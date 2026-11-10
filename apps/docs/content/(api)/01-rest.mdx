@@ -19,18 +19,11 @@ sidebar:
     curl 'https://api.fudoki.dev/v1/jurisdictions?name=%E6%AD%A6%E8%94%B5%E9%87%8E%E5%B8%82'
     ```
 
-    `name`（部分一致。例は「武蔵野市」）か `code`（6 桁か 5 桁）で絞ると、6 桁の自治体コードと、収録している年度・資料区分・会計が返ります。検索の `jurisdiction_code` は 6 桁だけを受け付けるので、ここで引いたコードを使います。
-  </Step>
-  <Step title="列の説明を読む">
-    ```bash
-    curl https://api.fudoki.dev/v1/fiscal/expenditure/columns
-    ```
-
-    列の意味、`where` の条件、金額を足すときの条件（`sum_rules`）、入力の例が返ります。
+    `name`（部分一致。例は「武蔵野市」）か `code`（6 桁か 5 桁）で絞ると、6 桁の自治体コードと、人口の推移、収録している年度・資料区分・会計、事業評価と予算案の年度が返ります。検索の `jurisdiction_code` は 6 桁だけを受け付けるので、ここで引いたコードを使います。
   </Step>
   <Step title="科目を検索する">
     ```bash
-    curl -X POST 'https://api.fudoki.dev/v1/fiscal/expenditure/subjects:search' \
+    curl -X POST 'https://api.fudoki.dev/v1/expenditures/subjects:search' \
       -H 'Content-Type: application/json' \
       -d '{
         "document_kind": "settlement",
@@ -41,14 +34,14 @@ sidebar:
       }'
     ```
 
-    `document_kind`（`settlement` は決算、`initial` は当初予算）と `fiscal_year`（西暦、5 年以内）が必須です。款・項・目は科目（`subjects:search`）、その下の事業・節は内訳（`POST /v1/fiscal/expenditure/details:search`）を同じ形で検索します。
+    `document_kind`（`settlement` は決算、`initial` は当初予算）と `fiscal_year`（西暦、5 年以内）が必須です。款・項・目は科目（`subjects:search`）、その下の事業・節は内訳（`POST /v1/expenditures/details:search`）を同じ形で検索します。列の意味と金額を足すときの条件は、[API リファレンス](/reference)の各操作の説明と schema にあります。
   </Step>
   <Step title="内訳を辿る">
     ```bash
-    curl 'https://api.fudoki.dev/v1/fiscal/expenditure/subjects/<subject_id>'
+    curl 'https://api.fudoki.dev/v1/expenditures/lines/<subject_id>'
     ```
 
-    科目と、子の科目、直下の内訳を分け方（`breakdown`：事業・節・その他）ごとに返します。内訳の子は `GET /v1/fiscal/expenditure/details/<detail_id>` で辿ります。印字の位置は `locations` に入ります。
+    科目と、子の科目、直下の内訳を分け方（`breakdown`：事業・節・その他）ごとに返します。内訳の子も同じ `GET /v1/expenditures/lines/<detail_id>` で辿ります。印字の位置は `locations` に入ります。
   </Step>
 </Steps>
 
@@ -72,9 +65,9 @@ sidebar:
 
 ## 出典を確かめる
 
-応答の `origins` に、行の `origin_id` が指す出典（資料名・公開 URL・形式・SHA-256）が入ります。自治体の一覧では `view=FULL` を付けると会計ごとの出典が返ります。
+応答の `origins` に、行の `origin_id` が指す出典（資料名・公開 URL・形式・SHA-256）が入ります。1 つの自治体（`GET /v1/jurisdictions/{jurisdiction_code}`）は会計ごとの出典も返します。
 
-`GET /v1/fiscal/origins/{origin_id}/pdf` は自治体の公開 PDF を表示用に中継します。取得 URL は `X-Origin-Url`（percent-encoding 済み。`decodeURIComponent` で戻す）、取得日時は `X-Origin-Fetched-At` で返し、取り込み時との一致は検査しません。上限は [MCP の表示](/mcp#表で見るmcp-apps)と同じです。
+`GET /v1/expenditures/origins/{origin_id}/pdf` は自治体の公開 PDF を表示用に中継します。取得 URL は `X-Origin-Url`（percent-encoding 済み。`decodeURIComponent` で戻す）、取得日時は `X-Origin-Fetched-At` で返し、取り込み時との一致は検査しません。上限は [MCP の表示](/mcp#表で見るmcp-apps)と同じです。
 
 ## エラーに対処する
 
@@ -88,10 +81,7 @@ sidebar:
 | 413 | `PAYLOAD_TOO_LARGE` | body が 16 KiB を超える |
 | 415 | `UNSUPPORTED_MEDIA_TYPE` | `Content-Type` が `application/json` でない |
 | 429 | `PDF_UNAVAILABLE` | PDF 中継の上限を超えた |
-| 429 | `RESOURCE_EXHAUSTED` | 評価資料の検索の回数の上限。`Retry-After` だけ待つ |
 | 502 / 504 | `PDF_UNAVAILABLE` | PDF を取れない・32 MiB 超・20 秒超 |
-| 503 | `UNAVAILABLE` | 提供を止めている。評価資料の検索では一時的な失敗でも返る |
-
-評価資料の検索の 503 は、停止中のほか、検索の失敗や不正な応答、回数の上限を確かめる仕組みの障害・設定の不備でも返ります。どれも 0 件という意味ではないので、時間をおいて再試行してください。
+| 503 | `UNAVAILABLE` | 提供を止めている |
 
 各操作の詳細は [API リファレンス](/reference)にあります。

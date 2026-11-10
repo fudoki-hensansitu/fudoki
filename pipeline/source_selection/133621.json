@@ -3179,5 +3179,40 @@
       "archive": null,
       "reason": "利島村の評価資料を探した。ブラウザで描画して確認した頁: https://www.toshimamura.org/（トップ）、https://www.toshimamura.org/about/12248.html（組織と計画）。DuckDuckGo の site 検索（事務事業評価・行政評価・施策評価・総合計画 進捗 評価など）でも、事業ごとの目標・実績・評価・課題を載せる事務事業評価・施策評価・行政評価の公表は出ず、教育委員会の点検・評価（選ばない対象）、社会資本総合整備計画の事後評価、総合計画・個別計画の本体、事務報告書（活動報告）のみ。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "133621",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。利島村のサイトに村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は無い。当初予算は議会情報の頁（https://www.toshimamura.org/about/assembly.html）の第1回定例会議案書に予算書として載るだけで、同じ頁の施政方針（村長の説明）は選ばない。会計の頁（https://www.toshimamura.org/about/total.html）は決算書・財務書類だけ、組織と計画（https://www.toshimamura.org/about/12248.html）は計画本体だけ。広報紙（https://www.toshimamura.org/about/kouhou.html）の予算記事は町村の方針で候補にしない。確認日 2026-11-10T07:02:17+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133621",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。利島村のサイトに村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は無い。当初予算は議会情報の頁（https://www.toshimamura.org/about/assembly.html）の第1回定例会議案書に予算書として載るだけで、同じ頁の施政方針（村長の説明）は選ばない。会計の頁（https://www.toshimamura.org/about/total.html）は決算書・財務書類だけ、組織と計画（https://www.toshimamura.org/about/12248.html）は計画本体だけ。広報紙（https://www.toshimamura.org/about/kouhou.html）の予算記事は町村の方針で候補にしない。確認日 2026-11-10T07:02:17+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133621",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。利島村のサイトに村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は無い。当初予算は議会情報の頁（https://www.toshimamura.org/about/assembly.html）の第1回定例会議案書に予算書として載るだけで、同じ頁の施政方針（村長の説明）は選ばない。会計の頁（https://www.toshimamura.org/about/total.html）は決算書・財務書類だけ、組織と計画（https://www.toshimamura.org/about/12248.html）は計画本体だけ。広報紙（https://www.toshimamura.org/about/kouhou.html）の予算記事は町村の方針で候補にしない。確認日 2026-11-10T07:02:17+00:00。"
+    }
   ]
 }

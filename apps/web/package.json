@@ -5,6 +5,7 @@
   "scripts": {
     "build": "vite build",
     "build:brand": "uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/build.py",
+    "build:og": "uv run --no-project --exclude-newer 2026-09-26 --with fonttools==4.66.0 --with brotli==1.2.0 python brand/og_jurisdictions.py",
     "deploy": "bun run build && cf deploy --prebuilt",
     "preview": "CLOUDFLARE_PREVIEW_BUILD=true bun run build && cf previews deploy --prebuilt",
     "dev": "vite dev",
@@ -35,6 +36,7 @@
     "@ai-sdk/mcp": "2.0.90",
     "@ai-sdk/react": "4.0.166",
     "@base-ui/react": "1.9.0",
+    "@fudoki/api": "workspace:*",
     "@fudoki/fiscal": "workspace:*",
     "@modelcontextprotocol/ext-apps": "2.0.4",
     "@phosphor-icons/react": "2.1.10",

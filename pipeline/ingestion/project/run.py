@@ -94,7 +94,7 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
     declared = origins()
     tables: dict[str, list[tuple]] = {name: [] for name in (
         'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator', 'project_evaluation_indicator_value',
-        'project_evaluation_result', 'project_budget_initiative')}
+        'project_evaluation_result', 'project_budget_measure')}
     for origin in sheet_sources(declared['sheets']):
         path = fetch(origin['reference'], remote=remote)
         sheets = read_cached(path, origin)
@@ -132,7 +132,7 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
         tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'press', origin['fiscal_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
         for item in items:
-            tables['project_budget_initiative'].append((
+            tables['project_budget_measure'].append((
                 origin_id(origin), item['page'], item['title'], json.dumps(item['names'], ensure_ascii=False),
                 item['is_new'], item['budget_thousand'], json.dumps(item['points'], ensure_ascii=False)))
     return tables
@@ -152,7 +152,7 @@ SCHEMAS = {
     'project_evaluation_result': 'origin_id varchar, evaluated_year integer, budget_year integer, page integer, '
                          'evaluated_count integer, grade_a integer, grade_b integer, grade_c integer, grade_d integer, '
                          'reduced_thousand bigint',
-    'project_budget_initiative': 'origin_id varchar, page integer, title varchar, names varchar, is_new boolean, '
+    'project_budget_measure': 'origin_id varchar, page integer, title varchar, names varchar, is_new boolean, '
                   'budget_thousand bigint, points varchar',
 }
 

@@ -18,7 +18,7 @@
 | Terms URL | https://docs.fudoki.dev/terms （2026-10-15 HTTP 200） |
 | アイコン | plugins/fudoki/assets/icon.png（256×256 PNG、既存markから作成） |
 | package | .build/plugins/fudoki-0.2.0.zip（再生成可能、未提出の準備用） |
-| 録画デモURL（暫定・提出用の正本ではない） | https://youtu.be/VX8z8EbJDyU （ChatGPTの北区の操作、89秒。2026-10-14に#197より前のUIで撮影）。現行の6 tool・描画toolのみUIの挙動で撮り直し、置き換える |
+| 録画デモURL（暫定・提出用の正本ではない） | https://youtu.be/VX8z8EbJDyU （ChatGPTの北区の操作、89秒。2026-10-14に#197より前のUIで撮影）。現行の10 tool・描画toolのみUIの挙動で撮り直し、置き換える |
 | 掲載用スクリーンショット | Claudeで撮影済み（検索3件・節の内訳・COFOG 10の集計）。gitの外の `.agent/claude-submission-shots/` に置く |
 
 OpenAIの英語subtitleは `Compare municipal spending`、日本語は「自治体の歳出を比較し出典を確認」。本文・starter prompts・5 positive / 3 negative case（2026-10-14に事業の評価の検索を各1件足し、2026-10-21にOpenAIの「positiveはちょうど5件・negativeはちょうど3件」に合わせて内訳と出典を1件にまとめ、pluginを呼ぶべき評価資料の金額のcaseをnegativeから外した）・課金なし・JP・release notesはportable manifestの `extensions.com.openai` に入れた。support/privacy/terms と録画URLは公開を確認してから入れた。[OpenAIの提出metadata](https://developers.openai.com/plugins/deploy/submission)
@@ -27,19 +27,19 @@ support/privacy/terms の項目調査・本番設定との照合・運用方針�
 
 Anthropic MCP Directory の英語掲載文案（MCP connector 用。Plugin bundle・OpenAI の別申請とは区別する。2026-10-28 のレビュー対応としてローカルで準備。公開反映・申請画面の更新・審査担当への返信は未実施）:
 
-> Search Japanese municipal initial-budget and settlement expenditure data down to individual projects. Check which fiscal years, document kinds and accounts are covered, compare spending on consistent terms, and inspect breakdowns and sources. For covered municipalities and years, also find pages that may contain project evaluations; results provide source locations and short excerpts, and evaluation content must be verified in the original source. COFOG classifications are judgments made by 風土記 and include provisional classifications. Access is read-only and requires no authentication. Individual transactions, revenue data and write operations are not supported. On clients supporting MCP Apps, expenditure search results and node breakdowns can be shown as tables and charts.
+> Search Japanese municipal initial-budget and settlement expenditure data down to individual projects. Check which fiscal years, document kinds and accounts are covered, compare spending on consistent terms, and inspect breakdowns and sources. For covered municipalities and years, also read project evaluation sheets (grades and indicators) and budget proposal measures, each with its source document and page. COFOG classifications are judgments made by 風土記 and include provisional classifications. Access is read-only and requires no authentication. Individual transactions, revenue data and write operations are not supported. On clients supporting MCP Apps, expenditure search results and node breakdowns can be shown as tables and charts.
 
 日本語の併記案:
 
-> 自治体の当初予算・決算の歳出を、事業の単位で検索し、内訳と出典を確認できます。比べたい年度・会計が収録されているかを確かめ、同じ条件で比較します。COFOG分類は風土記の判断で、暫定分類を含みます。個別取引、歳入、書込みには対応しません。
+> 自治体の当初予算・決算の歳出を、事業の単位で検索し、内訳と出典を確認できます。比べたい年度・会計が収録されているかを確かめ、同じ条件で比較します。収録した自治体は、事業評価の評価シートと予算案の施策も引けます。COFOG分類は風土記の判断で、暫定分類を含みます。個別取引、歳入、書込みには対応しません。
 
 カテゴリ候補はProductivity。各社の提出画面で選択できる値を確認する。connectorの出典リンクは自治体の第三者ドメインを含むため、発行者所有のURIとしてallowlistへ入れない。確認ダイアログが出る扱いを維持する。[Claude connectorのリンク条件](https://claude.com/docs/connectors/building/submission#allowed-link-uris)
 
 ## レビュー用の接続とcase
 
-既存URLへ匿名で接続する。風土記用のアカウント、API key、test passwordは不要。レビューhost側の接続設定を済ませ、6つのtool、うちUIを持つのは描画tool（render_expenditure_view）1つ、出典のリンクが使えることを確認する。データtoolは画面を出さず、モデルが描画toolを呼んだときだけUIが出る。公開PDFの中継には既存のサイズ・時間・頻度上限があり、取得時の内容が取り込み時と同じとは保証しない。
+既存URLへ匿名で接続する。風土記用のアカウント、API key、test passwordは不要。レビューhost側の接続設定を済ませ、10のtool、うちUIを持つのは描画tool（render_expenditure_view）1つ、出典のリンクが使えることを確認する。データtoolは画面を出さず、モデルが描画toolを呼んだときだけUIが出る。公開PDFの中継には既存のサイズ・時間・頻度上限があり、取得時の内容が取り込み時と同じとは保証しない。
 
-実行caseの正本は `plugins/fudoki/plugin.json` の `review.test_cases`。5件のpositiveは収録範囲・条件検索・内訳と出典・COFOG集計・事業の評価の頁の検索、3件のnegativeは個別取引/銀行口座・歳入・書込み。prompt、必要な前提、期待toolと引数、期待結果を記した。前の結果のnode_idは捏造せず、実際に返された値を使う。
+実行caseの正本は `plugins/fudoki/plugin.json` の `review.test_cases`。5件のpositiveは収録範囲・条件検索・内訳と出典・COFOG集計・事業評価の評価シートの検索、3件のnegativeは個別取引/銀行口座・歳入・書込み。prompt、必要な前提、期待toolと引数、期待結果を記した。前の結果のnode_idは捏造せず、実際に返された値を使う。
 
 | case | ChatGPT | Claude | Codex / Claude Code / Cursor package |
 | --- | --- | --- | --- |

@@ -1,6 +1,5 @@
 import { expect, test } from 'bun:test'
 import { MAX_PAGE_CHARS, readSourcePage, type SourceTextBucket } from './source-pages'
-import { CATALOG } from './evaluations'
 import { testDb } from './testing'
 
 const SHA = 'a'.repeat(64)
@@ -8,7 +7,7 @@ const OTHER = 'b'.repeat(64)
 
 function setup(pages: string[]) {
   const { db, sqlite } = testDb()
-  sqlite.query(`INSERT INTO fiscal_origin (origin_id, jurisdiction_code, fiscal_year, document_kind, title, url, format, sha256) VALUES (?,?,?,?,?,?,?,?)`)
+  sqlite.query(`INSERT INTO expenditure_origin (origin_id, jurisdiction_code, fiscal_year, document_kind, title, url, format, sha256) VALUES (?,?,?,?,?,?,?,?)`)
     .run('o1', '131091', 2026, 'initial', '予算書', 'https://city.example.jp/a.pdf', 'pdf', SHA)
   const keys: string[] = []
   const bucket: SourceTextBucket = {
@@ -17,7 +16,7 @@ function setup(pages: string[]) {
       return key === `source-text/${SHA}.json` ? { text: async () => JSON.stringify({ schema_version: 1, sha256: SHA, pages }) } : null
     },
   }
-  return { db, bucket, keys }
+  return { db, sqlite, bucket, keys }
 }
 
 test('origin_id か sha256 で出典の頁の文字と公式の URL を返す', async () => {
@@ -45,15 +44,28 @@ test('頁の範囲外と不正な入力は invalid、長い頁は上限で切る
   expect(r.status === 'ok' && [r.text.length, r.truncated]).toEqual([MAX_PAGE_CHARS, true])
 })
 
-test('評価資料の catalog の出典は、Wayback Machine の写しでなく自治体の公式の頁を返す', async () => {
-  const { db } = setup([])
-  const doc = { origin_sha256: OTHER, jurisdiction: '131016', fiscal_year: 2020, title: '評価', url: 'https://web.archive.org/web/2025id_/https://city.example.jp/r2.pdf', landing_url: 'https://city.example.jp/r2.html', item_format: 'pdf' as const, pages: [] }
-  CATALOG.push(doc)
-  try {
-    const bucket: SourceTextBucket = { get: async () => ({ text: async () => JSON.stringify({ pages: ['本文'] }) }) }
-    const r = await readSourcePage(db, bucket, { origin: OTHER, page: 1 })
+test('事業評価の出典は、Wayback Machine の写しでなく自治体の公式の頁を返す', async () => {
+  const { db, sqlite } = setup([])
+  sqlite
+    .query(`INSERT INTO evaluation_origin (origin_id, evaluation_id, jurisdiction_code, document_type, fiscal_year, title, url, landing_url, sha256) VALUES (?,?,?,?,?,?,?,?,?)`)
+    .run('e1', 'ev1', '131016', 'sheets', 2020, '評価', 'https://web.archive.org/web/2025id_/https://city.example.jp/r2.pdf', 'https://city.example.jp/r2.html', OTHER)
+  const bucket: SourceTextBucket = { get: async () => ({ text: async () => JSON.stringify({ pages: ['本文'] }) }) }
+  for (const origin of [OTHER, 'e1']) {
+    const r = await readSourcePage(db, bucket, { origin, page: 1 })
     expect(r.status === 'ok' && r.url).toBe('https://city.example.jp/r2.html')
-  } finally {
-    CATALOG.splice(CATALOG.indexOf(doc), 1)
   }
+})
+
+test('予算案のプレス発表の出典も origin_id か sha256 で引ける', async () => {
+  const { db, sqlite } = setup([])
+  sqlite
+    .query(`INSERT INTO budget_proposal_origin (origin_id, budget_proposal_id, jurisdiction_code, fiscal_year, title, url, landing_url, sha256) VALUES (?,?,?,?,?,?,?,?)`)
+    .run('p1', 'bp1', '131091', 2026, '予算案の概要', 'https://city.example.jp/p1.pdf', null, OTHER)
+  const keys: string[] = []
+  const bucket: SourceTextBucket = { get: async (key) => (keys.push(key), { text: async () => JSON.stringify({ pages: ['本文'] }) }) }
+  for (const origin of [OTHER, 'p1']) {
+    const r = await readSourcePage(db, bucket, { origin, page: 1 })
+    expect(r.status === 'ok' && [r.title, r.url]).toEqual(['予算案の概要', 'https://city.example.jp/p1.pdf'])
+  }
+  expect(keys).toEqual([`source-text/${OTHER}.json`, `source-text/${OTHER}.json`])
 })

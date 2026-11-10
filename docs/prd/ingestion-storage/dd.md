@@ -104,6 +104,7 @@ fudoki-inputs/
     settlement-2.pdf
     supplementary-<号>.pdf
     evaluation-settlement[-<n>].pdf   # 事業の評価の資料（docs/prd/evaluation-search/dd.md）
+    press-initial[-<n>].pdf           # 予算案のプレス発表（press_selections）
   fiscal/ingestion/<自治体>/<年度>/<initial|settlement|supplementary-号>/
     expenditure/<表ID>-nodes.parquet
     expenditure/<表ID>-amounts.parquet

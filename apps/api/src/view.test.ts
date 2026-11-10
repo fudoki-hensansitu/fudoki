@@ -4,7 +4,7 @@ import type { Db } from './db'
 import type { Database } from 'bun:sqlite'
 import { insertJurisdiction, insertOrigin, insertSubject, testDb } from './testing'
 import { VIEW_HTML, VIEW_URI } from './gen/view'
-import { operations } from './operations'
+import { tools as operations } from './app'
 import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
 
 let db: Db
@@ -36,7 +36,7 @@ describe('MCP Apps の View', () => {
     const withView = tools.filter((t) => t._meta).map((t) => t.name)
     expect(withView).toEqual(['render_expenditure_view'])
     expect(tools.find((t) => t.name === 'render_expenditure_view')!._meta).toEqual({ ui: { resourceUri: VIEW_URI }, 'ui/resourceUri': VIEW_URI })
-    for (const name of ['get_expenditure_subject', 'get_expenditure_detail', 'list_jurisdictions', 'search_expenditure_subjects', 'search_expenditure_details']) expect(tools.some((t) => t.name === name)).toBe(true)
+    for (const name of ['get_expenditure_line', 'list_jurisdictions', 'search_expenditure_subjects', 'search_expenditure_details']) expect(tools.some((t) => t.name === name)).toBe(true)
   })
 
   test('どの tool も title を最上位と annotations の両方に持ち、読み取り専用と宣言する（Claude の提出画面の検査）', async () => {
@@ -49,11 +49,11 @@ describe('MCP Apps の View', () => {
     }
   })
 
-  test('Directory exposes eight stable tool names with English capability descriptions', async () => {
+  test('Directory exposes stable tool names with English capability descriptions', async () => {
     const tools = (await rpc('tools/list')).result.tools as { name: string; title: string; description: string; inputSchema: { properties: Record<string, { enum?: string[] }> } }[]
     expect(tools.map((t) => t.name).sort()).toEqual([
-      'describe_expenditure_columns', 'get_expenditure_detail', 'get_expenditure_subject', 'list_jurisdictions',
-      'render_expenditure_view', 'search_evaluations', 'search_expenditure_details', 'search_expenditure_subjects',
+      'get_budget_proposal', 'get_evaluation', 'get_evaluation_sheet', 'get_expenditure_line', 'list_jurisdictions',
+      'render_expenditure_view', 'search_budget_measures', 'search_evaluation_sheets', 'search_expenditure_details', 'search_expenditure_subjects',
     ])
     for (const t of tools) {
       expect(t.title).toMatch(/[A-Za-z]+ [A-Za-z]+/)
@@ -62,7 +62,7 @@ describe('MCP Apps の View', () => {
     // Data tool descriptions stay independent of the optional View.
     for (const op of operations) expect(tools.find((t) => t.name === op.name)!.description).toBe(op.description)
     const renderer = tools.find((t) => t.name === 'render_expenditure_view')!
-    expect(renderer.inputSchema.properties.tool!.enum).toEqual(['search_expenditure_subjects', 'search_expenditure_details', 'get_expenditure_subject', 'get_expenditure_detail'])
+    expect(renderer.inputSchema.properties.tool!.enum).toEqual(['search_expenditure_subjects', 'search_expenditure_details', 'get_expenditure_line'])
     expect(renderer.description).toContain('tables and charts in clients that support MCP Apps')
     expect(renderer.description).toContain('structuredContent')
     expect(renderer.description).toContain('text acknowledgement')
@@ -80,14 +80,14 @@ describe('MCP Apps の View', () => {
     insertSubject(sqlite, { subject_id: subjectId, name: '総務費', amount_yen: 123456, origin_id: 'o1' })
     const calls = [
       { name: 'search_expenditure_subjects', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } },
-      { name: 'get_expenditure_subject', arguments: { subject_id: subjectId } },
+      { name: 'get_expenditure_line', arguments: { line_id: subjectId } },
     ]
     for (const call of calls) {
       const direct = (await rpc('tools/call', call)).result
       expect(direct.isError).toBeUndefined()
       const text = JSON.parse(direct.content[0].text)
       expect(text).toEqual(direct.structuredContent)
-      const node = text.subject ?? text.subjects[0]
+      const node = text.line ?? text.subjects[0]
       expect(node).toMatchObject({ name: '総務費', amount_yen: 123456, fiscal_year: 2024, document_kind: 'settlement', origin_id: 'o1' })
       expect(text.origins).toContainEqual(expect.objectContaining({ title: '決算書', url: 'https://example.test/settlement.pdf', sha256: 'abc123' }))
       const rendered = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: call.name, arguments: call.arguments } })).result
@@ -107,7 +107,7 @@ describe('MCP Apps の View', () => {
     // データは structuredContent だけで返し、text に同じ内容を写さない（会話の文脈を膨らませないため）
     expect(rendered.content).toEqual([{ type: 'text', text: RENDER_RESULT_TEXT }])
     expect(rendered._meta).toEqual(direct._meta)
-    const bad = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'get_expenditure_subject', arguments: {} } })).result
+    const bad = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'get_expenditure_line', arguments: {} } })).result
     expect(bad.isError).toBe(true)
     // 自治体の一覧は View を持たず、描画 tool では呼べない
     const noView = (await rpc('tools/call', { name: 'render_expenditure_view', arguments: { tool: 'list_jurisdictions', arguments: {} } })).result

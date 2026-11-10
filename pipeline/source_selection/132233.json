@@ -2875,5 +2875,121 @@
       },
       "reason": "令和6年度に評価した行政評価報告書（262頁、令和7年3月）。内部評価・外部評価の総括、評価結果（今後の方向性）の一覧、令和5年度に実施した事業の行政評価調書（目的・実績・評価・課題・方向性）を載せる。文字として読める。部署別の評価調書と同じ内容を1本にまとめた報告書を代表にした。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132233",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度武蔵村山市各会計予算の概要",
+          "landing_url": "https://www.city.musashimurayama.lg.jp/shisei/zaisei/1022367/1019837/1020013.html",
+          "inspected_at": "2026-11-10T06:57:57+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/020/013/r6gaiyou.pdf",
+              "sha256": "00d9ac0a0e22916f6b346ed4cdbc3a192ab594d59a4eb66b8a055907e69151a5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132233/2024/press-initial.pdf",
+            "sha256": "00d9ac0a0e22916f6b346ed4cdbc3a192ab594d59a4eb66b8a055907e69151a5",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/020/013/r6gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:58:07.067Z"
+      },
+      "reason": "予算の頁「令和6年度当初予算の概要」（https://www.city.musashimurayama.lg.jp/shisei/zaisei/1022367/1019837/1020013.html）に載る「令和6年度武蔵村山市各会計予算の概要」（66頁、文字PDF）。武蔵村山市は当初予算案の記者会見・報道発表の頁を持たず（市長の頁 https://www.city.musashimurayama.lg.jp/shisei/shicho/index.html は施政方針・所信表明・タウンミーティングのみ）、予算の頁の資料から選んだ。「22 一般会計等の主な事業（⑥実施計画事業）」「23 一般会計等の主な事業（その他の事業）」（物理約36〜58頁）に、長期総合計画の章・分野・施策ごとに事業名【所管課】・予算額（千円）・新規「新」／充実「充」／継続「●」の印・事業の説明（対象者・定員・充実内容など）を載せる。ほかは予算規模、歳入歳出予算のポイント、款別・目的別・性質別の前年度比較、債務負担行為、市債、財政分析指数、モノレール・DX・ゼロカーボンの関連事業、基金、特別会計など。予算書本体は選ばない。確認日 2026-11-10T06:57:57+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132233",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度武蔵村山市各会計予算の概要",
+          "landing_url": "https://www.city.musashimurayama.lg.jp/shisei/zaisei/1022367/1020642/1020960.html",
+          "inspected_at": "2026-11-10T06:57:57+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/020/960/r7gaiyou.pdf",
+              "sha256": "b3df6db35ab889a95a2883f1b8011290fa7196248ddf2a22e5a3694edd09ae1c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132233/2025/press-initial.pdf",
+            "sha256": "b3df6db35ab889a95a2883f1b8011290fa7196248ddf2a22e5a3694edd09ae1c",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/020/960/r7gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:58:10.202Z"
+      },
+      "reason": "予算の頁「令和7年度当初予算の概要」（https://www.city.musashimurayama.lg.jp/shisei/zaisei/1022367/1020642/1020960.html）に載る「令和7年度武蔵村山市各会計予算の概要」（68頁、文字PDF）。武蔵村山市は当初予算案の記者会見・報道発表の頁を持たず（市長の頁 https://www.city.musashimurayama.lg.jp/shisei/shicho/index.html は施政方針・所信表明・タウンミーティングのみ）、予算の頁の資料から選んだ。「22 一般会計等の主な事業（⑦実施計画事業）」「23 一般会計等の主な事業（その他の事業）」（物理約36〜60頁）に、長期総合計画の章・分野・施策ごとに事業名【所管課】・予算額（千円）・新規「新」／充実「充」／継続「●」の印・事業の説明（対象者・定員・充実内容など）を載せる。ほかは予算規模、歳入歳出予算のポイント、款別・目的別・性質別の前年度比較、債務負担行為、市債、財政分析指数、モノレール・DX・ゼロカーボンの関連事業、基金、特別会計など。同じ頁の「当初予算広報用資料」（20頁）は重点施策と主な事業を示す広報用の要約なので選ばない。「令和7年度予算のあらまし」（https://www.city.musashimurayama.lg.jp/shisei/zaisei/1022367/1020642/1020918/index.html）の「当初予算における主要な事業」は別の頁で、ここには含めない。予算書本体は選ばない。確認日 2026-11-10T06:57:57+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132233",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度武蔵村山市各会計予算の概要",
+          "landing_url": "https://www.city.musashimurayama.lg.jp/shisei/zaisei/1022367/1021676/1021988/index.html",
+          "inspected_at": "2026-11-10T06:57:57+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/988/r8gaiyou.pdf",
+              "sha256": "00f8a98713bf3493b4c34bea51ddb3a0c56dd67d02e7b96c53212e80df401118",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132233/2026/press-initial.pdf",
+            "sha256": "00f8a98713bf3493b4c34bea51ddb3a0c56dd67d02e7b96c53212e80df401118",
+            "final_url": "https://www.city.musashimurayama.lg.jp/_res/projects/default_project/_page_/001/021/988/r8gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:58:13.247Z"
+      },
+      "reason": "予算の頁「令和8年度当初予算の概要」（https://www.city.musashimurayama.lg.jp/shisei/zaisei/1022367/1021676/1021988/index.html）に載る「令和8年度武蔵村山市各会計予算の概要」（62頁、文字PDF）。武蔵村山市は当初予算案の記者会見・報道発表の頁を持たず（市長の頁 https://www.city.musashimurayama.lg.jp/shisei/shicho/index.html は施政方針・所信表明・タウンミーティングのみ）、予算の頁の資料から選んだ。「18 一般会計等の主な事業（⑧実施計画事業）」「19 一般会計等の主な事業（その他の事業）」（物理約32〜53頁）に、長期総合計画の章・分野・施策ごとに事業名【所管課】・予算額（千円）・新規「新」／充実「充」／継続「●」の印・事業の説明（対象者・定員・充実内容など）を載せる。ほかは予算規模、歳入歳出予算のポイント、款別・目的別・性質別の前年度比較、債務負担行為、市債、財政分析指数、モノレール・DX・ゼロカーボンの関連事業、基金、特別会計など。同じ頁の「当初予算広報用資料」（20頁）は4つの重点施策と主な事業名を絵入りで示す広報用の要約で、全施策の事業名と予算額は載らないので選ばない。予算書本体は選ばない。確認日 2026-11-10T06:57:57+00:00。"
+    }
   ]
 }

@@ -31,10 +31,10 @@ export function toServer(data: ViewData) {
   if ('nodes' in data)
     return data.nodes.length && !data.nodes.every(isSubject) ? { ...common, details: data.nodes.map(row) } : { ...common, subjects: data.nodes.map(row) }
   const all = [data.node, ...Object.values(data.children).flat()]
-  if (!isSubject(data.node)) return { ...common, detail: row(data.node), children: Object.values(data.children).flat().map(row), locations: all.map(locationOf) }
   const details: Record<string, unknown[]> = {}
   for (const [axis, rows] of Object.entries(data.children)) if (axis !== '科目') details[axis] = rows.map(row)
-  return { ...common, subject: row(data.node), children: (data.children['科目'] ?? []).map(row), details, locations: all.map(locationOf) }
+  const line = { kind: isSubject(data.node) ? 'subject' : 'detail', ...row(data.node) }
+  return { ...common, line, child_subjects: (data.children['科目'] ?? []).map(row), details, locations: all.map(locationOf) }
 }
 
 const origin: Origin = {

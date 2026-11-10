@@ -5,7 +5,9 @@
     "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles",
     "funded_explanation": "ingestion.generic.patterns.layout.funded_explanation",
     "staircase_codes": "ingestion.generic.patterns.layout.staircase_codes",
-    "stacked_blocks": "ingestion.generic.patterns.layout.stacked_blocks"
+    "stacked_blocks": "ingestion.generic.patterns.layout.stacked_blocks",
+    "running_titles": "ingestion.generic.patterns.layout.running_titles",
+    "purpose_section": "ingestion.generic.patterns.layout.purpose_section"
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
@@ -42,7 +44,10 @@
     "profiled_budget": "ingestion.generic.patterns.readings.profiled_budget",
     "enterprise_expenses": "ingestion.generic.patterns.readings.enterprise_expenses",
     "banded_projects": "ingestion.generic.patterns.readings.banded_projects",
-    "offset_projects": "ingestion.generic.patterns.readings.offset_projects"
+    "offset_projects": "ingestion.generic.patterns.readings.offset_projects",
+    "purpose_summary": "ingestion.generic.patterns.readings.purpose_summary",
+    "compared_years": "ingestion.generic.patterns.readings.compared_years",
+    "turned_summary": "ingestion.generic.patterns.readings.turned_summary"
   },
   "component": {
     "marked_subjects": "ingestion.generic.patterns.components.marked_subjects",

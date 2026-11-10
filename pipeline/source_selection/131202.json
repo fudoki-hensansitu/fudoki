@@ -1811,5 +1811,121 @@
       "archive": null,
       "reason": "練馬区の評価資料を探した。主要事業成果報告書（R6syuyoujigyou.pdf・R5syuyoujigyou.pdf、従前の調査で確認）は事業ごとの概要と経費の執行状況（予算額・執行額・不用額・執行率）のみで評価・今後の方向の欄が無い。DuckDuckGo の site 検索（事務事業評価・行政評価・施策評価・事業評価シート）では、令和の事務事業評価・施策評価の公表は出ず、平成21〜25年度の行政評価委員会の旧資料と会議録のみ（行政評価委員会の頁 https://www.city.nerima.tokyo.jp/kusei/kaigi/kaigiroku/gyouseiunei/gyouseihyouka/index.html は検索結果で確認）。一方、ブラウザで描画した第2次みどりの風吹くまちビジョン アクションプラン［年度別取組計画］の進捗状況の頁（https://www.city.nerima.tokyo.jp/kusei/sougoukeikaku/sougoukeikaugaiyou/vision2/dai2jikpiap.html）にある令和5年度末の進捗状況（R05_kpi_ap.pdf、60頁）は、基本目標・計画ごとの取組について目標値・令和4年度末と令和5年度末の実績・目標値に対する進捗状況（A など）・備考を載せる。取組単位で決算額・課題・今後の方向の欄が無く、事業の支出と結びつかないため選ばない（課題・今後の方向の欄が無く、評価資料の条件を満たさない）。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131202",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "記者発表資料（令和6年度練馬区当初予算案）",
+          "landing_url": "https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r6/r601/20240123.html",
+          "inspected_at": "2026-11-10T07:16:27+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r6/r601/20240123.files/R6yosan_shiryo-2.pdf",
+              "sha256": "3689abea34b2241ee40a76e860ea035b8ae4dd10a6872e976476d9a5798980b6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131202/2024/press-initial.pdf",
+            "sha256": "3689abea34b2241ee40a76e860ea035b8ae4dd10a6872e976476d9a5798980b6",
+            "final_url": "https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r6/r601/20240123.files/R6yosan_shiryo-2.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:16:37.160Z"
+      },
+      "reason": "報道発表資料の頁「【令和6年1月23日】令和6年度当初予算案を発表」（https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r6/r601/20240123.html）に載る記者発表資料（令和6年度練馬区当初予算案、74頁、文字PDF）。冒頭で区政の取組と予算の規模・歳入歳出を説明したあと、ビジョンの柱ごとに施策ごとの頁で、施策名・新規／充実の印・事業ごとの予算額（千円、経費名つき）・説明と写真を載せる。予算の頁の「令和6年度当初予算案 主な事業」（https://www.city.nerima.tokyo.jp/kusei/zaisei/yosan/r06/r06tosho/）は同じ発表を要約した HTML で、ここには含めない。確認日 2026-11-10T07:16:27+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131202",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "記者発表資料（令和7年度練馬区当初予算案）",
+          "landing_url": "https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r7/r701/20250123.html",
+          "inspected_at": "2026-11-10T07:16:27+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r7/r701/20250123.files/R7yosanshiryou20250123.pdf",
+              "sha256": "fe8f7849876cfbbd18a06c6c2a4ec83eb2bed1042698be986969241cbfa7d05d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131202/2025/press-initial.pdf",
+            "sha256": "fe8f7849876cfbbd18a06c6c2a4ec83eb2bed1042698be986969241cbfa7d05d",
+            "final_url": "https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r7/r701/20250123.files/R7yosanshiryou20250123.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:16:43.395Z"
+      },
+      "reason": "報道発表資料の頁「【令和7年1月23日】令和7年度当初予算案を発表」（https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r7/r701/20250123.html）に載る記者発表資料（令和7年度練馬区当初予算案、72頁、文字PDF）。冒頭で区政の取組と予算の規模・歳入歳出を説明したあと、ビジョンの柱ごとに施策ごとの頁で、施策名・新規／充実の印・事業ごとの予算額（千円、経費名つき）・説明と写真を載せる。予算の頁の「令和7年度当初予算案 主な事業」（https://www.city.nerima.tokyo.jp/kusei/zaisei/yosan/r07/r07tosho/）は同じ発表を要約した HTML で、ここには含めない。確認日 2026-11-10T07:16:27+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131202",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "記者発表資料（令和8年度練馬区当初予算案）",
+          "landing_url": "https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r8/r801/20260122.html",
+          "inspected_at": "2026-11-10T07:16:27+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r8/r801/20260122.files/R8yosansiryo20260122.pdf",
+              "sha256": "1bd04a9dc85f4cc26fcec670a4c81cab520dd41fc75fd34f5f3e93179fd3114e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131202/2026/press-initial.pdf",
+            "sha256": "1bd04a9dc85f4cc26fcec670a4c81cab520dd41fc75fd34f5f3e93179fd3114e",
+            "final_url": "https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r8/r801/20260122.files/R8yosansiryo20260122.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:16:47.673Z"
+      },
+      "reason": "報道発表資料の頁「【令和8年1月22日】令和8年度当初予算案を発表」（https://www.city.nerima.tokyo.jp/kusei/koho/hodo/r8/r801/20260122.html）に載る記者発表資料（令和8年度練馬区当初予算案、74頁、文字PDF）。冒頭で区政の取組と予算の規模・歳入歳出を説明したあと、ビジョンの柱ごとに施策ごとの頁で、施策名・新規／充実の印・事業ごとの予算額（千円、経費名つき）・説明と写真を載せる。予算の頁の「令和8年度当初予算案 主な事業」（https://www.city.nerima.tokyo.jp/kusei/zaisei/yosan/r08/r08tosho/）は同じ発表を要約した HTML で、ここには含めない。確認日 2026-11-10T07:16:27+00:00。"
+    }
   ]
 }
