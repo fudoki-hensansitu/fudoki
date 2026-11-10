@@ -13,8 +13,10 @@ open 款・項 again, so no titles are read (`level_titles` empty) and the page 
 
 The right page rules the purpose of the spread's first 目 (`区議会議員の人件費及び区議会の運営に要する経費`) in a row
 right under the `説明` header cell, so it is read as a second header row and the column's header changes with every
-spread. The column is `説明` (`EXPLANATION`): the conversion's settings name it once, and a column declared excluded
-under that name is left out as `layout.logical_pages` leaves out the columns it names.
+spread; on a scan OCR also reads the cell as `說明`, `明` or with the 節 header over it. The column is the label column
+right of the 節's amounts (`節／金額`), whatever its header reads: it is `説明` (`EXPLANATION`), the conversion's settings
+name it once, and a column declared excluded under that name is left out as `layout.logical_pages` leaves out the
+columns it names.
 """
 from ingestion.generic import layout
 
@@ -29,12 +31,14 @@ def _subject(logical: layout.Logical) -> bool:
 def read(pages, **options):
     result = []
     for logical in layout.logical_pages(pages, **options):
+        amounts = [b for b in logical.bands if b.kind == 'amount' and b.header[:1] == ('節',)]
         for band in logical.bands:
-            if band.header and band.header[0] == EXPLANATION and len(band.header) > 1:
+            if (amounts and band.kind == 'label' and band.header != (EXPLANATION,)
+                    and any(band.x0 >= a.x1 - 1 and band.offset == a.offset for a in amounts)):
                 band.header = (EXPLANATION,)
-                excluded = ((options.get('columns') or {}).get(EXPLANATION) or {}).get('excluded')
-                if excluded:
-                    band.excluded, band.kind = excluded, None
+                setting = (options.get('columns') or {}).get(EXPLANATION) or {}
+                if setting.get('excluded'):
+                    band.excluded, band.kind = setting['excluded'], None
         previous = result[-1] if result else None
         if (previous is not None and len(previous.pages) == 1 and len(logical.pages) == 1 and _subject(previous)
                 and not _subject(logical) and logical.pages[0] == previous.pages[0] + 1):
