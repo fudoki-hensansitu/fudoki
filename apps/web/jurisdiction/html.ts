@@ -2,7 +2,7 @@
 // Void がサーバーで書き、同じ props で hydrate する。ここは頁ごとの title・説明・canonical・JSON-LD を組む
 import type { CatalogEntry } from '../server/jurisdiction'
 import { jurisdictionPath } from './path'
-import { formatYen, INDEX_PATH, reiwa, type PageData } from './types'
+import { formatYen, INDEX_PATH, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
 /** JSON を script の中に置くときに </script> や <!-- で抜けないようにする */
@@ -29,23 +29,46 @@ const head = (title: string, description: string, canonical: string, extra: Part
   ...(extra.script ? { script: extra.script } : {}),
 })
 
+/** 検索で打たれる「令和6年度」の形。画面は R 表記（reiwa）だが、title・説明文だけは検索語に合わせる。2019年より前は西暦のまま */
+export const reiwaFull = (year: number) => (year < 2019 ? `${year}年度` : year === 2019 ? '令和元年度' : `令和${year - 2018}年度`)
+
+/** 決算より後の、金額のある当初予算のうちいちばん新しいもの */
+const latestBudget = (d: PageData) => d.budgets.filter((b) => !b.amountMissing).at(-1) ?? null
+
 /** 個別ページの説明文。検索結果に出るので、金額は API の値だけで書く（人口や仮の値は入れない） */
 export function pageDescription(d: PageData): string {
   const latest = d.years.at(-1)!
+  const budget = latestBudget(d)
   // 分野は COFOG の大分類（cofogFlow は大きい順で「その他」が最後）
   const top = d.cofogFlow.find((f) => f.kan.id !== 'cofog-none')?.kan
-  return `${d.name}の${reiwa(latest.year)}決算（一般会計）の歳出は約${formatYen(latest.yen)}。いちばん大きい分野は${top ? `${top.name}（${formatYen(top.yen)}）` : '—'}。使い道ごとの金額を、出典の頁と照らして確かめられます。`
+  const topText = top ? `${top.name}（${formatYen(top.yen)}）` : '—'
+  if (budget) {
+    return `${d.name}の${reiwaFull(budget.year)}当初予算の歳出は約${formatYen(budget.yen)}、${reiwaFull(latest.year)}決算（一般会計）の歳出は約${formatYen(latest.yen)}。決算でいちばん大きい分野は${topText}。予算書・決算書の歳出を事業の単位まで、出典の頁と並べて見られます。`
+  }
+  return `${d.name}の${reiwaFull(latest.year)}決算（一般会計）の歳出は約${formatYen(latest.yen)}。いちばん大きい分野は${topText}。決算書の歳出を事業の単位まで、出典の頁と並べて見られます。`
+}
+
+/** 個別ページの title。検索語の「◯◯区 予算」「◯◯区 決算」「令和6年度」を入れる。予算があれば予算・決算の両方を年度つきで出す */
+export function pageTitle(d: PageData): string {
+  const latest = d.years.at(-1)!
+  const budget = latestBudget(d)
+  return budget
+    ? `${d.name}の予算と決算｜${reiwaFull(budget.year)}予算・${reiwaFull(latest.year)}決算｜風土記`
+    : `${d.name}の決算（${reiwaFull(latest.year)}）｜何にいくら使った？｜風土記`
 }
 
 export function pageHead(d: PageData): Head {
   const latest = d.years.at(-1)!
-  const title = `${d.name}の歳出｜${reiwa(latest.year)}決算｜風土記`
+  const budget = latestBudget(d)
+  const title = pageTitle(d)
   const description = pageDescription(d)
   const canonical = `${ORIGIN}${jurisdictionPath(d.code)}`
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
-    name: `${d.name}の歳出（${reiwa(latest.year)}決算・一般会計）`,
+    name: budget ? `${d.name}の歳出（${reiwaFull(budget.year)}当初予算・${reiwaFull(latest.year)}決算・一般会計）` : `${d.name}の歳出（${reiwaFull(latest.year)}決算・一般会計）`,
+    keywords: [`${d.name} 決算`, ...(budget ? [`${d.name} 予算`] : []), '歳出', '一般会計'],
+    temporalCoverage: `${d.years[0]!.year}-04-01/${(budget?.year ?? latest.year) + 1}-03-31`,
     description,
     url: canonical,
     inLanguage: 'ja',
