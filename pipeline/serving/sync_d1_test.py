@@ -213,16 +213,30 @@ class ScopeTest(unittest.TestCase):
             self.assertEqual(d.execute(sql).fetchall(), q.execute(sql).fetchall())
         self.assertEqual(d.execute('select k from t' + sync_d1.scope_where(['132039']) + ' order by k').fetchall(), [('a',), ('d',)])
 
-    def test_bucket_rows_combines_where(self):
+    def test_ranges_cover_all_keys_in_duckdb_and_sqlite(self):
+        """範囲は両端が開いていて、warehouse に無い主キーもどれかの範囲に入る。範囲の式は両者で同じ行を選ぶ。"""
         import duckdb
+        from unittest import mock
 
+        keys = [f'{i:04x}' for i in range(0, 50, 3)]
         d = duckdb.connect()
-        d.execute('create table main."t" (jurisdiction_code varchar, node_id varchar)')
-        d.execute("insert into main.\"t\" values ('1','a1'), ('2','a2'), ('1','b1')")
-        where = sync_d1.scope_where(['1'])
-        self.assertEqual(sync_d1.bucket_chars(d, 't', 'node_id', where), {'a': 1, 'b': 1})
-        self.assertEqual(sync_d1.bucket_rows(d, 't', ['jurisdiction_code', 'node_id'], 'node_id', 'a', where), [['1', 'a1']])
-        self.assertEqual(sync_d1.bucket_chars(d, 't', 'node_id', sync_d1.scope_where(['9'])), {})
+        d.execute('create table main."t" (jurisdiction_code varchar, k varchar)')
+        d.executemany('insert into main."t" values (?, ?)', [('1', k) for k in keys])
+        q = sqlite3.connect(':memory:')
+        q.execute('create table t (jurisdiction_code text, k text)')
+        q.executemany('insert into t values (?, ?)', [('1', k) for k in keys] + [('1', ''), ('1', 'zz'), ('1', '0004')])
+        with mock.patch.object(sync_d1, 'RANGE_ROWS', 5):
+            ranges = sync_d1.key_ranges(d, 't', 'k')
+        self.assertEqual(len(ranges), 4)
+        self.assertEqual((ranges[0][0], ranges[-1][1]), (None, None))
+        seen = []
+        for lo, hi in ranges:
+            cond = sync_d1.range_condition('k', lo, hi)
+            got = [r[0] for r in q.execute(f'select k from t where {cond} order by k')]
+            self.assertEqual([r[0] for r in d.execute(f'select k from t where {cond} order by k').fetchall()], [k for k in got if k in keys])
+            seen += got
+        self.assertEqual(sorted(seen), sorted(keys + ['', 'zz', '0004']))
+        self.assertEqual(sync_d1.key_ranges(d, 't', 'k', sync_d1.scope_where(['9'])), [(None, None)])
 
     def test_swap_with_empty_tables(self):
         """該当行が0件の表でも、空の表を作って入れ替えが通る。"""
@@ -234,6 +248,154 @@ class ScopeTest(unittest.TestCase):
             con.execute(s['sql'])
         for name in tables:
             self.assertEqual(con.execute(f'select count(*) from "{name}"').fetchone()[0], 0)
+
+
+class DiffRowsTest(unittest.TestCase):
+    names = ['pk', 'v']
+
+    def test_deletes_and_writes(self):
+        got = [['a', 1], ['b', 2], ['c', 3]]
+        want = [['b', 2], ['c', 30], ['d', 4]]
+        self.assertEqual(sync_d1.diff_rows(self.names, 'pk', got, want), (['a'], ['c', 'd']))
+
+    def test_null_and_empty_string_differ(self):
+        self.assertEqual(sync_d1.diff_rows(self.names, 'pk', [['a', '']], [['a', None]]), ([], ['a']))
+
+    def test_delete_statements_execute_in_sqlite(self):
+        con = sqlite3.connect(':memory:')
+        con.execute('create table t (k text primary key)')
+        keys = [f"k'{i}" for i in range(1200)]
+        con.executemany('insert into t values (?)', [(k,) for k in keys])
+        stmts = list(sync_d1.delete_statements('t', 'k', keys[:1100]))
+        self.assertEqual(len(stmts), 3)
+        for sql in stmts:
+            con.execute(sql)
+        self.assertEqual(con.execute('select count(*) from t').fetchone()[0], 100)
+
+
+class FakeD1:
+    """sqlite3 を D1 の代わりにする。文の記録を残す。"""
+
+    local = True
+
+    def __init__(self):
+        self.con = sqlite3.connect(':memory:')
+        self.con.execute('create table control (key text primary key, value text not null)')
+        self.calls = 0
+        self.log: list[str] = []
+
+    def batch(self, statements, retries=3):
+        self.calls += 1
+        out = []
+        for s in statements:
+            self.log.append(s['sql'])
+            cur = self.con.execute(s['sql'])
+            out.append({'success': True, 'results': {'rows': [list(r) for r in cur.fetchall()]}})
+        return out
+
+    def rows(self, table, key):
+        return [list(r) for r in self.con.execute(f'select * from "{table}" order by "{key}"')]
+
+    def writes(self):
+        return [s for s in self.log if s.startswith(('insert', 'delete', 'create', 'drop', 'alter'))]
+
+
+class SyncTest(unittest.TestCase):
+    """warehouse（DuckDB）から FakeD1 へ同期し、差分の同期が変わった行だけを書くことを確かめる。"""
+
+    DUCK = {'string': 'varchar', 'integer': 'bigint', 'boolean': 'boolean', 'number': 'double'}
+
+    def setUp(self):
+        import duckdb
+        from unittest import mock
+
+        self.tables = columns.load()
+        self.duck = duckdb.connect()
+        for name, spec in self.tables.items():
+            cols = ', '.join(f'"{c["name"]}" {self.DUCK[c["type"]]}' for c in spec['columns'])
+            self.duck.execute(f'create table main."{name}" ({cols})')
+        self.add('jurisdiction', [f'{i:06d}' for i in range(3)])
+        self.add('project_year', [f'{i:064x}' for i in range(0, 600, 2)])
+        self.d1 = FakeD1()
+        patcher = mock.patch.object(sync_d1, 'RANGE_ROWS', 40)
+        patcher.start()
+        self.addCleanup(patcher.stop)
+
+    def add(self, name, keys, value='x'):
+        spec = self.tables[name]
+        names = [c['name'] for c in spec['columns']]
+        for k in keys:
+            row = {n: None for n in names}
+            row[spec['primary_key']] = k
+            for c in spec['columns']:
+                if c['name'] != spec['primary_key'] and c['type'] == 'string':
+                    row[c['name']] = value
+                    break
+            self.duck.execute(f'insert into main."{name}" values ({", ".join("?" for _ in names)})', [row[n] for n in names])
+
+    def sync(self, **kw):
+        self.d1.log.clear()
+        messages = []
+        code = sync_d1.run(self.d1, self.duck, self.tables, False, None, kw.get('full', False), messages.append)
+        self.assertEqual(code, 0, messages)
+        return messages
+
+    def assert_same(self):
+        for name, spec in self.tables.items():
+            key = spec['primary_key']
+            want = [[sync_d1.d1_value(v) for v in r] for r in self.duck.execute(f'select * from main."{name}" order by "{key}"').fetchall()]
+            self.assertEqual(self.d1.rows(name, key), want, name)
+
+    def test_first_sync_rebuilds_then_nothing_to_write(self):
+        self.sync()
+        self.assert_same()
+        self.sync()
+        # 変わっていなければ、残骸の drop 以外は何も書かない
+        self.assertEqual([s for s in self.d1.writes() if not s.endswith(('__new"', '__old"'))], [])
+
+    def test_changed_rows_only(self):
+        self.sync()
+        key = 'project_year_id'
+        self.duck.execute(f'delete from main."project_year" where "{key}" = ?', [f'{4:064x}'])
+        self.duck.execute(f'update main."project_year" set "project_id" = \'changed\' where "{key}" = ?', [f'{10:064x}'])
+        self.add('project_year', [f'{1:064x}', f'{999:064x}'])
+        self.sync()
+        self.assert_same()
+        writes = [s for s in self.d1.writes() if not s.endswith(('__new"', '__old"'))]
+        self.assertEqual(len(writes), 2, writes)  # delete 1文と insert 1文
+        self.assertTrue(writes[0].startswith('delete from "project_year"'))
+        self.assertEqual(writes[1].count('),(') + 1, 3)
+        self.assertFalse([s for s in self.d1.log if 'pragma' not in s and 'select' in s and '__new' in s])
+
+    def test_rows_missing_in_d1_are_refilled(self):
+        """途中で止まった同期の続きも、D1 の今の中身と比べて埋まる。"""
+        self.sync()
+        self.d1.con.execute('delete from project_year where rowid % 3 = 0')
+        self.d1.con.execute("insert into jurisdiction (jurisdiction_code) values ('zzz')")
+        self.sync()
+        self.assert_same()
+
+    def test_schema_change_rebuilds_that_table_only(self):
+        self.sync()
+        self.d1.con.execute('drop index "project_year_project_id"')
+        messages = self.sync()
+        self.assert_same()
+        self.assertIn('alter table "project_year__new" rename to "project_year"', self.d1.log)
+        self.assertEqual([s for s in self.d1.log if s.startswith('alter table')], ['alter table "project_year__new" rename to "project_year"'], messages)
+        self.assertIn('project_year_project_id', {r[0] for r in self.d1.con.execute("select name from sqlite_master where type='index'")})
+
+    def test_many_changes_rebuild(self):
+        self.sync()
+        self.duck.execute('update main."project_year" set "project_id" = \'all\'')
+        self.sync()
+        self.assert_same()
+        self.assertIn('alter table "project_year__new" rename to "project_year"', self.d1.log)
+
+    def test_full_rebuilds_every_table(self):
+        self.sync()
+        self.sync(full=True)
+        self.assert_same()
+        self.assertEqual(len([s for s in self.d1.log if s.startswith('alter table')]), len(self.tables))
 
 
 if __name__ == '__main__':
