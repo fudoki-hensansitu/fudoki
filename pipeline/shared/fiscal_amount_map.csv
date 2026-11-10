@@ -29,7 +29,6 @@ initial,内訳,approved
 initial,細目,approved
 initial,細々目,approved
 initial,節／金額,approved
-initial,本年度,approved
 supplementary,備考,adjusted
 supplementary,説明,adjusted
 supplementary,事業説明,adjusted
@@ -59,7 +58,6 @@ settlement,予算現／予備費支出及び流用増減,
 ,流用注記金額,
 settlement,款項,
 settlement,科目,
-initial,科目,
 ,予備費支出,
 ,流用増減,
 ,繰越事業費繰越額,
@@ -69,7 +67,6 @@ initial,科目,
 ,保険料,
 ,前年度決算額,
 ,前年度予算額,
-initial,前年度,
 ,国庫支出金,
 ,国都支出金,
 ,市債,
