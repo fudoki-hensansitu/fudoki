@@ -39,7 +39,7 @@ previous_actual as (
 )
 select s.sheet_id, s.origin_id, s.jurisdiction_code, s.fiscal_year, s.evaluation_year, s.page, s.name,
     s.account_name, s.kan as kan_name, s.kou as kou_name, s.moku as moku_name, s.jigyo as jigyo_name,
-    s.department, s.division, s.period_start_year, s.period_end_year,
+    s.department, s.division,
     s.budget_thousand * 1000 as budget_yen, s.settled_thousand * 1000 as settled_yen,
     s.cost_previous_thousand * 1000 as cost_previous_yen, s.cost_current_thousand * 1000 as cost_current_yen,
     s.grade_code, s.grade_label, s.direction,

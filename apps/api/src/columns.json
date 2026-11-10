@@ -849,18 +849,6 @@
           "description": "シートの担当課。"
         },
         {
-          "name": "period_start_year",
-          "type": "integer",
-          "nullable": true,
-          "description": "シートの事業期間の始まりの年度（西暦）。印字が無ければ空。"
-        },
-        {
-          "name": "period_end_year",
-          "type": "integer",
-          "nullable": true,
-          "description": "シートの事業期間の終わりの年度（西暦）。印字が無ければ空。"
-        },
-        {
           "name": "budget_yen",
           "type": "integer",
           "nullable": true,

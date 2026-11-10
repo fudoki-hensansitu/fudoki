@@ -77,10 +77,6 @@ models:
     description: シートの担当部署。
   - name: division
     description: シートの担当課。
-  - name: period_start_year
-    description: シートの事業期間の始まりの年度（西暦）。印字が無ければ空。
-  - name: period_end_year
-    description: シートの事業期間の終わりの年度（西暦）。印字が無ければ空。
   - name: budget_yen
     description: シートの予算・決算（概要）の計の予算現額（円）。
   - name: settled_yen
