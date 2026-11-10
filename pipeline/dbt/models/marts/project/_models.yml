@@ -54,9 +54,6 @@ models:
   - name: fiscal_year
     description: 評価した事業を実施した会計年度（西暦）。
     data_tests: [not_null]
-  - name: evaluation_year
-    description: 評価した年度（西暦）。シートの題の年度で、実施した年度の翌年度。
-    data_tests: [not_null]
   - name: page
     description: 出典の PDF の頁（1始まり、印字の頁番号ではない）。
     data_tests: [not_null]
@@ -110,8 +107,6 @@ models:
         arguments:
           to: ref('fiscal_expenditure_detail')
           field: detail_id
-  - name: cofog_code
-    description: 風土記の判断。subject_id の目に付けた COFOG コード（fiscal_expenditure_subject の cofog_code の写し）。
   - name: is_new_project
     description: 風土記の判断。実施年度に新しくできた事業の印。事業期間が実施年度から始まり、前年度の行政費用が0で、前年度までの指標の実績が無いもの。
     data_tests: [not_null]
@@ -178,11 +173,8 @@ models:
   - name: jurisdiction_code
     description: 全国地方公共団体コード（6桁）。
     data_tests: [not_null]
-  - name: evaluated_year
+  - name: fiscal_year
     description: 評価した事業を実施した会計年度（西暦）。
-    data_tests: [not_null]
-  - name: budget_year
-    description: 評価を反映した予算の会計年度（西暦）。
     data_tests: [not_null]
   - name: page
     description: 合計の行を読んだ出典の PDF の頁。
@@ -227,10 +219,11 @@ models:
     description: 事業名の欄（JSON の文字列の配列。複数のことがある）。
   - name: is_new
     description: 事業名に「新規」の印がある。
+    data_tests: [not_null]
   - name: budget_yen
     description: 予算額（円）。事業名が複数なら合計。
-  - name: points
-    description: POINT の箇条書き（JSON の文字列の配列、資料の表記）。
+  - name: description
+    description: 施策の説明。資料の箇条書き（品川は POINT）を改行でつないだもの（資料の表記）。
   - name: detail_id
     description: 風土記の判断。施策を紐付けた、同じ年度の当初予算書の内訳（fiscal_expenditure_detail の detail_id）。紐付かなければ空。
     data_tests:
@@ -243,5 +236,3 @@ models:
     data_tests: [not_null]
   - name: link_confidence
     description: 風土記の判断。link_method が jev のときの Jev の確信度。
-  - name: cofog_code
-    description: 風土記の判断。detail_id の内訳が属する目の COFOG コード。紐付かなければ空（分野は「その他」）。

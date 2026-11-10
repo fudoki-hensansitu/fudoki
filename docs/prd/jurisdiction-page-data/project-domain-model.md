@@ -280,8 +280,8 @@ type 予算案での説明 = {       // 予算案のプレス発表の資料の1
 | --- | --- | --- |
 | 事業・事業の金額 | なし | 案（下の「表の案」） |
 | 歳出 | `fiscal_expenditure_subject`（目）・`fiscal_expenditure_detail`（`breakdown='事業'`） | あり |
-| 事業評価 | `project_evaluation_result`（root。事業を行った年度は表の `evaluated_year`。`budget_year` とシートの `evaluation_year` は表にあるが、モデルでは事業を行った年度から導く）・`project_evaluation_sheet`（`sheet_id` は出典と頁から作る列で、指標の表から引くために持つ）・`project_evaluation_indicator`・`project_evaluation_indicator_value` | あり。シートは `detail_id` で内訳を指す |
-| 予算案での説明 | `project_budget_initiative` | あり。施策1件1行で、当たった内訳を `detail_id` で指す（その行の事業に付く）。出典は `project_origin`。`points` は箇条書きの配列で、モデルの説明（文字）とは形が違う |
+| 事業評価 | `project_evaluation_result`（root。事業を行った年度は表の `fiscal_year`）・`project_evaluation_sheet`（`sheet_id` は出典と頁から作る列で、指標の表から引くために持つ）・`project_evaluation_indicator`・`project_evaluation_indicator_value` | あり。シートは `detail_id` で内訳を指す |
+| 予算案での説明 | `project_budget_initiative` | あり。施策1件1行で、当たった内訳を `detail_id` で指す（その行の事業に付く）。出典は `project_origin`。説明（`description`）は資料の箇条書きを改行でつないだ文字 |
 | 出典 | `fiscal_origin`・`project_origin`・`population_origin` | あり。`population_origin` は資料名・形式・SHA256 を持たない（基準日と URL だけ）。`project_origin` は形式を持たない（事業の資料は PDF だけ） |
 
 品川で測った数（2026-11-10）:

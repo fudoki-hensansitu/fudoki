@@ -789,12 +789,6 @@
           "description": "評価した事業を実施した会計年度（西暦）。"
         },
         {
-          "name": "evaluation_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "評価した年度（西暦）。シートの題の年度で、実施した年度の翌年度。"
-        },
-        {
           "name": "page",
           "type": "integer",
           "nullable": false,
@@ -901,12 +895,6 @@
           "type": "string",
           "nullable": true,
           "description": "風土記の判断。subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるときの、その内訳。fiscal_expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。"
-        },
-        {
-          "name": "cofog_code",
-          "type": "string",
-          "nullable": true,
-          "description": "風土記の判断。subject_id の目に付けた COFOG コード（fiscal_expenditure_subject の cofog_code の写し）。"
         },
         {
           "name": "is_new_project",
@@ -1035,16 +1023,10 @@
           "description": "全国地方公共団体コード（6桁）。"
         },
         {
-          "name": "evaluated_year",
+          "name": "fiscal_year",
           "type": "integer",
           "nullable": false,
           "description": "評価した事業を実施した会計年度（西暦）。"
-        },
-        {
-          "name": "budget_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "評価を反映した予算の会計年度（西暦）。"
         },
         {
           "name": "page",
@@ -1147,7 +1129,7 @@
         {
           "name": "is_new",
           "type": "boolean",
-          "nullable": true,
+          "nullable": false,
           "description": "事業名に「新規」の印がある。"
         },
         {
@@ -1157,10 +1139,10 @@
           "description": "予算額（円）。事業名が複数なら合計。"
         },
         {
-          "name": "points",
+          "name": "description",
           "type": "string",
           "nullable": true,
-          "description": "POINT の箇条書き（JSON の文字列の配列、資料の表記）。"
+          "description": "施策の説明。資料の箇条書き（品川は POINT）を改行でつないだもの（資料の表記）。"
         },
         {
           "name": "detail_id",
@@ -1179,12 +1161,6 @@
           "type": "number",
           "nullable": true,
           "description": "風土記の判断。link_method が jev のときの Jev の確信度。"
-        },
-        {
-          "name": "cofog_code",
-          "type": "string",
-          "nullable": true,
-          "description": "風土記の判断。detail_id の内訳が属する目の COFOG コード。紐付かなければ空（分野は「その他」）。"
         }
       ]
     }

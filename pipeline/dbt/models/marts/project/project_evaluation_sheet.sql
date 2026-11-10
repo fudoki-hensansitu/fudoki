@@ -37,13 +37,13 @@ previous_actual as (
     join {{ source('project', 'project_origin') }} o using (origin_id)
     where v.fiscal_year < o.fiscal_year and nullif(trim(v.actual_text), '') is not null
 )
-select s.sheet_id, s.origin_id, s.jurisdiction_code, s.fiscal_year, s.evaluation_year, s.page, s.name,
+select s.sheet_id, s.origin_id, s.jurisdiction_code, s.fiscal_year, s.page, s.name,
     s.account_name, s.kan as kan_name, s.kou as kou_name, s.moku as moku_name, s.jigyo as jigyo_name,
     s.department, s.division,
     s.budget_thousand * 1000 as budget_yen, s.settled_thousand * 1000 as settled_yen,
     s.cost_previous_thousand * 1000 as cost_previous_yen, s.cost_current_thousand * 1000 as cost_current_yen,
     s.grade_code, s.grade_label, s.direction,
-    j.subject_id, d.detail_id, j.cofog_code,
+    j.subject_id, d.detail_id,
     coalesce(s.period_start_year = s.fiscal_year and s.cost_previous_thousand = 0 and p.page is null, false) as is_new_project
 from sheet s
 left join subject j using (sheet_id)
