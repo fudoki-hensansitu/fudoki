@@ -15,8 +15,8 @@ select sha256(to_json(['project_year', project_id, fiscal_year::varchar])) as pr
     nullif(coalesce(max(kan_name) filter (where document_kind = 'initial'), max(kan_name)), '') as kan_name,
     nullif(coalesce(max(kou_name) filter (where document_kind = 'initial'), max(kou_name)), '') as kou_name,
     nullif(coalesce(max(moku_name) filter (where document_kind = 'initial'), max(moku_name)), '') as moku_name,
-    max(detail_id) filter (where document_kind = 'initial') as budget_detail_id,
-    max(detail_id) filter (where document_kind = 'settlement') as settlement_detail_id,
+    max(detail_id) filter (where document_kind = 'initial') as initial_expenditure_detail_id,
+    max(detail_id) filter (where document_kind = 'settlement') as settlement_expenditure_detail_id,
     max(amount_yen) filter (where document_kind = 'initial') as budget_yen,
     max(amount_yen) filter (where document_kind = 'settlement') as settled_yen
 from lines

@@ -14,7 +14,7 @@ export const PROJECT_SEARCH_EXAMPLE = {
 
 const PROJECTS =
   'A project is a budget-book project line followed across fiscal years; which lines continue the same project is Fudoki\'s judgment. ' +
-  'Each project year holds the initial-budget line (budget_detail_id, budget_yen) and the settlement line (settlement_detail_id, settled_yen) of that year, either may be null. ' +
+  'Each project year holds the initial-budget line (initial_expenditure_detail_id, budget_yen) and the settlement line (settlement_expenditure_detail_id, settled_yen) of that year, either may be null. ' +
   'Projects nest like the budget book (parent_project_id): a child project\'s amount is included in its parent\'s, so never add projects together; open the lines with get_expenditure_line for sources. '
 
 const searchDescription =
@@ -25,7 +25,7 @@ const searchDescription =
 
 const getDescription =
   'Return one project by project_id: its years and child projects. ' +
-  'Evaluation sheets and budget proposal measures are not included: find them with search_evaluation_sheets (where detail_id eq the years\' settlement_detail_id) and search_budget_measures (where detail_id eq the years\' budget_detail_id); skip a search when the years have no such ids. ' +
+  'Evaluation sheets and budget proposal measures are not included: find them with search_evaluation_sheets (where expenditure_detail_id eq the years\' settlement_expenditure_detail_id) and search_budget_measures (where expenditure_detail_id eq the years\' initial_expenditure_detail_id); skip a search when the years have no such ids. ' +
   'first_year_kind before_coverage means the previous year is not covered, so the project may be older; last_year_kind latest means it is in the latest covered year, unknown means the next year is not covered. ' +
   PROJECTS
 

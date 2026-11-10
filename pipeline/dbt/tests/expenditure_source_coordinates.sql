@@ -4,7 +4,7 @@
 -- (3 rows in 131156: the name seems to continue on the next page), so only x and the
 -- amount y are ordered.
 {% for m in ['expenditure_location'] %}
-select row_id, '{{ m }}' as model from {{ ref(m) }}
+select line_id, '{{ m }}' as model from {{ ref(m) }}
 where ((amount_source_x0 is null)::int + (amount_source_y0 is null)::int
          + (amount_source_x1 is null)::int + (amount_source_y1 is null)::int) not in (0, 4)
        or source_x0 > source_x1

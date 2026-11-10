@@ -1,5 +1,5 @@
 // 事業の集約の問い合わせ。事業・年度・直下の事業は1つの batch（トランザクション）で読む。
-// 評価シート・施策は別の集約なので返さない（事業の年度の detail_id で、それぞれの検索から引く）。
+// 評価シート・施策は別の集約なので返さない（事業の年度の expenditure_detail_id で、それぞれの検索から引く）。
 import { columnsOf, PROJECT_TABLE, PROJECT_YEAR_TABLE, selectListOf, toRow } from '../columns'
 import { ApiError } from '../errors'
 import type { Ctx } from '../shared/context'

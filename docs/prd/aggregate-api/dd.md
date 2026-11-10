@@ -76,7 +76,7 @@
 | `expenditure_origin` | `fiscal_origin` | `origin_id` | 冊ごとに1行。会計は持たない（1冊が最大18会計にまたがる） |
 | `expenditure_origin_link` | なし | `link_id` | 根と冊を結ぶ（品川など 245冊・359根・456組） |
 | `expenditure_subject`・`expenditure_detail` | `fiscal_expenditure_*` | 今と同じ | `expenditure_id` を足す。根で決まる列（`fiscal_year`・`document_kind`・`account_name` など）は検索のために残す |
-| `expenditure_location` | `fiscal_expenditure_location` | `row_id` | `kind`（`pdf`・`csv`）を足し、CSV は行番号の列にする |
+| `expenditure_location` | `fiscal_expenditure_location` | `line_id` | `kind`（`pdf`・`csv`）を足し、CSV は行番号の列にする |
 | `evaluation` | `project_evaluation_result` | `evaluation_id` | 1行 = 自治体・事業を行った年度。シートだけの年度も1行（件数の列は空） |
 | `evaluation_origin` | `project_origin`（`sheets`・`result`） | `origin_id` | `evaluation_id` と資料の種類を持つ |
 | `evaluation_sheet`・`evaluation_indicator`・`evaluation_indicator_value` | `project_evaluation_*` | 今と同じ | シートに `evaluation_id` を足す |

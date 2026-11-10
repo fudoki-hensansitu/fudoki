@@ -21,8 +21,8 @@ export const ProjectEnd = z.discriminatedUnion('kind', [
 
 /** 歳出の行の参照。事業の内訳が無い自治体は目（目の無い項を含む）を指す */
 export const LineRef = z.discriminatedUnion('kind', [
-  z.strictObject({ kind: z.literal('detail'), detail_id: z.string() }),
-  z.strictObject({ kind: z.literal('moku'), subject_id: z.string() }),
+  z.strictObject({ kind: z.literal('detail'), expenditure_detail_id: z.string() }),
+  z.strictObject({ kind: z.literal('moku'), expenditure_subject_id: z.string() }),
 ])
 
 const yearCommon = { project_year_id: z.string(), fiscal_year: FiscalYear }
@@ -75,8 +75,8 @@ export const ProjectYearRow = z
       kan_name: z.string().nullable(),
       kou_name: z.string().nullable(),
       moku_name: z.string().nullable(),
-      budget_detail_id: z.string().nullable(),
-      settlement_detail_id: z.string().nullable(),
+      initial_expenditure_detail_id: z.string().nullable(),
+      settlement_expenditure_detail_id: z.string().nullable(),
       budget_yen: z.int().nullable(),
       settled_yen: z.int().nullable(),
     })

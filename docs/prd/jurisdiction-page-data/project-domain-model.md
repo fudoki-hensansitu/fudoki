@@ -81,7 +81,7 @@ classDiagram
 | 歳出（既存） | 1つの資料の1つの会計の歳出全体（自治体・年度・資料区分〔当初・補正号・決算〕・会計） | 歳出の行（科目＝款・項・目、内訳）、印字の位置 | 自治体 | 末端の科目の和が総額。内訳は科目と足さない |
 
 - 事業の金額は、歳出の集約の中の歳出の行（目・内訳）を ID で参照する。集約の名前は「歳出」、中の1行は「歳出の行」と呼び分ける。根は表の `expenditure`（自治体・年度・資料区分・会計）で、出典の予算書・決算書（分冊なら全部の冊）はその値の出どころとして持つ。
-- 評価シートと施策は事業の金額の行を直接指さず、事業と年度で参照する。表では列を持たず、`detail_id` から事業と年度を導出する。内訳の無い自治体では目（`subject_id`）だけでは事業が決まらないので、目と評価シートの事業名で事業を決めた判断を seed に置き、シートはその判断を引く。
+- 評価シートと施策は事業の金額の行を直接指さず、事業と年度で参照する。表では列を持たず、`expenditure_detail_id` から事業と年度を導出する。内訳の無い自治体では目（`subject_id`）だけでは事業が決まらないので、目と評価シートの事業名で事業を決めた判断を seed に置き、シートはその判断を引く。
 - 自治体と COFOG などのマスタは、共通の参照先として扱う。
 
 ## 集約ごとの型
@@ -360,8 +360,8 @@ type 目の参照 = {             // 事業の内訳が無い自治体。目の�
 | --- | --- | --- |
 | 事業・事業の金額 | なし | 案（下の「表の案」） |
 | 歳出 | `expenditure`（root）・`expenditure_subject`（科目）・`expenditure_detail`（内訳。`breakdown='事業'` が事業の行）・`expenditure_location`・`expenditure_origin`・`expenditure_origin_link` | あり |
-| 事業評価 | `evaluation`（root。`kind` が評価結果の有無）・`evaluation_origin`・`evaluation_sheet`（`sheet_id` は出典と頁から作る列で、指標の表から引くために持つ）・`evaluation_indicator`・`evaluation_indicator_value` | あり。シートは `detail_id` で内訳を指す |
-| 予算案 | `budget_proposal`（root）・`budget_proposal_origin`・`budget_measure`（施策） | あり。施策1件1行で、当たった内訳を `detail_id` で指す（当たらなければ空）。説明（`description`）は資料の箇条書きを改行でつないだ文字 |
+| 事業評価 | `evaluation`（root。`kind` が評価結果の有無）・`evaluation_origin`・`evaluation_sheet`（`sheet_id` は出典と頁から作る列で、指標の表から引くために持つ）・`evaluation_indicator`・`evaluation_indicator_value` | あり。シートは `expenditure_detail_id` で内訳を指す |
+| 予算案 | `budget_proposal`（root）・`budget_proposal_origin`・`budget_measure`（施策） | あり。施策1件1行で、当たった内訳を `expenditure_detail_id` で指す（当たらなければ空）。説明（`description`）は資料の箇条書きを改行でつないだ文字 |
 | 人口 | `population`・`population_origin` | あり |
 
 品川で測った数（2026-11-10）:
@@ -377,7 +377,7 @@ type 目の参照 = {             // 事業の内訳が無い自治体。目の�
 3. **前の年度と**: 上の段から順に結ぶ。候補は前の年度の事業の年度すべて（当初予算か決算の行があるもの）。目の直下は、会計・款・項・目と名前の組が今年度と前年度の両方に1つずつあれば同じ事業とする。その下の段は、親が同じ事業と決まった中で、名前が両方に1つずつあれば同じ事業とする。名前は【所管課】から後ろ（所管課と、人数・基金の見込額などの注記）を除く。前の年度に無く、2年以上前にあった事業は結ばず、新しい事業にする。
 4. **残り**: 手順3で決まらない事業（新しい事業か、名前や目が変わった事業）は、施策の紐付けと同じく、単語の Dice 係数で前年度の候補を12件に絞り、Jev に「どれでもない」を含めて選ばせ、確信度 0.6 以上だけを同じ事業とする。目の直下より下の段の候補は、親が同じ事業の中だけから取る。前年度の事業は今年度の1つの事業にだけ結ぶ。手順3で結んだ前年度の事業は候補から除き、同じ候補を複数の事業が選んだら確信度が最も高い1つだけを結ぶ（同点なら Dice 係数の高い方、それも同じなら今年度の行の印字順で先の方）。外れたものは新しい事業として始める。
 5. **始めた年度・終えた年度**: 収録の最初の年度にある事業は「収録の前から」。それより後に始まった事業は「確定」。最新の年度にある事業は「最新の年度にある」。途中で消えた事業は、次の年度にその自治体・会計の資料があれば「確定」、無ければ「分からない」。
-6. **評価シートと施策を付ける**: 評価シートは `detail_id` の行（予算科目の事業、またはその子孫で事業名が1つだけ当たる事業）の事業の年度に、施策は紐付いた行の事業の年度に付ける。紐付かない施策は事業に付けず、予算案の中に残す。
+6. **評価シートと施策を付ける**: 評価シートは `expenditure_detail_id` の行（予算科目の事業、またはその子孫で事業名が1つだけ当たる事業）の事業の年度に、施策は紐付いた行の事業の年度に付ける。紐付かない施策は事業に付けず、予算案の中に残す。
 7. **seed**: 手順2〜4の判断は seed に置き、取り込みのときに一度だけ作る（施策の紐付けの seed と同じ扱い）。seed は `detail_id` ではなく、自治体・年度・資料区分・会計・款・項・目と親からの名前の並びで行を引く（`detail_id` は名前を含む hash なので、取り込みを直すと変わる）。事業ID は seed で一度だけ振り、判断を直しても、収録の年度を足しても変えない。
 
 品川の当初予算で、手順3で決まる数（2026-11-10）。下の段は、会計・款・項・目と親からの名前の並びが前年度に1つだけある行を数えた。
@@ -400,11 +400,11 @@ type 目の参照 = {             // 事業の内訳が無い自治体。目の�
 | 表 | 1行 | 主な列 |
 | --- | --- | --- |
 | `project` | 事業1つ | `project_id`（代理キー）・`jurisdiction_code`・`name`・`first_year`・`first_year_kind`（`confirmed`・`before_coverage`）・`last_year`・`last_year_kind`（`confirmed`・`latest`・`unknown`。`latest` のとき `last_year` は空）・`parent_project_id` |
-| `project_year` | 事業の1年度 | `project_id`・`fiscal_year`・`budget_detail_id`・`settlement_detail_id`（その事業の行。内訳のある自治体）・`budget_subject_id`・`settlement_subject_id`（目。内訳の無い自治体だけ。目の無い項を含む） |
+| `project_year` | 事業の1年度 | `project_id`・`fiscal_year`・`initial_expenditure_detail_id`・`settlement_expenditure_detail_id`（その事業の行。内訳のある自治体）・`initial_expenditure_subject_id`・`settlement_expenditure_subject_id`（目。内訳の無い自治体だけ。目の無い項を含む） |
 
 - `project_year` は資料ごとに、内訳か目のどちらか1つを持ち、当初予算と決算の少なくとも一方を持つ。目と分野は内訳から導けるので、内訳のある自治体では持たない。
-- `budget_detail_id`・`settlement_detail_id` は、空でなければ表の中で重ならない（unique test）。
-- `evaluation_sheet` と `budget_measure` には列を足さず、`detail_id` から `project_year` を引いて事業と年度を得る。評価シートの `detail_id` は決算書の内訳なので `settlement_detail_id` に、施策の `detail_id` は当初予算書の内訳なので `budget_detail_id` に当てる。内訳の無い自治体は、評価シートは目と事業名で、施策は目と施策名で事業を決めた判断を seed に置いて引く。
+- `initial_expenditure_detail_id`・`settlement_expenditure_detail_id` は、空でなければ表の中で重ならない（unique test）。
+- `evaluation_sheet` と `budget_measure` には列を足さず、`expenditure_detail_id` から `project_year` を引いて事業と年度を得る。評価シートの `expenditure_detail_id` は決算書の内訳なので `settlement_expenditure_detail_id` に、施策の `expenditure_detail_id` は当初予算書の内訳なので `initial_expenditure_detail_id` に当てる。内訳の無い自治体は、評価シートは目と事業名で、施策は目と施策名で事業を決めた判断を seed に置いて引く。
 
 ## まだ決めていないこと
 
@@ -414,3 +414,7 @@ type 目の参照 = {             // 事業の内訳が無い自治体。目の�
 - 内訳の無い自治体では、事業の年度を評価シートから作るので、事業が事業評価の中身に依存する。当初予算の目をどう決めるかも含めて、2つ目の自治体で確かめる。
 - 紐付かない施策（品川は 25件）を、全部の段の事業を候補にして紐付け直せるか（未実測）。
 - 品川の R5 当初予算書・決算書を取り込むか。取り込まないと、R6 にある事業は全部「収録の前から」になり R6 の新規を出せず、R5 の評価シートも事業に入らない。
+
+## ID の列名
+
+ほかの集約の行を指す列は、指す表の名前を付ける（`expenditure_detail_id`・`expenditure_subject_id`）。事業の年度は資料区分を前に付ける（`initial_expenditure_detail_id`・`settlement_expenditure_detail_id`）。集約の中の主キー（`detail_id`・`sheet_id` など）はそのまま使う。

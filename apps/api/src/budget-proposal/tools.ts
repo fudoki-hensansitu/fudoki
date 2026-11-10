@@ -14,7 +14,7 @@ export const MEASURE_SEARCH_EXAMPLE = {
 
 const MEASURES =
   'A measure is one item in a municipality\'s budget proposal press release (the year is the budget year), with its title, the project names printed with it (names, a JSON array as text), the "new" mark and the amount printed in the release. ' +
-  'detail_id links a measure to the initial-budget detail line it was matched to (Fudoki\'s judgment; link_method and link_confidence say how); budget_yen is the release\'s own figure and is never added to expenditure lines. '
+  'expenditure_detail_id links a measure to the initial-budget detail line it was matched to (Fudoki\'s judgment; link_method and link_confidence say how); budget_yen is the release\'s own figure and is never added to expenditure lines. '
 
 const searchMeasuresDescription =
   'Search budget proposal measures. ' +

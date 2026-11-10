@@ -21,10 +21,10 @@ export async function searchDetails(ctx: Ctx, input: SearchInput): Promise<Detai
 
 /** 印字の位置と出典を、取得した行の ID の集合から引く文（1つの batch に入れる）。 */
 const locationsOf = (ctx: Ctx, ids: string) =>
-  ctx.db.prepare(`SELECT ${LOCATION_SELECT_LIST} FROM ${LOCATION_TABLE} WHERE row_id IN (${ids}) ORDER BY row_id`)
+  ctx.db.prepare(`SELECT ${LOCATION_SELECT_LIST} FROM ${LOCATION_TABLE} WHERE line_id IN (${ids}) ORDER BY line_id`)
 const originsOf = (ctx: Ctx, ids: string) =>
   ctx.db.prepare(
-    `SELECT ${ORIGIN_SELECT_LIST} FROM ${ORIGIN_TABLE} WHERE origin_id IN (SELECT origin_id FROM ${LOCATION_TABLE} WHERE row_id IN (${ids})) ORDER BY origin_id`
+    `SELECT ${ORIGIN_SELECT_LIST} FROM ${ORIGIN_TABLE} WHERE origin_id IN (SELECT origin_id FROM ${LOCATION_TABLE} WHERE line_id IN (${ids})) ORDER BY origin_id`
   )
 
 /** 子の科目は少ない（款の下の項、項の下の目）のでページを切らずに返す。上限は D1 の走査を抑えるため */
