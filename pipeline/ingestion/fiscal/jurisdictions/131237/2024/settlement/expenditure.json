@@ -4958,7 +4958,7 @@
     {
       "table_id": "nhi-expenditure-detail",
       "conversion_id": "nhi",
-      "input_fingerprint": "f6904f1a398bd49473565637212e23b99065b05e2bad6bc2b4ee6945ee4c3ed1",
+      "input_fingerprint": "3873cf520e83db9d04e7b43cbb2136735c5d9b4883ad83d654ecb1311d581196",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
@@ -4989,7 +4989,7 @@
     {
       "table_id": "kaigo-expenditure-detail",
       "conversion_id": "kaigo",
-      "input_fingerprint": "f764379a0c27d00644a46d3f32c5edc031a4f7292bcb103f497b9383beb94119",
+      "input_fingerprint": "8ad0a43f5d5b4bcef893977ff38dcdb888ac596727caec01fa7cdb44b806ffda",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
@@ -5020,7 +5020,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki",
-      "input_fingerprint": "1421fe90256eb9db09896b63000cc1d7d83662174993474b05ce374988e6be1e",
+      "input_fingerprint": "d4b4b764a0ad7bd8f38e72fbb14a45e87c487ac11c0e4e12057d84f59b47fbb8",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
@@ -5051,7 +5051,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "2d765121924d0e9c604201a1f0f1a02f79b8339ee4c73dc9ac20dcd97c078ed3",
+      "input_fingerprint": "a2af2a8cd43df7253573ef8d08eecb4cd6016861cbaff484b1b98a92431142b1",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",

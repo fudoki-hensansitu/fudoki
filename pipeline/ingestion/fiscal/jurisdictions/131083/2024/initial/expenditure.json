@@ -112,7 +112,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "ab594aef63b1a64948234b8e5b4aa1c84bfd70d79462d77f3ed1f94cca242d7e",
+      "input_fingerprint": "fdf507c3440155775f0c69e7b90eb9a1aacfe17f3ac6688cc4cdd1035c194e97",
       "account": "一般会計",
       "notes": [
         "款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。",
@@ -140,7 +140,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "d844ca3de743db66b9c8ad6a782d1ee43f7f07c2a066ea708910e0696af0674c",
+      "input_fingerprint": "d9d944e12deeccb3804b09fa2a7d53d81d8d447e00cedadb513fb901fc9917a4",
       "account": "国民健康保険会計",
       "notes": [
         "款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。",
@@ -168,7 +168,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "cde8089229b118f46074e4be257ec7c13b43feba1dd0ac5b95ce623e8c22343a",
+      "input_fingerprint": "392e62ba80b75432d401fcdca101c8be926bf32f48a66f7d4a3f2d111ce0437e",
       "account": "介護保険会計",
       "notes": [
         "款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。",
@@ -196,7 +196,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "46aebbe2b5c49eaecf20c8a81a66f0cd96a44c87596835fbbbfe1edc4dd4762c",
+      "input_fingerprint": "499f2a8e87c77048bcb01f790f9ccd6ceb358e6b72200f44acc9d949c3a9bf0e",
       "account": "後期高齢者医療会計",
       "notes": [
         "款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。",
