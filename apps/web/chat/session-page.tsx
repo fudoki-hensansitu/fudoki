@@ -1,10 +1,12 @@
 // 会話の画面（/s/:id。pages/[prefecture]/[name].tsx が描く）。会話の本体は conversation.tsx（自治体の個別ページの drawer と共有）。
 // 会話は sessionStorage にしか無いので、サーバーは枠だけを書き、ブラウザで読んでから描く
 import * as React from 'react'
-import { Link } from '@void/react'
+import { Link } from '../nav/link'
 import { Button } from '@/components/ui/button'
-import { Conversation } from './conversation'
 import { loadSession, type StoredSession } from './store'
+
+// 会話の本体（AI SDK など）は重いので、この頁で会話を描く時だけ読む。同じ route（/:prefecture/:name）の自治体の頁へ移る時に一緒に読まないようにする
+const Conversation = React.lazy(() => import('./conversation').then((m) => ({ default: m.Conversation })))
 
 // ロゴと頁の行き来はサイドバー（nav/）に置く。ここは上端のフェードの下地だけ
 const header = <div className="h-6" />
@@ -32,7 +34,13 @@ export function SessionPage({ id }: { id: string }) {
   return (
     <div id="chat-session">
       <noscript>会話には JavaScript を有効にしてください。</noscript>
-      {stored === undefined ? null : stored ? <Conversation key={id} id={id} stored={stored} header={header} movableViews /> : <Expired />}
+      {stored === undefined ? null : stored ? (
+        <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
+          <Conversation key={id} id={id} stored={stored} header={header} movableViews />
+        </React.Suspense>
+      ) : (
+        <Expired />
+      )}
     </div>
   )
 }

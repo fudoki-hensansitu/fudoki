@@ -2,7 +2,8 @@
 // 画面では同じデータで hydrate して、地図の切り替えと表の絞り込み・並べ替え（サーバーで30件ずつ）を動かす。個別ページへは Void の Link で頁を読み直さずに移る
 import * as React from 'react'
 import { flushSync } from 'react-dom'
-import { Link, useRouter } from '@void/react'
+import { useRouter } from '@void/react'
+import { Link } from '../nav/link'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Hint } from '@/components/hint'

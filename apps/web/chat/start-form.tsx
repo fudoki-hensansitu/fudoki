@@ -55,6 +55,8 @@ export function StartForm({
   const start = async (text: string) => {
     setPending(true)
     setError(undefined)
+    // 会話の本体は lazy に読むので、Turnstile と POST を待つ間に取り始めておく（移った先・drawer の lazy はこれを使う）
+    void import('./conversation').catch(() => {})
     try {
       if (!turnstile.current) throw new Error('確認の準備ができていません。少し待ってから送ってください')
       const turnstileToken = await turnstile.current.token()

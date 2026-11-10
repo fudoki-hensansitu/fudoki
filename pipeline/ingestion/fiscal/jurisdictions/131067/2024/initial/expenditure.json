@@ -1,0 +1,713 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131067",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "df7822158664f5a52cb6cd1b5f69530fc8ed0bd179b3f5c83a56a0fbe6d0a034"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "件": "積算",
+                    "補助額月額": "積算",
+                    "2か所利用件数97件": "積算",
+                    "第三ブロック": "積算",
+                    "東京土地家屋調査士会台東": "積算",
+                    "東京都行政書士会台東支部": "積算",
+                    "東京都社会保険労務士会台": "積算",
+                    "5月・9月・2月の第2日": "積算",
+                    "基金運用益金": "積算",
+                    "基金原資": "積算",
+                    "日本中央競馬会からの一般": "積算",
+                    "837基(令和6年1月1": "積算",
+                    "197町会11地区町会連": "積算",
+                    "基金積立金": "積算",
+                    "1か所9戸": "積算",
+                    "5人うち再任用2人": "積算",
+                    "3人": "積算",
+                    "5人うち再任用1人": "積算",
+                    "263人うち再任用5人": "積算",
+                    "相談日月~金曜日相談場所": "積算",
+                    "2人世帯": "積算",
+                    "3人~5人世帯": "積算",
+                    "1人2枚2,010人": "積算",
+                    "おむつ代入院・入所時": "積算",
+                    "福祉タクシー月額": "積算",
+                    "152人うち再任用4人": "積算",
+                    "4種混合、日本脳炎、麻し": "積算",
+                    "森林環境譲与税分": "積算",
+                    "129人うち再任用24人": "積算",
+                    "284業者(令和6年1月": "積算",
+                    "台東区ホテル旅館協会": "積算",
+                    "台東区観光みやげ品協会": "積算",
+                    "うえの桜まつり": "積算",
+                    "うえの夏まつり": "積算",
+                    "上野不忍PEACEOFL": "積算",
+                    "クリスマスマーケット": "積算",
+                    "浅草サンバカーニバル": "積算",
+                    "浅草お座敷おどり": "積算",
+                    "奥浅草観光PR事業": "積算",
+                    "奥浅草写真展及びコンテス": "積算",
+                    "下谷地区観光PR事業": "積算",
+                    "谷中菊まつり": "積算",
+                    "4団体": "積算",
+                    "1か所": "積算",
+                    "1校(園)あたり委員10": "積算",
+                    "1人1台端末・電子黒板1": "積算",
+                    "1人1台端末の追加配備": "積算",
+                    "9校浅草公会堂11月中旬": "積算",
+                    "3・4年生年間18日": "積算",
+                    "5・6年生年間38日": "積算",
+                    "8人うち再任用2人": "積算",
+                    "1人1台端末・電子黒板7": "積算",
+                    "対象者数303人": "積算",
+                    "197人うち再任用3人": "積算",
+                    "元金分": "積算",
+                    "利子分": "積算",
+                    "単身世帯": "積算",
+                    "浅草みなみ観光PR事業": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-ocr-1",
+          "origin_sha256": "df7822158664f5a52cb6cd1b5f69530fc8ed0bd179b3f5c83a56a0fbe6d0a034",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              23
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4b8f1230d0b59ed987fcc42d1bbcd044571f6d36e72b4bb50f15e16cfc2efe95",
+          "bytes": 126723
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8cd41d656c5c42055e56f499fa5ec3a58a5e4acfa249ba77fcb70e15ef367285"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "件": "積算",
+                    "対象医療費": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-initial-ocr-1",
+          "origin_sha256": "8cd41d656c5c42055e56f499fa5ec3a58a5e4acfa249ba77fcb70e15ef367285",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              17
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7e2559b6bce976f9d0042956f5560cf7a6049a14ae21d0d7719395b4a71d1db5",
+          "bytes": 88833
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8cd41d656c5c42055e56f499fa5ec3a58a5e4acfa249ba77fcb70e15ef367285"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "件": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-initial-ocr-1",
+          "origin_sha256": "8cd41d656c5c42055e56f499fa5ec3a58a5e4acfa249ba77fcb70e15ef367285",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              159
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9492ac0104738800306f41a924999f1502ef1b12a9dbe350870ece695d6b8d4e",
+          "bytes": 77893
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8cd41d656c5c42055e56f499fa5ec3a58a5e4acfa249ba77fcb70e15ef367285"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "件": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "8cd41d656c5c42055e56f499fa5ec3a58a5e4acfa249ba77fcb70e15ef367285",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              103
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "771b01849aa8caa5ce0457e429c79e852a6f77b136085df869a94f58f5e60133",
+          "bytes": 77917
+        }
+      ]
+    },
+    {
+      "id": "geriatric-facility-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8cd41d656c5c42055e56f499fa5ec3a58a5e4acfa249ba77fcb70e15ef367285"
+        }
+      ],
+      "options": {
+        "account": "老人保健施設会計",
+        "table_id": "geriatric-facility-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "件": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "geriatric-facility-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "geriatric-facility-initial-ocr-1",
+          "origin_sha256": "8cd41d656c5c42055e56f499fa5ec3a58a5e4acfa249ba77fcb70e15ef367285",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              255
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "e586e9f746957c91e8ee42a02449a82f8021c17d52b93e5fb252b1b7c24e72f4",
+          "bytes": 45230
+        }
+      ]
+    },
+    {
+      "id": "hospital-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8cd41d656c5c42055e56f499fa5ec3a58a5e4acfa249ba77fcb70e15ef367285"
+        }
+      ],
+      "options": {
+        "account": "病院施設会計",
+        "table_id": "hospital-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "件": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "hospital-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "hospital-initial-ocr-1",
+          "origin_sha256": "8cd41d656c5c42055e56f499fa5ec3a58a5e4acfa249ba77fcb70e15ef367285",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              293
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "db326c63e3abe523a932bc32e0bb91d5e7642aa1682b7ce4c4df039819ea540a",
+          "bytes": 44721
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "f196bf5ef144e8591ebbc66f77a297eefa119a145ace446fed83223d584aa7ff",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 216頁・carried 217頁・default 1頁 から決めた。款の和 123,200,000 と印字の「歳出合計」123,200,000 が一致。",
+        "金額の注記 47 件（積算 47）を注記軸に置いた。",
+        "文字層の無い頁 1 頁（23）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、段の読み方は文字層の頁から当てはめた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "67bdb444095b33524c88f48c91a64f7b8a3295a6b4ad6f1afceb871de956894e",
+          "bytes": 90602
+        },
+        "row_count": 3016
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "6a4b2c8e886aef96759fc8f515f804ccba51b34a1156ea43e61468621d681a7d",
+          "bytes": 68965
+        },
+        "row_count": 3286
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "31fa6ea453a72d0841bda2b9a00d61409746e2375f8d85d832885d557a60092c",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 28頁・carried 35頁・default 1頁 から決めた。款の和 23,572,000 と印字の「歳出合計」23,572,000 が一致。",
+        "金額の注記 2 件（積算 2）を注記軸に置いた。",
+        "文字層の無い頁 1 頁（17）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、段の読み方は文字層の頁から当てはめた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "7405f3820ad0038661e8e15779c2db768f58e4b4b5601d5b9669db0e62e42481",
+          "bytes": 10668
+        },
+        "row_count": 192
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "a80e22eed5c2bf6eac0b9d3a934b9a44de99e2bbeabc830a45a2ac6bb0426c37",
+          "bytes": 8351
+        },
+        "row_count": 250
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "f5ccc8508b6dcd689195bf10d8fc8dd48f678c64c59a5f1d9f2841986a2df3af",
+      "account": "介護保険会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 36頁・carried 41頁・default 1頁 から決めた。款の和 18,466,000 と印字の「歳出合計」18,466,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "文字層の無い頁 1 頁（159）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、段の読み方は文字層の頁から当てはめた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/care-initial-nodes.parquet",
+          "sha256": "a531ffb73eee90c00f4e04c69cb1235377c09baf3ebcad476d803cb5d2d15de7",
+          "bytes": 12148
+        },
+        "row_count": 238
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/care-initial-amounts.parquet",
+          "sha256": "2692a67981b441804ef2d5985787a1da3b68454e90f721ecc51501aa8c321776",
+          "bytes": 9287
+        },
+        "row_count": 313
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "550cf752f9feb8827a07e41b6e9c43051878a6a342d9c53d4cf9c11a4eda5dac",
+      "account": "後期高齢者医療会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 8頁・carried 14頁・default 1頁 から決めた。款の和 5,777,000 と印字の「歳出合計」5,777,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "文字層の無い頁 1 頁（103）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、段の読み方は文字層の頁から当てはめた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "9c4671b1bb8f6277551a20226ff5ad5160e17f59eff243aedbf8114a6ce5ae8d",
+          "bytes": 5952
+        },
+        "row_count": 75
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "97f7245cfefa892eb7a38d768abe697e2d25a6b281ebf7011b911c2bbbf27aab",
+          "bytes": 4561
+        },
+        "row_count": 96
+      }
+    },
+    {
+      "table_id": "geriatric-facility-initial",
+      "conversion_id": "geriatric-facility-initial",
+      "input_fingerprint": "111c7d52ac3d8c0e79f61fcde43e743df121d57a7f26bdba4819166698bd1730",
+      "account": "老人保健施設会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 4頁・carried 7頁・default 1頁 から決めた。款の和 418,300 と印字の「歳出合計」418,300 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "文字層の無い頁 1 頁（255）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、段の読み方は文字層の頁から当てはめた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/geriatric-facility-initial-nodes.parquet",
+          "sha256": "2f3a278d7800b49c9b10b1c18c59b37b3e4d526d2318cb44cdb673d24d9f3c24",
+          "bytes": 4001
+        },
+        "row_count": 27
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/geriatric-facility-initial-amounts.parquet",
+          "sha256": "c788099b9b2f2ee2cee6a5158a4b9a68569b3d0b61062a6ff50658fdb5f5085a",
+          "bytes": 3136
+        },
+        "row_count": 38
+      }
+    },
+    {
+      "table_id": "hospital-initial",
+      "conversion_id": "hospital-initial",
+      "input_fingerprint": "f742de25df1394a57c98b04a21cdd7fcf656cebe09210dbd7907b8e1a11f8c43",
+      "account": "病院施設会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 4頁・carried 9頁・default 1頁 から決めた。款の和 599,200 と印字の「歳出合計」599,200 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "文字層の無い頁 1 頁（293）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、段の読み方は文字層の頁から当てはめた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/hospital-initial-nodes.parquet",
+          "sha256": "795a271854c4fb9094b6a498683f4098e4694c52f2f149c689923fb0ffb8309d",
+          "bytes": 3895
+        },
+        "row_count": 26
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2024/initial/expenditure/hospital-initial-amounts.parquet",
+          "sha256": "213c0853b1abeb6b480b4edd90f20c725b3d960608a580ef819e229991ca2fc5",
+          "bytes": 3067
+        },
+        "row_count": 37
+      }
+    }
+  ]
+}
