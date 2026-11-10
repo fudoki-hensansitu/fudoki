@@ -37,6 +37,11 @@ class SubjectCardsTest(unittest.TestCase):
         self.assertEqual(subject_cards.after_departments(bare), {id(bare[2]): 350 + 4 - 200})
         spelled = [word('1', 0), word('事業', 20), word('16,238,313千円', 200), *[word(c, 340 + 10 * i) for i, c in enumerate('子育て支援課･')]]
         self.assertEqual(subject_cards.after_departments(spelled), {id(spelled[2]): 410 + 4 - 200})
+        # A bullet is no opening dot: the bulleted item and the bulleted basis still move their amounts.
+        bulleted = [word('・補助事業費', 20), word('38,343,659千円', 200), word('保険年金課', 330)]
+        self.assertEqual(subject_cards.after_departments(bulleted), {id(bulleted[1]): 380 + 4 - 200})
+        basis = [word('・対象医療費', 20), word('16,527,123', 200), word('負担率8／10', 330)]
+        self.assertEqual(subject_cards.after_departments(basis), {id(basis[1]): 400 + 4 - 200})
 
     def test_a_number_printed_in_pieces_is_one_word(self):
         joined = subject_cards.join_comma_splits([word('20,', 100, width=14), word('765千円', 116), word('事業', 10)])

@@ -223,7 +223,10 @@ def after_departments(words: list[Word]) -> dict[int, float]:
     item's name, the amount ends the line."""
     moves = {}
     for line in lines(words):
-        opening = max((i for i, w in enumerate(line) if norm(w.text)[:1] in DEPARTMENT_OPEN), default=None)
+        # A dot opens a department only when one also closes the line (`･子育て支援課･`): `・補助事業費` is a bullet.
+        dotted = len(line) > 1 and norm(line[-1].text)[-1:] == '・'
+        opening = max((i for i, w in enumerate(line) if norm(w.text)[:1] in DEPARTMENT_OPEN
+                       and (dotted or norm(w.text)[:1] != '・')), default=None)
         last = max((i for i, w in enumerate(line) if rt.priced([Glyph(w.text, 0, 0, 0, 0, 0, 0)])), default=None)
         tail = ''.join(norm(w.text) for w in line[last + 1:]) if last is not None else ''
         if last and (opening is None or opening > last) and re.search(r'(課|室|所)・?$', tail) \
@@ -402,6 +405,8 @@ def place_page(page: Page, columns: Columns | None):
             marked = any(MARK.match(norm(w.text)) for b in blocks if b[0] == 'subject' for w in b[3])
             columns = Columns(left, right, inner, amount_headings(header_line, inner, right),
                               LEVEL_HEADINGS if marked else ('目',))
+            # The amounts the frame prints, also when the 計上説明 starts only overleaf.
+            columns.held = {amount_value(w.text) for w in s_words} - {None}
         elif columns is None:
             return None
         level_width = columns.inner[0] - left
@@ -506,8 +511,6 @@ def place_page(page: Page, columns: Columns | None):
                                max(w.y1 for w in line))
                         left_out.append((box, line))
                         words = [w for w in words if w not in line]
-                if subject is not None:
-                    columns.held = {amount_value(w.text) for w in subject[3]} - {None}
                 # 中央区 restates the 目's amount in its 計上説明; 台東区's `合計` stays, closing the items above it.
                 for restated in (restated_lines(words, columns.held) if len(columns.levels) > 1 else []):
                     box = (min(w.x0 for w in restated), min(w.y0 for w in restated), max(w.x1 for w in restated),
@@ -619,9 +622,11 @@ def join_open_parens(words: list[Word]) -> list[Word]:
 def contained_fragments(words: list[Word]) -> list[Word]:
     """Paddle also reads a piece of a longer word as a word of its own inside it (`頁` inside `本年度予算額`, 131024
     R7 scans): a shorter word whose box lies inside a longer word's box is that piece, not printed text."""
+    size = {id(w): len(norm(w.text)) for w in words}
+
     def inside(small: Word, large: Word) -> bool:
-        return (len(norm(small.text)) < len(norm(large.text)) and small.x0 >= large.x0 - 1.5
-                and small.x1 <= large.x1 + 1.5 and small.y0 >= large.y0 - 1.5 and small.y1 <= large.y1 + 1.5)
+        return (small.x0 >= large.x0 - 1.5 and small.x1 <= large.x1 + 1.5 and small.y0 >= large.y0 - 1.5
+                and small.y1 <= large.y1 + 1.5 and size[id(small)] < size[id(large)])
     return [w for w in words if not any(o is not w and inside(w, o) for o in words)]
 
 
