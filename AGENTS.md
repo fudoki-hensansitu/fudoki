@@ -218,19 +218,16 @@ lint の script は持たない。
 
 ### secret
 
-手元で使う secret は root の `fnox.toml` に age で暗号化して commit する（[fnox](https://fnox.jdx.dev/)、mise で入る）。値は `recipients` に並べた公開鍵の全員が自分の秘密鍵で開ける。平文・秘密鍵は commit しない。
+手元で使う secret は root の `fnox.toml` に age で暗号化して commit する（[fnox](https://fnox.jdx.dev/)、mise で入る）。値は `recipients` に並べた公開鍵の全員が自分の秘密鍵で開ける。平文・秘密鍵は commit しない。この repo は public なので暗号文は誰でも見られる。
 
-- 中身は `TYPESAFE_API_KEY`（パイプラインの Jev の聞き直し）と `ESTAT_APP_ID`（e-Stat API の appId。コードはまだ読まず、agent が統計表を API で引くときに使う）。どちらも今は yuito 個人のもので、`TYPESAFE_API_KEY` はメンバーが使うと yuito の課金になる。メンバーが増えたら共有を続けるか各自の key にするかを決める
-- 使うときは `fnox exec -- <command>` で、その command にだけ env を渡す（例: `fnox exec -- bun run --cwd pipeline ingestion:convert ...`）。`fnox get`・`fnox export`・`printenv` で値を画面や log に出さない
-- 復号する鍵は `FNOX_AGE_KEY`（秘密鍵の中身）か `~/.config/fnox/age.txt` から読む
-- 値を足す・変える: `fnox set <KEY>` を実行し、値は stdin か hidden prompt で渡す（引数に書くと shell 履歴に残る）
-- メンバーを足す: その人の age 公開鍵（`age1...`）か SSH 公開鍵（`ssh-ed25519 ...`）を `recipients` に 1 行足し、鍵を持つ人が `fnox reencrypt -p age` で暗号文を作り直す
+- 鍵は fudoki 専用にする。個人の global の secret などを開ける鍵を recipients に入れない（漏れたときに fudoki 以外まで開くため）
+- 各自の fudoki 用の秘密鍵は OS の keychain（service `fnox-fudoki`、account `age-key`）に置き、`fnox.toml` の `identity` がそこから読む。shell に `FNOX_AGE_KEY` を export しない（export するとそちらが優先され、全 repo の fnox に同じ鍵が渡る）
+- 中身は `TYPESAFE_API_KEY`（パイプラインの Jev の聞き直し。fudoki 用に発行した key）と `ESTAT_APP_ID`（e-Stat API の appId。コードはまだ読まず、agent が統計表を API で引くときに使う）。どちらも今は yuito のアカウントのもので、`TYPESAFE_API_KEY` はメンバーが使うと yuito の課金になる。メンバーが増えたら共有を続けるか各自の key にするかを決める
+- 使うときは `fnox exec -- <command>` で、その command にだけ env を渡す（例: `fnox exec -- bun run --cwd pipeline ingestion:convert ...`）。`fnox get`・`fnox export`・`printenv` で値を画面や log に出さない。復号できない値は fnox が警告を出して env に入れずに command を走らせるので、警告を見落とさない
+- 値を足す・変える: `fnox set <KEY>` を実行し、値は hidden prompt か stdin で渡す（引数に書くと shell 履歴に残る）
+- メンバーを足す: 本人が fudoki 用の鍵を作って keychain に入れ（`age-keygen` の出力を `fnox set AGE_IDENTITY --provider keychain --key-name age-key` に stdin で渡す。この 1 回は `fnox.toml` に記録が増えるので commit しない）、公開鍵（`age1...`）を `recipients` に 1 行足す。鍵を持つ人が `fnox reencrypt -p age` で暗号文を作り直す。agent・CI に渡すときも専用の鍵を 1 本作って同じように足す
 - メンバーが抜ける: `recipients` から行を消して `fnox reencrypt -p age` で作り直す。その人は git 履歴の古い暗号文をまだ開けるので、値そのものを rotate する
 - `CLOUDFLARE_ACCOUNT_ID` は secret ではないので `mise.toml` の `[env]` に平文で置く。`CLOUDFLARE_API_TOKEN` などの CI・deploy の secret は GitHub secret、本番の Worker の secret（`TURNSTILE_SECRET_KEY` など）は Cloudflare に置き、`fnox.toml` には入れない。CI に `FNOX_AGE_KEY` を渡すとその 1 本で全部開くため、CI からは fnox を使わない
-
-unit テストは、金額の正しさ・公開 API の安全性（認証・入力の上限・SQL の bind・停止スイッチなど）・壊すと利用者に届く契約（MCP の出力 schema など）のように、間違えると困るものに限って書く。画面や細かい振る舞いはローカルの e2e（smoke）で確かめ、CI では回さない。CI は速さを優先する。
-
-依存は exact ピン留めにする。公開から7日未満の版は `bunfig.toml`（`minimumReleaseAge`）と root の `pyproject.toml`（`exclude-newer`）で解決から外す。セキュリティ修正は severity に関わらず cooldown の例外として直ちに適用し、例外を解除できる日時を PR 本文に書き、公開から7日経ったら例外と補助の固定を外す。
 
 ## 技術スタック
 

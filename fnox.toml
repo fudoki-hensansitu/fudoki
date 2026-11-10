@@ -1,14 +1,22 @@
 #:schema https://fnox.jdx.dev/schema.json
 # 手元で使う secret。値は age で recipients 全員の公開鍵宛てに暗号化して commit する（平文は置かない）。
-# 手順は AGENTS.md の「secret」を参照。CI・deploy の secret は GitHub secret / Cloudflare の Worker secret に置き、ここには入れない。
+# 鍵は fudoki 専用（個人の他の secret を開ける鍵は使わない）。手順は AGENTS.md の「secret」を参照。
+# CI・deploy の secret は GitHub secret / Cloudflare の Worker secret に置き、ここには入れない。
 default_provider = "age"
+
+# 各自の fudoki 用の age 秘密鍵は OS の keychain（service = fnox-fudoki、account = age-key）に置く。
+[providers.keychain]
+type = "keychain"
+service = "fnox-fudoki"
 
 [providers.age]
 type = "age"
 # 1 行 1 人。行末のコメントで誰の鍵かを示す（fnox 1.46 は名前付きの表を読めない）。
 # メンバーを足す・外したら `fnox reencrypt -p age` で暗号文を作り直す。
 recipients = [
-  "age1rawmsgdrn0uyqffa8gkvuty3sevefhtu6u2q9r8fgke4kskl7daqxuznr9", # yuito
+  "age1uttkatf0fgm70rpa6lx734kfzvvunqdf4fk3xg7tdfe3h8ccwgtsc5h34r", # yuito（fudoki 専用）
 ]
+# 復号の鍵は keychain から読む。FNOX_AGE_KEY が export されているとそちらが優先される。
+identity = { provider = "keychain", value = "age-key" }
 
 [secrets]
