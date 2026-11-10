@@ -2,7 +2,7 @@
 // 書体はゴシック1つ（--font-sans）。動くのは色の切り替え・冒頭のタブで替わる中身の浮き上がり・録画の再生だけで、スクロールでは動かさない。事業評価の画面は架空のデータのイメージ
 import * as React from 'react'
 import { ArrowRightIcon, CodeIcon, EnvelopeSimpleIcon, GavelIcon, HouseLineIcon, NewspaperIcon } from '@phosphor-icons/react'
-import { Link } from '@void/react'
+import { Link } from '../nav/link'
 import { Hint } from '@/components/hint'
 import { HOME } from '../home-data'
 import { LOGO_G, LOGO_WIDTH } from '../logo'

@@ -1,6 +1,6 @@
 // 自治体の頁（都道府県・市区町村）の本文。収録の無い自治体は案内だけを出す
 import './jurisdiction.css'
-import { Link } from '@void/react'
+import { Link } from '../nav/link'
 import type { JurisdictionProps } from '../server/pages'
 import { Page } from './page'
 import { INDEX_PATH } from './types'

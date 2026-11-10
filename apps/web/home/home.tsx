@@ -2,7 +2,7 @@
 // 自治体を探す・比べるのは自治体一覧（/jurisdictions）、AI との会話はアシスタント（/assistant）が受け持つので、ここでは重ねない。
 // 面の色は、主張したい面（うちのまち）が緑（--brand）の地で中の押せるものは --brand-fill（明るいときは白、暗いときは半透明の白）、押せるものの状態は生成り。見出しも含めてゴシック（明朝は /about の読み物だけ）
 import * as React from 'react'
-import { Link } from '@void/react'
+import { Link } from '../nav/link'
 import { ArrowRightIcon, BankIcon, ArrowSquareOutIcon, ChartBarIcon, ClipboardTextIcon, CoinsIcon, MagnifyingGlassIcon, NavigationArrowIcon } from '@phosphor-icons/react'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
