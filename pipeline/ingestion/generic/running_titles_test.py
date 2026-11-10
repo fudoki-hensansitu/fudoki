@@ -2,7 +2,7 @@ import unittest
 from types import SimpleNamespace
 
 from ingestion.generic.layout import Glyph
-from ingestion.generic.observe import Word
+from ingestion.generic.observe import Rule, Word
 from ingestion.generic.patterns.layout import running_titles
 
 
@@ -65,6 +65,12 @@ class RunningTitlesTest(unittest.TestCase):
         self.assertGreater(split[1].x0 - split[0].x1, 2.5)
         joined = running_titles.join_split_yen([glyph('１', 0, 0, width=10), glyph('０，４２０円', 10, 0)])
         self.assertEqual([w.text for w in joined], ['１０，４２０円'])
+
+    def test_an_amount_box_read_past_its_column_rule_ends_at_the_rule(self):
+        rules = [Rule(353.5, 100, 353.5, 200), Rule(409.2, 100, 409.2, 200)]
+        words = [Word('6,414', 327.0, 168.5, 354.14, 178), Word('事業', 360, 168.5, 380, 178), Word('12', 352, 120, 356, 130)]
+        result = running_titles.inside_rules(words, rules)
+        self.assertEqual([w.x1 for w in result], [353.5, 380, 356])
 
 
 if __name__ == '__main__':

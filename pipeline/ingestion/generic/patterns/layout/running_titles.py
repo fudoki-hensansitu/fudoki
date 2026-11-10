@@ -27,6 +27,10 @@
 語に割ったり（`２` `４` `か` `所`）、名前と金額を1語にしたり（`月額２７，９８０円`）する。割れた全角数字は観測の頁の上で
 1語に戻し（桁の網羅の検査も同じ語を読む）、名前に付いた金額は分けて読む。名前の下の行に単独で印字された人数・件数
 （`葬祭扶助 ２２，７７６千円` / `１０４人`）は項目にしない。行の種類（積算）は `note_kinds` で宣言する。
+
+スキャンの頁では、欄の右に寄せた金額の枠が右の縦罫を少し越えて読まれる（千代田区 R7 の財源内訳の `6,414` が 354.1 まで、
+縦罫は 353.5）。数字は欄の中に印字されているので、1.5pt 未満の越えは縦罫で切る（`inside_rules`。観測の頁の上で切り、
+桁の網羅の検査も同じ枠を読む）。
 """
 import re
 
@@ -389,11 +393,34 @@ def join_full_width(words: list[Word]) -> list[Word]:
     return result
 
 
+OVERSHOOT = 1.5
+
+
+def inside_rules(words: list[Word], rules) -> list[Word]:
+    """An amount whose box the scan reads a little past its column's right rule (`6,414` to 354.1 by a rule at
+    353.5) ends at the rule: the digits are printed inside the column, and only the box overshoots."""
+    verticals = [r for r in rules if r.vertical]
+    result = []
+    for word in words:
+        middle = (word.y0 + word.y1) / 2
+        if word.text[-1:].isdigit():
+            crossing = [r.x0 for r in verticals if r.y0 <= middle <= r.y1 and word.x1 - OVERSHOOT < r.x0 < word.x1
+                        and r.x0 - word.x0 > (word.x1 - word.x0) / 2]
+            if crossing:
+                word = Word(word.text, word.x0, word.y0, min(crossing), word.y1)
+        result.append(word)
+    return result
+
+
 def read(pages, **options):
+    extended = []
     for page in pages:
         # On the observed page itself: digit coverage reads the same words (`runtime.run_pages`).
         page.words = join_full_width(page.words)
-    pages = [extend_columns(page) for page in pages]
+        wide = extend_columns(page)
+        page.words = inside_rules(page.words, wide.rules)
+        extended.append(replace(wide, words=page.words))
+    pages = extended
     logicals = layout.logical_pages(pages, **options)
     heading = (options.get('header') or {}).get('title_amount')
     full = {page.number: full_rules(page) for page in pages}
