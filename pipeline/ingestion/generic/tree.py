@@ -1437,8 +1437,11 @@ def shape_of(item: Item) -> str | None:
     raw = unicodedata.normalize('NFKC', text(item.lines[0])) if item.lines else ''
     raw = raw.strip()
     line = item.lines[0] if item.lines else []
-    if (len(line) > 1 and re.fullmatch(r'[ア-ン]', normalize(line[0].text))
-            and line[1].x0 - line[0].x1 >= (line[0].y1 - line[0].y0) / 2):
+    height = line[0].y1 - line[0].y0 if line else 0
+    gap = line[1].x0 - line[0].x1 if len(line) > 1 else 0
+    # A name printed letter-spaced (`ガ ス 代`, 132128) sets every character apart alike: no kana there.
+    spaced = len(line) > 2 and abs((line[2].x0 - line[1].x1) - gap) <= height / 4
+    if len(line) > 1 and re.fullmatch(r'[ア-ン]', normalize(line[0].text)) and gap >= height / 2 and not spaced:
         return 'kana'  # a kana set apart from a name that begins with katakana (`ス ソフトウェア…`, 131211)
     for name, pattern in SHAPES:
         if pattern.match(raw if name not in ('circled',) else text(item.lines[0]).strip()):
