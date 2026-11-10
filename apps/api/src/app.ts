@@ -6,11 +6,11 @@ import { ApiError, errorBody, invalid } from './errors'
 import { VIEW_HTML, VIEW_URI } from './gen/view'
 import { JURISDICTION_TABLE } from './columns'
 import { quotaOf } from './evaluation-quota'
-import { evaluationSearchRoutes, searchEvaluationsTool } from './evaluations'
-import { ORIGIN_PDF_PATH, expenditureRoutes } from './expenditure/routes'
+import { searchEvaluationsTool } from './evaluations'
+import { ORIGIN_PDF_PATH } from './expenditure/routes'
 import { expenditureTools } from './expenditure/tools'
-import { jurisdictionRoutes } from './jurisdiction/routes'
 import { jurisdictionTools } from './jurisdiction/tools'
+import { apiRoutes } from './rpc'
 import type { Ctx } from './shared/context'
 import { MAX_BODY_BYTES, routes } from './shared/http'
 import type { Tool } from './shared/tool'
@@ -310,8 +310,8 @@ export function createApp() {
   )
   app.all('/health', (c) => c.json(errorBody('METHOD_NOT_ALLOWED', 'GET だけを受け付けます'), 405, { Allow: 'GET' }))
 
-  // 集約ごとの route。chain の戻り値の型が AppType（web の Hono RPC）になる
-  const api = app.route('/', jurisdictionRoutes).route('/', expenditureRoutes).route('/', evaluationSearchRoutes)
+  // 集約ごとの route（rpc.ts。型は web の Hono RPC が使う）
+  app.route('/', apiRoutes)
   app.all(ORIGIN_PDF_PATH, (c) => c.json(errorBody('METHOD_NOT_ALLOWED', 'GET だけを受け付けます'), 405, { Allow: 'GET' }))
 
   app.doc31('/openapi.json', OPENAPI_CONFIG)
@@ -354,8 +354,5 @@ export function createApp() {
     console.error(e)
     return c.json(errorBody('INTERNAL', '内部エラー'), 500)
   })
-  return api
+  return app
 }
-
-/** web が Hono RPC（hc<AppType>）で呼ぶ REST の型 */
-export type AppType = ReturnType<typeof createApp>

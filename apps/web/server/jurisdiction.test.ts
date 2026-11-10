@@ -6,7 +6,7 @@ import { indexPageData, resolveJurisdiction } from './jurisdiction-routes'
 import { DEFAULT_INDEX_QUERY, queryIndex } from '../jurisdiction/index-table'
 import type { IndexEntry } from '../jurisdiction/types'
 import { DETAIL_TABLE, SUBJECT_TABLE } from '../../api/src/columns'
-import { searchInputFor } from '../../api/src/search'
+import { searchInputFor } from '../../api/src/shared/search'
 import type { Env } from './env'
 import prefectures from '../../../packages/jurisdictions/prefectures.json'
 import registry from '../../../packages/jurisdictions/jurisdictions.json'
@@ -80,7 +80,7 @@ function fixtureApi({ code = '131148', name = '中野区', extraNodes = [] as Ro
         { jurisdiction_code: '131016', name: '千代田区', prefecture_name: '東京都', coverage: [] },
         { jurisdiction_code: '130001', name: '東京都', prefecture_name: '東京都', coverage: [] },
       ] })
-    const kind = url.pathname === '/v1/fiscal/expenditure/subjects:search' ? 'subjects' : url.pathname === '/v1/fiscal/expenditure/details:search' ? 'details' : undefined
+    const kind = url.pathname === '/v1/expenditures/subjects:search' ? 'subjects' : url.pathname === '/v1/expenditures/details:search' ? 'details' : undefined
     if (kind) {
       const parsed = (kind === 'subjects' ? subjectSearch : detailSearch).safeParse(await req.json())
       if (!parsed.success) return Response.json({ error: parsed.error.message }, { status: 400 })
@@ -92,11 +92,11 @@ function fixtureApi({ code = '131148', name = '中野区', extraNodes = [] as Ro
       const offset = Number(body.page_token?.slice(8) ?? 0)
       return Response.json({ [kind]: matches.slice(offset, offset + body.page_size), next_page_token: offset + body.page_size < matches.length ? `fixture_${offset + body.page_size}` : null, origins: [{ origin_id: 'o1', title: '令和7年度決算書' }] })
     }
-    const m = url.pathname.match(/^\/v1\/fiscal\/expenditure\/subjects\/([0-9a-f]{64})$/)
+    const m = url.pathname.match(/^\/v1\/expenditures\/lines\/([0-9a-f]{64})$/)
     if (m) {
       const byBreakdown: Record<string, unknown[]> = {}
       for (const d of details.filter((d) => d.subject_id === m[1])) (byBreakdown[String(d.breakdown)] ??= []).push(d)
-      return Response.json({ subject: subjects.find((n) => n.subject_id === m[1]), children: subjects.filter((n) => n.parent_subject_id === m[1]), details: byBreakdown, next_page_token: null })
+      return Response.json({ line: { kind: 'subject', ...subjects.find((n) => n.subject_id === m[1]) }, child_subjects: subjects.filter((n) => n.parent_subject_id === m[1]), details: byBreakdown, next_page_token: null })
     }
     return new Response('nf', { status: 404 })
   } }
@@ -180,7 +180,7 @@ describe('自治体の個別ページ', () => {
       const url = new URL(req.url)
       if (url.pathname === '/v1/jurisdictions')
         return Response.json({ jurisdictions: [{ jurisdiction_code: '131148', name: '中野区', prefecture_name: '東京都', coverage: [2019, 2020, 2021, 2023, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) }] })
-      if (url.pathname === '/v1/fiscal/expenditure/subjects:search') {
+      if (url.pathname === '/v1/expenditures/subjects:search') {
         const body = await req.json() as { fiscal_year: { min: number; max: number }; where: { level: { eq: string[] } } }
         if (body.fiscal_year.max - body.fiscal_year.min > 4) return Response.json({ error: 'fiscal_year は 5 年以内にしてください' }, { status: 400 })
         const rows = body.where.level.eq[0] === '款'
@@ -271,9 +271,9 @@ describe('内訳の API', () => {
   test('後続ページの節を優先し、全ページの金額から上位の内訳を選ぶ', async () => {
     const paginated: Env = { ...env, API: { fetch: async (req) => {
       const url = new URL(req.url)
-      if (url.pathname !== `/v1/fiscal/expenditure/subjects/${id(11)}`) return API.fetch(req)
+      if (url.pathname !== `/v1/expenditures/lines/${id(11)}`) return API.fetch(req)
       const token = url.searchParams.get('page_token')
-      const page = (details: Record<string, Row[]>, next: string | null) => Response.json({ subject: toSubject(MOKU_2025[1]!), children: [], details: Object.fromEntries(Object.entries(details).map(([k, rows]) => [k, rows.map(toDetail)])), next_page_token: next })
+      const page = (details: Record<string, Row[]>, next: string | null) => Response.json({ line: { kind: 'subject', ...toSubject(MOKU_2025[1]!) }, child_subjects: [], details: Object.fromEntries(Object.entries(details).map(([k, rows]) => [k, rows.map(toDetail)])), next_page_token: next })
       if (!token)
         return page({ 事業: Array.from({ length: 100 }, (_, i) => node({ node_id: id(100 + i), parent_node_id: id(11), axis: '事業', is_subject: false, name: `事業${i}`, amount_yen: 5000 })) }, 'next1')
       if (token === 'next1')
