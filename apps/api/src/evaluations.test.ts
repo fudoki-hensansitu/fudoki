@@ -8,7 +8,7 @@ import { EvaluationSearchQuota, quotaOf, type QuotaNamespace } from './evaluatio
 import {
   CATALOG,
   makeExcerpt,
-  searchEvaluationsOperation,
+  searchEvaluationsTool,
   searchRequest,
   stripHeader,
   verify,
@@ -16,7 +16,7 @@ import {
   type CatalogDocument,
   type AiSearchRequest,
 } from './evaluations'
-import { operations } from './operations'
+import { tools as operations } from './app'
 import { testDb } from './testing'
 
 // 北区（131172）と中野区（131148）の2025年度は apps/api/src/evaluation-catalog.json にある
@@ -121,12 +121,10 @@ describe('公開の範囲', () => {
       'list_jurisdictions',
       'search_expenditure_subjects',
       'search_expenditure_details',
-      'get_expenditure_subject',
-      'get_expenditure_detail',
-      'describe_expenditure_columns',
+      'get_expenditure_line',
       'search_evaluations',
     ])
-    expect(operations.at(-1)).toBe(searchEvaluationsOperation)
+    expect(operations.at(-1)).toBe(searchEvaluationsTool)
   })
 
   test('既定の app の REST・OpenAPI・MCP に出る。429 を持つのはこの操作と出典 PDF の中継だけ', async () => {
@@ -233,7 +231,7 @@ describe('状態の分類', () => {
     expect(res.status).toBe(200)
     expect(res.headers.get('Cache-Control')).toBe('no-store')
     const out = await res.json()
-    expect(searchEvaluationsOperation.output.parse(out)).toEqual(out)
+    expect(searchEvaluationsTool.output.parse(out)).toEqual(out)
     expect(out.status).toBe('candidates')
     expect(out.documents).toEqual([
       {
@@ -273,7 +271,7 @@ describe('状態の分類', () => {
       expect(res.status).toBe(200)
       const out = await res.json()
       expect(out).toMatchObject({ status: 'not_covered', documents: [], candidates: [] })
-      expect(searchEvaluationsOperation.output.parse(out)).toEqual(out)
+      expect(searchEvaluationsTool.output.parse(out)).toEqual(out)
       expect(out.notes.join('\n')).toContain('0件は出典に無いことを意味しない')
     }
     expect(order).toEqual([])
@@ -438,7 +436,7 @@ describe('CSV の出典（公開レポートの表）', () => {
   test('CSV の候補は出典の形・データ行の番号・レポートの URL（頁の指定なし）を返し、PDF の候補は今のまま', async () => {
     searchImpl = async () => ({ chunks: [csvChunk(7, '番号: 7\n事務事業名: 議会の運営')] })
     const out = await (await post(ask)).json()
-    expect(searchEvaluationsOperation.output.parse(out)).toEqual(out)
+    expect(searchEvaluationsTool.output.parse(out)).toEqual(out)
     expect(out.status).toBe('candidates')
     // 本番の catalog にも八王子市 2025 の CSV の出典があるので、足した出典が含まれることだけを見る
     expect(out.documents).toContainEqual({
@@ -607,7 +605,7 @@ describe('失敗と時間切れ', () => {
       },
     }
     const started = Date.now()
-    await expect(searchEvaluationsOperation.run(ctx, valid)).rejects.toMatchObject({ status: 503, code: 'UNAVAILABLE' })
+    await expect(searchEvaluationsTool.run(ctx, valid)).rejects.toMatchObject({ status: 503, code: 'UNAVAILABLE' })
     expect(Date.now() - started).toBeLessThan(1000)
     expect(requests).toHaveLength(1)
     expect(logs.some((l) => l.includes('"reason":"timeout"'))).toBe(true)
@@ -624,7 +622,7 @@ describe('失敗と時間切れ', () => {
         searchTimeoutMs: 10,
       },
     }
-    await expect(searchEvaluationsOperation.run(ctx, valid)).rejects.toMatchObject({ status: 503 })
+    await expect(searchEvaluationsTool.run(ctx, valid)).rejects.toMatchObject({ status: 503 })
     rejectLater(new Error('late'))
     await Bun.sleep(5)
   })
@@ -660,14 +658,14 @@ describe('上限と kill switch の順序', () => {
     sqlite.query(`UPDATE control SET value = 'off' WHERE key = 'serving'`).run()
     expect((await post(valid)).status).toBe(503)
     const ctx = { db, evaluation: { search: { search: async () => ({ chunks: [] }) }, rateLimit: { limit: async () => ({ success: true }) }, quota: { take: async () => ({ ok: true as const }) } } }
-    await expect(searchEvaluationsOperation.run(ctx, valid)).rejects.toMatchObject({ status: 503 })
+    await expect(searchEvaluationsTool.run(ctx, valid)).rejects.toMatchObject({ status: 503 })
     expect(order).toEqual([])
   })
 
   test('control が読めないなら 503', async () => {
     const broken: Db = { prepare: () => { throw new Error('d1 down') }, batch: async () => [] }
     const ctx = { db: broken, evaluation: {} }
-    await expect(searchEvaluationsOperation.run(ctx, valid)).rejects.toMatchObject({ status: 503 })
+    await expect(searchEvaluationsTool.run(ctx, valid)).rejects.toMatchObject({ status: 503 })
   })
 
   test('順序: 流量 → 総数 → 検索', async () => {
@@ -849,7 +847,7 @@ describe('日ごとの総数の Durable Object', () => {
       db,
       evaluation: { search: { search: () => new Promise<never>(() => {}) }, rateLimit: { limit: async () => ({ success: true }) }, quota: make(), searchTimeoutMs: 10 },
     }
-    await expect(searchEvaluationsOperation.run(ctx, valid)).rejects.toMatchObject({ status: 503 })
+    await expect(searchEvaluationsTool.run(ctx, valid)).rejects.toMatchObject({ status: 503 })
     expect(doState.map.get('day').count).toBe(2)
   })
 

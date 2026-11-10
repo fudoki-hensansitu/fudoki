@@ -73,28 +73,28 @@ function insertOwnLocation(sqlite: Database, rowId: unknown, originId: unknown) 
 /** 科目の表の1行。subject_id を省くと node_key と同じにする。origin_id があれば印字の位置の行も置く。 */
 export function insertSubject(sqlite: Database, row: Record<string, string | number | null>) {
   const id = row.subject_id ?? row.node_key ?? crypto.randomUUID()
-  insertRow(sqlite, 'fiscal_expenditure_subject', { ...docDefaults(row), subject_id: id, node_key: id, level: '目', is_leaf: row.level && row.level !== '目' ? 0 : 1 }, row)
+  insertRow(sqlite, 'expenditure_subject', { ...docDefaults(row), subject_id: id, node_key: id, level: '目', is_leaf: row.level && row.level !== '目' ? 0 : 1 }, row)
   insertOwnLocation(sqlite, id, row.origin_id)
 }
 
 /** 内訳の表の1行。origin_id があれば印字の位置の行も置く。 */
 export function insertDetail(sqlite: Database, row: Record<string, string | number | null>) {
   const id = row.detail_id ?? row.node_key ?? crypto.randomUUID()
-  insertRow(sqlite, 'fiscal_expenditure_detail', { ...docDefaults(row), detail_id: id, node_key: id, breakdown: '事業', source_heading: '備考', node_kind: '内訳1', depth: 1, is_leaf: 1, is_subject_remainder: 0 }, row)
+  insertRow(sqlite, 'expenditure_detail', { ...docDefaults(row), detail_id: id, node_key: id, breakdown: '事業', source_heading: '備考', node_kind: '内訳1', depth: 1, is_leaf: 1, is_subject_remainder: 0 }, row)
   insertOwnLocation(sqlite, id, row.origin_id)
 }
 
 /** 印字の位置の1行。 */
 export function insertLocation(sqlite: Database, row: Record<string, string | number | null>) {
-  insertRow(sqlite, 'fiscal_expenditure_location', {}, row)
+  insertRow(sqlite, 'expenditure_location', { kind: 'pdf' }, row)
 }
 
 /** origin の列は columns.json にあるものだけ入れる。 */
 export function insertOrigin(sqlite: Database, row: Record<string, string | number | null>) {
-  const names = new Set(TABLES.fiscal_origin!.columns.map((c) => c.name))
+  const names = new Set(TABLES.expenditure_origin!.columns.map((c) => c.name))
   const full = Object.entries({ jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement', format: 'pdf', ...row }).filter(([k]) => names.has(k))
   sqlite
-    .query(`INSERT INTO fiscal_origin (${full.map(([k]) => k).join(',')}) VALUES (${full.map(() => '?').join(',')})`)
+    .query(`INSERT INTO expenditure_origin (${full.map(([k]) => k).join(',')}) VALUES (${full.map(() => '?').join(',')})`)
     .run(...(full.map(([, v]) => v) as never[]))
 }
 
@@ -119,13 +119,17 @@ export function insertPopulation(
       .run(`${origin.origin_id}:${r.jurisdiction_code}`, origin.origin_id, r.jurisdiction_code, origin.reference_date, r.male, r.female, r.population, r.households)
 }
 
-/** 収録範囲の1行。coverage_id は行の中身から作る（一意であればよい）。 */
+/** 歳出の根の1行と、出典との組。ID は行の中身から作る（一意であればよい）。 */
 export function insertCoverage(
   sqlite: Database,
   row: { jurisdiction_code: string; fiscal_year: number; document_kind: string; account_name: string; account_kind?: string; origin_id: string }
 ) {
   const full = { account_kind: row.account_name, ...row }
+  const id = JSON.stringify([full.jurisdiction_code, full.fiscal_year, full.document_kind, full.account_name])
   sqlite
-    .query('INSERT INTO fiscal_coverage (coverage_id, jurisdiction_code, fiscal_year, document_kind, account_name, account_kind, origin_id) VALUES (?, ?, ?, ?, ?, ?, ?)')
-    .run(JSON.stringify(full), full.jurisdiction_code, full.fiscal_year, full.document_kind, full.account_name, full.account_kind, full.origin_id)
+    .query('INSERT OR IGNORE INTO expenditure (expenditure_id, jurisdiction_code, fiscal_year, document_kind, account_name, account_kind) VALUES (?, ?, ?, ?, ?, ?)')
+    .run(id, full.jurisdiction_code, full.fiscal_year, full.document_kind, full.account_name, full.account_kind)
+  sqlite
+    .query('INSERT INTO expenditure_origin_link (link_id, expenditure_id, origin_id) VALUES (?, ?, ?)')
+    .run(JSON.stringify([id, full.origin_id]), id, full.origin_id)
 }

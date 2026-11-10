@@ -3,7 +3,10 @@ import catalogJson from './evaluation-catalog.json'
 import type { QuotaLimits, SearchQuota } from './evaluation-quota'
 import { ApiError } from './errors'
 import { IP_RATE_LIMIT } from './evaluation-limits'
-import type { Ctx, Operation } from './operations'
+import { createRoute } from '@hono/zod-openapi'
+import type { Ctx } from './shared/context'
+import { ok, postErrors, rateLimitedError, routes } from './shared/http'
+import type { Tool } from './shared/tool'
 
 // 事業の評価の検索（docs/prd/evaluation-search/dd.md）。AI Search が返す頁の chunk（1頁が複数の chunk になり得る）を、頁ごとの出典の所在と短い抜粋に変える。
 // 頁の全文は返さない（両区の利用条件が無断の転載を禁じているため）。内容は利用者が出典 PDF の該当頁を取って読む。
@@ -398,17 +401,29 @@ async function searchEvaluations(ctx: Ctx, raw: Record<string, unknown>): Promis
   }
 }
 
-export const searchEvaluationsOperation: Operation = {
+export const searchEvaluationsTool = {
   name: 'search_evaluations',
-  summary: 'Find project evaluation pages',
-  restSummary: '事業の評価資料を探す',
-  method: 'post',
-  path: '/v1/evaluations:search',
-  pathParams: [],
+  title: 'Find project evaluation pages',
   description,
   input,
-  example: { jurisdiction: '131172', fiscal_year: 2025, query: '防災分野におけるデジタル化の推進' },
   output,
-  rateLimited: true,
   run: searchEvaluations,
-}
+} satisfies Tool
+
+export const evaluationSearchRoutes = routes().openapi(
+  createRoute({
+    method: 'post',
+    path: '/v1/evaluations:search',
+    operationId: searchEvaluationsTool.name,
+    summary: '事業の評価資料を探す',
+    description,
+    request: {
+      body: {
+        required: true,
+        content: { 'application/json': { schema: input, example: { jurisdiction: '131172', fiscal_year: 2025, query: '防災分野におけるデジタル化の推進' } } },
+      },
+    },
+    responses: { ...ok(output), ...postErrors, ...rateLimitedError },
+  }),
+  async (c) => c.json((await searchEvaluations(c.get('ctx'), c.req.valid('json'))) as never, 200)
+)

@@ -4,6 +4,7 @@ with rows as (select * from {{ ref('int_fiscal__expenditure_rows') }})
 select r.row_id as subject_id,
     r.node_id as node_key,
     p.row_id as parent_subject_id,
+    {{ expenditure_id('r.') }} as expenditure_id,
     r.jurisdiction_code,
     r.fiscal_year,
     r.document_kind,

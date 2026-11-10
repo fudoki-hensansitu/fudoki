@@ -8,7 +8,7 @@ const OTHER = 'b'.repeat(64)
 
 function setup(pages: string[]) {
   const { db, sqlite } = testDb()
-  sqlite.query(`INSERT INTO fiscal_origin (origin_id, jurisdiction_code, fiscal_year, document_kind, title, url, format, sha256) VALUES (?,?,?,?,?,?,?,?)`)
+  sqlite.query(`INSERT INTO expenditure_origin (origin_id, jurisdiction_code, fiscal_year, document_kind, title, url, format, sha256) VALUES (?,?,?,?,?,?,?,?)`)
     .run('o1', '131091', 2026, 'initial', '予算書', 'https://city.example.jp/a.pdf', 'pdf', SHA)
   const keys: string[] = []
   const bucket: SourceTextBucket = {

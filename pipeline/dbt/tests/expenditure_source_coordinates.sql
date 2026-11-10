@@ -3,7 +3,7 @@
 -- nodes; an amount box is one print and is all-or-nothing. A node's y0 can exceed y1
 -- (3 rows in 131156: the name seems to continue on the next page), so only x and the
 -- amount y are ordered.
-{% for m in ['fiscal_expenditure_location'] %}
+{% for m in ['expenditure_location'] %}
 select row_id, '{{ m }}' as model from {{ ref(m) }}
 where ((amount_source_x0 is null)::int + (amount_source_y0 is null)::int
          + (amount_source_x1 is null)::int + (amount_source_y1 is null)::int) not in (0, 4)

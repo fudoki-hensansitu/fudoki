@@ -20,12 +20,10 @@ sidebar:
 
 | tool | 使いどころ |
 | --- | --- |
-| `list_jurisdictions` | 自治体と、収録している年度・資料区分・会計を返す。会計ごとの出典が要るときは `view: FULL` |
-| `describe_expenditure_columns` | 列の説明・金額を足すときの条件（`sum_rules`）・入力の例。検索の前に一度読む |
+| `list_jurisdictions` | 自治体と、人口の推移、収録している年度・資料区分・会計、事業評価と予算案の年度を返す |
 | `search_expenditure_subjects` | 科目（款・項・目）を自治体・年度・段・COFOG などで絞って一覧する |
 | `search_expenditure_details` | 科目の下の内訳（事業・節）を分け方・所管課などで絞って一覧する |
-| `get_expenditure_subject` | 科目一つと、子の科目・直下の内訳を分け方（事業・節など）ごとに返す |
-| `get_expenditure_detail` | 内訳一つと、その子を返す |
+| `get_expenditure_line` | 科目か内訳を一つと、その直下（科目なら子の科目と内訳、内訳なら子）を分け方（事業・節など）ごとに返す |
 | `search_evaluations` | 事業の評価が載った出典 PDF の頁の所在を返す（[事業の評価資料](/evaluations)） |
 
 ## 表で見る（MCP Apps）

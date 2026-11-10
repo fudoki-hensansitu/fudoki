@@ -8,7 +8,7 @@
           "name": "jurisdiction_code",
           "type": "string",
           "nullable": false,
-          "description": "全国地方公共団体コード（6桁、末尾は検査数字）。科目の表・fiscal_origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。"
+          "description": "全国地方公共団体コード（6桁、末尾は検査数字）。科目の表・expenditure_origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。"
         },
         {
           "name": "name",
@@ -42,7 +42,145 @@
         }
       ]
     },
-    "fiscal_origin": {
+    "population_origin": {
+      "primary_key": "origin_id",
+      "indexes": [],
+      "columns": [
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "資料の識別子。資料の URL から導いた値。"
+        },
+        {
+          "name": "reference_date",
+          "type": "string",
+          "nullable": false,
+          "description": "基準日（YYYY-MM-DD）。この日時点の人数・世帯数を表す（期間の値ではない）。"
+        },
+        {
+          "name": "url",
+          "type": "string",
+          "nullable": false,
+          "description": "資料（xlsx）の URL。"
+        }
+      ]
+    },
+    "population": {
+      "primary_key": "population_id",
+      "indexes": [
+        [
+          "jurisdiction_code"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "population_id",
+          "type": "string",
+          "nullable": false,
+          "description": "行の識別子。origin_id と jurisdiction_code を「:」でつないだ値。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "資料の識別子。population_origin の origin_id。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。jurisdiction の jurisdiction_code。"
+        },
+        {
+          "name": "reference_date",
+          "type": "string",
+          "nullable": false,
+          "description": "基準日。population_origin の reference_date の写し。この日時点の人数・世帯数を表す。"
+        },
+        {
+          "name": "male",
+          "type": "integer",
+          "nullable": false,
+          "description": "男性の人数。"
+        },
+        {
+          "name": "female",
+          "type": "integer",
+          "nullable": false,
+          "description": "女性の人数。"
+        },
+        {
+          "name": "population",
+          "type": "integer",
+          "nullable": false,
+          "description": "人口の総数（出典の「計」）。性別欄が空欄の外国人住民を含むので、male と female の和より大きいことがある。"
+        },
+        {
+          "name": "households",
+          "type": "integer",
+          "nullable": false,
+          "description": "世帯数。"
+        }
+      ]
+    },
+    "expenditure": {
+      "primary_key": "expenditure_id",
+      "indexes": [
+        [
+          "jurisdiction_code"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "expenditure_id",
+          "type": "string",
+          "nullable": false,
+          "description": "自治体・年度・資料区分・補正号（無ければ空文字）・会計名から作る ID（sha256）。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "自治体コード。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "会計年度（西暦）。"
+        },
+        {
+          "name": "document_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "資料区分（settlement 決算・initial 当初予算）。",
+          "values": [
+            "settlement",
+            "initial"
+          ]
+        },
+        {
+          "name": "amendment_number",
+          "type": "integer",
+          "nullable": true,
+          "description": "補正予算の号数。補正予算以外はNULL。"
+        },
+        {
+          "name": "account_name",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の会計名。科目の表の account_name と同じ値で、検索の条件にそのまま使える。"
+        },
+        {
+          "name": "account_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "自治体共通の会計の種類（風土記の判断）。"
+        }
+      ]
+    },
+    "expenditure_origin": {
       "primary_key": "origin_id",
       "indexes": [],
       "columns": [
@@ -102,7 +240,38 @@
         }
       ]
     },
-    "fiscal_expenditure_subject": {
+    "expenditure_origin_link": {
+      "primary_key": "link_id",
+      "indexes": [
+        [
+          "expenditure_id"
+        ],
+        [
+          "origin_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "link_id",
+          "type": "string",
+          "nullable": false,
+          "description": "expenditure_id と origin_id から作る ID（sha256）。"
+        },
+        {
+          "name": "expenditure_id",
+          "type": "string",
+          "nullable": false,
+          "description": "歳出の根。expenditure の expenditure_id。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典。expenditure_origin の origin_id。"
+        }
+      ]
+    },
+    "expenditure_subject": {
       "primary_key": "subject_id",
       "indexes": [
         [
@@ -118,6 +287,9 @@
         ],
         [
           "parent_subject_id"
+        ],
+        [
+          "expenditure_id"
         ]
       ],
       "columns": [
@@ -140,6 +312,12 @@
           "description": "親の科目（款は NULL）。"
         },
         {
+          "name": "expenditure_id",
+          "type": "string",
+          "nullable": false,
+          "description": "歳出の根（自治体・年度・資料区分・補正号・会計）の ID。expenditure の expenditure_id。"
+        },
+        {
           "name": "jurisdiction_code",
           "type": "string",
           "nullable": false,
@@ -155,7 +333,11 @@
           "name": "document_kind",
           "type": "string",
           "nullable": false,
-          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。"
+          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。",
+          "values": [
+            "settlement",
+            "initial"
+          ]
         },
         {
           "name": "amendment_number",
@@ -167,7 +349,11 @@
           "name": "amount_phase",
           "type": "string",
           "nullable": false,
-          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。"
+          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。",
+          "values": [
+            "executed",
+            "approved"
+          ]
         },
         {
           "name": "account_name",
@@ -185,7 +371,12 @@
           "name": "level",
           "type": "string",
           "nullable": false,
-          "description": "科目の段（款・項・目）。足すときは同じ資料で一つの段か is_leaf に絞る。"
+          "description": "科目の段（款・項・目）。足すときは同じ資料で一つの段か is_leaf に絞る。",
+          "values": [
+            "款",
+            "項",
+            "目"
+          ]
         },
         {
           "name": "code",
@@ -279,7 +470,7 @@
         }
       ]
     },
-    "fiscal_expenditure_detail": {
+    "expenditure_detail": {
       "primary_key": "detail_id",
       "indexes": [
         [
@@ -295,6 +486,9 @@
           "document_kind",
           "jurisdiction_code",
           "breakdown"
+        ],
+        [
+          "expenditure_id"
         ]
       ],
       "columns": [
@@ -323,6 +517,12 @@
           "description": "枝が属する科目（ほぼ目。目の無い項や、項の直下に付く内訳もある）。"
         },
         {
+          "name": "expenditure_id",
+          "type": "string",
+          "nullable": false,
+          "description": "歳出の根（自治体・年度・資料区分・補正号・会計）の ID。expenditure の expenditure_id。"
+        },
+        {
           "name": "jurisdiction_code",
           "type": "string",
           "nullable": false,
@@ -338,7 +538,11 @@
           "name": "document_kind",
           "type": "string",
           "nullable": false,
-          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。"
+          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。",
+          "values": [
+            "settlement",
+            "initial"
+          ]
         },
         {
           "name": "amendment_number",
@@ -350,7 +554,11 @@
           "name": "amount_phase",
           "type": "string",
           "nullable": false,
-          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。"
+          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。",
+          "values": [
+            "executed",
+            "approved"
+          ]
         },
         {
           "name": "account_name",
@@ -404,7 +612,12 @@
           "name": "breakdown",
           "type": "string",
           "nullable": false,
-          "description": "風土記の判断。枝の分け方（事業・節・その他）。枝の根の見出しに出典ごとの宣言（seed fiscal_detail_breakdown）を当て、子孫へ継ぐ。同じ科目・同じ分け方の depth = 1 の和が科目の額。分け方を混ぜて足さない。"
+          "description": "風土記の判断。枝の分け方（事業・節・その他）。枝の根の見出しに出典ごとの宣言（seed fiscal_detail_breakdown）を当て、子孫へ継ぐ。同じ科目・同じ分け方の depth = 1 の和が科目の額。分け方を混ぜて足さない。",
+          "values": [
+            "事業",
+            "節",
+            "その他"
+          ]
         },
         {
           "name": "source_heading",
@@ -486,7 +699,7 @@
         }
       ]
     },
-    "fiscal_expenditure_location": {
+    "expenditure_location": {
       "primary_key": "row_id",
       "indexes": [],
       "columns": [
@@ -503,10 +716,20 @@
           "description": "出典選定のファイルを指すSHA由来のID。"
         },
         {
+          "name": "kind",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の形式。pdf（頁と枠を持つ）か csv（行番号を持つ）。",
+          "values": [
+            "pdf",
+            "csv"
+          ]
+        },
+        {
           "name": "source_page",
           "type": "integer",
           "nullable": true,
-          "description": "PDFは項目が印字された頁で、出典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号。紙面に印刷されたページ番号ではなく、分冊・抜粋のファイルではそのファイルの中での番号。CSVは出典ファイルの1始まりの物理行（見出しの行が1行目）で、末端は印字された行の開始行、CSVに行の無い親（款〜節）は子孫の行のうち最も小さい開始行。"
+          "description": "kind が pdf のときだけ。項目が印字された頁で、出典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号。紙面に印刷されたページ番号ではなく、分冊・抜粋のファイルではそのファイルの中での番号。"
         },
         {
           "name": "source_x0",
@@ -536,7 +759,7 @@
           "name": "amount_source_page",
           "type": "integer",
           "nullable": true,
-          "description": "採用した金額の位置。PDFは source_page と同じ数え方の、出典ファイルの1始まりのページ番号。CSVは1始まりの物理行。CSVの親の集計額はNULL。不明ならNULL。"
+          "description": "kind が pdf のときだけ。採用した金額の頁。source_page と同じ数え方。不明ならNULL。"
         },
         {
           "name": "amount_source_x0",
@@ -561,11 +784,23 @@
           "type": "number",
           "nullable": true,
           "description": "採用した金額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。"
+        },
+        {
+          "name": "source_line",
+          "type": "integer",
+          "nullable": true,
+          "description": "kind が csv のときだけ。出典ファイルの1始まりの物理行（見出しの行が1行目）。末端は印字された行の開始行、CSVに行の無い親（款〜節）は子孫の行のうち最も小さい開始行。"
+        },
+        {
+          "name": "amount_source_line",
+          "type": "integer",
+          "nullable": true,
+          "description": "kind が csv のときだけ。採用した金額の行。CSVの親の集計額はNULL。"
         }
       ]
     },
-    "fiscal_coverage": {
-      "primary_key": "coverage_id",
+    "evaluation": {
+      "primary_key": "evaluation_id",
       "indexes": [
         [
           "jurisdiction_code"
@@ -573,140 +808,96 @@
       ],
       "columns": [
         {
-          "name": "coverage_id",
+          "name": "evaluation_id",
           "type": "string",
           "nullable": false,
-          "description": "自治体・年度・資料区分・会計名・origin_id から生成した ID。"
+          "description": "自治体コードと年度から作る ID（sha256）。"
         },
         {
           "name": "jurisdiction_code",
           "type": "string",
           "nullable": false,
-          "description": "自治体コード。科目の表の jurisdiction_code。"
+          "description": "全国地方公共団体コード（6桁）。"
         },
         {
           "name": "fiscal_year",
           "type": "integer",
           "nullable": false,
-          "description": "会計年度（西暦）。"
+          "description": "評価した事業を実施した会計年度（西暦）。"
         },
         {
-          "name": "document_kind",
+          "name": "kind",
           "type": "string",
           "nullable": false,
-          "description": "資料区分（settlement 決算・initial 当初予算）。科目・内訳の表の document_kind。"
+          "description": "with_result（評価結果の資料があり件数を持つ）か sheets_only（評価シートだけで件数は空）。",
+          "values": [
+            "with_result",
+            "sheets_only"
+          ]
         },
         {
-          "name": "account_name",
+          "name": "result_origin_id",
           "type": "string",
-          "nullable": false,
-          "description": "出典の会計名。科目の表の account_name と同じ値で、検索の条件にそのまま使える。"
+          "nullable": true,
+          "description": "評価結果の資料。evaluation_origin の origin_id。sheets_only なら空。"
         },
         {
-          "name": "account_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "自治体共通の会計の種類（風土記の判断）。"
+          "name": "result_page",
+          "type": "integer",
+          "nullable": true,
+          "description": "評価結果の資料で合計の行を読んだ頁。"
         },
         {
-          "name": "origin_id",
-          "type": "string",
-          "nullable": false,
-          "description": "この自治体・年度・資料区分・会計の明細が指す出典。分冊などで一つの会計に複数の出典があれば、出典ごとに行がある。"
+          "name": "evaluated_count",
+          "type": "integer",
+          "nullable": true,
+          "description": "評価した事業の数（評価結果の資料の値）。"
+        },
+        {
+          "name": "grade_a",
+          "type": "integer",
+          "nullable": true,
+          "description": "A 評価の事業の数（評価結果の資料の値）。"
+        },
+        {
+          "name": "grade_b",
+          "type": "integer",
+          "nullable": true,
+          "description": "B 評価の事業の数（評価結果の資料の値）。"
+        },
+        {
+          "name": "grade_c",
+          "type": "integer",
+          "nullable": true,
+          "description": "C 評価の事業の数（評価結果の資料の値）。"
+        },
+        {
+          "name": "grade_d",
+          "type": "integer",
+          "nullable": true,
+          "description": "D 評価の事業の数（評価結果の資料の値）。"
         }
       ]
     },
-    "population_origin": {
+    "evaluation_origin": {
       "primary_key": "origin_id",
-      "indexes": [],
-      "columns": [
-        {
-          "name": "origin_id",
-          "type": "string",
-          "nullable": false,
-          "description": "資料の識別子。資料の URL から導いた値。"
-        },
-        {
-          "name": "reference_date",
-          "type": "string",
-          "nullable": false,
-          "description": "基準日（YYYY-MM-DD）。この日時点の人数・世帯数を表す（期間の値ではない）。"
-        },
-        {
-          "name": "url",
-          "type": "string",
-          "nullable": false,
-          "description": "資料（xlsx）の URL。"
-        }
-      ]
-    },
-    "population": {
-      "primary_key": "population_id",
       "indexes": [
         [
-          "jurisdiction_code"
+          "evaluation_id"
         ]
       ],
-      "columns": [
-        {
-          "name": "population_id",
-          "type": "string",
-          "nullable": false,
-          "description": "行の識別子。origin_id と jurisdiction_code を「:」でつないだ値。"
-        },
-        {
-          "name": "origin_id",
-          "type": "string",
-          "nullable": false,
-          "description": "資料の識別子。population_origin の origin_id。"
-        },
-        {
-          "name": "jurisdiction_code",
-          "type": "string",
-          "nullable": false,
-          "description": "全国地方公共団体コード（6桁）。jurisdiction の jurisdiction_code。"
-        },
-        {
-          "name": "reference_date",
-          "type": "string",
-          "nullable": false,
-          "description": "基準日。population_origin の reference_date の写し。この日時点の人数・世帯数を表す。"
-        },
-        {
-          "name": "male",
-          "type": "integer",
-          "nullable": false,
-          "description": "男性の人数。"
-        },
-        {
-          "name": "female",
-          "type": "integer",
-          "nullable": false,
-          "description": "女性の人数。"
-        },
-        {
-          "name": "population",
-          "type": "integer",
-          "nullable": false,
-          "description": "人口の総数（出典の「計」）。性別欄が空欄の外国人住民を含むので、male と female の和より大きいことがある。"
-        },
-        {
-          "name": "households",
-          "type": "integer",
-          "nullable": false,
-          "description": "世帯数。"
-        }
-      ]
-    },
-    "project_origin": {
-      "primary_key": "origin_id",
-      "indexes": [],
       "columns": [
         {
           "name": "origin_id",
           "type": "string",
           "nullable": false,
           "description": "出典の識別子。PDF の sha256。"
+        },
+        {
+          "name": "evaluation_id",
+          "type": "string",
+          "nullable": false,
+          "description": "事業評価の根。evaluation の evaluation_id。"
         },
         {
           "name": "jurisdiction_code",
@@ -718,13 +909,17 @@
           "name": "document_type",
           "type": "string",
           "nullable": false,
-          "description": "資料の種類。sheets（事務事業評価シート）・result（事務事業評価の結果）・press（予算案のプレス発表）。"
+          "description": "資料の種類。sheets（事務事業評価シート）・result（事務事業評価の結果）。",
+          "values": [
+            "sheets",
+            "result"
+          ]
         },
         {
           "name": "fiscal_year",
           "type": "integer",
           "nullable": false,
-          "description": "会計年度（西暦）。sheets と result は評価した事業を実施した年度、press は予算の年度。"
+          "description": "評価した事業を実施した会計年度（西暦）。"
         },
         {
           "name": "title",
@@ -752,9 +947,12 @@
         }
       ]
     },
-    "project_evaluation_sheet": {
+    "evaluation_sheet": {
       "primary_key": "sheet_id",
       "indexes": [
+        [
+          "evaluation_id"
+        ],
         [
           "jurisdiction_code",
           "fiscal_year"
@@ -771,10 +969,16 @@
           "description": "行の ID。origin_id と頁から作る（sha256）。"
         },
         {
+          "name": "evaluation_id",
+          "type": "string",
+          "nullable": false,
+          "description": "事業評価の根。evaluation の evaluation_id。"
+        },
+        {
           "name": "origin_id",
           "type": "string",
           "nullable": false,
-          "description": "出典。project_origin の origin_id。"
+          "description": "出典。evaluation_origin の origin_id。"
         },
         {
           "name": "jurisdiction_code",
@@ -858,7 +1062,13 @@
           "name": "grade_code",
           "type": "string",
           "nullable": false,
-          "description": "最終評価の区分の記号（A〜D）。"
+          "description": "最終評価の区分の記号（A〜D）。",
+          "values": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ]
         },
         {
           "name": "grade_label",
@@ -876,17 +1086,17 @@
           "name": "subject_id",
           "type": "string",
           "nullable": true,
-          "description": "風土記の判断。シートの予算科目（会計・款・項・目の名前）が1つに当たる、同じ年度の決算書の目。fiscal_expenditure_subject の subject_id。当たらなければ空。"
+          "description": "風土記の判断。シートの予算科目（会計・款・項・目の名前）が1つに当たる、同じ年度の決算書の目。expenditure_subject の subject_id。当たらなければ空。"
         },
         {
           "name": "detail_id",
           "type": "string",
           "nullable": true,
-          "description": "風土記の判断。subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき、その内訳。さらにその子孫に、シートの事業名と同じ名前の事業の内訳が1つだけあれば、そちらの内訳。fiscal_expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。"
+          "description": "風土記の判断。subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき、その内訳。さらにその子孫に、シートの事業名と同じ名前の事業の内訳が1つだけあれば、そちらの内訳。expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。"
         }
       ]
     },
-    "project_evaluation_indicator": {
+    "evaluation_indicator": {
       "primary_key": "indicator_id",
       "indexes": [
         [
@@ -904,7 +1114,7 @@
           "name": "sheet_id",
           "type": "string",
           "nullable": false,
-          "description": "project_evaluation_sheet の sheet_id。"
+          "description": "evaluation_sheet の sheet_id。"
         },
         {
           "name": "position",
@@ -944,7 +1154,7 @@
         }
       ]
     },
-    "project_evaluation_indicator_value": {
+    "evaluation_indicator_value": {
       "primary_key": "value_id",
       "indexes": [
         [
@@ -962,7 +1172,7 @@
           "name": "indicator_id",
           "type": "string",
           "nullable": false,
-          "description": "project_evaluation_indicator の indicator_id。"
+          "description": "evaluation_indicator の indicator_id。"
         },
         {
           "name": "fiscal_year",
@@ -984,8 +1194,8 @@
         }
       ]
     },
-    "project_evaluation_result": {
-      "primary_key": "origin_id",
+    "budget_proposal": {
+      "primary_key": "budget_proposal_id",
       "indexes": [
         [
           "jurisdiction_code"
@@ -993,10 +1203,10 @@
       ],
       "columns": [
         {
-          "name": "origin_id",
+          "name": "budget_proposal_id",
           "type": "string",
           "nullable": false,
-          "description": "出典。project_origin の origin_id。"
+          "description": "自治体コードと年度から作る ID（sha256）。"
         },
         {
           "name": "jurisdiction_code",
@@ -1008,55 +1218,74 @@
           "name": "fiscal_year",
           "type": "integer",
           "nullable": false,
-          "description": "評価した事業を実施した会計年度（西暦）。"
-        },
-        {
-          "name": "page",
-          "type": "integer",
-          "nullable": true,
-          "description": "合計の行を読んだ出典の PDF の頁。"
-        },
-        {
-          "name": "evaluated_count",
-          "type": "integer",
-          "nullable": false,
-          "description": "評価した事業の数。"
-        },
-        {
-          "name": "grade_a",
-          "type": "integer",
-          "nullable": false,
-          "description": "A 評価の事業の数。"
-        },
-        {
-          "name": "grade_b",
-          "type": "integer",
-          "nullable": false,
-          "description": "B 評価の事業の数。"
-        },
-        {
-          "name": "grade_c",
-          "type": "integer",
-          "nullable": false,
-          "description": "C 評価の事業の数。"
-        },
-        {
-          "name": "grade_d",
-          "type": "integer",
-          "nullable": false,
-          "description": "D 評価の事業の数。"
-        },
-        {
-          "name": "sheets_origin_id",
-          "type": "string",
-          "nullable": true,
-          "description": "同じ評価の評価シートの出典（project_origin の origin_id）。読んでいなければ空。"
+          "description": "予算の会計年度（西暦）。"
         }
       ]
     },
-    "project_budget_initiative": {
-      "primary_key": "initiative_id",
+    "budget_proposal_origin": {
+      "primary_key": "origin_id",
       "indexes": [
+        [
+          "budget_proposal_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の識別子。PDF の sha256。"
+        },
+        {
+          "name": "budget_proposal_id",
+          "type": "string",
+          "nullable": false,
+          "description": "予算案の根。budget_proposal の budget_proposal_id。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "予算の会計年度（西暦）。"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "nullable": true,
+          "description": "資料の名前。"
+        },
+        {
+          "name": "url",
+          "type": "string",
+          "nullable": false,
+          "description": "資料（PDF）の URL。"
+        },
+        {
+          "name": "landing_url",
+          "type": "string",
+          "nullable": true,
+          "description": "資料を載せた自治体のページの URL。"
+        },
+        {
+          "name": "sha256",
+          "type": "string",
+          "nullable": false,
+          "description": "読んだ PDF の sha256。"
+        }
+      ]
+    },
+    "budget_measure": {
+      "primary_key": "measure_id",
+      "indexes": [
+        [
+          "budget_proposal_id"
+        ],
         [
           "jurisdiction_code",
           "fiscal_year"
@@ -1067,16 +1296,22 @@
       ],
       "columns": [
         {
-          "name": "initiative_id",
+          "name": "measure_id",
           "type": "string",
           "nullable": false,
           "description": "行の ID。origin_id と頁から作る（sha256）。"
         },
         {
+          "name": "budget_proposal_id",
+          "type": "string",
+          "nullable": false,
+          "description": "予算案の根。budget_proposal の budget_proposal_id。"
+        },
+        {
           "name": "origin_id",
           "type": "string",
           "nullable": false,
-          "description": "出典。project_origin の origin_id。"
+          "description": "出典。budget_proposal_origin の origin_id。"
         },
         {
           "name": "jurisdiction_code",
@@ -1130,7 +1365,7 @@
           "name": "detail_id",
           "type": "string",
           "nullable": true,
-          "description": "風土記の判断。施策を紐付けた、同じ年度の当初予算書の内訳（fiscal_expenditure_detail の detail_id）。紐付かなければ空。"
+          "description": "風土記の判断。施策を紐付けた、同じ年度の当初予算書の内訳（expenditure_detail の detail_id）。紐付かなければ空。"
         },
         {
           "name": "link_method",

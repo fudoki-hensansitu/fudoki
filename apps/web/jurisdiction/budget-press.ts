@@ -3,7 +3,7 @@
 // 紐付けは名前と額で直接当たるもの（via: name）を先に決め、残りは単語の重なりで出した候補12件から TypeSafe の Jev に選ばせ、確信度 0.6 以上のもの（via: jev）だけを採った。
 // 紐付かないものは link を null、cofog を空にして「その他」に入れる。手順は .agents/skills/pipeline/references/link-to-budget-detail.md
 export interface PressLink {
-  /** 予算書の内訳（fiscal_expenditure_detail）の id */
+  /** 予算書の内訳（expenditure_detail）の id */
   detailId: string
   name: string
   kan: string
