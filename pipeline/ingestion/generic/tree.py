@@ -102,6 +102,7 @@ class Item:
     decided: bool = False  # role chosen by a judgment, not by the geometric rules
     hint: str | None = None  # the kind of the note whose parts this item prints (`note_breakdown`)
     title_depth: int = 1  # the depth of a title (level -1): 1 for a 款, 2 for a 項 (`Logical.level_titles`)
+    unnumbered_shift: int = 0  # levels an unnumbered line sits below its indent (layout setting `unnumbered_shift`)
     kinds: list[tuple[list[Glyph], list[Glyph], str]] = field(default_factory=list)  # (label, amount run, heading) of kind lines
 
     @property
@@ -230,7 +231,7 @@ PAREN_TAIL = re.compile(r'(?:[(（][^()（）]*[)）])+$')
 # A number printed against a counter word (`110番`, `3歳児`, `3階`, `2025年`) is a count in a name.
 # An item number glued to a year it is followed by (`42025年…`: 4 and 2025年).
 YEAR_LED = re.compile(r'^([0-9]{1,2})(?:19|20)[0-9]{2}年')
-COUNTED = re.compile(r'^[0-9０-９]+(?:番(?!号)|歳|階|年|か月|ヶ月|箇所|世帯|ミリ|キロ|メートル|インチ)')
+COUNTED = re.compile(r'^[0-9０-９]+(?:番(?!号)|歳|階|年|か月|ヶ月|箇所|世帯|ミリ|キロ|メートル|インチ|時間)')
 GROUPED = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+')
 YEN_AMOUNT = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+円')
 # An amount printed against text spilling in from the next band (`44,406,439,217明許`).
@@ -1704,6 +1705,11 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
                 item.role = 'note'
             else:
                 item.level = marks[mark] - 1
+        elif settings.get('unnumbered_shift') and item.role == 'node' and item.code is None and not note and item.amounts:
+            # The axis prints its deepest levels with no number, the first of them starting where the numbered
+            # names above start (利島: `１８委託料` / `業務委託料`): an unnumbered line is one level (the declared
+            # shift) deeper than its indent alone says.
+            item.unnumbered_shift = settings['unnumbered_shift']
         previous = result[-1] if result else None
         if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
                 and normalize(previous.name).startswith(('(', '（')) and not re.search(r'[)）]', normalize(previous.name))
@@ -2296,6 +2302,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                              prepared[mode])
                 if item.level is not None:
                     depth = item.level + 1  # the configured mark names a breakdown level
+                elif item.unnumbered_shift:
+                    depth = 1 + (min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 0) + item.unnumbered_shift
                 axis = item.group.axis
                 if id(item) in closing_headings:
                     open_headings[axis] = (depth, item.lines[0][0].x0)  # its parts follow one level down
