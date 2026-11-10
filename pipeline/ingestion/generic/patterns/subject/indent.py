@@ -1,6 +1,6 @@
 from collections import Counter, defaultdict
 import re
-from ingestion.generic.layout import SUBJECT_LEVELS
+from ingestion.generic.layout import SUBJECT_LEVELS, normalize
 from ingestion.generic.tree import subject_header
 
 
@@ -62,7 +62,10 @@ def align(logical, group, kept, alignment):
     # Join at the name's position before learning subject levels from the code's start.
     for item in kept:
         # The code leads the item: a name set a few points above its code's line (OCR) is not the start.
-        item.indent = min(g.x0 for g in item.glyphs) if logical.ocr else item.glyphs[0].x0
+        # A code printed between the two lines of its name (`中長期在留者` / `5` / `事務費`, 131211) starts the item.
+        coded = next((line[0] for line in item.lines if line and item.code is not None
+                      and normalize(line[0].text).startswith(item.code)), None)
+        item.indent = min(g.x0 for g in item.glyphs) if logical.ocr else (coded or item.glyphs[0]).x0
         band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
         narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
         if codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', item.glyphs[0].text):
@@ -120,3 +123,18 @@ def learn_levels(all_items):
                 for item in found[id(group)]:
                     item.level = min(range(len(centres)), key=lambda i: abs(centres[i] - edge(item))) if centres else 0
                     item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
+    # A 項・目 printed without its code (one the year drops, `傷病手当金 0 50 △50`, 131211) starts its name where the
+    # names of its level start, not where their codes do: its level is the one whose names start nearest.
+    names: dict[int, list[float]] = defaultdict(list)
+    for item in coded_:
+        line = next((line for line in getattr(item, 'lines', ()) if line and normalize(line[0].text) == item.code), None)
+        if line is not None and len(line) > 1:
+            names[item.level].append(line[1].x0 - (edge(item) - item.indent))
+    starts = {level: sorted(xs)[len(xs) // 2] for level, xs in names.items() if len(xs) >= 3}
+    # Only where each level's names start a step right of the level above (not in one name column for all, 131229).
+    ordered = [starts.get(level) for level in range(len(centres))]
+    if len(centres) > 1 and None not in ordered and all(b - a > 3 for a, b in zip(ordered, ordered[1:])):
+        for item in nodes_:
+            if item.code is None:
+                item.level = min(starts, key=lambda level: abs(starts[level] - edge(item)))
+                item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None

@@ -2,7 +2,7 @@ from pathlib import Path
 import re
 from ingestion.generic import mixed
 from ingestion.generic.layout import normalize
-from ingestion.generic.observe import Page, Rule, observe
+from ingestion.generic.observe import Page, Rule, cropped, observe
 from ingestion.generic.repair import repair
 from ingestion.generic.units import check as check_units
 from ingestion.generic.workflow import build_reading, read_layout
@@ -64,6 +64,8 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
     numbers, read_ocr = ocr or ((), None)
     character_map = (text_layer or {}).get('character_map')
     printed = observe(pdf, [number for number in pages if number not in numbers], cache, character_map)
+    if (text_layer or {}).get('crop_box'):
+        printed = cropped(pdf, printed)
     if (text_layer or {}).get('image_rules'):
         printed = [image_rules(pdf, page, staircase) if not page.rules else page for page in printed]
     unrepaired = [Page(page.number, page.width, page.height, list(page.words), page.rules) for page in printed]

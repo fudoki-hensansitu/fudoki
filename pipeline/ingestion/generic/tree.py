@@ -34,6 +34,9 @@ from ingestion.generic.layout import (SIGNS, SUBJECT_LEVELS, UNIT_CELL, Band, Gl
 # A leading item number; the separator after it (`1.議会費`, `1．`) is not part of the name.
 CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]|$))?(?=\D|$)')
 UNIT_NOTATION = re.compile(r'[(（]単位[:：][^()（）]*[)）]')
+# An item number set in full-width digits with a full-width stop (`９．納付案内センター事業経費`, 131164): a number
+# wherever its line starts (the explanation of a 目 printed above the items starts where they do and outvotes them).
+FULL_WIDTH_NUMBERED = re.compile(r'[０-９]{1,2}．(?![0-9０-９])')
 BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 # A reading in katakana printed in brackets right after a number (`73（ナナサン）`): the number is part of a name.
 READING = re.compile(r'[(（][ァ-ヶー]+[)）]')
@@ -46,6 +49,13 @@ TRANSFER_TAIL = re.compile(r'^[へか]ら?(?:流用|充用)')
 ENDED_TRANSFER = re.compile(r'(?:流用|充用)$')
 # A kind word printed above an amount inside an amount column's cell (a stacked carry-over column).
 SUPPLEMENT_ROUND = re.compile(r'第[0-9０-９]+次補正')  # the round of a supplementary budget printed over its amount
+# The history of the year's supplementary budgets printed under an item's amount in its column (131113): `補正経過`, then
+# each round in brackets with its amount in brackets, then `計` and the amount after the rounds in brackets.
+REVISION_HISTORY = '補正経過'
+REVISION_LABEL = re.compile(r'[(（]?第[0-9０-９]+次補正[)）]?')
+PAREN_AMOUNT = re.compile(r'[(（][△▲\-]?[0-9][0-9,]*[)）]')
+line_middle = lambda line: sum((g.y0 + g.y1) / 2 for g in line) / len(line)
+money_page = lambda line: line[0].page
 STACKED_KIND = re.compile(r'(翌年度)?(繰越明許費?|事故繰越し?|継続費逓次繰越|不用額)|' + SUPPLEMENT_ROUND.pattern)
 HEADING_INDENT = 6  # pt: the least a heading's lines are indented for the level learning to keep their level (3pt clusters, 6pt apart)
 # A total row ends in 合計・総計 (`歳出合計`); a name that contains the letters (`長期総合計画に要する経費`) is not one.
@@ -520,7 +530,8 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
                 and label[1].x0 - label[0].x1 >= 2):
             # `8` `2歳児歯科健診事業`, `0200` `16ミリ映写機検定委託料`: the number is a word of its own, and the name begins with a count.
             code, name, script = normalize(label[0].text), normalize(text(label[1:])), True
-        if code is not None and margins is not None and not margins & set(_margins(label)):
+        if (code is not None and margins is not None and not margins & set(_margins(label))
+                and not FULL_WIDTH_NUMBERED.match(raw_text)):
             code, name = None, line_text  # a name that begins with a digit
         if code is None and label and margins is not None and margins & set(_margins(label)):
             year = YEAR_LED.match(line_text)
@@ -639,11 +650,13 @@ def line_limits(logicals: list[Logical]) -> dict[str, float]:
 
 def items(group: Group, header: str, margins: set[int] | None = None,
           roles: dict[int, str] | None = None, limit: float | None = None, ocr: bool = False,
-          amount_brackets: bool = False, settings: dict | None = None, joined_codes: bool = False) -> list[Item]:
+          amount_brackets: bool = False, settings: dict | None = None, joined_codes: bool = False,
+          column_amounts: list[Glyph] | None = None) -> list[Item]:
     """Lines of a label group into items; amounts printed inside the group stay on their item.
 
     `roles` (variant B) replaces the geometric decisions for codeless lines. `joined_codes`: a word of the text layer
     that joins a code and the first character of its name (`03戸`) is measured as an OCR word is (`_measure`).
+    `column_amounts`: the amounts printed in the axis's own amount column, beside the names.
     """
     entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')))
     settings = settings or {}
@@ -674,6 +687,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                 code = number
         if label and code is not None and code.isdigit():
             last_at[slot] = int(code)
+    # A line with an amount of its own in the axis's amount column, under a name that has one too, is the next
+    # item (`3 職員手当等 86,812` / `扶養手当 2,178` set at the name's start, 131113): a wrapped name has one amount.
+    beside = lambda line: bool(column_amounts) and bool(line) and any(
+        a.page == line[0].page and a.y0 < (line[0].y0 + line[0].y1) / 2 < a.y1 for a in column_amounts)
     result: list[Item] = []
     # A rule-bounded cell with exactly one code is one item.
     band_of = lambda g: next(b for b in group.bands if b.x0 <= (g.x0 + g.x1) / 2 <= b.x1 or b is group.bands[-1])
@@ -722,7 +739,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
 
     single = {i: tuple(ix) for ix in cells.values()
               if sum(entries[i][2] is not None for i in ix) == 1 and len(ix) > 1
-              and sum(bool(entries[i][1]) for i in ix) <= 1 and wraps(0, ix) for i in ix}
+              and sum(bool(entries[i][1]) for i in ix) <= 1 and sum(beside(entries[i][0]) for i in ix) <= 1
+              and wraps(0, ix) for i in ix}
     repeated_headings: set[int] = set()
     if settings.get('heading_repeated_over_code'):
         # A page opens with the last line of the heading above (`医療費` over `02市単独事業`, 132276): it is no part of the number's name.
@@ -837,6 +855,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         # half a character left of a one-digit number (a half-width digit is half the line height).
         left_slack = max(3, (label[0].y1 - label[0].y0) / 2 + .5) if label and remainder else 3
         wrapped = (previous is not None and code is None and label and not previous.amounts and not marked
+                   and not (beside(label) and any(beside(line) for line in previous.lines))
                    and label[0].x0 >= previous.lines[0][0].x0 - left_slack
                    and not (headings and label[0].x0 > _name_start(previous) + HEADING_INDENT)
                    and (not money or bracketed
@@ -1416,6 +1435,10 @@ SHAPES = (('bullet', re.compile(r'^[○〇●◎□■◇◆]')), ('paren', re.c
 def shape_of(item: Item) -> str | None:
     raw = unicodedata.normalize('NFKC', text(item.lines[0])) if item.lines else ''
     raw = raw.strip()
+    line = item.lines[0] if item.lines else []
+    if (len(line) > 1 and re.fullmatch(r'[ア-ン]', normalize(line[0].text))
+            and line[1].x0 - line[0].x1 >= (line[0].y1 - line[0].y0) / 2):
+        return 'kana'  # a kana set apart from a name that begins with katakana (`ス ソフトウェア…`, 131211)
     for name, pattern in SHAPES:
         if pattern.match(raw if name not in ('circled',) else text(item.lines[0]).strip()):
             # A name that begins with a digit (`３階ホール…`, `30歳・35歳健康診査委託料`) is no number:
@@ -1845,9 +1868,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if judge is not None and not group.subject:
                 roles = judged_roles(judge, group, margins.get(group.axis))
             if not group.subject:
+                column = [w for band in logical.bands if band.kind == 'amount' and band.header[:1] == (group.axis,)
+                          and group.x1 - 1 <= band.x0 for w in band.words if is_amount(w.text)]
                 group_items = items(group, header, margins.get(group.axis), roles, limits.get(group.axis), logical.ocr,
                                     bool(layout and layout.get(group.axis, {}).get('amount_brackets')),
-                                    (layout or {}).get(group.axis))
+                                    (layout or {}).get(group.axis), column_amounts=column)
             elif group.mode == 'indent':
                 # The subject of a text layer (133086 `03戸` / `籍住民基本`, wrapped to `台帳費` at the name's start).
                 group_items = items(group, group.axis, joined_codes=not logical.ocr)
@@ -2133,6 +2158,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                   if i.level == -1), default=0)
     # Per amount column: (item, kind word) of a stacked kind word left at the foot of a page with its amount still to come.
     carried: dict[str, tuple[Item, str | None, list[Glyph]]] = {}
+    histories: dict[str, list] = {}  # per column: a `補正経過` the page ended in, its rounds going on over the page
     # `amounts_next_row`: the last subject item of the page before, still without an amount (its amounts row is the
     # first row of this page), and the items that took an amount.
     waiting_subject: Item | None = None
@@ -2162,7 +2188,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         subject_depth = max((g.levels or len(g.bands) for g in ordered if g.subject), default=3) \
             + (titled if any(title_shift(g) for g in ordered if g.subject) else 0)
         row = None  # (subject item, top, bottom) of the latest subject row
-        opening = True  # no subject with a code has begun on this page yet
+        opening = logical.reprints  # no subject with a code has begun on this page yet
         for _, _, item in events:
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
                     and (row[0].depth < subject_depth or item.code is None) \
@@ -2313,6 +2339,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     remarks.append({'kind': 'kind line', 'target': item, 'heading': heading, 'label': label,
                                     'runs': [run], 'unit': logical.unit})
             present = {'／'.join(band.header) for band in logical.bands if band.kind == 'amount'}
+            revisions: list[list] = []  # [item, top, bottom, page, label line] of each `補正経過` block on the page
             for header_ in [h for h in carried if h not in present]:
                 drop_carried_round(carried.pop(header_))  # the column does not go on on this page
             for band in logical.bands:
@@ -2325,7 +2352,47 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 unpaid = False  # no amount has followed that kind word yet
                 waiting = None  # (heading, y) of a kind word alone on its line in an inline-kind band
                 previous = None  # (item, rule-bounded cell) of the last amount this column gave to an item
+                history = histories.pop('／'.join(band.header), None)  # [item, label lines, a round waiting] of a `補正経過`
+                if history is not None:
+                    revisions.append([history[0], band.body_top, band.body_top, band.words[0].page if band.words else logical.pages[0], history[1][-1] if history[1] else []])
                 for line in lines(_signed_amounts(band.words)):
+                    whole = normalize(text(line))
+                    block = next((b for b in revisions if b[3] == money_page(line) and b[1] - 1 <= line_middle(line) <= b[2] + 1), None)
+                    if whole == REVISION_HISTORY and previous is not None:
+                        # `補正経過` under the item's amount opens the history of the year's supplementary budgets
+                        # (`第１次補正` / `441,563` / `(第６次補正)` / `(2,032,354)` / `計` / `(3,595,408)`, 131113):
+                        # each round's amount and the total after them are notes of the item, never its amounts.
+                        history = [previous[0], [], False]  # the item, its label lines, a round waiting for its amount
+                        revisions.append([previous[0], line_middle(line), line_middle(line), money_page(line), []])
+                        continue
+                    if history is not None and (REVISION_LABEL.fullmatch(whole) or whole.strip('()') == '計'):
+                        history[1].append(line)
+                        history[2] = True
+                        revisions[-1][2] = line_middle(line)
+                        revisions[-1][4] = line
+                        continue
+                    waiting_round = history is not None and history[2]
+                    bare = whole.strip('()')
+                    if (PAREN_AMOUNT.fullmatch(whole) or is_amount(whole)) and (waiting_round or (
+                            history is None and block is not None)):
+                        # The amount of a round, or the total after the rounds (also set against `計` in the comparison
+                        # column, `(△373,227)`): a note labelled with the round's words, of the history's kind otherwise.
+                        target, label = (history[0], history[1][-1]) if history is not None else (block[0], block[4])
+                        run = [Glyph(bare, min(g.x0 for g in line), min(g.y0 for g in line), max(g.x1 for g in line),
+                                     max(g.y1 for g in line), line[0].page, line[0].offset)]
+                        heading = '／'.join(band.header)
+                        word = normalize(text(label)) or REVISION_HISTORY
+                        annotations.append((target, f'{heading}／注記／{word}', run, logical.unit_of(heading)))
+                        remarks.append({'kind': 'annotation', 'target': target, 'heading': None, 'hint': REVISION_HISTORY,
+                                        'label': list(label), 'runs': [run], 'unit': logical.unit_of(heading)})
+                        if history is not None:
+                            revisions[-1][2] = line_middle(line)
+                            history[2] = False  # the round is paid: the next line is a round or `計`
+                            if normalize(text(label)).strip('()') == '計':
+                                history = None  # the total closes the history
+                        continue
+                    if history is not None:
+                        history = None  # the next amount of the column closes the history
                     printed = {}  # the amount of a word that runs on into text, by the word it was cut from
                     cut = [_leading_amount(g) for g in line]
                     printed.update({id(new): old for new, old in zip(cut, line)})
@@ -2441,6 +2508,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     amounts.append(_amount(target.key, header, money, logical.unit_of(header)))
                     owned.add(target.key)
                     previous = (target, _cell(band, y))
+                if history is not None:
+                    histories['／'.join(band.header)] = history  # the history goes on at the top of the next page
                 drop_carried_round(carry)  # no amount line in this column at all
                 if unpaid and previous is not None and stacked[1] == previous[1]:
                     carried['／'.join(band.header)] = (previous[0], stacked[0], stacked_label)

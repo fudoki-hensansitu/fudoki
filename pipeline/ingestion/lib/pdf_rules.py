@@ -39,8 +39,11 @@ class PageRules:
 
 
 def render(pdf: Path, page: int, dpi: int = DPI) -> np.ndarray:
-    """Grayscale render of one physical page as a (height, width) uint8 array."""
-    data = subprocess.check_output(['pdftoppm', '-gray', '-r', str(dpi), '-f', str(page), '-l', str(page),
+    """Grayscale render of one physical page as a (height, width) uint8 array.
+
+    The page as it is shown, inside its CropBox (as Paddle renders it): a scan cropped a few points inside its
+    MediaBox (131113 2024) has its rules where OCR boxes its words."""
+    data = subprocess.check_output(['pdftoppm', '-cropbox', '-gray', '-r', str(dpi), '-f', str(page), '-l', str(page),
                                     str(pdf)])
     magic, size, depth, pixels = data.split(b'\n', 3)
     if magic != b'P5' or depth != b'255':

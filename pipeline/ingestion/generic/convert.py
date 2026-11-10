@@ -58,6 +58,10 @@ BRACKET_CODE = re.compile(r'[【\[][0-9０-９]+[】\]]')
 # The part number a work's name ends with (`舗装補修工事(7-1)`): digits of a name, a hyphen between them.
 NAME_PART_NUMBER = re.compile(r'[^0-9０-９(（][(（][0-9０-９]{1,2}[-－][0-9０-９]{1,2}[)）]')
 RATIO_HEADER = re.compile(r'割合|比率|構成比|率$')
+# A reckoning in the words of an explanation, its amount set with its own unit (`保険者負担分医療費 34,905,701千円`,
+# `預託金額 1,600,000 千円`) or with the letter it is named by in the calculation (`年間費用額 40,830,874 Ａ`, 131229).
+UNIT_AMOUNT = re.compile(r'[△▲]?[0-9][0-9,]*千円')
+RECKONING_TAIL = re.compile(r'千円|[A-ZＡ-Ｚ]')
 ZERO_MARK = re.compile(r'^0+$')
 
 
@@ -170,8 +174,10 @@ def split_notes(built) -> tuple[list[dict], list[dict], list[dict], list[dict], 
 
 
 def amount_columns(logicals) -> list[dict]:
-    """The amount bands in the page's own x (a spread's right page is moved back)."""
-    return [{'header': '／'.join(band.header), 'x_range': [band.x0 - band.offset, band.x1 - band.offset]}
+    """The amount bands in the page's own x (a spread's right page is moved back), with the page they are on, and
+    the heights of the blocks they read when they read some blocks of the page only."""
+    return [{'header': '／'.join(band.header), 'x_range': [band.x0 - band.offset, band.x1 - band.offset], 'page': band.page,
+             **({'y_ranges': [list(extent) for extent in band.extents]} if band.extents else {})}
             for logical in logicals for band in logical.bands if band.kind == 'amount' and band.x0 - band.offset < band.x1 - band.offset]
 
 
@@ -185,6 +191,7 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     - a number of zeros printed before a name (`00 一般会計繰出金`): the bullet of a remark drawn as digits, which
       the builder takes off the name (item numbers start from 1): 本文;
     - the 合計 row (歳出合計) and a 計 row (a subtotal): 総括;
+    - an amount set with its own unit or a calculation's letter in an explanation (`34,905,701千円`, `40,830,874 Ａ`): 本文;
     - a frame that is no expenditure detail (no 款・項・目 column, no 予算現額・支出済額… column): 総括. On a spread its label is printed on the other physical page than its
       amounts, so the coverage check's own same-baseline rule cannot see the label.
     """
@@ -192,7 +199,10 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
                                reason='注記の文言に印字された流用元・流用先の科目コード。金額は注記金額として取り込み済み。')
     for logical in logicals:
         for band in logical.bands:
-            if band.excluded:  # a column the layout file declares not taken in, with its kind and reason
+            if band.excluded and band.extents:  # the column of some blocks of the page only: their boxes
+                regions += [{**band.excluded, 'page': band.page, 'bbox': [band.x0 - band.offset, top, band.x1 - band.offset, bottom]}
+                            for top, bottom in band.extents if top < bottom]
+            elif band.excluded:  # a column the layout file declares not taken in, with its kind and reason
                 regions.append({**band.excluded, 'pages': [[band.page, band.page]],
                                 'x_range': [band.x0 - band.offset, band.x1 - band.offset]})
             if band.kind == 'label' and RATIO_HEADER.search(''.join(band.header)) and band.x0 - band.offset < band.x1 - band.offset:
@@ -215,6 +225,8 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     regions += coverage_regions(formula_words(observed), kind='本文',
                                 reason='単価×数量の算式（560,000円×1人×11月）の数字。計算の式で、金額ではない。')
     regions += coverage_regions(closing, kind='本文', reason='括弧書きの説明の中の金額（（令和7年5月末基金現在額 …円））。括弧を閉じるだけで開かない語で、項目の金額ではない。')
+    regions += coverage_regions(reckoning_words(observed), kind='本文',
+                                reason='説明の文中の積算の金額（保険者負担分医療費 34,905,701千円、年間費用額 40,830,874 Ａ、月 309,100円）。単位や算式の記号を添えて書いた計算の数字や月額で、項目の金額ではない。')
     regions += coverage_regions([(g.page, g.original, g.text) for g in built.repeated_codes], kind='本文',
                                 reason='継続頁に繰り返し印字された科目の番号。直前の同じ科目（番号・名称が一致）の金額と番号であり、新しい金額ではない。')
     regions += coverage_regions([(g.page, g.original, g.text) for g in built.repeated_amounts], kind='親の繰り返し',
@@ -261,6 +273,31 @@ def formula_words(observed) -> list[tuple]:
             spaced = ((LONE_PRICE.fullmatch(joined) and SPACED_COUNT.match(after))
                       or (AMOUNT_TERM.fullmatch(joined) and after.startswith('×')))
             if lone or spaced or ('×' in joined and FORMULA.fullmatch(joined)):
+                found += [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for w in run]
+    return found
+
+
+def reckoning_words(observed) -> list[tuple]:
+    """The digits of an amount a line sets with its own unit or a letter after it (`34,905,701千円`, `1,600,000 千円`,
+    `40,830,874 Ａ`), and a monthly rate (`委員長 月 309,100円 1人`): a reckoning in a table whose amounts print no
+    unit, never an amount of an item."""
+    found = []
+    for page in observed:
+        runs: list[list] = []
+        for word in sorted(page.words, key=lambda w: (round(w.y0), w.x0)):
+            if runs and abs(runs[-1][-1].y0 - word.y0) <= 1.5 and 0 <= word.x0 - runs[-1][-1].x1 <= 2.5:
+                runs[-1].append(word)
+            else:
+                runs.append([word])
+        texts = [normalize(''.join(w.text for w in run)) for run in runs]
+        for index, (run, joined) in enumerate(zip(runs, texts)):
+            following = next((text for other, text in zip(runs[index + 1:index + 2], texts[index + 1:index + 2])
+                              if abs(other[0].y0 - run[0].y0) <= 1.5
+                              and other[0].x0 - run[-1].x1 <= 1.5 * (run[-1].y1 - run[-1].y0)), '')
+            before = next((text for other, text in zip(runs[index - 1:index], texts[index - 1:index])
+                           if index and abs(other[0].y0 - run[0].y0) <= 1.5), '')
+            if (UNIT_AMOUNT.fullmatch(joined) or (is_amount(joined) and RECKONING_TAIL.fullmatch(following))
+                    or (LONE_PRICE.fullmatch(joined) and before in ('月', '月額'))):
                 found += [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for w in run]
     return found
 

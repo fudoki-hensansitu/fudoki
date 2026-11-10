@@ -2,7 +2,8 @@
   "layout": {
     "ruled": "ingestion.generic.patterns.layout.ruled",
     "open_edge": "ingestion.generic.patterns.layout.open_edge",
-    "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles"
+    "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles",
+    "stacked_blocks": "ingestion.generic.patterns.layout.stacked_blocks"
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",

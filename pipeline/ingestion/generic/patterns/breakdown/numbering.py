@@ -5,11 +5,14 @@ def number_span(glyph: Glyph) -> tuple[float, float, int]:
     """Where a leading number starts and ends, and its digit count. The end comes from the
     digits' own widths (a half-width digit is half the line height, a full-width one the
     height), not from the word's average character width, which a name joined to the number
-    (`13使用料…`) widens. An opening bracket (`(1)`) is not part of the number: it starts where the digits do."""
+    (`13使用料…`) widens. An opening bracket (`(1)`) is not part of the number: it starts where the digits do.
+    A half-width opening bracket closed by a full-width one (`(3）`) is a full-width bracket OCR misread (131164)."""
     height = glyph.y1 - glyph.y0
     text = glyph.text
     lead = 1 if text[:1] in ('(', '（') else 0
-    start = glyph.x0 + (height / 2 if lead and text[0].isascii() else height if lead else 0)
+    closing = text[1:].lstrip('0123456789０１２３４５６７８９')[:1]
+    half = lead and text[0].isascii() and closing != '）'
+    start = glyph.x0 + (height / 2 if half else height if lead else 0)
     body = text[lead:]
     digits = len(body) - len(body.lstrip('0123456789０１２３４５６７８９'))
     full = sum(1 for c in body[:digits] if not c.isascii())
