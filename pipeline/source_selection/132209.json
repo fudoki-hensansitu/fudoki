@@ -3666,5 +3666,121 @@
       },
       "reason": "令和5年度に実施した事業を評価した東大和市のリアルタイム事務事業評価調書16冊。調書に「C）R5年度の実績」「D）分析（令和5年度の実績を踏まえて）」「R5予算額及び決算額」とあり、最新の実績は令和5年度。事業目的・概要、過去の成果、事業コスト、課題、主管課の意向、評価会議の意見、実績と要因、予算反映状況を載せる。文字として読める。施策評価シート（施策単位）は事業単位の細かい調書を代表にしたため含めない。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132209",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度東大和市予算概要",
+          "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/zaisei/1004304/1008904/1009285.html",
+          "inspected_at": "2026-11-10T07:18:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/009/285/20240214-1009285.pdf",
+              "sha256": "84a821ec95fd91dd162c0f79db5b30e8993d5248a748463a51175e6ede8f7ec2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132209/2024/press-initial.pdf",
+            "sha256": "84a821ec95fd91dd162c0f79db5b30e8993d5248a748463a51175e6ede8f7ec2",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/009/285/20240214-1009285.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:18:20.293Z"
+      },
+      "reason": "予算の頁「令和6年度の予算概要」（https://www.city.higashiyamato.lg.jp/shisei/zaisei/1004304/1008904/1009285.html）に載る「令和6年度東大和市予算概要」（政策経営部財政課、表紙に令和6年2月9日、63頁、文字PDF）。予算編成方針、「重要施策と優先的に予算を配分した事業」（物理7頁〜）、財政規模・編成過程・歳入歳出に続き、「一般会計予算における主な事業」（物理23〜45頁）で事業ごとに番号・見出し（【新規】の印）・課名・事業名・予算額（千円）・財源内訳（国・都支出金、市債、その他、一般財源）・説明を載せる。後半は繰出金・債務負担行為・市債・基金と特別会計・下水道事業会計。市のプレスリリースの頁（https://www.city.higashiyamato.lg.jp/shisei/koho/1010115/index.html）に予算案の発表は無い。確認日 2026-11-10T07:18:15+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132209",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度東大和市予算概要",
+          "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/zaisei/1004304/1010374/1010521.html",
+          "inspected_at": "2026-11-10T07:18:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/521/1010521-01.pdf",
+              "sha256": "892b888c201ab2543ae5d185706f5163b0947cd3273cabc7715ab2550a55ed1d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132209/2025/press-initial.pdf",
+            "sha256": "892b888c201ab2543ae5d185706f5163b0947cd3273cabc7715ab2550a55ed1d",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/010/521/1010521-01.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:18:24.857Z"
+      },
+      "reason": "予算の頁「令和7年度の予算概要」（https://www.city.higashiyamato.lg.jp/shisei/zaisei/1004304/1010374/1010521.html）に載る「令和7年度東大和市予算概要」（政策経営部財政課、表紙に令和7年2月7日、53頁、文字PDF）。予算編成方針、「重要施策と優先的に予算を配分した事業」（物理7頁〜）、財政規模・編成過程・歳入歳出に続き、「一般会計予算における主な事業」（物理22〜35頁）で事業ごとに番号・見出し（【新規】の印）・課名・事業名・予算額（千円）・財源内訳（国・都支出金、市債、その他、一般財源）・説明を載せる。後半は繰出金・債務負担行為・市債・基金と特別会計・下水道事業会計。同じ頁の「令和7年度予算概要説明資料」（1010521-02.pdf、37頁）は予算編成方針と歳入歳出のポイントを紹介するスライドの要約なので選ばない。市のプレスリリースの頁（https://www.city.higashiyamato.lg.jp/shisei/koho/1010115/index.html）に予算案の発表は無い。確認日 2026-11-10T07:18:15+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132209",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度東大和市予算概要",
+          "landing_url": "https://www.city.higashiyamato.lg.jp/shisei/zaisei/1004304/1011420/1011885.html",
+          "inspected_at": "2026-11-10T07:18:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/011/885/20260212.pdf",
+              "sha256": "f3c1b905a0116b1168814871c4a5e644bfc52ad946c2204991cb063604d557b7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132209/2026/press-initial.pdf",
+            "sha256": "f3c1b905a0116b1168814871c4a5e644bfc52ad946c2204991cb063604d557b7",
+            "final_url": "https://www.city.higashiyamato.lg.jp/_res/projects/default_project/_page_/001/011/885/20260212.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:18:28.460Z"
+      },
+      "reason": "予算の頁「令和8年度の予算概要」（https://www.city.higashiyamato.lg.jp/shisei/zaisei/1004304/1011420/1011885.html）に載る「令和8年度東大和市予算概要」（政策経営部財政課、表紙に令和8年2月6日、51頁、文字PDF）。予算編成方針、「重要施策と優先的に予算を配分した事業」（物理7頁〜）、財政規模・編成過程・歳入歳出に続き、「一般会計予算における主な事業」（物理22〜33頁）で事業ごとに番号・見出し（【新規】の印）・課名・事業名・予算額（千円）・財源内訳（国・都支出金、市債、その他、一般財源）・説明を載せる。後半は繰出金・債務負担行為・市債・基金と特別会計・下水道事業会計。同じ頁の「令和8年度予算概要説明資料」（202602133.pdf）は予算概要を紹介するスライドの要約なので選ばない。市のプレスリリースの頁（https://www.city.higashiyamato.lg.jp/shisei/koho/1010115/index.html）に予算案の発表は無い。確認日 2026-11-10T07:18:15+00:00。"
+    }
   ]
 }

@@ -2905,5 +2905,121 @@
       "archive": null,
       "reason": "令和5年度に当たる実施計画の成果シート（振り返り）は無い。第5次総合計画実施計画（各年度）の頁（https://www.city.higashimurayama.tokyo.jp/shisei/keikaku/sogo/sougoukeikaku5/dai5ji_jisshi.html）を描画して見ると、成果シート（振り返り）の掲載は令和6年度分（2024年度）と令和7年度分（2025年度）のみで、令和5年度は実施計画（計画）のみ、令和4年度は「実施計画事業決算額及び取り組み成果」（index_R4_kessann.pdf、2022年度）。主要な施策の成果の概要（r5seikanogaiyou_2.pdf）は事務報告に近く目標・評価・課題・方向の記述が無い。令和5年度行財政改革の取組成果（r5gyoukakuseika.pdf）は行財政改革の取組の検証で事業全体の評価ではない。DuckDuckGo の site 検索（令和5年度 実施計画成果シート・事業別主要な施策評価シート・振り返り）でも該当なし。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132136",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度予算概要（東村山市、令和6年2月7日）",
+          "landing_url": "https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/zaisei20231003.html",
+          "inspected_at": "2026-11-10T07:07:02+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/files/6yosangaiyou.pdf",
+              "sha256": "6f21d72b8d52df082aabe0c3888ddb0cf8c35ee8c31dee8dacb4485519bfb2cc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132136/2024/press-initial.pdf",
+            "sha256": "6f21d72b8d52df082aabe0c3888ddb0cf8c35ee8c31dee8dacb4485519bfb2cc",
+            "final_url": "https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/files/6yosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:07:11.415Z"
+      },
+      "reason": "予算の頁「令和6年度予算」（https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/zaisei20231003.html）に載る「予算概要」（表紙に令和6年2月7日、31頁、文字PDF）。令和6年2月7日の当初予算記者会見（プレスリリースの頁 https://www.city.higashimurayama.tokyo.jp/shisei/koho/press-release/index.html の「令和6年度当初予算記者会見」は予告（240206press.pdf、内容は予算案概要・主要事業・実施計画）だけで、当日配布資料は載っていない）と同じ日付。前半は編成方針・各会計の予算規模・歳入歳出、物理16頁からの「令和6年度予算事業のポイント」に、施策の柱ごとに事業名・予算額・所管課・事業の説明を載せ、新規事業に「新」の印を付ける。確認日 2026-11-10T07:07:02+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132136",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度予算概要（東村山市、令和7年2月5日）",
+          "landing_url": "https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/zaisei20241003.html",
+          "inspected_at": "2026-11-10T07:07:02+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/files/7yosangaiyou.pdf",
+              "sha256": "39e4abf1835efb89b2bf4a4008eb0bb3e87f5ffce8ec27fbc4bf56c496557998",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132136/2025/press-initial.pdf",
+            "sha256": "39e4abf1835efb89b2bf4a4008eb0bb3e87f5ffce8ec27fbc4bf56c496557998",
+            "final_url": "https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/files/7yosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:07:13.627Z"
+      },
+      "reason": "予算の頁「令和7年度予算」（https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/zaisei20241003.html）に載る「予算概要」（表紙に令和7年2月5日、37頁、文字PDF）。令和7年2月5日の当初予算記者会見（プレスリリースの頁 https://www.city.higashimurayama.tokyo.jp/shisei/koho/press-release/index.html の「令和7年度当初予算記者会見」は予告（press250129.pdf、内容は予算案概要・主要事業・実施計画）だけで、当日配布資料は載っていない）と同じ日付。前半は編成方針・各会計の予算規模・歳入歳出、物理16頁からの「令和7年度予算事業のポイント」に、施策の柱ごとに事業名・予算額・所管課・事業の説明を載せ、新規事業に「新」の印を付ける。確認日 2026-11-10T07:07:02+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132136",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度予算概要（東村山市）",
+          "landing_url": "https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/zaisei20251007.html",
+          "inspected_at": "2026-11-10T07:07:02+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/files/R8_yosangaiyou_v2.pdf",
+              "sha256": "1668b9109c400dfbf1ddcc584ce4e7fdaf20a1237c30199dfbf3147d772f362b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132136/2026/press-initial.pdf",
+            "sha256": "1668b9109c400dfbf1ddcc584ce4e7fdaf20a1237c30199dfbf3147d772f362b",
+            "final_url": "https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/files/R8_yosangaiyou_v2.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:07:16.802Z"
+      },
+      "reason": "予算の頁「令和8年度予算」（https://www.city.higashimurayama.tokyo.jp/shisei/gyozaisei/gyozaisei/yosan/zaisei20251007.html）に載る「予算概要」（48頁、文字PDF）。前半は編成方針・各会計の予算規模・歳入歳出、物理16頁からの「令和8年度予算事業の概要」に、第5次総合計画後期基本計画の重点化プロジェクト・施策ごとに事業名・事業費・説明を載せ、新規事業に「新」の印を付ける。プレスリリースの頁（https://www.city.higashimurayama.tokyo.jp/shisei/koho/press-release/index.html）の令和8年2月10日「令和8年度当初予算プレス発表」の当日配布資料（20260210press01.pdf、50頁）は総合計画の説明と同じ事業紹介のスライドで、事業紹介の部分は予算概要に収められているため、予算規模・歳入歳出まで含む予算概要を選ぶ。確認日 2026-11-10T07:07:02+00:00。"
+    }
   ]
 }

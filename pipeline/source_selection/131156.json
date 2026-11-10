@@ -3566,5 +3566,121 @@
       },
       "reason": "令和5年度に実施した事務事業を令和6年度に評価した事務事業評価シート（施策1〜29ごとの29冊）。事務事業ごとに事業の目的・内容、活動指標・成果指標の計画と実績、事業費・執行率、主な取組と取組成果、課題の分析と方向性・改善策を載せる。令和5年度実績の評価で、文字として読める。施策を構成しない事務事業は含めない。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131156",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年1月31日区長記者会見資料（令和6年度当初予算（案））",
+          "landing_url": "https://www.city.suginami.tokyo.jp/s012/482.html",
+          "inspected_at": "2026-11-10T07:03:09+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/482/060131kishakaiken-shiryo.pdf",
+              "sha256": "758c27bb95cfa43eacec8384ed31e70b7bf391feabd016fdad3d12d732a60535",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131156/2024/press-initial.pdf",
+            "sha256": "758c27bb95cfa43eacec8384ed31e70b7bf391feabd016fdad3d12d732a60535",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/482/060131kishakaiken-shiryo.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:03:14.702Z"
+      },
+      "reason": "区長記者会見の頁「令和6年1月31日 区長記者会見（令和6年度当初予算（案））」（https://www.city.suginami.tokyo.jp/s012/482.html）に載る会見資料「令和6年度 当初予算(案)の事業概要等」（26頁、文字PDF）。1頁1枚のスライドで、予算規模（各会計の当初予算規模）に続き、防災・減災、参加型予算、雨水流出抑制など施策ごとに所管課・事業名（■）・予算額（万円単位）・説明を載せる。新規・拡充の印は無い。この会見では別冊の配布資料は掲載されておらず、同じ頁のもう1点は議事録で選ばない。予算の頁の「主要事業の概要」（区政経営計画書の分冊）は議決後の資料で、ここには含めない。確認日 2026-11-10T07:03:09+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131156",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年1月31日区長記者会見机上配布資料（令和7年度 基本構想が掲げる分野別の主な取組）",
+          "landing_url": "https://www.city.suginami.tokyo.jp/s012/18086.html",
+          "inspected_at": "2026-11-10T07:03:09+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/18086/20250131_handouts.pdf",
+              "sha256": "3d57ee643a098f9f36d67bdab9aaa6c2f7233c902d2e286689fd2fb79f594fa6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131156/2025/press-initial.pdf",
+            "sha256": "3d57ee643a098f9f36d67bdab9aaa6c2f7233c902d2e286689fd2fb79f594fa6",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/18086/20250131_handouts.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:03:17.155Z"
+      },
+      "reason": "区長記者会見の頁「令和7年1月31日 区長記者会見〔令和7年度当初予算（案）〕」（https://www.city.suginami.tokyo.jp/s012/18086.html）に載る机上配布資料「令和7年度 基本構想が掲げる分野別の主な取組」（14頁、文字PDF）。基本構想の分野（防災・防犯など）ごとに取組名・予算額（億・万・千円）・所管課・説明を文章で載せ、一部に新規・拡充の語がある。同じ頁の会見資料（20250131_press.pdf、21頁）は重点の取組を抜き出したスライドで、配布資料のほうが取組を網羅するため冊子としてこちらを選ぶ。議事録も選ばない。予算の頁の「主要事業の概要」（区政経営計画書の分冊）は議決後の資料で、ここには含めない。確認日 2026-11-10T07:03:09+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131156",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年2月2日区長記者会見机上配布資料（別冊 基本構想に掲げる8つの分野における主な取組）",
+          "landing_url": "https://www.city.suginami.tokyo.jp/s012/24678.html",
+          "inspected_at": "2026-11-10T07:03:09+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.suginami.tokyo.jp/documents/24678/20260202basicconcept.pdf",
+              "sha256": "6340bc2304a29d5bd57c91c8206f4e3f18818538fab1d57b3233564032158c76",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131156/2026/press-initial.pdf",
+            "sha256": "6340bc2304a29d5bd57c91c8206f4e3f18818538fab1d57b3233564032158c76",
+            "final_url": "https://www.city.suginami.tokyo.jp/documents/24678/20260202basicconcept.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:03:19.478Z"
+      },
+      "reason": "区長記者会見の頁「令和8年2月2日 区長記者会見」（https://www.city.suginami.tokyo.jp/s012/24678.html）に載る机上配布資料「別冊 基本構想に掲げる8つの分野における主な取組」（18頁、文字PDF）。冒頭（物理1〜2頁）に分野ごとの取組の一覧、物理3頁以降で分野ごとに取組名・新規／拡充／新規予算事業の印・予算額（千円）・所管課・説明・区政経営計画書の頁を載せる。同じ頁の会見資料〔令和8年度当初予算案〕（20260202pressconferencematerials.pdf、27頁）は重点の取組を抜き出したスライドで、各スライドに「別冊 P.」で本資料の頁を示すため、冊子としてこちらを選ぶ。議事録も選ばない。予算の頁の「主要事業の概要」（区政経営計画書の分冊）は議決後の資料で、ここには含めない。確認日 2026-11-10T07:03:09+00:00。"
+    }
   ]
 }

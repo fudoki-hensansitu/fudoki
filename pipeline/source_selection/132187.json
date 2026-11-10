@@ -2828,7 +2828,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "選ばない（未公表）。令和7年度実績を評価する令和8年度の事務事業評価調書・実施結果一覧は掲載されていない。ブラウザで描画して見た頁: 行政評価（https://www.city.fussa.tokyo.jp/municipal/management/reform/1003477.html）。掲載一覧は令和7年度・令和6年度・令和5年度・令和4年度・令和3年度の事務事業評価調書と実施結果一覧、評価方法及び評価項目で、最新の「令和7年度 事務事業評価調書」（r7tyousyo.pdf）は2024年度に選んだ令和6年度実施事業の評価（本文の列は令和5・6年度）で、令和7年度実績を評価する資料ではない。確認日：2026-10-23（UTC）。"
+      "reason": "選ばない（未公表）。令和7年度実績を評価する令和8年度の事務事業評価調書・実施結果一覧は掲載されていない。ブラウザで描画して見た頁: 行政評価（https://www.city.fussa.tokyo.jp/municipal/management/reform/1003477.html）。掲載一覧は令和7年度・令和6年度・令和5年度・令和4年度・令和3年度の事務事業評価調書と実施結果一覧、評価方法及び評価項目で、最新の「令和7年度 事務事業評価調書」（r7tyousyo.pdf）は2024年度に選んだ令和6年度実施事業の評価（本文の列は令和5・6年度）で、令和7年度実績を評価する資料ではない。確認日：2026-11-10T07:13:32+00:00（UTC）。"
     },
     {
       "target": {
@@ -2905,6 +2905,41 @@
         "archived_at": "2026-10-22T05:35:00.693Z"
       },
       "reason": "令和5年度に実施した事務事業の評価調書（物理148頁、文字PDF）。事業ごとに（1）実施計画決算（令和4・5年度の列）、（6）事業指標（令和5年度目標値・実績値・達成率）、（7）担当課長の総括、（8）行政評価（評点・一次評価の継続判断・二次評価結果）を載せる。実施結果一覧（r6itirann.pdf）は事業ごとの改善検討の結果（改善予定・改善済み・現状維持）を並べたもので、各事業の二次評価の区分と評点は各調書の（8）行政評価にあるため、重複として選ばない。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132187",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "選ばない（発表資料なし）。当初予算（案）の発表資料は見つからない。市の記者会見の頁（記者会見（定例・臨時） https://www.city.fussa.tokyo.jp/municipal/press/conference/index.html）の令和6年2月定例記者会見（https://www.city.fussa.tokyo.jp/municipal/press/conference/1018663.html）は、次第に「令和6年度予算（案）について（企画財政部長）」があるが、配布資料として載るのは個別の話題の資料3-xだけで、予算案の資料は載っていない（説明は記者会見動画のみ）。報道発表の年度別一覧（https://www.city.fussa.tokyo.jp/municipal/press/byyear/index.html）にも予算案の発表は無い。予算の頁（令和6年度当初予算 https://www.city.fussa.tokyo.jp/municipal/aboutfussa/finances/yosan/1018811.html）は一般会計・特別会計の予算及び同説明書と「予算説明書（最初から福祉保健部まで）・（子ども家庭部から最後まで）」だけで、予算（案）の概要・主要事業の資料は無い。予算説明書は「実施計画（予算説明書）」（全事務事業の実施計画書。予算の概要・財政計画・施策の体系別予算額・一般会計実施計画一覧（事業名・課名・事業費）と組織別の実施計画書）で、全事務事業の予算説明であり主な施策を発表する資料ではないため選ばない。確認日 2026-11-10T07:13:32+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132187",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "選ばない（発表資料なし）。当初予算（案）の発表資料は見つからない。市の記者会見の頁（記者会見（定例・臨時） https://www.city.fussa.tokyo.jp/municipal/press/conference/index.html）の令和7年2月定例記者会見（令和7年2月26日、https://www.city.fussa.tokyo.jp/municipal/press/conference/1019884.html）は、次第に「令和7年度予算（案）について（企画財政部長）」があるが、配布資料として載るのは個別の話題の資料3-xだけで、予算案の資料は載っていない（説明は記者会見動画のみ）。報道発表の年度別一覧（https://www.city.fussa.tokyo.jp/municipal/press/byyear/index.html）にも予算案の発表は無い。予算の頁（令和7年度当初予算 https://www.city.fussa.tokyo.jp/municipal/aboutfussa/finances/yosan/1019846.html）は一般会計・特別会計の予算及び同説明書と「予算説明書（最初から福祉保健部まで）・（子ども家庭部から最後まで）」だけで、予算（案）の概要・主要事業の資料は無い。予算説明書は「実施計画（予算説明書）」（全事務事業の実施計画書。予算の概要・財政計画・施策の体系別予算額・一般会計実施計画一覧（事業名・課名・事業費）と組織別の実施計画書）で、全事務事業の予算説明であり主な施策を発表する資料ではないため選ばない。確認日 2026-11-10T07:13:32+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132187",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "選ばない（発表資料なし）。当初予算（案）の発表資料は見つからない。市の記者会見の頁（記者会見（定例・臨時） https://www.city.fussa.tokyo.jp/municipal/press/conference/index.html）の令和8年2月定例記者会見（https://www.city.fussa.tokyo.jp/municipal/press/conference/1020993.html）は、次第に「令和8年度予算（案）について（企画財政部長）」があるが、配布資料として載るのは個別の話題の資料3-xだけで、予算案の資料は載っていない（説明は記者会見動画のみ）。報道発表の年度別一覧（https://www.city.fussa.tokyo.jp/municipal/press/byyear/index.html）にも予算案の発表は無い。予算の頁（令和8年度当初予算 https://www.city.fussa.tokyo.jp/municipal/aboutfussa/finances/yosan/1020986.html）は一般会計・特別会計の予算及び同説明書と「予算説明書（r8yosansetsumei.pdf、416頁）」だけで、予算（案）の概要・主要事業の資料は無い。予算説明書は「実施計画（予算説明書）」（全事務事業の実施計画書。予算の概要・財政計画・施策の体系別予算額・一般会計実施計画一覧（事業名・課名・事業費）と組織別の実施計画書）で、全事務事業の予算説明であり主な施策を発表する資料ではないため選ばない。確認日 2026-11-10T07:13:32+00:00。"
     }
   ]
 }

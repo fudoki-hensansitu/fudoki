@@ -5651,7 +5651,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。教育委員会の点検・評価の報告書（「奥多摩町教育委員会の権限に属する事務の管理及び執行状況の点検及び評価（令和7年度分）報告書」、https://www.town.okutama.tokyo.jp/material/files/group/12/kyouikuiinnkaijimunotennkenhyouka.pdf）しか無く、全庁の事業の評価資料が無いため選ばない。探した頁：https://www.town.okutama.tokyo.jp/1/kyoikuka/kyoiku/2/655.html、全庁の事務事業評価・行政評価・主要施策の成果の掲載なし。確認日：2026-10-22T04:24:22+00:00（UTC）。"
+      "reason": "未選定。教育委員会の点検・評価の報告書（「奥多摩町教育委員会の権限に属する事務の管理及び執行状況の点検及び評価（令和7年度分）報告書」、https://www.town.okutama.tokyo.jp/material/files/group/12/kyouikuiinnkaijimunotennkenhyouka.pdf）しか無く、全庁の事業の評価資料が無いため選ばない。探した頁：https://www.town.okutama.tokyo.jp/1/kyoikuka/kyoiku/2/655.html、全庁の事務事業評価・行政評価・主要施策の成果の掲載なし。確認日：2026-11-10T07:00:46+00:00（UTC）。"
     },
     {
       "target": {
@@ -5674,6 +5674,122 @@
       "selected_candidate_id": null,
       "archive": null,
       "reason": "ブラウザで描画した町政情報の施策・計画（https://www.town.okutama.tokyo.jp/gyosei/8/shisaku_keikaku/choseijohonikansurushisaku_keikaku/index.html）、長期総合計画（https://www.town.okutama.tokyo.jp/gyosei/8/tyoukisougoukeikaku/index.html）の頁を確認した。掲載は第6期長期総合計画の本体、事務報告書（活動報告）、教育委員会事務の点検・評価、電源立地関係の事業評価総括表（r5_dengen_hyouka.pdf、交付金事業のみ）で、全事業を覆う事業の評価資料は無い。DuckDuckGo の site 検索（事務事業評価・行政評価・総合計画 進捗・決算 成果）でも出ない。確認日：2026-10-23（UTC）。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "133086",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度当初予算概要",
+          "landing_url": "https://www.town.okutama.tokyo.jp/gyosei/8/zaiseijokyo/yosan/2910.html",
+          "inspected_at": "2026-11-10T07:00:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.okutama.tokyo.jp/material/files/group/2/R6toushoyosan_gaiyou.pdf",
+              "sha256": "453bce07d7e8323c1534cc35922ac88bbe8f363a3ecaa7aea2c63fce6f580313",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133086/2024/press-initial.pdf",
+            "sha256": "453bce07d7e8323c1534cc35922ac88bbe8f363a3ecaa7aea2c63fce6f580313",
+            "final_url": "https://www.town.okutama.tokyo.jp/material/files/group/2/R6toushoyosan_gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:00:27.451Z"
+      },
+      "reason": "財政状況の予算の令和6年度の頁（https://www.town.okutama.tokyo.jp/gyosei/8/zaiseijokyo/yosan/2910.html）に予算書と並んで載る「令和6年度当初予算概要」（R6toushoyosan_gaiyou.pdf、9頁、文字PDF、題は「令和６年度 奥多摩町当初予算の概要」）。町長の記者会見・報道発表の頁に当初予算の発表資料は見当たらないため、この概要を選ぶ。予算編成方針・会計別予算・一般会計の推移・歳入歳出の主な増減のあと、物理7〜8頁の「第5期奥多摩町長期総合計画の分類に基づく主な事業」で計画の章ごとに事業名（括弧で主な内容）と予算額（千円）を並べる。物理9頁は入湯税の充当予定先。同じ頁の一般会計当初予算書（R06_ippann_tousyo.pdf）は選ばない。確認日 2026-11-10T07:00:15+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133086",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度当初予算概要",
+          "landing_url": "https://www.town.okutama.tokyo.jp/gyosei/8/zaiseijokyo/yosan/3254.html",
+          "inspected_at": "2026-11-10T07:00:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.okutama.tokyo.jp/material/files/group/2/R7toushoyosan_gaiyou.pdf",
+              "sha256": "7acaefffd564adc81e3de1b219a0a3f6cdef03d27e58e98881863741e60ce3ba",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133086/2025/press-initial.pdf",
+            "sha256": "7acaefffd564adc81e3de1b219a0a3f6cdef03d27e58e98881863741e60ce3ba",
+            "final_url": "https://www.town.okutama.tokyo.jp/material/files/group/2/R7toushoyosan_gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:00:30.007Z"
+      },
+      "reason": "財政状況の予算の令和7年度の頁（https://www.town.okutama.tokyo.jp/gyosei/8/zaiseijokyo/yosan/3254.html）に予算書と並んで載る「令和7年度当初予算概要」（R7toushoyosan_gaiyou.pdf、9頁、文字PDF、題は「令和７年度 奥多摩町当初予算の概要」）。町長の記者会見・報道発表の頁に当初予算の発表資料は見当たらないため、この概要を選ぶ。予算編成方針・会計別予算・一般会計の推移・歳入歳出の主な増減（款別・性質別）のあと、物理7〜8頁の「歳出目的に基づく主な事業（一般会計）」で款ごとに事業名（括弧で主な内容）と予算額（千円）を並べ、新規に実施する事業は下線で示す（下線は文字として抽出されない）。物理9頁は入湯税の充当予定先。同じ頁の一般会計当初予算書（R07_ippann_tousyo.pdf）は選ばない。確認日 2026-11-10T07:00:15+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133086",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度当初予算概要",
+          "landing_url": "https://www.town.okutama.tokyo.jp/gyosei/8/zaiseijokyo/yosan/3810.html",
+          "inspected_at": "2026-11-10T07:00:15+00:00",
+          "files": [
+            {
+              "download_url": "https://www.town.okutama.tokyo.jp/material/files/group/2/R8toushoyosan_gaiyou.pdf",
+              "sha256": "25f9e9a06ecaaccf667db2d85955f6a5773629e13d390eaacd5c707aceae62d9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133086/2026/press-initial.pdf",
+            "sha256": "25f9e9a06ecaaccf667db2d85955f6a5773629e13d390eaacd5c707aceae62d9",
+            "final_url": "https://www.town.okutama.tokyo.jp/material/files/group/2/R8toushoyosan_gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:00:32.805Z"
+      },
+      "reason": "財政状況の予算の令和8年度の頁（https://www.town.okutama.tokyo.jp/gyosei/8/zaiseijokyo/yosan/3810.html）に予算書と並んで載る「令和8年度当初予算概要」（R8toushoyosan_gaiyou.pdf、9頁、文字PDF、題は「令和８年度 奥多摩町当初予算の概要」）。町長の記者会見・報道発表の頁に当初予算の発表資料は見当たらないため、この概要を選ぶ。予算編成方針・会計別予算・一般会計の推移・歳入歳出の主な増減のあと、物理7〜8頁の「歳出目的に基づく主な事業（一般会計）」で款ごとに事業名（括弧で主な内容）と予算額（千円）を並べ、新規に実施する事業は下線で示す（下線は文字として抽出されない）。物理9頁は入湯税の充当予定先。同じ頁の一般会計当初予算書（R08_ippann_tousyo.pdf）は選ばない。確認日 2026-11-10T07:00:15+00:00。"
     }
   ]
 }

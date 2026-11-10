@@ -671,7 +671,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。新島村に2025年度の評価資料の公表なし。サイト内検索（行政評価）では社会資本総合整備計画の事後評価（インフラ個別計画）のみ、主要施策の成果の検索にも該当なし。財政・職員の状況頁（https://www.niijima.com/gyousei/zaiseishokuin/index.html）に評価資料の掲載なし。確認日：2026-10-22T04:15:59+00:00（UTC）。"
+      "reason": "未選定。新島村に2025年度の評価資料の公表なし。サイト内検索（行政評価）では社会資本総合整備計画の事後評価（インフラ個別計画）のみ、主要施策の成果の検索にも該当なし。財政・職員の状況頁（https://www.niijima.com/gyousei/zaiseishokuin/index.html）に評価資料の掲載なし。確認日：2026-11-10T07:02:50+00:00（UTC）。"
     },
     {
       "target": {
@@ -694,6 +694,41 @@
       "selected_candidate_id": null,
       "archive": null,
       "reason": "新島村の評価資料を探した。ブラウザで描画して確認した頁: https://www.niijima.com/gyousei/keikaku/index.html（計画）、https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html（財政状況等）。DuckDuckGo の site 検索（事務事業評価・行政評価・施策評価・総合計画 進捗 評価など）でも、事業ごとの目標・実績・評価・課題を載せる事務事業評価・施策評価・行政評価の公表は出ず、教育委員会の点検・評価（選ばない対象）、社会資本総合整備計画の事後評価、総合計画・個別計画の本体、事務報告書（活動報告）のみ。確認日：2026-10-23（UTC）。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。新島村のサイトに村長の記者会見・報道発表の頁（村長の部屋 https://www.niijima.com/mayor/index.html にも無い）や予算（案）の概要・主要事業の資料は無い。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）の「令和N年度当初予算」は社会保障財源化分の市町村交付金を充てる経費の1頁の表（例: R7.tousho.pdf）で、施策ごとの予算額の資料ではないので選ばない。予算書の本体も村のサイトに無く、計画・行政情報（https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/）にも予算の説明資料は無い。確認日 2026-11-10T07:02:50+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。新島村のサイトに村長の記者会見・報道発表の頁（村長の部屋 https://www.niijima.com/mayor/index.html にも無い）や予算（案）の概要・主要事業の資料は無い。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）の「令和N年度当初予算」は社会保障財源化分の市町村交付金を充てる経費の1頁の表（例: R7.tousho.pdf）で、施策ごとの予算額の資料ではないので選ばない。予算書の本体も村のサイトに無く、計画・行政情報（https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/）にも予算の説明資料は無い。確認日 2026-11-10T07:02:50+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133639",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。新島村のサイトに村長の記者会見・報道発表の頁（村長の部屋 https://www.niijima.com/mayor/index.html にも無い）や予算（案）の概要・主要事業の資料は無い。財政状況の頁（https://www.niijima.com/gyousei/zaiseishokuin/zaiseijoukyou.html）の「令和N年度当初予算」は社会保障財源化分の市町村交付金を充てる経費の1頁の表（例: R7.tousho.pdf）で、施策ごとの予算額の資料ではないので選ばない。予算書の本体も村のサイトに無く、計画・行政情報（https://www.niijima.com/gyousei/keikaku/gyouseijyouhou/）にも予算の説明資料は無い。確認日 2026-11-10T07:02:50+00:00。"
     }
   ]
 }

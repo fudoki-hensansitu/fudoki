@@ -6787,10 +6787,121 @@
         "fiscal_year": 2025,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "未選定（未公表）。令和7年度実施事業（2025年度）を評価する令和8年度の事務事業評価シートは未公表。Orca のブラウザで描画した内部評価（事務事業評価）の一覧（https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/index.html）の掲載は令和7年度〜令和3年度の事務事業評価で、最新の令和7年度事務事業評価（https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1011787.html）は令和6年度実施事業（2024年度分としてすでに選んでいる）。上位の事務事業評価の頁（https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/index.html）の外部評価（https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005401/index.html）は平成23〜27年度の委員会のみ。確認日：2026-10-23T09:47:41+00:00（UTC）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度事務事業評価シート（8分野、令和7年度実施事業）",
+          "landing_url": "https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1013102.html",
+          "inspected_at": "2026-11-10T07:10:50+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/1annzennannsinn.pdf",
+              "sha256": "345cb70d583e4d91555a2e115ab59f3cff2f59d9bb45e0bcc37d9577ceb32c2e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/2sasaeaisonntyou.pdf",
+              "sha256": "6bff3d58bfbeb3d958167322aa0d46cc2ef5ec5d9a8d9470b3ead1be67465727",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/3miraiwoninau.pdf",
+              "sha256": "b607f7c651751df6096f9178f491dbaa7d50b183ca137b3a46f5a47f487d2571",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/4bunnkageijustu.pdf",
+              "sha256": "23218f89e6b06ede4fe72509d3f67526ddfff0ed6aa1492cd71dbbfb82737677",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/5kannkyouhuka.pdf",
+              "sha256": "489a1e0ffdb170503d2ebc2a7167a7205d4d8e377a996d9194bf2270828f969f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/6kaitekiribenn.pdf",
+              "sha256": "3de14640139c9ee114bfc3ae19d384bc0b3925c56ec82f55ef94d0461767522e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/7seikatuwosasae.pdf",
+              "sha256": "c96945f65ba2a1cbf8bcf96a9fa4075996aa8900abb4ec94d415fab3d37d7c58",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/8keikakujitugenn.pdf",
+              "sha256": "10f5f72e891199f86644640dc82fda370812afceea7203655a8805fe17666f34",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132071/2025/evaluation-settlement-3.pdf",
+            "sha256": "345cb70d583e4d91555a2e115ab59f3cff2f59d9bb45e0bcc37d9577ceb32c2e",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/1annzennannsinn.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2025/evaluation-settlement-6.pdf",
+            "sha256": "6bff3d58bfbeb3d958167322aa0d46cc2ef5ec5d9a8d9470b3ead1be67465727",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/2sasaeaisonntyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2025/evaluation-settlement-7.pdf",
+            "sha256": "b607f7c651751df6096f9178f491dbaa7d50b183ca137b3a46f5a47f487d2571",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/3miraiwoninau.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2025/evaluation-settlement-2.pdf",
+            "sha256": "23218f89e6b06ede4fe72509d3f67526ddfff0ed6aa1492cd71dbbfb82737677",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/4bunnkageijustu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2025/evaluation-settlement-5.pdf",
+            "sha256": "489a1e0ffdb170503d2ebc2a7167a7205d4d8e377a996d9194bf2270828f969f",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/5kannkyouhuka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2025/evaluation-settlement-4.pdf",
+            "sha256": "3de14640139c9ee114bfc3ae19d384bc0b3925c56ec82f55ef94d0461767522e",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/6kaitekiribenn.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2025/evaluation-settlement-8.pdf",
+            "sha256": "c96945f65ba2a1cbf8bcf96a9fa4075996aa8900abb4ec94d415fab3d37d7c58",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/7seikatuwosasae.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132071/2025/evaluation-settlement-1.pdf",
+            "sha256": "10f5f72e891199f86644640dc82fda370812afceea7203655a8805fe17666f34",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/013/102/8keikakujitugenn.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:11:15.120Z"
+      },
+      "reason": "令和7年度に実施した事務事業を令和8年度に評価した事務事業評価シート8冊（計141頁、125事業）。内部評価（事務事業評価）の一覧に「令和8年度事務事業評価」の頁（https://www.city.akishima.lg.jp/shisei/seisaku/1005384/1005399/1005407/1013102.html、2026年10月28日更新）が新たに載った。総合基本計画の政策指標に直接関連する事業を対象に、事業ごとに予算科目・目的・概要、事業費（コスト）の推移（列「R6決算」「R7当初予算」「R７決算」「R8当初予算」）、基本施策の現状値と「R5実績」「R6実績」「R7実績」、実施方法の妥当性・効率性・達成度の評価、今後の方向性を載せる。年度は題でなく列で決めた: 評価シートの表題は「令和８年度 事務事業評価（内部評価）シート（令和７年度実施事業）」で、評価の対象は列「R７決算」（令和7年度＝2025年度の決算。例: 避難行動要支援者対策事業の直接事業費 6,864千円）。文字として読める。表紙・目次・対象事業一覧（0r8hyousi.pdf、4頁）は評価の本体ではないため含めない。確認日：2026-11-10T07:10:50+00:00（UTC）。"
     },
     {
       "target": {
@@ -7497,6 +7608,122 @@
         "archived_at": "2026-10-15T23:48:10.046Z"
       },
       "reason": "2020年度に実施した事務業を令和3年度に評価した事務事業評価シート12冊。シート表題は「令和3年度 事務事業評価（内部評価）シート（令和2年度実施事業）」。事業ごとに目的・対象、事業費（コスト）の推移（決算・当初予算の年度列）、指標の現状値と実績、実施内容・実績、評価・課題・今後の方向性を載せる。文字として読める。表紙・目次は評価の本体ではないため含めない。部（12部）別に分冊されている。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132071",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 昭島市一般会計予算概要",
+          "landing_url": "https://www.city.akishima.lg.jp/shisei/gyozaisei/1005263/1005265.html",
+          "inspected_at": "2026-11-10T07:12:03+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/265/03_ippangaiyour6.pdf",
+              "sha256": "5f851e70b960659ff26842464ce83e709dd25ff7385ace393c42de47eeb8d4cf",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132071/2024/press-initial.pdf",
+            "sha256": "5f851e70b960659ff26842464ce83e709dd25ff7385ace393c42de47eeb8d4cf",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/265/03_ippangaiyour6.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:12:12.009Z"
+      },
+      "reason": "財政の「令和6年度当初予算」の頁（https://www.city.akishima.lg.jp/shisei/gyozaisei/1005263/1005265.html）に載る「令和6年度一般会計予算概要」（22頁、文字PDF）。編成方針・予算規模・歳入歳出の概要・基金と市債のあと、「6 主な建設事業」と「7 主な事業（建設事業以外）」（物理14〜20頁）で総合基本計画のまちづくりの目標ごとに款・事業名・事業内容・予算額・うち一般財源（千円）を載せる（新規/拡充の印は無い）。物理21頁は市制施行70周年記念事業の一覧（款・事業名・内容・予算額）。末尾は継続費・債務負担行為。昭島市は当初予算の記者発表資料を頁に載せていない。同じ頁の「一般会計予算大綱」は予算編成の考え方と総合基本計画の施策体系別に主な事業名と予算額だけを並べた表で、事業内容の説明を持つ予算概要を選んだ。特別会計予算概要は施策の資料ではないので含めない。確認日 2026-11-10T07:12:03+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132071",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 昭島市一般会計予算概要",
+          "landing_url": "https://www.city.akishima.lg.jp/shisei/gyozaisei/1005263/1005264.html",
+          "inspected_at": "2026-11-10T07:12:05+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/264/03_ippangaiyour7.pdf",
+              "sha256": "b94aca7fea9c5baa7c3d5b6a2887cf922a9b291251691d5def96b9ca2e4a42e5",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132071/2025/press-initial.pdf",
+            "sha256": "b94aca7fea9c5baa7c3d5b6a2887cf922a9b291251691d5def96b9ca2e4a42e5",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/005/264/03_ippangaiyour7.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:12:14.518Z"
+      },
+      "reason": "財政の「令和7年度当初予算」の頁（https://www.city.akishima.lg.jp/shisei/gyozaisei/1005263/1005264.html）に載る「令和7年度一般会計予算概要」（21頁、文字の層はあるが ToUnicode が壊れていて pdftotext で読めない文字列になるため pdf_type は scan とした（構成は令和6・8年度と同じ様式で、目次・見出しの位置から確認））。編成方針・予算規模・歳入歳出の概要・基金と市債のあと、「6 主な建設事業」と「7 主な事業（建設事業以外）」（物理14〜20頁）で総合基本計画のまちづくりの目標ごとに款・事業名・事業内容・予算額・うち一般財源（千円）を載せる（新規/拡充の印は無い）。末尾は継続費・債務負担行為。昭島市は当初予算の記者発表資料を頁に載せていない。同じ頁の「一般会計予算大綱」は予算編成の考え方と総合基本計画の施策体系別に主な事業名と予算額だけを並べた表で、事業内容の説明を持つ予算概要を選んだ。特別会計予算概要は施策の資料ではないので含めない。確認日 2026-11-10T07:12:05+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132071",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 昭島市一般会計予算概要",
+          "landing_url": "https://www.city.akishima.lg.jp/shisei/gyozaisei/1005263/1011521.html",
+          "inspected_at": "2026-11-10T07:12:06+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/011/521/r8ippangaiyou0421.pdf",
+              "sha256": "17f81dd28625ad9c0d92af45cec19dd251fcc7c531cf67abe42499f794d14fd5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132071/2026/press-initial.pdf",
+            "sha256": "17f81dd28625ad9c0d92af45cec19dd251fcc7c531cf67abe42499f794d14fd5",
+            "final_url": "https://www.city.akishima.lg.jp/_res/projects/default_project/_page_/001/011/521/r8ippangaiyou0421.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:12:16.837Z"
+      },
+      "reason": "財政の「令和8年度当初予算」の頁（https://www.city.akishima.lg.jp/shisei/gyozaisei/1005263/1011521.html）に載る「令和8年度一般会計予算概要」（21頁、文字PDF）。編成方針・予算規模・歳入歳出の概要・基金と市債のあと、「6 主な建設事業」と「7 主な事業（建設事業以外）」（物理14〜20頁）で総合基本計画のまちづくりの目標ごとに款・事業名・事業内容・予算額・うち一般財源（千円）を載せる（新規/拡充の印は無い）。末尾は継続費・債務負担行為。昭島市は当初予算の記者発表資料を頁に載せていない。同じ頁の「一般会計予算大綱」は予算編成の考え方と総合基本計画の施策体系別に主な事業名と予算額だけを並べた表で、事業内容の説明を持つ予算概要を選んだ。特別会計予算概要は施策の資料ではないので含めない。確認日 2026-11-10T07:12:06+00:00。"
     }
   ]
 }

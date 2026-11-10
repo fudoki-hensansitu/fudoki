@@ -2931,5 +2931,121 @@
       },
       "reason": "令和5年度に実施した事務事業を令和6年度に評価した事務事業評価（10冊、令和6年10月）。一覧表と部署別の評価シートで、事務事業ごとに目的・内容、活動指標・成果指標の実績（最新の実績列はＲ５年度）と目標値・達成率、事務事業コスト・決算額、実績を踏まえた評価（必要性・効率性・手段の適切性・目的達成度の4段階と理由）、総合評価（事業の課題・方向性）を載せる。シート表題は「令和6年度 事務事業評価シート」で、実績列はＲ３年度・Ｒ４年度・Ｒ５年度（最新が令和5年度）。文字として読める。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131067",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "〔資料2〕令和6年度予算案の主な事業",
+          "landing_url": "https://www.city.taito.lg.jp/kusei/sanka/release/2023/press0602/01.html",
+          "inspected_at": "2026-11-10T07:10:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/sanka/release/2023/press0602/01.files/jigyou.pdf",
+              "sha256": "34531ff23e53115c1bbd6a07f1827e93a34633f5f18993d2a4866cdc3d2c7a72",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131067/2024/press-initial.pdf",
+            "sha256": "34531ff23e53115c1bbd6a07f1827e93a34633f5f18993d2a4866cdc3d2c7a72",
+            "final_url": "https://www.city.taito.lg.jp/kusei/sanka/release/2023/press0602/01.files/jigyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:10:29.714Z"
+      },
+      "reason": "区のプレス発表の頁「令和6年度台東区予算案プレス発表」（https://www.city.taito.lg.jp/kusei/sanka/release/2023/press0602/01.html）に載る〔資料2〕「令和6年度予算案の主な事業」（38頁、文字PDF）。冒頭に事業の一覧（番号・事業名、●は新規事業を含む）、事業ごとに1頁で事業名・予算額（うち該当経費、万円）・ここがPOINT・事業概要（背景・事業内容）・担当課を載せる。同じ頁の〔資料1〕予算案の概要は規模の要約、〔資料3〕款別予算額・〔資料4〕性質別集計表は総括表、担当課一覧・パワーポイント資料は要約なので選ばない。予算の頁の「令和6年度予算案のポイント」（https://www.city.taito.lg.jp/kusei/zaisei/yosan/tousyo/point/R6yosanannopoint.html）にも【資料2】が載るが別ファイルで含めない。確認日 2026-11-10T07:10:00+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131067",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "〔資料2〕令和7年度予算案の主な事業",
+          "landing_url": "https://www.city.taito.lg.jp/kusei/sanka/release/2024/press0701/31.html",
+          "inspected_at": "2026-11-10T07:10:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/sanka/release/2024/press0701/31.files/siryou2.pdf",
+              "sha256": "b86a9bcbe696a49420632f2cd113ea592b32703a9f314c9911d0423c5d948cea",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131067/2025/press-initial.pdf",
+            "sha256": "b86a9bcbe696a49420632f2cd113ea592b32703a9f314c9911d0423c5d948cea",
+            "final_url": "https://www.city.taito.lg.jp/kusei/sanka/release/2024/press0701/31.files/siryou2.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:10:33.340Z"
+      },
+      "reason": "区のプレス発表の頁「令和7年度台東区予算案プレス発表」（https://www.city.taito.lg.jp/kusei/sanka/release/2024/press0701/31.html）に載る〔資料2〕「令和7年度予算案の主な事業」（33頁、文字PDF）。冒頭に施策の柱ごとの事業一覧（番号・事業名・【新】新規の印）、事業ごとに1頁で事業名・予算額（うち該当経費、万円）・ここがPOINT・事業概要・担当課を載せる。同じ頁の〔資料1〕予算案の概要は規模の要約、〔資料3〕〔資料4〕は総括表、担当課一覧・パワーポイント資料は要約なので選ばない。予算の頁の「令和7年度台東区予算案の概要」（https://www.city.taito.lg.jp/kusei/zaisei/yosan/tousyo/gaiyou/R7gaiyo.html）は別の冊子で含めない。確認日 2026-11-10T07:10:00+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131067",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "〔資料2〕令和8年度予算案の主な事業",
+          "landing_url": "https://www.city.taito.lg.jp/kusei/sanka/release/2025/press0802/03.html",
+          "inspected_at": "2026-11-10T07:10:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.taito.lg.jp/kusei/sanka/release/2025/press0802/03.files/R8siryou2.pdf",
+              "sha256": "6ea67587c1e3dc60a2d6ffbbf7a1648c7bc7b66e1002ae92beebd1a5f11e302a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131067/2026/press-initial.pdf",
+            "sha256": "6ea67587c1e3dc60a2d6ffbbf7a1648c7bc7b66e1002ae92beebd1a5f11e302a",
+            "final_url": "https://www.city.taito.lg.jp/kusei/sanka/release/2025/press0802/03.files/R8siryou2.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:10:37.620Z"
+      },
+      "reason": "区のプレス発表の頁「令和8年度台東区予算案プレス発表」（https://www.city.taito.lg.jp/kusei/sanka/release/2025/press0802/03.html）に載る〔資料2〕「令和8年度予算案の主な事業」（32頁、文字PDF）。冒頭に施策の柱ごとの事業一覧（番号・事業名・【新】新規の印）、事業ごとに1頁で事業名・予算額（うち該当経費、万円）・ここがPOINT・事業概要・担当課を載せる。同じ頁の〔資料1〕予算案の概要は規模の要約、〔資料3〕〔資料4〕は総括表、担当課一覧・パワーポイント資料は要約なので選ばない。予算の頁の「令和8年度予算案のポイント」（https://www.city.taito.lg.jp/kusei/zaisei/yosan/tousyo/point/R8yosanannopoint.html）の【資料2】と「令和8年度台東区予算案の概要」（https://www.city.taito.lg.jp/kusei/zaisei/yosan/tousyo/gaiyou/R8gaiyo.html）は別ファイルで含めない。確認日 2026-11-10T07:10:00+00:00。"
+    }
   ]
 }
