@@ -24,14 +24,10 @@ const biggest = (nodes: Node[]) => nodes.reduce<Node | undefined>((top, n) => (n
 export function suggestionsFor(tool: string, out: unknown, jurisdictionNames: Record<string, string>): Suggestion[] {
   let focus: Node | undefined
   let drill: Node | undefined
-  if (tool === 'get_expenditure_subject') {
-    const o = out as { subject: Node; children: Node[]; details: Record<string, Node[]> }
-    focus = o.subject
-    drill = biggest([...o.children, ...Object.values(o.details).flat()].filter((n) => !n.is_leaf))
-  } else if (tool === 'get_expenditure_detail') {
-    const o = out as { detail: Node; children: Node[] }
-    focus = o.detail
-    drill = biggest(o.children.filter((n) => !n.is_leaf))
+  if (tool === 'get_expenditure_line') {
+    const o = out as { line: Node; child_subjects: Node[]; details: Record<string, Node[]> }
+    focus = o.line
+    drill = biggest([...o.child_subjects, ...Object.values(o.details).flat()].filter((n) => !n.is_leaf))
   } else if (tool === 'search_expenditure_subjects' || tool === 'search_expenditure_details') {
     const rows = (out as { subjects?: Node[]; details?: Node[] })
     const nodes = rows.subjects ?? rows.details ?? []

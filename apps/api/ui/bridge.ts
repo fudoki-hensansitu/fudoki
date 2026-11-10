@@ -43,7 +43,7 @@ function appendData(previous: ViewData, next: ViewData): ViewData {
   if ('nodes' in previous && 'nodes' in next)
     return { ...next, nodes: [...previous.nodes, ...next.nodes], origins }
   if ('node' in previous && 'node' in next) {
-    // 科目の子は get_expenditure_subject の全ページに毎回載るので、id で重ねない
+    // 科目の子は get_expenditure_line の全ページに毎回載るので、id で重ねない
     const children = { ...previous.children }
     for (const [axis, rows] of Object.entries(next.children)) {
       const seen = new Set((children[axis] ?? []).map((r) => r.id))

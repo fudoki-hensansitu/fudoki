@@ -1,5 +1,5 @@
 // 紹介の頁（/about）の「比べる・確かめる」に載せる数字。api.fudoki.dev の応答をそのまま写したもので、画面では足し算をしない（DESIGN.md「画面で集計しない」）
-// 取り直すときは POST /v1/fiscal/expenditure/subjects:search（document_kind=settlement, fiscal_year=2025, account_name=一般会計）。出典の頁と印字の位置は get の locations
+// 取り直すときは POST /v1/expenditures/subjects:search（document_kind=settlement, fiscal_year=2025, account_name=一般会計）。出典の頁と印字の位置は get の locations
 export const HOME = {
   // 「確かめる」に載せる出典の切り抜き。brand/home_origin.py と同じ頁・範囲（pt、左上原点）。mark は目「図書館費」の支出済額の印字位置（API の amount_source_*）
   origin: {

@@ -7,7 +7,7 @@ with doc as (
         sum(amount_yen) filter (where level = '款') as kan_sum,
         sum(amount_yen) filter (where is_leaf) as leaf_sum,
         count(*) filter (where is_leaf and amount_yen is null) as leaf_missing
-    from {{ ref('fiscal_expenditure_subject') }}
+    from {{ ref('expenditure_subject') }}
     group by all
 ), rows as (
     select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}
@@ -18,7 +18,7 @@ with doc as (
       and not exists (select 1 from rows m where m.source_table_key = k.source_table_key
                       and m.parent_node_key = k.node_key and m.node_kind = '目')
       -- 統合後に末端（is_leaf）になった項は leaf_sum に入っているので足さない
-      and not exists (select 1 from {{ ref('fiscal_expenditure_subject') }} s
+      and not exists (select 1 from {{ ref('expenditure_subject') }} s
                       where s.node_key = k.node_id and s.document_kind = 'settlement' and s.is_leaf)
     group by all
 )
