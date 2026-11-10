@@ -90,7 +90,7 @@ models:
   - name: description
     description: 施策の説明。資料の箇条書き（品川は POINT）を改行でつないだもの（資料の表記）。
   - name: detail_id
-    description: 風土記の判断。施策を紐付けた、同じ年度の当初予算書の内訳（fiscal_expenditure_detail の detail_id）。紐付かなければ空。
+    description: 風土記の判断。施策を紐付けた、同じ年度の当初予算書の内訳（expenditure_detail の detail_id）。紐付かなければ空。
     data_tests:
     - relationships:
         arguments:

@@ -106,14 +106,14 @@ models:
   - name: direction
     description: 最終評価の今後の取組の方向性（シートの表記、例「手法等の改善」）。
   - name: subject_id
-    description: 風土記の判断。シートの予算科目（会計・款・項・目の名前）が1つに当たる、同じ年度の決算書の目。fiscal_expenditure_subject の subject_id。当たらなければ空。
+    description: 風土記の判断。シートの予算科目（会計・款・項・目の名前）が1つに当たる、同じ年度の決算書の目。expenditure_subject の subject_id。当たらなければ空。
     data_tests:
     - relationships:
         arguments:
           to: ref('expenditure_subject')
           field: subject_id
   - name: detail_id
-    description: 風土記の判断。subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき、その内訳。さらにその子孫に、シートの事業名と同じ名前の事業の内訳が1つだけあれば、そちらの内訳。fiscal_expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。
+    description: 風土記の判断。subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき、その内訳。さらにその子孫に、シートの事業名と同じ名前の事業の内訳が1つだけあれば、そちらの内訳。expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。
     data_tests:
     - relationships:
         arguments:

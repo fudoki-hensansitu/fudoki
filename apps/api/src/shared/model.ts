@@ -13,7 +13,7 @@ export const Origin = z.strictObject({
   origin_id: z.string(),
   title: z.string().describe('資料名'),
   url: z.url().describe('公式サイトの公開 URL（ファイルそのもの）'),
-  sha256: z.string().nullable().describe('風土記が保存したファイルの SHA-256'),
+  sha256: Sha256.nullable().describe('風土記が保存したファイルの SHA-256'),
 })
 export type Origin = z.infer<typeof Origin>
 

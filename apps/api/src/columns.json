@@ -8,7 +8,7 @@
           "name": "jurisdiction_code",
           "type": "string",
           "nullable": false,
-          "description": "全国地方公共団体コード（6桁、末尾は検査数字）。科目の表・fiscal_origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。"
+          "description": "全国地方公共団体コード（6桁、末尾は検査数字）。科目の表・expenditure_origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。"
         },
         {
           "name": "name",
@@ -1086,13 +1086,13 @@
           "name": "subject_id",
           "type": "string",
           "nullable": true,
-          "description": "風土記の判断。シートの予算科目（会計・款・項・目の名前）が1つに当たる、同じ年度の決算書の目。fiscal_expenditure_subject の subject_id。当たらなければ空。"
+          "description": "風土記の判断。シートの予算科目（会計・款・項・目の名前）が1つに当たる、同じ年度の決算書の目。expenditure_subject の subject_id。当たらなければ空。"
         },
         {
           "name": "detail_id",
           "type": "string",
           "nullable": true,
-          "description": "風土記の判断。subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき、その内訳。さらにその子孫に、シートの事業名と同じ名前の事業の内訳が1つだけあれば、そちらの内訳。fiscal_expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。"
+          "description": "風土記の判断。subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき、その内訳。さらにその子孫に、シートの事業名と同じ名前の事業の内訳が1つだけあれば、そちらの内訳。expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。"
         }
       ]
     },
@@ -1365,7 +1365,7 @@
           "name": "detail_id",
           "type": "string",
           "nullable": true,
-          "description": "風土記の判断。施策を紐付けた、同じ年度の当初予算書の内訳（fiscal_expenditure_detail の detail_id）。紐付かなければ空。"
+          "description": "風土記の判断。施策を紐付けた、同じ年度の当初予算書の内訳（expenditure_detail の detail_id）。紐付かなければ空。"
         },
         {
           "name": "link_method",

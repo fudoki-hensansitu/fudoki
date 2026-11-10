@@ -86,7 +86,7 @@
 | `project` | なし | `project_id` | ドメインモデルの「表の案」のとおり |
 | `project_year` | なし | `project_year_id` | 同上 |
 
-- 根の ID（`expenditure_id`・`evaluation_id`・`budget_proposal_id`）と結ぶ表・事業の年度の ID（`link_id`・`project_year_id`）は、主キーの組の sha256 の16進にする。NULL（補正号の無い当初・決算）は空文字にして hash に入れる。
+- 根の ID（`expenditure_id`・`evaluation_id`・`budget_proposal_id`）と結ぶ表・事業の年度の ID（`link_id`・`project_year_id`）は、主キーの組の sha256 の16進にする。NULL（補正号の無い当初・決算）は空文字にして hash に入れる。`evaluation_id`・`budget_proposal_id` は組の先頭に集約の名前（`evaluation`・`budget_proposal`）を入れて hash し、自治体・年度だけの組が他の根の ID と重ならないようにする。`expenditure_id` は組に資料区分・会計を含むので集約の名前を入れない。
 - `project_id` は seed に足すときに一度だけ振る16進の乱数（32桁）。sync の読み戻しは主キーの先頭1文字で分けるので、接頭辞を付けない。
 - index（`pipeline/serving/columns.py` の `INDEXES`）: `expenditure_subject`・`expenditure_detail` の `expenditure_id`、`expenditure_origin_link` の `expenditure_id`・`origin_id`、`evaluation_sheet` の `evaluation_id`、`budget_measure` の `budget_proposal_id`、`project_year` の `project_id`・`budget_detail_id`・`settlement_detail_id`。今ある index は新しい表名で引き継ぐ。
 - D1 の schema は sync（`pipeline/serving/sync_d1.py`）が作るので、表の migration は作らない（今と同じ）。`columns.py` の `TABLES`・`PRIMARY_KEYS`・`INDEXES`・`MODELS` と `columns.json` を新しい表で作り直し、旧表は `LEGACY_TABLES` に移す。
