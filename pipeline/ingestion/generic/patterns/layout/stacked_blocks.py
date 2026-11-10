@@ -16,6 +16,8 @@ printed).
 
 - A 目 name too long for its cell wraps around the line with its code and amounts (`後期高齢者医療` / `1 12,248,824`
   / `保険料拠出金`). The lines of the name join the line with the amounts, in order.
+- A 項・目 in its last year prints no code (`傷病手当金`, 0 this year): its row is read at the level of the codes its name
+  starts right of.
 - The 財源内訳 is not taken in: it is an excluded box (財源内訳) of the coverage check, the size of its part.
 - The circled 節 number at the end of a 説明 line is no amount (OCR reads ⑫ as `12`, `①2` or a letter, or joins it to
   the amount: `16,940④`): the column of the circles is an excluded box (本文).
@@ -38,12 +40,15 @@ FUNDING_REASON = ('目ごとの財源内訳の表（区分・金額）は取り�
                   '歳出の目の和は本年度予算額で確かめる。')
 FIGURE_REASON = '説明の中の見込みの数（被保険者数・件数・1件当たりの額など）。予算の金額ではない。'
 # A line of the 説明 that ends in a figure and its unit (`年間受診件数見込 2,174,553 件`, `1件当たり費用額 21,335 円`)
-COUNTERS = r'(?:人|件|円|世帯|校|園|か所|箇所|戸|台|回|部|本|日|食|枚|冊|名|団体|時間|㎡|%|％)'
+COUNTERS = r'(?:人|件|円|世帯|世带|世帶|校|園|か所|箇所|戸|台|回|部|本|日|食|枚|冊|名|団体|時間|㎡|%|％)'
 FIGURE = re.compile(r'[0-9][0-9,.]*(?:' + COUNTERS + r'|現在)$')
 COUNTED = re.compile(r'^[0-9][0-9,]*' + COUNTERS + '?$')
+TITLE_REASON = '会計の歳出の初めの頁の題（3 歳出）の番号。金額ではない。'
+TITLE = re.compile(r'^[0-9]+歳出$')
 CIRCLE_REASON = '説明の行末の丸数字は節の番号（⑫など）。金額ではない。'
 SETSU_OFFSET = 600  # the 節 columns are moved this far right, the 説明 twice as far
 CIRCLE = 50  # the circled numbers start this far right of the 比較 column's left edge; the 説明's amounts end before it
+UNCODED = 12  # how far right of its level's codes a name starts
 SETSU_NAME = 20  # where a 節 name starts, right of the column's left edge
 NUMBERED = re.compile(r'^([(（][0-9０-９]+[)）])\s*')
 NUMBER_WIDTH = 5  # a half-width letter of `(1)`
@@ -52,7 +57,7 @@ JOIN = 8  # the gap OCR leaves where it splits an amount at its comma
 CIRCLED = re.compile(r'[\u2460-\u2473\u3251-\u325f]+$')  # ① … ⑳ ㉑ …
 UNIT = '千円'
 LONG_VOWEL = re.compile(r'(?<=[ァ-ヶ])一')  # OCR reads the ー of `ホール` as 一: a numbered `ホ` to the builder
-DIGITS = re.compile(r'^[△▲]?[0-9][0-9,]*$')
+DIGITS = re.compile(r'^[△▲]?[0-9,]*[0-9][0-9,]*$')  # a part may start at the comma (`38` `,786`)
 CODE = re.compile(r'^([0-9]+)(\D.*)$')
 
 
@@ -126,7 +131,7 @@ def merged(line: list[Glyph]) -> list[Glyph]:
         if previous and glyph.x0 - previous.x1 <= JOIN and DIGITS.match(normalize(previous.text)) \
                 and DIGITS.match(normalize(glyph.text)):
             joined = normalize(previous.text + glyph.text)
-            if not is_amount(joined):
+            if not is_amount(joined) or ',' not in joined:  # `10` `00`: 1,000, as the row above prints it
                 sign, digits = joined[:1] if joined[0] in '△▲' else '', joined.lstrip('△▲').replace(',', '')
                 joined = sign + f'{int(digits):,}' if digits.isdigit() and not digits.startswith('0') else joined
             if is_amount(joined):
@@ -175,7 +180,8 @@ def subject_lines(words: list[Glyph], edge: float) -> list[Glyph]:
         top, bottom = (code or name)[0].y0, (code or name)[0].y1
         result += code
         if name:
-            start = code[0].x1 + 5 if code else min(g.x0 for g in name)
+            # a row with no code (a 項・目 in its last year, `傷病手当金` 0) starts where the coded rows of its level do
+            start = code[0].x1 + 5 if code else min(g.x0 for g in name) - UNCODED
             result.append(Glyph(''.join(g.text for g in name), start, top,
                                 min(start + sum(g.x1 - g.x0 for g in name), edge - 1), bottom, name[0].page, name[0].offset))
     return result
@@ -212,9 +218,14 @@ def edges(bands: list[Band]) -> tuple[float, float, float] | None:
         return max(found) if found else None
     subject = [b.x1 for b in bands if b.header and set(normalize(b.header[-1])) <= set('款項目')]
     current, previous = right('本年度'), right('前年度')
-    if not subject or current is None or previous is None:
-        return None
-    return max(subject), current, previous
+    if subject and current is not None and previous is not None:
+        return max(subject), current, previous
+    # The header read as one cell (`款項目本年度前年度比較`), or the account's title over it (`3 歳出`) read as the
+    # header: the three columns of amounts are the frame's last three.
+    ordered = sorted(bands, key=lambda b: b.x0)
+    if len(ordered) >= 4 and len({b.header for b in ordered}) == 1:
+        return ordered[-3].x0, ordered[-2].x0, ordered[-1].x0
+    return None
 
 
 def rows_of(bands: list[Band], x0: float, x1: float) -> list[float]:
@@ -341,6 +352,12 @@ def read(pages, **options):
                 excluded.excluded = {'kind': kind, 'reason': reason, 'page': page,
                                      'bbox': [box[0] - 1, box[1] - 1, box[2] + 1, box[3] + 1]}
                 built.append(excluded)
+        # the account's title over the first page (`3 歳出`) read as the frame's header: its number is no amount
+        if any(TITLE.match(normalize(cell)) for b in bands for cell in b.header):
+            title = band(right, right + 10, ('題',), None, [], 3 * SETSU_OFFSET)
+            title.excluded = {'kind': '本文', 'reason': TITLE_REASON, 'page': page,
+                              'bbox': [left, top - 30, right, min(b.body_top for b in bands)]}
+            built.append(title)
         logical.bands = built
         logical.unit = logical.unit or UNIT
     return logicals
