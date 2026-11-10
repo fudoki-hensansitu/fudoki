@@ -1,0 +1,188 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "left",
+    "right",
+    "units",
+    "abolished_mark",
+    "divider_text"
+  ],
+  "$defs": {
+    "range": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "column": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "header",
+        "x"
+      ],
+      "properties": {
+        "header": {
+          "type": "string",
+          "minLength": 1
+        },
+        "x": {
+          "$ref": "#/$defs/range"
+        }
+      }
+    }
+  },
+  "properties": {
+    "left": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "levels",
+        "subject_amounts",
+        "funding",
+        "setsu",
+        "setsu_amount"
+      ],
+      "description": "The left page's frame. Every x is measured from the frame's left rule.",
+      "properties": {
+        "width": {
+          "type": "number",
+          "description": "From the frame's left rule to its right rule."
+        },
+        "levels": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "array",
+            "prefixItems": [
+              {
+                "type": "string",
+                "minLength": 1
+              },
+              {
+                "$ref": "#/$defs/range"
+              }
+            ],
+            "minItems": 2,
+            "maxItems": 2
+          },
+          "description": "The staircase of the subject column, outermost first: the level and the column its code starts in."
+        },
+        "subject_amounts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/column"
+          },
+          "description": "The amount columns of every subject row, with their heading in the shared dictionary."
+        },
+        "funding": {
+          "$ref": "#/$defs/range",
+          "description": "The 財源内訳 column (source names and amounts), not taken in."
+        },
+        "setsu": {
+          "$ref": "#/$defs/range",
+          "description": "The 節 区分 column: the 節 code and name."
+        },
+        "setsu_amount": {
+          "$ref": "#/$defs/column",
+          "description": "The 節 金額 column and its heading in the shared dictionary."
+        }
+      }
+    },
+    "right": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "width",
+        "items",
+        "amount_left",
+        "prose_indent",
+        "aside_heading"
+      ],
+      "description": "The facing page's frame of one column (説明). Every x is measured from the frame's left rule.",
+      "properties": {
+        "width": {
+          "type": "number"
+        },
+        "items": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "pattern",
+              "x",
+              "amount"
+            ],
+            "properties": {
+              "pattern": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The start of the item's line (its words joined)."
+              },
+              "x": {
+                "$ref": "#/$defs/range",
+                "description": "Where the item's line starts."
+              },
+              "amount": {
+                "type": "boolean",
+                "description": "The item prints its amount at the right end of its line."
+              },
+              "bullet": {
+                "type": "string",
+                "minLength": 1,
+                "description": "A mark that opens the name, in place of a code."
+              },
+              "code": {
+                "type": "string",
+                "minLength": 1,
+                "description": "The code and the name of the item as the two groups of a pattern (default: the leading digits and the rest)."
+              }
+            }
+          },
+          "description": "The kinds of explanation item, outermost first; a kind nests in the kinds before it that are open."
+        },
+        "amount_left": {
+          "type": "number",
+          "description": "An item's amount ends right of this x."
+        },
+        "prose_indent": {
+          "type": "number",
+          "description": "A line of prose starting right of this x is a quantity line under an item."
+        },
+        "aside_heading": {
+          "type": "string",
+          "minLength": 1,
+          "description": "A line (its words joined) heading the item above cut another way (`（選挙執行内訳）`): the lines under it up to the next item are not taken in."
+        }
+      }
+    },
+    "units": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "enum": [
+          "千円",
+          "円"
+        ]
+      }
+    },
+    "abolished_mark": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The mark a subject prints in place of its code when its amount this year is none (`△物価高騰…`)."
+    },
+    "divider_text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A page without a frame whose digits are this regex (compacted text) is a divider and is skipped; any other one stops."
+    }
+  }
+}
