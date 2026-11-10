@@ -23,6 +23,8 @@ PIPELINE = DBT.parent
 # numbers, so every moku of the same account would collapse into one node_id, and the
 # revenue and capital tables name their single kan differently inside one account.
 EXCLUDE: dict[tuple[str, str], str] = {
+    ('133639', 'general-expenditure'):
+        'summary of an account printing its 款 by name only, without kan numbers',
     ('132071', 'akishima-enterprise-expenditure-revenue-detail'):
         'public enterprise account without kan/kou/moku numbers',
     ('132071', 'akishima-enterprise-expenditure-capital-detail'):

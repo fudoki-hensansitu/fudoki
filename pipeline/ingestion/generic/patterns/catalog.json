@@ -44,7 +44,8 @@
     "offset_projects": "ingestion.generic.patterns.readings.offset_projects",
     "purpose_summary": "ingestion.generic.patterns.readings.purpose_summary",
     "compared_years": "ingestion.generic.patterns.readings.compared_years",
-    "turned_summary": "ingestion.generic.patterns.readings.turned_summary"
+    "turned_summary": "ingestion.generic.patterns.readings.turned_summary",
+    "paired_summary": "ingestion.generic.patterns.readings.paired_summary"
   },
   "component": {
     "marked_subjects": "ingestion.generic.patterns.components.marked_subjects",

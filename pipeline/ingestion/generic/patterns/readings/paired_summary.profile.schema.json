@@ -1,0 +1,41 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "range": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+    "text": {"type": "string", "minLength": 1}
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["page", "title", "unit", "frame", "body", "total_row", "columns"],
+  "properties": {
+    "page": {"type": "integer", "minimum": 1},
+    "title": {
+      "type": "object", "additionalProperties": false, "required": ["text", "x", "y"],
+      "properties": {"text": {"$ref": "#/$defs/text"}, "x": {"$ref": "#/$defs/range"}, "y": {"$ref": "#/$defs/range"}}
+    },
+    "unit": {
+      "type": "object", "additionalProperties": false, "required": ["printed", "text"],
+      "properties": {"printed": {"$ref": "#/$defs/text"}, "text": {"$ref": "#/$defs/text"}}
+    },
+    "frame": {
+      "type": "object", "additionalProperties": false, "required": ["heading", "x", "heading_y"],
+      "properties": {"heading": {"$ref": "#/$defs/text"}, "x": {"$ref": "#/$defs/range"}, "heading_y": {"$ref": "#/$defs/range"}}
+    },
+    "body": {"$ref": "#/$defs/range"},
+    "total_row": {
+      "type": "object", "additionalProperties": false, "required": ["label", "y"],
+      "properties": {"label": {"$ref": "#/$defs/text"}, "y": {"$ref": "#/$defs/range"}}
+    },
+    "columns": {
+      "type": "object", "additionalProperties": false, "required": ["label", "amount", "ratio"],
+      "properties": {
+        "label": {"$ref": "#/$defs/range"},
+        "amount": {
+          "type": "object", "additionalProperties": false, "required": ["x", "heading"],
+          "properties": {"x": {"$ref": "#/$defs/range"}, "heading": {"$ref": "#/$defs/text"}}
+        },
+        "ratio": {"$ref": "#/$defs/range"}
+      }
+    }
+  }
+}
