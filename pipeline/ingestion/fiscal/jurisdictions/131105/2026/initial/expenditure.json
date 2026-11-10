@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131105",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "labelled_spread",
+            "profile": "fiscal/jurisdictions/131105/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "labelled_spread",
+            "profile": "fiscal/jurisdictions/131105/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "labelled_spread",
+            "profile": "fiscal/jurisdictions/131105/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6c202834a2185be92f588a653f96650e02f4173801a41415d8440b7150fb3f13"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "labelled_spread",
+            "profile": "fiscal/jurisdictions/131105/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "6013e684056821f93cf1c95656da6397c2112131e16eee2f81e62d2305c9d561",
+      "account": "一般会計",
+      "notes": [
+        "款・項とその本年度の金額は総括の頁から読み、明細の各頁の題（１款 議会費 １項 議会費）で目を項に結んだ。項の金額は項の最後の「計」の欄から取った（総括の項の金額は同じ額の再掲）。",
+        "予算額の欄の本年度・前年度・比較は共有辞書の本年度予算額・前年度予算額・比較とし、増減率(%)・本年度の財源内訳は取り込んでいない。説明は番号（1・(1)）と右端の金額（千円）で読み、文中・数量の数は取り込んでいない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "492109923fe19e4c046d3239fb5846e5da24e303ee6258a764135f5a6003c018",
+          "bytes": 71687
+        },
+        "row_count": 2338
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "e8018e850da92a042719788c39d53408314f25a3eac1c0563fdbb0584a778171",
+          "bytes": 53088
+        },
+        "row_count": 2646
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "7b76c781527dca760d4e0078ce511c042893fd7dfbebf7df079c9c1dbfbefd58",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "款・項とその本年度の金額は総括の頁から読み、明細の各頁の題（１款 議会費 １項 議会費）で目を項に結んだ。項の金額は項の最後の「計」の欄から取った（総括の項の金額は同じ額の再掲）。",
+        "予算額の欄の本年度・前年度・比較は共有辞書の本年度予算額・前年度予算額・比較とし、増減率(%)・本年度の財源内訳は取り込んでいない。説明は番号（1・(1)）と右端の金額（千円）で読み、文中・数量の数は取り込んでいない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2026/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "5a7704735fddd0023cb87763501ed80112df995b23d8e383d7634e1ff279ae4a",
+          "bytes": 9109
+        },
+        "row_count": 162
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2026/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "c82e7dd33b8f988279d3504f37c3f8854276bd076d887654ce2b06b100f7b2f6",
+          "bytes": 6861
+        },
+        "row_count": 253
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "efc5789ee9b3c0232554ae00e8647f475242d0eaf9c5fc24a54609ab9dce18f7",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "款・項とその本年度の金額は総括の頁から読み、明細の各頁の題（１款 議会費 １項 議会費）で目を項に結んだ。項の金額は項の最後の「計」の欄から取った（総括の項の金額は同じ額の再掲）。",
+        "予算額の欄の本年度・前年度・比較は共有辞書の本年度予算額・前年度予算額・比較とし、増減率(%)・本年度の財源内訳は取り込んでいない。説明は番号（1・(1)）と右端の金額（千円）で読み、文中・数量の数は取り込んでいない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2026/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "d8015f4772d5074aa82ea9ece6a6869ba2922ec17b81043ec90aba91cc13c4b1",
+          "bytes": 5878
+        },
+        "row_count": 78
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2026/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "25370a2e75ed1dfc56e927fa088796ba23d65c6ee0fa4887bac1bc87ba34adab",
+          "bytes": 4532
+        },
+        "row_count": 114
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "5ab80719ff436fac6a419c0e0a776ac951fb81476fbc21061e70972fafb0717b",
+      "account": "介護保険特別会計",
+      "notes": [
+        "款・項とその本年度の金額は総括の頁から読み、明細の各頁の題（１款 議会費 １項 議会費）で目を項に結んだ。項の金額は項の最後の「計」の欄から取った（総括の項の金額は同じ額の再掲）。",
+        "予算額の欄の本年度・前年度・比較は共有辞書の本年度予算額・前年度予算額・比較とし、増減率(%)・本年度の財源内訳は取り込んでいない。説明は番号（1・(1)）と右端の金額（千円）で読み、文中・数量の数は取り込んでいない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2026/initial/expenditure/care-initial-nodes.parquet",
+          "sha256": "2d0d8068de08d8cb1e39b890f5aaef348989fa053308a915e573c47837287ee0",
+          "bytes": 9700
+        },
+        "row_count": 179
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2026/initial/expenditure/care-initial-amounts.parquet",
+          "sha256": "fe2bdea9880656cdac1b78a19f29906220644e22ef38db7692a59baedd92ab8a",
+          "bytes": 7423
+        },
+        "row_count": 259
+      }
+    }
+  ]
+}

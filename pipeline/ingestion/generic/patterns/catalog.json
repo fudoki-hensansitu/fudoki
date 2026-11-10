@@ -40,7 +40,8 @@
     "enterprise_expenses": "ingestion.generic.patterns.readings.enterprise_expenses",
     "banded_projects": "ingestion.generic.patterns.readings.banded_projects",
     "offset_projects": "ingestion.generic.patterns.readings.offset_projects",
-    "titled_pages": "ingestion.generic.patterns.readings.titled_pages"
+    "titled_pages": "ingestion.generic.patterns.readings.titled_pages",
+    "labelled_spread": "ingestion.generic.patterns.readings.labelled_spread"
   },
   "component": {
     "marked_subjects": "ingestion.generic.patterns.components.marked_subjects",
