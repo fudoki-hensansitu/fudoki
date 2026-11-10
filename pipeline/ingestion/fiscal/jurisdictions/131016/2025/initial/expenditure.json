@@ -1172,7 +1172,17 @@
               }
             }
           }
-        }
+        },
+        "name_corrections": [
+          {
+            "id": "p453-kan-2",
+            "page": 453,
+            "code": "2",
+            "observed_name": "付金",
+            "corrected_name": "広域連合納付金",
+            "reason": "原典の画像で、頁453（後期高齢者医療特別会計の歳出の総括）の款2は「広域連合納付金」と印字されている（p474 の題字も同じ）。Paddle は「付金」だけを読んだ。"
+          }
+        ]
       },
       "expected_tables": [
         {
@@ -1228,7 +1238,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "0a399979c1448d33f5655b8fdee0c4d2d3e6ba0983d6cdfb90bf0b21fb8d201a",
+      "input_fingerprint": "258b77c190176cb88e4f3470bf874fc96309ffdc8c55b85f32995ad805c2eb7d",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -1258,7 +1268,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "b96effd602e95957779a67c2778da1f3f0810c5f5f4a2c966a4db367b280b103",
+      "input_fingerprint": "9d4b8fdd4fc0cd17b56d13bc31cf5d7dccd8ed86c9bbc000e4c08733e02093b5",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -1288,7 +1298,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "c8662c548c3c83069a680e22ac106bb897d881bd7ad596b6e9e313b204bbc577",
+      "input_fingerprint": "d38df11165826263c887df2da14d1115c59477257906f928bc41fb69f4cfc458",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -1318,20 +1328,21 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "5b2b2fab1b67351024b1a869ba535a64766693ff1a56972d3cdb0bd37ed65cc2",
+      "input_fingerprint": "f67ec754bb22db570d02d774e7a7918d276a61374a414f38eaa28e7985475044",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は printed 1頁・column mark 8頁 から決めた。款の和 2,348,146 と印字の「歳出合計」2,348,146 が一致。",
-        "金額の注記 0 件（なし）を注記軸に置いた。"
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 2付金→2広域連合納付金。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131016/2025/initial/expenditure/elderly-medical-initial-nodes.parquet",
-          "sha256": "c660ea053c2826386bf7437d3076ceec1ef23441f56e46872b7b297bad465bfc",
-          "bytes": 5295
+          "sha256": "ca50158c50b303c505fa5c280615520dbb5067849be3dbad945af29574009879",
+          "bytes": 5291
         },
         "row_count": 56
       },

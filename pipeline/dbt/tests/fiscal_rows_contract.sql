@@ -1,9 +1,14 @@
 -- A volume that starts inside a row of the volume before prints it again, with no amount, in the running header
 -- of its first page (131211's general account, `continued_rows`): that copy is the node the amount-printing row
 -- of the volume before stands for (int_fiscal__settlement_expenditure_nodes), not a second print of it.
+-- A 款 or 項 the 総括 prints with its amount is printed again, with no amount, as the title over its own pages
+-- (`running_titles`, 千代田区・中野区の当初予算): that title is a copy of the same node in the same table.
 with printed as (select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}),
 rows as (
-    select *, amount_yen is null and physical_page = min(physical_page) over (partition by source_table_key) as continued
+    select *, amount_yen is null and (
+        physical_page = min(physical_page) over (partition by source_table_key)
+        or (axis_header = subject_axis and node_kind in ('款', '項')
+            and count(amount_yen) over (partition by source_table_key, node_id, name) > 0)) as continued
     from printed
 ),
 counts as (select source_table_key, count(*) as n from rows group by 1),
