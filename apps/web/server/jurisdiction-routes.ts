@@ -11,7 +11,8 @@ import { EMBLEMS } from '../jurisdiction/emblems'
 import { BUDGET_PRESS } from '../jurisdiction/budget-press'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
-import type { Env, RateLimiter } from './env'
+import type { Env, Fetcher, RateLimiter } from './env'
+import type { OgInput } from './og'
 import { loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, shownSettlementYears, type CatalogEntry, type DocumentKind } from './jurisdiction'
 
 const TTL = 3600
@@ -104,6 +105,33 @@ function withPress(code: string, profile: Profile | null): Profile | null {
     return [y, { ...py, budgetPress: p.source, budgetNew: p.items.filter((i) => i.isNew) }]
   }))
   return { ...profile, years }
+}
+
+/** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする） */
+export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<(OgInput & { cacheKey: string }) | null> {
+  if (!EMBLEMS[code]) return null
+  const entry = (await catalog(env)).find((e) => e.code === code)
+  const data = entry && entry.settlementYears.length > 0 ? await page(env, entry) : null
+  const areas = data?.cofogFlow.map((f) => ({ name: f.kan.name, yen: f.kan.yen })).filter((a) => a.yen > 0) ?? []
+  if (!entry || !data || areas.length === 0) return null
+  const asset = async (path: string) => {
+    const r = await assets.fetch(new Request(`https://fudoki.dev${path}`))
+    if (!r.ok) throw new Error(`${path} が読めません（${r.status}）`)
+    return r.text()
+  }
+  const [emblemSvg, logoSvg] = await Promise.all([asset(assetPath(code, 'emblem.svg')), asset('/logo.svg')])
+  const latest = data.years.at(-1)!
+  return {
+    name: entry.name,
+    prefecture: code.slice(2, 5) === '000' ? null : entry.prefecture,
+    year: latest.year,
+    total: latest.yen,
+    areas,
+    emblemSvg,
+    logoSvg,
+    // 同じ年度の決算なら同じ画像。字形・配置を変えたら版を上げる
+    cacheKey: `og-v1/${code}-${latest.year}-${latest.yen}`,
+  }
 }
 
 /** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */

@@ -217,8 +217,13 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
                 path = input_path(document, table, 'csv', candidate, remote=remote)
                 inspect(con, path, table, 'csv', spec['amount_column'])
                 con.execute(f'create or replace table ingestion.{identifier(declared["name"])} as select * from read_parquet(?)', [str(path)])
+                # The account column of each CSV layout (numbered 01会計, named 会計名称); see fiscal_csv_layouts.sql.
+                columns = {row[0] for row in con.execute(f'describe ingestion.{identifier(declared["name"])}').fetchall()}
+                account_column = next((c for c in ('01会計', '会計名称') if c in columns), None)
+                if account_column is None:
+                    raise ValueError(f'CSV without a known account column: {declared["name"]}')
                 accounts = [row[0] for row in con.execute(
-                    f'select distinct {identifier("01会計")} from ingestion.{identifier(declared["name"])}').fetchall()]
+                    f'select distinct {identifier(account_column)} from ingestion.{identifier(declared["name"])}').fetchall()]
                 stripped = {re.sub(r'^\d+', '', account) for account in accounts}
                 scope_accounts = {s['account'] for s in original['scope']}
                 if not stripped or not stripped <= scope_accounts:
@@ -286,7 +291,7 @@ def main() -> None:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
                         '--select', 'marts.expenditure+', '+marts.expenditure', '+jurisdiction',
-                        '+marts.population', 'cofog_master', '+marts.evaluation', '+marts.budget_proposal'],
+                        '+marts.population', 'cofog_master', '+marts.evaluation', '+marts.budget_proposal', '+marts.project'],
                        cwd=DBT, stdout=sys.stderr, check=True)
         result['dbt_build'] = 'passed'
     print(json.dumps(result, ensure_ascii=False))

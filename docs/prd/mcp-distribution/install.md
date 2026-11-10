@@ -8,7 +8,7 @@
 
 このrepoの `.agents/plugins/marketplace.json` は `fudoki-plugins` というローカルsourceを宣言する。対応するChatGPT desktopのPlugins Directoryでこのsourceを選び、風土記をインストールする。必要なら先に `codex plugin marketplace add /absolute/path/to/fudoki` で登録する。
 
-Gitから導入する場合は `codex plugin marketplace add fudoki-hensansitu/fudoki` でsourceを登録する。現在のCLIでは `codex plugin add fudoki@fudoki-plugins` でインストールできる（導入先で `codex plugin add --help` を確認）。desktopのPlugins Directoryでも `fudoki-plugins` を選んでインストールできる。`compare-expenditure` skill（事業評価・予算案の手順は `references/evaluation.md`）と10のMCP toolが読み込まれたことを確認する。
+Gitから導入する場合は `codex plugin marketplace add fudoki-hensansitu/fudoki` でsourceを登録する。現在のCLIでは `codex plugin add fudoki@fudoki-plugins` でインストールできる（導入先で `codex plugin add --help` を確認）。desktopのPlugins Directoryでも `fudoki-plugins` を選んでインストールできる。`compare-expenditure` skill（事業評価・予算案の手順は `references/evaluation.md`）と12のMCP toolが読み込まれたことを確認する。
 
 更新は `codex plugin marketplace upgrade fudoki-plugins` でsourceを更新し、desktopを再起動してインストール済みpluginの内容を確認する。marketplaceの更新だけで全クライアントのインストール済みpackageが必ず更新されるとは扱わない。[OpenAI公式仕様](https://developers.openai.com/plugins/build/plugins)
 

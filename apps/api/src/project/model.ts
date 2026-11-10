@@ -1,7 +1,12 @@
 // 事業の集約（docs/prd/jurisdiction-page-data/project-domain-model.md）: 予算書の事業の行を1つずつ事業にし、年度をまたいでつないだ木。
 // 守ること: 1つの年度に事業の金額は1つ。1つの内訳は高々1つの事業の年度に入る。金額は事業の木で足さず、資料ごとに末端の内訳を足す。
 import { z } from 'zod'
-import { FiscalYear, JurisdictionCode } from '../shared/model'
+import { MeasureRow } from '../budget-proposal/model'
+import { described, PROJECT_YEAR_TABLE } from '../columns'
+import { SheetRow } from '../evaluation/model'
+import { FiscalYear, JurisdictionCode, RowId } from '../shared/model'
+import { nextPageToken } from '../shared/paging'
+import { yearSearchInputFor } from '../shared/search'
 
 /** 始めた年度。収録の範囲でしか決まらない */
 export const ProjectStart = z.discriminatedUnion('kind', [
@@ -41,3 +46,62 @@ export const Project = z.strictObject({
   years: z.array(ProjectYear).min(1),
 })
 export type Project = z.infer<typeof Project>
+
+// API の行。列は表（columns.json）のまま。列の集合・型・null の可否・accepted_values は model.test.ts が照合する。
+
+export const ProjectRow = z
+  .strictObject(
+    described('project', {
+      project_id: z.string(),
+      jurisdiction_code: z.string(),
+      name: z.string(),
+      account_name: z.string(),
+      first_year: z.int(),
+      first_year_kind: z.enum(['confirmed', 'before_coverage']),
+      last_year: z.int().nullable(),
+      last_year_kind: z.enum(['confirmed', 'latest', 'unknown']),
+      parent_project_id: z.string().nullable(),
+    })
+  )
+  .meta({ id: 'ProjectRow', description: '事業（予算書・決算書の事業の行を年度をまたいでつないだもの。つなぎ方は風土記の判断）。' })
+
+export const ProjectYearRow = z
+  .strictObject(
+    described('project_year', {
+      project_year_id: z.string(),
+      project_id: z.string(),
+      jurisdiction_code: z.string(),
+      fiscal_year: z.int(),
+      name: z.string(),
+      account_name: z.string(),
+      kan_name: z.string().nullable(),
+      kou_name: z.string().nullable(),
+      moku_name: z.string().nullable(),
+      budget_detail_id: z.string().nullable(),
+      settlement_detail_id: z.string().nullable(),
+      budget_yen: z.int().nullable(),
+      settled_yen: z.int().nullable(),
+    })
+  )
+  .meta({ id: 'ProjectYearRow', description: '事業の1年度（当初予算と決算の事業の行）。' })
+
+/** 1つの事業の直下の事業の上限 */
+export const MAX_CHILDREN = 500
+
+export const ProjectId = RowId('project_id from search_projects or a parent_project_id')
+
+export const ProjectOutput = z.strictObject({
+  project: ProjectRow,
+  years: z.array(ProjectYearRow).describe('事業の年度（年度の順）。'),
+  children: z.array(ProjectRow).describe(`直下の事業（予算書の入れ子の1つ下）。${MAX_CHILDREN} 件まで。`),
+  evaluation_sheets: z.array(SheetRow).describe('事業の年度の決算の行に付いた事業評価の評価シート。'),
+  budget_measures: z.array(MeasureRow).describe('事業の年度の当初予算の行に付いた予算案の施策（紐付けは風土記の判断）。'),
+})
+export type ProjectOutput = z.infer<typeof ProjectOutput>
+
+export const ProjectSearchInput = yearSearchInputFor(PROJECT_YEAR_TABLE)
+export const ProjectSearchOutput = z.strictObject({
+  project_years: z.array(ProjectYearRow),
+  next_page_token: nextPageToken,
+})
+export type ProjectSearchOutput = z.infer<typeof ProjectSearchOutput>

@@ -30,7 +30,7 @@ export const DOCUMENT_KINDS = ['settlement', 'initial'] as const
 /** 検索の対象の表（歳出の科目・内訳、事業評価のシート、予算案の施策） */
 export interface FiscalTable {
   /** 操作名に使う複数形（page_token の指紋に入れる） */
-  kind: 'subjects' | 'details' | 'evaluation_sheets' | 'budget_measures'
+  kind: 'subjects' | 'details' | 'evaluation_sheets' | 'budget_measures' | 'project_years'
   table: string
   primaryKey: string
   /** document_kind の列があり、検索で必ず1つに絞る表か */
@@ -119,6 +119,8 @@ export const BUDGET_PROPOSAL_TABLE = 'budget_proposal'
 export const BUDGET_PROPOSAL_ORIGIN_TABLE = 'budget_proposal_origin'
 /** 予算案の施策。資料の1件 */
 export const BUDGET_MEASURE_TABLE = fiscalTable('budget_measures', 'budget_measure')
+export const PROJECT_TABLE = 'project'
+export const PROJECT_YEAR_TABLE = fiscalTable('project_years', 'project_year')
 
 /**
  * 手で書いた行の schema の各列に、columns.json（dbt の _models.yml）の説明を付ける。

@@ -4,7 +4,10 @@
     "open_edge": "ingestion.generic.patterns.layout.open_edge",
     "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles",
     "running_titles": "ingestion.generic.patterns.layout.running_titles",
-    "purpose_section": "ingestion.generic.patterns.layout.purpose_section"
+    "paren_titles": "ingestion.generic.patterns.layout.paren_titles",
+    "facing_pages": "ingestion.generic.patterns.layout.facing_pages",
+    "purpose_section": "ingestion.generic.patterns.layout.purpose_section",
+    "listed_sources": "ingestion.generic.patterns.layout.listed_sources"
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
@@ -20,7 +23,8 @@
   "breakdown": {
     "indent": "ingestion.generic.patterns.breakdown.indent",
     "shape": "ingestion.generic.patterns.breakdown.shape",
-    "position": "ingestion.generic.patterns.breakdown.position"
+    "position": "ingestion.generic.patterns.breakdown.position",
+    "flat": "ingestion.generic.patterns.breakdown.flat"
   },
   "repairs": {
     "opening_cell": "ingestion.generic.patterns.repairs.opening_cell",
@@ -45,6 +49,10 @@
     "purpose_summary": "ingestion.generic.patterns.readings.purpose_summary",
     "compared_years": "ingestion.generic.patterns.readings.compared_years",
     "turned_summary": "ingestion.generic.patterns.readings.turned_summary",
+    "titled_pages": "ingestion.generic.patterns.readings.titled_pages",
+    "labelled_spread": "ingestion.generic.patterns.readings.labelled_spread",
+    "facing_explanations": "ingestion.generic.patterns.readings.facing_explanations",
+    "annotated_spread": "ingestion.generic.patterns.readings.annotated_spread",
     "paired_summary": "ingestion.generic.patterns.readings.paired_summary"
   },
   "component": {

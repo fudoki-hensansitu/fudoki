@@ -17,7 +17,7 @@ import yaml
 
 PIPELINE = Path(__file__).resolve().parents[1]
 MODELS = [PIPELINE / f'dbt/models/marts/{name}/_models.yml'
-          for name in ('jurisdiction', 'population', 'expenditure', 'evaluation', 'budget_proposal')]
+          for name in ('jurisdiction', 'population', 'expenditure', 'evaluation', 'budget_proposal', 'project')]
 WAREHOUSE = PIPELINE / '.build/warehouse.duckdb'
 OUTPUT = PIPELINE.parent / 'apps/api/src/columns.json'
 
@@ -26,14 +26,14 @@ TABLES = ['jurisdiction', 'population_origin', 'population',
           'expenditure', 'expenditure_origin', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
           'expenditure_location',
           'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
-          'budget_proposal', 'budget_proposal_origin', 'budget_measure']
+          'budget_proposal', 'budget_proposal_origin', 'budget_measure', 'project', 'project_year']
 PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code', 'population_origin': 'origin_id', 'population': 'population_id',
                 'expenditure': 'expenditure_id', 'expenditure_origin': 'origin_id', 'expenditure_origin_link': 'link_id',
                 'expenditure_subject': 'subject_id', 'expenditure_detail': 'detail_id', 'expenditure_location': 'row_id',
                 'evaluation': 'evaluation_id', 'evaluation_origin': 'origin_id', 'evaluation_sheet': 'sheet_id',
                 'evaluation_indicator': 'indicator_id', 'evaluation_indicator_value': 'value_id',
                 'budget_proposal': 'budget_proposal_id', 'budget_proposal_origin': 'origin_id',
-                'budget_measure': 'measure_id'}
+                'budget_measure': 'measure_id', 'project': 'project_id', 'project_year': 'project_year_id'}
 # index（docs/prd/aggregate-api/dd.md）。科目は自治体の一覧・比較・COFOG・子・根、内訳は科目の下・子・自治体の事業・根。
 # 根の表と人口は自治体のページごとに自治体コードで引く
 INDEXES = {
@@ -52,6 +52,8 @@ INDEXES = {
     'budget_proposal': [['jurisdiction_code']],
     'budget_proposal_origin': [['budget_proposal_id']],
     'budget_measure': [['budget_proposal_id'], ['jurisdiction_code', 'fiscal_year'], ['detail_id']],
+    'project': [['jurisdiction_code'], ['parent_project_id']],
+    'project_year': [['project_id'], ['fiscal_year', 'jurisdiction_code'], ['budget_detail_id'], ['settlement_detail_id']],
 }
 
 TYPES = {'VARCHAR': 'string', 'INTEGER': 'integer', 'BIGINT': 'integer', 'HUGEINT': 'integer', 'BOOLEAN': 'boolean',
