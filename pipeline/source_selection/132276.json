@@ -3782,7 +3782,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "選ばない（未公表）。令和7年度実施事業の事後評価シート（目標・実績・評価を事業ごとに載せる資料）は未掲載で、掲載済みの令和8年度行政評価の内部評価（事後評価）は結果の概要一覧だけのため選ばない。ブラウザで描画して見た頁: 行政評価（令和8年度）（https://www.city.hamura.tokyo.jp/0000021220.html、初版公開日2026-10-15）、行政評価（令和7年度）（https://www.city.hamura.tokyo.jp/0000020270.html、更新日2026-04-06）、行政評価（令和6年度）（https://www.city.hamura.tokyo.jp/0000019498.html）。令和8年度の頁は「令和7年度に実施した行政評価対象事業について」の事後評価の結果（結果について 1頁、行政評価結果概要一覧（既存事務事業事後評価）14頁）だけで、外部評価委員会の資料（事後評価シート）は載っていない。概要一覧は計画事業ごとに進捗状況・妥当性・効率性（手法）・達成度・総合評価の区分（A〜Cなど）と、課題のある事業の「事後評価の概要」を載せるが、目標値と実績値の欄が無く、数値は一部の事業の文中（例: 補助件数が計画9件に対し1件）にとどまる。令和6年度実施分の選定でも、同じ種類の概要一覧は選ばず事後評価シートを選んでいる。令和7年度の頁の中間評価（R7tyuukanitiran.pdf）は令和7年度の途中の確認で、年度の実績の評価ではない。令和7年度実施事業の事後評価シートと外部評価の資料（令和7年度の頁は初版公開が2025年12月）が載れば選ぶ。確認日：2026-10-23（UTC）。"
+      "reason": "選ばない（未公表）。令和7年度実施事業の事後評価シート（目標・実績・評価を事業ごとに載せる資料）は未掲載で、掲載済みの令和8年度行政評価の内部評価（事後評価）は結果の概要一覧だけのため選ばない。ブラウザで描画して見た頁: 行政評価（令和8年度）（https://www.city.hamura.tokyo.jp/0000021220.html、初版公開日2026-10-15）、行政評価（令和7年度）（https://www.city.hamura.tokyo.jp/0000020270.html、更新日2026-04-06）、行政評価（令和6年度）（https://www.city.hamura.tokyo.jp/0000019498.html）。令和8年度の頁は「令和7年度に実施した行政評価対象事業について」の事後評価の結果（結果について 1頁、行政評価結果概要一覧（既存事務事業事後評価）14頁）だけで、外部評価委員会の資料（事後評価シート）は載っていない。概要一覧は計画事業ごとに進捗状況・妥当性・効率性（手法）・達成度・総合評価の区分（A〜Cなど）と、課題のある事業の「事後評価の概要」を載せるが、目標値と実績値の欄が無く、数値は一部の事業の文中（例: 補助件数が計画9件に対し1件）にとどまる。令和6年度実施分の選定でも、同じ種類の概要一覧は選ばず事後評価シートを選んでいる。令和7年度の頁の中間評価（R7tyuukanitiran.pdf）は令和7年度の途中の確認で、年度の実績の評価ではない。令和7年度実施事業の事後評価シートと外部評価の資料（令和7年度の頁は初版公開が2025年12月）が載れば選ぶ。確認日：2026-11-10（UTC）。"
     },
     {
       "target": {
@@ -3943,6 +3943,122 @@
         "archived_at": "2026-10-15T12:54:20.755Z"
       },
       "reason": "令和5年度に実施した主要な事務事業を事後評価した令和6年度の事後評価シート7冊（コンセプト3・4）。表題「令和5年度における施策の取組状況と成果について」で、評価対象は令和5年度。施策の取組状況と成果、事業ごとに進捗状況・妥当性・効率性・達成度（A〜D）・総合評価を載せる。文字として読める。なお、対象はコンセプト3・4の事業のみ。中間評価・外部評価の資料は評価の本体ではないため含めない。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132276",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "第六次羽村市長期総合計画 前期基本計画 令和6(2024)年度 実施計画・予算（概要説明）",
+          "landing_url": "https://www.city.hamura.tokyo.jp/0000016058.html",
+          "inspected_at": "2026-11-10T07:04:21+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000016/16058/r6_implementationplan-v2.pdf",
+              "sha256": "debbb047f8ff9ef12588bae1bb65162753427d91eb1e1530bf120f4dd2d66b94",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132276/2024/press-initial.pdf",
+            "sha256": "debbb047f8ff9ef12588bae1bb65162753427d91eb1e1530bf120f4dd2d66b94",
+            "final_url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000016/16058/r6_implementationplan-v2.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:04:38.153Z"
+      },
+      "reason": "令和6年度予算の頁（https://www.city.hamura.tokyo.jp/0000018443.html）からリンクされる実施計画の頁（https://www.city.hamura.tokyo.jp/0000016058.html）に載る「令和6(2024)年度 実施計画・予算（概要説明）」（84頁、令和6年2月、文字PDF）。羽村市は予算案の記者会見・報道発表の頁を持たず（市長室 https://www.city.hamura.tokyo.jp/category/3-1-0-0-0-0-0-0-0-0.html は市長あいさつ・施政方針等のみ）、予算の頁の資料から選んだ。令和6年度は予算の頁に「予算の概要」が無く、この冊子が予算の概要説明を兼ねる。第1部の実施計画（印字4〜43頁）は長期総合計画のコンセプト・施策・方向性ごとに、実施計画事業1件を1頁前後で、事業名・〔新規事業〕〔拡充〕などの区分・令和6年度の事業内容・令和6年度事業費（千円、財源内訳つき）・令和7〜8年度の計画を載せる。第2部の予算（概要説明）（印字44頁〜）は予算編成の考え方、一般会計の歳入歳出、特別会計・公営企業会計の予算の説明。同じ予算の頁の「わかりやすい最初の一歩！」は市民向けの要約、予算書本体は選ばない。確認日 2026-11-10T07:04:21+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132276",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度一般会計当初予算の概要（令和７（2025）年度 羽村市 予算の概要）",
+          "landing_url": "https://www.city.hamura.tokyo.jp/0000019430.html",
+          "inspected_at": "2026-11-10T07:04:21+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000019/19430/R7yosan_gaiyou.pdf",
+              "sha256": "e5e14371322c84ed3bffb682d02c791221df33d561072c98b4258a54c011a34a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132276/2025/press-initial.pdf",
+            "sha256": "e5e14371322c84ed3bffb682d02c791221df33d561072c98b4258a54c011a34a",
+            "final_url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000019/19430/R7yosan_gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:04:41.464Z"
+      },
+      "reason": "予算の頁「令和7年度予算」（https://www.city.hamura.tokyo.jp/0000019430.html）に載る「令和７（2025）年度 羽村市 予算の概要」（30頁、文字PDF）。羽村市は予算案の記者会見・報道発表の頁を持たず（市長室 https://www.city.hamura.tokyo.jp/category/3-1-0-0-0-0-0-0-0-0.html は市長あいさつ・施政方針等のみ）、予算の頁の資料から選んだ。「令和７年度 主要事業」（物理5〜23頁）は「三つの投資」などの区分ごとに主要事業1件を1頁で、見出し・事業費（万円）・事業の説明と取組の箇条・担当課を載せる。前半は予算編成の考え方と当初予算の規模、末尾は付属資料。同じ頁の「三つの投資」（1頁、対象事業の一覧）と「わかりやすい最初の一歩」（市民向けの要約）、予算説明書・予算書本体は選ばない。「三つの投資」の一覧は https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000019/19430/R7_3toushi.pdf 。確認日 2026-11-10T07:04:21+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132276",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 羽村市予算の概要",
+          "landing_url": "https://www.city.hamura.tokyo.jp/0000020481.html",
+          "inspected_at": "2026-11-10T07:04:21+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000020/20481/R8_yosangaiyou.pdf",
+              "sha256": "3fd65a37a37898cd802c090a02cd3684269c8c6f84dba1e9373222d8353f050e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132276/2026/press-initial.pdf",
+            "sha256": "3fd65a37a37898cd802c090a02cd3684269c8c6f84dba1e9373222d8353f050e",
+            "final_url": "https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000020/20481/R8_yosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:04:43.564Z"
+      },
+      "reason": "予算の頁「令和8年度予算」（https://www.city.hamura.tokyo.jp/0000020481.html）に載る「令和8（2026）年度 羽村市 予算の概要」（49頁、文字PDF）。羽村市は予算案の記者会見・報道発表の頁を持たず（市長室 https://www.city.hamura.tokyo.jp/category/3-1-0-0-0-0-0-0-0-0.html は市長あいさつ・施政方針等のみ）、予算の頁の資料から選んだ。「主要事業一覧」（物理11〜12頁）で区分（子供たちへの投資、安全・安心対策・地域の強靭化対策への投資、行政のデジタル化への投資、脱炭素化、物価高騰対策、その他）ごとに主要事業を挙げ、「主要事業」（物理13〜49頁）で1事業を1頁前後に、見出し・事業費（千円）・事業の説明と取組の箇条・担当課・実施計画の番号を載せる。前半は予算編成の考え方と当初予算の規模。同じ頁の「三つの投資+1」（1頁、実施計画事業の一覧で施策・事務事業名・担当課・事業費を載せる。https://www.city.hamura.tokyo.jp/cmsfiles/contents/0000020/20481/R8_01ippan_3toushi.pdf）は予算の頁に別にある一覧なので含めない。「わかりやすい最初の一歩」（市民向けの要約）、予算説明書・予算書本体も選ばない。確認日 2026-11-10T07:04:21+00:00。"
     }
   ]
 }

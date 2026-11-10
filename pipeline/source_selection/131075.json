@@ -4889,5 +4889,121 @@
       },
       "reason": "令和5年度に実施した事務業を令和6年度に評価した墨田区の行政評価（83ファイル）。ページに「令和5年度に実施した事務事業について、内部評価を行いました」「施策評価は、各部ごとに今後の施策の運営方針を示しています」とあり、施策評価シートの予算・決算額推移は最新の決算が令和5年度（令和6年度は見込み）、並びに「令和4年度（決算）／令和5年度（決算）／令和6年度（予算）」を持つ。施策ごとに目標、成果指標の目標値と実績値、総事業費推移、施策の評価（A〜D）と理由、今後の運営方針を載せる。施策評価シートのうち施策451（健康）2ファイルと施策472（教育）2ファイルは文字の層が無く（フォントも画像も無い輪郭線描画のみ、scan相当）ため pdf_type=scan として同じ選定に含めた（残り79ファイルは pdf_type=text）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131075",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度予算案発表資料",
+          "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/r6yosan_press.html",
+          "inspected_at": "2026-11-10T07:11:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/r6yosan_press.files/r6yosan_press.pdf",
+              "sha256": "edd1dacf7fc02df5438f0b3cc84ca1524acbe92694b0d5cfe0c635f2750b8e84",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131075/2024/press-initial.pdf",
+            "sha256": "edd1dacf7fc02df5438f0b3cc84ca1524acbe92694b0d5cfe0c635f2750b8e84",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/r6yosan_press.files/r6yosan_press.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:11:42.741Z"
+      },
+      "reason": "予算発表資料の頁「令和6年度予算案発表」（https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/r6yosan_press.html）に載る令和6年度予算案記者発表の資料（45頁、文字PDF）。冒頭に資料番号一覧（目次。資料タイトル・SDGs目標・予算概要での該当箇所・主管課）、資料ごとに事業名・予算額（新規・拡充の印つき、万円・千円）・目的・事業内容・問合せを載せる。予算の頁の「令和6年度 予算概要」（https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/zaisei/yosan_gaiyou/r6yosangaiyou.html）は別の冊子で含めない。確認日 2026-11-10T07:11:00+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131075",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度予算案発表資料",
+          "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/r7yosan_press.html",
+          "inspected_at": "2026-11-10T07:11:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/r7yosan_press.files/r7yosan_press.pdf",
+              "sha256": "9aa4ff09c7c9409a68754e98cb6b5c5d5b01845c84c7d884d5c7e1d85c7a79b7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131075/2025/press-initial.pdf",
+            "sha256": "9aa4ff09c7c9409a68754e98cb6b5c5d5b01845c84c7d884d5c7e1d85c7a79b7",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/r7yosan_press.files/r7yosan_press.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:11:45.554Z"
+      },
+      "reason": "予算発表資料の頁「令和7年度予算案発表」（https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/r7yosan_press.html）に載る令和7年度予算案記者発表の資料（42頁、文字PDF）。資料番号一覧（No.1〜38、重点課題と分野ごとの注目事業。資料タイトル・SDGs目標・予算概要の該当箇所・主管課）、資料ごとに事業名・予算額（新規・拡充の印、千円）・目的・主な事業内容・問合せを載せる。予算の頁の予算概要は別の冊子で含めない。確認日 2026-11-10T07:11:00+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131075",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度予算案発表資料",
+          "landing_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/080202.html",
+          "inspected_at": "2026-11-10T07:11:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/080202.files/080202.pdf",
+              "sha256": "d230592f677da3441446fbe5db5bac0bb6f07c53fcde17222edd6da7fdf105f2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131075/2026/press-initial.pdf",
+            "sha256": "d230592f677da3441446fbe5db5bac0bb6f07c53fcde17222edd6da7fdf105f2",
+            "final_url": "https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/080202.files/080202.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:11:53.992Z"
+      },
+      "reason": "予算発表資料の頁「令和8年度予算案発表」（https://www.city.sumida.lg.jp/kuseijoho/gyoseikaikaku_zaisei/presssiryou/080202.html）に載る令和8年度予算案記者発表の資料（48頁、文字PDF、副題「すみだの新時代を切り拓く予算」）。予算規模の説明に続き、資料ごとに事業名・予算額（新規・拡充の印、万円）・目的・事業概要・問合せを載せる。予算の頁の予算概要は別の冊子で含めない。確認日 2026-11-10T07:11:00+00:00。"
+    }
   ]
 }

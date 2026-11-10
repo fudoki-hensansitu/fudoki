@@ -431,10 +431,37 @@
         "fiscal_year": 2025,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "判断保留。小平市の公式サイトは回復していない。Orca のブラウザで https://www.city.kodaira.lg.jp/kurashi/index07011007.html（財政・行財政改革 > 行政評価の頁）を開くと chrome-error://chromewebdata/ のエラー画面で本文が無く、頁内の fetch も Failed to fetch、curl も TLS の alert protocol version で接続できない（https://www.city.kodaira.lg.jp/ も同じ）。旧ドメインの https://www.city.kodaira.tokyo.jp/ は臨時案内ページ（「現在、システム障害により市ホームページをご覧いただけない状態です」、最終更新：2026年10月20日 16時00分）で、記事本文へのリンクは無く、https://www.city.kodaira.tokyo.jp/kurashi/index07011007.html などの個別の頁は404。このため行政評価の掲載一覧を描画できず、評価資料の有無も年度も確かめられていない。令和7年度実績の評価（令和8年度の行政評価）の有無も未確認。サイトの復旧後に行政評価の頁を見直す。確認日：2026-10-23T09:47:41+00:00（UTC）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度 小平市の行政評価（令和8年9月）",
+          "landing_url": "https://www.city.kodaira.tokyo.jp/kurashi/071/071864.html",
+          "inspected_at": "2026-11-10T07:01:14+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/71864/071864/att_0000053.pdf",
+              "sha256": "ca9776bfa687e0106e05f09eaee088b9b186df4adcbdfa35f321b08609d3dd6e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132110/2025/evaluation-settlement.pdf",
+            "sha256": "ca9776bfa687e0106e05f09eaee088b9b186df4adcbdfa35f321b08609d3dd6e",
+            "final_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/71864/071864/att_0000053.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:49.316Z"
+      },
+      "reason": "小平市の公式サイトが復旧し、行政評価の頁「小平市の行政評価」（https://www.city.kodaira.tokyo.jp/kurashi/071/071864.html、更新日2026年10月1日。財政・行財政改革 > 行政評価 https://www.city.kodaira.tokyo.jp/kurashi/index07011007.html から）を開き直した。「令和7年度 小平市の行政評価」（令和8年9月、64頁、文字PDF）。第四次長期総合計画の23テーマと自治体経営方針の主要な事業について決算数値を基に評価した施策評価票で、テーマごとに施策の概要（PLAN）、4年後の到達目標の進捗状況（DO：成果指標の目標・実績・達成率）、施策の成果についての総括（CHECK：目標達成度合いと理由・成果・課題）、施策の方向性（ACTION）、関連事務事業一覧（令和7年度。事務事業名・予算科目・事務事業コード・担当課）を載せる。年度は成果指標の列（基準年度 令和5年度、令和7年度〜令和10年度）で、実績が入る最新の列が「令和7年度」（例: Ⅰ-1-1 妊娠届出者に対する面接を行った割合 実績111.6、達成率111.6%）なので2025年度。令和7年度版は関連事務事業一覧に事業費・次年度の動向の列が無い。評価は施策（テーマ）単位で、事務事業ごとの評価ではない。小平市は令和3年度決算以降、事務事業評価を決算附属書類の「事務事業表」（令和7年度決算・財政状況 https://www.city.kodaira.tokyo.jp/kurashi/130/130681.html の一般会計決算附属書類、款別の5分冊）に統合しており、事務事業ごとに総コスト・成果活動指標・次年度の動向（維持など）を載せるが評価の記述は無いので、評価の記述を持つ行政評価を代表にした。確認日 2026-11-10T07:01:14+00:00。"
     },
     {
       "target": {
@@ -442,10 +469,37 @@
         "fiscal_year": 2024,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "判断保留。小平市の公式サイトは回復していない。Orca のブラウザで https://www.city.kodaira.lg.jp/kurashi/index07011007.html（財政・行財政改革 > 行政評価の頁）を開くと chrome-error://chromewebdata/ のエラー画面で本文が無く、頁内の fetch も Failed to fetch、curl も TLS の alert protocol version で接続できない（https://www.city.kodaira.lg.jp/ も同じ）。旧ドメインの https://www.city.kodaira.tokyo.jp/ は臨時案内ページ（「現在、システム障害により市ホームページをご覧いただけない状態です」、最終更新：2026年10月20日 16時00分）で、記事本文へのリンクは無く、https://www.city.kodaira.tokyo.jp/kurashi/index07011007.html などの個別の頁は404。このため行政評価の掲載一覧を描画できず、評価資料の有無も年度も確かめられていない。令和6年度の行政評価（2025年の公表）の有無は掲載一覧を描画できず未確認。サイトの復旧後に行政評価の頁を見直す。確認日：2026-10-23T09:47:41+00:00（UTC）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度 小平市の行政評価（令和7年9月）",
+          "landing_url": "https://www.city.kodaira.tokyo.jp/kurashi/071/071864.html",
+          "inspected_at": "2026-11-10T07:01:14+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/71864/071864/att_0000049.pdf",
+              "sha256": "38dd4b88d6ad0f6a3280bd56e45af800c71cb0ac2083234aed88ceae68510188",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132110/2024/evaluation-settlement.pdf",
+            "sha256": "38dd4b88d6ad0f6a3280bd56e45af800c71cb0ac2083234aed88ceae68510188",
+            "final_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/71864/071864/att_0000049.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:02:01.022Z"
+      },
+      "reason": "小平市の公式サイトが復旧し、行政評価の頁「小平市の行政評価」（https://www.city.kodaira.tokyo.jp/kurashi/071/071864.html）を開き直した。「令和6年度 小平市の行政評価」（令和7年9月、72頁、文字PDF）。第四次長期総合計画の23テーマと自治体経営方針の主要な事業の施策評価票で、テーマごとに施策の概要（PLAN）、到達目標の進捗状況（DO：成果指標の目標・実績・達成率）、施策の成果についての総括（CHECK：目標達成度合いと理由・成果・課題）、施策の方向性（ACTION）、関連事務事業一覧（令和6年度。事務事業名・予算科目・担当課・事業費（千円）・令和7年度の動向）を載せる。年度は成果指標の列（基準年度 令和2年度、令和3〜6年度）で、実績が入る最新の列が「令和6年度」（例: Ⅰ-1-1 妊娠届出者に対する面接を行った割合 実績109.7、達成率109.7%）なので2024年度。事務事業ごとの実績は決算附属書類の「事務事業表」（令和6年度決算・財政状況 https://www.city.kodaira.tokyo.jp/kurashi/123/123847.html）にあるが評価の記述は無いので、評価の記述を持つ行政評価を代表にした。確認日 2026-11-10T07:01:14+00:00。"
     },
     {
       "target": {
@@ -453,10 +507,153 @@
         "fiscal_year": 2023,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "判断保留。小平市の公式サイトは回復していない。Orca のブラウザで https://www.city.kodaira.lg.jp/kurashi/index07011007.html（財政・行財政改革 > 行政評価の頁）を開くと chrome-error://chromewebdata/ のエラー画面で本文が無く、頁内の fetch も Failed to fetch、curl も TLS の alert protocol version で接続できない（https://www.city.kodaira.lg.jp/ も同じ）。旧ドメインの https://www.city.kodaira.tokyo.jp/ は臨時案内ページ（「現在、システム障害により市ホームページをご覧いただけない状態です」、最終更新：2026年10月20日 16時00分）で、記事本文へのリンクは無く、https://www.city.kodaira.tokyo.jp/kurashi/index07011007.html などの個別の頁は404。このため行政評価の掲載一覧を描画できず、評価資料の有無も年度も確かめられていない。令和5年度の行政評価として「令和5年度 小平市の行政評価」（128頁、令和6年9月作成）の存在だけは小平市デジタルアーカイブの目録（https://adeac.jp/kodaira-lib/catalog/mp000040-100050）で確認しているが、画像ビューアのみで原本の PDF が取れない。サイトの復旧後に行政評価の頁から PDF を取って年度の列を確かめる。確認日：2026-10-23T09:47:41+00:00（UTC）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和5年度 小平市の行政評価（令和6年9月）",
+          "landing_url": "https://www.city.kodaira.tokyo.jp/kurashi/071/071864.html",
+          "inspected_at": "2026-11-10T07:01:14+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/71864/071864/att_0000050.pdf",
+              "sha256": "62409d0e9347967468275ee7201f0731bf361b1480c34860fa70152f354ff1ee",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132110/2023/evaluation-settlement.pdf",
+            "sha256": "62409d0e9347967468275ee7201f0731bf361b1480c34860fa70152f354ff1ee",
+            "final_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/71864/071864/att_0000050.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:02:12.509Z"
+      },
+      "reason": "小平市の公式サイトが復旧し、行政評価の頁「小平市の行政評価」（https://www.city.kodaira.tokyo.jp/kurashi/071/071864.html）を開き直した。「令和5年度 小平市の行政評価」（令和6年9月、64頁、文字PDF）。第四次長期総合計画の23テーマと自治体経営方針の主要な事業の施策評価票で、テーマごとに施策の概要（PLAN）、到達目標の進捗状況（DO：成果指標の目標・実績・達成率）、施策の成果についての総括（CHECK：目標達成度合いと理由・成果・課題）、施策の方向性（ACTION）、関連事務事業一覧（令和5年度。事務事業名・予算科目・担当課・事業費（千円）・令和6年度の動向）を載せる。年度は成果指標の列（基準年度 令和2年度、令和3〜6年度）で、実績が入る最新の列が「令和5年度」（例: Ⅰ-1-1 妊娠届出者に対する面接を行った割合 実績119.4、令和6年度は空欄）なので2023年度。事務事業ごとの実績は決算附属書類の「事務事業表」（令和5年度決算・財政状況 https://www.city.kodaira.tokyo.jp/kurashi/108/108494.html）にあるが評価の記述は無いので、評価の記述を持つ行政評価を代表にした。確認日 2026-11-10T07:01:14+00:00。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132110",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 一般会計予算（案）の概要（令和6年度小平市予算（案）記者会見）",
+          "landing_url": "https://www.city.kodaira.tokyo.jp/kurashi/111/111688.html",
+          "inspected_at": "2026-11-10T07:00:45+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/111688/111688/att_0000002.pdf",
+              "sha256": "783fbac4afccb2fb962bc7c9a9729b1f5306b51ff3c74c0e204a55a917e1f34a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132110/2024/press-initial.pdf",
+            "sha256": "783fbac4afccb2fb962bc7c9a9729b1f5306b51ff3c74c0e204a55a917e1f34a",
+            "final_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/111688/111688/att_0000002.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:30.029Z"
+      },
+      "reason": "市長記者会見の頁「（令和6年2月7日記者会見）令和6年度小平市予算(案)記者会見」（https://www.city.kodaira.tokyo.jp/kurashi/111/111688.html、記者会見一覧 https://www.city.kodaira.tokyo.jp/kurashi/116/116976.html から）に載る「令和6年度予算(案)の概要」（表紙に令和6年2月7日、26頁、文字PDF）。「令和6年度主要事業の概要」（物理8〜15頁）で、小平市第四次長期総合計画の基本目標ごとに整理番号・区分（新規・拡充・継続）・事業名・事業費（千円）・特定財源・一般財源を一覧にし、続けて整理番号ごとに事業の概要を載せる。前半は予算の編成にあたって・財政規模・一般会計予算の概要、後半は歳入歳出の概要・財政指標・市債・基金。同じ会見の「特別会計・下水道事業会計予算（案）の概要」（att_0000003.pdf）は各会計の規模と予算の特徴だけで施策ごとの事業が無いため含めない。次第も選ばない。予算の頁（https://www.city.kodaira.tokyo.jp/kurashi/108/108990.html）にも同じ題の資料と「わかりやすい予算」がある。確認日 2026-11-10T07:00:45+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132110",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 一般会計予算（案）の概要（令和7年度小平市予算（案）記者会見）",
+          "landing_url": "https://www.city.kodaira.tokyo.jp/kurashi/117/117902.html",
+          "inspected_at": "2026-11-10T07:00:45+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/117902/117902/att_0000005.pdf",
+              "sha256": "8970d1e5eac65c86686a30c95f5df4def203df52d86d48bfe41a4f039a8e9db9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132110/2025/press-initial.pdf",
+            "sha256": "8970d1e5eac65c86686a30c95f5df4def203df52d86d48bfe41a4f039a8e9db9",
+            "final_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/117902/117902/att_0000005.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:33.986Z"
+      },
+      "reason": "市長記者会見の頁「（令和7年2月5日記者会見）令和7年度小平市予算(案)記者会見」（https://www.city.kodaira.tokyo.jp/kurashi/117/117902.html）に載る「令和7年度予算(案)の概要」（表紙に令和7年2月5日、24頁、文字PDF）。「令和7年度主要事業の概要」（物理6〜13頁）で、小平市第四次長期総合計画の基本目標ごとに整理番号・区分（新規・拡充・継続）・事業名・事業費（千円）・特定財源・一般財源を一覧にし、続けて整理番号ごとに事業の概要を載せる。前半は予算の編成にあたって・財政規模・一般会計予算の概要、後半は歳入歳出の概要・財政指標・市債・基金。同じ会見の「特別会計・下水道事業会計予算（案）の概要」（att_0000006.pdf）は各会計の規模と予算の特徴だけで施策ごとの事業が無いため含めない。次第も選ばない。予算の頁（https://www.city.kodaira.tokyo.jp/kurashi/115/115694.html）にも同じ題の資料と「わかりやすい予算」がある。確認日 2026-11-10T07:00:45+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132110",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度予算（案）の概要（令和8年度小平市予算（案）記者会見）",
+          "landing_url": "https://www.city.kodaira.tokyo.jp/kurashi/126/126337.html",
+          "inspected_at": "2026-11-10T07:00:45+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/126337/126337/att_0000008.pdf",
+              "sha256": "b1a2a0b0ab8f915867830ce30fcbdc7c6f51da58a5304653ecb6918c8254d41a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132110/2026/press-initial.pdf",
+            "sha256": "b1a2a0b0ab8f915867830ce30fcbdc7c6f51da58a5304653ecb6918c8254d41a",
+            "final_url": "https://www.city.kodaira.tokyo.jp/kurashi/files/126337/126337/att_0000008.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:37.871Z"
+      },
+      "reason": "市長記者会見の頁「（令和8年2月4日開催）令和8年度小平市予算(案)記者会見」（https://www.city.kodaira.tokyo.jp/kurashi/126/126337.html）に載る「令和8年度予算(案)の概要」（表紙に令和8年2月4日、24頁、文字PDF）。「令和8年度主要事業の概要」（物理6〜13頁）で、小平市第四次長期総合計画の基本目標ごとに整理番号・区分（新規・拡充・継続）・事業名・事業費（千円）・特定財源・一般財源を一覧にし、続けて整理番号ごとに事業の概要を載せる。同じ会見の「小平市令和8年度当初予算（案）～つながる笑顔と未来を育む予算～」（att_0000011.pdf、14頁）は3つの特徴的な取組の十数事業を写真と予算額で紹介するスライドで、主要事業の一部だけなので選ばない。「特別会計・下水道事業会計予算（案）の概要」（att_0000009.pdf）は各会計の規模と予算の特徴だけで含めない。予算の頁（https://www.city.kodaira.tokyo.jp/kurashi/124/124053.html）にも同じ題の資料（att_0000014.pdf）と「わかりやすい予算」がある。確認日 2026-11-10T07:00:45+00:00。"
     }
   ]
 }

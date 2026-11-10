@@ -2390,5 +2390,121 @@
       },
       "reason": "令和5年度決算の主要事業の説明（46頁、作成2024-08-27）。世田谷区未来つながるプランの施策を対象に、成果指標（全77指標）の達成状況と要因分析、事業ごとの取組・実績、予算現額・決算額、今後の政策展開を載せる。文字として読める。予算の執行実績・目次は評価の本体ではないため含めない。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131121",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度（2024年度）当初予算概要",
+          "landing_url": "https://www.city.setagaya.lg.jp/02022/6187.html",
+          "inspected_at": "2026-11-10T06:55:39+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.setagaya.lg.jp/documents/6187/6yosangaiyou.pdf",
+              "sha256": "eae4cce613d5039b932f2b9c300884727ebc35082dc7761c0f700a218412e407",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131121/2024/press-initial.pdf",
+            "sha256": "eae4cce613d5039b932f2b9c300884727ebc35082dc7761c0f700a218412e407",
+            "final_url": "https://www.city.setagaya.lg.jp/documents/6187/6yosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:55:54.479Z"
+      },
+      "reason": "予算の頁「当初予算概要」（https://www.city.setagaya.lg.jp/02022/6187.html）に載る令和6年度当初予算概要（109頁）。目次（物理3頁）のあと、予算編成の基本的考え方・予算規模・歳入歳出の概要に続き、重点項目（安全・安心、健康・福祉、子ども・若者、教育、暮らし・環境・コミュニティ、都市づくり、行政経営改革、地域経済など）ごとに項目・内容（主な予算事業名）・予算額（千円）・所管部の表を載せ、【新】新規・【拡】拡充の印がある。後半は主要事業説明資料（No.1 地域防災力の向上 P.42〜）。文字の層が無く（pdftotext で本文が取れず、pdffonts は CID フォント1つのみ）、画像として読む必要があるので scan。区長記者会見の頁（https://www.city.setagaya.lg.jp/kuchounoheya/kishakaiken/category/12632.html）には当初予算案の発表の冊子は載らず、会見録と会見スライド資料だけで、予算の説明は予算の頁の「当初予算概要」に案内している。確認日 2026-11-10T06:55:39+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131121",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度（2025年度）当初予算概要",
+          "landing_url": "https://www.city.setagaya.lg.jp/02022/6187.html",
+          "inspected_at": "2026-11-10T06:55:39+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.setagaya.lg.jp/documents/6187/r7tousyoyosangaiyou.pdf",
+              "sha256": "e4f64235290c1997f6f71f468d5840b29b42745c53b34fcd6c2931bbdcbfdeff",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131121/2025/press-initial.pdf",
+            "sha256": "e4f64235290c1997f6f71f468d5840b29b42745c53b34fcd6c2931bbdcbfdeff",
+            "final_url": "https://www.city.setagaya.lg.jp/documents/6187/r7tousyoyosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:56:03.683Z"
+      },
+      "reason": "予算の頁「当初予算概要」（https://www.city.setagaya.lg.jp/02022/6187.html）に載る令和7年度当初予算概要（106頁、文字PDF）。Contents（物理3頁）のとおり、I 当初予算の概要（P.4〜）、II 令和7年度新規・拡充事業説明（P.7〜、分野別に35事業）。事業ごとに1〜2頁で、分野・事業区分（新規／拡充）・所管部・事業名・予算額・目的・事業内容（内訳の金額つき）を載せる。区長記者会見の頁（https://www.city.setagaya.lg.jp/kuchounoheya/kishakaiken/category/12632.html）には当初予算案の発表の冊子は載らず、会見録と会見スライド資料だけで、予算の説明は予算の頁の「当初予算概要」に案内している。確認日 2026-11-10T06:55:39+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131121",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度（2026年度）当初予算概要",
+          "landing_url": "https://www.city.setagaya.lg.jp/02022/6187.html",
+          "inspected_at": "2026-11-10T06:55:39+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.setagaya.lg.jp/documents/6187/r8tousyoyosanngaiyou_2.pdf",
+              "sha256": "1d1256dda5734968e5b7a5de7c106a9413925e55ab2455c110f3adb681eafb60",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131121/2026/press-initial.pdf",
+            "sha256": "1d1256dda5734968e5b7a5de7c106a9413925e55ab2455c110f3adb681eafb60",
+            "final_url": "https://www.city.setagaya.lg.jp/documents/6187/r8tousyoyosanngaiyou_2.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:56:09.714Z"
+      },
+      "reason": "予算の頁「当初予算概要」（https://www.city.setagaya.lg.jp/02022/6187.html）に載る令和8年度当初予算概要（91頁、文字PDF）。Contents（物理3頁）のとおり、I 当初予算の概要（P.4〜）、II 令和8年度新規・拡充事業説明（P.7〜、分野別に26事業）、III 資料編（P.42〜）。事業ごとに1〜2頁で、分野・事業区分（新規／拡充）・所管部・事業名・予算額と前年度比・目的・事業内容（内訳の金額つき）を載せる。区長記者会見（令和8年2月6日、https://www.city.setagaya.lg.jp/02002/31036.html）の頁は会見録と会見スライド資料（slideshiryo.pdf）で、予算はこの当初予算概要へ案内している。スライドは選ばない。確認日 2026-11-10T06:55:39+00:00。"
+    }
   ]
 }

@@ -1011,7 +1011,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。神津島村に2025年度の評価資料の公表なし。サイト内検索（行政評価）に合致なし。企画財政課頁（https://www.vill.kouzushima.tokyo.jp/busyo/kikakuzaisei/）には財政指標のみで評価資料の掲載なし。確認日：2026-10-22T04:16:57+00:00（UTC）。"
+      "reason": "未選定。神津島村に2025年度の評価資料の公表なし。サイト内検索（行政評価）に合致なし。企画財政課頁（https://www.vill.kouzushima.tokyo.jp/busyo/kikakuzaisei/）には財政指標のみで評価資料の掲載なし。確認日：2026-11-10T07:03:20+00:00（UTC）。"
     },
     {
       "target": {
@@ -1034,6 +1034,41 @@
       "selected_candidate_id": null,
       "archive": null,
       "reason": "神津島村の評価資料を探した。ブラウザで描画して確認した頁: https://www.vill.kouzushima.tokyo.jp/busyo/kikakuzaisei/（企画財政課）。DuckDuckGo の site 検索（事務事業評価・行政評価・施策評価・総合計画 進捗 評価など）でも、事業ごとの目標・実績・評価・課題を載せる事務事業評価・施策評価・行政評価の公表は出ず、教育委員会の点検・評価（選ばない対象）、社会資本総合整備計画の事後評価、総合計画・個別計画の本体、事務報告書（活動報告）のみ。確認日：2026-10-23（UTC）。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "133647",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。神津島村のサイトに村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は無い。企画財政課の頁（https://www.vill.kouzushima.tokyo.jp/busyo/kikakuzaisei/）は財務書類と消費税（社会保障財源化分）の使途だけ、サイト内検索「予算」（https://www.vill.kouzushima.tokyo.jp/?s=予算）は令和4年度以前の予算書と物価高騰対応の交付金の実施計画・活用状況（https://www.vill.kouzushima.tokyo.jp/2026-0331/）だけ。当初予算は議会だよりに会計別の総額が載るだけで、広報紙・議会だよりは町村の方針で候補にしない。確認日 2026-11-10T07:03:20+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133647",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。神津島村のサイトに村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は無い。企画財政課の頁（https://www.vill.kouzushima.tokyo.jp/busyo/kikakuzaisei/）は財務書類と消費税（社会保障財源化分）の使途だけ、サイト内検索「予算」（https://www.vill.kouzushima.tokyo.jp/?s=予算）は令和4年度以前の予算書と物価高騰対応の交付金の実施計画・活用状況（https://www.vill.kouzushima.tokyo.jp/2026-0331/）だけ。当初予算は議会だよりに会計別の総額が載るだけで、広報紙・議会だよりは町村の方針で候補にしない。確認日 2026-11-10T07:03:20+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133647",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。神津島村のサイトに村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は無い。企画財政課の頁（https://www.vill.kouzushima.tokyo.jp/busyo/kikakuzaisei/）は財務書類と消費税（社会保障財源化分）の使途だけ、サイト内検索「予算」（https://www.vill.kouzushima.tokyo.jp/?s=予算）は令和4年度以前の予算書と物価高騰対応の交付金の実施計画・活用状況（https://www.vill.kouzushima.tokyo.jp/2026-0331/）だけ。当初予算は議会だよりに会計別の総額が載るだけで、広報紙・議会だよりは町村の方針で候補にしない。確認日 2026-11-10T07:03:20+00:00。"
     }
   ]
 }

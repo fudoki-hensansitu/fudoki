@@ -1,0 +1,310 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132136",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71df39e10ef123a937354ed15397aa984e5cc272f6513d51f25c0d832318eb0f"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e51eae832ab32918a2952c1b192ff40555bb78d7e9413947f024a35b75534b7b"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "31780cf459f3dd518c856a1938a35206b27ac1b64ad86ad62bb602ac622d4192"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "national-health-insurance-initial",
+      "conversion_id": "national-health-insurance-initial",
+      "input_fingerprint": "c6008603e84b2013fd46ac058661175f70ba3e2f7ba5acd6f508c25a4ca49c60",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 12頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 1 件（充用 1）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132136/2026/initial/expenditure/national-health-insurance-initial-nodes.parquet",
+          "sha256": "4318b230b611952674478b943b5f73fca08c18002e8fc39b9862281ff208b97a",
+          "bytes": 17083
+        },
+        "row_count": 371
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132136/2026/initial/expenditure/national-health-insurance-initial-amounts.parquet",
+          "sha256": "dec13793ea41f9382cc2e9a3172ea1e85149178026d27e1512278b43d80ecdbf",
+          "bytes": 12774
+        },
+        "row_count": 501
+      }
+    },
+    {
+      "table_id": "long-term-care-initial",
+      "conversion_id": "long-term-care-initial",
+      "input_fingerprint": "6dbf1fa0dced81af4f357e20201f750ef8d35d3434ba549670e60e1f6d27e63b",
+      "account": "介護保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 12頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 1 件（充用 1）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132136/2026/initial/expenditure/long-term-care-initial-nodes.parquet",
+          "sha256": "4c82b14d0e3ed0a56b99f24616f5fda7f0e53cbcce7f896787712a27a2807788",
+          "bytes": 16385
+        },
+        "row_count": 363
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132136/2026/initial/expenditure/long-term-care-initial-amounts.parquet",
+          "sha256": "3517e2301c546d828dcd0ec55e980973193032b05dac2a4f317b4f513c69693e",
+          "bytes": 12046
+        },
+        "row_count": 431
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "d0bb4863426628b2909ec08e93fe6a953be3d1284da77b25ea9c211efe938b11",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 6頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 2 件（充用 1・流用 1）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132136/2026/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "d413d13f65b5f65a008401d15a2e24e0d60bada21d9f8c0197d36eb2002f452b",
+          "bytes": 9895
+        },
+        "row_count": 161
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132136/2026/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "294b03a4aee5ca2090b5477f3fab7bde73c6aab42e68841e497b0d6e01e20611",
+          "bytes": 7059
+        },
+        "row_count": 217
+      }
+    }
+  ]
+}

@@ -1,5 +1,5 @@
 ---
-status: draft
+status: withdrawn
 ---
 
 # 事業名で事業の評価を引く

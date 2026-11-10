@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132217",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "64ad2be7abb31614bdbbc5fac2682b5a10152bf382102ca8a2e1881a31178d07"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "a65df70886e7a68597f4ba3ee21327466ccc1703d0a9a3ab14347aa133efc971",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 98頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132217/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "e12d7daa6311645d34005251558b47045cf40b477788f8ee1e8589000d1455c9",
+          "bytes": 157955
+        },
+        "row_count": 5005
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132217/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "bb3f6ed82937d7ab1d4345a7f7ef771dff26aaa2a6583f3cd70d9c142645f0c9",
+          "bytes": 109400
+        },
+        "row_count": 5831
+      }
+    }
+  ]
+}

@@ -1,16 +1,23 @@
 name: deploy-web
-# main に入った公開 web（fudoki.dev の入口の1枚）の変更をデプロイする
+# main に入った公開 web（fudoki.dev の入口の1枚）の変更をデプロイする。
+# web は api の型（Hono RPC）で api を呼ぶので、api も変わった push では deploy-api の完了を待ってから main の先頭を出す
 on:
   push:
     branches: [main]
     paths:
       - apps/web/**
+      - apps/api/src/rpc.ts
+      - apps/api/src/*/model.ts
       - package.json
       - bun.lock
       - bunfig.toml
       - mise.toml
       - tsconfig.json
       - .github/workflows/deploy-web.yml
+  workflow_run:
+    workflows: [deploy-api]
+    types: [completed]
+    branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
@@ -19,16 +26,35 @@ concurrency:
   cancel-in-progress: false
 jobs:
   deploy:
-    # 手動実行でも main 以外の branch は出さない
-    if: github.ref == 'refs/heads/main'
+    # 手動実行でも main 以外の branch は出さない。deploy-api の後は、それが成功したときだけ出す
+    if: >-
+      (github.event_name != 'workflow_run' && github.ref == 'refs/heads/main') ||
+      (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     steps:
+      # workflow_run でも main の先頭を出す（deploy-api の後に入った web の変更も一緒に出す）
       - uses: actions/checkout@v7
-      - uses: jdx/mise-action@v5
+        with:
+          ref: ${{ github.event_name == 'workflow_run' && 'main' || github.sha }}
+      # deploy-api も動く変更（その paths に当たるファイル）が出す範囲にあれば、その deploy-api の完了から出す。
+      # push は before..HEAD、workflow_run は deploy-api を走らせた commit..main の先頭を見る
+      - id: order
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          BASE: ${{ github.event.workflow_run.head_sha || github.event.before }}
+        run: |
+          git fetch --no-tags --depth=1 origin "$BASE"
+          if git diff --name-only "$BASE" HEAD | grep -qE '^(apps/api/|package\.json$|bun\.lock$|bunfig\.toml$|mise\.toml$|tsconfig\.json$|\.github/workflows/deploy-api\.yml$)'; then
+            echo "wait=true" >> "$GITHUB_OUTPUT"
+          fi
+      - if: steps.order.outputs.wait != 'true'
+        uses: jdx/mise-action@v5
         with:
           version: 2026.8.6
-      - run: bun install --frozen-lockfile
-      - run: bun run deploy:web
+      - if: steps.order.outputs.wait != 'true'
+        run: bun install --frozen-lockfile
+      - if: steps.order.outputs.wait != 'true'
+        run: bun run deploy:web
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
