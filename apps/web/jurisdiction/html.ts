@@ -61,7 +61,7 @@ export function pageTitle(d: PageData): string {
 /** 既定でない年度の頁（/tokyo/shinagawa/2024）の title・説明文。その年度に載っている決算か当初予算の金額で書く */
 export function yearHead(d: PageData, year: number): { title: string; description: string; name: string } {
   const settlement = d.years.find((y) => y.year === year)
-  const budget = d.budgets.find((b) => b.year === year && !b.amountMissing)
+  const budget = d.budgets.find((b) => b.year === year && !b.amountMissing && b.yen > 0)
   const y = reiwaFull(year)
   if (settlement) {
     // cofogFlow は最新の決算の年度の分だけ持つ

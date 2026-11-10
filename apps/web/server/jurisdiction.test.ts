@@ -219,6 +219,11 @@ describe('自治体の個別ページ', () => {
     const data = await view('/tokyo/nakano', sparse)
     expect(data.years.map((y: YearTotal) => [y.year, y.yen])).toEqual([[2021, 250], [2023, 300], [2025, 1000]])
     expect(data.projects[0]!.prevYen).toBeNull()
+    const xml = await (await get('/sitemap.xml', sparse)).text()
+    expect(xml).toContain('https://fudoki.dev/tokyo/nakano/2023')
+    expect(xml).toContain('https://fudoki.dev/tokyo/nakano/2021')
+    expect(xml).not.toContain('https://fudoki.dev/tokyo/nakano/2020')
+    expect(xml).not.toContain('https://fudoki.dev/tokyo/nakano/2019')
   })
 
   test('API に繋がらないときは投げて（頁は 502）、sitemap は入口・一覧・アシスタントだけで答える', async () => {
