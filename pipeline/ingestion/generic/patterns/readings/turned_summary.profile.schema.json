@@ -28,9 +28,14 @@
       "type": "array", "minItems": 1,
       "items": {
         "type": "object", "additionalProperties": false, "required": ["x", "kind", "header"],
+        "if": {"properties": {"kind": {"const": "breakdown"}}}, "then": {"required": ["exclusion"]}, "else": {"not": {"required": ["exclusion"]}},
         "properties": {
           "x": {"$ref": "#/$defs/range"},
-          "kind": {"enum": ["amount", "ratio"]},
+          "kind": {"enum": ["amount", "ratio", "breakdown"]},
+          "exclusion": {
+            "type": "object", "additionalProperties": false, "required": ["kind", "reason"],
+            "properties": {"kind": {"$ref": "#/$defs/text"}, "reason": {"$ref": "#/$defs/text"}}
+          },
           "header": {
             "type": "array", "minItems": 1,
             "items": {

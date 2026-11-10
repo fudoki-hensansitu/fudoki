@@ -10,8 +10,9 @@ What the profile declares (measured on the page, in the upright frame):
 - the header rows and the column x ranges, each column's printed heading path with the span of every
   spanning heading above it. The printed characters found in those spans must read the declared heading,
   or the conversion stops;
-- which columns are amounts and which are ratios (構成比・対前年度増減率). Ratio cells are not taken in and are
-  listed to the digit-coverage check as 数量表;
+- which columns are amounts, which are ratios (構成比・対前年度増減率) and which are breakdowns of another column
+  that are read and checked but not taken in (`breakdown`, with the coverage exclusion's kind and reason).
+  Ratio cells are listed to the digit-coverage check as 数量表;
 - the heading an amount column is kept under when the shared dictionary must know it (`heading`, for the
   executed total of the year);
 - the sums the table prints of itself: the 計 row of every amount column (款 sum = printed 計) and the row
@@ -188,6 +189,8 @@ class Reader(Reading):
                           'x0': x0, 'y0': y0, 'x1': x1, 'y1': y1})
             kan.append((name, values))
             for index, word in values.items():
+                if profile['columns'][index]['kind'] != 'amount':
+                    continue
                 bx0, by0, bx1, by1 = word['box']
                 amounts.append({'node_key': node_key, 'header_path': heading(profile['columns'][index]),
                                 'amount_text': word['text'], 'unit_text': unit, 'physical_page': page,
@@ -200,7 +203,8 @@ class Reader(Reading):
         if self.key(self.read(total_label)) != self.key(profile['total_row']['label']):
             raise ValueError(f'The 計 row label differs: {self.read(total_label)!r}')
         amount_columns = [i for i, c in enumerate(profile['columns']) if c['kind'] == 'amount']
-        for index in amount_columns:
+        breakdowns = [i for i, c in enumerate(profile['columns']) if c['kind'] == 'breakdown']
+        for index in [*amount_columns, *breakdowns]:
             if index not in totals:
                 raise ValueError(f'The 計 row prints no amount in column {profile["columns"][index]["x"]}')
             summed = sum(number(values[index]['text']) for _, values in kan if index in values)
@@ -227,6 +231,9 @@ class Reader(Reading):
         regions = [{'kind': '数量表', 'reason': '比率の欄（構成比・対前年度増減率）。金額の欄ではない。', 'page': page,
                     'bbox': self.display_box(c['x'], (profile['body'][0], profile['total_row']['y'][1]), height)}
                    for c in profile['columns'] if c['kind'] == 'ratio']
+        regions += [{**c['exclusion'], 'page': page,
+                     'bbox': self.display_box(c['x'], (profile['body'][0], profile['total_row']['y'][1]), height)}
+                    for c in profile['columns'] if c['kind'] == 'breakdown']
         regions.append({'kind': '総括', 'reason': '計の行。款の和と照合した統制値で、款の和には入れない。', 'page': page,
                         'bbox': self.display_box(table_x, profile['total_row']['y'], height)})
         scope = []
@@ -245,11 +252,14 @@ class Reader(Reading):
         notes = [
             f'物理{page}頁の表（{profile["title"]}）は頁に90°回して組まれているので、語の位置を表の向きに回して行と欄を読んだ（読み方 turned_summary、位置は表示頁の座標のまま）。',
             f'款の行 {len(nodes)} 行を、区分の欄の印字のとおり款として置いた。項・目は印字されていない。',
-            f'金額の単位は印字の「{profile["unit"]["printed"]}」。金額の欄 {len(amount_columns)} 欄すべてで款の和と印字の「{profile["total_row"]["label"]}」が一致。'
+            f'金額の単位は印字の「{profile["unit"]["printed"]}」。金額の欄 {len(amount_columns) + len(breakdowns)} 欄すべてで款の和と印字の「{profile["total_row"]["label"]}」が一致。'
             f'行の内訳（総額＝左の内訳の和など）を {compared} 行で照合して一致'
             + (f'（空欄を含む {len(skipped)} 行は照合していない: {"・".join(skipped)}）' if skipped else '') + '。',
             '比率の欄（構成比・対前年度増減率）は金額ではないので取り込んでいない。空欄の欄は金額の行を作っていない。',
         ]
+        if breakdowns:
+            notes.append('内訳の欄 ' + '・'.join('／'.join(s['text'] for s in profile['columns'][i]['header']) for i in breakdowns)
+                         + ' は、和と計を照合したうえで取り込んでいない（' + '・'.join(sorted({profile['columns'][i]['exclusion']['kind'] for i in breakdowns})) + '）。')
         if moved:
             notes.append('金額の見出しを辞書の見出しに寄せた: ' + '・'.join(f'{a}→{b}' for a, b in moved) + '。')
         (observations / 'notes.json').write_text(json.dumps(notes, ensure_ascii=False, indent=2) + '\n')
