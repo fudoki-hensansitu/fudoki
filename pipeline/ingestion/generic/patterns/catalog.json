@@ -40,6 +40,7 @@
     "enterprise_expenses": "ingestion.generic.patterns.readings.enterprise_expenses",
     "banded_projects": "ingestion.generic.patterns.readings.banded_projects",
     "offset_projects": "ingestion.generic.patterns.readings.offset_projects",
+    "compared_years": "ingestion.generic.patterns.readings.compared_years",
     "turned_summary": "ingestion.generic.patterns.readings.turned_summary"
   },
   "component": {

@@ -6052,6 +6052,134 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-initial
       kind: nodes
+  - name: j132144_2024_settlement_general_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-settlement
+      kind: amounts
+  - name: j132144_2024_settlement_general_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-settlement
+      kind: nodes
+  - name: j132144_2024_settlement_kaigo_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-settlement
+      kind: amounts
+  - name: j132144_2024_settlement_kaigo_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-settlement
+      kind: nodes
+  - name: j132144_2024_settlement_kokuho_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-settlement
+      kind: amounts
+  - name: j132144_2024_settlement_kokuho_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-settlement
+      kind: nodes
+  - name: j132144_2024_settlement_kouki_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-settlement
+      kind: amounts
+  - name: j132144_2024_settlement_kouki_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-settlement
+      kind: nodes
+  - name: j132144_2025_settlement_general_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-settlement
+      kind: amounts
+  - name: j132144_2025_settlement_general_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-settlement
+      kind: nodes
+  - name: j132144_2025_settlement_kaigo_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-settlement
+      kind: amounts
+  - name: j132144_2025_settlement_kaigo_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-settlement
+      kind: nodes
+  - name: j132144_2025_settlement_kokuho_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-settlement
+      kind: amounts
+  - name: j132144_2025_settlement_kokuho_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-settlement
+      kind: nodes
+  - name: j132144_2025_settlement_kouki_settlement_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-settlement
+      kind: amounts
+  - name: j132144_2025_settlement_kouki_settlement_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-settlement
+      kind: nodes
   - name: j132152_2024_settlement_general_expenditure_detail_amounts
     meta:
       jurisdiction: '132152'
@@ -8755,6 +8883,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: nhi-expenditure-detail
+      kind: nodes
+  - name: j133612_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133612_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j133621_2024_settlement_elderly_medical_expenditure_amounts
     meta:
