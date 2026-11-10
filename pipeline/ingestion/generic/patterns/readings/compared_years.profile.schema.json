@@ -1,0 +1,61 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "frame_heading",
+    "left_columns",
+    "right_columns",
+    "bracketed",
+    "note"
+  ],
+  "properties": {
+    "frame_heading": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The heading of the expenditure frame on the left page (支出済額); the column years are the first line of year digits below it."
+    },
+    "left_columns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "The left page's columns in order of their year digits: an amount heading, or `ratio` for a column of percentages."
+    },
+    "right_columns": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "The right page's columns, as left_columns."
+    },
+    "bracketed": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "A column whose bracketed numbers are another amount (the table's note: `※（ ）内は翌年度繰越額で外数`): the column and the heading of the bracketed amount."
+    },
+    "note": {
+      "type": "string",
+      "minLength": 10
+    },
+    "balances": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "array",
+        "minItems": 1,
+        "items": {
+          "type": "string",
+          "minLength": 1
+        }
+      },
+      "description": "Amounts each row must balance: a heading and the headings that add up to it (予算現額 = 支出済額 + 不用額 + 翌年度繰越額). A number read into the wrong column breaks it, and the conversion stops."
+    }
+  }
+}

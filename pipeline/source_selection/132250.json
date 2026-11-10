@@ -3716,7 +3716,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "選ばない（未公表）。令和7年度の事務事業を評価する地方公会計制度を活用した事務事業評価は掲載されていない。ブラウザで描画して見た頁: 地方公会計制度を活用した事務事業評価（https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/1008971/1008973.html）の掲載は平成28年度〜令和7年度の10件で、最新の「令和7年度地方公会計制度を活用した事務事業評価（令和6年度事務事業分）」は2024年度に選んだ資料。ほかに見た頁: 政策・計画（https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/index.html）、行政（政策・計画）（https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/1008971/index.html）、まち・ひと・しごと創生総合戦略（https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/1008971/1008975/index.html、検証の実施は平成29年度〜中間検証までで令和7年度分は無い）、長期総合計画（https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/1008815/index.html、計画本体と市民会議のみ）。ブラウザで検索して見つかった令和7年度事務報告書（r8.3kessan_jimuhokoku2.pdf、令和8年9月1日）は各部門の事業の活動報告で、目標・評価・課題の評価の欄を持たず、2024年度の選定と同じ理由で選ばない。確認日：2026-10-23（UTC）。"
+      "reason": "選ばない（未公表）。令和7年度の事務事業を評価する地方公会計制度を活用した事務事業評価は掲載されていない。ブラウザで描画して見た頁: 地方公会計制度を活用した事務事業評価（https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/1008971/1008973.html）の掲載は平成28年度〜令和7年度の10件で、最新の「令和7年度地方公会計制度を活用した事務事業評価（令和6年度事務事業分）」は2024年度に選んだ資料。ほかに見た頁: 政策・計画（https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/index.html）、行政（政策・計画）（https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/1008971/index.html）、まち・ひと・しごと創生総合戦略（https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/1008971/1008975/index.html、検証の実施は平成29年度〜中間検証までで令和7年度分は無い）、長期総合計画（https://www.city.inagi.tokyo.jp/shisei/keikaku_hokoku/1008815/index.html、計画本体と市民会議のみ）。ブラウザで検索して見つかった令和7年度事務報告書（r8.3kessan_jimuhokoku2.pdf、令和8年9月1日）は各部門の事業の活動報告で、目標・評価・課題の評価の欄を持たず、2024年度の選定と同じ理由で選ばない。確認日：2026-11-10（UTC）。"
     },
     {
       "target": {
@@ -3793,6 +3793,122 @@
         "archived_at": "2026-10-15T12:54:07.048Z"
       },
       "reason": "令和5年度に実施した事業を令和6年度に評価した事務事業評価。本文に「令和５年度実績」とあり、事業ごとに目的・概要、成果指標の目標値と実績値（最新が令和5年度）、行政コスト計算書、今後の課題、行政運営評価委員会の評価コメントと市の方針を載せる。文字として読める。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度予算の概要",
+          "landing_url": "https://www.city.inagi.tokyo.jp/shisei/zaisei/1010661.html",
+          "inspected_at": "2026-11-10T07:02:28+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/661/r6yosannogaiyou.pdf",
+              "sha256": "5f073441e24731902b69331db336f11ba39c6ce0471a958bf51489a4937f926f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2024/press-initial.pdf",
+            "sha256": "5f073441e24731902b69331db336f11ba39c6ce0471a958bf51489a4937f926f",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/661/r6yosannogaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:02:43.876Z"
+      },
+      "reason": "予算の頁「予算の概要」（https://www.city.inagi.tokyo.jp/shisei/zaisei/1010661.html）に載る「令和6年度当初予算の概要」（25頁、文字PDF）。稲城市は予算案の記者会見・報道発表の頁を持たず（市長の部屋 https://www.city.inagi.tokyo.jp/shisei/shichoushitsu/index.html は施政方針・タウンミーティング等のみ）、予算の頁の資料から選んだ。「令和6年度予算の特徴」（物理12〜16頁）は長期総合計画の分野・施策ごとに施策の予算額（千円）と事業名を新規「新」・レベルアップ「レ」・普通建設「建」などの印つきで並べ、「予算の特徴の補足説明」（物理17〜23頁）は新規事業・レベルアップ・見直し・普通建設事業の区分ごとに部局（所管課）・事業名・予算額（千円）・事業内容を表で載せる。前半は会計別予算、一般会計の歳入・歳出（性質別・目的別）の状況、市税・基金・市債、歳入歳出予算調書と性質別・節別集計表、末尾は地方消費税交付金の充当経費と都市計画税の充当事業。同じ頁の予算編成方針と、予算書本体は選ばない。確認日 2026-11-10T07:02:28+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度予算の概要",
+          "landing_url": "https://www.city.inagi.tokyo.jp/shisei/zaisei/1010661.html",
+          "inspected_at": "2026-11-10T07:02:28+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/661/r7yosannogaiyou.pdf",
+              "sha256": "05dcbb82ed1e2696ff49697e381960730fe6c3522723cd7e9d642ee4dc77ffb6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2025/press-initial.pdf",
+            "sha256": "05dcbb82ed1e2696ff49697e381960730fe6c3522723cd7e9d642ee4dc77ffb6",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/661/r7yosannogaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:02:46.276Z"
+      },
+      "reason": "予算の頁「予算の概要」（https://www.city.inagi.tokyo.jp/shisei/zaisei/1010661.html）に載る「令和7年度当初予算の概要」（27頁、文字PDF）。稲城市は予算案の記者会見・報道発表の頁を持たず（市長の部屋 https://www.city.inagi.tokyo.jp/shisei/shichoushitsu/index.html は施政方針・タウンミーティング等のみ）、予算の頁の資料から選んだ。「令和7年度予算の特徴」（物理12〜17頁）は長期総合計画の分野・施策ごとに施策の予算額（千円）と事業名を新規「新」・レベルアップ「レ」・普通建設「建」などの印つきで並べ、「予算の特徴の補足説明」（物理18〜25頁）は新規事業・レベルアップ・普通建設事業の区分ごとに部局（所管課）・事業名・予算額（千円）・事業内容を表で載せる。前半は会計別予算、一般会計の歳入・歳出（性質別・目的別）の状況、市税・基金・市債、歳入歳出予算調書と性質別・節別集計表、末尾は地方消費税交付金の充当経費と都市計画税の充当事業。同じ頁の予算編成方針と、予算書本体は選ばない。確認日 2026-11-10T07:02:28+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132250",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度予算の概要",
+          "landing_url": "https://www.city.inagi.tokyo.jp/shisei/zaisei/1010661.html",
+          "inspected_at": "2026-11-10T07:02:28+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/661/r8yosannogaiyou.pdf",
+              "sha256": "c8ea94d3d2a5142591ee4117b23f7893c29f3eecfc23d12a0c72e22b3db1c0c8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132250/2026/press-initial.pdf",
+            "sha256": "c8ea94d3d2a5142591ee4117b23f7893c29f3eecfc23d12a0c72e22b3db1c0c8",
+            "final_url": "https://www.city.inagi.tokyo.jp/_res/projects/default_project/_page_/001/010/661/r8yosannogaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:02:48.365Z"
+      },
+      "reason": "予算の頁「予算の概要」（https://www.city.inagi.tokyo.jp/shisei/zaisei/1010661.html）に載る「令和8年度当初予算の概要」（26頁、文字PDF）。稲城市は予算案の記者会見・報道発表の頁を持たず（市長の部屋 https://www.city.inagi.tokyo.jp/shisei/shichoushitsu/index.html は施政方針・タウンミーティング等のみ）、予算の頁の資料から選んだ。「令和8年度予算の特徴」（物理12〜17頁）は長期総合計画の分野・施策ごとに施策の予算額（千円）と事業名を新規「新」・レベルアップ「レ」・普通建設「建」などの印つきで並べ、「予算の特徴の補足説明」（物理18〜24頁）は新規事業・レベルアップ・見直し・普通建設事業の区分ごとに部局（所管課）・事業名・予算額（千円）・事業内容を表で載せる。前半は会計別予算、一般会計の歳入・歳出（性質別・目的別）の状況、市税・基金・市債、歳入歳出予算調書と性質別・節別集計表、末尾は地方消費税交付金の充当経費と都市計画税の充当事業。同じ頁の予算編成方針と、予算書本体は選ばない。確認日 2026-11-10T07:02:28+00:00。"
     }
   ]
 }

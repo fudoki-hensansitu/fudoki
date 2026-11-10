@@ -5328,5 +5328,121 @@
       "archive": null,
       "reason": "ブラウザで描画した行政評価・事務報告書の頁（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/index.html）と行政評価一覧（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1005527/index.html）を確認した。行政評価一覧に載る施策評価表・事務事業評価表・外部評価の最新は令和3年度（令和2年度振り返り）までで、頁に「行政評価制度を活用してきたが、事務報告書を作成している」とあり、以降は行政評価を実施していない。施策報告書（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/hyoka/1022766/1027450.html）は「事業名、事務概要、事業費及び取組み内容を公表する」もので、目標・評価・課題・方向の欄が無い。令和6年度施策報告書（令和5年度振り返り、https://www.city.higashikurume.lg.jp/_res/projects/default_project/_page_/001/024/679/r6/shisaku_all.pdf）が該当するが、活動報告のため選ばない。令和5年度事務報告書の頁（.../hyoka/1022766/1022778.html）も同様。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132225",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度予算の概要",
+          "landing_url": "https://www.city.higashikurume.lg.jp/shisei/gyousaisei/zaisei/1021641/1023870/1023874.html",
+          "inspected_at": "2026-11-10T06:56:24+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashikurume.lg.jp/_res/projects/default_project/_page_/001/023/874/r6yosannogaiyou.pdf",
+              "sha256": "cc84c2e117a41272ca8edbb0407e74fcb3f29cdcd75ce0284c406d1b3b565b32",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132225/2024/press-initial.pdf",
+            "sha256": "cc84c2e117a41272ca8edbb0407e74fcb3f29cdcd75ce0284c406d1b3b565b32",
+            "final_url": "https://www.city.higashikurume.lg.jp/_res/projects/default_project/_page_/001/023/874/r6yosannogaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:56:27.082Z"
+      },
+      "reason": "予算の頁「令和6年度予算の概要」（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/zaisei/1021641/1023870/1023874.html）に載る「令和6年度予算の概要」（28頁、文字PDF）。東久留米市は当初予算案の記者会見・プレスリリースを出しておらず（プレスリリースの年度別一覧 https://www.city.higashikurume.lg.jp/shisei/koho/1007395/1022342.html（5年度） に当初予算の発表なし。補正予算の発表だけがある）、予算の頁の資料から選んだ。「7. 主な新規・拡充事業、計画策定・投資的事業等」（物理15〜18頁）に、重点事項の事業名の一覧と、第5次長期総合計画の基本目標ごとに区分（重点・新規・拡充・継続）・事項【予算計上の事業名】・予算額（千円）・摘要（事業の説明）・所管を表で載せる。ほかは予算編成の基本的考え方、財政規模、歳入歳出の内訳と増減要因、歳入歳出予算の主な増減内容、基金の状況。同じ頁の「東久留米市の予算（わかりやすい版）」は市民向けの要約なので選ばない。予算書本体は選ばない。確認日 2026-11-10T06:56:24+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132225",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度予算の概要",
+          "landing_url": "https://www.city.higashikurume.lg.jp/shisei/gyousaisei/zaisei/1021641/1025978/1025980.html",
+          "inspected_at": "2026-11-10T06:56:24+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashikurume.lg.jp/_res/projects/default_project/_page_/001/025/980/r7yosannogaiyou.pdf",
+              "sha256": "ae17485512fc0d3b4514efc1ba0caab4cbcc2d84aff1020c23b386fcd0d3b90e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132225/2025/press-initial.pdf",
+            "sha256": "ae17485512fc0d3b4514efc1ba0caab4cbcc2d84aff1020c23b386fcd0d3b90e",
+            "final_url": "https://www.city.higashikurume.lg.jp/_res/projects/default_project/_page_/001/025/980/r7yosannogaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:56:29.740Z"
+      },
+      "reason": "予算の頁「令和7年度予算の概要」（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/zaisei/1021641/1025978/1025980.html）に載る「令和7年度予算の概要」（29頁、文字PDF）。東久留米市は当初予算案の記者会見・プレスリリースを出しておらず（プレスリリースの年度別一覧 https://www.city.higashikurume.lg.jp/shisei/koho/1007395/1024083.html（6年度） に当初予算の発表なし。補正予算の発表だけがある）、予算の頁の資料から選んだ。「7. 主な新規・拡充事業、計画策定・投資的事業等」（物理15〜19頁）に、重点事項の事業名の一覧と、第5次長期総合計画の基本目標ごとに区分（重点・新規・拡充・継続）・事項【予算計上の事業名】・予算額（千円）・摘要（事業の説明）・所管を表で載せる。ほかは予算編成の基本的考え方、財政規模、歳入歳出の内訳と増減要因、歳入歳出予算の主な増減内容、基金の状況。同じ頁の「東久留米市の予算（わかりやすい版）」は市民向けの要約なので選ばない。予算書本体は選ばない。確認日 2026-11-10T06:56:24+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132225",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度予算の概要",
+          "landing_url": "https://www.city.higashikurume.lg.jp/shisei/gyousaisei/zaisei/1021641/1028624/1028626.html",
+          "inspected_at": "2026-11-10T06:56:24+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.higashikurume.lg.jp/_res/projects/default_project/_page_/001/028/626/r8yosannogaiyo.pdf",
+              "sha256": "6551ce9f33829bcb4d744353268a46b913e88034a8b8ab614a431d42a8fe8f77",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132225/2026/press-initial.pdf",
+            "sha256": "6551ce9f33829bcb4d744353268a46b913e88034a8b8ab614a431d42a8fe8f77",
+            "final_url": "https://www.city.higashikurume.lg.jp/_res/projects/default_project/_page_/001/028/626/r8yosannogaiyo.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:56:32.653Z"
+      },
+      "reason": "予算の頁「令和8年度予算の概要」（https://www.city.higashikurume.lg.jp/shisei/gyousaisei/zaisei/1021641/1028624/1028626.html）に載る「令和8年度予算の概要」（30頁、文字PDF）。東久留米市は当初予算案の記者会見・プレスリリースを出しておらず（プレスリリースの年度別一覧 https://www.city.higashikurume.lg.jp/shisei/koho/1007395/1026190.html（7年度） に当初予算の発表なし。補正予算の発表だけがある）、予算の頁の資料から選んだ。「7. 主な新規・拡充事業、計画策定・投資的事業等」（物理15〜19頁）に、重点事項の事業名の一覧と、第5次長期総合計画の基本目標ごとに区分（重点・新規・拡充・継続）・事項【予算計上の事業名】・予算額（千円）・摘要（事業の説明）・所管を表で載せる。ほかは予算編成の基本的考え方、財政規模、歳入歳出の内訳と増減要因、歳入歳出予算の主な増減内容、基金の状況。予算書本体は選ばない。確認日 2026-11-10T06:56:24+00:00。"
+    }
   ]
 }

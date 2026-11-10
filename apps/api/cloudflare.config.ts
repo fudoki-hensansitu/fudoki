@@ -11,7 +11,8 @@ export default defineConfig({
     limits: { cpuMs: 200 },
     exports: {
       OriginPdfRelay: exports.durableObject({ storage: 'sqlite' }),
-      EvaluationSearchQuota: exports.durableObject({ storage: 'sqlite' }),
+      // 事業評価の検索（AI Search）の回数を数えていた。class を消したので namespace を退役させる
+      EvaluationSearchQuota: exports.durableObject({ state: 'deleted' }),
       // web のアシスタントだけが Service Binding で呼ぶ内部の RPC（src/source-pages-entrypoint.ts）
       SourcePages: exports.worker(),
     },
@@ -19,10 +20,6 @@ export default defineConfig({
     env: {
       DB: bindings.d1({ name: 'fudoki-api', id: 'b9b6f209-083e-45b3-a896-1014a17a15f9' }),
       ORIGIN_PDF: bindings.durableObject({ worker: 'fudoki-api', exportName: 'OriginPdfRelay' }),
-      EVALUATION_SEARCH: bindings.aiSearch({ name: 'fudoki-evaluation-v2' }),
-      // 値は src/evaluation-limits.ts の IP_RATE_LIMIT と同じ（試験が照合する）。config が import したファイルは cf dev の Worker から読めないので共有しない
-      EVALUATION_RATE_LIMIT: bindings.rateLimit({ namespace: '1001', simple: { limit: 10, period: 60 } }),
-      EVALUATION_QUOTA: bindings.durableObject({ worker: 'fudoki-api', exportName: 'EvaluationSearchQuota' }),
       // 出典の頁の文字（source-text/）。コードからは get だけを使う（src/source-pages.ts の型が読み取りだけ）
       SOURCE_TEXT: bindings.r2({ name: 'fudoki-inputs' }),
     },

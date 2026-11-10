@@ -5189,5 +5189,121 @@
       "archive": null,
       "reason": "ブラウザで描画した行政評価の頁（https://www.city.hino.lg.jp/shisei/gyozaisei/hyoka/index.html、令和6年度の頁 https://www.city.hino.lg.jp/shisei/gyozaisei/hyoka/1025984/1028428.html）を確認した。日野市の行政評価は毎年度、市民公募と行財政改革推進本部で選んだ少数の評価対象事業（令和7年度は窓口時間・土曜開庁の単一テーマ）だけを評価するもので、全事業の評価ではない。令和5年度日野市行政評価結果報告書（r5_gyouseihyoukakekka.pdf、40頁、令和6年2月）の評価対象は健康増進関連事業の市ホームページ上の情報提供のあり方（有効性・分かりやすさの採点）で、事業ごとの目標・実績・課題を載せる評価ではない。DuckDuckGo の site 検索でも他の評価資料は出ない。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132128",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度（2024年度）日野市の当初予算概要",
+          "landing_url": "https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/yosan/1025883.html",
+          "inspected_at": "2026-11-10T07:04:07+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/883/r6toushoyosangaiyou.pdf",
+              "sha256": "fc4c360c5c12d6623b04487f32caa0147aa0f744295e286ca8055024ffbca638",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132128/2024/press-initial.pdf",
+            "sha256": "fc4c360c5c12d6623b04487f32caa0147aa0f744295e286ca8055024ffbca638",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/025/883/r6toushoyosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:04:43.631Z"
+      },
+      "reason": "予算の頁「令和6年度 一般会計予算」（https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/yosan/1025883.html）に載る「令和6年度日野市の当初予算概要」（財政課、42頁、文字PDF）。巻末の「（参考資料）主要施策と主な事業」（物理31〜39頁）に、日野市地域未来ビジョン2030の主要施策ごとに事業名称・主管課・事業概要・区分（新規・拡充・継続）・予算名称・R6予算額（千円）を表で載せる。前半は予算の基本的な考え方・予算規模・歳入歳出・基金と市債・市民一人あたりの予算。市長の記者会見の頁（https://www.city.hino.lg.jp/shisei/koho/press/1015953/1026033.html）の令和6年第1回定例記者会見資料（令和6年2月21日、スライド）は予算案の規模と数件の事業の紹介で、施策ごとの事業の一覧ではないため選ばない。確認日 2026-11-10T07:04:07+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132128",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度（2025年度）日野市の当初予算概要",
+          "landing_url": "https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/yosan/1028423.html",
+          "inspected_at": "2026-11-10T07:04:07+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/423/r7yosangaiyou.pdf",
+              "sha256": "253c8e3f619235dbe65d976733fe602dc707f3a5d26d26416b03aa1596ed260e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132128/2025/press-initial.pdf",
+            "sha256": "253c8e3f619235dbe65d976733fe602dc707f3a5d26d26416b03aa1596ed260e",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/028/423/r7yosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:04:46.111Z"
+      },
+      "reason": "予算の頁「令和7年度 一般会計予算」（https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/yosan/1028423.html）に載る「令和7年度日野市の当初予算概要」（令和7年3月、財政課、47頁、文字PDF）。「（参考資料）主要施策と主な事業」（物理31〜39頁）に、日野市地域未来ビジョン2030の主要施策ごとに事業名称・主管課・事業概要・区分（新規・拡充・継続）・予算名称・R7予算額（千円）を表で載せる。続く「当初予算における主な廃止・削減事業」（物理40〜44頁）と4つの財政指標見込も同じ冊子に含まれる。市長の記者会見の頁（https://www.city.hino.lg.jp/shisei/koho/press/1015953/1028466.html）の令和7年第1回定例記者会見資料（令和7年2月20日、27頁のスライド）は「令和7年度予算(案)の概要」として予算規模と数件の事業（まんがんじ児童館の改築など）を紹介するもので、施策ごとの事業の一覧ではないため選ばない。確認日 2026-11-10T07:04:07+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132128",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度（2026年度）日野市の当初予算概要",
+          "landing_url": "https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/yosan/1030505.html",
+          "inspected_at": "2026-11-10T07:04:07+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/505/r8yosanngaiyo_annashi.pdf",
+              "sha256": "75fbc4fe204c2272e7197c4ad21c062119c9646ead30b6c6f71e8b6edc1b439e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132128/2026/press-initial.pdf",
+            "sha256": "75fbc4fe204c2272e7197c4ad21c062119c9646ead30b6c6f71e8b6edc1b439e",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/030/505/r8yosanngaiyo_annashi.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:04:49.393Z"
+      },
+      "reason": "予算の頁「令和8年度 一般会計予算」（https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/yosan/1030505.html）に載る「令和8年度 日野市の当初予算概要」（財政課、41頁、文字PDF）。「（参考資料）主要施策と主な事業」（物理32〜35頁）に、主要施策ごとに事業名称・主管課・事業概要・区分（新規・拡充・継続）・予算名称・R8予算額（千円）を表で載せ、続けて「当初予算における主な廃止・削減事業」（物理36頁〜）。市長の記者会見の頁（https://www.city.hino.lg.jp/shisei/koho/press/1015953/1030524.html）の令和8年第1回定例記者会見資料（令和8年3月5日）はスライドで、施策ごとの事業の一覧ではないため選ばない。確認日 2026-11-10T07:04:07+00:00。"
+    }
   ]
 }

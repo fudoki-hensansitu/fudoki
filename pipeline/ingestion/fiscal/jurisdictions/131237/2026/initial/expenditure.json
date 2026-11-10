@@ -109,6 +109,26 @@
             530,
             547
           ]
+        ],
+        "name_corrections": [
+          {
+            "id": "setsu-p530-y191-1報酬",
+            "page": 530,
+            "code": "1",
+            "y": 191.4,
+            "observed_name": "報酬料",
+            "corrected_name": "報酬",
+            "reason": "節「1 報酬」の「酬」と次の行の節「2 給料」の「料」は、名前を欄いっぱいに割り付けて同じ位置に印字され、縦書きの1語として「酬料」に結ばれる。原典の描画で印字を確かめ、名前を直す。"
+          },
+          {
+            "id": "setsu-p530-y206-2給料",
+            "page": 530,
+            "code": "2",
+            "y": 206.2,
+            "observed_name": "給",
+            "corrected_name": "給料",
+            "reason": "節「2 給料」の「料」が、前の行の節「1 報酬」の「酬」と縦書きの1語として結ばれ、「給」だけが残る。原典の描画で印字を確かめ、名前を直す。"
+          }
         ]
       },
       "expected_tables": [
@@ -219,6 +239,26 @@
             574,
             587
           ]
+        ],
+        "name_corrections": [
+          {
+            "id": "setsu-p574-y191-1報酬",
+            "page": 574,
+            "code": "1",
+            "y": 191.4,
+            "observed_name": "報酬料",
+            "corrected_name": "報酬",
+            "reason": "節「1 報酬」の「酬」と次の行の節「2 給料」の「料」は、名前を欄いっぱいに割り付けて同じ位置に印字され、縦書きの1語として「酬料」に結ばれる。原典の描画で印字を確かめ、名前を直す。"
+          },
+          {
+            "id": "setsu-p574-y206-2給料",
+            "page": 574,
+            "code": "2",
+            "y": 206.2,
+            "observed_name": "給",
+            "corrected_name": "給料",
+            "reason": "節「2 給料」の「料」が、前の行の節「1 報酬」の「酬」と縦書きの1語として結ばれ、「給」だけが残る。原典の描画で印字を確かめ、名前を直す。"
+          }
         ]
       },
       "expected_tables": [
@@ -329,6 +369,26 @@
             612,
             619
           ]
+        ],
+        "name_corrections": [
+          {
+            "id": "setsu-p612-y191-1報酬",
+            "page": 612,
+            "code": "1",
+            "y": 191.4,
+            "observed_name": "報酬料",
+            "corrected_name": "報酬",
+            "reason": "節「1 報酬」の「酬」と次の行の節「2 給料」の「料」は、名前を欄いっぱいに割り付けて同じ位置に印字され、縦書きの1語として「酬料」に結ばれる。原典の描画で印字を確かめ、名前を直す。"
+          },
+          {
+            "id": "setsu-p612-y206-2給料",
+            "page": 612,
+            "code": "2",
+            "y": 206.2,
+            "observed_name": "給",
+            "corrected_name": "給料",
+            "reason": "節「2 給料」の「料」が、前の行の節「1 報酬」の「酬」と縦書きの1語として結ばれ、「給」だけが残る。原典の描画で印字を確かめ、名前を直す。"
+          }
         ]
       },
       "expected_tables": [
@@ -342,20 +402,21 @@
     {
       "table_id": "nhi-initial",
       "conversion_id": "nhi",
-      "input_fingerprint": "20dc1ac3afb774040630cb8a9a1ddfc887c663b4e9f3b4eee7fe61c5c49fe119",
+      "input_fingerprint": "b255d3e1ef591d054654802f3b79f3458ea5758aa1f8eb2f3fa9f765929eaf1d",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
         "金額の単位は printed 9頁 から決めた。款の和 59,469,465（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。"
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 1報酬料→1報酬・2給→2給料。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131237/2026/initial/expenditure/nhi-initial-nodes.parquet",
-          "sha256": "7892f7eadac44b0e22058793e6572e3b908b5485d6c64a48d3e74a0a9c1de9c8",
-          "bytes": 11908
+          "sha256": "299fd38e78dabff0b13c27113235ae91da1b502d3be2c5d50242f005b16a0b13",
+          "bytes": 11905
         },
         "row_count": 222
       },
@@ -371,20 +432,21 @@
     {
       "table_id": "kaigo-initial",
       "conversion_id": "kaigo",
-      "input_fingerprint": "a620eff166010322d5aac7777e7d61e7df00a7517b4bae3a204d5e8762eff0d9",
+      "input_fingerprint": "bca8b8eea3c461cf7a975e51ff942395356e8da31df508e1feb62fc02a40ccfc",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
         "金額の単位は printed 7頁 から決めた。款の和 55,977,043（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。"
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 1報酬料→1報酬・2給→2給料。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131237/2026/initial/expenditure/kaigo-initial-nodes.parquet",
-          "sha256": "cf5b6ff402c071258b14adb786087bb8244e608b898b87e48eab77d5d3d0e8c7",
-          "bytes": 11024
+          "sha256": "26af9be87da4f7cd8d7b18bfc63d04b88149644607aec975900953eb368d05d0",
+          "bytes": 11019
         },
         "row_count": 195
       },
@@ -400,20 +462,21 @@
     {
       "table_id": "kouki-initial",
       "conversion_id": "kouki",
-      "input_fingerprint": "fbae4ad0e921098630e29a4fdddf8bcf4f83bf3be6fb88484ed89d1ef636765a",
+      "input_fingerprint": "dc6172630bf17cd882115449281e07aa0600f641b1831be40980b1d63f414de4",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
         "金額の単位は printed 4頁 から決めた。款の和 18,485,915（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。"
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 1報酬料→1報酬・2給→2給料。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131237/2026/initial/expenditure/kouki-initial-nodes.parquet",
-          "sha256": "5b2702e61f52e3fa27f7e313fa931fae2690380502bedbbc3aa250133a48cf59",
-          "bytes": 7349
+          "sha256": "6724e6b396f6bdeac3c3882018d79993e6adecabf972fe0bd01bdb6602f1da92",
+          "bytes": 7344
         },
         "row_count": 104
       },

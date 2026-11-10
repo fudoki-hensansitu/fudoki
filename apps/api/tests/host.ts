@@ -71,8 +71,8 @@ bridge.oncalltool = async (params) => {
   // プレビューでは本番に近い待ち時間を置き、取得中の見え方を確かめられるようにする
   if (preview) await new Promise((resolve) => setTimeout(resolve, 500))
   const input = params.arguments ?? {}
-  const isGet = params.name === 'get_expenditure_subject' || params.name === 'get_expenditure_detail'
-  const openedId = String(input.subject_id ?? input.detail_id)
+  const isGet = params.name === 'get_expenditure_line'
+  const openedId = String(input.line_id)
   if (scenario === 'pdf-locations' && isGet) {
     const data = uiData(scenario)
     const hit = 'nodes' in data ? data.nodes.find((n) => n.node_id === openedId) : undefined

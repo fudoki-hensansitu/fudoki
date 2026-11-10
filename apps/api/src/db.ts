@@ -13,10 +13,6 @@ export interface Db {
 export interface Env {
   DB: Db
   ORIGIN_PDF?: import('./origin-pdf').RelayNamespace
-  /** 評価の検索。手順5で operations に登録するまで、どの経路からも使わない。 */
-  EVALUATION_SEARCH?: import('./evaluations').EvaluationSearchClient
-  EVALUATION_RATE_LIMIT?: import('./evaluations').RateLimiter
-  EVALUATION_QUOTA?: import('./evaluation-quota').QuotaNamespace
   /** 出典の頁の文字（非公開 R2 fudoki-inputs）。読み取りだけの型にしてある。内部の RPC（SourcePages）だけが使う */
   SOURCE_TEXT?: import('./source-pages').SourceTextBucket
 }

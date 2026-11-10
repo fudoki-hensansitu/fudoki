@@ -23,3 +23,14 @@ export function evaluationObjectSlot(target: Extract<SourceTarget, { document_ki
 export function evaluationObjectKey(target: Extract<SourceTarget, { document_kind: 'settlement' }>, format: 'csv' | 'pdf', index?: number): string {
   return index === undefined ? `${evaluationObjectSlot(target)}.${format}` : `${evaluationObjectSlot(target)}-${index}.${format}`
 }
+
+/**
+ * 予算案のプレス発表（主な施策を事業名と予算額つきで載せた発表資料）の保存先。`initial-` で始めない: 予算書の保存は `<slot>/initial-` を一覧して、残さない key を消す。
+ */
+export function pressObjectSlot(target: Extract<SourceTarget, { document_kind: 'initial' }>): string {
+  return `fiscal/source-selection/${target.jurisdiction}/${target.fiscal_year}/press-${target.document_kind}`
+}
+
+export function pressObjectKey(target: Extract<SourceTarget, { document_kind: 'initial' }>, format: 'csv' | 'pdf', index?: number): string {
+  return index === undefined ? `${pressObjectSlot(target)}.${format}` : `${pressObjectSlot(target)}-${index}.${format}`
+}

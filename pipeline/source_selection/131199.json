@@ -1721,7 +1721,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定（未公表）。令和7年度実施事業（2025年度）を評価する令和8年度の行政評価結果は未公表。Orca のブラウザで描画した板橋区行政評価結果の一覧（https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/index.html）の掲載は令和7年度行政評価結果（https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1060042.html）・令和6年度〜令和3年度の板橋区行政評価結果で、最新の令和7年度行政評価結果は令和6年度実績（2024年度）の評価としてすでに選んでいる。令和8年度分の掲載は無い。確認日：2026-10-23T09:47:41+00:00（UTC）。"
+      "reason": "未選定（未公表）。令和7年度実施事業（2025年度）を評価する令和8年度の行政評価結果は未公表。Orca のブラウザで描画した板橋区行政評価結果の一覧（https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/index.html）の掲載は令和7年度行政評価結果（https://www.city.itabashi.tokyo.jp/kusei/seisakukeiei/hyouka/kekka/1060042.html）・令和6年度〜令和3年度の板橋区行政評価結果で、最新の令和7年度行政評価結果は令和6年度実績（2024年度）の評価としてすでに選んでいる。令和8年度分の掲載は無い。確認日：2026-11-10T07:14:18+00:00（UTC）。"
     },
     {
       "target": {
@@ -1906,6 +1906,122 @@
         "archived_at": "2026-10-15T12:47:06.467Z"
       },
       "reason": "令和5年度実績を令和6年度に評価した板橋区の施策評価表・事務事業評価表（基本政策ごとの10分冊）。表題「令和6年度施策評価表・事務事業評価表」。施策評価表の年度列は「令和3年度決算・令和4年度決算・令和5年度予算・令和5年度決算・令和6年度予算」で、最新の決算は令和5年度。施策ごとに目標、成果指標の実績値の推移、評価と改善の方向性を、事務事業ごとに評価標語と改善の方向性を載せる。別冊の事業別行政評価シート（1冊）は概要のため含めない。文字として読める。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131199",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "【全文】令和6年度当初予算案プレス発表",
+          "landing_url": "https://www.city.itabashi.tokyo.jp/mayor/kishakaiken/1050339.html",
+          "inspected_at": "2026-11-10T07:14:18+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/050/339/00.pdf",
+              "sha256": "0b4c8cd599dff353e9556ceb45ea1c12ba2ee779d04045bc98b34cea039f4dc9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131199/2024/press-initial.pdf",
+            "sha256": "0b4c8cd599dff353e9556ceb45ea1c12ba2ee779d04045bc98b34cea039f4dc9",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/050/339/00.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:14:22.822Z"
+      },
+      "reason": "区長記者会見の頁「令和6年度当初予算案プレス発表に伴う区長記者会見」（令和6年1月29日、https://www.city.itabashi.tokyo.jp/mayor/kishakaiken/1050339.html）に載るプレス発表資料の全文（42頁、文字PDF）。目次（物理2頁）のとおり、いたばしNo.1実現プラン2025、令和6年度予算の概要（経営方針・財政規模・歳入歳出の特徴・基金・財政指標）に続き、重点戦略（SDGs・DX・ブランド）ごとの当初予算案の事業で、事業ごとに★区長のいち押しの印・事業名・事業概要・事業の内容・予算（千円、内訳つき）・主管課を見開きで載せる。同じ頁の（1）〜（8）の分割版は全文と同じ内容なので全文を選ぶ。確認日 2026-11-10T07:14:18+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131199",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "【全文】令和7年度当初予算案プレス発表",
+          "landing_url": "https://www.city.itabashi.tokyo.jp/mayor/kishakaiken/1056042.html",
+          "inspected_at": "2026-11-10T07:14:18+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/056/042/11111111.pdf",
+              "sha256": "7c514cf62816560097f171556c29b8f6137d0ebdd78b5edeb11c4cefc57775ea",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131199/2025/press-initial.pdf",
+            "sha256": "7c514cf62816560097f171556c29b8f6137d0ebdd78b5edeb11c4cefc57775ea",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/056/042/11111111.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:14:26.265Z"
+      },
+      "reason": "区長記者会見の頁「令和7年度当初予算案プレス発表に伴う区長記者会見」（令和7年1月28日、https://www.city.itabashi.tokyo.jp/mayor/kishakaiken/1056042.html）に載るプレス発表資料の全文（40頁、文字PDF）。目次（物理2頁）のとおり、令和7年度予算の概要（経営方針・財政規模・歳入歳出の特徴・基金・財政指標）に続き、重点戦略（SDGs・DX・ブランド）ごとの当初予算案の事業で、事業ごとに★区長のいち押しの印・事業名・事業概要・事業の内容・予算（千円、内訳つき）・主管課を見開きで載せる。同じ頁の（1）〜（7）の分割版は全文と同じ内容なので全文を選ぶ。確認日 2026-11-10T07:14:18+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131199",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度当初予算案プレス発表",
+          "landing_url": "https://www.city.itabashi.tokyo.jp/mayor/kishakaiken/1061145.html",
+          "inspected_at": "2026-11-10T07:14:18+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/061/145/01a.pdf",
+              "sha256": "04b676333f63fcedb89ee42b5d4c7f6a4754a85a750f54018237e7c07d6521f6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131199/2026/press-initial.pdf",
+            "sha256": "04b676333f63fcedb89ee42b5d4c7f6a4754a85a750f54018237e7c07d6521f6",
+            "final_url": "https://www.city.itabashi.tokyo.jp/_res/projects/default_project/_page_/001/061/145/01a.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:14:29.320Z"
+      },
+      "reason": "区長記者会見の頁「令和8年度当初予算案プレス発表に伴う区長記者会見」（令和8年1月28日、https://www.city.itabashi.tokyo.jp/mayor/kishakaiken/1061145.html）に載るプレス発表資料（38頁、文字PDF）。目次（物理2頁）のとおり、新たな基本構想・基本計画、経営方針、いたばしNo.1実現プラン2028の3つの戦略、予算編成と財政規模・歳入歳出の特徴・財政の現状に続き、戦略（ウェルビーイング・クリエイティブ・トランスフォーメーション）ごとの当初予算案の事業で、事業ごとに★区長のいち押しの印・事業名・事業概要・事業の内容・予算（千円）・主管課を載せる。確認日 2026-11-10T07:14:18+00:00。"
     }
   ]
 }

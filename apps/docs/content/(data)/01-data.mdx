@@ -5,7 +5,7 @@ sidebar:
   icon: /icons/table.svg
 ---
 
-列ごとの説明は `describe_expenditure_columns`（REST は `GET /v1/fiscal/expenditure/columns`）が正本です。このページはその前提をまとめます。
+列ごとの説明は、各 tool の入力・出力の schema（[API リファレンス](/reference)）が正本です。このページはその前提をまとめます。
 
 ## 金額を足す前に
 
@@ -28,7 +28,7 @@ sidebar:
 
 `depth = 1` の内訳（科目の直下）を同じ分け方の中で足すと、おおむね科目の金額になります。出典が目の金額の一部しか内訳を印字していないときは一致しません。`is_subject_remainder` は、目を持つ項の直下に付いた内訳の印です。子の科目と並んで科目の額の一部になるので、科目の `is_leaf` の和には入っていません。`department` は名前の末尾の【】から取った所管課です。
 
-`get_expenditure_subject` は直下の内訳を分け方ごとに分けて返し、`get_expenditure_detail` は内訳の子を返します。
+`get_expenditure_line` は、科目なら子の科目と直下の内訳を、内訳なら内訳の子を、分け方ごとに分けて返します。
 
 ## COFOG で自治体をまたいで比べる
 
@@ -53,14 +53,15 @@ sidebar:
 
 ## 出典の頁と位置を確かめる
 
-印字の位置は科目・内訳の取得（`get_expenditure_subject`・`get_expenditure_detail`）の `locations` に、行の ID（`row_id`）ごとに入ります。
+印字の位置は歳出の行の取得（`get_expenditure_line`）の `locations` に、行の ID（`row_id`）ごとに入ります。
 
 | 列 | 中身 |
 | --- | --- |
+| `kind` | 出典の形式（`pdf`・`csv`） |
 | `source_page` | 項目が印字された頁 |
 | `amount_source_page` | 採用した金額が印字された頁 |
 | `source_x0`〜`source_y1`、`amount_source_x0`〜`amount_source_y1` | 頁の左上を原点とする印字の枠（pt） |
 
 - 頁は出典ファイル（`origin_id` が指す 1 つの PDF）の 1 から数えた番号で、紙面の印刷頁とは別です。URL に `#page=<番号>` を付けると、Chrome・Edge・Firefox・Acrobat ではその頁が開きます。
 - 横の座標（x0・x1）が null の自治体があります。金額の座標は、一つの印字が全額のときだけ入ります。
-- CSV の出典は頁の代わりに 1 から数えた物理行（見出しが 1 行目）が入り、座標は持ちません。
+- CSV の出典（`kind = "csv"`）は頁の代わりに `source_line`・`amount_source_line` に 1 から数えた物理行（見出しが 1 行目）が入り、頁と座標は持ちません。

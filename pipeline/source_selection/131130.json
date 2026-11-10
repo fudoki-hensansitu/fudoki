@@ -1729,10 +1729,37 @@
         "fiscal_year": 2025,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "selected_candidate_id": null,
-      "archive": null,
-      "reason": "未選定（未公表）。令和7年度決算に係る主要な施策の成果に関する報告書は未公表。JavaScript で描かれる決算のあらましの一覧（https://www.city.shibuya.tokyo.jp/kusei/zaisei/kessan-aramashi/）を Orca のブラウザで描画して読んだところ、最新は「令和6年度決算のあらまし」（https://www.city.shibuya.tokyo.jp/kusei/zaisei/kessan-aramashi/kessan06.html）で、令和7年度の頁は無い。2023・2024年度の評価資料（主要な施策の成果に関する報告書）は各年度の決算のあらましの頁に載っている。渋谷区の全庁の行政評価・事務事業評価は DuckDuckGo の site 検索（行政評価・事務事業評価）で見つからず、出るのは教育委員会の点検・評価だけ。確認日：2026-10-23T09:47:41+00:00（UTC）。"
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度主要な施策の成果に関する報告書",
+          "landing_url": "https://www.city.shibuya.tokyo.jp/kusei/zaisei/kessan-aramashi/kessan07.html",
+          "inspected_at": "2026-11-10T06:58:50+00:00",
+          "files": [
+            {
+              "download_url": "https://files.city.shibuya.tokyo.jp/assets/12995aba8b194961be709ba879857f70/5da8dac0f2204f3fb15ec947cf9cf624/syuyounasesaku07.pdf",
+              "sha256": "7ce0c3c8bae1b11956811723362200da246c452bcd88be191b184d04d601c971",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131130/2025/evaluation-settlement.pdf",
+            "sha256": "7ce0c3c8bae1b11956811723362200da246c452bcd88be191b184d04d601c971",
+            "final_url": "https://files.city.shibuya.tokyo.jp/assets/12995aba8b194961be709ba879857f70/5da8dac0f2204f3fb15ec947cf9cf624/syuyounasesaku07.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:59:01.145Z"
+      },
+      "reason": "令和7年度決算の主要な施策の成果に関する報告書（80頁、文字PDF。作成2026-07-07、更新2026-08-26。表紙裏に地方自治法第233条第5項に基づき令和7年度決算に係る主要な施策の成果を報告する旨と令和8年9月の日付）。決算のあらましの頁（https://www.city.shibuya.tokyo.jp/kusei/zaisei/kessan-aramashi/kessan07.html）に決算書と並んで載る。前半は決算額総括表と分野別事務事業の執行状況（予算現額・執行済額・執行率）、物理62頁以降の「主要な施策の実施概要」で事業ごとに事業名・目的・概要・令和7年度実施内容・決算額・成果目標・実績（指標名・単位・目標値・実績値・達成率）・課題・今後の方向性・担当を1事業1〜2頁で載せる。評価の対象は令和7年度の実施内容と決算額の欄で、2025年度。確認日 2026-11-10T06:58:50+00:00。"
     },
     {
       "target": {
@@ -1809,6 +1836,122 @@
         "archived_at": "2026-10-15T12:37:34.755Z"
       },
       "reason": "令和5年度決算の主要な施策の成果に関する報告書（令和5年）。2頁目に「令和５年度決算に係る主要な施策の成果について、報告書を提出します」とあり、事業ごとに目的・概要、令和5年度実施内容、決算額、成果目標・実績（指標の目標値・実績値・達成率）、課題・今後の方向性を1事業1頁で載せる。実績は令和5年度。文字として読める。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131130",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度渋谷区当初予算案の概要",
+          "landing_url": "https://www.city.shibuya.tokyo.jp/kusei/zaisei/yosan-gaiyo/r6.html",
+          "inspected_at": "2026-11-10T06:57:34+00:00",
+          "files": [
+            {
+              "download_url": "https://files.city.shibuya.tokyo.jp/assets/12995aba8b194961be709ba879857f70/2e7c36cecd47452db183914e71482396/yosan-gaiyo_r6.pdf",
+              "sha256": "62dc0a3d3553c469df7b45f14f689adc004350f820248c07b5b906f8b2e29225",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131130/2024/press-initial.pdf",
+            "sha256": "62dc0a3d3553c469df7b45f14f689adc004350f820248c07b5b906f8b2e29225",
+            "final_url": "https://files.city.shibuya.tokyo.jp/assets/12995aba8b194961be709ba879857f70/2e7c36cecd47452db183914e71482396/yosan-gaiyo_r6.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:57:46.115Z"
+      },
+      "reason": "当初予算案の概要の頁（https://www.city.shibuya.tokyo.jp/kusei/zaisei/yosan-gaiyo/r6.html。報道資料として令和6年2月5日に発表した当初予算案の資料と記載）に載る令和6年度渋谷区当初予算案の概要（53頁、文字PDF）。Contents（物理2頁）のとおり、当初予算案のあらまし（P.2〜）、個別事業説明（P.6〜、基本構想の分野別に14事業）、未来の学校プロジェクト、Appendix（財政規模・歳入歳出の内訳）。個別事業は1事業2〜3頁で、「当初予算案事業シート」に事業名・予算額・基本構想のビジョン・事業目的・事業概要を載せ、続く頁で前年度からの拡充点を図示する。新規・拡充の印は無い。予算のあらましの頁（https://www.city.shibuya.tokyo.jp/kusei/zaisei/yosan-aramashi/yosan06.html）の「主な施策」は HTML の一覧で、ここには含めない。確認日 2026-11-10T06:57:34+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131130",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度渋谷区当初予算案の概要",
+          "landing_url": "https://www.city.shibuya.tokyo.jp/kusei/zaisei/yosan-gaiyo/r7.html",
+          "inspected_at": "2026-11-10T06:57:34+00:00",
+          "files": [
+            {
+              "download_url": "https://files.city.shibuya.tokyo.jp/assets/12995aba8b194961be709ba879857f70/8a5948b02874459097ec7368adc4c920/yosan-gaiyo_r7.pdf",
+              "sha256": "7067aa8063de28d52275d2a9bd79431aaf7e1ec88363b53e62c8e68e46811948",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131130/2025/press-initial.pdf",
+            "sha256": "7067aa8063de28d52275d2a9bd79431aaf7e1ec88363b53e62c8e68e46811948",
+            "final_url": "https://files.city.shibuya.tokyo.jp/assets/12995aba8b194961be709ba879857f70/8a5948b02874459097ec7368adc4c920/yosan-gaiyo_r7.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:57:49.698Z"
+      },
+      "reason": "当初予算案の概要の頁（https://www.city.shibuya.tokyo.jp/kusei/zaisei/yosan-gaiyo/r7.html。報道資料として令和7年2月4日に発表した当初予算案の資料と記載）に載る令和7年度渋谷区当初予算案の概要（59頁、文字PDF）。Contents（物理2頁）のとおり、当初予算案のあらまし（P.2〜）、個別事業説明（P.6〜、基本構想の分野別に15事業）、未来の学校プロジェクト、Appendix（財政規模・歳入歳出の内訳）。個別事業は1事業2〜3頁で、「当初予算案事業シート」に事業名・予算額・基本構想のビジョン・事業目的・事業概要を載せ、続く頁で前年度からの拡充点を図示する。新規・拡充の印は無い。予算のあらましの頁（https://www.city.shibuya.tokyo.jp/kusei/zaisei/yosan-aramashi/yosan07.html）の「主な施策」は HTML の一覧で、ここには含めない。確認日 2026-11-10T06:57:34+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131130",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度渋谷区当初予算案の概要",
+          "landing_url": "https://www.city.shibuya.tokyo.jp/kusei/zaisei/yosan-gaiyo/r8.html",
+          "inspected_at": "2026-11-10T06:57:34+00:00",
+          "files": [
+            {
+              "download_url": "https://files.city.shibuya.tokyo.jp/assets/12995aba8b194961be709ba879857f70/a84b8f8802c94becbe8c025d72997bcf/yosan-gaiyo_r8.pdf",
+              "sha256": "c938a8e5928bc04728409ee3718945c9a9c9df25038bcf6c8a6163fbc26bb281",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131130/2026/press-initial.pdf",
+            "sha256": "c938a8e5928bc04728409ee3718945c9a9c9df25038bcf6c8a6163fbc26bb281",
+            "final_url": "https://files.city.shibuya.tokyo.jp/assets/12995aba8b194961be709ba879857f70/a84b8f8802c94becbe8c025d72997bcf/yosan-gaiyo_r8.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:57:52.887Z"
+      },
+      "reason": "当初予算案の概要の頁（https://www.city.shibuya.tokyo.jp/kusei/zaisei/yosan-gaiyo/r8.html。報道資料として令和8年2月3日に発表した当初予算案の資料と記載）に載る令和8年度渋谷区当初予算案の概要（54頁、文字PDF）。Contents（物理2頁）のとおり、当初予算案のあらまし（P.2〜）、個別事業説明（P.6〜、基本構想の分野別に16事業）、未来の学校プロジェクト、Appendix（財政規模・歳入歳出の内訳）。個別事業は1事業2〜3頁で、「当初予算案事業シート」に事業名・予算額・基本構想のビジョン・事業目的・事業概要を載せ、続く頁で前年度からの拡充点を図示する。新規・拡充の印は無い。予算のあらましの頁（https://www.city.shibuya.tokyo.jp/kusei/zaisei/yosan-aramashi/yosan08.html）の「主な施策」は HTML の一覧で、ここには含めない。確認日 2026-11-10T06:57:34+00:00。"
     }
   ]
 }
