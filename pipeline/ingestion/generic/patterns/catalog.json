@@ -44,7 +44,8 @@
     "turned_summary": "ingestion.generic.patterns.readings.turned_summary",
     "titled_pages": "ingestion.generic.patterns.readings.titled_pages",
     "labelled_spread": "ingestion.generic.patterns.readings.labelled_spread",
-    "facing_explanations": "ingestion.generic.patterns.readings.facing_explanations"
+    "facing_explanations": "ingestion.generic.patterns.readings.facing_explanations",
+    "annotated_spread": "ingestion.generic.patterns.readings.annotated_spread"
   },
   "component": {
     "marked_subjects": "ingestion.generic.patterns.components.marked_subjects",
