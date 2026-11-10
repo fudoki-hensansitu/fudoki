@@ -27,6 +27,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 9,
+                      "end": 9
+                    },
+                    {
                       "start": 58,
                       "end": 117
                     }
@@ -36,6 +40,10 @@
                   "account": "用地特別会計",
                   "direction": "expenditure",
                   "pages": [
+                    {
+                      "start": 179,
+                      "end": 179
+                    },
                     {
                       "start": 182,
                       "end": 183
@@ -47,6 +55,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 189,
+                      "end": 189
+                    },
+                    {
                       "start": 198,
                       "end": 207
                     }
@@ -57,6 +69,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 225,
+                      "end": 225
+                    },
+                    {
                       "start": 230,
                       "end": 232
                     }
@@ -66,6 +82,10 @@
                   "account": "介護保険特別会計",
                   "direction": "expenditure",
                   "pages": [
+                    {
+                      "start": 235,
+                      "end": 235
+                    },
                     {
                       "start": 244,
                       "end": 251
@@ -294,6 +314,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 9,
+                      "end": 9
+                    },
+                    {
                       "start": 62,
                       "end": 123
                     }
@@ -303,6 +327,10 @@
                   "account": "用地特別会計",
                   "direction": "expenditure",
                   "pages": [
+                    {
+                      "start": 183,
+                      "end": 183
+                    },
                     {
                       "start": 186,
                       "end": 187
@@ -314,6 +342,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 193,
+                      "end": 193
+                    },
+                    {
                       "start": 202,
                       "end": 211
                     }
@@ -324,6 +356,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 229,
+                      "end": 229
+                    },
+                    {
                       "start": 234,
                       "end": 235
                     }
@@ -333,6 +369,10 @@
                   "account": "介護保険特別会計",
                   "direction": "expenditure",
                   "pages": [
+                    {
+                      "start": 239,
+                      "end": 239
+                    },
                     {
                       "start": 248,
                       "end": 255
@@ -406,6 +446,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 9,
+                      "end": 9
+                    },
+                    {
                       "start": 58,
                       "end": 121
                     }
@@ -415,6 +459,10 @@
                   "account": "用地特別会計",
                   "direction": "expenditure",
                   "pages": [
+                    {
+                      "start": 189,
+                      "end": 189
+                    },
                     {
                       "start": 192,
                       "end": 193
@@ -426,6 +474,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 201,
+                      "end": 201
+                    },
+                    {
                       "start": 210,
                       "end": 219
                     }
@@ -436,6 +488,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 237,
+                      "end": 237
+                    },
+                    {
                       "start": 242,
                       "end": 243
                     }
@@ -445,6 +501,10 @@
                   "account": "介護保険特別会計",
                   "direction": "expenditure",
                   "pages": [
+                    {
+                      "start": 247,
+                      "end": 247
+                    },
                     {
                       "start": 256,
                       "end": 263
