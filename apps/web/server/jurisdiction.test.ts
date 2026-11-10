@@ -127,6 +127,9 @@ describe('自治体の個別ページ', () => {
     expect(pageHead({ ...data, budgets: [{ ...budget, amountMissing: true as const }] }).title).toBe(head.title)
     expect(pageHead({ ...data, budgets: [{ ...budget, yen: 0 }] }).title).toBe(head.title)
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano')
+    // 紋章のある自治体は og:image を自治体の画像に差し替え、無い自治体は全頁共通の画像のまま
+    expect(head.meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/jurisdictions/131148/og.png' })
+    expect(pageHead({ ...data, code: '999999' }).meta.some((m) => m.property === 'og:image')).toBe(false)
     const ld = JSON.parse(head.script![0]!.innerHTML!) as { '@type': string; itemListElement?: { position: number; name: string; item: string }[] }[]
     expect(ld.find((x) => x['@type'] === 'BreadcrumbList')?.itemListElement?.map((x) => [x.position, x.name, x.item])).toEqual([
       [1, '風土記', 'https://fudoki.dev/'],

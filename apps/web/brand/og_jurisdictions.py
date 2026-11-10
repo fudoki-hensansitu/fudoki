@@ -5,6 +5,7 @@
 """
 
 import base64
+import csv
 import json
 import subprocess
 import tempfile
@@ -18,6 +19,9 @@ PUBLIC = HERE.parent / "public"
 CONFIG = json.loads((HERE / "config.json").read_text())
 INK, PAPER, WEIGHT = CONFIG["ink"], CONFIG["paper"], CONFIG["weight"]
 JURISDICTIONS = json.loads((ROOT / "packages/jurisdictions/jurisdictions.json").read_text())["jurisdictions"]
+# 都道府県名の正本は pipeline の prefecture_master（カタログに無い都道府県もあるため、自治体マスタからは引かない）
+with (ROOT / "pipeline/dbt/seeds/jurisdiction/prefecture_master.csv").open(encoding="utf-8") as f:
+    PREFECTURES = {row["prefecture_code"]: row["prefecture_name"] for row in csv.DictReader(f)}
 TAGLINE = "まちのお金、何に使ってる？"
 OW, OH, LEFT = 1200, 630, 80
 EMBLEM_BOX, EMBLEM_Y = 200, 200
@@ -46,9 +50,7 @@ def text_width(s: str, size: float, found: dict, tracking: float = 0.04) -> floa
 
 def prefecture_of(code: str) -> str | None:
     """市区町村なら都道府県名を返す。都道府県そのもの（3〜5桁目が000）は None"""
-    if code[2:5] == "000":
-        return None
-    return JURISDICTIONS[f"{code[:2]}0001"]["name"] if f"{code[:2]}0001" in JURISDICTIONS else None
+    return None if code[2:5] == "000" else PREFECTURES[code[:2]]
 
 
 def og_svg(code: str, found: dict, logo: str) -> str:
