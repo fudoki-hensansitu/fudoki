@@ -1,6 +1,6 @@
 // ホーム（/）。「うちのまち」（選んだ自治体の情報への入口）、見られる情報の種類（予算・決算・事業評価）、収録の更新を並べるハブ。
 // 自治体を探す・比べるのは自治体一覧（/jurisdictions）、AI との会話はアシスタント（/assistant）が受け持つので、ここでは重ねない。
-// 面の色は、主張したい面（うちのまち）が緑（--primary）の地で中の押せるものは白、押せるものの状態は生成り。見出しも含めてゴシック（明朝は /about の読み物だけ）
+// 面の色は、主張したい面（うちのまち）が緑（--brand）の地で中の押せるものは --brand-fill（明るいときは白、暗いときは半透明の白）、押せるものの状態は生成り。見出しも含めてゴシック（明朝は /about の読み物だけ）
 import * as React from 'react'
 import { Link } from '@void/react'
 import { ArrowRightIcon, BankIcon, ArrowSquareOutIcon, ChartBarIcon, ClipboardTextIcon, CoinsIcon, MagnifyingGlassIcon, NavigationArrowIcon } from '@phosphor-icons/react'
@@ -52,7 +52,7 @@ const matches = (e: MapEntry, q: string) => {
 function Emblem({ code, name, className = 'size-10' }: { code: string; name: string; className?: string }) {
   const [failed, setFailed] = React.useState(false)
   return (
-    <span className={cn('grid shrink-0 place-items-center rounded-xl border bg-white p-1.5', className)}>
+    <span className={cn('grid shrink-0 place-items-center rounded-xl border bg-emblem p-1.5', className)}>
       {failed ? <span className="text-sm text-foreground">{name[0]}</span> : <img src={emblem(code)} alt="" loading="lazy" className="size-full object-contain" onError={() => setFailed(true)} />}
     </span>
   )
@@ -61,7 +61,7 @@ function Emblem({ code, name, className = 'size-10' }: { code: string; name: str
 function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; placeholder: string }) {
   return (
     <Combobox autoHighlight items={entries} filter={(e: MapEntry, q: string) => matches(e, q)} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && onPick(e as MapEntry)}>
-      <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder={placeholder} className="h-12 rounded-full border-0 bg-background px-2 text-[15px] text-foreground shadow-[var(--shadow-pill)] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/15">
+      <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder={placeholder} className="h-12 rounded-full border-0 bg-brand-fill px-2 text-[15px] text-brand-fill-foreground shadow-[var(--shadow-pill)] dark:bg-brand-fill dark:shadow-none [&_input]:placeholder:text-brand-fill-muted [&_svg]:text-brand-fill-muted has-[[data-slot=input-group-control]:focus-visible]:ring-ring/15">
         <InputGroupAddon>
           <MagnifyingGlassIcon className="size-5" />
         </InputGroupAddon>
@@ -106,7 +106,7 @@ function LocateButton({ entries, onPick }: { entries: MapEntry[]; onPick: (e: Ma
   }
   return (
     <div className="mt-3 flex flex-wrap items-center gap-x-3 gap-y-1">
-      <button type="button" onClick={() => void locate()} disabled={state.busy} className="inline-flex items-center gap-1.5 rounded-full bg-background px-3.5 py-1.5 text-[13px] text-foreground transition-colors hover:bg-card disabled:opacity-60">
+      <button type="button" onClick={() => void locate()} disabled={state.busy} className="inline-flex items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-1.5 text-[13px] text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover disabled:opacity-60">
         <NavigationArrowIcon aria-hidden="true" className="size-4" />
         {state.busy ? '現在地を調べています…' : '現在地から選ぶ'}
       </button>
@@ -172,7 +172,7 @@ function MyTown({ entries, featured }: HomeProps) {
     setEditing(false)
   }
   return (
-    <section aria-labelledby="town-h" className="rounded-[24px] bg-primary p-5 text-primary-foreground sm:p-7">
+    <section aria-labelledby="town-h" className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
       <div className="flex items-center justify-between gap-3">
         <h2 id="town-h" className="text-sm opacity-80">
           うちのまち
@@ -192,7 +192,7 @@ function MyTown({ entries, featured }: HomeProps) {
               <span className="block text-2xl font-bold sm:text-[28px]">{town.name}</span>
               {vision ? <span className="mt-0.5 block truncate text-sm opacity-80">{vision}</span> : null}
             </span>
-            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-background px-3.5 py-2 text-[13px] font-medium text-foreground transition-colors group-hover:bg-card">
+            <span className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors group-hover:bg-brand-fill-hover">
               <span className="hidden sm:inline">ページを見る</span>
               <ArrowRightIcon className="size-4 transition-transform group-hover:translate-x-0.5" />
             </span>
@@ -200,7 +200,7 @@ function MyTown({ entries, featured }: HomeProps) {
           <ul className="mt-5 grid grid-cols-3 gap-2">
             {townLinks(town.name).map((l) => (
               <li key={l.label}>
-                <Link href={`${town.path}${l.hash}`} className="flex h-full flex-col gap-2 rounded-2xl bg-background p-3.5 text-sm text-foreground transition-colors hover:bg-card [&_svg]:size-5 [&_svg]:text-accent-foreground">
+                <Link href={`${town.path}${l.hash}`} className="flex h-full flex-col gap-2 rounded-2xl bg-brand-fill p-3.5 text-sm text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover [&_svg]:size-5 [&_svg]:text-accent-foreground">
                   {l.icon}
                   {l.label}
                 </Link>

@@ -1,6 +1,6 @@
 # 公開 web
 
-ホーム（`/`、`home/`）と紹介の読み物（`/about`、`landing/`）、会話を始めるアシスタントの頁（`/assistant`、`chat/assistant-home.tsx`）・会話の画面（`/s/:id`、下の「風土記の AI に聞く」）、自治体ごとの頁（`/jurisdictions`・`/tokyo/nakano`、下の「自治体の個別ページ」）を返す。favicon・OG 画像・robots.txt・紹介（`/about`）の録画と出典の切り抜き（置き場は `public/home/` のまま）などのファイルは `public/` に置き、Workers static assets で配る。sitemap.xml と PWA 用の `/manifest.webmanifest`・`/sw.js`・`/offline`（`pwa.ts`）は `routes/` が返す。service worker は繋がらないときの案内を出すだけで、頁・API はキャッシュしない。PWA のアイコンは `brand/pwa_icons.py` で `public/` に描く。他は 404。main に入ると `.github/workflows/deploy-web.yml` が自動で deploy する（手元からは `bun run --cwd apps/web deploy`）。web を変える PR は `.github/workflows/preview-web.yml` が `pr-<番号>.fudoki.dev` に preview を出す（binding・var は `void.config.ts` の `previews`。push のたびに同じ URL を更新し、PR を閉じたら消す。Access で Cloudflare アカウントのログインだけを通す。利用状況は書かない）。
+ホーム（`/`、`home/`）と紹介の読み物（`/about`、`landing/`）、会話を始めるアシスタントの頁（`/assistant`、`chat/assistant-home.tsx`）・会話の画面（`/s/:id`、下の「風土記の AI に聞く」）、自治体ごとの頁（`/jurisdictions`・`/tokyo/nakano`、下の「自治体の個別ページ」）を返す。favicon・OG 画像・robots.txt・紹介（`/about`）の録画と出典の切り抜き（置き場は `public/home/` のまま）などのファイルは `public/` に置き、Workers static assets で配る。sitemap.xml と PWA 用の `/manifest.webmanifest`・`/sw.js`・`/offline`（`pwa.ts`）は `routes/` が返す。service worker は繋がらないときの案内を出すだけで、頁・API はキャッシュしない。PWA のアイコンは `brand/pwa_icons.py` で `public/` に描く。他は 404。main に入ると `.github/workflows/deploy-web.yml` が自動で deploy する（手元からは `bun run --cwd apps/web deploy`）。web を変える PR は `.github/workflows/preview-web.yml` が `pr-<番号>.fudoki.dev` に preview を出す（binding・var は `void.config.ts` の `preview` の分岐。push のたびに同じ URL を更新し、PR を閉じたら消す。Access で Cloudflare アカウントのログインだけを通す。利用状況は書かない）。
 
 ```bash
 bun run dev:web
@@ -9,12 +9,12 @@ bun run build:web
 
 ## 構成（Void）
 
-[Void](https://void.cloud/)（Vite）で build する。設定は `void.config.ts`（head の既定・var・Cloudflare の binding と preview の差し替え）と `vite.config.ts`。`vite build` が `dist/ssr/`（Worker）・`dist/client/`（`public/` を含む assets）と `dist/ssr/wrangler.json` を書き、`deploy` は `wrangler deploy -c dist/ssr/wrangler.json`、PR の preview は `wrangler preview` が同じ file を読む。
+[Void](https://void.cloud/)（Vite）で build する。設定は `void.config.ts`（head の既定・var・Cloudflare の binding と preview の差し替え）と `vite.config.ts`。`vite build` が cf の Build Output（`.cloudflare/output/v0`）を書き、`deploy` は `cf deploy --prebuilt`、PR の preview は `CLOUDFLARE_PREVIEW_BUILD=true` で build してから `cf previews deploy --prebuilt` で出す。Void は custom domain の `previews_enabled` を cf の形へ移せないので、`vite.config.ts` の `previewDomains` が出力の `domains` を本番と Preview の両方を出す形に書き換える。
 
 - **頁は `pages/`**（Void の Pages）: `index`（ホーム）・`about`（紹介）・`assistant`・`jurisdictions`・`[prefecture]/index`・`[prefecture]/[name]` の `.server.ts` が loader と head を持ち、`.tsx` が React の画面を描く。`pages/layout.tsx` がサイドバーを置き、`Link`・`useRouter().visit` で頁の間を移ると layout は描き直さず本文だけを差し替える（`voidReact({ viewTransitions: true })` で View Transition も効く）。全頁の head の既定（charset・viewport・OG・icon・manifest・service worker の登録）は `void.config.ts` の `head`
 - **会話の画面（`/s/:id`）は `pages/[prefecture]/[name]` が受ける**: Void は動的な経路を pattern の文字の順に当てるので、`pages/s/[id]` を置いても `/:prefecture/:name` が先に当たる。loader が先頭の段が `s` のときだけ会話の画面の props（`server/pages.ts` の `sessionProps`）を返し、`.tsx` が `chat/session-page.tsx` を描く
 - **API・sitemap・PWA は `routes/`**（Void の routes。`routes/api/*.ts` は `server/api.ts` の `handleApi` を呼ぶ）。試験は `server/routes.testing.ts` が同じ file を Hono に組んで叩く
-- **`middleware/01.site.ts`**: サイドバーの開閉の cookie を `useShared()` へ渡し、HTML に Void の head では書けないもの（ライト・ダークの theme-color の対、頁の間の View Transition の opt-in）を足す。開閉で HTML が変わるので `Vary: Cookie` を付ける。HTML の応答には `server/csp.ts` の CSP を付ける（script は自分の JS・service worker の登録の hash・Turnstile・Cloudflare Web Analytics の beacon だけ、通信は自分・beacon の報告先・ホームの現在地に使う国土地理院の逆ジオコーダーだけ、`frame-ancestors 'none'`）。inline の script を足すときは hash を CSP に足さないと止まる
+- **`middleware/01.site.ts`**: サイドバーの開閉とテーマ（`nav/theme.ts`、既定はライト）の cookie を `useShared()` へ渡し、`<html data-theme>` を書き、HTML に Void の head では書けないもの（選んだテーマの theme-color、頁の間の View Transition の opt-in）を足す。開閉とテーマで HTML が変わるので `Vary: Cookie` を付ける。HTML の応答には `server/csp.ts` の CSP を付ける（script は自分の JS・service worker の登録の hash・Turnstile・Cloudflare Web Analytics の beacon だけ、通信は自分・beacon の報告先・ホームの現在地に使う国土地理院の逆ジオコーダーだけ、`frame-ancestors 'none'`）。inline の script を足すときは hash を CSP に足さないと止まる
 - **CSS** は `styles/app.css`（Tailwind・`styles/tokens.css` の色・字・角の token・頁の間の動き）を layout が全頁に読む。頁の間を移っても CSS は残るので、入口だけの CSS（`landing/landing.css`）はどの規則も `.landing` の中に閉じる
 - **head の JSON-LD**（入口の Organization・自治体の頁の Dataset）はサーバーで書いた最初の頁にだけ載り、SPA で移った先には付かない（検索エンジンは頁を直接読むので足りる）
 
@@ -44,7 +44,7 @@ bun run build:web
 
 - Turnstile の widget を dashboard で作り（hostname は `fudoki.dev`）、site key を `void.config.ts` の `TURNSTILE_SITE_KEY` に書く（設定済み）。secret key は Worker の secret `TURNSTILE_SECRET_KEY` に置く（会話の token の署名の鍵もここから作る）
 - 手元の `bun run dev:web`（vite dev）は `apps/web/.env` に `TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA`（Cloudflare 公開の「常に通る」試験用の secret）を書く（`.env` は commit しない。Void は `.env` 以外の `.dev.vars`・`.env.example` などがあると build を止める）。site key は localhost / 127.0.0.1 のときだけ `server/pages.ts` の `siteKey` が試験用の値に差し替える（本番の widget の hostname は `fudoki.dev`）
-- preview（`pr-<番号>.fudoki.dev`、Cloudflare Access で保護）は `void.config.ts` の `previews.vars` で site key・secret を Cloudflare 公開の「常に通る」試験用の値に差し替える（AI エージェントが操作できる）。試験用の secret は action・hostname が合わないダミー値を返すので、`server/session.ts` はその secret のときだけ success のみを見る。本番は変えない
+- preview（`pr-<番号>.fudoki.dev`、Cloudflare Access で保護）は `void.config.ts` の `preview` の分岐の `worker.vars` で site key・secret を Cloudflare 公開の「常に通る」試験用の値に差し替える（AI エージェントが操作できる）。試験用の secret は action・hostname が合わないダミー値を返すので、`server/session.ts` はその secret のときだけ success のみを見る。本番は変えない
 
 ### 利用状況
 
@@ -69,7 +69,7 @@ ORDER BY day
 
 ### 会話の保存
 
-D1 `fudoki-web` の `conversations`（会話1件1行。`user_id` は認証を入れるまで NULL）と `messages`（1往復で質問と回答の2行。`parts` は AI SDK の UIMessage の parts の JSON で、回答の行に tool の呼び出しと結果、モデル・失敗・token・所要時間を持つ）に書く（列は `migrations/0001_conversations.sql`）。migration は自動では当たらないので、変えたら apps/web で `bun run build` のあと `bunx wrangler d1 migrations apply fudoki-web --remote -c dist/ssr/wrangler.json` を手で流す（apps/web には wrangler の設定ファイルが無いので、build が書き出す設定を渡す）。読むのは `bunx wrangler d1 execute fudoki-web --remote -c dist/ssr/wrangler.json --command "<SQL>"`。
+D1 `fudoki-web` の `conversations`（会話1件1行。`user_id` は認証を入れるまで NULL）と `messages`（1往復で質問と回答の2行。`parts` は AI SDK の UIMessage の parts の JSON で、回答の行に tool の呼び出しと結果、モデル・失敗・token・所要時間を持つ）に書く（列は `migrations/0001_conversations.sql`）。migration は自動では当たらないので、変えたら apps/web で `./node_modules/.bin/cf d1 migrations apply 760c7476-6e46-4b44-b174-1bfdd1b4f957 --dir migrations` を手で流す（cf の D1 は名前でなく ID で指す）。読むのは `./node_modules/.bin/cf d1 query 760c7476-6e46-4b44-b174-1bfdd1b4f957 --sql "<SQL>"`。
 
 ```sql
 -- 直近7日の質問を、始めた頁ごとに多い順

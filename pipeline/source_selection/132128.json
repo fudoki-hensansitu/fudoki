@@ -243,13 +243,13 @@
       "candidates": [
         {
           "id": "132128-2025-settlement",
-          "title": "令和7年度決算書 各会計歳出事項別明細書",
+          "title": "令和7年度決算書 各会計歳出事項別明細書（正誤表による訂正後の掲載）",
           "landing_url": "https://www.city.hino.lg.jp/shisei/gyozaisei/yosan/kessan/1031982.html",
-          "inspected_at": "2026-10-07T15:34:19.984577+00:00",
+          "inspected_at": "2026-11-09T13:34:15.665342+00:00",
           "files": [
             {
-              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/01saisyutu7.pdf",
-              "sha256": "710129ad90992ad8a58ab1ea01b2839ced4a40d9b265390e592a253e58d72408",
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0401gikai.pdf",
+              "sha256": "37ec821cb97628f94be3cff57b3213189e46cee4d9a1879f1f7ffa29bfaa7706",
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
@@ -259,15 +259,231 @@
                   "pages": [
                     {
                       "start": 1,
-                      "end": 187
+                      "end": 2
                     }
                   ]
                 }
               ]
             },
             {
-              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/02saisyutu7.pdf",
-              "sha256": "8ae72a02216c0146daae00ee12d9dc99b8fd3407de235aed798b6112e396710c",
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0501soumu.pdf",
+              "sha256": "edf2b1bfb60550f6e6027d05411f8f9cb430194255bbcb3f6a5f5fca9dd4ee2d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 39
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0601minnsei.pdf",
+              "sha256": "09294a0164932adadfcd9637e2850c821ed19adaadedce0b7b1ed51eac42b5e4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 46
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0701eisei.pdf",
+              "sha256": "c9a085131482d2ac22bca10ba8e29904d1dfa941bb1a829bf06b24fc4c77f1b9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 19
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0801roudou.pdf",
+              "sha256": "52d9200b9f720963fc984677b650269c39081c6a75323f3a0032dfed6a7c6566",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0901nougyou.pdf",
+              "sha256": "9fcdb8c4c1082c294ab77a83f61b0b50475482fce810b6cbdc4ff8fb988da143",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1001shoukou.pdf",
+              "sha256": "605f94ac82a3ea90a655833ad23d2338483226ff682824be8db99e09f7677375",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1101doboku.pdf",
+              "sha256": "8f7a05d44f3e6deb22d8b0d3034a5087d9e37a34ad3d15c9687fc773913f95fd",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 16
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1201shoubou.pdf",
+              "sha256": "8bcb788d754a45d936dbca80bd850d998cb4c6237ee6087f91dc92788f3594d3",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1301kyouiku.pdf",
+              "sha256": "0f12bb24276125ff19f62e0849837bb86f3cb1bc77ee5ee0923a9f2e8fb78ca4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 45
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1401kousai.pdf",
+              "sha256": "73f74f86041d795961fe5713e1495255d481735b237f9d03237ceeea5fa58b99",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1501shosishutu.pdf",
+              "sha256": "d603fc43f8137c121098292d2864854c3f66f5914589b6753d73735e25a96a83",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1601yobi.pdf",
+              "sha256": "7a03a26d1812ac645ad9ab2c6a46a32473f5e02124288f08fa1ccdac778bb6ea",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 1
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/2002saishutu.pdf",
+              "sha256": "008d956662ec98f503e43b64603e51efb32388cccbd70984b3d68c3a262b081b",
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
@@ -284,8 +500,8 @@
               ]
             },
             {
-              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/03saisyutu7.pdf",
-              "sha256": "ceed3f02ebc3cf25a32d1fb1b754a5761730a638a0bb2f788b3a20ed03ffe603",
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/2403saishutu.pdf",
+              "sha256": "dbf1aafe33b5fddfcc0781dcac937663b8630ef33c6a945e6641cd1c0c63c36e",
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
@@ -302,8 +518,8 @@
               ]
             },
             {
-              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/08saisyutu7.pdf",
-              "sha256": "d79f867b00013faebc61c99689fb05e3a3e1f47246930c7637b622c9b0477e04",
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/2808saishutu.pdf",
+              "sha256": "66b71af59da731f2bebf59f68d274b923261a706d66a02000126419c062c4a0c",
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
@@ -320,8 +536,8 @@
               ]
             },
             {
-              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/09saisyutu7.pdf",
-              "sha256": "2349b2a242576ecad3cd50a2a06d554890e8dbf786354101a8c0ce54c4cfc5fc",
+              "download_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/3209saishutu.pdf",
+              "sha256": "03d74f42ba7c84a3734e641510872d9cfec0d935ef5ccda50e340674bf73ab3f",
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
@@ -340,39 +556,99 @@
           ]
         }
       ],
-      "reason": "選定（一部会計不足）。令和7年度決算書頁(1031982)掲載の各会計歳出事項別明細書は文字PDFで、款・項・目と節の明細に当初予算額・補正予算額・繰越・流用・予算現額・支出済額・不用額・備考（事業名）の列、単位円。全会計分が掲載の5会計（一般会計・国民健康保険・土地区画整理事業・介護保険・後期高齢者医療の各特別会計）を選定。不足: 下水道事業会計は令和7年度決算書が未掲載（下水道決算一覧1018748の最新は令和6年度 reiwa6nenndo.pdf）、市立病院事業会計も決算書頁に令和7年度の掲載なし（市立病院サイト経営状況頁の最新は令和6年度決算書 r06_balance_sheet.pdf）。",
+      "reason": "選定（一部会計不足）。令和7年度決算書頁(1031982)は正誤表（seigohyou2.pdf、款2総務費・項1総務管理費・目1一般管理費の事業「1 特別職及び職員人件費（職員課）」の支出済額 誤3,003,925,159→正3,004,207,994）に合わせて掲載を差し替え、旧掲載の会計別の歳出事項別明細書（01・02・03・08・09saisyutu7.pdf）は404になった。差し替え後の各会計歳出事項別明細書は文字PDFで、款・項・目と節の明細に当初予算額・補正予算額・繰越・流用・予算現額・支出済額・不用額・備考（事業名）の列、単位円。一般会計は款別13冊（0401gikai議会費〜1601yobi予備費）に分割掲載され、全冊を選定。特別会計は国民健康保険(2002saishutu)・土地区画整理事業(2403saishutu)・介護保険(2808saishutu)・後期高齢者医療(3209saishutu)の4会計。不足: 下水道事業会計は令和7年度決算書が未掲載（下水道決算一覧1018748の最新は令和6年度 reiwa6nenndo.pdf）、市立病院事業会計も決算書頁に令和7年度の掲載なし（市立病院サイト経営状況頁の最新は令和6年度決算書 r06_balance_sheet.pdf）。",
       "selected_candidate_id": "132128-2025-settlement",
       "archive": {
         "bucket": "fudoki-inputs",
         "candidate_id": "132128-2025-settlement",
         "files": [
           {
-            "key": "fiscal/source-selection/132128/2025/settlement-2.pdf",
-            "sha256": "710129ad90992ad8a58ab1ea01b2839ced4a40d9b265390e592a253e58d72408",
-            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/01saisyutu7.pdf"
+            "key": "fiscal/source-selection/132128/2025/settlement-5.pdf",
+            "sha256": "37ec821cb97628f94be3cff57b3213189e46cee4d9a1879f1f7ffa29bfaa7706",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0401gikai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-17.pdf",
+            "sha256": "edf2b1bfb60550f6e6027d05411f8f9cb430194255bbcb3f6a5f5fca9dd4ee2d",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0501soumu.pdf"
           },
           {
             "key": "fiscal/source-selection/132128/2025/settlement-3.pdf",
-            "sha256": "8ae72a02216c0146daae00ee12d9dc99b8fd3407de235aed798b6112e396710c",
-            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/02saisyutu7.pdf"
+            "sha256": "09294a0164932adadfcd9637e2850c821ed19adaadedce0b7b1ed51eac42b5e4",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0601minnsei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-14.pdf",
+            "sha256": "c9a085131482d2ac22bca10ba8e29904d1dfa941bb1a829bf06b24fc4c77f1b9",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0701eisei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-6.pdf",
+            "sha256": "52d9200b9f720963fc984677b650269c39081c6a75323f3a0032dfed6a7c6566",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0801roudou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-13.pdf",
+            "sha256": "9fcdb8c4c1082c294ab77a83f61b0b50475482fce810b6cbdc4ff8fb988da143",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/0901nougyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-7.pdf",
+            "sha256": "605f94ac82a3ea90a655833ad23d2338483226ff682824be8db99e09f7677375",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1001shoukou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-12.pdf",
+            "sha256": "8f7a05d44f3e6deb22d8b0d3034a5087d9e37a34ad3d15c9687fc773913f95fd",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1101doboku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-11.pdf",
+            "sha256": "8bcb788d754a45d936dbca80bd850d998cb4c6237ee6087f91dc92788f3594d3",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1201shoubou.pdf"
           },
           {
             "key": "fiscal/source-selection/132128/2025/settlement-4.pdf",
-            "sha256": "ceed3f02ebc3cf25a32d1fb1b754a5761730a638a0bb2f788b3a20ed03ffe603",
-            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/03saisyutu7.pdf"
+            "sha256": "0f12bb24276125ff19f62e0849837bb86f3cb1bc77ee5ee0923a9f2e8fb78ca4",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1301kyouiku.pdf"
           },
           {
-            "key": "fiscal/source-selection/132128/2025/settlement-5.pdf",
-            "sha256": "d79f867b00013faebc61c99689fb05e3a3e1f47246930c7637b622c9b0477e04",
-            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/08saisyutu7.pdf"
+            "key": "fiscal/source-selection/132128/2025/settlement-9.pdf",
+            "sha256": "73f74f86041d795961fe5713e1495255d481735b237f9d03237ceeea5fa58b99",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1401kousai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-15.pdf",
+            "sha256": "d603fc43f8137c121098292d2864854c3f66f5914589b6753d73735e25a96a83",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1501shosishutu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-10.pdf",
+            "sha256": "7a03a26d1812ac645ad9ab2c6a46a32473f5e02124288f08fa1ccdac778bb6ea",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/1601yobi.pdf"
           },
           {
             "key": "fiscal/source-selection/132128/2025/settlement-1.pdf",
-            "sha256": "2349b2a242576ecad3cd50a2a06d554890e8dbf786354101a8c0ce54c4cfc5fc",
-            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/09saisyutu7.pdf"
+            "sha256": "008d956662ec98f503e43b64603e51efb32388cccbd70984b3d68c3a262b081b",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/2002saishutu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-16.pdf",
+            "sha256": "dbf1aafe33b5fddfcc0781dcac937663b8630ef33c6a945e6641cd1c0c63c36e",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/2403saishutu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-8.pdf",
+            "sha256": "66b71af59da731f2bebf59f68d274b923261a706d66a02000126419c062c4a0c",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/2808saishutu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132128/2025/settlement-2.pdf",
+            "sha256": "03d74f42ba7c84a3734e641510872d9cfec0d935ef5ccda50e340674bf73ab3f",
+            "final_url": "https://www.city.hino.lg.jp/_res/projects/default_project/_page_/001/031/982/3209saishutu.pdf"
           }
         ],
-        "archived_at": "2026-10-07T15:34:50.257Z"
+        "archived_at": "2026-11-08T07:27:18.867Z"
       }
     },
     {

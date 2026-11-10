@@ -1,36 +1,928 @@
 {
   "conversions": [
     {
-      "converter": "fiscal/layouts/workflow_text/convert.py",
-      "expected_tables": [
-        {
-          "table_id": "late-elderly-medical-setsu"
-        }
-      ],
-      "id": "late-elderly-medical-settlement",
+      "id": "general-settlement-01",
+      "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
         {
-          "sha256": "2349b2a242576ecad3cd50a2a06d554890e8dbf786354101a8c0ce54c4cfc5fc"
+          "sha256": "37ec821cb97628f94be3cff57b3213189e46cee4d9a1879f1f7ffa29bfaa7706"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-01",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-01"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-02",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "edf2b1bfb60550f6e6027d05411f8f9cb430194255bbcb3f6a5f5fca9dd4ee2d"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-02",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-02"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-03",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "09294a0164932adadfcd9637e2850c821ed19adaadedce0b7b1ed51eac42b5e4"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-03",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-03"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-04",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "c9a085131482d2ac22bca10ba8e29904d1dfa941bb1a829bf06b24fc4c77f1b9"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-04",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-04"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-05",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "52d9200b9f720963fc984677b650269c39081c6a75323f3a0032dfed6a7c6566"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-05",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-05"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-06",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9fcdb8c4c1082c294ab77a83f61b0b50475482fce810b6cbdc4ff8fb988da143"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-06",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品",
+                    "拡充用"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-06"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-07",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "605f94ac82a3ea90a655833ad23d2338483226ff682824be8db99e09f7677375"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-07",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-07"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-08",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8f7a05d44f3e6deb22d8b0d3034a5087d9e37a34ad3d15c9687fc773913f95fd"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-08",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-08"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-09",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8bcb788d754a45d936dbca80bd850d998cb4c6237ee6087f91dc92788f3594d3"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-09",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-09"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-10",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0f12bb24276125ff19f62e0849837bb86f3cb1bc77ee5ee0923a9f2e8fb78ca4"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-10",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-10"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-11",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "73f74f86041d795961fe5713e1495255d481735b237f9d03237ceeea5fa58b99"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-11",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-11"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-12",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d603fc43f8137c121098292d2864854c3f66f5914589b6753d73735e25a96a83"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-12",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-12"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-13",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7a03a26d1812ac645ad9ab2c6a46a32473f5e02124288f08fa1ccdac778bb6ea"
+        }
+      ],
+      "options": {
+        "partial": true,
+        "account": "一般会計",
+        "table_id": "general-expenditure-13",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "不用額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-13"
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "03d74f42ba7c84a3734e641510872d9cfec0d935ef5ccda50e340674bf73ab3f"
         }
       ],
       "options": {
         "account": "後期高齢者医療特別会計",
-        "table_id": "late-elderly-medical-setsu",
+        "table_id": "late-elderly-medical-expenditure",
         "workflow": {
-          "reading": {
-            "pattern": "banded_projects",
-            "profile": "fiscal/jurisdictions/132128/layouts/text_settlement/reading.json"
+          "layout": {
+            "pattern": "ruled"
           },
-          "components": []
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 1
+                  },
+                  "notes": [
+                    "(繰越明許費)"
+                  ],
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "plain_names": [
+                    "補充用備品"
+                  ],
+                  "note_kinds": {
+                    "市民プール高圧開閉装置等修繕": "債務負担行為"
+                  },
+                  "wrap": "amount_on_last_line"
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
         }
-      }
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-medical-expenditure"
+        }
+      ]
     },
     {
       "id": "land-readjustment-settlement",
       "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
         {
-          "sha256": "ceed3f02ebc3cf25a32d1fb1b754a5761730a638a0bb2f788b3a20ed03ffe603"
+          "sha256": "dbf1aafe33b5fddfcc0781dcac937663b8630ef33c6a945e6641cd1c0c63c36e"
         }
       ],
       "options": {
@@ -88,7 +980,7 @@
       "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
         {
-          "sha256": "8ae72a02216c0146daae00ee12d9dc99b8fd3407de235aed798b6112e396710c"
+          "sha256": "008d956662ec98f503e43b64603e51efb32388cccbd70984b3d68c3a262b081b"
         }
       ],
       "options": {
@@ -146,7 +1038,7 @@
       "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
         {
-          "sha256": "d79f867b00013faebc61c99689fb05e3a3e1f47246930c7637b622c9b0477e04"
+          "sha256": "66b71af59da731f2bebf59f68d274b923261a706d66a02000126419c062c4a0c"
         }
       ],
       "options": {
@@ -198,93 +1090,427 @@
           "table_id": "long-term-care-expenditure"
         }
       ]
-    },
-    {
-      "id": "general-settlement",
-      "converter": "fiscal/layouts/generic_text/convert.py",
-      "inputs": [
-        {
-          "sha256": "710129ad90992ad8a58ab1ea01b2839ced4a40d9b265390e592a253e58d72408"
-        }
-      ],
-      "options": {
-        "account": "一般会計",
-        "table_id": "general-expenditure",
-        "workflow": {
-          "layout": {
-            "pattern": "ruled"
-          },
-          "headers": {
-            "pattern": "standard"
-          },
-          "hierarchy": {
-            "subject": {
-              "pattern": "bands"
-            },
-            "breakdown": {
-              "備考": {
-                "pattern": "position",
-                "options": {
-                  "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 1
-                  },
-                  "notes": [
-                    "(繰越明許費)"
-                  ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
-                  "plain_names": [
-                    "補充用備品"
-                  ],
-                  "note_kinds": {
-                    "市民プール高圧開閉装置等修繕": "債務負担行為"
-                  },
-                  "wrap": "amount_on_last_line"
-                }
-              },
-              "節": {
-                "pattern": "indent"
-              }
-            }
-          }
-        }
-      },
-      "expected_tables": [
-        {
-          "table_id": "general-expenditure"
-        }
-      ]
     }
   ],
   "direction": "expenditure",
   "schema_version": 1,
   "tables": [
     {
-      "table_id": "late-elderly-medical-setsu",
-      "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "f61315c53048da7fd38b1b10efe8aa79fd6bdcae1ca29c363da8e88437ee1a00",
-      "account": "後期高齢者医療特別会計",
+      "table_id": "general-expenditure-01",
+      "conversion_id": "general-settlement-01",
+      "input_fingerprint": "c5e30e5e48dcabf8aa99c27fc18a89cffd9fe0a5f09ae01766e44ab3e3e98832",
+      "account": "一般会計",
       "notes": [
-        "日野市決算歳出事項別明細書（A3横単票）の備考細目を行とする。名称は単語間隔が2pt超の箇所を空白、欄内折返しを改行で保持する（印字のまま）。款・項・目の予算5列・執行3列・印字位置を反復し、事業・事業群・備考節を展開する。金額は印字原文（△・桁区切り・括弧のまま）。事業_名称は担当課の括弧書きを含む原文。予備費目は目の粒度とし、備考の bare 事業文を目_備考へ保持する（0069承認・0047先例）。同一印字行帯の科目・節・備考はx帯で独立に解釈し、高さの一致を対応の根拠にしない。法定節一覧は説明と独立した節の軸として保持し、歳出合計はlocal観測に留める。p2は款1項2目1の備考溢れ頁で、前頁の文脈を継承する。頁頭の「後期 (単位：円)」は単位の根拠、会計の同定は上流scopeによる。対象会計は後期高齢者医療特別会計。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 2頁 から決めた。分冊のため款の和 389,856,001 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 1 件（流用 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（13 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
-          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/late-elderly-medical-setsu-nodes.parquet",
-          "sha256": "c240490304fc7fd3362a73ea49e512193d52c52c9d32ec8fe2a7160936bb996b",
-          "bytes": 8641
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-01-nodes.parquet",
+          "sha256": "5066d3e41a678d0df0c9e6851f3af1c8ab5a181c0b1581ef376e723cf420201d",
+          "bytes": 6693
+        },
+        "row_count": 92
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-01-amounts.parquet",
+          "sha256": "bdfe699f3364b7a2bb24479d5cfa80c0cf1d06c6d0bcfdcd82279d102e935e98",
+          "bytes": 5071
+        },
+        "row_count": 152
+      }
+    },
+    {
+      "table_id": "general-expenditure-02",
+      "conversion_id": "general-settlement-02",
+      "input_fingerprint": "e705d1f58f403fc771390f2e8a5aba0b5acb43a4d67b08b5435b6f998043f026",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 39頁 から決めた。分冊のため款の和 10,427,831,958 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 21 件（充用 6・流用 15）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（218 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-02-nodes.parquet",
+          "sha256": "0e570f4bbc67f513a3d124fbd86caf73d7638c61613ccb0fb9d2099c6b5f911a",
+          "bytes": 57372
+        },
+        "row_count": 1864
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-02-amounts.parquet",
+          "sha256": "36028383e9cd8d8b3de2def708820cbd30407e7e593bb2da225933635f89b0c7",
+          "bytes": 44739
+        },
+        "row_count": 2763
+      }
+    },
+    {
+      "table_id": "general-expenditure-03",
+      "conversion_id": "general-settlement-03",
+      "input_fingerprint": "963d3824ac7206cba367a447d2ee7c7aea5624be1fa37b90e18b800bc105524e",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 46頁 から決めた。分冊のため款の和 41,048,640,695 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 21 件（充用 3・流用 16・繰越額 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（175 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-03-nodes.parquet",
+          "sha256": "8388b9c76d785ca7fd9be5f1321636578d4aa319b43009382c07625849355ba9",
+          "bytes": 66052
+        },
+        "row_count": 2096
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-03-amounts.parquet",
+          "sha256": "2f39c11acc84952e01b9ee838e1555bf253cfe39fa337d4b1dffe75e4328859b",
+          "bytes": 48777
+        },
+        "row_count": 2817
+      }
+    },
+    {
+      "table_id": "general-expenditure-04",
+      "conversion_id": "general-settlement-04",
+      "input_fingerprint": "39e572873d090232e0b3c356c9aadbac8f4bf009ef5537474ca2af37e0c16e76",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 19頁 から決めた。分冊のため款の和 7,399,103,072 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 13 件（流用 11・繰越額 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（79 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-04-nodes.parquet",
+          "sha256": "88ba23130cf4d2f6b6ac49a2013905e6e4b4e547eb090db42e48e243e4ee3f4f",
+          "bytes": 30276
+        },
+        "row_count": 874
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-04-amounts.parquet",
+          "sha256": "4d3c34d1863ceb5f7bead02265566a544b94b69b9f4aea2c07ed739688abce89",
+          "bytes": 22900
+        },
+        "row_count": 1216
+      }
+    },
+    {
+      "table_id": "general-expenditure-05",
+      "conversion_id": "general-settlement-05",
+      "input_fingerprint": "5f25245f9b5fb806cced7f806bc18ba2d800499028dfe74cb3c45ce829a8549f",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 33,357,397 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（6 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-05-nodes.parquet",
+          "sha256": "cf976fc6b4bf28141318cc8c321dae8c32179985bc0e64af021d76c7a7caf068",
+          "bytes": 3823
+        },
+        "row_count": 25
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-05-amounts.parquet",
+          "sha256": "81a94ab60a4faaf1485bbb58f3a3cee1e41968001ff27155747a3c446c5031dc",
+          "bytes": 3208
+        },
+        "row_count": 71
+      }
+    },
+    {
+      "table_id": "general-expenditure-06",
+      "conversion_id": "general-settlement-06",
+      "input_fingerprint": "c5c928e5dc539ea0c98d711bc12db83f34db50246f67d08457c939d819549478",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は printed 4頁 から決めた。分冊のため款の和 115,273,640 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 1 件（流用 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（24 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-06-nodes.parquet",
+          "sha256": "5d56fa40d299fc6b3166875791a13fd88ae552df2a1693d78593851cff274d43",
+          "bytes": 8871
+        },
+        "row_count": 159
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-06-amounts.parquet",
+          "sha256": "62a89325945ed9fcac81255fd5a5e73f5568dfca95cf185293a81dcdd3e52ccb",
+          "bytes": 7087
+        },
+        "row_count": 273
+      }
+    },
+    {
+      "table_id": "general-expenditure-07",
+      "conversion_id": "general-settlement-07",
+      "input_fingerprint": "a9169cd901c1a93ca20e1d3f5bab512663ff5fe77d53f53ee9142721f3c6c484",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は printed 6頁 から決めた。分冊のため款の和 769,089,465 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 1 件（流用 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（27 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-07-nodes.parquet",
+          "sha256": "7f321264c8cc51855f6241d3baf439f0634b1aac5dc5baa51b4ae3b8ab48375a",
+          "bytes": 12956
+        },
+        "row_count": 277
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-07-amounts.parquet",
+          "sha256": "f6f454d5381e1467a2806b22c87aff55c1c3e882ab78138c37b9427b65b8a769",
+          "bytes": 9793
+        },
+        "row_count": 400
+      }
+    },
+    {
+      "table_id": "general-expenditure-08",
+      "conversion_id": "general-settlement-08",
+      "input_fingerprint": "dd98e8f5bb2ea625624a9c261c5c0a3091aac9166fb7eed6ce7486517b9b5916",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 16頁 から決めた。分冊のため款の和 5,239,678,441 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 16 件（充用 5・流用 11）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（134 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-08-nodes.parquet",
+          "sha256": "70ffa0ad3d3ef9f3f14a25127571996554f2a997e5d5d40c03502332c59fc2d0",
+          "bytes": 29168
+        },
+        "row_count": 822
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-08-amounts.parquet",
+          "sha256": "21138150ccf26a4f09303b911cab1c8f06d8e56d4d4ebdaa22d46c0ff41c6e5a",
+          "bytes": 23166
+        },
+        "row_count": 1420
+      }
+    },
+    {
+      "table_id": "general-expenditure-09",
+      "conversion_id": "general-settlement-09",
+      "input_fingerprint": "4ddf3cd08cbef912d77881af6eea2243f3a30ad4ceb58cad274fb55ca2065684",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は printed 6頁 から決めた。分冊のため款の和 2,482,005,454 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 4 件（流用 3・繰越額 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（31 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-09-nodes.parquet",
+          "sha256": "aff2a9d2e483c26df6e0c6927600b7c9e170e081e39658a1ecb7816f77fe37f4",
+          "bytes": 13316
+        },
+        "row_count": 290
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-09-amounts.parquet",
+          "sha256": "0e5ffb754f952e8f60f4093bc468a63e6e70172326003df33eda2a6f20bbe418",
+          "bytes": 10132
+        },
+        "row_count": 425
+      }
+    },
+    {
+      "table_id": "general-expenditure-10",
+      "conversion_id": "general-settlement-10",
+      "input_fingerprint": "b43e37aae6f74da10bfd9814323d76d5f905b3956c7273f7a97490db3d9561a9",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 45頁 から決めた。分冊のため款の和 10,106,968,564 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 40 件（債務負担行為 1・充用 11・流用 27・繰越額 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（235 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-10-nodes.parquet",
+          "sha256": "aaebf1f30a51ed9c4780c6b436e3c47b154e459a437c1715889000868ec53463",
+          "bytes": 65766
+        },
+        "row_count": 2180
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-10-amounts.parquet",
+          "sha256": "003abc27928599c55a946bd58af4a8d753bcd4eb72786032226d8e3621485633",
+          "bytes": 51522
+        },
+        "row_count": 3123
+      }
+    },
+    {
+      "table_id": "general-expenditure-11",
+      "conversion_id": "general-settlement-11",
+      "input_fingerprint": "98ed0f29dfed5d0a55f5b38abeafd78b0b6084d2852d80f32ecd418fe45a0924",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 3,200,725,883 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（2 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-11-nodes.parquet",
+          "sha256": "9ce4ecc578c0ec40ce73aeb2e285572e8771137155c79a4a891d5306c2eef604",
+          "bytes": 4136
+        },
+        "row_count": 35
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-11-amounts.parquet",
+          "sha256": "ce33c4330862cc3076e929930887ac9ab39b1a8ddc8f09f1bcddb3d659dc3fb1",
+          "bytes": 3652
+        },
+        "row_count": 69
+      }
+    },
+    {
+      "table_id": "general-expenditure-12",
+      "conversion_id": "general-settlement-12",
+      "input_fingerprint": "24fac326c8cac5e2bef4e3234fd82b21a854e90485ed04574d5e1f49eaee35f6",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 125,292,244 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（1 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-12-nodes.parquet",
+          "sha256": "2e12eac3233bf0482962e20d03464ba0695822fb0bb1cb1c4c9675c2f0b793bd",
+          "bytes": 2718
+        },
+        "row_count": 8
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-12-amounts.parquet",
+          "sha256": "e019b0101d7394aea5b6dfbd0f7446022661f15df03db21e87ebdff83ca2f742",
+          "bytes": 2525
+        },
+        "row_count": 32
+      }
+    },
+    {
+      "table_id": "general-expenditure-13",
+      "conversion_id": "general-settlement-13",
+      "input_fingerprint": "20dad40738270592595564872d04d6d041650bb0de299c8c6a42f94a789c8065",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 26 件（充用 26）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（1 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-13-nodes.parquet",
+          "sha256": "acc265e6cb6341650d082e3a9a3e9fbaf4d6efd6c0fd6d85f1bbd5848f63b7f6",
+          "bytes": 3987
+        },
+        "row_count": 30
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-13-amounts.parquet",
+          "sha256": "2eb4300c609c7f60cd07d779f537cc6bf1251bef0c6c550deeabc6481c1cafbf",
+          "bytes": 3296
+        },
+        "row_count": 54
+      }
+    },
+    {
+      "table_id": "late-elderly-medical-expenditure",
+      "conversion_id": "late-elderly-medical-settlement",
+      "input_fingerprint": "84990dc7d13d1c0e8d840a7f80fa44ebab9ca17c3a0b019b6e596f4f1260e14b",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は printed 7頁 から決めた。款の和 5,940,640,832 と印字の「歳出合計」5,940,640,832 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（22 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/late-elderly-medical-expenditure-nodes.parquet",
+          "sha256": "21f17b8708a72197a11bfd19a0abeade9397ea8c12739afb6342e4e49f4c183f",
+          "bytes": 8490
         },
         "row_count": 144
       },
       "amounts": {
         "object": {
-          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/late-elderly-medical-setsu-amounts.parquet",
-          "sha256": "7f84c52f6669f52fb06eff4fd9bd4cb928e20ce74778e5eb7039bbf06da1ced3",
-          "bytes": 7340
+          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/late-elderly-medical-expenditure-amounts.parquet",
+          "sha256": "ccd305f0fad54b39b5daa3f3017eddc1c3a2d27b1bd5235183a0c8a3414ed1e9",
+          "bytes": 7476
         },
         "row_count": 364
       }
@@ -292,7 +1518,7 @@
     {
       "table_id": "land-readjustment-expenditure",
       "conversion_id": "land-readjustment-settlement",
-      "input_fingerprint": "d9e0af7c957ccb9d70192c795f5071b2ecd234d178f6e9d03ddb7a21948027da",
+      "input_fingerprint": "a1e86b10190216c19695affef1eaa76b6362bb92ad61333ccf199898ef862a50",
       "account": "土地区画整理事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -305,16 +1531,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132128/2025/settlement/expenditure/land-readjustment-expenditure-nodes.parquet",
-          "sha256": "f0541557cb8a600ed273b9fcd93f1eb107e6ef82b7a6ecfc8a566f24114adb57",
-          "bytes": 9987
+          "sha256": "bc3585cc5c8186c807cfc4722bbf0db5662ac6629e0f46b56f87adbdb75a4a15",
+          "bytes": 10063
         },
         "row_count": 213
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132128/2025/settlement/expenditure/land-readjustment-expenditure-amounts.parquet",
-          "sha256": "cd68bf6c8b6fc2dc334fe29cf357d48149a6c08852a843556719019153d262e1",
-          "bytes": 9214
+          "sha256": "eefe0d35fe3b2a516c134df59a2f9430f3e65467e9ef1dfd1719409b0ada0ceb",
+          "bytes": 9276
         },
         "row_count": 483
       }
@@ -322,7 +1548,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "5dd2ab5a86cbf68e948d699f7308c575cadb8eb3575761aacf3e2dcab172c82f",
+      "input_fingerprint": "9d6d859374cbed9d9d4746692b476c297590e569e9d7fc51ca7d9df720dc76c4",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -335,16 +1561,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132128/2025/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
-          "sha256": "730835894b7a275890d36d1ab4fde640ecb1f12a96564af9e12dfb06430fdd7e",
-          "bytes": 13646
+          "sha256": "21947a7a807f0eb33465abcafd9926b72222c85d9fb13a842cb259e88e5ec0ea",
+          "bytes": 13705
         },
         "row_count": 293
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132128/2025/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
-          "sha256": "09d416ce4b036dd0deebc52299b2a45d890a61d1a5d1de727426e3a6f44db82a",
-          "bytes": 11534
+          "sha256": "01a18a62b75289b837ebe47ae7e90270c576611734a149272ab33e5db80aa88c",
+          "bytes": 11593
         },
         "row_count": 815
       }
@@ -352,7 +1578,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "b325c6eceb124c345291763ca20a31c5da482d49f4c94ee3926695ef53db947b",
+      "input_fingerprint": "55a9b5b7f06e298c674472bd0824d05fc84ab820f7b45e7daf7965d72127144f",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
@@ -365,48 +1591,18 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132128/2025/settlement/expenditure/long-term-care-expenditure-nodes.parquet",
-          "sha256": "3eca7bf9275a6cc4706370fcea48bfcc16eab60322886ff991def43c9ef571d1",
-          "bytes": 16089
+          "sha256": "6b61f477475f6fb87da0a5596cd4aa788b8e7b3c86cc031c65416629308c9920",
+          "bytes": 16086
         },
         "row_count": 368
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132128/2025/settlement/expenditure/long-term-care-expenditure-amounts.parquet",
-          "sha256": "cf22f7acb6de11914752d737dc58cdc2d7b2cb9b99564998df28c1db1c0c51c6",
-          "bytes": 13693
+          "sha256": "324b55f8d97bc32bd6c48f8087cce6d27a52ffb420d4a2c6aa8202951d3b3312",
+          "bytes": 13745
         },
         "row_count": 1011
-      }
-    },
-    {
-      "table_id": "general-expenditure",
-      "conversion_id": "general-settlement",
-      "input_fingerprint": "a49626b163a97fc79467f70b590e1100b63194752cb45bb36ec4d2b8b8aba4a3",
-      "account": "一般会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
-        "金額の単位は printed 187頁 から決めた。款の和 81,337,822,814 と印字の「歳出合計」81,337,822,814 が一致。",
-        "金額の注記 144 件（債務負担行為 1・充用 51・流用 86・繰越額 6）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（946 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-nodes.parquet",
-          "sha256": "02e8f59c25557c2f15d96f540e9e27f77d7ae9f79f69db7928d8a2b12d887188",
-          "bytes": 253909
-        },
-        "row_count": 8752
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/132128/2025/settlement/expenditure/general-expenditure-amounts.parquet",
-          "sha256": "a47ee05158ab86553b0b9aacec937cdea01203886533800a55c626c45557bbf8",
-          "bytes": 198254
-        },
-        "row_count": 12815
       }
     }
   ],

@@ -1,6 +1,6 @@
 # `cf deploy` が CI で中止されるときのハマりどころ
 
-apps/web は Void へ移して `wrangler deploy -c dist/ssr/wrangler.json` で出すようになったので、ここは今は apps/docs（`cf deploy`）に当てはまる。web の route（`fudoki.dev` の custom domain と `previews_enabled`）は `apps/web/void.config.ts` が正本。
+apps/docs と apps/web（Void 1.5 から `cf deploy --prebuilt`）に当てはまる。web の route（`fudoki.dev` の custom domain）は `apps/web/void.config.ts`、Preview を出す設定は `apps/web/vite.config.ts` の `previewDomains` が正本。
 
 - **`cf deploy`（`mise.toml` の `npm:cf`。beta.6 と beta.18 で同じ）は strict 固定で、CI（非対話）では Cloudflare 側の設定とコードの設定に差があると中止する。** 中止メッセージは `--strict` を外せと言うが、フラグでは外せない。対話で実行すると差分が表示され、上書きするか聞かれる。
   - Why: 設定をコードで持つ（config-as-code）一方で、ダッシュボードで変えた値が黙って消えないよう、差分を人が確認する作りになっている。CI には確認する人がいないので止まる。
