@@ -1,0 +1,819 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131202",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ab757f6b60c4061fd94e303ab08f18c007d86b2a9cd12cdc533e8f547af79fe5",
+          "bytes": 2798241
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4b586a67944ec05132d9b5a3fd8a438a0d74337246e134257a2b6b3efea869c7",
+          "bytes": 2602677
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c1eb5a0add74de1879a18ed43ab45bcab3cdd1cfe4899dd206477768f0c2b3d7",
+          "bytes": 2679425
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6cb84f964d219768f43e9f4fc1bac494e4c44703e05ba25f44af939e010d64b7",
+          "bytes": 2346322
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7173b70a5d0c2b90f7dcd64aad95b6eac0f24981e4c7d4dc9c71d327e7046fe4",
+          "bytes": 2679753
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "faed446c8bd59ae175543b5291831b9c8a3b833549189e13b9ce99c9903012e2",
+          "bytes": 2845190
+        },
+        {
+          "id": "general-ocr-7",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "72b6119557374524c0ab6ca1fa1d4812667a7a67e086d68af63a6b288efd0948",
+          "bytes": 2582997
+        },
+        {
+          "id": "general-ocr-8",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9e808cbc2357ee55dcfc27715221f8477f99c090c9f060811470052a7d0836ea",
+          "bytes": 3111753
+        },
+        {
+          "id": "general-ocr-9",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3f2f3cecb4720728ff0c045dc7c8b5f1f304c153110abe4d3ca4827dd5e30cf5",
+          "bytes": 3060739
+        },
+        {
+          "id": "general-ocr-10",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7d5219e29ce16de4679cbf324b6b7611f6d585ff3e6c7d9034149be143e65176",
+          "bytes": 2771009
+        },
+        {
+          "id": "general-ocr-11",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "767aabdbe08bda56ed450d784595e72b549bab337e84d6b7aebccb7ff5c0c94c",
+          "bytes": 2932176
+        },
+        {
+          "id": "general-ocr-12",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4a8b0e52e49055738fd16ee7a139497caf28ace01d6dc7156597370d9b95107a",
+          "bytes": 2648453
+        },
+        {
+          "id": "general-ocr-13",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ccb5b7c13561273431f83eef2f79d6f4547a0b4734680665730257a067dcbd2c",
+          "bytes": 2919233
+        },
+        {
+          "id": "general-ocr-14",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              131,
+              132,
+              133,
+              134,
+              135,
+              136,
+              137,
+              138,
+              139,
+              140
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "490bd67efdb16f0d67d22dfb75a25a9fb046d240c5d7af64b9fc73bb8f63db2b",
+          "bytes": 2676743
+        },
+        {
+          "id": "general-ocr-15",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              141,
+              142,
+              143,
+              144,
+              145,
+              146,
+              147,
+              148,
+              149,
+              150
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f8dcf8a46968824a3c95b6b8d4604167c9d6ba6c2118e05995626ef4fff3eb1e",
+          "bytes": 2505971
+        },
+        {
+          "id": "general-ocr-16",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              151,
+              152,
+              153,
+              154,
+              155,
+              156,
+              157,
+              158,
+              159,
+              160
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6c7c99e04738e3ad66e785e4e77b914c87b98b3177c7c05b630d3d4041707bdf",
+          "bytes": 2974244
+        },
+        {
+          "id": "general-ocr-17",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              161,
+              162,
+              163,
+              164,
+              165,
+              166,
+              167,
+              168,
+              169,
+              170
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d7daa495f2d8992665d0be3ec9c9cfeb8dbe8fdad397f2e8476f31e3fc4d0b85",
+          "bytes": 2843224
+        },
+        {
+          "id": "general-ocr-18",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              171,
+              172,
+              173,
+              174,
+              175,
+              176,
+              177,
+              178,
+              179,
+              180
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "07a8dc32321e86bf5d0bfc1b2ab11950e7a0239ccff0ec6dfd8e096333870ff5",
+          "bytes": 3073816
+        },
+        {
+          "id": "general-ocr-19",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              181,
+              182,
+              183,
+              184,
+              185,
+              186,
+              187,
+              188,
+              189,
+              190
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "550b2daa5f0928f02c257d6f0ae767d6c0379c312e14eeefb222da9973ca6dc2",
+          "bytes": 3117123
+        },
+        {
+          "id": "general-ocr-20",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              191,
+              192,
+              193,
+              194,
+              195,
+              196,
+              197,
+              198,
+              199,
+              200
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "57110dcce36b0086c128eb9267f3112860c853b2043c29b3e7c5466fdb18ad09",
+          "bytes": 2900175
+        },
+        {
+          "id": "general-ocr-21",
+          "origin_sha256": "b738c7cff55c9879e13393059a189417228f104f27c687e078192b31607a3af4",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              201,
+              202,
+              203,
+              204,
+              205
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4b1a4ffdfcd7eccf9740205354c3224d9c74dec38069040dbf268219f56c7f13",
+          "bytes": 758602
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "beab615c17c2e936ec2e321f29486b942d542572c13609560f203b298e2e5695"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-ocr-1",
+          "origin_sha256": "beab615c17c2e936ec2e321f29486b942d542572c13609560f203b298e2e5695",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "fd98634d488cc88c0cad39083bc650fa2940b3c0ca4231c12fc353295385b8fc",
+          "bytes": 2858920
+        },
+        {
+          "id": "national-health-ocr-2",
+          "origin_sha256": "beab615c17c2e936ec2e321f29486b942d542572c13609560f203b298e2e5695",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e81e46f8f603d6964a09f040fa1568aecf31b78cdece0331a7cbd809bbc6bb49",
+          "bytes": 1017139
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "5bd2c7ad08d4e69b3d84d16c2f9641769fc614b8987e263ce36fa763d92d3ebb"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-ocr-1",
+          "origin_sha256": "5bd2c7ad08d4e69b3d84d16c2f9641769fc614b8987e263ce36fa763d92d3ebb",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "52bab3e5cf71a7a9a9d2bc4686f59c373e593c4f39353fbdde2ef75a238f58d3",
+          "bytes": 2259292
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "84e0907b53edc37e4e39c9f7c31ca6debe4e3318d5c74669b23a0ae0c8277cd7"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-ocr-1",
+          "origin_sha256": "84e0907b53edc37e4e39c9f7c31ca6debe4e3318d5c74669b23a0ae0c8277cd7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9f3472eb2cdeafb7148e18e3e4502bfcc1018d50bf892e985aa094658463ec39",
+          "bytes": 1049185
+        }
+      ]
+    }
+  ],
+  "tables": []
+}
