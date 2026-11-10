@@ -123,7 +123,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "73eb00be652e50be015f86e52042536526121d549ae3e807416e71f8911a4782",
+      "input_fingerprint": "e9382b3eb9ca197dc19c9941ba8756a4d054751ef4a7a0289997afa246bd1504",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",

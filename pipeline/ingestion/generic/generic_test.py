@@ -862,6 +862,7 @@ class ConvertRulesTest(unittest.TestCase):
         self.assertIsNotNone(COUNTED.match('110番非常通報装置保守点検委託'))
         self.assertIsNotNone(COUNTED.match('3歳児健康診査'))
         self.assertIsNotNone(COUNTED.match('24時間チャレンジ太鼓補助金'))  # 八丈: a duration, not an item number
+        self.assertIsNone(COUNTED.match('7時間外勤務手当'))  # 時間外 is a word: 7 is the item number
         self.assertIsNone(COUNTED.match('06番号制度整備事業委託料'))  # 番号 is a name, not a count
         self.assertEqual(YEAR_LED.match('42025年農林業センサス費').group(1), '4')
 
