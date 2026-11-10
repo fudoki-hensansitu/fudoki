@@ -35,13 +35,24 @@ jobs:
       - uses: actions/checkout@v7
         with:
           ref: ${{ github.event.workflow_run.head_sha || github.sha }}
-          fetch-depth: 2
-      # deploy-api も動く push（その paths に当たる変更を含む）は、deploy-api の完了から出す
+      # push: deploy-api も動く push（その paths に当たる変更を1つでも含む）は、deploy-api の完了から出す。
+      # workflow_run: deploy-api を走らせた commit が main の先頭でなければ出さない（後の push・deploy-api が新しい web を出す）
       - id: order
-        if: github.event_name == 'push'
+        if: github.event_name != 'workflow_dispatch'
+        env:
+          EVENT: ${{ github.event_name }}
+          BEFORE: ${{ github.event.before }}
         run: |
-          if git diff --name-only HEAD^ HEAD | grep -qE '^(apps/api/|package\.json$|bun\.lock$|bunfig\.toml$|mise\.toml$|tsconfig\.json$|\.github/workflows/deploy-api\.yml$)'; then
-            echo "wait=true" >> "$GITHUB_OUTPUT"
+          if [ "$EVENT" = push ]; then
+            git fetch --no-tags --depth=1 origin "$BEFORE"
+            if git diff --name-only "$BEFORE" HEAD | grep -qE '^(apps/api/|package\.json$|bun\.lock$|bunfig\.toml$|mise\.toml$|tsconfig\.json$|\.github/workflows/deploy-api\.yml$)'; then
+              echo "wait=true" >> "$GITHUB_OUTPUT"
+            fi
+          else
+            git fetch --no-tags --depth=1 origin main
+            if [ "$(git rev-parse origin/main)" != "$(git rev-parse HEAD)" ]; then
+              echo "wait=true" >> "$GITHUB_OUTPUT"
+            fi
           fi
       - if: steps.order.outputs.wait != 'true'
         uses: jdx/mise-action@v5
