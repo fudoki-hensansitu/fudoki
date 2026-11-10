@@ -50,7 +50,7 @@ const Section = ({ id, title, lead, aside, link, children }: { id: string; title
         </div>
       ) : null}
     </div>
-    {lead ? <p className="-mt-2 text-sm text-muted-foreground [text-wrap:pretty]">{lead}</p> : null}
+    {lead ? <p className="-mt-2 text-sm text-muted-foreground">{lead}</p> : null}
     {children}
   </section>
 )
@@ -159,7 +159,7 @@ function EvalBox({ grade, direction, children }: { grade: string; direction: str
 function InitiativeItem({ p, sheets }: { p: Initiative; sheets?: string }) {
   return (
     <FreshRow up upLabel="今ある事業の中で" title={p.title} yen={p.settledYen} source={pdfPage(sheets, p.page, '評価シート')}>
-      <p className="text-sm [text-wrap:pretty]">「{p.quote}」</p>
+      <p className="text-sm">「{p.quote}」</p>
       <EvalBox grade={p.grade} direction={p.direction}>
         この取り組みだけの評価はない。金額と評価は、含まれる事業「{p.name}」全体の決算額と評価。
       </EvalBox>
@@ -981,7 +981,7 @@ export function Page({ data, sitekey, initialYear }: { data: PageData; sitekey: 
           </div>
           <div className="flex min-w-0 flex-col gap-3">
             <h1 ref={title} className="text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight">{data.name}</h1>
-            {vision ? <p className="text-[17px] [text-wrap:pretty] [word-break:auto-phrase]">{vision}</p> : null}
+            {vision ? <p className="text-[17px]">{vision}</p> : null}
             <div className="flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
               <span className="inline-flex items-center gap-1 sm:gap-1.5">
                 <MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />
