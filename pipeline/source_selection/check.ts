@@ -1,7 +1,7 @@
 import { readFile, readdir } from 'node:fs/promises'
 import { join } from 'node:path'
 import { jurisdictionSelectionsSchema } from './schema'
-import { evaluationKind, isArchived, planArchives, planFiles } from './archive'
+import { evaluationKind, isArchived, planArchives, planFiles, pressKind } from './archive'
 
 /** 手で選定結果を更新した後にも使える、自治体別ファイルの構造・参照検査。 */
 export async function checkSelections(directory = import.meta.dir) {
@@ -20,6 +20,9 @@ export async function checkSelections(directory = import.meta.dir) {
     for (const group of planArchives(ledger.evaluation_selections ?? [], evaluationKind)) {
       if (group[0]!.archive !== null && !isArchived(group, undefined, undefined, evaluationKind)) throw new Error(`Evaluation archive key differs from selected file plan: ${file}`)
     }
+    for (const group of planArchives(ledger.press_selections ?? [], pressKind)) {
+      if (group[0]!.archive !== null && !isArchived(group, undefined, undefined, pressKind)) throw new Error(`Press archive key differs from selected file plan: ${file}`)
+    }
     reports.push({
       jurisdiction: file.slice(0, 6),
       targets: records.length,
@@ -29,6 +32,7 @@ export async function checkSelections(directory = import.meta.dir) {
       selected_files: archives.reduce((total, group) => total + planFiles(group).length, 0),
       unresolved_candidates: ledger.unresolved_candidates.length,
       evaluation_selected: (ledger.evaluation_selections ?? []).filter(record => record.selected_candidate_id !== null).length,
+      press_selected: (ledger.press_selections ?? []).filter(record => record.selected_candidate_id !== null).length,
     })
   }
   return reports

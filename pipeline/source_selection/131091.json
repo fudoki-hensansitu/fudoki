@@ -2873,5 +2873,121 @@
       },
       "reason": "令和5年度に実施した全事務事業を令和6年度に評価した事務事業評価シートの全部局版。表題「令和６年度 事務事業評価シート（令和５年度実施事業）」で、評価対象は令和5年度。事務事業ごとに基本情報・予算科目・決算額、目的・概要、実績・課題、指標の目標値と実績値、財務情報、評価・方向性を載せる。文字として読める。 2026-10-21確認: 品川区公式サイトの2026-10-20リニューアルでURLが移転した。landing_url・download_urlは新URL。新URLの配布物はsha256が再保存で変わったが、頁数と本文テキストは保存済みの出典と同一。sha256・保存は移転前に取得した出典のまま。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131091",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度品川区当初予算案プレス発表資料(冊子)",
+          "landing_url": "https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007196.html",
+          "inspected_at": "2026-11-10T06:50:03+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/196/20240119160943_3.pdf",
+              "sha256": "c6aa5b59a1ae4ff337d5c89f6496d98803872d104c78ee32c32317012d8ab600",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131091/2024/press-initial.pdf",
+            "sha256": "c6aa5b59a1ae4ff337d5c89f6496d98803872d104c78ee32c32317012d8ab600",
+            "final_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/196/20240119160943_3.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:50:17.402Z"
+      },
+      "reason": "区長記者会見の頁（https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007196.html）に載る当初予算案のプレス発表の冊子（94頁、文字PDF）。令和6年1月31日のプレス発表。冒頭の目次（物理4〜6頁）に主な施策と頁、施策ごとに1頁で見出し・事業名・予算額（千円）・POINT を載せる。末尾は職員事業提案制度の採択事業（P.87〜91）。同じ頁の「区長説明資料」は予算の規模・方針の要約なので選ばない。予算の頁の「款別予算等の主な施策」（新規◎・レベルアップ○の一覧）は別の資料で、ここには含めない。確認日 2026-11-10T06:50:03+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131091",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度品川区当初予算(案)プレス発表資料について",
+          "landing_url": "https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007188.html",
+          "inspected_at": "2026-11-10T06:50:03+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/188/20250120110302_1.pdf",
+              "sha256": "6637d88cb7634b962d043eba6faf68d1b60561ce7c5cff52b060d6eaadd65819",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131091/2025/press-initial.pdf",
+            "sha256": "6637d88cb7634b962d043eba6faf68d1b60561ce7c5cff52b060d6eaadd65819",
+            "final_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/188/20250120110302_1.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:50:20.028Z"
+      },
+      "reason": "区長記者会見の頁（https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007188.html）に載る当初予算案のプレス発表の冊子（99頁、文字PDF）。令和7年2月5日のプレス発表。施策ごとに1頁で見出し・事業名・新規の印・予算額（千円）・POINT を載せる。ingestion/project の origins.json の宣言と sha256 が一致。同じ頁の「区長説明資料」は予算の規模・方針の要約なので選ばない。予算の頁の「款別予算等の主な施策」（新規◎・レベルアップ○の一覧）は別の資料で、ここには含めない。確認日 2026-11-10T06:50:03+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131091",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度品川区当初予算案プレス発表資料について",
+          "landing_url": "https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007181.html",
+          "inspected_at": "2026-11-10T06:50:03+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/181/20260122093053_1.pdf",
+              "sha256": "fc61ee112f3ba83e3de93887d1bd6467924416e3cefc919bd5c4275faa66d39c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131091/2026/press-initial.pdf",
+            "sha256": "fc61ee112f3ba83e3de93887d1bd6467924416e3cefc919bd5c4275faa66d39c",
+            "final_url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/181/20260122093053_1.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:50:22.341Z"
+      },
+      "reason": "区長記者会見の頁（https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007181.html）に載る当初予算案のプレス発表の冊子（77頁、文字PDF）。令和8年2月17日のプレス発表。施策ごとに1頁で見出し・事業名・新規の印・予算額（千円）・POINT を載せる。ingestion/project の origins.json の宣言と sha256 が一致。同じ頁の「区長説明資料」は予算の規模・方針の要約なので選ばない。予算の頁の「款別予算等の主な施策」（新規◎・レベルアップ○の一覧）は別の資料で、ここには含めない。確認日 2026-11-10T06:50:03+00:00。"
+    }
   ]
 }
