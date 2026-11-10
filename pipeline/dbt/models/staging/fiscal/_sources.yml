@@ -1060,6 +1060,70 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j131032_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j131032_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j131032_2026_initial_kaigo_initial_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: amounts
+  - name: j131032_2026_initial_kaigo_initial_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: nodes
+  - name: j131032_2026_initial_kouki_initial_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: amounts
+  - name: j131032_2026_initial_kouki_initial_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: nodes
+  - name: j131032_2026_initial_nhi_initial_amounts
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
+      kind: amounts
+  - name: j131032_2026_initial_nhi_initial_nodes
+    meta:
+      jurisdiction: '131032'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
+      kind: nodes
   - name: j131041_2024_settlement_general_expenditure_detail_amounts
     meta:
       jurisdiction: '131041'
@@ -3572,6 +3636,70 @@ sources:
       direction: expenditure
       table_id: kouki-setsu
       kind: nodes
+  - name: j131172_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j131172_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j131172_2025_initial_kaigo_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: amounts
+  - name: j131172_2025_initial_kaigo_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: nodes
+  - name: j131172_2025_initial_kouki_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: amounts
+  - name: j131172_2025_initial_kouki_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: nodes
+  - name: j131172_2025_initial_nhi_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
+      kind: amounts
+  - name: j131172_2025_initial_nhi_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
+      kind: nodes
   - name: j131172_2025_settlement_general_setsu_amounts
     meta:
       jurisdiction: '131172'
@@ -3635,6 +3763,70 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: kouki-setsu
+      kind: nodes
+  - name: j131172_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j131172_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j131172_2026_initial_kaigo_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: amounts
+  - name: j131172_2026_initial_kaigo_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: nodes
+  - name: j131172_2026_initial_kouki_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: amounts
+  - name: j131172_2026_initial_kouki_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: nodes
+  - name: j131172_2026_initial_nhi_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
+      kind: amounts
+  - name: j131172_2026_initial_nhi_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
       kind: nodes
   - name: j131181_2024_settlement_general_expenditure_detail_amounts
     meta:
@@ -4292,6 +4484,38 @@ sources:
       direction: expenditure
       table_id: parking-initial
       kind: nodes
+  - name: j131237_2024_initial_kaigo_initial_amounts
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: amounts
+  - name: j131237_2024_initial_kaigo_initial_nodes
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: nodes
+  - name: j131237_2024_initial_kouki_initial_amounts
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: amounts
+  - name: j131237_2024_initial_kouki_initial_nodes
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: nodes
   - name: j131237_2024_settlement_general_expenditure_detail_amounts
     meta:
       jurisdiction: '131237'
@@ -4355,6 +4579,118 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: nhi-expenditure-detail
+      kind: nodes
+  - name: j131237_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j131237_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j131237_2025_initial_kaigo_initial_amounts
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: amounts
+  - name: j131237_2025_initial_kaigo_initial_nodes
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: nodes
+  - name: j131237_2025_initial_kouki_initial_amounts
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: amounts
+  - name: j131237_2025_initial_kouki_initial_nodes
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: nodes
+  - name: j131237_2025_initial_nhi_initial_amounts
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
+      kind: amounts
+  - name: j131237_2025_initial_nhi_initial_nodes
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
+      kind: nodes
+  - name: j131237_2026_initial_kaigo_initial_amounts
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: amounts
+  - name: j131237_2026_initial_kaigo_initial_nodes
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: nodes
+  - name: j131237_2026_initial_kouki_initial_amounts
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: amounts
+  - name: j131237_2026_initial_kouki_initial_nodes
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: nodes
+  - name: j131237_2026_initial_nhi_initial_amounts
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
+      kind: amounts
+  - name: j131237_2026_initial_nhi_initial_nodes
+    meta:
+      jurisdiction: '131237'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
       kind: nodes
   - name: j132012_2024_settlement_kaigo_detail_amounts
     meta:

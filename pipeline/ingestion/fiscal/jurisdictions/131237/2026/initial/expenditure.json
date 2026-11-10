@@ -1,0 +1,493 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131237",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "639759a32434ed9f7578a710d504af73ef691f1c3723841b1a187da001fbcad4"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較増(△)減": {
+                  "kind": "amount",
+                  "heading": "比較"
+                },
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。目の行に財源の種類（特定財源・一般財源など）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "ア": 4,
+                    "イ": 4,
+                    "ウ": 4,
+                    "エ": 4,
+                    "オ": 4,
+                    "カ": 4,
+                    "キ": 4,
+                    "ク": 4,
+                    "ケ": 4,
+                    "コ": 4,
+                    "サ": 4,
+                    "シ": 4,
+                    "ス": 4,
+                    "セ": 4,
+                    "ソ": 4,
+                    "タ": 4,
+                    "チ": 4,
+                    "ツ": 4,
+                    "テ": 4,
+                    "ト": 4,
+                    "アお": 4,
+                    "アが": 4,
+                    "アく": 4,
+                    "アご": 4,
+                    "アす": 4,
+                    "アひ": 4,
+                    "アみ": 4,
+                    "アオ": 4,
+                    "アグ": 4,
+                    "アデ": 4,
+                    "アパ": 4,
+                    "アビ": 4,
+                    "アピ": 4,
+                    "アプ": 4,
+                    "アポ": 4,
+                    "アマ": 4,
+                    "アヤ": 4,
+                    "アラ": 4,
+                    "アル": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            530,
+            547
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "setsu-p530-y191-1報酬",
+            "page": 530,
+            "code": "1",
+            "y": 191.4,
+            "observed_name": "報酬料",
+            "corrected_name": "報酬",
+            "reason": "節「1 報酬」の「酬」と次の行の節「2 給料」の「料」は、名前を欄いっぱいに割り付けて同じ位置に印字され、縦書きの1語として「酬料」に結ばれる。原典の描画で印字を確かめ、名前を直す。"
+          },
+          {
+            "id": "setsu-p530-y206-2給料",
+            "page": 530,
+            "code": "2",
+            "y": 206.2,
+            "observed_name": "給",
+            "corrected_name": "給料",
+            "reason": "節「2 給料」の「料」が、前の行の節「1 報酬」の「酬」と縦書きの1語として結ばれ、「給」だけが残る。原典の描画で印字を確かめ、名前を直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-initial"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "639759a32434ed9f7578a710d504af73ef691f1c3723841b1a187da001fbcad4"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較増(△)減": {
+                  "kind": "amount",
+                  "heading": "比較"
+                },
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。目の行に財源の種類（特定財源・一般財源など）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "ア": 4,
+                    "イ": 4,
+                    "ウ": 4,
+                    "エ": 4,
+                    "オ": 4,
+                    "カ": 4,
+                    "キ": 4,
+                    "ク": 4,
+                    "ケ": 4,
+                    "コ": 4,
+                    "サ": 4,
+                    "シ": 4,
+                    "ス": 4,
+                    "セ": 4,
+                    "ソ": 4,
+                    "タ": 4,
+                    "チ": 4,
+                    "ツ": 4,
+                    "テ": 4,
+                    "ト": 4,
+                    "アお": 4,
+                    "アが": 4,
+                    "アく": 4,
+                    "アご": 4,
+                    "アす": 4,
+                    "アひ": 4,
+                    "アみ": 4,
+                    "アオ": 4,
+                    "アグ": 4,
+                    "アデ": 4,
+                    "アパ": 4,
+                    "アビ": 4,
+                    "アピ": 4,
+                    "アプ": 4,
+                    "アポ": 4,
+                    "アマ": 4,
+                    "アヤ": 4,
+                    "アラ": 4,
+                    "アル": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            574,
+            587
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "setsu-p574-y191-1報酬",
+            "page": 574,
+            "code": "1",
+            "y": 191.4,
+            "observed_name": "報酬料",
+            "corrected_name": "報酬",
+            "reason": "節「1 報酬」の「酬」と次の行の節「2 給料」の「料」は、名前を欄いっぱいに割り付けて同じ位置に印字され、縦書きの1語として「酬料」に結ばれる。原典の描画で印字を確かめ、名前を直す。"
+          },
+          {
+            "id": "setsu-p574-y206-2給料",
+            "page": 574,
+            "code": "2",
+            "y": 206.2,
+            "observed_name": "給",
+            "corrected_name": "給料",
+            "reason": "節「2 給料」の「料」が、前の行の節「1 報酬」の「酬」と縦書きの1語として結ばれ、「給」だけが残る。原典の描画で印字を確かめ、名前を直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "639759a32434ed9f7578a710d504af73ef691f1c3723841b1a187da001fbcad4"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較増(△)減": {
+                  "kind": "amount",
+                  "heading": "比較"
+                },
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。目の行に財源の種類（特定財源・一般財源など）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "ア": 4,
+                    "イ": 4,
+                    "ウ": 4,
+                    "エ": 4,
+                    "オ": 4,
+                    "カ": 4,
+                    "キ": 4,
+                    "ク": 4,
+                    "ケ": 4,
+                    "コ": 4,
+                    "サ": 4,
+                    "シ": 4,
+                    "ス": 4,
+                    "セ": 4,
+                    "ソ": 4,
+                    "タ": 4,
+                    "チ": 4,
+                    "ツ": 4,
+                    "テ": 4,
+                    "ト": 4,
+                    "アお": 4,
+                    "アが": 4,
+                    "アく": 4,
+                    "アご": 4,
+                    "アす": 4,
+                    "アひ": 4,
+                    "アみ": 4,
+                    "アオ": 4,
+                    "アグ": 4,
+                    "アデ": 4,
+                    "アパ": 4,
+                    "アビ": 4,
+                    "アピ": 4,
+                    "アプ": 4,
+                    "アポ": 4,
+                    "アマ": 4,
+                    "アヤ": 4,
+                    "アラ": 4,
+                    "アル": 4
+                  }
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            612,
+            619
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "setsu-p612-y191-1報酬",
+            "page": 612,
+            "code": "1",
+            "y": 191.4,
+            "observed_name": "報酬料",
+            "corrected_name": "報酬",
+            "reason": "節「1 報酬」の「酬」と次の行の節「2 給料」の「料」は、名前を欄いっぱいに割り付けて同じ位置に印字され、縦書きの1語として「酬料」に結ばれる。原典の描画で印字を確かめ、名前を直す。"
+          },
+          {
+            "id": "setsu-p612-y206-2給料",
+            "page": 612,
+            "code": "2",
+            "y": 206.2,
+            "observed_name": "給",
+            "corrected_name": "給料",
+            "reason": "節「2 給料」の「料」が、前の行の節「1 報酬」の「酬」と縦書きの1語として結ばれ、「給」だけが残る。原典の描画で印字を確かめ、名前を直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "nhi-initial",
+      "conversion_id": "nhi",
+      "input_fingerprint": "b255d3e1ef591d054654802f3b79f3458ea5758aa1f8eb2f3fa9f765929eaf1d",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
+        "金額の単位は printed 9頁 から決めた。款の和 59,469,465（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 1報酬料→1報酬・2給→2給料。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2026/initial/expenditure/nhi-initial-nodes.parquet",
+          "sha256": "299fd38e78dabff0b13c27113235ae91da1b502d3be2c5d50242f005b16a0b13",
+          "bytes": 11905
+        },
+        "row_count": 222
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2026/initial/expenditure/nhi-initial-amounts.parquet",
+          "sha256": "c15a4c8d6e0dffdc3db9cc697279cac2354e19d8a67991b8b49e9bd65dbc1409",
+          "bytes": 8469
+        },
+        "row_count": 326
+      }
+    },
+    {
+      "table_id": "kaigo-initial",
+      "conversion_id": "kaigo",
+      "input_fingerprint": "bca8b8eea3c461cf7a975e51ff942395356e8da31df508e1feb62fc02a40ccfc",
+      "account": "介護保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
+        "金額の単位は printed 7頁 から決めた。款の和 55,977,043（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 1報酬料→1報酬・2給→2給料。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2026/initial/expenditure/kaigo-initial-nodes.parquet",
+          "sha256": "26af9be87da4f7cd8d7b18bfc63d04b88149644607aec975900953eb368d05d0",
+          "bytes": 11019
+        },
+        "row_count": 195
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2026/initial/expenditure/kaigo-initial-amounts.parquet",
+          "sha256": "9a070787152a0cb8a5b25daa145538beb9e468196aaed1a55d1c53c1c6fb6a1c",
+          "bytes": 7622
+        },
+        "row_count": 243
+      }
+    },
+    {
+      "table_id": "kouki-initial",
+      "conversion_id": "kouki",
+      "input_fingerprint": "dc6172630bf17cd882115449281e07aa0600f641b1831be40980b1d63f414de4",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 18,485,915（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 1報酬料→1報酬・2給→2給料。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2026/initial/expenditure/kouki-initial-nodes.parquet",
+          "sha256": "6724e6b396f6bdeac3c3882018d79993e6adecabf972fe0bd01bdb6602f1da92",
+          "bytes": 7344
+        },
+        "row_count": 104
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2026/initial/expenditure/kouki-initial-amounts.parquet",
+          "sha256": "3f18b688b70363b827856285812f285632b897e56cb7ef4b1958aad9883da127",
+          "bytes": 5507
+        },
+        "row_count": 148
+      }
+    }
+  ]
+}
