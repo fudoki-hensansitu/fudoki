@@ -1,6 +1,6 @@
 name: deploy-web
 # main に入った公開 web（fudoki.dev の入口の1枚）の変更をデプロイする。
-# web は api の型（Hono RPC）で api を呼ぶので、api も変わった push では deploy-api の完了を待ってから出す
+# web は api の型（Hono RPC）で api を呼ぶので、api も変わった push では deploy-api の完了を待ってから main の先頭を出す
 on:
   push:
     branches: [main]
@@ -32,27 +32,20 @@ jobs:
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
     runs-on: ubuntu-latest
     steps:
+      # workflow_run でも main の先頭を出す（deploy-api の後に入った web の変更も一緒に出す）
       - uses: actions/checkout@v7
         with:
-          ref: ${{ github.event.workflow_run.head_sha || github.sha }}
-      # push: deploy-api も動く push（その paths に当たる変更を1つでも含む）は、deploy-api の完了から出す。
-      # workflow_run: deploy-api を走らせた commit が main の先頭でなければ出さない（後の push・deploy-api が新しい web を出す）
+          ref: ${{ github.event_name == 'workflow_run' && 'main' || github.sha }}
+      # deploy-api も動く変更（その paths に当たるファイル）が出す範囲にあれば、その deploy-api の完了から出す。
+      # push は before..HEAD、workflow_run は deploy-api を走らせた commit..main の先頭を見る
       - id: order
         if: github.event_name != 'workflow_dispatch'
         env:
-          EVENT: ${{ github.event_name }}
-          BEFORE: ${{ github.event.before }}
+          BASE: ${{ github.event.workflow_run.head_sha || github.event.before }}
         run: |
-          if [ "$EVENT" = push ]; then
-            git fetch --no-tags --depth=1 origin "$BEFORE"
-            if git diff --name-only "$BEFORE" HEAD | grep -qE '^(apps/api/|package\.json$|bun\.lock$|bunfig\.toml$|mise\.toml$|tsconfig\.json$|\.github/workflows/deploy-api\.yml$)'; then
-              echo "wait=true" >> "$GITHUB_OUTPUT"
-            fi
-          else
-            git fetch --no-tags --depth=1 origin main
-            if [ "$(git rev-parse origin/main)" != "$(git rev-parse HEAD)" ]; then
-              echo "wait=true" >> "$GITHUB_OUTPUT"
-            fi
+          git fetch --no-tags --depth=1 origin "$BASE"
+          if git diff --name-only "$BASE" HEAD | grep -qE '^(apps/api/|package\.json$|bun\.lock$|bunfig\.toml$|mise\.toml$|tsconfig\.json$|\.github/workflows/deploy-api\.yml$)'; then
+            echo "wait=true" >> "$GITHUB_OUTPUT"
           fi
       - if: steps.order.outputs.wait != 'true'
         uses: jdx/mise-action@v5
