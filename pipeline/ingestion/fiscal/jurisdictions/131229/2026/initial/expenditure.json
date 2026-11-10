@@ -1,0 +1,679 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131229",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b70dc068f9f21dabcf2cd0260bf1e239a8b7ca8e1ed1428ecc28b08a7fefaf37"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-1",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の上に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源の列と組で読む財源の分解で、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "amount_brackets": true,
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "限度額": "限度額",
+                    "駅前広場加算": "限度額",
+                    "活動実績": "限度額",
+                    "個人住宅用": "限度額",
+                    "集合住宅用": "限度額",
+                    "事業所用": "限度額",
+                    "遮熱塗装等断熱改修": "限度額",
+                    "蓄電池": "限度額",
+                    "高断熱住宅": "限度額",
+                    "宅配ボックス": "限度額",
+                    "ＬＥＤ照明機器": "限度額",
+                    "高効率空調設備等": "限度額",
+                    "換気設備": "限度額",
+                    "電気自動車用充電設備": "限度額",
+                    "ビークル・トゥ・ホーム": "限度額",
+                    "太陽光発電システム": "限度額",
+                    "ホームエネルギーマネジメントシステム": "限度額",
+                    "①生活保護被保護者": "限度額",
+                    "②区民税非課税世帯": "限度額",
+                    "③区民税非課税世帯": "限度額",
+                    "④課税所得": "限度額",
+                    "⑤課税所得": "限度額",
+                    "⑥課税所得": "限度額",
+                    "所得等により": "限度額",
+                    "電気自動車等": "限度額",
+                    "環境経営クラウドサービス": "限度額",
+                    "年間費用額": "積算",
+                    "一部負担金": "積算",
+                    "他法負担分": "積算",
+                    "保険者負担分": "積算",
+                    "療養給付費負担分": "積算",
+                    "被保険者負担分": "積算",
+                    "第三者納付金等収入額": "積算",
+                    "預託金額": "積算",
+                    "貸付限度額": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "70c4bb0a4041a4fb5a5b26412a670fa854a15915d83af849ae64a4d384e8a55c"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の上に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源の列と組で読む財源の分解で、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "amount_brackets": true,
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "限度額": "限度額",
+                    "駅前広場加算": "限度額",
+                    "活動実績": "限度額",
+                    "個人住宅用": "限度額",
+                    "集合住宅用": "限度額",
+                    "事業所用": "限度額",
+                    "遮熱塗装等断熱改修": "限度額",
+                    "蓄電池": "限度額",
+                    "高断熱住宅": "限度額",
+                    "宅配ボックス": "限度額",
+                    "ＬＥＤ照明機器": "限度額",
+                    "高効率空調設備等": "限度額",
+                    "換気設備": "限度額",
+                    "電気自動車用充電設備": "限度額",
+                    "ビークル・トゥ・ホーム": "限度額",
+                    "太陽光発電システム": "限度額",
+                    "ホームエネルギーマネジメントシステム": "限度額",
+                    "①生活保護被保護者": "限度額",
+                    "②区民税非課税世帯": "限度額",
+                    "③区民税非課税世帯": "限度額",
+                    "④課税所得": "限度額",
+                    "⑤課税所得": "限度額",
+                    "⑥課税所得": "限度額",
+                    "所得等により": "限度額",
+                    "電気自動車等": "限度額",
+                    "環境経営クラウドサービス": "限度額",
+                    "年間費用額": "積算",
+                    "一部負担金": "積算",
+                    "他法負担分": "積算",
+                    "保険者負担分": "積算",
+                    "療養給付費負担分": "積算",
+                    "被保険者負担分": "積算",
+                    "第三者納付金等収入額": "積算",
+                    "預託金額": "積算",
+                    "貸付限度額": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "be33b37cb1ee73e5f9daf4545ebf990fc6add3cb10a5dbebb674b959fd06193d"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の上に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源の列と組で読む財源の分解で、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "amount_brackets": true,
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "限度額": "限度額",
+                    "駅前広場加算": "限度額",
+                    "活動実績": "限度額",
+                    "個人住宅用": "限度額",
+                    "集合住宅用": "限度額",
+                    "事業所用": "限度額",
+                    "遮熱塗装等断熱改修": "限度額",
+                    "蓄電池": "限度額",
+                    "高断熱住宅": "限度額",
+                    "宅配ボックス": "限度額",
+                    "ＬＥＤ照明機器": "限度額",
+                    "高効率空調設備等": "限度額",
+                    "換気設備": "限度額",
+                    "電気自動車用充電設備": "限度額",
+                    "ビークル・トゥ・ホーム": "限度額",
+                    "太陽光発電システム": "限度額",
+                    "ホームエネルギーマネジメントシステム": "限度額",
+                    "①生活保護被保護者": "限度額",
+                    "②区民税非課税世帯": "限度額",
+                    "③区民税非課税世帯": "限度額",
+                    "④課税所得": "限度額",
+                    "⑤課税所得": "限度額",
+                    "⑥課税所得": "限度額",
+                    "所得等により": "限度額",
+                    "電気自動車等": "限度額",
+                    "環境経営クラウドサービス": "限度額",
+                    "年間費用額": "積算",
+                    "一部負担金": "積算",
+                    "他法負担分": "積算",
+                    "保険者負担分": "積算",
+                    "療養給付費負担分": "積算",
+                    "被保険者負担分": "積算",
+                    "第三者納付金等収入額": "積算",
+                    "預託金額": "積算",
+                    "貸付限度額": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "land-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "22b2b49094b60691243e88d2f1731a297be98a8c63272ee6797dfad2abbb4bd8"
+        }
+      ],
+      "options": {
+        "account": "用地特別会計",
+        "table_id": "land-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の上に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源の列と組で読む財源の分解で、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "amount_brackets": true,
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "限度額": "限度額",
+                    "駅前広場加算": "限度額",
+                    "活動実績": "限度額",
+                    "個人住宅用": "限度額",
+                    "集合住宅用": "限度額",
+                    "事業所用": "限度額",
+                    "遮熱塗装等断熱改修": "限度額",
+                    "蓄電池": "限度額",
+                    "高断熱住宅": "限度額",
+                    "宅配ボックス": "限度額",
+                    "ＬＥＤ照明機器": "限度額",
+                    "高効率空調設備等": "限度額",
+                    "換気設備": "限度額",
+                    "電気自動車用充電設備": "限度額",
+                    "ビークル・トゥ・ホーム": "限度額",
+                    "太陽光発電システム": "限度額",
+                    "ホームエネルギーマネジメントシステム": "限度額",
+                    "①生活保護被保護者": "限度額",
+                    "②区民税非課税世帯": "限度額",
+                    "③区民税非課税世帯": "限度額",
+                    "④課税所得": "限度額",
+                    "⑤課税所得": "限度額",
+                    "⑥課税所得": "限度額",
+                    "所得等により": "限度額",
+                    "電気自動車等": "限度額",
+                    "環境経営クラウドサービス": "限度額",
+                    "年間費用額": "積算",
+                    "一部負担金": "積算",
+                    "他法負担分": "積算",
+                    "保険者負担分": "積算",
+                    "療養給付費負担分": "積算",
+                    "被保険者負担分": "積算",
+                    "第三者納付金等収入額": "積算",
+                    "預託金額": "積算",
+                    "貸付限度額": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-initial"
+        }
+      ]
+    },
+    {
+      "id": "parking-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "dc309b9a9fc6c3f38429dc8a07a6aaef2e8f4a5526dda75846350ce9a7ae3547"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の上に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源の列と組で読む財源の分解で、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "amount_brackets": true,
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "限度額": "限度額",
+                    "駅前広場加算": "限度額",
+                    "活動実績": "限度額",
+                    "個人住宅用": "限度額",
+                    "集合住宅用": "限度額",
+                    "事業所用": "限度額",
+                    "遮熱塗装等断熱改修": "限度額",
+                    "蓄電池": "限度額",
+                    "高断熱住宅": "限度額",
+                    "宅配ボックス": "限度額",
+                    "ＬＥＤ照明機器": "限度額",
+                    "高効率空調設備等": "限度額",
+                    "換気設備": "限度額",
+                    "電気自動車用充電設備": "限度額",
+                    "ビークル・トゥ・ホーム": "限度額",
+                    "太陽光発電システム": "限度額",
+                    "ホームエネルギーマネジメントシステム": "限度額",
+                    "①生活保護被保護者": "限度額",
+                    "②区民税非課税世帯": "限度額",
+                    "③区民税非課税世帯": "限度額",
+                    "④課税所得": "限度額",
+                    "⑤課税所得": "限度額",
+                    "⑥課税所得": "限度額",
+                    "所得等により": "限度額",
+                    "電気自動車等": "限度額",
+                    "環境経営クラウドサービス": "限度額",
+                    "年間費用額": "積算",
+                    "一部負担金": "積算",
+                    "他法負担分": "積算",
+                    "保険者負担分": "積算",
+                    "療養給付費負担分": "積算",
+                    "被保険者負担分": "積算",
+                    "第三者納付金等収入額": "積算",
+                    "預託金額": "積算",
+                    "貸付限度額": "積算"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial-1",
+      "conversion_id": "general-initial-1",
+      "input_fingerprint": "55818ec6abeee94535fbc99fb5ae335fd350add63715a16c744ff81ef5115419",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 74頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 27 件（限度額 27）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2026/initial/expenditure/general-initial-1-nodes.parquet",
+          "sha256": "2019b9c7d9261b90c9b92cf3c351fc82172298b9779bce4ef8558d5f16206066",
+          "bytes": 65314
+        },
+        "row_count": 1967
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2026/initial/expenditure/general-initial-1-amounts.parquet",
+          "sha256": "3954971772dc4f989089a4557c0b1755467b39df131011e3c3ea27f3b9ecc809",
+          "bytes": 44220
+        },
+        "row_count": 2072
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "cd96181893b0cc13088da8639faac22630d8a31b54fd98a1181dc8cf80e80e13",
+      "account": "後期高齢者医療事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 5頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2026/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "dfb03e084fe62015bce50124188e5ef25bdf22113fe0beeeb2b403d689ee15c0",
+          "bytes": 4869
+        },
+        "row_count": 50
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2026/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "2e2d804c727cb83b1c90cc8267084cad0b8ad6517063aff2690ebc2a72298d0e",
+          "bytes": 3751
+        },
+        "row_count": 80
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "bf3d1db0d03b1d8d96e8c267c969b3b71e2c7c403ae96969ebe6970dabeaf84d",
+      "account": "介護保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 12頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 7 件（限度額 7）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2026/initial/expenditure/care-initial-nodes.parquet",
+          "sha256": "3201431f14ecdbe63364d191bbc53768d94b24a754852da4d8a03ccfed4c86df",
+          "bytes": 9000
+        },
+        "row_count": 161
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2026/initial/expenditure/care-initial-amounts.parquet",
+          "sha256": "456ad5b695deafee5978c280cf7f596f96e6cb284480c804947239a15f78f511",
+          "bytes": 7190
+        },
+        "row_count": 225
+      }
+    },
+    {
+      "table_id": "land-initial",
+      "conversion_id": "land-initial",
+      "input_fingerprint": "7f8cd973dd25a82c98eea8b7d5d5db0e10a688f3be646142700dc943c0f4d7c6",
+      "account": "用地特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2026/initial/expenditure/land-initial-nodes.parquet",
+          "sha256": "7d7175afc4337bde9a216901e463f9de607772f04dae6ed1e4ae893f06647f57",
+          "bytes": 2817
+        },
+        "row_count": 10
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2026/initial/expenditure/land-initial-amounts.parquet",
+          "sha256": "6f8aa49b8d857e9dda21a4e23740298349412d25c17a333248e03b3ca8b9eb8d",
+          "bytes": 2179
+        },
+        "row_count": 18
+      }
+    },
+    {
+      "table_id": "parking-initial",
+      "conversion_id": "parking-initial",
+      "input_fingerprint": "472fd4622cdf3eb4901b543e438a3798c3562f77a656ed092de028236d05c7c9",
+      "account": "駐車場事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 3頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2026/initial/expenditure/parking-initial-nodes.parquet",
+          "sha256": "077915c3344f441205896edbb815e87938e99b98c0aec0b1b63951f3a5f3a1c5",
+          "bytes": 4039
+        },
+        "row_count": 30
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2026/initial/expenditure/parking-initial-amounts.parquet",
+          "sha256": "ff651c09227161cce1b07d34b22fe9e044f7da2c91104d86cc5e3c571cae3f20",
+          "bytes": 3049
+        },
+        "row_count": 50
+      }
+    }
+  ]
+}
