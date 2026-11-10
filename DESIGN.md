@@ -155,7 +155,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 ```css
 /* 見出しはゴシック。紹介の見出しは 700 で詰める */
 .text-heading { font-family: var(--font-sans); font-weight: 700; font-style: normal; letter-spacing: var(--letter-spacing-heading); word-break: auto-phrase; text-wrap: balance; }
-.text-body { font-family: var(--font-sans); font-size: var(--text-body); line-height: var(--line-height-body); letter-spacing: var(--letter-spacing-body); line-break: strict; word-break: normal; overflow-wrap: break-word; }
+.text-body { font-family: var(--font-sans); font-size: var(--text-body); line-height: var(--line-height-body); letter-spacing: var(--letter-spacing-body); line-break: strict; word-break: auto-phrase; overflow-wrap: break-word; text-wrap: pretty; }
 .num { font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: nowrap; }
 .eyebrow { font: 600 13px/1.4 var(--font-sans); letter-spacing: .08em; color: var(--primary); }
 
@@ -208,6 +208,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 - **比べる数字には、比べ方の注意を同じ面に書く。** 人口あたりでない、年度が違う、などは脚注に逃がさず数字の隣に置く
 - **溢れるものはその要素の中でスクロールさせる。** ページ本体を横にスクロールさせない（`overflow-x: clip`）
 - **和文の段落は `--line-height-body`（1.8）で組む。** `word-break: keep-all` は本文に当てない
+- **和文は文節で折る。** 全頁の本文を `word-break: auto-phrase` で組み、節の見出し（h1・h2）は `text-wrap: balance`、段落（p）は `text-wrap: pretty` にする。後ろにリンクを続ける行の見出し（h3・h4）は balance にしない。数字と単位、並べた2つの金額の文は塊（`whitespace-nowrap`・`inline-block`）にして途中で折らない
 
 ## Exports
 - `apps/web/styles/tokens.css` の `:root` は本ファイルの Tokens から写す。直接の値の変更はここを先に直す
