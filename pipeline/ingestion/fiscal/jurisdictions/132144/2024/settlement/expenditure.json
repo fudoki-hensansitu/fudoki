@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132144",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d678c3be06cb4a37f46f8756f6540daccc0bb4f394078e12975671d0401359e5"
+        }
+      ],
+      "options": {
+        "table_id": "general-settlement",
+        "account": "一般会計",
+        "workflow": {
+          "reading": {
+            "pattern": "compared_years",
+            "profile": "fiscal/jurisdictions/132144/layouts/compared_years/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-settlement"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-settlement",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d678c3be06cb4a37f46f8756f6540daccc0bb4f394078e12975671d0401359e5"
+        }
+      ],
+      "options": {
+        "table_id": "kokuho-settlement",
+        "account": "国民健康保険特別会計",
+        "workflow": {
+          "reading": {
+            "pattern": "compared_years",
+            "profile": "fiscal/jurisdictions/132144/layouts/compared_years/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-settlement"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-settlement",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d678c3be06cb4a37f46f8756f6540daccc0bb4f394078e12975671d0401359e5"
+        }
+      ],
+      "options": {
+        "table_id": "kaigo-settlement",
+        "account": "介護保険特別会計",
+        "workflow": {
+          "reading": {
+            "pattern": "compared_years",
+            "profile": "fiscal/jurisdictions/132144/layouts/compared_years/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-settlement"
+        }
+      ]
+    },
+    {
+      "id": "kouki-settlement",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d678c3be06cb4a37f46f8756f6540daccc0bb4f394078e12975671d0401359e5"
+        }
+      ],
+      "options": {
+        "table_id": "kouki-settlement",
+        "account": "後期高齢者医療特別会計",
+        "workflow": {
+          "reading": {
+            "pattern": "compared_years",
+            "profile": "fiscal/jurisdictions/132144/layouts/compared_years/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-settlement"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-settlement",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "da69e83f2709a683e17ace6b68bb679ef79d9e731d2038eb2376fb17eb8ac3f9",
+      "account": "一般会計",
+      "notes": [
+        "監査委員の審査意見書の歳入歳出決算年度比較表（款だけ）。欄は今年度（年度の行の左の数字）と前年度（右の数字）の2列ずつで、前年度の欄は前年度予算額・前年度決算額・前年度／不用額・前年度／翌年度繰越額とした。不用額の欄の括弧書きは表の注記「※（ ）内は翌年度繰越額で外数」のとおり翌年度繰越額。構成割合・増減率・予算現額に対する割合の欄は取り込まない。項・目以下の印字はない。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2024/settlement/expenditure/general-settlement-nodes.parquet",
+          "sha256": "39e823049b27a5b78fa4b45c9a2ac8ca226084c23170d1517b205ab17a5c117a",
+          "bytes": 2902
+        },
+        "row_count": 13
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2024/settlement/expenditure/general-settlement-amounts.parquet",
+          "sha256": "25bdb23f1c11d9f6944415626b46f3926881abf070c1ee098efc5fc903838df6",
+          "bytes": 3477
+        },
+        "row_count": 83
+      }
+    },
+    {
+      "table_id": "kokuho-settlement",
+      "conversion_id": "kokuho-settlement",
+      "input_fingerprint": "0864d86a1ea5259d01a9a5e994ab55e00554df1d364a4811852b75bb9f7c8576",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "監査委員の審査意見書の歳入歳出決算年度比較表（款だけ）。欄は今年度（年度の行の左の数字）と前年度（右の数字）の2列ずつで、前年度の欄は前年度予算額・前年度決算額・前年度／不用額・前年度／翌年度繰越額とした。不用額の欄の括弧書きは表の注記「※（ ）内は翌年度繰越額で外数」のとおり翌年度繰越額。構成割合・増減率・予算現額に対する割合の欄は取り込まない。項・目以下の印字はない。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2024/settlement/expenditure/kokuho-settlement-nodes.parquet",
+          "sha256": "3f80ea1f2b046df5684d7497faebad83641e657e1a20a2dc063e4299f4e37454",
+          "bytes": 2557
+        },
+        "row_count": 8
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2024/settlement/expenditure/kokuho-settlement-amounts.parquet",
+          "sha256": "abc411ca106eb1b94751f5761163d472244fc7d84c8fd04e199dd56e46be6691",
+          "bytes": 2971
+        },
+        "row_count": 48
+      }
+    },
+    {
+      "table_id": "kaigo-settlement",
+      "conversion_id": "kaigo-settlement",
+      "input_fingerprint": "73b03c4e84ecde3dde4c634a0d9642b54e123f7d69794ebfcf55cd869ae382fd",
+      "account": "介護保険特別会計",
+      "notes": [
+        "監査委員の審査意見書の歳入歳出決算年度比較表（款だけ）。欄は今年度（年度の行の左の数字）と前年度（右の数字）の2列ずつで、前年度の欄は前年度予算額・前年度決算額・前年度／不用額・前年度／翌年度繰越額とした。不用額の欄の括弧書きは表の注記「※（ ）内は翌年度繰越額で外数」のとおり翌年度繰越額。構成割合・増減率・予算現額に対する割合の欄は取り込まない。項・目以下の印字はない。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2024/settlement/expenditure/kaigo-settlement-nodes.parquet",
+          "sha256": "a4f7a9d44a3749917f0dbbe6a7cf7ebbb3190fd627dde77020bb4fb71fbca0e3",
+          "bytes": 2643
+        },
+        "row_count": 7
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2024/settlement/expenditure/kaigo-settlement-amounts.parquet",
+          "sha256": "04fb300055fd3cd082e3bc54ec1a6b0f70d552988e9e03d2b3518142c03fc28f",
+          "bytes": 2716
+        },
+        "row_count": 42
+      }
+    },
+    {
+      "table_id": "kouki-settlement",
+      "conversion_id": "kouki-settlement",
+      "input_fingerprint": "be5c5384964df42f49480e447993c0355c1d9e528ecac93d1fd2ba0fbee84ddd",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "監査委員の審査意見書の歳入歳出決算年度比較表（款だけ）。欄は今年度（年度の行の左の数字）と前年度（右の数字）の2列ずつで、前年度の欄は前年度予算額・前年度決算額・前年度／不用額・前年度／翌年度繰越額とした。不用額の欄の括弧書きは表の注記「※（ ）内は翌年度繰越額で外数」のとおり翌年度繰越額。構成割合・増減率・予算現額に対する割合の欄は取り込まない。項・目以下の印字はない。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2024/settlement/expenditure/kouki-settlement-nodes.parquet",
+          "sha256": "dbe1b5442a58ac95d8891c2c3c361072721be4debe755b7d5a9b6d099ebc1727",
+          "bytes": 2608
+        },
+        "row_count": 6
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2024/settlement/expenditure/kouki-settlement-amounts.parquet",
+          "sha256": "b83d1669b5c9767e389fbbb426241d015c3a0af584f2c52566540724bc44cbf7",
+          "bytes": 2616
+        },
+        "row_count": 36
+      }
+    }
+  ]
+}
