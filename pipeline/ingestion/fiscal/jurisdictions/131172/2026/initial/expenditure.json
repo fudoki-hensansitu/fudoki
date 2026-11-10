@@ -1,0 +1,1766 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131172",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "paren_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
+                  }
+                },
+                "說明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            71,
+            159
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p127-kan-doboku",
+            "page": 127,
+            "observation_id": "p127:ink-1:a1:result0:r0",
+            "observed_name": "木",
+            "corrected_name": "土木",
+            "reason": "原典の画像で、頁127の款の題は「（款）7 土木費」と字の間を空けて印字されている。Paddle は「土」を読まず「木費」になった。"
+          },
+          {
+            "id": "p128-kan-doboku",
+            "page": 128,
+            "observation_id": "p128:ink-1:a1:result0:r0",
+            "observed_name": "木",
+            "corrected_name": "土木",
+            "reason": "原典の画像で、頁128の款の題は「（款）7 土木費」と字の間を空けて印字されている。Paddle は「土」を読まず「木費」になった。"
+          },
+          {
+            "id": "p134-kan-doboku",
+            "page": 134,
+            "observation_id": "p134:ink-1:a1:result0:r0",
+            "observed_name": "木",
+            "corrected_name": "土木",
+            "reason": "原典の画像で、頁134の款の題は「（款）7 土木費」と字の間を空けて印字されている。Paddle は「土」を読まず「木費」になった。"
+          },
+          {
+            "id": "delta-p84-full-page-a0-result0-r14",
+            "page": 84,
+            "observation_id": "p84:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p84-full-page-a0-result0-r24",
+            "page": 84,
+            "observation_id": "p84:full-page:a0:result0:r24",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p85-full-page-a0-result0-r29",
+            "page": 85,
+            "observation_id": "p85:full-page:a0:result0:r29",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p86-full-page-a0-result0-r28",
+            "page": 86,
+            "observation_id": "p86:full-page:a0:result0:r28",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p87-full-page-a0-result0-r15",
+            "page": 87,
+            "observation_id": "p87:full-page:a0:result0:r15",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p87-full-page-a0-result0-r22",
+            "page": 87,
+            "observation_id": "p87:full-page:a0:result0:r22",
+            "observed_name": "Δ",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p88-full-page-a0-result0-r21",
+            "page": 88,
+            "observation_id": "p88:full-page:a0:result0:r21",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p88-full-page-a0-result0-r27",
+            "page": 88,
+            "observation_id": "p88:full-page:a0:result0:r27",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p88-full-page-a0-result0-r32",
+            "page": 88,
+            "observation_id": "p88:full-page:a0:result0:r32",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p89-full-page-a0-result0-r20",
+            "page": 89,
+            "observation_id": "p89:full-page:a0:result0:r20",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p91-full-page-a0-result0-r13",
+            "page": 91,
+            "observation_id": "p91:full-page:a0:result0:r13",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p92-full-page-a0-result0-r14",
+            "page": 92,
+            "observation_id": "p92:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p104-full-page-a0-result0-r14",
+            "page": 104,
+            "observation_id": "p104:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p108-full-page-a0-result0-r14",
+            "page": 108,
+            "observation_id": "p108:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p112-full-page-a0-result0-r14",
+            "page": 112,
+            "observation_id": "p112:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p112-full-page-a0-result0-r25",
+            "page": 112,
+            "observation_id": "p112:full-page:a0:result0:r25",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p113-full-page-a0-result0-r13",
+            "page": 113,
+            "observation_id": "p113:full-page:a0:result0:r13",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p113-full-page-a0-result0-r27",
+            "page": 113,
+            "observation_id": "p113:full-page:a0:result0:r27",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p114-full-page-a0-result0-r23",
+            "page": 114,
+            "observation_id": "p114:full-page:a0:result0:r23",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p118-full-page-a0-result0-r15",
+            "page": 118,
+            "observation_id": "p118:full-page:a0:result0:r15",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p120-full-page-a0-result0-r13",
+            "page": 120,
+            "observation_id": "p120:full-page:a0:result0:r13",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p124-full-page-a0-result0-r14",
+            "page": 124,
+            "observation_id": "p124:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p125-full-page-a0-result0-r36",
+            "page": 125,
+            "observation_id": "p125:full-page:a0:result0:r36",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p128-full-page-a0-result0-r13",
+            "page": 128,
+            "observation_id": "p128:full-page:a0:result0:r13",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p128-full-page-a0-result0-r30",
+            "page": 128,
+            "observation_id": "p128:full-page:a0:result0:r30",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p129-full-page-a0-result0-r22",
+            "page": 129,
+            "observation_id": "p129:full-page:a0:result0:r22",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p138-full-page-a0-result0-r14",
+            "page": 138,
+            "observation_id": "p138:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p140-full-page-a0-result0-r12",
+            "page": 140,
+            "observation_id": "p140:full-page:a0:result0:r12",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p141-full-page-a0-result0-r24",
+            "page": 141,
+            "observation_id": "p141:full-page:a0:result0:r24",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p144-full-page-a0-result0-r13",
+            "page": 144,
+            "observation_id": "p144:full-page:a0:result0:r13",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p146-full-page-a0-result0-r14",
+            "page": 146,
+            "observation_id": "p146:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p147-full-page-a0-result0-r14",
+            "page": 147,
+            "observation_id": "p147:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p147-full-page-a0-result0-r22",
+            "page": 147,
+            "observation_id": "p147:full-page:a0:result0:r22",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p148-full-page-a0-result0-r14",
+            "page": 148,
+            "observation_id": "p148:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p154-full-page-a0-result0-r29",
+            "page": 154,
+            "observation_id": "p154:full-page:a0:result0:r29",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p157-full-page-a0-result0-r20",
+            "page": 157,
+            "observation_id": "p157:full-page:a0:result0:r20",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p158-full-page-a0-result0-r28",
+            "page": 158,
+            "observation_id": "p158:full-page:a0:result0:r28",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "delta-p82-full-page-a0-result0-r14",
+            "page": 82,
+            "observation_id": "p82:full-page:a0:result0:r14",
+            "observed": "1,225,077繰入金",
+            "reason": "読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p89-full-page-a0-result0-r14",
+            "page": 89,
+            "observation_id": "p89:full-page:a0:result0:r14",
+            "observed": "Δ146,177 都支出金",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p114-full-page-a0-result0-r14",
+            "page": 114,
+            "observation_id": "p114:full-page:a0:result0:r14",
+            "observed": "Δ4,225都支出金",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p121-full-page-a0-result0-r14",
+            "page": 121,
+            "observation_id": "p121:full-page:a0:result0:r14",
+            "observed": "Δ249都支出金",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p154-full-page-a0-result0-r18",
+            "page": 154,
+            "observation_id": "p154:full-page:a0:result0:r18",
+            "observed": "∆355,025繰入金",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p157-full-page-a0-result0-r13",
+            "page": 157,
+            "observation_id": "p157:full-page:a0:result0:r13",
+            "observed": "Δ950,854財產収入",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "delta-p82-full-page-a0-result0-r14",
+            "page": 82,
+            "boxes": [
+              [
+                239.2,
+                137.0,
+                267.3,
+                145.4
+              ]
+            ],
+            "amount": "1,225,077",
+            "reason": "読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p89-full-page-a0-result0-r14",
+            "page": 89,
+            "boxes": [
+              [
+                240.4,
+                137.0,
+                267.1,
+                145.4
+              ]
+            ],
+            "amount": "△146,177",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p114-full-page-a0-result0-r14",
+            "page": 114,
+            "boxes": [
+              [
+                246.4,
+                137.2,
+                265.9,
+                144.9
+              ]
+            ],
+            "amount": "△4,225",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p121-full-page-a0-result0-r14",
+            "page": 121,
+            "boxes": [
+              [
+                253.6,
+                137.2,
+                267.1,
+                144.7
+              ]
+            ],
+            "amount": "△249",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p154-full-page-a0-result0-r18",
+            "page": 154,
+            "boxes": [
+              [
+                240.2,
+                200.8,
+                266.8,
+                210.2
+              ]
+            ],
+            "amount": "△355,025",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p157-full-page-a0-result0-r13",
+            "page": 157,
+            "boxes": [
+              [
+                240.2,
+                137.2,
+                267.5,
+                144.7
+              ]
+            ],
+            "amount": "△950,854",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "63a621895f9083d064938accfcab52c574e2a831cc9417934b56080df81620ae",
+          "bytes": 3118686
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "97908ffff10011bf6c43ef0b008ce295d9ec2c5f22f0ac0b95769e05130134b9",
+          "bytes": 2424742
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c8ff2fd6325f1d0fa8ca52617d73c4f2c6be0f170e7bf50ec9a892847b62de89",
+          "bytes": 2907309
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4bb82d5d083a447c5f5aa0910413441e37fbde1dbafb548b72aa5743233e4b0c",
+          "bytes": 2879977
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "1c39a3bf48a2cdb056c3eb443c52a4cb6f1a710f557fb71764207492775404fc",
+          "bytes": 2740538
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "399ed0f00dd223c2ef64350b6952f70a0ddae5d80e5d19a2339750afe3580432",
+          "bytes": 2333375
+        },
+        {
+          "id": "general-ocr-7",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              130,
+              131,
+              132,
+              133,
+              134,
+              135,
+              136,
+              137,
+              138,
+              139
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "255b8a09f34a29e13c69d327957e25c40fa5c48a9156489be80ebe844e570e20",
+          "bytes": 2740052
+        },
+        {
+          "id": "general-ocr-8",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              140,
+              141,
+              142,
+              143,
+              144,
+              145,
+              146,
+              147,
+              148,
+              149
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "10acc175d185a1630e14dcacf8c0e535289de173288b125c1e23c0cd84d40c52",
+          "bytes": 2437943
+        },
+        {
+          "id": "general-ocr-9",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              150,
+              151,
+              152,
+              153,
+              154,
+              155,
+              156,
+              157,
+              158,
+              159
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b7ea96386d1d6575844b85b8ab76cc5907f01624f8c86e7ab2b2dd08643d5468",
+          "bytes": 2044967
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "nhi-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "paren_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
+                  }
+                },
+                "說明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            201,
+            220
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "delta-p203-full-page-a0-result0-r14",
+            "page": 203,
+            "observation_id": "p203:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p204-full-page-a0-result0-r21",
+            "page": 204,
+            "observation_id": "p204:full-page:a0:result0:r21",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p204-full-page-a0-result0-r30",
+            "page": 204,
+            "observation_id": "p204:full-page:a0:result0:r30",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p205-full-page-a0-result0-r28",
+            "page": 205,
+            "observation_id": "p205:full-page:a0:result0:r28",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p208-full-page-a0-result0-r14",
+            "page": 208,
+            "observation_id": "p208:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p208-full-page-a0-result0-r21",
+            "page": 208,
+            "observation_id": "p208:full-page:a0:result0:r21",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p210-full-page-a0-result0-r20",
+            "page": 210,
+            "observation_id": "p210:full-page:a0:result0:r20",
+            "observed_name": "Δ",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p211-full-page-a0-result0-r14",
+            "page": 211,
+            "observation_id": "p211:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p211-full-page-a0-result0-r30",
+            "page": 211,
+            "observation_id": "p211:full-page:a0:result0:r30",
+            "observed_name": "Δ",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p211-full-page-a0-result0-r36",
+            "page": 211,
+            "observation_id": "p211:full-page:a0:result0:r36",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p212-full-page-a0-result0-r24",
+            "page": 212,
+            "observation_id": "p212:full-page:a0:result0:r24",
+            "observed_name": "Δ",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p216-full-page-a0-result0-r27",
+            "page": 216,
+            "observation_id": "p216:full-page:a0:result0:r27",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p217-full-page-a0-result0-r29",
+            "page": 217,
+            "observation_id": "p217:full-page:a0:result0:r29",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "delta-p201-full-page-a0-result0-r35",
+            "page": 201,
+            "observation_id": "p201:full-page:a0:result0:r35",
+            "observed": "Δ850繰入金",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p204-full-page-a0-result0-r14",
+            "page": 204,
+            "observation_id": "p204:full-page:a0:result0:r14",
+            "observed": "Δ8,331都支出金",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p205-full-page-a0-result0-r14",
+            "page": 205,
+            "observation_id": "p205:full-page:a0:result0:r14",
+            "observed": "Δ184,519 都支出金",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p210-full-page-a0-result0-r14",
+            "page": 210,
+            "observation_id": "p210:full-page:a0:result0:r14",
+            "observed": "Δ100都支出金",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p216-full-page-a0-result0-r14",
+            "page": 216,
+            "observation_id": "p216:full-page:a0:result0:r14",
+            "observed": "Δ6,638都支出金",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p217-full-page-a0-result0-r14",
+            "page": 217,
+            "observation_id": "p217:full-page:a0:result0:r14",
+            "observed": "∆8,317繰入金",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "p203-reread-digit",
+            "page": 203,
+            "observation_id": "p203:full-page:a0:result0:r15",
+            "observed": "3都支出金",
+            "reason": "頁203の比較の△2,134,388の最後の3を、Paddle が右の財源内訳の欄（取り込まない欄）の「都支出金」の頭でもう一度読んだ。原典の画像で確認し、この読みは使わない。"
+          },
+          {
+            "id": "p201-zaigen-name",
+            "page": 201,
+            "observation_id": "p201:full-page:a0:result0:r29",
+            "observed": "繰入金",
+            "reason": "頁201の財源内訳の欄（取り込まない欄）の「繰入金」。Paddle は「繰」の箱を左の比較の欄まで広げて読み、金額の欄の読めない字になる。原典の画像で確認し、この読みは使わない。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "delta-p201-full-page-a0-result0-r35",
+            "page": 201,
+            "boxes": [
+              [
+                252.9,
+                450.6,
+                267.3,
+                458.7
+              ]
+            ],
+            "amount": "△850",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p204-full-page-a0-result0-r14",
+            "page": 204,
+            "boxes": [
+              [
+                246.9,
+                137.0,
+                266.8,
+                145.4
+              ]
+            ],
+            "amount": "△8,331",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p205-full-page-a0-result0-r14",
+            "page": 205,
+            "boxes": [
+              [
+                240.0,
+                137.0,
+                266.8,
+                145.4
+              ]
+            ],
+            "amount": "△184,519",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p210-full-page-a0-result0-r14",
+            "page": 210,
+            "boxes": [
+              [
+                253.6,
+                137.0,
+                267.5,
+                145.4
+              ]
+            ],
+            "amount": "△100",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p216-full-page-a0-result0-r14",
+            "page": 216,
+            "boxes": [
+              [
+                246.9,
+                137.0,
+                266.6,
+                144.7
+              ]
+            ],
+            "amount": "△6,638",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p217-full-page-a0-result0-r14",
+            "page": 217,
+            "boxes": [
+              [
+                246.9,
+                137.0,
+                266.6,
+                145.4
+              ]
+            ],
+            "amount": "△8,317",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              188,
+              201,
+              202,
+              203,
+              204,
+              205,
+              206,
+              207,
+              208,
+              209
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "8e9a02d75af533a22650b65f24743a3bf21fad5cdbf90476550c4f32fea7c170",
+          "bytes": 1817039
+        },
+        {
+          "id": "nhi-ocr-2",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              210,
+              211,
+              212,
+              213,
+              214,
+              215,
+              216,
+              217,
+              218,
+              219
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "9c7fb0235ae81eafe810462db50b510bda54f2aba713d35c938b32474666b3f2",
+          "bytes": 1155999
+        },
+        {
+          "id": "nhi-ocr-3",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              220,
+              221
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b0e0535b9d9ba3b5064940c390b368bdafa38e4fb73d04b80c994f54b5a8a8aa",
+          "bytes": 136440
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-initial"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "kaigo-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "paren_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
+                  }
+                },
+                "說明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            246,
+            265
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "delta-p248-full-page-a0-result0-r14",
+            "page": 248,
+            "observation_id": "p248:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p248-full-page-a0-result0-r30",
+            "page": 248,
+            "observation_id": "p248:full-page:a0:result0:r30",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p249-full-page-a0-result0-r14",
+            "page": 249,
+            "observation_id": "p249:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p250-full-page-a0-result0-r30",
+            "page": 250,
+            "observation_id": "p250:full-page:a0:result0:r30",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p251-full-page-a0-result0-r14",
+            "page": 251,
+            "observation_id": "p251:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p251-full-page-a0-result0-r30",
+            "page": 251,
+            "observation_id": "p251:full-page:a0:result0:r30",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p256-full-page-a0-result0-r14",
+            "page": 256,
+            "observation_id": "p256:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p256-full-page-a0-result0-r47",
+            "page": 256,
+            "observation_id": "p256:full-page:a0:result0:r47",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p257-full-page-a0-result0-r32",
+            "page": 257,
+            "observation_id": "p257:full-page:a0:result0:r32",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p258-full-page-a0-result0-r30",
+            "page": 258,
+            "observation_id": "p258:full-page:a0:result0:r30",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p261-full-page-a0-result0-r14",
+            "page": 261,
+            "observation_id": "p261:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p261-full-page-a0-result0-r27",
+            "page": 261,
+            "observation_id": "p261:full-page:a0:result0:r27",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p263-full-page-a0-result0-r14",
+            "page": 263,
+            "observation_id": "p263:full-page:a0:result0:r14",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          },
+          {
+            "id": "delta-p263-full-page-a0-result0-r27",
+            "page": 263,
+            "observation_id": "p263:full-page:a0:result0:r27",
+            "observed_name": "Δ",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "delta-p265-full-page-a0-result0-r16",
+            "page": 265,
+            "observation_id": "p265:full-page:a0:result0:r16",
+            "observed": "6,843繰入金",
+            "reason": "読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "delta-p265-full-page-a0-result0-r16",
+            "page": 265,
+            "boxes": [
+              [
+                252.0,
+                137.0,
+                266.3,
+                144.9
+              ]
+            ],
+            "amount": "6,843",
+            "reason": "読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              231,
+              246,
+              247,
+              248,
+              249,
+              250,
+              251,
+              252,
+              253,
+              254
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "32fa6c16476e71d16a024219cbaee2da4858ab93c735208f8bb474e52e81d239",
+          "bytes": 1801528
+        },
+        {
+          "id": "kaigo-ocr-2",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              255,
+              256,
+              257,
+              258,
+              259,
+              260,
+              261,
+              262,
+              263,
+              264
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "6c3d1da5adbf2147a2c53c952c03eb38351c9ff929bc60f24ba33fabc290d0ca",
+          "bytes": 1665749
+        },
+        {
+          "id": "kaigo-ocr-3",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              265
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "73ac897e168711746fad82bb0eddd79a3ec1c9fd6322f66b825a40b3cf418928",
+          "bytes": 79803
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "kouki-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "paren_titles",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
+                  }
+                },
+                "說明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            285,
+            292
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "delta-p289-full-page-a0-result0-r24",
+            "page": 289,
+            "observation_id": "p289:full-page:a0:result0:r24",
+            "observed_name": "∆",
+            "corrected_name": "△",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "delta-p286-full-page-a0-result0-r16",
+            "page": 286,
+            "observation_id": "p286:full-page:a0:result0:r16",
+            "observed": "7,757繰入金",
+            "reason": "読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p288-full-page-a0-result0-r14",
+            "page": 288,
+            "observation_id": "p288:full-page:a0:result0:r14",
+            "observed": "2,015繰入金",
+            "reason": "読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p289-full-page-a0-result0-r16",
+            "page": 289,
+            "observation_id": "p289:full-page:a0:result0:r16",
+            "observed": "Δ12繰入金",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p290-full-page-a0-result0-r14",
+            "page": 290,
+            "observation_id": "p290:full-page:a0:result0:r14",
+            "observed": "2,030繰入金",
+            "reason": "読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "delta-p286-full-page-a0-result0-r16",
+            "page": 286,
+            "boxes": [
+              [
+                252.2,
+                137.0,
+                266.1,
+                145.4
+              ]
+            ],
+            "amount": "7,757",
+            "reason": "読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p288-full-page-a0-result0-r14",
+            "page": 288,
+            "boxes": [
+              [
+                252.2,
+                137.0,
+                267.5,
+                145.4
+              ]
+            ],
+            "amount": "2,015",
+            "reason": "読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p289-full-page-a0-result0-r16",
+            "page": 289,
+            "boxes": [
+              [
+                257.0,
+                137.0,
+                266.8,
+                145.4
+              ]
+            ],
+            "amount": "△12",
+            "reason": "原典の画像では減額の印は△と印字されている。Paddle は△を∆（U+2206）またはΔ（ギリシャ文字）と読んだ。 読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          },
+          {
+            "id": "delta-p290-full-page-a0-result0-r14",
+            "page": 290,
+            "boxes": [
+              [
+                252.2,
+                137.0,
+                267.8,
+                145.4
+              ]
+            ],
+            "amount": "2,030",
+            "reason": "読みは金額のあとに右の財源内訳の欄（取り込まない欄）の名前まで続き、金額の欄で切れない。この読みは使わず、金額をその数字の位置で読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "650c33ed51edff5202f5c93f23383be6b72140474f89cf05803c3b03fb7c479e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              275,
+              285,
+              286,
+              287,
+              288,
+              289,
+              290,
+              291,
+              292
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "53dc685a4ada097107bda96d9c0985ce61435be1599d0f2eed189b4f616ec0d0",
+          "bytes": 1135260
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general",
+      "input_fingerprint": "1a7c2d220f37c209bd0b5ef04bb1121e52a2b358b02628f013df9c0f306cd254",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
+        "金額の単位は printed 83頁・carried 6頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 40 件を、管理 JSON の name_corrections で印字に直した: 127頁 木→土木・128頁 木→土木・134頁 木→土木・84頁 ∆→△・84頁 ∆→△・85頁 ∆→△・86頁 ∆→△・87頁 ∆→△・87頁 Δ→△・88頁 ∆→△・88頁 ∆→△・88頁 ∆→△・89頁 ∆→△・91頁 ∆→△・92頁 ∆→△・104頁 ∆→△・108頁 ∆→△・112頁 ∆→△・112頁 ∆→△・113頁 ∆→△・113頁 ∆→△・114頁 ∆→△・118頁 ∆→△・120頁 ∆→△・124頁 ∆→△・125頁 ∆→△・128頁 ∆→△・128頁 ∆→△・129頁 ∆→△・138頁 ∆→△・140頁 ∆→△・141頁 ∆→△・144頁 ∆→△・146頁 ∆→△・147頁 ∆→△・147頁 ∆→△・148頁 ∆→△・154頁 ∆→△・157頁 ∆→△・158頁 ∆→△。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 60 件（p71:full-page:a0:result1:r61・p71:full-page:a0:result1:r61:w3・p73:full-page:a0:result1:r75・p73:full-page:a0:result1:r75:w13・p73:full-page:a0:result1:r77・p73:full-page:a0:result1:r77:w3・p73:full-page:a0:result1:r92・p73:full-page:a0:result1:r92:w7・p73:full-page:a0:result1:r94・p73:full-page:a0:result1:r94:w4・p74:full-page:a0:result1:r13・p74:full-page:a0:result1:r13:w4・p74:full-page:a0:result1:r15・p74:full-page:a0:result1:r15:w6・p74:full-page:a0:result1:r27・p74:full-page:a0:result1:r27:w3・p77:full-page:a0:result1:r75・p77:full-page:a0:result1:r75:w5・p77:full-page:a0:result1:r81・p77:full-page:a0:result1:r81:w4・p80:full-page:a0:result1:r29・p80:full-page:a0:result1:r29:w3・p80:full-page:a0:result1:r37・p80:full-page:a0:result1:r37:w4・p80:full-page:a0:result1:r81・p80:full-page:a0:result1:r81:w3・p91:full-page:a0:result1:r29・p91:full-page:a0:result1:r29:w6・p98:full-page:a0:result1:r35・p98:full-page:a0:result1:r35:w4・p101:full-page:a0:result1:r7・p101:full-page:a0:result1:r7:w6・p111:full-page:a0:result1:r33・p111:full-page:a0:result1:r33:w6・p113:full-page:a0:result1:r37・p113:full-page:a0:result1:r37:w4・p114:full-page:a0:result1:r21・p114:full-page:a0:result1:r21:w3・p114:full-page:a0:result1:r29・p114:full-page:a0:result1:r29:w8・p117:full-page:a0:result1:r30・p117:full-page:a0:result1:r30:w6・p119:full-page:a0:result1:r80・p119:full-page:a0:result1:r80:w8・p120:full-page:a0:result1:r25・p120:full-page:a0:result1:r25:w12・p121:full-page:a0:result1:r15・p121:full-page:a0:result1:r15:w4・p124:full-page:a0:result1:r39・p124:full-page:a0:result1:r39:w8・p124:full-page:a0:result1:r49・p124:full-page:a0:result1:r49:w8・p125:full-page:a0:result1:r46・p125:full-page:a0:result1:r46:w4・p133:full-page:a0:result1:r75・p133:full-page:a0:result1:r75:w3・p134:full-page:a0:result1:r16・p134:full-page:a0:result1:r16:w3・p143:full-page:a0:result1:r58・p143:full-page:a0:result1:r58:w6）・债→債 8 件（p154:full-page:a0:result1:r19・p154:full-page:a0:result1:r19:w5・p154:full-page:a0:result1:r25・p154:full-page:a0:result1:r25:w4・p156:full-page:a0:result0:r16・p156:full-page:a0:result0:r16:w3・p156:full-page:a0:result1:r18・p156:full-page:a0:result1:r18:w5）・徵→徴 6 件（p79:full-page:a0:result0:r3・p79:full-page:a0:result0:r3:w1・p79:full-page:a0:result0:r20・p79:full-page:a0:result0:r20:w3・p79:full-page:a0:result1:r47・p79:full-page:a0:result1:r47:w2）・查→査 44 件（p75:full-page:a0:result1:r72・p75:full-page:a0:result1:r72:w3・p90:full-page:a0:result0:r3・p90:full-page:a0:result0:r3:w3・p90:full-page:a0:result0:r11・p90:full-page:a0:result0:r11:w3・p90:full-page:a0:result1:r10・p90:full-page:a0:result1:r10:w23・p90:full-page:a0:result1:r17・p90:full-page:a0:result1:r17:w2・p90:full-page:a0:result1:r25・p90:full-page:a0:result1:r25:w6・p90:full-page:a0:result1:r53・p90:full-page:a0:result1:r53:w3・p96:full-page:a0:result1:r41・p96:full-page:a0:result1:r41:w9・p100:full-page:a0:result1:r67・p100:full-page:a0:result1:r67:w9・p109:full-page:a0:result1:r33・p109:full-page:a0:result1:r33:w7・p112:full-page:a0:result1:r24・p112:full-page:a0:result1:r24:w7・p112:full-page:a0:result1:r45・p112:full-page:a0:result1:r45:w12・p112:full-page:a0:result1:r49・p112:full-page:a0:result1:r49:w11・p112:full-page:a0:result1:r57・p112:full-page:a0:result1:r57:w10・p113:full-page:a0:result1:r16・p113:full-page:a0:result1:r16:w8・p113:full-page:a0:result1:r25・p113:full-page:a0:result1:r25:w8・p114:full-page:a0:result1:r29・p114:full-page:a0:result1:r29:w12・p118:full-page:a0:result1:r18・p118:full-page:a0:result1:r18:w8・p118:full-page:a0:result1:r21・p118:full-page:a0:result1:r21:w7・p132:full-page:a0:result1:r30・p132:full-page:a0:result1:r30:w5・p151:full-page:a0:result1:r59・p151:full-page:a0:result1:r59:w9・p151:full-page:a0:result1:r61・p151:full-page:a0:result1:r61:w10）・產→産 36 件（p73:full-page:a0:result0:r26・p73:full-page:a0:result0:r26:w1・p75:full-page:a0:result1:r63・p75:full-page:a0:result1:r63:w3・p75:full-page:a0:result1:r76・p75:full-page:a0:result1:r76:w3・p103:full-page:a0:result1:r19・p103:full-page:a0:result1:r19:w5・p113:full-page:a0:result1:r20・p113:full-page:a0:result1:r20:w3・p113:full-page:a0:result1:r37・p113:full-page:a0:result1:r37:w3・p119:full-page:a0:result0:r1・p119:full-page:a0:result0:r1:w2・p119:full-page:a0:result1:r29・p119:full-page:a0:result1:r29:w2・p119:full-page:a0:result1:r82・p119:full-page:a0:result1:r82:w2・p120:full-page:a0:result1:r15・p120:full-page:a0:result1:r15:w2・p120:full-page:a0:result1:r23・p120:full-page:a0:result1:r23:w6・p121:full-page:a0:result1:r12・p121:full-page:a0:result1:r12:w5・p130:full-page:a0:result1:r54・p130:full-page:a0:result1:r54:w4・p150:full-page:a0:result0:r20・p150:full-page:a0:result0:r20:w1・p156:full-page:a0:result0:r13・p156:full-page:a0:result0:r13:w4・p156:full-page:a0:result0:r19・p156:full-page:a0:result0:r19:w4・p156:full-page:a0:result0:r25・p156:full-page:a0:result0:r25:w4・p157:full-page:a0:result0:r26・p157:full-page:a0:result0:r26:w1）・费→費 2 件（p140:full-page:a0:result1:r33・p140:full-page:a0:result1:r33:w8）・项→項 2 件（p116:full-page:a0:result0:r3・p116:full-page:a0:result0:r3:w1）・齡→齢 26 件（p92:full-page:a0:result1:r7・p92:full-page:a0:result1:r7:w9・p93:full-page:a0:result0:r1・p93:full-page:a0:result0:r1:w3・p93:full-page:a0:result0:r9・p93:full-page:a0:result0:r9:w3・p94:full-page:a0:result0:r3・p94:full-page:a0:result0:r3:w3・p94:full-page:a0:result0:r11・p94:full-page:a0:result0:r11:w3・p94:full-page:a0:result1:r29・p94:full-page:a0:result1:r29:w3・p94:full-page:a0:result1:r57・p94:full-page:a0:result1:r57:w3・p94:full-page:a0:result1:r66・p94:full-page:a0:result1:r66:w3・p94:full-page:a0:result1:r70・p94:full-page:a0:result1:r70:w3・p94:full-page:a0:result1:r74・p94:full-page:a0:result1:r74:w2・p95:full-page:a0:result0:r3・p95:full-page:a0:result0:r3:w3・p95:full-page:a0:result0:r11・p95:full-page:a0:result0:r11:w3・p133:full-page:a0:result1:r28・p133:full-page:a0:result1:r28:w3）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "9c20a358d168555797e9bc1d8ab1a831a465af5634db2cb7cb0f560a64c3ced3",
+          "bytes": 30365
+        },
+        "row_count": 1063
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "01e11419ad77aa101760099015bf16f75596bb9d670cbac315d269290920e1bf",
+          "bytes": 29881
+        },
+        "row_count": 1286
+      }
+    },
+    {
+      "table_id": "nhi-initial",
+      "conversion_id": "nhi",
+      "input_fingerprint": "d30d01617d6c70cfcb24c63eb826f84e2bf535a23680432c081acf2dac0b5725",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
+        "金額の単位は printed 19頁・carried 1頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 13 件を、管理 JSON の name_corrections で印字に直した: 203頁 ∆→△・204頁 ∆→△・204頁 ∆→△・205頁 ∆→△・208頁 ∆→△・208頁 ∆→△・210頁 Δ→△・211頁 ∆→△・211頁 Δ→△・211頁 ∆→△・212頁 Δ→△・216頁 ∆→△・217頁 ∆→△。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 10 件（p201:full-page:a0:result1:r40・p201:full-page:a0:result1:r40:w3・p209:full-page:a0:result0:r3・p209:full-page:a0:result0:r3:w4・p209:full-page:a0:result0:r11・p209:full-page:a0:result0:r11:w4・p209:full-page:a0:result1:r9・p209:full-page:a0:result1:r9:w2・p209:full-page:a0:result1:r11・p209:full-page:a0:result1:r11:w4）・查→査 12 件（p204:full-page:a0:result0:r18・p204:full-page:a0:result0:r18:w3・p204:full-page:a0:result1:r39・p204:full-page:a0:result1:r39:w18・p204:full-page:a0:result1:r42・p204:full-page:a0:result1:r42:w3・p216:full-page:a0:result0:r3・p216:full-page:a0:result0:r3:w7・p216:full-page:a0:result0:r11・p216:full-page:a0:result0:r11:w7・p216:full-page:a0:result1:r11・p216:full-page:a0:result1:r11:w7）・產→産 6 件（p207:full-page:a0:result0:r3・p207:full-page:a0:result0:r3:w3・p207:full-page:a0:result0:r11・p207:full-page:a0:result0:r11:w3・p207:full-page:a0:result1:r10・p207:full-page:a0:result1:r10:w3）・齡→齢 4 件（p212:full-page:a0:result0:r17・p212:full-page:a0:result0:r17:w0・p212:full-page:a0:result0:r26・p212:full-page:a0:result0:r26:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2026/initial/expenditure/nhi-initial-nodes.parquet",
+          "sha256": "d9dedebaa277f7021c64ae903a4923c57a13b6fc9fc5169d3af85a17683210c5",
+          "bytes": 6910
+        },
+        "row_count": 96
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2026/initial/expenditure/nhi-initial-amounts.parquet",
+          "sha256": "ca7fe4653d322c16d3c9aca2ffe14c7285cbb5cc4d776c68cd3f13ee4e0bcd17",
+          "bytes": 5572
+        },
+        "row_count": 144
+      }
+    },
+    {
+      "table_id": "kaigo-initial",
+      "conversion_id": "kaigo",
+      "input_fingerprint": "29f473bda63c5a4e0abaef8838381652c4a6fb06ee13d9469e21111c9d7b71bf",
+      "account": "介護保険会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
+        "金額の単位は printed 20頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 14 件を、管理 JSON の name_corrections で印字に直した: 248頁 ∆→△・248頁 ∆→△・249頁 ∆→△・250頁 ∆→△・251頁 ∆→△・251頁 ∆→△・256頁 ∆→△・256頁 ∆→△・257頁 ∆→△・258頁 ∆→△・261頁 ∆→△・261頁 ∆→△・263頁 ∆→△・263頁 Δ→△。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p260:full-page:a0:result0:r3・p260:full-page:a0:result0:r3:w9・p261:full-page:a0:result0:r3・p261:full-page:a0:result0:r3:w9）・徵→徴 2 件（p246:full-page:a0:result1:r26・p246:full-page:a0:result1:r26:w4）・查→査 14 件（p246:full-page:a0:result1:r31・p246:full-page:a0:result1:r31:w5・p246:full-page:a0:result1:r35・p246:full-page:a0:result1:r35:w3・p253:full-page:a0:result0:r3・p253:full-page:a0:result0:r3:w3・p253:full-page:a0:result0:r11・p253:full-page:a0:result0:r11:w3・p253:full-page:a0:result1:r9・p253:full-page:a0:result1:r9:w1・p253:full-page:a0:result1:r10・p253:full-page:a0:result1:r10:w3・p258:full-page:a0:result1:r10・p258:full-page:a0:result1:r10:w3）・產→産 2 件（p262:full-page:a0:result0:r14・p262:full-page:a0:result0:r14:w4）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2026/initial/expenditure/kaigo-initial-nodes.parquet",
+          "sha256": "fc1d048169f31e6667235b5c79f70a76c7368c8a66e489546e897aa0e62aae58",
+          "bytes": 7597
+        },
+        "row_count": 121
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2026/initial/expenditure/kaigo-initial-amounts.parquet",
+          "sha256": "e3fc72a1c8c00a719112cf866d6a4655e44cee1060b0b3912b3b88d3da3d2ada",
+          "bytes": 6179
+        },
+        "row_count": 175
+      }
+    },
+    {
+      "table_id": "kouki-initial",
+      "conversion_id": "kouki",
+      "input_fingerprint": "417f7b52510191acc8024ee77c0087232f4d41822868f2347b6328e95d15e81c",
+      "account": "後期高齢者医療会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
+        "金額の単位は printed 8頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 289頁 ∆→△。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 徵→徴 6 件（p286:full-page:a0:result0:r4・p286:full-page:a0:result0:r4:w1・p286:full-page:a0:result0:r13・p286:full-page:a0:result0:r13:w1・p286:full-page:a0:result1:r12・p286:full-page:a0:result1:r12:w2）・查→査 4 件（p288:full-page:a0:result0:r11・p288:full-page:a0:result0:r11:w5・p288:full-page:a0:result1:r12・p288:full-page:a0:result1:r12:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2026/initial/expenditure/kouki-initial-nodes.parquet",
+          "sha256": "a99cfe49248b2aed409413302d7faf8cdaf9a8a1f538c9cf407091021d22da9a",
+          "bytes": 4826
+        },
+        "row_count": 49
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2026/initial/expenditure/kouki-initial-amounts.parquet",
+          "sha256": "7deb241ecc31b6a193ebc9a09b190b6221d27c791ceb8713c3934ba9f7c48dc4",
+          "bytes": 3749
+        },
+        "row_count": 61
+      }
+    }
+  ]
+}
