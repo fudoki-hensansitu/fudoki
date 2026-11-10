@@ -223,9 +223,10 @@ lint の script は持たない。
 - 鍵は fudoki 専用にする。個人の global の secret などを開ける鍵を recipients に入れない（漏れたときに fudoki 以外まで開くため）
 - 各自の fudoki 用の秘密鍵は OS の keychain（service `fnox-fudoki`、account `age-key`）に置き、`fnox.toml` の `identity` がそこから読む。shell に `FNOX_AGE_KEY` を export しない（export するとそちらが優先され、全 repo の fnox に同じ鍵が渡る）
 - 中身は `TYPESAFE_API_KEY`（パイプラインの Jev の聞き直し。fudoki 用に発行した key）と `ESTAT_APP_ID`（e-Stat API の appId。コードはまだ読まず、agent が統計表を API で引くときに使う）。どちらも今は yuito のアカウントのもので、`TYPESAFE_API_KEY` はメンバーが使うと yuito の課金になる。メンバーが増えたら共有を続けるか各自の key にするかを決める
-- 使うときは `fnox exec -- <command>` で、その command にだけ env を渡す（例: `fnox exec -- bun run --cwd pipeline ingestion:convert ...`）。`fnox get`・`fnox export`・`printenv` で値を画面や log に出さない。復号できない値は fnox が警告を出して env に入れずに command を走らせるので、警告を見落とさない
+- 使うときは `fnox exec --if-missing error -- <command>` で、その command にだけ env を渡す（例: `fnox exec --if-missing error -- bun run --cwd pipeline ingestion:convert ...`）。`--if-missing error` が無いと、復号できない値は警告だけで env に入らないまま command が走る。`fnox get`・`fnox export`・`printenv` で値を画面や log に出さない
 - 値を足す・変える: `fnox set <KEY>` を実行し、値は hidden prompt か stdin で渡す（引数に書くと shell 履歴に残る）
 - メンバーを足す: 本人が fudoki 用の鍵を作って keychain に入れ（`age-keygen` の出力を `fnox set AGE_IDENTITY --provider keychain --key-name age-key` に stdin で渡す。この 1 回は `fnox.toml` に記録が増えるので commit しない）、公開鍵（`age1...`）を `recipients` に 1 行足す。鍵を持つ人が `fnox reencrypt -p age` で暗号文を作り直す。agent・CI に渡すときも専用の鍵を 1 本作って同じように足す
+- AI agent（cloud 環境）用の鍵: recipients の `# ai` の行。秘密鍵は yuito の keychain（service `fnox-fudoki`、account `age-key-ai`）に置き、cloud 環境の環境変数 `FNOX_AGE_KEY` に渡す（`FNOX_AGE_KEY` は `identity` より優先されるので keychain の無い Linux でも開ける）。cloud 環境には fnox を GitHub Releases の版固定の binary で入れる。止めるときは、行を消して `fnox reencrypt -p age`、cloud 環境の `FNOX_AGE_KEY` を消し、値を rotate する
 - メンバーが抜ける: `recipients` から行を消して `fnox reencrypt -p age` で作り直す。その人は git 履歴の古い暗号文をまだ開けるので、値そのものを rotate する
 - `CLOUDFLARE_ACCOUNT_ID` は secret ではないので `mise.toml` の `[env]` に平文で置く。`CLOUDFLARE_API_TOKEN` などの CI・deploy の secret は GitHub secret、本番の Worker の secret（`TURNSTILE_SECRET_KEY` など）は Cloudflare に置き、`fnox.toml` には入れない。CI に `FNOX_AGE_KEY` を渡すとその 1 本で全部開くため、CI からは fnox を使わない
 

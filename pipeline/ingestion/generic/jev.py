@@ -34,7 +34,7 @@ ROLES = {
 def api_key() -> str:
     key = os.environ.get('TYPESAFE_API_KEY')
     if not key:
-        raise RuntimeError('TYPESAFE_API_KEY is not set; run the command through `fnox exec --` at the repo root')
+        raise RuntimeError('TYPESAFE_API_KEY is not set; run the command through `fnox exec --if-missing error --` at the repo root')
     return key
 
 
