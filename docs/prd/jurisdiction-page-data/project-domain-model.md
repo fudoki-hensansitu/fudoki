@@ -323,7 +323,7 @@ type 予算案での説明 = {       // 予算案のプレス発表の資料の1
 
 `project_evaluation_sheet` と `project_budget_initiative` には列を足さず、`detail_id` から `project_year` を引いて事業と年度を得る。評価シートの `detail_id` は決算書の内訳なので `settlement_detail_id` に、施策の `detail_id` は当初予算書の内訳なので `budget_detail_id` に当てる。内訳の無い自治体は、評価シートは目と事業名で、施策は目と施策名で事業を決めた判断を seed に置いて引く。歳出の行を持たない事業（紐付かない施策から作る事業）は、`project_budget_initiative_link` に `project_id` を持たせて引く。
 
-`project_id` は最初の年度の `project_year` の内訳から作る。歳出の行を持たない事業は施策の ID（`initiative_id`）から、内訳の無い自治体の事業は最初の年度の目（目の無い項を含む）と評価シートの事業名から作る。年度をまたぐ判断を直すと事業の識別子が変わるので、公開 API で `project_id` を出す前に、識別子を固定する方法を決める。
+`project_id` は最初の年度の `project_year` の内訳から作る。歳出の行を持たない事業は施策の ID（`initiative_id`）から、内訳の無い自治体の事業は最初の年度の目（目の無い項を含む）と、事業を決めた名前（評価シートの事業名、評価シートが無ければ施策名）から作る。年度をまたぐ判断を直すと事業の識別子が変わるので、公開 API で `project_id` を出す前に、識別子を固定する方法を決める。
 
 ## まだ決めていないこと
 
