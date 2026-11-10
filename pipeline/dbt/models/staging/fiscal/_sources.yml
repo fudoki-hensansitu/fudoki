@@ -2100,6 +2100,86 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j131121_2024_initial_care_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: amounts
+  - name: j131121_2024_initial_care_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: nodes
+  - name: j131121_2024_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j131121_2024_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j131121_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j131121_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j131121_2024_initial_national_health_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
+      kind: amounts
+  - name: j131121_2024_initial_national_health_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
+      kind: nodes
+  - name: j131121_2024_initial_school_lunch_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: school-lunch-initial
+      kind: amounts
+  - name: j131121_2024_initial_school_lunch_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: school-lunch-initial
+      kind: nodes
   - name: j131121_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '131121'
@@ -2115,6 +2195,70 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: general-expenditure
+      kind: nodes
+  - name: j131121_2026_initial_care_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: amounts
+  - name: j131121_2026_initial_care_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: nodes
+  - name: j131121_2026_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j131121_2026_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j131121_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j131121_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j131121_2026_initial_national_health_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
+      kind: amounts
+  - name: j131121_2026_initial_national_health_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
       kind: nodes
   - name: j131130_2024_settlement_general_expenditure_detail_amounts
     meta:
@@ -2180,6 +2324,86 @@ sources:
       direction: expenditure
       table_id: nhi-expenditure-detail
       kind: nodes
+  - name: j131148_2024_initial_care_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: amounts
+  - name: j131148_2024_initial_care_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: nodes
+  - name: j131148_2024_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j131148_2024_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j131148_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j131148_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j131148_2024_initial_land_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: amounts
+  - name: j131148_2024_initial_land_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: nodes
+  - name: j131148_2024_initial_national_health_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
+      kind: amounts
+  - name: j131148_2024_initial_national_health_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
+      kind: nodes
   - name: j131148_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '131148'
@@ -2195,6 +2419,86 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: general-expenditure
+      kind: nodes
+  - name: j131148_2025_initial_care_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: amounts
+  - name: j131148_2025_initial_care_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: nodes
+  - name: j131148_2025_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j131148_2025_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j131148_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j131148_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j131148_2025_initial_land_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: amounts
+  - name: j131148_2025_initial_land_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: nodes
+  - name: j131148_2025_initial_national_health_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
+      kind: amounts
+  - name: j131148_2025_initial_national_health_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
       kind: nodes
   - name: j131148_2025_settlement_care_insurance_setsu_amounts
     meta:
@@ -2275,6 +2579,86 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-setsu
+      kind: nodes
+  - name: j131148_2026_initial_care_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: amounts
+  - name: j131148_2026_initial_care_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: nodes
+  - name: j131148_2026_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j131148_2026_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j131148_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j131148_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j131148_2026_initial_land_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: amounts
+  - name: j131148_2026_initial_land_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: nodes
+  - name: j131148_2026_initial_national_health_initial_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
+      kind: amounts
+  - name: j131148_2026_initial_national_health_initial_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
       kind: nodes
   - name: j131156_2024_initial_care_initial_amounts
     meta:
@@ -8755,6 +9139,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: nhi-expenditure-detail
+      kind: nodes
+  - name: j133612_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j133612_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '133612'
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
       kind: nodes
   - name: j133621_2024_settlement_elderly_medical_expenditure_amounts
     meta:
