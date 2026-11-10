@@ -6,6 +6,7 @@ import { Landing } from '../landing/landing'
 import { fetchRoute } from './routes.testing'
 import { BACKGROUND_DARK, BACKGROUND_LIGHT } from '../tokens'
 import config from '../void.config'
+import { EMBLEMS } from '../jurisdiction/emblems'
 
 // web の頁は Void が描き、ファイルは public/ から配る。ここは頁の本文・配るファイル・PWA の繋ぎを確かめる（画面の振る舞いは手元の e2e で見る）
 const get = (path: string) => fetchRoute(new Request(`https://fudoki.dev${path}`), {})
@@ -20,6 +21,8 @@ test('紹介の頁は MCP とプライバシーポリシーへ繋ぎ、検索エ
   expect((await get('/sitemap.xml')).status).toBe(200)
   const meta = config.head?.meta ?? []
   expect(meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/og.png' })
+  // 自治体の頁は紋章があれば og:image を public/jurisdictions/<code>/og.png に差し替える（作るのは build:og）
+  for (const code of Object.keys(EMBLEMS)) expect(served(`/jurisdictions/${code}/og.png`), code).toBe(true)
 })
 
 test('PWA: manifest・service worker・アイコン・オフラインの頁を返し、全頁の head から繋ぐ', async () => {
