@@ -53,6 +53,7 @@ SETSU_NAME = 20  # where a 節 name starts, right of the column's left edge
 NUMBERED = re.compile(r'^([(（][0-9０-９]+[)）])\s*')
 NUMBER_WIDTH = 5  # a half-width letter of `(1)`
 NAME_GAP = 0  # the name follows `(1)` (where OCR boxes them apart: `(1)` 83–97, `議会運営費` 94–156)
+CELL = 40  # a cell of a column of amounts holds one amount: OCR splits it wider apart (`118` `11` `2` `4`)
 JOIN = 8  # the gap OCR leaves where it splits an amount at its comma
 CIRCLED = re.compile(r'[\u2460-\u2473\u3251-\u325f]+$')  # ① … ⑳ ㉑ …
 UNIT = '千円'
@@ -98,7 +99,15 @@ def opened(line: list[Glyph]) -> list[Glyph]:
                                glyph.offset)
             continue
         result.append(glyph)
-    return [part for glyph in result for part in numbered_apart(glyph)]
+    result = [part for glyph in result for part in numbered_apart(glyph)]
+    for index, glyph in enumerate(result[:-1]):
+        name = result[index + 1]
+        if NUMBERED.fullmatch(normalize(glyph.text)) and name.x0 - glyph.x1 <= 15:
+            # the name right after its number, as OCR boxes it: the text layer sets it a space apart, under the
+            # names of the items one level down (`(1)` 84–99, `事務費` 109; `子ども・子育て拠出金` 109)
+            start = glyph.x1 + NAME_GAP
+            result[index + 1] = Glyph(name.text, start, name.y0, start + name.x1 - name.x0, name.y1, name.page, name.offset)
+    return result
 
 
 def numbered_apart(glyph: Glyph) -> list[Glyph]:
@@ -122,13 +131,13 @@ def counted(glyph: Glyph, after: Glyph) -> bool:
     return not shown[-1].isdigit() or re.match(COUNTERS, normalize(after.text)) is not None
 
 
-def merged(line: list[Glyph]) -> list[Glyph]:
+def merged(line: list[Glyph], gap: float = JOIN) -> list[Glyph]:
     """The parts of an amount OCR split (see the module doc) as one glyph: their digits, grouped by three where OCR
     lost or misplaced a comma (`10` `24,481` is 1,024,481)."""
     result: list[Glyph] = []
     for glyph in sorted(line, key=lambda g: g.x0):
         previous = result[-1] if result else None
-        if previous and glyph.x0 - previous.x1 <= JOIN and DIGITS.match(normalize(previous.text)) \
+        if previous and glyph.x0 - previous.x1 <= gap and DIGITS.match(normalize(previous.text)) \
                 and DIGITS.match(normalize(glyph.text)):
             joined = normalize(previous.text + glyph.text)
             if not is_amount(joined) or ',' not in joined:  # `10` `00`: 1,000, as the row above prints it
@@ -297,7 +306,7 @@ def read(pages, **options):
             labels = [g for g in line if (g.x0 + g.x1) / 2 < name_edge]
             amounts = [g for g in line if (g.x0 + g.x1) / 2 >= name_edge]
             for low, high in ((name_edge, current_edge), (current_edge, previous_edge), (previous_edge, right + 1)):
-                labels += merged([g for g in amounts if low <= (g.x0 + g.x1) / 2 < high])
+                labels += merged([g for g in amounts if low <= (g.x0 + g.x1) / 2 < high], CELL)
             subject_words += labels
         subject_words = subject_lines(subject_words, name_edge)
         setsu_names, setsu_amounts = [], []
@@ -307,7 +316,7 @@ def read(pages, **options):
             if names:
                 setsu_names += [shifted(g, SETSU_OFFSET) for g in setsu_line(names, current_edge)]
             setsu_amounts += [shifted(g, SETSU_OFFSET)
-                              for g in merged([g for g in line if (g.x0 + g.x1) / 2 >= previous_edge])]
+                              for g in merged([g for g in line if (g.x0 + g.x1) / 2 >= previous_edge], CELL)]
         explanation, circles, figures = [], [], []
         for line in parts['explanation']:
             line = [part for g in line for part in circled_apart(g)]
