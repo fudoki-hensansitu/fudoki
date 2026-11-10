@@ -1,7 +1,7 @@
 import unittest
 from types import SimpleNamespace
 
-from ingestion.generic.layout import Glyph
+from ingestion.generic.layout import Glyph, Logical
 from ingestion.generic.observe import Rule, Word
 from ingestion.generic.patterns.layout import running_titles
 
@@ -71,6 +71,33 @@ class RunningTitlesTest(unittest.TestCase):
         words = [Word('6,414', 327.0, 168.5, 354.14, 178), Word('事業', 360, 168.5, 380, 178), Word('12', 352, 120, 356, 130)]
         result = running_titles.inside_rules(words, rules)
         self.assertEqual([w.x1 for w in result], [353.5, 380, 356])
+
+    def test_a_title_takes_the_first_of_its_amounts_and_only_when_the_heading_is_declared(self):
+        line = [glyph('(款)', 0, 0), glyph('1', 40, 0), glyph('議会費', 60, 0),
+                glyph('697,637', 200, 0), glyph('684,875', 300, 0), glyph('12,762', 400, 0)]
+        [(level, code, label, _, amount)] = running_titles.titles(Logical([1], [], None, line), '本年度予算額')
+        self.assertEqual((level, code, label, amount[0]), ('款', '1', '議会費', '本年度予算額'))
+        self.assertEqual(''.join(g.text for g in amount[1]), '697,637')
+        [untitled] = running_titles.titles(Logical([1], [], None, line), None)
+        self.assertIsNone(untitled[4])
+
+    def test_a_title_keeps_its_amount_only_when_the_pages_hold_its_table_whole(self):
+        moku = lambda rows: SimpleNamespace(header=('目',), words=[glyph(t, 0, y) for t, y in rows])
+
+        def logical(kou, rows):
+            titles = [('款', '2', '総務費', [glyph('(款)', 0, -40)], ('本年度予算額', [])),
+                      ('項', kou, '総務管理費', [glyph('(項)', 0, -20)], ('本年度予算額', []))]
+            return Logical([1], [moku(rows)], None, [], level_titles=titles)
+
+        whole = logical('1', [('1 一般管理費', 0), ('2 文書費', 20), ('計', 40)])
+        running_titles.complete_titles([whole])
+        self.assertEqual([t[4] is not None for t in whole.level_titles], [True, True])
+        cut = logical('1', [('3 広報費', 0), ('計', 40)])  # the 項 starts on a page not read
+        running_titles.complete_titles([cut])
+        self.assertEqual([t[4] for t in cut.level_titles], [None, None])
+        open_end = logical('1', [('1 一般管理費', 0), ('2 文書費', 20)])  # no 計: the 項 goes on past the pages
+        running_titles.complete_titles([open_end])
+        self.assertEqual([t[4] for t in open_end.level_titles], [None, None])
 
 
 if __name__ == '__main__':
