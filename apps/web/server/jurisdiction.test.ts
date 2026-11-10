@@ -3,6 +3,8 @@ import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../juri
 import { fetchRoute } from './routes.testing'
 import { emptyHead, indexHead, pageHead, type Head } from '../jurisdiction/html'
 import { indexPageData, resolveJurisdiction } from './jurisdiction-routes'
+import { jurisdictionProps } from './pages'
+import type { Context } from 'hono'
 import { DEFAULT_INDEX_QUERY, queryIndex } from '../jurisdiction/index-table'
 import type { IndexEntry } from '../jurisdiction/types'
 import { DETAIL_TABLE, SUBJECT_TABLE } from '../../api/src/columns'
@@ -154,6 +156,22 @@ describe('自治体の個別ページ', () => {
     const sitemap = await (await get('/sitemap.xml')).text()
     expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano</loc>')
     expect(sitemap).not.toContain('chiyoda')
+    // 既定でない年度の頁も載せ、既定の年度（最新）は自治体の頁だけにする
+    expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano/2024</loc>')
+    expect(sitemap).not.toContain('/tokyo/nakano/2025')
+  })
+
+  test('年度の頁は、その年度の title と canonical を持ち、既定の年度は自治体の頁へ 301、選べない年度は 404', async () => {
+    const data = await view('/tokyo/nakano')
+    const head = pageHead(data, 2024)
+    expect(head.title).toBe('中野区の決算（令和6年度）｜何にいくら使った？｜風土記')
+    expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano/2024')
+    expect(head.meta.find((m) => m.name === 'description')?.content).toStartWith('中野区の令和6年度決算（一般会計）の歳出は約')
+    const c = { env, req: { url: 'https://fudoki.dev/tokyo/nakano/2024' } } as unknown as Context
+    expect((await jurisdictionProps(c, '/tokyo/nakano', '2024')).year).toBe(2024)
+    const status = (segment: string) => jurisdictionProps(c, '/tokyo/nakano', segment).then(() => 200, (e: { status: number; res?: Response }) => [e.status, e.res?.headers.get('Location') ?? null])
+    expect(await status('2025')).toEqual([301, '/tokyo/nakano'])
+    expect(await status('2019')).toEqual([404, null])
   })
 
   test('一覧は収録のある自治体だけを、最新の決算の款の和で載せる', async () => {

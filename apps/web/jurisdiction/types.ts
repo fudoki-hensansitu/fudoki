@@ -116,6 +116,13 @@ export interface PageData {
   profile?: Profile | null
 }
 
+/** 頁で選べる年度（新しい順）。事業の振り返り（profile）と決算の年度を合わせる。先頭が頁の既定の年度 */
+export const pageYears = (d: { years: { year: number }[]; profile?: { years: Record<string, unknown> } | null }) =>
+  [...new Set([...Object.keys(d.profile?.years ?? {}).map(Number), ...d.years.map((y) => y.year)])].sort((a, b) => b - a)
+
+/** 年度ごとの頁の path。既定の年度は自治体の頁そのもの（/tokyo/shinagawa）、ほかは1段下げる（/tokyo/shinagawa/2024） */
+export const yearPath = (base: string, year: number, latest: number) => (year === latest ? base : `${base}/${year}`)
+
 /** 今日を含む会計年度（4月始まり） */
 export const currentFiscalYear = (now = new Date()) => (now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1)
 

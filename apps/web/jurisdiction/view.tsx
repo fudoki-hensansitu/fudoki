@@ -19,7 +19,7 @@ export function JurisdictionView(props: JurisdictionProps) {
   return (
     <div id="j-app">
       {/* 自治体を移ると年度・開いた款などの状態を持ち越さないよう、自治体ごとに描き直す */}
-      <Page key={props.data.code} data={props.data} sitekey={props.sitekey} />
+      <Page key={props.data.code} data={props.data} sitekey={props.sitekey} initialYear={props.year} />
     </div>
   )
 }
