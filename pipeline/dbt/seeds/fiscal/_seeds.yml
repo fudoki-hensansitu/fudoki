@@ -94,6 +94,29 @@ seeds:
       - name: variant
         data_tests: [unique, not_null]
 
+  - name: fiscal_budget_amendment
+    meta:
+      role: source-declaration
+    description: |
+      議会の修正案で当初予算を直す表の宣言。予算説明書が原案の額で印字され、議会が修正して可決した資料を1行で示す。
+      `table_id` は同じ自治体・年度・資料区分の修正案の表（修正した事務事業だけを、修正金額を本年度予算額・原案金額を予算案額として持つ）。
+      この表のノードは木に加えず、各行の 修正金額−原案金額 を、予算説明書の同じノードとその祖先（款まで）の承認額に足す
+      （int_fiscal__settlement_expenditure_nodes）。修正案が書かない枝（節など）は原案の額のまま残る。
+    config:
+      column_types:
+        jurisdiction_code: varchar
+        fiscal_year: integer
+        document_kind: varchar
+        table_id: varchar
+        basis: varchar
+    columns:
+      - name: document_kind
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['initial']
+      - name: basis
+        data_tests: [not_null]
   - name: fiscal_detail_breakdown
     meta:
       # **判断そのもの。** 内訳の枝の分け方の宣言。

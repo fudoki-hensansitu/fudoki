@@ -446,6 +446,31 @@
           "table_id": "care-initial"
         }
       ]
+    },
+    {
+      "id": "general-amendment",
+      "converter": "fiscal/jurisdictions/131148/layouts/council_amendment/convert.py",
+      "inputs": [
+        {
+          "sha256": "ebbdf049b6142c1759eaf612bce52f51a7f7ce2339504e46881ac5b5cdd41695"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-amendment",
+        "bill": "第7号議案",
+        "business_axis": "説明",
+        "headings": {
+          "修正金額": "本年度予算額",
+          "原案金額": "予算案額",
+          "差": "比較"
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-amendment"
+        }
+      ]
     }
   ],
   "tables": [
@@ -592,6 +617,35 @@
           "bytes": 5675
         },
         "row_count": 158
+      }
+    },
+    {
+      "table_id": "general-amendment",
+      "conversion_id": "general-amendment",
+      "input_fingerprint": "46b69df257ec1b10fb39925c1bddfeafe8859654e105f62663933c72211f7a74",
+      "account": "一般会計",
+      "notes": [
+        "議会の修正案（第7号議案）の歳出増減分の説明。修正した事務事業だけを載せる。修正金額を「本年度予算額」、原案金額を「予算案額」として読む。",
+        "第1表の款・項の修正額と原案額の差は、事務事業の差の和と一致することを確かめた。",
+        "事務事業の子の番号の括弧（(1)）は、予算説明書の印字に合わせて外した。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131148/2025/initial/expenditure/general-amendment-nodes.parquet",
+          "sha256": "1c3ad3ad715152bf8a9c25b9bd265eead6dde8fe2bf76aa21966f04bcf4eceed",
+          "bytes": 2488
+        },
+        "row_count": 10
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131148/2025/initial/expenditure/general-amendment-amounts.parquet",
+          "sha256": "10e05546b7f63f2a7752c134a45d6a7264f171e285d1b555e65ee34b98e8d8a1",
+          "bytes": 1758
+        },
+        "row_count": 6
       }
     }
   ]
