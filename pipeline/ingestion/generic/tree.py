@@ -690,8 +690,9 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             last_at[slot] = int(code)
     # A line with an amount of its own in the axis's amount column, under a name that has one too, is the next
     # item (`3 職員手当等 86,812` / `扶養手当 2,178` set at the name's start, 131113): a wrapped name has one amount.
-    beside = lambda line: bool(column_amounts) and bool(line) and any(
-        a.page == line[0].page and a.y0 < (line[0].y0 + line[0].y1) / 2 < a.y1 for a in column_amounts)
+    # The amounts beside a line; two lines of one name set against one tall amount (`報` / `酬`, 131202 OCR) share it.
+    beside = lambda line: frozenset(id(a) for a in column_amounts or () if line and a.page == line[0].page
+                                    and a.y0 < (line[0].y0 + line[0].y1) / 2 < a.y1)
     result: list[Item] = []
     # A rule-bounded cell with exactly one code is one item.
     band_of = lambda g: next(b for b in group.bands if b.x0 <= (g.x0 + g.x1) / 2 <= b.x1 or b is group.bands[-1])
@@ -740,7 +741,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
 
     single = {i: tuple(ix) for ix in cells.values()
               if sum(entries[i][2] is not None for i in ix) == 1 and len(ix) > 1
-              and sum(bool(entries[i][1]) for i in ix) <= 1 and sum(beside(entries[i][0]) for i in ix) <= 1
+              and sum(bool(entries[i][1]) for i in ix) <= 1 and len(set().union(*(beside(entries[i][0]) for i in ix))) <= 1
               and wraps(0, ix) for i in ix}
     repeated_headings: set[int] = set()
     if settings.get('heading_repeated_over_code'):
@@ -856,7 +857,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         # half a character left of a one-digit number (a half-width digit is half the line height).
         left_slack = max(3, (label[0].y1 - label[0].y0) / 2 + .5) if label and remainder else 3
         wrapped = (previous is not None and code is None and label and not previous.amounts and not marked
-                   and not (beside(label) and any(beside(line) for line in previous.lines))
+                   and not (beside(label) and any(beside(line) and not beside(line) & beside(label) for line in previous.lines))
                    and label[0].x0 >= previous.lines[0][0].x0 - left_slack
                    and not (headings and label[0].x0 > _name_start(previous) + HEADING_INDENT)
                    and (not money or bracketed
