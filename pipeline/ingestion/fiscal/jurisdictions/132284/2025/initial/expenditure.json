@@ -1,0 +1,94 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132284",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "049d127b5165418281d1ba8f8e2fc12c0d9221bfd2a443c838fbc3b4010f8786"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "d56908554ff5498d52319258c16f5d884f83daf407d00e4a47a11b321388f56e",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 125頁 から決めた。款の和 37,925,350（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132284/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "e5ab9421ba64ac56cf27458113528e4d0e830e4137905acad75783a2ffc30614",
+          "bytes": 187175
+        },
+        "row_count": 6312
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132284/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "dde6795ca4f423a8f04b3462a7c38ba259c292e2fb60e893e928be831ddbb8ec",
+          "bytes": 133868
+        },
+        "row_count": 7064
+      }
+    }
+  ]
+}

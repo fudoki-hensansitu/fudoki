@@ -168,6 +168,7 @@
           },
           "plain_names": {"type": "array", "items": {"type": "string", "minLength": 2}},
           "amount_brackets": {"type": "boolean"},
+          "unit_marked": {"type": "string", "minLength": 1, "description": "The column's unit printed after an amount set in a name's line (132128: `救急指定増嵩経費分 229,000千円`): the unit is no part of the amount."},
           "indent_chars": {"type": "integer", "minimum": 1},
           "single_part_notes": {"type": "boolean"},
           "rows": {"type": "boolean"},

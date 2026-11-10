@@ -196,6 +196,7 @@ SHOWN_SHARE = 4  # light rules at least this many times the dark ones are the ta
 def _segments(page, pdf: Path | None = None) -> list[Rule]:
     rules = []
     unread = []  # thin filled rectangles whose colour the reader gives as light
+    pieces = []  # thin light strokes, joined end to end below: a rule may be drawn one row at a time (132021)
     for line in page.lines:
         if line.get('stroke', True) and _dark(line.get('stroking_color', 0)):
             x0, x1, y0, y1 = line['x0'], line['x1'], line['top'], line['bottom']
@@ -203,9 +204,9 @@ def _segments(page, pdf: Path | None = None) -> list[Rule]:
                 rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1))
             elif abs(y1 - y0) < 1:
                 rules.append(Rule(x0, (y0 + y1) / 2, x1, (y0 + y1) / 2))
-        elif line.get('stroke', True) and max(line['x1'] - line['x0'], line['bottom'] - line['top']) > 20 \
-                and min(line['x1'] - line['x0'], line['bottom'] - line['top']) < 1:
-            unread.append(line)  # a stroke in a spot colour the reader gives as 1.0: checked on the rendered page below
+        elif line.get('stroke', True) and min(line['x1'] - line['x0'], line['bottom'] - line['top']) < 1:
+            pieces.append(line)  # a stroke in a spot colour the reader gives as 1.0: checked on the rendered page below
+    unread += [line for line in _joined(pieces) if max(line['x1'] - line['x0'], line['bottom'] - line['top']) > 20]
     for rect in page.rects:
         x0, x1, y0, y1 = rect['x0'], rect['x1'], rect['top'], rect['bottom']
         w, h = x1 - x0, y1 - y0
@@ -235,6 +236,24 @@ def _segments(page, pdf: Path | None = None) -> list[Rule]:
             rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1) if x1 - x0 < y1 - y0
                          else Rule(x0, (y0 + y1) / 2, x1, (y0 + y1) / 2))
     return rules
+
+
+def _joined(lines: list[dict]) -> list[dict]:
+    """Thin strokes on one line that touch end to end, as one stroke (a rule drawn row by row in short pieces)."""
+    result = []
+    for vertical in (True, False):
+        position = (lambda l: round((l['x0'] + l['x1']) / 2, 1)) if vertical else (lambda l: round((l['top'] + l['bottom']) / 2, 1))
+        start, end = ('top', 'bottom') if vertical else ('x0', 'x1')
+        chosen = sorted((l for l in lines if (l['x1'] - l['x0'] < l['bottom'] - l['top']) == vertical),
+                        key=lambda l: (position(l), l[start]))
+        for line in chosen:
+            last = result[-1] if result and result[-1]['vertical'] == vertical else None
+            if last is not None and last['position'] == position(line) and line[start] - last[end] <= 1:
+                last[end] = max(last[end], line[end])
+            else:
+                result.append({'vertical': vertical, 'position': position(line), 'x0': line['x0'], 'x1': line['x1'],
+                               'top': line['top'], 'bottom': line['bottom']})
+    return result
 
 
 def _drawn_dark(pdf: Path, page, rects: list[dict]) -> bool:

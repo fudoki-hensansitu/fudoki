@@ -36,6 +36,8 @@ from ingestion.lib.parquet import write_parquet
 from ingestion.paths import CACHE
 
 NOTE_SEPARATOR = '／注記／'
+# The `note_kinds` kind of a note that prints the funding of an item: no note, its digits are excluded.
+FUNDING = '財源内訳'
 # An account code joined by hyphens or dots (`02-01-02-15-11-01`, `40.15.25`): printed text in a transfer note's
 # label, and amount-shaped to the coverage check, which never lets a hyphen-and-digits word be a label.
 ACCOUNT_CODE = re.compile(r'[0-9０-９][-－―—.．][0-9０-９]')
@@ -50,7 +52,8 @@ CLOSING_AMOUNT = re.compile(r'[0-9][0-9,]*(?:千)?円[)）]')
 # calculation, no amount. A price alone on its line (`12,600円`) is one only when the next line goes on with `×`.
 PRICE = r'(?:[0-9][0-9,]*)?円'
 COUNT = r'延?[0-9][0-9,]*(?:人|名|回|月|か月|日|件|台|個|世帯)?'
-FORMULA = re.compile(rf'(?:{PRICE})?(?:×(?:{COUNT})?)+|{COUNT}(?:×(?:{COUNT})?)+')
+# A deduction may close it (`990,000円×12月－299,250円`, 132128).
+FORMULA = re.compile(rf'(?:(?:{PRICE})?(?:×(?:{COUNT})?)+|{COUNT}(?:×(?:{COUNT})?)+)(?:[－-]{PRICE})?')
 LONE_PRICE = re.compile(r'[0-9][0-9,]*円')
 SPACED_COUNT = re.compile(r'延[0-9][0-9,]*(?:人|名|回|月|か月|日|件|台|個|世帯)')
 AMOUNT_TERM = re.compile(r'[0-9]{1,3}(?:,[0-9]{3})*')
@@ -115,6 +118,10 @@ def lay_notes(built) -> tuple[list[dict], list[dict], list[dict], set, list]:
         # The dictionary first; then what the account says (a reserve's remarks are 充用); then the
         # transfer words of a remark.
         kind = kind_of(label) or record.get('hint') or kind_of(label, words=record['kind'] == 'annotation')
+        if record['kind'] == 'annotation' and record.get('hint') == FUNDING:
+            # The funding of the item (`（特定財源 9,533 一般財源 3,016,275）`): the sources of its amount, no note on it.
+            built.funding.extend([*record['label'], *(g for run in record['runs'] for g in run)])
+            continue
         if kind is None:
             if record['kind'] == 'annotation' and record['runs']:
                 where = record['runs'][0][0] if record['runs'] else (record['label'][0] if record['label'] else None)
@@ -190,6 +197,8 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     """
     regions = coverage_regions([(g.page, g.original, g.text) for g in codes], kind='本文',
                                reason='注記の文言に印字された流用元・流用先の科目コード。金額は注記金額として取り込み済み。')
+    regions += coverage_regions([(g.page, g.original, g.text) for g in getattr(built, 'funding', ())], kind=FUNDING,
+                                reason='事業の金額の財源の内訳（（特定財源 X 一般財源 Y））。歳出の金額ではない。')
     for logical in logicals:
         for band in logical.bands:
             if band.excluded:  # a column the layout file declares not taken in, with its kind and reason

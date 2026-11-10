@@ -45,6 +45,16 @@ class NoteLayingTest(unittest.TestCase):
         self.assertEqual((unresolved, dropped), ([], set()))
         self.assertEqual([g.text for g in codes], ['02-01-02-15-11-01'])  # printed text, not an amount
 
+    def test_the_funding_of_an_item_is_no_note_and_its_digits_are_a_funding_exclusion(self):
+        label = [glyph('（特定財源', 386, 316), glyph('一般財源', 520, 316)]
+        runs = [[glyph('9,533', 470, 316)], [glyph('3,016,275）', 600, 316)]]
+        built = self.built([self.record('annotation', label, runs, hint='財源内訳')])
+        nodes, amounts, unresolved, dropped, codes = lay_notes(built)
+        self.assertEqual((nodes, amounts, unresolved, codes), ([], [], [], []))
+        regions = excluded_regions(built, [], [], [])
+        self.assertEqual({r['kind'] for r in regions}, {'財源内訳'})
+        validate_exclusions(regions)
+
     def test_a_kind_line_inside_an_item_leaves_the_item_and_a_remark_without_a_kind_is_left_unadopted(self):
         kind_line = self.record('kind line', [glyph('繰越明許費', 900, 100)], [[glyph('302,000', 1000, 100)]],
                                 node_key='item', heading='備考／繰越明許費')

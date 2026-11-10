@@ -302,8 +302,15 @@ def _cell(band: Band, y: float) -> tuple[float, float]:
     return (above[-1] if above else band.body_top, below[0] if below else band.body_bottom)
 
 
-def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: bool = False) -> tuple[list[Glyph], list[list[Glyph]]]:
+def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: bool = False,
+                unit_marked: str | None = None) -> tuple[list[Glyph], list[list[Glyph]]]:
     parts = runs(line)
+    if unit_marked and parts:
+        # The column's unit printed after an amount set in the name's line (`救急指定増嵩経費分 229,000千円`, the
+        # setting `unit_marked`): the unit is no part of the amount.
+        shown = text(parts[-1])
+        if shown.endswith(unit_marked) and re.fullmatch(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})*', normalize(shown[:-len(unit_marked)])):
+            parts[-1] = _cut(parts[-1], len(shown) - len(unit_marked))[0]
     closing = normalize(text(line))[-1:]
     if amount_brackets and closing in BRACKET_PAIRS:  # `(187,037,067)`, and the 事業 total over it `[187,037,067]`
         for start in range(len(parts) - 1, -1, -1):
@@ -496,11 +503,11 @@ def strip_ancestor_codes(group: Group) -> list[Glyph]:
 
 
 def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False,
-               bare_amounts: bool = False) -> list[tuple]:
+               bare_amounts: bool = False, unit_marked: str | None = None) -> list[tuple]:
     """Printed lines of a label group as (label glyphs, amount runs, code, name)."""
     entries = []
     for line in lines([w for band in group.bands for w in band.words]):
-        label, money = _split_line(line, amount_brackets, bare_amounts)
+        label, money = _split_line(line, amount_brackets, bare_amounts, unit_marked)
         line_text = normalize(text(label))
         if label and not money and UNIT_NOTATION.fullmatch(line_text):
             continue  # `(単位:円・税抜)` printed over a column names the unit; it is no item of the column
@@ -645,7 +652,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     `roles` (variant B) replaces the geometric decisions for codeless lines. `joined_codes`: a word of the text layer
     that joins a code and the first character of its name (`03戸`) is measured as an OCR word is (`_measure`).
     """
-    entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')))
+    entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')),
+                         (settings or {}).get('unit_marked'))
     settings = settings or {}
     kind_names = bool(settings.get('names_end_with_kind_words'))
     remainder = bool(settings.get('bracketed_remainder'))
@@ -1399,6 +1407,9 @@ class Built:
     # the same column (the 節 row of a 予備費, which prints no 節 name): the parent's amounts again, not new ones.
     repeated_amounts: list = field(default_factory=list)
     unpaid_rounds: list = field(default_factory=list)  # the printed round of a supplementary budget (`第２次補正`) no amount follows
+    # Glyphs of a note the settings mark as the funding of an item (`note_kinds` → 財源内訳: `（特定財源 9,533 一般財源
+    # 3,016,275）`): no expenditure amount and no 注記, `convert` declares their digits as excluded regions.
+    funding: list = field(default_factory=list)
 
 
 def node_key(item: Item) -> str:
@@ -2472,6 +2483,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                        'unit': remark['unit'], 'hint': remark.get('hint')})
     nest_by_rows(nodes, placed, layout)
     repeated_amounts = repeated_parent_rows(nodes, amounts, unowned, unowned_runs)
+    repeated_amounts += repeated_breakdown_cells(nodes, amounts, logicals)
     return Built(nodes, _dedupe(amounts, unowned), unowned, notes, marked, skipped, repeated_codes, repeated_amounts, unpaid_rounds)
 
 
@@ -2497,7 +2509,11 @@ def nest_by_rows(nodes: list[dict], placed: list[Item], layout: dict | None) -> 
                                      for h in hosts):
                 # The lines go on over a page break (`12 委託料` with `審査支払事務委託` … at the foot of a page and
                 # `療養費審査委託` at the top of the next): the last item of the axis on the page before.
-                before = [h for h in hosts if h.parent is item.parent and h.page == item.page - 1]
+                # A document that sets the subject columns and the breakdown on facing pages (133078 2024) prints the
+                # page before the break two pages back: the nearest earlier page with an item of the axis.
+                before = [h for h in hosts if h.parent is item.parent and h.page < item.page]
+                last = max((h.page for h in before), default=None)
+                before = [h for h in before if h.page == last]
                 found = [max(before, key=lambda h: h.anchor)] if before else []
             if len(found) != 1:
                 continue
@@ -2596,6 +2612,35 @@ def repeated_parent_rows(nodes: list[dict], amounts: list[dict], unowned: list[d
             for record, run, _ in row:
                 repeated += run
                 unowned.remove(record)
+    return repeated
+
+
+def repeated_breakdown_cells(nodes: list[dict], amounts: list[dict], logicals: list[Logical]) -> list[Glyph]:
+    """The amount a 款・項・目 row prints in a breakdown axis's column on its own row, where that axis prints no
+    name (132284's 予備費: `01 予備費 30,000 …` with `30,000` under 節／金額 and 区分 blank): equal, to the yen, to
+    the amount the row prints in a column of its own, it is the row's amount again, not a new one. Only a row with no
+    item of that axis under it; one amount that differs keeps it (the check stops). Recorded as `親の繰り返し`."""
+    breakdown = {n['axis_header'] for n in nodes if n['axis_header'] != '科目'}
+    if not breakdown:
+        return []
+    subject = {n['node_key'] for n in nodes if n['axis_header'] == '科目'}
+    parents = {(n['parent_node_key'], n['axis_header']) for n in nodes if n['axis_header'] != '科目'}
+    by_node: dict[str, list[dict]] = defaultdict(list)
+    for amount in amounts:
+        if amount['node_key'] in subject:
+            by_node[amount['node_key']].append(amount)
+    repeated: list[Glyph] = []
+    for key, own in by_node.items():
+        for amount in list(own):
+            axis = amount['header_path'].split('／')[0]
+            if axis not in breakdown or (key, axis) in parents or amount['x0'] is None:
+                continue
+            columns = [a for a in own if a['header_path'].split('／')[0] not in breakdown]
+            if not any(normalize(a['amount_text']) == normalize(amount['amount_text']) for a in columns):
+                continue
+            amounts.remove(amount)
+            repeated.append(Glyph(amount['amount_text'], amount['x0'], amount['y0'], amount['x1'], amount['y1'],
+                                  amount['physical_page'], 0.0))
     return repeated
 
 

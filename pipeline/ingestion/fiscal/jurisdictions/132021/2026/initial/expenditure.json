@@ -1,0 +1,176 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132021",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "57d02763a1068295203a51b00d094d94f4c0cda03b60f0432d0b4ad5c2cc39e2"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "57d02763a1068295203a51b00d094d94f4c0cda03b60f0432d0b4ad5c2cc39e2",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              188
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e13eaca0e0e520b733e49714ad2ef83c7cf824c1d6323b259ec1715a17b17017",
+          "bytes": 299113
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "pages": [
+          [
+            79,
+            404
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p188-r15",
+            "page": 188,
+            "observation_id": "p188:full-page:a0:result0:r15",
+            "observed_name": "センタ一",
+            "corrected_name": "センター",
+            "reason": "頁188は文字層が壊れた画像の頁で OCR で読む。Paddle は長音「ー」を漢字の「一」（と「ト」を「卜」）と読んだ。原典の描画で「センター」の印字を確認した。"
+          },
+          {
+            "id": "p188-r20",
+            "page": 188,
+            "observation_id": "p188:full-page:a0:result0:r20",
+            "observed_name": "センタ一",
+            "corrected_name": "センター",
+            "reason": "頁188は文字層が壊れた画像の頁で OCR で読む。Paddle は長音「ー」を漢字の「一」（と「ト」を「卜」）と読んだ。原典の描画で「センター」の印字を確認した。"
+          },
+          {
+            "id": "p188-r26",
+            "page": 188,
+            "observation_id": "p188:full-page:a0:result0:r26",
+            "observed_name": "センタ一",
+            "corrected_name": "センター",
+            "reason": "頁188は文字層が壊れた画像の頁で OCR で読む。Paddle は長音「ー」を漢字の「一」（と「ト」を「卜」）と読んだ。原典の描画で「センター」の印字を確認した。"
+          },
+          {
+            "id": "p188-r60",
+            "page": 188,
+            "observation_id": "p188:full-page:a0:result0:r60",
+            "observed_name": "サポ一卜",
+            "corrected_name": "サポート",
+            "reason": "頁188は文字層が壊れた画像の頁で OCR で読む。Paddle は長音「ー」を漢字の「一」（と「ト」を「卜」）と読んだ。原典の描画で「サポート」の印字を確認した。"
+          },
+          {
+            "id": "p188-r65",
+            "page": 188,
+            "observation_id": "p188:full-page:a0:result0:r65",
+            "observed_name": "サポ一卜",
+            "corrected_name": "サポート",
+            "reason": "頁188は文字層が壊れた画像の頁で OCR で読む。Paddle は長音「ー」を漢字の「一」（と「ト」を「卜」）と読んだ。原典の描画で「サポート」の印字を確認した。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "note_kinds": {
+                    "（特定財源": "財源内訳",
+                    "(（特定財源": "財源内訳"
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "7a8bd12a98b77db569338d060b758db894ee8abdf1460c0f2e0a95f41f0f68a8",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 163頁 から決めた。款の和 93,506,000 と印字の「歳出合計」93,506,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 5 件を、管理 JSON の name_corrections で印字に直した: 188頁 センタ一→センター・188頁 センタ一→センター・188頁 センタ一→センター・188頁 サポ一卜→サポート・188頁 サポ一卜→サポート。",
+        "文字層の無い頁 1 頁（188）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、段の読み方は文字層の頁から当てはめた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132021/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "f95277e341a7188080a6a071973afba3fab567ba27183ef8606cdc10562481a0",
+          "bytes": 188667
+        },
+        "row_count": 5799
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132021/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "254487a15e973a9d1b6e54fd78a0917ddc5d9a99bddadd48e66586aa72c84e59",
+          "bytes": 121772
+        },
+        "row_count": 5967
+      }
+    }
+  ]
+}
