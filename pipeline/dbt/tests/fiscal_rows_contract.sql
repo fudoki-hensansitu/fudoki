@@ -25,7 +25,12 @@ select source_table_key, 'invalid_node' from rows
 where node_kind is null or name is null or name = '' or axis_header is null or axis_header = ''
    or (parent_node_key is null and (node_kind <> '款' or axis_header <> subject_axis))
    or (axis_header = subject_axis and (node_kind not in ('款','項','目')
-       or (code_text is null and node_kind in ('款', '項'))))
+       or (code_text is null and node_kind = '項')
+       -- A 款 prints its number, except in an account-year that identifies its 款 by name.
+       or (code_text is null and node_kind = '款' and not exists (
+           select 1 from {{ ref('fiscal_kan_name_identity') }} k
+           where k.jurisdiction_code = rows.jurisdiction_code and k.fiscal_year = rows.fiscal_year
+             and k.account_name = rows.account_name))))
 union all
 -- node_id joins the key so numberless 目 (parent-based identity) never lump with their 項.
 -- Tables printing the whole account agree on the amount; the shares of division tables

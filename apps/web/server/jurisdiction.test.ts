@@ -174,8 +174,11 @@ describe('自治体の個別ページ', () => {
     expect(head.title).toBe('中野区の決算（令和6年度）｜何にいくら使った？｜風土記')
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano/2024')
     expect(head.meta.find((m) => m.name === 'description')?.content).toStartWith('中野区の令和6年度決算（一般会計）の歳出は約')
-    const c = { env, req: { url: 'https://fudoki.dev/tokyo/nakano/2024' } } as unknown as Context
+    const headers = new Headers()
+    const c = { env, req: { url: 'https://fudoki.dev/tokyo/nakano/2024' }, header: (k: string, v: string) => headers.set(k, v) } as unknown as Context
     expect((await jurisdictionProps(c, '/tokyo/nakano', '2024')).year).toBe(2024)
+    // 戻る遷移で取り直さないようブラウザに置く
+    expect(headers.get('Cache-Control')).toBe('public, max-age=300')
     const status = (segment: string) => jurisdictionProps(c, '/tokyo/nakano', segment).then(() => 200, (e: { status: number; res?: Response }) => [e.status, e.res?.headers.get('Location') ?? null])
     expect(await status('2025')).toEqual([301, '/tokyo/nakano'])
     expect(await status('2019')).toEqual([404, null])
