@@ -11,7 +11,7 @@ import { InputGroupAddon } from '@/components/ui/input-group'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { cn } from '@/lib/utils'
 import { ArrowDownIcon, ArrowsDownUpIcon, ArrowUpIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
-import { flexRender, getCoreRowModel, useReactTable, type ColumnDef, type SortingState } from '@tanstack/react-table'
+import { flexRender, rowSortingFeature, tableFeatures, useTable, type ColumnDef, type SortingState } from '@tanstack/react-table'
 import { JAPAN_TILES } from './japan-tiles'
 import { PREFECTURE_MAPS } from './map.generated'
 import { DEFAULT_INDEX_QUERY, indexQueryString, type IndexQuery, type IndexSort, type IndexTable, type MapEntry } from './index-table'
@@ -31,8 +31,11 @@ const Chip = ({ on, onClick, children }: { on?: boolean; onClick?: () => void; c
 /** 令和の年度は R7 のように短く書く（2019年より前は西暦のまま） */
 const shortYear = (y: number) => (y >= 2019 ? `R${y - 2018}` : String(y))
 
+/** 表が使う機能。並べ替えはサーバーで行うので、要るのは見出しの並べ替えの状態と、右寄せを伝える meta だけ */
+const features = tableFeatures({ rowSortingFeature, columnMeta: {} as { numeric?: boolean } })
+
 /** 比較表の列。見出しを押すとその列で並べ替える（並べ替えはサーバーで行う。数値の列は大きい順から、値の無い自治体はどちらの向きでも末尾） */
-const columns: ColumnDef<IndexEntry>[] = [
+const columns: ColumnDef<typeof features, IndexEntry>[] = [
   {
     id: 'name',
     header: '自治体',
@@ -85,12 +88,6 @@ const columns: ColumnDef<IndexEntry>[] = [
     ),
   },
 ]
-
-declare module '@tanstack/react-table' {
-  interface ColumnMeta<TData, TValue> {
-    numeric?: boolean
-  }
-}
 
 type PrefectureMap = (typeof PREFECTURE_MAPS)[number]
 const MAPS = new Map<string, PrefectureMap>(PREFECTURE_MAPS.map((m) => [m.code, m]))
@@ -369,7 +366,7 @@ export function IndexPage({ map: entries, initial }: { map: MapEntry[]; initial:
   const query: IndexQuery = { sort: (sorting[0]?.id ?? DEFAULT_INDEX_QUERY.sort) as IndexSort, desc: sorting[0]?.desc ?? true, offset: 0, prefs: prefPicks, codes: namePicks }
   const key = indexQueryString(query)
   const { table: page, stale, more, retry, loading, failed } = useIndexTable(initial, key, indexQueryString(DEFAULT_INDEX_QUERY))
-  const table = useReactTable({ data: page.rows, columns, state: { sorting }, onSortingChange: setSorting, manualSorting: true, enableSortingRemoval: false, getCoreRowModel: getCoreRowModel(), getRowId: (e) => e.code })
+  const table = useTable({ features, data: page.rows, columns, state: { sorting }, onSortingChange: setSorting, manualSorting: true, enableSortingRemoval: false, getRowId: (e) => e.code })
   const rows = table.getRowModel().rows
   const prefCount = new Map<string, number>()
   for (const e of entries) prefCount.set(prefOf(e), (prefCount.get(prefOf(e)) ?? 0) + 1)
@@ -497,7 +494,7 @@ export function IndexPage({ map: entries, initial }: { map: MapEntry[]; initial:
             <TableBody>
               {rows.map((r) => (
                 <TableRow key={r.id} className="relative hover:bg-card">
-                  {r.getVisibleCells().map((c) => (
+                  {r.getAllCells().map((c) => (
                     <TableCell key={c.id} className={cn('py-3 text-[13px]', c.column.columnDef.meta?.numeric && 'text-right')}>
                       {flexRender(c.column.columnDef.cell, c.getContext())}
                     </TableCell>
