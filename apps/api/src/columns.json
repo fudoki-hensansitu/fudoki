@@ -154,7 +154,11 @@
           "name": "document_kind",
           "type": "string",
           "nullable": false,
-          "description": "資料区分（settlement 決算・initial 当初予算）。"
+          "description": "資料区分（settlement 決算・initial 当初予算）。",
+          "values": [
+            "settlement",
+            "initial"
+          ]
         },
         {
           "name": "amendment_number",
@@ -329,7 +333,11 @@
           "name": "document_kind",
           "type": "string",
           "nullable": false,
-          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。"
+          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。",
+          "values": [
+            "settlement",
+            "initial"
+          ]
         },
         {
           "name": "amendment_number",
@@ -341,7 +349,11 @@
           "name": "amount_phase",
           "type": "string",
           "nullable": false,
-          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。"
+          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。",
+          "values": [
+            "executed",
+            "approved"
+          ]
         },
         {
           "name": "account_name",
@@ -359,7 +371,12 @@
           "name": "level",
           "type": "string",
           "nullable": false,
-          "description": "科目の段（款・項・目）。足すときは同じ資料で一つの段か is_leaf に絞る。"
+          "description": "科目の段（款・項・目）。足すときは同じ資料で一つの段か is_leaf に絞る。",
+          "values": [
+            "款",
+            "項",
+            "目"
+          ]
         },
         {
           "name": "code",
@@ -521,7 +538,11 @@
           "name": "document_kind",
           "type": "string",
           "nullable": false,
-          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。"
+          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。",
+          "values": [
+            "settlement",
+            "initial"
+          ]
         },
         {
           "name": "amendment_number",
@@ -533,7 +554,11 @@
           "name": "amount_phase",
           "type": "string",
           "nullable": false,
-          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。"
+          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。",
+          "values": [
+            "executed",
+            "approved"
+          ]
         },
         {
           "name": "account_name",
@@ -587,7 +612,12 @@
           "name": "breakdown",
           "type": "string",
           "nullable": false,
-          "description": "風土記の判断。枝の分け方（事業・節・その他）。枝の根の見出しに出典ごとの宣言（seed fiscal_detail_breakdown）を当て、子孫へ継ぐ。同じ科目・同じ分け方の depth = 1 の和が科目の額。分け方を混ぜて足さない。"
+          "description": "風土記の判断。枝の分け方（事業・節・その他）。枝の根の見出しに出典ごとの宣言（seed fiscal_detail_breakdown）を当て、子孫へ継ぐ。同じ科目・同じ分け方の depth = 1 の和が科目の額。分け方を混ぜて足さない。",
+          "values": [
+            "事業",
+            "節",
+            "その他"
+          ]
         },
         {
           "name": "source_heading",
@@ -689,7 +719,11 @@
           "name": "kind",
           "type": "string",
           "nullable": false,
-          "description": "出典の形式。pdf（頁と枠を持つ）か csv（行番号を持つ）。"
+          "description": "出典の形式。pdf（頁と枠を持つ）か csv（行番号を持つ）。",
+          "values": [
+            "pdf",
+            "csv"
+          ]
         },
         {
           "name": "source_page",
@@ -795,7 +829,11 @@
           "name": "kind",
           "type": "string",
           "nullable": false,
-          "description": "with_result（評価結果の資料があり件数を持つ）か sheets_only（評価シートだけで件数は空）。"
+          "description": "with_result（評価結果の資料があり件数を持つ）か sheets_only（評価シートだけで件数は空）。",
+          "values": [
+            "with_result",
+            "sheets_only"
+          ]
         },
         {
           "name": "result_origin_id",
@@ -871,7 +909,11 @@
           "name": "document_type",
           "type": "string",
           "nullable": false,
-          "description": "資料の種類。sheets（事務事業評価シート）・result（事務事業評価の結果）。"
+          "description": "資料の種類。sheets（事務事業評価シート）・result（事務事業評価の結果）。",
+          "values": [
+            "sheets",
+            "result"
+          ]
         },
         {
           "name": "fiscal_year",
@@ -1020,7 +1062,13 @@
           "name": "grade_code",
           "type": "string",
           "nullable": false,
-          "description": "最終評価の区分の記号（A〜D）。"
+          "description": "最終評価の区分の記号（A〜D）。",
+          "values": [
+            "A",
+            "B",
+            "C",
+            "D"
+          ]
         },
         {
           "name": "grade_label",

@@ -102,16 +102,31 @@ def model_not_null() -> dict[str, set[str]]:
             for m in models()}
 
 
+def model_accepted_values() -> dict[str, dict[str, list]]:
+    """data_tests の accepted_values の値。api の型（model.ts の enum）と照合する。"""
+    out: dict[str, dict[str, list]] = {}
+    for m in models():
+        for c in m.get('columns', []):
+            for test in c.get('data_tests') or []:
+                if isinstance(test, dict) and 'accepted_values' in test:
+                    out.setdefault(m['name'], {})[c['name']] = test['accepted_values']['arguments']['values']
+    return out
+
+
 def build(columns: dict[str, list[tuple[str, str]]] | None = None) -> dict:
     columns = columns or warehouse_columns()
     descriptions = model_descriptions()
     not_null = model_not_null()
+    accepted = model_accepted_values()
     tables = {}
     for table in TABLES:
         spec: dict = {'primary_key': PRIMARY_KEYS[table], 'indexes': INDEXES.get(table, [])}
         spec['columns'] = [{'name': name, 'type': type_, 'nullable': name not in not_null[table],
                             'description': descriptions[table].get(name)}
                            for name, type_ in columns[table]]
+        for column in spec['columns']:
+            if column['name'] in accepted.get(table, {}):
+                column['values'] = accepted[table][column['name']]
         tables[table] = spec
     return {'tables': tables}
 

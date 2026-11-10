@@ -507,7 +507,7 @@ async function describeColumns() {
   }
 }
 
-const ColumnOut = z.strictObject({ name: z.string(), type: z.string(), description: z.string().nullable(), nullable: z.boolean().optional() })
+const ColumnOut = z.strictObject({ name: z.string(), type: z.string(), description: z.string().nullable(), nullable: z.boolean().optional(), values: z.array(z.union([z.string(), z.number()])).optional() })
 const tableDescription = (example: z.ZodType) =>
   z.strictObject({
     table: z.string(),

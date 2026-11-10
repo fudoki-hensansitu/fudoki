@@ -11,6 +11,8 @@ export interface ColumnSpec {
   description: string | null
   /** 欠けているときは null になり得るものとして扱う */
   nullable?: boolean
+  /** dbt の accepted_values。model.ts の enum と同じ値（model.test.ts が照合する） */
+  values?: (string | number)[]
 }
 
 interface TableSpec {
@@ -18,7 +20,7 @@ interface TableSpec {
   columns: ColumnSpec[]
 }
 
-const TABLES = (columnsJson as unknown as { tables: Record<string, TableSpec> }).tables
+export const TABLES = (columnsJson as unknown as { tables: Record<string, TableSpec> }).tables
 
 const selectList = (columns: ColumnSpec[]) => columns.map((c) => `"${c.name}"`).join(', ')
 
