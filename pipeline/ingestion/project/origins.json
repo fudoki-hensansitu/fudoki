@@ -1,0 +1,60 @@
+{
+  "sheets": [
+    {
+      "jurisdiction": "131091",
+      "layout": "shinagawa_sheet"
+    }
+  ],
+  "results": [
+    {
+      "jurisdiction": "131091",
+      "evaluated_year": 2022,
+      "budget_year": 2024,
+      "layout": "shinagawa_result",
+      "title": "令和5年度事務事業評価結果（令和4年度実施事業）",
+      "landing_url": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005180/1005181.html",
+      "url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/181/20240222105532_16.pdf",
+      "sha256": "564fbc0e139c7628be01d630489f991faeff0e3e0f7d66f3577b8df84564e55e"
+    },
+    {
+      "jurisdiction": "131091",
+      "evaluated_year": 2023,
+      "budget_year": 2025,
+      "layout": "shinagawa_result",
+      "title": "令和6年度事務事業評価結果（令和5年度実施事業）",
+      "landing_url": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005176/1005177.html",
+      "url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/177/20240222105532_18.pdf",
+      "sha256": "db00259fb5a83ee53ecd3944132ef3edf9f20973de8a7c5323e45b301f7c1520"
+    },
+    {
+      "jurisdiction": "131091",
+      "evaluated_year": 2024,
+      "budget_year": 2026,
+      "layout": "shinagawa_result",
+      "title": "令和7年度事務事業評価結果（令和6年度実施事業）",
+      "landing_url": "https://www.city.shinagawa.tokyo.jp/kusei/shisakukeikaku/1005171/1005172/1005173.html",
+      "url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/005/173/20240222105532_35.pdf",
+      "sha256": "56b5477b9df2412fad87705e9fb7813ba82d69f18f15d950a25e999f174e4e6d"
+    }
+  ],
+  "press": [
+    {
+      "jurisdiction": "131091",
+      "fiscal_year": 2025,
+      "layout": "shinagawa_press",
+      "title": "令和7年度品川区当初予算案 プレス発表",
+      "landing_url": "https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007188.html",
+      "url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/188/20250120110302_1.pdf",
+      "sha256": "6637d88cb7634b962d043eba6faf68d1b60561ce7c5cff52b060d6eaadd65819"
+    },
+    {
+      "jurisdiction": "131091",
+      "fiscal_year": 2026,
+      "layout": "shinagawa_press",
+      "title": "令和8年度品川区当初予算案 プレス発表",
+      "landing_url": "https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007181.html",
+      "url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/181/20260122093053_1.pdf",
+      "sha256": "fc61ee112f3ba83e3de93887d1bd6467924416e3cefc919bd5c4275faa66d39c"
+    }
+  ]
+}

@@ -15,6 +15,8 @@
     "ingestion:refresh": "uv run python -m ingestion.fiscal.run refresh",
     "ingestion:ocr": "uv run --extra paddle-ocr python -m ingestion.fiscal.run ocr",
     "population:save": "uv run python -m ingestion.population.run save",
+    "project:save": "uv run python -m ingestion.project.run save",
+    "project:link-initiatives": "uv run python -m ingestion.project.link_initiatives",
     "dbt:prepare": "uv run python dbt/scripts/prepare.py",
     "dbt:build": "uv run python dbt/scripts/prepare.py --build",
     "serving:columns": "uv run python -m serving.columns",
