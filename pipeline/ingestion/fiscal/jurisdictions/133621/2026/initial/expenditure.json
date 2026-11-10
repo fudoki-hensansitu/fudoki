@@ -1,0 +1,103 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133621",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "546c3750cecb2c75f00c2fc49352c4aefee0dd5e17e3300c49e16395deef639a"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "ade9e8442cef9097d28bb466f824ac10be6f57aebc69d32c83cbeb2721b71508",
+      "account": "後期高齢者医療事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 3頁 から決めた。款の和 10,819 と印字の「歳出合計」10,819 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2026/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "4afadfce60d4396e0d3b6c99359def6c29b8e3f9d3ce691dc3aa0bd79c22043f",
+          "bytes": 4479
+        },
+        "row_count": 39
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2026/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "f4eee5f64661ddec7b2f8a047b7d9735b4474ea01e33ff58a2ac42b8c14ed7f4",
+          "bytes": 3753
+        },
+        "row_count": 94
+      }
+    }
+  ]
+}

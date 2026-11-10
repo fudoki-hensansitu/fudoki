@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133621",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1724ed7ab5e50319832f46385b449b2a6a8a32c15d396c23a11fb8225b0b3fc5"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "septic-tank-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1724ed7ab5e50319832f46385b449b2a6a8a32c15d396c23a11fb8225b0b3fc5"
+        }
+      ],
+      "options": {
+        "account": "浄化槽事業会計",
+        "table_id": "septic-tank-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "septic-tank-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "07e653c5f289813dc67529d82ed0db0efc57ca92fd3c30614c7ebf81057f560e",
+      "account": "後期高齢者医療事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 10,088 と印字の「歳出合計」10,088 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（10 件）を、印字された語から辞書の見出しに寄せた: 金額→科目／款・金額→科目／項。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2024/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "8c5df34e2d03b798c6e194c482b284f3aa5baa210d08735be33a94d05f1d789c",
+          "bytes": 5119
+        },
+        "row_count": 52
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2024/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "512af340bb1e7918e1ac07ad1b216a0713e4112ecb4d1e752e05caf38c4a0313",
+          "bytes": 4153
+        },
+        "row_count": 107
+      }
+    },
+    {
+      "table_id": "septic-tank-initial",
+      "conversion_id": "septic-tank-initial",
+      "input_fingerprint": "0241149a9b9006c38ebe33011e6dc5b0ea206a050b149336b9f3d3f8857c5c76",
+      "account": "浄化槽事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent'}。",
+        "金額の単位は printed 3頁・carried 3頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2024/initial/expenditure/septic-tank-initial-nodes.parquet",
+          "sha256": "cec19ba7e5f8096ef68281036a9ddbc7e1f5e33b403992ddb694cde4e1deaa4d",
+          "bytes": 5049
+        },
+        "row_count": 44
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2024/initial/expenditure/septic-tank-initial-amounts.parquet",
+          "sha256": "3c50d3effc8db99cc3ab6fb973a1529c10e39f8c55a24d15c05c16e474e17c0c",
+          "bytes": 3311
+        },
+        "row_count": 42
+      }
+    }
+  ]
+}
