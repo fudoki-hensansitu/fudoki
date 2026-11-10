@@ -3,7 +3,11 @@
 -- of the volume before stands for (int_fiscal__settlement_expenditure_nodes), not a second print of it.
 with printed as (select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}),
 rows as (
-    select *, amount_yen is null and physical_page = min(physical_page) over (partition by source_table_key) as continued
+    select *, amount_yen is null and (physical_page = min(physical_page) over (partition by source_table_key)
+        -- A running title (`running_titles`: 款・項 printed above the frames of every page, 131148・131016) restates a
+        -- 款・項 whose amount the same table prints once, on its summary page: the title is that node, not a second print.
+        or (axis_header = subject_axis and node_kind in ('款', '項')
+            and count(amount_yen) over (partition by source_table_key, node_id) > 0)) as continued
     from printed
 ),
 counts as (select source_table_key, count(*) as n from rows group by 1),
@@ -21,7 +25,8 @@ select source_table_key, 'invalid_node' from rows
 where node_kind is null or name is null or name = '' or axis_header is null or axis_header = ''
    or (parent_node_key is null and (node_kind <> '款' or axis_header <> subject_axis))
    or (axis_header = subject_axis and (node_kind not in ('款','項','目')
-       or (code_text is null and node_kind in ('款', '項'))))
+       -- A 款 abolished this year prints no number and zero (131148 R7 用地: `(諸支出金) 0 506,045 △506,045`).
+       or (code_text is null and (node_kind = '項' or (node_kind = '款' and coalesce(amount_yen, 0) <> 0)))))
 union all
 -- node_id joins the key so numberless 目 (parent-based identity) never lump with their 項.
 -- Tables printing the whole account agree on the amount; the shares of division tables
