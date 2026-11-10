@@ -43,6 +43,7 @@
     "banded_projects": "ingestion.generic.patterns.readings.banded_projects",
     "offset_projects": "ingestion.generic.patterns.readings.offset_projects",
     "purpose_summary": "ingestion.generic.patterns.readings.purpose_summary",
+    "compared_years": "ingestion.generic.patterns.readings.compared_years",
     "turned_summary": "ingestion.generic.patterns.readings.turned_summary"
   },
   "component": {
