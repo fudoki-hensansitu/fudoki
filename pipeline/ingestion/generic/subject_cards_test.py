@@ -80,9 +80,6 @@ class SubjectCardsTest(unittest.TestCase):
         self.assertEqual([w.text for w in subject_cards.cut_at(Word('7028旅', 159, 0, 202, 9), 178)], ['702', '8旅'])
         self.assertEqual([w.text for w in subject_cards.cut_at(Word('13510需用費', 279, 0, 359, 9), 298)], ['135', '10需用費'])
 
-if __name__ == '__main__':
-    unittest.main()
-
     def test_a_block_is_divided_by_the_strokes_that_cross_it_whole(self):
         rules = [Rule(0, 100, 400, 100), Rule(0, 200, 400, 200), Rule(0, 300, 400, 300),  # rows of the block
                  Rule(150, 100, 150, 300),  # a cell edge from the first row to the last
@@ -95,3 +92,7 @@ if __name__ == '__main__':
         # The last card of a page: the empty space under its last row does not count against an edge.
         verticals, _ = subject_cards.dividing(page, 90, 560, 0, 400)
         self.assertEqual(verticals, [150])
+
+
+if __name__ == '__main__':
+    unittest.main()
