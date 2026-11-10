@@ -16,6 +16,7 @@ import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import type { PressItem } from './budget-press'
 import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
+import { pageHead } from './html'
 import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
 import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatPerCapita, formatYen, pageYears, reiwa, yearName, yearPath, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
@@ -877,6 +878,8 @@ export function Page({ data, sitekey, initialYear }: { data: PageData; sitekey: 
   const choose = (y: number) => {
     setYear(y)
     history.replaceState(null, '', yearPath(basePath(), y, years[0]!))
+    // 頁は読み直さないので、タブの title もその年度の頁と同じにする
+    document.title = pageHead(data, y === years[0] ? undefined : y).title
   }
 
   const money: TocItem[] = [
