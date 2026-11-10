@@ -21,8 +21,9 @@ test('紹介の頁は MCP とプライバシーポリシーへ繋ぎ、検索エ
   expect((await get('/sitemap.xml')).status).toBe(200)
   const meta = config.head?.meta ?? []
   expect(meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/og.png' })
-  // 自治体の頁は紋章があれば og:image を public/jurisdictions/<code>/og.png に差し替える（作るのは build:og）
-  for (const code of Object.keys(EMBLEMS)) expect(served(`/jurisdictions/${code}/og.png`), code).toBe(true)
+  // 自治体の頁は紋章と決算があれば og:image を public/jurisdictions/<code>/og.png に差し替える（作るのは build:og。決算の無い自治体には作らない）
+  for (const code of ['131091', '131148', '281000']) expect(served(`/jurisdictions/${code}/og.png`), code).toBe(true)
+  for (const code of Object.keys(EMBLEMS)) if (served(`/jurisdictions/${code}/og.png`)) expect(served(`/jurisdictions/${code}/emblem.svg`), code).toBe(true)
 })
 
 test('PWA: manifest・service worker・アイコン・オフラインの頁を返し、全頁の head から繋ぐ', async () => {
