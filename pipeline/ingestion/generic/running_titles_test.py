@@ -30,6 +30,18 @@ class RunningTitlesTest(unittest.TestCase):
         page = running_titles.drop_outside_columns(Page(9, 595, 842, [], rules))
         self.assertEqual(sorted(r.x0 for r in page.rules if r.vertical), [38, 519.4, 580])
 
+    def test_a_rule_drawn_in_two_pieces_is_a_full_rule_when_no_rule_spans_the_page(self):
+        # 杉並: every horizontal rule of the frame is drawn left of 576 and right of 654, none across.
+        rules = [Rule(38, y, 576, y) for y in (60, 120, 500)] + [Rule(654, y, 1150, y) for y in (60, 120, 500)]
+        rules += [Rule(38, 300, 400, 300)]  # a short row rule is no full rule
+        self.assertEqual(running_titles.full_rules(Page(1, 1191, 842, [], rules)), [60, 120, 500])
+        # Pieces further apart than a split rule are two rules.
+        apart = [Rule(38, 60, 400, 60), Rule(654, 60, 1150, 60)]
+        self.assertEqual(running_titles.full_rules(Page(1, 1191, 842, [], apart)), [])
+        # A page with a whole full rule keeps only its whole ones.
+        whole = [Rule(38, 60, 1150, 60), Rule(38, 120, 576, 120), Rule(654, 120, 1150, 120)]
+        self.assertEqual(running_titles.full_rules(Page(1, 1191, 842, [], whole)), [60])
+
     def test_a_frame_with_no_header_is_read_in_the_columns_of_the_table_under_it(self):
         columns = (39, 111, 589, 798)
         rules = [Rule(39, y, 798, y) for y in (100, 236, 250, 278, 318, 508)]
