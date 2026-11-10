@@ -11,7 +11,6 @@ from dataclasses import dataclass, field
 
 TITLE = re.compile(r'令和\s*(\d+)年度事務事業評価シート')
 ERA = 2018
-ERAS = {'令和': 2018, '平成': 1988, '昭和': 1925}
 GRADE = re.compile(r'^◆([ＡＢＣＤABCD])$')
 # 指標の表の段の見出し（「目標」「実績」）が置かれる x の帯
 INDICATOR_LABEL_X = (165, 195)
@@ -46,12 +45,8 @@ class Sheet:
     jigyo: str | None
     department: str | None
     division: str | None
-    period_start: int | None
-    period_end: int | None
     budget_thousand: int | None
     settled_thousand: int | None
-    cost_previous_thousand: int | None
-    cost_current_thousand: int | None
     grade_code: str | None
     grade_label: str | None
     direction: str | None
@@ -127,27 +122,11 @@ def read_page(page, number: int) -> Sheet | None:
     dept_row = left[find(left, '担当部署')]
     department = _after(dept_row, '担当部署', ('担当課',))
     division = _after(dept_row, '担当課', ('担当係',))
-    period_row = left[find(left, '事業期間')]
-    period_text = ''.join(w['text'] for w in period_row)
-    years = [ERAS[era] + (1 if n == '元' else int(n))
-             for era, n in re.findall(r'(令和|平成|昭和)(\d+|元)年度', _norm(period_text))]
-    period_start = years[0] if years else None
-    period_end = years[1] if len(years) > 1 else None
-
     total = next((row for row in right if row and _norm(row[0]['text']) == '計'), None)
     if total is None:
         raise ValueError(f'p{number}: 予算・決算の計の行が無い')
     amounts = [a for a in (_amount(w['text']) for w in total[1:]) if a is not None]
     budget_thousand, settled_thousand = (amounts[0], amounts[1]) if len(amounts) >= 2 else (None, None)
-
-    cost_previous = cost_current = None
-    for row in right:
-        texts = [_norm(w['text']) for w in row]
-        if texts[:2] == ['小計', 'D'] or (texts and texts[0] == '小計D'):
-            values = [a for a in (_amount(w['text']) for w in row if w['x0'] < 900) if a is not None]
-            if len(values) >= 2:
-                cost_previous, cost_current = values[0], values[1]
-            break
 
     final = next((i for i, row in enumerate(right) if _norm(''.join(w['text'] for w in row)) == '(2)最終評価'), None)
     if final is None:
@@ -164,8 +143,7 @@ def read_page(page, number: int) -> Sheet | None:
         raise ValueError(f'p{number}: 最終評価の区分（◆A〜◆D）が読めない')
 
     return Sheet(number, evaluation_year, evaluation_year - 1, _norm(name), account, kan, kou, moku, jigyo,
-                 department, division, period_start, period_end, budget_thousand, settled_thousand,
-                 cost_previous, cost_current, grade_code, grade_label, direction,
+                 department, division, budget_thousand, settled_thousand, grade_code, grade_label, direction,
                  _indicators(words, number))
 
 

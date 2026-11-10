@@ -106,8 +106,7 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
             tables['project_evaluation_sheet'].append((
                 origin_id(origin), sheet['page'], sheet['evaluation_year'], sheet['name'], sheet['account'],
                 sheet['kan'], sheet['kou'], sheet['moku'], sheet['jigyo'], sheet['department'], sheet['division'],
-                sheet['period_start'], sheet['period_end'], sheet['budget_thousand'], sheet['settled_thousand'],
-                sheet['cost_previous_thousand'], sheet['cost_current_thousand'], sheet['grade_code'],
+                sheet['budget_thousand'], sheet['settled_thousand'], sheet['grade_code'],
                 sheet['grade_label'], sheet['direction']))
             for indicator in sheet['indicators']:
                 tables['project_evaluation_indicator'].append((
@@ -144,8 +143,7 @@ SCHEMAS = {
                          'title varchar, url varchar, landing_url varchar, sha256 varchar',
     'project_evaluation_sheet': 'origin_id varchar, page integer, evaluation_year integer, name varchar, account_name varchar, '
                         'kan varchar, kou varchar, moku varchar, jigyo varchar, department varchar, division varchar, '
-                        'period_start_year integer, period_end_year integer, budget_thousand bigint, '
-                        'settled_thousand bigint, cost_previous_thousand bigint, cost_current_thousand bigint, '
+                        'budget_thousand bigint, settled_thousand bigint, '
                         'grade_code varchar, grade_label varchar, direction varchar',
     'project_evaluation_indicator': 'origin_id varchar, page integer, position integer, name varchar, unit varchar, '
                             'definition varchar, final_target_text varchar, final_target_year_text varchar',
