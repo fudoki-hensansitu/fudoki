@@ -85,7 +85,7 @@ export function countBinds(
   fiscalYear: { min: number; max: number },
   where: Record<string, Condition | undefined> | undefined
 ): number {
-  let n = 1 + Math.max(0, fiscalYear.max - fiscalYear.min + 1) // document_kind と fiscal_year の IN
+  let n = 1 + Math.max(0, fiscalYear.max - fiscalYear.min + 1) // document_kind（無い表でも数えて上限を揃える）と fiscal_year の IN
   for (const c of Object.values(where ?? {})) if (c !== undefined) n += bindsOf(c)
   return n
 }
@@ -99,14 +99,18 @@ const REQUIRED_COLUMNS = new Set(['document_kind', 'fiscal_year'])
 /** 資料区分・fiscal_year の範囲と where を、値を bind した WHERE に組み立てる。 */
 export function buildWhere(
   t: FiscalTable,
-  documentKind: string,
+  documentKind: string | undefined,
   fiscalYear: { min: number; max: number },
   where: Record<string, Condition | undefined> | undefined
 ): { sql: string; params: (string | number)[] } {
   // 範囲（>= AND <=）にすると複合 index の後続の列が効かないので、幅が5年以内の年を IN に展開する。
   const years = Array.from({ length: Math.min(MAX_YEARS, Math.max(0, fiscalYear.max - fiscalYear.min + 1)) }, (_, i) => fiscalYear.min + i)
-  const parts = [`"fiscal_year" IN (${years.map(() => '?').join(', ')})`, '"document_kind" = ?']
-  const params: (string | number)[] = [...years, documentKind]
+  const parts = [`"fiscal_year" IN (${years.map(() => '?').join(', ')})`]
+  const params: (string | number)[] = [...years]
+  if (t.hasDocumentKind) {
+    parts.push('"document_kind" = ?')
+    params.push(documentKind!)
+  }
   const bind = (column: string, op: string, value: string | number) => {
     parts.push(`"${column}" ${op} ?`)
     params.push(value)
@@ -160,51 +164,66 @@ export function canonicalJson(value: unknown): string {
   return JSON.stringify(value) ?? 'null'
 }
 
-/** 表ごとの検索の入力。where・order_by の列は表の列（必須の列を除く）。 */
-export function searchInputFor(t: FiscalTable) {
+const DOCUMENT_KIND_INPUT = z
+  .enum(DOCUMENT_KINDS)
+  .describe('Required document kind: settlement (executed expenditure) or initial (initial budget). One query never mixes amounts with different meanings.')
+
+/** 検索の入力の共通の項目。where・order_by の列は表の列（必須の列を除く）。 */
+function searchShape(t: FiscalTable) {
   const columnNames = t.columns.map((c) => c.name).filter((n) => n !== 'document_kind') as [string, ...string[]]
   const whereSchema = z.strictObject(
     Object.fromEntries(
       t.columns.filter((c) => !REQUIRED_COLUMNS.has(c.name)).map((c) => [c.name, conditionOf(c.type).optional()])
     )
   )
-  return z
-    .strictObject({
-      document_kind: z.enum(DOCUMENT_KINDS).describe('Required document kind: settlement (executed expenditure) or initial (initial budget). One query never mixes amounts with different meanings.'),
-      fiscal_year: z
-        .strictObject({
-          min: z.int().min(1).max(9999),
-          max: z.int().min(1).max(9999),
+  return {
+    fiscal_year: z
+      .strictObject({
+        min: z.int().min(1).max(9999),
+        max: z.int().min(1).max(9999),
+      })
+      .describe(`Required fiscal year range in Gregorian years, spanning at most ${MAX_YEARS} years (max - min <= ${MAX_YEARS - 1}).`),
+    where: whereSchema.optional().describe('Conditions per column, combined with AND.'),
+    order_by: z
+      .array(
+        z.strictObject({
+          column: z.enum(columnNames),
+          desc: z.boolean().optional(),
         })
-        .describe(`Required fiscal year range in Gregorian years, spanning at most ${MAX_YEARS} years (max - min <= ${MAX_YEARS - 1}).`),
-      where: whereSchema.optional().describe('Conditions per column, combined with AND.'),
-      order_by: z
-        .array(
-          z.strictObject({
-            column: z.enum(columnNames),
-            desc: z.boolean().optional(),
-          })
-        )
-        .max(MAX_ORDER_KEYS)
-        .optional()
-        .describe(`Sort order; ${t.primaryKey} is appended as a tie breaker.`),
-      page_size: z.int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe('Number of results per page.'),
-      page_token: z.string().max(512).regex(/^[A-Za-z0-9_-]*$/, 'page_token の形式が不正です').optional().describe('next_page_token from the previous response. Keep all input except page_size unchanged.'),
-    })
-    .superRefine((v, ctx) => {
-      if (v.fiscal_year.max < v.fiscal_year.min)
-        ctx.addIssue({ code: 'custom', path: ['fiscal_year'], message: 'fiscal_year は max >= min にしてください' })
-      else if (v.fiscal_year.max - v.fiscal_year.min + 1 > MAX_YEARS)
-        ctx.addIssue({ code: 'custom', path: ['fiscal_year'], message: `fiscal_year は ${MAX_YEARS} 年以内にしてください` })
-      const binds = countBinds(v.fiscal_year, v.where as Record<string, Condition | undefined> | undefined)
-      if (binds > MAX_BINDS)
-        ctx.addIssue({ code: 'custom', path: ['where'], message: `資料区分・年と条件の値の合計は ${MAX_BINDS} 個までです（今 ${binds} 個）` })
-      const seen = new Set<string>()
-      for (const k of v.order_by ?? []) {
-        if (seen.has(k.column)) ctx.addIssue({ code: 'custom', path: ['order_by'], message: `order_by に同じ列が複数あります: ${k.column}` })
-        seen.add(k.column)
-      }
-    })
+      )
+      .max(MAX_ORDER_KEYS)
+      .optional()
+      .describe(`Sort order; ${t.primaryKey} is appended as a tie breaker.`),
+    page_size: z.int().min(1).max(MAX_PAGE_SIZE).default(DEFAULT_PAGE_SIZE).describe('Number of results per page.'),
+    page_token: z.string().max(512).regex(/^[A-Za-z0-9_-]*$/, 'page_token の形式が不正です').optional().describe('next_page_token from the previous response. Keep all input except page_size unchanged.'),
+  }
 }
 
-export type SearchInput = z.output<ReturnType<typeof searchInputFor>>
+type ShapeValue = { fiscal_year: { min: number; max: number }; where?: Record<string, unknown>; order_by?: { column: string }[] }
+
+function checkSearch(v: ShapeValue, ctx: z.RefinementCtx) {
+  if (v.fiscal_year.max < v.fiscal_year.min)
+    ctx.addIssue({ code: 'custom', path: ['fiscal_year'], message: 'fiscal_year は max >= min にしてください' })
+  else if (v.fiscal_year.max - v.fiscal_year.min + 1 > MAX_YEARS)
+    ctx.addIssue({ code: 'custom', path: ['fiscal_year'], message: `fiscal_year は ${MAX_YEARS} 年以内にしてください` })
+  const binds = countBinds(v.fiscal_year, v.where as Record<string, Condition | undefined> | undefined)
+  if (binds > MAX_BINDS)
+    ctx.addIssue({ code: 'custom', path: ['where'], message: `資料区分・年と条件の値の合計は ${MAX_BINDS} 個までです（今 ${binds} 個）` })
+  const seen = new Set<string>()
+  for (const k of v.order_by ?? []) {
+    if (seen.has(k.column)) ctx.addIssue({ code: 'custom', path: ['order_by'], message: `order_by に同じ列が複数あります: ${k.column}` })
+    seen.add(k.column)
+  }
+}
+
+/** 歳出の表の検索の入力（資料区分と年度が必須） */
+export function searchInputFor(t: FiscalTable) {
+  return z.strictObject({ document_kind: DOCUMENT_KIND_INPUT, ...searchShape(t) }).superRefine(checkSearch)
+}
+
+/** 資料区分の無い表（評価シート・施策）の検索の入力（年度が必須） */
+export function yearSearchInputFor(t: FiscalTable) {
+  return z.strictObject(searchShape(t)).superRefine(checkSearch)
+}
+
+export type SearchInput = z.output<ReturnType<typeof yearSearchInputFor>> & { document_kind?: string }

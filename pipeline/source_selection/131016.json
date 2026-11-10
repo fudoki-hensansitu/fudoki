@@ -3490,5 +3490,121 @@
       },
       "reason": "令和2年度決算の主要施策の成果（分冊9ファイル・計159頁、令和3年9月提出）。1頁目が「主要施策の成果 令和2年度 令和3年9月 千代田区」、分冊2が「Ⅰ 令和2年度決算の状況」（一般会計歳入79,350,132,042円・歳出76,528,868,511円）、分冊3以降が部別の「施策の成果と事務事業評価」で、事業ごとに事業概要・事業費（決算額）・実績・評価・課題を載せる。文字として読める。令和2年度の全体版（r2seika-zentai.pdf、8,012,732バイト）と分冊は同じ内容だが、現行の公式URL（r2-seika.html・documents/27485/r2seika-*.pdf）は現在404で、Wayback Machine の保存版（2025-10-08取得）でも全体版は冒頭5MBで切れる（wayback の \"content truncated by length\"）ため、完全に取得できる分冊9ファイルを選んだ。download_url は実際に取得した Wayback のURL、元の公式URLは https://www.city.chiyoda.lg.jp/documents/27485/r2seika-1.pdf 〜 r2seika-9.pdf（および全体版 r2seika-zentai.pdf）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131016",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度当初予算（案）プレス資料",
+          "landing_url": "https://www.city.chiyoda.lg.jp/koho/kuse/zaise/yosan/index.html",
+          "inspected_at": "2026-11-10T06:53:27+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chiyoda.lg.jp/documents/583/r6press_1.pdf",
+              "sha256": "464b54dcbedd6cdaec6e82250cef731166795efbd0ac676947a645d76462317a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131016/2024/press-initial.pdf",
+            "sha256": "464b54dcbedd6cdaec6e82250cef731166795efbd0ac676947a645d76462317a",
+            "final_url": "https://www.city.chiyoda.lg.jp/documents/583/r6press_1.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:54:22.915Z"
+      },
+      "reason": "予算の頁（https://www.city.chiyoda.lg.jp/koho/kuse/zaise/yosan/index.html）に載る当初予算（案）のプレス資料（48頁、文字PDF）。令和6年1月30日発表。目次に当初予算（案）の概括（特徴・予算規模）と重点的に取り組む施策（予算編成方針に基づく6つのテーマ、子ども・子育て支援施策、DX の推進、分野別重点施策）を載せ、施策ごとに見出し・取組名・予算額（億円・万円）・説明と予算説明書の頁を載せる。同じ頁の「令和6年度区の仕事のあらまし（予算の概要）」（https://www.city.chiyoda.lg.jp/koho/kuse/zaise/yosan/r6-yosan.html）は事業全体の概要の冊子で、プレス発表の資料ではないので含めない。確認日 2026-11-10T06:53:27+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131016",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度当初予算（案）プレス資料",
+          "landing_url": "https://www.city.chiyoda.lg.jp/koho/kuse/zaise/yosan/index.html",
+          "inspected_at": "2026-11-10T06:53:27+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chiyoda.lg.jp/documents/583/r7press.pdf",
+              "sha256": "f95915de09941add8e9eed3dc7e2281f25ad44938b30a9e1965d91c40531557c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131016/2025/press-initial.pdf",
+            "sha256": "f95915de09941add8e9eed3dc7e2281f25ad44938b30a9e1965d91c40531557c",
+            "final_url": "https://www.city.chiyoda.lg.jp/documents/583/r7press.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:54:25.496Z"
+      },
+      "reason": "予算の頁（https://www.city.chiyoda.lg.jp/koho/kuse/zaise/yosan/index.html）に載る当初予算（案）のプレス資料（68頁、文字PDF）。令和7年2月18日発表。目次に当初予算（案）の概括と重点的に取り組む施策（子ども・子育て支援施策、高齢者施策、持続的に発展するまちづくり、デジタル技術の活用、組織変革の推進）を載せ、施策ごとに見出し・事業名・予算額（万円、プレス掲載内容を含む事業全体の額と注記）・説明を載せる。同じ頁の「令和7年度区の仕事のあらまし（予算の概要）」（https://www.city.chiyoda.lg.jp/koho/kuse/zaise/yosan/r7-yosan.html）は別の資料で含めない。確認日 2026-11-10T06:53:27+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131016",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度当初予算（案）プレス資料",
+          "landing_url": "https://www.city.chiyoda.lg.jp/koho/kuse/zaise/yosan/index.html",
+          "inspected_at": "2026-11-10T06:53:27+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.chiyoda.lg.jp/documents/583/r8press_1.pdf",
+              "sha256": "5ec34d12c117e14d703544129f71c87e71c41cc905c17e42bd6d553b497fca01",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131016/2026/press-initial.pdf",
+            "sha256": "5ec34d12c117e14d703544129f71c87e71c41cc905c17e42bd6d553b497fca01",
+            "final_url": "https://www.city.chiyoda.lg.jp/documents/583/r8press_1.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:54:28.558Z"
+      },
+      "reason": "予算の頁（https://www.city.chiyoda.lg.jp/koho/kuse/zaise/yosan/index.html）に載る当初予算（案）のプレス資料（48頁、文字PDF）。目次に当初予算（案）の概括（特徴・予算規模・物価高騰対策）、重点的に取り組む施策（子育て・教育の充実、福祉の充実、地域の活性化と産業振興、持続可能な社会、安全・安心、スマートな暮らし）、新規施設・公園整備を載せ、施策ごとに見出し・事業名・新規の印・予算額（万円、原則事業全体の額）・説明を載せる。同じ頁の「令和8年度区の仕事のあらまし（予算の概要）」（https://www.city.chiyoda.lg.jp/koho/kuse/zaise/yosan/r8-yosan.html）は別の資料で含めない。確認日 2026-11-10T06:53:27+00:00。"
+    }
   ]
 }

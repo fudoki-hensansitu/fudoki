@@ -334,7 +334,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。青ヶ島村HP（http://www.vill.aogashima.tokyo.jp/）に財政・決算・評価の掲載頁なし。村政頁（.../office/）は概要・村長挨拶・職員募集のみ、お知らせ（.../news/）も評価資料なし。確認日：2026-10-22T04:18:59+00:00（UTC）。"
+      "reason": "未選定。青ヶ島村HP（http://www.vill.aogashima.tokyo.jp/）に財政・決算・評価の掲載頁なし。村政頁（.../office/）は概要・村長挨拶・職員募集のみ、お知らせ（.../news/）も評価資料なし。確認日：2026-11-10T07:06:51+00:00（UTC）。"
     },
     {
       "target": {
@@ -357,6 +357,41 @@
       "selected_candidate_id": null,
       "archive": null,
       "reason": "青ヶ島村の評価資料を探した。ブラウザで描画して確認した頁: https://www.vill.aogashima.tokyo.jp/（トップ）、https://www.vill.aogashima.tokyo.jp/office/（役場）。DuckDuckGo の site 検索でも事業の評価資料は無く、教育委員会の点検・評価（選ばない対象）と計画本体のみ。確認日：2026-10-23（UTC）。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "134023",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。青ヶ島村のサイト（http://www.vill.aogashima.tokyo.jp/top.html）は1頁の案内で、村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料、財政・予算の頁は無い。当初予算は広報あおがしま4月号の記事（款別の内訳と主要事業名の抜粋）に載るだけで、広報紙は町村の方針で候補にしない。確認日 2026-11-10T07:06:51+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "134023",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。青ヶ島村のサイト（http://www.vill.aogashima.tokyo.jp/top.html）は1頁の案内で、村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料、財政・予算の頁は無い。当初予算は広報あおがしま4月号の記事（款別の内訳と主要事業名の抜粋）に載るだけで、広報紙は町村の方針で候補にしない。確認日 2026-11-10T07:06:51+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "134023",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。青ヶ島村のサイト（http://www.vill.aogashima.tokyo.jp/top.html）は1頁の案内で、村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料、財政・予算の頁は無い。当初予算は広報あおがしま4月号の記事（款別の内訳と主要事業名の抜粋）に載るだけで、広報紙は町村の方針で候補にしない。確認日 2026-11-10T07:06:51+00:00。"
     }
   ]
 }

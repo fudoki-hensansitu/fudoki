@@ -72,10 +72,10 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
     sqlite.exec(`INSERT INTO budget_proposal (budget_proposal_id, jurisdiction_code, fiscal_year) VALUES ('b1', '132039', 2026)`)
     const [j] = (await list('?code=132039')).jurisdictions
     expect(j.population.map((p: { reference_date: string }) => p.reference_date)).toEqual(['2025-01-01', '2026-01-01'])
-    expect(j.evaluation_years).toEqual([2024, 2025])
-    expect(j.budget_proposal_years).toEqual([2026])
+    expect(j.evaluations).toEqual([{ evaluation_id: 'e1', fiscal_year: 2024 }, { evaluation_id: 'e2', fiscal_year: 2025 }])
+    expect(j.budget_proposals).toEqual([{ budget_proposal_id: 'b1', fiscal_year: 2026 }])
     const detail = await (await get('/v1/jurisdictions/132039')).json()
-    expect([detail.evaluation_years, detail.budget_proposal_years]).toEqual([[2024, 2025], [2026]])
+    expect([detail.evaluations.map((e: { fiscal_year: number }) => e.fiscal_year), detail.budget_proposals.length]).toEqual([[2024, 2025], 1])
   })
 
   test('1つの自治体は、人口の推移と収録している年度・資料区分・会計・出典を1回で得る', async () => {
@@ -111,8 +111,8 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
               ],
             },
           ],
-          evaluation_years: [],
-          budget_proposal_years: [],
+          evaluations: [],
+          budget_proposals: [],
           uncovered_sources: UNCOVERED_SOURCES,
     })
     expect((await get('/v1/jurisdictions/999999')).status).toBe(404)

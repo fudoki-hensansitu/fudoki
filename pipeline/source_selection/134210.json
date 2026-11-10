@@ -5466,7 +5466,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。小笠原村に2025年度の評価資料の公表なし。決算の掲載頁（https://www.vill.ogasawara.tokyo.jp/zaisei/zaisei_kessan/）の最新は令和5年度決算概要・主要な施策の成果報告書と令和6年度決算カードで、令和7年度分の掲載なし。サイト内検索（行政評価）に合致する記事なし。確認日：2026-10-22T04:19:32+00:00（UTC）。"
+      "reason": "未選定。小笠原村に2025年度の評価資料の公表なし。決算の掲載頁（https://www.vill.ogasawara.tokyo.jp/zaisei/zaisei_kessan/）の最新は令和5年度決算概要・主要な施策の成果報告書と令和6年度決算カードで、令和7年度分の掲載なし。サイト内検索（行政評価）に合致する記事なし。確認日：2026-11-10T07:07:41+00:00（UTC）。"
     },
     {
       "target": {
@@ -5489,6 +5489,41 @@
       "selected_candidate_id": null,
       "archive": null,
       "reason": "小笠原村の評価資料を探した。ブラウザで描画して確認した頁: https://www.vill.ogasawara.tokyo.jp/kikaku_seisaku/comprehensiveplan/（小笠原村総合計画）。DuckDuckGo の site 検索でも、補助事業ごとの事業評価書（個別の補助金の事後評価）、教育委員会の点検・評価（選ばない対象）、計画本体のみで、全体の評価資料は無い。確認日：2026-10-23（UTC）。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "134210",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。小笠原村のサイトに村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は無い。財政課の予算の頁（https://www.vill.ogasawara.tokyo.jp/zaisei/zaisei_yosan/）は令和6〜8年度とも各会計の当初・補正予算の議案・説明書（予算書本体）と地方消費税交付金（社会保障財源化分）の使途の表だけで、サイト内検索「予算の概要」（https://www.vill.ogasawara.tokyo.jp/?s=予算の概要）にも該当する資料は出ない。確認日 2026-11-10T07:07:41+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "134210",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。小笠原村のサイトに村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は無い。財政課の予算の頁（https://www.vill.ogasawara.tokyo.jp/zaisei/zaisei_yosan/）は令和6〜8年度とも各会計の当初・補正予算の議案・説明書（予算書本体）と地方消費税交付金（社会保障財源化分）の使途の表だけで、サイト内検索「予算の概要」（https://www.vill.ogasawara.tokyo.jp/?s=予算の概要）にも該当する資料は出ない。確認日 2026-11-10T07:07:41+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "134210",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。小笠原村のサイトに村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の資料は無い。財政課の予算の頁（https://www.vill.ogasawara.tokyo.jp/zaisei/zaisei_yosan/）は令和6〜8年度とも各会計の当初・補正予算の議案・説明書（予算書本体）と地方消費税交付金（社会保障財源化分）の使途の表だけで、サイト内検索「予算の概要」（https://www.vill.ogasawara.tokyo.jp/?s=予算の概要）にも該当する資料は出ない。確認日 2026-11-10T07:07:41+00:00。"
     }
   ]
 }

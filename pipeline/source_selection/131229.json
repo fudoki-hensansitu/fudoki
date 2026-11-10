@@ -2458,5 +2458,121 @@
       },
       "reason": "令和5年度実績を令和6年度に評価した葛飾区行政評価の評価表。事務事業ごとに事業概要・目的・内容、予算及び決算状況（Ｒ３〜Ｒ６年度。最新の決算は令和5年度）、事業指標の目標値と実績値（最新が令和5年度）、評価（必要性・効率性・有効性）、総合評価、今後の方向性、目標との乖離の考察を載せる。本文に「令和５年度末時点で…16.9㎞が完了」「令和５年度の広報かつしかに掲…」とあり実績は令和5年度。文字として読める。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131229",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度当初予算案区長記者会見主要事業取材メモ",
+          "landing_url": "https://www.city.katsushika.lg.jp/information/kucho/1030245/1028091/1031163/1034384.html",
+          "inspected_at": "2026-11-10T07:22:44+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/034/384/syuzaimemo.pdf",
+              "sha256": "bde552c0a19c9382eb4c7f405c2d76c44e5eb7c4c59d02d44654d4b92c389669",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131229/2024/press-initial.pdf",
+            "sha256": "bde552c0a19c9382eb4c7f405c2d76c44e5eb7c4c59d02d44654d4b92c389669",
+            "final_url": "https://www.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/034/384/syuzaimemo.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:22:51.830Z"
+      },
+      "reason": "区長記者会見の頁「令和6年度当初予算案区長記者会見（令和6年2月6日）」（https://www.city.katsushika.lg.jp/information/kucho/1030245/1028091/1031163/1034384.html）に載る「令和6年度当初予算案区長記者会見主要事業取材メモ」（40頁、文字PDF。この頁に載る資料はこれだけ）。目次のとおり、予算編成のポイント・当初予算案の規模・款別表に続き、「当初予算案の主な項目」（P.6〜）で分野ごとに事業ごとの頁を設け、事業名・所管課・予算額（百万円）・説明（現行と新年度の比較など）を載せる。予算の頁の「令和6年度葛飾区予算概要」（https://www.city.katsushika.lg.jp/information/1000085/1006293/1034308.html）は議決後の3月に作られた冊子で、予算案の発表資料ではないので選ばない。確認日 2026-11-10T07:22:44+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131229",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度当初予算案区長記者会見主要事業取材メモ",
+          "landing_url": "https://www.city.katsushika.lg.jp/information/kucho/1030245/1028091/1035820/1037630.html",
+          "inspected_at": "2026-11-10T07:22:44+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/037/630/memo.pdf",
+              "sha256": "367b3a5d79d70d849f0362769e8280fdcf4145c4954af64e6104fecce3a3837e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131229/2025/press-initial.pdf",
+            "sha256": "367b3a5d79d70d849f0362769e8280fdcf4145c4954af64e6104fecce3a3837e",
+            "final_url": "https://www.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/037/630/memo.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:23:07.266Z"
+      },
+      "reason": "区長記者会見の頁「令和7年度当初予算案区長記者会見（令和7年2月5日）」（https://www.city.katsushika.lg.jp/information/kucho/1030245/1028091/1035820/1037630.html）に載る「令和7年度当初予算案区長記者会見主要事業取材メモ」（33頁、文字PDF。この頁に載る資料はこれだけ）。目次のとおり、予算編成のポイント・当初予算案の規模・款別表に続き、「当初予算案の主な項目」（P.6〜）で分野ごとに事業ごとの頁を設け、事業名・所管課・予算額（百万円）・説明（現行と新年度の比較など）を載せる。予算の頁の「令和7年度葛飾区予算概要」（https://www.city.katsushika.lg.jp/information/1000085/1006293/1037487.html）は議決後の3月に作られた冊子で、予算案の発表資料ではないので選ばない。確認日 2026-11-10T07:22:44+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131229",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度当初予算案区長記者会見主要事業取材メモ",
+          "landing_url": "https://www.city.katsushika.lg.jp/information/kucho/1030245/1028091/1038918/1041111.html",
+          "inspected_at": "2026-11-10T07:22:44+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/041/111/siryou.pdf",
+              "sha256": "874454fd7d91546b335b3bb293cf6d5f536bdd8a2d9b6feab303816344288846",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131229/2026/press-initial.pdf",
+            "sha256": "874454fd7d91546b335b3bb293cf6d5f536bdd8a2d9b6feab303816344288846",
+            "final_url": "https://www.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/041/111/siryou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:23:20.811Z"
+      },
+      "reason": "区長記者会見の頁「令和8年度当初予算案区長記者会見（令和8年2月5日）」（https://www.city.katsushika.lg.jp/information/kucho/1030245/1028091/1038918/1041111.html）に載る「令和8年度当初予算案区長記者会見主要事業取材メモ」（37頁、文字PDF。この頁に載る資料はこれだけ）。目次のとおり、予算編成のポイント・当初予算案の規模・款別表に続き、「当初予算案のピックアップ項目」（P.6〜17）で分野ごとに事業ごとの頁を設け、事業名・所管課・予算額（百万円）・説明（現行と新年度の比較など）を載せる。予算の頁の「令和8年度葛飾区予算概要」（https://www.city.katsushika.lg.jp/information/1000085/1006293/1041034.html）は議決後の3月に作られた冊子で、予算案の発表資料ではないので選ばない。確認日 2026-11-10T07:22:44+00:00。"
+    }
   ]
 }

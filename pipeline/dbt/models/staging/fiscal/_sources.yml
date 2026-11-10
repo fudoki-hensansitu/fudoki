@@ -2660,6 +2660,102 @@ sources:
       direction: expenditure
       table_id: nhi-expenditure-detail
       kind: nodes
+  - name: j131229_2024_initial_care_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: amounts
+  - name: j131229_2024_initial_care_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: nodes
+  - name: j131229_2024_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j131229_2024_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j131229_2024_initial_general_initial_1_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: amounts
+  - name: j131229_2024_initial_general_initial_1_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: nodes
+  - name: j131229_2024_initial_general_initial_2_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-2
+      kind: amounts
+  - name: j131229_2024_initial_general_initial_2_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-2
+      kind: nodes
+  - name: j131229_2024_initial_land_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: amounts
+  - name: j131229_2024_initial_land_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: nodes
+  - name: j131229_2024_initial_parking_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: parking-initial
+      kind: amounts
+  - name: j131229_2024_initial_parking_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: parking-initial
+      kind: nodes
   - name: j131229_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '131229'
@@ -2675,6 +2771,182 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: general-expenditure
+      kind: nodes
+  - name: j131229_2025_initial_care_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: amounts
+  - name: j131229_2025_initial_care_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: nodes
+  - name: j131229_2025_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j131229_2025_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j131229_2025_initial_general_initial_1_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: amounts
+  - name: j131229_2025_initial_general_initial_1_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: nodes
+  - name: j131229_2025_initial_general_initial_2_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-2
+      kind: amounts
+  - name: j131229_2025_initial_general_initial_2_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-2
+      kind: nodes
+  - name: j131229_2025_initial_land_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: amounts
+  - name: j131229_2025_initial_land_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: nodes
+  - name: j131229_2025_initial_parking_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: parking-initial
+      kind: amounts
+  - name: j131229_2025_initial_parking_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: parking-initial
+      kind: nodes
+  - name: j131229_2026_initial_care_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: amounts
+  - name: j131229_2026_initial_care_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: nodes
+  - name: j131229_2026_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j131229_2026_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j131229_2026_initial_general_initial_1_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: amounts
+  - name: j131229_2026_initial_general_initial_1_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: nodes
+  - name: j131229_2026_initial_land_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: amounts
+  - name: j131229_2026_initial_land_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: land-initial
+      kind: nodes
+  - name: j131229_2026_initial_parking_initial_amounts
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: parking-initial
+      kind: amounts
+  - name: j131229_2026_initial_parking_initial_nodes
+    meta:
+      jurisdiction: '131229'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: parking-initial
       kind: nodes
   - name: j131237_2024_settlement_general_expenditure_detail_amounts
     meta:
@@ -5347,6 +5619,86 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132233_2025_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j132233_2025_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j132233_2025_settlement_kaigo_expenditure_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure
+      kind: amounts
+  - name: j132233_2025_settlement_kaigo_expenditure_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kaigo-expenditure
+      kind: nodes
+  - name: j132233_2025_settlement_kokuho_expenditure_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-expenditure
+      kind: amounts
+  - name: j132233_2025_settlement_kokuho_expenditure_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kokuho-expenditure
+      kind: nodes
+  - name: j132233_2025_settlement_kouki_expenditure_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure
+      kind: amounts
+  - name: j132233_2025_settlement_kouki_expenditure_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: kouki-expenditure
+      kind: nodes
+  - name: j132233_2025_settlement_toshikaku_expenditure_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: toshikaku-expenditure
+      kind: amounts
+  - name: j132233_2025_settlement_toshikaku_expenditure_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: toshikaku-expenditure
       kind: nodes
   - name: j132241_2024_settlement_elderly_medical_expenditure_amounts
     meta:

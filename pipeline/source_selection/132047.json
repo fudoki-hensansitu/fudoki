@@ -8903,5 +8903,121 @@
       },
       "reason": "令和2年度決算の「各会計決算概要 ― 主要な施策の成果 ―」（3分冊）。1冊目の表紙が「令和2年度各会計決算概要 ―主要施策の成果― 三鷹市」で、決算年度は令和2年度（2020年度）。市政運営の基本的な考え方とその成果、主要事業一覧、款ごとの主要事業の成果（一般会計・特別会計）、三鷹市都市経営アクションプラン等の主な取組状況を載せる。主要事業ごとに事業概要・予算現額・決算額と、重点管理事業は「部の方針と重点管理事業 目標⇒達成状況」（計画した時期・内容に対する実績）と実績・内容を載せる。文字として読める。ただし課題・今後の方向を事業ごとに体系立てて書く形ではなく、評価の記述は目標と達成状況・実績にとどまる。市全体の事務事業評価・行政評価は見つからなかった（行政評価の頁は基本的な考え方の文書のみ）ため、決算説明書の中で最も評価に近い資料としてこれを候補にする。ファイルは決算概要の下位頁「決算概要（1）」（/c_service/104/104592.html）に掲載されている。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132047",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年第1回市議会定例会前の記者会見 配布資料",
+          "landing_url": "https://www.city.mitaka.lg.jp/c_press/107/107657.html",
+          "inspected_at": "2026-11-10T07:04:56+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.mitaka.lg.jp/c_press/107/attached/attach_107657_1.pdf",
+              "sha256": "7ea18153a13635b139f001a2a1dd03b85187c2233d1c7f6bab9e8bc574c6d1fe",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132047/2024/press-initial.pdf",
+            "sha256": "7ea18153a13635b139f001a2a1dd03b85187c2233d1c7f6bab9e8bc574c6d1fe",
+            "final_url": "https://www.city.mitaka.lg.jp/c_press/107/attached/attach_107657_1.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:05:08.528Z"
+      },
+      "reason": "報道発表の頁「2月16日（金曜日）開催 定例記者会見」（https://www.city.mitaka.lg.jp/c_press/107/107657.html）に載る令和6年第1回市議会定例会前の記者会見の配布資料（16頁、文字PDF）。目次のあと、11項目（能登半島地震の被災地支援、学校給食費の無償化、三鷹駅前地区再開発、国立天文台と連携したまちづくり、みたか地域ポイント、人権条例、井口特設グラウンド、牟礼の里農園、地域福祉コーディネーター、カーボンオフセット、吉村昭書斎）を1〜2頁ずつ、施政方針の参照頁・当初予算/議案関係の区分、事業の目的・内容、【歳出】【歳入】の予算額（千円）で載せる。議案関係（人権条例）と義援金は当初予算の事業ではない。配布資料が添付と記す「令和6年度施政方針 予算概要」はこのファイルに含まれず、市長の施政方針の冊子なので選ばない。確認日 2026-11-10T07:04:56+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132047",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年第1回市議会定例会前の記者会見 配布資料",
+          "landing_url": "https://www.city.mitaka.lg.jp/c_press/113/113044.html",
+          "inspected_at": "2026-11-10T07:04:58+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.mitaka.lg.jp/c_press/113/attached/attach_113044_1.pdf",
+              "sha256": "c9f079650c1b2c23e14af029aada0c3c1b9fd1c5c8ddc150d51ad216ecdfbf15",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132047/2025/press-initial.pdf",
+            "sha256": "c9f079650c1b2c23e14af029aada0c3c1b9fd1c5c8ddc150d51ad216ecdfbf15",
+            "final_url": "https://www.city.mitaka.lg.jp/c_press/113/attached/attach_113044_1.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:05:11.176Z"
+      },
+      "reason": "報道発表の頁「2月17日（月曜日）開催 定例記者会見」（https://www.city.mitaka.lg.jp/c_press/113/113044.html）に載る令和7年第1回市議会定例会前の記者会見の配布資料（20頁、文字PDF）。目次のあと、17項目（防災・減災、三鷹駅前地区再開発、三鷹幼稚園跡地の子どもの居場所、国立天文台、井口グラウンド、中原小学校の建替え設計、公共交通網の見直し、森のアトリエ、戦後80年平和事業、大沢総合グラウンド、三鷹産業プラザ新創業支援施設ほか）を1頁ずつ、施政方針の参照頁・当初予算/議案関係の区分、事業の目的・内容、【歳出】【歳入】の予算額（千円）で載せる。添付と記す「令和7年度施政方針 予算概要」はこのファイルに含まれず、市長の施政方針の冊子なので選ばない。確認日 2026-11-10T07:04:58+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132047",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年第1回定例会前の記者会見 配布資料",
+          "landing_url": "https://www.city.mitaka.lg.jp/c_press/118/118245.html",
+          "inspected_at": "2026-11-10T07:05:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.mitaka.lg.jp/c_press/118/attached/attach_118245_1.pdf",
+              "sha256": "0f16d492a046b5d6a0d3dde8429db47a3afa8d04acbad6b15eb21223a2734952",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132047/2026/press-initial.pdf",
+            "sha256": "0f16d492a046b5d6a0d3dde8429db47a3afa8d04acbad6b15eb21223a2734952",
+            "final_url": "https://www.city.mitaka.lg.jp/c_press/118/attached/attach_118245_1.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:05:13.651Z"
+      },
+      "reason": "報道発表の頁「2月17日（火曜日）開催 定例記者会見」（https://www.city.mitaka.lg.jp/c_press/118/118245.html）に載る令和8年第1回定例会前の記者会見の配布資料（18頁、文字PDF）。目次のあと、15項目（平和の日を中心とした平和施策、猛暑・熱中症対策、学校3部制、長期欠席・不登校支援、子どものあそびと学びの施設、認知症条例を踏まえた事業、要支援者の支援体制、OriHime による障がい者雇用支援、創業・商店街・観光、牟礼里山農園、三鷹まるごと博物館、吉村昭記念事業、森のアトリエ、窓口サービス、廃食用油の回収）を1頁ずつ、当初予算/議案関係の区分、事業の目的・内容、【歳出】【歳入】の予算額（千円）で載せる。施政方針は市長の説明の冊子なので選ばない。確認日 2026-11-10T07:05:00+00:00。"
+    }
   ]
 }

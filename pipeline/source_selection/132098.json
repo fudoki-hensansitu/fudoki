@@ -3728,5 +3728,121 @@
       },
       "reason": "2023年度決算の「主要な施策の成果に関する説明書」（地方自治法第233条第5項）として作成された課別・事業別行政評価シート。部課ごとの21分冊。シート表題「2023年度 事業別行政評価シート」で、成果指標の実績は2021年度・2022年度・2023年度（最新が2023年度）、本文は「2022年度末の総括と2023年度の状況」。事業目的、課題と取り組み状況、成果指標の目標と実績、成果の説明、行政コスト計算書、総括を載せる。文字として読める。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132098",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度（2024年度）予算概要説明書（記者会見用）",
+          "landing_url": "https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2023/20240215.html",
+          "inspected_at": "2026-11-10T07:20:12+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2023/20240215.files/0215-6.pdf",
+              "sha256": "61da618109a95feaef3f864cf92b055fce6f59581d71486461d1bcb2442cd741",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132098/2024/press-initial.pdf",
+            "sha256": "61da618109a95feaef3f864cf92b055fce6f59581d71486461d1bcb2442cd741",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2023/20240215.files/0215-6.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:20:39.208Z"
+      },
+      "reason": "市長記者会見資料の頁（https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2023/20240215.html、2024年2月15日開催分「令和6年（2024年）第1回町田市議会定例会」の議案について）に載る「令和6年度（2024年度）予算概要説明書（記者会見用）」（91頁、文字PDF）。予算のポイント（編成方針・予算フレーム）・歳入歳出の状況・基金と市債・5ヵ年計画の財政見通しのあと、「町田市5ヵ年計画22-26の2024年度重点事業（事業費ベース）」（印字24頁〜）で重点事業ごとに事業名・予算額・概要・参照頁、「2024年度予算において重点的に取り組む事業」（印字26頁〜）で事業ごとに件名・予算額（千円）と財源内訳・事業の背景と目的・事業の内容を載せ、末尾に参考資料（一般会計予算の内訳表）。同じ会見頁の議案概要・3月補正予算の資料は選ばない。予算の頁（https://www.city.machida.tokyo.jp/shisei/gyouzaisei/siyosan/tousyo_24/index.html）の予算概要説明書は同じ内容を分冊で載せ、部別予算概要説明書（部ごとの全事業の説明）を加えたもので、記者会見の資料ではないので含めない。確認日 2026-11-10T07:20:12+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132098",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度（2025年度）予算概要説明書（記者会見用）",
+          "landing_url": "https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2024/20250213.html",
+          "inspected_at": "2026-11-10T07:20:19+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2024/20250213.files/20250213-6.pdf",
+              "sha256": "3dcc1a11646a456cbbc3d69db59742ae47651bffebaffd6068c43399843f6c33",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132098/2025/press-initial.pdf",
+            "sha256": "3dcc1a11646a456cbbc3d69db59742ae47651bffebaffd6068c43399843f6c33",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2024/20250213.files/20250213-6.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:20:48.096Z"
+      },
+      "reason": "市長記者会見資料の頁（https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2024/20250213.html、2025年2月13日開催分「令和7年（2025年）第1回町田市議会定例会」の議案について）に載る「令和7年度（2025年度）予算概要説明書（記者会見用）」（83頁、文字PDF）。予算のポイント（編成方針・予算フレーム）・歳入歳出の状況・基金と市債・5ヵ年計画の財政見通しのあと、「町田市5ヵ年計画22-26の2025年度重点事業（事業費ベース）」（印字24頁〜）で重点事業ごとに事業名・予算額・概要・参照頁、「2025年度予算において重点的に取り組む事業」（印字26頁〜）で事業ごとに件名・予算額（千円）と財源内訳・事業の背景と目的・事業の内容を載せ、末尾に参考資料（一般会計予算の内訳表）。同じ会見頁の議案概要・3月補正予算の資料は選ばない。予算の頁（https://www.city.machida.tokyo.jp/shisei/gyouzaisei/siyosan/tousyo_25/index.html）の予算概要説明書は同じ内容を分冊で載せ、部別予算概要説明書（部ごとの全事業の説明）を加えたもので、記者会見の資料ではないので含めない。確認日 2026-11-10T07:20:19+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132098",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度（2026年度）予算概要説明書（記者会見用）",
+          "landing_url": "https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2025/20260302.html",
+          "inspected_at": "2026-11-10T07:20:22+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2025/20260302.files/4.pdf",
+              "sha256": "ccf008fa1ec84763f0a7960f3a30bd8afa263c01540951f5767c169c58ebd960",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132098/2026/press-initial.pdf",
+            "sha256": "ccf008fa1ec84763f0a7960f3a30bd8afa263c01540951f5767c169c58ebd960",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2025/20260302.files/4.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:20:51.674Z"
+      },
+      "reason": "市長記者会見資料の頁（https://www.city.machida.tokyo.jp/shisei/koho/kisyakaiken/2025/20260302.html、2026年3月2日開催分「令和8年（2026年）第1回町田市議会定例会」の議案について）に載る「令和8年度（2026年度）予算概要説明書（記者会見用）」（83頁、文字PDF）。予算のポイント（編成方針・予算フレーム）・歳入歳出の状況・基金と市債・5ヵ年計画の財政見通しのあと、「町田市5ヵ年計画22-26の2026年度重点事業（事業費ベース）」（印字24頁〜）で重点事業ごとに事業名・予算額・概要・参照頁、「2026年度予算において重点的に取り組む事業」（印字26頁〜）で事業ごとに件名・予算額（千円）と財源内訳・事業の背景と目的・事業の内容を載せ、末尾に参考資料（一般会計予算の内訳表）。同じ会見頁の議案概要・3月補正予算の資料は選ばない。予算の頁（https://www.city.machida.tokyo.jp/shisei/gyouzaisei/siyosan/tousyo_26/index.html）の予算概要説明書は同じ内容を分冊で載せ、部別予算概要説明書（部ごとの全事業の説明）を加えたもので、記者会見の資料ではないので含めない。確認日 2026-11-10T07:20:22+00:00。"
+    }
   ]
 }

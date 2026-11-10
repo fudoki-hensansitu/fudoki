@@ -2,10 +2,10 @@ import { createHash, randomUUID } from 'node:crypto'
 import { mkdtemp, readFile, readdir, rename, rm, writeFile } from 'node:fs/promises'
 import { tmpdir } from 'node:os'
 import { join } from 'node:path'
-import { evaluationSelectionsSchema, jurisdictionSelectionsSchema, sourceSelectionsSchema, targetKey, type ArchivedOrigin, type PowerBiAcquisition, type SourceTarget } from './schema'
+import { evaluationSelectionsSchema, jurisdictionSelectionsSchema, pressSelectionsSchema, sourceSelectionsSchema, targetKey, type ArchivedOrigin, type PowerBiAcquisition, type SourceTarget } from './schema'
 import { downloadOriginal, MAX_BYTES } from './download'
 import { fetchPowerBiCsv } from './powerbi'
-import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObjectKey, originObjectSlot } from './storage'
+import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObjectKey, originObjectSlot, pressObjectKey, pressObjectSlot } from './storage'
 
 const digest = (body: Uint8Array) => createHash('sha256').update(body).digest('hex')
 
@@ -49,7 +49,7 @@ export type ArchiveSelection = {
 /** 保存する資料の種類ごとの違い。選定の検査・slot と key・選定ファイルの置き場所だけで、計画と保存の手順は共通。 */
 export type ArchiveKind = {
   /** 選定ファイルの中でこの種類の選定を持つ field。 */
-  field: 'selections' | 'evaluation_selections'
+  field: 'selections' | 'evaluation_selections' | 'press_selections'
   formats: ('csv' | 'pdf')[]
   parse(selections: ArchiveSelection[]): void
   slot(target: SourceTarget): string
@@ -75,6 +75,19 @@ export const evaluationKind: ArchiveKind = {
   parse: selections => { evaluationSelectionsSchema.parse(selections) },
   slot: target => evaluationObjectSlot(settlementTarget(target)),
   key: (target, format, index) => evaluationObjectKey(settlementTarget(target), format, index),
+}
+
+function initialTarget(target: SourceTarget) {
+  if (target.document_kind !== 'initial') throw new Error('Press originals belong to an initial budget target')
+  return target
+}
+
+export const pressKind: ArchiveKind = {
+  field: 'press_selections',
+  formats: ['pdf'],
+  parse: selections => { pressSelectionsSchema.parse(selections) },
+  slot: target => pressObjectSlot(initialTarget(target)),
+  key: (target, format, index) => pressObjectKey(initialTarget(target), format, index),
 }
 
 /** 同じ保存範囲のファイルを、確認済みバイト列ごとに共有する。 */
@@ -262,7 +275,7 @@ const cfTransport: ArchiveTransport = {
 
 async function main(args: string[]) {
   if (args.includes('--help')) {
-    console.log('Usage: bun pipeline/source_selection/archive.ts [--write] [--evaluation] [--jurisdiction CODE] [--replacement-selection JSON] [--next-part N]\nDefault: read-only selected-original plan. --evaluation targets only the evaluation_selections (keys evaluation-settlement[-N].pdf|csv; a csv with an acquisition is fetched from the Power BI report, not downloaded) and leaves settlement originals untouched; without it evaluation_selections are never touched. JSON is a file containing one existing source-selection schema object with archive:null. Replacement retains the same target\'s saved files and keys, uploads only new bytes at the next part number, and saves the selection after all receipts succeed; it never deletes old objects. Optional --next-part requires replacement and sets the first new part number above all saved receipt numbers; plan and write use the same argument, and existing objects still cause an error. Without replacement, --write preserves the existing archive flow. No readback.')
+    console.log('Usage: bun pipeline/source_selection/archive.ts [--write] [--evaluation | --press] [--jurisdiction CODE] [--replacement-selection JSON] [--next-part N]\nDefault: read-only selected-original plan. --evaluation targets only the evaluation_selections (keys evaluation-settlement[-N].pdf|csv; a csv with an acquisition is fetched from the Power BI report, not downloaded) and leaves settlement originals untouched; without it evaluation_selections are never touched. --press targets only the press_selections (keys press-initial[-N].pdf) in the same way. JSON is a file containing one existing source-selection schema object with archive:null. Replacement retains the same target\'s saved files and keys, uploads only new bytes at the next part number, and saves the selection after all receipts succeed; it never deletes old objects. Optional --next-part requires replacement and sets the first new part number above all saved receipt numbers; plan and write use the same argument, and existing objects still cause an error. Without replacement, --write preserves the existing archive flow. No readback.')
     return
   }
   let write = false
@@ -270,16 +283,18 @@ async function main(args: string[]) {
   let replacementPath: string | undefined
   let nextPart: number | undefined
   let evaluation = false
+  let press = false
   for (let index = 0; index < args.length; index++) {
     if (args[index] === '--write' && !write) write = true
-    else if (args[index] === '--evaluation' && !evaluation) evaluation = true
+    else if (args[index] === '--evaluation' && !evaluation && !press) evaluation = true
+    else if (args[index] === '--press' && !press && !evaluation) press = true
     else if (args[index] === '--jurisdiction' && /^\d{6}$/.test(args[index + 1] ?? '') && !jurisdiction) jurisdiction = args[++index]
     else if (args[index] === '--replacement-selection' && args[index + 1] && !replacementPath) replacementPath = args[++index]
     else if (args[index] === '--next-part' && /^[1-9]\d*$/.test(args[index + 1] ?? '') && nextPart === undefined) nextPart = Number(args[++index])
     else throw new Error(`Unknown or incomplete argument: ${args[index]}`)
   }
   if (nextPart !== undefined && (!replacementPath || !Number.isSafeInteger(nextPart))) throw new Error('next-part requires replacement and a positive safe integer')
-  const kind = evaluation ? evaluationKind : settlementKind
+  const kind = evaluation ? evaluationKind : press ? pressKind : settlementKind
   const replacement: ArchiveSelection | undefined = replacementPath ? JSON.parse(await readFile(replacementPath, 'utf8')) : undefined
   if (replacement) kind.parse([replacement])
   if (replacement) {

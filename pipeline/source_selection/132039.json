@@ -2977,5 +2977,121 @@
       },
       "reason": "令和5年度に実施した事務事業（補助金）を評価した令和6年度評価実施結果集（令和7年2月作成）。見方に「各シートは、原則として、令和５年度の実施内容及び決算額に基づいて評価を行っています」と明記。事業（補助金）ごとに目的・内容、事業費・決算額、目標と実績、評価（市関与の妥当性・成果・コスト）、課題と方向性を載せる。文字として読める。なお、対象は補助金を中心とした見直し対象事業で、全事務事業の評価ではない。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132039",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度 武蔵野市 予算案の概要（変化する時代 命を尊重し安全・安心な未来を築く予算）",
+          "landing_url": "https://www.city.musashino.lg.jp/shiseijoho/koho/kishakaiken/r6/1046460.html",
+          "inspected_at": "2026-11-10T07:03:16+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/046/460/6_1_yosanangaiyou.pdf",
+              "sha256": "f684a04c8dc9d6d5cf8936fbada860bedfb92ff23dea618b9ef177a092350723",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132039/2024/press-initial.pdf",
+            "sha256": "f684a04c8dc9d6d5cf8936fbada860bedfb92ff23dea618b9ef177a092350723",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/046/460/6_1_yosanangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:03:33.286Z"
+      },
+      "reason": "令和6年第1回定例記者会見の頁（https://www.city.musashino.lg.jp/shiseijoho/koho/kishakaiken/r6/1046460.html）に載る「令和6年度予算案の概要」（31頁、文字PDF）。予算編成方針の概要・当初予算案の規模（2〜3頁）のあと、「令和6年度 特徴ある事業」（印字4〜22頁）で事業ごとに1頁前後、新規/拡充などの印・款・予算額・内容の説明・担当課を載せ、23頁以降は付属資料。同じ頁の「令和6年度予算参考資料」（107頁）は款別・性質別の総括表など財政の資料、「施政方針」は市長の説明文、資料1・2は予算と別のイベント発表なので選ばない。確認日 2026-11-10T07:03:16+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132039",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 特徴ある事業",
+          "landing_url": "https://www.city.musashino.lg.jp/shiseijoho/koho/kishakaiken/1049364/1049368.html",
+          "inspected_at": "2026-11-10T07:03:23+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/049/368/7_1_tokuchou_aru_jigyou.pdf",
+              "sha256": "d7830f6073d5f7c36017eedc2b6ae67f887d40e506d731505e51e9f194dc8680",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132039/2025/press-initial.pdf",
+            "sha256": "d7830f6073d5f7c36017eedc2b6ae67f887d40e506d731505e51e9f194dc8680",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/049/368/7_1_tokuchou_aru_jigyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:03:35.297Z"
+      },
+      "reason": "令和7年第1回定例記者会見の頁（https://www.city.musashino.lg.jp/shiseijoho/koho/kishakaiken/1049364/1049368.html）に載る「令和7年度 特徴ある事業」（13頁、文字PDF）。冒頭の目次に9テーマ（市民の命を守る取り組み、吉祥寺のまちづくり、戦後80年の平和啓発、ムーバス、私立幼稚園等の保護者補助、緑、DX、就労支援、学校づくり）と頁、テーマごとに事業名・新規/拡充/継続の印・款・予算額・内容の説明・担当課を載せる。この年は記者会見の頁にも予算概要の頁（https://www.city.musashino.lg.jp/shiseijoho/zaisei/zaiseijokyo/yosangaiyou/1049201.html）にも令和6年度のような「予算案の概要」冊子は無い。予算参考資料・施政方針は総括表や市長の説明文なので選ばない。確認日 2026-11-10T07:03:23+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132039",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 特徴ある事業",
+          "landing_url": "https://www.city.musashino.lg.jp/shiseijoho/koho/kishakaiken/1053602/1053604.html",
+          "inspected_at": "2026-11-10T07:03:27+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/053/604/8_1_tokuchou_aru_jigyou.pdf",
+              "sha256": "cd363fab780ee5e530266828325ba469d9f52e295522b6128fb2b5ea7640f5be",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132039/2026/press-initial.pdf",
+            "sha256": "cd363fab780ee5e530266828325ba469d9f52e295522b6128fb2b5ea7640f5be",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/053/604/8_1_tokuchou_aru_jigyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:03:37.351Z"
+      },
+      "reason": "令和8年第1回定例記者会見の頁（https://www.city.musashino.lg.jp/shiseijoho/koho/kishakaiken/1053602/1053604.html）に載る「令和8年度 特徴ある事業」（12頁、文字PDF）。冒頭の目次にテーマ（吉祥寺パークエリア、吉祥寺イーストエリアの環境浄化、医療機関への支援、首都直下地震への備え、妊娠期〜産後の子育て支援、ペットボトル毎週収集ほか）と頁、テーマごとに事業名・新規/拡充/継続の印・款・予算額（例: 吉祥寺パークエリア 土木費 5319万円）・内容の説明・担当課を載せる。予算概要の頁（https://www.city.musashino.lg.jp/shiseijoho/zaisei/zaiseijokyo/yosangaiyou/1053506.html）は予算参考資料（総括表）だけで「予算案の概要」冊子は無い。施政方針は市長の説明文なので選ばない。確認日 2026-11-10T07:03:27+00:00。"
+    }
   ]
 }
