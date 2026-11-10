@@ -16,6 +16,11 @@
   body { margin: 0; background: var(--background); color: var(--foreground); font: 400 15px/1.7 var(--font-sans); -webkit-font-smoothing: antialiased; }
   button:not(:disabled) { cursor: pointer; }
   a { color: inherit; }
+  /* 日本語は文節の切れ目で折り返す（lang="ja" の Chrome が対応。未対応の端末は今まで通り文字ごと）。節の見出しは行の長さをそろえ、段落は最後の行に1語だけ残さない。
+     行の見出し（h3・h4）は後ろにリンクを続けるので balance にしない（そろえると名前が早く折れ、リンクだけの行ができる） */
+  body { word-break: auto-phrase; }
+  :is(h1, h2) { text-wrap: balance; }
+  p { text-wrap: pretty; }
   /* ホーム画面から開いたとき、ダブルタップの拡大待ちと横向きの切り欠きへの食い込みを避ける */
   body { touch-action: manipulation; }
 }

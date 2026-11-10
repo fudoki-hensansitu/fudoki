@@ -333,7 +333,7 @@ const DOMAIN_ICON: Record<string, typeof BankIcon> = {
 function Emph({ text }: { text: string }) {
   const [, pre = '', num = text, unit = ''] = /^(約?)([\d,.]+)(.*)$/.exec(text) ?? []
   return (
-    <b className="mx-1 font-normal tabular-nums text-primary">
+    <b className="mx-1 whitespace-nowrap font-normal tabular-nums text-primary">
       {pre ? <span className="text-sm">{pre}</span> : null}
       <span className="text-2xl">{num}</span>
       <span className="ml-0.5 text-sm">{unit}</span>
@@ -353,13 +353,15 @@ function Overview({ data, sections, year }: { data: PageData; sections: Set<stri
     <Section id="about" title={`${kind}は何をしている？`}>
       {shown && latest ? (
         <p className="text-[15px]">
-          {shown.lead}<Emph text={formatYen(shown.yen)} />
+          {/* スマホで折り返すときは予算と1人あたりの間で折る（数字と単位の途中で折らない） */}
           {people ? (
             <>
-              、住民1人あたり<Emph text={`${Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円`} />
+              <span className="inline-block">{shown.lead}<Emph text={formatYen(shown.yen)} />、</span>
+              <span className="inline-block">住民1人あたり<Emph text={`${Math.round(shown.yen / people / 1e4).toLocaleString('ja-JP')}万円`} />です。</span>
             </>
-          ) : null}
-          です。
+          ) : (
+            <span className="inline-block">{shown.lead}<Emph text={formatYen(shown.yen)} />です。</span>
+          )}
           {!budget && year !== latest.year ? (
             <span className="mt-1 block text-[13px] text-muted-foreground">{data.years.some((y) => y.year === year) ? '' : `${reiwa(year)}の決算はまだ収録していないため、`}ここの金額は収録している最新の決算（{reiwa(latest.year)}）のものです。</span>
           ) : null}
@@ -494,7 +496,7 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
   }, [p.id, attempt])
   return (
     <li className="border-b border-foreground/10">
-      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-center gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px]'}`}>
+      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-baseline gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px]'} sm:items-center`}>
         <span className="text-xl tabular-nums">{rank}</span>
         <div className="min-w-0">
           <h3 className="text-base font-normal leading-snug">{p.name}</h3>
