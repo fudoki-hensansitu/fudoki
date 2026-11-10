@@ -115,7 +115,15 @@ describe('自治体の個別ページ', () => {
   test('款の和・事業・前年度の同じ目から組み、head に金額と自治体名を入れる', async () => {
     const data = await view('/tokyo/nakano')
     const head = pageHead(data)
-    expect(head.title).toBe('中野区の歳出｜R7年度決算｜風土記')
+    expect(head.title).toBe('中野区の決算（令和7年度）｜何にいくら使った？｜風土記')
+    // 決算より後の当初予算があれば、title・説明文に予算と決算の両方を年度つきで入れる
+    const budget = { year: 2026, yen: 1_234_000_000, kan: [], divisions: [], projects: [] }
+    const withBudget = { ...data, budgets: [budget] }
+    expect(pageHead(withBudget).title).toBe('中野区の予算と決算｜令和8年度予算・令和7年度決算｜風土記')
+    expect(pageHead(withBudget).meta.find((m) => m.name === 'description')?.content).toMatch(/^中野区の令和8年度当初予算の歳出は約12\.3億円、令和7年度決算（一般会計）の歳出は約/)
+    // 金額の無い当初予算は title に使わない
+    expect(pageHead({ ...data, budgets: [{ ...budget, amountMissing: true as const }] }).title).toBe(head.title)
+    expect(pageHead({ ...data, budgets: [{ ...budget, yen: 0 }] }).title).toBe(head.title)
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano')
     const ld = JSON.parse(head.script![0]!.innerHTML!) as { '@type': string; itemListElement?: { position: number; name: string; item: string }[] }[]
     expect(ld.find((x) => x['@type'] === 'BreadcrumbList')?.itemListElement?.map((x) => [x.position, x.name, x.item])).toEqual([
