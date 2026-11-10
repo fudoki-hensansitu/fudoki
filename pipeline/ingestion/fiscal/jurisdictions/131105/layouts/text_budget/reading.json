@@ -1,0 +1,17 @@
+{
+  "headers": {"subject": "目", "budget": "予算額", "explanation": "説明", "summary": ["款", "項", "金額"]},
+  "budget_labels": {"本年度": "本年度予算額", "前年度": "前年度予算額", "比較": "比較"},
+  "rate_line": {
+    "label": "増減率(%)",
+    "kind": "数量表",
+    "reason": "予算額の欄の増減率(%)は本年度と前年度から計算した率で、金額ではないので取り込まない。共有の除外の種類に率を表す語が無く、金額でない数量を表す「数量表」が最も近い。"
+  },
+  "summary_amount": "本年度予算額",
+  "setsu_amount": "節／金額",
+  "explanation_amount": "説明",
+  "markers": ["[0-9]+", "\\([0-9]+\\)"],
+  "marker_reach": 30,
+  "item_amount_reach": 80,
+  "total_label": "計",
+  "grand_total_label": "歳出合計"
+}
