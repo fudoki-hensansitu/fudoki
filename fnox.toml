@@ -3,6 +3,8 @@
 # 鍵は fudoki 専用（個人の他の secret を開ける鍵は使わない）。手順は AGENTS.md の「secret」を参照。
 # CI・deploy の secret は GitHub secret / Cloudflare の Worker secret に置き、ここには入れない。
 default_provider = "age"
+# fnox activate の shell には export せず、fnox exec の command にだけ渡す
+env = "exec"
 
 # 各自の fudoki 用の age 秘密鍵は OS の keychain（service = fnox-fudoki、account = age-key）に置く。
 [providers.keychain]
