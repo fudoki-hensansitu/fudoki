@@ -1,5 +1,5 @@
 -- 事務事業評価シート。1枚（1小事業）が1行。金額は出典の千円を円にしたもの。
--- 決算書の目・内訳への紐付けと COFOG、新しくできた事業の印は風土記の判断（列の説明を参照）。
+-- 決算書の目・内訳への紐付けと、新しくできた事業の印は風土記の判断（列の説明を参照）。
 with sheet as (
     select s.*, o.jurisdiction_code, o.fiscal_year,
         sha256(to_json([s.origin_id, s.page::varchar])) as sheet_id
@@ -7,13 +7,13 @@ with sheet as (
     join {{ source('project', 'project_origin') }} o using (origin_id)
 ),
 moku as (
-    select subject_id, jurisdiction_code, fiscal_year, account_name, kan_name, kou_name, name as moku_name, cofog_code
+    select subject_id, jurisdiction_code, fiscal_year, account_name, kan_name, kou_name, name as moku_name
     from {{ ref('fiscal_expenditure_subject') }}
     where document_kind = 'settlement' and amendment_number is null and level = '目'
 ),
 -- 名前で1つに決まる目だけを採る
 subject as (
-    select s.sheet_id, any_value(m.subject_id) as subject_id, any_value(m.cofog_code) as cofog_code
+    select s.sheet_id, any_value(m.subject_id) as subject_id
     from sheet s
     join moku m on m.jurisdiction_code = s.jurisdiction_code and m.fiscal_year = s.fiscal_year
         and m.account_name = s.account_name and m.kan_name = s.kan and m.kou_name = s.kou and m.moku_name = s.moku

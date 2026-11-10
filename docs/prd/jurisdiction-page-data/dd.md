@@ -37,7 +37,7 @@
 | ページの値 | 今の出どころ | 作る表・列 |
 | --- | --- | --- |
 | 新しくできた事業（名前・決算額・指標・評価・方向性・頁） | `profiles.ts` の `projects` | `project_evaluation_sheet`（`is_new_project`）・`project_evaluation_indicator`・`project_evaluation_indicator_value` |
-| 新しくできた事業の分野 | `profiles.ts` の `cofog` | `project_evaluation_sheet.cofog_code`（決算書の目の COFOG） |
+| 新しくできた事業の分野 | `profiles.ts` の `cofog` | `project_evaluation_sheet.subject_id` の目の `cofog_code`（`fiscal_expenditure_subject` から引く） |
 | やめた事業・A〜C の一覧 | `profiles.ts` の `scrap.exits`・`graded` | `project_evaluation_sheet`（`grade_code`・`direction`） |
 | 評価した数・A〜D の数 | `profiles.ts` の `scrap` | `project_evaluation_result` |
 | 予算の年度の新しい施策 | `budget-press.ts` | `project_budget_initiative` と seed `project_budget_initiative_link` |
@@ -93,7 +93,7 @@
 | `project_evaluation_result` | 評価の結果の資料1つ | `origin_id` |
 | `project_budget_initiative` | 予算案の施策1件（品川はプレス発表の1頁） | `initiative_id`（出典と頁） |
 
-金額は千円の印字を円にする。指標の値は単位や「令和8年度」を含むのでシートの表記のまま文字列で持つ。プレス発表の事業名と POINT は JSON の文字列の配列で持つ。
+金額は千円の印字を円にする。指標の値は単位や「令和8年度」を含むのでシートの表記のまま文字列で持つ。プレス発表の事業名は JSON の文字列の配列で、POINT の箇条書きは改行でつないだ説明（`description`）で持つ。
 
 ### 判断の列
 
@@ -101,10 +101,8 @@
 | --- | --- |
 | `project_evaluation_sheet.subject_id` | 予算科目の会計・款・項・目の名前が、同じ年度の決算書の目に1つだけ当たるとき |
 | `project_evaluation_sheet.detail_id` | その目の下で、予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき |
-| `project_evaluation_sheet.cofog_code` | `subject_id` の目の COFOG |
 | `project_evaluation_sheet.is_new_project` | 事業期間が実施年度から始まり、前年度の行政費用が0で、前年度までの指標の実績が無い |
 | `project_budget_initiative.detail_id`・`link_method`・`link_confidence` | seed `project_budget_initiative_link`（下記） |
-| `project_budget_initiative.cofog_code` | `detail_id` の内訳が属する目の COFOG |
 
 施策の紐付けは [link-to-budget-detail](../../../.agents/skills/pipeline/references/link-to-budget-detail.md) の手順を `project:link-initiatives` にした。名前と額で直接当たるものを先に決め、残りは単語の Dice 係数の上位12件から Jev に選ばせ、確信度 0.6 以上だけを採る。seed に行がある施策は聞き直さない。R7・R8 の160行は `budget-press.ts` の紐付け（同じ手順で作ったもの）を移した。`--refresh` で作り直すと、Jev の答えの揺れで25行が変わる（2026-11-08）。
 
