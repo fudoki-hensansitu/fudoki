@@ -115,25 +115,33 @@ selected_amounts as (
     from hierarchy
     window sibling_group as (partition by source_table_key, parent_node_key, axis_header, node_kind, code_text, name),
         sibling as (sibling_group order by origin_id, physical_page, y0, x0, node_key)
+), keyed as (
+    -- A 款 identifies by its number, or by its name in an account-year declared in fiscal_kan_name_identity
+    -- (no printed numbers, or numbers renumbered within the year), for every document of that account-year.
+    select n.*, case when k.jurisdiction_code is not null then 'name:' || n.kan_name else n.kan_code end as kan_key
+    from siblings n
+    left join {{ ref('fiscal_kan_name_identity') }} k
+      on k.jurisdiction_code = n.jurisdiction_code and k.fiscal_year = n.fiscal_year and k.account_name = n.account_name
 ), identified as (
-    select n.*, sha256(to_json([jurisdiction_code, fiscal_year::varchar, account_name, kan_code, kou_code, moku_code])) as node_id,
+    select n.* exclude (kan_key),
+        sha256(to_json([jurisdiction_code, fiscal_year::varchar, account_name, kan_key, kou_code, moku_code])) as node_id,
         null::varchar as parent_node_id
-    from siblings n where parent_node_key is null
+    from keyed n where parent_node_key is null
     union all
     -- Subject nodes identify by kan/kou/moku numbers; a subject 目 without a printed
     -- number (e.g. zero-budget election 目) falls back to the parent-based identity
     -- like non-subject nodes, keeping every printed row.
-    select n.*,
+    select n.* exclude (kan_key),
         case when n.axis_header = n.subject_axis and n.node_kind = '款'
-             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_code, n.kou_code, n.moku_code]))
+             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_key, n.kou_code, n.moku_code]))
              when n.axis_header = n.subject_axis and n.node_kind = '項' and n.kou_code is not null
-             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_code, n.kou_code, n.moku_code]))
+             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_key, n.kou_code, n.moku_code]))
              when n.axis_header = n.subject_axis and n.node_kind = '目' and n.moku_code is not null
-             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_code, n.kou_code, n.moku_code]))
+             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_key, n.kou_code, n.moku_code]))
              else sha256(to_json([p.node_id, n.axis_header, n.node_kind, n.code_text, n.name,
                  case when n.sibling_count > 1 then n.sibling_ordinal::varchar end])) end,
         p.node_id
-    from siblings n join identified p
+    from keyed n join identified p
       on n.source_table_key = p.source_table_key and n.parent_node_key = p.node_key
 )
 select * from identified

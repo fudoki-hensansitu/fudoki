@@ -94,6 +94,24 @@ seeds:
       - name: variant
         data_tests: [unique, not_null]
 
+  - name: fiscal_kan_name_identity
+    meta:
+      # **判断そのもの。** 款を番号でなく名前で同定する会計・年度の宣言。
+      role: judgment-rule
+    description: |
+      款を番号でなく名前で同定する自治体・年度・会計。**fudoki の判断。** 款の id（node_id）は款の番号から作るが、
+      出典が款の番号を印字しない、または年度の途中で番号を振り直して資料ごとに同じ番号が別の款を指す会計では、
+      その年度・会計のすべての資料（当初予算・決算）で款の名前から作る。ここに無い会計の id は変わらない。
+      款の番号の無い款（code が空）は、ここで宣言した会計でだけ許す（tests/fiscal_rows_contract.sql）。
+    config:
+      column_types:
+        jurisdiction_code: varchar
+        fiscal_year: integer
+        account_name: varchar
+        basis: varchar
+    columns:
+      - name: basis
+        data_tests: [not_null]
   - name: fiscal_detail_breakdown
     meta:
       # **判断そのもの。** 内訳の枝の分け方の宣言。
