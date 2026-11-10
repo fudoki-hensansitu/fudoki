@@ -55,3 +55,17 @@ test('事業評価の出典は、Wayback Machine の写しでなく自治体の�
     expect(r.status === 'ok' && r.url).toBe('https://city.example.jp/r2.html')
   }
 })
+
+test('予算案のプレス発表の出典も origin_id か sha256 で引ける', async () => {
+  const { db, sqlite } = setup([])
+  sqlite
+    .query(`INSERT INTO budget_proposal_origin (origin_id, budget_proposal_id, jurisdiction_code, fiscal_year, title, url, landing_url, sha256) VALUES (?,?,?,?,?,?,?,?)`)
+    .run('p1', 'bp1', '131091', 2026, '予算案の概要', 'https://city.example.jp/p1.pdf', null, OTHER)
+  const keys: string[] = []
+  const bucket: SourceTextBucket = { get: async (key) => (keys.push(key), { text: async () => JSON.stringify({ pages: ['本文'] }) }) }
+  for (const origin of [OTHER, 'p1']) {
+    const r = await readSourcePage(db, bucket, { origin, page: 1 })
+    expect(r.status === 'ok' && [r.title, r.url]).toEqual(['予算案の概要', 'https://city.example.jp/p1.pdf'])
+  }
+  expect(keys).toEqual([`source-text/${OTHER}.json`, `source-text/${OTHER}.json`])
+})

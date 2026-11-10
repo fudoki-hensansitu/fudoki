@@ -98,7 +98,7 @@ export function reasoningEffort(value: string | undefined): { reasoning_effort?:
 export async function handleChat(c: ApiRequest): Promise<Response> {
   const started = Date.now()
   const { env } = c
-  const { sessionId, ip } = c
+  const { sessionId } = c
   const chat = parseChat(c.body)
   if (chat.id !== sessionId) throw new HttpError(403, 'PERMISSION_DENIED', '別の会話の token です')
   const modelId = env.CHAT_MODEL
@@ -155,7 +155,7 @@ export async function handleChat(c: ApiRequest): Promise<Response> {
   const connectStarted = Date.now()
   try {
     mcp = await createMCPClient({
-      transport: { type: 'http', url: MCP_URL, fetch: apiFetch(env), headers: ip ? { 'CF-Connecting-IP': ip } : {} },
+      transport: { type: 'http', url: MCP_URL, fetch: apiFetch(env) },
       clientName: 'fudoki-web',
       capabilities: mcpAppClientCapabilities,
     })

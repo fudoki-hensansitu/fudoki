@@ -37,9 +37,9 @@ Anthropic MCP Directory の英語掲載文案（MCP connector 用。Plugin bundl
 
 ## レビュー用の接続とcase
 
-既存URLへ匿名で接続する。風土記用のアカウント、API key、test passwordは不要。レビューhost側の接続設定を済ませ、6つのtool、うちUIを持つのは描画tool（render_expenditure_view）1つ、出典のリンクが使えることを確認する。データtoolは画面を出さず、モデルが描画toolを呼んだときだけUIが出る。公開PDFの中継には既存のサイズ・時間・頻度上限があり、取得時の内容が取り込み時と同じとは保証しない。
+既存URLへ匿名で接続する。風土記用のアカウント、API key、test passwordは不要。レビューhost側の接続設定を済ませ、10のtool、うちUIを持つのは描画tool（render_expenditure_view）1つ、出典のリンクが使えることを確認する。データtoolは画面を出さず、モデルが描画toolを呼んだときだけUIが出る。公開PDFの中継には既存のサイズ・時間・頻度上限があり、取得時の内容が取り込み時と同じとは保証しない。
 
-実行caseの正本は `plugins/fudoki/plugin.json` の `review.test_cases`。5件のpositiveは収録範囲・条件検索・内訳と出典・COFOG集計・事業の評価の頁の検索、3件のnegativeは個別取引/銀行口座・歳入・書込み。prompt、必要な前提、期待toolと引数、期待結果を記した。前の結果のnode_idは捏造せず、実際に返された値を使う。
+実行caseの正本は `plugins/fudoki/plugin.json` の `review.test_cases`。5件のpositiveは収録範囲・条件検索・内訳と出典・COFOG集計・事業評価の評価シートの検索、3件のnegativeは個別取引/銀行口座・歳入・書込み。prompt、必要な前提、期待toolと引数、期待結果を記した。前の結果のnode_idは捏造せず、実際に返された値を使う。
 
 | case | ChatGPT | Claude | Codex / Claude Code / Cursor package |
 | --- | --- | --- | --- |

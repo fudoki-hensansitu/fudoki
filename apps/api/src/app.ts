@@ -169,7 +169,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
     } catch (e) {
       // 想定外の例外の詳細（SQL のエラーなど）は返さず、ログにだけ出す
       if (!(e instanceof ApiError)) console.error(e)
-      const body = e instanceof ApiError ? errorBody(e.code, e.message, e.retryAfter) : errorBody('INTERNAL', '内部エラー')
+      const body = e instanceof ApiError ? errorBody(e.code, e.message) : errorBody('INTERNAL', '内部エラー')
       return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify(body) }] }
     }
   }
@@ -345,7 +345,7 @@ export function createApp() {
 
   app.onError((e, c) => {
     if (e instanceof ApiError) {
-      return c.json(errorBody(e.code, e.message, e.retryAfter), e.status, e.retryAfter === undefined ? {} : { 'Retry-After': String(e.retryAfter) })
+      return c.json(errorBody(e.code, e.message), e.status)
     }
     if (e instanceof HTTPException) {
       // 415・406 などは 500 にしない。MCP の transport は JSON-RPC の形の応答を持っている

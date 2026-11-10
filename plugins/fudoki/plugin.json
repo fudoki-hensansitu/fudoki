@@ -14,7 +14,7 @@
       "interface": {
         "displayName": "風土記(fudoki)",
         "shortDescription": "Compare municipal spending",
-        "longDescription": "Search Japanese municipal expenditure in initial budgets and settlements, check coverage and accounting scope, inspect line-item breakdowns, and trace amounts to original documents. For the selected municipalities, locate the pages of their program evaluation documents for the 2020-2025 fiscal year settlements; only the location (document URL, SHA-256, page) and a short excerpt are returned, and the content is read from the original PDF, which remains the municipality's copyright. Only collected documents are available. COFOG classifications are Fudoki judgments and may be tentative. Revenue, individual transactions, and writes are outside the supported scope.",
+        "longDescription": "Search Japanese municipal expenditure in initial budgets and settlements, check coverage and accounting scope, inspect line-item breakdowns, and trace amounts to original documents. For covered municipalities, also read project evaluation sheets (grades and indicators) and budget proposal measures, each with its source document and page. Source documents remain the municipality's copyright. Only collected documents are available. COFOG classifications are Fudoki judgments and may be tentative. Revenue, individual transactions, and writes are outside the supported scope.",
         "developerName": "風土記",
         "category": "Productivity",
         "capabilities": [
@@ -28,7 +28,7 @@
         "defaultPrompt": [
           "中野区で収録されている年度・資料区分・会計を教えて",
           "中野区の2025年度決算一般会計の目を金額の大きい順に3件見せて",
-          "北区の2025年度の事業評価で、防災分野におけるデジタル化の推進が載っている頁を探して"
+          "品川区の2024年度の事業評価で、評価がCの事業を教えて"
         ],
         "logo": "./assets/icon.png",
         "composerIcon": "./assets/icon.png"
