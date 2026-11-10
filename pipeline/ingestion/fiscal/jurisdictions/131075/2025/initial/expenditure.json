@@ -1,0 +1,225 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131075",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71b58bd84cf3a0b117074b268d017d50e932a38fea7cda2b7b364d36fc0f88e1"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "titled_pages",
+            "profile": "fiscal/jurisdictions/131075/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71b58bd84cf3a0b117074b268d017d50e932a38fea7cda2b7b364d36fc0f88e1"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "titled_pages",
+            "profile": "fiscal/jurisdictions/131075/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71b58bd84cf3a0b117074b268d017d50e932a38fea7cda2b7b364d36fc0f88e1"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "titled_pages",
+            "profile": "fiscal/jurisdictions/131075/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71b58bd84cf3a0b117074b268d017d50e932a38fea7cda2b7b364d36fc0f88e1"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "titled_pages",
+            "profile": "fiscal/jurisdictions/131075/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "4d5507c45bbda46032fecfdbb1988855f999ef252af2796e288a11843de91a2e",
+      "account": "一般会計",
+      "notes": [
+        "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",
+        "計上説明の頭と計の行の財源内訳は取り込んでいない。説明の項目は番号（1・⑴・ア…）と右端の金額（千円）で読み、文中・表中の数は取り込んでいない。印字の見出し「計上説明」の金額は共有辞書の「説明」とした。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131075/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "5f7e50c9b54652066b8885ac13b89dc0f3b308dc36af1e7f66f732d091ccaa76",
+          "bytes": 110454
+        },
+        "row_count": 2784
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131075/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "b554af3d56689556bb00661583aae640e7bd0f7d9c4ccfa9f03ffbda20f74be9",
+          "bytes": 88435
+        },
+        "row_count": 3147
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "e71635946fdf10399af4bb49bb6f52c0b9ca46f0afbf9cf64161358f7f31c4fc",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",
+        "計上説明の頭と計の行の財源内訳は取り込んでいない。説明の項目は番号（1・⑴・ア…）と右端の金額（千円）で読み、文中・表中の数は取り込んでいない。印字の見出し「計上説明」の金額は共有辞書の「説明」とした。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131075/2025/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "0a7e90d8465ca6a5324e130a45507c51e16ca0c0defe64f82ff3165514375d26",
+          "bytes": 9737
+        },
+        "row_count": 154
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131075/2025/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "1ed21653a299e49afd979e0f49534961b4aa70eec69bd78a91bc0e5bd3da9fb4",
+          "bytes": 7967
+        },
+        "row_count": 257
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "71ce5d72a503faa295ba4d61e921f03bcb232020d442b1e5d8ebe94a29365dfc",
+      "account": "介護保険特別会計",
+      "notes": [
+        "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",
+        "計上説明の頭と計の行の財源内訳は取り込んでいない。説明の項目は番号（1・⑴・ア…）と右端の金額（千円）で読み、文中・表中の数は取り込んでいない。印字の見出し「計上説明」の金額は共有辞書の「説明」とした。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131075/2025/initial/expenditure/care-initial-nodes.parquet",
+          "sha256": "3339d2a710b758833b0c0a053bbb2137f24661cb37bb5ebcf31830e263191010",
+          "bytes": 10053
+        },
+        "row_count": 151
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131075/2025/initial/expenditure/care-initial-amounts.parquet",
+          "sha256": "990340ba95a498836c6ebc4f1f2e2bac0647395d1df69c348abdd4f0a38d99b4",
+          "bytes": 8032
+        },
+        "row_count": 211
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "be1fe7b8b23ff0c5dc74022f1154d45b1712f7470232686ea37e500b0bea473b",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",
+        "計上説明の頭と計の行の財源内訳は取り込んでいない。説明の項目は番号（1・⑴・ア…）と右端の金額（千円）で読み、文中・表中の数は取り込んでいない。印字の見出し「計上説明」の金額は共有辞書の「説明」とした。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131075/2025/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "729267346f86616b1a478a92623e708e99c4bacfbce649396af6ba5bea30e011",
+          "bytes": 5904
+        },
+        "row_count": 68
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131075/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "09b9b336601c1853f15fdf8ee1b71ee3353f2276f9f6ec82be6c2db8d9f4c1f8",
+          "bytes": 4568
+        },
+        "row_count": 94
+      }
+    }
+  ]
+}
