@@ -8,7 +8,7 @@ characters. Codes, cells, subject rows and amounts stay rule-decided.
 
 The model is pinned for reproducibility. Answers are cached on disk by request
 hash so reruns cost nothing. The key comes from `TYPESAFE_API_KEY` (age-encrypted in
-the repo's fnox.toml; run through `fnox exec --`); it is never written anywhere.
+the repo's fnox.toml; run through `fnox exec --if-missing error --`); it is never written anywhere.
 """
 from __future__ import annotations
 
