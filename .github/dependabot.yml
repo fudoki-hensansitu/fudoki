@@ -12,14 +12,6 @@ updates:
     groups:
       bun:
         update-types: [minor, patch]
-    ignore:
-      # void 1.5.0 は build で wrangler の設定を Cloudflare の新しい形に移すが、fudoki.dev の route
-      # （custom_domain に previews_enabled を付けて pr-<番号>.fudoki.dev の preview を出す）を移せずに止まる。
-      # 移せる版が出るまで 1.3.0 に留める
-      - dependency-name: 'void'
-        versions: ['>=1.5.0']
-      - dependency-name: '@void/react'
-        versions: ['>=1.5.0']
   - package-ecosystem: uv
     directory: /
     schedule:
