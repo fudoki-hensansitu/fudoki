@@ -522,6 +522,46 @@
         ]
       }
     },
+    "rule_ink": {
+      "description": "OCR の取得が読まれない墨として残したが、原画で罫線の一片と確かめた箇所（行の罫線に接する縦罫の短い切れ端など）。頁と墨の箱（観測の unread_ink の箱、PDF の pt）を宣言し、金額の欄の読まれない墨として止める対象から外す。宣言した箱が墨に当たらなければ止める。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "minLength": 1
+          },
+          "page": {
+            "type": "integer",
+            "minimum": 1
+          },
+          "boxes": {
+            "type": "array",
+            "minItems": 1,
+            "items": {
+              "type": "array",
+              "items": {
+                "type": "number"
+              },
+              "minItems": 4,
+              "maxItems": 4
+            }
+          },
+          "reason": {
+            "type": "string",
+            "minLength": 10
+          }
+        },
+        "required": [
+          "id",
+          "page",
+          "boxes",
+          "reason"
+        ]
+      }
+    },
     "workflow": {
       "type": "object"
     }
