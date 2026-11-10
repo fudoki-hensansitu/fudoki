@@ -1,0 +1,95 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133078",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "485a2bf2294d6ecdc4cf1ae3775195f7ff4bbc6dfcf6df5ca80e179475361173"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "総額に対する割合": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "wrap": "amount_on_last_line"
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "1e92e13f3bcefc5a409bc0cba00841c63165b6ff7395e38b16d0d0d51410549a",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '総額に対する割合': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 48頁 から決めた。款の和 4,158,000 と印字の「歳出合計」4,158,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（48 件）を、印字された語から辞書の見出しに寄せた: 金額→科目／款・金額→科目／項。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "e8dbe4c6fd43356ba7488f4fcafcc3538c4f3befc04e8b1299bfc8c06e92b4fc",
+          "bytes": 66408
+        },
+        "row_count": 2391
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133078/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "fe52144fda7a617ec885f3b9642d493af0c091b75f451fe84d95522a78de2034",
+          "bytes": 50868
+        },
+        "row_count": 3149
+      }
+    }
+  ]
+}
