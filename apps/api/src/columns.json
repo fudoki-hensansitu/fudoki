@@ -1380,6 +1380,180 @@
           "description": "風土記の判断。link_method が jev のときの Jev の確信度。"
         }
       ]
+    },
+    "project": {
+      "primary_key": "project_id",
+      "indexes": [
+        [
+          "jurisdiction_code"
+        ],
+        [
+          "parent_project_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "project_id",
+          "type": "string",
+          "nullable": false,
+          "description": "事業の ID（代理キー）。seed で一度だけ振り、判断を直しても変えない。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": false,
+          "description": "最新の年度の事業の名前（当初予算の表記を優先。所管課の【】を含む出典の表記のまま）。"
+        },
+        {
+          "name": "account_name",
+          "type": "string",
+          "nullable": false,
+          "description": "最新の年度の会計の名前。"
+        },
+        {
+          "name": "first_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "事業の行がある最初の会計年度（西暦）。"
+        },
+        {
+          "name": "first_year_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "confirmed（前の年度の資料があり、そこに無かった）か before_coverage（収録の最初の年度にあり、それより前は分からない）。",
+          "values": [
+            "confirmed",
+            "before_coverage"
+          ]
+        },
+        {
+          "name": "last_year",
+          "type": "integer",
+          "nullable": true,
+          "description": "事業の行がある最後の会計年度（西暦）。last_year_kind が latest のときは NULL。"
+        },
+        {
+          "name": "last_year_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "confirmed（次の年度の資料があり、そこに無かった）・latest（収録の最新の年度にある）・unknown（次の年度の資料がその会計に無い）。",
+          "values": [
+            "confirmed",
+            "latest",
+            "unknown"
+          ]
+        },
+        {
+          "name": "parent_project_id",
+          "type": "string",
+          "nullable": true,
+          "description": "予算書の入れ子の1つ上の事業（最新の年度の行で決める）。目の直下の事業は NULL。"
+        }
+      ]
+    },
+    "project_year": {
+      "primary_key": "project_year_id",
+      "indexes": [
+        [
+          "project_id"
+        ],
+        [
+          "fiscal_year",
+          "jurisdiction_code"
+        ],
+        [
+          "budget_detail_id"
+        ],
+        [
+          "settlement_detail_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "project_year_id",
+          "type": "string",
+          "nullable": false,
+          "description": "事業の ID と年度から作る ID（sha256）。"
+        },
+        {
+          "name": "project_id",
+          "type": "string",
+          "nullable": false,
+          "description": "事業。project の project_id。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "会計年度（西暦）。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": false,
+          "description": "この年度の事業の名前（当初予算の表記を優先）。"
+        },
+        {
+          "name": "account_name",
+          "type": "string",
+          "nullable": false,
+          "description": "会計の名前。"
+        },
+        {
+          "name": "kan_name",
+          "type": "string",
+          "nullable": true,
+          "description": "款の名前。"
+        },
+        {
+          "name": "kou_name",
+          "type": "string",
+          "nullable": true,
+          "description": "項の名前。"
+        },
+        {
+          "name": "moku_name",
+          "type": "string",
+          "nullable": true,
+          "description": "目の名前。目の無い項の下の事業は NULL。"
+        },
+        {
+          "name": "budget_detail_id",
+          "type": "string",
+          "nullable": true,
+          "description": "当初予算書の事業の行。expenditure_detail の detail_id。当初予算に無い年度は NULL。"
+        },
+        {
+          "name": "settlement_detail_id",
+          "type": "string",
+          "nullable": true,
+          "description": "決算書の事業の行。expenditure_detail の detail_id。決算に無い年度は NULL。"
+        },
+        {
+          "name": "budget_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "当初予算額（円）。当初予算書の事業の行の金額。"
+        },
+        {
+          "name": "settled_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "支出済額（円）。決算書の事業の行の金額。"
+        }
+      ]
     }
   }
 }

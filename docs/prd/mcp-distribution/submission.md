@@ -18,7 +18,7 @@
 | Terms URL | https://docs.fudoki.dev/terms （2026-10-15 HTTP 200） |
 | アイコン | plugins/fudoki/assets/icon.png（256×256 PNG、既存markから作成） |
 | package | .build/plugins/fudoki-0.2.0.zip（再生成可能、未提出の準備用） |
-| 録画デモURL（暫定・提出用の正本ではない） | https://youtu.be/VX8z8EbJDyU （ChatGPTの北区の操作、89秒。2026-10-14に#197より前のUIで撮影）。現行の10 tool・描画toolのみUIの挙動で撮り直し、置き換える |
+| 録画デモURL（暫定・提出用の正本ではない） | https://youtu.be/VX8z8EbJDyU （ChatGPTの北区の操作、89秒。2026-10-14に#197より前のUIで撮影）。現行の12 tool・描画toolのみUIの挙動で撮り直し、置き換える |
 | 掲載用スクリーンショット | Claudeで撮影済み（検索3件・節の内訳・COFOG 10の集計）。gitの外の `.agent/claude-submission-shots/` に置く |
 
 OpenAIの英語subtitleは `Compare municipal spending`、日本語は「自治体の歳出を比較し出典を確認」。本文・starter prompts・5 positive / 3 negative case（2026-10-14に事業の評価の検索を各1件足し、2026-10-21にOpenAIの「positiveはちょうど5件・negativeはちょうど3件」に合わせて内訳と出典を1件にまとめ、pluginを呼ぶべき評価資料の金額のcaseをnegativeから外した）・課金なし・JP・release notesはportable manifestの `extensions.com.openai` に入れた。support/privacy/terms と録画URLは公開を確認してから入れた。[OpenAIの提出metadata](https://developers.openai.com/plugins/deploy/submission)
@@ -37,7 +37,7 @@ Anthropic MCP Directory の英語掲載文案（MCP connector 用。Plugin bundl
 
 ## レビュー用の接続とcase
 
-既存URLへ匿名で接続する。風土記用のアカウント、API key、test passwordは不要。レビューhost側の接続設定を済ませ、10のtool、うちUIを持つのは描画tool（render_expenditure_view）1つ、出典のリンクが使えることを確認する。データtoolは画面を出さず、モデルが描画toolを呼んだときだけUIが出る。公開PDFの中継には既存のサイズ・時間・頻度上限があり、取得時の内容が取り込み時と同じとは保証しない。
+既存URLへ匿名で接続する。風土記用のアカウント、API key、test passwordは不要。レビューhost側の接続設定を済ませ、12のtool、うちUIを持つのは描画tool（render_expenditure_view）1つ、出典のリンクが使えることを確認する。データtoolは画面を出さず、モデルが描画toolを呼んだときだけUIが出る。公開PDFの中継には既存のサイズ・時間・頻度上限があり、取得時の内容が取り込み時と同じとは保証しない。
 
 実行caseの正本は `plugins/fudoki/plugin.json` の `review.test_cases`。5件のpositiveは収録範囲・条件検索・内訳と出典・COFOG集計・事業評価の評価シートの検索、3件のnegativeは個別取引/銀行口座・歳入・書込み。prompt、必要な前提、期待toolと引数、期待結果を記した。前の結果のnode_idは捏造せず、実際に返された値を使う。
 

@@ -25,3 +25,43 @@ seeds:
           - accepted_values:
               arguments:
                 values: ['name', 'jev', 'none']
+  - name: project_jurisdiction
+    description: 事業（project・project_year）を作る自治体。予算書の事業の行の入れ子の作りを確かめた自治体だけを並べる。
+    config:
+      column_types:
+        jurisdiction_code: varchar
+    columns:
+      - name: jurisdiction_code
+        data_tests:
+          - not_null
+          - unique
+  - name: project_line
+    meta:
+      role: judgment
+    description: |
+      予算書・決算書の事業の行を事業（project_id）に結んだ結果。**風土記の判断**。
+      `bun run --cwd pipeline project:link-projects` が seed に無い行だけを判断して足す（手順は
+      docs/prd/jurisdiction-page-data/project-domain-model.md の「事業を作る」）。行は detail_id ではなく、
+      自治体・年度・資料区分・会計・款・項・目と枝の根からの名前の並び（path、int_project__lines と同じ）で引く。
+    config:
+      column_types:
+        jurisdiction_code: varchar
+        fiscal_year: integer
+        document_kind: varchar
+        account_name: varchar
+        kan_name: varchar
+        kou_name: varchar
+        moku_name: varchar
+        path: varchar
+        project_id: varchar
+        method: varchar
+    columns:
+      - name: project_id
+        data_tests: [not_null]
+      - name: method
+        description: continued（前の年度の事業と名前の並びで結んだ）か new（前の年度に結べる事業が無く、新しい事業にした）。
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['continued', 'new']

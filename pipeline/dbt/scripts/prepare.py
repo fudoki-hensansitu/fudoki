@@ -286,7 +286,7 @@ def main() -> None:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
                         '--select', 'marts.expenditure+', '+marts.expenditure', '+jurisdiction',
-                        '+marts.population', 'cofog_master', '+marts.evaluation', '+marts.budget_proposal'],
+                        '+marts.population', 'cofog_master', '+marts.evaluation', '+marts.budget_proposal', '+marts.project'],
                        cwd=DBT, stdout=sys.stderr, check=True)
         result['dbt_build'] = 'passed'
     print(json.dumps(result, ensure_ascii=False))
