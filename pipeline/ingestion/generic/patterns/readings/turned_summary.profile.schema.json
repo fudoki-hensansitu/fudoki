@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$defs": {
+    "range": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2},
+    "text": {"type": "string", "minLength": 1}
+  },
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["page", "title", "unit", "header_rows", "body", "total_row", "label_column", "columns", "row_sums"],
+  "properties": {
+    "page": {"type": "integer", "minimum": 1},
+    "title": {"$ref": "#/$defs/text"},
+    "unit": {
+      "type": "object", "additionalProperties": false, "required": ["printed", "text"],
+      "properties": {"printed": {"$ref": "#/$defs/text"}, "text": {"$ref": "#/$defs/text"}}
+    },
+    "header_rows": {"type": "array", "minItems": 1, "items": {"$ref": "#/$defs/range"}},
+    "body": {"$ref": "#/$defs/range"},
+    "total_row": {
+      "type": "object", "additionalProperties": false, "required": ["label", "y"],
+      "properties": {"label": {"$ref": "#/$defs/text"}, "y": {"$ref": "#/$defs/range"}}
+    },
+    "label_column": {
+      "type": "object", "additionalProperties": false, "required": ["header", "x"],
+      "properties": {"header": {"$ref": "#/$defs/text"}, "x": {"$ref": "#/$defs/range"}}
+    },
+    "columns": {
+      "type": "array", "minItems": 1,
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["x", "kind", "header"],
+        "properties": {
+          "x": {"$ref": "#/$defs/range"},
+          "kind": {"enum": ["amount", "ratio"]},
+          "header": {
+            "type": "array", "minItems": 1,
+            "items": {
+              "type": "object", "additionalProperties": false, "required": ["text"],
+              "properties": {"text": {"$ref": "#/$defs/text"}, "x": {"$ref": "#/$defs/range"}}
+            }
+          },
+          "heading": {"$ref": "#/$defs/text"}
+        }
+      }
+    },
+    "row_sums": {
+      "type": "array",
+      "items": {
+        "type": "object", "additionalProperties": false, "required": ["whole", "parts"],
+        "properties": {"whole": {"$ref": "#/$defs/text"}, "parts": {"type": "array", "minItems": 2, "items": {"$ref": "#/$defs/text"}}}
+      }
+    }
+  }
+}

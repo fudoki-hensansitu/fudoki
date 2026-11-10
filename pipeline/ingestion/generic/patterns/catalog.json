@@ -39,7 +39,8 @@
     "profiled_budget": "ingestion.generic.patterns.readings.profiled_budget",
     "enterprise_expenses": "ingestion.generic.patterns.readings.enterprise_expenses",
     "banded_projects": "ingestion.generic.patterns.readings.banded_projects",
-    "offset_projects": "ingestion.generic.patterns.readings.offset_projects"
+    "offset_projects": "ingestion.generic.patterns.readings.offset_projects",
+    "turned_summary": "ingestion.generic.patterns.readings.turned_summary"
   },
   "component": {
     "marked_subjects": "ingestion.generic.patterns.components.marked_subjects",

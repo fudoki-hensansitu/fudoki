@@ -1,0 +1,69 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133612",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "89a8d736c8f37d56b65df08cfa0e7f2be1f4b575645f8ca8856fe3d94d33bf14"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "reading": {
+            "pattern": "turned_summary",
+            "profile": "fiscal/jurisdictions/133612/layouts/purpose_summary_2024.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "a817e8421bf4fc24ab743dfe7d906b7ca8c443b284a75fb52712f27de4a5988b",
+      "account": "一般会計",
+      "notes": [
+        "物理5頁の表（４．一般会計目的別歳出）は頁に90°回して組まれているので、語の位置を表の向きに回して行と欄を読んだ（読み方 turned_summary、位置は表示頁の座標のまま）。",
+        "款の行 13 行を、区分の欄の印字のとおり款として置いた。項・目は印字されていない。",
+        "金額の単位は印字の「（単位：千円）」。金額の欄 8 欄すべてで款の和と印字の「計」が一致。行の内訳（総額＝左の内訳の和など）を 22 行で照合して一致（空欄を含む 6 行は照合していない: 労働費（決算額）・土石流災害対策費（決算額）・災害復旧費（決算額）・労働費（令和６年度／一般財源／金額）・土石流災害対策費（令和６年度／一般財源／金額）・災害復旧費（令和６年度／一般財源／金額））。",
+        "比率の欄（構成比・対前年度増減率）は金額ではないので取り込んでいない。空欄の欄は金額の行を作っていない。",
+        "金額の見出しを辞書の見出しに寄せた: 令和６年度／総額／金額→決算額・令和５年度／総額／金額→前年度決算額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133612/2024/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "6fc984d1ad385853b0802f27c49be96b29098d7fa6a6284dcba297e126f1b723",
+          "bytes": 2803
+        },
+        "row_count": 13
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133612/2024/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "44203ce48f3a8be91c8c1d4f2cc9343b9495dc60067169d168f80c25d8ed67a4",
+          "bytes": 4288
+        },
+        "row_count": 91
+      }
+    }
+  ]
+}
