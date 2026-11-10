@@ -94,7 +94,6 @@ type URL = string
 type 自治体コード = string       // 全国地方公共団体コード（6桁）
 type 科目ID = string             // 表の subject_id
 type 内訳ID = string             // 表の detail_id
-type 評価シートID = string       // 表の sheet_id
 type 事業ID = string             // ★案
 type COFOG = string              // COFOG分類マスタのコード
 type 歳出の節 = string           // 歳出の節マスタの ID
@@ -210,8 +209,7 @@ type 事業評価 = {
   出典: 出典<'PDF'>           // 評価結果の資料
   シート: 評価シート[]
 }
-type 評価シート = {           // 1枚 = 小事業の1年度
-  評価シートID: 評価シートID  // PK
+type 評価シート = {           // 1枚 = 小事業の1年度。出典と頁で1枚が決まる
   事業?: 事業の年度の参照     // FK。★案。今は決算書の内訳から導く。決算書の無い年度など紐付かないシートもある
   事業名: 文字                // 小事業の名前。資料のまま
   所管課: 文字
@@ -221,7 +219,7 @@ type 評価シート = {           // 1枚 = 小事業の1年度
   評価の名前?: 文字           // シートの表記。読めない欄は空（例: 改善・見直しする事業）
   今後の方向?: 文字           // シートの表記。読めない欄は空（例: 手法等の改善）
   指標: 指標[]
-  出典: 出典<'PDF'> & { 頁: 数 }
+  出典: 出典<'PDF'> & { 頁: 数 } // PK
 }
 type 事業の年度の参照 = {
   事業: 事業ID
@@ -282,7 +280,7 @@ type 予算案での説明 = {       // 予算案のプレス発表の資料の1
 | --- | --- | --- |
 | 事業・事業の金額 | なし | 案（下の「表の案」） |
 | 歳出 | `fiscal_expenditure_subject`（目）・`fiscal_expenditure_detail`（`breakdown='事業'`） | あり |
-| 事業評価 | `project_evaluation_result`（root。事業を行った年度は表の `evaluated_year`。`budget_year` とシートの `evaluation_year` は表にあるが、モデルでは事業を行った年度から導く）・`project_evaluation_sheet`・`project_evaluation_indicator`・`project_evaluation_indicator_value` | あり。シートは `detail_id` で内訳を指す |
+| 事業評価 | `project_evaluation_result`（root。事業を行った年度は表の `evaluated_year`。`budget_year` とシートの `evaluation_year` は表にあるが、モデルでは事業を行った年度から導く）・`project_evaluation_sheet`（`sheet_id` は出典と頁から作る列で、指標の表から引くために持つ）・`project_evaluation_indicator`・`project_evaluation_indicator_value` | あり。シートは `detail_id` で内訳を指す |
 | 予算案での説明 | `project_budget_initiative` | あり。施策1件1行で、当たった内訳を `detail_id` で指す（その行の事業に付く）。出典は `project_origin`。`points` は箇条書きの配列で、モデルの説明（文字）とは形が違う |
 | 出典 | `fiscal_origin`・`project_origin`・`population_origin` | あり。`population_origin` は資料名・形式・SHA256 を持たない（基準日と URL だけ）。`project_origin` は形式を持たない（事業の資料は PDF だけ） |
 
