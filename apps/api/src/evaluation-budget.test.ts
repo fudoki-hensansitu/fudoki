@@ -104,12 +104,17 @@ describe('事業', () => {
       })
   })
 
-  test('事業は年度・直下の事業・付いた評価シートと施策を返す', async () => {
+  test('事業は年度と直下の事業を返し、評価シートと施策は detail_id の検索で引く', async () => {
     const body = ProjectOutput.parse(await (await get(`/v1/projects/${P}`)).json())
     expect(body.years.map((y) => y.fiscal_year)).toEqual([2024, 2026])
     expect(body.children.map((c) => c.project_id)).toEqual([CHILD])
-    expect(body.evaluation_sheets.map((s) => s.sheet_id)).toEqual([H('0')])
-    expect(body.budget_measures.map((m) => m.measure_id)).toEqual([H('5')])
+    expect(Object.keys(body).sort()).toEqual(['children', 'project', 'years'])
+    const settled = body.years.flatMap((y) => (y.settlement_detail_id ? [y.settlement_detail_id] : []))
+    const initial = body.years.flatMap((y) => (y.budget_detail_id ? [y.budget_detail_id] : []))
+    const sheets = await (await post('/v1/evaluations/sheets:search', { fiscal_year: { min: 2024, max: 2026 }, where: { detail_id: { eq: settled } } })).json()
+    expect(sheets.sheets.map((s: { sheet_id: string }) => s.sheet_id)).toEqual([H('0')])
+    const measures = await (await post('/v1/budget-proposals/measures:search', { fiscal_year: { min: 2024, max: 2026 }, where: { detail_id: { eq: initial } } })).json()
+    expect(measures.measures.map((m: { measure_id: string }) => m.measure_id)).toEqual([H('5')])
     expect((await get(`/v1/projects/${H('f')}`)).status).toBe(404)
     expect((await get('/v1/projects/xyz')).status).toBe(400)
   })

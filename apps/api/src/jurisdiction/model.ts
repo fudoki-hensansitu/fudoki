@@ -1,9 +1,8 @@
 // 自治体の集約。自治体コード・名前・都道府県を決める。
 import { z } from 'zod'
 import { described } from '../columns'
-import { DocumentKind } from '../expenditure/model'
 import { nextPageToken } from '../shared/paging'
-import { JurisdictionCode } from '../shared/model'
+import { DocumentKind, JurisdictionCode } from '../shared/model'
 
 export const Jurisdiction = z.strictObject({
   jurisdiction_code: JurisdictionCode,

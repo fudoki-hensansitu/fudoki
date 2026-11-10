@@ -4,9 +4,8 @@ import { z } from 'zod'
 import { DETAIL_TABLE, SUBJECT_TABLE, described } from '../columns'
 import { nextPageToken } from '../shared/paging'
 import { searchInputFor } from '../shared/search'
-import { FiscalYear, JurisdictionCode, Origin, OriginFormat, Yen } from '../shared/model'
+import { DocumentKind, FiscalYear, JurisdictionCode, Origin, OriginFormat, Yen } from '../shared/model'
 
-export const DocumentKind = z.enum(['initial', 'settlement']).describe('資料区分。initial は当初予算、settlement は決算')
 export const CofogCertainty = z.enum(['assigned', 'tentative'])
 export const CofogUnclassified = z.enum(['unclassifiable', 'out-of-scope'])
 export const Breakdown = z.enum(['事業', '節', 'その他']).describe('内訳の分け方（風土記の判断）')

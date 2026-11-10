@@ -1,9 +1,7 @@
 // 事業の集約（docs/prd/jurisdiction-page-data/project-domain-model.md）: 予算書の事業の行を1つずつ事業にし、年度をまたいでつないだ木。
 // 守ること: 1つの年度に事業の金額は1つ。1つの内訳は高々1つの事業の年度に入る。金額は事業の木で足さず、資料ごとに末端の内訳を足す。
 import { z } from 'zod'
-import { MeasureRow } from '../budget-proposal/model'
 import { described, PROJECT_YEAR_TABLE } from '../columns'
-import { SheetRow } from '../evaluation/model'
 import { FiscalYear, JurisdictionCode, RowId } from '../shared/model'
 import { nextPageToken } from '../shared/paging'
 import { yearSearchInputFor } from '../shared/search'
@@ -11,7 +9,7 @@ import { yearSearchInputFor } from '../shared/search'
 /** 始めた年度。収録の範囲でしか決まらない */
 export const ProjectStart = z.discriminatedUnion('kind', [
   z.strictObject({ kind: z.literal('confirmed'), fiscal_year: FiscalYear.describe('前の年度の資料があり、そこに無かった') }),
-  z.strictObject({ kind: z.literal('before_coverage'), first_seen: FiscalYear.describe('収録の最初の年度') }),
+  z.strictObject({ kind: z.literal('before_coverage'), first_seen: FiscalYear.describe('前の年度の資料が無く、それより前は分からない') }),
 ])
 
 /** 終えた年度 */
@@ -94,8 +92,6 @@ export const ProjectOutput = z.strictObject({
   project: ProjectRow,
   years: z.array(ProjectYearRow).describe('事業の年度（年度の順）。'),
   children: z.array(ProjectRow).describe(`直下の事業（予算書の入れ子の1つ下）。${MAX_CHILDREN} 件まで。`),
-  evaluation_sheets: z.array(SheetRow).describe('事業の年度の決算の行に付いた事業評価の評価シート。'),
-  budget_measures: z.array(MeasureRow).describe('事業の年度の当初予算の行に付いた予算案の施策（紐付けは風土記の判断）。'),
 })
 export type ProjectOutput = z.infer<typeof ProjectOutput>
 

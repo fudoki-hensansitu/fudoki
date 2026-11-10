@@ -102,7 +102,7 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 | 歳出 | `POST /v1/expenditures/subjects:search`・`POST /v1/expenditures/details:search`・`GET /v1/expenditures/lines/{line_id}`（科目か内訳と、その直下。印字の位置と出典まで）・`GET /v1/expenditures/origins/{origin_id}/pdf` | `search_expenditure_subjects`・`search_expenditure_details`・`get_expenditure_line` |
 | 事業評価 | `GET /v1/evaluations/{evaluation_id}`（根・件数・シートの要約。シートはページ）・`GET /v1/evaluations/sheets/{sheet_id}`（指標まで）・`POST /v1/evaluations/sheets:search` | `get_evaluation`・`get_evaluation_sheet`・`search_evaluation_sheets` |
 | 予算案 | `GET /v1/budget-proposals/{budget_proposal_id}`（施策まで）・`POST /v1/budget-proposals/measures:search` | `get_budget_proposal`・`search_budget_measures` |
-| 事業 | `GET /v1/projects/{project_id}`（年度と、付いた評価シート・施策の ID まで）・`POST /v1/projects:search` | `get_project`・`search_projects` |
+| 事業 | `GET /v1/projects/{project_id}`（年度と直下の事業まで。評価シート・施策は返さない）・`POST /v1/projects:search` | `get_project`・`search_projects` |
 
 - `get_expenditure_line` は `line`（`kind` が `subject` か `detail` の union。列は表の行のまま）・`child_subjects`（科目のときの子の科目）・`details`（科目なら直下、内訳なら子を breakdown ごとに。ページ）・`locations`・`origins` を返す。科目と内訳の取得を1つにし、View の drill（行を押して直下を開く）を1回の呼び出しで描けるようにした。`locations` は表の行（`kind` と頁・枠・行番号の列）のままにし、ドメインの `Location` の union には組み直さない（View の出典の表示がこの列を読む）。
 - 自治体の一覧の行は要約（人口の推移・収録範囲・事業評価と予算案の ID と年度。`evaluations`・`budget_proposals` が `{evaluation_id|budget_proposal_id, fiscal_year}` の配列で、`get_evaluation`・`get_budget_proposal` に渡す ID をここで引ける）にし、会計ごとの出典は `GET /v1/jurisdictions/{jurisdiction_code}` だけが返す（今の `view=FULL` はなくす）。MCP には一覧だけを出す（出典は検索の結果の `origins` に載る）。
