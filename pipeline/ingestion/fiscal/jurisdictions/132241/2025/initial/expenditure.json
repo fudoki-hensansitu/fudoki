@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132241",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "csv-d8364d50219eddbe",
+      "converter": "fiscal/layouts/csv/convert.py",
+      "inputs": [
+        {
+          "sha256": "d8364d50219eddbe3faea25ef2e9cff8ab86f09ba40a7e0c22a20164c632bb86"
+        }
+      ],
+      "options": {
+        "encoding": "cp932",
+        "table_id": "csv-d8364d50219eddbe",
+        "amount_column": "合計 / 予算額",
+        "amount_unit": "円"
+      },
+      "expected_tables": [
+        {
+          "table_id": "csv-d8364d50219eddbe"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "csv-d8364d50219eddbe",
+      "conversion_id": "csv-d8364d50219eddbe",
+      "input_fingerprint": "dfb97d5c5bc573fadcdeae478c37cdd9e5eeeb527aa1d848c9bb6687e5f6d09e",
+      "object": {
+        "key": "fiscal/ingestion/132241/2025/initial/expenditure/csv-d8364d50219eddbe.parquet",
+        "sha256": "c175bf000909f4f60c74fbec9a7d7002302aa1567406532c4b65067e4178f6cd",
+        "bytes": 25838
+      },
+      "row_count": 1610
+    }
+  ]
+}
