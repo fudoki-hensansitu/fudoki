@@ -496,7 +496,7 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
   }, [p.id, attempt])
   return (
     <li className="border-b border-foreground/10">
-      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-baseline gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px]'} sm:items-center`}>
+      <div className={`grid grid-cols-[22px_minmax(0,1fr)_auto] items-baseline gap-x-3.5 gap-y-2 py-4 ${showChange ? 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px_80px]' : 'sm:grid-cols-[22px_minmax(140px,200px)_1fr_150px]'}`}>
         <span className="text-xl tabular-nums">{rank}</span>
         <div className="min-w-0">
           <h3 className="text-base font-normal leading-snug">{p.name}</h3>
@@ -506,8 +506,8 @@ function ProjectRow({ p, rank, max, total, people, showChange, shown }: { p: Pro
             {p.domain}
           </span>
         </div>
-        {/* 棒は1位を満たした長さ。スマホでは名前の下に、名前の左端から並べる */}
-        <div className="order-5 col-span-2 col-start-2 sm:order-none sm:col-span-1 sm:col-start-auto">
+        {/* 棒は1位を満たした長さ。スマホでは名前の下に、名前の左端から並べる。順位・名前・割合は1行目の文字のベースラインでそろえ、棒だけ行の真ん中に置く */}
+        <div className="order-5 col-span-2 col-start-2 self-center sm:order-none sm:col-span-1 sm:col-start-auto">
           <div className="h-2 overflow-hidden rounded-full bg-foreground/5">
             {/* 画面に入ったら、上の順位から少しずつ遅らせて伸ばす */}
             <div className="h-full rounded-full bg-primary transition-[width] duration-[1200ms] ease-out motion-reduce:transition-none" style={{ width: shown ? `${(p.yen / max) * 100}%` : 0, transitionDelay: `${(rank - 1) * 120}ms` }} />
