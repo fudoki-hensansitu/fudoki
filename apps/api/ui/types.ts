@@ -55,7 +55,7 @@ export interface TreeNode extends PdfLocation {
   id: string
   parent_id: string | null
   is_subject: boolean
-  open: { tool: 'get_expenditure_subject' | 'get_expenditure_detail'; args: Json }
+  open: { tool: 'get_expenditure_line'; args: Json }
   document_kind: string
   jurisdiction_code: string
   fiscal_year: number
@@ -79,10 +79,9 @@ export type ViewData = {
 )
 
 export function toolFor(data: Json): string | undefined {
+  if (data.line && data.details) return 'get_expenditure_line'
   if (Array.isArray(data.subjects)) return 'search_expenditure_subjects'
   if (Array.isArray(data.details)) return 'search_expenditure_details'
-  if (data.subject && data.children) return 'get_expenditure_subject'
-  if (data.detail && data.children) return 'get_expenditure_detail'
 }
 
 const NO_LOCATION: PdfLocation = {
@@ -99,30 +98,29 @@ const base = (r: RowBase, at: Map<string, Location>, id: string) => {
 }
 const fromSubject = (r: SubjectRow, at: Map<string, Location>): TreeNode => ({
   ...base(r, at, r.subject_id), id: r.subject_id, parent_id: r.parent_subject_id, is_subject: true,
-  open: { tool: 'get_expenditure_subject', args: { subject_id: r.subject_id } }, axis: '科目', node_kind: r.level,
+  open: { tool: 'get_expenditure_line', args: { line_id: r.subject_id } }, axis: '科目', node_kind: r.level,
 })
 /** 直下の内訳（depth 1）の親は科目にする。同じ科目の同じ分け方の内訳が兄弟になる */
 const fromDetail = (r: DetailRow, at: Map<string, Location>): TreeNode => ({
   ...base(r, at, r.detail_id), id: r.detail_id, parent_id: r.parent_detail_id ?? r.subject_id, is_subject: false,
-  open: { tool: 'get_expenditure_detail', args: { detail_id: r.detail_id } }, axis: r.breakdown, node_kind: r.node_kind,
+  open: { tool: 'get_expenditure_line', args: { line_id: r.detail_id } }, axis: r.breakdown, node_kind: r.node_kind,
 })
 
 /** server の結果（科目・内訳の検索と取得）を View の形にそろえる。印字の位置は行に重ねる */
 export function toView(data: Json): ViewData {
   const at = new Map(((data.locations ?? []) as Location[]).map((l) => [l.row_id, l]))
   const common = { origins: data.origins as Origin[] | undefined, next_page_token: data.next_page_token as string | null | undefined }
-  if (Array.isArray(data.subjects)) return { ...common, nodes: (data.subjects as SubjectRow[]).map((r) => fromSubject(r, at)) }
-  if (Array.isArray(data.details)) return { ...common, nodes: (data.details as DetailRow[]).map((r) => fromDetail(r, at)) }
-  if (data.subject) {
+  if (data.line) {
+    // 歳出の行の取得: 科目なら子の科目と直下の内訳、内訳なら子の内訳（どちらも breakdown ごと）
+    const line = data.line as (SubjectRow & { kind: 'subject' }) | (DetailRow & { kind: 'detail' })
     const children: Record<string, TreeNode[]> = {}
-    const subjects = (data.children as SubjectRow[]).map((r) => fromSubject(r, at))
+    const subjects = ((data.child_subjects ?? []) as SubjectRow[]).map((r) => fromSubject(r, at))
     if (subjects.length) children['科目'] = subjects
     for (const [breakdown, rows] of Object.entries(data.details as Record<string, DetailRow[]>)) children[breakdown] = rows.map((r) => fromDetail(r, at))
-    return { ...common, node: fromSubject(data.subject as SubjectRow, at), children }
+    return { ...common, node: line.kind === 'subject' ? fromSubject(line, at) : fromDetail(line, at), children }
   }
-  const detail = fromDetail(data.detail as DetailRow, at)
-  const kids = (data.children as DetailRow[]).map((r) => fromDetail(r, at))
-  return { ...common, node: detail, children: kids.length ? { [detail.axis]: kids } : {} }
+  if (Array.isArray(data.subjects)) return { ...common, nodes: (data.subjects as SubjectRow[]).map((r) => fromSubject(r, at)) }
+  return { ...common, nodes: (data.details as DetailRow[]).map((r) => fromDetail(r, at)) }
 }
 
 export const KIND_LABEL: Record<string, string> = {

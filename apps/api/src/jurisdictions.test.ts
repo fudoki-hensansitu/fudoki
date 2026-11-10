@@ -2,7 +2,7 @@ import { beforeEach, describe, expect, test } from 'bun:test'
 import type { Database } from 'bun:sqlite'
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/validators/cf-worker'
 import { createApp } from './app'
-import { UNCOVERED_SOURCES } from './operations'
+import { UNCOVERED_SOURCES } from './jurisdiction/queries'
 import type { Db } from './db'
 import { insertCoverage, insertJurisdiction, insertOrigin, insertPopulation, insertSubject, testDb } from './testing'
 
@@ -50,7 +50,7 @@ beforeEach(() => {
 })
 
 describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions）', () => {
-  test('既定（BASIC）は出典を含めず、年度・資料区分・会計だけを返す', async () => {
+  test('一覧は出典を含めず、年度・資料区分・会計だけを返す', async () => {
     const body = await list(`?name=${encodeURIComponent('武蔵野市')}`)
     expect(body.jurisdictions[0].coverage.map((c: { document_kind: string; accounts: unknown[] }) => [c.document_kind, c.accounts])).toEqual([
       ['initial', [{ account_name: '一般会計', account_kind: '一般会計' }]],
@@ -67,11 +67,21 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
     expect(fuchu.jurisdictions[0].coverage[0].accounts).toEqual([{ account_name: '一般会計', account_kind: '一般会計' }])
   })
 
-  test('view=FULL は、6桁のコードと収録している年度・資料区分・会計・出典を1回で得る', async () => {
-    const body = await list(`?name=${encodeURIComponent('武蔵野市')}&view=FULL`)
-    expect(body).toEqual({
-      jurisdictions: [
-        {
+  test('一覧は最新の人口と、事業評価・予算案を収録した年度を返す', async () => {
+    sqlite.exec(`INSERT INTO evaluation (evaluation_id, jurisdiction_code, fiscal_year, kind) VALUES ('e2', '132039', 2025, 'sheets_only'), ('e1', '132039', 2024, 'with_result')`)
+    sqlite.exec(`INSERT INTO budget_proposal (budget_proposal_id, jurisdiction_code, fiscal_year) VALUES ('b1', '132039', 2026)`)
+    const [j] = (await list('?code=132039')).jurisdictions
+    expect(j.population).toEqual({ reference_date: '2026-01-01', male: 72000, female: 76000, population: 148001, households: 76000, url: 'https://example.test/2026.xlsx' })
+    expect(j.evaluation_years).toEqual([2024, 2025])
+    expect(j.budget_proposal_years).toEqual([2026])
+    const detail = await (await get('/v1/jurisdictions/132039')).json()
+    expect([detail.evaluation_years, detail.budget_proposal_years]).toEqual([[2024, 2025], [2026]])
+  })
+
+  test('1つの自治体は、人口の推移と収録している年度・資料区分・会計・出典を1回で得る', async () => {
+    const res = await get('/v1/jurisdictions/132039')
+    expect(res.status).toBe(200)
+    expect(await res.json()).toEqual({
           jurisdiction_code: '132039',
           name: '武蔵野市',
           prefecture_code: '13',
@@ -101,17 +111,18 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
               ],
             },
           ],
-        },
-      ],
-      next_page_token: null,
-      uncovered_sources: UNCOVERED_SOURCES,
+          evaluation_years: [],
+          budget_proposal_years: [],
+          uncovered_sources: UNCOVERED_SOURCES,
     })
+    expect((await get('/v1/jurisdictions/999999')).status).toBe(404)
+    expect((await get('/v1/jurisdictions/13203')).status).toBe(400)
   })
 
   test('収録の無い自治体でも、空の収録範囲と一緒に統計の出典の案内を返す', async () => {
     const body = await list('?code=131016')
     expect(body.jurisdictions[0].coverage).toEqual([])
-    expect(body.jurisdictions[0].population).toEqual([])
+    expect(body.jurisdictions[0].population).toBeNull()
     expect(body.uncovered_sources.map((s: { url: string }) => s.url)).toEqual([
       'https://www.soumu.go.jp/iken/zaisei/card.html',
       'https://www.e-stat.go.jp/stat-search/files?toukei=00200251&tstat=000001077755',
@@ -163,19 +174,19 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
       expect(result.valid, result.valid ? '' : result.errorMessage).toBe(true)
       expect(body.result.structuredContent).toEqual(JSON.parse(body.result.content[0].text))
     }
-    const rest = await list(`?name=${encodeURIComponent('武蔵野市')}&view=FULL`)
-    expect((await rpc('tools/call', { name: 'list_jurisdictions', arguments: { name: '武蔵野市', view: 'FULL' } })).result.structuredContent).toEqual(rest)
+    const rest = await list(`?name=${encodeURIComponent('武蔵野市')}`)
+    expect((await rpc('tools/call', { name: 'list_jurisdictions', arguments: { name: '武蔵野市' } })).result.structuredContent).toEqual(rest)
     const err = await rpc('tools/call', { name: 'list_jurisdictions', arguments: { code: '1' } })
     expect(err.error !== undefined || err.result.isError === true).toBe(true)
   })
 
   test('返った条件でそのまま明細を検索できる', async () => {
     insertSubject(sqlite, { document_kind: 'settlement', subject_id: 'a'.repeat(64), jurisdiction_code: '132039', fiscal_year: 2024, account_name: '国民健康保険事業会計', level: '款', origin_id: 'o2' })
-    const j = (await list('?code=132039&view=FULL')).jurisdictions[0]
+    const j = await (await get('/v1/jurisdictions/132039')).json()
     const c = j.coverage.find((x: { document_kind: string }) => x.document_kind === 'settlement')
     const a = c.accounts.find((x: { account_name: string }) => x.account_name === '国民健康保険事業会計')
     const res = await app.request(
-      '/v1/fiscal/expenditure/subjects:search',
+      '/v1/expenditures/subjects:search',
       {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

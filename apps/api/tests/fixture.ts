@@ -114,12 +114,12 @@ export async function fixture(real = false) {
     await insert('expenditure_location', { kind: 'pdf', row_id: id, origin_id, ...location })
   }
   if (real) {
-    const response = await fetch('https://api.fudoki.dev/v1/fiscal/expenditure/subjects:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { jurisdiction_code: { eq: ['132039'] } }, page_size: 2 }) })
+    const response = await fetch('https://api.fudoki.dev/v1/expenditures/subjects:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { jurisdiction_code: { eq: ['132039'] } }, page_size: 2 }) })
     const data = await response.json() as { subjects: Record<string, unknown>[]; origins: Record<string, unknown>[] }
     for (const origin of data.origins) await insert('expenditure_origin', origin)
     for (const subject of data.subjects) {
       await insert('expenditure_subject', subject)
-      const detail = await (await fetch(`https://api.fudoki.dev/v1/fiscal/expenditure/subjects/${subject.subject_id}`)).json() as { locations: Record<string, unknown>[] }
+      const detail = await (await fetch(`https://api.fudoki.dev/v1/expenditures/lines/${subject.subject_id}`)).json() as { locations: Record<string, unknown>[] }
       for (const location of detail.locations.filter((l) => l.row_id === subject.subject_id)) await insert('expenditure_location', location)
     }
   }

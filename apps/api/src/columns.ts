@@ -102,3 +102,18 @@ export const zodOf = (type: ColumnType) =>
 
 /** nullable が false の列だけ非 null にする（OpenAPI の契約を締める）。 */
 export const nullableIf = (schema: z.ZodType, c: ColumnSpec) => (c.nullable === false ? schema : schema.nullable())
+
+/** 事業評価の根（自治体 × 評価した事業を行った年度）と予算案の根（自治体 × 予算の年度） */
+export const EVALUATION_TABLE = 'evaluation'
+export const BUDGET_PROPOSAL_TABLE = 'budget_proposal'
+
+/**
+ * 手で書いた行の schema の各列に、columns.json（dbt の _models.yml）の説明を付ける。
+ * 列の集合・型・null の可否・accepted_values が columns.json と合うかは model.test.ts が照合する。
+ */
+export function described<T extends z.ZodRawShape>(table: string, shape: T): T {
+  const columns = TABLES[table]!.columns
+  return Object.fromEntries(
+    Object.entries(shape).map(([name, schema]) => [name, (schema as z.ZodType).describe(columns.find((c) => c.name === name)?.description ?? '')])
+  ) as unknown as T
+}

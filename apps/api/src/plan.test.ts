@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { DETAIL_TABLE, SUBJECT_TABLE } from './columns'
-import { buildWhere } from './search'
+import { buildWhere } from './shared/search'
 import { testDb } from './testing'
 
 // 年を IN に展開すると、複合 index の後続の列（document_kind・cofog_code・jurisdiction_code・level）が使われる。

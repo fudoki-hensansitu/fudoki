@@ -1,6 +1,9 @@
 // 歳出の集約: 1つの資料（自治体・年度・資料区分・補正号）の1つの会計の歳出全体。
 // 中に歳出の行（科目＝款・項・目、科目の下の内訳）と印字の位置を持つ。守ること: 末端の科目の和が総額。内訳は科目と足さない。
 import { z } from 'zod'
+import { DETAIL_TABLE, SUBJECT_TABLE, described } from '../columns'
+import { nextPageToken } from '../shared/paging'
+import { searchInputFor } from '../shared/search'
 import { FiscalYear, JurisdictionCode, Origin, OriginFormat, Yen } from '../shared/model'
 
 export const DocumentKind = z.enum(['initial', 'settlement']).describe('資料区分。initial は当初予算、settlement は決算')
@@ -100,3 +103,149 @@ export const Expenditure = z.strictObject({
   kan: z.array(Kan),
 })
 export type Expenditure = z.infer<typeof Expenditure>
+
+// --- API の応答（docs/prd/aggregate-api/dd.md）。search は表の行のまま平らに返し、列の型と説明は columns.json から作る ---
+
+const amountPhase = z.enum(['executed', 'approved'])
+const level = z.enum(['款', '項', '目'])
+const docKind = z.enum(['settlement', 'initial'])
+
+/** 科目と内訳に共通の、根で決まる列と科目の経路 */
+const lineCommon = {
+  expenditure_id: z.string(),
+  jurisdiction_code: z.string(),
+  fiscal_year: z.int(),
+  document_kind: docKind,
+  amendment_number: z.int().nullable(),
+  amount_phase: amountPhase,
+  account_name: z.string(),
+  account_kind: z.string(),
+  kan_code: z.string(),
+  kan_name: z.string(),
+  kou_code: z.string().nullable(),
+  kou_name: z.string().nullable(),
+  moku_code: z.string().nullable(),
+  moku_name: z.string().nullable(),
+}
+
+// meta の id を付けると、JSON Schema では $defs に一度だけ出て $ref で参照される（tools/list と OpenAPI が小さくなる）。
+export const OriginRow = z
+  .strictObject(
+    described('expenditure_origin', {
+      origin_id: z.string(),
+      jurisdiction_code: z.string(),
+      fiscal_year: z.int(),
+      document_kind: z.string(),
+      amendment_number: z.int().nullable(),
+      title: z.string(),
+      url: z.string(),
+      format: z.string(),
+      sha256: z.string(),
+    })
+  )
+  .meta({ id: 'ExpenditureOriginRow', description: '出典（資料名・URL・SHA-256）。予算書・決算書の1冊。' })
+
+export const LocationRow = z
+  .strictObject(
+    described('expenditure_location', {
+      row_id: z.string(),
+      origin_id: z.string(),
+      kind: LocationKind,
+      source_page: z.int().nullable(),
+      source_x0: z.number().nullable(),
+      source_y0: z.number().nullable(),
+      source_x1: z.number().nullable(),
+      source_y1: z.number().nullable(),
+      amount_source_page: z.int().nullable(),
+      amount_source_x0: z.number().nullable(),
+      amount_source_y0: z.number().nullable(),
+      amount_source_x1: z.number().nullable(),
+      amount_source_y1: z.number().nullable(),
+      source_line: z.int().nullable(),
+      amount_source_line: z.int().nullable(),
+    })
+  )
+  .meta({ id: 'LocationRow', description: '行が印字された出典の位置。row_id は subject_id か detail_id。kind が pdf なら頁と枠、csv なら行番号。' })
+
+const subjectShape = described('expenditure_subject', {
+  subject_id: z.string(),
+  node_key: z.string(),
+  parent_subject_id: z.string().nullable(),
+  ...lineCommon,
+  level,
+  code: z.string().nullable(),
+  name: z.string(),
+  amount_yen: z.int().nullable(),
+  is_leaf: z.boolean(),
+  cofog_status: z.string().nullable(),
+  cofog_code: z.string().nullable(),
+  is_interfund_transfer: z.boolean(),
+  interfund_transfer_to: z.string().nullable(),
+  origin_id: z.string(),
+})
+export const SubjectRow = z.strictObject(subjectShape).meta({ id: 'SubjectRow', description: '歳出の科目（款・項・目）。' })
+
+const detailShape = described('expenditure_detail', {
+  detail_id: z.string(),
+  node_key: z.string(),
+  parent_detail_id: z.string().nullable(),
+  subject_id: z.string(),
+  ...lineCommon,
+  breakdown: Breakdown,
+  source_heading: z.string(),
+  node_kind: z.string(),
+  depth: z.int(),
+  code: z.string().nullable(),
+  name: z.string(),
+  department: z.string().nullable(),
+  amount_yen: z.int().nullable(),
+  is_leaf: z.boolean(),
+  is_subject_remainder: z.boolean(),
+  expenditure_setsu_id: z.string().nullable(),
+  is_interfund_transfer: z.boolean(),
+  interfund_transfer_to: z.string().nullable(),
+  origin_id: z.string(),
+})
+export const DetailRow = z.strictObject(detailShape).meta({ id: 'DetailRow', description: '歳出の内訳（科目の下の事業・節など）。' })
+
+const ORIGINS_HELP = '結果の行が指す出典。行の origin_id から引く。'
+const LOCATIONS_HELP = '結果の行が印字された位置。行の subject_id・detail_id を row_id で引く。'
+
+export const SubjectSearchInput = searchInputFor(SUBJECT_TABLE)
+export const DetailSearchInput = searchInputFor(DETAIL_TABLE)
+
+export const SubjectSearchOutput = z.strictObject({
+  subjects: z.array(SubjectRow),
+  next_page_token: nextPageToken,
+  origins: z.array(OriginRow).describe(ORIGINS_HELP),
+})
+export const DetailSearchOutput = z.strictObject({
+  details: z.array(DetailRow),
+  next_page_token: nextPageToken,
+  origins: z.array(OriginRow).describe(ORIGINS_HELP),
+})
+
+export const LineId = z.string().regex(/^[0-9a-f]{64}$/).describe('subject_id or detail_id from a search response (64 lowercase hexadecimal characters).')
+
+/** 歳出の行（科目か内訳）と、その直下。科目なら子の科目と直下（depth = 1）の内訳、内訳なら子の内訳 */
+export const Line = z.discriminatedUnion('kind', [
+  z.strictObject({ kind: z.literal('subject'), ...subjectShape }),
+  z.strictObject({ kind: z.literal('detail'), ...detailShape }),
+])
+export const LineOutput = z.strictObject({
+  line: Line.describe('kind が subject なら科目、detail なら内訳。'),
+  child_subjects: z.array(SubjectRow).describe('子の科目（款なら項、項なら目）。内訳なら空。ページを切らずに返す。'),
+  details: z
+    .record(z.string(), z.array(DetailRow))
+    .describe('科目なら直下の内訳（depth = 1）、内訳なら子の内訳を breakdown ごとに。breakdown の違う内訳を同じ金額に混ぜて足さない。'),
+  next_page_token: nextPageToken.describe('details の次のページの token。無ければ null。'),
+  locations: z.array(LocationRow).describe(LOCATIONS_HELP),
+  origins: z.array(OriginRow).describe(ORIGINS_HELP),
+})
+export type LineOutput = z.infer<typeof LineOutput>
+export type SubjectSearchOutput = z.infer<typeof SubjectSearchOutput>
+export type DetailSearchOutput = z.infer<typeof DetailSearchOutput>
+export type SubjectRow = z.infer<typeof SubjectRow>
+export type DetailRow = z.infer<typeof DetailRow>
+export type LocationRow = z.infer<typeof LocationRow>
+export type OriginRow = z.infer<typeof OriginRow>
