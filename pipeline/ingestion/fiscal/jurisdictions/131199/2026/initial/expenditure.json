@@ -763,5 +763,156 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "0a587aa0f0e09c4279221e28237d4468a6a53d500a5913d9cd2299172b465270",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は column mark 88頁 から決めた。款の和 301,500,000 と印字の「歳出合計」301,500,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（10 件）を、印字された語から辞書の見出しに寄せた: 比較／金額→比較。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131199/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "aedf64d09cb747e63f13c1e4315ff81e2ee4243ccb153033beef0bb6e8155f6b",
+          "bytes": 85793
+        },
+        "row_count": 2854
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131199/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "de4142edb1d487dc292a77bccf43039d474843a405dcd33f4a76313a3aea2a7a",
+          "bytes": 61697
+        },
+        "row_count": 3021
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "9308120f17dcbdb87d2a07757bcf18b2313837a9d2feedc36955b16e8cf42c36",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は column mark 10頁 から決めた。款の和 53,480,000 と印字の「歳出合計」53,480,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（5 件）を、印字された語から辞書の見出しに寄せた: 比較／金額→比較。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131199/2026/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "97854875571b97530e604dfa71cb0006693b3dc4b0160c3b994dbfa20dd045cc",
+          "bytes": 10577
+        },
+        "row_count": 159
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131199/2026/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "f08e39db76dd37d2eb822cb50669ac9f52b7a01c0fa82fd9298363dd72784d60",
+          "bytes": 7858
+        },
+        "row_count": 194
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "c1e159b9c93ed112e59ccfb6add67172eddde47d4c05be170a21e239a0726360",
+      "account": "介護保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は column mark 10頁 から決めた。款の和 48,416,000 と印字の「歳出合計」48,416,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（3 件）を、印字された語から辞書の見出しに寄せた: 比較／金額→比較。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131199/2026/initial/expenditure/care-initial-nodes.parquet",
+          "sha256": "304589421b0e1d74baa89a662cb91270a31e7c982160526f534eeda62a3a6a46",
+          "bytes": 12819
+        },
+        "row_count": 203
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131199/2026/initial/expenditure/care-initial-amounts.parquet",
+          "sha256": "d8a6d83b2d27503b3d672286a0b043aea2fdce4d846a2d8d05148dfe27bffee4",
+          "bytes": 8576
+        },
+        "row_count": 229
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "202e1e5cc7b214b11813bbc25f5339dad11208847abaceea75dc46a7daebdea6",
+      "account": "後期高齢者医療事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は column mark 3頁 から決めた。款の和 16,050,000 と印字の「歳出合計」16,050,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（2 件）を、印字された語から辞書の見出しに寄せた: 比較／金額→比較。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131199/2026/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "30ae4445a5e936bb9a045abe6bd86e70a9379adb169e27704ae704dc0871588f",
+          "bytes": 4784
+        },
+        "row_count": 37
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131199/2026/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "e111dad0c6007f37b6f8b7c25c77f738809cfc12764a230a9e1519d8714dca28",
+          "bytes": 3416
+        },
+        "row_count": 43
+      }
+    },
+    {
+      "table_id": "tobu-tojo-grade-separation-initial",
+      "conversion_id": "tobu-tojo-grade-separation-initial",
+      "input_fingerprint": "e50a183c0a8034e77826d73fdfcb294340bcbd36bec358a3310a57a6faaec3b2",
+      "account": "東武東上線連続立体化事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 593,000 と印字の「歳出合計」593,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（1 件）を、印字された語から辞書の見出しに寄せた: 比較／金額→比較。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131199/2026/initial/expenditure/tobu-tojo-grade-separation-initial-nodes.parquet",
+          "sha256": "11c6ed5f198cd0f75ef53a8584224c4dbe57de60a208a791a7aa2708c4390c58",
+          "bytes": 3878
+        },
+        "row_count": 24
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131199/2026/initial/expenditure/tobu-tojo-grade-separation-initial-amounts.parquet",
+          "sha256": "e6c7d59933c6475080af8b65d40e69aeba5c0f912bd92cb2267e99474b927779",
+          "bytes": 2875
+        },
+        "row_count": 29
+      }
+    }
+  ]
 }

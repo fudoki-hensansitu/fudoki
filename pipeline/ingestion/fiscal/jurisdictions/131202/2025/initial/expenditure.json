@@ -176,5 +176,122 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "9c01c04737cbba3daa7d35501c85e35c2bc6213b497f9b6060d2301641e05dca",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は printed 212頁 から決めた。款の和 351,685,775 と印字の「歳出合計」351,685,775 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131202/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "b7ad4fbb3058896336fa6aae8cb93dcd8a064189c79c5901e0b60f9c5344bcd7",
+          "bytes": 251313
+        },
+        "row_count": 6695
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131202/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "4e4ac21da10d23040aa9e792bb3e72f917a8aded346967fb5b4cfe068854e91c",
+          "bytes": 212499
+        },
+        "row_count": 6972
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "1f1ea1d7049cc3252b04777b5459719bf8ac990d884e92002b8ce007c60f8cf4",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は printed 13頁 から決めた。款の和 64,627,639 と印字の「歳出合計」64,627,639 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131202/2025/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "75cd5055f7e94fe8672061a5d2f7f318561cb8df6f3a2f055a4199abfa4454d0",
+          "bytes": 12561
+        },
+        "row_count": 203
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131202/2025/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "e6fb4d3cc5b232dad79781fbaf234a7292591537da89aba3a08e675a2bb0ef6e",
+          "bytes": 10476
+        },
+        "row_count": 322
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "e09d6392347b9476e15f4f1bfc532708b07a981673bfed04e656c7f0d93c3bc2",
+      "account": "介護保険会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は printed 8頁 から決めた。款の和 64,092,086 と印字の「歳出合計」64,092,086 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131202/2025/initial/expenditure/care-initial-nodes.parquet",
+          "sha256": "30dcb241f479e64bb811035af5b400e3a2466491aad17de743fbbe55d8d8085e",
+          "bytes": 12468
+        },
+        "row_count": 191
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131202/2025/initial/expenditure/care-initial-amounts.parquet",
+          "sha256": "fcdb6dde55eb6ce660f3e39cf6eb2722a195864243b622852d2091acce62c032",
+          "bytes": 9979
+        },
+        "row_count": 228
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "9fc2523ba77cdfff1004b50e8bf71a4c7c511aed60f986e6a58bf673662eeb26",
+      "account": "後期高齢者医療会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 20,359,840 と印字の「歳出合計」20,359,840 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131202/2025/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "d9f33b6cf9251fd32d49740655b1685290d410894807eaf77fdb419b7e18a508",
+          "bytes": 6072
+        },
+        "row_count": 66
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131202/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "9a16282713e8e58ecc4fbc2a95567790567a5b3b2afd25229f1008c755c2eb4a",
+          "bytes": 4949
+        },
+        "row_count": 107
+      }
+    }
+  ]
 }
