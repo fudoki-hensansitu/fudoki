@@ -46,6 +46,9 @@
                     "kind": "財源内訳",
                     "reason": "本年度予算額の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度予算額で確かめる。"
                   }
+                },
+                "比較増(△)減": {
+                  "heading": "比較"
                 }
               }
             }
@@ -116,6 +119,9 @@
                     "kind": "財源内訳",
                     "reason": "本年度予算額の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度予算額で確かめる。"
                   }
+                },
+                "比較増(△)減": {
+                  "heading": "比較"
                 }
               }
             }
@@ -186,6 +192,9 @@
                     "kind": "財源内訳",
                     "reason": "本年度予算額の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度予算額で確かめる。"
                   }
+                },
+                "比較増(△)減": {
+                  "heading": "比較"
                 }
               }
             }
@@ -256,6 +265,9 @@
                     "kind": "財源内訳",
                     "reason": "本年度予算額の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度予算額で確かめる。"
                   }
+                },
+                "比較増(△)減": {
+                  "heading": "比較"
                 }
               }
             }
@@ -292,13 +304,13 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "06d29a7b3e6c4f364a14e8700375f0c54e09f74e5f1407f47483a81b979fef01",
+      "input_fingerprint": "d5e7a3f5206255bcea5165fcd473d82f9364e1333bd203838eaa3371f16e76be",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 82頁 から決めた。款の和 245,603,000 と印字の「歳出合計」245,603,000 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（125 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減・節／金額／節／金額→節／金額。"
+        "共有辞書に無い金額の見出し 1 種（12 件）を、印字された語から辞書の見出しに寄せた: 節／金額／節／金額→節／金額。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -313,8 +325,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "d7b68e4cd643d9c95d261f05146c9ceeb157924d5617cfd37290a4088197d644",
-          "bytes": 59266
+          "sha256": "144027567a47df5814a65667d6aa93127e61728f305ca0e5356f6125606a16ea",
+          "bytes": 59258
         },
         "row_count": 2972
       }
@@ -322,13 +334,13 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "2a6d0fb17a2d24d0c1688a5ee457bc60c3575b5f3ceb8e6cd6f6d3d9b7456e83",
+      "input_fingerprint": "5b827d03807d60886312404a5160deb0be92e4d6d0e7e9035f3fc65e0a5b6d73",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 12頁 から決めた。款の和 52,119,478 と印字の「歳出合計」52,119,478 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（47 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減・節／金額／節／金額→節／金額。"
+        "共有辞書に無い金額の見出し 1 種（6 件）を、印字された語から辞書の見出しに寄せた: 節／金額／節／金額→節／金額。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -343,8 +355,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/initial/expenditure/national-health-initial-amounts.parquet",
-          "sha256": "04cedab3b427458d5c00404ed81e8b0aded82387f0daa8f79d6bc3c43a42e8cd",
-          "bytes": 6150
+          "sha256": "5e6c8eba6dbc28337adb956962651b6a1eb402966490a4921d28bd0e2642a89e",
+          "bytes": 6142
         },
         "row_count": 227
       }
@@ -352,13 +364,12 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "8fc53ca7a4b08add371a773ce484d3abe490f466119bb2fc8fdb7307d846d8d2",
+      "input_fingerprint": "47f7871af26b63cd308c8cd157af6b5a8f5b45081cabbcbdc3078718b331f86d",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 12頁 から決めた。款の和 46,040,136 と印字の「歳出合計」46,040,136 が一致。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（30 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+        "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -373,8 +384,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/initial/expenditure/care-initial-amounts.parquet",
-          "sha256": "74a98389af8a96c8dbbf7a343df0318471321444f1c8440fa1679c8e13ed1d7f",
-          "bytes": 6935
+          "sha256": "3d7b90bf18faaa74d2ef846881738b215605356d46a7f0a37260928f19e9549c",
+          "bytes": 6927
         },
         "row_count": 238
       }
@@ -382,13 +393,12 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "ff986cef1d7f64e06789bd17c4f914aa399bfa2d15c993f271e79b488e528053",
+      "input_fingerprint": "9892d2a5239dc7f48dd82dbe919d4f1d8cde8adebcd26c558b39a329a4149c63",
       "account": "後期高齢者医療事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 7頁 から決めた。款の和 16,241,424 と印字の「歳出合計」16,241,424 が一致。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（14 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+        "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -403,8 +413,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131156/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
-          "sha256": "9edb7fd04374fa2e2e5f4ff74f4a95054385470bfca5e2771f36fd0f28dd1291",
-          "bytes": 3421
+          "sha256": "0951ea5b9676b3cd867e4f7ca9600e720738ddfa3df7411ca288a0856413f6ce",
+          "bytes": 3413
         },
         "row_count": 72
       }
