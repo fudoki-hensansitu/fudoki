@@ -5,8 +5,8 @@ import iconSvg from './favicon.svg?raw'
 import { ApiError, errorBody, invalid } from './errors'
 import { VIEW_HTML, VIEW_URI } from './gen/view'
 import { JURISDICTION_TABLE } from './columns'
-import { quotaOf } from './evaluation-quota'
-import { searchEvaluationsTool } from './evaluations'
+import { budgetProposalTools } from './budget-proposal/tools'
+import { evaluationTools } from './evaluation/tools'
 import { ORIGIN_PDF_PATH } from './expenditure/routes'
 import { expenditureTools } from './expenditure/tools'
 import { jurisdictionTools } from './jurisdiction/tools'
@@ -23,7 +23,11 @@ export const tools: Tool[] = [
   expenditureTools.searchSubjects,
   expenditureTools.searchDetails,
   expenditureTools.getLine,
-  searchEvaluationsTool,
+  evaluationTools.get,
+  evaluationTools.getSheet,
+  evaluationTools.searchSheets,
+  budgetProposalTools.get,
+  budgetProposalTools.searchMeasures,
 ]
 
 const MCP_ICON_SRC = `data:image/svg+xml;base64,${btoa(String.fromCharCode(...new TextEncoder().encode(iconSvg)))}`
@@ -137,7 +141,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
     },
     // stateless で tool・resource の一覧は変わらず、通知を送る経路も無いので、listChanged は名乗らない
     {
-      instructions: '風土記 provides read-only search of Japanese municipal expenditure budgets, settlements and project evaluation documents. Use it for questions about municipal spending or project evaluations.',
+      instructions: '風土記 provides read-only search of Japanese municipal expenditure budgets and settlements, project evaluation sheets and budget proposal press releases. Use it for questions about municipal spending, project evaluations or new budget measures.',
       capabilities: { tools: { listChanged: false }, resources: { listChanged: false } },
     }
   )
@@ -169,7 +173,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
       return { isError: true, content: [{ type: 'text' as const, text: JSON.stringify(body) }] }
     }
   }
-  // どの tool も利用者の状態を変えない（評価の検索は回数の記録と AI Search の呼び出しを伴うが、風土記の内側で閉じる）
+  // どの tool も利用者の状態を変えない
   // title は最上位と annotations の両方に書く（annotations.title は旧仕様の置き場所で、Claude の提出画面はこちらを見る）
   const annotations = (title: string) => ({ title, readOnlyHint: true, destructiveHint: false, idempotentHint: true, openWorldHint: false })
   for (const op of tools) {
@@ -254,10 +258,7 @@ export function createApp() {
     if (!on) {
       return c.json(errorBody('UNAVAILABLE', '提供を停止しています'), 503, { 'Cache-Control': 'no-store' })
     }
-    c.set('ctx', {
-      db: c.env.DB,
-      evaluation: { search: c.env.EVALUATION_SEARCH, rateLimit: c.env.EVALUATION_RATE_LIMIT, quota: quotaOf(c.env.EVALUATION_QUOTA), ip: c.req.header('CF-Connecting-IP') },
-    })
+    c.set('ctx', { db: c.env.DB })
     await next()
   })
 

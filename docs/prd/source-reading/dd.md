@@ -13,7 +13,7 @@ web のアシスタント（`/api/chat`）が、事業の目的・内容・実�
 - Goal: アシスタントが、出典の sha256 か `origin_id` と物理頁を指定して、その頁の文字を読める。
 - Goal: 頁の文字は AI だけに渡し、公開の REST・MCP、画面、会話の保存には出さない。
 - Goal: R2 には web から直接触れない。読む処理は apps/api の中だけにあり、書き込み・削除を呼ぶコードを持たない。
-- Non-Goal: 全文検索。どの頁を読むかは、他の tool の結果（`search_evaluations` の `page`、印字の位置の `source_page`）と、今後の評価の構造化データで決める。AI Search（`fudoki-evaluation-v2`）は評価の構造化に合わせて削除する予定で、この設計はそれに依存しない。
+- Non-Goal: 全文検索。どの頁を読むかは、他の tool の結果（評価シート・施策の `page`、印字の位置の `source_page`）で決める。
 - Non-Goal: 文字の層の無い PDF（scan）と CSV。scan は OCR の観測を使う形を後で検討する。
 
 ## Design

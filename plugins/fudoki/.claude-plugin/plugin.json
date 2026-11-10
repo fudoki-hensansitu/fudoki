@@ -1,7 +1,7 @@
 {
   "name": "fudoki",
-  "version": "0.3.0",
-  "description": "Search Japanese municipal expenditure budgets and settlements at project level. Check coverage and sources before comparing or aggregating amounts. For covered municipalities, also find source pages containing project evaluations.",
+  "version": "0.4.0",
+  "description": "Search Japanese municipal expenditure budgets and settlements at project level. Check coverage and sources before comparing or aggregating amounts. For covered municipalities, also read project evaluation sheets and budget proposal measures.",
   "author": {
     "name": "風土記",
     "email": "support@fudoki.dev"

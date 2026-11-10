@@ -12,7 +12,6 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 | 取り込み表の合計検査 | `ingestion:verify`（ノードの表・金額の表の全段の木の検査（保存済み可）と印字された数字の網羅の検査（候補の scope 付きのみ。弱い規則で通した数字と帯の外の数字を Jev が金額と読めば止める。convert が聞いて保存した答えを verify は API なしで再現し、無ければ止める）を保存済み・候補の表に当てる。CIでは回さない） |
 | dbt | `dbt:prepare`（入力準備だけ）/ `dbt:build`（入力準備から marts まで。候補は `--candidate-dir`、保存済みで未キャッシュなら `--remote`） |
 | 配信 | `serving:columns`（`apps/api/src/columns.json` を warehouse の列と `_models.yml` の説明から生成。`--check` で最新か検査）/ `serving:sync`（marts の表を D1 へ同名・同列で写す。`--database-id <uuid>` か `--local`、`--persist-to`、`--dry-run`。ネットワーク・cf を使うので sandbox 外） |
-| 評価の検索 | `evaluation:index`（保存済みの評価資料を R2 から取り、1頁ずつの PDF にして AI Search `fudoki-evaluation-v2` へ登録する。既定は計画の表示だけ、`--write` で書き、全 item が completed で数と metadata が計画と一致した出典の記録を `evaluation_search/instance.json` に書く。分割 PDF は保存しない。ネットワーク・cf を使うので sandbox 外）/ `serving:evaluation-catalog`（登録の記録があり指紋が今の選定と設定に一致する出典だけを `apps/api/src/evaluation-catalog.json` に生成。`--check` で最新か検査し、CI で回す） |
 | 事業（事業評価・予算案のプレス発表） | `project:save`（`ingestion/project/origins.json` の評価の結果・予算案のプレス発表の PDF を取得し、宣言の sha256 と同じときだけ非公開 R2 の `project/<種類>/<自治体>/<年度>/<sha256>.pdf` に置く。ネットワーク・cf を使うので sandbox 外）/ `project:link-measures`（build 済みの warehouse から、seed `dbt/seeds/project/budget_measure_link.csv` に無い施策だけを当初予算書の内訳（事業）へ紐付けて足す。`--refresh` で全部やり直す。Jev を呼ぶので sandbox 外） |
 | 出典の頁の文字 | `source-text:save`（保存済みの文字の層がある出典 PDF を R2 から取り、頁ごとの文字を非公開 R2 の `source-text/<sha256>.json` に置く。web のアシスタントが apps/api の内部 RPC から読む。既定は計画の表示だけ、`--write` で書き、R2 にある key は作り直さない。`--jurisdiction`・`--kind`・`--jobs`、抜き出し方を変えたら `--refresh`。ネットワーク・cf を使うので sandbox 外） |
 | 検査 | `test`（bun）/ `test:python`（unittest）/ `test:dbt`（入力準備の unittest） |
@@ -50,9 +49,6 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
   | 出典の頁ごとの文字 | 非公開R2の `source-text/<sha256>.json` | 管理しない（R2 の出典から `source-text:save` で作り直す） |
   | 住民基本台帳人口の xlsx | 非公開R2の `population/resident-register/<基準日>/<origin_id>.xlsx` | URL と基準日（`ingestion/population/origins.json`）だけ |
   | 評価の結果・予算案のプレス発表の PDF | 非公開R2の `project/<種類>/<自治体>/<年度>/<sha256>.pdf` | URL と sha256（`ingestion/project/origins.json`）だけ |
-  | 評価資料の索引の設定と登録の記録（出典ごとの sha256・頁数・指紋・確認日時） | `evaluation_search/instance.json` | 管理する |
-  | 評価資料の頁ごとの PDF・chunk | AI Search `fudoki-evaluation-v2` の built-in storage | 管理しない（R2 の出典から `evaluation:index` で作り直す） |
-  | Worker が引く評価資料の一覧 | `apps/api/src/evaluation-catalog.json`（生成物） | 管理する |
   | 分類・名称のマスタ | dbt seeds | 管理する |
   | 復元済み入力・PDF/OCR キャッシュ | `pipeline/.cache/` | 管理しない |
   | DuckDB・dbt manifest・検査結果・ローカル報告 | `pipeline/.build/` | 管理しない |

@@ -1,8 +1,8 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fudoki",
-  "version": "0.3.0",
-  "description": "Search Japanese municipal expenditure budgets and settlements at project level. Check coverage and sources before comparing or aggregating amounts. For covered municipalities, also find source pages containing project evaluations.",
+  "version": "0.4.0",
+  "description": "Search Japanese municipal expenditure budgets and settlements at project level. Check coverage and sources before comparing or aggregating amounts. For covered municipalities, also read project evaluation sheets and budget proposal measures.",
   "author": {
     "name": "風土記",
     "email": "support@fudoki.dev"
@@ -62,10 +62,10 @@
               "expected_behavior": "同じ自治体・年度・資料区分・会計の目（level=目）に限定し、cofog_code prefix=10で検索する。next_page_tokenを辿り、分類状態と欠損を示す。全件取得できなければ取得分の小計と明記する。"
             },
             {
-              "description": "事業の評価の頁の所在を探す。収録は選定した自治体の2020〜2025年度決算を評価した資料のみ（未収録はnot_covered）。公開データのみ、認証不要。",
-              "prompt": "北区の2025年度の事業評価で、防災分野におけるデジタル化の推進が載っている頁を教えて。",
-              "tools_triggered": "search_evaluations",
-              "expected_behavior": "jurisdiction=131172、fiscal_year=2025、query=防災分野におけるデジタル化の推進で検索する。候補の資料URL・origin_sha256・物理頁・page_urlを示し、抜粋だけを根拠に評価・目標値・実績を答えない。page_urlの頁を取得できれば読んで事業・年度の列・指標を確かめてから出典つきで答え、取得できなければpage_urlを示して確認を促す。"
+              "description": "事業評価の評価シートを引く。収録は list_jurisdictions の evaluations にある自治体・年度のみ。公開データのみ、認証不要。",
+              "prompt": "品川区の2024年度の事業評価で、評価がCの事業を教えて。",
+              "tools_triggered": "list_jurisdictions, search_evaluation_sheets",
+              "expected_behavior": "list_jurisdictionsで品川区（131091）の2024年度の事業評価があるか確かめ、search_evaluation_sheetsでfiscal_year=2024、jurisdiction_code=131091、grade_code を C で絞る。事業名と出典の資料名・物理頁を示し、評価で自治体どうしを順位付けせず、評価シートの金額を歳出に足さない。"
             }
           ],
           "negative": [
@@ -90,11 +90,11 @@
         "countries": [
           "JP"
         ],
-        "release_notes": "0.2.0: 選定した自治体の2025年度決算を評価した資料から、事業の評価が載った出典PDFの頁の所在を探すsearch_evaluations toolと、compare-expenditure skillの評価の検索の手順（references/evaluation.md）を追加。返すのは所在と短い抜粋だけで、内容は出典PDFで読む。0.1.0: 初版。既存リモートMCPへの接続と歳出の比較・集計skillを同梱。",
+        "release_notes": "0.4.0: search_evaluations（評価資料の頁の所在の検索）を外し、事業評価の評価シート・指標（get_evaluation・get_evaluation_sheet・search_evaluation_sheets）と予算案のプレス発表の施策（get_budget_proposal・search_budget_measures）を引くtoolに置き換え。references/evaluation.mdを新しいtoolの手順に書き換え。0.2.0: 選定した自治体の2025年度決算を評価した資料から、事業の評価が載った出典PDFの頁の所在を探すsearch_evaluations toolと、compare-expenditure skillの評価の検索の手順（references/evaluation.md）を追加。返すのは所在と短い抜粋だけで、内容は出典PDFで読む。0.1.0: 初版。既存リモートMCPへの接続と歳出の比較・集計skillを同梱。",
         "translations": {
           "ja-JP": {
             "subtitle": "自治体の歳出を比較し出典を確認",
-            "description": "自治体の当初予算・決算の歳出を検索し、収録範囲・会計・粒度を確かめて比較できます。内訳と出典の位置を確認できます。収録した自治体は、2020〜2025年度決算を評価した資料から事業の評価が載った頁の所在を探せます（返すのは所在と短い抜粋のみ。内容は出典PDFで確認）。収録済み資料に限られ、COFOG分類は風土記の判断です。歳入・取引・書込みには対応しません。"
+            "description": "自治体の当初予算・決算の歳出を検索し、収録範囲・会計・粒度を確かめて比較できます。内訳と出典の位置を確認できます。収録した自治体は、事業評価の評価シートと予算案のプレス発表の施策も引けます。収録済み資料に限られ、COFOG分類は風土記の判断です。歳入・取引・書込みには対応しません。"
           }
         }
       }

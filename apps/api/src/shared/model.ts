@@ -5,6 +5,8 @@ export const Yen = z.int().describe('円（整数）')
 export const FiscalYear = z.int().min(1900).max(2200).describe('会計年度（西暦。R7年度 = 2025）')
 export const JurisdictionCode = z.string().regex(/^\d{6}$/).describe('全国地方公共団体コード（6桁）')
 export const Sha256 = z.string().regex(/^[0-9a-f]{64}$/)
+/** 行の ID（主キーの組の sha256 の16進） */
+export const RowId = (what: string) => z.string().regex(/^[0-9a-f]{64}$/).describe(`${what} (64 lowercase hexadecimal characters).`)
 
 export const OriginFormat = z.enum(['pdf', 'csv'])
 

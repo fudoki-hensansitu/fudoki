@@ -105,10 +105,11 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 | 事業 | `GET /v1/projects/{project_id}`（年度と、付いた評価シート・施策の ID まで）・`POST /v1/projects:search` | `get_project`・`search_projects` |
 
 - `get_expenditure_line` は `line`（`kind` が `subject` か `detail` の union。列は表の行のまま）・`child_subjects`（科目のときの子の科目）・`details`（科目なら直下、内訳なら子を breakdown ごとに。ページ）・`locations`・`origins` を返す。科目と内訳の取得を1つにし、View の drill（行を押して直下を開く）を1回の呼び出しで描けるようにした。`locations` は表の行（`kind` と頁・枠・行番号の列）のままにし、ドメインの `Location` の union には組み直さない（View の出典の表示がこの列を読む）。
-- 自治体の一覧の行は要約（人口の推移・収録範囲・事業評価と予算案の年度）にし、会計ごとの出典は `GET /v1/jurisdictions/{jurisdiction_code}` だけが返す（今の `view=FULL` はなくす）。MCP には一覧だけを出す（出典は検索の結果の `origins` に載る）。
+- 自治体の一覧の行は要約（人口の推移・収録範囲・事業評価と予算案の ID と年度。`evaluations`・`budget_proposals` が `{evaluation_id|budget_proposal_id, fiscal_year}` の配列で、`get_evaluation`・`get_budget_proposal` に渡す ID をここで引ける）にし、会計ごとの出典は `GET /v1/jurisdictions/{jurisdiction_code}` だけが返す（今の `view=FULL` はなくす）。MCP には一覧だけを出す（出典は検索の結果の `origins` に載る）。
 - API の行の schema（`SubjectRow` など）は zod で列ごとに手で書き、説明だけを `columns.json` から付ける（`described`）。列の集合・型・null の可否・accepted_values が `columns.json` と合うかは `model.test.ts` で照合する。
 - `get` は応答の型（`model.ts` の部分の型）で検査してから返し、OpenAPI と MCP の出力 schema もその schema から作る。1回の応答が CPU の上限（200ms）と D1 の行数に収まるよう、子が多いもの（事業評価のシート、品川で年652枚）はページにする。歳出の根を丸ごと返す `get` は作らない（1つの根の内訳が最大9,300行）。
 - `search` は今の構造化 JSON の入力（必須の条件・where・order_by・ページ）を共通の部品で受ける。応答は平らな行で、行の列は `columns.json` の契約のまま。列の説明は入力・出力の schema に `.describe()` で付け、足し方の決まり（今の `sum_rules`）はその tool の description に書く。列の説明を返すだけの操作（今の `describe_expenditure_columns`）は作らない。
+- 事業評価・予算案の `get` も歳出と同じく表の行のまま返す（`EvaluationOutput` は `evaluation`・`sheets`（ページ）・`origins`、`SheetOutput` は `sheet`・`indicators`・`indicator_values`・`origins`、`BudgetProposalOutput` は `budget_proposal`・`measures`（1,000 件まで）・`origins`）。ドメインの型（`Evaluation` など）には組み直さない。
 - kill switch・流量・入力の上限は今の仕組みを全操作に掛ける。
 - MCP Apps の View（`apps/api/ui/`）は tool 名と応答の形で描き方を決めている（`ui/types.ts` の `toolFor`、`render_expenditure_view`、web の `VIEW_TOOLS`・`bridge.ts`）。新しい tool 名に付け替え、`src/gen/view.ts` を作り直す。`render_expenditure_view` は名前を残す。
 - web の呼び出し（MCP と REST）は同じ PR で新しい名前に直し、jurisdiction の cache の版（`jurisdiction-vN`）を上げる。
@@ -119,7 +120,7 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 - `cloudflare.config.ts` の AI Search の binding と Durable Object `EvaluationSearchQuota`（export・binding と、class を消す migration）
 - `control` の `evaluation_search*` の行を消す D1 の migration（`0003`）
 - `pipeline/evaluation_search`・`serving:evaluation-catalog` と CI の `--check`
-- docs の `(data)/02-evaluations.mdx`、plugin の `compare-expenditure` の評価の手順、web のチャットの指示（`server/chat.ts`）とツールの表示名（`chat/conversation.tsx`）
+- docs の `(data)/02-evaluations.mdx` の AI Search の案内（新しい tool の案内に書き換え、URL `/evaluations` は残す）、plugin の `compare-expenditure` の評価の手順、web のチャットの指示（`server/chat.ts`）とツールの表示名（`chat/conversation.tsx`）
 - `read_source_page`（`source-pages.ts`）は目録の代わりに3つの出典の表を引く
 
 ## 事業を作る

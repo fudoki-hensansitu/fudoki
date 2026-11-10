@@ -24,7 +24,8 @@ sidebar:
 | `search_expenditure_subjects` | 科目（款・項・目）を自治体・年度・段・COFOG などで絞って一覧する |
 | `search_expenditure_details` | 科目の下の内訳（事業・節）を分け方・所管課などで絞って一覧する |
 | `get_expenditure_line` | 科目か内訳を一つと、その直下（科目なら子の科目と内訳、内訳なら子）を分け方（事業・節など）ごとに返す |
-| `search_evaluations` | 事業の評価が載った出典 PDF の頁の所在を返す（[事業の評価資料](/evaluations)） |
+| `get_evaluation`・`get_evaluation_sheet`・`search_evaluation_sheets` | 事業評価の評価シートと指標を返す（[事業評価と予算案](/evaluations)） |
+| `get_budget_proposal`・`search_budget_measures` | 予算案のプレス発表の施策を返す（[事業評価と予算案](/evaluations)） |
 
 ## 表で見る（MCP Apps）
 
@@ -36,7 +37,6 @@ MCP Apps に対応したクライアントでは、科目・内訳の検索と�
 
 - POST だけを受け付けます。JSON-RPC の batch と `subscriptions/listen` は使えません。
 - リクエストの body は 16 KiB までです。
-- `search_evaluations` は回数に上限があります。超えると `RESOURCE_EXHAUSTED` と `retry_after_seconds` を返します。
 - 提供を止めているあいだは HTTP 503 を返します。
 
 ## つながらないとき
