@@ -2,9 +2,8 @@
 // HTTP の route・MCP には載せず、web のアシスタントが内部の RPC（source-pages-entrypoint.ts）から呼ぶだけ（docs/prd/source-reading/dd.md）。
 // 出典の利用条件が無断の転載を禁じるため、本文は公開の REST・MCP には返さない。
 import { z } from 'zod'
-import { ORIGIN_TABLE } from './columns'
+import { BUDGET_PROPOSAL_ORIGIN_TABLE, EVALUATION_ORIGIN_TABLE, ORIGIN_TABLE } from './columns'
 import type { Db } from './db'
-import { CATALOG } from './evaluations'
 
 /** R2 の binding のうち、ここで使う読み取りだけの型。書き込み・削除の関数を型に持たせない。 */
 export interface SourceTextBucket {
@@ -30,21 +29,24 @@ export type SourcePageResult =
 
 interface Origin { sha256: string; title: string; url: string }
 
-const officialUrl = (url: string, landing: string) => (new URL(url).hostname === 'web.archive.org' ? landing : url)
+// 出典の表（歳出・事業評価・予算案）を1つに並べる。評価・予算案の url は自治体から消えた資料だと Wayback Machine の写しになるので、landing_url（自治体の公式の頁）も引く
+const ORIGINS =
+  `SELECT "origin_id", "sha256", "title", "url", NULL AS "landing_url" FROM ${ORIGIN_TABLE} ` +
+  `UNION ALL SELECT "origin_id", "sha256", "title", "url", "landing_url" FROM ${EVALUATION_ORIGIN_TABLE} ` +
+  `UNION ALL SELECT "origin_id", "sha256", "title", "url", "landing_url" FROM ${BUDGET_PROPOSAL_ORIGIN_TABLE}`
+
+type OriginRecord = { sha256: string | null; title: string | null; url: string; landing_url: string | null }
+
+/** 利用者に示す URL。Wayback Machine の写しなら自治体の公式の頁にする */
+const officialUrl = (r: OriginRecord) => (r.landing_url && new URL(r.url).hostname === 'web.archive.org' ? r.landing_url : r.url)
 
 async function resolveOrigin(db: Db, origin: string): Promise<Origin | null> {
-  if (SHA256.test(origin)) {
-    const row = await db.prepare(`SELECT title, url FROM ${ORIGIN_TABLE} WHERE sha256 = ? ORDER BY origin_id LIMIT 1`).bind(origin).first<{ title: string; url: string }>()
-    if (row) return { sha256: origin, title: row.title, url: row.url }
-    const doc = CATALOG.find((d) => d.origin_sha256 === origin)
-    // catalog の url は自治体から消えた資料だと Wayback Machine の写しになる。利用者に示すのは自治体の公式の頁にする
-    return doc ? { sha256: origin, title: doc.title, url: officialUrl(doc.url, doc.landing_url) } : null
-  }
-  const row = await db.prepare(`SELECT sha256, title, url FROM ${ORIGIN_TABLE} WHERE origin_id = ?`).bind(origin).first<{ sha256: string | null; title: string; url: string }>()
-  return row?.sha256 && SHA256.test(row.sha256) ? { sha256: row.sha256, title: row.title, url: row.url } : null
+  const column = SHA256.test(origin) ? 'sha256' : 'origin_id'
+  const row = await db.prepare(`SELECT "sha256", "title", "url", "landing_url" FROM (${ORIGINS}) WHERE "${column}" = ? ORDER BY "origin_id" LIMIT 1`).bind(origin).first<OriginRecord>()
+  return row?.sha256 && SHA256.test(row.sha256) ? { sha256: row.sha256, title: row.title ?? '', url: officialUrl(row) } : null
 }
 
-/** 出典を風土記の出典の記録（D1 の expenditure_origin・評価資料の catalog）に照らしてから、R2 の key を sha256 から組み立てて読む。
+/** 出典を風土記の出典の記録（D1 の歳出・事業評価・予算案の出典の表）に照らしてから、R2 の key を sha256 から組み立てて読む。
  * 利用者や AI から R2 の key は受け取らない（取り込み表など他の object を読ませない）。 */
 export async function readSourcePage(db: Db, bucket: SourceTextBucket | undefined, raw: unknown): Promise<SourcePageResult> {
   const parsed = sourcePageInput.safeParse(raw)

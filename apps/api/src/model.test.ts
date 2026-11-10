@@ -1,7 +1,8 @@
 // 集約の型（*/model.ts）の enum と、dbt の accepted_values（columns.json）が同じ値かを照合する（docs/prd/aggregate-api/dd.md）。
 import { describe, expect, test } from 'bun:test'
 import { TABLES } from './columns'
-import { EvaluationOriginType, Grade } from './evaluation/model'
+import { EvaluationOriginRow, EvaluationOriginType, EvaluationRow, Grade, IndicatorRow, IndicatorValueRow, SheetRow } from './evaluation/model'
+import { BudgetProposalOriginRow, BudgetProposalRow, MeasureRow } from './budget-proposal/model'
 import { z } from 'zod'
 import { Breakdown, DetailRow, DocumentKind, LocationKind, LocationRow, OriginRow, SubjectRow } from './expenditure/model'
 import { JurisdictionList } from './jurisdiction/model'
@@ -55,6 +56,14 @@ describe('API の行の schema と表の列', () => {
     ['expenditure_detail', shapeOf(DetailRow), true],
     ['expenditure_location', shapeOf(LocationRow), true],
     ['expenditure_origin', shapeOf(OriginRow), true],
+    ['evaluation', shapeOf(EvaluationRow), true],
+    ['evaluation_origin', shapeOf(EvaluationOriginRow), true],
+    ['evaluation_sheet', shapeOf(SheetRow), true],
+    ['evaluation_indicator', shapeOf(IndicatorRow), true],
+    ['evaluation_indicator_value', shapeOf(IndicatorValueRow), true],
+    ['budget_proposal', shapeOf(BudgetProposalRow), true],
+    ['budget_proposal_origin', shapeOf(BudgetProposalOriginRow), true],
+    ['budget_measure', shapeOf(MeasureRow), true],
     // 一覧の要約は自治体マスタの全列と、組み立てた列（人口・収録範囲・年度）
     ['jurisdiction', jurisdiction, false],
   ] as const)('%s', (table, shape, exact) => {

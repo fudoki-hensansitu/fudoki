@@ -6,7 +6,6 @@ import type { AppEnv } from './context'
 export const MAX_BODY_BYTES = 16 * 1024
 
 export const ErrorBody = z.object({ error: z.object({ code: z.string(), message: z.string() }) })
-export const RateLimitedBody = z.object({ error: z.object({ code: z.string(), message: z.string(), retry_after_seconds: z.int() }) })
 
 const json = <S extends z.ZodType>(schema: S) => ({ 'application/json': { schema } })
 
@@ -22,14 +21,6 @@ export const postErrors = {
   ...getErrors,
   413: { description: `body が ${MAX_BODY_BYTES} バイトを超える`, content: json(ErrorBody) },
   415: { description: 'Content-Type が application/json でない', content: json(ErrorBody) },
-}
-
-export const rateLimitedError = {
-  429: {
-    description: '回数の上限を超えた。Retry-After 秒後に再試行する',
-    headers: z.object({ 'Retry-After': z.string() }),
-    content: json(RateLimitedBody),
-  },
 }
 
 export const ok = <S extends z.ZodType>(schema: S) => ({ 200: { description: '成功', content: json(schema) } })

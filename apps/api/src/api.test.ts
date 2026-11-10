@@ -214,7 +214,7 @@ describe('search', () => {
   test('SQL インジェクションの値は bind される', async () => {
     const body = await (await search({ where: { name: { eq: [`x' OR 1=1 --`], prefix: `"; DROP TABLE control; --` } } })).json()
     expect(body.subjects).toEqual([])
-    expect(sqlite.query('SELECT count(*) AS n FROM control').get()).toEqual({ n: 4 })
+    expect(sqlite.query('SELECT count(*) AS n FROM control').get()).toEqual({ n: 1 })
   })
 
 })
@@ -282,13 +282,17 @@ describe('MCP', () => {
   test('initialize → tools/list → tools/call', async () => {
     const init = await rpc('initialize', { protocolVersion: '2025-03-26', capabilities: {}, clientInfo: { name: 't', version: '0' } })
     expect(init.body.result.serverInfo.name).toBe('fudoki-api')
-    expect(init.body.result.instructions).toContain('read-only search of Japanese municipal expenditure budgets, settlements and project evaluation documents')
+    expect(init.body.result.instructions).toContain('read-only search of Japanese municipal expenditure budgets and settlements, project evaluation sheets and budget proposal press releases')
     const list = await rpc('tools/list')
     expect(list.body.result.tools.map((t: { name: string }) => t.name).sort()).toEqual([
+      'get_budget_proposal',
+      'get_evaluation',
+      'get_evaluation_sheet',
       'get_expenditure_line',
       'list_jurisdictions',
       'render_expenditure_view',
-      'search_evaluations',
+      'search_budget_measures',
+      'search_evaluation_sheets',
       'search_expenditure_details',
       'search_expenditure_subjects',
     ])
@@ -512,10 +516,14 @@ describe('MCP 2026-07-28', () => {
   test('initialize なしで tools/list と tools/call が通る', async () => {
     const list = await rpcBody(await modern('tools/list'))
     expect(list.result.tools.map((t: { name: string }) => t.name).sort()).toEqual([
+      'get_budget_proposal',
+      'get_evaluation',
+      'get_evaluation_sheet',
       'get_expenditure_line',
       'list_jurisdictions',
       'render_expenditure_view',
-      'search_evaluations',
+      'search_budget_measures',
+      'search_evaluation_sheets',
       'search_expenditure_details',
       'search_expenditure_subjects',
     ])

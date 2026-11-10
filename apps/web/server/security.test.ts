@@ -21,8 +21,7 @@ test('流量の上限は config の rate limit binding と同じ値', async () =
   const limit = (name: string) => config.cloudflare.ratelimits.find((l) => l.name === name)!
   expect(limit('CHAT_RATE_LIMIT').simple).toEqual(CHAT_RATE_LIMIT)
   expect(limit('VIEW_RATE_LIMIT').simple).toEqual(VIEW_RATE_LIMIT)
-  // apps/api の評価の検索（1001）と同じ namespace を使わない
-  expect(new Set(['1001', limit('CHAT_RATE_LIMIT').namespace_id, limit('VIEW_RATE_LIMIT').namespace_id]).size).toBe(3)
+  expect(limit('CHAT_RATE_LIMIT').namespace_id).not.toBe(limit('VIEW_RATE_LIMIT').namespace_id)
 })
 
 describe('会話の token', () => {
@@ -82,10 +81,10 @@ describe('View の中継の許可リスト', () => {
     expect(parseRelay({ method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: { page_size: 1 } } })).toMatchObject({ params: { name: 'search_expenditure_subjects' } })
     expect(parseRelay({ method: 'resources/read', params: { uri: 'ui://fudoki/view-06a8e196f6a7.html' } })).toMatchObject({ method: 'resources/read' })
   })
-  test('描画 tool・評価の検索・自治体の一覧・他の method・他の resource は 403', () => {
+  test('描画 tool・事業評価・自治体の一覧・他の method・他の resource は 403', () => {
     for (const body of [
       { method: 'tools/call', params: { name: 'render_expenditure_view', arguments: {} } },
-      { method: 'tools/call', params: { name: 'search_evaluations', arguments: {} } },
+      { method: 'tools/call', params: { name: 'search_evaluation_sheets', arguments: {} } },
       { method: 'tools/call', params: { name: 'list_jurisdictions', arguments: {} } },
       { method: 'tools/call', params: { name: '__proto__' } },
       { method: 'tools/list', params: {} },

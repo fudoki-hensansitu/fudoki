@@ -1,0 +1,292 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132047",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "kaigo-service-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "226190ff24132abd4e372f5977226d8cb61c4015f372a8d1ee90ba5416e0a3af"
+        }
+      ],
+      "options": {
+        "account": "介護サービス事業特別会計",
+        "table_id": "kaigo-service-initial",
+        "pages": [
+          [
+            70,
+            75
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款・項・目": {
+                  "heading": "科目"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に「（内訳）」として財源の種類（都支出金・その他等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に「（内訳）」として財源の種類（都支出金・その他等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-service-initial"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-hoken-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "226190ff24132abd4e372f5977226d8cb61c4015f372a8d1ee90ba5416e0a3af"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-hoken-initial",
+        "pages": [
+          [
+            106,
+            121
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款・項・目": {
+                  "heading": "科目"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に「（内訳）」として財源の種類（都支出金・その他等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に「（内訳）」として財源の種類（都支出金・その他等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-hoken-initial"
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "226190ff24132abd4e372f5977226d8cb61c4015f372a8d1ee90ba5416e0a3af"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-initial",
+        "pages": [
+          [
+            148,
+            157
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款・項・目": {
+                  "heading": "科目"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に「（内訳）」として財源の種類（都支出金・その他等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に「（内訳）」として財源の種類（都支出金・その他等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "kaigo-service-initial",
+      "conversion_id": "kaigo-service-initial",
+      "input_fingerprint": "50d94cc38369315d520c944a162a0c4b336413a9a59f7d318d03171d8d43a8b8",
+      "account": "介護サービス事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
+        "金額の単位は printed 3頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132047/2026/initial/expenditure/kaigo-service-initial-nodes.parquet",
+          "sha256": "f1d843641a7e44cc8df55fe379834ac0c9b692620bb023a984c95958d8c5ca85",
+          "bytes": 4834
+        },
+        "row_count": 49
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132047/2026/initial/expenditure/kaigo-service-initial-amounts.parquet",
+          "sha256": "06dc7684c5994e081a3943b9a6e1bda5727a058aad1b6210d3db62238a146713",
+          "bytes": 3627
+        },
+        "row_count": 71
+      }
+    },
+    {
+      "table_id": "kaigo-hoken-initial",
+      "conversion_id": "kaigo-hoken-initial",
+      "input_fingerprint": "595604efde642a856ac72e617a1b692d143f069434d0b870666aeba4ae2795b4",
+      "account": "介護保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
+        "金額の単位は printed 8頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132047/2026/initial/expenditure/kaigo-hoken-initial-nodes.parquet",
+          "sha256": "421adfb72b50518be43483522ae594c4f4d07cea6b8b57db51dd70a31fe078c0",
+          "bytes": 12161
+        },
+        "row_count": 266
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132047/2026/initial/expenditure/kaigo-hoken-initial-amounts.parquet",
+          "sha256": "563e962c89733942544ce876e64ef76e21a0e114fb15bcdf7d8d2a252928613d",
+          "bytes": 9098
+        },
+        "row_count": 342
+      }
+    },
+    {
+      "table_id": "kouki-initial",
+      "conversion_id": "kouki-initial",
+      "input_fingerprint": "8fa82110470fa27467ddb41bcb76e6db36bc0e1f282d20c8e99213a7c75acb32",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
+        "金額の単位は printed 5頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132047/2026/initial/expenditure/kouki-initial-nodes.parquet",
+          "sha256": "46c85001732676407d62de3882614c9c49a634a6b4176b60de87c97f1bf3d1ae",
+          "bytes": 6595
+        },
+        "row_count": 100
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132047/2026/initial/expenditure/kouki-initial-amounts.parquet",
+          "sha256": "91cde8a165a2c6038c3168d48e0c62bda33e82b8dcc5003eb4a752bc73d4eed6",
+          "bytes": 4929
+        },
+        "row_count": 134
+      }
+    }
+  ]
+}

@@ -30,7 +30,11 @@ const TOOL_LABELS: Record<string, string> = {
   search_expenditure_details: '内訳を検索',
   get_expenditure_line: '科目・内訳を開く',
   list_jurisdictions: '収録している自治体を確認',
-  search_evaluations: '事業の評価を検索',
+  get_evaluation: '事業評価を開く',
+  get_evaluation_sheet: '評価シートを開く',
+  search_evaluation_sheets: '評価シートを検索',
+  get_budget_proposal: '予算案の発表を開く',
+  search_budget_measures: '予算案の施策を検索',
   render_expenditure_view: '表とグラフを用意',
   read_source_page: '資料を読む',
 }

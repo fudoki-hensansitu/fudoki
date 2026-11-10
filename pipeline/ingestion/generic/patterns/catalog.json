@@ -2,7 +2,7 @@
   "layout": {
     "ruled": "ingestion.generic.patterns.layout.ruled",
     "open_edge": "ingestion.generic.patterns.layout.open_edge",
-    "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles"
+    "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles", "running_titles": "ingestion.generic.patterns.layout.running_titles"
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
@@ -40,10 +40,11 @@
     "enterprise_expenses": "ingestion.generic.patterns.readings.enterprise_expenses",
     "banded_projects": "ingestion.generic.patterns.readings.banded_projects",
     "offset_projects": "ingestion.generic.patterns.readings.offset_projects",
+    "compared_years": "ingestion.generic.patterns.readings.compared_years",
+    "turned_summary": "ingestion.generic.patterns.readings.turned_summary",
     "titled_pages": "ingestion.generic.patterns.readings.titled_pages",
     "labelled_spread": "ingestion.generic.patterns.readings.labelled_spread",
-    "facing_explanations": "ingestion.generic.patterns.readings.facing_explanations",
-    "annotated_spread": "ingestion.generic.patterns.readings.annotated_spread"
+    "facing_explanations": "ingestion.generic.patterns.readings.facing_explanations"
   },
   "component": {
     "marked_subjects": "ingestion.generic.patterns.components.marked_subjects",
