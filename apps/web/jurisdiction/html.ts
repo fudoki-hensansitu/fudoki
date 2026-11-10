@@ -1,7 +1,9 @@
 // 自治体の個別ページ（/tokyo/nakano）と一覧（/jurisdictions）の <head> と sitemap。本文は pages/ の React（page.tsx・index-page.tsx）を
 // Void がサーバーで書き、同じ props で hydrate する。ここは頁ごとの title・説明・canonical・JSON-LD を組む
 import type { CatalogEntry } from '../server/jurisdiction'
+import { EMBLEMS } from './emblems'
 import { jurisdictionPath } from './path'
+import { assetPath } from './profiles'
 import { formatYen, INDEX_PATH, pageYears, yearPath, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
@@ -115,7 +117,11 @@ export function pageHead(d: PageData, year?: number): Head {
     '@type': 'BreadcrumbList',
     itemListElement: [{ name: '風土記', path: '/' }, parent, { name: d.name, path: jurisdictionPath(d.code) }].map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: `${ORIGIN}${c.path}` })),
   }
-  return head(title, description, canonical, { script: [{ type: 'application/ld+json', innerHTML: inlineJson([ld, breadcrumb]) }] })
+  // 紋章と決算のある自治体の最新の頁は、OG 画像を自治体のもの（build:og が最新の決算の総額・分野から public/jurisdictions/<code>/og.png に作る）に差し替える。
+  // 画像の金額は最新の決算なので、過去の年度の頁は全頁共通の画像のまま
+  const own = !past && EMBLEMS[d.code] && d.cofogFlow.some((f) => f.kan.yen > 0)
+  const meta = own ? [{ property: 'og:image', content: `${ORIGIN}${assetPath(d.code, 'og.png')}` }] : []
+  return head(title, description, canonical, { meta, script: [{ type: 'application/ld+json', innerHTML: inlineJson([ld, breadcrumb]) }] })
 }
 
 /** 収録がまだ無い自治体。検索の対象にはしない */
