@@ -1,9 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { createApp } from './app'
 import { ApiError } from './errors'
-import { decodeToken, operations } from './operations'
+import { tools as operations } from './app'
+import { decodeToken } from './shared/paging'
 import { SUBJECT_TABLE } from './columns'
-import { MAX_BINDS, countBinds, searchInputFor } from './search'
+import { MAX_BINDS, countBinds, searchInputFor } from './shared/search'
 import { insertSubject, testDb } from './testing'
 
 const searchInput = searchInputFor(SUBJECT_TABLE)
@@ -149,7 +150,7 @@ describe('REST の fuzz', () => {
     for (let i = 0; i < 1500; i++) bodies.push(JSON.stringify(i % 3 === 0 ? randomValue(r, 0) : randomQuery(r)))
     const started = performance.now()
     for (const body of bodies) {
-      const res = await app.request('/v1/fiscal/expenditure/subjects:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }, { DB: db })
+      const res = await app.request('/v1/expenditures/subjects:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body }, { DB: db })
       expect([200, 400, 413], body.slice(0, 120)).toContain(res.status)
       if (res.status !== 200) expect((await res.json()).error.code).toBe('INVALID_ARGUMENT')
     }

@@ -3259,7 +3259,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "選ばない（未公表）。令和7年度の行政評価（施策マネジメントシート・事務事業マネジメントシート）は掲載されていない。ブラウザで描画して見た頁: 行政評価（https://www.city.kunitachi.tokyo.jp/soshiki/Dept01/Div02/Sec01/gyomu/0407/0410/index.html）。年度別の評価結果は令和元年度〜令和6年度の行政評価までで、最新の「令和6年度の行政評価」は2024年度（シートの「6年度の取組状況」）に選んだ資料。施策等評価委員会の頁（https://www.city.kunitachi.tokyo.jp/soshiki/Dept01/Div02/Sec01/gyomu/0407/0410/shisaku_iinkai/index.html）は令和2〜5年度までで令和7年度分は無い。ブラウザで検索して見つかった令和7年度の決算概況（R7-kessangaikyo.pdf）と令和7年度国立市事務報告書（7jimuhoukoku.pdf、581頁、https://www.city.kunitachi.tokyo.jp/shisei/zaisei/2/index.html の事務報告書）は、事務報告書が事業ごとの事業費と「執行状況及び成果」（検診の対象者数・受診者数などの活動実績）で、目標値・評価・課題の欄が無いため評価資料に当たらない。確認日：2026-10-23（UTC）。"
+      "reason": "選ばない（未公表）。令和7年度の行政評価（施策マネジメントシート・事務事業マネジメントシート）は掲載されていない。ブラウザで描画して見た頁: 行政評価（https://www.city.kunitachi.tokyo.jp/soshiki/Dept01/Div02/Sec01/gyomu/0407/0410/index.html）。年度別の評価結果は令和元年度〜令和6年度の行政評価までで、最新の「令和6年度の行政評価」は2024年度（シートの「6年度の取組状況」）に選んだ資料。施策等評価委員会の頁（https://www.city.kunitachi.tokyo.jp/soshiki/Dept01/Div02/Sec01/gyomu/0407/0410/shisaku_iinkai/index.html）は令和2〜5年度までで令和7年度分は無い。ブラウザで検索して見つかった令和7年度の決算概況（R7-kessangaikyo.pdf）と令和7年度国立市事務報告書（7jimuhoukoku.pdf、581頁、https://www.city.kunitachi.tokyo.jp/shisei/zaisei/2/index.html の事務報告書）は、事務報告書が事業ごとの事業費と「執行状況及び成果」（検診の対象者数・受診者数などの活動実績）で、目標値・評価・課題の欄が無いため評価資料に当たらない。確認日：2026-11-10T07:11:13+00:00（UTC）。"
     },
     {
       "target": {
@@ -4356,6 +4356,122 @@
         "archived_at": "2026-10-23T08:24:21.770Z"
       },
       "reason": "令和5年度の行政評価結果（掲載頁の更新日2025-01-15）。第2次基本計画の29基本施策ごとの施策マネジメントシート（R5_sesaku01〜29）と、事務事業マネジメントシート16事業（R5_jimu01〜16、各2頁）の計45ファイル。施策シートは対象指標・成果指標の目標値・実績値、施策全体の成果実績目標達成度と時系列比較、理由・背景、「5年度の取組状況」と「6年度の取組予定」、「5年度の評価結果」を載せる。事務事業シートは指標と事務事業コストの令和3〜6年度の推移（令和5年度は決算の(Ａ)列）、必要性・有効性・効率性の評価、改革・改善方向を載せる。年度は施策シートの「5年度の取組状況」「5年度の評価結果」と、事務事業シートの令和5年度（決算）の列で決めた。文字として読める（全ファイルの先頭3頁に文字あり）。施策シートの総事業費の欄は空欄が多く、金額が載るのは事務事業シートの一部。従前の「2023年度実績の評価資料が見つからない」は見落とし。確認日：2026-10-23（UTC）。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132152",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度（2024年度）国立市予算(案)記者会見資料",
+          "landing_url": "https://www.city.kunitachi.tokyo.jp/shisei/koho/3/7768.html",
+          "inspected_at": "2026-11-10T07:11:13+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/1/R6yosancompressed.pdf",
+              "sha256": "dc081fd35eb07b6cee531fc97001a907b7aff865b477b67c4b6667eb098b1768",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132152/2024/press-initial.pdf",
+            "sha256": "dc081fd35eb07b6cee531fc97001a907b7aff865b477b67c4b6667eb098b1768",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/1/R6yosancompressed.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:11:16.826Z"
+      },
+      "reason": "記者会見の頁（https://www.city.kunitachi.tokyo.jp/shisei/koho/3/7768.html）に載る「2月20日開催記者会見(令和6年度(2024年度)予算案の概要)」の冊子（46頁、文字PDF）。予算編成にあたっての重点施策・当初予算（案）の概要（財政規模・基金・地方債）に続き、主な事業を1事業1頁で、事業番号・事業名・事業費（千円）・予算書ページ・事業概要・担当課を載せ、新規事業はその旨を記す。記者会見の資料はこの1冊だけ。確認日 2026-11-10T07:11:13+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132152",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度（2025年度）国立市予算(案)記者会見資料",
+          "landing_url": "https://www.city.kunitachi.tokyo.jp/shisei/koho/3/7768.html",
+          "inspected_at": "2026-11-10T07:11:13+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/1/2025yosan.pdf",
+              "sha256": "246e481a674fc9956b0bb9f1ad2eeaac13aa08744ad0533237f6c2c6b250f56a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132152/2025/press-initial.pdf",
+            "sha256": "246e481a674fc9956b0bb9f1ad2eeaac13aa08744ad0533237f6c2c6b250f56a",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/1/2025yosan.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:11:21.068Z"
+      },
+      "reason": "記者会見の頁（https://www.city.kunitachi.tokyo.jp/shisei/koho/3/7768.html）に載る「2月19日開催記者会見(令和7(2025)年度予算案の概要)」の冊子（52頁、文字PDF）。世代別の施策の柱・当初予算（案）の概要（財政規模・基金・地方債）に続き、主な事業を1事業1頁で、事業番号・事業名・事業費（千円）・予算書ページ・事業概要・担当課を載せ、新規事業はその旨を記す。記者会見の資料はこの1冊だけ。確認日 2026-11-10T07:11:13+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132152",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8(2026)年度国立市予算(案)記者会見資料",
+          "landing_url": "https://www.city.kunitachi.tokyo.jp/shisei/koho/3/7768.html",
+          "inspected_at": "2026-11-10T07:11:13+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/1/KunitachiR8yosankisyakaiken.pdf",
+              "sha256": "d839565c4ee79062cf284f946367e4adeb7c9911ee6fadb10d8ac8b3a498b5c9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132152/2026/press-initial.pdf",
+            "sha256": "d839565c4ee79062cf284f946367e4adeb7c9911ee6fadb10d8ac8b3a498b5c9",
+            "final_url": "https://www.city.kunitachi.tokyo.jp/material/files/group/1/KunitachiR8yosankisyakaiken.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:11:23.855Z"
+      },
+      "reason": "記者会見の頁（https://www.city.kunitachi.tokyo.jp/shisei/koho/3/7768.html）に載る「2月19日開催記者会見(令和8(2026)年度予算案の概要)」の冊子（56頁、文字PDF）。目次のあと当初予算（案）の概要（財政規模・一般会計予算(案)・基金・地方債）、【主な事業】を1事業1頁で、事業番号・事業名・事業費（千円）・予算書ページ・事業概要・担当課を載せ、新規事業はその旨を記す。記者会見の資料はこの1冊だけ（ほかは YouTube の動画）。確認日 2026-11-10T07:11:13+00:00。"
     }
   ]
 }

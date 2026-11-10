@@ -2067,7 +2067,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。檜原村に事務事業評価・行政評価・主要施策の成果の公表なし。決算の令和7年度カテゴリ（https://www.vill.hinohara.tokyo.jp/category/2-8-3-20-0-0-0-0-0-0.html）には歳入歳出決算書の記事（0000002172）のみ、施策・計画カテゴリ（.../category/2-7-0-0-0-0-0-0-0-0.html）には総合計画・個別計画のみで評価資料の記事なし。確認日：2026-10-22T04:11:10+00:00（UTC）。"
+      "reason": "未選定。檜原村に事務事業評価・行政評価・主要施策の成果の公表なし。決算の令和7年度カテゴリ（https://www.vill.hinohara.tokyo.jp/category/2-8-3-20-0-0-0-0-0-0.html）には歳入歳出決算書の記事（0000002172）のみ、施策・計画カテゴリ（.../category/2-7-0-0-0-0-0-0-0-0.html）には総合計画・個別計画のみで評価資料の記事なし。確認日：2026-11-10T06:58:44+00:00（UTC）。"
     },
     {
       "target": {
@@ -2090,6 +2090,95 @@
       "selected_candidate_id": null,
       "archive": null,
       "reason": "ブラウザで描画した施策・計画（https://www.vill.hinohara.tokyo.jp/category/2-7-0-0-0-0-0-0-0-0.html）と総合計画（.../category/2-7-1-0-0-0-0-0-0-0.html）の頁、教育委員会の教育目標・基本方針の頁（https://www.vill.hinohara.tokyo.jp/0000000582.html）を確認した。総合計画・個別計画は計画の本体で評価の掲載が無く、事務報告書（DuckDuckGo の検索結果で確認）は活動報告、教育委員会の点検・評価は選ばない対象。DuckDuckGo の site 検索（事務事業評価・行政評価・総合計画 進捗・決算 成果）でも事業の評価資料は出ない。確認日：2026-10-23（UTC）。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "133078",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "選ばない（施策ごとの予算額が載る資料なし）。予算の令和6年度カテゴリ（https://www.vill.hinohara.tokyo.jp/category/2-8-4-7-0-0-0-0-0-0.html）には「令和6年度 予算書」（https://www.vill.hinohara.tokyo.jp/0000001674.html）と「令和6年度 予算説明書」（https://www.vill.hinohara.tokyo.jp/0000002052.html）の2記事だけで、村長の記者会見・報道発表の頁や予算（案）の概要の資料は無い。予算説明書（R6_ippan_yosansetumeisyo.pdf、101頁、文字PDF）の「主要事業の予算」（物理17〜29頁）は生活環境基盤整備・保健福祉・産業観光振興など4つの関連事業の区分ごとに事業名を箇条書きし、予算額は区分ごとの合計だけ（例: 797,558千円）で施策・事業ごとの額が無く、残りは予算のあらまし・款別の総括表・歳入歳出の款別説明なので選ばない。確認日 2026-11-10T06:58:17+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133078",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度 檜原村一般会計予算書補足説明資料",
+          "landing_url": "https://www.vill.hinohara.tokyo.jp/0000002053.html",
+          "inspected_at": "2026-11-10T06:58:17+00:00",
+          "files": [
+            {
+              "download_url": "https://www.vill.hinohara.tokyo.jp/cmsfiles/contents/0000002/2053/R7_ippan_yosansyohosokusetumei.pdf",
+              "sha256": "c54c205eb8acde353c42693a4237e36c1355a08a52374d0b09ef51e1cd90805f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133078/2025/press-initial.pdf",
+            "sha256": "c54c205eb8acde353c42693a4237e36c1355a08a52374d0b09ef51e1cd90805f",
+            "final_url": "https://www.vill.hinohara.tokyo.jp/cmsfiles/contents/0000002/2053/R7_ippan_yosansyohosokusetumei.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:58:26.804Z"
+      },
+      "reason": "予算の令和7年度カテゴリ（https://www.vill.hinohara.tokyo.jp/category/2-8-4-8-0-0-0-0-0-0.html）の記事「令和7年度 予算書補足説明資料」（https://www.vill.hinohara.tokyo.jp/0000002053.html）の一般会計分（R7_ippan_yosansyohosokusetumei.pdf、108頁、文字PDF）。村長の記者会見・報道発表の頁や予算（案）の概要の資料は無く、施策ごとに予算額が載るのはこの資料だけ。冒頭の「檜原村一般会計予算のあらまし」（目次1頁〜）で款ごとの増減と新規事業を文章で説明し、「総合計画事業の予算」（目次14〜31頁、物理18〜35頁前後）で総合計画の基本目標・施策・取組（○）ごとに事業名を箇条書きし、取組ごとに予算額の計（千円）を載せる。新規・拡充の印は無い。後半は当初予算総括表・性質別歳出・決算諸指数と歳入歳出の款別説明。同じ年度の予算書（https://www.vill.hinohara.tokyo.jp/0000001869.html）と同じ記事の村長施政方針説明（R7_siseihousin.pdf、首長の説明）は選ばない。確認日 2026-11-10T06:58:17+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133078",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度 檜原村一般会計予算書補足説明資料",
+          "landing_url": "https://www.vill.hinohara.tokyo.jp/0000002054.html",
+          "inspected_at": "2026-11-10T06:58:17+00:00",
+          "files": [
+            {
+              "download_url": "https://www.vill.hinohara.tokyo.jp/cmsfiles/contents/0000002/2054/R8_ippan_yosansyohosokusetumei_2.pdf",
+              "sha256": "9b569ea124899fe408d1b58de4fc5543f7bfcdc8385c0ed0f0080ec7224c8d7e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133078/2026/press-initial.pdf",
+            "sha256": "9b569ea124899fe408d1b58de4fc5543f7bfcdc8385c0ed0f0080ec7224c8d7e",
+            "final_url": "https://www.vill.hinohara.tokyo.jp/cmsfiles/contents/0000002/2054/R8_ippan_yosansyohosokusetumei_2.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:58:29.000Z"
+      },
+      "reason": "予算の令和8年度カテゴリ（https://www.vill.hinohara.tokyo.jp/category/2-8-4-9-0-0-0-0-0-0.html）の記事「令和8年度 予算書補足説明資料」（https://www.vill.hinohara.tokyo.jp/0000002054.html）の一般会計分（R8_ippan_yosansyohosokusetumei_2.pdf、43頁、文字PDF）。村長の記者会見・報道発表の頁や予算（案）の概要の資料は無く、施策ごとに予算額が載るのはこの資料だけ。冒頭の「檜原村一般会計予算のあらまし」（目次1〜12頁）で款ごとの増減と新規事業を文章で説明し、当初予算総括表・村税の状況・性質別歳出・決算諸指数のあと、「令和8年度 総合計画 実施計画」（目次23頁〜末尾）で総合計画の基本目標・施策・取組（○）ごとに事業名・数量・予算額（千円）と取組ごとの計を載せる。新規・拡充の印は無い。同じ年度の予算書（https://www.vill.hinohara.tokyo.jp/0000002051.html の R8_ippan_yosansyo.pdf）と村長施政方針説明（R8_siseihousin.pdf）は選ばない。確認日 2026-11-10T06:58:17+00:00。"
     }
   ]
 }
