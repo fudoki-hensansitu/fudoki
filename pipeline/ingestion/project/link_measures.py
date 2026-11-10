@@ -138,7 +138,7 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
                 row.update(detail_id=found['detail_id'], method='name')
             else:
                 if not key:
-                    raise ValueError(f'{KEY_ENV} が無いので Jev に聞けない')
+                    raise ValueError(f'{KEY_ENV} が無いので Jev に聞けない。repo root から `fnox exec --if-missing error --` 経由で実行する')
                 texts = segment([' '.join([item['title'], *item['names']]), *(d['name'] for d in pool)])
                 mine = words(texts[0])
                 ranked = sorted(zip(pool, texts[1:], strict=True), key=lambda pair: (-dice(mine, words(pair[1])), pair[0]['detail_id']))
