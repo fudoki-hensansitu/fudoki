@@ -33,7 +33,8 @@ const head = (title: string, description: string, canonical: string, extra: Part
 export const reiwaFull = (year: number) => (year < 2019 ? `${year}年度` : year === 2019 ? '令和元年度' : `令和${year - 2018}年度`)
 
 /** 決算より後の、金額のある当初予算のうちいちばん新しいもの */
-const latestBudget = (d: PageData) => d.budgets.filter((b) => !b.amountMissing).at(-1) ?? null
+/** 金額の欠けた予算と、目の行が無く 0 円になった予算（款だけの出典など）は使わない。自治体の歳出の総額が本当に 0 円になることは無い */
+const latestBudget = (d: PageData) => d.budgets.filter((b) => !b.amountMissing && b.yen > 0).at(-1) ?? null
 
 /** 個別ページの説明文。検索結果に出るので、金額は API の値だけで書く（人口や仮の値は入れない） */
 export function pageDescription(d: PageData): string {
