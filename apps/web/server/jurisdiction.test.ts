@@ -177,8 +177,8 @@ describe('自治体の個別ページ', () => {
     const headers = new Headers()
     const c = { env, req: { url: 'https://fudoki.dev/tokyo/nakano/2024' }, header: (k: string, v: string) => headers.set(k, v) } as unknown as Context
     expect((await jurisdictionProps(c, '/tokyo/nakano', '2024')).year).toBe(2024)
-    // 戻る遷移で取り直さないようブラウザに置く。deploy 直後に古い形が残らないよう短くする
-    expect(headers.get('Cache-Control')).toBe('public, max-age=60')
+    // 戻る遷移で取り直さないようブラウザに置く
+    expect(headers.get('Cache-Control')).toBe('public, max-age=300')
     const status = (segment: string) => jurisdictionProps(c, '/tokyo/nakano', segment).then(() => 200, (e: { status: number; res?: Response }) => [e.status, e.res?.headers.get('Location') ?? null])
     expect(await status('2025')).toEqual([301, '/tokyo/nakano'])
     expect(await status('2019')).toEqual([404, null])
