@@ -1,0 +1,900 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131181",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "staircase_codes",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄は取り込まない。目の行に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄は取り込まない。目の行に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "df91cdbbd77efd7e1b84371809a176f41739457c4ef8678516e5cd5d1bd21bc5",
+          "bytes": 1857554
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4f6b85a73c8d723d76e621f91b3e78b8705f365791cf82dfc82b5d018e43ead3",
+          "bytes": 1399159
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d623f74e5b545170ba5da51e49728a11fede0ad52170d7d033ceca489c21c39c",
+          "bytes": 1391288
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e9e8e0734d3df526a7e3cb35a5443e223cbf776b95473df160a6da48bf353ec3",
+          "bytes": 881745
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "50a4348249c022773af110e160b090a5122f8b8ff03a5f30b0b7f60eb6962112",
+          "bytes": 1776766
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131,
+              132,
+              133
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5c48383c8b79dd3a4fe0afb8e2556127990742099d7874a1e6be30b6778f583d",
+          "bytes": 2617314
+        },
+        {
+          "id": "general-ocr-7",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              134,
+              135,
+              136,
+              137,
+              138,
+              139,
+              140,
+              141,
+              142,
+              143
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "efe12f72b553d94bafe9b382d20b762fab79bde17090bb69f2341908b26d1be6",
+          "bytes": 1841253
+        },
+        {
+          "id": "general-ocr-8",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              144,
+              145,
+              146,
+              147,
+              148,
+              149,
+              150,
+              151,
+              152,
+              153
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "98168b42a326db80eb3aa03850f1383d42d07fa37dd83862f91e200b28ef31aa",
+          "bytes": 1808641
+        },
+        {
+          "id": "general-ocr-9",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              154,
+              155,
+              156,
+              157,
+              158,
+              159,
+              160,
+              161,
+              162,
+              163
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2cedee08b54c05b84ffdf5ce33cfea53404f128498ab79940d96df0f4ec39339",
+          "bytes": 1836877
+        },
+        {
+          "id": "general-ocr-10",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              164,
+              165,
+              166,
+              167,
+              168,
+              169,
+              170,
+              171,
+              172,
+              173
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ca06072955c228cbb84e69fa7ea51de900eabbefa1c585acd2ac7656d0607fbd",
+          "bytes": 1789257
+        },
+        {
+          "id": "general-ocr-11",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              174,
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e84bbc74cb6209c0742b547e1f38dec7b3602439eb84a2f8a508a13684339d4f",
+          "bytes": 1630760
+        },
+        {
+          "id": "general-ocr-12",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              184,
+              185,
+              186,
+              187,
+              188,
+              189,
+              190,
+              191,
+              192,
+              193
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "151ddecff2d7cd6330ce890df90f4222257d5a4af9a21a20cd057c7a075827aa",
+          "bytes": 1319650
+        },
+        {
+          "id": "general-ocr-13",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              194,
+              195,
+              196,
+              197,
+              198,
+              199,
+              200,
+              201,
+              202,
+              203
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6f3740fe302edd7291b99d871c414d48afe47f5d17cf192620781f6f161319f7",
+          "bytes": 1055497
+        },
+        {
+          "id": "general-ocr-14",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              204,
+              205,
+              206,
+              207
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8af0bbeb3cde455a90566d26028c81b69f1910afeb93c498ce14e9fb62f50205",
+          "bytes": 272167
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "staircase_codes",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄は取り込まない。目の行に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄は取り込まない。目の行に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-ocr-1",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              286,
+              287,
+              288,
+              289,
+              290,
+              291,
+              292,
+              293,
+              294,
+              295
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1148f5bb00188bc57973074a32562ecb394c2bdf540b28e6f69971002af673b5",
+          "bytes": 901416
+        },
+        {
+          "id": "national-health-ocr-2",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              296,
+              297,
+              298,
+              299,
+              300,
+              301,
+              302,
+              303,
+              304,
+              305
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e50bf3b70cbbf1bce1a8b8bc1f05325e6fd5faf669eb65f77839d0998fd5a8bf",
+          "bytes": 596580
+        },
+        {
+          "id": "national-health-ocr-3",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              306,
+              307,
+              308,
+              309,
+              310,
+              311,
+              312,
+              313,
+              314,
+              315
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3e25691c4123317234248d7fd0e298a6bb766a37c176c17d164174df4b773034",
+          "bytes": 664227
+        },
+        {
+          "id": "national-health-ocr-4",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              316,
+              317,
+              318,
+              319,
+              320,
+              321,
+              322,
+              323,
+              324,
+              325
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1e102ae229a4c508d7d96749a604b8041daba4957711a10a08c7846a0c3e8e67",
+          "bytes": 737731
+        },
+        {
+          "id": "national-health-ocr-5",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              326,
+              327
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "261673fd60c444558ed7f1a141c56f46c49d088c7a22eac3525bc49e88f570e8",
+          "bytes": 97844
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "staircase_codes",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄は取り込まない。目の行に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄は取り込まない。目の行に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-ocr-1",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              348,
+              349,
+              350,
+              351,
+              352,
+              353,
+              354,
+              355,
+              356,
+              357
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8098ab3a409e7f707ed05f508b5c57da6de7e6e98aacfcd34d874610fe9dd9de",
+          "bytes": 746343
+        },
+        {
+          "id": "elderly-medical-ocr-2",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              358,
+              359,
+              360,
+              361,
+              362,
+              363
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ea518c6aa5102f05615c8ec9b9410eedf02c520d32b27a7350b7dd4d3573b75e",
+          "bytes": 395310
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "staircase_codes",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄は取り込まない。目の行に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄は取り込まない。目の行に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-ocr-1",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              386,
+              387,
+              388,
+              389,
+              390,
+              391,
+              392,
+              393,
+              394,
+              395
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "49c5a2453345d559f373737da495e738d3fbbdf25c75f3f5c83b7935ba92cb16",
+          "bytes": 1410719
+        },
+        {
+          "id": "care-ocr-2",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              396,
+              397,
+              398,
+              399,
+              400,
+              401,
+              402,
+              403,
+              404,
+              405
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "593b4b81572b7d272e7554490bb451eb8c51d192000c163ee60a97b4180bea72",
+          "bytes": 957817
+        },
+        {
+          "id": "care-ocr-3",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              406,
+              407,
+              408,
+              409,
+              410,
+              411,
+              412,
+              413,
+              414,
+              415
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e7c4331740442cee35c49f4ab1799b9287d85811749f6b2be4d5d982bbeade65",
+          "bytes": 650609
+        },
+        {
+          "id": "care-ocr-4",
+          "origin_sha256": "66ea451ec498a663e892e0e5991abb418e0779a0112494449d37571200ca2735",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              416,
+              417
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "995257b1c6892fdaec1a8f8370a7fc11b2ae9b3aca28d16ad1d7ea25cbdff160",
+          "bytes": 95608
+        }
+      ]
+    }
+  ],
+  "tables": []
+}
