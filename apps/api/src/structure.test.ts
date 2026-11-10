@@ -5,8 +5,11 @@ import { readdirSync, readFileSync } from 'node:fs'
 // 残るループは配列の for...of と、長さで回数が決まる for だけ。生成物（bundle した外部のコード）は対象外。
 test('api/src の本番コードに while・do・for (;...) が無い', () => {
   const dir = new URL('.', import.meta.url).pathname
-  const files = readdirSync(dir).filter((f) => f.endsWith('.ts') && !f.endsWith('.test.ts') && !f.endsWith('.generated.ts') && f !== 'testing.ts')
-  expect(files).toContain('search.ts')
+  // 集約の dir（expenditure/ など）も見る。gen/ は bundle した外部のコード
+  const files = (readdirSync(dir, { recursive: true }) as string[]).filter(
+    (f) => f.endsWith('.ts') && !f.endsWith('.test.ts') && !f.endsWith('.generated.ts') && f !== 'testing.ts' && !f.startsWith('gen/')
+  )
+  expect(files).toContain('shared/search.ts')
   for (const f of files) {
     const code = readFileSync(dir + f, 'utf8').replace(/\/\*[\s\S]*?\*\//g, '').replace(/^\s*\/\/.*$/gm, '')
     expect(code, f).not.toMatch(/\bwhile\s*\(/)

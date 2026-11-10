@@ -28,10 +28,8 @@ type ChatMessage = UIMessage<Metadata>
 const TOOL_LABELS: Record<string, string> = {
   search_expenditure_subjects: '支出を検索',
   search_expenditure_details: '内訳を検索',
-  get_expenditure_subject: '科目を開く',
-  get_expenditure_detail: '内訳を開く',
+  get_expenditure_line: '科目・内訳を開く',
   list_jurisdictions: '収録している自治体を確認',
-  describe_expenditure_columns: '列の意味を確認',
   search_evaluations: '事業の評価を検索',
   render_expenditure_view: '表とグラフを用意',
   read_source_page: '資料を読む',

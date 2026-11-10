@@ -8,7 +8,7 @@ with recursive sheet as (
 ),
 moku as (
     select subject_id, jurisdiction_code, fiscal_year, account_name, kan_name, kou_name, name as moku_name
-    from {{ ref('fiscal_expenditure_subject') }}
+    from {{ ref('expenditure_subject') }}
     where document_kind = 'settlement' and amendment_number is null and level = '目'
 ),
 -- 名前で1つに決まる目だけを採る
@@ -25,7 +25,7 @@ detail as (
     from sheet s
     join subject j using (sheet_id)
     -- 内訳の名前は末尾に【所管課】と人数などを印字している
-    join {{ ref('fiscal_expenditure_detail') }} d on d.subject_id = j.subject_id and d.breakdown = '事業'
+    join {{ ref('expenditure_detail') }} d on d.subject_id = j.subject_id and d.breakdown = '事業'
         and regexp_replace(d.name, '【[^】]*】.*$', '') = s.jigyo
     group by s.sheet_id
     having count(*) = 1
@@ -34,22 +34,23 @@ detail as (
 descendant as (
     select d.sheet_id, x.detail_id
     from detail d
-    join {{ ref('fiscal_expenditure_detail') }} x on x.parent_detail_id = d.detail_id and x.breakdown = '事業'
+    join {{ ref('expenditure_detail') }} x on x.parent_detail_id = d.detail_id and x.breakdown = '事業'
     union all
     select a.sheet_id, x.detail_id
     from descendant a
-    join {{ ref('fiscal_expenditure_detail') }} x on x.parent_detail_id = a.detail_id and x.breakdown = '事業'
+    join {{ ref('expenditure_detail') }} x on x.parent_detail_id = a.detail_id and x.breakdown = '事業'
 ),
 same_name as (
     select a.sheet_id, any_value(a.detail_id) as detail_id
     from descendant a
     join sheet s using (sheet_id)
-    join {{ ref('fiscal_expenditure_detail') }} x using (detail_id)
+    join {{ ref('expenditure_detail') }} x using (detail_id)
     where regexp_replace(x.name, '【[^】]*】.*$', '') = s.name
     group by a.sheet_id
     having count(*) = 1
 )
-select s.sheet_id, s.origin_id, s.jurisdiction_code, s.fiscal_year, s.page, s.name,
+select s.sheet_id, sha256(to_json(['evaluation', s.jurisdiction_code, s.fiscal_year::varchar])) as evaluation_id,
+    s.origin_id, s.jurisdiction_code, s.fiscal_year, s.page, s.name,
     s.account_name, s.kan as kan_name, s.kou as kou_name, s.moku as moku_name, s.jigyo as jigyo_name,
     s.department, s.division,
     s.budget_thousand * 1000 as budget_yen, s.settled_thousand * 1000 as settled_yen,

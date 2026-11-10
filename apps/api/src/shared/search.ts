@@ -1,6 +1,6 @@
 import { z } from 'zod'
-import { DOCUMENT_KINDS, type ColumnSpec, type FiscalTable } from './columns'
-import { invalid } from './errors'
+import { DOCUMENT_KINDS, type ColumnSpec, type FiscalTable } from '../columns'
+import { invalid } from '../errors'
 
 // 構造化した問い合わせ入力（ADR 0022）。列名は許可列の enum からだけ、値はすべて bind し、SQL に連結しない。
 // 文字列の構文解析を持たない。列どうしは AND、eq の配列の中は OR（IN）。

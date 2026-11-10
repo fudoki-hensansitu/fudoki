@@ -2,11 +2,12 @@
 -- 宣言が「除外」の枝と、宣言の無い枝（検査 fiscal_detail_breakdown_declared が止める）は入れない。
 -- 同じ科目・同じ分け方で depth = 1 の行を足すと、その科目の額になる（出典の金額が欠ける行を除く）。
 with rows as (select * from {{ ref('int_fiscal__expenditure_rows') }}),
-subjects as (select * from {{ ref('fiscal_expenditure_subject') }})
+subjects as (select * from {{ ref('expenditure_subject') }})
 select r.row_id as detail_id,
     r.node_id as node_key,
     case when r.depth > 1 then p.row_id end as parent_detail_id,
     r.subject_row_id as subject_id,
+    {{ expenditure_id('r.') }} as expenditure_id,
     r.jurisdiction_code,
     r.fiscal_year,
     r.document_kind,

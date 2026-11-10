@@ -1,7 +1,7 @@
 version: 2
 models:
-- name: fiscal_expenditure_subject
-  description: 歳出の科目の表。一つの資料（自治体・年度・資料区分・会計）の款・項・目の印字。同じ資料で level を一つに絞るか is_leaf の行を足すと総額。目より下は fiscal_expenditure_detail、印字の位置は fiscal_expenditure_location。
+- name: expenditure_subject
+  description: 歳出の科目の表。一つの資料（自治体・年度・資料区分・会計）の款・項・目の印字。同じ資料で level を一つに絞るか is_leaf の行を足すと総額。目より下は expenditure_detail、印字の位置は expenditure_location。
   columns:
   - name: subject_id
     description: 行の ID。資料区分・補正号・node_key から作る（sha256）。
@@ -17,8 +17,16 @@ models:
     data_tests:
     - relationships:
         arguments:
-          to: ref('fiscal_expenditure_subject')
+          to: ref('expenditure_subject')
           field: subject_id
+  - name: expenditure_id
+    description: 歳出の根（自治体・年度・資料区分・補正号・会計）の ID。expenditure の expenditure_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('expenditure')
+          field: expenditure_id
   - &id002
     name: jurisdiction_code
     description: 宣言の自治体コード。
@@ -120,9 +128,9 @@ models:
     - not_null
     - relationships:
         arguments:
-          to: ref('fiscal_origin')
+          to: ref('expenditure_origin')
           field: origin_id
-- name: fiscal_expenditure_detail
+- name: expenditure_detail
   description: 歳出の内訳の表。科目の下の印字（事業・節・その他の分け方の枝）。同じ科目・同じ breakdown の depth = 1 の行を足すと科目の額になる。分け方・深さを混ぜて足さない。
   columns:
   - name: detail_id
@@ -138,7 +146,7 @@ models:
     data_tests:
     - relationships:
         arguments:
-          to: ref('fiscal_expenditure_detail')
+          to: ref('expenditure_detail')
           field: detail_id
   - name: subject_id
     description: 枝が属する科目（ほぼ目。目の無い項や、項の直下に付く内訳もある）。
@@ -146,8 +154,16 @@ models:
     - not_null
     - relationships:
         arguments:
-          to: ref('fiscal_expenditure_subject')
+          to: ref('expenditure_subject')
           field: subject_id
+  - name: expenditure_id
+    description: 歳出の根（自治体・年度・資料区分・補正号・会計）の ID。expenditure の expenditure_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('expenditure')
+          field: expenditure_id
   - *id002
   - *id003
   - *id004
@@ -221,10 +237,10 @@ models:
     - not_null
     - relationships:
         arguments:
-          to: ref('fiscal_origin')
+          to: ref('expenditure_origin')
           field: origin_id
-- name: fiscal_expenditure_location
-  description: 科目・内訳の表の1行が印字された出典の頁と枠。PDF だけ座標を持つ。
+- name: expenditure_location
+  description: 科目・内訳の表の1行が印字された出典の位置。kind で形が違う（pdf は頁と枠、csv は行番号）。
   columns:
   - name: row_id
     description: 科目の表の subject_id か内訳の表の detail_id。
@@ -237,10 +253,19 @@ models:
     - not_null
     - relationships:
         arguments:
-          to: ref('fiscal_origin')
+          to: ref('expenditure_origin')
           field: origin_id
+  - name: kind
+    description: 出典の形式。pdf（頁と枠を持つ）か csv（行番号を持つ）。
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - pdf
+          - csv
   - name: source_page
-    description: PDFは項目が印字された頁で、出典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号。紙面に印刷されたページ番号ではなく、分冊・抜粋のファイルではそのファイルの中での番号。CSVは出典ファイルの1始まりの物理行（見出しの行が1行目）で、末端は印字された行の開始行、CSVに行の無い親（款〜節）は子孫の行のうち最も小さい開始行。
+    description: kind が pdf のときだけ。項目が印字された頁で、出典ファイル（origin_id が指す1つの PDF）の1始まりのページ番号。紙面に印刷されたページ番号ではなく、分冊・抜粋のファイルではそのファイルの中での番号。
   - name: source_x0
     description: 項目の印字の枠の左端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: source_y0
@@ -250,7 +275,7 @@ models:
   - name: source_y1
     description: 項目の印字の枠の下端。PDFだけ（頁`source_page`の左上原点のpt）。保存済みの取り込み表で値が無ければNULL（自治体によりy0・y1だけが入り、x0・x1がNULLのことがある）。名称が次の頁へ続く項目は y0 が y1 より大きいことがある。
   - name: amount_source_page
-    description: 採用した金額の位置。PDFは source_page と同じ数え方の、出典ファイルの1始まりのページ番号。CSVは1始まりの物理行。CSVの親の集計額はNULL。不明ならNULL。
+    description: kind が pdf のときだけ。採用した金額の頁。source_page と同じ数え方。不明ならNULL。
   - name: amount_source_x0
     description: 採用した金額の印字の枠の左端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
   - name: amount_source_y0
@@ -259,7 +284,11 @@ models:
     description: 採用した金額の印字の枠の右端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
   - name: amount_source_y1
     description: 採用した金額の印字の枠の下端。PDFだけ（頁`amount_source_page`の左上原点のpt）。印字が一つで全額のときだけ入れ、複数の印字を足した額・金額が無い・位置が不明ならNULL（頁が最初の頁として入っていても座標はNULL）。4つの座標は全部NULLか全部非NULL。
-- name: fiscal_origin
+  - name: source_line
+    description: kind が csv のときだけ。出典ファイルの1始まりの物理行（見出しの行が1行目）。末端は印字された行の開始行、CSVに行の無い親（款〜節）は子孫の行のうち最も小さい開始行。
+  - name: amount_source_line
+    description: kind が csv のときだけ。採用した金額の行。CSVの親の集計額はNULL。
+- name: expenditure_origin
   description: 出典選定から毎回生成する出典ファイルの表。独立した証跡ファイルを保存するものではない。
   columns:
   - name: origin_id
@@ -297,16 +326,16 @@ models:
     description: 出典の形式（pdf か csv）。
     data_tests:
     - not_null
-- name: fiscal_coverage
-  description: 収録範囲。歳出の科目・内訳の表に行がある自治体・年度・資料区分・会計と、その行が指す出典の組。表から作るので、検索で返る範囲と一致する。行があることを示し、会計全体・全事業を収録し終えたことは保証しない。出典の選定結果は使わないので、収録が無い理由（未収録か出典が無いか）は区別しない。
+- name: expenditure
+  description: 歳出の根。一つの資料（自治体・年度・資料区分・補正号）の一つの会計。科目・内訳の表に行があるものだけで、検索で返る範囲と一致する。行があることを示し、会計全体・全事業を収録し終えたことは保証しない。出典の選定結果は使わないので、収録が無い理由（未収録か出典が無いか）は区別しない。
   columns:
-  - name: coverage_id
-    description: 自治体・年度・資料区分・会計名・origin_id から生成した ID。
+  - name: expenditure_id
+    description: 自治体・年度・資料区分・補正号（無ければ空文字）・会計名から作る ID（sha256）。
     data_tests:
     - not_null
     - unique
   - name: jurisdiction_code
-    description: 自治体コード。科目の表の jurisdiction_code。
+    description: 自治体コード。
     data_tests:
     - not_null
     - relationships:
@@ -318,7 +347,7 @@ models:
     data_tests:
     - not_null
   - name: document_kind
-    description: 資料区分（settlement 決算・initial 当初予算）。科目・内訳の表の document_kind。
+    description: 資料区分（settlement 決算・initial 当初予算）。
     data_tests:
     - not_null
     - accepted_values:
@@ -326,6 +355,8 @@ models:
           values:
           - settlement
           - initial
+  - name: amendment_number
+    description: 補正予算の号数。補正予算以外はNULL。
   - name: account_name
     description: 出典の会計名。科目の表の account_name と同じ値で、検索の条件にそのまま使える。
     data_tests:
@@ -334,11 +365,27 @@ models:
     description: 自治体共通の会計の種類（風土記の判断）。
     data_tests:
     - not_null
-  - name: origin_id
-    description: この自治体・年度・資料区分・会計の明細が指す出典。分冊などで一つの会計に複数の出典があれば、出典ごとに行がある。
+- name: expenditure_origin_link
+  description: 歳出の根と出典（冊）の組。1冊が複数の会計にまたがり、1つの会計が分冊になることもある。
+  columns:
+  - name: link_id
+    description: expenditure_id と origin_id から作る ID（sha256）。
+    data_tests:
+    - not_null
+    - unique
+  - name: expenditure_id
+    description: 歳出の根。expenditure の expenditure_id。
     data_tests:
     - not_null
     - relationships:
         arguments:
-          to: ref('fiscal_origin')
+          to: ref('expenditure')
+          field: expenditure_id
+  - name: origin_id
+    description: 出典。expenditure_origin の origin_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('expenditure_origin')
           field: origin_id

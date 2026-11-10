@@ -1,7 +1,7 @@
 {
   "$schema": "https://agent-plugins.org/schemas/1.0.0/plugin.schema.json",
   "name": "fudoki",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Search Japanese municipal expenditure budgets and settlements at project level. Check coverage and sources before comparing or aggregating amounts. For covered municipalities, also find source pages containing project evaluations.",
   "author": {
     "name": "風土記",
@@ -46,19 +46,19 @@
             {
               "description": "条件付きの検索。中野区2025年度決算一般会計は2026-10-14に収録を確認。",
               "prompt": "中野区の2025年度決算、一般会計の目を、金額の大きい順に3件見せて。",
-              "tools_triggered": "list_jurisdictions, describe_expenditure_columns, search_expenditure_subjects",
+              "tools_triggered": "list_jurisdictions, search_expenditure_subjects",
               "expected_behavior": "search_expenditure_subjects で document_kind=settlement、fiscal_year=min/max 2025、jurisdiction_code=131148、account_name=一般会計、level=目に絞り、amount_yen降順で3件。円単位と出典を示す。"
             },
             {
               "description": "明細の内訳と出典確認。公開データのみ、認証不要。中野区2025年度決算一般会計は2026-10-14に収録を確認。",
               "prompt": "中野区の2025年度決算、一般会計で金額が最も大きい目について、内訳を事業・節の切り口ごとに見せて。あわせて、その目の資料名、URL、PDFファイルの頁番号を教えて。",
-              "tools_triggered": "search_expenditure_subjects, get_expenditure_subject",
+              "tools_triggered": "search_expenditure_subjects, get_expenditure_line",
               "expected_behavior": "document_kind=settlement、fiscal_year=2025、jurisdiction_code=131148、account_name=一般会計、level=目、amount_yen降順で1件を検索し、返されたsubject_idで取得する。内訳をbreakdown別に示し、異なるbreakdownと親子を合算しない。origin_idに対応する資料名・URL、locationsのsource_pageとamount_source_pageを示し、ファイル頁と紙面頁を区別する。"
             },
             {
               "description": "COFOG分類の集計。検索上限に達したら総額を断言しない。",
               "prompt": "中野区の2025年度決算一般会計について、COFOGの社会保護（10）の目を集計し、暫定分類と分類できない項目の扱いも説明して。",
-              "tools_triggered": "list_jurisdictions, describe_expenditure_columns, search_expenditure_subjects",
+              "tools_triggered": "list_jurisdictions, search_expenditure_subjects",
               "expected_behavior": "同じ自治体・年度・資料区分・会計の目（level=目）に限定し、cofog_code prefix=10で検索する。next_page_tokenを辿り、分類状態と欠損を示す。全件取得できなければ取得分の小計と明記する。"
             },
             {

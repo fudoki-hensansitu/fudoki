@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { SUBJECT_TABLE } from './columns'
+import { SUBJECT_TABLE } from '../columns'
 import { buildWhere, countBinds, globEscape } from './search'
 
 const t = SUBJECT_TABLE
