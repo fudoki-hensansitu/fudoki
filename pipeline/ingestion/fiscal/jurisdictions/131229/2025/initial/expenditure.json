@@ -738,5 +738,209 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general-initial-1",
+      "conversion_id": "general-initial-1",
+      "input_fingerprint": "6ebbfff496cae467353999dad9435615a24c1496df774dad02efa7e16f89dc5c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 75頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 29 件（限度額 29）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/general-initial-1-nodes.parquet",
+          "sha256": "b7b6cfcf11b6589bdcc1001375848c41097e3b05dd2aa0ed7ae6afe5d0dc9c04",
+          "bytes": 66168
+        },
+        "row_count": 2006
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/general-initial-1-amounts.parquet",
+          "sha256": "181d5faed2454ba52f662233ac1893a39cd6632129ac293679ad957903eebb5c",
+          "bytes": 45122
+        },
+        "row_count": 2116
+      }
+    },
+    {
+      "table_id": "general-initial-2",
+      "conversion_id": "general-initial-2",
+      "input_fingerprint": "0dbf40255fe08e6e1827a7a55afbb17658be3fc1fd25ffe9f6b905ac4e833bba",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 82頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/general-initial-2-nodes.parquet",
+          "sha256": "cd01bf7634ed93e5e56d46ab28c652b1c5f17ded7a966fae083dff0d7df25f3e",
+          "bytes": 71296
+        },
+        "row_count": 2222
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/general-initial-2-amounts.parquet",
+          "sha256": "3f094ec5649246abda0b9c9a7770c332ad5806d652c73d56d1db6a580c6c950e",
+          "bytes": 48997
+        },
+        "row_count": 2363
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "808690112768d554903d058ae278cbe565067332ae6f068307f3811eac003caf",
+      "account": "後期高齢者医療事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 6頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "0ab30791639bbf3ee1f4fea804940c0b65a3292c200417e46192123cfcbf26d4",
+          "bytes": 4987
+        },
+        "row_count": 53
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "29d3579fa3802b3ad2900fed416d09e4bfe88298712b93cd33bdcc7d2b72e0ca",
+          "bytes": 3858
+        },
+        "row_count": 89
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "e5cb7f8f7ca4c34fd10ce537898cb130d08f7470afa366435c7247c72ff0c0b9",
+      "account": "介護保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 12頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 7 件（限度額 7）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/care-initial-nodes.parquet",
+          "sha256": "1244a2dbfc07c628a1e58752ca4db2814f737b53c9dc0467970d312e5e9a61a7",
+          "bytes": 9085
+        },
+        "row_count": 163
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/care-initial-amounts.parquet",
+          "sha256": "eec8263caedf87380dc982636dc9f93a89be09c8e88e14ec4d74d78f2ed8e86a",
+          "bytes": 7061
+        },
+        "row_count": 227
+      }
+    },
+    {
+      "table_id": "land-initial",
+      "conversion_id": "land-initial",
+      "input_fingerprint": "94e8b5dec580e51f3974ecbb153ce2801a83bac9003df1ff4b30bebdb3a8dd33",
+      "account": "用地特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/land-initial-nodes.parquet",
+          "sha256": "7d7175afc4337bde9a216901e463f9de607772f04dae6ed1e4ae893f06647f57",
+          "bytes": 2817
+        },
+        "row_count": 10
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/land-initial-amounts.parquet",
+          "sha256": "8518c996cfd208fbaff52633ec0795e1c0988081e2bd9f9689e17235ea09fb05",
+          "bytes": 2224
+        },
+        "row_count": 18
+      }
+    },
+    {
+      "table_id": "parking-initial",
+      "conversion_id": "parking-initial",
+      "input_fingerprint": "ee6625f29df71443b0764a3ec33e5bc688452912a692220237cb09ff7349e974",
+      "account": "駐車場事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 3頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/parking-initial-nodes.parquet",
+          "sha256": "b1c9e606d1a3b98fdd16c4e677c48f62c425c4ce51a065856a7bcffc2d738fb9",
+          "bytes": 3936
+        },
+        "row_count": 29
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/parking-initial-amounts.parquet",
+          "sha256": "66980141ebc6660f603b32722e080ddaa73626e5ef3b7aa07d50ad9b61265272",
+          "bytes": 3010
+        },
+        "row_count": 49
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "2e47ce21eed2641b7b71b00e3d6dc90af5ddc95c5804a11926b9e41970249f59",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 16頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 2 件（積算 2）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "9b4da01f4bc44407be5ca15ccd568de7880cf832b3421136f06be443f629ff93",
+          "bytes": 8564
+        },
+        "row_count": 141
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131229/2025/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "45dd21d9e43c88f6556a147d1177eb5678494c28f9cc8e339574fa097684f40b",
+          "bytes": 6697
+        },
+        "row_count": 246
+      }
+    }
+  ]
 }

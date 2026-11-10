@@ -332,5 +332,122 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "62e9bd2977babc3520453e25a6e589dc54df6129a0ce37518154068607f363ad",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 64頁・carried 19頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "a09a312d0c9bc84fcec2a67a7a43675fe4241223649348021e6c6aca9fe19810",
+          "bytes": 56091
+        },
+        "row_count": 1872
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "9677cb03b90d3ed6fdd7ec7045d6a08aefbf499ae5bf6b9121accfdf6a720e2f",
+          "bytes": 43823
+        },
+        "row_count": 2174
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "e3552d441fcdceca868d7248d6de58f4aa50e5546d7c24ff8772ebb9548f3e9d",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 12頁・carried 1頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2025/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "116f758645d73b89b7fa79a88d9403ed66ed36eff2a6ded59db2112051d8a762",
+          "bytes": 9723
+        },
+        "row_count": 177
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2025/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "4f835265b79dffa3e4b3c59cce3c046fbc7714b8d4248611c3ca5efe26eda046",
+          "bytes": 7594
+        },
+        "row_count": 295
+      }
+    },
+    {
+      "table_id": "long-term-care-initial",
+      "conversion_id": "long-term-care-initial",
+      "input_fingerprint": "772ae9e5b399fed927d6121463093687613b5f7a761ed0ac84b628399ae073b2",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 12頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2025/initial/expenditure/long-term-care-initial-nodes.parquet",
+          "sha256": "aeb0aa70e85be9a1d5c3813d3f7c2813948a8a6b11cbdfe8a00c35487eaf0052",
+          "bytes": 9444
+        },
+        "row_count": 176
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2025/initial/expenditure/long-term-care-initial-amounts.parquet",
+          "sha256": "f0e26d7fa6df10347236e89b1abb6d6f91125a9e8bbfb4c46948432c37929009",
+          "bytes": 7214
+        },
+        "row_count": 260
+      }
+    },
+    {
+      "table_id": "late-elderly-initial",
+      "conversion_id": "late-elderly-initial",
+      "input_fingerprint": "d1c0665530de42ff407f3e103941281c6206ecf1db8abc583bdc67e5060b16d3",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 5頁・carried 1頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2025/initial/expenditure/late-elderly-initial-nodes.parquet",
+          "sha256": "f647eba36b27ad201f3f121fe2d70dff5d1f5af4d218e9654f088699a8856915",
+          "bytes": 7139
+        },
+        "row_count": 99
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2025/initial/expenditure/late-elderly-initial-amounts.parquet",
+          "sha256": "ea3492663a8858e8a344b608452932201560a25c9ba1a0243a63d0f3fa5d1453",
+          "bytes": 5153
+        },
+        "row_count": 147
+      }
+    }
+  ]
 }

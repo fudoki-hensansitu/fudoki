@@ -480,5 +480,122 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "a77ebcc4f61611468226d9088ce281462be190baad2325f199044090f3755627",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 95頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 483 件（基準額 1・補正回次 113・補正経過 369）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "b7441cfe8f648d69d7e284f7899c85593b549a708b580377c19df58d8edcb003",
+          "bytes": 98166
+        },
+        "row_count": 3068
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "c3eb1c294e6a47f002b6a380ea253633e6c36e6532bc0c0b78ce6b7f4e126732",
+          "bytes": 80662
+        },
+        "row_count": 3100
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "357b8e2b6f5c58b6e807da04141aa4db62110e7da24c40ac2ba58bc5026ce236",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 19頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 49 件（積算 15・補正回次 8・補正経過 26）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2026/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "e407e147f8cde84474f29f42b2f8256b1a785fe017f8480fa79c12505b605c1d",
+          "bytes": 10496
+        },
+        "row_count": 193
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2026/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "31f94b983608a784c61ace568461bada429c8332351e8908bcac0efedbef3996",
+          "bytes": 9580
+        },
+        "row_count": 285
+      }
+    },
+    {
+      "table_id": "late-elderly-initial",
+      "conversion_id": "late-elderly-initial",
+      "input_fingerprint": "411fdd215c00beb5aa21d2f3af1fb0b9b8951cf25ba84f2cd1d95066d88e8d64",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 9頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 22 件（積算 3・補正回次 5・補正経過 14）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2026/initial/expenditure/late-elderly-initial-nodes.parquet",
+          "sha256": "1c6489d4ea20a14b34a94bb28dcfacccb4bf9d9681b8990a09040b0553f994b6",
+          "bytes": 6727
+        },
+        "row_count": 94
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2026/initial/expenditure/late-elderly-initial-amounts.parquet",
+          "sha256": "b0839356ee970283d4a128e626ada9dd850d1a8d08dd45131bda384a7218a5f4",
+          "bytes": 5785
+        },
+        "row_count": 138
+      }
+    },
+    {
+      "table_id": "long-term-care-initial",
+      "conversion_id": "long-term-care-initial",
+      "input_fingerprint": "1e135be528a553eb792892e4977cebb25215cb06a14fb0df06fc5cb7043d4ea2",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は printed 13頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 19 件（補正回次 5・補正経過 14）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2026/initial/expenditure/long-term-care-initial-nodes.parquet",
+          "sha256": "f28f7fcc0874fd7789064468bbf77e48a58740771c5c60732e4050e23ba4e5e1",
+          "bytes": 10055
+        },
+        "row_count": 173
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2026/initial/expenditure/long-term-care-initial-amounts.parquet",
+          "sha256": "8f8ab421d6035f1b964bbd429bab9b4bc40d4cee7968a3ffe67c7984456d3cd4",
+          "bytes": 8688
+        },
+        "row_count": 236
+      }
+    }
+  ]
 }

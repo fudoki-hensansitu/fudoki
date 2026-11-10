@@ -332,5 +332,122 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "41846fd214e5d319afab56ff5da48d612cc744e07a39e043b8f1aa6eaf7444a9",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 67頁・carried 15頁・default 1頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 3 件（基準額 3）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "36b6a99eda84030e893508516e83a6958694270e3b3ef24bf710bef2c597d7d0",
+          "bytes": 55693
+        },
+        "row_count": 1849
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "e8c3c2f06a5ceca77d74f01080795a479e474b44c13dd4b91899ff0a4195d59f",
+          "bytes": 43551
+        },
+        "row_count": 2152
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "a7c5c94933971d2e48e471ba524eb596b4f392f4ce95c3f3beac5a5d3715ad3b",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 11頁・carried 2頁・default 1頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "5713da58a4e6206318601a615514360bd9c0d59979d5054856056464b0afc884",
+          "bytes": 10014
+        },
+        "row_count": 187
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "1e65b0f857e3d30fba0ec778a02efb070a509ff195133971023e759b042442c5",
+          "bytes": 7679
+        },
+        "row_count": 305
+      }
+    },
+    {
+      "table_id": "long-term-care-initial",
+      "conversion_id": "long-term-care-initial",
+      "input_fingerprint": "7fc963e39388ae799b0d2c9f02b090898133af4a331cfab8e3ecbfa6433fe05b",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 10頁・carried 1頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/initial/expenditure/long-term-care-initial-nodes.parquet",
+          "sha256": "d672e2673322aa4e38bd7e42e7a5b6b98cb9c235f9c68af75dfd05ec8ca7be6c",
+          "bytes": 9145
+        },
+        "row_count": 170
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/initial/expenditure/long-term-care-initial-amounts.parquet",
+          "sha256": "11a4ad211dc90141ccbae242462e0a086550bb90f07fe1782cd70cd53f33fdc0",
+          "bytes": 7016
+        },
+        "row_count": 254
+      }
+    },
+    {
+      "table_id": "late-elderly-initial",
+      "conversion_id": "late-elderly-initial",
+      "input_fingerprint": "549469f9fb8077cea7a2a6cb63326b2b6207ff1a3d4c9bca724aaf90537f37e8",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 5頁・carried 1頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/initial/expenditure/late-elderly-initial-nodes.parquet",
+          "sha256": "3437fa77a47f7a8d6f1b4154c9c32253a53bdfd4d852367a8da156e81731a3ae",
+          "bytes": 6787
+        },
+        "row_count": 93
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131211/2024/initial/expenditure/late-elderly-initial-amounts.parquet",
+          "sha256": "5a42f6c4d454697993460b2cd4409e6c29e791ad1126f956d54186d600081bc0",
+          "bytes": 4935
+        },
+        "row_count": 143
+      }
+    }
+  ]
 }
