@@ -154,7 +154,7 @@ export async function listJurisdictions(ctx: Ctx, input: ListInput): Promise<Jur
       const code = String(r.jurisdiction_code)
       return {
         ...toRow(JURISDICTION_COLUMNS, r),
-        population: residents.get(code)?.at(-1) ?? null,
+        population: residents.get(code) ?? [],
         coverage: (nested.get(code) ?? []).map((c) => ({ ...c, accounts: c.accounts.map(({ origins: _, ...a }) => a) })),
         evaluation_years: yearsOf.get(code)?.evaluation_years ?? [],
         budget_proposal_years: yearsOf.get(code)?.budget_proposal_years ?? [],

@@ -57,7 +57,7 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
   do {
     const r = await parseResponse(api(env).v1.jurisdictions.$get({ query: token ? { page_token: token } : {} }))
     for (const j of r.jurisdictions) {
-      const populations = j.population ? [{ people: j.population.population, asOf: j.population.reference_date }] : []
+      const populations = j.population.map((p) => ({ people: p.population, asOf: p.reference_date }))
       out.push({
         code: j.jurisdiction_code,
         name: j.name,

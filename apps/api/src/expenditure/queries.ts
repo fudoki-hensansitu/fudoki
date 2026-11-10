@@ -79,8 +79,9 @@ export async function getLine(ctx: Ctx, input: LineInput): Promise<LineOutput> {
   // 子の内訳: 科目の直下（depth = 1）か、内訳の子。id はどちらかの表にしか無い
   const kidsWhere = `("parent_detail_id" = ? OR ("subject_id" = ? AND "depth" = 1))`
   const kidIds = `SELECT "detail_id" FROM ${d.table} WHERE ${kidsWhere} ORDER BY "breakdown", "detail_id" LIMIT ? OFFSET ?`
-  const ids = `SELECT ? UNION ALL SELECT "subject_id" FROM ${s.table} WHERE "parent_subject_id" = ? UNION ALL SELECT * FROM (${kidIds})`
-  const idParams = [id, id, id, id, limit, offset]
+  const childIds = `SELECT "subject_id" FROM ${s.table} WHERE "parent_subject_id" = ? ORDER BY "code", "subject_id" LIMIT ?`
+  const ids = `SELECT ? UNION ALL SELECT * FROM (${childIds}) UNION ALL SELECT * FROM (${kidIds})`
+  const idParams = [id, id, MAX_CHILD_SUBJECTS, id, id, limit, offset]
   const [subject, detail, children, kids, locations, origins] = await db.batch([
     db.prepare(`SELECT ${s.selectList} FROM ${s.table} WHERE "subject_id" = ?`).bind(id),
     db.prepare(`SELECT ${d.selectList} FROM ${d.table} WHERE "detail_id" = ?`).bind(id),

@@ -19,7 +19,7 @@ sidebar:
     curl 'https://api.fudoki.dev/v1/jurisdictions?name=%E6%AD%A6%E8%94%B5%E9%87%8E%E5%B8%82'
     ```
 
-    `name`（部分一致。例は「武蔵野市」）か `code`（6 桁か 5 桁）で絞ると、6 桁の自治体コードと、最新の人口、収録している年度・資料区分・会計、事業評価と予算案の年度が返ります。検索の `jurisdiction_code` は 6 桁だけを受け付けるので、ここで引いたコードを使います。
+    `name`（部分一致。例は「武蔵野市」）か `code`（6 桁か 5 桁）で絞ると、6 桁の自治体コードと、人口の推移、収録している年度・資料区分・会計、事業評価と予算案の年度が返ります。検索の `jurisdiction_code` は 6 桁だけを受け付けるので、ここで引いたコードを使います。
   </Step>
   <Step title="科目を検索する">
     ```bash
@@ -65,7 +65,7 @@ sidebar:
 
 ## 出典を確かめる
 
-応答の `origins` に、行の `origin_id` が指す出典（資料名・公開 URL・形式・SHA-256）が入ります。1 つの自治体（`GET /v1/jurisdictions/{jurisdiction_code}`）は会計ごとの出典と人口の推移を返します。
+応答の `origins` に、行の `origin_id` が指す出典（資料名・公開 URL・形式・SHA-256）が入ります。1 つの自治体（`GET /v1/jurisdictions/{jurisdiction_code}`）は会計ごとの出典も返します。
 
 `GET /v1/expenditures/origins/{origin_id}/pdf` は自治体の公開 PDF を表示用に中継します。取得 URL は `X-Origin-Url`（percent-encoding 済み。`decodeURIComponent` で戻す）、取得日時は `X-Origin-Fetched-At` で返し、取り込み時との一致は検査しません。上限は [MCP の表示](/mcp#表で見るmcp-apps)と同じです。
 

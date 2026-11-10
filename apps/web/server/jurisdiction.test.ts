@@ -76,9 +76,9 @@ function fixtureApi({ code = '131148', name = '中野区', extraNodes = [] as Ro
     const url = new URL(req.url)
     if (url.pathname === '/v1/jurisdictions')
       return Response.json({ jurisdictions: [
-        { jurisdiction_code: code, name, prefecture_name: '東京都', coverage: [2024, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) },
-        { jurisdiction_code: '131016', name: '千代田区', prefecture_name: '東京都', coverage: [] },
-        { jurisdiction_code: '130001', name: '東京都', prefecture_name: '東京都', coverage: [] },
+        { jurisdiction_code: code, name, prefecture_name: '東京都', population: [], coverage: [2024, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) },
+        { jurisdiction_code: '131016', name: '千代田区', prefecture_name: '東京都', population: [], coverage: [] },
+        { jurisdiction_code: '130001', name: '東京都', prefecture_name: '東京都', population: [], coverage: [] },
       ] })
     const kind = url.pathname === '/v1/expenditures/subjects:search' ? 'subjects' : url.pathname === '/v1/expenditures/details:search' ? 'details' : undefined
     if (kind) {
@@ -179,7 +179,7 @@ describe('自治体の個別ページ', () => {
     const sparse: Env = { API: { fetch: async (req) => {
       const url = new URL(req.url)
       if (url.pathname === '/v1/jurisdictions')
-        return Response.json({ jurisdictions: [{ jurisdiction_code: '131148', name: '中野区', prefecture_name: '東京都', coverage: [2019, 2020, 2021, 2023, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) }] })
+        return Response.json({ jurisdictions: [{ jurisdiction_code: '131148', name: '中野区', prefecture_name: '東京都', population: [], coverage: [2019, 2020, 2021, 2023, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) }] })
       if (url.pathname === '/v1/expenditures/subjects:search') {
         const body = await req.json() as { fiscal_year: { min: number; max: number }; where: { level: { eq: string[] } } }
         if (body.fiscal_year.max - body.fiscal_year.min > 4) return Response.json({ error: 'fiscal_year は 5 年以内にしてください' }, { status: 400 })

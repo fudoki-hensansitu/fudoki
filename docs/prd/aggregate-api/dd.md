@@ -98,14 +98,14 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 
 | 集約 | REST | MCP |
 | --- | --- | --- |
-| 自治体 | `GET /v1/jurisdictions`（要約: 最新の人口・歳出の収録の年度と会計・事業評価と予算案の年度）・`GET /v1/jurisdictions/{code}`（人口の推移まで） | `list_jurisdictions` |
+| 自治体 | `GET /v1/jurisdictions`（要約: 人口の推移・歳出の収録の年度と会計・事業評価と予算案の年度）・`GET /v1/jurisdictions/{code}`（会計ごとの出典まで） | `list_jurisdictions` |
 | 歳出 | `POST /v1/expenditures/subjects:search`・`POST /v1/expenditures/details:search`・`GET /v1/expenditures/lines/{line_id}`（科目か内訳と、その直下。印字の位置と出典まで）・`GET /v1/expenditures/origins/{origin_id}/pdf` | `search_expenditure_subjects`・`search_expenditure_details`・`get_expenditure_line` |
 | 事業評価 | `GET /v1/evaluations/{evaluation_id}`（根・件数・シートの要約。シートはページ）・`GET /v1/evaluations/sheets/{sheet_id}`（指標まで）・`POST /v1/evaluations/sheets:search` | `get_evaluation`・`get_evaluation_sheet`・`search_evaluation_sheets` |
 | 予算案 | `GET /v1/budget-proposals/{budget_proposal_id}`（施策まで）・`POST /v1/budget-proposals/measures:search` | `get_budget_proposal`・`search_budget_measures` |
 | 事業 | `GET /v1/projects/{project_id}`（年度と、付いた評価シート・施策の ID まで）・`POST /v1/projects:search` | `get_project`・`search_projects` |
 
 - `get_expenditure_line` は `line`（`kind` が `subject` か `detail` の union。列は表の行のまま）・`child_subjects`（科目のときの子の科目）・`details`（科目なら直下、内訳なら子を breakdown ごとに。ページ）・`locations`・`origins` を返す。科目と内訳の取得を1つにし、View の drill（行を押して直下を開く）を1回の呼び出しで描けるようにした。`locations` は表の行（`kind` と頁・枠・行番号の列）のままにし、ドメインの `Location` の union には組み直さない（View の出典の表示がこの列を読む）。
-- 自治体の一覧の行は要約（最新の人口・収録範囲・事業評価と予算案の年度）にし、会計ごとの出典と人口の推移は `GET /v1/jurisdictions/{jurisdiction_code}` だけが返す（今の `view=FULL` はなくす）。MCP には一覧だけを出す（出典は検索の結果の `origins` に載る）。
+- 自治体の一覧の行は要約（人口の推移・収録範囲・事業評価と予算案の年度）にし、会計ごとの出典は `GET /v1/jurisdictions/{jurisdiction_code}` だけが返す（今の `view=FULL` はなくす）。MCP には一覧だけを出す（出典は検索の結果の `origins` に載る）。
 - API の行の schema（`SubjectRow` など）は zod で列ごとに手で書き、説明だけを `columns.json` から付ける（`described`）。列の集合・型・null の可否・accepted_values が `columns.json` と合うかは `model.test.ts` で照合する。
 - `get` は応答の型（`model.ts` の部分の型）で検査してから返し、OpenAPI と MCP の出力 schema もその schema から作る。1回の応答が CPU の上限（200ms）と D1 の行数に収まるよう、子が多いもの（事業評価のシート、品川で年652枚）はページにする。歳出の根を丸ごと返す `get` は作らない（1つの根の内訳が最大9,300行）。
 - `search` は今の構造化 JSON の入力（必須の条件・where・order_by・ページ）を共通の部品で受ける。応答は平らな行で、行の列は `columns.json` の契約のまま。列の説明は入力・出力の schema に `.describe()` で付け、足し方の決まり（今の `sum_rules`）はその tool の description に書く。列の説明を返すだけの操作（今の `describe_expenditure_columns`）は作らない。
@@ -132,7 +132,7 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 ## 本番の切り替え
 
 1. merge の前に、本番 D1 へ新しい表を sync する（旧表は残る）。
-2. merge で api・web が deploy される。deploy-web の発火の paths に `apps/api/src/*/model.ts` を足す（web が api の型を import するため）。web が先に出ると新しい path で古い api を叩くので、api の deploy が済んでから web を出す（deploy-web を deploy-api の完了に続けるか、手で順に出す）。
+2. merge で api・web が deploy される。deploy-web の発火の paths に `apps/api/src/rpc.ts`・`apps/api/src/*/model.ts` を足す（web が api の型を import するため）。web が先に出ると新しい path で古い api を叩くので、deploy-api も動く push では deploy-web は自分では出さず、deploy-api の成功（`workflow_run`）から出す。
 3. 新しい Worker の動作を確かめてから `serving:sync --drop-legacy` で旧表を消す。
 
 本番 D1 への書き込みは yuito の go を取ってから行う。

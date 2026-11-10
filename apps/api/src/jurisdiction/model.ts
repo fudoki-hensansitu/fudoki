@@ -66,7 +66,7 @@ const yearsOf = (what: string) => z.array(z.int()).describe(`${what}を収録し
 export const JurisdictionSummary = z
   .strictObject({
     ...jurisdictionFields,
-    population: PopulationPoint.nullable().describe(`いちばん新しい基準日の住民基本台帳人口。推移は GET /v1/jurisdictions/{code}。${POPULATION_MATCH_HELP}`),
+    population: z.array(PopulationPoint).describe(`住民基本台帳人口（基準日の昇順）。${POPULATION_MATCH_HELP}`),
     coverage: z.array(Coverage).describe(COVERAGE_HELP),
     evaluation_years: yearsOf('事業評価（評価した事業を行った年度）'),
     budget_proposal_years: yearsOf('予算案（予算の年度）'),

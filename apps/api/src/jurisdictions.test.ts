@@ -67,11 +67,11 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
     expect(fuchu.jurisdictions[0].coverage[0].accounts).toEqual([{ account_name: '一般会計', account_kind: '一般会計' }])
   })
 
-  test('一覧は最新の人口と、事業評価・予算案を収録した年度を返す', async () => {
+  test('一覧は人口の推移と、事業評価・予算案を収録した年度を返す', async () => {
     sqlite.exec(`INSERT INTO evaluation (evaluation_id, jurisdiction_code, fiscal_year, kind) VALUES ('e2', '132039', 2025, 'sheets_only'), ('e1', '132039', 2024, 'with_result')`)
     sqlite.exec(`INSERT INTO budget_proposal (budget_proposal_id, jurisdiction_code, fiscal_year) VALUES ('b1', '132039', 2026)`)
     const [j] = (await list('?code=132039')).jurisdictions
-    expect(j.population).toEqual({ reference_date: '2026-01-01', male: 72000, female: 76000, population: 148001, households: 76000, url: 'https://example.test/2026.xlsx' })
+    expect(j.population.map((p: { reference_date: string }) => p.reference_date)).toEqual(['2025-01-01', '2026-01-01'])
     expect(j.evaluation_years).toEqual([2024, 2025])
     expect(j.budget_proposal_years).toEqual([2026])
     const detail = await (await get('/v1/jurisdictions/132039')).json()
@@ -122,7 +122,7 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
   test('収録の無い自治体でも、空の収録範囲と一緒に統計の出典の案内を返す', async () => {
     const body = await list('?code=131016')
     expect(body.jurisdictions[0].coverage).toEqual([])
-    expect(body.jurisdictions[0].population).toBeNull()
+    expect(body.jurisdictions[0].population).toEqual([])
     expect(body.uncovered_sources.map((s: { url: string }) => s.url)).toEqual([
       'https://www.soumu.go.jp/iken/zaisei/card.html',
       'https://www.e-stat.go.jp/stat-search/files?toukei=00200251&tstat=000001077755',
