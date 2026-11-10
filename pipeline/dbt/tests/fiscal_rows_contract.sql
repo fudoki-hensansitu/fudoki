@@ -25,8 +25,7 @@ select source_table_key, 'invalid_node' from rows
 where node_kind is null or name is null or name = '' or axis_header is null or axis_header = ''
    or (parent_node_key is null and (node_kind <> '款' or axis_header <> subject_axis))
    or (axis_header = subject_axis and (node_kind not in ('款','項','目')
-       -- A 款 abolished this year prints no number and zero (131148 R7 用地: `(諸支出金) 0 506,045 △506,045`).
-       or (code_text is null and (node_kind = '項' or (node_kind = '款' and coalesce(amount_yen, 0) <> 0)))))
+       or (code_text is null and node_kind in ('款', '項'))))
 union all
 -- node_id joins the key so numberless 目 (parent-based identity) never lump with their 項.
 -- Tables printing the whole account agree on the amount; the shares of division tables

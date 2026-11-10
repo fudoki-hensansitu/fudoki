@@ -123,11 +123,7 @@ selected_amounts as (
     window sibling_group as (partition by source_table_key, parent_node_key, axis_header, node_kind, code_text, name),
         sibling as (sibling_group order by origin_id, physical_page, y0, x0, node_key)
 ), identified as (
-    -- A 款 without a printed number (abolished this year, printed as `(諸支出金) 0` in 131148 R7 用地) identifies by
-    -- its name, so two of them in one account stay two nodes.
-    select n.*, case when kan_code is null
-                     then sha256(to_json([jurisdiction_code, fiscal_year::varchar, account_name, '款', name]))
-                     else sha256(to_json([jurisdiction_code, fiscal_year::varchar, account_name, kan_code, kou_code, moku_code])) end as node_id,
+    select n.*, sha256(to_json([jurisdiction_code, fiscal_year::varchar, account_name, kan_code, kou_code, moku_code])) as node_id,
         null::varchar as parent_node_id
     from siblings n where parent_node_key is null
     union all
