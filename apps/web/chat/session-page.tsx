@@ -35,7 +35,7 @@ export function SessionPage({ id }: { id: string }) {
     <div id="chat-session">
       <noscript>会話には JavaScript を有効にしてください。</noscript>
       {stored === undefined ? null : stored ? (
-        <React.Suspense fallback={null}>
+        <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
           <Conversation key={id} id={id} stored={stored} header={header} movableViews />
         </React.Suspense>
       ) : (
