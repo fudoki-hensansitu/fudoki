@@ -12,6 +12,8 @@ from ingestion.generic.layout import lines, normalize, text
 from ingestion.generic.observe import Page
 
 TITLE = '目的別'
+# The title of another section (`◎ 歳 出 （ 性 質 別 ）`): met before any ruled row, the 目的別 title heads no table.
+SECTION = ('歳入', '歳出')
 MIN_RULE = 10  # a column rule runs down the table's rows; a shorter stroke is no column's
 
 
@@ -38,6 +40,8 @@ def section(page: Page) -> Page:
         elif inside:
             bottom = min(w.y0 for w in line)
             break
+        elif any(word in normalize(text(line)).replace(' ', '') for word in SECTION):
+            break  # the next section's title: the 目的別 title has no table of its own
     if not inside:
         raise ValueError(f'Page {page.number}: no ruled table under the title naming {TITLE}')
     words = [w for w in page.words if top <= (w.y0 + w.y1) / 2 < bottom]

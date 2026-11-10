@@ -39,6 +39,14 @@ class PurposeSectionTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             section(page)
 
+    def test_a_title_with_no_table_of_its_own_stops(self):
+        page = self.page()
+        # The 目的別 table is gone: the next ruled rows are the 性質別 table's, under its own title.
+        page.words = [w for w in page.words if not 140 < w.y0 < 220]
+        page.rules = [r for r in page.rules if not 140 <= min(r.y0, r.y1) <= 220]
+        with self.assertRaises(ValueError):
+            section(page)
+
 
 if __name__ == '__main__':
     unittest.main()
