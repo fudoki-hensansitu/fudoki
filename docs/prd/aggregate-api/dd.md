@@ -121,7 +121,7 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 
 ## 事業を作る
 
-ドメインモデルの「事業を作る」の手順1〜3・5〜7を作る。dbt は seed に書けないので、`project:link-initiatives` と同じく Python の script が判断して seed の CSV を書く。
+ドメインモデルの「事業を作る」の手順1〜3・5〜7を作る。dbt は seed に書けないので、`project:link-measures` と同じく Python の script が判断して seed の CSV を書く。
 
 - script `project:link-projects` が、手順1〜3（名前の並びで決まる規則）で前年度と結び、seed（`project_line`: 自治体・年度・資料区分・会計・款・項・目・名前の並び → `project_id`）に書く。2回目からは seed を正にし、seed に無い行だけを新しく判断して足す。手順4に回る事業は新しい事業として始める。
 - dbt は seed と `expenditure_detail` を名前の並びで結んで `project`・`project_year` を作る。seed の行が `expenditure_detail` のどの行にも当たらない（取り込みを直して名前が変わった）ときは dbt の検査で止め、script を流し直す。

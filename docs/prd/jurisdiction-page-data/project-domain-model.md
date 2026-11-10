@@ -43,7 +43,7 @@ classDiagram
     class BudgetRoot["予算案"] {
         予算の年度
     }
-    class Initiative["施策"] {
+    class Measure["施策"] {
         施策名
         新規の印
         説明
@@ -53,8 +53,8 @@ classDiagram
     ProjectYear "0..*" --> "1..2" Expenditure : 含まれる行（当初・決算）
     EvaluationRoot "1" *-- "0..*" Evaluation : 評価シート全部
     Evaluation "0..*" --> "0..1" ProjectYear : 小事業の事業
-    BudgetRoot "1" *-- "0..*" Initiative : 施策全部
-    Initiative "0..*" --> "0..1" ProjectYear : 当たった行の事業
+    BudgetRoot "1" *-- "0..*" Measure : 施策全部
+    Measure "0..*" --> "0..1" ProjectYear : 当たった行の事業
 ```
 
 - **事業**は、予算書に印字された事業の行を1つずつ事業にし、年度をまたいでつないだもの。予算書の入れ子のとおりに親の事業を持つ（木）。最小単位は末端の事業で、品川は1年度に約2,450件。目の直下の事業（約460件）が木の根になる。属性は名前・始めた年度・終えた年度・親の事業だけで、金額は持たない。年度をまたいで同じ事業かどうかは出典に書かれていないので、事業の識別は **風土記の判断** である。

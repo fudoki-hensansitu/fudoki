@@ -263,7 +263,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         con.commit()
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
             'origins': len(origins), 'jurisdictions': len(jurisdictions), 'population_origins': len(population_origins),
-            'evaluation_sheets': len(project_tables['project_evaluation_sheet']), 'budget_initiatives': len(project_tables['project_budget_initiative']),
+            'evaluation_sheets': len(project_tables['project_evaluation_sheet']), 'budget_measures': len(project_tables['project_budget_measure']),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
 
 
