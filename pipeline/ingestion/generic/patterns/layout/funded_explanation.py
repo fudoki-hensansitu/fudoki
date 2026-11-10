@@ -8,7 +8,8 @@ make the layout read the column as eight bands, so the explanation's words strad
 The bands to the right of the 節's amount band are read here as one band `説明`, and the words of the 財源 row
 (those a short rule between two cells crosses) are taken out of it. The 財源 row is not taken in: each one becomes
 an excluded box (財源内訳) of the coverage check, the size of the row, not the whole column, so a digit of the
-explanation left unread is still found. Otherwise the tables are read as `marked_titles` reads them.
+explanation left unread is still found. The 款・項 titles above the tables (`(款) 1 議会費`) are read as
+`stacked_titles` reads its `1款 総務費`, in order.
 """
 from dataclasses import replace
 import re
@@ -16,7 +17,7 @@ import re
 from ingestion.generic import layout
 from ingestion.generic.layout import Band, Glyph, is_amount, lines, normalize, runs, text
 from ingestion.generic.observe import Word
-from ingestion.generic.patterns.layout import marked_titles, stacked_titles
+from ingestion.generic.patterns.layout import stacked_titles
 
 HEADING = '説明'
 REASON = ('説明の欄の最初の行に罫線で区切って印字された目の財源内訳（使用料及び手数料〜一般財源）を取り込まない。'
@@ -42,6 +43,8 @@ def unmarked(words: list[Glyph]) -> list[Glyph]:
     return kept
 
 
+# A 款・項 title printed above the table: `(款) 1 議会費`.
+TITLE = re.compile(r'^[(（](款|項)[)）]([0-9]+)(.+)$')
 # A 款・項 title's mark joined to its code and name in one word.
 MARK = re.compile(r'^([(（](?:款|項)[)）])\s*(?=[0-9])')
 # How far past a rule the box of a digit printed against it may run and still be the cell's print.
@@ -206,10 +209,25 @@ def fit_digits(page) -> None:
     page.words = words
 
 
+def titles(logical: layout.Logical) -> list[tuple]:
+    """The 款・項 titles above the tables (`(款) 1 議会費` / `(項) 1 議会費`), top to bottom: level, code, name, name
+    glyphs and no amount (the title prints none). They are read as `stacked_titles` reads its `1款 総務費`."""
+    found = []
+    pages = sorted({g.page for g in logical.outside})
+    for line in (line for page in pages for line in lines([g for g in logical.outside if g.page == page])):
+        if any(logical.below_foot(g) for g in line):
+            continue
+        name = [g for part in runs(line) for g in part]
+        match = TITLE.match(normalize(text(name)))
+        if match:
+            found.append((match.group(1), match.group(2), match.group(3), name, None))
+    return found
+
+
 def read(pages, **options):
     for page in pages:
         fit_digits(page)
-    logicals = marked_titles.read(pages, **options)
+    logicals = stacked_titles.read(pages, **options)
     verticals = {page.number: [rule for rule in page.rules if rule.vertical and rule.y1 - rule.y0 >= stacked_titles.MIN_RULE]
                  for page in pages}
     merged = []
@@ -220,6 +238,8 @@ def read(pages, **options):
             logical.bands = [b for b in logical.bands if id(b) not in gone] + excluded
             merged.append((logical, explanation))
     start = max((band.x0 for _, band in merged), default=0)
+    for logical in logicals:
+        logical.level_titles = titles(logical)
     for logical, explanation in merged:
         explanation = aligned(explanation, start)
         logical.bands.append(snapped(explanation))
