@@ -7,8 +7,8 @@ lines of the same block as state: text, indentation and amount column in
 characters. Codes, cells, subject rows and amounts stay rule-decided.
 
 The model is pinned for reproducibility. Answers are cached on disk by request
-hash so reruns cost nothing. The key comes from `TYPESAFE_API_KEY` or the
-user's mise (age-encrypted); it is never written anywhere.
+hash so reruns cost nothing. The key comes from `TYPESAFE_API_KEY` (age-encrypted in
+the repo's fnox.toml; run through `fnox exec --if-missing error --`); it is never written anywhere.
 """
 from __future__ import annotations
 
@@ -16,7 +16,6 @@ import hashlib
 import json
 import os
 from pathlib import Path
-import subprocess
 import time
 import urllib.error
 import urllib.request
@@ -33,15 +32,10 @@ ROLES = {
 
 
 def api_key() -> str:
-    if os.environ.get('TYPESAFE_API_KEY'):
-        return os.environ['TYPESAFE_API_KEY']
-    env = dict(os.environ)
-    if not env.get('MISE_AGE_KEY'):
-        env['MISE_AGE_KEY'] = subprocess.run(
-            ['security', 'find-generic-password', '-a', os.environ.get('USER', ''), '-s', 'mise-age-key', '-w'],
-            capture_output=True, text=True).stdout.strip()
-    result = subprocess.run(['mise', 'env', '--json'], capture_output=True, text=True, env=env, cwd=str(Path.home()))
-    return json.loads(result.stdout or '{}')['TYPESAFE_API_KEY']
+    key = os.environ.get('TYPESAFE_API_KEY')
+    if not key:
+        raise RuntimeError('TYPESAFE_API_KEY is not set; run the command through `fnox exec --if-missing error --` at the repo root')
+    return key
 
 
 class Client:

@@ -1,0 +1,27 @@
+#:schema https://fnox.jdx.dev/schema.json
+# 手元で使う secret。値は age で recipients 全員の公開鍵宛てに暗号化して commit する（平文は置かない）。
+# 鍵は fudoki 専用（個人の他の secret を開ける鍵は使わない）。手順は AGENTS.md の「secret」を参照。
+# CI・deploy の secret は GitHub secret / Cloudflare の Worker secret に置き、ここには入れない。
+default_provider = "age"
+# fnox activate の shell には export せず、fnox exec の command にだけ渡す
+env = "exec"
+
+# 各自の fudoki 用の age 秘密鍵は OS の keychain（service = fnox-fudoki、account = age-key）に置く。
+[providers.keychain]
+type = "keychain"
+service = "fnox-fudoki"
+
+[providers.age]
+type = "age"
+# 1 行 1 人。行末のコメントで誰の鍵かを示す（fnox 1.46 は名前付きの表を読めない）。
+# メンバーを足す・外したら `fnox reencrypt -p age` で暗号文を作り直す。
+recipients = [
+  "age1uttkatf0fgm70rpa6lx734kfzvvunqdf4fk3xg7tdfe3h8ccwgtsc5h34r", # yuito（fudoki 専用）
+  "age1jzmrmcmuh7wxlczs880pm28zf9tlqd7f9l8e2mh984633m9cca6snarwtj", # ai（cloud agent 用。cloud 環境の FNOX_AGE_KEY）
+]
+# 復号の鍵は keychain から読む。FNOX_AGE_KEY が export されているとそちらが優先される。
+identity = { provider = "keychain", value = "age-key" }
+
+[secrets]
+ESTAT_APP_ID= { provider = "age", value = "fnox-age-batch-v1:YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzR2xWOHRTQ0NmU0twMDNTc2t1R05vUFlMWDBWQ1FGd1lGOTNveDVDZGhVCi9VZnAwZjRTR3FCSEFTL0tHMUpNeWZnMmlzOWladzQwakhaWWNtY3k0Y2MKLT4gWDI1NTE5IFBiZlltbEc4cGhMMlB5T0s2c014OVREQ2pXc3YzNHR4MVA1WFdTOU9mRXMKY05OZ1BHM09wVDY0NHpLNkxsNlpYRmhvWFBjZEdrNkR6ZEZvQVh6L2FDWQotPiBXLWdyZWFzZSBmSSc8eWJmcgpqZXBMWkhsallBK1ErWENzc2tyZlNWOEJrbUtQNFZHS0FQbTVudGVGUXROMjU1bXBWOWowMDN2NFI3THpaWUZYCnd1VzFDalZMNXNEWVpMaHJ0VzI0RWljUgotLS0geXNHWjAwbW1HTmZ3c3FZS0c3UlIxNWNvU3YrYnk4cXE2d0ZzYjJHTFNKNAqVmNXVcU2OBFCoTNRBniYzrX9SuN8oHhGYziv2366iON4ayjoNp+lWrJwNs/f5rJZSaxoARFt9wL1e7Ks2gB/3FqQBCbWdZ+rKwYOM:pT3y/1Ik7FanoLpVRqQ14VFP6kityDq+YVOSj5tnRG1z+68/V3L0N0sCRoZMlTUBC7XVduEsCXwWcAPTeZP97efpg+k=" }
+TYPESAFE_API_KEY= { provider = "age", value = "fnox-age-batch-v1:YWdlLWVuY3J5cHRpb24ub3JnL3YxCi0+IFgyNTUxOSAzR2xWOHRTQ0NmU0twMDNTc2t1R05vUFlMWDBWQ1FGd1lGOTNveDVDZGhVCi9VZnAwZjRTR3FCSEFTL0tHMUpNeWZnMmlzOWladzQwakhaWWNtY3k0Y2MKLT4gWDI1NTE5IFBiZlltbEc4cGhMMlB5T0s2c014OVREQ2pXc3YzNHR4MVA1WFdTOU9mRXMKY05OZ1BHM09wVDY0NHpLNkxsNlpYRmhvWFBjZEdrNkR6ZEZvQVh6L2FDWQotPiBXLWdyZWFzZSBmSSc8eWJmcgpqZXBMWkhsallBK1ErWENzc2tyZlNWOEJrbUtQNFZHS0FQbTVudGVGUXROMjU1bXBWOWowMDN2NFI3THpaWUZYCnd1VzFDalZMNXNEWVpMaHJ0VzI0RWljUgotLS0geXNHWjAwbW1HTmZ3c3FZS0c3UlIxNWNvU3YrYnk4cXE2d0ZzYjJHTFNKNAqVmNXVcU2OBFCoTNRBniYzrX9SuN8oHhGYziv2366iON4ayjoNp+lWrJwNs/f5rJZSaxoARFt9wL1e7Ks2gB/3FqQBCbWdZ+rKwYOM:XTb5KhoQKbdcJZjI5KwysToPFAX7PELUcYdcYtxmwODND4HasQ07wX2cLQ5Znt9aAfe3PANfQ7BczKxBeQto8ba+Wl/CjK94iCiIrUj6se1RGHFD2DHE7bEz5DEz3TM6ST3j6zZwqRfTp9V0QWm9HE98BHqy1k5KPVaWyRz1mTqXvpIie7t8QQ==" }
