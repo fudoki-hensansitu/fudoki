@@ -2,7 +2,8 @@
   "layout": {
     "ruled": "ingestion.generic.patterns.layout.ruled",
     "open_edge": "ingestion.generic.patterns.layout.open_edge",
-    "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles"
+    "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles",
+    "purpose_section": "ingestion.generic.patterns.layout.purpose_section"
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
@@ -39,7 +40,8 @@
     "profiled_budget": "ingestion.generic.patterns.readings.profiled_budget",
     "enterprise_expenses": "ingestion.generic.patterns.readings.enterprise_expenses",
     "banded_projects": "ingestion.generic.patterns.readings.banded_projects",
-    "offset_projects": "ingestion.generic.patterns.readings.offset_projects"
+    "offset_projects": "ingestion.generic.patterns.readings.offset_projects",
+    "purpose_summary": "ingestion.generic.patterns.readings.purpose_summary"
   },
   "component": {
     "marked_subjects": "ingestion.generic.patterns.components.marked_subjects",

@@ -1,0 +1,68 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133817",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "062949a829c54573e01d3fa392bca055e7a557dae7ba40693cab9db3188287b8"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "reading": {
+            "pattern": "purpose_summary",
+            "profile": "fiscal/jurisdictions/133817/layouts/summary-2024.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "fbb1588e92205ea6b033166ee5889f4c2318d32450f4c34accdfa9d018eaaa97",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は column mark 1頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（13 件）を、印字された語から辞書の見出しに寄せた: 決算額(千円)→決算額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133817/2024/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "f4e1c896521b5ae28e950bc0ac8777196ad2950179a58842cca0b29abec0446c",
+          "bytes": 2762
+        },
+        "row_count": 13
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133817/2024/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "4a114b159414db7dc7397b103a39ea740ece06062abccbb2fe13c27a96391fa5",
+          "bytes": 2216
+        },
+        "row_count": 13
+      }
+    }
+  ]
+}
