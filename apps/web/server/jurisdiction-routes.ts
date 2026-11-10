@@ -11,7 +11,8 @@ import { EMBLEMS } from '../jurisdiction/emblems'
 import { BUDGET_PRESS } from '../jurisdiction/budget-press'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
-import type { Env, RateLimiter } from './env'
+import type { Env, Fetcher, RateLimiter } from './env'
+import type { OgInput } from './og'
 import { loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, shownSettlementYears, type CatalogEntry, type DocumentKind } from './jurisdiction'
 
 const TTL = 3600
@@ -76,7 +77,7 @@ function nearby(entry: CatalogEntry, candidates: CatalogEntry[]): CatalogEntry[]
 }
 
 /** 個別ページに出すもの。収録の無い自治体は empty、存在しない名称や都道府県の slug でない path は null（404） */
-export type JurisdictionView = { kind: 'page'; data: PageData & { profile: Profile | null } } | { kind: 'empty'; entry: CatalogEntry }
+export type JurisdictionView = { kind: 'page'; data: PageData & { profile: Profile | null } } | { kind: 'empty'; entry: CatalogEntry; neighbors: PageData['neighbors'] }
 
 /** /<都道府県のローマ字>/<自治体のローマ字>、都道府県自体は /<都道府県のローマ字>。API に繋がらなければ投げる */
 export async function resolveJurisdiction(env: Env, path: string): Promise<JurisdictionView | null> {
@@ -90,7 +91,7 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
     .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
   const data = entry.settlementYears.length > 0 ? await page(env, entry) : null
-  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: withPress(entry.code, PROFILES[entry.code] ?? null) } } : { kind: 'empty', entry }
+  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: withPress(entry.code, PROFILES[entry.code] ?? null) } } : { kind: 'empty', entry, neighbors }
 }
 
 /** 事業評価がまだの年度に、予算案のプレス発表資料の施策（budgetNew）を足す。評価のある年度は足さない */
@@ -104,6 +105,33 @@ function withPress(code: string, profile: Profile | null): Profile | null {
     return [y, { ...py, budgetPress: p.source, budgetNew: p.items.filter((i) => i.isNew) }]
   }))
   return { ...profile, years }
+}
+
+/** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする） */
+export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<(OgInput & { cacheKey: string }) | null> {
+  if (!EMBLEMS[code]) return null
+  const entry = (await catalog(env)).find((e) => e.code === code)
+  const data = entry && entry.settlementYears.length > 0 ? await page(env, entry) : null
+  const areas = data?.cofogFlow.map((f) => ({ name: f.kan.name, yen: f.kan.yen })).filter((a) => a.yen > 0) ?? []
+  if (!entry || !data || areas.length === 0) return null
+  const asset = async (path: string) => {
+    const r = await assets.fetch(new Request(`https://fudoki.dev${path}`))
+    if (!r.ok) throw new Error(`${path} が読めません（${r.status}）`)
+    return r.text()
+  }
+  const [emblemSvg, logoSvg] = await Promise.all([asset(assetPath(code, 'emblem.svg')), asset('/logo.svg')])
+  const latest = data.years.at(-1)!
+  return {
+    name: entry.name,
+    prefecture: code.slice(2, 5) === '000' ? null : entry.prefecture,
+    year: latest.year,
+    total: latest.yen,
+    areas,
+    emblemSvg,
+    logoSvg,
+    // 同じ年度の決算なら同じ画像。字形・配置を変えたら版を上げる
+    cacheKey: `og-v1/${code}-${latest.year}-${latest.yen}`,
+  }
 }
 
 /** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */

@@ -12,13 +12,13 @@
       "candidates": [
         {
           "id": "representative",
-          "title": "令和8年度各会計予算・事項別明細書（分割版）",
+          "title": "令和8年度各会計予算・事項別明細書（一般会計は一括版、特別会計は分割版）",
           "landing_url": "https://www.city.bunkyo.lg.jp/b002/p007692.html",
-          "inspected_at": "2026-10-07T14:28:19.919064+00:00",
+          "inspected_at": "2026-11-10T07:19:29.907238+00:00",
           "files": [
             {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu03.pdf",
-              "sha256": "9dada9704c8529256b72d17b131d1d511899e49862ba2627771383be51e077c6",
+              "download_url": "https://www.city.bunkyo.lg.jp/documents/12708/r08_tosyoyosansyo_ikkatsu.pdf",
+              "sha256": "a24ca9ba0601064d181b565ba16b0ba34f55dc6a69173e14da6ef0fd0919b2b0",
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
@@ -27,98 +27,12 @@
                   "direction": "expenditure",
                   "pages": [
                     {
-                      "start": 1,
-                      "end": 29
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu04.pdf",
-              "sha256": "9da1d81e243858e2bb0c7bdbf9e80a0af17758e95fe833d67c332b3f31962d2d",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
+                      "start": 40,
+                      "end": 40
+                    },
                     {
-                      "start": 3,
-                      "end": 24
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu05.pdf",
-              "sha256": "866068c2bf1e05425f2d94991b22a24facbf8a9d56899e7a22be9014cc3de4b3",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 3,
-                      "end": 42
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu06.pdf",
-              "sha256": "0c63423bba832db4051b6f387b11055ae8617aa4d7cb829da5bb0bead77007cd",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 3,
-                      "end": 26
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu07.pdf",
-              "sha256": "f362d4af802ae39a941c0e34f2fac964f0ae91fbc7cf99cecd67a4501a6f66d4",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 3,
-                      "end": 18
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu08.pdf",
-              "sha256": "263671f3329b09fe3268e509d1b26c2bbc50376c623b784a0c6215acf28edf01",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 3,
-                      "end": 38
+                      "start": 145,
+                      "end": 311
                     }
                   ]
                 }
@@ -235,59 +149,34 @@
           ]
         }
       ],
-      "reason": "令和8年度当初予算ページの分割版事項別明細書を選定。全会計は一般会計・国民健康保険特別会計・介護保険特別会計・後期高齢者医療特別会計の4会計で、歳出は款・項・目＋節の明細を同じ明細書内で名称と金額（本年度予算額＝当初予算額、単位：千円）が対応する形で持つ。\n一般会計歳出はbunkatsu03〜08（1款議会費〜12款予備費）。分割冊は前冊末尾2頁（印字頁で172-173・194-195・234-235・258-259・274-275）を冒頭に重複収録するため、scopeはbunkatsu03が全29頁、bunkatsu04〜08は物理3頁目から末尾までに絞り、印字146〜311頁を重複なく覆う。特別会計は各1冊で歳入歳出予算総括・歳入明細・歳出明細・給与費明細書を収録し、歳出scopeは事項別明細の終端（予備費の節明細）までで、末尾の給与費明細書（国保40-45・介護42-47・後期24-29）は事項別明細外のため除く：国保（46頁）は総括2-3、歳入5-17、歳出19-39、介護（48頁）は総括2-3、歳入5-19、歳出21-41、後期（30頁）は総括2-3、歳入5-15、歳出17-23。いずれも文字PDF。一般会計給与費明細書・特別区債（bunkatsu09）と歳入側（bunkatsu02）は歳出選定に不要のため含めない。一括版（r08_tosyoyosansyo_ikkatsu.pdf）は同一内容のため分割版を採用。文京区に企業会計・独自特別会計の掲載はない（予算ページの各会計一覧・決算審査意見書の会計列挙とも4会計のみ）。",
+      "reason": "令和8年度当初予算ページの事項別明細書を選定。全会計は一般会計・国民健康保険特別会計・介護保険特別会計・後期高齢者医療特別会計の4会計で、歳出は款・項・目＋節の明細を同じ明細書内で名称と金額（本年度予算額＝当初予算額、単位：千円）が対応する形で持つ。\n一般会計は一括版（r08_tosyoyosansyo_ikkatsu.pdf、全458頁）の物理40頁（総括の歳出。歳出合計を持つ）と物理145–311頁（歳出の事項別明細、印字146〜311頁）。分割版の冊は款の途中（次の款の最初の見開き。前の款の最後の目の説明の続きと、次の款の最初の目が同じ見開きに載る）で切れ、どの冊にも款・項・目の一部しか無く、冊ごとの表では親の金額を子の和で確かめられないため、分割版から選び直した（2026-11-10）。物理145–311頁は分割版の各冊（bunkatsu03〜08）の scope の頁と文字が1頁ずつ一致することを確かめた。\n特別会計だけは分割版の各1冊で、歳入歳出予算総括・歳入明細・歳出明細・給与費明細書を収録し、歳出scopeは事項別明細の終端（予備費の節明細）までで、末尾の給与費明細書（国保40-45・介護42-47・後期24-29）は事項別明細外のため除く：国保（46頁）は総括2-3、歳入5-17、歳出19-39、介護（48頁）は総括2-3、歳入5-19、歳出21-41、後期（30頁）は総括2-3、歳入5-15、歳出17-23。いずれも文字PDF。一般会計給与費明細書・特別区債と歳入側は歳出選定に不要のため含めない。文京区に企業会計・独自特別会計の掲載はない（予算ページの各会計一覧・決算審査意見書の会計列挙とも4会計のみ）。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
         "candidate_id": "representative",
         "files": [
           {
-            "key": "fiscal/source-selection/131059/2026/initial-7.pdf",
-            "sha256": "9dada9704c8529256b72d17b131d1d511899e49862ba2627771383be51e077c6",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu03.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2026/initial-6.pdf",
-            "sha256": "9da1d81e243858e2bb0c7bdbf9e80a0af17758e95fe833d67c332b3f31962d2d",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu04.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2026/initial-5.pdf",
-            "sha256": "866068c2bf1e05425f2d94991b22a24facbf8a9d56899e7a22be9014cc3de4b3",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu05.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2026/initial-1.pdf",
-            "sha256": "0c63423bba832db4051b6f387b11055ae8617aa4d7cb829da5bb0bead77007cd",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu06.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2026/initial-9.pdf",
-            "sha256": "f362d4af802ae39a941c0e34f2fac964f0ae91fbc7cf99cecd67a4501a6f66d4",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu07.pdf"
-          },
-          {
             "key": "fiscal/source-selection/131059/2026/initial-3.pdf",
-            "sha256": "263671f3329b09fe3268e509d1b26c2bbc50376c623b784a0c6215acf28edf01",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu08.pdf"
+            "sha256": "a24ca9ba0601064d181b565ba16b0ba34f55dc6a69173e14da6ef0fd0919b2b0",
+            "final_url": "https://www.city.bunkyo.lg.jp/documents/12708/r08_tosyoyosansyo_ikkatsu.pdf"
           },
           {
-            "key": "fiscal/source-selection/131059/2026/initial-8.pdf",
+            "key": "fiscal/source-selection/131059/2026/initial-4.pdf",
             "sha256": "a24da55a9394d1523f53ffc44ad6eab94fa7e4857b1ce7cc3fb8979cad1f98fe",
             "final_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu10.pdf"
           },
           {
-            "key": "fiscal/source-selection/131059/2026/initial-4.pdf",
+            "key": "fiscal/source-selection/131059/2026/initial-2.pdf",
             "sha256": "5f7da9420db373686d321a82c7b70c5e2aef78f4c82cf1e4516b9dd735404280",
             "final_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu11.pdf"
           },
           {
-            "key": "fiscal/source-selection/131059/2026/initial-2.pdf",
+            "key": "fiscal/source-selection/131059/2026/initial-1.pdf",
             "sha256": "1a3118234b68d96c236919563063e8397eeeb5533258ff3b4ea707f07940197f",
             "final_url": "https://www.city.bunkyo.lg.jp/documents/12708/r8_tosyoyosansyo_bunkatsu12.pdf"
           }
         ],
-        "archived_at": "2026-10-07T14:29:20.883Z"
+        "archived_at": "2026-11-10T07:20:19.082Z"
       }
     },
     {
@@ -431,13 +320,13 @@
       "candidates": [
         {
           "id": "representative",
-          "title": "令和7年度各会計予算・事項別明細書（分割版）",
+          "title": "令和7年度各会計予算・事項別明細書（一般会計は一括版、特別会計は分割版）",
           "landing_url": "https://www.city.bunkyo.lg.jp/b002/p007690.html",
-          "inspected_at": "2026-10-08T03:48:56.042681+00:00",
+          "inspected_at": "2026-11-10T07:19:29.907238+00:00",
           "files": [
             {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu03.pdf",
-              "sha256": "d4b9ea25d37b29cfd2393125f12fefe2bafc6cb64d16f7769450d2409e98b311",
+              "download_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_ikkatsu.pdf",
+              "sha256": "be1e03857c206d7dce4fbb055e518ebe1d526f3e9c86cb39567d97f8302e8139",
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
@@ -446,98 +335,12 @@
                   "direction": "expenditure",
                   "pages": [
                     {
-                      "start": 1,
-                      "end": 31
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu04.pdf",
-              "sha256": "e29aca0db8bacee85f81e36dae183f86b2fc7d99023b762ac9cc04d7efbef8b9",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
+                      "start": 44,
+                      "end": 44
+                    },
                     {
-                      "start": 3,
-                      "end": 24
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu05.pdf",
-              "sha256": "d6b84f82623c2b57eae99c4b8131619d61ea71bf16e67dccd5861604e8411d3c",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 1,
-                      "end": 38
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu06.pdf",
-              "sha256": "5bbf93b545f690cfa10c1a2c0a6b736d8d0b0e1f729d54490388ea5ba3dae442",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 3,
-                      "end": 26
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu07.pdf",
-              "sha256": "9e227cc6e51fe9d115bd982e395a3297b100686641d5e5f0f8ba553f40e0005e",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 3,
-                      "end": 18
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu08.pdf",
-              "sha256": "4675d36610892bcb4699f4b75249d551c61ce019e94a97dab698fdc6a2c28ebb",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 1,
-                      "end": 36
+                      "start": 147,
+                      "end": 313
                     }
                   ]
                 }
@@ -654,41 +457,16 @@
           ]
         }
       ],
-      "reason": "令和7年度当初予算ページの分割版事項別明細書を選定。全会計は一般会計・国民健康保険特別会計・介護保険特別会計・後期高齢者医療特別会計の4会計（令和8年度選定時に予算ページの各会計一覧と決算審査意見書で企業会計・独自特別会計がないことを確認済み）。歳出は款・項・目＋節で名称と本年度予算額（当初予算額、単位：千円）が同じ明細で対応する。\n一般会計歳出はbunkatsu03〜08（1款議会費〜12款予備費）。分割冊は前冊末尾2頁を冒頭に重複収録する場合があり、03→04・05→06・06→07の境界は冒頭2頁の重複を確認して物理3頁目から、04→05・07→08の境界は重複なしで物理1頁目からとし、重複なく覆う。特別会計は各1冊で、国保（52頁）総括2-3・歳入5-23・歳出25-45・給与費明細書46-51、介護（48頁）総括2-3・歳入5-19・歳出21-41・給与費42-47、後期（30頁）総括2-3・歳入5-15・歳出17-23・給与費24-29。歳出scopeは歳出扉を含め事項別明細の終端（予備費・諸支出金の節明細）まで、末尾の給与費明細書は除外。いずれも文字PDF。一般会計給与費明細書・特別区債（bunkatsu09）と歳入側（bunkatsu02）、各会計予算（bunkatsu01＝款レベル）、概要・主要事業一覧・補助金一覧は歳出選定に不要または明細を欠くため含めない。一括版（r07_tosyoyosansyo_ikkatsu.pdf）は同一内容のため分割版を採用。",
+      "reason": "令和7年度当初予算ページの事項別明細書を選定。全会計は一般会計・国民健康保険特別会計・介護保険特別会計・後期高齢者医療特別会計の4会計（令和8年度選定時に予算ページの各会計一覧と決算審査意見書で企業会計・独自特別会計がないことを確認済み）。歳出は款・項・目＋節で名称と本年度予算額（当初予算額、単位：千円）が同じ明細で対応する。\n一般会計は一括版（r07_tosyoyosansyo_ikkatsu.pdf、全470頁）の物理44頁（総括の歳出。歳出合計を持つ）と物理147–313頁（歳出の事項別明細）。分割版の冊は款の途中（次の款の最初の見開き。前の款の最後の目の説明の続きと、次の款の最初の目が同じ見開きに載る）で切れ、どの冊にも款・項・目の一部しか無く、冊ごとの表では親の金額を子の和で確かめられないため、分割版から選び直した（2026-11-10）。物理147–313頁は分割版の各冊（bunkatsu03〜08）の scope の頁と文字が1頁ずつ一致することを確かめた。\n特別会計だけは分割版の各1冊で、国保（52頁）総括2-3・歳入5-23・歳出25-45・給与費明細書46-51、介護（48頁）総括2-3・歳入5-19・歳出21-41・給与費42-47、後期（30頁）総括2-3・歳入5-15・歳出17-23・給与費24-29。歳出scopeは歳出扉を含め事項別明細の終端（予備費・諸支出金の節明細）まで、末尾の給与費明細書は除外。いずれも文字PDF。一般会計給与費明細書・特別区債と歳入側、各会計予算（款レベル）、概要・主要事業一覧・補助金一覧は歳出選定に不要または明細を欠くため含めない。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
         "candidate_id": "representative",
         "files": [
           {
-            "key": "fiscal/source-selection/131059/2025/initial-6.pdf",
-            "sha256": "d4b9ea25d37b29cfd2393125f12fefe2bafc6cb64d16f7769450d2409e98b311",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu03.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2025/initial-8.pdf",
-            "sha256": "e29aca0db8bacee85f81e36dae183f86b2fc7d99023b762ac9cc04d7efbef8b9",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu04.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2025/initial-7.pdf",
-            "sha256": "d6b84f82623c2b57eae99c4b8131619d61ea71bf16e67dccd5861604e8411d3c",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu05.pdf"
-          },
-          {
             "key": "fiscal/source-selection/131059/2025/initial-3.pdf",
-            "sha256": "5bbf93b545f690cfa10c1a2c0a6b736d8d0b0e1f729d54490388ea5ba3dae442",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu06.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2025/initial-4.pdf",
-            "sha256": "9e227cc6e51fe9d115bd982e395a3297b100686641d5e5f0f8ba553f40e0005e",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu07.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2025/initial-2.pdf",
-            "sha256": "4675d36610892bcb4699f4b75249d551c61ce019e94a97dab698fdc6a2c28ebb",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu08.pdf"
+            "sha256": "be1e03857c206d7dce4fbb055e518ebe1d526f3e9c86cb39567d97f8302e8139",
+            "final_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_ikkatsu.pdf"
           },
           {
             "key": "fiscal/source-selection/131059/2025/initial-1.pdf",
@@ -696,17 +474,17 @@
             "final_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu10.pdf"
           },
           {
-            "key": "fiscal/source-selection/131059/2025/initial-5.pdf",
+            "key": "fiscal/source-selection/131059/2025/initial-2.pdf",
             "sha256": "a902ed69b0e579e1933c4a73bd7d7f9a0238f9e59e60a16d9b046e66d5fe17e5",
             "final_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu11.pdf"
           },
           {
-            "key": "fiscal/source-selection/131059/2025/initial-9.pdf",
+            "key": "fiscal/source-selection/131059/2025/initial-4.pdf",
             "sha256": "fc2945637cdbd734c6d9f7d9ac30b91e7865ef1fff630649d671d796f9286d74",
             "final_url": "https://www.city.bunkyo.lg.jp/documents/10873/r07_tosyoyosansyo_bunkatsu12.pdf"
           }
         ],
-        "archived_at": "2026-10-08T03:49:27.749Z"
+        "archived_at": "2026-11-10T07:20:31.439Z"
       }
     },
     {
@@ -718,13 +496,13 @@
       "candidates": [
         {
           "id": "representative",
-          "title": "令和6年度各会計予算・事項別明細書（分割版）",
+          "title": "令和6年度各会計予算・事項別明細書（一般会計は一括版、特別会計は分割版）",
           "landing_url": "https://www.city.bunkyo.lg.jp/b002/p007676.html",
-          "inspected_at": "2026-10-08T03:48:56.042681+00:00",
+          "inspected_at": "2026-11-10T07:19:29.907238+00:00",
           "files": [
             {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884121.pdf",
-              "sha256": "b0882821b7be85dccc81753a205fdd2817bc8341cb82525e677899f22f798db3",
+              "download_url": "https://www.city.bunkyo.lg.jp/documents/8579/202437164940.pdf",
+              "sha256": "5d332e1d89385a3e927d938655bd37dfd5c57fc69058ab5ab022d50d8fd4a42e",
               "format": "pdf",
               "pdf_type": "text",
               "scope": [
@@ -733,98 +511,12 @@
                   "direction": "expenditure",
                   "pages": [
                     {
-                      "start": 1,
-                      "end": 29
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884213.pdf",
-              "sha256": "a05f709e1fab313e2011360e59024833e918cc91e716b2db1c7570acaceab2ec",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
+                      "start": 41,
+                      "end": 41
+                    },
                     {
-                      "start": 3,
-                      "end": 24
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884226.pdf",
-              "sha256": "f304e55b58ca7f19e0e2619dbcae6ef9ae013da76a06af316e69f2b19186b0cc",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 3,
-                      "end": 40
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884237.pdf",
-              "sha256": "9a3d847b92f4bb1f56eb5c40947dc0de61532eef4606a08a5ddf8d9c922fd072",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 3,
-                      "end": 24
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884248.pdf",
-              "sha256": "5bb748c7a5fd5d97ff0e1f280d4e521fad9811cfbaebe5cde0bb260822ee1386",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 1,
-                      "end": 18
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "download_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884259.pdf",
-              "sha256": "589f297980d338028dacf050e0a7cc4ff90547924938c73211237531a101a0cc",
-              "format": "pdf",
-              "pdf_type": "text",
-              "scope": [
-                {
-                  "account": "一般会計",
-                  "direction": "expenditure",
-                  "pages": [
-                    {
-                      "start": 3,
-                      "end": 38
+                      "start": 140,
+                      "end": 304
                     }
                   ]
                 }
@@ -941,44 +633,19 @@
           ]
         }
       ],
-      "reason": "令和6年度当初予算ページの分割版事項別明細書を選定。全会計は一般会計・国民健康保険特別会計・介護保険特別会計・後期高齢者医療特別会計の4会計。歳出は款・項・目＋節で名称と本年度予算額（当初予算額、単位：千円）が同じ明細で対応する。\n一般会計歳出は6冊（1款議会費〜12款予備費）。分割冊は前冊末尾2頁を冒頭に重複収録する場合があり、1-2款→3-4款・3-4款→5款・5款→6-7款・8-9款→10-12款の境界は冒頭2頁の重複を確認して物理3頁目から、6-7款→8-9款の境界は重複なしで物理1頁目からとする。特別会計は各1冊で、国保（52頁）総括2-3・歳入5-23・歳出25-45・給与費明細書46-51、介護（48頁）総括2-3・歳入5-19・歳出21-41・給与費42-47、後期（30頁）総括2-3・歳入5-15・歳出17-23・給与費24-29。歳出scopeは歳出扉を含め事項別明細の終端まで、末尾の給与費明細書は除外。いずれも文字PDF。一般会計給与費明細書・特別区債の冊と歳入側・各会計予算（款レベル）・概要・主要事業一覧・補助金一覧は含めない。一括版（202437164940.pdf）は同一内容のため分割版を採用。",
+      "reason": "令和6年度当初予算ページの事項別明細書を選定。全会計は一般会計・国民健康保険特別会計・介護保険特別会計・後期高齢者医療特別会計の4会計。歳出は款・項・目＋節で名称と本年度予算額（当初予算額、単位：千円）が同じ明細で対応する。\n一般会計は一括版（202437164940.pdf、全455頁）の物理41頁（総括の歳出。歳出合計を持つ）と物理140–304頁（歳出の事項別明細）。分割版の冊は款の途中（次の款の最初の見開き。前の款の最後の目の説明の続きと、次の款の最初の目が同じ見開きに載る）で切れ、どの冊にも款・項・目の一部しか無く、冊ごとの表では親の金額を子の和で確かめられないため、分割版から選び直した（2026-11-10）。物理140–304頁は分割版の各冊（6冊）の scope の頁と文字が1頁ずつ一致することを確かめた。\n特別会計だけは分割版の各1冊で、国保（52頁）総括2-3・歳入5-23・歳出25-45・給与費明細書46-51、介護（48頁）総括2-3・歳入5-19・歳出21-41・給与費42-47、後期（30頁）総括2-3・歳入5-15・歳出17-23・給与費24-29。歳出scopeは歳出扉を含め事項別明細の終端まで、末尾の給与費明細書は除外。いずれも文字PDF。一般会計給与費明細書・特別区債と歳入側・各会計予算（款レベル）・概要・主要事業一覧・補助金一覧は含めない。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
         "candidate_id": "representative",
         "files": [
           {
-            "key": "fiscal/source-selection/131059/2024/initial-7.pdf",
-            "sha256": "b0882821b7be85dccc81753a205fdd2817bc8341cb82525e677899f22f798db3",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884121.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2024/initial-6.pdf",
-            "sha256": "a05f709e1fab313e2011360e59024833e918cc91e716b2db1c7570acaceab2ec",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884213.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2024/initial-9.pdf",
-            "sha256": "f304e55b58ca7f19e0e2619dbcae6ef9ae013da76a06af316e69f2b19186b0cc",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884226.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2024/initial-5.pdf",
-            "sha256": "9a3d847b92f4bb1f56eb5c40947dc0de61532eef4606a08a5ddf8d9c922fd072",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884237.pdf"
+            "key": "fiscal/source-selection/131059/2024/initial-2.pdf",
+            "sha256": "5d332e1d89385a3e927d938655bd37dfd5c57fc69058ab5ab022d50d8fd4a42e",
+            "final_url": "https://www.city.bunkyo.lg.jp/documents/8579/202437164940.pdf"
           },
           {
             "key": "fiscal/source-selection/131059/2024/initial-3.pdf",
-            "sha256": "5bb748c7a5fd5d97ff0e1f280d4e521fad9811cfbaebe5cde0bb260822ee1386",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884248.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2024/initial-2.pdf",
-            "sha256": "589f297980d338028dacf050e0a7cc4ff90547924938c73211237531a101a0cc",
-            "final_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884259.pdf"
-          },
-          {
-            "key": "fiscal/source-selection/131059/2024/initial-4.pdf",
             "sha256": "951eb34019469f9c6bcc6b3c5b89b27c8d4f0b33ec04f37d63e67f9ea1b57179",
             "final_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884329.pdf"
           },
@@ -988,12 +655,12 @@
             "final_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884341.pdf"
           },
           {
-            "key": "fiscal/source-selection/131059/2024/initial-8.pdf",
+            "key": "fiscal/source-selection/131059/2024/initial-4.pdf",
             "sha256": "ef11ca474a30e1beee3aee0187d4a9c1c162753ecd0f5419a994e97f4abea193",
             "final_url": "https://www.city.bunkyo.lg.jp/documents/8579/20243884358.pdf"
           }
         ],
-        "archived_at": "2026-10-08T03:49:43.473Z"
+        "archived_at": "2026-11-10T07:20:44.006Z"
       }
     },
     {
