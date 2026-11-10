@@ -16,8 +16,9 @@ import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import type { PressItem } from './budget-press'
 import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
+import { pageHead } from './html'
 import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
-import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatPerCapita, formatYen, reiwa, yearName, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatPerCapita, formatYen, pageYears, reiwa, yearName, yearPath, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -406,7 +407,7 @@ function DomainLink({ section, children }: { section?: string; children: React.R
   return (
     <a
       href={`#${section}`}
-      // 目次と同じく #yYYYY を節の fragment に置き換えない
+      // 目次と同じく URL を節の fragment に変えない
       onClick={(e) => { const t = document.getElementById(section); if (!t) return; e.preventDefault(); t.scrollIntoView({ behavior: 'smooth' }) }}
       className={`${row} text-foreground no-underline transition-colors hover:bg-card`}
     >
@@ -836,24 +837,31 @@ function YearPicker({ years, current, onChange }: { years: number[]; current: nu
   )
 }
 
+// 以前の年度の URL（#y2025）。開かれたら年度の頁の path（/tokyo/shinagawa/2025）に置き換える
 const yearFromHash = () => Number(/^#y(\d{4})$/.exec(location.hash)?.[1]) || undefined
+/** 今の URL から年度の段を除いた、自治体の頁の path */
+const basePath = () => location.pathname.replace(/\/\d{4}\/?$/, '')
 
-export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
+export function Page({ data, sitekey, initialYear }: { data: PageData; sitekey: string; initialYear?: number }) {
   const profile = data.profile ?? null
-  const years = React.useMemo(() => [...new Set([...Object.keys(profile?.years ?? {}).map(Number), ...data.years.map((y) => y.year)])].sort((a, b) => b - a), [data, profile])
-  // サーバーで書いた HTML と同じ年度で始め、URL の #y2025 は描いたあとに反映する（hydration の食い違いを避ける）
-  const [year, setYear] = React.useState(years[0]!)
+  const years = React.useMemo(() => pageYears(data), [data])
+  // サーバーで書いた HTML と同じ年度で始める（年度の頁ならその年度）。古い #y2025 は描いたあとに反映する（hydration の食い違いを避ける）
+  const [year, setYear] = React.useState(initialYear ?? years[0]!)
   React.useEffect(() => {
     const y = yearFromHash()
-    if (y && years.includes(y)) setYear(y)
+    if (y && years.includes(y)) choose(y)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [years])
-  React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: location.pathname }), [data.code, data.name])
+  React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: basePath() }), [data.code, data.name])
   const py = profile?.years[String(year)]
   // 基本構想の都市像。年度で変わらない
   const vision = profile?.vision?.text
+  // 年度を選んだら、その年度の頁の path にする（検索に載る URL と同じ。既定の年度は自治体の頁そのもの）
   const choose = (y: number) => {
     setYear(y)
-    history.replaceState(null, '', `#y${y}`)
+    history.replaceState(null, '', yearPath(basePath(), y, years[0]!))
+    // 頁は読み直さないので、タブの title もその年度の頁と同じにする
+    document.title = pageHead(data, y === years[0] ? undefined : y).title
   }
 
   const money: TocItem[] = [
@@ -926,7 +934,7 @@ export function Page({ data, sitekey }: { data: PageData; sitekey: string }) {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tocKey, year])
-  // 目次の移動で #yYYYY を節の fragment に置き換えない（再読み込みで年度が戻らないように）
+  // 目次の移動で URL を節の fragment に変えない
   const jump = (e: React.MouseEvent<HTMLAnchorElement>) => {
     const target = document.querySelector(e.currentTarget.getAttribute('href')!)
     if (!target) return

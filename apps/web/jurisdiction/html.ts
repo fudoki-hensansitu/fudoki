@@ -2,7 +2,7 @@
 // Void がサーバーで書き、同じ props で hydrate する。ここは頁ごとの title・説明・canonical・JSON-LD を組む
 import type { CatalogEntry } from '../server/jurisdiction'
 import { jurisdictionPath } from './path'
-import { formatYen, INDEX_PATH, type PageData } from './types'
+import { formatYen, INDEX_PATH, pageYears, yearPath, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
 /** JSON を script の中に置くときに </script> や <!-- で抜けないようにする */
@@ -58,18 +58,49 @@ export function pageTitle(d: PageData): string {
     : `${d.name}の決算（${reiwaFull(latest.year)}）｜何にいくら使った？｜風土記`
 }
 
-export function pageHead(d: PageData): Head {
+/** 既定でない年度の頁（/tokyo/shinagawa/2024）の title・説明文。その年度に載っている決算か当初予算の金額で書く */
+export function yearHead(d: PageData, year: number): { title: string; description: string; name: string } {
+  const settlement = d.years.find((y) => y.year === year)
+  const budget = d.budgets.find((b) => b.year === year && !b.amountMissing && b.yen > 0)
+  const y = reiwaFull(year)
+  if (settlement) {
+    // cofogFlow は最新の決算の年度の分だけ持つ
+    const top = settlement.year === d.years.at(-1)!.year ? d.cofogFlow.find((f) => f.kan.id !== 'cofog-none')?.kan : undefined
+    return {
+      title: `${d.name}の決算（${y}）｜何にいくら使った？｜風土記`,
+      description: `${d.name}の${y}決算（一般会計）の歳出は約${formatYen(settlement.yen)}。${top ? `いちばん大きい分野は${top.name}（${formatYen(top.yen)}）。` : ''}決算書の歳出を事業の単位まで、出典の頁と並べて見られます。`,
+      name: `${d.name}の歳出（${y}決算・一般会計）`,
+    }
+  }
+  if (budget) {
+    return {
+      title: `${d.name}の予算（${y}）｜何にいくら使う？｜風土記`,
+      description: `${d.name}の${y}当初予算（一般会計）の歳出は約${formatYen(budget.yen)}。予算書の歳出を事業の単位まで、出典の頁と並べて見られます。`,
+      name: `${d.name}の歳出（${y}当初予算・一般会計）`,
+    }
+  }
+  return {
+    title: `${d.name}の事業（${y}）｜風土記`,
+    description: `${d.name}の${y}の事業と、その振り返り。出典の資料と並べて見られます。`,
+    name: `${d.name}の事業（${y}）`,
+  }
+}
+
+/** 自治体の頁の head。year は既定でない年度の頁のときだけ渡す */
+export function pageHead(d: PageData, year?: number): Head {
   const latest = d.years.at(-1)!
   const budget = latestBudget(d)
-  const title = pageTitle(d)
-  const description = pageDescription(d)
-  const canonical = `${ORIGIN}${jurisdictionPath(d.code)}`
+  const base = jurisdictionPath(d.code)
+  const past = year !== undefined && year !== pageYears(d)[0] ? yearHead(d, year) : null
+  const title = past?.title ?? pageTitle(d)
+  const description = past?.description ?? pageDescription(d)
+  const canonical = `${ORIGIN}${past ? `${base}/${year}` : base}`
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
-    name: budget ? `${d.name}の歳出（${reiwaFull(budget.year)}当初予算・${reiwaFull(latest.year)}決算・一般会計）` : `${d.name}の歳出（${reiwaFull(latest.year)}決算・一般会計）`,
+    name: past?.name ?? (budget ? `${d.name}の歳出（${reiwaFull(budget.year)}当初予算・${reiwaFull(latest.year)}決算・一般会計）` : `${d.name}の歳出（${reiwaFull(latest.year)}決算・一般会計）`),
     keywords: [`${d.name} 決算`, ...(budget ? [`${d.name} 予算`] : []), '歳出', '一般会計'],
-    temporalCoverage: `${d.years[0]!.year}-04-01/${(budget?.year ?? latest.year) + 1}-03-31`,
+    temporalCoverage: past ? `${year}-04-01/${year! + 1}-03-31` : `${d.years[0]!.year}-04-01/${(budget?.year ?? latest.year) + 1}-03-31`,
     description,
     url: canonical,
     inLanguage: 'ja',
@@ -98,8 +129,14 @@ export function indexHead(count: number): Head {
   return head('自治体を探す｜風土記', description, `${ORIGIN}${INDEX_PATH}`)
 }
 
-export const sitemapXml = (entries: CatalogEntry[]) =>
+/** sitemap。自治体の頁に加え、既定でない年度の頁（/tokyo/shinagawa/2024）も載せる。years は頁で選べる年度（新しい順） */
+export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) => number[] = (e) => [...e.settlementYears].sort((a, b) => b - a)) =>
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}${INDEX_PATH}</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url>${entries
     .filter((e) => e.settlementYears.length > 0)
-    .map((e) => `<url><loc>${ORIGIN}${jurisdictionPath(e.code)}</loc></url>`)
+    .flatMap((e) => {
+      const base = jurisdictionPath(e.code)
+      const [latest, ...past] = yearsOf(e)
+      return [base, ...past.map((y) => yearPath(base, y, latest!))]
+    })
+    .map((path) => `<url><loc>${ORIGIN}${path}</loc></url>`)
     .join('')}</urlset>\n`

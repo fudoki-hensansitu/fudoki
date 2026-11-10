@@ -345,11 +345,17 @@ async function loadBudget(env: Env, code: string, year: number): Promise<BudgetT
   }
 }
 
+/** 頁で見せる決算の年度（最新から MAX_YEARS 年）。sitemap も同じ年度だけを載せる */
+export const shownSettlementYears = (settlementYears: number[]) => {
+  const latest = settlementYears.at(-1)
+  return latest === undefined ? [] : settlementYears.filter((year) => year >= latest - MAX_YEARS + 1)
+}
+
 /** 都道府県の頁へのリンク（prefecturePath）・同じ都道府県の自治体（neighbors）はカタログを見て route 側で決める */
 export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<PageData, 'prefecturePath' | 'neighbors'> | null> {
   const latest = entry.settlementYears.at(-1)
   if (latest === undefined) return null
-  const years = entry.settlementYears.filter((year) => year >= latest - MAX_YEARS + 1)
+  const years = shownSettlementYears(entry.settlementYears)
   const range = { min: years[0]!, max: latest }
   const [kanRes, mokuRes] = await Promise.all([search(env, entry.code, range, '款'), search(env, entry.code, { min: latest, max: latest }, '目', {}, CANDIDATES)])
   // 積立・公債・予備費の款は「事業」ではないので、力を入れている事業の候補から外す
