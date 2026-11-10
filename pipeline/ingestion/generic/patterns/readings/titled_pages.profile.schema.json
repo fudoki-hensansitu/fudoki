@@ -1,0 +1,134 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "columns",
+    "item_amount_left",
+    "marker_reach",
+    "markers",
+    "funding_rule",
+    "note_kinds",
+    "total_label",
+    "marker_edges",
+    "divider_text"
+  ],
+  "$defs": {
+    "range": {
+      "type": "array",
+      "items": {
+        "type": "number"
+      },
+      "minItems": 2,
+      "maxItems": 2
+    },
+    "column": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "header",
+        "x"
+      ],
+      "properties": {
+        "header": {
+          "type": "string",
+          "minLength": 1
+        },
+        "x": {
+          "$ref": "#/$defs/range"
+        }
+      }
+    }
+  },
+  "properties": {
+    "columns": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "subject",
+        "subject_amounts",
+        "setsu",
+        "setsu_amount",
+        "explanation"
+      ],
+      "properties": {
+        "subject": {
+          "$ref": "#/$defs/range",
+          "description": "The 目 column: its code and name."
+        },
+        "subject_amounts": {
+          "type": "array",
+          "minItems": 1,
+          "items": {
+            "$ref": "#/$defs/column"
+          },
+          "description": "The amount columns of the 目 (and of the 計 row of the 項), with their printed heading."
+        },
+        "setsu": {
+          "$ref": "#/$defs/range",
+          "description": "The 節 区分 column: the 節 code and name."
+        },
+        "setsu_amount": {
+          "$ref": "#/$defs/column",
+          "description": "The 節 金額 column and its heading in the shared dictionary."
+        },
+        "explanation": {
+          "$ref": "#/$defs/range",
+          "description": "The 計上説明 column: the 財源内訳 blocks and the explanation."
+        }
+      }
+    },
+    "item_amount_left": {
+      "type": "number",
+      "description": "An explanation item's amount ends right of this x (it is set at the right end of the line)."
+    },
+    "marker_reach": {
+      "type": "number",
+      "description": "How far right of the explanation column's left edge an item marker may start."
+    },
+    "markers": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "The item markers, one pattern per depth from the top (a whole word: `1`, `⑴`, `ア`)."
+    },
+    "funding_rule": {
+      "$ref": "#/$defs/range",
+      "description": "A vertical rule in this x range crosses each 財源内訳 band (and no explanation line)."
+    },
+    "note_kinds": {
+      "type": "object",
+      "additionalProperties": {
+        "type": "string",
+        "minLength": 1
+      },
+      "description": "A word of an explanation line and the kind of the monetary note it prints (`債務負担行為額`: 債務負担行為)."
+    },
+    "total_label": {
+      "type": "string",
+      "minLength": 1,
+      "description": "The label of the 項 total row in the 目 column."
+    },
+    "wrap_reach": {
+      "type": "number",
+      "minimum": 0,
+      "description": "How far left of item_amount_left the amount of an item whose name wrapped may end (a deeper item's amount ends further in)."
+    },
+    "marker_edges": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "number"
+      },
+      "description": "The right bound of the left edge of each depth's markers, from the top: an item's depth is where its marker starts (a misprinted `２` at the place of `⑵` is the second depth)."
+    },
+    "divider_text": {
+      "type": "string",
+      "minLength": 1,
+      "description": "A page without a frame whose digits are this regex (compacted text) is a divider and is skipped; any other one stops."
+    }
+  }
+}
