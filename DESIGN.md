@@ -23,7 +23,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 - ブランド色 `--primary`（青丹）: 操作・リンク・選んだ項目・グラフの系列・各節の要の数字（数字を全部塗らない）
 - アクセント `--kincha`（金茶）: 目を引きたい面（進み具合の棒、注意の印）と、ページ冒頭の使ったお金の数字。文字に使うときは白地で読める（コントラスト 4.5 以上）鮮やかな `--kincha-ink`（#b85c00）。暗くすると目立たなくなるので、濃さは彩度で出す
 - 増減（前年度比など）は良し悪しを表さないので、プラスもマイナスも色を付けない
-- 面の地: 主張したい面（ホームの「うちのまち」など、1画面に1枚）は `--primary` の緑の地に `--primary-foreground` の文字。中の押せるものは白（`--background`）に置く。押せるもの（タブ・切り替え・カード）の状態（選んだ・選んでいない・hover）は生成り（`--secondary`・`--card`）。
+- 面の地: 主張したい面（ホームの「うちのまち」など、1画面に1枚）は `--brand` の緑の地に `--brand-foreground` の文字。`--brand` は明暗とも青丹の濃い緑。中の押せるものは `--brand-fill` に置く（明るいときは白、暗いときは半透明の白）。押せるもの（タブ・切り替え・カード）の状態（選んだ・選んでいない・hover）は生成り（`--secondary`・`--card`）。
 - 絵の色 `--shu`・`--ai`・`--sakura`: 読み物の絵の面と帯だけ
 
 `--accent` は shadcn の名前で、hover の控えめな面に使う（アクセント色ではない）。
@@ -62,6 +62,16 @@ shadcn/ui の語彙。色の役割は次のとおり。
   /* 出典の頁を写す面。PDF の白なので明暗で変えない */
   --page: #ffffff;
   --page-foreground: #2b2723;
+  /* 主張したい面の地（明暗とも同じ緑） */
+  --brand: #2f5d43;
+  --brand-foreground: #f8f5ee;
+  /* 緑の面の中の押せるもの（検索欄・ボタン） */
+  --brand-fill: #ffffff;
+  --brand-fill-hover: #f8f5ee;
+  --brand-fill-foreground: #2b2723;
+  --brand-fill-muted: #6b655c;
+  /* 自治体の紋章の地。暗いときは白を少し落とす */
+  --emblem: #ffffff;
   --shu: #c1553a;
   --ai: #33507a;
   --kincha: #e3a43c;
@@ -102,6 +112,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
   --ease-sweep: cubic-bezier(0.87, 0, 0.13, 1);
   --duration: 150ms;
 }
+/* 暗い色。実装（apps/web/styles/tokens.css）は light-dark() で両方を持ち、テーマ（サイドバー、SP は下の帯の設定）は html の data-theme で切り替える。既定はライトで、「端末に合わせる」のときだけ端末の設定に従う */
 @media (prefers-color-scheme: dark) {
   :root {
     --background: #1b1916;
@@ -129,6 +140,12 @@ shadcn/ui の語彙。色の役割は次のとおり。
     --kincha-ink: #e3a43c;
     --ai: #6f8fc0;
     --sakura: #b98f80;
+    --brand-foreground: #ece6da;
+    --brand-fill: rgb(255 255 255 / .08);
+    --brand-fill-hover: rgb(255 255 255 / .12);
+    --brand-fill-foreground: #f3f0ea;
+    --brand-fill-muted: rgb(243 240 234 / .9);
+    --emblem: #e6e0d4;
   }
 }
 ```

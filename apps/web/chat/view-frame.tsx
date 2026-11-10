@@ -13,6 +13,7 @@ import { Spinner } from '@/components/ui/spinner'
 import { cn } from '@/lib/utils'
 import { VIEW_HTML_MESSAGE, VIEW_READY_MESSAGE } from '../server/csp'
 import { relay } from './relay'
+import { isDark, THEME_EVENT } from '../nav/theme'
 
 interface Resource {
   html: string
@@ -83,7 +84,6 @@ function closeTab(owner: object) {
   if (tabs.length === panel.tabs.length) return
   setPanel({ tabs, active: panel.active === owner ? tabs.at(-1)?.owner : panel.active })
 }
-const dark = () => matchMedia('(prefers-color-scheme: dark)').matches
 
 /** View に選ばせる表示の大きさ。広い画面では会話の右に並べ（side-by-side）、狭い画面では頁の上に全画面で重ねる */
 type DisplayMode = Extract<McpUiDisplayMode, 'inline' | 'fullscreen'>
@@ -93,18 +93,30 @@ const DISPLAY_MODES: DisplayMode[] = ['inline', 'fullscreen']
 function hostContext(displayMode: DisplayMode) {
   const css = getComputedStyle(document.documentElement)
   const v = (name: string) => css.getPropertyValue(name).trim()
+  // 色の token は light-dark() のままなので、いまのテーマで解いた色を渡す
+  const probe = document.createElement('i')
+  probe.style.display = 'none'
+  document.body.appendChild(probe)
+  const color = (name: string) => {
+    probe.style.color = `var(${name})`
+    return getComputedStyle(probe).color
+  }
+  const colors = {
+    '--color-background-primary': color('--background'),
+    '--color-background-secondary': color('--secondary'),
+    '--color-text-primary': color('--foreground'),
+    '--color-text-secondary': color('--muted-foreground'),
+    '--color-border-primary': color('--border'),
+  }
+  probe.remove()
   return {
-    theme: dark() ? ('dark' as const) : ('light' as const),
+    theme: isDark() ? ('dark' as const) : ('light' as const),
     displayMode,
     availableDisplayModes: DISPLAY_MODES,
     locale: 'ja-JP',
     styles: {
       variables: {
-        '--color-background-primary': v('--background'),
-        '--color-background-secondary': v('--secondary'),
-        '--color-text-primary': v('--foreground'),
-        '--color-text-secondary': v('--muted-foreground'),
-        '--color-border-primary': v('--border'),
+        ...colors,
         '--font-sans': v('--font-sans'),
         '--border-radius-md': v('--radius'),
       } as McpUiStyles,
@@ -272,6 +284,7 @@ export function ViewFrame({
         addEventListener('message', onReady)
         iframe.src = '/view-frame'
         media.addEventListener('change', onTheme)
+        window.addEventListener(THEME_EVENT, onTheme)
         return connected
       })
       .catch((e: unknown) => {
@@ -282,6 +295,7 @@ export function ViewFrame({
       stopReady?.()
       bridgeRef.current = undefined
       media.removeEventListener('change', onTheme)
+      window.removeEventListener(THEME_EVENT, onTheme)
       void bridge?.teardownResource({}).catch(() => {})
       void bridge?.close().catch(() => {})
     }
