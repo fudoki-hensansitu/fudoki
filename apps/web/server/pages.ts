@@ -21,9 +21,9 @@ const TURNSTILE_TEST_SITE_KEY = '1x00000000000000000000AA'
 
 /**
  * 自治体・都道府県・一覧の頁（HTML と頁を移る時の JSON）をブラウザに置く時間。戻る遷移で取り直さないようにする。
- * deploy の直後に前の形の JSON が残ると新しい JS で描けないので、ホーム（5分）より短くする
+ * ホームと同じ5分にする
  */
-export const PAGE_CACHE = 'public, max-age=60'
+export const PAGE_CACHE = 'public, max-age=300'
 
 export async function jurisdictionProps(c: Context, path: string, yearSegment?: string): Promise<JurisdictionProps> {
   const env = c.env as unknown as Env
