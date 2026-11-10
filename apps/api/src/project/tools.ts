@@ -25,7 +25,7 @@ const searchDescription =
 
 const getDescription =
   'Return one project by project_id: its years and child projects. ' +
-  'Evaluation sheets and budget proposal measures are not included: find them with search_evaluation_sheets (where detail_id eq the years\' settlement_detail_id) and search_budget_measures (where detail_id eq the years\' budget_detail_id). ' +
+  'Evaluation sheets and budget proposal measures are not included: find them with search_evaluation_sheets (where detail_id eq the years\' settlement_detail_id) and search_budget_measures (where detail_id eq the years\' budget_detail_id); skip a search when the years have no such ids. ' +
   'first_year_kind before_coverage means the previous year is not covered, so the project may be older; last_year_kind latest means it is in the latest covered year, unknown means the next year is not covered. ' +
   PROJECTS
 
