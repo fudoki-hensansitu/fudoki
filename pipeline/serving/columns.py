@@ -16,36 +16,42 @@ from pathlib import Path
 import yaml
 
 PIPELINE = Path(__file__).resolve().parents[1]
-MODELS = [PIPELINE / 'dbt/models/marts/fiscal/_models.yml', PIPELINE / 'dbt/models/marts/jurisdiction/_models.yml',
-          PIPELINE / 'dbt/models/marts/population/_models.yml', PIPELINE / 'dbt/models/marts/project/_models.yml']
+MODELS = [PIPELINE / f'dbt/models/marts/{name}/_models.yml'
+          for name in ('jurisdiction', 'population', 'expenditure', 'evaluation', 'budget_proposal')]
 WAREHOUSE = PIPELINE / '.build/warehouse.duckdb'
 OUTPUT = PIPELINE.parent / 'apps/api/src/columns.json'
 
 # D1 に写す marts の表（同期の順は sync_d1.TABLE_ORDER）
-TABLES = ['jurisdiction', 'fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expenditure_detail',
-          'fiscal_expenditure_location', 'fiscal_coverage', 'population_origin', 'population',
-          'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator', 'project_evaluation_indicator_value',
-          'project_evaluation_result', 'project_budget_initiative']
-PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code', 'fiscal_origin': 'origin_id',
-                'fiscal_expenditure_subject': 'subject_id', 'fiscal_expenditure_detail': 'detail_id',
-                'fiscal_expenditure_location': 'row_id', 'fiscal_coverage': 'coverage_id',
-                'population_origin': 'origin_id', 'population': 'population_id',
-                'project_origin': 'origin_id', 'project_evaluation_sheet': 'sheet_id', 'project_evaluation_indicator': 'indicator_id',
-                'project_evaluation_indicator_value': 'value_id', 'project_evaluation_result': 'origin_id', 'project_budget_initiative': 'initiative_id'}
-# index（docs/prd/fiscal-serving-tables/dd.md）。科目は自治体の一覧・比較・COFOG・子、内訳は科目の下・子・自治体の事業。
-# 収録範囲と人口は自治体のページごとに自治体コードで引く
+TABLES = ['jurisdiction', 'population_origin', 'population',
+          'expenditure', 'expenditure_origin', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
+          'expenditure_location',
+          'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
+          'budget_proposal', 'budget_proposal_origin', 'budget_measure']
+PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code', 'population_origin': 'origin_id', 'population': 'population_id',
+                'expenditure': 'expenditure_id', 'expenditure_origin': 'origin_id', 'expenditure_origin_link': 'link_id',
+                'expenditure_subject': 'subject_id', 'expenditure_detail': 'detail_id', 'expenditure_location': 'row_id',
+                'evaluation': 'evaluation_id', 'evaluation_origin': 'origin_id', 'evaluation_sheet': 'sheet_id',
+                'evaluation_indicator': 'indicator_id', 'evaluation_indicator_value': 'value_id',
+                'budget_proposal': 'budget_proposal_id', 'budget_proposal_origin': 'origin_id',
+                'budget_measure': 'measure_id'}
+# index（docs/prd/aggregate-api/dd.md）。科目は自治体の一覧・比較・COFOG・子・根、内訳は科目の下・子・自治体の事業・根。
+# 根の表と人口は自治体のページごとに自治体コードで引く
 INDEXES = {
-    'fiscal_expenditure_subject': [['fiscal_year', 'document_kind', 'jurisdiction_code', 'level'],
-                                   ['fiscal_year', 'document_kind', 'cofog_code'], ['parent_subject_id']],
-    'fiscal_expenditure_detail': [['subject_id', 'breakdown', 'depth'], ['parent_detail_id'],
-                                  ['fiscal_year', 'document_kind', 'jurisdiction_code', 'breakdown']],
-    'fiscal_coverage': [['jurisdiction_code']],
     'population': [['jurisdiction_code']],
-    'project_evaluation_sheet': [['jurisdiction_code', 'fiscal_year'], ['detail_id']],
-    'project_evaluation_indicator': [['sheet_id']],
-    'project_evaluation_indicator_value': [['indicator_id']],
-    'project_evaluation_result': [['jurisdiction_code']],
-    'project_budget_initiative': [['jurisdiction_code', 'fiscal_year'], ['detail_id']],
+    'expenditure': [['jurisdiction_code']],
+    'expenditure_origin_link': [['expenditure_id'], ['origin_id']],
+    'expenditure_subject': [['fiscal_year', 'document_kind', 'jurisdiction_code', 'level'],
+                            ['fiscal_year', 'document_kind', 'cofog_code'], ['parent_subject_id'], ['expenditure_id']],
+    'expenditure_detail': [['subject_id', 'breakdown', 'depth'], ['parent_detail_id'],
+                           ['fiscal_year', 'document_kind', 'jurisdiction_code', 'breakdown'], ['expenditure_id']],
+    'evaluation': [['jurisdiction_code']],
+    'evaluation_origin': [['evaluation_id']],
+    'evaluation_sheet': [['evaluation_id'], ['jurisdiction_code', 'fiscal_year'], ['detail_id']],
+    'evaluation_indicator': [['sheet_id']],
+    'evaluation_indicator_value': [['indicator_id']],
+    'budget_proposal': [['jurisdiction_code']],
+    'budget_proposal_origin': [['budget_proposal_id']],
+    'budget_measure': [['budget_proposal_id'], ['jurisdiction_code', 'fiscal_year'], ['detail_id']],
 }
 
 TYPES = {'VARCHAR': 'string', 'INTEGER': 'integer', 'BIGINT': 'integer', 'HUGEINT': 'integer', 'BOOLEAN': 'boolean',

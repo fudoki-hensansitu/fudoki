@@ -1,0 +1,103 @@
+version: 2
+models:
+- name: budget_proposal
+  description: 予算案の根。自治体の1年度（予算の年度）分の予算案のプレス発表。
+  columns:
+  - name: budget_proposal_id
+    description: 自治体コードと年度から作る ID（sha256）。
+    data_tests: [not_null, unique]
+  - name: jurisdiction_code
+    description: 全国地方公共団体コード（6桁）。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('jurisdiction')
+          field: jurisdiction_code
+  - name: fiscal_year
+    description: 予算の会計年度（西暦）。
+    data_tests: [not_null]
+- name: budget_proposal_origin
+  description: 予算案の出典（プレス発表の資料）。PDF 1つが1行。
+  columns:
+  - name: origin_id
+    description: 出典の識別子。PDF の sha256。
+    data_tests: [not_null, unique]
+  - name: budget_proposal_id
+    description: 予算案の根。budget_proposal の budget_proposal_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('budget_proposal')
+          field: budget_proposal_id
+  - name: jurisdiction_code
+    description: 全国地方公共団体コード（6桁）。
+    data_tests: [not_null]
+  - name: fiscal_year
+    description: 予算の会計年度（西暦）。
+    data_tests: [not_null]
+  - name: title
+    description: 資料の名前。
+  - name: url
+    description: 資料（PDF）の URL。
+    data_tests: [not_null]
+  - name: landing_url
+    description: 資料を載せた自治体のページの URL。
+  - name: sha256
+    description: 読んだ PDF の sha256。
+    data_tests: [not_null]
+- name: budget_measure
+  description: 予算案に載った施策。品川は予算案のプレス発表の1頁（1施策）が1行。金額は出典の千円を円にしたもの。背景・目的と事業概要の文章は持たない。
+  columns:
+  - name: measure_id
+    description: 行の ID。origin_id と頁から作る（sha256）。
+    data_tests: [not_null, unique]
+  - name: budget_proposal_id
+    description: 予算案の根。budget_proposal の budget_proposal_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('budget_proposal')
+          field: budget_proposal_id
+  - name: origin_id
+    description: 出典。budget_proposal_origin の origin_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('budget_proposal_origin')
+          field: origin_id
+  - name: jurisdiction_code
+    description: 全国地方公共団体コード（6桁）。
+    data_tests: [not_null]
+  - name: fiscal_year
+    description: 予算の会計年度（西暦）。
+    data_tests: [not_null]
+  - name: page
+    description: 出典の PDF の頁（1始まり）。
+    data_tests: [not_null]
+  - name: title
+    description: 頁の見出し（副題を含む、資料の表記）。
+  - name: names
+    description: 事業名の欄（JSON の文字列の配列。複数のことがある）。
+  - name: is_new
+    description: 事業名に「新規」の印がある。
+    data_tests: [not_null]
+  - name: budget_yen
+    description: 予算額（円）。事業名が複数なら合計。
+  - name: description
+    description: 施策の説明。資料の箇条書き（品川は POINT）を改行でつないだもの（資料の表記）。
+  - name: detail_id
+    description: 風土記の判断。施策を紐付けた、同じ年度の当初予算書の内訳（fiscal_expenditure_detail の detail_id）。紐付かなければ空。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('expenditure_detail')
+          field: detail_id
+  - name: link_method
+    description: 風土記の判断。紐付けの方法。name（名前と額で直接当たった）・jev（候補12件から TypeSafe の Jev が確信度 0.6 以上で選んだ）・none（紐付かない）。
+    data_tests: [not_null]
+  - name: link_confidence
+    description: 風土記の判断。link_method が jev のときの Jev の確信度。

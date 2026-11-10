@@ -51,16 +51,16 @@ const fiscalTable = (kind: FiscalTable['kind'], table: string, parentKey: string
 }
 
 /** 款・項・目。同じ資料・会計の款の和が総額（目・is_leaf の和は出典しだいで小さくなる） */
-export const SUBJECT_TABLE = fiscalTable('subjects', 'fiscal_expenditure_subject', 'parent_subject_id')
+export const SUBJECT_TABLE = fiscalTable('subjects', 'expenditure_subject', 'parent_subject_id')
 /** 科目の下の内訳。同じ科目・同じ breakdown の depth = 1 の和が科目の額 */
-export const DETAIL_TABLE = fiscalTable('details', 'fiscal_expenditure_detail', 'parent_detail_id')
+export const DETAIL_TABLE = fiscalTable('details', 'expenditure_detail', 'parent_detail_id')
 
 /** 科目・内訳の行が印字された位置（row_id は subject_id か detail_id） */
-export const LOCATION_TABLE = 'fiscal_expenditure_location'
+export const LOCATION_TABLE = 'expenditure_location'
 export const LOCATION_COLUMNS = TABLES[LOCATION_TABLE]!.columns
 export const LOCATION_SELECT_LIST = selectList(LOCATION_COLUMNS)
 
-export const ORIGIN_TABLE = 'fiscal_origin'
+export const ORIGIN_TABLE = 'expenditure_origin'
 export const ORIGIN_COLUMNS = TABLES[ORIGIN_TABLE]!.columns
 export const ORIGIN_SELECT_LIST = selectList(ORIGIN_COLUMNS)
 
@@ -75,9 +75,10 @@ export const POPULATION_COLUMNS = TABLES[POPULATION_TABLE]!.columns
 export const POPULATION_ORIGIN_TABLE = 'population_origin'
 export const POPULATION_ORIGIN_COLUMNS = TABLES[POPULATION_ORIGIN_TABLE]!.columns
 
-/** 収録範囲。科目・内訳の表に行がある自治体・年度・資料区分・会計と出典の組 */
-export const COVERAGE_TABLE = 'fiscal_coverage'
+/** 歳出の根。科目・内訳の表に行がある自治体・年度・資料区分・会計。出典（冊）とは結ぶ表で組になる */
+export const COVERAGE_TABLE = 'expenditure'
 export const COVERAGE_COLUMNS = TABLES[COVERAGE_TABLE]!.columns
+export const ORIGIN_LINK_TABLE = 'expenditure_origin_link'
 
 export const DOCUMENT_KIND_DESCRIPTION =
   'Document kind: settlement means executed expenditure; initial means initial budget amounts. Do not add amounts with different meanings.'

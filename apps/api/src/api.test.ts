@@ -325,7 +325,7 @@ describe('MCP の batch', () => {
     expect(body.jsonrpc).toBe('2.0')
     expect(body.error.code).toBe(-32600)
     expect(body.id).toBeNull()
-    expect(calls.filter((c) => c.includes('fiscal_expenditure_subject'))).toEqual([])
+    expect(calls.filter((c) => c.includes('expenditure_subject'))).toEqual([])
     expect((await mcp([])).status).toBe(400)
   })
 
@@ -339,7 +339,7 @@ describe('MCP の batch', () => {
   })
 
   test('想定外の例外の詳細は tool の結果に出さない', async () => {
-    sqlite.query('DROP TABLE fiscal_expenditure_subject').run()
+    sqlite.query('DROP TABLE expenditure_subject').run()
     const orig = console.error
     const logged: unknown[] = []
     console.error = (...a: unknown[]) => void logged.push(a)
@@ -355,7 +355,7 @@ describe('MCP の batch', () => {
   })
 
   test('REST も想定外の例外の詳細を返さない', async () => {
-    sqlite.query('DROP TABLE fiscal_expenditure_subject').run()
+    sqlite.query('DROP TABLE expenditure_subject').run()
     const orig = console.error
     console.error = () => {}
     try {
@@ -548,7 +548,7 @@ describe('MCP 2026-07-28', () => {
       console.error = orig
     }
     expect(res.status).toBe(400)
-    expect(calls.filter((c) => c.includes('fiscal_expenditure_subject'))).toEqual([])
+    expect(calls.filter((c) => c.includes('expenditure_subject'))).toEqual([])
   })
 
   test('subscriptions/listen は長い SSE を開かずに 400 で断る。listChanged は名乗らない', async () => {
@@ -566,7 +566,7 @@ describe('MCP 2026-07-28', () => {
     const one = (id: number) => ({ jsonrpc: '2.0', id, method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: valid, _meta: meta } })
     const res = await app.request('/mcp', { method: 'POST', headers: { ...MCP_HEADERS, 'MCP-Protocol-Version': '2026-07-28' }, body: JSON.stringify([one(1), one(2)]) }, { DB: spy })
     expect(res.status).toBe(400)
-    expect(calls.filter((c) => c.includes('fiscal_expenditure_subject'))).toEqual([])
+    expect(calls.filter((c) => c.includes('expenditure_subject'))).toEqual([])
   })
 })
 
@@ -581,13 +581,13 @@ describe('operation の応答は output の schema に合う', () => {
     return { ...Object.fromEntries(cols.filter((c) => !c.nullable).map((c) => [c.name, dflt(c.type)])), ...row }
   }
   beforeEach(() => {
-    insertOrigin(sqlite, filled('fiscal_origin', { origin_id: 'of', fiscal_year: 2023, sha256: 'f'.repeat(64) }))
+    insertOrigin(sqlite, filled('expenditure_origin', { origin_id: 'of', fiscal_year: 2023, sha256: 'f'.repeat(64) }))
     for (const document_kind of ['settlement', 'initial'] as const) {
       const { P, C, D } = IDS[document_kind]
       const amount_phase = document_kind === 'settlement' ? 'executed' : 'approved'
-      insertSubject(sqlite, filled('fiscal_expenditure_subject', { document_kind, amount_phase, subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '款', is_leaf: 0 }))
-      insertSubject(sqlite, filled('fiscal_expenditure_subject', { document_kind, amount_phase, subject_id: C, parent_subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '目', is_leaf: 1 }))
-      insertDetail(sqlite, filled('fiscal_expenditure_detail', { document_kind, amount_phase, detail_id: D, subject_id: C, fiscal_year: 2023, origin_id: 'of', breakdown: '事業', depth: 1 }))
+      insertSubject(sqlite, filled('expenditure_subject', { document_kind, amount_phase, subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '款', is_leaf: 0 }))
+      insertSubject(sqlite, filled('expenditure_subject', { document_kind, amount_phase, subject_id: C, parent_subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '目', is_leaf: 1 }))
+      insertDetail(sqlite, filled('expenditure_detail', { document_kind, amount_phase, detail_id: D, subject_id: C, fiscal_year: 2023, origin_id: 'of', breakdown: '事業', depth: 1 }))
     }
   })
 

@@ -2,6 +2,7 @@ import { z } from 'zod'
 import {
   COVERAGE_COLUMNS,
   COVERAGE_TABLE,
+  ORIGIN_LINK_TABLE,
   DOCUMENT_KINDS,
   DOCUMENT_KIND_DESCRIPTION,
   JURISDICTION_COLUMNS,
@@ -424,7 +425,8 @@ async function listJurisdictions(ctx: Ctx, input: Record<string, unknown>) {
       .prepare(
         full
           ? `SELECT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind", o."origin_id", o."title", o."url", o."format" ` +
-              `FROM ${COVERAGE_TABLE} c JOIN ${ORIGIN_TABLE} o ON o."origin_id" = c."origin_id" ` +
+              `FROM ${COVERAGE_TABLE} c JOIN ${ORIGIN_LINK_TABLE} l ON l."expenditure_id" = c."expenditure_id" ` +
+              `JOIN ${ORIGIN_TABLE} o ON o."origin_id" = l."origin_id" ` +
               `WHERE c."jurisdiction_code" IN (${pageSql}) ` +
               `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name", o."title", o."origin_id"`
           : `SELECT DISTINCT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind" ` +

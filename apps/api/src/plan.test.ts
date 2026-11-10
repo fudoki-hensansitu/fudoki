@@ -44,8 +44,8 @@ describe('EXPLAIN QUERY PLAN', () => {
 
   test('自治体のページの収録範囲は jurisdiction_code の index で引く', () => {
     const rows = sqlite
-      .query(`EXPLAIN QUERY PLAN SELECT * FROM fiscal_coverage WHERE jurisdiction_code IN (SELECT jurisdiction_code FROM jurisdiction ORDER BY jurisdiction_code LIMIT ? OFFSET ?)`)
+      .query(`EXPLAIN QUERY PLAN SELECT * FROM expenditure WHERE jurisdiction_code IN (SELECT jurisdiction_code FROM jurisdiction ORDER BY jurisdiction_code LIMIT ? OFFSET ?)`)
       .all(10, 0) as { detail: string }[]
-    expect(rows.map((r) => r.detail).join('\n')).toMatch(/fiscal_coverage USING INDEX fiscal_coverage_jurisdiction_code \(jurisdiction_code=\?\)/)
+    expect(rows.map((r) => r.detail).join('\n')).toMatch(/expenditure USING INDEX expenditure_jurisdiction_code \(jurisdiction_code=\?\)/)
   })
 })

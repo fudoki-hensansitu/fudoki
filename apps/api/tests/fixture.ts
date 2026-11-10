@@ -88,10 +88,10 @@ export async function fixture(real = false) {
     await db.prepare(`INSERT INTO ${table} (${Object.keys(data).join(',')}) VALUES (${Object.keys(data).map(() => '?').join(',')})`).bind(...Object.values(data) as never[]).run()
   }
   const paths = ['navigation', 'ok', 'rotated', 'pending', 'skinny', 'missing', 'recover', 'redirect', 'html', 'fake', 'big-header', 'big-stream', 'limit', 'slow', 'slow-body', ...Array.from({ length: 18 }, (_, i) => `extra-${i}`)]
-  for (const path of paths) await insert('fiscal_origin', { origin_id: path, title: `試験出典 ${path}`, url: `https://city.fudoki.dev/${path}.pdf`, format: 'pdf' })
-  await insert('fiscal_origin', { origin_id: 'same', title: '同じ URL', url: 'https://city.fudoki.dev/ok.pdf', format: 'pdf' })
-  await insert('fiscal_origin', { origin_id: 'csv', title: 'CSV', url: 'https://city.fudoki.dev/csv', format: 'csv' })
-  await insert('fiscal_origin', { origin_id: 'private', title: 'private', url: 'http://127.0.0.1/pdf', format: 'pdf' })
+  for (const path of paths) await insert('expenditure_origin', { origin_id: path, title: `試験出典 ${path}`, url: `https://city.fudoki.dev/${path}.pdf`, format: 'pdf' })
+  await insert('expenditure_origin', { origin_id: 'same', title: '同じ URL', url: 'https://city.fudoki.dev/ok.pdf', format: 'pdf' })
+  await insert('expenditure_origin', { origin_id: 'csv', title: 'CSV', url: 'https://city.fudoki.dev/csv', format: 'csv' })
+  await insert('expenditure_origin', { origin_id: 'private', title: 'private', url: 'http://127.0.0.1/pdf', format: 'pdf' })
   const scenarios = [
     { name: '頁送り', origin_id: 'navigation', source_page: 1, amount_source_page: 2, source_x0: 35, source_y0: 40, source_x1: 240, source_y1: 80 },
     { name: '枠あり', origin_id: 'ok', source_page: 1, source_x0: 35, source_y0: 40, source_x1: 240, source_y1: 80, amount_source_page: 1, amount_source_x0: 35, amount_source_y0: 140, amount_source_x1: 240, amount_source_y1: 180 },
@@ -110,17 +110,17 @@ export async function fixture(real = false) {
   ]
   for (const [i, { name, origin_id, ...location }] of scenarios.entries()) {
     const id = String(i + 1).padStart(64, '0')
-    await insert('fiscal_expenditure_subject', { subject_id: id, node_key: id, jurisdiction_code: '000001', fiscal_year: 2024, document_kind: 'settlement', amount_phase: 'executed', account_name: '一般会計', kan_name: '総務費', level: '目', name, amount_yen: 12345, origin_id })
-    await insert('fiscal_expenditure_location', { row_id: id, origin_id, ...location })
+    await insert('expenditure_subject', { subject_id: id, node_key: id, jurisdiction_code: '000001', fiscal_year: 2024, document_kind: 'settlement', amount_phase: 'executed', account_name: '一般会計', kan_name: '総務費', level: '目', name, amount_yen: 12345, origin_id })
+    await insert('expenditure_location', { kind: 'pdf', row_id: id, origin_id, ...location })
   }
   if (real) {
     const response = await fetch('https://api.fudoki.dev/v1/fiscal/expenditure/subjects:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { jurisdiction_code: { eq: ['132039'] } }, page_size: 2 }) })
     const data = await response.json() as { subjects: Record<string, unknown>[]; origins: Record<string, unknown>[] }
-    for (const origin of data.origins) await insert('fiscal_origin', origin)
+    for (const origin of data.origins) await insert('expenditure_origin', origin)
     for (const subject of data.subjects) {
-      await insert('fiscal_expenditure_subject', subject)
+      await insert('expenditure_subject', subject)
       const detail = await (await fetch(`https://api.fudoki.dev/v1/fiscal/expenditure/subjects/${subject.subject_id}`)).json() as { locations: Record<string, unknown>[] }
-      for (const location of detail.locations.filter((l) => l.row_id === subject.subject_id)) await insert('fiscal_expenditure_location', location)
+      for (const location of detail.locations.filter((l) => l.row_id === subject.subject_id)) await insert('expenditure_location', location)
     }
   }
   return {
