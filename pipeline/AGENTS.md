@@ -17,7 +17,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 | 出典の頁の文字 | `source-text:save`（保存済みの文字の層がある出典 PDF を R2 から取り、頁ごとの文字を非公開 R2 の `source-text/<sha256>.json` に置く。web のアシスタントが apps/api の内部 RPC から読む。既定は計画の表示だけ、`--write` で書き、R2 にある key は作り直さない。`--jurisdiction`・`--kind`・`--jobs`、抜き出し方を変えたら `--refresh`。ネットワーク・cf を使うので sandbox 外） |
 | 検査 | `test`（bun）/ `test:python`（unittest）/ `test:dbt`（入力準備の unittest） |
 
-出典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。事業の評価の資料（`evaluation_selections`）は `archive.ts --evaluation` で決算書とは別の key（`.../evaluation-settlement[-<n>].pdf`）に保存する。`settlement-` で始めると決算書の保存が消す。dbt は入力準備（`dbt/scripts/`）、staging・intermediate・marts のモデル、seeds を持つ。
+出典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。事業の評価の資料（`evaluation_selections`）は `archive.ts --evaluation` で決算書とは別の key（`.../evaluation-settlement[-<n>].pdf`）に保存する。`settlement-` で始めると決算書の保存が消す。予算案のプレス発表（`press_selections`）は `archive.ts --press` で予算書とは別の key（`.../press-initial[-<n>].pdf`）に保存する。dbt は入力準備（`dbt/scripts/`）、staging・intermediate・marts のモデル、seeds を持つ。
 
 ## 生成物・観測・取得の規約
 

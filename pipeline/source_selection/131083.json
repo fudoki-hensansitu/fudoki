@@ -1681,7 +1681,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定（未公表）。令和7年度実施事業（2025年度）を評価する令和8年度の行政評価は未公表。江東区の行政評価は長期計画の「展開」の第6章（施策評価・事務事業評価）に載り、2024年度に選んだ令和6年度実績の評価は「江東区長期計画の展開2026」の一部。Orca のブラウザで描画した展開の一覧（https://www.city.koto.lg.jp/010162/kuse/shisaku/kekaku/kekakur0211/koki/tenkai/index.html）の掲載は「江東区長期計画の展開2026」（https://www.city.koto.lg.jp/010162/kuse/shisaku/kekaku/kekakur0211/koki/tenkai/tenkai2026.html）だけで、展開2027は無い。行政評価制度の一覧（https://www.city.koto.lg.jp/kuse/shisaku/hyokasedo/system22/index.html）は令和6年度行政評価で更新が止まっている。同系の「江東区長期計画 令和7年度主要事業実績報告書」（https://www.city.koto.lg.jp/010162/07jissekihoukokusyo.html）は事業内容・活動量・事業費の計画と実績だけで、評価・課題・方向性の欄が無く評価資料ではない。確認日：2026-10-23T09:47:41+00:00（UTC）。"
+      "reason": "未選定（未公表）。令和7年度実施事業（2025年度）を評価する令和8年度の行政評価は未公表。江東区の行政評価は長期計画の「展開」の第6章（施策評価・事務事業評価）に載り、2024年度に選んだ令和6年度実績の評価は「江東区長期計画の展開2026」の一部。Orca のブラウザで描画した展開の一覧（https://www.city.koto.lg.jp/010162/kuse/shisaku/kekaku/kekakur0211/koki/tenkai/index.html）の掲載は「江東区長期計画の展開2026」（https://www.city.koto.lg.jp/010162/kuse/shisaku/kekaku/kekakur0211/koki/tenkai/tenkai2026.html）だけで、展開2027は無い。行政評価制度の一覧（https://www.city.koto.lg.jp/kuse/shisaku/hyokasedo/system22/index.html）は令和6年度行政評価で更新が止まっている。同系の「江東区長期計画 令和7年度主要事業実績報告書」（https://www.city.koto.lg.jp/010162/07jissekihoukokusyo.html）は事業内容・活動量・事業費の計画と実績だけで、評価・課題・方向性の欄が無く評価資料ではない。確認日：2026-11-10T07:13:32+00:00（UTC）。"
     },
     {
       "target": {
@@ -1758,6 +1758,122 @@
         "archived_at": "2026-10-15T12:37:23.119Z"
       },
       "reason": "令和5年度実績を令和6年度に評価した江東区の施策評価。施策評価シートのコスト欄は「5年度予算／5年度決算／6年度予算／7年度予算」で、最新の決算は令和5年度（2023年度）。施策ごとに目標（目指す姿・代表指標の目標値と実績値・達成度）、コスト、取組方針ごとの成果と課題、一次評価・二次評価・今後の方向性を載せる。文字として読める。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131083",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度江東区当初予算案～主な事業の紹介～",
+          "landing_url": "https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/2024press.html",
+          "inspected_at": "2026-11-10T07:12:48+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/documents/r6kotobudget_press.pdf",
+              "sha256": "f3bd798cef173bafffe3cbc6f7b3b059ca713cf1f610192efc481e8c9260cc99",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131083/2024/press-initial.pdf",
+            "sha256": "f3bd798cef173bafffe3cbc6f7b3b059ca713cf1f610192efc481e8c9260cc99",
+            "final_url": "https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/documents/r6kotobudget_press.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:12:54.291Z"
+      },
+      "reason": "予算案（プレス発表）の頁「令和6年度予算案について」（https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/2024press.html、令和6年2月2日のプレス発表）に載る「令和6年度江東区当初予算案～主な事業の紹介～」（56頁、文字PDF）。区長のあいさつ・予算規模に続き、事業ごとに1頁で見出し・事業名・NEW（新規）の印・予算額（万円）・POINT・事業概要を載せる。関連ページの「令和6年度当初予算（案）概要のお知らせ」は予算の頁の別の資料で含めない。確認日 2026-11-10T07:12:48+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131083",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "江東区令和7年度当初予算案～主な事業の紹介～",
+          "landing_url": "https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/2025press.html",
+          "inspected_at": "2026-11-10T07:12:48+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/documents/2025press.pdf",
+              "sha256": "66efdc4e753c45332a0fdd88829299c13ae65e62200f63876e8dadf4dc87e998",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131083/2025/press-initial.pdf",
+            "sha256": "66efdc4e753c45332a0fdd88829299c13ae65e62200f63876e8dadf4dc87e998",
+            "final_url": "https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/documents/2025press.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:12:57.359Z"
+      },
+      "reason": "予算案（プレス発表）の頁「令和7年度予算案について」（https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/2025press.html、令和7年2月3日のプレス発表）に載る「江東区令和7年度当初予算案～主な事業の紹介～」（50頁、文字PDF）。区長のあいさつ・予算規模に続き、事業ごとに見出し・事業名・新規の印・予算額（万円）・POINT・事業概要を載せる。関連ページの「令和7年度当初予算（案）概要のお知らせ」は別の資料で含めない。確認日 2026-11-10T07:12:48+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131083",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "江東区令和8年度当初予算案",
+          "landing_url": "https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/2026press.html",
+          "inspected_at": "2026-11-10T07:12:48+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/documents/2026pressmaterials.pdf",
+              "sha256": "d07f26723880e15aa3904d2acde6c7b90df012f987bb9ba82e0cd3f91591e00f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131083/2026/press-initial.pdf",
+            "sha256": "d07f26723880e15aa3904d2acde6c7b90df012f987bb9ba82e0cd3f91591e00f",
+            "final_url": "https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/documents/2026pressmaterials.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:13:00.375Z"
+      },
+      "reason": "予算案（プレス発表）の頁「令和8年度予算案について」（https://www.city.koto.lg.jp/011502/kuse/koho/yosanan/2026press.html、令和8年2月2日のプレス発表）に載る「江東区令和8年度当初予算案」（30頁、文字PDF）。区長のあいさつ・予算規模に続き、3つのアクションと分野（防災・こども等）ごとに事業名・予算額（万円）・Point・事業内容とスケジュールを載せる。関連ページの「令和8年度当初予算（案）概要について」は別の資料で含めない。確認日 2026-11-10T07:12:48+00:00。"
     }
   ]
 }

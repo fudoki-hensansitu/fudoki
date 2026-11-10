@@ -98,6 +98,8 @@ pdftoppm -cropbox -f N -l N -r 120 -png FILE PREFIX
 評価資料が Power BI の公開レポート（「Web に公開」）でだけ出ていて、PDF・CSV のファイルが無いときは、`bun pipeline/source_selection/powerbi.ts <レポートの URL> --schema` で表と列を調べ、`--table`・`--columns`・`--order-by`・`--out` でレポートの API から表を CSV に取り、`format: csv` と `acquisition`（`type: powerbi`・表・列・並びの列）の選定にする（[ADR 0034](../../../../docs/adr/0034-evaluation-origin-from-power-bi-report-api.md)）。市のファイルではなく風土記が問い合わせた結果なので、`reason` にそう書く。列は measure を除き、並びの列は行を一意に決めるものにする（共同所管で事業が複数行になる列は除くか並びに足す）。年度は題でなく実績の列で決め、レポートの画面の総事業数や内訳の件数と CSV の件数を突き合わせて `reason` に写す。同じレポートを2回取って sha256 が同じことを確かめる。
 探して選ばなかった自治体・年度も `evaluation_selections` に書く（`candidates: []`・`selected_candidate_id: null`・`archive: null`）。`reason` に選ばない理由（未公表・目標や評価の欄が無い・文字の層が無いなど）、探した頁の URL、確認日を書く。評価資料の選定が無い年度は「まだ探していない」と読めるようにするためで、見送りの記録を `.cache` の `_skipped.md` や PR の本文だけに置かない。評価資料の選定は決算の選定（`selections`）とは独立で、決算が未選定の年度にも書ける。
 
+予算案のプレス発表（`press_selections`）は、当初予算の発表で自治体が出した、主な施策を事業名と予算額つきで説明する資料を選ぶ（事業（project）の取り込みが読む。品川区 131091 が基準）。target は当初予算（`document_kind: initial`）で、保存先は予算書とは別の slot（`press-initial`）。探す順は、首長の記者会見・報道発表の頁の当初予算（案）の発表資料、なければ予算の頁の「予算（案）の概要」「主要事業」「主な施策」。事業名・予算額が施策ごとに載り、新規・拡充の印があればなお良い。款別の総括表・予算書本体・歳入歳出の規模だけの説明資料、首長の説明の要約（区長説明資料など）は選ばない。同じ発表に冊子と要約があれば冊子を、分冊なら施策が載る冊を全部1つの候補にまとめる。予算の頁に別にある新規・拡充の一覧（品川の「款別予算等の主な施策」など）は選んだ資料に含めず、URL を `reason` に残す。年度は題の「令和N年度予算（案）」の N で決める（評価資料と違いずれない）。探して無かった年度も `candidates: []`・`selected_candidate_id: null`・`archive: null` で書き、探した頁と確認日を `reason` に残す。保存は `archive.ts --press --write --jurisdiction <code>`。
+
 pdf_type は取り込み範囲の各頁の読取方法で判断し、表紙・目次や一部の頁の体裁で断定しない。schema の `scan` は画像として読む必要があることを表し、出典の作成方式が画像スキャンであることを意味しない。選定範囲に ToUnicode 欠損の文字化けや輪郭線描画があり画像を読む必要があれば、画像 XObject がなくても `scan` とし、読めない頁を reason に記録する。画像スキャンという作成方式を確認する場合は `pdfimages -list` を起点に画像の寸法と頁面積に対する覆域を見て、迷う場合は対象頁を描画して確かめる。ロゴや図表の画像だけで出典全体を画像スキャンと断定しない。
 
 ## 検査・保存
@@ -109,6 +111,7 @@ mise x -- bun pipeline/source_selection/check.ts
 mise x -- bun pipeline/source_selection/archive.ts
 mise x -- bun pipeline/source_selection/archive.ts --write --jurisdiction 132047
 mise x -- bun pipeline/source_selection/archive.ts --evaluation --write --jurisdiction 131172   # evaluation_selections だけを evaluation-settlement の key へ
+mise x -- bun pipeline/source_selection/archive.ts --press --write --jurisdiction 131091        # press_selections だけを press-initial の key へ
 ```
 
 評価資料の索引は、保存後に `bun run --cwd pipeline evaluation:index`（計画の表示）→ `--write`（sandbox の外）で AI Search へ頁ごとに登録し、`bun run --cwd pipeline serving:evaluation-catalog` で Worker の一覧を書き直す。item の key は `<出典のsha256>_p<物理頁4桁>.pdf`。`cf ai-search items upload` は key を `--file` の basename にするので `/` では区切れない。metadata の number（`page`）は文字列の数字で送る（number のままだと `invalid_metadata_format`）。`items list` は 1 回 50 件まで。選定の sha256 や pages を変えたら、`--write` を回すまで catalog から外れる（指紋が合わない）。取り込みは1時間に数百頁なので、数千頁を足すときは `--timeout-minutes` を数百分にして background で回す（期限切れや `items list` の `fetch failed` で止まっても、同じ計画の再実行は登録済みを飛ばす）。既定の実行は、記録が無いか計画が変わった出典の item だけを `origin_sha256` で絞って一覧する。索引の全件と比べるのは `--full` を付けたときだけ。`running` のまま数十分進まない item は再実行でも登録し直されないので、その key だけ同じ metadata で `items upload` し直す。

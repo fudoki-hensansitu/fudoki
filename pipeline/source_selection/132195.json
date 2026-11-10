@@ -5949,5 +5949,121 @@
       },
       "reason": "令和2年度に実施した事務事業を所管課が内部評価した「令和3年度内部評価結果報告書（令和2年度実施事務事業評価）」（令和3年9月、122頁、狛江市の行政評価ページで公表）。1頁目が「令和3年度内部評価結果報告書（令和2年度実施事務事業評価）」。事業ごとに目的・対象・内容、事業費（決算額）、活動指標・成果指標の目標値と実績値、実施内容・成果、評価・課題・今後の方向性を載せる。文字として読める。現行の公式URL（index.cfm/46,117244,c,html/117244/20211112-143703.pdf）は404で、行政評価の頁からも外れているため、Wayback Machine の保存版（2022-03-02取得、11,180,829バイト、x-archive-orig-content-length と一致）から取得した。download_url は実際に取得した Wayback のURL、元の公式URLは https://www.city.komae.tokyo.jp/index.cfm/46,117244,c,html/117244/20211112-143703.pdf。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132195",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度予算概要（狛江市）",
+          "landing_url": "https://www.city.komae.tokyo.jp/index.cfm/46,132125,377,3618,html",
+          "inspected_at": "2026-11-10T07:16:16+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.komae.tokyo.jp/index.cfm/46,132125,c,html/132125/R6-1yosangaiyou.pdf",
+              "sha256": "70b2aa240113511f95e7af0fcde7c591841eadc07a47e4af3091ba9b84bb350d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132195/2024/press-initial.pdf",
+            "sha256": "70b2aa240113511f95e7af0fcde7c591841eadc07a47e4af3091ba9b84bb350d",
+            "final_url": "https://www.city.komae.tokyo.jp/index.cfm/46,132125,c,html/132125/R6-1yosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:16:19.222Z"
+      },
+      "reason": "定例記者会見資料の頁（令和6年（プレスリリース） https://www.city.komae.tokyo.jp/index.cfm/46,132125,377,3618,html、定例記者会見資料の一覧 https://www.city.komae.tokyo.jp/index.cfm/46,0,377,html から）に載る「令和6年度予算概要」（令和6年2月の定例記者会見資料、71頁、文字PDF）。予算編成方針・会計別予算規模・歳入歳出・基金・市債に続き、「主要事業」（物理22〜47頁）で後期基本計画（基本構想）のまちの姿ごとに、新規事業や拡充した内容を中心に、区分（新規・拡充・見直し）・事業名・予算科目・担当課・事業費（当年度と前年度、一般財源・特定財源、増減額）と説明を載せる。同じ会見の「令和6年度狛江市予算(案)・特徴的な事業」（1-R6toushoyosan.pdf、1頁）は予算額と特徴的な事業の要約なので選ばない。予算の頁「予算の概要」（https://www.city.komae.tokyo.jp/index.cfm/46,0,361,2169,html）にも同じ年度の予算が載る。確認日 2026-11-10T07:16:16+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132195",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度予算概要（狛江市）",
+          "landing_url": "https://www.city.komae.tokyo.jp/index.cfm/46,136986,377,3661,html",
+          "inspected_at": "2026-11-10T07:16:16+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.komae.tokyo.jp/index.cfm/46,136986,c,html/136986/20250217-093103.pdf",
+              "sha256": "37d4303872e1f3d6a5a1711cd82164b39f87486e5fd3b1977e243f69d509ac9f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132195/2025/press-initial.pdf",
+            "sha256": "37d4303872e1f3d6a5a1711cd82164b39f87486e5fd3b1977e243f69d509ac9f",
+            "final_url": "https://www.city.komae.tokyo.jp/index.cfm/46,136986,c,html/136986/20250217-093103.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:16:22.201Z"
+      },
+      "reason": "定例記者会見資料の頁（令和7年（プレスリリース） https://www.city.komae.tokyo.jp/index.cfm/46,136986,377,3661,html、定例記者会見資料の一覧 https://www.city.komae.tokyo.jp/index.cfm/46,0,377,html から）に載る「令和7年度予算概要」（令和7年2月17日の定例記者会見資料、67頁、文字PDF）。予算編成方針・会計別予算規模・歳入歳出・基金・市債に続き、「主要事業」（物理22〜44頁）で後期基本計画（基本構想）のまちの姿ごとに、新規事業や拡充した内容を中心に、区分（新規・拡充・見直し）・事業名・予算科目・担当課・事業費（当年度と前年度、一般財源・特定財源、増減額）と説明を載せる。同じ会見の「令和７年度狛江市予算（案）・特徴的な事業」（20250217-093314.pdf、1頁）は予算額と特徴的な事業の要約なので選ばない。予算の頁「予算の概要」（https://www.city.komae.tokyo.jp/index.cfm/46,0,361,2169,html）にも同じ年度の予算が載る。確認日 2026-11-10T07:16:16+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132195",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度予算概要（狛江市）",
+          "landing_url": "https://www.city.komae.tokyo.jp/index.cfm/46,142099,377,3726,html",
+          "inspected_at": "2026-11-10T07:16:16+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.komae.tokyo.jp/index.cfm/46,142099,c,html/142099/20260218-153554.pdf",
+              "sha256": "037f75daa089f6e08276f819aa6a637476e32467627e17cb0f0b69a9d40f8851",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132195/2026/press-initial.pdf",
+            "sha256": "037f75daa089f6e08276f819aa6a637476e32467627e17cb0f0b69a9d40f8851",
+            "final_url": "https://www.city.komae.tokyo.jp/index.cfm/46,142099,c,html/142099/20260218-153554.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:16:25.562Z"
+      },
+      "reason": "定例記者会見資料の頁（令和8年（プレスリリース） https://www.city.komae.tokyo.jp/index.cfm/46,142099,377,3726,html、定例記者会見資料の一覧 https://www.city.komae.tokyo.jp/index.cfm/46,0,377,html から）に載る「令和8年度予算概要」（令和8年2月の定例記者会見資料、65頁、文字PDF）。予算編成方針・会計別予算規模・歳入歳出・基金・市債に続き、「主要事業」（物理22〜44頁）で後期基本計画（基本構想）のまちの姿ごとに、新規事業や拡充した内容を中心に、区分（新規・拡充・見直し）・事業名・予算科目・担当課・事業費（当年度と前年度、一般財源・特定財源、増減額）と説明を載せる。同じ会見の「令和８年度狛江市予算案の特徴的な事業」（20260219-152005.pdf、1頁）は予算額と特徴的な事業の要約なので選ばない。予算の頁「予算の概要」（https://www.city.komae.tokyo.jp/index.cfm/46,0,361,2169,html）にも同じ年度の予算が載る。確認日 2026-11-10T07:16:16+00:00。"
+    }
   ]
 }

@@ -3192,5 +3192,205 @@
       },
       "reason": "令和5年度（2023年度）実施分の事務事業評価シート（562頁、令和6年9月2日更新）。1事業1頁で、事業名・担当部課・基本計画の施策・予算科目（款項目）、令和5年度目標と目標に対する事業実績と評価（達成など）、活動・成果指標の令和3〜5年度の推移、経常費用・純経常コストの令和3〜5年度、今後の方向性（維持など）を載せる。年度は各頁の見出し「事務事業評価シート（令和５年度（2023年度）実施分）」と、指標・経済性の表の最新年度列「令和５年度」で決めた。文字として読める（抜き取った頁1・2・5・100・300・500・562に文字あり）。「令和5年度評価はPower BIのみ」とした従前の判断は誤りで、令和6年度評価結果の頁（p034392.html）に総括と評価シートのPDFが掲載されている。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132012",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度（2024年度）予算の概要 一般会計歳出（款別の主要事業）",
+          "landing_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526.html",
+          "inspected_at": "2026-11-10T06:57:17+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/2soumu.pdf",
+              "sha256": "6c2daf2063b3bb208e069998375c7b64b11cd1d07ae2226ea173dfb802f7f4d9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/3minnsei.pdf",
+              "sha256": "ae0903d3c36484a19044833889f920dd2215283bfe02f30fa31234ddd311d224",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/4eisei.pdf",
+              "sha256": "021c0533621f48bae1f358c2ea723426bdab579bffa370d046ee054697ec2344",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/567rounousyou.pdf",
+              "sha256": "9b228084695b27eed293232ff2270ee287cc1bf17faada7553dda17776843ce7",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/8doboku.pdf",
+              "sha256": "da55527fca5ed9f7c2791a25c93b5a12a20eb4896b4540315a6420b60c4c7b80",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/9syoubou.pdf",
+              "sha256": "8481fd50c325250719956dadfd37766d1cd569836e990881808b730b3639cec6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/10kyouiku.pdf",
+              "sha256": "9e44c0bb07448cde218f8871b2e5798cbb4be15d64af418639b6a7b19b8763cc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            },
+            {
+              "download_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/11kousai.pdf",
+              "sha256": "09fcb706e93b82d768bddec2cae4b61716a8ce1cbc59ec805736e737dfab581c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132012/2024/press-initial-3.pdf",
+            "sha256": "6c2daf2063b3bb208e069998375c7b64b11cd1d07ae2226ea173dfb802f7f4d9",
+            "final_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/2soumu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132012/2024/press-initial-7.pdf",
+            "sha256": "ae0903d3c36484a19044833889f920dd2215283bfe02f30fa31234ddd311d224",
+            "final_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/3minnsei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132012/2024/press-initial-1.pdf",
+            "sha256": "021c0533621f48bae1f358c2ea723426bdab579bffa370d046ee054697ec2344",
+            "final_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/4eisei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132012/2024/press-initial-5.pdf",
+            "sha256": "9b228084695b27eed293232ff2270ee287cc1bf17faada7553dda17776843ce7",
+            "final_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/567rounousyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132012/2024/press-initial-8.pdf",
+            "sha256": "da55527fca5ed9f7c2791a25c93b5a12a20eb4896b4540315a6420b60c4c7b80",
+            "final_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/8doboku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132012/2024/press-initial-4.pdf",
+            "sha256": "8481fd50c325250719956dadfd37766d1cd569836e990881808b730b3639cec6",
+            "final_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/9syoubou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132012/2024/press-initial-6.pdf",
+            "sha256": "9e44c0bb07448cde218f8871b2e5798cbb4be15d64af418639b6a7b19b8763cc",
+            "final_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/10kyouiku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132012/2024/press-initial-2.pdf",
+            "sha256": "09fcb706e93b82d768bddec2cae4b61716a8ce1cbc59ec805736e737dfab581c",
+            "final_url": "https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p033526_d/fil/11kousai.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:58:02.701Z"
+      },
+      "reason": "市長記者会見の頁（https://www.city.hachioji.tokyo.jp/shisei/001/001/009/001/p007708.html）の令和6年2月15日の記者会見資料（240215kaiken.pdf、9頁）は、予算（案）の概要が予算規模の1頁だけで、施策は三種混合接種と保育士配置基準の2件の個別発表のため選ばない（令和6年度は骨格予算）。代わりに予算の頁「令和6年度（2024年度）予算の概要」の一般会計歳出の款別資料8冊（2款総務費21頁・3款民生費23頁・4款衛生費16頁・5〜7款労働・農林業・商工費10頁・8款土木費27頁・9款消防費5頁・10款教育費16頁・11款公債費1頁、計119頁、文字PDF。ただしフォント非埋め込みで、読むには poppler-data が要る）を1候補にした。主要な事務事業ごとに1枠で、都市像・施策番号・予算科目・説明書の頁、事務事業名・所管課、令和6年度予算と令和5年度予算・対前年・令和4年度決算の事業費と財源内訳（千円）、事業の説明、内訳の細事業と金額、（新）（充）の印を載せる（計190事業）。同じ頁の総括資料のうち「07 重点事業一覧」（事務事業名・所管課・参照頁のみで予算額なし）と「06 地域別の主な事業」（事業名のみで予算額なし）は選ばない。特別会計・公営企業会計・補助金の款別資料は施策の主要事業ではないので含めない。確認日 2026-11-10T06:57:17+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132012",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年2月14日市長記者会見資料（令和7年度（2025年度）予算（案）の概要ほか）",
+          "landing_url": "https://www.city.hachioji.tokyo.jp/shisei/001/001/009/001/p007708.html",
+          "inspected_at": "2026-11-10T06:57:25+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.hachioji.tokyo.jp/shisei/001/001/009/001/p007708_d/fil/250214kaiken.pdf",
+              "sha256": "f701f8e324f2848a856e76f91d803379cba6c91107d00268f954f4e9a67f6a6b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132012/2025/press-initial.pdf",
+            "sha256": "f701f8e324f2848a856e76f91d803379cba6c91107d00268f954f4e9a67f6a6b",
+            "final_url": "https://www.city.hachioji.tokyo.jp/shisei/001/001/009/001/p007708_d/fil/250214kaiken.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:58:06.772Z"
+      },
+      "reason": "市長記者会見の頁（https://www.city.hachioji.tokyo.jp/shisei/001/001/009/001/p007708.html）に載る令和7年2月14日の記者会見資料（17頁、文字PDF）。ファイルは会見資料一式で、報道発表資料①「令和7年度（2025年度）予算（案）の概要」（物理2〜3頁。予算規模と、令和7年度予算のポイントとして柱ごとに事業名と予算額（千円、2月補正の外書きつき））、②〜⑦の予算案の主な取組（予防接種、特色ある公園の整備、企業立地等の促進、日本遺産を活用した文化観光、放課後等の児童の居場所、地域公共交通。取組ごとに【新規】【充実】の印、内容の説明、経費）を載せる。物理15〜17頁は令和6年度2月補正予算（案）の発表で当初予算ではない。予算の頁の「令和7年度（2025年度）予算の概要」（https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p035105.html）の「06 八王子市が抱える課題の解決に向けた取組」（6頁。事務事業名・取組内容・事業費・一般財源・所管課の一覧）は別の資料で、ここには含めない。確認日 2026-11-10T06:57:25+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132012",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年2月17日市長記者会見資料（令和8年度（2026年度）予算（案）についてほか）",
+          "landing_url": "https://www.city.hachioji.tokyo.jp/shisei/001/001/009/001/p007708.html",
+          "inspected_at": "2026-11-10T06:57:34+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.hachioji.tokyo.jp/shisei/001/001/009/001/p007708_d/fil/260217kaiken.pdf",
+              "sha256": "afc0dd0ef76de9a67e3869800f611b63507b474679567bd3a5c8bf1af4b89792",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132012/2026/press-initial.pdf",
+            "sha256": "afc0dd0ef76de9a67e3869800f611b63507b474679567bd3a5c8bf1af4b89792",
+            "final_url": "https://www.city.hachioji.tokyo.jp/shisei/001/001/009/001/p007708_d/fil/260217kaiken.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:58:10.199Z"
+      },
+      "reason": "市長記者会見の頁（https://www.city.hachioji.tokyo.jp/shisei/001/001/009/001/p007708.html）に載る令和8年2月17日の記者会見資料（27頁、文字PDF）。ファイルは会見資料一式で、報道発表資料④「令和8年度（2026年度）予算（案）について」（物理10〜13頁。予算規模、一般会計の款別の歳入・歳出）と⑤〜⑫の【令和8年度の主な事業】（崖・擁壁実態調査、避難所の空調機設置、創業支援、市内中小企業の人材確保、八王子駅南口集いの拠点、日本遺産、子ども・若者の居場所、市民のアイデア。事業ごとに内容の説明と予算額）を載せる。①〜③は議案・職員体制・使用料改定（別紙1は人的リソースを強化する事業一覧で予算額なし）、⑬〜⑮（物理23〜27頁）は令和7年度2月補正予算（案）で、当初予算ではない。予算の頁の「令和8年度（2026年度）予算の概要」（https://www.city.hachioji.tokyo.jp/shisei/001/010/001/001/p037011.html）の「06 八王子市が抱える課題の解決に向けた取組」（6頁。事務事業名・取組内容・事業費・一般財源・所管課の一覧）は別の資料で、ここには含めない。確認日 2026-11-10T06:57:34+00:00。"
+    }
   ]
 }

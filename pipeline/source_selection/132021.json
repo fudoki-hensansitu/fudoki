@@ -5810,5 +5810,121 @@
       },
       "reason": "令和5年度に実施した事業を令和6年度に評価した事務事業マネジメントシート6冊。各シートは「令和5年度事後評価／令和6年度 事務事業マネジメントシート」で、本文に「④令和５年度実績(事業活動)」とあり最新の実績は令和5年度。基本事業ごとに目的、成果指標の実績と目標値、全体総括、次年度の取組方針、事業費・人件費・総事業費、構成する事務事業ごとの予算科目・事業費・活動指標・課題の有無を載せる。文字として読める。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132021",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年2月13日 市長定例記者会見 資料（令和6年度予算案「優しさと安心をカタチに！子育て・暮らしの笑顔あふれる予算 ～第一章～」）",
+          "landing_url": "https://www.city.tachikawa.lg.jp/shisei/koho/1019945/1005490/1005829/1020301.html",
+          "inspected_at": "2026-11-10T07:01:07+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/020/301/20240213kaikenshiriyou01.pdf",
+              "sha256": "d75cb4739c644548e41bb7727be78353c73d060d1cba4273f77bba64a16186da",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132021/2024/press-initial.pdf",
+            "sha256": "d75cb4739c644548e41bb7727be78353c73d060d1cba4273f77bba64a16186da",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/020/301/20240213kaikenshiriyou01.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:38.847Z"
+      },
+      "reason": "市長記者会見（令和6年）の頁（https://www.city.tachikawa.lg.jp/shisei/koho/1019945/1005490/1005829/1020301.html）の「令和6年2月13日（令和6年度予算案）」の資料（60頁、文字PDF）。予算案の発表スライドで、予算編成にあたっての市長の言葉と財政規模・歳入歳出（物理2〜5頁）のあと、主要事業を公約の柱（子育て安心・暮らしの笑顔倍増ほか）とその他の主要施策・その他施設整備等に分け、1事業1頁で事務事業名・新規/充実の印・見出し・内容の説明・所管・事業費（千円）を載せる。同じ頁の会見記録（20240213kaikenkiroku.pdf）は質疑の記録なので選ばない。予算の頁の「令和6年度予算案の概要及び主要施策の概要」（https://www.city.tachikawa.lg.jp/shisei/yosan/1007100/1007123.html の r6yosangaiyo.pdf。主要施策を事務事業名・予算科目・事業費・財源内訳の表で載せる冊子）は別の資料で、ここには含めない。確認日 2026-11-10T07:01:07+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132021",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年2月12日 市長定例記者会見 資料（令和7年度予算案「優しさと安心をカタチに！子育て・暮らしの笑顔あふれる予算 ～第二章 ステップアップ～」）",
+          "landing_url": "https://www.city.tachikawa.lg.jp/shisei/koho/1019945/1005490/1005829/1023660.html",
+          "inspected_at": "2026-11-10T07:01:08+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/023/660/20250212kaikensiryou.pdf",
+              "sha256": "c89d4edd8f05985cbfabc9b70865882e9d2f446f8bcb8b4aafae80198505188e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132021/2025/press-initial.pdf",
+            "sha256": "c89d4edd8f05985cbfabc9b70865882e9d2f446f8bcb8b4aafae80198505188e",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/023/660/20250212kaikensiryou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:41.973Z"
+      },
+      "reason": "市長記者会見（令和7年）の頁（https://www.city.tachikawa.lg.jp/shisei/koho/1019945/1005490/1005829/1023660.html）の「令和7年2月12日（令和7年度予算案）」の資料（69頁、文字PDF）。物理1頁が会見の概要、2〜6頁が財政規模・歳入歳出、7〜56頁が主要事業のスライドで、政策分野ごとに1事業1頁で事務事業名・市長公約の印・新規/充実の印・内容の説明・所管・事業費（千円）を載せる（54〜56頁は市長特選枠）。57〜66頁は「市長会見では紹介しない取組み」で同じ形の事業頁、67〜69頁は予算と別の発表（資料2・3）。同じ頁の会見記録は質疑の記録なので選ばない。予算の頁の「令和7年度予算案の概要及び主要施策の概要」（https://www.city.tachikawa.lg.jp/shisei/yosan/1007100/1007123.html の r7_gaiyo.pdf）は別の資料で、ここには含めない。確認日 2026-11-10T07:01:08+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132021",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年2月12日 市長定例記者会見 資料（令和8年度予算案）",
+          "landing_url": "https://www.city.tachikawa.lg.jp/shisei/koho/1019945/1005490/1005829/1026499.html",
+          "inspected_at": "2026-11-10T07:01:09+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/026/499/202602teireikai.pdf",
+              "sha256": "c77935bf068f943dde4939c92f785e628c2377d12678248cdf6078844e1c69c1",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132021/2026/press-initial.pdf",
+            "sha256": "c77935bf068f943dde4939c92f785e628c2377d12678248cdf6078844e1c69c1",
+            "final_url": "https://www.city.tachikawa.lg.jp/_res/projects/default_project/_page_/001/026/499/202602teireikai.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:01:46.377Z"
+      },
+      "reason": "市長記者会見（令和8年）の頁（https://www.city.tachikawa.lg.jp/shisei/koho/1019945/1005490/1005829/1026499.html）の「令和8年2月12日（令和8年度予算案）」の資料（46頁）。文字の層はあるが ToUnicode が壊れていて pdftotext で読めない文字列になるため pdf_type は scan とした。画像で確認した構成は、物理1頁が会見の概要、2〜6頁が財政規模・歳入歳出、7頁以降が主要事業のスライドで、政策分野ごとに1事業1頁で事務事業名・市長公約の印・新規/充実の印・内容の説明・所管・事業費（千円）を載せる（物理9頁「いじめ防止対策事業」事業費264千円などで確認。物理37頁からはチャレンジ提案枠）。末尾は予算と別の発表（市史の講演会など）。同じ頁の会見記録は質疑の記録なので選ばない。予算の頁の「令和8年度予算案の概要及び主要施策の概要」（https://www.city.tachikawa.lg.jp/shisei/yosan/1007100/1007123.html の r8_gaiyo.pdf、84頁、文字PDF。主要施策を事務事業名・予算科目・事業費・財源内訳の表で載せる）は別の資料で、ここには含めない。確認日 2026-11-10T07:01:09+00:00。"
+    }
   ]
 }

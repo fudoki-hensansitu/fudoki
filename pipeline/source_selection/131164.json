@@ -2280,7 +2280,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定（未公表）。令和7年度（令和8年度実施）の行政評価結果は未公表。Orca のブラウザで描画した行政評価の一覧（https://www.city.toshima.lg.jp/kuse/shisaku/gyosehyoka/index.html）の掲載は令和6年度（令和7年度実施）・令和5年度（令和6年度実施）・令和4年度（令和5年度実施）の行政評価結果と行政評価制度の頁で、最新の令和6年度（令和7年度実施）行政評価結果（https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r07/2508291433.html）は2024年度分としてすでに選んでいる。令和7年度実施分の掲載は無い。確認日：2026-10-23T09:47:41+00:00（UTC）。"
+      "reason": "未選定（未公表）。令和7年度（令和8年度実施）の行政評価結果は未公表。Orca のブラウザで描画した行政評価の一覧（https://www.city.toshima.lg.jp/kuse/shisaku/gyosehyoka/index.html）の掲載は令和6年度（令和7年度実施）・令和5年度（令和6年度実施）・令和4年度（令和5年度実施）の行政評価結果と行政評価制度の頁で、最新の令和6年度（令和7年度実施）行政評価結果（https://www.city.toshima.lg.jp/009/kuse/shisaku/gyosehyoka/r07/2508291433.html）は2024年度分としてすでに選んでいる。令和7年度実施分の掲載は無い。確認日：2026-11-10T07:08:06+00:00（UTC）。"
     },
     {
       "target": {
@@ -2765,6 +2765,122 @@
         "archived_at": "2026-10-15T12:39:11.898Z"
       },
       "reason": "令和5年度に実施した事務事業を令和6年度に評価した事務事業評価表（35事業）。各表の表題は「令和5年度（令和6年度実施）事務事業評価」で、本文に「5年度の取組内容」「5年度に実施した」、指標の列は「4年度・5年度・6年度」で最新の実績は令和5年度。事業の目的・概要、事業費（決算・予算）、指標の目標値と実績値、達成状況分析、区が実施する必要性・業務改善の取組・課題と改善の予定、評価を載せる。文字として読める。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "131164",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "豊島区令和6年度予算プレス主な事業の概要",
+          "landing_url": "https://www.city.toshima.lg.jp/013/kuse/shisaku/shisaku/kekaku/2402021648.html",
+          "inspected_at": "2026-11-10T07:08:06+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/46660/2_jigyougaiyou.pdf",
+              "sha256": "c85f19149e3eea1364f814e8621b8964e84945fe498200725f779a43f1c44a17",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131164/2024/press-initial.pdf",
+            "sha256": "c85f19149e3eea1364f814e8621b8964e84945fe498200725f779a43f1c44a17",
+            "final_url": "https://www.city.toshima.lg.jp/documents/46660/2_jigyougaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:08:10.537Z"
+      },
+      "reason": "予算案プレス発表の頁「令和6年度 予算案重点事業（プレス資料）」（https://www.city.toshima.lg.jp/013/kuse/shisaku/shisaku/kekaku/2402021648.html）に載る「豊島区令和6年度予算プレス主な事業の概要」（82頁、文字PDF）。目次（物理2〜5頁）のあと1事業1頁の「令和6年度予算案重点事業概要」で、事業名・予算額（千円、一般財源の内訳つき）・経緯・目的・内容を載せ、事業名に拡充・新設の語がある。同じ頁の「豊島区令和6年度予算案重点事業資料」（1toueisiryou2.pdf、42頁）は会見の投影スライドで要約にあたり、「令和6年度豊島区当初予算（案）の概要」（3gaiyou_1.pdf、32頁）は予算規模・歳入歳出の説明なので選ばない。予算の頁（https://www.city.toshima.lg.jp/004/kuse/shisaku/2606291920.html）からこのプレス発表の頁へリンクがある。確認日 2026-11-10T07:08:06+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131164",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度豊島区当初予算案事業概要",
+          "landing_url": "https://www.city.toshima.lg.jp/013/kuse/shisaku/shisaku/kekaku/2502031833.html",
+          "inspected_at": "2026-11-10T07:08:06+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/50408/jigyougaiyou.pdf",
+              "sha256": "007ece83a0cde3fd0c1b6a4fc8881a2fcacec93ddfdf57db3c393412f729af79",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131164/2025/press-initial.pdf",
+            "sha256": "007ece83a0cde3fd0c1b6a4fc8881a2fcacec93ddfdf57db3c393412f729af79",
+            "final_url": "https://www.city.toshima.lg.jp/documents/50408/jigyougaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:08:13.265Z"
+      },
+      "reason": "予算案プレス発表の頁「令和7年度 豊島区当初予算案プレス発表（プレス資料）」（https://www.city.toshima.lg.jp/013/kuse/shisaku/shisaku/kekaku/2502031833.html）に載る「令和7年度豊島区当初予算案事業概要」（表紙は「当初予算案プレス発表 主な事業一覧」、64頁、文字PDF）。目次で分野別に事業を並べ、1事業1頁で事業名・セールスポイント・事業費とうち新拡分事業費・経緯・目的・内容を載せる。同じ頁の「令和7年度豊島区当初予算案プレス発表」（tousyoyosann-kakou.pdf、43頁）は会見の投影スライドで文字の層も無く要約にあたり、「令和7年度豊島区当初予算（案）の概要」（r7_tousyoyosanan_gaiyou.pdf、30頁）は予算規模・歳入歳出の説明なので選ばない。予算の頁（https://www.city.toshima.lg.jp/004/kuse/shisaku/2606291920.html）からこのプレス発表の頁へリンクがある。確認日 2026-11-10T07:08:06+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131164",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度豊島区当初予算案事業概要",
+          "landing_url": "https://www.city.toshima.lg.jp/013/kuse/shisaku/shisaku/kekaku/2603091013.html",
+          "inspected_at": "2026-11-10T07:08:06+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.toshima.lg.jp/documents/55776/20260309101847.pdf",
+              "sha256": "53a6bc5d7401e090c5877ad4401b3c028d56fde7b71b6417ce8f3767b6418f0c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131164/2026/press-initial.pdf",
+            "sha256": "53a6bc5d7401e090c5877ad4401b3c028d56fde7b71b6417ce8f3767b6418f0c",
+            "final_url": "https://www.city.toshima.lg.jp/documents/55776/20260309101847.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:08:15.682Z"
+      },
+      "reason": "予算案プレス発表の頁「令和8年度 豊島区当初予算案プレス発表（プレス資料）」（https://www.city.toshima.lg.jp/013/kuse/shisaku/shisaku/kekaku/2603091013.html）に載る「令和8年度豊島区当初予算案事業概要」（表紙は「当初予算案プレス発表 予算案の主な事業一覧」、67頁、文字PDF）。目次で分野別に事業を並べ、1事業1頁で所管課・事業名・セールスポイント・事業費とうち新拡分事業費・経緯・目的・内容を載せる。同じ頁の「令和8年度豊島区当初予算案プレス発表」（20260309101804.pdf、36頁）は会見の投影スライドで要約にあたり、「令和8年度豊島区当初予算（案）の概要」（20260309101928.pdf、32頁）は予算規模・歳入歳出の説明なので選ばない。予算の頁（https://www.city.toshima.lg.jp/004/kuse/shisaku/2606291920.html）からこのプレス発表の頁へリンクがある。確認日 2026-11-10T07:08:06+00:00。"
     }
   ]
 }

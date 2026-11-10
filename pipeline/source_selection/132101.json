@@ -4641,5 +4641,121 @@
       },
       "reason": "小金井市の令和6年度行政評価結果（1冊・112頁、令和6年9月公表、令和6年12月訂正版）。事務事業評価シートの表題は「令和6年度 事務事業評価シート（評価対象：令和5年度）」（48頁）で、決算額の列は「令和元年度〜令和5年度」（最新が令和5年度＝2023年度）と画像で確認した。施策評価シートと事務事業評価シートを収録。文字の層の状態: pdffonts は38フォントを持つが ToUnicode が壊れており pdftotext は文字化けする（例 政策→ᨻ⟇）。漢字の抽出は2,407字のみで本文は読めないため pdf_type=scan。頁を100dpiで描画して目視で確認した。"
     }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "132101",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和6年度（2024年度）小金井市予算の概要",
+          "landing_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R6henseihousin.html",
+          "inspected_at": "2026-11-10T06:55:08+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R6henseihousin.files/R06toushoyoyosangaiyou2.pdf",
+              "sha256": "de290eed3b1def0d97cfaaa7a2b917af8b09fe3d2d4c7ace6488bf51288f1fd8",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132101/2024/press-initial.pdf",
+            "sha256": "de290eed3b1def0d97cfaaa7a2b917af8b09fe3d2d4c7ace6488bf51288f1fd8",
+            "final_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R6henseihousin.files/R06toushoyoyosangaiyou2.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:55:18.135Z"
+      },
+      "reason": "予算の頁「令和6年度当初予算編成」（https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R6henseihousin.html）に載る「令和6年度当初予算の概要」の冊子（33頁、文字PDF）。目次の「９ 主な事業」（印字P.15〜、物理17〜28頁）に、施策分野ごとに○印の事業名・事業の説明・事業費（千円）と財源内訳（国都支出金・地方債・その他・一般財源）を事業ごとに載せる。新規・拡充の印は無い。前半は予算規模・歳入歳出の概要・基金と市債・市の家計簿で、末尾に財政用語。市長の記者会見の頁（https://www.city.koganei.lg.jp/shisei/461/kisyakaiken/index.html）は令和7年以降の掲載で、令和6年度予算案の発表資料は無い。同じ予算の頁の予算編成方針・予算説明会資料・予算要求の概要・予算編成の状況は事業ごとの予算額を施策として並べる資料ではないので選ばない。確認日 2026-11-10T06:55:08+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132101",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度（2025年度）小金井市予算の概要",
+          "landing_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R7tousyoyosanhensei.html",
+          "inspected_at": "2026-11-10T06:55:08+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R7tousyoyosanhensei.files/R07toushoyoyosangaiyou.pdf",
+              "sha256": "e2df5358366f555e4dc0ea360c1f7edaae39149d925365e8c7efeace107e2d3f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132101/2025/press-initial.pdf",
+            "sha256": "e2df5358366f555e4dc0ea360c1f7edaae39149d925365e8c7efeace107e2d3f",
+            "final_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R7tousyoyosanhensei.files/R07toushoyoyosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:55:22.624Z"
+      },
+      "reason": "予算の頁「令和7年度当初予算編成」（https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R7tousyoyosanhensei.html）に載る「令和7年度当初予算の概要」の冊子（32頁、文字PDF）。目次の「９ 主な事業」（印字P.15〜、物理17〜27頁）に、施策分野ごとに○印の事業名・事業の説明・事業費（千円）と財源内訳（国都支出金・地方債・その他・一般財源）を事業ごとに載せる。新規・拡充の印は無い。前半は予算規模・歳入歳出の概要・基金と市債・市の家計簿で、末尾に財政用語。市長の記者会見の頁（令和7年分 https://www.city.koganei.lg.jp/shisei/461/kisyakaiken/kisyakaikenr7/index.html）は第2回（5月）以降の掲載で、令和7年度予算案の発表資料は無い。同じ予算の頁の予算編成方針・予算説明会資料・予算要求の概要・予算編成の状況は選ばない。確認日 2026-11-10T06:55:08+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "132101",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度（2026年度）小金井市予算の概要",
+          "landing_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R8tousyoyosanhensei.html",
+          "inspected_at": "2026-11-10T06:55:08+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R8tousyoyosanhensei.files/R08toushoyosangaiyou.pdf",
+              "sha256": "142fa8f3a557d386516f7e3425fe5fb1ebb89398c53dfbce25bfcf12bcf1406d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132101/2026/press-initial.pdf",
+            "sha256": "142fa8f3a557d386516f7e3425fe5fb1ebb89398c53dfbce25bfcf12bcf1406d",
+            "final_url": "https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R8tousyoyosanhensei.files/R08toushoyosangaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T06:55:25.347Z"
+      },
+      "reason": "予算の頁「令和8年度当初予算編成」（https://www.city.koganei.lg.jp/shisei/zaiseiyosan/yosan/yosanhensei/R8tousyoyosanhensei.html）に載る「令和8年度当初予算の概要」の冊子（34頁、文字PDF）。目次の「１０ 主な事業」（印字P.16〜、物理18〜29頁）に、施策分野ごとに○印の事業名・事業の説明・事業費（千円）と財源内訳（国都支出金・地方債・その他・一般財源）を事業ごとに載せる。新規・拡充の印は無い。前半は予算規模・歳入歳出の概要・基金と市債・市の家計簿・地方消費税交付金で、末尾に財政用語。令和8年第1回定例記者会見資料（https://www.city.koganei.lg.jp/shisei/461/kisyakaiken/kisyakaikenr8/kisyakaiken20260213.html、41頁）は施政方針の重要課題と当初予算案を写真・図で紹介するスライドで、事業ごとの予算額を施策ごとに並べる資料ではないため選ばない。予算編成方針・予算説明会資料・予算要求の概要・予算編成の状況も選ばない。確認日 2026-11-10T06:55:08+00:00。"
+    }
   ]
 }

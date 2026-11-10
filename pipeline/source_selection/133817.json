@@ -701,7 +701,7 @@
       "candidates": [],
       "selected_candidate_id": null,
       "archive": null,
-      "reason": "未選定。三宅村に2025年度の評価資料の公表なし。サイト内検索（行政評価）では行政相談・マイナンバー特定個人情報評価書のみで事務事業評価に該当なし。企画財政課頁（https://www.vill.miyake.tokyo.jp/kakuka/kikakuzaisei/index.html）に評価資料の掲載なし。確認日：2026-10-22T04:17:49+00:00（UTC）。"
+      "reason": "未選定。三宅村に2025年度の評価資料の公表なし。サイト内検索（行政評価）では行政相談・マイナンバー特定個人情報評価書のみで事務事業評価に該当なし。企画財政課頁（https://www.vill.miyake.tokyo.jp/kakuka/kikakuzaisei/index.html）に評価資料の掲載なし。確認日：2026-11-10T07:04:31+00:00（UTC）。"
     },
     {
       "target": {
@@ -724,6 +724,95 @@
       "selected_candidate_id": null,
       "archive": null,
       "reason": "三宅村の評価資料を探した。ブラウザで描画して確認した頁: https://www.vill.miyake.tokyo.jp/gyousei/houshin_keikaku/index.html（村の方針・計画）。DuckDuckGo の site 検索（事務事業評価・行政評価・施策評価・総合計画 進捗 評価など）でも、事業ごとの目標・実績・評価・課題を載せる事務事業評価・施策評価・行政評価の公表は出ず、教育委員会の点検・評価（選ばない対象）、社会資本総合整備計画の事後評価、総合計画・個別計画の本体、事務報告書（活動報告）のみ。三宅村行政改革実施計画（2023_5_18_2.pdf）は行財政改革の取組計画で、事業の評価ではない。確認日：2026-10-23（UTC）。"
+    }
+  ],
+  "press_selections": [
+    {
+      "target": {
+        "jurisdiction": "133817",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（予算案の発表資料なし）。三宅村の財政状況の頁（https://www.vill.miyake.tokyo.jp/gyousei/zaisei/index.html）に当初予算の概要は令和8年度・令和7年度の2件だけで、令和6年度の概要は無い。村長の記者会見・報道発表の頁は無く、企画財政課の頁（https://www.vill.miyake.tokyo.jp/kakuka/kikakuzaisei/index.html）も交付金の活用状況だけ。広報みやけの施政方針・予算記事は町村の方針で候補にしない。確認日 2026-11-10T07:04:16+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133817",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和7年度三宅村当初予算の概要",
+          "landing_url": "https://www.vill.miyake.tokyo.jp/gyousei/zaisei/index.html",
+          "inspected_at": "2026-11-10T07:04:16+00:00",
+          "files": [
+            {
+              "download_url": "https://www.vill.miyake.tokyo.jp/gyousei/zaisei/files/yosanngaiyou.pdf",
+              "sha256": "66ae5e523bcebba53f6fb4d2982d49ea63c71cc09102ad93cf135c36ed4fb7bb",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133817/2025/press-initial.pdf",
+            "sha256": "66ae5e523bcebba53f6fb4d2982d49ea63c71cc09102ad93cf135c36ed4fb7bb",
+            "final_url": "https://www.vill.miyake.tokyo.jp/gyousei/zaisei/files/yosanngaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:04:27.443Z"
+      },
+      "reason": "財政状況の頁（https://www.vill.miyake.tokyo.jp/gyousei/zaisei/index.html）に載る「令和7年度三宅村当初予算の概要」（yosanngaiyou.pdf、2頁、文字PDF）。3月定例議会で成立した当初予算の主な内容の知らせ。村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の別資料は無く、事業名と予算額が載るのはこの資料だけ。物理1頁は会計別予算額・一般会計歳入の内訳、物理2頁は歳出の性質別内訳・推移のあと「6.投資的事業」で款（区分）ごとに事業名と事業費（千円）を並べる。対象は投資的事業だけで、新規・拡充の印と説明文は無い。確認日 2026-11-10T07:04:16+00:00。"
+    },
+    {
+      "target": {
+        "jurisdiction": "133817",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "press",
+          "title": "令和8年度三宅村当初予算の概要",
+          "landing_url": "https://www.vill.miyake.tokyo.jp/gyousei/zaisei/index.html",
+          "inspected_at": "2026-11-10T07:04:16+00:00",
+          "files": [
+            {
+              "download_url": "https://www.vill.miyake.tokyo.jp/gyousei/zaisei/files/R8.TousyoYosanGaiyou.pdf",
+              "sha256": "a6740ac9c383bc5623301b40de86761094d40c0284a54ad0eecff7fa006a6b09",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "press",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "press",
+        "files": [
+          {
+            "key": "fiscal/source-selection/133817/2026/press-initial.pdf",
+            "sha256": "a6740ac9c383bc5623301b40de86761094d40c0284a54ad0eecff7fa006a6b09",
+            "final_url": "https://www.vill.miyake.tokyo.jp/gyousei/zaisei/files/R8.TousyoYosanGaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-10T07:04:30.991Z"
+      },
+      "reason": "財政状況の頁（https://www.vill.miyake.tokyo.jp/gyousei/zaisei/index.html）に載る「令和8年度三宅村当初予算の概要」（R8.TousyoYosanGaiyou.pdf、2頁、文字PDF）。3月定例議会で成立した当初予算の主な内容の知らせ。村長の記者会見・報道発表の頁や予算（案）の概要・主要事業の別資料は無く、事業名と予算額が載るのはこの資料だけ。物理1頁は会計別予算額・一般会計歳入の内訳、物理2頁は歳出の性質別内訳・推移のあと「6.投資的事業」で款（区分）ごとに事業名と事業費（千円）を並べる。対象は投資的事業だけで、新規・拡充の印と説明文は無い。確認日 2026-11-10T07:04:16+00:00。"
     }
   ]
 }
