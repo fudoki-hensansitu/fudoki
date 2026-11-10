@@ -187,9 +187,10 @@ class Reader(Reading):
             found = CODE.match(self.key(printed)) or DASH.match(self.key(printed))
             if not found:
                 raise ValueError(f'A 款 row without its printed number: {printed!r}')
-            # A dash in place of the number (`- 土石流災害対策費`): a 款 of the year before only, printed with no number.
-            number_printed = re.match(r'[0-9０-９]+', printed.strip())
-            code = number_printed.group(0) if number_printed else None
+            # A dash in place of the number (`- 土石流災害対策費`): a 款 of the year before only. The dash printed in the
+            # number's place is kept as its code (a 款 of the subject axis always carries the code it prints).
+            number_printed = re.match(r'[0-9０-９]+|[-－−‐]', printed.strip())
+            code = number_printed.group(0)
             name = self.key(printed)[found.end():]
             if not name:
                 raise ValueError(f'A 款 row without its printed name: {printed!r}')

@@ -37,7 +37,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-initial",
-      "input_fingerprint": "ed89430bbf07ed7b462ce3111a63937f44ae581b6fb9b20841d01c2a1c9d89ef",
+      "input_fingerprint": "cf290bf3ff8ea0e0b834596333f0ec1ccd2a82585e05b01bc60e8e4ad5c8c8bc",
       "account": "一般会計",
       "notes": [
         "物理3頁の表（３．一般会計目的別歳出）は頁ごと回してあり、文字層が表の向きのままなので、その座標で行と欄を読んだ（読み方 turned_summary の turned: false）。",
@@ -52,8 +52,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133612/2024/initial/expenditure/general-expenditure-nodes.parquet",
-          "sha256": "99bccdf61985e4e69f7996bbaaa8ec70dfb6c003a031952fa40b4f2c220d3702",
-          "bytes": 2999
+          "sha256": "34a7f22b2005fcbbf9054b815dc6a89a7bc73a08e2b5da17c1518ed1ebc416e5",
+          "bytes": 2990
         },
         "row_count": 15
       },

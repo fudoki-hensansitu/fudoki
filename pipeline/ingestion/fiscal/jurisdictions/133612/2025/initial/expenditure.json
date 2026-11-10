@@ -37,7 +37,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-initial",
-      "input_fingerprint": "e9370df483f2b12e2d83d187fe843b57fdf052f860df646412b7ede83c219f88",
+      "input_fingerprint": "541be92bc41e714a62b151b90d6b3d7e4aef35d471aea224d7d92c25d8299ba0",
       "account": "一般会計",
       "notes": [
         "物理3頁の表（３．一般会計目的別歳出）は頁に90°回して組まれているので、語の位置を表の向きに回して行と欄を読んだ（読み方 turned_summary、位置は表示頁の座標のまま）。",
