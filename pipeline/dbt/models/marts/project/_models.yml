@@ -1,0 +1,100 @@
+version: 2
+models:
+- name: project
+  description: 事業。予算書・決算書の事業の行（内訳の分け方が「事業」の行）を、年度をまたいでつないだもの。つなぎ方は**風土記の判断**（seed の project_line、`bun run --cwd pipeline project:link-projects`）。対象は project_jurisdiction の自治体だけ。
+  columns:
+  - name: project_id
+    description: 事業の ID（代理キー）。seed で一度だけ振り、判断を直しても変えない。
+    data_tests: [not_null, unique]
+  - name: jurisdiction_code
+    description: 全国地方公共団体コード（6桁）。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('jurisdiction')
+          field: jurisdiction_code
+  - name: name
+    description: 最新の年度の事業の名前（当初予算の表記を優先。所管課の【】を含む出典の表記のまま）。
+    data_tests: [not_null]
+  - name: account_name
+    description: 最新の年度の会計の名前。
+    data_tests: [not_null]
+  - name: first_year
+    description: 事業の行がある最初の会計年度（西暦）。
+    data_tests: [not_null]
+  - name: first_year_kind
+    description: confirmed（前の年度の資料があり、そこに無かった）か before_coverage（前の年度の資料が無く、それより前は分からない）。
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values: ['confirmed', 'before_coverage']
+  - name: last_year
+    description: 事業の行がある最後の会計年度（西暦）。last_year_kind が latest のときは NULL。
+  - name: last_year_kind
+    description: confirmed（次の年度の資料があり、そこに無かった）・latest（収録の最新の年度にある）・unknown（次の年度の資料がその会計に無い）。
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values: ['confirmed', 'latest', 'unknown']
+  - name: parent_project_id
+    description: 予算書の入れ子の1つ上の事業（最新の年度の行で決める）。目の直下の事業は NULL。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('project')
+          field: project_id
+- name: project_year
+  description: 事業の1年度。その年度の当初予算と決算の事業の行（少なくとも一方）を持つ。金額は出典の金額で、子の事業の額は親の事業の額に含まれるので、事業どうしを足さない。
+  columns:
+  - name: project_year_id
+    description: 事業の ID と年度から作る ID（sha256）。
+    data_tests: [not_null, unique]
+  - name: project_id
+    description: 事業。project の project_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('project')
+          field: project_id
+  - name: jurisdiction_code
+    description: 全国地方公共団体コード（6桁）。
+    data_tests: [not_null]
+  - name: fiscal_year
+    description: 会計年度（西暦）。
+    data_tests: [not_null]
+  - name: name
+    description: この年度の事業の名前（当初予算の表記を優先）。
+    data_tests: [not_null]
+  - name: account_name
+    description: 会計の名前。
+    data_tests: [not_null]
+  - name: kan_name
+    description: 款の名前。
+  - name: kou_name
+    description: 項の名前。
+  - name: moku_name
+    description: 目の名前。目の無い項の下の事業は NULL。
+  - name: budget_detail_id
+    description: 当初予算書の事業の行。expenditure_detail の detail_id。当初予算に無い年度は NULL。
+    data_tests:
+    - unique
+    - relationships:
+        arguments:
+          to: ref('expenditure_detail')
+          field: detail_id
+  - name: settlement_detail_id
+    description: 決算書の事業の行。expenditure_detail の detail_id。決算に無い年度は NULL。
+    data_tests:
+    - unique
+    - relationships:
+        arguments:
+          to: ref('expenditure_detail')
+          field: detail_id
+  - name: budget_yen
+    description: 当初予算額（円）。当初予算書の事業の行の金額。
+  - name: settled_yen
+    description: 支出済額（円）。決算書の事業の行の金額。

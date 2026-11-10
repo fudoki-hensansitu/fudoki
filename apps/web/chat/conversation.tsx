@@ -35,6 +35,8 @@ const TOOL_LABELS: Record<string, string> = {
   search_evaluation_sheets: '評価シートを検索',
   get_budget_proposal: '予算案の発表を開く',
   search_budget_measures: '予算案の施策を検索',
+  get_project: '事業を開く',
+  search_projects: '事業を検索',
   render_expenditure_view: '表とグラフを用意',
   read_source_page: '資料を読む',
 }

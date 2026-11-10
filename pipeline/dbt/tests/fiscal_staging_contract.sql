@@ -26,9 +26,15 @@ group by source_table_key, node_key, header_path having count(*) <> 1
 union all
 select t.source_table_key, 'csv_row_count' as failure
 from {{ source('fiscal_metadata', 'csv_tables') }} t
-left join (select source_table_key, count(*) as n from {{ ref('stg_fiscal__csv_expenditure') }} group by 1) c
+left join (select source_table_key, count(*) as n from (
+        select source_table_key from {{ ref('stg_fiscal__csv_expenditure') }}
+        union all
+        select source_table_key from {{ ref('stg_fiscal__csv_named_expenditure') }}) group by 1) c
     using (source_table_key)
 where coalesce(c.n, 0) <> t.row_count
 union all
-select source_table_key, 'csv_unparsed_amount' from {{ ref('stg_fiscal__csv_expenditure') }}
+select source_table_key, 'csv_unparsed_amount' from (
+    select source_table_key, amount, amount_text from {{ ref('stg_fiscal__csv_expenditure') }}
+    union all
+    select source_table_key, amount, amount_text from {{ ref('stg_fiscal__csv_named_expenditure') }})
 where amount is null or amount_text is null or amount_text = ''

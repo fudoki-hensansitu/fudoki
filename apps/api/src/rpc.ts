@@ -4,9 +4,10 @@ import { budgetProposalRoutes } from './budget-proposal/routes'
 import { evaluationRoutes } from './evaluation/routes'
 import { expenditureRoutes } from './expenditure/routes'
 import { jurisdictionRoutes } from './jurisdiction/routes'
+import { projectRoutes } from './project/routes'
 import { routes } from './shared/http'
 
-export const apiRoutes = routes().route('/', jurisdictionRoutes).route('/', expenditureRoutes).route('/', evaluationRoutes).route('/', budgetProposalRoutes)
+export const apiRoutes = routes().route('/', jurisdictionRoutes).route('/', expenditureRoutes).route('/', evaluationRoutes).route('/', budgetProposalRoutes).route('/', projectRoutes)
 
 /** web が Hono RPC（hc<AppType>）で呼ぶ REST の型 */
 export type AppType = typeof apiRoutes

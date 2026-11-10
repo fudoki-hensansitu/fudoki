@@ -7,7 +7,8 @@
     "paren_titles": "ingestion.generic.patterns.layout.paren_titles",
     "facing_pages": "ingestion.generic.patterns.layout.facing_pages",
     "purpose_section": "ingestion.generic.patterns.layout.purpose_section",
-    "subject_cards": "ingestion.generic.patterns.layout.subject_cards"
+    "subject_cards": "ingestion.generic.patterns.layout.subject_cards",
+    "listed_sources": "ingestion.generic.patterns.layout.listed_sources"
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
