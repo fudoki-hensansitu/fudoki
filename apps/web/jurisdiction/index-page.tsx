@@ -6,6 +6,7 @@ import { Link, useRouter } from '@void/react'
 import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Button, buttonVariants } from '@/components/ui/button'
 import { Hint } from '@/components/hint'
+import { RequestTown } from '../nav/request-town'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
@@ -393,7 +394,10 @@ export function IndexPage({ map: entries, initial }: { map: MapEntry[]; initial:
             </InputGroupAddon>
           </ComboboxInput>
           <ComboboxContent>
-            <ComboboxEmpty>当たる自治体は、まだ収録していません</ComboboxEmpty>
+            <ComboboxEmpty className="flex-col items-center gap-1">
+              当たる自治体は、まだ収録していません
+              <RequestTown />
+            </ComboboxEmpty>
             <ComboboxList>
               {(e: MapEntry) => (
                 <ComboboxItem key={e.code} value={e}>

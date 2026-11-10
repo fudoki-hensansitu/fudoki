@@ -10,6 +10,7 @@ import { cn } from '@/lib/utils'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { INDEX_PATH } from '../jurisdiction/types'
 import { FEEDBACK } from '../nav/feedback'
+import { RequestTown } from '../nav/request-town'
 import { LocateError, locateMunicipality } from './locate'
 import { loadHomeCode, loadRecent, saveHomeCode } from './recent'
 
@@ -67,7 +68,10 @@ function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick:
         </InputGroupAddon>
       </ComboboxInput>
       <ComboboxContent>
-        <ComboboxEmpty>当たる自治体は、まだ収録していません</ComboboxEmpty>
+        <ComboboxEmpty className="flex-col items-center gap-1">
+          当たる自治体は、まだ収録していません
+          <RequestTown />
+        </ComboboxEmpty>
         <ComboboxList>
           {(e: MapEntry) => (
             <ComboboxItem key={e.code} value={e}>
@@ -90,14 +94,14 @@ const townLinks = (name: string) => [
 
 /** 現在地から自治体を選ぶボタン。開いた時点の自動の判定で取れなかったときや、変えるときに使う */
 function LocateButton({ entries, onPick }: { entries: MapEntry[]; onPick: (e: MapEntry) => void }) {
-  const [state, setState] = React.useState<{ busy?: boolean; error?: string }>({})
+  const [state, setState] = React.useState<{ busy?: boolean; error?: string; missing?: boolean }>({})
   const locate = async () => {
     setState({ busy: true })
     try {
       const muni = await locateMunicipality()
       // 自治体コードは検査数字を足した6桁なので、先頭5桁で引く
       const hit = entries.find((e) => e.code.startsWith(muni))
-      if (!hit) return setState({ error: '現在地の自治体は、まだ収録していません' })
+      if (!hit) return setState({ error: '現在地の自治体は、まだ収録していません', missing: true })
       setState({})
       onPick(hit)
     } catch (e) {
@@ -113,6 +117,7 @@ function LocateButton({ entries, onPick }: { entries: MapEntry[]; onPick: (e: Ma
       {state.error ? (
         <span role="status" className="text-[13px] opacity-80">
           {state.error}
+          {state.missing ? <RequestTown className="ml-2" /> : null}
         </span>
       ) : null}
     </div>
