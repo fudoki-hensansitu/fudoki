@@ -28,6 +28,7 @@
 """
 import re
 import unicodedata
+from collections import defaultdict
 from dataclasses import dataclass, field
 
 from ingestion.generic import layout
@@ -121,6 +122,10 @@ def split_cards(page: Page, left: float, right: float):
             marks.append((found, top, line))
     if not any(k == 'header' or k == 'notes' for k, _, _ in marks):
         return None
+    # A heading row with no row under it before the next heading row (the 中央区 R7 scans read the headings again
+    # in the `(3) 歳出予算` box over the first card) heads nothing.
+    empty = {id(w) for (k, _, line), (n, _, _) in zip(marks, marks[1:]) if k == n == 'header' for w in line}
+    marks = [m for m in marks if not (m[0] == 'header' and id(m[2][0]) in empty)]
     blocks = []
     for index, (found, top, line) in enumerate(marks):
         end = marks[index + 1][1] if index + 1 < len(marks) else bottom
@@ -128,17 +133,59 @@ def split_cards(page: Page, left: float, right: float):
         words = [w for w in page.words if top <= (w.y0 + w.y1) / 2 < end and id(w) not in heading]
         blocks.append((found if found != 'header' else 'subject', top, end, words, line))
     first = marks[0][1]
-    outside = [w for w in page.words if (w.y0 + w.y1) / 2 < first]
+    outside = [w for w in page.words if (w.y0 + w.y1) / 2 < first and id(w) not in empty]
     foot = [w for w in page.words if (w.y0 + w.y1) / 2 >= bottom]
     return outside, blocks, foot, rows
 
 
-def setsu_lines(page: Page, words: list[Word], top: float, bottom: float, left: float, right: float) -> list[list[Word]]:
-    """Each cell of the 節区分 frame as one entry: its words in reading order."""
-    verticals = sorted({round(r.x0, 1) for r in page.rules if r.vertical and r.y0 < bottom - 1 and r.y1 > top + 1
-                        and left + FRAME_REACH < r.x0 < right - FRAME_REACH})
+def dividing(page: Page, top: float, bottom: float, left: float, right: float) -> tuple[list[float], list[float]]:
+    """The inner verticals and horizontals that divide a block of the frame whole. The short strokes some years draw
+    inside a cell (中央区 R8: by a 目's name, between the cells of the 節区分) are no edges of it."""
+    reach = defaultdict(float)
+    for r in page.rules:
+        if not r.vertical and top + 1 < r.y0 < bottom - 1:
+            reach['h', round(r.y0, 1)] += min(r.x1, right) - max(r.x0, left)
+    horizontals = sorted(y for (kind, y), length in reach.items() if kind == 'h' and length >= (right - left) * .9)
+    # The block's heading row (`節 区 分`) spans the frame: its cells start under the first horizontal (台東区).
+    start = horizontals[0] if horizontals and horizontals[0] - top < 25 else top
+    # The last card on a page ends at the frame's foot: the empty space under its last row is no part of its cells.
+    end = horizontals[-1] if horizontals and bottom - horizontals[-1] > 100 and horizontals[-1] > start else bottom
+    for r in page.rules:
+        if r.vertical and r.y0 < end - 1 and r.y1 > start + 1 and left + FRAME_REACH < r.x0 < right - FRAME_REACH:
+            reach['v', round(r.x0, 1)] += min(r.y1, end) - max(r.y0, start)
+    verticals = sorted(x for (kind, x), length in reach.items() if kind == 'v' and length >= (end - start) * .6)
+    return verticals, horizontals
+
+
+def cut_at(word: Word, edge: float) -> list[Word]:
+    """A word read across a cell's edge (`7028旅` over `702 | 8 旅費`, the 中央区 R7 scans), cut at the character
+    boundary nearest the edge; a digit is set half as wide as a kanji."""
+    text = word.text
+    units = [0.5 if re.fullmatch(r'[0-9,.]', ch) else 1.0 for ch in text]
+    scale = (word.x1 - word.x0) / sum(units)
+    bounds, x = [], word.x0
+    for unit in units[:-1]:
+        x += unit * scale
+        bounds.append(x)
+    if not bounds:
+        return [word]
+    index = min(range(len(bounds)), key=lambda i: abs(bounds[i] - edge))
+    cut = bounds[index]
+    return [Word(text[:index + 1], word.x0, word.y0, cut, word.y1), Word(text[index + 1:], cut + 1, word.y0, word.x1, word.y1)]
+
+
+def setsu_lines(page: Page, words: list[Word], top: float, bottom: float, left: float, right: float,
+                fallback: list[float] = ()) -> list[list[Word]]:
+    """Each cell of the 節区分 frame as one entry: its words in reading order. A scan whose cell edges are too short
+    to be found divides the cells where the 目's frame divides its amounts (`fallback`), and a word read across an
+    edge is cut there."""
+    verticals, horizontals = dividing(page, top, bottom, left, right)
+    if not verticals and fallback:
+        verticals = list(fallback)
+        for edge in verticals:
+            words = [part for w in words
+                     for part in (cut_at(w, edge) if w.x0 + 3 < edge < w.x1 - 3 else [w])]
     edges = [left, *verticals, right]
-    horizontals = sorted({round(r.y0, 1) for r in page.rules if not r.vertical and top + 1 < r.y0 < bottom - 1})
     bands = [top, *horizontals, bottom]
     cells = []
     for upper, lower in zip(bands, bands[1:]):
@@ -167,15 +214,23 @@ def cell_line(cell: list[Word]) -> tuple[list[Word], list[Word]]:
     return ([number] if number is not None else []) + names, amounts
 
 
-DEPARTMENT_OPEN, DEPARTMENT_CLOSE = '〔[【', '〕]】'
+DEPARTMENT_OPEN, DEPARTMENT_CLOSE = '〔[【・', '〕]】・'  # `･子育て支援課･` (中央区) between dots
 
 
 def after_departments(words: list[Word]) -> dict[int, float]:
     """How far to move each amount printed before the line's department (`98,000 〔国民健康保険課〕`,
-    `46,081千円 [保険年金課]`): the department ends the item's name, the amount ends the line."""
+    `46,081千円 [保険年金課]`, `12,571,351千円 ･子育て支援課･`, `17,122千円 保険年金課`): the department ends the
+    item's name, the amount ends the line."""
     moves = {}
     for line in lines(words):
         opening = max((i for i, w in enumerate(line) if norm(w.text)[:1] in DEPARTMENT_OPEN), default=None)
+        last = max((i for i, w in enumerate(line) if rt.priced([Glyph(w.text, 0, 0, 0, 0, 0, 0)])), default=None)
+        tail = ''.join(norm(w.text) for w in line[last + 1:]) if last is not None else ''
+        if last and (opening is None or opening > last) and re.search(r'(課|室|所)・?$', tail) \
+                and not re.search(r'[0-9]', tail):
+            # `17,122千円 保険年金課`, `16,238,313千円 子 ど も 子 育 て 支 援 課 ･`: a department without its brackets
+            moves[id(line[last])] = line[-1].x1 + 4 - line[last].x0
+            continue
         if opening is None:
             # `対象医療費 16,527,123 負担率8／10・7／10`: the basis of a 積算 ends the line like an item's amount.
             priced = [i for i, w in enumerate(line) if re.fullmatch(r'[0-9][0-9,]*', norm(w.text))
@@ -198,6 +253,57 @@ def after_departments(words: list[Word]) -> dict[int, float]:
         for word in amounts:
             moves[id(word)] = end - amounts[0].x0
     return moves
+
+
+def apart_amounts(words: list[Word]) -> dict[int, float]:
+    """`「中央区育ちのサポートシステム」12,830千円`: an amount printed right against the end of its name is set a gap
+    apart, so that it reads as the line's amount and not as part of the name."""
+    moves = {}
+    for line in lines(words):
+        for before, word in zip(line, line[1:]):
+            if word.x0 - before.x1 < rt.SPLIT_GAP and not rt.priced([Glyph(before.text, 0, 0, 0, 0, 0, 0)]) \
+                    and re.fullmatch(r'[0-9]{1,3}(?:,[0-9]{3})*千円', norm(word.text)):
+                moves[id(word)] = rt.SPLIT_GAP + 1 - (word.x0 - before.x1)
+    return moves
+
+
+def office_headings(words: list[Word]) -> dict[int, float]:
+    """`日本橋特別出張所 2,332,236千円 [日本橋特別出張所]` heads the numbered items under it (`1 日本橋特別出張所
+    管理事業`), which start a little right of it (the number's box is narrower than a character): it is laid out
+    where they start, so that the tree reads them as printed at its indentation."""
+    moves = {}
+    printed = lines(words)
+    for line, following in zip(printed, printed[1:]):
+        texts = [norm(w.text) for w in line]
+        priced = next((i for i, w in enumerate(line) if rt.priced([Glyph(w.text, 0, 0, 0, 0, 0, 0)])), None)
+        if not priced or re.match(r'[0-9(（]', texts[0]):
+            continue
+        name, tail = ''.join(texts[:priced]), ''.join(texts[priced + 1:])
+        if tail != f'[{name}]':
+            continue
+        dx = following[0].x0 - line[0].x0
+        if 0 < dx <= 6:
+            for word in line[:priced]:
+                moves[id(word)] = dx
+    return moves
+
+
+def amount_value(text: str) -> int | None:
+    found = re.fullmatch(r'([0-9]{1,3}(?:,[0-9]{3})*)(?:千円)?', norm(text))
+    return int(found.group(1).replace(',', '')) if found else None
+
+
+def restated_lines(words: list[Word], held: set) -> list[list[Word]]:
+    """The lines of a 目's 計上説明 that print the 目's amount again: the first, which says what the 目 is for
+    (`療養の給付に要する経費を計上 6,626,796千円 [保険年金課]`, 中央区), and the 合計 of its items at the end. The
+    amount is the 目's, no item of it."""
+    printed = lines(words)
+    found = []
+    for index, line in enumerate(printed):
+        text = norm(''.join(w.text for w in line))
+        if ((index == 0 and '計上' in text) or text.startswith('合計')) and any(amount_value(w.text) in held for w in line):
+            found.append(line)
+    return found
 
 
 def inner_boxes(page: Page, top: float, bottom: float, left: float, right: float) -> list[tuple]:
@@ -227,6 +333,7 @@ class Columns:
     inner: list[float]   # the column rules of the 目's frame (目 | 本年度予算額 | 前年度予算額 | 比較増減額)
     headings: list[str]  # the headings over the amount columns
     levels: tuple        # the levels the frame prints in its rows: 款・項・目 (中央区, marked) or 目 only (台東区)
+    held: set = field(default_factory=set)  # the amounts the last card's frame prints: its 計上説明 may go on overleaf
 
 
 LEVEL_HEADINGS = ('款', '項', '目')
@@ -236,6 +343,18 @@ def amount_headings(line: list[Word], inner: list[float], right: float) -> list[
     """The heading of each amount column, its words joined (`本 年 度 予 算 額` → `本年度予算額`)."""
     edges = [*inner, right]
     return [norm(''.join(w.text for w in line if a <= (w.x0 + w.x1) / 2 < b)) for a, b in zip(edges, edges[1:])]
+
+
+def split_code(line: list[Word], names_right: float) -> list[Word]:
+    """`2高` `額療養費` (the 中央区 R7 scans): the OCR glues a row's number to its name; the number is a word of its own."""
+    first = min(line, key=lambda w: w.x0)
+    found = re.fullmatch(r'([0-9]{1,2})([^0-9,，.．、].*)', norm(first.text))
+    if found is None or first.x1 > names_right:
+        return line
+    units = [0.5 if ch.isdigit() else 1.0 for ch in first.text]  # a digit is set half as wide as a kanji
+    cut = first.x0 + (first.x1 - first.x0) * sum(units[:len(found.group(1))]) / sum(units)
+    return [Word(found.group(1), first.x0, first.y0, cut, first.y1), Word(found.group(2), cut + 3, first.y0, first.x1, first.y1),
+            *(w for w in line if w is not first)]
 
 
 def line_glyphs(line: list[Word]) -> list[Glyph]:
@@ -277,8 +396,7 @@ def place_page(page: Page, columns: Columns | None):
         subject = next((b for b in card if b[0] == 'subject'), None)
         if subject is not None:
             _, s_top, s_bottom, s_words, header_line = subject
-            inner = sorted({round(r.x0, 1) for r in page.rules if r.vertical and r.y0 < s_bottom - 1 and r.y1 > s_top + 1
-                            and left + FRAME_REACH < r.x0 < right - FRAME_REACH})
+            inner = dividing(page, s_top, s_bottom, left, right)[0]
             if not inner:
                 return None
             marked = any(MARK.match(norm(w.text)) for b in blocks if b[0] == 'subject' for w in b[3])
@@ -311,19 +429,39 @@ def place_page(page: Page, columns: Columns | None):
             units = [w for w in body if norm(w.text) in UNIT_WORDS]
             for word in units:  # `千円` under each heading, printed in the first row (中央区): into the heading row
                 placed.put(word, shift, header_bottom - 2 - min(word.y1 - word.y0, 10), min(word.y1 - word.y0, 10))
-            level = '目'
+            level, rows_of = '目', []
             for line in lines([w for w in body if w not in units]):
                 marks = [w for w in line if MARK.match(norm(w.text))]
                 rest = [w for w in line if w not in marks]
                 if marks:  # the level goes on to the lines under the mark (a name wrapped round its number)
                     level = MARK.match(norm(marks[0].text)).group(1)
-                if not rest:
-                    continue
+                if rest:
+                    rows_of.append([split_code(rest, columns.inner[0]), level])
+            priced = [i for i, (rest, _) in enumerate(rows_of)
+                      if any((w.x0 + w.x1) / 2 >= columns.inner[0] for w in rest)]
+            if len(columns.levels) > 1 and priced and rows_of[priced[-1]][1] != '目':
+                # A card ends with its 目's row: an unread `(目)` (the 中央区 R7 scans) is that row's mark. The row's
+                # name wraps round its number, so the lines nearer its amounts than the row above's are its own.
+                last = rows_of[priced[-1]][0][0].y0
+                before = rows_of[priced[-2]][0][0].y0 if len(priced) > 1 else None
+                for row in rows_of:
+                    y = row[0][0].y0
+                    if before is None or (y > before and abs(y - last) < abs(y - before)):
+                        row[1] = '目'
+            heads = {}  # a name's first line printed on its mark's line (`（目） 地域密着型介護` over `8 サービス等給付`)
+            for (rest, _), following in zip(rows_of, rows_of[1:]):
+                bare = not any((w.x0 + w.x1) / 2 >= columns.inner[0] for w in rest) and not re.match(
+                    r'[0-9]', norm(min(rest, key=lambda w: w.x0).text))
+                coded = re.fullmatch(r'[0-9]{1,2}', norm(min(following[0], key=lambda w: w.x0).text))
+                gap = following[0][0].y0 - max(w.y0 for w in rest)
+                if bare and coded and 8 < gap < 16:
+                    heads.update({id(w): following[0][0].y0 - 6 for w in rest})
+            for rest, level in rows_of:
                 row_level = LEVEL_HEADINGS[0] if '合計' in norm(''.join(w.text for w in rest)) else level
                 offset = {'款': 0, '項': level_width, '目': shift}[row_level if row_level in columns.levels else '目']
                 for word in rest:
                     in_names = (word.x0 + word.x1) / 2 < columns.inner[0]
-                    placed.put(word, offset if in_names else shift)
+                    placed.put(word, offset if in_names else shift, heads.get(id(word)))
                 first_row = min(w.y0 for w in rest) if first_row is None else first_row
                 bottoms.append(max(w.y1 for w in rest))
         row_top = first_row if first_row is not None else header_bottom + 4
@@ -331,7 +469,8 @@ def place_page(page: Page, columns: Columns | None):
             if name == 'funds':
                 left_out.append(((left, b_top, right, b_bottom), words))
             elif name == 'setsu':
-                cells = [cell_line(cell) for cell in setsu_lines(page, words, b_top, b_bottom, left, right)]
+                cells = [cell_line(split_code(cell, right)) for cell in
+                         setsu_lines(page, words, b_top, b_bottom, left, right, columns.inner)]
                 room = max(next_top - 8 - row_top, 1.0)
                 pitch = max(6.0, min(PITCH, room / (len(cells) + 1)))
                 height = pitch - 2
@@ -365,7 +504,19 @@ def place_page(page: Page, columns: Columns | None):
                                max(w.y1 for w in line))
                         left_out.append((box, line))
                         words = [w for w in words if w not in line]
+                if subject is not None:
+                    columns.held = {amount_value(w.text) for w in subject[3]} - {None}
+                # 中央区 restates the 目's amount in its 計上説明; 台東区's `合計` stays, closing the items above it.
+                for restated in (restated_lines(words, columns.held) if len(columns.levels) > 1 else []):
+                    box = (min(w.x0 for w in restated), min(w.y0 for w in restated), max(w.x1 for w in restated),
+                           max(w.y1 for w in restated))
+                    left_out.append((box, restated))
+                    words = [w for w in words if w not in restated]
                 moves = after_departments(words)
+                for key, dx in apart_amounts(words).items():
+                    moves.setdefault(key, dx)
+                for key, dx in office_headings(words).items():
+                    moves[key] = moves.get(key, 0.0) + dx
                 for word in words:
                     placed.put(word, notes_left - left + moves.get(id(word), 0.0))
                 if words:
@@ -405,6 +556,103 @@ def funds_logical(page: int, left: float, right: float, top: float, bottom: floa
     return Logical([page], [band], None, [])
 
 
+def split_glue(head: str, tail: str) -> str | None:
+    """What goes between the two pieces of one amount cut at its comma, or None when they are no such pieces:
+    `20,` `765千円` (the text 冊 set a space after the comma), and in the scans `14` `,291件` and `960` `382千円`
+    (the OCR cuts the amount at the comma, keeping it on either side or on neither)."""
+    if re.fullmatch(r'[△▲]?[0-9,]*[0-9],', head) and re.match(r'[0-9]{3}(?:[,千円]|$)', tail):
+        return ''
+    if re.fullmatch(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})*', head):
+        if re.fullmatch(r',[0-9]{3}(?:,[0-9]{3})*(?:千円|円|件|人)?', tail):
+            return ''
+        if re.fullmatch(r'[0-9]{3}(?:,[0-9]{3})*千円', tail):
+            return ','
+    return None
+
+
+def join_comma_splits(words: list[Word]) -> list[Word]:
+    """An amount cut at its comma into two words (`split_glue`): one amount, one word."""
+    result, taken = [], set()
+    ordered = sorted(words, key=lambda w: (round(w.y0), w.x0))
+    for index, word in enumerate(ordered):
+        if id(word) in taken:
+            continue
+        joined = word
+        for following in ordered[index + 1:]:
+            if abs(following.y0 - joined.y0) > LINE:
+                break
+            glue = split_glue(joined.text, following.text)
+            if (glue is None and following.x0 - joined.x1 < 1 and re.fullmatch(r'[△▲]?[0-9,]+', joined.text)
+                    and re.fullmatch(r'[0-9,]+', following.text)):
+                glue = ''  # `7` `05` (the scans): the OCR cuts one amount into touching pieces
+            if glue is not None and 0 <= following.x0 - joined.x1 < 6:
+                joined = Word(joined.text + glue + following.text, joined.x0, min(joined.y0, following.y0),
+                              following.x1, max(joined.y1, following.y1))
+                taken.add(id(following))
+            else:
+                break
+        result.append(joined)
+    return result
+
+
+def join_open_parens(words: list[Word]) -> list[Word]:
+    """`( 1)` / `( ｱ)` (the same 冊): the bracket and the number in it are one number, as `(1)` is elsewhere. So is
+    a level's mark read in two (`(目` `)`, the 中央区 R7 scans)."""
+    result, taken = [], set()
+    ordered = sorted(words, key=lambda w: (round(w.y0), w.x0))
+    for word, following in zip(ordered, [*ordered[1:], None]):
+        if id(word) in taken:
+            continue
+        if (following is not None and abs(following.y0 - word.y0) <= LINE and 0 <= following.x0 - word.x1 < 6
+                and (norm(word.text) == '(' and re.fullmatch(r'[^()（）]{1,3}\)', norm(following.text))
+                     or re.fullmatch(r'\((?:款|項|目)', norm(word.text)) and norm(following.text) == ')')):
+            result.append(Word(word.text + following.text, word.x0, min(word.y0, following.y0), following.x1,
+                               max(word.y1, following.y1)))
+            taken.add(id(following))
+        else:
+            result.append(word)
+    return result
+
+
+def contained_fragments(words: list[Word]) -> list[Word]:
+    """Paddle also reads a piece of a longer word as a word of its own inside it (`頁` inside `本年度予算額`, 131024
+    R7 scans): a shorter word whose box lies inside a longer word's box is that piece, not printed text."""
+    def inside(small: Word, large: Word) -> bool:
+        return (len(norm(small.text)) < len(norm(large.text)) and small.x0 >= large.x0 - 1.5
+                and small.x1 <= large.x1 + 1.5 and small.y0 >= large.y0 - 1.5 and small.y1 <= large.y1 + 1.5)
+    return [w for w in words if not any(o is not w and inside(w, o) for o in words)]
+
+
+def strip_bars(words: list[Word]) -> list[Word]:
+    """`|4共済費` (the 中央区 R7 scans): the OCR reads a cell's edge as a bar before the word; the bar is no text."""
+    result = []
+    for w in words:
+        text = w.text.lstrip('|｜').rstrip('|｜')
+        if not text:
+            continue
+        if text != w.text:
+            width = (w.x1 - w.x0) / max(len(w.text), 1)
+            lead = len(w.text) - len(w.text.lstrip('|｜'))
+            trail = len(w.text) - len(w.text.rstrip('|｜'))
+            w = Word(text, w.x0 + lead * width, w.y0, w.x1 - trail * width, w.y1)
+        result.append(w)
+    return result
+
+
+def split_marks(words: list[Word]) -> list[Word]:
+    """`（目）地域密着型介護` (the 中央区 R7 scans): the OCR glues a level's mark to the name under it; the mark is a word
+    of its own."""
+    result = []
+    for w in words:
+        found = re.match(r'([(（](?:款|項|目)[)）])(.+)', w.text)
+        if found is None:
+            result.append(w)
+            continue
+        cut = w.x0 + (w.x1 - w.x0) * 3 / len(w.text)
+        result += [Word(found.group(1), w.x0, w.y0, cut, w.y1), Word(found.group(2), cut + 2, w.y0, w.x1, w.y1)]
+    return result
+
+
 def summary_page(page: Page) -> bool:
     """A 款's page of its 項 (`項 | 本年度 | 前年度 | 比較 | 本年度の財源内訳`, closed by `計`) between the cards: the
     項 and their amounts are printed again over each 項's cards, so the page is left out whole. So is the right half of
@@ -424,7 +672,7 @@ def read(pages, **options):
     shifts_by_page, scopes_by_page, left_out, synthetic, columns = {}, {}, [], [], None
     for page in pages:
         # On the observed page itself: digit coverage reads the same words (`runtime.run_pages`).
-        page.words = rt.join_full_width(page.words)
+        page.words = join_open_parens(join_comma_splits(rt.join_full_width(split_marks(strip_bars(contained_fragments(page.words))))))
         wide = rt.extend_columns(page)
         page.words = rt.inside_rules(page.words, wide.rules)
         if summary_page(page):

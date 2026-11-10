@@ -32,6 +32,53 @@ class SubjectCardsTest(unittest.TestCase):
         self.assertTrue(subject_cards.summary_page(page('比', '較', '国都支出金', 'その他', '一般財源')))
         self.assertFalse(subject_cards.summary_page(page('目', '本年度予算額', '前年度予算額', '比較増減額')))
 
+    def test_a_department_without_brackets_also_takes_the_amount_after_it(self):
+        bare = [word('2', 0), word('徴収事務', 20), word('17,122千円', 200), word('保険年金課', 300)]
+        self.assertEqual(subject_cards.after_departments(bare), {id(bare[2]): 350 + 4 - 200})
+        spelled = [word('1', 0), word('事業', 20), word('16,238,313千円', 200), *[word(c, 340 + 10 * i) for i, c in enumerate('子育て支援課･')]]
+        self.assertEqual(subject_cards.after_departments(spelled), {id(spelled[2]): 410 + 4 - 200})
+
+    def test_a_number_printed_in_pieces_is_one_word(self):
+        joined = subject_cards.join_comma_splits([word('20,', 100, width=14), word('765千円', 116), word('事業', 10)])
+        self.assertEqual(sorted(w.text for w in joined), ['20,765千円', '事業'])
+        parens = subject_cards.join_open_parens([word('(', 88, width=3), word('1)', 93), word('各種援助', 110)])
+        self.assertEqual(sorted(w.text for w in parens), ['(1)', '各種援助'])
+
+    def test_the_lines_that_print_the_moku_amount_again_are_found(self):
+        notes = [word('療養の給付に要する経費を計上', 0, 0), word('6,626,796千円', 300, 0),
+                 word('1', 0, 20), word('療養給付費', 20, 20), word('6,626,796千円', 300, 20),
+                 word('合', 20, 40), word('計', 60, 40), word('6,626,796千円', 300, 40)]
+        found = subject_cards.restated_lines(notes, {6626796})
+        self.assertEqual([[w.text for w in line][0] for line in found], ['療養の給付に要する経費を計上', '合'])
+        self.assertEqual(subject_cards.restated_lines(notes, {1}), [])
+
+    def test_an_office_heading_is_laid_out_where_its_items_start(self):
+        heading = [word('日本橋特別出張所', 61.9, 0), word('2,332,236千円', 385, 0), word('[', 461, 0, width=5),
+                   word('日本橋特別出張所', 466, 0), word(']', 540, 0, width=5)]
+        item = [word('1', 65.0, 18), word('日本橋特別出張所管理事業', 96, 18), word('835,627千円', 350, 18)]
+        moves = subject_cards.office_headings(heading + item)
+        self.assertAlmostEqual(moves[id(heading[0])], 3.1)
+        self.assertNotIn(id(heading[1]), moves)
+
+
+    def test_scan_pieces_of_an_amount_or_a_mark_are_joined(self):
+        joined = subject_cards.join_comma_splits([word('960', 0, width=19), word('382千円', 24, width=36),
+                                                  word('14', 100, width=11), word(',291件', 113, width=31),
+                                                  word('7', 200, width=7), word('05', 207, width=11)])
+        self.assertEqual(sorted(w.text for w in joined), ['14,291件', '705', '960,382千円'])
+        self.assertEqual([w.text for w in subject_cards.join_open_parens([word('(目', 0, width=14), word(')', 18, width=5)])],
+                         ['(目)'])
+        self.assertEqual([w.text for w in subject_cards.split_marks([word('（目）地域密着型介護', 0)])], ['（目）', '地域密着型介護'])
+
+    def test_scan_fragments_bars_and_glued_numbers_are_taken_apart(self):
+        inner = word('頁', 283, width=7)
+        self.assertEqual([w.text for w in subject_cards.contained_fragments([word('本年度予算額', 186, width=103), inner])],
+                         ['本年度予算額'])
+        self.assertEqual([w.text for w in subject_cards.strip_bars([word('|4共済費', 297)])], ['4共済費'])
+        self.assertEqual([w.text for w in subject_cards.split_code([word('2高', 65, width=34), word('額療養費', 98)], 178)],
+                         ['2', '高', '額療養費'])
+        self.assertEqual([w.text for w in subject_cards.cut_at(Word('7028旅', 159, 0, 202, 9), 178)], ['702', '8旅'])
+        self.assertEqual([w.text for w in subject_cards.cut_at(Word('13510需用費', 279, 0, 359, 9), 298)], ['135', '10需用費'])
 
 if __name__ == '__main__':
     unittest.main()
