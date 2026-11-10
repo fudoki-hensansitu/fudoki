@@ -302,7 +302,7 @@ erDiagram
 
 #### intermediate: 対応の宣言を当て、木を統合し、円・COFOG を付ける
 
-- `int_fiscal__csv_expenditure_nodes`: CSV の staging から、会計/款/項/目/事項/節/細々節の列を group by して木を作る。CSV の行は葉の粒度で経路が完全なので、PDF のノードの表を経由せず直接ノードの形にし、款・項・目の `node_id` の導出は PDF と共通にする。CSV では親子は列から機械的に決まり、出典の事実の復元ではなく正規化なので、取り込みではなくここで行う。葉の金額は千円を1000倍し、親は子の和の集計を持つ（印字ではない）。番号の印字がない目は親基準の ID で保つ。
+- `int_fiscal__csv_expenditure_nodes`: CSV の staging から、会計/款/項/目/事項（または細目）/節/細々節の列を group by して木を作る。CSV は書式ごとに staging を分ける（番号+名称のセルの書式は `stg_fiscal__csv_expenditure`、番号と名称が別の列の書式は `stg_fiscal__csv_named_expenditure`）。目と節の間の段は書式の名前（事項・細目）のまま持ち、細々節の無い書式は節を葉にする。CSV の行は葉の粒度で経路が完全なので、PDF のノードの表を経由せず直接ノードの形にし、款・項・目の `node_id` の導出は PDF と共通にする。CSV では親子は列から機械的に決まり、出典の事実の復元ではなく正規化なので、取り込みではなくここで行う。葉の金額は千円を1000倍し、親は子の和の集計を持つ（印字ではない）。番号の印字がない目は親基準の ID で保つ。
 - `int_fiscal__settlement_expenditure_nodes`（決算・当初予算の PDF 共通。`document_kind` を列として流し、決算は支出済額・当初予算は当初予算額を選ぶ）:
   - 共通規則で `node_kind` を決める（[ADR 0025](../../adr/0025-level-names-by-shared-rule.md)）。科目軸の深さと印字見出しが食い違えば止める。
   - 共有辞書（`pipeline/shared/fiscal_amount_map.csv`）で各ノードの支出済額を一つ選ぶ。宣言にない金額の見出しがあれば止める。

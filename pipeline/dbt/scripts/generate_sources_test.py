@@ -24,8 +24,9 @@ class GenerateSourcesTest(unittest.TestCase):
                 key = (jurisdiction, table['table_id'])
                 entry = generate_sources.relation_name(
                     jurisdiction, target['fiscal_year'], target['document_kind'], table['table_id'])
-                if key in generate_sources.EXCLUDE:
-                    self.assertTrue(generate_sources.EXCLUDE[key])
+                target_key = (jurisdiction, target['fiscal_year'], target['document_kind'], table['table_id'])
+                if key in generate_sources.EXCLUDE or target_key in generate_sources.EXCLUDE_TARGETS:
+                    self.assertTrue(generate_sources.EXCLUDE.get(key) or generate_sources.EXCLUDE_TARGETS[target_key])
                     self.assertNotIn(entry + '_nodes', names)
                     self.assertNotIn(entry, names)
                 elif 'nodes' in table:

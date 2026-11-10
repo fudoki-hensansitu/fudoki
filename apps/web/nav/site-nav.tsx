@@ -1,6 +1,6 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
-import { Link } from '@void/react'
+import { Link } from './link'
 import { BankIcon, ChatIcon, CircleHalfIcon, DesktopIcon, GearSixIcon, GithubLogoIcon, HouseIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,

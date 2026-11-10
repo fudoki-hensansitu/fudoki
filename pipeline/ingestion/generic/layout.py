@@ -81,7 +81,7 @@ class Band:
     excluded: dict | None = None  # a declared column whose printed digits are not taken in (kind and reason)
     stripped_codes: bool = False  # ancestors' codes a continuation page prints (`2 1 6`) were taken out of its words (`tree.strip_ancestor_codes`)
     staircase: bool = False  # the layout setting `header.staircase`: a level's cell runs right until its own rule starts
-    extents: list[tuple[float, float]] = field(default_factory=list)  # (top, bottom) of each block the band reads, when it reads some blocks of the page only (`patterns/layout/stacked_blocks`)
+    extents: list[tuple[float, float]] = field(default_factory=list)  # (top, bottom) of each block the band reads, when it reads some blocks of the page only (`patterns/layout/framed_blocks`)
 
     @property
     def center(self) -> float:
@@ -101,7 +101,7 @@ class Logical:
     # code, name, name glyphs and amount glyphs. None: the tables are titled by their 款 only (`titles`).
     level_titles: list | None = None
     # The page may open by printing the open 款・項・目 again, names only. False: every table of the page prints its
-    # own header over its rows (`patterns/layout/stacked_blocks`), so a name without a code is a subject of its own.
+    # own header over its rows (`patterns/layout/framed_blocks`), so a name without a code is a subject of its own.
     reprints: bool = True
 
     def unit_of(self, header: str) -> str | None:

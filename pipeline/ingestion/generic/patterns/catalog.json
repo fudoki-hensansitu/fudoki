@@ -3,11 +3,15 @@
     "ruled": "ingestion.generic.patterns.layout.ruled",
     "open_edge": "ingestion.generic.patterns.layout.open_edge",
     "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles",
+    "funded_explanation": "ingestion.generic.patterns.layout.funded_explanation",
+    "staircase_codes": "ingestion.generic.patterns.layout.staircase_codes",
     "stacked_blocks": "ingestion.generic.patterns.layout.stacked_blocks",
     "running_titles": "ingestion.generic.patterns.layout.running_titles",
     "paren_titles": "ingestion.generic.patterns.layout.paren_titles",
     "facing_pages": "ingestion.generic.patterns.layout.facing_pages",
-    "purpose_section": "ingestion.generic.patterns.layout.purpose_section"
+    "purpose_section": "ingestion.generic.patterns.layout.purpose_section",
+    "subject_cards": "ingestion.generic.patterns.layout.subject_cards",
+    "listed_sources": "ingestion.generic.patterns.layout.listed_sources"
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
@@ -52,7 +56,8 @@
     "titled_pages": "ingestion.generic.patterns.readings.titled_pages",
     "labelled_spread": "ingestion.generic.patterns.readings.labelled_spread",
     "facing_explanations": "ingestion.generic.patterns.readings.facing_explanations",
-    "annotated_spread": "ingestion.generic.patterns.readings.annotated_spread"
+    "annotated_spread": "ingestion.generic.patterns.readings.annotated_spread",
+    "paired_summary": "ingestion.generic.patterns.readings.paired_summary"
   },
   "component": {
     "marked_subjects": "ingestion.generic.patterns.components.marked_subjects",

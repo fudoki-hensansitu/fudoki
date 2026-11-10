@@ -10,7 +10,8 @@ export interface OriginSource {
   selectList: string
 }
 
-export async function searchRows(t: FiscalTable, origin: OriginSource, ctx: Ctx, input: SearchInput) {
+/** origin が null の表（事業の年度など、行が出典を指さない表）は出典を読まない */
+export async function searchRows(t: FiscalTable, origin: OriginSource | null, ctx: Ctx, input: SearchInput) {
   const { db } = ctx
   const where = buildWhere(t, input.document_kind, input.fiscal_year, input.where as never)
   const order = [...(input.order_by ?? [])]
@@ -23,17 +24,21 @@ export async function searchRows(t: FiscalTable, origin: OriginSource, ctx: Ctx,
     db
       .prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?`)
       .bind(...where.params, limit + 1, offset),
-    db
-      .prepare(
-        `SELECT ${origin.selectList} FROM ${origin.table} WHERE origin_id IN ` +
-          `(SELECT origin_id FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?) ORDER BY origin_id`
-      )
-      .bind(...where.params, limit, offset),
+    ...(origin
+      ? [
+          db
+            .prepare(
+              `SELECT ${origin.selectList} FROM ${origin.table} WHERE origin_id IN ` +
+                `(SELECT origin_id FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?) ORDER BY origin_id`
+            )
+            .bind(...where.params, limit, offset),
+        ]
+      : []),
   ])
   const more = page!.results.length > limit
   return {
     rows: page!.results.slice(0, limit).map((r) => toRow(t.columns, r)),
     next_page_token: more ? await nextToken(offset + limit, fp) : null,
-    origins: origins!.results,
+    origins: origins?.results ?? [],
   }
 }

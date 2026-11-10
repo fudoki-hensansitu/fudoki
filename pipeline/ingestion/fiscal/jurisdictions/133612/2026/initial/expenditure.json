@@ -1,0 +1,70 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133612",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ee12416a0ecd6db13e7bb24389aba1474209363b5df0550aab6e2ffb26eb20a6"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "reading": {
+            "pattern": "turned_summary",
+            "profile": "fiscal/jurisdictions/133612/layouts/purpose_summary_initial_2026.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "6a8ffc917a4f7c8ab47d4783fa36d70f5e23474948fe99fc6cb25a4f3d50babc",
+      "account": "一般会計",
+      "notes": [
+        "物理3頁の表（３．一般会計目的別歳出）は頁に90°回して組まれているので、語の位置を表の向きに回して行と欄を読んだ（読み方 turned_summary、位置は表示頁の座標のまま）。",
+        "款の行 14 行を、区分の欄の印字のとおり款として置いた。項・目は印字されていない。",
+        "金額の単位は印字の「（単位：千円）」。金額の欄 8 欄すべてで款の和と印字の「計」が一致。行の内訳（総額＝左の内訳の和など）を 16 行で照合して一致（空欄を含む 14 行は照合していない: 議会費（当初予算額）・民生費（当初予算額）・労働費（当初予算額）・災害復旧費（当初予算額）・公債費（当初予算額）・諸支出金（当初予算額）・予備費（当初予算額）・議会費（一般財源）・民生費（一般財源）・労働費（一般財源）・災害復旧費（一般財源）・公債費（一般財源）・諸支出金（一般財源）・予備費（一般財源））。",
+        "比率の欄（構成比・対前年度増減率）は金額ではないので取り込んでいない。空欄の欄は金額の行を作っていない。",
+        "内訳の欄 令和８年度／左の内訳／事業費額・令和８年度／左の内訳／その他の経費額・令和８年度／左の内訳／事業費額・令和８年度／左の内訳／その他の経費額 は、和と計を照合したうえで取り込んでいない（経費内訳・財源内訳）。",
+        "金額の見出しを辞書の見出しに寄せた: 令和８年度／総額／金額→当初予算額・令和８年度／左の内訳／事業費額→総額の内訳／事業費額・令和８年度／左の内訳／その他の経費額→総額の内訳／その他の経費額・令和８年度／一般財源／金額→一般財源・令和８年度／左の内訳／事業費額→一般財源の内訳／事業費額・令和８年度／左の内訳／その他の経費額→一般財源の内訳／その他の経費額・令和７年度／総額／金額→前年度予算額・令和７年度／一般財源／金額→前年度予算額／一般財源。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133612/2026/initial/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "562231edd54d5fada2644c9692eb1c716e89e41b0a9f495ef23b0a40cf606e7f",
+          "bytes": 2906
+        },
+        "row_count": 14
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133612/2026/initial/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "5402b024d17eb5112d207c12753270321036c429dc9258e2d99d1577039d9acb",
+          "bytes": 3111
+        },
+        "row_count": 56
+      }
+    }
+  ]
+}

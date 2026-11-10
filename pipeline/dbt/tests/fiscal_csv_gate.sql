@@ -3,7 +3,8 @@
 -- needs a 款 axis, and more than half of the 目 carry an amount.
 with declared as (
     select t.source_table_key, t.document_kind,
-        regexp_replace(t.amount_column, '^[0-9]+', '') as header
+        -- 08予算額 (numbered layout) and 合計 / 予算額 (a pivot export's sum label) name the 予算額 column.
+        regexp_replace(regexp_replace(t.amount_column, '^[0-9]+', ''), '^合計 / ', '') as header
     from {{ source('fiscal_metadata', 'csv_tables') }} t
     where t.direction = 'expenditure'
 ), phase_mismatch as (

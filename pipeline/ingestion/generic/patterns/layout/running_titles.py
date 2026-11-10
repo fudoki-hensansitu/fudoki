@@ -43,8 +43,9 @@ from ingestion.generic.patterns.layout import stacked_titles
 
 FULL_REACH = 3  # how far short of the frame's edges a rule may end and still cross the whole frame
 
-# `（款） 1 議会費`・`(項)1 総務管理費` or `1款 議会費`・`第2項 防災費`.
-PREFIXED = re.compile(r'^[(（](款|項)[)）]([0-9]+)(\D.*)$')
+# `（款） 1 議会費`・`(項)1 総務管理費`・`（款） 2.総務費` or `1款 議会費`・`第2項 防災費`. The point after the code
+# (檜原村) is the code's, not the name's.
+PREFIXED = re.compile(r'^[(（](款|項)[)）]([0-9]+)[.．]?([^\d.．].*)$')
 SUFFIXED = re.compile(r'^第?([0-9]+)(款|項)(\D.*)$')
 
 
@@ -130,18 +131,37 @@ def titles(logical: layout.Logical, heading: str | None) -> list[tuple[str, str,
     for line in (line for page in pages for line in lines([g for g in logical.outside if g.page == page])):
         if any(logical.below_foot(g) for g in line):
             continue  # the page's foot (`（款） 1 議会費 （項） 1 議会費` under the frame of a right-hand page)
-        parts = runs(line)
-        amounts = []
-        while len(parts) > 1 and is_amount(normalize(text(parts[-1]))):
-            amounts.insert(0, parts.pop())
-        name = [g for part in parts for g in part]
-        found_title = title(name)
-        if found_title is None:
-            continue
-        level, code, label = found_title
-        amount = (heading, amounts[0]) if amounts and heading else None
-        found.append((level, code, label, name, amount))
+        for parts in title_segments(runs(line)):
+            amounts = []
+            while len(parts) > 1 and is_amount(normalize(text(parts[-1]))):
+                amounts.insert(0, parts.pop())
+            name = [g for part in parts for g in part]
+            found_title = title(name)
+            if found_title is None:
+                continue
+            level, code, label = found_title
+            amount = (heading, amounts[0]) if amounts and heading else None
+            found.append((level, code, label, name, amount))
     return found
+
+
+MARK = re.compile(r'^[(（](款|項)[)）]')
+UNIT_NOTE = re.compile(r'^[(（]単位[:：]')
+
+
+def title_segments(parts: list[list[Glyph]]) -> list[list[list[Glyph]]]:
+    """The runs of a line, cut where a mark opens the next title: 日の出町 prints the 款 and the 項 on one line
+    (`（款） 1 議会費 （項） 1 議会費 （単位：千円）`). The unit notation is no title's."""
+    segments: list[list[list[Glyph]]] = []
+    for run in parts:
+        shown = normalize(text(run))
+        if UNIT_NOTE.match(shown):
+            continue
+        if not segments or MARK.match(shown):
+            segments.append([run])
+        else:
+            segments[-1].append(run)
+    return segments
 
 
 def extend_columns(page):
@@ -170,6 +190,75 @@ def extend_columns(page):
         if below and below[0] - rule.y1 > 1:
             added.append(Rule(rule.x0, rule.y1, rule.x0, below[0]))
     return replace(page, rules=[*page.rules, *added]) if added else page
+
+
+def drop_outside_columns(page):
+    """The page without the vertical rules drawn wholly above or below the rules that cross the whole frame.
+
+    A box printed under the table (中野区の総括の頁の注記の枠) draws its own sides: counted as column edges, the
+    right side (523.7) splits the 一般財源 column (519.4–579.4) and its figures fall between two bands."""
+    full = full_rules(page)
+    if len(full) < 2:
+        return page
+    top, bottom = full[0], full[-1]
+    kept = [r for r in page.rules if not r.vertical or (r.y1 >= top - 1 and r.y0 <= bottom + 1)]
+    return replace(page, rules=kept) if len(kept) < len(page.rules) else page
+
+
+HEADLESS_LINE = 15  # how far under the frame's top rule the first line of a header-less frame prints
+
+
+def headless_top(page) -> tuple[float, float] | None:
+    """(top, gap) of a frame at the top of the page that prints no header: the rows of the previous page's table
+    go on under its top rule (説明 lines and its `計`), and the next table opens under its own header below a stretch
+    no column rule crosses (日の出町 R8 p43). None when the page's first frame opens with a header."""
+    full = full_rules(page)
+    if len(full) < 3:
+        return None
+    left = min(r.x0 for r in page.rules if not r.vertical)
+    right = max(r.x1 for r in page.rules if not r.vertical)
+    columns = [r for r in page.rules if r.vertical and left + 1 < r.x0 < right - 1]
+    top = full[0]
+    for upper, lower in zip(full[1:], full[2:]):
+        if any(r.y0 < lower - 1 and r.y1 > upper + 1 for r in columns):
+            continue
+        first = [w for w in page.words if left < (w.x0 + w.x1) / 2 < right and top < (w.y0 + w.y1) / 2 < top + HEADLESS_LINE]
+        if any(re.search(r'[0-9０-９]', w.text) for w in first):
+            return top, upper
+        return None
+    return None
+
+
+def in_headless_top(page, found: tuple[float, float]):
+    """Whether a word is printed in the header-less frame (`headless_top`)."""
+    top, gap = found
+    left = min(r.x0 for r in page.rules if not r.vertical)
+    right = max(r.x1 for r in page.rules if not r.vertical)
+    return lambda w: left < (w.x0 + w.x1) / 2 < right and top < (w.y0 + w.y1) / 2 < gap
+
+
+def without_headless_rules(page, found: tuple[float, float]):
+    """The page as the layout reads it: the header-less frame's rules left out, so the frame under the stretch is
+    read with its own header. The frame's words are left out too and read in that frame's columns
+    (`read_headless_rows`)."""
+    gap = found[1]
+    return replace(page, rules=[r for r in page.rules if not (r.vertical and r.y1 <= gap + 1)
+                                and not (not r.vertical and r.y0 <= gap + 1)])
+
+
+def read_headless_rows(logicals: list[layout.Logical], upper: dict) -> None:
+    """The words of a header-less frame go to the columns of the frame under it, at the place they are printed:
+    above that frame's header, so the tree reads them before the titles that open the next table."""
+    for logical in logicals:
+        for band in logical.bands:
+            for word in upper.get(band.page, ()):
+                start = word.x0 + min(2, (word.x1 - word.x0) / 2)
+                if re.match(r'^[△▲]|.*,[0-9]{3}', word.text) and is_amount(word.text):
+                    start = (word.x0 + word.x1) / 2  # a grouped amount belongs to the column that holds most of it
+                if band.x0 - band.offset < start < band.x1 - band.offset:
+                    band.words.append(Glyph(word.text, word.x0 + band.offset, word.y0, word.x1 + band.offset, word.y1,
+                                            band.page, band.offset))
+            band.words.sort(key=lambda g: (g.y0, g.x0))
 
 
 def full_rules(page) -> list[float]:
@@ -413,15 +502,21 @@ def inside_rules(words: list[Word], rules) -> list[Word]:
 
 
 def read(pages, **options):
-    extended = []
+    extended, upper = [], {}
     for page in pages:
         # On the observed page itself: digit coverage reads the same words (`runtime.run_pages`).
         page.words = join_full_width(page.words)
-        wide = extend_columns(page)
+        wide = drop_outside_columns(page)
+        headless = headless_top(wide)
+        inside = in_headless_top(wide, headless) if headless else None
+        wide = extend_columns(without_headless_rules(wide, headless) if headless else wide)
         page.words = inside_rules(page.words, wide.rules)
-        extended.append(replace(wide, words=page.words))
+        if headless:
+            upper[page.number] = [w for w in page.words if inside(w)]
+        extended.append(replace(wide, words=[w for w in page.words if not inside(w)] if headless else page.words))
     pages = extended
     logicals = layout.logical_pages(pages, **options)
+    read_headless_rows(logicals, upper)
     heading = (options.get('header') or {}).get('title_amount')
     full = {page.number: full_rules(page) for page in pages}
     verticals = {page.number: [rule for rule in page.rules if rule.vertical and rule.y1 - rule.y0 >= stacked_titles.MIN_RULE]

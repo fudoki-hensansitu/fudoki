@@ -20,7 +20,7 @@
         "table_id": "general-initial",
         "workflow": {
           "layout": {
-            "pattern": "stacked_blocks",
+            "pattern": "framed_blocks",
             "options": {
               "columns": {
                 "款項目": {
@@ -101,7 +101,7 @@
         "table_id": "national-health-initial",
         "workflow": {
           "layout": {
-            "pattern": "stacked_blocks",
+            "pattern": "framed_blocks",
             "options": {
               "columns": {
                 "款項目": {
@@ -182,7 +182,7 @@
         "table_id": "long-term-care-initial",
         "workflow": {
           "layout": {
-            "pattern": "stacked_blocks",
+            "pattern": "framed_blocks",
             "options": {
               "columns": {
                 "款項目": {
@@ -263,7 +263,7 @@
         "table_id": "late-elderly-initial",
         "workflow": {
           "layout": {
-            "pattern": "stacked_blocks",
+            "pattern": "framed_blocks",
             "options": {
               "columns": {
                 "款項目": {

@@ -38,6 +38,7 @@ from shared.amount import number
 
 AMOUNT = re.compile(r'△?(?:0|[1-9][0-9]{0,2}(?:,[0-9]{3})*)')
 CODE = re.compile(r'^([0-9０-９]+)[．.]')
+DASH = re.compile(r'[-－−‐]')
 ROW_GAP = 3.0  # points: the words of one printed row start within this of each other (upright y)
 
 
@@ -49,8 +50,12 @@ class Reader(Reading):
         self.profile = profile
 
     # The upright frame of a table turned 90° counterclockwise on a page of height H: x' = H - y, y' = x.
+    # A profile with `turned: false` measures a page whose text layer already runs upright (the page is
+    # rotated in the PDF, so Poppler gives the table's own frame): the frame is the display frame.
     def upright(self, word, height):
         x0, y0, x1, y1 = word['box']
+        if not self.profile.get('turned', True):
+            return (x0, y0, x1, y1)
         return (height - y1, x0, height - y0, x1)
 
     def words(self, pdf, page, directory):
@@ -101,6 +106,8 @@ class Reader(Reading):
 
     def display_box(self, x, y, height):
         """An upright rectangle (x' range, y' range) as a display-page box."""
+        if not self.profile.get('turned', True):
+            return [x[0], y[0], x[1], y[1]]
         return [y[0], height - x[1], y[1], height - x[0]]
 
     def convert(self, inputs, destination, options):
@@ -156,6 +163,8 @@ class Reader(Reading):
                 taken.update(id(w) for w in inside)
                 if column['kind'] == 'ratio':
                     continue
+                # A dash alone in an amount cell is the printed nil of a 款 the year does not have: a blank.
+                inside = [w for w in inside if not DASH.fullmatch(w['text'])]
                 if len(inside) > 1:
                     raise ValueError(f'More than one print in an amount cell: {where} {[w["text"] for w in inside]}')
                 if inside and not AMOUNT.fullmatch(inside[0]['text']):
@@ -175,10 +184,13 @@ class Reader(Reading):
             label_words, values = cells(row, f'row at y\'={row[0]["up"][1]:.1f}')
             label_ids.update(id(w) for w in label_words)
             printed = self.read(label_words)
-            found = CODE.match(self.key(printed))
+            found = CODE.match(self.key(printed)) or DASH.match(self.key(printed))
             if not found:
                 raise ValueError(f'A 款 row without its printed number: {printed!r}')
-            code = re.match(r'[0-9０-９]+', printed.strip()).group(0)
+            # A dash in place of the number (`- 土石流災害対策費`): a 款 of the year before only. The dash printed in the
+            # number's place is kept as its code (a 款 of the subject axis always carries the code it prints).
+            number_printed = re.match(r'[0-9０-９]+|[-－−‐]', printed.strip())
+            code = number_printed.group(0)
             name = self.key(printed)[found.end():]
             if not name:
                 raise ValueError(f'A 款 row without its printed name: {printed!r}')
@@ -242,15 +254,23 @@ class Reader(Reading):
             glued = re.match(r'^([0-9０-９]+)(.+)$', w['text'])
             if glued and id(w) in label_ids:
                 x0, y0, x1, y1 = w['box']
-                cut = y1 - (y1 - y0) * len(glued.group(1)) / len(w['text'])  # the text runs up the page
-                scope.append((page, (x0, cut, x1, y1), glued.group(1)))
-                scope.append((page, (x0, y0, x1, cut), glued.group(2)))
+                share = len(glued.group(1)) / len(w['text'])
+                if profile.get('turned', True):
+                    cut = y1 - (y1 - y0) * share  # the text runs up the page
+                    scope.append((page, (x0, cut, x1, y1), glued.group(1)))
+                    scope.append((page, (x0, y0, x1, cut), glued.group(2)))
+                else:
+                    cut = x0 + (x1 - x0) * share
+                    scope.append((page, (x0, y0, cut, y1), glued.group(1)))
+                    scope.append((page, (cut, y0, x1, y1), glued.group(2)))
             else:
                 scope.append((page, w['box'], w['text']))
         write_coverage_words(destination / f'{options["table_id"]}.parquet', scope, excluded_regions=regions)
         moved = [(('／'.join(s['text'] for s in c['header'])), c['heading']) for c in profile['columns'] if c.get('heading')]
         notes = [
-            f'物理{page}頁の表（{profile["title"]}）は頁に90°回して組まれているので、語の位置を表の向きに回して行と欄を読んだ（読み方 turned_summary、位置は表示頁の座標のまま）。',
+            (f'物理{page}頁の表（{profile["title"]}）は頁に90°回して組まれているので、語の位置を表の向きに回して行と欄を読んだ（読み方 turned_summary、位置は表示頁の座標のまま）。'
+             if profile.get('turned', True) else
+             f'物理{page}頁の表（{profile["title"]}）は頁ごと回してあり、文字層が表の向きのままなので、その座標で行と欄を読んだ（読み方 turned_summary の turned: false）。'),
             f'款の行 {len(nodes)} 行を、区分の欄の印字のとおり款として置いた。項・目は印字されていない。',
             f'金額の単位は印字の「{profile["unit"]["printed"]}」。金額の欄 {len(amount_columns) + len(breakdowns)} 欄すべてで款の和と印字の「{profile["total_row"]["label"]}」が一致。'
             f'行の内訳（総額＝左の内訳の和など）を {compared} 行で照合して一致'
