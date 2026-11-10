@@ -30,14 +30,12 @@ export function parseRelay(body: unknown): RelayRequest {
 }
 
 /** JSON-RPC を1つ送り、JSON か SSE の data 行から result を取り出す */
-export async function callMcp(env: Env, ip: string, method: string, params: unknown) {
+export async function callMcp(env: Env, method: string, params: unknown) {
   const res = await apiFetch(env)(MCP_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
       Accept: 'application/json, text/event-stream',
-      // apps/api の評価の検索は IP ごとに数えるので、利用者の IP を渡す（Service Binding では自動で付かない）
-      ...(ip ? { 'CF-Connecting-IP': ip } : {}),
     },
     body: JSON.stringify({ jsonrpc: '2.0', id: 1, method, params }),
   })
@@ -58,12 +56,11 @@ export async function callMcp(env: Env, ip: string, method: string, params: unkn
 export async function handleRelay(c: ApiRequest): Promise<Response> {
   const started = Date.now()
   const { env } = c
-  const { ip } = c
   const relay = parseRelay(c.body)
   const tool = relay.method === 'tools/call' ? relay.params.name : ''
   let failed = false
   try {
-    return json(await callMcp(env, ip, relay.method, relay.params))
+    return json(await callMcp(env, relay.method, relay.params))
   } catch (e) {
     failed = true
     throw e

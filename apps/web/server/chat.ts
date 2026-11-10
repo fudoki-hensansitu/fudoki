@@ -19,7 +19,7 @@ const SYSTEM = [
   '頁の文脈（利用者が見ている頁・年度・選んだ文）は、問いの対象を補う参考です。文脈があるだけで調べ始めないでください。',
   '何を知りたいかが発言から決まらないとき（「品川区について教えて」など）は、推測で調べずに、選べる例を2〜3個添えて聞き返してください。',
   '金額・事業名・収録範囲を答えるときは、風土記の tool で調べた結果だけを根拠に、日本語で短く答えてください。tool で確かめていない金額や事業名を書かないでください。',
-  '事業の目的・内容・実績・評価など、金額だけでは答えられない詳細を聞かれたら、read_source_page で出典の該当頁を読んでから答えてください。頁は search_evaluations の page や、内訳・科目の印字の位置（source_page）から決めます。読んだ内容は要約して書き、長く引用しないでください。出典は read_source_page の結果の url（自治体の公式の資料）と頁で示してください。',
+  '事業の目的・内容・実績・評価など、金額だけでは答えられない詳細を聞かれたら、read_source_page で出典の該当頁を読んでから答えてください。頁は評価シート・予算案の施策の page（origin_id と組で渡す）や、内訳・科目の印字の位置（source_page）から決めます。読んだ内容は要約して書き、長く引用しないでください。出典は read_source_page の結果の url（自治体の公式の資料）と頁で示してください。',
   '収録されていない自治体・年度・資料は、無いと正直に伝えてください。決算の年度が無いときは、list_jurisdictions の uncovered_sources にある統計の出典を案内してください。統計は普通会計の分野ごとの合計で、事業の単位は無く、風土記の数字とは合計が合わないことも添えてください。',
   '表とグラフに出した結果は、応答の文章で一覧や金額を繰り返さず、問いへの答えと注意点だけを書いてください。',
 ].join('\n')
@@ -98,7 +98,7 @@ export function reasoningEffort(value: string | undefined): { reasoning_effort?:
 export async function handleChat(c: ApiRequest): Promise<Response> {
   const started = Date.now()
   const { env } = c
-  const { sessionId, ip } = c
+  const { sessionId } = c
   const chat = parseChat(c.body)
   if (chat.id !== sessionId) throw new HttpError(403, 'PERMISSION_DENIED', '別の会話の token です')
   const modelId = env.CHAT_MODEL
@@ -155,7 +155,7 @@ export async function handleChat(c: ApiRequest): Promise<Response> {
   const connectStarted = Date.now()
   try {
     mcp = await createMCPClient({
-      transport: { type: 'http', url: MCP_URL, fetch: apiFetch(env), headers: ip ? { 'CF-Connecting-IP': ip } : {} },
+      transport: { type: 'http', url: MCP_URL, fetch: apiFetch(env) },
       clientName: 'fudoki-web',
       capabilities: mcpAppClientCapabilities,
     })

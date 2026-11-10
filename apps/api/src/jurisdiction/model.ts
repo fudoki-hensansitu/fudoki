@@ -60,7 +60,16 @@ const jurisdictionFields = described('jurisdiction', {
   ocd_id: z.string(),
   official_url: z.string().nullable(),
 })
-const yearsOf = (what: string) => z.array(z.int()).describe(`${what}を収録した年度（西暦の昇順）。`)
+const EvaluationRef = z
+  .strictObject({ evaluation_id: z.string(), fiscal_year: z.int().describe('評価した事業を行った年度') })
+  .meta({ id: 'EvaluationRef', description: '収録した事業評価の年度。get_evaluation に evaluation_id を渡す。' })
+const BudgetProposalRef = z
+  .strictObject({ budget_proposal_id: z.string(), fiscal_year: z.int().describe('予算の年度') })
+  .meta({ id: 'BudgetProposalRef', description: '収録した予算案の年度。get_budget_proposal に budget_proposal_id を渡す。' })
+const refs = {
+  evaluations: z.array(EvaluationRef).describe('収録した事業評価（年度の昇順）。'),
+  budget_proposals: z.array(BudgetProposalRef).describe('収録した予算案（年度の昇順）。'),
+}
 
 /** 一覧の1行（要約） */
 export const JurisdictionSummary = z
@@ -68,8 +77,7 @@ export const JurisdictionSummary = z
     ...jurisdictionFields,
     population: z.array(PopulationPoint).describe(`住民基本台帳人口（基準日の昇順）。${POPULATION_MATCH_HELP}`),
     coverage: z.array(Coverage).describe(COVERAGE_HELP),
-    evaluation_years: yearsOf('事業評価（評価した事業を行った年度）'),
-    budget_proposal_years: yearsOf('予算案（予算の年度）'),
+    ...refs,
   })
   .meta({ id: 'JurisdictionSummary', description: '自治体と、その収録範囲の要約。' })
 export type JurisdictionSummary = z.infer<typeof JurisdictionSummary>
@@ -94,8 +102,7 @@ export const JurisdictionDetail = z.strictObject({
   ...jurisdictionFields,
   population: z.array(PopulationPoint).describe(`住民基本台帳人口（基準日の昇順）。${POPULATION_MATCH_HELP}`),
   coverage: z.array(CoverageWithOrigins).describe(COVERAGE_HELP),
-  evaluation_years: yearsOf('事業評価（評価した事業を行った年度）'),
-  budget_proposal_years: yearsOf('予算案（予算の年度）'),
+  ...refs,
   uncovered_sources: z.array(UncoveredSource).describe(UNCOVERED_SOURCES_HELP),
 })
 export type JurisdictionDetail = z.infer<typeof JurisdictionDetail>

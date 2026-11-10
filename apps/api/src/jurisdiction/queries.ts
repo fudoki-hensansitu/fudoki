@@ -88,12 +88,12 @@ const populationSql = (codes: string) =>
   `WHERE p."jurisdiction_code" IN (${codes}) ORDER BY p."jurisdiction_code", p."reference_date"`
 
 const yearsSql = (codes: string) =>
-  `SELECT "jurisdiction_code", 'evaluation' AS "kind", "fiscal_year" FROM ${EVALUATION_TABLE} WHERE "jurisdiction_code" IN (${codes}) ` +
-  `UNION SELECT "jurisdiction_code", 'budget_proposal', "fiscal_year" FROM ${BUDGET_PROPOSAL_TABLE} WHERE "jurisdiction_code" IN (${codes}) ` +
-  `ORDER BY 1, 2, 3`
+  `SELECT "jurisdiction_code", 'evaluation' AS "kind", "evaluation_id" AS "id", "fiscal_year" FROM ${EVALUATION_TABLE} WHERE "jurisdiction_code" IN (${codes}) ` +
+  `UNION ALL SELECT "jurisdiction_code", 'budget_proposal', "budget_proposal_id", "fiscal_year" FROM ${BUDGET_PROPOSAL_TABLE} WHERE "jurisdiction_code" IN (${codes}) ` +
+  `ORDER BY 1, 2, 4`
 
 type PopulationRow = PopulationPoint & { jurisdiction_code: string }
-type YearRow = { jurisdiction_code: string; kind: 'evaluation' | 'budget_proposal'; fiscal_year: number }
+type YearRow = { jurisdiction_code: string; kind: 'evaluation' | 'budget_proposal'; id: string; fiscal_year: number }
 
 function groupPopulation(rows: PopulationRow[]) {
   const out = new Map<string, PopulationPoint[]>()
@@ -102,11 +102,13 @@ function groupPopulation(rows: PopulationRow[]) {
 }
 
 function groupYears(rows: YearRow[]) {
-  const out = new Map<string, { evaluation_years: number[]; budget_proposal_years: number[] }>()
+  type Refs = { evaluations: { evaluation_id: string; fiscal_year: number }[]; budget_proposals: { budget_proposal_id: string; fiscal_year: number }[] }
+  const out = new Map<string, Refs>()
   for (const r of rows) {
-    const y = out.get(r.jurisdiction_code) ?? { evaluation_years: [], budget_proposal_years: [] }
+    const y = out.get(r.jurisdiction_code) ?? { evaluations: [], budget_proposals: [] }
     out.set(r.jurisdiction_code, y)
-    ;(r.kind === 'evaluation' ? y.evaluation_years : y.budget_proposal_years).push(r.fiscal_year)
+    if (r.kind === 'evaluation') y.evaluations.push({ evaluation_id: r.id, fiscal_year: r.fiscal_year })
+    else y.budget_proposals.push({ budget_proposal_id: r.id, fiscal_year: r.fiscal_year })
   }
   return out
 }
@@ -156,8 +158,8 @@ export async function listJurisdictions(ctx: Ctx, input: ListInput): Promise<Jur
         ...toRow(JURISDICTION_COLUMNS, r),
         population: residents.get(code) ?? [],
         coverage: (nested.get(code) ?? []).map((c) => ({ ...c, accounts: c.accounts.map(({ origins: _, ...a }) => a) })),
-        evaluation_years: yearsOf.get(code)?.evaluation_years ?? [],
-        budget_proposal_years: yearsOf.get(code)?.budget_proposal_years ?? [],
+        evaluations: yearsOf.get(code)?.evaluations ?? [],
+        budget_proposals: yearsOf.get(code)?.budget_proposals ?? [],
       } as JurisdictionList['jurisdictions'][number]
     }),
     next_page_token: more ? await nextToken(offset + limit, fp) : null,
@@ -181,8 +183,8 @@ export async function getJurisdiction(ctx: Ctx, code: string): Promise<Jurisdict
     ...toRow(JURISDICTION_COLUMNS, raw),
     population: groupPopulation(population!.results as unknown as PopulationRow[]).get(code) ?? [],
     coverage: nestCoverage(coverage!.results as unknown as CoverageRow[], true).get(code) ?? [],
-    evaluation_years: y?.evaluation_years ?? [],
-    budget_proposal_years: y?.budget_proposal_years ?? [],
+    evaluations: y?.evaluations ?? [],
+    budget_proposals: y?.budget_proposals ?? [],
     uncovered_sources: UNCOVERED_SOURCES,
   } as JurisdictionDetail
 }

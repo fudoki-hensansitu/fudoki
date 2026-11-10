@@ -1,46 +1,21 @@
 // 歳出の集約の問い合わせ。行と出典は1つの batch（トランザクション）で読み、同期の入れ替えをまたいで食い違わないようにする。
-import { DETAIL_TABLE, LOCATION_SELECT_LIST, LOCATION_TABLE, ORIGIN_SELECT_LIST, ORIGIN_TABLE, SUBJECT_TABLE, toRow, type FiscalTable, type Row } from '../columns'
+import { DETAIL_TABLE, LOCATION_SELECT_LIST, LOCATION_TABLE, ORIGIN_SELECT_LIST, ORIGIN_TABLE, SUBJECT_TABLE, toRow, type Row } from '../columns'
 import { ApiError } from '../errors'
 import type { Ctx } from '../shared/context'
 import { decodeToken, nextToken } from '../shared/paging'
-import { DEFAULT_PAGE_SIZE, buildWhere, canonicalJson, type SearchInput } from '../shared/search'
+import { searchRows } from '../shared/query'
+import { DEFAULT_PAGE_SIZE, type SearchInput } from '../shared/search'
 import type { DetailSearchOutput, LineOutput, SubjectSearchOutput } from './model'
 
-async function searchRows(t: FiscalTable, ctx: Ctx, input: SearchInput) {
-  const { db } = ctx
-  const where = buildWhere(t, input.document_kind, input.fiscal_year, input.where as never)
-  const order = [...(input.order_by ?? [])]
-  if (!order.some((k) => k.column === t.primaryKey)) order.push({ column: t.primaryKey })
-  const orderSql = order.map((k) => `"${k.column}"${k.desc ? ' DESC' : ''}`).join(', ')
-  const { page_size: limit, page_token: token, ...query } = input
-  const fp = [`search_${t.kind}`, canonicalJson(query)]
-  const offset = await decodeToken(token, fp)
-  const [page, origins] = await db.batch([
-    db
-      .prepare(`SELECT ${t.selectList} FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?`)
-      .bind(...where.params, limit + 1, offset),
-    db
-      .prepare(
-        `SELECT ${ORIGIN_SELECT_LIST} FROM ${ORIGIN_TABLE} WHERE origin_id IN ` +
-          `(SELECT origin_id FROM ${t.table} WHERE ${where.sql} ORDER BY ${orderSql} LIMIT ? OFFSET ?) ORDER BY origin_id`
-      )
-      .bind(...where.params, limit, offset),
-  ])
-  const more = page!.results.length > limit
-  return {
-    rows: page!.results.slice(0, limit).map((r) => toRow(t.columns, r)),
-    next_page_token: more ? await nextToken(offset + limit, fp) : null,
-    origins: origins!.results,
-  }
-}
+const EXPENDITURE_ORIGIN = { table: ORIGIN_TABLE, selectList: ORIGIN_SELECT_LIST }
 
 export async function searchSubjects(ctx: Ctx, input: SearchInput): Promise<SubjectSearchOutput> {
-  const { rows, ...rest } = await searchRows(SUBJECT_TABLE, ctx, input)
+  const { rows, ...rest } = await searchRows(SUBJECT_TABLE, EXPENDITURE_ORIGIN, ctx, input)
   return { subjects: rows, ...rest } as SubjectSearchOutput
 }
 
 export async function searchDetails(ctx: Ctx, input: SearchInput): Promise<DetailSearchOutput> {
-  const { rows, ...rest } = await searchRows(DETAIL_TABLE, ctx, input)
+  const { rows, ...rest } = await searchRows(DETAIL_TABLE, EXPENDITURE_ORIGIN, ctx, input)
   return { details: rows, ...rest } as DetailSearchOutput
 }
 

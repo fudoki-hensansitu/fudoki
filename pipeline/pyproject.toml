@@ -33,5 +33,5 @@ requires = ["uv_build==0.13.6"]
 build-backend = "uv_build"
 
 [tool.uv.build-backend]
-module-name = ["ingestion", "staging", "serving", "evaluation_search", "source_text"]
+module-name = ["ingestion", "staging", "serving", "source_text"]
 module-root = ""
