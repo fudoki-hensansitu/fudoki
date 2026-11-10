@@ -720,7 +720,7 @@
     {
       "table_id": "water-revenue-expenditure-detail",
       "conversion_id": "water-revenue",
-      "input_fingerprint": "18ebc576b1999aff9ff6d7e19c9273b7ac9c2736b0eeb4c85f7b769f566ceb01",
+      "input_fingerprint": "fde25d663b07d25a22b8b9cb32af4501fc4872915f9e55d9fc53cab3b2ece93d",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
@@ -750,7 +750,7 @@
     {
       "table_id": "water-capital-expenditure-detail",
       "conversion_id": "water-capital",
-      "input_fingerprint": "a50b9d6c3d7333d667fe4b0bb5d824a54404d778830d4926ddb137da692801da",
+      "input_fingerprint": "ee5a50c2e40f78856010dfa0c6aa3ab82cdb3775d1f1716985840d3fc1e885ea",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",

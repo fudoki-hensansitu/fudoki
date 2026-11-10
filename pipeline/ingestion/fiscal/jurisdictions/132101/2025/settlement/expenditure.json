@@ -1266,7 +1266,7 @@
     {
       "table_id": "expenditure-settlement-6",
       "conversion_id": "settlement-6",
-      "input_fingerprint": "78ae0bee6518d2e0b27c62f658420afbd6aa5a110e7ec986c08c6de7b97d2a14",
+      "input_fingerprint": "a687447547fc457da1bcafa9245224f1c1d1801f26930f7dc503668283b138db",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'備考': 'indent'}。",
@@ -1431,7 +1431,7 @@
     {
       "table_id": "expenditure-settlement-12",
       "conversion_id": "settlement-12",
-      "input_fingerprint": "78ff2da71a7c333407731603165b0c588c9d67aa0c40d05de086da1cd61cc1ba",
+      "input_fingerprint": "b4b882f8ff9a36b0e4f9bc10ed57195f782e0458ee8167136ca3c7c3bfbf7577",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -1570,7 +1570,7 @@
     {
       "table_id": "expenditure-settlement-17",
       "conversion_id": "settlement-17",
-      "input_fingerprint": "4213f6226674fe499e232eca2a0b5191085aa26bcc43ff88071e22cc4b0ceccf",
+      "input_fingerprint": "99dce5e5a3a3aafd74163d07408474a0d8804f3d735964b6072b589d9976117d",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",

@@ -2122,7 +2122,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "532f0eacdfc5b0b46980f959235d4ce48dbb0115f2e43b25f5b7482eed3ee45c",
+      "input_fingerprint": "df0f964f68c60ba2f7f6172c281537fa356144d6ec844733e33995669b0d1042",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2154,7 +2154,7 @@
     {
       "table_id": "nhi-expenditure-detail",
       "conversion_id": "nhi",
-      "input_fingerprint": "5c1a8851bb604728c89c2759559e3daac8efbe854e90851ec9e4cbb88450e8ff",
+      "input_fingerprint": "03ec403d86efaf2caa2523a80694abfd5a1e7b9f1c797c3f84ada78a899e9435",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2186,7 +2186,7 @@
     {
       "table_id": "elderly-expenditure-detail",
       "conversion_id": "elderly",
-      "input_fingerprint": "f7366ff9321c763b8613e448ba94f2bcbe985631473cf44715e81aad852ad42c",
+      "input_fingerprint": "14d65951a231ea1268e74cb77bbc1fbd312954f5efbc8fa83561888feacf2de5",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2217,7 +2217,7 @@
     {
       "table_id": "care-expenditure-detail",
       "conversion_id": "care",
-      "input_fingerprint": "5147b39e4b1f8a457de3a77c26dca216e0635c701927154f55f5cc906c929b94",
+      "input_fingerprint": "d2736840dfe36e9af1c171ac27680954aa32fe584fbaa779c61a2e1bd08e10dc",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
@@ -2249,7 +2249,7 @@
     {
       "table_id": "nishiguchi-expenditure-detail",
       "conversion_id": "nishiguchi",
-      "input_fingerprint": "769cd38751064c41cde3b9759b74ea57259e2da49e6b99e036c99505e8d9e7a7",
+      "input_fingerprint": "4856f0eb0080cad3574c1d13b515aa3148514484486d34ed647c7485162425cd",
       "account": "羽村市福生都市計画事業羽村駅西口土地区画整理事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'position'}。",
