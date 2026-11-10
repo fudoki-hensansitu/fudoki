@@ -50,6 +50,9 @@ const matches = (e: MapEntry, q: string) => {
   return !s || e.name.includes(s) || e.path.includes(s.toLowerCase())
 }
 
+/** 何か入力していて、当たる自治体が1つも無い */
+const noMatch = (entries: MapEntry[], q: string) => q.trim() !== '' && !entries.some((e) => matches(e, q))
+
 function Emblem({ code, name, className = 'size-10' }: { code: string; name: string; className?: string }) {
   const [failed, setFailed] = React.useState(false)
   return (
@@ -60,18 +63,17 @@ function Emblem({ code, name, className = 'size-10' }: { code: string; name: str
 }
 
 function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; placeholder: string }) {
+  const [query, setQuery] = React.useState('')
   return (
-    <Combobox autoHighlight items={entries} filter={(e: MapEntry, q: string) => matches(e, q)} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && onPick(e as MapEntry)}>
+    <>
+    <Combobox autoHighlight items={entries} onInputValueChange={setQuery} filter={(e: MapEntry, q: string) => matches(e, q)} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && onPick(e as MapEntry)}>
       <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder={placeholder} className="h-12 rounded-full border-0 bg-brand-fill px-2 text-[15px] text-brand-fill-foreground shadow-[var(--shadow-pill)] dark:bg-brand-fill dark:shadow-none [&_input]:placeholder:text-brand-fill-muted [&_svg]:text-brand-fill-muted has-[[data-slot=input-group-control]:focus-visible]:ring-ring/15">
         <InputGroupAddon>
           <MagnifyingGlassIcon className="size-5" />
         </InputGroupAddon>
       </ComboboxInput>
       <ComboboxContent>
-        <ComboboxEmpty className="flex-col items-center gap-1">
-          当たる自治体は、まだ収録していません
-          <RequestTown />
-        </ComboboxEmpty>
+        <ComboboxEmpty>当たる自治体は、まだ収録していません</ComboboxEmpty>
         <ComboboxList>
           {(e: MapEntry) => (
             <ComboboxItem key={e.code} value={e}>
@@ -82,6 +84,9 @@ function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick:
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
+    {/* 候補の窓の中のリンクはキーボードで辿れないので、要望フォームへの入口は検索欄の下に出す */}
+    {noMatch(entries, query) ? <RequestTown className="mt-2 text-[13px]" /> : null}
+    </>
   )
 }
 

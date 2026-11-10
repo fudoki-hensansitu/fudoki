@@ -14,7 +14,7 @@ export function JurisdictionView(props: JurisdictionProps) {
         <p>この自治体の決算は、風土記にまだ収録されていません。</p>
         {props.neighbors.length ? (
           <>
-            <h2>近くで収録している自治体</h2>
+            <h2>同じ都道府県で収録している自治体</h2>
             <p>
               {props.neighbors.map((n, i) => (
                 <span key={n.code}>
