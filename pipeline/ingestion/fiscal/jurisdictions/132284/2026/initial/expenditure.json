@@ -28,6 +28,30 @@
                 },
                 "前年度": {
                   "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
                 }
               }
             }
@@ -64,7 +88,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "0c3828d47ca02182048b1f2db4532346e0639ab6e655ccdfba9236d1d3fb852c",
+      "input_fingerprint": "10c271da06bb93f5d858d3b49a20073c7c987b08ac0d35fd03849c2a08817ac4",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -76,18 +100,18 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132284/2026/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "9ebf62e44e4c285e6726857db2b0fa684b8e36e5176ae7c38c676355c5db9eef",
-          "bytes": 184656
+          "sha256": "b91c6530930ee392571ee27902a7c73810175492d3baf801f62670e2e0978032",
+          "bytes": 184658
         },
-        "row_count": 6226
+        "row_count": 6225
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132284/2026/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "e86a7a8339273305b620df4ffc26d7fea0fcc08875142f60896ec4c5d5500a43",
-          "bytes": 131891
+          "sha256": "db17816ba3ca1e90f9e2527ca1a564167316bbf0ff3fb20a17afb7647b1a1287",
+          "bytes": 128244
         },
-        "row_count": 6976
+        "row_count": 6561
       }
     }
   ]

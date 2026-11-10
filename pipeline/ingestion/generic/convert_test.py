@@ -55,6 +55,14 @@ class NoteLayingTest(unittest.TestCase):
         self.assertEqual({r['kind'] for r in regions}, {'財源内訳'})
         validate_exclusions(regions)
 
+    def test_a_head_count_line_is_no_note_and_its_digits_are_a_staff_exclusion(self):
+        built = self.built([self.record('annotation', [glyph('２６人', 161, 258)], [], hint='職員')])
+        nodes, amounts, unresolved, dropped, codes = lay_notes(built)
+        self.assertEqual((nodes, amounts, unresolved), ([], [], []))
+        regions = excluded_regions(built, [], [], [])
+        self.assertEqual({r['kind'] for r in regions}, {'職員'})
+        validate_exclusions(regions)
+
     def test_a_kind_line_inside_an_item_leaves_the_item_and_a_remark_without_a_kind_is_left_unadopted(self):
         kind_line = self.record('kind line', [glyph('繰越明許費', 900, 100)], [[glyph('302,000', 1000, 100)]],
                                 node_key='item', heading='備考／繰越明許費')

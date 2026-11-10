@@ -126,7 +126,8 @@
                   "note_kinds": {
                     "（特定財源": "財源内訳",
                     "(（特定財源": "財源内訳"
-                  }
+                  },
+                  "head_counts": true
                 }
               }
             }
@@ -144,7 +145,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "7a8bd12a98b77db569338d060b758db894ee8abdf1460c0f2e0a95f41f0f68a8",
+      "input_fingerprint": "7f655236cde9a9d2a4b6e422f8f41ce4a481bfb4494c8b3f50a38e1fcef7d6f9",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -158,10 +159,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132021/2026/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "f95277e341a7188080a6a071973afba3fab567ba27183ef8606cdc10562481a0",
-          "bytes": 188667
+          "sha256": "1461e0092c75c796b40f1bab7b3f1531db5179e0b73277471c775345946ba326",
+          "bytes": 183587
         },
-        "row_count": 5799
+        "row_count": 5683
       },
       "amounts": {
         "object": {

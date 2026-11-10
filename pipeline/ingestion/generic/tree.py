@@ -1407,9 +1407,10 @@ class Built:
     # the same column (the 節 row of a 予備費, which prints no 節 name): the parent's amounts again, not new ones.
     repeated_amounts: list = field(default_factory=list)
     unpaid_rounds: list = field(default_factory=list)  # the printed round of a supplementary budget (`第２次補正`) no amount follows
-    # Glyphs of a note the settings mark as the funding of an item (`note_kinds` → 財源内訳: `（特定財源 9,533 一般財源
-    # 3,016,275）`): no expenditure amount and no 注記, `convert` declares their digits as excluded regions.
-    funding: list = field(default_factory=list)
+    # Glyphs of the notes that are no note, by kind: the funding of an item (`note_kinds` → 財源内訳: `（特定財源 9,533
+    # 一般財源 3,016,275）`) and a head count (`head_counts`: `２６人`). No expenditure amount and no 注記, `convert`
+    # declares their digits as excluded regions.
+    dropped_notes: dict = field(default_factory=dict)
 
 
 def node_key(item: Item) -> str:
@@ -1678,6 +1679,11 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             # `1項1目18節から 169,664`, 132055) is the note it says it is.
             note = False
             item.code, item.name, item.indent = None, raw, waiting.indent
+        if (settings.get('head_counts') and item.code is not None and not item.amounts and id(item) not in column_amount_items
+                and re.fullmatch(r'[0-9０-９]+人', raw)):
+            # A line that prints only the head count of the item above (`議員報酬 174,972` / `２６人`), not an item.
+            note, item.hint = False, '職員'
+            item.role = 'annotation'
         mark = next((m for m in ordered_marks
                      if (shape_of(item) == shapes[m] if m in shapes else raw.startswith(normalize(m)))), None)
         if note:
@@ -1938,9 +1944,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             kept = []
             for item in found[id(group)]:
                 previous = kept[-1] if kept else None
-                # (Under stacked titles a 目 abolished this year prints no number: `退職被保険` / `者等療養費` `0 1 △1`.)
+                # (A 目 abolished this year prints no number, its amounts in the columns: `退職被保険` / `者等療養費` `0 1 △1`
+                # under stacked titles, `○都知事` / `選挙費` `0 105,491 △105,491` in a ruled table, 132021.)
                 if (previous is not None and previous.name
-                        and (previous.code is not None or (logical.level_titles is not None and id(previous) in column_amount_items))
+                        and (previous.code is not None or (id(previous) in column_amount_items and not TOTAL.search(previous.name)))
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts
                         # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)

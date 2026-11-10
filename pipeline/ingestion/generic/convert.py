@@ -38,6 +38,13 @@ from ingestion.paths import CACHE
 NOTE_SEPARATOR = '／注記／'
 # The `note_kinds` kind of a note that prints the funding of an item: no note, its digits are excluded.
 FUNDING = '財源内訳'
+# The hint of a line that prints only the head count of the item above (`２６人`, breakdown `head_counts`).
+HEAD_COUNT = '職員'
+# Notes that are no note: their digits are a coverage exclusion of their kind, with this reason.
+DROPPED_NOTES = {
+    FUNDING: '事業の金額の財源の内訳（（特定財源 X 一般財源 Y））。歳出の金額ではない。',
+    HEAD_COUNT: '上の行の人数（２６人）。歳出の金額ではない。',
+}
 # An account code joined by hyphens or dots (`02-01-02-15-11-01`, `40.15.25`): printed text in a transfer note's
 # label, and amount-shaped to the coverage check, which never lets a hyphen-and-digits word be a label.
 ACCOUNT_CODE = re.compile(r'[0-9０-９][-－―—.．][0-9０-９]')
@@ -118,9 +125,10 @@ def lay_notes(built) -> tuple[list[dict], list[dict], list[dict], set, list]:
         # The dictionary first; then what the account says (a reserve's remarks are 充用); then the
         # transfer words of a remark.
         kind = kind_of(label) or record.get('hint') or kind_of(label, words=record['kind'] == 'annotation')
-        if record['kind'] == 'annotation' and record.get('hint') == FUNDING:
-            # The funding of the item (`（特定財源 9,533 一般財源 3,016,275）`): the sources of its amount, no note on it.
-            built.funding.extend([*record['label'], *(g for run in record['runs'] for g in run)])
+        if record['kind'] == 'annotation' and record.get('hint') in DROPPED_NOTES:
+            # The funding of the item (`（特定財源 9,533 一般財源 3,016,275）`), or its head count (`２６人`): no note on it.
+            built.dropped_notes.setdefault(record['hint'], []).extend(
+                [*record['label'], *(g for run in record['runs'] for g in run)])
             continue
         if kind is None:
             if record['kind'] == 'annotation' and record['runs']:
@@ -197,8 +205,8 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     """
     regions = coverage_regions([(g.page, g.original, g.text) for g in codes], kind='本文',
                                reason='注記の文言に印字された流用元・流用先の科目コード。金額は注記金額として取り込み済み。')
-    regions += coverage_regions([(g.page, g.original, g.text) for g in getattr(built, 'funding', ())], kind=FUNDING,
-                                reason='事業の金額の財源の内訳（（特定財源 X 一般財源 Y））。歳出の金額ではない。')
+    for kind, glyphs in getattr(built, 'dropped_notes', {}).items():
+        regions += coverage_regions([(g.page, g.original, g.text) for g in glyphs], kind=kind, reason=DROPPED_NOTES[kind])
     for logical in logicals:
         for band in logical.bands:
             if band.excluded:  # a column the layout file declares not taken in, with its kind and reason

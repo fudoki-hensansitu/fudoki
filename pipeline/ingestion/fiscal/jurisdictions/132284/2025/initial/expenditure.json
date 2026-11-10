@@ -28,6 +28,30 @@
                 },
                 "前年度": {
                   "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
                 }
               }
             }
@@ -64,7 +88,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "d56908554ff5498d52319258c16f5d884f83daf407d00e4a47a11b321388f56e",
+      "input_fingerprint": "289832f6837b024dbf968d65fc46ccc8bb8316714e7868c6fed3e48a13e21cc3",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -84,10 +108,10 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132284/2025/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "dde6795ca4f423a8f04b3462a7c38ba259c292e2fb60e893e928be831ddbb8ec",
-          "bytes": 133868
+          "sha256": "2e6b63340c16e06eb87c145f4dbeeb39dfebec3a562e3ddda7f7b5ef06fe2e23",
+          "bytes": 130196
         },
-        "row_count": 7064
+        "row_count": 6648
       }
     }
   ]
