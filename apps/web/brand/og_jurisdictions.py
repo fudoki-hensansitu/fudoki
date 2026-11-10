@@ -3,7 +3,7 @@
 `bun run --cwd apps/web build:og` で、紋章（emblem.svg）を置いた自治体の分だけ作り直す。
 金額は画面と同じ数字にするため、公開中の自治体の頁（fudoki.dev）が埋め込む cofogFlow（最新の決算の COFOG 大分類）を読む。
 決算を取り込んで本番に出たら作り直す。決算の無い自治体（cofogFlow が空）は画像を作らず、全頁共通の OG 画像のままにする。
-文字はロゴと同じ書体をパス化し、端末の書体に依存させない。緑は総額とロゴだけに使う。
+文字はロゴと同じ書体をパス化し、端末の書体に依存させない。緑は総額・ロゴ・サンキーに使い、文字は墨色にする。
 """
 
 import base64
@@ -28,7 +28,7 @@ with (ROOT / "pipeline/dbt/seeds/jurisdiction/prefecture_master.csv").open(encod
 PREFECTURE_SLUGS = json.loads((ROOT / "packages/jurisdictions/prefectures.json").read_text())["slugs"]
 ORIGIN = "https://fudoki.dev"
 TAGLINE = "まちのお金、何に使ってる？"
-TEXT, MUTED = "#2b2723", "#8a8378"
+TEXT = "#2b2723"
 OW, OH, LEFT = 1200, 630, 80
 # サンキー: 総額の棒（左）から分野の棒（右）へ。名前を付けるのは大きい順に6分野で、残りは「ほか」にまとめる
 TOP_AREAS, FLOW_TOP, FLOW_BOTTOM, LABEL_MIN = 6, 64, 566, 58
@@ -95,7 +95,7 @@ def sankey(areas: list[tuple[str, int]], found: dict) -> tuple[int, str]:
     gap = (room - sum(max(h, LABEL_MIN) for h in heights)) / max(len(nodes) - 1, 1)
     source_h = total * k
     source_y = FLOW_TOP + (room - source_h) / 2
-    parts = [f'<rect x="{SOURCE_X}" y="{source_y:.1f}" width="{BAR_W}" height="{source_h:.1f}" rx="3" fill="{MUTED}"/>']
+    parts = [f'<rect x="{SOURCE_X}" y="{source_y:.1f}" width="{BAR_W}" height="{source_h:.1f}" rx="3" fill="{INK}"/>']
     x0, x1 = SOURCE_X + BAR_W, TARGET_X
     c = (x0 + x1) / 2
     y_source, slot_y = source_y, FLOW_TOP
@@ -104,8 +104,8 @@ def sankey(areas: list[tuple[str, int]], found: dict) -> tuple[int, str]:
         y = slot_y + (slot - h) / 2
         parts.append(
             f'<path d="M{x0} {y_source:.1f} C{c} {y_source:.1f} {c} {y:.1f} {x1} {y:.1f} L{x1} {y + h:.1f} '
-            f'C{c} {y + h:.1f} {c} {y_source + h:.1f} {x0} {y_source + h:.1f} Z" fill="{TEXT}" fill-opacity="0.08"/>')
-        parts.append(f'<rect x="{TARGET_X}" y="{y:.1f}" width="{BAR_W}" height="{max(h, 2):.1f}" rx="2" fill="{MUTED}"/>')
+            f'C{c} {y + h:.1f} {c} {y_source + h:.1f} {x0} {y_source + h:.1f} Z" fill="{INK}" fill-opacity="0.16"/>')
+        parts.append(f'<rect x="{TARGET_X}" y="{y:.1f}" width="{BAR_W}" height="{max(h, 2):.1f}" rx="2" fill="{INK}"/>')
         mid, label_x = slot_y + slot / 2, TARGET_X + 30
         amount = oku(yen)
         parts.append(f'<g fill="{TEXT}" fill-opacity="0.65">{text(name, 19, label_x, mid - 4, found, 0.02)}</g>')
