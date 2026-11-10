@@ -61,7 +61,7 @@ TABLE_ORDER = ['jurisdiction', 'population_origin', 'population',
                'expenditure', 'expenditure_origin', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
                'expenditure_location',
                'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
-               'budget_proposal', 'budget_proposal_origin', 'budget_measure']
+               'budget_proposal', 'budget_proposal_origin', 'budget_measure', 'project', 'project_year']
 # 集約ごとの作り直し（docs/prd/aggregate-api/dd.md）より前の表。新しい Worker の deploy を確かめてから --drop-legacy で消す
 LEGACY_TABLES = ['fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expenditure_detail', 'fiscal_expenditure_location',
                  'fiscal_coverage', 'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator',

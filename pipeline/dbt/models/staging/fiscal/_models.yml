@@ -12,8 +12,41 @@ models:
     description: 金額自身の矩形の右端。不明ならNULL。
   - name: y1
     description: 金額自身の矩形の下端。不明ならNULL。
+- name: stg_fiscal__csv_named_expenditure
+  description: 原文のCSV行と1対1。番号と名称を別の列に持つ書式（会計名称・款・款名称・項・項名称・目・目名称・細目・細目名称・節・節名称、多摩市の当初予算）。細々節は無い。金額の列名と単位は CSV の変換の宣言（amount_column・amount_unit）で決める。木への変換はintermediateで行う。
+  columns:
+  - name: account_name
+    description: 会計名称の原文（例 一般会計）。
+  - name: kan_code
+    description: 款の番号。
+  - name: kan_name
+    description: 款名称の原文。
+  - name: kou_code
+    description: 項の番号。
+  - name: kou_name
+    description: 項名称の原文。
+  - name: moku_code
+    description: 目の番号。
+  - name: moku_name
+    description: 目名称の原文。
+  - name: saimoku_code
+    description: 細目の番号。目と節の間の区分。
+  - name: saimoku_name
+    description: 細目名称の原文。
+  - name: setsu_code
+    description: 節の番号。
+  - name: setsu_name
+    description: 節名称の原文。
+  - name: amount_text
+    description: 金額の列の原文。列名と単位は CSV の変換の宣言で決める。
+  - name: amount
+    description: 金額の数値。読めない値はNULLにせず検査で止める。
+  - name: source_line_start
+    description: 原文CSVの物理行の開始。出典の位置の特定に使う。
+  - name: source_line_end
+    description: 原文CSVの物理行の終了。
 - name: stg_fiscal__csv_expenditure
-  description: 原文のCSV行と1対1。歳出（132047の当初予算・決算）は会計/款/項/目/事項/節/細々節の7階層で、各セルは番号+名称。金額の列名と単位は CSV の変換の宣言（amount_column・amount_unit）で決める。木への変換はintermediateで行う。
+  description: 原文のCSV行と1対1（番号付きの書式）。歳出（132047の当初予算・決算）は会計/款/項/目/事項/節/細々節の7階層で、各セルは番号+名称。金額の列名と単位は CSV の変換の宣言（amount_column・amount_unit）で決める。木への変換はintermediateで行う。
   columns:
   - name: account_raw
     description: 01会計の原文（例01一般会計）。会計名は番号を除いた値。

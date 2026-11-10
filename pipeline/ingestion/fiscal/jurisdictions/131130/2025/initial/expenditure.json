@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131130",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3e2efbe4d6e69588962a6f12ccfc2237b7a016913fdfb0415df3f600c54e5902"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "annotated_spread",
+            "profile": "fiscal/jurisdictions/131130/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "nhi-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3e2efbe4d6e69588962a6f12ccfc2237b7a016913fdfb0415df3f600c54e5902"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "nhi-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "annotated_spread",
+            "profile": "fiscal/jurisdictions/131130/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-initial"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3e2efbe4d6e69588962a6f12ccfc2237b7a016913fdfb0415df3f600c54e5902"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "kaigo-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "annotated_spread",
+            "profile": "fiscal/jurisdictions/131130/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3e2efbe4d6e69588962a6f12ccfc2237b7a016913fdfb0415df3f600c54e5902"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "kouki-initial",
+        "workflow": {
+          "reading": {
+            "pattern": "annotated_spread",
+            "profile": "fiscal/jurisdictions/131130/layouts/text_budget/reading.json"
+          },
+          "components": []
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "e98c99a89b9db36b42cfca6756d2c9453c6dc5988fa5e44d553941f46e1f3b98",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 77頁 から決めた。款の和 146,873,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 2 件（内訳 2）を注記軸に置いた。",
+        "説明の額の後ろに印字された単位の語（千円）2 語を、額の一部・名前の一部とせずに外して読んだ。",
+        "数量だけを折り返した説明の行（「22 回」のような数と助数詞）55 件を項目にせず、数量表として網羅の検査から外した。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131130/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "1b920762f64424eb93fbfdd9f1dad87bc7b8f6edbca5d201c81044d3d6697f41",
+          "bytes": 74282
+        },
+        "row_count": 2445
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131130/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "18501aff848a223017e4eba1fa1772b26c689ebb795588b2cae8c37b424be3fb",
+          "bytes": 65955
+        },
+        "row_count": 4359
+      }
+    },
+    {
+      "table_id": "nhi-initial",
+      "conversion_id": "nhi-initial",
+      "input_fingerprint": "da0367197ef75220bc1e74c3c165616d7c039e486654053f8dff3aaad992861e",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 17頁 から決めた。款の和 26,704,072（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 14 件（内訳 4・積算 10）を注記軸に置いた。",
+        "説明の額の後ろに印字された単位の語（千円）23 語を、額の一部・名前の一部とせずに外して読んだ。",
+        "数量だけを折り返した説明の行（「22 回」のような数と助数詞）0 件を項目にせず、数量表として網羅の検査から外した。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131130/2025/initial/expenditure/nhi-initial-nodes.parquet",
+          "sha256": "66184ecdd07f61c467b93d70bc38cfdf483aa2f00c8b172e7efb6d0e2c0b3d0e",
+          "bytes": 10099
+        },
+        "row_count": 194
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131130/2025/initial/expenditure/nhi-initial-amounts.parquet",
+          "sha256": "47c832ce3163361b50999eff6aaa9442885921ea5778e35804e62fa584337454",
+          "bytes": 9133
+        },
+        "row_count": 372
+      }
+    },
+    {
+      "table_id": "kaigo-initial",
+      "conversion_id": "kaigo-initial",
+      "input_fingerprint": "c36a0d243ff0ba62ccc34788dcb1a727a242872fac9cc2c89ae6a05aeb0c6329",
+      "account": "介護保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 10頁 から決めた。款の和 17,609,649（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "説明の額の後ろに印字された単位の語（千円）0 語を、額の一部・名前の一部とせずに外して読んだ。",
+        "数量だけを折り返した説明の行（「22 回」のような数と助数詞）0 件を項目にせず、数量表として網羅の検査から外した。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131130/2025/initial/expenditure/kaigo-initial-nodes.parquet",
+          "sha256": "ec93bf6d4a282f053a8a2f87764ab6607051b9d8c800ddbe276abe2dbed0adf9",
+          "bytes": 9615
+        },
+        "row_count": 176
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131130/2025/initial/expenditure/kaigo-initial-amounts.parquet",
+          "sha256": "41278266a259e5800fa69e1a6cdf24b6a1c14753b5c4c0e050e0166f57ce1c9b",
+          "bytes": 7968
+        },
+        "row_count": 304
+      }
+    },
+    {
+      "table_id": "kouki-initial",
+      "conversion_id": "kouki-initial",
+      "input_fingerprint": "931d203b55200c44ab086f70676868ce0c612c2ba2ead7b4fe4034b813615aee",
+      "account": "後期高齢者医療事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 6頁 から決めた。款の和 6,959,223（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "説明の額の後ろに印字された単位の語（千円）0 語を、額の一部・名前の一部とせずに外して読んだ。",
+        "数量だけを折り返した説明の行（「22 回」のような数と助数詞）0 件を項目にせず、数量表として網羅の検査から外した。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131130/2025/initial/expenditure/kouki-initial-nodes.parquet",
+          "sha256": "32379669f378a3fc4046a26035849b70b41aa3dbcf4504697f73cef277771e29",
+          "bytes": 4897
+        },
+        "row_count": 58
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131130/2025/initial/expenditure/kouki-initial-amounts.parquet",
+          "sha256": "fab591ba0e3fb5364a4e3f3c7508aa1814c94500f6b32b1d1a0b926ccbf1416e",
+          "bytes": 4257
+        },
+        "row_count": 126
+      }
+    }
+  ]
+}
