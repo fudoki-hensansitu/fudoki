@@ -22,7 +22,7 @@ from ingestion.generic.observe import Page, Rule, Word
 from ingestion.generic.patterns import quirk
 from ingestion.generic.workflow import read_layout
 from ingestion.lib import pdf_rules
-from ingestion.lib.scan_ocr import superseded
+from ingestion.lib.ocr_ink import superseded
 from ingestion.lib.ocr_names import (AmountDictionary, AmountRule, correct_amount, correct_name, correct_variant_chars,
                                      load_name_dictionary, load_variant_chars)
 
@@ -1003,7 +1003,7 @@ def recover_codes(observed: list[Page], pdf: Path, columns: dict | None = None,
     The component must have digit height, be narrow, stay off the crop edges, and be
     separate from the name. Other digits and ambiguous marks are left for explicit OCR.
     """
-    from ingestion.lib.scan_ocr import missed_ink
+    from ingestion.lib.ocr_ink import missed_ink
     holes = [h for h in code_holes(_layout(observed, columns, spread=spread, header=header),
                                     (header or {}).get('_subject_pattern', 'bands')) if h['expected'] == 1]
     images, filled, words = {}, [], {p.number: list(p.words) for p in observed}
