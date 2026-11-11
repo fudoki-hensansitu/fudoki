@@ -72,6 +72,11 @@ export function yearView(d: Snapshot, year: number) {
     isNew,
     isEnded: (p: Proj) => hasPrev && amt(p, prev) != null && budget(p) == null,
     kind: y.kind,
+    hasPrev,
+    /** 頁の金額が当初予算か決算か */
+    word: y.kind === 'settlement' ? '決算' : '予算',
+    /** その年度の並びに使う額の名前 */
+    label: (year: number) => (d.years[String(year)]?.kind === 'settlement' ? '決算' : '当初予算'),
     amount: (p: Proj, year = ys) => amt(p, year),
   }
 }

@@ -158,7 +158,7 @@ function ProjectRow({ p, rank }: { p: Proj; rank?: number }) {
   const ended = v.isEnded(p)
   const yen = ended ? p.y[String(v.year - 1)]?.b : p.y[String(v.year)]?.b
   const icon = ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : <IconBox><FieldIcon id={p.field} /></IconBox>
-  return <Row rank={rank} icon={icon} title={p.name} sub={[p.dept, fieldName(v, p.field)].filter(Boolean).join(' · ')} yen={yen} note={ended ? `${r(v.year - 1)} 当初予算` : `${((yen! / v.total) * 100).toFixed(1)}%`} selected={selected?.kind === 'project' && selected.id === p.id} onClick={() => select({ kind: 'project', id: p.id })} />
+  return <Row rank={rank} icon={icon} title={p.name} sub={[p.dept, fieldName(v, p.field)].filter(Boolean).join(' · ')} yen={yen} note={ended ? `${r(v.year - 1)} ${v.label(v.year - 1)}` : `${((yen! / v.total) * 100).toFixed(1)}%`} selected={selected?.kind === 'project' && selected.id === p.id} onClick={() => select({ kind: 'project', id: p.id })} />
 }
 function MeasureRow({ m }: { m: Measure }) {
   const { v, select, selected } = useApp()
@@ -337,15 +337,19 @@ function Overview({ go }: { go: Go }) {
     <div className="flex flex-col gap-8">
       <div className="grid gap-3 md:grid-cols-[1.3fr_1fr]">
         <Card className="gap-0 bg-card px-5 py-[18px] ring-0">
-          <span className="text-xs text-muted-foreground">{reiwa(v.year)}の予算（一般会計）</span>
+          <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}（一般会計）</span>
           <Amt yen={v.total} className="mt-0.5 text-[40px] leading-tight text-primary max-sm:text-[34px]" />
           <span className="mt-3 text-xs text-muted-foreground">住民1人あたり</span>
           <Amt yen={v.perHead} className="text-[22px] text-primary" />
         </Card>
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-2"><CountCard icon={<ListBulletsIcon />} label="事業" n={v.current.length} onClick={() => go('projects', { filter: 'all' })} /></div>
-          <CountCard icon={<NewIcon className="text-primary" />} label="新しく始める事業" n={v.newProjects.length + v.freshUnlinked.length} onClick={() => go('projects', { filter: 'new' })} />
-          <CountCard icon={<StopIcon className="text-primary" />} label="やめた事業" n={v.ended.length} onClick={() => go('projects', { filter: 'ended' })} />
+          {v.hasPrev || v.fresh.length ? (
+            <>
+              <CountCard icon={<NewIcon className="text-primary" />} label="新しく始める事業" n={v.newProjects.length + v.freshUnlinked.length} onClick={() => go('projects', { filter: 'new' })} />
+              <CountCard icon={<StopIcon className="text-primary" />} label="やめた事業" n={v.ended.length} onClick={() => go('projects', { filter: 'ended' })} />
+            </>
+          ) : null}
           {v.sheets.length ? <div className="col-span-2"><CountCard icon={<ClipboardTextIcon />} label="評価した事業" n={v.sheets.length} onClick={() => go('projects', { filter: 'eval' })} /></div> : null}
         </div>
       </div>
@@ -377,6 +381,8 @@ function Overview({ go }: { go: Go }) {
 
 function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { filter: string; setFilter: (f: string) => void; field: string; setField: (f: string) => void; grade: string; setGrade: (g: string) => void }) {
   const { v } = useApp()
+  const by = filter === 'ended' ? v.year - 1 : v.year
+  const byLabel = `${r(by)} ${v.label(by)}`
   const [q, setQ] = React.useState('')
   const items = React.useMemo(() => {
     let ps = filter === 'ended' ? v.ended : filter === 'new' ? v.newProjects : v.current
@@ -395,8 +401,8 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
         </div>
         <ToggleGroup value={[filter]} onValueChange={(x) => x[0] && setFilter(x[0])} variant="outline" size="sm" spacing={0}>
           <ToggleGroupItem value="all">すべて</ToggleGroupItem>
-          <ToggleGroupItem value="new"><NewIcon className="size-4 text-primary" />新しく始める</ToggleGroupItem>
-          <ToggleGroupItem value="ended"><StopIcon className="size-4 text-primary" />やめた</ToggleGroupItem>
+          {v.hasPrev || v.fresh.length ? <ToggleGroupItem value="new"><NewIcon className="size-4 text-primary" />新しく始める</ToggleGroupItem> : null}
+          {v.hasPrev ? <ToggleGroupItem value="ended"><StopIcon className="size-4 text-primary" />やめた</ToggleGroupItem> : null}
           {v.sheets.length ? <ToggleGroupItem value="eval"><ClipboardTextIcon className="size-4" />評価した</ToggleGroupItem> : null}
         </ToggleGroup>
       </div>
@@ -409,7 +415,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
       {filter === 'eval' ? <EvalList grade={grade} setGrade={setGrade} field={field} q={q} /> : <>
       <p className="px-2.5 text-xs text-muted-foreground">
         {filter === 'new' ? '新規の施策が付いた事業と、予算書で新しく現れた事業・' : ''}
-        {items.length}件・{filter === 'ended' ? `${r(v.year - 1)} 当初予算` : `${r(v.year)} 当初予算`}の多い順
+        {items.length}件・{byLabel}の多い順
       </p>
       <Infinite items={items} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
       {unlinked.length ? (
@@ -458,10 +464,10 @@ const Ext = ({ href, children }: { href: string; children: React.ReactNode }) =>
 )
 
 function ProjectDetail({ p }: { p: Proj }) {
-  const { v, d, select , years } = useApp()
+  const { v, d, select, years } = useApp()
   const ys = String(v.year)
-  const now = p.y[ys]?.b
-  const prev = p.y[String(v.year - 1)]?.b
+  const now = v.amount(p)
+  const prev = v.amount(p, String(v.year - 1))
   const ms = v.measuresOf.get(p.id) ?? []
   const ss = v.sheetsOf.get(p.id) ?? []
   const kids = p.kids[ys] ?? []
@@ -480,13 +486,13 @@ function ProjectDetail({ p }: { p: Proj }) {
       <div className="mt-5">
         {ended ? (
           <>
-            <span className="text-xs text-muted-foreground">{reiwa(v.year)}の予算書には載っていません</span>
+            <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}書には載っていません</span>
             <Amt yen={prev} className="block text-4xl leading-tight" />
-            <span className="text-xs text-muted-foreground">{r(v.year - 1)}年度の当初予算</span>
+            <span className="text-xs text-muted-foreground">{r(v.year - 1)}年度の{v.label(v.year - 1)}</span>
           </>
         ) : (
           <>
-            <span className="text-xs text-muted-foreground">{reiwa(v.year)}の予算</span>
+            <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}</span>
             <Amt yen={now} className="block text-4xl leading-tight text-primary" />
             {now != null ? <span className="text-xs text-muted-foreground">{perHead(now, d.pop)}{prev ? ` · ${r(v.year - 1)}年度から ${now >= prev ? '+' : '−'}${yenText(Math.abs(now - prev))}` : ''}</span> : <span className="text-xs text-muted-foreground">当初予算には載っていません{p.y[ys]?.s != null ? `（決算 ${yenText(p.y[ys]!.s!)}）` : ''}</span>}
           </>
@@ -618,7 +624,7 @@ function FieldDetail({ id }: { id: string }) {
         </div>
       </div>
       <div className="mt-5">
-        <span className="text-xs text-muted-foreground">{reiwa(v.year)}の予算</span>
+        <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}</span>
         <Amt yen={f.yen} className="block text-4xl leading-tight text-primary" />
         <span className="text-xs text-muted-foreground">全体の {((f.yen / v.total) * 100).toFixed(1)}% · {perHead(f.yen, d.pop)}</span>
       </div>
