@@ -191,10 +191,6 @@ describe('自治体の個別ページ', () => {
     expect((await homeEntries({ ...env, API: api })).map((e) => e.yen)).toEqual([1000])
   })
 
-  test('廃止した自治体の一覧（/jurisdictions）はホームへ 301', async () => {
-    const res = await get('/jurisdictions')
-    expect([res.status, res.headers.get('Location')]).toEqual([301, '/'])
-  })
 
   test('URL のローマ字は自治体マスタの全自治体にあり、同じ都道府県の中でもテーマの段とも重ならない', () => {
     const seen = new Set<string>()

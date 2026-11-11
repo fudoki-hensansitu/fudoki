@@ -4,7 +4,7 @@ status: withdrawn
 
 # 自治体一覧
 
-2026-11-11 に一覧の頁（`/jurisdictions`）を廃止した。`/jurisdictions` はホーム（`/`）へ 301 する。自治体はホームのうちのまちの検索から選ぶ。
+2026-11-11 に一覧の頁（`/jurisdictions`）を廃止した。自治体はホームのうちのまちの検索から選ぶ。
 
 ## Problem
 
