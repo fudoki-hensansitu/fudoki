@@ -531,7 +531,7 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
             {flows.length > 0 ? (
               <Overview flows={flows} total={year.yen} levels={levels} onSelect={select} height={overviewHeight} />
             ) : (
-              error ? null : <OverviewSkeleton levels={levels} height={overviewHeight} />
+              error ? null : <OverviewSkeleton total={year.yen} levels={levels} height={overviewHeight} />
             )}
           </div>
           {flows.map((f, i) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} />)}

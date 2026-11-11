@@ -179,11 +179,13 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
 const SKELETON = [[0.29, 0.06, 0.054, 0.052, 0.053], [0.108, 0.024], [0.051, 0.026, 0.002, 0.022], [0.059, 0.005], [0.019, 0.016, 0.008], [0.037, 0.004], [0.037, 0.002], [0.03, 0.008], [0.028], [0.006]]
 /** ラベルの置き場の長さ（px）。同じ長さが並ぶと縞に見えるので、少しずつ変える */
 const LABEL_WIDTHS = [64, 44, 56, 72, 40, 52]
-export function OverviewSkeleton({ height = 520, levels = { kan: '款', kou: '項' } }: { height?: number; levels?: { kan: string; kou: string } }) {
+/** total は読み込む年度の総額。比に掛けて実際の図と同じ桁の金額で並べる（fit の二分探索の刻みが金額の桁で変わり、比のままだと図より高くなる） */
+export function OverviewSkeleton({ total: yen, height = 520, levels = { kan: '款', kou: '項' } }: { total: number; height?: number; levels?: { kan: string; kou: string } }) {
   const ref = React.useRef<HTMLDivElement>(null)
   const width = useWidth(ref)
-  const kous = SKELETON.flatMap((kou, kanIndex) => kou.map((yen) => ({ kanIndex, yen })))
-  const { narrow, x0, x1, kans, kouNodes, total } = geometry(SKELETON.map((kou) => kou.reduce((a, v) => a + v, 0)), kous.map((k) => k.yen), width, height)
+  const base = yen > 0 ? yen : 1e11
+  const kous = SKELETON.flatMap((kou, kanIndex) => kou.map((share) => ({ kanIndex, yen: share * base })))
+  const { narrow, x0, x1, kans, kouNodes, total } = geometry(SKELETON.map((kou) => kou.reduce((a, v) => a + v, 0) * base), kous.map((k) => k.yen), width, height)
   const offsets = new Map<number, number>()
   const line = narrow ? 8 : 10
   return (
