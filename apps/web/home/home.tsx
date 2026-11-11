@@ -52,7 +52,7 @@ const matches = (e: MapEntry, q: string) => {
 /** 何か入力していて、当たる自治体が1つも無い */
 const noMatch = (entries: MapEntry[], q: string) => q.trim() !== '' && !entries.some((e) => matches(e, q))
 
-function Emblem({ code, name, className = 'size-10' }: { code: string; name: string; className?: string }) {
+export function Emblem({ code, name, className = 'size-10' }: { code: string; name: string; className?: string }) {
   const [failed, setFailed] = React.useState(false)
   return (
     <span className={cn('grid shrink-0 place-items-center rounded-xl border bg-emblem p-1.5', className)}>
@@ -61,7 +61,7 @@ function Emblem({ code, name, className = 'size-10' }: { code: string; name: str
   )
 }
 
-function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; placeholder: string }) {
+export function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; placeholder: string }) {
   const [query, setQuery] = React.useState('')
   return (
     <>
@@ -98,7 +98,7 @@ const townLinks = (name: string) => [
 ]
 
 /** 現在地から自治体を選ぶボタン。開いた時点の自動の判定で取れなかったときや、変えるときに使う */
-function LocateButton({ entries, onPick }: { entries: MapEntry[]; onPick: (e: MapEntry) => void }) {
+export function LocateButton({ entries, onPick }: { entries: MapEntry[]; onPick: (e: MapEntry) => void }) {
   const [state, setState] = React.useState<{ busy?: boolean; error?: string; missing?: boolean }>({})
   const locate = async () => {
     setState({ busy: true })

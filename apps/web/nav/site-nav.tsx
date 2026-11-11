@@ -22,10 +22,13 @@ import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, type Theme } from './theme'
+import { ProtoNavContent } from '../prototype/nav-content'
+import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
 
-export const NAV_SECTIONS = ['home', 'assistant'] as const
+export const NAV_SECTIONS = ['home', 'assistant', 'compare'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
-export type SiteNavProps = { active?: NavSection; open: boolean; theme: Theme }
+/** proto: 試作のサイドバー（/prototype の下だけ） */
+export type SiteNavProps = { active?: NavSection; open: boolean; theme: Theme; proto?: boolean }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
 function NavLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
   if (props.href.startsWith('https://')) return <a target="_blank" rel="noopener" {...props} />
@@ -64,12 +67,12 @@ function CollapsedToggle() {
 }
 
 /** サイドバーの項目。icon は shadcn の既定より一回り大きくし、閉じて icon だけのときだけ名前を tooltip で出す */
-const Item = ({ href, label, icon, active }: { href: string; label: string; icon: React.ReactNode; active?: boolean }) => {
+export const Item = ({ href, label, icon, active, onClick }: { href: string; label: string; icon: React.ReactNode; active?: boolean; onClick?: React.MouseEventHandler<HTMLAnchorElement> }) => {
   const { state, isMobile } = useSidebar()
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
-        render={<NavLink href={href} aria-current={active ? 'page' : undefined} />}
+        render={<NavLink href={href} aria-current={active ? 'page' : undefined} onClick={onClick} />}
         isActive={active}
         tooltip={state === 'collapsed' && !isMobile ? label : undefined}
         className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
@@ -191,12 +194,18 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
 }
 
 /** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。入らないものは「設定」にまとめる */
-function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void }) {
+function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void; proto?: boolean }) {
   const [hidden, setHidden] = useHideOnScroll()
-  const items = [
-    { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
-    { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
-  ]
+  const items = proto
+    ? [
+        { href: '/prototype', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
+        { href: '/prototype/compare', label: '比べる', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
+        { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
+      ]
+    : [
+        { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
+        { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
+      ]
   return (
     <nav
       aria-label="サイト"
@@ -207,7 +216,7 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
     >
       {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
       <Separator />
-      <ul className="grid h-14 grid-cols-3">
+      <ul className={cn('grid h-14', proto ? 'grid-cols-4' : 'grid-cols-3')}>
         {items.map((i) => (
           <li key={i.href}>
             <NavLink
@@ -228,7 +237,7 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
   )
 }
 
-export function SiteNav({ active, open, theme: initialTheme }: SiteNavProps) {
+export function SiteNav({ active, open, theme: initialTheme, proto }: SiteNavProps) {
   const [theme, setTheme] = React.useState(initialTheme)
   const pickTheme = (t: Theme) => {
     setTheme(t)
@@ -238,10 +247,10 @@ export function SiteNav({ active, open, theme: initialTheme }: SiteNavProps) {
     <TooltipProvider>
       {/* 頁の本文は provider の外（.site-main）にあるので、provider の枠は箱を作らず（contents）、幅の変数だけを配る */}
       <SidebarProvider defaultOpen={open} className="contents" style={{ '--sidebar-width': '13rem', '--sidebar-width-icon': '3.5rem' } as React.CSSProperties}>
-        <BottomNav active={active} theme={theme} onPick={pickTheme} />
+        <BottomNav active={active} theme={theme} onPick={pickTheme} proto={proto} />
         <Sidebar collapsible="icon" aria-label="サイト">
           <SidebarHeader className="flex-row items-center justify-between gap-2 px-3 pt-5 pb-4 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2">
-            <NavLink href="/" aria-label="風土記 ホーム" className="ps-2 group-data-[collapsible=icon]:hidden">
+            <NavLink href={proto ? '/prototype' : '/'} aria-label="風土記 ホーム" className="ps-2 group-data-[collapsible=icon]:hidden">
               {/* 色は svg に付ける（a { color: inherit } に負けて黒くならないように） */}
               <Logo className="block h-7 w-auto text-primary" />
             </NavLink>
@@ -249,11 +258,15 @@ export function SiteNav({ active, open, theme: initialTheme }: SiteNavProps) {
             <CollapsedToggle />
           </SidebarHeader>
           <SidebarContent>
-            <SidebarGroup>
-              <SidebarMenu>
-                <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={active === 'assistant'} />
-              </SidebarMenu>
-            </SidebarGroup>
+            {proto ? (
+              <ProtoNavContent />
+            ) : (
+              <SidebarGroup>
+                <SidebarMenu>
+                  <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={active === 'assistant'} />
+                </SidebarMenu>
+              </SidebarGroup>
+            )}
           </SidebarContent>
           <SidebarFooter className="gap-0 px-2 pt-2 pb-12">
             <SidebarMenu>
