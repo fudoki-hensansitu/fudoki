@@ -1,11 +1,11 @@
-// 自治体の個別ページ（/tokyo/nakano）・一覧（/jurisdictions）のデータと、画面が款・目の内訳を引く /api/jurisdictions/*・sitemap の応答。
+// 自治体の個別ページ（/tokyo/nakano）・ホームの自治体の要約のデータと、画面が款・目の内訳を引く /api/jurisdictions/*・sitemap の応答。
 // データは apps/api の歳出の検索から組み、変わるのは取り込みのときだけなので、Worker の cache に1時間置く。頁は pages/ の loader が、
 // 内訳の API と sitemap は routes/ がここを呼ぶ。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
 import { PREFECTURE_MAPS } from '../jurisdiction/map.generated'
 import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
-import { DEFAULT_INDEX_QUERY, parseIndexQuery, queryIndex, toMapEntry, type IndexTable, type MapEntry } from '../jurisdiction/index-table'
-import { INDEX_PATH, pageYears, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
+import { toMapEntry, type MapEntry } from '../jurisdiction/index-table'
+import { pageYears, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
 import { assetPath, PROFILES, type Profile } from '../jurisdiction/profiles'
 import { EMBLEMS } from '../jurisdiction/emblems'
 import { BUDGET_PRESS } from '../jurisdiction/budget-press'
@@ -32,35 +32,12 @@ async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
 }
 
 export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog', () => loadCatalog(env))
-// catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてから一覧へ出るまで最大で約2時間かかる
+// catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてからホームの検索へ出るまで最大で約2時間かかる
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
 const page = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
-/** 一覧（/jurisdictions）の頁に載せるもの。地図・検索の要約は全自治体、表は既定の並びの最初の1頁。API に繋がらなければ投げる */
-export async function indexPageData(env: Env): Promise<{ map: MapEntry[]; table: IndexTable }> {
-  const entries = await index(env)
-  return { map: entries.map(toMapEntry), table: queryIndex(entries, DEFAULT_INDEX_QUERY) }
-}
-
 /** ホーム（/）に載せる全自治体の要約 */
 export const homeEntries = async (env: Env): Promise<MapEntry[]> => (await index(env)).map(toMapEntry)
-
-/** 比較表の続き・並べ替え・絞り込み（/api/jurisdictions/table?sort=&order=&offset=&pref=&code=）。30件ずつ返す */
-export async function tableResponse(env: Env, request: Request): Promise<Response> {
-  try {
-    let q
-    try {
-      q = parseIndexQuery(new URL(request.url).searchParams)
-    } catch (e) {
-      throw new HttpError(400, 'INVALID_ARGUMENT', (e as Error).message)
-    }
-    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
-    return json(queryIndex(await index(env), q))
-  } catch (e) {
-    if (e instanceof HttpError) return errorResponse(e)
-    return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
-  }
-}
 
 /** 最後の節に出す近くの自治体の数 */
 const NEARBY_COUNT = 3
@@ -85,9 +62,9 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   const entries = await catalog(env)
   const entry = entries.find((e) => jurisdictionPath(e.code) === path)
   if (!entry) return null
-  // 都道府県名は都道府県自体の頁へ。都道府県自体の頁と、都道府県がカタログに無い（頁が無い）ときは一覧へ
+  // 都道府県名は都道府県自体の頁へ。都道府県自体の頁と、都道府県がカタログに無い（頁が無い）ときはリンクしない
   const prefectureCode = `${entry.code.slice(0, 2)}0001`
-  const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : INDEX_PATH
+  const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : null
   const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
     .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
   const data = entry.settlementYears.length > 0 ? await page(env, entry) : null

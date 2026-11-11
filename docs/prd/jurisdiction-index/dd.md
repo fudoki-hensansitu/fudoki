@@ -1,5 +1,7 @@
 # 自治体一覧の設計
 
+2026-11-11 に一覧の頁を廃止した（[PRD](prd.md)）。都道府県の図（`jurisdiction/map.generated.ts`）は、個別ページの近くの自治体の並びにだけ使う。
+
 要件は [PRD](prd.md) に置く。個別ページ・URL の決め方は `apps/web/README.md` の「自治体の個別ページ」が正本。
 
 ## 画面

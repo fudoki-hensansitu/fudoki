@@ -1,5 +1,5 @@
 // ホーム（/）。「うちのまち」（選んだ自治体の情報への入口）、見られる情報の種類（予算・決算・事業評価）、収録の更新を並べるハブ。
-// 自治体を探す・比べるのは自治体一覧（/jurisdictions）、AI との会話はアシスタント（/assistant）が受け持つので、ここでは重ねない。
+// 自治体はうちのまちの検索から選ぶ。AI との会話はアシスタント（/assistant）が受け持つので、ここでは重ねない。
 // 面の色は、主張したい面（うちのまち）が緑（--brand）の地で中の押せるものは --brand-fill（明るいときは白、暗いときは半透明の白）、押せるものの状態は生成り。見出しも含めてゴシック（明朝は /about の読み物だけ）
 import * as React from 'react'
 import { Link } from '../nav/link'
@@ -8,7 +8,6 @@ import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, 
 import { InputGroupAddon } from '@/components/ui/input-group'
 import { cn } from '@/lib/utils'
 import type { MapEntry } from '../jurisdiction/index-table'
-import { INDEX_PATH } from '../jurisdiction/types'
 import { FEEDBACK } from '../nav/feedback'
 import { RequestTown } from '../nav/request-town'
 import { LocateError, locateMunicipality } from './locate'
@@ -246,8 +245,8 @@ function MyTown({ entries, featured }: HomeProps) {
 function Topics({ entries, featured }: HomeProps) {
   const evaluated = featured.filter((f) => f.evalYear)
   const topics = [
-    // 一覧を読めなかったときは件数を出さない（0件と取り違えないように）
-    { title: '予算・決算', body: '何にいくら使ったか', meta: entries.length ? `${entries.length}の自治体` : undefined, href: INDEX_PATH, icon: <CoinsIcon /> },
+    // 一覧を読めなかったときは件数を出さない（0件と取り違えないように）。行き先は事業評価と同じく、くわしい頁のある自治体の例
+    { title: '予算・決算', body: '何にいくら使ったか', meta: entries.length ? `${entries.length}の自治体` : undefined, href: featured[0]?.path, icon: <CoinsIcon /> },
     { title: '事業評価', body: '事業をどう振り返ったか', meta: evaluated.map((f) => f.name).join('・'), href: evaluated[0] ? `${evaluated[0].path}#y${evaluated[0].evalYear}` : undefined, icon: <ClipboardTextIcon /> },
   ]
   return (
