@@ -51,6 +51,8 @@ export function yearView(d: Snapshot, year: number) {
   const current = d.projects.filter((p) => budget(p) != null).sort((a, b) => budget(b)! - budget(a)!)
   // やめた事業は前の年度で終えた事業（DB の事業の終えた年度）だけ
   const isEnded = (p: Proj) => p.ended === year - 1
+  // 前の年度と比べられるのは、DB に事業の収録があり、前の年度もある頁だけ（事業の収録の無い自治体は NEW・やめたを出さない）
+  const comparable = hasPrev && d.projects.some((p) => p.started != null || p.ended != null)
   const ended = d.projects.filter(isEnded).sort((a, b) => (amt(b, prev) ?? 0) - (amt(a, prev) ?? 0))
   const measures = d.measures.filter((m) => m.fy === year)
   const measuresOf = group(measures, (m) => m.project)
@@ -80,6 +82,7 @@ export function yearView(d: Snapshot, year: number) {
     isEnded,
     kind: y.kind,
     hasPrev,
+    comparable,
     /** 頁の金額が当初予算か決算か */
     word: y.kind === 'settlement' ? '決算' : '予算',
     /** その年度の並びに使う額の名前 */

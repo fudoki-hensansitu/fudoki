@@ -416,10 +416,10 @@ function Overview({ go }: { go: Go }) {
         </Card>
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-2"><CountCard icon={<ListBulletsIcon />} label="事業" n={v.current.length} onClick={() => go('projects', { filter: 'all' })} /></div>
-          {v.hasPrev || v.newProjects.length || v.ended.length || v.fresh.length ? (
+          {v.comparable || v.newProjects.length || v.ended.length || v.fresh.length ? (
             <>
               <CountCard icon={<NewIcon className="text-primary" />} label="新しく始める事業" n={v.newProjects.length + v.freshUnlinked.length} onClick={() => go('projects', { filter: 'new' })} />
-              <CountCard icon={<StopIcon className="text-primary" />} label="やめた事業" n={v.ended.length} onClick={() => go('projects', { filter: 'ended' })} />
+              {v.comparable || v.ended.length ? <CountCard icon={<StopIcon className="text-primary" />} label="やめた事業" n={v.ended.length} onClick={() => go('projects', { filter: 'ended' })} /> : null}
             </>
           ) : null}
           {v.sheets.length ? <div className="col-span-2"><CountCard icon={<ClipboardTextIcon />} label="評価した事業" n={v.sheets.length} onClick={() => go('projects', { filter: 'eval' })} /></div> : null}
@@ -474,8 +474,8 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
         </div>
         <ToggleGroup value={[filter]} onValueChange={(x) => x[0] && setFilter(x[0])} variant="outline" size="sm" spacing={0}>
           <ToggleGroupItem value="all">すべて</ToggleGroupItem>
-          {v.hasPrev || v.newProjects.length || v.fresh.length ? <ToggleGroupItem value="new"><NewIcon className="size-4 text-primary" />新しく始める</ToggleGroupItem> : null}
-          {v.hasPrev || v.ended.length ? <ToggleGroupItem value="ended"><StopIcon className="size-4 text-primary" />やめた</ToggleGroupItem> : null}
+          {v.comparable || v.newProjects.length || v.fresh.length ? <ToggleGroupItem value="new"><NewIcon className="size-4 text-primary" />新しく始める</ToggleGroupItem> : null}
+          {v.comparable || v.ended.length ? <ToggleGroupItem value="ended"><StopIcon className="size-4 text-primary" />やめた</ToggleGroupItem> : null}
           {v.sheets.length ? <ToggleGroupItem value="eval"><ClipboardTextIcon className="size-4" />評価した</ToggleGroupItem> : null}
         </ToggleGroup>
       </div>
@@ -487,7 +487,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
       </ToggleGroup>
       {filter === 'eval' ? <EvalList grade={grade} setGrade={setGrade} field={field} q={q} /> : <>
       <p className="px-2.5 text-xs text-muted-foreground">
-        {filter === 'new' ? '新規の施策が付いた事業と、予算書で新しく現れた事業・' : ''}
+        {filter === 'new' ? '予算書で新しく現れた事業・' : ''}
         {items.length}件・{byLabel}の多い順
       </p>
       <Infinite items={items} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
