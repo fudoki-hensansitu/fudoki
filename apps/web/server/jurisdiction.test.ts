@@ -163,12 +163,12 @@ describe('自治体の個別ページ', () => {
     const sitemap = await (await get('/sitemap.xml')).text()
     expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano</loc>')
     expect(sitemap).not.toContain('chiyoda')
-    // 既定でない年度の頁も載せ、既定の年度（最新）は自治体の頁だけにする
+    // 年度の段つきの頁は最新の年度も載せる
     expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano/2024</loc>')
-    expect(sitemap).not.toContain('/tokyo/nakano/2025')
+    expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano/2025</loc>')
   })
 
-  test('年度の頁は、その年度の title と canonical を持ち、既定の年度は自治体の頁へ 301、選べない年度は 404', async () => {
+  test('年度の頁は、その年度の title と canonical を持ち、最新の年度も年度の段つきで出し、選べない年度は 404', async () => {
     const data = await view('/tokyo/nakano')
     const head = pageHead(data, 2024)
     expect(head.title).toBe('中野区の決算（令和6年度）｜何にいくら使った？｜風土記')
@@ -180,7 +180,8 @@ describe('自治体の個別ページ', () => {
     // 戻る遷移で取り直さないようブラウザに置く
     expect(headers.get('Cache-Control')).toBe('public, max-age=300')
     const status = (segment: string) => jurisdictionProps(c, '/tokyo/nakano', segment).then(() => 200, (e: { status: number; res?: Response }) => [e.status, e.res?.headers.get('Location') ?? null])
-    expect(await status('2025')).toEqual([301, '/tokyo/nakano'])
+    expect(await status('2025')).toBe(200)
+    expect(canonical(pageHead(data, 2025))).toBe('https://fudoki.dev/tokyo/nakano/2025')
     expect(await status('2019')).toEqual([404, null])
   })
 

@@ -1,5 +1,5 @@
-// 既定でない年度のタブの頁（/tokyo/shinagawa/2024/projects）。既定の年度は年度の段の無いタブの頁へ 301。
-// ルーターは /tokyo/shinagawa/fields/fukushi もここへ当てるので、段が fields なら分野の頁にする
+// 年度のタブの頁（/tokyo/shinagawa/2024/projects）。
+// ルーターは /tokyo/shinagawa/fields/fukushi もここへ当てるので、段が fields なら最新の年度の分野の頁へ 301 する
 import { defineHandler, defineHead } from 'void'
 import { fieldProps, jurisdictionHead, tabProps, type JurisdictionProps } from '../../../../server/pages'
 

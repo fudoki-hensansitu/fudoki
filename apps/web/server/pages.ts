@@ -11,8 +11,8 @@ export const notFound = () => new Response('Not Found\n', { status: 404, headers
 export const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
 
 /** 自治体の頁（/tokyo、/tokyo/nakano、/tokyo/nakano/2024）の props。sitekey は頁の中の「この自治体について質問」の Turnstile。
- * year は既定でない年度の頁（/tokyo/nakano/2024）のときだけ持つ */
-export type JurisdictionProps = JurisdictionView & { sitekey: string; year?: number; /** 分野の頁（/tokyo/nakano/fields/fukushi）のときの分野の id */ field?: string; /** タブの頁（/tokyo/nakano/projects）のときのタブ */ tab?: Exclude<PageTab, 'overview'> }
+ * year は年度の段のある頁（/tokyo/nakano/2026、/tokyo/nakano/2024）のときだけ持つ。年度の段の無い /tokyo/nakano は最新の年度を出す入口 */
+export type JurisdictionProps = JurisdictionView & { sitekey: string; year?: number; /** 分野の頁（/tokyo/nakano/2026/fields/fukushi）のときの分野の id */ field?: string; /** タブの頁（/tokyo/nakano/2026/projects）のときのタブ */ tab?: Exclude<PageTab, 'overview'> }
 
 /** 年度の段（/tokyo/nakano/2024）。4桁の数字だけ */
 export const YEAR_SEGMENT = /^\d{4}$/
@@ -37,11 +37,10 @@ export async function jurisdictionProps(c: Context, path: string, yearSegment?: 
   if (!view) throw new HTTPException(404, { res: notFound() })
   c.header('Cache-Control', PAGE_CACHE)
   if (yearSegment === undefined) return { ...view, sitekey: siteKey(c) }
-  // 年度の頁: 頁で選べない年度は 404、既定の年度は自治体の頁そのものへ寄せる（同じ中身の URL を2つ作らない）
+  // 年度の頁: 頁で選べない年度は 404。頁の中の導線は最新の年度も年度の段つきの URL にする
   const years = view.kind === 'page' ? appPageYears(view.data) : []
   const year = Number(yearSegment)
   if (!YEAR_SEGMENT.test(yearSegment) || !years.includes(year)) throw new HTTPException(404, { res: notFound() })
-  if (year === years[0]) throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: path } }) })
   return { ...view, sitekey: siteKey(c), year }
 }
 
@@ -53,31 +52,27 @@ export function siteKey(c: Context): string {
 
 const FIELD_IDS = new Set([...DOMAIN_FRAMES, OTHER_FRAME].map((f) => f.id))
 
-/** 分野の頁。分野の id が違えば 404 */
+/** 年度の段の無い分野・タブの頁（/tokyo/nakano/projects）は、最新の年度の段つきの頁へ 301 */
+async function toLatestYear(c: Context, path: string, sub: string): Promise<never> {
+  const props = await jurisdictionProps(c, path)
+  const latest = props.kind === 'page' ? appPageYears(props.data)[0] : undefined
+  if (latest === undefined) throw new HTTPException(404, { res: notFound() })
+  throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${latest}${sub}` } }) })
+}
+
+/** 分野の頁（/tokyo/nakano/2026/fields/fukushi）。分野の id が違えば 404 */
 export async function fieldProps(c: Context, path: string, field: string, yearSegment?: string): Promise<JurisdictionProps> {
   if (!FIELD_IDS.has(field)) throw new HTTPException(404, { res: notFound() })
-  const to = `/fields/${field}`
-  try {
-    return { ...(await jurisdictionProps(c, path, yearSegment)), field }
-  } catch (e) {
-    // 既定の年度は年度の段の無い分野の頁へ寄せる
-    if (e instanceof HTTPException && e.status === 301) throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: path + to } }) })
-    throw e
-  }
+  if (yearSegment === undefined) return toLatestYear(c, path, `/fields/${field}`)
+  return { ...(await jurisdictionProps(c, path, yearSegment)), field }
 }
 
 /** タブの頁（/tokyo/nakano/projects、/tokyo/nakano/2024/budget）。タブの名前が違う、その年度に決算が無いなら 404 */
 export async function tabProps(c: Context, path: string, slug: string, yearSegment?: string): Promise<JurisdictionProps> {
   const tab = tabOfSlug(slug)
   if (!tab) throw new HTTPException(404, { res: notFound() })
-  let props: JurisdictionProps
-  try {
-    props = await jurisdictionProps(c, path, yearSegment)
-  } catch (e) {
-    // 既定の年度は年度の段の無いタブの頁へ寄せる
-    if (e instanceof HTTPException && e.status === 301) throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${slug}` } }) })
-    throw e
-  }
+  if (yearSegment === undefined) return toLatestYear(c, path, `/${slug}`)
+  const props = await jurisdictionProps(c, path, yearSegment)
   if (props.kind === 'page' && !hasTab(props.data, props.year ?? appPageYears(props.data)[0]!, tab)) throw new HTTPException(404, { res: notFound() })
   return { ...props, tab }
 }

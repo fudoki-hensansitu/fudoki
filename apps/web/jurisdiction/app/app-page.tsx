@@ -56,7 +56,7 @@ import { assetPath } from '../profiles'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock, Elsewhere } from '../page'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, yearPath, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
@@ -142,7 +142,7 @@ function MoreLink({ onClick }: { onClick: () => void }) {
 /** 一覧の行。押すと詳細を開く */
 function Row({ icon, title, sub, yen, note, rank, selected, onClick }: { icon: React.ReactNode; title: string; sub?: string; yen: number | null | undefined; note?: string; rank?: number; selected?: boolean; onClick: () => void }) {
   return (
-    <button type="button" onClick={onClick} data-selected={selected || undefined} className="group flex w-full items-center gap-3 rounded-lg px-2.5 py-3 text-left transition-colors hover:bg-card data-selected:bg-accent">
+    <button type="button" onClick={onClick} data-selected={selected || undefined} className="group flex w-full items-center gap-3 px-2.5 py-3 text-left transition-colors hover:bg-card data-selected:bg-accent">
       {rank != null ? <span className="w-5 shrink-0 text-right text-sm tabular-nums text-muted-foreground">{rank}</span> : null}
       {icon}
       <span className="min-w-0 flex-1">
@@ -616,7 +616,7 @@ function SheetDetail({ s }: { s: EvalSheet }) {
   )
 }
 
-/** 分野の頁（/tokyo/shinagawa/fields/fukushi）。まとめのタイルから開く */
+/** 分野の頁（/tokyo/shinagawa/2026/fields/fukushi）。まとめのタイルから開く */
 const FieldChart = React.lazy(() => import('./field-chart'))
 /** 内訳の色。緑の濃さを金額の順に下げる（色に意味は持たせない）。その他は灰色。ink は切れの上に書く割合の文字色 */
 const SLICE_COLORS = [100, 78, 60, 44, 30].map((n) => `color-mix(in oklab, var(--primary) ${n}%, var(--background))`)
@@ -832,7 +832,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
     at.current = { year: y, tab: t }
     const f = fieldOfPath()
     const sub = f ? undefined : t === 'overview' ? undefined : { label: TAB_LABELS[t], path: `/${TAB_SLUGS[t]}` }
-    history.replaceState(history.state, '', yearPath(basePath(), y, years[0]!) + (f ? `/fields/${f}` : sub?.path ?? ''))
+    history.replaceState(history.state, '', `${basePath()}/${y}` + (f ? `/fields/${f}` : sub?.path ?? ''))
     document.title = pageHead(data, y === years[0] ? undefined : y, sub).title
   }
   const setYear = (y: number) => {
@@ -854,14 +854,14 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
   // 頁の中で開いた分野の頁は履歴の state に印を付け、閉じるときは履歴を戻る（進むで戻ってきた場合も同じ）
   const openField = (id: string) => {
     select(null)
-    history.pushState({ field: id }, '', `${yearPath(basePath(), year, years[0]!)}/fields/${id}`)
+    history.pushState({ field: id }, '', `${basePath()}/${year}/fields/${id}`)
     setFieldPage(id)
     window.scrollTo({ top: 0 })
   }
   const closeField = () => {
     select(null)
     if ((history.state as { field?: string } | null)?.field) return history.back()
-    history.pushState(null, '', yearPath(basePath(), year, years[0]!) + (tab === 'overview' ? '' : `/${TAB_SLUGS[tab]}`))
+    history.pushState(null, '', `${basePath()}/${year}` + (tab === 'overview' ? '' : `/${TAB_SLUGS[tab]}`))
     setFieldPage(null)
     window.scrollTo({ top: 0 })
   }

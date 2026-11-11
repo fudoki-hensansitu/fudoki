@@ -4,7 +4,7 @@ import type { CatalogEntry } from '../server/jurisdiction'
 import { EMBLEMS } from './emblems'
 import { jurisdictionPath } from './path'
 import { assetPath } from './profiles'
-import { appPageYears, formatYen, INDEX_PATH, TAB_SLUGS, yearPath, type PageData } from './types'
+import { appPageYears, formatYen, INDEX_PATH, TAB_SLUGS, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
 /** JSON を script の中に置くときに </script> や <!-- で抜けないようにする */
@@ -97,7 +97,7 @@ export function pageHead(d: PageData, year?: number, sub?: { label: string; path
   const past = year !== undefined && year !== appPageYears(d)[0] ? yearHead(d, year) : null
   const title = (sub ? `${sub.label}｜` : '') + (past?.title ?? pageTitle(d))
   const description = past?.description ?? pageDescription(d)
-  const canonical = `${ORIGIN}${past ? `${base}/${year}` : base}${sub?.path ?? ''}`
+  const canonical = `${ORIGIN}${year !== undefined ? `${base}/${year}` : base}${sub?.path ?? ''}`
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -136,7 +136,7 @@ export function indexHead(count: number): Head {
   return head('自治体を探す｜風土記', description, `${ORIGIN}${INDEX_PATH}`)
 }
 
-/** sitemap。自治体の頁に加え、既定でない年度の頁（/tokyo/shinagawa/2024）も載せる。years は頁で選べる年度（新しい順） */
+/** sitemap。自治体の頁（最新の年度の入口）に加え、年度の段つきの頁（/tokyo/shinagawa/2026）も載せる。years は頁で選べる年度（新しい順） */
 export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) => number[] = (e) => [...e.settlementYears].sort((a, b) => b - a)) =>
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}${INDEX_PATH}</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url>${entries
     .filter((e) => e.settlementYears.length > 0)
@@ -144,10 +144,10 @@ export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) =
       const base = jurisdictionPath(e.code)
       const years = yearsOf(e)
       // 年度ごとの頁と、そのタブの頁（事業・予算・決算）
-      return years.flatMap((y) => {
-        const page = yearPath(base, y, years[0]!)
+      return [base, ...years.flatMap((y) => {
+        const page = `${base}/${y}`
         return [page, `${page}/${TAB_SLUGS.projects}`, ...(e.initialYears.includes(y) ? [`${page}/${TAB_SLUGS.money}`] : []), ...(e.settlementYears.includes(y) ? [`${page}/${TAB_SLUGS.settled}`] : [])]
-      })
+      })]
     })
     .map((path) => `<url><loc>${ORIGIN}${path}</loc></url>`)
     .join('')}</urlset>\n`
