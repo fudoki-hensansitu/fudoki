@@ -4,7 +4,6 @@ import { ListMagnifyingGlassIcon, MagnifyingGlassIcon, RobotIcon } from '@phosph
 import { useRouter } from '@void/react'
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { Command, CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
-import { Kbd } from '@/components/ui/kbd'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { Item } from './site-nav'
 import { loadTowns } from '../home/towns'
@@ -63,8 +62,7 @@ function TownSearch() {
         className="h-10 gap-3 rounded-full px-3 text-sm text-muted-foreground group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:rounded-md group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-2.5! group-data-[collapsible=icon]:text-sidebar-foreground group-data-[collapsible=icon]:shadow-none [&_svg]:size-5"
       >
         <MagnifyingGlassIcon />
-        <span className="flex-1">まちを探す</span>
-        <Kbd className="group-data-[collapsible=icon]:hidden">⌘K</Kbd>
+        <span>まちを探す</span>
       </SidebarMenuButton>
       {palette}
     </SidebarMenuItem>
