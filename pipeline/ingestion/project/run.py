@@ -4,8 +4,9 @@
 
     bun run --cwd pipeline project:save   # 宣言の PDF を取得し、指紋を確かめて R2 に保存する（ネットワークを使う。CI では回さない）
 
-評価シートは出典の選定（`evaluation_selections`）で保存済みの PDF を、評価の結果とプレス発表は `origins.json` の宣言の PDF を読む。
-どの様式で読むかは `origins.json` の `layout` で決める。読んだ結果は PDF の指紋と読み方のコードの指紋ごとにキャッシュし、
+評価シートは出典の選定の `evaluation_selections`、予算案のプレス発表は `press_selections` で保存済みの PDF を、
+評価の結果は `origins.json` の宣言の PDF を読む。どの様式で読むかは `origins.json` の `layout` で決める
+（プレス発表は年度ごとに様式が違うことがあるので `years` で年度を絞れる）。読んだ結果は PDF の指紋と読み方のコードの指紋ごとにキャッシュし、
 同じ PDF を毎回読み直さない。
 """
 from __future__ import annotations
@@ -63,14 +64,35 @@ def sheet_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[d
     return out
 
 
+def press_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[dict]:
+    """予算案のプレス発表の出典。出典の選定で保存済みの資料を、宣言の様式で読む。分冊は1冊ずつ別の出典にする。"""
+    out = []
+    for entry in declared:
+        selection = json.loads((selections / f'{entry["jurisdiction"]}.json').read_text(encoding='utf-8'))
+        for item in selection.get('press_selections', []):
+            archive = item.get('archive')
+            year = item['target']['fiscal_year']
+            if not archive or ('years' in entry and year not in entry['years']):
+                continue
+            candidate = next(c for c in item['candidates'] if c['id'] == archive['candidate_id'])
+            for stored in archive['files']:
+                url = stored.get('final_url') or next(
+                    f['download_url'] for f in candidate['files'] if f['sha256'] == stored['sha256'])
+                out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': year, 'layout': entry['layout'],
+                            'title': candidate['title'], 'landing_url': candidate['landing_url'], 'url': url,
+                            'sha256': stored['sha256'], 'reference': {'key': stored['key'], 'sha256': stored['sha256']}})
+    return out
+
+
 def layout(name: str):
     return importlib.import_module(f'ingestion.project.layouts.{name}')
 
 
 def code_fingerprint(name: str) -> str:
-    """読み方のコードの指紋。コードを直したらキャッシュを読み直す。"""
-    module = layout(name)
-    return hashlib.sha256(Path(module.__file__).read_bytes()).hexdigest()[:16]
+    """読み方のコードの指紋（様式のモジュールと、様式が共通に使う press.py）。コードを直したらキャッシュを読み直す。"""
+    digest = hashlib.sha256(Path(layout(name).__file__).read_bytes())
+    digest.update((HERE / 'layouts' / 'press.py').read_bytes())
+    return digest.hexdigest()[:16]
 
 
 def read_cached(path: Path, origin: dict) -> object:
@@ -126,14 +148,14 @@ def load(*, remote: bool = False) -> dict[str, list[tuple]]:
         tables['project_evaluation_result'].append((
             origin_id(origin), origin['evaluated_year'], origin['budget_year'], result['page'],
             result['evaluated_count'], counts['A'], counts['B'], counts['C'], counts['D'], result['reduced_thousand']))
-    for origin in declared['press']:
-        path = fetch(reference('press', origin), remote=remote)
+    for origin in press_sources(declared['press']):
+        path = fetch(origin['reference'], remote=remote)
         items = read_cached(path, origin)
         tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'press', origin['fiscal_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
         for item in items:
             tables['project_budget_measure'].append((
-                origin_id(origin), item['page'], item['title'], json.dumps(item['names'], ensure_ascii=False),
+                origin_id(origin), item['page'], item.get('position', 1), item['title'], json.dumps(item['names'], ensure_ascii=False),
                 item['is_new'], item['budget_thousand'], json.dumps(item['points'], ensure_ascii=False)))
     return tables
 
@@ -152,7 +174,7 @@ SCHEMAS = {
     'project_evaluation_result': 'origin_id varchar, evaluated_year integer, budget_year integer, page integer, '
                          'evaluated_count integer, grade_a integer, grade_b integer, grade_c integer, grade_d integer, '
                          'reduced_thousand bigint',
-    'project_budget_measure': 'origin_id varchar, page integer, title varchar, names varchar, is_new boolean, '
+    'project_budget_measure': 'origin_id varchar, page integer, position integer, title varchar, names varchar, is_new boolean, '
                   'budget_thousand bigint, points varchar',
 }
 
@@ -188,10 +210,9 @@ def main() -> None:
     parser.add_argument('command', choices=['save'])
     parser.parse_args()
     declared = origins()
-    for kind in ('results', 'press'):
-        for origin in declared[kind]:
-            save(kind, origin)
-            print(object_key(kind, origin))
+    for origin in declared['results']:
+        save('results', origin)
+        print(object_key('results', origin))
 
 
 if __name__ == '__main__':

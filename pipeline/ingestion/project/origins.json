@@ -40,21 +40,219 @@
   "press": [
     {
       "jurisdiction": "131091",
-      "fiscal_year": 2025,
-      "layout": "shinagawa_press",
-      "title": "令和7年度品川区当初予算案 プレス発表",
-      "landing_url": "https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007188.html",
-      "url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/188/20250120110302_1.pdf",
-      "sha256": "6637d88cb7634b962d043eba6faf68d1b60561ce7c5cff52b060d6eaadd65819"
+      "layout": "shinagawa_press"
     },
     {
-      "jurisdiction": "131091",
-      "fiscal_year": 2026,
-      "layout": "shinagawa_press",
-      "title": "令和8年度品川区当初予算案 プレス発表",
-      "landing_url": "https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007181.html",
-      "url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/181/20260122093053_1.pdf",
-      "sha256": "fc61ee112f3ba83e3de93887d1bd6467924416e3cefc919bd5c4275faa66d39c"
+      "jurisdiction": "131016",
+      "layout": "chiyoda_press"
+    },
+    {
+      "jurisdiction": "131024",
+      "layout": "chuo_press"
+    },
+    {
+      "jurisdiction": "131032",
+      "layout": "minato_press"
+    },
+    {
+      "jurisdiction": "131041",
+      "layout": "shinjuku_press"
+    },
+    {
+      "jurisdiction": "131059",
+      "layout": "bunkyo_press"
+    },
+    {
+      "jurisdiction": "131067",
+      "layout": "taito_press"
+    },
+    {
+      "jurisdiction": "131075",
+      "layout": "sumida_press"
+    },
+    {
+      "jurisdiction": "131083",
+      "layout": "koto_press"
+    },
+    {
+      "jurisdiction": "131105",
+      "layout": "meguro_press"
+    },
+    {
+      "jurisdiction": "131113",
+      "layout": "ota_press"
+    },
+    {
+      "jurisdiction": "131121",
+      "layout": "setagaya_press"
+    },
+    {
+      "jurisdiction": "131130",
+      "layout": "shibuya_press"
+    },
+    {
+      "jurisdiction": "131148",
+      "layout": "nakano_press"
+    },
+    {
+      "jurisdiction": "131156",
+      "layout": "suginami_press"
+    },
+    {
+      "jurisdiction": "131164",
+      "layout": "toshima_press"
+    },
+    {
+      "jurisdiction": "131172",
+      "layout": "kita_press"
+    },
+    {
+      "jurisdiction": "131181",
+      "layout": "arakawa_press"
+    },
+    {
+      "jurisdiction": "131199",
+      "layout": "itabashi_press"
+    },
+    {
+      "jurisdiction": "131202",
+      "layout": "nerima_press"
+    },
+    {
+      "jurisdiction": "131211",
+      "layout": "adachi_press"
+    },
+    {
+      "jurisdiction": "131229",
+      "layout": "katsushika_press"
+    },
+    {
+      "jurisdiction": "131237",
+      "layout": "edogawa_press"
+    },
+    {
+      "jurisdiction": "132012",
+      "layout": "hachioji_press"
+    },
+    {
+      "jurisdiction": "132021",
+      "layout": "tachikawa_press"
+    },
+    {
+      "jurisdiction": "132039",
+      "layout": "musashino_press"
+    },
+    {
+      "jurisdiction": "132047",
+      "layout": "mitaka_press"
+    },
+    {
+      "jurisdiction": "132055",
+      "layout": "ome_press"
+    },
+    {
+      "jurisdiction": "132063",
+      "layout": "fuchu_press"
+    },
+    {
+      "jurisdiction": "132071",
+      "layout": "akishima_press"
+    },
+    {
+      "jurisdiction": "132080",
+      "layout": "chofu_press"
+    },
+    {
+      "jurisdiction": "132098",
+      "layout": "machida_press"
+    },
+    {
+      "jurisdiction": "132101",
+      "layout": "koganei_press"
+    },
+    {
+      "jurisdiction": "132110",
+      "layout": "kodaira_press"
+    },
+    {
+      "jurisdiction": "132128",
+      "layout": "hino_press"
+    },
+    {
+      "jurisdiction": "132136",
+      "layout": "higashimurayama_press"
+    },
+    {
+      "jurisdiction": "132144",
+      "layout": "kokubunji_press"
+    },
+    {
+      "jurisdiction": "132152",
+      "layout": "kunitachi_press"
+    },
+    {
+      "jurisdiction": "132195",
+      "layout": "komae_press"
+    },
+    {
+      "jurisdiction": "132209",
+      "layout": "higashiyamato_press"
+    },
+    {
+      "jurisdiction": "132217",
+      "layout": "kiyose_press"
+    },
+    {
+      "jurisdiction": "132225",
+      "layout": "higashikurume_press"
+    },
+    {
+      "jurisdiction": "132233",
+      "layout": "musashimurayama_press"
+    },
+    {
+      "jurisdiction": "132241",
+      "layout": "tama_press"
+    },
+    {
+      "jurisdiction": "132250",
+      "layout": "inagi_press"
+    },
+    {
+      "jurisdiction": "132276",
+      "layout": "hamura_press"
+    },
+    {
+      "jurisdiction": "132284",
+      "layout": "akiruno_press"
+    },
+    {
+      "jurisdiction": "132292",
+      "layout": "nishitokyo_press"
+    },
+    {
+      "jurisdiction": "133035",
+      "layout": "mizuho_press"
+    },
+    {
+      "jurisdiction": "133051",
+      "layout": "hinode_press"
+    },
+    {
+      "jurisdiction": "133078",
+      "layout": "hinohara_press"
+    },
+    {
+      "jurisdiction": "133086",
+      "layout": "okutama_press"
+    },
+    {
+      "jurisdiction": "133612",
+      "layout": "oshima_press"
+    },
+    {
+      "jurisdiction": "133817",
+      "layout": "miyake_press"
     }
   ]
 }
