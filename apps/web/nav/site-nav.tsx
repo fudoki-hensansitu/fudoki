@@ -265,6 +265,9 @@ function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; them
 
 export function SiteNav({ active, open, theme: initialTheme, proto }: SiteNavProps) {
   const [theme, setTheme] = React.useState(initialTheme)
+  // 試作の部品は lazy なので、サーバーの HTML では描かず、描いたあとに読む
+  const [mounted, setMounted] = React.useState(false)
+  React.useEffect(() => setMounted(true), [])
   const pickTheme = (t: Theme) => {
     setTheme(t)
     applyTheme(t)
@@ -275,7 +278,7 @@ export function SiteNav({ active, open, theme: initialTheme, proto }: SiteNavPro
       <SidebarProvider defaultOpen={open} className="contents" style={{ '--sidebar-width': '13rem', '--sidebar-width-icon': '3.5rem' } as React.CSSProperties}>
         <BottomNav active={active} theme={theme} onPick={pickTheme} proto={proto} />
         {/* 試作: 案のピッカーは /prototype の下のどの頁でも出す */}
-        {proto ? (
+        {proto && mounted ? (
           <React.Suspense fallback={null}>
             <ProtoPicker />
           </React.Suspense>
@@ -290,7 +293,7 @@ export function SiteNav({ active, open, theme: initialTheme, proto }: SiteNavPro
             <CollapsedToggle />
           </SidebarHeader>
           <SidebarContent>
-            {proto ? (
+            {proto && mounted ? (
               <React.Suspense fallback={null}>
                 <ProtoNavContent />
               </React.Suspense>

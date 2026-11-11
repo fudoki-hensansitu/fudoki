@@ -142,7 +142,7 @@ function Dashboard({ c }: { c: Ctx }) {
   const { v, d, year, town } = c
   const { fy, sheets } = sheetsOf(d)
   return (
-    <div className="grid gap-3 md:grid-cols-2">
+    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
       <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7 md:col-span-2">
         <div className="flex items-start gap-4">
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
@@ -414,7 +414,7 @@ function Inside({ c, sitekey, onChoose }: { c: Ctx; sitekey: string; onChoose: (
             <ArrowRightIcon className="size-4" />
           </Link>
           {v.comparable && v.newProjects.length ? (
-            <Link href={`${c.base}/projects`} className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] hover:bg-white/10">
+            <Link href={`${c.base}/projects`} className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] hover:bg-white/10 [&_svg]:size-5">
               <NewIcon />
               始めた事業 {v.newProjects.length}件
             </Link>

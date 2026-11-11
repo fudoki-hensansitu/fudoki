@@ -1,7 +1,7 @@
 // 試作: ホームとサイドバーの案。サイドバーとホームが同じ案を読むので、ブラウザに置いて window に知らせる。?v= で開いたらそれを使う
 import * as React from 'react'
 
-export const VARIANTS = ['うちのまち中心', 'さがす中心', 'まちの中で使う']
+export const VARIANTS = ['うちのまち', 'さがす', 'まちの中']
 const KEY = 'fudoki:proto-variant'
 const EVENT = 'fudoki:proto-variant'
 
