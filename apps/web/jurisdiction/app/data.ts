@@ -33,9 +33,6 @@ const byYenOtherLast = (a: Field, b: Field) => Number(a.id === 'other') - Number
 
 export type YearView = ReturnType<typeof yearView>
 
-/** 評価シートは評価した事業を行った年度で持つ。表示する年度の2年前の事業の評価を出す（R8 の頁なら R6 の事業） */
-export const EVAL_LAG = 2
-
 export function yearView(d: Snapshot, year: number) {
   const ys = String(year)
   const prev = String(year - 1)
@@ -51,7 +48,8 @@ export function yearView(d: Snapshot, year: number) {
   const isNew = (p: Proj) => appeared(p) || (measuresOf.get(p.id) ?? []).some((m) => m.new)
   const currentIds = new Set(current.map((p) => p.id))
   const fresh = measures.filter((m) => m.new).sort((a, b) => (b.yen ?? 0) - (a.yen ?? 0))
-  const sheets = d.sheets.filter((s) => s.fy === year - EVAL_LAG)
+  // 評価シートは評価した事業を行った年度の頁に出す（R6 の事業の評価は R6 の頁）。まだ評価の無い年度は出さない
+  const sheets = d.sheets.filter((s) => s.fy === year)
   return {
     year,
     total: y.total,
