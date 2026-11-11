@@ -13,7 +13,7 @@ const ORGANIZATION = { '@context': 'https://schema.org', '@type': 'Organization'
 
 export const loader = defineHandler<Props>(async (c) => {
   c.header('Cache-Control', 'public, max-age=300')
-  // API に繋がらなくても、ほかの使い方への入口は出す
+  // API に繋がらなくても頁は返す（一覧が空なら、ホームは「読み込めません」と出す）
   const env = c.env as unknown as Env
   const [entries, jurisdictions] = await Promise.all([homeEntries(env).catch(() => []), catalog(env).catch(() => [])])
   // 事業評価のある自治体を先に並べる。評価の年度は、自治体の頁で選べる年度のうち評価を収録した最新の年度

@@ -33,27 +33,34 @@ export function AskTown({ entries, onPick, onCancel, first }: { entries: MapEntr
       {first ? <Steps at={1} of={2} onBrand /> : null}
       <h2 className="text-[20px] leading-snug font-bold sm:text-[24px]">{first ? '住んでいるまちを選ぶ' : '住んでいるまちを変える'}</h2>
       <p className={cn('mt-1 mb-4 text-[14px]', first ? 'opacity-80' : 'text-muted-foreground')}>名前で探すか、現在地から選びます。選んだまちの予算と事業を、次からもここに出します。</p>
-      <TownPicker entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
-      <div className="mt-3 text-foreground">
-        {loc ? (
-          <div className="ob-swap">
-            <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onClose={() => setLoc(null)} />
-          </div>
-        ) : (
-          <button
-            type="button"
-            onClick={() => void locate()}
-            className={cn(
-              'inline-flex items-center gap-2 rounded-full px-4 py-2 text-[14px] font-bold transition-[background-color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none',
-              first ? 'bg-brand-foreground/15 text-brand-foreground hover:bg-brand-foreground/25' : 'bg-secondary hover:bg-accent',
+      {/* 一覧を読めなかったときに「未収録」と誤って伝えないよう、検索と現在地を出さない */}
+      {entries.length ? (
+        <>
+          <TownPicker entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
+          <div className="mt-3 text-foreground">
+            {loc ? (
+              <div className="ob-swap">
+                <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onClose={() => setLoc(null)} />
+              </div>
+            ) : (
+              <button
+                type="button"
+                onClick={() => void locate()}
+                className={cn(
+                  'inline-flex items-center gap-2 rounded-full px-4 py-2 text-[14px] font-bold transition-[background-color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none',
+                  first ? 'bg-brand-foreground/15 text-brand-foreground hover:bg-brand-foreground/25' : 'bg-secondary hover:bg-accent',
+                )}
+              >
+                <NavigationArrowIcon className="size-4" />
+                現在地から選ぶ
+                <span className={cn('text-[12px] font-normal', first ? 'opacity-75' : 'text-muted-foreground')}>位置は保存しません</span>
+              </button>
             )}
-          >
-            <NavigationArrowIcon className="size-4" />
-            現在地から選ぶ
-            <span className={cn('text-[12px] font-normal', first ? 'opacity-75' : 'text-muted-foreground')}>位置は保存しません</span>
-          </button>
-        )}
-      </div>
+          </div>
+        </>
+      ) : (
+        <p className={cn('text-[14px]', first ? 'opacity-80' : 'text-muted-foreground')}>今は自治体の一覧を読み込めません。少し時間をおいて開き直してください。</p>
+      )}
       {onCancel ? (
         <button type="button" onClick={onCancel} className="mt-4 text-[13px] text-muted-foreground hover:text-foreground">
           やめる
@@ -119,6 +126,7 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
 /** ほかのまちを見る検索。ホームに常に出し、選んだまちの頁へ移るだけ（住んでいるまちは変えない） */
 export function OtherTowns({ entries, className }: { entries: MapEntry[]; className?: string }) {
   const { visit } = useRouter()
+  if (!entries.length) return null
   return (
     <section className={cn('ob-rise', className)} aria-label="ほかのまちを見る">
       <h2 className="mb-2 flex items-center gap-1.5 text-[14px] font-bold text-muted-foreground">
