@@ -103,6 +103,7 @@
     "names_end_with_kind_words": "ingestion.generic.patterns.quirks.names_end_with_kind_words",
     "names_over_pages": "ingestion.generic.patterns.quirks.names_over_pages",
     "office_departments": "ingestion.generic.patterns.quirks.office_departments",
+    "one_row_header": "ingestion.generic.patterns.quirks.one_row_header",
     "opening_bracket_ink": "ingestion.generic.patterns.quirks.opening_bracket_ink",
     "repeated_heading_owns_nothing": "ingestion.generic.patterns.quirks.repeated_heading_owns_nothing",
     "repeated_subject_headings": "ingestion.generic.patterns.quirks.repeated_subject_headings",

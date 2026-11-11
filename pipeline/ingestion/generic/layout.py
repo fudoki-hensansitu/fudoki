@@ -342,7 +342,8 @@ def _joined(horizontals):
     return joined
 
 
-def _header_bottom(page: Page, frame) -> float:
+def _header_bottom(page: Page, frame, one_row: bool = False) -> float:
+    """`one_row`: the quirk `one_row_header` (the header is one ruled row, ended by the first full rule)."""
     x0, x1, top, bottom, _ = frame
     horizontals = _joined([r for r in page.rules if not r.vertical])
     # An edge of stacked tables set a few points apart (`_frames`) is the outermost of them: the top table's rules
@@ -362,6 +363,8 @@ def _header_bottom(page: Page, frame) -> float:
               and re.search(r'[0-9０-９]', w.text)]
     first = min(digits) if digits else bottom
     candidates = [y for y in full if top + 1 < y <= first + 1]
+    if one_row:
+        candidates = candidates[:1]
     # A row that prints only the unit (`千円` over each column) opens the body on the pages whose header rule is read
     # whole; a page that draws a full rule under it too (国分寺市) keeps it in the body as well: the header ends at the
     # rule across most of the frame above that row.
@@ -421,10 +424,12 @@ def page_bands(page: Page, spread: dict | None = None,
     bands = []
     whole = list(enumerate(page.words))
     staircase = bool((header or {}).get('staircase'))
+    from ingestion.generic.patterns import quirk
+    one_row = quirk({'quirks': (header or {}).get('_quirks') or {}}, 'one_row_header') is not None
     for frame in _frames(page, spread, staircase):
         x0, x1, top, bottom, edges = frame
         first_band = len(bands)
-        header_bottom = _header_bottom(page, frame)
+        header_bottom = _header_bottom(page, frame, one_row)
         title_ignored = bool((header or {}).get('ignore_frame_title'))
         # Header cells: the rule-bounded rectangle around each header word.
         cells: dict[tuple, list[Word]] = defaultdict(list)

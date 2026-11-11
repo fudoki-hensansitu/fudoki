@@ -130,6 +130,8 @@ def effective_settings(source: dict, options: dict, *, text_pdf: bool) -> dict:
         found['header']['_layout_pattern'] = workflow['layout']['pattern']
         found['header']['_headers_pattern'] = workflow['headers']['pattern']
         found['header']['_subject_pattern'] = workflow['hierarchy']['subject']['pattern']
+        if workflow.get('quirks'):
+            found['header']['_quirks'] = deepcopy(workflow['quirks'])  # the document quirks the layout reads
         return found
     from ingestion.generic.layout_settings import load as load_layout
     found = load_layout(source['target'], source.get('direction', 'expenditure')) or {}
