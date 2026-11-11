@@ -97,6 +97,8 @@ export interface OgInput {
   areas: OgArea[]
   emblemSvg: string
   logoSvg: string
+  /** 帰属表示の要る紋章の、描き起こした人とライセンス（「紋章の SVG 化: Wgn / CC BY-SA 3.0」）。左下に小さく書く */
+  credit?: string
 }
 
 export function ogSvg(o: OgInput): string {
@@ -115,6 +117,7 @@ export function ogSvg(o: OgInput): string {
     `<g fill="${INK}">${amount(o.total, 92, 36, LEFT - 2, 448)}</g>` +
     `<g fill="${TEXT}">${text(TAGLINE, 26, LEFT + 2, 548, 0.06)}</g>` +
     sankey(o.areas) +
+    (o.credit ? `<g fill="${TEXT}" fill-opacity="0.5">${text(o.credit, 14, LEFT + 2, 600, 0.02)}</g>` : '') +
     '</svg>'
   )
 }

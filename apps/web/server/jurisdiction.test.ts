@@ -128,8 +128,6 @@ describe('自治体の個別ページ', () => {
     // 紋章と決算のある自治体は og:image を自治体の画像に差し替え、紋章の無い自治体は全頁共通の画像のまま
     expect(head.meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/jurisdictions/131148/og.png' })
     expect(pageHead({ ...data, emblem: null }).meta.some((m) => m.property === 'og:image')).toBe(false)
-    // 帰属表示の要る紋章（CC BY など）は OG 画像に使わない
-    expect(pageHead({ ...data, emblem: { src: data.emblem!.src, og: false } }).meta.some((m) => m.property === 'og:image')).toBe(false)
     // 画像の金額は最新の決算なので、過去の年度の頁・決算の分野が無い頁は全頁共通の画像のまま
     expect(pageHead(data, 2024).meta.some((m) => m.property === 'og:image')).toBe(false)
     expect(pageHead({ ...data, cofogFlow: [] }).meta.some((m) => m.property === 'og:image')).toBe(false)

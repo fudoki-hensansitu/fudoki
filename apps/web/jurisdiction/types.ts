@@ -98,7 +98,7 @@ export interface PageData {
   /** 都道府県の紋章の URL（prefecturePath があり、紋章のあるときだけ） */
   prefectureLogo?: string
   /** 自治体の紋章（jurisdiction/emblems.ts の emblemOf） */
-  emblem: { src: string; og: boolean } | null
+  emblem: { src: string } | null
   /** 同じ都道府県で収録のある近くの自治体（自身と都道府県自体を除き、近い順に数件）。最後の節から回遊させる */
   neighbors: { code: string; name: string; path: string; /** 紋章の URL（emblems.ts に紋章がある自治体だけ） */ logo?: string }[]
   officialUrl: string | null
