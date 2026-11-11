@@ -64,9 +64,9 @@ function Preview() {
 
 type Locate = { busy?: boolean; error?: string; hit?: MapEntry }
 
-/** 下の段: オンボーディング。picking=true で、まちの欄を開いた状態から始める（うちのまちを変えるとき） */
-export function Onboarding({ entries, onPick, picking: startPicking, onCancel }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; picking?: boolean; onCancel?: () => void }) {
-  const [mode, setMode] = React.useState<'idle' | 'pick' | 'locate'>(startPicking ? 'pick' : 'idle')
+/** 下の段: オンボーディング。onCancel を渡すと二択の下に「やめる」を出す（うちのまちを変えるとき） */
+export function Onboarding({ entries, onPick, onCancel }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; onCancel?: () => void }) {
+  const [mode, setMode] = React.useState<'idle' | 'pick' | 'locate'>('idle')
   const [loc, setLoc] = React.useState<Locate>({})
   const locate = async () => {
     setMode('locate')
@@ -102,6 +102,11 @@ export function Onboarding({ entries, onPick, picking: startPicking, onCancel }:
               <div className="grid gap-2.5">
                 <Choice icon={<HouseIcon />} title="住んでいるまちを選ぶ" note="名前で選びます" onClick={() => setMode('pick')} />
                 <Choice icon={<NavigationArrowIcon />} title="現在地から選ぶ" note="位置は保存しません" onClick={() => void locate()} />
+                {onCancel ? (
+                  <button type="button" onClick={onCancel} className="justify-self-start text-[13px] text-muted-foreground hover:text-foreground">
+                    やめる
+                  </button>
+                ) : null}
               </div>
             ) : (
               <div key={mode} className="ob-swap">
@@ -109,11 +114,11 @@ export function Onboarding({ entries, onPick, picking: startPicking, onCancel }:
                   <span className="text-[13px] font-bold">{mode === 'pick' ? '住んでいるまちを選ぶ' : '現在地から選ぶ'}</span>
                   <button
                     type="button"
-                    onClick={() => (onCancel && startPicking ? onCancel() : (setMode('idle'), setLoc({})))}
+                    onClick={() => (setMode('idle'), setLoc({}))}
                     className="inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground"
                   >
                     <XIcon className="size-3.5" />
-                    {onCancel && startPicking ? 'やめる' : 'もどる'}
+                    もどる
                   </button>
                 </div>
                 {mode === 'pick' ? (

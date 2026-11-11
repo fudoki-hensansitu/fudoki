@@ -1,4 +1,4 @@
-// 試作: 事業を探す。言葉で全部のまち（または1つのまち）の決算の内訳を引き、まちごとに並べる。まちは自治体コードの順で、金額の順位は付けない
+// 試作: 事業を検索。言葉で全部のまち（または1つのまち）の決算の内訳を引き、まちごとに並べる。まちは自治体コードの順で、金額の順位は付けない
 import * as React from 'react'
 import { ArrowRightIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
@@ -15,7 +15,7 @@ export const EXAMPLES = ['給食', 'プール', '保育', '図書館', '防災',
 
 export const searchHref = (q: string, code?: string | null) => `/prototype/search?q=${encodeURIComponent(q)}${code ? `&code=${code}` : ''}`
 
-/** 事業を探す欄。サイドバー・ホーム・この頁で同じものを使う */
+/** 事業を検索する欄。サイドバー・ホーム・この頁で同じものを使う */
 export function ProjectSearchBox({ q = '', code, placeholder, className, size = 'lg' }: { q?: string; code?: string | null; placeholder?: string; className?: string; size?: 'lg' | 'md' }) {
   const { visit } = useRouter()
   const [text, setText] = React.useState(q)
@@ -32,7 +32,7 @@ export function ProjectSearchBox({ q = '', code, placeholder, className, size = 
         <InputGroupAddon>
           <MagnifyingGlassIcon className="size-5" />
         </InputGroupAddon>
-        <InputGroupInput maxLength={16} value={text} onChange={(e) => setText(e.target.value)} placeholder={placeholder ?? '例：給食、プール、保育'} aria-label="事業を探す" className="text-base" />
+        <InputGroupInput maxLength={16} value={text} onChange={(e) => setText(e.target.value)} placeholder={placeholder ?? '例：給食、プール、保育'} aria-label="事業を検索" className="text-base" />
       </InputGroup>
     </form>
   )

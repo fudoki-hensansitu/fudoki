@@ -22,7 +22,7 @@ import { useVariant } from './variant'
 
 const toTown = (e: MapEntry): Town => ({ code: e.code, name: e.name, path: e.path })
 
-// ---------- 3案で共通のもの ----------
+// ---------- 2案で共通のもの ----------
 
 /** うちのまちのデータ。年度は収録の最新から始める */
 function useSnapshot(code: string | null) {
@@ -325,7 +325,7 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
   let body: React.ReactNode
   if (!ready) body = <Loading />
   else if (!town) body = <Empty entries={entries} onPick={pick} />
-  else if (changing) body = <Onboarding entries={entries} onPick={pick} picking onCancel={() => setChanging(false)} />
+  else if (changing) body = <Onboarding entries={entries} onPick={pick} onCancel={() => setChanging(false)} />
   else if (current === 1) body = <WithCtx town={town!} vision={vision} snap={snap}>{(c) => <Inside c={c} sitekey={sitekey} onChoose={choose} />}</WithCtx>
   else
     body = (
