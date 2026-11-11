@@ -72,4 +72,4 @@ export const loader = defineHandler<Props>(async (c) => {
   }
 })
 
-export const head = defineHead(() => ({ title: '事業（試作） — 風土記', meta: [{ name: 'robots', content: 'noindex' }] }))
+export const head = defineHead(() => ({ title: '事業を検索（試作） — 風土記', meta: [{ name: 'robots', content: 'noindex' }] }))

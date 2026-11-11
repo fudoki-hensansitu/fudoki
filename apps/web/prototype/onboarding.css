@@ -1,0 +1,60 @@
+/* 試作: オンボーディングの動き。入りは ease-out で 300ms 前後、絵は 7 秒で組み上がって消えるのを繰り返す。transform と opacity だけを動かす */
+.ob-rise {
+  animation: ob-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+.ob-fade {
+  animation: ob-rise 360ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation-delay: var(--d, 0s);
+}
+.ob-swap {
+  animation: ob-swap 220ms cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+@keyframes ob-rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+@keyframes ob-swap {
+  from { opacity: 0; transform: translateY(4px) scale(0.99); }
+  to { opacity: 1; transform: none; }
+}
+
+/* 絵: 全部が同じ 7s の周期で、--d だけずらして順に出す */
+.ob-preview .ob-step {
+  animation: ob-step 7s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+  animation-delay: var(--d, 0s);
+}
+.ob-preview .ob-bar {
+  transform-origin: left center;
+  animation: ob-bar 7s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
+  animation-delay: var(--d, 0s);
+}
+@keyframes ob-step {
+  0% { opacity: 0; transform: translateY(6px) scale(0.98); }
+  6%, 78% { opacity: 1; transform: none; }
+  88%, 100% { opacity: 0; transform: none; }
+}
+@keyframes ob-bar {
+  0% { opacity: 1; transform: scaleX(0); }
+  9%, 78% { opacity: 1; transform: scaleX(1); }
+  88%, 100% { opacity: 0; transform: scaleX(1); }
+}
+
+/* 現在地を調べている間の輪 */
+.ob-ping::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: 9999px;
+  border: 1.5px solid currentColor;
+  animation: ob-ping 1.2s cubic-bezier(0, 0, 0.2, 1) infinite;
+}
+@keyframes ob-ping {
+  from { opacity: 0.5; transform: scale(1); }
+  to { opacity: 0; transform: scale(1.6); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ob-rise, .ob-fade, .ob-swap, .ob-preview .ob-step, .ob-preview .ob-bar, .ob-ping::after {
+    animation: none;
+  }
+}

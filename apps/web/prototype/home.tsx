@@ -1,14 +1,14 @@
-// 試作: アプリのホーム。サイドバーの4項目（まちを探す・うちのまち・事業を探す・アシスタント）に合わせ、3つの組み方で見比べる（prototype skill。上のピッカーで切り替え、サイドバーも同じ案に変わる）。
-// 1 うちのまち中心: ホーム＝うちのまちのダッシュボード。探すのはサイドバー / 2 さがす中心: ホーム＝まち・事業を探す入口、うちのまちは小さく / 3 まちの中で使う: うちのまちの中で聞く・探す、要点は小さく。
+// 試作: アプリのホーム。まちを探すは PC ではサイドバーに置く（決定）。2つの組み方で見比べる（prototype skill。上のピッカーで切り替え、サイドバーも同じ案に変わる）。
+// 1 うちのまち中心: ホーム＝うちのまちのダッシュボード / 2 まちの中で使う: うちのまちの中で聞く・探す、要点は小さく。
+// うちのまちを決めていないときは、まちを探すを前に出し、その下のオンボーディングで うちのまちを選ぶ／現在地から選ぶ を出す（onboarding.tsx）
 // データは自治体の頁と同じ /api/jurisdictions/app/:code を読み、yearView で年度ごとに見る
 import * as React from 'react'
-import { ArrowRightIcon, ClipboardTextIcon, CoinsIcon, ListMagnifyingGlassIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
-import { useRouter } from '@void/react'
+import { ArrowRightIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { StartForm } from '../chat/start-form'
 import { Link } from '../nav/link'
-import { Emblem, LocateButton, Picker as TownPicker } from '../home/home'
+import { Emblem } from '../home/home'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { GRADES, yearView, type Snapshot, type YearView } from '../jurisdiction/app/data'
 import { NewIcon, StopIcon } from '../jurisdiction/fresh-icons'
@@ -17,6 +17,7 @@ import type { Props } from '../pages/prototype/index.server'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { EXAMPLES, ProjectSearchBox, searchHref } from './search'
 import { useMyTown, type Town } from './towns'
+import { Empty, Onboarding } from './onboarding'
 import { useVariant } from './variant'
 
 const toTown = (e: MapEntry): Town => ({ code: e.code, name: e.name, path: e.path })
@@ -206,144 +207,7 @@ function Dashboard({ c }: { c: Ctx }) {
   )
 }
 
-
-// ---------- 2 さがす中心: ホームはまち・事業を探す入口。うちのまちは下に小さく ----------
-
-const SEEK = 'fudoki:seek-town'
-
-function Seek({ entries, town, recent, snap, onChoose }: { entries: MapEntry[]; town: Town | null; recent: Town[]; snap: ReturnType<typeof useSnapshot>; onChoose: () => void }) {
-  const { visit } = useRouter()
-  const [tab, setTab] = React.useState<'town' | 'project'>('town')
-  const box = React.useRef<HTMLDivElement>(null)
-  // サイドバーの「まちを探す」から来たら、まちの欄に入れる
-  React.useEffect(() => {
-    const focus = () => {
-      setTab('town')
-      requestAnimationFrame(() => box.current?.querySelector('input')?.focus())
-    }
-    if (new URLSearchParams(location.search).get('seek') === 'town') focus()
-    window.addEventListener(SEEK, focus)
-    return () => window.removeEventListener(SEEK, focus)
-  }, [])
-  const { d, year } = snap
-  const v = d && year != null && d.years[String(year)] ? yearView(d, year) : null
-  return (
-    <div className="space-y-4">
-      <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
-        <h2 className="text-xl font-bold sm:text-2xl">何を探しますか？</h2>
-        <div className="mt-4 mb-4 flex w-fit gap-1 rounded-full bg-brand-fill/20 p-1" role="tablist" aria-label="探すもの">
-          {(
-            [
-              ['town', 'まち', <MagnifyingGlassIcon key="i" />],
-              ['project', '事業', <ListMagnifyingGlassIcon key="i" />],
-            ] as const
-          ).map(([k, label, icon]) => (
-            <button
-              key={k}
-              type="button"
-              role="tab"
-              aria-selected={tab === k}
-              onClick={() => setTab(k)}
-              className={cn('flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm transition-colors duration-150 ease-out [&_svg]:size-4', tab === k ? 'bg-brand-fill text-brand-fill-foreground' : 'hover:bg-white/10')}
-            >
-              {icon}
-              {label}
-            </button>
-          ))}
-        </div>
-        <div ref={box} key={tab} className="animate-in fade-in duration-200 ease-out motion-reduce:animate-none">
-          {tab === 'town' ? (
-            <>
-              <TownPicker entries={entries} onPick={(e) => visit(e.path)} placeholder="自治体名で探す（例：品川）" />
-              <p className="mt-3 text-[13px] opacity-80">収録しているまちの予算・決算・事業を開きます。</p>
-            </>
-          ) : (
-            <>
-              <ProjectSearchBox placeholder="例：給食、プール、保育" />
-              <div className="mt-3 flex flex-wrap gap-2">
-                {EXAMPLES.map((x) => (
-                  <Link key={x} href={searchHref(x)} className="rounded-full bg-brand-fill/20 px-3 py-1 text-[13px] transition-colors hover:bg-brand-fill/35">
-                    {x}
-                  </Link>
-                ))}
-              </div>
-            </>
-          )}
-        </div>
-      </section>
-
-      {town ? (
-        <section className="rounded-2xl border bg-background p-5 animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none">
-          <div className="flex items-center gap-3">
-            <Emblem code={town.code} name={town.name} className="size-10" />
-            <div className="min-w-0 flex-1">
-              <p className="text-[12px] text-muted-foreground">うちのまち</p>
-              <p className="truncate text-lg font-bold">{town.name}</p>
-            </div>
-            {v && year != null ? (
-              <div className="text-right">
-                <p className="text-[12px] text-muted-foreground">
-                  {reiwa(year)}の{v.word === '決算' ? '決算' : '当初予算'}
-                </p>
-                <Amt yen={v.total} className="text-2xl font-bold text-primary" />
-              </div>
-            ) : snap.failed ? null : (
-              <Skeleton className="h-10 w-28" />
-            )}
-          </div>
-          {v && year != null ? (
-            <ul className="mt-4 grid grid-cols-3 gap-2">
-              {v.fields.slice(0, 3).map((f) => (
-                <li key={f.id}>
-                  <Link href={`${town.path}/${year}/fields/${f.id}`} className="block rounded-xl bg-card px-3 py-2.5 transition-colors hover:bg-accent">
-                    <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
-                      <FieldIcon id={f.id} className="size-4" />
-                      <span className="truncate">{f.name}</span>
-                    </span>
-                    <Amt yen={f.yen} className="mt-0.5 block text-base font-bold" />
-                  </Link>
-                </li>
-              ))}
-            </ul>
-          ) : null}
-          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
-            <More href={town.path}>{town.name}のページを見る</More>
-            <More href={searchHref('', town.code)}>{town.name}の事業</More>
-            <button type="button" onClick={onChoose} className="ms-auto text-[13px] text-muted-foreground hover:text-foreground">
-              変える
-            </button>
-          </div>
-        </section>
-      ) : (
-        <button type="button" onClick={onChoose} className="flex w-full items-center gap-3 rounded-2xl border border-dashed bg-background p-5 text-left transition-colors hover:bg-accent">
-          <span className="flex-1">
-            <span className="block font-bold">うちのまちを選ぶ</span>
-            <span className="block text-[13px] text-muted-foreground">選ぶと、そのまちのお金の要点がここに出ます。</span>
-          </span>
-          <ArrowRightIcon className="size-5 text-muted-foreground" />
-        </button>
-      )}
-
-      {recent.length ? (
-        <section>
-          <h3 className="mb-2 text-[13px] text-muted-foreground">最近見たまち</h3>
-          <ul className="flex flex-wrap gap-2">
-            {recent.slice(0, 6).map((t) => (
-              <li key={t.code}>
-                <Link href={t.path} className="flex items-center gap-2 rounded-full border bg-background py-1 ps-1 pe-3 text-sm transition-colors hover:bg-accent">
-                  <Emblem code={t.code} name={t.name} className="size-7 rounded-full p-1" />
-                  {t.name}
-                </Link>
-              </li>
-            ))}
-          </ul>
-        </section>
-      ) : null}
-    </div>
-  )
-}
-
-// ---------- 3 まちの中で使う: うちのまちについて聞く・探す。要点は小さく ----------
+// ---------- 2 まちの中で使う: うちのまちについて聞く・探す。要点は小さく ----------
 
 function Inside({ c, sitekey, onChoose }: { c: Ctx; sitekey: string; onChoose: () => void }) {
   const { town, d, v, year } = c
@@ -447,30 +311,8 @@ function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string
   return <>{children(buildCtx(town, d, year, setYear, vision))}</>
 }
 
-function Choose({ entries, onPick, onCancel }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; onCancel?: () => void }) {
-  return (
-    <>
-      <header className="mb-6">
-        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">まちのお金、何に使ってる？</h1>
-        <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
-      </header>
-      <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
-        <p className="text-xl font-bold sm:text-2xl">住んでいるまちを選ぶ</p>
-        <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちのお金の使い道がここに並びます。</p>
-        <TownPicker entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
-        <LocateButton entries={entries} onPick={onPick} />
-        {onCancel ? (
-          <button type="button" onClick={onCancel} className="mt-3 text-[13px] opacity-80 hover:opacity-100">
-            やめる
-          </button>
-        ) : null}
-      </section>
-    </>
-  )
-}
-
 export function ProtoHome({ entries, featured, sitekey }: Props) {
-  const { ready, town, recent, set } = useMyTown()
+  const { ready, town, set } = useMyTown()
   const [changing, setChanging] = React.useState(false)
   const { current, key } = useVariant()
   const snap = useSnapshot(town?.code ?? null)
@@ -482,9 +324,9 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
   const choose = () => setChanging(true)
   let body: React.ReactNode
   if (!ready) body = <Loading />
-  else if (changing || (!town && current !== 1)) body = <Choose entries={entries} onPick={pick} onCancel={changing ? () => setChanging(false) : undefined} />
-  else if (current === 1) body = <Seek entries={entries} town={town} recent={recent} snap={snap} onChoose={choose} />
-  else if (current === 2) body = <WithCtx town={town!} vision={vision} snap={snap}>{(c) => <Inside c={c} sitekey={sitekey} onChoose={choose} />}</WithCtx>
+  else if (!town) body = <Empty entries={entries} onPick={pick} />
+  else if (changing) body = <Onboarding entries={entries} onPick={pick} picking onCancel={() => setChanging(false)} />
+  else if (current === 1) body = <WithCtx town={town!} vision={vision} snap={snap}>{(c) => <Inside c={c} sitekey={sitekey} onChoose={choose} />}</WithCtx>
   else
     body = (
       <>

@@ -71,7 +71,7 @@ export function Search({ q, code, townName, towns, capped, failed }: Props) {
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-20 pb-28 sm:px-8">
       <header className="mb-5">
-        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em]">事業</h1>
+        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em]">事業を検索</h1>
         <p className="mt-1 text-[15px] text-muted-foreground">言葉で、決算の中身を引きます。ほかのまちが同じことにいくら使っているかも見られます。</p>
       </header>
       <ProjectSearchBox q={q} code={code} />
