@@ -229,9 +229,9 @@ function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; them
   const [hidden, setHidden] = useHideOnScroll()
   const items = proto
     ? [
-        { href: '/prototype', label: 'うちのまち', icon: <HouseIcon />, active: active === 'home' },
-        { href: '/prototype/search', label: '事業を探す', icon: <ListMagnifyingGlassIcon />, active: active === 'search' },
+        { href: '/prototype', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
         { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
+        { href: '/prototype/search', label: '事業を探す', icon: <ListMagnifyingGlassIcon />, active: active === 'search' },
       ]
     : [
         { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
@@ -256,7 +256,7 @@ function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; them
                 {i.label}
               </NavLink>
             </li>
-            {/* 試作: うちのまちの隣に、まちを探す */}
+            {/* 試作: ホームの隣に、まちを探す */}
             {proto && n === 0 ? (
               <li>
                 <FindTownButton />

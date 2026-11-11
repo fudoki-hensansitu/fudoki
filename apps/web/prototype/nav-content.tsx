@@ -1,5 +1,5 @@
-// 試作: サイドバーの中身。項目は まちを探す・うちのまち・事業を探す・アシスタント の4つだけ。並べ方を3案で見比べる（ホームと同じピッカーで切り替え）。
-// 1 うちのまち中心: 頭にまちの検索欄、その下にうちのまち・事業を探す・アシスタント / 2 さがす中心: 探す2つを上に、うちのまちは下に置く（検索欄はホーム） / 3 まちの中で使う: 頭にうちのまちを置き、その下の項目はうちのまちの中で使う
+// 試作: サイドバーの中身。項目は まちを探す・アシスタント・事業を探す の3つだけ（うちのまちはホームなので置かない。ホームへはロゴから）。並べ方を3案で見比べる（ホームと同じピッカーで切り替え）。
+// 1 うちのまち中心: 頭にまちの検索欄 / 2 さがす中心: まちの検索欄はホームに置き、項目だけ並べる / 3 まちの中で使う: うちのまちを見出しに置き、事業を探すはうちのまちに絞る
 import * as React from 'react'
 import { HouseIcon, ListMagnifyingGlassIcon, MagnifyingGlassIcon, RobotIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
@@ -101,9 +101,8 @@ function Mine({ path, town }: { path: string; town: Town | null }) {
       </SidebarGroup>
       <SidebarGroup>
         <SidebarMenu>
-          <Item href="/prototype" label={town ? town.name : 'うちのまち'} icon={<TownIcon town={town} />} active={path === '/prototype'} />
-          <Item href="/prototype/search" label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
           <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
+          <Item href="/prototype/search" label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
         </SidebarMenu>
       </SidebarGroup>
     </>
@@ -111,7 +110,7 @@ function Mine({ path, town }: { path: string; town: Town | null }) {
 }
 
 /** 2 さがす中心。まちの検索欄はホームに置き、ここからはホームのまちの欄へ入る */
-function Seek({ path, town }: { path: string; town: Town | null }) {
+function Seek({ path }: { path: string; town: Town | null }) {
   const { visit } = useRouter()
   const { setOpenMobile } = useSidebar()
   const seekTown = () => {
@@ -132,14 +131,8 @@ function Seek({ path, town }: { path: string; town: Town | null }) {
               seekTown()
             }}
           />
-          <Item href="/prototype/search" label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
           <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
-        </SidebarMenu>
-      </SidebarGroup>
-      <SidebarGroup>
-        <SidebarGroupLabel>うちのまち</SidebarGroupLabel>
-        <SidebarMenu>
-          <Item href={town ? town.path : '/prototype'} label={town ? town.name : '選ぶ'} icon={<TownIcon town={town} />} active={!!town && (path === town.path || path.startsWith(`${town.path}/`))} />
+          <Item href="/prototype/search" label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
         </SidebarMenu>
       </SidebarGroup>
     </>
@@ -159,9 +152,8 @@ function Inside({ path, town }: { path: string; town: Town | null }) {
           <span className="truncate font-bold">{town ? town.name : 'うちのまち'}</span>
         </SidebarGroupLabel>
         <SidebarMenu>
-          <Item href="/prototype" label="うちのまち" icon={<HouseIcon />} active={path === '/prototype'} />
-          <Item href={town ? searchHref('', town.code) : '/prototype/search'} label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
           <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
+          <Item href={town ? searchHref('', town.code) : '/prototype/search'} label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
         </SidebarMenu>
       </SidebarGroup>
     </>
