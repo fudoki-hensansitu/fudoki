@@ -391,7 +391,9 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
                   "opening_bracket_ink": true,
                   "column_edge": true,
                   "group_heads": [
@@ -1497,7 +1499,9 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
                   "opening_bracket_ink": true,
                   "column_edge": true,
                   "group_heads": [
@@ -2859,7 +2863,9 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
                   "opening_bracket_ink": true,
                   "column_edge": true,
                   "group_heads": [

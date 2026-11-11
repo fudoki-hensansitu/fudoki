@@ -678,10 +678,11 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
                 # the declared column whose heading reads the same characters.
                 joined = ''.join(band.header)
                 setting = next((v for k, v in (columns or {}).items() if joined and k.replace('／', '') == joined), None)
-            if setting is None and band.header:
-                # A skewed scan reads only part of a heading, or its characters out of order (`国都支出金` under
-                # `本年度の財源内訳／特定財源`, `度)較)`): the declared columns whose heading holds every character read,
-                # when they all declare the same.
+            if setting is None and band.header and LINE_TOLERANCE.get() > 2.0:
+                # A skewed scan (`rules.skewed`) reads only part of a heading, or its characters out of order (`国都支出金`
+                # under `本年度の財源内訳／特定財源`, `度)較)`): the declared columns whose heading holds every character read,
+                # when they all declare the same. Only there: a printed `本年度` is a heading of its own, not part of
+                # `本年度の財源内訳` (三鷹市).
                 read = Counter(''.join(band.header))
                 found = [v for k, v in (columns or {}).items() if not read - Counter(k.replace('／', ''))]
                 setting = found[0] if found and all(v == found[0] for v in found) else None
