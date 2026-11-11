@@ -2,7 +2,7 @@
 import * as React from 'react'
 import { ListMagnifyingGlassIcon, MagnifyingGlassIcon, RobotIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
-import { SidebarGroup, SidebarMenu, useSidebar } from '@/components/ui/sidebar'
+import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { Command, CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Kbd } from '@/components/ui/kbd'
 import type { MapEntry } from '../jurisdiction/index-table'
@@ -51,38 +51,23 @@ function TownSearch() {
       </Command>
     </CommandDialog>
   )
-  if (state === 'collapsed' && !isMobile) {
-    return (
-      <SidebarMenu>
-        <Item
-          href="#search"
-          label="まちを探す"
-          icon={<MagnifyingGlassIcon />}
-          onClick={(e) => {
-            e.preventDefault()
-            show()
-          }}
-        />
-        {palette}
-      </SidebarMenu>
-    )
-  }
+  // サイドバーの項目と同じ SidebarMenuButton で描き、icon・文字の位置と大きさを下の項目にそろえる。開いているときだけ枠を付けた欄に見せる
   return (
-    <>
-      {/* 下の項目（px-3・icon 20px・gap-3・高さ 40px）と icon の位置・大きさ・文字までの間を揃える。枠の 1px を引いて 11px */}
-      <button
-        type="button"
+    <SidebarMenuItem className="mb-3 group-data-[collapsible=icon]:mb-0">
+      <SidebarMenuButton
+        variant="outline"
         onClick={show}
         onPointerEnter={warm}
         aria-keyshortcuts="Meta+K Control+K"
-        className="flex h-10 w-full items-center gap-3 rounded-full border border-sidebar-border bg-background px-[11px] text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+        tooltip={state === 'collapsed' && !isMobile ? 'まちを探す' : undefined}
+        className="h-10 gap-3 rounded-full px-3 text-sm text-muted-foreground group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:rounded-md group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-2.5! group-data-[collapsible=icon]:text-sidebar-foreground group-data-[collapsible=icon]:shadow-none [&_svg]:size-5"
       >
-        <MagnifyingGlassIcon className="size-5 shrink-0" />
-        <span className="flex-1 text-left">まちを探す</span>
-        <Kbd>⌘K</Kbd>
-      </button>
+        <MagnifyingGlassIcon />
+        <span className="flex-1">まちを探す</span>
+        <Kbd className="group-data-[collapsible=icon]:hidden">⌘K</Kbd>
+      </SidebarMenuButton>
       {palette}
-    </>
+    </SidebarMenuItem>
   )
 }
 
@@ -91,17 +76,12 @@ const isAssistant = (path: string) => path === '/assistant' || path.startsWith('
 export function NavContent() {
   const { path } = useRouter()
   return (
-    <>
-      {/* 欄の focus の輪（3px）が、スクロールする枠の上端で切れないよう少し空ける */}
-      <SidebarGroup className="pt-1">
+    <SidebarGroup className="pt-1">
+      <SidebarMenu data-tour="nav">
         <TownSearch />
-      </SidebarGroup>
-      <SidebarGroup>
-        <SidebarMenu data-tour="nav">
-          <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
-          <Item href="/search" label="事業を検索" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/search')} />
-        </SidebarMenu>
-      </SidebarGroup>
-    </>
+        <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
+        <Item href="/search" label="事業を検索" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/search')} />
+      </SidebarMenu>
+    </SidebarGroup>
   )
 }
