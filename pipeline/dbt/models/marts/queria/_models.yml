@@ -56,7 +56,7 @@ models:
     data_tests: [not_null, unique]
   - &node_key
     name: node_key
-    description: 同じ自治体・年度の当初予算と決算で同じ科目・内訳に同じ値が付く鍵。年度をまたいでは一致しない。
+    description: 同じ自治体・年度の当初予算と決算の同じ科目に同じ値が付く鍵。内訳は見出し・名称が違うと一致しない。
     data_tests: [not_null]
   - name: parent_subject_id
     description: 親の科目の subject_id。款は NULL。
