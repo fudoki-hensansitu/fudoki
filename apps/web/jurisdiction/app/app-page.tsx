@@ -625,7 +625,7 @@ const SLICE_INKS = ['var(--primary-foreground)', 'var(--primary-foreground)', 'v
 const REST_COLOR = 'color-mix(in oklab, var(--muted-foreground) 22%, var(--background))'
 
 /** 分野の内訳: COFOG の中分類ごとの金額。多い順に5つと、残りはまとめる */
-function FieldBreakdown({ frame, total }: { frame: { cofog: string }; total: number }) {
+function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   const { v, d, page } = useApp()
   const [drills, setDrills] = React.useState<Drill[] | null>()
   const initial = d.years[String(v.year)]?.kind === 'initial'
@@ -646,28 +646,13 @@ function FieldBreakdown({ frame, total }: { frame: { cofog: string }; total: num
     return rest > 0 ? [...top, { key: 'rest', name: `ほか${rows.length - top.length}件`, yen: rest, color: REST_COLOR, ink: 'var(--foreground)' }] : top
   }, [drills, frame.cofog])
   if (drills === null || (drills && !slices.length)) return null
-  const sum = slices.reduce((t, s) => t + s.yen, 0) || total
   return (
     <DetailSection icon={ChartPieSliceIcon} title="内訳">
-      <div className="grid items-center gap-5 sm:grid-cols-[220px_minmax(0,1fr)] sm:gap-8">
-        <div className="grid aspect-square w-full max-w-[220px] place-items-center justify-self-center">
-          {drills ? (
-            <React.Suspense fallback={<div className="size-full animate-pulse rounded-full bg-card" />}>
-              <FieldChart slices={slices} />
-            </React.Suspense>
-          ) : <div className="size-full animate-pulse rounded-full bg-card" />}
-        </div>
-        <ul className="flex min-w-0 flex-col">
-          {slices.map((s) => (
-            <li key={s.key} className="flex items-center gap-3 px-2 py-2">
-              <span className="size-3 shrink-0 rounded-full" style={{ background: s.color }} />
-              <span className="min-w-0 flex-1 text-[15px] leading-snug">{s.name}</span>
-              <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{((s.yen / sum) * 100).toFixed(1)}%</span>
-              <Amt yen={s.yen} className="w-[5.5em] shrink-0 text-right text-[15px]" />
-            </li>
-          ))}
-        </ul>
-      </div>
+      {drills ? (
+        <React.Suspense fallback={<div className="h-[300px] animate-pulse rounded-xl bg-card" />}>
+          <FieldChart slices={slices} format={yenText} />
+        </React.Suspense>
+      ) : <div className="h-[300px] animate-pulse rounded-xl bg-card" />}
     </DetailSection>
   )
 }
@@ -694,7 +679,7 @@ function FieldPage({ id }: { id: string }) {
         <Amt yen={f.yen} className="block text-4xl leading-tight text-primary" />
         <span className="text-xs text-muted-foreground">{[`全体の ${((f.yen / v.total) * 100).toFixed(1)}%`, perHead(f.yen, d.pop)].filter(Boolean).join(' · ')}</span>
       </div>
-      <FieldBreakdown frame={[...DOMAIN_FRAMES, OTHER_FRAME].find((x) => x.id === f.id) ?? OTHER_FRAME} total={f.yen} />
+      <FieldBreakdown frame={[...DOMAIN_FRAMES, OTHER_FRAME].find((x) => x.id === f.id) ?? OTHER_FRAME} />
       {ms.length ? (
         <DetailSection icon={SparkleIcon} title="新しく始める事業" count={ms.length}>
           <Rows>{ms.map((m) => <MeasureRow key={m.id} m={m} />)}</Rows>
