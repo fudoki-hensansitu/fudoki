@@ -12,7 +12,7 @@ bun run build:web
 [Void](https://void.cloud/)（Vite）で build する。設定は `void.config.ts`（head の既定・var・Cloudflare の binding と preview の差し替え）と `vite.config.ts`。`vite build` が cf の Build Output（`.cloudflare/output/v0`）を書き、`deploy` は `cf deploy --prebuilt`、PR の preview は `CLOUDFLARE_PREVIEW_BUILD=true` で build してから `cf previews deploy --prebuilt` で出す。Void は custom domain の `previews_enabled` を cf の形へ移せないので、`vite.config.ts` の `previewDomains` が出力の `domains` を本番と Preview の両方を出す形に書き換える。
 
 - **頁は `pages/`**（Void の Pages）: `index`（ホーム）・`about`（紹介）・`assistant`・`jurisdictions`・`[prefecture]/index`・`[prefecture]/[name]` の `.server.ts` が loader と head を持ち、`.tsx` が React の画面を描く。`pages/layout.tsx` がサイドバーを置き、`Link`・`useRouter().visit` で頁の間を移ると layout は描き直さず本文だけを差し替える（`voidReact({ viewTransitions: true })` で View Transition も効く）。全頁の head の既定（charset・viewport・OG・icon・manifest・service worker の登録）は `void.config.ts` の `head`
-- **会話の画面（`/s/:id`）は `pages/[prefecture]/[name]` が受ける**: Void は動的な経路を pattern の文字の順に当てるので、`pages/s/[id]` を置いても `/:prefecture/:name` が先に当たる。loader が先頭の段が `s` のときだけ会話の画面の props（`server/pages.ts` の `sessionProps`）を返し、`.tsx` が `chat/session-page.tsx` を描く
+- **会話の画面（`/s/:id`）は `pages/[prefecture]/[name]` が受ける**: Void は動的な経路を pattern の文字の順に当てるので、`pages/s/[id]` を置いても `/:prefecture/:name` が先に当たる。loader が先頭の段が `s` のときだけ会話の画面の props（`pages/[prefecture]/_session.ts` の `sessionProps`）を返し、`.tsx` が `chat/session-page.tsx` を描く
 - **API・sitemap・PWA は `routes/`**（Void の routes。`routes/api/*.ts` は `server/api.ts` の `handleApi` を呼ぶ）。試験は `server/routes.testing.ts` が同じ file を Hono に組んで叩く
 - **`middleware/01.site.ts`**: サイドバーの開閉とテーマ（`nav/theme.ts`、既定はライト）の cookie を `useShared()` へ渡し、`<html data-theme>` を書き、HTML に Void の head では書けないもの（選んだテーマの theme-color、頁の間の View Transition の opt-in）を足す。開閉とテーマで HTML が変わるので `Vary: Cookie` を付ける。HTML の応答には `server/csp.ts` の CSP を付ける（script は自分の JS・service worker の登録の hash・Turnstile・Cloudflare Web Analytics の beacon だけ、通信は自分・beacon の報告先・ホームの現在地に使う国土地理院の逆ジオコーダーだけ、`frame-ancestors 'none'`）。inline の script を足すときは hash を CSP に足さないと止まる
 - **CSS** は `styles/app.css`（Tailwind・`styles/tokens.css` の色・字・角の token・頁の間の動き）を layout が全頁に読む。頁の間を移っても CSS は残るので、入口だけの CSS（`landing/landing.css`）はどの規則も `.landing` の中に閉じる
@@ -43,7 +43,7 @@ bun run build:web
 ### 手で設定するもの
 
 - Turnstile の widget を dashboard で作り（hostname は `fudoki.dev`）、site key を `void.config.ts` の `TURNSTILE_SITE_KEY` に書く（設定済み）。secret key は Worker の secret `TURNSTILE_SECRET_KEY` に置く（会話の token の署名の鍵もここから作る）
-- 手元の `bun run dev:web`（vite dev）は `apps/web/.env` に `TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA`（Cloudflare 公開の「常に通る」試験用の secret）を書く（`.env` は commit しない。Void は `.env` 以外の `.dev.vars`・`.env.example` などがあると build を止める）。site key は localhost / 127.0.0.1 のときだけ `server/pages.ts` の `siteKey` が試験用の値に差し替える（本番の widget の hostname は `fudoki.dev`）
+- 手元の `bun run dev:web`（vite dev）は `apps/web/.env` に `TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA`（Cloudflare 公開の「常に通る」試験用の secret）を書く（`.env` は commit しない。Void は `.env` 以外の `.dev.vars`・`.env.example` などがあると build を止める）。site key は localhost / 127.0.0.1 のときだけ `server/site-key.ts` の `siteKey` が試験用の値に差し替える（本番の widget の hostname は `fudoki.dev`）
 - preview（`pr-<番号>.fudoki.dev`、Cloudflare Access で保護）は `void.config.ts` の `preview` の分岐の `worker.vars` で site key・secret を Cloudflare 公開の「常に通る」試験用の値に差し替える（AI エージェントが操作できる）。試験用の secret は action・hostname が合わないダミー値を返すので、`server/session.ts` はその secret のときだけ success のみを見る。本番は変えない
 
 ### 利用状況

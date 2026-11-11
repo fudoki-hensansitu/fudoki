@@ -57,7 +57,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
               },
               "説明": {
                 "pattern": "shape",
@@ -70,9 +73,15 @@
                     "教育長": "基準額",
                     "監査委員": "基準額"
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               }
             }
+          },
+          "quirks": {
+            "codeless_name_levels": true
           }
         },
         "pages": [
@@ -138,7 +147,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
               },
               "説明": {
                 "pattern": "shape",
@@ -151,9 +163,15 @@
                     "教育長": "基準額",
                     "監査委員": "基準額"
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               }
             }
+          },
+          "quirks": {
+            "codeless_name_levels": true
           }
         },
         "pages": [
@@ -219,7 +237,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
               },
               "説明": {
                 "pattern": "shape",
@@ -232,9 +253,15 @@
                     "教育長": "基準額",
                     "監査委員": "基準額"
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               }
             }
+          },
+          "quirks": {
+            "codeless_name_levels": true
           }
         },
         "pages": [
@@ -300,7 +327,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
               },
               "説明": {
                 "pattern": "shape",
@@ -313,9 +343,15 @@
                     "教育長": "基準額",
                     "監査委員": "基準額"
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               }
             }
+          },
+          "quirks": {
+            "codeless_name_levels": true
           }
         },
         "pages": [

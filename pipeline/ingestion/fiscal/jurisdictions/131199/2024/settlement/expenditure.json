@@ -31,11 +31,6 @@
               "rules": {
                 "row_gaps": true,
                 "short_columns": true
-              },
-              "inner_tables": {
-                "marker": "当初予算額",
-                "left": "目",
-                "heading": "事務事業"
               }
             }
           },
@@ -68,6 +63,13 @@
                   ]
                 }
               }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "heading": "事務事業"
             }
           }
         },
@@ -934,11 +936,6 @@
               "rules": {
                 "row_gaps": true,
                 "short_columns": true
-              },
-              "inner_tables": {
-                "marker": "当初予算額",
-                "left": "目",
-                "heading": "事務事業"
               }
             }
           },
@@ -971,6 +968,13 @@
                   ]
                 }
               }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "heading": "事務事業"
             }
           }
         }
@@ -1087,11 +1091,6 @@
               "rules": {
                 "row_gaps": true,
                 "short_columns": true
-              },
-              "inner_tables": {
-                "marker": "当初予算額",
-                "left": "目",
-                "heading": "事務事業"
               }
             }
           },
@@ -1124,6 +1123,13 @@
                   ]
                 }
               }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "heading": "事務事業"
             }
           }
         },
@@ -1240,11 +1246,6 @@
               "rules": {
                 "row_gaps": true,
                 "short_columns": true
-              },
-              "inner_tables": {
-                "marker": "当初予算額",
-                "left": "目",
-                "heading": "事務事業"
               }
             }
           },
@@ -1277,6 +1278,13 @@
                   ]
                 }
               }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "heading": "事務事業"
             }
           }
         }
@@ -1349,11 +1357,6 @@
               "rules": {
                 "row_gaps": true,
                 "short_columns": true
-              },
-              "inner_tables": {
-                "marker": "当初予算額",
-                "left": "目",
-                "heading": "事務事業"
               }
             }
           },
@@ -1386,6 +1389,13 @@
                   ]
                 }
               }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "heading": "事務事業"
             }
           }
         }

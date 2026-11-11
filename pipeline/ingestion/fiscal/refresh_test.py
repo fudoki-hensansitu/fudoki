@@ -155,9 +155,9 @@ class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
         self.assertEqual(result['status'], refresh.CURRENT)
         convert.assert_not_called()
 
-    def test_comment_only_change_rewrites_only_fingerprints(self):
+    def test_code_change_with_the_same_tables_rewrites_only_fingerprints(self):
         with (self.code / 'lib/parquet.py').open('a') as stream:
-            stream.write('\n# a comment does not change a table\n')
+            stream.write('\n_EDITED = "a comment does not change a table"\n')
         with self.assertRaisesRegex(ValueError, 'Stale saved table'):
             manifest.require_current(manifest.read(self.path))
         result = self.refresh()
@@ -176,7 +176,7 @@ class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
 
     def test_dry_run_compares_but_keeps_the_manifest(self):
         with (self.code / 'lib/parquet.py').open('a') as stream:
-            stream.write('\n# comment\n')
+            stream.write('\n_EDITED = "comment"\n')
         before = self.path.read_bytes()
         result = self.refresh(dry_run=True)
         self.assertEqual(result['status'], refresh.WOULD_REFRESH)
@@ -185,7 +185,7 @@ class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
     def test_refresh_never_asks_or_writes_jev_answers(self):
         # A refresh (dry-run included) compares tables; it must not extend or rewrite the tracked answer store.
         with (self.code / 'lib/parquet.py').open('a') as stream:
-            stream.write('\n# a comment\n')
+            stream.write('\n_EDITED = "a comment"\n')
         seen = []
         real = run.convert
 
@@ -227,7 +227,7 @@ class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
 
     def test_save_gate_failure_blocks_even_when_content_is_the_same(self):
         with (self.code / 'lib/parquet.py').open('a') as stream:
-            stream.write('\n# comment\n')
+            stream.write('\n_EDITED = "comment"\n')
         before = self.path.read_bytes()
         with patch.object(storage, 'prepare_save', side_effect=ValueError('Node table failed the mandatory pre-save tree check')):
             result = self.refresh()
@@ -247,7 +247,7 @@ class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
 
     def test_manifest_changed_during_comparison_is_not_overwritten(self):
         with (self.code / 'lib/parquet.py').open('a') as stream:
-            stream.write('\n# comment\n')
+            stream.write('\n_EDITED = "comment"\n')
         original = refresh.compare_table
 
         def compare_and_edit(*args):
@@ -261,7 +261,7 @@ class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
 
     def test_missing_saved_table_without_remote_is_an_error_not_a_rewrite(self):
         with (self.code / 'lib/parquet.py').open('a') as stream:
-            stream.write('\n# comment\n')
+            stream.write('\n_EDITED = "comment"\n')
         shutil.rmtree(self.objects)
         before = self.path.read_bytes()
         result = self.refresh()

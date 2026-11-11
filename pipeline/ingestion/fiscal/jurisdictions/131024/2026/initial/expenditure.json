@@ -39,6 +39,9 @@
                     "1": 1,
                     "(1)": 2
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               },
               "説明": {
@@ -73,6 +76,10 @@
                     "9路線": "積算",
                     "中央区先": "積算"
                   }
+                },
+                "quirks": {
+                  "office_departments": true,
+                  "kana_set_apart": true
                 }
               }
             }
@@ -118,6 +125,9 @@
                     "1": 1,
                     "(1)": 2
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               },
               "説明": {
@@ -152,6 +162,10 @@
                     "9路線": "積算",
                     "中央区先": "積算"
                   }
+                },
+                "quirks": {
+                  "office_departments": true,
+                  "kana_set_apart": true
                 }
               }
             }
@@ -197,6 +211,9 @@
                     "1": 1,
                     "(1)": 2
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               },
               "説明": {
@@ -231,6 +248,10 @@
                     "9路線": "積算",
                     "中央区先": "積算"
                   }
+                },
+                "quirks": {
+                  "office_departments": true,
+                  "kana_set_apart": true
                 }
               }
             }
@@ -275,6 +296,9 @@
                     "1": 1,
                     "(1)": 2
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               },
               "説明": {
@@ -309,6 +333,10 @@
                     "9路線": "積算",
                     "中央区先": "積算"
                   }
+                },
+                "quirks": {
+                  "office_departments": true,
+                  "kana_set_apart": true
                 }
               }
             }
@@ -353,6 +381,9 @@
                     "1": 1,
                     "(1)": 2
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               },
               "説明": {
@@ -387,6 +418,10 @@
                     "9路線": "積算",
                     "中央区先": "積算"
                   }
+                },
+                "quirks": {
+                  "office_departments": true,
+                  "kana_set_apart": true
                 }
               }
             }

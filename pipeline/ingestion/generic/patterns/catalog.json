@@ -71,5 +71,33 @@
     "page_context": "ingestion.generic.patterns.components.page_context",
     "enterprise_hierarchy": "ingestion.generic.patterns.components.enterprise_hierarchy",
     "carried_totals": "ingestion.generic.patterns.components.carried_totals"
+  },
+  "quirks": {
+    "amounts_beside_names": "ingestion.generic.patterns.quirks.amounts_beside_names",
+    "bracket_line_closes_name": "ingestion.generic.patterns.quirks.bracket_line_closes_name",
+    "bracketed_remainder": "ingestion.generic.patterns.quirks.bracketed_remainder",
+    "codeless_name_levels": "ingestion.generic.patterns.quirks.codeless_name_levels",
+    "column_edge": "ingestion.generic.patterns.quirks.column_edge",
+    "explained_projects": "ingestion.generic.patterns.quirks.explained_projects",
+    "fitted_names": "ingestion.generic.patterns.quirks.fitted_names",
+    "full_width_numbers": "ingestion.generic.patterns.quirks.full_width_numbers",
+    "glued_numbers": "ingestion.generic.patterns.quirks.glued_numbers",
+    "group_heads": "ingestion.generic.patterns.quirks.group_heads",
+    "heading_repeated_over_code": "ingestion.generic.patterns.quirks.heading_repeated_over_code",
+    "headings": "ingestion.generic.patterns.quirks.headings",
+    "inner_tables": "ingestion.generic.patterns.quirks.inner_tables",
+    "kana_set_apart": "ingestion.generic.patterns.quirks.kana_set_apart",
+    "line_starts": "ingestion.generic.patterns.quirks.line_starts",
+    "name_column": "ingestion.generic.patterns.quirks.name_column",
+    "name_columns": "ingestion.generic.patterns.quirks.name_columns",
+    "names_end_with_kind_words": "ingestion.generic.patterns.quirks.names_end_with_kind_words",
+    "office_departments": "ingestion.generic.patterns.quirks.office_departments",
+    "opening_bracket_ink": "ingestion.generic.patterns.quirks.opening_bracket_ink",
+    "revision_history": "ingestion.generic.patterns.quirks.revision_history",
+    "rows": "ingestion.generic.patterns.quirks.rows",
+    "rows_from": "ingestion.generic.patterns.quirks.rows_from",
+    "sum_levels": "ingestion.generic.patterns.quirks.sum_levels",
+    "under": "ingestion.generic.patterns.quirks.under",
+    "unnumbered_shift": "ingestion.generic.patterns.quirks.unnumbered_shift"
   }
 }

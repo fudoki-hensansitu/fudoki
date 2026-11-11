@@ -668,6 +668,17 @@ class PatternTest(unittest.TestCase):
         self.assertIsNone(shape('３階ホール吊り物設備等保守管理委託料'))
         self.assertEqual(shape('㉓災害急患対応手当'), 'circled')
 
+    def test_kana_set_apart_only_where_selected(self):
+        # `ス` `ソフトウェア…` a whole character apart (131211): `kana` only on an axis that selects `kana_set_apart`.
+        from ingestion.generic.patterns import Quirk, load
+        from ingestion.generic.tree import Item, shape_of
+        band = Band(0, 100, 1, ('説明',), [], 0, 100)
+        line = [Glyph('ス', 0, 0, 9, 9, 1, 0), Glyph('ソフトウェア', 18, 0, 72, 9, 1, 1)]
+        item = lambda group: Item(group, 1, [list(line)], None, 'ス ソフトウェア', 0)
+        plain = Group([band], '説明', False)
+        selected = Group([band], '説明', False, kana=Quirk(load('quirks', 'kana_set_apart'), True))
+        self.assertEqual([shape_of(item(plain)), shape_of(item(selected))], [None, 'kana'])
+
 
 class UnitTest(unittest.TestCase):
     def test_default_by_document_kind_when_nothing_is_printed(self):
@@ -898,10 +909,12 @@ class ConvertRulesTest(unittest.TestCase):
             if priced:
                 found.amounts.append(('備考', [glyph('2,332,236', 1089, 100, 50)]))
             return found
-        self.assertTrue(department_heading(item('日本橋特別出張所[日本橋特別出張所]')))
-        self.assertFalse(department_heading(item('戸籍事務[区民課]')))
-        self.assertFalse(department_heading(item('日本橋特別出張所[日本橋特別出張所]', code='1')))
-        self.assertFalse(department_heading(item('日本橋特別出張所[日本橋特別出張所]', priced=False)))
+        offices = {'備考': {'quirks': {'office_departments': True}}}
+        self.assertTrue(department_heading(item('日本橋特別出張所[日本橋特別出張所]'), offices))
+        self.assertFalse(department_heading(item('日本橋特別出張所[日本橋特別出張所]')))
+        self.assertFalse(department_heading(item('戸籍事務[区民課]'), offices))
+        self.assertFalse(department_heading(item('日本橋特別出張所[日本橋特別出張所]', code='1'), offices))
+        self.assertFalse(department_heading(item('日本橋特別出張所[日本橋特別出張所]', priced=False), offices))
 
     def test_a_note_word_over_or_under_an_amount_belongs_to_the_amount_next_to_it(self):
         from ingestion.generic.tree import items
@@ -1199,7 +1212,7 @@ class LayoutNoteSettingsTest(unittest.TestCase):
                  ('副市長', 360, 112, 27), ('9,377,714', 560, 112, 50)]
         found = self.items(lines)
         self.assertEqual(len(found), 2)
-        result = apply_layout(found, {'name_columns': True}, set())
+        result = apply_layout(found, {'quirks': {'name_columns': True}}, set())
         self.assertEqual(result[0].indent, result[1].indent)
         unchanged = apply_layout(self.items(lines), {}, set())
         self.assertNotEqual(unchanged[0].indent, unchanged[1].indent)
@@ -1723,7 +1736,7 @@ class OcrCodeWordTest(unittest.TestCase):
 
 class HeadingsTest(unittest.TestCase):
     """`headings`: a name-only line heads the deeper lines under it, only in an axis that declares it."""
-    SETTINGS = {'備考': {'headings': True, 'plain_names': ['繰越明許費分']}}
+    SETTINGS = {'備考': {'quirks': {'headings': True}, 'plain_names': ['繰越明許費分']}}
 
     def read(self, lines, settings=True):
         from ingestion.generic.tree import heads_items, items

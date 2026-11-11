@@ -83,9 +83,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -810,9 +813,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -951,9 +957,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -1066,9 +1075,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -1163,9 +1175,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -1260,9 +1275,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -1351,9 +1369,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -1442,9 +1463,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -1533,9 +1557,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -1624,9 +1651,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -1715,9 +1745,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -1816,9 +1849,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -1907,9 +1943,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -2044,9 +2083,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -2156,9 +2198,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -2267,9 +2312,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -2380,9 +2428,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -2471,9 +2522,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -2562,9 +2616,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -2741,9 +2798,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -2888,9 +2948,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -2979,9 +3042,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -3149,9 +3215,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -3277,9 +3346,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -3378,9 +3450,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -3469,9 +3544,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -3556,9 +3634,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -3663,9 +3744,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -3754,9 +3838,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -3845,9 +3932,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }
@@ -3934,9 +4024,12 @@
               "節": {
                 "pattern": "indent",
                 "options": {
-                  "name_column": true,
-                  "name_line_reach": 1.5,
                   "indent_chars": 2
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.5
+                  }
                 }
               }
             }

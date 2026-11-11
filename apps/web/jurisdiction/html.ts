@@ -4,7 +4,7 @@ import type { CatalogEntry } from '../server/jurisdiction'
 import { EMBLEMS } from './emblems'
 import { jurisdictionPath } from './path'
 import { assetPath } from './profiles'
-import { formatYen, pageYears, yearPath, type PageData } from './types'
+import { appPageYears, formatYen, TAB_SLUGS, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
 /** JSON を script の中に置くときに </script> や <!-- で抜けないようにする */
@@ -89,14 +89,17 @@ export function yearHead(d: PageData, year: number): { title: string; descriptio
 }
 
 /** 自治体の頁の head。year は既定でない年度の頁のときだけ渡す */
-export function pageHead(d: PageData, year?: number): Head {
+/** sub は分野・タブの頁。題の頭に名前を足し、canonical をその頁にする */
+export function pageHead(d: PageData, year?: number, sub?: { label: string; path: string }): Head {
   const latest = d.years.at(-1)!
   const budget = latestBudget(d)
   const base = jurisdictionPath(d.code)
-  const past = year !== undefined && year !== pageYears(d)[0] ? yearHead(d, year) : null
-  const title = past?.title ?? pageTitle(d)
+  const past = year !== undefined && year !== appPageYears(d)[0] ? yearHead(d, year) : null
+  const title = (sub ? `${sub.label}｜` : '') + (past?.title ?? pageTitle(d))
   const description = past?.description ?? pageDescription(d)
-  const canonical = `${ORIGIN}${past ? `${base}/${year}` : base}`
+  // 最新の年度の頁（/tokyo/nakano/2026）は入口（/tokyo/nakano）と同じ中身なので、canonical を入口にする。
+  // 分野・タブの頁は年度の段の無い URL が 301 なので、最新の年度でも年度の段つきにする
+  const canonical = `${ORIGIN}${year !== undefined && (past || sub) ? `${base}/${year}` : base}${sub?.path ?? ''}`
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -128,14 +131,19 @@ export function pageHead(d: PageData, year?: number): Head {
 export const emptyHead = (e: CatalogEntry): Head =>
   head(`${e.name}｜風土記`, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.code)}`, { meta: [{ name: 'robots', content: 'noindex' }] })
 
-/** sitemap。自治体の頁に加え、既定でない年度の頁（/tokyo/shinagawa/2024）も載せる。years は頁で選べる年度（新しい順） */
+/** sitemap。自治体の頁（最新の年度の入口）に加え、過去の年度の頁（/tokyo/shinagawa/2024）と各年度のタブの頁を載せる。
+ * 最新の年度の頁（/tokyo/shinagawa/2026）は canonical が入口なので載せない。years は頁で選べる年度（新しい順） */
 export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) => number[] = (e) => [...e.settlementYears].sort((a, b) => b - a)) =>
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url>${entries
     .filter((e) => e.settlementYears.length > 0)
     .flatMap((e) => {
       const base = jurisdictionPath(e.code)
-      const [latest, ...past] = yearsOf(e)
-      return [base, ...past.map((y) => yearPath(base, y, latest!))]
+      const years = yearsOf(e)
+      // 年度ごとの頁と、そのタブの頁（事業・予算・決算）
+      return [base, ...years.flatMap((y, i) => {
+        const page = `${base}/${y}`
+        return [...(i === 0 ? [] : [page]), `${page}/${TAB_SLUGS.projects}`, ...(e.initialYears.includes(y) ? [`${page}/${TAB_SLUGS.money}`] : []), ...(e.settlementYears.includes(y) ? [`${page}/${TAB_SLUGS.settled}`] : [])]
+      })]
     })
     .map((path) => `<url><loc>${ORIGIN}${path}</loc></url>`)
     .join('')}</urlset>\n`

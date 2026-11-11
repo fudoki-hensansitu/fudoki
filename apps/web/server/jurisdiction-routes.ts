@@ -1,26 +1,26 @@
 // 自治体の個別ページ（/tokyo/nakano）・ホームの自治体の要約のデータと、画面が款・目の内訳を引く /api/jurisdictions/*・sitemap の応答。
 // データは apps/api の歳出の検索から組み、変わるのは取り込みのときだけなので、Worker の cache に1時間置く。頁は pages/ の loader が、
 // 内訳の API と sitemap は routes/ がここを呼ぶ。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
-import { PREFECTURE_MAPS } from '../jurisdiction/map.generated'
 import { sitemapXml } from '../jurisdiction/html'
-import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
+import { jurisdictionPath } from '../jurisdiction/path'
 import { toMapEntry, type MapEntry } from '../jurisdiction/index-table'
-import { pageYears, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
-import { assetPath, PROFILES, type Profile } from '../jurisdiction/profiles'
+import { appPageYears, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
+import { assetPath } from '../jurisdiction/profiles'
 import { EMBLEMS } from '../jurisdiction/emblems'
-import { BUDGET_PRESS } from '../jurisdiction/budget-press'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
-import { loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, shownSettlementYears, type CatalogEntry, type DocumentKind } from './jurisdiction'
+import { loadAppData } from './app-data'
+import type { Snapshot } from '../jurisdiction/app/data'
+import { ACCOUNT, loadAccountTotals, loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, shownSettlementYears, type CatalogEntry, type DocumentKind } from './jurisdiction'
 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/jurisdiction-v20/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v21/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
@@ -31,64 +31,21 @@ async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
   return value
 }
 
-export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog', () => loadCatalog(env))
+// 会計の一覧（accounts）を足したので key を変え、前の形のキャッシュを読まない
+export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog-accounts', () => loadCatalog(env))
 // catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてからホームの検索へ出るまで最大で約2時間かかる
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
-const page = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
+/** 自治体の頁と OG 画像が共有する、最新の決算の年度の頁のデータ */
+export const pageData = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
 /** ホーム（/）に載せる全自治体の要約 */
 export const homeEntries = async (env: Env): Promise<MapEntry[]> => (await index(env)).map(toMapEntry)
-
-/** 最後の節に出す近くの自治体の数 */
-const NEARBY_COUNT = 3
-
-/** 近い順の自治体。都道府県の図（map.generated.ts）のタイルの位置で測り、図の無い自治体は自治体コードの近さで測る */
-function nearby(entry: CatalogEntry, candidates: CatalogEntry[]): CatalogEntry[] {
-  const tiles = new Map<string, { col: number; row: number }>(PREFECTURE_MAPS.flatMap((m) => m.tiles.map((t) => [t.code, t] as const)))
-  const here = tiles.get(entry.code)
-  const distance = (e: CatalogEntry) => {
-    const t = tiles.get(e.code)
-    return here && t ? Math.hypot(t.col - here.col, t.row - here.row) : 1e3 + Math.abs(Number(e.code) - Number(entry.code))
-  }
-  return candidates.map((e) => ({ e, d: distance(e) })).sort((a, b) => a.d - b.d || a.e.code.localeCompare(b.e.code)).slice(0, NEARBY_COUNT).map((x) => x.e)
-}
-
-/** 個別ページに出すもの。収録の無い自治体は empty、存在しない名称や都道府県の slug でない path は null（404） */
-export type JurisdictionView = { kind: 'page'; data: PageData & { profile: Profile | null } } | { kind: 'empty'; entry: CatalogEntry; neighbors: PageData['neighbors'] }
-
-/** /<都道府県のローマ字>/<自治体のローマ字>、都道府県自体は /<都道府県のローマ字>。API に繋がらなければ投げる */
-export async function resolveJurisdiction(env: Env, path: string): Promise<JurisdictionView | null> {
-  if (!PREFECTURE_SLUGS.has(path.split('/')[1] ?? '')) return null
-  const entries = await catalog(env)
-  const entry = entries.find((e) => jurisdictionPath(e.code) === path)
-  if (!entry) return null
-  // 都道府県名は都道府県自体の頁へ。都道府県自体の頁と、都道府県がカタログに無い（頁が無い）ときはリンクしない
-  const prefectureCode = `${entry.code.slice(0, 2)}0001`
-  const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : null
-  const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
-    .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
-  const data = entry.settlementYears.length > 0 ? await page(env, entry) : null
-  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: withPress(entry.code, PROFILES[entry.code] ?? null) } } : { kind: 'empty', entry, neighbors }
-}
-
-/** 事業評価がまだの年度に、予算案のプレス発表資料の施策（budgetNew）を足す。評価のある年度は足さない */
-function withPress(code: string, profile: Profile | null): Profile | null {
-  const press = BUDGET_PRESS[code]
-  if (!profile || !press) return profile
-  const years = Object.fromEntries(Object.entries(profile.years).map(([y, py]) => {
-    const p = press[y]
-    if (!p || py.projects.length || py.initiatives?.length) return [y, py]
-    // 出すのは「新規」の印が付いた施策だけ。印の無い施策は拡大か継続かを資料から決められないので出さない（データには紐付けごと残す）
-    return [y, { ...py, budgetPress: p.source, budgetNew: p.items.filter((i) => i.isNew) }]
-  }))
-  return { ...profile, years }
-}
 
 /** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする） */
 export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<(OgInput & { cacheKey: string }) | null> {
   if (!EMBLEMS[code]) return null
   const entry = (await catalog(env)).find((e) => e.code === code)
-  const data = entry && entry.settlementYears.length > 0 ? await page(env, entry) : null
+  const data = entry && entry.settlementYears.length > 0 ? await pageData(env, entry) : null
   const areas = data?.cofogFlow.map((f) => ({ name: f.kan.name, yen: f.kan.yen })).filter((a) => a.yen > 0) ?? []
   if (!entry || !data || areas.length === 0) return null
   const asset = async (path: string) => {
@@ -114,7 +71,7 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
 /** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */
 export async function sitemapResponse(env: Env): Promise<Response> {
   try {
-    return new Response(sitemapXml(await catalog(env), (e) => pageYears({ years: shownSettlementYears(e.settlementYears).map((year) => ({ year })), profile: PROFILES[e.code] ?? null })), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
+    return new Response(sitemapXml(await catalog(env), (e) => { const settled = shownSettlementYears(e.settlementYears); const last = Math.max(0, ...settled); return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) }) }), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
   } catch {
     return new Response(sitemapXml([]), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } })
   }
@@ -145,15 +102,47 @@ export async function flowResponse(env: Env, request: Request, { code, year, dep
       throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度・表示階層の指定が違います')
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     const view: FlowView = new URL(request.url).searchParams.get('view') === 'cofog' ? 'cofog' : 'kan'
-    // 決算の無い年度は当初予算を読む（?phase=initial）。決算のある年度に予算は出さない
+    // ?phase=initial なら当初予算、無ければ決算を読む
     const kind: DocumentKind = new URL(request.url).searchParams.get('phase') === 'initial' ? 'initial' : 'settlement'
+    // ?account= で特別会計も読む。無ければ一般会計
+    const account = new URL(request.url).searchParams.get('account') || ACCOUNT
     const entry = (await catalog(env)).find((e) => e.code === code)
-    const ok = kind === 'initial' ? entry?.initialYears.includes(Number(year)) && !entry.settlementYears.includes(Number(year)) : entry?.settlementYears.includes(Number(year))
-    if (!ok) throw new HttpError(404, 'NOT_FOUND', kind === 'initial' ? 'この自治体・年度の決算の無い一般会計の当初予算は収録されていません' : 'この自治体・年度の一般会計の決算は収録されていません')
+    const ok = entry?.accounts?.[kind]?.[year]?.includes(account) ?? (account === ACCOUNT && (kind === 'initial' ? entry?.initialYears : entry?.settlementYears)?.includes(Number(year)))
+    if (!ok) throw new HttpError(404, 'NOT_FOUND', `この自治体・年度の${account}の${kind === 'initial' ? '当初予算' : '決算'}は収録されていません`)
     const load = view === 'cofog' ? loadCofogFlow : loadFlow
-    return json(await memo<Drill[]>(`flow-${view}-${kind}-${code}-${year}-${depth}`, () => load(env, code, Number(year), depth as FlowDepth, kind)))
+    const suffix = account === ACCOUNT ? '' : `-${account}`
+    return json(await memo<Drill[]>(`flow-${view}-${kind}-${code}-${year}-${depth}${suffix}`, () => load(env, code, Number(year), depth as FlowDepth, kind, account)))
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '決算データを表示できませんでした。少し待ってからもう一度開いてください。'))
+  }
+}
+
+/** 一つの自治体・年度の会計ごとの総額（/api/jurisdictions/accounts/:code/:year）。?phase=initial なら当初予算 */
+export async function accountsResponse(env: Env, request: Request, { code, year }: { code: string; year: string }): Promise<Response> {
+  try {
+    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(year)) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度の指定が違います')
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
+    const kind: DocumentKind = new URL(request.url).searchParams.get('phase') === 'initial' ? 'initial' : 'settlement'
+    const accounts = (await catalog(env)).find((e) => e.code === code)?.accounts?.[kind]?.[year]
+    if (!accounts?.length) throw new HttpError(404, 'NOT_FOUND', 'この自治体・年度の資料は収録されていません')
+    return json(await memo(`accounts-${kind}-${code}-${year}`, () => loadAccountTotals(env, code, Number(year), kind, accounts)))
+  } catch (e) {
+    if (e instanceof HttpError) return errorResponse(e)
+    return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
+  }
+}
+
+/** 自治体の頁（アプリ型）のデータ（/api/jurisdictions/app/:code）。年度ごとの款項目・事業・施策・評価シート */
+export async function appDataResponse(env: Env, request: Request, code: string): Promise<Response> {
+  try {
+    if (!/^\d{6}$/.test(code)) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コードの形が違います')
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
+    const entry = (await catalog(env)).find((e) => e.code === code)
+    if (!entry) throw new HttpError(404, 'NOT_FOUND', 'この自治体は収録されていません')
+    return json(await memo<Snapshot>(`app-${code}-${entry.initialYears.at(-1)}-${entry.settlementYears.at(-1)}`, () => loadAppData(env, entry)))
+  } catch (e) {
+    if (e instanceof HttpError) return errorResponse(e)
+    return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
   }
 }

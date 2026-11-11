@@ -137,11 +137,11 @@ class SelectedDependencyTest(unittest.TestCase):
     def test_editing_an_unselected_pattern_does_not_invalidate_a_saved_reading(self):
         before = self.fingerprint()
         path = self.root / 'ingestion/generic/patterns/headers/characters.py'
-        path.write_text(path.read_text() + '\n# changed character reading\n')
+        path.write_text(path.read_text() + '\n_EDITED = "changed character reading"\n')
         self.assertEqual(before, self.fingerprint())
         self.conversion['options']['workflow']['headers']['pattern'] = 'characters'
         before = self.fingerprint()
-        path.write_text(path.read_text() + '\n# another change\n')
+        path.write_text(path.read_text() + '\n_EDITED = "another change"\n')
         self.assertNotEqual(before, self.fingerprint())
 
     def test_catalog_additions_do_not_invalidate_existing_selections(self):
@@ -191,3 +191,50 @@ class SelectedDependencyTest(unittest.TestCase):
         other['options']['workflow'] = reading()
         other['options']['workflow']['headers']['pattern'] = 'characters'
         self.assertEqual(before, self.fingerprint())
+
+
+class QuirkTest(unittest.TestCase):
+    def test_a_quirk_is_checked_by_its_own_schema_and_scope(self):
+        workflow = reading()
+        workflow['hierarchy']['breakdown']['備考']['quirks'] = {'fitted_names': {'chars': 5, 'overflow_left_chars': 1}}
+        validate(workflow)
+        workflow['hierarchy']['breakdown']['備考']['quirks'] = {'fitted_names': {'chars': 0, 'overflow_left_chars': 1}}
+        with self.assertRaises(jsonschema.ValidationError):
+            validate(workflow)
+        workflow['hierarchy']['breakdown']['備考']['quirks'] = {'not_a_quirk': True}
+        with self.assertRaisesRegex(ValueError, 'Unknown PDF pattern'):
+            validate(workflow)
+        workflow = reading()
+        workflow['quirks'] = {'headings': True}
+        with self.assertRaisesRegex(ValueError, 'applies to the axis'):
+            validate(workflow)
+
+    def test_only_a_conversion_that_selects_a_quirk_depends_on_its_module(self):
+        conversion = {'converter': 'fiscal/layouts/generic_text/convert.py',
+                      'options': {'account': '一般会計', 'table_id': 'general', 'workflow': reading()}}
+        self.assertNotIn('generic/patterns/quirks/headings.py', manifest.dependencies(conversion))
+        conversion['options']['workflow']['hierarchy']['breakdown']['備考']['quirks'] = {'headings': True}
+        self.assertIn('generic/patterns/quirks/headings.py', manifest.dependencies(conversion))
+        from ingestion.generic.workflow import settings
+        self.assertEqual(settings(conversion['options']['workflow'])['breakdown']['備考']['quirks'], {'headings': True})
+
+
+class CodeFingerprintTest(unittest.TestCase):
+    def test_comments_and_docstrings_do_not_change_the_code_fingerprint(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'reading.py'
+            path.write_text('def read(x):\n    return x + 1\n')
+            before = manifest.sha_code(path)
+            path.write_text('"""A reading."""\n# why\ndef read(x):\n    """Read it."""\n    return x + 1  # one more\n')
+            self.assertEqual(before, manifest.sha_code(path))
+            path.write_text('def read(x):\n    return x + 2\n')
+            self.assertNotEqual(before, manifest.sha_code(path))
+
+
+class ProfileWorkflowDependencyTest(unittest.TestCase):
+    def test_the_quirks_of_a_profile_workflow_are_in_the_fingerprint(self):
+        document = manifest.read(manifest.JURISDICTIONS / '131130/2024/initial/expenditure.json')
+        conversion = next(c for c in document['conversions'] if 'reading' in c['options'].get('workflow', {}))
+        files = manifest.dependencies(conversion)
+        self.assertIn('generic/patterns/quirks/headings.py', files)
+        self.assertIn('generic/patterns/layout/stacked_titles.py', files)

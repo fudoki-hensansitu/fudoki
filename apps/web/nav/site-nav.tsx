@@ -16,6 +16,7 @@ import {
   useSidebar,
 } from '@/components/ui/sidebar'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Separator } from '@/components/ui/separator'
 import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
@@ -204,6 +205,8 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
       onFocus={() => setHidden(false)}
       className="fixed inset-x-0 bottom-0 z-40 bg-sidebar pb-[env(safe-area-inset-bottom)] transition-transform duration-200 ease-out motion-reduce:transition-none data-hidden:translate-y-full md:hidden"
     >
+      {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
+      <Separator />
       <ul className="grid h-14 grid-cols-3">
         {items.map((i) => (
           <li key={i.href}>

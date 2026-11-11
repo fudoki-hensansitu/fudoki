@@ -42,15 +42,9 @@
                 "pattern": "position",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -59,6 +53,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               },
               "節": {
@@ -112,15 +114,9 @@
                 "pattern": "position",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -129,6 +125,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               }
             }
@@ -179,15 +183,9 @@
                 "pattern": "position",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -196,6 +194,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               }
             }
@@ -243,15 +249,9 @@
                 "pattern": "position",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -260,6 +260,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               },
               "節": {
@@ -310,15 +318,9 @@
                 "pattern": "indent",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -327,6 +329,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               },
               "節": {
@@ -377,15 +387,9 @@
                 "pattern": "position",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -394,6 +398,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               },
               "節": {
@@ -444,15 +456,9 @@
                 "pattern": "position",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -461,6 +467,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               },
               "節": {
@@ -511,15 +525,9 @@
                 "pattern": "position",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -528,6 +536,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               },
               "節": {
@@ -578,15 +594,9 @@
                 "pattern": "position",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -595,6 +605,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               },
               "節": {
@@ -645,15 +663,9 @@
                 "pattern": "position",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -662,6 +674,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               },
               "節": {
@@ -712,15 +732,9 @@
                 "pattern": "indent",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -729,6 +743,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               },
               "節": {
@@ -779,15 +801,9 @@
                 "pattern": "indent",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -796,6 +812,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               },
               "節": {
@@ -849,15 +873,9 @@
                 "pattern": "indent",
                 "options": {
                   "amount_brackets": true,
-                  "fitted_names": {
-                    "chars": 5,
-                    "overflow_left_chars": 0
-                  },
                   "notes": [
                     "(繰越明許費)"
                   ],
-                  "bracketed_remainder": true,
-                  "name_columns": true,
                   "plain_names": [
                     "補充用備品",
                     "拡充用"
@@ -866,6 +884,14 @@
                     "市民プール高圧開閉装置等修繕": "債務負担行為"
                   },
                   "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "bracketed_remainder": true,
+                  "name_columns": true,
+                  "fitted_names": {
+                    "chars": 5,
+                    "overflow_left_chars": 0
+                  }
                 }
               }
             }

@@ -42,10 +42,12 @@
               "備考": {
                 "pattern": "position",
                 "options": {
-                  "opening_bracket_ink": true,
                   "name_start_slack": 5,
-                  "heading_repeated_over_code": true,
                   "bare_amounts": true
+                },
+                "quirks": {
+                  "heading_repeated_over_code": true,
+                  "opening_bracket_ink": true
                 }
               }
             }
@@ -1336,9 +1338,11 @@
               "備考": {
                 "pattern": "position",
                 "options": {
-                  "opening_bracket_ink": true,
-                  "name_start_slack": 5,
-                  "heading_repeated_over_code": true
+                  "name_start_slack": 5
+                },
+                "quirks": {
+                  "heading_repeated_over_code": true,
+                  "opening_bracket_ink": true
                 }
               }
             }
@@ -1449,9 +1453,11 @@
               "備考": {
                 "pattern": "position",
                 "options": {
-                  "opening_bracket_ink": true,
-                  "name_start_slack": 5,
-                  "heading_repeated_over_code": true
+                  "name_start_slack": 5
+                },
+                "quirks": {
+                  "heading_repeated_over_code": true,
+                  "opening_bracket_ink": true
                 }
               }
             }
@@ -1527,9 +1533,11 @@
               "備考": {
                 "pattern": "position",
                 "options": {
-                  "opening_bracket_ink": true,
-                  "name_start_slack": 5,
-                  "heading_repeated_over_code": true
+                  "name_start_slack": 5
+                },
+                "quirks": {
+                  "heading_repeated_over_code": true,
+                  "opening_bracket_ink": true
                 }
               }
             }
@@ -1844,9 +1852,11 @@
               "備考": {
                 "pattern": "position",
                 "options": {
-                  "opening_bracket_ink": true,
-                  "name_start_slack": 5,
-                  "heading_repeated_over_code": true
+                  "name_start_slack": 5
+                },
+                "quirks": {
+                  "heading_repeated_over_code": true,
+                  "opening_bracket_ink": true
                 }
               }
             }
