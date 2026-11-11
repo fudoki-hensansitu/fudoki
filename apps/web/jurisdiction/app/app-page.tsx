@@ -384,7 +384,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       ) : (
         <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の{label}は、まだ収録していません</p>
       )}
-      <p className="text-xs text-muted-foreground">分野は使い道を目的ごとに分ける世界共通の分類（COFOG）で、分け方は風土記の判断です。款・項は予算書・決算書の分け方のままです。</p>
+      <p className="text-xs text-muted-foreground">分野は使い道を目的ごとに分ける世界共通の分類（COFOG）で、風土記が独自で区別しています。款・項は予算書・決算書の分け方のままです。</p>
     </div>
   )
 }
@@ -754,7 +754,7 @@ function FieldPage({ id }: { id: string }) {
           <GradeCards sheets={ss} />
         </DetailSection>
       ) : null}
-      <p className="mt-6 text-xs text-muted-foreground">分野は COFOG（政府支出の機能別分類）の大分類です。分け方は風土記の判断です。</p>
+      <p className="mt-6 text-xs text-muted-foreground">分野は COFOG（政府支出の機能別分類）の大分類です。風土記が独自で区別しています。</p>
     </>
   )
 }
