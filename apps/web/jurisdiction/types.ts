@@ -1,5 +1,5 @@
 // 自治体の個別ページ（/:都道府県/:名称）のデータの型と、金額・年度の表記。server（SSR・API）と画面（島）で同じものを使う
-import type { Profile } from './profiles'
+import type { Vision } from './visions'
 
 /** 款・項・目・節など、出典の1行。金額は API が返した円（画面で足し引きしない） */
 export interface Line {
@@ -82,11 +82,6 @@ export function populationForYear(list: Population[], fiscalYear: number): Popul
   return list.find((p) => p.asOf === `${fiscalYear + 1}-01-01`) ?? list.at(-1) ?? null
 }
 
-/** 1人あたりの金額。万円の小数1桁まで（52.3万円）。1万円未満は円で出す */
-export function formatPerCapita(yen: number): string {
-  if (yen < 1e4) return `${Math.round(yen).toLocaleString('ja-JP')}円`
-  return `${(yen / 1e4).toLocaleString('ja-JP', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}万円`
-}
 
 /** 人口。1万人以上は万人の小数1桁（41.6万人）、それ未満は人単位（303人） */
 export const formatPeople = (people: number) => (people >= 1e4 ? `${(people / 1e4).toFixed(1)}万人` : `${people.toLocaleString('ja-JP')}人`)
@@ -100,6 +95,10 @@ export interface PageData {
   prefecture: string
   /** 都道府県自体の頁（/tokyo）。header の都道府県名から移る。都道府県自体の頁と、都道府県の頁が無いときは null */
   prefecturePath: string | null
+  /** 都道府県の紋章の URL（prefecturePath があり、紋章のあるときだけ） */
+  prefectureLogo?: string
+  /** 自治体の紋章（jurisdiction/emblems.ts の emblemOf） */
+  emblem: { src: string; og: boolean } | null
   /** 同じ都道府県で収録のある近くの自治体（自身と都道府県自体を除き、近い順に数件）。最後の節から回遊させる */
   neighbors: { code: string; name: string; path: string; /** 紋章の URL（emblems.ts に紋章がある自治体だけ） */ logo?: string }[]
   officialUrl: string | null
@@ -114,13 +113,9 @@ export interface PageData {
   /** 最新の決算より後の年度の当初予算（古い順）。決算の無い年度の概要に使う */
   budgets: BudgetTotal[]
   projects: Project[]
-  /** 方針・政策領域・事業の入れ替え（jurisdiction/profiles.ts）。手で起こした自治体だけにある */
-  profile?: Profile | null
+  /** 基本構想の都市像（jurisdiction/visions.ts）。手で起こした自治体だけにある */
+  vision?: Vision | null
 }
-
-/** 頁で選べる年度（新しい順）。事業の振り返り（profile）と決算の年度を合わせる。先頭が頁の既定の年度 */
-export const pageYears = (d: { years: { year: number }[]; profile?: { years: Record<string, unknown> } | null }) =>
-  [...new Set([...Object.keys(d.profile?.years ?? {}).map(Number), ...d.years.map((y) => y.year)])].sort((a, b) => b - a)
 
 /** 自治体の頁で選べる年度（新しい順に3年）。決算の年度と、決算より後の当初予算の年度 */
 export const appPageYears = (d: { years: { year: number }[]; budgets: { year: number }[] }) =>
@@ -134,8 +129,6 @@ export const tabOfSlug = (slug: string) => (Object.entries(TAB_SLUGS).find(([, s
 /** 決算のタブは決算のある年度だけ。予算のタブの有無は頁のデータ（当初予算の有無）を読むまで分からないので、無ければ画面で別のタブへ移す */
 export const hasTab = (d: { years: { year: number }[] }, year: number, tab: PageTab) => tab !== 'settled' || d.years.some((y) => y.year === year)
 
-/** 年度ごとの頁の path。既定の年度は自治体の頁そのもの（/tokyo/shinagawa）、ほかは1段下げる（/tokyo/shinagawa/2024） */
-export const yearPath = (base: string, year: number, latest: number) => (year === latest ? base : `${base}/${year}`)
 
 /** 今日を含む会計年度（4月始まり） */
 export const currentFiscalYear = (now = new Date()) => (now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1)

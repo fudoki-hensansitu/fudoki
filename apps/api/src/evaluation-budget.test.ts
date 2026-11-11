@@ -127,5 +127,7 @@ describe('事業', () => {
     expect(body.project_years).toEqual([])
     const hit = ProjectSearchOutput.parse(await (await post('/v1/projects:search', { fiscal_year: { min: 2024, max: 2026 }, where: { name: { contains: '子育て' } } })).json())
     expect(hit.project_years.map((y) => y.fiscal_year).sort()).toEqual([2024, 2026])
+    expect(hit.projects.map((p) => p.project_id)).toEqual([P])
+    expect(body.projects).toEqual([])
   })
 })

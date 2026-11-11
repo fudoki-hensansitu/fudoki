@@ -2,8 +2,8 @@ import { describe, expect, test } from 'bun:test'
 import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../jurisdiction/types'
 import { fetchRoute } from './routes.testing'
 import { emptyHead, pageHead, type Head } from '../jurisdiction/html'
-import { homeEntries, resolveJurisdiction } from './jurisdiction-routes'
-import { jurisdictionProps } from './pages'
+import { homeEntries } from './jurisdiction-routes'
+import { jurisdictionProps, resolveJurisdiction } from '../pages/[prefecture]/_loader'
 import type { Context } from 'hono'
 import { DETAIL_TABLE, SUBJECT_TABLE } from '../../api/src/columns'
 import { searchInputFor } from '../../api/src/shared/search'
@@ -76,9 +76,9 @@ function fixtureApi({ code = '131148', name = '中野区', extraNodes = [] as Ro
     const url = new URL(req.url)
     if (url.pathname === '/v1/jurisdictions')
       return Response.json({ jurisdictions: [
-        { jurisdiction_code: code, name, prefecture_name: '東京都', population: [], coverage: [2024, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) },
-        { jurisdiction_code: '131016', name: '千代田区', prefecture_name: '東京都', population: [], coverage: [] },
-        { jurisdiction_code: '130001', name: '東京都', prefecture_name: '東京都', population: [], coverage: [] },
+        { jurisdiction_code: code, name, prefecture_name: '東京都', population: [], evaluations: [], coverage: [2024, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) },
+        { jurisdiction_code: '131016', name: '千代田区', prefecture_name: '東京都', population: [], evaluations: [], coverage: [] },
+        { jurisdiction_code: '130001', name: '東京都', prefecture_name: '東京都', population: [], evaluations: [], coverage: [] },
       ] })
     const kind = url.pathname === '/v1/expenditures/subjects:search' ? 'subjects' : url.pathname === '/v1/expenditures/details:search' ? 'details' : undefined
     if (kind) {
@@ -127,7 +127,9 @@ describe('自治体の個別ページ', () => {
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano')
     // 紋章と決算のある自治体は og:image を自治体の画像に差し替え、紋章の無い自治体は全頁共通の画像のまま
     expect(head.meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/jurisdictions/131148/og.png' })
-    expect(pageHead({ ...data, code: '999999' }).meta.some((m) => m.property === 'og:image')).toBe(false)
+    expect(pageHead({ ...data, emblem: null }).meta.some((m) => m.property === 'og:image')).toBe(false)
+    // 帰属表示の要る紋章（CC BY など）は OG 画像に使わない
+    expect(pageHead({ ...data, emblem: { src: data.emblem!.src, og: false } }).meta.some((m) => m.property === 'og:image')).toBe(false)
     // 画像の金額は最新の決算なので、過去の年度の頁・決算の分野が無い頁は全頁共通の画像のまま
     expect(pageHead(data, 2024).meta.some((m) => m.property === 'og:image')).toBe(false)
     expect(pageHead({ ...data, cofogFlow: [] }).meta.some((m) => m.property === 'og:image')).toBe(false)
@@ -212,7 +214,7 @@ describe('自治体の個別ページ', () => {
     const sparse: Env = { API: { fetch: async (req) => {
       const url = new URL(req.url)
       if (url.pathname === '/v1/jurisdictions')
-        return Response.json({ jurisdictions: [{ jurisdiction_code: '131148', name: '中野区', prefecture_name: '東京都', population: [], coverage: [2019, 2020, 2021, 2023, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) }] })
+        return Response.json({ jurisdictions: [{ jurisdiction_code: '131148', name: '中野区', prefecture_name: '東京都', population: [], evaluations: [], coverage: [2019, 2020, 2021, 2023, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) }] })
       if (url.pathname === '/v1/expenditures/subjects:search') {
         const body = await req.json() as { fiscal_year: { min: number; max: number }; where: { level: { eq: string[] } } }
         if (body.fiscal_year.max - body.fiscal_year.min > 4) return Response.json({ error: 'fiscal_year は 5 年以内にしてください' }, { status: 400 })

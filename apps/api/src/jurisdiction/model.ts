@@ -14,15 +14,7 @@ export const Jurisdiction = z.strictObject({
 })
 export type Jurisdiction = z.infer<typeof Jurisdiction>
 
-// --- API の応答（docs/prd/aggregate-api/dd.md）。一覧は要約、1つの自治体は人口の推移と出典まで ---
-
-export const PopulationPoint = z
-  .strictObject({
-    ...described('population', { reference_date: z.string(), male: z.int(), female: z.int(), population: z.int(), households: z.int() }),
-    ...described('population_origin', { url: z.string() }),
-  })
-  .meta({ id: 'Population', description: '住民基本台帳人口（日本人住民と外国人住民の総計）。基準日時点の人数で、期間の値ではない。' })
-export type PopulationPoint = z.infer<typeof PopulationPoint>
+// --- API の応答（docs/prd/aggregate-api/dd.md）。一覧は要約、1つの自治体は会計ごとの出典まで ---
 
 export const CoverageOrigin = z
   .strictObject(described('expenditure_origin', { origin_id: z.string(), title: z.string(), url: z.string(), format: z.string() }))
@@ -48,8 +40,6 @@ export type CoverageWithOrigins = z.infer<typeof CoverageWithOrigins>
 
 const COVERAGE_HELP =
   '収録範囲（年度の昇順、同じ年度は当初予算・決算の順）。空なら、この自治体の明細は収録していない。明細があることを示し、会計全体・全事業を収録し終えたことは保証しない。'
-const POPULATION_MATCH_HELP =
-  '決算・予算の N 年度と比べるときは、N+1 年1月1日の値を当てる（地方財政状況調査の決算カードと同じ）。その値がまだ無い年度は、いちばん新しい基準日の値を選び、使った基準日を添える。'
 
 const jurisdictionFields = described('jurisdiction', {
   jurisdiction_code: z.string(),
@@ -74,7 +64,6 @@ const refs = {
 export const JurisdictionSummary = z
   .strictObject({
     ...jurisdictionFields,
-    population: z.array(PopulationPoint).describe(`住民基本台帳人口（基準日の昇順）。${POPULATION_MATCH_HELP}`),
     coverage: z.array(Coverage).describe(COVERAGE_HELP),
     ...refs,
   })
@@ -96,10 +85,9 @@ export const JurisdictionList = z.strictObject({
 })
 export type JurisdictionList = z.infer<typeof JurisdictionList>
 
-/** 1つの自治体（人口の推移と、会計ごとの出典まで） */
+/** 1つの自治体（会計ごとの出典まで） */
 export const JurisdictionDetail = z.strictObject({
   ...jurisdictionFields,
-  population: z.array(PopulationPoint).describe(`住民基本台帳人口（基準日の昇順）。${POPULATION_MATCH_HELP}`),
   coverage: z.array(CoverageWithOrigins).describe(COVERAGE_HELP),
   ...refs,
   uncovered_sources: z.array(UncoveredSource).describe(UNCOVERED_SOURCES_HELP),

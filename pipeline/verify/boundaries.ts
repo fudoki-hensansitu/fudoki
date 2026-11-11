@@ -60,7 +60,7 @@ for (const root of ['apps', 'packages'])
   }
 // web はホーム・紹介と AI との会話、自治体のページを配る。データ（D1・R2・KV など）の binding は持たせず、データは apps/api に Service Binding で聞く。
 // 許すのは Workers AI・Service Binding・流量・利用状況の記録と、binding でない Worker の設定だけ。文字列の var は worker.vars、secret は Worker 側に置く
-// 例外として、本番だけ web 自身のデータ（今は AI との会話の保存。認証を足したら利用者も）の D1（binding DB・fudoki-web）を持てる。風土記のデータの D1 ではなく、それ以外の binding 名は許さない
+// 例外として、web 自身のデータ（AI との会話の保存と、外部サービスから引く参照データ。認証を足したら利用者も）の D1（binding DB・本番は fudoki-web、preview は fudoki-web-preview）を持てる。風土記のデータの D1 ではなく、それ以外の binding 名は許さない
 const WEB_BINDING_KEYS = ['ai', 'services', 'ratelimits', 'analytics_engine_datasets']
 const WEB_CLOUDFLARE_KEYS = new Set(['name', 'routes', 'workers_dev', 'observability', 'd1_databases', ...WEB_BINDING_KEYS])
 const WEB_WORKER_KEYS = new Set(['compatibility_date', 'vars'])
@@ -71,7 +71,7 @@ for (const key of Object.keys(webConfig.cloudflare ?? {}))
   if (!WEB_CLOUDFLARE_KEYS.has(key))
     throw new Error(`Public web must not bind data: web (cloudflare.${key})`)
 for (const d1 of (webConfig.cloudflare?.d1_databases as { binding?: string; database_name?: string }[] | undefined) ?? [])
-  if (d1.binding !== 'DB' || d1.database_name !== 'fudoki-web')
+  if (d1.binding !== 'DB' || !['fudoki-web', 'fudoki-web-preview'].includes(d1.database_name ?? ''))
     throw new Error(`Public web must not bind data: web (cloudflare.d1_databases.${d1.binding})`)
 for (const key of Object.keys(webConfig.worker ?? {}))
   if (!WEB_WORKER_KEYS.has(key))

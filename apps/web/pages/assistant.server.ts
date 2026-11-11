@@ -1,6 +1,6 @@
 // アシスタント（/assistant）。サイドバーから風土記の AI との会話を始める頁。Turnstile の site key だけを渡す
 import { defineHandler, defineHead } from 'void'
-import { siteKey } from '../server/pages'
+import { siteKey } from '../server/site-key'
 
 export type Props = { sitekey: string }
 

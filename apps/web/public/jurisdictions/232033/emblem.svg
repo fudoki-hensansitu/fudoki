@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-130 -135 260 249 " width="520" height="498" fill="#1a0d66">
+<mask id="a">
+<circle r="45" fill="#fff"/>
+<circle cy="100" r="85" fill="#000"/>
+<circle cy="-100" r="85" fill="#000"/>
+</mask>
+<circle r="50" mask="url(#a)"/>
+<circle r="82.5" fill="none" stroke="#1a0d66" stroke-width="35"/>
+<circle id="b" cy="-110" r="25"/>
+<g id="c">
+<use xlink:href="#b" transform="rotate(72)"/>
+<use xlink:href="#b" transform="rotate(216)"/>
+</g>
+<use xlink:href="#c" transform="rotate(72)"/>
+</svg>

@@ -69,7 +69,7 @@ REBUILD_RATIO = 0.5
 DELETE_KEYS_PER_STATEMENT = 500
 
 # 参照される表（自治体マスタ・根・出典）を先に、参照する表を後に
-TABLE_ORDER = ['jurisdiction', 'population_origin', 'population',
+TABLE_ORDER = ['jurisdiction',
                'expenditure', 'expenditure_origin', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
                'expenditure_location',
                'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
@@ -79,7 +79,9 @@ LEGACY_TABLES = ['fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expendit
                  'fiscal_coverage', 'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator',
                  'project_evaluation_indicator_value', 'project_evaluation_result', 'project_budget_initiative',
                  'jurisdiction_master', 'origin', 'settlement_expenditure_node', 'initial_expenditure_node',
-                 'expenditure_coverage', 'jurisdiction_population']
+                 'expenditure_coverage', 'jurisdiction_population',
+                 # 人口は web の D1 へ移した（ADR 0042）
+                 'population_origin', 'population']
 
 Table = dict  # columns.json の1表
 
@@ -172,7 +174,7 @@ def scope_where(jurisdictions: Sequence[str] | None) -> str:
 
 
 def scoped(where: str, names: list[str]) -> str:
-    """自治体コードの列を持たない表（人口の資料）は、一部の自治体だけを入れるときも全行を入れる。"""
+    """自治体コードの列を持たない表は、一部の自治体だけを入れるときも全行を入れる。"""
     return where if 'jurisdiction_code' in names else ''
 
 

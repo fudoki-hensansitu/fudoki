@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><svg width="400" height="421" viewBox="50 29 400 421" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <g xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#4a762d">
+  <path fill-rule="evenodd" d="m250 130c-66.3 0-120 53.7-120 120s53.7 120 120 120c5.354 0 10.7-0.4 16-1.2v-203.2c40.6 7.7 70 43.1 70 84.5 0 31.9-17.8 61.2-46 76v37c47.9-17 79.9-62.3 80-113.1 0-66.3-53.7-120-120-120zm-16 35.6v168.9c-40.6-7.7-70-43.2-70-84.5 0-41.3 29.4-76.8 70-84.4z"/>
+  <path id="a" d="m250.3 49.2a200 200 0 0 0 -166.8 89.9l29.4 17a166 166 0 0 1 137.4 -72.8 166 166 0 0 1 137.4 73.1l29.5-17a200 200 0 0 0 -166.9 -90.1zm-16.3-19.8v64.8c0 11.4 6.1 22 16 27.7 9.9-5.7 16-16.3 16-27.7v-64.8z"/>
+  <use xlink:href="#a" transform="rotate(120 250 250)"/>
+  <use xlink:href="#a" transform="rotate(240 250 250)"/>
+ </g>
+</svg>

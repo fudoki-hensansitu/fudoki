@@ -1,0 +1,19 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-20.8 -24 41.6 48" width="416" height="480">
+<mask id="c">
+<g id="e">
+<circle id="d" cy="-24" r="28" fill="#fff" transform="rotate(60 0 24)"/>
+<use xlink:href="#d" transform="rotate(60)"/>
+<use xlink:href="#d" transform="rotate(120)"/>
+</g>
+<use xlink:href="#e" transform="rotate(180)"/>
+<g id="b">
+<circle id="a" cy="-24" r="24" fill="#000" transform="rotate(60 0 24)"/>
+<use xlink:href="#a" transform="rotate(60)"/>
+<use xlink:href="#a" transform="rotate(120)"/>
+</g>
+<use xlink:href="#b" transform="rotate(180)"/>
+</mask>
+<circle r="25" mask="url(#c)"/>
+<rect id="g" width="12" height="6" rx="3" ry="3" x="-6" y="-9" fill="none" stroke="#000" stroke-width="4" />
+<use xlink:href="#g" transform="scale(1-1)"/>
+</svg>

@@ -1,14 +1,11 @@
 // 自治体の個別ページ（/tokyo/nakano）・ホームの自治体の要約のデータと、画面が款・目の内訳を引く /api/jurisdictions/*・sitemap の応答。
 // データは apps/api の歳出の検索から組み、変わるのは取り込みのときだけなので、Worker の cache に1時間置く。頁は pages/ の loader が、
 // 内訳の API と sitemap は routes/ がここを呼ぶ。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
-import { PREFECTURE_MAPS } from '../jurisdiction/map.generated'
 import { sitemapXml } from '../jurisdiction/html'
-import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
+import { jurisdictionPath } from '../jurisdiction/path'
 import { toMapEntry, type MapEntry } from '../jurisdiction/index-table'
 import { appPageYears, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
-import { assetPath, PROFILES, type Profile } from '../jurisdiction/profiles'
-import { EMBLEMS } from '../jurisdiction/emblems'
-import { BUDGET_PRESS } from '../jurisdiction/budget-press'
+import { assetPath, EMBLEMS } from '../jurisdiction/emblems'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
@@ -22,7 +19,7 @@ const NODE_ID = /^[0-9a-f]{64}$/
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/jurisdiction-v21/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v22/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
@@ -33,65 +30,33 @@ async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
   return value
 }
 
-// 会計の一覧（accounts）を足したので key を変え、前の形のキャッシュを読まない
-export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog-accounts', () => loadCatalog(env))
+// 形を変えたら key を変え、前の形のキャッシュを読まない（今は事業評価の年度 evaluationYears を足した形）
+export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog-evaluations', () => loadCatalog(env))
 // catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてからホームの検索へ出るまで最大で約2時間かかる
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
-const page = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
+/** 自治体の頁と OG 画像が共有する、最新の決算の年度の頁のデータ */
+export const pageData = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'prefectureLogo' | 'emblem' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
 /** ホーム（/）に載せる全自治体の要約 */
-export const homeEntries = async (env: Env): Promise<MapEntry[]> => (await index(env)).map(toMapEntry)
-
-/** 最後の節に出す近くの自治体の数 */
-const NEARBY_COUNT = 3
-
-/** 近い順の自治体。都道府県の図（map.generated.ts）のタイルの位置で測り、図の無い自治体は自治体コードの近さで測る */
-function nearby(entry: CatalogEntry, candidates: CatalogEntry[]): CatalogEntry[] {
-  const tiles = new Map<string, { col: number; row: number }>(PREFECTURE_MAPS.flatMap((m) => m.tiles.map((t) => [t.code, t] as const)))
-  const here = tiles.get(entry.code)
-  const distance = (e: CatalogEntry) => {
-    const t = tiles.get(e.code)
-    return here && t ? Math.hypot(t.col - here.col, t.row - here.row) : 1e3 + Math.abs(Number(e.code) - Number(entry.code))
-  }
-  return candidates.map((e) => ({ e, d: distance(e) })).sort((a, b) => a.d - b.d || a.e.code.localeCompare(b.e.code)).slice(0, NEARBY_COUNT).map((x) => x.e)
+export async function homeEntries(env: Env): Promise<MapEntry[]> {
+  const [entries, jurisdictions] = await Promise.all([index(env), catalog(env)])
+  const latest = new Map(jurisdictions.map((j) => [j.code, pageYearsOf(j)[0]]))
+  return entries.map((e) => toMapEntry(e, latest.get(e.code)))
 }
 
-/** 個別ページに出すもの。収録の無い自治体は empty、存在しない名称や都道府県の slug でない path は null（404） */
-export type JurisdictionView = { kind: 'page'; data: PageData & { profile: Profile | null } } | { kind: 'empty'; entry: CatalogEntry; neighbors: PageData['neighbors'] }
-
-/** /<都道府県のローマ字>/<自治体のローマ字>、都道府県自体は /<都道府県のローマ字>。API に繋がらなければ投げる */
-export async function resolveJurisdiction(env: Env, path: string): Promise<JurisdictionView | null> {
-  if (!PREFECTURE_SLUGS.has(path.split('/')[1] ?? '')) return null
-  const entries = await catalog(env)
-  const entry = entries.find((e) => jurisdictionPath(e.code) === path)
-  if (!entry) return null
-  // 都道府県名は都道府県自体の頁へ。都道府県自体の頁と、都道府県がカタログに無い（頁が無い）ときはリンクしない
-  const prefectureCode = `${entry.code.slice(0, 2)}0001`
-  const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : null
-  const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
-    .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
-  const data = entry.settlementYears.length > 0 ? await page(env, entry) : null
-  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: withPress(entry.code, PROFILES[entry.code] ?? null) } } : { kind: 'empty', entry, neighbors }
+/** 自治体の頁で選べる年度（新しい順）。頁のデータを読まずにカタログだけで決める（sitemap・ホームのリンク） */
+export function pageYearsOf(e: CatalogEntry): number[] {
+  const settled = shownSettlementYears(e.settlementYears)
+  const last = Math.max(0, ...settled)
+  return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) })
 }
 
-/** 事業評価がまだの年度に、予算案のプレス発表資料の施策（budgetNew）を足す。評価のある年度は足さない */
-function withPress(code: string, profile: Profile | null): Profile | null {
-  const press = BUDGET_PRESS[code]
-  if (!profile || !press) return profile
-  const years = Object.fromEntries(Object.entries(profile.years).map(([y, py]) => {
-    const p = press[y]
-    if (!p || py.projects.length || py.initiatives?.length) return [y, py]
-    // 出すのは「新規」の印が付いた施策だけ。印の無い施策は拡大か継続かを資料から決められないので出さない（データには紐付けごと残す）
-    return [y, { ...py, budgetPress: p.source, budgetNew: p.items.filter((i) => i.isNew) }]
-  }))
-  return { ...profile, years }
-}
-
-/** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする） */
+/** OG 画像（server/og.ts）に描くもの。紋章が無い（帰属表示の要る紋章を含む）・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする） */
 export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<(OgInput & { cacheKey: string }) | null> {
-  if (!EMBLEMS[code]) return null
+  const emblem = EMBLEMS[code]
+  if (!emblem || emblem.author) return null
   const entry = (await catalog(env)).find((e) => e.code === code)
-  const data = entry && entry.settlementYears.length > 0 ? await page(env, entry) : null
+  const data = entry && entry.settlementYears.length > 0 ? await pageData(env, entry) : null
   const areas = data?.cofogFlow.map((f) => ({ name: f.kan.name, yen: f.kan.yen })).filter((a) => a.yen > 0) ?? []
   if (!entry || !data || areas.length === 0) return null
   const asset = async (path: string) => {
@@ -110,14 +75,14 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
     emblemSvg,
     logoSvg,
     // 同じ年度の決算なら同じ画像。字形・配置を変えたら版を上げる
-    cacheKey: `og-v1/${code}-${latest.year}-${latest.yen}`,
+    cacheKey: `og-v2/${code}-${latest.year}-${latest.yen}`,
   }
 }
 
 /** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */
 export async function sitemapResponse(env: Env): Promise<Response> {
   try {
-    return new Response(sitemapXml(await catalog(env), (e) => { const settled = shownSettlementYears(e.settlementYears); const last = Math.max(0, ...settled); return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) }) }), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
+    return new Response(sitemapXml(await catalog(env), pageYearsOf), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
   } catch {
     return new Response(sitemapXml([]), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } })
   }
