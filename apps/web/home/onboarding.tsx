@@ -15,7 +15,7 @@ import './onboarding.css'
 type Locate = { busy?: boolean; error?: string; hit?: MapEntry }
 
 /** 住んでいるまちを聞く札（はじめての流れの 1 / 2）。名前の入力欄をはじめから出し、下に「現在地から選ぶ」。ホームの「リセット」のあともここに戻る */
-export function AskTown({ entries, onPick }: { entries: MapEntry[]; onPick: (e: MapEntry) => void }) {
+export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; again?: boolean }) {
   const [loc, setLoc] = React.useState<Locate | null>(null)
   const locate = async () => {
     setLoc({ busy: true })
@@ -30,7 +30,7 @@ export function AskTown({ entries, onPick }: { entries: MapEntry[]; onPick: (e: 
   }
   return (
     <section className={'ob-rise rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7'}>
-      <Steps at={1} of={2} onBrand />
+      {again ? null : <Steps at={1} of={2} onBrand />}
       <h2 className="mb-4 text-[20px] leading-snug font-bold sm:text-[24px]">住んでいるまちを選ぶ</h2>
       {/* 一覧を読めなかったときに「未収録」と誤って伝えないよう、検索と現在地を出さない */}
       {entries.length ? (
@@ -152,10 +152,10 @@ export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
 }
 
 /** まちを選んでいないときの画面。reveal があれば（まちを選んだ直後）2歩目の要点を出す */
-export function Empty({ entries, onPick, reveal }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; reveal: React.ReactNode }) {
+export function Empty({ entries, onPick, reveal, again }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; reveal: React.ReactNode; again?: boolean }) {
   return (
     <>
-      {reveal ? <div key="reveal">{reveal}</div> : <AskTown entries={entries} onPick={onPick} />}
+      {reveal ? <div key="reveal">{reveal}</div> : <AskTown entries={entries} onPick={onPick} again={again} />}
       <OtherTowns entries={entries} className="mt-6" />
     </>
   )

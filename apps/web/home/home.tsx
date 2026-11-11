@@ -17,7 +17,7 @@ import { reiwa, yearName } from '../jurisdiction/types'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { searchHref } from '../search/search'
 import { useMyTown, type Town } from './towns'
-import { Tour, useTour, type TourStep } from './tour'
+import { onboarded, Tour, useTour, type TourStep } from './tour'
 import { OtherTowns, Checklist, Empty, Intro, Steps, startChecklist, type CheckItem } from './onboarding'
 
 export interface Featured {
@@ -376,13 +376,17 @@ export function Home({ entries, featured }: HomeProps) {
     set(pending)
     setPending(null)
   }
+  // 住んでいるまちを外す（選び直す）。前にはじめての流れを通った人は、選んだらそのままダッシュボードに戻す
+  const reset = () => set(null)
+  const again = ready && !town && onboarded()
   let body: React.ReactNode
   if (!ready) body = <Loading />
   else if (!town)
     body = (
       <Empty
         entries={entries}
-        onPick={(e) => setPending(toTown(e))}
+        again={again}
+        onPick={(e) => (again ? set(toTown(e)) : setPending(toTown(e)))}
         reveal={
           pending ? (
             <>
@@ -403,6 +407,11 @@ export function Home({ entries, featured }: HomeProps) {
   else
     body = (
       <>
+        <div className="mb-3 flex justify-end">
+          <button type="button" onClick={reset} className="text-[13px] text-muted-foreground hover:text-foreground">
+            リセット
+          </button>
+        </div>
         <WithCtx town={town!} vision={vision} snap={snap}>
           {(c) => (
             <>
