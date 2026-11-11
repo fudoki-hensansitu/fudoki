@@ -165,7 +165,7 @@ function FieldBars({ c, limit }: { c: Ctx; limit: number }) {
 function Card({ title, icon, children, footer, className, tour }: { title: string; icon?: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; className?: string; tour?: string }) {
   return (
     <section data-tour={tour} className={cn('flex flex-col rounded-2xl border bg-background p-5 animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none', className)}>
-      <h3 className="mb-3 flex items-center gap-2 text-[15px] font-bold [&_svg]:size-5 [&_svg]:text-muted-foreground">
+      <h3 className="mb-3 flex items-center gap-2 text-[15px] font-bold [&_svg]:size-5 [&>svg]:text-muted-foreground">
         {icon}
         {title}
       </h3>
@@ -212,7 +212,7 @@ function Dashboard({ c }: { c: Ctx }) {
         </Card>
       ) : null}
       {v.comparable && v.newProjects.length ? (
-        <Card tour="projects" title={`${yearName(year)}に始めた事業`} icon={<NewIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
+        <Card tour="projects" title={`${yearName(year)}に始めた事業`} icon={<span className="flex text-primary"><NewIcon /></span>} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
           <ProjectList items={v.newProjects.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p) ?? null }))} rest={v.newProjects.length - 5} />
         </Card>
       ) : v.current.length ? (
@@ -221,7 +221,7 @@ function Dashboard({ c }: { c: Ctx }) {
         </Card>
       ) : null}
       {v.comparable && v.ended.length ? (
-        <Card title={`${yearName(year - 1)}でやめた事業`} icon={<StopIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
+        <Card title={`${yearName(year - 1)}でやめた事業`} icon={<span className="flex text-primary"><StopIcon /></span>} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
           <ProjectList items={v.ended.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p, String(year - 1)) ?? null }))} rest={v.ended.length - 5} />
         </Card>
       ) : null}

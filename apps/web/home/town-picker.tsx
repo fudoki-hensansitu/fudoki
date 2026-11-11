@@ -25,12 +25,13 @@ export function Emblem({ code, name, className = 'size-10' }: { code: string; na
   )
 }
 
-export function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; placeholder: string }) {
+/** plain: 白い地に置くとき。地と同じ白に溶けないよう枠を付ける */
+export function Picker({ entries, onPick, placeholder, plain }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; placeholder: string; plain?: boolean }) {
   const [query, setQuery] = React.useState('')
   return (
     <>
     <Combobox autoHighlight items={entries} onInputValueChange={(v, d) => d.reason === 'input-change' && setQuery(v)} filter={(e: MapEntry, q: string) => matches(e, q)} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && onPick(e as MapEntry)}>
-      <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder={placeholder} className="h-12 rounded-full border-0 bg-brand-fill px-2 text-[15px] text-brand-fill-foreground shadow-[var(--shadow-pill)] dark:bg-brand-fill dark:shadow-none [&_input]:placeholder:text-brand-fill-muted [&_svg]:text-brand-fill-muted has-[[data-slot=input-group-control]:focus-visible]:ring-ring/15">
+      <ComboboxInput showTrigger={false} aria-label="自治体名で探す" placeholder={placeholder} className={cn('h-12 rounded-full px-2 text-[15px] has-[[data-slot=input-group-control]:focus-visible]:ring-ring/15', plain ? 'border-border bg-background [&_input]:placeholder:text-muted-foreground [&_svg]:text-muted-foreground' : 'border-0 bg-brand-fill text-brand-fill-foreground shadow-[var(--shadow-pill)] dark:bg-brand-fill dark:shadow-none [&_input]:placeholder:text-brand-fill-muted [&_svg]:text-brand-fill-muted')}>
         <InputGroupAddon>
           <MagnifyingGlassIcon className="size-5" />
         </InputGroupAddon>

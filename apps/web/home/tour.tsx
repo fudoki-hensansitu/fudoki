@@ -73,7 +73,8 @@ export function Tour({ steps, onDone, offset = 0, total }: { steps: TourStep[]; 
     const t = setInterval(() => {
       n++
       const found = steps.filter((s) => find(s.target))
-      if (found.length === steps.length || n > 25) {
+      // 自治体の頁はデータが冷えていると描くまで15秒ほどかかるので、それまで待ってから出せる歩だけに絞る
+      if (found.length === steps.length || n > 70) {
         clearInterval(t)
         setLive(found)
       }

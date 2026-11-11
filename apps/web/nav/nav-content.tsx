@@ -13,8 +13,10 @@ function TownSearch() {
   const { state, isMobile } = useSidebar()
   const { visit } = useRouter()
   const [entries, setEntries] = React.useState<MapEntry[]>([])
+  // 一覧は空では返らないので、読み終えて空なら取得に失敗している
+  const [loaded, setLoaded] = React.useState(false)
   const [open, setOpen] = React.useState(false)
-  const warm = () => void loadTowns().then(setEntries)
+  const warm = () => void loadTowns().then((e) => (setEntries(e), setLoaded(true)))
   const show = () => {
     warm()
     setOpen(true)
@@ -39,7 +41,17 @@ function TownSearch() {
       <Command filter={(value, q) => (value.includes(q.trim().toLowerCase()) ? 1 : 0)}>
         <CommandInput placeholder="自治体名で探す（例：品川）" />
         <CommandList>
-          <CommandEmpty>{entries.length ? '当たるまちは、まだ収録していません' : '読み込んでいます…'}</CommandEmpty>
+          <CommandEmpty>
+            {entries.length ? (
+              '当たるまちは、まだ収録していません'
+            ) : loaded ? (
+              <button type="button" onClick={warm} className="underline underline-offset-4">
+                一覧を読み込めませんでした。もう一度読む
+              </button>
+            ) : (
+              '読み込んでいます…'
+            )}
+          </CommandEmpty>
           {entries.map((e) => (
             <CommandItem key={e.code} value={`${e.name} ${e.path}`} onSelect={() => pick(e)}>
               {e.name}

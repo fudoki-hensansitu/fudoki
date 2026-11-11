@@ -27,17 +27,20 @@ function clip(q: string) {
 export type Hit = { name: string; yen: number | null; where: string }
 export type TownHits = { code: string; name: string; path: string; year: number; count: number; hits: Hit[] }
 /** capped: 広い言葉で、金額の大きい順に上限まで読んだところで止めた */
-export type Props = { q: string; code: string | null; townName: string | null; towns: TownHits[]; capped: boolean; failed: boolean }
+export type Props = { q: string; code: string | null; townName: string | null; towns: TownHits[]; capped: boolean; failed: boolean; tooLong?: boolean }
 
 export const loader = defineHandler<Props>(async (c) => {
   const env = c.env as unknown as Env
-  const q = clip((c.req.query('q') ?? '').trim())
+  const raw = (c.req.query('q') ?? '').trim()
+  const q = clip(raw)
   const asked = c.req.query('code') ?? ''
   const code = /^\d{6}$/.test(asked) ? asked : null
   const cat = await catalog(env).catch(() => [])
   const names = new Map(cat.map((e) => [e.code, e.name]))
   const townName = code ? (names.get(code) ?? null) : null
   if (!q) return { q, code, townName, towns: [], capped: false, failed: false }
+  // api の上限を超える言葉は、縮めて別の言葉で引かずに、長すぎると返す
+  if (q !== raw) return { q: raw, code, townName, towns: [], capped: false, failed: false, tooLong: true }
   const perTown = code ? 30 : 6
   try {
     const byYear = await Promise.all(

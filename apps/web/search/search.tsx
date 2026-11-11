@@ -66,7 +66,7 @@ function TownCard({ t }: { t: TownHits }) {
   )
 }
 
-export function Search({ q, code, townName, towns, capped, failed }: Props) {
+export function Search({ q, code, townName, towns, capped, failed, tooLong }: Props) {
   const { town } = useMyTown()
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
@@ -83,7 +83,7 @@ export function Search({ q, code, townName, towns, capped, failed }: Props) {
           </Link>
           {town || code ? (
             <Link href={searchHref(q || EXAMPLES[0]!, code ?? town?.code)} aria-current={code ? 'page' : undefined} className={cn('rounded-full px-3 py-1 transition-colors', code ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground')}>
-              {townName ?? town?.name}だけ
+              {code ? (townName ?? code) : town?.name}だけ
             </Link>
           ) : null}
         </div>
@@ -94,8 +94,9 @@ export function Search({ q, code, townName, towns, capped, failed }: Props) {
         ))}
       </div>
 
+      {tooLong ? <p className="mt-8 text-sm text-muted-foreground">言葉が長すぎます。短くして（全角でおよそ16文字まで）やり直してください。</p> : null}
       {failed ? <p className="mt-8 text-sm text-muted-foreground">今は検索できません。少し時間をおいてやり直してください。</p> : null}
-      {q && !failed ? (
+      {q && !failed && !tooLong ? (
         <>
           <p className="mt-8 mb-3 flex flex-wrap items-center gap-2 text-[13px] text-muted-foreground">
             {code ? (

@@ -36,7 +36,7 @@ export function AskTown({ entries, onPick, onCancel, first }: { entries: MapEntr
       {/* 一覧を読めなかったときに「未収録」と誤って伝えないよう、検索と現在地を出さない */}
       {entries.length ? (
         <>
-          <TownPicker entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
+          <TownPicker plain={!first} entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
           <div className="mt-3 text-foreground">
             {loc ? (
               <div className="ob-swap">
@@ -129,7 +129,7 @@ export function OtherTowns({ entries, className }: { entries: MapEntry[]; classN
   if (!entries.length) return null
   return (
     <section className={cn('ob-rise', className)} aria-label="ほかのまちを見る">
-      <TownPicker entries={entries} onPick={(e) => visit(e.path)} placeholder="自治体名で探す（例：世田谷）" />
+      <TownPicker plain entries={entries} onPick={(e) => visit(e.path)} placeholder="自治体名で探す（例：世田谷）" />
     </section>
   )
 }
