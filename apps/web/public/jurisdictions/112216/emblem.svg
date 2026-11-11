@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="500" height="500" viewBox="-250,-233,500,500">
+	<title>Soka, Saitama Chapter</title>
+	<polygon points="250,267 -250,267 -250,-233 250,-233 " style="fill:none;stroke:none" />
+	<g id="G01">
+		<path d="M 0,8 A 110,110 0 0 0 -110,118 110,110 0 0 0 -34,222.46875 L -34,179.15625 A 70,70 0 0 1 -70,118 70,70 0 0 1 0,48 70,70 0 0 1 70,118 70,70 0 0 1 34,179.09375 L 34,222.53125 A 110,110 0 0 0 110,118 110,110 0 0 0 0,8 z" style="fill:#04b34a;stroke:none" />
+		<rect width="40" height="270" x="-20" y="-30" style="fill:#04b34a;stroke:none" />
+	</g>
+	<use xlink:href="#G01" transform="rotate(120,0,-25)" />
+	<use xlink:href="#G01" transform="rotate(-120,0,-25)" />
+</svg>

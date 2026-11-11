@@ -1,0 +1,22 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="500" height="500" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <desc>Emblem of Sendai</desc>
+  <defs>
+    <clipPath id="mask1">
+      <polyline points="0,0 270,0 270,250 350,250 350,0 500,0 500,500 230,500 230,250 150,250 150,500 0,500 0,0" />
+    </clipPath>
+    <clipPath id="mask2">
+      <circle cx="250" cy="250" r="240" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#mask1)">
+    <circle cx="250" cy="250" r="220" fill="none" stroke-width="40" stroke="#003300" />
+  </g>
+  <g clip-path="url(#mask2)">
+    <line x1="190" y1="0" x2="190" y2="500" stroke-width="40" stroke="#003300" />
+    <line x1="250" y1="30" x2="250" y2="470" stroke-width="40" stroke="#003300" />
+    <line x1="310" y1="0" x2="310" y2="500" stroke-width="40" stroke="#003300" />
+  </g>
+</svg>

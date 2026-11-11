@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="500" viewBox="-250 -250 500 500">
+	<title>Yoshimi Saitama Chapter</title>
+	<g id="DrawingLayer" style="fill:#2f9c58;stroke:none">
+		<circle r="48"/>
+		<path d="M0-240 A380,380 0 0 1-240,0 380,380 0 0 1 0,240 380,380 0 0 1 240,0 380,380 0 0 1 0-240z M0-166 A300,300 0 0 0 166,0 300,300 0 0 0 0,166 300,300 0 0 0-166,0 300,300 0 0 0 0-166z"/>
+	</g>
+</svg>

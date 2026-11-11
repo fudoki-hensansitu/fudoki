@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="490.5" viewBox="-500 -587 1000 981">
+<mask id="a">
+<path d="M-500-587H500v981H-500z" fill="#fff"/>
+<circle r="184"/>
+</mask>
+<path d="M-393.5-452h797L154-316h-308zM0-587l189 333 106-62L500 39.5 32.25 394V0h-64.5v394L-500 39.5-295-316l106 62z" mask="url(#a)"/>
+</svg>

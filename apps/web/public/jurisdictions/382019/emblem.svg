@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-210 -396 420 396" width="420" height="396" fill="#00a650">
+<path id="a" d="M60-374v-22l50 20 50-20v22l50-20v95l-40 16v20l40-16v95l-70 28v20l-80 32v-60l-50-20v-95l40 16v-20l-40-16v-95zM120-323v-16h-20v16l-40-16v20l40 16v95l-40-16v20l40 16v28l20-8v-20l40-16v-20l-40 16v-95l40-16v-20z" />
+<use xlink:href="#a" transform="scale(-1 1)"/>
+<path d="M0-168l40 16v76l120-48v-20l50-20v80L0 0l-210-84v-80l50 20v 20l120 48v-76z"/>
+</svg>
