@@ -1,3 +1,5 @@
+from contextlib import contextmanager
+from contextvars import ContextVar
 from functools import lru_cache
 import importlib
 import json
@@ -35,3 +37,23 @@ def quirk(settings: dict | None, name: str) -> Quirk | None:
     take the module's code into their fingerprint."""
     value = (settings or {}).get('quirks', {}).get(name)
     return None if value is None else Quirk(load('quirks', name), value)
+
+
+# The workflow of the conversion being built: the document quirks of a reading that no settings reach (`_split_line`,
+# `layout._frames`) are looked up here. `convert.build_table` and `scan.build_table` set it.
+WORKFLOW: ContextVar[dict | None] = ContextVar('workflow', default=None)
+
+
+def document_quirk(name: str) -> Quirk | None:
+    """The document quirk `name` when the workflow of the conversion being built selects it, else None."""
+    return quirk(WORKFLOW.get(), name)
+
+
+@contextmanager
+def building(workflow: dict | None):
+    """Make `workflow` the workflow of the conversion being built while the block runs."""
+    token = WORKFLOW.set(workflow)
+    try:
+        yield
+    finally:
+        WORKFLOW.reset(token)

@@ -583,9 +583,7 @@
               },
               "rules": {
                 "dark": 180,
-                "skewed": true,
-                "specks": true,
-                "bracket_marks": true
+                "skewed": true
               }
             }
           },
@@ -605,7 +603,10 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "column_edge": true,
                   "group_heads": [
                     {
                       "page": 2,
@@ -709,7 +710,6 @@
                     }
                   ],
                   "opening_bracket_ink": true,
-                  "column_edge": true,
                   "line_starts": [
                     {
                       "page": 132,
@@ -721,6 +721,17 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "letter_spaced_lines": true,
+            "lost_name_characters": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "skewed_frames": true,
+            "specks": true,
+            "stacked_tables_apart": true,
+            "unopened_brackets": true
           }
         },
         "dropped_readings": [
@@ -1405,9 +1416,7 @@
               },
               "rules": {
                 "dark": 180,
-                "skewed": true,
-                "specks": true,
-                "bracket_marks": true
+                "skewed": true
               }
             }
           },
@@ -1427,8 +1436,9 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
-                  "opening_bracket_ink": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
                   "column_edge": true,
                   "group_heads": [
                     {
@@ -1476,10 +1486,22 @@
                       "y": 357.5,
                       "reason": "原画の「基幹統計調査等に要する経費 7,118」は、続く3つの事業の金額をまとめた見出しで（金額は3事業の和）、事業と同じ位置から印字されている。"
                     }
-                  ]
+                  ],
+                  "opening_bracket_ink": true
                 }
               }
             }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "letter_spaced_lines": true,
+            "lost_name_characters": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "skewed_frames": true,
+            "specks": true,
+            "stacked_tables_apart": true,
+            "unopened_brackets": true
           }
         },
         "dropped_readings": [
@@ -1923,9 +1945,7 @@
               },
               "rules": {
                 "dark": 180,
-                "skewed": true,
-                "specks": true,
-                "bracket_marks": true
+                "skewed": true
               }
             }
           },
@@ -1945,8 +1965,9 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
-                  "opening_bracket_ink": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
                   "column_edge": true,
                   "group_heads": [
                     {
@@ -2034,10 +2055,22 @@
                       "y": 240.7,
                       "reason": "原画の「借入金利子支払費 265,990」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
                     }
-                  ]
+                  ],
+                  "opening_bracket_ink": true
                 }
               }
             }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "letter_spaced_lines": true,
+            "lost_name_characters": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "skewed_frames": true,
+            "specks": true,
+            "stacked_tables_apart": true,
+            "unopened_brackets": true
           }
         },
         "dropped_readings": [

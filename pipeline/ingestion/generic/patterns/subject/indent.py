@@ -1,6 +1,7 @@
 from collections import Counter, defaultdict
 import re
 from ingestion.generic.layout import SUBJECT_LEVELS, normalize
+from ingestion.generic.patterns import document_quirk
 from ingestion.generic.tree import subject_header
 
 
@@ -59,6 +60,7 @@ def alignment(all_items, codes_right):
 
 def align(logical, group, kept, alignment):
     one_width, codes_set_right, right_set = alignment
+    run_into = document_quirk('code_run_into_name')
     # Join at the name's position before learning subject levels from the code's start.
     for item in kept:
         # The code leads the item: a name set a few points above its code's line (OCR) is not the start.
@@ -68,10 +70,10 @@ def align(logical, group, kept, alignment):
         item.indent = min(g.x0 for g in item.glyphs) if logical.ocr else (coded or item.glyphs[0]).x0
         band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
         narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
-        if (codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', item.code)
-                and item.glyphs[0].text.startswith(item.code)):
-            # (by the code: OCR reads a code run into its name, `45△市議会議員選挙` of a 目 that ended, as one word)
+        if run_into is not None and codes_set_right and item.code is not None and run_into.module.set_right(item):
             item.indent += one_width if len(item.code) == 2 else 0
+        elif run_into is None and codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', item.glyphs[0].text):
+            item.indent += one_width if len(item.glyphs[0].text) == 2 else 0
         elif band is not None and item.code is not None and narrow and item.level in right_set:
             # A staircase of narrow level columns with the codes set right: the column is the level,
             # not where the digits start (`5` and `10` of one 目 start 5pt apart).

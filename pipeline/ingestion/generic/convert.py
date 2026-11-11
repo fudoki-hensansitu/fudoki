@@ -26,6 +26,7 @@ from pathlib import Path
 import re
 
 from ingestion.generic import mixed, observe as observe_module, scan as scan_module
+from ingestion.generic.patterns import building
 from ingestion.generic.runtime import run_pages
 from ingestion.generic.workflow import effective_settings
 from ingestion.generic.headers import canonical
@@ -414,6 +415,11 @@ def check_ocr_rereads(options: dict, ocr_pages: list[int]) -> None:
 
 def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     """Everything the converter derives from one original, before anything is written."""
+    with building(options.get('workflow')):
+        return _build_table(source, options, stop=stop)
+
+
+def _build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     if source.get('format') != 'pdf' or source.get('pdf_type') != 'text':
         raise ValueError('The generic builder reads text PDFs only')
     account = options['account']
