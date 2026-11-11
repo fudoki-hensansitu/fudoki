@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="350" viewBox="-45 -42.5 90 87.5">
+<clipPath id="c">
+<path d="M-45-45h30a15 15 0 0 0 30 0h30V45H1.2V0h-2.4V45H-45z"/>
+</clipPath>
+<circle r="30" fill="none" stroke="#4166ad" stroke-width="30" clip-path="url(#c)"/>
+</svg>

@@ -1,0 +1,32 @@
+<svg viewBox="-2 -2 4 4" xmlns="http://www.w3.org/2000/svg" width="300" height="300">
+<clipPath id="e">
+<circle cy="1" r="1"/>
+</clipPath>
+<mask id="a" fill="#000">
+<circle cy="-1" r="1" fill="#fff"/>
+<circle cx="-1" r="1" transform="rotate(60)"/>
+<circle cx="-1" r="1" transform="rotate(30)" fill="#fff"/>
+<circle cx="-1" r="1"/>
+<circle cy="1" r="1" transform="rotate(60)" fill="#fff"/>
+<circle cy="1" r="1" transform="rotate(30)"/>
+</mask>
+<mask id="b" fill="#000">
+<circle cy="1" r="1" fill="#fff"/>
+<circle cx="1" r="1" transform="rotate(30)"/>
+</mask>
+<mask id="c" fill="#000">
+<circle cx="1" r="1" transform="rotate(30)" fill="#fff"/>
+<circle cx="1" r="1"/>
+<circle cy="-1" r="1" transform="rotate(60)" fill="#fff"/>
+<circle cy="-1" r="1" transform="rotate(30)"/>
+<circle cy="1" r="1"/>
+</mask>
+<mask id="d" fill="#000">
+<circle cx="1" r="1" fill="#fff"/>
+<circle cy="-1" r="1" transform="rotate(60)"/>
+</mask>
+<circle r="4" mask="url(#a)" fill="#fd0202"/>
+<circle r="4" mask="url(#b)" fill="#fd0202"/>
+<circle r="4" mask="url(#c)" fill="#4890df"/>
+<circle r="4" mask="url(#d)" clip-path="url(#e)" fill="#1da80b"/>
+</svg>

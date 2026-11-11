@@ -35,7 +35,7 @@ export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog-evaluations',
 // catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてからホームの検索へ出るまで最大で約2時間かかる
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
 /** 自治体の頁と OG 画像が共有する、最新の決算の年度の頁のデータ */
-export const pageData = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
+export const pageData = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'prefectureLogo' | 'emblem' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
 /** ホーム（/）に載せる全自治体の要約 */
 export async function homeEntries(env: Env): Promise<MapEntry[]> {
@@ -51,9 +51,10 @@ export function pageYearsOf(e: CatalogEntry): number[] {
   return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) })
 }
 
-/** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする） */
+/** OG 画像（server/og.ts）に描くもの。紋章が無い（帰属表示の要る紋章を含む）・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする） */
 export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<(OgInput & { cacheKey: string }) | null> {
-  if (!EMBLEMS[code]) return null
+  const emblem = EMBLEMS[code]
+  if (!emblem || emblem.author) return null
   const entry = (await catalog(env)).find((e) => e.code === code)
   const data = entry && entry.settlementYears.length > 0 ? await pageData(env, entry) : null
   const areas = data?.cofogFlow.map((f) => ({ name: f.kan.name, yen: f.kan.yen })).filter((a) => a.yen > 0) ?? []

@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   version="1.1"
+   width="172"
+   height="153"
+   id="svg2">
+  <metadata
+     id="metadata8">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs6" />
+  <path
+     d="M 86,47 C 77.706548,47 70.148514,50.10596 64.40625,55.21875 69.789195,61.840999 73,70.300773 73,79.5 73,88.699226 69.789195,97.159001 64.40625,103.78125 70.148514,108.89404 77.706548,112 86,112 c 8.29345,0 15.85149,-3.10596 21.59375,-8.21875 C 102.2108,97.159001 99,88.699226 99,79.5 99,70.300773 102.2108,61.840999 107.59375,55.21875 101.85149,50.10596 94.29345,47 86,47 z M 60.25,59.6875 C 56.023583,65.172819 53.5,72.039841 53.5,79.5 c 0,7.460159 2.523583,14.327181 6.75,19.8125 C 64.476417,93.827181 67,86.960159 67,79.5 67,72.039841 64.476417,65.172819 60.25,59.6875 z m 51.5,0 C 107.52358,65.172819 105,72.039841 105,79.5 c 0,7.460159 2.52358,14.327181 6.75,19.8125 4.22642,-5.485319 6.75,-12.352341 6.75,-19.8125 0,-7.460159 -2.52358,-14.327181 -6.75,-19.8125 z"
+     id="path3024"
+     style="fill:#eb1c24;fill-opacity:1;stroke:none" />
+  <path
+     d="m 81,4 0,10 -32.5,0 19.46875,33.75 c 2.905834,-1.65306 6.07246,-2.910844 9.40625,-3.71875 L 65.8125,24 106.1875,24 94.625,44.03125 c 3.33379,0.807906 6.50042,2.06569 9.40625,3.71875 L 123.5,14 91,14 91,4 81,4 z"
+     id="rect3800"
+     style="fill:#eb1c24;fill-opacity:1;fill-rule:nonzero;stroke:none" />
+  <use
+     transform="matrix(-0.5,-0.8660254,0.8660254,-0.5,60.15098,193.72818)"
+     id="use3832"
+     x="0"
+     y="0"
+     width="172"
+     height="153"
+     xlink:href="#rect3800" />
+  <use
+     transform="matrix(-0.5,0.8660254,-0.8660254,-0.5,197.84902,44.771817)"
+     id="use3834"
+     x="0"
+     y="0"
+     width="172"
+     height="153"
+     xlink:href="#rect3800" />
+</svg>

@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="500" height="500" viewBox="-250,-250,500,500">
+	<title>Fudai, Iwate Chapter</title>
+	<path d="M -12,-239.6875 -12,-179.59375 12,-179.59375 12,-239.6875 A 240,240 0 0 0 -12,-239.6875 z M -12,179.59375 -12,239.6875 A 240,240 0 0 0 12,239.6875 L 12,179.59375 -12,179.59375 z" id="S01" style="fill:black;stroke:none" />
+	<use xlink:href="#S01" transform="rotate(45)" />
+	<use xlink:href="#S01" transform="rotate(90)" />
+	<use xlink:href="#S01" transform="rotate(135)" />
+	<g transform="matrix(0.89879405,-0.43837115,0.43837115,0.89879405,0,0)" id="N02" style="fill:black;stroke:none">
+		<circle cx="28" cy="-80" r="36" />
+		<rect x="-8" y="-80" width="16" height="80" />
+	</g>
+	<use xlink:href="#N02" transform="rotate(90)" />
+	<use xlink:href="#N02" transform="rotate(180)" />
+	<use xlink:href="#N02" transform="rotate(270)" />
+	<circle cx="0" cy="0" r="184" id="circle3804" style="fill:none;stroke:black;stroke-width:28" />
+</svg>

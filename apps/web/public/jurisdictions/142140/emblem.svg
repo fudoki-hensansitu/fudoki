@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="360" height="360" viewBox="-90 -90 180 180" stroke-width="30" stroke="#000" fill="none">
+<clipPath id="a">
+<path d="M-100-100H100A100 100 0 0 0-5 0V100H-100zM95-90V90H5V0z"/>
+</clipPath>
+<clipPath id="b">
+<path d="M50 0A50 50 0 0 1-50 0H-100A100 100 0 0 1 100 0z"/>
+</clipPath>
+<circle r="75" clip-path="url(#a)"/>
+<path d="M20 50V0A75 75 0 0 1 95-75M-20 50V0A75 75 0 0 0-95-75" clip-path="url(#b)"/>
+
+</svg>

@@ -1,7 +1,7 @@
 // 自治体の個別ページ（/tokyo/nakano）の <head> と sitemap。本文は pages/ の React（jurisdiction/app/app-page.tsx）を
 // Void がサーバーで書き、同じ props で hydrate する。ここは頁ごとの title・説明・canonical・JSON-LD を組む
 import type { CatalogEntry } from '../server/jurisdiction'
-import { assetPath, EMBLEMS } from './emblems'
+import { assetPath } from './assets'
 import { jurisdictionPath } from './path'
 import { appPageYears, formatYen, TAB_SLUGS, type PageData } from './types'
 
@@ -120,8 +120,8 @@ export function pageHead(d: PageData, year?: number, sub?: { label: string; path
     itemListElement: [{ name: '風土記', path: '/' }, ...parent, { name: d.name, path: jurisdictionPath(d.code) }].map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: `${ORIGIN}${c.path}` })),
   }
   // 紋章と決算のある自治体の最新の頁は、OG 画像を自治体のもの（routes/jurisdictions/[code]/og.png.ts が最新の決算の総額・分野から描く）に差し替える。
-  // 画像の金額は最新の決算なので、過去の年度の頁は全頁共通の画像のまま
-  const own = !past && EMBLEMS[d.code] && d.cofogFlow.some((f) => f.kan.yen > 0)
+  // 画像の金額は最新の決算なので、過去の年度の頁は全頁共通の画像のまま。帰属表示の要る紋章（author あり）は OG 画像に使わない
+  const own = !past && d.emblem?.og && d.cofogFlow.some((f) => f.kan.yen > 0)
   const meta = own ? [{ property: 'og:image', content: `${ORIGIN}${assetPath(d.code, 'og.png')}` }] : []
   return head(title, description, canonical, { meta, script: [{ type: 'application/ld+json', innerHTML: inlineJson([ld, breadcrumb]) }] })
 }

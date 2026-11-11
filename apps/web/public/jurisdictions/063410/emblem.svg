@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="500" height="500" viewBox="-250,-250,500,500">
+	<title>Oishida, Yamagata Chapter</title>
+	<polygon points="-250,250 -250,-250 250,-250 250,250 " style="fill:none;stroke:none" />
+	<circle cx="0" cy="0" r="240" style="fill:black;stroke:none" />
+	<path id="TD01" d="M 0,114.54534 33.97871,161.31302 A 42,42 0 0 1 42,186 42,42 0 0 1 0,228 42,42 0 0 1 -42,186 42,42 0 0 1 -33.97871,161.31302 L 0,114.54534 z" style="fill:white;stroke:none" />
+	<use xlink:href="#TD01" transform="rotate(72)" />
+	<use xlink:href="#TD01" transform="rotate(144)" />
+	<use xlink:href="#TD01" transform="rotate(216)" />
+	<use xlink:href="#TD01" transform="rotate(288)" />
+</svg>
