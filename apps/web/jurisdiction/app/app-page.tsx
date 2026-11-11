@@ -40,6 +40,7 @@ import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
+import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
@@ -511,7 +512,7 @@ function ProjectDetail({ p }: { p: Proj }) {
       <DetailSection icon={CalendarBlankIcon} title="年度ごと">
         <div className="grid grid-cols-[auto_1fr_1fr] text-[15px]">
           <span className="py-1.5 text-xs" /><span className="py-1.5 text-right text-xs text-muted-foreground">当初予算</span><span className="px-1 py-1.5 text-right text-xs text-muted-foreground">決算</span>
-          {years.slice().reverse().map((y) => (
+          {years.map((y) => (
             <div key={y} className={cn('col-span-full grid grid-cols-subgrid', y === v.year && 'bg-card')}>
               <Separator className="col-span-full" />
               <span className="px-1 py-2">{r(y)}</span>
@@ -1032,7 +1033,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
                 ))
               )}
 
-              {/* 詳細: 広い画面は右に固定して一覧と並べる。それより狭いと Sheet（中間幅は右から、スマホは下から） */}
+              {/* 詳細: 広い画面は右に固定して一覧と並べる（Sheet は背景を塞ぐので使わない）。中間幅は右からの Sheet、スマホは下からの Drawer */}
               {wide ? (
                 <aside className={cn('fixed inset-y-0 right-0 z-30 flex w-[440px] bg-background shadow-xl transition-transform duration-300 ease-out', selected ? '' : 'translate-x-full')} aria-label="詳細">
                   <Separator orientation="vertical" />
@@ -1045,9 +1046,17 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
                     ) : null}
                   </div>
                 </aside>
+              ) : phone ? (
+                // スマホは下からの Drawer。つまんで下へ引くと閉じる
+                <Drawer open={!!selected} onOpenChange={(o) => !o && select(null)} showSwipeHandle>
+                  <DrawerContent className="[--drawer-height:calc(100dvh-5rem)]">
+                    <DrawerTitle className="sr-only">詳細</DrawerTitle>
+                    <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-10 pt-3">{selected ? <Detail sel={selected} /> : null}</div>
+                  </DrawerContent>
+                </Drawer>
               ) : (
                 <Sheet open={!!selected} onOpenChange={(o) => !o && select(null)}>
-                  <SheetContent side={phone ? 'bottom' : 'right'} className={cn('gap-0 overflow-hidden', phone ? 'data-[side=bottom]:h-[92dvh] rounded-t-3xl' : 'w-[440px] sm:max-w-[440px]')}>
+                  <SheetContent side="right" className="w-[440px] gap-0 overflow-hidden sm:max-w-[440px]">
                     <SheetTitle className="sr-only">詳細</SheetTitle>
                     {/* 閉じるボタンに focus が移っても中身が下まで送られないよう、送るのは中の箱にする */}
                     <div className="min-h-0 flex-1 overflow-y-auto px-5 pb-10 pt-5">{selected ? <Detail sel={selected} /> : null}</div>
