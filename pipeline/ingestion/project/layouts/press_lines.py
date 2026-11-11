@@ -5,11 +5,12 @@
 - `item`（必須）: 施策の行。名前付きの組 `name`（必須）・`tag`（新規などの札）・`amount`（金額）を持つ
 - `previous`: 施策の行の直前の行が当たるときだけ読む（番号の行の次に事業名と金額を置く様式）
 - `amount_next`: `item` に金額が無いとき、続く行（`lookahead` 行まで、既定 1。次の施策の行の前まで）から組 `amount` を探す。
-  `join` が true なら、金額の行までの行を名前の続きにする
+  `join` が true なら、金額の行までの行（金額の行の組 `name` も）を名前の続きにする
 - `tag`: 名前の中の札（組 `tag`）。当たったら札の前までを名前にする
 - `require_amount`: 金額の無い施策を読まない（既定 true）
 - `new`: 新規を表す `tag` の値の list
 - `start` / `end`: 節の始まりと終わりの行。`start` に当たった行の次から、`end` に当たる行の前までを読む（頁をまたぐ）
+- `point`: 名前の中の説明（組 `point`、「事業名(説明)」の括弧など）。名前から除いて points にする
 - `strip`: 名前から除く部分。`skip`: 名前に当たる施策は読まない。`unique`: 同じ名前は最初の1件だけにする
 - `unit`: 数だけの金額の単位（`千円` 既定、`百万円`）
 """
@@ -29,6 +30,7 @@ def read(path, rules: dict) -> list[PressItem]:
     end = re.compile(rules['end']) if 'end' in rules else None
     tag = re.compile(rules['tag']) if 'tag' in rules else None
     strip = re.compile(rules['strip']) if 'strip' in rules else None
+    point = re.compile(rules['point']) if 'point' in rules else None
     skip = re.compile(rules['skip']) if 'skip' in rules else None
     unit, new = rules.get('unit', '千円'), set(rules.get('new', []))
     items: list[PressItem] = []
@@ -56,6 +58,8 @@ def read(path, rules: dict) -> list[PressItem]:
                         after = following.search(row_after)
                         if after:
                             value = after.group('amount')
+                            if rules.get('join') and after.groupdict().get('name'):
+                                name += after.group('name')
                             groups = {**after.groupdict(), **{k: v for k, v in groups.items() if v}}
                             break
                         if item.match(row_after):
@@ -70,11 +74,15 @@ def read(path, rules: dict) -> list[PressItem]:
                     name = name[:marked.start()] if marked else name
                 if strip:
                     name = strip.sub('', name)
+                points = []
+                described = point.search(name) if point else None
+                if described:
+                    name, points = name[:described.start()] + name[described.end():], [described.group('point')]
                 name = name.strip()
                 if skip and skip.search(name):
                     continue
                 if rules.get('unique') and any(i.title == name for i in items):
                     continue
                 position += 1
-                items.append(PressItem(number, name, [name], groups.get('tag') in new, amount(value, unit), [], position))
+                items.append(PressItem(number, name, [name], groups.get('tag') in new, amount(value, unit), points, position))
     return items

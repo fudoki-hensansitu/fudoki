@@ -186,9 +186,9 @@
       "layout": "press_table",
       "rules": {
         "columns": {
-          "name": "事業名",
-          "point": "事業内容",
-          "amount": "予算額"
+          "name": "^事業名",
+          "point": "^事業内容",
+          "amount": "^予算額"
         },
         "new_mark": "\\(新\\)"
       },
@@ -229,7 +229,19 @@
     },
     {
       "jurisdiction": "132128",
-      "layout": "hino_press"
+      "layout": "press_table",
+      "rules": {
+        "columns": {
+          "name": "^事業名称",
+          "tag": "^経費",
+          "amount": "予算額"
+        },
+        "new": [
+          "新規"
+        ],
+        "skip": "^\\d+\\.?(?=\\D)"
+      },
+      "note": "当初予算概要の「主要施策と主な事業」の表。字を縦に組んだ頁（R7 の全頁、R8 の物価高対策の頁）は表として読めず読まない（R7 は 0 件）"
     },
     {
       "jurisdiction": "132136",
@@ -237,7 +249,20 @@
     },
     {
       "jurisdiction": "132144",
-      "layout": "kokubunji_press"
+      "layout": "press_table",
+      "rules": {
+        "columns": {
+          "tag": "^(事業)?区分",
+          "name": "^事業名",
+          "amount": "^事業費"
+        },
+        "new": [
+          "新"
+        ],
+        "carry": true,
+        "skip": "^小計$"
+      },
+      "note": "記者会見資料「政策的経費の内容」の表（見出しは2段、頁をまたぐ表は見出しが無い）。「主な取組」の冊は額を持たないので 0 件"
     },
     {
       "jurisdiction": "132152",
@@ -246,13 +271,14 @@
         "page": "^.{0,54}政策事業一覧",
         "cid_digits": true,
         "columns": {
-          "name": "個別事業名",
-          "tag": "分類",
-          "amount": "事業費"
+          "name": "^個別事業名",
+          "tag": "^分類",
+          "amount": "^事業費"
         },
         "new": [
           "新規"
-        ]
+        ],
+        "skip": " 計$"
       },
       "note": "予算（案）記者会見資料の「政策事業一覧」の表。R8 は数字を (cid:1746N) で符号化している"
     },
@@ -270,7 +296,23 @@
     },
     {
       "jurisdiction": "132225",
-      "layout": "higashikurume_press"
+      "layout": "press_table",
+      "rules": {
+        "page": "予算計上の事業名",
+        "columns": {
+          "tag": "^区分",
+          "name": "^事項",
+          "amount": "^予算額",
+          "point": "^摘"
+        },
+        "new": [
+          "新規"
+        ],
+        "new_contains": true,
+        "also": "【(?P<also>.+?)】$",
+        "also_skip": "^同事業名$"
+      },
+      "note": "予算の概要の「主な新規・拡充事業、計画策定・投資的事業等」の表。事項の【】の中は予算書の事業名（【同事業名】は事項と同じ）"
     },
     {
       "jurisdiction": "132233",
@@ -290,7 +332,17 @@
     },
     {
       "jurisdiction": "132284",
-      "layout": "akiruno_press"
+      "layout": "press_table",
+      "rules": {
+        "columns": {
+          "name": "^事業名",
+          "point": "^事業内容",
+          "amount": "^事業費"
+        },
+        "new_mark": "^【新】 ?",
+        "strip": "^【拡充】 ?"
+      },
+      "note": "当初予算(案)の概要の「一般会計歳出事業の概要」の表。補正予算の表は欄の見出しが違うので読まない。R7 p17 は事業名の枠が2つに割れていて名前の1字目が欠ける"
     },
     {
       "jurisdiction": "132292",
@@ -310,7 +362,17 @@
     },
     {
       "jurisdiction": "133086",
-      "layout": "okutama_press"
+      "layout": "press_lines",
+      "rules": {
+        "start": "^\\d+\\.(?:歳出目的|.*長期総合計画の分類)に基づく主な事業",
+        "end": "^\\d+\\.",
+        "item": "^・ ?(?P<name>.*?)(?: ?(?P<amount>[\\d,]+))?$",
+        "amount_next": "^(?P<name>.*?) ?(?P<amount>[\\d,]+)$",
+        "join": true,
+        "lookahead": 5,
+        "point": "\\((?P<point>.*)\\)$"
+      },
+      "note": "当初予算の概要の「歳出目的に基づく主な事業」（R6 は「長期総合計画の分類に基づく主な事業」）。新規は下線だけで文字の印が無いので is_new は読まない"
     },
     {
       "jurisdiction": "133612",
@@ -321,9 +383,9 @@
       "layout": "press_table",
       "rules": {
         "columns": {
-          "point": "区分",
-          "name": "事業名",
-          "amount": "事業費"
+          "point": "^区分",
+          "name": "^事業名",
+          "amount": "^事業費"
         },
         "fill": [
           "point"
