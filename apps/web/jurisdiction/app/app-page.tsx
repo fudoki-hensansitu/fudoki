@@ -342,18 +342,25 @@ function Overview({ go }: { go: Go }) {
   return (
     <div className="flex flex-col gap-8">
       <div className="grid gap-3 md:grid-cols-[1.3fr_1fr]">
-        {/* 総額と1人あたりは横に並べ、数字の下端を揃える */}
-        <Card className="flex-row flex-wrap content-center items-end gap-x-8 gap-y-3 bg-card px-5 py-[18px] ring-0">
+        {/* 総額と1人あたりは横に並べ、間に大きな斜線を引いて分ける。数字の下端は揃える */}
+        <Card className="justify-center bg-card px-5 py-[18px] ring-0">
+          <div className="flex items-end gap-4 sm:gap-6">
           <span className="flex flex-col">
             <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}（一般会計）</span>
             <Amt yen={v.total} className="mt-0.5 text-[40px] leading-tight text-primary max-sm:text-[34px]" />
           </span>
           {v.perHead != null ? (
+            <>
+            <span aria-hidden="true" className="self-stretch">
+              <svg viewBox="0 0 20 60" preserveAspectRatio="none" className="h-full w-4 stroke-border sm:w-5"><line x1="19" y1="1" x2="1" y2="59" strokeWidth="1.5" vectorEffect="non-scaling-stroke" /></svg>
+            </span>
             <span className="flex flex-col pb-1">
               <span className="text-xs text-muted-foreground">住民1人あたり</span>
               <Amt yen={v.perHead} className="mt-0.5 text-[22px] text-primary" />
             </span>
+            </>
           ) : null}
+          </div>
         </Card>
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-2"><CountCard icon={<ListBulletsIcon />} label="事業" n={v.current.length} onClick={() => go('projects', { filter: 'all' })} /></div>
