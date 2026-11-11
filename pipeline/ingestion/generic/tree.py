@@ -700,6 +700,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     settings = settings or {}
     kind_names = quirk(settings, 'names_end_with_kind_words')
     remainder = quirk(settings, 'bracketed_remainder')
+    department = quirk(settings, 'department_line')
     headings = quirk(settings, 'headings')
     glued = quirk(settings, 'glued_numbers')
     name_column = quirk(settings, 'name_column')
@@ -888,6 +889,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                               and closes_parts(entries, index, previous, remainder))
         wrapped = wrapped or (remainder is not None and remainder.module.overflows(
             previous, label, money, code, bracketed, limit, left_slack))
+        wrapped = wrapped or (department is not None and department.module.continues(
+            previous, label, money, code, left_slack))
         if wrapped:  # a wrapped name; its amount may be printed on the last line
             previous.lines.append(label)
             previous.name += normalize(text(label))
@@ -1126,7 +1129,7 @@ def split_glued_numbers(words: list[Glyph], edges: set[int]) -> list[Glyph]:
     return result
 
 
-def subject_items(group: Group) -> list[Item]:
+def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
     """Subject (款・項・目) items: a code printed in a level band starts an item.
 
     A line splits where a glyph run that starts with a code begins in a new
@@ -1170,16 +1173,30 @@ def subject_items(group: Group) -> list[Item]:
                 apart = bool(pieces) and glyph.x0 - pieces[-1][1][-1].x1 > glyph.y1 - glyph.y0 and any(
                     top <= (glyph.y0 + glyph.y1) / 2 <= bottom for edge in group.bands[pieces[-1][0] + 1:band + 1]
                     for top, bottom in edge.left_rules)
+                apart = apart or (dropped is not None and bool(pieces) and dropped.module.apart(pieces[-1], glyph, band))
                 if pieces and not (band != pieces[-1][0] and (starts_code or apart)):
                     pieces[-1][1].append(glyph)
                 else:
                     pieces.append((band, [glyph]))
             for band, piece in pieces:
-                if CODE.match(normalize(text(piece))):
+                if marked is not None and marked.module.stray(piece):
+                    continue
+                if (CODE.match(normalize(text(piece))) or (marked is not None and marked.module.marked(piece))
+                        or (dropped is not None and dropped.module.codeless(band, piece, pieces))):
                     tokens.append((band, piece))
                 else:
                     names.append(piece)
         parsed[cell] = (tokens, names)
+    extra: dict[tuple, list[list[Glyph]]] = defaultdict(list)
+    if marked is not None:  # the rest of a marked item's name, on the lines under it (`marked_subjects`)
+        heads = [(cell, i, piece) for cell, (tokens, _) in parsed.items()
+                 for i, (_, piece) in enumerate(tokens) if marked.module.marked(piece)]
+        for cell, (_, names) in parsed.items():
+            kept = []
+            for piece in names:
+                head = next(((c, i) for c, i, token in heads if marked.module.continues(token, piece)), None)
+                (extra[head] if head is not None else kept).append(piece)
+            names[:] = kept
     # A name-only line belongs to the one code printed in its own column and the rule-bounded cell of that
     # column, even when a rule of a deeper column cuts between them: `4 その他公共 / 施設、公用 / 災害復旧費`
     # (項) wraps through the row of `1 その他公共 / 施設、公用…` (目), 132241. Otherwise, to the deepest code
@@ -1197,7 +1214,6 @@ def subject_items(group: Group) -> list[Item]:
                      if _cell(group.bands[column], centre(parsed[c][0][i][1])) == span]
             if len(found) == 1:
                 claimed[cell, position] = found[0]
-    extra: dict[tuple, list[list[Glyph]]] = defaultdict(list)
     for (cell, position), owner_token in claimed.items():
         extra[owner_token].append(parsed[cell][1][position])
     result: list[Item] = []
@@ -1800,6 +1816,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     nodes, amounts, unowned, notes = [], [], [], []
     placed: list[Item] = []  # the items of `nodes`, in order
     repeated_codes: list = []
+    # `repeated_heading_owns_nothing`: a heading the page prints again takes no amount of the line it is on.
+    owners = ('node', 'total') if quirk(document, 'repeated_heading_owns_nothing') is not None else ('node', 'repeat', 'total')
     for logical in logicals:
         for group in groups(logical, pattern):
             if (group.subject and group.mode == 'indent') or (not group.subject and group.axis == '款項目'):
@@ -1859,7 +1877,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             else:
                 for band in group.bands:
                     band.words = split_glued_numbers(band.words, edges)
-                group_items = subject_items(group)
+                group_items = subject_items(group, quirk(document, 'marked_subjects'),
+                                            quirk(document, 'codeless_beside_repeated_code'))
             if not group.subject:
                 group_items = join_transfer_tails(group_items, layout)
             for position, item in enumerate(group_items):
@@ -1916,7 +1935,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 money = [g for g in line if is_amount(g.text)]
                 if not money:
                     continue
-                target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note'))
+                target = owner(money, band, ordered, found, roles=(*owners, 'note'))
                 if target is not None:
                     column_amount_items.add(id(target))
                 if target is not None and target.role == 'note':
@@ -2442,7 +2461,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     candidate = ''.join(g.text for g in money)
                     if not is_amount(candidate):
                         unowned.append({'kind': 'unreadable amount', 'page': money[0].page, 'text': candidate}); continue
-                    target = owner(money, band, ordered, found, ocr=logical.ocr, next_row=amounts_next_row)
+                    target = owner(money, band, ordered, found, owners, ocr=logical.ocr, next_row=amounts_next_row)
                     if (target is None and amounts_next_row and waiting_subject is not None
                             and _cell(band, money[0].y0)[0] == band.body_top
                             and not any(i.role == 'node' and i.anchor < money[0].y0
@@ -2513,7 +2532,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         if name is not None and name.page == money[0].page:
                             # The line the amount stands on below the item's name: a line left blank or printed as a
                             # dash (`41,589` / `-` / `41,589`) keeps the lines under it in their headings.
-                            step = .82 * (name.y1 - name.y0)
+                            step = band.line_pitch or .82 * (name.y1 - name.y0)
                             middle = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
                             if index < len(band.lines):
                                 index = min(max(index, round((middle - (name.y0 + name.y1) / 2) / step)), len(band.lines) - 1)
