@@ -1693,7 +1693,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
                 item.role = 'note'
             else:
                 item.level = marks[mark] - 1
-        elif unnumbered is not None and unnumbered.module.shift(item, note, unnumbered.value):
+        elif unnumbered is not None and unnumbered.module.shift(item, note, unnumbered.value, id(item) in column_amount_items):
             item.unnumbered_shift = unnumbered.value
         previous = result[-1] if result else None
         if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
@@ -2387,9 +2387,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 history = histories.pop('／'.join(band.header), None)  # [item, label lines, a round waiting] of a `補正経過`
                 if history is not None:
                     revisions.append([history[0], band.body_top, band.body_top, band.words[0].page if band.words else logical.pages[0], history[1][-1] if history[1] else []])
+                # A `補正経過` is printed in the subject's own columns: the amounts a breakdown axis prints in its column
+                # beside the rounds (`2 給料 86,968` beside `補正経過`, 131113) are that axis's items, not rounds.
+                breakdown_column = band.header[:1] and band.header[0] in {g.axis for g in ordered if not g.subject}
                 for line in lines(_signed_amounts(words_)):
                     whole = normalize(text(line))
-                    block = next((b for b in revisions if b[3] == money_page(line) and b[1] - 1 <= line_middle(line) <= b[2] + 1), None)
+                    block = None if breakdown_column else next(
+                        (b for b in revisions if b[3] == money_page(line) and b[1] - 1 <= line_middle(line) <= b[2] + 1), None)
                     if revision is not None and revision.module.opens(whole) and previous is not None:
                         # The history of the year's supplementary budgets (the quirk `revision_history`).
                         history = [previous[0], [], False]  # the item, its label lines, a round waiting for its amount
