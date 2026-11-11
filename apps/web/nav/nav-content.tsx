@@ -56,7 +56,9 @@ function TownSearch() {
         <InputGroupAddon>
           <MagnifyingGlassIcon className="size-4" />
         </InputGroupAddon>
-        <kbd className="me-2 hidden rounded border px-1 text-[10px] text-muted-foreground lg:inline">⌘K</kbd>
+        <InputGroupAddon align="inline-end">
+          <kbd className="rounded border px-1 font-sans text-[11px] text-muted-foreground">⌘K</kbd>
+        </InputGroupAddon>
       </ComboboxInput>
       <ComboboxContent>
         <ComboboxEmpty>{entries.length ? '当たるまちは、まだ収録していません' : '読み込んでいます…'}</ComboboxEmpty>
@@ -79,7 +81,8 @@ export function NavContent() {
   const { path } = useRouter()
   return (
     <>
-      <SidebarGroup className="pt-0">
+      {/* 欄の focus の輪（3px）が、スクロールする枠の上端で切れないよう少し空ける */}
+      <SidebarGroup className="pt-1">
         <TownSearch />
       </SidebarGroup>
       <SidebarGroup>
