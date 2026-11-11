@@ -20,10 +20,12 @@ export default function FieldChart({ slices, format }: { slices: Slice[]; format
     const cx = Number(p.cx), cy = Number(p.cy), inner = Number(p.innerRadius), outer = Number(p.outerRadius), mid = Number(p.midAngle ?? 0)
     const cos = Math.cos(-mid * RAD), sin = Math.sin(-mid * RAD)
     const pct = `${(percent * 100).toFixed(1)}%`
+    const full = `${s.name} ${pct} ${format(s.yen)}`
     if (percent >= INSIDE_MIN) {
       const r = inner ? (inner + outer) / 2 : outer * 0.55
       return (
         <text x={cx + r * cos} y={cy + r * sin} fill={s.ink} textAnchor="middle" className="tabular-nums">
+          <title>{full}</title>
           <tspan x={cx + r * cos} dy="-1.1em" className="text-[11px]">{cut(s.name, 7)}</tspan>
           <tspan x={cx + r * cos} dy="1.25em" className="text-[13px] font-semibold">{pct}</tspan>
           <tspan x={cx + r * cos} dy="1.25em" className="text-[11px]">{format(s.yen)}</tspan>
@@ -40,6 +42,7 @@ export default function FieldChart({ slices, format }: { slices: Slice[]; format
       <g>
         <path d={`M${sx},${sy}L${mx},${my}L${ex},${my}`} className="fill-none stroke-muted-foreground/50" />
         <text x={tx} y={my} textAnchor={anchor} className="fill-foreground tabular-nums">
+          <title>{full}</title>
           <tspan x={tx} dy="-0.85em" className="text-[11px]">{cut(s.name, NAME_MAX)}</tspan>
           <tspan x={tx} dy="1.2em" className="fill-muted-foreground text-[11px]">{pct}</tspan>
           <tspan x={tx} dy="1.2em" className="fill-muted-foreground text-[11px]">{format(s.yen)}</tspan>
@@ -47,13 +50,19 @@ export default function FieldChart({ slices, format }: { slices: Slice[]; format
       </g>
     )
   }
+  // 切った名前の全文は、支援技術向けに一覧でも持つ
   return (
-    <ChartContainer config={config} className="aspect-auto h-[320px] w-full">
+    <>
+    <ul className="sr-only">
+      {slices.map((s) => <li key={s.key}>{s.name} {format(s.yen)}</li>)}
+    </ul>
+    <ChartContainer config={config} className="aspect-auto h-[320px] w-full" aria-hidden>
       <PieChart margin={{ top: 16, bottom: 16, left: 8, right: 8 }}>
         <Pie data={slices} dataKey="yen" nameKey="key" innerRadius={0} outerRadius="56%" startAngle={90} endAngle={-270} stroke="var(--background)" strokeWidth={2} isAnimationActive labelLine={false} label={label}>
           {slices.map((s) => <Cell key={s.key} fill={s.color} className="outline-none" />)}
         </Pie>
       </PieChart>
     </ChartContainer>
+    </>
   )
 }
