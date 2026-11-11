@@ -94,17 +94,23 @@ def big_amounts(items: list[dict], min_size: float, units: tuple[str, ...] = ('�
     return out
 
 
-_AMOUNT_TEXTS = (
-    (re.compile(r'([\d,]+)\s*億\s*([\d,]+)\s*万円'), lambda m: int(m[1].replace(',', '')) * 100_000 + int(m[2].replace(',', '')) * 10),
-    (re.compile(r'([\d,]+)\s+([\d,]+)\s*億\s*万円'), lambda m: int(m[1].replace(',', '')) * 100_000 + int(m[2].replace(',', '')) * 10),
-    (re.compile(r'([\d,]+)\s*億円'), lambda m: int(m[1].replace(',', '')) * 100_000),
-    (re.compile(r'([\d,]+)\s*万円'), lambda m: int(m[1].replace(',', '')) * 10),
-    (re.compile(r'([\d,]+)\s*千円'), lambda m: int(m[1].replace(',', ''))),
-)
+_SPLIT_OKU_MAN = re.compile(r'([\d,]+)\s+([\d,]+)\s*億\s*万円')  # 「16 3,694 億 万円」（億と万の数を別に印字）
+_YEN = re.compile(r'(?:([\d,]+)\s*億\s*)?(?:([\d,]+)\s*万\s*)?(?:([\d,]+)\s*千\s*)?円')
 
 
 def amount_text(value: str) -> int | None:
-    """「1億4,270万円」「16 3,694 億 万円」「1,846万円」「23,108千円」のような印字を千円にする。最初に当たった形で読む。"""
+    """「1億4,270万円」「95万9千円」「16 3,694 億 万円」「1,846万円」「23,108千円」のような印字を千円にする。
+
+    最初に当たった金額を読む。千円未満の端数は持たない（「〇円」だけの印字は読まない）。
+    """
     value = norm(value)
-    found = [(m.start(), reader(m)) for pattern, reader in _AMOUNT_TEXTS for m in [pattern.search(value)] if m]
+    found = []
+    split = _SPLIT_OKU_MAN.search(value)
+    if split:
+        found.append((split.start(), int(split[1].replace(',', '')) * 100_000 + int(split[2].replace(',', '')) * 10))
+    for match in _YEN.finditer(value):
+        oku, man, sen = (int(g.replace(',', '')) if g else 0 for g in match.groups())
+        if match.group(1) or match.group(2) or match.group(3):
+            found.append((match.start(), oku * 100_000 + man * 10 + sen))
+            break
     return min(found)[1] if found else None
