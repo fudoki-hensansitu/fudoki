@@ -1872,6 +1872,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 group_items = subject_items(group)
             if not group.subject:
                 group_items = join_transfer_tails(group_items, layout)
+                if (digit_set := quirk(document, 'digit_set_codes')) is not None:
+                    digit_set.module.measure(group_items, digit_set.value)
             for position, item in enumerate(group_items):
                 # 01.01.01.01から流用 starts with digits. A parenthesised remark joined to an item's
                 # name (`需用費（同事業、委託料へ流用 △1,815,000）`) does not make the item a note.
@@ -1977,6 +1979,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 kept.append(item)
             if group.mode == "indent":
                 subject_pattern.align(logical, group, kept, alignment)
+                if group.subject and (digit_set := quirk(document, 'digit_set_codes')) is not None:
+                    digit_set.module.align(kept, digit_set.value)
             found[id(group)] = kept
     # A subject name cut at the foot of a page continues without a number or amount at the next page's
     # start (`8 市立社会福祉` / `センター費`). Keep its first-page position; a box cannot span two pages.
@@ -2202,6 +2206,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             + (titled if any(title_shift(g) for g in ordered if g.subject) else 0)
         row = None  # (subject item, top, bottom) of the latest subject row
         opening = logical.reprints  # no subject with a code has begun on this page yet
+        page_axes: set[str] = set()  # the breakdown axes with an item on this page so far (`repeated_at_top`)
+        digit_set = quirk(document, 'digit_set_codes')
         for _, _, item in events:
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
                     and (row[0].depth < subject_depth or item.code is None) and id(item) not in numbered_names \
@@ -2253,6 +2259,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if again is None:
                         # The open headings printed again one to a line, outermost first: this line is one of them.
                         again = next((s for s in reversed(stack) if s.name and same_heading(s.name, item.name)), None)
+                    if again is not None and digit_set is not None and again.level != item.level:
+                        # (The quirk `digit_set_codes`: a 款, 項 and 目 the year drops print one name, `×` `保健福祉事業`
+                        # at each level's place; the 項 that opens the next page is no reprint of the 款.)
+                        again = None
                     if again is not None:
                         item.key, item.role = again.key, 'repeat'
                         # Digits in the repeated name (`市制７０周年記念事業費`) are the open heading's own, not an amount.
@@ -2298,6 +2308,19 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 summing.clear()
                 row = (item, *subject_row(item, logical))
             else:
+                first_on_page = item.group.axis not in page_axes
+                page_axes.add(item.group.axis)
+                if (first_on_page and item.role == 'node' and item.code is not None
+                        and quirk((layout or {}).get(item.group.axis), 'repeated_at_top') is not None
+                        and not any(i.group.subject and i.page == item.page for i in placed)
+                        and (again := next((p for p in branch.get(item.group.axis, [])[:1] if p is not None), None)) is not None
+                        and again.code == item.code and normalize(again.name) == normalize(item.name)
+                        and [normalize(text(r)) for _, r in again.amounts] == [normalize(text(r)) for _, r in item.amounts]):
+                    # The quirk `repeated_at_top`: the open item printed again at the top of a continuation page.
+                    # Its number and amount are the open item's (a coverage exclusion), not new ones.
+                    item.key, item.role = again.key, 'repeat'
+                    repeated_codes.extend(g for g in item.glyphs if re.search(r'[0-9０-９]', g.text))
+                    continue
                 ranks = levels[item.group.axis]
                 depth = 1 + min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 1
                 mode = detail if isinstance(detail, str) else detail.get(item.group.axis)
@@ -2563,6 +2586,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             remarks.append({'kind': 'kind line', 'target': target, 'heading': header, 'label': stacked_label,
                                             'runs': [money], 'unit': logical.unit_of(header)})
                     amounts.append(_amount(target.key, header, money, logical.unit_of(header)))
+                    if target.role == 'repeat' and not target.group.subject:
+                        repeated_codes.extend(money)  # the open item's amount printed again (`repeated_at_top`)
                     owned.add(target.key)
                     previous = (target, _cell(band, y))
                 if history is not None:
