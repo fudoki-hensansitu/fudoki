@@ -3,7 +3,8 @@
 // データは自治体の頁と同じ /api/jurisdictions/app/:code を読み、yearView で年度ごとに見る
 import * as React from 'react'
 import { useRouter } from '@void/react'
-import { ArrowRightIcon, ArrowSquareOutIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, ArrowSquareOutIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
+import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { FEEDBACK } from '../nav/feedback'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
@@ -12,7 +13,7 @@ import { Emblem } from './town-picker'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { GRADES, yearView, type Snapshot, type YearView } from '../jurisdiction/app/data'
 import { NewIcon, StopIcon } from '../jurisdiction/fresh-icons'
-import { formatPeople, reiwa } from '../jurisdiction/types'
+import { formatPeople, reiwa, yearName } from '../jurisdiction/types'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { searchHref } from '../search/search'
 import { useMyTown, type Town } from './towns'
@@ -82,22 +83,46 @@ const More = ({ href, children, className }: { href: string; children: React.Rea
   </Link>
 )
 
+/**
+ * 年度の切り替え。名前は自治体の頁と同じく今年度・昨年度…で呼び、新しい年度から並べる。
+ * スマホは自治体の頁と同じく選んでいる年度だけを出し、押すとメニューで切り替える
+ */
 function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
   if (c.years.length < 2) return null
+  const years = [...c.years].sort((a, b) => b - a)
   return (
-    <div className={cn('flex gap-1 rounded-full p-1', onBrand ? 'bg-brand-fill/20' : 'bg-secondary')} role="group" aria-label="年度">
-      {c.years.map((y) => (
-        <button
-          key={y}
-          type="button"
-          onClick={() => c.setYear(y)}
-          aria-pressed={y === c.year}
-          className={cn('rounded-full px-3 py-1 text-[13px] transition-colors duration-150 ease-out', y === c.year ? (onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-background text-foreground shadow-sm') : onBrand ? 'hover:bg-white/10' : 'text-muted-foreground hover:text-foreground')}
-        >
-          {reiwa(y).replace('年度', '')}
-        </button>
-      ))}
-    </div>
+    <>
+      <div className={cn('hidden gap-1 rounded-full p-1 sm:flex', onBrand ? 'bg-brand-fill/20' : 'bg-secondary')} role="group" aria-label="年度">
+        {years.map((y) => (
+          <button
+            key={y}
+            type="button"
+            onClick={() => c.setYear(y)}
+            aria-pressed={y === c.year}
+            title={reiwa(y)}
+            className={cn('rounded-full px-3 py-1 text-[13px] transition-colors duration-150 ease-out', y === c.year ? (onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-background text-foreground shadow-sm') : onBrand ? 'hover:bg-white/10' : 'text-muted-foreground hover:text-foreground')}
+          >
+            {yearName(y)}
+          </button>
+        ))}
+      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger className={cn('inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[15px] sm:hidden', onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-secondary text-foreground')}>
+          {yearName(c.year)}
+          <CaretDownIcon className="size-3.5" aria-hidden="true" />
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-auto">
+          <DropdownMenuRadioGroup value={String(c.year)} onValueChange={(v) => c.setYear(Number(v))}>
+            {years.map((y) => (
+              <DropdownMenuRadioItem key={y} value={String(y)}>
+                {yearName(y)}
+                {yearName(y) !== reiwa(y) ? `（${reiwa(y).replace(/年度$/, '')}）` : ''}
+              </DropdownMenuRadioItem>
+            ))}
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+    </>
   )
 }
 
@@ -168,7 +193,7 @@ function Dashboard({ c }: { c: Ctx }) {
         <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
           <div>
             <p className="text-sm opacity-80">
-              {reiwa(year)}の{v.word === '決算' ? '決算' : '当初予算'}
+              {yearName(year)}の{v.word === '決算' ? '決算' : '当初予算'}
             </p>
             <p className="mt-1 text-[40px] leading-none font-bold sm:text-[48px]">
               <Amt yen={v.total} />
@@ -176,7 +201,7 @@ function Dashboard({ c }: { c: Ctx }) {
             {d.pop ? <p className="mt-2 text-sm opacity-80">1人あたり {perHeadText(v.total, d.pop)}</p> : null}
           </div>
           <Link data-tour="open" href={c.base} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
-            ページを見る
+            詳細を見る
             <ArrowRightIcon className="size-4" />
           </Link>
         </div>
@@ -187,7 +212,7 @@ function Dashboard({ c }: { c: Ctx }) {
         </Card>
       ) : null}
       {v.comparable && v.newProjects.length ? (
-        <Card tour="projects" title={`${reiwa(year)}に始めた事業`} icon={<NewIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
+        <Card tour="projects" title={`${yearName(year)}に始めた事業`} icon={<NewIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
           <ProjectList items={v.newProjects.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p) ?? null }))} rest={v.newProjects.length - 5} />
         </Card>
       ) : v.current.length ? (
@@ -196,12 +221,12 @@ function Dashboard({ c }: { c: Ctx }) {
         </Card>
       ) : null}
       {v.comparable && v.ended.length ? (
-        <Card title={`${reiwa(year - 1)}でやめた事業`} icon={<StopIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
+        <Card title={`${yearName(year - 1)}でやめた事業`} icon={<StopIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
           <ProjectList items={v.ended.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p, String(year - 1)) ?? null }))} rest={v.ended.length - 5} />
         </Card>
       ) : null}
       {sheets.length ? (
-        <Card title={`${reiwa(fy)}の事業評価`} icon={<ClipboardTextIcon />} footer={<More href={`${town.path}/${fy}/projects`}>事業を見る</More>}>
+        <Card title={`${yearName(fy)}の事業評価`} icon={<ClipboardTextIcon />} footer={<More href={`${town.path}/${fy}/projects`}>事業を見る</More>}>
           <p className="text-sm text-muted-foreground">
             <span className="text-2xl font-bold text-foreground tabular-nums">{sheets.length}</span> 件の事業を振り返りました
           </p>
@@ -246,7 +271,7 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
   const { town, d, v, year } = c
   const top = v.fields[0]
   const rows: [string, React.ReactNode][] = [
-    [`${reiwa(year)}の${v.word === '決算' ? '決算' : '当初予算'}`, <Amt key="t" yen={v.total} className="text-[28px] font-bold sm:text-[32px]" />],
+    [`${yearName(year)}の${v.word === '決算' ? '決算' : '当初予算'}`, <Amt key="t" yen={v.total} className="text-[28px] font-bold sm:text-[32px]" />],
     ...(d.pop ? ([['1人あたり', <span key="p" className="text-[20px] font-bold">{perHeadText(v.total, d.pop)}</span>]] as [string, React.ReactNode][]) : []),
     ...(top
       ? ([
