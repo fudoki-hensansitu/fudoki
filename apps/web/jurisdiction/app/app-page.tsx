@@ -885,11 +885,12 @@ export function AppPage({ data, sitekey, initialYear, initialField }: { data: Pa
             <AppContext.Provider value={{ d: d!, page: data, years, v, select, selected, projects, go, openField }}>
               {fieldPage ? (
                 <div key={fieldPage} className="app-in pt-6"><FieldPage id={fieldPage} /></div>
+                {/* 枠の線が端で切れないよう、Carousel は画面の端まで広げて中身を内側に寄せる */}
               ) : phone ? (
-                <Carousel setApi={setApi} opts={{ startIndex: index }} className="pt-5">
-                  <CarouselContent className="-ml-4 items-start transition-[height] duration-300" style={{ height }}>
+                <Carousel setApi={setApi} opts={{ startIndex: index }} className="-mx-4 pt-5">
+                  <CarouselContent className="ml-0 items-start transition-[height] duration-300" style={{ height }}>
                     {tabs.map((t, i) => (
-                      <CarouselItem key={t.key} className="pl-4">
+                      <CarouselItem key={t.key} className="px-4">
                         <div ref={(el) => void (slides.current[i] = el)}>{panel(t.key)}</div>
                       </CarouselItem>
                     ))}
