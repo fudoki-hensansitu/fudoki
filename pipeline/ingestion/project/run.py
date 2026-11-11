@@ -5,8 +5,9 @@
     bun run --cwd pipeline project:save   # 宣言の PDF を取得し、指紋を確かめて R2 に保存する（ネットワークを使う。CI では回さない）
 
 評価シートは出典の選定の `evaluation_selections`、予算案のプレス発表は `press_selections` で保存済みの PDF を、
-評価の結果は `origins.json` の宣言の PDF を読む。どの様式で読むかは `origins.json` の `layout` で決める
-（プレス発表は年度ごとに様式が違うことがあるので `years` で年度を絞れる）。読んだ結果は PDF の指紋と読み方のコードの指紋ごとにキャッシュし、
+評価の結果は `origins.json` の宣言の PDF を読む。どの様式で読むかは `origins.json` の `layout` で決める。
+プレス発表は工程ごとのパターンの組み合わせ（`workflow`、`press/`）か、型に収まらない自治体だけ `layout` で読む
+（年度ごとに様式が違うことがあるので `years` で年度を絞れる）。読んだ結果は PDF の指紋と読み方のコードの指紋ごとにキャッシュし、
 同じ PDF を毎回読み直さない。
 """
 from __future__ import annotations
@@ -24,6 +25,7 @@ from pathlib import Path
 from ingestion.fiscal.manifest import BUCKET, sha_file
 from ingestion.fiscal.storage import fetch
 from ingestion.paths import CACHE
+from ingestion.project import press
 
 HERE = Path(__file__).parent
 ORIGINS = HERE / 'origins.json'
@@ -78,7 +80,9 @@ def press_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[d
             for stored in archive['files']:
                 url = stored.get('final_url') or next(
                     f['download_url'] for f in candidate['files'] if f['sha256'] == stored['sha256'])
-                out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': year, 'layout': entry['layout'],
+                out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': year,
+                            **({'layout': entry['layout']} if 'layout' in entry else {}),
+                            **({'workflow': entry['workflow']} if 'workflow' in entry else {}),
                             'title': candidate['title'], 'landing_url': candidate['landing_url'], 'url': url,
                             'sha256': stored['sha256'], 'reference': {'key': stored['key'], 'sha256': stored['sha256']}})
     return out
@@ -88,19 +92,25 @@ def layout(name: str):
     return importlib.import_module(f'ingestion.project.layouts.{name}')
 
 
-def code_fingerprint(name: str) -> str:
-    """読み方のコードの指紋（様式のモジュールと、様式が共通に使う press.py）。コードを直したらキャッシュを読み直す。"""
-    digest = hashlib.sha256(Path(layout(name).__file__).read_bytes())
-    digest.update((HERE / 'layouts' / 'press.py').read_bytes())
+def code_fingerprint(origin: dict) -> str:
+    """読み方の指紋（様式のモジュールか、組み合わせたパターン、共通の press.py、宣言の workflow）。読み方を直したらキャッシュを読み直す。"""
+    workflow = origin.get('workflow')
+    files = press.modules(workflow) if workflow else [Path(layout(origin['layout']).__file__)]
+    digest = hashlib.sha256()
+    for path in [*files, HERE / 'layouts' / 'press.py']:
+        digest.update(path.read_bytes())
+    if workflow is not None:
+        digest.update(json.dumps(workflow, ensure_ascii=False, sort_keys=True).encode())
     return digest.hexdigest()[:16]
 
 
 def read_cached(path: Path, origin: dict) -> object:
-    """PDF を宣言の様式で読む。結果は dataclass を dict にしたもの。"""
-    cache = READINGS / f'{origin["sha256"]}-{origin["layout"]}-{code_fingerprint(origin["layout"])}.json'
+    """PDF を宣言の様式（またはパターンの組み合わせ）で読む。結果は dataclass を dict にしたもの。"""
+    name = origin.get('layout', 'press')
+    cache = READINGS / f'{origin["sha256"]}-{name}-{code_fingerprint(origin)}.json'
     if cache.exists():
         return json.loads(cache.read_text(encoding='utf-8'))
-    result = layout(origin['layout']).read(path)
+    result = press.read(path, origin['workflow']) if 'workflow' in origin else layout(origin['layout']).read(path)
     data = [dataclasses.asdict(r) for r in result] if isinstance(result, list) else dataclasses.asdict(result)
     cache.parent.mkdir(parents=True, exist_ok=True)
     cache.write_text(json.dumps(data, ensure_ascii=False), encoding='utf-8')

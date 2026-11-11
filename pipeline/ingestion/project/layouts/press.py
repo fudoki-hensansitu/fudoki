@@ -1,6 +1,7 @@
 """予算案のプレス発表の様式が共通に使う道具（語を行にまとめる、金額を千円で読む）。
 
-様式ごとの読み方は `<自治体>_press.py` に置き、ここには様式に依らない処理だけを置く。
+多くの自治体は工程ごとのパターンの組み合わせ（`ingestion/project/press/`、宣言の `workflow`）で読む。
+組み合わせに収まらない自治体だけ `<自治体>_press.py` に置く。ここには様式に依らない処理だけを置く。
 """
 from __future__ import annotations
 
@@ -114,3 +115,15 @@ def amount_text(value: str) -> int | None:
             found.append((match.start(), oku * 100_000 + man * 10 + sen))
             break
     return min(found)[1] if found else None
+
+
+UNITS = {'千円': 1, '百万円': 1000}
+
+
+def amount(value: str | None, unit: str = '千円') -> int | None:
+    """宣言で読む金額。億・万・千・円を含む印字は amount_text で、数だけの印字は unit（千円・百万円）で千円にする。"""
+    if not value or not re.search(r'\d', value):
+        return None
+    if re.search(r'[億万千円]', value):
+        return amount_text(value if '円' in value else value + '円')
+    return int(re.sub(r'[,\s]', '', value)) * UNITS[unit]

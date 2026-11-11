@@ -127,7 +127,7 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
                                              for row in con.execute(
                 "select detail_id, name, kan_name, moku_name, amount_yen from expenditure_detail"
                 " where jurisdiction_code = ? and fiscal_year = ? and document_kind = 'initial'"
-                " and amendment_number is null and breakdown = '事業' order by detail_id", [jurisdiction, year]).fetchall()]
+                " and amendment_number is null and breakdown = '事業' and name is not null order by detail_id", [jurisdiction, year]).fetchall()]
         # 当初予算書の内訳（事業）がまだ無い年度は紐付けを決めず、seed に行を書かない（予算書を取り込んだら紐付ける）
         skipped = sorted({k for k, v in details.items() if not v})
         todo = [i for i in todo if details[(i['jurisdiction_code'], i['fiscal_year'])]]
