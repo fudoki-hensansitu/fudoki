@@ -304,7 +304,8 @@ describe('内訳の API', () => {
     // 款（子ども教育費）は使わず、COFOG の名前で分ける
     const social = flows.find((f) => f.kan.id === 'cofog-10')!
     expect(social.kan).toMatchObject({ name: '福祉・子育て', yen: 70, amountMissing: true })
-    expect(social.kou.map((k) => k.name)).toEqual(['未分類', '家族及び児童'])
+    // 未分類は金額が大きくても最後
+    expect(social.kou.map((k) => k.name)).toEqual(['家族及び児童', '未分類'])
     expect(social.kou[1]).toMatchObject({ yen: 0, amountMissing: true })
     expect(flows.find((f) => f.kan.id === 'cofog-09')!.kou[0]).toMatchObject({ name: '就学前教育及び初等教育', yen: 50, moku: [{ name: '学校費' }] })
     // COFOG の付かない目は「その他」に入り、最後に置く
