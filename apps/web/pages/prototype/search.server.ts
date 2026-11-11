@@ -1,4 +1,4 @@
-// 試作: 事業を探す（/prototype/search?q=給食&code=131091）。言葉で、収録しているまちの決算の内訳（事業・節など）を引く。code があればそのまちだけ。
+// 試作: 事業を検索（/prototype/search?q=給食&code=131091）。言葉で、収録しているまちの決算の内訳（事業・節など）を引く。code があればそのまちだけ。
 // まちは自治体コードの順に並べ、金額で順位を付けない。内訳は入れ子なので足さない
 import { defineHandler, defineHead } from 'void'
 import { jurisdictionPath } from '../../jurisdiction/path'
