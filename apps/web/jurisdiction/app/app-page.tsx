@@ -27,6 +27,8 @@ import {
   ShieldCheckIcon,
   SparkleIcon,
   SquaresFourIcon,
+  MapTrifoldIcon,
+  MapPinAreaIcon,
   StorefrontIcon,
   StudentIcon,
   TreeStructureIcon,
@@ -55,8 +57,8 @@ import { EMBLEMS } from '../emblems'
 import { assetPath } from '../profiles'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
-import { AskDock, Elsewhere } from '../page'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
+import { AskDock } from '../page'
+import { appPageYears, INDEX_PATH, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
@@ -175,6 +177,29 @@ function SheetRow({ s }: { s: EvalSheet }) {
   return <Row icon={dir ? <Mark kind={dir.icon} label={dir.label} /> : <IconBox><ClipboardTextIcon /></IconBox>} title={s.name} sub={[s.div, dir?.label ?? s.dir].filter(Boolean).join(' · ')} yen={s.s} note={`${r(s.fy)} 決算`} selected={selected?.kind === 'sheet' && selected.id === s.id} onClick={() => select({ kind: 'sheet', id: s.id })} />
 }
 /** 行の間に Separator を挟む */
+/** 最後の節。都道府県・近くの自治体・全国の一覧へ。見出しと行はほかの節と同じ形にする */
+function Elsewhere() {
+  const { page } = useApp()
+  const places = [
+    ...(page.prefecturePath !== INDEX_PATH ? [{ href: page.prefecturePath, name: page.prefecture, icon: <MapTrifoldIcon /> }] : []),
+    ...page.neighbors.map((n) => ({ href: n.path, name: n.name, icon: n.logo ? <img src={n.logo} alt="" className="size-full object-contain p-1" /> : <MapPinAreaIcon /> })),
+    { href: INDEX_PATH, name: 'すべての自治体', icon: <SquaresFourIcon /> },
+  ]
+  return (
+    <section>
+      <SectionHead title="ほかの自治体も見る" />
+      <div className="grid gap-x-6 sm:grid-cols-2">
+        {places.map((x) => (
+          <Link key={x.href} href={x.href} className="flex items-center gap-3 px-2.5 py-3 text-base text-foreground no-underline transition-colors hover:bg-card">
+            <IconBox>{x.icon}</IconBox>
+            <span className="min-w-0 flex-1 truncate">{x.name}</span>
+          </Link>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 function Rows({ children }: { children: React.ReactNode[] }) {
   return <div className="flex flex-col">{children.map((c, i) => <React.Fragment key={i}>{i ? <Separator /> : null}{c}</React.Fragment>)}</div>
 }
@@ -395,7 +420,7 @@ function Overview({ go }: { go: Go }) {
           <GradeCards sheets={v.sheets} onChange={(g) => go('projects', { filter: 'eval', grade: g })} />
         </section>
       ) : null}
-      <Elsewhere data={page} />
+      <Elsewhere />
     </div>
   )
 }
