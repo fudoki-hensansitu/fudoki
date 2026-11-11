@@ -232,7 +232,7 @@ unit テストは、金額の正しさ・公開 API の安全性（認証・入�
 - メンバーを足す: 本人が fudoki 用の鍵を作って keychain に入れ（macOS: `d=$(mktemp -d) && age-keygen -o "$d/k" 2>/dev/null && age-keygen -y "$d/k" && security add-generic-password -U -s fnox-fudoki -a age-key -w "$(grep '^AGE-SECRET-KEY' "$d/k")"; rm -rf "$d"`。公開鍵だけが表示される）、公開鍵（`age1...`）を `recipients` に 1 行足す。鍵を持つ人が `fnox reencrypt -p age` で暗号文を作り直す。agent・CI に渡すときも専用の鍵を 1 本作って同じように足す
 - AI agent（cloud 環境）用の鍵: recipients の `# ai` の行。秘密鍵は yuito の keychain（service `fnox-fudoki`、account `age-key-ai`。作り方は上と同じで account だけ変える）に置き、cloud 環境の環境変数 `FNOX_AGE_KEY` に渡す（`FNOX_AGE_KEY` は `identity` より優先されるので keychain の無い Linux でも開ける）。cloud 環境には mise を版固定で入れ、`mise.toml` の fnox を入れる（setup script: `curl -fsSL https://mise.run | MISE_VERSION=v2026.11.5 sh`、`export PATH="$HOME/.local/bin:$HOME/.local/share/mise/shims:$PATH"`、`mise trust --yes && mise install`）。止めるときは、行を消して `fnox reencrypt -p age`、cloud 環境の `FNOX_AGE_KEY` を消し、値を rotate する
 - メンバーが抜ける: `recipients` から行を消して `fnox reencrypt -p age` で作り直す。その人は git 履歴の古い暗号文をまだ開けるので、値そのものを rotate する
-- `CLOUDFLARE_ACCOUNT_ID` は secret ではないので `mise.toml` の `[env]` に平文で置く。`CLOUDFLARE_API_TOKEN`・`CLOUDFLARE_PREVIEW_API_TOKEN` などの CI・deploy の secret は GitHub secret（本番の token は Environment `production`）、本番の Worker の secret（`TURNSTILE_SECRET_KEY` など）は Cloudflare に置き、`fnox.toml` には入れない。CI に `FNOX_AGE_KEY` を渡すとその 1 本で全部開くため、CI からは fnox を使わない
+- `CLOUDFLARE_ACCOUNT_ID` は secret ではないので `mise.toml` の `[env]` に平文で置く。`CLOUDFLARE_API_TOKEN` などの CI・deploy の secret は GitHub secret、本番の Worker の secret（`TURNSTILE_SECRET_KEY` など）は Cloudflare に置き、`fnox.toml` には入れない。CI に `FNOX_AGE_KEY` を渡すとその 1 本で全部開くため、CI からは fnox を使わない
 
 ## 技術スタック
 
