@@ -1,0 +1,114 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132152",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6da3e3763101f5e393002011edc9a473b4d886a1467edc78466bb2091a0810eb"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額(前年度予算額)(比較増減)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 14
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "marks": {
+                    "(1": 2,
+                    "(2": 2,
+                    "(3": 2,
+                    "(4": 2,
+                    "(5": 2,
+                    "(6": 2,
+                    "(7": 2,
+                    "(8": 2,
+                    "(9": 2
+                  },
+                  "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "department_line": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}
