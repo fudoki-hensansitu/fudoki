@@ -943,14 +943,14 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
       <div className="grid size-20 place-items-center rounded-xl border bg-emblem p-2.5 sm:size-[108px] sm:rounded-2xl sm:p-4">
         {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
       </div>
-      <div className="flex min-w-0 flex-col gap-3">
-        {/* 自治体名の行の右に年度の切り替えを置く */}
+      <div className="flex min-w-0 flex-col gap-1.5">
+        {/* 自治体名の行の右に年度の切り替えを置く。切り替えのボタンで行が高くならないよう上下を詰める */}
         <div className="flex items-center justify-between gap-3">
           <h1 className="min-w-0 text-[22px] font-normal leading-tight sm:text-[26px]">{data.name}</h1>
-          <div className="shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
+          <div className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
         </div>
-        {vision ? <p className="text-[17px]">{vision}</p> : null}
-        <div className="flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
+        {vision ? <p className="text-base leading-snug sm:text-[17px]">{vision}</p> : null}
+        <div className="mt-1 flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
           <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button></span>
           {data.population ? (
             <Hint label={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
