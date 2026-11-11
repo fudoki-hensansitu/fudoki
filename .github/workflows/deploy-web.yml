@@ -53,6 +53,13 @@ jobs:
           version: 2026.8.6
       - if: steps.order.outputs.wait != 'true'
         run: bun install --frozen-lockfile
+      # web の D1（fudoki-web）の migration を deploy の前に当てる。当たっているものは飛ばす（d1_migrations に記録がある）
+      - if: steps.order.outputs.wait != 'true'
+        working-directory: apps/web
+        run: ./node_modules/.bin/cf d1 migrations apply 760c7476-6e46-4b44-b174-1bfdd1b4f957 --dir migrations
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
       - if: steps.order.outputs.wait != 'true'
         run: bun run deploy:web
         env:

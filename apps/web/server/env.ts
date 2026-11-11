@@ -5,9 +5,10 @@ export interface RateLimiter {
 export interface AnalyticsDataset {
   writeDataPoint(point: { indexes?: string[]; blobs?: string[]; doubles?: number[] }): void
 }
-/** D1 の使う部分だけ（会話を保存する） */
+/** D1 の使う部分だけ（会話を保存する・人口を読む） */
 export interface ChatLogStatement {
   bind(...values: unknown[]): ChatLogStatement
+  all?<T = Record<string, unknown>>(): Promise<{ results: T[] }>
 }
 export interface WebDatabase {
   prepare(sql: string): ChatLogStatement
@@ -28,7 +29,7 @@ export interface Env {
   VIEW_RATE_LIMIT?: RateLimiter
   /** 利用状況（会話の本文・IP は書かない） */
   CHAT_USAGE?: AnalyticsDataset
-  /** 会話の保存（server/chat-log.ts。復元と分析に使う。IP は書かない）。無ければ書かない */
+  /** web 自身のデータ。会話の保存（server/chat-log.ts。IP は書かない）と住民基本台帳人口（server/population.ts）。無ければ書かず、人口も出さない */
   DB?: WebDatabase
   /** Workers AI のモデル ID。config の var で切り替える */
   CHAT_MODEL?: string

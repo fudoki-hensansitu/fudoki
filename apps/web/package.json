@@ -10,6 +10,7 @@
     "preview": "CLOUDFLARE_PREVIEW_BUILD=true bun run build && cf previews deploy --prebuilt",
     "dev": "vite dev",
     "fetch:boundaries": "uv run python map/build.py",
+    "sync-data:population": "uv run python scripts/sync-data/population.py",
     "build:map": "bun jurisdiction/map-build.ts",
     "test": "bun test server",
     "typecheck": "void prepare && tsc --noEmit",

@@ -1,6 +1,6 @@
 # 公開 web
 
-ホーム（`/`、`home/`）と紹介の読み物（`/about`、`landing/`）、会話を始めるアシスタントの頁（`/assistant`、`chat/assistant-home.tsx`）・会話の画面（`/s/:id`、下の「風土記の AI に聞く」）、自治体ごとの頁（`/jurisdictions`・`/tokyo/nakano`、下の「自治体の個別ページ」）を返す。favicon・OG 画像・robots.txt・紹介（`/about`）の録画と出典の切り抜き（置き場は `public/home/` のまま）などのファイルは `public/` に置き、Workers static assets で配る。sitemap.xml と PWA 用の `/manifest.webmanifest`・`/sw.js`・`/offline`（`pwa.ts`）は `routes/` が返す。service worker は繋がらないときの案内を出すだけで、頁・API はキャッシュしない。PWA のアイコンは `brand/pwa_icons.py` で `public/` に描く。他は 404。main に入ると `.github/workflows/deploy-web.yml` が自動で deploy する（手元からは `bun run --cwd apps/web deploy`）。web を変える PR は `.github/workflows/preview-web.yml` が `pr-<番号>.fudoki.dev` に preview を出す（binding・var は `void.config.ts` の `preview` の分岐。push のたびに同じ URL を更新し、PR を閉じたら消す。Access で Cloudflare アカウントのログインだけを通す。利用状況は書かない）。
+ホーム（`/`、`home/`）と紹介の読み物（`/about`、`landing/`）、会話を始めるアシスタントの頁（`/assistant`、`chat/assistant-home.tsx`）・会話の画面（`/s/:id`、下の「風土記の AI に聞く」）、自治体ごとの頁（`/jurisdictions`・`/tokyo/nakano`、下の「自治体の個別ページ」）を返す。favicon・OG 画像・robots.txt・紹介（`/about`）の録画と出典の切り抜き（置き場は `public/home/` のまま）などのファイルは `public/` に置き、Workers static assets で配る。sitemap.xml と PWA 用の `/manifest.webmanifest`・`/sw.js`・`/offline`（`pwa.ts`）は `routes/` が返す。service worker は繋がらないときの案内を出すだけで、頁・API はキャッシュしない。PWA のアイコンは `brand/pwa_icons.py` で `public/` に描く。他は 404。main に入ると `.github/workflows/deploy-web.yml` が自動で deploy する（手元からは `bun run --cwd apps/web deploy`）。web を変える PR は `.github/workflows/deploy-preview-web.yml` が `pr-<番号>.fudoki.dev` に preview を出す（binding・var は `void.config.ts` の `preview` の分岐。push のたびに同じ URL を更新し、PR を閉じたら消す。Access で Cloudflare アカウントのログインだけを通す。利用状況は書かない）。
 
 ```bash
 bun run dev:web
@@ -67,9 +67,13 @@ GROUP BY day, model
 ORDER BY day
 ```
 
+### 外部のデータ（人口）
+
+自治体の人口は、web の D1 の `population`（列は `migrations/0002_population.sql`）から読む（`server/population.ts`）。風土記が構造化したデータではないので apps/api には置かない（[ADR 0042](../../docs/adr/0042-external-reference-data-in-web.md)）。出典は総務省「住民基本台帳に基づく人口、人口動態及び世帯数」の総計で、Queria の `e_stat.resident_registry.population` から `bun run --cwd apps/web sync-data:population --write` が本番と preview の D1 の全行を入れ替える。住基は毎年1月1日時点で7月末に公表されるので、公表のあとに1回流す。外部のデータを足すときも `scripts/sync-data/<名前>.py` と `sync-data:<名前>` にする。D1 が無いか読めないときは、頁は人口と1人あたりの額を出さずに描く。アシスタントは tool `get_population` で同じ表を読む。
+
 ### 会話の保存
 
-D1 `fudoki-web` の `conversations`（会話1件1行。`user_id` は認証を入れるまで NULL）と `messages`（1往復で質問と回答の2行。`parts` は AI SDK の UIMessage の parts の JSON で、回答の行に tool の呼び出しと結果、モデル・失敗・token・所要時間を持つ）に書く（列は `migrations/0001_conversations.sql`）。migration は自動では当たらないので、変えたら apps/web で `./node_modules/.bin/cf d1 migrations apply 760c7476-6e46-4b44-b174-1bfdd1b4f957 --dir migrations` を手で流す（cf の D1 は名前でなく ID で指す）。読むのは `./node_modules/.bin/cf d1 query 760c7476-6e46-4b44-b174-1bfdd1b4f957 --sql "<SQL>"`。
+D1 `fudoki-web` の `conversations`（会話1件1行。`user_id` は認証を入れるまで NULL）と `messages`（1往復で質問と回答の2行。`parts` は AI SDK の UIMessage の parts の JSON で、回答の行に tool の呼び出しと結果、モデル・失敗・token・所要時間を持つ）に書く（列は `migrations/0001_conversations.sql`）。migration は deploy-web（本番の `fudoki-web`）と deploy-preview-web（preview の `fudoki-web-preview`）が deploy の前に当てる。手では当てない。読むのは `./node_modules/.bin/cf d1 query 760c7476-6e46-4b44-b174-1bfdd1b4f957 --sql "<SQL>"`。
 
 ```sql
 -- 直近7日の質問を、始めた頁ごとに多い順
