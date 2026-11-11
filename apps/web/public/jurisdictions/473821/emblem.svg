@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-5 -5.5 10 10.5" width="500" height="525">
+<clipPath id="a">
+<path d="M-5-5.5H5v4H.5v1H5V5H-5V1h7V.6h-3V-.5h-4z"/>
+</clipPath>
+<path d="M5 0A5 5 0 0 1-5 0 5 5 0 0 1 5 0zM4 0a4 4 0 0 0-8 0 4 4 0 0 0 8 0zm.5.5h-5v-6h1v5l1.5-1v-1h2zm-8.5-2h2V.8h3.5V2H-4z" clip-path="url(#a)"/>
+</svg>

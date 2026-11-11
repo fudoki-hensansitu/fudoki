@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="500" height="354" viewBox="-1125 -795.5 2250 1591">
+ <mask id="m">
+<path d="M-1125-307.5h2250V795.5h-2250z" fill="#fff"/>
+<circle cy="52.5" r="532.9951229" fill="#000"/>
+<path d="M-1125-267.5h2250v40h-2250zm0 120h2250v40h-2250zm0 160h2250v40h-2250z" fill="#000"/>
+</mask>
+<ellipse rx="1125" ry="795.495129" mask="url(#m)" fill="#0074bf"/>
+<circle cy="-480.495129" r="315" fill="#00a267"/>
+</svg>

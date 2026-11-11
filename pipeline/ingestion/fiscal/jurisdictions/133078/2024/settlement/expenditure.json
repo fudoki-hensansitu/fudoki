@@ -46,6 +46,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "code_gap_wraps": true
           }
         },
         "name_corrections": [
@@ -710,6 +713,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "code_gap_wraps": true
           }
         },
         "name_corrections": [
@@ -798,6 +804,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "code_gap_wraps": true
           }
         },
         "name_corrections": [
@@ -882,6 +891,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "code_gap_wraps": true
           }
         },
         "name_corrections": [
@@ -964,6 +976,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "code_gap_wraps": true
           }
         },
         "name_corrections": [
@@ -1082,6 +1097,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "code_gap_wraps": true
           }
         }
       },
@@ -1151,6 +1169,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "code_gap_wraps": true
           }
         }
       },

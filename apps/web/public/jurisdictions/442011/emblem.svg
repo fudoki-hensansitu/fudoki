@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="500" height="500" viewBox="-250,-275,500,500">
+	<title>Oita, Oita Chapter</title>
+	<polygon points="250,225 -250,225 -250,-275 250,-275 " style="fill:none;stroke:none" />
+	<g style="fill:none;stroke:black;stroke-width:34;stroke-linecap:round">
+		<path d="M -34.53642,177.67452 A 181,181 0 0 1 -55.932079,-172.14123" />
+		<path d="M 55.932068,-172.14123 A 181,181 0 0 1 34.536431,177.67452" />
+		<path d="M -34.918921,107.46939 A 113,113 0 1 1 34.918917,107.46939" />
+		<path d="M 0,0 0,-230" />
+		<path d="M 0,0 199.18584,115" />
+		<path d="M 0,0 -199.18584,115" />
+	</g>
+</svg>

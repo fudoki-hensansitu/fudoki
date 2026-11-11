@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="-70 -80 140 120" width="420" height="360">
+<mask id="a">
+<circle r="34" fill="#fff"/>
+<circle r="24" fill="#000"/>
+<circle r="16" fill="#fff"/>
+<path d="M-35-2.8H35v5H-35z" fill="#000"/>
+<path d="M-33 0H33v8H-33z" fill="#fff"/>
+<circle r="8" fill="#000"/>
+</mask>
+<circle r="32" mask="url(#a)"/>
+<path d="M-4-37.788887h8V-10h-8z"/>
+<path id="b" d="M0-80 17.234323-33.867066 0-44-17.234323-33.867066z"/>
+<use xlink:href="#b" transform="rotate(120)"/>
+<use xlink:href="#b" transform="rotate(240)"/>
+</svg>

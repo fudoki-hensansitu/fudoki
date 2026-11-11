@@ -34,6 +34,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "names_in_own_column": true
           }
         }
       },
@@ -70,6 +73,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "names_in_own_column": true
           }
         }
       },
@@ -106,6 +112,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "names_in_own_column": true
           }
         }
       },

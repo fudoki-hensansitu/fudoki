@@ -25,7 +25,7 @@ export function StartForm({
   suggestions?: string[]
   /** Turnstile の鍵が無いとき入力の代わりに出す文 */
   unavailable?: string
-  /** 送るときに読む、画面で見ているもの（質問とは別の利用者の発言として AI に渡す） */
+  /** 送るときに読む、頁で見ているもの・選んだ文（選んだ文は質問の直前の利用者の発言に、見ている画面は最後の質問のものだけを system prompt に入れて AI に渡す） */
   context?: () => string | undefined
   /** 渡すと /s/:id へ移らず、始めた会話をその場で開く */
   onStart?: (id: string, session: StoredSession) => void

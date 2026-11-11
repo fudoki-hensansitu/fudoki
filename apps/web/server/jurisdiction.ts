@@ -343,7 +343,7 @@ export const shownSettlementYears = (settlementYears: number[]) => {
 }
 
 /** 都道府県の頁へのリンク（prefecturePath）・同じ都道府県の自治体（neighbors）はカタログを見て route 側で決める */
-export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<PageData, 'prefecturePath' | 'neighbors'> | null> {
+export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<PageData, 'prefecturePath' | 'prefectureLogo' | 'emblem' | 'neighbors'> | null> {
   const latest = entry.settlementYears.at(-1)
   if (latest === undefined) return null
   const years = shownSettlementYears(entry.settlementYears)

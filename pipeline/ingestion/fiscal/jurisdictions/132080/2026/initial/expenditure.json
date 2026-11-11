@@ -556,6 +556,11 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "code_run_into_name": true,
+            "padded_runs": true,
+            "titles_on_one_line": true
           }
         },
         "dropped_readings": [
@@ -1016,6 +1021,11 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "code_run_into_name": true,
+            "padded_runs": true,
+            "titles_on_one_line": true
           }
         },
         "dropped_readings": [],

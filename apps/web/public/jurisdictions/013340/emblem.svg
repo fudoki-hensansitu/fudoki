@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<!-- Validated W3C 2014-02-23 -->
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="482" height="482" id="svg2" viewBox="-241 -241 482 482">
+	<title>Kikonai Hokkaido Chapter</title>
+	<g style="fill:#030193;stroke:none">
+		<path d="M -18,-222 -18,-58 18,-58 18,-222 A 18,18 0 0 0 0,-240 18,18 0 0 0 -18,-222 z" id="P2" />
+		<path id="P1" d="M -18,-222 -18,-173.205 18,-173.205 18,-222 C 18,-226.71239 16.060084,-231.39576 12.727922,-234.72792 9.3957599,-238.06008 4.712389,-240 0,-240 -4.712389,-240 -9.3957599,-238.06008 -12.727922,-234.72792 -16.060084,-231.39576 -18,-226.71239 -18,-222 z" transform="rotate(60)" />
+		<use xlink:href="#P1" transform="rotate(120)" />
+		<use xlink:href="#P1" transform="rotate(240)" />
+		<use xlink:href="#P2" transform="rotate(120)" />
+		<use xlink:href="#P2" transform="rotate(240)" />
+		<path d="M 0,-194 -168,-97 -168,97 0,194 168,97 168,-97 z M 0,-152.4375 132,-76.1875 132,76.1875 0,152.4375 -132,76.1875 -132,-76.1875 z" />
+		<path d="M 0,-76 A 76,76 0 0 1 76,0 A 76,76 0 0 1 0,76 A 76,76 0 0 1 -76,0 A 76,76 0 0 1 0,-76 z M 0,-40 A 40,40 0 0 0 -40,0 A 40,40 0 0 0 0,40 A 40,40 0 0 0 40,0 A 40,40 0 0 0 0,-40 z" />
+	</g>
+</svg>

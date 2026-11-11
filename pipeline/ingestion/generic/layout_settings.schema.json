@@ -14,8 +14,6 @@
       "properties": {
         "dark": {"type": "integer", "minimum": 129, "maximum": 255},
         "skewed": {"const": true, "description": "A scan set a little off level breaks each long horizontal rule into pieces a pixel row apart (国分寺市): the pieces are joined end to end before a rule's length is checked, and the words of one printed line are grouped with a wider tolerance (a line's amount at the right end sits up to 2.5pt above its name at the left)."},
-        "specks": {"const": true, "description": "The scan carries specks OCR reads as characters (国分寺市): a word boxed less than half as tall as the page's usual word, and no dash or sign, is dropped."},
-        "bracket_marks": {"const": true, "description": "OCR reads the opening bracket of a bracketed amount, printed apart from its figure, as a letter or digit (国分寺市: `C`, `L`, `7`, `（し`): such a one-mark word with an amount next right of it on its line is dropped."},
         "row_gaps": {"const": true, "description": "A vertical rule the page leaves out for a row lets the row's text run on into the next column (133086's 事業 names): an OCR line is cut only at the rules drawn across its middle."},
         "short_columns": {"const": true, "description": "A column rule drawn only over one short row (shorter than the page-wide detector keeps) is still a rule: a short vertical stroke joining two horizontal rules at the place of a vertical rule the page draws elsewhere closes the cell, as in a staircase (131199's 目 rows between 事務事業 blocks)."},
         "row_columns": {"const": true, "description": "A narrow stroke that runs the whole height between two horizontal rules is a column rule even where the page draws no rule at that place elsewhere (131164's 財源 columns under 説明, drawn only over a 目's row in the middle of a page)."}
@@ -54,7 +52,8 @@
             "description": "The column is not taken in: the builder reads none of it, and its printed digits are a coverage exclusion of the whole column on every page, with a kind of the shared vocabulary and the reason.",
             "properties": {
               "kind": {"type": "string", "minLength": 1},
-              "reason": {"type": "string", "minLength": 10}
+              "reason": {"type": "string", "minLength": 10},
+              "overhang": {"type": "number", "exclusiveMinimum": 0, "maximum": 10, "description": "Points the text layer sets the column's digits past its right rule (a font the PDF does not embed, 小笠原村): they are still the column's."}
             }
           }
         }
@@ -73,6 +72,8 @@
       "additionalProperties": false,
       "properties": {
         "ignore_frame_title": {"type": "boolean"},
+        "open_frame": {"const": true, "description": "No rule closes the table at its top or foot, and the 款・項 columns rule only the rows that open a 款・項 (八丈町 R6): a column counts with one row rule, and the frame runs from where its side rules start to where they end."},
+        "carried": {"const": true, "description": "Only the first page of a run prints the column headings (八丈町 R6): a frame drawn with the same column rules as a frame read before it, whose top prints fewer than half of its heading words, takes its headings and is body from its top rule."},
         "staircase": {"enum": [true, "款項目節", "款項目事務事業"], "description": "The subject columns are a staircase: one header cell 款 項 目 over narrow code columns, and the 款・項 cells run down the page with no closing rule. \"款項目節\" also reads a header cell 款 項 目 節 over four columns, the fourth being 節."},
         "agree_on_bottom": {"const": true, "description": "Scan: the agreed header reading is moved onto each page aligned on the header's bottom rule, not the frame's top (a frame boxing the page title above the header on some pages)."},
         "merged_cells": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "Header cells (`説明`) whose columns are ruled only in some rows: in a row their rules leave out, one cell runs across them and its words are read as one column under the header cell."},

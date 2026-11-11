@@ -369,9 +369,7 @@
               },
               "rules": {
                 "dark": 180,
-                "skewed": true,
-                "specks": true,
-                "bracket_marks": true
+                "skewed": true
               }
             }
           },
@@ -391,8 +389,9 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
-                  "opening_bracket_ink": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
                   "column_edge": true,
                   "group_heads": [
                     {
@@ -485,10 +484,21 @@
                       "y": 166.8,
                       "reason": "原画の「基金積立金 688,929」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
                     }
-                  ]
+                  ],
+                  "opening_bracket_ink": true
                 }
               }
             }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "counted_cities": true,
+            "letter_spaced_lines": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "specks": true,
+            "stacked_tables_apart": true,
+            "unopened_brackets": true
           }
         },
         "dropped_readings": [
@@ -1475,9 +1485,7 @@
               },
               "rules": {
                 "dark": 180,
-                "skewed": true,
-                "specks": true,
-                "bracket_marks": true
+                "skewed": true
               }
             }
           },
@@ -1497,8 +1505,9 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
-                  "opening_bracket_ink": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
                   "column_edge": true,
                   "group_heads": [
                     {
@@ -1616,10 +1625,21 @@
                       "y": 149.3,
                       "reason": "原画の「東日本大震災の支援等に要する経費 58」は、続く1つの事業の金額をまとめた見出しで（金額は1事業の和）、事業と同じ位置から印字されている。"
                     }
-                  ]
+                  ],
+                  "opening_bracket_ink": true
                 }
               }
             }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "counted_cities": true,
+            "letter_spaced_lines": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "specks": true,
+            "stacked_tables_apart": true,
+            "unopened_brackets": true
           }
         },
         "dropped_readings": [
@@ -2837,9 +2857,7 @@
               },
               "rules": {
                 "dark": 180,
-                "skewed": true,
-                "specks": true,
-                "bracket_marks": true
+                "skewed": true
               }
             }
           },
@@ -2859,8 +2877,9 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
-                  "opening_bracket_ink": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
                   "column_edge": true,
                   "group_heads": [
                     {
@@ -2908,10 +2927,21 @@
                       "y": 353.5,
                       "reason": "原画の「基幹統計調査等に要する経費 2,810」は、続く6つの事業の金額をまとめた見出しで（金額は6事業の和）、事業と同じ位置から印字されている。"
                     }
-                  ]
+                  ],
+                  "opening_bracket_ink": true
                 }
               }
             }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "counted_cities": true,
+            "letter_spaced_lines": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "specks": true,
+            "stacked_tables_apart": true,
+            "unopened_brackets": true
           }
         },
         "dropped_readings": [

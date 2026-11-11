@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="297" height="297" viewBox="-297 -297 594 594">
+<clipPath id="a">
+<path d="M-297-297h594V-7.5h-594z"/>
+</clipPath>
+<clipPath id="b">
+<path d="M-297 297h594V7.5h-594z"/>
+</clipPath>
+<g stroke="#000" stroke-width="45" fill="none">
+<g clip-path="url(#a)">
+<circle r="274.5"/>
+<circle r="214.5"/>
+<circle r="154.5"/>
+</g>
+<circle r="274.5" clip-path="url(#b)"/>
+<path d="M0 147v123zm0-417v189"/>
+</g>
+<path d="M-99-66H99v91.5H22.5v15H99V132H-99V40.5h76.5v-15H-99zM54-35.5H-54V-5H54zM54 71H-54v30.5H54z"/>
+</svg>

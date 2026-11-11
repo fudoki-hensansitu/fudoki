@@ -26,6 +26,7 @@ from pathlib import Path
 import re
 
 from ingestion.generic import mixed, observe as observe_module, scan as scan_module
+from ingestion.generic.patterns import building
 from ingestion.generic.runtime import run_pages
 from ingestion.generic.workflow import effective_settings
 from ingestion.generic.headers import canonical
@@ -199,12 +200,15 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
                                reason='注記の文言に印字された流用元・流用先の科目コード。金額は注記金額として取り込み済み。')
     for logical in logicals:
         for band in logical.bands:
+            # The digits a column sets past its right rule (`overhang`) are still the column's.
+            excluded = {k: v for k, v in (band.excluded or {}).items() if k != 'overhang'}
+            right = band.x1 - band.offset + float((band.excluded or {}).get('overhang', 0))
             if band.excluded and band.extents:  # the column of some blocks of the page only: their boxes
-                regions += [{**band.excluded, 'page': band.page, 'bbox': [band.x0 - band.offset, top, band.x1 - band.offset, bottom]}
+                regions += [{**excluded, 'page': band.page, 'bbox': [band.x0 - band.offset, top, right, bottom]}
                             for top, bottom in band.extents if top < bottom]
             elif band.excluded:  # a column the layout file declares not taken in, with its kind and reason
-                regions.append({**band.excluded, 'pages': [[band.page, band.page]],
-                                'x_range': [band.x0 - band.offset, band.x1 - band.offset]})
+                regions.append({**excluded, 'pages': [[band.page, band.page]],
+                                'x_range': [band.x0 - band.offset, right]})
             if band.kind == 'label' and RATIO_HEADER.search(''.join(band.header)) and band.x0 - band.offset < band.x1 - band.offset:
                 regions.append({'kind': '数量表', 'reason': '比率の欄（見出しが割合・率）。金額の欄ではない。',
                                 'pages': [[band.page, band.page]], 'x_range': [band.x0 - band.offset, band.x1 - band.offset]})
@@ -411,6 +415,11 @@ def check_ocr_rereads(options: dict, ocr_pages: list[int]) -> None:
 
 def build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     """Everything the converter derives from one original, before anything is written."""
+    with building(options.get('workflow')):
+        return _build_table(source, options, stop=stop)
+
+
+def _build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     if source.get('format') != 'pdf' or source.get('pdf_type') != 'text':
         raise ValueError('The generic builder reads text PDFs only')
     account = options['account']

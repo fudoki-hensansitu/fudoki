@@ -24,7 +24,7 @@ import hashlib
 import re
 import unicodedata
 
-from ingestion.generic.patterns import load as load_pattern, quirk
+from ingestion.generic.patterns import document_quirk, load as load_pattern, quirk
 from ingestion.generic.notes import kind_of, reads_as_note
 from ingestion.lib.node_tables import amount_phase, phase_dictionary
 from shared.amount import number
@@ -43,7 +43,6 @@ AGE = re.compile(r'(歳|歲|箇月|か月|ヶ月|ケ月|カ月)')
 CODE_LED = re.compile(r'^[0-9０-９]{1,4}[^0-9０-９,，.．]')  # a code joined to its name (`1商`)
 TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|予備費[よか]り|第[0-9０-９]+節[へか]|^第[0-9０-９]+[款項目節]|^[○〇●]?同[款項目])')
 # The words that end a transfer remark begun on the line above (`…費` / `から流用 13,281,000円`).
-TRANSFER_TAIL = re.compile(r'^[へか]ら?(?:流用|充用)')
 # A transfer remark ends with the word (`…へ流用`): a line after it is another remark, even when it reaches the column's limit.
 ENDED_TRANSFER = re.compile(r'(?:流用|充用)$')
 # A kind word printed above an amount inside an amount column's cell (a stacked carry-over column).
@@ -341,29 +340,21 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
             if run and is_amount(text(run)) and number(text(run)) is not None:
                 return [g for part in parts[:-1] for g in part], [run]
         # OCR left the opening bracket unread (`負担金補助及び交付金` `48,005,970)`), or read it as a letter
-        # (`C21,368,656)`, `一887)` 国分寺市): a grouped amount closed by the bracket is the bracketed amount all the same.
+        # (`C21,368,656)`): a grouped amount closed by the bracket is the bracketed amount all the same.
+        unread = document_quirk('unopened_brackets')
+        letters = unread.module.LETTERS if unread is not None else 'CcＣ'
         take = 2 if len(parts) > 2 and normalize(text(parts[-1])) == closing else 1  # `48,005,970` `)`
         last = [g for part in parts[-take:] for g in part] if len(parts) > take else []
-        unopened = re.fullmatch(r'([CcＣ一]?)([△▲]?[0-9]{1,3}(?:,[0-9]{3})+)[)\]）］]', normalize(text(last)))
+        unopened = re.fullmatch(rf'([{letters}]?)([△▲]?[0-9]{{1,3}}(?:,[0-9]{{3}})+)[)\]）］]', normalize(text(last)))
         if unopened and BRACKET_PAIRS[closing] not in normalize(text(line)):
             tail = _cut(last, len(unopened.group(1)))[1]  # the letter OCR read for the bracket is no name
             tail = _cut(tail, len(unopened.group(2)))[0]  # the closing bracket is no digit
             if number(normalize(text(tail))) is not None:
                 head = [g for part in parts[:-take] for g in part]
-                if head and head[-1].text == '一' and not unopened.group(1):
-                    head = head[:-1]  # the opening bracket OCR read as a word of its own `一` (国分寺市)
-                return head, [tail]
-        # OCR left the opening bracket unread and joined the amount to the name (`使用料及び賃借料338)`,
-        # `職員手当等C863)`): a closing bracket with no opening one closes the amount at the end of the name.
+                return (unread.module.head(head, unopened.group(1)) if unread is not None else head), [tail]
         glyphs = [g for part in parts for g in part]
-        shown = normalize(text(glyphs))
-        glued = re.fullmatch(r'(.*[^0-9,△▲CcＣ一])([CcＣ一]?)([△▲]?[0-9]{1,3}(?:,[0-9]{3})*)[)）]', text(glyphs))
-        if glued and shown.count('(') < shown.count(')'):
-            head, tail = _cut(glyphs, len(glued.group(1)))
-            tail = _cut(tail, len(glued.group(2)))[1]
-            tail = _cut(tail, len(glued.group(3)))[0]
-            if head and number(normalize(text(tail))) is not None:
-                return head, [tail]
+        if unread is not None and (split := unread.module.glued(glyphs)) is not None:
+            return split
         # The bracket printed flush against a long name, inside one of Poppler's words (`…課）(1,04` `7,226)`).
         flush = re.match(r'^(.*[^(\[（［])([(\[（［][△▲]?[0-9]{1,3}(?:,[0-9]{3})*[)\]）］])$', text(glyphs))
         if flush:
@@ -387,9 +378,8 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
         parts.pop()
     money = []
     while parts and is_amount(text(parts[-1])) and len(parts) > 1:
-        if (not money and text(parts[-2])[-1:] in '・·･' and re.fullmatch(r'[0-9]{1,2}', normalize(text(parts[-1])))
-                and parts[-1][0].x0 - parts[-2][-1].x1 < parts[-1][0].y1 - parts[-1][0].y0):
-            break  # the last of a list cut by the line's end (`使用料（1・2・3` `月）`): no amount
+        if not money and (listed := document_quirk('list_cut')) is not None and listed.module.cut(parts):
+            break
         money.insert(0, parts.pop())
     # Full-width digits without a comma before a half-width grouped amount are part of the name (`…東京２０２４ 1,619,271`).
     while len(money) > 1 and WIDE_DIGITS.fullmatch(text(money[0])) and GROUPED.fullmatch(normalize(text(money[-1]))) \
@@ -536,8 +526,9 @@ def strip_ancestor_codes(group: Group) -> list[Glyph]:
 
 
 def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False,
-               bare_amounts: bool = False, numbers=None) -> list[tuple]:
-    """Printed lines of a label group as (label glyphs, amount runs, code, name). `numbers`: the quirk `full_width_numbers`."""
+               bare_amounts: bool = False, numbers=()) -> list[tuple]:
+    """Printed lines of a label group as (label glyphs, amount runs, code, name). `numbers`: the quirks that say a line
+    starts with an item number wherever it starts (`full_width_numbers`, `name_line`)."""
     entries = []
     for line in lines([w for band in group.bands for w in band.words]):
         label, money = _split_line(line, amount_brackets, bare_amounts)
@@ -561,7 +552,7 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             # `8` `2歳児歯科健診事業`, `0200` `16ミリ映写機検定委託料`: the number is a word of its own, and the name begins with a count.
             code, name, script = normalize(label[0].text), normalize(text(label[1:])), True
         if (code is not None and margins is not None and not margins & set(_margins(label))
-                and not (numbers is not None and numbers.module.numbered(raw_text))):
+                and not any(q.module.numbered(raw_text) for q in numbers)):
             code, name = None, line_text  # a name that begins with a digit
         if code is None and label and margins is not None and margins & set(_margins(label)):
             year = YEAR_LED.match(line_text)
@@ -576,12 +567,9 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
         if code is not None and re.match(r'[0-9]{1,3}(?:,[0-9]{3})+', line_text):
             code, name = None, line_text  # `66,000)`: the end of a bracketed amount (`(翌年度へ繰越明許費`), not an item `66`
         if (code is not None and entries and not entries[-1][1] and entries[-1][0]
-                and re.fullmatch(r'([(（]?)[0-9]+[^0-9(（)）]{1,3}[)）]', line_text)):
-            before = normalize(text(entries[-1][0]))
-            if line_text[0] in '(（' or before.count('(') > before.count(')'):
-                # A count in brackets under a name without an amount ends that name (`…任用職員報酬(` / `1人) 1,301`,
-                # `…任用職員報酬` / `(1人) 764`): no item `1`.
-                code, name = None, line_text
+                and (counts := document_quirk('bracketed_counts')) is not None
+                and counts.module.ends_name(line_text, entries[-1][0])):
+            code, name = None, line_text
         entries.append((label, money, code, name))
     return entries
 
@@ -696,13 +684,14 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     `column_amounts`: the amounts printed in the axis's own amount column, beside the names.
     """
     entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')),
-                         quirk(settings, 'full_width_numbers'))
+                         [q for name in ('full_width_numbers', 'name_line') if (q := quirk(settings, name)) is not None])
     settings = settings or {}
     kind_names = quirk(settings, 'names_end_with_kind_words')
     remainder = quirk(settings, 'bracketed_remainder')
     headings = quirk(settings, 'headings')
     glued = quirk(settings, 'glued_numbers')
     name_column = quirk(settings, 'name_column')
+    transfers = document_quirk('account_code_transfers')
     # A name that begins with a count, glued to its number (`82歳児歯科健診事業` = `8` + `2歳児…`,
     # `42025年農林業センサス費` = `4` + `2025年…`): the number is the one that follows the number before it
     # in this list. Only a line at a number's margin with a counter after its digits is read so.
@@ -720,11 +709,9 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                     entries[index] = (label, money, digits[:cut], raw[cut:])
                     code = digits[:cut]
                     break
-        if (code is not None and label and (re.match(r'[0-9]+市(?![民長立役議内外政営有史街場道域制況販部])', normalize(label[0].text))
-                                                    or re.match(r'[0-9]+[×✕]', raw))
-                and (previous_code is None or int(code) != previous_code + 1)):
-            # `5市共同事業実行委員会負担金` among names without numbers: a count of cities, not item `5` (an item
-            # `5市町村総合体育大会…` follows item `4` at its margin). So is the size in `3×3バスケットボール`.
+        if (code is not None and label and (previous_code is None or int(code) != previous_code + 1)
+                and (cities := document_quirk('counted_cities')) is not None
+                and cities.module.counted(normalize(label[0].text), raw)):
             entries[index] = (label, money, None, raw)
             code = None
         # Where the number before it is on another page or in another cell, the quirk says where the number ends.
@@ -841,9 +828,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             continue
         label_text = normalize(text(label))
         if (previous is not None and label and not money and previous.code is None and previous.amounts
-                and is_account_code(previous.name) and kind_of(label_text, words=True) is not None):
-            # An account code printed with the amount of a transfer (`・020601【010261】 △28,800`) and the
-            # words that say where it went on the line below (`020000へ予算流用減`): one note.
+                and transfers is not None and transfers.module.below(previous, label_text)):
             previous.lines.append(label)
             previous.name += label_text
             continue
@@ -936,18 +921,6 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     return result
 
 
-def same_line_after(previous: Item, item: Item) -> bool:
-    """Whether the item begins on the line of the one before, right after its end: OCR boxed the last character of a
-    letter-spaced name (`委 員 旅 費`) a few points off the line of the others, and the lines split there."""
-    if len(previous.lines) != 1 or not item.lines or not item.lines[0]:
-        return False
-    before, first = previous.lines[0], item.lines[0][0]
-    height = max(g.y1 - g.y0 for g in before)
-    overlap = min(first.y1, max(g.y1 for g in before)) - max(first.y0, min(g.y0 for g in before))
-    gap = first.x0 - max(g.x1 for g in before)
-    return overlap >= (first.y1 - first.y0) / 2 and -1 <= gap <= height
-
-
 def closes_parts(entries: list[tuple], index: int, previous: Item, right_aligned=None) -> bool:
     """Whether the amount printed on this codeless line is the amount of the numbered item above, whose
     name goes on (`9 …運営` / `・補助事業費 38,343,659` / `（地域福祉課）`): the item above prints no amount,
@@ -964,8 +937,9 @@ def closes_parts(entries: list[tuple], index: int, previous: Item, right_aligned
         if label[0].x0 <= start + 3 and (code is not None or not money):
             break
         if code is not None and money:
-            # A part may print its amount in brackets (`3 職員手当等 (3,549)`, the 節 over its own breakdown).
-            value = number(normalize(text(money[0])).removeprefix('(').removesuffix(')'))
+            # A part may print its amount in brackets (`3 職員手当等 (3,549)`, the 節 over its own breakdown; `bracketed_remainder`).
+            shown = normalize(text(money[0]))
+            value = number(shown.removeprefix('(').removesuffix(')') if right_aligned is not None else shown)
             if value is not None:
                 parts.append((label[0].x0, value))
     if not parts:
@@ -1054,12 +1028,8 @@ def join_transfer_tails(items_: list[Item], layout: dict | None) -> list[Item]:
             previous.lines += item.lines
             continue
         if (previous is not None and previous.code is not None and not previous.amounts and item.code is None
-                and item.amounts and item.lines and previous.lines
-                and abs(item.lines[0][0].x0 - previous.lines[0][0].x0) <= 2
-                and 0 < item.lines[0][0].y0 - previous.lines[-1][0].y0 <= 2.5 * (previous.lines[-1][0].y1 - previous.lines[-1][0].y0)
-                and TRANSFER_TAIL.match(normalize(item.name)) and not is_plain_name(layout, previous)):
-            # The account a transfer came from, printed by its code on the line above the words and amount
-            # (`０１項０２土木技術支援・人材育成センター費` / `から流用 13,281,000円`, 130001): one note, not an item numbered 01.
+                and item.amounts and item.lines and previous.lines and not is_plain_name(layout, previous)
+                and (above := document_quirk('transfer_account_above')) is not None and above.module.joins(previous, item)):
             previous.name = previous.code + previous.name + item.name
             previous.code = None
             previous.lines += item.lines
@@ -1180,22 +1150,22 @@ def subject_items(group: Group) -> list[Item]:
                 else:
                     names.append(piece)
         parsed[cell] = (tokens, names)
-    # A name-only line belongs to the one code printed in its own column and the rule-bounded cell of that
-    # column, even when a rule of a deeper column cuts between them: `4 その他公共 / 施設、公用 / 災害復旧費`
-    # (項) wraps through the row of `1 その他公共 / 施設、公用…` (目), 132241. Otherwise, to the deepest code
-    # of its cell (a name wrapped above and below its code); a cell without a code continues the previous item.
+    # A name-only line belongs to the one code printed in its own column and cell (across a rule of a deeper
+    # column: `names_in_own_column`). Otherwise, to the deepest code of its cell (a name wrapped above and below
+    # its code); a cell without a code continues the previous item.
     in_column: dict[int, list[tuple[tuple, int]]] = defaultdict(list)
     for cell, (tokens, _) in parsed.items():
         for index, (band, piece) in enumerate(tokens):
             in_column[band].append((cell, index))
     claimed: dict[tuple, tuple[tuple, int]] = {}
+    own_column = document_quirk('names_in_own_column')
     for cell, (tokens, names) in parsed.items():
         for position, piece in enumerate(names):
             column = band_index(piece[0])
             span = _cell(group.bands[column], centre(piece))
             found = [(c, i) for c, i in in_column[column]
                      if _cell(group.bands[column], centre(parsed[c][0][i][1])) == span]
-            if len(found) == 1:
+            if len(found) == 1 and (found[0][0] == cell or own_column is not None):
                 claimed[cell, position] = found[0]
     extra: dict[tuple, list[list[Glyph]]] = defaultdict(list)
     for (cell, position), owner_token in claimed.items():
@@ -1320,10 +1290,11 @@ def join_last_lines(items_: list[Item], depth_of, amount_depth) -> list[Item]:
 
 
 def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
-          roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False) -> Item | None:
+          roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False,
+          name_line: dict | None = None) -> Item | None:
     """`_owner`, but a heading the page prints again (`営業費用`) does not take the amounts of the line it is on when
     the row it opens is the next item of its ruled cell (`5 減価償却費`, whose `計` is printed beside the heading)."""
-    item = _owner(amount, band, ordered, found, roles, ocr=ocr, next_row=next_row)
+    item = _owner(amount, band, ordered, found, roles, ocr=ocr, next_row=next_row, name_line=name_line)
     if item is None or item.role != 'repeat' or not band.rows:
         return item  # a column without rules draws no cell: the heading stays the owner
     digits = [g for g in amount if g.text not in ('△', '▲')] or amount  # the line `_owner` reads the amount at
@@ -1336,12 +1307,15 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
 
 
 def _owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
-           roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False) -> Item | None:
+           roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False,
+           name_line: dict | None = None) -> Item | None:
     """The item printed on the amount's own line in the nearest label group to its left;
     failing that, the item in its rule-bounded row (a label centred in a tall cell).
 
     The line comes first: when sub-rows carry no rules (131172 prints the 節 of a 目
     inside the 目's ruled cell), the cell alone would hand the 目's amount to a 節.
+
+    `name_line`: the axes that select the quirk `name_line`, by axis.
     """
     digits = [g for g in amount if g.text not in ('△', '▲')] or amount
     y = sum((g.y0 + g.y1) / 2 for g in digits) / len(digits)
@@ -1350,6 +1324,9 @@ def _owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[in
         from ingestion.generic.scan import line_reach
     line_limit = lambda line: line_reach(digits, line) if ocr else reach
     left = sorted((g for g in ordered if g.x1 <= band.x0 + 1), key=lambda g: -g.x0)
+    if left and (printed_on := (name_line or {}).get(left[0].axis)) is not None \
+            and (item := printed_on.module.owner(found[id(left[0])], y, line_limit, roles)) is not None:
+        return item
     for group in left:
         same_line = [i for i in found[id(group)] if i.role in roles
                      and abs(i.anchor - y) <= line_limit(i.lines[0])]
@@ -1581,20 +1558,20 @@ def closing_department_headings(ordered: list[Item], layout: dict | None = None)
             if other.group.subject and not other.amounts and other.page != item.page:
                 # The subject printed again at the top of the next page (`(1 保健衛生費)`): the parts run on. A new
                 # subject there (its amounts may sit in a column not yet joined to it) ends them.
+                depths = document_quirk('title_depths')
                 open_one = next((s for s in reversed(ordered[:position]) if s.group.subject and s.level == other.level
-                                 and s.title_depth == other.title_depth), None)  # a 款 title and a 項 title are both level -1
+                                 and (depths is None or s.title_depth == other.title_depth)), None)
                 if open_one is not None and repeats(open_one, other, ocr=True):
                     continue
                 break
             if other.group.subject:
                 break
             if other.group.axis != item.group.axis:
-                continue  # another column of the spread (the 節 beside the 説明): no part, and no end of the parts
+                if document_quirk('spread_columns') is not None:
+                    continue
+                break
             start = lambda it: it.lines[0][0].x0  # where the line starts, its number included
-            # A scan boxes the bracket a little right of the print (`(施設建設課)` 751.1 over `旅費` 747.7): within
-            # half the line's height, well short of the next level's indent.
-            line = item.lines[0][0]
-            slack = max(3, (line.y1 - line.y0) / 2)
+            slack = heading_slack(item.lines[0][0])
             if start(other) < start(item) - slack:
                 break
             if department_heading(other, layout):
@@ -1614,6 +1591,12 @@ def prints_phase(logical: Logical) -> bool:
     return any(band.kind == 'amount' and (('／'.join(band.header) in known) or (band.header and band.header[-1] in known)
                                            or any(part in known for part in band.header))
                for band in logical.bands)
+
+
+def heading_slack(first: Glyph) -> float:
+    """How far left of a department heading's start its parts may start."""
+    slack = document_quirk('department_heading_slack')
+    return slack.module.slack(first) if slack is not None else 3
 
 
 def layout_name_start(item: Item, hang_chars: int | None = None) -> float:
@@ -1652,6 +1635,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     note_kinds = {normalize(prefix): kind for prefix, kind in settings.get('note_kinds', {}).items()}
     prefixes = note_prefixes(settings)
     rows = quirk(settings, 'rows')
+    spaced = document_quirk('letter_spaced_lines')
     unnumbered = quirk(settings, 'unnumbered_shift')
     for item in items:
         if rows is not None:
@@ -1685,7 +1669,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
                 item.role = 'note'
             else:
                 item.level = marks[mark] - 1
-        elif unnumbered is not None and unnumbered.module.shift(item, note, unnumbered.value):
+        elif unnumbered is not None and unnumbered.module.shift(item, note, unnumbered.value, id(item) in column_amount_items):
             item.unnumbered_shift = unnumbered.value
         previous = result[-1] if result else None
         if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
@@ -1705,26 +1689,24 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             previous.name += item.name
             previous.lines += item.lines
             continue
-        if (previous and item.code is None and previous.code is None and mark is None and not note and item.role == 'note'
-                and not item.amounts and previous.role == 'node' and item.page == previous.page
-                and same_line_after(item, previous)):
+        if (previous and spaced is not None and item.code is None and previous.code is None and mark is None and not note
+                and item.role == 'note' and not item.amounts and previous.role == 'node' and item.page == previous.page
+                and spaced.module.same_line_after(item, previous)):
             # The last character of a letter-spaced name boxed a little higher than the others (`費` 689.6 over
             # `委` `員` `旅` 692.3) was read first: the others begin its line.
             previous.lines[0] = item.lines[0] + previous.lines[0]
             previous.name = item.name + previous.name
             previous.indent = item.indent
             continue
-        # A bracket OCR boxes taller than the line (`(職員課)` 753.2–767.4 under a line ending at 754.9) sets the
-        # wrapped line a little into the one above.
         if (previous and not previous.amounts and id(previous) not in column_amount_items and item.code is None and mark is None and not note
                 and item.role in ('node', 'note') and previous.role in ('node', 'note', 'annotation')
                 and (settings.get('wrap') == 'amount_on_last_line' or normalize(text(previous.lines[0])).startswith(prefixes))
                 and item.page == previous.page
                 and bisect_right(subject_starts, previous.anchor) == bisect_right(subject_starts, item.anchor)
                 and ((abs(item.indent - previous.indent) <= 3 + float(settings.get('name_start_slack', 0))
-                      and -.2 * max(g.y1 - g.y0 for g in item.glyphs) <= item.y0 - previous.y1
-                      <= max(g.y1 - g.y0 for g in item.glyphs))
-                     or same_line_after(previous, item))):
+                      and -(spaced.module.overlap(max(g.y1 - g.y0 for g in item.glyphs)) if spaced is not None else 0)
+                      <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs))
+                     or (spaced is not None and spaced.module.same_line_after(previous, item)))):
             if previous.role == 'annotation' and id(item) in column_amount_items:
                 raise ValueError(f'Configured note carries separate-column money: p{item.page} {item.name!r}')
             if item.role == 'node' and previous.role == 'note':
@@ -1792,6 +1774,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
 
     `document`: the settings that hold the document's quirks (the workflow's `quirks`)."""
     """`judge(lines) -> {line id: (role, confidence)}` replaces the codeless-line rules (variant B)."""
+    name_lines = {axis: quirk(settings, 'name_line') for axis, settings in (layout or {}).items()
+                  if isinstance(settings, dict) and quirk(settings, 'name_line') is not None}
     shapes: dict[str, list[str]] = {}  # numbering shapes per breakdown axis, in order of first use
     anchors: dict[str, dict[str, tuple[float, float, int]]] = {}  # where each shape's numbers start and end, per axis
     stack: list[Item] = []  # open subject items by depth
@@ -1825,6 +1809,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         scan_margins, scan_edges, scan_limits = code_margins(scanned), number_edges(scanned, pattern), line_limits(scanned)
         text_taught = (margins, edges, limits)
     skipped: list[Logical] = []
+    gaps = document_quirk('code_gap_wraps')
     open_headings: dict[str, tuple[int, float]] = {}  # per axis: the depth and line start of the open department heading
     summing: dict[str, list] = {}  # per axis: the depth, amount and items' sum so far of the open declared heading
     for logical in logicals:
@@ -1862,6 +1847,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 group_items = subject_items(group)
             if not group.subject:
                 group_items = join_transfer_tails(group_items, layout)
+                if (digit_set := quirk(document, 'digit_set_codes')) is not None:
+                    digit_set.module.measure(group_items, digit_set.value)
             for position, item in enumerate(group_items):
                 # 01.01.01.01から流用 starts with digits. A parenthesised remark joined to an item's
                 # name (`需用費（同事業、委託料へ流用 △1,815,000）`) does not make the item a note.
@@ -1881,16 +1868,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         subject = next((g for g in ordered if g.subject), None)
         if subject is not None and (untitled(subject) or getattr(logical, 'opening', False)) and logical.level_titles is not None:
             # Tables stacked on the page, each under its 款・項 titles: the titles are the 款・項 items, in order.
-            before = None
+            before, one_line = None, document_quirk('titles_on_one_line')
             for level_name, code, name, line, amount in logical.level_titles:
                 title = Item(subject, line[0].page, [line], code, name, line[0].x0, level=-1, level_name=level_name,
                              title_depth=SUBJECT_LEVELS.index(level_name) + 1)
                 if amount is not None:
                     title.amounts.append(amount)
-                if (before is not None and before.page == title.page and title.title_depth > before.title_depth
-                        and abs(title.anchor - before.anchor) < (line[0].y1 - line[0].y0) / 2):
-                    # `2款 総務費 1項 総務管理費` on one line: the 項 follows its 款 whichever OCR boxed a little higher.
-                    title.fixed_anchor = before.anchor + .01
+                if one_line is not None and before is not None:
+                    one_line.module.follow(before, title, line)
                 before = title
                 found[id(subject)].append(title)
             found[id(subject)].sort(key=lambda i: i.anchor)
@@ -1916,13 +1901,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 money = [g for g in line if is_amount(g.text)]
                 if not money:
                     continue
-                target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note'))
+                target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note'), name_line=name_lines)
                 if target is not None:
                     column_amount_items.add(id(target))
                 if target is not None and target.role == 'note':
                     target.role = 'node'
                 if layout:
-                    note_target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note', 'annotation'))
+                    note_target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note', 'annotation'),
+                                        name_line=name_lines)
                     prefixes = note_prefixes(layout.get(note_target.group.axis, {})) if note_target is not None else ()
                     if note_target is not None and normalize(text(note_target.lines[0])).startswith(prefixes):
                         column_amount_items.add(id(note_target))
@@ -1951,7 +1937,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         and not TOTAL.search(item.name) and item.page == previous.page
                         # (A line starting between the code's end and the name's start wraps that name: a name split from
                         # its code by the width of its characters starts too far right, `3その他公共施` / `設・公用施設`, 133078.)
-                        and (abs(item.indent - previous.indent) <= 3 or previous.lines[0][0].x1 <= item.indent <= previous.indent
+                        and (abs(item.indent - previous.indent) <= 3
+                             or (gaps is not None and gaps.module.wraps(previous, item))
                              if group.mode == 'indent' else
                              group.bands[item.level].header[-1] == group.bands[previous.level].header[-1])
                         and (0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)
@@ -1966,6 +1953,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 kept.append(item)
             if group.mode == "indent":
                 subject_pattern.align(logical, group, kept, alignment)
+                if group.subject and (digit_set := quirk(document, 'digit_set_codes')) is not None:
+                    digit_set.module.align(kept, digit_set.value)
             found[id(group)] = kept
     # A subject name cut at the foot of a page continues without a number or amount at the next page's
     # start (`8 市立社会福祉` / `センター費`). Keep its first-page position; a box cannot span two pages.
@@ -2010,11 +1999,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     next_found[id(other)].remove(head)
                     previous_head = head
                 break
-    # An account code printed with the amount of a transfer at the foot of a page and the words that say where
-    # it went on the first line of the next table page (`030201【111412】 △33,630` / `020000へ予算流用減`; a
-    # page of headings only may lie between): the kind is the next page's. (Joining the two lines would put one
-    # item's glyphs on two pages.)
-    for (_, ordered, found), (_, next_ordered, next_found) in zip(all_items, all_items[1:]):
+    # An account code printed with the amount of a transfer at the foot of a page (`account_code_transfers`).
+    for (_, ordered, found), (_, next_ordered, next_found) in zip(all_items, all_items[1:] if document_quirk('account_code_transfers') else ()):
         for group in ordered:
             tail = found[id(group)][-1] if not group.subject and found[id(group)] else None
             if tail is None or tail.role != 'annotation' or tail.code is not None or tail.hint is not None \
@@ -2167,6 +2153,17 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         return [e[4] for e in events]
 
     # A department heading's parts can run on to the next page (132055 p52-54): its sum is checked over the pages.
+    # The quirk `name_line`: an item that prints its number alone above its name opens on its name's line.
+    numbered_names: set[int] = set()
+    for _, ordered, found in all_items:
+        for group in ordered:
+            if group.axis in name_lines:
+                for item in found[id(group)]:
+                    if item.fixed_anchor is None and (y := name_lines[group.axis].module.anchor(
+                            item, lambda line: CODE.fullmatch(normalize(text(line))))) is not None:
+                        item.fixed_anchor = y
+                        item.indent = item.lines[1][0].x0  # the name starts its own line: `9` and `10` indent alike
+                        numbered_names.add(id(item))
     closing_headings = closing_department_headings([item for entry in all_items for item in page_events(*entry)], layout)
     for logical, ordered, found in all_items:
         # A subject item opens at the top of its rule-bounded row: its label may be
@@ -2180,9 +2177,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             + (titled if any(title_shift(g) for g in ordered if g.subject) else 0)
         row = None  # (subject item, top, bottom) of the latest subject row
         opening = logical.reprints  # no subject with a code has begun on this page yet
+        page_axes: set[str] = set()  # the breakdown axes with an item on this page so far (`repeated_at_top`)
+        digit_set = quirk(document, 'digit_set_codes')
         for _, _, item in events:
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
-                    and (row[0].depth < subject_depth or item.code is None) \
+                    and (row[0].depth < subject_depth or item.code is None) and id(item) not in numbered_names \
                     and row[1] - .5 <= item.anchor <= row[2] + .5 \
                     and (not item.amounts or (kind_of(item.name, words=True) is not None
                                               and not is_plain_name(layout, item))):
@@ -2231,6 +2230,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if again is None:
                         # The open headings printed again one to a line, outermost first: this line is one of them.
                         again = next((s for s in reversed(stack) if s.name and same_heading(s.name, item.name)), None)
+                    if again is not None and digit_set is not None and again.level != item.level:
+                        # (The quirk `digit_set_codes`: a 款, 項 and 目 the year drops print one name, `×` `保健福祉事業`
+                        # at each level's place; the 項 that opens the next page is no reprint of the 款.)
+                        again = None
                     if again is not None:
                         item.key, item.role = again.key, 'repeat'
                         # Digits in the repeated name (`市制７０周年記念事業費`) are the open heading's own, not an amount.
@@ -2276,6 +2279,19 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 summing.clear()
                 row = (item, *subject_row(item, logical))
             else:
+                first_on_page = item.group.axis not in page_axes
+                page_axes.add(item.group.axis)
+                if (first_on_page and item.role == 'node' and item.code is not None
+                        and quirk((layout or {}).get(item.group.axis), 'repeated_at_top') is not None
+                        and not any(i.group.subject and i.page == item.page for i in placed)
+                        and (again := next((p for p in branch.get(item.group.axis, [])[:1] if p is not None), None)) is not None
+                        and again.code == item.code and normalize(again.name) == normalize(item.name)
+                        and [normalize(text(r)) for _, r in again.amounts] == [normalize(text(r)) for _, r in item.amounts]):
+                    # The quirk `repeated_at_top`: the open item printed again at the top of a continuation page.
+                    # Its number and amount are the open item's (a coverage exclusion), not new ones.
+                    item.key, item.role = again.key, 'repeat'
+                    repeated_codes.extend(g for g in item.glyphs if re.search(r'[0-9０-９]', g.text))
+                    continue
                 ranks = levels[item.group.axis]
                 depth = 1 + min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 1
                 mode = detail if isinstance(detail, str) else detail.get(item.group.axis)
@@ -2306,7 +2322,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         del summing[axis]
                 if id(item) in closing_headings:
                     first = item.lines[0][0]  # its parts follow one level down, starting about where it does
-                    open_headings[axis] = (depth, first.x0 - max(3, (first.y1 - first.y0) / 2))
+                    open_headings[axis] = (depth, first.x0 - heading_slack(first))
                 elif axis in open_headings:
                     heading_depth, heading_start = open_headings[axis]
                     if (depth < heading_depth or department_heading(item, layout)
@@ -2365,9 +2381,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 history = histories.pop('／'.join(band.header), None)  # [item, label lines, a round waiting] of a `補正経過`
                 if history is not None:
                     revisions.append([history[0], band.body_top, band.body_top, band.words[0].page if band.words else logical.pages[0], history[1][-1] if history[1] else []])
+                # A `補正経過` is printed in the subject's own columns: the amounts a breakdown axis prints in its column
+                # beside the rounds (`2 給料 86,968` beside `補正経過`, 131113) are that axis's items, not rounds.
+                breakdown_column = band.header[:1] and band.header[0] in {g.axis for g in ordered if not g.subject}
                 for line in lines(_signed_amounts(words_)):
                     whole = normalize(text(line))
-                    block = next((b for b in revisions if b[3] == money_page(line) and b[1] - 1 <= line_middle(line) <= b[2] + 1), None)
+                    block = None if breakdown_column else next(
+                        (b for b in revisions if b[3] == money_page(line) and b[1] - 1 <= line_middle(line) <= b[2] + 1), None)
                     if revision is not None and revision.module.opens(whole) and previous is not None:
                         # The history of the year's supplementary budgets (the quirk `revision_history`).
                         history = [previous[0], [], False]  # the item, its label lines, a round waiting for its amount
@@ -2442,7 +2462,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     candidate = ''.join(g.text for g in money)
                     if not is_amount(candidate):
                         unowned.append({'kind': 'unreadable amount', 'page': money[0].page, 'text': candidate}); continue
-                    target = owner(money, band, ordered, found, ocr=logical.ocr, next_row=amounts_next_row)
+                    target = owner(money, band, ordered, found, ocr=logical.ocr, next_row=amounts_next_row,
+                                   name_line=name_lines)
                     if (target is None and amounts_next_row and waiting_subject is not None
                             and _cell(band, money[0].y0)[0] == band.body_top
                             and not any(i.role == 'node' and i.anchor < money[0].y0
@@ -2536,6 +2557,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             remarks.append({'kind': 'kind line', 'target': target, 'heading': header, 'label': stacked_label,
                                             'runs': [money], 'unit': logical.unit_of(header)})
                     amounts.append(_amount(target.key, header, money, logical.unit_of(header)))
+                    if target.role == 'repeat' and not target.group.subject:
+                        repeated_codes.extend(money)  # the open item's amount printed again (`repeated_at_top`)
                     owned.add(target.key)
                     previous = (target, _cell(band, y))
                 if history is not None:

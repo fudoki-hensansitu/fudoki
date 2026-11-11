@@ -116,6 +116,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -234,6 +237,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -352,6 +358,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -470,6 +479,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -588,6 +600,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -706,6 +721,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -824,6 +842,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -942,6 +963,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -1060,6 +1084,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -1178,6 +1205,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },

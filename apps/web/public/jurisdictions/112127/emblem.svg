@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="500"
+   height="500"
+   viewBox="-250 -250 500 500"
+   id="svg2"
+   inkscape:version="0.48.4 r"
+   sodipodi:docname="Symbol_of_Higashimatsuyama_Saitama.svg">
+  <metadata
+     id="metadata21">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs19" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1280"
+     inkscape:window-height="961"
+     id="namedview17"
+     showgrid="true"
+     inkscape:snap-grids="false"
+     inkscape:zoom="1.5948276"
+     inkscape:cx="249.95312"
+     inkscape:cy="250"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2">
+    <inkscape:grid
+       type="xygrid"
+       id="grid3770" />
+  </sodipodi:namedview>
+  <title
+     id="title4">Higashimatsuyama Saitama Chapter</title>
+  <path
+     style="opacity:1;fill:#009946;fill-opacity:1;stroke:none"
+     d="M 215,306 165,335 250,482 330.44246,342.52616 280.27221,313.568 250,366 z"
+     id="path3774"
+     inkscape:connector-curvature="0"
+     transform="translate(-250,-250)"
+     sodipodi:nodetypes="ccccccc" />
+  <path
+     style="opacity:1;fill:#009946;fill-opacity:1;stroke:none"
+     d="m 180.49747,244.51489 -31.05934,-52.63477 75.27437,0.33363 0,-58 L 49,134 130.285,273.63625 z"
+     id="path3772"
+     inkscape:connector-curvature="0"
+     transform="translate(-250,-250)"
+     sodipodi:nodetypes="ccccccc" />
+  <path
+     style="fill:#009946;stroke:none"
+     inkscape:connector-curvature="0"
+     id="path10"
+     d="m 0,-232 -32,55.4375 0,158.09375 -136.90625,79.03125 -32,55.4375 64,0 L 0,36.96875 136.90625,116 l 64,0 -32,-55.4375 L 32,-18.46875 32,-176.5625 z" />
+  <path
+     style="fill:#009946;stroke:none"
+     inkscape:connector-curvature="0"
+     id="Angle01"
+     d="m 40,-116 0,58 60.46875,0 -50.25,87 50.25,29 100.4375,-174 L 40,-116 z" />
+</svg>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" x="0" y="0" width="80" height="80" viewBox="0 0 80 80">
+<style type="text/css">
+	.st0{fill:#447550;}
+	.st1{fill:#FCB931;stroke:#DBA12B;stroke-width:0.5;}
+</style>
+<path class="st0" d="M41.9,6.3C22.9,6.3,7.4,21.7,7.4,40.8c0,5.4,1.2,10.5,3.4,15c-0.8-2.6-1.2-5.3-1.2-8.1c0-15.5,12.5-28,28-28
+	c15.5,0,28,12.5,28,28c0,13.9-10.1,25.4-23.3,27.6C61.2,75,76.4,59.7,76.4,40.8C76.4,21.7,61,6.3,41.9,6.3z"/>
+<path class="st0" d="M10.4,23.1c-12.6,13.1-8.5,31.4,5.2,43.2C3,51.8,3.7,34.2,10.4,23.1z"/>
+<circle class="st1" cx="18.8" cy="39.8" r="6"/>
+<circle class="st1" cx="17.8" cy="55.4" r="5.5"/>
+<circle class="st1" cx="25.8" cy="65.8" r="5"/>
+<circle class="st1" cx="36.8" cy="69.1" r="4.5"/>
+<circle class="st1" cx="46.8" cy="67.8" r="4"/>
+<circle class="st1" cx="54.5" cy="63.2" r="3.5"/>
+</svg>
