@@ -4,6 +4,7 @@ import { ArrowSquareOutIcon, ArrowUpIcon, NotePencilIcon, QuotesIcon, RobotIcon,
 import { Link } from '../nav/link'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
+import { QUOTE_PREFIX } from '../chat/history'
 import { Hint } from '@/components/hint'
 import { reiwa } from './types'
 /** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」、頁の文を選んで文脈が入ったときに開く。
@@ -21,14 +22,37 @@ const SIDE_WIDTH = 440
 
 const Conversation = React.lazy(() => import('../chat/conversation').then((m) => ({ default: m.Conversation })))
 
-/** 画面に見えている data-ask-view の印を、頁の順に読む */
-const visibleViews = () =>
-  [...document.querySelectorAll<HTMLElement>('[data-ask-view]')]
-    .filter((el) => {
-      const r = el.getBoundingClientRect()
-      return r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth && r.width > 0
-    })
-    .map((el) => el.dataset.askView!)
+/** 画面の文字として AI に渡す長さの上限（頁・年度・節・選んだ文と合わせて MAX_CONTEXT に収める） */
+const SCREEN_TEXT_MAX = 1200
+/** 画面の文字に入れない要素。サイトのナビ・読み上げから外したものを除く（聞く欄・会話は呼ぶ側で除く） */
+const SCREEN_SKIP = 'nav, script, style, noscript, template, [aria-hidden="true"], [hidden], [inert]'
+
+/** 画面の表示範囲に見えている文字を、頁の順に読む。宣言なしで、いま見ている画面を AI に伝える */
+const screenText = (exclude: (Node | null)[]) => {
+  const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, {
+    acceptNode: (node) => {
+      const parent = node.parentElement
+      if (!parent || !node.textContent?.trim()) return NodeFilter.FILTER_REJECT
+      if (parent.closest(SCREEN_SKIP) || exclude.some((el) => el?.contains(node))) return NodeFilter.FILTER_REJECT
+      return NodeFilter.FILTER_ACCEPT
+    },
+  })
+  const range = document.createRange()
+  const lines: string[] = []
+  let length = 0
+  for (let node = walker.nextNode(); node && length < SCREEN_TEXT_MAX; node = walker.nextNode()) {
+    range.selectNodeContents(node)
+    const r = range.getBoundingClientRect()
+    if (!(r.width > 0 && r.bottom > 0 && r.top < innerHeight && r.right > 0 && r.left < innerWidth)) continue
+    const style = getComputedStyle(node.parentElement!)
+    if (style.visibility === 'hidden' || Number(style.opacity) === 0) continue
+    const text = node.textContent!.replace(/\s+/g, ' ').trim()
+    if (text === lines.at(-1)) continue
+    lines.push(text)
+    length += text.length + 1
+  }
+  return lines.join(' ').slice(0, SCREEN_TEXT_MAX)
+}
 
 /** 一定より下までスクロールしたら左下（質問のボタンと同じ高さ）に出す、頁の先頭へ戻るボタン */
 const BACK_TO_TOP_AFTER = 800
@@ -140,13 +164,13 @@ export function AskDock({ name, sitekey, year, section }: { name: string; siteke
   }, [quote, chat])
 
   const describe = () => {
-    const views = [...new Set(visibleViews())]
+    const screen = screenText([dock.current, sheet.current])
     return [
       `${name}の頁（${location.pathname}）を見ている`,
       `年度: ${reiwa(year)}（${year}年度）`,
       section ? `いま読んでいる節: ${section}` : '',
-      views.length ? `画面に出ているもの: ${views.join('、')}` : '',
-      quote ? `選んだ文: 「${quote}」` : '',
+      screen ? `画面に見えている文字: ${screen}` : '',
+      quote ? `${QUOTE_PREFIX}「${quote}」` : '',
     ]
       .filter(Boolean)
       .join('\n')
