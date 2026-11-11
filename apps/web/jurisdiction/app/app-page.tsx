@@ -371,9 +371,9 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   return (
     <div className="flex flex-col gap-3">
       {accounts && accounts.length > 1 ? (
-        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]" role="radiogroup" aria-label="会計">
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" role="radiogroup" aria-label="会計">
           {accounts.map((x) => (
-            <button key={x.name} type="button" role="radio" aria-checked={x.name === account} onClick={() => setAccount(x.name)} data-selected={x.name === account || undefined} className="flex shrink-0 flex-col items-start rounded-xl bg-card px-3.5 py-2.5 text-left ring-1 ring-transparent transition-colors hover:bg-accent data-selected:bg-accent data-selected:ring-primary">
+            <button key={x.name} type="button" role="radio" aria-checked={x.name === account} onClick={() => setAccount(x.name)} data-selected={x.name === account || undefined} className="flex flex-col items-start rounded-xl bg-card px-3.5 py-2.5 text-left ring-1 ring-transparent transition-colors hover:bg-accent data-selected:bg-accent data-selected:ring-primary">
               <span className="text-xs text-muted-foreground">{x.name}</span>
               <Amt yen={x.yen} className="text-[17px] text-primary" />
             </button>
