@@ -22,9 +22,7 @@ import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, type Theme } from './theme'
-import { ListMagnifyingGlassIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
-import { useRouter } from '@void/react'
-import { useVariant } from '../prototype/variant'
+import { ListMagnifyingGlassIcon } from '@phosphor-icons/react'
 
 // 試作のサイドバーは /prototype の下でだけ読む（ほかの頁に combobox などを載せない）
 const ProtoNavContent = React.lazy(() => import('../prototype/nav-content').then((m) => ({ default: m.ProtoNavContent })))
@@ -199,31 +197,6 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
 }
 
 /** 試作: 狭い画面で、サイドバー（機能・うちのまち）を下から開く */
-/** 試作: まちを探す。さがす中心の案はホームのまちの欄へ、ほかの案はサイドバー（スマホでは下からの sheet）の頭の検索欄へ入る */
-function FindTownButton() {
-  const { setOpenMobile } = useSidebar()
-  const { path, visit } = useRouter()
-  const { current } = useVariant()
-  return (
-    <button
-      type="button"
-      onClick={() => {
-        if (current === 1) {
-          if (path === '/prototype') window.dispatchEvent(new Event('fudoki:seek-town'))
-          else visit('/prototype?seek=town')
-          return
-        }
-        setOpenMobile(true)
-        setTimeout(() => window.dispatchEvent(new Event('fudoki:find-town')), 250)
-      }}
-      className={BOTTOM_ITEM}
-    >
-      <MagnifyingGlassIcon />
-      まちを探す
-    </button>
-  )
-}
-
 /** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。入らないものは「設定」にまとめる */
 function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void; proto?: boolean }) {
   const [hidden, setHidden] = useHideOnScroll()
@@ -247,22 +220,14 @@ function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; them
     >
       {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
       <Separator />
-      <ul className={cn('grid h-14', proto ? 'grid-cols-5' : 'grid-cols-3')}>
-        {items.map((i, n) => (
-          <React.Fragment key={i.href}>
-            <li>
-              <NavLink href={i.href} aria-current={i.active ? 'page' : undefined} className={BOTTOM_ITEM}>
-                {i.icon}
-                {i.label}
-              </NavLink>
-            </li>
-            {/* 試作: ホームの隣に、まちを探す */}
-            {proto && n === 0 ? (
-              <li>
-                <FindTownButton />
-              </li>
-            ) : null}
-          </React.Fragment>
+      <ul className={cn('grid h-14', proto ? 'grid-cols-4' : 'grid-cols-3')}>
+        {items.map((i) => (
+          <li key={i.href}>
+            <NavLink href={i.href} aria-current={i.active ? 'page' : undefined} className={BOTTOM_ITEM}>
+              {i.icon}
+              {i.label}
+            </NavLink>
+          </li>
         ))}
         <li>
           <SettingsMenu theme={theme} onPick={onPick} className={BOTTOM_ITEM} />
