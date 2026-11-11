@@ -433,8 +433,8 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
 function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: string) => void; field: string; q: string }) {
   const { v } = useApp()
   const t = q.trim()
-  const all = v.sheets.filter((s) => (field === 'all' || s.field === field) && (!t || s.name.includes(t) || (s.div ?? '').includes(t)))
-  const ss = all.filter((s) => s.grade === grade).sort((a, b) => (b.s ?? 0) - (a.s ?? 0))
+  const all = React.useMemo(() => v.sheets.filter((s) => (field === 'all' || s.field === field) && (!t || s.name.includes(t) || (s.div ?? '').includes(t))), [v, field, t])
+  const ss = React.useMemo(() => all.filter((s) => s.grade === grade).sort((a, b) => (b.s ?? 0) - (a.s ?? 0)), [all, grade])
   const dirs = Object.entries(DIRECTIONS).map(([k, x]) => [x, ss.filter((s) => s.dir === k).length] as const).filter(([, n]) => n)
   return (
     <div className="mt-1 flex flex-col gap-3">
@@ -744,7 +744,8 @@ export function AppPage({ data, sitekey, initialYear }: { data: PageData; siteke
   React.useEffect(() => {
     const el = tabsTop.current
     if (!el) return
-    const io = new IntersectionObserver(([e]) => setStuck(!e!.isIntersecting && e!.boundingClientRect.top < 0))
+    // 目印がちょうど上端（top = 0）にあるときも貼り付きとみなすため、判定の枠を 1px 下げる
+    const io = new IntersectionObserver(([e]) => setStuck(!e!.isIntersecting && e!.boundingClientRect.top < 1), { rootMargin: '-1px 0px 0px 0px' })
     io.observe(el)
     return () => io.disconnect()
   }, [d])
