@@ -3,6 +3,7 @@
 // うちのまちを決めていないときは、まちを探すを前に出し、その下のオンボーディングで うちのまちを選ぶ／現在地から選ぶ を出す（onboarding.tsx）
 // データは自治体の頁と同じ /api/jurisdictions/app/:code を読み、yearView で年度ごとに見る
 import * as React from 'react'
+import { useRouter } from '@void/react'
 import { ArrowRightIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
@@ -17,8 +18,8 @@ import type { Props } from '../pages/prototype/index.server'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { EXAMPLES, ProjectSearchBox, searchHref } from './search'
 import { useMyTown, type Town } from './towns'
-import { Tour, queueTour, useTour, type TourStep } from './tour'
-import { AskTown, Checklist, Empty, Steps, startChecklist, type CheckItem } from './onboarding'
+import { Tour, useTour, type TourStep } from './tour'
+import { AskTown, OtherTowns, Checklist, Empty, Steps, startChecklist, type CheckItem } from './onboarding'
 import { useVariant } from './variant'
 
 const toTown = (e: MapEntry): Town => ({ code: e.code, name: e.name, path: e.path })
@@ -152,7 +153,7 @@ function Dashboard({ c }: { c: Ctx }) {
             <h2 className="text-2xl font-bold sm:text-[28px]">{town.name}</h2>
             <p className="mt-0.5 truncate text-sm opacity-80">{[c.vision, d.pop ? formatPeople(d.pop) : ''].filter(Boolean).join(' · ')}</p>
           </div>
-          <Link href={c.base} className="hidden shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover sm:inline-flex">
+          <Link data-tour="open" href={c.base} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
             ページを見る
             <ArrowRightIcon className="size-4" />
           </Link>
@@ -274,7 +275,7 @@ function Inside({ c, sitekey, onChoose }: { c: Ctx; sitekey: string; onChoose: (
           ))}
         </ul>
         <div className="mt-4 flex flex-wrap gap-2">
-          <Link href={c.base} className="inline-flex items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
+          <Link data-tour="open" href={c.base} className="inline-flex items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
             ページを見る
             <ArrowRightIcon className="size-4" />
           </Link>
@@ -312,7 +313,7 @@ function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string
   return <>{children(buildCtx(town, d, year, setYear, vision))}</>
 }
 
-/** はじめての流れの2歩目: 選んだまちの要点を一枚で見せる。「このまちを見る」で決める */
+/** はじめての流れの2歩目: 選んだまちの要点を一枚で見せる。「このまちにする」で決める */
 function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () => void }) {
   const { town, d, v, year } = c
   const top = v.fields[0]
@@ -349,7 +350,7 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
       </dl>
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <button type="button" onClick={onOpen} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-[14px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
-          このまちを見る
+          このまちにする
           <ArrowRightIcon className="size-4" />
         </button>
         <button type="button" onClick={onBack} className="text-[13px] text-muted-foreground hover:text-foreground">
@@ -369,32 +370,18 @@ const checkItems = (c: Ctx): CheckItem[] => [
   { key: 'assistant', label: 'アシスタントに聞く', href: '/assistant' },
 ]
 
-/** まちの画面に入った直後のツアー。案ごとに、上から順に光らせる */
-const TOTAL: TourStep = { target: 'total', title: '1年に使うお金', body: 'このまちが1年に使うお金の総額と、1人あたりの額です。右で年度を切り替えられます。' }
-const NAV: TourStep = { target: 'nav', title: '事業を検索・アシスタント', body: '事業を名前で探したり、このまちの予算についてアシスタントに質問したりできます。' }
-const tourSteps = (c: Ctx, variant: number): TourStep[] =>
-  variant === 1
-    ? [
-        { target: 'ask', title: `${c.town.name}について聞く`, body: '質問を書くと、アシスタントが予算・決算の資料から答えます。' },
-        { target: 'search', title: '事業を探す', body: '「給食」「プール」のような言葉で、このまちの事業を探せます。' },
-        TOTAL,
-        NAV,
-      ]
-    : [
-        TOTAL,
-        { target: 'fields', title: '何に使っているか', body: '分野ごとの額と割合です。「お金の流れを見る」で、もっと細かく見られます。' },
-        c.v.comparable && c.v.newProjects.length
-          ? { target: 'projects', title: `${reiwa(c.year)}に始めた事業`, body: 'この年度に新しく始めた事業です。押すと、事業ごとの予算と中身を見られます。' }
-          : { target: 'projects', title: '事業', body: '事業ごとの予算です。押すと中身を見られます。' },
-        NAV,
-      ]
+/** 住んでいるまちを選んだ直後のツアーの1歩目。まちの頁を開かせ、続き（事業・予算・年度・文字を選んで聞く）はまちの頁の PageTour が出す */
+const tourSteps = (c: Ctx, go: () => void): TourStep[] => [
+  { target: 'open', title: 'まちの頁を開く', body: `${c.town.name}の予算・決算・事業を、まとめて見られる頁です。押して開いてみてください。`, mode: 'click', action: { label: '開く', run: go } },
+]
 
 export function ProtoHome({ entries, featured, sitekey }: Props) {
   const { ready, town, set } = useMyTown()
   const [changing, setChanging] = React.useState(false)
   const { current, key } = useVariant()
-  const tour = useTour()
-  // はじめての流れで選んだまち。要点を見せてから「このまちを見る」で決める
+  const tour = useTour('home')
+  const { visit } = useRouter()
+  // はじめての流れで選んだまち。要点を見せてから「このまちにする」で決める
   const [pending, setPending] = React.useState<Town | null>(null)
   const shown = town ?? pending
   const snap = useSnapshot(ready && shown ? shown.code : null)
@@ -406,7 +393,7 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
   const open = () => {
     if (!pending) return
     startChecklist()
-    queueTour()
+    tour.start()
     set(pending)
     setPending(null)
   }
@@ -427,7 +414,7 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
       <WithCtx town={town!} vision={vision} snap={snap}>
         {(c) => (
           <>
-            {tour.on ? <Tour steps={tourSteps(c, 1)} onDone={tour.done} /> : <Checklist items={checkItems(c)} />}
+            {tour.on ? <Tour steps={tourSteps(c, () => (tour.to('page'), visit(c.base)))} onDone={tour.done} total={5} /> : <Checklist items={checkItems(c)} />}
             <Inside c={c} sitekey={sitekey} onChoose={choose} />
           </>
         )}
@@ -438,13 +425,13 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
       <>
         <div className="mb-3 flex justify-end">
           <button type="button" onClick={choose} className="text-[13px] text-muted-foreground hover:text-foreground">
-            見るまちを変える
+            住んでいるまちを変える
           </button>
         </div>
         <WithCtx town={town!} vision={vision} snap={snap}>
           {(c) => (
             <>
-              {tour.on ? <Tour steps={tourSteps(c, 0)} onDone={tour.done} /> : <Checklist items={checkItems(c)} />}
+              {tour.on ? <Tour steps={tourSteps(c, () => (tour.to('page'), visit(c.base)))} onDone={tour.done} total={5} /> : <Checklist items={checkItems(c)} />}
               <Dashboard c={c} />
             </>
           )}
@@ -454,7 +441,11 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-20 pb-28 sm:px-8">
       {/* key は出し直しの動きのためだけ。データは上で持つ */}
-      <div key={key}>{body}</div>
+      <div key={key}>
+        {/* ほかのまちを見る導線。住んでいるまちを選んだあとも、ホームの頭に常に出す（選ぶ前は Empty の中に出す） */}
+        {ready && town && !changing ? <OtherTowns entries={entries} className="mb-6" /> : null}
+        {body}
+      </div>
     </main>
   )
 }

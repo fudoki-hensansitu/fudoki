@@ -1,8 +1,9 @@
 // 試作: はじめて開いたときの流れ（marketingskills の onboarding skill に沿う）。
-// 1 どのまちのお金を見るかを選ぶ（名前／現在地）→ 2 選んだまちの要点を一枚で見せる（価値の瞬間）→ まちの画面に入ったら小さなチェックリスト（1つ目は済み、閉じられる）。
-// 聞くのは一つだけにする。「住んでいるまち」「ホーム」のような、知らない人に通じない言葉や構えさせる言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
+// 1 住んでいるまちを選ぶ（名前／現在地）→ 2 選んだまちの要点を一枚で見せる（価値の瞬間）→ ツアー（tour.tsx）→ チェックリスト（1つ目は済み、閉じられる）。
+// ほかのまちを見る導線として、まちの検索はホームに常に出す。「ホーム」「見るまち」のような通じない言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
 import * as React from 'react'
-import { ArrowRightIcon, CheckIcon, NavigationArrowIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, CheckIcon, MagnifyingGlassIcon, NavigationArrowIcon, XIcon } from '@phosphor-icons/react'
+import { useRouter } from '@void/react'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { Logo } from '../nav/site-nav'
@@ -13,7 +14,7 @@ import './onboarding.css'
 
 type Locate = { busy?: boolean; error?: string; hit?: MapEntry }
 
-/** どのまちを見るかを聞く札。名前の入力欄をはじめから出し、下に「現在地から選ぶ」。first は はじめての流れ（緑・1 / 2）、それ以外は見るまちを変えるとき */
+/** 住んでいるまちを聞く札。名前の入力欄をはじめから出し、下に「現在地から選ぶ」。first は はじめての流れ（緑・1 / 2）、それ以外は住んでいるまちを変えるとき */
 export function AskTown({ entries, onPick, onCancel, first }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; onCancel?: () => void; first?: boolean }) {
   const [loc, setLoc] = React.useState<Locate | null>(null)
   const locate = async () => {
@@ -30,8 +31,8 @@ export function AskTown({ entries, onPick, onCancel, first }: { entries: MapEntr
   return (
     <section className={cn('ob-rise rounded-[24px] p-5 sm:p-7', first ? 'bg-brand text-brand-foreground' : 'border bg-background')}>
       {first ? <Steps at={1} of={2} onBrand /> : null}
-      <h2 className="text-[20px] leading-snug font-bold sm:text-[24px]">{first ? 'どのまちのお金を見ますか？' : '見るまちを変える'}</h2>
-      <p className={cn('mt-1 mb-4 text-[14px]', first ? 'opacity-80' : 'text-muted-foreground')}>名前で探すか、現在地から選びます。</p>
+      <h2 className="text-[20px] leading-snug font-bold sm:text-[24px]">{first ? '住んでいるまちを選ぶ' : '住んでいるまちを変える'}</h2>
+      <p className={cn('mt-1 mb-4 text-[14px]', first ? 'opacity-80' : 'text-muted-foreground')}>名前で探すか、現在地から選びます。選んだまちの予算と事業を、次からもここに出します。</p>
       <TownPicker entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
       <div className="mt-3 text-foreground">
         {loc ? (
@@ -115,6 +116,20 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
   )
 }
 
+/** ほかのまちを見る検索。ホームに常に出し、選んだまちの頁へ移るだけ（住んでいるまちは変えない） */
+export function OtherTowns({ entries, className }: { entries: MapEntry[]; className?: string }) {
+  const { visit } = useRouter()
+  return (
+    <section className={cn('ob-rise', className)} aria-label="ほかのまちを見る">
+      <h2 className="mb-2 flex items-center gap-1.5 text-[14px] font-bold text-muted-foreground">
+        <MagnifyingGlassIcon className="size-4" />
+        ほかのまちを見る
+      </h2>
+      <TownPicker entries={entries} onPick={(e) => visit(e.path)} placeholder="自治体名で探す（例：世田谷）" />
+    </section>
+  )
+}
+
 /** まちを選んでいないときの画面。reveal があれば（まちを選んだ直後）2歩目の要点を出す */
 export function Empty({ entries, onPick, reveal }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; reveal: React.ReactNode }) {
   return (
@@ -126,6 +141,7 @@ export function Empty({ entries, onPick, reveal }: { entries: MapEntry[]; onPick
         <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
       </header>
       {reveal ? <div key="reveal">{reveal}</div> : <AskTown entries={entries} onPick={onPick} first />}
+      <OtherTowns entries={entries} className="mt-6" />
     </>
   )
 }
@@ -162,7 +178,7 @@ export function Checklist({ items }: { items: CheckItem[] }) {
     }
   }
   if (!st || st.closed) return null
-  const all = [{ key: 'town', label: '見るまちを選ぶ', href: '' }, ...items]
+  const all = [{ key: 'town', label: '住んでいるまちを選ぶ', href: '' }, ...items]
   const n = all.filter((x) => st.done.includes(x.key)).length
   const complete = n === all.length
   return (

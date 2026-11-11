@@ -58,6 +58,7 @@ import { assetPath, EMBLEMS } from '../emblems'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
+import { PageTour } from '../../prototype/tour'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
@@ -394,7 +395,7 @@ function Overview({ go }: { go: Go }) {
     <div className="flex flex-col gap-8">
       <div className="grid gap-3 md:grid-cols-[1.3fr_1fr]">
         {/* 総額と1人あたりは同じ大きさで左右に半分ずつ並べ、間に大きな斜線を引いて分ける */}
-        <Card className="justify-center bg-card px-5 py-[18px] ring-0">
+        <Card data-tour="budget" className="justify-center bg-card px-5 py-[18px] ring-0">
           <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3 sm:gap-6">
           <span className="flex flex-col">
             <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}（一般会計）</span>
@@ -435,7 +436,7 @@ function Overview({ go }: { go: Go }) {
 
       <FreshCarousel items={v.fresh.slice(0, 12)} more={() => go('projects', { filter: 'new' })} />
 
-      <section>
+      <section data-tour="project">
         <SectionHead title="お金のかかる事業"><MoreLink onClick={() => go('projects', { filter: 'all' })} /></SectionHead>
         <Rows>{v.current.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>
       </section>
@@ -1023,9 +1024,9 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
         {/* 自治体名の行の右に年度の切り替えを置く。切り替えのボタンで行が高くならないよう上下を詰める */}
         <div className="flex items-center justify-between gap-3">
           <h1 className="min-w-0 text-[22px] font-normal leading-tight sm:text-[26px]">{data.name}</h1>
-          <div className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
+          <div data-tour="year" className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
         </div>
-        {vision ? <p className="text-base leading-snug sm:text-[17px]">{vision}</p> : null}
+        {vision ? <p data-tour="select" className="text-base leading-snug sm:text-[17px]">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
           <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
           {data.population ? (
@@ -1135,6 +1136,8 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
         </Tabs>
       </div>
       <AskDock name={data.name} sitekey={sitekey} year={year} section={TABS.find((t) => t.key === tab)?.label} />
+      {/* 試作のホーム（/prototype）で住んでいるまちを選んだ人にだけ出すツアーの続き。それ以外では何も描かない */}
+      <PageTour name={data.name} />
     </div>
   )
 }
