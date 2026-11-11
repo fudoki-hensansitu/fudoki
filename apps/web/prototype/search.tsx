@@ -32,7 +32,7 @@ export function ProjectSearchBox({ q = '', code, placeholder, className, size = 
         <InputGroupAddon>
           <MagnifyingGlassIcon className="size-5" />
         </InputGroupAddon>
-        <InputGroupInput value={text} onChange={(e) => setText(e.target.value)} placeholder={placeholder ?? '例：給食、プール、保育'} aria-label="事業を探す" className="text-base" />
+        <InputGroupInput maxLength={16} value={text} onChange={(e) => setText(e.target.value)} placeholder={placeholder ?? '例：給食、プール、保育'} aria-label="事業を探す" className="text-base" />
       </InputGroup>
     </form>
   )
@@ -66,7 +66,7 @@ function TownCard({ t }: { t: TownHits }) {
   )
 }
 
-export function Search({ q, code, townName, towns, failed }: Props) {
+export function Search({ q, code, townName, towns, capped, failed }: Props) {
   const { town } = useMyTown()
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-8 pb-28 sm:px-8 sm:pt-12">
@@ -112,6 +112,7 @@ export function Search({ q, code, townName, towns, failed }: Props) {
               </>
             )}
             <span>まちごとに、決算がある新しい年度の分です。内訳は入れ子なので、金額は足していません。</span>
+            {capped ? <span>広い言葉なので、金額の大きい内訳から年度ごとに {(5000).toLocaleString('ja-JP')} 件までを見ています。ほかにも当たるまちがあります。</span> : null}
           </p>
           {towns.length ? (
             <div className={cn('grid gap-3', !code && 'md:grid-cols-2')}>
