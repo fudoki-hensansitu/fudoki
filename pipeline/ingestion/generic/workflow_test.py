@@ -229,3 +229,12 @@ class CodeFingerprintTest(unittest.TestCase):
             self.assertEqual(before, manifest.sha_code(path))
             path.write_text('def read(x):\n    return x + 2\n')
             self.assertNotEqual(before, manifest.sha_code(path))
+
+
+class ProfileWorkflowDependencyTest(unittest.TestCase):
+    def test_the_quirks_of_a_profile_workflow_are_in_the_fingerprint(self):
+        document = manifest.read(manifest.JURISDICTIONS / '131130/2024/initial/expenditure.json')
+        conversion = next(c for c in document['conversions'] if 'reading' in c['options'].get('workflow', {}))
+        files = manifest.dependencies(conversion)
+        self.assertIn('generic/patterns/quirks/headings.py', files)
+        self.assertIn('generic/patterns/layout/stacked_titles.py', files)

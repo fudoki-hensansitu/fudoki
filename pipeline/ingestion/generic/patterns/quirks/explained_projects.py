@@ -36,7 +36,7 @@ OPTIONS = {
         "items_axis",
         "rows_axis"
     ],
-    "description": "A 事業別決算説明書 (131211): the left page of each spread prints 款・項・目 and 事務事業 rows with the budget and settled amounts. Department rows, code copies, explanation items and 不用額 are arranged before the columns are read (ingestion/generic/explained_projects.py).",
+    "description": "A 事業別決算説明書 (131211): the left page of each spread prints 款・項・目 and 事務事業 rows with the budget and settled amounts. Department rows, code copies, explanation items and 不用額 are arranged before the columns are read (ingestion/generic/patterns/quirks/explained_projects.py).",
     "properties": {
         "budget": {
             "type": "string",

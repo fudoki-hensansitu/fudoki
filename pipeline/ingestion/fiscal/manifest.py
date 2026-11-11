@@ -192,7 +192,16 @@ def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict 
         from ingestion.generic.workflow import selections
         if 'reading' in workflow:
             from ingestion.generic.reading import declaration_files
-            pending.extend(declaration_files(workflow))
+            declarations = declaration_files(workflow)
+            pending.extend(declarations)
+            # A profile that holds a layered workflow (`annotated_spread`, `purpose_summary`) loads that workflow's
+            # patterns and quirks by name: they shape its tables as the outer selection's do.
+            for relative in declarations:
+                path = code_path(relative)
+                profile = json.loads(path.read_text()) if path.suffix == '.json' and path.is_file() else None
+                if isinstance(profile, dict) and isinstance(profile.get('workflow'), dict) and 'hierarchy' in profile['workflow']:
+                    pending.extend(module.removeprefix('ingestion.').replace('.', '/') + '.py'
+                                   for module in selections(profile['workflow']).values())
         pending.extend(module.removeprefix('ingestion.').replace('.', '/') + '.py'
                        for module in (selections(workflow) if patterns is None else patterns).values())
     found = set()
