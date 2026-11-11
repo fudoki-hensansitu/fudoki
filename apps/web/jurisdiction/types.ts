@@ -20,6 +20,8 @@ export interface Setsu {
 
 export interface Moku extends Line {
   setsu: Setsu[]
+  /** 自治体の科目の款・項の名前。分野で分けた図でも、目から事業を引くのに使う */
+  path?: [string | null, string | null]
 }
 
 export interface Kou extends Line {

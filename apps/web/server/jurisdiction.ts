@@ -196,7 +196,7 @@ export async function loadFlow(env: Env, code: string, year: number, depth: Flow
     kan: line(kan),
     kou: (byParent.get(kan.subject_id) ?? []).filter((n) => n.level === '項').sort(byAmount).map((kou) => ({
       ...line(kou),
-      moku: (byParent.get(kou.subject_id) ?? []).filter((n) => n.level === '目').sort(byAmount).map((moku) => ({ ...line(moku), setsu: setsuByMoku.get(moku.subject_id) ?? [] })),
+      moku: (byParent.get(kou.subject_id) ?? []).filter((n) => n.level === '目').sort(byAmount).map((moku) => ({ ...line(moku), setsu: setsuByMoku.get(moku.subject_id) ?? [], path: [kan.name, kou.name] as [string, string] })),
     })),
   }))
 }
@@ -224,7 +224,7 @@ export async function loadCofogFlow(env: Env, code: string, year: number, depth:
   }
   return [...divisions].map(([division, byGroup]) => {
     const kou = [...byGroup].map(([group, list]) => {
-      const mokuLines = list.sort(byAmount).map((m) => ({ ...line(m), setsu: setsuByMoku.get(m.subject_id) ?? [] }))
+      const mokuLines = list.sort(byAmount).map((m) => ({ ...line(m), setsu: setsuByMoku.get(m.subject_id) ?? [], path: [m.kan_name ?? null, m.kou_name ?? null] as [string | null, string | null] }))
       return { id: `cofog-${group || 'none'}-g`, name: cofogGroupName(group), yen: sumYen(mokuLines), ...partial(mokuLines), page: null, moku: depth === 'kou' ? [] : mokuLines }
     }).sort((a, b) => b.yen - a.yen)
     const kan = { id: `cofog-${division || 'none'}`, name: (division ? frameOf(division) : OTHER_FRAME)?.name ?? `COFOG ${division}`, yen: kou.reduce((sum, k) => sum + k.yen, 0), ...partial(kou), page: null }

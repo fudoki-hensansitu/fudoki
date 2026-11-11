@@ -37,11 +37,9 @@ const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記�
 const share = (yen: number, max: number, missing?: boolean) => (missing || max <= 0 ? 0 : Math.min(100, (Math.max(0, yen) / max) * 100))
 
 /** 節は目の内訳。上位だけ名前を出して残りは件数にまとめる。広い画面では目の棒から帯でつなぎ、狭い画面では目の金額に占める割合の横棒を出す */
-/** 割合のラベル。基準が無い（金額未記載）ときは金額のまま出す */
-const pctOr = (yen: number, base: number, missing?: boolean) => formatShare(yen, base, missing) ?? amountText(yen, missing)
 
-/** kouYen は割合の基準（目は項に占める割合、節は目に占める割合）。金額はツールチップで見せる */
-function MokuGroup({ moku, kouYen, levels }: { moku: Moku; kouYen: number; levels: Levels }) {
+/** kouYen は割合の基準（目は項に占める割合、節は目に占める割合）。金額と割合を並べて出す */
+function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: number; levels: Levels; onMoku?: (m: Moku) => void }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
   const rest = shown.slice(SETSU_SHOWN)
@@ -55,10 +53,19 @@ function MokuGroup({ moku, kouYen, levels }: { moku: Moku; kouYen: number; level
     <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} className="grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[active=true]/kou:translate-y-0 group-data-[active=true]/kou:opacity-100 sm:grid-cols-[5fr_7fr] sm:gap-4">
       <div className="min-w-0">
         <div className="text-[11px] text-muted-foreground sm:hidden">{levels.moku}</div>
-        <AmountTip name={moku.name} yen={moku.yen} missing={moku.amountMissing} side="right" className="inline-grid outline-none">
-          <span className="text-sm leading-snug">{moku.name}</span>
-          <span className="text-xs font-semibold tabular-nums text-primary">{pctOr(moku.yen, kouYen, moku.amountMissing)}</span>
-        </AmountTip>
+        {onMoku ? (
+          // 押すと事業と同じ詳細のパネルで目の中身（事業・節）を出す
+          <button type="button" onClick={() => onMoku(moku)} className="group/moku -mx-1.5 grid w-[calc(100%+0.75rem)] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 rounded-lg px-1.5 py-1 text-left hover:bg-secondary">
+            <span className="text-sm leading-snug underline-offset-2 group-hover/moku:underline">{moku.name}</span>
+            <CaretRightIcon className="row-span-2 size-3.5 text-muted-foreground" aria-hidden="true" />
+            <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
+          </button>
+        ) : (
+          <AmountTip name={moku.name} yen={moku.yen} missing={moku.amountMissing} side="right" className="inline-grid outline-none">
+            <span className="text-sm leading-snug">{moku.name}</span>
+            <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
+          </AmountTip>
+        )}
       </div>
       {top.length > 0 ? (
         <ul data-setsu-list className="grid min-w-0 gap-y-1 border-l pl-3 text-[12.5px] leading-snug sm:border-0 sm:pl-4" aria-label={`${moku.name}の${levels.setsu}`}>
@@ -67,7 +74,7 @@ function MokuGroup({ moku, kouYen, levels }: { moku: Moku; kouYen: number; level
             <li key={s.name} data-setsu data-yen={s.amountMissing ? 0 : Math.max(0, s.yen)} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
               <AmountTip name={`${moku.name}・${s.name}`} yen={s.yen} missing={s.amountMissing} side="right" className="col-span-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 outline-none">
                 <span className="truncate">{s.name}</span>
-                <span className="text-right font-semibold tabular-nums text-primary">{pctOr(s.yen, mokuYen, s.amountMissing)}</span>
+                <span className="text-right tabular-nums"><span className="font-semibold">{amountText(s.yen, s.amountMissing)}</span>{formatShare(s.yen, mokuYen, s.amountMissing) ? <span className="ml-1.5 text-muted-foreground">{formatShare(s.yen, mokuYen, s.amountMissing)}</span> : null}</span>
               </AmountTip>
               <span className="col-span-2 h-1 overflow-hidden rounded-full bg-foreground/5 sm:hidden">
                 <span className="block h-full rounded-full bg-primary/55" style={{ width: `${share(s.yen, base, s.amountMissing)}%` }} />
@@ -79,7 +86,7 @@ function MokuGroup({ moku, kouYen, levels }: { moku: Moku; kouYen: number; level
               <Tooltip>
                 <TooltipTrigger delay={100} className="grid w-full cursor-default! grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
                   <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}件</span>
-                  {restYen !== null ? <span className="text-right tabular-nums">{pctOr(restYen, mokuYen)}</span> : null}
+                  {restYen !== null ? <span className="text-right tabular-nums">{amountText(restYen)}{formatShare(restYen, mokuYen) ? <span className="ml-1.5">{formatShare(restYen, mokuYen)}</span> : null}</span> : null}
                 </TooltipTrigger>
                 <TooltipContent side="right" className={`block max-w-72 ${TIP_CARD}`}>
                   {restYen !== null ? <div className="mb-1.5"><TipCard name={`ほか${rest.length}件`} yen={restYen} /></div> : null}
@@ -181,7 +188,7 @@ function TickMenu({ items, current, onPick, side, label, className, children }: 
   )
 }
 
-function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void; levels: Levels }) {
+function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void; levels: Levels; onMoku?: (m: Moku) => void }) {
   const box = React.useRef<HTMLElement | null>(null)
   const rib = React.useRef<HTMLDivElement>(null)
   const [paths, setPaths] = React.useState<Ribbon[]>([])
@@ -294,7 +301,7 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
             <span className="pl-4">{levels.setsu}</span>
           </div>
         ) : null}
-        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} levels={levels} />) : (
+        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} levels={levels} onMoku={onMoku} />) : (
           <p className="text-[12.5px] text-muted-foreground" role={loading ? 'status' : undefined}>{loading ? '内訳を読み込んでいます…' : `この${levels.kou}に${levels.moku}はありません`}</p>
         )}
       </div>
@@ -302,7 +309,7 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
   )
 }
 
-function KanPanel({ drill, loading, levels }: { drill: Drill; loading: boolean; levels: Levels }) {
+function KanPanel({ drill, loading, levels, onMoku }: { drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void }) {
   const body = React.useRef<HTMLDivElement>(null)
   const [current, setCurrent] = React.useState(0)
   const sections = React.useRef<(HTMLElement | null)[]>([])
@@ -343,7 +350,7 @@ function KanPanel({ drill, loading, levels }: { drill: Drill; loading: boolean; 
       ) : null}
       <div ref={body} style={fade} className="h-full snap-y snap-proximity scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" tabIndex={-1}>
         {drill.kou.map((k, i) => (
-          <KouSection key={k.id} kou={k} active={i === current} loading={loading} levels={levels} onBox={(el) => { sections.current[i] = el }} />
+          <KouSection key={k.id} kou={k} active={i === current} loading={loading} levels={levels} onMoku={onMoku} onBox={(el) => { sections.current[i] = el }} />
         ))}
         {/* 下端にも止まる所を置く。最後の段の頭にしか止まれないと、下端まで送れず頁のスクロールにも渡らない */}
         <div aria-hidden="true" className="h-px snap-end" />
@@ -354,7 +361,7 @@ function KanPanel({ drill, loading, levels }: { drill: Drill; loading: boolean; 
 
 /** 款→項の全体図と款ごとの内訳。最新年度の款→項はページに埋めてあり、それ以外の年度は図が近づいたら読み込む */
 /** tabs はカードの左上に置く切り替え（分け方）、summary は全体図のときに出す総額。view は分野（COFOG の枠）か款か */
-export function Flow({ data, total: year, view = 'kan', phase = 'settlement', tabs, summary, className, bare }: { data: PageData; total: YearTotal; view?: FlowView; /** 決算の無い年度は当初予算（initial）の流れを読む */ phase?: 'settlement' | 'initial'; tabs?: React.ReactNode; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean }) {
+export function Flow({ data, total: year, view = 'kan', phase = 'settlement', tabs, summary, className, bare, onMoku }: { data: PageData; total: YearTotal; view?: FlowView; /** 決算の無い年度は当初予算（initial）の流れを読む */ phase?: 'settlement' | 'initial'; tabs?: React.ReactNode; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void }) {
   const levels = LEVELS[view]
   const isLatest = phase === 'settlement' && year.year === data.years.at(-1)?.year
   const root = React.useRef<HTMLDivElement>(null)
@@ -473,7 +480,7 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
               <p className="grid h-full place-items-center text-sm text-muted-foreground" role={error ? undefined : 'status'}>{error ? '' : 'お金の流れを読み込んでいます…'}</p>
             )}
           </div>
-          {flows.map((f) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} />)}
+          {flows.map((f) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} onMoku={onMoku} />)}
         </div>
       </div>
       {error ? (

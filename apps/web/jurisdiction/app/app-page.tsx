@@ -54,7 +54,7 @@ import { assetPath } from '../profiles'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock, Elsewhere } from '../page'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, yearPath, type FlowView, type PageData, type YearTotal } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, yearPath, type FlowView, type Moku, type PageData, type YearTotal } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
@@ -95,7 +95,7 @@ const perHead = (y: number, pop: number) => {
 const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
-type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | null
+type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement' } | null
 type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go; openField: (id: string) => void }
 const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
@@ -308,7 +308,7 @@ const VIEWS: { key: FlowView; label: string }[] = [
 
 /** 予算・決算。事業は下から積み上げる見方、こちらは大きい項目から下りていく見方。当初予算と決算の両方がある年度はタブを分ける */
 function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
-  const { v, d, page } = useApp()
+  const { v, d, page, select } = useApp()
   const [view, setView] = React.useState<FlowView>('cofog')
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = phase === 'settlement'
@@ -327,7 +327,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   return (
     <div className="flex flex-col gap-3">
       {total ? (
-        <Flow key={`${v.year}-${view}-${phase}`} data={page} total={total} view={view} phase={phase} tabs={tabs} summary={summary} bare className="h-[calc(100svh-12rem)] scroll-mt-16 @4xl:h-[calc(100svh-10rem)] @4xl:scroll-mt-16" />
+        <Flow key={`${v.year}-${view}-${phase}`} data={page} total={total} view={view} phase={phase} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase })} bare className="h-[calc(100svh-12rem)] scroll-mt-16 @4xl:h-[calc(100svh-10rem)] @4xl:scroll-mt-16" />
       ) : (
         <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の{label}は、まだ収録していません</p>
       )}
@@ -698,12 +698,64 @@ function FieldPage({ id }: { id: string }) {
   )
 }
 
+/** 予算タブの図で押した目。事業の詳細と同じ形で、目の金額・中の事業・節を出す */
+function MokuDetail({ moku, phase }: { moku: Moku; phase: 'initial' | 'settlement' }) {
+  const { v, d, select } = useApp()
+  const ys = String(v.year)
+  const amountOf = (p: Proj) => (phase === 'initial' ? p.y[ys]?.b : p.y[ys]?.s) ?? null
+  // 款・項・目の名前が揃う事業。款・項が分からない古い応答では目の名前だけで引く
+  const ps = d.projects
+    .filter((p) => p.path[2] === moku.name && (!moku.path || (p.path[0] === moku.path[0] && p.path[1] === moku.path[1])) && amountOf(p) != null)
+    .sort((a, b) => (amountOf(b) ?? 0) - (amountOf(a) ?? 0))
+  const setsu = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
+  const base = moku.amountMissing ? Math.max(0, ...setsu.map((s) => s.yen)) : moku.yen
+  return (
+    <>
+      {moku.path ? <p className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">{moku.path.filter(Boolean).map((x, i) => <React.Fragment key={i}>{i ? <CaretRightIcon className="size-2.5" /> : null}{x}</React.Fragment>)}</p> : null}
+      <h2 className="mt-1.5 mb-2 text-xl font-semibold leading-snug">{moku.name}</h2>
+      <div className="mt-5">
+        <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{phase === 'initial' ? '当初予算' : '決算'}</span>
+        {moku.amountMissing ? <span className="block text-2xl leading-tight text-muted-foreground">金額未記載</span> : <Amt yen={moku.yen} className="block text-4xl leading-tight text-primary" />}
+        {!moku.amountMissing && perHead(moku.yen, d.pop) ? <span className="text-xs text-muted-foreground">{perHead(moku.yen, d.pop)}</span> : null}
+      </div>
+      {ps.length ? (
+        <DetailSection icon={BriefcaseIcon} title="中の事業" count={ps.length}>
+          <Rows>
+            {ps.map((p) => (
+              <button key={p.id} type="button" onClick={() => select({ kind: 'project', id: p.id })} className="flex w-full items-center gap-3 px-1.5 py-2.5 text-left hover:bg-secondary">
+                <span className="min-w-0 flex-1"><span className="block text-[15px]">{p.name}</span>{p.dept ? <span className="text-xs text-muted-foreground">{p.dept}</span> : null}</span>
+                <Amt yen={amountOf(p)} className="text-[15px]" />
+                <CaretRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
+              </button>
+            ))}
+          </Rows>
+        </DetailSection>
+      ) : null}
+      {setsu.length ? (
+        <DetailSection icon={ListBulletsIcon} title="節" count={setsu.length}>
+          <ul className="flex flex-col gap-2.5">
+            {setsu.map((s) => (
+              <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 text-[15px]">
+                <span className="truncate">{s.name}</span>
+                <span className="tabular-nums">{s.amountMissing ? <span className="text-xs text-muted-foreground">金額未記載</span> : <><Amt yen={s.yen} className="text-[15px]" />{!moku.amountMissing && moku.yen > 0 ? <span className="ml-2 inline-block w-[3.2em] text-right text-xs text-muted-foreground">{((s.yen / moku.yen) * 100).toFixed(0)}%</span> : null}</>}</span>
+                <span className="col-span-2 mt-1 h-1 overflow-hidden rounded-full bg-foreground/5">
+                  <span className="block h-full rounded-full bg-primary/55" style={{ width: `${s.amountMissing || base <= 0 ? 0 : Math.min(100, (s.yen / base) * 100)}%` }} />
+                </span>
+              </li>
+            ))}
+          </ul>
+        </DetailSection>
+      ) : null}
+    </>
+  )
+}
+
 function Detail({ sel }: { sel: NonNullable<Selected> }) {
   const { d } = useApp()
-  const kind = { project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon] } as const
+  const kind = { project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon], moku: ['目', TreeStructureIcon] } as const
   const [label, I] = kind[sel.kind]
   const body =
-    sel.kind === 'project' ? <ProjectDetail p={d.projects.find((p) => p.id === sel.id)!} /> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
+    sel.kind === 'moku' ? <MokuDetail moku={sel.moku} phase={sel.phase} /> : sel.kind === 'project' ? <ProjectDetail p={d.projects.find((p) => p.id === sel.id)!} /> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
   return (
     <div key={`${sel.kind}${sel.id}`} className="app-in">
       <p className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground"><I className="size-3.5" aria-hidden="true" />{label}</p>
