@@ -3,7 +3,7 @@
 // 歳出の決算は API の値。事業評価から取った事業・やめたこと（事業の入れ替え）は jurisdiction/profiles.ts の手で起こした値で、ある自治体・年度だけ節を出す
 import { Link } from '../nav/link'
 import * as React from 'react'
-import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, SquaresFourIcon, BankIcon, BasketballIcon, CaretDownIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowLeftIcon, ArrowUpIcon, ArrowRightIcon, ArrowSquareOutIcon, CaretRightIcon, MapPinAreaIcon, MapTrifoldIcon, BankIcon, BasketballIcon, CaretDownIcon, CoinsIcon, RobotIcon, FirstAidKitIcon, GlobeIcon, HandHeartIcon, HouseLineIcon, LeafIcon, MapPinIcon, NotePencilIcon, QuotesIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, DotsThreeCircleIcon, UsersIcon, XIcon } from '@phosphor-icons/react'
 import { StartForm } from '../chat/start-form'
 import type { StoredSession } from '../chat/store'
 import { rememberJurisdiction } from '../home/recent'
@@ -18,7 +18,7 @@ import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
 import { pageHead } from './html'
 import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
-import { changePct, INDEX_PATH, formatAsOf, formatPeople, formatPerCapita, formatYen, pageYears, reiwa, yearName, yearPath, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
+import { changePct, formatAsOf, formatPeople, formatPerCapita, formatYen, pageYears, reiwa, yearName, yearPath, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
 
 const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
   const res = await fetch(url, { signal })
@@ -460,14 +460,13 @@ function PlaceCard({ href, name, logo, icon: Icon, className }: { href: string; 
   )
 }
 
-/** 最後の節。都道府県・近くの自治体（紋章があれば紋章）・全国の一覧を同じカードで並べる */
+/** 最後の節。都道府県・近くの自治体（紋章があれば紋章）を同じカードで並べる */
 function Elsewhere({ data }: { data: PageData }) {
   return (
     <Section id="elsewhere" title="ほかの自治体も見る">
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
-        {data.prefecturePath !== INDEX_PATH ? <PlaceCard href={data.prefecturePath} name={data.prefecture} icon={MapTrifoldIcon} /> : null}
+        {data.prefecturePath ? <PlaceCard href={data.prefecturePath} name={data.prefecture} icon={MapTrifoldIcon} /> : null}
         {data.neighbors.map((n) => <PlaceCard key={n.path} href={n.path} name={n.name} logo={n.logo} icon={MapPinAreaIcon} />)}
-        <PlaceCard href={INDEX_PATH} name="すべての自治体" icon={SquaresFourIcon} className="sm:col-span-2" />
       </ul>
     </Section>
   )
@@ -985,7 +984,11 @@ export function Page({ data, sitekey, initialYear }: { data: PageData; sitekey: 
             <div className="flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
               <span className="inline-flex items-center gap-1 sm:gap-1.5">
                 <MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />
-                <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button>
+                {data.prefecturePath ? (
+                  <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button>
+                ) : (
+                  data.prefecture
+                )}
               </span>
               {data.population ? (
                 <Hint label={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
