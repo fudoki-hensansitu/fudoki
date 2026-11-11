@@ -323,7 +323,7 @@ const checkItems = (c: Ctx): CheckItem[] => [
   { key: 'assistant', label: 'アシスタントに聞く', href: '/assistant' },
 ]
 
-/** 住んでいるまちを選んだ直後のツアーの1歩目。まちの頁を開かせ、続き（事業・予算・年度・文字を選んで聞く）はまちの頁の PageTour が出す */
+/** 住んでいるまちを選んだ直後のツアーの1歩目。まちの頁を開かせ、続き（年度・予算・事業・文字を選んで聞く）はまちの頁の PageTour が出す */
 const tourSteps = (c: Ctx, go: () => void): TourStep[] => [
   { target: 'open', title: 'まちの頁を開く', body: `${c.town.name}の予算・決算・事業を、まとめて見られる頁です。押して開いてみてください。`, mode: 'click', action: { label: '開く', run: go } },
 ]

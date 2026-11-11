@@ -1,5 +1,5 @@
 // 住んでいるまちを選んだあとに1回だけ出すツアー（marketingskills の onboarding skill の Guided Tours: 3〜5歩・いつでも閉じられる・2回目からは出さない。Do, don't show）。
-// 流れは yuito の決めた順: まちの頁を開く（ホーム）→ 事業 → 予算 → 年度の切り替え → 文字を選んでアシスタント（まちの頁）。頁をまたぐので、どこまで進んだかを localStorage に置く。
+// 流れは頁の上から: まちの頁を開く（ホーム）→ 年度の切り替え → 予算 → 事業 → 文字を選んでアシスタント（まちの頁）。頁をまたぐので、どこまで進んだかを localStorage に置く。
 // 画面を暗くして [data-tour="…"] の部分を1か所ずつ光らせ、その横に吹き出しで説明を重ねる。光らせた所は、押す・選ぶの歩だけ触れる
 import * as React from 'react'
 import { createPortal } from 'react-dom'
