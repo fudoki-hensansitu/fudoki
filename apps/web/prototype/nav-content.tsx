@@ -1,4 +1,4 @@
-// 試作: サイドバーの中身。項目は まちを探す・アシスタント・事業を探す の3つだけ（うちのまちはホームなので置かない。ホームへはロゴから）。並べ方を3案で見比べる（ホームと同じピッカーで切り替え）。
+// 試作: サイドバーの中身。項目は まち・アシスタント・事業 の3つだけ（うちのまちはホームなので置かない。ホームへはロゴから）。並べ方を3案で見比べる（ホームと同じピッカーで切り替え）。
 // 1 うちのまち中心: 頭にまちの検索欄 / 2 さがす中心: まちの検索欄はホームに置き、項目だけ並べる / 3 まちの中で使う: うちのまちを見出しに置き、事業を探すはうちのまちに絞る
 import * as React from 'react'
 import { HouseIcon, ListMagnifyingGlassIcon, MagnifyingGlassIcon, RobotIcon } from '@phosphor-icons/react'
@@ -12,10 +12,7 @@ import { searchHref } from './search'
 import { emblemSrc, loadTowns, useMyTown, type Town } from './towns'
 import { useVariant } from './variant'
 
-/** スマホの下の帯の「まちを探す」が投げる（nav/site-nav.tsx） */
-const FIND = 'fudoki:find-town'
-
-/** まちを探す欄。⌘K と下の帯の「まちを探す」で入る。選んだまちの頁へ移る */
+/** まちを探す欄。⌘K で入る。選んだまちの頁へ移る */
 function TownSearch() {
   const { state, isMobile, setOpen } = useSidebar()
   const { visit } = useRouter()
@@ -35,10 +32,8 @@ function TownSearch() {
       }
     }
     window.addEventListener('keydown', onKey)
-    window.addEventListener(FIND, focus)
     return () => {
       window.removeEventListener('keydown', onKey)
-      window.removeEventListener(FIND, focus)
     }
   }, [setOpen])
   if (state === 'collapsed' && !isMobile) {

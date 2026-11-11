@@ -196,7 +196,6 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
   )
 }
 
-/** 試作: 狭い画面で、サイドバー（機能・うちのまち）を下から開く */
 /** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。入らないものは「設定」にまとめる */
 function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void; proto?: boolean }) {
   const [hidden, setHidden] = useHideOnScroll()
