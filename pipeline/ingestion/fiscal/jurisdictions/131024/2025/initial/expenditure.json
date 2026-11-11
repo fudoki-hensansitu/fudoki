@@ -594,7 +594,7 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "c4ccf63c4791b0a2c777dd94b2d0472b1657106a92d29c3c1038f283e8327d78",
+      "input_fingerprint": "4268622414fcdd8b3f21d216518bf0ece56809cd1a792d4ae7fed17234c50de6",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -624,7 +624,7 @@
     {
       "table_id": "general-initial-2",
       "conversion_id": "general-initial-2",
-      "input_fingerprint": "386d459cae18189fc2c1f5a2bd2bc414eb6211d60e679d5ccb23e0bc6e1006f1",
+      "input_fingerprint": "7c7241d68935fac547ec08f4be103d5282d23088d747ffa95b2ed67287fbd2e7",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -654,7 +654,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "49d36f6e2a8a95ca7ba58f9c900fc730eb34a974e0400e4fd6fbec19b816aec6",
+      "input_fingerprint": "c0a090e48165f7bd2dfe118796b0b3c9471f319f192ac09253d66cc382f808e4",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -685,38 +685,38 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "7fe13c9f281722b3bd8f9bebce314e98679cc164f86cfa568952734f3982678d",
+      "input_fingerprint": "414cf29a693488cb477d64f1d5f2dfe7cd1d650cebab840d95b396ef5777fb2b",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は column mark 25頁・carried 54頁 から決めた。款の和 10,078,197（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は column mark 25頁・carried 57頁 から決めた。款の和 10,078,197（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（48 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 14 件（p25:full-page:a0:result0:r75・p25:full-page:a0:result0:r75:w1・p26:full-page:a0:result0:r57・p26:full-page:a0:result0:r57:w1・p27:full-page:a0:result0:r63・p27:full-page:a0:result0:r63:w1・p28:full-page:a0:result0:r63・p28:full-page:a0:result0:r63:w1・p34:full-page:a0:result0:r15・p34:full-page:a0:result0:r15:w7・p37:full-page:a0:result0:r15・p37:full-page:a0:result0:r15:w0・p37:full-page:a0:result0:r70・p37:full-page:a0:result0:r70:w4）・徵→徴 6 件（p24:full-page:a0:result0:r10・p24:full-page:a0:result0:r10:w1・p24:full-page:a0:result0:r15・p24:full-page:a0:result0:r15:w1・p24:full-page:a0:result0:r74・p24:full-page:a0:result0:r74:w0）・查→査 6 件（p22:full-page:a0:result0:r10・p22:full-page:a0:result0:r10:w4・p29:full-page:a0:result0:r77・p29:full-page:a0:result0:r77:w3・p36:full-page:a0:result0:r10・p36:full-page:a0:result0:r10:w3）。"
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 14 件（p25:full-page:a0:result0:r75・p25:full-page:a0:result0:r75:w1・p26:full-page:a0:result0:r57・p26:full-page:a0:result0:r57:w1・p27:full-page:a0:result0:r63・p27:full-page:a0:result0:r63:w1・p28:full-page:a0:result0:r63・p28:full-page:a0:result0:r63:w1・p34:full-page:a0:result0:r15・p34:full-page:a0:result0:r15:w7・p37:full-page:a0:result0:r15・p37:full-page:a0:result0:r15:w0・p37:full-page:a0:result0:r70・p37:full-page:a0:result0:r70:w4）・徵→徴 6 件（p24:full-page:a0:result0:r10・p24:full-page:a0:result0:r10:w1・p24:full-page:a0:result0:r15・p24:full-page:a0:result0:r15:w1・p24:full-page:a0:result0:r74・p24:full-page:a0:result0:r74:w0）・查→査 6 件（p22:full-page:a0:result0:r10・p22:full-page:a0:result0:r10:w4・p29:full-page:a0:result0:r77・p29:full-page:a0:result0:r77:w3・p36:full-page:a0:result0:r10・p36:full-page:a0:result0:r10:w3）・說→説 6 件（p22:full-page:a0:result0:r57・p22:full-page:a0:result0:r57:w0・p22:full-page:a0:result0:r121・p22:full-page:a0:result0:r121:w0・p32:full-page:a0:result0:r53・p32:full-page:a0:result0:r53:w0）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/care-initial-nodes.parquet",
-          "sha256": "9650e94971e13be8834e4e1d65a0f2c30efa772a74df834b2772c8b5936ce674",
-          "bytes": 11098
+          "sha256": "1a804faef43c06460d120f3632296f456419034fc3083e0f1d72b06df0efc99e",
+          "bytes": 10604
         },
-        "row_count": 168
+        "row_count": 162
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/care-initial-amounts.parquet",
-          "sha256": "76ffafb92e44c116c72985eb98e37760b2eec88a252cd5681161bdf87c226787",
-          "bytes": 9144
+          "sha256": "b7de38549fa67d78e40e89311aedeef5d7d4a23d4a16ea2442003d2063304345",
+          "bytes": 8961
         },
-        "row_count": 261
+        "row_count": 257
       }
     },
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "d8a0cd807241ca9bd85cff5111aca9bee034913012894d43b970ee51af627e2b",
+      "input_fingerprint": "f3b838908db102d3a20fd11687e85d3c112b09df4eccf7743820c32eeb81eecf",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",

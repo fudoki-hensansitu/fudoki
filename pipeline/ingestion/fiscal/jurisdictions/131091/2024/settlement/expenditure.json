@@ -276,7 +276,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "eb97974af08a511c404c367d993b8cc77d41a5a16dc84e267b08abfa8fee290a",
+      "input_fingerprint": "5c8bf10a80de7da4ff03791c5ab4f10f2fcc59269e498d8a80e029c8a0c549d2",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -289,16 +289,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131091/2024/settlement/expenditure/general-expenditure-nodes.parquet",
-          "sha256": "cbe300e02af0919124e2ddf6b259a685d108488cc22e4c3f57d98adc09286107",
-          "bytes": 147261
+          "sha256": "e08180e20aadb850f7b16c582598a86c0b5cd07cc18f80c699c6d0bf04c2736e",
+          "bytes": 147242
         },
         "row_count": 4019
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131091/2024/settlement/expenditure/general-expenditure-amounts.parquet",
-          "sha256": "3c90de1dd89ba8479a00f3e78c6b3210cbf453cf1bce3c84c41d4d817532f253",
-          "bytes": 137763
+          "sha256": "1340315cb60c1c0a819227b4273ac81e3e3e241c572cebb550424ef652423e04",
+          "bytes": 137832
         },
         "row_count": 6988
       }
@@ -306,7 +306,7 @@
     {
       "table_id": "care-expenditure",
       "conversion_id": "care-settlement",
-      "input_fingerprint": "b09dfb0ab51c634b6fa460a672d393e7471e246bfa543ebb028387ef6754ff74",
+      "input_fingerprint": "d3e09e2ceb1fae7c9b1848c9cabda7f4e05592bd179a8c891f9502af7336ee37",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -319,16 +319,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131091/2024/settlement/expenditure/care-expenditure-nodes.parquet",
-          "sha256": "3fcf492a4be18ac8fe087c9ce44f3f4ca21c7a8bdbdb5fd166c7d3bcc702bf5a",
-          "bytes": 13571
+          "sha256": "21dedef0342742df297db0630f768c22b6ff42e82d90b2f736816b1f0e84bb45",
+          "bytes": 13636
         },
         "row_count": 278
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131091/2024/settlement/expenditure/care-expenditure-amounts.parquet",
-          "sha256": "f952b7b8f7e1879e14347982e8cf0e143461135c93894412cadcfdbc9c71369c",
-          "bytes": 15751
+          "sha256": "0bfd237b7e4a4bbca4fccc7f59285d40351ce7b457f060ef47c07f8af5eb1f5e",
+          "bytes": 15814
         },
         "row_count": 1010
       }
@@ -336,7 +336,7 @@
     {
       "table_id": "national-health-expenditure",
       "conversion_id": "national-health-settlement",
-      "input_fingerprint": "5711c8beeb21a05e450ca7f7b2c79e5e99c969cf32868862faa09431cef6ed61",
+      "input_fingerprint": "94b99c9491b3148dbfd3ebf9e29674dd7c3442bb75e492683f197d71e07ae133",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -349,16 +349,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131091/2024/settlement/expenditure/national-health-expenditure-nodes.parquet",
-          "sha256": "aefc234bc88fdc4256d6cbfc45d7b1510f7177be1591674dd5a46845bcf699ac",
-          "bytes": 10287
+          "sha256": "5d131072bc6f4ae6c295368ed3f17eec5c2d06537c1bc3e2bc7c7f6f41ee9154",
+          "bytes": 10265
         },
         "row_count": 183
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131091/2024/settlement/expenditure/national-health-expenditure-amounts.parquet",
-          "sha256": "5f305b6b4925e1391f2378ef9c2ba69b4fc97868de023adfc12323edb587687e",
-          "bytes": 12095
+          "sha256": "709a99ff43a0c2a52496a575c49c81d0c9574d49d7a8daa21cc58da885f12c4d",
+          "bytes": 12156
         },
         "row_count": 650
       }
@@ -366,7 +366,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "247db8c175db5978e256f19538225b1c31b274f3f11f39e86bc92c546505e851",
+      "input_fingerprint": "cc7bfc9f3ec419ffef9d481ec6d855ce773a0ef3078f6181386c701fb3969eac",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -379,16 +379,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131091/2024/settlement/expenditure/elderly-medical-expenditure-nodes.parquet",
-          "sha256": "3a0839faf6bbd5d3803ad34c74296dd09ed23862c7ea7d3eb87132977f8b6bf4",
-          "bytes": 6742
+          "sha256": "2617abbc15aec5b4e6a6e2ec6276332cf730dd3d1e6cb613cdf3d1bcc01b25e1",
+          "bytes": 6808
         },
         "row_count": 90
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131091/2024/settlement/expenditure/elderly-medical-expenditure-amounts.parquet",
-          "sha256": "9e92517a574eabd924c247669d30e3c70895d38d00d4e893ee749c286cebaccb",
-          "bytes": 7459
+          "sha256": "da729f35cf4b28df861e6f52e7d59926256adfc65bceb5fe1da49de808132ac5",
+          "bytes": 7527
         },
         "row_count": 312
       }
