@@ -352,7 +352,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "7e0bf30c5fbefe0bf165238c9cce94d287660f2f5e26a845b018f7d1d7651fae",
+      "input_fingerprint": "553be1e9ea887d6acd68245fd27e769095716444cedb404d6fb789b60e84f496",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -381,7 +381,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "333a853f33581c2e523b201e701bedd3121218ab461108aa6d47d1b802d60393",
+      "input_fingerprint": "90f234e2a4ecaee4cf1f059e30539a73b57d88882b58bfac0b33489c24bc5098",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -410,7 +410,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "d2200bcb5bdf844977489d96f8ea4d29a23b652e55d53aec712179d7926da535",
+      "input_fingerprint": "e879352e7421eab41ad3a4dd6fddeb69fdbada5f989dfd63a6ad049302df5416",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -439,7 +439,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "81a228451ceea174fbf4e4a5e25175054871756cb74730b91bc3489399f9bd20",
+      "input_fingerprint": "ebef692e18ee5ebbd7870ddc36ac16f81fd78aac54884ed891c3e4561dc4f131",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",

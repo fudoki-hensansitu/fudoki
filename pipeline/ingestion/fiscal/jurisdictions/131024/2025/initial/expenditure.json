@@ -559,7 +559,7 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "66ae60c022fb9efad05680f97d2686d5f76328e3be71d097aa1b16bb4c659988",
+      "input_fingerprint": "8f93c7619d64c42b21720b023738acb644eeb47dff7bece7d44df7a09ff51250",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -589,7 +589,7 @@
     {
       "table_id": "general-initial-2",
       "conversion_id": "general-initial-2",
-      "input_fingerprint": "84e7779e666e114447022511b7cb4d3e1c105f8709ea91eb88ff71159ff44fe7",
+      "input_fingerprint": "9428ce57765f3708b3f44df2425b994e97e44c9cee1a175b59da6e5f07aa037f",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -619,7 +619,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "b4b040703d94efb55eb1f84eb01dd196e6b637e1f9b2b7f24f6f3d6446b108e0",
+      "input_fingerprint": "8312fe3475dfa8e1173dfac52e2d3e48fee30202072bbca0cb4518dca7e6480f",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -650,7 +650,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "d2662351f663872dc26bb88499ff87a96a2b2f84de64ebced75257b6d802e8e8",
+      "input_fingerprint": "93a43122b3f3b9ccf52f443380b8071a5601bc102b5203e8b0b28ab15bf8b494",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -681,7 +681,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "227419961431c85a4691464845c7ed5815cda7b2fd5474ca7e455da91fe8b335",
+      "input_fingerprint": "8b8fe647ba04e5c15a9140d3fca083dd3ee49a01b4325a4446ba4757d7a1e63e",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
