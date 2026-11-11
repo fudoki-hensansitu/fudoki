@@ -192,6 +192,10 @@
               "const": true,
               "description": "Cut a name box taller than the page's usual line (two printed lines the detector boxed as one) at the blank rows between its lines and read each line alone. For a scan whose wrapped names sit almost touching; omission leaves the observation as the engine read it."
             },
+            "dashed_rules": {
+              "const": true,
+              "description": "The scan draws vertical dashed rules (調布市, between the levels of the 款・項・目 codes). Their dashes are not missed ink and are whitened where missed ink is read again, so the digit beside them is read alone."
+            },
             "rule_steps": {
               "const": true,
               "description": "A skewed low-resolution scan breaks its rules into stair steps too short to count as rules. Marks that lie along a detected rule and are thinner than a digit are not missed ink."

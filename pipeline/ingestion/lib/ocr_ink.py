@@ -30,13 +30,16 @@ def _strip_runs(dark: np.ndarray, minimum: int) -> np.ndarray:
     return out
 
 
-def missed_ink(dark: np.ndarray, scale: float, boxes: Sequence[Sequence[float]]) -> list[tuple[float, ...]]:
+def missed_ink(dark: np.ndarray, scale: float, boxes: Sequence[Sequence[float]],
+               ignored: np.ndarray | None = None) -> list[tuple[float, ...]]:
     """Marks on the page that no OCR box covers and that are not rules, in displayed-page points.
 
     ``dark`` is a thresholded render, ``scale`` points per pixel. OCR drops a lone 0, a
     bare 一, single kanji of letter-spaced names and sometimes whole lines; all leave ink here.
     """
     ink = _strip_runs(dark, int(RULE_RUN_PT / scale))
+    if ignored is not None:  # (after the rules: a rule crossing a dashed rule is still one run)
+        ink &= ~ignored
     for x0, y0, x1, y1 in boxes:
         ink[max(0, int((y0 - BOX_PAD_PT) / scale)):int((y1 + BOX_PAD_PT) / scale) + 1,
             max(0, int((x0 - BOX_PAD_PT) / scale)):int((x1 + BOX_PAD_PT) / scale) + 1] = False

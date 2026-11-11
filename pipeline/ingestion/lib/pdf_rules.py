@@ -88,13 +88,35 @@ def _merge(runs: list[tuple[int, int, int]], scale: float) -> tuple[Rule, ...]:
     return tuple(sorted(rules, key=lambda rule: (rule.position, rule.start)))
 
 
+def _chained(rules: tuple[Rule, ...], minimum: float, drift: float = 1.5, gap: float = 3.0) -> tuple[Rule, ...]:
+    """Pieces of one skewed stroke joined end to end (each piece a little above or below the one before it), and of
+    them the strokes at least `minimum` long."""
+    chains: list[list[Rule]] = []
+    for rule in sorted(rules, key=lambda r: (r.start, r.position)):
+        chain = next((c for c in chains if abs(c[-1].position - rule.position) <= drift
+                      and -gap <= rule.start - c[-1].end <= gap), None)
+        if chain is None:
+            chains.append([rule])
+        else:
+            chain.append(rule)
+    joined = [Rule(round(sum(r.position * (r.end - r.start) for r in c) / max(sum(r.end - r.start for r in c), 1e-9), 1),
+                   c[0].start, c[-1].end, max(r.thickness for r in c)) for c in chains]
+    return tuple(sorted((r for r in joined if r.end - r.start >= minimum), key=lambda rule: (rule.position, rule.start)))
+
+
 def detect(pdf: Path, page: int, *, dpi: int = DPI, vertical_fraction: float = 0.05,
-           horizontal_fraction: float = 0.2, dark: int = DARK) -> PageRules:
-    """`dark` is the gray level below which a pixel is ink; a scan that prints its rules pale declares a higher one."""
+           horizontal_fraction: float = 0.2, dark: int = DARK, skewed: bool = False) -> PageRules:
+    """`dark` is the gray level below which a pixel is ink; a scan that prints its rules pale declares a higher one.
+    `skewed`: a scan set a little off level breaks each long horizontal rule into pieces a pixel row apart; the pieces
+    (each at least a quarter of the usual length) are joined end to end before the length is checked."""
     image = render(pdf, page, dpi)
     dark = image < dark
     scale = 72 / dpi
     height, width = dark.shape
+    if skewed:
+        horizontal = _chained(_merge(_runs(dark.T, int(width * horizontal_fraction / 4)), scale),
+                              width * horizontal_fraction * scale)
+    else:
+        horizontal = _merge(_runs(dark.T, int(width * horizontal_fraction)), scale)
     return PageRules(page, round(width * scale, 1), round(height * scale, 1),
-                     _merge(_runs(dark, int(height * vertical_fraction)), scale),
-                     _merge(_runs(dark.T, int(width * horizontal_fraction)), scale))
+                     _merge(_runs(dark, int(height * vertical_fraction)), scale), horizontal)

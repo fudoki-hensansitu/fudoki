@@ -8,6 +8,48 @@
   "direction": "expenditure",
   "conversions": [
     {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "63a45786c7303078684765076b4b002a48163a73e5ac3ef2eb5cbb8feaa2ee2b"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
       "id": "long-term-care-initial",
       "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
@@ -88,13 +130,42 @@
   ],
   "tables": [
     {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "1d4f06adbc1087e363db79cd133f6996e6ea22a9444d08701f6d24ca0b269b09",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 106頁 から決めた。款の和 9,108,200 と印字の「計」9,108,200 が一致。",
+        "金額の注記 1 件（充用 1）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "fbc99dc4a6bf7bfb76d496430b669cb55ce1a43e23875c2c27160beae10be6cb",
+          "bytes": 73133
+        },
+        "row_count": 2983
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "f615138dc3d1ae5f0296b23591bae263e50cace1351c677d72b0d53a548c767b",
+          "bytes": 62817
+        },
+        "row_count": 3616
+      }
+    },
+    {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "ff758ff489c9d0e254b41f20539ecb14c66bda608daaffd0bf67e25e1c9b8f4b",
+      "input_fingerprint": "339ec4a6b451f4e33f4a81d92b6aeb464fcad5926c5b9ede3a8bf8bf3fd3f2ca",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 11頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 11頁 から決めた。款の和 1,066,435 と印字の「計」1,066,435 が一致。",
         "金額の注記 1 件（充用 1）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -119,11 +190,11 @@
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "08c8b93a87fed5cd07450ebb3aad824825983f95960076b59e060e19d5785072",
+      "input_fingerprint": "589299dccd1aae5c5f0f91c46dfc835e35920d0b3e8fcd8929cd78c1342bfc85",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 9頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 9頁 から決めた。款の和 1,089,356 と印字の「計」1,089,356 が一致。",
         "金額の注記 1 件（充用 1）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,

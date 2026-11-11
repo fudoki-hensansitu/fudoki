@@ -11,6 +11,12 @@ def slack(line) -> float:
     return max(3, (line[0].y1 - line[0].y0) / 2 + .5)
 
 
+def parts_slack(line) -> float:
+    """Where the parts' numbers start. A digit is about .6 of the line height wide (`7 報償費` 899.7 under `10 需用費`
+    894.6 at a 9pt height)."""
+    return max(3, (line[0].y1 - line[0].y0) * .6 + .5)
+
+
 def overflows(previous, label, money, code, bracketed: bool, limit: float | None, left_slack: float) -> bool:
     """The bracketed line would have run past the right limit of the column on the line of the numbered name above."""
     return (previous is not None and code is None and bool(label) and bool(money) and bracketed

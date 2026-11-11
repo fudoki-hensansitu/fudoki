@@ -38,6 +38,7 @@ BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 # A reading in katakana printed in brackets right after a number (`73（ナナサン）`): the number is part of a name.
 READING = re.compile(r'[(（][ァ-ヶー]+[)）]')
 BRACKET_PAIRS = {')': '(', ']': '['}  # the closing and opening brackets of a bracketed amount
+BRACKETS = {'(', ')', '（', '）'}  # a stacked amount's brackets printed as words of their own (`(` `1,110,941` `)`)
 CODE_LED = re.compile(r'^[0-9０-９]{1,4}[^0-9０-９,，.．]')  # a code joined to its name (`1商`)
 TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|予備費[よか]り|第[0-9０-９]+節[へか]|^第[0-9０-９]+[款項目節]|^[○〇●]?同[款項目])')
 # The words that end a transfer remark begun on the line above (`…費` / `から流用 13,281,000円`).
@@ -102,6 +103,8 @@ class Item:
     title_depth: int = 1  # the depth of a title (level -1): 1 for a 款, 2 for a 項 (`Logical.level_titles`)
     unnumbered_shift: int = 0  # levels an unnumbered line sits below its indent (the quirk `unnumbered_shift`)
     kinds: list[tuple[list[Glyph], list[Glyph], str]] = field(default_factory=list)  # (label, amount run, heading) of kind lines
+    shift: float = 0.0  # how far right of the axis's usual column edge the item's column stands (`column_edge`)
+    sums: bool = False  # a heading over the items after it at its own level, up to their sum (`group_heads`)
 
     @property
     def glyphs(self) -> list[Glyph]:
@@ -326,17 +329,30 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
             if run and is_amount(text(run)) and number(text(run)) is not None:
                 return [g for part in parts[:-1] for g in part], [run]
         # OCR left the opening bracket unread (`負担金補助及び交付金` `48,005,970)`), or read it as a letter
-        # (`C21,368,656)`): a grouped amount closed by the bracket is the bracketed amount all the same.
+        # (`C21,368,656)`, `一887)` 国分寺市): a grouped amount closed by the bracket is the bracketed amount all the same.
         take = 2 if len(parts) > 2 and normalize(text(parts[-1])) == closing else 1  # `48,005,970` `)`
         last = [g for part in parts[-take:] for g in part] if len(parts) > take else []
-        unopened = re.fullmatch(r'([CcＣ]?)([△▲]?[0-9]{1,3}(?:,[0-9]{3})+)[)\]）］]', normalize(text(last)))
+        unopened = re.fullmatch(r'([CcＣ一]?)([△▲]?[0-9]{1,3}(?:,[0-9]{3})+)[)\]）］]', normalize(text(last)))
         if unopened and BRACKET_PAIRS[closing] not in normalize(text(line)):
             tail = _cut(last, len(unopened.group(1)))[1]  # the letter OCR read for the bracket is no name
             tail = _cut(tail, len(unopened.group(2)))[0]  # the closing bracket is no digit
             if number(normalize(text(tail))) is not None:
-                return [g for part in parts[:-take] for g in part], [tail]
-        # The bracket printed flush against a long name, inside one of Poppler's words (`…課）(1,04` `7,226)`).
+                head = [g for part in parts[:-take] for g in part]
+                if head and head[-1].text == '一' and not unopened.group(1):
+                    head = head[:-1]  # the opening bracket OCR read as a word of its own `一` (国分寺市)
+                return head, [tail]
+        # OCR left the opening bracket unread and joined the amount to the name (`使用料及び賃借料338)`,
+        # `職員手当等C863)`): a closing bracket with no opening one closes the amount at the end of the name.
         glyphs = [g for part in parts for g in part]
+        shown = normalize(text(glyphs))
+        glued = re.fullmatch(r'(.*[^0-9,△▲CcＣ一])([CcＣ一]?)([△▲]?[0-9]{1,3}(?:,[0-9]{3})*)[)）]', text(glyphs))
+        if glued and shown.count('(') < shown.count(')'):
+            head, tail = _cut(glyphs, len(glued.group(1)))
+            tail = _cut(tail, len(glued.group(2)))[1]
+            tail = _cut(tail, len(glued.group(3)))[0]
+            if head and number(normalize(text(tail))) is not None:
+                return head, [tail]
+        # The bracket printed flush against a long name, inside one of Poppler's words (`…課）(1,04` `7,226)`).
         flush = re.match(r'^(.*[^(\[（［])([(\[（［][△▲]?[0-9]{1,3}(?:,[0-9]{3})*[)\]）］])$', text(glyphs))
         if flush:
             head, tail = _cut(glyphs, len(flush.group(1)))
@@ -359,6 +375,9 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
         parts.pop()
     money = []
     while parts and is_amount(text(parts[-1])) and len(parts) > 1:
+        if (not money and text(parts[-2])[-1:] in '・·･' and re.fullmatch(r'[0-9]{1,2}', normalize(text(parts[-1])))
+                and parts[-1][0].x0 - parts[-2][-1].x1 < parts[-1][0].y1 - parts[-1][0].y0):
+            break  # the last of a list cut by the line's end (`使用料（1・2・3` `月）`): no amount
         money.insert(0, parts.pop())
     # Full-width digits without a comma before a half-width grouped amount are part of the name (`…東京２０２４ 1,619,271`).
     while len(money) > 1 and WIDE_DIGITS.fullmatch(text(money[0])) and GROUPED.fullmatch(normalize(text(money[-1]))) \
@@ -544,6 +563,13 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             code = None  # a lone number left of an amount is not a code
         if code is not None and re.match(r'[0-9]{1,3}(?:,[0-9]{3})+', line_text):
             code, name = None, line_text  # `66,000)`: the end of a bracketed amount (`(翌年度へ繰越明許費`), not an item `66`
+        if (code is not None and entries and not entries[-1][1] and entries[-1][0]
+                and re.fullmatch(r'([(（]?)[0-9]+[^0-9(（)）]{1,3}[)）]', line_text)):
+            before = normalize(text(entries[-1][0]))
+            if line_text[0] in '(（' or before.count('(') > before.count(')'):
+                # A count in brackets under a name without an amount ends that name (`…任用職員報酬(` / `1人) 1,301`,
+                # `…任用職員報酬` / `(1人) 764`): no item `1`.
+                code, name = None, line_text
         entries.append((label, money, code, name))
     return entries
 
@@ -682,6 +708,13 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                     entries[index] = (label, money, digits[:cut], raw[cut:])
                     code = digits[:cut]
                     break
+        if (code is not None and label and (re.match(r'[0-9]+市(?![民長立役議内外政営有史街場道域制況販部])', normalize(label[0].text))
+                                                    or re.match(r'[0-9]+[×✕]', raw))
+                and (previous_code is None or int(code) != previous_code + 1)):
+            # `5市共同事業実行委員会負担金` among names without numbers: a count of cities, not item `5` (an item
+            # `5市町村総合体育大会…` follows item `4` at its margin). So is the size in `3×3バスケットボール`.
+            entries[index] = (label, money, None, raw)
+            code = None
         # Where the number before it is on another page or in another cell, the quirk says where the number ends.
         if glued is not None and (held := glued.module.number(raw, glued.value)) is not None:
             entries[index] = (label, money, held, raw[len(held):])
@@ -884,9 +917,23 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         result.append(item)
     if (starts := quirk(settings, 'line_starts')) is not None:
         starts.module.shift(result, starts.value)
+    if (heads := quirk(settings, 'group_heads')) is not None:
+        heads.module.mark(result, heads.value)
     if (ink := quirk(settings, 'opening_bracket_ink')) is not None:
         ink.module.shift(result)
     return result
+
+
+def same_line_after(previous: Item, item: Item) -> bool:
+    """Whether the item begins on the line of the one before, right after its end: OCR boxed the last character of a
+    letter-spaced name (`委 員 旅 費`) a few points off the line of the others, and the lines split there."""
+    if len(previous.lines) != 1 or not item.lines or not item.lines[0]:
+        return False
+    before, first = previous.lines[0], item.lines[0][0]
+    height = max(g.y1 - g.y0 for g in before)
+    overlap = min(first.y1, max(g.y1 for g in before)) - max(first.y0, min(g.y0 for g in before))
+    gap = first.x0 - max(g.x1 for g in before)
+    return overlap >= (first.y1 - first.y0) / 2 and -1 <= gap <= height
 
 
 def closes_parts(entries: list[tuple], index: int, previous: Item, right_aligned=None) -> bool:
@@ -905,14 +952,15 @@ def closes_parts(entries: list[tuple], index: int, previous: Item, right_aligned
         if label[0].x0 <= start + 3 and (code is not None or not money):
             break
         if code is not None and money:
-            value = number(normalize(text(money[0])))
+            # A part may print its amount in brackets (`3 職員手当等 (3,549)`, the 節 over its own breakdown).
+            value = number(normalize(text(money[0])).removeprefix('(').removesuffix(')'))
             if value is not None:
                 parts.append((label[0].x0, value))
     if not parts:
         return False
     margin = min(x for x, _ in parts)
     # Right-aligned numbers (the quirk `bracketed_remainder`): a one-digit number starts half a character right of a two-digit one.
-    slack = right_aligned.module.slack(previous.lines[0]) if right_aligned is not None else 3
+    slack = right_aligned.module.parts_slack(previous.lines[0]) if right_aligned is not None else 3
     return sum(v for x, v in parts if x <= margin + slack) == amount
 
 
@@ -1521,19 +1569,25 @@ def closing_department_headings(ordered: list[Item], layout: dict | None = None)
             if other.group.subject and not other.amounts and other.page != item.page:
                 # The subject printed again at the top of the next page (`(1 保健衛生費)`): the parts run on. A new
                 # subject there (its amounts may sit in a column not yet joined to it) ends them.
-                open_one = next((s for s in reversed(ordered[:position])
-                                 if s.group.subject and s.level == other.level), None)
+                open_one = next((s for s in reversed(ordered[:position]) if s.group.subject and s.level == other.level
+                                 and s.title_depth == other.title_depth), None)  # a 款 title and a 項 title are both level -1
                 if open_one is not None and repeats(open_one, other, ocr=True):
                     continue
                 break
-            if other.group.subject or other.group.axis != item.group.axis:
+            if other.group.subject:
                 break
+            if other.group.axis != item.group.axis:
+                continue  # another column of the spread (the 節 beside the 説明): no part, and no end of the parts
             start = lambda it: it.lines[0][0].x0  # where the line starts, its number included
-            if start(other) < start(item) - 3:
+            # A scan boxes the bracket a little right of the print (`(施設建設課)` 751.1 over `旅費` 747.7): within
+            # half the line's height, well short of the next level's indent.
+            line = item.lines[0][0]
+            slack = max(3, (line.y1 - line.y0) / 2)
+            if start(other) < start(item) - slack:
                 break
             if department_heading(other, layout):
                 break
-            if abs(start(other) - start(item)) <= 3 and other.role in ('node', 'note') and other.amounts:
+            if abs(start(other) - start(item)) <= slack and other.role in ('node', 'note') and other.amounts:
                 parts.append(other)
         first = lambda it: number(normalize(text(it.amounts[0][1]))) or 0
         if parts and sum(first(p) for p in parts) == first(item):
@@ -1569,6 +1623,11 @@ def layout_name_start(item: Item, hang_chars: int | None = None) -> float:
             return glyph.x0 + (glyph.y1 - glyph.y0) * sum(.5 if c.isascii() else 1 for c in prefix)
         remaining -= len(glyph.text)
     return item.indent
+
+
+def _value(item: Item) -> int | None:
+    """The item's first amount as a number, its brackets taken off."""
+    return number(normalize(text(item.amounts[0][1])).strip('()（）')) if item.amounts else None
 
 
 def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int],
@@ -1634,12 +1693,26 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             previous.name += item.name
             previous.lines += item.lines
             continue
+        if (previous and item.code is None and previous.code is None and mark is None and not note and item.role == 'note'
+                and not item.amounts and previous.role == 'node' and item.page == previous.page
+                and same_line_after(item, previous)):
+            # The last character of a letter-spaced name boxed a little higher than the others (`費` 689.6 over
+            # `委` `員` `旅` 692.3) was read first: the others begin its line.
+            previous.lines[0] = item.lines[0] + previous.lines[0]
+            previous.name = item.name + previous.name
+            previous.indent = item.indent
+            continue
+        # A bracket OCR boxes taller than the line (`(職員課)` 753.2–767.4 under a line ending at 754.9) sets the
+        # wrapped line a little into the one above.
         if (previous and not previous.amounts and id(previous) not in column_amount_items and item.code is None and mark is None and not note
                 and item.role in ('node', 'note') and previous.role in ('node', 'note', 'annotation')
                 and (settings.get('wrap') == 'amount_on_last_line' or normalize(text(previous.lines[0])).startswith(prefixes))
-                and item.page == previous.page and abs(item.indent - previous.indent) <= 3
+                and item.page == previous.page
                 and bisect_right(subject_starts, previous.anchor) == bisect_right(subject_starts, item.anchor)
-                and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
+                and ((abs(item.indent - previous.indent) <= 3 + float(settings.get('name_start_slack', 0))
+                      and -.2 * max(g.y1 - g.y0 for g in item.glyphs) <= item.y0 - previous.y1
+                      <= max(g.y1 - g.y0 for g in item.glyphs))
+                     or same_line_after(previous, item))):
             if previous.role == 'annotation' and id(item) in column_amount_items:
                 raise ValueError(f'Configured note carries separate-column money: p{item.page} {item.name!r}')
             if item.role == 'node' and previous.role == 'note':
@@ -1741,6 +1814,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         text_taught = (margins, edges, limits)
     skipped: list[Logical] = []
     open_headings: dict[str, tuple[int, float]] = {}  # per axis: the depth and line start of the open department heading
+    summing: dict[str, list] = {}  # per axis: the depth, amount and items' sum so far of the open declared heading
     for logical in logicals:
         if scanned:
             margins, edges, limits = (scan_margins, scan_edges, scan_limits) if logical.ocr else text_taught
@@ -1793,13 +1867,19 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     item.role = 'annotation'  # An amount note or a transfer's account code, no item of the breakdown.
             found[id(group)] = group_items
         subject = next((g for g in ordered if g.subject), None)
-        if subject is not None and untitled(subject) and logical.level_titles is not None:
+        if subject is not None and (untitled(subject) or getattr(logical, 'opening', False)) and logical.level_titles is not None:
             # Tables stacked on the page, each under its 款・項 titles: the titles are the 款・項 items, in order.
+            before = None
             for level_name, code, name, line, amount in logical.level_titles:
                 title = Item(subject, line[0].page, [line], code, name, line[0].x0, level=-1, level_name=level_name,
                              title_depth=SUBJECT_LEVELS.index(level_name) + 1)
                 if amount is not None:
                     title.amounts.append(amount)
+                if (before is not None and before.page == title.page and title.title_depth > before.title_depth
+                        and abs(title.anchor - before.anchor) < (line[0].y1 - line[0].y0) / 2):
+                    # `2款 総務費 1項 総務管理費` on one line: the 項 follows its 款 whichever OCR boxed a little higher.
+                    title.fixed_anchor = before.anchor + .01
+                before = title
                 found[id(subject)].append(title)
             found[id(subject)].sort(key=lambda i: i.anchor)
         elif subject is not None and untitled(subject):
@@ -1991,6 +2071,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 item.level = floor(steps + .4)
     if pattern == "indent":
         subject_pattern.learn_levels(all_items, quirk(document, 'codeless_name_levels'))
+    for axis, hints in (layout or {}).items():
+        if (edge := quirk(hints, 'column_edge')) is not None:
+            edge.module.shift(all_items, axis)
     # Indentation levels per non-subject axis, learned over the document.
     indents, printed = level_indents(all_items, mixed_document(logicals))
     for axis, values in indents.items():
@@ -2178,6 +2261,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 stack.append(item)
                 branch.clear()
                 open_headings.clear()
+                summing.clear()
                 row = (item, *subject_row(item, logical))
             else:
                 ranks = levels[item.group.axis]
@@ -2195,12 +2279,26 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 elif item.unnumbered_shift:
                     depth = 1 + (min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 0) + item.unnumbered_shift
                 axis = item.group.axis
+                if item.sums and item.amounts:
+                    # A declared heading (`group_heads`): the items after it at its level are its, one level down,
+                    # until they add up to its amount; their own items go one level down with them.
+                    summing[axis] = [depth, _value(item), 0]
+                elif axis in summing:
+                    head_depth, total, running = summing[axis]
+                    if depth > head_depth:
+                        depth += 1
+                    elif depth == head_depth and running != total and _value(item) is not None:
+                        summing[axis][2] += _value(item)
+                        depth += 1
+                    else:
+                        del summing[axis]
                 if id(item) in closing_headings:
-                    open_headings[axis] = (depth, item.lines[0][0].x0)  # its parts follow one level down
+                    first = item.lines[0][0]  # its parts follow one level down, starting about where it does
+                    open_headings[axis] = (depth, first.x0 - max(3, (first.y1 - first.y0) / 2))
                 elif axis in open_headings:
                     heading_depth, heading_start = open_headings[axis]
                     if (depth < heading_depth or department_heading(item, layout)
-                            or item.lines[0][0].x0 < heading_start - 3):
+                            or item.lines[0][0].x0 < heading_start):
                         # shallower than the heading, another department, or printed left of the heading
                         # (`3 個人番号カード交付事務経費` after `(前年度繰越明許費)`): its parts have ended
                         del open_headings[axis]
@@ -2250,10 +2348,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 unpaid = False  # no amount has followed that kind word yet
                 waiting = None  # (heading, y) of a kind word alone on its line in an inline-kind band
                 previous = None  # (item, rule-bounded cell) of the last amount this column gave to an item
+                stacked_lines = Counter()  # amounts a column of stacked lines (`band.lines`) gave to each item
+                words_ = [g for g in band.words if not (band.lines and g.text in BRACKETS)]
                 history = histories.pop('／'.join(band.header), None)  # [item, label lines, a round waiting] of a `補正経過`
                 if history is not None:
                     revisions.append([history[0], band.body_top, band.body_top, band.words[0].page if band.words else logical.pages[0], history[1][-1] if history[1] else []])
-                for line in lines(_signed_amounts(band.words)):
+                for line in lines(_signed_amounts(words_)):
                     whole = normalize(text(line))
                     block = next((b for b in revisions if b[3] == money_page(line) and b[1] - 1 <= line_middle(line) <= b[2] + 1), None)
                     if revision is not None and revision.module.opens(whole) and previous is not None:
@@ -2337,6 +2437,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                         for g in ordered if g.subject for i in found[id(g)])):
                         # The amounts row of the item that ends the page before opens this page.
                         target = waiting_subject
+                    if (target is None and band.lines and previous is not None
+                            and stacked_lines[previous[0].key] < len(band.lines)
+                            and previous[1] == _cell(band, sum((g.y0 + g.y1) / 2 for g in money) / len(money))):
+                        # A stacked line below the item's name (`(36,524)` under a 目 named on one line): the
+                        # cell's item, while it has a heading left.
+                        target = previous[0]
                     if target is None and stacked is not None and previous is not None:
                         # `事故繰越` / `19,968,000` printed two lines below its 節 under `31,321,000`: the amount
                         # under a kind word, in the same cell as the amount above it, belongs to that amount's item.
@@ -2389,6 +2495,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                             'header': header})
                             continue
                         header = '／'.join((band.header if band.inline_free else band.header[:-1]) + (kind,))
+                    if band.lines:
+                        index = stacked_lines[target.key]
+                        stacked_lines[target.key] += 1
+                        if index >= len(band.lines):
+                            unowned.append({'kind': 'amount past the stacked lines', 'page': money[0].page,
+                                            'text': candidate, 'header': header})
+                            continue
+                        header = '／'.join(band.header[:-1] + (band.lines[index],))
                     y = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
                     if unpaid and stacked[1] != _cell(band, y) and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
                         unpaid_rounds.extend(stacked_label)  # the cell ended without an amount for it

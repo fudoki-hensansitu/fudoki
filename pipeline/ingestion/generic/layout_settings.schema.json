@@ -13,6 +13,7 @@
       "additionalProperties": false,
       "properties": {
         "dark": {"type": "integer", "minimum": 129, "maximum": 255},
+        "skewed": {"const": true, "description": "A scan set a little off level breaks each long horizontal rule into pieces a pixel row apart (国分寺市): the pieces are joined end to end before a rule's length is checked, and the words of one printed line are grouped with a wider tolerance (a line's amount at the right end sits up to 2.5pt above its name at the left)."},
         "row_gaps": {"const": true, "description": "A vertical rule the page leaves out for a row lets the row's text run on into the next column (133086's 事業 names): an OCR line is cut only at the rules drawn across its middle."},
         "short_columns": {"const": true, "description": "A column rule drawn only over one short row (shorter than the page-wide detector keeps) is still a rule: a short vertical stroke joining two horizontal rules at the place of a vertical rule the page draws elsewhere closes the cell, as in a staircase (131199's 目 rows between 事務事業 blocks)."},
         "row_columns": {"const": true, "description": "A narrow stroke that runs the whole height between two horizontal rules is a column rule even where the page draws no rule at that place elsewhere (131164's 財源 columns under 説明, drawn only over a 目's row in the middle of a page)."}
@@ -43,6 +44,7 @@
           "axis_header": {"type": "string", "minLength": 1},
           "inline": {"type": "boolean"},
           "heading": {"type": "string", "minLength": 1},
+          "lines": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}, "description": "One cell stacks the item's amounts a line each, the later ones in brackets (国分寺市: `1,147,465` / `(1,110,941)` / `(36,524)` under `本年度 (前年度) (比較)`): the heading of each line, top to bottom."},
           "excluded": {
             "type": "object",
             "additionalProperties": false,
@@ -74,6 +76,9 @@
         "merged_cells": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "Header cells (`説明`) whose columns are ruled only in some rows: in a row their rules leave out, one cell runs across them and its words are read as one column under the header cell."},
         "agree_all_frames": {"const": true, "description": "Scan: every frame of a spread (not only the widest) takes the header reading most pages share, frame by frame from the left."},
         "kind_by_characters": {"const": true, "description": "A stacked kind under its group whose two printed lines the text layer or OCR read across (翌年度繰越額／継逓繰続費次越) is the known kind its characters spell, not the group (headers.canonical)."},
+        "facing_pages": {"const": true, "description": "The layout pattern `running_titles`: a page without a subject column is the right half of the spread opened by the page before it with one, whatever horizontal rules each prints (東久留米市: the left page rules each 目, the right page each line of the 説明)."},
+        "opening": {"type": "array", "minItems": 1, "description": "The layout pattern `running_titles` with `carried_names`: a volume that begins inside a 目 repeats it first (`15515(高齢者福祉費)`); the 款・項・目 its codes are, with the names the volume before prints, open the volume as titles.", "items": {"type": "object", "additionalProperties": false, "required": ["level", "code", "name"], "properties": {"level": {"enum": ["款", "項", "目"]}, "code": {"type": "string", "pattern": "^[0-9]+$"}, "name": {"type": "string", "minLength": 1}}}},
+        "carried_names": {"const": true, "description": "The layout pattern `running_titles`: the first line of a page's subject column that only repeats the open 目, its codes and its name in brackets with no amount in its row (`10 5 40 (企画調整費)`, 調布市), opens no item."},
         "title_amount": {"type": "string", "minLength": 1, "description": "The heading of the amount a 款・項 title prints with no heading over it (`1款 総務費 24,930,655千円`, the layout pattern `stacked_titles`)."}
       }
     },
