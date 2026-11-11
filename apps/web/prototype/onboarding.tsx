@@ -5,6 +5,7 @@ import * as React from 'react'
 import { ArrowRightIcon, HouseIcon, MagnifyingGlassIcon, NavigationArrowIcon, XIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { cn } from '@/lib/utils'
+import { Logo } from '../nav/site-nav'
 import { Picker as TownPicker } from '../home/home'
 import { LocateError, locateMunicipality } from '../home/locate'
 import type { MapEntry } from '../jurisdiction/index-table'
@@ -149,6 +150,8 @@ export function Empty({ entries, onPick, sample, sampleName }: { entries: MapEnt
   return (
     <>
       <header className="ob-rise mb-6">
+        {/* スマホはサイドバーが無くロゴが見えないので、見出しの上に出す。PC はサイドバーの頭にある */}
+        <Logo className="mb-5 block h-7 w-auto text-primary md:hidden" />
         <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">まちのお金、何に使ってる？</h1>
         <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
       </header>

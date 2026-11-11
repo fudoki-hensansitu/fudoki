@@ -44,7 +44,7 @@ const DOCS = 'https://docs.fudoki.dev'
 /** 開閉の状態を残す cookie（shadcn の SidebarProvider が書く名前） */
 export const SIDEBAR_COOKIE = 'sidebar_state'
 
-const Logo = ({ className }: { className?: string }) => (
+export const Logo = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
 )
 
