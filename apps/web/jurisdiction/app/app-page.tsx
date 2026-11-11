@@ -33,6 +33,7 @@ import {
   StudentIcon,
   TreeStructureIcon,
   UsersIcon,
+  WalletIcon,
   XIcon,
   type Icon,
 } from '@phosphor-icons/react'
@@ -859,7 +860,7 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
 const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'overview', label: 'まとめ', icon: SquaresFourIcon },
   { key: 'projects', label: '事業', icon: ListBulletsIcon },
-  { key: 'money', label: '予算', icon: TreeStructureIcon },
+  { key: 'money', label: '予算', icon: WalletIcon },
   { key: 'settled', label: '決算', icon: ReceiptIcon },
 ]
 
