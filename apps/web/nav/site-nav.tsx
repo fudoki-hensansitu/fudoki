@@ -22,12 +22,12 @@ import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, type Theme } from './theme'
-import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
+import { ArrowsLeftRightIcon, ListIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 
 // 試作のサイドバーは /prototype の下でだけ読む（ほかの頁に combobox などを載せない）
 const ProtoNavContent = React.lazy(() => import('../prototype/nav-content').then((m) => ({ default: m.ProtoNavContent })))
 
-export const NAV_SECTIONS = ['home', 'assistant', 'compare'] as const
+export const NAV_SECTIONS = ['home', 'assistant', 'compare', 'search'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 /** proto: 試作のサイドバー（/prototype の下だけ） */
 export type SiteNavProps = { active?: NavSection; open: boolean; theme: Theme; proto?: boolean }
@@ -195,14 +195,25 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
   )
 }
 
+/** 試作: 狭い画面で、サイドバー（機能・うちのまち）を下から開く */
+function MenuButton() {
+  const { setOpenMobile } = useSidebar()
+  return (
+    <button type="button" onClick={() => setOpenMobile(true)} className={BOTTOM_ITEM}>
+      <ListIcon />
+      メニュー
+    </button>
+  )
+}
+
 /** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。入らないものは「設定」にまとめる */
 function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void; proto?: boolean }) {
   const [hidden, setHidden] = useHideOnScroll()
   const items = proto
     ? [
         { href: '/prototype', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
+        { href: '/prototype/search', label: 'さがす', icon: <MagnifyingGlassIcon />, active: active === 'search' },
         { href: '/prototype/compare', label: '比べる', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
-        { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
       ]
     : [
         { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
@@ -218,7 +229,7 @@ function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; them
     >
       {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
       <Separator />
-      <ul className={cn('grid h-14', proto ? 'grid-cols-4' : 'grid-cols-3')}>
+      <ul className={cn('grid h-14', proto ? 'grid-cols-5' : 'grid-cols-3')}>
         {items.map((i) => (
           <li key={i.href}>
             <NavLink
@@ -231,6 +242,11 @@ function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; them
             </NavLink>
           </li>
         ))}
+        {proto ? (
+          <li>
+            <MenuButton />
+          </li>
+        ) : null}
         <li>
           <SettingsMenu theme={theme} onPick={onPick} className={BOTTOM_ITEM} />
         </li>

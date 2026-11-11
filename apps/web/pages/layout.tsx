@@ -7,6 +7,7 @@ import { SiteNav, type NavSection } from '../nav/site-nav'
 const sectionOf = (path: string): NavSection | undefined => {
   if (path === '/' || path === '/prototype') return 'home'
   if (path.startsWith('/prototype/compare')) return 'compare'
+  if (path.startsWith('/prototype/search')) return 'search'
   if (path === '/assistant' || path.startsWith('/s/')) return 'assistant'
   return undefined
 }
