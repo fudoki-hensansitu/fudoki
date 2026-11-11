@@ -108,7 +108,14 @@
     },
     {
       "jurisdiction": "131181",
-      "layout": "arakawa_press"
+      "layout": "press_lines",
+      "rules": {
+        "item": "^\\(\\d+\\) ?(?P<name>.+?)(?: (?P<tag>新|充|レ))?(?: (?P<amount>[\\d,]+)千円)?$",
+        "amount_next": "^(?:(?P<tag>新|充|レ) )?(?P<amount>[\\d,]+)千円$",
+        "new": [
+          "新"
+        ]
+      }
     },
     {
       "jurisdiction": "131199",
@@ -120,7 +127,12 @@
     },
     {
       "jurisdiction": "131211",
-      "layout": "adachi_press"
+      "layout": "press_card",
+      "rules": {
+        "name": "^事業名:",
+        "amount": "^予算額$",
+        "strip": "^\\d(?=\\D)"
+      }
     },
     {
       "jurisdiction": "131229",
@@ -128,7 +140,18 @@
     },
     {
       "jurisdiction": "131237",
-      "layout": "edogawa_press"
+      "layout": "press_lines",
+      "rules": {
+        "item": "^\\d+\\.(?P<name>\\D.*)$",
+        "amount_next": "(?:^|】 ?)(?P<amount>[\\d,]+) ?\\(.*\\)$",
+        "lookahead": 3,
+        "join": true,
+        "tag": "\\((?P<tag>新規|拡充|充実|継続|見直し)\\)",
+        "strip": "【[^】]*】?",
+        "new": [
+          "新規"
+        ]
+      }
     },
     {
       "jurisdiction": "132012",
@@ -156,11 +179,26 @@
     },
     {
       "jurisdiction": "132071",
-      "layout": "akishima_press"
+      "layout": "press_table",
+      "rules": {
+        "columns": {
+          "name": "事業名",
+          "point": "事業内容",
+          "amount": "予算額"
+        },
+        "new_mark": "\\(新\\)"
+      }
     },
     {
       "jurisdiction": "132080",
-      "layout": "chofu_press"
+      "layout": "press_lines",
+      "rules": {
+        "previous": "^(?:№|No) ?\\d+ ",
+        "item": "^(?P<name>.+?)(?: (?P<tag>新規|拡充))? ?\\d+年度 (?:\\(※\\))?(?P<amount>[\\d, ]*\\d)$",
+        "new": [
+          "新規"
+        ]
+      }
     },
     {
       "jurisdiction": "132098",
@@ -168,7 +206,15 @@
     },
     {
       "jurisdiction": "132101",
-      "layout": "koganei_press"
+      "layout": "press_lines",
+      "rules": {
+        "start": "^\\d+ ?\\d* 主な事業$",
+        "end": "^\\d+ ?\\d* 財政用語",
+        "item": "^○ ?(?P<name>.+)$",
+        "amount_next": "事 ?業 ?費 (?P<amount>[\\d,]+)千円",
+        "lookahead": 1000,
+        "require_amount": false
+      }
     },
     {
       "jurisdiction": "132110",
@@ -188,7 +234,19 @@
     },
     {
       "jurisdiction": "132152",
-      "layout": "kunitachi_press"
+      "layout": "press_table",
+      "rules": {
+        "page": "^.{0,54}政策事業一覧",
+        "cid_digits": true,
+        "columns": {
+          "name": "個別事業名",
+          "tag": "分類",
+          "amount": "事業費"
+        },
+        "new": [
+          "新規"
+        ]
+      }
     },
     {
       "jurisdiction": "132195",
@@ -252,7 +310,17 @@
     },
     {
       "jurisdiction": "133817",
-      "layout": "miyake_press"
+      "layout": "press_table",
+      "rules": {
+        "columns": {
+          "point": "区分",
+          "name": "事業名",
+          "amount": "事業費"
+        },
+        "fill": [
+          "point"
+        ]
+      }
     }
   ]
 }

@@ -79,6 +79,7 @@ def press_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[d
                 url = stored.get('final_url') or next(
                     f['download_url'] for f in candidate['files'] if f['sha256'] == stored['sha256'])
                 out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': year, 'layout': entry['layout'],
+                            **({'rules': entry['rules']} if 'rules' in entry else {}),
                             'title': candidate['title'], 'landing_url': candidate['landing_url'], 'url': url,
                             'sha256': stored['sha256'], 'reference': {'key': stored['key'], 'sha256': stored['sha256']}})
     return out
@@ -88,19 +89,23 @@ def layout(name: str):
     return importlib.import_module(f'ingestion.project.layouts.{name}')
 
 
-def code_fingerprint(name: str) -> str:
-    """読み方のコードの指紋（様式のモジュールと、様式が共通に使う press.py）。コードを直したらキャッシュを読み直す。"""
+def code_fingerprint(name: str, rules: dict | None = None) -> str:
+    """読み方の指紋（様式のモジュール、様式が共通に使う press.py、宣言の rules）。読み方を直したらキャッシュを読み直す。"""
     digest = hashlib.sha256(Path(layout(name).__file__).read_bytes())
     digest.update((HERE / 'layouts' / 'press.py').read_bytes())
+    if rules is not None:
+        digest.update(json.dumps(rules, ensure_ascii=False, sort_keys=True).encode())
     return digest.hexdigest()[:16]
 
 
 def read_cached(path: Path, origin: dict) -> object:
     """PDF を宣言の様式で読む。結果は dataclass を dict にしたもの。"""
-    cache = READINGS / f'{origin["sha256"]}-{origin["layout"]}-{code_fingerprint(origin["layout"])}.json'
+    rules = origin.get('rules')
+    cache = READINGS / f'{origin["sha256"]}-{origin["layout"]}-{code_fingerprint(origin["layout"], rules)}.json'
     if cache.exists():
         return json.loads(cache.read_text(encoding='utf-8'))
-    result = layout(origin['layout']).read(path)
+    module = layout(origin['layout'])
+    result = module.read(path) if rules is None else module.read(path, rules)
     data = [dataclasses.asdict(r) for r in result] if isinstance(result, list) else dataclasses.asdict(result)
     cache.parent.mkdir(parents=True, exist_ok=True)
     cache.write_text(json.dumps(data, ensure_ascii=False), encoding='utf-8')
