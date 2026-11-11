@@ -2,7 +2,7 @@
 import './jurisdiction.css'
 import { Link } from '../nav/link'
 import { RequestTown } from '../nav/request-town'
-import type { JurisdictionProps } from '../server/pages'
+import type { JurisdictionProps } from '../pages/[prefecture]/_loader'
 import { AppPage } from './app/app-page'
 
 export function JurisdictionView(props: JurisdictionProps) {
