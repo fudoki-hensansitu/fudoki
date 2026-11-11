@@ -59,7 +59,7 @@ function TownCard({ t }: { t: TownHits }) {
           </li>
         ))}
       </ul>
-      <Link href={`${t.path}/${t.year}/settlement`} className="mt-2 inline-flex items-center gap-1 self-start text-[13px] text-primary hover:underline">
+      <Link href={t.code.slice(2, 5) === '000' ? t.path : `${t.path}/${t.year}/settlement`} className="mt-2 inline-flex items-center gap-1 self-start text-[13px] text-primary hover:underline">
         {t.name}の決算を見る <ArrowRightIcon className="size-3.5" />
       </Link>
     </section>
@@ -111,7 +111,7 @@ export function Search({ q, code, townName, towns, capped, failed }: Props) {
                 「{q}」が名前に入る内訳が <b className="text-foreground tabular-nums">{towns.length}</b> のまちにありました。
               </>
             )}
-            <span>まちごとに、決算がある新しい年度の分です。内訳は入れ子なので、金額は足していません。</span>
+            <span>まちごとに、当たる内訳がある新しい年度の分です。内訳は入れ子なので、金額は足していません。</span>
             {capped ? <span>広い言葉なので、金額の大きい内訳から年度ごとに {(5000).toLocaleString('ja-JP')} 件までを見ています。ほかにも当たるまちがあります。</span> : null}
           </p>
           {towns.length ? (

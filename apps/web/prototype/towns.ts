@@ -15,6 +15,7 @@ export const loadTowns = () =>
   (townsPromise ??= fetch('/api/prototype/towns')
     .then((r) => (r.ok ? (r.json() as Promise<MapEntry[]>) : Promise.reject(r)))
     .catch(() => {
+      // 失敗は覚えず、次に引くときにもう一度取りに行く
       townsPromise = null
       return [] as MapEntry[]
     }))
@@ -48,12 +49,15 @@ export function useMyTown() {
   const [recent, setRecent] = React.useState<Town[]>([])
   const [ready, setReady] = React.useState(false)
   React.useEffect(() => {
+    let alive = true
     const sync = () => {
       const t = read()
       const home = loadHomeCode()
       // 今のホームで選んだだけのまちは名前が手元に無いので、一覧から引く
       if (!t && home) {
         void loadTowns().then((list) => {
+          // 引いている間に外れた・別のまちに変わったときは捨てる
+          if (!alive || loadHomeCode() !== home) return
           const e = list.find((x) => x.code === home)
           if (e) setMyTown({ code: e.code, name: e.name, path: e.path })
           else setReady(true)
@@ -66,6 +70,7 @@ export function useMyTown() {
     window.addEventListener(EVENT, sync)
     window.addEventListener('storage', sync)
     return () => {
+      alive = false
       window.removeEventListener(EVENT, sync)
       window.removeEventListener('storage', sync)
     }

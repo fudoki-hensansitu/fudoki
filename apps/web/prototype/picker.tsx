@@ -10,6 +10,8 @@ export function Picker() {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement
       if (/^(INPUT|TEXTAREA|SELECT)$/.test(t.tagName) || t.isContentEditable) return
+      // ボタン・リンク・タブの上の矢印は、その部品の操作に任せる
+      if (e.key.startsWith('Arrow') && t.closest('button, a, [role="tab"]')) return
       if (e.metaKey || e.ctrlKey || e.altKey) return
       const num = parseInt(e.key, 10)
       if (num >= 1 && num <= names.length) select(num - 1)

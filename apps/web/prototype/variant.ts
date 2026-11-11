@@ -7,7 +7,15 @@ const EVENT = 'fudoki:proto-variant'
 
 const read = () => {
   const fromUrl = parseInt(new URLSearchParams(location.search).get('v') ?? '', 10)
-  if (fromUrl >= 1 && fromUrl <= VARIANTS.length) return fromUrl - 1
+  if (fromUrl >= 1 && fromUrl <= VARIANTS.length) {
+    // ?v= で開いた案を覚え、URL の無い頁へ移っても同じ案にする
+    try {
+      localStorage.setItem(KEY, String(fromUrl - 1))
+    } catch {
+      // 保存できなくても、この頁では URL の案を出す
+    }
+    return fromUrl - 1
+  }
   try {
     const saved = parseInt(localStorage.getItem(KEY) ?? '', 10)
     return saved >= 0 && saved < VARIANTS.length ? saved : 0
