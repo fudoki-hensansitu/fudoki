@@ -8,11 +8,14 @@ seeds:
       予算案のプレス発表の施策を、同じ年度の当初予算書の内訳（事業）の1行に紐付けた結果。**風土記の判断**。
       `bun run --cwd pipeline project:link-measures` が seed に無い施策だけを紐付けて足す（手順は
       .agents/skills/pipeline/references/link-to-budget-detail.md）。行がある施策は聞き直さない。
+      施策は出典（origin_id）・頁・頁の中の順で引く。当初予算書の内訳（事業）がまだ無い年度の施策は行を持たない。
     config:
       column_types:
         jurisdiction_code: varchar
         fiscal_year: integer
+        origin_id: varchar
         page: integer
+        position: integer
         detail_id: varchar
         method: varchar
         confidence: double

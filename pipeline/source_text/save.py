@@ -1,8 +1,8 @@
 """保存済みの出典 PDF から頁ごとの文字を抜き出し、非公開 R2 の `source-text/<sha256>.json` に置く。
 
 web のアシスタントが apps/api の内部 RPC（`SourcePages`）から、出典の1頁を読むために使う（docs/prd/source-reading/dd.md）。
-対象は出典の選定（`selections`・`evaluation_selections`）で R2 に保存済みの、文字の層がある PDF（`pdf_type: text`）と、
-事業の取り込みの宣言（`ingestion/project/origins.json` の `results`・`press`）の出典。
+対象は出典の選定（`selections`・`evaluation_selections`・`press_selections`）で R2 に保存済みの、文字の層がある PDF
+（`pdf_type: text`）と、事業の取り込みの宣言（`ingestion/project/origins.json` の `results`）の出典。
 既定は計画の表示だけで、`--write` で R2 へ書く。R2 に同じ key があれば作り直さない（key は出典の sha256 で、中身は出典から決まる）。
 抜き出し方を変えたときは `--refresh` で保存済みの key も作り直す。
 """
@@ -41,6 +41,9 @@ class Origin:
     kind: str  # selections の document_kind、評価資料は evaluation、予算案のプレス発表は press
 
 
+KINDS = {'evaluation_selections': 'evaluation', 'press_selections': 'press'}
+
+
 def object_key(sha256: str) -> str:
     return f'{PREFIX}{sha256}.json'
 
@@ -50,7 +53,7 @@ def load_origins(selection_dir: Path = SELECTION_DIR) -> list[Origin]:
     origins: dict[str, Origin] = {}
     for path in sorted(selection_dir.glob('[0-9]*.json')):
         document = json.loads(path.read_text(encoding='utf-8'))
-        for field in ('selections', 'evaluation_selections'):
+        for field in ('selections', 'evaluation_selections', 'press_selections'):
             for selection in document.get(field) or []:
                 archive = selection.get('archive')
                 if not archive or selection.get('selected_candidate_id') is None:
@@ -64,19 +67,19 @@ def load_origins(selection_dir: Path = SELECTION_DIR) -> list[Origin]:
                     origins.setdefault(file['sha256'], Origin(
                         sha256=file['sha256'], r2_key=saved[file['sha256']]['key'], jurisdiction=target['jurisdiction'],
                         fiscal_year=target['fiscal_year'],
-                        kind='evaluation' if field == 'evaluation_selections' else target['document_kind']))
+                        kind=KINDS.get(field) or target['document_kind']))
     origins.update({o.sha256: o for o in project_origins() if o.sha256 not in origins})
     return sorted(origins.values(), key=lambda o: (o.jurisdiction, o.fiscal_year, o.kind, o.sha256))
 
 
 def project_origins(path: Path = PROJECT_ORIGINS) -> list[Origin]:
-    """事業の取り込みが R2 の `project/` に保存した評価結果・プレス発表の PDF。"""
+    """事業の取り込みが R2 の `project/` に保存した評価結果の PDF（プレス発表は出典の選定の `press_selections` から読む）。"""
     from ingestion.project.run import object_key as project_key
 
     declared = json.loads(path.read_text(encoding='utf-8'))
     return [Origin(sha256=origin['sha256'], r2_key=project_key(field, origin), jurisdiction=origin['jurisdiction'],
                    fiscal_year=origin.get('budget_year', origin.get('fiscal_year')), kind=kind)
-            for field, kind in (('results', 'evaluation'), ('press', 'press')) for origin in declared.get(field) or []]
+            for field, kind in (('results', 'evaluation'),) for origin in declared.get(field) or []]
 
 
 def page_texts(path: Path) -> list[str]:

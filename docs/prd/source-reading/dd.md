@@ -29,7 +29,7 @@ flowchart LR
 
 ### 頁の文字を R2 に置く
 
-`bun run --cwd pipeline source-text:save`（`pipeline/source_text/save.py`）が、出典の選定（`selections`・`evaluation_selections`）で R2 に保存済みの `pdf_type: text` の PDF と、事業の取り込みの宣言（`ingestion/project/origins.json` の `results`・`press`）が R2 の `project/` に保存した PDF を対象にする。R2 から出典を取って sha256 を選定と照らし、pdfium で頁ごとの文字を抜き出して `source-text/<sha256>.json` に置く。中身は `{schema_version: 1, sha256, pages: string[]}` で、`pages[i]` が物理頁 i+1 の文字。key は出典の内容で決まるので、R2 に同じ key があれば作り直さない。抜き出し方を変えたときは `--refresh` で作り直す。既定は計画の表示だけで、`--write` で書く。
+`bun run --cwd pipeline source-text:save`（`pipeline/source_text/save.py`）が、出典の選定（`selections`・`evaluation_selections`・`press_selections`）で R2 に保存済みの `pdf_type: text` の PDF と、事業の取り込みの宣言（`ingestion/project/origins.json` の `results`）が R2 の `project/` に保存した PDF を対象にする。R2 から出典を取って sha256 を選定と照らし、pdfium で頁ごとの文字を抜き出して `source-text/<sha256>.json` に置く。中身は `{schema_version: 1, sha256, pages: string[]}` で、`pages[i]` が物理頁 i+1 の文字。key は出典の内容で決まるので、R2 に同じ key があれば作り直さない。抜き出し方を変えたときは `--refresh` で作り直す。既定は計画の表示だけで、`--write` で書く。
 
 Worker で PDF から文字を抜き出すと CPU の上限（apps/api は 200ms）に収まらないので、取り込みの側で作る。
 

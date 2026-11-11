@@ -55,7 +55,7 @@
 
 ### 全体の流れ
 
-1. `project:save` が、`ingestion/project/origins.json` の評価の結果とプレス発表の PDF を取得し、宣言の sha256 と同じときだけ非公開 R2 の `project/<種類>/<自治体>/<年度>/<sha256>.pdf` に置く。評価シートは出典の選定（`evaluation_selections`）で保存済みのものを使う。
+1. `project:save` が、`ingestion/project/origins.json` の評価の結果の PDF を取得し、宣言の sha256 と同じときだけ非公開 R2 の `project/<種類>/<自治体>/<年度>/<sha256>.pdf` に置く。評価シートは出典の選定（`evaluation_selections`）、プレス発表は出典の選定（`press_selections`）で保存済みのものを使う。
 2. 入力準備（`dbt/scripts/prepare.py`）が PDF を宣言の様式で読み、`ingestion` スキーマの表にする。読んだ結果は PDF と読み方のコードの指紋ごとに `.cache/project/` に置く（評価シート1冊を読むのに約1分かかる）。
 3. dbt の marts が、出典の値に判断の列を足す。施策の紐付けは seed `project_budget_initiative_link` を読む。
 4. `serving:sync` が marts の6表を D1 に写す。
@@ -68,9 +68,9 @@
 
 ### 宣言
 
-`ingestion/project/origins.json` に、資料の種類ごとに自治体・年度・様式（`layout`）・URL・sha256 を書く。評価シートは自治体と様式だけを書き、どの PDF を読むかは出典の選定に従う。
+`ingestion/project/origins.json` に、評価の結果は自治体・年度・様式（`layout`）・URL・sha256 を書く。評価シートとプレス発表は自治体と様式だけを書き、どの PDF を読むかは出典の選定に従う。
 
-人口（`ingestion/population/origins.json`）と同じく、出典の選定の schema は広げない。評価の結果とプレス発表は金額の表ではなく、`fiscal_coverage` の対象にもしないため。
+評価の結果は、人口（`ingestion/population/origins.json`）と同じく出典の選定の schema に入れない。金額の表ではなく、`fiscal_coverage` の対象にもしないため。プレス発表は自治体・年度ごとに資料を選ぶので、出典の選定の `press_selections` で選ぶ。
 
 ### 読み方（`ingestion/project/layouts/`）
 
