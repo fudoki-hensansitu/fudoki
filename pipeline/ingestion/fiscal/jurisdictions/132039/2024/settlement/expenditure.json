@@ -48,6 +48,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "names_in_own_column": true
           }
         }
       }
@@ -88,6 +91,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "names_in_own_column": true
           }
         }
       },
@@ -133,6 +139,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "names_in_own_column": true
           }
         }
       },
@@ -230,6 +239,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "names_in_own_column": true
           }
         }
       },
@@ -315,6 +327,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "names_in_own_column": true
           }
         },
         "dropped_readings": [

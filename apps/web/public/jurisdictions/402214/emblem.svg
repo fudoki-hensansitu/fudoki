@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   width="500.00003"
+   height="486.59583"
+   version="1.1"
+   id="svg11"
+   sodipodi:docname="Emblem_of_Dazaifu,_Fukuoka.svg"
+   inkscape:version="1.2.1 (9c6d41e410, 2022-07-14)"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs15" />
+  <sodipodi:namedview
+     id="namedview13"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     showgrid="false"
+     inkscape:zoom="0.841"
+     inkscape:cx="175.98097"
+     inkscape:cy="285.96908"
+     inkscape:window-width="1920"
+     inkscape:window-height="996"
+     inkscape:window-x="1912"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg11" />
+  <path
+     id="a"
+     d="m 139.03793,91.362459 a 124.15802,124.15802 0 0 1 54.62953,26.976151 56.435464,56.435464 0 1 1 102.03532,27.65338 112.87093,112.87093 0 0 0 -20.994,77.09084 112.87093,112.87093 0 0 0 40.85928,-18.28509 72.011652,72.011652 0 0 0 10.04551,44.69689 124.15802,124.15802 0 0 1 19.18806,0 56.435464,56.435464 0 0 1 -3.27326,-70.54433 112.87093,112.87093 0 1 0 -202.2647,-87.813591 z"
+     fill="#172e62"
+     stroke-linecap="round"
+     stroke-width="25.396" />
+  <use
+     xlink:href="#a"
+     transform="rotate(72,249.99005,257.05698)"
+     id="use3" />
+  <use
+     xlink:href="#a"
+     transform="rotate(144,249.99005,257.05698)"
+     id="use5" />
+  <use
+     xlink:href="#a"
+     transform="rotate(-144,249.99005,257.05698)"
+     id="use7" />
+  <use
+     xlink:href="#a"
+     transform="rotate(-72,249.99005,257.05698)"
+     id="use9" />
+</svg>

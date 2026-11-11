@@ -1,0 +1,18 @@
+<?xml version="1.0" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="700" height="700" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <desc>Emblem of Himi, Toyama</desc>
+  <defs>
+    <clipPath id="mask1">
+      <polyline points="0,0 312.5,0 312.5,100, 387.5,100 387.5,0 700,0 700,700 0,700" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#mask1)">
+    <circle cx="350" cy="350" r="330" fill="none" stroke="black" stroke-width="30" />
+  </g>
+  <g transform="translate(350,350) rotate(45)">
+    <path d="M270,0 A270 270 90 0 1 0 270 M210,0 A210 210 90 0 1 0 210" fill="none" stroke="black" stroke-width="30" />
+  </g>
+  <circle cx="350" cy="350" r="105" fill="black" />
+</svg>

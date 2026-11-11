@@ -8,14 +8,14 @@ the two are read as one logical page with the right page shifted to the right.
 """
 from __future__ import annotations
 
-from collections import Counter, defaultdict
+from collections import defaultdict
 from contextvars import ContextVar
 from functools import lru_cache
 from dataclasses import dataclass, field, replace
 import re
 import unicodedata
 
-from ingestion.generic.patterns import load as load_pattern
+from ingestion.generic.patterns import document_quirk, load as load_pattern
 from ingestion.generic.observe import Page, Rule, Word
 
 AMOUNT = re.compile(r'[△▲\-]?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)')
@@ -262,21 +262,16 @@ def _frames(page: Page, spread: dict | None = None,
                  min((x for x in repeated if x > gutter), default=None))
         xs.update(x for x in edges if x is not None)
     xs = sorted(xs)
-    spans: dict[float, list[tuple[float, float]]] = defaultdict(list)
-    for r in page.rules:
-        if r.vertical:
-            spans[round(r.x0, 1)].append((r.y0, r.y1))
-
-    def apart(a: float, b: float) -> bool:
-        # Two tables stacked on a page, the lower set a few points aside (国分寺市): the column edge of one ends
-        # above where the other's starts, so the two are one column edge drawn twice.
-        above = lambda x, y: all(y1 <= min(z0 for z0, _ in spans[y]) + 3 for _, y1 in spans[x])
-        return bool(spans[a]) and bool(spans[b]) and (above(a, b) or above(b, a))
+    apart = document_quirk('stacked_tables_apart')
     edges: list[float] = []
     for x in xs:
-        empty = lambda a, b: not any(a < (w.x0 + w.x1) / 2 < b for w in page.words)
-        if not edges or (x - edges[-1] > 3 and not (x - edges[-1] <= 8 and (apart(edges[-1], x) or empty(edges[-1], x)))):
+        if not edges or (x - edges[-1] > 3 and not (apart is not None and apart.module.one_edge(page, edges[-1], x))):
             edges.append(x)
+    spans: dict[float, list[tuple[float, float]]] = defaultdict(list)
+    if open_frame:
+        for r in page.rules:
+            if r.vertical:
+                spans[round(r.x0, 1)].append((r.y0, r.y1))
     frames, current = [], []
     for left, right in zip(edges, edges[1:]):
         middle = (left + right) / 2
@@ -306,14 +301,8 @@ def _frames(page: Page, spread: dict | None = None,
         if len(spanning) < 2 and not edges_drawn:
             continue
         bottom = max([h.y0 for h in spanning] + [r.y1 for r in edges_drawn])
-        most = lambda h: sum(1 for m in middle if _covers(h, m)) >= max(2, .6 * len(middle))
-        sides = min(max((r.y1 for r in page.rules if r.vertical and abs(r.x0 - x) <= 3), default=bottom)
-                    for x in (frame[0], frame[-1]))
-        closing = [h for h in horizontals if abs(h.y0 - sides) <= 4 and most(h)]
-        if sides - bottom > 100 and closing and not any(bottom < h.y0 < sides - 4 and all(_covers(h, m) for m in middle) for h in horizontals):
-            # A skewed scan loses the ends of the closing rule (国分寺市: 148–502 of a frame 72–571): the rule drawn
-            # where the frame's sides end across most of its columns closes it, if no rule across the whole frame lies between.
-            bottom = max(h.y0 for h in closing)
+        if (skewed := document_quirk('skewed_frames')) is not None:
+            bottom = skewed.module.bottom(page, frame, middle, horizontals, bottom)
         if staircase:
             # The rows of a staircase draw their rules from the deeper columns only: the frame ends at the lowest
             # rule its own sides reach that crosses most of its columns, or that is drawn where the sides end.
@@ -357,11 +346,8 @@ def _header_bottom(page: Page, frame, one_row: bool = False) -> float:
     """`one_row`: the quirk `one_row_header` (the header is one ruled row, ended by the first full rule)."""
     x0, x1, top, bottom, _ = frame
     horizontals = _joined([r for r in page.rules if not r.vertical])
-    # An edge of stacked tables set a few points apart (`_frames`) is the outermost of them: the top table's rules
-    # start up to that far inside it.
-    verticals = [r for r in page.rules if r.vertical]
-    reach = 3 + max([abs(r.x0 - x) for x in (x0, x1) for r in verticals if 2 < abs(r.x0 - x) <= 8
-                     and top - 3 <= r.y0 <= bottom], default=0)
+    apart = document_quirk('stacked_tables_apart')
+    reach = apart.module.reach(page, frame) if apart is not None else 3
     # A rule from the frame's left edge across most of it (a free-text column at the right end may draw none).
     full = sorted(h.y0 for h in horizontals
                   if h.x0 <= x0 + reach and h.x1 >= x1 - reach and top - 1 <= h.y0 <= bottom + 1)
@@ -387,11 +373,8 @@ def _header_bottom(page: Page, frame, one_row: bool = False) -> float:
                 return max(wide)
     if candidates:
         return candidates[-1]
-    # No full rule above the first figure (the header's bottom rule read short of the frame's right edge, 国分寺市):
-    # the rule across most of the frame above it.
-    wide = [h.y0 for h in horizontals if h.x0 <= x0 + reach and h.x1 - x0 >= .6 * (x1 - x0) and top + 1 < h.y0 <= first + 1]
-    if wide:
-        return max(wide)
+    if (skewed := document_quirk('skewed_frames')) is not None and (wide := skewed.module.header_bottom(horizontals, frame, reach, first)):
+        return wide
     return full[1] if len(full) > 1 else top
 
 
@@ -440,8 +423,7 @@ def page_bands(page: Page, spread: dict | None = None,
     bands = []
     whole = list(enumerate(page.words))
     staircase = bool((header or {}).get('staircase'))
-    from ingestion.generic.patterns import quirk
-    one_row = quirk({'quirks': (header or {}).get('_quirks') or {}}, 'one_row_header') is not None
+    one_row = document_quirk('one_row_header') is not None
     for frame in _frames(page, spread, staircase, bool((header or {}).get('open_frame'))):
         x0, x1, top, bottom, edges = frame
         first_band = len(bands)
@@ -733,19 +715,8 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
             else:
                 band.kind = 'label'
             setting = (columns or {}).get('／'.join(band.header))
-            if setting is None:
-                # A scan's header read with its cells cut elsewhere (`本年度の` / `財源内訳` for `本年度の財源内訳`):
-                # the declared column whose heading reads the same characters.
-                joined = ''.join(band.header)
-                setting = next((v for k, v in (columns or {}).items() if joined and k.replace('／', '') == joined), None)
-            if setting is None and band.header and LINE_TOLERANCE.get() > 2.0:
-                # A skewed scan (`rules.skewed`) reads only part of a heading, or its characters out of order (`国都支出金`
-                # under `本年度の財源内訳／特定財源`, `度)較)`): the declared columns whose heading holds every character read,
-                # when they all declare the same. Only there: a printed `本年度` is a heading of its own, not part of
-                # `本年度の財源内訳` (三鷹市).
-                read = Counter(''.join(band.header))
-                found = [v for k, v in (columns or {}).items() if not read - Counter(k.replace('／', ''))]
-                setting = found[0] if found and all(v == found[0] for v in found) else None
+            if setting is None and (partial := document_quirk('partial_headings')) is not None:
+                setting = partial.module.declared(band.header, columns or {})
             setting = setting or {}
             band.kind = setting.get('kind', band.kind)
             if setting.get('heading'):  # the column's meaning, declared where the print only says `金額`

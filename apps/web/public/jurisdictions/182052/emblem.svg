@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-46 -48 92 87 " width="368" height="348">
+<mask id="a">
+<path d="M-45.650713-14.832816H45.650713L-28.213692 38.832816 0-48 28.213692 38.832816z" fill="#fff"/>
+<circle r="30"  fill="#fff"/>
+<circle r="20"  fill="#000"/>
+<path d="M0 10L12.377879 27.327424H-12.377879z" fill="#fff"/>
+<path d="M17.359372 0H18.514721L0 31.996643V30z" fill="#000"/>
+</mask>
+<circle r="50" mask="url(#a)"/>
+</svg>

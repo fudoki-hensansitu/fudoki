@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="300" height="300" viewBox="-90 -90 180 180" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+  <desc>Emblem of Akashi, Hyogo</desc>
+  <defs>
+    <clipPath id="mask">
+      <rect id="r" x="2" y="-100" width="100" height="200" />
+      <use xlink:href="#r" transform="scale(-1)" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#mask)" stroke="#c00">
+    <circle r="72" stroke-width="16" fill="none" />
+    <line y1="-72" y2="72" stroke-width="20" />
+  </g>
+  <circle id="c" cx="37" r="9" fill="#c00" />
+  <use xlink:href="#c" transform="scale(-1)" />
+</svg>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?><svg width="434" height="453" viewBox="34 23 434 453" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+ <g xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#000000">
+  <path d="m285.3 48.4c-14.9-2.3-29.4-13.1-35.3-23.4-5.9 10.2-20.3 21.1-35.3 23.4z"/>
+  <g id="b">
+   <path d="m261.9 99.5a161.2 161.2 0 0 0-23.9 0v321.5a161.2 161.2 0 0 0 23.9 0z"/>
+   <path id="a" d="m161.3 125.6a161.2 161.2 0 0 1 21.5-11.9 68.7 68.7 0 0 0 134.2 0 161.2 161.2 0 0 1 21.5 11.9 92.5 92.5 0 0 1-177.3 0zm215.2 8.2c0-31.6-6.9-54.2-29.4-65-30.3-14.6-63.3-23.3-97.2-23.3a214.9 214.9 0 0 0-97.2 23c-22.5 10.8-29.4 33.4-29.4 65a179.1 179.1 0 0 1 253.3 0.3z"/>
+   <use transform="rotate(180,250,260.3)" xlink:href="#a"/>
+  </g>
+  <use transform="rotate(90,250,260.3)" xlink:href="#b"/>
+ </g>
+</svg>

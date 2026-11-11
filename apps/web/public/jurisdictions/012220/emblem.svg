@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="500" height="500" viewBox="-250,-250,500,500">
+	<title>Mikasa, Hokkaido Chapter</title>
+	<polygon points="250,250 -250,250 -250,-250 250,-250" style="fill:none;stroke:none" />
+	<g style="fill:black;stroke:none">
+		<path d="M 0,-240 A 240,240 0 0 0 -30,237.9375 L -30,177.28125 A 180,180 0 0 1 0,-180 180,180 0 0 1 30,177.3125 L 30,237.90625 A 240,240 0 0 0 0,-240 z" />
+		<path d="M 0,-120 A 180,180 0 0 0 -30,237.3125 L -30,176.03125 A 120,120 0 0 1 0,-60 120,120 0 0 1 30,176.125 L 30,237.28125 A 180,180 0 0 0 0,-120 z" />
+		<path d="M 0,0 A 120,120 0 0 0 -30,236.125 L -30,171.90625 A 60,60 0 0 1 0,60 60,60 0 0 1 30,171.90625 L 30,236.03125 A 120,120 0 0 0 0,0 z" />
+	</g>
+</svg>

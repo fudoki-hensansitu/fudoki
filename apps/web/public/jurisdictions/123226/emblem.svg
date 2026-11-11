@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?><svg width="431" height="303" viewBox="33 99 431 303" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+ <defs xmlns="http://www.w3.org/2000/svg">
+  <clipPath id="c">
+   <path d="m12.5 100v13.9h450v-13.9h-450zm0 25v13.9h450v-13.9h-450zm0 25v13.9h450v-13.9h-450zm0 25v13.9h450v-13.9h-450zm0 25v13.9h450v-13.9h-450zm0 25v13.9h450v-13.9h-450zm0 25v13.9h450v-13.9h-450zm0 25v13.9h450v-13.9h-450zm0 25v13.9h450v-13.9h-450zm0 25v13.9h450v-13.9h-450zm0 25v13.9h450v-13.9h-450zm0 25v13.9h450v-13.9h-450z"/>
+  </clipPath>
+  <clipPath id="d">
+   <path d="m12.5 100v5.6h450v-5.6h-450zm0 25v2.8h450v-2.8h-450zm0 25v2.8h450v-2.8h-450zm0 25v2.8h450v-2.8h-450zm0 25v2.8h450v-2.8h-450zm0 25v2.8h450v-2.8h-450zm0 25v2.8h450v-2.8h-450zm0 25v2.8h450v-2.8h-450zm0 25v2.8h450v-2.8h-450zm0 25v2.8h450v-2.8h-450zm0 25v2.8h450v-2.8h-450zm0 25v2.8h450v-2.8h-450z"/>
+  </clipPath>
+ </defs>
+ <g xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#2056ae">
+  <path id="a" d="m162.5 400h300v-300l-300 300z"/>
+  <use x="-75" xlink:href="#a" clip-path="url(#c)"/>
+  <use x="-150" xlink:href="#a" clip-path="url(#d)"/>
+ </g>
+ <g xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" stroke="#ffffff" fill="none">
+  <g stroke-width="4.806">
+   <path id="e" d="m317.8 369.6c0-4.7-4.6-6.5-8.2-6.5s-7.7 1.7-7.7 5.5c0 2.9 2.5 4.4 5.2 5.1l6.5 1.6c2.8 0.7 5 1.8 5 5.6 0 3.7-3.7 5.5-9 5.6-5.2 0.1-8.6-2.8-8.6-7.3m52.6-18.1v27.8"/>
+   <use xlink:href="#e" height="100%" width="100%" y="0" x="61.599998"/>
+   <path d="m406.8 361.6v15.3c0 4.7-1 9.6-8.9 9.6s-8.9-4.9-8.9-9.6v-15.3m-61.6 12.7h17.3m0-13.1v27.8m-17.3-27.78v27.8"/>
+  </g>
+  <path stroke-width="3.287" d="m383.6 310.8h15.3v21.9h-15.3zm-10-9.4v11.2m8.4-9.6h18.6m-21.7 31.3v-13.2m-5.3 13.2v-18.1h5.3v-14.8"/>
+  <path stroke-width="3" d="m383.6 327.1h15.3m-5.1-24.2v16.3h5.1m-10.2-16.3v16.3h-5.1"/>
+  <g stroke-width="3.226">
+   <circle cy="298.4" cx="373.9" r="50"/>
+   <path stroke-miterlimit="4.1" d="m448.5 234.6-190.9 104.7h159.8a133.3 134.4 0 0 0 32.4 -87.7 133.3 134.4 0 0 0 -1.2 -17z"/>
+  </g>
+ </g>
+</svg>

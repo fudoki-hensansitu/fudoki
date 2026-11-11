@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?><svg width="442" height="500" viewBox="28 0 442 500" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:xlink="http://www.w3.org/1999/xlink" xmlns:dc="http://purl.org/dc/elements/1.1/" version="1.1">
+ <defs xmlns="http://www.w3.org/2000/svg">
+  <symbol id="el">
+   <ellipse rx="30.8" ry="43.5" transform="rotate(-22)" cy="62.4" cx="25"/>
+  </symbol>
+ </defs>
+ <g xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#f9d545">
+  <use xlink:href="#el" y="94.8" x="58.8"/>
+  <use xlink:href="#el" y="162.2" x="16.3"/>
+  <use xlink:href="#el" y="149.8" x="131.2"/>
+ </g>
+ <g xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" fill="#00c6de">
+  <use xlink:href="#el" y="249.7" x="133.7"/>
+  <use xlink:href="#el" y="249.7" x="66.3"/>
+  <path d="m135.3 344.8 33.96 63.68c5.244 3.496 38.46 24.22 82.65 27.72 28.72 2.247 66.42-2.996 89.4-21.23 51.94-40.95 49.19-98.88 49.19-100.1-1.498 38.46-17.48 71.92-47.19 88.9-50.19 28.97-120.9 1.498-163.8-61.43 11.74 30.46 27.72 57.43 37.46 71.42-29.22-15.73-56.43-38.46-81.65-69.17z"/>
+ </g>
+ <path xmlns="http://www.w3.org/2000/svg" fill="#b2df00" d="m194.9 0.08437c-76.6 0.4994-133.6 53.69-150.3 138.3 21.48-60.91 69.4-88.62 125.9-82.88 0 0-27.22 18.48-39.2 59.43 23.9-18.78 51.6-32.01 93.1-24.52-23.7 20.52-34.7 37.42-46.7 64.42 135.6-78.4 214.1 97.4 213.1 160.8-0.8 45.5-29.5 102.4-92.7 117.9-128.8 20.2-207-86.9-246-165.8 28.71 113.1 135.1 232.2 260.4 232.2 117.6 0 157.3-104.4 157.6-182.8 0-56.93-14.48-110.1-45.7-164.3-57-112.2-138.2-153.1-229.5-152.9z"/>
+</svg>

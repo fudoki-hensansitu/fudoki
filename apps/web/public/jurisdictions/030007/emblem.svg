@@ -1,0 +1,8 @@
+<svg viewBox="-15 -17.5 30 35" width="300" height="350" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+<mask id="a">
+<path id="b" d="M-15-5h4l3 3 h4l-2-2 6-6 6 6-2 2h4l3-3h4l-5 5h-20zM0-2l2-2-2-2-2 2z" transform="scale(1 1.7320508075689)" fill="#fff"/>
+<use xlink:href="#b" transform="scale(1-1)"/>
+<path d="M-15-0.2H15v0.4h-30z" fill="#000"/>
+</mask>
+<circle r="17.5" mask="url(#a)" fill="#096b4a"/>
+</svg>

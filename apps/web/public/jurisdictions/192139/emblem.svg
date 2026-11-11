@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="500" height="500" viewBox="-250,-250,500,500">
+	<title>Koshu, Yamanashi Chapter</title>
+	<path d="M 0,-190 C -47.496488,-190 -86,-151.49649 -86,-104 -86,-56.503512 -47.496488,-18 0,-18 47.496488,-18 86,-56.503512 86,-104 86,-151.49649 47.496488,-190 0,-190 z M 0.59375,-119.96875 A 20,48 0 0 1 20,-72 20,48 0 0 1 -20,-72 20,48 0 0 1 0.59375,-119.96875 z" id="C01" style="fill:#3a0072;stroke:none" />
+	<use xlink:href="#C01" transform="scale(-1,-1)" />
+	<use xlink:href="#C01" transform="matrix(0,-1,1,0,-50,0)" />
+	<use xlink:href="#C01" transform="matrix(0,1,-1,0,50,0)" />
+</svg>
