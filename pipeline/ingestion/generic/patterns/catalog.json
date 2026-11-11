@@ -95,6 +95,7 @@
     "explained_projects": "ingestion.generic.patterns.quirks.explained_projects",
     "fitted_names": "ingestion.generic.patterns.quirks.fitted_names",
     "full_width_numbers": "ingestion.generic.patterns.quirks.full_width_numbers",
+    "glued_project_codes": "ingestion.generic.patterns.quirks.glued_project_codes",
     "glued_number_stops": "ingestion.generic.patterns.quirks.glued_number_stops",
     "repeated_at_top": "ingestion.generic.patterns.quirks.repeated_at_top",
     "glued_numbers": "ingestion.generic.patterns.quirks.glued_numbers",

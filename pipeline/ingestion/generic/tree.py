@@ -527,10 +527,12 @@ def strip_ancestor_codes(group: Group) -> list[Glyph]:
 
 
 def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False,
-               bare_amounts: bool = False, numbers=None, long_numbers=None, stops=None, name_line=None) -> list[tuple]:
+               bare_amounts: bool = False, numbers=None, long_numbers=None, stops=None, name_line=None,
+               projects=None) -> list[tuple]:
     """Printed lines of a label group as (label glyphs, amount runs, code, name). `numbers`: the quirk `full_width_numbers`;
     `long_numbers`: the quirk `long_numbers`; `stops`: the quirk `glued_number_stops`; `name_line`: the quirk
-    `name_line` (a line that is a number alone starts with an item number wherever it starts)."""
+    `name_line` (a line that is a number alone starts with an item number wherever it starts); `projects`: the quirk
+    `glued_project_codes`."""
     entries = []
     for line in lines([w for band in group.bands for w in band.words]):
         label, money = _split_line(line, amount_brackets, bare_amounts)
@@ -541,6 +543,9 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
         raw_text = text(label).strip()
         if code is None and numbers is not None and (held := numbers.module.split(raw_text, numbers.value)) is not None:
             code, name = normalize(held[0]), normalize(held[1])
+        project = code is None and projects is not None and (held := projects.module.split(raw_text)) is not None
+        if project:
+            code, name = held[0], normalize(held[1])
         if code is not None and len(name) > 1 and re.match(r'[０-９]{3,}', raw_text):
             code, name = None, line_text  # `２０３０ビジョン…`: three or more full-width digits begin a name, not an item number (a one-character name stays `161`/`人`)
         script = re.match(r'([0-9]+)(?=[０-９])', raw_text)
@@ -560,7 +565,7 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
                 and label[1].x0 - label[0].x1 >= 2):
             # `8` `2歳児歯科健診事業`, `0200` `16ミリ映写機検定委託料`: the number is a word of its own, and the name begins with a count.
             code, name, script = normalize(label[0].text), normalize(text(label[1:])), True
-        if (code is not None and margins is not None and not margins & set(_margins(label))
+        if (code is not None and not project and margins is not None and not margins & set(_margins(label))
                 and not (numbers is not None and numbers.module.numbered(raw_text, numbers.value))
                 and not (name_line is not None and name_line.module.numbered(raw_text))):
             code, name = None, line_text  # a name that begins with a digit
@@ -696,7 +701,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     numbers = quirk(settings, 'full_width_numbers')
     entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')),
                          numbers, quirk(settings, 'long_numbers'), quirk(settings, 'glued_number_stops'),
-                         quirk(settings, 'name_line'))
+                         quirk(settings, 'name_line'), quirk(settings, 'glued_project_codes'))
     settings = settings or {}
     if (shares := quirk(settings, 'department_amounts')) is not None:
         for index, (label, money, code, name) in enumerate(entries):
@@ -1480,6 +1485,8 @@ def shape_of(item: Item) -> str | None:
             # the item reading had already left its code empty.
             if name == 'number' and item.code is None:
                 return None
+            if name == 'number' and len(item.code) > 4:
+                return f'number{len(item.code)}'  # a long code (the quirk `glued_project_codes`) is a shape of its length
             return name
     # A number printed between the two lines of a wrapped name (`負担金補助` / `18` / `及び交付金`, 132021).
     return 'number' if item.code is not None and item.code.isdigit() else None
