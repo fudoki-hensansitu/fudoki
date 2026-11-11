@@ -1299,7 +1299,7 @@
           "name": "measure_id",
           "type": "string",
           "nullable": false,
-          "description": "行の ID。origin_id と頁から作る（sha256）。"
+          "description": "行の ID。origin_id と頁と頁の中の順から作る（sha256）。"
         },
         {
           "name": "budget_proposal_id",
@@ -1332,6 +1332,12 @@
           "description": "出典の PDF の頁（1始まり）。"
         },
         {
+          "name": "position",
+          "type": "integer",
+          "nullable": false,
+          "description": "同じ頁の中の施策の順（1始まり、上から。2段組は左から）。"
+        },
+        {
           "name": "title",
           "type": "string",
           "nullable": true,
@@ -1347,7 +1353,7 @@
           "name": "is_new",
           "type": "boolean",
           "nullable": false,
-          "description": "事業名に「新規」の印がある。"
+          "description": "事業名に「新規」の印がある。施策ごとに印を付けない資料（千代田など）は常に偽。"
         },
         {
           "name": "budget_yen",
@@ -1370,8 +1376,8 @@
         {
           "name": "link_method",
           "type": "string",
-          "nullable": false,
-          "description": "風土記の判断。紐付けの方法。name（名前と額で直接当たった）・jev（候補12件から TypeSafe の Jev が確信度 0.6 以上で選んだ）・none（紐付かない）。"
+          "nullable": true,
+          "description": "風土記の判断。紐付けの方法。name（名前と額で直接当たった）・jev（候補12件から TypeSafe の Jev が確信度 0.6 以上で選んだ）・none（紐付かない）。同じ年度の当初予算書の内訳（事業）がまだ無ければ空（未判断）。"
         },
         {
           "name": "link_confidence",
