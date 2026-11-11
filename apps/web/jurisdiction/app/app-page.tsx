@@ -44,7 +44,7 @@ import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { cn } from '@/lib/utils'
 import { Link } from '../../nav/link'
 import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon, NewIcon, PlanIcon, SizeIcon, StopIcon, UpIcon } from '../fresh-icons'
-import { YearPicker } from '../page'
+import { YearPicker } from '../year-picker'
 import { Overview as SankeyOverview } from '../sankey'
 import { formatPeople, reiwa, yearName, type Drill } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
@@ -487,7 +487,7 @@ function ProjectDetail({ p }: { p: Proj }) {
           <>
             <span className="text-xs text-muted-foreground">{reiwa(v.year)}の予算</span>
             <Amt yen={now} className="block text-4xl leading-tight text-primary" />
-            <span className="text-xs text-muted-foreground">{perHead(now!, d.pop)}{prev ? ` · ${r(v.year - 1)}年度から ${now! >= prev ? '+' : '−'}${yenText(Math.abs(now! - prev))}` : ''}</span>
+            {now != null ? <span className="text-xs text-muted-foreground">{perHead(now, d.pop)}{prev ? ` · ${r(v.year - 1)}年度から ${now >= prev ? '+' : '−'}${yenText(Math.abs(now - prev))}` : ''}</span> : <span className="text-xs text-muted-foreground">当初予算には載っていません{p.y[ys]?.s != null ? `（決算 ${yenText(p.y[ys]!.s!)}）` : ''}</span>}
           </>
         )}
       </div>
@@ -740,8 +740,11 @@ const TABS: { key: TabKey; label: string; icon: Icon }[] = [
 
 export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emblem }: { vision: string; prefecture: string; prefecturePath: string; officialUrl: string; emblem: string }) {
   const [d, setD] = React.useState<Snapshot>()
+  const [failed, setFailed] = React.useState(false)
   React.useEffect(() => {
-    fetch('/prototype/shinagawa.json').then((r) => r.json() as Promise<Snapshot>).then(setD)
+    fetch('/prototype/shinagawa.json')
+      .then((r) => (r.ok ? (r.json() as Promise<Snapshot>) : Promise.reject(new Error(String(r.status)))))
+      .then(setD, () => setFailed(true))
   }, [])
   const [year, setYear] = React.useState(YEARS[0]!)
   const [tab, setTab] = React.useState<TabKey>('overview')
@@ -897,7 +900,11 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
               )}
             </AppContext.Provider>
           ) : (
-            <div className="flex flex-col gap-3 pt-6">{[0, 1, 2].map((i) => <div key={i} className="h-24 animate-pulse rounded-2xl bg-card" />)}</div>
+            failed ? (
+              <p className="pt-6 text-sm text-muted-foreground">データを読み込めませんでした。頁を読み込み直してください。</p>
+            ) : (
+              <div className="flex flex-col gap-3 pt-6">{[0, 1, 2].map((i) => <div key={i} className="h-24 animate-pulse rounded-2xl bg-card" />)}</div>
+            )
           )}
         </Tabs>
       </div>
