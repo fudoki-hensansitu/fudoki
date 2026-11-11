@@ -120,6 +120,10 @@ export interface PageData {
 export const pageYears = (d: { years: { year: number }[]; profile?: { years: Record<string, unknown> } | null }) =>
   [...new Set([...Object.keys(d.profile?.years ?? {}).map(Number), ...d.years.map((y) => y.year)])].sort((a, b) => b - a)
 
+/** 自治体の頁で選べる年度（新しい順に3年）。決算の年度と、決算より後の当初予算の年度 */
+export const appPageYears = (d: { years: { year: number }[]; budgets: { year: number }[] }) =>
+  [...new Set([...d.years.map((y) => y.year), ...d.budgets.map((b) => b.year)])].sort((a, b) => b - a).slice(0, 3)
+
 /** 年度ごとの頁の path。既定の年度は自治体の頁そのもの（/tokyo/shinagawa）、ほかは1段下げる（/tokyo/shinagawa/2024） */
 export const yearPath = (base: string, year: number, latest: number) => (year === latest ? base : `${base}/${year}`)
 

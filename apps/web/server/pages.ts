@@ -2,7 +2,7 @@
 import { HTTPException } from 'hono/http-exception'
 import type { Context } from 'hono'
 import { emptyHead, pageHead, type Head } from '../jurisdiction/html'
-import { pageYears } from '../jurisdiction/types'
+import { appPageYears } from '../jurisdiction/types'
 import type { Env } from './env'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../jurisdiction/domains'
 import { resolveJurisdiction, type JurisdictionView } from './jurisdiction-routes'
@@ -38,7 +38,7 @@ export async function jurisdictionProps(c: Context, path: string, yearSegment?: 
   c.header('Cache-Control', PAGE_CACHE)
   if (yearSegment === undefined) return { ...view, sitekey: siteKey(c) }
   // 年度の頁: 頁で選べない年度は 404、既定の年度は自治体の頁そのものへ寄せる（同じ中身の URL を2つ作らない）
-  const years = view.kind === 'page' ? pageYears(view.data) : []
+  const years = view.kind === 'page' ? appPageYears(view.data) : []
   const year = Number(yearSegment)
   if (!YEAR_SEGMENT.test(yearSegment) || !years.includes(year)) throw new HTTPException(404, { res: notFound() })
   if (year === years[0]) throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: path } }) })

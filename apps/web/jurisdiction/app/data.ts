@@ -57,7 +57,8 @@ export function yearView(d: Snapshot, year: number) {
   return {
     year,
     total: y.total,
-    perHead: y.total / d.pop,
+    /** 人口の無い自治体は null */
+    perHead: d.pop ? y.total / d.pop : null,
     origin: y.origin,
     originTitle: y.originTitle,
     fields,

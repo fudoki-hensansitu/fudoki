@@ -4,7 +4,7 @@ import type { CatalogEntry } from '../server/jurisdiction'
 import { EMBLEMS } from './emblems'
 import { jurisdictionPath } from './path'
 import { assetPath } from './profiles'
-import { formatYen, INDEX_PATH, pageYears, yearPath, type PageData } from './types'
+import { appPageYears, formatYen, INDEX_PATH, yearPath, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
 /** JSON を script の中に置くときに </script> や <!-- で抜けないようにする */
@@ -93,7 +93,7 @@ export function pageHead(d: PageData, year?: number): Head {
   const latest = d.years.at(-1)!
   const budget = latestBudget(d)
   const base = jurisdictionPath(d.code)
-  const past = year !== undefined && year !== pageYears(d)[0] ? yearHead(d, year) : null
+  const past = year !== undefined && year !== appPageYears(d)[0] ? yearHead(d, year) : null
   const title = past?.title ?? pageTitle(d)
   const description = past?.description ?? pageDescription(d)
   const canonical = `${ORIGIN}${past ? `${base}/${year}` : base}`

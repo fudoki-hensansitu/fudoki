@@ -5,7 +5,7 @@ import { PREFECTURE_MAPS } from '../jurisdiction/map.generated'
 import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../jurisdiction/path'
 import { DEFAULT_INDEX_QUERY, parseIndexQuery, queryIndex, toMapEntry, type IndexTable, type MapEntry } from '../jurisdiction/index-table'
-import { INDEX_PATH, pageYears, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
+import { appPageYears, INDEX_PATH, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
 import { assetPath, PROFILES, type Profile } from '../jurisdiction/profiles'
 import { EMBLEMS } from '../jurisdiction/emblems'
 import { BUDGET_PRESS } from '../jurisdiction/budget-press'
@@ -139,7 +139,7 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
 /** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */
 export async function sitemapResponse(env: Env): Promise<Response> {
   try {
-    return new Response(sitemapXml(await catalog(env), (e) => pageYears({ years: shownSettlementYears(e.settlementYears).map((year) => ({ year })), profile: PROFILES[e.code] ?? null })), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
+    return new Response(sitemapXml(await catalog(env), (e) => { const settled = shownSettlementYears(e.settlementYears); const last = Math.max(0, ...settled); return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) }) }), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
   } catch {
     return new Response(sitemapXml([]), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } })
   }

@@ -1,5 +1,5 @@
-// 試作: 自治体の頁をアプリ型にしたもの（品川区）。ヘッダーは今の頁のまま、その下をオブジェクト（分野・事業・評価シート）ごとの
-// 一覧と詳細に分ける。一覧は名前と金額だけを出し、説明は詳細にだけ出す。部品は shadcn/ui（Tabs・Carousel・Sheet・Card・Input・ToggleGroup）
+// 自治体の頁（アプリ型）。ヘッダーの下を「まとめ・事業・予算・決算」のタブにし、事業・施策・評価シートは一覧と詳細、分野は分野の頁に分ける。
+// 一覧は名前と金額だけを出し、説明は詳細にだけ出す。部品は shadcn/ui（Tabs・Carousel・Sheet・Card・Input・ToggleGroup）
 import * as React from 'react'
 import {
   ArrowSquareOutIcon,
@@ -53,7 +53,7 @@ import { assetPath } from '../profiles'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock, Elsewhere } from '../page'
-import { formatAsOf, formatPeople, reiwa, yearName, yearPath, type FlowView, type PageData, type YearTotal } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, yearPath, type FlowView, type PageData, type YearTotal } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
@@ -85,7 +85,9 @@ function Amt({ yen, className }: { yen: number | null | undefined; className?: s
   )
 }
 const yenText = (y: number) => yenParts(y).join('')
+/** 人口の無い自治体は空 */
 const perHead = (y: number, pop: number) => {
+  if (!pop) return ''
   const v = y / pop
   return v >= 1e4 ? `1人 ${(v / 1e4).toFixed(1)}万円` : `1人 ${Math.round(v).toLocaleString('ja-JP')}円`
 }
@@ -157,9 +159,9 @@ const IconBox = ({ children }: { children: React.ReactNode }) => <span className
 function ProjectRow({ p, rank }: { p: Proj; rank?: number }) {
   const { v, select, selected } = useApp()
   const ended = v.isEnded(p)
-  const yen = ended ? p.y[String(v.year - 1)]?.b : p.y[String(v.year)]?.b
+  const yen = ended ? v.amount(p, String(v.year - 1)) : v.amount(p)
   const icon = ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : <IconBox><FieldIcon id={p.field} /></IconBox>
-  return <Row rank={rank} icon={icon} title={p.name} sub={[p.dept, fieldName(v, p.field)].filter(Boolean).join(' · ')} yen={yen} note={ended ? `${r(v.year - 1)} ${v.label(v.year - 1)}` : `${((yen! / v.total) * 100).toFixed(1)}%`} selected={selected?.kind === 'project' && selected.id === p.id} onClick={() => select({ kind: 'project', id: p.id })} />
+  return <Row rank={rank} icon={icon} title={p.name} sub={[p.dept, fieldName(v, p.field)].filter(Boolean).join(' · ')} yen={yen} note={ended ? `${r(v.year - 1)} ${v.label(v.year - 1)}` : yen != null ? `${((yen / v.total) * 100).toFixed(1)}%` : undefined} selected={selected?.kind === 'project' && selected.id === p.id} onClick={() => select({ kind: 'project', id: p.id })} />
 }
 function MeasureRow({ m }: { m: Measure }) {
   const { v, select, selected } = useApp()
@@ -341,8 +343,12 @@ function Overview({ go }: { go: Go }) {
         <Card className="gap-0 bg-card px-5 py-[18px] ring-0">
           <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}（一般会計）</span>
           <Amt yen={v.total} className="mt-0.5 text-[40px] leading-tight text-primary max-sm:text-[34px]" />
-          <span className="mt-3 text-xs text-muted-foreground">住民1人あたり</span>
-          <Amt yen={v.perHead} className="text-[22px] text-primary" />
+          {v.perHead != null ? (
+            <>
+              <span className="mt-3 text-xs text-muted-foreground">住民1人あたり</span>
+              <Amt yen={v.perHead} className="text-[22px] text-primary" />
+            </>
+          ) : null}
         </Card>
         <div className="grid grid-cols-2 gap-3">
           <div className="col-span-2"><CountCard icon={<ListBulletsIcon />} label="事業" n={v.current.length} onClick={() => go('projects', { filter: 'all' })} /></div>
@@ -496,7 +502,7 @@ function ProjectDetail({ p }: { p: Proj }) {
           <>
             <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}</span>
             <Amt yen={now} className="block text-4xl leading-tight text-primary" />
-            {now != null ? <span className="text-xs text-muted-foreground">{perHead(now, d.pop)}{prev ? ` · ${r(v.year - 1)}年度から ${now >= prev ? '+' : '−'}${yenText(Math.abs(now - prev))}` : ''}</span> : <span className="text-xs text-muted-foreground">当初予算には載っていません{p.y[ys]?.s != null ? `（決算 ${yenText(p.y[ys]!.s!)}）` : ''}</span>}
+            {now != null ? <span className="text-xs text-muted-foreground">{[perHead(now, d.pop), prev ? `${r(v.year - 1)}年度から ${now >= prev ? '+' : '−'}${yenText(Math.abs(now - prev))}` : ''].filter(Boolean).join(' · ')}</span> : <span className="text-xs text-muted-foreground">当初予算には載っていません{p.y[ys]?.s != null ? `（決算 ${yenText(p.y[ys]!.s!)}）` : ''}</span>}
           </>
         )}
       </div>
@@ -613,7 +619,7 @@ function FieldPage({ id }: { id: string }) {
   const { v, d } = useApp()
   const f = v.fields.find((x) => x.id === id)
   if (!f) return <p className="text-sm text-muted-foreground">{reiwa(v.year)}にはこの分野の予算がありません。</p>
-  const ps = v.current.filter((p) => p.field === f.id)
+  const ps = React.useMemo(() => v.current.filter((p) => p.field === id), [v, id])
   const ms = v.fresh.filter((m) => m.field === f.id)
   const ss = v.sheets.filter((s) => s.field === f.id)
   return (
@@ -628,7 +634,7 @@ function FieldPage({ id }: { id: string }) {
       <div className="mt-5">
         <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}</span>
         <Amt yen={f.yen} className="block text-4xl leading-tight text-primary" />
-        <span className="text-xs text-muted-foreground">全体の {((f.yen / v.total) * 100).toFixed(1)}% · {perHead(f.yen, d.pop)}</span>
+        <span className="text-xs text-muted-foreground">{[`全体の ${((f.yen / v.total) * 100).toFixed(1)}%`, perHead(f.yen, d.pop)].filter(Boolean).join(' · ')}</span>
       </div>
       {ms.length ? (
         <DetailSection icon={SparkleIcon} title="新しく始める事業" count={ms.length}>
@@ -701,9 +707,6 @@ const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'settled', label: '決算', icon: ReceiptIcon },
 ]
 
-/** 頁の年度（新しい順に3年）。決算の年度と、決算より後の当初予算の年度 */
-const YEAR_COUNT = 3
-const pageYearsOf = (data: PageData) => [...new Set([...data.years.map((y) => y.year), ...data.budgets.map((b) => b.year)])].sort((a, b) => b - a).slice(0, YEAR_COUNT)
 /** 今の URL から年度の段と分野の段を除いた、自治体の頁の path */
 const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').replace(/\/\d{4}\/?$/, '')
 /** 今の URL の分野の段（/fields/fukushi）の id */
@@ -712,7 +715,7 @@ const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] 
 export function AppPage({ data, sitekey, initialYear, initialField }: { data: PageData; sitekey: string; initialYear?: number; initialField?: string }) {
   const vision = data.profile?.vision?.text
   const emblem = EMBLEMS[data.code] ? assetPath(data.code, 'emblem.svg') : null
-  const years = React.useMemo(() => pageYearsOf(data), [data])
+  const years = React.useMemo(() => appPageYears(data), [data])
   const [d, setD] = React.useState<Snapshot>()
   const [failed, setFailed] = React.useState(false)
   React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: basePath() }), [data.code, data.name])
