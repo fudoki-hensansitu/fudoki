@@ -146,5 +146,36 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general",
+      "conversion_id": "general",
+      "input_fingerprint": "dfb85504004915f4c73256904e7ecf95553fbbe4e445527c285666ba0edf2539",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は printed 144頁 から決めた。款の和 47,761,000 と印字の「歳出合計」47,761,000 が一致。",
+        "金額の注記 1 件（充用 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（126 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132250/2026/initial/expenditure/general-nodes.parquet",
+          "sha256": "8ba7462e0d01cbf8096dfd61831641fc3a4f2f5d4bd65b93ac42caa53f153986",
+          "bytes": 187008
+        },
+        "row_count": 5965
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132250/2026/initial/expenditure/general-amounts.parquet",
+          "sha256": "2861a43b4df4c8104535a5a236e1c84fa5c70a73a530590fc306cb85f48eea3b",
+          "bytes": 125073
+        },
+        "row_count": 6264
+      }
+    }
+  ]
 }

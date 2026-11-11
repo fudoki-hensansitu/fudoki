@@ -201,6 +201,72 @@
           "table_id": "kouyouchi-initial"
         }
       ]
+    },
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "223ea9e52a108c9c091896c585d1eab004ece6bb203d57e6eaa05d5de26e3dd1"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                },
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "repeated_subject_headings": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
     }
   ],
   "tables": [
@@ -289,6 +355,35 @@
           "bytes": 2924
         },
         "row_count": 38
+      }
+    },
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "37e4f4c05c5448ddc02b368824b8cedd5652d5654589073bb500f04251dbdc4b",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 61頁 から決めた。款の和 121,910,000 と印字の「合計」121,910,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "566e42c36233546ad8c6d3a8f17f9199c40bad7237eba8d5586db5b784f9125a",
+          "bytes": 79081
+        },
+        "row_count": 2847
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "46d090493aff6b6c605c77e5cba53d3a482dd3eaf4fbedf8d9ac9a55846d1e8b",
+          "bytes": 57839
+        },
+        "row_count": 3006
       }
     }
   ]

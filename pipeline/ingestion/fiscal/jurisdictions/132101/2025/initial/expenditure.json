@@ -93,5 +93,35 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general",
+      "conversion_id": "general",
+      "input_fingerprint": "d9b2a27aba005b1948f578888ca10e2672455203279ddb0ad2bf83e2698f411d",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '細節': 'shape', '説明': 'position'}。",
+        "金額の単位は column mark 182頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132101/2025/initial/expenditure/general-nodes.parquet",
+          "sha256": "58a919b71218b4b12acbea3fbc25cc4bdcb78fb774ab6adcaea1c6dd0fdad582",
+          "bytes": 338041
+        },
+        "row_count": 8627
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132101/2025/initial/expenditure/general-amounts.parquet",
+          "sha256": "3f72163e5b29178f0627675d90f72042889ce5d9916b5c3fc7e1f62d90200be2",
+          "bytes": 231028
+        },
+        "row_count": 8813
+      }
+    }
+  ]
 }
