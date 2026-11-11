@@ -15,12 +15,17 @@ function TownSearch() {
   const { visit } = useRouter()
   const [entries, setEntries] = React.useState<MapEntry[]>([])
   const input = React.useRef<HTMLInputElement>(null)
+  // ⌘K・focus で候補を開く（既定は打つまで開かない）
+  const [listOpen, setListOpen] = React.useState(false)
   const warm = () => void loadTowns().then(setEntries)
   React.useEffect(() => {
     const focus = () => {
       setOpen(true)
       warm()
-      requestAnimationFrame(() => input.current?.focus())
+      requestAnimationFrame(() => {
+        input.current?.focus()
+        setListOpen(true)
+      })
     }
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
@@ -51,10 +56,11 @@ function TownSearch() {
     )
   }
   return (
-    <Combobox autoHighlight items={entries} filter={(e: MapEntry, q: string) => !q.trim() || e.name.includes(q.trim()) || e.path.includes(q.trim().toLowerCase())} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && visit((e as MapEntry).path)}>
-      <ComboboxInput ref={input} showTrigger={false} aria-label="まちを探す" placeholder="まちを探す" onFocus={warm} className="h-9 rounded-md border-sidebar-border bg-background text-sm">
-        <InputGroupAddon>
-          <MagnifyingGlassIcon className="size-4" />
+    <Combobox open={listOpen} onOpenChange={setListOpen} openOnInputClick autoHighlight items={entries} filter={(e: MapEntry, q: string) => !q.trim() || e.name.includes(q.trim()) || e.path.includes(q.trim().toLowerCase())} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && visit((e as MapEntry).path)}>
+      <ComboboxInput ref={input} showTrigger={false} aria-label="まちを探す" placeholder="まちを探す" onFocus={() => (warm(), setListOpen(true))} className="h-10 rounded-md border-sidebar-border bg-background text-sm [&_input]:pl-3!">
+        {/* 下の項目（px-3・icon 20px・gap-3）と icon の位置・大きさ・文字までの間を揃える。枠の 1px を引いて 11px */}
+        <InputGroupAddon className="pl-[11px]">
+          <MagnifyingGlassIcon className="size-5" />
         </InputGroupAddon>
         <InputGroupAddon align="inline-end">
           <kbd className="rounded border px-1 font-sans text-[11px] text-muted-foreground">⌘K</kbd>

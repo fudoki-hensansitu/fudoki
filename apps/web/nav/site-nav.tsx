@@ -1,7 +1,7 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
 import { Link } from './link'
-import { ChatIcon, CircleHalfIcon, DesktopIcon, GearSixIcon, GithubLogoIcon, HouseIcon, InfoIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
+import { ChatIcon, CircleHalfIcon, DesktopIcon, GearSixIcon, GithubLogoIcon, HouseIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
   SidebarContent,
@@ -181,11 +181,6 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
         <ThemeChoices theme={theme} onPick={onPick} />
         <DropdownMenuSeparator />
         <DropdownMenuGroup>
-          {/* 利用規約・プライバシーポリシーは /about から辿る */}
-          <DropdownMenuItem render={<a href="/about" />} className="gap-2 [&_svg]:size-4 [&_svg]:text-muted-foreground">
-            <InfoIcon />
-            風土記について
-          </DropdownMenuItem>
           {links.map((l) => (
             <DropdownMenuItem key={l.label} render={<a href={l.href} target="_blank" rel="noopener noreferrer" />} className="gap-2 [&_svg]:size-4 [&_svg]:text-muted-foreground">
               {l.icon}
@@ -259,8 +254,6 @@ export function SiteNav({ active, open, theme: initialTheme }: SiteNavProps) {
           <SidebarFooter className="gap-0 px-2 pt-2 pb-12">
             <SidebarMenu>
               <ThemeItem theme={theme} onPick={pickTheme} />
-              {/* 利用規約・プライバシーポリシーは /about から辿る */}
-              <Item href="/about" label="風土記について" icon={<InfoIcon />} />
               <Item href={MCP} label="MCP" icon={<PlugIcon />} />
               <Item href={FEEDBACK} label="フィードバック" icon={<ChatIcon />} />
             </SidebarMenu>

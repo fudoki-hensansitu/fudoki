@@ -3,7 +3,8 @@
 // データは自治体の頁と同じ /api/jurisdictions/app/:code を読み、yearView で年度ごとに見る
 import * as React from 'react'
 import { useRouter } from '@void/react'
-import { ArrowRightIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, ArrowSquareOutIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
+import { FEEDBACK } from '../nav/feedback'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
@@ -301,6 +302,38 @@ const tourSteps = (c: Ctx, go: () => void): TourStep[] => [
   { target: 'open', title: 'まちの頁を開く', body: `${c.town.name}の予算・決算・事業を、まとめて見られる頁です。押して開いてみてください。`, mode: 'click', action: { label: '開く', run: go } },
 ]
 
+const DOCS = 'https://docs.fudoki.dev'
+
+/** 頁の末尾。風土記について・利用規約・プライバシーポリシーへはここから辿る（前のホームと同じ並び） */
+function Footer() {
+  const ext = 'inline-flex items-center gap-1 hover:text-foreground'
+  return (
+    <footer className="mt-12 flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
+      <span>© 2026 風土記</span>
+      <span className="flex flex-wrap gap-x-5 gap-y-2">
+        <Link href="/about" className="hover:text-foreground">
+          風土記について
+        </Link>
+        <a href={`${DOCS}/terms`} target="_blank" rel="noopener" className={ext}>
+          利用規約
+          <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
+        </a>
+        <a href={`${DOCS}/privacy`} target="_blank" rel="noopener" className={ext}>
+          プライバシーポリシー
+          <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
+        </a>
+        <a href={FEEDBACK} target="_blank" rel="noopener" className={ext}>
+          フィードバック
+          <ArrowSquareOutIcon aria-hidden="true" className="size-3" />
+        </a>
+        <a href="mailto:support@fudoki.dev" className="hover:text-foreground">
+          お問い合わせ
+        </a>
+      </span>
+    </footer>
+  )
+}
+
 export function Home({ entries, featured }: HomeProps) {
   const { ready, town, set } = useMyTown()
   const [changing, setChanging] = React.useState(false)
@@ -372,6 +405,7 @@ export function Home({ entries, featured }: HomeProps) {
       {/* ほかのまちを見る導線。住んでいるまちを選んだあとも、ホームの頭に常に出す（選ぶ前は Empty の中に出す） */}
       {ready && town && !changing ? <OtherTowns entries={entries} className="mb-6" /> : null}
       {body}
+      <Footer />
     </main>
   )
 }
