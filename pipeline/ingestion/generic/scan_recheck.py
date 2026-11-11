@@ -163,7 +163,7 @@ def read_amount(pdf: Path, box, model: str, *, allow_vlm: bool = True,
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory) / 'cell'
             scale, margin = 300 / 72, 4
-            subprocess.run(['pdftoppm', '-f', str(box.page), '-l', str(box.page), '-r', '300', '-png', '-singlefile',
+            subprocess.run(['pdftoppm', '-cropbox', '-f', str(box.page), '-l', str(box.page), '-r', '300', '-png', '-singlefile',
                 '-x', str(int(max(0, box.x0 - margin) * scale)), '-y', str(int(max(0, box.y0 - margin) * scale)),
                 '-W', str(int((box.x1 - box.x0 + 2 * margin) * scale)),
                 '-H', str(int((box.y1 - box.y0 + 2 * margin) * scale)), str(pdf), str(root)], check=True, timeout=60)

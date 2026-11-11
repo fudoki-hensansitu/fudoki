@@ -14,7 +14,8 @@
         "dark": {"type": "integer", "minimum": 129, "maximum": 255},
         "skewed": {"const": true, "description": "A scan set a little off level breaks each long horizontal rule into pieces a pixel row apart (国分寺市): the pieces are joined end to end before a rule's length is checked, and the words of one printed line are grouped with a wider tolerance (a line's amount at the right end sits up to 2.5pt above its name at the left)."},
         "row_gaps": {"const": true, "description": "A vertical rule the page leaves out for a row lets the row's text run on into the next column (133086's 事業 names): an OCR line is cut only at the rules drawn across its middle."},
-        "short_columns": {"const": true, "description": "A column rule drawn only over one short row (shorter than the page-wide detector keeps) is still a rule: a short vertical stroke joining two horizontal rules at the place of a vertical rule the page draws elsewhere closes the cell, as in a staircase (131199's 目 rows between 事務事業 blocks)."}
+        "short_columns": {"const": true, "description": "A column rule drawn only over one short row (shorter than the page-wide detector keeps) is still a rule: a short vertical stroke joining two horizontal rules at the place of a vertical rule the page draws elsewhere closes the cell, as in a staircase (131199's 目 rows between 事務事業 blocks)."},
+        "row_columns": {"const": true, "description": "A narrow stroke that runs the whole height between two horizontal rules is a column rule even where the page draws no rule at that place elsewhere (131164's 財源 columns under 説明, drawn only over a 目's row in the middle of a page)."}
       }
     },
     "inner_tables": {
@@ -95,6 +96,7 @@
         "ignore_frame_title": {"type": "boolean"},
         "staircase": {"enum": [true, "款項目節", "款項目事務事業"], "description": "The subject columns are a staircase: one header cell 款 項 目 over narrow code columns, and the 款・項 cells run down the page with no closing rule. \"款項目節\" also reads a header cell 款 項 目 節 over four columns, the fourth being 節."},
         "agree_on_bottom": {"const": true, "description": "Scan: the agreed header reading is moved onto each page aligned on the header's bottom rule, not the frame's top (a frame boxing the page title above the header on some pages)."},
+        "merged_cells": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "Header cells (`説明`) whose columns are ruled only in some rows: in a row their rules leave out, one cell runs across them and its words are read as one column under the header cell."},
         "agree_all_frames": {"const": true, "description": "Scan: every frame of a spread (not only the widest) takes the header reading most pages share, frame by frame from the left."},
         "kind_by_characters": {"const": true, "description": "A stacked kind under its group whose two printed lines the text layer or OCR read across (翌年度繰越額／継逓繰続費次越) is the known kind its characters spell, not the group (headers.canonical)."},
         "facing_pages": {"const": true, "description": "The layout pattern `running_titles`: a page without a subject column is the right half of the spread opened by the page before it with one, whatever horizontal rules each prints (東久留米市: the left page rules each 目, the right page each line of the 説明)."},
@@ -135,7 +137,8 @@
       "properties": {
         "character_map": {"type": "object", "minProperties": 1, "propertyNames": {"pattern": "^[\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f]$"}, "additionalProperties": {"type": "string", "minLength": 1, "maxLength": 1}, "description": "Explicit Unicode mapping for broken font maps, before XML parsing and glyph reconstruction."},
         "form_clips": {"const": true, "description": "Text drawn inside a form has its clip in the form's space: an object whose own bounds meet it is visible."},
-        "image_rules": {"const": true, "description": "A page that draws no vector rule has its ruled grid in a background image: the rules are read from the render, as a scan's are."}
+        "image_rules": {"const": true, "description": "A page that draws no vector rule has its ruled grid in a background image: the rules are read from the render, as a scan's are."},
+        "crop_box": {"const": true, "description": "Each page shows one half of a sheet printed two pages up through its CropBox (131211): the words and rules outside it are the other page's, observed as that page."}
       }
     },
     "breakdown": {
@@ -192,6 +195,7 @@
           "group_heads": {"type": "array", "description": "Where a heading is printed at the start of the items it heads: the items after it at its level hang from it until they add up to its amount.", "items": {"type": "object", "additionalProperties": false, "required": ["page", "y", "reason"], "properties": {"page": {"type": "integer", "minimum": 1}, "y": {"type": "number"}, "reason": {"type": "string", "minLength": 10}}}},
           "glued_numbers": {"type": "object", "description": "A line's start and the number it holds, for a number read as one word with a name that begins with digits (`101歳6か月…` holds 10).", "additionalProperties": {"type": "string", "pattern": "^[0-9]+$"}},
           "opening_bracket_ink": {"const": true, "description": "OCR boxes the ink of a line: a line that starts with a full-width opening bracket starts half a character left of its box."},
+          "unnumbered_shift": {"type": "integer", "minimum": 1, "description": "A line of this axis that prints money and no number sits this many levels below the level its indent gives: the axis prints its deepest levels unnumbered, the first of them starting where the numbered names above start (利島)."},
           "headings": {"type": "boolean", "description": "A line without an amount, followed by a deeper line that prints one, is a heading of its own: the lines under it are its items."},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}},
           "name_line_reach": {"type": "number", "minimum": 1, "maximum": 2, "description": "How far a name line wrapped around a number's line may sit from it, in heights of its box (default 1). A Paddle box is lower than the line pitch, so a scan read by Paddle declares a little over 1."},

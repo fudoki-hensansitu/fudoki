@@ -277,7 +277,7 @@ def _cell_words(pieces: list[Word], cuts: list[float], reach: float = 0) -> list
 
 
 def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.DARK,
-               staircase: bool = False) -> pdf_rules.PageRules:
+               staircase: bool = False, row_columns: bool = False) -> pdf_rules.PageRules:
     """A continuous horizontal stroke joining two observed vertical rules closes their cell.
 
     The page-wide detector deliberately omits short strokes. Here both ends must meet
@@ -318,6 +318,27 @@ def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.D
             px, y0, y1 = round(x * scale), round(top * scale) + 1, round(bottom * scale)
             if y1 > y0 and np.any(np.all(image[y0:y1, max(0, px - 1):px + 2] < dark, axis=0)):
                 columns.append(pdf_rules.Rule(x, top, bottom, vertical[0].thickness))
+    # And with the layout setting `rules.row_columns`, a narrow stroke that runs the whole height between two
+    # horizontal rules is a column rule even where the page draws none elsewhere (131164's 財源 columns under 説明,
+    # drawn only over a 目's row in the middle of a page).
+    for upper in horizontal if row_columns else ():
+        lower = next((r for r in horizontal if r.position > upper.position + 1
+                      and min(upper.end, r.end) - max(upper.start, r.start) > 2), None)
+        if lower is None:
+            continue
+        left, right = max(upper.start, lower.start), min(upper.end, lower.end)
+        y0, y1 = round(upper.position * scale) + 1, round(lower.position * scale)
+        if lower.position - upper.position < 2 or right - left < 2 or y1 <= y0:
+            continue
+        x0 = round(left * scale)
+        inked = np.all(image[y0:y1, x0:round(right * scale) + 1] < dark, axis=0)
+        edges = np.flatnonzero(np.diff(np.concatenate(([0], inked.astype(int), [0]))))
+        for start, end in zip(edges[::2], edges[1::2]):
+            x = float(x0 + (start + end - 1) / 2) / scale
+            if end - start > 4 or any(abs(r.position - x) <= 1 and r.start <= upper.position + 1
+                                      and lower.position - 1 <= r.end for r in [*vertical, *columns]):
+                continue
+            columns.append(pdf_rules.Rule(round(x, 1), upper.position, lower.position, vertical[0].thickness))
     return replace(detected, horizontal=tuple(horizontal),
                    vertical=tuple(sorted([*detected.vertical, *columns], key=lambda r: (r.position, r.start))))
 
@@ -581,9 +602,11 @@ def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
         observed, corrected = rule['observed_name'], rule['corrected_name']
         digits = lambda t: [c for c in t if c.isdigit()]
         # Characters are replaced one for one, or a character the OCR lost is put back (`3款民生費` → `第3款民生費`:
-        # the observed text is the corrected one without the lost characters). A digit is never changed.
+        # the observed text is the corrected one without the lost characters), or a character the OCR read twice
+        # is taken out (`(（2）` → `（2）`: the corrected text is the observed one without it). A digit is never changed.
         inserted = len(observed) < len(corrected) and _subsequence(observed, corrected)
-        if digits(observed) != digits(corrected) or (len(observed) != len(corrected) and not inserted):
+        removed = len(corrected) < len(observed) and _subsequence(corrected, observed)
+        if digits(observed) != digits(corrected) or (len(observed) != len(corrected) and not inserted and not removed):
             raise ValueError(f'A name correction replaces characters of a name: {rule["id"]}')
         hit = 0
         for p in result['pages']:
@@ -610,7 +633,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
           header: dict | None = None, code_corrections: list[dict] | None = None,
           header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK, rule_hook=None,
           keep_marks: bool = False, row_gaps: bool = False, short_columns: bool = False,
-          skewed: bool = False) -> list[Page]:
+          skewed: bool = False, row_columns: bool = False) -> list[Page]:
     """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
     them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
@@ -622,7 +645,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     @cache
     def detected(number):
         found = short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed), rule_dark,
-                           bool((header or {}).get('staircase')) or short_columns)
+                           bool((header or {}).get('staircase')) or short_columns, row_columns)
         return rule_hook(found) if rule_hook else found
 
     code_rules, shrunk = [], []
@@ -1146,7 +1169,8 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
                     rule_dark=((settings or {}).get('rules') or {}).get('dark', pdf_rules.DARK), rule_hook=rule_hook,
                     keep_marks=keep_marks, row_gaps=bool(((settings or {}).get('rules') or {}).get('row_gaps')),
                     short_columns=bool(((settings or {}).get('rules') or {}).get('short_columns')),
-                    skewed=bool(((settings or {}).get('rules') or {}).get('skewed')))
+                    skewed=bool(((settings or {}).get('rules') or {}).get('skewed')),
+                    row_columns=bool(((settings or {}).get('rules') or {}).get('row_columns')))
     printed = add_code_readings(printed, options.get('code_readings'))
     printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
                                 'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')

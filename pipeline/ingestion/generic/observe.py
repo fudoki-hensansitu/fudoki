@@ -196,6 +196,7 @@ SHOWN_SHARE = 4  # light rules at least this many times the dark ones are the ta
 def _segments(page, pdf: Path | None = None) -> list[Rule]:
     rules = []
     unread = []  # thin filled rectangles whose colour the reader gives as light
+    pieces = []  # thin strokes whose colour the reader gives as light
     for line in page.lines:
         if line.get('stroke', True) and _dark(line.get('stroking_color', 0)):
             x0, x1, y0, y1 = line['x0'], line['x1'], line['top'], line['bottom']
@@ -203,9 +204,11 @@ def _segments(page, pdf: Path | None = None) -> list[Rule]:
                 rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1))
             elif abs(y1 - y0) < 1:
                 rules.append(Rule(x0, (y0 + y1) / 2, x1, (y0 + y1) / 2))
-        elif line.get('stroke', True) and max(line['x1'] - line['x0'], line['bottom'] - line['top']) > 20 \
-                and min(line['x1'] - line['x0'], line['bottom'] - line['top']) < 1:
-            unread.append(line)  # a stroke in a spot colour the reader gives as 1.0: checked on the rendered page below
+        elif line.get('stroke', True) and min(line['x1'] - line['x0'], line['bottom'] - line['top']) < 1:
+            pieces.append(line)  # a stroke in a spot colour the reader gives as 1.0: checked on the rendered page below
+    # A column rule drawn as a stroke per printed line (131164 2024: 0.2pt pieces 16pt long, one after the other) is
+    # one rule as long as the pieces it joins.
+    unread += [line for line in _joined(pieces) if max(line['x1'] - line['x0'], line['bottom'] - line['top']) > 20]
     for rect in page.rects:
         x0, x1, y0, y1 = rect['x0'], rect['x1'], rect['top'], rect['bottom']
         w, h = x1 - x0, y1 - y0
@@ -235,6 +238,23 @@ def _segments(page, pdf: Path | None = None) -> list[Rule]:
             rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1) if x1 - x0 < y1 - y0
                          else Rule(x0, (y0 + y1) / 2, x1, (y0 + y1) / 2))
     return rules
+
+
+def _joined(strokes: list[dict], gap: float = 1.0) -> list[dict]:
+    """Thin strokes on one line (the same x for vertical ones, the same y for horizontal ones) that touch or nearly
+    touch, joined into one stroke from the first one's start to the last one's end."""
+    joined = []
+    for vertical in (True, False):
+        along = [s for s in strokes if (s['x1'] - s['x0'] < s['bottom'] - s['top']) == vertical]
+        across = (lambda s: round((s['x0'] + s['x1']) / 2, 1)) if vertical else (lambda s: round((s['top'] + s['bottom']) / 2, 1))
+        start, end = ('top', 'bottom') if vertical else ('x0', 'x1')
+        for stroke in sorted(along, key=lambda s: (across(s), s[start])):
+            last = joined[-1] if joined and joined[-1]['_vertical'] == vertical else None
+            if last is not None and abs(across(last) - across(stroke)) <= .5 and stroke[start] - last[end] <= gap:
+                last[end] = max(last[end], stroke[end])
+            else:
+                joined.append({**stroke, '_vertical': vertical})
+    return joined
 
 
 def _drawn_dark(pdf: Path, page, rects: list[dict]) -> bool:
@@ -311,4 +331,27 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None,
             {'number': p.number, 'width': p.width, 'height': p.height,
              'words': [[w.text, w.x0, w.y0, w.x1, w.y1] for w in p.words],
              'rules': [[r.x0, r.y0, r.x1, r.y1] for r in p.rules]} for p in result]}, ensure_ascii=False))
+    return result
+
+
+def cropped(pdf: Path, pages: list[Page]) -> list[Page]:
+    """The pages cut to their CropBox (the layout setting `text_layer.crop_box`).
+
+    A sheet printed two pages up is shown page by page through a CropBox over each half (131211's 予算説明書): the
+    text layer and the drawing hold the whole sheet on both pages. Only the words whose middle is inside the box,
+    and the rules cut to it, are the page's."""
+    import pdfplumber
+    result = []
+    with pdfplumber.open(pdf) as document:
+        for page in pages:
+            left, top, right, bottom = document.pages[page.number - 1].cropbox
+            inside = lambda x, y: left <= x <= right and top <= y <= bottom
+            words = [w for w in page.words if inside((w.x0 + w.x1) / 2, (w.y0 + w.y1) / 2)]
+            rules = []
+            for rule in page.rules:
+                x0, x1 = max(rule.x0, left - 1), min(rule.x1, right + 1)
+                y0, y1 = max(rule.y0, top - 1), min(rule.y1, bottom + 1)
+                if x0 <= x1 and y0 <= y1 and (x1 - x0 > 1 or y1 - y0 > 1):
+                    rules.append(Rule(x0, y0, x1, y1))
+            result.append(Page(page.number, page.width, page.height, words, rules))
     return result

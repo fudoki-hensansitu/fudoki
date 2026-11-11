@@ -1,0 +1,25 @@
+{"criteria": {"false": "取り込むべきでない数字。例: 款・項・目・節・事業の番号、頁番号、年月日・年度・議決の号数（令和8年第6号）、住所の番地、人数・件数・回数・面積などの数量、率（％）、本文や注記の中の数字、「第10節へ同項同目第8節から流用 12,846」のような流用・充用の注記の金額。", "true": "表の項目（科目・事業）の金額として取り込むべき値。例: 予算額、補正額、決算額、支出済額、不用額、事業費、国・県支出金など、表の金額の欄に印字された円の金額（0 や 1,234,000 のような値も含む）。"}, "instructions": "日本の自治体の決算書（歳出）のある頁から、数字を1つ取り出した。文脈は `items.{id}` にある（同じ行の語を左から並べた文、列の見出し、上下の行）。取り出した数字 `items.{id}.対象の数字`（同じ行では【】で示す）は、表の項目の金額として取り込むべき値か。", "kind": "digit-recheck", "model": "jev-1.13.0", "threshold": 0.7, "version": 1}
+{"fp":"07886c777a4d5553e0d0e2b93bd73bda","p":0.19,"t":"general-initial"}
+{"fp":"0de61f342e055eddda9e64101b57ceb6","p":0.18,"t":"general-initial"}
+{"fp":"0ed82893fc3290e22db1eddde14263c3","p":0.06,"t":"general-initial"}
+{"fp":"1204e0c6b78e27dd84b5ca86d49a9d1d","p":0.05,"t":"general-initial"}
+{"fp":"1f32ab2e7841cf2658befa4e037a510c","p":0.08,"t":"general-initial"}
+{"fp":"58a562bfcf21f219b3e68dcbe86e0dec","p":0.05,"t":"general-initial"}
+{"fp":"5ed0dfe74ab1b23a001cfca3c215b3b0","p":0.11,"t":"general-initial"}
+{"fp":"6c23c1b794e040fdb0d12dd42696629c","p":0.11,"t":"general-initial"}
+{"fp":"75e1b5376e25018390d4702ee6ff805c","p":0.05,"t":"general-initial"}
+{"fp":"75e97ac36123ff98d6f8b94a34716163","p":0.06,"t":"general-initial"}
+{"fp":"84490927f4cd1cb9bef235d4d028078f","p":0.17,"t":"general-initial"}
+{"fp":"8ba984a6fc55e143fe8170f316278666","p":0.32,"t":"general-initial"}
+{"fp":"9150370dce96dbf75ee4b1db835be38b","p":0.05,"t":"general-initial"}
+{"fp":"9cce5dda8ab9343047a25db3acaa3f69","p":0.06,"t":"general-initial"}
+{"fp":"a50d359eef15a2d07fa66423e645eee6","p":0.05,"t":"general-initial"}
+{"fp":"a88c9a9c9d90948392b51668d5091d70","p":0.06,"t":"general-initial"}
+{"fp":"ab67c6ec8670358d1c27b3844aab8313","p":0.19,"t":"general-initial"}
+{"fp":"ba37f9ae386e8fcf4e39d6edff3b0c16","p":0.12,"t":"general-initial"}
+{"fp":"c755090b7806195c9636aee64f96614a","p":0.11,"t":"general-initial"}
+{"fp":"c93410b670327e11f95ae2a45dab5cb6","p":0.12,"t":"general-initial"}
+{"fp":"cb5dfbfa0901cfcbebf51c1158be7f06","p":0.12,"t":"general-initial"}
+{"fp":"e0e91fc49d5854355cb1c31a0dfa3fc5","p":0.11,"t":"general-initial"}
+{"fp":"eea1193631092e55145393aa6614ba29","p":0.05,"t":"general-initial"}
+{"fp":"f2f395c22d3c9f07523a7c26765f3f22","p":0.08,"t":"general-initial"}
