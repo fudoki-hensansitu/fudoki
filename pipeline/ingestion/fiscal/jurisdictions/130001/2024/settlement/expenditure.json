@@ -50,7 +50,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -102,7 +105,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -154,7 +160,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -206,7 +215,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -258,7 +270,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -310,7 +325,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -362,7 +380,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -414,7 +435,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -466,7 +490,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -518,7 +545,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -570,7 +600,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -622,7 +655,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -674,7 +710,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -726,7 +765,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -778,7 +820,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -830,7 +875,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -882,7 +930,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -934,7 +985,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [
@@ -986,7 +1040,10 @@
           },
           "repairs": [
             "split_at_rules"
-          ]
+          ],
+          "quirks": {
+            "transfer_account_above": true
+          }
         }
       },
       "expected_tables": [

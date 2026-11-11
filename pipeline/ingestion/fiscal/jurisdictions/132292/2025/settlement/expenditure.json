@@ -38,6 +38,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -78,6 +81,9 @@
                 "pattern": "shape"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -118,6 +124,9 @@
                 "pattern": "shape"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -158,6 +167,9 @@
                 "pattern": "shape"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -198,6 +210,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -238,6 +253,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -278,6 +296,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -318,6 +339,9 @@
                 "pattern": "shape"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -358,6 +382,9 @@
                 "pattern": "shape"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -398,6 +425,9 @@
                 "pattern": "shape"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -438,6 +468,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -478,6 +511,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -511,6 +547,9 @@
               "pattern": "bands"
             },
             "breakdown": {}
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -550,6 +589,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -589,6 +631,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -628,6 +673,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -667,6 +715,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },

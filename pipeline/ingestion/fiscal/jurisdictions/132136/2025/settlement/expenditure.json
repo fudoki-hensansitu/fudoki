@@ -37,6 +37,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "account_code_transfers": true
           }
         }
       },
@@ -76,6 +79,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "account_code_transfers": true
           }
         }
       },
@@ -115,6 +121,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "account_code_transfers": true
           }
         }
       },
@@ -154,6 +163,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "account_code_transfers": true
           }
         }
       },
