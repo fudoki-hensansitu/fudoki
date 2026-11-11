@@ -1,0 +1,570 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "134210",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "762d5786c27bc939ed2eb343bf5b514b982becbb444972658f97c165452d87b0"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "pages": [
+          [
+            41,
+            90
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_at_top": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 5
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef8db5182207ff4bc8c919d8cb02e13f60b3611554d26d631fa04c18e0ec53e"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "pages": [
+          [
+            15,
+            24
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_at_top": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 5
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "land-development-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f1a348dd9a6f89e2b865c6e0e023dd4424c9483e3aacffbada1d5652d4804803"
+        }
+      ],
+      "options": {
+        "account": "宅地造成事業特別会計",
+        "table_id": "land-development-initial",
+        "pages": [
+          [
+            11,
+            12
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_at_top": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 5
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-development-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8b5c6e8ad2db7dca6eeecfdeb7746c84cc7e22d81a434a08d2ff3c6104316f1f"
+        }
+      ],
+      "options": {
+        "account": "介護保険（保険事業勘定）特別会計",
+        "table_id": "long-term-care-insurance-initial",
+        "pages": [
+          [
+            17,
+            24
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_at_top": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 5
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-service-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1cf1c6bbdab1e7b907d5a52af88c806aa23be5b1387da5a814e43a60753af276"
+        }
+      ],
+      "options": {
+        "account": "介護保険（介護サービス事業勘定）特別会計",
+        "table_id": "long-term-care-service-initial",
+        "pages": [
+          [
+            13,
+            16
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_at_top": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 5
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-service-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b9362e3da1890c470746b14955d1366852e1650403a613cb62213c0ce60af882"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "pages": [
+          [
+            13,
+            16
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目の行の財源額の下に財源の名前と額が国都支出金からその他の欄にまたがって複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。",
+                    "overhang": 5
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_at_top": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "digit_set_codes": 5
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}

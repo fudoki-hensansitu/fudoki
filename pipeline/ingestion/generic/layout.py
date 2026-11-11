@@ -443,6 +443,8 @@ def page_bands(page: Page, spread: dict | None = None,
         known = _carried_header(page, frame, carry) if carry is not None else None
         if known is not None:
             header_bottom = top
+        elif carry is not None:
+            header_bottom = _carried_bottom(page, frame, carry, header_bottom)
         title_ignored = bool((header or {}).get('ignore_frame_title'))
         # Header cells: the rule-bounded rectangle around each header word.
         cells: dict[tuple, list[Word]] = defaultdict(list)
@@ -519,6 +521,21 @@ def _carried_header(page: Page, frame, carry: list) -> list | None:
         # A name in the body may print a character of a heading (`金`): the top is the header when it prints most of them.
         return None if len(printed & words) * 2 >= len(words) else cells
     return None
+
+
+def _carried_bottom(page: Page, frame, carry: list, bottom: float) -> float:
+    """Where the header ends on a frame that prints its headings: as far below its top as on the latest frame in `carry`
+    drawn with the same column rules, where a rule across the frame is drawn there. The rows a page opens with that print
+    no figure (the 説明 a 目 carries on from the page before, 小笠原村) are body, not more of the header."""
+    x0, x1, top, _, edges = frame
+    for known_edges, height, _, _ in reversed(carry):
+        if len(known_edges) != len(edges) or any(abs(a - b) > 2 for a, b in zip(known_edges, edges)):
+            continue
+        if bottom - top > height + 2 and any(abs(r.y0 - (top + height)) <= 1.5 and r.x0 <= x0 + 3 and r.x1 >= x1 - 3
+                                             for r in _joined([r for r in page.rules if not r.vertical])):
+            return top + height
+        return bottom
+    return bottom
 
 
 def merged_cells(frame_bands: list[Band], heading: str, verticals: list[Rule]) -> list[Band]:

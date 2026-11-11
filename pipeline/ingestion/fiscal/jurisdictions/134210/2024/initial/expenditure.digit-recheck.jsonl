@@ -1,0 +1,16 @@
+{"criteria": {"false": "取り込むべきでない数字。例: 款・項・目・節・事業の番号、頁番号、年月日・年度・議決の号数（令和8年第6号）、住所の番地、人数・件数・回数・面積などの数量、率（％）、本文や注記の中の数字、「第10節へ同項同目第8節から流用 12,846」のような流用・充用の注記の金額。", "true": "表の項目（科目・事業）の金額として取り込むべき値。例: 予算額、補正額、決算額、支出済額、不用額、事業費、国・県支出金など、表の金額の欄に印字された円の金額（0 や 1,234,000 のような値も含む）。"}, "instructions": "日本の自治体の決算書（歳出）のある頁から、数字を1つ取り出した。文脈は `items.{id}` にある（同じ行の語を左から並べた文、列の見出し、上下の行）。取り出した数字 `items.{id}.対象の数字`（同じ行では【】で示す）は、表の項目の金額として取り込むべき値か。", "kind": "digit-recheck", "model": "jev-1.13.0", "threshold": 0.7, "version": 1}
+{"fp":"591095b2f6a31e1f61b7807699d68791","p":0.06,"t":"general-initial"}
+{"fp":"6b61e78b1ec5dedc02b5c5ef4fac3255","p":0.06,"t":"general-initial"}
+{"fp":"6e02edf8624423fee854de1537d611af","p":0.09,"t":"general-initial"}
+{"fp":"7e33f5f9ac857ed3e7b9da580c6ccfa2","p":0.12,"t":"general-initial"}
+{"fp":"889f9282feeb3006e75c9f0625ca0f04","p":0.1,"t":"general-initial"}
+{"fp":"9ad6d5b229bb02771ce470fa020fe280","p":0.12,"t":"general-initial"}
+{"fp":"cab14e694946208c5496ba9e8cf7252b","p":0.14,"t":"general-initial"}
+{"fp":"cc44eb42fec25cbafcacd83cf4782611","p":0.12,"t":"general-initial"}
+{"fp":"ce856342d69fa2a12111f44434d9bdbc","p":0.08,"t":"general-initial"}
+{"fp":"ed51c606c973676b414894ae15c8bee1","p":0.29,"t":"general-initial"}
+{"fp":"da90dcd498704b892abfc31ddba71789","p":0.13,"t":"land-development-initial"}
+{"fp":"b105197d704a9abd2af656006c1ef6be","p":0.54,"t":"long-term-care-insurance-initial"}
+{"fp":"e6517d0791d45ac92fc7169f689a0930","p":0.6,"t":"long-term-care-insurance-initial"}
+{"fp":"4807ece852da499d8374b0f961afcb2b","p":0.48,"t":"national-health-insurance-initial"}
+{"fp":"ce89a4430574b09a9e8d676067ceeeaa","p":0.51,"t":"national-health-insurance-initial"}
