@@ -486,3 +486,20 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1646,adachi-2024-01,131211,一般会計,,産業経済費,,,勤労費,eq,,assigned,04.1.2,retained,目,,足立区 勤労者への支援を一般労働業務に分類する。名称からの判断。,true
 1647,kind-fallback-school-lunch,,,学校給食費,,,,,,,assigned,09.6,retained,目,,学校給食費の会計（例: 131121 世田谷区の学校給食費会計）の目を教育の補助サービス 09.6 に分類する（一般会計の給食の目 vocab-school-meal と同じ）。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
 1648,kind-fallback-housing-land,,,宅地造成,,,,,,,assigned,06.1,retained,目,,宅地造成事業の特別会計の目を住宅開発 06.1 に置く（例: 134210 小笠原村。島の住宅用地の造成と分譲）。償還・積立・繰出など行き先が違う目は先の規則が取る。,true
+1649,chiyoda-education-promotion,131016,一般会計,,子ども費,学校管理費,,教育振興費,eq,,assigned,09,retained,目,,千代田区 子ども費の学校管理費の下の教育振興費は学校教育の振興全般で、段階を分けられないため教育 09 に置く（281000 神戸市の教育振興費と同じ）。名称からの判断。,true
+1650,chiyoda-health-welfare-admin,131016,一般会計,,保健福祉費,保健福祉管理費,,保健福祉総務費,eq,,unclassifiable,,retained,目,,千代田区 保健福祉の総務費は保健と社会保護にまたがり一つの機能に寄せられない（131202 練馬区の保健福祉総務費と同じ）。,false
+1651,chiyoda-contracted-road-works,131016,一般会計,,環境まちづくり費,道路公園費,,受託事業費,eq,,assigned,04.5,retained,目,,千代田区 道路公園費の受託事業費は他団体から受けた道路の工事で、道路の整備として運輸 04.5 に置く。名称からの判断。,true
+1652,chuo-livelihood-support,131024,一般会計,,福祉保健費,社会福祉費,,生活支援費,contains,,assigned,10.7,retained,目,,中央区 社会福祉費の（生活支援費）は生活に困る人への支援で、他に分類されない社会的排除 10.7 に置く（生活援護・生活福祉と同じ）。名称からの判断。,true
+1653,taito-hospital-facility-admin,131067,病院施設会計,,施設管理費,施設管理費,,施設総務費,eq,,assigned,07.3,retained,目,,台東区 病院施設会計の施設総務費は区が持つ病院の建物の管理で、病院サービス 07.3 に置く。名称からの判断。,true
+1654,taito-geriatric-facility-admin,131067,老人保健施設会計,,施設管理費,施設管理費,,施設総務費,eq,,assigned,10.2,retained,目,,台東区 老人保健施設会計の施設総務費は介護老人保健施設の建物の管理で、高齢者の介護として 10.2 に置く。名称からの判断。,true
+1655,taito-facility-debt-cost,131067,病院施設会計|老人保健施設会計,,諸支出金,公債費,,公債諸費,eq,,assigned,01.7,retained,目,,台東区 病院施設・老人保健施設の会計の公債諸費は公債の取引 01.7（一般会計の公債諸費 keyword-debt-cost と同じ）。,false
+1656,nakano-care-elderly-support,131148,一般会計,,地域支えあい推進費,介護保険費,,介護・高齢者支援費,contains,,assigned,10.2,retained,目,,中野区 介護保険費の（介護・高齢者支援費）は高齢者の介護と支援で、高齢 10.2 に置く。名称からの判断。,true
+1657,toshima-mayor-office,131164,一般会計,,政策経営費,政策経営費,,区長室費,eq,,assigned,01.1,retained,目,,豊島区 区長室費は区長の執務を支える費用で、執行機関 01.1 に置く。名称からの判断。,true
+1658,toshima-city-promotion,131164,一般会計,,政策経営費,政策経営費,,シテイプロモーション費,eq,,assigned,04.7,retained,目,,豊島区 シテイプロモーション費（出典の表記はイが大きい）はシティプロモーションで、keyword-city-promotion と同じ 04.7 に置く。,true
+1659,toshima-information-policy,131164,一般会計,,政策経営費,政策経営費,,情報政策費,eq,,assigned,01.3.3,retained,目,,豊島区 情報政策費は区の情報システムの運営で、vocab-info-system と同じ 01.3.3 に置く。名称からの判断。,true
+1660,toshima-culture-events,131164,一般会計,,文化スポーツ費,文化スポーツ費,,文化事業費,eq,,assigned,08.2,retained,目,,豊島区 文化事業費は文化の催し・振興で、文化サービス 08.2 に置く。名称からの判断。,true
+1661,toshima-manga-anime,131164,一般会計,,産業観光費,産業観光費,,マンガ・アニメ・トキワ荘振興費,eq,,assigned,08.2,retained,目,,豊島区 マンガ・アニメ・トキワ荘振興費はトキワ荘ゆかりの漫画・アニメ文化の振興で、文化サービス 08.2 に置く。名称からの判断。,true
+1662,arakawa-amusement-park,131181,一般会計,,産業経済費,産業観光費,,荒川遊園費,eq,,assigned,08.1,retained,目,,荒川区 荒川遊園費は区立の遊園地（あらかわ遊園）の運営で、レクリエーション 08.1 に置く。名称からの判断。,true
+1663,ogasawara-termite,134210,一般会計,,衛生費,保健衛生費,,シロアリ対策費,eq,,assigned,07.4,retained,目,,小笠原村 シロアリ対策費は島の家屋のシロアリの駆除への支援で、保健衛生費の下の害虫対策として公衆衛生 07.4 に置く。名称からの判断。,true
+1664,ogasawara-cemetery,134210,一般会計,,衛生費,保健衛生費,,墓園費,eq,,assigned,06.2,retained,目,,小笠原村 墓園費は村営墓地の管理で、vocab-cemetery（霊園・斎場）と同じ 06.2 に置く。,true
+1665,ogasawara-housing-land,134210,一般会計,,土木費,住宅費,,用地造成費,contains,,assigned,06.1,retained,目,,小笠原村 住宅費の用地造成費は住宅用地の造成で、住宅開発 06.1 に置く（R6 は出典の印 × を名前に含めて読むので contains）。名称からの判断。,true

@@ -34,3 +34,6 @@ select r.row_id as subject_id,
 from rows r
 left join rows p on p.node_id = r.parent_node_id and p.document_kind = r.document_kind
 where r.is_subject_row
+    -- A 款・項 the year dropped prints no number and no budget beside last year's (`(共同事業拠出金)`):
+    -- the year has nothing under it, so the table leaves it out.
+    and not (r.kan_code is null and coalesce(r.amount_yen, 0) = 0)

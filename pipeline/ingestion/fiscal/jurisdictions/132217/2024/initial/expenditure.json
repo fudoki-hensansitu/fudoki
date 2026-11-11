@@ -117,7 +117,10 @@
                 "pattern": "indent",
                 "options": {
                   "bare_amounts": true,
-                  "yen_marked": true
+                  "yen_marked": true,
+                  "notes": [
+                    "一人当たり"
+                  ]
                 }
               }
             }
@@ -321,7 +324,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "81a144662e8004b61387ad8b288fd466721b7a037f72de04da595b57fbdc2b94",
+      "input_fingerprint": "795dc6eef61f4dc7eee22aeeed2e6181c40c13135a21fdc70628077e36066fbb",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -351,12 +354,12 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "a3fd49565aacb6fbef196b2a3c57b9d51c2322fd4f566d07edb379e71bc3ccb8",
+      "input_fingerprint": "25c6548476ab01fe0771484899f23fe6a57bed23ddd2434ce5223be2678ffe78",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は printed 14頁 から決めた。款の和 8,036,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "金額の注記 0 件（なし）を注記軸に置いた。種類を決められなかった注記 1 件は取り込んでいない。",
         "共有辞書に無い金額の見出し 1 種（59 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
       ],
       "unread_amount_count": 0,
@@ -364,24 +367,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132217/2024/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "0a2b811c3ae19fb890c5509b5298e3ed3d53b2bfcd8eb47eff3d06546fa1c50b",
-          "bytes": 14823
+          "sha256": "7b41089fb5223fa9acef3742975f4458eda7ce0989ec3ec43736d2a791fc5b8e",
+          "bytes": 14717
         },
-        "row_count": 324
+        "row_count": 323
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132217/2024/initial/expenditure/national-health-initial-amounts.parquet",
-          "sha256": "abe8fb42822f1ef0ffa69a0334cd4651ae01a165e7b53d252830b3d2035dfaad",
-          "bytes": 10265
+          "sha256": "fb9f78fe0a8d554bbe992cc98a8ccbc74f7aebc58e83a26ac430ce6583401244",
+          "bytes": 10185
         },
-        "row_count": 442
+        "row_count": 441
       }
     },
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "a5694330536b986b12c155c130838e3d744f22064a0791da690d2d38ff4d60b7",
+      "input_fingerprint": "c58f827714ff3b501d08f6ffc57de0807cf65d3c812c6ed4414276fffec5f470",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -411,7 +414,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "d7a9611f3a4800b9bf478056a7bdbf4adbcdd8d7ef5906eb3965ae6a0f5e4b6c",
+      "input_fingerprint": "1386e35d1d7fe872172654e1f730b5e7ee243e5401651ed1ee689943b7bbda71",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -441,7 +444,7 @@
     {
       "table_id": "parking-initial",
       "conversion_id": "parking-initial",
-      "input_fingerprint": "6f2dc996356f7aed3f4fabc75a98ee425bedd1080a1df62dd662b932aa28769f",
+      "input_fingerprint": "0d006b8bdec9fb89901d8bd9415126d2bbdab88f7e94f53307ca6c979d208338",
       "account": "駐車場事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
