@@ -92,7 +92,37 @@
     },
     {
       "jurisdiction": "131148",
-      "layout": "nakano_press"
+      "workflow": {
+        "scope": {
+          "start": "^■主な事業"
+        },
+        "find": {
+          "pattern": "lines",
+          "options": {
+            "item": "^\\d{1,2} (?P<name>.+?(?: ?\\((?P<tag>新規|拡充|推進|見直し|見直し等|廃止|充実|継続)\\))?) ?(?P<amount>(?:[\\d,]+億)?(?:[\\d,]+万)?(?:[\\d,]+千)?円)?(?: ?\\((?:[\\d,]+億)?(?:[\\d,]+万)?(?:[\\d,]+千)?円\\))?$"
+          }
+        },
+        "assemble": [
+          {
+            "pattern": "amount_next",
+            "options": {
+              "pattern": "^(?:※\\S*含む ?)?(?P<amount>(?:[\\d,]+億)?(?:[\\d,]+万)?(?:[\\d,]+千)?円)(?: ?\\(.*円\\))?$"
+            }
+          }
+        ],
+        "marks": {
+          "tag": " ?\\((?P<tag>新規|拡充|推進|見直し|見直し等|廃止|充実|継続)\\)$",
+          "strip": " ?※.*$",
+          "new": [
+            "新規"
+          ],
+          "require_amount": "untagged",
+          "no_amount": [
+            "廃止"
+          ]
+        }
+      },
+      "note": "予算（案）の概要の「各部予算の概要・主な事業」の章。末尾の括弧は前年度の額。廃止の事業は前年度の額だけを印字するので金額なし。債務負担行為の限度額だけの事業も金額なし"
     },
     {
       "jurisdiction": "131156",
@@ -108,13 +138,27 @@
     },
     {
       "jurisdiction": "131181",
-      "layout": "press_lines",
-      "rules": {
-        "item": "^\\(\\d+\\) ?(?P<name>.+?)(?: (?P<tag>新|充|レ))?(?: (?P<amount>[\\d,]+)千円)?$",
-        "amount_next": "^(?:(?P<tag>新|充|レ) )?(?P<amount>[\\d,]+)千円$",
-        "new": [
-          "新"
-        ]
+      "workflow": {
+        "find": {
+          "pattern": "lines",
+          "options": {
+            "item": "^\\(\\d+\\) ?(?P<name>.+?)(?: (?P<tag>新|充|レ))?(?: (?P<amount>[\\d,]+)千円)?$"
+          }
+        },
+        "assemble": [
+          {
+            "pattern": "amount_next",
+            "options": {
+              "pattern": "^(?:(?P<tag>新|充|レ) )?(?P<amount>[\\d,]+)千円$"
+            }
+          }
+        ],
+        "marks": {
+          "new": [
+            "新"
+          ],
+          "require_amount": true
+        }
       },
       "note": "予算（案）の概要の「予算の主要な事業」の章。見出し「（１２）事業名 充 １８５，０６０千円」（札 新・充・レ、額が次の行のこともある）"
     },
@@ -128,12 +172,18 @@
     },
     {
       "jurisdiction": "131211",
-      "layout": "press_card",
-      "rules": {
-        "name": "^事業名:",
-        "amount": "^予算額$",
-        "strip": "^\\d(?=\\D)",
-        "pair_height": 6
+      "workflow": {
+        "find": {
+          "pattern": "card",
+          "options": {
+            "name": "^事業名:",
+            "amount": "^予算額$",
+            "pair_height": 6
+          }
+        },
+        "marks": {
+          "strip": "^\\d(?=\\D)"
+        }
       },
       "note": "予算（案）の概要の「主要事業」の頁（1事業1頁）。《》の中は前年度の額で読まない。主要施策の頁と新規・拡充事業の一覧表は読まない"
     },
@@ -143,17 +193,31 @@
     },
     {
       "jurisdiction": "131237",
-      "layout": "press_lines",
-      "rules": {
-        "item": "^\\d+\\.(?P<name>\\D.*)$",
-        "amount_next": "(?:^|】 ?)(?P<amount>[\\d,]+) ?\\(.*\\)$",
-        "lookahead": 3,
-        "join": true,
-        "tag": "\\((?P<tag>新規|拡充|充実|継続|見直し)\\)",
-        "strip": "【[^】]*】?",
-        "new": [
-          "新規"
-        ]
+      "workflow": {
+        "find": {
+          "pattern": "lines",
+          "options": {
+            "item": "^\\d+\\.(?P<name>\\D.*)$"
+          }
+        },
+        "assemble": [
+          {
+            "pattern": "amount_next",
+            "options": {
+              "pattern": "(?:^|】 ?)(?P<amount>[\\d,]+) ?\\(.*\\)$",
+              "lookahead": 3,
+              "join": true
+            }
+          }
+        ],
+        "marks": {
+          "tag": "\\((?P<tag>新規|拡充|充実|継続|見直し)\\).*$",
+          "strip": "【[^】]*】?",
+          "new": [
+            "新規"
+          ],
+          "require_amount": true
+        }
       },
       "note": "予算概要の「新規・拡充事業の概要」の章。番号付きの見出しの下の行に当年度の額（千円）。額の行が続かない番号付きの行（目次・小見出し）は読まない"
     },
@@ -175,7 +239,39 @@
     },
     {
       "jurisdiction": "132055",
-      "layout": "ome_press"
+      "workflow": {
+        "scope": {
+          "start": "一般会計予算のポイント(?!.*\\d$)",
+          "end": "収益事業から|^5 主な使用料"
+        },
+        "find": {
+          "pattern": "lines",
+          "options": {
+            "item": "^★?【(?P<tag>新|拡|投|継)】 ?(?!新規事業)(?P<name>.+?)(?: ?[☆※])?(?: (?P<amount>[\\d,]+) ?千円 ?\\(.+\\))?$"
+          }
+        },
+        "assemble": [
+          {
+            "pattern": "amount_next",
+            "options": {
+              "pattern": "^(?:[☆※] )?(?P<amount>[\\d,]+) ?千円 ?\\(.+\\)$",
+              "lookahead": 3
+            }
+          },
+          {
+            "pattern": "name_after",
+            "options": {
+              "pattern": "^(?![ア-ン] |◆|\\*|\\(|★|【|- \\d+ -$|\\d+$|.*千円)."
+            }
+          }
+        ],
+        "marks": {
+          "new": [
+            "新"
+          ]
+        }
+      },
+      "note": "当初予算（案）の概要の「4 一般会計予算のポイント」。【新】新規・【拡】拡充・【投】投資的・【継】継続。括弧書きの行は注記で名前に入れない。「収益事業」の節で終わる"
     },
     {
       "jurisdiction": "132063",
@@ -183,26 +279,39 @@
     },
     {
       "jurisdiction": "132071",
-      "layout": "press_table",
-      "rules": {
-        "columns": {
-          "name": "^事業名",
-          "point": "^事業内容",
-          "amount": "^予算額"
+      "workflow": {
+        "find": {
+          "pattern": "table",
+          "options": {
+            "columns": {
+              "name": "^事業名",
+              "point": "^事業内容",
+              "amount": "^予算額"
+            }
+          }
         },
-        "new_mark": "\\(新\\)"
+        "marks": {
+          "new_mark": "\\(新\\)"
+        }
       },
       "note": "一般会計予算概要の「主な建設事業」などの表。R7 は字が cid で符号化されていて読めず 0 件"
     },
     {
       "jurisdiction": "132080",
-      "layout": "press_lines",
-      "rules": {
-        "previous": "^(?:№|No) ?\\d+ ",
-        "item": "^(?P<name>.+?)(?: (?P<tag>新規|拡充))? ?\\d+年度 (?:\\(※\\))?(?P<amount>[\\d, ]*\\d)$",
-        "new": [
-          "新規"
-        ]
+      "workflow": {
+        "find": {
+          "pattern": "lines",
+          "options": {
+            "previous": "^(?:№|No) ?\\d+ ",
+            "item": "^(?P<name>.+?)(?: (?P<tag>新規|拡充))? ?\\d+年度 (?:\\(※\\))?(?P<amount>[\\d, ]*\\d)$"
+          }
+        },
+        "marks": {
+          "new": [
+            "新規"
+          ],
+          "require_amount": true
+        }
       },
       "note": "「市政経営の概要《施策と予算》」の予算事業の一覧（№の行と次の行の組）。基本計画事業の一覧は額を持たないので読まない"
     },
@@ -212,14 +321,26 @@
     },
     {
       "jurisdiction": "132101",
-      "layout": "press_lines",
-      "rules": {
-        "start": "^\\d+ ?\\d* 主な事業$",
-        "end": "^\\d+ ?\\d* 財政用語",
-        "item": "^○ ?(?P<name>.+)$",
-        "amount_next": "事 ?業 ?費 (?P<amount>[\\d,]+)千円",
-        "lookahead": 1000,
-        "require_amount": false
+      "workflow": {
+        "scope": {
+          "start": "^\\d+ ?\\d* 主な事業$",
+          "end": "^\\d+ ?\\d* 財政用語"
+        },
+        "find": {
+          "pattern": "lines",
+          "options": {
+            "item": "^○ ?(?P<name>.+)$"
+          }
+        },
+        "assemble": [
+          {
+            "pattern": "amount_next",
+            "options": {
+              "pattern": "事 ?業 ?費 (?P<amount>[\\d,]+)千円",
+              "lookahead": 1000
+            }
+          }
+        ]
       },
       "note": "予算の概要の「主な事業」の節（「財政用語」の節の前まで）。見出し「○ 事業名」の後の最初の事業費"
     },
@@ -229,62 +350,133 @@
     },
     {
       "jurisdiction": "132128",
-      "layout": "press_table",
-      "rules": {
-        "columns": {
-          "name": "^事業名称",
-          "tag": "^経費",
-          "amount": "予算額"
+      "workflow": {
+        "find": {
+          "pattern": "table",
+          "options": {
+            "columns": {
+              "name": "^事業名称",
+              "tag": "^経費",
+              "amount": "予算額"
+            }
+          }
         },
-        "new": [
-          "新規"
-        ],
-        "skip": "^\\d+\\.?(?=\\D)"
+        "marks": {
+          "new": [
+            "新規"
+          ],
+          "skip": "^\\d+\\.?(?=\\D)"
+        }
       },
       "note": "当初予算概要の「主要施策と主な事業」の表。字を縦に組んだ頁（R7 の全頁、R8 の物価高対策の頁）は表として読めず読まない（R7 は 0 件）"
     },
     {
       "jurisdiction": "132136",
-      "layout": "higashimurayama_press"
+      "workflow": {
+        "find": {
+          "pattern": "lines",
+          "options": {
+            "item": "^(?P<name>.*?)\\((?:予算額|事業費): ?(?P<amount>[^)]*?)(?:\\)|$)"
+          }
+        },
+        "assemble": [
+          {
+            "pattern": "name_around",
+            "options": {
+              "before": "^(?P<name>.*)$"
+            }
+          }
+        ],
+        "marks": {
+          "tag": "^(?P<tag>新) ?",
+          "new": [
+            "新"
+          ]
+        }
+      }
     },
     {
       "jurisdiction": "132144",
-      "layout": "press_table",
-      "rules": {
-        "columns": {
-          "tag": "^(事業)?区分",
-          "name": "^事業名",
-          "amount": "^事業費"
+      "workflow": {
+        "find": {
+          "pattern": "table",
+          "options": {
+            "columns": {
+              "tag": "^(事業)?区分",
+              "name": "^事業名",
+              "amount": "^事業費"
+            },
+            "carry": true
+          }
         },
-        "new": [
-          "新"
-        ],
-        "carry": true,
-        "skip": "^小計$"
+        "marks": {
+          "new": [
+            "新"
+          ],
+          "skip": "^小計$"
+        }
       },
       "note": "記者会見資料「政策的経費の内容」の表（見出しは2段、頁をまたぐ表は見出しが無い）。「主な取組」の冊は額を持たないので 0 件"
     },
     {
       "jurisdiction": "132152",
-      "layout": "press_table",
-      "rules": {
-        "page": "^.{0,54}政策事業一覧",
-        "cid_digits": true,
-        "columns": {
-          "name": "^個別事業名",
-          "tag": "^分類",
-          "amount": "^事業費"
+      "workflow": {
+        "scope": {
+          "page": "^.{0,54}政策事業一覧"
         },
-        "new": [
-          "新規"
-        ],
-        "skip": " 計$"
+        "find": {
+          "pattern": "table",
+          "options": {
+            "cid_digits": true,
+            "columns": {
+              "name": "^個別事業名",
+              "tag": "^分類",
+              "amount": "^事業費"
+            }
+          }
+        },
+        "marks": {
+          "new": [
+            "新規"
+          ],
+          "skip": " 計$"
+        }
       },
       "note": "予算（案）記者会見資料の「政策事業一覧」の表。R8 は数字を (cid:1746N) で符号化している"
     },
     {
       "jurisdiction": "132195",
-      "layout": "komae_press"
+      "workflow": {
+        "find": {
+          "pattern": "lines",
+          "options": {
+            "item": "^(?!予算科目)(?:(?P<tag>新規|拡充|見直し) ?)?(?P<name>.*?) ?担当課(?: .*)?$"
+          }
+        },
+        "assemble": [
+          {
+            "pattern": "name_around",
+            "options": {
+              "before": "^予算科目 (?P<name>.+)$",
+              "after": "^[-‐ー] [-‐ー] [-‐ー] (?P<name>.+)$"
+            }
+          },
+          {
+            "pattern": "amount_next",
+            "options": {
+              "pattern": "^R ?\\d+年度 (?P<amount>[\\d,]+)",
+              "lookahead": 1000
+            }
+          }
+        ],
+        "marks": {
+          "new": [
+            "新規"
+          ],
+          "skip": "^$|^[-‐ー]$|再掲|^\\(歳入\\)"
+        }
+      },
+      "note": "予算概要の「主要事業」の枠。事業名の欄が「-」の枠（複数の事業をまとめた枠）、「(再掲)」「(歳入)」の枠は読まない。事業費が「-」の枠は金額なし"
     },
     {
       "jurisdiction": "132209",
@@ -296,21 +488,29 @@
     },
     {
       "jurisdiction": "132225",
-      "layout": "press_table",
-      "rules": {
-        "page": "予算計上の事業名",
-        "columns": {
-          "tag": "^区分",
-          "name": "^事項",
-          "amount": "^予算額",
-          "point": "^摘"
+      "workflow": {
+        "scope": {
+          "page": "予算計上の事業名"
         },
-        "new": [
-          "新規"
-        ],
-        "new_contains": true,
-        "also": "【(?P<also>.+?)】$",
-        "also_skip": "^同事業名$"
+        "find": {
+          "pattern": "table",
+          "options": {
+            "columns": {
+              "tag": "^区分",
+              "name": "^事項",
+              "amount": "^予算額",
+              "point": "^摘"
+            }
+          }
+        },
+        "marks": {
+          "new": [
+            "新規"
+          ],
+          "new_contains": true,
+          "also": "【(?P<also>.+?)】$",
+          "also_skip": "^同事業名$"
+        }
       },
       "note": "予算の概要の「主な新規・拡充事業、計画策定・投資的事業等」の表。事項の【】の中は予算書の事業名（【同事業名】は事項と同じ）"
     },
@@ -332,15 +532,21 @@
     },
     {
       "jurisdiction": "132284",
-      "layout": "press_table",
-      "rules": {
-        "columns": {
-          "name": "^事業名",
-          "point": "^事業内容",
-          "amount": "^事業費"
+      "workflow": {
+        "find": {
+          "pattern": "table",
+          "options": {
+            "columns": {
+              "name": "^事業名",
+              "point": "^事業内容",
+              "amount": "^事業費"
+            }
+          }
         },
-        "new_mark": "^【新】 ?",
-        "strip": "^【拡充】 ?"
+        "marks": {
+          "new_mark": "^【新】 ?",
+          "strip": "^【拡充】 ?"
+        }
       },
       "note": "当初予算(案)の概要の「一般会計歳出事業の概要」の表。補正予算の表は欄の見出しが違うので読まない。R7 p17 は事業名の枠が2つに割れていて名前の1字目が欠ける"
     },
@@ -354,7 +560,53 @@
     },
     {
       "jurisdiction": "133051",
-      "layout": "hinode_press"
+      "years": [
+        2024,
+        2025
+      ],
+      "workflow": {
+        "find": {
+          "pattern": "lines",
+          "options": {
+            "item": "^(?:(?P<tag>新) )?(?P<name>.+?) (?:(?:-|[\\d,]+) )?(?:-|[\\d,]+) (?P<amount>[\\d,]+) (?:△?[\\d,]+|-)(?: .*)? \\d+$"
+          }
+        },
+        "assemble": [
+          {
+            "pattern": "group_name",
+            "options": {
+              "pattern": "^【.+?費】(?P<name>.+?) R\\d+決算 R\\d+予算 R\\d+予算",
+              "require": true
+            }
+          }
+        ],
+        "marks": {
+          "new": [
+            "新"
+          ]
+        }
+      },
+      "note": "課ごとの頁の経費（【総務費】財産管理経費）の下に事業を並べる。今年度予算（千円）を読み、経費名を names に足す"
+    },
+    {
+      "jurisdiction": "133051",
+      "years": [
+        2026
+      ],
+      "workflow": {
+        "find": {
+          "pattern": "lines",
+          "options": {
+            "item": "^【(?P<tag>新|拡)】(?P<name>.+?) (?:(?P<amount>[\\d,]+)千円|-円)$"
+          }
+        },
+        "marks": {
+          "new": [
+            "新"
+          ]
+        }
+      },
+      "note": "「【新】事業名 17,327千円」の行（札は 新・拡、「-円」は金額なし）"
     },
     {
       "jurisdiction": "133078",
@@ -362,15 +614,31 @@
     },
     {
       "jurisdiction": "133086",
-      "layout": "press_lines",
-      "rules": {
-        "start": "^\\d+\\.(?:歳出目的|.*長期総合計画の分類)に基づく主な事業",
-        "end": "^\\d+\\.",
-        "item": "^・ ?(?P<name>.*?)(?: ?(?P<amount>[\\d,]+))?$",
-        "amount_next": "^(?P<name>.*?) ?(?P<amount>[\\d,]+)$",
-        "join": true,
-        "lookahead": 5,
-        "point": "\\((?P<point>.*)\\)$"
+      "workflow": {
+        "scope": {
+          "start": "^\\d+\\.(?:歳出目的|.*長期総合計画の分類)に基づく主な事業",
+          "end": "^\\d+\\."
+        },
+        "find": {
+          "pattern": "lines",
+          "options": {
+            "item": "^・ ?(?P<name>.*?)(?: ?(?P<amount>[\\d,]+))?$"
+          }
+        },
+        "assemble": [
+          {
+            "pattern": "amount_next",
+            "options": {
+              "pattern": "^(?P<name>.*?) ?(?P<amount>[\\d,]+)$",
+              "lookahead": 5,
+              "join": true
+            }
+          }
+        ],
+        "marks": {
+          "point": "\\((?P<point>.*)\\)$",
+          "require_amount": true
+        }
       },
       "note": "当初予算の概要の「歳出目的に基づく主な事業」（R6 は「長期総合計画の分類に基づく主な事業」）。新規は下線だけで文字の印が無いので is_new は読まない"
     },
@@ -380,16 +648,20 @@
     },
     {
       "jurisdiction": "133817",
-      "layout": "press_table",
-      "rules": {
-        "columns": {
-          "point": "^区分",
-          "name": "^事業名",
-          "amount": "^事業費"
-        },
-        "fill": [
-          "point"
-        ]
+      "workflow": {
+        "find": {
+          "pattern": "table",
+          "options": {
+            "columns": {
+              "point": "^区分",
+              "name": "^事業名",
+              "amount": "^事業費"
+            },
+            "fill": [
+              "point"
+            ]
+          }
+        }
       },
       "note": "当初予算の概要の「投資的事業」の表（区分は款、左右2組）"
     }
