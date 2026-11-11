@@ -239,7 +239,9 @@ def write_coverage_words(wide_path, words, *, amount_columns=(), excluded_region
         xrange = entry['x_range']
         if len(xrange) != 2 or not xrange[0] < xrange[1]:
             raise ValueError(f'Amount columns need increasing x ranges: {entry!r}')
-        columns.append({'header': entry.get('header'), 'x_range': list(xrange)})
+        columns.append({'header': entry.get('header'), 'x_range': list(xrange),
+                        **({'page': entry['page']} if 'page' in entry else {}),
+                        **({'y_ranges': [list(span) for span in entry['y_ranges']]} if entry.get('y_ranges') else {})})
     regions = []
     for entry in validate_exclusions(excluded_regions):
         record = {'kind': entry['kind'], 'reason': entry['reason']}

@@ -81,6 +81,7 @@ class Band:
     excluded: dict | None = None  # a declared column whose printed digits are not taken in (kind and reason)
     stripped_codes: bool = False  # ancestors' codes a continuation page prints (`2 1 6`) were taken out of its words (`tree.strip_ancestor_codes`)
     staircase: bool = False  # the layout setting `header.staircase`: a level's cell runs right until its own rule starts
+    extents: list[tuple[float, float]] = field(default_factory=list)  # (top, bottom) of each block the band reads, when it reads some blocks of the page only (`patterns/layout/framed_blocks`)
 
     @property
     def center(self) -> float:
@@ -99,6 +100,9 @@ class Logical:
     # The 款・項 titles a layout pattern read above each of the page's tables (`patterns/layout/stacked_titles`): level,
     # code, name, name glyphs and amount glyphs. None: the tables are titled by their 款 only (`titles`).
     level_titles: list | None = None
+    # The page may open by printing the open 款・項・目 again, names only. False: every table of the page prints its
+    # own header over its rows (`patterns/layout/framed_blocks`), so a name without a code is a subject of its own.
+    reprints: bool = True
 
     def unit_of(self, header: str) -> str | None:
         """The unit of an amount under `header`: its column's own mark (`(千円)` over 当初予算額 on a 円 page), else the page's."""
@@ -363,6 +367,7 @@ def page_bands(page: Page, spread: dict | None = None,
     staircase = bool((header or {}).get('staircase'))
     for frame in _frames(page, spread, staircase):
         x0, x1, top, bottom, edges = frame
+        first_band = len(bands)
         header_bottom = _header_bottom(page, frame)
         title_ignored = bool((header or {}).get('ignore_frame_title'))
         # Header cells: the rule-bounded rectangle around each header word.
@@ -417,8 +422,36 @@ def page_bands(page: Page, spread: dict | None = None,
                     band.words.append(Glyph(word.text, word.x0, word.y0, word.x1, word.y1, page.number, 0))
                     used.add(index)
             bands.append(band)
+        for heading in (header or {}).get('merged_cells', []):
+            bands.extend(merged_cells(bands[first_band:], heading, verticals))
     outside = [w for i, w in enumerate(page.words) if i not in used]
     return bands, outside
+
+
+def merged_cells(frame_bands: list[Band], heading: str, verticals: list[Rule]) -> list[Band]:
+    """The layout setting `header.merged_cells`: the columns under one header cell (`説明` over the 財源 columns
+    `国庫支出金`…`一般財源`, 131164) are drawn only in some rows (the 目's row prints its 財源 there); in a row their
+    rules leave out, one cell runs across them (the 目's 説明, its amounts at the right end). The words of such a row
+    leave the columns for one band under the header cell; the words of a row the rules cross stay in their columns."""
+    group = [b for b in frame_bands if len(b.header) > 1 and b.header[0] == heading]
+    if len(group) == 1:
+        # A page with no 目's row draws none of the columns' rules into the body: the one band is the header cell's.
+        group[0].header, group[0].spans = (heading,), [(group[0].x0, group[0].x1, heading)]
+    if len(group) < 2:
+        return []
+    inner = [b.x0 for b in group[1:]]
+    first = group[0]
+    merged = Band(first.x0, group[-1].x1, first.page, (heading,), sorted({r for b in group for r in b.rows}),
+                  first.body_top, first.body_bottom, spans=[(first.x0, group[-1].x1, heading)], top=first.top,
+                  left_rules=first.left_rules, staircase=first.staircase)
+    for band in group:
+        kept = []
+        for word in band.words:
+            middle = (word.y0 + word.y1) / 2
+            crossed = any(abs(rule.x0 - x) <= 3 and _crosses(rule, middle) for rule in verticals for x in inner)
+            (kept if crossed else merged.words).append(word)
+        band.words = kept
+    return [merged]
 
 
 def run_on_starts(body: list[tuple[int, Word]], verticals: list[Rule]) -> dict[int, float]:
@@ -524,25 +557,9 @@ def inline_kind(band: Band, line: list[Glyph]) -> bool:
     return bool(names) and all(kind_heading(w, band.header[-1]) is not None for w in names)
 
 
-def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dict | None = None,
-                  header: dict | None = None, split_text: bool = False, ocr_pages: frozenset = frozenset(),
-                  row_gaps: bool = False) -> list[Logical]:
-    """Read each page's bands, classify them once per document, then join spreads.
-
-    `ocr_pages`: pages of a text document whose words OCR read (`mixed.py`). Their bands are classified by what
-    the text pages teach (their headings corrected as a scan's are) and never teach anything themselves."""
-    per_page = [(page, *page_bands(page, spread, header, split_text, row_gaps and page.number not in ocr_pages))
-                for page in pages]
-    if ocr_pages:
-        from ingestion.generic.scan import header_path
-        # A heading the text pages print is the document's own spelling: the scan correction (`事故繰越し` → `事故繰越`,
-        # a misread elsewhere) is for the others only.
-        printed = {part for page, bands, _ in per_page if page.number not in ocr_pages for band in bands for part in band.header}
-        for page, bands, _ in per_page:
-            if page.number in ocr_pages:
-                for band in bands:
-                    corrected = header_path(band.header)
-                    band.header = band.header if set(band.header) <= printed else corrected
+def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict | None = None,
+             ocr_pages: frozenset = frozenset()) -> None:
+    """Set each band's kind and apply the layout settings of its column (`columns`)."""
     # Band kind by content, learned per header path over the whole document so
     # that empty continuation pages keep it. A band is a label band when at least
     # half of its printed lines carry text; otherwise it holds amounts if any
@@ -603,6 +620,28 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
             band.excluded = setting.get('excluded')
             if band.excluded:
                 band.kind = None  # not read: its words are no items and its digits a declared exclusion
+
+
+def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dict | None = None,
+                  header: dict | None = None, split_text: bool = False, ocr_pages: frozenset = frozenset(),
+                  row_gaps: bool = False) -> list[Logical]:
+    """Read each page's bands, classify them once per document, then join spreads.
+
+    `ocr_pages`: pages of a text document whose words OCR read (`mixed.py`). Their bands are classified by what
+    the text pages teach (their headings corrected as a scan's are) and never teach anything themselves."""
+    per_page = [(page, *page_bands(page, spread, header, split_text, row_gaps and page.number not in ocr_pages))
+                for page in pages]
+    if ocr_pages:
+        from ingestion.generic.scan import header_path
+        # A heading the text pages print is the document's own spelling: the scan correction (`事故繰越し` → `事故繰越`,
+        # a misread elsewhere) is for the others only.
+        printed = {part for page, bands, _ in per_page if page.number not in ocr_pages for band in bands for part in band.header}
+        for page, bands, _ in per_page:
+            if page.number in ocr_pages:
+                for band in bands:
+                    corrected = header_path(band.header)
+                    band.header = band.header if set(band.header) <= printed else corrected
+    classify(per_page, columns, ocr_pages)
     result: list[Logical] = []
     observed = {page.number: page for page, _, _ in per_page}
     for page, bands, outside in per_page:
