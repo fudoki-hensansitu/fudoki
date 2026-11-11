@@ -181,18 +181,20 @@ function Dashboard({ c }: { c: Ctx }) {
           <YearSwitch c={c} onBrand />
         </div>
       </section>
-      <Card title="何に使っている？" icon={<CoinsIcon />} footer={<More href={flowHref(c)}>お金の流れを見る</More>}>
-        <FieldBars c={c} limit={6} />
-      </Card>
+      {v.fields.length ? (
+        <Card title="何に使っている？" icon={<CoinsIcon />} footer={<More href={flowHref(c)}>お金の流れを見る</More>}>
+          <FieldBars c={c} limit={6} />
+        </Card>
+      ) : null}
       {v.comparable && v.newProjects.length ? (
         <Card title={`${reiwa(year)}に始めた事業`} icon={<NewIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
           <ProjectList items={v.newProjects.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p) ?? null }))} rest={v.newProjects.length - 5} />
         </Card>
-      ) : (
+      ) : v.current.length ? (
         <Card title="お金のかかる事業" icon={<CoinsIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
           <ProjectList items={v.current.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p) ?? null }))} rest={0} />
         </Card>
-      )}
+      ) : null}
       {v.comparable && v.ended.length ? (
         <Card title={`${reiwa(year - 1)}でやめた事業`} icon={<StopIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
           <ProjectList items={v.ended.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p, String(year - 1)) ?? null }))} rest={v.ended.length - 5} />
@@ -388,7 +390,7 @@ function questions(c: Ctx): Question[] {
         </>
       ),
     })
-  if (!v.comparable || !v.newProjects.length)
+  if ((!v.comparable || !v.newProjects.length) && v.current.length)
     out.push({
       key: 'top',
       q: 'いちばんお金のかかる事業は？',
