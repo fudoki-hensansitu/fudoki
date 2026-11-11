@@ -45,7 +45,8 @@ import { cn } from '@/lib/utils'
 import { Link } from '../../nav/link'
 import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon, NewIcon, PlanIcon, SizeIcon, StopIcon, UpIcon } from '../fresh-icons'
 import { YearPicker } from '../page'
-import { formatPeople, reiwa, yearName } from '../types'
+import { Overview as SankeyOverview } from '../sankey'
+import { formatPeople, reiwa, yearName, type Drill } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
@@ -85,7 +86,7 @@ const perHead = (y: number, pop: number) => {
 const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
-type Selected = { kind: 'field' | 'project' | 'measure' | 'sheet'; id: string } | null
+type Selected = { kind: 'field' | 'kan' | 'project' | 'measure' | 'sheet'; id: string } | null
 type Ctx = { d: Snapshot; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go }
 const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
@@ -194,7 +195,7 @@ function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, 
 }
 
 // ---------- 画面 ----------
-type TabKey = 'overview' | 'projects'
+type TabKey = 'overview' | 'projects' | 'money'
 type Go = (t: TabKey, opt?: { filter?: string; field?: string; grade?: string }) => void
 
 function CountCard({ icon, label, n, onClick }: { icon: React.ReactNode; label: string; n: number; onClick: () => void }) {
@@ -290,6 +291,46 @@ function GradeCards({ sheets, value, onChange }: { sheets: EvalSheet[]; value?: 
   )
 }
 
+/** 款→項のサンキー図。押すと款（と項）の詳細を開き、目とその下の事業まで下りていける */
+function KanFlow() {
+  const { v, d, select } = useApp()
+  const flows: Drill[] = React.useMemo(
+    () => d.years[String(v.year)]!.kan.map((k, i) => ({ kan: { id: `k${i}`, name: k.name, yen: k.yen }, kou: k.kou.map((q, j) => ({ id: `k${i}-${j}`, name: q.name, yen: q.yen, moku: [] })) })),
+    [d, v.year],
+  )
+  return (
+    <Card className="bg-background px-4 py-3 ring-1 ring-border">
+      <SankeyOverview flows={flows} total={v.total} height={600} onSelect={(kan, kou) => select({ kind: 'kan', id: kou == null ? `${kan}` : `${kan}.${kou}` })} />
+    </Card>
+  )
+}
+
+/** 予算。事業は下から積み上げる見方、こちらは款→項→目と大きい項目から下りていく見方 */
+function MoneyTab() {
+  const { v, d } = useApp()
+  const prev = d.years[String(v.year - 1)]
+  return (
+    <div className="flex flex-col gap-6">
+      <div className="grid gap-3 sm:grid-cols-2">
+        <Card className="gap-0 bg-card px-5 py-[18px] ring-0">
+          <span className="text-xs text-muted-foreground">{reiwa(v.year)}の当初予算（一般会計）</span>
+          <Amt yen={v.total} className="mt-0.5 text-[34px] leading-tight text-primary" />
+          <span className="text-xs text-muted-foreground">{perHead(v.total, d.pop)}</span>
+        </Card>
+        <Card className="gap-0 bg-card px-5 py-[18px] ring-0">
+          <span className="text-xs text-muted-foreground">{prev ? `${reiwa(v.year - 1)}の当初予算から` : '前の年度'}</span>
+          {prev ? <span className="mt-0.5 text-[34px] leading-tight tabular-nums">{v.total >= prev.total ? '+' : '−'}<Amt yen={Math.abs(v.total - prev.total)} /></span> : <span className="mt-2 text-sm text-muted-foreground">収録していません</span>}
+        </Card>
+      </div>
+      <section>
+        <SectionHead title="款から項へ" sub="押すと目と事業まで見られます" />
+        <KanFlow />
+      </section>
+      {v.origin ? <p className="text-xs text-muted-foreground">出典 <Ext href={v.origin}>{v.originTitle ?? '予算書'}</Ext></p> : null}
+    </div>
+  )
+}
+
 function Overview({ go }: { go: Go }) {
   const { v, select } = useApp()
   return (
@@ -300,17 +341,12 @@ function Overview({ go }: { go: Go }) {
           <Amt yen={v.total} className="mt-0.5 text-[40px] leading-tight text-primary max-sm:text-[34px]" />
           <span className="mt-3 text-xs text-muted-foreground">住民1人あたり</span>
           <Amt yen={v.perHead} className="text-[22px] text-primary" />
-          <div className="mt-4 flex h-2.5 gap-0.5 overflow-hidden rounded-full" aria-hidden="true">
-            {v.fields.map((f, i) => (
-              <span key={f.id} title={f.name} className="app-grow h-full bg-primary" style={{ flex: f.yen, opacity: 1 - i * 0.085, animationDelay: `${i * 40}ms` }} />
-            ))}
-          </div>
         </Card>
         <div className="grid grid-cols-2 gap-3">
-          <CountCard icon={<ListBulletsIcon />} label="事業" n={v.current.length} onClick={() => go('projects', { filter: 'all' })} />
+          <div className="col-span-2"><CountCard icon={<ListBulletsIcon />} label="事業" n={v.current.length} onClick={() => go('projects', { filter: 'all' })} /></div>
           <CountCard icon={<NewIcon className="text-primary" />} label="新しく始める事業" n={v.newProjects.length + v.freshUnlinked.length} onClick={() => go('projects', { filter: 'new' })} />
-          <div className={cn(!v.sheets.length && 'col-span-2')}><CountCard icon={<StopIcon className="text-primary" />} label="やめた事業" n={v.ended.length} onClick={() => go('projects', { filter: 'ended' })} /></div>
-          {v.sheets.length ? <CountCard icon={<ClipboardTextIcon />} label="評価した事業" n={v.sheets.length} onClick={() => go('projects', { filter: 'eval' })} /> : null}
+          <CountCard icon={<StopIcon className="text-primary" />} label="やめた事業" n={v.ended.length} onClick={() => go('projects', { filter: 'ended' })} />
+          {v.sheets.length ? <div className="col-span-2"><CountCard icon={<ClipboardTextIcon />} label="評価した事業" n={v.sheets.length} onClick={() => go('projects', { filter: 'eval' })} /></div> : null}
         </div>
       </div>
 
@@ -563,6 +599,48 @@ function SheetDetail({ s }: { s: EvalSheet }) {
   )
 }
 
+/** 款の詳細。項ごとに目を並べ、目の下にその目の事業を出す。項を押して開いたときはその項だけ */
+function KanDetail({ id }: { id: string }) {
+  const { v, d } = useApp()
+  const [ki, qi] = id.split('.').map(Number) as [number, number | undefined]
+  const k = d.years[String(v.year)]!.kan[ki!]
+  if (!k) return null
+  const kous = qi == null ? k.kou : [k.kou[qi]!]
+  const projectsOf = (kou: string, moku: string) => v.current.filter((p) => p.path[0] === k.name && p.path[1] === kou && p.path[2] === moku)
+  const head = qi == null ? k : k.kou[qi]!
+  return (
+    <>
+      {qi != null ? <p className="text-xs text-muted-foreground">{k.name}</p> : null}
+      <h2 className="text-xl font-semibold leading-snug">{head.name}</h2>
+      <div className="mt-4">
+        <span className="text-xs text-muted-foreground">{reiwa(v.year)}の当初予算</span>
+        <Amt yen={head.yen} className="block text-4xl leading-tight text-primary" />
+        <span className="text-xs text-muted-foreground">全体の {((head.yen / v.total) * 100).toFixed(1)}% · {perHead(head.yen, d.pop)}</span>
+      </div>
+      {kous.map((q) => (
+        <DetailSection key={q.name} icon={TreeStructureIcon} title={qi == null ? q.name : '目'} count={qi == null ? <Amt yen={q.yen} className="text-xs" /> : undefined}>
+          <div className="flex flex-col gap-4">
+            {q.moku.map((m) => {
+              const ps = projectsOf(q.name, m.name)
+              return (
+                <div key={m.name}>
+                  <div className="flex items-baseline justify-between gap-3 px-1 pb-1">
+                    <span className="text-[13px] font-semibold">{m.name}</span>
+                    <Amt yen={m.yen} className="text-sm" />
+                  </div>
+                  <Separator />
+                  {ps.length ? <Rows>{ps.map((p) => <ProjectRow key={p.id} p={p} />)}</Rows> : <p className="px-1 py-2 text-xs text-muted-foreground">事業の内訳はありません</p>}
+                </div>
+              )
+            })}
+          </div>
+        </DetailSection>
+      ))}
+      {v.origin ? <DetailSection icon={FileTextIcon} title="出典"><Ext href={v.origin}>{v.originTitle ?? '予算書'}</Ext></DetailSection> : null}
+    </>
+  )
+}
+
 /** 分野の詳細。分野はまとめのタイルから開く */
 function FieldDetail({ id }: { id: string }) {
   const { v, d, go, select } = useApp()
@@ -609,10 +687,10 @@ function FieldDetail({ id }: { id: string }) {
 
 function Detail({ sel }: { sel: NonNullable<Selected> }) {
   const { d } = useApp()
-  const kind = { field: ['分野', ChartPieSliceIcon], project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon] } as const
+  const kind = { field: ['分野', ChartPieSliceIcon], kan: ['予算の科目', TreeStructureIcon], project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon] } as const
   const [label, I] = kind[sel.kind]
   const body =
-    sel.kind === 'field' ? <FieldDetail id={sel.id} /> : sel.kind === 'project' ? <ProjectDetail p={d.projects.find((p) => p.id === sel.id)!} /> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
+    sel.kind === 'field' ? <FieldDetail id={sel.id} /> : sel.kind === 'kan' ? <KanDetail id={sel.id} /> : sel.kind === 'project' ? <ProjectDetail p={d.projects.find((p) => p.id === sel.id)!} /> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
   return (
     <div key={`${sel.kind}${sel.id}`} className="app-in">
       <p className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground"><I className="size-3.5" aria-hidden="true" />{label}</p>
@@ -657,6 +735,7 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
 const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'overview', label: 'まとめ', icon: SquaresFourIcon },
   { key: 'projects', label: '事業', icon: ListBulletsIcon },
+  { key: 'money', label: '予算', icon: TreeStructureIcon },
 ]
 
 export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emblem }: { vision: string; prefecture: string; prefecturePath: string; officialUrl: string; emblem: string }) {
@@ -749,7 +828,7 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
   )
 
   const panel = (key: TabKey) =>
-    !v ? null : key === 'overview' ? <Overview go={go} /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
+    !v ? null : key === 'overview' ? <Overview go={go} /> : key === 'money' ? <MoneyTab /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
 
   return (
     <div className={cn('transition-[padding] duration-300', wide && selected && 'pr-[440px]')}>
@@ -759,11 +838,13 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
         <Tabs value={tab} onValueChange={(t) => changeTab(t as TabKey)} className="gap-0">
           <div ref={tabsTop} aria-hidden="true" />
           <div className="sticky top-0 z-20 -mx-4 bg-background">
+            {/* 下線を区切りの線に重ねて、線が二重に見えないようにする */}
+            <Separator className="absolute inset-x-0 bottom-0" />
             {/* スクロールしたら上にタブを残し、右に年度の切り替えを出す。下に Separator を引いて中身と分ける */}
             <div className="flex items-center gap-3 px-4">
-            <TabsList variant="line" className="min-w-0 flex-1 justify-start gap-6 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-auto sm:gap-9">
+            <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-6 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-auto sm:gap-9">
               {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} className="flex-none gap-2 px-0 pb-2.5 pt-4 focus-visible:ring-inset text-[15px] leading-none group-data-horizontal/tabs:after:bottom-0 sm:text-[17px] [&_svg:not([class*='size-'])]:size-5">
+                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-2 px-0 pb-2.5 pt-4 focus-visible:ring-inset text-[15px] leading-none group-data-horizontal/tabs:after:bottom-0 sm:text-[17px] [&_svg:not([class*='size-'])]:size-5">
                   <t.icon />
                   {t.label}
                 </TabsTrigger>
@@ -771,7 +852,6 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
             </TabsList>
               {stuck ? <div className="app-in shrink-0">{phone ? <YearMenu years={YEARS} current={year} onChange={setYear} /> : <YearPicker years={YEARS} current={year} onChange={setYear} />}</div> : null}
             </div>
-            <Separator className={cn('transition-opacity', stuck ? 'opacity-100' : 'opacity-0')} />
           </div>
           {v ? (
             <AppContext.Provider value={{ d: d!, v, select, selected, projects, go }}>
