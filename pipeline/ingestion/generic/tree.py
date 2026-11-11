@@ -1703,7 +1703,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
                 and (settings.get('wrap') == 'amount_on_last_line' or normalize(text(previous.lines[0])).startswith(prefixes))
                 and item.page == previous.page
                 and bisect_right(subject_starts, previous.anchor) == bisect_right(subject_starts, item.anchor)
-                and ((abs(item.indent - previous.indent) <= 3 + (float(settings.get('name_start_slack', 0)) if spaced is not None else 0)
+                and ((abs(item.indent - previous.indent) <= 3 + float(settings.get('name_start_slack', 0))
                       and -(spaced.module.overlap(max(g.y1 - g.y0 for g in item.glyphs)) if spaced is not None else 0)
                       <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs))
                      or (spaced is not None and spaced.module.same_line_after(previous, item)))):
