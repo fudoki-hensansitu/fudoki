@@ -7028,6 +7028,22 @@ sources:
       direction: expenditure
       table_id: kouki-expenditure-notes
       kind: nodes
+  - name: j132039_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132039_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132039_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132039'
@@ -7092,6 +7108,22 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j132039_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132039_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132039_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132039'
@@ -7155,6 +7187,38 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132039_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132039_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132039'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j132047_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132047'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132047_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132047'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
       kind: nodes
   - name: j132047_2025_initial_kaigo_hoken_initial_amounts
     meta:
@@ -7299,6 +7363,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132047_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132047'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132047_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132047'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
       kind: nodes
   - name: j132047_2026_initial_kaigo_hoken_initial_amounts
     meta:
@@ -7636,6 +7716,22 @@ sources:
       direction: expenditure
       table_id: expenditure-settlement-1
       kind: nodes
+  - name: j132063_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132063_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132063_2024_settlement_care_insurance_expenditure_amounts
     meta:
       jurisdiction: '132063'
@@ -7716,6 +7812,22 @@ sources:
       direction: expenditure
       table_id: public-land-expenditure
       kind: nodes
+  - name: j132063_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132063_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132063_2025_initial_kaigo_initial_amounts
     meta:
       jurisdiction: '132063'
@@ -7795,6 +7907,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: kouki-setsu
+      kind: nodes
+  - name: j132063_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132063_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132063'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
       kind: nodes
   - name: j132063_2026_initial_kaigo_initial_amounts
     meta:
@@ -8084,6 +8212,22 @@ sources:
       direction: expenditure
       table_id: general-initial
       kind: nodes
+  - name: j132101_2024_initial_general_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: amounts
+  - name: j132101_2024_initial_general_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: nodes
   - name: j132101_2024_settlement_general_01_expenditure_detail_amounts
     meta:
       jurisdiction: '132101'
@@ -8307,6 +8451,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: nhi-expenditure-detail
+      kind: nodes
+  - name: j132101_2025_initial_general_amounts
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: amounts
+  - name: j132101_2025_initial_general_nodes
+    meta:
+      jurisdiction: '132101'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general
       kind: nodes
   - name: j132101_2025_settlement_expenditure_settlement_10_amounts
     meta:
@@ -9604,6 +9764,22 @@ sources:
       direction: expenditure
       table_id: general-initial-7
       kind: nodes
+  - name: j132152_2024_initial_general_amounts
+    meta:
+      jurisdiction: '132152'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: amounts
+  - name: j132152_2024_initial_general_nodes
+    meta:
+      jurisdiction: '132152'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: nodes
   - name: j132152_2024_settlement_general_expenditure_detail_amounts
     meta:
       jurisdiction: '132152'
@@ -9620,6 +9796,22 @@ sources:
       direction: expenditure
       table_id: general-expenditure-detail
       kind: nodes
+  - name: j132152_2025_initial_general_amounts
+    meta:
+      jurisdiction: '132152'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: amounts
+  - name: j132152_2025_initial_general_nodes
+    meta:
+      jurisdiction: '132152'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: nodes
   - name: j132152_2025_settlement_general_expenditure_detail_amounts
     meta:
       jurisdiction: '132152'
@@ -9635,6 +9827,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: general-expenditure-detail
+      kind: nodes
+  - name: j132152_2026_initial_general_amounts
+    meta:
+      jurisdiction: '132152'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: amounts
+  - name: j132152_2026_initial_general_nodes
+    meta:
+      jurisdiction: '132152'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general
       kind: nodes
   - name: j132187_2024_settlement_elderly_medical_expenditure_amounts
     meta:
@@ -9699,6 +9907,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132195_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132195_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
       kind: nodes
   - name: j132195_2024_settlement_general_expenditure_detail_amounts
     meta:
@@ -9780,6 +10004,22 @@ sources:
       direction: expenditure
       table_id: parking-expenditure-detail
       kind: nodes
+  - name: j132195_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132195_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132195_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132195'
@@ -9795,6 +10035,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: general-expenditure
+      kind: nodes
+  - name: j132195_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132195_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132195'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
       kind: nodes
   - name: j132209_2024_settlement_general_expenditure_amounts
     meta:
@@ -10212,6 +10468,22 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j132225_2025_initial_general_initial_1_amounts
+    meta:
+      jurisdiction: '132225'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: amounts
+  - name: j132225_2025_initial_general_initial_1_nodes
+    meta:
+      jurisdiction: '132225'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: nodes
   - name: j132225_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132225'
@@ -10275,6 +10547,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132225_2026_initial_general_initial_3_amounts
+    meta:
+      jurisdiction: '132225'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-3
+      kind: amounts
+  - name: j132225_2026_initial_general_initial_3_nodes
+    meta:
+      jurisdiction: '132225'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-3
       kind: nodes
   - name: j132233_2025_settlement_general_expenditure_amounts
     meta:
@@ -10468,6 +10756,38 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j132241_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132241'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132241_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132241'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j132250_2024_initial_general_amounts
+    meta:
+      jurisdiction: '132250'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: amounts
+  - name: j132250_2024_initial_general_nodes
+    meta:
+      jurisdiction: '132250'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: nodes
   - name: j132250_2024_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132250'
@@ -10548,6 +10868,22 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-expenditure
       kind: nodes
+  - name: j132250_2025_initial_general_amounts
+    meta:
+      jurisdiction: '132250'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: amounts
+  - name: j132250_2025_initial_general_nodes
+    meta:
+      jurisdiction: '132250'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: nodes
   - name: j132250_2025_settlement_elderly_medical_expenditure_amounts
     meta:
       jurisdiction: '132250'
@@ -10627,6 +10963,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j132250_2026_initial_general_amounts
+    meta:
+      jurisdiction: '132250'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general
+      kind: amounts
+  - name: j132250_2026_initial_general_nodes
+    meta:
+      jurisdiction: '132250'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general
       kind: nodes
   - name: j132276_2024_settlement_care_expenditure_detail_amounts
     meta:
@@ -10868,6 +11220,22 @@ sources:
       direction: expenditure
       table_id: general-02
       kind: nodes
+  - name: j132292_2024_initial_general_03_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-03
+      kind: amounts
+  - name: j132292_2024_initial_general_03_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-03
+      kind: nodes
   - name: j132292_2024_initial_general_04_amounts
     meta:
       jurisdiction: '132292'
@@ -10979,6 +11347,38 @@ sources:
       document_kind: initial
       direction: expenditure
       table_id: general-10
+      kind: nodes
+  - name: j132292_2024_initial_general_11_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-11
+      kind: amounts
+  - name: j132292_2024_initial_general_11_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-11
+      kind: nodes
+  - name: j132292_2024_initial_general_12_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-12
+      kind: amounts
+  - name: j132292_2024_initial_general_12_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-12
       kind: nodes
   - name: j132292_2024_initial_general_13_amounts
     meta:
@@ -11300,6 +11700,22 @@ sources:
       direction: expenditure
       table_id: general-02
       kind: nodes
+  - name: j132292_2025_initial_general_03_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-03
+      kind: amounts
+  - name: j132292_2025_initial_general_03_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-03
+      kind: nodes
   - name: j132292_2025_initial_general_04_amounts
     meta:
       jurisdiction: '132292'
@@ -11411,6 +11827,38 @@ sources:
       document_kind: initial
       direction: expenditure
       table_id: general-10
+      kind: nodes
+  - name: j132292_2025_initial_general_11_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-11
+      kind: amounts
+  - name: j132292_2025_initial_general_11_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-11
+      kind: nodes
+  - name: j132292_2025_initial_general_12_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-12
+      kind: amounts
+  - name: j132292_2025_initial_general_12_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-12
       kind: nodes
   - name: j132292_2025_initial_general_13_amounts
     meta:
@@ -11732,6 +12180,22 @@ sources:
       direction: expenditure
       table_id: general-02
       kind: nodes
+  - name: j132292_2026_initial_general_03_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-03
+      kind: amounts
+  - name: j132292_2026_initial_general_03_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-03
+      kind: nodes
   - name: j132292_2026_initial_general_04_amounts
     meta:
       jurisdiction: '132292'
@@ -11843,6 +12307,38 @@ sources:
       document_kind: initial
       direction: expenditure
       table_id: general-10
+      kind: nodes
+  - name: j132292_2026_initial_general_11_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-11
+      kind: amounts
+  - name: j132292_2026_initial_general_11_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-11
+      kind: nodes
+  - name: j132292_2026_initial_general_12_amounts
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-12
+      kind: amounts
+  - name: j132292_2026_initial_general_12_nodes
+    meta:
+      jurisdiction: '132292'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-12
       kind: nodes
   - name: j132292_2026_initial_general_13_amounts
     meta:
