@@ -102,7 +102,7 @@ class Item:
     decided: bool = False  # role chosen by a judgment, not by the geometric rules
     hint: str | None = None  # the kind of the note whose parts this item prints (`note_breakdown`)
     title_depth: int = 1  # the depth of a title (level -1): 1 for a 款, 2 for a 項 (`Logical.level_titles`)
-    unnumbered_shift: int = 0  # levels an unnumbered line sits below its indent (layout setting `unnumbered_shift`)
+    unnumbered_shift: int = 0  # levels an unnumbered line sits below its indent (the quirk `unnumbered_shift`)
     kinds: list[tuple[list[Glyph], list[Glyph], str]] = field(default_factory=list)  # (label, amount run, heading) of kind lines
 
     @property
@@ -1590,6 +1590,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     note_kinds = {normalize(prefix): kind for prefix, kind in settings.get('note_kinds', {}).items()}
     prefixes = note_prefixes(settings)
     rows = quirk(settings, 'rows')
+    unnumbered = quirk(settings, 'unnumbered_shift')
     for item in items:
         if rows is not None:
             rows.module.unnumber(item)
@@ -1622,11 +1623,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
                 item.role = 'note'
             else:
                 item.level = marks[mark] - 1
-        elif settings.get('unnumbered_shift') and item.role == 'node' and item.code is None and not note and item.amounts:
-            # The axis prints its deepest levels with no number, the first of them starting where the numbered
-            # names above start (利島: `１８委託料` / `業務委託料`): an unnumbered line is one level (the declared
-            # shift) deeper than its indent alone says.
-            item.unnumbered_shift = settings['unnumbered_shift']
+        elif unnumbered is not None and unnumbered.module.shift(item, note, unnumbered.value):
+            item.unnumbered_shift = unnumbered.value
         previous = result[-1] if result else None
         if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
                 and normalize(previous.name).startswith(('(', '（')) and not re.search(r'[)）]', normalize(previous.name))

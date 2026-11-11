@@ -90,6 +90,7 @@
     "rows": "ingestion.generic.patterns.quirks.rows",
     "rows_from": "ingestion.generic.patterns.quirks.rows_from",
     "sum_levels": "ingestion.generic.patterns.quirks.sum_levels",
-    "under": "ingestion.generic.patterns.quirks.under"
+    "under": "ingestion.generic.patterns.quirks.under",
+    "unnumbered_shift": "ingestion.generic.patterns.quirks.unnumbered_shift"
   }
 }

@@ -141,7 +141,6 @@
           "single_part_notes": {"type": "boolean"},
           "bare_amounts": {"type": "boolean"},
           "name_start_slack": {"type": "number", "exclusiveMinimum": 0, "maximum": 10, "description": "Points past the usual 3 a wrapped line may stand from the name's start, where a long number and the blank after it are not as wide as the estimate."},
-          "unnumbered_shift": {"type": "integer", "minimum": 1, "description": "A line of this axis that prints money and no number sits this many levels below the level its indent gives: the axis prints its deepest levels unnumbered, the first of them starting where the numbered names above start (利島)."},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}},
           "yen_marked": {"const": true, "description": "An amount that prints 円 after it in a column of another unit is in yen: a reckoning (`46.4円 × 1,115,000件 ＝ 51,736,000円`) set among the column's 千円."}
         }
