@@ -17,12 +17,10 @@ import type { Props } from '../pages/prototype/index.server'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { EXAMPLES, ProjectSearchBox, searchHref } from './search'
 import { useMyTown, type Town } from './towns'
-import { Empty, Onboarding } from './onboarding'
+import { AskCard, Checklist, Empty, Steps, startChecklist, type CheckItem } from './onboarding'
 import { useVariant } from './variant'
 
 const toTown = (e: MapEntry): Town => ({ code: e.code, name: e.name, path: e.path })
-/** うちのまちを決めていないときの見本。年度をまたいだ事業まで揃っているまち */
-const SAMPLE: Town = { code: '131091', name: '品川区', path: '/tokyo/shinagawa' }
 
 // ---------- 2案で共通のもの ----------
 
@@ -313,16 +311,80 @@ function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string
   return <>{children(buildCtx(town, d, year, setYear, vision))}</>
 }
 
+/** はじめての流れの2歩目: 選んだまちの要点を一枚で見せる。ここで「ホームに出す」と決める */
+function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () => void }) {
+  const { town, d, v, year } = c
+  const top = v.fields[0]
+  const rows: [string, React.ReactNode][] = [
+    [`${reiwa(year)}の${v.word === '決算' ? '決算' : '当初予算'}`, <Amt key="t" yen={v.total} className="text-[28px] font-bold sm:text-[32px]" />],
+    ...(d.pop ? ([['1人あたり', <span key="p" className="text-[20px] font-bold">{perHeadText(v.total, d.pop)}</span>]] as [string, React.ReactNode][]) : []),
+    ...(top
+      ? ([
+          [
+            'いちばん多い分野',
+            <span key="f" className="flex items-center gap-1.5 text-[18px] font-bold">
+              <FieldIcon id={top.id} className="size-5 text-muted-foreground" />
+              {top.name}
+              <span className="text-[13px] font-normal text-muted-foreground tabular-nums">{pct(top.yen, v.total)}</span>
+            </span>,
+          ],
+        ] as [string, React.ReactNode][])
+      : []),
+  ]
+  return (
+    <section className="ob-swap rounded-[24px] border bg-background p-5 sm:p-7">
+      <Steps at={2} of={2} />
+      <div className="flex items-center gap-3">
+        <Emblem code={town.code} name={town.name} className="size-11 rounded-xl p-1.5" />
+        <h2 className="text-[22px] font-bold">{town.name}</h2>
+      </div>
+      <dl className="mt-5 divide-y">
+        {rows.map(([k, val], i) => (
+          <div key={k} className="ob-fade flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3" style={{ '--d': `${0.12 + i * 0.12}s` } as React.CSSProperties}>
+            <dt className="text-[14px] text-muted-foreground">{k}</dt>
+            <dd>{val}</dd>
+          </div>
+        ))}
+      </dl>
+      <div className="mt-5 flex flex-wrap items-center gap-3">
+        <button type="button" onClick={onOpen} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-[14px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
+          このまちをホームに出す
+          <ArrowRightIcon className="size-4" />
+        </button>
+        <button type="button" onClick={onBack} className="text-[13px] text-muted-foreground hover:text-foreground">
+          ちがうまちを選ぶ
+        </button>
+      </div>
+    </section>
+  )
+}
+
+/** ホームのチェックリストの残りの項目。まちの頁・検索・アシスタントへ */
+const checkItems = (c: Ctx): CheckItem[] => [
+  { key: 'flow', label: 'お金の使い道を見る', href: flowHref(c) },
+  { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects` },
+  { key: 'search', label: '事業を検索する', href: searchHref('', c.town.code) },
+  { key: 'assistant', label: 'アシスタントに聞く', href: '/assistant' },
+]
+
 export function ProtoHome({ entries, featured, sitekey }: Props) {
   const { ready, town, set } = useMyTown()
   const [changing, setChanging] = React.useState(false)
   const { current, key } = useVariant()
-  const shown = town ?? SAMPLE
-  const snap = useSnapshot(ready ? shown.code : null)
-  const vision = featured.find((f) => f.code === shown.code)?.vision
+  // はじめての流れで選んだまち。要点を見せてから「ホームに出す」で決める
+  const [pending, setPending] = React.useState<Town | null>(null)
+  const shown = town ?? pending
+  const snap = useSnapshot(ready && shown ? shown.code : null)
+  const vision = shown ? featured.find((f) => f.code === shown.code)?.vision : undefined
   const pick = (e: MapEntry) => {
     set(toTown(e))
     setChanging(false)
+  }
+  const open = () => {
+    if (!pending) return
+    startChecklist()
+    set(pending)
+    setPending(null)
   }
   const choose = () => setChanging(true)
   let body: React.ReactNode
@@ -331,22 +393,38 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
     body = (
       <Empty
         entries={entries}
-        onPick={pick}
-        sampleName={SAMPLE.name}
-        sample={<WithCtx town={SAMPLE} vision={vision} snap={snap}>{(c) => (current === 1 ? <Inside c={c} sitekey={sitekey} onChoose={choose} /> : <Dashboard c={c} />)}</WithCtx>}
+        onPick={(e) => setPending(toTown(e))}
+        reveal={pending ? <WithCtx town={pending} vision={vision} snap={snap}>{(c) => <Reveal c={c} onOpen={open} onBack={() => setPending(null)} />}</WithCtx> : null}
       />
     )
-  else if (changing) body = <Onboarding entries={entries} onPick={pick} onCancel={() => setChanging(false)} />
-  else if (current === 1) body = <WithCtx town={town!} vision={vision} snap={snap}>{(c) => <Inside c={c} sitekey={sitekey} onChoose={choose} />}</WithCtx>
+  else if (changing) body = <AskCard entries={entries} onPick={pick} onCancel={() => setChanging(false)} />
+  else if (current === 1)
+    body = (
+      <WithCtx town={town!} vision={vision} snap={snap}>
+        {(c) => (
+          <>
+            <Checklist items={checkItems(c)} />
+            <Inside c={c} sitekey={sitekey} onChoose={choose} />
+          </>
+        )}
+      </WithCtx>
+    )
   else
     body = (
       <>
         <div className="mb-3 flex justify-end">
           <button type="button" onClick={choose} className="text-[13px] text-muted-foreground hover:text-foreground">
-            うちのまちを変える
+            ホームのまちを変える
           </button>
         </div>
-        <WithCtx town={town!} vision={vision} snap={snap}>{(c) => <Dashboard c={c} />}</WithCtx>
+        <WithCtx town={town!} vision={vision} snap={snap}>
+          {(c) => (
+            <>
+              <Checklist items={checkItems(c)} />
+              <Dashboard c={c} />
+            </>
+          )}
+        </WithCtx>
       </>
     )
   return (

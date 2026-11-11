@@ -1,10 +1,11 @@
-// 試作: うちのまちを決めていないときのホーム。上に「まちを探す」（開くだけで、うちのまちにはしない）、その下に本物のまちのホームを「見本」として敷き、その上に一つの行動「うちのまちにする（名前で／現在地から）」を載せる。
-// marketingskills の onboarding skill に沿う: 骨組みの絵で見せず本物のデータで見せる（空の状態は「データが入るとどう見えるか」を見せる）、行動は一つ、選んだらすぐ自分のまちのホームになる。
-// 「住んでいるまち」を最初に聞くのは怖く見えるので、探すを先に置き、うちのまちは任意の次の一歩にする（2026-11-11 yuito）
+// 試作: はじめて開いたときの流れ（marketingskills の onboarding skill に沿う）。
+// 1 ホームに出すまちを選ぶ（名前／現在地。飛ばせる）→ 2 選んだまちの要点を一枚で見せる（価値の瞬間）→ ホームに入ったら小さなチェックリスト（1つ目は済み、閉じられる）。
+// まちを探す（開くだけ）は上に残す。「住んでいるまち」を最初に聞くのは怖く見えるので、選ぶのは任意にする（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
 import * as React from 'react'
-import { ArrowRightIcon, HouseIcon, MagnifyingGlassIcon, NavigationArrowIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, CheckIcon, MagnifyingGlassIcon, NavigationArrowIcon, XIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { cn } from '@/lib/utils'
+import { Link } from '../nav/link'
 import { Logo } from '../nav/site-nav'
 import { Picker as TownPicker } from '../home/home'
 import { LocateError, locateMunicipality } from '../home/locate'
@@ -28,8 +29,8 @@ export function FindTown({ entries }: { entries: MapEntry[] }) {
 
 type Locate = { busy?: boolean; error?: string; hit?: MapEntry }
 
-/** うちのまちを決める札。sample（見本のまちの名前）があれば見本の上に載せる文言にし、onCancel があれば「やめる」を出す（うちのまちを変えるとき） */
-export function Onboarding({ entries, onPick, onCancel, sample }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; onCancel?: () => void; sample?: string }) {
+/** 1 ホームに出すまちを選ぶ札。step は「1 / 2」の表示。onSkip（あとで）か onCancel（やめる）を出す */
+export function AskCard({ entries, onPick, onSkip, onCancel, step }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; onSkip?: () => void; onCancel?: () => void; step?: [number, number] }) {
   const [mode, setMode] = React.useState<'idle' | 'pick' | 'locate'>('idle')
   const [loc, setLoc] = React.useState<Locate>({})
   const locate = async () => {
@@ -45,49 +46,55 @@ export function Onboarding({ entries, onPick, onCancel, sample }: { entries: Map
     }
   }
   return (
-    <section className={cn('ob-rise rounded-[24px] border bg-background p-5 sm:p-7', sample && 'shadow-[0_12px_40px_-12px_rgb(0_0_0/0.18)]')} style={{ animationDelay: sample ? '.45s' : '0s' }}>
-      <div>
-        <div>
-          <h2 className="text-[19px] leading-snug font-bold sm:text-[22px]">{sample ? 'うちのまちにすると、ホームがこうなります' : 'うちのまちを変える'}</h2>
-          <p className="mt-1.5 text-[14px] text-muted-foreground">
-            {sample ? `うしろは${sample}の見本です。予算・新しく始めた事業・事業評価が、開くたびにここに並びます。あとからいつでも変えられます。` : '名前か現在地で選びます。'}
-          </p>
-
-          <div className="mt-5">
-            {mode === 'idle' ? (
-              <div className="grid gap-2.5 sm:grid-cols-2">
-                <Choice icon={<HouseIcon />} title="住んでいるまちを選ぶ" note="名前で選びます" onClick={() => setMode('pick')} />
-                <Choice icon={<NavigationArrowIcon />} title="現在地から選ぶ" note="位置は保存しません" onClick={() => void locate()} />
-                {onCancel ? (
-                  <button type="button" onClick={onCancel} className="justify-self-start text-[13px] text-muted-foreground hover:text-foreground sm:col-span-2">
-                    やめる
-                  </button>
-                ) : null}
-              </div>
+    <section className="ob-rise rounded-[24px] border bg-background p-5 sm:p-7" style={{ animationDelay: '.12s' }}>
+      {step ? <Steps at={step[0]} of={step[1]} /> : null}
+      <h2 className="text-[19px] leading-snug font-bold sm:text-[22px]">ホームに出すまちを選ぶ</h2>
+      <p className="mt-1.5 text-[14px] text-muted-foreground">選んだまちの予算と事業が、開くたびにこのホームに並びます。あとから変えられます。</p>
+      <div className="mt-5">
+        {mode === 'idle' ? (
+          <div className="grid gap-2.5 sm:grid-cols-2">
+            <Choice icon={<MagnifyingGlassIcon />} title="名前で選ぶ" note="自治体名を入れます" onClick={() => setMode('pick')} />
+            <Choice icon={<NavigationArrowIcon />} title="現在地から選ぶ" note="位置は保存しません" onClick={() => void locate()} />
+          </div>
+        ) : (
+          <div key={mode} className="ob-swap">
+            <div className="mb-2.5 flex items-center justify-between">
+              <span className="text-[13px] font-bold">{mode === 'pick' ? '名前で選ぶ' : '現在地から選ぶ'}</span>
+              <button type="button" onClick={() => (setMode('idle'), setLoc({}))} className="inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground">
+                <XIcon className="size-3.5" />
+                もどる
+              </button>
+            </div>
+            {mode === 'pick' ? (
+              <TownPicker entries={entries} onPick={onPick} placeholder="自治体名（例：品川）" />
             ) : (
-              <div key={mode} className="ob-swap">
-                <div className="mb-2.5 flex items-center justify-between">
-                  <span className="text-[13px] font-bold">{mode === 'pick' ? '住んでいるまちを選ぶ' : '現在地から選ぶ'}</span>
-                  <button
-                    type="button"
-                    onClick={() => (setMode('idle'), setLoc({}))}
-                    className="inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground"
-                  >
-                    <XIcon className="size-3.5" />
-                    もどる
-                  </button>
-                </div>
-                {mode === 'pick' ? (
-                  <TownPicker entries={entries} onPick={onPick} placeholder="自治体名（例：品川）" />
-                ) : (
-                  <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onPickByName={() => setMode('pick')} />
-                )}
-              </div>
+              <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onPickByName={() => setMode('pick')} />
             )}
           </div>
-        </div>
+        )}
       </div>
+      {onSkip || onCancel ? (
+        <button type="button" onClick={onSkip ?? onCancel} className="mt-4 text-[13px] text-muted-foreground hover:text-foreground">
+          {onSkip ? 'あとで' : 'やめる'}
+        </button>
+      ) : null}
     </section>
+  )
+}
+
+/** 何歩目か。点と「1 / 2」 */
+export function Steps({ at, of }: { at: number; of: number }) {
+  return (
+    <div className="mb-3 flex items-center gap-2 text-[12px] text-muted-foreground">
+      <span className="flex gap-1">
+        {Array.from({ length: of }, (_, i) => (
+          <span key={i} className={cn('h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out', i < at ? 'w-5 bg-primary' : 'w-1.5 bg-border')} />
+        ))}
+      </span>
+      <span className="tabular-nums">
+        {at} / {of}
+      </span>
+    </div>
   )
 }
 
@@ -126,7 +133,7 @@ function LocateResult({ loc, onPick, onRetry, onPickByName }: { loc: Locate; onP
           現在地は <b className="text-[16px]">{loc.hit.name}</b> です
         </span>
         <button type="button" onClick={() => onPick(loc.hit!)} className="rounded-full bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
-          このまちにする
+          このまちを選ぶ
         </button>
       </div>
     )
@@ -145,8 +152,26 @@ function LocateResult({ loc, onPick, onRetry, onPickByName }: { loc: Locate; onP
   )
 }
 
-/** うちのまちを決めていないときのホーム。sample は見本のまちのホーム（本物のデータ）。押せないようにして下へ薄れさせ、その上に決める札を重ねる */
-export function Empty({ entries, onPick, sample, sampleName }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; sample: React.ReactNode; sampleName: string }) {
+const SKIP = 'fudoki:proto-onboarding-skipped'
+
+/** うちのまちを決めていないときのホーム。reveal があれば（まちを選んだ直後）2歩目の要点を出す */
+export function Empty({ entries, onPick, reveal }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; reveal: React.ReactNode }) {
+  const [skipped, setSkipped] = React.useState(false)
+  React.useEffect(() => {
+    try {
+      setSkipped(localStorage.getItem(SKIP) === '1')
+    } catch {
+      // 読めなければ毎回出す
+    }
+  }, [])
+  const skip = () => {
+    setSkipped(true)
+    try {
+      localStorage.setItem(SKIP, '1')
+    } catch {
+      // 保存できなくても、この頁では閉じる
+    }
+  }
   return (
     <>
       <header className="ob-rise mb-6">
@@ -156,18 +181,98 @@ export function Empty({ entries, onPick, sample, sampleName }: { entries: MapEnt
         <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
       </header>
       <FindTown entries={entries} />
-      <section className="mt-8" aria-label="うちのまちを決める">
-        <p className="ob-rise mb-3 flex items-center gap-2 text-[13px] text-muted-foreground" style={{ animationDelay: '.1s' }}>
-          <span className="rounded-full border px-2 py-0.5 text-[11px] font-bold">見本</span>
-          {sampleName}のホーム
-        </p>
-        <div inert aria-hidden="true" className="ob-sample pointer-events-none h-[460px] overflow-hidden select-none [mask-image:linear-gradient(to_bottom,#000_30%,transparent_92%)] sm:h-[520px]">
-          {sample}
-        </div>
-        <div className="relative -mt-44 sm:-mt-52 sm:px-6">
-          <Onboarding entries={entries} onPick={onPick} sample={sampleName} />
-        </div>
-      </section>
+      <div className="mt-4">
+        {reveal ? (
+          <div key="reveal">{reveal}</div>
+        ) : skipped ? (
+          <button type="button" onClick={() => setSkipped(false)} className="inline-flex items-center gap-1.5 text-[14px] text-primary hover:underline">
+            ホームに出すまちを選ぶ
+            <ArrowRightIcon className="size-4" />
+          </button>
+        ) : (
+          <AskCard entries={entries} onPick={onPick} onSkip={skip} step={[1, 2]} />
+        )}
+      </div>
     </>
+  )
+}
+
+export type CheckItem = { key: string; label: string; href: string }
+const CHECK = 'fudoki:proto-checklist'
+type CheckState = { done: string[]; closed?: boolean }
+
+/** ホームのチェックリスト。まちを選んだときに start() で始め、1つ目（まちを選ぶ）は済みにしておく */
+export const startChecklist = () => {
+  try {
+    localStorage.setItem(CHECK, JSON.stringify({ done: ['town'] } satisfies CheckState))
+  } catch {
+    // 保存できなければ出さない
+  }
+}
+
+export function Checklist({ items }: { items: CheckItem[] }) {
+  const [st, setSt] = React.useState<CheckState | null>(null)
+  React.useEffect(() => {
+    try {
+      const raw = localStorage.getItem(CHECK)
+      setSt(raw ? (JSON.parse(raw) as CheckState) : null)
+    } catch {
+      setSt(null)
+    }
+  }, [])
+  const save = (next: CheckState) => {
+    setSt(next)
+    try {
+      localStorage.setItem(CHECK, JSON.stringify(next))
+    } catch {
+      // この頁では反映する
+    }
+  }
+  if (!st || st.closed) return null
+  const all = [{ key: 'town', label: 'ホームに出すまちを選ぶ', href: '' }, ...items]
+  const n = all.filter((x) => st.done.includes(x.key)).length
+  const complete = n === all.length
+  return (
+    <section className="ob-rise mb-4 rounded-2xl border bg-background p-4 sm:p-5" aria-label="はじめにやること">
+      <div className="flex items-center gap-3">
+        <h2 className="flex-1 text-[15px] font-bold">{complete ? 'ひととおり見ました' : 'はじめにやること'}</h2>
+        <span className="text-[12px] text-muted-foreground tabular-nums">
+          {n} / {all.length}
+        </span>
+        <button type="button" onClick={() => save({ ...st, closed: true })} aria-label="閉じる" className="text-muted-foreground hover:text-foreground">
+          <XIcon className="size-4" />
+        </button>
+      </div>
+      <span className="mt-2.5 block h-1.5 overflow-hidden rounded-full bg-secondary">
+        <span className="block h-full origin-left rounded-full bg-primary transition-[width] duration-500 ease-out" style={{ width: `${(n / all.length) * 100}%` }} />
+      </span>
+      {complete ? null : (
+        <ul className="mt-3 grid gap-1 sm:grid-cols-2">
+          {all.map((x) => {
+            const done = st.done.includes(x.key)
+            const body = (
+              <>
+                <span className={cn('grid size-5 shrink-0 place-items-center rounded-full border transition-colors duration-200', done ? 'border-primary bg-primary text-primary-foreground' : 'border-border')}>
+                  {done ? <CheckIcon className="size-3" weight="bold" /> : null}
+                </span>
+                <span className={cn('flex-1', done && 'text-muted-foreground line-through decoration-muted-foreground/40')}>{x.label}</span>
+                {done ? null : <ArrowRightIcon className="size-3.5 text-muted-foreground" />}
+              </>
+            )
+            return (
+              <li key={x.key}>
+                {done || !x.href ? (
+                  <span className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-[14px]">{body}</span>
+                ) : (
+                  <Link href={x.href} onClick={() => save({ ...st, done: [...st.done, x.key] })} className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-[14px] transition-colors hover:bg-secondary">
+                    {body}
+                  </Link>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+      )}
+    </section>
   )
 }

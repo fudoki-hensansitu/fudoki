@@ -1,4 +1,4 @@
-/* 試作: オンボーディングの動き。入りは ease-out で 300ms 前後、見本の札は上から順に一度だけ浮かぶ。transform と opacity だけを動かす */
+/* 試作: オンボーディングの動き。入りは ease-out で 300ms 前後、2歩目の要点は上から順に一度だけ浮かぶ。transform と opacity だけを動かす */
 .ob-rise {
   animation: ob-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -18,15 +18,6 @@
   to { opacity: 1; transform: none; }
 }
 
-/* 見本: ホームの札が上から順に浮かぶ（一度だけ） */
-.ob-sample > * > * {
-  animation: ob-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-.ob-sample > * > :nth-child(1) { animation-delay: 0.05s; }
-.ob-sample > * > :nth-child(2) { animation-delay: 0.14s; }
-.ob-sample > * > :nth-child(3) { animation-delay: 0.22s; }
-.ob-sample > * > :nth-child(n + 4) { animation-delay: 0.3s; }
-
 /* 現在地を調べている間の輪 */
 .ob-ping::after {
   content: '';
@@ -42,7 +33,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ob-rise, .ob-fade, .ob-swap, .ob-sample > * > *, .ob-ping::after {
+  .ob-rise, .ob-fade, .ob-swap, .ob-ping::after {
     animation: none;
   }
 }
