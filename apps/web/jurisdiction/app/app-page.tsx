@@ -845,8 +845,8 @@ export function AppPage({ data, sitekey, initialYear }: { data: PageData; siteke
             <div className="flex items-center gap-3 px-4">
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
               {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-2 px-3 py-0 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none group-data-horizontal/tabs:after:bottom-0 after:bg-primary sm:text-[17px] [&_svg:not([class*='size-'])]:size-5">
-                  <t.icon />
+                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none group-data-horizontal/tabs:after:bottom-0 after:bg-primary sm:text-[17px]">
+                  <t.icon data-icon="inline-start" />
                   {t.label}
                 </TabsTrigger>
               ))}
