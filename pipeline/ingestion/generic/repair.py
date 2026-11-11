@@ -25,7 +25,7 @@ from pathlib import Path
 import re
 import unicodedata
 
-from ingestion.generic.patterns import load as load_pattern
+from ingestion.generic.patterns import document_quirk, load as load_pattern
 from ingestion.generic.observe import OPENING, Page, Rule, Word
 
 REPAIRS = Path(__file__).resolve().parents[1] / 'lib/text_repairs.csv'
@@ -366,7 +366,8 @@ def _continues(previous: Word, word: Word) -> bool:
     ending with a comma continues on its right (`5,` `184,344`, 132209), and touching digit groups join. A minus
     sign never continues a number."""
     comma_gap = 1.2 * (word.y1 - word.y0) if word.text.startswith(',') or previous.text.endswith(',') else 1.0
-    return bool(NUMERIC.match(previous.text) and NUMERIC.match(word.text) and word.x0 > previous.x0
+    rest = word.text if (yen := document_quirk('yen_split_amounts')) is None else yen.module.digits(word.text)
+    return bool(NUMERIC.match(previous.text) and NUMERIC.match(rest) and word.x0 > previous.x0
                 and not (word.text[:1] in '△▲' and previous.text[-1:] not in '△▲')
                 and -.5 * (word.x1 - word.x0) <= word.x0 - previous.x1 <= comma_gap)
 

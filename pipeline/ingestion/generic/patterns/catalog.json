@@ -76,6 +76,7 @@
   "quirks": {
     "account_code_transfers": "ingestion.generic.patterns.quirks.account_code_transfers",
     "amount_on_next_page": "ingestion.generic.patterns.quirks.amount_on_next_page",
+    "amount_over_page": "ingestion.generic.patterns.quirks.amount_over_page",
     "amounts_beside_names": "ingestion.generic.patterns.quirks.amounts_beside_names",
     "bracket_line_closes_name": "ingestion.generic.patterns.quirks.bracket_line_closes_name",
     "bracket_marks": "ingestion.generic.patterns.quirks.bracket_marks",
@@ -116,6 +117,7 @@
     "names_end_with_kind_words": "ingestion.generic.patterns.quirks.names_end_with_kind_words",
     "names_in_own_column": "ingestion.generic.patterns.quirks.names_in_own_column",
     "names_over_pages": "ingestion.generic.patterns.quirks.names_over_pages",
+    "numbers_set_right": "ingestion.generic.patterns.quirks.numbers_set_right",
     "office_departments": "ingestion.generic.patterns.quirks.office_departments",
     "one_row_header": "ingestion.generic.patterns.quirks.one_row_header",
     "opening_bracket_ink": "ingestion.generic.patterns.quirks.opening_bracket_ink",
@@ -137,6 +139,8 @@
     "transfer_account_above": "ingestion.generic.patterns.quirks.transfer_account_above",
     "under": "ingestion.generic.patterns.quirks.under",
     "unnumbered_shift": "ingestion.generic.patterns.quirks.unnumbered_shift",
-    "unopened_brackets": "ingestion.generic.patterns.quirks.unopened_brackets"
+    "unopened_brackets": "ingestion.generic.patterns.quirks.unopened_brackets",
+    "whole_name_notes": "ingestion.generic.patterns.quirks.whole_name_notes",
+    "yen_split_amounts": "ingestion.generic.patterns.quirks.yen_split_amounts"
   }
 }

@@ -71,6 +71,7 @@ class Group:
     mode: str = 'bands'  # how the subject group marks its levels (see SUBJECT_PATTERNS)
     levels: int | None = None  # number of subject levels
     kana: object = field(default=None, compare=False, repr=False)  # the axis's quirk `kana_set_apart`, if selected
+    numbers_right: object = field(default=None, compare=False, repr=False)  # the axis's quirk `numbers_set_right`
 
     @property
     def x0(self) -> float:
@@ -924,7 +925,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             if result:
                 for run in money:
                     result[-1].amounts.append((header, run))
-            elif settings.get('wrap') == 'amount_on_last_line' or quirk(settings, 'amount_on_next_page') is not None:
+            elif (settings.get('wrap') == 'amount_on_last_line' or quirk(settings, 'amount_on_next_page') is not None
+                  or quirk(settings, 'amount_over_page') is not None):
                 # The first line of a page carries the amount of a label that ended the page before:
                 # `apply_layout` joins the two. It stays a nameless item if there is no such label.
                 item = Item(group, money[0][0].page, [[g for run in money for g in run]], None, '', money[0][0].x0)
@@ -1684,13 +1686,15 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     spaced = document_quirk('letter_spaced_lines')
     unnumbered = quirk(settings, 'unnumbered_shift')
     highlights = quirk(settings, 'listed_highlights')
+    whole = quirk(settings, 'whole_name_notes')
+    whole_names = {normalize(name): kind for name, kind in whole.value.items()} if whole is not None else {}
     for item in items:
         if rows is not None:
             rows.module.unnumber(item)
         if settings.get('wrap'):
             item.indent = layout_name_start(item, settings.get('hang_chars'))
         raw = normalize(text(item.lines[0]))
-        note = raw.startswith(prefixes)
+        note = raw.startswith(prefixes) or raw in whole_names
         if not note and highlights is not None and highlights.module.listed(item) and id(item) not in column_amount_items:
             note, item.hint = True, highlights.module.KIND
         waiting = result[-1] if result else None
@@ -1707,7 +1711,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
         mark = next((m for m in ordered_marks
                      if (shape_of(item) == shapes[m] if m in shapes else raw.startswith(normalize(m)))), None)
         if note:
-            item.hint = next((kind for prefix, kind in note_kinds.items() if raw.startswith(prefix)), item.hint)
+            item.hint = whole_names.get(raw) or next((kind for prefix, kind in note_kinds.items() if raw.startswith(prefix)), item.hint)
             if id(item) in column_amount_items:
                 raise ValueError(f'Configured note carries separate-column money: p{item.page} {item.name!r}')
             item.role = 'annotation'
@@ -2077,6 +2081,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         for group in ordered:
             if not group.subject:
                 group.kana = quirk((layout or {}).get(group.axis), 'kana_set_apart')
+                group.numbers_right = quirk((layout or {}).get(group.axis), 'numbers_set_right')
                 if (rows_from := quirk((layout or {}).get(group.axis), 'rows_from')) is not None:
                     found[id(group)] = rows_from.module.with_empty_rows(found[id(group)], group, logical, rows_from.value)
                 if layout and group.axis in layout:
@@ -2094,7 +2099,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             mine = found[id(group)]
             previous = tails.get(group.axis)
             if (((layout or {}).get(group.axis, {}).get('wrap') == 'amount_on_last_line'
-                 or quirk((layout or {}).get(group.axis), 'amount_on_next_page') is not None) and previous is not None
+                 or quirk((layout or {}).get(group.axis), 'amount_on_next_page') is not None
+                 or quirk((layout or {}).get(group.axis), 'amount_over_page') is not None) and previous is not None
                     and mine and not mine[0].name and mine[0].amounts and mine[0].code is None
                     and not previous.amounts and previous.name
                     and previous.role in ('node', 'note', 'annotation') and mine[0].page == previous.page + 1):
@@ -2265,8 +2271,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                               'amounts': [text(r) for _, r in item.amounts]})
                 if target is not None:
                     label = normalize(text([g for g in item.glyphs if not any(g in r for _, r in item.amounts)]))
+                    over = quirk((layout or {}).get(item.group.axis), 'amount_over_page')
                     yen = bool((layout or {}).get(item.group.axis, {}).get('yen_marked')) and bool(item.amounts) \
-                        and all(yen_marked(logical, run) for _, run in item.amounts)
+                        and all(yen_marked(logical if over is None else over.module.page_of(all_items, run, logical), run)
+                                for _, run in item.amounts)
                     for header, run in item.amounts:
                         annotations.append((target, f'{header}／注記／{label}', run, '円' if yen else logical.unit_of(header)))
                     remarks.append({'kind': 'annotation', 'target': target, 'heading': None,
