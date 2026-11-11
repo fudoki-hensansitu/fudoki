@@ -53,7 +53,8 @@ const projectYearsOf = (env: Env, code: string, min: number, max: number) =>
   all(
     (token) => parseResponse(api(env).v1['projects:search'].$post({ json: { fiscal_year: { min, max }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as ProjectBody })),
     (r) => {
-      const started = new Map(r.projects.map((p) => [p.project_id, p.first_year_kind === 'confirmed' ? p.first_year : null]))
+      // 本番の API が projects を返す前に web が出ても落ちないようにする（そのあいだ NEW は付かない）
+      const started = new Map((r.projects ?? []).map((p) => [p.project_id, p.first_year_kind === 'confirmed' ? p.first_year : null]))
       return r.project_years.map((py) => ({ ...py, started: started.get(py.project_id) ?? null }))
     },
   )
