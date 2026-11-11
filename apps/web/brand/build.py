@@ -119,7 +119,7 @@ for target in (ROOT / "apps/docs/public",):
 # OS の設定を追うファビコンと、画面の .dark で選ぶ SVG は分ける。
 # 画像内部の prefers-color-scheme は画面側のクラスを参照できない。
 OW, OH = 1200, 630
-TAGLINE = "まちのお金、何に使ってる？"
+TAGLINE = "私のお金はどこへ行った？"
 og_height = 100
 scale = og_height / H
 LEFT = 80

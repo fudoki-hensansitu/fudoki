@@ -7,7 +7,7 @@ import { formatYen, reiwa } from '../jurisdiction/types'
 export const INK = '#2f5d43'
 const PAPER = '#f4f1e6'
 const TEXT = '#2b2723'
-const TAGLINE = 'まちのお金、何に使ってる？'
+const TAGLINE = '私のお金はどこへ行った？'
 export const OG_WIDTH = 1200
 export const OG_HEIGHT = 630
 const LEFT = 80
