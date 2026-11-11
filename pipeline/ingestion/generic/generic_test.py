@@ -381,7 +381,7 @@ class TrialRulesTest(unittest.TestCase):
         misread = [node('說明板')]
         self.assertEqual(correct_names(misread, [rule]), ['說明板→説明板'])
         self.assertEqual(misread[0]['name_text'], '説明板')
-        self.assertEqual(correct_names([node('説明板')], [rule]), [])
+        self.assertEqual(correct_names([node('説明板')], [rule]), ['說明板→説明板（字形表で直っていた）'])
         with self.assertRaises(ValueError):
             correct_names([node('別の名前')], [rule])
 

@@ -83,6 +83,9 @@ def kan_entries(nodes: list[dict], amounts: list[dict], document_kind: str
     amounts and units (a 款 of 0 may be left out of either), is that printing again and is not
     counted. Anything less (a different unit, a 款 with an amount missing or added, an unnamed
     款) counts in full, so a doubtful sum stops the build.
+
+    When no 款 prints an amount of the phase, the topmost subject rows that do (目 or 項) stand for
+    the 款, and the runs are cut on their numbers instead.
     """
     from ingestion.generic.headers import dictionary_header
     from ingestion.lib.node_tables import amount_phase
