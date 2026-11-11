@@ -808,11 +808,11 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
   }, [phone, index, v])
 
   const header = (
-    <header className="relative grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 py-7 sm:grid-cols-[132px_minmax(0,1fr)] sm:gap-7">
+    <header className="relative grid grid-cols-[80px_minmax(0,1fr)] items-end gap-4 py-7 sm:grid-cols-[108px_minmax(0,1fr)] sm:gap-6">
       <div className="col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0">
         {phone ? <YearMenu years={YEARS} current={year} onChange={setYear} /> : <YearPicker years={YEARS} current={year} onChange={setYear} />}
       </div>
-      <div className="grid size-20 place-items-center rounded-xl border bg-emblem p-2.5 sm:size-[132px] sm:rounded-2xl sm:p-[18px]">
+      <div className="grid size-20 place-items-center rounded-xl border bg-emblem p-2.5 sm:size-[108px] sm:rounded-2xl sm:p-4">
         <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" />
       </div>
       <div className="flex min-w-0 flex-col gap-3">
@@ -839,7 +839,7 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
           <div ref={tabsTop} aria-hidden="true" />
           <div className="sticky top-0 z-20 -mx-4 bg-background">
             {/* 下線を区切りの線に重ねて、線が二重に見えないようにする */}
-            <Separator className="absolute inset-x-0 bottom-0" />
+            <Separator className="absolute inset-x-4 bottom-0 w-auto" />
             {/* スクロールしたら上にタブを残し、右に年度の切り替えを出す。下に Separator を引いて中身と分ける */}
             <div className="flex items-center gap-3 px-4">
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-6 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-auto sm:gap-9">
