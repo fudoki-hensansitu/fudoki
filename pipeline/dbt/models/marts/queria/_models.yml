@@ -54,6 +54,10 @@ models:
   - name: subject_id
     description: 行の ID。
     data_tests: [not_null, unique]
+  - &node_key
+    name: node_key
+    description: 同じ自治体・年度の当初予算と決算で同じ科目・内訳に同じ値が付く鍵。年度をまたいでは一致しない。
+    data_tests: [not_null]
   - name: parent_subject_id
     description: 親の科目の subject_id。款は NULL。
   - &expenditure_id
@@ -106,7 +110,7 @@ models:
     config:
       meta: {queria: {semantic: {role: measure, agg: sum}}}
   - name: is_leaf
-    description: 子の科目を持たないか（目と、目の無い項）。is_leaf の行の和が歳出の総額。
+    description: 子の科目を持たないか（目と、目の無い項）。is_leaf の和が歳出の総額（神戸市 2025 一般会計は 170,000 円足りない）。
     data_tests: [not_null]
   - name: cofog_status
     description: 目に付けた COFOG の判断（assigned・tentative など）。風土記の判断。
@@ -130,12 +134,14 @@ models:
 
     - 科目（subject）と足さないでください。
     - 同じ科目・同じ breakdown の depth = 1 の行の和が科目の金額です。breakdown を混ぜて足さないでください。
+    - 金額の無い行があると和は閉じません。is_subject_remainder の行はこの規則の外です。
   config:
     meta: {queria: {primary_key: detail_id}}
   columns:
   - name: detail_id
     description: 行の ID。
     data_tests: [not_null, unique]
+  - *node_key
   - name: parent_detail_id
     description: 親の内訳の detail_id。科目の直下は NULL。
   - name: subject_id
@@ -182,7 +188,7 @@ models:
     description: 子の内訳を持たないか。
     data_tests: [not_null]
   - name: is_subject_remainder
-    description: 子の科目と並んで科目の金額の一部になる枝か（神戸市の一部の項）。
+    description: 子の科目と並んで科目の金額の一部になる枝か（神戸市の一部の項）。depth = 1 の和の規則の外。
     data_tests: [not_null]
   - name: expenditure_setsu_id
     description: 節の欄の行に対応する法定の歳出の節の ID。節以外は NULL。
@@ -213,6 +219,9 @@ models:
     data_tests: [not_null]
   - name: format
     description: 出典の形式（pdf か csv）。
+    data_tests: [not_null]
+  - name: sha256
+    description: 風土記が取得した時点の出典ファイルの SHA-256。自治体の差し替えで変わることがある。
     data_tests: [not_null]
 
 - name: queria_expenditure__origin_link

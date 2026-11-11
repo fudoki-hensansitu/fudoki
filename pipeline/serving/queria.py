@@ -2,7 +2,7 @@
 
 表は marts と同名・同列のまま写す（モデル名 queria_<スキーマ>__<テーブル> → <スキーマ>.<テーブル>）。
 `fdl checkout` で作った作業用カタログに表を書き、作業ディレクトリに `dataset.yml`・`tables/<スキーマ>.<テーブル>.table.yml`・`README.md` を書く。
-宣言の説明・主キー・キーは marts の `_models.yml` から引く。公開（`queria validate` → `fdl commit` → `fdl push`）は手で流す。
+宣言の説明・主キー・キーは marts の `_models.yml` から引く。公開（`queria validate` → `uvx --from fdl-cli fdl commit` → `fdl push`）は手で流す。手順は pipeline/AGENTS.md の「Queria への配布」。
 
     bun run --cwd pipeline serving:queria                          # 全自治体
     bun run --cwd pipeline serving:queria -- --jurisdiction 131091  # 試しに一部の自治体だけ
@@ -79,6 +79,12 @@ def write_tables(working: Path, codes: list[str], specs: list[dict], warehouse: 
     con.execute(f"attach 'ducklake:{working}' as q (data_path '{working}.data/', override_data_path true, "
                 "meta_type 'sqlite', data_inlining_row_limit 0)")
     rows = {}
+    wanted = {queria_name(spec['name']) for spec in specs}
+    # checkout した前の版に、宣言から消した・改名した表が残らないようにする
+    for schema, table in con.execute(
+            "select schema_name, table_name from duckdb_tables() where database_name = 'q'").fetchall():
+        if (schema, table) not in wanted:
+            con.execute(f'drop table q.{schema}.{table}')
     for spec in specs:
         model = spec['name']
         schema, table = queria_name(model)
@@ -140,6 +146,7 @@ def readme(specs: list[dict], written: dict) -> str:
               '## 注意', '',
               '- 決算（`document_kind = settlement`）と当初予算（`initial`）の金額は意味が違うので、必ずどちらかに絞ってください。',
               '- 内訳（`detail`）は科目（`subject`）の下の行です。科目と足さないでください。',
+              '- 当初予算と決算の同じ科目・内訳は、同じ自治体・年度の中なら `node_key` で突き合わせられます。',
               '- 収録していない自治体・年度・会計は 0 ではなく、データがありません。', '']
     return '\n'.join(lines)
 
@@ -167,7 +174,7 @@ def write_declarations(workdir: Path, specs: list[dict], written: dict) -> None:
 
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
-    parser.add_argument('--jurisdiction', action='append', default=[], help='載せる自治体コード（6桁）。省略すると全部')
+    parser.add_argument('--jurisdiction', action='append', default=[], help='試しに載せる自治体コード（6桁）。公開する版は省略して全自治体で作る')
     parser.add_argument('--workdir', type=Path, default=WORKDIR, help='宣言ファイルを書く作業ディレクトリ')
     parser.add_argument('--ducklake', type=Path, default=None,
                         help='作業用カタログ（fdl checkout の出力）。省略すると $FDL_WORKING か <workdir>/.fdl/work.sqlite')
