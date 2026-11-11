@@ -38,7 +38,18 @@ const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(en
 export const pageData = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
 /** ホーム（/）に載せる全自治体の要約 */
-export const homeEntries = async (env: Env): Promise<MapEntry[]> => (await index(env)).map(toMapEntry)
+export async function homeEntries(env: Env): Promise<MapEntry[]> {
+  const [entries, jurisdictions] = await Promise.all([index(env), catalog(env)])
+  const latest = new Map(jurisdictions.map((j) => [j.code, pageYearsOf(j)[0]]))
+  return entries.map((e) => toMapEntry(e, latest.get(e.code)))
+}
+
+/** 自治体の頁で選べる年度（新しい順）。頁のデータを読まずにカタログだけで決める（sitemap・ホームのリンク） */
+function pageYearsOf(e: CatalogEntry): number[] {
+  const settled = shownSettlementYears(e.settlementYears)
+  const last = Math.max(0, ...settled)
+  return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) })
+}
 
 /** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする） */
 export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<(OgInput & { cacheKey: string }) | null> {
@@ -70,7 +81,7 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
 /** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */
 export async function sitemapResponse(env: Env): Promise<Response> {
   try {
-    return new Response(sitemapXml(await catalog(env), (e) => { const settled = shownSettlementYears(e.settlementYears); const last = Math.max(0, ...settled); return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) }) }), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
+    return new Response(sitemapXml(await catalog(env), pageYearsOf), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
   } catch {
     return new Response(sitemapXml([]), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } })
   }

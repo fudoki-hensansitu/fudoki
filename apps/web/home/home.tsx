@@ -90,12 +90,15 @@ function Picker({ entries, onPick, placeholder }: { entries: MapEntry[]; onPick:
   )
 }
 
-/** うちのまちで出す、その自治体の情報の入口。hash は自治体の頁の目次の id か年度（#y2024）。くわしい頁の無い自治体には無い節は出さない */
-const townLinks = (name: string) => [
-  { label: `${name.slice(-1)}の仕事`, hash: '#about', icon: <BankIcon /> },
-  { label: 'お金の使い道', hash: '#budget', icon: <CoinsIcon /> },
-  { label: 'お金のかかる事業', hash: '#projects', icon: <ChartBarIcon /> },
-]
+/** うちのまちで出す、その自治体の情報の入口。頁の最新の年度のまとめ・予算・事業のタブへ繋ぐ（年度の分からないときは年度の無い URL。頁が最新の年度へ移す） */
+const townLinks = (town: MapEntry) => {
+  const base = town.latestYear ? `${town.path}/${town.latestYear}` : town.path
+  return [
+    { label: `${town.name.slice(-1)}の仕事`, href: base, icon: <BankIcon /> },
+    { label: 'お金の使い道', href: `${base}/budget`, icon: <CoinsIcon /> },
+    { label: 'お金のかかる事業', href: `${base}/projects`, icon: <ChartBarIcon /> },
+  ]
+}
 
 /** 現在地から自治体を選ぶボタン。開いた時点の自動の判定で取れなかったときや、変えるときに使う */
 function LocateButton({ entries, onPick }: { entries: MapEntry[]; onPick: (e: MapEntry) => void }) {
@@ -208,9 +211,9 @@ function MyTown({ entries, featured }: HomeProps) {
             </span>
           </Link>
           <ul className="mt-5 grid grid-cols-3 gap-2">
-            {townLinks(town.name).map((l) => (
+            {townLinks(town).map((l) => (
               <li key={l.label}>
-                <Link href={`${town.path}${l.hash}`} className="flex h-full flex-col gap-2 rounded-2xl bg-brand-fill p-3.5 text-sm text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover [&_svg]:size-5 [&_svg]:text-accent-foreground">
+                <Link href={l.href} className="flex h-full flex-col gap-2 rounded-2xl bg-brand-fill p-3.5 text-sm text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover [&_svg]:size-5 [&_svg]:text-accent-foreground">
                   {l.icon}
                   {l.label}
                 </Link>
