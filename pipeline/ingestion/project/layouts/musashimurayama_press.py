@@ -70,8 +70,8 @@ def read(path) -> list[PressItem]:
                 point = POINT.match(row)
                 if current is not None and point and not current.points:
                     current.points.append(point.group(1))
-                elif current is not None and len(current.points) == 1 and not row.startswith(('〇', '○', '', '《', '-')) \
-                        and not POINT.match(row):
+                elif current is not None and len(current.points) == 1 and not current.points[0].endswith('。') \
+                        and not row.startswith(('〇', '○', '《', '-')) and '【' not in row and not POINT.match(row):
                     current.points[0] += row
                 else:
                     current = None if current is None or current.points else current

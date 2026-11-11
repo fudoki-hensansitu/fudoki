@@ -12,6 +12,7 @@ import re
 from ingestion.project.layouts.press import PressItem, norm
 
 AMOUNT = re.compile(r'^([\d,]+(?:\.\d+)?)百万$')
+NEW = re.compile(r'新規(?:事業|項目)')
 
 
 def _bands(page) -> list[tuple[float, float]]:
@@ -50,7 +51,7 @@ def read(path) -> list[PressItem]:
                 summary = ''.join(norm(w['text']) for w in inside if summary_x0 <= w['x0'] < 500)
                 position += 1
                 value = float(AMOUNT.match(norm(amounts[0]['text'])).group(1).replace(',', ''))
-                items.append(PressItem(number, name, [name], '新規事業' in office, round(value * 1000),
+                items.append(PressItem(number, name, [name], bool(NEW.search(office)), round(value * 1000),
                                        [summary] if summary else [], position))
             page.flush_cache()
     return items
