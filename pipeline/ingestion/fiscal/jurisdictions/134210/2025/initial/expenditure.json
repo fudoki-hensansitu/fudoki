@@ -598,5 +598,180 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "7b386807932639401f77f77dcec6d7ef46116b04b510b74bdfd4caa810310848",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 26頁 から決めた。款の和 6,778,193 と印字の「歳出合計」6,778,193 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "32a46fdafc10258b6da8fc2da178d898143b4276ce08cc6221154cde13748660",
+          "bytes": 40714
+        },
+        "row_count": 1324
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "6ce7d1a2029223aeaf71f11d7532079313269b915b51869f558301396255dbc0",
+          "bytes": 30776
+        },
+        "row_count": 1741
+      }
+    },
+    {
+      "table_id": "national-health-insurance-initial",
+      "conversion_id": "national-health-insurance-initial",
+      "input_fingerprint": "90f732d9ba1d6c3c07390665ac0eb67484dbebb64f4a8fe8b0ad515b2ec1b1d4",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 5頁 から決めた。款の和 371,853 と印字の「歳出合計」371,853 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/national-health-insurance-initial-nodes.parquet",
+          "sha256": "1efe1b0a1061c5e9bc48562deec4bc8d07ab6df0f54d8f3d650194a947f34733",
+          "bytes": 8459
+        },
+        "row_count": 161
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/national-health-insurance-initial-amounts.parquet",
+          "sha256": "9e33355c725f6c1c6ca89982d5b29ad7933f8f8216b2985abd36ced7f2bd0a08",
+          "bytes": 6498
+        },
+        "row_count": 310
+      }
+    },
+    {
+      "table_id": "land-development-initial",
+      "conversion_id": "land-development-initial",
+      "input_fingerprint": "f5f4da03b1a1662ad9a97723be9064b9510a1701b4ee8001d35fb5d02ea8b8d5",
+      "account": "宅地造成事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 18,857 と印字の「歳出合計」18,857 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/land-development-initial-nodes.parquet",
+          "sha256": "e71e707183a6ba1aaadbe0d30759919a5c1bc4abe81ddfbf294aa56c91b70be0",
+          "bytes": 3181
+        },
+        "row_count": 15
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/land-development-initial-amounts.parquet",
+          "sha256": "881aacea05d1903d86aa9e13cbe3168fc12659c7374a36575dc5b6fa918169ce",
+          "bytes": 2342
+        },
+        "row_count": 33
+      }
+    },
+    {
+      "table_id": "long-term-care-insurance-initial",
+      "conversion_id": "long-term-care-insurance-initial",
+      "input_fingerprint": "574e802682ad23d2ad671f842acf038f18f8007f0ae405e04148a375dee4c702",
+      "account": "介護保険（保険事業勘定）特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 117,462 と印字の「歳出合計」117,462 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/long-term-care-insurance-initial-nodes.parquet",
+          "sha256": "57dfeef334448bcffb6356fee9ac5ce6a8853c64e0f581af20c7fb9499c8f1f6",
+          "bytes": 7165
+        },
+        "row_count": 122
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/long-term-care-insurance-initial-amounts.parquet",
+          "sha256": "41604ff4ff03c2293f4c84a202aa670ab6690b18443a6f982120eb1066983ac4",
+          "bytes": 5293
+        },
+        "row_count": 234
+      }
+    },
+    {
+      "table_id": "long-term-care-service-initial",
+      "conversion_id": "long-term-care-service-initial",
+      "input_fingerprint": "8e23b267598ee3ae997613f6e8ababae5ce05ba9478391eefbc6a5ab780100b5",
+      "account": "介護保険（介護サービス事業勘定）特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。款の和 202,863 と印字の「歳出合計」202,863 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/long-term-care-service-initial-nodes.parquet",
+          "sha256": "0d90a8a0b6d20566b60bf5c9a2014fd648af1ace323e1dbf36c2ff6324d4704a",
+          "bytes": 4926
+        },
+        "row_count": 57
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/long-term-care-service-initial-amounts.parquet",
+          "sha256": "754406f08f0d21ba82feb9faefb28f91a403411135c64dc0b9f6133cf72e6405",
+          "bytes": 3473
+        },
+        "row_count": 87
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "30679e9e2e673ec682822a462c4ada3c85f096f7948b5904d39b037b42dfae0b",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。款の和 49,836 と印字の「歳出合計」49,836 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "cb1c21ce81c2b5347b88765b92ea06022f31fbe616f40ea1d33498208776d4b6",
+          "bytes": 4941
+        },
+        "row_count": 59
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "fdfd99e6964dfc58687190651d5d57cb45e3385f081dfab02284979cd93f7a62",
+          "bytes": 3623
+        },
+        "row_count": 128
+      }
+    }
+  ]
 }
