@@ -41,7 +41,7 @@ export function setMyTown(t: Town | null) {
 /** 試作の保存（まち・オンボを飛ばした印・チェックリスト）を消し、はじめて開いた状態に戻す */
 export function resetProto() {
   try {
-    for (const k of [KEY, 'fudoki:proto-onboarding-skipped', 'fudoki:proto-checklist']) localStorage.removeItem(k)
+    for (const k of [KEY, 'fudoki:proto-onboarding-skipped', 'fudoki:proto-checklist', 'fudoki:proto-tour']) localStorage.removeItem(k)
   } catch {
     // 消せなければそのまま
   }

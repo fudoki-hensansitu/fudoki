@@ -95,7 +95,7 @@ function Mine({ path, town }: { path: string; town: Town | null }) {
         <TownSearch />
       </SidebarGroup>
       <SidebarGroup>
-        <SidebarMenu>
+        <SidebarMenu data-tour="nav">
           <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
           <Item href="/prototype/search" label="事業を検索" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
         </SidebarMenu>
@@ -116,7 +116,7 @@ function Inside({ path, town }: { path: string; town: Town | null }) {
           <TownIcon town={town} />
           <span className="truncate font-bold">{town ? town.name : 'まちを選んでいません'}</span>
         </SidebarGroupLabel>
-        <SidebarMenu>
+        <SidebarMenu data-tour="nav">
           <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
           <Item href={town ? searchHref('', town.code) : '/prototype/search'} label="事業を検索" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
         </SidebarMenu>

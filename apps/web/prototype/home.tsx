@@ -17,6 +17,7 @@ import type { Props } from '../pages/prototype/index.server'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { EXAMPLES, ProjectSearchBox, searchHref } from './search'
 import { useMyTown, type Town } from './towns'
+import { Tour, queueTour, useTour, type TourStep } from './tour'
 import { AskTown, Checklist, Empty, Steps, startChecklist, type CheckItem } from './onboarding'
 import { useVariant } from './variant'
 
@@ -126,9 +127,9 @@ function FieldBars({ c, limit }: { c: Ctx; limit: number }) {
 
 // ---------- 1 うちのまち中心: ホームはうちのまちのダッシュボード ----------
 
-function Card({ title, icon, children, footer, className }: { title: string; icon?: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; className?: string }) {
+function Card({ title, icon, children, footer, className, tour }: { title: string; icon?: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; className?: string; tour?: string }) {
   return (
-    <section className={cn('flex flex-col rounded-2xl border bg-background p-5 animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none', className)}>
+    <section data-tour={tour} className={cn('flex flex-col rounded-2xl border bg-background p-5 animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none', className)}>
       <h3 className="mb-3 flex items-center gap-2 text-[15px] font-bold [&_svg]:size-5 [&_svg]:text-muted-foreground">
         {icon}
         {title}
@@ -144,7 +145,7 @@ function Dashboard({ c }: { c: Ctx }) {
   const { fy, sheets } = sheetsOf(d)
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-      <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7 md:col-span-2">
+      <section data-tour="total" className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7 md:col-span-2">
         <div className="flex items-start gap-4">
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
           <div className="min-w-0 flex-1">
@@ -170,16 +171,16 @@ function Dashboard({ c }: { c: Ctx }) {
         </div>
       </section>
       {v.fields.length ? (
-        <Card title="何に使っている？" icon={<CoinsIcon />} footer={<More href={flowHref(c)}>お金の流れを見る</More>}>
+        <Card tour="fields" title="何に使っている？" icon={<CoinsIcon />} footer={<More href={flowHref(c)}>お金の流れを見る</More>}>
           <FieldBars c={c} limit={6} />
         </Card>
       ) : null}
       {v.comparable && v.newProjects.length ? (
-        <Card title={`${reiwa(year)}に始めた事業`} icon={<NewIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
+        <Card tour="projects" title={`${reiwa(year)}に始めた事業`} icon={<NewIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
           <ProjectList items={v.newProjects.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p) ?? null }))} rest={v.newProjects.length - 5} />
         </Card>
       ) : v.current.length ? (
-        <Card title="お金のかかる事業" icon={<CoinsIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
+        <Card tour="projects" title="お金のかかる事業" icon={<CoinsIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
           <ProjectList items={v.current.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p) ?? null }))} rest={0} />
         </Card>
       ) : null}
@@ -224,7 +225,7 @@ function Inside({ c, sitekey, onChoose }: { c: Ctx; sitekey: string; onChoose: (
         </button>
       </header>
 
-      <section className="animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none">
+      <section data-tour="ask" className="animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none">
         <h3 className="mb-2 text-[15px] font-bold">{town.name}について聞く</h3>
         <StartForm
           sitekey={sitekey}
@@ -234,7 +235,7 @@ function Inside({ c, sitekey, onChoose }: { c: Ctx; sitekey: string; onChoose: (
         />
       </section>
 
-      <section className="animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none">
+      <section data-tour="search" className="animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none">
         <h3 className="mb-2 text-[15px] font-bold">{town.name}の事業</h3>
         <ProjectSearchBox code={town.code} size="md" placeholder="例：給食、プール、保育" />
         <div className="mt-2.5 flex flex-wrap gap-2">
@@ -246,7 +247,7 @@ function Inside({ c, sitekey, onChoose }: { c: Ctx; sitekey: string; onChoose: (
         </div>
       </section>
 
-      <section className="rounded-[24px] bg-brand p-5 text-brand-foreground animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none sm:p-6">
+      <section data-tour="total" className="rounded-[24px] bg-brand p-5 text-brand-foreground animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none sm:p-6">
         <div className="flex flex-wrap items-end justify-between gap-3">
           <div>
             <p className="text-sm opacity-80">
@@ -368,10 +369,31 @@ const checkItems = (c: Ctx): CheckItem[] => [
   { key: 'assistant', label: 'アシスタントに聞く', href: '/assistant' },
 ]
 
+/** まちの画面に入った直後のツアー。案ごとに、上から順に光らせる */
+const TOTAL: TourStep = { target: 'total', title: '1年に使うお金', body: 'このまちが1年に使うお金の総額と、1人あたりの額です。右で年度を切り替えられます。' }
+const NAV: TourStep = { target: 'nav', title: '事業を検索・アシスタント', body: '事業を名前で探したり、このまちの予算についてアシスタントに質問したりできます。' }
+const tourSteps = (c: Ctx, variant: number): TourStep[] =>
+  variant === 1
+    ? [
+        { target: 'ask', title: `${c.town.name}について聞く`, body: '質問を書くと、アシスタントが予算・決算の資料から答えます。' },
+        { target: 'search', title: '事業を探す', body: '「給食」「プール」のような言葉で、このまちの事業を探せます。' },
+        TOTAL,
+        NAV,
+      ]
+    : [
+        TOTAL,
+        { target: 'fields', title: '何に使っているか', body: '分野ごとの額と割合です。「お金の流れを見る」で、もっと細かく見られます。' },
+        c.v.comparable && c.v.newProjects.length
+          ? { target: 'projects', title: `${reiwa(c.year)}に始めた事業`, body: 'この年度に新しく始めた事業です。押すと、事業ごとの予算と中身を見られます。' }
+          : { target: 'projects', title: '事業', body: '事業ごとの予算です。押すと中身を見られます。' },
+        NAV,
+      ]
+
 export function ProtoHome({ entries, featured, sitekey }: Props) {
   const { ready, town, set } = useMyTown()
   const [changing, setChanging] = React.useState(false)
   const { current, key } = useVariant()
+  const tour = useTour()
   // はじめての流れで選んだまち。要点を見せてから「このまちを見る」で決める
   const [pending, setPending] = React.useState<Town | null>(null)
   const shown = town ?? pending
@@ -384,6 +406,7 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
   const open = () => {
     if (!pending) return
     startChecklist()
+    queueTour()
     set(pending)
     setPending(null)
   }
@@ -404,7 +427,7 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
       <WithCtx town={town!} vision={vision} snap={snap}>
         {(c) => (
           <>
-            <Checklist items={checkItems(c)} />
+            {tour.on ? <Tour steps={tourSteps(c, 1)} onDone={tour.done} /> : <Checklist items={checkItems(c)} />}
             <Inside c={c} sitekey={sitekey} onChoose={choose} />
           </>
         )}
@@ -421,7 +444,7 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
         <WithCtx town={town!} vision={vision} snap={snap}>
           {(c) => (
             <>
-              <Checklist items={checkItems(c)} />
+              {tour.on ? <Tour steps={tourSteps(c, 0)} onDone={tour.done} /> : <Checklist items={checkItems(c)} />}
               <Dashboard c={c} />
             </>
           )}
