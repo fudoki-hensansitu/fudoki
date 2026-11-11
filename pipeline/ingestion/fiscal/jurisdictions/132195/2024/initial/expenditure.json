@@ -156,5 +156,36 @@
       ]
     }
   ],
-  "tables": []
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "d01dd6e892caf1201f3d515f763d55f27dbf78ccfb50ff2f34e4c1125ec1fdce",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は column mark 158頁・carried 125頁 から決めた。款の和 33,920,000 と印字の「歳出合計」33,920,000 が一致。",
+        "金額の注記 1 件（充用 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（103 件）を、印字された語から辞書の見出しに寄せた: 比較増△減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "f1f3ad788498c69b2b44440f5fe13dbddb544d633827dba38079d7ade60a7340",
+          "bytes": 213444
+        },
+        "row_count": 6987
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132195/2024/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "a0f9cf946c15cefefee02304f402ae4957208d11c8b907dae0e32a85bb42d938",
+          "bytes": 149731
+        },
+        "row_count": 7219
+      }
+    }
+  ]
 }

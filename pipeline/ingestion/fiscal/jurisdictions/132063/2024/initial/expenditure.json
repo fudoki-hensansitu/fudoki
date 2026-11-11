@@ -1,81 +1,111 @@
 {
- "schema_version": 1,
- "target": {
-  "jurisdiction": "132063",
-  "fiscal_year": 2024,
-  "document_kind": "initial"
- },
- "direction": "expenditure",
- "conversions": [
-  {
-   "id": "general-initial",
-   "converter": "fiscal/layouts/generic_text/convert.py",
-   "inputs": [
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132063",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
     {
-     "sha256": "574f8276f1497e50444a9c07a50248cbd8086426299fea145198f1bf66b3c734"
-    }
-   ],
-   "options": {
-    "account": "一般会計",
-    "table_id": "general-initial",
-    "workflow": {
-     "layout": {
-      "pattern": "ruled",
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "574f8276f1497e50444a9c07a50248cbd8086426299fea145198f1bf66b3c734"
+        }
+      ],
       "options": {
-       "columns": {
-        "施策番号": {
-         "kind": "ignore"
-        },
-        "比較額(増減率%)": {
-         "kind": "ignore"
-        },
-        "財源内訳／特定財源": {
-         "excluded": {
-          "kind": "財源内訳",
-          "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
-         }
-        },
-        "財源内訳／一般財源": {
-         "excluded": {
-          "kind": "財源内訳",
-          "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
-         }
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                },
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "quirks": {
+                  "amount_on_next_page": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "repeated_subject_headings": true
+          }
         }
-       }
-      }
-     },
-     "headers": {
-      "pattern": "standard"
-     },
-     "hierarchy": {
-      "subject": {
-       "pattern": "indent",
-       "codes": "right"
       },
-      "breakdown": {
-       "節": {
-        "pattern": "indent"
-       },
-       "説明": {
-        "pattern": "indent",
-        "quirks": {
-         "amount_on_next_page": true
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
         }
-       }
-      }
-     },
-     "quirks": {
-      "codeless_name_levels": true,
-      "repeated_subject_headings": true
-     }
+      ]
     }
-   },
-   "expected_tables": [
+  ],
+  "tables": [
     {
-     "table_id": "general-initial"
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "ad2fd84d6b24fb31e1d24a34bbce52ea19c72c1e372ae9b4c6ec0ac4db2f316e",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 62頁 から決めた。款の和 127,830,000 と印字の「合計」127,830,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "24143e32748224411f45b9c64845f3d8aecdff5c70695f3dc1dc102145cf6e09",
+          "bytes": 79480
+        },
+        "row_count": 2874
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132063/2024/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "a27e2f6bb60f712218a3ffb7f9fcc94ee6911d9be356cfe3289d39283ce318a4",
+          "bytes": 58231
+        },
+        "row_count": 3034
+      }
     }
-   ]
-  }
- ],
- "tables": []
+  ]
 }
