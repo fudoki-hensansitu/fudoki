@@ -261,13 +261,35 @@ def read_headless_rows(logicals: list[layout.Logical], upper: dict) -> None:
             band.words.sort(key=lambda g: (g.y0, g.x0))
 
 
+SPLIT_RULE_GAP = 100  # points: the widest gap between the pieces of one rule drawn in two (杉並: 576 to 654)
+
+
 def full_rules(page) -> list[float]:
-    """The heights of the horizontal rules that cross the whole frame."""
+    """The heights of the horizontal rules that cross the whole frame.
+
+    A page none of whose rules crosses the whole frame may draw each rule in pieces at one height with a gap
+    between them (杉並 leaves the stretch between the 一般財源 and the 節 columns out of every rule). There, the
+    heights whose pieces reach both edges, with no gap wider than `SPLIT_RULE_GAP`, are the full rules."""
     horizontals = [r for r in page.rules if not r.vertical]
     if not horizontals:
         return []
     left, right = min(r.x0 for r in horizontals), max(r.x1 for r in horizontals)
-    return sorted(r.y0 for r in horizontals if r.x0 <= left + FULL_REACH and r.x1 >= right - FULL_REACH)
+    whole = sorted(r.y0 for r in horizontals if r.x0 <= left + FULL_REACH and r.x1 >= right - FULL_REACH)
+    if whole:
+        return whole
+    joined = []
+    for y in sorted({r.y0 for r in horizontals}):
+        pieces = sorted((r.x0, r.x1) for r in horizontals if abs(r.y0 - y) <= 0.5)
+        if pieces[0][0] > left + FULL_REACH:
+            continue
+        reach = pieces[0][1]
+        for x0, x1 in pieces[1:]:
+            if x0 - reach > SPLIT_RULE_GAP:
+                break
+            reach = max(reach, x1)
+        if reach >= right - FULL_REACH and (not joined or y - joined[-1] > 0.5):
+            joined.append(y)
+    return joined
 
 
 def between_tables(logical: layout.Logical, verticals: dict, full: dict) -> list[tuple[layout.Band, Glyph]]:

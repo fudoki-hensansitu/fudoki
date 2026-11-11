@@ -111,7 +111,7 @@ export async function fixture(real = false) {
   for (const [i, { name, origin_id, ...location }] of scenarios.entries()) {
     const id = String(i + 1).padStart(64, '0')
     await insert('expenditure_subject', { subject_id: id, node_key: id, jurisdiction_code: '000001', fiscal_year: 2024, document_kind: 'settlement', amount_phase: 'executed', account_name: '一般会計', kan_name: '総務費', level: '目', name, amount_yen: 12345, origin_id })
-    await insert('expenditure_location', { kind: 'pdf', row_id: id, origin_id, ...location })
+    await insert('expenditure_location', { kind: 'pdf', line_id: id, origin_id, ...location })
   }
   if (real) {
     const response = await fetch('https://api.fudoki.dev/v1/expenditures/subjects:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { jurisdiction_code: { eq: ['132039'] } }, page_size: 2 }) })
@@ -120,7 +120,7 @@ export async function fixture(real = false) {
     for (const subject of data.subjects) {
       await insert('expenditure_subject', subject)
       const detail = await (await fetch(`https://api.fudoki.dev/v1/expenditures/lines/${subject.subject_id}`)).json() as { locations: Record<string, unknown>[] }
-      for (const location of detail.locations.filter((l) => l.row_id === subject.subject_id)) await insert('expenditure_location', location)
+      for (const location of detail.locations.filter((l) => l.line_id === subject.subject_id)) await insert('expenditure_location', location)
     }
   }
   return {

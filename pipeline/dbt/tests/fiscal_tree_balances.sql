@@ -9,7 +9,7 @@ with recursive rows as (
     select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}
 ), scoped as (
     select '' as scope, n.node_id, n.parent_node_id, n.document_kind, n.axis, n.amount_yen,
-        n.jurisdiction_code, n.fiscal_year, n.account_name, n.source_page, n.code, n.name
+        n.jurisdiction_code, n.fiscal_year, n.account_name, n.source_page, n.code, n.name, n.amendment_yen
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }} n
     where not exists (
         select 1 from rows r where r.document_kind = n.document_kind and r.node_id = n.node_id
@@ -20,8 +20,8 @@ with recursive rows as (
     )
     union all
     select r.source_table_key, r.node_id, r.parent_node_id, r.document_kind, r.axis_header, r.amount_yen,
-        r.jurisdiction_code, r.fiscal_year, r.account_name, r.physical_page, r.code_text, r.name
-    from rows r where r.division is not null
+        r.jurisdiction_code, r.fiscal_year, r.account_name, r.physical_page, r.code_text, r.name, null::bigint
+    from rows r where r.division is not null and not r.is_amendment
 ), nodes as (
     -- Whether a node has children on its own axis, read here because a third reference
     -- to a CTE does not bind inside the recursive part below.
@@ -56,6 +56,9 @@ join children c on c.scope = p.scope and c.checked_node_id = p.node_id and c.doc
 join printed_axes a on a.scope = c.scope and a.checked_node_id = c.checked_node_id
     and a.document_kind = c.document_kind and a.axis = c.axis
 where p.amount_yen is not null and c.amount_yen <> p.amount_yen
+    -- A council amendment moved the node (seed fiscal_budget_amendment); a branch it does not print (the 節)
+    -- keeps the proposed amount, so it adds up to the amount before the amendment.
+    and not (p.amendment_yen is not null and c.amount_yen = p.amount_yen - p.amendment_yen)
     -- A difference the original prints and the layout file declares (`source_inconsistencies`) passes only
     -- when the page, parent, printed value and children's sum all match the declaration.
     and not exists (

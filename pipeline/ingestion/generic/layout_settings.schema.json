@@ -14,7 +14,8 @@
       "properties": {
         "dark": {"type": "integer", "minimum": 129, "maximum": 255},
         "row_gaps": {"const": true, "description": "A vertical rule the page leaves out for a row lets the row's text run on into the next column (133086's 事業 names): an OCR line is cut only at the rules drawn across its middle."},
-        "short_columns": {"const": true, "description": "A column rule drawn only over one short row (shorter than the page-wide detector keeps) is still a rule: a short vertical stroke joining two horizontal rules at the place of a vertical rule the page draws elsewhere closes the cell, as in a staircase (131199's 目 rows between 事務事業 blocks)."}
+        "short_columns": {"const": true, "description": "A column rule drawn only over one short row (shorter than the page-wide detector keeps) is still a rule: a short vertical stroke joining two horizontal rules at the place of a vertical rule the page draws elsewhere closes the cell, as in a staircase (131199's 目 rows between 事務事業 blocks)."},
+        "row_columns": {"const": true, "description": "A narrow stroke that runs the whole height between two horizontal rules is a column rule even where the page draws no rule at that place elsewhere (131164's 財源 columns under 説明, drawn only over a 目's row in the middle of a page)."}
       }
     },
     "accounts": {
@@ -70,6 +71,7 @@
         "ignore_frame_title": {"type": "boolean"},
         "staircase": {"enum": [true, "款項目節", "款項目事務事業"], "description": "The subject columns are a staircase: one header cell 款 項 目 over narrow code columns, and the 款・項 cells run down the page with no closing rule. \"款項目節\" also reads a header cell 款 項 目 節 over four columns, the fourth being 節."},
         "agree_on_bottom": {"const": true, "description": "Scan: the agreed header reading is moved onto each page aligned on the header's bottom rule, not the frame's top (a frame boxing the page title above the header on some pages)."},
+        "merged_cells": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "Header cells (`説明`) whose columns are ruled only in some rows: in a row their rules leave out, one cell runs across them and its words are read as one column under the header cell."},
         "agree_all_frames": {"const": true, "description": "Scan: every frame of a spread (not only the widest) takes the header reading most pages share, frame by frame from the left."},
         "kind_by_characters": {"const": true, "description": "A stacked kind under its group whose two printed lines the text layer or OCR read across (翌年度繰越額／継逓繰続費次越) is the known kind its characters spell, not the group (headers.canonical)."},
         "title_amount": {"type": "string", "minLength": 1, "description": "The heading of the amount a 款・項 title prints with no heading over it (`1款 総務費 24,930,655千円`, the layout pattern `stacked_titles`)."}
@@ -107,7 +109,8 @@
       "properties": {
         "character_map": {"type": "object", "minProperties": 1, "propertyNames": {"pattern": "^[\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f]$"}, "additionalProperties": {"type": "string", "minLength": 1, "maxLength": 1}, "description": "Explicit Unicode mapping for broken font maps, before XML parsing and glyph reconstruction."},
         "form_clips": {"const": true, "description": "Text drawn inside a form has its clip in the form's space: an object whose own bounds meet it is visible."},
-        "image_rules": {"const": true, "description": "A page that draws no vector rule has its ruled grid in a background image: the rules are read from the render, as a scan's are."}
+        "image_rules": {"const": true, "description": "A page that draws no vector rule has its ruled grid in a background image: the rules are read from the render, as a scan's are."},
+        "crop_box": {"const": true, "description": "Each page shows one half of a sheet printed two pages up through its CropBox (131211): the words and rules outside it are the other page's, observed as that page."}
       }
     },
     "breakdown": {
@@ -138,6 +141,7 @@
           "single_part_notes": {"type": "boolean"},
           "bare_amounts": {"type": "boolean"},
           "name_start_slack": {"type": "number", "exclusiveMinimum": 0, "maximum": 10, "description": "Points past the usual 3 a wrapped line may stand from the name's start, where a long number and the blank after it are not as wide as the estimate."},
+          "unnumbered_shift": {"type": "integer", "minimum": 1, "description": "A line of this axis that prints money and no number sits this many levels below the level its indent gives: the axis prints its deepest levels unnumbered, the first of them starting where the numbered names above start (利島)."},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}},
           "yen_marked": {"const": true, "description": "An amount that prints 円 after it in a column of another unit is in yen: a reckoning (`46.4円 × 1,115,000件 ＝ 51,736,000円`) set among the column's 千円."}
         }

@@ -67,7 +67,7 @@ const docDefaults = (row: Record<string, unknown>) => {
 
 /** marts と同じく、科目・内訳の1行ごとに印字の位置の行を置く（出典はここから引く）。 */
 function insertOwnLocation(sqlite: Database, rowId: unknown, originId: unknown) {
-  if (originId !== undefined && originId !== null) insertLocation(sqlite, { row_id: rowId as string, origin_id: originId as string })
+  if (originId !== undefined && originId !== null) insertLocation(sqlite, { line_id: rowId as string, origin_id: originId as string })
 }
 
 /** 科目の表の1行。subject_id を省くと node_key と同じにする。origin_id があれば印字の位置の行も置く。 */

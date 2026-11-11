@@ -5,7 +5,7 @@ select sha256(to_json([p.origin_id, p.page::varchar])) as measure_id,
     p.origin_id, o.jurisdiction_code, o.fiscal_year, p.page, p.title, p.names, p.is_new,
     p.budget_thousand * 1000 as budget_yen,
     array_to_string(from_json(p.points, '["VARCHAR"]'), chr(10)) as description,
-    nullif(l.detail_id, '') as detail_id, l.method as link_method, l.confidence as link_confidence
+    nullif(l.detail_id, '') as expenditure_detail_id, l.method as link_method, l.confidence as link_confidence
 from {{ source('project', 'project_budget_measure') }} p
 join {{ source('project', 'project_origin') }} o using (origin_id)
 left join {{ ref('budget_measure_link') }} l

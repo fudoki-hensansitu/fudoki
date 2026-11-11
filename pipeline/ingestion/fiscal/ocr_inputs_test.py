@@ -26,7 +26,7 @@ def fake_result(seconds: float, path: str) -> dict:
 class AcquireTest(unittest.TestCase):
     def setUp(self):
         # supplement's page checks read the PDF; the tests here hand it pages that have none
-        for step in ('require_one_page_box', 'split_unit_stacks'):
+        for step in ('split_unit_stacks',):
             self.enterContext(patch.object(scan_ocr, step))
 
     def test_run_dependent_fields_leave_the_observation_bytes_unchanged(self):

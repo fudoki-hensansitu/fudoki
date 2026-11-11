@@ -468,8 +468,21 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
             else:
                 bands.append([left, right])
 
+    # A spread printed on two physical pages has its amount columns on one of them: a column is looked for on the
+    # word's own page when the converter says which page each column is on.
+    paged = defaultdict(list)
+    if amount_columns and all('page' in entry for entry in amount_columns):
+        for entry in amount_columns:
+            paged[entry['page']].append((*entry['x_range'], entry.get('y_ranges')))
+
     def in_band(word):
         center = (word['bbox'][0] + word['bbox'][2]) / 2
+        middle = (word['bbox'][1] + word['bbox'][3]) / 2
+        if paged:
+            # A column of stacked blocks (`y_ranges`) is a column at the heights of its blocks only.
+            return any(left - tolerance <= center <= right + tolerance
+                       and (heights is None or any(top <= middle <= bottom for top, bottom in heights))
+                       for left, right, heights in paged.get(word['page'], ()))
         return any(left - tolerance <= center <= right + tolerance for left, right in bands)
 
     words_by_page = defaultdict(list)
