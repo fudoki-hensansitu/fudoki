@@ -121,6 +121,8 @@ export function ogSvg(o: OgInput): string {
 
 /** SVG に書いた文字（<text> の中身）。書体はこの字だけを取る */
 export function ogChars(svg: string): string {
-  const body = svg.replace(/<[^>]*>/g, '').replace(/&lt;/g, '<').replace(/&gt;/g, '>').replace(/&amp;/g, '&')
-  return [...new Set(body)].sort().join('')
+  // 「>」の後ろから次の「<」の前までが文字。data URI は属性の中なので入らない
+  const body = svg.split('>').map((part) => part.split('<')[0] ?? '').join('')
+  const chars = new Set(body.replaceAll('&lt;', '<').replaceAll('&gt;', '>').replaceAll('&amp;', '&'))
+  return [...chars].sort().join('')
 }
