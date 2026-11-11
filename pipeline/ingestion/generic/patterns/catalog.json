@@ -92,6 +92,7 @@
     "name_columns": "ingestion.generic.patterns.quirks.name_columns",
     "names_end_with_kind_words": "ingestion.generic.patterns.quirks.names_end_with_kind_words",
     "office_departments": "ingestion.generic.patterns.quirks.office_departments",
+    "one_row_header": "ingestion.generic.patterns.quirks.one_row_header",
     "opening_bracket_ink": "ingestion.generic.patterns.quirks.opening_bracket_ink",
     "revision_history": "ingestion.generic.patterns.quirks.revision_history",
     "rows": "ingestion.generic.patterns.quirks.rows",
