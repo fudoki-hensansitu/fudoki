@@ -2,11 +2,22 @@
 // サイドバーとホームが同じものを読むので、変えたら window に知らせる。うちのまちのコードは今のホームと同じ鍵（saveHomeCode）にも書く
 import * as React from 'react'
 import { loadHomeCode, loadRecent, saveHomeCode, type RecentJurisdiction } from '../home/recent'
+import type { MapEntry } from '../jurisdiction/index-table'
 
 const KEY = 'fudoki:home-town'
 const EVENT = 'fudoki:home-town'
 
 export type Town = RecentJurisdiction
+
+/** 収録している自治体の一覧。必要になったときに一度だけ読み、失敗したら次に読み直す */
+let townsPromise: Promise<MapEntry[]> | null = null
+export const loadTowns = () =>
+  (townsPromise ??= fetch('/api/prototype/towns')
+    .then((r) => (r.ok ? (r.json() as Promise<MapEntry[]>) : Promise.reject(r)))
+    .catch(() => {
+      townsPromise = null
+      return [] as MapEntry[]
+    }))
 
 function read(): Town | null {
   try {
@@ -38,9 +49,18 @@ export function useMyTown() {
   const [ready, setReady] = React.useState(false)
   React.useEffect(() => {
     const sync = () => {
-      setTown(read())
+      const t = read()
+      const home = loadHomeCode()
+      // 今のホームで選んだだけのまちは名前が手元に無いので、一覧から引く
+      if (!t && home) {
+        void loadTowns().then((list) => {
+          const e = list.find((x) => x.code === home)
+          if (e) setMyTown({ code: e.code, name: e.name, path: e.path })
+          else setReady(true)
+        })
+      } else setReady(true)
+      setTown(t)
       setRecent(loadRecent())
-      setReady(true)
     }
     sync()
     window.addEventListener(EVENT, sync)

@@ -8,7 +8,7 @@ import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, 
 import { InputGroupAddon } from '@/components/ui/input-group'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { Item } from '../nav/site-nav'
-import { emblemSrc, useMyTown, type Town } from './towns'
+import { emblemSrc, loadTowns, useMyTown, type Town } from './towns'
 
 /** 自治体の頁以外の機能。試作なので候補を全部並べ、触って残すものを決める */
 const FEATURES = [
@@ -19,16 +19,6 @@ const FEATURES = [
   { href: '/prototype/map', label: '地図で選ぶ', icon: <MapTrifoldIcon /> },
   { href: '/prototype/similar', label: '似たまち', icon: <UsersThreeIcon /> },
 ]
-
-/** 自治体の一覧は検索を開いたときに一度だけ読む */
-let townsPromise: Promise<MapEntry[]> | null = null
-const loadTowns = () =>
-  (townsPromise ??= fetch('/api/prototype/towns')
-    .then((r) => (r.ok ? (r.json() as Promise<MapEntry[]>) : Promise.reject(r)))
-    .catch(() => {
-      townsPromise = null
-      return [] as MapEntry[]
-    }))
 
 function Search() {
   const { state, isMobile, setOpen } = useSidebar()
