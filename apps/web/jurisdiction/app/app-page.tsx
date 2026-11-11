@@ -11,6 +11,7 @@ import {
   CaretDownIcon,
   CaretLeftIcon,
   CaretRightIcon,
+  ChartPieSliceIcon,
   ClipboardTextIcon,
   DotsThreeCircleIcon,
   FileTextIcon,
@@ -615,6 +616,47 @@ function SheetDetail({ s }: { s: EvalSheet }) {
 }
 
 /** 分野の頁（/tokyo/shinagawa/fields/fukushi）。まとめのタイルから開く */
+const FieldChart = React.lazy(() => import('./field-chart'))
+/** 内訳の色。緑の濃さを金額の順に下げる（色に意味は持たせない）。その他は灰色 */
+const SLICE_COLORS = [100, 78, 60, 44, 30].map((n) => `color-mix(in oklab, var(--primary) ${n}%, var(--background))`)
+const REST_COLOR = 'color-mix(in oklab, var(--muted-foreground) 22%, var(--background))'
+
+/** 分野の内訳: 金額の多い事業5つと、その他 */
+function FieldBreakdown({ ps, total }: { ps: Proj[]; total: number }) {
+  const { v, select } = useApp()
+  const slices = React.useMemo(() => {
+    const rows = ps.map((p) => ({ p, yen: v.amount(p) ?? 0 })).filter((x) => x.yen > 0).sort((a, b) => b.yen - a.yen)
+    const top = rows.slice(0, SLICE_COLORS.length).map((x, i) => ({ key: x.p.id, name: x.p.name, yen: x.yen, color: SLICE_COLORS[i]! }))
+    const rest = total - top.reduce((t, x) => t + x.yen, 0)
+    return rest > 0 ? [...top, { key: 'rest', name: 'その他', yen: rest, color: REST_COLOR }] : top
+  }, [ps, total, v])
+  if (!slices.length) return null
+  const pick = (key: string) => key !== 'rest' && select({ kind: 'project', id: key })
+  return (
+    <DetailSection icon={ChartPieSliceIcon} title="内訳" count="金額の多い事業">
+      <div className="grid items-center gap-5 sm:grid-cols-[220px_minmax(0,1fr)] sm:gap-8">
+        <div className="grid aspect-square w-full max-w-[220px] place-items-center justify-self-center">
+          <React.Suspense fallback={<div className="size-full animate-pulse rounded-full bg-card" />}>
+            <FieldChart slices={slices} format={yenText} onPick={pick} />
+          </React.Suspense>
+        </div>
+        <ul className="flex min-w-0 flex-col">
+          {slices.map((s) => (
+            <li key={s.key}>
+              <button type="button" disabled={s.key === 'rest'} onClick={() => pick(s.key)} className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left enabled:hover:bg-secondary">
+                <span className="size-3 shrink-0 rounded-full" style={{ background: s.color }} />
+                <span className="min-w-0 flex-1 truncate text-[15px]">{s.name}</span>
+                <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{((s.yen / total) * 100).toFixed(1)}%</span>
+                <Amt yen={s.yen} className="w-[5.5em] shrink-0 text-right text-[15px]" />
+              </button>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </DetailSection>
+  )
+}
+
 function FieldPage({ id }: { id: string }) {
   const { v, d } = useApp()
   const f = v.fields.find((x) => x.id === id)
@@ -637,6 +679,7 @@ function FieldPage({ id }: { id: string }) {
         <Amt yen={f.yen} className="block text-4xl leading-tight text-primary" />
         <span className="text-xs text-muted-foreground">{[`全体の ${((f.yen / v.total) * 100).toFixed(1)}%`, perHead(f.yen, d.pop)].filter(Boolean).join(' · ')}</span>
       </div>
+      <FieldBreakdown ps={ps} total={f.yen} />
       {ms.length ? (
         <DetailSection icon={SparkleIcon} title="新しく始める事業" count={ms.length}>
           <Rows>{ms.map((m) => <MeasureRow key={m.id} m={m} />)}</Rows>
