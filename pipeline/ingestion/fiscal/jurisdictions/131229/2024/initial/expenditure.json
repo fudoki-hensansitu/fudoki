@@ -638,7 +638,7 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "0bb5b1747fd4b3b322faf1927b0f625cfd96fbd5b4a88e1a5f4ec2ea805af760",
+      "input_fingerprint": "c84d60f220926bac0e7e533b6a3c8391509695e33e164850d43c730aa6a5714b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -667,7 +667,7 @@
     {
       "table_id": "general-initial-2",
       "conversion_id": "general-initial-2",
-      "input_fingerprint": "324e5c7b094fed4d32593d50bc7082e41fc35e40b1ded20bc13b178943cf2379",
+      "input_fingerprint": "c2a78131a3ad80c3602168fb49afbe766724553acbf61acd4c2248ebf8f241f3",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -696,7 +696,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "65d181825ada9ffe0d5111f6445e54aff62bf589508931ff075fc8fbdc31470e",
+      "input_fingerprint": "6cbabe9891fc0ff162f56e94ae42d04567b0cc543d966080dfb3fffab5b73add",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -725,7 +725,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "e74ca63dc2fc4057c7398b25ff09b89270fa5714e22509730d3fbcfd8d5dc17e",
+      "input_fingerprint": "5d33ca032370311026be14bb3566245b60e9d5f92e6efc1681b44dbc77c9179e",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -754,7 +754,7 @@
     {
       "table_id": "land-initial",
       "conversion_id": "land-initial",
-      "input_fingerprint": "9c2555b7e3efc6d8e17260f434e64b37697e0a72cac906d2a85cda794a8beb20",
+      "input_fingerprint": "c4a75f128809909dded3ce616cd6ca7f8a623c069a36642c997453d1cf8c53c7",
       "account": "用地特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -783,7 +783,7 @@
     {
       "table_id": "parking-initial",
       "conversion_id": "parking-initial",
-      "input_fingerprint": "9717ec8a5b4f3d58202b00a6d918b59c5054feaea1e7cce490d390f56645be37",
+      "input_fingerprint": "cebe1c6dc701057e72b07ec38590813f8a1103dce39885e5afbcac3e3db1f6a7",
       "account": "駐車場事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
