@@ -100,7 +100,7 @@ const perHead = (y: number, pop: number) => {
 const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
-type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement' } | null
+type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
 type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go; openField: (id: string) => void }
 const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
@@ -380,7 +380,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
         </div>
       ) : null}
       {picked ? (
-        <Flow key={`${v.year}-${view}-${phase}-${account}`} data={page} total={picked} view={view} phase={phase} account={account === GENERAL ? undefined : account} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
+        <Flow key={`${v.year}-${view}-${phase}-${account}`} data={page} total={picked} view={view} phase={phase} account={account === GENERAL ? undefined : account} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase, special: account !== GENERAL })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
       ) : (
         <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の{label}は、まだ収録していません</p>
       )}
@@ -760,12 +760,12 @@ function FieldPage({ id }: { id: string }) {
 }
 
 /** 予算タブの図で押した目。事業の詳細と同じ形で、目の金額・中の事業・節を出す */
-function MokuDetail({ moku, phase }: { moku: Moku; phase: 'initial' | 'settlement' }) {
+function MokuDetail({ moku, phase, special }: { moku: Moku; phase: 'initial' | 'settlement'; special?: boolean }) {
   const { v, d, select } = useApp()
   const ys = String(v.year)
   const amountOf = (p: Proj) => (phase === 'initial' ? p.y[ys]?.b : p.y[ys]?.s) ?? null
   // 款・項・目の名前が揃う事業。款・項が分からない古い応答では目の名前だけで引く
-  const ps = d.projects
+  const ps = special ? [] : d.projects
     .filter((p) => p.path[2] === moku.name && (!moku.path || (p.path[0] === moku.path[0] && p.path[1] === moku.path[1])) && amountOf(p) != null)
     .sort((a, b) => (amountOf(b) ?? 0) - (amountOf(a) ?? 0))
   const setsu = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
@@ -815,7 +815,7 @@ function Detail({ sel }: { sel: NonNullable<Selected> }) {
   const kind = { project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon], moku: ['目', TreeStructureIcon] } as const
   const [label, I] = kind[sel.kind]
   const body =
-    sel.kind === 'moku' ? <MokuDetail moku={sel.moku} phase={sel.phase} /> : sel.kind === 'project' ? <ProjectDetail p={d.projects.find((p) => p.id === sel.id)!} /> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
+    sel.kind === 'moku' ? <MokuDetail moku={sel.moku} phase={sel.phase} special={sel.special} /> : sel.kind === 'project' ? <ProjectDetail p={d.projects.find((p) => p.id === sel.id)!} /> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
   return (
     <div key={`${sel.kind}${sel.id}`} className="app-in">
       <p className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground"><I className="size-3.5" aria-hidden="true" />{label}</p>
