@@ -82,11 +82,6 @@ export function populationForYear(list: Population[], fiscalYear: number): Popul
   return list.find((p) => p.asOf === `${fiscalYear + 1}-01-01`) ?? list.at(-1) ?? null
 }
 
-/** 1人あたりの金額。万円の小数1桁まで（52.3万円）。1万円未満は円で出す */
-export function formatPerCapita(yen: number): string {
-  if (yen < 1e4) return `${Math.round(yen).toLocaleString('ja-JP')}円`
-  return `${(yen / 1e4).toLocaleString('ja-JP', { minimumFractionDigits: 1, maximumFractionDigits: 1 })}万円`
-}
 
 /** 人口。1万人以上は万人の小数1桁（41.6万人）、それ未満は人単位（303人） */
 export const formatPeople = (people: number) => (people >= 1e4 ? `${(people / 1e4).toFixed(1)}万人` : `${people.toLocaleString('ja-JP')}人`)
@@ -130,8 +125,6 @@ export const tabOfSlug = (slug: string) => (Object.entries(TAB_SLUGS).find(([, s
 /** 決算のタブは決算のある年度だけ。予算のタブの有無は頁のデータ（当初予算の有無）を読むまで分からないので、無ければ画面で別のタブへ移す */
 export const hasTab = (d: { years: { year: number }[] }, year: number, tab: PageTab) => tab !== 'settled' || d.years.some((y) => y.year === year)
 
-/** 年度ごとの頁の path。既定の年度は自治体の頁そのもの（/tokyo/shinagawa）、ほかは1段下げる（/tokyo/shinagawa/2024） */
-export const yearPath = (base: string, year: number, latest: number) => (year === latest ? base : `${base}/${year}`)
 
 /** 今日を含む会計年度（4月始まり） */
 export const currentFiscalYear = (now = new Date()) => (now.getMonth() >= 3 ? now.getFullYear() : now.getFullYear() - 1)

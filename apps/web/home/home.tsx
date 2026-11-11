@@ -18,7 +18,7 @@ export interface Featured {
   name: string
   path: string
   vision?: string
-  /** 事業評価の載る最新の年度。頁はその年度の事業のタブで評価を出す */
+  /** 自治体の頁で選べる年度のうち、事業評価を収録した最新の年度。札はその年度の事業のタブへ繋ぐ */
   evalYear?: number
 }
 
