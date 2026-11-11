@@ -27,7 +27,6 @@ const write = (p: Phase) => {
   }
 }
 
-/** ツアーのどこにいるか。phase の頁で on になる。まちを選んだときに start()、頁を移るときに to('page')、終わったら done() で二度と出さない */
 /** 前にはじめての流れを通った（ツアーの保存がある）か。ホームのリセットのあとは、はじめての流れ・ツアーを出さずにまちだけ選び直す */
 export const onboarded = () => {
   try {
@@ -37,6 +36,7 @@ export const onboarded = () => {
   }
 }
 
+/** ツアーのどこにいるか。phase の頁で on になる。まちを選んだときに start()、頁を移るときに to('page')、終わったら done() で二度と出さない */
 export function useTour(phase: Phase) {
   const [on, setOn] = React.useState(false)
   React.useEffect(() => {
