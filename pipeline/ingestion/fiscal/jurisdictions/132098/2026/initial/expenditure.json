@@ -1,0 +1,125 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132098",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f9e99acf44bde0c045f1d5a8ded72b318ee7a8461e01de0efaed231ee74e750e"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。本年度予算額を財源の種類（国都支出金・地方債・その他・一般財源）に分けた額で、支出の目的の木には加わらない。歳出の木は本年度・前年度・比較の金額で確かめる。"
+                  }
+                },
+                "構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "歳出総括の頁（款別の本年度・前年度・財源内訳と構成比）の構成比の欄を取り込まない。百分率で金額ではないため。総括の頁は歳出合計の印字のために読む。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "listed_highlights": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "717166e329f6d25252603da8c7b9ec2da842e407130149322bf9902237fba779",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 89頁 から決めた。款の和 207,674,590（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 876 件（内訳 876）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（26 件）を、印字された語から辞書の見出しに寄せた: 前予年算度額→前年度予算額・本予年算度額→本年度予算額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "8f3841edf097d5a62cb3ebdacb62a438573e206da044e92351784e6dc168c9e7",
+          "bytes": 61123
+        },
+        "row_count": 2580
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "01b3df1828ea71e75dcfd89ce06cdf8f5861d9bc83f91c28a38cdf10e2d40441",
+          "bytes": 57233
+        },
+        "row_count": 2966
+      }
+    }
+  ]
+}
