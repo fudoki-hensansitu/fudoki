@@ -214,7 +214,7 @@ const partial = (lines: { amountMissing?: true }[]) => (lines.some((l) => l.amou
 /**
  * 分野（COFOG の大分類）→ 中分類 → 目 の流れ。款・項は使わない。目に付いた COFOG のコードで大分類・中分類を決め、
  * 金額は目の和（api の sum_rules: COFOG は目を前方一致で集めて足す。分類できない目・対象外の目は「その他」に入れ、全分類の和が総額になる。印字の無い目を含む分類は amountMissing を付ける）。
- * 並びは金額の順で「その他」を最後に置く。depth が kou なら目を返さない（全体図だけに使う）
+ * 並びは金額の順で「その他」を最後に置く。中分類も、未分類（中分類まで決めていない目）は金額に関係なく最後に置く。depth が kou なら目を返さない（全体図だけに使う）
  */
 export async function loadCofogFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou', kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<Drill[]> {
   const moku = await searchAll(env, 'subjects', code, year, { level: { eq: ['目'] } }, kind, account)
@@ -232,7 +232,7 @@ export async function loadCofogFlow(env: Env, code: string, year: number, depth:
     const kou = [...byGroup].map(([group, list]) => {
       const mokuLines = list.sort(byAmount).map((m) => ({ ...line(m), setsu: setsuByMoku.get(m.subject_id) ?? [], path: [m.kan_name ?? null, m.kou_name ?? null] as [string | null, string | null] }))
       return { id: `cofog-${group || 'none'}-g`, name: cofogGroupName(group), yen: sumYen(mokuLines), ...partial(mokuLines), page: null, moku: depth === 'kou' ? [] : mokuLines }
-    }).sort((a, b) => b.yen - a.yen)
+    }).sort((a, b) => Number(!a.id.includes('.')) - Number(!b.id.includes('.')) || b.yen - a.yen)
     const kan = { id: `cofog-${division || 'none'}`, name: (division ? frameOf(division) : OTHER_FRAME)?.name ?? `COFOG ${division}`, yen: kou.reduce((sum, k) => sum + k.yen, 0), ...partial(kou), page: null }
     return { kan, kou }
   }).sort((a, b) => Number(a.kan.id === 'cofog-none') - Number(b.kan.id === 'cofog-none') || b.kan.yen - a.kan.yen)

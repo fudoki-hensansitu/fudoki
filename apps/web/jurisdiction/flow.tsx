@@ -111,11 +111,11 @@ function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: numbe
 }
 
 /** 縦にスクロールする面で、上や下にまだ続きがあるか。続きがある側を fade にして、前後の要素が少し見えるようにする */
-function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.DependencyList): React.CSSProperties {
+function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.DependencyList, off = false): React.CSSProperties {
   const [edge, setEdge] = React.useState({ top: false, bottom: false })
   React.useEffect(() => {
     const el = ref.current
-    if (!el) return
+    if (!el || off) return
     const update = () => {
       const top = el.scrollTop > 2
       const bottom = el.scrollTop + el.clientHeight < el.scrollHeight - 2
@@ -140,6 +140,7 @@ function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.Depen
     return () => { el.removeEventListener('scroll', update); el.removeEventListener('wheel', onWheel); observer.disconnect() }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
+  if (off) return {}
   const mask = `linear-gradient(to bottom, ${edge.top ? 'transparent 0, #000 48px' : '#000 0'}, ${edge.bottom ? '#000 calc(100% - 72px), transparent 100%' : '#000 100%'})`
   return { maskImage: mask, WebkitMaskImage: mask }
 }
@@ -341,7 +342,8 @@ function FlowSkeleton() {
   )
 }
 
-function KanPanel({ drill, loading, levels, onMoku }: { drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void }) {
+/** natural は面の中で縦に送らず、中身の高さのまま頁のスクロールで読む */
+function KanPanel({ drill, loading, levels, onMoku, natural }: { drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void; natural?: boolean }) {
   const body = React.useRef<HTMLDivElement>(null)
   const [current, setCurrent] = React.useState(0)
   const sections = React.useRef<(HTMLElement | null)[]>([])
@@ -350,28 +352,31 @@ function KanPanel({ drill, loading, levels, onMoku }: { drill: Drill; loading: b
     if (!root) return
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) if (entry.isIntersecting) setCurrent(sections.current.indexOf(entry.target as HTMLElement))
-    }, { root, rootMargin: '-35% 0px -55% 0px', threshold: 0 })
+    }, { root: natural ? null : root, rootMargin: '-35% 0px -55% 0px', threshold: 0 })
     for (const el of sections.current) if (el) observer.observe(el)
     return () => observer.disconnect()
-  }, [drill.kou.length])
-  const fade = useEdgeFade(body, [drill.kou.length])
+  }, [drill.kou.length, natural])
+  const fade = useEdgeFade(body, [drill.kou.length], natural)
   const toKou = (i: number) => {
     const root = body.current
     const el = sections.current[i]
     if (!root || !el) return
+    // 上に貼り付くタブの帯と図の見出しの下に出す
+    if (natural) return window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' })
     root.scrollTo({ top: el.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop, behavior: 'smooth' })
   }
   return (
-    <div className="relative h-full w-full shrink-0 snap-start snap-always" data-panel>
+    <div className={cn('relative w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel>
       {drill.kou.length > 1 ? (
-        // 項の目盛り。押すとその項へ縦に送る
+        // 項の目盛り。押すとその項へ縦に送る。natural のときは面の右の縦いっぱいの帯の中で、画面の真ん中に留める
+        <div className={natural ? 'pointer-events-none absolute inset-y-0 right-0.5 z-10 [&>*]:pointer-events-auto' : 'contents'}>
         <TickMenu
           label={`${drill.kan.name}の${levels.kou}へ移る`}
           side="left"
           current={current}
           onPick={toKou}
           items={drill.kou.map((k) => ({ key: k.id, name: k.name, note: amountText(k.yen, k.amountMissing) }))}
-          className="absolute right-0.5 top-1/2 z-10 flex -translate-y-1/2 flex-col"
+          className={natural ? 'sticky top-1/2 flex flex-col' : 'absolute right-0.5 top-1/2 z-10 flex -translate-y-1/2 flex-col'}
         >
           {drill.kou.map((k, i) => (
             <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} className="group/dot px-1.5 py-[3px]">
@@ -379,13 +384,14 @@ function KanPanel({ drill, loading, levels, onMoku }: { drill: Drill; loading: b
             </button>
           ))}
         </TickMenu>
+        </div>
       ) : null}
-      <div ref={body} style={fade} className="h-full snap-y snap-proximity scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" tabIndex={-1}>
+      <div ref={body} style={fade} className={natural ? '' : 'h-full snap-y snap-proximity scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'} tabIndex={-1}>
         {drill.kou.map((k, i) => (
           <KouSection key={k.id} kou={k} active={i === current} loading={loading} levels={levels} onMoku={onMoku} onBox={(el) => { sections.current[i] = el }} />
         ))}
         {/* 下端にも止まる所を置く。最後の段の頭にしか止まれないと、下端まで送れず頁のスクロールにも渡らない */}
-        <div aria-hidden="true" className="h-px snap-end" />
+        {natural ? null : <div aria-hidden="true" className="h-px snap-end" />}
       </div>
     </div>
   )
@@ -393,7 +399,7 @@ function KanPanel({ drill, loading, levels, onMoku }: { drill: Drill; loading: b
 
 /** 款→項の全体図と款ごとの内訳。最新年度の款→項はページに埋めてあり、それ以外の年度は図が近づいたら読み込む */
 /** tabs はカードの左上に置く切り替え（分け方）、summary は全体図のときに出す総額。view は分野（COFOG の枠）か款か */
-export function Flow({ data, total: year, view = 'kan', phase = 'settlement', tabs, summary, className, bare, onMoku, account }: { data: PageData; total: YearTotal; view?: FlowView; /** 決算の無い年度は当初予算（initial）の流れを読む */ phase?: 'settlement' | 'initial'; tabs?: React.ReactNode; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 特別会計の流れを読むときの会計の名前。無ければ一般会計 */ account?: string }) {
+export function Flow({ data, total: year, view = 'kan', phase = 'settlement', tabs, summary, className, bare, onMoku, account, natural }: { data: PageData; total: YearTotal; view?: FlowView; /** 決算の無い年度は当初予算（initial）の流れを読む */ phase?: 'settlement' | 'initial'; tabs?: React.ReactNode; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 特別会計の流れを読むときの会計の名前。無ければ一般会計 */ account?: string; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean }) {
   const levels = LEVELS[view]
   // 頁に埋めてある最新の決算の流れは一般会計のものだけ
   const isLatest = !account && phase === 'settlement' && year.year === data.years.at(-1)?.year
@@ -406,7 +412,19 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
   const [near, setNear] = React.useState(false)
   const [index, setIndex] = React.useState(0)
   const flows = detail ?? (isLatest ? (view === 'cofog' ? data.cofogFlow : data.flow) : [])
-  const overviewFade = useEdgeFade(overview, [flows.length])
+  const overviewFade = useEdgeFade(overview, [flows.length], natural)
+  // natural のときは、横に並ぶ面のうち今の面の高さに枠を合わせる（ほかの面の高さで下が空かないように）
+  const [trackHeight, setTrackHeight] = React.useState<number>()
+  React.useEffect(() => {
+    const el = track.current
+    if (!natural || !el) return
+    const panels = [...el.children] as HTMLElement[]
+    const measure = () => setTrackHeight(panels[index]?.offsetHeight)
+    measure()
+    const observer = new ResizeObserver(measure)
+    for (const p of panels) observer.observe(p)
+    return () => observer.disconnect()
+  }, [natural, index, flows.length])
   // 項の内訳（目・節）は、図が近づいたら読み込む。クリックは要らない
   React.useEffect(() => {
     const el = root.current
@@ -440,6 +458,11 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
     const body = panel?.lastElementChild as HTMLElement | null
     const section = kouIndex === undefined ? undefined : body?.querySelectorAll<HTMLElement>('[data-kou]')[kouIndex]
     if (!body) return
+    if (natural) {
+      if (section) window.scrollTo({ top: section.getBoundingClientRect().top + window.scrollY - 120, behavior: 'instant' })
+      el.focus({ preventScroll: true })
+      return
+    }
     const top = section ? section.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop : 0
     body.scrollTo({ top, behavior: 'instant' })
     el.focus({ preventScroll: true })
@@ -454,7 +477,7 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
   const kan = index > 0 ? flows[index - 1] : undefined
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) || 1
   return (
-    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（${levels.kan}）の内訳` : `${levels.kan}から${levels.kou}への全体図`} className={cn('flex h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:h-[calc(100svh-61px-2rem)] @4xl:scroll-mt-[77px]', bare && 'rounded-none border-0', className)}>
+    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（${levels.kan}）の内訳` : `${levels.kan}から${levels.kou}への全体図`} className={cn('flex min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:scroll-mt-[77px]', !natural && 'h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] @4xl:h-[calc(100svh-61px-2rem)]', bare && 'rounded-none border-0', className)}>
       <div className={cn('shrink-0', bare ? 'pt-1' : 'px-5 pt-5 sm:px-6')}>
         {tabs}
         {/* 見出しと金額の行。右に今いる段（大分類 4 / 8）と前後の矢印を置く */}
@@ -493,10 +516,10 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
           ))}
         </TickMenu>
         <p className="mt-2 text-xs text-muted-foreground">
-          {index > 0 ? <>縦にスクロールすると、{levels.kan}の中の{levels.kou}が一つずつ開きます。{index < total ? `横で次の${levels.kan}へ。` : null}</> : '横にスクロールすると、詳細が開きます。'}
+          {index > 0 ? natural ? null : <>縦にスクロールすると、{levels.kan}の中の{levels.kou}が一つずつ開きます。{index < total ? `横で次の${levels.kan}へ。` : null}</> : '横にスクロールすると、詳細が開きます。'}
         </p>
       </div>
-      <div className="relative mt-2 min-h-0 flex-1">
+      <div className={cn('relative mt-2', !natural && 'min-h-0 flex-1')}>
         <div
           ref={track}
           role="region"
@@ -504,16 +527,17 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
           tabIndex={0}
           onScroll={onScroll}
           onKeyDown={onKey}
-          className="flex h-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden"
+          style={natural ? { height: trackHeight } : undefined}
+          className={cn('flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden', natural ? 'items-start transition-[height] duration-300' : 'h-full')}
         >
-          <div ref={overview} style={overviewFade} className={cn('h-full w-full shrink-0 snap-start snap-always overflow-y-auto pb-3 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
+          <div ref={overview} style={overviewFade} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
             {flows.length > 0 ? (
               <Overview flows={flows} total={year.yen} levels={levels} onSelect={select} height={Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))} />
             ) : (
               error ? null : <FlowSkeleton />
             )}
           </div>
-          {flows.map((f) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} onMoku={onMoku} />)}
+          {flows.map((f) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} onMoku={onMoku} natural={natural} />)}
         </div>
       </div>
       {error ? (

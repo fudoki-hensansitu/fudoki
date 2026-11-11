@@ -178,7 +178,7 @@ function SheetRow({ s }: { s: EvalSheet }) {
   return <Row icon={dir ? <Mark kind={dir.icon} label={dir.label} /> : <IconBox><ClipboardTextIcon /></IconBox>} title={s.name} sub={[s.div, dir?.label ?? s.dir].filter(Boolean).join(' · ')} yen={s.s} note={`${r(s.fy)} 決算`} selected={selected?.kind === 'sheet' && selected.id === s.id} onClick={() => select({ kind: 'sheet', id: s.id })} />
 }
 /** 行の間に Separator を挟む */
-/** 最後の節。都道府県・近くの自治体・全国の一覧へ。見出しと行はほかの節と同じ形にする */
+/** 最後の節。都道府県・近くの自治体へ。見出しと行はほかの節と同じ形にする */
 function Elsewhere() {
   const { page } = useApp()
   // 都道府県の紋章も、近くの自治体と同じく紋章の画像で出す（都道府県のコードは先頭2桁＋0001）
@@ -186,7 +186,6 @@ function Elsewhere() {
   const places = [
     ...(page.prefecturePath !== INDEX_PATH ? [{ href: page.prefecturePath, name: page.prefecture, icon: EMBLEMS[prefCode] ? <img src={assetPath(prefCode, 'emblem.svg')} alt="" className="size-full object-contain p-1" /> : <MapTrifoldIcon /> }] : []),
     ...page.neighbors.map((n) => ({ href: n.path, name: n.name, icon: n.logo ? <img src={n.logo} alt="" className="size-full object-contain p-1" /> : <MapPinAreaIcon /> })),
-    { href: INDEX_PATH, name: 'すべての自治体', icon: <SquaresFourIcon /> },
   ]
   return (
     <section>
@@ -381,7 +380,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
         </div>
       ) : null}
       {picked ? (
-        <Flow key={`${v.year}-${view}-${phase}-${account}`} data={page} total={picked} view={view} phase={phase} account={account === GENERAL ? undefined : account} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase })} bare className="h-[calc(100svh-12rem)] scroll-mt-16 @4xl:h-[calc(100svh-10rem)] @4xl:scroll-mt-16" />
+        <Flow key={`${v.year}-${view}-${phase}-${account}`} data={page} total={picked} view={view} phase={phase} account={account === GENERAL ? undefined : account} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
       ) : (
         <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の{label}は、まだ収録していません</p>
       )}
@@ -701,7 +700,7 @@ function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   }, [page.code, v.year, initial])
   const slices = React.useMemo(() => {
     const drill = drills?.find((x) => x.kan.id === `cofog-${frame.cofog || 'none'}`)
-    const rows = (drill?.kou ?? []).filter((k) => !k.amountMissing && k.yen > 0).sort((a, b) => b.yen - a.yen)
+    const rows = (drill?.kou ?? []).filter((k) => !k.amountMissing && k.yen > 0).sort((a, b) => Number(!a.id.includes('.')) - Number(!b.id.includes('.')) || b.yen - a.yen)
     const many = rows.length > SLICE_COLORS.length + 1
     const top = (many ? rows.slice(0, SLICE_COLORS.length) : rows.slice(0, SLICE_COLORS.length + 1)).map((k, i) => ({ key: k.id, name: k.name, yen: k.yen, color: SLICE_COLORS[i] ?? REST_COLOR, ink: SLICE_INKS[i] ?? 'var(--foreground)' }))
     const rest = rows.slice(top.length).reduce((t, k) => t + k.yen, 0)
