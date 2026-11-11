@@ -3,6 +3,7 @@
 // 画面を暗くして [data-tour="…"] の部分を1か所ずつ光らせ、その横に吹き出しで説明を重ねる。光らせた所は、押す・選ぶの歩だけ触れる
 import * as React from 'react'
 import { createPortal } from 'react-dom'
+import { useRouter } from '@void/react'
 import { cn } from '@/lib/utils'
 import './onboarding.css'
 
@@ -68,7 +69,7 @@ const GAP = 12
 const SHADE = 'rgb(0 0 0 / .55)'
 
 /** steps を順に光らせる。offset・total は頁をまたいだ通し番号（例: ホームで 1、まちの頁で 2〜5） */
-export function Tour({ steps, onDone, offset = 0, total }: { steps: TourStep[]; onDone: () => void; offset?: number; total?: number }) {
+export function Tour({ steps, onDone, onBack, offset = 0, total }: { steps: TourStep[]; onDone: () => void; onBack?: () => void; offset?: number; total?: number }) {
   // 対象が描かれるのを待ってから、見える対象のある歩だけを残す（データを読み込む頁があるので、少しのあいだ待つ）
   const [live, setLive] = React.useState<TourStep[] | null>(null)
   const [i, setI] = React.useState(0)
@@ -236,8 +237,9 @@ export function Tour({ steps, onDone, offset = 0, total }: { steps: TourStep[]; 
             スキップ
           </button>
           <span className="flex-1" />
-          {i > 0 ? (
-            <button type="button" onClick={() => setI(i - 1)} className="rounded-full px-3 py-2 text-[13px] hover:bg-secondary">
+          {/* 頁の頭の歩では、前の頁の歩（onBack）へ戻る */}
+          {i > 0 || onBack ? (
+            <button type="button" onClick={() => (i > 0 ? setI(i - 1) : onBack?.())} className="rounded-full px-3 py-2 text-[13px] hover:bg-secondary">
               もどる
             </button>
           ) : null}
@@ -255,18 +257,20 @@ export function Tour({ steps, onDone, offset = 0, total }: { steps: TourStep[]; 
   )
 }
 
-/** まちの頁（自治体の頁）の側のツアー。ホームから「まちの頁を開く」で来たときだけ出す */
+/** まちの頁（自治体の頁）の側のツアー。ホームから「まちの頁を開く」で来たときだけ出す。頁の上から順に説明し、頭の歩の「もどる」でホームの歩へ戻る */
 export function PageTour({ name }: { name: string }) {
-  const { on, done } = useTour('page')
+  const { on, done, to } = useTour('page')
+  const { visit } = useRouter()
   if (!on) return null
   return (
     <Tour
       offset={1}
       onDone={done}
+      onBack={() => (to('home'), visit('/'))}
       steps={[
-        { target: 'project', title: '事業', body: `${name}がお金を使っている事業です。押すと、事業の中身・予算・年ごとの動きが開きます。` },
-        { target: 'budget', title: '予算', body: 'この年度の一般会計の総額と、住民1人あたりの額です。「予算」「決算」のタブで、分野や款・項・目ごとの内訳を見られます。' },
         { target: 'year', title: '年度の切り替え', body: '年度を変えると、その年の予算・決算・事業に切り替わります。' },
+        { target: 'budget', title: '予算', body: 'この年度の一般会計の総額と、住民1人あたりの額です。「予算」「決算」のタブで、分野や款・項・目ごとの内訳を見られます。' },
+        { target: 'project', title: '事業', body: `${name}がお金を使っている事業です。押すと、事業の中身・予算・年ごとの動きが開きます。` },
         { target: 'select|project', title: '文字を選んでアシスタントに聞く', body: '気になる文字を選ぶと、その文を添えてアシスタントに質問できます。ここの文字を選んでみてください。', mode: 'select' },
       ]}
     />
