@@ -8,14 +8,12 @@ import {
   JURISDICTION_TABLE,
   ORIGIN_LINK_TABLE,
   ORIGIN_TABLE,
-  POPULATION_ORIGIN_TABLE,
-  POPULATION_TABLE,
   toRow,
 } from '../columns'
 import { ApiError } from '../errors'
 import type { Ctx } from '../shared/context'
 import { decodeToken, nextToken } from '../shared/paging'
-import type { Coverage, CoverageWithOrigins, JurisdictionDetail, JurisdictionList, PopulationPoint } from './model'
+import type { Coverage, CoverageWithOrigins, JurisdictionDetail, JurisdictionList } from './model'
 
 /**
  * 収録の無い自治体・年度・資料区分で、利用者を案内する統計の出典。数字は風土記に取り込まない（ADR 0037）。
@@ -82,24 +80,12 @@ const coverageSql = (codes: string, withOrigins: boolean) =>
       `FROM ${COVERAGE_TABLE} c WHERE c."jurisdiction_code" IN (${codes}) ` +
       `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name"`
 
-const populationSql = (codes: string) =>
-  `SELECT p."jurisdiction_code", p."reference_date", p."male", p."female", p."population", p."households", o."url" ` +
-  `FROM ${POPULATION_TABLE} p JOIN ${POPULATION_ORIGIN_TABLE} o ON o."origin_id" = p."origin_id" ` +
-  `WHERE p."jurisdiction_code" IN (${codes}) ORDER BY p."jurisdiction_code", p."reference_date"`
-
 const yearsSql = (codes: string) =>
   `SELECT "jurisdiction_code", 'evaluation' AS "kind", "evaluation_id" AS "id", "fiscal_year" FROM ${EVALUATION_TABLE} WHERE "jurisdiction_code" IN (${codes}) ` +
   `UNION ALL SELECT "jurisdiction_code", 'budget_proposal', "budget_proposal_id", "fiscal_year" FROM ${BUDGET_PROPOSAL_TABLE} WHERE "jurisdiction_code" IN (${codes}) ` +
   `ORDER BY 1, 2, 4`
 
-type PopulationRow = PopulationPoint & { jurisdiction_code: string }
 type YearRow = { jurisdiction_code: string; kind: 'evaluation' | 'budget_proposal'; id: string; fiscal_year: number }
-
-function groupPopulation(rows: PopulationRow[]) {
-  const out = new Map<string, PopulationPoint[]>()
-  for (const { jurisdiction_code, ...r } of rows) out.set(jurisdiction_code, [...(out.get(jurisdiction_code) ?? []), r])
-  return out
-}
 
 function groupYears(rows: YearRow[]) {
   type Refs = { evaluations: { evaluation_id: string; fiscal_year: number }[]; budget_proposals: { budget_proposal_id: string; fiscal_year: number }[] }
@@ -141,22 +127,19 @@ export async function listJurisdictions(ctx: Ctx, input: ListInput): Promise<Jur
   const offset = await decodeToken(input.page_token, fp)
   const pageSql = `SELECT "jurisdiction_code" FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY "jurisdiction_code" LIMIT ? OFFSET ?`
   const pageParams = [...params, limit, offset]
-  const [page, coverage, population, years] = await db.batch([
+  const [page, coverage, years] = await db.batch([
     db.prepare(`SELECT ${JURISDICTION_SELECT_LIST} FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY "jurisdiction_code" LIMIT ? OFFSET ?`).bind(...params, limit + 1, offset),
     db.prepare(coverageSql(pageSql, false)).bind(...pageParams),
-    db.prepare(populationSql(pageSql)).bind(...pageParams),
     db.prepare(yearsSql(pageSql)).bind(...pageParams, ...pageParams),
   ])
   const more = page!.results.length > limit
   const nested = nestCoverage(coverage!.results as unknown as CoverageRow[], false)
-  const residents = groupPopulation(population!.results as unknown as PopulationRow[])
   const yearsOf = groupYears(years!.results as unknown as YearRow[])
   return {
     jurisdictions: page!.results.slice(0, limit).map((r) => {
       const code = String(r.jurisdiction_code)
       return {
         ...toRow(JURISDICTION_COLUMNS, r),
-        population: residents.get(code) ?? [],
         coverage: (nested.get(code) ?? []).map((c) => ({ ...c, accounts: c.accounts.map(({ origins: _, ...a }) => a) })),
         evaluations: yearsOf.get(code)?.evaluations ?? [],
         budget_proposals: yearsOf.get(code)?.budget_proposals ?? [],
@@ -170,10 +153,9 @@ export async function listJurisdictions(ctx: Ctx, input: ListInput): Promise<Jur
 export async function getJurisdiction(ctx: Ctx, code: string): Promise<JurisdictionDetail> {
   const { db } = ctx
   const one = '?'
-  const [self, coverage, population, years] = await db.batch([
+  const [self, coverage, years] = await db.batch([
     db.prepare(`SELECT ${JURISDICTION_SELECT_LIST} FROM ${JURISDICTION_TABLE} WHERE "jurisdiction_code" = ?`).bind(code),
     db.prepare(coverageSql(one, true)).bind(code),
-    db.prepare(populationSql(one)).bind(code),
     db.prepare(yearsSql(one)).bind(code, code),
   ])
   const raw = self!.results[0]
@@ -181,7 +163,6 @@ export async function getJurisdiction(ctx: Ctx, code: string): Promise<Jurisdict
   const y = groupYears(years!.results as unknown as YearRow[]).get(code)
   return {
     ...toRow(JURISDICTION_COLUMNS, raw),
-    population: groupPopulation(population!.results as unknown as PopulationRow[]).get(code) ?? [],
     coverage: nestCoverage(coverage!.results as unknown as CoverageRow[], true).get(code) ?? [],
     evaluations: y?.evaluations ?? [],
     budget_proposals: y?.budget_proposals ?? [],

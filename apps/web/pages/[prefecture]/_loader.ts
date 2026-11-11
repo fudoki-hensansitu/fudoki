@@ -7,9 +7,8 @@ import { appPageYears, hasTab, tabOfSlug, TAB_LABELS, TAB_SLUGS, type PageData, 
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../../jurisdiction/path'
-import { assetPath, PROFILES, type Profile } from '../../jurisdiction/profiles'
-import { EMBLEMS } from '../../jurisdiction/emblems'
-import { BUDGET_PRESS } from '../../jurisdiction/budget-press'
+import { assetPath, EMBLEMS } from '../../jurisdiction/emblems'
+import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
 import { catalog, pageData } from '../../server/jurisdiction-routes'
@@ -99,7 +98,7 @@ function nearby(entry: CatalogEntry, candidates: CatalogEntry[]): CatalogEntry[]
 }
 
 /** 個別ページに出すもの。収録の無い自治体は empty、存在しない名称や都道府県の slug でない path は null（404） */
-export type JurisdictionView = { kind: 'page'; data: PageData & { profile: Profile | null } } | { kind: 'empty'; entry: CatalogEntry; neighbors: PageData['neighbors'] }
+export type JurisdictionView = { kind: 'page'; data: PageData } | { kind: 'empty'; entry: CatalogEntry; neighbors: PageData['neighbors'] }
 
 /** /<都道府県のローマ字>/<自治体のローマ字>、都道府県自体は /<都道府県のローマ字>。API に繋がらなければ投げる */
 export async function resolveJurisdiction(env: Env, path: string): Promise<JurisdictionView | null> {
@@ -113,18 +112,5 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
     .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
   const data = entry.settlementYears.length > 0 ? await pageData(env, entry) : null
-  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, profile: withPress(entry.code, PROFILES[entry.code] ?? null) } } : { kind: 'empty', entry, neighbors }
-}
-
-/** 事業評価がまだの年度に、予算案のプレス発表資料の施策（budgetNew）を足す。評価のある年度は足さない */
-function withPress(code: string, profile: Profile | null): Profile | null {
-  const press = BUDGET_PRESS[code]
-  if (!profile || !press) return profile
-  const years = Object.fromEntries(Object.entries(profile.years).map(([y, py]) => {
-    const p = press[y]
-    if (!p || py.projects.length || py.initiatives?.length) return [y, py]
-    // 出すのは「新規」の印が付いた施策だけ。印の無い施策は拡大か継続かを資料から決められないので出さない（データには紐付けごと残す）
-    return [y, { ...py, budgetPress: p.source, budgetNew: p.items.filter((i) => i.isNew) }]
-  }))
-  return { ...profile, years }
+  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, vision: VISIONS[entry.code] ?? null } } : { kind: 'empty', entry, neighbors }
 }

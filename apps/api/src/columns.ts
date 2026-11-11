@@ -72,12 +72,6 @@ export const JURISDICTION_TABLE = 'jurisdiction'
 export const JURISDICTION_COLUMNS = TABLES[JURISDICTION_TABLE]!.columns
 export const JURISDICTION_SELECT_LIST = selectList(JURISDICTION_COLUMNS)
 
-/** 住民基本台帳人口。自治体マスタの自治体ごと・資料（基準日）ごとに1行 */
-export const POPULATION_TABLE = 'population'
-export const POPULATION_COLUMNS = TABLES[POPULATION_TABLE]!.columns
-export const POPULATION_ORIGIN_TABLE = 'population_origin'
-export const POPULATION_ORIGIN_COLUMNS = TABLES[POPULATION_ORIGIN_TABLE]!.columns
-
 /** 歳出の根。科目・内訳の表に行がある自治体・年度・資料区分・会計。出典（冊）とは結ぶ表で組になる */
 export const COVERAGE_TABLE = 'expenditure'
 export const COVERAGE_COLUMNS = TABLES[COVERAGE_TABLE]!.columns

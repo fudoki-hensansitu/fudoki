@@ -52,7 +52,11 @@ const detailsOf = (env: Env, code: string, year: number, kind: Kind) =>
 const projectYearsOf = (env: Env, code: string, min: number, max: number) =>
   all(
     (token) => parseResponse(api(env).v1['projects:search'].$post({ json: { fiscal_year: { min, max }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as ProjectBody })),
-    (r) => r.project_years,
+    (r) => {
+      // 本番の API が projects を返す前に web が出ても落ちないようにする（そのあいだ NEW・やめた事業は出ない）
+      const span = new Map((r.projects ?? []).map((p) => [p.project_id, { started: p.first_year_kind === 'confirmed' ? p.first_year : null, ended: p.last_year_kind === 'confirmed' ? p.last_year : null }]))
+      return r.project_years.map((py) => ({ ...py, started: span.get(py.project_id)?.started ?? null, ended: span.get(py.project_id)?.ended ?? null }))
+    },
   )
 
 const measuresOf = (env: Env, code: string, min: number, max: number) =>
@@ -135,7 +139,7 @@ export async function loadAppData(env: Env, entry: CatalogEntry): Promise<Snapsh
       if (!d || d.depth !== 1) continue
       const pid = short(py.project_id)
       projectByDetail.set(d.detail_id, pid)
-      const p = projects.get(pid) ?? { id: pid, name: clean(d.name), dept: d.department, path: [d.kan_name, d.kou_name, d.moku_name], field: 'other', y: {}, kids: {}, latest: 0 }
+      const p = projects.get(pid) ?? { id: pid, name: clean(d.name), dept: d.department, path: [d.kan_name, d.kou_name, d.moku_name], field: 'other', started: py.started, ended: py.ended, y: {}, kids: {}, latest: 0 }
       const y = (p.y[py.fiscal_year] ??= {})
       if (kind === 'initial') y.b = d.amount_yen
       else y.s = d.amount_yen
@@ -155,7 +159,7 @@ export async function loadAppData(env: Env, entry: CatalogEntry): Promise<Snapsh
       for (const r of y.rows) {
         if (r.level !== '目') continue
         const pid = short(r.node_key ?? `${r.kan_name}/${r.kou_name}/${r.moku_name}`)
-        const p = projects.get(pid) ?? { id: pid, name: r.name, dept: null, path: [r.kan_name, r.kou_name, r.moku_name], field: fieldOf(r.cofog_code), y: {}, kids: {}, latest: y.year }
+        const p = projects.get(pid) ?? { id: pid, name: r.name, dept: null, path: [r.kan_name, r.kou_name, r.moku_name], field: fieldOf(r.cofog_code), started: null, ended: null, y: {}, kids: {}, latest: y.year }
         const yy = (p.y[y.year] ??= {})
         if (y.kind === 'initial') yy.b = r.amount_yen
         else yy.s = r.amount_yen

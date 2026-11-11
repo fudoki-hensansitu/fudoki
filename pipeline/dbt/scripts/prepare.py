@@ -17,7 +17,6 @@ from ingestion.fiscal.storage import fetch, verify
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS
 from ingestion.lib.source_inconsistencies import declared_for
 from ingestion.project import run as project
-from ingestion.population import run as population
 
 DBT = Path(__file__).resolve().parents[1]
 PIPELINE = DBT.parent
@@ -249,16 +248,6 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         jurisdictions = load_jurisdictions(JURISDICTIONS)
         con.execute('create or replace table ingestion.jurisdiction (jurisdiction_code varchar, name varchar, ocd_id varchar, official_url varchar)')
         con.executemany('insert into ingestion.jurisdiction values (?,?,?,?)', jurisdictions)
-        population_origins, residents = [], []
-        for origin in population.origins():
-            path = population.fetch(origin, remote=remote)
-            population_origins.append((population.origin_id(origin), origin['reference_date'], origin['url']))
-            residents += [(population.origin_id(origin), *row) for row in population.read(con, path, origin['reference_date'])]
-        con.execute('create or replace table ingestion.population_origin (origin_id varchar, reference_date date, url varchar)')
-        con.execute('create or replace table ingestion.resident_register (origin_id varchar, jurisdiction_code varchar, male bigint, female bigint, population bigint, households bigint)')
-        if population_origins:
-            con.executemany('insert into ingestion.population_origin values (?,?,?)', population_origins)
-            con.executemany('insert into ingestion.resident_register values (?,?,?,?,?,?)', residents)
         project_tables = project.load(remote=remote)
         project.write(con, project_tables)
         used = {root / 'manifest.json' for document in documents.values()
@@ -267,7 +256,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             raise ValueError(f'Unused candidate manifests: {sorted(str(p) for p in provided - used)}')
         con.commit()
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
-            'origins': len(origins), 'jurisdictions': len(jurisdictions), 'population_origins': len(population_origins),
+            'origins': len(origins), 'jurisdictions': len(jurisdictions),
             'evaluation_sheets': len(project_tables['project_evaluation_sheet']), 'budget_measures': len(project_tables['project_budget_measure']),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
 
@@ -291,7 +280,7 @@ def main() -> None:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
                         '--select', 'marts.expenditure+', '+marts.expenditure', '+jurisdiction',
-                        '+marts.population', 'cofog_master', '+marts.evaluation', '+marts.budget_proposal', '+marts.project'],
+                        'cofog_master', '+marts.evaluation', '+marts.budget_proposal', '+marts.project'],
                        cwd=DBT, stdout=sys.stderr, check=True)
         result['dbt_build'] = 'passed'
     print(json.dumps(result, ensure_ascii=False))

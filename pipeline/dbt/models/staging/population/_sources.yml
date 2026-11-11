@@ -1,8 +1,0 @@
-version: 2
-sources:
-- name: population
-  schema: ingestion
-  description: 入力準備（dbt/scripts/prepare.py）が ingestion/population/origins.json の資料から読んだ住民基本台帳人口。
-  tables:
-  - name: population_origin
-  - name: resident_register

@@ -9,6 +9,10 @@ export type Proj = {
   dept: string | null
   path: (string | null)[]
   field: string
+  /** 始めた年度（前の年度の資料にこの事業が無かったと確かめられたときだけ。DB の事業の first_year） */
+  started: number | null
+  /** 終えた年度（次の年度の資料にこの事業が無かったと確かめられたときだけ。DB の事業の last_year） */
+  ended: number | null
   /** 年度ごとの当初予算（b）と決算（s） */
   y: Record<string, Amounts>
   /** 年度ごとの中の事業（名前・金額）。金額の多い順 */
@@ -45,11 +49,15 @@ export function yearView(d: Snapshot, year: number) {
   const amt = (p: Proj, year: string) => (d.years[year]?.kind === 'settlement' ? p.y[year]?.s : p.y[year]?.b)
   const budget = (p: Proj) => amt(p, ys)
   const current = d.projects.filter((p) => budget(p) != null).sort((a, b) => budget(b)! - budget(a)!)
-  const ended = hasPrev ? d.projects.filter((p) => amt(p, prev) != null && budget(p) == null).sort((a, b) => amt(b, prev)! - amt(a, prev)!) : []
+  // やめた事業は前の年度で終えた事業（DB の事業の終えた年度）だけ
+  const isEnded = (p: Proj) => p.ended === year - 1
+  // 前の年度と比べられるのは、DB に事業の収録があり、前の年度もある頁だけ（事業の収録の無い自治体は NEW・やめたを出さない）
+  const comparable = hasPrev && d.projects.some((p) => p.started != null || p.ended != null)
+  const ended = d.projects.filter(isEnded).sort((a, b) => (amt(b, prev) ?? 0) - (amt(a, prev) ?? 0))
   const measures = d.measures.filter((m) => m.fy === year)
   const measuresOf = group(measures, (m) => m.project)
-  const appeared = (p: Proj) => hasPrev && budget(p) != null && amt(p, prev) == null
-  const isNew = (p: Proj) => appeared(p) || (measuresOf.get(p.id) ?? []).some((m) => m.new)
+  // NEW はその年度に始めた事業（予算書に新しく出てきた事業）だけ。施策の新規はこの印に使わない
+  const isNew = (p: Proj) => p.started === year
   const currentIds = new Set(current.map((p) => p.id))
   const fresh = measures.filter((m) => m.new).sort((a, b) => (b.yen ?? 0) - (a.yen ?? 0))
   // 評価シートは評価した事業を行った年度の頁に出す（R6 の事業の評価は R6 の頁）。まだ評価の無い年度は出さない
@@ -71,9 +79,10 @@ export function yearView(d: Snapshot, year: number) {
     sheets,
     sheetsOf: group(sheets, (s) => s.project),
     isNew,
-    isEnded: (p: Proj) => hasPrev && amt(p, prev) != null && budget(p) == null,
+    isEnded,
     kind: y.kind,
     hasPrev,
+    comparable,
     /** 頁の金額が当初予算か決算か */
     word: y.kind === 'settlement' ? '決算' : '予算',
     /** その年度の並びに使う額の名前 */

@@ -5,8 +5,7 @@ import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath } from '../jurisdiction/path'
 import { toMapEntry, type MapEntry } from '../jurisdiction/index-table'
 import { appPageYears, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
-import { assetPath } from '../jurisdiction/profiles'
-import { EMBLEMS } from '../jurisdiction/emblems'
+import { assetPath, EMBLEMS } from '../jurisdiction/emblems'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
@@ -20,7 +19,7 @@ const NODE_ID = /^[0-9a-f]{64}$/
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
 async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
-  const url = `https://fudoki.dev/__cache/jurisdiction-v21/${key}`
+  const url = `https://fudoki.dev/__cache/jurisdiction-v22/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
   if (hit) return (await hit.json()) as T
@@ -31,15 +30,26 @@ async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
   return value
 }
 
-// 会計の一覧（accounts）を足したので key を変え、前の形のキャッシュを読まない
-export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog-accounts', () => loadCatalog(env))
+// 形を変えたら key を変え、前の形のキャッシュを読まない（今は事業評価の年度 evaluationYears を足した形）
+export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog-evaluations', () => loadCatalog(env))
 // catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてからホームの検索へ出るまで最大で約2時間かかる
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
 /** 自治体の頁と OG 画像が共有する、最新の決算の年度の頁のデータ */
 export const pageData = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
 /** ホーム（/）に載せる全自治体の要約 */
-export const homeEntries = async (env: Env): Promise<MapEntry[]> => (await index(env)).map(toMapEntry)
+export async function homeEntries(env: Env): Promise<MapEntry[]> {
+  const [entries, jurisdictions] = await Promise.all([index(env), catalog(env)])
+  const latest = new Map(jurisdictions.map((j) => [j.code, pageYearsOf(j)[0]]))
+  return entries.map((e) => toMapEntry(e, latest.get(e.code)))
+}
+
+/** 自治体の頁で選べる年度（新しい順）。頁のデータを読まずにカタログだけで決める（sitemap・ホームのリンク） */
+export function pageYearsOf(e: CatalogEntry): number[] {
+  const settled = shownSettlementYears(e.settlementYears)
+  const last = Math.max(0, ...settled)
+  return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) })
+}
 
 /** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする） */
 export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<(OgInput & { cacheKey: string }) | null> {
@@ -64,14 +74,14 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
     emblemSvg,
     logoSvg,
     // 同じ年度の決算なら同じ画像。字形・配置を変えたら版を上げる
-    cacheKey: `og-v1/${code}-${latest.year}-${latest.yen}`,
+    cacheKey: `og-v2/${code}-${latest.year}-${latest.yen}`,
   }
 }
 
 /** 収録のある自治体の頁を含む sitemap。API に繋がらなくても入口・一覧・アシスタントだけで答える */
 export async function sitemapResponse(env: Env): Promise<Response> {
   try {
-    return new Response(sitemapXml(await catalog(env), (e) => { const settled = shownSettlementYears(e.settlementYears); const last = Math.max(0, ...settled); return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) }) }), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
+    return new Response(sitemapXml(await catalog(env), pageYearsOf), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
   } catch {
     return new Response(sitemapXml([]), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } })
   }

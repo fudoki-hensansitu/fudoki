@@ -6,6 +6,7 @@ import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import type { AppType } from '@fudoki/api/rpc'
 import { hc, parseResponse } from 'hono/client'
 import { apiFetch, type Env } from './env'
+import { loadPopulations } from './population'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
 export const ACCOUNT = '一般会計'
@@ -42,6 +43,8 @@ export interface CatalogEntry {
   initialYears: number[]
   /** 資料の種類・年度ごとに収録した会計の名前（一般会計と特別会計） */
   accounts?: Record<DocumentKind, Record<string, string[]>>
+  /** 事業評価を収録した年度（評価した事業を行った年度、古い順） */
+  evaluationYears: number[]
   officialUrl: string | null
   /** いちばん新しい基準日の住民基本台帳人口 */
   population: Population | null
@@ -52,14 +55,13 @@ export interface CatalogEntry {
 const amount = (n: { amount_yen: number | null }) => ({ yen: n.amount_yen ?? 0, ...(n.amount_yen === null ? { amountMissing: true as const } : {}) })
 const line = (n: ApiSubject): Line => ({ id: n.subject_id, name: n.name, ...amount(n) })
 
-/** 自治体と、一般会計の決算がある年度。収録が無い自治体は settlementYears が空 */
+/** 自治体と、一般会計の決算がある年度。収録が無い自治体は settlementYears が空。人口は web の D1 から足す */
 export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
   const out: CatalogEntry[] = []
   let token: string | undefined
   do {
     const r = await parseResponse(api(env).v1.jurisdictions.$get({ query: token ? { page_token: token } : {} }))
     for (const j of r.jurisdictions) {
-      const populations = j.population.map((p) => ({ people: p.population, asOf: p.reference_date }))
       out.push({
         code: j.jurisdiction_code,
         name: j.name,
@@ -70,13 +72,19 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
           initial: Object.fromEntries(j.coverage.filter((c) => c.document_kind === 'initial').map((c) => [String(c.fiscal_year), c.accounts.map((a) => a.account_name)])),
           settlement: Object.fromEntries(j.coverage.filter((c) => c.document_kind === 'settlement').map((c) => [String(c.fiscal_year), c.accounts.map((a) => a.account_name)])),
         },
+        evaluationYears: j.evaluations.map((e) => e.fiscal_year).sort((a, b) => a - b),
         officialUrl: j.official_url,
-        population: populations.at(-1) ?? null,
-        populations,
+        population: null,
+        populations: [],
       })
     }
     token = r.next_page_token ?? undefined
   } while (token)
+  const populations = await loadPopulations(env, out.map((e) => e.code))
+  for (const e of out) {
+    e.populations = populations.get(e.code) ?? []
+    e.population = e.populations.at(-1) ?? null
+  }
   return out
 }
 

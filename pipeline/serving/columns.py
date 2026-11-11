@@ -1,7 +1,7 @@
 """D1 に写す表の契約と、API が読む `apps/api/src/columns.json` の生成器（ADR 0022）。
 
 D1 の表は marts の表を同名・同列・同順で写したもの。列・順序・型は warehouse の information_schema から、
-説明は marts の `_models.yml`（財政・自治体マスタ・人口・事業評価）から引く。warehouse は read_only で開く（構築は dbt:build）。
+説明は marts の `_models.yml`（財政・自治体マスタ・事業評価）から引く。warehouse は read_only で開く（構築は dbt:build）。
 
     bun run --cwd pipeline serving:columns           # columns.json を書き直す
     bun run --cwd pipeline serving:columns -- --check  # 最新かだけ検査する
@@ -17,17 +17,17 @@ import yaml
 
 PIPELINE = Path(__file__).resolve().parents[1]
 MODELS = [PIPELINE / f'dbt/models/marts/{name}/_models.yml'
-          for name in ('jurisdiction', 'population', 'expenditure', 'evaluation', 'budget_proposal', 'project')]
+          for name in ('jurisdiction', 'expenditure', 'evaluation', 'budget_proposal', 'project')]
 WAREHOUSE = PIPELINE / '.build/warehouse.duckdb'
 OUTPUT = PIPELINE.parent / 'apps/api/src/columns.json'
 
 # D1 に写す marts の表（同期の順は sync_d1.TABLE_ORDER）
-TABLES = ['jurisdiction', 'population_origin', 'population',
+TABLES = ['jurisdiction',
           'expenditure', 'expenditure_origin', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
           'expenditure_location',
           'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
           'budget_proposal', 'budget_proposal_origin', 'budget_measure', 'project', 'project_year']
-PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code', 'population_origin': 'origin_id', 'population': 'population_id',
+PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code',
                 'expenditure': 'expenditure_id', 'expenditure_origin': 'origin_id', 'expenditure_origin_link': 'link_id',
                 'expenditure_subject': 'subject_id', 'expenditure_detail': 'detail_id', 'expenditure_location': 'line_id',
                 'evaluation': 'evaluation_id', 'evaluation_origin': 'origin_id', 'evaluation_sheet': 'sheet_id',
@@ -35,9 +35,8 @@ PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code', 'population_origin': 'origi
                 'budget_proposal': 'budget_proposal_id', 'budget_proposal_origin': 'origin_id',
                 'budget_measure': 'measure_id', 'project': 'project_id', 'project_year': 'project_year_id'}
 # index（docs/prd/aggregate-api/dd.md）。科目は自治体の一覧・比較・COFOG・子・根、内訳は科目の下・子・自治体の事業・根。
-# 根の表と人口は自治体のページごとに自治体コードで引く
+# 根の表は自治体のページごとに自治体コードで引く
 INDEXES = {
-    'population': [['jurisdiction_code']],
     'expenditure': [['jurisdiction_code']],
     'expenditure_origin_link': [['expenditure_id'], ['origin_id']],
     'expenditure_subject': [['fiscal_year', 'document_kind', 'jurisdiction_code', 'level'],

@@ -1,9 +1,8 @@
-// 自治体の個別ページ（/tokyo/nakano）の <head> と sitemap。本文は pages/ の React（page.tsx）を
+// 自治体の個別ページ（/tokyo/nakano）の <head> と sitemap。本文は pages/ の React（jurisdiction/app/app-page.tsx）を
 // Void がサーバーで書き、同じ props で hydrate する。ここは頁ごとの title・説明・canonical・JSON-LD を組む
 import type { CatalogEntry } from '../server/jurisdiction'
-import { EMBLEMS } from './emblems'
+import { assetPath, EMBLEMS } from './emblems'
 import { jurisdictionPath } from './path'
-import { assetPath } from './profiles'
 import { appPageYears, formatYen, TAB_SLUGS, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'

@@ -26,7 +26,7 @@ export const ListInputSchema = z.strictObject({ ...filters, page_size: pageSize(
 export const ListQuerySchema = z.strictObject({ ...filters, page_size: queryPageSize(MAX_JURISDICTION_PAGE_SIZE, DEFAULT_JURISDICTION_PAGE_SIZE, 'municipalities') })
 
 const listDescription =
-  'List municipality names, six-digit jurisdiction codes, prefectures, resident population by reference date, and what Fudoki covers: expenditure (fiscal years, document kinds and accounts), project evaluation years (evaluation_id for get_evaluation) and budget proposal years (budget_proposal_id for get_budget_proposal). ' +
+  'List municipality names, six-digit jurisdiction codes, prefectures, and what Fudoki covers: expenditure (fiscal years, document kinds and accounts), project evaluation years (evaluation_id for get_evaluation) and budget proposal years (budget_proposal_id for get_budget_proposal). ' +
   'Before searching expenditure, use this tool to check the municipality code and whether the years and document kinds you want to compare are covered. ' +
   'Filter by partial municipality name or a five- or six-digit code. Without filters, results are ordered by jurisdiction code. Pages default to 20 municipalities (maximum 100); follow next_page_token for more. Municipalities without data have empty coverage. ' +
   'When a wanted settlement year is not covered (for example, the municipality has not published its settlement document), do not treat it as zero; point the user to uncovered_sources, which hold official statistics at kan/kou level for the ordinary account (普通会計), not comparable to Fudoki general-account totals. ' +
