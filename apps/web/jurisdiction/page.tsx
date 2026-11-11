@@ -16,6 +16,7 @@ import { DOMAIN_FRAMES, groupByFrame, OTHER_FRAME } from './domains'
 import type { PressItem } from './budget-press'
 import { EMBLEMS } from './emblems'
 import { Flow } from './flow'
+import { YearPicker } from './year-picker'
 import { pageHead } from './html'
 import { assetPath, type EvaluatedProject, type Initiative, type ProfileYear, type Scrap } from './profiles'
 import { changePct, formatAsOf, formatPeople, formatPerCapita, formatYen, pageYears, reiwa, yearName, yearPath, type FlowView, type PageData, type Project, type Setsu, type YearTotal } from './types'
@@ -802,42 +803,6 @@ interface TocItem {
 }
 
 /** 直近の3年度は並べ、それより前は一つのメニューにまとめる */
-const RECENT_YEARS = 3
-
-function YearPicker({ years, current, onChange }: { years: number[]; current: number; onChange: (y: number) => void }) {
-  const recent = years.slice(0, RECENT_YEARS)
-  const older = years.slice(RECENT_YEARS)
-  const olderPicked = older.includes(current)
-  const pill = (on: boolean) => `rounded-full px-2.5 py-1.5 text-[13px] ${on ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`
-  return (
-    <div role="group" aria-label="年度" className="flex gap-1">
-      {recent.map((y) => (
-        <Hint key={y} label={reiwa(y)}>
-          <button type="button" aria-pressed={y === current} onClick={() => onChange(y)} className={pill(y === current)}>
-            {yearName(y)}
-            {yearName(y) !== reiwa(y) ? <span className="hidden text-muted-foreground lg:inline">（{reiwa(y).replace(/年度$/, '')}）</span> : null}
-          </button>
-        </Hint>
-      ))}
-      {older.length > 0 ? (
-        <DropdownMenu>
-          <DropdownMenuTrigger className={`inline-flex items-center gap-0.5 ${pill(olderPicked)}`}>
-            {olderPicked ? reiwa(current) : 'それより前'}
-            <CaretDownIcon className="size-3.5" aria-hidden="true" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-auto">
-            <DropdownMenuRadioGroup value={olderPicked ? String(current) : ''} onValueChange={(v) => onChange(Number(v))}>
-              {older.map((y) => (
-                <DropdownMenuRadioItem key={y} value={String(y)}>{reiwa(y)}</DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      ) : null}
-    </div>
-  )
-}
-
 // 以前の年度の URL（#y2025）。開かれたら年度の頁の path（/tokyo/shinagawa/2025）に置き換える
 const yearFromHash = () => Number(/^#y(\d{4})$/.exec(location.hash)?.[1]) || undefined
 /** 今の URL から年度の段を除いた、自治体の頁の path */
@@ -1105,7 +1070,7 @@ function BackToTop({ hidden }: { hidden: boolean }) {
   )
 }
 
-function AskDock({ name, sitekey, year, section }: { name: string; sitekey: string; year: number; section?: string }) {
+export function AskDock({ name, sitekey, year, section }: { name: string; sitekey: string; year: number; section?: string }) {
   const [open, setOpen] = React.useState(true)
   const [chat, setChat] = React.useState<{ id: string; session: StoredSession }>()
   const [drawer, setDrawer] = React.useState(false)

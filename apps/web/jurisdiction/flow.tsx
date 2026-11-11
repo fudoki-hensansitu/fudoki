@@ -1,8 +1,10 @@
 // お金の流れ。初期は全款の款→項。横にスクロールすると款が一つずつ（snap）開き、縦にスクロールするとその款の項が一つずつ開く。
 // 項まで開くと、その項の目と節の上位を出す（節の金額は目ごとに大きい順、足し上げは作らない）。
 import * as React from 'react'
+import { createPortal } from 'react-dom'
 import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
 import { Overview } from './sankey'
@@ -36,11 +38,9 @@ const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記�
 const share = (yen: number, max: number, missing?: boolean) => (missing || max <= 0 ? 0 : Math.min(100, (Math.max(0, yen) / max) * 100))
 
 /** 節は目の内訳。上位だけ名前を出して残りは件数にまとめる。広い画面では目の棒から帯でつなぎ、狭い画面では目の金額に占める割合の横棒を出す */
-/** 割合のラベル。基準が無い（金額未記載）ときは金額のまま出す */
-const pctOr = (yen: number, base: number, missing?: boolean) => formatShare(yen, base, missing) ?? amountText(yen, missing)
 
-/** kouYen は割合の基準（目は項に占める割合、節は目に占める割合）。金額はツールチップで見せる */
-function MokuGroup({ moku, kouYen, levels }: { moku: Moku; kouYen: number; levels: Levels }) {
+/** kouYen は割合の基準（目は項に占める割合、節は目に占める割合）。金額と割合を並べて出す */
+function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: number; levels: Levels; onMoku?: (m: Moku) => void }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
   const rest = shown.slice(SETSU_SHOWN)
@@ -54,10 +54,19 @@ function MokuGroup({ moku, kouYen, levels }: { moku: Moku; kouYen: number; level
     <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} className="grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[active=true]/kou:translate-y-0 group-data-[active=true]/kou:opacity-100 sm:grid-cols-[5fr_7fr] sm:gap-4">
       <div className="min-w-0">
         <div className="text-[11px] text-muted-foreground sm:hidden">{levels.moku}</div>
-        <AmountTip name={moku.name} yen={moku.yen} missing={moku.amountMissing} side="right" className="inline-grid outline-none">
-          <span className="text-sm leading-snug">{moku.name}</span>
-          <span className="text-xs font-semibold tabular-nums text-primary">{pctOr(moku.yen, kouYen, moku.amountMissing)}</span>
-        </AmountTip>
+        {onMoku ? (
+          // 押すと事業と同じ詳細のパネルで目の中身（事業・節）を出す
+          <button type="button" onClick={() => onMoku(moku)} className="group/moku -mx-1.5 grid w-[calc(100%+0.75rem)] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 rounded-lg px-1.5 py-1 text-left hover:bg-secondary">
+            <span className="text-sm leading-snug underline-offset-2 group-hover/moku:underline">{moku.name}</span>
+            <CaretRightIcon className="row-span-2 size-3.5 text-muted-foreground" aria-hidden="true" />
+            <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
+          </button>
+        ) : (
+          <AmountTip name={moku.name} yen={moku.yen} missing={moku.amountMissing} side="right" className="inline-grid outline-none">
+            <span className="text-sm leading-snug">{moku.name}</span>
+            <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
+          </AmountTip>
+        )}
       </div>
       {top.length > 0 ? (
         <ul data-setsu-list className="grid min-w-0 gap-y-1 border-l pl-3 text-[12.5px] leading-snug sm:border-0 sm:pl-4" aria-label={`${moku.name}の${levels.setsu}`}>
@@ -66,7 +75,7 @@ function MokuGroup({ moku, kouYen, levels }: { moku: Moku; kouYen: number; level
             <li key={s.name} data-setsu data-yen={s.amountMissing ? 0 : Math.max(0, s.yen)} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
               <AmountTip name={`${moku.name}・${s.name}`} yen={s.yen} missing={s.amountMissing} side="right" className="col-span-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 outline-none">
                 <span className="truncate">{s.name}</span>
-                <span className="text-right font-semibold tabular-nums text-primary">{pctOr(s.yen, mokuYen, s.amountMissing)}</span>
+                <span className="text-right tabular-nums"><span className="font-semibold">{amountText(s.yen, s.amountMissing)}</span>{formatShare(s.yen, mokuYen, s.amountMissing) ? <span className="ml-1.5 text-muted-foreground">{formatShare(s.yen, mokuYen, s.amountMissing)}</span> : null}</span>
               </AmountTip>
               <span className="col-span-2 h-1 overflow-hidden rounded-full bg-foreground/5 sm:hidden">
                 <span className="block h-full rounded-full bg-primary/55" style={{ width: `${share(s.yen, base, s.amountMissing)}%` }} />
@@ -78,7 +87,7 @@ function MokuGroup({ moku, kouYen, levels }: { moku: Moku; kouYen: number; level
               <Tooltip>
                 <TooltipTrigger delay={100} className="grid w-full cursor-default! grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
                   <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}件</span>
-                  {restYen !== null ? <span className="text-right tabular-nums">{pctOr(restYen, mokuYen)}</span> : null}
+                  {restYen !== null ? <span className="text-right tabular-nums">{amountText(restYen)}{formatShare(restYen, mokuYen) ? <span className="ml-1.5">{formatShare(restYen, mokuYen)}</span> : null}</span> : null}
                 </TooltipTrigger>
                 <TooltipContent side="right" className={`block max-w-72 ${TIP_CARD}`}>
                   {restYen !== null ? <div className="mb-1.5"><TipCard name={`ほか${rest.length}件`} yen={restYen} /></div> : null}
@@ -103,11 +112,11 @@ function MokuGroup({ moku, kouYen, levels }: { moku: Moku; kouYen: number; level
 }
 
 /** 縦にスクロールする面で、上や下にまだ続きがあるか。続きがある側を fade にして、前後の要素が少し見えるようにする */
-function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.DependencyList): React.CSSProperties {
+function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.DependencyList, off = false): React.CSSProperties {
   const [edge, setEdge] = React.useState({ top: false, bottom: false })
   React.useEffect(() => {
     const el = ref.current
-    if (!el) return
+    if (!el || off) return
     const update = () => {
       const top = el.scrollTop > 2
       const bottom = el.scrollTop + el.clientHeight < el.scrollHeight - 2
@@ -132,6 +141,7 @@ function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.Depen
     return () => { el.removeEventListener('scroll', update); el.removeEventListener('wheel', onWheel); observer.disconnect() }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
+  if (off) return {}
   const mask = `linear-gradient(to bottom, ${edge.top ? 'transparent 0, #000 48px' : '#000 0'}, ${edge.bottom ? '#000 calc(100% - 72px), transparent 100%' : '#000 100%'})`
   return { maskImage: mask, WebkitMaskImage: mask }
 }
@@ -180,7 +190,7 @@ function TickMenu({ items, current, onPick, side, label, className, children }: 
   )
 }
 
-function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void; levels: Levels }) {
+function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void; levels: Levels; onMoku?: (m: Moku) => void }) {
   const box = React.useRef<HTMLElement | null>(null)
   const rib = React.useRef<HTMLDivElement>(null)
   const [paths, setPaths] = React.useState<Ribbon[]>([])
@@ -293,7 +303,7 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
             <span className="pl-4">{levels.setsu}</span>
           </div>
         ) : null}
-        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} levels={levels} />) : (
+        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} levels={levels} onMoku={onMoku} />) : (
           <p className="text-[12.5px] text-muted-foreground" role={loading ? 'status' : undefined}>{loading ? '内訳を読み込んでいます…' : `この${levels.kou}に${levels.moku}はありません`}</p>
         )}
       </div>
@@ -301,8 +311,50 @@ function KouSection({ kou, active, loading, onBox, levels }: { kou: Kou; active:
   )
 }
 
-function KanPanel({ drill, loading, levels }: { drill: Drill; loading: boolean; levels: Levels }) {
+/** 読み込み中の全体図。左の総額の柱から右の款の柱へ帯が流れる形を、薄い色で点滅させる */
+const SKELETON_SHARES = [0.3, 0.2, 0.15, 0.12, 0.1, 0.07, 0.06]
+function FlowSkeleton() {
+  const H = 400, GAP = 8, LEFT = 14, RIGHT = 14, X0 = 0, X1 = 286
+  const usable = H - GAP * (SKELETON_SHARES.length - 1)
+  let left = 0
+  let right = 0
+  const bands = SKELETON_SHARES.map((share) => {
+    const h = usable * share
+    const band = { l: left, r: right, h }
+    left += h
+    right += h + GAP
+    return band
+  })
+  return (
+    <div role="status" aria-label="お金の流れを読み込んでいます" className="h-full animate-pulse">
+      <svg viewBox={`0 0 300 ${H}`} preserveAspectRatio="none" className="h-full max-h-[520px] w-full" aria-hidden="true">
+        <rect x={X0} y={0} width={LEFT} height={usable} rx={3} className="fill-muted" />
+        {bands.map((b, i) => {
+          const sx = X0 + LEFT, ex = X1, mx = (sx + ex) / 2
+          return (
+            <g key={i}>
+              <path d={`M${sx},${b.l} C${mx},${b.l} ${mx},${b.r} ${ex},${b.r} L${ex},${b.r + b.h} C${mx},${b.r + b.h} ${mx},${b.l + b.h} ${sx},${b.l + b.h} Z`} className="fill-muted/60" />
+              <rect x={X1} y={b.r} width={RIGHT} height={b.h} rx={3} className="fill-muted" />
+            </g>
+          )
+        })}
+      </svg>
+    </div>
+  )
+}
+
+/** natural は面の中で縦に送らず、中身の高さのまま頁のスクロールで読む */
+function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void; natural?: boolean; /** 横に並ぶ面のうち、今見せている面か */ shown?: boolean }) {
   const body = React.useRef<HTMLDivElement>(null)
+  // natural のとき、面が画面に入っている間だけ目盛りを画面の右に固定して出す（track が横のスクロールの箱なので sticky は効かない）
+  const [inView, setInView] = React.useState(false)
+  React.useEffect(() => {
+    const el = body.current
+    if (!natural || !el) return
+    const observer = new IntersectionObserver(([e]) => setInView(!!e?.isIntersecting), { rootMargin: '-45% 0px -45% 0px' })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [natural])
   const [current, setCurrent] = React.useState(0)
   const sections = React.useRef<(HTMLElement | null)[]>([])
   React.useEffect(() => {
@@ -310,28 +362,27 @@ function KanPanel({ drill, loading, levels }: { drill: Drill; loading: boolean; 
     if (!root) return
     const observer = new IntersectionObserver((entries) => {
       for (const entry of entries) if (entry.isIntersecting) setCurrent(sections.current.indexOf(entry.target as HTMLElement))
-    }, { root, rootMargin: '-35% 0px -55% 0px', threshold: 0 })
+    }, { root: natural ? null : root, rootMargin: '-35% 0px -55% 0px', threshold: 0 })
     for (const el of sections.current) if (el) observer.observe(el)
     return () => observer.disconnect()
-  }, [drill.kou.length])
-  const fade = useEdgeFade(body, [drill.kou.length])
+  }, [drill.kou.length, natural])
+  const fade = useEdgeFade(body, [drill.kou.length], natural)
   const toKou = (i: number) => {
     const root = body.current
     const el = sections.current[i]
     if (!root || !el) return
+    // 上に貼り付くタブの帯と図の見出しの下に出す
+    if (natural) return window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' })
     root.scrollTo({ top: el.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop, behavior: 'smooth' })
   }
-  return (
-    <div className="relative h-full w-full shrink-0 snap-start snap-always" data-panel>
-      {drill.kou.length > 1 ? (
-        // 項の目盛り。押すとその項へ縦に送る
+  const ticks = (
         <TickMenu
           label={`${drill.kan.name}の${levels.kou}へ移る`}
           side="left"
           current={current}
           onPick={toKou}
           items={drill.kou.map((k) => ({ key: k.id, name: k.name, note: amountText(k.yen, k.amountMissing) }))}
-          className="absolute right-0.5 top-1/2 z-10 flex -translate-y-1/2 flex-col"
+          className={natural ? 'fixed right-1 top-1/2 z-10 flex -translate-y-1/2 flex-col' : 'absolute right-0.5 top-1/2 z-10 flex -translate-y-1/2 flex-col'}
         >
           {drill.kou.map((k, i) => (
             <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} className="group/dot px-1.5 py-[3px]">
@@ -339,13 +390,20 @@ function KanPanel({ drill, loading, levels }: { drill: Drill; loading: boolean; 
             </button>
           ))}
         </TickMenu>
+  )
+  return (
+    <div className={cn('relative w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel>
+      {drill.kou.length > 1 && (!natural || (shown && inView)) ? (
+        // 項の目盛り。押すとその項へ縦に送る。natural のときは画面の右の真ん中に固定する。
+        // 祖先に transform（スマホのタブのカルーセル）があると fixed が画面に効かないので、body に出す
+        natural ? createPortal(ticks, document.body) : ticks
       ) : null}
-      <div ref={body} style={fade} className="h-full snap-y snap-proximity scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden" tabIndex={-1}>
+      <div ref={body} style={fade} className={natural ? '' : 'h-full snap-y snap-proximity scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'} tabIndex={-1}>
         {drill.kou.map((k, i) => (
-          <KouSection key={k.id} kou={k} active={i === current} loading={loading} levels={levels} onBox={(el) => { sections.current[i] = el }} />
+          <KouSection key={k.id} kou={k} active={i === current} loading={loading} levels={levels} onMoku={onMoku} onBox={(el) => { sections.current[i] = el }} />
         ))}
         {/* 下端にも止まる所を置く。最後の段の頭にしか止まれないと、下端まで送れず頁のスクロールにも渡らない */}
-        <div aria-hidden="true" className="h-px snap-end" />
+        {natural ? null : <div aria-hidden="true" className="h-px snap-end" />}
       </div>
     </div>
   )
@@ -353,9 +411,10 @@ function KanPanel({ drill, loading, levels }: { drill: Drill; loading: boolean; 
 
 /** 款→項の全体図と款ごとの内訳。最新年度の款→項はページに埋めてあり、それ以外の年度は図が近づいたら読み込む */
 /** tabs はカードの左上に置く切り替え（分け方）、summary は全体図のときに出す総額。view は分野（COFOG の枠）か款か */
-export function Flow({ data, total: year, view = 'kan', phase = 'settlement', tabs, summary }: { data: PageData; total: YearTotal; view?: FlowView; /** 決算の無い年度は当初予算（initial）の流れを読む */ phase?: 'settlement' | 'initial'; tabs?: React.ReactNode; summary?: React.ReactNode }) {
+export function Flow({ data, total: year, view = 'kan', phase = 'settlement', tabs, summary, className, bare, onMoku, account, natural }: { data: PageData; total: YearTotal; view?: FlowView; /** 決算の無い年度は当初予算（initial）の流れを読む */ phase?: 'settlement' | 'initial'; tabs?: React.ReactNode; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 特別会計の流れを読むときの会計の名前。無ければ一般会計 */ account?: string; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean }) {
   const levels = LEVELS[view]
-  const isLatest = phase === 'settlement' && year.year === data.years.at(-1)?.year
+  // 頁に埋めてある最新の決算の流れは一般会計のものだけ
+  const isLatest = !account && phase === 'settlement' && year.year === data.years.at(-1)?.year
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
   const overview = React.useRef<HTMLDivElement>(null)
@@ -365,7 +424,19 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
   const [near, setNear] = React.useState(false)
   const [index, setIndex] = React.useState(0)
   const flows = detail ?? (isLatest ? (view === 'cofog' ? data.cofogFlow : data.flow) : [])
-  const overviewFade = useEdgeFade(overview, [flows.length])
+  const overviewFade = useEdgeFade(overview, [flows.length], natural)
+  // natural のときは、横に並ぶ面のうち今の面の高さに枠を合わせる（ほかの面の高さで下が空かないように）
+  const [trackHeight, setTrackHeight] = React.useState<number>()
+  React.useEffect(() => {
+    const el = track.current
+    if (!natural || !el) return
+    const panels = [...el.children] as HTMLElement[]
+    const measure = () => setTrackHeight(panels[index]?.offsetHeight)
+    measure()
+    const observer = new ResizeObserver(measure)
+    for (const p of panels) observer.observe(p)
+    return () => observer.disconnect()
+  }, [natural, index, flows.length])
   // 項の内訳（目・節）は、図が近づいたら読み込む。クリックは要らない
   React.useEffect(() => {
     const el = root.current
@@ -378,12 +449,12 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
     if (!near || detail) return
     setError(false)
     const controller = new AbortController()
-    fetchJson<Drill[]>(`/api/jurisdictions/flow/${data.code}/${year.year}/setsu?${new URLSearchParams({ ...(view === 'cofog' ? { view: 'cofog' } : {}), ...(phase === 'initial' ? { phase: 'initial' } : {}) })}`, controller.signal).then(
+    fetchJson<Drill[]>(`/api/jurisdictions/flow/${data.code}/${year.year}/setsu?${new URLSearchParams({ ...(view === 'cofog' ? { view: 'cofog' } : {}), ...(phase === 'initial' ? { phase: 'initial' } : {}), ...(account ? { account } : {}) })}`, controller.signal).then(
       (value) => { if (!controller.signal.aborted) setDetail(value) },
       () => { if (!controller.signal.aborted) setError(true) },
     )
     return () => controller.abort()
-  }, [near, detail, data.code, year.year, view, phase, attempt])
+  }, [near, detail, data.code, year.year, view, phase, account, attempt])
   const onScroll = () => {
     const el = track.current
     if (!el) return
@@ -399,6 +470,11 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
     const body = panel?.lastElementChild as HTMLElement | null
     const section = kouIndex === undefined ? undefined : body?.querySelectorAll<HTMLElement>('[data-kou]')[kouIndex]
     if (!body) return
+    if (natural) {
+      if (section) window.scrollTo({ top: section.getBoundingClientRect().top + window.scrollY - 120, behavior: 'instant' })
+      el.focus({ preventScroll: true })
+      return
+    }
     const top = section ? section.getBoundingClientRect().top - body.getBoundingClientRect().top + body.scrollTop : 0
     body.scrollTo({ top, behavior: 'instant' })
     el.focus({ preventScroll: true })
@@ -413,8 +489,8 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
   const kan = index > 0 ? flows[index - 1] : undefined
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) || 1
   return (
-    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（${levels.kan}）の内訳` : `${levels.kan}から${levels.kou}への全体図`} className="flex h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:h-[calc(100svh-61px-2rem)] @4xl:scroll-mt-[77px]">
-      <div className="shrink-0 px-5 pt-5 sm:px-6">
+    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（${levels.kan}）の内訳` : `${levels.kan}から${levels.kou}への全体図`} className={cn('flex min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:scroll-mt-[77px]', !natural && 'h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] @4xl:h-[calc(100svh-61px-2rem)]', bare && 'rounded-none border-0', className)}>
+      <div className={cn('shrink-0', bare ? 'pt-1' : 'px-5 pt-5 sm:px-6')}>
         {tabs}
         {/* 見出しと金額の行。右に今いる段（大分類 4 / 8）と前後の矢印を置く */}
         <div className="mt-3 flex min-h-9 items-center justify-between gap-3">
@@ -452,10 +528,10 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
           ))}
         </TickMenu>
         <p className="mt-2 text-xs text-muted-foreground">
-          {index > 0 ? <>縦にスクロールすると、{levels.kan}の中の{levels.kou}が一つずつ開きます。{index < total ? `横で次の${levels.kan}へ。` : null}</> : '横にスクロールすると、詳細が開きます。'}
+          {index > 0 ? natural ? null : <>縦にスクロールすると、{levels.kan}の中の{levels.kou}が一つずつ開きます。{index < total ? `横で次の${levels.kan}へ。` : null}</> : '横にスクロールすると、詳細が開きます。'}
         </p>
       </div>
-      <div className="relative mt-2 min-h-0 flex-1">
+      <div className={cn('relative mt-2', !natural && 'min-h-0 flex-1')}>
         <div
           ref={track}
           role="region"
@@ -463,16 +539,17 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
           tabIndex={0}
           onScroll={onScroll}
           onKeyDown={onKey}
-          className="flex h-full snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden"
+          style={natural ? { height: trackHeight } : undefined}
+          className={cn('flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden', natural ? 'items-start transition-[height] duration-300' : 'h-full')}
         >
-          <div ref={overview} style={overviewFade} className="h-full w-full shrink-0 snap-start snap-always overflow-y-auto px-3 pb-3 pt-2 [scrollbar-width:none] [&::-webkit-scrollbar]:hidden sm:px-5">
+          <div ref={overview} style={overviewFade} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
             {flows.length > 0 ? (
               <Overview flows={flows} total={year.yen} levels={levels} onSelect={select} height={Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))} />
             ) : (
-              <p className="grid h-full place-items-center text-sm text-muted-foreground" role={error ? undefined : 'status'}>{error ? '' : 'お金の流れを読み込んでいます…'}</p>
+              error ? null : <FlowSkeleton />
             )}
           </div>
-          {flows.map((f) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} />)}
+          {flows.map((f, i) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} />)}
         </div>
       </div>
       {error ? (

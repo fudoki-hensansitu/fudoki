@@ -91,7 +91,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
   const kouNodes = layout(kouValues, scale, KOU_SLOT, KOU_GAP)
   const x0 = left
   const x1 = Math.max(width - right - BAR, x0 + BAR + 40)
-  const cut = (name: string, n: number) => (narrow && Array.from(name).length > n ? `${Array.from(name).slice(0, n - 1).join('')}…` : name)
+  const cut = (name: string, n: number) => (Array.from(name).length > n ? `${Array.from(name).slice(0, n - 1).join('')}…` : name)
   const offsets = new Map<number, number>()
   const end = (nodes: { top: number; size: number }[]) => (nodes.length ? nodes[nodes.length - 1]!.top + nodes[nodes.length - 1]!.size : 0)
   const total = Math.max(end(kans), end(kouNodes), 40)
@@ -132,7 +132,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
           </g>
           {flows.map((flow, i) => {
             const node = kans[i]!
-            const label = cut(flow.kan.name, 9)
+            const label = narrow ? cut(flow.kan.name, 9) : flow.kan.name
             return (
               <AmountTip key={flow.kan.id} name={flow.kan.name} yen={flow.kan.yen} missing={flow.kan.amountMissing} side="right" render={<g {...(onSelect ? pick(() => onSelect(i)) : {})} aria-label={`${flow.kan.name} ${amountText(flow.kan.yen, flow.kan.amountMissing)}${onSelect ? '、内訳を見る' : ''}`} />}>
                 <rect x={0} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
@@ -150,7 +150,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
                 <rect x={x1} y={node.top} width={width - x1} height={node.size} className="fill-transparent" />
                 <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x1 + BAR + 8} y={node.top + node.size / 2 + 4} className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
-                  {cut(kou.name, 10)}
+                  {cut(kou.name, narrow ? 10 : Math.max(10, Math.floor((width - x1 - BAR - 8 - 44) / 12)))}
                   <tspan dx={6} className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(kou.yen, kou.amountMissing)}</tspan>
                 </text>
                 </g>
