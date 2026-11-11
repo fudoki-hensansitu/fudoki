@@ -3,7 +3,7 @@ import { describe, expect, test } from 'bun:test'
 import { fetchRoute } from './routes.testing'
 import type { Env, RateLimiter } from './env'
 import { CHAT_RATE_LIMIT, MAX_MESSAGES, MAX_USER_TEXT, VIEW_RATE_LIMIT } from './limits'
-import { CONTEXT_HEADING, parseChat } from './chat'
+import { QUOTE_HEADING, parseChat } from './chat'
 import { parseRelay } from './relay'
 import { issueSession, SITEVERIFY_URL, TURNSTILE_ACTION, TURNSTILE_TEST_SECRET, verifySession, verifyTurnstile } from './session'
 
@@ -108,12 +108,17 @@ describe('会話の入力の上限', () => {
     expect(() => parseChat({ id, messages: [user('a'), { id: 'y', role: 'assistant', parts: [] }] })).toThrow(expect.objectContaining({ status: 400 }))
     expect(() => parseChat({ id, messages: [user('a')], viewContext: 'x'.repeat(2001) })).toThrow(expect.objectContaining({ status: 400 }))
   })
-  test('頁の文脈は質問の直前の別の利用者の発言にし、長さを検査する', () => {
+  test('選んだ文は質問の直前の別の利用者の発言に、画面は最後の質問のものだけを screen にし、長さを検査する', () => {
     const id = crypto.randomUUID()
-    const parsed = parseChat({ id, messages: [{ ...user('これは何？', 'q'), context: '選んだ文: 「保育施設運営費」' }] })
+    const parsed = parseChat({ id, messages: [{ ...user('これは何？', 'q'), context: '品川区の頁を見ている\n選んだ文: 「保育施設運営費」' }] })
     expect(parsed.messages.map((m) => m.role)).toEqual(['user', 'user'])
-    expect(parsed.messages[0]!.parts).toEqual([{ type: 'text', text: `${CONTEXT_HEADING}\n選んだ文: 「保育施設運営費」` }])
+    expect(parsed.messages[0]!.parts).toEqual([{ type: 'text', text: `${QUOTE_HEADING}\n選んだ文: 「保育施設運営費」` }])
     expect(parsed.messages[1]!.parts).toEqual([{ type: 'text', text: 'これは何？' }])
+    expect(parsed.screen).toBe('品川区の頁を見ている')
+    expect(parsed.turn).toBe(1)
+    const screenOnly = parseChat({ id, messages: [{ ...user('a'), context: '古い画面' }, { id: 'b', role: 'assistant', parts: [{ type: 'text', text: 'ok' }] }, { ...user('c'), context: '新しい画面' }] })
+    expect(screenOnly.messages).toHaveLength(3)
+    expect(screenOnly.screen).toBe('新しい画面')
     expect(() => parseChat({ id, messages: [{ ...user('a'), context: 'x'.repeat(2001) }] })).toThrow(expect.objectContaining({ status: 400 }))
     expect(() => parseChat({ id, messages: [{ ...user('a'), context: 1 }] })).toThrow(expect.objectContaining({ status: 400 }))
   })

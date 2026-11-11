@@ -265,7 +265,7 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
     return () => { observer.disconnect(); window.clearTimeout(settle) }
   }, [kou.moku.length, active])
   return (
-    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} data-ask-view={active ? `${kou.name}（${levels.kou}）の${levels.moku}と${levels.setsu}` : undefined} className="group/kou grid min-h-[calc(100%-7.5rem)] snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
+    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} className="group/kou grid min-h-[calc(100%-7.5rem)] snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
       <div className="min-w-0 border-b pb-2 sm:border-0 sm:pb-0 sm:pr-2">
         <div className="text-[11px] text-muted-foreground">{levels.kou}</div>
         <div className="font-sans text-lg leading-snug">{kou.name}</div>
@@ -489,7 +489,7 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
   const kan = index > 0 ? flows[index - 1] : undefined
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) || 1
   return (
-    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（${levels.kan}）の内訳` : `${levels.kan}から${levels.kou}への全体図`} className={cn('flex min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:scroll-mt-[77px]', !natural && 'h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] @4xl:h-[calc(100svh-61px-2rem)]', bare && 'rounded-none border-0', className)}>
+    <div ref={root} className={cn('flex min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:scroll-mt-[77px]', !natural && 'h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] @4xl:h-[calc(100svh-61px-2rem)]', bare && 'rounded-none border-0', className)}>
       <div className={cn('shrink-0', bare ? 'pt-1' : 'px-5 pt-5 sm:px-6')}>
         {tabs}
         {/* 見出しと金額の行。右に今いる段（大分類 4 / 8）と前後の矢印を置く */}
