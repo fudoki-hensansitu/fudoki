@@ -158,9 +158,11 @@ export function Tour({ steps, onDone, offset = 0, total }: { steps: TourStep[]; 
     if (live && !live.length) onDone()
   }, [live, onDone])
 
+  // カードが描かれてから（box が入ってから）focus する
+  const shown = !!box
   React.useEffect(() => {
-    card.current?.focus({ preventScroll: true })
-  }, [i, live])
+    if (shown) card.current?.focus({ preventScroll: true })
+  }, [i, live, shown])
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
