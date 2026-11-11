@@ -1,4 +1,4 @@
-name: preview-web
+name: deploy-preview-web
 # PR ごとに公開 web（fudoki.dev）の preview を pr-<番号>.fudoki.dev に出す。push のたびに同じ URL を更新する
 # CLOUDFLARE_PREVIEW_BUILD=true で build（vite build）し、その出力（.cloudflare/output/v0）を cf previews deploy に渡す。preview の binding・var は apps/web/void.config.ts の preview の分岐が正本
 # PR を閉じたら（merge を含む）preview を消す
@@ -12,12 +12,12 @@ on:
       - bunfig.toml
       - mise.toml
       - tsconfig.json
-      - .github/workflows/preview-web.yml
+      - .github/workflows/deploy-preview-web.yml
 permissions:
   contents: read
   pull-requests: write
 concurrency:
-  group: preview-web-${{ github.event.pull_request.number }}
+  group: deploy-preview-web-${{ github.event.pull_request.number }}
   cancel-in-progress: true
 jobs:
   preview:

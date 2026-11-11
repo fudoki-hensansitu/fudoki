@@ -1,6 +1,6 @@
 # 公開 web
 
-ホーム（`/`、`home/`）と紹介の読み物（`/about`、`landing/`）、会話を始めるアシスタントの頁（`/assistant`、`chat/assistant-home.tsx`）・会話の画面（`/s/:id`、下の「風土記の AI に聞く」）、自治体ごとの頁（`/jurisdictions`・`/tokyo/nakano`、下の「自治体の個別ページ」）を返す。favicon・OG 画像・robots.txt・紹介（`/about`）の録画と出典の切り抜き（置き場は `public/home/` のまま）などのファイルは `public/` に置き、Workers static assets で配る。sitemap.xml と PWA 用の `/manifest.webmanifest`・`/sw.js`・`/offline`（`pwa.ts`）は `routes/` が返す。service worker は繋がらないときの案内を出すだけで、頁・API はキャッシュしない。PWA のアイコンは `brand/pwa_icons.py` で `public/` に描く。他は 404。main に入ると `.github/workflows/deploy-web.yml` が自動で deploy する（手元からは `bun run --cwd apps/web deploy`）。web を変える PR は `.github/workflows/preview-web.yml` が `pr-<番号>.fudoki.dev` に preview を出す（binding・var は `void.config.ts` の `preview` の分岐。push のたびに同じ URL を更新し、PR を閉じたら消す。Access で Cloudflare アカウントのログインだけを通す。利用状況は書かない）。
+ホーム（`/`、`home/`）と紹介の読み物（`/about`、`landing/`）、会話を始めるアシスタントの頁（`/assistant`、`chat/assistant-home.tsx`）・会話の画面（`/s/:id`、下の「風土記の AI に聞く」）、自治体ごとの頁（`/jurisdictions`・`/tokyo/nakano`、下の「自治体の個別ページ」）を返す。favicon・OG 画像・robots.txt・紹介（`/about`）の録画と出典の切り抜き（置き場は `public/home/` のまま）などのファイルは `public/` に置き、Workers static assets で配る。sitemap.xml と PWA 用の `/manifest.webmanifest`・`/sw.js`・`/offline`（`pwa.ts`）は `routes/` が返す。service worker は繋がらないときの案内を出すだけで、頁・API はキャッシュしない。PWA のアイコンは `brand/pwa_icons.py` で `public/` に描く。他は 404。main に入ると `.github/workflows/deploy-web.yml` が自動で deploy する（手元からは `bun run --cwd apps/web deploy`）。web を変える PR は `.github/workflows/deploy-preview-web.yml` が `pr-<番号>.fudoki.dev` に preview を出す（binding・var は `void.config.ts` の `preview` の分岐。push のたびに同じ URL を更新し、PR を閉じたら消す。Access で Cloudflare アカウントのログインだけを通す。利用状況は書かない）。
 
 ```bash
 bun run dev:web
@@ -73,7 +73,7 @@ ORDER BY day
 
 ### 会話の保存
 
-D1 `fudoki-web` の `conversations`（会話1件1行。`user_id` は認証を入れるまで NULL）と `messages`（1往復で質問と回答の2行。`parts` は AI SDK の UIMessage の parts の JSON で、回答の行に tool の呼び出しと結果、モデル・失敗・token・所要時間を持つ）に書く（列は `migrations/0001_conversations.sql`）。migration は deploy-web（本番の `fudoki-web`）と preview-web（preview の `fudoki-web-preview`）が deploy の前に当てる。手では当てない。読むのは `./node_modules/.bin/cf d1 query 760c7476-6e46-4b44-b174-1bfdd1b4f957 --sql "<SQL>"`。
+D1 `fudoki-web` の `conversations`（会話1件1行。`user_id` は認証を入れるまで NULL）と `messages`（1往復で質問と回答の2行。`parts` は AI SDK の UIMessage の parts の JSON で、回答の行に tool の呼び出しと結果、モデル・失敗・token・所要時間を持つ）に書く（列は `migrations/0001_conversations.sql`）。migration は deploy-web（本番の `fudoki-web`）と deploy-preview-web（preview の `fudoki-web-preview`）が deploy の前に当てる。手では当てない。読むのは `./node_modules/.bin/cf d1 query 760c7476-6e46-4b44-b174-1bfdd1b4f957 --sql "<SQL>"`。
 
 ```sql
 -- 直近7日の質問を、始めた頁ごとに多い順

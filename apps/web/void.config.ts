@@ -4,7 +4,7 @@
 import { defineConfig } from 'void/config'
 import { SW_REGISTER } from './pwa'
 
-// PR ごとの preview の build か。cf previews deploy と preview-web.yml が CLOUDFLARE_PREVIEW_BUILD=true で build する。
+// PR ごとの preview の build か。cf previews deploy と deploy-preview-web.yml が CLOUDFLARE_PREVIEW_BUILD=true で build する。
 // void は Cloudflare の設定を cf の形へ移すとき wrangler の previews を受け付けないので、preview の差し替えはここで分ける
 const preview = process.env.CLOUDFLARE_PREVIEW_BUILD === 'true'
 
@@ -80,7 +80,7 @@ export default defineConfig({
     observability: { enabled: true, head_sampling_rate: 1, traces: { enabled: true, head_sampling_rate: 1 } },
     ...shared,
     // web 自身のデータの D1。preview は別の D1（fudoki-web-preview）にし、試した会話を本番の記録に混ぜない。
-    // migration は deploy-web・preview-web が deploy の前に当てる。人口は scripts/sync-data/population.py が両方に入れる
+    // migration は deploy-web・deploy-preview-web が deploy の前に当てる。人口は scripts/sync-data/population.py が両方に入れる
     d1_databases: [
       preview
         ? { binding: 'DB', database_name: 'fudoki-web-preview', database_id: '5b2c16b3-f008-4901-8660-2c66db3c714d', migrations_dir: 'migrations' }
