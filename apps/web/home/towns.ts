@@ -20,10 +20,10 @@ export const loadTowns = () =>
       return [] as MapEntry[]
     }))
 
-/** 自治体を探す語に当たるか。名前・都道府県名・ローマ字の path のどれかに含まれれば当てる（「東京」で東京都の自治体を全部出す） */
+/** 自治体を探す語に当たるか。名前・ローマ字の path に含まれるか、都道府県名の頭に合えば当てる（「京都」で東京都を出さない）（「東京」で東京都の自治体を全部出す） */
 export const townMatches = (e: Pick<MapEntry, 'name' | 'prefecture' | 'path'>, q: string) => {
   const s = q.trim()
-  return !s || e.name.includes(s) || e.prefecture.includes(s) || e.path.includes(s.toLowerCase())
+  return !s || e.name.includes(s) || e.prefecture.startsWith(s) || e.path.includes(s.toLowerCase())
 }
 
 function read(): Town | null {
