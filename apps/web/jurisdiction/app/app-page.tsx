@@ -618,8 +618,9 @@ function SheetDetail({ s }: { s: EvalSheet }) {
 function FieldPage({ id }: { id: string }) {
   const { v, d } = useApp()
   const f = v.fields.find((x) => x.id === id)
-  if (!f) return <p className="text-sm text-muted-foreground">{reiwa(v.year)}にはこの分野の予算がありません。</p>
+  // 年度を切り替えると分野が消えることがあるので、hook は早期 return より前に呼ぶ
   const ps = React.useMemo(() => v.current.filter((p) => p.field === id), [v, id])
+  if (!f) return <p className="text-sm text-muted-foreground">{reiwa(v.year)}にはこの分野の予算がありません。</p>
   const ms = v.fresh.filter((m) => m.field === f.id)
   const ss = v.sheets.filter((s) => s.field === f.id)
   return (
