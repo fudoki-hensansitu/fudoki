@@ -928,6 +928,9 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
     if (v && !hasEval && filter === 'eval') setFilter('all')
   }, [v, hasEval, filter])
   const index = Math.max(0, tabs.findIndex((t) => t.key === tab))
+  // 始めの位置は Carousel を置いたときだけ渡す。タブのたびに変わると embla が作り直されて、滑らずに飛ぶ
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const carouselOpts = React.useMemo(() => ({ startIndex: index }), [phone, fieldPage])
   React.useEffect(() => {
     if (!api) return
     const onSelect = () => changeTab(tabsRef.current[api.selectedScrollSnap()]!.key)
@@ -1013,7 +1016,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
               {fieldPage ? (
                 <div key={fieldPage} className="app-in pt-6"><FieldPage id={fieldPage} /></div>
               ) : phone ? (
-                <Carousel setApi={setApi} opts={{ startIndex: index }} className="-mx-4 pt-5">
+                <Carousel setApi={setApi} opts={carouselOpts} className="-mx-4 pt-5">
                   <CarouselContent className="ml-0 items-start transition-[height] duration-300" style={{ height }}>
                     {tabs.map((t, i) => (
                       <CarouselItem key={t.key} className="px-4">
