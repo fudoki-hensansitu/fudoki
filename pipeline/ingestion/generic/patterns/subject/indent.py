@@ -68,8 +68,10 @@ def align(logical, group, kept, alignment):
         item.indent = min(g.x0 for g in item.glyphs) if logical.ocr else (coded or item.glyphs[0]).x0
         band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
         narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
-        if codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', item.glyphs[0].text):
-            item.indent += one_width if len(item.glyphs[0].text) == 2 else 0
+        if (codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', item.code)
+                and item.glyphs[0].text.startswith(item.code)):
+            # (by the code: OCR reads a code run into its name, `45△市議会議員選挙` of a 目 that ended, as one word)
+            item.indent += one_width if len(item.code) == 2 else 0
         elif band is not None and item.code is not None and narrow and item.level in right_set:
             # A staircase of narrow level columns with the codes set right: the column is the level,
             # not where the digits start (`5` and `10` of one 目 start 5pt apart).
@@ -79,7 +81,7 @@ def align(logical, group, kept, alignment):
 def learn_levels(all_items):
     # Subject levels by indentation, learned over the document (pattern indent).
     nodes_ = [i for _, ordered, found in all_items for g in ordered if g.subject and g.mode == 'indent'
-              for i in found[id(g)] if i.role == 'node']
+              for i in found[id(g)] if i.role == 'node' and i.level != -1]
     # Where the codes start decide the levels; the names a continuation page prints again without their codes
     # sit elsewhere (their box is open, its code is not printed) and are no level of their own.
     coded_ = [i for i in nodes_ if i.code is not None]
@@ -121,6 +123,8 @@ def learn_levels(all_items):
             if group.subject and group.mode == 'indent':
                 group.levels = len(centres) or 1
                 for item in found[id(group)]:
+                    if item.level == -1:
+                        continue  # a title the layout read (`level_titles`): its level is the one it names
                     item.level = min(range(len(centres)), key=lambda i: abs(centres[i] - edge(item))) if centres else 0
                     item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
     # A 項・目 printed without its code (one the year drops, `傷病手当金 0 50 △50`, 131211) starts its name where the
