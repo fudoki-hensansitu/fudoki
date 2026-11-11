@@ -648,10 +648,10 @@ function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   return (
     <DetailSection icon={ChartPieSliceIcon} title="内訳">
       {drills ? (
-        <React.Suspense fallback={<div className="h-[300px] animate-pulse rounded-xl bg-card" />}>
+        <React.Suspense fallback={<div className="h-[320px] animate-pulse rounded-xl bg-card" />}>
           <FieldChart slices={slices} format={yenText} />
         </React.Suspense>
-      ) : <div className="h-[300px] animate-pulse rounded-xl bg-card" />}
+      ) : <div className="h-[320px] animate-pulse rounded-xl bg-card" />}
     </DetailSection>
   )
 }
