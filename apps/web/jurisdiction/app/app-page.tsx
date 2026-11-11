@@ -111,7 +111,7 @@ function Mark({ kind, label, className = 'size-6' }: { kind: string; label?: str
   )
 }
 function Chip({ children }: { children: React.ReactNode }) {
-  return <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border bg-background px-2 py-0.5 text-[11px] text-muted-foreground [&_svg]:size-3">{children}</span>
+  return <span className="inline-flex items-center gap-1 whitespace-nowrap rounded-full border bg-background px-2 py-0.5 text-xs text-muted-foreground [&_svg]:size-3">{children}</span>
 }
 function SectionHead({ title, sub, children }: { title: string; sub?: string; children?: React.ReactNode }) {
   return (
@@ -137,15 +137,15 @@ function MoreLink({ onClick }: { onClick: () => void }) {
 function Row({ icon, title, sub, yen, note, rank, selected, onClick }: { icon: React.ReactNode; title: string; sub?: string; yen: number | null | undefined; note?: string; rank?: number; selected?: boolean; onClick: () => void }) {
   return (
     <button type="button" onClick={onClick} data-selected={selected || undefined} className="group flex w-full items-center gap-3 rounded-lg px-2.5 py-3 text-left transition-colors hover:bg-card data-selected:bg-accent">
-      {rank != null ? <span className="w-5 shrink-0 text-right text-[13px] tabular-nums text-muted-foreground">{rank}</span> : null}
+      {rank != null ? <span className="w-5 shrink-0 text-right text-sm tabular-nums text-muted-foreground">{rank}</span> : null}
       {icon}
       <span className="min-w-0 flex-1">
-        <span className="line-clamp-2 text-sm leading-normal">{title}</span>
-        {sub ? <span className="block truncate text-[11px] text-muted-foreground">{sub}</span> : null}
+        <span className="line-clamp-2 text-base leading-normal">{title}</span>
+        {sub ? <span className="block truncate text-xs text-muted-foreground">{sub}</span> : null}
       </span>
       <span className="shrink-0 text-right">
-        <Amt yen={yen} className="text-base" />
-        {note ? <span className="block text-[11px] text-muted-foreground">{note}</span> : null}
+        <Amt yen={yen} className="text-[17px]" />
+        {note ? <span className="block text-xs text-muted-foreground">{note}</span> : null}
       </span>
       <CaretRightIcon className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
     </button>
@@ -229,7 +229,7 @@ function FieldTile({ f, i, onClick }: { f: YearView['fields'][number]; i: number
         </span>
       </span>
       <span>
-        <span className="block text-sm font-semibold">{f.name}</span>
+        <span className="block text-base font-semibold">{f.name}</span>
         <span className="text-xs text-muted-foreground"><Amt yen={f.yen} /> · 事業 {n}</span>
       </span>
       <span className="block h-1 overflow-hidden rounded-full bg-secondary">
@@ -246,7 +246,7 @@ function FreshCard({ m }: { m: Measure }) {
   return (
     <button type="button" onClick={() => select(p ? { kind: 'project', id: p.id } : { kind: 'measure', id: m.id })} className="block h-full w-full rounded-xl text-left transition-transform active:scale-[.98]"><Card className="h-full h-full min-h-[132px] gap-2.5 bg-card p-3.5 text-left ring-0 transition-[background,transform] hover:bg-secondary active:scale-[.98]">
       <Mark kind={m.new ? 'new' : 'up'} />
-      <span className="line-clamp-2 text-sm font-semibold leading-normal">{m.title}</span>
+      <span className="line-clamp-2 text-base font-semibold leading-normal">{m.title}</span>
       <span className="mt-auto flex items-end justify-between gap-2">
         <Chip><FieldIcon id={m.field} />{fieldName(v, m.field)}</Chip>
         <Amt yen={m.yen} className="text-primary" />
@@ -282,7 +282,7 @@ function GradeCards({ sheets, value, onChange }: { sheets: EvalSheet[]; value?: 
       {GRADES.map(([g, label]) => (
         <button key={g}
           type="button" aria-pressed={value === g} onClick={() => onChange?.(g)} className="block h-full w-full rounded-xl text-left transition-transform active:scale-[.98]"><Card className={cn('h-full', 'gap-1 bg-background px-3.5 py-3 text-left ring-1 ring-border transition-colors hover:bg-card', value === g && 'bg-accent ring-primary hover:bg-accent')}>
-          <span className="flex items-center gap-1.5 text-[13px]">
+          <span className="flex items-center gap-1.5 text-[15px]">
             <span className="grid size-5 place-items-center rounded-full border border-current text-[11px]">{g}</span>
             {label}
           </span>
@@ -326,7 +326,7 @@ function MoneyTab() {
       ) : (
         <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の決算・予算は、まだ収録していません</p>
       )}
-      <p className="text-[11px] text-muted-foreground">分野は使い道を目的ごとに分ける世界共通の分類（COFOG）で、分け方は風土記の判断です。款・項は予算書・決算書の分け方のままです。</p>
+      <p className="text-xs text-muted-foreground">分野は使い道を目的ごとに分ける世界共通の分類（COFOG）で、分け方は風土記の判断です。款・項は予算書・決算書の分け方のままです。</p>
     </div>
   )
 }
@@ -445,7 +445,7 @@ function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: 
         ))}
       </div>
       <Infinite items={ss} render={(s) => <SheetRow key={s.id} s={s} />} />
-      <p className="text-[11px] text-muted-foreground">区が {r(v.year)}年度に行った事業を自ら評価した結果（A〜D は区の区分）です。風土記は評価を加えていません。</p>
+      <p className="text-xs text-muted-foreground">区が {r(v.year)}年度に行った事業を自ら評価した結果（A〜D は区の区分）です。風土記は評価を加えていません。</p>
     </div>
   )
 }
@@ -454,7 +454,7 @@ function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: 
 function DetailSection({ icon: I, title, count, children }: { icon: Icon; title: string; count?: React.ReactNode; children: React.ReactNode }) {
   return (
     <section className="mt-6">
-      <h3 className="mb-2 flex items-center gap-1.5 text-[13px] font-semibold"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}{count != null ? <span className="font-normal text-muted-foreground">{count}</span> : null}</h3>
+      <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}{count != null ? <span className="font-normal text-muted-foreground">{count}</span> : null}</h3>
       {children}
     </section>
   )
@@ -474,7 +474,7 @@ function ProjectDetail({ p }: { p: Proj }) {
   const ended = v.isEnded(p)
   return (
     <>
-      <p className="flex flex-wrap items-center gap-1 text-[11px] text-muted-foreground">{p.path.filter(Boolean).map((x, i) => <React.Fragment key={i}>{i ? <CaretRightIcon className="size-2.5" /> : null}{x}</React.Fragment>)}</p>
+      <p className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">{p.path.filter(Boolean).map((x, i) => <React.Fragment key={i}>{i ? <CaretRightIcon className="size-2.5" /> : null}{x}</React.Fragment>)}</p>
       <h2 className="mt-1.5 mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
         {ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : null}
         {p.name}
@@ -499,8 +499,8 @@ function ProjectDetail({ p }: { p: Proj }) {
         )}
       </div>
       <DetailSection icon={CalendarBlankIcon} title="年度ごと">
-        <div className="grid grid-cols-[auto_1fr_1fr] text-[13px]">
-          <span className="py-1.5 text-[11px]" /><span className="py-1.5 text-right text-[11px] text-muted-foreground">当初予算</span><span className="px-1 py-1.5 text-right text-[11px] text-muted-foreground">決算</span>
+        <div className="grid grid-cols-[auto_1fr_1fr] text-[15px]">
+          <span className="py-1.5 text-xs" /><span className="py-1.5 text-right text-xs text-muted-foreground">当初予算</span><span className="px-1 py-1.5 text-right text-xs text-muted-foreground">決算</span>
           {years.slice().reverse().map((y) => (
             <div key={y} className={cn('col-span-full grid grid-cols-subgrid', y === v.year && 'bg-card')}>
               <Separator className="col-span-full" />
@@ -518,13 +518,13 @@ function ProjectDetail({ p }: { p: Proj }) {
               <div key={m.id} className="flex gap-2.5 rounded-xl bg-card p-3">
                 <Mark kind={m.new ? 'new' : 'up'} />
                 <div className="min-w-0 flex-1">
-                  <p className="text-[13px] font-semibold">{m.title}</p>
+                  <p className="text-[15px] font-semibold">{m.title}</p>
                   <ul className="mt-1.5 list-disc pl-4 text-xs leading-relaxed">{m.desc.map((x, i) => <li key={i}>{x}</li>)}</ul>
-                  <div className="mt-2 flex items-center justify-between"><span className="text-[11px] text-muted-foreground">{m.new ? '新規' : '拡大'} · 予算案 {m.yen != null ? yenText(m.yen) : '—'}</span><Ext href={`${m.url}#page=${m.page}`}>発表資料</Ext></div>
+                  <div className="mt-2 flex items-center justify-between"><span className="text-xs text-muted-foreground">{m.new ? '新規' : '拡大'} · 予算案 {m.yen != null ? yenText(m.yen) : '—'}</span><Ext href={`${m.url}#page=${m.page}`}>発表資料</Ext></div>
                 </div>
               </div>
             ))}
-            <p className="text-[11px] text-muted-foreground">発表の施策と予算書の事業の紐付けは風土記の判断です。</p>
+            <p className="text-xs text-muted-foreground">発表の施策と予算書の事業の紐付けは風土記の判断です。</p>
           </div>
         </DetailSection>
       ) : null}
@@ -535,7 +535,7 @@ function ProjectDetail({ p }: { p: Proj }) {
             return (
               <button key={s.id} type="button" onClick={() => select({ kind: 'sheet', id: s.id })} className="mb-2 flex w-full items-start gap-2.5 rounded-xl bg-card p-3 text-left hover:bg-secondary">
                 {dir ? <Mark kind={dir.icon} /> : null}
-                <span><span className="block text-[13px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">評価 {s.grade} {GRADES.find((g) => g[0] === s.grade)![1]} · {dir?.label ?? s.dir}</span></span>
+                <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">評価 {s.grade} {GRADES.find((g) => g[0] === s.grade)![1]} · {dir?.label ?? s.dir}</span></span>
               </button>
             )
           })}
@@ -544,9 +544,9 @@ function ProjectDetail({ p }: { p: Proj }) {
       {kids.length ? (
         <DetailSection icon={TreeStructureIcon} title="中の事業" count={kids.length}>
           <Rows>{kids.slice(0, 8).map(([name, yen], i) => (
-            <div key={i} className="flex items-center gap-3 px-1.5 py-2 text-[13px]"><span className="flex-1">{name}</span><Amt yen={yen} className="text-sm" /></div>
+            <div key={i} className="flex items-center gap-3 px-1.5 py-2 text-[15px]"><span className="flex-1">{name}</span><Amt yen={yen} className="text-base" /></div>
           ))}</Rows>
-          {kids.length > 8 ? <p className="mt-1 text-[11px] text-muted-foreground">ほか {kids.length - 8} 件</p> : null}
+          {kids.length > 8 ? <p className="mt-1 text-xs text-muted-foreground">ほか {kids.length - 8} 件</p> : null}
         </DetailSection>
       ) : null}
       {v.origin ? <DetailSection icon={FileTextIcon} title="出典"><Ext href={v.origin}>{v.originTitle ?? '予算書'}</Ext></DetailSection> : null}
@@ -565,7 +565,7 @@ function MeasureDetail({ m }: { m: Measure }) {
         <Amt yen={m.yen} className="block text-4xl leading-tight text-primary" />
         {m.yen ? <span className="text-xs text-muted-foreground">{perHead(m.yen, d.pop)}</span> : null}
       </div>
-      <DetailSection icon={ListBulletsIcon} title="ポイント"><ul className="list-disc pl-5 text-[13px] leading-loose">{m.desc.map((x, i) => <li key={i}>{x}</li>)}</ul></DetailSection>
+      <DetailSection icon={ListBulletsIcon} title="ポイント"><ul className="list-disc pl-5 text-[15px] leading-loose">{m.desc.map((x, i) => <li key={i}>{x}</li>)}</ul></DetailSection>
       <DetailSection icon={FileTextIcon} title="出典"><Ext href={`${m.url}#page=${m.page}`}>予算案のプレス発表（{m.page}頁）</Ext></DetailSection>
     </>
   )
@@ -577,31 +577,31 @@ function SheetDetail({ s }: { s: EvalSheet }) {
   const p = s.project ? projects.get(s.project) : undefined
   return (
     <>
-      <p className="text-[11px] text-muted-foreground">{s.acct} · {s.div}</p>
+      <p className="text-xs text-muted-foreground">{s.acct} · {s.div}</p>
       <h2 className="mt-1.5 text-xl font-semibold leading-snug">{s.name}</h2>
       <div className="mt-4 grid grid-cols-2 gap-2.5">
         <Card className="gap-1 bg-accent px-3.5 py-3 ring-1 ring-primary">
-          <span className="flex items-center gap-1.5 text-[13px]"><span className="grid size-5 place-items-center rounded-full border border-current text-[11px]">{s.grade}</span>評価</span>
+          <span className="flex items-center gap-1.5 text-[15px]"><span className="grid size-5 place-items-center rounded-full border border-current text-[11px]">{s.grade}</span>評価</span>
           <span className="text-lg">{GRADES.find((g) => g[0] === s.grade)![1]}</span>
         </Card>
         <Card className="gap-1 bg-background px-3.5 py-3 ring-1 ring-border">
-          <span className="flex items-center gap-1.5 text-[13px]">{dir ? <Mark kind={dir.icon} className="size-5" /> : null}今後の方向</span>
+          <span className="flex items-center gap-1.5 text-[15px]">{dir ? <Mark kind={dir.icon} className="size-5" /> : null}今後の方向</span>
           <span className="text-base">{dir?.label ?? s.dir ?? '—'}</span>
         </Card>
       </div>
       <DetailSection icon={CalendarBlankIcon} title={`${r(s.fy)}年度の小事業`}>
-        <div className="flex gap-8 text-[13px]"><span>予算 <Amt yen={s.b} className="text-[15px]" /></span><span>決算 <Amt yen={s.s} className="text-[15px]" /></span></div>
+        <div className="flex gap-8 text-[15px]"><span>予算 <Amt yen={s.b} className="text-[15px]" /></span><span>決算 <Amt yen={s.s} className="text-[15px]" /></span></div>
       </DetailSection>
       {p ? (
         <DetailSection icon={BriefcaseIcon} title="予算書の事業">
           <button type="button" onClick={() => select({ kind: 'project', id: p.id })} className="flex w-full items-center gap-3 rounded-xl bg-card p-3 text-left hover:bg-secondary">
-            <span className="flex-1"><span className="block text-[13px] font-semibold">{p.name}</span><span className="text-xs text-muted-foreground">{p.dept}</span></span>
+            <span className="flex-1"><span className="block text-[15px] font-semibold">{p.name}</span><span className="text-xs text-muted-foreground">{p.dept}</span></span>
             <CaretRightIcon className="size-3.5 text-muted-foreground" />
           </button>
         </DetailSection>
       ) : null}
       <DetailSection icon={FileTextIcon} title="出典"><Ext href={`${s.url}#page=${s.page}`}>評価シート（{s.page}頁）</Ext></DetailSection>
-      <p className="mt-3 text-[11px] text-muted-foreground">評価は区が自ら付けたものです。風土記は評価を加えていません。</p>
+      <p className="mt-3 text-xs text-muted-foreground">評価は区が自ら付けたものです。風土記は評価を加えていません。</p>
     </>
   )
 }
@@ -645,7 +645,7 @@ function FieldDetail({ id }: { id: string }) {
           <GradeCards sheets={ss} />
         </DetailSection>
       ) : null}
-      <p className="mt-6 text-[11px] text-muted-foreground">分野は COFOG（政府支出の機能別分類）の大分類です。分け方は風土記の判断です。</p>
+      <p className="mt-6 text-xs text-muted-foreground">分野は COFOG（政府支出の機能別分類）の大分類です。分け方は風土記の判断です。</p>
     </>
   )
 }
@@ -680,7 +680,7 @@ function useMedia(query: string) {
 function YearMenu({ years, current, onChange }: { years: number[]; current: number; onChange: (y: number) => void }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-[13px] text-foreground">
+      <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-[15px] text-foreground">
         {yearName(current)}
         <span className="text-muted-foreground">（{reiwa(current).replace(/年度$/, '')}）</span>
         <CaretDownIcon className="size-3.5" aria-hidden="true" />
