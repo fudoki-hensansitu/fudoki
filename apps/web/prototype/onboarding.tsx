@@ -1,9 +1,8 @@
 // 試作: はじめて開いたときの流れ（marketingskills の onboarding skill に沿う）。
-// 1 ホームに出すまちを選ぶ（名前／現在地。飛ばせる）→ 2 選んだまちの要点を一枚で見せる（価値の瞬間）→ ホームに入ったら小さなチェックリスト（1つ目は済み、閉じられる）。
-// まちを探す（開くだけ）は上に残す。「住んでいるまち」を最初に聞くのは怖く見えるので、選ぶのは任意にする（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
+// 1 どのまちのお金を見るかを選ぶ（名前／現在地）→ 2 選んだまちの要点を一枚で見せる（価値の瞬間）→ まちの画面に入ったら小さなチェックリスト（1つ目は済み、閉じられる）。
+// 聞くのは一つだけにする。「住んでいるまち」「ホーム」のような、知らない人に通じない言葉や構えさせる言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
 import * as React from 'react'
-import { ArrowRightIcon, CheckIcon, MagnifyingGlassIcon, NavigationArrowIcon, XIcon } from '@phosphor-icons/react'
-import { useRouter } from '@void/react'
+import { ArrowRightIcon, CheckIcon, NavigationArrowIcon, XIcon } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { Logo } from '../nav/site-nav'
@@ -12,29 +11,12 @@ import { LocateError, locateMunicipality } from '../home/locate'
 import type { MapEntry } from '../jurisdiction/index-table'
 import './onboarding.css'
 
-/** 上の段: まちを探す。選んだまちの頁へ移るだけで、うちのまちには入れない */
-export function FindTown({ entries }: { entries: MapEntry[] }) {
-  const { visit } = useRouter()
-  return (
-    <section className="ob-rise rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
-      <h2 className="flex items-center gap-2 text-xl font-bold sm:text-2xl">
-        <MagnifyingGlassIcon className="size-6 opacity-80" aria-hidden="true" />
-        まちを探す
-      </h2>
-      <p className="mt-1 mb-4 text-sm opacity-80">収録しているまちの予算・決算・事業を開きます。</p>
-      <TownPicker entries={entries} onPick={(e) => visit(e.path)} placeholder="自治体名で探す（例：品川）" />
-    </section>
-  )
-}
-
 type Locate = { busy?: boolean; error?: string; hit?: MapEntry }
 
-/** 1 ホームに出すまちを選ぶ札。step は「1 / 2」の表示。onSkip（あとで）か onCancel（やめる）を出す */
-export function AskCard({ entries, onPick, onSkip, onCancel, step }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; onSkip?: () => void; onCancel?: () => void; step?: [number, number] }) {
-  const [mode, setMode] = React.useState<'idle' | 'pick' | 'locate'>('idle')
-  const [loc, setLoc] = React.useState<Locate>({})
+/** どのまちを見るかを聞く札。名前の入力欄をはじめから出し、下に「現在地から選ぶ」。first は はじめての流れ（緑・1 / 2）、それ以外は見るまちを変えるとき */
+export function AskTown({ entries, onPick, onCancel, first }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; onCancel?: () => void; first?: boolean }) {
+  const [loc, setLoc] = React.useState<Locate | null>(null)
   const locate = async () => {
-    setMode('locate')
     setLoc({ busy: true })
     try {
       const muni = await locateMunicipality()
@@ -46,36 +28,34 @@ export function AskCard({ entries, onPick, onSkip, onCancel, step }: { entries: 
     }
   }
   return (
-    <section className="ob-rise rounded-[24px] border bg-background p-5 sm:p-7" style={{ animationDelay: '.12s' }}>
-      {step ? <Steps at={step[0]} of={step[1]} /> : null}
-      <h2 className="text-[19px] leading-snug font-bold sm:text-[22px]">ホームに出すまちを選ぶ</h2>
-      <p className="mt-1.5 text-[14px] text-muted-foreground">選んだまちの予算と事業が、開くたびにこのホームに並びます。あとから変えられます。</p>
-      <div className="mt-5">
-        {mode === 'idle' ? (
-          <div className="grid gap-2.5 sm:grid-cols-2">
-            <Choice icon={<MagnifyingGlassIcon />} title="名前で選ぶ" note="自治体名を入れます" onClick={() => setMode('pick')} />
-            <Choice icon={<NavigationArrowIcon />} title="現在地から選ぶ" note="位置は保存しません" onClick={() => void locate()} />
+    <section className={cn('ob-rise rounded-[24px] p-5 sm:p-7', first ? 'bg-brand text-brand-foreground' : 'border bg-background')}>
+      {first ? <Steps at={1} of={2} onBrand /> : null}
+      <h2 className="text-[20px] leading-snug font-bold sm:text-[24px]">{first ? 'どのまちのお金を見ますか？' : '見るまちを変える'}</h2>
+      <p className={cn('mt-1 mb-4 text-[14px]', first ? 'opacity-80' : 'text-muted-foreground')}>名前で探すか、現在地から選びます。</p>
+      <TownPicker entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
+      <div className="mt-3 text-foreground">
+        {loc ? (
+          <div className="ob-swap">
+            <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onClose={() => setLoc(null)} />
           </div>
         ) : (
-          <div key={mode} className="ob-swap">
-            <div className="mb-2.5 flex items-center justify-between">
-              <span className="text-[13px] font-bold">{mode === 'pick' ? '名前で選ぶ' : '現在地から選ぶ'}</span>
-              <button type="button" onClick={() => (setMode('idle'), setLoc({}))} className="inline-flex items-center gap-1 text-[12px] text-muted-foreground hover:text-foreground">
-                <XIcon className="size-3.5" />
-                もどる
-              </button>
-            </div>
-            {mode === 'pick' ? (
-              <TownPicker entries={entries} onPick={onPick} placeholder="自治体名（例：品川）" />
-            ) : (
-              <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onPickByName={() => setMode('pick')} />
+          <button
+            type="button"
+            onClick={() => void locate()}
+            className={cn(
+              'inline-flex items-center gap-2 rounded-full px-4 py-2 text-[14px] font-bold transition-[background-color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none',
+              first ? 'bg-brand-foreground/15 text-brand-foreground hover:bg-brand-foreground/25' : 'bg-secondary hover:bg-accent',
             )}
-          </div>
+          >
+            <NavigationArrowIcon className="size-4" />
+            現在地から選ぶ
+            <span className={cn('text-[12px] font-normal', first ? 'opacity-75' : 'text-muted-foreground')}>位置は保存しません</span>
+          </button>
         )}
       </div>
-      {onSkip || onCancel ? (
-        <button type="button" onClick={onSkip ?? onCancel} className="mt-4 text-[13px] text-muted-foreground hover:text-foreground">
-          {onSkip ? 'あとで' : 'やめる'}
+      {onCancel ? (
+        <button type="button" onClick={onCancel} className="mt-4 text-[13px] text-muted-foreground hover:text-foreground">
+          やめる
         </button>
       ) : null}
     </section>
@@ -83,12 +63,12 @@ export function AskCard({ entries, onPick, onSkip, onCancel, step }: { entries: 
 }
 
 /** 何歩目か。点と「1 / 2」 */
-export function Steps({ at, of }: { at: number; of: number }) {
+export function Steps({ at, of, onBrand }: { at: number; of: number; onBrand?: boolean }) {
   return (
-    <div className="mb-3 flex items-center gap-2 text-[12px] text-muted-foreground">
+    <div className={cn('mb-3 flex items-center gap-2 text-[12px]', onBrand ? 'opacity-80' : 'text-muted-foreground')}>
       <span className="flex gap-1">
         {Array.from({ length: of }, (_, i) => (
-          <span key={i} className={cn('h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out', i < at ? 'w-5 bg-primary' : 'w-1.5 bg-border')} />
+          <span key={i} className={cn('h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out', i < at ? cn('w-5', onBrand ? 'bg-brand-foreground' : 'bg-primary') : cn('w-1.5', onBrand ? 'bg-brand-foreground/30' : 'bg-border'))} />
         ))}
       </span>
       <span className="tabular-nums">
@@ -98,25 +78,8 @@ export function Steps({ at, of }: { at: number; of: number }) {
   )
 }
 
-function Choice({ icon, title, note, onClick }: { icon: React.ReactNode; title: string; note: string; onClick: () => void }) {
-  return (
-    <button
-      type="button"
-      onClick={onClick}
-      className="group flex items-center gap-3 rounded-2xl bg-secondary px-4 py-3.5 text-left transition-[background-color,transform] duration-150 ease-out hover:bg-accent active:scale-[0.98] motion-reduce:transition-none"
-    >
-      <span className="grid size-9 shrink-0 place-items-center rounded-full bg-background text-muted-foreground [&_svg]:size-[18px]">{icon}</span>
-      <span className="min-w-0 flex-1">
-        <span className="block text-[14px] font-bold">{title}</span>
-        <span className="block text-[12px] text-muted-foreground">{note}</span>
-      </span>
-      <ArrowRightIcon className="size-4 text-muted-foreground transition-transform duration-150 ease-out group-hover:translate-x-0.5 motion-reduce:transition-none" />
-    </button>
-  )
-}
-
-/** 現在地の結果。当たったら「このまちにする」で確かめてから決める（勝手に決めない） */
-function LocateResult({ loc, onPick, onRetry, onPickByName }: { loc: Locate; onPick: (e: MapEntry) => void; onRetry: () => void; onPickByName: () => void }) {
+/** 現在地の結果。当たったら「このまちを選ぶ」で確かめてから決める（勝手に決めない） */
+function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: (e: MapEntry) => void; onRetry: () => void; onClose: () => void }) {
   if (loc.busy)
     return (
       <div role="status" className="flex items-center gap-3 rounded-2xl bg-secondary px-4 py-3.5 text-[14px]">
@@ -144,34 +107,16 @@ function LocateResult({ loc, onPick, onRetry, onPickByName }: { loc: Locate; onP
         <button type="button" onClick={onRetry} className="text-primary hover:underline">
           もう一度
         </button>
-        <button type="button" onClick={onPickByName} className="text-primary hover:underline">
-          名前で選ぶ
+        <button type="button" onClick={onClose} className="text-primary hover:underline">
+          閉じる
         </button>
       </div>
     </div>
   )
 }
 
-const SKIP = 'fudoki:proto-onboarding-skipped'
-
-/** うちのまちを決めていないときのホーム。reveal があれば（まちを選んだ直後）2歩目の要点を出す */
+/** まちを選んでいないときの画面。reveal があれば（まちを選んだ直後）2歩目の要点を出す */
 export function Empty({ entries, onPick, reveal }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; reveal: React.ReactNode }) {
-  const [skipped, setSkipped] = React.useState(false)
-  React.useEffect(() => {
-    try {
-      setSkipped(localStorage.getItem(SKIP) === '1')
-    } catch {
-      // 読めなければ毎回出す
-    }
-  }, [])
-  const skip = () => {
-    setSkipped(true)
-    try {
-      localStorage.setItem(SKIP, '1')
-    } catch {
-      // 保存できなくても、この頁では閉じる
-    }
-  }
   return (
     <>
       <header className="ob-rise mb-6">
@@ -180,19 +125,7 @@ export function Empty({ entries, onPick, reveal }: { entries: MapEntry[]; onPick
         <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">まちのお金、何に使ってる？</h1>
         <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
       </header>
-      <FindTown entries={entries} />
-      <div className="mt-4">
-        {reveal ? (
-          <div key="reveal">{reveal}</div>
-        ) : skipped ? (
-          <button type="button" onClick={() => setSkipped(false)} className="inline-flex items-center gap-1.5 text-[14px] text-primary hover:underline">
-            ホームに出すまちを選ぶ
-            <ArrowRightIcon className="size-4" />
-          </button>
-        ) : (
-          <AskCard entries={entries} onPick={onPick} onSkip={skip} step={[1, 2]} />
-        )}
-      </div>
+      {reveal ? <div key="reveal">{reveal}</div> : <AskTown entries={entries} onPick={onPick} first />}
     </>
   )
 }
@@ -201,7 +134,7 @@ export type CheckItem = { key: string; label: string; href: string }
 const CHECK = 'fudoki:proto-checklist'
 type CheckState = { done: string[]; closed?: boolean }
 
-/** ホームのチェックリスト。まちを選んだときに start() で始め、1つ目（まちを選ぶ）は済みにしておく */
+/** まちの画面のチェックリスト。まちを選んだときに startChecklist() で始め、1つ目（まちを選ぶ）は済みにしておく */
 export const startChecklist = () => {
   try {
     localStorage.setItem(CHECK, JSON.stringify({ done: ['town'] } satisfies CheckState))
@@ -229,7 +162,7 @@ export function Checklist({ items }: { items: CheckItem[] }) {
     }
   }
   if (!st || st.closed) return null
-  const all = [{ key: 'town', label: 'ホームに出すまちを選ぶ', href: '' }, ...items]
+  const all = [{ key: 'town', label: '見るまちを選ぶ', href: '' }, ...items]
   const n = all.filter((x) => st.done.includes(x.key)).length
   const complete = n === all.length
   return (

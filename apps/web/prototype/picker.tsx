@@ -1,6 +1,7 @@
-// 試作のピッカー（prototype skill の PICKER.md の振る舞い）。1〜N・←→で切り替え、R で描き直す。選んだ案は variant.ts が持つ
+// 試作のピッカー（prototype skill の PICKER.md の振る舞い）。1〜N・←→で切り替え、R で描き直す。「最初から」は試作の保存を消してはじめての画面に戻す。選んだ案は variant.ts が持つ
 import * as React from 'react'
 import './picker.css'
+import { resetProto } from './towns'
 import { useVariant, VARIANTS } from './variant'
 
 export function Picker() {
@@ -50,6 +51,10 @@ export function Picker() {
       <span className="proto-picker-divider" aria-hidden="true" />
       <button className="proto-picker-item proto-picker-replay" aria-label="Replay animation (R)" onClick={replay}>
         ↻
+      </button>
+      {/* 選んだまち・チェックリストを消して、はじめて開いた画面から見直す */}
+      <button className="proto-picker-item" onClick={() => (resetProto(), window.location.assign('/prototype'))}>
+        最初から
       </button>
     </nav>
   )

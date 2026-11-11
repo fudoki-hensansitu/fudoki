@@ -17,7 +17,7 @@ import type { Props } from '../pages/prototype/index.server'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { EXAMPLES, ProjectSearchBox, searchHref } from './search'
 import { useMyTown, type Town } from './towns'
-import { AskCard, Checklist, Empty, Steps, startChecklist, type CheckItem } from './onboarding'
+import { AskTown, Checklist, Empty, Steps, startChecklist, type CheckItem } from './onboarding'
 import { useVariant } from './variant'
 
 const toTown = (e: MapEntry): Town => ({ code: e.code, name: e.name, path: e.path })
@@ -311,7 +311,7 @@ function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string
   return <>{children(buildCtx(town, d, year, setYear, vision))}</>
 }
 
-/** はじめての流れの2歩目: 選んだまちの要点を一枚で見せる。ここで「ホームに出す」と決める */
+/** はじめての流れの2歩目: 選んだまちの要点を一枚で見せる。「このまちを見る」で決める */
 function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () => void }) {
   const { town, d, v, year } = c
   const top = v.fields[0]
@@ -348,18 +348,19 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
       </dl>
       <div className="mt-5 flex flex-wrap items-center gap-3">
         <button type="button" onClick={onOpen} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-[14px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
-          このまちをホームに出す
+          このまちを見る
           <ArrowRightIcon className="size-4" />
         </button>
         <button type="button" onClick={onBack} className="text-[13px] text-muted-foreground hover:text-foreground">
           ちがうまちを選ぶ
         </button>
       </div>
+      <p className="mt-3 text-[12px] text-muted-foreground">次に開いたときも、このまちから始まります。あとから変えられます。</p>
     </section>
   )
 }
 
-/** ホームのチェックリストの残りの項目。まちの頁・検索・アシスタントへ */
+/** チェックリストの残りの項目。まちの頁・検索・アシスタントへ */
 const checkItems = (c: Ctx): CheckItem[] => [
   { key: 'flow', label: 'お金の使い道を見る', href: flowHref(c) },
   { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects` },
@@ -371,7 +372,7 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
   const { ready, town, set } = useMyTown()
   const [changing, setChanging] = React.useState(false)
   const { current, key } = useVariant()
-  // はじめての流れで選んだまち。要点を見せてから「ホームに出す」で決める
+  // はじめての流れで選んだまち。要点を見せてから「このまちを見る」で決める
   const [pending, setPending] = React.useState<Town | null>(null)
   const shown = town ?? pending
   const snap = useSnapshot(ready && shown ? shown.code : null)
@@ -397,7 +398,7 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
         reveal={pending ? <WithCtx town={pending} vision={vision} snap={snap}>{(c) => <Reveal c={c} onOpen={open} onBack={() => setPending(null)} />}</WithCtx> : null}
       />
     )
-  else if (changing) body = <AskCard entries={entries} onPick={pick} onCancel={() => setChanging(false)} />
+  else if (changing) body = <AskTown entries={entries} onPick={pick} onCancel={() => setChanging(false)} />
   else if (current === 1)
     body = (
       <WithCtx town={town!} vision={vision} snap={snap}>
@@ -414,7 +415,7 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
       <>
         <div className="mb-3 flex justify-end">
           <button type="button" onClick={choose} className="text-[13px] text-muted-foreground hover:text-foreground">
-            ホームのまちを変える
+            見るまちを変える
           </button>
         </div>
         <WithCtx town={town!} vision={vision} snap={snap}>

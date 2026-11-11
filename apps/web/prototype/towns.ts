@@ -1,10 +1,10 @@
 // 試作: 「うちのまち」（1つ）と最近見たまち。ブラウザ（localStorage）にだけ置き、サーバーには送らない。
-// サイドバーとホームが同じものを読むので、変えたら window に知らせる。うちのまちのコードは今のホームと同じ鍵（saveHomeCode）にも書く
+// サイドバーとホームが同じものを読むので、変えたら window に知らせる。本番のホームのうちのまち（fudoki:home-jurisdiction）とは分け、試作は必ずはじめての状態から見られるようにする
 import * as React from 'react'
-import { loadHomeCode, loadRecent, saveHomeCode, type RecentJurisdiction } from '../home/recent'
+import { loadRecent, type RecentJurisdiction } from '../home/recent'
 import type { MapEntry } from '../jurisdiction/index-table'
 
-const KEY = 'fudoki:home-town'
+const KEY = 'fudoki:proto-town'
 const EVENT = 'fudoki:home-town'
 
 export type Town = RecentJurisdiction
@@ -22,11 +22,7 @@ export const loadTowns = () =>
 
 function read(): Town | null {
   try {
-    // うちのまちの正は今のホームと同じ鍵。今のホームで変えたら、最近見たまちから名前を引く
-    const home = loadHomeCode()
-    if (!home) return null
-    const t = JSON.parse(localStorage.getItem(KEY) ?? 'null') as Town | null
-    return t?.code === home ? t : loadRecent().find((r) => r.code === home) || null
+    return JSON.parse(localStorage.getItem(KEY) ?? 'null') as Town | null
   } catch {
     return null
   }
@@ -39,7 +35,16 @@ export function setMyTown(t: Town | null) {
   } catch {
     // 保存できなくても、その場では選んだまちを出す
   }
-  saveHomeCode(t?.code ?? null)
+  window.dispatchEvent(new Event(EVENT))
+}
+
+/** 試作の保存（まち・オンボを飛ばした印・チェックリスト）を消し、はじめて開いた状態に戻す */
+export function resetProto() {
+  try {
+    for (const k of [KEY, 'fudoki:proto-onboarding-skipped', 'fudoki:proto-checklist']) localStorage.removeItem(k)
+  } catch {
+    // 消せなければそのまま
+  }
   window.dispatchEvent(new Event(EVENT))
 }
 
@@ -49,28 +54,15 @@ export function useMyTown() {
   const [recent, setRecent] = React.useState<Town[]>([])
   const [ready, setReady] = React.useState(false)
   React.useEffect(() => {
-    let alive = true
     const sync = () => {
-      const t = read()
-      const home = loadHomeCode()
-      // 今のホームで選んだだけのまちは名前が手元に無いので、一覧から引く
-      if (!t && home) {
-        void loadTowns().then((list) => {
-          // 引いている間に外れた・別のまちに変わったときは捨てる
-          if (!alive || loadHomeCode() !== home) return
-          const e = list.find((x) => x.code === home)
-          if (e) setMyTown({ code: e.code, name: e.name, path: e.path })
-          else setReady(true)
-        })
-      } else setReady(true)
-      setTown(t)
+      setTown(read())
       setRecent(loadRecent())
+      setReady(true)
     }
     sync()
     window.addEventListener(EVENT, sync)
     window.addEventListener('storage', sync)
     return () => {
-      alive = false
       window.removeEventListener(EVENT, sync)
       window.removeEventListener('storage', sync)
     }

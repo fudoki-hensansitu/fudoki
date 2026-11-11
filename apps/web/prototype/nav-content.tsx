@@ -114,7 +114,7 @@ function Inside({ path, town }: { path: string; town: Town | null }) {
       <SidebarGroup>
         <SidebarGroupLabel className="h-auto gap-2 py-1.5 text-[13px] text-sidebar-foreground group-data-[collapsible=icon]:hidden">
           <TownIcon town={town} />
-          <span className="truncate font-bold">{town ? town.name : 'うちのまち'}</span>
+          <span className="truncate font-bold">{town ? town.name : 'まちを選んでいません'}</span>
         </SidebarGroupLabel>
         <SidebarMenu>
           <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
