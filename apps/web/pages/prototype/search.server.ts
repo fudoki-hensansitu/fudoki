@@ -59,7 +59,7 @@ export const loader = defineHandler<Props>(async (c) => {
       if (py.fiscal_year === Math.max(...t.years)) t.name = py.name
       tracked.set(py.project_id, t)
     }
-    return { q, towns: [...towns.values()].sort((a, b) => a.code.localeCompare(b.code)), trackable: [...tracked.values()].filter((t) => t.years.length > 1).slice(0, 8), failed: false }
+    return { q, towns: [...towns.values()].sort((a, b) => a.code.localeCompare(b.code)), trackable: [...tracked.values()].filter((t) => t.years.length > 1).map((t) => ({ ...t, years: t.years.sort((x, y) => x - y) })).slice(0, 8), failed: false }
   } catch {
     return { q, towns: [], trackable: [], failed: true }
   }
