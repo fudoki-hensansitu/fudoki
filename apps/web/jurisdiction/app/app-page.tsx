@@ -153,7 +153,6 @@ function Row({ icon, title, sub, yen, note, rank, selected, onClick }: { icon: R
         <Amt yen={yen} className="text-[17px]" />
         {note ? <span className="block text-xs text-muted-foreground">{note}</span> : null}
       </span>
-      <CaretRightIcon className="size-3.5 shrink-0 text-muted-foreground" aria-hidden="true" />
     </button>
   )
 }
@@ -607,7 +606,6 @@ function SheetDetail({ s }: { s: EvalSheet }) {
         <DetailSection icon={BriefcaseIcon} title="予算書の事業">
           <button type="button" onClick={() => select({ kind: 'project', id: p.id })} className="flex w-full items-center gap-3 rounded-xl bg-card p-3 text-left hover:bg-secondary">
             <span className="flex-1"><span className="block text-[15px] font-semibold">{p.name}</span><span className="text-xs text-muted-foreground">{p.dept}</span></span>
-            <CaretRightIcon className="size-3.5 text-muted-foreground" />
           </button>
         </DetailSection>
       ) : null}
@@ -725,7 +723,6 @@ function MokuDetail({ moku, phase }: { moku: Moku; phase: 'initial' | 'settlemen
               <button key={p.id} type="button" onClick={() => select({ kind: 'project', id: p.id })} className="flex w-full items-center gap-3 px-1.5 py-2.5 text-left hover:bg-secondary">
                 <span className="min-w-0 flex-1"><span className="block text-[15px]">{p.name}</span>{p.dept ? <span className="text-xs text-muted-foreground">{p.dept}</span> : null}</span>
                 <Amt yen={amountOf(p)} className="text-[15px]" />
-                <CaretRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
               </button>
             ))}
           </Rows>
