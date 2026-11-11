@@ -1,10 +1,10 @@
-// 試作: 事業を検索（/prototype/search?q=給食&code=131091）。言葉で、収録しているまちの決算の内訳（事業・節など）を引く。code があればそのまちだけ。
+// 事業を検索（/search?q=給食&code=131091）。言葉で、収録しているまちの決算の内訳（事業・節など）を引く。code があればそのまちだけ。
 // まちは自治体コードの順に並べ、金額で順位を付けない。内訳は入れ子なので足さない
 import { defineHandler, defineHead } from 'void'
-import { jurisdictionPath } from '../../jurisdiction/path'
-import { catalog } from '../../server/jurisdiction-routes'
-import type { Env } from '../../server/env'
-import { apiPostAll, type DetailRow } from '../../server/prototype-api'
+import { jurisdictionPath } from '../jurisdiction/path'
+import { catalog } from '../server/jurisdiction-routes'
+import type { Env } from '../server/env'
+import { apiPostAll, type DetailRow } from '../server/api-fetch'
 
 const YEARS = [2025, 2024]
 /** 1年度で読む頁の上限（1頁1000行） */
@@ -72,4 +72,4 @@ export const loader = defineHandler<Props>(async (c) => {
   }
 })
 
-export const head = defineHead(() => ({ title: '事業を検索（試作） — 風土記', meta: [{ name: 'robots', content: 'noindex' }] }))
+export const head = defineHead(() => ({ title: '事業を検索 — 風土記', meta: [{ name: 'robots', content: 'noindex' }] }))

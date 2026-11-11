@@ -23,15 +23,12 @@ import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, type Theme } from './theme'
 import { ListMagnifyingGlassIcon } from '@phosphor-icons/react'
+import { NavContent } from './nav-content'
 
-// 試作のサイドバーは /prototype の下でだけ読む（ほかの頁に combobox などを載せない）
-const ProtoNavContent = React.lazy(() => import('../prototype/nav-content').then((m) => ({ default: m.ProtoNavContent })))
-const ProtoPicker = React.lazy(() => import('../prototype/picker').then((m) => ({ default: m.Picker })))
 
 export const NAV_SECTIONS = ['home', 'assistant', 'search'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
-/** proto: 試作のサイドバー（/prototype の下だけ） */
-export type SiteNavProps = { active?: NavSection; open: boolean; theme: Theme; proto?: boolean }
+export type SiteNavProps = { active?: NavSection; open: boolean; theme: Theme }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
 function NavLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
   if (props.href.startsWith('https://')) return <a target="_blank" rel="noopener" {...props} />
@@ -197,18 +194,13 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
 }
 
 /** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。入らないものは「設定」にまとめる */
-function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void; proto?: boolean }) {
+function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void }) {
   const [hidden, setHidden] = useHideOnScroll()
-  const items = proto
-    ? [
-        { href: '/prototype', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
-        { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
-        { href: '/prototype/search', label: '事業を検索', icon: <ListMagnifyingGlassIcon />, active: active === 'search' },
-      ]
-    : [
-        { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
-        { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
-      ]
+  const items = [
+    { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
+    { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
+    { href: '/search', label: '事業を検索', icon: <ListMagnifyingGlassIcon />, active: active === 'search' },
+  ]
   return (
     <nav
       aria-label="サイト"
@@ -219,7 +211,7 @@ function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; them
     >
       {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
       <Separator />
-      <ul data-tour={proto ? 'nav' : undefined} className={cn('grid h-14', proto ? 'grid-cols-4' : 'grid-cols-3')}>
+      <ul data-tour="nav" className="grid h-14 grid-cols-4">
         {items.map((i) => (
           <li key={i.href}>
             <NavLink href={i.href} aria-current={i.active ? 'page' : undefined} className={BOTTOM_ITEM}>
@@ -236,11 +228,8 @@ function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; them
   )
 }
 
-export function SiteNav({ active, open, theme: initialTheme, proto }: SiteNavProps) {
+export function SiteNav({ active, open, theme: initialTheme }: SiteNavProps) {
   const [theme, setTheme] = React.useState(initialTheme)
-  // 試作の部品は lazy なので、サーバーの HTML では描かず、描いたあとに読む
-  const [mounted, setMounted] = React.useState(false)
-  React.useEffect(() => setMounted(true), [])
   const pickTheme = (t: Theme) => {
     setTheme(t)
     applyTheme(t)
@@ -249,16 +238,10 @@ export function SiteNav({ active, open, theme: initialTheme, proto }: SiteNavPro
     <TooltipProvider>
       {/* 頁の本文は provider の外（.site-main）にあるので、provider の枠は箱を作らず（contents）、幅の変数だけを配る */}
       <SidebarProvider defaultOpen={open} className="contents" style={{ '--sidebar-width': '13rem', '--sidebar-width-icon': '3.5rem' } as React.CSSProperties}>
-        <BottomNav active={active} theme={theme} onPick={pickTheme} proto={proto} />
-        {/* 試作: 案のピッカーは /prototype の下のどの頁でも出す */}
-        {proto && mounted ? (
-          <React.Suspense fallback={null}>
-            <ProtoPicker />
-          </React.Suspense>
-        ) : null}
+        <BottomNav active={active} theme={theme} onPick={pickTheme} />
         <Sidebar collapsible="icon" aria-label="サイト">
           <SidebarHeader className="flex-row items-center justify-between gap-2 px-3 pt-5 pb-4 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2">
-            <NavLink href={proto ? '/prototype' : '/'} aria-label="風土記 ホーム" className="ps-2 group-data-[collapsible=icon]:hidden">
+            <NavLink href="/" aria-label="風土記 ホーム" className="ps-2 group-data-[collapsible=icon]:hidden">
               {/* 色は svg に付ける（a { color: inherit } に負けて黒くならないように） */}
               <Logo className="block h-7 w-auto text-primary" />
             </NavLink>
@@ -266,17 +249,7 @@ export function SiteNav({ active, open, theme: initialTheme, proto }: SiteNavPro
             <CollapsedToggle />
           </SidebarHeader>
           <SidebarContent>
-            {proto && mounted ? (
-              <React.Suspense fallback={null}>
-                <ProtoNavContent />
-              </React.Suspense>
-            ) : (
-              <SidebarGroup>
-                <SidebarMenu>
-                  <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={active === 'assistant'} />
-                </SidebarMenu>
-              </SidebarGroup>
-            )}
+            <NavContent />
           </SidebarContent>
           <SidebarFooter className="gap-0 px-2 pt-2 pb-12">
             <SidebarMenu>

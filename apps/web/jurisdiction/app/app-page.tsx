@@ -58,7 +58,7 @@ import { assetPath, EMBLEMS } from '../emblems'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
-import { PageTour } from '../../prototype/tour'
+import { PageTour } from '../../home/tour'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
@@ -1136,7 +1136,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
         </Tabs>
       </div>
       <AskDock name={data.name} sitekey={sitekey} year={year} section={TABS.find((t) => t.key === tab)?.label} />
-      {/* 試作のホーム（/prototype）で住んでいるまちを選んだ人にだけ出すツアーの続き。それ以外では何も描かない */}
+      {/* ホームで住んでいるまちを選んだ人にだけ出すツアーの続き。それ以外では何も描かない */}
       <PageTour name={data.name} />
     </div>
   )

@@ -1,4 +1,4 @@
-/* 試作: オンボーディングの動き。入りは ease-out で 300ms 前後、2歩目の要点は上から順に一度だけ浮かぶ。transform と opacity だけを動かす */
+/* オンボーディングとツアーの動き。入りは ease-out で 300ms 前後、2歩目の要点は上から順に一度だけ浮かぶ。transform と opacity だけを動かす */
 .ob-rise {
   animation: ob-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }

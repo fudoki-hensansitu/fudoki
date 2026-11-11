@@ -1,4 +1,4 @@
-// 試作の小さな部品。自治体の頁（jurisdiction/app/app-page.tsx）と同じ分野の icon と金額の書き方
+// ホームと事業の検索の小さな部品。自治体の頁（jurisdiction/app/app-page.tsx）と同じ分野の icon と金額の書き方
 import { BankIcon, BasketballIcon, DotsThreeCircleIcon, FirstAidKitIcon, HandHeartIcon, HouseLineIcon, LeafIcon, ShieldCheckIcon, StorefrontIcon, StudentIcon, type Icon } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 

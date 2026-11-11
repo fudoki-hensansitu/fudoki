@@ -1,5 +1,4 @@
 // ホーム（/）。全自治体の要約と、くわしく見られる自治体（事業評価か都市像のある自治体）を渡し、本文は home/home.tsx が描く。旧トップの紹介は /about
-import type { Context } from 'hono'
 import { defineHandler, defineHead } from 'void'
 import type { HomeProps } from '../home/home'
 import { VISIONS } from '../jurisdiction/visions'
@@ -12,8 +11,7 @@ const TITLE = '風土記 — まちのお金、何に使ってる？'
 const DESCRIPTION = 'まちのお金、何に使ってる？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、出典の資料まで辿れます。'
 const ORGANIZATION = { '@context': 'https://schema.org', '@type': 'Organization', name: '風土記（fudoki）', url: 'https://fudoki.dev/', logo: 'https://fudoki.dev/icon.png', sameAs: ['https://github.com/fudoki-hensansitu', 'https://docs.fudoki.dev/'] }
 
-/** ホームのデータ。試作のホーム（/prototype）も使う */
-export async function homeData(c: Context): Promise<Props> {
+export const loader = defineHandler<Props>(async (c) => {
   c.header('Cache-Control', 'public, max-age=300')
   // API に繋がらなくても、ほかの使い方への入口は出す
   const env = c.env as unknown as Env
@@ -29,9 +27,7 @@ export async function homeData(c: Context): Promise<Props> {
       return e ? [{ code: j.code, name: e.name, path: e.path, vision: VISIONS[j.code]?.text, ...(evalYear !== undefined ? { evalYear } : {}) }] : []
     })
   return { entries, featured }
-}
-
-export const loader = defineHandler<Props>(homeData)
+})
 
 export const head = defineHead(() => ({
   title: TITLE,

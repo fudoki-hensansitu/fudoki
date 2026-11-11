@@ -1,4 +1,4 @@
-// 試作: apps/api の検索を web の loader から呼ぶ小さな入口（本実装では Hono RPC の型つきに寄せる）
+// apps/api の検索を web の loader から呼ぶ小さな入口（いずれ Hono RPC の型つきに寄せる）
 import { apiFetch, type Env } from './env'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
@@ -15,7 +15,7 @@ export async function apiGet<T>(env: Env, path: string): Promise<T> {
   return (await r.json()) as T
 }
 
-/** next_page_token が無くなるまで読む（試作なので頁数に上限を置く） */
+/** next_page_token が無くなるまで読む（頁数に上限を置く） */
 export async function apiPostAll<R extends { next_page_token?: string | null }>(env: Env, path: string, body: Record<string, unknown>, maxPages = 5): Promise<R[]> {
   const out: R[] = []
   let token: string | undefined

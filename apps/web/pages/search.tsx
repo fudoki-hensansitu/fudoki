@@ -1,4 +1,4 @@
-import { Search } from '../../prototype/search'
+import { Search } from '../search/search'
 import type { Props } from './search.server'
 
 export default function SearchPage(props: Props) {

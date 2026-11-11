@@ -1,19 +1,19 @@
-// 試作: 事業を検索。言葉で全部のまち（または1つのまち）の決算の内訳を引き、まちごとに並べる。まちは自治体コードの順で、金額の順位は付けない
+// 事業を検索。言葉で全部のまち（または1つのまち）の決算の内訳を引き、まちごとに並べる。まちは自治体コードの順で、金額の順位は付けない
 import * as React from 'react'
 import { ArrowRightIcon, MagnifyingGlassIcon, XIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { InputGroup, InputGroupAddon, InputGroupInput } from '@/components/ui/input-group'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
-import { Emblem } from '../home/home'
+import { Emblem } from '../home/town-picker'
 import { reiwa } from '../jurisdiction/types'
-import { Amt } from './parts'
-import { useMyTown } from './towns'
-import type { Props, TownHits } from '../pages/prototype/search.server'
+import { Amt } from '../home/parts'
+import { useMyTown } from '../home/towns'
+import type { Props, TownHits } from '../pages/search.server'
 
 export const EXAMPLES = ['給食', 'プール', '保育', '図書館', '防災', '公園', 'DX']
 
-export const searchHref = (q: string, code?: string | null) => `/prototype/search?q=${encodeURIComponent(q)}${code ? `&code=${code}` : ''}`
+export const searchHref = (q: string, code?: string | null) => `/search?q=${encodeURIComponent(q)}${code ? `&code=${code}` : ''}`
 
 /** 事業を検索する欄。サイドバー・ホーム・この頁で同じものを使う */
 export function ProjectSearchBox({ q = '', code, placeholder, className, size = 'lg' }: { q?: string; code?: string | null; placeholder?: string; className?: string; size?: 'lg' | 'md' }) {

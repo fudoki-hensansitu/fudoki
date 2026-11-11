@@ -1,4 +1,4 @@
-// 試作: はじめて開いたときの流れ（marketingskills の onboarding skill に沿う）。
+// はじめて開いたときの流れ（marketingskills の onboarding skill に沿う）。
 // 1 住んでいるまちを選ぶ（名前／現在地）→ 2 選んだまちの要点を一枚で見せる（価値の瞬間）→ ツアー（tour.tsx）→ チェックリスト（1つ目は済み、閉じられる）。
 // ほかのまちを見る導線として、まちの検索はホームに常に出す。「ホーム」「見るまち」のような通じない言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
 import * as React from 'react'
@@ -7,8 +7,8 @@ import { useRouter } from '@void/react'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { Logo } from '../nav/site-nav'
-import { Picker as TownPicker } from '../home/home'
-import { LocateError, locateMunicipality } from '../home/locate'
+import { Picker as TownPicker } from './town-picker'
+import { LocateError, locateMunicipality } from './locate'
 import type { MapEntry } from '../jurisdiction/index-table'
 import './onboarding.css'
 
@@ -147,7 +147,7 @@ export function Empty({ entries, onPick, reveal }: { entries: MapEntry[]; onPick
 }
 
 export type CheckItem = { key: string; label: string; href: string }
-const CHECK = 'fudoki:proto-checklist'
+const CHECK = 'fudoki:checklist'
 type CheckState = { done: string[]; closed?: boolean }
 
 /** まちの画面のチェックリスト。まちを選んだときに startChecklist() で始め、1つ目（まちを選ぶ）は済みにしておく */
