@@ -194,7 +194,7 @@ function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, 
 }
 
 // ---------- 画面 ----------
-type TabKey = 'overview' | 'projects' | 'eval'
+type TabKey = 'overview' | 'projects'
 type Go = (t: TabKey, opt?: { filter?: string; field?: string; grade?: string }) => void
 
 function CountCard({ icon, label, n, onClick }: { icon: React.ReactNode; label: string; n: number; onClick: () => void }) {
@@ -310,7 +310,7 @@ function Overview({ go }: { go: Go }) {
           <CountCard icon={<ListBulletsIcon />} label="事業" n={v.current.length} onClick={() => go('projects', { filter: 'all' })} />
           <CountCard icon={<NewIcon className="text-primary" />} label="新しく始める事業" n={v.newProjects.length + v.freshUnlinked.length} onClick={() => go('projects', { filter: 'new' })} />
           <div className={cn(!v.sheets.length && 'col-span-2')}><CountCard icon={<StopIcon className="text-primary" />} label="やめた事業" n={v.ended.length} onClick={() => go('projects', { filter: 'ended' })} /></div>
-          {v.sheets.length ? <CountCard icon={<ClipboardTextIcon />} label="評価した事業" n={v.sheets.length} onClick={() => go('eval')} /> : null}
+          {v.sheets.length ? <CountCard icon={<ClipboardTextIcon />} label="評価した事業" n={v.sheets.length} onClick={() => go('projects', { filter: 'eval' })} /> : null}
         </div>
       </div>
 
@@ -330,15 +330,15 @@ function Overview({ go }: { go: Go }) {
 
       {v.sheets.length ? (
         <section>
-          <SectionHead title="事業評価" sub={`${r(v.year)}年度の事業`}><MoreLink onClick={() => go('eval')} /></SectionHead>
-          <GradeCards sheets={v.sheets} onChange={(g) => go('eval', { grade: g })} />
+          <SectionHead title="事業評価" sub={`${r(v.year)}年度の事業`}><MoreLink onClick={() => go('projects', { filter: 'eval' })} /></SectionHead>
+          <GradeCards sheets={v.sheets} onChange={(g) => go('projects', { filter: 'eval', grade: g })} />
         </section>
       ) : null}
     </div>
   )
 }
 
-function ProjectsTab({ filter, setFilter, field, setField }: { filter: string; setFilter: (f: string) => void; field: string; setField: (f: string) => void }) {
+function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { filter: string; setFilter: (f: string) => void; field: string; setField: (f: string) => void; grade: string; setGrade: (g: string) => void }) {
   const { v } = useApp()
   const [q, setQ] = React.useState('')
   const items = React.useMemo(() => {
@@ -360,6 +360,7 @@ function ProjectsTab({ filter, setFilter, field, setField }: { filter: string; s
           <ToggleGroupItem value="all">すべて</ToggleGroupItem>
           <ToggleGroupItem value="new"><NewIcon className="size-4 text-primary" />新しく始める</ToggleGroupItem>
           <ToggleGroupItem value="ended"><StopIcon className="size-4 text-primary" />やめた</ToggleGroupItem>
+          {v.sheets.length ? <ToggleGroupItem value="eval"><ClipboardTextIcon className="size-4" />評価した</ToggleGroupItem> : null}
         </ToggleGroup>
       </div>
       <ToggleGroup value={[field]} onValueChange={(x) => x[0] && setField(x[0])} variant="outline" size="sm" className="-mx-1 w-auto overflow-x-auto px-1 py-1 [scrollbar-width:none]">
@@ -368,6 +369,7 @@ function ProjectsTab({ filter, setFilter, field, setField }: { filter: string; s
           <ToggleGroupItem key={f.id} value={f.id} className="rounded-full"><FieldIcon id={f.id} />{f.name}</ToggleGroupItem>
         ))}
       </ToggleGroup>
+      {filter === 'eval' ? <EvalList grade={grade} setGrade={setGrade} field={field} q={q} /> : <>
       <p className="px-2.5 text-xs text-muted-foreground">
         {filter === 'new' ? '新規の施策が付いた事業と、予算書で新しく現れた事業・' : ''}
         {items.length}件・{filter === 'ended' ? `${r(v.year - 1)} 当初予算` : `${r(v.year)} 当初予算`}の多い順
@@ -379,18 +381,21 @@ function ProjectsTab({ filter, setFilter, field, setField }: { filter: string; s
           <Rows>{unlinked.map((m) => <MeasureRow key={m.id} m={m} />)}</Rows>
         </section>
       ) : null}
+      </>}
     </div>
   )
 }
 
-function EvalTab({ grade, setGrade }: { grade: string; setGrade: (g: string) => void }) {
+/** 事業の一覧の「評価した」。評価は事業の属性なので、別のタブにせず事業の絞り込みの1つにする */
+function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: string) => void; field: string; q: string }) {
   const { v } = useApp()
-  if (!v.sheets.length) return <p className="text-sm text-muted-foreground">{r(v.year)}年度の事業の評価は、まだ収録していません。</p>
-  const ss = v.sheets.filter((s) => s.grade === grade).sort((a, b) => (b.s ?? 0) - (a.s ?? 0))
+  const t = q.trim()
+  const all = v.sheets.filter((s) => (field === 'all' || s.field === field) && (!t || s.name.includes(t) || (s.div ?? '').includes(t)))
+  const ss = all.filter((s) => s.grade === grade).sort((a, b) => (b.s ?? 0) - (a.s ?? 0))
   const dirs = Object.entries(DIRECTIONS).map(([k, x]) => [x, ss.filter((s) => s.dir === k).length] as const).filter(([, n]) => n)
   return (
-    <div className="flex flex-col gap-3">
-      <GradeCards sheets={v.sheets} value={grade} onChange={setGrade} />
+    <div className="mt-1 flex flex-col gap-3">
+      <GradeCards sheets={all} value={grade} onChange={setGrade} />
       <div className="flex flex-wrap gap-1.5">
         {dirs.map(([x, n]) => (
           <span key={x.label} className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs text-muted-foreground"><Mark kind={x.icon} className="size-[18px]" />{x.label} {n}</span>
@@ -652,7 +657,6 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
 const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'overview', label: 'まとめ', icon: SquaresFourIcon },
   { key: 'projects', label: '事業', icon: ListBulletsIcon },
-  { key: 'eval', label: '事業評価', icon: ClipboardTextIcon },
 ]
 
 export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emblem }: { vision: string; prefecture: string; prefecturePath: string; officialUrl: string; emblem: string }) {
@@ -671,7 +675,16 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
   const v = React.useMemo(() => (d ? yearView(d, year) : undefined), [d, year])
   const projects = React.useMemo(() => new Map((d?.projects ?? []).map((p) => [p.id, p])), [d])
 
+  // タブの真上の目印。これが画面の上へ消えたら、タブが上に貼り付いている
   const tabsTop = React.useRef<HTMLDivElement>(null)
+  const [stuck, setStuck] = React.useState(false)
+  React.useEffect(() => {
+    const el = tabsTop.current
+    if (!el) return
+    const io = new IntersectionObserver(([e]) => setStuck(!e!.isIntersecting && e!.boundingClientRect.top < 0))
+    io.observe(el)
+    return () => io.disconnect()
+  }, [d])
   const changeTab = (t: TabKey) => {
     setTab(t)
     const el = tabsTop.current
@@ -686,14 +699,13 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
 
   // スマホではタブの中身を左右のスワイプで切り替える（shadcn の Carousel）。高さは今のタブに合わせる
   const [api, setApi] = React.useState<CarouselApi>()
-  // 事業評価は評価した事業を行った年度にだけ出す（まだ評価の無い年度はタブごと出さない）
-  const hasEval = !!v?.sheets.length
-  const tabs = React.useMemo(() => TABS.filter((t) => t.key !== 'eval' || hasEval), [hasEval])
+  const tabs = TABS
   const tabsRef = React.useRef(tabs)
-  tabsRef.current = tabs
+  // 事業評価は評価した事業を行った年度にだけある。評価の無い年度へ移ったら絞り込みを戻す
+  const hasEval = !!v?.sheets.length
   React.useEffect(() => {
-    if (v && !hasEval && tab === 'eval') setTab('overview')
-  }, [v, hasEval, tab])
+    if (v && !hasEval && filter === 'eval') setFilter('all')
+  }, [v, hasEval, filter])
   const index = Math.max(0, tabs.findIndex((t) => t.key === tab))
   React.useEffect(() => {
     if (!api) return
@@ -737,7 +749,7 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
   )
 
   const panel = (key: TabKey) =>
-    !v ? null : key === 'overview' ? <Overview go={go} /> : key === 'projects' ? <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} /> : <EvalTab grade={grade} setGrade={setGrade} />
+    !v ? null : key === 'overview' ? <Overview go={go} /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
 
   return (
     <div className={cn('transition-[padding] duration-300', wide && selected && 'pr-[440px]')}>
@@ -745,16 +757,21 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
         {header}
         <Separator />
         <Tabs value={tab} onValueChange={(t) => changeTab(t as TabKey)} className="gap-0">
-          <div ref={tabsTop} className="sticky top-0 z-20 -mx-4 bg-background px-4">
-            {/* スクロールしたら上に残すのはこのタブだけ */}
-            <TabsList variant="line" className="h-14 w-full justify-start gap-6 overflow-x-auto [scrollbar-width:none] sm:h-16 sm:gap-9">
+          <div ref={tabsTop} aria-hidden="true" />
+          <div className="sticky top-0 z-20 -mx-4 bg-background">
+            {/* スクロールしたら上にタブを残し、右に年度の切り替えを出す。下に Separator を引いて中身と分ける */}
+            <div className="flex items-center gap-3 px-4">
+            <TabsList variant="line" className="min-w-0 flex-1 justify-start gap-6 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-auto sm:gap-9">
               {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} className="flex-none gap-2 px-0 text-[15px] sm:text-[17px] [&_svg:not([class*='size-'])]:size-5">
+                <TabsTrigger key={t.key} value={t.key} className="flex-none gap-2 px-0 pb-2.5 pt-4 focus-visible:ring-inset text-[15px] leading-none group-data-horizontal/tabs:after:bottom-0 sm:text-[17px] [&_svg:not([class*='size-'])]:size-5">
                   <t.icon />
                   {t.label}
                 </TabsTrigger>
               ))}
             </TabsList>
+              {stuck ? <div className="app-in shrink-0">{phone ? <YearMenu years={YEARS} current={year} onChange={setYear} /> : <YearPicker years={YEARS} current={year} onChange={setYear} />}</div> : null}
+            </div>
+            <Separator className={cn('transition-opacity', stuck ? 'opacity-100' : 'opacity-0')} />
           </div>
           {v ? (
             <AppContext.Provider value={{ d: d!, v, select, selected, projects, go }}>
