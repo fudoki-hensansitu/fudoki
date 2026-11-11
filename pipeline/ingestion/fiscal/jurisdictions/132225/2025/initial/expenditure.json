@@ -1,0 +1,161 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132225",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "2dd080c355eec186cf773de5353d566862a131da7949b57e00575ff5172e4795"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-1-ocr-1",
+          "origin_sha256": "2dd080c355eec186cf773de5353d566862a131da7949b57e00575ff5172e4795",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              54,
+              55,
+              56,
+              57,
+              71,
+              95,
+              262,
+              263,
+              264,
+              265
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8955d6eac5b765b752f2ee572ccb3151260be43c2d0329a9824e9f755e254253",
+          "bytes": 1895894
+        },
+        {
+          "id": "general-initial-1-ocr-2",
+          "origin_sha256": "2dd080c355eec186cf773de5353d566862a131da7949b57e00575ff5172e4795",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              266,
+              267,
+              268,
+              269,
+              270,
+              271,
+              272,
+              273,
+              281,
+              295
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9c96af3fceca2b749895d83b2131ce5a09c77e3334cd0ab798f0c2da21814ff9",
+          "bytes": 1819402
+        }
+      ],
+      "options": {
+        "pages": [
+          [
+            4,
+            5
+          ],
+          [
+            48,
+            313
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金都支出金地方債その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position"
+              },
+              "説明": {
+                "pattern": "position"
+              }
+            }
+          }
+        },
+        "account": "一般会計",
+        "table_id": "general-initial-1"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1"
+        }
+      ]
+    }
+  ],
+  "tables": []
+}
