@@ -30,6 +30,8 @@ jobs:
     if: >-
       (github.event_name != 'workflow_run' && github.ref == 'refs/heads/main') ||
       (github.event_name == 'workflow_run' && github.event.workflow_run.conclusion == 'success')
+    # 本番の token は Environment production（main だけ）の secret に置き、PR の run からは読めないようにする
+    environment: production
     runs-on: ubuntu-latest
     steps:
       # workflow_run でも main の先頭を出す（deploy-api の後に入った web の変更も一緒に出す）

@@ -22,6 +22,8 @@ jobs:
   deploy:
     # 手動実行でも main 以外の branch は出さない
     if: github.ref == 'refs/heads/main'
+    # 本番の token は Environment production（main だけ）の secret に置き、PR の run からは読めないようにする
+    environment: production
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
