@@ -100,7 +100,7 @@ def write_tables(working: Path, codes: list[str], specs: list[dict], warehouse: 
         con.execute(f'create schema if not exists q.{schema}')
         con.execute(f'create or replace table q.{schema}.{table} as {sql}', params)
         rows[model] = con.execute(f'select count(*) from q.{schema}.{table}').fetchone()[0]
-        if rows[model] == 0:
+        if rows[model] == 0 and model != 'queria_expenditure__detail':  # 内訳を印字しない資料もある
             raise SystemExit(f'{model}: 行が無い（自治体コードを確かめる）')
     found = [r[0] for r in con.execute(
         f'select distinct {CODE} from q.expenditure.expenditure order by 1').fetchall()]
@@ -140,9 +140,9 @@ def readme(specs: list[dict], written: dict) -> str:
         lines.append(f'| `{schema}.{table}` | {summary} | {written["rows"][spec["name"]]:,} |')
     lines += ['', '## 使い方', '', '```sql',
               '-- 一般会計の決算の、款ごとの支出済額',
-              'SELECT fiscal_year, kan_name, amount_yen FROM fudoki.expenditure.subject',
+              'SELECT local_government_code, fiscal_year, kan_name, amount_yen FROM fudoki.expenditure.subject',
               "WHERE document_kind = 'settlement' AND account_kind = '一般会計' AND level = '款'",
-              'ORDER BY fiscal_year, kan_code;', '```', '',
+              'ORDER BY local_government_code, fiscal_year, kan_code;', '```', '',
               '## 注意', '',
               '- 決算（`document_kind = settlement`）と当初予算（`initial`）の金額は意味が違うので、必ずどちらかに絞ってください。',
               '- 内訳（`detail`）は科目（`subject`）の下の行です。科目と足さないでください。',
