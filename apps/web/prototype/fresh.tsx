@@ -47,7 +47,8 @@ export function Fresh({ year, years, towns, failed }: Props) {
           ))}
         </div>
       </header>
-      <Tabs value={view} onValueChange={(v) => setView(v as View)} className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+      <div className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
+      <Tabs value={view} onValueChange={(v) => setView(v as View)}>
         <TabsList variant="line" className="mb-4">
           <TabsTrigger value="started">
             <NewIcon className="size-4" />
@@ -63,6 +64,7 @@ export function Fresh({ year, years, towns, failed }: Props) {
           </TabsTrigger>
         </TabsList>
       </Tabs>
+      </div>
       {failed ? <p className="text-sm text-muted-foreground">今は読み込めません。少し時間をおいて開き直してください。</p> : null}
       {!failed && !shown.length ? <p className="text-sm text-muted-foreground">この年度の分は、まだ収録していません。</p> : null}
       <div className="grid gap-3 md:grid-cols-2">
