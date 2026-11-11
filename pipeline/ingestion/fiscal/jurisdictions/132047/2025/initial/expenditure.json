@@ -274,17 +274,91 @@
           "table_id": "kouki-initial"
         }
       ]
+    },
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1173228e5fea0088f32797982429c3a1f9af9969debba1e86350ad3a795d7929"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "pages": [
+          [
+            122,
+            385
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款・項・目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に「（内訳）」として財源の種類（都支出金・その他等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に「（内訳）」として財源の種類（都支出金・その他等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "indent",
+                "quirks": {
+                  "glued_number_stops": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "glued_subject_codes": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "kokuho-initial",
       "conversion_id": "kokuho-initial",
-      "input_fingerprint": "b312e5160eed613b5a4733b951606c1d3ff69ae733452e84e227864771edb35f",
+      "input_fingerprint": "7197ce10eb4271dadc17a8b2bf14b4ceeae0126c5c5065c2195f53e5fd92c20f",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
-        "金額の単位は printed 7頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 7頁 から決めた。款の和 17,856,265（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -309,11 +383,11 @@
     {
       "table_id": "kaigo-service-initial",
       "conversion_id": "kaigo-service-initial",
-      "input_fingerprint": "25c7e65e41558723c50a3c48bb9ae9fca77c24fe6fde573472a1b29703acc842",
+      "input_fingerprint": "d2ba326b676744e1ba65bda1145fc3220dfb9f0acec088defc91c1d1d436e2cc",
       "account": "介護サービス事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
-        "金額の単位は printed 3頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 3頁 から決めた。款の和 817,895（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -338,11 +412,11 @@
     {
       "table_id": "kaigo-hoken-initial",
       "conversion_id": "kaigo-hoken-initial",
-      "input_fingerprint": "eb57c863fa4ce1b7ff3d4004fee8cbd83d982d6e3c1c883c87692cf21813c1d9",
+      "input_fingerprint": "3aaf3f71825d5106bc5d5eb61c0db7a04d0ee9f882a230d88ae8cf60e5dea0e6",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
-        "金額の単位は printed 8頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 8頁 から決めた。款の和 15,324,341（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -367,11 +441,11 @@
     {
       "table_id": "kouki-initial",
       "conversion_id": "kouki-initial",
-      "input_fingerprint": "3a050af45749a4a48deb6fcad150b070d73db58ac3d3ea0eb8a0110828982078",
+      "input_fingerprint": "164bd9f49b487bfee2b5a61f8d6d4022faafa1419506db4e3ec55ecd148772d4",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
-        "金額の単位は printed 5頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 5頁 から決めた。款の和 5,332,407（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -391,6 +465,35 @@
           "bytes": 5070
         },
         "row_count": 141
+      }
+    },
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "ec6a42d56dc87de49d86ff55cee16b22cd587c123449e96762c944454ebd8457",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
+        "金額の単位は printed 132頁 から決めた。款の和 89,453,739（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132047/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "53e8f2fbc2ef7fdcbb3803284525b8e0ac72af9cd5c4bba58a4d3ce3fafe4e3f",
+          "bytes": 210153
+        },
+        "row_count": 7606
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132047/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "eb1d6d6e5365891f874b86ad92e2fece9182b24431a191fef67637d3d1a6180e",
+          "bytes": 157305
+        },
+        "row_count": 7908
       }
     }
   ]
