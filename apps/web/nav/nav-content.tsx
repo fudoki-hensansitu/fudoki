@@ -5,6 +5,7 @@ import { useRouter } from '@void/react'
 import { SidebarGroup, SidebarMenu, useSidebar } from '@/components/ui/sidebar'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
+import { Kbd } from '@/components/ui/kbd'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { Item } from './site-nav'
 import { loadTowns } from '../home/towns'
@@ -63,7 +64,7 @@ function TownSearch() {
           <MagnifyingGlassIcon className="size-5" />
         </InputGroupAddon>
         <InputGroupAddon align="inline-end">
-          <kbd className="rounded border px-1 font-sans text-[11px] text-muted-foreground">⌘K</kbd>
+          <Kbd>⌘K</Kbd>
         </InputGroupAddon>
       </ComboboxInput>
       <ComboboxContent>

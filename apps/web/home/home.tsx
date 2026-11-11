@@ -162,10 +162,8 @@ function Dashboard({ c }: { c: Ctx }) {
             <h2 className="text-2xl font-bold sm:text-[28px]">{town.name}</h2>
             <p className="mt-0.5 truncate text-sm opacity-80">{[c.vision, d.pop ? formatPeople(d.pop) : ''].filter(Boolean).join(' · ')}</p>
           </div>
-          <Link data-tour="open" href={c.base} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
-            ページを見る
-            <ArrowRightIcon className="size-4" />
-          </Link>
+          {/* 年度は数字の頭に効くので上に、頁へ進む導線は数字を読んだあとの下に置く */}
+          <YearSwitch c={c} onBrand />
         </div>
         <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
           <div>
@@ -177,7 +175,10 @@ function Dashboard({ c }: { c: Ctx }) {
             </p>
             {d.pop ? <p className="mt-2 text-sm opacity-80">1人あたり {perHeadText(v.total, d.pop)}</p> : null}
           </div>
-          <YearSwitch c={c} onBrand />
+          <Link data-tour="open" href={c.base} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
+            ページを見る
+            <ArrowRightIcon className="size-4" />
+          </Link>
         </div>
       </section>
       {v.fields.length ? (
