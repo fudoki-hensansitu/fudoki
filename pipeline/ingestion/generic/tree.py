@@ -548,6 +548,8 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             code, name = held[0], normalize(held[1])
         if code is not None and len(name) > 1 and re.match(r'[０-９]{3,}', raw_text):
             code, name = None, line_text  # `２０３０ビジョン…`: three or more full-width digits begin a name, not an item number (a one-character name stays `161`/`人`)
+        if code is not None and (full := document_quirk('full_width_names')) is not None and full.module.names(raw_text):
+            code, name = None, line_text
         script = re.match(r'([0-9]+)(?=[０-９])', raw_text)
         if stops is not None and (stopped := stops.module.split(raw_text)) is not None:
             code, name = stopped[0], normalize(stopped[1])  # `6．５歳児…`: item 6, not 6.5

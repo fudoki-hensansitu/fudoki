@@ -705,9 +705,30 @@
           ]
         }
       ],
-      "reason": "令和6年度（2024年度）当初予算は、公式の当初予算ページに予算書の掲載が無く、予算概要説明書と予算編成方針だけ。部別予算概要説明書の事業別支出科目一覧は職員人件費・会計年度任用職員人件費・予備費の行と歳出合計を載せず、款・項の名称も印字しないため、当初予算の出典にしない。予算書が掲載されれば選定し直す。",
-      "selected_candidate_id": null,
-      "archive": null
+      "reason": "令和6年度（2024年度）当初予算。公式の当該年度当初予算ページ（tousyo_24/index.html）には予算書の掲載が無く予算概要説明書・予算編成方針のみ。概要説明書ページ（2024yosangaiyou.html）掲載の部別予算概要説明書(2)（R6_3-2）に収録の事業別支出科目一覧を出典として選定（出典の注記に「305ページから事業別支出科目一覧を掲載」とある通り、当該PDF物理頁77から開始）。【一般会計】物理頁77「事業別支出科目一覧（一般会計）」以降、列見出し「款 項 目 事業名 所属名 金額（千円）」、款項目＋事業名＋事業額と節額が同一明細。物理頁77-159。【特別会計】国民健康保険事業会計 160-162、介護保険事業会計 163-166、後期高齢者医療事業会計 167-168、鶴川駅南土地区画整理事業会計 169（同列・千円）。同ファイル170-174の下水道事業会計一覧は同じ会計の予算書を採用したためscope外（175は印字頁番号のみ、176は職員人件費の状況、177は別節）。【下水道事業会計】予算書の予算実施計画：収益的支出 物理頁9、資本的支出 物理頁11、款・項・目＋予定額（千円）＋備考（8頁は収入、10頁は資本的収入）。【病院事業会計】予算書の予算実施計画 物理頁6後半-7（収益的支出→資本的支出）、実施計画内訳 物理頁22-26（26頁に資本的支出）、款・項・目・節＋予定額（千円）。税は出典に注記を確認できず未確認。歳入は未確認。不足：事業別支出科目一覧には職員人件費・会計年度任用職員人件費・予備費の行が無い（対象頁を全文照合し0件を実物確認）。同ファイル内の別表「職員人件費の状況」は款・項・職員数・給料・職員手当・共済費・合計（単位千円）の款項級集計で目・事業粒度を持たないためscope外。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132098/2024/initial-2.pdf",
+            "sha256": "0ad072500477d4cf00120827299f6d7662a12dc76aec0c23cc5362330d7c58ee",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/siyosan/tousyo_24/2024yosangaiyou.files/R6_3-2yosannogaiyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/initial-3.pdf",
+            "sha256": "62936f02260175b5d38de078e4398a449406bd3f453cf27a7fd9fbde8e7ddbc8",
+            "final_url": "https://www.city.machida.tokyo.jp/kurashi/suido/grsui/gesuidoujigyou/yosankessan.files/2024machidagesuiyosan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2024/initial-1.pdf",
+            "sha256": "0a1ab2ff720bf6c3b2b05ada0ff81dd7fd44982fc2e2cc8493d2bbf703845d0c",
+            "final_url": "https://machida-city-hospital-tokyo.jp/media/yosan2024.pdf"
+          }
+        ],
+        "archived_at": "2026-10-08T06:30:29.460Z"
+      }
     },
     {
       "target": {
@@ -823,9 +844,30 @@
           ]
         }
       ],
-      "reason": "令和7年度（2025年度）当初予算は、公式の当初予算ページに予算書の掲載が無く、予算概要説明書と予算編成方針だけ。部別予算概要説明書の事業別支出科目一覧は職員人件費・会計年度任用職員人件費・予備費の行と歳出合計を載せず、款・項の名称も印字しないため、当初予算の出典にしない。予算書が掲載されれば選定し直す。",
-      "selected_candidate_id": null,
-      "archive": null
+      "reason": "令和7年度（2025年度）当初予算。公式の当該年度当初予算ページ（tousyo_25/index.html）には予算書の掲載が無く予算概要説明書・予算編成方針のみ。概要説明書ページ（2025yosangaiyou.html）掲載の部別予算概要説明書(2)（R7-bubetuyosangaiyou-2）に収録の事業別支出科目一覧を出典として選定（物理頁77から開始）。【一般会計】物理頁77「事業別支出科目一覧（一般会計）」以降、列見出し「款 項 目 事業名 所属名 金額（千円）」、款項目＋事業名＋事業額と節額が同一明細。物理頁77-157。【特別会計】国民健康保険事業会計 158-160、介護保険事業会計 161-164、後期高齢者医療事業会計 165-166、鶴川駅南土地区画整理事業会計 167（同列・千円）。同ファイル168-171の下水道事業会計一覧は同じ会計の予算書を採用したためscope外（172は職員人件費の状況、174以降は債務負担行為一覧）。【下水道事業会計】予算書の予算実施計画：収益的支出 物理頁9、資本的支出 物理頁11、款・項・目＋予定額（千円）。【病院事業会計】予算書の予算実施計画 物理頁6後半-7、実施計画内訳 物理頁22-26（26頁に資本的支出）、款・項・目・節＋予定額（千円）。税は出典に注記を確認できず未確認。歳入は未確認。不足：事業別支出科目一覧には職員人件費・会計年度任用職員人件費・予備費の行が無い（対象頁を全文照合し0件を実物確認）。同ファイル内の別表「職員人件費の状況」は款・項・職員数・給料・職員手当・共済費・合計（単位千円）の款項級集計で目・事業粒度を持たないためscope外。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/132098/2025/initial-2.pdf",
+            "sha256": "72105d7a248da97af9cdc4d266b11678a5e7814ae2199283840d6392858e91f3",
+            "final_url": "https://www.city.machida.tokyo.jp/shisei/gyouzaisei/siyosan/tousyo_25/2025yosangaiyou.files/R7-bubetuyosangaiyou-2.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2025/initial-1.pdf",
+            "sha256": "62a1b7e74d99119dcb5c3ff6fef4d5ae81e37a3ba07a66aa70107f900ade9b29",
+            "final_url": "https://www.city.machida.tokyo.jp/kurashi/suido/grsui/gesuidoujigyou/yosankessan.files/2025machidagesuiyosan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132098/2025/initial-3.pdf",
+            "sha256": "ec402ebeaa74d18013a95ca763c9d2b11fd775b41992b612c9359986794ce7dc",
+            "final_url": "https://machida-city-hospital-tokyo.jp/media/yosan2025.pdf"
+          }
+        ],
+        "archived_at": "2026-10-08T06:30:39.416Z"
+      }
     },
     {
       "target": {

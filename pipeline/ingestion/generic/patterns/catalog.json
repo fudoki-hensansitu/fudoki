@@ -1,6 +1,7 @@
 {
   "layout": {
     "ruled": "ingestion.generic.patterns.layout.ruled",
+    "listed_projects": "ingestion.generic.patterns.layout.listed_projects",
     "open_edge": "ingestion.generic.patterns.layout.open_edge",
     "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles",
     "funded_explanation": "ingestion.generic.patterns.layout.funded_explanation",
@@ -37,7 +38,8 @@
     "overprint": "ingestion.generic.patterns.repairs.overprint",
     "split_at_rules": "ingestion.generic.patterns.repairs.split_at_rules",
     "stacked_rows": "ingestion.generic.patterns.repairs.stacked_rows",
-    "justified_names": "ingestion.generic.patterns.repairs.justified_names"
+    "justified_names": "ingestion.generic.patterns.repairs.justified_names",
+    "white_text": "ingestion.generic.patterns.repairs.white_text"
   },
   "reading": {
     "marked_businesses": "ingestion.generic.patterns.readings.marked_businesses",
@@ -88,6 +90,7 @@
     "codeless_name_levels": "ingestion.generic.patterns.quirks.codeless_name_levels",
     "column_edge": "ingestion.generic.patterns.quirks.column_edge",
     "counted_cities": "ingestion.generic.patterns.quirks.counted_cities",
+    "full_width_names": "ingestion.generic.patterns.quirks.full_width_names",
     "department_amounts": "ingestion.generic.patterns.quirks.department_amounts",
     "department_heading_slack": "ingestion.generic.patterns.quirks.department_heading_slack",
     "department_line": "ingestion.generic.patterns.quirks.department_line",
