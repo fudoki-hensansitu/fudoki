@@ -54,11 +54,10 @@ import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
 import { pageHead } from '../html'
-import { EMBLEMS } from '../emblems'
-import { assetPath } from '../profiles'
+import { assetPath, EMBLEMS } from '../emblems'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
-import { AskDock } from '../page'
+import { AskDock } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
@@ -874,7 +873,7 @@ const tabOfPath = (): TabKey => tabOfSlug(location.pathname.match(TAB_SEGMENT)?.
 const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
 
 export function AppPage({ data, sitekey, initialYear, initialField, initialTab }: { data: PageData; sitekey: string; initialYear?: number; initialField?: string; initialTab?: TabKey }) {
-  const vision = data.profile?.vision?.text
+  const vision = data.vision?.text
   const emblem = EMBLEMS[data.code] ? assetPath(data.code, 'emblem.svg') : null
   const years = React.useMemo(() => appPageYears(data), [data])
   const [d, setD] = React.useState<Snapshot>()
