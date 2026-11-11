@@ -83,6 +83,7 @@ class Band:
     stripped_codes: bool = False  # ancestors' codes a continuation page prints (`2 1 6`) were taken out of its words (`tree.strip_ancestor_codes`)
     staircase: bool = False  # the layout setting `header.staircase`: a level's cell runs right until its own rule starts
     lines: tuple[str, ...] | None = None  # the declared heading of each line of a cell that stacks its amounts (`columns.<見出し>.lines`)
+    line_pitch: float | None = None  # the declared distance between those lines (`columns.<見出し>.line_pitch`)
     extents: list[tuple[float, float]] = field(default_factory=list)  # (top, bottom) of each block the band reads, when it reads some blocks of the page only (`patterns/layout/framed_blocks`)
 
     @property
@@ -341,7 +342,8 @@ def _joined(horizontals):
     return joined
 
 
-def _header_bottom(page: Page, frame) -> float:
+def _header_bottom(page: Page, frame, one_row: bool = False) -> float:
+    """`one_row`: the quirk `one_row_header` (the header is one ruled row, ended by the first full rule)."""
     x0, x1, top, bottom, _ = frame
     horizontals = _joined([r for r in page.rules if not r.vertical])
     apart = document_quirk('stacked_tables_apart')
@@ -358,6 +360,8 @@ def _header_bottom(page: Page, frame) -> float:
               and re.search(r'[0-9０-９]', w.text)]
     first = min(digits) if digits else bottom
     candidates = [y for y in full if top + 1 < y <= first + 1]
+    if one_row:
+        candidates = candidates[:1]
     # A row that prints only the unit (`千円` over each column) opens the body on the pages whose header rule is read
     # whole; a page that draws a full rule under it too (国分寺市) keeps it in the body as well: the header ends at the
     # rule across most of the frame above that row.
@@ -419,10 +423,11 @@ def page_bands(page: Page, spread: dict | None = None,
     bands = []
     whole = list(enumerate(page.words))
     staircase = bool((header or {}).get('staircase'))
+    one_row = document_quirk('one_row_header') is not None
     for frame in _frames(page, spread, staircase, bool((header or {}).get('open_frame'))):
         x0, x1, top, bottom, edges = frame
         first_band = len(bands)
-        header_bottom = _header_bottom(page, frame)
+        header_bottom = _header_bottom(page, frame, one_row)
         known = _carried_header(page, frame, carry) if carry is not None else None
         if known is not None:
             header_bottom = top
@@ -725,6 +730,7 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
                 # One cell stacks the item's amounts a line each (`1,147,465` / `(1,110,941)` / `(36,524)` under
                 # `本年度 (前年度) (比較)`): the declared headings, in the order of the lines.
                 band.kind, band.lines = 'amount', tuple(setting['lines'])
+                band.line_pitch = setting.get('line_pitch')
             band.excluded = setting.get('excluded')
             if band.excluded:
                 band.kind = None  # not read: its words are no items and its digits a declared exclusion

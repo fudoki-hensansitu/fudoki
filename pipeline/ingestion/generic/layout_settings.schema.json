@@ -5,7 +5,7 @@
   "required": ["schema_version"],
   "properties": {
     "schema_version": {"const": 1},
-    "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["justified_names", "opening_cell", "overprint", "split_at_rules", "stacked_rows"]}},
+    "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["justified_names", "opening_cell", "overprint", "split_at_rules", "stacked_rows", "white_text"]}},
     "codes": {"const": "right"},
     "quirks": {"type": "object", "description": "Opt-in quirks the workflow selected (`generic/patterns/quirks/`); each module checks its own value."},
     "rules": {
@@ -45,6 +45,7 @@
           "inline": {"type": "boolean"},
           "heading": {"type": "string", "minLength": 1},
           "lines": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}, "description": "One cell stacks the item's amounts a line each, the later ones in brackets (国分寺市: `1,147,465` / `(1,110,941)` / `(36,524)` under `本年度 (前年度) (比較)`): the heading of each line, top to bottom."},
+          "line_pitch": {"type": "number", "exclusiveMinimum": 0, "description": "The distance in points from one stacked line (`lines`) to the next, where the lines stand further apart than their height (国立市: 10pt figures 14pt apart). Without it a line is taken to be .82 of the name's height below the one above."},
           "excluded": {
             "type": "object",
             "additionalProperties": false,

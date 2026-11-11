@@ -1,0 +1,158 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132152",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3207bf4e796921e9c2e13fa8ce232559aeaca0148823f56356f8b5acbaefb981"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額(前年度予算額)(比較増減)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 14
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額のほかに、説明の事業ごとの行にも財源の額が印字され、目の財源額と事業の財源額を同じ欄で組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "marks": {
+                    "(1": 2,
+                    "(2": 2,
+                    "(3": 2,
+                    "(4": 2,
+                    "(5": 2,
+                    "(6": 2,
+                    "(7": 2,
+                    "(8": 2,
+                    "(9": 2
+                  },
+                  "wrap": "amount_on_last_line"
+                },
+                "quirks": {
+                  "department_line": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "marked_subjects": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general",
+      "conversion_id": "general",
+      "input_fingerprint": "b25e65d21ebf7f04b568582702c4d18d5fec105428722d8d12a506b1d34fdc1c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は column mark 166頁 から決めた。款の和 41,393,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132152/2026/initial/expenditure/general-nodes.parquet",
+          "sha256": "9ef4c55822429444d3259942b71de81d7e1f9e7b647053f70a891d41ec28df0f",
+          "bytes": 250491
+        },
+        "row_count": 7899
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132152/2026/initial/expenditure/general-amounts.parquet",
+          "sha256": "84266dbb95a9cc43110c909df6f92c42843b1db07ac37a264264d90f1785a496",
+          "bytes": 159174
+        },
+        "row_count": 8211
+      }
+    }
+  ]
+}

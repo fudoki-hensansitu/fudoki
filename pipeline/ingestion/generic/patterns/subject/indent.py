@@ -21,9 +21,12 @@ def select(bands):
     return subject_bands, "indent", None
 
 
-def alignment(all_items, codes_right):
+def alignment(all_items, codes_right, glued=None):
     # Codes set right in their column: a one-digit and a two-digit code of one level start a digit apart (4–6pt).
     # A wider spread is names or other levels sharing the column, not alignment.
+    # `glued`: the quirk `glued_subject_codes` (a code printed in one word with its name, `10.総`): its digits.
+    digits_of = glued.module.digits if glued is not None else (lambda glyph: glyph.text)
+    digit_width = glued.module.digit_width if glued is not None else (lambda glyph: glyph.x1 - glyph.x0)
     code_starts: dict[int, list[float]] = defaultdict(list)
     digit_widths: dict[int, list[float]] = defaultdict(list)
     for _, ordered, found in all_items:
@@ -38,11 +41,11 @@ def alignment(all_items, codes_right):
     # one digit before a one-digit code of its level, so it is read at the position the one-digit codes start.
     ones = [item.glyphs[0] for _, ordered, found in all_items for group in ordered
             if group.subject and group.mode == 'indent' for item in found[id(group)]
-            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]', item.glyphs[0].text)]
+            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]', digits_of(item.glyphs[0]))]
     twos = [item.glyphs[0] for _, ordered, found in all_items for group in ordered
             if group.subject and group.mode == 'indent' for item in found[id(group)]
-            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]{2}', item.glyphs[0].text)]
-    one_width = sorted(g.x1 - g.x0 for g in ones)[len(ones) // 2] if ones else 0
+            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]{2}', digits_of(item.glyphs[0]))]
+    one_width = sorted(digit_width(g) for g in ones)[len(ones) // 2] if ones else 0
     starts_of_ones = [g.x0 for g in ones]
     set_right = sum(any(abs(g.x0 + one_width - x) <= 1 for x in starts_of_ones) for g in twos)
     set_left = sum(any(abs(g.x0 - x) <= 1 for x in starts_of_ones) for g in twos)

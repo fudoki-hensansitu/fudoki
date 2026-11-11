@@ -1196,13 +1196,388 @@
           "table_id": "general-13"
         }
       ]
+    },
+    {
+      "id": "general-03",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "06c8354a45877a82a822cf83c392c938cbb2982b0b494ecd50135edc847fe3e1"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-03",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "生活支援給付費": "積算",
+                    "住宅支援給付費": "積算",
+                    "医療支援給付費": "積算",
+                    "介護支援給付費": "積算",
+                    "葬祭支援給付費": "積算",
+                    "中規模改修": "積算",
+                    "屋内移動設備": "積算",
+                    "生活費等": "積算",
+                    "生活扶助": "積算",
+                    "住宅扶助": "積算",
+                    "教育扶助": "積算",
+                    "介護扶助": "積算",
+                    "医療扶助": "積算",
+                    "出産扶助": "積算",
+                    "生業扶助": "積算",
+                    "葬祭扶助": "積算",
+                    "保護施設事務費": "積算",
+                    "夏季健全育成費": "積算",
+                    "学童服支給費": "積算",
+                    "運動衣支給費": "積算",
+                    "中学校卒業者自立援助費": "積算",
+                    "修学旅行支度金支給費": "積算",
+                    "就労支援": "積算",
+                    "社会参加活動支援": "積算",
+                    "地域生活移行支援": "積算",
+                    "次世代育成支援": "積算",
+                    "健康増進支援": "積算",
+                    "日常生活支援住居施設委託事務費": "積算"
+                  }
+                },
+                "quirks": {
+                  "whole_name_notes": {
+                    "事務費": "積算",
+                    "成人": "積算",
+                    "児童": "積算"
+                  },
+                  "amount_over_page": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true,
+            "yen_split_amounts": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-03"
+        }
+      ]
+    },
+    {
+      "id": "general-11",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9c3d130757378a8d588bceb2409b31c71e8f89fb3d1772d902954c08c706f560"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-11",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "生活支援給付費": "積算",
+                    "住宅支援給付費": "積算",
+                    "医療支援給付費": "積算",
+                    "介護支援給付費": "積算",
+                    "葬祭支援給付費": "積算",
+                    "中規模改修": "積算",
+                    "屋内移動設備": "積算",
+                    "生活費等": "積算",
+                    "生活扶助": "積算",
+                    "住宅扶助": "積算",
+                    "教育扶助": "積算",
+                    "介護扶助": "積算",
+                    "医療扶助": "積算",
+                    "出産扶助": "積算",
+                    "生業扶助": "積算",
+                    "葬祭扶助": "積算",
+                    "保護施設事務費": "積算",
+                    "夏季健全育成費": "積算",
+                    "学童服支給費": "積算",
+                    "運動衣支給費": "積算",
+                    "中学校卒業者自立援助費": "積算",
+                    "修学旅行支度金支給費": "積算",
+                    "就労支援": "積算",
+                    "社会参加活動支援": "積算",
+                    "地域生活移行支援": "積算",
+                    "次世代育成支援": "積算",
+                    "健康増進支援": "積算",
+                    "事務費23,288": "積算"
+                  }
+                },
+                "quirks": {
+                  "numbers_set_right": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-11"
+        }
+      ]
+    },
+    {
+      "id": "general-12",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0aa947656e5060bd867956d9cc3fee9b9dd07755746a512a5b56963971ec4c27"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-12",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較増△減": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源内訳の列を取り込まない。目の行の財源額に加えて、説明欄の各事業の行の高さにその事業の財源額が印字され、目と事業のどちらの財源かを欄から組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "生活支援給付費": "積算",
+                    "住宅支援給付費": "積算",
+                    "医療支援給付費": "積算",
+                    "介護支援給付費": "積算",
+                    "葬祭支援給付費": "積算",
+                    "中規模改修": "積算",
+                    "屋内移動設備": "積算",
+                    "生活費等": "積算",
+                    "生活扶助": "積算",
+                    "住宅扶助": "積算",
+                    "教育扶助": "積算",
+                    "介護扶助": "積算",
+                    "医療扶助": "積算",
+                    "出産扶助": "積算",
+                    "生業扶助": "積算",
+                    "葬祭扶助": "積算",
+                    "保護施設事務費": "積算",
+                    "夏季健全育成費": "積算",
+                    "学童服支給費": "積算",
+                    "運動衣支給費": "積算",
+                    "中学校卒業者自立援助費": "積算",
+                    "修学旅行支度金支給費": "積算",
+                    "就労支援": "積算",
+                    "社会参加活動支援": "積算",
+                    "地域生活移行支援": "積算",
+                    "次世代育成支援": "積算",
+                    "健康増進支援": "積算",
+                    "事務費23,288": "積算"
+                  }
+                },
+                "quirks": {
+                  "numbers_set_right": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-12"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "general-01",
       "conversion_id": "general-01",
-      "input_fingerprint": "5810f397da87e78904b435a16e2bda7e7e468e3bd7f2eec5ad8ab426f593d3f0",
+      "input_fingerprint": "171d1c075320763b8d58205f309d9042b55ac56a7973cf5d998d4349e981dd17",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1232,7 +1607,7 @@
     {
       "table_id": "general-02",
       "conversion_id": "general-02",
-      "input_fingerprint": "66a6d51910da4c0bd0b140a218f4f87001d6e7a2b4d4633bcfd3cbd9082ad5db",
+      "input_fingerprint": "fea2f21cd4c55d2ce0f36dfbe9d2d261fd3847ff07f430154177b4a45275690b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1262,7 +1637,7 @@
     {
       "table_id": "general-04",
       "conversion_id": "general-04",
-      "input_fingerprint": "1cdc18b921f9eb858d2a407c2303de0eef83eb05fdbf6045876b82e4a0ef9775",
+      "input_fingerprint": "0668faaf4a621de17ffd52a800115274c3df9d3954f5b26ab3287034a9bd981b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1292,7 +1667,7 @@
     {
       "table_id": "general-05",
       "conversion_id": "general-05",
-      "input_fingerprint": "4ab99d66593b7dc6eadf13c6ca9d914c75f7a204d96ae9e81ba19db5a0bde56e",
+      "input_fingerprint": "84585fbab7288853e9d30b3f7333054809bb4865aca0b0592a21e8ba5a07a260",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1322,7 +1697,7 @@
     {
       "table_id": "general-06",
       "conversion_id": "general-06",
-      "input_fingerprint": "7fc56003c18cc615247225a14e9f742789d8e85848b97821db251ea0bff53a5a",
+      "input_fingerprint": "ff0b53858f7ac85e88a04504e9ec1cdb97bfa8fe7e412b9f005cf052fd28d18f",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1352,7 +1727,7 @@
     {
       "table_id": "general-07",
       "conversion_id": "general-07",
-      "input_fingerprint": "6c4db087e7bd21d49325a9be289af6d6df95100620cf4c14cb7b008f0e83561a",
+      "input_fingerprint": "15f84c90f66acab700b732178cbace2d3c17dbb829f94795f0e342f63d4c4722",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1382,7 +1757,7 @@
     {
       "table_id": "general-08",
       "conversion_id": "general-08",
-      "input_fingerprint": "2026a147e1372db464ebe6ec8d1ed89f4d4411d2c90261ad1a4d5e29a7dfe21e",
+      "input_fingerprint": "5eab233f5568c17e28e59261c10679b9110384da15d312ee73229fac48c92bd3",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1412,7 +1787,7 @@
     {
       "table_id": "general-09",
       "conversion_id": "general-09",
-      "input_fingerprint": "1f433324bbbf3f4b7753922e7d5e665b870733bf32fde4490858f8645063a251",
+      "input_fingerprint": "7090d35e071179d5a9feadbb085485f0368ed99631afc6b3eca5e70af89c3071",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1442,7 +1817,7 @@
     {
       "table_id": "general-10",
       "conversion_id": "general-10",
-      "input_fingerprint": "baeed321a261cd532a1bae59435148516dbcc6b9cf6ee92c9e54ebf85267c2e6",
+      "input_fingerprint": "617019a686f97aaefebd67870ca944d133f92d8e417eb4ccbf7786e3b189f5af",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1472,7 +1847,7 @@
     {
       "table_id": "general-13",
       "conversion_id": "general-13",
-      "input_fingerprint": "a7c95d48b66bb03841f8cb8172b2a75a3aa104cbd638a27c9bf5f3ad728ed6d7",
+      "input_fingerprint": "7cafb038da6d60194b4067e95fb644e98880829faf4cf6c80b9bb9ce9eeeb2e3",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1497,6 +1872,96 @@
           "bytes": 1885
         },
         "row_count": 8
+      }
+    },
+    {
+      "table_id": "general-03",
+      "conversion_id": "general-03",
+      "input_fingerprint": "73fbfdfc107e89397c0d886fc975533ce6bb5f9f2f903f10387ccb1a2fd53ab4",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は printed 56頁 から決めた。分冊のため款の和 45,790,380 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 32 件（積算 32）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（21 件）を、印字された語から辞書の見出しに寄せた: 比較増△減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132292/2024/initial/expenditure/general-03-nodes.parquet",
+          "sha256": "8c14446a16589d6b106a7ab03da149725f39d33f9d8e8aa9aee5ce8c75ed0366",
+          "bytes": 71979
+        },
+        "row_count": 2443
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132292/2024/initial/expenditure/general-03-amounts.parquet",
+          "sha256": "c3b582ef261ae5d7c4faa1bfcaafb49a721b59331ebb4229fa8ce6476d6c67b1",
+          "bytes": 49289
+        },
+        "row_count": 2480
+      }
+    },
+    {
+      "table_id": "general-11",
+      "conversion_id": "general-11",
+      "input_fingerprint": "a34f6ff42ccb056ce486af90fbe1788d55417cfacda0f086762c13a14ca200e8",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 4,699,845 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（3 件）を、印字された語から辞書の見出しに寄せた: 比較増△減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132292/2024/initial/expenditure/general-11-nodes.parquet",
+          "sha256": "f71bc3815f368679ff1f8d56f1bfb181f4910f0d2dc3d9bc6038079531abf5ae",
+          "bytes": 3970
+        },
+        "row_count": 28
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132292/2024/initial/expenditure/general-11-amounts.parquet",
+          "sha256": "4325f78a29fede343a7ba27f307a4b8ba9ee48f81a6fb5f7c16a9eceb1311d73",
+          "bytes": 2990
+        },
+        "row_count": 34
+      }
+    },
+    {
+      "table_id": "general-12",
+      "conversion_id": "general-12",
+      "input_fingerprint": "bded688c43c53c94419086f13ebe0687aebf6b0112c1a3f69fe49c2bdff98664",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 76 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（4 件）を、印字された語から辞書の見出しに寄せた: 比較増△減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132292/2024/initial/expenditure/general-12-nodes.parquet",
+          "sha256": "b0400a34ac210893d2a6c30c0b39e59201370c5baca97d54d02264690baadffc",
+          "bytes": 2930
+        },
+        "row_count": 13
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132292/2024/initial/expenditure/general-12-amounts.parquet",
+          "sha256": "9f4bc440575237054e28117030e4db7b578c2f5c4c9b5bf1a72206e032325f8f",
+          "bytes": 2260
+        },
+        "row_count": 21
       }
     }
   ]
