@@ -50,7 +50,7 @@ export default function FieldChart({ slices, format }: { slices: Slice[]; format
   return (
     <ChartContainer config={config} className="aspect-auto h-[320px] w-full">
       <PieChart margin={{ top: 16, bottom: 16, left: 8, right: 8 }}>
-        <Pie data={slices} dataKey="yen" nameKey="key" innerRadius={0} outerRadius="62%" startAngle={90} endAngle={-270} stroke="var(--background)" strokeWidth={2} isAnimationActive labelLine={false} label={label}>
+        <Pie data={slices} dataKey="yen" nameKey="key" innerRadius={0} outerRadius="56%" startAngle={90} endAngle={-270} stroke="var(--background)" strokeWidth={2} isAnimationActive labelLine={false} label={label}>
           {slices.map((s) => <Cell key={s.key} fill={s.color} className="outline-none" />)}
         </Pie>
       </PieChart>
