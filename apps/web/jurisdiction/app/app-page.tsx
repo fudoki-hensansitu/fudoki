@@ -842,7 +842,7 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
           <div ref={tabsTop} aria-hidden="true" />
           <div className="sticky top-0 z-20 -mx-4 bg-background">
             {/* 下線を区切りの線に重ねて、線が二重に見えないようにする */}
-            <Separator className="absolute inset-x-4 bottom-0 w-auto" />
+            <Separator className="absolute inset-x-4 bottom-0 data-horizontal:w-auto" />
             {/* スクロールしたら上にタブを残し、右に年度の切り替えを出す。下に Separator を引いて中身と分ける */}
             <div className="flex items-center gap-3 px-4">
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
