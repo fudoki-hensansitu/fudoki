@@ -2,7 +2,7 @@ import unittest
 from types import SimpleNamespace
 from unittest import mock
 
-from ingestion.generic import explained_projects as E
+from ingestion.generic.patterns.quirks import explained_projects as E
 from ingestion.generic.observe import Page, Word
 
 

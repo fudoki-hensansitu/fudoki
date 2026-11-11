@@ -15,7 +15,7 @@ from ingestion.generic.observe import Word
 from ingestion.generic.scan import _paddle_pieces, apply_name_corrections, apply_variant_chars
 from ingestion.lib.ocr_names import AmountDictionary, AmountRule
 from ingestion.lib.pdf_rules import detect
-from ingestion.lib.scan_ocr import superseded
+from ingestion.lib.ocr_ink import superseded
 
 
 def ocr_boxes(observation: dict, page: dict, cuts: tuple[float, ...] = (), corrected_ids: frozenset[str] = frozenset()) -> list[Box]:

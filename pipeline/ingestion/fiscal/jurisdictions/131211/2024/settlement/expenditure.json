@@ -32,13 +32,6 @@
                 "決算額": {
                   "kind": "amount"
                 }
-              },
-              "explained_projects": {
-                "budget": "予算現額",
-                "settled": "決算",
-                "items_axis": "決算説明",
-                "title": "予算説明",
-                "rows_axis": "事務事業"
               }
             }
           },
@@ -53,6 +46,15 @@
               "事務事業": {
                 "pattern": "indent"
               }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "事務事業"
             }
           }
         },
@@ -242,13 +244,6 @@
                 "決算額": {
                   "kind": "amount"
                 }
-              },
-              "explained_projects": {
-                "budget": "予算現額",
-                "settled": "決算",
-                "items_axis": "決算説明",
-                "title": "予算説明",
-                "rows_axis": "事務事業"
               }
             }
           },
@@ -263,6 +258,15 @@
               "事務事業": {
                 "pattern": "indent"
               }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "事務事業"
             }
           }
         },
@@ -475,13 +479,6 @@
                 "決算額": {
                   "kind": "amount"
                 }
-              },
-              "explained_projects": {
-                "budget": "予算現額",
-                "settled": "決算",
-                "items_axis": "決算説明",
-                "title": "予算説明",
-                "rows_axis": "事務事業"
               }
             }
           },
@@ -496,6 +493,15 @@
               "事務事業": {
                 "pattern": "indent"
               }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "事務事業"
             }
           }
         },
@@ -684,13 +690,6 @@
                 "決算額": {
                   "kind": "amount"
                 }
-              },
-              "explained_projects": {
-                "budget": "予算現額",
-                "settled": "決算",
-                "items_axis": "決算説明",
-                "title": "予算説明",
-                "rows_axis": "事務事業"
               }
             }
           },
@@ -705,6 +704,15 @@
               "事務事業": {
                 "pattern": "indent"
               }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "事務事業"
             }
           }
         },
@@ -900,13 +908,6 @@
                 "決算額": {
                   "kind": "amount"
                 }
-              },
-              "explained_projects": {
-                "budget": "予算現額",
-                "settled": "決算",
-                "items_axis": "決算説明",
-                "title": "予算説明",
-                "rows_axis": "事務事業"
               }
             }
           },
@@ -921,6 +922,15 @@
               "事務事業": {
                 "pattern": "indent"
               }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "事務事業"
             }
           }
         },
@@ -1143,13 +1153,6 @@
                 "決算額": {
                   "kind": "amount"
                 }
-              },
-              "explained_projects": {
-                "budget": "予算現額",
-                "settled": "決算",
-                "items_axis": "決算説明",
-                "title": "予算説明",
-                "rows_axis": "事務事業"
               }
             }
           },
@@ -1164,6 +1167,15 @@
               "事務事業": {
                 "pattern": "indent"
               }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "事務事業"
             }
           }
         },
@@ -1380,13 +1392,6 @@
                 "決算額": {
                   "kind": "amount"
                 }
-              },
-              "explained_projects": {
-                "budget": "予算現額",
-                "settled": "決算",
-                "items_axis": "決算説明",
-                "title": "予算説明",
-                "rows_axis": "事務事業"
               }
             }
           },
@@ -1401,6 +1406,15 @@
               "事務事業": {
                 "pattern": "indent"
               }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "事務事業"
             }
           }
         },
@@ -1503,13 +1517,6 @@
                 "決算額": {
                   "kind": "amount"
                 }
-              },
-              "explained_projects": {
-                "budget": "予算現額",
-                "settled": "決算",
-                "items_axis": "決算説明",
-                "title": "予算説明",
-                "rows_axis": "事務事業"
               }
             }
           },
@@ -1524,6 +1531,15 @@
               "事務事業": {
                 "pattern": "indent"
               }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "事務事業"
             }
           }
         },
@@ -1610,13 +1626,6 @@
                 "決算額": {
                   "kind": "amount"
                 }
-              },
-              "explained_projects": {
-                "budget": "予算現額",
-                "settled": "決算",
-                "items_axis": "決算説明",
-                "title": "予算説明",
-                "rows_axis": "事務事業"
               }
             }
           },
@@ -1631,6 +1640,15 @@
               "事務事業": {
                 "pattern": "indent"
               }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "事務事業"
             }
           }
         },
@@ -1715,13 +1733,6 @@
                 "決算額": {
                   "kind": "amount"
                 }
-              },
-              "explained_projects": {
-                "budget": "予算現額",
-                "settled": "決算",
-                "items_axis": "決算説明",
-                "title": "予算説明",
-                "rows_axis": "事務事業"
               }
             }
           },
@@ -1736,6 +1747,15 @@
               "事務事業": {
                 "pattern": "indent"
               }
+            }
+          },
+          "quirks": {
+            "explained_projects": {
+              "budget": "予算現額",
+              "settled": "決算",
+              "items_axis": "決算説明",
+              "title": "予算説明",
+              "rows_axis": "事務事業"
             }
           }
         },

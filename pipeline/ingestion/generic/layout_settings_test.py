@@ -120,7 +120,7 @@ class LayoutHintsTest(unittest.TestCase):
         long = self.item('審議会委員報酬', None, '審議会委員報酬', 80, 10, '100')
         short = self.item('評価員報酬', None, '評価員報酬', 89, 30, '100')
         before = deepcopy([(item.lines, item.amounts) for item in (long, short)])
-        result = apply_layout([long, short], {'fitted_names': {'chars': 5, 'overflow_left_chars': 1}}, set())
+        result = apply_layout([long, short], {'quirks': {'fitted_names': {'chars': 5, 'overflow_left_chars': 1}}}, set())
         self.assertEqual([item.indent for item in result], [89, 89])
         self.assertEqual([(item.lines, item.amounts) for item in result], before)
 
@@ -130,7 +130,7 @@ class LayoutHintsTest(unittest.TestCase):
                 first = self.item('1.' + name, '1', name, 80, 10)
                 last = self.item('補助費', None, '補助費', 89, 23, '100')
                 result = apply_layout([first, last], {'wrap': 'amount_on_last_line',
-                                                    'fitted_names': {'chars': 5, 'overflow_left_chars': 1}}, set())
+                                                    'quirks': {'fitted_names': {'chars': 5, 'overflow_left_chars': 1}}}, set())
                 self.assertEqual([(item.name, item.indent) for item in result], [(name + '補助費', 98)])
                 self.assertEqual(result[0].amounts[0][1][0].text, '100')
 
@@ -312,7 +312,6 @@ class LayoutRegistryTest(unittest.TestCase):
 
     def test_schema_stops_invalid_marks_wrap_and_empty_notes(self):
         for hints in ({'marks': {'○': 0}}, {'wrap': 'always'}, {'notes': ['']},
-                      {'fitted_names': {'chars': 0, 'overflow_left_chars': 1}},
                       {'indent_chars': 0}, {'indent_chars': 0.5}, {'amount_brackets': 'true'}):
             with self.subTest(hints=hints), self.assertRaises(jsonschema.ValidationError):
                 validator().validate({'schema_version': 1, 'breakdown': {'備考': hints}})

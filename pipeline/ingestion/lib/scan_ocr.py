@@ -19,6 +19,7 @@ import numpy as np
 from . import paddle_ocr, pdf_rules, vlm_ocr
 from .pdf_rules import PageRules
 from .paddle_ocr import OcrRegion, PaddleConfig, PaddleOcr
+from .ocr_ink import RULE_RUN_PT, _strip_runs, missed_ink, superseded  # noqa: F401 (re-exported)
 
 
 def recognize_pdf(path: Path, *, pages: Sequence[int], config: PaddleConfig | None = None,
@@ -57,27 +58,7 @@ def _slim(page: dict) -> dict:
     return page
 
 
-RULE_RUN_PT = 14.0   # a straight dark run this long is a rule or an underline, not a glyph
-BOX_PAD_PT = 1.5     # ink this close to an OCR box belongs to it
-JOIN_PX = 4          # pixels this close are one mark
-MIN_PIXELS = 9       # smaller marks are specks; a thin 1 or a lone 0 is 9-11 px at 144 dpi, a bracket's tip 4-8
 AREA_PAD_PT = 6.0    # OCR drops the leading 1 of an amount cut 3pt from it (measured: 21 → 39 of 45)
-
-
-def _strip_runs(dark: np.ndarray, minimum: int) -> np.ndarray:
-    out = dark.copy()
-    for array, transposed in ((dark, False), (dark.T, True)):
-        padded = np.zeros((array.shape[0], array.shape[1] + 2), np.int8)
-        padded[:, 1:-1] = array
-        edges = np.diff(padded, axis=1)
-        for row in range(array.shape[0]):
-            for start, end in zip(np.flatnonzero(edges[row] == 1), np.flatnonzero(edges[row] == -1)):
-                if end - start >= minimum:
-                    if transposed:
-                        out[start:end, row] = False
-                    else:
-                        out[row, start:end] = False
-    return out
 
 
 DASHED_PT = (5.0, 6.0, 6)  # a dashed rule: dashes at most this tall, gaps at most this tall, at least this many in a row
@@ -104,41 +85,6 @@ def dashed_rules(dark: np.ndarray, scale: float) -> np.ndarray:
                     out[a:b, max(0, x - 1):x + 2] |= dark[a:b, max(0, x - 1):x + 2]
             chain = [(start, end)] if start is not None and end - start <= dash else []
     return out
-
-
-def missed_ink(dark: np.ndarray, scale: float, boxes: Sequence[Sequence[float]],
-               ignored: np.ndarray | None = None) -> list[tuple[float, ...]]:
-    """Marks on the page that no OCR box covers and that are not rules, in displayed-page points.
-
-    ``dark`` is a thresholded render, ``scale`` points per pixel. OCR drops a lone 0, a
-    bare 一, single kanji of letter-spaced names and sometimes whole lines; all leave ink here.
-    """
-    ink = _strip_runs(dark, int(RULE_RUN_PT / scale))
-    if ignored is not None:  # (after the rules: a rule crossing a dashed rule is still one run)
-        ink &= ~ignored
-    for x0, y0, x1, y1 in boxes:
-        ink[max(0, int((y0 - BOX_PAD_PT) / scale)):int((y1 + BOX_PAD_PT) / scale) + 1,
-            max(0, int((x0 - BOX_PAD_PT) / scale)):int((x1 + BOX_PAD_PT) / scale) + 1] = False
-    pixels = set(zip(*(axis.tolist() for axis in np.nonzero(ink))))
-    seen, marks = set(), []
-    for seed in sorted(pixels):
-        if seed in seen:
-            continue
-        queue, group = deque([seed]), []
-        seen.add(seed)
-        while queue:
-            y, x = queue.popleft()
-            group.append((y, x))
-            for dy in range(-JOIN_PX, JOIN_PX + 1):
-                for dx in range(-JOIN_PX, JOIN_PX + 1):
-                    near = (y + dy, x + dx)
-                    if near in pixels and near not in seen:
-                        seen.add(near)
-                        queue.append(near)
-        if len(group) >= MIN_PIXELS:
-            ys, xs = [g[0] for g in group], [g[1] for g in group]
-            marks.append((min(xs) * scale, min(ys) * scale, (max(xs) + 1) * scale, (max(ys) + 1) * scale))
-    return sorted(marks, key=lambda m: (m[1], m[0]))
 
 
 DASH_PT = (2.0, 7.0, 2.0)  # a dash: at least / at most this wide, at most this tall (pt)
@@ -283,12 +229,6 @@ def _overlaps(box: Sequence[float], other: Sequence[float]) -> bool:
     width = max(0.0, min(box[2], other[2]) - max(box[0], other[0]))
     height = max(0.0, min(box[3], other[3]) - max(box[1], other[1]))
     return width * height > 0.3 * max((box[2] - box[0]) * (box[3] - box[1]), 1e-9)
-
-
-def superseded(page: dict) -> set[str]:
-    """Observations a fuller re-read replaced (and their words): readers skip them."""
-    ids = {i for region in page["regions"] for i in region.get("supersedes", ())}
-    return ids | {o["id"] for region in page["regions"] for o in region["observations"] if o.get("parent_id") in ids}
 
 
 def _boxes(page: dict) -> list[list[float]]:

@@ -78,7 +78,7 @@ def align(logical, group, kept, alignment):
             item.indent = band.x0
 
 
-def learn_levels(all_items):
+def learn_levels(all_items, codeless=None):
     # Subject levels by indentation, learned over the document (pattern indent).
     nodes_ = [i for _, ordered, found in all_items for g in ordered if g.subject and g.mode == 'indent'
               for i in found[id(g)] if i.role == 'node' and i.level != -1]
@@ -127,20 +127,6 @@ def learn_levels(all_items):
                         continue  # a title the layout read (`level_titles`): its level is the one it names
                     item.level = min(range(len(centres)), key=lambda i: abs(centres[i] - edge(item))) if centres else 0
                     item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
-    # A 項・目 printed without its code (one the year drops, `傷病手当金 0 50 △50`, 131211) starts its name where the
-    # names of its level start, not where their codes do: its level is the one whose names start nearest.
-    names: dict[int, list[float]] = defaultdict(list)
-    for item in coded_:
-        line = next((line for line in getattr(item, 'lines', ()) if line and normalize(line[0].text) == item.code), None)
-        if line is not None and len(line) > 1:
-            names[item.level].append(line[1].x0 - item.indent + edge(item))  # the name's start, measured as `edge` is
-    starts = {level: sorted(xs)[len(xs) // 2] for level, xs in names.items() if len(xs) >= 3}
-    # Only where each level's names start a step right of the level above (not in one name column for all, 131229).
-    ordered = [starts.get(level) for level in range(len(centres))]
-    if len(centres) > 1 and None not in ordered and all(b - a > 3 for a, b in zip(ordered, ordered[1:])):
-        for item in nodes_:
-            # A codeless line set where the codes start (`傷病手当金` at its 項's code, 131202) keeps its level.
-            near = lambda xs: min(abs(x - edge(item)) for x in xs)
-            if item.code is None and near(starts.values()) < near(centres):
-                item.level = min(starts, key=lambda level: abs(starts[level] - edge(item)))
-                item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
+    # A 項・目 printed without its code: the quirk `codeless_name_levels`.
+    if codeless is not None:
+        codeless.module.relevel(coded_, nodes_, centres, edge)

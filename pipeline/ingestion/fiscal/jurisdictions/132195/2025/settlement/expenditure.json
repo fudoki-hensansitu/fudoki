@@ -52,7 +52,7 @@
             "breakdown": {
               "事業名": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "rows": true,
                   "rows_from": {
                     "name": "主管課",
@@ -67,8 +67,10 @@
                 "pattern": "indent",
                 "options": {
                   "amount_brackets": true,
-                  "sum_levels": true,
                   "bare_amounts": true
+                },
+                "quirks": {
+                  "sum_levels": true
                 }
               }
             }

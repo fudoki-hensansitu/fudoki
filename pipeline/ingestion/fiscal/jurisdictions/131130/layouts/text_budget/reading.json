@@ -52,7 +52,6 @@
           "pattern": "indent",
           "options": {
             "amount_brackets": true,
-            "headings": true,
             "wrap": "amount_on_last_line",
             "bare_amounts": true,
             "note_kinds": {
@@ -69,6 +68,9 @@
             "marks": {
               "ア": 4
             }
+          },
+          "quirks": {
+            "headings": true
           }
         }
       }

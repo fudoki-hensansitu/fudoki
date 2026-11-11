@@ -1,4 +1,4 @@
-"""Rows of a 事業別決算説明書 (the layout setting `explained_projects`).
+"""Rows of a 事業別決算説明書 (the quirk `explained_projects`).
 
 131211 prints its 決算 by 事務事業 on facing pages. The left page has the 款・項・目 and 事務事業 rows with
 予算現額 and 決算額; the right page explains them. Under each 事務事業 the left page prints:
@@ -25,6 +25,47 @@ from ingestion.generic.layout import normalize
 from ingestion.generic.observe import Page, Word
 
 # The codes of the items: the katakana in their order (no voiced or small kana).
+
+SCOPE = 'document'
+OPTIONS = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "budget",
+        "settled",
+        "items_axis",
+        "rows_axis"
+    ],
+    "description": "A 事業別決算説明書 (131211): the left page of each spread prints 款・項・目 and 事務事業 rows with the budget and settled amounts. Department rows, code copies, explanation items and 不用額 are arranged before the columns are read (ingestion/generic/patterns/quirks/explained_projects.py).",
+    "properties": {
+        "budget": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The heading of the budget column (予算現額)."
+        },
+        "settled": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A word of the heading of the settled column (決算)."
+        },
+        "items_axis": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The axis of the explanation's items (ア・イ・(ア)), compared with the row's settled amount alone."
+        },
+        "rows_axis": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The axis of the 事務事業 rows (the breakdown of the 目): the axis of the rows a volume continues (`continued_rows`)."
+        },
+        "title": {
+            "type": "string",
+            "minLength": 1,
+            "description": "A title printed over the name and budget columns (予算説明): it heads no amount column."
+        }
+    }
+}
+
 KANA = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン'
 CODE = re.compile(rf'^(?:[0-9]+|[(（][0-9]+[)）]|[{KANA}]|[(（][{KANA}][)）]|[a-zA-Z]|[(（][a-zA-Z][)）])$')
 # The items step down ア, (ア), a, (a) (131211's 扶助費 prints all four).
@@ -461,7 +502,7 @@ def attach(built, items: list[Item], setting: dict, unit: str = '円', declared:
     """Lay the items under the rows they explain, on the axis `items_axis`; `(ア)` under the `ア` above it, `a` under
     the `(ア)` (or the `ア`, when no `(ア)` stands between) and `(a)` under the `a`. The
     problems found (an item whose row is not found, or with no name on the facing page) are returned."""
-    from ingestion.generic.inner_tables import node_key
+    from ingestion.generic.patterns.quirks.inner_tables import node_key
     axis = setting['items_axis']
     rows = [n for n in built.nodes if not n.get('level_header')]
     problems, last, used = [], {}, set()
@@ -543,7 +584,7 @@ def continue_rows(built, pages: list[Page], continued: list[dict], levels: dict[
     header = _running_header(first)
     if len(header) != 3:
         return [f'続きの冊の見出しが款・項・目の3つでない: {[c + n for c, n, _ in header]}']
-    from ingestion.generic.inner_tables import node_key
+    from ingestion.generic.patterns.quirks.inner_tables import node_key
     chain, parent = [], None
     for index, (code, name, box) in enumerate(header):
         node = {'node_key': node_key(first.number, box, subject_axis), 'parent_node_key': parent, 'axis_header': subject_axis,
@@ -649,5 +690,5 @@ def notes(built, moved: list[Moved], unit: str = '円') -> list[str]:
 
 
 def node_key_of(page: int, box: tuple[float, float, float, float]) -> str:
-    from ingestion.generic.inner_tables import node_key
+    from ingestion.generic.patterns.quirks.inner_tables import node_key
     return node_key(page, box, '注記')[2:]

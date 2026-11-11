@@ -35,7 +35,7 @@
               },
               "説明": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "headings": true
                 }
               }

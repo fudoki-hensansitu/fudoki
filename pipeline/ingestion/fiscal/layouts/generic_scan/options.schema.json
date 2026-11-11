@@ -17,7 +17,7 @@
     },
     "continued_rows": {
       "type": "array",
-      "description": "The original starts inside a 事務事業 the volume before it opened (an account printed in volumes cut anywhere, with the layout setting `explained_projects`): the 事務事業 rows still open at the end of the volume before, outermost first, as that volume prints them (a total row, then its department row with `department`, then a 細事業 `(1)`). Empty when the volume starts at a 事務事業 of a 目 the volume before opened. The 款・項・目 come from the running header of the first page (ingestion/generic/explained_projects.py `continue_rows`).",
+      "description": "The original starts inside a 事務事業 the volume before it opened (an account printed in volumes cut anywhere, with the quirk `explained_projects`): the 事務事業 rows still open at the end of the volume before, outermost first, as that volume prints them (a total row, then its department row with `department`, then a 細事業 `(1)`). Empty when the volume starts at a 事務事業 of a 目 the volume before opened. The 款・項・目 come from the running header of the first page (ingestion/generic/patterns/quirks/explained_projects.py `continue_rows`).",
       "items": {
         "type": "object",
         "additionalProperties": false,
@@ -31,7 +31,7 @@
     },
     "explained_names": {
       "type": "array",
-      "description": "The names of explanation items (the layout setting `explained_projects`) that OCR left unread on the facing page, read from the rendered page: the item's page, code and amount as the left page prints them, and the name the facing page prints. A declaration that names no item stops the conversion.",
+      "description": "The names of explanation items (the quirk `explained_projects`) that OCR left unread on the facing page, read from the rendered page: the item's page, code and amount as the left page prints them, and the name the facing page prints. A declaration that names no item stops the conversion.",
       "items": {
         "type": "object",
         "additionalProperties": false,

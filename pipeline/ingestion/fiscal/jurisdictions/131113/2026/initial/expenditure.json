@@ -57,7 +57,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
               },
               "説明": {
                 "pattern": "shape",
@@ -113,9 +116,15 @@
                     "(1)広域連合負担分": "積算",
                     "(2)区負担分": "積算"
                   }
+                },
+                "quirks": {
+                  "amounts_beside_names": true
                 }
               }
             }
+          },
+          "quirks": {
+            "revision_history": true
           }
         }
       },
@@ -175,7 +184,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
               },
               "説明": {
                 "pattern": "shape",
@@ -231,9 +243,15 @@
                     "(1)広域連合負担分": "積算",
                     "(2)区負担分": "積算"
                   }
+                },
+                "quirks": {
+                  "amounts_beside_names": true
                 }
               }
             }
+          },
+          "quirks": {
+            "revision_history": true
           }
         }
       },
@@ -293,7 +311,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
               },
               "説明": {
                 "pattern": "shape",
@@ -349,9 +370,15 @@
                     "(1)広域連合負担分": "積算",
                     "(2)区負担分": "積算"
                   }
+                },
+                "quirks": {
+                  "amounts_beside_names": true
                 }
               }
             }
+          },
+          "quirks": {
+            "revision_history": true
           }
         }
       },
@@ -411,7 +438,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
               },
               "説明": {
                 "pattern": "shape",
@@ -467,9 +497,15 @@
                     "(1)広域連合負担分": "積算",
                     "(2)区負担分": "積算"
                   }
+                },
+                "quirks": {
+                  "amounts_beside_names": true
                 }
               }
             }
+          },
+          "quirks": {
+            "revision_history": true
           }
         }
       },

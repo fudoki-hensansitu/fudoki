@@ -53,7 +53,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
               },
               "説明": {
                 "pattern": "indent",
@@ -99,6 +102,9 @@
                     "アラ": 4,
                     "アル": 4
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               }
             }
@@ -1277,7 +1283,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
               },
               "説明": {
                 "pattern": "indent",
@@ -1323,6 +1332,9 @@
                     "アラ": 4,
                     "アル": 4
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               }
             }
@@ -1407,7 +1419,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
               },
               "説明": {
                 "pattern": "indent",
@@ -1453,6 +1468,9 @@
                     "アラ": 4,
                     "アル": 4
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               }
             }
@@ -1537,7 +1555,10 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
               },
               "説明": {
                 "pattern": "indent",
@@ -1583,6 +1604,9 @@
                     "アラ": 4,
                     "アル": 4
                   }
+                },
+                "quirks": {
+                  "kana_set_apart": true
                 }
               }
             }

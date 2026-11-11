@@ -41,9 +41,9 @@
               },
               "備考": {
                 "pattern": "position",
-                "options": {
-                  "opening_bracket_ink": true,
-                  "bracket_line_closes_name": true
+                "quirks": {
+                  "bracket_line_closes_name": true,
+                  "opening_bracket_ink": true
                 }
               }
             }
@@ -158,9 +158,9 @@
               },
               "備考": {
                 "pattern": "position",
-                "options": {
-                  "opening_bracket_ink": true,
-                  "bracket_line_closes_name": true
+                "quirks": {
+                  "bracket_line_closes_name": true,
+                  "opening_bracket_ink": true
                 }
               }
             }
@@ -255,9 +255,9 @@
               },
               "備考": {
                 "pattern": "position",
-                "options": {
-                  "opening_bracket_ink": true,
-                  "bracket_line_closes_name": true
+                "quirks": {
+                  "bracket_line_closes_name": true,
+                  "opening_bracket_ink": true
                 }
               }
             }
@@ -327,9 +327,9 @@
               },
               "備考": {
                 "pattern": "position",
-                "options": {
-                  "opening_bracket_ink": true,
-                  "bracket_line_closes_name": true
+                "quirks": {
+                  "bracket_line_closes_name": true,
+                  "opening_bracket_ink": true
                 }
               }
             }
@@ -453,9 +453,9 @@
               },
               "備考": {
                 "pattern": "position",
-                "options": {
-                  "opening_bracket_ink": true,
-                  "bracket_line_closes_name": true
+                "quirks": {
+                  "bracket_line_closes_name": true,
+                  "opening_bracket_ink": true
                 }
               }
             }
@@ -527,9 +527,13 @@
               },
               "備考": {
                 "pattern": "position",
-                "options": {
-                  "opening_bracket_ink": true,
+                "quirks": {
                   "bracket_line_closes_name": true,
+                  "opening_bracket_ink": true,
+                  "glued_numbers": {
+                    "101歳6か月": "10",
+                    "739歳以下": "7"
+                  },
                   "line_starts": [
                     {
                       "page": 227,
@@ -537,11 +541,7 @@
                       "reason": "頁227の性被害防止対策設備等支援事業補助金は他の行と同じ位置に印字される。OCR の枠が左に広がった。",
                       "shift": 5
                     }
-                  ],
-                  "glued_numbers": {
-                    "101歳6か月": "10",
-                    "739歳以下": "7"
-                  }
+                  ]
                 }
               }
             }

@@ -36,7 +36,9 @@
               "備考": {
                 "pattern": "indent",
                 "options": {
-                  "indent_chars": 1,
+                  "indent_chars": 1
+                },
+                "quirks": {
                   "names_end_with_kind_words": true
                 }
               }

@@ -17,13 +17,14 @@ from pathlib import Path
 from functools import cache
 import re
 
-from ingestion.generic import explained_projects, inner_tables, layout
+from ingestion.generic import layout
 from ingestion.generic.layout import SIGNS, _frames, _header_bottom, normalize
 from dataclasses import replace
 from ingestion.generic.observe import Page, Rule, Word
+from ingestion.generic.patterns import quirk
 from ingestion.generic.workflow import read_layout
 from ingestion.lib import pdf_rules
-from ingestion.lib.scan_ocr import superseded
+from ingestion.lib.ocr_ink import superseded
 from ingestion.lib.ocr_names import (AmountDictionary, AmountRule, correct_amount, correct_name, correct_variant_chars,
                                      load_name_dictionary, load_variant_chars)
 
@@ -1040,7 +1041,7 @@ def recover_codes(observed: list[Page], pdf: Path, columns: dict | None = None,
     The component must have digit height, be narrow, stay off the crop edges, and be
     separate from the name. Other digits and ambiguous marks are left for explicit OCR.
     """
-    from ingestion.lib.scan_ocr import missed_ink
+    from ingestion.lib.ocr_ink import missed_ink
     holes = [h for h in code_holes(_layout(observed, columns, spread=spread, header=header),
                                     (header or {}).get('_subject_pattern', 'bands')) if h['expected'] == 1]
     images, filled, words = {}, [], {p.number: list(p.words) for p in observed}
@@ -1284,8 +1285,11 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     titles = page_titles([p for p in printed if p.number not in sectioned]) if direction else {}
     report.skipped_pages = [p for p, title in titles.items() if title not in (None, direction)] + other_sections
     observed = [p for p in printed if p.number not in report.skipped_pages]
-    inner = (settings or {}).get('inner_tables')
-    explained = (settings or {}).get('explained_projects')
+    inner_quirk, explained_quirk = quirk(settings, 'inner_tables'), quirk(settings, 'explained_projects')
+    inner = inner_quirk.value if inner_quirk is not None else None
+    explained = explained_quirk.value if explained_quirk is not None else None
+    inner_tables = inner_quirk.module if inner_quirk is not None else None
+    explained_projects = explained_quirk.module if explained_quirk is not None else None
     continued = options.get('continued_rows')
     arranged, taken, items, levels = explained_projects.arrange(observed, explained, continued) if explained \
         else (observed, [], [], {})
@@ -1311,7 +1315,7 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     # Ink OCR left unread in a block's prose (a line of its 事業説明) lies over the amount columns, though the
     # block is no row of them; ink in its boxed table still stops the conversion.
     built.unowned = [u for u in built.unowned if not (u['kind'] == 'unread ink in amount column'
-                                                      and inner_tables.in_prose(blocks, u['page'], u['box']))]
+                                                      and inner_tables is not None and inner_tables.in_prose(blocks, u['page'], u['box']))]
     # Ink a declared reading covers (`amount_readings`, `code_readings`: what OCR left unread, read from the rendered
     # page) is read: the reading stands for it.
     declared = [(r['page'], box) for r in options.get('amount_readings', ()) for box in r['boxes']]

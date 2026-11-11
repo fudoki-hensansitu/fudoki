@@ -481,7 +481,9 @@
                 "options": {
                   "marks": {
                     "◎": 1
-                  },
+                  }
+                },
+                "quirks": {
                   "line_starts": [
                     {
                       "page": 6,
@@ -1126,7 +1128,9 @@
                 "options": {
                   "marks": {
                     "◎": 1
-                  },
+                  }
+                },
+                "quirks": {
                   "line_starts": [
                     {
                       "page": 95,

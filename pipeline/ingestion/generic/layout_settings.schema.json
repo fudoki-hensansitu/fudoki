@@ -7,6 +7,7 @@
     "schema_version": {"const": 1},
     "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["justified_names", "opening_cell", "overprint", "split_at_rules", "stacked_rows"]}},
     "codes": {"const": "right"},
+    "quirks": {"type": "object", "description": "Opt-in quirks the workflow selected (`generic/patterns/quirks/`); each module checks its own value."},
     "rules": {
       "type": "object",
       "additionalProperties": false,
@@ -18,30 +19,6 @@
         "row_gaps": {"const": true, "description": "A vertical rule the page leaves out for a row lets the row's text run on into the next column (133086's 事業 names): an OCR line is cut only at the rules drawn across its middle."},
         "short_columns": {"const": true, "description": "A column rule drawn only over one short row (shorter than the page-wide detector keeps) is still a rule: a short vertical stroke joining two horizontal rules at the place of a vertical rule the page draws elsewhere closes the cell, as in a staircase (131199's 目 rows between 事務事業 blocks)."},
         "row_columns": {"const": true, "description": "A narrow stroke that runs the whole height between two horizontal rules is a column rule even where the page draws no rule at that place elsewhere (131164's 財源 columns under 説明, drawn only over a 目's row in the middle of a page)."}
-      }
-    },
-    "inner_tables": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["marker", "left", "heading"],
-      "description": "Blocks printed under a subject row across the amount columns, where the column rules stop (131199: 事業説明 and a boxed 事務事業 table under each 目). They are cut out before the columns are read; the boxed table whose first column header is `heading` becomes a breakdown of the subject above, on the axis `heading`.",
-      "properties": {
-        "marker": {"type": "string", "minLength": 1, "description": "The header of the first amount column; the vertical rule left of it stops over a block."},
-        "left": {"type": "string", "minLength": 1, "description": "The header of the deepest subject column; a block runs right of the rule left of it."},
-        "heading": {"type": "string", "minLength": 1, "description": "The first column header of the boxed table, and the breakdown axis of its rows."}
-      }
-    },
-    "explained_projects": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": ["budget", "settled", "items_axis", "rows_axis"],
-      "description": "A 事業別決算説明書 (131211): the left page of each spread prints 款・項・目 and 事務事業 rows with the budget and settled amounts. Department rows, code copies, explanation items and 不用額 are arranged before the columns are read (ingestion/generic/explained_projects.py).",
-      "properties": {
-        "budget": {"type": "string", "minLength": 1, "description": "The heading of the budget column (予算現額)."},
-        "settled": {"type": "string", "minLength": 1, "description": "A word of the heading of the settled column (決算)."},
-        "items_axis": {"type": "string", "minLength": 1, "description": "The axis of the explanation's items (ア・イ・(ア)), compared with the row's settled amount alone."},
-        "rows_axis": {"type": "string", "minLength": 1, "description": "The axis of the 事務事業 rows (the breakdown of the 目): the axis of the rows a volume continues (`continued_rows`)."},
-        "title": {"type": "string", "minLength": 1, "description": "A title printed over the name and budget columns (予算説明): it heads no amount column."}
       }
     },
     "accounts": {
@@ -150,6 +127,7 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "quirks": {"type": "object", "description": "Opt-in quirks the workflow selected (`generic/patterns/quirks/`); each module checks its own value."},
           "marks": {
             "type": "object",
             "propertyNames": {"minLength": 1},
@@ -157,20 +135,8 @@
               "oneOf": [{"type": "integer", "minimum": 1}, {"const": "説明"}]
             }
           },
-          "fitted_names": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["chars", "overflow_left_chars"],
-            "properties": {
-              "chars": {"type": "integer", "minimum": 1},
-              "overflow_left_chars": {"type": "integer", "minimum": 0}
-            }
-          },
           "wrap": {"const": "amount_on_last_line"},
           "hang_chars": {"type": "integer", "minimum": 1},
-          "names_end_with_kind_words": {"type": "boolean"},
-          "bracketed_remainder": {"type": "boolean"},
-          "name_columns": {"type": "boolean"},
           "note_kinds": {
             "type": "object",
             "propertyNames": {"minLength": 1},
@@ -180,29 +146,9 @@
           "amount_brackets": {"type": "boolean"},
           "indent_chars": {"type": "integer", "minimum": 1},
           "single_part_notes": {"type": "boolean"},
-          "rows": {"type": "boolean"},
-          "rows_from": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["name", "amount"],
-            "properties": {"name": {"type": "string", "minLength": 1}, "amount": {"type": "string", "minLength": 1}}
-          },
-          "sum_levels": {"type": "boolean"},
           "bare_amounts": {"type": "boolean"},
           "name_start_slack": {"type": "number", "exclusiveMinimum": 0, "maximum": 10, "description": "Points past the usual 3 a wrapped line may stand from the name's start, where a long number and the blank after it are not as wide as the estimate."},
-          "heading_repeated_over_code": {"const": true, "description": "A codeless line above a code in its ruled cell is the heading of the page before, repeated: not the start of the code's name."},
-          "bracket_line_closes_name": {"const": true, "description": "A line in brackets ends the name above it; the line under it is the next item."},
-          "line_starts": {"type": "array", "description": "Where a line starts on the page, for a line OCR boxed left of its print.", "items": {"type": "object", "additionalProperties": false, "required": ["page", "y", "shift", "reason"], "properties": {"page": {"type": "integer", "minimum": 1}, "y": {"type": "number"}, "shift": {"type": "number"}, "reason": {"type": "string", "minLength": 10}}}},
-          "column_edge": {"const": true, "description": "A scan sets each page a few points aside: a line's start (its indentation, where its number stands) is read from its column's left rule, not from the page."},
-          "group_heads": {"type": "array", "description": "Where a heading is printed at the start of the items it heads: the items after it at its level hang from it until they add up to its amount.", "items": {"type": "object", "additionalProperties": false, "required": ["page", "y", "reason"], "properties": {"page": {"type": "integer", "minimum": 1}, "y": {"type": "number"}, "reason": {"type": "string", "minLength": 10}}}},
-          "glued_numbers": {"type": "object", "description": "A line's start and the number it holds, for a number read as one word with a name that begins with digits (`101歳6か月…` holds 10).", "additionalProperties": {"type": "string", "pattern": "^[0-9]+$"}},
-          "opening_bracket_ink": {"const": true, "description": "OCR boxes the ink of a line: a line that starts with a full-width opening bracket starts half a character left of its box."},
-          "unnumbered_shift": {"type": "integer", "minimum": 1, "description": "A line of this axis that prints money and no number sits this many levels below the level its indent gives: the axis prints its deepest levels unnumbered, the first of them starting where the numbered names above start (利島)."},
-          "headings": {"type": "boolean", "description": "A line without an amount, followed by a deeper line that prints one, is a heading of its own: the lines under it are its items."},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}},
-          "name_line_reach": {"type": "number", "minimum": 1, "maximum": 2, "description": "How far a name line wrapped around a number's line may sit from it, in heights of its box (default 1). A Paddle box is lower than the line pitch, so a scan read by Paddle declares a little over 1."},
-          "name_column": {"const": true, "description": "Names are set in a column of their own a space right of the numbers: a name wrapped around a line printing only its number starts up to a character past it."},
-          "under": {"type": "string", "minLength": 1, "description": "An item of this axis that hangs from its subject item belongs to the item of the named axis whose ruled row it is printed in, under the same subject item (133086: the 備考 of a 節, centred on the 節's row)."},
           "yen_marked": {"const": true, "description": "An amount that prints 円 after it in a column of another unit is in yen: a reckoning (`46.4円 × 1,115,000件 ＝ 51,736,000円`) set among the column's 千円."}
         }
       }

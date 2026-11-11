@@ -9,9 +9,8 @@ from ingestion.generic.convert import convert as generic_convert
 from ingestion.generic.reading import Reading
 from ingestion.generic.workflow import selections, validate as validate_layered
 
-# The pattern modules the profile's layered workflow may select. The generic builder loads them by name, so the
-# fingerprint (`manifest.dependencies`, which follows `ingestion.` names in the code) sees them only here: a profile
-# that selects any other pattern is refused rather than read with code the fingerprint does not cover.
+# The pattern modules the profile's layered workflow may select. The reading is written for the 目的別 table that
+# `purpose_section` keeps, so a profile that selects any other pattern is refused.
 LAYERED_MODULES = (
     'ingestion.generic.patterns.layout.purpose_section',
     'ingestion.generic.patterns.headers.standard',
