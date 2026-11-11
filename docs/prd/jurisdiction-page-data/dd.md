@@ -1,12 +1,12 @@
 # 事業評価とプレス発表を、出典の PDF から D1 に取り込む — 設計
 
 担当者: wwwyo / Claude
-更新日: `2026-11-09`
-状態: In Progress（取り込みから D1 までを実装。API と web は次の段階）
+更新日: `2026-11-11`
+状態: Done（取り込み・D1・API・web まで実装済み。web の手書きの定数は #511 で消した）
 
 ## Summary
 
-品川区のページのうち、次の節は web の中の手書きの定数（`apps/web/jurisdiction/profiles.ts`・`budget-press.ts`）から出している。
+品川区のページのうち、次の節は web の中の手書きの定数（`apps/web/jurisdiction/profiles.ts`・`budget-press.ts`）から出していた（#511 で削除）。
 
 - 事業評価から取った節: 新しく何を始めた？・やめたこと・見直したことは？
 - プレス発表から取った節: 新しく何を始める？
@@ -34,7 +34,7 @@
 
 ### 今のページの値と、この設計で作る値
 
-| ページの値 | 今の出どころ | 作る表・列 |
+| ページの値 | 元の出どころ（削除済み） | 作る表・列 |
 | --- | --- | --- |
 | 新しくできた事業（名前・決算額・指標・評価・方向性・頁） | `profiles.ts` の `projects` | `project_evaluation_sheet`（新しくできた事業かは事業の始めた年度で決める。事業を作るまでは出さない）・`project_evaluation_indicator`・`project_evaluation_indicator_value` |
 | 新しくできた事業の分野 | `profiles.ts` の `cofog` | `project_evaluation_sheet.subject_id` の目の `cofog_code`（`fiscal_expenditure_subject` から引く） |
@@ -129,7 +129,7 @@ fiscal-serving-tables と同じく、判断も列に置き、列の説明で区�
 
 1. ローカルで `dbt:build` → `serving:sync --local` を流し、上の「確かめたこと」の数を D1 の行で確かめる。
 2. 本番 D1 へは yuito の go を取ってから `serving:sync` を流す。新しい表を足すだけで、今の表と API は変わらない。
-3. 次の PR で、公開 API の操作（検索）を足し、web の節を D1 から組み立てて `profiles.ts`・`budget-press.ts` の評価とプレス発表の部分を消す。画面の事業名は資料の表記（小事業名）を出す。取り組みの一文は、その前に作り方を決める。
+3. 公開 API の操作（検索）を足し、web の節を D1 から組み立てて `profiles.ts`・`budget-press.ts` を消す（#511 で完了）。画面の事業名は資料の表記（小事業名）を出す。取り組みの一文は、その前に作り方を決める。
 
 ## Open Questions
 
