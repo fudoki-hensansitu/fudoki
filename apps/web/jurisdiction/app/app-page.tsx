@@ -826,7 +826,8 @@ export function AppPage({ data, sitekey, initialYear, initialField }: { data: Pa
     const ro = new ResizeObserver(() => setHeight(el.offsetHeight))
     ro.observe(el)
     return () => ro.disconnect()
-  }, [phone, index, v])
+    // 分野の頁から戻ると Carousel が作り直されるので、新しいスライドを測り直す
+  }, [phone, index, v, fieldPage])
 
   const header = (
     <header className="grid grid-cols-[80px_minmax(0,1fr)] items-end gap-4 py-7 sm:grid-cols-[108px_minmax(0,1fr)] sm:gap-6">
