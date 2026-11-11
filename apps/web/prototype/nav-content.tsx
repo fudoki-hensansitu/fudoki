@@ -1,48 +1,52 @@
-// 試作: サイドバーの中身。頭に検索、真ん中に機能、その下に「うちのまち」（登録したまちと最近見たまち）。
-// 全自治体の一覧は置かない。自治体は検索で探し、自分で選んだ・見たまちだけを並べる
+// 試作: サイドバーの中身。項目は まちを探す・うちのまち・事業を探す・アシスタント の4つだけ。並べ方を3案で見比べる（ホームと同じピッカーで切り替え）。
+// 1 うちのまち中心: 頭にまちの検索欄、その下にうちのまち・事業を探す・アシスタント / 2 さがす中心: 探す2つを上に、うちのまちは下に置く（検索欄はホーム） / 3 まちの中で使う: 頭にうちのまちを置き、その下の項目はうちのまちの中で使う
 import * as React from 'react'
-import { ArrowsLeftRightIcon, ListMagnifyingGlassIcon, MagnifyingGlassIcon, RobotIcon, SealCheckIcon, StarIcon } from '@phosphor-icons/react'
+import { HouseIcon, ListMagnifyingGlassIcon, MagnifyingGlassIcon, RobotIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, useSidebar } from '@/components/ui/sidebar'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { Item } from '../nav/site-nav'
+import { searchHref } from './search'
 import { emblemSrc, loadTowns, useMyTown, type Town } from './towns'
+import { useVariant } from './variant'
 
-/** 自治体の頁以外の機能。試作なので候補を全部並べ、触って残すものを決める */
-const FEATURES = [
-  { href: '/prototype/search', label: '事業をさがす', icon: <ListMagnifyingGlassIcon /> },
-  { href: '/prototype/compare', label: '比べる', icon: <ArrowsLeftRightIcon /> },
-  { href: '/prototype/fresh', label: '始めた・やめた', icon: <SealCheckIcon /> },
-  { href: '/prototype/saved', label: '追っている事業', icon: <StarIcon /> },
-]
+/** スマホの下の帯の「まちを探す」が投げる（nav/site-nav.tsx） */
+const FIND = 'fudoki:find-town'
 
-function Search() {
+/** まちを探す欄。⌘K と下の帯の「まちを探す」で入る。選んだまちの頁へ移る */
+function TownSearch() {
   const { state, isMobile, setOpen } = useSidebar()
   const { visit } = useRouter()
   const [entries, setEntries] = React.useState<MapEntry[]>([])
   const input = React.useRef<HTMLInputElement>(null)
   const warm = () => void loadTowns().then(setEntries)
-  // ⌘K / Ctrl+K で検索へ。閉じていたら開いてから入れる
   React.useEffect(() => {
+    const focus = () => {
+      setOpen(true)
+      warm()
+      requestAnimationFrame(() => input.current?.focus())
+    }
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault()
-        setOpen(true)
-        warm()
-        requestAnimationFrame(() => input.current?.focus())
+        focus()
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    window.addEventListener(FIND, focus)
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      window.removeEventListener(FIND, focus)
+    }
   }, [setOpen])
   if (state === 'collapsed' && !isMobile) {
     return (
       <SidebarMenu>
         <Item
           href="#search"
-          label="さがす"
+          label="まちを探す"
           icon={<MagnifyingGlassIcon />}
           onClick={(e) => {
             e.preventDefault()
@@ -56,7 +60,7 @@ function Search() {
   }
   return (
     <Combobox autoHighlight items={entries} filter={(e: MapEntry, q: string) => !q.trim() || e.name.includes(q.trim()) || e.path.includes(q.trim().toLowerCase())} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && visit((e as MapEntry).path)}>
-      <ComboboxInput ref={input} showTrigger={false} aria-label="まちをさがす" placeholder="まちをさがす" onFocus={warm} className="h-9 rounded-md border-sidebar-border bg-background text-sm">
+      <ComboboxInput ref={input} showTrigger={false} aria-label="まちを探す" placeholder="まちを探す" onFocus={warm} className="h-9 rounded-md border-sidebar-border bg-background text-sm">
         <InputGroupAddon>
           <MagnifyingGlassIcon className="size-4" />
         </InputGroupAddon>
@@ -77,57 +81,103 @@ function Search() {
   )
 }
 
-function TownItem({ town, active }: { town: Town; active: boolean }) {
+const TownIcon = ({ town }: { town: Town | null }) =>
+  town ? (
+    <span className="grid size-5 shrink-0 place-items-center rounded-[5px] bg-emblem p-[2px] ring-1 ring-sidebar-border">
+      <img src={emblemSrc(town.code)} alt="" className="size-full object-contain" />
+    </span>
+  ) : (
+    <HouseIcon />
+  )
+
+const isAssistant = (path: string) => path === '/assistant' || path.startsWith('/s/')
+
+/** 1 うちのまち中心 */
+function Mine({ path, town }: { path: string; town: Town | null }) {
   return (
-    <Item
-      href={town.path}
-      label={town.name}
-      active={active}
-      icon={
-        <span className="grid size-5 shrink-0 place-items-center rounded-[5px] bg-emblem p-[2px] ring-1 ring-sidebar-border">
-          <img src={emblemSrc(town.code)} alt="" className="size-full object-contain" />
-        </span>
-      }
-    />
+    <>
+      <SidebarGroup className="pt-0">
+        <TownSearch />
+      </SidebarGroup>
+      <SidebarGroup>
+        <SidebarMenu>
+          <Item href="/prototype" label={town ? town.name : 'うちのまち'} icon={<TownIcon town={town} />} active={path === '/prototype'} />
+          <Item href="/prototype/search" label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
+          <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
+        </SidebarMenu>
+      </SidebarGroup>
+    </>
+  )
+}
+
+/** 2 さがす中心。まちの検索欄はホームに置き、ここからはホームのまちの欄へ入る */
+function Seek({ path, town }: { path: string; town: Town | null }) {
+  const { visit } = useRouter()
+  const { setOpenMobile } = useSidebar()
+  const seekTown = () => {
+    setOpenMobile(false)
+    if (path === '/prototype') window.dispatchEvent(new Event('fudoki:seek-town'))
+    else visit('/prototype?seek=town')
+  }
+  React.useEffect(() => {
+    window.addEventListener(FIND, seekTown)
+    return () => window.removeEventListener(FIND, seekTown)
+  })
+  return (
+    <>
+      <SidebarGroup className="pt-0">
+        <SidebarMenu>
+          <Item
+            href="/prototype?seek=town"
+            label="まちを探す"
+            icon={<MagnifyingGlassIcon />}
+            onClick={(e) => {
+              e.preventDefault()
+              seekTown()
+            }}
+          />
+          <Item href="/prototype/search" label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
+          <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
+        </SidebarMenu>
+      </SidebarGroup>
+      <SidebarGroup>
+        <SidebarGroupLabel>うちのまち</SidebarGroupLabel>
+        <SidebarMenu>
+          <Item href={town ? town.path : '/prototype'} label={town ? town.name : '選ぶ'} icon={<TownIcon town={town} />} active={!!town && (path === town.path || path.startsWith(`${town.path}/`))} />
+        </SidebarMenu>
+      </SidebarGroup>
+    </>
+  )
+}
+
+/** 3 まちの中で使う。頭にうちのまち、その下の項目はうちのまちに絞る。ほかのまちは検索欄から */
+function Inside({ path, town }: { path: string; town: Town | null }) {
+  return (
+    <>
+      <SidebarGroup className="pt-0">
+        <TownSearch />
+      </SidebarGroup>
+      <SidebarGroup>
+        <SidebarGroupLabel className="h-auto gap-2 py-1.5 text-[13px] text-sidebar-foreground group-data-[collapsible=icon]:hidden">
+          <TownIcon town={town} />
+          <span className="truncate font-bold">{town ? town.name : 'うちのまち'}</span>
+        </SidebarGroupLabel>
+        <SidebarMenu>
+          <Item href="/prototype" label="うちのまち" icon={<HouseIcon />} active={path === '/prototype'} />
+          <Item href={town ? searchHref('', town.code) : '/prototype/search'} label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
+          <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
+        </SidebarMenu>
+      </SidebarGroup>
+    </>
   )
 }
 
 export function ProtoNavContent() {
   const { path } = useRouter()
-  const { town, recent } = useMyTown()
-  const at = (t: Town) => path === t.path || path.startsWith(`${t.path}/`)
+  const { town } = useMyTown()
+  const { current } = useVariant()
+  const Body = current === 1 ? Seek : current === 2 ? Inside : Mine
   return (
-    <>
-      <SidebarGroup className="pt-0">
-        <Search />
-      </SidebarGroup>
-      <SidebarGroup>
-        <SidebarMenu>
-          {FEATURES.map((f) => (
-            <Item key={f.href} href={f.href} label={f.label} icon={f.icon} active={path.startsWith(f.href)} />
-          ))}
-          <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={path === '/assistant' || path.startsWith('/s/')} />
-        </SidebarMenu>
-      </SidebarGroup>
-      {town ? (
-        <SidebarGroup>
-          <SidebarGroupLabel>うちのまち</SidebarGroupLabel>
-          <SidebarMenu>
-            <TownItem town={town} active={at(town)} />
-          </SidebarMenu>
-        </SidebarGroup>
-      ) : null}
-      {recent.length ? (
-        <SidebarGroup className="group-data-[collapsible=icon]:hidden">
-          <SidebarGroupLabel>最近見たまち</SidebarGroupLabel>
-          <SidebarMenu>
-            {recent.slice(0, 3).map((t) => (
-              <TownItem key={t.code} town={t} active={at(t)} />
-            ))}
-          </SidebarMenu>
-        </SidebarGroup>
-      ) : null}
-    </>
+<Body path={path} town={town} />
   )
 }
-

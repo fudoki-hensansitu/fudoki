@@ -1,26 +1,11 @@
-// 試作のピッカー（prototype skill の PICKER.md の振る舞い）。1〜N・←→で切り替え、R で描き直す。選んだものは ?v= に残す
+// 試作のピッカー（prototype skill の PICKER.md の振る舞い）。1〜N・←→で切り替え、R で描き直す。選んだ案は variant.ts が持つ
 import * as React from 'react'
 import './picker.css'
+import { useVariant, VARIANTS } from './variant'
 
-export function usePicker(names: string[]) {
-  const [current, setCurrent] = React.useState(0)
-  const [nonce, setNonce] = React.useState(0)
-  React.useEffect(() => {
-    const v = parseInt(new URLSearchParams(location.search).get('v') ?? '', 10)
-    if (v >= 1 && v <= names.length) setCurrent(v - 1)
-  }, [names.length])
-  const select = React.useCallback(
-    (i: number) => {
-      if (i < 0 || i >= names.length) return
-      setCurrent(i)
-      setNonce((n) => n + 1)
-      const url = new URL(location.href)
-      url.searchParams.set('v', String(i + 1))
-      history.replaceState(history.state, '', url)
-    },
-    [names.length],
-  )
-  const replay = React.useCallback(() => setNonce((n) => n + 1), [])
+export function Picker() {
+  const { current, select, replay } = useVariant()
+  const names = VARIANTS
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       const t = e.target as HTMLElement
@@ -34,11 +19,7 @@ export function usePicker(names: string[]) {
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [current, names.length, select, replay])
-  return { current, key: `${current}-${nonce}`, select, replay }
-}
-
-export function Picker({ names, current, select, replay }: { names: string[]; current: number; select: (i: number) => void; replay: () => void }) {
+  }, [current, names, select, replay])
   const nav = React.useRef<HTMLElement>(null)
   const items = React.useRef<(HTMLButtonElement | null)[]>([])
   const highlight = React.useRef<HTMLSpanElement>(null)

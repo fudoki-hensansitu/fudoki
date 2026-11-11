@@ -1,23 +1,24 @@
-// 試作: アプリのホーム。うちのまち（1つ）のお金の要点を、3つの違う組み方で見比べる（prototype skill。上のピッカーで切り替え）。
-// 1 ダッシュボード: 要点をカードの格子で一覧する / 2 ストーリー: 1枚に1つの事実を大きく出し、横にめくる / 3 問いから: 住民の問いを並べ、押すと答えが開く。
-// データは3案とも自治体の頁と同じ /api/jurisdictions/app/:code を読み、yearView で年度ごとに見る
+// 試作: アプリのホーム。サイドバーの4項目（まちを探す・うちのまち・事業を探す・アシスタント）に合わせ、3つの組み方で見比べる（prototype skill。上のピッカーで切り替え、サイドバーも同じ案に変わる）。
+// 1 うちのまち中心: ホーム＝うちのまちのダッシュボード。探すのはサイドバー / 2 さがす中心: ホーム＝まち・事業を探す入口、うちのまちは小さく / 3 まちの中で使う: うちのまちの中で聞く・探す、要点は小さく。
+// データは自治体の頁と同じ /api/jurisdictions/app/:code を読み、yearView で年度ごとに見る
 import * as React from 'react'
-import { ArrowRightIcon, ArrowsLeftRightIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from '@/components/ui/carousel'
+import { ArrowRightIcon, ClipboardTextIcon, CoinsIcon, ListMagnifyingGlassIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
+import { useRouter } from '@void/react'
 import { Skeleton } from '@/components/ui/skeleton'
 import { cn } from '@/lib/utils'
+import { StartForm } from '../chat/start-form'
 import { Link } from '../nav/link'
-import { Emblem, LocateButton, Picker as TownPicker, type HomeProps } from '../home/home'
+import { Emblem, LocateButton, Picker as TownPicker } from '../home/home'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { GRADES, yearView, type Snapshot, type YearView } from '../jurisdiction/app/data'
 import { NewIcon, StopIcon } from '../jurisdiction/fresh-icons'
 import { formatPeople, reiwa } from '../jurisdiction/types'
+import type { Props } from '../pages/prototype/index.server'
 import { Amt, FieldIcon, perHeadText } from './parts'
-import { Picker, usePicker } from './picker'
+import { EXAMPLES, ProjectSearchBox, searchHref } from './search'
 import { useMyTown, type Town } from './towns'
-import neighbors from './neighbors.json'
+import { useVariant } from './variant'
 
-const VARIANTS = ['ダッシュボード', 'ストーリー', '問いから']
 const toTown = (e: MapEntry): Town => ({ code: e.code, name: e.name, path: e.path })
 
 // ---------- 3案で共通のもの ----------
@@ -47,14 +48,12 @@ function useSnapshot(code: string | null) {
   return { d, failed, year, setYear }
 }
 
-type Ctx = { town: Town; d: Snapshot; v: YearView; year: number; years: number[]; setYear: (y: number) => void; near: MapEntry[]; base: string; vision?: string }
+type Ctx = { town: Town; d: Snapshot; v: YearView; year: number; years: number[]; setYear: (y: number) => void; base: string; vision?: string }
 
-function buildCtx(town: Town, d: Snapshot, year: number, setYear: (y: number) => void, entries: MapEntry[], vision?: string): Ctx {
-  const near = ((neighbors as Record<string, string[]>)[town.code] ?? []).flatMap((c) => entries.filter((e) => e.code === c))
-  return { town, d, v: yearView(d, year), year, years: Object.keys(d.years).map(Number).sort((a, b) => a - b), setYear, near, base: `${town.path}/${year}`, vision }
+function buildCtx(town: Town, d: Snapshot, year: number, setYear: (y: number) => void, vision?: string): Ctx {
+  return { town, d, v: yearView(d, year), year, years: Object.keys(d.years).map(Number).sort((a, b) => a - b), setYear, base: `${town.path}/${year}`, vision }
 }
 
-const compareHref = (c: Ctx, codes = c.near.slice(0, 3).map((n) => n.code)) => `/prototype/compare?codes=${[c.town.code, ...codes].join(',')}`
 const flowHref = (c: Ctx) => `${c.base}/${c.v.word === '決算' ? 'settlement' : 'budget'}`
 const sheetsOf = (d: Snapshot) => {
   const fy = Math.max(0, ...d.sheets.map((s) => s.fy))
@@ -124,20 +123,7 @@ function FieldBars({ c, limit }: { c: Ctx; limit: number }) {
   )
 }
 
-function NearChips({ c }: { c: Ctx }) {
-  return (
-    <div className="flex flex-wrap items-center gap-2">
-      {c.near.map((n) => (
-        <Link key={n.code} href={compareHref(c, [n.code])} className="inline-flex items-center gap-2 rounded-full border bg-background py-1 ps-1 pe-3 text-sm transition-colors hover:bg-card">
-          <Emblem code={n.code} name={n.name} className="size-7 rounded-full border-0 p-1" />
-          {n.name}
-        </Link>
-      ))}
-    </div>
-  )
-}
-
-// ---------- 1 ダッシュボード ----------
+// ---------- 1 うちのまち中心: ホームはうちのまちのダッシュボード ----------
 
 function Card({ title, icon, children, footer, className }: { title: string; icon?: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; className?: string }) {
   return (
@@ -216,267 +202,225 @@ function Dashboard({ c }: { c: Ctx }) {
           </ul>
         </Card>
       ) : null}
-      {c.near.length ? (
-        <Card title="となりのまちと比べる" icon={<ArrowsLeftRightIcon />} className="md:col-span-2">
-          <div className="flex flex-wrap items-center gap-3">
-            <NearChips c={c} />
-            <Link href={compareHref(c)} className="ms-auto inline-flex items-center gap-1.5 rounded-full bg-primary px-4 py-2 text-[13px] font-medium text-primary-foreground transition-colors hover:bg-primary/90">
-              まとめて比べる
-              <ArrowRightIcon className="size-4" />
-            </Link>
+    </div>
+  )
+}
+
+
+// ---------- 2 さがす中心: ホームはまち・事業を探す入口。うちのまちは下に小さく ----------
+
+const SEEK = 'fudoki:seek-town'
+
+function Seek({ entries, town, recent, snap, onChoose }: { entries: MapEntry[]; town: Town | null; recent: Town[]; snap: ReturnType<typeof useSnapshot>; onChoose: () => void }) {
+  const { visit } = useRouter()
+  const [tab, setTab] = React.useState<'town' | 'project'>('town')
+  const box = React.useRef<HTMLDivElement>(null)
+  // サイドバーの「まちを探す」から来たら、まちの欄に入れる
+  React.useEffect(() => {
+    const focus = () => {
+      setTab('town')
+      requestAnimationFrame(() => box.current?.querySelector('input')?.focus())
+    }
+    if (new URLSearchParams(location.search).get('seek') === 'town') focus()
+    window.addEventListener(SEEK, focus)
+    return () => window.removeEventListener(SEEK, focus)
+  }, [])
+  const { d, year } = snap
+  const v = d && year != null && d.years[String(year)] ? yearView(d, year) : null
+  return (
+    <div className="space-y-4">
+      <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
+        <h2 className="text-xl font-bold sm:text-2xl">何を探しますか？</h2>
+        <div className="mt-4 mb-4 flex w-fit gap-1 rounded-full bg-brand-fill/20 p-1" role="tablist" aria-label="探すもの">
+          {(
+            [
+              ['town', 'まちを探す', <MagnifyingGlassIcon key="i" />],
+              ['project', '事業を探す', <ListMagnifyingGlassIcon key="i" />],
+            ] as const
+          ).map(([k, label, icon]) => (
+            <button
+              key={k}
+              type="button"
+              role="tab"
+              aria-selected={tab === k}
+              onClick={() => setTab(k)}
+              className={cn('flex items-center gap-1.5 rounded-full px-4 py-1.5 text-sm transition-colors duration-150 ease-out [&_svg]:size-4', tab === k ? 'bg-brand-fill text-brand-fill-foreground' : 'hover:bg-white/10')}
+            >
+              {icon}
+              {label}
+            </button>
+          ))}
+        </div>
+        <div ref={box} key={tab} className="animate-in fade-in duration-200 ease-out motion-reduce:animate-none">
+          {tab === 'town' ? (
+            <>
+              <TownPicker entries={entries} onPick={(e) => visit(e.path)} placeholder="自治体名で探す（例：品川）" />
+              <p className="mt-3 text-[13px] opacity-80">収録しているまちの予算・決算・事業を開きます。</p>
+            </>
+          ) : (
+            <>
+              <ProjectSearchBox placeholder="例：給食、プール、保育" />
+              <div className="mt-3 flex flex-wrap gap-2">
+                {EXAMPLES.map((x) => (
+                  <Link key={x} href={searchHref(x)} className="rounded-full bg-brand-fill/20 px-3 py-1 text-[13px] transition-colors hover:bg-brand-fill/35">
+                    {x}
+                  </Link>
+                ))}
+              </div>
+            </>
+          )}
+        </div>
+      </section>
+
+      {town ? (
+        <section className="rounded-2xl border bg-background p-5 animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none">
+          <div className="flex items-center gap-3">
+            <Emblem code={town.code} name={town.name} className="size-10" />
+            <div className="min-w-0 flex-1">
+              <p className="text-[12px] text-muted-foreground">うちのまち</p>
+              <p className="truncate text-lg font-bold">{town.name}</p>
+            </div>
+            {v && year != null ? (
+              <div className="text-right">
+                <p className="text-[12px] text-muted-foreground">
+                  {reiwa(year)}の{v.word === '決算' ? '決算' : '当初予算'}
+                </p>
+                <Amt yen={v.total} className="text-2xl font-bold text-primary" />
+              </div>
+            ) : snap.failed ? null : (
+              <Skeleton className="h-10 w-28" />
+            )}
           </div>
-        </Card>
+          {v && year != null ? (
+            <ul className="mt-4 grid grid-cols-3 gap-2">
+              {v.fields.slice(0, 3).map((f) => (
+                <li key={f.id}>
+                  <Link href={`${town.path}/${year}/fields/${f.id}`} className="block rounded-xl bg-card px-3 py-2.5 transition-colors hover:bg-accent">
+                    <span className="flex items-center gap-1.5 text-[12px] text-muted-foreground">
+                      <FieldIcon id={f.id} className="size-4" />
+                      <span className="truncate">{f.name}</span>
+                    </span>
+                    <Amt yen={f.yen} className="mt-0.5 block text-base font-bold" />
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          ) : null}
+          <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
+            <More href={town.path}>{town.name}のページを見る</More>
+            <More href={searchHref('', town.code)}>{town.name}の事業を探す</More>
+            <button type="button" onClick={onChoose} className="ms-auto text-[13px] text-muted-foreground hover:text-foreground">
+              変える
+            </button>
+          </div>
+        </section>
+      ) : (
+        <button type="button" onClick={onChoose} className="flex w-full items-center gap-3 rounded-2xl border border-dashed bg-background p-5 text-left transition-colors hover:bg-accent">
+          <span className="flex-1">
+            <span className="block font-bold">うちのまちを選ぶ</span>
+            <span className="block text-[13px] text-muted-foreground">選ぶと、そのまちのお金の要点がここに出ます。</span>
+          </span>
+          <ArrowRightIcon className="size-5 text-muted-foreground" />
+        </button>
+      )}
+
+      {recent.length ? (
+        <section>
+          <h3 className="mb-2 text-[13px] text-muted-foreground">最近見たまち</h3>
+          <ul className="flex flex-wrap gap-2">
+            {recent.slice(0, 6).map((t) => (
+              <li key={t.code}>
+                <Link href={t.path} className="flex items-center gap-2 rounded-full border bg-background py-1 ps-1 pe-3 text-sm transition-colors hover:bg-accent">
+                  <Emblem code={t.code} name={t.name} className="size-7 rounded-full p-1" />
+                  {t.name}
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </section>
       ) : null}
     </div>
   )
 }
 
-// ---------- 2 ストーリー ----------
+// ---------- 3 まちの中で使う: うちのまちについて聞く・探す。要点は小さく ----------
 
-type Fact = { key: string; eyebrow: string; big: React.ReactNode; body: React.ReactNode; href: string; cta: string; brand?: boolean; icon?: React.ReactNode }
-
-function facts(c: Ctx): Fact[] {
-  const { v, d, year, town } = c
-  const out: Fact[] = [
-    {
-      key: 'total',
-      brand: true,
-      eyebrow: `${reiwa(year)}の${v.word === '決算' ? '決算' : '当初予算'}`,
-      big: <Amt yen={v.total} />,
-      body: d.pop ? <>住んでいる人 1人あたり {perHeadText(v.total, d.pop)}</> : <>{town.name}の一般会計</>,
-      href: c.base,
-      cta: 'ページを見る',
-    },
-  ]
-  const [f1, f2] = v.fields
-  if (f1) out.push({ key: 'f1', icon: <FieldIcon id={f1.id} />, eyebrow: 'いちばん多いのは', big: f1.name, body: <>全体の {pct(f1.yen, v.total)}、<Amt yen={f1.yen} /> を使います。</>, href: `${c.base}/fields/${f1.id}`, cta: `${f1.name}の中身を見る` })
-  if (f2) out.push({ key: 'f2', icon: <FieldIcon id={f2.id} />, eyebrow: '2番目は', big: f2.name, body: <>全体の {pct(f2.yen, v.total)}、<Amt yen={f2.yen} /> です。</>, href: `${c.base}/fields/${f2.id}`, cta: `${f2.name}の中身を見る` })
-  const top = v.current[0]
-  if (top) out.push({ key: 'top', icon: <CoinsIcon />, eyebrow: 'いちばんお金のかかる事業', big: top.name, body: <><Amt yen={v.amount(top)} /> を見込んでいます。</>, href: `${c.base}/projects`, cta: '事業を見る' })
-  if (v.comparable && v.newProjects.length) {
-    const p = v.newProjects[0]!
-    out.push({ key: 'new', icon: <NewIcon />, eyebrow: `${reiwa(year)}に始めた事業`, big: <>{v.newProjects.length}<small className="ml-1 text-[0.45em]">件</small></>, body: <>いちばん大きいのは「{p.name}」（<Amt yen={v.amount(p)} />）。</>, href: `${c.base}/projects`, cta: '始めた事業を見る' })
-  }
-  if (v.comparable && v.ended.length) {
-    const p = v.ended[0]!
-    out.push({ key: 'end', icon: <StopIcon />, eyebrow: `${reiwa(year - 1)}でやめた事業`, big: <>{v.ended.length}<small className="ml-1 text-[0.45em]">件</small></>, body: <>いちばん大きかったのは「{p.name}」。</>, href: `${c.base}/projects`, cta: 'やめた事業を見る' })
-  }
-  const { fy, sheets } = sheetsOf(d)
-  if (sheets.length) out.push({ key: 'eval', icon: <ClipboardTextIcon />, eyebrow: `${reiwa(fy)}の事業評価`, big: <>{sheets.length}<small className="ml-1 text-[0.45em]">件</small></>, body: <>区が自分で事業を振り返りました。「広げる」は {sheets.filter((s) => s.grade === 'A').length} 件。</>, href: `${town.path}/${fy}/projects`, cta: '事業を見る' })
-  if (c.near.length) out.push({ key: 'near', icon: <ArrowsLeftRightIcon />, eyebrow: 'となりのまち', big: c.near.map((n) => n.name).join('・'), body: <>同じ年度の決算を、分野ごとに並べて見られます。</>, href: compareHref(c), cta: '比べる' })
-  return out
-}
-
-function Story({ c }: { c: Ctx }) {
-  const list = facts(c)
-  const [api, setApi] = React.useState<CarouselApi>()
-  const [at, setAt] = React.useState(0)
-  React.useEffect(() => {
-    if (!api) return
-    const on = () => setAt(api.selectedScrollSnap())
-    on()
-    api.on('select', on)
-    return () => void api.off('select', on)
-  }, [api])
+function Inside({ c, sitekey, onChoose }: { c: Ctx; sitekey: string; onChoose: () => void }) {
+  const { town, d, v, year } = c
   return (
-    <div>
-      <div className="mb-4 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Emblem code={c.town.code} name={c.town.name} className="size-10 rounded-xl" />
-          <div>
-            <h2 className="text-xl font-bold">{c.town.name}のお金</h2>
-            {c.vision ? <p className="text-[13px] text-muted-foreground">{c.vision}</p> : null}
-          </div>
+    <div className="space-y-6">
+      <header className="flex items-center gap-4">
+        <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl p-2" />
+        <div className="min-w-0 flex-1">
+          <h2 className="text-[26px] leading-tight font-bold sm:text-[30px]">{town.name}</h2>
+          <p className="mt-0.5 truncate text-sm text-muted-foreground">{[c.vision, d.pop ? formatPeople(d.pop) : ''].filter(Boolean).join(' · ')}</p>
         </div>
-        <YearSwitch c={c} />
-      </div>
-      <Carousel setApi={setApi} opts={{ align: 'start' }} className="relative">
-        <CarouselContent>
-          {list.map((f) => (
-            <CarouselItem key={`${c.year}-${f.key}`} className="basis-[88%] sm:basis-[62%]">
-              <article className={cn('flex h-[320px] flex-col rounded-[24px] p-6 sm:p-7', f.brand ? 'bg-brand text-brand-foreground' : 'border bg-card')}>
-                <p className={cn('flex items-center gap-2 text-sm [&_svg]:size-5', f.brand ? 'opacity-80' : 'text-muted-foreground')}>
-                  {f.icon}
-                  {f.eyebrow}
-                </p>
-                <p className={cn('mt-auto leading-[1.2] font-bold [overflow-wrap:anywhere]', typeof f.big === 'string' ? 'text-[28px] sm:text-[32px]' : 'text-[40px] sm:text-[48px]')}>{f.big}</p>
-                <p className={cn('mt-3 text-[15px]', f.brand ? 'opacity-90' : 'text-muted-foreground')}>{f.body}</p>
-                <Link href={f.href} className={cn('mt-5 inline-flex w-fit items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium transition-colors', f.brand ? 'bg-brand-fill text-brand-fill-foreground hover:bg-brand-fill-hover' : 'bg-background text-foreground ring-1 ring-border hover:bg-secondary')}>
-                  {f.cta}
-                  <ArrowRightIcon className="size-4" />
-                </Link>
-              </article>
-            </CarouselItem>
+        <button type="button" onClick={onChoose} className="shrink-0 text-[13px] text-muted-foreground hover:text-foreground">
+          変える
+        </button>
+      </header>
+
+      <section className="animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none">
+        <h3 className="mb-2 text-[15px] font-bold">{town.name}について聞く</h3>
+        <StartForm
+          sitekey={sitekey}
+          prefix={`${town.name}について。`}
+          placeholder={`${town.name}について質問`}
+          suggestions={['いちばんお金を使っている分野は？', `${reiwa(year)}に新しく始めた事業は？`, '子育てにいくら使っている？']}
+        />
+      </section>
+
+      <section className="animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none">
+        <h3 className="mb-2 text-[15px] font-bold">{town.name}の事業を探す</h3>
+        <ProjectSearchBox code={town.code} size="md" placeholder="例：給食、プール、保育" />
+        <div className="mt-2.5 flex flex-wrap gap-2">
+          {EXAMPLES.map((x) => (
+            <Link key={x} href={searchHref(x, town.code)} className="rounded-full bg-secondary px-3 py-1 text-[13px] text-secondary-foreground transition-colors hover:bg-accent">
+              {x}
+            </Link>
           ))}
-        </CarouselContent>
-        <CarouselPrevious className="-left-3 hidden sm:flex" />
-        <CarouselNext className="-right-3 hidden sm:flex" />
-      </Carousel>
-      <div className="mt-4 flex justify-center gap-1.5" aria-hidden="true">
-        {list.map((f, i) => (
-          <span key={f.key} className={cn('h-1.5 rounded-full transition-[width,background-color] duration-200 ease-out', i === at ? 'w-5 bg-primary' : 'w-1.5 bg-border')} />
-        ))}
-      </div>
-      <p className="mt-6 text-center text-[13px] text-muted-foreground">
-        {at + 1} / {list.length}・横にめくると次の事実へ
-      </p>
-    </div>
-  )
-}
-
-// ---------- 3 問いから ----------
-
-type Question = { key: string; q: string; preview: React.ReactNode; answer: React.ReactNode }
-
-function questions(c: Ctx): Question[] {
-  const { v, d, year, town } = c
-  const out: Question[] = [
-    {
-      key: 'total',
-      q: `${town.name}は、${reiwa(year)}に全部でいくら使う？`,
-      preview: <Amt yen={v.total} className="font-bold text-primary" />,
-      answer: (
-        <>
-          <p className="text-[15px]">
-            {v.word === '決算' ? '決算' : '当初予算'}で <Amt yen={v.total} className="font-bold" />
-            {d.pop ? <>。住んでいる {formatPeople(d.pop)}で割ると、1人あたり {perHeadText(v.total, d.pop)}です。</> : '。'}
-          </p>
-          <More href={c.base} className="mt-3">
-            {town.name}のページを見る
-          </More>
-        </>
-      ),
-    },
-  ]
-  const f1 = v.fields[0]
-  if (f1)
-    out.push({
-      key: 'fields',
-      q: 'いちばんお金を使っているのは？',
-      preview: <span className="text-sm">{f1.name}</span>,
-      answer: (
-        <>
-          <FieldBars c={c} limit={5} />
-          <More href={flowHref(c)} className="mt-4">
-            お金の流れを見る
-          </More>
-        </>
-      ),
-    })
-  if (v.comparable && v.newProjects.length)
-    out.push({
-      key: 'new',
-      q: `${reiwa(year)}に新しく始めたことは？`,
-      preview: <span className="text-sm tabular-nums">{v.newProjects.length}件</span>,
-      answer: (
-        <>
-          <ProjectList items={v.newProjects.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p) ?? null }))} rest={v.newProjects.length - 5} />
-          <More href={`${c.base}/projects`} className="mt-3">
-            事業をすべて見る
-          </More>
-        </>
-      ),
-    })
-  if (v.comparable && v.ended.length)
-    out.push({
-      key: 'end',
-      q: `${reiwa(year - 1)}でやめたことは？`,
-      preview: <span className="text-sm tabular-nums">{v.ended.length}件</span>,
-      answer: (
-        <>
-          <ProjectList items={v.ended.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p, String(year - 1)) ?? null }))} rest={v.ended.length - 5} />
-          <More href={`${c.base}/projects`} className="mt-3">
-            事業をすべて見る
-          </More>
-        </>
-      ),
-    })
-  if ((!v.comparable || !v.newProjects.length) && v.current.length)
-    out.push({
-      key: 'top',
-      q: 'いちばんお金のかかる事業は？',
-      preview: <span className="max-w-40 truncate text-sm">{v.current[0]?.name}</span>,
-      answer: (
-        <>
-          <ProjectList items={v.current.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p) ?? null }))} rest={0} />
-          <More href={`${c.base}/projects`} className="mt-3">
-            事業をすべて見る
-          </More>
-        </>
-      ),
-    })
-  const { fy, sheets } = sheetsOf(d)
-  if (sheets.length)
-    out.push({
-      key: 'eval',
-      q: '事業を、どう振り返った？',
-      preview: <span className="text-sm tabular-nums">{sheets.length}件</span>,
-      answer: (
-        <>
-          <ul className="grid grid-cols-4 gap-2">
-            {GRADES.map(([g, label]) => (
-              <li key={g} className="rounded-xl bg-card px-2 py-2.5 text-center">
-                <span className="block text-lg font-bold tabular-nums">{sheets.filter((s) => s.grade === g).length}</span>
-                <span className="block text-[11px] text-muted-foreground">{label}</span>
-              </li>
-            ))}
-          </ul>
-          <More href={`${town.path}/${fy}/projects`} className="mt-3">
-            {reiwa(fy)}の評価を見る
-          </More>
-        </>
-      ),
-    })
-  if (c.near.length)
-    out.push({
-      key: 'near',
-      q: 'となりのまちと比べると？',
-      preview: <span className="text-sm">{c.near.length}つのまち</span>,
-      answer: (
-        <>
-          <NearChips c={c} />
-          <More href={compareHref(c)} className="mt-3">
-            まとめて比べる
-          </More>
-        </>
-      ),
-    })
-  return out
-}
-
-function Questions({ c }: { c: Ctx }) {
-  const list = questions(c)
-  const [open, setOpen] = React.useState<string | null>(list[0]?.key ?? null)
-  return (
-    <div>
-      <div className="mb-5 flex items-center justify-between gap-3">
-        <div className="flex items-center gap-3">
-          <Emblem code={c.town.code} name={c.town.name} className="size-10 rounded-xl" />
-          <h2 className="text-xl font-bold">{c.town.name}に聞いてみる</h2>
         </div>
-        <YearSwitch c={c} />
-      </div>
-      <ul className="divide-y overflow-hidden rounded-2xl border bg-background">
-        {list.map((q) => {
-          const isOpen = open === q.key
-          return (
-            <li key={q.key}>
-              <button type="button" onClick={() => setOpen(isOpen ? null : q.key)} aria-expanded={isOpen} className="flex w-full items-center gap-3 px-5 py-4 text-left transition-colors hover:bg-card">
-                <span className="flex-1 text-[15px] font-medium">{q.q}</span>
-                <span className={cn('shrink-0 text-muted-foreground transition-opacity duration-150', isOpen && 'opacity-0')}>{q.preview}</span>
-                <CaretDownIcon className={cn('size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-out', isOpen && 'rotate-180')} />
-              </button>
-              {/* 高さは grid の 0fr → 1fr で開く */}
-              {/* 閉じている間は中のリンクを Tab と読み上げから外す */}
-              <div inert={!isOpen} className={cn('grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none', isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]')}>
-                <div className="overflow-hidden">
-                  <div className="px-5 pt-1 pb-5">{q.answer}</div>
-                </div>
-              </div>
+      </section>
+
+      <section className="rounded-[24px] bg-brand p-5 text-brand-foreground animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none sm:p-6">
+        <div className="flex flex-wrap items-end justify-between gap-3">
+          <div>
+            <p className="text-sm opacity-80">
+              {reiwa(year)}の{v.word === '決算' ? '決算' : '当初予算'}
+            </p>
+            <p className="mt-1 text-[34px] leading-none font-bold">
+              <Amt yen={v.total} />
+            </p>
+            {d.pop ? <p className="mt-1.5 text-[13px] opacity-80">1人あたり {perHeadText(v.total, d.pop)}</p> : null}
+          </div>
+          <YearSwitch c={c} onBrand />
+        </div>
+        <ul className="mt-5 grid grid-cols-2 gap-2 sm:grid-cols-4">
+          {v.fields.slice(0, 4).map((f) => (
+            <li key={f.id}>
+              <Link href={`${c.base}/fields/${f.id}`} className="block rounded-xl bg-brand-fill/20 px-3 py-2.5 transition-colors hover:bg-brand-fill/35">
+                <span className="flex items-center gap-1.5 text-[12px] opacity-80">
+                  <FieldIcon id={f.id} className="size-4" />
+                  <span className="truncate">{f.name}</span>
+                </span>
+                <Amt yen={f.yen} className="mt-0.5 block text-base font-bold" />
+              </Link>
             </li>
-          )
-        })}
-      </ul>
+          ))}
+        </ul>
+        <div className="mt-4 flex flex-wrap gap-2">
+          <Link href={c.base} className="inline-flex items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
+            ページを見る
+            <ArrowRightIcon className="size-4" />
+          </Link>
+          {v.comparable && v.newProjects.length ? (
+            <Link href={`${c.base}/projects`} className="inline-flex items-center gap-1.5 rounded-full px-3.5 py-2 text-[13px] hover:bg-white/10">
+              <NewIcon />
+              始めた事業 {v.newProjects.length}件
+            </Link>
+          ) : null}
+        </div>
+      </section>
     </div>
   )
 }
@@ -494,60 +438,68 @@ function Loading() {
   )
 }
 
-function Body({ town, entries, vision, variant, snap }: { town: Town; entries: MapEntry[]; vision?: string; variant: number; snap: ReturnType<typeof useSnapshot> }) {
+/** うちのまちのデータが揃うまでの出し分け。揃ったら children に渡す */
+function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string; snap: ReturnType<typeof useSnapshot>; children: (c: Ctx) => React.ReactNode }) {
   const { d, failed, year, setYear } = snap
   if (failed) return <p className="text-sm text-muted-foreground">今はこのまちのデータを読み込めません。少し時間をおいて開き直してください。</p>
   if (!d || year == null) return <Loading />
   if (!d.years[String(year)]) return <p className="text-sm text-muted-foreground">このまちの予算・決算は、まだ収録していません。</p>
-  const c = buildCtx(town, d, year, setYear, entries, vision)
-  return variant === 1 ? <Story c={c} /> : variant === 2 ? <Questions c={c} /> : <Dashboard c={c} />
+  return <>{children(buildCtx(town, d, year, setYear, vision))}</>
 }
 
-export function ProtoHome({ entries, featured }: HomeProps) {
-  const { ready, town, set } = useMyTown()
+function Choose({ entries, onPick, onCancel }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; onCancel?: () => void }) {
+  return (
+    <>
+      <header className="mb-6">
+        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">まちのお金、何に使ってる？</h1>
+        <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
+      </header>
+      <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
+        <p className="text-xl font-bold sm:text-2xl">住んでいるまちを選ぶ</p>
+        <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちのお金の使い道がここに並びます。</p>
+        <TownPicker entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
+        <LocateButton entries={entries} onPick={onPick} />
+        {onCancel ? (
+          <button type="button" onClick={onCancel} className="mt-3 text-[13px] opacity-80 hover:opacity-100">
+            やめる
+          </button>
+        ) : null}
+      </section>
+    </>
+  )
+}
+
+export function ProtoHome({ entries, featured, sitekey }: Props) {
+  const { ready, town, recent, set } = useMyTown()
   const [changing, setChanging] = React.useState(false)
-  const picker = usePicker(VARIANTS)
+  const { current, key } = useVariant()
   const snap = useSnapshot(town?.code ?? null)
+  const vision = town ? featured.find((f) => f.code === town.code)?.vision : undefined
   const pick = (e: MapEntry) => {
     set(toTown(e))
     setChanging(false)
   }
+  const choose = () => setChanging(true)
+  let body: React.ReactNode
+  if (!ready) body = <Loading />
+  else if (changing || (!town && current !== 1)) body = <Choose entries={entries} onPick={pick} onCancel={changing ? () => setChanging(false) : undefined} />
+  else if (current === 1) body = <Seek entries={entries} town={town} recent={recent} snap={snap} onChoose={choose} />
+  else if (current === 2) body = <WithCtx town={town!} vision={vision} snap={snap}>{(c) => <Inside c={c} sitekey={sitekey} onChoose={choose} />}</WithCtx>
+  else
+    body = (
+      <>
+        <div className="mb-3 flex justify-end">
+          <button type="button" onClick={choose} className="text-[13px] text-muted-foreground hover:text-foreground">
+            うちのまちを変える
+          </button>
+        </div>
+        <WithCtx town={town!} vision={vision} snap={snap}>{(c) => <Dashboard c={c} />}</WithCtx>
+      </>
+    )
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-20 pb-28 sm:px-8">
-      <Picker names={VARIANTS} current={picker.current} select={picker.select} replay={picker.replay} />
-      {!ready ? (
-        <Loading />
-      ) : !town || changing ? (
-        <>
-          <header className="mb-6">
-            <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">まちのお金、何に使ってる？</h1>
-            <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
-          </header>
-          <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
-            <p className="text-xl font-bold sm:text-2xl">住んでいるまちを選ぶ</p>
-            <p className="mt-1 mb-4 text-sm opacity-80">選ぶと、そのまちのお金の使い道がここに並びます。</p>
-            <TownPicker entries={entries} onPick={pick} placeholder="自治体名で探す（例：品川）" />
-            <LocateButton entries={entries} onPick={pick} />
-            {changing ? (
-              <button type="button" onClick={() => setChanging(false)} className="mt-3 text-[13px] opacity-80 hover:opacity-100">
-                やめる
-              </button>
-            ) : null}
-          </section>
-        </>
-      ) : (
-        <>
-          <div className="mb-3 flex justify-end">
-            <button type="button" onClick={() => setChanging(true)} className="text-[13px] text-muted-foreground hover:text-foreground">
-              うちのまちを変える
-            </button>
-          </div>
-          {/* key は出し直しの動きのためだけ。データは上で持つ */}
-          <div key={picker.key}>
-            <Body town={town} entries={entries} vision={featured.find((f) => f.code === town.code)?.vision} variant={picker.current} snap={snap} />
-          </div>
-        </>
-      )}
+      {/* key は出し直しの動きのためだけ。データは上で持つ */}
+      <div key={key}>{body}</div>
     </main>
   )
 }

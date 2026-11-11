@@ -22,12 +22,13 @@ import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, type Theme } from './theme'
-import { ArrowsLeftRightIcon, ListIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
+import { ListMagnifyingGlassIcon, MagnifyingGlassIcon } from '@phosphor-icons/react'
 
 // 試作のサイドバーは /prototype の下でだけ読む（ほかの頁に combobox などを載せない）
 const ProtoNavContent = React.lazy(() => import('../prototype/nav-content').then((m) => ({ default: m.ProtoNavContent })))
+const ProtoPicker = React.lazy(() => import('../prototype/picker').then((m) => ({ default: m.Picker })))
 
-export const NAV_SECTIONS = ['home', 'assistant', 'compare', 'search'] as const
+export const NAV_SECTIONS = ['home', 'assistant', 'search'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 /** proto: 試作のサイドバー（/prototype の下だけ） */
 export type SiteNavProps = { active?: NavSection; open: boolean; theme: Theme; proto?: boolean }
@@ -196,12 +197,20 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
 }
 
 /** 試作: 狭い画面で、サイドバー（機能・うちのまち）を下から開く */
-function MenuButton() {
+/** 試作: まちを探す。サイドバー（スマホでは下からの sheet）を開き、頭の検索欄に入れる */
+function FindTownButton() {
   const { setOpenMobile } = useSidebar()
   return (
-    <button type="button" onClick={() => setOpenMobile(true)} className={BOTTOM_ITEM}>
-      <ListIcon />
-      メニュー
+    <button
+      type="button"
+      onClick={() => {
+        setOpenMobile(true)
+        setTimeout(() => window.dispatchEvent(new Event('fudoki:find-town')), 250)
+      }}
+      className={BOTTOM_ITEM}
+    >
+      <MagnifyingGlassIcon />
+      まちを探す
     </button>
   )
 }
@@ -211,9 +220,9 @@ function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; them
   const [hidden, setHidden] = useHideOnScroll()
   const items = proto
     ? [
-        { href: '/prototype', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
-        { href: '/prototype/search', label: 'さがす', icon: <MagnifyingGlassIcon />, active: active === 'search' },
-        { href: '/prototype/compare', label: '比べる', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
+        { href: '/prototype', label: 'うちのまち', icon: <HouseIcon />, active: active === 'home' },
+        { href: '/prototype/search', label: '事業を探す', icon: <ListMagnifyingGlassIcon />, active: active === 'search' },
+        { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
       ]
     : [
         { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
@@ -230,23 +239,22 @@ function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; them
       {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
       <Separator />
       <ul className={cn('grid h-14', proto ? 'grid-cols-5' : 'grid-cols-3')}>
-        {items.map((i) => (
-          <li key={i.href}>
-            <NavLink
-              href={i.href}
-              aria-current={i.active ? 'page' : undefined}
-              className={BOTTOM_ITEM}
-            >
-              {i.icon}
-              {i.label}
-            </NavLink>
-          </li>
+        {items.map((i, n) => (
+          <React.Fragment key={i.href}>
+            <li>
+              <NavLink href={i.href} aria-current={i.active ? 'page' : undefined} className={BOTTOM_ITEM}>
+                {i.icon}
+                {i.label}
+              </NavLink>
+            </li>
+            {/* 試作: うちのまちの隣に、まちを探す */}
+            {proto && n === 0 ? (
+              <li>
+                <FindTownButton />
+              </li>
+            ) : null}
+          </React.Fragment>
         ))}
-        {proto ? (
-          <li>
-            <MenuButton />
-          </li>
-        ) : null}
         <li>
           <SettingsMenu theme={theme} onPick={onPick} className={BOTTOM_ITEM} />
         </li>
@@ -266,6 +274,12 @@ export function SiteNav({ active, open, theme: initialTheme, proto }: SiteNavPro
       {/* 頁の本文は provider の外（.site-main）にあるので、provider の枠は箱を作らず（contents）、幅の変数だけを配る */}
       <SidebarProvider defaultOpen={open} className="contents" style={{ '--sidebar-width': '13rem', '--sidebar-width-icon': '3.5rem' } as React.CSSProperties}>
         <BottomNav active={active} theme={theme} onPick={pickTheme} proto={proto} />
+        {/* 試作: 案のピッカーは /prototype の下のどの頁でも出す */}
+        {proto ? (
+          <React.Suspense fallback={null}>
+            <ProtoPicker />
+          </React.Suspense>
+        ) : null}
         <Sidebar collapsible="icon" aria-label="サイト">
           <SidebarHeader className="flex-row items-center justify-between gap-2 px-3 pt-5 pb-4 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2">
             <NavLink href={proto ? '/prototype' : '/'} aria-label="風土記 ホーム" className="ps-2 group-data-[collapsible=icon]:hidden">
