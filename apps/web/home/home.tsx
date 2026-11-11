@@ -376,8 +376,6 @@ export function Home({ entries, featured }: HomeProps) {
     set(pending)
     setPending(null)
   }
-  // 住んでいるまちを外し、はじめての流れ（住んでいるまちを選ぶ）に戻す
-  const reset = () => set(null)
   let body: React.ReactNode
   if (!ready) body = <Loading />
   else if (!town)
@@ -405,11 +403,6 @@ export function Home({ entries, featured }: HomeProps) {
   else
     body = (
       <>
-        <div className="mb-3 flex justify-end">
-          <button type="button" onClick={reset} className="text-[13px] text-muted-foreground hover:text-foreground">
-            リセット
-          </button>
-        </div>
         <WithCtx town={town!} vision={vision} snap={snap}>
           {(c) => (
             <>
