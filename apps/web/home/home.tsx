@@ -427,7 +427,7 @@ export function Home({ entries, featured }: HomeProps) {
     )
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
-      <Intro shown={ready && !town} />
+      <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />
       {/* ほかのまちを見る導線。住んでいるまちを選んだあとも、ホームの頭に常に出す（選ぶ前は Empty の中に出す） */}
       {ready && town && !changing ? <OtherTowns entries={entries} className="mb-6" /> : null}
       {body}

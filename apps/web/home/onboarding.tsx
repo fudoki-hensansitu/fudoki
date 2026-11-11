@@ -6,7 +6,7 @@ import { ArrowRightIcon, CheckIcon, NavigationArrowIcon, XIcon } from '@phosphor
 import { useRouter } from '@void/react'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
-import { Logo } from '../nav/site-nav'
+import { Logo, Mark } from '../nav/site-nav'
 import { Picker as TownPicker } from './town-picker'
 import { LocateError, locateMunicipality } from './locate'
 import type { MapEntry } from '../jurisdiction/index-table'
@@ -136,15 +136,26 @@ export function OtherTowns({ entries, className }: { entries: MapEntry[]; classN
 
 /**
  * 頁の見出しと説明。サーバーの HTML にも載せるため、まちの有無に関わらず描く。
- * 見せるのはまちを選んでいないときだけで、それ以外（読み込み中・ダッシュボード）は読み上げだけに残す
+ * まちを選ぶ前は大きく、選んだあと（ダッシュボード）はロゴのマークと1行の小さめの見出しにする。読み込み中は読み上げだけに残す
  */
-export function Intro({ shown }: { shown: boolean }) {
+export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
+  const title = '私のお金はどこへ行った？'
+  const lead = '自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。'
+  if (mode === 'compact')
+    return (
+      <header className="mb-5 flex items-center gap-2.5">
+        <Mark className="size-7 shrink-0 text-primary" />
+        <h1 className="text-lg leading-snug font-bold tracking-[0.02em] sm:text-xl">{title}</h1>
+        <p className="sr-only">{lead}</p>
+      </header>
+    )
+  const shown = mode === 'full'
   return (
     <header className={shown ? 'ob-rise mb-6' : 'sr-only'}>
       {/* スマホはサイドバーが無くロゴが見えないので、見出しの上に出す。PC はサイドバーの頭にある */}
       {shown ? <Logo className="mb-5 block h-7 w-auto text-primary md:hidden" /> : null}
-      <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">まちのお金、何に使ってる？</h1>
-      <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
+      <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">{title}</h1>
+      <p className="mt-1.5 text-[15px] text-muted-foreground">{lead}</p>
     </header>
   )
 }
