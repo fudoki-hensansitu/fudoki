@@ -229,12 +229,17 @@ def reading(words: list[Word]) -> str:
 
 
 def _frames(page: Page, spread: dict | None = None,
-            staircase: bool = False) -> list[tuple[float, float, float, float, list[float]]]:
+            staircase: bool = False, open_frame: bool = False) -> list[tuple[float, float, float, float, list[float]]]:
     """Frames as (x0, x1, top, bottom, band edges) from rules that bound a table.
 
     `staircase` (the layout setting `header.staircase`): the 款・項 cells run down the page with no closing
     rule, so the frame ends at the lowest rule its sides reach that crosses most of its columns or is drawn
-    where the sides end (281000)."""
+    where the sides end (281000).
+
+    `open_frame` (the layout setting `header.open_frame`): no rule closes the table at its top or foot, and the 款・項
+    columns rule only the rows that open a 款・項 (八丈町 R6). A column between two edges counts with one row rule, or
+    none where its two side rules run together over 40pt, and the frame runs from where its side rules start to where
+    they end."""
     # (A bottom rule a skewed scan reads in two overlapping pieces is one rule: 国分寺市.)
     horizontals = _joined([r for r in page.rules if not r.vertical])
     # A column edge drawn in pieces (the header cell and the rows that have a cell of their own) is one rule.
@@ -275,7 +280,10 @@ def _frames(page: Page, spread: dict | None = None,
     for left, right in zip(edges, edges[1:]):
         middle = (left + right) / 2
         inside = [h for h in horizontals if _covers(h, middle)]
-        if len(inside) >= 2:
+        # `open_frame`: a 款・項 column of a page that opens no 款・項 draws no row rule; its two side rules run together.
+        beside = open_frame and any(min(a1, b1) - max(a0, b0) > 40 for a0, a1 in spans[round(left, 1)]
+                                    for b0, b1 in spans[round(right, 1)])
+        if len(inside) >= (1 if open_frame else 2) or beside:
             if not current:
                 current = [left]
             current.append(right)
@@ -291,9 +299,12 @@ def _frames(page: Page, spread: dict | None = None,
         spanning = [h for h in horizontals if all(_covers(h, m) for m in middle)]
         if len(spanning) < 2:
             spanning = [h for h in horizontals if sum(1 for m in middle if _covers(h, m)) >= max(2, .6 * len(middle))]
-        if len(spanning) < 2:
+        # `open_frame`: a page that opens no 款・項 rules none of its rows across; its side rules bound it.
+        edges_drawn = [r for r in page.rules if r.vertical and r.y1 - r.y0 > 40
+                       and any(abs(r.x0 - x) <= 3 for x in (frame[0], frame[-1]))] if open_frame else []
+        if len(spanning) < 2 and not edges_drawn:
             continue
-        bottom = max(h.y0 for h in spanning)
+        bottom = max([h.y0 for h in spanning] + [r.y1 for r in edges_drawn])
         most = lambda h: sum(1 for m in middle if _covers(h, m)) >= max(2, .6 * len(middle))
         sides = min(max((r.y1 for r in page.rules if r.vertical and abs(r.x0 - x) <= 3), default=bottom)
                     for x in (frame[0], frame[-1]))
@@ -310,7 +321,7 @@ def _frames(page: Page, spread: dict | None = None,
             bottom = max([h.y0 for h in horizontals if bottom < h.y0 <= end + 2 and h.x0 < frame[-1] and h.x1 > frame[0]
                           and (abs(h.y0 - end) <= 2 or sum(1 for m in middle if _covers(h, m)) >= max(2, .6 * len(middle)))]
                          or [bottom])
-        result.append((frame[0], frame[-1], min(h.y0 for h in spanning), bottom, frame))
+        result.append((frame[0], frame[-1], min([h.y0 for h in spanning] + [r.y0 for r in edges_drawn]), bottom, frame))
     # A column that draws no row rules at all (the 支出済額 column printed between two ruled halves of one wide
     # page) splits a table in two. Two frames that start and end on the same rules, one column apart, with the
     # figures of that column printed between them, are one.
@@ -404,8 +415,13 @@ def level_cells(cells: list[tuple[tuple, str]], edges: list[float], levels: str 
 
 def page_bands(page: Page, spread: dict | None = None,
                header: dict | None = None, split_text: bool = False,
-               row_gaps: bool = False) -> tuple[list[Band], list[Word]]:
+               row_gaps: bool = False, carry: list | None = None) -> tuple[list[Band], list[Word]]:
     """Bands of every frame on one physical page, and the words outside frames.
+
+    `carry` (the layout setting `header.carried`, kept by `logical_pages` across the pages in order): the frames read
+    with their headings so far. A frame drawn with the same column rules as one of them whose top prints fewer than
+    half of its heading words (八丈町 R6: only the first page of a section prints the column headings) takes that
+    frame's headings and is body from its top rule.
 
     `row_gaps` (the layout setting `rules.row_gaps`): a vertical rule the page leaves out for a row lets the row's
     text run on into the next column. A word that Poppler cut off where the name crossed the column's edge, touching
@@ -420,10 +436,15 @@ def page_bands(page: Page, spread: dict | None = None,
     bands = []
     whole = list(enumerate(page.words))
     staircase = bool((header or {}).get('staircase'))
-    for frame in _frames(page, spread, staircase):
+    for frame in _frames(page, spread, staircase, bool((header or {}).get('open_frame'))):
         x0, x1, top, bottom, edges = frame
         first_band = len(bands)
         header_bottom = _header_bottom(page, frame)
+        known = _carried_header(page, frame, carry) if carry is not None else None
+        if known is not None:
+            header_bottom = top
+        elif carry is not None:
+            header_bottom = _carried_bottom(page, frame, carry, header_bottom)
         title_ignored = bool((header or {}).get('ignore_frame_title'))
         # Header cells: the rule-bounded rectangle around each header word.
         cells: dict[tuple, list[Word]] = defaultdict(list)
@@ -443,6 +464,11 @@ def page_bands(page: Page, spread: dict | None = None,
         if staircase:
             levels = (header or {})['staircase']
             header_cells = level_cells(header_cells, edges, levels if isinstance(levels, str) else '款項目')
+        if known is not None:
+            header_cells = known
+        elif carry is not None and header_cells:
+            carry.append((edges, header_bottom - top, header_cells,
+                          {normalize(w.text) for ws in cells.values() for w in ws}))
         covering_of = lambda middle: [(key, text) for key, text in header_cells if key[0] - 1 <= middle <= key[1] + 1 and text]
         # Only a rule between two 款・項・目 columns splits a body word of digits (`１１` = 項1・目1);
         # amounts stay whole even when a rule crosses them.
@@ -481,6 +507,35 @@ def page_bands(page: Page, spread: dict | None = None,
             bands.extend(merged_cells(bands[first_band:], heading, verticals))
     outside = [w for i, w in enumerate(page.words) if i not in used]
     return bands, outside
+
+
+def _carried_header(page: Page, frame, carry: list) -> list | None:
+    """The header cells of the latest frame in `carry` drawn with the same column rules, when this frame's top prints
+    fewer than half of that frame's heading words (see `page_bands`)."""
+    x0, x1, top, _, edges = frame
+    for known_edges, height, cells, words in reversed(carry):
+        if len(known_edges) != len(edges) or any(abs(a - b) > 2 for a, b in zip(known_edges, edges)):
+            continue
+        printed = {normalize(w.text) for w in page.words
+                   if x0 < (w.x0 + w.x1) / 2 < x1 and top < (w.y0 + w.y1) / 2 < top + height}
+        # A name in the body may print a character of a heading (`金`): the top is the header when it prints most of them.
+        return None if len(printed & words) * 2 >= len(words) else cells
+    return None
+
+
+def _carried_bottom(page: Page, frame, carry: list, bottom: float) -> float:
+    """Where the header ends on a frame that prints its headings: as far below its top as on the latest frame in `carry`
+    drawn with the same column rules, where a rule across the frame is drawn there. The rows a page opens with that print
+    no figure (the 説明 a 目 carries on from the page before, 小笠原村) are body, not more of the header."""
+    x0, x1, top, _, edges = frame
+    for known_edges, height, _, _ in reversed(carry):
+        if len(known_edges) != len(edges) or any(abs(a - b) > 2 for a, b in zip(known_edges, edges)):
+            continue
+        if bottom - top > height + 2 and any(abs(r.y0 - (top + height)) <= 1.5 and r.x0 <= x0 + 3 and r.x1 >= x1 - 3
+                                             for r in _joined([r for r in page.rules if not r.vertical])):
+            return top + height
+        return bottom
+    return bottom
 
 
 def merged_cells(frame_bands: list[Band], heading: str, verticals: list[Rule]) -> list[Band]:
@@ -709,7 +764,8 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
 
     `ocr_pages`: pages of a text document whose words OCR read (`mixed.py`). Their bands are classified by what
     the text pages teach (their headings corrected as a scan's are) and never teach anything themselves."""
-    per_page = [(page, *page_bands(page, spread, header, split_text, row_gaps and page.number not in ocr_pages))
+    carry = [] if (header or {}).get('carried') else None
+    per_page = [(page, *page_bands(page, spread, header, split_text, row_gaps and page.number not in ocr_pages, carry))
                 for page in pages]
     if ocr_pages:
         from ingestion.generic.scan import header_path

@@ -18,6 +18,7 @@ user-invocable: false
 | A. source_selection — 出典の情報を埋め、1資料を選定・保存する。選べなければ理由を残す | [references/source-selection.md](references/source-selection.md) |
 | B. ingestion：保存済みCSV・text PDF・scan PDFから取り込みParquetを作り、形式別に検査する | [references/ingestion.md](references/ingestion.md) |
 | C. dbt：保存済みの取り込み表からstagingを定義し、構築する | [references/dbt.md](references/dbt.md) |
+| 予算案のプレス発表を工程ごとのパターンの組み合わせ（宣言の workflow）で読む | [references/press-reading.md](references/press-reading.md) |
 | 資料の施策（プレス発表など）を予算書の内訳（事業）に紐付け、分野を付ける | [references/link-to-budget-detail.md](references/link-to-budget-detail.md) |
 
 ## 関連 skill

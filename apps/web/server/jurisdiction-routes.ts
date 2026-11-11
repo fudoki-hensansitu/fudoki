@@ -75,7 +75,7 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
     emblemSvg,
     logoSvg,
     // 同じ年度の決算なら同じ画像。字形・配置を変えたら版を上げる
-    cacheKey: `og-v1/${code}-${latest.year}-${latest.yen}`,
+    cacheKey: `og-v2/${code}-${latest.year}-${latest.yen}`,
   }
 }
 

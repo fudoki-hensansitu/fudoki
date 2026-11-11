@@ -12,7 +12,7 @@ import { Marker, MarkerContent, MarkerIcon } from '@/components/ui/marker'
 import { Message, MessageContent } from '@/components/ui/message'
 import { Spinner } from '@/components/ui/spinner'
 import { Composer } from './composer'
-import { forServer, MAX_CONTEXT } from './history'
+import { forServer, MAX_CONTEXT, splitContext } from './history'
 import { Markdown } from './markdown'
 import { saveSession, type StoredSession } from './store'
 import { ViewFrame } from './view-frame'
@@ -92,7 +92,7 @@ export function Conversation({
   movableViews?: boolean
 }) {
   const viewContext = React.useRef(stored.viewContext ?? '')
-  // 頁の文脈は質問ごとに読み、その発言の metadata に持たせる（server が質問とは別の利用者の発言にして AI に渡す）
+  // 頁の文脈は質問ごとに読み、その発言の metadata に持たせる（server が選んだ文は質問の直前の利用者の発言に、見ている画面は最後の質問のものだけを system prompt に入れる）
   const contextRef = React.useRef(context)
   contextRef.current = context
   const transport = React.useMemo(
@@ -262,16 +262,14 @@ export function Conversation({
 
 /** 質問に添えた頁の文脈。質問の吹き出しとは分けて、その上に小さく出す。選んだ文はいつも見せ、画面の様子は開いて読む */
 function ContextNote({ text }: { text: string }) {
-  const lines = text.split('\n')
-  const quote = lines.find((l) => l.startsWith('選んだ文: '))?.slice('選んだ文: '.length)
-  const rest = lines.filter((l) => !l.startsWith('選んだ文: '))
+  const { quote, screen } = splitContext(text)
   return (
     <div className="mb-1.5 ml-auto flex max-w-[85%] flex-col items-end gap-1 text-xs text-muted-foreground">
       {quote ? <blockquote className="line-clamp-3 border-l-2 border-primary/60 pl-2.5 text-left">{quote}</blockquote> : null}
-      {rest.length ? (
+      {screen ? (
         <details className="group/ctx text-right">
           <summary className="cursor-pointer list-none select-none hover:text-foreground [&::-webkit-details-marker]:hidden">見ていた画面を添えています</summary>
-          <p className="mt-1 whitespace-pre-wrap text-left">{rest.join('\n')}</p>
+          <p className="mt-1 whitespace-pre-wrap text-left">{screen}</p>
         </details>
       ) : null}
     </div>
