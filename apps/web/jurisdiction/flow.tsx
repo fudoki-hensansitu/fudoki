@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
-import { Overview } from './sankey'
+import { Overview, OverviewSkeleton } from './sankey'
 import { formatShare, formatYen, type Drill, type FlowView, type Kou, type Moku, type PageData, type YearTotal } from './types'
 
 /** 分け方ごとの段の呼び名。機能分類は COFOG の大分類・中分類のあとに自治体の科目（目）とその内訳（節・事業）が来る */
@@ -18,6 +18,8 @@ const LEVELS: Record<FlowView, { kan: string; kou: string; moku: string; setsu: 
 type Levels = (typeof LEVELS)[FlowView]
 
 const SETSU_SHOWN = 3
+/** 流れの読み込みを打ち切るまでの時間（ms）。冷えたキャッシュでも数秒で返る */
+const FETCH_TIMEOUT = 20_000
 /** 帯の上を流れる光の幅と速さ（px、px/秒） */
 const LIGHT = 140
 const LIGHT_SPEED = 320
@@ -311,38 +313,6 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
   )
 }
 
-/** 読み込み中の全体図。左の総額の柱から右の款の柱へ帯が流れる形を、薄い色で点滅させる */
-const SKELETON_SHARES = [0.3, 0.2, 0.15, 0.12, 0.1, 0.07, 0.06]
-function FlowSkeleton() {
-  const H = 400, GAP = 8, LEFT = 14, RIGHT = 14, X0 = 0, X1 = 286
-  const usable = H - GAP * (SKELETON_SHARES.length - 1)
-  let left = 0
-  let right = 0
-  const bands = SKELETON_SHARES.map((share) => {
-    const h = usable * share
-    const band = { l: left, r: right, h }
-    left += h
-    right += h + GAP
-    return band
-  })
-  return (
-    <div role="status" aria-label="お金の流れを読み込んでいます" className="h-full animate-pulse">
-      <svg viewBox={`0 0 300 ${H}`} preserveAspectRatio="none" className="h-full max-h-[520px] w-full" aria-hidden="true">
-        <rect x={X0} y={0} width={LEFT} height={usable} rx={3} className="fill-muted" />
-        {bands.map((b, i) => {
-          const sx = X0 + LEFT, ex = X1, mx = (sx + ex) / 2
-          return (
-            <g key={i}>
-              <path d={`M${sx},${b.l} C${mx},${b.l} ${mx},${b.r} ${ex},${b.r} L${ex},${b.r + b.h} C${mx},${b.r + b.h} ${mx},${b.l + b.h} ${sx},${b.l + b.h} Z`} className="fill-muted/60" />
-              <rect x={X1} y={b.r} width={RIGHT} height={b.h} rx={3} className="fill-muted" />
-            </g>
-          )
-        })}
-      </svg>
-    </div>
-  )
-}
-
 /** natural は面の中で縦に送らず、中身の高さのまま頁のスクロールで読む */
 function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void; natural?: boolean; /** 横に並ぶ面のうち、今見せている面か */ shown?: boolean }) {
   const body = React.useRef<HTMLDivElement>(null)
@@ -421,7 +391,8 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
   const [detail, setDetail] = React.useState<Drill[]>()
   const [error, setError] = React.useState(false)
   const [attempt, setAttempt] = React.useState(0)
-  const [near, setNear] = React.useState(false)
+  // natural（自治体の頁のタブ）では図は開いたタブの中にあるので、近づくのを待たずにすぐ読む
+  const [near, setNear] = React.useState(!!natural)
   const [index, setIndex] = React.useState(0)
   const flows = detail ?? (isLatest ? (view === 'cofog' ? data.cofogFlow : data.flow) : [])
   const overviewFade = useEdgeFade(overview, [flows.length], natural)
@@ -440,20 +411,33 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
   // 項の内訳（目・節）は、図が近づいたら読み込む。クリックは要らない
   React.useEffect(() => {
     const el = root.current
-    if (!el) return
+    if (!el || near) return
     const observer = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) setNear(true) }, { rootMargin: '900px 0px' })
     observer.observe(el)
     return () => observer.disconnect()
-  }, [])
+  }, [near])
   React.useEffect(() => {
     if (!near || detail) return
     setError(false)
     const controller = new AbortController()
-    fetchJson<Drill[]>(`/api/jurisdictions/flow/${data.code}/${year.year}/setsu?${new URLSearchParams({ ...(view === 'cofog' ? { view: 'cofog' } : {}), ...(phase === 'initial' ? { phase: 'initial' } : {}), ...(account ? { account } : {}) })}`, controller.signal).then(
-      (value) => { if (!controller.signal.aborted) setDetail(value) },
-      () => { if (!controller.signal.aborted) setError(true) },
-    )
-    return () => controller.abort()
+    // 応答が返らないまま読み込み中の形で止まらないよう、時間を区切る。一度目は黙って読み直し、二度目で読み直しのボタンを出す
+    let timedOut = false
+    const timer = window.setTimeout(() => { timedOut = true; controller.abort() }, FETCH_TIMEOUT)
+    const url = `/api/jurisdictions/flow/${data.code}/${year.year}/setsu?${new URLSearchParams({ ...(view === 'cofog' ? { view: 'cofog' } : {}), ...(phase === 'initial' ? { phase: 'initial' } : {}), ...(account ? { account } : {}) })}`
+    fetchJson<Drill[]>(url, controller.signal).then(
+      (value) => {
+        if (controller.signal.aborted) return
+        // 空の流れは読み込み中の形のまま残さず、読めなかったものとして扱う
+        if (value.length > 0) setDetail(value)
+        else setError(true)
+      },
+      () => {
+        if (controller.signal.aborted && !timedOut) return
+        if (attempt === 0) setAttempt(1)
+        else setError(true)
+      },
+    ).finally(() => window.clearTimeout(timer))
+    return () => { window.clearTimeout(timer); controller.abort() }
   }, [near, detail, data.code, year.year, view, phase, account, attempt])
   const onScroll = () => {
     const el = track.current
@@ -486,6 +470,7 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
     else if (e.key === 'ArrowLeft') { go(-1); e.preventDefault() }
   }
   const total = flows.length
+  const overviewHeight = Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))
   const kan = index > 0 ? flows[index - 1] : undefined
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) || 1
   return (
@@ -544,9 +529,9 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
         >
           <div ref={overview} style={overviewFade} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
             {flows.length > 0 ? (
-              <Overview flows={flows} total={year.yen} levels={levels} onSelect={select} height={Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))} />
+              <Overview flows={flows} total={year.yen} levels={levels} onSelect={select} height={overviewHeight} />
             ) : (
-              error ? null : <FlowSkeleton />
+              error ? null : <OverviewSkeleton levels={levels} height={overviewHeight} />
             )}
           </div>
           {flows.map((f, i) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} />)}
