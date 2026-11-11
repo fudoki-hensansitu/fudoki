@@ -37,7 +37,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-initial",
-      "input_fingerprint": "c4f114b8b06e03028c6954a9b0f35a97c1bf7a91d457ae1c923e165b6dfdc424",
+      "input_fingerprint": "58c7b0aa3e8fdffa2cc8039f40c56deac29492477b6153db2c0585bdb9249443",
       "account": "一般会計",
       "notes": [
         "物理7頁の「（３）令和7年度一般会計当初予算（単位：千円）」は歳入と歳出を左右に並べた表なので、右の「歳出」の枠だけを読んだ（読み方 paired_summary）。左の歳入と頁の他の表は取り込んでいない。",

@@ -90,7 +90,7 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "fc18256eb53be36f71d5862e6f9fd14dd5bbcac8dc9e983dda4c892ba0656a3d",
+      "input_fingerprint": "9933fb3e17af438f8d6a8cf1e926d17860b735cd2d8d10d09f06084f5d30be54",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -119,7 +119,7 @@
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "c22412d65f8d82eec5d080769ac9ae52adf4f81e963d682b12c7f29dcc86703b",
+      "input_fingerprint": "cc8d5d11e05418d0cc7e14cacd6ce38376c5f10d8899306e1b9c061b1f776602",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",

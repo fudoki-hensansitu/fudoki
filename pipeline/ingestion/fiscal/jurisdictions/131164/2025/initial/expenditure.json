@@ -818,7 +818,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "a8cf7857da8cc1842c3a2447b16164b33450b2ab1cc25b05dea2ea1bf7d874fa",
+      "input_fingerprint": "a2d8560fe94e847a5d9266e39adf2926af62c47980f10da3e0bcf61f2b6adb97",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -849,7 +849,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "16890b73cfe4a8c2b39bfdc5e2a4de8484d38c4a1d7aa2f0f8ebea6ad8f9b5a2",
+      "input_fingerprint": "c20f4d5051ec19a2a295d689ee2c7776dcc51e3bcb9227d091fe0a7ac9d49d23",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -879,7 +879,7 @@
     {
       "table_id": "late-elderly-initial",
       "conversion_id": "late-elderly-initial",
-      "input_fingerprint": "fe6e0000250144025ab63db4b078ce411874c7388e6d277cadf71c56dc2cd742",
+      "input_fingerprint": "ef043436670ee54632f5992fe1e2615f7f7b86c8f1d53de91bd83cfd1b8b0dc0",
       "account": "後期高齢者医療事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -909,7 +909,7 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "5af761f890f9091a042d09fbd1a122e64586ae96cacab39d2ec9096737c6d740",
+      "input_fingerprint": "119d122a05df0f108d1c8b0619a98e2873f151d4a6c1b8378befe3dac2280542",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -922,8 +922,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131164/2025/initial/expenditure/long-term-care-initial-nodes.parquet",
-          "sha256": "57a494686f58dee7fd72d4d4cb8d824f68030d54c10337ad6811d8d1aa6fd91d",
-          "bytes": 12179
+          "sha256": "0304bd556bc847be2c0dbf62f41cb99358897831a7afed32a52509bc0741195c",
+          "bytes": 12184
         },
         "row_count": 211
       },

@@ -1428,7 +1428,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "e3b90b2d7d69d362f906a33e623f087930eadfee4bd10d43604df928bae67631",
+      "input_fingerprint": "39a08eb0881b027b3960664095aa49f300635353b8a955fb5a8235fd7abe1d9e",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1459,7 +1459,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "3de7b73deab75247b7d5be5f1ce212ac8321df313ea82605b9bec7e1861aca48",
+      "input_fingerprint": "f1a834523569d221bf0cf132df0293705e69a57c04e8a5cd33b17c8a01dccd0c",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1490,7 +1490,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "567a40aba48a34888557800f498e112a9259c834ab45fbf8038dcc1161c0d3d0",
+      "input_fingerprint": "67c68179fa95c0b615a204b7afbad55730b34622b70787ce4fae104cdabb0661",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1521,7 +1521,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "9520c38082cfc573759692cfa91ee21f3cb478f57d59cf8f38921d13f89763ee",
+      "input_fingerprint": "e02cc0ed727db3d2692025c58a14c0ac6f7e574cbd1512ea955cfb4612e3d40e",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1552,7 +1552,7 @@
     {
       "table_id": "tobu-tojo-grade-separation-initial",
       "conversion_id": "tobu-tojo-grade-separation-initial",
-      "input_fingerprint": "ba0974b1d6efc8c8273085a58ffcd08eab1b40a776f815f663c8d1677ffb8c8c",
+      "input_fingerprint": "f426380cc6c64041231fee98a8a24e9894afd248d5c136c9b0dd3e47fab52ecc",
       "account": "東武東上線連続立体化事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",

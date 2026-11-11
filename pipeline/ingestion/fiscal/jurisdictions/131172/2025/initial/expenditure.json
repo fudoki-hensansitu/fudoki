@@ -1281,7 +1281,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general",
-      "input_fingerprint": "4a6c16c6688119cf2e5abb7d0473936c3c59f74eb5c0e19c9482204d44792517",
+      "input_fingerprint": "cd179715f7cb7cbee3e522905dacdfd6bb83dbd5c28123055bfed78d71faf9b9",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
@@ -1312,7 +1312,7 @@
     {
       "table_id": "nhi-initial",
       "conversion_id": "nhi",
-      "input_fingerprint": "b769094e4c5e3e7881d5040148feee3a74aa0e6b1d1d53b65cd5b4affa4d63b6",
+      "input_fingerprint": "7e89034779e942efb92e1cf1d826d5a007704a54ce4b1ce1c8105f482ef32463",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
@@ -1343,7 +1343,7 @@
     {
       "table_id": "kaigo-initial",
       "conversion_id": "kaigo",
-      "input_fingerprint": "2a8c161478721f72d513dddc5c4e55569cd24ab61112779ae438a742cfe1540a",
+      "input_fingerprint": "a955caba248cd2d95a027a986fbcdaaeb4a0357aa0c8ba252bd09a4bea61c031",
       "account": "介護保険会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
@@ -1374,7 +1374,7 @@
     {
       "table_id": "kouki-initial",
       "conversion_id": "kouki",
-      "input_fingerprint": "e5ac405017494651cab0366816fb9ab68c365f2610ad72c4aa1e20751c231b26",
+      "input_fingerprint": "ba5ea6d4928967e4bf3f7aee9fbab07b9da77afd4f8d46e30469c313d9d367ec",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
