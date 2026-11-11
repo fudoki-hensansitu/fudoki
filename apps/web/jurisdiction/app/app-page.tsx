@@ -21,6 +21,7 @@ import {
   LeafIcon,
   ListBulletsIcon,
   MagnifyingGlassIcon,
+  ReceiptIcon,
   MapPinIcon,
   ShieldCheckIcon,
   SparkleIcon,
@@ -200,7 +201,7 @@ function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, 
 }
 
 // ---------- 画面 ----------
-type TabKey = 'overview' | 'projects' | 'money'
+type TabKey = 'overview' | 'projects' | 'money' | 'settled'
 type Go = (t: TabKey, opt?: { filter?: string; field?: string; grade?: string }) => void
 
 function CountCard({ icon, label, n, onClick }: { icon: React.ReactNode; label: string; n: number; onClick: () => void }) {
@@ -302,14 +303,15 @@ const VIEWS: { key: FlowView; label: string }[] = [
   { key: 'kan', label: '款・項' },
 ]
 
-/** 予算。事業は下から積み上げる見方、こちらは大きい項目から下りていく見方。決算のある年度は決算、無ければ当初予算の流れ */
-function MoneyTab() {
-  const { v, page } = useApp()
+/** 予算・決算。事業は下から積み上げる見方、こちらは大きい項目から下りていく見方。当初予算と決算の両方がある年度はタブを分ける */
+function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
+  const { v, d, page } = useApp()
   const [view, setView] = React.useState<FlowView>('cofog')
-  const settled = page.years.find((y) => y.year === v.year)
-  const budget = settled ? undefined : page.budgets.find((b) => b.year === v.year)
-  const total: YearTotal | undefined = settled ?? (budget ? { year: v.year, yen: budget.yen, kan: budget.kan } : undefined)
-  const label = budget ? '当初予算' : '決算'
+  const y = d.years[String(v.year)]
+  const total: YearTotal | undefined = phase === 'settlement'
+    ? page.years.find((t) => t.year === v.year)
+    : y?.kind === 'initial' ? { year: v.year, yen: y.total, kan: [] } : undefined
+  const label = phase === 'initial' ? '当初予算' : '決算'
   const tabs = (
     <div className="flex items-center justify-between gap-3">
       <span className="text-base">{reiwa(v.year)}の{label}</span>
@@ -322,9 +324,9 @@ function MoneyTab() {
   return (
     <div className="flex flex-col gap-3">
       {total ? (
-        <Flow key={`${v.year}-${view}`} data={page} total={total} view={view} phase={budget ? 'initial' : 'settlement'} tabs={tabs} summary={summary} className="h-[calc(100svh-12rem)] scroll-mt-16 @4xl:h-[calc(100svh-10rem)] @4xl:scroll-mt-16" />
+        <Flow key={`${v.year}-${view}-${phase}`} data={page} total={total} view={view} phase={phase} tabs={tabs} summary={summary} bare className="h-[calc(100svh-12rem)] scroll-mt-16 @4xl:h-[calc(100svh-10rem)] @4xl:scroll-mt-16" />
       ) : (
-        <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の決算・予算は、まだ収録していません</p>
+        <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の{label}は、まだ収録していません</p>
       )}
       <p className="text-xs text-muted-foreground">分野は使い道を目的ごとに分ける世界共通の分類（COFOG）で、分け方は風土記の判断です。款・項は予算書・決算書の分け方のままです。</p>
     </div>
@@ -701,6 +703,7 @@ const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'overview', label: 'まとめ', icon: SquaresFourIcon },
   { key: 'projects', label: '事業', icon: ListBulletsIcon },
   { key: 'money', label: '予算', icon: TreeStructureIcon },
+  { key: 'settled', label: '決算', icon: ReceiptIcon },
 ]
 
 /** 頁の年度（新しい順に3年）。決算の年度と、決算より後の当初予算の年度 */
@@ -763,8 +766,17 @@ export function AppPage({ data, sitekey, initialYear }: { data: PageData; siteke
 
   // スマホではタブの中身を左右のスワイプで切り替える（shadcn の Carousel）。高さは今のタブに合わせる
   const [api, setApi] = React.useState<CarouselApi>()
-  const tabs = TABS
+  // 当初予算の流れは当初予算のある年度、決算の流れは決算のある年度だけ
+  const hasInitial = d?.years[String(year)]?.kind === 'initial'
+  const hasSettled = data.years.some((t) => t.year === year)
+  const tabs = React.useMemo(() => TABS.filter((t) => (t.key === 'money' ? hasInitial : t.key === 'settled' ? hasSettled : true)), [hasInitial, hasSettled])
+  // 移った年度に今のタブが無ければ、もう一方のお金のタブへ
+  React.useEffect(() => {
+    if (!d || tabs.some((t) => t.key === tab)) return
+    setTab(tabs.find((t) => t.key === 'money' || t.key === 'settled')?.key ?? 'overview')
+  }, [d, tabs, tab])
   const tabsRef = React.useRef(tabs)
+  tabsRef.current = tabs
   // 事業評価は評価した事業を行った年度にだけある。評価の無い年度へ移ったら絞り込みを戻す
   const hasEval = !!v?.sheets.length
   React.useEffect(() => {
@@ -817,7 +829,7 @@ export function AppPage({ data, sitekey, initialYear }: { data: PageData; siteke
   )
 
   const panel = (key: TabKey) =>
-    !v ? null : key === 'overview' ? <Overview go={go} /> : key === 'money' ? <MoneyTab /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
+    !v ? null : key === 'overview' ? <Overview go={go} /> : key === 'money' ? <MoneyTab phase="initial" /> : key === 'settled' ? <MoneyTab phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
 
   return (
     <div className={cn('transition-[padding] duration-300', wide && selected && 'pr-[440px]')}>

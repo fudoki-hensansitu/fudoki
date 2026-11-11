@@ -170,11 +170,11 @@ export async function flowResponse(env: Env, request: Request, { code, year, dep
       throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度・表示階層の指定が違います')
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     const view: FlowView = new URL(request.url).searchParams.get('view') === 'cofog' ? 'cofog' : 'kan'
-    // 決算の無い年度は当初予算を読む（?phase=initial）。決算のある年度に予算は出さない
+    // ?phase=initial なら当初予算、無ければ決算を読む
     const kind: DocumentKind = new URL(request.url).searchParams.get('phase') === 'initial' ? 'initial' : 'settlement'
     const entry = (await catalog(env)).find((e) => e.code === code)
-    const ok = kind === 'initial' ? entry?.initialYears.includes(Number(year)) && !entry.settlementYears.includes(Number(year)) : entry?.settlementYears.includes(Number(year))
-    if (!ok) throw new HttpError(404, 'NOT_FOUND', kind === 'initial' ? 'この自治体・年度の決算の無い一般会計の当初予算は収録されていません' : 'この自治体・年度の一般会計の決算は収録されていません')
+    const ok = (kind === 'initial' ? entry?.initialYears : entry?.settlementYears)?.includes(Number(year))
+    if (!ok) throw new HttpError(404, 'NOT_FOUND', kind === 'initial' ? 'この自治体・年度の一般会計の当初予算は収録されていません' : 'この自治体・年度の一般会計の決算は収録されていません')
     const load = view === 'cofog' ? loadCofogFlow : loadFlow
     return json(await memo<Drill[]>(`flow-${view}-${kind}-${code}-${year}-${depth}`, () => load(env, code, Number(year), depth as FlowDepth, kind)))
   } catch (e) {
