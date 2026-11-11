@@ -113,6 +113,14 @@
     {
       "jurisdiction": "131199",
       "layout": "itabashi_press"
+    },
+    {
+      "jurisdiction": "131202",
+      "layout": "nerima_press"
+    },
+    {
+      "jurisdiction": "131211",
+      "layout": "adachi_press"
     }
   ]
 }
