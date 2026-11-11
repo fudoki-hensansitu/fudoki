@@ -680,7 +680,6 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
     <DropdownMenu>
       <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-[15px] text-foreground">
         {yearName(current)}
-        <span className="text-muted-foreground">（{reiwa(current).replace(/年度$/, '')}）</span>
         <CaretDownIcon className="size-3.5" aria-hidden="true" />
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-auto">
@@ -826,15 +825,16 @@ export function AppPage({ data, sitekey, initialYear, initialField }: { data: Pa
   }, [phone, index, v])
 
   const header = (
-    <header className="relative grid grid-cols-[80px_minmax(0,1fr)] items-end gap-4 py-7 sm:grid-cols-[108px_minmax(0,1fr)] sm:gap-6">
-      <div className="col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0">
-        {phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}
-      </div>
+    <header className="grid grid-cols-[80px_minmax(0,1fr)] items-end gap-4 py-7 sm:grid-cols-[108px_minmax(0,1fr)] sm:gap-6">
       <div className="grid size-20 place-items-center rounded-xl border bg-emblem p-2.5 sm:size-[108px] sm:rounded-2xl sm:p-4">
         {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
       </div>
       <div className="flex min-w-0 flex-col gap-3">
-        <h1 className="text-[26px] font-normal leading-tight sm:text-[30px]">{data.name}</h1>
+        {/* 自治体名の行の右に年度の切り替えを置く */}
+        <div className="flex items-center justify-between gap-3">
+          <h1 className="min-w-0 text-[22px] font-normal leading-tight sm:text-[26px]">{data.name}</h1>
+          <div className="shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
+        </div>
         {vision ? <p className="text-[17px]">{vision}</p> : null}
         <div className="flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
           <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button></span>
