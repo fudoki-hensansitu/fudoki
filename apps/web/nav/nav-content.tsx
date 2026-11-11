@@ -3,42 +3,54 @@ import * as React from 'react'
 import { ListMagnifyingGlassIcon, MagnifyingGlassIcon, RobotIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { SidebarGroup, SidebarMenu, useSidebar } from '@/components/ui/sidebar'
-import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
-import { InputGroupAddon } from '@/components/ui/input-group'
+import { Command, CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import { Kbd } from '@/components/ui/kbd'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { Item } from './site-nav'
 import { loadTowns } from '../home/towns'
 
-/** まちを探す欄。⌘K で入る。選んだまちの頁へ移る */
+/** まちを探す。欄を押すか ⌘K で、画面の中央に候補のパレット（shadcn の Command）を開く。選んだまちの頁へ移る */
 function TownSearch() {
-  const { state, isMobile, setOpen } = useSidebar()
+  const { state, isMobile } = useSidebar()
   const { visit } = useRouter()
   const [entries, setEntries] = React.useState<MapEntry[]>([])
-  const input = React.useRef<HTMLInputElement>(null)
-  // ⌘K・focus で候補を開く（既定は打つまで開かない）
-  const [listOpen, setListOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false)
   const warm = () => void loadTowns().then(setEntries)
+  const show = () => {
+    warm()
+    setOpen(true)
+  }
   React.useEffect(() => {
-    const focus = () => {
-      setOpen(true)
-      warm()
-      requestAnimationFrame(() => {
-        input.current?.focus()
-        setListOpen(true)
-      })
-    }
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault()
-        focus()
+        warm()
+        setOpen((o) => !o)
       }
     }
     window.addEventListener('keydown', onKey)
-    return () => {
-      window.removeEventListener('keydown', onKey)
-    }
-  }, [setOpen])
+    return () => window.removeEventListener('keydown', onKey)
+  }, [])
+  const pick = (e: MapEntry) => {
+    setOpen(false)
+    visit(e.path)
+  }
+  const palette = (
+    <CommandDialog open={open} onOpenChange={setOpen} title="まちを探す" description="自治体名で探して、そのまちの頁を開きます">
+      <Command filter={(value, q) => (value.includes(q.trim().toLowerCase()) ? 1 : 0)}>
+        <CommandInput placeholder="自治体名で探す（例：品川）" />
+        <CommandList>
+          <CommandEmpty>{entries.length ? '当たるまちは、まだ収録していません' : '読み込んでいます…'}</CommandEmpty>
+          {entries.map((e) => (
+            <CommandItem key={e.code} value={`${e.name} ${e.path}`} onSelect={() => pick(e)}>
+              {e.name}
+              <span className="text-[11px] text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</span>
+            </CommandItem>
+          ))}
+        </CommandList>
+      </Command>
+    </CommandDialog>
+  )
   if (state === 'collapsed' && !isMobile) {
     return (
       <SidebarMenu>
@@ -48,37 +60,29 @@ function TownSearch() {
           icon={<MagnifyingGlassIcon />}
           onClick={(e) => {
             e.preventDefault()
-            setOpen(true)
-            warm()
-            setTimeout(() => input.current?.focus(), 220)
+            show()
           }}
         />
+        {palette}
       </SidebarMenu>
     )
   }
   return (
-    <Combobox open={listOpen} onOpenChange={setListOpen} openOnInputClick autoHighlight items={entries} filter={(e: MapEntry, q: string) => !q.trim() || e.name.includes(q.trim()) || e.path.includes(q.trim().toLowerCase())} itemToStringLabel={(e: MapEntry) => e.name} value={null} onValueChange={(e) => e && visit((e as MapEntry).path)}>
-      <ComboboxInput ref={input} showTrigger={false} aria-label="まちを探す" placeholder="まちを探す" onFocus={() => (warm(), setListOpen(true))} className="h-10 rounded-md border-sidebar-border bg-background text-sm [&_input]:pl-3!">
-        {/* 下の項目（px-3・icon 20px・gap-3）と icon の位置・大きさ・文字までの間を揃える。枠の 1px を引いて 11px */}
-        <InputGroupAddon className="pl-[11px]">
-          <MagnifyingGlassIcon className="size-5" />
-        </InputGroupAddon>
-        <InputGroupAddon align="inline-end">
-          <Kbd>⌘K</Kbd>
-        </InputGroupAddon>
-      </ComboboxInput>
-      <ComboboxContent>
-        <ComboboxEmpty>{entries.length ? '当たるまちは、まだ収録していません' : '読み込んでいます…'}</ComboboxEmpty>
-        <ComboboxList>
-          {(e: MapEntry) => (
-            <ComboboxItem key={e.code} value={e}>
-              {e.name}
-              <small className="text-[11px] text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</small>
-            </ComboboxItem>
-          )}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
+    <>
+      {/* 下の項目（px-3・icon 20px・gap-3・高さ 40px）と icon の位置・大きさ・文字までの間を揃える。枠の 1px を引いて 11px */}
+      <button
+        type="button"
+        onClick={show}
+        onPointerEnter={warm}
+        aria-keyshortcuts="Meta+K Control+K"
+        className="flex h-10 w-full items-center gap-3 rounded-md border border-sidebar-border bg-background px-[11px] text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+      >
+        <MagnifyingGlassIcon className="size-5 shrink-0" />
+        <span className="flex-1 text-left">まちを探す</span>
+        <Kbd>⌘K</Kbd>
+      </button>
+      {palette}
+    </>
   )
 }
 
