@@ -7,7 +7,7 @@
 
 ## Product Overview
 
-**One-liner:** まちのお金、何に使ってる？
+**One-liner:** 私のお金はどこへ行った？
 **What it does:** 自治体が何にいくら使い、どう振り返ったかを、予算書・決算書・事業評価から事業の単位まで読み込み、区政・市政の知識がなくても読める頁にする。予算・決算の同じデータを出典つきで REST・MCP・オープンデータとして配り、ChatGPT や Claude からも聞ける（事業評価は API では資料の所在と短い抜粋の検索まで）。
 **Product category:** 自治体の予算・決算を調べる場所。検索では「◯◯区 予算」「◯◯市 決算書」「◯◯市 歳出」「令和◯年度 予算 ◯◯区」で探される
 **Product type:** 無料の Web サイト（fudoki.dev）＋ 公開 API・MCP（api.fudoki.dev）＋ ドキュメント（docs.fudoki.dev）
