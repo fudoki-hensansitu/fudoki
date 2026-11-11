@@ -74,6 +74,7 @@
     "carried_totals": "ingestion.generic.patterns.components.carried_totals"
   },
   "quirks": {
+    "amount_on_next_page": "ingestion.generic.patterns.quirks.amount_on_next_page",
     "amounts_beside_names": "ingestion.generic.patterns.quirks.amounts_beside_names",
     "bracket_line_closes_name": "ingestion.generic.patterns.quirks.bracket_line_closes_name",
     "bracketed_remainder": "ingestion.generic.patterns.quirks.bracketed_remainder",
@@ -85,7 +86,9 @@
     "explained_projects": "ingestion.generic.patterns.quirks.explained_projects",
     "fitted_names": "ingestion.generic.patterns.quirks.fitted_names",
     "full_width_numbers": "ingestion.generic.patterns.quirks.full_width_numbers",
+    "glued_number_stops": "ingestion.generic.patterns.quirks.glued_number_stops",
     "glued_numbers": "ingestion.generic.patterns.quirks.glued_numbers",
+    "glued_subject_codes": "ingestion.generic.patterns.quirks.glued_subject_codes",
     "group_heads": "ingestion.generic.patterns.quirks.group_heads",
     "heading_repeated_over_code": "ingestion.generic.patterns.quirks.heading_repeated_over_code",
     "headings": "ingestion.generic.patterns.quirks.headings",
@@ -102,6 +105,7 @@
     "office_departments": "ingestion.generic.patterns.quirks.office_departments",
     "opening_bracket_ink": "ingestion.generic.patterns.quirks.opening_bracket_ink",
     "repeated_heading_owns_nothing": "ingestion.generic.patterns.quirks.repeated_heading_owns_nothing",
+    "repeated_subject_headings": "ingestion.generic.patterns.quirks.repeated_subject_headings",
     "revision_history": "ingestion.generic.patterns.quirks.revision_history",
     "rows": "ingestion.generic.patterns.quirks.rows",
     "rows_from": "ingestion.generic.patterns.quirks.rows_from",

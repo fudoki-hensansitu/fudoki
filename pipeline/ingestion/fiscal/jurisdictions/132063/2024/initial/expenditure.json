@@ -1,0 +1,81 @@
+{
+ "schema_version": 1,
+ "target": {
+  "jurisdiction": "132063",
+  "fiscal_year": 2024,
+  "document_kind": "initial"
+ },
+ "direction": "expenditure",
+ "conversions": [
+  {
+   "id": "general-initial",
+   "converter": "fiscal/layouts/generic_text/convert.py",
+   "inputs": [
+    {
+     "sha256": "574f8276f1497e50444a9c07a50248cbd8086426299fea145198f1bf66b3c734"
+    }
+   ],
+   "options": {
+    "account": "一般会計",
+    "table_id": "general-initial",
+    "workflow": {
+     "layout": {
+      "pattern": "ruled",
+      "options": {
+       "columns": {
+        "施策番号": {
+         "kind": "ignore"
+        },
+        "比較額(増減率%)": {
+         "kind": "ignore"
+        },
+        "財源内訳／特定財源": {
+         "excluded": {
+          "kind": "財源内訳",
+          "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+         }
+        },
+        "財源内訳／一般財源": {
+         "excluded": {
+          "kind": "財源内訳",
+          "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+         }
+        }
+       }
+      }
+     },
+     "headers": {
+      "pattern": "standard"
+     },
+     "hierarchy": {
+      "subject": {
+       "pattern": "indent",
+       "codes": "right"
+      },
+      "breakdown": {
+       "節": {
+        "pattern": "indent"
+       },
+       "説明": {
+        "pattern": "indent",
+        "quirks": {
+         "amount_on_next_page": true
+        }
+       }
+      }
+     },
+     "quirks": {
+      "codeless_name_levels": true,
+      "repeated_subject_headings": true
+     }
+    }
+   },
+   "expected_tables": [
+    {
+     "table_id": "general-initial"
+    }
+   ]
+  }
+ ],
+ "tables": []
+}

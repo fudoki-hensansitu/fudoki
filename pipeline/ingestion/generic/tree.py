@@ -536,9 +536,9 @@ def strip_ancestor_codes(group: Group) -> list[Glyph]:
 
 
 def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False,
-               bare_amounts: bool = False, numbers=None, long_numbers=None) -> list[tuple]:
+               bare_amounts: bool = False, numbers=None, long_numbers=None, stops=None) -> list[tuple]:
     """Printed lines of a label group as (label glyphs, amount runs, code, name). `numbers`: the quirk `full_width_numbers`;
-    `long_numbers`: the quirk `long_numbers`."""
+    `long_numbers`: the quirk `long_numbers`; `stops`: the quirk `glued_number_stops`."""
     entries = []
     for line in lines([w for band in group.bands for w in band.words]):
         label, money = _split_line(line, amount_brackets, bare_amounts)
@@ -552,6 +552,9 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
         if code is not None and len(name) > 1 and re.match(r'[０-９]{3,}', raw_text):
             code, name = None, line_text  # `２０３０ビジョン…`: three or more full-width digits begin a name, not an item number (a one-character name stays `161`/`人`)
         script = re.match(r'([0-9]+)(?=[０-９])', raw_text)
+        if stops is not None and (stopped := stops.module.split(raw_text)) is not None:
+            code, name = stopped[0], normalize(stopped[1])  # `6．５歳児…`: item 6, not 6.5
+            script = None
         if script and long_numbers is not None and long_numbers.module.too_long(script.group(1)):
             script = None
         if script and label and re.fullmatch(r'[0-9]+[０-９]+', label[0].text) and (
@@ -702,7 +705,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     """
     numbers = quirk(settings, 'full_width_numbers')
     entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')),
-                         numbers, quirk(settings, 'long_numbers'))
+                         numbers, quirk(settings, 'long_numbers'), quirk(settings, 'glued_number_stops'))
     settings = settings or {}
     if (shares := quirk(settings, 'department_amounts')) is not None:
         for index, (label, money, code, name) in enumerate(entries):
@@ -710,7 +713,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                 entries[index] = (found[0], [found[1]], None, normalize(text(found[0])))
 
     def measure(item, label, code) -> None:
-        _measure(item, label, code, ocr or joined_codes)
+        _measure(item, label, code, ocr or joined_codes, stops)
         if numbers is not None and code is not None and (start := numbers.module.name_start(label, numbers.value)) is not None:
             item.indent = start
     kind_names = quirk(settings, 'names_end_with_kind_words')
@@ -718,6 +721,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     department = quirk(settings, 'department_line')
     headings = quirk(settings, 'headings')
     glued = quirk(settings, 'glued_numbers')
+    stops = quirk(settings, 'glued_number_stops')
     name_column = quirk(settings, 'name_column')
     # A name that begins with a count, glued to its number (`82歳児歯科健診事業` = `8` + `2歳児…`,
     # `42025年農林業センサス費` = `4` + `2025年…`): the number is the one that follows the number before it
@@ -801,7 +805,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
               and sum(bool(entries[i][1]) for i in ix) <= 1 and len({beside(entries[i][0]) for i in ix} - {frozenset()}) <= 1
               and wraps(0, ix) for i in ix}
     repeated_headings: set[int] = set()
-    if (repeated := quirk(settings, 'heading_repeated_over_code')) is not None:
+    if (repeated := quirk(settings, 'heading_repeated_over_code')
+            or quirk(settings, 'repeated_subject_headings')) is not None:
         repeated_headings = repeated.module.split(entries, single)
     if name_column is not None:
         name_column.module.attach(entries, single, repeated_headings, name_column.value)
@@ -932,7 +937,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             if result:
                 for run in money:
                     result[-1].amounts.append((header, run))
-            elif settings.get('wrap') == 'amount_on_last_line':
+            elif settings.get('wrap') == 'amount_on_last_line' or quirk(settings, 'amount_on_next_page') is not None:
                 # The first line of a page carries the amount of a label that ended the page before:
                 # `apply_layout` joins the two. It stays a nameless item if there is no such label.
                 item = Item(group, money[0][0].page, [[g for run in money for g in run]], None, '', money[0][0].x0)
@@ -1020,9 +1025,10 @@ def _name_start(item: Item) -> float:
     return item.indent
 
 
-def _measure(item: Item, label: list[Glyph], code: str | None, joined: bool = False) -> None:
+def _measure(item: Item, label: list[Glyph], code: str | None, joined: bool = False, stops=None) -> None:
     """Indentation is where the name starts; subject level is the band of the first glyph. `joined`: a word
-    that joins the code and the name is measured by the digits' own width."""
+    that joins the code and the name is measured by the digits' own width. `stops`: the axis quirk
+    `glued_number_stops` (`2．職員`)."""
     first = label[0]
     if code is not None:
         consumed, offset = 0, None
@@ -1035,6 +1041,9 @@ def _measure(item: Item, label: list[Glyph], code: str | None, joined: bool = Fa
             length = len(head)  # a number set apart from a name that begins with digits (`11 ２０歳のつどい事業`)
         for glyph in label:
             if consumed + len(glyph.text) > length:
+                if stops is not None and (start := stops.module.name_start(glyph, length - consumed)) is not None:
+                    offset = start
+                    break
                 width = (glyph.x1 - glyph.x0) / max(len(glyph.text), 1)
                 if joined and any(not c.isascii() for c in glyph.text) and all(c.isascii() and c.isdigit() for c in glyph.text[:length - consumed]):
                     # A word that joins the code and the name (OCR `10需用費`, text `03戸`): half-width digits are half a
@@ -1895,7 +1904,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                     (layout or {}).get(group.axis), column_amounts=column)
             elif group.mode == 'indent':
                 # The subject of a text layer (133086 `03戸` / `籍住民基本`, wrapped to `台帳費` at the name's start).
-                group_items = items(group, group.axis, joined_codes=not logical.ocr)
+                # (The open headings a continuation page prints again over its first code: the quirk
+                # `repeated_subject_headings`.)
+                group_items = items(group, group.axis, joined_codes=not logical.ocr,
+                                    settings={'quirks': {'repeated_subject_headings': True}}
+                                    if quirk(document, 'repeated_subject_headings') is not None else None)
             else:
                 for band in group.bands:
                     band.words = split_glued_numbers(band.words, edges)
@@ -1971,7 +1984,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     # A subject's name can cross a rule of its narrow name column while its amount cell stays whole.
     # The next line without a code or amount is still the name, not a deeper subject (`センタ－費`).
     subject_pattern = load_pattern("subject", pattern)
-    alignment = subject_pattern.alignment(all_items, codes_right) if pattern == "indent" else None
+    alignment = (subject_pattern.alignment(all_items, codes_right, quirk(document, 'glued_subject_codes'))
+                 if pattern == "indent" else None)
     for logical, ordered, found in all_items:
         for group in ordered:
             if not group.subject:
@@ -2091,7 +2105,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 continue
             mine = found[id(group)]
             previous = tails.get(group.axis)
-            if ((layout or {}).get(group.axis, {}).get('wrap') == 'amount_on_last_line' and previous is not None
+            if (((layout or {}).get(group.axis, {}).get('wrap') == 'amount_on_last_line'
+                 or quirk((layout or {}).get(group.axis), 'amount_on_next_page') is not None) and previous is not None
                     and mine and not mine[0].name and mine[0].amounts and mine[0].code is None
                     and not previous.amounts and previous.name
                     and previous.role in ('node', 'note', 'annotation') and mine[0].page == previous.page + 1):
