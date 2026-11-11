@@ -9,6 +9,8 @@ with recursive subject_axes as (
     group by source_table_key
 ) , mapped_nodes as (
     select n.*, t.jurisdiction_code, t.fiscal_year, t.document_kind, t.account_name, t.division, t.origin_id,
+        -- A council amendment's table (seed fiscal_budget_amendment) is applied in the nodes model, not added to the tree.
+        am.table_id is not null as is_amendment,
         case when s.subject_axis is null
              then error('No subject axis (no 款 nodes): ' || n.source_table_key)
              when n.level_header in ('款', '項', '目') and n.axis_header <> s.subject_axis
@@ -28,6 +30,9 @@ with recursive subject_axes as (
     from {{ ref('stg_fiscal__nodes') }} n
     join {{ source('fiscal_metadata', 'tables') }} t using (source_table_key)
     left join subject_axes s using (source_table_key)
+    left join {{ ref('fiscal_budget_amendment') }} am
+        on am.jurisdiction_code = t.jurisdiction_code and am.fiscal_year = t.fiscal_year
+        and am.document_kind = t.document_kind and am.table_id = t.table_id
     where t.document_kind in ('settlement', 'initial') and t.direction = 'expenditure'
       and n.axis_header <> '注記'
 ), checked_nodes as (
@@ -62,6 +67,8 @@ with recursive subject_axes as (
 selected_amounts as (
     select source_table_key, node_key,
         sum(amount_yen) filter (where amount_role = target_phase)::bigint as amount_yen,
+        -- The proposed amount (原案金額) is read only from a council amendment's lines.
+        sum(amount_yen) filter (where amount_role = 'proposed')::bigint as proposed_yen,
         case when count(*) filter (where amount_role = target_phase)
                   = count(physical_page) filter (where amount_role = target_phase)
              then min(physical_page) filter (where amount_role = target_phase) end as amount_source_page,
@@ -93,7 +100,7 @@ selected_amounts as (
              then min(y1) filter (where amount_role = target_phase and physical_page is not null) end as amount_source_y1
     from mapped_amounts group by source_table_key, node_key, document_kind
 ), amounts_checked as (
-    select n.*, a.amount_yen, a.amount_source_page,
+    select n.*, a.amount_yen, a.proposed_yen, a.amount_source_page,
         a.amount_source_x0, a.amount_source_y0, a.amount_source_x1, a.amount_source_y1
     from checked_nodes n left join selected_amounts a using (source_table_key, node_key)
 ), hierarchy as (
