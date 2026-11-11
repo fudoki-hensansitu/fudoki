@@ -41,7 +41,7 @@
               },
               "備考": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "headings": true
                 }
               }
@@ -705,7 +705,7 @@
               },
               "備考": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "headings": true
                 }
               }
@@ -793,7 +793,7 @@
               },
               "備考": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "headings": true
                 }
               }
@@ -877,7 +877,7 @@
               },
               "備考": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "headings": true
                 }
               }
@@ -959,7 +959,7 @@
               },
               "備考": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "headings": true
                 }
               }
@@ -1077,7 +1077,7 @@
               },
               "備考": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "headings": true
                 }
               }
@@ -1146,7 +1146,7 @@
               },
               "備考": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "headings": true
                 }
               }

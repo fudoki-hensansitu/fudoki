@@ -425,7 +425,7 @@
               },
               "備考": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "headings": true,
                   "under": "節"
                 }
@@ -667,7 +667,7 @@
               },
               "備考": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "headings": true,
                   "under": "節"
                 }
@@ -995,7 +995,7 @@
               },
               "備考": {
                 "pattern": "indent",
-                "options": {
+                "quirks": {
                   "headings": true,
                   "under": "節"
                 }
@@ -1112,11 +1112,13 @@
               "備考": {
                 "pattern": "indent",
                 "options": {
-                  "headings": true,
-                  "under": "節",
                   "plain_names": [
                     "高額調整事務委託"
                   ]
+                },
+                "quirks": {
+                  "headings": true,
+                  "under": "節"
                 }
               }
             }

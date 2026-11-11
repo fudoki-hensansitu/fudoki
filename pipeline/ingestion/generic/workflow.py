@@ -18,8 +18,30 @@ def selections(workflow: dict) -> dict[tuple[str, str], str]:
                ('subject', hierarchy['subject']['pattern'])]
     choices += [('breakdown', value['pattern']) for value in hierarchy['breakdown'].values()]
     choices += [('repairs', name) for name in workflow.get('repairs', [])]
+    choices += [('quirks', name) for name in quirk_names(workflow)]
     entries = catalog()
     return {choice: entry(*choice, entries=entries) for choice in dict.fromkeys(choices)}
+
+
+def quirk_names(workflow: dict) -> list[str]:
+    """The quirks a layered workflow selects, for the document and for each breakdown axis."""
+    names = list(workflow.get('quirks', {}))
+    for value in workflow['hierarchy']['breakdown'].values():
+        names.extend(value.get('quirks', {}))
+    return names
+
+
+def validate_quirks(workflow: dict) -> None:
+    """Each selected quirk is used where its module says it applies (`SCOPE`: the document or an axis) with a value
+    its module's `OPTIONS` schema accepts."""
+    scoped = [('document', name, value) for name, value in workflow.get('quirks', {}).items()]
+    scoped += [('axis', name, value) for axis in workflow['hierarchy']['breakdown'].values()
+               for name, value in axis.get('quirks', {}).items()]
+    for scope, name, value in scoped:
+        module = load('quirks', name)
+        if module.SCOPE != scope:
+            raise ValueError(f'Quirk {name} applies to the {module.SCOPE}, not the {scope}')
+        jsonschema.Draft202012Validator(module.OPTIONS).validate(value)
 
 
 def settings(workflow: dict) -> dict:
@@ -30,6 +52,11 @@ def settings(workflow: dict) -> dict:
         found['header']['kind_by_characters'] = True
     found['breakdown'] = {axis: deepcopy(value.get('options', {}))
                           for axis, value in workflow['hierarchy']['breakdown'].items()}
+    for axis, value in workflow['hierarchy']['breakdown'].items():
+        if value.get('quirks'):
+            found['breakdown'][axis]['quirks'] = deepcopy(value['quirks'])
+    if workflow.get('quirks'):
+        found['quirks'] = deepcopy(workflow['quirks'])
     if 'codes' in workflow['hierarchy']['subject']:
         found['codes'] = workflow['hierarchy']['subject']['codes']
     found['repairs'] = workflow.get('repairs', [])
@@ -50,6 +77,7 @@ def validate(workflow: dict, *, text_pdf: bool = True, coupled: bool | None = No
         raise ValueError('Text-layer repairs cannot be applied to a scan workflow')
     if 'kind_by_characters' in workflow['layout'].get('options', {}).get('header', {}):
         raise ValueError('Select a header pattern instead of setting kind_by_characters')
+    validate_quirks(workflow)
     subject = workflow['hierarchy']['subject']
     if 'codes' in subject and subject['pattern'] != 'indent':
         raise ValueError('Right-aligned subject codes require the indent pattern')

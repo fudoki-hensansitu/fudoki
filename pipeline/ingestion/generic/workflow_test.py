@@ -191,3 +191,29 @@ class SelectedDependencyTest(unittest.TestCase):
         other['options']['workflow'] = reading()
         other['options']['workflow']['headers']['pattern'] = 'characters'
         self.assertEqual(before, self.fingerprint())
+
+
+class QuirkTest(unittest.TestCase):
+    def test_a_quirk_is_checked_by_its_own_schema_and_scope(self):
+        workflow = reading()
+        workflow['hierarchy']['breakdown']['備考']['quirks'] = {'fitted_names': {'chars': 5, 'overflow_left_chars': 1}}
+        validate(workflow)
+        workflow['hierarchy']['breakdown']['備考']['quirks'] = {'fitted_names': {'chars': 0, 'overflow_left_chars': 1}}
+        with self.assertRaises(jsonschema.ValidationError):
+            validate(workflow)
+        workflow['hierarchy']['breakdown']['備考']['quirks'] = {'not_a_quirk': True}
+        with self.assertRaisesRegex(ValueError, 'Unknown PDF pattern'):
+            validate(workflow)
+        workflow = reading()
+        workflow['quirks'] = {'headings': True}
+        with self.assertRaisesRegex(ValueError, 'applies to the axis'):
+            validate(workflow)
+
+    def test_only_a_conversion_that_selects_a_quirk_depends_on_its_module(self):
+        conversion = {'converter': 'fiscal/layouts/generic_text/convert.py',
+                      'options': {'account': '一般会計', 'table_id': 'general', 'workflow': reading()}}
+        self.assertNotIn('generic/patterns/quirks/headings.py', manifest.dependencies(conversion))
+        conversion['options']['workflow']['hierarchy']['breakdown']['備考']['quirks'] = {'headings': True}
+        self.assertIn('generic/patterns/quirks/headings.py', manifest.dependencies(conversion))
+        from ingestion.generic.workflow import settings
+        self.assertEqual(settings(conversion['options']['workflow'])['breakdown']['備考']['quirks'], {'headings': True})

@@ -114,6 +114,13 @@
                   },
                   "options": {
                     "type": "object"
+                  },
+                  "quirks": {
+                    "type": "object",
+                    "propertyNames": {
+                      "pattern": "^[a-z][a-z0-9_]*$"
+                    },
+                    "description": "Opt-in quirks of this format (`generic/patterns/quirks/`): name → the value its module's `OPTIONS` schema checks."
                   }
                 }
               }
@@ -127,6 +134,13 @@
             "type": "string",
             "minLength": 1
           }
+        },
+        "quirks": {
+          "type": "object",
+          "propertyNames": {
+            "pattern": "^[a-z][a-z0-9_]*$"
+          },
+          "description": "Opt-in quirks of this format (`generic/patterns/quirks/`): name → the value its module's `OPTIONS` schema checks."
         }
       }
     },

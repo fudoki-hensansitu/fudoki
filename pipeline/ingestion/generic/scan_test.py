@@ -149,7 +149,7 @@ class OkutamaRulesTest(unittest.TestCase):
         on_next = Item(remark, 2, [glyph(10, 2)], None, '療養費審査委託', 630, key='療養費審査委託', parent=moku)
         placed = [moku, first, second, inside, later, on_next]
         nodes = [{'node_key': i.key, 'parent_node_key': i.parent.key if i.parent else None} for i in placed]
-        nest_by_rows(nodes, placed, {'備考': {'under': '節'}})
+        nest_by_rows(nodes, placed, {'備考': {'quirks': {'under': '節'}}})
         self.assertEqual({n['node_key']: n['parent_node_key'] for n in nodes}['消耗品費'], '需用費')
         # In no 節 row (below the last rule): stays under the 目. Over a page break: the last 節 of the page before.
         self.assertEqual({n['node_key']: n['parent_node_key'] for n in nodes}['審査支払事務委託'], '目')

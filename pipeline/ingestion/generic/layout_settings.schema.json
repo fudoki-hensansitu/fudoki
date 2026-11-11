@@ -7,6 +7,7 @@
     "schema_version": {"const": 1},
     "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["justified_names", "opening_cell", "overprint", "split_at_rules", "stacked_rows"]}},
     "codes": {"const": "right"},
+    "quirks": {"type": "object", "description": "Opt-in quirks the workflow selected (`generic/patterns/quirks/`); each module checks its own value."},
     "rules": {
       "type": "object",
       "additionalProperties": false,
@@ -140,6 +141,7 @@
         "type": "object",
         "additionalProperties": false,
         "properties": {
+          "quirks": {"type": "object", "description": "Opt-in quirks the workflow selected (`generic/patterns/quirks/`); each module checks its own value."},
           "marks": {
             "type": "object",
             "propertyNames": {"minLength": 1},
@@ -147,20 +149,8 @@
               "oneOf": [{"type": "integer", "minimum": 1}, {"const": "説明"}]
             }
           },
-          "fitted_names": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["chars", "overflow_left_chars"],
-            "properties": {
-              "chars": {"type": "integer", "minimum": 1},
-              "overflow_left_chars": {"type": "integer", "minimum": 0}
-            }
-          },
           "wrap": {"const": "amount_on_last_line"},
           "hang_chars": {"type": "integer", "minimum": 1},
-          "names_end_with_kind_words": {"type": "boolean"},
-          "bracketed_remainder": {"type": "boolean"},
-          "name_columns": {"type": "boolean"},
           "note_kinds": {
             "type": "object",
             "propertyNames": {"minLength": 1},
@@ -170,26 +160,9 @@
           "amount_brackets": {"type": "boolean"},
           "indent_chars": {"type": "integer", "minimum": 1},
           "single_part_notes": {"type": "boolean"},
-          "rows": {"type": "boolean"},
-          "rows_from": {
-            "type": "object",
-            "additionalProperties": false,
-            "required": ["name", "amount"],
-            "properties": {"name": {"type": "string", "minLength": 1}, "amount": {"type": "string", "minLength": 1}}
-          },
-          "sum_levels": {"type": "boolean"},
           "bare_amounts": {"type": "boolean"},
           "name_start_slack": {"type": "number", "exclusiveMinimum": 0, "maximum": 10, "description": "Points past the usual 3 a wrapped line may stand from the name's start, where a long number and the blank after it are not as wide as the estimate."},
-          "heading_repeated_over_code": {"const": true, "description": "A codeless line above a code in its ruled cell is the heading of the page before, repeated: not the start of the code's name."},
-          "bracket_line_closes_name": {"const": true, "description": "A line in brackets ends the name above it; the line under it is the next item."},
-          "line_starts": {"type": "array", "description": "Where a line starts on the page, for a line OCR boxed left of its print.", "items": {"type": "object", "additionalProperties": false, "required": ["page", "y", "shift", "reason"], "properties": {"page": {"type": "integer", "minimum": 1}, "y": {"type": "number"}, "shift": {"type": "number"}, "reason": {"type": "string", "minLength": 10}}}},
-          "glued_numbers": {"type": "object", "description": "A line's start and the number it holds, for a number read as one word with a name that begins with digits (`101歳6か月…` holds 10).", "additionalProperties": {"type": "string", "pattern": "^[0-9]+$"}},
-          "opening_bracket_ink": {"const": true, "description": "OCR boxes the ink of a line: a line that starts with a full-width opening bracket starts half a character left of its box."},
-          "headings": {"type": "boolean", "description": "A line without an amount, followed by a deeper line that prints one, is a heading of its own: the lines under it are its items."},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}},
-          "name_line_reach": {"type": "number", "minimum": 1, "maximum": 2, "description": "How far a name line wrapped around a number's line may sit from it, in heights of its box (default 1). A Paddle box is lower than the line pitch, so a scan read by Paddle declares a little over 1."},
-          "name_column": {"const": true, "description": "Names are set in a column of their own a space right of the numbers: a name wrapped around a line printing only its number starts up to a character past it."},
-          "under": {"type": "string", "minLength": 1, "description": "An item of this axis that hangs from its subject item belongs to the item of the named axis whose ruled row it is printed in, under the same subject item (133086: the 備考 of a 節, centred on the 節's row)."},
           "yen_marked": {"const": true, "description": "An amount that prints 円 after it in a column of another unit is in yen: a reckoning (`46.4円 × 1,115,000件 ＝ 51,736,000円`) set among the column's 千円."}
         }
       }

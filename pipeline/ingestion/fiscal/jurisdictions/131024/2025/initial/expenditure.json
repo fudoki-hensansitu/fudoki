@@ -73,6 +73,9 @@
                     "9路線": "積算",
                     "中央区先": "積算"
                   }
+                },
+                "quirks": {
+                  "office_departments": true
                 }
               }
             }
@@ -152,6 +155,9 @@
                     "9路線": "積算",
                     "中央区先": "積算"
                   }
+                },
+                "quirks": {
+                  "office_departments": true
                 }
               }
             }
@@ -231,6 +237,9 @@
                     "9路線": "積算",
                     "中央区先": "積算"
                   }
+                },
+                "quirks": {
+                  "office_departments": true
                 }
               }
             }
@@ -363,6 +372,9 @@
                     "9路線": "積算",
                     "中央区先": "積算"
                   }
+                },
+                "quirks": {
+                  "office_departments": true
                 }
               }
             }
@@ -516,6 +528,9 @@
                     "9路線": "積算",
                     "中央区先": "積算"
                   }
+                },
+                "quirks": {
+                  "office_departments": true
                 }
               }
             }
