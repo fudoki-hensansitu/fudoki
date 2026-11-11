@@ -8,6 +8,57 @@
   "direction": "expenditure",
   "conversions": [
     {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "58db99b2a2a4fdcb01e93f81f3d9d52bb4a097caf5eab407e5bcedb5e48711b5"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "carried": true,
+                "open_frame": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_line": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
       "id": "long-term-care-initial",
       "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
@@ -88,13 +139,42 @@
   ],
   "tables": [
     {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "95dd6c78442d28c8aaecac641f66adfc27e3e63c78078a5af94f399d3446ed99",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 43頁・carried 43頁 から決めた。款の和 9,902,793 と印字の「計」9,902,793 が一致。",
+        "金額の注記 1 件（充用 1）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2024/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "aa07478958b3ec9ab7baa985ad998eeff637a5b421cec548e02b3d700dc90af3",
+          "bytes": 86683
+        },
+        "row_count": 2957
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2024/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "5de40b444b4c17125196f4bedda37ce7794def390ea4b56dc247fec610e020c1",
+          "bytes": 73481
+        },
+        "row_count": 3589
+      }
+    },
+    {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "29db3673a188e4c4b15703831cd19d1db8cc9b978bae6d3a0b5a48c26009f5ac",
+      "input_fingerprint": "dc82be45677ad6d8f29c378bb2d183ff741db794c2ff58d7aa8a0a7f41162575",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 11頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 11頁 から決めた。款の和 1,099,608 と印字の「計」1,099,608 が一致。",
         "金額の注記 1 件（充用 1）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -119,11 +199,11 @@
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "b0ac632c9f512eb594e689a091730bb72cd26d2adcc731a479cc71694298ddde",
+      "input_fingerprint": "c00b14a564388dc29dfdf25f21a2b6f9f1afc67ed9013a9b3596c1f071cd329a",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 10頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 10頁 から決めた。款の和 1,118,956 と印字の「計」1,118,956 が一致。",
         "金額の注記 1 件（充用 1）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,

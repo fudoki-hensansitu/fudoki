@@ -90,6 +90,7 @@
     "line_starts": "ingestion.generic.patterns.quirks.line_starts",
     "name_column": "ingestion.generic.patterns.quirks.name_column",
     "name_columns": "ingestion.generic.patterns.quirks.name_columns",
+    "name_line": "ingestion.generic.patterns.quirks.name_line",
     "names_end_with_kind_words": "ingestion.generic.patterns.quirks.names_end_with_kind_words",
     "office_departments": "ingestion.generic.patterns.quirks.office_departments",
     "opening_bracket_ink": "ingestion.generic.patterns.quirks.opening_bracket_ink",

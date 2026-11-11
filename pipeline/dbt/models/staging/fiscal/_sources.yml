@@ -12820,6 +12820,22 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
+  - name: j134015_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j134015_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '134015'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j134015_2024_initial_long_term_care_initial_amounts
     meta:
       jurisdiction: '134015'
