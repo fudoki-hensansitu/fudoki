@@ -40,21 +40,43 @@
   "press": [
     {
       "jurisdiction": "131091",
-      "fiscal_year": 2025,
-      "layout": "shinagawa_press",
-      "title": "令和7年度品川区当初予算案 プレス発表",
-      "landing_url": "https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007188.html",
-      "url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/188/20250120110302_1.pdf",
-      "sha256": "6637d88cb7634b962d043eba6faf68d1b60561ce7c5cff52b060d6eaadd65819"
+      "layout": "shinagawa_press"
     },
     {
-      "jurisdiction": "131091",
-      "fiscal_year": 2026,
-      "layout": "shinagawa_press",
-      "title": "令和8年度品川区当初予算案 プレス発表",
-      "landing_url": "https://www.city.shinagawa.tokyo.jp/kucho/kishakaiken/1007181.html",
-      "url": "https://www.city.shinagawa.tokyo.jp/_res/projects/default_project/_page_/001/007/181/20260122093053_1.pdf",
-      "sha256": "fc61ee112f3ba83e3de93887d1bd6467924416e3cefc919bd5c4275faa66d39c"
+      "jurisdiction": "131016",
+      "layout": "chiyoda_press"
+    },
+    {
+      "jurisdiction": "131024",
+      "layout": "chuo_press"
+    },
+    {
+      "jurisdiction": "131032",
+      "layout": "minato_press"
+    },
+    {
+      "jurisdiction": "131041",
+      "layout": "shinjuku_press"
+    },
+    {
+      "jurisdiction": "131059",
+      "layout": "bunkyo_press"
+    },
+    {
+      "jurisdiction": "131067",
+      "layout": "taito_press"
+    },
+    {
+      "jurisdiction": "131075",
+      "layout": "sumida_press"
+    },
+    {
+      "jurisdiction": "131083",
+      "layout": "koto_press"
+    },
+    {
+      "jurisdiction": "131105",
+      "layout": "meguro_press"
     }
   ]
 }
