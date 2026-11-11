@@ -83,6 +83,7 @@ class Band:
     stripped_codes: bool = False  # ancestors' codes a continuation page prints (`2 1 6`) were taken out of its words (`tree.strip_ancestor_codes`)
     staircase: bool = False  # the layout setting `header.staircase`: a level's cell runs right until its own rule starts
     lines: tuple[str, ...] | None = None  # the declared heading of each line of a cell that stacks its amounts (`columns.<見出し>.lines`)
+    line_pitch: float | None = None  # the declared distance between those lines (`columns.<見出し>.line_pitch`)
     extents: list[tuple[float, float]] = field(default_factory=list)  # (top, bottom) of each block the band reads, when it reads some blocks of the page only (`patterns/layout/framed_blocks`)
 
     @property
@@ -697,6 +698,7 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
                 # One cell stacks the item's amounts a line each (`1,147,465` / `(1,110,941)` / `(36,524)` under
                 # `本年度 (前年度) (比較)`): the declared headings, in the order of the lines.
                 band.kind, band.lines = 'amount', tuple(setting['lines'])
+                band.line_pitch = setting.get('line_pitch')
             band.excluded = setting.get('excluded')
             if band.excluded:
                 band.kind = None  # not read: its words are no items and its digits a declared exclusion

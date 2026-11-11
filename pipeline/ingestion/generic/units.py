@@ -34,6 +34,15 @@ def column_mark(band: Band) -> str | None:
     if band.unit_mark:
         return band.unit_mark
     top = sorted(band.words, key=lambda w: w.y0)[:1]
+    if top:
+        # The mark's characters may be two words on baselines a hair apart (`円` 0.01pt above `千`, 小金井市): the
+        # words of its line in reading order make the mark when they read as one.
+        word = top[0]
+        line = sorted((w for w in band.words if min(w.y1, word.y1) - max(w.y0, word.y0) >= .5 * min(w.y1 - w.y0, word.y1 - word.y0)),
+                      key=lambda w: w.x0)
+        joined = ''.join(w.text for w in line)
+        if joined in MULTIPLIER:
+            return joined
     return top[0].text if top and top[0].text in MULTIPLIER else None
 
 
