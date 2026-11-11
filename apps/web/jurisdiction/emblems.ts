@@ -2,8 +2,22 @@
 // どれも Wikimedia Commons の SVG をそのまま使う。file は Commons の File 名、license は Commons の著作権タグかライセンス名。
 // 候補は Wikidata の全国地方公共団体コード（P429）の紋章の画像（P94、無ければ P158）、無ければ日本語版 Wikipedia の記事の基礎情報の紋章。
 // Public domain（CC0 を含む）でないもの（CC BY・CC BY-SA）は author を持ち、利用規約の頁に作者とライセンスを表示する。OG 画像には使わない
-/** 自治体ごとの資産（public/jurisdictions/<code>/ の紋章など）の URL */
-export const assetPath = (code: string, file: string) => `/jurisdictions/${code}/${file}`
+import { assetPath } from './assets'
+
+export { assetPath }
+
+/** 都道府県の全国地方公共団体コード。先頭2桁＋000 に検査数字を付ける（東京都は 130001、兵庫県は 280003） */
+export const prefectureCodeOf = (code: string) => withCheckDigit(`${code.slice(0, 2)}000`)
+const withCheckDigit = (five: string) => {
+  const r = [...five].reduce((s, d, i) => s + Number(d) * (6 - i), 0) % 11
+  return `${five}${r === 0 ? 0 : (11 - r) % 10}`
+}
+
+/** 頁に載せる紋章。画面の bundle に EMBLEMS を載せないよう、server 側で引いて PageData に入れる。og は OG 画像に使えるか（帰属表示の要る紋章は使わない） */
+export const emblemOf = (code: string): { src: string; og: boolean } | null => {
+  const e = EMBLEMS[code]
+  return e ? { src: assetPath(code, 'emblem.svg'), og: !e.author } : null
+}
 
 export interface Emblem {
   file: string

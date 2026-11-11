@@ -7,7 +7,7 @@ import { appPageYears, hasTab, tabOfSlug, TAB_LABELS, TAB_SLUGS, type PageData, 
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../../jurisdiction/path'
-import { assetPath, EMBLEMS } from '../../jurisdiction/emblems'
+import { assetPath, EMBLEMS, emblemOf, prefectureCodeOf } from '../../jurisdiction/emblems'
 import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
@@ -107,10 +107,10 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   const entry = entries.find((e) => jurisdictionPath(e.code) === path)
   if (!entry) return null
   // 都道府県名は都道府県自体の頁へ。都道府県自体の頁と、都道府県がカタログに無い（頁が無い）ときはリンクしない
-  const prefectureCode = `${entry.code.slice(0, 2)}0001`
+  const prefectureCode = prefectureCodeOf(entry.code)
   const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : null
   const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
     .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
   const data = entry.settlementYears.length > 0 ? await pageData(env, entry) : null
-  return data ? { kind: 'page', data: { ...data, prefecturePath, neighbors, vision: VISIONS[entry.code] ?? null } } : { kind: 'empty', entry, neighbors }
+  return data ? { kind: 'page', data: { ...data, prefecturePath, ...(prefecturePath && EMBLEMS[prefectureCode] ? { prefectureLogo: assetPath(prefectureCode, 'emblem.svg') } : {}), emblem: emblemOf(entry.code), neighbors, vision: VISIONS[entry.code] ?? null } } : { kind: 'empty', entry, neighbors }
 }

@@ -54,7 +54,6 @@ import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
 import { pageHead } from '../html'
-import { assetPath, EMBLEMS } from '../emblems'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
@@ -180,10 +179,9 @@ function SheetRow({ s }: { s: EvalSheet }) {
 /** 最後の節。都道府県・近くの自治体へ。見出しと行はほかの節と同じ形にする */
 function Elsewhere() {
   const { page } = useApp()
-  // 都道府県の紋章も、近くの自治体と同じく紋章の画像で出す（都道府県のコードは先頭2桁＋0001）
-  const prefCode = `${page.code.slice(0, 2)}0001`
+  // 都道府県の紋章も、近くの自治体と同じく紋章の画像で出す
   const places = [
-    ...(page.prefecturePath ? [{ href: page.prefecturePath, name: page.prefecture, icon: EMBLEMS[prefCode] ? <img src={assetPath(prefCode, 'emblem.svg')} alt="" className="size-full object-contain p-1" /> : <MapTrifoldIcon /> }] : []),
+    ...(page.prefecturePath ? [{ href: page.prefecturePath, name: page.prefecture, icon: page.prefectureLogo ? <img src={page.prefectureLogo} alt="" className="size-full object-contain p-1" /> : <MapTrifoldIcon /> }] : []),
     ...page.neighbors.map((n) => ({ href: n.path, name: n.name, icon: n.logo ? <img src={n.logo} alt="" className="size-full object-contain p-1" /> : <MapPinAreaIcon /> })),
   ]
   return (
@@ -874,7 +872,7 @@ const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] 
 
 export function AppPage({ data, sitekey, initialYear, initialField, initialTab }: { data: PageData; sitekey: string; initialYear?: number; initialField?: string; initialTab?: TabKey }) {
   const vision = data.vision?.text
-  const emblem = EMBLEMS[data.code] ? assetPath(data.code, 'emblem.svg') : null
+  const emblem = data.emblem?.src ?? null
   const years = React.useMemo(() => appPageYears(data), [data])
   const [d, setD] = React.useState<Snapshot>()
   const [failed, setFailed] = React.useState(false)
