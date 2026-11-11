@@ -9,6 +9,7 @@ export const Sha256 = z.string().regex(/^[0-9a-f]{64}$/)
 export const RowId = (what: string) => z.string().regex(/^[0-9a-f]{64}$/).describe(`${what} (64 lowercase hexadecimal characters).`)
 
 export const OriginFormat = z.enum(['pdf', 'csv'])
+export const DocumentKind = z.enum(['initial', 'settlement']).describe('資料区分。initial は当初予算、settlement は決算')
 
 /** 出典。値を取った資料そのもの（公式サイトの URL と、風土記が保存したファイルの指紋） */
 export const Origin = z.strictObject({

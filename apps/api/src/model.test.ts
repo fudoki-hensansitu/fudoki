@@ -5,7 +5,8 @@ import { EvaluationOriginRow, EvaluationOriginType, EvaluationRow, Grade, Indica
 import { BudgetProposalOriginRow, BudgetProposalRow, MeasureRow } from './budget-proposal/model'
 import { ProjectRow, ProjectYearRow } from './project/model'
 import { z } from 'zod'
-import { Breakdown, DetailRow, DocumentKind, LocationKind, LocationRow, OriginRow, SubjectRow } from './expenditure/model'
+import { DocumentKind } from './shared/model'
+import { Breakdown, DetailRow, LocationKind, LocationRow, OriginRow, SubjectRow } from './expenditure/model'
 import { JurisdictionList } from './jurisdiction/model'
 
 const values = (table: string, column: string) => {

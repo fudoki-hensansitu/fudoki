@@ -4,9 +4,8 @@ import { z } from 'zod'
 import { DETAIL_TABLE, SUBJECT_TABLE, described } from '../columns'
 import { nextPageToken } from '../shared/paging'
 import { searchInputFor } from '../shared/search'
-import { FiscalYear, JurisdictionCode, Origin, OriginFormat, Yen } from '../shared/model'
+import { DocumentKind, FiscalYear, JurisdictionCode, Origin, OriginFormat, Yen } from '../shared/model'
 
-export const DocumentKind = z.enum(['initial', 'settlement']).describe('資料区分。initial は当初予算、settlement は決算')
 export const CofogCertainty = z.enum(['assigned', 'tentative'])
 export const CofogUnclassified = z.enum(['unclassifiable', 'out-of-scope'])
 export const Breakdown = z.enum(['事業', '節', 'その他']).describe('内訳の分け方（風土記の判断）')
@@ -148,7 +147,7 @@ export const OriginRow = z
 export const LocationRow = z
   .strictObject(
     described('expenditure_location', {
-      row_id: z.string(),
+      line_id: z.string(),
       origin_id: z.string(),
       kind: LocationKind,
       source_page: z.int().nullable(),
@@ -165,7 +164,7 @@ export const LocationRow = z
       amount_source_line: z.int().nullable(),
     })
   )
-  .meta({ id: 'LocationRow', description: '行が印字された出典の位置。row_id は subject_id か detail_id。kind が pdf なら頁と枠、csv なら行番号。' })
+  .meta({ id: 'LocationRow', description: '行が印字された出典の位置。line_id は subject_id か detail_id。kind が pdf なら頁と枠、csv なら行番号。' })
 
 const subjectShape = described('expenditure_subject', {
   subject_id: z.string(),
@@ -209,7 +208,7 @@ const detailShape = described('expenditure_detail', {
 export const DetailRow = z.strictObject(detailShape).meta({ id: 'DetailRow', description: '歳出の内訳（科目の下の事業・節など）。' })
 
 const ORIGINS_HELP = '結果の行が指す出典。行の origin_id から引く。'
-const LOCATIONS_HELP = '結果の行が印字された位置。行の subject_id・detail_id を row_id で引く。'
+const LOCATIONS_HELP = '結果の行が印字された位置。行の subject_id・detail_id を line_id で引く。'
 
 export const SubjectSearchInput = searchInputFor(SUBJECT_TABLE)
 export const DetailSearchInput = searchInputFor(DETAIL_TABLE)

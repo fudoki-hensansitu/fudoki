@@ -55,7 +55,7 @@ export const EvaluationSheet = z.strictObject({
   grade: Grade,
   grade_label: z.string().nullable().describe('シートの表記。読めない欄は空'),
   direction: z.string().nullable().describe('今後の方向。シートの表記。読めない欄は空'),
-  detail_id: z.string().nullable().describe('紐付けた決算書の内訳（風土記の判断）'),
+  expenditure_detail_id: z.string().nullable().describe('紐付けた決算書の内訳（歳出の集約の内訳の ID。風土記の判断）'),
   indicators: z.array(Indicator),
   origin: PagedOrigin,
 })
@@ -135,8 +135,8 @@ export const SheetRow = z
       grade_code: Grade,
       grade_label: z.string().nullable(),
       direction: z.string().nullable(),
-      subject_id: z.string().nullable(),
-      detail_id: z.string().nullable(),
+      expenditure_subject_id: z.string().nullable(),
+      expenditure_detail_id: z.string().nullable(),
     })
   )
   .meta({ id: 'EvaluationSheetRow', description: '評価シート（1枚 = 小事業の1年度）。' })

@@ -242,7 +242,7 @@ models:
 - name: expenditure_location
   description: 科目・内訳の表の1行が印字された出典の位置。kind で形が違う（pdf は頁と枠、csv は行番号）。
   columns:
-  - name: row_id
+  - name: line_id
     description: 科目の表の subject_id か内訳の表の detail_id。
     data_tests:
     - not_null

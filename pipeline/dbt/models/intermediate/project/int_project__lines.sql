@@ -19,9 +19,9 @@ with recursive business as (
     from {{ ref('expenditure_detail') }} d
     join {{ ref('expenditure') }} e using (expenditure_id)
     left join (
-        select row_id, min(origin_id) as origin_id, min(source_page) as source_page, min(source_y0) as source_y0, min(source_line) as source_line
-        from {{ ref('expenditure_location') }} group by row_id
-    ) l on l.row_id = d.detail_id
+        select line_id, min(origin_id) as origin_id, min(source_page) as source_page, min(source_y0) as source_y0, min(source_line) as source_line
+        from {{ ref('expenditure_location') }} group by line_id
+    ) l on l.line_id = d.detail_id
     where d.breakdown = '事業' and e.amendment_number is null
         and e.jurisdiction_code in (select jurisdiction_code from {{ ref('project_jurisdiction') }})
 ),

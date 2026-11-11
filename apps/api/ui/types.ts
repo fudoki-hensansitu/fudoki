@@ -45,7 +45,7 @@ export interface DetailRow extends RowBase {
   breakdown: string
   node_kind: string
 }
-type Location = PdfLocation & { row_id: string }
+type Location = PdfLocation & { line_id: string }
 
 /**
  * View の中で扱う1行。科目と内訳を同じ形にし、開くときの tool と引数を持たせる。
@@ -89,7 +89,7 @@ const NO_LOCATION: PdfLocation = {
   amount_source_page: null, amount_source_x0: null, amount_source_y0: null, amount_source_x1: null, amount_source_y1: null,
 }
 const base = (r: RowBase, at: Map<string, Location>, id: string) => {
-  const { row_id: _, ...location } = at.get(id) ?? { row_id: id, ...NO_LOCATION }
+  const { line_id: _, ...location } = at.get(id) ?? { line_id: id, ...NO_LOCATION }
   return {
     ...location,
     document_kind: r.document_kind, jurisdiction_code: r.jurisdiction_code, fiscal_year: r.fiscal_year, account_name: r.account_name,
@@ -108,7 +108,7 @@ const fromDetail = (r: DetailRow, at: Map<string, Location>): TreeNode => ({
 
 /** server の結果（科目・内訳の検索と取得）を View の形にそろえる。印字の位置は行に重ねる */
 export function toView(data: Json): ViewData {
-  const at = new Map(((data.locations ?? []) as Location[]).map((l) => [l.row_id, l]))
+  const at = new Map(((data.locations ?? []) as Location[]).map((l) => [l.line_id, l]))
   const common = { origins: data.origins as Origin[] | undefined, next_page_token: data.next_page_token as string | null | undefined }
   if (data.line) {
     // 歳出の行の取得: 科目なら子の科目と直下の内訳、内訳なら子の内訳（どちらも breakdown ごと）
