@@ -8,7 +8,7 @@ the two are read as one logical page with the right page shifted to the right.
 """
 from __future__ import annotations
 
-from collections import defaultdict
+from collections import Counter, defaultdict
 from contextvars import ContextVar
 from functools import lru_cache
 from dataclasses import dataclass, field, replace
@@ -294,6 +294,14 @@ def _frames(page: Page, spread: dict | None = None,
         if len(spanning) < 2:
             continue
         bottom = max(h.y0 for h in spanning)
+        most = lambda h: sum(1 for m in middle if _covers(h, m)) >= max(2, .6 * len(middle))
+        sides = min(max((r.y1 for r in page.rules if r.vertical and abs(r.x0 - x) <= 3), default=bottom)
+                    for x in (frame[0], frame[-1]))
+        closing = [h for h in horizontals if abs(h.y0 - sides) <= 4 and most(h)]
+        if sides - bottom > 100 and closing and not any(bottom < h.y0 < sides - 4 and all(_covers(h, m) for m in middle) for h in horizontals):
+            # A skewed scan loses the ends of the closing rule (国分寺市: 148–502 of a frame 72–571): the rule drawn
+            # where the frame's sides end across most of its columns closes it, if no rule across the whole frame lies between.
+            bottom = max(h.y0 for h in closing)
         if staircase:
             # The rows of a staircase draw their rules from the deeper columns only: the frame ends at the lowest
             # rule its own sides reach that crosses most of its columns, or that is drawn where the sides end.
@@ -339,8 +347,8 @@ def _header_bottom(page: Page, frame) -> float:
     # An edge of stacked tables set a few points apart (`_frames`) is the outermost of them: the top table's rules
     # start up to that far inside it.
     verticals = [r for r in page.rules if r.vertical]
-    reach = 3 + max([abs(r.x0 - x) for x in (x0, x1) for r in verticals if 3 < abs(r.x0 - x) <= 8
-                     and top - 1 <= r.y0 <= bottom], default=0)
+    reach = 3 + max([abs(r.x0 - x) for x in (x0, x1) for r in verticals if 2 < abs(r.x0 - x) <= 8
+                     and top - 3 <= r.y0 <= bottom], default=0)
     # A rule from the frame's left edge across most of it (a free-text column at the right end may draw none).
     full = sorted(h.y0 for h in horizontals
                   if h.x0 <= x0 + reach and h.x1 >= x1 - reach and top - 1 <= h.y0 <= bottom + 1)
@@ -526,9 +534,9 @@ def run_on_starts(body: list[tuple[int, Word]], verticals: list[Rule]) -> dict[i
 
 
 # How far apart two words' centres may be and still be one printed line. A scan set a little off level (the scan
-# setting `rules.skewed`, 国分寺市) prints a line's amount at the right end up to 2.5pt above its name at the left.
+# setting `rules.skewed`, 国分寺市) prints a line's amount at the right end up to 3.5pt above its name at the left.
 LINE_TOLERANCE: ContextVar[float] = ContextVar('line_tolerance', default=2.0)
-SKEWED_LINE_TOLERANCE = 3.0
+SKEWED_LINE_TOLERANCE = 4.0
 
 
 def lines(words: list[Glyph], tolerance: float | None = None) -> list[list[Glyph]]:
@@ -668,7 +676,15 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
                 # A scan's header read with its cells cut elsewhere (`本年度の` / `財源内訳` for `本年度の財源内訳`):
                 # the declared column whose heading reads the same characters.
                 joined = ''.join(band.header)
-                setting = next((v for k, v in (columns or {}).items() if joined and k.replace('／', '') == joined), {})
+                setting = next((v for k, v in (columns or {}).items() if joined and k.replace('／', '') == joined), None)
+            if setting is None and band.header:
+                # A skewed scan reads only part of a heading, or its characters out of order (`国都支出金` under
+                # `本年度の財源内訳／特定財源`, `度)較)`): the declared columns whose heading holds every character read,
+                # when they all declare the same.
+                read = Counter(''.join(band.header))
+                found = [v for k, v in (columns or {}).items() if not read - Counter(k.replace('／', ''))]
+                setting = found[0] if found and all(v == found[0] for v in found) else None
+            setting = setting or {}
             band.kind = setting.get('kind', band.kind)
             if setting.get('heading'):  # the column's meaning, declared where the print only says `金額`
                 band.header = band.header[:-1] + (setting['heading'],)

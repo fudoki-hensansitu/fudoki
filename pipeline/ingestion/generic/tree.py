@@ -19,7 +19,7 @@ from __future__ import annotations
 from collections import Counter, defaultdict
 from bisect import bisect_right
 from math import floor
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 import hashlib
 import re
 import unicodedata
@@ -42,6 +42,7 @@ BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
 READING = re.compile(r'[(（][ァ-ヶー]+[)）]')
 BRACKET_PAIRS = {')': '(', ']': '['}  # the closing and opening brackets of a bracketed amount
 BRACKETS = {'(', ')', '（', '）'}  # a stacked amount's brackets printed as words of their own (`(` `1,110,941` `)`)
+AGE = re.compile(r'(歳|歲|箇月|か月|ヶ月|ケ月|カ月)')
 CODE_LED = re.compile(r'^[0-9０-９]{1,4}[^0-9０-９,，.．]')  # a code joined to its name (`1商`)
 TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|予備費[よか]り|第[0-9０-９]+節[へか]|^第[0-9０-９]+[款項目節]|^[○〇●]?同[款項目])')
 # The words that end a transfer remark begun on the line above (`…費` / `から流用 13,281,000円`).
@@ -295,11 +296,22 @@ def note_breakdown(items: list['Item'], subject_starts: tuple[float, ...] = (), 
                 follower.hint = kind
 
 
+def _stacked_word(glyph: Glyph) -> Glyph:
+    """A word of a column of stacked lines (`columns.<見出し>.lines`): the closing bracket of `(1,532)` read on the
+    figure (`90)`) is no digit, and `A` read for the `△` before a figure is its sign (国分寺市)."""
+    if glyph.text == 'A':
+        return replace(glyph, text='△')
+    bare = glyph.text.rstrip(')）')
+    return replace(glyph, text=bare) if bare != glyph.text and bare and is_amount(bare) else glyph
+
+
 def _split_code(line_text: str) -> tuple[str | None, str]:
     """A leading item number and the name. Numbers start from 1, so a leading 0 is a
     bullet drawn as a digit; bullet marks (〇) mark a level and are not part of the name."""
     found = CODE.match(line_text)
     if found and line_text[found.end():found.end() + 1] in ('～', '〜', '~'):  # `3～4か月児…` is a range in a name
+        return None, line_text
+    if found and AGE.match(line_text, found.end()):  # `1歳6箇月児健康診査…`: an age in a name
         return None, line_text
     if found and READING.match(line_text, found.end()):  # `73（ナナサン）歯科健診事業`: the number's reading, a name
         return None, line_text
@@ -2485,7 +2497,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 waiting = None  # (heading, y) of a kind word alone on its line in an inline-kind band
                 previous = None  # (item, rule-bounded cell) of the last amount this column gave to an item
                 stacked_lines = Counter()  # amounts a column of stacked lines (`band.lines`) gave to each item
-                words_ = [g for g in band.words if not (band.lines and g.text in BRACKETS)]
+                words_ = [_stacked_word(g) for g in band.words if g.text not in BRACKETS] if band.lines else band.words
                 history = histories.pop('／'.join(band.header), None)  # [item, label lines, a round waiting] of a `補正経過`
                 if history is not None:
                     revisions.append([history[0], band.body_top, band.body_top, band.words[0].page if band.words else logical.pages[0], history[1][-1] if history[1] else []])
@@ -2635,7 +2647,15 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         header = '／'.join((band.header if band.inline_free else band.header[:-1]) + (kind,))
                     if band.lines:
                         index = stacked_lines[target.key]
-                        stacked_lines[target.key] += 1
+                        name = target.lines[0][0] if target.lines and target.lines[0] else None
+                        if name is not None and name.page == money[0].page:
+                            # The line the amount stands on below the item's name: a line left blank or printed as a
+                            # dash (`41,589` / `-` / `41,589`) keeps the lines under it in their headings.
+                            step = .82 * (name.y1 - name.y0)
+                            middle = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
+                            if index < len(band.lines):
+                                index = min(max(index, round((middle - (name.y0 + name.y1) / 2) / step)), len(band.lines) - 1)
+                        stacked_lines[target.key] = index + 1
                         if index >= len(band.lines):
                             unowned.append({'kind': 'amount past the stacked lines', 'page': money[0].page,
                                             'text': candidate, 'header': header})
