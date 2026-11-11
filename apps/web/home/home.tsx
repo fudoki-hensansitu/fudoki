@@ -18,7 +18,7 @@ import { Amt, FieldIcon, perHeadText } from './parts'
 import { searchHref } from '../search/search'
 import { useMyTown, type Town } from './towns'
 import { Tour, useTour, type TourStep } from './tour'
-import { AskTown, OtherTowns, Checklist, Empty, Intro, Steps, startChecklist, type CheckItem } from './onboarding'
+import { OtherTowns, Checklist, Empty, Intro, Steps, startChecklist, type CheckItem } from './onboarding'
 
 export interface Featured {
   code: string
@@ -362,7 +362,6 @@ function Footer() {
 
 export function Home({ entries, featured }: HomeProps) {
   const { ready, town, set } = useMyTown()
-  const [changing, setChanging] = React.useState(false)
   const tour = useTour('home')
   const { visit } = useRouter()
   // はじめての流れで選んだまち。要点を見せてから「このまちにする」で決める
@@ -370,10 +369,6 @@ export function Home({ entries, featured }: HomeProps) {
   const shown = town ?? pending
   const snap = useSnapshot(ready && shown ? shown.code : null)
   const vision = shown ? featured.find((f) => f.code === shown.code)?.vision : undefined
-  const pick = (e: MapEntry) => {
-    set(toTown(e))
-    setChanging(false)
-  }
   const open = () => {
     if (!pending) return
     startChecklist()
@@ -381,7 +376,8 @@ export function Home({ entries, featured }: HomeProps) {
     set(pending)
     setPending(null)
   }
-  const choose = () => setChanging(true)
+  // 住んでいるまちを外し、はじめての流れ（住んでいるまちを選ぶ）に戻す
+  const reset = () => set(null)
   let body: React.ReactNode
   if (!ready) body = <Loading />
   else if (!town)
@@ -406,13 +402,12 @@ export function Home({ entries, featured }: HomeProps) {
         }
       />
     )
-  else if (changing) body = <AskTown entries={entries} onPick={pick} onCancel={() => setChanging(false)} />
   else
     body = (
       <>
         <div className="mb-3 flex justify-end">
-          <button type="button" onClick={choose} className="text-[13px] text-muted-foreground hover:text-foreground">
-            住んでいるまちを変える
+          <button type="button" onClick={reset} className="text-[13px] text-muted-foreground hover:text-foreground">
+            リセット
           </button>
         </div>
         <WithCtx town={town!} vision={vision} snap={snap}>
@@ -429,7 +424,7 @@ export function Home({ entries, featured }: HomeProps) {
     <main className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
       <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />
       {/* ほかのまちを見る導線。住んでいるまちを選んだあとも、ホームの頭に常に出す（選ぶ前は Empty の中に出す） */}
-      {ready && town && !changing ? <OtherTowns entries={entries} className="mb-6" /> : null}
+      {ready && town ? <OtherTowns entries={entries} className="mb-6" /> : null}
       {body}
       <Footer />
     </main>

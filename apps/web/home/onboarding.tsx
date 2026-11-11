@@ -14,8 +14,8 @@ import './onboarding.css'
 
 type Locate = { busy?: boolean; error?: string; hit?: MapEntry }
 
-/** 住んでいるまちを聞く札。名前の入力欄をはじめから出し、下に「現在地から選ぶ」。first は はじめての流れ（緑・1 / 2）、それ以外は住んでいるまちを変えるとき */
-export function AskTown({ entries, onPick, onCancel, first }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; onCancel?: () => void; first?: boolean }) {
+/** 住んでいるまちを聞く札（はじめての流れの 1 / 2）。名前の入力欄をはじめから出し、下に「現在地から選ぶ」。ホームの「リセット」のあともここに戻る */
+export function AskTown({ entries, onPick }: { entries: MapEntry[]; onPick: (e: MapEntry) => void }) {
   const [loc, setLoc] = React.useState<Locate | null>(null)
   const locate = async () => {
     setLoc({ busy: true })
@@ -29,14 +29,14 @@ export function AskTown({ entries, onPick, onCancel, first }: { entries: MapEntr
     }
   }
   return (
-    <section className={cn('ob-rise rounded-[24px] p-5 sm:p-7', first ? 'bg-brand text-brand-foreground' : 'border bg-background')}>
-      {first ? <Steps at={1} of={2} onBrand /> : null}
-      <h2 className="text-[20px] leading-snug font-bold sm:text-[24px]">{first ? '住んでいるまちを選ぶ' : '住んでいるまちを変える'}</h2>
-      <p className={cn('mt-1 mb-4 text-[14px]', first ? 'opacity-80' : 'text-muted-foreground')}>名前で探すか、現在地から選びます。選んだまちの予算と事業を、次からもここに出します。</p>
+    <section className={'ob-rise rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7'}>
+      <Steps at={1} of={2} onBrand />
+      <h2 className="text-[20px] leading-snug font-bold sm:text-[24px]">住んでいるまちを選ぶ</h2>
+      <p className="mt-1 mb-4 text-[14px] opacity-80">名前で探すか、現在地から選びます。選んだまちの予算と事業を、次からもここに出します。</p>
       {/* 一覧を読めなかったときに「未収録」と誤って伝えないよう、検索と現在地を出さない */}
       {entries.length ? (
         <>
-          <TownPicker plain={!first} entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
+          <TownPicker entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
           <div className="mt-3 text-foreground">
             {loc ? (
               <div className="ob-swap">
@@ -46,26 +46,18 @@ export function AskTown({ entries, onPick, onCancel, first }: { entries: MapEntr
               <button
                 type="button"
                 onClick={() => void locate()}
-                className={cn(
-                  'inline-flex items-center gap-2 rounded-full px-4 py-2 text-[14px] font-bold transition-[background-color,transform] duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none',
-                  first ? 'bg-brand-foreground/15 text-brand-foreground hover:bg-brand-foreground/25' : 'bg-secondary hover:bg-accent',
-                )}
+                className="inline-flex items-center gap-2 rounded-full bg-brand-foreground/15 px-4 py-2 text-[14px] font-bold text-brand-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-brand-foreground/25 active:scale-[0.97] motion-reduce:transition-none"
               >
                 <NavigationArrowIcon className="size-4" />
                 現在地から選ぶ
-                <span className={cn('text-[12px] font-normal', first ? 'opacity-75' : 'text-muted-foreground')}>位置は保存しません</span>
+                <span className="text-[12px] font-normal opacity-75">位置は保存しません</span>
               </button>
             )}
           </div>
         </>
       ) : (
-        <p className={cn('text-[14px]', first ? 'opacity-80' : 'text-muted-foreground')}>今は自治体の一覧を読み込めません。少し時間をおいて開き直してください。</p>
+        <p className="text-[14px] opacity-80">今は自治体の一覧を読み込めません。少し時間をおいて開き直してください。</p>
       )}
-      {onCancel ? (
-        <button type="button" onClick={onCancel} className="mt-4 text-[13px] text-muted-foreground hover:text-foreground">
-          やめる
-        </button>
-      ) : null}
     </section>
   )
 }
@@ -164,7 +156,7 @@ export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
 export function Empty({ entries, onPick, reveal }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; reveal: React.ReactNode }) {
   return (
     <>
-      {reveal ? <div key="reveal">{reveal}</div> : <AskTown entries={entries} onPick={onPick} first />}
+      {reveal ? <div key="reveal">{reveal}</div> : <AskTown entries={entries} onPick={onPick} />}
       <OtherTowns entries={entries} className="mt-6" />
     </>
   )
