@@ -32,7 +32,7 @@ export function ProjectSearchBox({ q = '', code, placeholder, className, size = 
         <InputGroupAddon>
           <MagnifyingGlassIcon className="size-5" />
         </InputGroupAddon>
-        <InputGroupInput maxLength={16} value={text} onChange={(e) => setText(e.target.value)} placeholder={placeholder ?? '例：給食、プール、保育'} aria-label="事業を検索" className="text-base" />
+        <InputGroupInput maxLength={48} value={text} onChange={(e) => setText(e.target.value)} placeholder={placeholder ?? '例：給食、プール、保育'} aria-label="事業を検索" className="text-base" />
       </InputGroup>
     </form>
   )

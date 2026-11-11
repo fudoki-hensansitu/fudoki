@@ -405,7 +405,21 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
       <Empty
         entries={entries}
         onPick={(e) => setPending(toTown(e))}
-        reveal={pending ? <WithCtx town={pending} vision={vision} snap={snap}>{(c) => <Reveal c={c} onOpen={open} onBack={() => setPending(null)} />}</WithCtx> : null}
+        reveal={
+          pending ? (
+            <>
+              <WithCtx town={pending} vision={vision} snap={snap}>
+                {(c) => <Reveal c={c} onOpen={open} onBack={() => setPending(null)} />}
+              </WithCtx>
+              {/* 読み込み中・失敗・年度なしでは Reveal が出ないので、選び直す導線をここに残す */}
+              {snap.d && snap.year != null && snap.d.years[String(snap.year)] ? null : (
+                <button type="button" onClick={() => setPending(null)} className="mt-3 text-[13px] text-muted-foreground hover:text-foreground">
+                  ちがうまちを選ぶ
+                </button>
+              )}
+            </>
+          ) : null
+        }
       />
     )
   else if (changing) body = <AskTown entries={entries} onPick={pick} onCancel={() => setChanging(false)} />
