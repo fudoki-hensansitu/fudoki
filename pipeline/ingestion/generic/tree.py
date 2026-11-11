@@ -536,8 +536,9 @@ def strip_ancestor_codes(group: Group) -> list[Glyph]:
 
 
 def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False,
-               bare_amounts: bool = False, numbers=None) -> list[tuple]:
-    """Printed lines of a label group as (label glyphs, amount runs, code, name). `numbers`: the quirk `full_width_numbers`."""
+               bare_amounts: bool = False, numbers=()) -> list[tuple]:
+    """Printed lines of a label group as (label glyphs, amount runs, code, name). `numbers`: the quirks that say a line
+    starts with an item number wherever it starts (`full_width_numbers`, `name_line`)."""
     entries = []
     for line in lines([w for band in group.bands for w in band.words]):
         label, money = _split_line(line, amount_brackets, bare_amounts)
@@ -561,7 +562,7 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             # `8` `2歳児歯科健診事業`, `0200` `16ミリ映写機検定委託料`: the number is a word of its own, and the name begins with a count.
             code, name, script = normalize(label[0].text), normalize(text(label[1:])), True
         if (code is not None and margins is not None and not margins & set(_margins(label))
-                and not (numbers is not None and numbers.module.numbered(raw_text))):
+                and not any(q.module.numbered(raw_text) for q in numbers)):
             code, name = None, line_text  # a name that begins with a digit
         if code is None and label and margins is not None and margins & set(_margins(label)):
             year = YEAR_LED.match(line_text)
@@ -696,7 +697,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     `column_amounts`: the amounts printed in the axis's own amount column, beside the names.
     """
     entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')),
-                         quirk(settings, 'full_width_numbers'))
+                         [q for name in ('full_width_numbers', 'name_line') if (q := quirk(settings, name)) is not None])
     settings = settings or {}
     kind_names = quirk(settings, 'names_end_with_kind_words')
     remainder = quirk(settings, 'bracketed_remainder')
@@ -2186,6 +2187,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if item.fixed_anchor is None and (y := name_lines[group.axis].module.anchor(
                             item, lambda line: CODE.fullmatch(normalize(text(line))))) is not None:
                         item.fixed_anchor = y
+                        item.indent = item.lines[1][0].x0  # the name starts its own line: `9` and `10` indent alike
                         numbered_names.add(id(item))
     closing_headings = closing_department_headings([item for entry in all_items for item in page_events(*entry)], layout)
     for logical, ordered, found in all_items:

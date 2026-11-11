@@ -1,11 +1,20 @@
 """Axis quirk: the axis prints an item's number alone on the line above its name and its amount on the name's line
 (八丈町 R6's 節: `1` / `報酬 30,240`), so the first 節 of a 目 prints its name and amount on the 目's own line.
 
-The item opens on its name's line (it follows the 目 it belongs to), it stays an item of the 目's row even where its
-number was read into its name (`10需用費`), and an amount in the axis's columns goes to the item one of whose lines it
+A number alone on its line is the item's number wherever it ends (`10` ends a character right of `9`, under the
+name lines that start where the numbers do). The item opens on its name's line (it follows the 目 it belongs to), it
+stays an item of the 目's row, and an amount in the axis's columns goes to the item one of whose lines it
 is printed on before the first line of an item farther left (the 目)."""
+import re
+
 SCOPE = 'axis'
 OPTIONS = {'const': True}
+LONE_NUMBER = re.compile(r'[0-9０-９]{1,2}')
+
+
+def numbered(raw_text: str) -> bool:
+    """Whether the line is a number alone."""
+    return LONE_NUMBER.fullmatch(raw_text.strip()) is not None
 
 
 def anchor(item, lone_number) -> float | None:
