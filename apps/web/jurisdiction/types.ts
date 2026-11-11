@@ -1,5 +1,5 @@
 // 自治体の個別ページ（/:都道府県/:名称）のデータの型と、金額・年度の表記。server（SSR・API）と画面（島）で同じものを使う
-import type { Profile } from './profiles'
+import type { Vision } from './visions'
 
 /** 款・項・目・節など、出典の1行。金額は API が返した円（画面で足し引きしない） */
 export interface Line {
@@ -114,13 +114,9 @@ export interface PageData {
   /** 最新の決算より後の年度の当初予算（古い順）。決算の無い年度の概要に使う */
   budgets: BudgetTotal[]
   projects: Project[]
-  /** 方針・政策領域・事業の入れ替え（jurisdiction/profiles.ts）。手で起こした自治体だけにある */
-  profile?: Profile | null
+  /** 基本構想の都市像（jurisdiction/visions.ts）。手で起こした自治体だけにある */
+  vision?: Vision | null
 }
-
-/** 頁で選べる年度（新しい順）。事業の振り返り（profile）と決算の年度を合わせる。先頭が頁の既定の年度 */
-export const pageYears = (d: { years: { year: number }[]; profile?: { years: Record<string, unknown> } | null }) =>
-  [...new Set([...Object.keys(d.profile?.years ?? {}).map(Number), ...d.years.map((y) => y.year)])].sort((a, b) => b - a)
 
 /** 自治体の頁で選べる年度（新しい順に3年）。決算の年度と、決算より後の当初予算の年度 */
 export const appPageYears = (d: { years: { year: number }[]; budgets: { year: number }[] }) =>

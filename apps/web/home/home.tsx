@@ -18,7 +18,7 @@ export interface Featured {
   name: string
   path: string
   vision?: string
-  /** 事業評価の載る年度 */
+  /** 事業評価の載る最新の年度。頁はその年度の事業のタブで評価を出す */
   evalYear?: number
 }
 
@@ -247,7 +247,7 @@ function Topics({ entries, featured }: HomeProps) {
   const topics = [
     // 一覧を読めなかったときは件数を出さない（0件と取り違えないように）。行き先は事業評価と同じく、くわしい頁のある自治体の例
     { title: '予算・決算', body: '何にいくら使ったか', meta: entries.length ? `${entries.length}の自治体` : undefined, href: featured[0]?.path, icon: <CoinsIcon /> },
-    { title: '事業評価', body: '事業をどう振り返ったか', meta: evaluated.map((f) => f.name).join('・'), href: evaluated[0] ? `${evaluated[0].path}#y${evaluated[0].evalYear}` : undefined, icon: <ClipboardTextIcon /> },
+    { title: '事業評価', body: '事業をどう振り返ったか', meta: evaluated.map((f) => f.name).join('・'), href: evaluated[0] ? `${evaluated[0].path}/${evaluated[0].evalYear}/projects` : undefined, icon: <ClipboardTextIcon /> },
   ]
   return (
     <section aria-labelledby="topics-h" className="mt-12">

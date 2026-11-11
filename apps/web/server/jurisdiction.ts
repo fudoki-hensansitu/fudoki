@@ -43,6 +43,8 @@ export interface CatalogEntry {
   initialYears: number[]
   /** 資料の種類・年度ごとに収録した会計の名前（一般会計と特別会計） */
   accounts?: Record<DocumentKind, Record<string, string[]>>
+  /** 事業評価を収録した年度（評価した事業を行った年度、古い順） */
+  evaluationYears: number[]
   officialUrl: string | null
   /** いちばん新しい基準日の住民基本台帳人口 */
   population: Population | null
@@ -70,6 +72,7 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
           initial: Object.fromEntries(j.coverage.filter((c) => c.document_kind === 'initial').map((c) => [String(c.fiscal_year), c.accounts.map((a) => a.account_name)])),
           settlement: Object.fromEntries(j.coverage.filter((c) => c.document_kind === 'settlement').map((c) => [String(c.fiscal_year), c.accounts.map((a) => a.account_name)])),
         },
+        evaluationYears: j.evaluations.map((e) => e.fiscal_year).sort((a, b) => a - b),
         officialUrl: j.official_url,
         population: null,
         populations: [],
