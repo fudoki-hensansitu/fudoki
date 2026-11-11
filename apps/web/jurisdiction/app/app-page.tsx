@@ -322,7 +322,7 @@ function MoneyTab() {
   return (
     <div className="flex flex-col gap-3">
       {total ? (
-        <Flow key={`${v.year}-${view}`} data={page} total={total} view={view} phase={budget ? 'initial' : 'settlement'} tabs={tabs} summary={summary} />
+        <Flow key={`${v.year}-${view}`} data={page} total={total} view={view} phase={budget ? 'initial' : 'settlement'} tabs={tabs} summary={summary} className="h-[calc(100svh-12rem)] scroll-mt-16 @4xl:h-[calc(100svh-10rem)] @4xl:scroll-mt-16" />
       ) : (
         <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の決算・予算は、まだ収録していません</p>
       )}

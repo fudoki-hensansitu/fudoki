@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
+import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
 import { Overview } from './sankey'
@@ -353,7 +354,7 @@ function KanPanel({ drill, loading, levels }: { drill: Drill; loading: boolean; 
 
 /** 款→項の全体図と款ごとの内訳。最新年度の款→項はページに埋めてあり、それ以外の年度は図が近づいたら読み込む */
 /** tabs はカードの左上に置く切り替え（分け方）、summary は全体図のときに出す総額。view は分野（COFOG の枠）か款か */
-export function Flow({ data, total: year, view = 'kan', phase = 'settlement', tabs, summary }: { data: PageData; total: YearTotal; view?: FlowView; /** 決算の無い年度は当初予算（initial）の流れを読む */ phase?: 'settlement' | 'initial'; tabs?: React.ReactNode; summary?: React.ReactNode }) {
+export function Flow({ data, total: year, view = 'kan', phase = 'settlement', tabs, summary, className }: { data: PageData; total: YearTotal; view?: FlowView; /** 決算の無い年度は当初予算（initial）の流れを読む */ phase?: 'settlement' | 'initial'; tabs?: React.ReactNode; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string }) {
   const levels = LEVELS[view]
   const isLatest = phase === 'settlement' && year.year === data.years.at(-1)?.year
   const root = React.useRef<HTMLDivElement>(null)
@@ -413,7 +414,7 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
   const kan = index > 0 ? flows[index - 1] : undefined
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) || 1
   return (
-    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（${levels.kan}）の内訳` : `${levels.kan}から${levels.kou}への全体図`} className="flex h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:h-[calc(100svh-61px-2rem)] @4xl:scroll-mt-[77px]">
+    <div ref={root} data-ask-view={kan ? `${kan.kan.name}（${levels.kan}）の内訳` : `${levels.kan}から${levels.kou}への全体図`} className={cn('flex h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:h-[calc(100svh-61px-2rem)] @4xl:scroll-mt-[77px]', className)}>
       <div className="shrink-0 px-5 pt-5 sm:px-6">
         {tabs}
         {/* 見出しと金額の行。右に今いる段（大分類 4 / 8）と前後の矢印を置く */}
