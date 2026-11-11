@@ -741,7 +741,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
 
     single = {i: tuple(ix) for ix in cells.values()
               if sum(entries[i][2] is not None for i in ix) == 1 and len(ix) > 1
-              and sum(bool(entries[i][1]) for i in ix) <= 1 and len(set().union(*(beside(entries[i][0]) for i in ix))) <= 1
+              and sum(bool(entries[i][1]) for i in ix) <= 1 and len({beside(entries[i][0]) for i in ix} - {frozenset()}) <= 1
               and wraps(0, ix) for i in ix}
     repeated_headings: set[int] = set()
     if settings.get('heading_repeated_over_code'):
