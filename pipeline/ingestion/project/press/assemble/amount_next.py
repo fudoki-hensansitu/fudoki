@@ -17,6 +17,8 @@ def apply(found: list[Candidate], page: Page, options: dict) -> list[Candidate]:
         if candidate.amount or candidate.index is None:
             continue
         for row in page.rows[candidate.index + 1:candidate.index + 1 + options.get('lookahead', 1)]:
+            if page.is_item and page.is_item(row):
+                break
             after = following.search(row)
             if after:
                 groups = after.groupdict()
@@ -24,8 +26,6 @@ def apply(found: list[Candidate], page: Page, options: dict) -> list[Candidate]:
                 candidate.tag = candidate.tag or groups.get('tag')
                 if options.get('join') and groups.get('name'):
                     candidate.name += groups['name']
-                break
-            if page.is_item and page.is_item(row):
                 break
             if options.get('join'):
                 candidate.name += row
