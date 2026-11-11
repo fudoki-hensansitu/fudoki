@@ -1,7 +1,7 @@
 // 試作: サイドバーの中身。頭に検索、真ん中に機能、その下に「うちのまち」（登録したまちと最近見たまち）。
 // 全自治体の一覧は置かない。自治体は検索で探し、自分で選んだ・見たまちだけを並べる
 import * as React from 'react'
-import { ArrowsLeftRightIcon, ListMagnifyingGlassIcon, MagnifyingGlassIcon, MapTrifoldIcon, RobotIcon, SealCheckIcon, StarIcon, UsersThreeIcon } from '@phosphor-icons/react'
+import { ArrowsLeftRightIcon, ListMagnifyingGlassIcon, MagnifyingGlassIcon, RobotIcon, SealCheckIcon, StarIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { SidebarGroup, SidebarGroupLabel, SidebarMenu, useSidebar } from '@/components/ui/sidebar'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
@@ -16,8 +16,6 @@ const FEATURES = [
   { href: '/prototype/compare', label: '比べる', icon: <ArrowsLeftRightIcon /> },
   { href: '/prototype/fresh', label: '始めた・やめた', icon: <SealCheckIcon /> },
   { href: '/prototype/saved', label: '追っている事業', icon: <StarIcon /> },
-  { href: '/prototype/map', label: '地図で選ぶ', icon: <MapTrifoldIcon /> },
-  { href: '/prototype/similar', label: '似たまち', icon: <UsersThreeIcon /> },
 ]
 
 function Search() {
