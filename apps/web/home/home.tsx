@@ -13,7 +13,7 @@ import { Emblem } from './town-picker'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { GRADES, yearView, type Snapshot, type YearView } from '../jurisdiction/app/data'
 import { NewIcon, StopIcon } from '../jurisdiction/fresh-icons'
-import { formatPeople, reiwa, yearName } from '../jurisdiction/types'
+import { reiwa, yearName } from '../jurisdiction/types'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { searchHref } from '../search/search'
 import { useMyTown, type Town } from './towns'
@@ -185,7 +185,7 @@ function Dashboard({ c }: { c: Ctx }) {
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
           <div className="min-w-0 flex-1">
             <h2 className="text-2xl font-bold sm:text-[28px]">{town.name}</h2>
-            <p className="mt-0.5 truncate text-sm opacity-80">{[c.vision, d.pop ? formatPeople(d.pop) : ''].filter(Boolean).join(' · ')}</p>
+            <p className="mt-0.5 truncate text-sm opacity-80">{c.vision}</p>
           </div>
           {/* 年度は数字の頭に効くので上に、頁へ進む導線は数字を読んだあとの下に置く */}
           <YearSwitch c={c} onBrand />
