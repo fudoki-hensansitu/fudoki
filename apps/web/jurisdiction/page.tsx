@@ -1345,7 +1345,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
       <BackToTop hidden={docked || drawer} />
       <div ref={dock} onBlur={onDockBlur} onFocus={() => { focusedAt.current = Date.now(); anchor.current = window.scrollY }} className={`fixed inset-x-0 bottom-0 z-20 max-md:bottom-(--bottom-nav) md:left-(--nav-w) md:right-(--side-panel,0px) bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
         <div className="mx-auto max-w-[720px]">
-          <StartForm sitekey={sitekey} placeholder={`${name}について聞く…`} context={describe} onStart={start} before={chip} />
+          <StartForm sitekey={sitekey} placeholder={`${name}について質問…`} context={describe} onStart={start} before={chip} />
         </div>
       </div>
       <button
@@ -1357,7 +1357,7 @@ function AskDock({ name, sitekey, year, section }: { name: string; sitekey: stri
         aria-hidden={docked || drawer}
       >
         <RobotIcon className="size-4 text-primary" aria-hidden="true" />
-        {chat ? '会話に戻る' : `${name}について聞く`}
+        {chat ? '会話に戻る' : `${name}について質問`}
       </button>
       {chat ? (
         <>
