@@ -147,6 +147,18 @@
       "reason": "報酬・報償費の報。日本の科目名・見出しでは 报 を正字として使わない。"
     },
     {
+      "id": "variant-24",
+      "observed_char": "說",
+      "corrected_char": "説",
+      "reason": "説明の欄の見出しの説。日本の予算書では 說 を正字として使わない。"
+    },
+    {
+      "id": "variant-25",
+      "observed_char": "壤",
+      "corrected_char": "壌",
+      "reason": "土壌汚染調査などの壌。日本の科目名・事業名では 壤 を正字として使わない。"
+    },
+    {
       "id": "variant-middle-dot",
       "observed_char": "·",
       "corrected_char": "・",

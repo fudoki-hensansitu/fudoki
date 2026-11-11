@@ -41,12 +41,16 @@ from ingestion.generic.layout import Glyph, is_amount, lines, normalize, runs, t
 from ingestion.generic.observe import Rule, Word
 from ingestion.generic.patterns.layout import stacked_titles
 
+STACKED_SHIFT = 6  # how far aside a scan sets one table of a page from the one above it (国分寺市)
 FULL_REACH = 3  # how far short of the frame's edges a rule may end and still cross the whole frame
 
 # `（款） 1 議会費`・`(項)1 総務管理費`・`（款） 2.総務費` or `1款 議会費`・`第2項 防災費`. The point after the code
 # (檜原村) is the code's, not the name's.
-PREFIXED = re.compile(r'^[(（](款|項)[)）]([0-9]+)[.．]?([^\d.．].*)$')
+PREFIXED = re.compile(r'^(?:[(（](款|項)[)）]|(款|項)(?=[0-9]))([0-9]+)[.．]?([^\d.．].*)$')
 SUFFIXED = re.compile(r'^第?([0-9]+)(款|項)(\D.*)$')
+# The index a right-hand page prints at its top corner (`款 3 項 1 目 1`, 国分寺市): the 款・項・目 its rows run on
+# from, no title.
+PAGE_INDEX = re.compile(r'^款[0-9]+項[0-9]+目[0-9]*$')
 
 
 # An amount with the unit printed after it, touching it (`361,665千円`).
@@ -114,9 +118,11 @@ def drop_units(words: list[Glyph]) -> list[Glyph]:
 
 def title(name: list[Glyph]) -> tuple[str, str, str] | None:
     value = normalize(text(name))
+    if PAGE_INDEX.match(value):
+        return None
     match = PREFIXED.match(value)
     if match:
-        return match.group(1), match.group(2), match.group(3)
+        return match.group(1) or match.group(2), match.group(3), match.group(4)
     match = SUFFIXED.match(value)
     if match:
         return match.group(2), match.group(1), match.group(3)
@@ -145,19 +151,22 @@ def titles(logical: layout.Logical, heading: str | None) -> list[tuple[str, str,
     return found
 
 
-MARK = re.compile(r'^[(（](款|項)[)）]')
+MARK = re.compile(r'^(?:[(（](款|項)[)）]|第?[0-9]+(款|項))')
 UNIT_NOTE = re.compile(r'^[(（]単位[:：]')
 
 
 def title_segments(parts: list[list[Glyph]]) -> list[list[list[Glyph]]]:
     """The runs of a line, cut where a mark opens the next title: 日の出町 prints the 款 and the 項 on one line
-    (`（款） 1 議会費 （項） 1 議会費 （単位：千円）`). The unit notation is no title's."""
+    (`（款） 1 議会費 （項） 1 議会費 （単位：千円）`), 東久留米市 `2款 総務費 1項 総務管理費`. The unit notation is no
+    title's."""
     segments: list[list[list[Glyph]]] = []
     for run in parts:
         shown = normalize(text(run))
         if UNIT_NOTE.match(shown):
             continue
-        if not segments or MARK.match(shown):
+        # A mark opens the next title only after one (`2款 総務費 1項 総務管理費`): the digits of a code the
+        # OCR split (`1` `1款 公債費`) stay with their mark.
+        if not segments or (MARK.match(shown) and any(c in '款項' for part in segments[-1] for c in text(part))):
             segments.append([run])
         else:
             segments[-1].append(run)
@@ -181,8 +190,9 @@ def extend_columns(page):
     for rule in verticals:
         if not left - 1 <= rule.x0 <= right + 1:
             continue
-        above = [y for y in full if y <= rule.y0 + 1]
-        below = [y for y in full if y >= rule.y1 - 1]
+        # A skewed scan ends a piece up to a few points past the full rule it meets (国分寺市).
+        above = [y for y in full if y <= rule.y0 + FULL_REACH]
+        below = [y for y in full if y >= rule.y1 - FULL_REACH]
         # Not up to the frame's top rule: a rule of the header that starts under a spanning cell (`節` over
         # `区分`・`金額`) stays under it.
         if above and above[-1] > full[0] and rule.y0 - above[-1] > 1:
@@ -263,11 +273,13 @@ def read_headless_rows(logicals: list[layout.Logical], upper: dict) -> None:
 
 def full_rules(page) -> list[float]:
     """The heights of the horizontal rules that cross the whole frame."""
-    horizontals = [r for r in page.rules if not r.vertical]
+    horizontals = layout._joined([r for r in page.rules if not r.vertical])
     if not horizontals:
         return []
     left, right = min(r.x0 for r in horizontals), max(r.x1 for r in horizontals)
-    return sorted(r.y0 for r in horizontals if r.x0 <= left + FULL_REACH and r.x1 >= right - FULL_REACH)
+    # Tables stacked a few points aside (国分寺市) draw their full rules that far inside the page's outermost edges.
+    reach = FULL_REACH + STACKED_SHIFT
+    return sorted(r.y0 for r in horizontals if r.x0 <= left + reach and r.x1 >= right - reach)
 
 
 def between_tables(logical: layout.Logical, verticals: dict, full: dict) -> list[tuple[layout.Band, Glyph]]:
@@ -297,8 +309,9 @@ def between_tables(logical: layout.Logical, verticals: dict, full: dict) -> list
             parts = runs(line)
             while len(parts) > 1 and is_amount(normalize(text(parts[-1]))):
                 parts.pop()
-            if title([g for part in parts for g in part]) is not None:
-                last = max(g.y1 for g in line)
+            name = [g for part in parts for g in part]
+            if title(name) is not None or PAGE_INDEX.match(normalize(text(name))):
+                last = max(g.y1 for g in line)  # (the index over the next table of a right-hand page: no title, not a row)
         if last is not None:
             moved.extend((band, word) for band, word in inside if (word.y0 + word.y1) / 2 <= last)
     return moved
@@ -501,6 +514,83 @@ def inside_rules(words: list[Word], rules) -> list[Word]:
     return result
 
 
+def join_facing(logicals: list[layout.Logical]) -> list[layout.Logical]:
+    """Each page without a subject column joined to the page before it that has one, as its spread's right half.
+
+    東久留米市の予算説明書は左の頁に款・項・目と金額、右の頁に節と説明を刷る。左の頁は目の行だけ、右の頁は説明の行ごとに
+    横罫を引くので、共通の組み方（`layout.same_rows`）では左右が別の表になり、右の頁の説明は左の頁の最後の目に付く
+    （左の頁の途中で次の款が始まる頁）。`header.facing_pages` を宣言した書式では、横罫を見ずに左右を組む。"""
+    result: list[layout.Logical] = []
+    subject = lambda logical: any(layout._subject(band) for band in logical.bands)
+    for logical in logicals:
+        previous = result[-1] if result else None
+        if (previous is not None and len(previous.pages) == 1 and len(logical.pages) == 1 and subject(previous)
+                and not subject(logical) and logical.pages[0] == previous.pages[0] + 1):
+            offset = max(b.x1 for b in previous.bands) + 10 - min(b.x0 for b in logical.bands)
+            for band in logical.bands:
+                band.x0 += offset; band.x1 += offset; band.offset = offset
+                band.spans = [(a + offset, b + offset, t) for a, b, t in band.spans]
+                for word in band.words:
+                    word.x0 += offset; word.x1 += offset; word.offset = offset
+            previous.pages.extend(logical.pages)
+            previous.bands.extend(logical.bands)
+            previous.unit = previous.unit or logical.unit
+            previous.outside.extend(logical.outside)
+            previous.foot.update(logical.foot)
+            previous.ocr = previous.ocr or logical.ocr
+            previous.column_units.update(logical.column_units)
+            continue
+        result.append(logical)
+    return result
+
+
+CARRIED = re.compile(r'^[0-9,\s]*[(（][^()（）]+[)）]$')
+
+
+def carried_names(logical: layout.Logical) -> list[Glyph]:
+    """The first line of each page's subject column when it only repeats the open 目: its codes and its name in
+    brackets (`10 5 40 (企画調整費)`, 調布市), with no amount in its row. It opens no item."""
+    found = []
+    for page in sorted({w.page for band in logical.bands for w in band.words}):
+        subject = [w for band in logical.bands if layout._subject(band) for w in band.words if w.page == page]
+        rows = lines(subject)
+        if not rows:
+            continue
+        rows = sorted(rows, key=lambda line: min(g.y0 for g in line))
+        first = rows[0]
+        top, bottom = min(g.y0 for g in first), max(g.y1 for g in first)
+        middle = (top + bottom) / 2
+        priced_row = any(is_amount(w.text) and w.y0 <= middle <= w.y1 for band in logical.bands
+                         if band.kind == 'amount' for w in band.words if w.page == page)
+        shown = normalize(''.join(g.text for g in first))
+        # (a long name wraps: `151040（子ども発達セン` / `タ一費)`)
+        wrapped = len(rows) > 1 and normalize(''.join(g.text for g in rows[1]))
+        if priced_row:
+            continue
+        if CARRIED.match(shown):
+            found.extend(first)
+        elif wrapped and CARRIED.match(shown + wrapped) and not re.search(r'[)）]', shown):
+            found.extend(first + rows[1])
+    return found
+
+
+def opened(opening: list[dict], repeated: list[Glyph]) -> list[tuple]:
+    """A volume that begins inside a 目 (調布市's 分冊): its first page repeats the open 目 with its codes
+    (`15515(高齢者福祉費)`), and the settings name the 款・項・目 those codes are, as the volume before prints them. They
+    open the volume as titles, so its first items go under them."""
+    first = sorted((g for g in repeated if g.page == min(w.page for w in repeated)), key=lambda g: g.x0) if repeated else []
+    shown = normalize(''.join(g.text for g in first))
+    digits = ''.join(re.findall(r'[0-9]', shown.split('(')[0].split('（')[0]))
+    if not first or digits != ''.join(entry['code'] for entry in opening):
+        raise ValueError(f'The opening the settings name is not the line the volume repeats first: {shown!r}')
+    # One line for all of them: each title gets its own share of it, in order (a title is keyed by where it is printed).
+    left, right = first[0].x0, first[-1].x1
+    step = (right - left) / len(opening)
+    return [(entry['level'], entry['code'], entry['name'],
+             [replace(first[0], text=entry['code'], x0=left + i * step, x1=left + (i + 1) * step)], None)
+            for i, entry in enumerate(opening)]
+
+
 def read(pages, **options):
     extended, upper = [], {}
     for page in pages:
@@ -516,20 +606,28 @@ def read(pages, **options):
         extended.append(replace(wide, words=[w for w in page.words if not inside(w)] if headless else page.words))
     pages = extended
     logicals = layout.logical_pages(pages, **options)
+    if (options.get('header') or {}).get('facing_pages'):
+        logicals = join_facing(logicals)
     read_headless_rows(logicals, upper)
     heading = (options.get('header') or {}).get('title_amount')
     full = {page.number: full_rules(page) for page in pages}
     verticals = {page.number: [rule for rule in page.rules if rule.vertical and rule.y1 - rule.y0 >= stacked_titles.MIN_RULE]
                  for page in pages}
-    for logical in logicals:
+    opening = (options.get('header') or {}).get('opening')
+    for index, logical in enumerate(logicals):
         # A second table on the page opens under titles printed in the first one's columns (between the bottom
         # rule of one and the top rule of the next): those words are outside the tables.
         moved = between_tables(logical, verticals, full)
-        gone = {id(w) for _, w in moved}
+        repeated = carried_names(logical) if (options.get('header') or {}).get('carried_names') else []
+        carried = {id(w) for w in repeated}
+        gone = {id(w) for _, w in moved} | carried
         for band in logical.bands:
             band.words = rejoin_total_tails(join_split_yen(split_glued_yen(drop_units([w for w in band.words if id(w) not in gone]))))
         logical.outside.extend(Glyph(w.text, *w.original, w.page, 0) for _, w in moved)
         logical.level_titles = titles(logical, heading)
+        if opening and index == 0 and logical.pages[0] == 1:  # (a read of later pages alone opens under nothing)
+            logical.level_titles = opened(opening, repeated) + logical.level_titles
+            logical.opening = True
     carry_amounts(logicals)
     if heading:
         complete_titles(logicals)

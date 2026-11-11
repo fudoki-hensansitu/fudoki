@@ -80,13 +80,42 @@ def _strip_runs(dark: np.ndarray, minimum: int) -> np.ndarray:
     return out
 
 
-def missed_ink(dark: np.ndarray, scale: float, boxes: Sequence[Sequence[float]]) -> list[tuple[float, ...]]:
+DASHED_PT = (5.0, 6.0, 6)  # a dashed rule: dashes at most this tall, gaps at most this tall, at least this many in a row
+
+
+def dashed_rules(dark: np.ndarray, scale: float) -> np.ndarray:
+    """The pixels of vertical dashed rules: short runs of one column, one under the other with short gaps (調布市 draws
+    the levels of its 款・項・目 codes apart with them). Each dash is shorter than ``RULE_RUN_PT``, so the rule is no
+    rule to ``_strip_runs``: its dashes join the digit beside them into one tall mark that OCR never reads."""
+    dash, gap, count = int(DASHED_PT[0] / scale), int(DASHED_PT[1] / scale), DASHED_PT[2]
+    out = np.zeros_like(dark)
+    padded = np.zeros((dark.shape[0] + 2, dark.shape[1]), np.int8)
+    padded[1:-1] = dark
+    edges = np.diff(padded, axis=0)
+    for x in range(dark.shape[1]):
+        runs = list(zip(np.flatnonzero(edges[:, x] == 1), np.flatnonzero(edges[:, x] == -1)))
+        chain: list[tuple[int, int]] = []
+        for start, end in [*runs, (None, None)]:
+            if start is not None and end - start <= dash and (not chain or start - chain[-1][1] <= gap):
+                chain.append((start, end))
+                continue
+            if len(chain) >= count:
+                for a, b in chain:
+                    out[a:b, max(0, x - 1):x + 2] |= dark[a:b, max(0, x - 1):x + 2]
+            chain = [(start, end)] if start is not None and end - start <= dash else []
+    return out
+
+
+def missed_ink(dark: np.ndarray, scale: float, boxes: Sequence[Sequence[float]],
+               ignored: np.ndarray | None = None) -> list[tuple[float, ...]]:
     """Marks on the page that no OCR box covers and that are not rules, in displayed-page points.
 
     ``dark`` is a thresholded render, ``scale`` points per pixel. OCR drops a lone 0, a
     bare 一, single kanji of letter-spaced names and sometimes whole lines; all leave ink here.
     """
     ink = _strip_runs(dark, int(RULE_RUN_PT / scale))
+    if ignored is not None:  # (after the rules: a rule crossing a dashed rule is still one run)
+        ink &= ~ignored
     for x0, y0, x1, y1 in boxes:
         ink[max(0, int((y0 - BOX_PAD_PT) / scale)):int((y1 + BOX_PAD_PT) / scale) + 1,
             max(0, int((x0 - BOX_PAD_PT) / scale)):int((x1 + BOX_PAD_PT) / scale) + 1] = False
@@ -196,11 +225,11 @@ def _renumber(page: dict, number: int) -> None:
 
 
 def _read_without_rules(path: Path, number: int, config: PaddleConfig, regions: Sequence[OcrRegion],
-                        width_pt: float) -> dict:
+                        width_pt: float, dashed: bool = False) -> dict:
     """The engine on the page with its rules whitened: next to a scanned rule OCR reads the rule's
     edge as 1, l or 一 however far the area keeps off the rule's nominal position. Paddle reads each
     area as a tight crop of the whitened page (no white padding, upscaled to 64 px)."""
-    clean = _whitened(path, number, config.dpi)
+    clean = _whitened(path, number, config.dpi, dashed)
     with tempfile.TemporaryDirectory() as tmp:
         png = Path(tmp) / "page.png"
         _png(clean, png)
@@ -216,12 +245,14 @@ def _read_without_rules(path: Path, number: int, config: PaddleConfig, regions: 
 
 
 @lru_cache(maxsize=2)
-def _whitened(path: Path, number: int, dpi: int) -> np.ndarray:
-    """The page rendered at ``dpi`` with its rules and their faint edges whitened."""
+def _whitened(path: Path, number: int, dpi: int, dashed: bool = False) -> np.ndarray:
+    """The page rendered at ``dpi`` with its rules (and its dashed rules, where asked) and their faint edges whitened."""
     image = pdf_rules.render(path, number, dpi)
     dark = image < pdf_rules.DARK
     clean = image.copy()
     rule = dark & ~_strip_runs(dark, int(RULE_RUN_PT * dpi / 72))
+    if dashed:
+        rule |= dashed_rules(dark, 72 / dpi)
     edge = rule.copy()  # the faint edge left beside a whitened rule reads as ）
     for shift in (1, 2):
         edge[shift:] |= rule[:-shift]
@@ -564,15 +595,16 @@ def settle_seams(page: dict) -> dict:
 
 def supplement(path: Path, page: dict, config: PaddleConfig, previous: Mapping[str, str], *,
                vlm_fallback: bool = True, ink_dark: int = pdf_rules.DARK, unit_marks: bool = False,
-               merged_lines: bool = False, rule_steps: bool = False) -> dict:
+               merged_lines: bool = False, rule_steps: bool = False, dashed: bool = False) -> dict:
     """``_supplement``, then the seam pairs it left (``settle_seams``)."""
     return settle_seams(_supplement(path, page, config, previous, vlm_fallback=vlm_fallback, ink_dark=ink_dark,
-                                    unit_marks=unit_marks, merged_lines=merged_lines, rule_steps=rule_steps))
+                                    unit_marks=unit_marks, merged_lines=merged_lines, rule_steps=rule_steps,
+                                    dashed=dashed))
 
 
 def _supplement(path: Path, page: dict, config: PaddleConfig, previous: Mapping[str, str], *,
                 vlm_fallback: bool = True, ink_dark: int = pdf_rules.DARK, unit_marks: bool = False,
-                merged_lines: bool = False, rule_steps: bool = False) -> dict:
+                merged_lines: bool = False, rule_steps: bool = False, dashed: bool = False) -> dict:
     """Read the ink OCR missed on one page: the engine on those areas, then the VLM on what remains.
 
     The engine reads each tight area (``ink_areas``) as a new region ``ink-<n>``. A reading that
@@ -593,10 +625,12 @@ def _supplement(path: Path, page: dict, config: PaddleConfig, previous: Mapping[
     rules = pdf_rules.detect(path, number)
     image = pdf_rules.render(path, number)
     dark, scale = image < ink_dark, rules.width / image.shape[1]
+    # The dashes of a dashed rule are no missed ink, and joined to a digit they hide it.
+    dashes = dashed_rules(dark, scale) if dashed else None
     # (a dash set in an amount column is no missed ink: only where the request lowers the ink level, which is what
     # makes a dash's pixels count; the default level never saw them)
-    missed = (lambda: _without_dashes(missed_ink(dark, scale, _boxes(page)), page)) if ink_dark != pdf_rules.DARK \
-        else (lambda: missed_ink(dark, scale, _boxes(page)))
+    missed = (lambda: _without_dashes(missed_ink(dark, scale, _boxes(page), dashes), page)) if ink_dark != pdf_rules.DARK \
+        else (lambda: missed_ink(dark, scale, _boxes(page), dashes))
     if rule_steps:
         unstepped = missed
         missed = lambda: _without_rule_steps(unstepped(), rules)
@@ -606,7 +640,7 @@ def _supplement(path: Path, page: dict, config: PaddleConfig, previous: Mapping[
     areas = ink_areas(marks, rules, _boxes(page))
     regions = [OcrRegion(f"ink-{i}", (a[0] / rules.width, a[1] / rules.height, a[2] / rules.width, a[3] / rules.height))
                for i, a in enumerate(areas)]
-    read = _read_without_rules(path, number, config, regions, rules.width)
+    read = _read_without_rules(path, number, config, regions, rules.width, dashed)
     gone = superseded(page)
     existing = [(o["id"], o["bbox_pdf_pt"]) for region in page["regions"] for o in region["observations"]
                 if o["kind"] == "region" and o.get("bbox_pdf_pt") and o["id"] not in gone]
@@ -815,7 +849,7 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
     pinned = _pinned_answers(previous)
     result["pages"] = [supplement(path, page, config, pinned, vlm_fallback=request.get('vlm_fallback', True),
                           ink_dark=request.get('ink_dark', pdf_rules.DARK), unit_marks=bool(request.get('unit_marks')),
-                          rule_steps=bool(request.get('rule_steps')),
+                          rule_steps=bool(request.get('rule_steps')), dashed=bool(request.get('dashed_rules')),
                           merged_lines=bool(request.get('merged_lines')))
                        for page in result["pages"]]
     observation = {"schema_version": 1, "request": dict(request), "vlm": _vlm_identity(),

@@ -71,6 +71,18 @@ class UnitStackTest(unittest.TestCase):
         self.assertEqual(scan_ocr._without_rule_steps(
             [along_horizontal, along_vertical, lone_zero, thin_dash_between_rules], rules), [lone_zero, thin_dash_between_rules])
 
+    def test_a_digit_beside_a_dashed_rule_is_missed_ink_of_its_own(self):
+        import numpy as np
+        dark = np.zeros((300, 100), bool)
+        for y in range(20, 280, 6):  # dashes 3 px tall, gaps 3 px, in column 50
+            dark[y:y + 3, 50] = True
+        dark[140:150, 44:49] = True  # a digit just left of the rule
+        dark[150:152, 10:90] = True  # a rule across both
+        dashes = scan_ocr.dashed_rules(dark, 1.0)
+        self.assertTrue(dashes[20:23, 50].all())
+        self.assertFalse(dashes[140:150, 44:49].any())
+        self.assertEqual(scan_ocr.missed_ink(dark, 1.0, [], dashes), [(44.0, 140.0, 49.0, 150.0)])
+
     def test_a_unit_mark_boxed_with_the_amount_under_it_is_split_at_the_mark(self):
         from ingestion.lib import scan_ocr
         page = self.split(self.page(), " 0 ")
