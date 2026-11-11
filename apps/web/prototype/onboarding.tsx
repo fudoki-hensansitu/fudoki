@@ -99,7 +99,7 @@ export function Onboarding({ entries, onPick, picking: startPicking, onCancel }:
 
           <div className="ob-fade mt-5" style={{ '--d': '.4s' } as React.CSSProperties}>
             {mode === 'idle' ? (
-              <div className="grid gap-2.5 sm:grid-cols-2">
+              <div className="grid gap-2.5">
                 <Choice icon={<HouseIcon />} title="住んでいるまちを選ぶ" note="名前で選びます" onClick={() => setMode('pick')} />
                 <Choice icon={<NavigationArrowIcon />} title="現在地から選ぶ" note="位置は保存しません" onClick={() => void locate()} />
               </div>
