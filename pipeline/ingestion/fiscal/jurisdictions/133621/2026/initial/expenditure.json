@@ -8,6 +8,530 @@
   "direction": "expenditure",
   "conversions": [
     {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "546c3750cecb2c75f00c2fc49352c4aefee0dd5e17e3300c49e16395deef639a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "前年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1報酬": 2,
+                    "2給料": 2,
+                    "3職員手当等": 2,
+                    "4共済費": 2,
+                    "5災害補償費": 2,
+                    "6恩給及び退職年金": 2,
+                    "7報償費": 2,
+                    "8旅費": 2,
+                    "9交際費": 2,
+                    "10需用費": 2,
+                    "11役務費": 2,
+                    "12委託料": 2,
+                    "13使用料及び賃借料": 2,
+                    "14工事請負費": 2,
+                    "15原材料費": 2,
+                    "16公有財産購入費": 2,
+                    "17備品購入費": 2,
+                    "18負担金補助及び交付金": 2,
+                    "19扶助費": 2,
+                    "20貸付金": 2,
+                    "21補償補填及び賠償金": 2,
+                    "22償還金利子及び割引料": 2,
+                    "23投資及び出資金": 2,
+                    "24積立金": 2,
+                    "25寄附金": 2,
+                    "26公課費": 2,
+                    "27繰出金": 2,
+                    "28予備費": 2,
+                    "29予備費": 2
+                  },
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-business-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "546c3750cecb2c75f00c2fc49352c4aefee0dd5e17e3300c49e16395deef639a"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計（事業勘定）",
+        "table_id": "national-health-insurance-business-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "前年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1報酬": 2,
+                    "2給料": 2,
+                    "3職員手当等": 2,
+                    "4共済費": 2,
+                    "5災害補償費": 2,
+                    "6恩給及び退職年金": 2,
+                    "7報償費": 2,
+                    "8旅費": 2,
+                    "9交際費": 2,
+                    "10需用費": 2,
+                    "11役務費": 2,
+                    "12委託料": 2,
+                    "13使用料及び賃借料": 2,
+                    "14工事請負費": 2,
+                    "15原材料費": 2,
+                    "16公有財産購入費": 2,
+                    "17備品購入費": 2,
+                    "18負担金補助及び交付金": 2,
+                    "19扶助費": 2,
+                    "20貸付金": 2,
+                    "21補償補填及び賠償金": 2,
+                    "22償還金利子及び割引料": 2,
+                    "23投資及び出資金": 2,
+                    "24積立金": 2,
+                    "25寄附金": 2,
+                    "26公課費": 2,
+                    "27繰出金": 2,
+                    "28予備費": 2,
+                    "29予備費": 2
+                  },
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-business-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-clinic-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "546c3750cecb2c75f00c2fc49352c4aefee0dd5e17e3300c49e16395deef639a"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計（直診勘定）",
+        "table_id": "national-health-insurance-clinic-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "前年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1報酬": 2,
+                    "2給料": 2,
+                    "3職員手当等": 2,
+                    "4共済費": 2,
+                    "5災害補償費": 2,
+                    "6恩給及び退職年金": 2,
+                    "7報償費": 2,
+                    "8旅費": 2,
+                    "9交際費": 2,
+                    "10需用費": 2,
+                    "11役務費": 2,
+                    "12委託料": 2,
+                    "13使用料及び賃借料": 2,
+                    "14工事請負費": 2,
+                    "15原材料費": 2,
+                    "16公有財産購入費": 2,
+                    "17備品購入費": 2,
+                    "18負担金補助及び交付金": 2,
+                    "19扶助費": 2,
+                    "20貸付金": 2,
+                    "21補償補填及び賠償金": 2,
+                    "22償還金利子及び割引料": 2,
+                    "23投資及び出資金": 2,
+                    "24積立金": 2,
+                    "25寄附金": 2,
+                    "26公課費": 2,
+                    "27繰出金": 2,
+                    "28予備費": 2,
+                    "29予備費": 2
+                  },
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-clinic-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-business-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "546c3750cecb2c75f00c2fc49352c4aefee0dd5e17e3300c49e16395deef639a"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計（事業勘定）",
+        "table_id": "long-term-care-business-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源の特定財源の欄を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・その他など）と額が複数行で印字され、目の財源額と1対1に組めないため。歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "前年度予算額": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "款別の総括の頁の本年度予算額・前年度予算額とその財源内訳を取り込まない。同じ款の本年度・前年度・財源の額を明細の頁が印字し、二重に数えないため。款の額は明細の頁で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1報酬": 2,
+                    "2給料": 2,
+                    "3職員手当等": 2,
+                    "4共済費": 2,
+                    "5災害補償費": 2,
+                    "6恩給及び退職年金": 2,
+                    "7報償費": 2,
+                    "8旅費": 2,
+                    "9交際費": 2,
+                    "10需用費": 2,
+                    "11役務費": 2,
+                    "12委託料": 2,
+                    "13使用料及び賃借料": 2,
+                    "14工事請負費": 2,
+                    "15原材料費": 2,
+                    "16公有財産購入費": 2,
+                    "17備品購入費": 2,
+                    "18負担金補助及び交付金": 2,
+                    "19扶助費": 2,
+                    "20貸付金": 2,
+                    "21補償補填及び賠償金": 2,
+                    "22償還金利子及び割引料": 2,
+                    "23投資及び出資金": 2,
+                    "24積立金": 2,
+                    "25寄附金": 2,
+                    "26公課費": 2,
+                    "27繰出金": 2,
+                    "28予備費": 2,
+                    "29予備費": 2
+                  },
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-business-initial"
+        }
+      ]
+    },
+    {
       "id": "elderly-medical-initial",
       "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
@@ -121,13 +645,129 @@
   ],
   "tables": [
     {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "0416f8638a860c340587d429365ca350e28477766c5c5544c5e8d69ac2bb30ac",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 48頁 から決めた。款の和 2,324,747（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "270821ab89e596ac552c7d046e06a92bc07b71b60349679373d6c1c6e9349a3f",
+          "bytes": 63780
+        },
+        "row_count": 2038
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "f19daa2d1650b8ba45a2a81631e864cfaecc39a710d8be0eee3d770f6af98e5f",
+          "bytes": 43582
+        },
+        "row_count": 2326
+      }
+    },
+    {
+      "table_id": "national-health-insurance-business-initial",
+      "conversion_id": "national-health-insurance-business-initial",
+      "input_fingerprint": "a43210904e333a348dbf3b2176c54cec5382201c0633482d101d99e0470f72cd",
+      "account": "国民健康保険事業特別会計（事業勘定）",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 7頁 から決めた。款の和 81,115（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2026/initial/expenditure/national-health-insurance-business-initial-nodes.parquet",
+          "sha256": "0a974158b601df6dc37f307756338d1af8bc49edbee6ece023ca63b2d6fb722c",
+          "bytes": 10346
+        },
+        "row_count": 188
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2026/initial/expenditure/national-health-insurance-business-initial-amounts.parquet",
+          "sha256": "0f80a946382e01bdd0197bb566be615838002f92b8770f7965f538ac04e873f2",
+          "bytes": 7773
+        },
+        "row_count": 311
+      }
+    },
+    {
+      "table_id": "national-health-insurance-clinic-initial",
+      "conversion_id": "national-health-insurance-clinic-initial",
+      "input_fingerprint": "ddacf7c8a778cf6a900e90ee1231c495fffa7596678e212c678108d6b04817bf",
+      "account": "国民健康保険事業特別会計（直診勘定）",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 5頁 から決めた。款の和 88,512（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2026/initial/expenditure/national-health-insurance-clinic-initial-nodes.parquet",
+          "sha256": "8dd9d8459d4f3e65df798614e7b1923f84f7360624811ae43fc922554e0f8698",
+          "bytes": 8497
+        },
+        "row_count": 143
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2026/initial/expenditure/national-health-insurance-clinic-initial-amounts.parquet",
+          "sha256": "be36a632fd9de2d9c4efaef0dafe8f83a1113361c7cb28f6c9653d71b80c65e8",
+          "bytes": 6041
+        },
+        "row_count": 171
+      }
+    },
+    {
+      "table_id": "long-term-care-business-initial",
+      "conversion_id": "long-term-care-business-initial",
+      "input_fingerprint": "41aa0388a31e7a359e0178ea5531db3c2f90db0578110ff7b7f8cbfe716dca3b",
+      "account": "介護保険事業特別会計（事業勘定）",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 7頁 から決めた。款の和 69,351（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2026/initial/expenditure/long-term-care-business-initial-nodes.parquet",
+          "sha256": "fd1998762198d32b3db456a7274d7b7dabe4967a64a9def874cd63c7abae27d6",
+          "bytes": 10049
+        },
+        "row_count": 181
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133621/2026/initial/expenditure/long-term-care-business-initial-amounts.parquet",
+          "sha256": "d55dff86edfe583aa92390df7a315d7dac2a11ce8a85f0cc5416ad792888a48b",
+          "bytes": 7416
+        },
+        "row_count": 307
+      }
+    },
+    {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "06e518dbbbd57cb45a5b2ece5d384d8c191b19ae8f5694db4fed0d7511ebc5c5",
+      "input_fingerprint": "5f07e7799e1fa82e4d5b128dd65eb7679e094dddaff6464658a8acd78497413b",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
-        "金額の単位は printed 3頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 3頁 から決めた。款の和 10,819（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
