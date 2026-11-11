@@ -55,7 +55,8 @@
             "description": "The column is not taken in: the builder reads none of it, and its printed digits are a coverage exclusion of the whole column on every page, with a kind of the shared vocabulary and the reason.",
             "properties": {
               "kind": {"type": "string", "minLength": 1},
-              "reason": {"type": "string", "minLength": 10}
+              "reason": {"type": "string", "minLength": 10},
+              "overhang": {"type": "number", "exclusiveMinimum": 0, "maximum": 10, "description": "Points the text layer sets the column's digits past its right rule (a font the PDF does not embed, 小笠原村): they are still the column's."}
             }
           }
         }
@@ -74,6 +75,8 @@
       "additionalProperties": false,
       "properties": {
         "ignore_frame_title": {"type": "boolean"},
+        "open_frame": {"const": true, "description": "No rule closes the table at its top or foot, and the 款・項 columns rule only the rows that open a 款・項 (八丈町 R6): a column counts with one row rule, and the frame runs from where its side rules start to where they end."},
+        "carried": {"const": true, "description": "Only the first page of a run prints the column headings (八丈町 R6): a frame drawn with the same column rules as a frame read before it, whose top prints fewer than half of its heading words, takes its headings and is body from its top rule."},
         "staircase": {"enum": [true, "款項目節", "款項目事務事業"], "description": "The subject columns are a staircase: one header cell 款 項 目 over narrow code columns, and the 款・項 cells run down the page with no closing rule. \"款項目節\" also reads a header cell 款 項 目 節 over four columns, the fourth being 節."},
         "agree_on_bottom": {"const": true, "description": "Scan: the agreed header reading is moved onto each page aligned on the header's bottom rule, not the frame's top (a frame boxing the page title above the header on some pages)."},
         "merged_cells": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "Header cells (`説明`) whose columns are ruled only in some rows: in a row their rules leave out, one cell runs across them and its words are read as one column under the header cell."},

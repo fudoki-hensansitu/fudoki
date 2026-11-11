@@ -44,6 +44,21 @@
                 "比較": {
                   "kind": "amount"
                 }
+              },
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
               }
             }
           },
@@ -59,7 +74,8 @@
               "節": {
                 "pattern": "shape",
                 "quirks": {
-                  "amounts_beside_names": true
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
                 }
               },
               "説明": {
@@ -171,6 +187,21 @@
                 "比較": {
                   "kind": "amount"
                 }
+              },
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
               }
             }
           },
@@ -186,7 +217,8 @@
               "節": {
                 "pattern": "shape",
                 "quirks": {
-                  "amounts_beside_names": true
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
                 }
               },
               "説明": {
@@ -298,6 +330,21 @@
                 "比較": {
                   "kind": "amount"
                 }
+              },
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
               }
             }
           },
@@ -313,7 +360,8 @@
               "節": {
                 "pattern": "shape",
                 "quirks": {
-                  "amounts_beside_names": true
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
                 }
               },
               "説明": {
@@ -425,6 +473,21 @@
                 "比較": {
                   "kind": "amount"
                 }
+              },
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
               }
             }
           },
@@ -440,7 +503,8 @@
               "節": {
                 "pattern": "shape",
                 "quirks": {
-                  "amounts_beside_names": true
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
                 }
               },
               "説明": {
@@ -520,57 +584,57 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "6ba9b715fbb38be35b6e8f9f02fad54fd6f37f3897b651354cfc8c97004271e3",
+      "input_fingerprint": "743cd2c307a13debc613898e899762f9c41d2b82860a90807e50560dd4de6b96",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 95頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 483 件（基準額 1・補正回次 113・補正経過 369）を注記軸に置いた。"
+        "金額の単位は printed 95頁 から決めた。款の和 368,523,847（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 252 件（基準額 1・補正回次 107・補正経過 144）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131113/2026/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "b7441cfe8f648d69d7e284f7899c85593b549a708b580377c19df58d8edcb003",
-          "bytes": 98166
+          "sha256": "0f1bbbb7fc40a49310d1ca7b53f4671a57187e309020419c45eb088cb618ad96",
+          "bytes": 98443
         },
-        "row_count": 3068
+        "row_count": 2846
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131113/2026/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "c3eb1c294e6a47f002b6a380ea253633e6c36e6532bc0c0b78ce6b7f4e126732",
-          "bytes": 80662
+          "sha256": "54896a932dddde68bf71991567ad691e7d387c36457d9e0cd67b6c55f1af8587",
+          "bytes": 81051
         },
-        "row_count": 3100
+        "row_count": 3122
       }
     },
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "7e4a271f95f8815745f4510da2d19515d7f3f8469c4db08706b357ecb3efad11",
+      "input_fingerprint": "785b03907c9f489ecfe7dab19f5e1c739204fe6cf98ac2945341bc5dc4ab279f",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 19頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 49 件（積算 15・補正回次 8・補正経過 26）を注記軸に置いた。"
+        "金額の単位は printed 19頁 から決めた。款の和 63,171,324（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 39 件（積算 15・補正回次 8・補正経過 16）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131113/2026/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "e407e147f8cde84474f29f42b2f8256b1a785fe017f8480fa79c12505b605c1d",
-          "bytes": 10496
+          "sha256": "0a4cd092420e6ae50be9d574b9e0015ce334a9ada768733380a6f74107a8bdf3",
+          "bytes": 10498
         },
-        "row_count": 193
+        "row_count": 183
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131113/2026/initial/expenditure/national-health-initial-amounts.parquet",
-          "sha256": "31f94b983608a784c61ace568461bada429c8332351e8908bcac0efedbef3996",
-          "bytes": 9580
+          "sha256": "c22b6b74a2cbe6f94c8eb569fc302a12a1bbd3a82e1e80370721406947db9c90",
+          "bytes": 9578
         },
         "row_count": 285
       }
@@ -578,28 +642,28 @@
     {
       "table_id": "late-elderly-initial",
       "conversion_id": "late-elderly-initial",
-      "input_fingerprint": "5fa323758f6493b512870b4384b1099e48813b7e1feba48cb1d30dc1423ce1c8",
+      "input_fingerprint": "eaf0438567e5958d5fc6c543d5cc00fd1fb7a714598653f3f3b5b4b0b6426413",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 9頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 22 件（積算 3・補正回次 5・補正経過 14）を注記軸に置いた。"
+        "金額の単位は printed 9頁 から決めた。款の和 21,730,930（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 16 件（積算 3・補正回次 5・補正経過 8）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131113/2026/initial/expenditure/late-elderly-initial-nodes.parquet",
-          "sha256": "1c6489d4ea20a14b34a94bb28dcfacccb4bf9d9681b8990a09040b0553f994b6",
-          "bytes": 6727
+          "sha256": "fdf07c09f542b59f85da92dd2bc7f42957d5f1e61b0a9bc052afe75413c137f8",
+          "bytes": 6756
         },
-        "row_count": 94
+        "row_count": 88
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131113/2026/initial/expenditure/late-elderly-initial-amounts.parquet",
-          "sha256": "b0839356ee970283d4a128e626ada9dd850d1a8d08dd45131bda384a7218a5f4",
-          "bytes": 5785
+          "sha256": "102a4cbb9647d470546d9ae643dd5f70ccc299efac5233d89758582bfe871b00",
+          "bytes": 5795
         },
         "row_count": 138
       }
@@ -607,28 +671,28 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "3b261ea3482c5785ccde9ef88e6e4ddae5920d1a7c146db22c19179fc01abd8d",
+      "input_fingerprint": "2fad3c301d3ea47c05b580516a2de09a6c6f36ea329e5f38de08ab2e2e39dfc2",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 13頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 19 件（補正回次 5・補正経過 14）を注記軸に置いた。"
+        "金額の単位は printed 13頁 から決めた。款の和 63,642,587（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 13 件（補正回次 5・補正経過 8）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131113/2026/initial/expenditure/long-term-care-initial-nodes.parquet",
-          "sha256": "f28f7fcc0874fd7789064468bbf77e48a58740771c5c60732e4050e23ba4e5e1",
-          "bytes": 10055
+          "sha256": "02d1d5ebf5e22cf20d0d3c794d3f68205b1c4dd468cec2259e39a8f5074c7d4c",
+          "bytes": 10121
         },
-        "row_count": 173
+        "row_count": 167
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131113/2026/initial/expenditure/long-term-care-initial-amounts.parquet",
-          "sha256": "8f8ab421d6035f1b964bbd429bab9b4bc40d4cee7968a3ffe67c7984456d3cd4",
-          "bytes": 8688
+          "sha256": "069262b466716a58534bc9de79a64310fce81c5bdc3146b791da5b0b2ab4beae",
+          "bytes": 8660
         },
         "row_count": 236
       }

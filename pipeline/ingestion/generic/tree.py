@@ -536,9 +536,10 @@ def strip_ancestor_codes(group: Group) -> list[Glyph]:
 
 
 def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False,
-               bare_amounts: bool = False, numbers=None, long_numbers=None, stops=None) -> list[tuple]:
+               bare_amounts: bool = False, numbers=None, long_numbers=None, stops=None, name_line=None) -> list[tuple]:
     """Printed lines of a label group as (label glyphs, amount runs, code, name). `numbers`: the quirk `full_width_numbers`;
-    `long_numbers`: the quirk `long_numbers`; `stops`: the quirk `glued_number_stops`."""
+    `long_numbers`: the quirk `long_numbers`; `stops`: the quirk `glued_number_stops`; `name_line`: the quirk
+    `name_line` (a line that is a number alone starts with an item number wherever it starts)."""
     entries = []
     for line in lines([w for band in group.bands for w in band.words]):
         label, money = _split_line(line, amount_brackets, bare_amounts)
@@ -569,7 +570,8 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             # `8` `2歳児歯科健診事業`, `0200` `16ミリ映写機検定委託料`: the number is a word of its own, and the name begins with a count.
             code, name, script = normalize(label[0].text), normalize(text(label[1:])), True
         if (code is not None and margins is not None and not margins & set(_margins(label))
-                and not (numbers is not None and numbers.module.numbered(raw_text, numbers.value))):
+                and not (numbers is not None and numbers.module.numbered(raw_text, numbers.value))
+                and not (name_line is not None and name_line.module.numbered(raw_text))):
             code, name = None, line_text  # a name that begins with a digit
         if code is None and label and margins is not None and margins & set(_margins(label)):
             year = YEAR_LED.match(line_text)
@@ -705,7 +707,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     """
     numbers = quirk(settings, 'full_width_numbers')
     entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')),
-                         numbers, quirk(settings, 'long_numbers'), quirk(settings, 'glued_number_stops'))
+                         numbers, quirk(settings, 'long_numbers'), quirk(settings, 'glued_number_stops'),
+                         quirk(settings, 'name_line'))
     settings = settings or {}
     if (shares := quirk(settings, 'department_amounts')) is not None:
         for index, (label, money, code, name) in enumerate(entries):
@@ -1360,10 +1363,11 @@ def join_last_lines(items_: list[Item], depth_of, amount_depth) -> list[Item]:
 
 
 def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
-          roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False) -> Item | None:
+          roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False,
+          name_line: dict | None = None) -> Item | None:
     """`_owner`, but a heading the page prints again (`営業費用`) does not take the amounts of the line it is on when
     the row it opens is the next item of its ruled cell (`5 減価償却費`, whose `計` is printed beside the heading)."""
-    item = _owner(amount, band, ordered, found, roles, ocr=ocr, next_row=next_row)
+    item = _owner(amount, band, ordered, found, roles, ocr=ocr, next_row=next_row, name_line=name_line)
     if item is None or item.role != 'repeat' or not band.rows:
         return item  # a column without rules draws no cell: the heading stays the owner
     digits = [g for g in amount if g.text not in ('△', '▲')] or amount  # the line `_owner` reads the amount at
@@ -1376,12 +1380,15 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
 
 
 def _owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int, list[Item]],
-           roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False) -> Item | None:
+           roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False,
+           name_line: dict | None = None) -> Item | None:
     """The item printed on the amount's own line in the nearest label group to its left;
     failing that, the item in its rule-bounded row (a label centred in a tall cell).
 
     The line comes first: when sub-rows carry no rules (131172 prints the 節 of a 目
     inside the 目's ruled cell), the cell alone would hand the 目's amount to a 節.
+
+    `name_line`: the axes that select the quirk `name_line`, by axis.
     """
     digits = [g for g in amount if g.text not in ('△', '▲')] or amount
     y = sum((g.y0 + g.y1) / 2 for g in digits) / len(digits)
@@ -1390,6 +1397,9 @@ def _owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[in
         from ingestion.generic.scan import line_reach
     line_limit = lambda line: line_reach(digits, line) if ocr else reach
     left = sorted((g for g in ordered if g.x1 <= band.x0 + 1), key=lambda g: -g.x0)
+    if left and (printed_on := (name_line or {}).get(left[0].axis)) is not None \
+            and (item := printed_on.module.owner(found[id(left[0])], y, line_limit, roles)) is not None:
+        return item
     for group in left:
         same_line = [i for i in found[id(group)] if i.role in roles
                      and abs(i.anchor - y) <= line_limit(i.lines[0])]
@@ -1732,7 +1742,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
                 item.role = 'note'
             else:
                 item.level = marks[mark] - 1
-        elif unnumbered is not None and unnumbered.module.shift(item, note, unnumbered.value):
+        elif unnumbered is not None and unnumbered.module.shift(item, note, unnumbered.value, id(item) in column_amount_items):
             item.unnumbered_shift = unnumbered.value
         previous = result[-1] if result else None
         if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
@@ -1839,6 +1849,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
 
     `document`: the settings that hold the document's quirks (the workflow's `quirks`)."""
     """`judge(lines) -> {line id: (role, confidence)}` replaces the codeless-line rules (variant B)."""
+    name_lines = {axis: quirk(settings, 'name_line') for axis, settings in (layout or {}).items()
+                  if isinstance(settings, dict) and quirk(settings, 'name_line') is not None}
     shapes: dict[str, list[str]] = {}  # numbering shapes per breakdown axis, in order of first use
     anchors: dict[str, dict[str, tuple[float, float, int]]] = {}  # where each shape's numbers start and end, per axis
     stack: list[Item] = []  # open subject items by depth
@@ -1916,6 +1928,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                             quirk(document, 'codeless_beside_repeated_code'))
             if not group.subject:
                 group_items = join_transfer_tails(group_items, layout)
+                if (digit_set := quirk(document, 'digit_set_codes')) is not None:
+                    digit_set.module.measure(group_items, digit_set.value)
             for position, item in enumerate(group_items):
                 # 01.01.01.01から流用 starts with digits. A parenthesised remark joined to an item's
                 # name (`需用費（同事業、委託料へ流用 △1,815,000）`) does not make the item a note.
@@ -1970,13 +1984,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 money = [g for g in line if is_amount(g.text)]
                 if not money:
                     continue
-                target = owner(money, band, ordered, found, roles=(*owners, 'note'))
+                target = owner(money, band, ordered, found, roles=(*owners, 'note'), name_line=name_lines)
                 if target is not None:
                     column_amount_items.add(id(target))
                 if target is not None and target.role == 'note':
                     target.role = 'node'
                 if layout:
-                    note_target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note', 'annotation'))
+                    note_target = owner(money, band, ordered, found, roles=('node', 'repeat', 'total', 'note', 'annotation'),
+                                        name_line=name_lines)
                     prefixes = note_prefixes(layout.get(note_target.group.axis, {})) if note_target is not None else ()
                     if note_target is not None and normalize(text(note_target.lines[0])).startswith(prefixes):
                         column_amount_items.add(id(note_target))
@@ -2021,6 +2036,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 kept.append(item)
             if group.mode == "indent":
                 subject_pattern.align(logical, group, kept, alignment)
+                if group.subject and (digit_set := quirk(document, 'digit_set_codes')) is not None:
+                    digit_set.module.align(kept, digit_set.value)
             found[id(group)] = kept
     # A subject name cut at the foot of a page continues without a number or amount at the next page's
     # start (`8 市立社会福祉` / `センター費`). Keep its first-page position; a box cannot span two pages.
@@ -2231,6 +2248,17 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         return [e[4] for e in events]
 
     # A department heading's parts can run on to the next page (132055 p52-54): its sum is checked over the pages.
+    # The quirk `name_line`: an item that prints its number alone above its name opens on its name's line.
+    numbered_names: set[int] = set()
+    for _, ordered, found in all_items:
+        for group in ordered:
+            if group.axis in name_lines:
+                for item in found[id(group)]:
+                    if item.fixed_anchor is None and (y := name_lines[group.axis].module.anchor(
+                            item, lambda line: CODE.fullmatch(normalize(text(line))))) is not None:
+                        item.fixed_anchor = y
+                        item.indent = item.lines[1][0].x0  # the name starts its own line: `9` and `10` indent alike
+                        numbered_names.add(id(item))
     closing_headings = closing_department_headings([item for entry in all_items for item in page_events(*entry)], layout)
     for logical, ordered, found in all_items:
         # A subject item opens at the top of its rule-bounded row: its label may be
@@ -2244,9 +2272,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             + (titled if any(title_shift(g) for g in ordered if g.subject) else 0)
         row = None  # (subject item, top, bottom) of the latest subject row
         opening = logical.reprints  # no subject with a code has begun on this page yet
+        page_axes: set[str] = set()  # the breakdown axes with an item on this page so far (`repeated_at_top`)
+        digit_set = quirk(document, 'digit_set_codes')
         for _, _, item in events:
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
-                    and (row[0].depth < subject_depth or item.code is None) \
+                    and (row[0].depth < subject_depth or item.code is None) and id(item) not in numbered_names \
                     and row[1] - .5 <= item.anchor <= row[2] + .5 \
                     and (not item.amounts or (kind_of(item.name, words=True) is not None
                                               and not is_plain_name(layout, item))):
@@ -2295,6 +2325,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if again is None:
                         # The open headings printed again one to a line, outermost first: this line is one of them.
                         again = next((s for s in reversed(stack) if s.name and same_heading(s.name, item.name)), None)
+                    if again is not None and digit_set is not None and again.level != item.level:
+                        # (The quirk `digit_set_codes`: a 款, 項 and 目 the year drops print one name, `×` `保健福祉事業`
+                        # at each level's place; the 項 that opens the next page is no reprint of the 款.)
+                        again = None
                     if again is not None:
                         item.key, item.role = again.key, 'repeat'
                         # Digits in the repeated name (`市制７０周年記念事業費`) are the open heading's own, not an amount.
@@ -2340,6 +2374,19 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 summing.clear()
                 row = (item, *subject_row(item, logical))
             else:
+                first_on_page = item.group.axis not in page_axes
+                page_axes.add(item.group.axis)
+                if (first_on_page and item.role == 'node' and item.code is not None
+                        and quirk((layout or {}).get(item.group.axis), 'repeated_at_top') is not None
+                        and not any(i.group.subject and i.page == item.page for i in placed)
+                        and (again := next((p for p in branch.get(item.group.axis, [])[:1] if p is not None), None)) is not None
+                        and again.code == item.code and normalize(again.name) == normalize(item.name)
+                        and [normalize(text(r)) for _, r in again.amounts] == [normalize(text(r)) for _, r in item.amounts]):
+                    # The quirk `repeated_at_top`: the open item printed again at the top of a continuation page.
+                    # Its number and amount are the open item's (a coverage exclusion), not new ones.
+                    item.key, item.role = again.key, 'repeat'
+                    repeated_codes.extend(g for g in item.glyphs if re.search(r'[0-9０-９]', g.text))
+                    continue
                 ranks = levels[item.group.axis]
                 depth = 1 + min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 1
                 mode = detail if isinstance(detail, str) else detail.get(item.group.axis)
@@ -2429,9 +2476,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 history = histories.pop('／'.join(band.header), None)  # [item, label lines, a round waiting] of a `補正経過`
                 if history is not None:
                     revisions.append([history[0], band.body_top, band.body_top, band.words[0].page if band.words else logical.pages[0], history[1][-1] if history[1] else []])
+                # A `補正経過` is printed in the subject's own columns: the amounts a breakdown axis prints in its column
+                # beside the rounds (`2 給料 86,968` beside `補正経過`, 131113) are that axis's items, not rounds.
+                breakdown_column = band.header[:1] and band.header[0] in {g.axis for g in ordered if not g.subject}
                 for line in lines(_signed_amounts(words_)):
                     whole = normalize(text(line))
-                    block = next((b for b in revisions if b[3] == money_page(line) and b[1] - 1 <= line_middle(line) <= b[2] + 1), None)
+                    block = None if breakdown_column else next(
+                        (b for b in revisions if b[3] == money_page(line) and b[1] - 1 <= line_middle(line) <= b[2] + 1), None)
                     if revision is not None and revision.module.opens(whole) and previous is not None:
                         # The history of the year's supplementary budgets (the quirk `revision_history`).
                         history = [previous[0], [], False]  # the item, its label lines, a round waiting for its amount
@@ -2506,7 +2557,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     candidate = ''.join(g.text for g in money)
                     if not is_amount(candidate):
                         unowned.append({'kind': 'unreadable amount', 'page': money[0].page, 'text': candidate}); continue
-                    target = owner(money, band, ordered, found, owners, ocr=logical.ocr, next_row=amounts_next_row)
+                    target = owner(money, band, ordered, found, owners, ocr=logical.ocr, next_row=amounts_next_row,
+                                   name_line=name_lines)
                     if (target is None and amounts_next_row and waiting_subject is not None
                             and _cell(band, money[0].y0)[0] == band.body_top
                             and not any(i.role == 'node' and i.anchor < money[0].y0
@@ -2600,6 +2652,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             remarks.append({'kind': 'kind line', 'target': target, 'heading': header, 'label': stacked_label,
                                             'runs': [money], 'unit': logical.unit_of(header)})
                     amounts.append(_amount(target.key, header, money, logical.unit_of(header)))
+                    if target.role == 'repeat' and not target.group.subject:
+                        repeated_codes.extend(money)  # the open item's amount printed again (`repeated_at_top`)
                     owned.add(target.key)
                     previous = (target, _cell(band, y))
                 if history is not None:
