@@ -4,6 +4,7 @@
 
 - `name`（必須）: 事業名の札の語。札の右の、札と同じ高さ（上下 `name_height`、既定 14pt）の語を事業名にする。札の語が「事業名：〇〇」のように名前を続けて持つときは札を除いた残りも名前にする
 - `amount`（必須）: 予算額の札の語。札の右の、札と同じ高さ（上下 `amount_height`、既定 14pt）の語を予算額にする
+- `pair_height`: 予算額の札は事業名の札に一番近いものを使う。上下がこの pt を超えて離れていれば、その頁は読まない
 - `strip`: 名前から除く部分
 - `new`: 頁の語に当たれば新規にする
 - `unit`: 数だけの金額の単位（`千円` 既定）
@@ -20,8 +21,11 @@ def read_page(page, number: int, rules: dict) -> PressItem | None:
     name_label = re.compile(rules['name'])
     amount_label = re.compile(rules['amount'])
     label = next((w for w in items if name_label.match(norm(w['text']))), None)
-    budget = next((w for w in items if amount_label.match(norm(w['text']))), None)
-    if label is None or budget is None:
+    budgets = [w for w in items if amount_label.match(norm(w['text']))]
+    if label is None or not budgets:
+        return None
+    budget = min(budgets, key=lambda w: abs(w['top'] - label['top']))
+    if 'pair_height' in rules and abs(budget['top'] - label['top']) > rules['pair_height']:
         return None
     reach = rules.get('name_height', 14)
     limit = budget['x0'] - 5 if abs(budget['top'] - label['top']) < reach and budget['x0'] > label['x1'] else page.width
