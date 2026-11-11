@@ -1,28 +1,34 @@
-"""warehouse の提供用データ（marts）の表を、同名・同列のまま D1 に写す（ADR 0022）。
+"""warehouse の提供用データ（marts）の表を、同名・同列のまま D1 に写す（ADR 0022・ADR 0040）。
 
-    bun run --cwd pipeline serving:sync -- --database-id <uuid> [--dry-run]
-    bun run --cwd pipeline serving:sync -- --local [--persist-to <dir>] [--dry-run]
-    ... --jurisdiction 132039 [--jurisdiction ...]   # 一部の自治体だけを入れる（動作確認用。自治体マスタも絞られる）
+    bun run --cwd pipeline serving:sync -- --database-id <uuid> [--dry-run] [--full]
+    bun run --cwd pipeline serving:sync -- --local [--persist-to <dir>] [--dry-run] [--full]
+    ... --jurisdiction 132039 [--jurisdiction ...]   # 一部の自治体だけを入れる（動作確認用。自治体マスタも絞られる。--full と同じ作り直し）
 
-手順:
+既定は差分の同期（ADR 0040）。D1 の書き込みは行数で課金されるので、変わった行だけを書く。
 1. 開始時に、前回の失敗の残骸 `<表>__new`・`<表>__old` を無条件に drop する（本名の表には触らない）。
-2. 表ごと（TABLE_ORDER の順）に `<表>__new` を create し、全件投入する。
-3. `__new` から全行を主キーの先頭1文字ごと（sha の hex。1回の出力を抑えられる）に読み戻し、warehouse の同じ行と
-   1行ずつ全列で突き合わせる（`verify`）。1つでも違えば最初の数件の主キーと列名を出して止め、入れ替えない。
-4. 全表が合ったら、1つの batch で表ごとに `drop table if exists <表>; alter table <表>__new rename to <表>;` と index の作成。
+2. 表ごとに D1 の列・index を columns.json と比べる。表が無い・列か index が違う表は作り直す（3 の手順）。
+   残りの表は、主キーの範囲（warehouse の主キー順に RANGE_ROWS 行ずつ）ごとに D1 の行を読み、warehouse の同じ範囲と
+   主キーで突き合わせて全列を比べ、消す行と書く行を決める。変わる行が表の REBUILD_RATIO を超えれば作り直す（そのほうが書き込みが少ない）。
+3. 作り直す表は `<表>__new` を create して全件投入し、全範囲を読み戻して warehouse と全列で突き合わせる（`verify`）。
+   1つでも違えば最初の数件の主キーと列名を出して止める。この時点では本名の表に何も書いていない。
+4. 差分の表に、消す行の delete と、書く行の `insert or replace` を流す。変わった範囲を読み戻して突き合わせ、行数も比べる。
+5. 作り直した表を、1つの batch で `drop table if exists <表>; alter table <表>__new rename to <表>;` と index の作成で入れ替える。
+`--full` は全表を作り直す。`--dry-run` は書かずに、書く予定の行数を出す（D1 を指定すれば D1 を読んで差分を数える）。
 
 可用性は担保しない。D1 は warehouse から作り直せる写しで、失敗した同期の途中や後では、API がエラーを返したり
 表の世代が混ざったりし得る（Cloudflare の公式文書は REST の query/raw に複数文を渡したときの原子性を保証していない）。
-そのときはもう一度同期を流す。(1) から作り直して直る。復旧処理は持たない。入れ替えの batch は再送しない
-（成功したのに応答だけ失った場合に、再送が失敗して表が欠けた状態を固定しないため）。
+そのときはもう一度同期を流す。差分は D1 の今の中身と比べて決めるので、途中で止まった同期の続きも次の同期で埋まる。
+復旧処理は持たない。入れ替えの batch は再送しない（成功したのに応答だけ失った場合に、再送が失敗して表が欠けた状態を固定しないため）。
 
 前提:
 - 書き込むのはこの script だけで、同時に2つ以上実行しない（`__new` が衝突する）。
 - 表の列・型・index は `apps/api/src/columns.json`（serving:columns）が正。warehouse と食い違えば止まる。
-- D1 の上限（1文の SQL 100KB）を守るため、行は表・自治体ごとに流し、全行を一度にメモリへ載せない。
+- D1 の上限（1文の SQL 100KB）を守るため、行は表ごとに流し、全行を一度にメモリへ載せない。
   値は SQL の literal に埋め込む（D1 の REST は params に NULL を渡せない）。boolean は 0/1。
+- 主キーの範囲は DuckDB と SQLite で同じ式（`>=`・`<` の文字列比較）で切る。主キーは sha の hex なので両者の順序は一致する。
+  一致しない文字があっても、ある範囲で消して別の範囲で書くだけになるよう、全範囲の delete を先に流してから書く。
 - `cf d1 raw --local` は「Network connection lost」で散発的に失敗する（cf 1.0.0-beta の実測）ので3回まで再試行する。
-  応答が失われただけで書き込みは済んでいた場合に備え、投入は `insert or replace`（流し直しても同じ結果）にし、最後の行数照合で重複や欠落を止める。
+  応答が失われただけで書き込みは済んでいた場合に備え、投入は `insert or replace`（流し直しても同じ結果）にし、最後の照合で重複や欠落を止める。
 - D1 の REST は1回の API 要求が30秒以内（公式 limits）。1回の cf 呼び出しは約1MBの batch と、読み戻し約4000行に抑える。
 - cf の呼び出し回数を減らすため、多数の文を1回の `cf d1 raw --batch` にまとめる（約1MBごと）。
 """
@@ -55,6 +61,12 @@ MAX_BATCH_BYTES = 1_000_000
 FETCH_ROWS = 500
 MEMORY_LIMIT = '1GB'
 READ_ROWS_PER_CALL = 4000
+# 突き合わせの1範囲の行数。1回の cf 呼び出しで READ_ROWS_PER_CALL // RANGE_ROWS 範囲を読む
+RANGE_ROWS = 1000
+# 変わる行が表のこの割合を超えたら、差分ではなく作り直す（既存の行の置き換えは delete と insert の2回分書く）
+REBUILD_RATIO = 0.5
+# delete の1文に入れる主キーの数
+DELETE_KEYS_PER_STATEMENT = 500
 
 # 参照される表（自治体マスタ・根・出典）を先に、参照する表を後に
 TABLE_ORDER = ['jurisdiction', 'population_origin', 'population',
@@ -139,7 +151,7 @@ def cleanup_statements() -> list[dict]:
 def swap_statements(tables: dict[str, Table]) -> list[dict]:
     """照合済みの新表を本名にする。旧表を drop してから rename し、その後に index を作る（index 名の衝突を避ける）。"""
     out = []
-    for name in TABLE_ORDER:
+    for name in [n for n in TABLE_ORDER if n in tables]:
         out.append(f'drop table if exists "{name}"')
         out.append(f'alter table "{new_name(name)}" rename to "{name}"')
         out += contract.create_index_sql(name, tables[name])
@@ -175,17 +187,41 @@ def d1_value(value: Any) -> Any:
     return int(value) if isinstance(value, bool) else value
 
 
-def bucket_chars(con: duckdb.DuckDBPyConnection, table: str, key: str, where: str = '') -> dict[str, int]:
-    """主キーの先頭1文字ごとの行数。"""
-    return dict(con.execute(f'select substr("{key}", 1, 1), count(*) from main."{table}"{where} group by 1 order by 1').fetchall())
+def and_where(where: str, condition: str) -> str:
+    """` where ...` に条件を足す。where が空なら ` where <条件>`。"""
+    return f'{where} and {condition}' if where else f' where {condition}'
 
 
-def bucket_rows(con: duckdb.DuckDBPyConnection, table: str, names: list[str], key: str, char: str,
-                where: str = '') -> list[list]:
+def key_ranges(con: duckdb.DuckDBPyConnection, table: str, key: str, where: str = '') -> list[tuple[str | None, str | None]]:
+    """warehouse の主キー順に RANGE_ROWS 行ずつの範囲 [lo, hi)。両端は開いていて、D1 にだけある行もどれかの範囲に入る。"""
+    bounds = [r[0] for r in con.execute(
+        f'select "{key}" from (select "{key}", row_number() over (order by "{key}") - 1 as i from main."{table}"{where}) '
+        f'where i > 0 and i % {RANGE_ROWS} = 0 order by 1').fetchall()]
+    edges: list[str | None] = [None, *bounds, None]
+    return list(zip(edges, edges[1:]))
+
+
+def range_condition(key: str, lo: str | None, hi: str | None) -> str:
+    """DuckDB と SQLite のどちらでも同じ範囲を選ぶ式。"""
+    parts = ([f'"{key}" >= {literal(lo)}'] if lo is not None else []) + ([f'"{key}" < {literal(hi)}'] if hi is not None else [])
+    return ' and '.join(parts) or '1 = 1'
+
+
+def range_rows(con: duckdb.DuckDBPyConnection, table: str, names: list[str], key: str, lo: str | None, hi: str | None,
+               where: str = '') -> list[list]:
     cols = ', '.join(f'"{n}"' for n in names)
-    cond = f'{where.replace(" where ", " and ", 1)}' if where else ''
     return [[d1_value(v) for v in row] for row in con.execute(
-        f'select {cols} from main."{table}" where substr("{key}", 1, 1) = {literal(char)}{cond} order by "{key}"').fetchall()]
+        f'select {cols} from main."{table}"{and_where(where, range_condition(key, lo, hi))} order by "{key}"').fetchall()]
+
+
+def diff_rows(names: list[str], key: str, got: list[list], want: list[list]) -> tuple[list[str], list[str]]:
+    """D1 の行（got）を warehouse の行（want）にするために、消す主キーと書く主キー（新しい行・全列のどれかが違う行）。"""
+    k = names.index(key)
+    got_by = {row[k]: row for row in got}
+    want_by = {row[k]: row for row in want}
+    deletes = sorted(got_by.keys() - want_by.keys())
+    writes = sorted(pk for pk, row in want_by.items() if got_by.get(pk) != row)
+    return deletes, writes
 
 
 def compare_rows(names: list[str], key: str, got: list[list], want: list[list], limit: int = 5) -> list[str]:
@@ -276,92 +312,209 @@ class D1:
         return results
 
 
-def verify(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], where_all: str = '') -> list[str]:
-    """`__new` の全行を主キーの先頭1文字ごとに読み戻し、warehouse の同じ行と全列で突き合わせる。
+def delete_statements(table: str, key: str, keys: Sequence[str]) -> Iterator[str]:
+    for i in range(0, len(keys), DELETE_KEYS_PER_STATEMENT):
+        chunk = keys[i:i + DELETE_KEYS_PER_STATEMENT]
+        yield f'delete from "{table}" where "{key}" in ({", ".join(literal(k) for k in chunk)})'
 
-    1回の cf 呼び出しは READ_ROWS_PER_CALL 行ほどにまとめる。メモリにあるのはその分だけ。
+
+def schema_statements(names: Sequence[str]) -> list[dict]:
+    """表ごとの列と、全 index の名前を読む文。"""
+    return ([{'sql': f"select name, type, pk from pragma_table_info({literal(name)})"} for name in names]
+            + [{'sql': "select tbl_name, name from sqlite_master where type = 'index' and name not like 'sqlite_%'"}])
+
+
+def schema_matches(name: str, spec: Table, columns: list[list], indexes: set[str]) -> bool:
+    """D1 の表の列（名前・型・主キー）と index が columns.json と同じか。表が無ければ columns は空。"""
+    want = [[c['name'], contract.SQL_TYPES[c['type']], 1 if c['name'] == spec['primary_key'] else 0] for c in spec['columns']]
+    got = [[n, (t or '').lower(), 1 if pk else 0] for n, t, pk in columns]
+    return got == want and indexes == {contract.index_name(name, cols) for cols in spec['indexes']}
+
+
+def read_schemas(d1: D1, tables: dict[str, Table]) -> dict[str, bool]:
+    """表ごとに、D1 の列と index が columns.json と同じか。"""
+    results = d1.batch(schema_statements(TABLE_ORDER))
+    indexes: dict[str, set[str]] = {}
+    for tbl, idx in results[-1]['results']['rows']:
+        indexes.setdefault(tbl, set()).add(idx)
+    return {name: schema_matches(name, tables[name], result['results']['rows'], indexes.get(name, set()))
+            for name, result in zip(TABLE_ORDER, results)}
+
+
+class TableDiff:
+    """1表の warehouse と D1 の差。ranges は書き込み後に読み戻す範囲（差のあった範囲）。"""
+
+    def __init__(self) -> None:
+        self.deletes: list[str] = []
+        self.writes: list[str] = []
+        self.ranges: list[tuple[str | None, str | None]] = []
+        self.problems: list[str] = []
+
+    @property
+    def changes(self) -> int:
+        return len(self.deletes) + len(self.writes)
+
+
+def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d1_table: str, where: str = '',
+               ranges: list[tuple[str | None, str | None]] | None = None) -> TableDiff:
+    """主キーの範囲ごとに D1 の d1_table を読み、warehouse の name と全列で突き合わせる。
+
+    1回の cf 呼び出しは READ_ROWS_PER_CALL 行ほどにまとめる。メモリにあるのはその分と、差のある主キーだけ。
+    where は warehouse だけに掛ける（D1 の表に余分な行があれば消す行として出る）。
     """
+    names = [c['name'] for c in spec['columns']]
+    key = spec['primary_key']
+    cols = ', '.join(f'"{n}"' for n in names)
+    ranges = key_ranges(con, name, key, where) if ranges is None else ranges
+    per_call = max(1, READ_ROWS_PER_CALL // RANGE_ROWS)
+    diff = TableDiff()
+    for i in range(0, len(ranges), per_call):
+        group = ranges[i:i + per_call]
+        results = d1.batch([{'sql': f'select {cols} from "{d1_table}" where {range_condition(key, lo, hi)} order by "{key}"'}
+                            for lo, hi in group])
+        for (lo, hi), result in zip(group, results):
+            got = result['results']['rows']
+            want = range_rows(con, name, names, key, lo, hi, where)
+            deletes, writes = diff_rows(names, key, got, want)
+            if deletes or writes:
+                diff.deletes += deletes
+                diff.writes += writes
+                diff.ranges.append((lo, hi))
+                diff.problems += [f'{name}: {p}' for p in compare_rows(names, key, got, want)]
+    return diff
+
+
+def count_rows(d1: D1, table: str) -> int:
+    return d1.batch([{'sql': f'select count(*) from "{table}"'}])[0]['results']['rows'][0][0]
+
+
+def warehouse_count(con: duckdb.DuckDBPyConnection, table: str, where: str = '') -> int:
+    return con.execute(f'select count(*) from main."{table}"{where}').fetchone()[0]
+
+
+def verify(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d1_table: str, where: str = '',
+           ranges: list[tuple[str | None, str | None]] | None = None) -> list[str]:
+    """D1 の d1_table が warehouse と同じか。ranges を渡せばその範囲だけを読み戻す。行数は常に全体で比べる。"""
     problems = []
-    for name in TABLE_ORDER:
-        spec = tables[name]
-        names = [c['name'] for c in spec['columns']]
-        key = spec['primary_key']
-        where = scoped(where_all, names)
-        buckets = bucket_chars(con, name, key, where)
-        cols = ', '.join(f'"{n}"' for n in names)
-        total = d1.batch([{'sql': f'select count(*) from "{new_name(name)}"'}])[0]['results']['rows'][0][0]
-        if total != sum(buckets.values()):
-            problems.append(f'{name}: 行数 D1 {total} != warehouse {sum(buckets.values())}')
-        groups: list[list[str]] = [[]]
-        rows = 0
-        for char, count in buckets.items():
-            if groups[-1] and rows + count > READ_ROWS_PER_CALL:
-                groups.append([])
-                rows = 0
-            groups[-1].append(char)
-            rows += count
-        for group in groups:
-            if not group:  # 該当行が0件の表
-                continue
-            results = d1.batch([{'sql': f'select {cols} from "{new_name(name)}" where substr("{key}", 1, 1) = {literal(c)} order by "{key}"'}
-                                for c in group])
-            for char, result in zip(group, results):
-                got = result['results']['rows']
-                problems += [f'{name}: {p}' for p in compare_rows(names, key, got, bucket_rows(con, name, names, key, char, where))]
-        log_rows = sum(buckets.values())
-        print(f'  読み戻し {name}: {log_rows} 行 / {len(groups)} 回', flush=True)
+    total, want = count_rows(d1, d1_table), warehouse_count(con, name, where)
+    if total != want:
+        problems.append(f'{name}: 行数 D1 {total} != warehouse {want}')
+    ranges = key_ranges(con, name, spec['primary_key'], where) if ranges is None else ranges
+    problems += diff_table(d1, con, name, spec, d1_table, where, ranges).problems[:5]
+    print(f'  読み戻し {name}: {len(ranges)} 範囲', flush=True)
     return problems
+
+
+def rows_written(rows: int, spec: Table) -> int:
+    """D1 が数える書き込み行数の目安。1行は表と主キーの index と各 index に1回ずつ書く。"""
+    return rows * (2 + len(spec['indexes']))
 
 
 def rss_mb() -> float:
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024 / 1024  # macOS は bytes
 
 
-def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[str] | None = None, log: Callable[[str], None] = lambda m: print(m, flush=True)) -> int:
+def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[str] | None = None, full: bool = False,
+         log: Callable[[str], None] = lambda m: print(m, flush=True)) -> int:
     tables = contract.load()
     con = open_warehouse(warehouse)
     try:
         if contract.build(contract.warehouse_columns(warehouse, con)) != {'tables': tables}:
             raise SystemExit('columns.json が warehouse と食い違う。serving:columns で書き直す')
-        where = scope_where(jurisdictions)
-        if jurisdictions:
-            log(f'一部の自治体だけを入れる: {", ".join(jurisdictions)}（D1 は全自治体の写しにならない）')
-        started = time.time()
-        if d1 and not dry_run:
-            d1.batch(cleanup_statements())
-        for name in TABLE_ORDER:
-            spec = tables[name]
-            names = [c['name'] for c in spec['columns']]
-            order = spec['primary_key']
-            table_where = scoped(where, names)
-
-            def statements(name=name, spec=spec, names=names, order=order, where=table_where) -> Iterator[str]:
-                yield f'drop table if exists "{new_name(name)}"'
-                yield contract.create_table_sql(name, spec, new_name(name))
-                yield from insert_statements(new_name(name), names, table_rows(con, name, names, order, where))
-
-            calls = size = 0
-            for batch in pack(statements()):
-                calls += 1
-                size += sum(len(s['sql'].encode()) for s in batch)
-                if d1 and not dry_run:
-                    d1.batch(batch)
-            log(f'{name}: {con.execute(f'select count(*) from main."{name}"{table_where}').fetchone()[0]} 行 / {calls} 回 / {size / 1e6:.1f}MB / RSS最大 {rss_mb():.0f}MB')
-        if dry_run:
-            log('dry-run: D1 には書いていない')
-            return 0
-        problems = verify(d1, con, tables, where)
-        if problems:
-            for p in problems:
-                log(f'照合に失敗: {p}')
-            log('rename せず中止（__new は残る）')
-            return 1
-        # リモートの入れ替えは再送しない。ローカルの miniflare は batch が1つのトランザクションで、失敗は応答を失う散発エラー（起動時）なので再送する
-        d1.batch(swap_statements(tables), retries=3 if d1.local else 1)
-        log(f'完了: cf {d1.calls} 回 / {time.time() - started:.0f} 秒 / RSS最大 {rss_mb():.0f}MB')
-        return 0
+        return run(d1, con, tables, dry_run, jurisdictions, full, log)
     finally:
         con.close()
+
+
+def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], dry_run: bool,
+        jurisdictions: Sequence[str] | None, full: bool, log: Callable[[str], None]) -> int:
+    where = scope_where(jurisdictions)
+    if jurisdictions:
+        log(f'一部の自治体だけを入れる: {", ".join(jurisdictions)}（D1 は全自治体の写しにならない。全表を作り直す）')
+        full = True
+    started = time.time()
+    if d1 and not dry_run:
+        d1.batch(cleanup_statements())
+
+    # 1. 作り直す表と、差分で書く表を決める（D1 を読むだけ）
+    matches = read_schemas(d1, tables) if d1 and not full else {name: False for name in TABLE_ORDER}
+    rebuild: list[str] = []
+    diffs: dict[str, TableDiff] = {}
+    for name in TABLE_ORDER:
+        spec = tables[name]
+        table_where = scoped(where, [c['name'] for c in spec['columns']])
+        rows = warehouse_count(con, name, table_where)
+        if not matches[name]:
+            rebuild.append(name)
+            reason = '--full' if full else 'D1 に無いか列・index が違う' if d1 else 'D1 を指定していない'
+            log(f'{name}: 作り直す（{reason}）{rows} 行 / 書き込み約 {rows_written(rows, spec):,} 行')
+            continue
+        diff = diff_table(d1, con, name, spec, name)
+        if diff.changes > REBUILD_RATIO * max(rows, 1):
+            rebuild.append(name)
+            log(f'{name}: 変わる行 {diff.changes} が多いので作り直す {rows} 行 / 書き込み約 {rows_written(rows, spec):,} 行')
+            continue
+        diffs[name] = diff
+        cost = rows_written(len(diff.deletes), spec) + 2 * rows_written(len(diff.writes), spec)
+        log(f'{name}: 消す {len(diff.deletes)} 行・書く {len(diff.writes)} 行 / 書き込み約 {cost:,} 行（{rows} 行中）')
+    if dry_run or not d1:
+        log('dry-run: D1 には書いていない')
+        return 0
+
+    # 2. 作り直す表を __new に入れて照合する。ここまで本名の表には書いていない
+    for name in rebuild:
+        spec = tables[name]
+        names = [c['name'] for c in spec['columns']]
+        table_where = scoped(where, names)
+
+        def statements(name=name, spec=spec, names=names, where=table_where) -> Iterator[str]:
+            yield f'drop table if exists "{new_name(name)}"'
+            yield contract.create_table_sql(name, spec, new_name(name))
+            yield from insert_statements(new_name(name), names, table_rows(con, name, names, spec['primary_key'], where))
+
+        calls = 0
+        for batch in pack(statements()):
+            calls += 1
+            d1.batch(batch)
+        log(f'{name}: __new に投入 / {calls} 回 / RSS最大 {rss_mb():.0f}MB')
+    problems = [p for name in rebuild
+                for p in verify(d1, con, name, tables[name], new_name(name), scoped(where, [c['name'] for c in tables[name]['columns']]))]
+    if problems:
+        for p in problems:
+            log(f'照合に失敗: {p}')
+        log('本名の表に書かずに中止（__new は残る）')
+        return 1
+
+    # 3. 差分の表に書く。全範囲の delete を先に流す（範囲の切り方が両者でずれても、消してから書く順を守る）
+    for name, diff in diffs.items():
+        if not diff.changes:
+            continue
+        spec = tables[name]
+        names = [c['name'] for c in spec['columns']]
+        key = spec['primary_key']
+        writes = set(diff.writes)
+        rows = (row for row in table_rows(con, name, names, key) if row[names.index(key)] in writes)
+
+        def statements(name=name, key=key, diff=diff, names=names, rows=rows) -> Iterator[str]:
+            yield from delete_statements(name, key, diff.deletes)
+            yield from insert_statements(name, names, rows)
+
+        for batch in pack(statements()):
+            d1.batch(batch)
+        problems += verify(d1, con, name, spec, name, ranges=diff.ranges)
+    if problems:
+        for p in problems:
+            log(f'照合に失敗: {p}')
+        log('作り直す表を入れ替えずに中止。もう一度同期を流す')
+        return 1
+
+    # 4. 作り直した表を入れ替える。リモートの入れ替えは再送しない。ローカルの miniflare は batch が1つのトランザクションで、
+    # 失敗は応答を失う散発エラー（起動時）なので再送する
+    if rebuild:
+        d1.batch(swap_statements({name: tables[name] for name in rebuild}), retries=3 if d1.local else 1)
+    log(f'完了: 作り直し {len(rebuild)} 表・差分 {sum(1 for d in diffs.values() if d.changes)} 表 / cf {d1.calls} 回 / '
+        f'{time.time() - started:.0f} 秒 / RSS最大 {rss_mb():.0f}MB')
+    return 0
 
 
 def main() -> int:
@@ -372,7 +525,8 @@ def main() -> int:
     parser.add_argument('--warehouse', type=Path, default=contract.WAREHOUSE)
     parser.add_argument('--jurisdiction', action='append', metavar='自治体コード',
                         help='一部の自治体だけを入れる（複数指定可）。jurisdiction_code を持つ表を絞る。省略は全件')
-    parser.add_argument('--dry-run', action='store_true', help='文を作って数えるだけで、書かない')
+    parser.add_argument('--dry-run', action='store_true', help='書かずに、書く予定の行数を出す（D1 を指定すれば D1 を読んで差分を数える）')
+    parser.add_argument('--full', action='store_true', help='差分ではなく全表を作り直す')
     parser.add_argument('--drop-legacy', action='store_true',
                         help='同期せず、作り直し前の表（LEGACY_TABLES）を drop する。新しい Worker の deploy を確かめてから流す')
     args = parser.parse_args()
@@ -386,7 +540,7 @@ def main() -> int:
             d1.batch(statements)
         print('\n'.join(s['sql'] for s in statements) + ('\ndry-run: D1 には書いていない' if args.dry_run or not d1 else ''))
         return 0
-    return sync(d1, args.warehouse, args.dry_run, args.jurisdiction)
+    return sync(d1, args.warehouse, args.dry_run, args.jurisdiction, args.full)
 
 
 if __name__ == '__main__':

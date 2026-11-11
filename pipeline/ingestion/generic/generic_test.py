@@ -890,6 +890,19 @@ class ConvertRulesTest(unittest.TestCase):
         item.amounts.clear()
         self.assertFalse(department_heading(item))
 
+    def test_an_office_named_again_in_its_department_brackets_is_a_heading(self):
+        from ingestion.generic.tree import department_heading
+
+        def item(name, code=None, priced=True):
+            found = Item(Group([self.band([])], '備考', False), 1, [[glyph(name, 900, 100, 80)]], code, name, 900)
+            if priced:
+                found.amounts.append(('備考', [glyph('2,332,236', 1089, 100, 50)]))
+            return found
+        self.assertTrue(department_heading(item('日本橋特別出張所[日本橋特別出張所]')))
+        self.assertFalse(department_heading(item('戸籍事務[区民課]')))
+        self.assertFalse(department_heading(item('日本橋特別出張所[日本橋特別出張所]', code='1')))
+        self.assertFalse(department_heading(item('日本橋特別出張所[日本橋特別出張所]', priced=False)))
+
     def test_a_note_word_over_or_under_an_amount_belongs_to_the_amount_next_to_it(self):
         from ingestion.generic.tree import items
         # `12,409,365 円` / `流用`: the amount is printed above its word.

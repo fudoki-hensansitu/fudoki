@@ -632,117 +632,13 @@
           "table_id": "parking-initial"
         }
       ]
-    },
-    {
-      "id": "national-health-initial",
-      "converter": "fiscal/layouts/generic_text/convert.py",
-      "inputs": [
-        {
-          "sha256": "15c59c25d35011407a90c2164ec7409e36a669ac23f102526a1c3a4ec55f8f37"
-        }
-      ],
-      "options": {
-        "account": "国民健康保険事業特別会計",
-        "table_id": "national-health-initial",
-        "workflow": {
-          "layout": {
-            "pattern": "ruled",
-            "options": {
-              "columns": {
-                "本年度の財源内訳／特定財源": {
-                  "excluded": {
-                    "kind": "財源内訳",
-                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の上に財源の種類（都支出金・使用料及び手数料等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の額で確かめる。"
-                  }
-                },
-                "本年度の財源内訳／一般財源": {
-                  "excluded": {
-                    "kind": "財源内訳",
-                    "reason": "本年度の財源内訳の列を取り込まない。特定財源の列と組で読む財源の分解で、歳出の目の和は本年度の額で確かめる。"
-                  }
-                },
-                "款項目": {
-                  "heading": "科目"
-                }
-              },
-              "spread": {
-                "gutter": 0.5
-              }
-            }
-          },
-          "headers": {
-            "pattern": "standard"
-          },
-          "hierarchy": {
-            "subject": {
-              "pattern": "indent",
-              "codes": "right"
-            },
-            "breakdown": {
-              "節": {
-                "pattern": "shape"
-              },
-              "説明": {
-                "pattern": "shape",
-                "options": {
-                  "amount_brackets": true,
-                  "bare_amounts": true,
-                  "yen_marked": true,
-                  "note_kinds": {
-                    "限度額": "限度額",
-                    "駅前広場加算": "限度額",
-                    "活動実績": "限度額",
-                    "個人住宅用": "限度額",
-                    "集合住宅用": "限度額",
-                    "事業所用": "限度額",
-                    "遮熱塗装等断熱改修": "限度額",
-                    "蓄電池": "限度額",
-                    "高断熱住宅": "限度額",
-                    "宅配ボックス": "限度額",
-                    "ＬＥＤ照明機器": "限度額",
-                    "高効率空調設備等": "限度額",
-                    "換気設備": "限度額",
-                    "電気自動車用充電設備": "限度額",
-                    "ビークル・トゥ・ホーム": "限度額",
-                    "太陽光発電システム": "限度額",
-                    "ホームエネルギーマネジメントシステム": "限度額",
-                    "①生活保護被保護者": "限度額",
-                    "②区民税非課税世帯": "限度額",
-                    "③区民税非課税世帯": "限度額",
-                    "④課税所得": "限度額",
-                    "⑤課税所得": "限度額",
-                    "⑥課税所得": "限度額",
-                    "所得等により": "限度額",
-                    "電気自動車等": "限度額",
-                    "環境経営クラウドサービス": "限度額",
-                    "年間費用額": "積算",
-                    "一部負担金": "積算",
-                    "他法負担分": "積算",
-                    "保険者負担分": "積算",
-                    "療養給付費負担分": "積算",
-                    "被保険者負担分": "積算",
-                    "第三者納付金等収入額": "積算",
-                    "預託金額": "積算",
-                    "貸付限度額": "積算"
-                  }
-                }
-              }
-            }
-          }
-        }
-      },
-      "expected_tables": [
-        {
-          "table_id": "national-health-initial"
-        }
-      ]
     }
   ],
   "tables": [
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "9d3aa2f35c147aceb7cd2200fb781ef1f03e38d03e7a2f04f90772ff0e4b311e",
+      "input_fingerprint": "ebca37f446570f7e0ae96882c223e221146b0523155247547c86aaff8a8cd92a",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -771,7 +667,7 @@
     {
       "table_id": "general-initial-2",
       "conversion_id": "general-initial-2",
-      "input_fingerprint": "579fcc34c01384c5407aea0f676448da22e0f9daa23627147451e32a205eb94d",
+      "input_fingerprint": "27bd3d73c0d23920567440ff2d056757546c7b94a6692039fab91ba599dabf0d",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -800,7 +696,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "1e8adfb077a5c2b71467a176c64e2534220a35f0a4b57fad98787990d43c014f",
+      "input_fingerprint": "6c80459e7a2dbedef615d2c2c75fb2e082495bcd279282d40e686b73cbd5ac92",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -829,7 +725,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "3b5d56091c20362a8e85bc08d03a6d777e9833f61ae7bba2d035d718f6455207",
+      "input_fingerprint": "c565170e898b58a7d1306a220ad128710e256ba80e6f44e62b9bc968d5e4b5a4",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -858,7 +754,7 @@
     {
       "table_id": "land-initial",
       "conversion_id": "land-initial",
-      "input_fingerprint": "62264f53985e90e69df7edd8b3286a2802a582b8b8a797f008947e3390aa354d",
+      "input_fingerprint": "73980a9fb97c3d493f601671c3b023a63ec4b04d1e9d2a3181a63469c64242df",
       "account": "用地特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -887,7 +783,7 @@
     {
       "table_id": "parking-initial",
       "conversion_id": "parking-initial",
-      "input_fingerprint": "d894cce248a3549eb12a60459e8c8ed1cd8b53252fb921b7c6d0ce437966cc3d",
+      "input_fingerprint": "51bd2b8928775b07cef7c82a865ec5ee392c90bb775f30f456575035e1c6c38f",
       "account": "駐車場事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -911,35 +807,6 @@
           "bytes": 3010
         },
         "row_count": 49
-      }
-    },
-    {
-      "table_id": "national-health-initial",
-      "conversion_id": "national-health-initial",
-      "input_fingerprint": "02c3d794961be4182b7363121ac96ae7ead2f2eed5d9ef368c1abd2c0d5c4213",
-      "account": "国民健康保険事業特別会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 16頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 2 件（積算 2）を注記軸に置いた。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131229/2025/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "9b4da01f4bc44407be5ca15ccd568de7880cf832b3421136f06be443f629ff93",
-          "bytes": 8564
-        },
-        "row_count": 141
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131229/2025/initial/expenditure/national-health-initial-amounts.parquet",
-          "sha256": "45dd21d9e43c88f6556a147d1177eb5678494c28f9cc8e339574fa097684f40b",
-          "bytes": 6697
-        },
-        "row_count": 246
       }
     }
   ]

@@ -78,7 +78,7 @@ models:
     description: 項の名前。
   - name: moku_name
     description: 目の名前。目の無い項の下の事業は NULL。
-  - name: budget_detail_id
+  - name: initial_expenditure_detail_id
     description: 当初予算書の事業の行。expenditure_detail の detail_id。当初予算に無い年度は NULL。
     data_tests:
     - unique
@@ -86,7 +86,7 @@ models:
         arguments:
           to: ref('expenditure_detail')
           field: detail_id
-  - name: settlement_detail_id
+  - name: settlement_expenditure_detail_id
     description: 決算書の事業の行。expenditure_detail の detail_id。決算に無い年度は NULL。
     data_tests:
     - unique

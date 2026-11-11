@@ -9,6 +9,8 @@ with recursive subject_axes as (
     group by source_table_key
 ) , mapped_nodes as (
     select n.*, t.jurisdiction_code, t.fiscal_year, t.document_kind, t.account_name, t.division, t.origin_id,
+        -- A council amendment's table (seed fiscal_budget_amendment) is applied in the nodes model, not added to the tree.
+        am.table_id is not null as is_amendment,
         case when s.subject_axis is null
              then error('No subject axis (no 款 nodes): ' || n.source_table_key)
              when n.level_header in ('款', '項', '目') and n.axis_header <> s.subject_axis
@@ -28,6 +30,9 @@ with recursive subject_axes as (
     from {{ ref('stg_fiscal__nodes') }} n
     join {{ source('fiscal_metadata', 'tables') }} t using (source_table_key)
     left join subject_axes s using (source_table_key)
+    left join {{ ref('fiscal_budget_amendment') }} am
+        on am.jurisdiction_code = t.jurisdiction_code and am.fiscal_year = t.fiscal_year
+        and am.document_kind = t.document_kind and am.table_id = t.table_id
     where t.document_kind in ('settlement', 'initial') and t.direction = 'expenditure'
       and n.axis_header <> '注記'
 ), checked_nodes as (
@@ -62,6 +67,8 @@ with recursive subject_axes as (
 selected_amounts as (
     select source_table_key, node_key,
         sum(amount_yen) filter (where amount_role = target_phase)::bigint as amount_yen,
+        -- The proposed amount (原案金額) is read only from a council amendment's lines.
+        sum(amount_yen) filter (where amount_role = 'proposed')::bigint as proposed_yen,
         case when count(*) filter (where amount_role = target_phase)
                   = count(physical_page) filter (where amount_role = target_phase)
              then min(physical_page) filter (where amount_role = target_phase) end as amount_source_page,
@@ -93,7 +100,7 @@ selected_amounts as (
              then min(y1) filter (where amount_role = target_phase and physical_page is not null) end as amount_source_y1
     from mapped_amounts group by source_table_key, node_key, document_kind
 ), amounts_checked as (
-    select n.*, a.amount_yen, a.amount_source_page,
+    select n.*, a.amount_yen, a.proposed_yen, a.amount_source_page,
         a.amount_source_x0, a.amount_source_y0, a.amount_source_x1, a.amount_source_y1
     from checked_nodes n left join selected_amounts a using (source_table_key, node_key)
 ), hierarchy as (
@@ -115,25 +122,33 @@ selected_amounts as (
     from hierarchy
     window sibling_group as (partition by source_table_key, parent_node_key, axis_header, node_kind, code_text, name),
         sibling as (sibling_group order by origin_id, physical_page, y0, x0, node_key)
+), keyed as (
+    -- A 款 identifies by its number, or by its name in an account-year declared in fiscal_kan_name_identity
+    -- (no printed numbers, or numbers renumbered within the year), for every document of that account-year.
+    select n.*, case when k.jurisdiction_code is not null then 'name:' || n.kan_name else n.kan_code end as kan_key
+    from siblings n
+    left join {{ ref('fiscal_kan_name_identity') }} k
+      on k.jurisdiction_code = n.jurisdiction_code and k.fiscal_year = n.fiscal_year and k.account_name = n.account_name
 ), identified as (
-    select n.*, sha256(to_json([jurisdiction_code, fiscal_year::varchar, account_name, kan_code, kou_code, moku_code])) as node_id,
+    select n.* exclude (kan_key),
+        sha256(to_json([jurisdiction_code, fiscal_year::varchar, account_name, kan_key, kou_code, moku_code])) as node_id,
         null::varchar as parent_node_id
-    from siblings n where parent_node_key is null
+    from keyed n where parent_node_key is null
     union all
     -- Subject nodes identify by kan/kou/moku numbers; a subject 目 without a printed
     -- number (e.g. zero-budget election 目) falls back to the parent-based identity
     -- like non-subject nodes, keeping every printed row.
-    select n.*,
+    select n.* exclude (kan_key),
         case when n.axis_header = n.subject_axis and n.node_kind = '款'
-             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_code, n.kou_code, n.moku_code]))
+             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_key, n.kou_code, n.moku_code]))
              when n.axis_header = n.subject_axis and n.node_kind = '項' and n.kou_code is not null
-             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_code, n.kou_code, n.moku_code]))
+             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_key, n.kou_code, n.moku_code]))
              when n.axis_header = n.subject_axis and n.node_kind = '目' and n.moku_code is not null
-             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_code, n.kou_code, n.moku_code]))
+             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_key, n.kou_code, n.moku_code]))
              else sha256(to_json([p.node_id, n.axis_header, n.node_kind, n.code_text, n.name,
                  case when n.sibling_count > 1 then n.sibling_ordinal::varchar end])) end,
         p.node_id
-    from siblings n join identified p
+    from keyed n join identified p
       on n.source_table_key = p.source_table_key and n.parent_node_key = p.node_key
 )
 select * from identified

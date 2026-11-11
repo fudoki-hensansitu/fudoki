@@ -76,7 +76,7 @@
 | `expenditure_origin` | `fiscal_origin` | `origin_id` | 冊ごとに1行。会計は持たない（1冊が最大18会計にまたがる） |
 | `expenditure_origin_link` | なし | `link_id` | 根と冊を結ぶ（品川など 245冊・359根・456組） |
 | `expenditure_subject`・`expenditure_detail` | `fiscal_expenditure_*` | 今と同じ | `expenditure_id` を足す。根で決まる列（`fiscal_year`・`document_kind`・`account_name` など）は検索のために残す |
-| `expenditure_location` | `fiscal_expenditure_location` | `row_id` | `kind`（`pdf`・`csv`）を足し、CSV は行番号の列にする |
+| `expenditure_location` | `fiscal_expenditure_location` | `line_id` | `kind`（`pdf`・`csv`）を足し、CSV は行番号の列にする |
 | `evaluation` | `project_evaluation_result` | `evaluation_id` | 1行 = 自治体・事業を行った年度。シートだけの年度も1行（件数の列は空） |
 | `evaluation_origin` | `project_origin`（`sheets`・`result`） | `origin_id` | `evaluation_id` と資料の種類を持つ |
 | `evaluation_sheet`・`evaluation_indicator`・`evaluation_indicator_value` | `project_evaluation_*` | 今と同じ | シートに `evaluation_id` を足す |
@@ -102,7 +102,7 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 | 歳出 | `POST /v1/expenditures/subjects:search`・`POST /v1/expenditures/details:search`・`GET /v1/expenditures/lines/{line_id}`（科目か内訳と、その直下。印字の位置と出典まで）・`GET /v1/expenditures/origins/{origin_id}/pdf` | `search_expenditure_subjects`・`search_expenditure_details`・`get_expenditure_line` |
 | 事業評価 | `GET /v1/evaluations/{evaluation_id}`（根・件数・シートの要約。シートはページ）・`GET /v1/evaluations/sheets/{sheet_id}`（指標まで）・`POST /v1/evaluations/sheets:search` | `get_evaluation`・`get_evaluation_sheet`・`search_evaluation_sheets` |
 | 予算案 | `GET /v1/budget-proposals/{budget_proposal_id}`（施策まで）・`POST /v1/budget-proposals/measures:search` | `get_budget_proposal`・`search_budget_measures` |
-| 事業 | `GET /v1/projects/{project_id}`（年度と、付いた評価シート・施策の ID まで）・`POST /v1/projects:search` | `get_project`・`search_projects` |
+| 事業 | `GET /v1/projects/{project_id}`（年度と直下の事業まで。評価シート・施策は返さない）・`POST /v1/projects:search` | `get_project`・`search_projects` |
 
 - `get_expenditure_line` は `line`（`kind` が `subject` か `detail` の union。列は表の行のまま）・`child_subjects`（科目のときの子の科目）・`details`（科目なら直下、内訳なら子を breakdown ごとに。ページ）・`locations`・`origins` を返す。科目と内訳の取得を1つにし、View の drill（行を押して直下を開く）を1回の呼び出しで描けるようにした。`locations` は表の行（`kind` と頁・枠・行番号の列）のままにし、ドメインの `Location` の union には組み直さない（View の出典の表示がこの列を読む）。
 - 自治体の一覧の行は要約（人口の推移・収録範囲・事業評価と予算案の ID と年度。`evaluations`・`budget_proposals` が `{evaluation_id|budget_proposal_id, fiscal_year}` の配列で、`get_evaluation`・`get_budget_proposal` に渡す ID をここで引ける）にし、会計ごとの出典は `GET /v1/jurisdictions/{jurisdiction_code}` だけが返す（今の `view=FULL` はなくす）。MCP には一覧だけを出す（出典は検索の結果の `origins` に載る）。

@@ -146,5 +146,6 @@ select case node_kind
     amount_source_page,
     null::double as amount_source_x0, null::double as amount_source_y0,
     null::double as amount_source_x1, null::double as amount_source_y1,
-    kan_name, kou_name
+    kan_name, kou_name,
+    null::bigint as amendment_yen  -- a council amendment applies to PDF budget books only
 from linked

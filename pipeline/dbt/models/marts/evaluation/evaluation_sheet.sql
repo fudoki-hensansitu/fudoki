@@ -55,7 +55,7 @@ select s.sheet_id, sha256(to_json(['evaluation', s.jurisdiction_code, s.fiscal_y
     s.department, s.division,
     s.budget_thousand * 1000 as budget_yen, s.settled_thousand * 1000 as settled_yen,
     s.grade_code, s.grade_label, s.direction,
-    j.subject_id, coalesce(p.detail_id, d.detail_id) as detail_id
+    j.subject_id as expenditure_subject_id, coalesce(p.detail_id, d.detail_id) as expenditure_detail_id
 from sheet s
 left join subject j using (sheet_id)
 left join detail d using (sheet_id)

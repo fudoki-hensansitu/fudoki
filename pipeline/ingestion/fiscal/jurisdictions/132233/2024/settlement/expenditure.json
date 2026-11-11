@@ -143,7 +143,7 @@
     {
       "table_id": "sewer-expenditure-detail",
       "conversion_id": "sewer",
-      "input_fingerprint": "029ea026da7449e784aa440e2976c990a9897186ae96def27e6cbfa07e2c4116",
+      "input_fingerprint": "499ac277bb511d4604ad69c91c9d97d014770b250142211fd3554aa5534445e6",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
