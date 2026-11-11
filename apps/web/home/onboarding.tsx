@@ -2,7 +2,7 @@
 // 1 住んでいるまちを選ぶ（名前／現在地）→ 2 選んだまちの要点を一枚で見せる（価値の瞬間）→ ツアー（tour.tsx）→ チェックリスト（1つ目は済み、閉じられる）。
 // ほかのまちを見る導線として、まちの検索はホームに常に出す。「ホーム」「見るまち」のような通じない言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
 import * as React from 'react'
-import { ArrowRightIcon, CheckIcon, MagnifyingGlassIcon, NavigationArrowIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, CheckIcon, NavigationArrowIcon, XIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
@@ -129,10 +129,6 @@ export function OtherTowns({ entries, className }: { entries: MapEntry[]; classN
   if (!entries.length) return null
   return (
     <section className={cn('ob-rise', className)} aria-label="ほかのまちを見る">
-      <h2 className="mb-2 flex items-center gap-1.5 text-[14px] font-bold text-muted-foreground">
-        <MagnifyingGlassIcon className="size-4" />
-        ほかのまちを見る
-      </h2>
       <TownPicker entries={entries} onPick={(e) => visit(e.path)} placeholder="自治体名で探す（例：世田谷）" />
     </section>
   )
