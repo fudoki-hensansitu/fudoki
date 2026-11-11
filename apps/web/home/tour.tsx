@@ -164,6 +164,19 @@ export function Tour({ steps, onDone, offset = 0, total }: { steps: TourStep[]; 
     if (shown) card.current?.focus({ preventScroll: true })
   }, [i, live, shown])
 
+  // aria-modal なので、フォーカスはカードと光らせた所（押す・選ぶの歩）の中にとどめる。覆いは pointer しか止めないので、Tab で外へ出たらカードへ戻す
+  React.useEffect(() => {
+    if (!shown || !step) return
+    const onFocus = (e: FocusEvent) => {
+      const t = e.target as Node | null
+      if (!t || card.current?.contains(t)) return
+      if ((step.mode === 'click' || step.mode === 'select') && find(step.target)?.contains(t)) return
+      card.current?.focus({ preventScroll: true })
+    }
+    document.addEventListener('focusin', onFocus)
+    return () => document.removeEventListener('focusin', onFocus)
+  }, [shown, step])
+
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') onDone()

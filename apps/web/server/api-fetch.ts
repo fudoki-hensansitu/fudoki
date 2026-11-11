@@ -9,12 +9,6 @@ export async function apiPost<T>(env: Env, path: string, body: unknown): Promise
   return (await r.json()) as T
 }
 
-export async function apiGet<T>(env: Env, path: string): Promise<T> {
-  const r = await apiFetch(env)(`${API_ORIGIN}${path}`)
-  if (!r.ok) throw new Error(`${path} ${r.status}`)
-  return (await r.json()) as T
-}
-
 /** next_page_token が無くなるまで読む（頁数に上限を置く） */
 export async function apiPostAll<R extends { next_page_token?: string | null }>(env: Env, path: string, body: Record<string, unknown>, maxPages = 5): Promise<R[]> {
   const out: R[] = []

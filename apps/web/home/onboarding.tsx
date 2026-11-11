@@ -130,16 +130,25 @@ export function OtherTowns({ entries, className }: { entries: MapEntry[]; classN
   )
 }
 
+/**
+ * 頁の見出しと説明。サーバーの HTML にも載せるため、まちの有無に関わらず描く。
+ * 見せるのはまちを選んでいないときだけで、それ以外（読み込み中・ダッシュボード）は読み上げだけに残す
+ */
+export function Intro({ shown }: { shown: boolean }) {
+  return (
+    <header className={shown ? 'ob-rise mb-6' : 'sr-only'}>
+      {/* スマホはサイドバーが無くロゴが見えないので、見出しの上に出す。PC はサイドバーの頭にある */}
+      {shown ? <Logo className="mb-5 block h-7 w-auto text-primary md:hidden" /> : null}
+      <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">まちのお金、何に使ってる？</h1>
+      <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
+    </header>
+  )
+}
+
 /** まちを選んでいないときの画面。reveal があれば（まちを選んだ直後）2歩目の要点を出す */
 export function Empty({ entries, onPick, reveal }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; reveal: React.ReactNode }) {
   return (
     <>
-      <header className="ob-rise mb-6">
-        {/* スマホはサイドバーが無くロゴが見えないので、見出しの上に出す。PC はサイドバーの頭にある */}
-        <Logo className="mb-5 block h-7 w-auto text-primary md:hidden" />
-        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">まちのお金、何に使ってる？</h1>
-        <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
-      </header>
       {reveal ? <div key="reveal">{reveal}</div> : <AskTown entries={entries} onPick={onPick} first />}
       <OtherTowns entries={entries} className="mt-6" />
     </>

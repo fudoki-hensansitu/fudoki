@@ -16,7 +16,7 @@ import { Amt, FieldIcon, perHeadText } from './parts'
 import { searchHref } from '../search/search'
 import { useMyTown, type Town } from './towns'
 import { Tour, useTour, type TourStep } from './tour'
-import { AskTown, OtherTowns, Checklist, Empty, Steps, startChecklist, type CheckItem } from './onboarding'
+import { AskTown, OtherTowns, Checklist, Empty, Intro, Steps, startChecklist, type CheckItem } from './onboarding'
 
 export interface Featured {
   code: string
@@ -368,6 +368,7 @@ export function Home({ entries, featured }: HomeProps) {
     )
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
+      <Intro shown={ready && !town} />
       {/* ほかのまちを見る導線。住んでいるまちを選んだあとも、ホームの頭に常に出す（選ぶ前は Empty の中に出す） */}
       {ready && town && !changing ? <OtherTowns entries={entries} className="mb-6" /> : null}
       {body}

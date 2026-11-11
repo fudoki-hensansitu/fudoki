@@ -77,5 +77,3 @@ export function useMyTown() {
   }, [])
   return { ready, town, recent: recent.filter((r) => r.code !== town?.code), set: setMyTown }
 }
-
-export const emblemSrc = (code: string) => `/jurisdictions/${code}/emblem.svg`
