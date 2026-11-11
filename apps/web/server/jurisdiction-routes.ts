@@ -13,6 +13,8 @@ import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
+import { loadAppData } from './app-data'
+import type { Snapshot } from '../jurisdiction/app/data'
 import { loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, shownSettlementYears, type CatalogEntry, type DocumentKind } from './jurisdiction'
 
 const TTL = 3600
@@ -178,5 +180,19 @@ export async function flowResponse(env: Env, request: Request, { code, year, dep
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '決算データを表示できませんでした。少し待ってからもう一度開いてください。'))
+  }
+}
+
+/** 自治体の頁（アプリ型）のデータ（/api/jurisdictions/app/:code）。年度ごとの款項目・事業・施策・評価シート */
+export async function appDataResponse(env: Env, request: Request, code: string): Promise<Response> {
+  try {
+    if (!/^\d{6}$/.test(code)) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コードの形が違います')
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
+    const entry = (await catalog(env)).find((e) => e.code === code)
+    if (!entry) throw new HttpError(404, 'NOT_FOUND', 'この自治体は収録されていません')
+    return json(await memo<Snapshot>(`app-${code}-${entry.initialYears.at(-1)}-${entry.settlementYears.at(-1)}`, () => loadAppData(env, entry)))
+  } catch (e) {
+    if (e instanceof HttpError) return errorResponse(e)
+    return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
   }
 }

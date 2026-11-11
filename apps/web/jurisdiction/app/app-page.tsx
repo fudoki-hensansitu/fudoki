@@ -45,12 +45,17 @@ import { cn } from '@/lib/utils'
 import { Link } from '../../nav/link'
 import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon, NewIcon, PlanIcon, SizeIcon, StopIcon, UpIcon } from '../fresh-icons'
 import { YearPicker } from '../year-picker'
-import { Overview as SankeyOverview } from '../sankey'
-import { formatPeople, reiwa, yearName, type Drill } from '../types'
+import { Flow } from '../flow'
+import { pageHead } from '../html'
+import { EMBLEMS } from '../emblems'
+import { assetPath } from '../profiles'
+import { rememberJurisdiction } from '../../home/recent'
+import { Hint } from '@/components/hint'
+import { AskDock, Elsewhere } from '../page'
+import { formatAsOf, formatPeople, reiwa, yearName, yearPath, type FlowView, type PageData, type YearTotal } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
-const YEARS = [2026, 2025, 2024]
 const FIELD_ICON: Record<string, Icon> = {
   bosai: ShieldCheckIcon, fukushi: HandHeartIcon, kyoiku: StudentIcon, iryo: FirstAidKitIcon, kurashi: HouseLineIcon,
   sangyo: StorefrontIcon, kankyo: LeafIcon, bunka: BasketballIcon, gyosei: BankIcon, other: DotsThreeCircleIcon,
@@ -86,8 +91,8 @@ const perHead = (y: number, pop: number) => {
 const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
-type Selected = { kind: 'field' | 'kan' | 'project' | 'measure' | 'sheet'; id: string } | null
-type Ctx = { d: Snapshot; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go }
+type Selected = { kind: 'field' | 'project' | 'measure' | 'sheet'; id: string } | null
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go }
 const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
 
@@ -291,48 +296,43 @@ function GradeCards({ sheets, value, onChange }: { sheets: EvalSheet[]; value?: 
   )
 }
 
-/** 款→項のサンキー図。押すと款（と項）の詳細を開き、目とその下の事業まで下りていける */
-function KanFlow() {
-  const { v, d, select } = useApp()
-  const flows: Drill[] = React.useMemo(
-    () => d.years[String(v.year)]!.kan.map((k, i) => ({ kan: { id: `k${i}`, name: k.name, yen: k.yen }, kou: k.kou.map((q, j) => ({ id: `k${i}-${j}`, name: q.name, yen: q.yen, moku: [] })) })),
-    [d, v.year],
-  )
-  return (
-    <Card className="bg-background px-4 py-3 ring-1 ring-border">
-      <SankeyOverview flows={flows} total={v.total} height={600} onSelect={(kan, kou) => select({ kind: 'kan', id: kou == null ? `${kan}` : `${kan}.${kou}` })} />
-    </Card>
-  )
-}
+/** お金の流れの分け方。分野（COFOG の大分類）か、予算書・決算書の款・項のまま */
+const VIEWS: { key: FlowView; label: string }[] = [
+  { key: 'cofog', label: '分野' },
+  { key: 'kan', label: '款・項' },
+]
 
-/** 予算。事業は下から積み上げる見方、こちらは款→項→目と大きい項目から下りていく見方 */
+/** 予算。事業は下から積み上げる見方、こちらは大きい項目から下りていく見方。決算のある年度は決算、無ければ当初予算の流れ */
 function MoneyTab() {
-  const { v, d } = useApp()
-  const prev = d.years[String(v.year - 1)]
+  const { v, page } = useApp()
+  const [view, setView] = React.useState<FlowView>('cofog')
+  const settled = page.years.find((y) => y.year === v.year)
+  const budget = settled ? undefined : page.budgets.find((b) => b.year === v.year)
+  const total: YearTotal | undefined = settled ?? (budget ? { year: v.year, yen: budget.yen, kan: budget.kan } : undefined)
+  const label = budget ? '当初予算' : '決算'
+  const tabs = (
+    <div className="flex items-center justify-between gap-3">
+      <span className="text-base">{reiwa(v.year)}の{label}</span>
+      <ToggleGroup value={[view]} onValueChange={(x) => x[0] && setView(x[0] as FlowView)} variant="outline" size="sm" spacing={0}>
+        {VIEWS.map((x) => <ToggleGroupItem key={x.key} value={x.key}>{x.label}</ToggleGroupItem>)}
+      </ToggleGroup>
+    </div>
+  )
+  const summary = total ? <Amt yen={total.yen} className="text-[26px] leading-snug text-primary" /> : null
   return (
-    <div className="flex flex-col gap-6">
-      <div className="grid gap-3 sm:grid-cols-2">
-        <Card className="gap-0 bg-card px-5 py-[18px] ring-0">
-          <span className="text-xs text-muted-foreground">{reiwa(v.year)}の当初予算（一般会計）</span>
-          <Amt yen={v.total} className="mt-0.5 text-[34px] leading-tight text-primary" />
-          <span className="text-xs text-muted-foreground">{perHead(v.total, d.pop)}</span>
-        </Card>
-        <Card className="gap-0 bg-card px-5 py-[18px] ring-0">
-          <span className="text-xs text-muted-foreground">{prev ? `${reiwa(v.year - 1)}の当初予算から` : '前の年度'}</span>
-          {prev ? <span className="mt-0.5 text-[34px] leading-tight tabular-nums">{v.total >= prev.total ? '+' : '−'}<Amt yen={Math.abs(v.total - prev.total)} /></span> : <span className="mt-2 text-sm text-muted-foreground">収録していません</span>}
-        </Card>
-      </div>
-      <section>
-        <SectionHead title="款から項へ" sub="押すと目と事業まで見られます" />
-        <KanFlow />
-      </section>
-      {v.origin ? <p className="text-xs text-muted-foreground">出典 <Ext href={v.origin}>{v.originTitle ?? '予算書'}</Ext></p> : null}
+    <div className="flex flex-col gap-3">
+      {total ? (
+        <Flow key={`${v.year}-${view}`} data={page} total={total} view={view} phase={budget ? 'initial' : 'settlement'} tabs={tabs} summary={summary} />
+      ) : (
+        <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の決算・予算は、まだ収録していません</p>
+      )}
+      <p className="text-[11px] text-muted-foreground">分野は使い道を目的ごとに分ける世界共通の分類（COFOG）で、分け方は風土記の判断です。款・項は予算書・決算書の分け方のままです。</p>
     </div>
   )
 }
 
 function Overview({ go }: { go: Go }) {
-  const { v, select } = useApp()
+  const { v, select, page } = useApp()
   return (
     <div className="flex flex-col gap-8">
       <div className="grid gap-3 md:grid-cols-[1.3fr_1fr]">
@@ -370,6 +370,7 @@ function Overview({ go }: { go: Go }) {
           <GradeCards sheets={v.sheets} onChange={(g) => go('projects', { filter: 'eval', grade: g })} />
         </section>
       ) : null}
+      <Elsewhere data={page} />
     </div>
   )
 }
@@ -457,7 +458,7 @@ const Ext = ({ href, children }: { href: string; children: React.ReactNode }) =>
 )
 
 function ProjectDetail({ p }: { p: Proj }) {
-  const { v, d, select } = useApp()
+  const { v, d, select , years } = useApp()
   const ys = String(v.year)
   const now = p.y[ys]?.b
   const prev = p.y[String(v.year - 1)]?.b
@@ -494,7 +495,7 @@ function ProjectDetail({ p }: { p: Proj }) {
       <DetailSection icon={CalendarBlankIcon} title="年度ごと">
         <div className="grid grid-cols-[auto_1fr_1fr] text-[13px]">
           <span className="py-1.5 text-[11px]" /><span className="py-1.5 text-right text-[11px] text-muted-foreground">当初予算</span><span className="px-1 py-1.5 text-right text-[11px] text-muted-foreground">決算</span>
-          {YEARS.slice().reverse().map((y) => (
+          {years.slice().reverse().map((y) => (
             <div key={y} className={cn('col-span-full grid grid-cols-subgrid', y === v.year && 'bg-card')}>
               <Separator className="col-span-full" />
               <span className="px-1 py-2">{r(y)}</span>
@@ -599,48 +600,6 @@ function SheetDetail({ s }: { s: EvalSheet }) {
   )
 }
 
-/** 款の詳細。項ごとに目を並べ、目の下にその目の事業を出す。項を押して開いたときはその項だけ */
-function KanDetail({ id }: { id: string }) {
-  const { v, d } = useApp()
-  const [ki, qi] = id.split('.').map(Number) as [number, number | undefined]
-  const k = d.years[String(v.year)]!.kan[ki!]
-  if (!k) return null
-  const kous = qi == null ? k.kou : [k.kou[qi]!]
-  const projectsOf = (kou: string, moku: string) => v.current.filter((p) => p.path[0] === k.name && p.path[1] === kou && p.path[2] === moku)
-  const head = qi == null ? k : k.kou[qi]!
-  return (
-    <>
-      {qi != null ? <p className="text-xs text-muted-foreground">{k.name}</p> : null}
-      <h2 className="text-xl font-semibold leading-snug">{head.name}</h2>
-      <div className="mt-4">
-        <span className="text-xs text-muted-foreground">{reiwa(v.year)}の当初予算</span>
-        <Amt yen={head.yen} className="block text-4xl leading-tight text-primary" />
-        <span className="text-xs text-muted-foreground">全体の {((head.yen / v.total) * 100).toFixed(1)}% · {perHead(head.yen, d.pop)}</span>
-      </div>
-      {kous.map((q) => (
-        <DetailSection key={q.name} icon={TreeStructureIcon} title={qi == null ? q.name : '目'} count={qi == null ? <Amt yen={q.yen} className="text-xs" /> : undefined}>
-          <div className="flex flex-col gap-4">
-            {q.moku.map((m) => {
-              const ps = projectsOf(q.name, m.name)
-              return (
-                <div key={m.name}>
-                  <div className="flex items-baseline justify-between gap-3 px-1 pb-1">
-                    <span className="text-[13px] font-semibold">{m.name}</span>
-                    <Amt yen={m.yen} className="text-sm" />
-                  </div>
-                  <Separator />
-                  {ps.length ? <Rows>{ps.map((p) => <ProjectRow key={p.id} p={p} />)}</Rows> : <p className="px-1 py-2 text-xs text-muted-foreground">事業の内訳はありません</p>}
-                </div>
-              )
-            })}
-          </div>
-        </DetailSection>
-      ))}
-      {v.origin ? <DetailSection icon={FileTextIcon} title="出典"><Ext href={v.origin}>{v.originTitle ?? '予算書'}</Ext></DetailSection> : null}
-    </>
-  )
-}
-
 /** 分野の詳細。分野はまとめのタイルから開く */
 function FieldDetail({ id }: { id: string }) {
   const { v, d, go, select } = useApp()
@@ -687,10 +646,10 @@ function FieldDetail({ id }: { id: string }) {
 
 function Detail({ sel }: { sel: NonNullable<Selected> }) {
   const { d } = useApp()
-  const kind = { field: ['分野', ChartPieSliceIcon], kan: ['予算の科目', TreeStructureIcon], project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon] } as const
+  const kind = { field: ['分野', ChartPieSliceIcon], project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon] } as const
   const [label, I] = kind[sel.kind]
   const body =
-    sel.kind === 'field' ? <FieldDetail id={sel.id} /> : sel.kind === 'kan' ? <KanDetail id={sel.id} /> : sel.kind === 'project' ? <ProjectDetail p={d.projects.find((p) => p.id === sel.id)!} /> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
+    sel.kind === 'field' ? <FieldDetail id={sel.id} /> : sel.kind === 'project' ? <ProjectDetail p={d.projects.find((p) => p.id === sel.id)!} /> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
   return (
     <div key={`${sel.kind}${sel.id}`} className="app-in">
       <p className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground"><I className="size-3.5" aria-hidden="true" />{label}</p>
@@ -738,15 +697,31 @@ const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'money', label: '予算', icon: TreeStructureIcon },
 ]
 
-export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emblem }: { vision: string; prefecture: string; prefecturePath: string; officialUrl: string; emblem: string }) {
+/** 頁の年度（新しい順に3年）。決算の年度と、決算より後の当初予算の年度 */
+const YEAR_COUNT = 3
+const pageYearsOf = (data: PageData) => [...new Set([...data.years.map((y) => y.year), ...data.budgets.map((b) => b.year)])].sort((a, b) => b - a).slice(0, YEAR_COUNT)
+/** 今の URL から年度の段を除いた、自治体の頁の path */
+const basePath = () => location.pathname.replace(/\/\d{4}\/?$/, '')
+
+export function AppPage({ data, sitekey, initialYear }: { data: PageData; sitekey: string; initialYear?: number }) {
+  const vision = data.profile?.vision?.text
+  const emblem = EMBLEMS[data.code] ? assetPath(data.code, 'emblem.svg') : null
+  const years = React.useMemo(() => pageYearsOf(data), [data])
   const [d, setD] = React.useState<Snapshot>()
   const [failed, setFailed] = React.useState(false)
+  React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: basePath() }), [data.code, data.name])
   React.useEffect(() => {
-    fetch('/prototype/shinagawa.json')
+    fetch(`/api/jurisdictions/app/${data.code}`)
       .then((r) => (r.ok ? (r.json() as Promise<Snapshot>) : Promise.reject(new Error(String(r.status)))))
       .then(setD, () => setFailed(true))
-  }, [])
-  const [year, setYear] = React.useState(YEARS[0]!)
+  }, [data.code])
+  const [year, setYearState] = React.useState(initialYear && years.includes(initialYear) ? initialYear : years[0]!)
+  // 年度を選んだら、その年度の頁の path にする（既定の年度は自治体の頁そのもの）。頁は読み直さないので title も合わせる
+  const setYear = (y: number) => {
+    setYearState(y)
+    history.replaceState(null, '', yearPath(basePath(), y, years[0]!))
+    document.title = pageHead(data, y === years[0] ? undefined : y).title
+  }
   const [tab, setTab] = React.useState<TabKey>('overview')
   const [field, setField] = React.useState('all')
   const [filter, setFilter] = React.useState('all')
@@ -754,7 +729,7 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
   const [selected, select] = React.useState<Selected>(null)
   const wide = useMedia('(min-width: 1280px)')
   const phone = useMedia('(max-width: 767px)')
-  const v = React.useMemo(() => (d ? yearView(d, year) : undefined), [d, year])
+  const v = React.useMemo(() => (d?.years[year] ? yearView(d, year) : undefined), [d, year])
   const projects = React.useMemo(() => new Map((d?.projects ?? []).map((p) => [p.id, p])), [d])
 
   // タブの真上の目印。これが画面の上へ消えたら、タブが上に貼り付いている
@@ -813,18 +788,22 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
   const header = (
     <header className="relative grid grid-cols-[80px_minmax(0,1fr)] items-end gap-4 py-7 sm:grid-cols-[108px_minmax(0,1fr)] sm:gap-6">
       <div className="col-span-full -mb-2 justify-self-end sm:absolute sm:right-0 sm:top-7 sm:mb-0">
-        {phone ? <YearMenu years={YEARS} current={year} onChange={setYear} /> : <YearPicker years={YEARS} current={year} onChange={setYear} />}
+        {phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}
       </div>
       <div className="grid size-20 place-items-center rounded-xl border bg-emblem p-2.5 sm:size-[108px] sm:rounded-2xl sm:p-4">
-        <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" />
+        {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
       </div>
       <div className="flex min-w-0 flex-col gap-3">
-        <h1 className="text-[clamp(1.75rem,1.4rem+1.2vw,2.25rem)] font-normal leading-tight">品川区</h1>
-        <p className="text-[17px]">{vision}</p>
+        <h1 className="text-[26px] font-normal leading-tight sm:text-[30px]">{data.name}</h1>
+        {vision ? <p className="text-[17px]">{vision}</p> : null}
         <div className="flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
-          <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<Link href={prefecturePath} />}>{prefecture}</Button></span>
-          <span className="inline-flex items-center gap-1 text-foreground sm:gap-1.5"><UsersIcon className="size-3.5 text-muted-foreground sm:size-4" aria-hidden="true" />{formatPeople(d?.pop ?? 415644)}</span>
-          <span className="inline-flex items-center gap-1 sm:gap-1.5"><GlobeIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<a href={officialUrl} target="_blank" rel="noopener" />}>公式サイト</Button></span>
+          <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button></span>
+          {data.population ? (
+            <Hint label={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
+              <span className="inline-flex items-center gap-1 text-foreground sm:gap-1.5"><UsersIcon className="size-3.5 text-muted-foreground sm:size-4" aria-hidden="true" /><span className="sr-only">人口 </span>{formatPeople(data.population.people)}</span>
+            </Hint>
+          ) : null}
+          {data.officialUrl ? <span className="inline-flex items-center gap-1 sm:gap-1.5"><GlobeIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<a href={data.officialUrl} target="_blank" rel="noopener" />}>公式サイト</Button></span> : null}
         </div>
       </div>
     </header>
@@ -853,11 +832,11 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
                 </TabsTrigger>
               ))}
             </TabsList>
-              {stuck ? <div className="app-in shrink-0">{phone ? <YearMenu years={YEARS} current={year} onChange={setYear} /> : <YearPicker years={YEARS} current={year} onChange={setYear} />}</div> : null}
+              {stuck ? <div className="app-in shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div> : null}
             </div>
           </div>
           {v ? (
-            <AppContext.Provider value={{ d: d!, v, select, selected, projects, go }}>
+            <AppContext.Provider value={{ d: d!, page: data, years, v, select, selected, projects, go }}>
               {phone ? (
                 <Carousel setApi={setApi} opts={{ startIndex: index }} className="pt-5">
                   <CarouselContent className="-ml-4 items-start transition-[height] duration-300" style={{ height }}>
@@ -908,6 +887,7 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
           )}
         </Tabs>
       </div>
+      <AskDock name={data.name} sitekey={sitekey} year={year} section={TABS.find((t) => t.key === tab)?.label} />
     </div>
   )
 }

@@ -462,7 +462,7 @@ function PlaceCard({ href, name, logo, icon: Icon, className }: { href: string; 
 }
 
 /** 最後の節。都道府県・近くの自治体（紋章があれば紋章）・全国の一覧を同じカードで並べる */
-function Elsewhere({ data }: { data: PageData }) {
+export function Elsewhere({ data }: { data: PageData }) {
   return (
     <Section id="elsewhere" title="ほかの自治体も見る">
       <ul className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
@@ -1067,7 +1067,7 @@ function BackToTop({ hidden }: { hidden: boolean }) {
   )
 }
 
-function AskDock({ name, sitekey, year, section }: { name: string; sitekey: string; year: number; section?: string }) {
+export function AskDock({ name, sitekey, year, section }: { name: string; sitekey: string; year: number; section?: string }) {
   const [open, setOpen] = React.useState(true)
   const [chat, setChat] = React.useState<{ id: string; session: StoredSession }>()
   const [drawer, setDrawer] = React.useState(false)

@@ -3,7 +3,7 @@ import './jurisdiction.css'
 import { Link } from '../nav/link'
 import { RequestTown } from '../nav/request-town'
 import type { JurisdictionProps } from '../server/pages'
-import { Page } from './page'
+import { AppPage } from './app/app-page'
 import { INDEX_PATH } from './types'
 
 export function JurisdictionView(props: JurisdictionProps) {
@@ -36,7 +36,7 @@ export function JurisdictionView(props: JurisdictionProps) {
   return (
     <div id="j-app">
       {/* 自治体を移ると年度・開いた款などの状態を持ち越さないよう、自治体ごとに描き直す */}
-      <Page key={props.data.code} data={props.data} sitekey={props.sitekey} initialYear={props.year} />
+      <AppPage key={props.data.code} data={props.data} sitekey={props.sitekey} initialYear={props.year} />
     </div>
   )
 }

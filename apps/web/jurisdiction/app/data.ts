@@ -1,4 +1,4 @@
-// 試作（アプリ型の自治体の頁）のデータ。本番 API から取った品川区の写し（public/prototype/shinagawa.json）を年度ごとの見え方に組み直す。
+// 自治体の頁（アプリ型）のデータ。server/app-data.ts が API から組んだものを、年度ごとの見え方に組み直す。
 // 事業・施策（予算案のプレス発表）・評価シートの3つのオブジェクトを、事業を中心につなぐ
 import { DOMAIN_FRAMES, OTHER_FRAME, type DomainFrame } from '../domains'
 
@@ -22,7 +22,7 @@ export type Snapshot = {
   code: string
   name: string
   pop: number
-  years: Record<string, { kan: Kan[]; total: number; fields: Record<string, number>; origin: string | null; originTitle: string | null }>
+  years: Record<string, { /** 当初予算（initial）か、当初予算の無い年度の決算（settlement）か */ kind: 'initial' | 'settlement'; kan: Kan[]; total: number; fields: Record<string, number>; origin: string | null; originTitle: string | null }>
   projects: Proj[]
   measures: Measure[]
   sheets: Sheet[]
@@ -41,12 +41,14 @@ export function yearView(d: Snapshot, year: number) {
   const hasPrev = !!d.years[prev]
   const y = d.years[ys]!
   const fields: Field[] = [...DOMAIN_FRAMES, OTHER_FRAME].map((f) => ({ ...f, yen: y.fields[f.id] ?? 0 })).filter((f) => f.yen > 0).sort(byYenOtherLast)
-  const budget = (p: Proj) => p.y[ys]?.b
+  // 当初予算の無い年度は決算の額で並べる
+  const amt = (p: Proj, year: string) => (d.years[year]?.kind === 'settlement' ? p.y[year]?.s : p.y[year]?.b)
+  const budget = (p: Proj) => amt(p, ys)
   const current = d.projects.filter((p) => budget(p) != null).sort((a, b) => budget(b)! - budget(a)!)
-  const ended = hasPrev ? d.projects.filter((p) => p.y[prev]?.b != null && budget(p) == null).sort((a, b) => b.y[prev]!.b! - a.y[prev]!.b!) : []
+  const ended = hasPrev ? d.projects.filter((p) => amt(p, prev) != null && budget(p) == null).sort((a, b) => amt(b, prev)! - amt(a, prev)!) : []
   const measures = d.measures.filter((m) => m.fy === year)
   const measuresOf = group(measures, (m) => m.project)
-  const appeared = (p: Proj) => hasPrev && budget(p) != null && p.y[prev]?.b == null
+  const appeared = (p: Proj) => hasPrev && budget(p) != null && amt(p, prev) == null
   const isNew = (p: Proj) => appeared(p) || (measuresOf.get(p.id) ?? []).some((m) => m.new)
   const currentIds = new Set(current.map((p) => p.id))
   const fresh = measures.filter((m) => m.new).sort((a, b) => (b.yen ?? 0) - (a.yen ?? 0))
@@ -68,7 +70,9 @@ export function yearView(d: Snapshot, year: number) {
     sheets,
     sheetsOf: group(sheets, (s) => s.project),
     isNew,
-    isEnded: (p: Proj) => hasPrev && p.y[prev]?.b != null && budget(p) == null,
+    isEnded: (p: Proj) => hasPrev && amt(p, prev) != null && budget(p) == null,
+    kind: y.kind,
+    amount: (p: Proj, year = ys) => amt(p, year),
   }
 }
 
