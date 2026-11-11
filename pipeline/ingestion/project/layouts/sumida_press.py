@@ -8,9 +8,8 @@ from __future__ import annotations
 
 import re
 
-from ingestion.project.layouts.press import PressItem, lines, norm, text, words
+from ingestion.project.layouts.press import PressItem, amount_text, lines, norm, text, words
 
-AMOUNT = re.compile(r'([\d,]+)(千円|万円)')
 BLACK = ((0,), (0.0,), (0, 0, 0), (0.0, 0.0, 0.0), (0, 0, 0, 1), (0.0, 0.0, 0.0, 1.0))
 
 
@@ -24,11 +23,9 @@ def read_page(page, number: int) -> list[PressItem]:
     contact = next((w['x0'] for w in items if norm(w['text']) == '問合せ' and w['top'] < 80), page.width)
     near = sorted((w for w in items if label['top'] - 5 < w['top'] < label['top'] + 50 and w['x0'] > label['x0'] - 20
                    and w['size'] >= 16 and w['x1'] < contact - 5), key=lambda w: (w['top'], w['x0']))
-    match = AMOUNT.search(text(near))
-    if not match:
+    amount = amount_text(text(near))
+    if amount is None:
         raise ValueError(f'p{number}: 予算額が読めない')
-    value = int(match.group(1).replace(',', ''))
-    amount = value if match.group(2) == '千円' else value * 10
     big = [w for w in items if w['size'] >= 20 and w['x1'] < label['x0'] and w['top'] < label['top'] + 70]
     name = ''.join(text(r) for r in lines(big, tolerance=6))
     if not name:

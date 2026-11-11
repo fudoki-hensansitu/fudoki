@@ -83,7 +83,7 @@ def read_page(page, number: int) -> list[PressItem]:
             else:
                 parts = [w for w in items if w['size'] < 7 and DIGITS.match(norm(w['text']))
                          and anchor['top'] - 3 < w['top'] < anchor['top'] + 30 and w['x0'] > anchor['x0']]
-                amount = sum(int(norm(w['text']).replace(',', '')) for w in parts)
+                amount = sum(int(norm(w['text']).replace(',', '')) for w in parts) if parts else None
         tags = {norm(w['text']) for w in region if w['size'] < 8 and w['x1'] < 55 and w['top'] > rows[0][0]['top'] - 12}
         out.append(PressItem(number, name, [name], '新規' in tags, amount, [], len(out) + 1))
         previous = anchor['top'] + 30
