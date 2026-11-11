@@ -1,5 +1,5 @@
 // 自治体の紋章（都章・区章・市章・町村章）。SVG は public/jurisdictions/<code>/emblem.svg に置く。
-// どれも Wikimedia Commons で Public domain とされている SVG をそのまま使う。file は Commons の File 名、license は Commons の著作権タグ
+// どれも Wikimedia Commons で Public domain（CC0 を含む）とされている SVG をそのまま使う。file は Commons の File 名、license は Commons の著作権タグ。候補は Wikidata の全国地方公共団体コード（P429）の紋章の画像（P94、無ければ P158）
 /** 自治体ごとの資産（public/jurisdictions/<code>/ の紋章など）の URL */
 export const assetPath = (code: string, file: string) => `/jurisdictions/${code}/${file}`
 
