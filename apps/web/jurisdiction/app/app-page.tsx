@@ -343,7 +343,7 @@ function Overview({ go }: { go: Go }) {
     <div className="flex flex-col gap-8">
       <div className="grid gap-3 md:grid-cols-[1.3fr_1fr]">
         {/* 総額と1人あたりは横に並べ、数字の下端を揃える */}
-        <Card className="flex-row flex-wrap items-end gap-x-8 gap-y-3 bg-card px-5 py-[18px] ring-0">
+        <Card className="flex-row flex-wrap content-center items-end gap-x-8 gap-y-3 bg-card px-5 py-[18px] ring-0">
           <span className="flex flex-col">
             <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}（一般会計）</span>
             <Amt yen={v.total} className="mt-0.5 text-[40px] leading-tight text-primary max-sm:text-[34px]" />
