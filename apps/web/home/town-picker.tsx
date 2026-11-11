@@ -6,12 +6,10 @@ import { InputGroupAddon } from '@/components/ui/input-group'
 import { cn } from '@/lib/utils'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { RequestTown } from '../nav/request-town'
+import { townMatches } from './towns'
 
 const emblem = (code: string) => `/jurisdictions/${code}/emblem.svg`
-const matches = (e: MapEntry, q: string) => {
-  const s = q.trim()
-  return !s || e.name.includes(s) || e.path.includes(s.toLowerCase())
-}
+const matches = townMatches
 
 /** 何か入力していて、当たる自治体が1つも無い */
 const noMatch = (entries: MapEntry[], q: string) => q.trim() !== '' && !entries.some((e) => matches(e, q))

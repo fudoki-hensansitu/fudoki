@@ -6,13 +6,15 @@ import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSideb
 import { Command, CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { Item } from './site-nav'
-import { loadTowns } from '../home/towns'
+import { loadTowns, townMatches } from '../home/towns'
 
 /** まちを探す。欄を押すか ⌘K で、画面の中央に候補のパレット（shadcn の Command）を開く。選んだまちの頁へ移る */
 function TownSearch() {
   const { state, isMobile } = useSidebar()
   const { visit } = useRouter()
   const [entries, setEntries] = React.useState<MapEntry[]>([])
+  // cmdk の filter は value（コード）しか渡さないので、コードから自治体を引く
+  const byKey = React.useMemo(() => new Map(entries.map((e) => [e.code, e])), [entries])
   // 一覧は空では返らないので、読み終えて空なら取得に失敗している
   const [loaded, setLoaded] = React.useState(false)
   const [open, setOpen] = React.useState(false)
@@ -38,7 +40,7 @@ function TownSearch() {
   }
   const palette = (
     <CommandDialog open={open} onOpenChange={setOpen} title="まちを探す" description="自治体名で探して、そのまちの頁を開きます">
-      <Command filter={(value, q) => (value.includes(q.trim().toLowerCase()) ? 1 : 0)}>
+      <Command filter={(value, q) => (townMatches(byKey.get(value) ?? { name: value, prefecture: '', path: '' }, q) ? 1 : 0)}>
         <CommandInput placeholder="自治体名で探す（例：品川）" />
         <CommandList>
           <CommandEmpty>
@@ -53,7 +55,7 @@ function TownSearch() {
             )}
           </CommandEmpty>
           {entries.map((e) => (
-            <CommandItem key={e.code} value={`${e.name} ${e.path}`} onSelect={() => pick(e)}>
+            <CommandItem key={e.code} value={e.code} onSelect={() => pick(e)}>
               {e.name}
               <span className="text-[11px] text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</span>
             </CommandItem>
