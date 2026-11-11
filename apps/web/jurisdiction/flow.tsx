@@ -1,6 +1,7 @@
 // お金の流れ。初期は全款の款→項。横にスクロールすると款が一つずつ（snap）開き、縦にスクロールするとその款の項が一つずつ開く。
 // 項まで開くと、その項の目と節の上位を出す（節の金額は目ごとに大きい順、足し上げは作らない）。
 import * as React from 'react'
+import { createPortal } from 'react-dom'
 import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -343,8 +344,17 @@ function FlowSkeleton() {
 }
 
 /** natural は面の中で縦に送らず、中身の高さのまま頁のスクロールで読む */
-function KanPanel({ drill, loading, levels, onMoku, natural }: { drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void; natural?: boolean }) {
+function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void; natural?: boolean; /** 横に並ぶ面のうち、今見せている面か */ shown?: boolean }) {
   const body = React.useRef<HTMLDivElement>(null)
+  // natural のとき、面が画面に入っている間だけ目盛りを画面の右に固定して出す（track が横のスクロールの箱なので sticky は効かない）
+  const [inView, setInView] = React.useState(false)
+  React.useEffect(() => {
+    const el = body.current
+    if (!natural || !el) return
+    const observer = new IntersectionObserver(([e]) => setInView(!!e?.isIntersecting), { rootMargin: '-45% 0px -45% 0px' })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [natural])
   const [current, setCurrent] = React.useState(0)
   const sections = React.useRef<(HTMLElement | null)[]>([])
   React.useEffect(() => {
@@ -365,18 +375,14 @@ function KanPanel({ drill, loading, levels, onMoku, natural }: { drill: Drill; l
     if (natural) return window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - 120, behavior: 'smooth' })
     root.scrollTo({ top: el.getBoundingClientRect().top - root.getBoundingClientRect().top + root.scrollTop, behavior: 'smooth' })
   }
-  return (
-    <div className={cn('relative w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel>
-      {drill.kou.length > 1 ? (
-        // 項の目盛り。押すとその項へ縦に送る。natural のときは面の右の縦いっぱいの帯の中で、画面の真ん中に留める
-        <div className={natural ? 'pointer-events-none absolute inset-y-0 right-0.5 z-10 [&>*]:pointer-events-auto' : 'contents'}>
+  const ticks = (
         <TickMenu
           label={`${drill.kan.name}の${levels.kou}へ移る`}
           side="left"
           current={current}
           onPick={toKou}
           items={drill.kou.map((k) => ({ key: k.id, name: k.name, note: amountText(k.yen, k.amountMissing) }))}
-          className={natural ? 'sticky top-1/2 flex flex-col' : 'absolute right-0.5 top-1/2 z-10 flex -translate-y-1/2 flex-col'}
+          className={natural ? 'fixed right-1 top-1/2 z-10 flex -translate-y-1/2 flex-col' : 'absolute right-0.5 top-1/2 z-10 flex -translate-y-1/2 flex-col'}
         >
           {drill.kou.map((k, i) => (
             <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} className="group/dot px-1.5 py-[3px]">
@@ -384,7 +390,13 @@ function KanPanel({ drill, loading, levels, onMoku, natural }: { drill: Drill; l
             </button>
           ))}
         </TickMenu>
-        </div>
+  )
+  return (
+    <div className={cn('relative w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel>
+      {drill.kou.length > 1 && (!natural || (shown && inView)) ? (
+        // 項の目盛り。押すとその項へ縦に送る。natural のときは画面の右の真ん中に固定する。
+        // 祖先に transform（スマホのタブのカルーセル）があると fixed が画面に効かないので、body に出す
+        natural ? createPortal(ticks, document.body) : ticks
       ) : null}
       <div ref={body} style={fade} className={natural ? '' : 'h-full snap-y snap-proximity scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'} tabIndex={-1}>
         {drill.kou.map((k, i) => (
@@ -537,7 +549,7 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
               error ? null : <FlowSkeleton />
             )}
           </div>
-          {flows.map((f) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} onMoku={onMoku} natural={natural} />)}
+          {flows.map((f, i) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} />)}
         </div>
       </div>
       {error ? (
