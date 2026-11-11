@@ -28,6 +28,6 @@ export async function apiPostAll<R extends { next_page_token?: string | null }>(
 }
 
 export type DetailRow = { detail_id: string; jurisdiction_code: string; fiscal_year: number; kan_name: string | null; kou_name: string | null; moku_name: string | null; name: string; department: string | null; amount_yen: number | null; depth: number }
-export type ProjectRow = { project_id: string; jurisdiction_code: string; name: string; first_year: number; first_year_kind: 'confirmed' | 'before_coverage'; last_year: number | null; last_year_kind: 'confirmed' | 'latest' | 'unknown' }
+export type ProjectRow = { project_id: string; jurisdiction_code: string; name: string; first_year: number; first_year_kind: 'confirmed' | 'before_coverage'; last_year: number | null; last_year_kind: 'confirmed' | 'latest' | 'unknown'; parent_project_id: string | null }
 export type ProjectYearRow = { project_year_id: string; project_id: string; jurisdiction_code: string; fiscal_year: number; name: string; kan_name: string | null; moku_name: string | null; budget_yen: number | null; settled_yen: number | null }
 export type MeasureRow = { measure_id: string; jurisdiction_code: string; fiscal_year: number; title: string; is_new: boolean | null; budget_yen: number | null; description: string | null }

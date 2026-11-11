@@ -47,7 +47,7 @@ export function Fresh({ year, years, towns, failed }: Props) {
           ))}
         </div>
       </header>
-      <Tabs value={view} onValueChange={(v) => setView(v as View)}>
+      <Tabs value={view} onValueChange={(v) => setView(v as View)} className="-mx-4 overflow-x-auto px-4 sm:mx-0 sm:px-0">
         <TabsList variant="line" className="mb-4">
           <TabsTrigger value="started">
             <NewIcon className="size-4" />

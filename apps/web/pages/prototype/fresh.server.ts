@@ -1,5 +1,5 @@
 // 試作: 始めた・やめた事業（/prototype/fresh?year=2026）。全部のまちを横断して、その年度に始めた事業と前の年度でやめた事業を並べる。
-// 始めた・やめたは事業の DB の判断（first_year_kind・last_year_kind が confirmed）だけを使い、頁で金額を比べて決めない
+// 事業は目の直下のもの（入れ子の中の行は名前だけでは分からないので外す）。始めた・やめたは事業の DB の判断（first_year_kind・last_year_kind が confirmed）だけを使い、頁で金額を比べて決めない
 import { defineHandler, defineHead } from 'void'
 import { jurisdictionPath } from '../../jurisdiction/path'
 import { catalog, memo } from '../../server/jurisdiction-routes'
@@ -42,8 +42,8 @@ export const loader = defineHandler<Props>(async (c) => {
     }
     const item = (py: ProjectYearRow): Item => ({ name: py.name, yen: py.budget_yen ?? py.settled_yen, where: [py.kan_name, py.moku_name].filter(Boolean).join(' › ') })
     const byYen = (a: Item, b: Item) => (b.yen ?? 0) - (a.yen ?? 0)
-    for (const py of pick(now, (p) => p?.first_year_kind === 'confirmed' && p.first_year === year)) town(py.jurisdiction_code).started.push(item(py))
-    for (const py of pick(before, (p) => p?.last_year_kind === 'confirmed' && p.last_year === year - 1)) town(py.jurisdiction_code).ended.push(item(py))
+    for (const py of pick(now, (p) => p?.first_year_kind === 'confirmed' && p.first_year === year && !p.parent_project_id)) town(py.jurisdiction_code).started.push(item(py))
+    for (const py of pick(before, (p) => p?.last_year_kind === 'confirmed' && p.last_year === year - 1 && !p.parent_project_id)) town(py.jurisdiction_code).ended.push(item(py))
     for (const m of measures.flatMap((r) => r.measures)) town(m.jurisdiction_code).announced.push({ name: m.title, yen: m.budget_yen, where: '' })
     for (const t of towns.values()) {
       t.startedCount = t.started.length
