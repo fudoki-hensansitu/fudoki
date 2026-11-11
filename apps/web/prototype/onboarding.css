@@ -1,4 +1,4 @@
-/* 試作: オンボーディングの動き。入りは ease-out で 300ms 前後、絵は 7 秒で組み上がって消えるのを繰り返す。transform と opacity だけを動かす */
+/* 試作: オンボーディングの動き。入りは ease-out で 300ms 前後、見本の札は上から順に一度だけ浮かぶ。transform と opacity だけを動かす */
 .ob-rise {
   animation: ob-rise 420ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
@@ -18,26 +18,14 @@
   to { opacity: 1; transform: none; }
 }
 
-/* 絵: 全部が同じ 7s の周期で、--d だけずらして順に出す */
-.ob-preview .ob-step {
-  animation: ob-step 7s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
-  animation-delay: var(--d, 0s);
+/* 見本: ホームの札が上から順に浮かぶ（一度だけ） */
+.ob-sample > * > * {
+  animation: ob-rise 520ms cubic-bezier(0.22, 1, 0.36, 1) both;
 }
-.ob-preview .ob-bar {
-  transform-origin: left center;
-  animation: ob-bar 7s cubic-bezier(0.22, 1, 0.36, 1) infinite both;
-  animation-delay: var(--d, 0s);
-}
-@keyframes ob-step {
-  0% { opacity: 0; transform: translateY(6px) scale(0.98); }
-  6%, 78% { opacity: 1; transform: none; }
-  88%, 100% { opacity: 0; transform: none; }
-}
-@keyframes ob-bar {
-  0% { opacity: 1; transform: scaleX(0); }
-  9%, 78% { opacity: 1; transform: scaleX(1); }
-  88%, 100% { opacity: 0; transform: scaleX(1); }
-}
+.ob-sample > * > :nth-child(1) { animation-delay: 0.05s; }
+.ob-sample > * > :nth-child(2) { animation-delay: 0.14s; }
+.ob-sample > * > :nth-child(3) { animation-delay: 0.22s; }
+.ob-sample > * > :nth-child(n + 4) { animation-delay: 0.3s; }
 
 /* 現在地を調べている間の輪 */
 .ob-ping::after {
@@ -54,7 +42,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ob-rise, .ob-fade, .ob-swap, .ob-preview .ob-step, .ob-preview .ob-bar, .ob-ping::after {
+  .ob-rise, .ob-fade, .ob-swap, .ob-sample > * > *, .ob-ping::after {
     animation: none;
   }
 }

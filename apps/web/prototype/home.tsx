@@ -21,6 +21,8 @@ import { Empty, Onboarding } from './onboarding'
 import { useVariant } from './variant'
 
 const toTown = (e: MapEntry): Town => ({ code: e.code, name: e.name, path: e.path })
+/** うちのまちを決めていないときの見本。年度をまたいだ事業まで揃っているまち */
+const SAMPLE: Town = { code: '131091', name: '品川区', path: '/tokyo/shinagawa' }
 
 // ---------- 2案で共通のもの ----------
 
@@ -315,8 +317,9 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
   const { ready, town, set } = useMyTown()
   const [changing, setChanging] = React.useState(false)
   const { current, key } = useVariant()
-  const snap = useSnapshot(town?.code ?? null)
-  const vision = town ? featured.find((f) => f.code === town.code)?.vision : undefined
+  const shown = town ?? SAMPLE
+  const snap = useSnapshot(ready ? shown.code : null)
+  const vision = featured.find((f) => f.code === shown.code)?.vision
   const pick = (e: MapEntry) => {
     set(toTown(e))
     setChanging(false)
@@ -324,7 +327,15 @@ export function ProtoHome({ entries, featured, sitekey }: Props) {
   const choose = () => setChanging(true)
   let body: React.ReactNode
   if (!ready) body = <Loading />
-  else if (!town) body = <Empty entries={entries} onPick={pick} />
+  else if (!town)
+    body = (
+      <Empty
+        entries={entries}
+        onPick={pick}
+        sampleName={SAMPLE.name}
+        sample={<WithCtx town={SAMPLE} vision={vision} snap={snap}>{(c) => (current === 1 ? <Inside c={c} sitekey={sitekey} onChoose={choose} /> : <Dashboard c={c} />)}</WithCtx>}
+      />
+    )
   else if (changing) body = <Onboarding entries={entries} onPick={pick} onCancel={() => setChanging(false)} />
   else if (current === 1) body = <WithCtx town={town!} vision={vision} snap={snap}>{(c) => <Inside c={c} sitekey={sitekey} onChoose={choose} />}</WithCtx>
   else

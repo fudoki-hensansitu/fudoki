@@ -1,9 +1,10 @@
-// 試作: うちのまちを決めていないときのホーム。上に「まちを探す」（開くだけで、うちのまちにはしない）、その下にオンボーディング。
-// オンボーディングは、うちのまちを決めるとホームが何になるかを小さな動く絵で見せ、住んでいるまちを選ぶ／現在地から選ぶ の二択を出す。
+// 試作: うちのまちを決めていないときのホーム。上に「まちを探す」（開くだけで、うちのまちにはしない）、その下に本物のまちのホームを「見本」として敷き、その上に一つの行動「うちのまちにする（名前で／現在地から）」を載せる。
+// marketingskills の onboarding skill に沿う: 骨組みの絵で見せず本物のデータで見せる（空の状態は「データが入るとどう見えるか」を見せる）、行動は一つ、選んだらすぐ自分のまちのホームになる。
 // 「住んでいるまち」を最初に聞くのは怖く見えるので、探すを先に置き、うちのまちは任意の次の一歩にする（2026-11-11 yuito）
 import * as React from 'react'
 import { ArrowRightIcon, HouseIcon, MagnifyingGlassIcon, NavigationArrowIcon, XIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
+import { cn } from '@/lib/utils'
 import { Picker as TownPicker } from '../home/home'
 import { LocateError, locateMunicipality } from '../home/locate'
 import type { MapEntry } from '../jurisdiction/index-table'
@@ -24,48 +25,10 @@ export function FindTown({ entries }: { entries: MapEntry[] }) {
   )
 }
 
-/** 小さく動く絵: うちのまちの札が付き、金額・分野の棒・新しく始めた事業の札が順に組み上がる。動きを減らす設定では止めて全部出す */
-function Preview() {
-  return (
-    <div aria-hidden="true" className="ob-preview relative overflow-hidden rounded-2xl border bg-muted/40 p-4">
-      <div className="rounded-xl border bg-background p-3 shadow-[0_1px_0_rgb(0_0_0/0.03)]">
-        <div className="ob-step flex items-center gap-2" style={{ '--d': '0s' } as React.CSSProperties}>
-          <span className="grid size-6 place-items-center rounded-md bg-primary/10 text-primary">
-            <HouseIcon className="size-3.5" />
-          </span>
-          <span className="text-[12px] font-bold">うちのまち</span>
-          <span className="ml-auto h-2 w-10 rounded-full bg-muted" />
-        </div>
-        <div className="ob-step mt-3" style={{ '--d': '.35s' } as React.CSSProperties}>
-          <span className="block h-1.5 w-14 rounded-full bg-muted" />
-          <span className="mt-1.5 block h-4 w-28 rounded-md bg-primary/80" />
-        </div>
-        <div className="mt-3 space-y-1.5">
-          {[0.92, 0.64, 0.41].map((w, i) => (
-            <div key={i} className="flex items-center gap-2">
-              <span className="h-1.5 w-8 shrink-0 rounded-full bg-muted" />
-              <span className="ob-bar h-2 rounded-full bg-foreground/15" style={{ width: `${w * 100}%`, '--d': `${0.7 + i * 0.12}s` } as React.CSSProperties} />
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="mt-2.5 grid grid-cols-2 gap-2.5">
-        {[0, 1].map((i) => (
-          <div key={i} className="ob-step rounded-xl border bg-background p-2.5" style={{ '--d': `${1.25 + i * 0.15}s` } as React.CSSProperties}>
-            <span className="inline-block rounded-[4px] bg-primary/10 px-1 text-[9px] leading-[14px] font-bold text-primary">NEW</span>
-            <span className="mt-1.5 block h-1.5 w-[80%] rounded-full bg-muted" />
-            <span className="mt-1 block h-1.5 w-[55%] rounded-full bg-muted" />
-          </div>
-        ))}
-      </div>
-    </div>
-  )
-}
-
 type Locate = { busy?: boolean; error?: string; hit?: MapEntry }
 
-/** 下の段: オンボーディング。onCancel を渡すと二択の下に「やめる」を出す（うちのまちを変えるとき） */
-export function Onboarding({ entries, onPick, onCancel }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; onCancel?: () => void }) {
+/** うちのまちを決める札。sample（見本のまちの名前）があれば見本の上に載せる文言にし、onCancel があれば「やめる」を出す（うちのまちを変えるとき） */
+export function Onboarding({ entries, onPick, onCancel, sample }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; onCancel?: () => void; sample?: string }) {
   const [mode, setMode] = React.useState<'idle' | 'pick' | 'locate'>('idle')
   const [loc, setLoc] = React.useState<Locate>({})
   const locate = async () => {
@@ -81,29 +44,21 @@ export function Onboarding({ entries, onPick, onCancel }: { entries: MapEntry[];
     }
   }
   return (
-    <section className="ob-rise mt-4 rounded-[24px] border bg-background p-5 sm:p-7" style={{ animationDelay: '.08s' }}>
-      <div className="grid items-center gap-6 md:grid-cols-[minmax(0,1fr)_minmax(0,1.15fr)] md:gap-8">
-        <Preview />
+    <section className={cn('ob-rise rounded-[24px] border bg-background p-5 sm:p-7', sample && 'shadow-[0_12px_40px_-12px_rgb(0_0_0/0.18)]')} style={{ animationDelay: sample ? '.45s' : '0s' }}>
+      <div>
         <div>
-          <p className="ob-fade text-[12px] font-bold tracking-[0.04em] text-primary" style={{ '--d': '.15s' } as React.CSSProperties}>
-            はじめに
-          </p>
-          <h2 className="ob-fade mt-1 text-[19px] leading-snug font-bold sm:text-[22px]" style={{ '--d': '.22s' } as React.CSSProperties}>
-            うちのまちを決めると、
-            <br className="hidden sm:inline" />
-            ホームがそのまちのお金になります
-          </h2>
-          <p className="ob-fade mt-2 text-[14px] text-muted-foreground" style={{ '--d': '.3s' } as React.CSSProperties}>
-            予算・新しく始めた事業・事業評価が、開くたびにここに並びます。あとからいつでも変えられます。
+          <h2 className="text-[19px] leading-snug font-bold sm:text-[22px]">{sample ? 'うちのまちにすると、ホームがこうなります' : 'うちのまちを変える'}</h2>
+          <p className="mt-1.5 text-[14px] text-muted-foreground">
+            {sample ? `うしろは${sample}の見本です。予算・新しく始めた事業・事業評価が、開くたびにここに並びます。あとからいつでも変えられます。` : '名前か現在地で選びます。'}
           </p>
 
-          <div className="ob-fade mt-5" style={{ '--d': '.4s' } as React.CSSProperties}>
+          <div className="mt-5">
             {mode === 'idle' ? (
-              <div className="grid gap-2.5">
+              <div className="grid gap-2.5 sm:grid-cols-2">
                 <Choice icon={<HouseIcon />} title="住んでいるまちを選ぶ" note="名前で選びます" onClick={() => setMode('pick')} />
                 <Choice icon={<NavigationArrowIcon />} title="現在地から選ぶ" note="位置は保存しません" onClick={() => void locate()} />
                 {onCancel ? (
-                  <button type="button" onClick={onCancel} className="justify-self-start text-[13px] text-muted-foreground hover:text-foreground">
+                  <button type="button" onClick={onCancel} className="justify-self-start text-[13px] text-muted-foreground hover:text-foreground sm:col-span-2">
                     やめる
                   </button>
                 ) : null}
@@ -189,8 +144,8 @@ function LocateResult({ loc, onPick, onRetry, onPickByName }: { loc: Locate; onP
   )
 }
 
-/** うちのまちを決めていないときのホーム */
-export function Empty({ entries, onPick }: { entries: MapEntry[]; onPick: (e: MapEntry) => void }) {
+/** うちのまちを決めていないときのホーム。sample は見本のまちのホーム（本物のデータ）。押せないようにして下へ薄れさせ、その上に決める札を重ねる */
+export function Empty({ entries, onPick, sample, sampleName }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; sample: React.ReactNode; sampleName: string }) {
   return (
     <>
       <header className="ob-rise mb-6">
@@ -198,8 +153,18 @@ export function Empty({ entries, onPick }: { entries: MapEntry[]; onPick: (e: Ma
         <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
       </header>
       <FindTown entries={entries} />
-      <Onboarding entries={entries} onPick={onPick} />
+      <section className="mt-8" aria-label="うちのまちを決める">
+        <p className="ob-rise mb-3 flex items-center gap-2 text-[13px] text-muted-foreground" style={{ animationDelay: '.1s' }}>
+          <span className="rounded-full border px-2 py-0.5 text-[11px] font-bold">見本</span>
+          {sampleName}のホーム
+        </p>
+        <div inert aria-hidden="true" className="ob-sample pointer-events-none max-h-[460px] overflow-hidden select-none [mask-image:linear-gradient(to_bottom,#000_30%,transparent_92%)] sm:max-h-[520px]">
+          {sample}
+        </div>
+        <div className="relative -mt-44 sm:-mt-52 sm:px-6">
+          <Onboarding entries={entries} onPick={onPick} sample={sampleName} />
+        </div>
+      </section>
     </>
   )
 }
-
