@@ -175,22 +175,15 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
 }
 
 /** 読み込み中の全体図。図と同じ並べ方・高さで、款・項の棒と帯、ラベルの置き場を薄い色で出す。
- * 款・項の数は品川区などの分野（大分類10・中分類24前後）に寄せた仮のもので、金額の比も仮 */
-const SKELETON_KAN = [0.48, 0.13, 0.1, 0.07, 0.05, 0.045, 0.04, 0.035, 0.03, 0.02]
-const SKELETON_KOU = [5, 2, 4, 2, 3, 2, 2, 2, 1, 1]
+ * 款ごとの項の金額の比は、品川区 R8 当初予算の分野（大分類10・中分類24）を丸めた仮のもの。多くの自治体で図の高さがほぼ同じになる */
+const SKELETON = [[0.29, 0.06, 0.054, 0.052, 0.053], [0.108, 0.024], [0.051, 0.026, 0.002, 0.022], [0.059, 0.005], [0.019, 0.016, 0.008], [0.037, 0.004], [0.037, 0.002], [0.03, 0.008], [0.028], [0.006]]
 /** ラベルの置き場の長さ（px）。同じ長さが並ぶと縞に見えるので、少しずつ変える */
 const LABEL_WIDTHS = [64, 44, 56, 72, 40, 52]
 export function OverviewSkeleton({ height = 520, levels = { kan: '款', kou: '項' } }: { height?: number; levels?: { kan: string; kou: string } }) {
   const ref = React.useRef<HTMLDivElement>(null)
   const width = useWidth(ref)
-  const kous = SKELETON_KAN.flatMap((yen, kanIndex) => {
-    const n = SKELETON_KOU[kanIndex]!
-    // 款の中では前の項ほど大きくする（実際の図も大きい順に並ぶ）
-    const weights = Array.from({ length: n }, (_, i) => n - i)
-    const sum = weights.reduce((a, w) => a + w, 0)
-    return weights.map((w) => ({ kanIndex, yen: (yen * w) / sum }))
-  })
-  const { narrow, x0, x1, kans, kouNodes, total } = geometry(SKELETON_KAN, kous.map((k) => k.yen), width, height)
+  const kous = SKELETON.flatMap((kou, kanIndex) => kou.map((yen) => ({ kanIndex, yen })))
+  const { narrow, x0, x1, kans, kouNodes, total } = geometry(SKELETON.map((kou) => kou.reduce((a, v) => a + v, 0)), kous.map((k) => k.yen), width, height)
   const offsets = new Map<number, number>()
   const line = narrow ? 8 : 10
   return (
