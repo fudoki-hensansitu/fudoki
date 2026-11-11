@@ -180,8 +180,10 @@ function SheetRow({ s }: { s: EvalSheet }) {
 /** 最後の節。都道府県・近くの自治体・全国の一覧へ。見出しと行はほかの節と同じ形にする */
 function Elsewhere() {
   const { page } = useApp()
+  // 都道府県の紋章も、近くの自治体と同じく紋章の画像で出す（都道府県のコードは先頭2桁＋0001）
+  const prefCode = `${page.code.slice(0, 2)}0001`
   const places = [
-    ...(page.prefecturePath !== INDEX_PATH ? [{ href: page.prefecturePath, name: page.prefecture, icon: <MapTrifoldIcon /> }] : []),
+    ...(page.prefecturePath !== INDEX_PATH ? [{ href: page.prefecturePath, name: page.prefecture, icon: EMBLEMS[prefCode] ? <img src={assetPath(prefCode, 'emblem.svg')} alt="" className="size-full object-contain p-1" /> : <MapTrifoldIcon /> }] : []),
     ...page.neighbors.map((n) => ({ href: n.path, name: n.name, icon: n.logo ? <img src={n.logo} alt="" className="size-full object-contain p-1" /> : <MapPinAreaIcon /> })),
     { href: INDEX_PATH, name: 'すべての自治体', icon: <SquaresFourIcon /> },
   ]
