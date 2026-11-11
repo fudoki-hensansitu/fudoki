@@ -10,7 +10,7 @@ export { assetPath }
 export const prefectureCodeOf = (code: string) => withCheckDigit(`${code.slice(0, 2)}000`)
 const withCheckDigit = (five: string) => {
   const r = [...five].reduce((s, d, i) => s + Number(d) * (6 - i), 0) % 11
-  return `${five}${r === 0 ? 0 : (11 - r) % 10}`
+  return `${five}${r === 0 ? 1 : (11 - r) % 10}`
 }
 
 /** 頁に載せる紋章。画面の bundle に EMBLEMS を載せないよう、server 側で引いて PageData に入れる。og は OG 画像に使えるか（帰属表示の要る紋章は使わない） */
