@@ -21,6 +21,6 @@
 
 ## Consequences
 
-既存の判定で quirks に移したのは、設定で切り替えていた判定 15 個（`glued_numbers`・`name_column`・`heading_repeated_over_code`・`bracket_line_closes_name`・`line_starts`・`opening_bracket_ink`・`names_end_with_kind_words`・`bracketed_remainder`・`headings`・`rows`・`rows_from`・`name_columns`・`fitted_names`・`sum_levels`・`under`）、中央区の出張所の見出し（`office_departments`）、足立区の事業別決算説明書（`explained_projects`）と板橋区の内側の表（`inner_tables`）。使っていた管理 JSON は workflow の `quirks` に書き換えた。`yen_marked`・`bare_amounts`・`amount_brackets` など多くの自治体が使う設定は本体に残す。
+既存の判定で quirks に移したのは、設定で切り替えていた判定 16 個（`glued_numbers`・`name_column`・`heading_repeated_over_code`・`bracket_line_closes_name`・`line_starts`・`opening_bracket_ink`・`names_end_with_kind_words`・`bracketed_remainder`・`headings`・`rows`・`rows_from`・`name_columns`・`fitted_names`・`sum_levels`・`under`・`unnumbered_shift`）、中央区の出張所の見出し（`office_departments`）、足立区の事業別決算説明書（`explained_projects`）と板橋区の内側の表（`inner_tables`）。使っていた管理 JSON は workflow の `quirks` に書き換えた。`yen_marked`・`bare_amounts`・`amount_brackets` など多くの自治体が使う設定は本体に残す。
 
 移した時点で全表の指紋が一度変わる。中身の差は全表の `ingestion:refresh` で確かめる。
