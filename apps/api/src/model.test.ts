@@ -68,7 +68,7 @@ describe('API の行の schema と表の列', () => {
     ['budget_measure', shapeOf(MeasureRow), true],
     ['project', shapeOf(ProjectRow), true],
     ['project_year', shapeOf(ProjectYearRow), true],
-    // 一覧の要約は自治体マスタの全列と、組み立てた列（人口・収録範囲・年度）
+    // 一覧の要約は自治体マスタの全列と、組み立てた列（収録範囲・年度）
     ['jurisdiction', jurisdiction, false],
   ] as const)('%s', (table, shape, exact) => {
     const columns = TABLES[table]!.columns

@@ -4,7 +4,7 @@ import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/valida
 import { createApp } from './app'
 import { UNCOVERED_SOURCES } from './jurisdiction/queries'
 import type { Db } from './db'
-import { insertCoverage, insertJurisdiction, insertOrigin, insertPopulation, insertSubject, testDb } from './testing'
+import { insertCoverage, insertJurisdiction, insertOrigin, insertSubject, testDb } from './testing'
 
 let db: Db
 let sqlite: Database
@@ -31,14 +31,6 @@ beforeEach(() => {
   insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市', official_url: 'https://www.city.musashino.lg.jp/' })
   insertJurisdiction(sqlite, { jurisdiction_code: '132063', name: '府中市' })
   insertJurisdiction(sqlite, { jurisdiction_code: '342076', name: '府中市', prefecture_name: '広島県' })
-  // 新しい基準日を先に入れても、基準日の昇順で返る
-  insertPopulation(sqlite, { origin_id: 'p2026', reference_date: '2026-01-01', url: 'https://example.test/2026.xlsx' }, [
-    { jurisdiction_code: '132039', male: 72000, female: 76000, population: 148001, households: 76000 },
-  ])
-  insertPopulation(sqlite, { origin_id: 'p2025', reference_date: '2025-01-01', url: 'https://example.test/2025.xlsx' }, [
-    { jurisdiction_code: '132039', male: 71000, female: 75000, population: 146000, households: 75000 },
-    { jurisdiction_code: '132063', male: 130000, female: 130000, population: 260000, households: 130000 },
-  ])
   insertOrigin(sqlite, { origin_id: 'o1', title: '令和6年度決算書', url: 'https://example.test/o1.pdf', sha256: 'a' })
   insertOrigin(sqlite, { origin_id: 'o2', title: '令和6年度決算書（特別会計）', url: 'https://example.test/o2.pdf', sha256: 'b' })
   insertOrigin(sqlite, { origin_id: 'o3', title: '令和6年度予算', url: 'https://example.test/o3.csv', document_kind: 'initial', format: 'csv', sha256: 'c' })
@@ -67,18 +59,18 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
     expect(fuchu.jurisdictions[0].coverage[0].accounts).toEqual([{ account_name: '一般会計', account_kind: '一般会計' }])
   })
 
-  test('一覧は人口の推移と、事業評価・予算案を収録した年度を返す', async () => {
+  test('一覧は事業評価・予算案を収録した年度を返す', async () => {
     sqlite.exec(`INSERT INTO evaluation (evaluation_id, jurisdiction_code, fiscal_year, kind) VALUES ('e2', '132039', 2025, 'sheets_only'), ('e1', '132039', 2024, 'with_result')`)
     sqlite.exec(`INSERT INTO budget_proposal (budget_proposal_id, jurisdiction_code, fiscal_year) VALUES ('b1', '132039', 2026)`)
     const [j] = (await list('?code=132039')).jurisdictions
-    expect(j.population.map((p: { reference_date: string }) => p.reference_date)).toEqual(['2025-01-01', '2026-01-01'])
+    expect(j).not.toHaveProperty('population')
     expect(j.evaluations).toEqual([{ evaluation_id: 'e1', fiscal_year: 2024 }, { evaluation_id: 'e2', fiscal_year: 2025 }])
     expect(j.budget_proposals).toEqual([{ budget_proposal_id: 'b1', fiscal_year: 2026 }])
     const detail = await (await get('/v1/jurisdictions/132039')).json()
     expect([detail.evaluations.map((e: { fiscal_year: number }) => e.fiscal_year), detail.budget_proposals.length]).toEqual([[2024, 2025], 1])
   })
 
-  test('1つの自治体は、人口の推移と収録している年度・資料区分・会計・出典を1回で得る', async () => {
+  test('1つの自治体は、収録している年度・資料区分・会計・出典を1回で得る', async () => {
     const res = await get('/v1/jurisdictions/132039')
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual({
@@ -88,10 +80,6 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
           prefecture_name: '東京都',
           ocd_id: 'ocd-division/country:jp/prefecture:13/city:132039',
           official_url: 'https://www.city.musashino.lg.jp/',
-          population: [
-            { reference_date: '2025-01-01', male: 71000, female: 75000, population: 146000, households: 75000, url: 'https://example.test/2025.xlsx' },
-            { reference_date: '2026-01-01', male: 72000, female: 76000, population: 148001, households: 76000, url: 'https://example.test/2026.xlsx' },
-          ],
           coverage: [
             {
               fiscal_year: 2024,
@@ -122,7 +110,6 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
   test('収録の無い自治体でも、空の収録範囲と一緒に統計の出典の案内を返す', async () => {
     const body = await list('?code=131016')
     expect(body.jurisdictions[0].coverage).toEqual([])
-    expect(body.jurisdictions[0].population).toEqual([])
     expect(body.uncovered_sources.map((s: { url: string }) => s.url)).toEqual([
       'https://www.soumu.go.jp/iken/zaisei/card.html',
       'https://www.e-stat.go.jp/stat-search/files?toukei=00200251&tstat=000001077755',

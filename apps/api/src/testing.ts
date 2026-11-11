@@ -106,19 +106,6 @@ export function insertJurisdiction(sqlite: Database, row: { jurisdiction_code: s
     .run(row.jurisdiction_code, row.name, prefecture_code, row.prefecture_name ?? '東京都', `ocd-division/country:jp/prefecture:${prefecture_code}/city:${row.jurisdiction_code}`, row.official_url ?? null)
 }
 
-/** 人口の資料と、その資料の自治体ごとの行。 */
-export function insertPopulation(
-  sqlite: Database,
-  origin: { origin_id: string; reference_date: string; url: string },
-  rows: { jurisdiction_code: string; male: number; female: number; population: number; households: number }[]
-) {
-  sqlite.query('INSERT OR IGNORE INTO population_origin (origin_id, reference_date, url) VALUES (?, ?, ?)').run(origin.origin_id, origin.reference_date, origin.url)
-  for (const r of rows)
-    sqlite
-      .query('INSERT INTO population (population_id, origin_id, jurisdiction_code, reference_date, male, female, population, households) VALUES (?, ?, ?, ?, ?, ?, ?, ?)')
-      .run(`${origin.origin_id}:${r.jurisdiction_code}`, origin.origin_id, r.jurisdiction_code, origin.reference_date, r.male, r.female, r.population, r.households)
-}
-
 /** 歳出の根の1行と、出典との組。ID は行の中身から作る（一意であればよい）。 */
 export function insertCoverage(
   sqlite: Database,

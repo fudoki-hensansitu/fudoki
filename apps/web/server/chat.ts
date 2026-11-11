@@ -12,6 +12,7 @@ import { logError, logStep, logTiming } from './log'
 import { writeUsage, type Usage } from './usage'
 import { writeChatTurn } from './chat-log'
 import { SOURCE_PAGE_TOOL, sourcePageTool } from './source-pages'
+import { POPULATION_TOOL, populationTool } from './population'
 
 const SYSTEM = [
   'あなたは「風土記」の案内役です。風土記は、日本の自治体が何にいくら使ったか（歳出の予算・決算）を、事業の単位まで集めたデータです。',
@@ -175,6 +176,7 @@ export async function handleChat(c: ApiRequest): Promise<Response> {
     Object.assign(t, { toModelOutput: ({ output }: { output: unknown }) => ({ type: 'text' as const, value: toolText(name, output) }) })
   }
   if (env.SOURCES) tools[SOURCE_PAGE_TOOL] = sourcePageTool(env.SOURCES)
+  if (env.DB) tools[POPULATION_TOOL] = populationTool(env)
   const close = () => c.defer(mcp.close().catch(() => {}))
 
   let messages

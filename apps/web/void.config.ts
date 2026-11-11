@@ -1,6 +1,6 @@
 // 公開 web の Worker（fudoki）の設定。build（vite build）が cf の形で .cloudflare/output/v0 に書き出し、deploy・preview は cf がそれを読む。
 // データ（D1・R2・KV など）の binding は持たせず、データは apps/api に Service Binding で聞く（pipeline/verify/boundaries.ts が検査する）。
-// 例外は web 自身のデータの D1（binding DB・fudoki-web。今は AI との会話の保存）だけ。風土記のデータではなく、web だけが使う別の D1 にする
+// 例外は web 自身のデータの D1（binding DB・fudoki-web。AI との会話の保存と、外部サービスから引く参照データ）だけ。風土記のデータではなく、web だけが使う別の D1 にする
 import { defineConfig } from 'void/config'
 import { SW_REGISTER } from './pwa'
 
@@ -79,6 +79,13 @@ export default defineConfig({
     workers_dev: false,
     observability: { enabled: true, head_sampling_rate: 1, traces: { enabled: true, head_sampling_rate: 1 } },
     ...shared,
+    // web 自身のデータの D1。preview は別の D1（fudoki-web-preview）にし、試した会話を本番の記録に混ぜない。
+    // migration は deploy-web・preview-web が deploy の前に当てる。人口は scripts/sync-data/population.py が両方に入れる
+    d1_databases: [
+      preview
+        ? { binding: 'DB', database_name: 'fudoki-web-preview', database_id: '5b2c16b3-f008-4901-8660-2c66db3c714d', migrations_dir: 'migrations' }
+        : { binding: 'DB', database_name: 'fudoki-web', database_id: '760c7476-6e46-4b44-b174-1bfdd1b4f957', migrations_dir: 'migrations' },
+    ],
     // 以下は本番だけ。preview には渡さない
     ...(preview
       ? {}
@@ -86,9 +93,6 @@ export default defineConfig({
           // 利用状況（時刻・モデル・token 数・tool の回数・段数・所要時間・失敗の有無）。会話の本文と IP は書かない。
           // 本番の集計に混ぜない（dataset が無ければ server/usage.ts は何もしない）
           analytics_engine_datasets: [{ binding: 'CHAT_USAGE', dataset: 'fudoki_web_chat' }],
-          // 会話の保存（質問と回答・使った tool・失敗・token など。IP・UA は書かない。ログインしていない会話は90日で消す）。復元と改善の分析に使う。
-          // migration は自動では当たらないので、変えたら apps/web で cf d1 migrations apply を手で流す（README）
-          d1_databases: [{ binding: 'DB', database_name: 'fudoki-web', database_id: '760c7476-6e46-4b44-b174-1bfdd1b4f957', migrations_dir: 'migrations' }],
         }),
   },
 })

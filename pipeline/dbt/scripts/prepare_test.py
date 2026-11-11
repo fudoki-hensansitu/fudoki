@@ -54,7 +54,6 @@ class PrepareTest(unittest.TestCase):
              patch.object(prepare.manifest, 'validate', return_value=self.document), \
              patch.object(prepare.manifest, 'resolved_inputs', return_value=[original]), \
              patch.object(prepare.manifest, 'selection_for', return_value={'candidates': [{'title': 'original'}]}), \
-             patch.object(prepare.population, 'origins', return_value=[]), \
              patch.object(prepare.project, 'load', return_value={name: [] for name in prepare.project.SCHEMAS}):
             return prepare.prepare(self.warehouse, self.candidate)
 
