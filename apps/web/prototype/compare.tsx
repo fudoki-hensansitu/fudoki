@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { Emblem, Picker } from '../home/home'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../jurisdiction/domains'
-import { formatPeople, reiwa } from '../jurisdiction/types'
+import { formatAsOf, formatPeople, reiwa } from '../jurisdiction/types'
 import { FieldIcon, yenParts } from './parts'
 import type { Props } from '../pages/prototype/compare.server'
 
@@ -37,13 +37,15 @@ function Value({ yen, mode }: { yen: number | null; mode: Mode }) {
 
 export function Compare({ towns, year, entries, suggestions, missing }: Props) {
   const { visit } = useRouter()
-  const [mode, setMode] = React.useState<Mode>('head')
+  const [chosen, setMode] = React.useState<Mode>('head')
   const codes = towns.map((t) => t.code)
   const href = (next: string[]) => `/prototype/compare?codes=${next.join(',')}`
   const canAdd = codes.length < MAX
-  const value = (t: Props['towns'][number], yen: number | undefined) => (yen == null ? null : mode === 'head' ? (t.people ? yen / t.people : null) : yen)
-  const rows = [...DOMAIN_FRAMES.filter((f) => f.id !== 'boei'), OTHER_FRAME].filter((f) => towns.some((t) => t.fields[f.id]))
   const hasPeople = towns.every((t) => t.people)
+  // 人口の無いまちがあれば総額で出す
+  const mode: Mode = hasPeople ? chosen : 'total'
+  const value = (t: Props['towns'][number], yen: number | undefined) => (yen == null ? null : mode === 'head' ? (t.people ? yen / t.people : null) : yen)
+  const rows = [...DOMAIN_FRAMES, OTHER_FRAME].filter((f) => towns.some((t) => t.fields[f.id]))
   return (
     <main className="mx-auto w-full max-w-5xl px-4 pt-8 pb-28 sm:px-8 sm:pt-12">
       <header className="mb-6">
@@ -107,7 +109,12 @@ export function Compare({ towns, year, entries, suggestions, missing }: Props) {
                   {towns.map((t) => (
                     <th key={t.code} className="px-4 py-3 font-medium">
                       <span className="block text-sm text-foreground">{t.name}</span>
-                      {t.people ? <span className="tabular-nums">{formatPeople(t.people)}</span> : null}
+                      {t.people ? (
+                        <span className="tabular-nums">
+                          {formatPeople(t.people)}
+                          {t.asOf ? `（${formatAsOf(t.asOf)}時点）` : null}
+                        </span>
+                      ) : null}
                     </th>
                   ))}
                 </tr>

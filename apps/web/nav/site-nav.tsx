@@ -22,8 +22,10 @@ import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, type Theme } from './theme'
-import { ProtoNavContent } from '../prototype/nav-content'
 import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
+
+// 試作のサイドバーは /prototype の下でだけ読む（ほかの頁に combobox などを載せない）
+const ProtoNavContent = React.lazy(() => import('../prototype/nav-content').then((m) => ({ default: m.ProtoNavContent })))
 
 export const NAV_SECTIONS = ['home', 'assistant', 'compare'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
@@ -259,7 +261,9 @@ export function SiteNav({ active, open, theme: initialTheme, proto }: SiteNavPro
           </SidebarHeader>
           <SidebarContent>
             {proto ? (
-              <ProtoNavContent />
+              <React.Suspense fallback={null}>
+                <ProtoNavContent />
+              </React.Suspense>
             ) : (
               <SidebarGroup>
                 <SidebarMenu>

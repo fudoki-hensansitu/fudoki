@@ -23,7 +23,7 @@ export const loader = defineHandler<Props>(async (c) => {
   const asked = (c.req.query('codes') ?? '').split(',').filter((x) => /^\d{6}$/.test(x))
   const codes = [...new Set(asked.length ? asked : DEFAULT)].slice(0, MAX_COMPARE)
   const [cat, entries] = await Promise.all([catalog(env), homeEntries(env).catch(() => [] as MapEntry[])])
-  const picked = codes.flatMap((code) => cat.filter((e) => e.code === code))
+  const picked = codes.flatMap((code) => cat.filter((e) => e.code === code && e.settlementYears.length > 0))
   // 全部のまちに決算がある、いちばん新しい年度で揃える
   const common = picked.reduce<number[] | null>((acc, e) => (acc ? acc.filter((y) => e.settlementYears.includes(y)) : [...e.settlementYears]), null) ?? []
   const year = common.at(-1) ?? null

@@ -10,11 +10,11 @@ export type Town = RecentJurisdiction
 
 function read(): Town | null {
   try {
-    const t = JSON.parse(localStorage.getItem(KEY) ?? 'null') as Town | null
-    if (t?.code) return t
-    // まだ無ければ、今のホームで選んだまちを最近見たまちから引き継ぐ
+    // うちのまちの正は今のホームと同じ鍵。今のホームで変えたら、最近見たまちから名前を引く
     const home = loadHomeCode()
-    return (home && loadRecent().find((r) => r.code === home)) || null
+    if (!home) return null
+    const t = JSON.parse(localStorage.getItem(KEY) ?? 'null') as Town | null
+    return t?.code === home ? t : loadRecent().find((r) => r.code === home) || null
   } catch {
     return null
   }

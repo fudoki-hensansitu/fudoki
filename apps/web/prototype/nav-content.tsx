@@ -12,7 +12,13 @@ import { emblemSrc, useMyTown, type Town } from './towns'
 
 /** 自治体の一覧は検索を開いたときに一度だけ読む */
 let townsPromise: Promise<MapEntry[]> | null = null
-const loadTowns = () => (townsPromise ??= fetch('/api/prototype/towns').then((r) => (r.ok ? (r.json() as Promise<MapEntry[]>) : [])).catch(() => []))
+const loadTowns = () =>
+  (townsPromise ??= fetch('/api/prototype/towns')
+    .then((r) => (r.ok ? (r.json() as Promise<MapEntry[]>) : Promise.reject(r)))
+    .catch(() => {
+      townsPromise = null
+      return [] as MapEntry[]
+    }))
 
 function Search() {
   const { state, isMobile, setOpen } = useSidebar()

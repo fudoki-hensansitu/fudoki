@@ -23,7 +23,7 @@ const toTown = (e: MapEntry): Town => ({ code: e.code, name: e.name, path: e.pat
 // ---------- 3案で共通のもの ----------
 
 /** うちのまちのデータ。年度は収録の最新から始める */
-function useSnapshot(code: string) {
+function useSnapshot(code: string | null) {
   const [d, setD] = React.useState<Snapshot | null>(null)
   const [failed, setFailed] = React.useState(false)
   const [year, setYear] = React.useState<number | null>(null)
@@ -31,6 +31,7 @@ function useSnapshot(code: string) {
     let alive = true
     setD(null)
     setFailed(false)
+    if (!code) return
     fetch(`/api/jurisdictions/app/${code}`)
       .then((r) => (r.ok ? (r.json() as Promise<Snapshot>) : Promise.reject(r)))
       .then((x) => {
@@ -80,7 +81,7 @@ function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
           aria-pressed={y === c.year}
           className={cn('rounded-full px-3 py-1 text-[13px] transition-colors duration-150 ease-out', y === c.year ? (onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-background text-foreground shadow-sm') : onBrand ? 'hover:bg-white/10' : 'text-muted-foreground hover:text-foreground')}
         >
-          R{y - 2018}
+          {reiwa(y).replace('年度', '')}
         </button>
       ))}
     </div>
@@ -201,7 +202,7 @@ function Dashboard({ c }: { c: Ctx }) {
         </Card>
       ) : null}
       {sheets.length ? (
-        <Card title={`${reiwa(fy)}の事業評価`} icon={<ClipboardTextIcon />} footer={<More href={`${town.path}/${fy}/projects`}>評価した事業を見る</More>}>
+        <Card title={`${reiwa(fy)}の事業評価`} icon={<ClipboardTextIcon />} footer={<More href={`${town.path}/${fy}/projects`}>事業を見る</More>}>
           <p className="text-sm text-muted-foreground">
             <span className="text-2xl font-bold text-foreground tabular-nums">{sheets.length}</span> 件の事業を振り返りました
           </p>
@@ -261,7 +262,7 @@ function facts(c: Ctx): Fact[] {
     out.push({ key: 'end', icon: <StopIcon />, eyebrow: `${reiwa(year - 1)}でやめた事業`, big: <>{v.ended.length}<small className="ml-1 text-[0.45em]">件</small></>, body: <>いちばん大きかったのは「{p.name}」。</>, href: `${c.base}/projects`, cta: 'やめた事業を見る' })
   }
   const { fy, sheets } = sheetsOf(d)
-  if (sheets.length) out.push({ key: 'eval', icon: <ClipboardTextIcon />, eyebrow: `${reiwa(fy)}の事業評価`, big: <>{sheets.length}<small className="ml-1 text-[0.45em]">件</small></>, body: <>区が自分で事業を振り返りました。「広げる」は {sheets.filter((s) => s.grade === 'A').length} 件。</>, href: `${town.path}/${fy}/projects`, cta: '評価を見る' })
+  if (sheets.length) out.push({ key: 'eval', icon: <ClipboardTextIcon />, eyebrow: `${reiwa(fy)}の事業評価`, big: <>{sheets.length}<small className="ml-1 text-[0.45em]">件</small></>, body: <>区が自分で事業を振り返りました。「広げる」は {sheets.filter((s) => s.grade === 'A').length} 件。</>, href: `${town.path}/${fy}/projects`, cta: '事業を見る' })
   if (c.near.length) out.push({ key: 'near', icon: <ArrowsLeftRightIcon />, eyebrow: 'となりのまち', big: c.near.map((n) => n.name).join('・'), body: <>同じ年度の決算を、分野ごとに並べて見られます。</>, href: compareHref(c), cta: '比べる' })
   return out
 }
@@ -466,7 +467,8 @@ function Questions({ c }: { c: Ctx }) {
                 <CaretDownIcon className={cn('size-4 shrink-0 text-muted-foreground transition-transform duration-200 ease-out', isOpen && 'rotate-180')} />
               </button>
               {/* 高さは grid の 0fr → 1fr で開く */}
-              <div className={cn('grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none', isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]')}>
+              {/* 閉じている間は中のリンクを Tab と読み上げから外す */}
+              <div inert={!isOpen} className={cn('grid transition-[grid-template-rows] duration-200 ease-out motion-reduce:transition-none', isOpen ? 'grid-rows-[1fr]' : 'grid-rows-[0fr]')}>
                 <div className="overflow-hidden">
                   <div className="px-5 pt-1 pb-5">{q.answer}</div>
                 </div>
@@ -492,8 +494,8 @@ function Loading() {
   )
 }
 
-function Body({ town, entries, vision, variant }: { town: Town; entries: MapEntry[]; vision?: string; variant: number }) {
-  const { d, failed, year, setYear } = useSnapshot(town.code)
+function Body({ town, entries, vision, variant, snap }: { town: Town; entries: MapEntry[]; vision?: string; variant: number; snap: ReturnType<typeof useSnapshot> }) {
+  const { d, failed, year, setYear } = snap
   if (failed) return <p className="text-sm text-muted-foreground">今はこのまちのデータを読み込めません。少し時間をおいて開き直してください。</p>
   if (!d || year == null) return <Loading />
   if (!d.years[String(year)]) return <p className="text-sm text-muted-foreground">このまちの予算・決算は、まだ収録していません。</p>
@@ -505,6 +507,7 @@ export function ProtoHome({ entries, featured }: HomeProps) {
   const { ready, town, set } = useMyTown()
   const [changing, setChanging] = React.useState(false)
   const picker = usePicker(VARIANTS)
+  const snap = useSnapshot(town?.code ?? null)
   const pick = (e: MapEntry) => {
     set(toTown(e))
     setChanging(false)
@@ -539,7 +542,10 @@ export function ProtoHome({ entries, featured }: HomeProps) {
               うちのまちを変える
             </button>
           </div>
-          <Body key={`${town.code}-${picker.key}`} town={town} entries={entries} vision={featured.find((f) => f.code === town.code)?.vision} variant={picker.current} />
+          {/* key は出し直しの動きのためだけ。データは上で持つ */}
+          <div key={picker.key}>
+            <Body town={town} entries={entries} vision={featured.find((f) => f.code === town.code)?.vision} variant={picker.current} snap={snap} />
+          </div>
         </>
       )}
     </main>
