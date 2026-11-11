@@ -31,7 +31,7 @@
 - 款・項の題: 1行に並ぶ款と項（`titles_on_one_line`。調布・東久留米）、名前に続けて読む番号（`code_run_into_name`。調布）
 - 流用の注記: 金額と同じ行の勘定コードと次の行の流用の語（`account_code_transfers`。東村山）、上の行に印字した流用元（`transfer_account_above`。東京都）
 - 科目の欄: 深い欄の罫をまたぐ名前（`names_in_own_column`。武蔵野・多摩）
-- スキャンの枠と見出し: 数 pt ずらして積んだ表（`stacked_tables_apart`。国分寺・中央・台東）、傾いたスキャンの短く読んだ罫（`skewed_frames`）、一部だけ読んだ欄の見出し（`partial_headings`）、罫と見出しのインク（`rule_ink`）、しみ（`specks`）、括弧の読み違いの語（`bracket_marks`）、読み落とした名前の字の幅（`lost_name_characters`。以上国分寺）、罫が余白だけを切る金額（`padded_runs`。調布）
+- スキャンの枠と見出し: 数 pt ずらして積んだ表（`stacked_tables_apart`。国分寺・中央・台東・小笠原）、傾いたスキャンの短く読んだ罫（`skewed_frames`）、一部だけ読んだ欄の見出し（`partial_headings`）、罫と見出しのインク（`rule_ink`）、しみ（`specks`）、括弧の読み違いの語（`bracket_marks`）、読み落とした名前の字の幅（`lost_name_characters`。以上国分寺）、罫が余白だけを切る金額（`padded_runs`。調布）
 
 `partial_headings` は既定に入っていたため、選ばない区（千代田・中野・葛飾・八王子など）の欄の見出しを取り違えて表を止めていた。10 か所以上の自治体で効く判定（年齢の「1歳6箇月」・単位だけの行・罫の切れ端をつなぐ・見出しの1字の読み違いなど）は本体に残す。
 

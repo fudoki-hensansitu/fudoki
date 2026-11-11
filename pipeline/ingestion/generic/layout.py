@@ -266,6 +266,11 @@ def _frames(page: Page, spread: dict | None = None,
     for x in xs:
         if not edges or (x - edges[-1] > 3 and not (apart is not None and apart.module.one_edge(page, edges[-1], x))):
             edges.append(x)
+    spans: dict[float, list[tuple[float, float]]] = defaultdict(list)
+    if open_frame:
+        for r in page.rules:
+            if r.vertical:
+                spans[round(r.x0, 1)].append((r.y0, r.y1))
     frames, current = [], []
     for left, right in zip(edges, edges[1:]):
         middle = (left + right) / 2
