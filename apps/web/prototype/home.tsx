@@ -234,8 +234,8 @@ function Seek({ entries, town, recent, snap, onChoose }: { entries: MapEntry[]; 
         <div className="mt-4 mb-4 flex w-fit gap-1 rounded-full bg-brand-fill/20 p-1" role="tablist" aria-label="探すもの">
           {(
             [
-              ['town', 'まちを探す', <MagnifyingGlassIcon key="i" />],
-              ['project', '事業を探す', <ListMagnifyingGlassIcon key="i" />],
+              ['town', 'まち', <MagnifyingGlassIcon key="i" />],
+              ['project', '事業', <ListMagnifyingGlassIcon key="i" />],
             ] as const
           ).map(([k, label, icon]) => (
             <button
@@ -308,7 +308,7 @@ function Seek({ entries, town, recent, snap, onChoose }: { entries: MapEntry[]; 
           ) : null}
           <div className="mt-4 flex flex-wrap gap-x-5 gap-y-2">
             <More href={town.path}>{town.name}のページを見る</More>
-            <More href={searchHref('', town.code)}>{town.name}の事業を探す</More>
+            <More href={searchHref('', town.code)}>{town.name}の事業</More>
             <button type="button" onClick={onChoose} className="ms-auto text-[13px] text-muted-foreground hover:text-foreground">
               変える
             </button>
@@ -371,7 +371,7 @@ function Inside({ c, sitekey, onChoose }: { c: Ctx; sitekey: string; onChoose: (
       </section>
 
       <section className="animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none">
-        <h3 className="mb-2 text-[15px] font-bold">{town.name}の事業を探す</h3>
+        <h3 className="mb-2 text-[15px] font-bold">{town.name}の事業</h3>
         <ProjectSearchBox code={town.code} size="md" placeholder="例：給食、プール、保育" />
         <div className="mt-2.5 flex flex-wrap gap-2">
           {EXAMPLES.map((x) => (

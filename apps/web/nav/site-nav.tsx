@@ -204,7 +204,7 @@ function BottomNav({ active, theme, onPick, proto }: { active?: NavSection; them
     ? [
         { href: '/prototype', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
         { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
-        { href: '/prototype/search', label: '事業を探す', icon: <ListMagnifyingGlassIcon />, active: active === 'search' },
+        { href: '/prototype/search', label: '事業', icon: <ListMagnifyingGlassIcon />, active: active === 'search' },
       ]
     : [
         { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },

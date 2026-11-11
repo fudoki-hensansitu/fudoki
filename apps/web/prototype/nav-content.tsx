@@ -46,7 +46,7 @@ function TownSearch() {
       <SidebarMenu>
         <Item
           href="#search"
-          label="まちを探す"
+          label="まち"
           icon={<MagnifyingGlassIcon />}
           onClick={(e) => {
             e.preventDefault()
@@ -102,7 +102,7 @@ function Mine({ path, town }: { path: string; town: Town | null }) {
       <SidebarGroup>
         <SidebarMenu>
           <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
-          <Item href="/prototype/search" label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
+          <Item href="/prototype/search" label="事業" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
         </SidebarMenu>
       </SidebarGroup>
     </>
@@ -124,7 +124,7 @@ function Seek({ path }: { path: string; town: Town | null }) {
         <SidebarMenu>
           <Item
             href="/prototype?seek=town"
-            label="まちを探す"
+            label="まち"
             icon={<MagnifyingGlassIcon />}
             onClick={(e) => {
               e.preventDefault()
@@ -132,7 +132,7 @@ function Seek({ path }: { path: string; town: Town | null }) {
             }}
           />
           <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
-          <Item href="/prototype/search" label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
+          <Item href="/prototype/search" label="事業" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
         </SidebarMenu>
       </SidebarGroup>
     </>
@@ -153,7 +153,7 @@ function Inside({ path, town }: { path: string; town: Town | null }) {
         </SidebarGroupLabel>
         <SidebarMenu>
           <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
-          <Item href={town ? searchHref('', town.code) : '/prototype/search'} label="事業を探す" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
+          <Item href={town ? searchHref('', town.code) : '/prototype/search'} label="事業" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/prototype/search')} />
         </SidebarMenu>
       </SidebarGroup>
     </>
