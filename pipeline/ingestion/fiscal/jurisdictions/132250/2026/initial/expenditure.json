@@ -135,7 +135,8 @@
             }
           },
           "quirks": {
-            "repeated_heading_owns_nothing": true
+            "repeated_heading_owns_nothing": true,
+            "spread_columns": true
           }
         }
       },

@@ -136,8 +136,9 @@
             }
           },
           "quirks": {
+            "codeless_beside_repeated_code": true,
             "repeated_heading_owns_nothing": true,
-            "codeless_beside_repeated_code": true
+            "spread_columns": true
           }
         }
       },

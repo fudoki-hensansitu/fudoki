@@ -91,6 +91,12 @@
                 "pattern": "position"
               }
             }
+          },
+          "quirks": {
+            "department_heading_slack": true,
+            "spread_columns": true,
+            "title_depths": true,
+            "titles_on_one_line": true
           }
         },
         "account": "一般会計",
