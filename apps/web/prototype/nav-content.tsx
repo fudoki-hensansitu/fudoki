@@ -119,10 +119,6 @@ function Seek({ path, town }: { path: string; town: Town | null }) {
     if (path === '/prototype') window.dispatchEvent(new Event('fudoki:seek-town'))
     else visit('/prototype?seek=town')
   }
-  React.useEffect(() => {
-    window.addEventListener(FIND, seekTown)
-    return () => window.removeEventListener(FIND, seekTown)
-  })
   return (
     <>
       <SidebarGroup className="pt-0">

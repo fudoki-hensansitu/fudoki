@@ -9,6 +9,7 @@
   align-items: center;
   gap: 2px;
   padding: 4px;
+  white-space: nowrap; /* left: 50% で幅が画面の半分に縮み、日本語の名前が折り返すので */
   border-radius: 999px;
   background: rgba(10, 10, 10, 0.82);
   -webkit-backdrop-filter: blur(12px) saturate(1.4);
