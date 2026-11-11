@@ -1516,9 +1516,15 @@ def stacked_columns(logicals: list[Logical]) -> set[str]:
 
 def department_heading(item: Item) -> bool:
     """A line that is only a department in brackets with an amount of its own (`(財政課) 138,154,166`): the
-    items printed under it at its indentation are its parts (`22 償還金利子及び割引料 138,154,166`)."""
-    return (item.code is None and bool(item.amounts)
-            and re.fullmatch(r'[（(][^()（）]+[)）]', normalize(item.name)) is not None)
+    items printed under it at its indentation are its parts (`22 償還金利子及び割引料 138,154,166`). So is an office
+    printed with itself as its department (`日本橋特別出張所 2,332,236千円 [日本橋特別出張所]`, 131024)."""
+    if item.code is not None or not item.amounts:
+        return False
+    name = normalize(item.name)
+    if re.fullmatch(r'[（(][^()（）]+[)）]', name):
+        return True
+    office = re.fullmatch(r'([^\[\]]+)\[([^\[\]]+)\]', name)
+    return office is not None and office.group(1) == office.group(2)
 
 
 def closing_department_headings(ordered: list[Item]) -> set[int]:
