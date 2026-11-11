@@ -76,12 +76,18 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "full_width_numbers": true
+                }
               },
               "説明": {
                 "pattern": "shape",
                 "options": {
                   "bare_amounts": true
+                },
+                "quirks": {
+                  "full_width_numbers": true
                 }
               }
             }
@@ -163,12 +169,18 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "full_width_numbers": true
+                }
               },
               "説明": {
                 "pattern": "shape",
                 "options": {
                   "bare_amounts": true
+                },
+                "quirks": {
+                  "full_width_numbers": true
                 }
               }
             }
@@ -250,12 +262,18 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "full_width_numbers": true
+                }
               },
               "説明": {
                 "pattern": "shape",
                 "options": {
                   "bare_amounts": true
+                },
+                "quirks": {
+                  "full_width_numbers": true
                 }
               }
             }
@@ -337,12 +355,18 @@
             },
             "breakdown": {
               "節": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "full_width_numbers": true
+                }
               },
               "説明": {
                 "pattern": "shape",
                 "options": {
                   "bare_amounts": true
+                },
+                "quirks": {
+                  "full_width_numbers": true
                 }
               }
             }

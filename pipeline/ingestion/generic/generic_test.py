@@ -668,6 +668,17 @@ class PatternTest(unittest.TestCase):
         self.assertIsNone(shape('３階ホール吊り物設備等保守管理委託料'))
         self.assertEqual(shape('㉓災害急患対応手当'), 'circled')
 
+    def test_kana_set_apart_only_where_selected(self):
+        # `ス` `ソフトウェア…` a whole character apart (131211): `kana` only on an axis that selects `kana_set_apart`.
+        from ingestion.generic.patterns import Quirk, load
+        from ingestion.generic.tree import Item, shape_of
+        band = Band(0, 100, 1, ('説明',), [], 0, 100)
+        line = [Glyph('ス', 0, 0, 9, 9, 1, 0), Glyph('ソフトウェア', 18, 0, 72, 9, 1, 1)]
+        item = lambda group: Item(group, 1, [list(line)], None, 'ス ソフトウェア', 0)
+        plain = Group([band], '説明', False)
+        selected = Group([band], '説明', False, kana=Quirk(load('quirks', 'kana_set_apart'), True))
+        self.assertEqual([shape_of(item(plain)), shape_of(item(selected))], [None, 'kana'])
+
 
 class UnitTest(unittest.TestCase):
     def test_default_by_document_kind_when_nothing_is_printed(self):

@@ -104,7 +104,7 @@ def build_reading(logicals, document_kind='settlement', judge=None, layout=None,
     subject = hierarchy['subject']['pattern']
     detail = {axis: value['pattern'] for axis, value in hierarchy['breakdown'].items()}
     built = build(logicals, judge, subject, detail, layout, codes_right, strict=True,
-                  amounts_next_row=hierarchy['subject'].get('amounts') == 'next_row')
+                  amounts_next_row=hierarchy['subject'].get('amounts') == 'next_row', document=workflow)
     if (fourth := hierarchy['subject'].get('fourth_level_axis')):
         fourth_level_axis(built.nodes, fourth)
     return built, {'chosen': subject, 'detail': detail, 'units': units}
