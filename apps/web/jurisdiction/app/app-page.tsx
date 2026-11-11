@@ -845,9 +845,9 @@ export function AppPage({ vision, prefecture, prefecturePath, officialUrl, emble
             <Separator className="absolute inset-x-4 bottom-0 w-auto" />
             {/* スクロールしたら上にタブを残し、右に年度の切り替えを出す。下に Separator を引いて中身と分ける */}
             <div className="flex items-center gap-3 px-4">
-            <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-auto sm:gap-4">
+            <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
               {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-2 px-3 pb-2.5 pt-4 focus-visible:ring-inset text-[15px] leading-none group-data-horizontal/tabs:after:bottom-0 sm:text-[17px] [&_svg:not([class*='size-'])]:size-5">
+                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-2 px-3 py-0 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none group-data-horizontal/tabs:after:bottom-0 sm:text-[17px] [&_svg:not([class*='size-'])]:size-5">
                   <t.icon />
                   {t.label}
                 </TabsTrigger>
