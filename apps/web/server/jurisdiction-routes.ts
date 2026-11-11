@@ -15,7 +15,7 @@ import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
 import { loadAppData } from './app-data'
 import type { Snapshot } from '../jurisdiction/app/data'
-import { loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, shownSettlementYears, type CatalogEntry, type DocumentKind } from './jurisdiction'
+import { ACCOUNT, loadAccountTotals, loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, shownSettlementYears, type CatalogEntry, type DocumentKind } from './jurisdiction'
 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
@@ -33,7 +33,8 @@ async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
   return value
 }
 
-export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog', () => loadCatalog(env))
+// 会計の一覧（accounts）を足したので key を変え、前の形のキャッシュを読まない
+export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog-accounts', () => loadCatalog(env))
 // catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてから一覧へ出るまで最大で約2時間かかる
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
 const page = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
@@ -172,14 +173,32 @@ export async function flowResponse(env: Env, request: Request, { code, year, dep
     const view: FlowView = new URL(request.url).searchParams.get('view') === 'cofog' ? 'cofog' : 'kan'
     // ?phase=initial なら当初予算、無ければ決算を読む
     const kind: DocumentKind = new URL(request.url).searchParams.get('phase') === 'initial' ? 'initial' : 'settlement'
+    // ?account= で特別会計も読む。無ければ一般会計
+    const account = new URL(request.url).searchParams.get('account') || ACCOUNT
     const entry = (await catalog(env)).find((e) => e.code === code)
-    const ok = (kind === 'initial' ? entry?.initialYears : entry?.settlementYears)?.includes(Number(year))
-    if (!ok) throw new HttpError(404, 'NOT_FOUND', kind === 'initial' ? 'この自治体・年度の一般会計の当初予算は収録されていません' : 'この自治体・年度の一般会計の決算は収録されていません')
+    const ok = entry?.accounts?.[kind]?.[year]?.includes(account) ?? (account === ACCOUNT && (kind === 'initial' ? entry?.initialYears : entry?.settlementYears)?.includes(Number(year)))
+    if (!ok) throw new HttpError(404, 'NOT_FOUND', `この自治体・年度の${account}の${kind === 'initial' ? '当初予算' : '決算'}は収録されていません`)
     const load = view === 'cofog' ? loadCofogFlow : loadFlow
-    return json(await memo<Drill[]>(`flow-${view}-${kind}-${code}-${year}-${depth}`, () => load(env, code, Number(year), depth as FlowDepth, kind)))
+    const suffix = account === ACCOUNT ? '' : `-${account}`
+    return json(await memo<Drill[]>(`flow-${view}-${kind}-${code}-${year}-${depth}${suffix}`, () => load(env, code, Number(year), depth as FlowDepth, kind, account)))
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '決算データを表示できませんでした。少し待ってからもう一度開いてください。'))
+  }
+}
+
+/** 一つの自治体・年度の会計ごとの総額（/api/jurisdictions/accounts/:code/:year）。?phase=initial なら当初予算 */
+export async function accountsResponse(env: Env, request: Request, { code, year }: { code: string; year: string }): Promise<Response> {
+  try {
+    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(year)) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度の指定が違います')
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
+    const kind: DocumentKind = new URL(request.url).searchParams.get('phase') === 'initial' ? 'initial' : 'settlement'
+    const accounts = (await catalog(env)).find((e) => e.code === code)?.accounts?.[kind]?.[year]
+    if (!accounts?.length) throw new HttpError(404, 'NOT_FOUND', 'この自治体・年度の資料は収録されていません')
+    return json(await memo(`accounts-${kind}-${code}-${year}`, () => loadAccountTotals(env, code, Number(year), kind, accounts)))
+  } catch (e) {
+    if (e instanceof HttpError) return errorResponse(e)
+    return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
   }
 }
 

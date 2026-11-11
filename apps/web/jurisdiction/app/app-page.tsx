@@ -332,6 +332,9 @@ const VIEWS: { key: FlowView; label: string }[] = [
   { key: 'kan', label: '款・項' },
 ]
 
+const GENERAL = '一般会計'
+type AccountTotal = { name: string; yen: number; amountMissing?: true }
+
 /** 予算・決算。事業は下から積み上げる見方、こちらは大きい項目から下りていく見方。当初予算と決算の両方がある年度はタブを分ける */
 function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   const { v, d, page, select } = useApp()
@@ -349,11 +352,35 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       </ToggleGroup>
     </div>
   )
-  const summary = total ? <Amt yen={total.yen} className="text-[26px] leading-snug text-primary" /> : null
+  // 会計ごとの総額。一般会計を先頭に並べ、押した会計の流れを下に出す
+  const [accounts, setAccounts] = React.useState<AccountTotal[]>()
+  const [account, setAccount] = React.useState(GENERAL)
+  React.useEffect(() => {
+    setAccounts(undefined)
+    setAccount(GENERAL)
+    const controller = new AbortController()
+    fetch(`/api/jurisdictions/accounts/${page.code}/${v.year}${phase === 'initial' ? '?phase=initial' : ''}`, { signal: controller.signal })
+      .then((r) => (r.ok ? r.json() as Promise<AccountTotal[]> : []))
+      .then((x) => { if (!controller.signal.aborted) setAccounts(x) }, () => {})
+    return () => controller.abort()
+  }, [page.code, v.year, phase])
+  const special = account === GENERAL ? undefined : accounts?.find((x) => x.name === account)
+  const picked: YearTotal | undefined = special ? { year: v.year, yen: special.yen, kan: [] } : total
+  const summary = picked ? <Amt yen={picked.yen} className="text-[26px] leading-snug text-primary" /> : null
   return (
     <div className="flex flex-col gap-3">
-      {total ? (
-        <Flow key={`${v.year}-${view}-${phase}`} data={page} total={total} view={view} phase={phase} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase })} bare className="h-[calc(100svh-12rem)] scroll-mt-16 @4xl:h-[calc(100svh-10rem)] @4xl:scroll-mt-16" />
+      {accounts && accounts.length > 1 ? (
+        <div className="-mx-4 flex gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none]" role="radiogroup" aria-label="会計">
+          {accounts.map((x) => (
+            <button key={x.name} type="button" role="radio" aria-checked={x.name === account} onClick={() => setAccount(x.name)} data-selected={x.name === account || undefined} className="flex shrink-0 flex-col items-start rounded-xl bg-card px-3.5 py-2.5 text-left ring-1 ring-transparent transition-colors hover:bg-accent data-selected:bg-accent data-selected:ring-primary">
+              <span className="text-xs text-muted-foreground">{x.name}</span>
+              <Amt yen={x.yen} className="text-[17px] text-primary" />
+            </button>
+          ))}
+        </div>
+      ) : null}
+      {picked ? (
+        <Flow key={`${v.year}-${view}-${phase}-${account}`} data={page} total={picked} view={view} phase={phase} account={account === GENERAL ? undefined : account} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase })} bare className="h-[calc(100svh-12rem)] scroll-mt-16 @4xl:h-[calc(100svh-10rem)] @4xl:scroll-mt-16" />
       ) : (
         <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の{label}は、まだ収録していません</p>
       )}
