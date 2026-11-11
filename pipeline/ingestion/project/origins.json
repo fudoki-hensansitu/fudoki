@@ -81,6 +81,14 @@
     {
       "jurisdiction": "131113",
       "layout": "ota_press"
+    },
+    {
+      "jurisdiction": "131121",
+      "layout": "setagaya_press"
+    },
+    {
+      "jurisdiction": "131130",
+      "layout": "shibuya_press"
     }
   ]
 }
