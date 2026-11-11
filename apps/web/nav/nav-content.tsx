@@ -75,7 +75,7 @@ function TownSearch() {
         onClick={show}
         onPointerEnter={warm}
         aria-keyshortcuts="Meta+K Control+K"
-        className="flex h-10 w-full items-center gap-3 rounded-md border border-sidebar-border bg-background px-[11px] text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
+        className="flex h-10 w-full items-center gap-3 rounded-full border border-sidebar-border bg-background px-[11px] text-sm text-muted-foreground transition-colors hover:text-foreground focus-visible:ring-3 focus-visible:ring-ring/50 focus-visible:outline-none"
       >
         <MagnifyingGlassIcon className="size-5 shrink-0" />
         <span className="flex-1 text-left">まちを探す</span>
