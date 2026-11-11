@@ -485,3 +485,4 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1645,itabashi-2024-05,131199,一般会計,,衛生費,保健所費,,衛生保健指導費,eq,,assigned,07.4,retained,目,,板橋区 保健所費の衛生保健指導費（保健指導・健康相談など）を公衆衛生サービスに分類する（keyword-medicine-nutrition にならう）。名称からの判断。,true
 1646,adachi-2024-01,131211,一般会計,,産業経済費,,,勤労費,eq,,assigned,04.1.2,retained,目,,足立区 勤労者への支援を一般労働業務に分類する。名称からの判断。,true
 1647,kind-fallback-school-lunch,,,学校給食費,,,,,,,assigned,09.6,retained,目,,学校給食費の会計（例: 131121 世田谷区の学校給食費会計）の目を教育の補助サービス 09.6 に分類する（一般会計の給食の目 vocab-school-meal と同じ）。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
+1648,kind-fallback-housing-land,,,宅地造成,,,,,,,assigned,06.1,retained,目,,宅地造成事業の特別会計の目を住宅開発 06.1 に置く（例: 134210 小笠原村。島の住宅用地の造成と分譲）。償還・積立・繰出など行き先が違う目は先の規則が取る。,true
