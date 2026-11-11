@@ -358,7 +358,7 @@ export function Home(props: HomeProps) {
   return (
     <main id="home" className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-16">
       <header className="mb-6">
-        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">まちのお金、何に使ってる？</h1>
+        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">私のお金はどこへ行った？</h1>
         <p className="mt-1.5 text-[15px] text-muted-foreground">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。</p>
       </header>
       <MyTown {...props} />
