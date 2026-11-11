@@ -51,10 +51,11 @@ export function pageYearsOf(e: CatalogEntry): number[] {
   return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) })
 }
 
-/** OG 画像（server/og.ts）に描くもの。紋章が無い（帰属表示の要る紋章を含む）・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする） */
+/** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする）。
+ * 帰属表示の要る紋章（CC BY など）は、描き起こした人とライセンスを画像の隅に書く */
 export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<(OgInput & { cacheKey: string }) | null> {
   const emblem = EMBLEMS[code]
-  if (!emblem || emblem.author) return null
+  if (!emblem) return null
   const entry = (await catalog(env)).find((e) => e.code === code)
   const data = entry && entry.settlementYears.length > 0 ? await pageData(env, entry) : null
   const areas = data?.cofogFlow.map((f) => ({ name: f.kan.name, yen: f.kan.yen })).filter((a) => a.yen > 0) ?? []
@@ -74,6 +75,7 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
     areas,
     emblemSvg,
     logoSvg,
+    ...(emblem.author ? { credit: `紋章の SVG 化: ${emblem.author} / ${emblem.license}` } : {}),
     // 同じ年度の決算なら同じ画像。字形・配置を変えたら版を上げる
     cacheKey: `og-v2/${code}-${latest.year}-${latest.yen}`,
   }

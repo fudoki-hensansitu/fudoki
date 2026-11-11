@@ -1,7 +1,8 @@
 // 自治体の紋章（都章・区章・市章・町村章）。SVG は public/jurisdictions/<code>/emblem.svg に置く。
 // どれも Wikimedia Commons の SVG をそのまま使う。file は Commons の File 名、license は Commons の著作権タグかライセンス名。
 // 候補は Wikidata の全国地方公共団体コード（P429）の紋章の画像（P94、無ければ P158）、無ければ日本語版 Wikipedia の記事の基礎情報の紋章。
-// Public domain（CC0 を含む）でないもの（CC BY・CC BY-SA）は author を持ち、利用規約の頁に作者とライセンスを表示する。OG 画像には使わない
+// Public domain（CC0 を含む）でないもの（CC BY・CC BY-SA）は author（Commons に SVG を描き起こして上げた人。紋章の図案の権利者ではない）を持ち、
+// 利用規約の頁と OG 画像に、描き起こした人とライセンスを表示する
 import { assetPath } from './assets'
 
 export { assetPath }
@@ -14,15 +15,15 @@ const withCheckDigit = (five: string) => {
 }
 
 /** 頁に載せる紋章。画面の bundle に EMBLEMS を載せないよう、server 側で引いて PageData に入れる。og は OG 画像に使えるか（帰属表示の要る紋章は使わない） */
-export const emblemOf = (code: string): { src: string; og: boolean } | null => {
+export const emblemOf = (code: string): { src: string } | null => {
   const e = EMBLEMS[code]
-  return e ? { src: assetPath(code, 'emblem.svg'), og: !e.author } : null
+  return e ? { src: assetPath(code, 'emblem.svg') } : null
 }
 
 export interface Emblem {
   file: string
   license: string
-  /** 帰属表示が要るとき（CC BY・CC BY-SA）の Commons の作者 */
+  /** 帰属表示が要るとき（CC BY・CC BY-SA）の、Commons に SVG を描き起こした人 */
   author?: string
 }
 
