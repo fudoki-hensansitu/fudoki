@@ -158,7 +158,7 @@ export function Empty({ entries, onPick, sample, sampleName }: { entries: MapEnt
           <span className="rounded-full border px-2 py-0.5 text-[11px] font-bold">見本</span>
           {sampleName}のホーム
         </p>
-        <div inert aria-hidden="true" className="ob-sample pointer-events-none max-h-[460px] overflow-hidden select-none [mask-image:linear-gradient(to_bottom,#000_30%,transparent_92%)] sm:max-h-[520px]">
+        <div inert aria-hidden="true" className="ob-sample pointer-events-none h-[460px] overflow-hidden select-none [mask-image:linear-gradient(to_bottom,#000_30%,transparent_92%)] sm:h-[520px]">
           {sample}
         </div>
         <div className="relative -mt-44 sm:-mt-52 sm:px-6">
