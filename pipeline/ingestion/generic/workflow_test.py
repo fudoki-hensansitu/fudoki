@@ -137,11 +137,11 @@ class SelectedDependencyTest(unittest.TestCase):
     def test_editing_an_unselected_pattern_does_not_invalidate_a_saved_reading(self):
         before = self.fingerprint()
         path = self.root / 'ingestion/generic/patterns/headers/characters.py'
-        path.write_text(path.read_text() + '\n# changed character reading\n')
+        path.write_text(path.read_text() + '\n_EDITED = "changed character reading"\n')
         self.assertEqual(before, self.fingerprint())
         self.conversion['options']['workflow']['headers']['pattern'] = 'characters'
         before = self.fingerprint()
-        path.write_text(path.read_text() + '\n# another change\n')
+        path.write_text(path.read_text() + '\n_EDITED = "another change"\n')
         self.assertNotEqual(before, self.fingerprint())
 
     def test_catalog_additions_do_not_invalidate_existing_selections(self):
@@ -217,3 +217,15 @@ class QuirkTest(unittest.TestCase):
         self.assertIn('generic/patterns/quirks/headings.py', manifest.dependencies(conversion))
         from ingestion.generic.workflow import settings
         self.assertEqual(settings(conversion['options']['workflow'])['breakdown']['備考']['quirks'], {'headings': True})
+
+
+class CodeFingerprintTest(unittest.TestCase):
+    def test_comments_and_docstrings_do_not_change_the_code_fingerprint(self):
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'reading.py'
+            path.write_text('def read(x):\n    return x + 1\n')
+            before = manifest.sha_code(path)
+            path.write_text('"""A reading."""\n# why\ndef read(x):\n    """Read it."""\n    return x + 1  # one more\n')
+            self.assertEqual(before, manifest.sha_code(path))
+            path.write_text('def read(x):\n    return x + 2\n')
+            self.assertNotEqual(before, manifest.sha_code(path))

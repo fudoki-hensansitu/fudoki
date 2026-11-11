@@ -120,21 +120,21 @@ class CoupledReadingTest(unittest.TestCase):
                     patch.object(reading, 'INGESTION', root / 'ingestion'):
                 before = manifest.fingerprint(self.document, self.conversion)
                 unselected = root / 'ingestion/generic/patterns/components/page_context.py'
-                unselected.write_text(unselected.read_text() + '\n# unselected edit\n')
+                unselected.write_text(unselected.read_text() + '\n_EDITED = "unselected edit"\n')
                 self.assertEqual(before, manifest.fingerprint(self.document, self.conversion))
                 tree = root / 'ingestion/generic/tree.py'
-                tree.write_text(tree.read_text() + '\n# layered edit\n')
+                tree.write_text(tree.read_text() + '\n_EDITED = "layered edit"\n')
                 self.assertEqual(before, manifest.fingerprint(self.document, self.conversion))
                 layered_before = manifest.fingerprint(self.document, layered)
                 shared_reading = root / 'ingestion/generic/reading.py'
-                shared_reading.write_text(shared_reading.read_text() + '\n# coupled edit\n')
+                shared_reading.write_text(shared_reading.read_text() + '\n_EDITED = "coupled edit"\n')
                 self.assertEqual(layered_before, manifest.fingerprint(self.document, layered))
                 for name in ('generic/patterns/components/scoped_text.py',
                              self.conversion['options']['workflow']['reading']['profile'],
                              'generic/patterns/readings/parallel_breakdowns.profile.schema.json'):
                     before = manifest.fingerprint(self.document, self.conversion)
                     path = root / 'ingestion' / name
-                    path.write_text(path.read_text() + '\n')
+                    path.write_text(path.read_text() + ('\n_EDITED = 1\n' if name.endswith('.py') else '\n'))
                     with self.subTest(dependency=name):
                         self.assertNotEqual(before, manifest.fingerprint(self.document, self.conversion))
                 profile = root / 'ingestion' / self.conversion['options']['workflow']['reading']['profile']

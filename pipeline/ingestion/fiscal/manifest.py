@@ -35,6 +35,21 @@ def sha_file(path: Path) -> str:
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 
+def sha_code(path: Path) -> str:
+    """The fingerprint of a code file. A Python file is hashed by its syntax tree without docstrings, so editing a
+    comment, a docstring or the layout of the code leaves the tables it built current; other files by their bytes.
+    The tree's dump belongs to the Python version, so a new Python makes every table stale once."""
+    if path.suffix != '.py':
+        return sha_file(path)
+    tree = ast.parse(path.read_text())
+    for node in ast.walk(tree):
+        if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and node.body:
+            first = node.body[0]
+            if isinstance(first, ast.Expr) and isinstance(first.value, ast.Constant) and isinstance(first.value.value, str):
+                node.body = node.body[1:] or [ast.Pass()]
+    return hashlib.sha256(ast.dump(tree, include_attributes=False).encode()).hexdigest()
+
+
 def document_slot(target: dict) -> str:
     return (f'supplementary-{target["amendment_number"]}'
             if target['document_kind'] == 'supplementary' else target['document_kind'])
@@ -456,7 +471,7 @@ def fingerprints(document: dict, conversions: list[dict] | None = None) -> dict[
             patterns = discovery_patterns()
         for path in files:
             if code_path(path) not in hashes:
-                hashes[code_path(path)] = sha_file(code_path(path))
+                hashes[code_path(path)] = sha_code(code_path(path))
         material = {'target': document['target'], 'direction': document['direction'],
                     'conversion': conversion,
                     'origins': [{k: item[k] for k in ('sha256', 'format', 'scope', 'pdf_type')} for item in origins],
@@ -471,7 +486,7 @@ def fingerprints(document: dict, conversions: list[dict] | None = None) -> dict[
         if data:
             for path in data:
                 if PIPELINE / path not in hashes:
-                    hashes[PIPELINE / path] = sha_file(PIPELINE / path)
+                    hashes[PIPELINE / path] = sha_code(PIPELINE / path)
             material['resources'] = [{'path': path, 'sha256': hashes[PIPELINE / path]} for path in data]
         if any(origin.get('pdf_type') == 'text' for origin in origins):
             material['annotation_dictionary_sha256'] = sha_file(

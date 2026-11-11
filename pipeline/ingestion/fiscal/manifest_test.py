@@ -214,7 +214,7 @@ class ManifestWorkflowTest(unittest.TestCase):
         (self.code/'unrelated.py').write_text('# unrelated')
         self.assertEqual(manifest.fingerprint(self.document, conversion), before)
         with (self.code/'lib/parquet.py').open('a') as stream:
-            stream.write('\n# relevant code change\n')
+            stream.write('\n_EDITED = "relevant code change"\n')
         self.assertNotEqual(manifest.fingerprint(self.document, conversion), before)
 
     def test_relative_imports_and_literal_config_files_invalidate_fingerprint(self):
@@ -365,7 +365,7 @@ class ManifestWorkflowTest(unittest.TestCase):
         candidate = json.loads(Path(result['candidate']).read_text())
         manifest.require_current(candidate)
         with (self.code/'lib/parquet.py').open('a') as stream:
-            stream.write('\n# changed extraction dependency\n')
+            stream.write('\n_EDITED = "changed extraction dependency"\n')
         with self.assertRaisesRegex(ValueError, 'Stale saved table'):
             manifest.require_current(candidate)
 
