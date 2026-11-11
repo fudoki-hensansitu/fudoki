@@ -225,7 +225,7 @@ function FieldTile({ f, i, onClick }: { f: YearView['fields'][number]; i: number
   const n = v.current.filter((p) => p.field === f.id).length
   const pct = (f.yen / v.total) * 100
   return (
-    <button type="button" onClick={onClick} className="block h-full w-full rounded-xl text-left transition-transform active:scale-[.98]"><Card className="h-full gap-2.5 bg-background p-3.5 text-left ring-1 ring-border transition-[background,box-shadow,transform] hover:bg-accent hover:ring-primary active:scale-[.98]">
+    <button type="button" onClick={onClick} className="row-span-3 grid w-full grid-rows-subgrid rounded-xl text-left transition-transform active:scale-[.98]"><Card className="row-span-3 grid grid-rows-subgrid gap-2.5 bg-background p-3.5 text-left ring-1 ring-border transition-[background,box-shadow,transform] hover:bg-accent hover:ring-primary active:scale-[.98]">
       <span className="flex items-center justify-between">
         <IconBox><FieldIcon id={f.id} /></IconBox>
         <span className="text-[22px] tabular-nums text-primary">
@@ -237,7 +237,7 @@ function FieldTile({ f, i, onClick }: { f: YearView['fields'][number]; i: number
         <span className="block text-base font-semibold">{f.name}</span>
         <span className="text-xs text-muted-foreground"><Amt yen={f.yen} /> · 事業 {n}</span>
       </span>
-      <span className="block h-1 overflow-hidden rounded-full bg-secondary">
+      <span className="block h-1 self-end overflow-hidden rounded-full bg-secondary">
         <span className="app-grow block h-full rounded-full bg-primary" style={{ width: `${Math.max(2, pct * 1.8)}%`, animationDelay: `${i * 30}ms` }} />
       </span>
     </Card></button>
@@ -366,6 +366,7 @@ function Overview({ go }: { go: Go }) {
 
       <section>
         <SectionHead title="分野" />
+        {/* 札の中の行（数字・名前・棒）を subgrid で横の札と揃え、名前が2行になっても棒の位置を同じにする */}
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 @3xl:grid-cols-5">
           {v.fields.map((f, i) => <FieldTile key={f.id} f={f} i={i} onClick={() => openField(f.id)} />)}
         </div>
