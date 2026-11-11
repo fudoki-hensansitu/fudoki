@@ -9,6 +9,8 @@ export type Proj = {
   dept: string | null
   path: (string | null)[]
   field: string
+  /** 始めた年度（前の年度の資料にこの事業が無かったと確かめられたときだけ。DB の事業の first_year） */
+  started: number | null
   /** 年度ごとの当初予算（b）と決算（s） */
   y: Record<string, Amounts>
   /** 年度ごとの中の事業（名前・金額）。金額の多い順 */
@@ -48,8 +50,8 @@ export function yearView(d: Snapshot, year: number) {
   const ended = hasPrev ? d.projects.filter((p) => amt(p, prev) != null && budget(p) == null).sort((a, b) => amt(b, prev)! - amt(a, prev)!) : []
   const measures = d.measures.filter((m) => m.fy === year)
   const measuresOf = group(measures, (m) => m.project)
-  const appeared = (p: Proj) => hasPrev && budget(p) != null && amt(p, prev) == null
-  const isNew = (p: Proj) => appeared(p) || (measuresOf.get(p.id) ?? []).some((m) => m.new)
+  // NEW はその年度に始めた事業（予算書に新しく出てきた事業）だけ。施策の新規はこの印に使わない
+  const isNew = (p: Proj) => p.started === year
   const currentIds = new Set(current.map((p) => p.id))
   const fresh = measures.filter((m) => m.new).sort((a, b) => (b.yen ?? 0) - (a.yen ?? 0))
   // 評価シートは評価した事業を行った年度の頁に出す（R6 の事業の評価は R6 の頁）。まだ評価の無い年度は出さない

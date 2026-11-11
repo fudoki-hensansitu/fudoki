@@ -98,6 +98,7 @@ export type ProjectOutput = z.infer<typeof ProjectOutput>
 export const ProjectSearchInput = yearSearchInputFor(PROJECT_YEAR_TABLE)
 export const ProjectSearchOutput = z.strictObject({
   project_years: z.array(ProjectYearRow),
+  projects: z.array(ProjectRow).describe('この頁の事業の年度が属する事業（始めた年度・終えた年度）。'),
   next_page_token: nextPageToken,
 })
 export type ProjectSearchOutput = z.infer<typeof ProjectSearchOutput>
