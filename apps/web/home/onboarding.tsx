@@ -31,8 +31,7 @@ export function AskTown({ entries, onPick }: { entries: MapEntry[]; onPick: (e: 
   return (
     <section className={'ob-rise rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7'}>
       <Steps at={1} of={2} onBrand />
-      <h2 className="text-[20px] leading-snug font-bold sm:text-[24px]">住んでいるまちを選ぶ</h2>
-      <p className="mt-1 mb-4 text-[14px] opacity-80">名前で探すか、現在地から選びます。選んだまちの予算と事業を、次からもここに出します。</p>
+      <h2 className="mb-4 text-[20px] leading-snug font-bold sm:text-[24px]">住んでいるまちを選ぶ</h2>
       {/* 一覧を読めなかったときに「未収録」と誤って伝えないよう、検索と現在地を出さない */}
       {entries.length ? (
         <>

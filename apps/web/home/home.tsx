@@ -334,7 +334,7 @@ const DOCS = 'https://docs.fudoki.dev'
 function Footer() {
   const ext = 'inline-flex items-center gap-1 hover:text-foreground'
   return (
-    <footer className="mt-12 flex flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
+    <footer className="mt-auto flex pt-12 flex-wrap items-center justify-between gap-4 text-xs text-muted-foreground">
       <span>© 2026 風土記</span>
       <span className="flex flex-wrap gap-x-5 gap-y-2">
         <Link href="/about" className="hover:text-foreground">
@@ -421,7 +421,7 @@ export function Home({ entries, featured }: HomeProps) {
       </>
     )
   return (
-    <main className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
+    <main className="mx-auto flex min-h-svh w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
       <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />
       {/* ほかのまちを見る導線。住んでいるまちを選んだあとも、ホームの頭に常に出す（選ぶ前は Empty の中に出す） */}
       {ready && town ? <OtherTowns entries={entries} className="mb-6" /> : null}
