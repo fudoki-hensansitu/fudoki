@@ -54,7 +54,8 @@
             "description": "The column is not taken in: the builder reads none of it, and its printed digits are a coverage exclusion of the whole column on every page, with a kind of the shared vocabulary and the reason.",
             "properties": {
               "kind": {"type": "string", "minLength": 1},
-              "reason": {"type": "string", "minLength": 10}
+              "reason": {"type": "string", "minLength": 10},
+              "overhang": {"type": "number", "exclusiveMinimum": 0, "maximum": 10, "description": "Points the text layer sets the column's digits past its right rule (a font the PDF does not embed, 小笠原村): they are still the column's."}
             }
           }
         }
