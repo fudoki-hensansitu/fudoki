@@ -59,7 +59,7 @@ import { assetPath } from '../profiles'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../page'
-import { appPageYears, INDEX_PATH, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
@@ -184,7 +184,7 @@ function Elsewhere() {
   // 都道府県の紋章も、近くの自治体と同じく紋章の画像で出す（都道府県のコードは先頭2桁＋0001）
   const prefCode = `${page.code.slice(0, 2)}0001`
   const places = [
-    ...(page.prefecturePath !== INDEX_PATH ? [{ href: page.prefecturePath, name: page.prefecture, icon: EMBLEMS[prefCode] ? <img src={assetPath(prefCode, 'emblem.svg')} alt="" className="size-full object-contain p-1" /> : <MapTrifoldIcon /> }] : []),
+    ...(page.prefecturePath ? [{ href: page.prefecturePath, name: page.prefecture, icon: EMBLEMS[prefCode] ? <img src={assetPath(prefCode, 'emblem.svg')} alt="" className="size-full object-contain p-1" /> : <MapTrifoldIcon /> }] : []),
     ...page.neighbors.map((n) => ({ href: n.path, name: n.name, icon: n.logo ? <img src={n.logo} alt="" className="size-full object-contain p-1" /> : <MapPinAreaIcon /> })),
   ]
   return (
@@ -1028,7 +1028,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
         </div>
         {vision ? <p className="text-base leading-snug sm:text-[17px]">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
-          <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" /><Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button></span>
+          <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
           {data.population ? (
             <Hint label={`住民基本台帳人口（${formatAsOf(data.population.asOf)}時点）`}>
               <span className="inline-flex items-center gap-1 text-foreground sm:gap-1.5"><UsersIcon className="size-3.5 text-muted-foreground sm:size-4" aria-hidden="true" /><span className="sr-only">人口 </span>{formatPeople(data.population.people)}</span>

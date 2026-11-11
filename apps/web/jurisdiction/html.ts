@@ -1,10 +1,10 @@
-// 自治体の個別ページ（/tokyo/nakano）と一覧（/jurisdictions）の <head> と sitemap。本文は pages/ の React（page.tsx・index-page.tsx）を
+// 自治体の個別ページ（/tokyo/nakano）の <head> と sitemap。本文は pages/ の React（page.tsx）を
 // Void がサーバーで書き、同じ props で hydrate する。ここは頁ごとの title・説明・canonical・JSON-LD を組む
 import type { CatalogEntry } from '../server/jurisdiction'
 import { EMBLEMS } from './emblems'
 import { jurisdictionPath } from './path'
 import { assetPath } from './profiles'
-import { appPageYears, formatYen, INDEX_PATH, TAB_SLUGS, type PageData } from './types'
+import { appPageYears, formatYen, TAB_SLUGS, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
 /** JSON を script の中に置くときに </script> や <!-- で抜けないようにする */
@@ -113,12 +113,12 @@ export function pageHead(d: PageData, year?: number, sub?: { label: string; path
     creator: { '@type': 'Organization', name: '風土記', url: `${ORIGIN}/` },
     ...(d.originTitle ? { isBasedOn: d.originTitle } : {}),
   }
-  // 検索結果にパンくず（風土記 › 東京都 › 品川区）を出す。都道府県の頁が無ければ一覧を挟む
-  const parent = d.prefecturePath === INDEX_PATH ? { name: '自治体を探す', path: INDEX_PATH } : { name: d.prefecture, path: d.prefecturePath }
+  // 検索結果にパンくず（風土記 › 東京都 › 品川区）を出す。都道府県の頁が無ければ都道府県を挟まない
+  const parent = d.prefecturePath ? [{ name: d.prefecture, path: d.prefecturePath }] : []
   const breadcrumb = {
     '@context': 'https://schema.org',
     '@type': 'BreadcrumbList',
-    itemListElement: [{ name: '風土記', path: '/' }, parent, { name: d.name, path: jurisdictionPath(d.code) }].map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: `${ORIGIN}${c.path}` })),
+    itemListElement: [{ name: '風土記', path: '/' }, ...parent, { name: d.name, path: jurisdictionPath(d.code) }].map((c, i) => ({ '@type': 'ListItem', position: i + 1, name: c.name, item: `${ORIGIN}${c.path}` })),
   }
   // 紋章と決算のある自治体の最新の頁は、OG 画像を自治体のもの（routes/jurisdictions/[code]/og.png.ts が最新の決算の総額・分野から描く）に差し替える。
   // 画像の金額は最新の決算なので、過去の年度の頁は全頁共通の画像のまま
@@ -131,17 +131,10 @@ export function pageHead(d: PageData, year?: number, sub?: { label: string; path
 export const emptyHead = (e: CatalogEntry): Head =>
   head(`${e.name}｜風土記`, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.code)}`, { meta: [{ name: 'robots', content: 'noindex' }] })
 
-export function indexHead(count: number): Head {
-  const description = count
-    ? `決算を収録している自治体（${count}）を、地図と表で一覧にしています。人口・1人あたりの歳出・歳出の総額を見比べて、自治体ごとのお金の使い道へ進めます。`
-    : '風土記が決算を収録した自治体の一覧です。まだ収録した自治体がありません。'
-  return head('自治体を探す｜風土記', description, `${ORIGIN}${INDEX_PATH}`)
-}
-
 /** sitemap。自治体の頁（最新の年度の入口）に加え、過去の年度の頁（/tokyo/shinagawa/2024）と各年度のタブの頁を載せる。
  * 最新の年度の頁（/tokyo/shinagawa/2026）は canonical が入口なので載せない。years は頁で選べる年度（新しい順） */
 export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) => number[] = (e) => [...e.settlementYears].sort((a, b) => b - a)) =>
-  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}${INDEX_PATH}</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url>${entries
+  `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url>${entries
     .filter((e) => e.settlementYears.length > 0)
     .flatMap((e) => {
       const base = jurisdictionPath(e.code)

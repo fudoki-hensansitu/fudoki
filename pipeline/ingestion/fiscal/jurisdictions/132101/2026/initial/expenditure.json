@@ -1,0 +1,1326 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132101",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-1-ocr-1-b",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "28e6a60825ecbf27a93a7d0b26edfc45f8c0c537959a007428deb03e37f83d9f",
+          "bytes": 3237285
+        },
+        {
+          "id": "general-initial-1-ocr-2",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a5cce5b4a7bdb0cb76cc9862dea32215b373f113b44722a2c2c525b65d28b626",
+          "bytes": 4132924
+        },
+        {
+          "id": "general-initial-1-ocr-3",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "88f84119cce9e3f5a90155ff883544f03f392d96b51592a767fae712c53dfb27",
+          "bytes": 4105156
+        },
+        {
+          "id": "general-initial-1-ocr-4",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "846d20c5032b2a3548142aed3b40ab66f7f792ee6c974026bc0862fec39180fe",
+          "bytes": 3646389
+        },
+        {
+          "id": "general-initial-1-ocr-5-b",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9b75c73de2fe38698e64dacec30aaa5e4bd73e4e84945e5fdfa923a96cbdbff9",
+          "bytes": 3341914
+        },
+        {
+          "id": "general-initial-1-ocr-6",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1ba181fadba47848c2ea21551b8a107c430e72ee02234fd0e4e565cc7792f35b",
+          "bytes": 3702399
+        },
+        {
+          "id": "general-initial-1-ocr-7",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7f9fdc0af92fb14cb417ed6cba9657fed9e90a7aec088140a8931ece70f7aef1",
+          "bytes": 3746879
+        },
+        {
+          "id": "general-initial-1-ocr-8",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ffe76c92cf7a408306a556a196149a904969577fe67dae3aa7d3e5ca899767ec",
+          "bytes": 4273830
+        },
+        {
+          "id": "general-initial-1-ocr-9",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "03dd45d9ff8fc74cee05be1d5f4a5645ac359964678054a1a8d4db72e42c44bf",
+          "bytes": 3878525
+        },
+        {
+          "id": "general-initial-1-ocr-10",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "fd36b5a4aeb06c3188176e7d45399b7a6c63ff17ca4284a737fc5e94d210126d",
+          "bytes": 3683876
+        },
+        {
+          "id": "general-initial-1-ocr-11-b",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              110
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2d20847b5b0aa348d7d9122fc6a19825482853ce480d8860838b60907bf6efad",
+          "bytes": 3303068
+        },
+        {
+          "id": "general-initial-1-ocr-12",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "cd077a95f11982907d93ca8334c4b92b09a884fafcf359d20c5ef897154ab580",
+          "bytes": 3620163
+        },
+        {
+          "id": "general-initial-1-ocr-13-b",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              121,
+              122,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9d77283903d99facd71cd41c52ce3ee3713d78deaff089116781175dc1e59055",
+          "bytes": 3576735
+        },
+        {
+          "id": "general-initial-1-ocr-14-b",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              131,
+              132,
+              133,
+              134,
+              136,
+              137,
+              138,
+              140
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a8012b184301dde8b1e511f16c7fe88d72b2d4f81cc33cfd8bc5bd19a1c6a7ce",
+          "bytes": 2641857
+        },
+        {
+          "id": "general-initial-1-ocr-15-b",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              141,
+              142,
+              143,
+              144,
+              145,
+              146,
+              147,
+              148,
+              150
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "79e03b4d6e894f2afcba5808a06999b6d7102bf6e88bde980191751f9e4b223a",
+          "bytes": 3319323
+        },
+        {
+          "id": "general-initial-1-ocr-16-b",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              151,
+              152,
+              153,
+              154,
+              155,
+              157,
+              158,
+              159,
+              160
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7b472b984536d6e19e4d2831c0c347921ad296a6fe4592fe5165cb38f4c711a2",
+          "bytes": 3912806
+        },
+        {
+          "id": "general-initial-1-ocr-17",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              161,
+              162,
+              163,
+              164,
+              165,
+              166,
+              167,
+              168,
+              169,
+              170
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "34d3f2d6066dedfaf76c9d207fc6bef384b1e8a582f8935c2d5cd722ee734fec",
+          "bytes": 4058138
+        },
+        {
+          "id": "general-initial-1-ocr-18",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              171,
+              172,
+              173,
+              174,
+              175,
+              176,
+              177,
+              178,
+              179,
+              180
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2873f6fe6c7074ee3fea6b000fc5439118c952924bfcd9beef74a0f6038c49fc",
+          "bytes": 2576945
+        },
+        {
+          "id": "general-initial-1-ocr-19",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              181
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "106ce545caf3b3df5b8b65b367252dc3fbcbd70238e234b7dc63319d7831b586",
+          "bytes": 64249
+        },
+        {
+          "id": "general-initial-1-ocr-p4-strips2",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              4
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 2,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "59d259f199cf369cd76b8933b99e97402107c42a1d4ba207508ef0c6ba134af1",
+          "bytes": 546335
+        },
+        {
+          "id": "general-initial-1-ocr-p41-strips2",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 2,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "14c60ef31685cdd3eb7f5d1b1c506ebf49c537816a424e780a6cc203173a3055",
+          "bytes": 337129
+        },
+        {
+          "id": "general-initial-1-ocr-p109-strips2",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              109
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 2,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8f1480b306fa3d4030a33f1966bddb63b09a48f376228755164058bb7599a5c9",
+          "bytes": 426790
+        },
+        {
+          "id": "general-initial-1-ocr-p123-strips2",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              123
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 2,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "0a034b3f276cbff844bb3341710687302238ffccecac1cc189b2d87abcd49d8d",
+          "bytes": 453005
+        },
+        {
+          "id": "general-initial-1-ocr-p135-strips2",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              135
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 2,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a8d249a93bc36846636105c63fc9713b011e2a89c4f0e427c03cce33a7885006",
+          "bytes": 499171
+        },
+        {
+          "id": "general-initial-1-ocr-p139-strips2",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              139
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 2,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "be7b6132f5dcb34d9a76ee1bfcad7d2657956f14ab4bc3b3b0ea2d0b9276f376",
+          "bytes": 510113
+        },
+        {
+          "id": "general-initial-1-ocr-p149-strips2",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              149
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 2,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c184ff9cdd6bd8f087e22d8f8b846c4c035e2b915c0424999c5f65b59b4053c6",
+          "bytes": 508265
+        },
+        {
+          "id": "general-initial-1-ocr-p156-strips2",
+          "origin_sha256": "41f3d67a60b7b7fc8239191d88737edd91b2c8262a2930c87e2713799ccadc6c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              156
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 2,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "fd692df57c1b16c5961956bae3dc6f46868ff98006428909c980c7c5aa4dc192",
+          "bytes": 495819
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-1",
+        "pages": [
+          [
+            1,
+            181
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財／源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "細節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "wrap": "amount_on_last_line",
+                  "bracketed_remainder": true,
+                  "name_start_slack": 7,
+                  "bare_amounts": true,
+                  "glued_numbers": {
+                    "81歳6か月児健康診査に要す": "8"
+                  },
+                  "opening_bracket_ink": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p88-age-1",
+            "page": 88,
+            "observation_id": "p88:full-page:a0:result0:r117",
+            "observed_name": "歲児健康診查",
+            "corrected_name": "歳児健康診査",
+            "reason": "原画は「3歳児…」。OCR が「歳」を異体字の「歲」と読み、名前の頭の「3」を番号と取り違えていた。"
+          },
+          {
+            "id": "p88-age-2",
+            "page": 88,
+            "observation_id": "p88:full-page:a0:result0:r119",
+            "observed_name": "歲児経過観察健康診查",
+            "corrected_name": "歳児経過観察健康診査",
+            "reason": "原画は「3歳児…」。OCR が「歳」を異体字の「歲」と読み、名前の頭の「3」を番号と取り違えていた。"
+          },
+          {
+            "id": "p88-age-3",
+            "page": 88,
+            "observation_id": "p88:full-page:a0:result0:r135",
+            "observed_name": "歲児精密健康診查審查",
+            "corrected_name": "歳児精密健康診査審査",
+            "reason": "原画は「3歳児…」。OCR が「歳」を異体字の「歲」と読み、名前の頭の「3」を番号と取り違えていた。"
+          },
+          {
+            "id": "p149-pool",
+            "page": 149,
+            "observation_id": "p149:full-page:a0:result1:r171",
+            "observed_name": "プ一ル",
+            "corrected_name": "プール",
+            "reason": "原画は「プール循環浄化装置保守点検委託料」。OCR が長音の「ー」を漢数字の「一」と読み、上の行の子にしていた。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p17-stacked-r93",
+            "page": 17,
+            "observation_id": "p17:full-page:a0:result0:r93",
+            "observed": "22",
+            "reason": "原画では上下2行の1桁の金額（2 と 2）。OCR が縦に並んだ2つの数字を1語「22」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p28-stacked-r73",
+            "page": 28,
+            "observation_id": "p28:full-page:a0:result0:r73",
+            "observed": "22",
+            "reason": "原画では上下2行の1桁の金額（2 と 2）。OCR が縦に並んだ2つの数字を1語「22」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p28-stacked-r82",
+            "page": 28,
+            "observation_id": "p28:full-page:a0:result0:r82",
+            "observed": "44",
+            "reason": "原画では上下2行の1桁の金額（4 と 4）。OCR が縦に並んだ2つの数字を1語「44」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p38-stacked-r42",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result0:r42",
+            "observed": "33",
+            "reason": "原画では上下2行の1桁の金額（3 と 3）。OCR が縦に並んだ2つの数字を1語「33」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p38-stacked-r84",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result0:r84",
+            "observed": "44",
+            "reason": "原画では上下2行の1桁の金額（4 と 4）。OCR が縦に並んだ2つの数字を1語「44」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p39-stacked-r98",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result0:r98",
+            "observed": "55",
+            "reason": "原画では上下2行の1桁の金額（5 と 5）。OCR が縦に並んだ2つの数字を1語「55」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p45-stacked-r123",
+            "page": 45,
+            "observation_id": "p45:full-page:a0:result0:r123",
+            "observed": "53",
+            "reason": "原画では上下2行の1桁の金額（5 と 3）。OCR が縦に並んだ2つの数字を1語「53」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p55-stacked-r67",
+            "page": 55,
+            "observation_id": "p55:full-page:a0:result0:r67",
+            "observed": "44",
+            "reason": "原画では上下2行の1桁の金額（4 と 4）。OCR が縦に並んだ2つの数字を1語「44」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p55-stacked-r115",
+            "page": 55,
+            "observation_id": "p55:full-page:a0:result0:r115",
+            "observed": "21",
+            "reason": "原画では上下2行の1桁の金額（2 と 1）。OCR が縦に並んだ2つの数字を1語「21」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p112-stacked-r166",
+            "page": 112,
+            "observation_id": "p112:full-page:a0:result0:r166",
+            "observed": "33",
+            "reason": "原画では上下2行の1桁の金額（3 と 3）。OCR が縦に並んだ2つの数字を1語「33」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p113-stacked-r73",
+            "page": 113,
+            "observation_id": "p113:full-page:a0:result0:r73",
+            "observed": "44",
+            "reason": "原画では上下2行の1桁の金額（4 と 4）。OCR が縦に並んだ2つの数字を1語「44」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p116-stacked-r36",
+            "page": 116,
+            "observation_id": "p116:full-page:a0:result0:r36",
+            "observed": "33",
+            "reason": "原画では上下2行の1桁の金額（3 と 3）。OCR が縦に並んだ2つの数字を1語「33」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p116-stacked-r47",
+            "page": 116,
+            "observation_id": "p116:full-page:a0:result0:r47",
+            "observed": "44",
+            "reason": "原画では上下2行の1桁の金額（4 と 4）。OCR が縦に並んだ2つの数字を1語「44」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p139-delta",
+            "page": 139,
+            "observation_id": "p139:full-page:a0:result0:r29",
+            "observed": "30,010",
+            "reason": "原画では比較の欄の減額「△30,010」。OCR は数字だけを読み、△を読み落とした。この読みを除き、△から数字までを amount_readings で読む。"
+          },
+          {
+            "id": "p149-delta",
+            "page": 149,
+            "observation_id": "p149:full-page:a0:result0:r25",
+            "observed": "24,939",
+            "reason": "原画では比較の欄の減額「△24,939」。OCR は数字だけを読み、△を読み落とした。この読みを除き、△から数字までを amount_readings で読む。"
+          },
+          {
+            "id": "p178-delta",
+            "page": 178,
+            "observation_id": "p178:full-page:a0:result0:r35",
+            "observed": "85,563",
+            "reason": "原画では比較の欄の減額「△85,563」。OCR は数字だけを読み、△を読み落とした。この読みを除き、△から数字までを amount_readings で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p17-stacked-r93-1",
+            "page": 17,
+            "boxes": [
+              [
+                867.0,
+                423.3,
+                875.2,
+                431.9
+              ]
+            ],
+            "amount": "2",
+            "reason": "原画で確かめた上の行の金額 2。OCR が上下の行の数字を1語「22」と読んでいた。"
+          },
+          {
+            "id": "p17-stacked-r93-2",
+            "page": 17,
+            "boxes": [
+              [
+                867.0,
+                433.9,
+                875.2,
+                442.4
+              ]
+            ],
+            "amount": "2",
+            "reason": "原画で確かめた下の行の金額 2。OCR が上下の行の数字を1語「22」と読んでいた。"
+          },
+          {
+            "id": "p28-stacked-r73-1",
+            "page": 28,
+            "boxes": [
+              [
+                867.0,
+                318.9,
+                875.2,
+                327.5
+              ]
+            ],
+            "amount": "2",
+            "reason": "原画で確かめた上の行の金額 2。OCR が上下の行の数字を1語「22」と読んでいた。"
+          },
+          {
+            "id": "p28-stacked-r73-2",
+            "page": 28,
+            "boxes": [
+              [
+                867.0,
+                329.5,
+                875.2,
+                338.1
+              ]
+            ],
+            "amount": "2",
+            "reason": "原画で確かめた下の行の金額 2。OCR が上下の行の数字を1語「22」と読んでいた。"
+          },
+          {
+            "id": "p28-stacked-r82-1",
+            "page": 28,
+            "boxes": [
+              [
+                867.3,
+                350.4,
+                875.7,
+                359.0
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた上の行の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p28-stacked-r82-2",
+            "page": 28,
+            "boxes": [
+              [
+                867.3,
+                361.0,
+                875.7,
+                369.7
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた下の行の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p38-stacked-r42-1",
+            "page": 38,
+            "boxes": [
+              [
+                867.8,
+                216.0,
+                875.0,
+                223.7
+              ]
+            ],
+            "amount": "3",
+            "reason": "原画で確かめた上の行の金額 3。OCR が上下の行の数字を1語「33」と読んでいた。"
+          },
+          {
+            "id": "p38-stacked-r42-2",
+            "page": 38,
+            "boxes": [
+              [
+                867.8,
+                225.7,
+                875.0,
+                233.4
+              ]
+            ],
+            "amount": "3",
+            "reason": "原画で確かめた下の行の金額 3。OCR が上下の行の数字を1語「33」と読んでいた。"
+          },
+          {
+            "id": "p38-stacked-r84-1",
+            "page": 38,
+            "boxes": [
+              [
+                867.3,
+                361.2,
+                875.7,
+                369.5
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた上の行の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p38-stacked-r84-2",
+            "page": 38,
+            "boxes": [
+              [
+                867.3,
+                371.5,
+                875.7,
+                379.8
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた下の行の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p39-stacked-r98-1",
+            "page": 39,
+            "boxes": [
+              [
+                866.6,
+                402.4,
+                875.0,
+                410.6
+              ]
+            ],
+            "amount": "5",
+            "reason": "原画で確かめた上の行の金額 5。OCR が上下の行の数字を1語「55」と読んでいた。"
+          },
+          {
+            "id": "p39-stacked-r98-2",
+            "page": 39,
+            "boxes": [
+              [
+                866.6,
+                412.6,
+                875.0,
+                420.8
+              ]
+            ],
+            "amount": "5",
+            "reason": "原画で確かめた下の行の金額 5。OCR が上下の行の数字を1語「55」と読んでいた。"
+          },
+          {
+            "id": "p45-stacked-r123-1",
+            "page": 45,
+            "boxes": [
+              [
+                1146.1,
+                652.5,
+                1153.6,
+                660.7
+              ]
+            ],
+            "amount": "5",
+            "reason": "原画で確かめた上の行の金額 5。OCR が上下の行の数字を1語「53」と読んでいた。"
+          },
+          {
+            "id": "p45-stacked-r123-2",
+            "page": 45,
+            "boxes": [
+              [
+                1146.1,
+                662.7,
+                1153.6,
+                670.9
+              ]
+            ],
+            "amount": "3",
+            "reason": "原画で確かめた下の行の金額 3。OCR が上下の行の数字を1語「53」と読んでいた。"
+          },
+          {
+            "id": "p55-stacked-r67-1",
+            "page": 55,
+            "boxes": [
+              [
+                1144.0,
+                370.5,
+                1156.9,
+                380.5
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた上の行の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p55-stacked-r67-2",
+            "page": 55,
+            "boxes": [
+              [
+                1144.0,
+                382.5,
+                1156.9,
+                389.5
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた下の行の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p55-stacked-r115-1",
+            "page": 55,
+            "boxes": [
+              [
+                1143.5,
+                644.0,
+                1156.4,
+                650.5
+              ]
+            ],
+            "amount": "2",
+            "reason": "原画で確かめた上の行の金額 2。OCR が上下の行の数字を1語「21」と読んでいた。"
+          },
+          {
+            "id": "p55-stacked-r115-2",
+            "page": 55,
+            "boxes": [
+              [
+                1143.5,
+                652.0,
+                1156.4,
+                659.5
+              ]
+            ],
+            "amount": "1",
+            "reason": "原画で確かめた下の行の金額 1。OCR が上下の行の数字を1語「21」と読んでいた。"
+          },
+          {
+            "id": "p112-stacked-r166-1",
+            "page": 112,
+            "boxes": [
+              [
+                866.6,
+                641.7,
+                875.0,
+                650.2
+              ]
+            ],
+            "amount": "3",
+            "reason": "原画で確かめた上の行の金額 3。OCR が上下の行の数字を1語「33」と読んでいた。"
+          },
+          {
+            "id": "p112-stacked-r166-2",
+            "page": 112,
+            "boxes": [
+              [
+                866.6,
+                652.2,
+                875.0,
+                660.8
+              ]
+            ],
+            "amount": "3",
+            "reason": "原画で確かめた下の行の金額 3。OCR が上下の行の数字を1語「33」と読んでいた。"
+          },
+          {
+            "id": "p113-stacked-r73-1",
+            "page": 113,
+            "boxes": [
+              [
+                867.3,
+                340.8,
+                874.7,
+                348.6
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた上の行の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p113-stacked-r73-2",
+            "page": 113,
+            "boxes": [
+              [
+                867.3,
+                350.6,
+                874.7,
+                358.5
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた下の行の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p116-stacked-r36-1",
+            "page": 116,
+            "boxes": [
+              [
+                867.0,
+                205.7,
+                874.2,
+                213.6
+              ]
+            ],
+            "amount": "3",
+            "reason": "原画で確かめた上の行の金額 3。OCR が上下の行の数字を1語「33」と読んでいた。"
+          },
+          {
+            "id": "p116-stacked-r36-2",
+            "page": 116,
+            "boxes": [
+              [
+                867.0,
+                215.6,
+                874.2,
+                223.4
+              ]
+            ],
+            "amount": "3",
+            "reason": "原画で確かめた下の行の金額 3。OCR が上下の行の数字を1語「33」と読んでいた。"
+          },
+          {
+            "id": "p116-stacked-r47-1",
+            "page": 116,
+            "boxes": [
+              [
+                867.3,
+                236.9,
+                874.7,
+                244.8
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた上の行の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p116-stacked-r47-2",
+            "page": 116,
+            "boxes": [
+              [
+                867.3,
+                246.8,
+                874.7,
+                254.6
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた下の行の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p139-delta",
+            "page": 139,
+            "boxes": [
+              [
+                266.9,
+                369.3,
+                335.2,
+                381.3
+              ]
+            ],
+            "amount": "△30,010",
+            "reason": "原画で確かめた比較の欄の減額 △30,010。OCR が△を読み落としていた。"
+          },
+          {
+            "id": "p149-delta",
+            "page": 149,
+            "boxes": [
+              [
+                266.6,
+                192.4,
+                334.8,
+                204.7
+              ]
+            ],
+            "amount": "△24,939",
+            "reason": "原画で確かめた比較の欄の減額 △24,939。OCR が△を読み落としていた。"
+          },
+          {
+            "id": "p178-delta",
+            "page": 178,
+            "boxes": [
+              [
+                266.9,
+                193.4,
+                335.2,
+                204.0
+              ]
+            ],
+            "amount": "△85,563",
+            "reason": "原画で確かめた比較の欄の減額 △85,563。OCR が△を読み落としていた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial-1",
+      "conversion_id": "general-initial-1",
+      "input_fingerprint": "98b9b71733333bf512fed91ca8e089e691deae4dc57294e5c683cd097f67bacb",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '細節': 'shape', '説明': 'position'}。",
+        "金額の単位は column mark 181頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 4 件を、管理 JSON の name_corrections で印字に直した: 88頁 歲児健康診查→歳児健康診査・88頁 歲児経過観察健康診查→歳児経過観察健康診査・88頁 歲児精密健康診查審查→歳児精密健康診査審査・149頁 プ一ル→プール。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 190 件（p5:full-page:a0:result0:r64・p5:full-page:a0:result0:r64:w13・p8:full-page:a0:result0:r64・p8:full-page:a0:result0:r64:w4・p8:full-page:a0:result0:r66・p8:full-page:a0:result0:r66:w14・p8:full-page:a0:result0:r127・p8:full-page:a0:result0:r127・p8:full-page:a0:result0:r127:w4・p8:full-page:a0:result0:r127:w8・p11:full-page:a0:result0:r69・p11:full-page:a0:result0:r69:w4・p11:full-page:a0:result0:r72・p11:full-page:a0:result0:r72:w4・p11:full-page:a0:result0:r77・p11:full-page:a0:result0:r77:w6・p11:full-page:a0:result0:r93・p11:full-page:a0:result0:r93:w4・p11:full-page:a0:result0:r96・p11:full-page:a0:result0:r96:w4・p13:full-page:a0:result0:r101・p13:full-page:a0:result0:r101:w3・p22:full-page:a0:result0:r37・p22:full-page:a0:result0:r37:w2・p22:full-page:a0:result0:r136・p22:full-page:a0:result0:r136:w2・p23:full-page:a0:result0:r92・p23:full-page:a0:result0:r92:w2・p23:full-page:a0:result0:r157・p23:full-page:a0:result0:r157:w5・p29:full-page:a0:result0:r59・p29:full-page:a0:result0:r59:w15・p29:full-page:a0:result0:r61・p29:full-page:a0:result0:r61・p29:full-page:a0:result0:r61:w15・p29:full-page:a0:result0:r61:w17・p32:full-page:a0:result0:r169・p32:full-page:a0:result0:r169:w4・p36:full-page:a0:result0:r33・p36:full-page:a0:result0:r33:w16・p37:full-page:a0:result0:r33・p37:full-page:a0:result0:r33:w1・p42:full-page:a0:result0:r105・p42:full-page:a0:result0:r105:w14・p42:full-page:a0:result0:r142・p42:full-page:a0:result0:r142:w5・p43:full-page:a0:result0:r115・p43:full-page:a0:result0:r115:w7・p43:full-page:a0:result0:r128・p43:full-page:a0:result0:r128:w6・p45:full-page:a0:result0:r116・p45:full-page:a0:result0:r116:w8・p49:full-page:a0:result0:r87・p49:full-page:a0:result0:r87:w11・p49:full-page:a0:result0:r92・p49:full-page:a0:result0:r92:w11・p52:full-page:a0:result0:r107・p52:full-page:a0:result0:r107:w9・p52:full-page:a0:result0:r114・p52:full-page:a0:result0:r114:w7・p60:full-page:a0:result0:r70・p60:full-page:a0:result0:r70:w11・p64:full-page:a0:result0:r77・p64:full-page:a0:result0:r77:w11・p64:full-page:a0:result0:r80・p64:full-page:a0:result0:r80:w11・p68:full-page:a0:result0:r41・p68:full-page:a0:result0:r41:w3・p71:full-page:a0:result0:r109・p71:full-page:a0:result0:r109:w5・p72:full-page:a0:result0:r139・p72:full-page:a0:result0:r139:w4・p74:full-page:a0:result0:r112・p74:full-page:a0:result0:r112:w2・p74:full-page:a0:result0:r123・p74:full-page:a0:result0:r123:w5・p76:full-page:a0:result0:r99・p76:full-page:a0:result0:r99・p76:full-page:a0:result0:r99:w2・p76:full-page:a0:result0:r99:w5・p77:full-page:a0:result0:r81・p77:full-page:a0:result0:r81:w3・p77:full-page:a0:result0:r167・p77:full-page:a0:result0:r167・p77:full-page:a0:result0:r167:w2・p77:full-page:a0:result0:r167:w5・p84:full-page:a0:result0:r77・p84:full-page:a0:result0:r77:w2・p89:full-page:a0:result0:r40・p89:full-page:a0:result0:r40:w13・p89:full-page:a0:result0:r60・p89:full-page:a0:result0:r60:w3・p89:full-page:a0:result0:r66・p89:full-page:a0:result0:r66:w3・p90:full-page:a0:result0:r108・p90:full-page:a0:result0:r108:w6・p91:full-page:a0:result0:r39・p91:full-page:a0:result0:r39:w9・p93:full-page:a0:result0:r72・p93:full-page:a0:result0:r72:w2・p93:full-page:a0:result0:r74・p93:full-page:a0:result0:r74:w2・p94:full-page:a0:result0:r58・p94:full-page:a0:result0:r58:w5・p103:full-page:a0:result0:r51・p103:full-page:a0:result0:r51:w6・p103:full-page:a0:result0:r58・p103:full-page:a0:result0:r58:w4・p107:full-page:a0:result0:r66・p107:full-page:a0:result0:r66:w3・p109:full-page:a0:result1:r52・p109:full-page:a0:result1:r52:w4・p109:full-page:a0:result1:r99・p109:full-page:a0:result1:r99:w1・p111:full-page:a0:result0:r40・p111:full-page:a0:result0:r40:w6・p124:full-page:a0:result0:r45・p124:full-page:a0:result0:r45:w6・p126:full-page:a0:result0:r170・p126:full-page:a0:result0:r170:w3・p127:full-page:a0:result0:r44・p127:full-page:a0:result0:r44:w2・p130:full-page:a0:result0:r52・p130:full-page:a0:result0:r52・p130:full-page:a0:result0:r52:w9・p130:full-page:a0:result0:r52:w11・p130:full-page:a0:result0:r65・p130:full-page:a0:result0:r65・p130:full-page:a0:result0:r65:w7・p130:full-page:a0:result0:r65:w9・p130:full-page:a0:result0:r71・p130:full-page:a0:result0:r71:w9・p130:full-page:a0:result0:r77・p130:full-page:a0:result0:r77・p130:full-page:a0:result0:r77:w7・p130:full-page:a0:result0:r77:w9・p130:full-page:a0:result0:r108・p130:full-page:a0:result0:r108:w6・p137:full-page:a0:result0:r102・p137:full-page:a0:result0:r102:w7・p140:full-page:a0:result0:r106・p140:full-page:a0:result0:r106・p140:full-page:a0:result0:r106:w14・p140:full-page:a0:result0:r106:w18・p143:full-page:a0:result0:r86・p143:full-page:a0:result0:r86:w3・p144:full-page:a0:result0:r137・p144:full-page:a0:result0:r137:w2・p146:full-page:a0:result0:r120・p146:full-page:a0:result0:r120・p146:full-page:a0:result0:r120:w2・p146:full-page:a0:result0:r120:w5・p149:full-page:a0:result1:r173・p149:full-page:a0:result1:r173:w3・p151:full-page:a0:result0:r41・p151:full-page:a0:result0:r41:w2・p151:full-page:a0:result0:r136・p151:full-page:a0:result0:r136:w9・p152:full-page:a0:result0:r32・p152:full-page:a0:result0:r32:w8・p152:full-page:a0:result0:r141・p152:full-page:a0:result0:r141:w3・p154:full-page:a0:result0:r90・p154:full-page:a0:result0:r90:w3・p154:full-page:a0:result0:r164・p154:full-page:a0:result0:r164:w7・p154:full-page:a0:result0:r165・p154:full-page:a0:result0:r165:w7・p157:full-page:a0:result0:r128・p157:full-page:a0:result0:r128:w2・p158:full-page:a0:result0:r109・p158:full-page:a0:result0:r109:w9・p159:full-page:a0:result0:r95・p159:full-page:a0:result0:r95:w3・p160:full-page:a0:result0:r155・p160:full-page:a0:result0:r155:w3・p161:full-page:a0:result0:r74・p161:full-page:a0:result0:r74:w6・p161:full-page:a0:result0:r78・p161:full-page:a0:result0:r78:w6・p169:full-page:a0:result0:r102・p169:full-page:a0:result0:r102:w2・p171:full-page:a0:result0:r75・p171:full-page:a0:result0:r75:w4・p171:full-page:a0:result0:r95・p171:full-page:a0:result0:r95:w4・p173:full-page:a0:result0:r164・p173:full-page:a0:result0:r164:w0・p174:full-page:a0:result0:r112・p174:full-page:a0:result0:r112:w5）・增→増 2 件（p154:full-page:a0:result0:r151・p154:full-page:a0:result0:r151:w6）・壤→壌 2 件（p176:full-page:a0:result0:r32・p176:full-page:a0:result0:r32:w1）・徵→徴 16 件（p29:full-page:a0:result0:r3・p29:full-page:a0:result0:r3:w1・p29:full-page:a0:result0:r44・p29:full-page:a0:result0:r44:w2・p30:full-page:a0:result0:r46・p30:full-page:a0:result0:r46:w1・p30:full-page:a0:result0:r127・p30:full-page:a0:result0:r127:w0・p31:full-page:a0:result0:r3・p31:full-page:a0:result0:r3:w1・p31:full-page:a0:result0:r32・p31:full-page:a0:result0:r32:w1・p154:full-page:a0:result0:r49・p154:full-page:a0:result0:r49:w6・p160:full-page:a0:result0:r118・p160:full-page:a0:result0:r118:w6）・查→査 200 件（p5:full-page:a0:result0:r49・p5:full-page:a0:result0:r49:w10・p5:full-page:a0:result0:r56・p5:full-page:a0:result0:r56:w8・p7:full-page:a0:result0:r124・p7:full-page:a0:result0:r124:w7・p10:full-page:a0:result0:r44・p10:full-page:a0:result0:r44:w3・p10:full-page:a0:result0:r50・p10:full-page:a0:result0:r50:w5・p11:full-page:a0:result0:r69・p11:full-page:a0:result0:r69:w12・p11:full-page:a0:result0:r96・p11:full-page:a0:result0:r96:w12・p28:full-page:a0:result0:r102・p28:full-page:a0:result0:r102:w9・p28:full-page:a0:result0:r109・p28:full-page:a0:result0:r109:w7・p28:full-page:a0:result0:r123・p28:full-page:a0:result0:r123・p28:full-page:a0:result0:r123:w11・p28:full-page:a0:result0:r123:w16・p28:full-page:a0:result0:r201・p28:full-page:a0:result0:r201:w5・p30:full-page:a0:result0:r157・p30:full-page:a0:result0:r157:w7・p38:full-page:a0:result0:r3・p38:full-page:a0:result0:r3:w5・p38:full-page:a0:result0:r32・p38:full-page:a0:result0:r32:w5・p38:full-page:a0:result0:r81・p38:full-page:a0:result0:r81:w8・p38:full-page:a0:result0:r95・p38:full-page:a0:result0:r95:w7・p39:full-page:a0:result0:r3・p39:full-page:a0:result0:r3:w3・p39:full-page:a0:result0:r104・p39:full-page:a0:result0:r104:w2・p39:full-page:a0:result0:r114・p39:full-page:a0:result0:r114:w3・p39:full-page:a0:result0:r118・p39:full-page:a0:result0:r118:w3・p39:full-page:a0:result0:r140・p39:full-page:a0:result0:r140:w1・p39:full-page:a0:result0:r160・p39:full-page:a0:result0:r160:w5・p39:full-page:a0:result0:r162・p39:full-page:a0:result0:r162:w5・p39:full-page:a0:result0:r164・p39:full-page:a0:result0:r164:w5・p45:full-page:a0:result0:r112・p45:full-page:a0:result0:r112:w9・p48:full-page:a0:result0:r104・p48:full-page:a0:result0:r104:w11・p48:full-page:a0:result0:r111・p48:full-page:a0:result0:r111:w9・p48:full-page:a0:result0:r116・p48:full-page:a0:result0:r116:w9・p48:full-page:a0:result0:r143・p48:full-page:a0:result0:r143:w9・p51:full-page:a0:result0:r106・p51:full-page:a0:result0:r106:w10・p52:full-page:a0:result0:r114・p52:full-page:a0:result0:r114:w13・p55:full-page:a0:result0:r118・p55:full-page:a0:result0:r118:w1・p64:full-page:a0:result0:r137・p64:full-page:a0:result0:r137:w3・p73:full-page:a0:result0:r85・p73:full-page:a0:result0:r85:w1・p74:full-page:a0:result0:r44・p74:full-page:a0:result0:r44:w10・p74:full-page:a0:result0:r51・p74:full-page:a0:result0:r51:w8・p77:full-page:a0:result0:r120・p77:full-page:a0:result0:r120:w10・p79:full-page:a0:result0:r121・p79:full-page:a0:result0:r121:w8・p80:full-page:a0:result0:r138・p80:full-page:a0:result0:r138:w10・p81:full-page:a0:result0:r33・p81:full-page:a0:result0:r33:w12・p81:full-page:a0:result0:r166・p81:full-page:a0:result0:r166:w1・p87:full-page:a0:result0:r55・p87:full-page:a0:result0:r55・p87:full-page:a0:result0:r55:w5・p87:full-page:a0:result0:r55:w7・p87:full-page:a0:result0:r57・p87:full-page:a0:result0:r57:w9・p87:full-page:a0:result0:r61・p87:full-page:a0:result0:r61:w5・p87:full-page:a0:result0:r69・p87:full-page:a0:result0:r69:w7・p87:full-page:a0:result0:r128・p87:full-page:a0:result0:r128:w5・p87:full-page:a0:result0:r130・p87:full-page:a0:result0:r130:w10・p88:full-page:a0:result0:r45・p88:full-page:a0:result0:r45:w1・p88:full-page:a0:result0:r55・p88:full-page:a0:result0:r55:w7・p88:full-page:a0:result0:r59・p88:full-page:a0:result0:r59:w6・p88:full-page:a0:result0:r61・p88:full-page:a0:result0:r61:w8・p88:full-page:a0:result0:r63・p88:full-page:a0:result0:r63:w5・p88:full-page:a0:result0:r67・p88:full-page:a0:result0:r67:w9・p88:full-page:a0:result0:r69・p88:full-page:a0:result0:r69:w11・p88:full-page:a0:result0:r81・p88:full-page:a0:result0:r81:w13・p88:full-page:a0:result0:r99・p88:full-page:a0:result0:r99・p88:full-page:a0:result0:r99:w11・p88:full-page:a0:result0:r99:w13・p88:full-page:a0:result0:r105・p88:full-page:a0:result0:r105:w11・p88:full-page:a0:result0:r117:w6・p88:full-page:a0:result0:r119:w10・p88:full-page:a0:result0:r135:w8・p88:full-page:a0:result0:r135:w10・p89:full-page:a0:result0:r33・p89:full-page:a0:result0:r33:w8・p89:full-page:a0:result0:r60・p89:full-page:a0:result0:r60:w14・p89:full-page:a0:result0:r78・p89:full-page:a0:result0:r78:w5・p92:full-page:a0:result0:r144・p92:full-page:a0:result0:r144:w7・p95:full-page:a0:result0:r54・p95:full-page:a0:result0:r54:w1・p103:full-page:a0:result0:r58・p103:full-page:a0:result0:r58:w3・p103:full-page:a0:result0:r68・p103:full-page:a0:result0:r68:w4・p103:full-page:a0:result0:r100・p103:full-page:a0:result0:r100:w16・p103:full-page:a0:result0:r105・p103:full-page:a0:result0:r105:w7・p114:full-page:a0:result0:r165・p114:full-page:a0:result0:r165:w6・p117:full-page:a0:result0:r158・p117:full-page:a0:result0:r158:w3・p120:full-page:a0:result0:r38・p120:full-page:a0:result0:r38:w9・p120:full-page:a0:result0:r59・p120:full-page:a0:result0:r59:w7・p120:full-page:a0:result0:r64・p120:full-page:a0:result0:r64:w6・p120:full-page:a0:result0:r66・p120:full-page:a0:result0:r66:w5・p120:full-page:a0:result0:r138・p120:full-page:a0:result0:r138:w6・p121:full-page:a0:result0:r63・p121:full-page:a0:result0:r63:w13・p122:full-page:a0:result0:r54・p122:full-page:a0:result0:r54:w11・p127:full-page:a0:result0:r78・p127:full-page:a0:result0:r78:w9・p131:full-page:a0:result0:r52・p131:full-page:a0:result0:r52:w11・p132:full-page:a0:result0:r79・p132:full-page:a0:result0:r79:w14・p133:full-page:a0:result0:r102・p133:full-page:a0:result0:r102:w7・p137:full-page:a0:result0:r69・p137:full-page:a0:result0:r69:w10・p140:full-page:a0:result0:r129・p140:full-page:a0:result0:r129:w5・p146:full-page:a0:result0:r102・p146:full-page:a0:result0:r102:w5・p149:full-page:a0:result1:r175・p149:full-page:a0:result1:r175:w7・p153:full-page:a0:result0:r103・p153:full-page:a0:result0:r103:w2・p153:full-page:a0:result0:r115・p153:full-page:a0:result0:r115:w10・p153:full-page:a0:result0:r126・p153:full-page:a0:result0:r126:w6・p154:full-page:a0:result0:r45・p154:full-page:a0:result0:r45:w8・p154:full-page:a0:result0:r47・p154:full-page:a0:result0:r47:w6・p154:full-page:a0:result0:r149・p154:full-page:a0:result0:r149:w13・p160:full-page:a0:result0:r36・p160:full-page:a0:result0:r36:w10・p160:full-page:a0:result0:r45・p160:full-page:a0:result0:r45:w6・p160:full-page:a0:result0:r116・p160:full-page:a0:result0:r116:w6・p160:full-page:a0:result0:r120・p160:full-page:a0:result0:r120:w8・p170:full-page:a0:result0:r65・p170:full-page:a0:result0:r65:w8・p170:full-page:a0:result0:r118・p170:full-page:a0:result0:r118:w1）・济→済 6 件（p113:full-page:a0:result0:r52・p113:full-page:a0:result0:r52:w2・p114:full-page:a0:result0:r186・p114:full-page:a0:result0:r186:w2・p115:full-page:a0:result0:r174・p115:full-page:a0:result0:r174:w2）・產→産 56 件（p18:full-page:a0:result0:r45・p18:full-page:a0:result0:r45:w2・p18:full-page:a0:result0:r113・p18:full-page:a0:result0:r113:w2・p19:full-page:a0:result0:r32・p19:full-page:a0:result0:r32:w2・p28:full-page:a0:result0:r123・p28:full-page:a0:result0:r123:w7・p29:full-page:a0:result0:r90・p29:full-page:a0:result0:r90:w5・p29:full-page:a0:result0:r92・p29:full-page:a0:result0:r92:w2・p29:full-page:a0:result0:r97・p29:full-page:a0:result0:r97:w3・p29:full-page:a0:result0:r132・p29:full-page:a0:result0:r132:w3・p64:full-page:a0:result0:r54・p64:full-page:a0:result0:r54・p64:full-page:a0:result0:r54:w0・p64:full-page:a0:result0:r54:w2・p74:full-page:a0:result0:r82・p74:full-page:a0:result0:r82:w1・p74:full-page:a0:result0:r108・p74:full-page:a0:result0:r108:w0・p83:full-page:a0:result0:r141・p83:full-page:a0:result0:r141:w3・p87:full-page:a0:result0:r71・p87:full-page:a0:result0:r71:w7・p89:full-page:a0:result0:r60・p89:full-page:a0:result0:r60:w1・p89:full-page:a0:result0:r66・p89:full-page:a0:result0:r66:w1・p89:full-page:a0:result0:r99・p89:full-page:a0:result0:r99:w3・p93:full-page:a0:result0:r60・p93:full-page:a0:result0:r60:w3・p112:full-page:a0:result0:r1・p112:full-page:a0:result0:r1:w5・p113:full-page:a0:result0:r39・p113:full-page:a0:result0:r39:w6・p115:full-page:a0:result0:r128・p115:full-page:a0:result0:r128:w6・p121:full-page:a0:result0:r99・p121:full-page:a0:result0:r99:w4・p122:full-page:a0:result0:r56・p122:full-page:a0:result0:r56:w5・p130:full-page:a0:result0:r61・p130:full-page:a0:result0:r61:w5・p130:full-page:a0:result0:r63・p130:full-page:a0:result0:r63:w5・p130:full-page:a0:result0:r179・p130:full-page:a0:result0:r179:w4・p132:full-page:a0:result0:r35・p132:full-page:a0:result0:r35:w2・p132:full-page:a0:result0:r48・p132:full-page:a0:result0:r48:w5）・說→説 2 件（p170:full-page:a0:result0:r123・p170:full-page:a0:result0:r123:w3）・齡→齢 26 件（p53:full-page:a0:result0:r185・p53:full-page:a0:result0:r185:w1・p54:full-page:a0:result0:r32・p54:full-page:a0:result0:r32:w3・p54:full-page:a0:result0:r36・p54:full-page:a0:result0:r36:w1・p54:full-page:a0:result0:r82・p54:full-page:a0:result0:r82:w1・p54:full-page:a0:result0:r109・p54:full-page:a0:result0:r109:w1・p54:full-page:a0:result0:r111・p54:full-page:a0:result0:r111:w1・p55:full-page:a0:result0:r32・p55:full-page:a0:result0:r32:w3・p56:full-page:a0:result0:r32・p56:full-page:a0:result0:r32:w3・p57:full-page:a0:result0:r32・p57:full-page:a0:result0:r32:w3・p58:full-page:a0:result0:r32・p58:full-page:a0:result0:r32:w3・p60:full-page:a0:result0:r32・p60:full-page:a0:result0:r32:w3・p60:full-page:a0:result0:r90・p60:full-page:a0:result0:r90:w3・p62:full-page:a0:result0:r32・p62:full-page:a0:result0:r32:w3）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132101/2026/initial/expenditure/general-initial-1-nodes.parquet",
+          "sha256": "9b86c9cadbd2f8a2173fe0ba5677c6fafdac30f02e70476e80f3159cc14b4290",
+          "bytes": 293784
+        },
+        "row_count": 8453
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132101/2026/initial/expenditure/general-initial-1-amounts.parquet",
+          "sha256": "e61ec790cceaf4a494da7596fcf6f03bc5fd3879d437f69ec1048d10f903e695",
+          "bytes": 203843
+        },
+        "row_count": 8633
+      }
+    }
+  ]
+}

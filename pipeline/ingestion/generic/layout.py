@@ -8,9 +8,10 @@ the two are read as one logical page with the right page shifted to the right.
 """
 from __future__ import annotations
 
-from collections import defaultdict
+from collections import Counter, defaultdict
+from contextvars import ContextVar
 from functools import lru_cache
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 import re
 import unicodedata
 
@@ -81,6 +82,7 @@ class Band:
     excluded: dict | None = None  # a declared column whose printed digits are not taken in (kind and reason)
     stripped_codes: bool = False  # ancestors' codes a continuation page prints (`2 1 6`) were taken out of its words (`tree.strip_ancestor_codes`)
     staircase: bool = False  # the layout setting `header.staircase`: a level's cell runs right until its own rule starts
+    lines: tuple[str, ...] | None = None  # the declared heading of each line of a cell that stacks its amounts (`columns.<見出し>.lines`)
     extents: list[tuple[float, float]] = field(default_factory=list)  # (top, bottom) of each block the band reads, when it reads some blocks of the page only (`patterns/layout/framed_blocks`)
 
     @property
@@ -233,7 +235,8 @@ def _frames(page: Page, spread: dict | None = None,
     `staircase` (the layout setting `header.staircase`): the 款・項 cells run down the page with no closing
     rule, so the frame ends at the lowest rule its sides reach that crosses most of its columns or is drawn
     where the sides end (281000)."""
-    horizontals = [r for r in page.rules if not r.vertical]
+    # (A bottom rule a skewed scan reads in two overlapping pieces is one rule: 国分寺市.)
+    horizontals = _joined([r for r in page.rules if not r.vertical])
     # A column edge drawn in pieces (the header cell and the rows that have a cell of their own) is one rule.
     drawn: dict[float, float] = defaultdict(float)
     for r in page.rules:
@@ -253,9 +256,20 @@ def _frames(page: Page, spread: dict | None = None,
                  min((x for x in repeated if x > gutter), default=None))
         xs.update(x for x in edges if x is not None)
     xs = sorted(xs)
+    spans: dict[float, list[tuple[float, float]]] = defaultdict(list)
+    for r in page.rules:
+        if r.vertical:
+            spans[round(r.x0, 1)].append((r.y0, r.y1))
+
+    def apart(a: float, b: float) -> bool:
+        # Two tables stacked on a page, the lower set a few points aside (国分寺市): the column edge of one ends
+        # above where the other's starts, so the two are one column edge drawn twice.
+        above = lambda x, y: all(y1 <= min(z0 for z0, _ in spans[y]) + 3 for _, y1 in spans[x])
+        return bool(spans[a]) and bool(spans[b]) and (above(a, b) or above(b, a))
     edges: list[float] = []
     for x in xs:
-        if not edges or x - edges[-1] > 3:
+        empty = lambda a, b: not any(a < (w.x0 + w.x1) / 2 < b for w in page.words)
+        if not edges or (x - edges[-1] > 3 and not (x - edges[-1] <= 8 and (apart(edges[-1], x) or empty(edges[-1], x)))):
             edges.append(x)
     frames, current = [], []
     for left, right in zip(edges, edges[1:]):
@@ -280,6 +294,14 @@ def _frames(page: Page, spread: dict | None = None,
         if len(spanning) < 2:
             continue
         bottom = max(h.y0 for h in spanning)
+        most = lambda h: sum(1 for m in middle if _covers(h, m)) >= max(2, .6 * len(middle))
+        sides = min(max((r.y1 for r in page.rules if r.vertical and abs(r.x0 - x) <= 3), default=bottom)
+                    for x in (frame[0], frame[-1]))
+        closing = [h for h in horizontals if abs(h.y0 - sides) <= 4 and most(h)]
+        if sides - bottom > 100 and closing and not any(bottom < h.y0 < sides - 4 and all(_covers(h, m) for m in middle) for h in horizontals):
+            # A skewed scan loses the ends of the closing rule (国分寺市: 148–502 of a frame 72–571): the rule drawn
+            # where the frame's sides end across most of its columns closes it, if no rule across the whole frame lies between.
+            bottom = max(h.y0 for h in closing)
         if staircase:
             # The rows of a staircase draw their rules from the deeper columns only: the frame ends at the lowest
             # rule its own sides reach that crosses most of its columns, or that is drawn where the sides end.
@@ -305,23 +327,56 @@ def _frames(page: Page, spread: dict | None = None,
     return merged
 
 
+def _joined(horizontals):
+    """Horizontal rules with the pieces of one stroke joined: a scan's rule is read in overlapping pieces where the
+    page is not quite level (国分寺市: the header's bottom rule as 71–153 and 100–568 at 136.8 and 136.0)."""
+    joined = []
+    for rule in sorted(horizontals, key=lambda r: (r.y0, r.x0)):
+        last = next((j for j in reversed(joined) if abs(j.y0 - rule.y0) <= 1.5
+                     and rule.x0 <= j.x1 + 1 and j.x0 <= rule.x1 + 1), None)
+        if last is not None:
+            joined[joined.index(last)] = replace(last, x0=min(last.x0, rule.x0), x1=max(last.x1, rule.x1))
+        else:
+            joined.append(rule)
+    return joined
+
+
 def _header_bottom(page: Page, frame) -> float:
     x0, x1, top, bottom, _ = frame
-    horizontals = [r for r in page.rules if not r.vertical]
+    horizontals = _joined([r for r in page.rules if not r.vertical])
+    # An edge of stacked tables set a few points apart (`_frames`) is the outermost of them: the top table's rules
+    # start up to that far inside it.
+    verticals = [r for r in page.rules if r.vertical]
+    reach = 3 + max([abs(r.x0 - x) for x in (x0, x1) for r in verticals if 2 < abs(r.x0 - x) <= 8
+                     and top - 3 <= r.y0 <= bottom], default=0)
     # A rule from the frame's left edge across most of it (a free-text column at the right end may draw none).
     full = sorted(h.y0 for h in horizontals
-                  if h.x0 <= x0 + 3 and h.x1 >= x1 - 3 and top - 1 <= h.y0 <= bottom + 1)
+                  if h.x0 <= x0 + reach and h.x1 >= x1 - reach and top - 1 <= h.y0 <= bottom + 1)
     if len(full) < 2:  # most of the frame's width (a free-text column at the right end may draw no row rules)
         full = sorted(h.y0 for h in horizontals
-                      if h.x0 <= x0 + 3 and h.x1 - x0 >= .6 * (x1 - x0) and top - 1 <= h.y0 <= bottom + 1)
+                      if h.x0 <= x0 + reach and h.x1 - x0 >= .6 * (x1 - x0) and top - 1 <= h.y0 <= bottom + 1)
     if len(full) < 2:  # two ruled halves of one frame (see `_frames`): the rules that touch either end
         full = sorted({h.y0 for h in horizontals if (h.x0 <= x0 + 3 or h.x1 >= x1 - 3) and top - 1 <= h.y0 <= bottom + 1})
     digits = [w.y0 for w in page.words if x0 < (w.x0 + w.x1) / 2 < x1 and top + 1 < w.y0 < bottom
               and re.search(r'[0-9０-９]', w.text)]
     first = min(digits) if digits else bottom
     candidates = [y for y in full if top + 1 < y <= first + 1]
+    # A row that prints only the unit (`千円` over each column) opens the body on the pages whose header rule is read
+    # whole; a page that draws a full rule under it too (国分寺市) keeps it in the body as well: the header ends at the
+    # rule across most of the frame above that row.
+    if candidates:
+        wide = [h.y0 for h in horizontals if h.x0 <= x0 + reach and h.x1 - x0 >= .6 * (x1 - x0) and top + 1 < h.y0 < candidates[-1] - 1]
+        if wide:
+            row = [w for w in page.words if x0 < (w.x0 + w.x1) / 2 < x1 and max(wide) < (w.y0 + w.y1) / 2 < candidates[-1]]
+            if row and all(normalize(w.text) in ('千円', '円') for w in row):
+                return max(wide)
     if candidates:
         return candidates[-1]
+    # No full rule above the first figure (the header's bottom rule read short of the frame's right edge, 国分寺市):
+    # the rule across most of the frame above it.
+    wide = [h.y0 for h in horizontals if h.x0 <= x0 + reach and h.x1 - x0 >= .6 * (x1 - x0) and top + 1 < h.y0 <= first + 1]
+    if wide:
+        return max(wide)
     return full[1] if len(full) > 1 else top
 
 
@@ -478,8 +533,16 @@ def run_on_starts(body: list[tuple[int, Word]], verticals: list[Rule]) -> dict[i
     return starts
 
 
-def lines(words: list[Glyph], tolerance: float = 2.0) -> list[list[Glyph]]:
+# How far apart two words' centres may be and still be one printed line. A scan set a little off level (the scan
+# setting `rules.skewed`, 国分寺市) prints a line's amount at the right end up to 3.5pt above its name at the left.
+LINE_TOLERANCE: ContextVar[float] = ContextVar('line_tolerance', default=2.0)
+SKEWED_LINE_TOLERANCE = 4.0
+
+
+def lines(words: list[Glyph], tolerance: float | None = None) -> list[list[Glyph]]:
     """Words of one band grouped into printed lines (by vertical centre)."""
+    if tolerance is None:
+        tolerance = LINE_TOLERANCE.get()
     result: list[list[Glyph]] = []
     for word in sorted(words, key=lambda w: ((w.y0 + w.y1) / 2, w.x0)):
         cy = (word.y0 + word.y1) / 2
@@ -608,7 +671,20 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
                 band.kind = 'amount'
             else:
                 band.kind = 'label'
-            setting = (columns or {}).get('／'.join(band.header), {})
+            setting = (columns or {}).get('／'.join(band.header))
+            if setting is None:
+                # A scan's header read with its cells cut elsewhere (`本年度の` / `財源内訳` for `本年度の財源内訳`):
+                # the declared column whose heading reads the same characters.
+                joined = ''.join(band.header)
+                setting = next((v for k, v in (columns or {}).items() if joined and k.replace('／', '') == joined), None)
+            if setting is None and band.header:
+                # A skewed scan reads only part of a heading, or its characters out of order (`国都支出金` under
+                # `本年度の財源内訳／特定財源`, `度)較)`): the declared columns whose heading holds every character read,
+                # when they all declare the same.
+                read = Counter(''.join(band.header))
+                found = [v for k, v in (columns or {}).items() if not read - Counter(k.replace('／', ''))]
+                setting = found[0] if found and all(v == found[0] for v in found) else None
+            setting = setting or {}
             band.kind = setting.get('kind', band.kind)
             if setting.get('heading'):  # the column's meaning, declared where the print only says `金額`
                 band.header = band.header[:-1] + (setting['heading'],)
@@ -617,6 +693,10 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
             if band.kind == 'ignore':  # a column that is no part of the table (a policy number printed beside it)
                 band.kind, band.ignored = None, True
             band.axis_header = setting.get('axis_header')
+            if setting.get('lines'):
+                # One cell stacks the item's amounts a line each (`1,147,465` / `(1,110,941)` / `(36,524)` under
+                # `本年度 (前年度) (比較)`): the declared headings, in the order of the lines.
+                band.kind, band.lines = 'amount', tuple(setting['lines'])
             band.excluded = setting.get('excluded')
             if band.excluded:
                 band.kind = None  # not read: its words are no items and its digits a declared exclusion

@@ -39,7 +39,7 @@ beforeEach(() => {
   insert('budget_proposal_origin', { origin_id: 'p1', budget_proposal_id: BP, jurisdiction_code: '131091', fiscal_year: 2026, title: '予算案の概要', url: 'https://example.test/p1.pdf', landing_url: null, sha256: H('3') })
   for (const [i, isNew] of [1, 0].entries())
     insert('budget_measure', {
-      measure_id: H(String(5 + i)), budget_proposal_id: BP, origin_id: 'p1', jurisdiction_code: '131091', fiscal_year: 2026, page: i + 1,
+      measure_id: H(String(5 + i)), budget_proposal_id: BP, origin_id: 'p1', jurisdiction_code: '131091', fiscal_year: 2026, page: i + 1, position: 1,
       title: `施策${i}`, names: '["事業"]', is_new: isNew, budget_yen: 500, description: null, expenditure_detail_id: null, link_method: 'none', link_confidence: null,
     })
 })

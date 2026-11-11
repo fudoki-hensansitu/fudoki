@@ -1,0 +1,1089 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132080",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial-3",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-3-ocr-1",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "46f44c1434e136497a183b32e61e4382446bffaf2cccc906d1e7100383f65fde",
+          "bytes": 1549840
+        },
+        {
+          "id": "general-initial-3-ocr-2",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "8b5212e3fe2e6b75388ac954c39ca709dfc4cc9fba1e2917f0f0caf91747cf3e",
+          "bytes": 2151156
+        },
+        {
+          "id": "general-initial-3-ocr-3",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "1ff8d67b23c0dd356ea4f031b7b6b5540c27d2ff2da8656de00daffc6accb923",
+          "bytes": 1511932
+        },
+        {
+          "id": "general-initial-3-ocr-4",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "bd5ad6099e71758fe3d5283a1916ae6bdb53e14fed2b1bf162dcd614a26a2d2c",
+          "bytes": 1725936
+        },
+        {
+          "id": "general-initial-3-ocr-5",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "eea7dfc27696fe57f62c2ed6da07d74245a9b6fa56fc4e06e939a53d904beb8c",
+          "bytes": 1471074
+        },
+        {
+          "id": "general-initial-3-ocr-6",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "7d41b0c08ab4795ffe6295e62a2b74826c90b31ad99967e6561791af8fc88282",
+          "bytes": 1602480
+        },
+        {
+          "id": "general-initial-3-ocr-7",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "68e57bb85ea0bbf575ad59c102a6053f11bb9c6438effe99ce9dc57332460734",
+          "bytes": 1897968
+        },
+        {
+          "id": "general-initial-3-ocr-8",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "0de836e9e84d1ac823f776bbb59efb6d3ecf4227ba3a6f4155ca89006a7acf11",
+          "bytes": 1908321
+        },
+        {
+          "id": "general-initial-3-ocr-9",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "5c49b15714407c44540b87f55826c9a892170769b22ad2eef927c9f8f58a37a1",
+          "bytes": 1585059
+        },
+        {
+          "id": "general-initial-3-ocr-10",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "7d27d0237b69eee2a8f065e5f46169b39f67fec1759a7b91a092dc5a062b0faf",
+          "bytes": 1566904
+        },
+        {
+          "id": "general-initial-3-ocr-11",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "a3412b4b27eb0741e0e01b2a91a516874005d272cdaa30d790d5611af8afdbb1",
+          "bytes": 1558308
+        },
+        {
+          "id": "general-initial-3-ocr-12",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "faa5fde5001d80e37c3b605061bb5d6266f579733473a92444c83aef877f909b",
+          "bytes": 1903200
+        },
+        {
+          "id": "general-initial-3-ocr-13",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "5f6565f8a317b0ef163cffc91b68ca05c2c4d051f2c54490f96b5043cc93ef84",
+          "bytes": 1134902
+        },
+        {
+          "id": "general-initial-3-ocr-14",
+          "origin_sha256": "4d840165699916901a8a9506f05737b4e7ce003accb43bac7f918ba6a1e73903",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              131,
+              132
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "f6b41325fd86b43b554fdc9a06907e8753709ad7d40f64f18c0179bdb2cc3527",
+          "bytes": 78454
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-3",
+        "pages": [
+          [
+            1,
+            132
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true,
+                "opening": [
+                  {
+                    "level": "款",
+                    "code": "15",
+                    "name": "民生費"
+                  },
+                  {
+                    "level": "項",
+                    "code": "5",
+                    "name": "社会福祉費"
+                  },
+                  {
+                    "level": "目",
+                    "code": "15",
+                    "name": "高齢者福祉費"
+                  }
+                ]
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "marks": {
+                    "◎": 1
+                  },
+                  "line_starts": [
+                    {
+                      "page": 6,
+                      "y": 365.5,
+                      "shift": -11.0,
+                      "reason": "原画は「◎児童福祉総務事業費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 22,
+                      "y": 246.7,
+                      "shift": -10.0,
+                      "reason": "原画は「◎子ども発達センター事業運営費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 50,
+                      "y": 364.7,
+                      "shift": -11.0,
+                      "reason": "原画は「◎雇用対策費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 60,
+                      "y": 365.5,
+                      "shift": -9.0,
+                      "reason": "原画は「◎自転車対策費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 66,
+                      "y": 341.7,
+                      "shift": -10.0,
+                      "reason": "原画は「◎道路用地費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 72,
+                      "y": 579.2,
+                      "shift": -10.0,
+                      "reason": "原画は「◎公遊園管理費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 120,
+                      "y": 675.0,
+                      "shift": -10.0,
+                      "reason": "原画は「◎深大寺水車館管理運営費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 126,
+                      "y": 127.9,
+                      "shift": -10.0,
+                      "reason": "原画は「◎体育施設整備費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p67-row1",
+            "page": 67,
+            "observation_id": "p67:full-page:a0:result0:r15",
+            "observed": "7, 734,122-1,316,5331,213, 724",
+            "reason": "原画は前年度 7,734,122・比較 −1,316,533・国都支出金 1,213,724。OCR が欄をまたいで続けて読んだ金額で、欄の罫で切ると桁がずれる。この読みを除き、原画で確かめた金額を欄ごとに読む。"
+          },
+          {
+            "id": "p67-row2",
+            "page": 67,
+            "observation_id": "p67:full-page:a0:result0:r20",
+            "observed": "2,016,5243,500,805-1,484,281",
+            "reason": "原画は本年度 2,016,524・前年度 3,500,805・比較 −1,484,281。OCR が欄をまたいで続けて読んだ金額で、欄の罫で切ると桁がずれる。この読みを除き、原画で確かめた金額を欄ごとに読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p67-row1-prior",
+            "page": 67,
+            "boxes": [
+              [
+                232.0,
+                127.4,
+                277.0,
+                139.7
+              ]
+            ],
+            "amount": "7,734,122",
+            "reason": "原画で確かめた都市計画費の前年度 7,734,122。"
+          },
+          {
+            "id": "p67-row1-diff",
+            "page": 67,
+            "boxes": [
+              [
+                278.6,
+                127.4,
+                330.7,
+                139.7
+              ]
+            ],
+            "amount": "△1,316,533",
+            "reason": "原画で確かめた都市計画費の比較 −1,316,533（減額）。"
+          },
+          {
+            "id": "p67-row1-state",
+            "page": 67,
+            "boxes": [
+              [
+                332.3,
+                127.4,
+                380.2,
+                139.7
+              ]
+            ],
+            "amount": "1,213,724",
+            "reason": "原画で確かめた都市計画費の国都支出金 1,213,724。"
+          },
+          {
+            "id": "p67-row2-now",
+            "page": 67,
+            "boxes": [
+              [
+                176.6,
+                150.9,
+                223.4,
+                163.9
+              ]
+            ],
+            "amount": "2,016,524",
+            "reason": "原画で確かめた都市計画総務費の本年度 2,016,524。"
+          },
+          {
+            "id": "p67-row2-prior",
+            "page": 67,
+            "boxes": [
+              [
+                225.0,
+                150.9,
+                277.0,
+                163.9
+              ]
+            ],
+            "amount": "3,500,805",
+            "reason": "原画で確かめた都市計画総務費の前年度 3,500,805。"
+          },
+          {
+            "id": "p67-row2-diff",
+            "page": 67,
+            "boxes": [
+              [
+                278.6,
+                150.9,
+                330.7,
+                163.9
+              ]
+            ],
+            "amount": "△1,484,281",
+            "reason": "原画で確かめた都市計画総務費の比較 −1,484,281（減額）。"
+          }
+        ],
+        "code_readings": []
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-3"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-5",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c03d5eb8da3fc39d684650e9b7931f796fbd5ec56fe6f0e81b6d3d4f297c5d4a"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-5-ocr-1",
+          "origin_sha256": "c03d5eb8da3fc39d684650e9b7931f796fbd5ec56fe6f0e81b6d3d4f297c5d4a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "eb66871736f4487deefd2a7329d4b6e26ebfe89eb0bbf0eebffa86cac4683ed9",
+          "bytes": 1679704
+        },
+        {
+          "id": "general-initial-5-ocr-2",
+          "origin_sha256": "c03d5eb8da3fc39d684650e9b7931f796fbd5ec56fe6f0e81b6d3d4f297c5d4a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "fd16e239cc3f0faf769f5e4a9a84f02ae57f74b892e2536c575a3e3f55afa65d",
+          "bytes": 1752280
+        },
+        {
+          "id": "general-initial-5-ocr-3",
+          "origin_sha256": "c03d5eb8da3fc39d684650e9b7931f796fbd5ec56fe6f0e81b6d3d4f297c5d4a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "769fb142ff2523032cc001cf26da2054de9f7dda5f5ee0d29890f86d10f470c4",
+          "bytes": 1742360
+        },
+        {
+          "id": "general-initial-5-ocr-4",
+          "origin_sha256": "c03d5eb8da3fc39d684650e9b7931f796fbd5ec56fe6f0e81b6d3d4f297c5d4a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131,
+              132,
+              133
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "a42360dcf7bfbde21bf086ac1d78afe370b1a90f475182bf16223901ccd737a6",
+          "bytes": 1594190
+        },
+        {
+          "id": "general-initial-5-ocr-5",
+          "origin_sha256": "c03d5eb8da3fc39d684650e9b7931f796fbd5ec56fe6f0e81b6d3d4f297c5d4a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              134,
+              135,
+              136,
+              137,
+              138,
+              139,
+              140,
+              141,
+              142,
+              143
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "ef47bcd432eaf281073f7c88d98858a8625a4a28a541ba07dc92e54a279820c5",
+          "bytes": 1737696
+        },
+        {
+          "id": "general-initial-5-ocr-6",
+          "origin_sha256": "c03d5eb8da3fc39d684650e9b7931f796fbd5ec56fe6f0e81b6d3d4f297c5d4a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              144,
+              145,
+              146,
+              147,
+              148,
+              149,
+              150,
+              151,
+              152,
+              153
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "dashed_rules": true
+          },
+          "sha256": "e6c1df8f0ca209ddc9dc0bbbc5b2fa0ce8231ba2ba9cc5b95654a03c037c0293",
+          "bytes": 1982578
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-5",
+        "pages": [
+          [
+            94,
+            153
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国・都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "marks": {
+                    "◎": 1
+                  },
+                  "line_starts": [
+                    {
+                      "page": 97,
+                      "y": 270.2,
+                      "shift": -9.0,
+                      "reason": "原画は「◎一般職人件費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 109,
+                      "y": 246.9,
+                      "shift": -10.0,
+                      "reason": "原画は「◎市有財産管理費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 111,
+                      "y": 306.2,
+                      "shift": -10.0,
+                      "reason": "原画は「◎調布基地跡地利用促進費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 111,
+                      "y": 448.7,
+                      "shift": -10.0,
+                      "reason": "原画は「◎行財政改革推進費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 113,
+                      "y": 460.7,
+                      "shift": -10.0,
+                      "reason": "原画は「◎国民保護諸費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 119,
+                      "y": 295.1,
+                      "shift": -10.0,
+                      "reason": "原画は「◎戸籍住民基本台帳管理事務費」。OCR が◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 129,
+                      "y": 317.9,
+                      "shift": -11.0,
+                      "reason": "原画は「◎文化振興事業費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 129,
+                      "y": 437.0,
+                      "shift": -10.0,
+                      "reason": "原画は「◎国際交流事業費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 133,
+                      "y": 126.5,
+                      "shift": -10.0,
+                      "reason": "原画は「◎市民活動支援センタ一管理運営費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 135,
+                      "y": 449.0,
+                      "shift": -14.0,
+                      "reason": "原画は「◎グリーンホール施設費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 139,
+                      "y": 293.0,
+                      "shift": -9.0,
+                      "reason": "原画は「◎国民健康保険事業特別会計」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    },
+                    {
+                      "page": 139,
+                      "y": 639.5,
+                      "shift": -10.0,
+                      "reason": "原画は「◎社会福祉委員費」。OCR が前の欄の金額と1語に読み、◎を落として名前の始まりを1字右に置いた。ほかの事業の名前と同じく◎の位置から始まる。"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "dropped_readings": [],
+        "code_readings": []
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-5"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial-3",
+      "conversion_id": "general-initial-3",
+      "input_fingerprint": "f8a8d04448e0b41ba394abd0fe55880dacdeb9acc72d33d99a19212cc2d4499f",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は printed 66頁 から決めた。分冊のため款の和 41,066,169 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 2772 件（p1:full-page:a0:result0:r9・p1:full-page:a0:result0:r9:w1・p2:full-page:a0:result0:r8・p2:full-page:a0:result0:r8:w0・p2:full-page:a0:result0:r13・p2:full-page:a0:result0:r13:w0・p2:full-page:a0:result0:r17・p2:full-page:a0:result0:r17:w0・p2:full-page:a0:result0:r21・p2:full-page:a0:result0:r21:w0・p2:full-page:a0:result0:r25・p2:full-page:a0:result0:r25・p2:full-page:a0:result0:r25:w0・p2:full-page:a0:result0:r25:w2・p2:full-page:a0:result0:r27・p2:full-page:a0:result0:r27:w0・p2:full-page:a0:result0:r32・p2:full-page:a0:result0:r32:w0・p2:full-page:a0:result0:r34・p2:full-page:a0:result0:r34:w0・p2:full-page:a0:result0:r36・p2:full-page:a0:result0:r36:w0・p2:full-page:a0:result0:r38・p2:full-page:a0:result0:r38:w0・p2:full-page:a0:result0:r47・p2:full-page:a0:result0:r47:w0・p2:full-page:a0:result0:r49・p2:full-page:a0:result0:r49:w0・p2:full-page:a0:result0:r53・p2:full-page:a0:result0:r53:w0・p2:full-page:a0:result0:r60・p2:full-page:a0:result0:r60:w0・p2:full-page:a0:result0:r67・p2:full-page:a0:result0:r67:w0・p2:full-page:a0:result0:r78・p2:full-page:a0:result0:r78:w0・p2:full-page:a0:result0:r80・p2:full-page:a0:result0:r80:w0・p2:full-page:a0:result0:r89・p2:full-page:a0:result0:r89:w0・p2:full-page:a0:result0:r91・p2:full-page:a0:result0:r91:w0・p3:full-page:a0:result0:r9・p3:full-page:a0:result0:r9:w1・p4:full-page:a0:result0:r17・p4:full-page:a0:result0:r17:w0・p4:full-page:a0:result0:r19・p4:full-page:a0:result0:r19:w0・p4:full-page:a0:result0:r23・p4:full-page:a0:result0:r23:w0・p4:full-page:a0:result0:r25・p4:full-page:a0:result0:r25:w0・p4:full-page:a0:result0:r29・p4:full-page:a0:result0:r29:w0・p4:full-page:a0:result0:r32・p4:full-page:a0:result0:r32:w0・p4:full-page:a0:result0:r34・p4:full-page:a0:result0:r34:w0・p4:full-page:a0:result0:r38・p4:full-page:a0:result0:r38:w0・p5:full-page:a0:result0:r9・p5:full-page:a0:result0:r9:w1・p6:full-page:a0:result0:r15・p6:full-page:a0:result0:r15:w0・p6:full-page:a0:result0:r18・p6:full-page:a0:result0:r18:w0・p6:full-page:a0:result0:r22・p6:full-page:a0:result0:r22:w0・p6:full-page:a0:result0:r24・p6:full-page:a0:result0:r24:w0・p6:full-page:a0:result0:r33・p6:full-page:a0:result0:r33:w0・p6:full-page:a0:result0:r37・p6:full-page:a0:result0:r37:w0・p6:full-page:a0:result0:r39・p6:full-page:a0:result0:r39:w0・p6:full-page:a0:result0:r43・p6:full-page:a0:result0:r43:w0・p6:full-page:a0:result0:r70・p6:full-page:a0:result0:r70・p6:full-page:a0:result0:r70:w0・p6:full-page:a0:result0:r70:w2・p6:full-page:a0:result0:r84・p6:full-page:a0:result0:r84:w0・p6:full-page:a0:result0:r86・p6:full-page:a0:result0:r86:w0・p6:full-page:a0:result0:r96・p6:full-page:a0:result0:r96:w0・p6:full-page:a0:result0:r98・p6:full-page:a0:result0:r98:w0・p6:full-page:a0:result0:r102・p6:full-page:a0:result0:r102:w0・p6:full-page:a0:result0:r114・p6:full-page:a0:result0:r114:w0・p7:full-page:a0:result0:r9・p7:full-page:a0:result0:r9:w1・p8:full-page:a0:result0:r8・p8:full-page:a0:result0:r8:w0・p8:full-page:a0:result0:r10・p8:full-page:a0:result0:r10:w0・p8:full-page:a0:result0:r14・p8:full-page:a0:result0:r14:w0・p8:full-page:a0:result0:r16・p8:full-page:a0:result0:r16:w0・p8:full-page:a0:result0:r18・p8:full-page:a0:result0:r18:w0・p8:full-page:a0:result0:r20・p8:full-page:a0:result0:r20:w0・p8:full-page:a0:result0:r22・p8:full-page:a0:result0:r22:w0・p8:full-page:a0:result0:r26・p8:full-page:a0:result0:r26:w0・p8:full-page:a0:result0:r38・p8:full-page:a0:result0:r38:w0・p8:full-page:a0:result0:r50・p8:full-page:a0:result0:r50:w0・p8:full-page:a0:result0:r58・p8:full-page:a0:result0:r58:w0・p8:full-page:a0:result0:r60・p8:full-page:a0:result0:r60:w0・p8:full-page:a0:result0:r62・p8:full-page:a0:result0:r62:w0・p8:full-page:a0:result0:r64・p8:full-page:a0:result0:r64:w0・p8:full-page:a0:result0:r70・p8:full-page:a0:result0:r70・p8:full-page:a0:result0:r70:w0・p8:full-page:a0:result0:r70:w2・p8:full-page:a0:result0:r75・p8:full-page:a0:result0:r75:w0・p8:full-page:a0:result0:r77・p8:full-page:a0:result0:r77:w0・p8:full-page:a0:result0:r79・p8:full-page:a0:result0:r79:w0・p8:full-page:a0:result0:r81・p8:full-page:a0:result0:r81:w0・p8:full-page:a0:result0:r85・p8:full-page:a0:result0:r85:w0・p8:full-page:a0:result0:r87・p8:full-page:a0:result0:r87:w0・p8:full-page:a0:result0:r89・p8:full-page:a0:result0:r89:w0・p8:full-page:a0:result0:r93・p8:full-page:a0:result0:r93・p8:full-page:a0:result0:r93:w0・p8:full-page:a0:result0:r93:w2・p8:full-page:a0:result0:r95・p8:full-page:a0:result0:r95:w0・p9:full-page:a0:result0:r9・p9:full-page:a0:result0:r9:w1・p10:full-page:a0:result0:r20・p10:full-page:a0:result0:r20:w0・p10:full-page:a0:result0:r24・p10:full-page:a0:result0:r24・p10:full-page:a0:result0:r24:w0・p10:full-page:a0:result0:r24:w3・p10:full-page:a0:result0:r26・p10:full-page:a0:result0:r26:w0・p10:full-page:a0:result0:r28・p10:full-page:a0:result0:r28:w0・p10:full-page:a0:result0:r30・p10:full-page:a0:result0:r30:w0・p10:full-page:a0:result0:r32・p10:full-page:a0:result0:r32・p10:full-page:a0:result0:r32:w0・p10:full-page:a0:result0:r32:w2・p10:full-page:a0:result0:r37・p10:full-page:a0:result0:r37:w0・p10:full-page:a0:result0:r39・p10:full-page:a0:result0:r39:w0・p10:full-page:a0:result0:r41・p10:full-page:a0:result0:r41:w0・p10:full-page:a0:result0:r45・p10:full-page:a0:result0:r45:w0・p10:full-page:a0:result0:r47・p10:full-page:a0:result0:r47:w0・p10:full-page:a0:result0:r49・p10:full-page:a0:result0:r49:w0・p10:full-page:a0:result0:r51・p10:full-page:a0:result0:r51:w0・p10:full-page:a0:result0:r53・p10:full-page:a0:result0:r53:w0・p10:full-page:a0:result0:r57・p10:full-page:a0:result0:r57:w0・p10:full-page:a0:result0:r59・p10:full-page:a0:result0:r59:w0・p10:full-page:a0:result0:r61・p10:full-page:a0:result0:r61:w0・p10:full-page:a0:result0:r63・p10:full-page:a0:result0:r63:w0・p10:full-page:a0:result0:r65・p10:full-page:a0:result0:r65:w0・p10:full-page:a0:result0:r69・p10:full-page:a0:result0:r69:w0・p10:full-page:a0:result0:r71・p10:full-page:a0:result0:r71:w0・p10:full-page:a0:result0:r73・p10:full-page:a0:result0:r73:w0・p10:full-page:a0:result0:r75・p10:full-page:a0:result0:r75:w0・p10:full-page:a0:result0:r77・p10:full-page:a0:result0:r77:w0・p10:full-page:a0:result0:r82・p10:full-page:a0:result0:r82:w0・p10:full-page:a0:result0:r84・p10:full-page:a0:result0:r84:w0・p10:full-page:a0:result0:r86・p10:full-page:a0:result0:r86:w0・p11:full-page:a0:result0:r9・p11:full-page:a0:result0:r9:w1・p12:full-page:a0:result0:r11・p12:full-page:a0:result0:r11・p12:full-page:a0:result0:r11:w2・p12:full-page:a0:result0:r11:w7・p12:full-page:a0:result0:r15・p12:full-page:a0:result0:r15:w0・p12:full-page:a0:result0:r17・p12:full-page:a0:result0:r17:w0・p12:full-page:a0:result0:r21・p12:full-page:a0:result0:r21:w0・p12:full-page:a0:result0:r23・p12:full-page:a0:result0:r23:w0・p12:full-page:a0:result0:r27・p12:full-page:a0:result0:r27:w0・p12:full-page:a0:result0:r29・p12:full-page:a0:result0:r29・p12:full-page:a0:result0:r29:w0・p12:full-page:a0:result0:r29:w2・p12:full-page:a0:result0:r33・p12:full-page:a0:result0:r33:w0・p12:full-page:a0:result0:r43・p12:full-page:a0:result0:r43:w0・p12:full-page:a0:result0:r46・p12:full-page:a0:result0:r46・p12:full-page:a0:result0:r46:w0・p12:full-page:a0:result0:r46:w2・p12:full-page:a0:result0:r54・p12:full-page:a0:result0:r54:w0・p12:full-page:a0:result0:r58・p12:full-page:a0:result0:r58・p12:full-page:a0:result0:r58:w0・p12:full-page:a0:result0:r58:w3・p12:full-page:a0:result0:r60・p12:full-page:a0:result0:r60:w0・p12:full-page:a0:result0:r64・p12:full-page:a0:result0:r64:w0・p12:full-page:a0:result0:r67・p12:full-page:a0:result0:r67・p12:full-page:a0:result0:r67:w0・p12:full-page:a0:result0:r67:w2・p12:full-page:a0:result0:r69・p12:full-page:a0:result0:r69:w0・p12:full-page:a0:result0:r73・p12:full-page:a0:result0:r73:w0・p12:full-page:a0:result0:r75・p12:full-page:a0:result0:r75:w0・p12:full-page:a0:result0:r77・p12:full-page:a0:result0:r77:w0・p12:full-page:a0:result0:r79・p12:full-page:a0:result0:r79:w0・p12:full-page:a0:result0:r89・p12:full-page:a0:result0:r89:w0・p12:full-page:a0:result0:r91・p12:full-page:a0:result0:r91:w0・p12:full-page:a0:result0:r93・p12:full-page:a0:result0:r93:w0・p12:full-page:a0:result0:r95・p12:full-page:a0:result0:r95:w0・p12:full-page:a0:result0:r99・p12:full-page:a0:result0:r99:w0・p12:full-page:a0:result0:r101・p12:full-page:a0:result0:r101:w0・p12:full-page:a0:result0:r103・p12:full-page:a0:result0:r103・p12:full-page:a0:result0:r103:w0・p12:full-page:a0:result0:r103:w2・p12:full-page:a0:result0:r105・p12:full-page:a0:result0:r105:w0・p12:full-page:a0:result0:r109・p12:full-page:a0:result0:r109:w0・p13:full-page:a0:result0:r8・p13:full-page:a0:result0:r8:w1・p14:full-page:a0:result0:r8・p14:full-page:a0:result0:r8:w0・p14:full-page:a0:result0:r31・p14:full-page:a0:result0:r31・p14:full-page:a0:result0:r31:w0・p14:full-page:a0:result0:r31:w3・p14:full-page:a0:result0:r35・p14:full-page:a0:result0:r35:w2・p14:full-page:a0:result0:r47・p14:full-page:a0:result0:r47・p14:full-page:a0:result0:r47:w0・p14:full-page:a0:result0:r47:w3・p14:full-page:a0:result0:r49・p14:full-page:a0:result0:r49:w0・p14:full-page:a0:result0:r56・p14:full-page:a0:result0:r56:w0・p14:full-page:a0:result0:r58・p14:full-page:a0:result0:r58:w0・p14:full-page:a0:result0:r65・p14:full-page:a0:result0:r65:w0・p14:full-page:a0:result0:r79・p14:full-page:a0:result0:r79・p14:full-page:a0:result0:r79・p14:full-page:a0:result0:r79:w0・p14:full-page:a0:result0:r79:w3・p14:full-page:a0:result0:r79:w6・p14:full-page:a0:result0:r81・p14:full-page:a0:result0:r81:w0・p14:full-page:a0:result0:r85・p14:full-page:a0:result0:r85・p14:full-page:a0:result0:r85:w0・p14:full-page:a0:result0:r85:w2・p14:full-page:a0:result0:r87・p14:full-page:a0:result0:r87:w0・p14:full-page:a0:result0:r91・p14:full-page:a0:result0:r91:w0・p14:full-page:a0:result0:r93・p14:full-page:a0:result0:r93:w0・p14:full-page:a0:result0:r95・p14:full-page:a0:result0:r95:w0・p14:full-page:a0:result0:r97・p14:full-page:a0:result0:r97:w0・p14:full-page:a0:result0:r99・p14:full-page:a0:result0:r99:w0・p14:full-page:a0:result0:r108・p14:full-page:a0:result0:r108:w0・p14:full-page:a0:result0:r123・p14:full-page:a0:result0:r123:w0・p15:full-page:a0:result0:r9・p15:full-page:a0:result0:r9:w1・p16:full-page:a0:result0:r10・p16:full-page:a0:result0:r10:w0・p16:full-page:a0:result0:r12・p16:full-page:a0:result0:r12:w0・p16:full-page:a0:result0:r16・p16:full-page:a0:result0:r16:w0・p16:full-page:a0:result0:r18・p16:full-page:a0:result0:r18:w0・p16:full-page:a0:result0:r22・p16:full-page:a0:result0:r22:w0・p16:full-page:a0:result0:r24・p16:full-page:a0:result0:r24:w0・p16:full-page:a0:result0:r28・p16:full-page:a0:result0:r28:w0・p16:full-page:a0:result0:r31・p16:full-page:a0:result0:r31:w0・p16:full-page:a0:result0:r33・p16:full-page:a0:result0:r33:w0・p16:full-page:a0:result0:r37・p16:full-page:a0:result0:r37:w0・p16:full-page:a0:result0:r39・p16:full-page:a0:result0:r39:w0・p16:full-page:a0:result0:r43・p16:full-page:a0:result0:r43:w0・p16:full-page:a0:result0:r45・p16:full-page:a0:result0:r45:w0・p16:full-page:a0:result0:r53・p16:full-page:a0:result0:r53:w0・p16:full-page:a0:result0:r58・p16:full-page:a0:result0:r58:w0・p16:full-page:a0:result0:r69・p16:full-page:a0:result0:r69:w0・p16:full-page:a0:result0:r99・p16:full-page:a0:result0:r99:w0・p16:full-page:a0:result0:r103・p16:full-page:a0:result0:r103:w0・p16:full-page:a0:result0:r107・p16:full-page:a0:result0:r107:w0・p16:full-page:a0:result0:r109・p16:full-page:a0:result0:r109:w0・p16:full-page:a0:result0:r111・p16:full-page:a0:result0:r111:w0・p16:full-page:a0:result0:r113・p16:full-page:a0:result0:r113:w0・p16:full-page:a0:result0:r115・p16:full-page:a0:result0:r115:w0・p16:full-page:a0:result0:r117・p16:full-page:a0:result0:r117:w0・p16:full-page:a0:result0:r119・p16:full-page:a0:result0:r119:w0・p17:full-page:a0:result0:r9・p17:full-page:a0:result0:r9:w1・p18:full-page:a0:result0:r19・p18:full-page:a0:result0:r19:w0・p18:full-page:a0:result0:r22・p18:full-page:a0:result0:r22:w0・p18:full-page:a0:result0:r26・p18:full-page:a0:result0:r26:w0・p18:full-page:a0:result0:r28・p18:full-page:a0:result0:r28:w0・p18:full-page:a0:result0:r37・p18:full-page:a0:result0:r37:w0・p18:full-page:a0:result0:r41・p18:full-page:a0:result0:r41:w0・p18:full-page:a0:result0:r43・p18:full-page:a0:result0:r43:w0・p18:full-page:a0:result0:r47・p18:full-page:a0:result0:r47:w0・p18:full-page:a0:result0:r49・p18:full-page:a0:result0:r49:w0・p18:full-page:a0:result0:r53・p18:full-page:a0:result0:r53:w0・p18:full-page:a0:result0:r55・p18:full-page:a0:result0:r55:w0・p18:full-page:a0:result0:r59・p18:full-page:a0:result0:r59:w0・p18:full-page:a0:result0:r61・p18:full-page:a0:result0:r61:w0・p18:full-page:a0:result0:r65・p18:full-page:a0:result0:r65:w0・p18:full-page:a0:result0:r68・p18:full-page:a0:result0:r68:w0・p18:full-page:a0:result0:r74・p18:full-page:a0:result0:r74:w0・p18:full-page:a0:result0:r78・p18:full-page:a0:result0:r78:w0・p18:full-page:a0:result0:r93・p18:full-page:a0:result0:r93:w0・p18:full-page:a0:result0:r95・p18:full-page:a0:result0:r95:w0・p18:full-page:a0:result0:r99・p18:full-page:a0:result0:r99:w0・p18:full-page:a0:result0:r104・p18:full-page:a0:result0:r104:w0・p18:full-page:a0:result0:r106・p18:full-page:a0:result0:r106:w0・p18:full-page:a0:result0:r108・p18:full-page:a0:result0:r108:w0・p18:full-page:a0:result0:r110・p18:full-page:a0:result0:r110:w0・p18:full-page:a0:result0:r112・p18:full-page:a0:result0:r112:w0・p18:full-page:a0:result0:r114・p18:full-page:a0:result0:r114:w0・p18:full-page:a0:result0:r116・p18:full-page:a0:result0:r116:w0・p18:full-page:a0:result0:r118・p18:full-page:a0:result0:r118:w0・p18:full-page:a0:result0:r120・p18:full-page:a0:result0:r120:w0・p18:full-page:a0:result0:r122・p18:full-page:a0:result0:r122:w0・p18:full-page:a0:result0:r124・p18:full-page:a0:result0:r124:w0・p18:full-page:a0:result0:r126・p18:full-page:a0:result0:r126:w0・p18:full-page:a0:result0:r128・p18:full-page:a0:result0:r128:w0・p19:full-page:a0:result0:r8・p19:full-page:a0:result0:r8:w1・p20:full-page:a0:result0:r8・p20:full-page:a0:result0:r8:w0・p20:full-page:a0:result0:r10・p20:full-page:a0:result0:r10:w0・p20:full-page:a0:result0:r12・p20:full-page:a0:result0:r12:w0・p20:full-page:a0:result0:r54・p20:full-page:a0:result0:r54:w0・p20:full-page:a0:result0:r58・p20:full-page:a0:result0:r58:w0・p20:full-page:a0:result0:r63・p20:full-page:a0:result0:r63:w0・p20:full-page:a0:result0:r73・p20:full-page:a0:result0:r73:w0・p20:full-page:a0:result0:r75・p20:full-page:a0:result0:r75:w0・p20:full-page:a0:result0:r79・p20:full-page:a0:result0:r79・p20:full-page:a0:result0:r79:w0・p20:full-page:a0:result0:r79:w2・p20:full-page:a0:result0:r82・p20:full-page:a0:result0:r82:w0・p20:full-page:a0:result0:r88・p20:full-page:a0:result0:r88:w0・p20:full-page:a0:result0:r92・p20:full-page:a0:result0:r92:w0・p20:full-page:a0:result0:r95・p20:full-page:a0:result0:r95:w0・p20:full-page:a0:result0:r105・p20:full-page:a0:result0:r105:w0・p20:full-page:a0:result0:r107・p20:full-page:a0:result0:r107:w0・p20:full-page:a0:result0:r109・p20:full-page:a0:result0:r109:w0・p20:full-page:a0:result0:r111・p20:full-page:a0:result0:r111:w0・p20:full-page:a0:result0:r120・p20:full-page:a0:result0:r120:w0・p21:full-page:a0:result0:r9・p21:full-page:a0:result0:r9:w1・p22:full-page:a0:result0:r10・p22:full-page:a0:result0:r10:w0・p22:full-page:a0:result0:r12・p22:full-page:a0:result0:r12:w0・p22:full-page:a0:result0:r16・p22:full-page:a0:result0:r16:w0・p22:full-page:a0:result0:r18・p22:full-page:a0:result0:r18:w0・p22:full-page:a0:result0:r22・p22:full-page:a0:result0:r22:w0・p22:full-page:a0:result0:r24・p22:full-page:a0:result0:r24:w0・p22:full-page:a0:result0:r28・p22:full-page:a0:result0:r28:w0・p22:full-page:a0:result0:r30・p22:full-page:a0:result0:r30:w0・p22:full-page:a0:result0:r34・p22:full-page:a0:result0:r34:w0・p22:full-page:a0:result0:r46・p22:full-page:a0:result0:r46:w0・p22:full-page:a0:result0:r57・p22:full-page:a0:result0:r57:w0・p22:full-page:a0:result0:r67・p22:full-page:a0:result0:r67:w0・p22:full-page:a0:result0:r77・p22:full-page:a0:result0:r77:w0・p22:full-page:a0:result0:r97・p22:full-page:a0:result0:r97:w0・p22:full-page:a0:result0:r107・p22:full-page:a0:result0:r107:w0・p22:full-page:a0:result0:r117・p22:full-page:a0:result0:r117:w0・p23:full-page:a0:result0:r9・p23:full-page:a0:result0:r9:w1・p24:full-page:a0:result0:r10・p24:full-page:a0:result0:r10:w0・p24:full-page:a0:result0:r12・p24:full-page:a0:result0:r12:w0・p24:full-page:a0:result0:r14・p24:full-page:a0:result0:r14:w0・p24:full-page:a0:result0:r16・p24:full-page:a0:result0:r16:w0・p24:full-page:a0:result0:r18・p24:full-page:a0:result0:r18:w0・p24:full-page:a0:result0:r20・p24:full-page:a0:result0:r20:w0・p24:full-page:a0:result0:r22・p24:full-page:a0:result0:r22:w0・p24:full-page:a0:result0:r24・p24:full-page:a0:result0:r24:w0・p24:full-page:a0:result0:r26・p24:full-page:a0:result0:r26:w0・p24:full-page:a0:result0:r35・p24:full-page:a0:result0:r35:w0・p24:full-page:a0:result0:r37・p24:full-page:a0:result0:r37:w0・p24:full-page:a0:result0:r41・p24:full-page:a0:result0:r41:w0・p24:full-page:a0:result0:r43・p24:full-page:a0:result0:r43:w0・p24:full-page:a0:result0:r47・p24:full-page:a0:result0:r47:w0・p24:full-page:a0:result0:r49・p24:full-page:a0:result0:r49:w0・p24:full-page:a0:result0:r53・p24:full-page:a0:result0:r53:w0・p24:full-page:a0:result0:r55・p24:full-page:a0:result0:r55:w0・p24:full-page:a0:result0:r59・p24:full-page:a0:result0:r59:w0・p24:full-page:a0:result0:r62・p24:full-page:a0:result0:r62:w0・p24:full-page:a0:result0:r66・p24:full-page:a0:result0:r66:w0・p24:full-page:a0:result0:r68・p24:full-page:a0:result0:r68:w0・p25:full-page:a0:result0:r9・p25:full-page:a0:result0:r9:w1・p26:full-page:a0:result0:r15・p26:full-page:a0:result0:r15:w0・p26:full-page:a0:result0:r18・p26:full-page:a0:result0:r18:w0・p26:full-page:a0:result0:r22・p26:full-page:a0:result0:r22:w0・p26:full-page:a0:result0:r24・p26:full-page:a0:result0:r24:w0・p26:full-page:a0:result0:r33・p26:full-page:a0:result0:r33:w0・p26:full-page:a0:result0:r37・p26:full-page:a0:result0:r37:w0・p26:full-page:a0:result0:r56・p26:full-page:a0:result0:r56:w0・p26:full-page:a0:result0:r74・p26:full-page:a0:result0:r74:w0・p26:full-page:a0:result0:r78・p26:full-page:a0:result0:r78:w0・p26:full-page:a0:result0:r93・p26:full-page:a0:result0:r93:w0・p26:full-page:a0:result0:r97・p26:full-page:a0:result0:r97:w0・p26:full-page:a0:result0:r100・p26:full-page:a0:result0:r100:w0・p26:full-page:a0:result0:r102・p26:full-page:a0:result0:r102:w0・p26:full-page:a0:result0:r106・p26:full-page:a0:result0:r106:w0・p26:full-page:a0:result0:r108・p26:full-page:a0:result0:r108:w0・p26:full-page:a0:result0:r110・p26:full-page:a0:result0:r110:w0・p26:full-page:a0:result0:r112・p26:full-page:a0:result0:r112・p26:full-page:a0:result0:r112・p26:full-page:a0:result0:r112:w0・p26:full-page:a0:result0:r112:w3・p26:full-page:a0:result0:r112:w9・p26:full-page:a0:result0:r114・p26:full-page:a0:result0:r114・p26:full-page:a0:result0:r114:w2・p26:full-page:a0:result0:r114:w8・p26:full-page:a0:result0:r124・p26:full-page:a0:result0:r124:w0・p27:full-page:a0:result0:r9・p27:full-page:a0:result0:r9:w1・p28:full-page:a0:result0:r12・p28:full-page:a0:result0:r12:w0・p28:full-page:a0:result0:r24・p28:full-page:a0:result0:r24:w0・p28:full-page:a0:result0:r26・p28:full-page:a0:result0:r26・p28:full-page:a0:result0:r26:w0・p28:full-page:a0:result0:r26:w7・p28:full-page:a0:result0:r28・p28:full-page:a0:result0:r28:w0・p28:full-page:a0:result0:r32・p28:full-page:a0:result0:r32:w0・p28:full-page:a0:result0:r34・p28:full-page:a0:result0:r34:w0・p28:full-page:a0:result0:r40・p28:full-page:a0:result0:r40:w0・p28:full-page:a0:result0:r42・p28:full-page:a0:result0:r42:w0・p28:full-page:a0:result0:r44・p28:full-page:a0:result0:r44:w0・p28:full-page:a0:result0:r46・p28:full-page:a0:result0:r46:w0・p28:full-page:a0:result0:r48・p28:full-page:a0:result0:r48:w0・p28:full-page:a0:result0:r52・p28:full-page:a0:result0:r52:w0・p28:full-page:a0:result0:r54・p28:full-page:a0:result0:r54・p28:full-page:a0:result0:r54:w0・p28:full-page:a0:result0:r54:w2・p28:full-page:a0:result0:r56・p28:full-page:a0:result0:r56:w0・p28:full-page:a0:result0:r63・p28:full-page:a0:result0:r63:w0・p28:full-page:a0:result0:r65・p28:full-page:a0:result0:r65:w0・p28:full-page:a0:result0:r67・p28:full-page:a0:result0:r67:w0・p28:full-page:a0:result0:r69・p28:full-page:a0:result0:r69:w0・p28:full-page:a0:result0:r71・p28:full-page:a0:result0:r71:w0・p28:full-page:a0:result0:r73・p28:full-page:a0:result0:r73:w0・p28:full-page:a0:result0:r75・p28:full-page:a0:result0:r75:w0・p28:full-page:a0:result0:r77・p28:full-page:a0:result0:r77:w0・p28:full-page:a0:result0:r79・p28:full-page:a0:result0:r79:w0・p28:full-page:a0:result0:r81・p28:full-page:a0:result0:r81:w0・p28:full-page:a0:result0:r83・p28:full-page:a0:result0:r83・p28:full-page:a0:result0:r83:w0・p28:full-page:a0:result0:r83:w3・p28:full-page:a0:result0:r87・p28:full-page:a0:result0:r87:w0・p28:full-page:a0:result0:r89・p28:full-page:a0:result0:r89:w0・p28:full-page:a0:result0:r91・p28:full-page:a0:result0:r91:w0・p28:full-page:a0:result0:r95・p28:full-page:a0:result0:r95:w0・p28:full-page:a0:result0:r97・p28:full-page:a0:result0:r97:w0・p28:full-page:a0:result0:r99・p28:full-page:a0:result0:r99:w0・p29:full-page:a0:result0:r9・p29:full-page:a0:result0:r9:w1・p30:full-page:a0:result0:r8・p30:full-page:a0:result0:r8:w0・p30:full-page:a0:result0:r12・p30:full-page:a0:result0:r12:w0・p30:full-page:a0:result0:r14・p30:full-page:a0:result0:r14:w0・p30:full-page:a0:result0:r16・p30:full-page:a0:result0:r16:w0・p30:full-page:a0:result0:r18・p30:full-page:a0:result0:r18:w0・p30:full-page:a0:result0:r20・p30:full-page:a0:result0:r20:w0・p30:full-page:a0:result0:r22・p30:full-page:a0:result0:r22:w0・p31:full-page:a0:result0:r9・p31:full-page:a0:result0:r9:w1・p32:full-page:a0:result0:r15・p32:full-page:a0:result0:r15:w0・p32:full-page:a0:result0:r17・p32:full-page:a0:result0:r17:w0・p32:full-page:a0:result0:r21・p32:full-page:a0:result0:r21:w0・p32:full-page:a0:result0:r23・p32:full-page:a0:result0:r23:w0・p32:full-page:a0:result0:r32・p32:full-page:a0:result0:r32:w0・p32:full-page:a0:result0:r49・p32:full-page:a0:result0:r49:w0・p32:full-page:a0:result0:r51・p32:full-page:a0:result0:r51:w0・p32:full-page:a0:result0:r55・p32:full-page:a0:result0:r55:w0・p32:full-page:a0:result0:r58・p32:full-page:a0:result0:r58:w0・p32:full-page:a0:result0:r60・p32:full-page:a0:result0:r60:w0・p32:full-page:a0:result0:r62・p32:full-page:a0:result0:r62:w0・p33:full-page:a0:result0:r9・p33:full-page:a0:result0:r9:w1・p34:full-page:a0:result0:r15・p34:full-page:a0:result0:r15:w0・p34:full-page:a0:result0:r17・p34:full-page:a0:result0:r17:w0・p34:full-page:a0:result0:r21・p34:full-page:a0:result0:r21:w0・p34:full-page:a0:result0:r23・p34:full-page:a0:result0:r23:w0・p34:full-page:a0:result0:r32・p34:full-page:a0:result0:r32:w0・p34:full-page:a0:result0:r38・p34:full-page:a0:result0:r38:w0・p34:full-page:a0:result0:r42・p34:full-page:a0:result0:r42:w0・p34:full-page:a0:result0:r48・p34:full-page:a0:result0:r48:w0・p34:full-page:a0:result0:r50・p34:full-page:a0:result0:r50:w0・p34:full-page:a0:result0:r54・p34:full-page:a0:result0:r54:w0・p34:full-page:a0:result0:r56・p34:full-page:a0:result0:r56:w0・p34:full-page:a0:result0:r60・p34:full-page:a0:result0:r60・p34:full-page:a0:result0:r60:w0・p34:full-page:a0:result0:r60:w2・p34:full-page:a0:result0:r91・p34:full-page:a0:result0:r91:w0・p34:full-page:a0:result0:r109・p34:full-page:a0:result0:r109:w0・p34:full-page:a0:result0:r111・p34:full-page:a0:result0:r111:w0・p36:full-page:a0:result0:r12・p36:full-page:a0:result0:r12:w0・p36:full-page:a0:result0:r42・p36:full-page:a0:result0:r42・p36:full-page:a0:result0:r42:w0・p36:full-page:a0:result0:r42:w3・p36:full-page:a0:result0:r44・p36:full-page:a0:result0:r44:w2・p36:full-page:a0:result0:r52・p36:full-page:a0:result0:r52:w0・p36:full-page:a0:result0:r56・p36:full-page:a0:result0:r56:w0・p36:full-page:a0:result0:r58・p36:full-page:a0:result0:r58:w0・p36:full-page:a0:result0:r60・p36:full-page:a0:result0:r60:w0・p36:full-page:a0:result0:r62・p36:full-page:a0:result0:r62:w0・p36:full-page:a0:result0:r64・p36:full-page:a0:result0:r64:w0・p36:full-page:a0:result0:r66・p36:full-page:a0:result0:r66:w0・p36:full-page:a0:result0:r68・p36:full-page:a0:result0:r68:w0・p36:full-page:a0:result0:r70・p36:full-page:a0:result0:r70:w0・p36:full-page:a0:result0:r81・p36:full-page:a0:result0:r81:w0・p36:full-page:a0:result0:r83・p36:full-page:a0:result0:r83・p36:full-page:a0:result0:r83:w0・p36:full-page:a0:result0:r83:w4・p36:full-page:a0:result0:r85・p36:full-page:a0:result0:r85:w0・p36:full-page:a0:result0:r89・p36:full-page:a0:result0:r89:w0・p36:full-page:a0:result0:r91・p36:full-page:a0:result0:r91:w0・p36:full-page:a0:result0:r93・p36:full-page:a0:result0:r93:w0・p36:full-page:a0:result0:r98・p36:full-page:a0:result0:r98:w0・p36:full-page:a0:result0:r102・p36:full-page:a0:result0:r102:w0・p38:full-page:a0:result0:r11・p38:full-page:a0:result0:r11:w0・p38:full-page:a0:result0:r13・p38:full-page:a0:result0:r13:w0・p38:full-page:a0:result0:r23・p38:full-page:a0:result0:r23:w0・p38:full-page:a0:result0:r27・p38:full-page:a0:result0:r27:w0・p38:full-page:a0:result0:r37・p38:full-page:a0:result0:r37・p38:full-page:a0:result0:r37:w0・p38:full-page:a0:result0:r37:w7・p38:full-page:a0:result0:r39・p38:full-page:a0:result0:r39:w6・p38:full-page:a0:result0:r49・p38:full-page:a0:result0:r49:w0・p38:full-page:a0:result0:r51・p38:full-page:a0:result0:r51:w0・p38:full-page:a0:result0:r53・p38:full-page:a0:result0:r53:w0・p38:full-page:a0:result0:r55・p38:full-page:a0:result0:r55:w0・p38:full-page:a0:result0:r57・p38:full-page:a0:result0:r57:w0・p38:full-page:a0:result0:r61・p38:full-page:a0:result0:r61:w0・p38:full-page:a0:result0:r63・p38:full-page:a0:result0:r63:w0・p38:full-page:a0:result0:r65・p38:full-page:a0:result0:r65:w0・p38:full-page:a0:result0:r67・p38:full-page:a0:result0:r67:w0・p38:full-page:a0:result0:r69・p38:full-page:a0:result0:r69・p38:full-page:a0:result0:r69:w0・p38:full-page:a0:result0:r69:w2・p38:full-page:a0:result0:r75・p38:full-page:a0:result0:r75:w0・p38:full-page:a0:result0:r77・p38:full-page:a0:result0:r77:w0・p38:full-page:a0:result0:r79・p38:full-page:a0:result0:r79:w0・p38:full-page:a0:result0:r83・p38:full-page:a0:result0:r83:w0・p38:full-page:a0:result0:r87・p38:full-page:a0:result0:r87:w0・p38:full-page:a0:result0:r91・p38:full-page:a0:result0:r91:w0・p38:full-page:a0:result0:r93・p38:full-page:a0:result0:r93:w0・p38:full-page:a0:result0:r95・p38:full-page:a0:result0:r95:w0・p38:full-page:a0:result0:r99・p38:full-page:a0:result0:r99:w0・p39:full-page:a0:result0:r9・p39:full-page:a0:result0:r9:w1・p40:full-page:a0:result0:r16・p40:full-page:a0:result0:r16:w0・p40:full-page:a0:result0:r20・p40:full-page:a0:result0:r20:w0・p40:full-page:a0:result0:r22・p40:full-page:a0:result0:r22:w0・p40:full-page:a0:result0:r24・p40:full-page:a0:result0:r24:w0・p40:full-page:a0:result0:r26・p40:full-page:a0:result0:r26:w0・p40:full-page:a0:result0:r28・p40:full-page:a0:result0:r28:w0・p40:full-page:a0:result0:r42・p40:full-page:a0:result0:r42:w0・p40:full-page:a0:result0:r46・p40:full-page:a0:result0:r46:w0・p40:full-page:a0:result0:r60・p40:full-page:a0:result0:r60:w0・p40:full-page:a0:result0:r62・p40:full-page:a0:result0:r62:w0・p40:full-page:a0:result0:r64・p40:full-page:a0:result0:r64:w0・p40:full-page:a0:result0:r73・p40:full-page:a0:result0:r73:w0・p40:full-page:a0:result0:r75・p40:full-page:a0:result0:r75:w0・p40:full-page:a0:result0:r79・p40:full-page:a0:result0:r79:w0・p40:full-page:a0:result0:r81・p40:full-page:a0:result0:r81:w0・p40:full-page:a0:result0:r85・p40:full-page:a0:result0:r85:w0・p40:full-page:a0:result0:r87・p40:full-page:a0:result0:r87:w0・p40:full-page:a0:result0:r91・p40:full-page:a0:result0:r91:w0・p40:full-page:a0:result0:r96・p40:full-page:a0:result0:r96・p40:full-page:a0:result0:r96:w0・p40:full-page:a0:result0:r96:w2・p40:full-page:a0:result0:r104・p40:full-page:a0:result0:r104:w0・p40:full-page:a0:result0:r106・p40:full-page:a0:result0:r106:w0・p40:full-page:a0:result0:r108・p40:full-page:a0:result0:r108:w0・p42:full-page:a0:result0:r8・p42:full-page:a0:result0:r8:w0・p42:full-page:a0:result0:r10・p42:full-page:a0:result0:r10:w0・p42:full-page:a0:result0:r12・p42:full-page:a0:result0:r12:w0・p42:full-page:a0:result0:r14・p42:full-page:a0:result0:r14:w0・p42:full-page:a0:result0:r16・p42:full-page:a0:result0:r16:w0・p42:full-page:a0:result0:r18・p42:full-page:a0:result0:r18:w0・p42:full-page:a0:result0:r20・p42:full-page:a0:result0:r20:w0・p42:full-page:a0:result0:r22・p42:full-page:a0:result0:r22:w0・p42:full-page:a0:result0:r26・p42:full-page:a0:result0:r26・p42:full-page:a0:result0:r26:w0・p42:full-page:a0:result0:r26:w2・p42:full-page:a0:result0:r35・p42:full-page:a0:result0:r35:w0・p42:full-page:a0:result0:r37・p42:full-page:a0:result0:r37:w0・p42:full-page:a0:result0:r41・p42:full-page:a0:result0:r41:w0・p42:full-page:a0:result0:r43・p42:full-page:a0:result0:r43:w0・p42:full-page:a0:result0:r49・p42:full-page:a0:result0:r49:w0・p42:full-page:a0:result0:r59・p42:full-page:a0:result0:r59:w0・p42:full-page:a0:result0:r61・p42:full-page:a0:result0:r61:w0・p42:full-page:a0:result0:r65・p42:full-page:a0:result0:r65:w0・p42:full-page:a0:result0:r68・p42:full-page:a0:result0:r68:w0・p42:full-page:a0:result0:r70・p42:full-page:a0:result0:r70:w0・p42:full-page:a0:result0:r74・p42:full-page:a0:result0:r74:w0・p42:full-page:a0:result0:r76・p42:full-page:a0:result0:r76:w0・p42:full-page:a0:result0:r82・p42:full-page:a0:result0:r82:w0・p42:full-page:a0:result0:r86・p42:full-page:a0:result0:r86:w0・p42:full-page:a0:result0:r89・p42:full-page:a0:result0:r89:w0・p42:full-page:a0:result0:r100・p42:full-page:a0:result0:r100:w0・p42:full-page:a0:result0:r102・p42:full-page:a0:result0:r102:w0・p42:full-page:a0:result0:r104・p42:full-page:a0:result0:r104:w0・p42:full-page:a0:result0:r106・p42:full-page:a0:result0:r106:w0・p42:full-page:a0:result0:r108・p42:full-page:a0:result0:r108:w0・p42:full-page:a0:result0:r110・p42:full-page:a0:result0:r110:w0・p42:full-page:a0:result0:r112・p42:full-page:a0:result0:r112:w0・p42:full-page:a0:result0:r114・p42:full-page:a0:result0:r114:w0・p42:full-page:a0:result0:r118・p42:full-page:a0:result0:r118:w0・p43:full-page:a0:result0:r9・p43:full-page:a0:result0:r9:w1・p45:full-page:a0:result0:r9・p45:full-page:a0:result0:r9:w1・p46:full-page:a0:result0:r15・p46:full-page:a0:result0:r15:w0・p46:full-page:a0:result0:r18・p46:full-page:a0:result0:r18:w0・p46:full-page:a0:result0:r22・p46:full-page:a0:result0:r22:w0・p46:full-page:a0:result0:r24・p46:full-page:a0:result0:r24:w0・p46:full-page:a0:result0:r37・p46:full-page:a0:result0:r37:w0・p46:full-page:a0:result0:r39・p46:full-page:a0:result0:r39:w0・p46:full-page:a0:result0:r43・p46:full-page:a0:result0:r43:w0・p46:full-page:a0:result0:r45・p46:full-page:a0:result0:r45:w0・p46:full-page:a0:result0:r49・p46:full-page:a0:result0:r49:w0・p46:full-page:a0:result0:r52・p46:full-page:a0:result0:r52:w0・p46:full-page:a0:result0:r54・p46:full-page:a0:result0:r54:w0・p46:full-page:a0:result0:r58・p46:full-page:a0:result0:r58:w0・p46:full-page:a0:result0:r60・p46:full-page:a0:result0:r60:w0・p46:full-page:a0:result0:r64・p46:full-page:a0:result0:r64:w0・p46:full-page:a0:result0:r81・p46:full-page:a0:result0:r81:w0・p46:full-page:a0:result0:r83・p46:full-page:a0:result0:r83:w0・p46:full-page:a0:result0:r91・p46:full-page:a0:result0:r91:w0・p46:full-page:a0:result0:r93・p46:full-page:a0:result0:r93:w0・p46:full-page:a0:result0:r97・p46:full-page:a0:result0:r97:w0・p46:full-page:a0:result0:r99・p46:full-page:a0:result0:r99:w0・p46:full-page:a0:result0:r103・p46:full-page:a0:result0:r103:w0・p46:full-page:a0:result0:r105・p46:full-page:a0:result0:r105:w0・p46:full-page:a0:result0:r109・p46:full-page:a0:result0:r109:w0・p46:full-page:a0:result0:r112・p46:full-page:a0:result0:r112:w0・p46:full-page:a0:result0:r114・p46:full-page:a0:result0:r114:w0・p46:full-page:a0:result0:r118・p46:full-page:a0:result0:r118:w0・p46:full-page:a0:result0:r120・p46:full-page:a0:result0:r120:w0・p46:full-page:a0:result0:r124・p46:full-page:a0:result0:r124:w0・p46:full-page:a0:result0:r127・p46:full-page:a0:result0:r127:w0・p47:full-page:a0:result0:r9・p47:full-page:a0:result0:r9:w1・p48:full-page:a0:result0:r13・p48:full-page:a0:result0:r13:w0・p48:full-page:a0:result0:r15・p48:full-page:a0:result0:r15:w0・p48:full-page:a0:result0:r23・p48:full-page:a0:result0:r23:w0・p48:full-page:a0:result0:r25・p48:full-page:a0:result0:r25:w0・p48:full-page:a0:result0:r29・p48:full-page:a0:result0:r29:w0・p48:full-page:a0:result0:r31・p48:full-page:a0:result0:r31:w0・p48:full-page:a0:result0:r33・p48:full-page:a0:result0:r33:w0・p48:full-page:a0:result0:r35・p48:full-page:a0:result0:r35:w0・p48:full-page:a0:result0:r39・p48:full-page:a0:result0:r39:w0・p48:full-page:a0:result0:r43・p48:full-page:a0:result0:r43:w0・p48:full-page:a0:result0:r51・p48:full-page:a0:result0:r51:w0・p48:full-page:a0:result0:r53・p48:full-page:a0:result0:r53:w0・p48:full-page:a0:result0:r55・p48:full-page:a0:result0:r55:w0・p48:full-page:a0:result0:r63・p48:full-page:a0:result0:r63:w0・p48:full-page:a0:result0:r67・p48:full-page:a0:result0:r67:w0・p48:full-page:a0:result0:r69・p48:full-page:a0:result0:r69:w0・p48:full-page:a0:result0:r71・p48:full-page:a0:result0:r71:w0・p48:full-page:a0:result0:r75・p48:full-page:a0:result0:r75:w0・p48:full-page:a0:result0:r77・p48:full-page:a0:result0:r77:w0・p48:full-page:a0:result0:r84・p48:full-page:a0:result0:r84:w0・p49:full-page:a0:result0:r9・p49:full-page:a0:result0:r9:w1・p50:full-page:a0:result0:r15・p50:full-page:a0:result0:r15:w0・p50:full-page:a0:result0:r17・p50:full-page:a0:result0:r17:w0・p50:full-page:a0:result0:r21・p50:full-page:a0:result0:r21:w0・p50:full-page:a0:result0:r23・p50:full-page:a0:result0:r23:w0・p50:full-page:a0:result0:r32・p50:full-page:a0:result0:r32:w0・p50:full-page:a0:result0:r40・p50:full-page:a0:result0:r40:w0・p50:full-page:a0:result0:r46・p50:full-page:a0:result0:r46:w0・p52:full-page:a0:result0:r15・p52:full-page:a0:result0:r15:w0・p52:full-page:a0:result0:r17・p52:full-page:a0:result0:r17:w0・p52:full-page:a0:result0:r21・p52:full-page:a0:result0:r21:w0・p52:full-page:a0:result0:r23・p52:full-page:a0:result0:r23:w0・p52:full-page:a0:result0:r27・p52:full-page:a0:result0:r27:w0・p52:full-page:a0:result0:r33・p52:full-page:a0:result0:r33:w0・p52:full-page:a0:result0:r50・p52:full-page:a0:result0:r50:w0・p52:full-page:a0:result0:r52・p52:full-page:a0:result0:r52:w0・p52:full-page:a0:result0:r56・p52:full-page:a0:result0:r56:w0・p52:full-page:a0:result0:r58・p52:full-page:a0:result0:r58:w0・p52:full-page:a0:result0:r73・p52:full-page:a0:result0:r73:w0・p52:full-page:a0:result0:r75・p52:full-page:a0:result0:r75:w0・p52:full-page:a0:result0:r79・p52:full-page:a0:result0:r79:w0・p52:full-page:a0:result0:r81・p52:full-page:a0:result0:r81:w0・p52:full-page:a0:result0:r85・p52:full-page:a0:result0:r85:w0・p52:full-page:a0:result0:r91・p52:full-page:a0:result0:r91:w0・p52:full-page:a0:result0:r95・p52:full-page:a0:result0:r95:w0・p53:full-page:a0:result0:r9・p53:full-page:a0:result0:r9:w1・p54:full-page:a0:result0:r12・p54:full-page:a0:result0:r12:w0・p54:full-page:a0:result0:r16・p54:full-page:a0:result0:r16:w0・p54:full-page:a0:result0:r21・p54:full-page:a0:result0:r21:w0・p54:full-page:a0:result0:r23・p54:full-page:a0:result0:r23:w0・p54:full-page:a0:result0:r25・p54:full-page:a0:result0:r25:w0・p54:full-page:a0:result0:r29・p54:full-page:a0:result0:r29:w0・p56:full-page:a0:result0:r15・p56:full-page:a0:result0:r15:w0・p56:full-page:a0:result0:r17・p56:full-page:a0:result0:r17:w0・p56:full-page:a0:result0:r21・p56:full-page:a0:result0:r21:w0・p56:full-page:a0:result0:r23・p56:full-page:a0:result0:r23:w0・p56:full-page:a0:result0:r36・p56:full-page:a0:result0:r36:w0・p56:full-page:a0:result0:r52・p56:full-page:a0:result0:r52:w0・p56:full-page:a0:result0:r54・p56:full-page:a0:result0:r54:w0・p56:full-page:a0:result0:r61・p56:full-page:a0:result0:r61:w0・p56:full-page:a0:result0:r63・p56:full-page:a0:result0:r63:w0・p56:full-page:a0:result0:r65・p56:full-page:a0:result0:r65:w0・p56:full-page:a0:result0:r69・p56:full-page:a0:result0:r69:w0・p56:full-page:a0:result0:r73・p56:full-page:a0:result0:r73:w0・p57:full-page:a0:result0:r9・p57:full-page:a0:result0:r9:w1・p58:full-page:a0:result0:r12・p58:full-page:a0:result0:r12:w0・p58:full-page:a0:result0:r22・p58:full-page:a0:result0:r22:w0・p58:full-page:a0:result0:r24・p58:full-page:a0:result0:r24:w0・p58:full-page:a0:result0:r28・p58:full-page:a0:result0:r28:w0・p58:full-page:a0:result0:r43・p58:full-page:a0:result0:r43:w0・p58:full-page:a0:result0:r45・p58:full-page:a0:result0:r45:w0・p58:full-page:a0:result0:r49・p58:full-page:a0:result0:r49:w0・p58:full-page:a0:result0:r61・p58:full-page:a0:result0:r61:w0・p58:full-page:a0:result0:r65・p58:full-page:a0:result0:r65:w0・p58:full-page:a0:result0:r68・p58:full-page:a0:result0:r68:w0・p59:full-page:a0:result0:r9・p59:full-page:a0:result0:r9:w1・p60:full-page:a0:result0:r15・p60:full-page:a0:result0:r15:w0・p60:full-page:a0:result0:r17・p60:full-page:a0:result0:r17:w0・p60:full-page:a0:result0:r21・p60:full-page:a0:result0:r21:w0・p60:full-page:a0:result0:r23・p60:full-page:a0:result0:r23:w0・p60:full-page:a0:result0:r32・p60:full-page:a0:result0:r32:w0・p60:full-page:a0:result0:r36・p60:full-page:a0:result0:r36:w0・p60:full-page:a0:result0:r38・p60:full-page:a0:result0:r38:w0・p60:full-page:a0:result0:r47・p60:full-page:a0:result0:r47:w0・p60:full-page:a0:result0:r49・p60:full-page:a0:result0:r49:w0・p60:full-page:a0:result0:r53・p60:full-page:a0:result0:r53:w0・p60:full-page:a0:result0:r56・p60:full-page:a0:result0:r56:w0・p60:full-page:a0:result0:r58・p60:full-page:a0:result0:r58:w0・p60:full-page:a0:result0:r62・p60:full-page:a0:result0:r62:w0・p60:full-page:a0:result0:r65・p60:full-page:a0:result0:r65:w0・p60:full-page:a0:result0:r67・p60:full-page:a0:result0:r67:w0・p60:full-page:a0:result0:r71・p60:full-page:a0:result0:r71:w0・p60:full-page:a0:result0:r74・p60:full-page:a0:result0:r74:w0・p60:full-page:a0:result0:r76・p60:full-page:a0:result0:r76:w0・p60:full-page:a0:result0:r80・p60:full-page:a0:result0:r80:w0・p60:full-page:a0:result0:r82・p60:full-page:a0:result0:r82:w0・p60:full-page:a0:result0:r88・p60:full-page:a0:result0:r88:w0・p60:full-page:a0:result0:r90・p60:full-page:a0:result0:r90:w0・p60:full-page:a0:result0:r103・p60:full-page:a0:result0:r103:w0・p60:full-page:a0:result0:r105・p60:full-page:a0:result0:r105:w0・p60:full-page:a0:result0:r109・p60:full-page:a0:result0:r109:w0・p61:full-page:a0:result0:r9・p61:full-page:a0:result0:r9:w1・p62:full-page:a0:result0:r10・p62:full-page:a0:result0:r10:w0・p62:full-page:a0:result0:r19・p62:full-page:a0:result0:r19:w0・p62:full-page:a0:result0:r21・p62:full-page:a0:result0:r21:w0・p62:full-page:a0:result0:r29・p62:full-page:a0:result0:r29:w0・p62:full-page:a0:result0:r31・p62:full-page:a0:result0:r31:w0・p62:full-page:a0:result0:r35・p62:full-page:a0:result0:r35:w0・p62:full-page:a0:result0:r37・p62:full-page:a0:result0:r37:w0・p62:full-page:a0:result0:r41・p62:full-page:a0:result0:r41:w0・p62:full-page:a0:result0:r50・p62:full-page:a0:result0:r50:w0・p62:full-page:a0:result0:r56・p62:full-page:a0:result0:r56:w0・p62:full-page:a0:result0:r58・p62:full-page:a0:result0:r58:w0・p62:full-page:a0:result0:r62・p62:full-page:a0:result0:r62:w0・p62:full-page:a0:result0:r65・p62:full-page:a0:result0:r65:w0・p62:full-page:a0:result0:r67・p62:full-page:a0:result0:r67:w0・p62:full-page:a0:result0:r71・p62:full-page:a0:result0:r71:w0・p62:full-page:a0:result0:r74・p62:full-page:a0:result0:r74:w0・p62:full-page:a0:result0:r76・p62:full-page:a0:result0:r76:w0・p62:full-page:a0:result0:r80・p62:full-page:a0:result0:r80:w0・p62:full-page:a0:result0:r82・p62:full-page:a0:result0:r82:w0・p62:full-page:a0:result0:r84・p62:full-page:a0:result0:r84:w0・p62:full-page:a0:result0:r88・p62:full-page:a0:result0:r88:w0・p62:full-page:a0:result0:r90・p62:full-page:a0:result0:r90:w0・p62:full-page:a0:result0:r94・p62:full-page:a0:result0:r94:w0・p62:full-page:a0:result0:r96・p62:full-page:a0:result0:r96:w0・p62:full-page:a0:result0:r98・p62:full-page:a0:result0:r98:w0・p62:full-page:a0:result0:r100・p62:full-page:a0:result0:r100:w0・p62:full-page:a0:result0:r104・p62:full-page:a0:result0:r104:w0・p63:full-page:a0:result0:r9・p63:full-page:a0:result0:r9:w1・p64:full-page:a0:result0:r15・p64:full-page:a0:result0:r15:w0・p64:full-page:a0:result0:r17・p64:full-page:a0:result0:r17:w0・p64:full-page:a0:result0:r21・p64:full-page:a0:result0:r21:w0・p64:full-page:a0:result0:r23・p64:full-page:a0:result0:r23:w0・p64:full-page:a0:result0:r32・p64:full-page:a0:result0:r32:w0・p64:full-page:a0:result0:r34・p64:full-page:a0:result0:r34:w0・p64:full-page:a0:result0:r38・p64:full-page:a0:result0:r38:w0・p64:full-page:a0:result0:r40・p64:full-page:a0:result0:r40:w0・p64:full-page:a0:result0:r46・p64:full-page:a0:result0:r46:w0・p64:full-page:a0:result0:r52・p64:full-page:a0:result0:r52:w0・p64:full-page:a0:result0:r59・p64:full-page:a0:result0:r59:w0・p64:full-page:a0:result0:r61・p64:full-page:a0:result0:r61:w0・p64:full-page:a0:result0:r65・p64:full-page:a0:result0:r65・p64:full-page:a0:result0:r65:w0・p64:full-page:a0:result0:r65:w7・p64:full-page:a0:result0:r71・p64:full-page:a0:result0:r71:w0・p64:full-page:a0:result0:r73・p64:full-page:a0:result0:r73:w0・p64:full-page:a0:result0:r77・p64:full-page:a0:result0:r77:w0・p64:full-page:a0:result0:r80・p64:full-page:a0:result0:r80:w0・p64:full-page:a0:result0:r82・p64:full-page:a0:result0:r82:w0・p64:full-page:a0:result0:r89・p64:full-page:a0:result0:r89:w0・p64:full-page:a0:result0:r93・p64:full-page:a0:result0:r93:w0・p64:full-page:a0:result0:r95・p64:full-page:a0:result0:r95:w0・p64:full-page:a0:result0:r97・p64:full-page:a0:result0:r97:w0・p64:full-page:a0:result0:r99・p64:full-page:a0:result0:r99:w0・p64:full-page:a0:result0:r101・p64:full-page:a0:result0:r101:w0・p64:full-page:a0:result0:r103・p64:full-page:a0:result0:r103:w0・p64:full-page:a0:result0:r109・p64:full-page:a0:result0:r109:w0・p64:full-page:a0:result0:r111・p64:full-page:a0:result0:r111:w0・p64:full-page:a0:result0:r113・p64:full-page:a0:result0:r113:w0・p64:full-page:a0:result0:r115・p64:full-page:a0:result0:r115:w0・p64:full-page:a0:result0:r117・p64:full-page:a0:result0:r117:w0・p65:full-page:a0:result0:r9・p65:full-page:a0:result0:r9:w1・p66:full-page:a0:result0:r8・p66:full-page:a0:result0:r8:w0・p66:full-page:a0:result0:r14・p66:full-page:a0:result0:r14:w0・p66:full-page:a0:result0:r23・p66:full-page:a0:result0:r23:w0・p66:full-page:a0:result0:r25・p66:full-page:a0:result0:r25・p66:full-page:a0:result0:r25:w0・p66:full-page:a0:result0:r25:w7・p66:full-page:a0:result0:r32・p66:full-page:a0:result0:r32:w0・p66:full-page:a0:result0:r38・p66:full-page:a0:result0:r38:w0・p66:full-page:a0:result0:r41・p66:full-page:a0:result0:r41:w0・p66:full-page:a0:result0:r47・p66:full-page:a0:result0:r47・p66:full-page:a0:result0:r47:w0・p66:full-page:a0:result0:r47:w7・p66:full-page:a0:result0:r49・p66:full-page:a0:result0:r49:w0・p66:full-page:a0:result0:r53・p66:full-page:a0:result0:r53:w0・p66:full-page:a0:result0:r55・p66:full-page:a0:result0:r55:w0・p66:full-page:a0:result0:r60・p66:full-page:a0:result0:r60:w0・p66:full-page:a0:result0:r62・p66:full-page:a0:result0:r62:w0・p66:full-page:a0:result0:r64・p66:full-page:a0:result0:r64・p66:full-page:a0:result0:r64:w0・p66:full-page:a0:result0:r64:w9・p66:full-page:a0:result0:r70・p66:full-page:a0:result0:r70:w0・p67:full-page:a0:result0:r9・p67:full-page:a0:result0:r9:w1・p68:full-page:a0:result0:r15・p68:full-page:a0:result0:r15:w0・p68:full-page:a0:result0:r18・p68:full-page:a0:result0:r18:w0・p68:full-page:a0:result0:r22・p68:full-page:a0:result0:r22:w0・p68:full-page:a0:result0:r24・p68:full-page:a0:result0:r24:w0・p68:full-page:a0:result0:r33・p68:full-page:a0:result0:r33:w0・p68:full-page:a0:result0:r37・p68:full-page:a0:result0:r37:w0・p68:full-page:a0:result0:r61・p68:full-page:a0:result0:r61:w0・p68:full-page:a0:result0:r64・p68:full-page:a0:result0:r64:w0・p68:full-page:a0:result0:r66・p68:full-page:a0:result0:r66:w0・p68:full-page:a0:result0:r70・p68:full-page:a0:result0:r70:w0・p68:full-page:a0:result0:r81・p68:full-page:a0:result0:r81:w0・p68:full-page:a0:result0:r85・p68:full-page:a0:result0:r85:w0・p68:full-page:a0:result0:r88・p68:full-page:a0:result0:r88:w0・p68:full-page:a0:result0:r94・p68:full-page:a0:result0:r94:w0・p68:full-page:a0:result0:r97・p68:full-page:a0:result0:r97:w0・p68:full-page:a0:result0:r99・p68:full-page:a0:result0:r99:w0・p68:full-page:a0:result0:r103・p68:full-page:a0:result0:r103:w0・p68:full-page:a0:result0:r105・p68:full-page:a0:result0:r105:w0・p68:full-page:a0:result0:r113・p68:full-page:a0:result0:r113:w0・p68:full-page:a0:result0:r117・p68:full-page:a0:result0:r117:w0・p68:full-page:a0:result0:r119・p68:full-page:a0:result0:r119:w0・p68:full-page:a0:result0:r121・p68:full-page:a0:result0:r121:w0・p68:full-page:a0:result0:r123・p68:full-page:a0:result0:r123:w0・p68:full-page:a0:result0:r125・p68:full-page:a0:result0:r125:w0・p69:full-page:a0:result0:r9・p69:full-page:a0:result0:r9:w1・p70:full-page:a0:result0:r8・p70:full-page:a0:result0:r8:w0・p70:full-page:a0:result0:r23・p70:full-page:a0:result0:r23:w0・p70:full-page:a0:result0:r25・p70:full-page:a0:result0:r25:w0・p70:full-page:a0:result0:r27・p70:full-page:a0:result0:r27:w0・p70:full-page:a0:result0:r29・p70:full-page:a0:result0:r29:w0・p70:full-page:a0:result0:r31・p70:full-page:a0:result0:r31:w0・p70:full-page:a0:result0:r33・p70:full-page:a0:result0:r33:w0・p70:full-page:a0:result0:r37・p70:full-page:a0:result0:r37:w0・p70:full-page:a0:result0:r39・p70:full-page:a0:result0:r39:w0・p70:full-page:a0:result0:r41・p70:full-page:a0:result0:r41:w0・p70:full-page:a0:result0:r43・p70:full-page:a0:result0:r43:w0・p70:full-page:a0:result0:r48・p70:full-page:a0:result0:r48:w0・p70:full-page:a0:result0:r50・p70:full-page:a0:result0:r50:w0・p70:full-page:a0:result0:r54・p70:full-page:a0:result0:r54:w0・p70:full-page:a0:result0:r56・p70:full-page:a0:result0:r56:w0・p70:full-page:a0:result0:r58・p70:full-page:a0:result0:r58:w0・p70:full-page:a0:result0:r65・p70:full-page:a0:result0:r65:w0・p70:full-page:a0:result0:r73・p70:full-page:a0:result0:r73:w0・p70:full-page:a0:result0:r82・p70:full-page:a0:result0:r82:w0・p71:full-page:a0:result0:r9・p71:full-page:a0:result0:r9:w1・p72:full-page:a0:result0:r10・p72:full-page:a0:result0:r10:w0・p72:full-page:a0:result0:r13・p72:full-page:a0:result0:r13:w0・p72:full-page:a0:result0:r15・p72:full-page:a0:result0:r15:w0・p72:full-page:a0:result0:r19・p72:full-page:a0:result0:r19:w0・p72:full-page:a0:result0:r26・p72:full-page:a0:result0:r26・p72:full-page:a0:result0:r26:w0・p72:full-page:a0:result0:r26:w7・p72:full-page:a0:result0:r28・p72:full-page:a0:result0:r28:w0・p72:full-page:a0:result0:r32・p72:full-page:a0:result0:r32:w0・p72:full-page:a0:result0:r35・p72:full-page:a0:result0:r35:w0・p72:full-page:a0:result0:r46・p72:full-page:a0:result0:r46:w0・p72:full-page:a0:result0:r49・p72:full-page:a0:result0:r49:w0・p72:full-page:a0:result0:r51・p72:full-page:a0:result0:r51:w0・p72:full-page:a0:result0:r62・p72:full-page:a0:result0:r62:w0・p72:full-page:a0:result0:r71・p72:full-page:a0:result0:r71:w0・p72:full-page:a0:result0:r73・p72:full-page:a0:result0:r73:w0・p72:full-page:a0:result0:r77・p72:full-page:a0:result0:r77:w0・p72:full-page:a0:result0:r82・p72:full-page:a0:result0:r82:w0・p72:full-page:a0:result0:r86・p72:full-page:a0:result0:r86:w0・p72:full-page:a0:result0:r88・p72:full-page:a0:result0:r88:w0・p72:full-page:a0:result0:r92・p72:full-page:a0:result0:r92:w0・p72:full-page:a0:result0:r95・p72:full-page:a0:result0:r95:w0・p72:full-page:a0:result0:r97・p72:full-page:a0:result0:r97:w0・p72:full-page:a0:result0:r101・p72:full-page:a0:result0:r101:w0・p72:full-page:a0:result0:r103・p72:full-page:a0:result0:r103:w0・p72:full-page:a0:result0:r107・p72:full-page:a0:result0:r107:w0・p72:full-page:a0:result0:r109・p72:full-page:a0:result0:r109:w0・p72:full-page:a0:result0:r113・p72:full-page:a0:result0:r113:w0・p73:full-page:a0:result0:r8・p73:full-page:a0:result0:r8:w1・p74:full-page:a0:result0:r13・p74:full-page:a0:result0:r13:w0・p74:full-page:a0:result0:r15・p74:full-page:a0:result0:r15:w0・p74:full-page:a0:result0:r22・p74:full-page:a0:result0:r22:w0・p74:full-page:a0:result0:r26・p74:full-page:a0:result0:r26:w0・p74:full-page:a0:result0:r28・p74:full-page:a0:result0:r28:w0・p74:full-page:a0:result0:r30・p74:full-page:a0:result0:r30:w0・p74:full-page:a0:result0:r32・p74:full-page:a0:result0:r32:w0・p74:full-page:a0:result0:r41・p74:full-page:a0:result0:r41:w0・p74:full-page:a0:result0:r43・p74:full-page:a0:result0:r43:w0・p74:full-page:a0:result0:r47・p74:full-page:a0:result0:r47:w0・p74:full-page:a0:result0:r49・p74:full-page:a0:result0:r49:w0・p74:full-page:a0:result0:r53・p74:full-page:a0:result0:r53:w0・p74:full-page:a0:result0:r55・p74:full-page:a0:result0:r55:w0・p74:full-page:a0:result0:r67・p74:full-page:a0:result0:r67:w0・p74:full-page:a0:result0:r71・p74:full-page:a0:result0:r71:w0・p74:full-page:a0:result0:r78・p74:full-page:a0:result0:r78:w0・p74:full-page:a0:result0:r80・p74:full-page:a0:result0:r80:w0・p74:full-page:a0:result0:r87・p74:full-page:a0:result0:r87:w0・p74:full-page:a0:result0:r89・p74:full-page:a0:result0:r89:w0・p75:full-page:a0:result0:r9・p75:full-page:a0:result0:r9:w1・p76:full-page:a0:result0:r15・p76:full-page:a0:result0:r15:w0・p76:full-page:a0:result0:r17・p76:full-page:a0:result0:r17:w0・p76:full-page:a0:result0:r21・p76:full-page:a0:result0:r21:w0・p76:full-page:a0:result0:r23・p76:full-page:a0:result0:r23:w0・p76:full-page:a0:result0:r32・p76:full-page:a0:result0:r32:w0・p76:full-page:a0:result0:r36・p76:full-page:a0:result0:r36:w0・p76:full-page:a0:result0:r38・p76:full-page:a0:result0:r38:w0・p76:full-page:a0:result0:r42・p76:full-page:a0:result0:r42:w0・p76:full-page:a0:result0:r44・p76:full-page:a0:result0:r44:w0・p76:full-page:a0:result0:r50・p76:full-page:a0:result0:r50:w0・p76:full-page:a0:result0:r54・p76:full-page:a0:result0:r54:w0・p76:full-page:a0:result0:r67・p76:full-page:a0:result0:r67:w0・p76:full-page:a0:result0:r70・p76:full-page:a0:result0:r70:w0・p76:full-page:a0:result0:r72・p76:full-page:a0:result0:r72:w0・p76:full-page:a0:result0:r74・p76:full-page:a0:result0:r74:w0・p76:full-page:a0:result0:r78・p76:full-page:a0:result0:r78:w0・p76:full-page:a0:result0:r80・p76:full-page:a0:result0:r80:w0・p76:full-page:a0:result0:r84・p76:full-page:a0:result0:r84:w0・p76:full-page:a0:result0:r88・p76:full-page:a0:result0:r88:w0・p76:full-page:a0:result0:r90・p76:full-page:a0:result0:r90:w0・p77:full-page:a0:result0:r9・p77:full-page:a0:result0:r9:w1・p78:full-page:a0:result0:r14・p78:full-page:a0:result0:r14:w0・p78:full-page:a0:result0:r16・p78:full-page:a0:result0:r16:w0・p78:full-page:a0:result0:r25・p78:full-page:a0:result0:r25:w0・p78:full-page:a0:result0:r27・p78:full-page:a0:result0:r27:w0・p78:full-page:a0:result0:r31・p78:full-page:a0:result0:r31:w0・p78:full-page:a0:result0:r33・p78:full-page:a0:result0:r33:w0・p78:full-page:a0:result0:r37・p78:full-page:a0:result0:r37:w0・p78:full-page:a0:result0:r39・p78:full-page:a0:result0:r39:w0・p78:full-page:a0:result0:r43・p78:full-page:a0:result0:r43:w0・p78:full-page:a0:result0:r45・p78:full-page:a0:result0:r45:w0・p78:full-page:a0:result0:r49・p78:full-page:a0:result0:r49:w0・p78:full-page:a0:result0:r51・p78:full-page:a0:result0:r51:w0・p78:full-page:a0:result0:r55・p78:full-page:a0:result0:r55:w0・p78:full-page:a0:result0:r57・p78:full-page:a0:result0:r57:w0・p78:full-page:a0:result0:r61・p78:full-page:a0:result0:r61:w0・p78:full-page:a0:result0:r81・p78:full-page:a0:result0:r81:w0・p78:full-page:a0:result0:r83・p78:full-page:a0:result0:r83:w0・p78:full-page:a0:result0:r87・p78:full-page:a0:result0:r87:w0・p78:full-page:a0:result0:r90・p78:full-page:a0:result0:r90:w0・p79:full-page:a0:result0:r9・p79:full-page:a0:result0:r9:w1・p80:full-page:a0:result0:r18・p80:full-page:a0:result0:r18:w0・p80:full-page:a0:result0:r27・p80:full-page:a0:result0:r27:w0・p80:full-page:a0:result0:r29・p80:full-page:a0:result0:r29:w0・p80:full-page:a0:result0:r33・p80:full-page:a0:result0:r33:w0・p80:full-page:a0:result0:r35・p80:full-page:a0:result0:r35:w0・p80:full-page:a0:result0:r50・p80:full-page:a0:result0:r50:w0・p80:full-page:a0:result0:r58・p80:full-page:a0:result0:r58:w0・p80:full-page:a0:result0:r61・p80:full-page:a0:result0:r61:w0・p80:full-page:a0:result0:r63・p80:full-page:a0:result0:r63:w0・p80:full-page:a0:result0:r67・p80:full-page:a0:result0:r67:w0・p80:full-page:a0:result0:r69・p80:full-page:a0:result0:r69:w4・p80:full-page:a0:result0:r71・p80:full-page:a0:result0:r71:w0・p80:full-page:a0:result0:r73・p80:full-page:a0:result0:r73:w0・p80:full-page:a0:result0:r75・p80:full-page:a0:result0:r75:w0・p80:full-page:a0:result0:r77・p80:full-page:a0:result0:r77:w0・p80:full-page:a0:result0:r79・p80:full-page:a0:result0:r79・p80:full-page:a0:result0:r79:w0・p80:full-page:a0:result0:r79:w8・p80:full-page:a0:result0:r81・p80:full-page:a0:result0:r81:w0・p80:full-page:a0:result0:r85・p80:full-page:a0:result0:r85:w0・p80:full-page:a0:result0:r87・p80:full-page:a0:result0:r87:w0・p80:full-page:a0:result0:r89・p80:full-page:a0:result0:r89:w0・p80:full-page:a0:result0:r91・p80:full-page:a0:result0:r91:w0・p80:full-page:a0:result0:r93・p80:full-page:a0:result0:r93:w0・p80:full-page:a0:result0:r97・p80:full-page:a0:result0:r97:w0・p80:full-page:a0:result0:r99・p80:full-page:a0:result0:r99:w0・p80:full-page:a0:result0:r103・p80:full-page:a0:result0:r103:w0・p80:full-page:a0:result0:r105・p80:full-page:a0:result0:r105:w0・p80:full-page:a0:result0:r107・p80:full-page:a0:result0:r107:w0・p80:full-page:a0:result0:r109・p80:full-page:a0:result0:r109・p80:full-page:a0:result0:r109:w0・p80:full-page:a0:result0:r109:w6・p81:full-page:a0:result0:r9・p81:full-page:a0:result0:r9:w1・p82:full-page:a0:result0:r8・p82:full-page:a0:result0:r8:w0・p82:full-page:a0:result0:r10・p82:full-page:a0:result0:r10:w0・p82:full-page:a0:result0:r12・p82:full-page:a0:result0:r12:w0・p82:full-page:a0:result0:r14・p82:full-page:a0:result0:r14:w0・p82:full-page:a0:result0:r16・p82:full-page:a0:result0:r16:w0・p82:full-page:a0:result0:r18・p82:full-page:a0:result0:r18:w0・p82:full-page:a0:result0:r22・p82:full-page:a0:result0:r22:w0・p82:full-page:a0:result0:r24・p82:full-page:a0:result0:r24:w0・p82:full-page:a0:result0:r26・p82:full-page:a0:result0:r26:w0・p82:full-page:a0:result0:r28・p82:full-page:a0:result0:r28:w0・p82:full-page:a0:result0:r30・p82:full-page:a0:result0:r30:w0・p83:full-page:a0:result0:r9・p83:full-page:a0:result0:r9:w1・p84:full-page:a0:result0:r15・p84:full-page:a0:result0:r15:w0・p84:full-page:a0:result0:r17・p84:full-page:a0:result0:r17:w0・p84:full-page:a0:result0:r21・p84:full-page:a0:result0:r21:w0・p84:full-page:a0:result0:r30・p84:full-page:a0:result0:r30:w0・p84:full-page:a0:result0:r32・p84:full-page:a0:result0:r32:w0・p84:full-page:a0:result0:r36・p84:full-page:a0:result0:r36:w0・p84:full-page:a0:result0:r38・p84:full-page:a0:result0:r38:w0・p84:full-page:a0:result0:r42・p84:full-page:a0:result0:r42:w0・p84:full-page:a0:result0:r61・p84:full-page:a0:result0:r61:w0・p84:full-page:a0:result0:r63・p84:full-page:a0:result0:r63:w0・p84:full-page:a0:result0:r67・p84:full-page:a0:result0:r67:w0・p84:full-page:a0:result0:r69・p84:full-page:a0:result0:r69:w0・p84:full-page:a0:result0:r78・p84:full-page:a0:result0:r78:w0・p84:full-page:a0:result0:r95・p84:full-page:a0:result0:r95:w0・p85:full-page:a0:result0:r9・p85:full-page:a0:result0:r9:w1・p86:full-page:a0:result0:r15・p86:full-page:a0:result0:r15:w0・p86:full-page:a0:result0:r35・p86:full-page:a0:result0:r35:w0・p86:full-page:a0:result0:r50・p86:full-page:a0:result0:r50:w0・p86:full-page:a0:result0:r52・p86:full-page:a0:result0:r52:w0・p86:full-page:a0:result0:r54・p86:full-page:a0:result0:r54:w0・p86:full-page:a0:result0:r56・p86:full-page:a0:result0:r56:w0・p86:full-page:a0:result0:r58・p86:full-page:a0:result0:r58:w0・p86:full-page:a0:result0:r62・p86:full-page:a0:result0:r62:w0・p86:full-page:a0:result0:r64・p86:full-page:a0:result0:r64:w0・p86:full-page:a0:result0:r70・p86:full-page:a0:result0:r70:w0・p86:full-page:a0:result0:r76・p86:full-page:a0:result0:r76:w0・p86:full-page:a0:result0:r78・p86:full-page:a0:result0:r78:w0・p86:full-page:a0:result0:r82・p86:full-page:a0:result0:r82:w0・p86:full-page:a0:result0:r84・p86:full-page:a0:result0:r84:w0・p86:full-page:a0:result0:r86・p86:full-page:a0:result0:r86:w0・p86:full-page:a0:result0:r88・p86:full-page:a0:result0:r88:w0・p86:full-page:a0:result0:r90・p86:full-page:a0:result0:r90:w0・p86:full-page:a0:result0:r92・p86:full-page:a0:result0:r92:w0・p86:full-page:a0:result0:r94・p86:full-page:a0:result0:r94:w0・p86:full-page:a0:result0:r96・p86:full-page:a0:result0:r96:w0・p86:full-page:a0:result0:r101・p86:full-page:a0:result0:r101:w0・p86:full-page:a0:result0:r103・p86:full-page:a0:result0:r103:w0・p86:full-page:a0:result0:r105・p86:full-page:a0:result0:r105:w0・p86:full-page:a0:result0:r107・p86:full-page:a0:result0:r107:w0・p86:full-page:a0:result0:r109・p86:full-page:a0:result0:r109:w0・p87:full-page:a0:result0:r9・p87:full-page:a0:result0:r9:w1・p88:full-page:a0:result0:r16・p88:full-page:a0:result0:r16:w0・p88:full-page:a0:result0:r21・p88:full-page:a0:result0:r21:w0・p88:full-page:a0:result0:r23・p88:full-page:a0:result0:r23:w0・p88:full-page:a0:result0:r25・p88:full-page:a0:result0:r25:w0・p88:full-page:a0:result0:r34・p88:full-page:a0:result0:r34:w0・p88:full-page:a0:result0:r49・p88:full-page:a0:result0:r49:w0・p88:full-page:a0:result0:r93・p88:full-page:a0:result0:r93:w0・p88:full-page:a0:result0:r104・p88:full-page:a0:result0:r104:w0・p88:full-page:a0:result0:r114・p88:full-page:a0:result0:r114:w0・p89:full-page:a0:result0:r9・p89:full-page:a0:result0:r9:w1・p90:full-page:a0:result0:r20・p90:full-page:a0:result0:r20:w0・p90:full-page:a0:result0:r22・p90:full-page:a0:result0:r22:w0・p90:full-page:a0:result0:r24・p90:full-page:a0:result0:r24・p90:full-page:a0:result0:r24:w0・p90:full-page:a0:result0:r24:w8・p90:full-page:a0:result0:r26・p90:full-page:a0:result0:r26:w0・p90:full-page:a0:result0:r28・p90:full-page:a0:result0:r28・p90:full-page:a0:result0:r28:w0・p90:full-page:a0:result0:r28:w4・p90:full-page:a0:result0:r30・p90:full-page:a0:result0:r30:w0・p90:full-page:a0:result0:r32・p90:full-page:a0:result0:r32:w0・p90:full-page:a0:result0:r34・p90:full-page:a0:result0:r34:w0・p90:full-page:a0:result0:r36・p90:full-page:a0:result0:r36・p90:full-page:a0:result0:r36:w0・p90:full-page:a0:result0:r36:w3・p90:full-page:a0:result0:r60・p90:full-page:a0:result0:r60・p90:full-page:a0:result0:r60:w0・p90:full-page:a0:result0:r60:w6・p90:full-page:a0:result0:r62・p90:full-page:a0:result0:r62:w0・p90:full-page:a0:result0:r72・p90:full-page:a0:result0:r72:w0・p90:full-page:a0:result0:r74・p90:full-page:a0:result0:r74:w0・p90:full-page:a0:result0:r76・p90:full-page:a0:result0:r76:w0・p90:full-page:a0:result0:r78・p90:full-page:a0:result0:r78・p90:full-page:a0:result0:r78:w0・p90:full-page:a0:result0:r78:w4・p90:full-page:a0:result0:r80・p90:full-page:a0:result0:r80:w0・p90:full-page:a0:result0:r84・p90:full-page:a0:result0:r84:w0・p90:full-page:a0:result0:r95・p90:full-page:a0:result0:r95:w0・p90:full-page:a0:result0:r97・p90:full-page:a0:result0:r97:w0・p90:full-page:a0:result0:r99・p90:full-page:a0:result0:r99:w0・p91:full-page:a0:result0:r9・p91:full-page:a0:result0:r9:w1・p92:full-page:a0:result0:r20・p92:full-page:a0:result0:r20:w0・p92:full-page:a0:result0:r24・p92:full-page:a0:result0:r24:w0・p92:full-page:a0:result0:r26・p92:full-page:a0:result0:r26:w0・p92:full-page:a0:result0:r28・p92:full-page:a0:result0:r28:w0・p92:full-page:a0:result0:r30・p92:full-page:a0:result0:r30:w0・p92:full-page:a0:result0:r32・p92:full-page:a0:result0:r32:w0・p92:full-page:a0:result0:r34・p92:full-page:a0:result0:r34:w0・p92:full-page:a0:result0:r36・p92:full-page:a0:result0:r36:w0・p92:full-page:a0:result0:r38・p92:full-page:a0:result0:r38・p92:full-page:a0:result0:r38:w0・p92:full-page:a0:result0:r38:w8・p92:full-page:a0:result0:r40・p92:full-page:a0:result0:r40:w0・p92:full-page:a0:result0:r42・p92:full-page:a0:result0:r42:w0・p92:full-page:a0:result0:r46・p92:full-page:a0:result0:r46:w0・p92:full-page:a0:result0:r50・p92:full-page:a0:result0:r50:w0・p92:full-page:a0:result0:r52・p92:full-page:a0:result0:r52:w0・p92:full-page:a0:result0:r56・p92:full-page:a0:result0:r56:w0・p92:full-page:a0:result0:r60・p92:full-page:a0:result0:r60:w0・p92:full-page:a0:result0:r64・p92:full-page:a0:result0:r64:w0・p92:full-page:a0:result0:r66・p92:full-page:a0:result0:r66:w0・p92:full-page:a0:result0:r68・p92:full-page:a0:result0:r68・p92:full-page:a0:result0:r68:w0・p92:full-page:a0:result0:r68:w2・p92:full-page:a0:result0:r70・p92:full-page:a0:result0:r70:w0・p92:full-page:a0:result0:r80・p92:full-page:a0:result0:r80:w0・p92:full-page:a0:result0:r92・p92:full-page:a0:result0:r92:w0・p93:full-page:a0:result0:r9・p93:full-page:a0:result0:r9:w1・p94:full-page:a0:result0:r14・p94:full-page:a0:result0:r14:w0・p94:full-page:a0:result0:r18・p94:full-page:a0:result0:r18:w0・p94:full-page:a0:result0:r20・p94:full-page:a0:result0:r20:w0・p94:full-page:a0:result0:r24・p94:full-page:a0:result0:r24:w0・p94:full-page:a0:result0:r26・p94:full-page:a0:result0:r26:w0・p94:full-page:a0:result0:r30・p94:full-page:a0:result0:r30:w0・p94:full-page:a0:result0:r32・p94:full-page:a0:result0:r32:w0・p94:full-page:a0:result0:r34・p94:full-page:a0:result0:r34:w0・p94:full-page:a0:result0:r48・p94:full-page:a0:result0:r48:w0・p94:full-page:a0:result0:r50・p94:full-page:a0:result0:r50:w0・p94:full-page:a0:result0:r52・p94:full-page:a0:result0:r52:w0・p94:full-page:a0:result0:r54・p94:full-page:a0:result0:r54:w0・p94:full-page:a0:result0:r58・p94:full-page:a0:result0:r58:w0・p94:full-page:a0:result0:r60・p94:full-page:a0:result0:r60:w0・p95:full-page:a0:result0:r9・p95:full-page:a0:result0:r9:w1・p96:full-page:a0:result0:r15・p96:full-page:a0:result0:r15:w0・p96:full-page:a0:result0:r17・p96:full-page:a0:result0:r17:w0・p96:full-page:a0:result0:r21・p96:full-page:a0:result0:r21:w0・p96:full-page:a0:result0:r23・p96:full-page:a0:result0:r23:w0・p96:full-page:a0:result0:r32・p96:full-page:a0:result0:r32:w0・p96:full-page:a0:result0:r36・p96:full-page:a0:result0:r36:w0・p96:full-page:a0:result0:r38・p96:full-page:a0:result0:r38:w0・p96:full-page:a0:result0:r42・p96:full-page:a0:result0:r42:w0・p96:full-page:a0:result0:r44・p96:full-page:a0:result0:r44:w0・p96:full-page:a0:result0:r48・p96:full-page:a0:result0:r48:w0・p96:full-page:a0:result0:r50・p96:full-page:a0:result0:r50:w0・p96:full-page:a0:result0:r54・p96:full-page:a0:result0:r54:w0・p96:full-page:a0:result0:r57・p96:full-page:a0:result0:r57:w0・p96:full-page:a0:result0:r59・p96:full-page:a0:result0:r59:w0・p96:full-page:a0:result0:r63・p96:full-page:a0:result0:r63:w0・p96:full-page:a0:result0:r65・p96:full-page:a0:result0:r65:w0・p96:full-page:a0:result0:r71・p96:full-page:a0:result0:r71:w0・p96:full-page:a0:result0:r75・p96:full-page:a0:result0:r75:w0・p96:full-page:a0:result0:r78・p96:full-page:a0:result0:r78:w0・p96:full-page:a0:result0:r80・p96:full-page:a0:result0:r80:w0・p96:full-page:a0:result0:r83・p96:full-page:a0:result0:r83:w0・p96:full-page:a0:result0:r86・p96:full-page:a0:result0:r86:w0・p96:full-page:a0:result0:r88・p96:full-page:a0:result0:r88:w0・p96:full-page:a0:result0:r90・p96:full-page:a0:result0:r90:w0・p96:full-page:a0:result0:r94・p96:full-page:a0:result0:r94:w0・p96:full-page:a0:result0:r96・p96:full-page:a0:result0:r96:w0・p96:full-page:a0:result0:r98・p96:full-page:a0:result0:r98:w0・p96:full-page:a0:result0:r100・p96:full-page:a0:result0:r100:w0・p96:full-page:a0:result0:r102・p96:full-page:a0:result0:r102:w0・p96:full-page:a0:result0:r104・p96:full-page:a0:result0:r104・p96:full-page:a0:result0:r104:w0・p96:full-page:a0:result0:r104:w10・p96:full-page:a0:result0:r106・p96:full-page:a0:result0:r106:w0・p96:full-page:a0:result0:r111・p96:full-page:a0:result0:r111:w2・p96:full-page:a0:result0:r115・p96:full-page:a0:result0:r115:w0・p96:full-page:a0:result0:r117・p96:full-page:a0:result0:r117:w0・p97:full-page:a0:result0:r9・p97:full-page:a0:result0:r9:w1・p98:full-page:a0:result0:r10・p98:full-page:a0:result0:r10:w0・p98:full-page:a0:result0:r12・p98:full-page:a0:result0:r12:w0・p98:full-page:a0:result0:r16・p98:full-page:a0:result0:r16:w0・p98:full-page:a0:result0:r24・p98:full-page:a0:result0:r24・p98:full-page:a0:result0:r24:w0・p98:full-page:a0:result0:r24:w2・p98:full-page:a0:result0:r28・p98:full-page:a0:result0:r28:w0・p98:full-page:a0:result0:r41・p98:full-page:a0:result0:r41:w0・p98:full-page:a0:result0:r43・p98:full-page:a0:result0:r43:w0・p98:full-page:a0:result0:r47・p98:full-page:a0:result0:r47:w0・p98:full-page:a0:result0:r49・p98:full-page:a0:result0:r49:w0・p98:full-page:a0:result0:r53・p98:full-page:a0:result0:r53:w0・p98:full-page:a0:result0:r55・p98:full-page:a0:result0:r55:w0・p98:full-page:a0:result0:r59・p98:full-page:a0:result0:r59:w0・p98:full-page:a0:result0:r61・p98:full-page:a0:result0:r61:w0・p98:full-page:a0:result0:r65・p98:full-page:a0:result0:r65:w0・p98:full-page:a0:result0:r67・p98:full-page:a0:result0:r67:w0・p98:full-page:a0:result0:r71・p98:full-page:a0:result0:r71:w0・p98:full-page:a0:result0:r73・p98:full-page:a0:result0:r73:w0・p98:full-page:a0:result0:r77・p98:full-page:a0:result0:r77:w0・p98:full-page:a0:result0:r80・p98:full-page:a0:result0:r80:w0・p98:full-page:a0:result0:r86・p98:full-page:a0:result0:r86:w0・p98:full-page:a0:result0:r99・p98:full-page:a0:result0:r99:w0・p98:full-page:a0:result0:r101・p98:full-page:a0:result0:r101:w0・p98:full-page:a0:result0:r114・p98:full-page:a0:result0:r114:w0・p98:full-page:a0:result0:r116・p98:full-page:a0:result0:r116:w0・p98:full-page:a0:result0:r118・p98:full-page:a0:result0:r118:w0・p98:full-page:a0:result0:r120・p98:full-page:a0:result0:r120:w0・p98:full-page:a0:result0:r122・p98:full-page:a0:result0:r122:w0・p98:full-page:a0:result0:r124・p98:full-page:a0:result0:r124:w0・p99:full-page:a0:result0:r9・p99:full-page:a0:result0:r9:w1・p100:full-page:a0:result0:r15・p100:full-page:a0:result0:r15:w0・p100:full-page:a0:result0:r18・p100:full-page:a0:result0:r18:w0・p100:full-page:a0:result0:r20・p100:full-page:a0:result0:r20:w0・p100:full-page:a0:result0:r24・p100:full-page:a0:result0:r24:w0・p100:full-page:a0:result0:r26・p100:full-page:a0:result0:r26:w0・p100:full-page:a0:result0:r30・p100:full-page:a0:result0:r30:w0・p100:full-page:a0:result0:r34・p100:full-page:a0:result0:r34:w0・p100:full-page:a0:result0:r36・p100:full-page:a0:result0:r36:w5・p100:full-page:a0:result0:r38・p100:full-page:a0:result0:r38:w0・p102:full-page:a0:result0:r15・p102:full-page:a0:result0:r15:w0・p102:full-page:a0:result0:r17・p102:full-page:a0:result0:r17:w0・p102:full-page:a0:result0:r21・p102:full-page:a0:result0:r21:w0・p102:full-page:a0:result0:r23・p102:full-page:a0:result0:r23:w0・p102:full-page:a0:result0:r32・p102:full-page:a0:result0:r32:w0・p102:full-page:a0:result0:r36・p102:full-page:a0:result0:r36:w0・p102:full-page:a0:result0:r38・p102:full-page:a0:result0:r38:w0・p102:full-page:a0:result0:r42・p102:full-page:a0:result0:r42:w0・p102:full-page:a0:result0:r44・p102:full-page:a0:result0:r44:w0・p102:full-page:a0:result0:r48・p102:full-page:a0:result0:r48:w0・p102:full-page:a0:result0:r50・p102:full-page:a0:result0:r50:w0・p102:full-page:a0:result0:r54・p102:full-page:a0:result0:r54:w0・p102:full-page:a0:result0:r57・p102:full-page:a0:result0:r57:w0・p102:full-page:a0:result0:r59・p102:full-page:a0:result0:r59:w0・p102:full-page:a0:result0:r63・p102:full-page:a0:result0:r63:w0・p102:full-page:a0:result0:r65・p102:full-page:a0:result0:r65:w0・p102:full-page:a0:result0:r71・p102:full-page:a0:result0:r71:w0・p102:full-page:a0:result0:r75・p102:full-page:a0:result0:r75:w0・p102:full-page:a0:result0:r78・p102:full-page:a0:result0:r78:w0・p102:full-page:a0:result0:r80・p102:full-page:a0:result0:r80:w0・p102:full-page:a0:result0:r83・p102:full-page:a0:result0:r83:w0・p102:full-page:a0:result0:r86・p102:full-page:a0:result0:r86:w0・p102:full-page:a0:result0:r88・p102:full-page:a0:result0:r88:w0・p102:full-page:a0:result0:r90・p102:full-page:a0:result0:r90:w0・p102:full-page:a0:result0:r94・p102:full-page:a0:result0:r94:w0・p102:full-page:a0:result0:r96・p102:full-page:a0:result0:r96:w0・p102:full-page:a0:result0:r98・p102:full-page:a0:result0:r98:w0・p102:full-page:a0:result0:r100・p102:full-page:a0:result0:r100:w0・p102:full-page:a0:result0:r102・p102:full-page:a0:result0:r102:w0・p102:full-page:a0:result0:r107・p102:full-page:a0:result0:r107:w2・p102:full-page:a0:result0:r111・p102:full-page:a0:result0:r111:w0・p102:full-page:a0:result0:r113・p102:full-page:a0:result0:r113:w0・p102:full-page:a0:result0:r117・p102:full-page:a0:result0:r117:w0・p102:full-page:a0:result0:r119・p102:full-page:a0:result0:r119:w0・p103:full-page:a0:result0:r9・p103:full-page:a0:result0:r9:w1・p104:full-page:a0:result0:r10・p104:full-page:a0:result0:r10:w0・p104:full-page:a0:result0:r12・p104:full-page:a0:result0:r12:w0・p104:full-page:a0:result0:r16・p104:full-page:a0:result0:r16:w0・p104:full-page:a0:result0:r24・p104:full-page:a0:result0:r24・p104:full-page:a0:result0:r24:w0・p104:full-page:a0:result0:r24:w2・p104:full-page:a0:result0:r26・p104:full-page:a0:result0:r26:w0・p104:full-page:a0:result0:r30・p104:full-page:a0:result0:r30:w0・p104:full-page:a0:result0:r39・p104:full-page:a0:result0:r39:w0・p104:full-page:a0:result0:r41・p104:full-page:a0:result0:r41:w0・p104:full-page:a0:result0:r45・p104:full-page:a0:result0:r45:w0・p104:full-page:a0:result0:r47・p104:full-page:a0:result0:r47:w0・p104:full-page:a0:result0:r51・p104:full-page:a0:result0:r51:w0・p104:full-page:a0:result0:r53・p104:full-page:a0:result0:r53:w0・p104:full-page:a0:result0:r57・p104:full-page:a0:result0:r57:w0・p104:full-page:a0:result0:r59・p104:full-page:a0:result0:r59:w0・p104:full-page:a0:result0:r63・p104:full-page:a0:result0:r63:w0・p104:full-page:a0:result0:r65・p104:full-page:a0:result0:r65:w0・p104:full-page:a0:result0:r69・p104:full-page:a0:result0:r69:w0・p104:full-page:a0:result0:r71・p104:full-page:a0:result0:r71:w0・p104:full-page:a0:result0:r75・p104:full-page:a0:result0:r75:w0・p104:full-page:a0:result0:r82・p104:full-page:a0:result0:r82:w0・p104:full-page:a0:result0:r95・p104:full-page:a0:result0:r95:w0・p104:full-page:a0:result0:r97・p104:full-page:a0:result0:r97:w0・p104:full-page:a0:result0:r99・p104:full-page:a0:result0:r99:w0・p104:full-page:a0:result0:r108・p104:full-page:a0:result0:r108:w0・p104:full-page:a0:result0:r111・p104:full-page:a0:result0:r111:w0・p104:full-page:a0:result0:r113・p104:full-page:a0:result0:r113:w0・p104:full-page:a0:result0:r117・p104:full-page:a0:result0:r117:w0・p105:full-page:a0:result0:r9・p105:full-page:a0:result0:r9:w1・p106:full-page:a0:result0:r8・p106:full-page:a0:result0:r8:w5・p106:full-page:a0:result0:r10・p106:full-page:a0:result0:r10:w0・p107:full-page:a0:result0:r9・p107:full-page:a0:result0:r9:w1・p108:full-page:a0:result0:r15・p108:full-page:a0:result0:r15:w0・p108:full-page:a0:result0:r17・p108:full-page:a0:result0:r17:w0・p108:full-page:a0:result0:r21・p108:full-page:a0:result0:r21:w0・p108:full-page:a0:result0:r23・p108:full-page:a0:result0:r23:w0・p108:full-page:a0:result0:r27・p108:full-page:a0:result0:r27:w0・p108:full-page:a0:result0:r30・p108:full-page:a0:result0:r30:w0・p108:full-page:a0:result0:r38・p108:full-page:a0:result0:r38:w0・p108:full-page:a0:result0:r42・p108:full-page:a0:result0:r42:w0・p108:full-page:a0:result0:r45・p108:full-page:a0:result0:r45:w0・p108:full-page:a0:result0:r47・p108:full-page:a0:result0:r47:w0・p108:full-page:a0:result0:r51・p108:full-page:a0:result0:r51・p108:full-page:a0:result0:r51:w0・p108:full-page:a0:result0:r51:w2・p108:full-page:a0:result0:r53・p108:full-page:a0:result0:r53:w0・p108:full-page:a0:result0:r55・p108:full-page:a0:result0:r55:w0・p109:full-page:a0:result0:r9・p109:full-page:a0:result0:r9:w1・p110:full-page:a0:result0:r15・p110:full-page:a0:result0:r15:w0・p110:full-page:a0:result0:r17・p110:full-page:a0:result0:r17:w0・p110:full-page:a0:result0:r21・p110:full-page:a0:result0:r21:w0・p110:full-page:a0:result0:r23・p110:full-page:a0:result0:r23:w0・p110:full-page:a0:result0:r32・p110:full-page:a0:result0:r32:w0・p110:full-page:a0:result0:r36・p110:full-page:a0:result0:r36:w0・p110:full-page:a0:result0:r38・p110:full-page:a0:result0:r38:w0・p110:full-page:a0:result0:r46・p110:full-page:a0:result0:r46:w0・p110:full-page:a0:result0:r52・p110:full-page:a0:result0:r52:w0・p110:full-page:a0:result0:r54・p110:full-page:a0:result0:r54:w0・p110:full-page:a0:result0:r61・p110:full-page:a0:result0:r61:w0・p110:full-page:a0:result0:r76・p110:full-page:a0:result0:r76:w0・p110:full-page:a0:result0:r78・p110:full-page:a0:result0:r78:w0・p110:full-page:a0:result0:r80・p110:full-page:a0:result0:r80:w0・p110:full-page:a0:result0:r82・p110:full-page:a0:result0:r82:w0・p110:full-page:a0:result0:r84・p110:full-page:a0:result0:r84:w0・p110:full-page:a0:result0:r86・p110:full-page:a0:result0:r86:w0・p110:full-page:a0:result0:r88・p110:full-page:a0:result0:r88:w0・p110:full-page:a0:result0:r99・p110:full-page:a0:result0:r99:w0・p110:full-page:a0:result0:r107・p110:full-page:a0:result0:r107:w0・p110:full-page:a0:result0:r109・p110:full-page:a0:result0:r109:w0・p111:full-page:a0:result0:r9・p111:full-page:a0:result0:r9:w1・p112:full-page:a0:result0:r18・p112:full-page:a0:result0:r18:w0・p112:full-page:a0:result0:r27・p112:full-page:a0:result0:r27:w0・p112:full-page:a0:result0:r29・p112:full-page:a0:result0:r29:w0・p112:full-page:a0:result0:r43・p112:full-page:a0:result0:r43:w0・p112:full-page:a0:result0:r55・p112:full-page:a0:result0:r55:w0・p112:full-page:a0:result0:r57・p112:full-page:a0:result0:r57:w0・p112:full-page:a0:result0:r73・p112:full-page:a0:result0:r73:w0・p112:full-page:a0:result0:r88・p112:full-page:a0:result0:r88:w0・p112:full-page:a0:result0:r104・p112:full-page:a0:result0:r104:w0・p112:full-page:a0:result0:r120・p112:full-page:a0:result0:r120:w0・p112:full-page:a0:result0:r124・p112:full-page:a0:result0:r124:w0・p112:full-page:a0:result0:r126・p112:full-page:a0:result0:r126:w0・p112:full-page:a0:result0:r128・p112:full-page:a0:result0:r128:w0・p113:full-page:a0:result0:r9・p113:full-page:a0:result0:r9:w1・p114:full-page:a0:result0:r8・p114:full-page:a0:result0:r8:w5・p114:full-page:a0:result0:r10・p114:full-page:a0:result0:r10:w0・p114:full-page:a0:result0:r12・p114:full-page:a0:result0:r12:w0・p114:full-page:a0:result0:r14・p114:full-page:a0:result0:r14:w0・p114:full-page:a0:result0:r16・p114:full-page:a0:result0:r16:w0・p114:full-page:a0:result0:r18・p114:full-page:a0:result0:r18:w0・p114:full-page:a0:result0:r20・p114:full-page:a0:result0:r20:w0・p114:full-page:a0:result0:r22・p114:full-page:a0:result0:r22:w0・p114:full-page:a0:result0:r24・p114:full-page:a0:result0:r24:w0・p114:full-page:a0:result0:r26・p114:full-page:a0:result0:r26:w0・p114:full-page:a0:result0:r28・p114:full-page:a0:result0:r28:w0・p114:full-page:a0:result0:r30・p114:full-page:a0:result0:r30:w0・p114:full-page:a0:result0:r34・p114:full-page:a0:result0:r34:w0・p114:full-page:a0:result0:r43・p114:full-page:a0:result0:r43:w0・p114:full-page:a0:result0:r45・p114:full-page:a0:result0:r45:w0・p114:full-page:a0:result0:r49・p114:full-page:a0:result0:r49:w0・p114:full-page:a0:result0:r51・p114:full-page:a0:result0:r51:w0・p114:full-page:a0:result0:r67・p114:full-page:a0:result0:r67:w0・p114:full-page:a0:result0:r69・p114:full-page:a0:result0:r69:w0・p114:full-page:a0:result0:r73・p114:full-page:a0:result0:r73:w0・p114:full-page:a0:result0:r75・p114:full-page:a0:result0:r75:w0・p114:full-page:a0:result0:r79・p114:full-page:a0:result0:r79:w0・p114:full-page:a0:result0:r82・p114:full-page:a0:result0:r82:w0・p114:full-page:a0:result0:r84・p114:full-page:a0:result0:r84:w0・p114:full-page:a0:result0:r88・p114:full-page:a0:result0:r88:w0・p114:full-page:a0:result0:r90・p114:full-page:a0:result0:r90:w0・p114:full-page:a0:result0:r94・p114:full-page:a0:result0:r94:w0・p114:full-page:a0:result0:r99・p114:full-page:a0:result0:r99:w0・p114:full-page:a0:result0:r106・p114:full-page:a0:result0:r106:w0・p114:full-page:a0:result0:r108・p114:full-page:a0:result0:r108:w0・p114:full-page:a0:result0:r110・p114:full-page:a0:result0:r110:w0・p114:full-page:a0:result0:r112・p114:full-page:a0:result0:r112:w0・p114:full-page:a0:result0:r114・p114:full-page:a0:result0:r114:w0・p114:full-page:a0:result0:r116・p114:full-page:a0:result0:r116:w0・p114:full-page:a0:result0:r118・p114:full-page:a0:result0:r118:w0・p115:full-page:a0:result0:r9・p115:full-page:a0:result0:r9:w1・p116:full-page:a0:result0:r8・p116:full-page:a0:result0:r8:w0・p116:full-page:a0:result0:r10・p116:full-page:a0:result0:r10:w0・p116:full-page:a0:result0:r12・p116:full-page:a0:result0:r12:w0・p116:full-page:a0:result0:r14・p116:full-page:a0:result0:r14:w0・p116:full-page:a0:result0:r19・p116:full-page:a0:result0:r19:w0・p116:full-page:a0:result0:r29・p116:full-page:a0:result0:r29:w0・p116:full-page:a0:result0:r31・p116:full-page:a0:result0:r31:w0・p116:full-page:a0:result0:r33・p116:full-page:a0:result0:r33:w0・p116:full-page:a0:result0:r35・p116:full-page:a0:result0:r35:w0・p116:full-page:a0:result0:r37・p116:full-page:a0:result0:r37:w0・p116:full-page:a0:result0:r39・p116:full-page:a0:result0:r39:w0・p116:full-page:a0:result0:r41・p116:full-page:a0:result0:r41:w0・p116:full-page:a0:result0:r43・p116:full-page:a0:result0:r43:w0・p116:full-page:a0:result0:r45・p116:full-page:a0:result0:r45:w0・p116:full-page:a0:result0:r47・p116:full-page:a0:result0:r47:w0・p116:full-page:a0:result0:r49・p116:full-page:a0:result0:r49:w0・p116:full-page:a0:result0:r51・p116:full-page:a0:result0:r51:w0・p116:full-page:a0:result0:r55・p116:full-page:a0:result0:r55:w0・p116:full-page:a0:result0:r61・p116:full-page:a0:result0:r61:w0・p116:full-page:a0:result0:r63・p116:full-page:a0:result0:r63:w0・p116:full-page:a0:result0:r65・p116:full-page:a0:result0:r65:w0・p116:full-page:a0:result0:r67・p116:full-page:a0:result0:r67:w0・p116:full-page:a0:result0:r69・p116:full-page:a0:result0:r69:w0・p116:full-page:a0:result0:r71・p116:full-page:a0:result0:r71:w0・p116:full-page:a0:result0:r73・p116:full-page:a0:result0:r73:w0・p116:full-page:a0:result0:r75・p116:full-page:a0:result0:r75:w0・p116:full-page:a0:result0:r77・p116:full-page:a0:result0:r77:w0・p116:full-page:a0:result0:r79・p116:full-page:a0:result0:r79:w0・p116:full-page:a0:result0:r84・p116:full-page:a0:result0:r84:w0・p116:full-page:a0:result0:r92・p116:full-page:a0:result0:r92:w0・p116:full-page:a0:result0:r94・p116:full-page:a0:result0:r94:w0・p116:full-page:a0:result0:r96・p116:full-page:a0:result0:r96:w0・p116:full-page:a0:result0:r98・p116:full-page:a0:result0:r98:w0・p117:full-page:a0:result0:r9・p117:full-page:a0:result0:r9:w1・p118:full-page:a0:result0:r8・p118:full-page:a0:result0:r8:w0・p118:full-page:a0:result0:r10・p118:full-page:a0:result0:r10:w0・p118:full-page:a0:result0:r12・p118:full-page:a0:result0:r12:w0・p118:full-page:a0:result0:r14・p118:full-page:a0:result0:r14:w0・p118:full-page:a0:result0:r16・p118:full-page:a0:result0:r16:w0・p118:full-page:a0:result0:r18・p118:full-page:a0:result0:r18:w0・p118:full-page:a0:result0:r20・p118:full-page:a0:result0:r20:w0・p118:full-page:a0:result0:r22・p118:full-page:a0:result0:r22:w0・p118:full-page:a0:result0:r26・p118:full-page:a0:result0:r26:w0・p118:full-page:a0:result0:r33・p118:full-page:a0:result0:r33:w0・p118:full-page:a0:result0:r35・p118:full-page:a0:result0:r35:w0・p118:full-page:a0:result0:r37・p118:full-page:a0:result0:r37:w0・p118:full-page:a0:result0:r39・p118:full-page:a0:result0:r39:w0・p118:full-page:a0:result0:r41・p118:full-page:a0:result0:r41:w0・p118:full-page:a0:result0:r43・p118:full-page:a0:result0:r43:w0・p118:full-page:a0:result0:r45・p118:full-page:a0:result0:r45:w0・p118:full-page:a0:result0:r47・p118:full-page:a0:result0:r47:w0・p118:full-page:a0:result0:r49・p118:full-page:a0:result0:r49:w0・p118:full-page:a0:result0:r51・p118:full-page:a0:result0:r51:w0・p118:full-page:a0:result0:r60・p118:full-page:a0:result0:r60:w0・p118:full-page:a0:result0:r62・p118:full-page:a0:result0:r62:w0・p118:full-page:a0:result0:r66・p118:full-page:a0:result0:r66:w0・p118:full-page:a0:result0:r80・p118:full-page:a0:result0:r80:w0・p118:full-page:a0:result0:r84・p118:full-page:a0:result0:r84:w0・p118:full-page:a0:result0:r86・p118:full-page:a0:result0:r86:w0・p118:full-page:a0:result0:r90・p118:full-page:a0:result0:r90:w0・p118:full-page:a0:result0:r92・p118:full-page:a0:result0:r92:w0・p118:full-page:a0:result0:r96・p118:full-page:a0:result0:r96:w0・p118:full-page:a0:result0:r99・p118:full-page:a0:result0:r99:w0・p118:full-page:a0:result0:r101・p118:full-page:a0:result0:r101:w0・p118:full-page:a0:result0:r105・p118:full-page:a0:result0:r105:w0・p118:full-page:a0:result0:r114・p118:full-page:a0:result0:r114:w0・p118:full-page:a0:result0:r119・p118:full-page:a0:result0:r119:w0・p118:full-page:a0:result0:r122・p118:full-page:a0:result0:r122:w0・p118:full-page:a0:result0:r124・p118:full-page:a0:result0:r124:w0・p119:full-page:a0:result0:r9・p119:full-page:a0:result0:r9:w1・p120:full-page:a0:result0:r10・p120:full-page:a0:result0:r10:w0・p120:full-page:a0:result0:r13・p120:full-page:a0:result0:r13:w0・p120:full-page:a0:result0:r15・p120:full-page:a0:result0:r15:w0・p120:full-page:a0:result0:r21・p120:full-page:a0:result0:r21:w0・p120:full-page:a0:result0:r23・p120:full-page:a0:result0:r23:w0・p120:full-page:a0:result0:r25・p120:full-page:a0:result0:r25:w0・p120:full-page:a0:result0:r27・p120:full-page:a0:result0:r27:w0・p120:full-page:a0:result0:r29・p120:full-page:a0:result0:r29:w0・p120:full-page:a0:result0:r37・p120:full-page:a0:result0:r37:w0・p120:full-page:a0:result0:r41・p120:full-page:a0:result0:r41:w0・p120:full-page:a0:result0:r43・p120:full-page:a0:result0:r43:w0・p120:full-page:a0:result0:r45・p120:full-page:a0:result0:r45:w0・p120:full-page:a0:result0:r49・p120:full-page:a0:result0:r49:w0・p120:full-page:a0:result0:r51・p120:full-page:a0:result0:r51:w0・p120:full-page:a0:result0:r53・p120:full-page:a0:result0:r53:w0・p120:full-page:a0:result0:r55・p120:full-page:a0:result0:r55:w0・p120:full-page:a0:result0:r57・p120:full-page:a0:result0:r57:w0・p120:full-page:a0:result0:r59・p120:full-page:a0:result0:r59:w0・p120:full-page:a0:result0:r61・p120:full-page:a0:result0:r61:w0・p120:full-page:a0:result0:r63・p120:full-page:a0:result0:r63:w0・p120:full-page:a0:result0:r72・p120:full-page:a0:result0:r72:w0・p120:full-page:a0:result0:r75・p120:full-page:a0:result0:r75:w0・p120:full-page:a0:result0:r79・p120:full-page:a0:result0:r79:w0・p120:full-page:a0:result0:r81・p120:full-page:a0:result0:r81:w0・p120:full-page:a0:result0:r85・p120:full-page:a0:result0:r85:w0・p120:full-page:a0:result0:r87・p120:full-page:a0:result0:r87:w0・p120:full-page:a0:result0:r91・p120:full-page:a0:result0:r91:w0・p120:full-page:a0:result0:r93・p120:full-page:a0:result0:r93:w0・p120:full-page:a0:result0:r97・p120:full-page:a0:result0:r97:w0・p120:full-page:a0:result0:r99・p120:full-page:a0:result0:r99:w0・p120:full-page:a0:result0:r103・p120:full-page:a0:result0:r103:w0・p120:full-page:a0:result0:r106・p120:full-page:a0:result0:r106:w0・p120:full-page:a0:result0:r111・p120:full-page:a0:result0:r111:w0・p120:full-page:a0:result0:r115・p120:full-page:a0:result0:r115:w0・p120:full-page:a0:result0:r118・p120:full-page:a0:result0:r118:w0・p121:full-page:a0:result0:r9・p121:full-page:a0:result0:r9:w1・p122:full-page:a0:result0:r13・p122:full-page:a0:result0:r13:w0・p122:full-page:a0:result0:r15・p122:full-page:a0:result0:r15:w0・p122:full-page:a0:result0:r19・p122:full-page:a0:result0:r19:w0・p122:full-page:a0:result0:r21・p122:full-page:a0:result0:r21:w0・p122:full-page:a0:result0:r30・p122:full-page:a0:result0:r30:w0・p122:full-page:a0:result0:r35・p122:full-page:a0:result0:r35:w0・p122:full-page:a0:result0:r47・p122:full-page:a0:result0:r47:w0・p122:full-page:a0:result0:r49・p122:full-page:a0:result0:r49:w0・p122:full-page:a0:result0:r56・p122:full-page:a0:result0:r56:w0・p124:full-page:a0:result0:r15・p124:full-page:a0:result0:r15:w0・p124:full-page:a0:result0:r17・p124:full-page:a0:result0:r17:w0・p124:full-page:a0:result0:r21・p124:full-page:a0:result0:r21:w0・p124:full-page:a0:result0:r23・p124:full-page:a0:result0:r23:w0・p124:full-page:a0:result0:r32・p124:full-page:a0:result0:r32:w0・p124:full-page:a0:result0:r44・p124:full-page:a0:result0:r44:w0・p124:full-page:a0:result0:r48・p124:full-page:a0:result0:r48:w0・p124:full-page:a0:result0:r54・p124:full-page:a0:result0:r54:w0・p124:full-page:a0:result0:r56・p124:full-page:a0:result0:r56:w0・p124:full-page:a0:result0:r60・p124:full-page:a0:result0:r60:w0・p124:full-page:a0:result0:r79・p124:full-page:a0:result0:r79・p124:full-page:a0:result0:r79:w0・p124:full-page:a0:result0:r79:w8・p124:full-page:a0:result0:r85・p124:full-page:a0:result0:r85:w0・p124:full-page:a0:result0:r94・p124:full-page:a0:result0:r94:w0・p124:full-page:a0:result0:r96・p124:full-page:a0:result0:r96:w0・p124:full-page:a0:result0:r100・p124:full-page:a0:result0:r100:w0・p124:full-page:a0:result0:r102・p124:full-page:a0:result0:r102:w0・p124:full-page:a0:result0:r106・p124:full-page:a0:result0:r106:w0・p124:full-page:a0:result0:r108・p124:full-page:a0:result0:r108:w0・p124:full-page:a0:result0:r112・p124:full-page:a0:result0:r112:w0・p124:full-page:a0:result0:r117・p124:full-page:a0:result0:r117:w0・p124:full-page:a0:result0:r127・p124:full-page:a0:result0:r127:w0・p125:full-page:a0:result0:r9・p125:full-page:a0:result0:r9:w1・p126:full-page:a0:result0:r12・p126:full-page:a0:result0:r12:w0・p126:full-page:a0:result0:r14・p126:full-page:a0:result0:r14:w0・p126:full-page:a0:result0:r16・p126:full-page:a0:result0:r16:w0・p126:full-page:a0:result0:r18・p126:full-page:a0:result0:r18:w0・p126:full-page:a0:result0:r26・p126:full-page:a0:result0:r26:w0・p127:full-page:a0:result0:r9・p127:full-page:a0:result0:r9:w1・p128:full-page:a0:result0:r14・p128:full-page:a0:result0:r14:w0・p128:full-page:a0:result0:r16・p128:full-page:a0:result0:r16:w0・p128:full-page:a0:result0:r18・p128:full-page:a0:result0:r18:w0・p128:full-page:a0:result0:r20・p128:full-page:a0:result0:r20:w0・p128:full-page:a0:result0:r22・p128:full-page:a0:result0:r22:w0・p128:full-page:a0:result0:r24・p128:full-page:a0:result0:r24:w0・p128:full-page:a0:result0:r26・p128:full-page:a0:result0:r26:w0・p128:full-page:a0:result0:r28・p128:full-page:a0:result0:r28:w0・p128:full-page:a0:result0:r36・p128:full-page:a0:result0:r36:w0・p128:full-page:a0:result0:r38・p128:full-page:a0:result0:r38:w0・p128:full-page:a0:result0:r40・p128:full-page:a0:result0:r40:w0・p128:full-page:a0:result0:r42・p128:full-page:a0:result0:r42:w0・p128:full-page:a0:result0:r44・p128:full-page:a0:result0:r44:w0・p128:full-page:a0:result0:r46・p128:full-page:a0:result0:r46:w0・p128:full-page:a0:result0:r48・p128:full-page:a0:result0:r48:w0・p128:full-page:a0:result0:r50・p128:full-page:a0:result0:r50:w0・p128:full-page:a0:result0:r52・p128:full-page:a0:result0:r52:w0・p128:full-page:a0:result0:r54・p128:full-page:a0:result0:r54:w0・p129:full-page:a0:result0:r9・p129:full-page:a0:result0:r9:w1・p130:full-page:a0:result0:r13・p130:full-page:a0:result0:r13:w0）・增→増 2 件（p38:full-page:a0:result0:r95・p38:full-page:a0:result0:r95:w3）・查→査 94 件（p10:full-page:a0:result0:r49・p10:full-page:a0:result0:r49:w5・p10:full-page:a0:result0:r61・p10:full-page:a0:result0:r61:w5・p10:full-page:a0:result0:r73・p10:full-page:a0:result0:r73:w5・p14:full-page:a0:result0:r95・p14:full-page:a0:result0:r95:w5・p24:full-page:a0:result0:r37・p24:full-page:a0:result0:r37:w12・p26:full-page:a0:result0:r108・p26:full-page:a0:result0:r108:w5・p26:full-page:a0:result0:r112・p26:full-page:a0:result0:r112:w8・p28:full-page:a0:result0:r24・p28:full-page:a0:result0:r24:w6・p28:full-page:a0:result0:r26・p28:full-page:a0:result0:r26:w6・p36:full-page:a0:result0:r58・p36:full-page:a0:result0:r58:w7・p36:full-page:a0:result0:r60・p36:full-page:a0:result0:r60:w6・p36:full-page:a0:result0:r62・p36:full-page:a0:result0:r62:w11・p36:full-page:a0:result0:r64・p36:full-page:a0:result0:r64:w10・p36:full-page:a0:result0:r66・p36:full-page:a0:result0:r66:w7・p36:full-page:a0:result0:r68・p36:full-page:a0:result0:r68:w7・p36:full-page:a0:result0:r83・p36:full-page:a0:result0:r83:w11・p40:full-page:a0:result0:r104・p40:full-page:a0:result0:r104:w10・p42:full-page:a0:result0:r100・p42:full-page:a0:result0:r100:w7・p42:full-page:a0:result0:r102・p42:full-page:a0:result0:r102:w9・p42:full-page:a0:result0:r106・p42:full-page:a0:result0:r106:w7・p42:full-page:a0:result0:r112・p42:full-page:a0:result0:r112:w7・p60:full-page:a0:result0:r88・p60:full-page:a0:result0:r88:w8・p62:full-page:a0:result0:r15・p62:full-page:a0:result0:r15:w3・p62:full-page:a0:result0:r19・p62:full-page:a0:result0:r19:w4・p62:full-page:a0:result0:r21・p62:full-page:a0:result0:r21:w4・p62:full-page:a0:result0:r56・p62:full-page:a0:result0:r56:w11・p62:full-page:a0:result0:r62・p62:full-page:a0:result0:r62:w16・p62:full-page:a0:result0:r94・p62:full-page:a0:result0:r94:w10・p64:full-page:a0:result0:r38・p64:full-page:a0:result0:r38:w4・p66:full-page:a0:result0:r12・p66:full-page:a0:result0:r12:w3・p66:full-page:a0:result0:r14・p66:full-page:a0:result0:r14:w4・p66:full-page:a0:result0:r47・p66:full-page:a0:result0:r47:w11・p68:full-page:a0:result0:r70・p68:full-page:a0:result0:r70:w9・p72:full-page:a0:result0:r26・p72:full-page:a0:result0:r26:w11・p74:full-page:a0:result0:r28・p74:full-page:a0:result0:r28:w6・p74:full-page:a0:result0:r53・p74:full-page:a0:result0:r53:w7・p98:full-page:a0:result0:r71・p98:full-page:a0:result0:r71:w2・p100:full-page:a0:result0:r18・p100:full-page:a0:result0:r18:w2・p100:full-page:a0:result0:r20・p100:full-page:a0:result0:r20:w2・p104:full-page:a0:result0:r65・p104:full-page:a0:result0:r65:w2・p104:full-page:a0:result0:r108・p104:full-page:a0:result0:r108:w2・p104:full-page:a0:result0:r111・p104:full-page:a0:result0:r111:w2・p112:full-page:a0:result0:r104・p112:full-page:a0:result0:r104:w7・p112:full-page:a0:result0:r108・p112:full-page:a0:result0:r108:w6・p114:full-page:a0:result0:r8・p114:full-page:a0:result0:r8:w7・p114:full-page:a0:result0:r10・p114:full-page:a0:result0:r10:w7・p114:full-page:a0:result0:r12・p114:full-page:a0:result0:r12:w5）・產→産 36 件（p14:full-page:a0:result0:r58・p14:full-page:a0:result0:r58:w4・p16:full-page:a0:result0:r99・p16:full-page:a0:result0:r99:w2・p28:full-page:a0:result0:r79・p28:full-page:a0:result0:r79:w2・p36:full-page:a0:result0:r58・p36:full-page:a0:result0:r58:w2・p36:full-page:a0:result0:r83・p36:full-page:a0:result0:r83:w2・p50:full-page:a0:result0:r27・p50:full-page:a0:result0:r27:w1・p52:full-page:a0:result0:r81・p52:full-page:a0:result0:r81・p52:full-page:a0:result0:r81:w3・p52:full-page:a0:result0:r81:w5・p54:full-page:a0:result0:r12・p54:full-page:a0:result0:r12:w3・p56:full-page:a0:result0:r27・p56:full-page:a0:result0:r27:w1・p56:full-page:a0:result0:r47・p56:full-page:a0:result0:r47:w1・p56:full-page:a0:result0:r73・p56:full-page:a0:result0:r73:w3・p56:full-page:a0:result0:r79・p56:full-page:a0:result0:r79:w1・p58:full-page:a0:result0:r38・p58:full-page:a0:result0:r38:w1・p66:full-page:a0:result0:r27・p66:full-page:a0:result0:r27:w5・p68:full-page:a0:result0:r74・p68:full-page:a0:result0:r74:w5・p68:full-page:a0:result0:r85・p68:full-page:a0:result0:r85:w2・p72:full-page:a0:result0:r21・p72:full-page:a0:result0:r21:w5）・說→説 2 件（p132:full-page:a0:result0:r2・p132:full-page:a0:result0:r2:w0）・齡→齢 10 件（p1:full-page:a0:result0:r12・p1:full-page:a0:result0:r12:w3・p2:full-page:a0:result0:r30・p2:full-page:a0:result0:r30:w1・p2:full-page:a0:result0:r32・p2:full-page:a0:result0:r32:w2・p28:full-page:a0:result0:r14・p28:full-page:a0:result0:r14:w5・p42:full-page:a0:result0:r8・p42:full-page:a0:result0:r8:w2）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132080/2026/initial/expenditure/general-initial-3-nodes.parquet",
+          "sha256": "64a7b6fd925fa6ce461b5d44d5ecdfc7996f289b621b6712ec5c77428f41721d",
+          "bytes": 92028
+        },
+        "row_count": 2735
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132080/2026/initial/expenditure/general-initial-3-amounts.parquet",
+          "sha256": "c6735310bc82da8e909ae7d138f60a2df1ccd888a0f8c344ac4dc5e98574b03e",
+          "bytes": 70339
+        },
+        "row_count": 2948
+      }
+    },
+    {
+      "table_id": "general-initial-5",
+      "conversion_id": "general-initial-5",
+      "input_fingerprint": "71bae7bb54b298b2621508ac3de076e54da90f6ecd6fcca63c1da464a698be07",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は printed 30頁 から決めた。分冊のため款の和 78,103,831 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 1260 件（p94:full-page:a0:result0:r11・p94:full-page:a0:result0:r11:w1・p95:full-page:a0:result0:r12・p95:full-page:a0:result0:r12:w0・p95:full-page:a0:result0:r18・p95:full-page:a0:result0:r18:w0・p95:full-page:a0:result0:r20・p95:full-page:a0:result0:r20:w0・p95:full-page:a0:result0:r29・p95:full-page:a0:result0:r29:w0・p95:full-page:a0:result0:r34・p95:full-page:a0:result0:r34:w0・p95:full-page:a0:result0:r36・p95:full-page:a0:result0:r36:w0・p95:full-page:a0:result0:r40・p95:full-page:a0:result0:r40:w0・p95:full-page:a0:result0:r49・p95:full-page:a0:result0:r49:w0・p95:full-page:a0:result0:r51・p95:full-page:a0:result0:r51:w0・p95:full-page:a0:result0:r55・p95:full-page:a0:result0:r55:w0・p95:full-page:a0:result0:r57・p95:full-page:a0:result0:r57:w0・p95:full-page:a0:result0:r61・p95:full-page:a0:result0:r61:w0・p95:full-page:a0:result0:r63・p95:full-page:a0:result0:r63:w0・p95:full-page:a0:result0:r67・p95:full-page:a0:result0:r67:w0・p95:full-page:a0:result0:r70・p95:full-page:a0:result0:r70:w0・p95:full-page:a0:result0:r72・p95:full-page:a0:result0:r72:w0・p95:full-page:a0:result0:r76・p95:full-page:a0:result0:r76:w0・p95:full-page:a0:result0:r78・p95:full-page:a0:result0:r78:w0・p95:full-page:a0:result0:r82・p95:full-page:a0:result0:r82:w0・p95:full-page:a0:result0:r85・p95:full-page:a0:result0:r85:w0・p95:full-page:a0:result0:r95・p95:full-page:a0:result0:r95:w0・p95:full-page:a0:result0:r97・p95:full-page:a0:result0:r97:w0・p95:full-page:a0:result0:r99・p95:full-page:a0:result0:r99:w0・p95:full-page:a0:result0:r101・p95:full-page:a0:result0:r101:w0・p96:full-page:a0:result0:r9・p96:full-page:a0:result0:r9:w1・p97:full-page:a0:result0:r15・p97:full-page:a0:result0:r15:w0・p97:full-page:a0:result0:r17・p97:full-page:a0:result0:r17:w0・p97:full-page:a0:result0:r21・p97:full-page:a0:result0:r21:w0・p97:full-page:a0:result0:r26・p97:full-page:a0:result0:r26:w0・p97:full-page:a0:result0:r31・p97:full-page:a0:result0:r31:w0・p97:full-page:a0:result0:r33・p97:full-page:a0:result0:r33:w0・p97:full-page:a0:result0:r37・p97:full-page:a0:result0:r37:w0・p97:full-page:a0:result0:r57・p97:full-page:a0:result0:r57:w0・p97:full-page:a0:result0:r61・p97:full-page:a0:result0:r61:w0・p97:full-page:a0:result0:r63・p97:full-page:a0:result0:r63:w0・p97:full-page:a0:result0:r67・p97:full-page:a0:result0:r67:w0・p97:full-page:a0:result0:r70・p97:full-page:a0:result0:r70:w0・p97:full-page:a0:result0:r72・p97:full-page:a0:result0:r72:w0・p97:full-page:a0:result0:r76・p97:full-page:a0:result0:r76:w0・p97:full-page:a0:result0:r84・p97:full-page:a0:result0:r84:w0・p97:full-page:a0:result0:r88・p97:full-page:a0:result0:r88:w0・p97:full-page:a0:result0:r91・p97:full-page:a0:result0:r91:w0・p97:full-page:a0:result0:r93・p97:full-page:a0:result0:r93:w0・p97:full-page:a0:result0:r97・p97:full-page:a0:result0:r97:w0・p97:full-page:a0:result0:r99・p97:full-page:a0:result0:r99:w0・p97:full-page:a0:result0:r103・p97:full-page:a0:result0:r103:w0・p97:full-page:a0:result0:r105・p97:full-page:a0:result0:r105:w0・p97:full-page:a0:result0:r107・p97:full-page:a0:result0:r107:w0・p97:full-page:a0:result0:r109・p97:full-page:a0:result0:r109:w0・p97:full-page:a0:result0:r115・p97:full-page:a0:result0:r115:w0・p98:full-page:a0:result0:r9・p98:full-page:a0:result0:r9:w1・p99:full-page:a0:result0:r12・p99:full-page:a0:result0:r12:w0・p99:full-page:a0:result0:r26・p99:full-page:a0:result0:r26:w0・p99:full-page:a0:result0:r28・p99:full-page:a0:result0:r28:w0・p99:full-page:a0:result0:r34・p99:full-page:a0:result0:r34:w0・p99:full-page:a0:result0:r40・p99:full-page:a0:result0:r40:w0・p99:full-page:a0:result0:r42・p99:full-page:a0:result0:r42:w0・p99:full-page:a0:result0:r64・p99:full-page:a0:result0:r64:w0・p99:full-page:a0:result0:r66・p99:full-page:a0:result0:r66:w0・p99:full-page:a0:result0:r68・p99:full-page:a0:result0:r68:w0・p99:full-page:a0:result0:r72・p99:full-page:a0:result0:r72:w0・p99:full-page:a0:result0:r74・p99:full-page:a0:result0:r74:w0・p99:full-page:a0:result0:r76・p99:full-page:a0:result0:r76:w0・p99:full-page:a0:result0:r81・p99:full-page:a0:result0:r81:w0・p99:full-page:a0:result0:r83・p99:full-page:a0:result0:r83:w0・p99:full-page:a0:result0:r85・p99:full-page:a0:result0:r85:w0・p99:full-page:a0:result0:r87・p99:full-page:a0:result0:r87:w0・p99:full-page:a0:result0:r89・p99:full-page:a0:result0:r89:w0・p100:full-page:a0:result0:r9・p100:full-page:a0:result0:r9:w1・p101:full-page:a0:result0:r8・p101:full-page:a0:result0:r8:w0・p101:full-page:a0:result0:r12・p101:full-page:a0:result0:r12:w0・p101:full-page:a0:result0:r14・p101:full-page:a0:result0:r14:w0・p101:full-page:a0:result0:r18・p101:full-page:a0:result0:r18:w0・p101:full-page:a0:result0:r20・p101:full-page:a0:result0:r20:w0・p101:full-page:a0:result0:r22・p101:full-page:a0:result0:r22:w0・p101:full-page:a0:result0:r24・p101:full-page:a0:result0:r24:w0・p101:full-page:a0:result0:r28・p101:full-page:a0:result0:r28:w0・p101:full-page:a0:result0:r39・p101:full-page:a0:result0:r39:w0・p101:full-page:a0:result0:r49・p101:full-page:a0:result0:r49:w0・p101:full-page:a0:result0:r51・p101:full-page:a0:result0:r51:w0・p101:full-page:a0:result0:r53・p101:full-page:a0:result0:r53:w0・p101:full-page:a0:result0:r55・p101:full-page:a0:result0:r55:w0・p101:full-page:a0:result0:r57・p101:full-page:a0:result0:r57:w0・p101:full-page:a0:result0:r59・p101:full-page:a0:result0:r59:w0・p101:full-page:a0:result0:r61・p101:full-page:a0:result0:r61:w0・p101:full-page:a0:result0:r63・p101:full-page:a0:result0:r63:w0・p101:full-page:a0:result0:r68・p101:full-page:a0:result0:r68:w0・p101:full-page:a0:result0:r70・p101:full-page:a0:result0:r70:w0・p101:full-page:a0:result0:r72・p101:full-page:a0:result0:r72:w0・p101:full-page:a0:result0:r74・p101:full-page:a0:result0:r74:w0・p101:full-page:a0:result0:r76・p101:full-page:a0:result0:r76:w0・p101:full-page:a0:result0:r86・p101:full-page:a0:result0:r86:w0・p101:full-page:a0:result0:r88・p101:full-page:a0:result0:r88:w0・p101:full-page:a0:result0:r90・p101:full-page:a0:result0:r90:w0・p102:full-page:a0:result0:r9・p102:full-page:a0:result0:r9:w1・p103:full-page:a0:result0:r11・p103:full-page:a0:result0:r11:w0・p103:full-page:a0:result0:r13・p103:full-page:a0:result0:r13:w0・p103:full-page:a0:result0:r15・p103:full-page:a0:result0:r15:w0・p103:full-page:a0:result0:r17・p103:full-page:a0:result0:r17:w0・p103:full-page:a0:result0:r19・p103:full-page:a0:result0:r19:w0・p103:full-page:a0:result0:r22・p103:full-page:a0:result0:r22:w0・p103:full-page:a0:result0:r24・p103:full-page:a0:result0:r24:w0・p103:full-page:a0:result0:r28・p103:full-page:a0:result0:r28:w0・p103:full-page:a0:result0:r30・p103:full-page:a0:result0:r30:w0・p103:full-page:a0:result0:r41・p103:full-page:a0:result0:r41:w0・p103:full-page:a0:result0:r43・p103:full-page:a0:result0:r43:w0・p103:full-page:a0:result0:r45・p103:full-page:a0:result0:r45・p103:full-page:a0:result0:r45:w0・p103:full-page:a0:result0:r45:w7・p103:full-page:a0:result0:r49・p103:full-page:a0:result0:r49:w0・p103:full-page:a0:result0:r53・p103:full-page:a0:result0:r53:w0・p103:full-page:a0:result0:r55・p103:full-page:a0:result0:r55:w0・p103:full-page:a0:result0:r57・p103:full-page:a0:result0:r57:w0・p103:full-page:a0:result0:r59・p103:full-page:a0:result0:r59:w0・p103:full-page:a0:result0:r61・p103:full-page:a0:result0:r61:w0・p103:full-page:a0:result0:r63・p103:full-page:a0:result0:r63:w0・p103:full-page:a0:result0:r65・p103:full-page:a0:result0:r65:w0・p103:full-page:a0:result0:r67・p103:full-page:a0:result0:r67:w0・p103:full-page:a0:result0:r79・p103:full-page:a0:result0:r79:w0・p103:full-page:a0:result0:r83・p103:full-page:a0:result0:r83:w0・p103:full-page:a0:result0:r88・p103:full-page:a0:result0:r88:w0・p103:full-page:a0:result0:r92・p103:full-page:a0:result0:r92:w0・p104:full-page:a0:result0:r9・p104:full-page:a0:result0:r9:w1・p105:full-page:a0:result0:r14・p105:full-page:a0:result0:r14:w0・p105:full-page:a0:result0:r19・p105:full-page:a0:result0:r19:w0・p105:full-page:a0:result0:r21・p105:full-page:a0:result0:r21:w0・p105:full-page:a0:result0:r25・p105:full-page:a0:result0:r25:w0・p105:full-page:a0:result0:r27・p105:full-page:a0:result0:r27:w0・p105:full-page:a0:result0:r29・p105:full-page:a0:result0:r29:w0・p105:full-page:a0:result0:r31・p105:full-page:a0:result0:r31:w0・p105:full-page:a0:result0:r35・p105:full-page:a0:result0:r35:w0・p105:full-page:a0:result0:r45・p105:full-page:a0:result0:r45:w0・p105:full-page:a0:result0:r54・p105:full-page:a0:result0:r54:w0・p105:full-page:a0:result0:r56・p105:full-page:a0:result0:r56:w0・p105:full-page:a0:result0:r60・p105:full-page:a0:result0:r60:w0・p105:full-page:a0:result0:r66・p105:full-page:a0:result0:r66:w0・p105:full-page:a0:result0:r78・p105:full-page:a0:result0:r78・p105:full-page:a0:result0:r78:w0・p105:full-page:a0:result0:r78:w3・p105:full-page:a0:result0:r82・p105:full-page:a0:result0:r82:w0・p105:full-page:a0:result0:r84・p105:full-page:a0:result0:r84:w0・p105:full-page:a0:result0:r88・p105:full-page:a0:result0:r88:w0・p105:full-page:a0:result0:r93・p105:full-page:a0:result0:r93:w0・p105:full-page:a0:result0:r97・p105:full-page:a0:result0:r97:w0・p105:full-page:a0:result0:r100・p105:full-page:a0:result0:r100:w0・p105:full-page:a0:result0:r103・p105:full-page:a0:result0:r103:w2・p105:full-page:a0:result0:r105・p105:full-page:a0:result0:r105:w0・p107:full-page:a0:result0:r10・p107:full-page:a0:result0:r10:w0・p107:full-page:a0:result0:r14・p107:full-page:a0:result0:r14:w0・p107:full-page:a0:result0:r20・p107:full-page:a0:result0:r20:w0・p107:full-page:a0:result0:r22・p107:full-page:a0:result0:r22:w0・p107:full-page:a0:result0:r24・p107:full-page:a0:result0:r24:w0・p107:full-page:a0:result0:r34・p107:full-page:a0:result0:r34:w0・p107:full-page:a0:result0:r43・p107:full-page:a0:result0:r43:w0・p107:full-page:a0:result0:r45・p107:full-page:a0:result0:r45:w0・p107:full-page:a0:result0:r56・p107:full-page:a0:result0:r56:w0・p107:full-page:a0:result0:r58・p107:full-page:a0:result0:r58:w0・p107:full-page:a0:result0:r62・p107:full-page:a0:result0:r62:w0・p107:full-page:a0:result0:r64・p107:full-page:a0:result0:r64:w0・p107:full-page:a0:result0:r72・p107:full-page:a0:result0:r72:w0・p107:full-page:a0:result0:r85・p107:full-page:a0:result0:r85:w0・p107:full-page:a0:result0:r87・p107:full-page:a0:result0:r87:w0・p107:full-page:a0:result0:r91・p107:full-page:a0:result0:r91:w0・p107:full-page:a0:result0:r93・p107:full-page:a0:result0:r93:w0・p107:full-page:a0:result0:r97・p107:full-page:a0:result0:r97・p107:full-page:a0:result0:r97:w0・p107:full-page:a0:result0:r97:w6・p108:full-page:a0:result0:r9・p108:full-page:a0:result0:r9:w1・p109:full-page:a0:result0:r10・p109:full-page:a0:result0:r10:w0・p109:full-page:a0:result0:r18・p109:full-page:a0:result0:r18:w0・p109:full-page:a0:result0:r20・p109:full-page:a0:result0:r20:w0・p109:full-page:a0:result0:r24・p109:full-page:a0:result0:r24:w0・p109:full-page:a0:result0:r27・p109:full-page:a0:result0:r27:w0・p109:full-page:a0:result0:r29・p109:full-page:a0:result0:r29:w0・p109:full-page:a0:result0:r33・p109:full-page:a0:result0:r33:w0・p109:full-page:a0:result0:r39・p109:full-page:a0:result0:r39:w0・p109:full-page:a0:result0:r41・p109:full-page:a0:result0:r41:w0・p109:full-page:a0:result0:r45・p109:full-page:a0:result0:r45:w0・p109:full-page:a0:result0:r48・p109:full-page:a0:result0:r48:w0・p109:full-page:a0:result0:r50・p109:full-page:a0:result0:r50:w0・p109:full-page:a0:result0:r58・p109:full-page:a0:result0:r58:w0・p109:full-page:a0:result0:r60・p109:full-page:a0:result0:r60:w0・p109:full-page:a0:result0:r62・p109:full-page:a0:result0:r62:w0・p109:full-page:a0:result0:r64・p109:full-page:a0:result0:r64:w0・p109:full-page:a0:result0:r68・p109:full-page:a0:result0:r68:w0・p109:full-page:a0:result0:r70・p109:full-page:a0:result0:r70:w0・p109:full-page:a0:result0:r75・p109:full-page:a0:result0:r75:w0・p109:full-page:a0:result0:r77・p109:full-page:a0:result0:r77:w0・p109:full-page:a0:result0:r79・p109:full-page:a0:result0:r79:w0・p109:full-page:a0:result0:r81・p109:full-page:a0:result0:r81:w0・p109:full-page:a0:result0:r87・p109:full-page:a0:result0:r87:w0・p109:full-page:a0:result0:r94・p109:full-page:a0:result0:r94:w0・p109:full-page:a0:result0:r101・p109:full-page:a0:result0:r101:w0・p110:full-page:a0:result0:r9・p110:full-page:a0:result0:r9:w1・p111:full-page:a0:result0:r13・p111:full-page:a0:result0:r13:w0・p111:full-page:a0:result0:r22・p111:full-page:a0:result0:r22:w0・p111:full-page:a0:result0:r28・p111:full-page:a0:result0:r28:w0・p111:full-page:a0:result0:r33・p111:full-page:a0:result0:r33:w0・p111:full-page:a0:result0:r37・p111:full-page:a0:result0:r37:w0・p111:full-page:a0:result0:r39・p111:full-page:a0:result0:r39:w0・p111:full-page:a0:result0:r47・p111:full-page:a0:result0:r47:w0・p111:full-page:a0:result0:r50・p111:full-page:a0:result0:r50:w0・p111:full-page:a0:result0:r52・p111:full-page:a0:result0:r52:w0・p111:full-page:a0:result0:r56・p111:full-page:a0:result0:r56:w0・p111:full-page:a0:result0:r59・p111:full-page:a0:result0:r59:w0・p111:full-page:a0:result0:r64・p111:full-page:a0:result0:r64:w0・p111:full-page:a0:result0:r68・p111:full-page:a0:result0:r68:w0・p111:full-page:a0:result0:r78・p111:full-page:a0:result0:r78:w0・p111:full-page:a0:result0:r87・p111:full-page:a0:result0:r87:w0・p111:full-page:a0:result0:r89・p111:full-page:a0:result0:r89:w0・p111:full-page:a0:result0:r93・p111:full-page:a0:result0:r93:w0・p111:full-page:a0:result0:r95・p111:full-page:a0:result0:r95:w0・p111:full-page:a0:result0:r99・p111:full-page:a0:result0:r99:w0・p112:full-page:a0:result0:r9・p112:full-page:a0:result0:r9:w1・p113:full-page:a0:result0:r30・p113:full-page:a0:result0:r30:w0・p113:full-page:a0:result0:r32・p113:full-page:a0:result0:r32:w0・p113:full-page:a0:result0:r34・p113:full-page:a0:result0:r34:w0・p113:full-page:a0:result0:r36・p113:full-page:a0:result0:r36:w0・p113:full-page:a0:result0:r38・p113:full-page:a0:result0:r38:w0・p113:full-page:a0:result0:r40・p113:full-page:a0:result0:r40:w0・p113:full-page:a0:result0:r42・p113:full-page:a0:result0:r42:w0・p113:full-page:a0:result0:r51・p113:full-page:a0:result0:r51:w0・p113:full-page:a0:result0:r53・p113:full-page:a0:result0:r53:w0・p113:full-page:a0:result0:r57・p113:full-page:a0:result0:r57:w0・p113:full-page:a0:result0:r63・p113:full-page:a0:result0:r63:w0・p113:full-page:a0:result0:r65・p113:full-page:a0:result0:r65:w0・p113:full-page:a0:result0:r69・p113:full-page:a0:result0:r69:w0・p113:full-page:a0:result0:r72・p113:full-page:a0:result0:r72:w0・p113:full-page:a0:result0:r78・p113:full-page:a0:result0:r78:w0・p115:full-page:a0:result0:r15・p115:full-page:a0:result0:r15:w0・p115:full-page:a0:result0:r17・p115:full-page:a0:result0:r17:w0・p115:full-page:a0:result0:r21・p115:full-page:a0:result0:r21:w0・p115:full-page:a0:result0:r23・p115:full-page:a0:result0:r23:w0・p115:full-page:a0:result0:r32・p115:full-page:a0:result0:r32:w0・p115:full-page:a0:result0:r36・p115:full-page:a0:result0:r36:w0・p115:full-page:a0:result0:r38・p115:full-page:a0:result0:r38:w0・p115:full-page:a0:result0:r42・p115:full-page:a0:result0:r42:w0・p115:full-page:a0:result0:r54・p115:full-page:a0:result0:r54:w0・p115:full-page:a0:result0:r59・p115:full-page:a0:result0:r59:w0・p115:full-page:a0:result0:r61・p115:full-page:a0:result0:r61:w0・p115:full-page:a0:result0:r70・p115:full-page:a0:result0:r70:w0・p115:full-page:a0:result0:r72・p115:full-page:a0:result0:r72:w0・p115:full-page:a0:result0:r76・p115:full-page:a0:result0:r76:w0・p115:full-page:a0:result0:r78・p115:full-page:a0:result0:r78:w0・p115:full-page:a0:result0:r82・p115:full-page:a0:result0:r82:w0・p115:full-page:a0:result0:r84・p115:full-page:a0:result0:r84:w0・p115:full-page:a0:result0:r88・p115:full-page:a0:result0:r88:w0・p115:full-page:a0:result0:r90・p115:full-page:a0:result0:r90:w0・p115:full-page:a0:result0:r96・p115:full-page:a0:result0:r96:w0・p115:full-page:a0:result0:r100・p115:full-page:a0:result0:r100:w0・p115:full-page:a0:result0:r102・p115:full-page:a0:result0:r102:w0・p115:full-page:a0:result0:r106・p115:full-page:a0:result0:r106:w0・p115:full-page:a0:result0:r115・p115:full-page:a0:result0:r115:w0・p115:full-page:a0:result0:r117・p115:full-page:a0:result0:r117:w0・p115:full-page:a0:result0:r119・p115:full-page:a0:result0:r119:w0・p116:full-page:a0:result0:r9・p116:full-page:a0:result0:r9:w1・p117:full-page:a0:result0:r10・p117:full-page:a0:result0:r10:w0・p117:full-page:a0:result0:r13・p117:full-page:a0:result0:r13・p117:full-page:a0:result0:r13:w0・p117:full-page:a0:result0:r13:w4・p117:full-page:a0:result0:r15・p117:full-page:a0:result0:r15:w0・p117:full-page:a0:result0:r19・p117:full-page:a0:result0:r19:w0・p117:full-page:a0:result0:r22・p117:full-page:a0:result0:r22:w0・p117:full-page:a0:result0:r24・p117:full-page:a0:result0:r24:w0・p117:full-page:a0:result0:r28・p117:full-page:a0:result0:r28:w0・p117:full-page:a0:result0:r33・p117:full-page:a0:result0:r33:w0・p117:full-page:a0:result0:r44・p117:full-page:a0:result0:r44:w0・p117:full-page:a0:result0:r46・p117:full-page:a0:result0:r46:w0・p117:full-page:a0:result0:r48・p117:full-page:a0:result0:r48:w0・p117:full-page:a0:result0:r50・p117:full-page:a0:result0:r50:w0・p117:full-page:a0:result0:r52・p117:full-page:a0:result0:r52:w0・p117:full-page:a0:result0:r54・p117:full-page:a0:result0:r54:w0・p117:full-page:a0:result0:r56・p117:full-page:a0:result0:r56:w0・p117:full-page:a0:result0:r58・p117:full-page:a0:result0:r58:w0・p117:full-page:a0:result0:r60・p117:full-page:a0:result0:r60:w0・p117:full-page:a0:result0:r68・p117:full-page:a0:result0:r68:w0・p117:full-page:a0:result0:r70・p117:full-page:a0:result0:r70:w0・p117:full-page:a0:result0:r72・p117:full-page:a0:result0:r72:w0・p117:full-page:a0:result0:r76・p117:full-page:a0:result0:r76:w0・p117:full-page:a0:result0:r80・p117:full-page:a0:result0:r80:w0・p117:full-page:a0:result0:r82・p117:full-page:a0:result0:r82:w0・p117:full-page:a0:result0:r84・p117:full-page:a0:result0:r84:w0・p117:full-page:a0:result0:r86・p117:full-page:a0:result0:r86:w0・p117:full-page:a0:result0:r88・p117:full-page:a0:result0:r88:w0・p118:full-page:a0:result0:r9・p118:full-page:a0:result0:r9:w1・p119:full-page:a0:result0:r15・p119:full-page:a0:result0:r15:w0・p119:full-page:a0:result0:r18・p119:full-page:a0:result0:r18:w0・p119:full-page:a0:result0:r22・p119:full-page:a0:result0:r22:w0・p119:full-page:a0:result0:r24・p119:full-page:a0:result0:r24:w0・p119:full-page:a0:result0:r33・p119:full-page:a0:result0:r33:w0・p119:full-page:a0:result0:r37・p119:full-page:a0:result0:r37:w0・p119:full-page:a0:result0:r39・p119:full-page:a0:result0:r39:w0・p119:full-page:a0:result0:r43・p119:full-page:a0:result0:r43:w0・p119:full-page:a0:result0:r49・p119:full-page:a0:result0:r49:w0・p119:full-page:a0:result0:r55・p119:full-page:a0:result0:r55:w0・p119:full-page:a0:result0:r66・p119:full-page:a0:result0:r66:w0・p119:full-page:a0:result0:r79・p119:full-page:a0:result0:r79:w0・p119:full-page:a0:result0:r83・p119:full-page:a0:result0:r83:w0・p120:full-page:a0:result0:r9・p120:full-page:a0:result0:r9:w1・p121:full-page:a0:result0:r15・p121:full-page:a0:result0:r15:w0・p121:full-page:a0:result0:r17・p121:full-page:a0:result0:r17:w0・p121:full-page:a0:result0:r21・p121:full-page:a0:result0:r21:w0・p121:full-page:a0:result0:r23・p121:full-page:a0:result0:r23:w0・p121:full-page:a0:result0:r32・p121:full-page:a0:result0:r32:w0・p121:full-page:a0:result0:r36・p121:full-page:a0:result0:r36:w0・p121:full-page:a0:result0:r38・p121:full-page:a0:result0:r38:w0・p121:full-page:a0:result0:r42・p121:full-page:a0:result0:r42:w0・p121:full-page:a0:result0:r48・p121:full-page:a0:result0:r48:w0・p121:full-page:a0:result0:r83・p121:full-page:a0:result0:r83:w0・p122:full-page:a0:result0:r9・p122:full-page:a0:result0:r9:w1・p123:full-page:a0:result0:r15・p123:full-page:a0:result0:r15:w0・p123:full-page:a0:result0:r35・p123:full-page:a0:result0:r35:w0・p123:full-page:a0:result0:r44・p123:full-page:a0:result0:r44:w0・p123:full-page:a0:result0:r48・p123:full-page:a0:result0:r48:w0・p123:full-page:a0:result0:r50・p123:full-page:a0:result0:r50:w0・p123:full-page:a0:result0:r54・p123:full-page:a0:result0:r54:w0・p123:full-page:a0:result0:r57・p123:full-page:a0:result0:r57:w0・p123:full-page:a0:result0:r59・p123:full-page:a0:result0:r59:w0・p123:full-page:a0:result0:r61・p123:full-page:a0:result0:r61:w0・p123:full-page:a0:result0:r63・p123:full-page:a0:result0:r63・p123:full-page:a0:result0:r63:w0・p123:full-page:a0:result0:r63:w2・p123:full-page:a0:result0:r65・p123:full-page:a0:result0:r65:w0・p123:full-page:a0:result0:r69・p123:full-page:a0:result0:r69:w0・p123:full-page:a0:result0:r78・p123:full-page:a0:result0:r78:w0・p123:full-page:a0:result0:r87・p123:full-page:a0:result0:r87:w0・p123:full-page:a0:result0:r95・p123:full-page:a0:result0:r95:w0・p123:full-page:a0:result0:r99・p123:full-page:a0:result0:r99:w0・p123:full-page:a0:result0:r101・p123:full-page:a0:result0:r101:w0・p123:full-page:a0:result0:r105・p123:full-page:a0:result0:r105:w0・p123:full-page:a0:result0:r108・p123:full-page:a0:result0:r108・p123:full-page:a0:result0:r108:w0・p123:full-page:a0:result0:r108:w2・p123:full-page:a0:result0:r110・p123:full-page:a0:result0:r110:w0・p125:full-page:a0:result0:r15・p125:full-page:a0:result0:r15:w0・p125:full-page:a0:result0:r17・p125:full-page:a0:result0:r17:w0・p125:full-page:a0:result0:r21・p125:full-page:a0:result0:r21:w0・p125:full-page:a0:result0:r23・p125:full-page:a0:result0:r23:w0・p125:full-page:a0:result0:r32・p125:full-page:a0:result0:r32:w0・p125:full-page:a0:result0:r53・p125:full-page:a0:result0:r53:w3・p125:full-page:a0:result0:r59・p125:full-page:a0:result0:r59:w0・p127:full-page:a0:result0:r15・p127:full-page:a0:result0:r15:w0・p127:full-page:a0:result0:r17・p127:full-page:a0:result0:r17:w0・p127:full-page:a0:result0:r21・p127:full-page:a0:result0:r21:w0・p127:full-page:a0:result0:r23・p127:full-page:a0:result0:r23:w0・p127:full-page:a0:result0:r32・p127:full-page:a0:result0:r32:w0・p127:full-page:a0:result0:r36・p127:full-page:a0:result0:r36:w0・p127:full-page:a0:result0:r38・p127:full-page:a0:result0:r38:w0・p127:full-page:a0:result0:r42・p127:full-page:a0:result0:r42:w0・p127:full-page:a0:result0:r44・p127:full-page:a0:result0:r44:w0・p127:full-page:a0:result0:r48・p127:full-page:a0:result0:r48:w0・p129:full-page:a0:result0:r15・p129:full-page:a0:result0:r15:w0・p129:full-page:a0:result0:r17・p129:full-page:a0:result0:r17:w0・p129:full-page:a0:result0:r21・p129:full-page:a0:result0:r21:w0・p129:full-page:a0:result0:r23・p129:full-page:a0:result0:r23:w0・p129:full-page:a0:result0:r32・p129:full-page:a0:result0:r32:w0・p129:full-page:a0:result0:r36・p129:full-page:a0:result0:r36:w0・p129:full-page:a0:result0:r45・p129:full-page:a0:result0:r45:w0・p129:full-page:a0:result0:r47・p129:full-page:a0:result0:r47:w0・p129:full-page:a0:result0:r54・p129:full-page:a0:result0:r54:w0・p129:full-page:a0:result0:r56・p129:full-page:a0:result0:r56:w0・p129:full-page:a0:result0:r60・p129:full-page:a0:result0:r60・p129:full-page:a0:result0:r60:w0・p129:full-page:a0:result0:r60:w8・p129:full-page:a0:result0:r63・p129:full-page:a0:result0:r63:w0・p129:full-page:a0:result0:r70・p129:full-page:a0:result0:r70:w0・p129:full-page:a0:result0:r72・p129:full-page:a0:result0:r72:w0・p129:full-page:a0:result0:r76・p129:full-page:a0:result0:r76:w0・p129:full-page:a0:result0:r85・p129:full-page:a0:result0:r85:w0・p129:full-page:a0:result0:r99・p129:full-page:a0:result0:r99:w0・p129:full-page:a0:result0:r105・p129:full-page:a0:result0:r105:w0・p129:full-page:a0:result0:r109・p129:full-page:a0:result0:r109:w0・p129:full-page:a0:result0:r111・p129:full-page:a0:result0:r111:w0・p130:full-page:a0:result0:r8・p130:full-page:a0:result0:r8:w1・p131:full-page:a0:result0:r21・p131:full-page:a0:result0:r21:w0・p131:full-page:a0:result0:r23・p131:full-page:a0:result0:r23:w0・p131:full-page:a0:result0:r27・p131:full-page:a0:result0:r27:w0・p131:full-page:a0:result0:r29・p131:full-page:a0:result0:r29:w0・p131:full-page:a0:result0:r33・p131:full-page:a0:result0:r33:w0・p131:full-page:a0:result0:r36・p131:full-page:a0:result0:r36:w0・p131:full-page:a0:result0:r42・p131:full-page:a0:result0:r42:w0・p131:full-page:a0:result0:r46・p131:full-page:a0:result0:r46:w0・p131:full-page:a0:result0:r48・p131:full-page:a0:result0:r48:w0・p131:full-page:a0:result0:r52・p131:full-page:a0:result0:r52:w0・p131:full-page:a0:result0:r55・p131:full-page:a0:result0:r55:w0・p131:full-page:a0:result0:r59・p131:full-page:a0:result0:r59:w0・p131:full-page:a0:result0:r61・p131:full-page:a0:result0:r61:w0・p131:full-page:a0:result0:r63・p131:full-page:a0:result0:r63:w0・p131:full-page:a0:result0:r65・p131:full-page:a0:result0:r65:w0・p131:full-page:a0:result0:r67・p131:full-page:a0:result0:r67:w0・p131:full-page:a0:result0:r69・p131:full-page:a0:result0:r69:w0・p131:full-page:a0:result0:r78・p131:full-page:a0:result0:r78:w0・p131:full-page:a0:result0:r80・p131:full-page:a0:result0:r80:w0・p131:full-page:a0:result0:r84・p131:full-page:a0:result0:r84:w0・p131:full-page:a0:result0:r86・p131:full-page:a0:result0:r86:w0・p131:full-page:a0:result0:r96・p131:full-page:a0:result0:r96:w0・p131:full-page:a0:result0:r98・p131:full-page:a0:result0:r98:w0・p131:full-page:a0:result0:r102・p131:full-page:a0:result0:r102:w0・p131:full-page:a0:result0:r105・p131:full-page:a0:result0:r105:w0・p132:full-page:a0:result0:r9・p132:full-page:a0:result0:r9:w1・p132:full-page:a0:result0:r30・p132:full-page:a0:result0:r30:w5・p133:full-page:a0:result0:r12・p133:full-page:a0:result0:r12:w0・p133:full-page:a0:result0:r26・p133:full-page:a0:result0:r26:w0・p133:full-page:a0:result0:r28・p133:full-page:a0:result0:r28:w0・p133:full-page:a0:result0:r52・p133:full-page:a0:result0:r52:w0・p133:full-page:a0:result0:r56・p133:full-page:a0:result0:r56:w6・p133:full-page:a0:result0:r61・p133:full-page:a0:result0:r61:w0・p133:full-page:a0:result0:r63・p133:full-page:a0:result0:r63:w0・p133:full-page:a0:result0:r67・p133:full-page:a0:result0:r67:w0・p133:full-page:a0:result0:r69・p133:full-page:a0:result0:r69:w0・p133:full-page:a0:result0:r79・p133:full-page:a0:result0:r79:w6・p133:full-page:a0:result0:r84・p133:full-page:a0:result0:r84:w0・p133:full-page:a0:result0:r86・p133:full-page:a0:result0:r86:w0・p133:full-page:a0:result0:r90・p133:full-page:a0:result0:r90:w0・p134:full-page:a0:result0:r8・p134:full-page:a0:result0:r8:w1・p134:full-page:a0:result0:r11・p134:full-page:a0:result0:r11:w7・p135:full-page:a0:result0:r10・p135:full-page:a0:result0:r10:w5・p135:full-page:a0:result0:r31・p135:full-page:a0:result0:r31:w0・p135:full-page:a0:result0:r39・p135:full-page:a0:result0:r39:w0・p135:full-page:a0:result0:r43・p135:full-page:a0:result0:r43:w0・p135:full-page:a0:result0:r48・p135:full-page:a0:result0:r48:w0・p135:full-page:a0:result0:r50・p135:full-page:a0:result0:r50:w0・p135:full-page:a0:result0:r52・p135:full-page:a0:result0:r52:w0・p135:full-page:a0:result0:r56・p135:full-page:a0:result0:r56:w0・p135:full-page:a0:result0:r58・p135:full-page:a0:result0:r58:w0・p135:full-page:a0:result0:r67・p135:full-page:a0:result0:r67:w0・p135:full-page:a0:result0:r72・p135:full-page:a0:result0:r72:w0・p135:full-page:a0:result0:r86・p135:full-page:a0:result0:r86:w0・p135:full-page:a0:result0:r90・p135:full-page:a0:result0:r90:w0・p135:full-page:a0:result0:r99・p135:full-page:a0:result0:r99:w0・p135:full-page:a0:result0:r103・p135:full-page:a0:result0:r103:w0・p135:full-page:a0:result0:r108・p135:full-page:a0:result0:r108:w0・p136:full-page:a0:result0:r9・p136:full-page:a0:result0:r9:w1・p137:full-page:a0:result0:r15・p137:full-page:a0:result0:r15:w0・p137:full-page:a0:result0:r22・p137:full-page:a0:result0:r22:w0・p137:full-page:a0:result0:r24・p137:full-page:a0:result0:r24:w0・p138:full-page:a0:result0:r9・p138:full-page:a0:result0:r9:w1・p139:full-page:a0:result0:r15・p139:full-page:a0:result0:r15:w0・p139:full-page:a0:result0:r17・p139:full-page:a0:result0:r17:w0・p139:full-page:a0:result0:r21・p139:full-page:a0:result0:r21:w0・p139:full-page:a0:result0:r23・p139:full-page:a0:result0:r23:w0・p139:full-page:a0:result0:r31・p139:full-page:a0:result0:r31:w0・p139:full-page:a0:result0:r40・p139:full-page:a0:result0:r40:w0・p139:full-page:a0:result0:r44・p139:full-page:a0:result0:r44:w0・p139:full-page:a0:result0:r46・p139:full-page:a0:result0:r46:w0・p139:full-page:a0:result0:r54・p139:full-page:a0:result0:r54:w0・p139:full-page:a0:result0:r57・p139:full-page:a0:result0:r57:w0・p139:full-page:a0:result0:r63・p139:full-page:a0:result0:r63:w0・p139:full-page:a0:result0:r66・p139:full-page:a0:result0:r66・p139:full-page:a0:result0:r66:w0・p139:full-page:a0:result0:r66:w2・p139:full-page:a0:result0:r74・p139:full-page:a0:result0:r74:w0・p139:full-page:a0:result0:r78・p139:full-page:a0:result0:r78:w0・p139:full-page:a0:result0:r80・p139:full-page:a0:result0:r80:w0・p139:full-page:a0:result0:r84・p139:full-page:a0:result0:r84:w0・p139:full-page:a0:result0:r93・p139:full-page:a0:result0:r93:w0・p139:full-page:a0:result0:r95・p139:full-page:a0:result0:r95:w0・p139:full-page:a0:result0:r99・p139:full-page:a0:result0:r99・p139:full-page:a0:result0:r99:w0・p139:full-page:a0:result0:r99:w2・p139:full-page:a0:result0:r102・p139:full-page:a0:result0:r102:w0・p139:full-page:a0:result0:r107・p139:full-page:a0:result0:r107:w0・p139:full-page:a0:result0:r113・p139:full-page:a0:result0:r113:w0・p139:full-page:a0:result0:r117・p139:full-page:a0:result0:r117:w0・p141:full-page:a0:result0:r8・p141:full-page:a0:result0:r8:w0・p141:full-page:a0:result0:r10・p141:full-page:a0:result0:r10:w0・p141:full-page:a0:result0:r12・p141:full-page:a0:result0:r12:w0・p141:full-page:a0:result0:r14・p141:full-page:a0:result0:r14:w0・p141:full-page:a0:result0:r18・p141:full-page:a0:result0:r18:w0・p141:full-page:a0:result0:r20・p141:full-page:a0:result0:r20:w0・p141:full-page:a0:result0:r22・p141:full-page:a0:result0:r22:w0・p141:full-page:a0:result0:r28・p141:full-page:a0:result0:r28:w0・p141:full-page:a0:result0:r30・p141:full-page:a0:result0:r30:w0・p141:full-page:a0:result0:r42・p141:full-page:a0:result0:r42:w0・p141:full-page:a0:result0:r44・p141:full-page:a0:result0:r44:w0・p141:full-page:a0:result0:r48・p141:full-page:a0:result0:r48:w0・p141:full-page:a0:result0:r50・p141:full-page:a0:result0:r50:w8・p141:full-page:a0:result0:r52・p141:full-page:a0:result0:r52:w0・p141:full-page:a0:result0:r54・p141:full-page:a0:result0:r54:w0・p141:full-page:a0:result0:r58・p141:full-page:a0:result0:r58:w0・p141:full-page:a0:result0:r62・p141:full-page:a0:result0:r62:w0・p141:full-page:a0:result0:r64・p141:full-page:a0:result0:r64:w0・p141:full-page:a0:result0:r70・p141:full-page:a0:result0:r70:w0・p141:full-page:a0:result0:r74・p141:full-page:a0:result0:r74:w0・p141:full-page:a0:result0:r76・p141:full-page:a0:result0:r76:w0・p141:full-page:a0:result0:r81・p141:full-page:a0:result0:r81:w0・p141:full-page:a0:result0:r85・p141:full-page:a0:result0:r85:w0・p142:full-page:a0:result0:r9・p142:full-page:a0:result0:r9:w1・p143:full-page:a0:result0:r15・p143:full-page:a0:result0:r15:w0・p143:full-page:a0:result0:r24・p143:full-page:a0:result0:r24:w0・p143:full-page:a0:result0:r38・p143:full-page:a0:result0:r38:w0・p143:full-page:a0:result0:r42・p143:full-page:a0:result0:r42:w0・p143:full-page:a0:result0:r44・p143:full-page:a0:result0:r44:w0・p143:full-page:a0:result0:r48・p143:full-page:a0:result0:r48:w0・p143:full-page:a0:result0:r51・p143:full-page:a0:result0:r51:w0・p143:full-page:a0:result0:r53・p143:full-page:a0:result0:r53:w0・p143:full-page:a0:result0:r57・p143:full-page:a0:result0:r57:w0・p143:full-page:a0:result0:r60・p143:full-page:a0:result0:r60:w0・p143:full-page:a0:result0:r62・p143:full-page:a0:result0:r62:w0・p143:full-page:a0:result0:r87・p143:full-page:a0:result0:r87:w0・p143:full-page:a0:result0:r95・p143:full-page:a0:result0:r95・p143:full-page:a0:result0:r95:w0・p143:full-page:a0:result0:r95:w2・p143:full-page:a0:result0:r97・p143:full-page:a0:result0:r97:w0・p143:full-page:a0:result0:r101・p143:full-page:a0:result0:r101:w0・p143:full-page:a0:result0:r103・p143:full-page:a0:result0:r103:w0・p143:full-page:a0:result0:r105・p143:full-page:a0:result0:r105:w0・p143:full-page:a0:result0:r107・p143:full-page:a0:result0:r107:w0・p143:full-page:a0:result0:r109・p143:full-page:a0:result0:r109:w0・p143:full-page:a0:result0:r111・p143:full-page:a0:result0:r111:w0・p143:full-page:a0:result0:r115・p143:full-page:a0:result0:r115:w0・p144:full-page:a0:result0:r9・p144:full-page:a0:result0:r9:w1・p145:full-page:a0:result0:r8・p145:full-page:a0:result0:r8:w0・p145:full-page:a0:result0:r10・p145:full-page:a0:result0:r10:w0・p145:full-page:a0:result0:r12・p145:full-page:a0:result0:r12:w0・p145:full-page:a0:result0:r16・p145:full-page:a0:result0:r16:w0・p145:full-page:a0:result0:r18・p145:full-page:a0:result0:r18:w0・p145:full-page:a0:result0:r22・p145:full-page:a0:result0:r22:w0・p145:full-page:a0:result0:r30・p145:full-page:a0:result0:r30:w0・p145:full-page:a0:result0:r32・p145:full-page:a0:result0:r32:w0・p145:full-page:a0:result0:r42・p145:full-page:a0:result0:r42:w0・p145:full-page:a0:result0:r44・p145:full-page:a0:result0:r44:w0・p145:full-page:a0:result0:r46・p145:full-page:a0:result0:r46:w0・p145:full-page:a0:result0:r48・p145:full-page:a0:result0:r48:w0・p145:full-page:a0:result0:r60・p145:full-page:a0:result0:r60:w0・p145:full-page:a0:result0:r62・p145:full-page:a0:result0:r62:w0・p145:full-page:a0:result0:r64・p145:full-page:a0:result0:r64:w0・p145:full-page:a0:result0:r68・p145:full-page:a0:result0:r68:w0・p145:full-page:a0:result0:r70・p145:full-page:a0:result0:r70:w0・p145:full-page:a0:result0:r72・p145:full-page:a0:result0:r72:w0・p145:full-page:a0:result0:r74・p145:full-page:a0:result0:r74:w0・p145:full-page:a0:result0:r76・p145:full-page:a0:result0:r76:w0・p145:full-page:a0:result0:r78・p145:full-page:a0:result0:r78:w0・p145:full-page:a0:result0:r98・p145:full-page:a0:result0:r98:w0・p145:full-page:a0:result0:r101・p145:full-page:a0:result0:r101:w0・p145:full-page:a0:result0:r104・p145:full-page:a0:result0:r104:w0・p145:full-page:a0:result0:r106・p145:full-page:a0:result0:r106:w0・p146:full-page:a0:result0:r9・p146:full-page:a0:result0:r9:w1・p147:full-page:a0:result0:r12・p147:full-page:a0:result0:r12:w0・p147:full-page:a0:result0:r14・p147:full-page:a0:result0:r14:w0・p147:full-page:a0:result0:r20・p147:full-page:a0:result0:r20:w0・p147:full-page:a0:result0:r22・p147:full-page:a0:result0:r22:w0・p147:full-page:a0:result0:r26・p147:full-page:a0:result0:r26:w0・p147:full-page:a0:result0:r32・p147:full-page:a0:result0:r32:w0・p147:full-page:a0:result0:r38・p147:full-page:a0:result0:r38:w0・p147:full-page:a0:result0:r46・p147:full-page:a0:result0:r46:w0・p147:full-page:a0:result0:r55・p147:full-page:a0:result0:r55:w0・p147:full-page:a0:result0:r57・p147:full-page:a0:result0:r57:w0・p147:full-page:a0:result0:r61・p147:full-page:a0:result0:r61:w0・p147:full-page:a0:result0:r63・p147:full-page:a0:result0:r63:w0・p147:full-page:a0:result0:r79・p147:full-page:a0:result0:r79:w0・p147:full-page:a0:result0:r81・p147:full-page:a0:result0:r81:w0・p147:full-page:a0:result0:r89・p147:full-page:a0:result0:r89:w0・p147:full-page:a0:result0:r92・p147:full-page:a0:result0:r92:w0・p147:full-page:a0:result0:r94・p147:full-page:a0:result0:r94:w0・p147:full-page:a0:result0:r98・p147:full-page:a0:result0:r98:w0・p147:full-page:a0:result0:r101・p147:full-page:a0:result0:r101:w0・p147:full-page:a0:result0:r107・p147:full-page:a0:result0:r107:w0・p148:full-page:a0:result0:r9・p148:full-page:a0:result0:r9:w1・p149:full-page:a0:result0:r8・p149:full-page:a0:result0:r8:w0・p149:full-page:a0:result0:r10・p149:full-page:a0:result0:r10:w0・p149:full-page:a0:result0:r12・p149:full-page:a0:result0:r12:w0・p149:full-page:a0:result0:r14・p149:full-page:a0:result0:r14:w0・p149:full-page:a0:result0:r16・p149:full-page:a0:result0:r16:w0・p149:full-page:a0:result0:r18・p149:full-page:a0:result0:r18:w0・p149:full-page:a0:result0:r20・p149:full-page:a0:result0:r20:w0・p149:full-page:a0:result0:r24・p149:full-page:a0:result0:r24:w0・p149:full-page:a0:result0:r28・p149:full-page:a0:result0:r28:w0・p149:full-page:a0:result0:r32・p149:full-page:a0:result0:r32:w0・p149:full-page:a0:result0:r41・p149:full-page:a0:result0:r41:w0・p149:full-page:a0:result0:r50・p149:full-page:a0:result0:r50:w0・p149:full-page:a0:result0:r65・p149:full-page:a0:result0:r65:w0・p149:full-page:a0:result0:r69・p149:full-page:a0:result0:r69:w0・p149:full-page:a0:result0:r75・p149:full-page:a0:result0:r75:w0・p149:full-page:a0:result0:r78・p149:full-page:a0:result0:r78:w0・p149:full-page:a0:result0:r80・p149:full-page:a0:result0:r80:w0・p149:full-page:a0:result0:r84・p149:full-page:a0:result0:r84:w0・p149:full-page:a0:result0:r86・p149:full-page:a0:result0:r86:w0・p149:full-page:a0:result0:r90・p149:full-page:a0:result0:r90:w0・p149:full-page:a0:result0:r93・p149:full-page:a0:result0:r93:w0・p149:full-page:a0:result0:r95・p149:full-page:a0:result0:r95:w0・p149:full-page:a0:result0:r99・p149:full-page:a0:result0:r99・p149:full-page:a0:result0:r99:w0・p149:full-page:a0:result0:r99:w2・p149:full-page:a0:result0:r101・p149:full-page:a0:result0:r101:w0・p149:full-page:a0:result0:r105・p149:full-page:a0:result0:r105:w0・p149:full-page:a0:result0:r108・p149:full-page:a0:result0:r108:w0・p149:full-page:a0:result0:r114・p149:full-page:a0:result0:r114:w0・p150:full-page:a0:result0:r9・p150:full-page:a0:result0:r9:w1・p151:full-page:a0:result0:r14・p151:full-page:a0:result0:r14:w0・p151:full-page:a0:result0:r16・p151:full-page:a0:result0:r16:w0・p151:full-page:a0:result0:r18・p151:full-page:a0:result0:r18:w0・p151:full-page:a0:result0:r20・p151:full-page:a0:result0:r20:w0・p151:full-page:a0:result0:r26・p151:full-page:a0:result0:r26:w0・p151:full-page:a0:result0:r28・p151:full-page:a0:result0:r28・p151:full-page:a0:result0:r28:w0・p151:full-page:a0:result0:r28:w2・p151:full-page:a0:result0:r30・p151:full-page:a0:result0:r30:w0・p151:full-page:a0:result0:r36・p151:full-page:a0:result0:r36:w0・p151:full-page:a0:result0:r38・p151:full-page:a0:result0:r38:w0・p151:full-page:a0:result0:r40・p151:full-page:a0:result0:r40:w0・p151:full-page:a0:result0:r42・p151:full-page:a0:result0:r42:w0・p151:full-page:a0:result0:r44・p151:full-page:a0:result0:r44:w0・p151:full-page:a0:result0:r48・p151:full-page:a0:result0:r48:w0・p151:full-page:a0:result0:r50・p151:full-page:a0:result0:r50:w0・p151:full-page:a0:result0:r52・p151:full-page:a0:result0:r52:w0・p151:full-page:a0:result0:r54・p151:full-page:a0:result0:r54・p151:full-page:a0:result0:r54:w0・p151:full-page:a0:result0:r54:w8・p151:full-page:a0:result0:r56・p151:full-page:a0:result0:r56:w0・p151:full-page:a0:result0:r60・p151:full-page:a0:result0:r60:w0・p151:full-page:a0:result0:r70・p151:full-page:a0:result0:r70:w0・p151:full-page:a0:result0:r76・p151:full-page:a0:result0:r76:w0・p151:full-page:a0:result0:r84・p151:full-page:a0:result0:r84:w0・p151:full-page:a0:result0:r92・p151:full-page:a0:result0:r92・p151:full-page:a0:result0:r92:w0・p151:full-page:a0:result0:r92:w5・p151:full-page:a0:result0:r94・p151:full-page:a0:result0:r94:w0・p152:full-page:a0:result0:r9・p152:full-page:a0:result0:r9:w1・p153:full-page:a0:result0:r10・p153:full-page:a0:result0:r10:w0・p153:full-page:a0:result0:r14・p153:full-page:a0:result0:r14:w0・p153:full-page:a0:result0:r16・p153:full-page:a0:result0:r16:w0・p153:full-page:a0:result0:r18・p153:full-page:a0:result0:r18:w0・p153:full-page:a0:result0:r20・p153:full-page:a0:result0:r20:w0・p153:full-page:a0:result0:r22・p153:full-page:a0:result0:r22:w0・p153:full-page:a0:result0:r24・p153:full-page:a0:result0:r24:w0・p153:full-page:a0:result0:r26・p153:full-page:a0:result0:r26:w0・p153:full-page:a0:result0:r36・p153:full-page:a0:result0:r36:w0・p153:full-page:a0:result0:r42・p153:full-page:a0:result0:r42:w0・p153:full-page:a0:result0:r46・p153:full-page:a0:result0:r46:w0・p153:full-page:a0:result0:r48・p153:full-page:a0:result0:r48:w0・p153:full-page:a0:result0:r50・p153:full-page:a0:result0:r50:w0・p153:full-page:a0:result0:r54・p153:full-page:a0:result0:r54:w0・p153:full-page:a0:result0:r56・p153:full-page:a0:result0:r56:w0・p153:full-page:a0:result0:r58・p153:full-page:a0:result0:r58:w0・p153:full-page:a0:result0:r62・p153:full-page:a0:result0:r62:w0・p153:full-page:a0:result0:r66・p153:full-page:a0:result0:r66:w0・p153:full-page:a0:result0:r80・p153:full-page:a0:result0:r80:w4・p153:full-page:a0:result0:r82・p153:full-page:a0:result0:r82・p153:full-page:a0:result0:r82:w0・p153:full-page:a0:result0:r82:w5・p153:full-page:a0:result0:r84・p153:full-page:a0:result0:r84:w0・p153:full-page:a0:result0:r86・p153:full-page:a0:result0:r86:w0・p153:full-page:a0:result0:r88・p153:full-page:a0:result0:r88:w0）・徵→徴 10 件（p114:full-page:a0:result0:r13・p114:full-page:a0:result0:r13:w0・p115:full-page:a0:result0:r66・p115:full-page:a0:result0:r66:w5・p115:full-page:a0:result0:r100・p115:full-page:a0:result0:r100:w3・p115:full-page:a0:result0:r102・p115:full-page:a0:result0:r102:w7・p116:full-page:a0:result0:r12・p116:full-page:a0:result0:r12:w4）・查→査 50 件（p101:full-page:a0:result0:r12・p101:full-page:a0:result0:r12:w4・p101:full-page:a0:result0:r57・p101:full-page:a0:result0:r57:w6・p101:full-page:a0:result0:r59・p101:full-page:a0:result0:r59:w8・p101:full-page:a0:result0:r84・p101:full-page:a0:result0:r84:w1・p101:full-page:a0:result0:r86・p101:full-page:a0:result0:r86:w6・p101:full-page:a0:result0:r88・p101:full-page:a0:result0:r88:w8・p103:full-page:a0:result0:r11・p103:full-page:a0:result0:r11:w9・p111:full-page:a0:result0:r28・p111:full-page:a0:result0:r28:w4・p117:full-page:a0:result0:r72・p117:full-page:a0:result0:r72:w11・p125:full-page:a0:result0:r30・p125:full-page:a0:result0:r30:w3・p125:full-page:a0:result0:r43・p125:full-page:a0:result0:r43:w3・p125:full-page:a0:result0:r47・p125:full-page:a0:result0:r47:w5・p125:full-page:a0:result0:r59・p125:full-page:a0:result0:r59:w6・p127:full-page:a0:result0:r27・p127:full-page:a0:result0:r27:w2・p127:full-page:a0:result0:r30・p127:full-page:a0:result0:r30:w1・p127:full-page:a0:result0:r32・p127:full-page:a0:result0:r32:w4・p127:full-page:a0:result0:r36・p127:full-page:a0:result0:r36:w6・p127:full-page:a0:result0:r38・p127:full-page:a0:result0:r38:w2・p141:full-page:a0:result0:r50・p141:full-page:a0:result0:r50:w12・p147:full-page:a0:result0:r57・p147:full-page:a0:result0:r57:w10・p147:full-page:a0:result0:r61・p147:full-page:a0:result0:r61:w10・p147:full-page:a0:result0:r63・p147:full-page:a0:result0:r63:w10・p147:full-page:a0:result0:r67・p147:full-page:a0:result0:r67:w9・p147:full-page:a0:result0:r79・p147:full-page:a0:result0:r79:w4・p151:full-page:a0:result0:r38・p151:full-page:a0:result0:r38:w7）・產→産 20 件（p101:full-page:a0:result0:r88・p101:full-page:a0:result0:r88:w4・p106:full-page:a0:result0:r25・p106:full-page:a0:result0:r25:w1・p108:full-page:a0:result0:r12・p108:full-page:a0:result0:r12:w3・p109:full-page:a0:result0:r22・p109:full-page:a0:result0:r22:w5・p109:full-page:a0:result0:r48・p109:full-page:a0:result0:r48:w4・p109:full-page:a0:result0:r54・p109:full-page:a0:result0:r54:w1・p111:full-page:a0:result0:r54・p111:full-page:a0:result0:r54:w5・p115:full-page:a0:result0:r57・p115:full-page:a0:result0:r57:w3・p117:full-page:a0:result0:r82・p117:full-page:a0:result0:r82:w4・p139:full-page:a0:result0:r61・p139:full-page:a0:result0:r61:w5）・齡→齢 14 件（p149:full-page:a0:result0:r52・p149:full-page:a0:result0:r52:w1・p151:full-page:a0:result0:r10・p151:full-page:a0:result0:r10:w1・p151:full-page:a0:result0:r32・p151:full-page:a0:result0:r32:w3・p151:full-page:a0:result0:r40・p151:full-page:a0:result0:r40:w2・p151:full-page:a0:result0:r54・p151:full-page:a0:result0:r54:w2・p151:full-page:a0:result0:r60・p151:full-page:a0:result0:r60:w2・p153:full-page:a0:result0:r52・p153:full-page:a0:result0:r52:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132080/2026/initial/expenditure/general-initial-5-nodes.parquet",
+          "sha256": "e9942c298caf8a4977b9c578383c7d7bf3730b89141788e057bffebb55f3ea03",
+          "bytes": 49252
+        },
+        "row_count": 1326
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132080/2026/initial/expenditure/general-initial-5-amounts.parquet",
+          "sha256": "a2ffa19c314834f23eea6e76b0758dad6e9abd0cc289c6441228fcad5f5a5bd7",
+          "bytes": 37181
+        },
+        "row_count": 1432
+      }
+    }
+  ]
+}

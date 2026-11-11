@@ -291,7 +291,8 @@ function Demo() {
 
 
 const SHINAGAWA = '/tokyo/shinagawa'
-const JURISDICTIONS = '/jurisdictions'
+/** 自分のまちはホームのうちのまちで選ぶ */
+const HOME_PATH = '/'
 
 /** 品川区 R8年度当初予算の分野別の割合（自治体の頁と同じ値） */
 const SHARES = [
@@ -514,7 +515,7 @@ const FAQ: [string, React.ReactNode][] = [
   [
     'どのまちが入っていますか',
     <>
-      収録するまちと年度は、順次広げています。いま入っている範囲は<Link href={JURISDICTIONS}>自治体の一覧</Link>で確かめられます。
+      収録するまちと年度は、順次広げています。いま入っている範囲は<Link href={HOME_PATH}>ホーム</Link>のまちの検索で確かめられます。
     </>,
   ],
   [
@@ -546,7 +547,7 @@ export function Landing() {
           </h1>
           <p className="sub">自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。ほかのまちと同じ物差しで比べられ、出典の資料まで辿れます。</p>
           <div className="acts">
-            <Link className="btn" href={JURISDICTIONS}>
+            <Link className="btn" href={HOME_PATH}>
               自分のまちを見る
               <ArrowRightIcon className="i" />
             </Link>
@@ -779,7 +780,7 @@ export function Landing() {
           <Dashes className="d-cta" />
           <h2 id="cta-h">あなたのまちを、のぞいてみよう。</h2>
           <p>まちの名前を選ぶだけ。登録はいりません。</p>
-          <Link className="btn" href={JURISDICTIONS}>
+          <Link className="btn" href={HOME_PATH}>
             自分のまちを見る
             <ArrowRightIcon className="i" />
           </Link>
@@ -799,9 +800,6 @@ export function Landing() {
             <ul>
               <li>
                 <Link href="/">ホーム</Link>
-              </li>
-              <li>
-                <Link href="/jurisdictions">自治体を探す</Link>
               </li>
               <li>
                 <Link href="/assistant">アシスタント</Link>

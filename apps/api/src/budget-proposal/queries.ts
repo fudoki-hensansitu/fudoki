@@ -15,7 +15,7 @@ export async function getBudgetProposal(ctx: Ctx, input: { budget_proposal_id: s
   const id = input.budget_proposal_id
   const [root, measures, origins] = await db.batch([
     db.prepare(`SELECT ${selectListOf(BUDGET_PROPOSAL_TABLE)} FROM ${BUDGET_PROPOSAL_TABLE} WHERE "budget_proposal_id" = ?`).bind(id),
-    db.prepare(`SELECT ${M.selectList} FROM ${M.table} WHERE "budget_proposal_id" = ? ORDER BY "origin_id", "page", "measure_id" LIMIT ?`).bind(id, MAX_MEASURES),
+    db.prepare(`SELECT ${M.selectList} FROM ${M.table} WHERE "budget_proposal_id" = ? ORDER BY "origin_id", "page", "position" LIMIT ?`).bind(id, MAX_MEASURES),
     db.prepare(`SELECT ${ORIGIN.selectList} FROM ${ORIGIN.table} WHERE "budget_proposal_id" = ? ORDER BY "origin_id"`).bind(id),
   ])
   const r = root!.results[0]

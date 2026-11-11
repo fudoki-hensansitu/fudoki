@@ -125,7 +125,10 @@ selected_amounts as (
 ), keyed as (
     -- A 款 identifies by its number, or by its name in an account-year declared in fiscal_kan_name_identity
     -- (no printed numbers, or numbers renumbered within the year), for every document of that account-year.
-    select n.*, case when k.jurisdiction_code is not null then 'name:' || n.kan_name else n.kan_code end as kan_key
+    -- A 款 printed without its number (a 款 the year drops, printed with no budget beside last year's: `(共同事業拠出金)`)
+    -- identifies by its name too.
+    select n.*, case when k.jurisdiction_code is not null or n.kan_code is null then 'name:' || n.kan_name
+                     else n.kan_code end as kan_key
     from siblings n
     left join {{ ref('fiscal_kan_name_identity') }} k
       on k.jurisdiction_code = n.jurisdiction_code and k.fiscal_year = n.fiscal_year and k.account_name = n.account_name

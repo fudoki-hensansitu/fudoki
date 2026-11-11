@@ -9,6 +9,7 @@
 1. 名前と額で1行に決まるもの（正規化した名前の一致、または部分一致かつ予算額が円まで一致）を先に確定する（method=name）。
 2. 残りは単語の Dice 係数で上位12件の候補を出し、Jev に「どれでもない」を含めて選ばせる。確信度 0.6 以上だけ採る（method=jev）。
 3. どれにも当たらない施策も行を残す（method=none、detail_id 空）。seed に行があれば次からは聞き直さない。
+4. 当初予算書の内訳（事業）がまだ無い年度の施策は紐付けず、seed に行を書かない（予算書を取り込んでから流し直す）。
 """
 from __future__ import annotations
 
@@ -29,7 +30,7 @@ from ingestion.lib.digit_recheck import KEY_ENV, MODEL, _post
 PIPELINE = Path(__file__).resolve().parents[2]
 SEED = PIPELINE / 'dbt/seeds/project/budget_measure_link.csv'
 SEGMENT = Path(__file__).with_name('segment.ts')
-COLUMNS = ('jurisdiction_code', 'fiscal_year', 'page', 'detail_id', 'method', 'confidence', 'model')
+COLUMNS = ('jurisdiction_code', 'fiscal_year', 'origin_id', 'page', 'position', 'detail_id', 'method', 'confidence', 'model')
 CANDIDATES = 12
 THRESHOLD = 0.6
 # どの内訳の名前にも付く語。重なりの点に数えない
@@ -90,7 +91,7 @@ def read_seed() -> dict[tuple, dict]:
     if not SEED.exists():
         return {}
     with SEED.open(encoding='utf-8') as stream:
-        return {(r['jurisdiction_code'], int(r['fiscal_year']), int(r['page'])): r for r in csv.DictReader(stream)}
+        return {(r['origin_id'], int(r['page']), int(r['position'])): r for r in csv.DictReader(stream)}
 
 
 def write_seed(rows: dict[tuple, dict]) -> None:
@@ -111,12 +112,15 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
     previous = read_seed()
     seed = {} if refresh else dict(previous)
     with duckdb.connect(str(warehouse()), read_only=True) as con:
-        items = [dict(zip(('jurisdiction_code', 'fiscal_year', 'page', 'title', 'names', 'budget_yen', 'points'), row))
+        items = [dict(zip(('jurisdiction_code', 'fiscal_year', 'origin_id', 'page', 'position', 'title', 'names', 'budget_yen',
+                           'points'), row))
                  for row in con.execute(
-                     "select o.jurisdiction_code, o.fiscal_year, p.page, p.title, p.names, p.budget_thousand * 1000, p.points"
+                     "select o.jurisdiction_code, o.fiscal_year, p.origin_id, p.page, p.position, p.title, p.names,"
+                     " p.budget_thousand * 1000, p.points"
                      " from ingestion.project_budget_measure p join ingestion.project_origin o using (origin_id)"
-                     " order by 1, 2, 3").fetchall()]
-        todo = [i for i in items if (i['jurisdiction_code'], i['fiscal_year'], i['page']) not in seed]
+                     " order by 1, 2, 3, 4, 5").fetchall()]
+        todo = [i for i in items if (i['origin_id'], i['page'], i['position']) not in seed]
+        kept = len(items) - len(todo)
         details: dict[tuple, list[dict]] = {}
         for jurisdiction, year in sorted({(i['jurisdiction_code'], i['fiscal_year']) for i in todo}):
             details[(jurisdiction, year)] = [dict(zip(('detail_id', 'name', 'kan_name', 'moku_name', 'amount_yen'), row))
@@ -124,15 +128,16 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
                 "select detail_id, name, kan_name, moku_name, amount_yen from expenditure_detail"
                 " where jurisdiction_code = ? and fiscal_year = ? and document_kind = 'initial'"
                 " and amendment_number is null and breakdown = '事業' order by detail_id", [jurisdiction, year]).fetchall()]
-            if not details[(jurisdiction, year)]:
-                raise ValueError(f'当初予算書の内訳（事業）が無い: {jurisdiction} {year}')
+        # 当初予算書の内訳（事業）がまだ無い年度は紐付けを決めず、seed に行を書かない（予算書を取り込んだら紐付ける）
+        skipped = sorted({k for k, v in details.items() if not v})
+        todo = [i for i in todo if details[(i['jurisdiction_code'], i['fiscal_year'])]]
     key = os.environ.get(KEY_ENV)
     counts = {'name': 0, 'jev': 0, 'none': 0}
     try:
         for item in todo:
             item['names'], item['points'] = json.loads(item['names']), json.loads(item['points'])
             pool = details[(item['jurisdiction_code'], item['fiscal_year'])]
-            row = {'jurisdiction_code': item['jurisdiction_code'], 'fiscal_year': item['fiscal_year'], 'page': item['page']}
+            row = {c: item[c] for c in ('jurisdiction_code', 'fiscal_year', 'origin_id', 'page', 'position')}
             found = direct(item, pool)
             if found:
                 row.update(detail_id=found['detail_id'], method='name')
@@ -149,12 +154,13 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
                 else:
                     row.update(method='none')
             counts[row['method']] += 1
-            seed[(item['jurisdiction_code'], item['fiscal_year'], item['page'])] = row
+            seed[(item['origin_id'], item['page'], item['position'])] = row
     except BaseException:
         write_seed({**previous, **seed})  # 途中で失敗したら、決まった分を足して前の行は残す
         raise
     write_seed(seed)
-    return {'linked': counts, 'kept': len(items) - len(todo)}
+    return {'linked': counts, 'kept': kept,
+            'no_initial_budget': [f'{j} {y}' for j, y in skipped]}
 
 
 def main() -> None:

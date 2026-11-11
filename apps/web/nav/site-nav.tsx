@@ -1,7 +1,7 @@
 // 全ページの左に置くサイドバー（shadcn の Sidebar）。pages/layout.tsx が置き、頁の間を移っても描き直さない
 import * as React from 'react'
 import { Link } from './link'
-import { BankIcon, ChatIcon, CircleHalfIcon, DesktopIcon, GearSixIcon, GithubLogoIcon, HouseIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
+import { ChatIcon, CircleHalfIcon, DesktopIcon, GearSixIcon, GithubLogoIcon, HouseIcon, MoonIcon, PlugIcon, RobotIcon, SidebarSimpleIcon, SunIcon, XLogoIcon } from '@phosphor-icons/react'
 import {
   Sidebar,
   SidebarContent,
@@ -23,7 +23,7 @@ import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, type Theme } from './theme'
 
-export const NAV_SECTIONS = ['home', 'jurisdictions', 'assistant'] as const
+export const NAV_SECTIONS = ['home', 'assistant'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 export type SiteNavProps = { active?: NavSection; open: boolean; theme: Theme }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
@@ -195,7 +195,6 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
   const [hidden, setHidden] = useHideOnScroll()
   const items = [
     { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
-    { href: '/jurisdictions', label: '自治体一覧', icon: <BankIcon />, active: active === 'jurisdictions' },
     { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
   ]
   return (
@@ -208,7 +207,7 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
     >
       {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
       <Separator />
-      <ul className="grid h-14 grid-cols-4">
+      <ul className="grid h-14 grid-cols-3">
         {items.map((i) => (
           <li key={i.href}>
             <NavLink
@@ -252,7 +251,6 @@ export function SiteNav({ active, open, theme: initialTheme }: SiteNavProps) {
           <SidebarContent>
             <SidebarGroup>
               <SidebarMenu>
-                <Item href="/jurisdictions" label="自治体一覧" icon={<BankIcon />} active={active === 'jurisdictions'} />
                 <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={active === 'assistant'} />
               </SidebarMenu>
             </SidebarGroup>

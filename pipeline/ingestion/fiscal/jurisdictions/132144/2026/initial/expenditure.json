@@ -1,0 +1,2424 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132144",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-1-ocr-1",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "a8041e3e2a327e2bf9dfb34516bd08a06250889eb914aac367d7ed6b2de9f589",
+          "bytes": 2279891
+        },
+        {
+          "id": "general-initial-1-ocr-2",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "b27cb9fb4e8abb32fc0892a9886978499b1d18104b46578cbb8b2481e3a74d86",
+          "bytes": 2189216
+        },
+        {
+          "id": "general-initial-1-ocr-3",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "12548aa6d0c245b45724e80e6e631ab20d6db52f2659acae2b1b36af51ccb83d",
+          "bytes": 2390739
+        },
+        {
+          "id": "general-initial-1-ocr-4",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "2a1beed5789d6952e3dfb4b76e3c30a492e244f81a14f6de1949dbf876e8bce7",
+          "bytes": 2106418
+        },
+        {
+          "id": "general-initial-1-ocr-5",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "0a0fd6ef651bd315b97a9c01a6a6535ea8c03f0723f840d52f3a53a91cfd76b7",
+          "bytes": 2057462
+        },
+        {
+          "id": "general-initial-1-ocr-6",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "7424fa7cee416304c9084523af7f09257f66e9df5ef0a85879b8d4cb747bd60c",
+          "bytes": 2411078
+        },
+        {
+          "id": "general-initial-1-ocr-7",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "0e03744cdf2d16bded92a76043a5e2d9cdcda2cb7be3bcab5c3a44f1bbfbb512",
+          "bytes": 2163766
+        },
+        {
+          "id": "general-initial-1-ocr-8",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "26b6d7590a76e017cbf868773a464050f92002716a8bda5a14f53df46be22ad9",
+          "bytes": 2264170
+        },
+        {
+          "id": "general-initial-1-ocr-9",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "03e65c1eab3da28dea7c362c817233541af31a1ff813c6fc739fbcdf303a5736",
+          "bytes": 2401696
+        },
+        {
+          "id": "general-initial-1-ocr-10",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "56fce5869a67d2c7e9cfa0ce0b35fdb7f6f19feee8501bdfe5767d0c4acc971f",
+          "bytes": 2098910
+        },
+        {
+          "id": "general-initial-1-ocr-11",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "a321900be9762176d584bbf4e28c4d7d1896089d0b95ccab8bf144e80c096cf5",
+          "bytes": 2290247
+        },
+        {
+          "id": "general-initial-1-ocr-12",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "17abe15586c6d6cce91ed0ce38ad8350e6bbe52d9b508f9c38db909b036d08ee",
+          "bytes": 2311029
+        },
+        {
+          "id": "general-initial-1-ocr-13",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "0a55a7ec2fdef2ae582ce6497ddeb53849c6c0fb2cb4a174d25b5e651ef440e4",
+          "bytes": 2023439
+        },
+        {
+          "id": "general-initial-1-ocr-14",
+          "origin_sha256": "1d9c691f9ba84d9dab64a162f592a0ecde8e9438a53d917516945b16298a9243",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              131,
+              132,
+              133,
+              134,
+              135,
+              136
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "61c7a0ed16fb1f613a9f054378ac190dd5f154a84818c5ccdc50337837215b78",
+          "bytes": 1417983
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-1",
+        "pages": [
+          [
+            1,
+            136
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true,
+                "agree_all_frames": true
+              },
+              "columns": {
+                "本年度(前年度)(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "本年・度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年・度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年・度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年・度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度(前年度)／(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "説／明": {
+                  "axis_header": "説明"
+                },
+                "金額": {
+                  "axis_header": "節"
+                },
+                "本年特国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "度の定財地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "財源源その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "内訳一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                },
+                "本年／度の財源内訳／国都支出金／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年／度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年／度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年／度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／国都支出金／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "明／説": {
+                  "axis_header": "説明"
+                },
+                "本年度の財源内内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 180,
+                "skewed": true,
+                "specks": true,
+                "bracket_marks": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true,
+                  "group_heads": [
+                    {
+                      "page": 2,
+                      "y": 165.3,
+                      "reason": "原画の「社会福祉事業協力員に要する経費 7,877」は、続く1つの事業の金額をまとめた見出しで（金額は1事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 8,
+                      "y": 386.8,
+                      "reason": "原画の「福祉サービス第三者評価受審支援事業に要する経費 5,442」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 10,
+                      "y": 277.9,
+                      "reason": "原画の「避難行動要支援者支援に要する経費 932」は、続く3つの事業の金額をまとめた見出しで（金額は3事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 22,
+                      "y": 386.1,
+                      "reason": "原画の「自立支援給付関連事業に要する経費 10,108」は、続く4つの事業の金額をまとめた見出しで（金額は4事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 24,
+                      "y": 202.8,
+                      "reason": "原画の「自立支援給付事業に要する経費 3,260,529」は、続く6つの事業の金額をまとめた見出しで（金額は6事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 26,
+                      "y": 221.7,
+                      "reason": "原画の「地域生活支援事業に要する経費(必須事業) 207,518」は、続く9つの事業の金額をまとめた見出しで（金額は9事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 28,
+                      "y": 387.3,
+                      "reason": "原画の「地域生活支援事業に要する経費(任意事業) 17,669」は、続く5つの事業の金額をまとめた見出しで（金額は5事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 30,
+                      "y": 386.3,
+                      "reason": "原画の「障害者(児)支援給付等加算事業 264,734」は、続く4つの事業の金額をまとめた見出しで（金額は4事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 32,
+                      "y": 617.9,
+                      "reason": "原画の「障害者手当に要する経費 275,735」は、続く3つの事業の金額をまとめた見出しで（金額は3事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 50,
+                      "y": 306.9,
+                      "reason": "原画の「幼児教育・保育無償化事務に要する経費 538」は、続く1つの事業の金額をまとめた見出しで（金額は1事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 50,
+                      "y": 451.6,
+                      "reason": "原画の「特定教育・保育施設に要する経費 8,343,201」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 54,
+                      "y": 202.5,
+                      "reason": "原画の「民設民営保育所整備に要する経費 298,622」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 72,
+                      "y": 503.0,
+                      "reason": "原画の「保健センター維持管理に要する経費 9,132」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 78,
+                      "y": 413.5,
+                      "reason": "原画の「成人健康教育相談に要する経費 473」は、続く1つの事業の金額をまとめた見出しで（金額は1事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 78,
+                      "y": 539.4,
+                      "reason": "原画の「成人健康診査に要する経費 405,090」は、続く4つの事業の金額をまとめた見出しで（金額は4事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 88,
+                      "y": 685.6,
+                      "reason": "原画の「塵芥処理に要する経費 1,465,648」は、続く事業（0140950 可燃ごみ共同処理事業関係経費から）の金額をまとめた見出しで（金額は事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 90,
+                      "y": 500.6,
+                      "reason": "原画の「塵芥収集に要する経費 1,342,254」は、続く事業（0141600 事業系ごみ収集関係経費から）の金額をまとめた見出しで、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 92,
+                      "y": 636.9,
+                      "reason": "原画の「ごみ減量化及び再利用推進に要する経費 319,291」は、続く事業（0141920 廃棄物の減量及び再利用推進事業に要する経費から）の金額をまとめた見出しで、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 120,
+                      "y": 346.0,
+                      "reason": "原画の「都市公園維持管理に要する経費 96,166」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 122,
+                      "y": 617.0,
+                      "reason": "原画の「市民防災に要する経費 7,492」は、続く4つの事業の金額をまとめた見出しで（金額は4事業の和）、事業と同じ位置から印字されている。"
+                    }
+                  ],
+                  "opening_bracket_ink": true,
+                  "column_edge": true,
+                  "line_starts": [
+                    {
+                      "page": 132,
+                      "y": 733.1,
+                      "shift": -2.9,
+                      "reason": "原画の「三市地区消防連絡協議会負担金」は上の行と同じ位置から始まる。OCR が名前の始まりを 3pt 右に置いた。"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p2-drop-r0",
+            "page": 2,
+            "observation_id": "p2:ink-9:a9:result0:r0",
+            "observed": "1",
+            "reason": "原画の貸付金の金額は 1。OCR が同じ字を2度読み（ink-9 は ink-10 の中の同じ字）、11 になるので内側の読みを除く。"
+          },
+          {
+            "id": "p4-stacked-r15",
+            "page": 4,
+            "observation_id": "p4:full-page:a0:result0:r15",
+            "observed": "111",
+            "reason": "原画では上下2行の金額（1・1）。OCR が縦に並んだ数字を1語「111」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p4-drop-r14",
+            "page": 4,
+            "observation_id": "p4:full-page:a0:result0:r14",
+            "observed": "(",
+            "reason": "原画は「01 報酬 ( 1)」。閉じ括弧が下の行の金額と1語に読まれて消えたので、開き括弧だけが名前に残る。この読みを除き、金額 1 は amount_readings で読む。"
+          },
+          {
+            "id": "p4-stacked-r104",
+            "page": 4,
+            "observation_id": "p4:full-page:a0:result0:r104",
+            "observed": "48",
+            "reason": "原画では上下2行の金額（4・8）。OCR が縦に並んだ数字を1語「48」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p16-drop-r108",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r108",
+            "observed": "2",
+            "reason": "原画のこの位置に金額は無い（高さ 3pt に足りない汚れの点）。OCR が 2 と読んだので除く。"
+          },
+          {
+            "id": "p24-drop-r1",
+            "page": 24,
+            "observation_id": "p24:ink-15:a15:result0:r1",
+            "observed": "- - - -",
+            "reason": "原画では事業の区切りの点線。OCR が文字の「-」と読んだので除く。"
+          },
+          {
+            "id": "p24-drop-r1-ink-16",
+            "page": 24,
+            "observation_id": "p24:ink-16:a16:result0:r1",
+            "observed": "-",
+            "reason": "原画では事業の区切りの点線。OCR が文字の「-」と読んだので除く。"
+          },
+          {
+            "id": "p30-stacked-r11",
+            "page": 30,
+            "observation_id": "p30:full-page:a0:result0:r11",
+            "observed": "11",
+            "reason": "原画では上下2行の金額（1・1）。OCR が縦に並んだ数字を1語「11」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p50-stacked-r8",
+            "page": 50,
+            "observation_id": "p50:full-page:a0:result0:r8",
+            "observed": "55",
+            "reason": "原画では上下2行の金額（5・5）。OCR が縦に並んだ数字を1語「55」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p61-drop-r30",
+            "page": 61,
+            "observation_id": "p61:full-page:a0:result0:r30",
+            "observed": "4",
+            "reason": "原画のこの位置に金額は無い（高さ 1pt ほどの汚れの点）。OCR が 4 と読んだので除く。"
+          },
+          {
+            "id": "p84-stacked-r91",
+            "page": 84,
+            "observation_id": "p84:full-page:a0:result0:r91",
+            "observed": "32",
+            "reason": "原画では上下2行の金額（3・2）。OCR が縦に並んだ数字を1語「32」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p98-drop-r109",
+            "page": 98,
+            "observation_id": "p98:full-page:a0:result0:r109",
+            "observed": "6",
+            "reason": "原画では「0143200 経済課」の行に金額は無い（汚れの点）。OCR が 6 と読んだので除く。"
+          },
+          {
+            "id": "p120-drop-r1",
+            "page": 120,
+            "observation_id": "p120:ink-6:a6:result0:r1",
+            "observed": "- - -",
+            "reason": "原画では事業の区切りの点線。OCR が文字の「-」と読んだので除く。"
+          },
+          {
+            "id": "p132-drop-r60",
+            "page": 132,
+            "observation_id": "p132:full-page:a0:result0:r60",
+            "observed": "4",
+            "reason": "原画の交際費の金額は 300。金額の左の汚れの点を OCR が 4 と読み 4300 になるので除く。"
+          },
+          {
+            "id": "p85-split-r31",
+            "page": 85,
+            "observation_id": "p85:full-page:a0:result0:r31",
+            "observed": "4, 123)",
+            "reason": "原画は公害対策費の比較「(△4,123)」（本年度 63,247 − 前年度 67,370）。OCR が △ を読まず、桁区切りの後に空白を入れて2語に割ったので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p95-header-moku",
+            "page": 95,
+            "observation_id": "p95:full-page:a0:result0:r39",
+            "observed": "目",
+            "reason": "頁の中ほどから始まる労働費の表の見出し「目」。この表の上の横罫の左端がかすれて見出しの行として読めず、目の名前に読まれるので、この読みを除く。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p4-stacked-r15-1",
+            "page": 4,
+            "boxes": [
+              [
+                548.7,
+                191.8,
+                562.6,
+                202.9
+              ]
+            ],
+            "amount": "1",
+            "reason": "原画で確かめた1行目の金額 1。OCR が上下の行の数字を1語「111」と読んでいた。"
+          },
+          {
+            "id": "p4-stacked-r15-2",
+            "page": 4,
+            "boxes": [
+              [
+                548.7,
+                203.5,
+                562.6,
+                210.5
+              ]
+            ],
+            "amount": "1",
+            "reason": "原画で確かめた2行目の金額 1。OCR が上下の行の数字を1語「111」と読んでいた。"
+          },
+          {
+            "id": "p4-stacked-r104-1",
+            "page": 4,
+            "boxes": [
+              [
+                551.3,
+                669.3,
+                561.1,
+                677.0
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた1行目の金額 4。OCR が上下の行の数字を1語「48」と読んでいた。"
+          },
+          {
+            "id": "p4-stacked-r104-2",
+            "page": 4,
+            "boxes": [
+              [
+                551.3,
+                678.0,
+                561.1,
+                686.7
+              ]
+            ],
+            "amount": "8",
+            "reason": "原画で確かめた2行目の金額 8。OCR が上下の行の数字を1語「48」と読んでいた。"
+          },
+          {
+            "id": "p30-stacked-r11-1",
+            "page": 30,
+            "boxes": [
+              [
+                551.3,
+                165.2,
+                560.2,
+                172.0
+              ]
+            ],
+            "amount": "1",
+            "reason": "原画で確かめた1行目の金額 1。OCR が上下の行の数字を1語「11」と読んでいた。"
+          },
+          {
+            "id": "p30-stacked-r11-2",
+            "page": 30,
+            "boxes": [
+              [
+                551.3,
+                173.0,
+                560.2,
+                182.4
+              ]
+            ],
+            "amount": "1",
+            "reason": "原画で確かめた2行目の金額 1。OCR が上下の行の数字を1語「11」と読んでいた。"
+          },
+          {
+            "id": "p50-stacked-r8-1",
+            "page": 50,
+            "boxes": [
+              [
+                550.6,
+                139.0,
+                565.0,
+                150.1
+              ]
+            ],
+            "amount": "5",
+            "reason": "原画で確かめた1行目の金額 5。OCR が上下の行の数字を1語「55」と読んでいた。"
+          },
+          {
+            "id": "p50-stacked-r8-2",
+            "page": 50,
+            "boxes": [
+              [
+                550.6,
+                151.1,
+                565.0,
+                162.2
+              ]
+            ],
+            "amount": "5",
+            "reason": "原画で確かめた2行目の金額 5。OCR が上下の行の数字を1語「55」と読んでいた。"
+          },
+          {
+            "id": "p84-stacked-r91-1",
+            "page": 84,
+            "boxes": [
+              [
+                551.3,
+                502.2,
+                561.1,
+                509.5
+              ]
+            ],
+            "amount": "3",
+            "reason": "原画で確かめた1行目の金額 3。OCR が上下の行の数字を1語「32」と読んでいた。"
+          },
+          {
+            "id": "p84-stacked-r91-2",
+            "page": 84,
+            "boxes": [
+              [
+                551.3,
+                510.5,
+                561.1,
+                518.4
+              ]
+            ],
+            "amount": "2",
+            "reason": "原画で確かめた2行目の金額 2。OCR が上下の行の数字を1語「32」と読んでいた。"
+          },
+          {
+            "id": "p85-split-r31-1",
+            "page": 85,
+            "boxes": [
+              [
+                168.9,
+                166.0,
+                206.6,
+                175.9
+              ]
+            ],
+            "amount": "△4,123",
+            "reason": "原画で確かめた公害対策費の比較 △4,123。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p132-santama-shobo",
+            "page": 132,
+            "observation_id": "p132:full-page:a0:result0:r151",
+            "observed_name": "多摩地区消防運営協議会負担金",
+            "corrected_name": "三多摩地区消防運営協議会負担金",
+            "reason": "原画は「三多摩地区消防運営協議会負担金」。Paddle は頭の「三」を読まなかった。"
+          }
+        ],
+        "amount_corrections": [
+          {
+            "id": "p39-kokuho-hikaku",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result0:r45",
+            "observed_amount": "19,438)",
+            "corrected_amount": "△19,438",
+            "reason": "原画の国民健康保険事業費の比較は「(△19,438)」（本年度 1,221,334 − 前年度 1,240,772）。OCR が △ を読まなかった。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-6",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-6-ocr-1",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "01aa570ea37e1f40f6fd85399d87b48a5f90bf0acb30ea9b5e6f873842b40441",
+          "bytes": 2021845
+        },
+        {
+          "id": "general-initial-6-ocr-2",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "8b661ee0372ac02adaf48e1eab9ba1c0141fd7f396b1856d6ca28c6cfb83d9b3",
+          "bytes": 2264561
+        },
+        {
+          "id": "general-initial-6-ocr-3",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "fa75f9df9c14543bcc5eab3d430878d88b6431f9bcf7be96ad68f952729953b4",
+          "bytes": 2244567
+        },
+        {
+          "id": "general-initial-6-ocr-4",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "4e4f86cd29c80e89c2e79fa10efcd8eb2128957113071f4c67791d85bb2e372f",
+          "bytes": 2389711
+        },
+        {
+          "id": "general-initial-6-ocr-5",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              130,
+              131,
+              132,
+              133,
+              134,
+              135,
+              136,
+              137,
+              138,
+              139
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "c8937d9c09f897961b671898f1aac4fbaf5e2cf8f5f87c6b0e2ee2b0e0a1ff53",
+          "bytes": 1850206
+        },
+        {
+          "id": "general-initial-6-ocr-6",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              140,
+              141,
+              142,
+              143,
+              144,
+              145,
+              146,
+              147,
+              148,
+              149
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "8810831e2b25e824514e0766c02439b9bce6e8c365bfdb4bec5fc89d132e942d",
+          "bytes": 1906335
+        },
+        {
+          "id": "general-initial-6-ocr-7",
+          "origin_sha256": "ded0d4b1ebcb24c5ef66f28fe40e8677e5afa5279bd7859a28bbb3e4b752f2e7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              150,
+              151,
+              152,
+              153
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "b82294ba27af92a056e18cebf65ce328c4be53fe8a15e555e214ae3ddbccdc38",
+          "bytes": 667987
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-6",
+        "pages": [
+          [
+            90,
+            153
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true,
+                "agree_all_frames": true
+              },
+              "columns": {
+                "本年度(前年度)(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "本年・度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年・度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年・度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年・度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度(前年度)／(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "説／明": {
+                  "axis_header": "説明"
+                },
+                "金額": {
+                  "axis_header": "節"
+                },
+                "本年特国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "度の定財地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "財源源その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "内訳一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                },
+                "本年／度の財源内訳／国都支出金／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年／度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年／度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年／度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／国都支出金／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "明／説": {
+                  "axis_header": "説明"
+                },
+                "本年度の財源内内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 180,
+                "skewed": true,
+                "specks": true,
+                "bracket_marks": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true,
+                  "opening_bracket_ink": true,
+                  "column_edge": true,
+                  "group_heads": [
+                    {
+                      "page": 97,
+                      "y": 649.6,
+                      "reason": "原画の「職員人事管理に要する経費 117,168」は、続く5つの事業の金額をまとめた見出しで（金額は5事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 101,
+                      "y": 526.0,
+                      "reason": "原画の「法令等追録に要する経費 5,001」は、続く5つの事業の金額をまとめた見出しで（金額は5事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 107,
+                      "y": 202.5,
+                      "reason": "原画の「庁舎維持管理に要する経費 403,184」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 111,
+                      "y": 687.5,
+                      "reason": "原画の「まちの魅力発信に要する経費 30,349」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 113,
+                      "y": 434.3,
+                      "reason": "原画の「姉妹都市等交流事業に要する経費 2,764」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 129,
+                      "y": 568.7,
+                      "reason": "原画の「国庫支出金等超過収入額返還金 10」は、続く10つの事業の金額をまとめた見出しで（金額は10事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 131,
+                      "y": 531.8,
+                      "reason": "原画の「公共施設使用料等返還金 399」は、続く5つの事業の金額をまとめた見出しで（金額は5事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 141,
+                      "y": 473.5,
+                      "reason": "原画の「住民基本台帳に要する経費 69,451」は、続く1つの事業の金額をまとめた見出しで（金額は1事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 151,
+                      "y": 357.5,
+                      "reason": "原画の「基幹統計調査等に要する経費 7,118」は、続く3つの事業の金額をまとめた見出しで（金額は3事業の和）、事業と同じ位置から印字されている。"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p91-stacked-r87",
+            "page": 91,
+            "observation_id": "p91:full-page:a0:result0:r87",
+            "observed": "95",
+            "reason": "原画では上下2行の金額（9・5）。OCR が縦に並んだ数字を1語「95」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p103-stacked-r107",
+            "page": 103,
+            "observation_id": "p103:full-page:a0:result0:r107",
+            "observed": "44",
+            "reason": "原画では上下2行の金額（4・4）。OCR が縦に並んだ数字を1語「44」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p91-stacked-r87-1",
+            "page": 91,
+            "boxes": [
+              [
+                552.5,
+                426.6,
+                562.6,
+                434.7
+              ]
+            ],
+            "amount": "9",
+            "reason": "原画で確かめた1行目の金額 9。OCR が上下の行の数字を1語「95」と読んでいた。"
+          },
+          {
+            "id": "p91-stacked-r87-2",
+            "page": 91,
+            "boxes": [
+              [
+                552.5,
+                435.7,
+                562.6,
+                443.7
+              ]
+            ],
+            "amount": "5",
+            "reason": "原画で確かめた2行目の金額 5。OCR が上下の行の数字を1語「95」と読んでいた。"
+          },
+          {
+            "id": "p103-stacked-r107-1",
+            "page": 103,
+            "boxes": [
+              [
+                553.5,
+                674.3,
+                565.9,
+                684.8
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた1行目の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p103-stacked-r107-2",
+            "page": 103,
+            "boxes": [
+              [
+                553.5,
+                685.8,
+                565.9,
+                696.4
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた2行目の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-6"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-7",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "fbb278519c3f4bf31ed13211abac51120628e0a041cf678a9271c7252976bbfe"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-7-ocr-1",
+          "origin_sha256": "fbb278519c3f4bf31ed13211abac51120628e0a041cf678a9271c7252976bbfe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "b085b73e36a07d325cf1b3ea23a13f58f854e77b82db87d27a193cecc1d14e88",
+          "bytes": 2288008
+        },
+        {
+          "id": "general-initial-7-ocr-2",
+          "origin_sha256": "fbb278519c3f4bf31ed13211abac51120628e0a041cf678a9271c7252976bbfe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "814f3e89b2818cd6eb2008dde8278b30f01ddec1f82d972ed21c08a5ce8a5f0b",
+          "bytes": 2343189
+        },
+        {
+          "id": "general-initial-7-ocr-3",
+          "origin_sha256": "fbb278519c3f4bf31ed13211abac51120628e0a041cf678a9271c7252976bbfe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "a2dd927b6fdb40458861c4fb781de48d5f0b1467c69824bb15568ffbc766a5c2",
+          "bytes": 2030062
+        },
+        {
+          "id": "general-initial-7-ocr-4",
+          "origin_sha256": "fbb278519c3f4bf31ed13211abac51120628e0a041cf678a9271c7252976bbfe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "c767449b53911bfa371cebaf759d26be896591f232a939dddb0dcbc0a41109e1",
+          "bytes": 2432845
+        },
+        {
+          "id": "general-initial-7-ocr-5",
+          "origin_sha256": "fbb278519c3f4bf31ed13211abac51120628e0a041cf678a9271c7252976bbfe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "7694a876f59ff95e51c74b953a8609694b2d3768f3bd9c89f344df15ea47e1e8",
+          "bytes": 2100457
+        },
+        {
+          "id": "general-initial-7-ocr-6",
+          "origin_sha256": "fbb278519c3f4bf31ed13211abac51120628e0a041cf678a9271c7252976bbfe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              51,
+              52,
+              53,
+              54,
+              55,
+              56
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "0ba209f87e14b3c574ffa4075cdc6ab9539a4bf063850280c71d650301886d7a",
+          "bytes": 1049472
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-7",
+        "pages": [
+          [
+            1,
+            56
+          ]
+        ],
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true,
+                "agree_all_frames": true
+              },
+              "columns": {
+                "本年度(前年度)(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "本年・度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年・度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年・度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年・度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度(前年度)／(比較)": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ]
+                },
+                "説／明": {
+                  "axis_header": "説明"
+                },
+                "金額": {
+                  "axis_header": "節"
+                },
+                "本年特国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "度の定財地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "財源源その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "内訳一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "節／区分": {
+                  "axis_header": "節"
+                },
+                "本年／度の財源内訳／国都支出金／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年／度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年／度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年／度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／国都支出金／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "年度の財源内訳／本／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "明／説": {
+                  "axis_header": "説明"
+                },
+                "本年度の財源内内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 180,
+                "skewed": true,
+                "specks": true,
+                "bracket_marks": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true,
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true,
+                  "opening_bracket_ink": true,
+                  "column_edge": true,
+                  "group_heads": [
+                    {
+                      "page": 2,
+                      "y": 355.4,
+                      "reason": "原画の「教育委員会事務局運営に要する経費 835,326」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 4,
+                      "y": 469.1,
+                      "reason": "原画の「教育指導関係の諸行事に要する経費 46,156」は、続く3つの事業の金額をまとめた見出しで（金額は3事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 6,
+                      "y": 217.4,
+                      "reason": "原画の「教育研究指導に要する経費 158,468」は、続く6つの事業の金額をまとめた見出しで（金額は6事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 14,
+                      "y": 161.7,
+                      "reason": "原画の「小学校の運営に要する経費 185,556」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 16,
+                      "y": 210.2,
+                      "reason": "原画の「小学校の施設維持管理に要する経費 215,189」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 16,
+                      "y": 626.6,
+                      "reason": "原画の「小学校の普通学級運営に要する経費 83,417」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 18,
+                      "y": 347.5,
+                      "reason": "原画の「小学校の特別支援学級運営に要する経費 73,817」は、続く3つの事業の金額をまとめた見出しで（金額は3事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 18,
+                      "y": 754.5,
+                      "reason": "原画の「小学校の保健衛生に要する経費 71,247」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 20,
+                      "y": 538.5,
+                      "reason": "原画の「小学校の給食に要する経費 878,345」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 24,
+                      "y": 162.7,
+                      "reason": "原画の「中学校の運営に要する経費 109,120」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 26,
+                      "y": 181.4,
+                      "reason": "原画の「中学校の施設維持管理に要する経費 143,236」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 26,
+                      "y": 607.6,
+                      "reason": "原画の「中学校の普通学級運営に要する経費 55,459」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 28,
+                      "y": 200.4,
+                      "reason": "原画の「中学校の特別支援学級運営に要する経費 10,500」は、続く3つの事業の金額をまとめた見出しで（金額は3事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 28,
+                      "y": 539.0,
+                      "reason": "原画の「中学校の保健衛生に要する経費 33,138」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 40,
+                      "y": 318.9,
+                      "reason": "原画の「青少年地域活動振興に要する経費 71,476」は、続く3つの事業の金額をまとめた見出しで（金額は3事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 46,
+                      "y": 561.5,
+                      "reason": "原画の「図書館事業に要する経費 140,565」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 54,
+                      "y": 240.7,
+                      "reason": "原画の「借入金利子支払費 265,990」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p12-stacked-r53",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r53",
+            "observed": "44",
+            "reason": "原画では上下2行の金額（4・4）。OCR が縦に並んだ数字を1語「44」と読んだので、この読みを除き、行ごとの金額を amount_readings で読む。"
+          },
+          {
+            "id": "p3-split-r38",
+            "page": 3,
+            "observation_id": "p3:full-page:a0:result0:r38",
+            "observed": "304, 736)",
+            "reason": "原画は「304,736)」。OCR が桁区切りの後に空白を入れて読み、金額が2語に割れるので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p14-split-r110",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r110",
+            "observed": "14, 518)",
+            "reason": "原画は「14,518)」。OCR が桁区切りの後に空白を入れて読み、金額が2語に割れるので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p18-split-r57",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r57",
+            "observed": "33, 165)",
+            "reason": "原画は「33,165)」。OCR が桁区切りの後に空白を入れて読み、金額が2語に割れるので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p18-split-r67",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r67",
+            "observed": "62, 192)",
+            "reason": "原画は「62,192)」。OCR が桁区切りの後に空白を入れて読み、金額が2語に割れるので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p22-split-r33",
+            "page": 22,
+            "observation_id": "p22:full-page:a0:result0:r33",
+            "observed": "10, 148)",
+            "reason": "原画は「10,148)」。OCR が桁区切りの後に空白を入れて読み、金額が2語に割れるので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p27-split-r44",
+            "page": 27,
+            "observation_id": "p27:full-page:a0:result0:r44",
+            "observed": "344, 156)",
+            "reason": "原画は「344,156)」。OCR が桁区切りの後に空白を入れて読み、金額が2語に割れるので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p32-split-r17",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r17",
+            "observed": "58, 338)",
+            "reason": "原画は「58,338)」。OCR が桁区切りの後に空白を入れて読み、金額が2語に割れるので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p32-split-r34",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r34",
+            "observed": "41, 338)",
+            "reason": "原画は「41,338)」。OCR が桁区切りの後に空白を入れて読み、金額が2語に割れるので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p38-split-r87",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result0:r87",
+            "observed": "145, 775)",
+            "reason": "原画は「145,775)」。OCR が桁区切りの後に空白を入れて読み、金額が2語に割れるので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p40-split-r39",
+            "page": 40,
+            "observation_id": "p40:full-page:a0:result0:r39",
+            "observed": "138, 289)",
+            "reason": "原画は「138,289)」。OCR が桁区切りの後に空白を入れて読み、金額が2語に割れるので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p44-split-r122",
+            "page": 44,
+            "observation_id": "p44:full-page:a0:result0:r122",
+            "observed": "142, 798)",
+            "reason": "原画は「142,798)」。OCR が桁区切りの後に空白を入れて読み、金額が2語に割れるので、この読みを除き amount_readings で読む。"
+          },
+          {
+            "id": "p48-bracket-ink9",
+            "page": 48,
+            "observation_id": "p48:ink-9:a9:result0:r0",
+            "observed": "7",
+            "reason": "原画は「( 33)」の開き括弧。読み直したインクが括弧を「7」と読み、「33」と並んで 733 になるので、この読みを除く。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p12-stacked-r53-1",
+            "page": 12,
+            "boxes": [
+              [
+                553.0,
+                360.4,
+                567.6,
+                371.7
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた1行目の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p12-stacked-r53-2",
+            "page": 12,
+            "boxes": [
+              [
+                553.0,
+                372.7,
+                567.6,
+                383.9
+              ]
+            ],
+            "amount": "4",
+            "reason": "原画で確かめた2行目の金額 4。OCR が上下の行の数字を1語「44」と読んでいた。"
+          },
+          {
+            "id": "p3-split-r38-1",
+            "page": 3,
+            "boxes": [
+              [
+                167.9,
+                461.7,
+                206.8,
+                470.4
+              ]
+            ],
+            "amount": "304,736",
+            "reason": "桁区切りの後の空白で割れた金額を1語で読む。"
+          },
+          {
+            "id": "p14-split-r110-1",
+            "page": 14,
+            "boxes": [
+              [
+                529.9,
+                510.4,
+                564.7,
+                518.8
+              ]
+            ],
+            "amount": "14,518",
+            "reason": "桁区切りの後の空白で割れた金額を1語で読む。"
+          },
+          {
+            "id": "p18-split-r57-1",
+            "page": 18,
+            "boxes": [
+              [
+                528.7,
+                318.9,
+                563.5,
+                327.1
+              ]
+            ],
+            "amount": "33,165",
+            "reason": "桁区切りの後の空白で割れた金額を1語で読む。"
+          },
+          {
+            "id": "p18-split-r67-1",
+            "page": 18,
+            "boxes": [
+              [
+                529.0,
+                393.8,
+                563.8,
+                404.1
+              ]
+            ],
+            "amount": "62,192",
+            "reason": "桁区切りの後の空白で割れた金額を1語で読む。"
+          },
+          {
+            "id": "p22-split-r33-1",
+            "page": 22,
+            "boxes": [
+              [
+                529.5,
+                261.0,
+                562.3,
+                269.0
+              ]
+            ],
+            "amount": "10,148",
+            "reason": "桁区切りの後の空白で割れた金額を1語で読む。"
+          },
+          {
+            "id": "p27-split-r44-1",
+            "page": 27,
+            "boxes": [
+              [
+                165.5,
+                530.5,
+                204.6,
+                538.8
+              ]
+            ],
+            "amount": "344,156",
+            "reason": "桁区切りの後の空白で割れた金額を1語で読む。"
+          },
+          {
+            "id": "p32-split-r17-1",
+            "page": 32,
+            "boxes": [
+              [
+                528.0,
+                190.5,
+                561.6,
+                199.9
+              ]
+            ],
+            "amount": "58,338",
+            "reason": "桁区切りの後の空白で割れた金額を1語で読む。"
+          },
+          {
+            "id": "p32-split-r34-1",
+            "page": 32,
+            "boxes": [
+              [
+                528.0,
+                249.8,
+                560.9,
+                258.2
+              ]
+            ],
+            "amount": "41,338",
+            "reason": "桁区切りの後の空白で割れた金額を1語で読む。"
+          },
+          {
+            "id": "p38-split-r87-1",
+            "page": 38,
+            "boxes": [
+              [
+                523.9,
+                510.8,
+                563.1,
+                518.8
+              ]
+            ],
+            "amount": "145,775",
+            "reason": "桁区切りの後の空白で割れた金額を1語で読む。"
+          },
+          {
+            "id": "p40-split-r39-1",
+            "page": 40,
+            "boxes": [
+              [
+                522.3,
+                271.1,
+                561.4,
+                279.4
+              ]
+            ],
+            "amount": "138,289",
+            "reason": "桁区切りの後の空白で割れた金額を1語で読む。"
+          },
+          {
+            "id": "p44-split-r122-1",
+            "page": 44,
+            "boxes": [
+              [
+                523.0,
+                626.3,
+                561.4,
+                635.0
+              ]
+            ],
+            "amount": "142,798",
+            "reason": "桁区切りの後の空白で割れた金額を1語で読む。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-7"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial-1",
+      "conversion_id": "general-initial-1",
+      "input_fingerprint": "e414ddd30c537b97a4b4d1368fe46ec3af391bd76508151beb7aa1c69bfa5e3c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は column mark 68頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（71 件）を、印字された語から辞書の見出しに寄せた: 明／説→説明・説／明→説明。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 132頁 多摩地区消防運営協議会負担金→三多摩地区消防運営協議会負担金。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 100 件（p3:full-page:a0:result0:r2・p3:full-page:a0:result0:r2:w1・p4:full-page:a0:result0:r21・p4:full-page:a0:result0:r21:w5・p10:full-page:a0:result0:r52・p10:full-page:a0:result0:r52:w6・p12:full-page:a0:result0:r130・p12:full-page:a0:result0:r130:w6・p16:full-page:a0:result0:r72・p16:full-page:a0:result0:r72:w9・p18:full-page:a0:result0:r104・p18:full-page:a0:result0:r104:w4・p24:full-page:a0:result0:r70・p24:full-page:a0:result0:r70:w4・p36:full-page:a0:result0:r22・p36:full-page:a0:result0:r22:w2・p36:full-page:a0:result0:r77・p36:full-page:a0:result0:r77:w5・p48:full-page:a0:result0:r124・p48:full-page:a0:result0:r124:w6・p50:full-page:a0:result0:r85・p50:full-page:a0:result0:r85:w10・p50:full-page:a0:result0:r88・p50:full-page:a0:result0:r88:w10・p52:full-page:a0:result0:r103・p52:full-page:a0:result0:r103:w2・p52:full-page:a0:result0:r110・p52:full-page:a0:result0:r110:w2・p52:full-page:a0:result0:r112・p52:full-page:a0:result0:r112:w2・p54:full-page:a0:result0:r90・p54:full-page:a0:result0:r90:w6・p70:full-page:a0:result0:r16・p70:full-page:a0:result0:r16:w2・p72:full-page:a0:result0:r50・p72:full-page:a0:result0:r50・p72:full-page:a0:result0:r50:w2・p72:full-page:a0:result0:r50:w17・p72:full-page:a0:result0:r57・p72:full-page:a0:result0:r57:w4・p72:full-page:a0:result0:r59・p72:full-page:a0:result0:r59:w4・p72:full-page:a0:result0:r63・p72:full-page:a0:result0:r63:w4・p78:full-page:a0:result0:r73・p78:full-page:a0:result0:r73:w2・p80:full-page:a0:result0:r105・p80:full-page:a0:result0:r105:w6・p84:full-page:a0:result0:r25・p84:full-page:a0:result0:r25:w3・p92:full-page:a0:result0:r16・p92:full-page:a0:result0:r16・p92:full-page:a0:result0:r16・p92:full-page:a0:result0:r16・p92:full-page:a0:result0:r16:w7・p92:full-page:a0:result0:r16:w10・p92:full-page:a0:result0:r16:w13・p92:full-page:a0:result0:r16:w16・p100:full-page:a0:result0:r37・p100:full-page:a0:result0:r37:w2・p100:full-page:a0:result0:r76・p100:full-page:a0:result0:r76:w2・p104:full-page:a0:result0:r17・p104:full-page:a0:result0:r17:w3・p112:full-page:a0:result0:r127・p112:full-page:a0:result0:r127:w9・p112:full-page:a0:result0:r135・p112:full-page:a0:result0:r135:w2・p116:full-page:a0:result0:r106・p116:full-page:a0:result0:r106:w2・p120:full-page:a0:result0:r28・p120:full-page:a0:result0:r28:w2・p120:full-page:a0:result0:r82・p120:full-page:a0:result0:r82・p120:full-page:a0:result0:r82:w6・p120:full-page:a0:result0:r82:w9・p120:full-page:a0:result0:r86・p120:full-page:a0:result0:r86:w4・p122:full-page:a0:result0:r23・p122:full-page:a0:result0:r23・p122:full-page:a0:result0:r23:w4・p122:full-page:a0:result0:r23:w7・p122:full-page:a0:result0:r76・p122:full-page:a0:result0:r76:w4・p126:full-page:a0:result0:r125・p126:full-page:a0:result0:r125:w2・p126:full-page:a0:result0:r127・p126:full-page:a0:result0:r127:w2・p126:full-page:a0:result0:r129・p126:full-page:a0:result0:r129:w4・p132:full-page:a0:result0:r123・p132:full-page:a0:result0:r123:w10・p132:full-page:a0:result0:r155・p132:full-page:a0:result0:r155:w2・p134:full-page:a0:result0:r33・p134:full-page:a0:result0:r33・p134:full-page:a0:result0:r33:w4・p134:full-page:a0:result0:r33:w7・p134:full-page:a0:result0:r50・p134:full-page:a0:result0:r50:w5）・壤→壌 2 件（p92:full-page:a0:result0:r91・p92:full-page:a0:result0:r91:w4）・查→査 98 件（p8:full-page:a0:result0:r13・p8:full-page:a0:result0:r13:w3・p12:full-page:a0:result0:r77・p12:full-page:a0:result0:r77:w8・p16:full-page:a0:result0:r93・p16:full-page:a0:result0:r93:w6・p22:full-page:a0:result0:r155・p22:full-page:a0:result0:r155:w3・p36:full-page:a0:result0:r110・p36:full-page:a0:result0:r110:w3・p38:full-page:a0:result0:r105・p38:full-page:a0:result0:r105:w4・p46:full-page:a0:result0:r92・p46:full-page:a0:result0:r92:w3・p48:full-page:a0:result0:r18・p48:full-page:a0:result0:r18:w7・p48:full-page:a0:result0:r32・p48:full-page:a0:result0:r32:w3・p48:full-page:a0:result0:r118・p48:full-page:a0:result0:r118:w6・p56:full-page:a0:result0:r106・p56:full-page:a0:result0:r106:w1・p56:full-page:a0:result0:r140・p56:full-page:a0:result0:r140:w1・p58:full-page:a0:result0:r24・p58:full-page:a0:result0:r24:w1・p60:full-page:a0:result0:r38・p60:full-page:a0:result0:r38:w7・p60:full-page:a0:result0:r99・p60:full-page:a0:result0:r99:w6・p64:full-page:a0:result0:r10・p64:full-page:a0:result0:r10:w4・p64:full-page:a0:result0:r36・p64:full-page:a0:result0:r36:w8・p68:full-page:a0:result0:r97・p68:full-page:a0:result0:r97:w7・p76:full-page:a0:result0:r75・p76:full-page:a0:result0:r75:w3・p76:full-page:a0:result0:r85・p76:full-page:a0:result0:r85:w5・p76:full-page:a0:result0:r88・p76:full-page:a0:result0:r88:w10・p78:full-page:a0:result0:r18・p78:full-page:a0:result0:r18:w4・p78:full-page:a0:result0:r24・p78:full-page:a0:result0:r24:w5・p78:full-page:a0:result0:r52・p78:full-page:a0:result0:r52:w1・p78:full-page:a0:result0:r97・p78:full-page:a0:result0:r97:w3・p78:full-page:a0:result0:r114・p78:full-page:a0:result0:r114:w3・p82:full-page:a0:result0:r84・p82:full-page:a0:result0:r84:w5・p82:full-page:a0:result0:r131・p82:full-page:a0:result0:r131:w9・p86:full-page:a0:result0:r106・p86:full-page:a0:result0:r106:w6・p86:full-page:a0:result0:r112・p86:full-page:a0:result0:r112:w8・p86:full-page:a0:result0:r120・p86:full-page:a0:result0:r120:w6・p92:full-page:a0:result0:r50・p92:full-page:a0:result0:r50:w6・p94:full-page:a0:result0:r48・p94:full-page:a0:result0:r48:w6・p98:full-page:a0:result0:r117・p98:full-page:a0:result0:r117:w10・p106:full-page:a0:result0:r97・p106:full-page:a0:result0:r97:w5・p106:full-page:a0:result0:r99・p106:full-page:a0:result0:r99:w6・p110:full-page:a0:result0:r35・p110:full-page:a0:result0:r35:w6・p110:full-page:a0:result0:r91・p110:full-page:a0:result0:r91:w6・p112:full-page:a0:result0:r17・p112:full-page:a0:result0:r17:w6・p112:full-page:a0:result0:r29・p112:full-page:a0:result0:r29:w4・p120:full-page:a0:result0:r140・p120:full-page:a0:result0:r140:w3・p122:full-page:a0:result0:r64・p122:full-page:a0:result0:r64:w6・p124:full-page:a0:result0:r52・p124:full-page:a0:result0:r52:w3・p128:full-page:a0:result0:r28・p128:full-page:a0:result0:r28:w3・p128:full-page:a0:result0:r35・p128:full-page:a0:result0:r35:w3・p128:full-page:a0:result0:r54・p128:full-page:a0:result0:r54:w5・p128:full-page:a0:result0:r56・p128:full-page:a0:result0:r56:w5・p132:full-page:a0:result0:r93・p132:full-page:a0:result0:r93:w6・p136:full-page:a0:result0:r18・p136:full-page:a0:result0:r18:w3）・產→産 20 件（p40:full-page:a0:result0:r113・p40:full-page:a0:result0:r113:w7・p46:full-page:a0:result0:r96・p46:full-page:a0:result0:r96:w1・p56:full-page:a0:result0:r32・p56:full-page:a0:result0:r32:w3・p56:full-page:a0:result0:r44・p56:full-page:a0:result0:r44:w3・p76:full-page:a0:result0:r114・p76:full-page:a0:result0:r114:w9・p106:full-page:a0:result0:r107・p106:full-page:a0:result0:r107:w1・p120:full-page:a0:result0:r12・p120:full-page:a0:result0:r12:w5・p120:full-page:a0:result0:r17・p120:full-page:a0:result0:r17:w5・p120:full-page:a0:result0:r88・p120:full-page:a0:result0:r88:w5・p120:full-page:a0:result0:r147・p120:full-page:a0:result0:r147:w4）・說→説 14 件（p6:full-page:a0:result0:r2・p6:full-page:a0:result0:r2:w0・p18:full-page:a0:result0:r2・p18:full-page:a0:result0:r2:w0・p56:full-page:a0:result0:r2・p56:full-page:a0:result0:r2:w0・p72:full-page:a0:result0:r2・p72:full-page:a0:result0:r2:w0・p88:full-page:a0:result0:r2・p88:full-page:a0:result0:r2:w0・p94:full-page:a0:result0:r2・p94:full-page:a0:result0:r2:w0・p96:full-page:a0:result0:r30・p96:full-page:a0:result0:r30:w0）・项→項 12 件（p12:full-page:a0:result0:r0・p12:full-page:a0:result0:r0:w2・p24:full-page:a0:result0:r0・p24:full-page:a0:result0:r0:w4・p32:full-page:a0:result0:r0・p32:full-page:a0:result0:r0:w2・p48:full-page:a0:result0:r0・p48:full-page:a0:result0:r0:w2・p68:full-page:a0:result0:r0・p68:full-page:a0:result0:r0:w2・p108:full-page:a0:result0:r0・p108:full-page:a0:result0:r0:w2）・齡→齢 66 件（p8:full-page:a0:result0:r56・p8:full-page:a0:result0:r56:w1・p10:full-page:a0:result0:r11・p10:full-page:a0:result0:r11:w1・p10:full-page:a0:result0:r64・p10:full-page:a0:result0:r64:w1・p10:full-page:a0:result0:r116・p10:full-page:a0:result0:r116:w1・p12:full-page:a0:result0:r14・p12:full-page:a0:result0:r14:w1・p12:full-page:a0:result0:r44・p12:full-page:a0:result0:r44:w1・p12:full-page:a0:result0:r71・p12:full-page:a0:result0:r71:w1・p12:full-page:a0:result0:r80・p12:full-page:a0:result0:r80:w1・p12:full-page:a0:result0:r98・p12:full-page:a0:result0:r98:w1・p12:full-page:a0:result0:r112・p12:full-page:a0:result0:r112:w1・p12:full-page:a0:result0:r130・p12:full-page:a0:result0:r130:w1・p14:full-page:a0:result0:r9・p14:full-page:a0:result0:r9:w1・p14:full-page:a0:result0:r23・p14:full-page:a0:result0:r23:w1・p14:full-page:a0:result0:r74・p14:full-page:a0:result0:r74:w1・p14:full-page:a0:result0:r95・p14:full-page:a0:result0:r95:w1・p14:full-page:a0:result0:r103・p14:full-page:a0:result0:r103:w1・p14:full-page:a0:result0:r112・p14:full-page:a0:result0:r112:w1・p16:full-page:a0:result0:r33・p16:full-page:a0:result0:r33:w1・p16:full-page:a0:result0:r46・p16:full-page:a0:result0:r46:w1・p16:full-page:a0:result0:r55・p16:full-page:a0:result0:r55:w1・p16:full-page:a0:result0:r70・p16:full-page:a0:result0:r70:w1・p16:full-page:a0:result0:r72・p16:full-page:a0:result0:r72:w1・p16:full-page:a0:result0:r106・p16:full-page:a0:result0:r106:w1・p16:full-page:a0:result0:r109・p16:full-page:a0:result0:r109:w1・p16:full-page:a0:result0:r137・p16:full-page:a0:result0:r137:w1・p18:full-page:a0:result0:r30・p18:full-page:a0:result0:r30:w1・p18:full-page:a0:result0:r83・p18:full-page:a0:result0:r83:w1・p18:full-page:a0:result0:r86・p18:full-page:a0:result0:r86:w1・p18:full-page:a0:result0:r106・p18:full-page:a0:result0:r106:w1・p18:full-page:a0:result0:r124・p18:full-page:a0:result0:r124:w1・p20:full-page:a0:result0:r63・p20:full-page:a0:result0:r63:w1・p42:full-page:a0:result0:r11・p42:full-page:a0:result0:r11:w1・p82:full-page:a0:result0:r90・p82:full-page:a0:result0:r90:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2026/initial/expenditure/general-initial-1-nodes.parquet",
+          "sha256": "21f73f89901f7bacd7120aa92c83ea1e8d36055a1d0f8e113ecbabbb4c66f45e",
+          "bytes": 143597
+        },
+        "row_count": 3592
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2026/initial/expenditure/general-initial-1-amounts.parquet",
+          "sha256": "a65df9c11041b8089d2e723fac612fb30dc971db93aaa39a30ad93cbc041c1f4",
+          "bytes": 103750
+        },
+        "row_count": 3672
+      }
+    },
+    {
+      "table_id": "general-initial-6",
+      "conversion_id": "general-initial-6",
+      "input_fingerprint": "387596cf26592d1283db668545f6f251866b09ed37f4a36e203853ffa4dedb63",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は column mark 32頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（48 件）を、印字された語から辞書の見出しに寄せた: 説／明→説明。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 26 件（p97:full-page:a0:result0:r131・p97:full-page:a0:result0:r131:w0・p103:full-page:a0:result0:r102・p103:full-page:a0:result0:r102・p103:full-page:a0:result0:r102・p103:full-page:a0:result0:r102:w2・p103:full-page:a0:result0:r102:w5・p103:full-page:a0:result0:r102:w10・p111:full-page:a0:result0:r59・p111:full-page:a0:result0:r59:w2・p122:full-page:a0:result0:r30・p122:full-page:a0:result0:r30:w6・p124:full-page:a0:result0:r26・p124:full-page:a0:result0:r26:w6・p127:full-page:a0:result0:r52・p127:full-page:a0:result0:r52:w1・p127:full-page:a0:result0:r64・p127:full-page:a0:result0:r64:w4・p127:full-page:a0:result0:r66・p127:full-page:a0:result0:r66:w4・p129:full-page:a0:result0:r83・p129:full-page:a0:result0:r83:w2・p133:full-page:a0:result0:r75・p133:full-page:a0:result0:r75:w6・p147:full-page:a0:result0:r78・p147:full-page:a0:result0:r78:w6）・决→決 2 件（p139:full-page:a0:result0:r35・p139:full-page:a0:result0:r35:w0）・徵→徴 8 件（p134:full-page:a0:result0:r1・p134:full-page:a0:result0:r1:w4・p134:full-page:a0:result0:r39・p134:full-page:a0:result0:r39:w4・p136:full-page:a0:result0:r1・p136:full-page:a0:result0:r1:w3・p138:full-page:a0:result0:r1・p138:full-page:a0:result0:r1:w4）・查→査 72 件（p95:full-page:a0:result0:r20・p95:full-page:a0:result0:r20:w5・p95:full-page:a0:result0:r32・p95:full-page:a0:result0:r32:w3・p95:full-page:a0:result0:r145・p95:full-page:a0:result0:r145:w5・p99:full-page:a0:result0:r50・p99:full-page:a0:result0:r50:w12・p101:full-page:a0:result0:r38・p101:full-page:a0:result0:r38:w5・p101:full-page:a0:result0:r56・p101:full-page:a0:result0:r56:w5・p101:full-page:a0:result0:r61・p101:full-page:a0:result0:r61:w5・p101:full-page:a0:result0:r65・p101:full-page:a0:result0:r65:w5・p101:full-page:a0:result0:r118・p101:full-page:a0:result0:r118:w1・p101:full-page:a0:result0:r120・p101:full-page:a0:result0:r120:w1・p107:full-page:a0:result0:r141・p107:full-page:a0:result0:r141:w6・p111:full-page:a0:result0:r63・p111:full-page:a0:result0:r63:w13・p117:full-page:a0:result0:r43・p117:full-page:a0:result0:r43:w9・p121:full-page:a0:result0:r87・p121:full-page:a0:result0:r87:w7・p121:full-page:a0:result0:r120・p121:full-page:a0:result0:r120:w5・p125:full-page:a0:result0:r70・p125:full-page:a0:result0:r70:w6・p127:full-page:a0:result0:r64・p127:full-page:a0:result0:r64:w12・p127:full-page:a0:result0:r81・p127:full-page:a0:result0:r81:w9・p127:full-page:a0:result0:r85・p127:full-page:a0:result0:r85:w5・p135:full-page:a0:result0:r13・p135:full-page:a0:result0:r13:w7・p135:full-page:a0:result0:r19・p135:full-page:a0:result0:r19:w7・p135:full-page:a0:result0:r31・p135:full-page:a0:result0:r31・p135:full-page:a0:result0:r31:w11・p135:full-page:a0:result0:r31:w16・p139:full-page:a0:result0:r47・p139:full-page:a0:result0:r47:w3・p150:full-page:a0:result0:r1・p150:full-page:a0:result0:r1:w7・p151:full-page:a0:result0:r64・p151:full-page:a0:result0:r64:w4・p151:full-page:a0:result0:r112・p151:full-page:a0:result0:r112:w5・p152:full-page:a0:result0:r1・p152:full-page:a0:result0:r1:w4・p152:full-page:a0:result0:r25・p152:full-page:a0:result0:r25:w3・p153:full-page:a0:result0:r11・p153:full-page:a0:result0:r11:w1・p153:full-page:a0:result0:r18・p153:full-page:a0:result0:r18:w3・p153:full-page:a0:result0:r20・p153:full-page:a0:result0:r20:w3・p153:full-page:a0:result0:r33・p153:full-page:a0:result0:r33:w5・p153:full-page:a0:result0:r35・p153:full-page:a0:result0:r35:w5・p153:full-page:a0:result0:r37・p153:full-page:a0:result0:r37:w5・p153:full-page:a0:result0:r42・p153:full-page:a0:result0:r42:w2）・產→産 14 件（p99:full-page:a0:result0:r56・p99:full-page:a0:result0:r56:w0・p106:full-page:a0:result0:r24・p106:full-page:a0:result0:r24:w3・p107:full-page:a0:result0:r89・p107:full-page:a0:result0:r89:w0・p108:full-page:a0:result0:r23・p108:full-page:a0:result0:r23:w3・p135:full-page:a0:result0:r31・p135:full-page:a0:result0:r31:w7・p137:full-page:a0:result0:r123・p137:full-page:a0:result0:r123:w3・p139:full-page:a0:result0:r39・p139:full-page:a0:result0:r39:w3）・說→説 6 件（p101:full-page:a0:result0:r2・p101:full-page:a0:result0:r2:w0・p125:full-page:a0:result0:r2・p125:full-page:a0:result0:r2:w0・p145:full-page:a0:result0:r2・p145:full-page:a0:result0:r2:w0）・项→項 2 件（p119:full-page:a0:result0:r0・p119:full-page:a0:result0:r0:w3）・齡→齢 4 件（p131:full-page:a0:result0:r42・p131:full-page:a0:result0:r42:w1・p131:full-page:a0:result0:r43・p131:full-page:a0:result0:r43:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2026/initial/expenditure/general-initial-6-nodes.parquet",
+          "sha256": "28e1994f93cc7f1c02cbb230c5b5533c76d37390a92559130a7fb565de212126",
+          "bytes": 70889
+        },
+        "row_count": 1641
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2026/initial/expenditure/general-initial-6-amounts.parquet",
+          "sha256": "237c20ce2fbb6bec83560ee1391711b87f431a965142dba4167c4d07edfc833e",
+          "bytes": 51781
+        },
+        "row_count": 1684
+      }
+    },
+    {
+      "table_id": "general-initial-7",
+      "conversion_id": "general-initial-7",
+      "input_fingerprint": "bf95a4afa7d7cc343e27d85617b6e96522500eaab9f0971e3d84c2c8b47bf1eb",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は column mark 28頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（55 件）を、印字された語から辞書の見出しに寄せた: 説／明→説明。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 24 件（p4:full-page:a0:result0:r60・p4:full-page:a0:result0:r60・p4:full-page:a0:result0:r60:w2・p4:full-page:a0:result0:r60:w5・p4:full-page:a0:result0:r90・p4:full-page:a0:result0:r90・p4:full-page:a0:result0:r90:w1・p4:full-page:a0:result0:r90:w9・p6:full-page:a0:result0:r17・p6:full-page:a0:result0:r17:w12・p12:full-page:a0:result0:r45・p12:full-page:a0:result0:r45:w7・p18:full-page:a0:result0:r58・p18:full-page:a0:result0:r58:w3・p28:full-page:a0:result0:r17・p28:full-page:a0:result0:r17:w3・p32:full-page:a0:result0:r125・p32:full-page:a0:result0:r125:w10・p38:full-page:a0:result0:r54・p38:full-page:a0:result0:r54・p38:full-page:a0:result0:r54:w7・p38:full-page:a0:result0:r54:w14・p46:full-page:a0:result0:r29・p46:full-page:a0:result0:r29:w5）・减→減 2 件（p12:full-page:a0:result0:r45・p12:full-page:a0:result0:r45:w16）・查→査 36 件（p2:full-page:a0:result0:r124・p2:full-page:a0:result0:r124:w6・p4:full-page:a0:result0:r15・p4:full-page:a0:result0:r15:w6・p6:full-page:a0:result0:r67・p6:full-page:a0:result0:r67:w4・p10:full-page:a0:result0:r60・p10:full-page:a0:result0:r60:w6・p20:full-page:a0:result0:r71・p20:full-page:a0:result0:r71:w8・p20:full-page:a0:result0:r73・p20:full-page:a0:result0:r73:w4・p20:full-page:a0:result0:r89・p20:full-page:a0:result0:r89:w6・p22:full-page:a0:result0:r14・p22:full-page:a0:result0:r14:w6・p22:full-page:a0:result0:r24・p22:full-page:a0:result0:r24:w5・p28:full-page:a0:result0:r125・p28:full-page:a0:result0:r125:w8・p30:full-page:a0:result0:r8・p30:full-page:a0:result0:r8:w4・p30:full-page:a0:result0:r20・p30:full-page:a0:result0:r20:w6・p30:full-page:a0:result0:r64・p30:full-page:a0:result0:r64:w5・p34:full-page:a0:result0:r103・p34:full-page:a0:result0:r103:w7・p36:full-page:a0:result0:r78・p36:full-page:a0:result0:r78:w4・p36:full-page:a0:result0:r87・p36:full-page:a0:result0:r87:w1・p36:full-page:a0:result0:r105・p36:full-page:a0:result0:r105:w6・p44:full-page:a0:result0:r143・p44:full-page:a0:result0:r143:w6）・產→産 6 件（p38:full-page:a0:result0:r85・p38:full-page:a0:result0:r85:w5・p38:full-page:a0:result0:r121・p38:full-page:a0:result0:r121:w5・p46:full-page:a0:result0:r17・p46:full-page:a0:result0:r17:w0）・說→説 2 件（p44:full-page:a0:result0:r2・p44:full-page:a0:result0:r2:w0）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2026/initial/expenditure/general-initial-7-nodes.parquet",
+          "sha256": "c410e8f8da0aa9ff0e2ba54173e2bc269d8a05ca886810a9a2c86e2b495a1098",
+          "bytes": 66613
+        },
+        "row_count": 1500
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132144/2026/initial/expenditure/general-initial-7-amounts.parquet",
+          "sha256": "1f7f357632af78dfcf6d13849bb53d07d458829eae2c7de09c2de07532fed768",
+          "bytes": 50482
+        },
+        "row_count": 1539
+      }
+    }
+  ]
+}

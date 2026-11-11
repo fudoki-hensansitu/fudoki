@@ -48,10 +48,10 @@ models:
     description: 読んだ PDF の sha256。
     data_tests: [not_null]
 - name: budget_measure
-  description: 予算案に載った施策。品川は予算案のプレス発表の1頁（1施策）が1行。金額は出典の千円を円にしたもの。背景・目的と事業概要の文章は持たない。
+  description: 予算案に載った施策。資料の1件が1行（品川は1頁1施策、千代田などは1頁に複数のことがある）。金額は出典の千円を円にしたもの。背景・目的と事業概要の文章は持たない。
   columns:
   - name: measure_id
-    description: 行の ID。origin_id と頁から作る（sha256）。
+    description: 行の ID。origin_id と頁と頁の中の順から作る（sha256）。
     data_tests: [not_null, unique]
   - name: budget_proposal_id
     description: 予算案の根。budget_proposal の budget_proposal_id。
@@ -78,12 +78,15 @@ models:
   - name: page
     description: 出典の PDF の頁（1始まり）。
     data_tests: [not_null]
+  - name: position
+    description: 同じ頁の中の施策の順（1始まり、上から。2段組は左から）。
+    data_tests: [not_null]
   - name: title
     description: 頁の見出し（副題を含む、資料の表記）。
   - name: names
     description: 事業名の欄（JSON の文字列の配列。複数のことがある）。
   - name: is_new
-    description: 事業名に「新規」の印がある。
+    description: 事業名に「新規」の印がある。施策ごとに印を付けない資料（千代田など）は常に偽。
     data_tests: [not_null]
   - name: budget_yen
     description: 予算額（円）。事業名が複数なら合計。
@@ -97,7 +100,6 @@ models:
           to: ref('expenditure_detail')
           field: detail_id
   - name: link_method
-    description: 風土記の判断。紐付けの方法。name（名前と額で直接当たった）・jev（候補12件から TypeSafe の Jev が確信度 0.6 以上で選んだ）・none（紐付かない）。
-    data_tests: [not_null]
+    description: 風土記の判断。紐付けの方法。name（名前と額で直接当たった）・jev（候補12件から TypeSafe の Jev が確信度 0.6 以上で選んだ）・none（紐付かない）。同じ年度の当初予算書の内訳（事業）がまだ無ければ空（未判断）。
   - name: link_confidence
     description: 風土記の判断。link_method が jev のときの Jev の確信度。

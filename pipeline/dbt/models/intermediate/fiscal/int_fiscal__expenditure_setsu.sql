@@ -12,10 +12,11 @@
 -- (`setsu_match` = 'code'): number and name must both agree, so neither a misread number
 -- nor a near name alone moves a row. A 細節 printed under its 節 with an enumerator
 -- (`(2)光熱水費` beside 節 10) has no legal label of its own and takes the legal setsu of
--- its printed number (`setsu_match` = 'number'). The printed name stays as it is. Non-節 axes
--- (備考・事業説明・CSV の科目など) are out of scope.
-with setsu_nodes as (
-    select node_id, document_kind, fiscal_year, name, code
+-- its printed number (`setsu_match` = 'number'). A 細節 printed under its 節 with no number and a name of
+-- its own (`期末手当` under 職員手当等, 131113) takes its parent 節's legal setsu (`setsu_match` = 'parent').
+-- The printed name stays as it is. Non-節 axes (備考・事業説明・CSV の科目など) are out of scope.
+with recursive setsu_nodes as (
+    select node_id, parent_node_id, document_kind, fiscal_year, name, code
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
     where axis = '節'
 ), stripped as (
@@ -53,17 +54,34 @@ with setsu_nodes as (
         c.code_ids, c.number_ids, c.code_count
     from matched m
     left join code_match c using (node_id)
+), own as (
+    select node_id, parent_node_id, document_kind, name,
+        case when expenditure_setsu_id is not null then expenditure_setsu_id
+             when len(prefix_ids) = 1 then prefix_ids[1]
+             when len(prefix_ids) > 1
+             then error('Ambiguous setsu name (several legal setsu begin with it): ' || name)
+             when code_count = 1 and len(code_ids) = 1 then code_ids[1]
+             when regexp_matches(name, '^[(（][0-9]+[)）]') and code_count = 1 then number_ids[1]
+        end as own_id,
+        case when expenditure_setsu_id is not null then 'exact'
+             when len(prefix_ids) = 1 then 'prefix'
+             when code_count = 1 and len(code_ids) = 1 then 'code'
+             when regexp_matches(name, '^[(（][0-9]+[)）]') and code_count = 1 then 'number'
+        end as own_match
+    from resolved
+), inherited(node_id, document_kind, expenditure_setsu_id) as (
+    -- A 節 node without a legal setsu of its own, under a 節 node that has one, takes its parent's.
+    select node_id, document_kind, own_id from own where own_id is not null
+    union all
+    select o.node_id, o.document_kind, i.expenditure_setsu_id
+    from inherited i
+    join own o on o.document_kind = i.document_kind and o.parent_node_id = i.node_id
+    where o.own_id is null
 )
-select node_id, document_kind,
-    case when expenditure_setsu_id is not null then expenditure_setsu_id
-         when len(prefix_ids) = 1 then prefix_ids[1]
-         when len(prefix_ids) > 1
-         then error('Ambiguous setsu name (several legal setsu begin with it): ' || name)
-         when code_count = 1 and len(code_ids) = 1 then code_ids[1]
-         when regexp_matches(name, '^[(（][0-9]+[)）]') and code_count = 1 then number_ids[1]
-         else error('Unknown setsu name (no legal setsu matches): ' || name) end as expenditure_setsu_id,
-    case when expenditure_setsu_id is not null then 'exact'
-         when len(prefix_ids) = 1 then 'prefix'
-         when not (code_count = 1 and len(code_ids) = 1) then 'number'
-         else 'code' end as setsu_match
-from resolved
+select o.node_id, o.document_kind,
+    case when o.own_id is not null then o.own_id
+         when i.expenditure_setsu_id is not null then i.expenditure_setsu_id
+         else error('Unknown setsu name (no legal setsu matches): ' || o.name) end as expenditure_setsu_id,
+    coalesce(o.own_match, 'parent') as setsu_match
+from own o
+left join inherited i on o.own_id is null and i.document_kind = o.document_kind and i.node_id = o.node_id

@@ -84,7 +84,7 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
 const INDEX_BATCH = 60
 
 /**
- * 一覧（/jurisdictions）のデータ。収録している自治体の款を、自治体をまとめて検索して最新の決算ごとに足す。
+ * ホームの検索に使う自治体の要約のデータ。収録している自治体の款を、自治体をまとめて検索して最新の決算ごとに足す。
  * 総額の足し方は個別ページ（loadPage の totals）と同じ「一般会計の款の和」
  */
 export async function loadIndex(env: Env, entries: CatalogEntry[], pathOf: (code: string) => string): Promise<IndexEntry[]> {

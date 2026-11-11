@@ -1,12 +1,10 @@
 import { describe, expect, test } from 'bun:test'
 import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../jurisdiction/types'
 import { fetchRoute } from './routes.testing'
-import { emptyHead, indexHead, pageHead, type Head } from '../jurisdiction/html'
-import { indexPageData, resolveJurisdiction } from './jurisdiction-routes'
+import { emptyHead, pageHead, type Head } from '../jurisdiction/html'
+import { homeEntries, resolveJurisdiction } from './jurisdiction-routes'
 import { jurisdictionProps } from './pages'
 import type { Context } from 'hono'
-import { DEFAULT_INDEX_QUERY, queryIndex } from '../jurisdiction/index-table'
-import type { IndexEntry } from '../jurisdiction/types'
 import { DETAIL_TABLE, SUBJECT_TABLE } from '../../api/src/columns'
 import { searchInputFor } from '../../api/src/shared/search'
 import type { Env } from './env'
@@ -187,18 +185,15 @@ describe('自治体の個別ページ', () => {
     expect(await status('2019')).toEqual([404, null])
   })
 
-  test('一覧は収録のある自治体だけを、最新の決算の款の和で載せる', async () => {
-    const { map, table } = await indexPageData(env)
-    expect(table.rows.map((e) => [e.name, e.year, e.yen, e.path])).toEqual([['中野区', 2025, 1000, '/tokyo/nakano']])
-    expect(map.map((e) => e.code)).toEqual(table.rows.map((e) => e.code))
-    expect(canonical(indexHead(map.length))).toBe('https://fudoki.dev/jurisdictions')
+  test('ホームの自治体の要約は収録のある自治体だけを、最新の決算の款の和で載せる', async () => {
+    expect((await homeEntries(env)).map((e) => [e.name, e.yen, e.path])).toEqual([['中野区', 1000, '/tokyo/nakano']])
   })
 
-  test('一覧の総額は金額の印字が無い款を 0 と数えず、一部の款の和だと印を付ける', async () => {
+  test('一覧の自治体の総額は金額の印字が無い款を 0 と数えない', async () => {
     const api = fixtureApi({ extraNodes: [node({ node_id: id(99), node_kind: '款', name: '予備費', amount_yen: null, fiscal_year: 2025 })] })
-    const { table } = await indexPageData({ ...env, API: api })
-    expect(table.rows.map((e) => [e.yen, e.amountMissing])).toEqual([[1000, true]])
+    expect((await homeEntries({ ...env, API: api })).map((e) => e.yen)).toEqual([1000])
   })
+
 
   test('URL のローマ字は自治体マスタの全自治体にあり、同じ都道府県の中でもテーマの段とも重ならない', () => {
     const seen = new Set<string>()
@@ -238,32 +233,15 @@ describe('自治体の個別ページ', () => {
     expect(xml).not.toContain('https://fudoki.dev/tokyo/nakano/2019')
   })
 
-  test('API に繋がらないときは投げて（頁は 502）、sitemap は入口・一覧・アシスタントだけで答える', async () => {
+  test('API に繋がらないときは投げて（頁は 502）、sitemap は入口・アシスタントだけで答える', async () => {
     const down: Env = { API: { fetch: async () => new Response('x', { status: 500 }) } }
     await expect(resolveJurisdiction(down, '/tokyo/nakano')).rejects.toThrow()
-    await expect(indexPageData(down)).rejects.toThrow()
+    await expect(homeEntries(down)).rejects.toThrow()
     const sitemap = await get('/sitemap.xml', down)
     expect(sitemap.status).toBe(200)
     const xml = await sitemap.text()
-    expect(xml).toContain('https://fudoki.dev/jurisdictions')
+    expect(xml).not.toContain('https://fudoki.dev/jurisdictions')
     expect(xml).toContain('https://fudoki.dev/assistant')
-  })
-})
-
-describe('一覧の比較表の API', () => {
-  test('並び・絞り込みを受けて30件ずつ返し、形の違う条件は 400 にする', async () => {
-    const res = await get('/api/jurisdictions/table?sort=yen&order=asc&pref=13')
-    expect(res.status).toBe(200)
-    const body = (await res.json()) as { rows: { code: string }[]; total: number; next: number | null }
-    expect([body.rows.map((r) => r.code), body.total, body.next]).toEqual([['131148'], 1, null])
-    for (const bad of ['sort=drop', 'order=up', 'offset=-1', 'offset=1.5', 'pref=1', 'code=13114x', `code=${Array(2001).fill('131148').join(',')}`])
-      expect((await get(`/api/jurisdictions/table?${bad}`)).status, bad).toBe(400)
-  })
-
-  test('値の無い自治体はどちらの向きでも末尾に置く', () => {
-    const e = (code: string, perCapita: number | null) => ({ code, perCapita }) as IndexEntry
-    const rows = [e('000003', null), e('000001', 10), e('000002', 20)]
-    for (const desc of [true, false]) expect(queryIndex(rows, { ...DEFAULT_INDEX_QUERY, desc }).rows.map((r) => r.code).at(-1)).toBe('000003')
   })
 })
 

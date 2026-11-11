@@ -64,13 +64,14 @@ export const MeasureRow = z
       jurisdiction_code: z.string(),
       fiscal_year: z.int(),
       page: z.int(),
+      position: z.int(),
       title: z.string().nullable(),
       names: z.string().nullable(),
       is_new: z.boolean(),
       budget_yen: z.int().nullable(),
       description: z.string().nullable(),
       expenditure_detail_id: z.string().nullable(),
-      link_method: z.string(),
+      link_method: z.string().nullable(),
       link_confidence: z.number().nullable(),
     })
   )

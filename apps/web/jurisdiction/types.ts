@@ -98,8 +98,8 @@ export interface PageData {
   code: string
   name: string
   prefecture: string
-  /** 都道府県自体の頁（/tokyo）。header の都道府県名から移る */
-  prefecturePath: string
+  /** 都道府県自体の頁（/tokyo）。header の都道府県名から移る。都道府県自体の頁と、都道府県の頁が無いときは null */
+  prefecturePath: string | null
   /** 同じ都道府県で収録のある近くの自治体（自身と都道府県自体を除き、近い順に数件）。最後の節から回遊させる */
   neighbors: { code: string; name: string; path: string; /** 紋章の URL（emblems.ts に紋章がある自治体だけ） */ logo?: string }[]
   officialUrl: string | null
@@ -171,8 +171,6 @@ export function kanChanges(years: YearTotal[]): { name: string; pct: number }[] 
   })
 }
 
-/** 自治体の一覧。個別ページの path は server 側の path.ts が作る */
-export const INDEX_PATH = '/jurisdictions'
 
 /** 全体に占める割合（%）の表記。サンキー図のラベルに使い、金額はツールチップで見せる。基準が無い・金額未記載のときは null */
 export function formatShare(yen: number, base: number, missing?: boolean): string | null {

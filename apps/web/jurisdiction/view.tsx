@@ -4,7 +4,6 @@ import { Link } from '../nav/link'
 import { RequestTown } from '../nav/request-town'
 import type { JurisdictionProps } from '../server/pages'
 import { AppPage } from './app/app-page'
-import { INDEX_PATH } from './types'
 
 export function JurisdictionView(props: JurisdictionProps) {
   if (props.kind === 'empty')
@@ -29,7 +28,7 @@ export function JurisdictionView(props: JurisdictionProps) {
           <RequestTown />
         </p>
         <p>
-          <Link href={INDEX_PATH}>収録している自治体を見る</Link>
+          <Link href="/">ホームでほかのまちを探す</Link>
         </p>
       </main>
     )
