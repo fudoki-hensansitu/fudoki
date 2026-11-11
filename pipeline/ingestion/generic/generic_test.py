@@ -360,6 +360,31 @@ class TrialRulesTest(unittest.TestCase):
         unnamed = built([(None, None, '139,266,890', '円')] * 2, '139,266,890')
         self.assertEqual(check_units(unnamed, 'settlement')['kan_sum'], 2 * 139266890)
 
+    def test_a_book_with_amounts_on_the_moku_only_sums_them_and_skips_kan_and_kou_subtotals(self):
+        # 豊島 131164's 当初予算: 款・項 print no amount, 計 rows print the total of one 款 or 項.
+        tree = [('a', None, '1', '総務費'), ('a1', 'a', '1', '総務管理費'), ('a11', 'a1', '1', '総務費'), ('a12', 'a1', '2', '人事費'),
+                ('a2', 'a', '2', '会計費'), ('a21', 'a2', '1', '会計費'), ('b', None, '2', '福祉費'), ('b1', 'b', '1', '福祉費'),
+                ('b11', 'b1', '1', '福祉総務費')]
+        nodes = [{'node_key': k, 'parent_node_key': p, 'axis_header': '科目', 'code_text': c, 'name_text': n} for k, p, c, n in tree]
+        amounts = [{'node_key': k, 'header_path': '本年度', 'amount_text': t, 'unit_text': '千円'}
+                   for k, t in (('a11', '100'), ('a12', '200'), ('a21', '50'), ('b11', '1,000'))]
+        total = lambda text: {'kind': 'total amount', 'header': '本年度', 'text': text, 'label': '計', 'unit': '千円'}
+        subtotals = check_units(Built(nodes, amounts, [], [total('300'), total('350')]), 'initial', '一般会計')
+        self.assertEqual((subtotals['kan_sum'], subtotals['printed_total']), (1350, None))
+        grand = check_units(Built(nodes, amounts, [], [total('300'), total('1,350')]), 'initial')
+        self.assertTrue(grand['sum_matches'] and not grand['stopped'])
+
+    def test_a_name_correction_the_variant_table_already_made_passes(self):
+        from ingestion.generic.convert import correct_names
+        node = lambda name: {'physical_page': 44, 'name_text': name, 'code_text': None, 'y0': 328.0}
+        rule = {'id': 'r', 'page': 44, 'code': None, 'observed_name': '說明板', 'corrected_name': '説明板', 'y': 328.3}
+        misread = [node('說明板')]
+        self.assertEqual(correct_names(misread, [rule]), ['說明板→説明板'])
+        self.assertEqual(misread[0]['name_text'], '説明板')
+        self.assertEqual(correct_names([node('説明板')], [rule]), [])
+        with self.assertRaises(ValueError):
+            correct_names([node('別の名前')], [rule])
+
     def test_an_amount_on_the_line_below_its_item_belongs_to_it_only_within_its_cell(self):
         band = Band(40, 125, 50, ('科目', '目'), [213.4, 551.4], 101, 551.4)
         group = Group([band], '科目', True)

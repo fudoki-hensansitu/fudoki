@@ -462,8 +462,11 @@ def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
     `corrected_code` takes the number off a name that begins with a digit (`6次産業化…` read as `6`)."""
     notes = []
     for rule in rules or ():
-        found = [n for n in nodes if n['physical_page'] == rule['page'] and n['name_text'] == rule['observed_name']
-                 and n['code_text'] == rule.get('code') and ('y' not in rule or abs(n['y0'] - rule['y']) <= 3)]
+        at = lambda n, name: n['physical_page'] == rule['page'] and n['name_text'] == name \
+            and n['code_text'] == rule.get('code') and ('y' not in rule or abs(n['y0'] - rule['y']) <= 3)
+        found = [n for n in nodes if at(n, rule['observed_name'])]
+        if not found and 'corrected_code' not in rule and len([n for n in nodes if at(n, rule['corrected_name'])]) == 1:
+            continue  # the shared variant table (ocr_variant_chars.json) already printed the name right (說→説)
         if len(found) != 1:
             raise ValueError(f'A name correction must find one node: {rule["id"]} ({len(found)})')
         found[0]['name_text'] = rule['corrected_name']
