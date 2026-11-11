@@ -546,6 +546,8 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             continue  # `(単位:円・税抜)` printed over a column names the unit; it is no item of the column
         code, name = _split_code(line_text)
         raw_text = text(label).strip()
+        if code is None and numbers is not None and (held := numbers.module.split(raw_text, numbers.value)) is not None:
+            code, name = normalize(held[0]), normalize(held[1])
         if code is not None and len(name) > 1 and re.match(r'[０-９]{3,}', raw_text):
             code, name = None, line_text  # `２０３０ビジョン…`: three or more full-width digits begin a name, not an item number (a one-character name stays `161`/`人`)
         script = re.match(r'([0-9]+)(?=[０-９])', raw_text)
@@ -561,7 +563,7 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             # `8` `2歳児歯科健診事業`, `0200` `16ミリ映写機検定委託料`: the number is a word of its own, and the name begins with a count.
             code, name, script = normalize(label[0].text), normalize(text(label[1:])), True
         if (code is not None and margins is not None and not margins & set(_margins(label))
-                and not (numbers is not None and numbers.module.numbered(raw_text))):
+                and not (numbers is not None and numbers.module.numbered(raw_text, numbers.value))):
             code, name = None, line_text  # a name that begins with a digit
         if code is None and label and margins is not None and margins & set(_margins(label)):
             year = YEAR_LED.match(line_text)
@@ -695,9 +697,18 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     that joins a code and the first character of its name (`03戸`) is measured as an OCR word is (`_measure`).
     `column_amounts`: the amounts printed in the axis's own amount column, beside the names.
     """
-    entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')),
-                         quirk(settings, 'full_width_numbers'))
+    numbers = quirk(settings, 'full_width_numbers')
+    entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')), numbers)
     settings = settings or {}
+    if (shares := quirk(settings, 'department_amounts')) is not None:
+        for index, (label, money, code, name) in enumerate(entries):
+            if label and not money and code is None and (found := shares.module.split(label, _cut)) is not None:
+                entries[index] = (found[0], [found[1]], None, normalize(text(found[0])))
+
+    def measure(item, label, code) -> None:
+        _measure(item, label, code, ocr or joined_codes)
+        if numbers is not None and code is not None and (start := numbers.module.name_start(label, numbers.value)) is not None:
+            item.indent = start
     kind_names = quirk(settings, 'names_end_with_kind_words')
     remainder = quirk(settings, 'bracketed_remainder')
     headings = quirk(settings, 'headings')
@@ -810,7 +821,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             for i in members:
                 for run in entries[i][1]:
                     item.amounts.append((header, run))
-            _measure(item, entries[code_index][0], entries[code_index][2], ocr or joined_codes)
+            measure(item, entries[code_index][0], entries[code_index][2])
             result.append(item)
             continue
         previous = result[-1] if result else None
@@ -925,7 +936,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         item = Item(group, label[0].page, [label], code, name, 0)
         for run in money:
             item.amounts.append((header, run))
-        _measure(item, label, code, ocr or joined_codes)
+        measure(item, label, code)
         result.append(item)
     if (starts := quirk(settings, 'line_starts')) is not None:
         starts.module.shift(result, starts.value)
@@ -1561,7 +1572,8 @@ def department_heading(item: Item, layout: dict | None = None) -> bool:
     if re.fullmatch(r'[（(][^()（）]+[)）]', name):
         return True
     offices = quirk((layout or {}).get(item.group.axis), 'office_departments')
-    return offices is not None and offices.module.heading(name)
+    shares = quirk((layout or {}).get(item.group.axis), 'department_amounts')
+    return (offices is not None and offices.module.heading(name)) or (shares is not None and shares.module.heading(name))
 
 
 def closing_department_headings(ordered: list[Item], layout: dict | None = None) -> set[int]:
@@ -1575,6 +1587,7 @@ def closing_department_headings(ordered: list[Item], layout: dict | None = None)
     for index, item in enumerate(ordered):
         if item.group.subject or not department_heading(item, layout):
             continue
+        shares = quirk((layout or {}).get(item.group.axis), 'department_amounts')
         parts = []
         for position in range(index + 1, len(ordered)):
             other = ordered[position]
@@ -1585,6 +1598,8 @@ def closing_department_headings(ordered: list[Item], layout: dict | None = None)
                                  and s.title_depth == other.title_depth), None)  # a 款 title and a 項 title are both level -1
                 if open_one is not None and repeats(open_one, other, ocr=True):
                     continue
+                if shares is not None:
+                    continue  # (the quirk: the 目 printed again by its number alone, `１.`)
                 break
             if other.group.subject:
                 break
@@ -1597,8 +1612,8 @@ def closing_department_headings(ordered: list[Item], layout: dict | None = None)
             slack = max(3, (line.y1 - line.y0) / 2)
             if start(other) < start(item) - slack:
                 break
-            if department_heading(other, layout):
-                break
+            if department_heading(other, layout) or (shares is not None and other.code is not None):
+                break  # (the quirk: the next numbered 事業 ends the department's parts)
             if abs(start(other) - start(item)) <= slack and other.role in ('node', 'note') and other.amounts:
                 parts.append(other)
         first = lambda it: number(normalize(text(it.amounts[0][1]))) or 0
