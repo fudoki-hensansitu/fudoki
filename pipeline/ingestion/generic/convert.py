@@ -225,7 +225,13 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     regions += coverage_regions(formula_words(observed), kind='本文',
                                 reason='単価×数量の算式（560,000円×1人×11月）の数字。計算の式で、金額ではない。')
     regions += coverage_regions(closing, kind='本文', reason='括弧書きの説明の中の金額（（令和7年5月末基金現在額 …円））。括弧を閉じるだけで開かない語で、項目の金額ではない。')
-    regions += coverage_regions(reckoning_words(observed), kind='本文',
+    amount_x = defaultdict(list)  # page -> (x0, x1, top, bottom) of its amount columns: a reckoning is set in the words, not there
+    for logical in logicals:
+        for band in logical.bands:
+            if band.kind == 'amount':
+                amount_x[band.page] += [(band.x0 - band.offset, band.x1 - band.offset, top, bottom)
+                                        for top, bottom in (band.extents or [(float('-inf'), float('inf'))])]
+    regions += coverage_regions(reckoning_words(observed, amount_x), kind='本文',
                                 reason='説明の文中の積算の金額（保険者負担分医療費 34,905,701千円、年間費用額 40,830,874 Ａ、月 309,100円）。単位や算式の記号を添えて書いた計算の数字や月額で、項目の金額ではない。')
     regions += coverage_regions([(g.page, g.original, g.text) for g in built.repeated_codes], kind='本文',
                                 reason='継続頁に繰り返し印字された科目の番号。直前の同じ科目（番号・名称が一致）の金額と番号であり、新しい金額ではない。')
@@ -277,7 +283,7 @@ def formula_words(observed) -> list[tuple]:
     return found
 
 
-def reckoning_words(observed) -> list[tuple]:
+def reckoning_words(observed, amount_x: dict | None = None) -> list[tuple]:
     """The digits of an amount a line sets with its own unit or a letter after it (`34,905,701千円`, `1,600,000 千円`,
     `40,830,874 Ａ`), and a monthly rate (`委員長 月 309,100円 1人`): a reckoning in a table whose amounts print no
     unit, never an amount of an item."""
@@ -296,6 +302,9 @@ def reckoning_words(observed) -> list[tuple]:
                               and other[0].x0 - run[-1].x1 <= 1.5 * (run[-1].y1 - run[-1].y0)), '')
             before = next((text for other, text in zip(runs[index - 1:index], texts[index - 1:index])
                            if index and abs(other[0].y0 - run[0].y0) <= 1.5), '')
+            middle, height = (run[0].x0 + run[-1].x1) / 2, (run[0].y0 + run[0].y1) / 2
+            if any(a <= middle <= b and top <= height <= bottom for a, b, top, bottom in (amount_x or {}).get(page.number, ())):
+                continue  # an amount column's own amount, set with a unit or a footnote mark
             if (UNIT_AMOUNT.fullmatch(joined) or (is_amount(joined) and RECKONING_TAIL.fullmatch(following))
                     or (LONE_PRICE.fullmatch(joined) and before in ('月', '月額'))):
                 found += [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for w in run]

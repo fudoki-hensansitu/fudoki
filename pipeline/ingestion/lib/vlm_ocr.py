@@ -30,7 +30,7 @@ def read(pdf: Path, page: int, box: tuple[float, float, float, float], prompt: s
     scale = dpi / 72
     with tempfile.TemporaryDirectory() as tmp:
         root = Path(tmp) / 'crop'
-        subprocess.run(['pdftoppm', '-r', str(dpi), '-f', str(page), '-l', str(page),
+        subprocess.run(['pdftoppm', '-cropbox', '-r', str(dpi), '-f', str(page), '-l', str(page),
                         '-x', str(int(max(0.0, x0 - margin) * scale)), '-y', str(int(max(0.0, y0 - margin) * scale)),
                         '-W', str(int((x1 - x0 + 2 * margin) * scale)), '-H', str(int((y1 - y0 + 2 * margin) * scale)),
                         '-png', '-singlefile', str(pdf), str(root)], check=True)

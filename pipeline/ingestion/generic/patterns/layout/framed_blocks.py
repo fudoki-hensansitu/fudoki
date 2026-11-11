@@ -168,7 +168,6 @@ def read(pages, *, columns: dict | None = None, header: dict | None = None, **_o
     kind = None
     for page in pages:
         sheet = frames(page)
-        used: set[int] = set()
         for frame in sorted(sheet, key=lambda f: f[0]):
             x0, x1, _, _ = frame
             by_column: dict[tuple, list[Band]] = defaultdict(list)
@@ -185,7 +184,6 @@ def read(pages, *, columns: dict | None = None, header: dict | None = None, **_o
                                                spans=[(a - x0, c - x0, t) for a, c, t in b.spans]) for b in bands]
                 for band in bands:
                     by_column[(GROUP[kind], round(band.x0 - x0), band.header)].append(band)
-                    used.update(id(w) for w in band.words)
             width = x1 - x0 + GAP
             # A page all of one block (a 説明 running on over the whole page) still has the columns of the others,
             # empty: the page is a page of the detail, not a table with no 款・項・目 column.
@@ -200,8 +198,10 @@ def read(pages, *, columns: dict | None = None, header: dict | None = None, **_o
             # Every frame starts at the same x (the left and right pages of a sheet indent their 款・項・目 alike).
             frame_bands = [shifted(merged(bands), key[0] * width + GAP - x0)
                            for key, bands in sorted(by_column.items(), key=lambda kv: kv[0][:2])]
-            outside = [w for w in page.words if x0 < (w.x0 + w.x1) / 2 < x1 and not any(
-                g.original == (w.x0, w.y0, w.x1, w.y1) for b in frame_bands for g in b.words)]
+            # A word moved into a frame comes back as `(x + offset) - offset`: compare at a rounding it survives.
+            framed = {tuple(round(v, 3) for v in g.original) for b in frame_bands for g in b.words}
+            outside = [w for w in page.words if x0 < (w.x0 + w.x1) / 2 < x1
+                       and tuple(round(v, 3) for v in (w.x0, w.y0, w.x1, w.y1)) not in framed]
             per_page.append((page, frame_bands, outside))
     layout.classify(per_page, columns)
     result = []
