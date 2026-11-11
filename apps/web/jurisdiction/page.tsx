@@ -805,7 +805,7 @@ interface TocItem {
 /** 直近の3年度は並べ、それより前は一つのメニューにまとめる */
 const RECENT_YEARS = 3
 
-function YearPicker({ years, current, onChange }: { years: number[]; current: number; onChange: (y: number) => void }) {
+export function YearPicker({ years, current, onChange }: { years: number[]; current: number; onChange: (y: number) => void }) {
   const recent = years.slice(0, RECENT_YEARS)
   const older = years.slice(RECENT_YEARS)
   const olderPicked = older.includes(current)
