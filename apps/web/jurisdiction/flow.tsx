@@ -309,6 +309,38 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
   )
 }
 
+/** 読み込み中の全体図。左の総額の柱から右の款の柱へ帯が流れる形を、薄い色で点滅させる */
+const SKELETON_SHARES = [0.3, 0.2, 0.15, 0.12, 0.1, 0.07, 0.06]
+function FlowSkeleton() {
+  const H = 400, GAP = 8, LEFT = 14, RIGHT = 14, X0 = 0, X1 = 286
+  const usable = H - GAP * (SKELETON_SHARES.length - 1)
+  let left = 0
+  let right = 0
+  const bands = SKELETON_SHARES.map((share) => {
+    const h = usable * share
+    const band = { l: left, r: right, h }
+    left += h
+    right += h + GAP
+    return band
+  })
+  return (
+    <div role="status" aria-label="お金の流れを読み込んでいます" className="h-full animate-pulse">
+      <svg viewBox={`0 0 300 ${H}`} preserveAspectRatio="none" className="h-full max-h-[520px] w-full" aria-hidden="true">
+        <rect x={X0} y={0} width={LEFT} height={usable} rx={3} className="fill-muted" />
+        {bands.map((b, i) => {
+          const sx = X0 + LEFT, ex = X1, mx = (sx + ex) / 2
+          return (
+            <g key={i}>
+              <path d={`M${sx},${b.l} C${mx},${b.l} ${mx},${b.r} ${ex},${b.r} L${ex},${b.r + b.h} C${mx},${b.r + b.h} ${mx},${b.l + b.h} ${sx},${b.l + b.h} Z`} className="fill-muted/60" />
+              <rect x={X1} y={b.r} width={RIGHT} height={b.h} rx={3} className="fill-muted" />
+            </g>
+          )
+        })}
+      </svg>
+    </div>
+  )
+}
+
 function KanPanel({ drill, loading, levels, onMoku }: { drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void }) {
   const body = React.useRef<HTMLDivElement>(null)
   const [current, setCurrent] = React.useState(0)
@@ -477,7 +509,7 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
             {flows.length > 0 ? (
               <Overview flows={flows} total={year.yen} levels={levels} onSelect={select} height={Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))} />
             ) : (
-              <p className="grid h-full place-items-center text-sm text-muted-foreground" role={error ? undefined : 'status'}>{error ? '' : 'お金の流れを読み込んでいます…'}</p>
+              error ? null : <FlowSkeleton />
             )}
           </div>
           {flows.map((f) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} onMoku={onMoku} />)}
