@@ -1,44 +1,44 @@
-// 試作: 「うちのまち」を複数持つ（住んでいる・働いている・実家など）。ブラウザ（localStorage）にだけ置き、サーバーには送らない。
-// サイドバーとホームが同じ一覧を読むので、変えたら window に知らせる
+// 試作: 「うちのまち」（1つ）と最近見たまち。ブラウザ（localStorage）にだけ置き、サーバーには送らない。
+// サイドバーとホームが同じものを読むので、変えたら window に知らせる。うちのまちのコードは今のホームと同じ鍵（saveHomeCode）にも書く
 import * as React from 'react'
-import { loadHomeCode, loadRecent, type RecentJurisdiction } from '../home/recent'
+import { loadHomeCode, loadRecent, saveHomeCode, type RecentJurisdiction } from '../home/recent'
 
-const KEY = 'fudoki:my-towns'
-const EVENT = 'fudoki:my-towns'
-export const MAX_TOWNS = 5
+const KEY = 'fudoki:home-town'
+const EVENT = 'fudoki:home-town'
 
 export type Town = RecentJurisdiction
 
-function read(): Town[] {
+function read(): Town | null {
   try {
-    const list = JSON.parse(localStorage.getItem(KEY) ?? 'null') as Town[] | null
-    if (Array.isArray(list)) return list.slice(0, MAX_TOWNS)
-    // まだ一覧が無ければ、今のホームで選んだまちを引き継ぐ
+    const t = JSON.parse(localStorage.getItem(KEY) ?? 'null') as Town | null
+    if (t?.code) return t
+    // まだ無ければ、今のホームで選んだまちを最近見たまちから引き継ぐ
     const home = loadHomeCode()
-    const hit = home ? loadRecent().find((r) => r.code === home) : undefined
-    return hit ? [hit] : []
+    return (home && loadRecent().find((r) => r.code === home)) || null
   } catch {
-    return []
+    return null
   }
 }
 
-function write(list: Town[]) {
+export function setMyTown(t: Town | null) {
   try {
-    localStorage.setItem(KEY, JSON.stringify(list.slice(0, MAX_TOWNS)))
+    if (t) localStorage.setItem(KEY, JSON.stringify(t))
+    else localStorage.removeItem(KEY)
   } catch {
     // 保存できなくても、その場では選んだまちを出す
   }
+  saveHomeCode(t?.code ?? null)
   window.dispatchEvent(new Event(EVENT))
 }
 
-/** うちのまちの一覧と、足す・外す・先頭にする操作。描いたあとに読む（サーバーの HTML では空） */
-export function useMyTowns() {
-  const [towns, setTowns] = React.useState<Town[]>([])
+/** うちのまちと最近見たまち（うちのまちを除く）。描いたあとに読む（サーバーの HTML では空） */
+export function useMyTown() {
+  const [town, setTown] = React.useState<Town | null>(null)
   const [recent, setRecent] = React.useState<Town[]>([])
   const [ready, setReady] = React.useState(false)
   React.useEffect(() => {
     const sync = () => {
-      setTowns(read())
+      setTown(read())
       setRecent(loadRecent())
       setReady(true)
     }
@@ -50,9 +50,7 @@ export function useMyTowns() {
       window.removeEventListener('storage', sync)
     }
   }, [])
-  const add = (t: Town) => write([t, ...read().filter((x) => x.code !== t.code)])
-  const remove = (code: string) => write(read().filter((x) => x.code !== code))
-  return { ready, towns, recent: recent.filter((r) => !towns.some((t) => t.code === r.code)), add, remove }
+  return { ready, town, recent: recent.filter((r) => r.code !== town?.code), set: setMyTown }
 }
 
 export const emblemSrc = (code: string) => `/jurisdictions/${code}/emblem.svg`

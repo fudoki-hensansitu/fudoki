@@ -8,7 +8,7 @@ import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, 
 import { InputGroupAddon } from '@/components/ui/input-group'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { Item } from '../nav/site-nav'
-import { emblemSrc, useMyTowns, type Town } from './towns'
+import { emblemSrc, useMyTown, type Town } from './towns'
 
 /** 自治体の一覧は検索を開いたときに一度だけ読む */
 let townsPromise: Promise<MapEntry[]> | null = null
@@ -90,7 +90,7 @@ function TownItem({ town, active }: { town: Town; active: boolean }) {
 
 export function ProtoNavContent() {
   const { path } = useRouter()
-  const { towns, recent } = useMyTowns()
+  const { town, recent } = useMyTown()
   const at = (t: Town) => path === t.path || path.startsWith(`${t.path}/`)
   return (
     <>
@@ -103,13 +103,11 @@ export function ProtoNavContent() {
           <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={path === '/assistant' || path.startsWith('/s/')} />
         </SidebarMenu>
       </SidebarGroup>
-      {towns.length ? (
+      {town ? (
         <SidebarGroup>
           <SidebarGroupLabel>うちのまち</SidebarGroupLabel>
           <SidebarMenu>
-            {towns.map((t) => (
-              <TownItem key={t.code} town={t} active={at(t)} />
-            ))}
+            <TownItem town={town} active={at(town)} />
           </SidebarMenu>
         </SidebarGroup>
       ) : null}
