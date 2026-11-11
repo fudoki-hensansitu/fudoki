@@ -4,7 +4,7 @@ import type { CatalogEntry } from '../server/jurisdiction'
 import { EMBLEMS } from './emblems'
 import { jurisdictionPath } from './path'
 import { assetPath } from './profiles'
-import { appPageYears, formatYen, INDEX_PATH, yearPath, type PageData } from './types'
+import { appPageYears, formatYen, INDEX_PATH, TAB_SLUGS, yearPath, type PageData } from './types'
 
 const ORIGIN = 'https://fudoki.dev'
 /** JSON を script の中に置くときに </script> や <!-- で抜けないようにする */
@@ -89,14 +89,15 @@ export function yearHead(d: PageData, year: number): { title: string; descriptio
 }
 
 /** 自治体の頁の head。year は既定でない年度の頁のときだけ渡す */
-export function pageHead(d: PageData, year?: number): Head {
+/** sub は分野・タブの頁。題の頭に名前を足し、canonical をその頁にする */
+export function pageHead(d: PageData, year?: number, sub?: { label: string; path: string }): Head {
   const latest = d.years.at(-1)!
   const budget = latestBudget(d)
   const base = jurisdictionPath(d.code)
   const past = year !== undefined && year !== appPageYears(d)[0] ? yearHead(d, year) : null
-  const title = past?.title ?? pageTitle(d)
+  const title = (sub ? `${sub.label}｜` : '') + (past?.title ?? pageTitle(d))
   const description = past?.description ?? pageDescription(d)
-  const canonical = `${ORIGIN}${past ? `${base}/${year}` : base}`
+  const canonical = `${ORIGIN}${past ? `${base}/${year}` : base}${sub?.path ?? ''}`
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -141,8 +142,12 @@ export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) =
     .filter((e) => e.settlementYears.length > 0)
     .flatMap((e) => {
       const base = jurisdictionPath(e.code)
-      const [latest, ...past] = yearsOf(e)
-      return [base, ...past.map((y) => yearPath(base, y, latest!))]
+      const years = yearsOf(e)
+      // 年度ごとの頁と、そのタブの頁（事業・予算・決算）
+      return years.flatMap((y) => {
+        const page = yearPath(base, y, years[0]!)
+        return [page, `${page}/${TAB_SLUGS.projects}`, ...(e.initialYears.includes(y) ? [`${page}/${TAB_SLUGS.money}`] : []), ...(e.settlementYears.includes(y) ? [`${page}/${TAB_SLUGS.settled}`] : [])]
+      })
     })
     .map((path) => `<url><loc>${ORIGIN}${path}</loc></url>`)
     .join('')}</urlset>\n`

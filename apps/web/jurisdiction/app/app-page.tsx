@@ -54,7 +54,7 @@ import { assetPath } from '../profiles'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock, Elsewhere } from '../page'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, yearPath, type FlowView, type Moku, type PageData, type YearTotal } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, yearPath, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
@@ -204,7 +204,7 @@ function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, 
 }
 
 // ---------- 画面 ----------
-type TabKey = 'overview' | 'projects' | 'money' | 'settled'
+type TabKey = PageTab
 type Go = (t: TabKey, opt?: { filter?: string; field?: string; grade?: string }) => void
 
 function CountCard({ icon, label, n, onClick }: { icon: React.ReactNode; label: string; n: number; onClick: () => void }) {
@@ -803,12 +803,15 @@ const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'settled', label: '決算', icon: ReceiptIcon },
 ]
 
-/** 今の URL から年度の段と分野の段を除いた、自治体の頁の path */
-const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').replace(/\/\d{4}\/?$/, '')
+const TAB_SEGMENT = new RegExp(`/(${Object.values(TAB_SLUGS).join('|')})/?$`)
+/** 今の URL から年度・タブ・分野の段を除いた、自治体の頁の path */
+const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').replace(TAB_SEGMENT, '').replace(/\/\d{4}\/?$/, '')
+/** 今の URL のタブ（/projects など）。段が無ければまとめ */
+const tabOfPath = (): TabKey => tabOfSlug(location.pathname.match(TAB_SEGMENT)?.[1] ?? '') ?? 'overview'
 /** 今の URL の分野の段（/fields/fukushi）の id */
 const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
 
-export function AppPage({ data, sitekey, initialYear, initialField }: { data: PageData; sitekey: string; initialYear?: number; initialField?: string }) {
+export function AppPage({ data, sitekey, initialYear, initialField, initialTab }: { data: PageData; sitekey: string; initialYear?: number; initialField?: string; initialTab?: TabKey }) {
   const vision = data.profile?.vision?.text
   const emblem = EMBLEMS[data.code] ? assetPath(data.code, 'emblem.svg') : null
   const years = React.useMemo(() => appPageYears(data), [data])
@@ -822,13 +825,24 @@ export function AppPage({ data, sitekey, initialYear, initialField }: { data: Pa
   }, [data.code])
   const [year, setYearState] = React.useState(initialYear && years.includes(initialYear) ? initialYear : years[0]!)
   // 年度を選んだら、その年度の頁の path にする（既定の年度は自治体の頁そのもの）。頁は読み直さないので title も合わせる
+  // タブごとに URL を分ける（まとめは自治体の頁、ほかは /projects・/budget・/settlement）。タブを移るたびに履歴を積まないよう置き換える
+  const [tab, setTabState] = React.useState<TabKey>(initialTab ?? 'overview')
+  const at = React.useRef({ year, tab })
+  const showUrl = (y: number, t: TabKey) => {
+    at.current = { year: y, tab: t }
+    const f = fieldOfPath()
+    const sub = f ? undefined : t === 'overview' ? undefined : { label: TAB_LABELS[t], path: `/${TAB_SLUGS[t]}` }
+    history.replaceState(null, '', yearPath(basePath(), y, years[0]!) + (f ? `/fields/${f}` : sub?.path ?? ''))
+    document.title = pageHead(data, y === years[0] ? undefined : y, sub).title
+  }
   const setYear = (y: number) => {
     setYearState(y)
-    const f = fieldOfPath()
-    history.replaceState(null, '', yearPath(basePath(), y, years[0]!) + (f ? `/fields/${f}` : ''))
-    document.title = pageHead(data, y === years[0] ? undefined : y).title
+    showUrl(y, at.current.tab)
   }
-  const [tab, setTab] = React.useState<TabKey>('overview')
+  const setTab = (t: TabKey) => {
+    setTabState(t)
+    if (t !== at.current.tab) showUrl(at.current.year, t)
+  }
   const [field, setField] = React.useState('all')
   const [filter, setFilter] = React.useState('all')
   const [grade, setGrade] = React.useState('A')
@@ -846,12 +860,12 @@ export function AppPage({ data, sitekey, initialYear, initialField }: { data: Pa
   const closeField = () => {
     select(null)
     if (pushed.current) return history.back()
-    history.pushState(null, '', yearPath(basePath(), year, years[0]!))
+    history.pushState(null, '', yearPath(basePath(), year, years[0]!) + (tab === 'overview' ? '' : `/${TAB_SLUGS[tab]}`))
     setFieldPage(null)
     window.scrollTo({ top: 0 })
   }
   React.useEffect(() => {
-    const onPop = () => { select(null); setFieldPage(fieldOfPath()); pushed.current = false }
+    const onPop = () => { select(null); setFieldPage(fieldOfPath()); const t = tabOfPath(); at.current.tab = t; setTabState(t); pushed.current = false }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
   }, [])

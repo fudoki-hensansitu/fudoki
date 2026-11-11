@@ -2,7 +2,7 @@
 import { HTTPException } from 'hono/http-exception'
 import type { Context } from 'hono'
 import { emptyHead, pageHead, type Head } from '../jurisdiction/html'
-import { appPageYears } from '../jurisdiction/types'
+import { appPageYears, hasTab, tabOfSlug, TAB_LABELS, TAB_SLUGS, type PageTab } from '../jurisdiction/types'
 import type { Env } from './env'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../jurisdiction/domains'
 import { resolveJurisdiction, type JurisdictionView } from './jurisdiction-routes'
@@ -12,7 +12,7 @@ export const unavailable = () => new Response('風土記の API に繋がりま�
 
 /** 自治体の頁（/tokyo、/tokyo/nakano、/tokyo/nakano/2024）の props。sitekey は頁の中の「この自治体について質問」の Turnstile。
  * year は既定でない年度の頁（/tokyo/nakano/2024）のときだけ持つ */
-export type JurisdictionProps = JurisdictionView & { sitekey: string; year?: number; /** 分野の頁（/tokyo/nakano/fields/fukushi）のときの分野の id */ field?: string }
+export type JurisdictionProps = JurisdictionView & { sitekey: string; year?: number; /** 分野の頁（/tokyo/nakano/fields/fukushi）のときの分野の id */ field?: string; /** タブの頁（/tokyo/nakano/projects）のときのタブ */ tab?: Exclude<PageTab, 'overview'> }
 
 /** 年度の段（/tokyo/nakano/2024）。4桁の数字だけ */
 export const YEAR_SEGMENT = /^\d{4}$/
@@ -66,7 +66,29 @@ export async function fieldProps(c: Context, path: string, field: string, yearSe
   }
 }
 
-export const jurisdictionHead = (p: JurisdictionProps): Head => (p.kind === 'page' ? pageHead(p.data, p.year) : emptyHead(p.entry))
+/** タブの頁（/tokyo/nakano/projects、/tokyo/nakano/2024/budget）。タブの名前が違う、その年度に決算が無いなら 404 */
+export async function tabProps(c: Context, path: string, slug: string, yearSegment?: string): Promise<JurisdictionProps> {
+  const tab = tabOfSlug(slug)
+  if (!tab) throw new HTTPException(404, { res: notFound() })
+  let props: JurisdictionProps
+  try {
+    props = await jurisdictionProps(c, path, yearSegment)
+  } catch (e) {
+    // 既定の年度は年度の段の無いタブの頁へ寄せる
+    if (e instanceof HTTPException && e.status === 301) throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${slug}` } }) })
+    throw e
+  }
+  if (props.kind === 'page' && !hasTab(props.data, props.year ?? appPageYears(props.data)[0]!, tab)) throw new HTTPException(404, { res: notFound() })
+  return { ...props, tab }
+}
+
+/** 分野の頁とタブの頁は、題と canonical に分野・タブを足す */
+export const jurisdictionHead = (p: JurisdictionProps): Head => {
+  if (p.kind !== 'page') return emptyHead(p.entry)
+  const field = p.field ? [...DOMAIN_FRAMES, OTHER_FRAME].find((f) => f.id === p.field) : undefined
+  const sub = field ? { label: field.name, path: `/fields/${field.id}` } : p.tab ? { label: TAB_LABELS[p.tab], path: `/${TAB_SLUGS[p.tab]}` } : undefined
+  return pageHead(p.data, p.year, sub)
+}
 
 const SESSION_ID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/
 /** 会話の画面（/s/:id）の props。会話の履歴と token はブラウザの sessionStorage にだけあり、サーバーは枠だけを返す（保存させない） */

@@ -126,6 +126,14 @@ export const pageYears = (d: { years: { year: number }[]; profile?: { years: Rec
 export const appPageYears = (d: { years: { year: number }[]; budgets: { year: number }[] }) =>
   [...new Set([...d.years.map((y) => y.year), ...d.budgets.map((b) => b.year)])].sort((a, b) => b - a).slice(0, 3)
 
+/** 自治体の頁のタブ。まとめは自治体の頁そのもの、ほかは1段下げる（/tokyo/shinagawa/projects） */
+export type PageTab = 'overview' | 'projects' | 'money' | 'settled'
+export const TAB_SLUGS = { projects: 'projects', money: 'budget', settled: 'settlement' } as const satisfies Record<Exclude<PageTab, 'overview'>, string>
+export const TAB_LABELS: Record<Exclude<PageTab, 'overview'>, string> = { projects: '事業', money: '予算', settled: '決算' }
+export const tabOfSlug = (slug: string) => (Object.entries(TAB_SLUGS).find(([, s]) => s === slug)?.[0] as Exclude<PageTab, 'overview'> | undefined)
+/** 決算のタブは決算のある年度だけ。予算のタブの有無は頁のデータ（当初予算の有無）を読むまで分からないので、無ければ画面で別のタブへ移す */
+export const hasTab = (d: { years: { year: number }[] }, year: number, tab: PageTab) => tab !== 'settled' || d.years.some((y) => y.year === year)
+
 /** 年度ごとの頁の path。既定の年度は自治体の頁そのもの（/tokyo/shinagawa）、ほかは1段下げる（/tokyo/shinagawa/2024） */
 export const yearPath = (base: string, year: number, latest: number) => (year === latest ? base : `${base}/${year}`)
 
