@@ -536,8 +536,9 @@ def strip_ancestor_codes(group: Group) -> list[Glyph]:
 
 
 def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False,
-               bare_amounts: bool = False, numbers=None) -> list[tuple]:
-    """Printed lines of a label group as (label glyphs, amount runs, code, name). `numbers`: the quirk `full_width_numbers`."""
+               bare_amounts: bool = False, numbers=None, long_numbers=None) -> list[tuple]:
+    """Printed lines of a label group as (label glyphs, amount runs, code, name). `numbers`: the quirk `full_width_numbers`;
+    `long_numbers`: the quirk `long_numbers`."""
     entries = []
     for line in lines([w for band in group.bands for w in band.words]):
         label, money = _split_line(line, amount_brackets, bare_amounts)
@@ -549,6 +550,8 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
         if code is not None and len(name) > 1 and re.match(r'[０-９]{3,}', raw_text):
             code, name = None, line_text  # `２０３０ビジョン…`: three or more full-width digits begin a name, not an item number (a one-character name stays `161`/`人`)
         script = re.match(r'([0-9]+)(?=[０-９])', raw_text)
+        if script and long_numbers is not None and long_numbers.module.too_long(script.group(1)):
+            script = None
         if script and label and re.fullmatch(r'[0-9]+[０-９]+', label[0].text) and (
                 len(label) == 1 or label[1].x0 - label[0].x1 >= 2):
             script = None  # `1０` `需用費`: a number printed in two widths, a word of its own (281000)
@@ -696,7 +699,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     `column_amounts`: the amounts printed in the axis's own amount column, beside the names.
     """
     entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')),
-                         quirk(settings, 'full_width_numbers'))
+                         quirk(settings, 'full_width_numbers'), quirk(settings, 'long_numbers'))
     settings = settings or {}
     kind_names = quirk(settings, 'names_end_with_kind_words')
     remainder = quirk(settings, 'bracketed_remainder')
@@ -1653,6 +1656,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     prefixes = note_prefixes(settings)
     rows = quirk(settings, 'rows')
     unnumbered = quirk(settings, 'unnumbered_shift')
+    highlights = quirk(settings, 'listed_highlights')
     for item in items:
         if rows is not None:
             rows.module.unnumber(item)
@@ -1660,6 +1664,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             item.indent = layout_name_start(item, settings.get('hang_chars'))
         raw = normalize(text(item.lines[0]))
         note = raw.startswith(prefixes)
+        if not note and highlights is not None and highlights.module.listed(item) and id(item) not in column_amount_items:
+            note, item.hint = True, highlights.module.KIND
         waiting = result[-1] if result else None
         if (note and raw.startswith(('(', '（')) and settings.get('wrap') == 'amount_on_last_line' and waiting is not None and waiting.role in ('node', 'note')
                 and not waiting.amounts and id(waiting) not in column_amount_items
@@ -2055,6 +2061,14 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     and not previous.amounts and previous.name
                     and previous.role in ('node', 'note', 'annotation') and mine[0].page == previous.page + 1):
                 first = mine.pop(0)
+                previous.lines += first.lines
+                previous.amounts += first.amounts
+            elif (previous is not None and mine
+                  and (over := quirk((layout or {}).get(group.axis), 'names_over_pages')) is not None
+                  and over.module.runs_on(previous, mine[0])):
+                first = mine.pop(0)
+                previous.role = 'node'
+                previous.name += first.name
                 previous.lines += first.lines
                 previous.amounts += first.amounts
             if mine:
