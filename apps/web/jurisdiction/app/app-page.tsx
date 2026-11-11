@@ -233,17 +233,6 @@ function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, 
 type TabKey = PageTab
 type Go = (t: TabKey, opt?: { filter?: string; field?: string; grade?: string }) => void
 
-function CountCard({ icon, label, n, onClick }: { icon: React.ReactNode; label: string; n: number; onClick: () => void }) {
-  return (
-    <button type="button" onClick={onClick} className="block h-full w-full rounded-xl text-left transition-transform active:scale-[.98]"><Card className="h-full gap-1.5 bg-card px-4 py-3.5 text-left ring-0 transition-[background,transform] hover:bg-secondary active:scale-[.98]">
-      <span className="flex items-center gap-1.5 text-xs text-muted-foreground [&_svg]:size-4">{icon}{label}</span>
-      <span className="text-[26px] leading-tight tabular-nums">
-        {n}
-        <small className="ml-1 text-xs text-muted-foreground">件</small>
-      </span>
-    </Card></button>
-  )
-}
 
 function FieldTile({ f, i, onClick }: { f: YearView['fields'][number]; i: number; onClick: () => void }) {
   const { v } = useApp()
@@ -391,38 +380,16 @@ function Overview({ go }: { go: Go }) {
   const { v, page, openField } = useApp()
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid gap-3 md:grid-cols-[1.3fr_1fr]">
-        {/* 総額と1人あたりは同じ大きさで左右に半分ずつ並べ、間に大きな斜線を引いて分ける */}
-        <Card data-tour="budget" className="justify-center bg-card px-5 py-[18px] ring-0">
-          <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3 sm:gap-6">
-          <span className="flex flex-col">
-            <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}（一般会計）</span>
-            <Amt yen={v.total} className="mt-0.5 text-[40px] leading-tight text-primary max-sm:text-[28px]" />
-          </span>
-          {v.perHead != null ? (
-            <>
-            <span aria-hidden="true" className="self-stretch">
-              <svg viewBox="0 0 20 60" preserveAspectRatio="none" className="h-full w-4 stroke-border sm:w-5"><line x1="19" y1="1" x2="1" y2="59" strokeWidth="1.5" vectorEffect="non-scaling-stroke" /></svg>
-            </span>
-            <span className="flex flex-col">
-              <span className="text-xs text-muted-foreground">住民1人あたり</span>
-              <Amt yen={v.perHead} className="mt-0.5 text-[40px] leading-tight text-primary max-sm:text-[28px]" />
-            </span>
-            </>
-          ) : null}
-          </div>
-        </Card>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="col-span-2"><CountCard icon={<ListBulletsIcon />} label="事業" n={v.current.length} onClick={() => go('projects', { filter: 'all' })} /></div>
-          {v.comparable || v.newProjects.length || v.ended.length || v.fresh.length ? (
-            <>
-              <CountCard icon={<NewIcon className="text-primary" />} label="新しく始める事業" n={v.newProjects.length + v.freshUnlinked.length} onClick={() => go('projects', { filter: 'new' })} />
-              {v.comparable || v.ended.length ? <CountCard icon={<StopIcon className="text-primary" />} label="やめた事業" n={v.ended.length} onClick={() => go('projects', { filter: 'ended' })} /> : null}
-            </>
-          ) : null}
-          {v.sheets.length ? <div className="col-span-2"><CountCard icon={<ClipboardTextIcon />} label="評価した事業" n={v.sheets.length} onClick={() => go('projects', { filter: 'eval' })} /></div> : null}
-        </div>
-      </div>
+      {/* ホームのまちの札と同じく、濃い緑の地に総額と1人あたりを載せる。事業の件数は出さない */}
+      <section data-tour="budget" className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
+        <p className="text-sm opacity-80">{reiwa(v.year)}の{v.word}（一般会計）</p>
+        <Amt yen={v.total} className="mt-1 block text-[40px] leading-none font-bold sm:text-[48px]" />
+        {v.perHead != null ? (
+          <p className="mt-2 text-sm opacity-80">
+            1人あたり <Amt yen={v.perHead} />
+          </p>
+        ) : null}
+      </section>
 
       <section>
         <SectionHead title="分野" />
