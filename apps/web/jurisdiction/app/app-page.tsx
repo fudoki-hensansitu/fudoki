@@ -48,13 +48,14 @@ import { Link } from '../../nav/link'
 import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon, NewIcon, PlanIcon, SizeIcon, StopIcon, UpIcon } from '../fresh-icons'
 import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
+import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
 import { pageHead } from '../html'
 import { EMBLEMS } from '../emblems'
 import { assetPath } from '../profiles'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock, Elsewhere } from '../page'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, yearPath, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, yearPath, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
@@ -617,38 +618,51 @@ function SheetDetail({ s }: { s: EvalSheet }) {
 
 /** 分野の頁（/tokyo/shinagawa/fields/fukushi）。まとめのタイルから開く */
 const FieldChart = React.lazy(() => import('./field-chart'))
-/** 内訳の色。緑の濃さを金額の順に下げる（色に意味は持たせない）。その他は灰色 */
+/** 内訳の色。緑の濃さを金額の順に下げる（色に意味は持たせない）。その他は灰色。ink は切れの上に書く割合の文字色 */
 const SLICE_COLORS = [100, 78, 60, 44, 30].map((n) => `color-mix(in oklab, var(--primary) ${n}%, var(--background))`)
+const SLICE_INKS = ['var(--primary-foreground)', 'var(--primary-foreground)', 'var(--primary-foreground)', 'var(--foreground)', 'var(--foreground)']
 const REST_COLOR = 'color-mix(in oklab, var(--muted-foreground) 22%, var(--background))'
 
-/** 分野の内訳: 金額の多い事業5つと、その他 */
-function FieldBreakdown({ ps, total }: { ps: Proj[]; total: number }) {
-  const { v, select } = useApp()
+/** 分野の内訳: COFOG の中分類ごとの金額。多い順に5つと、残りはまとめる */
+function FieldBreakdown({ frame, total }: { frame: { cofog: string }; total: number }) {
+  const { v, d, page } = useApp()
+  const [drills, setDrills] = React.useState<Drill[] | null>()
+  const initial = d.years[String(v.year)]?.kind === 'initial'
+  React.useEffect(() => {
+    setDrills(undefined)
+    const controller = new AbortController()
+    fetch(`/api/jurisdictions/flow/${page.code}/${v.year}/kou?${new URLSearchParams({ view: 'cofog', ...(initial ? { phase: 'initial' } : {}) })}`, { signal: controller.signal })
+      .then((r) => (r.ok ? (r.json() as Promise<Drill[]>) : Promise.reject(new Error(String(r.status)))))
+      .then((x) => !controller.signal.aborted && setDrills(x), () => !controller.signal.aborted && setDrills(null))
+    return () => controller.abort()
+  }, [page.code, v.year, initial])
   const slices = React.useMemo(() => {
-    const rows = ps.map((p) => ({ p, yen: v.amount(p) ?? 0 })).filter((x) => x.yen > 0).sort((a, b) => b.yen - a.yen)
-    const top = rows.slice(0, SLICE_COLORS.length).map((x, i) => ({ key: x.p.id, name: x.p.name, yen: x.yen, color: SLICE_COLORS[i]! }))
-    const rest = total - top.reduce((t, x) => t + x.yen, 0)
-    return rest > 0 ? [...top, { key: 'rest', name: 'その他', yen: rest, color: REST_COLOR }] : top
-  }, [ps, total, v])
-  if (!slices.length) return null
-  const pick = (key: string) => key !== 'rest' && select({ kind: 'project', id: key })
+    const drill = drills?.find((x) => x.kan.id === `cofog-${frame.cofog || 'none'}`)
+    const rows = (drill?.kou ?? []).filter((k) => !k.amountMissing && k.yen > 0).sort((a, b) => b.yen - a.yen)
+    const many = rows.length > SLICE_COLORS.length + 1
+    const top = (many ? rows.slice(0, SLICE_COLORS.length) : rows.slice(0, SLICE_COLORS.length + 1)).map((k, i) => ({ key: k.id, name: k.name, yen: k.yen, color: SLICE_COLORS[i] ?? REST_COLOR, ink: SLICE_INKS[i] ?? 'var(--foreground)' }))
+    const rest = rows.slice(top.length).reduce((t, k) => t + k.yen, 0)
+    return rest > 0 ? [...top, { key: 'rest', name: `ほか${rows.length - top.length}件`, yen: rest, color: REST_COLOR, ink: 'var(--foreground)' }] : top
+  }, [drills, frame.cofog])
+  if (drills === null || (drills && !slices.length)) return null
+  const sum = slices.reduce((t, s) => t + s.yen, 0) || total
   return (
-    <DetailSection icon={ChartPieSliceIcon} title="内訳" count="金額の多い事業">
+    <DetailSection icon={ChartPieSliceIcon} title="内訳">
       <div className="grid items-center gap-5 sm:grid-cols-[220px_minmax(0,1fr)] sm:gap-8">
         <div className="grid aspect-square w-full max-w-[220px] place-items-center justify-self-center">
-          <React.Suspense fallback={<div className="size-full animate-pulse rounded-full bg-card" />}>
-            <FieldChart slices={slices} format={yenText} onPick={pick} />
-          </React.Suspense>
+          {drills ? (
+            <React.Suspense fallback={<div className="size-full animate-pulse rounded-full bg-card" />}>
+              <FieldChart slices={slices} />
+            </React.Suspense>
+          ) : <div className="size-full animate-pulse rounded-full bg-card" />}
         </div>
         <ul className="flex min-w-0 flex-col">
           {slices.map((s) => (
-            <li key={s.key}>
-              <button type="button" disabled={s.key === 'rest'} onClick={() => pick(s.key)} className="flex w-full items-center gap-3 rounded-lg px-2 py-2 text-left enabled:hover:bg-secondary">
-                <span className="size-3 shrink-0 rounded-full" style={{ background: s.color }} />
-                <span className="min-w-0 flex-1 truncate text-[15px]">{s.name}</span>
-                <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{((s.yen / total) * 100).toFixed(1)}%</span>
-                <Amt yen={s.yen} className="w-[5.5em] shrink-0 text-right text-[15px]" />
-              </button>
+            <li key={s.key} className="flex items-center gap-3 px-2 py-2">
+              <span className="size-3 shrink-0 rounded-full" style={{ background: s.color }} />
+              <span className="min-w-0 flex-1 text-[15px] leading-snug">{s.name}</span>
+              <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{((s.yen / sum) * 100).toFixed(1)}%</span>
+              <Amt yen={s.yen} className="w-[5.5em] shrink-0 text-right text-[15px]" />
             </li>
           ))}
         </ul>
@@ -679,7 +693,7 @@ function FieldPage({ id }: { id: string }) {
         <Amt yen={f.yen} className="block text-4xl leading-tight text-primary" />
         <span className="text-xs text-muted-foreground">{[`全体の ${((f.yen / v.total) * 100).toFixed(1)}%`, perHead(f.yen, d.pop)].filter(Boolean).join(' · ')}</span>
       </div>
-      <FieldBreakdown ps={ps} total={f.yen} />
+      <FieldBreakdown frame={[...DOMAIN_FRAMES, OTHER_FRAME].find((x) => x.id === f.id) ?? OTHER_FRAME} total={f.yen} />
       {ms.length ? (
         <DetailSection icon={SparkleIcon} title="新しく始める事業" count={ms.length}>
           <Rows>{ms.map((m) => <MeasureRow key={m.id} m={m} />)}</Rows>
