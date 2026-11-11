@@ -2,7 +2,7 @@
 import { defineHandler, defineHead } from 'void'
 import type { HomeProps } from '../home/home'
 import { VISIONS } from '../jurisdiction/visions'
-import { catalog, homeEntries } from '../server/jurisdiction-routes'
+import { catalog, homeEntries, pageYearsOf } from '../server/jurisdiction-routes'
 import type { Env } from '../server/env'
 
 export type Props = HomeProps
@@ -16,13 +16,14 @@ export const loader = defineHandler<Props>(async (c) => {
   // API に繋がらなくても、ほかの使い方への入口は出す
   const env = c.env as unknown as Env
   const [entries, jurisdictions] = await Promise.all([homeEntries(env).catch(() => []), catalog(env).catch(() => [])])
-  // 事業評価のある自治体を先に並べる。評価の年度は API が収録した最新の年度
+  // 事業評価のある自治体を先に並べる。評価の年度は、自治体の頁で選べる年度のうち評価を収録した最新の年度
   const featured = jurisdictions
     .filter((j) => j.evaluationYears.length > 0 || VISIONS[j.code])
     .sort((a, b) => Number(b.evaluationYears.length > 0) - Number(a.evaluationYears.length > 0))
     .flatMap((j) => {
       const e = entries.find((x) => x.code === j.code)
-      const evalYear = j.evaluationYears.at(-1)
+      const years = pageYearsOf(j)
+      const evalYear = j.evaluationYears.filter((y) => years.includes(y)).at(-1)
       return e ? [{ code: j.code, name: e.name, path: e.path, vision: VISIONS[j.code]?.text, ...(evalYear !== undefined ? { evalYear } : {}) }] : []
     })
   return { entries, featured }

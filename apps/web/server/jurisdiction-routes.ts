@@ -45,7 +45,7 @@ export async function homeEntries(env: Env): Promise<MapEntry[]> {
 }
 
 /** 自治体の頁で選べる年度（新しい順）。頁のデータを読まずにカタログだけで決める（sitemap・ホームのリンク） */
-function pageYearsOf(e: CatalogEntry): number[] {
+export function pageYearsOf(e: CatalogEntry): number[] {
   const settled = shownSettlementYears(e.settlementYears)
   const last = Math.max(0, ...settled)
   return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) })
