@@ -37,12 +37,6 @@
                 "rules": {
                   "type": "object"
                 },
-                "inner_tables": {
-                  "type": "object"
-                },
-                "explained_projects": {
-                  "type": "object"
-                },
                 "text_layer": {
                   "type": "object"
                 }

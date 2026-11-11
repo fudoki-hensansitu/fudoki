@@ -74,10 +74,12 @@
   "quirks": {
     "bracket_line_closes_name": "ingestion.generic.patterns.quirks.bracket_line_closes_name",
     "bracketed_remainder": "ingestion.generic.patterns.quirks.bracketed_remainder",
+    "explained_projects": "ingestion.generic.patterns.quirks.explained_projects",
     "fitted_names": "ingestion.generic.patterns.quirks.fitted_names",
     "glued_numbers": "ingestion.generic.patterns.quirks.glued_numbers",
     "heading_repeated_over_code": "ingestion.generic.patterns.quirks.heading_repeated_over_code",
     "headings": "ingestion.generic.patterns.quirks.headings",
+    "inner_tables": "ingestion.generic.patterns.quirks.inner_tables",
     "line_starts": "ingestion.generic.patterns.quirks.line_starts",
     "name_column": "ingestion.generic.patterns.quirks.name_column",
     "name_columns": "ingestion.generic.patterns.quirks.name_columns",

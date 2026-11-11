@@ -1,7 +1,7 @@
 import unittest
 from types import SimpleNamespace
 
-from ingestion.generic import inner_tables
+from ingestion.generic.patterns.quirks import inner_tables
 from ingestion.generic.observe import Page, Rule, Word
 
 SETTING = {'marker': '当初予算額', 'left': '目', 'heading': '事務事業'}

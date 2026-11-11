@@ -1,4 +1,4 @@
-"""Blocks printed under a subject row across the amount columns (the layout setting `inner_tables`).
+"""Blocks printed under a subject row across the amount columns (the quirk `inner_tables`).
 
 131199 prints, under each 目 of its 決算 detail, a block that runs from the 目 column to the right frame: a
 事業説明 in prose and a boxed table `事務事業 | 予算現額 | 決算額`, whose rows are the 目's 事業 and, indented
@@ -16,6 +16,35 @@ import re
 
 from ingestion.generic.layout import normalize
 from ingestion.generic.observe import Page, Rule, Word
+
+SCOPE = 'document'
+OPTIONS = {
+    "type": "object",
+    "additionalProperties": False,
+    "required": [
+        "marker",
+        "left",
+        "heading"
+    ],
+    "description": "Blocks printed under a subject row across the amount columns, where the column rules stop (131199: 事業説明 and a boxed 事務事業 table under each 目). They are cut out before the columns are read; the boxed table whose first column header is `heading` becomes a breakdown of the subject above, on the axis `heading`.",
+    "properties": {
+        "marker": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The header of the first amount column; the vertical rule left of it stops over a block."
+        },
+        "left": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The header of the deepest subject column; a block runs right of the rule left of it."
+        },
+        "heading": {
+            "type": "string",
+            "minLength": 1,
+            "description": "The first column header of the boxed table, and the breakdown axis of its rows."
+        }
+    }
+}
 
 CODE = re.compile(r'^([0-9]+|[(（][0-9]+[)）])\s*')
 YEN_AMOUNT = re.compile(r'△?[0-9]{1,3}(,[0-9]{3})*')
