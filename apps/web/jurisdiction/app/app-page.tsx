@@ -856,17 +856,18 @@ export function AppPage({ data, sitekey, initialYear, initialField }: { data: Pa
     !v ? null : key === 'overview' ? <Overview go={go} /> : key === 'money' ? <MoneyTab phase="initial" /> : key === 'settled' ? <MoneyTab phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
 
   return (
-    <div className={cn('transition-[padding] duration-300', wide && selected && 'pr-[440px]')}>
-      <div className="@container mx-auto max-w-[1120px] px-4 pb-48">
+    <div className={cn('@container transition-[padding] duration-300', wide && selected && 'pr-[440px]')}>
+      <div className="mx-auto max-w-[1120px] px-4 pb-48">
         {header}
         <Separator />
         <Tabs value={tab} onValueChange={(t) => changeTab(t as TabKey)} className="gap-0">
           <div ref={tabsTop} aria-hidden="true" />
-          <div className="sticky top-0 z-20 -mx-4 bg-background">
+          {/* 区切りの線は画面の端から端まで引く（50cqw は外側の幅の半分、50% は中身の幅の半分。px で文字の位置は中身に揃える） */}
+          <div className="sticky top-0 z-20 mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] bg-background">
             {/* 下線を区切りの線に重ねて、線が二重に見えないようにする */}
-            <Separator className="absolute inset-x-4 bottom-0 data-horizontal:w-auto" />
+            <Separator className="absolute inset-x-0 bottom-0 data-horizontal:w-auto" />
             {/* スクロールしたら上にタブを残し、右に年度の切り替えを出す。下に Separator を引いて中身と分ける */}
-            <div className="flex items-center gap-3 px-4">
+            <div className="flex items-center gap-3">
             {fieldPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
                 <Button variant="ghost" onClick={closeField} className="-ml-2 text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" />{data.name}</Button>
