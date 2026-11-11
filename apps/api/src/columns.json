@@ -700,11 +700,11 @@
       ]
     },
     "expenditure_location": {
-      "primary_key": "row_id",
+      "primary_key": "line_id",
       "indexes": [],
       "columns": [
         {
-          "name": "row_id",
+          "name": "line_id",
           "type": "string",
           "nullable": false,
           "description": "科目の表の subject_id か内訳の表の detail_id。"
@@ -958,7 +958,7 @@
           "fiscal_year"
         ],
         [
-          "detail_id"
+          "expenditure_detail_id"
         ]
       ],
       "columns": [
@@ -1083,16 +1083,16 @@
           "description": "最終評価の今後の取組の方向性（シートの表記、例「手法等の改善」）。"
         },
         {
-          "name": "subject_id",
+          "name": "expenditure_subject_id",
           "type": "string",
           "nullable": true,
           "description": "風土記の判断。シートの予算科目（会計・款・項・目の名前）が1つに当たる、同じ年度の決算書の目。expenditure_subject の subject_id。当たらなければ空。"
         },
         {
-          "name": "detail_id",
+          "name": "expenditure_detail_id",
           "type": "string",
           "nullable": true,
-          "description": "風土記の判断。subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき、その内訳。さらにその子孫に、シートの事業名と同じ名前の事業の内訳が1つだけあれば、そちらの内訳。expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。"
+          "description": "風土記の判断。expenditure_subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき、その内訳。さらにその子孫に、シートの事業名と同じ名前の事業の内訳が1つだけあれば、そちらの内訳。expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。"
         }
       ]
     },
@@ -1291,7 +1291,7 @@
           "fiscal_year"
         ],
         [
-          "detail_id"
+          "expenditure_detail_id"
         ]
       ],
       "columns": [
@@ -1362,7 +1362,7 @@
           "description": "施策の説明。資料の箇条書き（品川は POINT）を改行でつないだもの（資料の表記）。"
         },
         {
-          "name": "detail_id",
+          "name": "expenditure_detail_id",
           "type": "string",
           "nullable": true,
           "description": "風土記の判断。施策を紐付けた、同じ年度の当初予算書の内訳（expenditure_detail の detail_id）。紐付かなければ空。"
@@ -1468,10 +1468,10 @@
           "jurisdiction_code"
         ],
         [
-          "budget_detail_id"
+          "initial_expenditure_detail_id"
         ],
         [
-          "settlement_detail_id"
+          "settlement_expenditure_detail_id"
         ]
       ],
       "columns": [
@@ -1530,13 +1530,13 @@
           "description": "目の名前。目の無い項の下の事業は NULL。"
         },
         {
-          "name": "budget_detail_id",
+          "name": "initial_expenditure_detail_id",
           "type": "string",
           "nullable": true,
           "description": "当初予算書の事業の行。expenditure_detail の detail_id。当初予算に無い年度は NULL。"
         },
         {
-          "name": "settlement_detail_id",
+          "name": "settlement_expenditure_detail_id",
           "type": "string",
           "nullable": true,
           "description": "決算書の事業の行。expenditure_detail の detail_id。決算に無い年度は NULL。"

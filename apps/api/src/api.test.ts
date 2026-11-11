@@ -230,7 +230,7 @@ describe('get', () => {
     expect(body.details).toEqual({})
     expect(body.next_page_token).toBeNull()
     expect(body.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(['o1'])
-    expect(body.locations.map((l: { row_id: string }) => l.row_id).sort()).toEqual([K1, M1, M2])
+    expect(body.locations.map((l: { line_id: string }) => l.line_id).sort()).toEqual([K1, M1, M2])
   })
 
   test('目は直下の内訳を breakdown ごとに返し、内訳の出典も含む', async () => {

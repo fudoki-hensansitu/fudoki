@@ -58,7 +58,7 @@ export const SUBJECT_TABLE = fiscalTable('subjects', 'expenditure_subject')
 /** 科目の下の内訳。同じ科目・同じ breakdown の depth = 1 の和が科目の額 */
 export const DETAIL_TABLE = fiscalTable('details', 'expenditure_detail')
 
-/** 科目・内訳の行が印字された位置（row_id は subject_id か detail_id） */
+/** 科目・内訳の行が印字された位置（line_id は subject_id か detail_id） */
 export const LOCATION_TABLE = 'expenditure_location'
 export const LOCATION_COLUMNS = TABLES[LOCATION_TABLE]!.columns
 export const LOCATION_SELECT_LIST = selectList(LOCATION_COLUMNS)

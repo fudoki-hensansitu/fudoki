@@ -14,7 +14,7 @@ export const Measure = z.strictObject({
   is_new: z.boolean().describe('新規の印'),
   description: z.string().describe('資料の説明文（品川は「ポイント」の箇条書きを改行でつないだもの）'),
   budget_yen: Yen.nullable(),
-  detail_id: z.string().nullable().describe('紐付けた当初予算書の内訳（風土記の判断）。当たらなければ空'),
+  expenditure_detail_id: z.string().nullable().describe('紐付けた当初予算書の内訳（歳出の集約の内訳の ID。風土記の判断）。当たらなければ空'),
   origin: PagedOrigin,
 })
 export type Measure = z.infer<typeof Measure>
@@ -69,7 +69,7 @@ export const MeasureRow = z
       is_new: z.boolean(),
       budget_yen: z.int().nullable(),
       description: z.string().nullable(),
-      detail_id: z.string().nullable(),
+      expenditure_detail_id: z.string().nullable(),
       link_method: z.string(),
       link_confidence: z.number().nullable(),
     })

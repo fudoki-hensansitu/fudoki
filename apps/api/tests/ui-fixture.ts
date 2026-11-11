@@ -23,7 +23,7 @@ const row = (n: FixtureNode) => {
     ? { ...rest, subject_id: node_id, parent_subject_id: parent_node_id ?? null, level: node_kind, moku_name: n.moku_name ?? (node_kind === '目' ? n.name : null), is_leaf: node_kind === '目' }
     : { ...rest, detail_id: node_id, parent_detail_id: null, subject_id: parent_node_id ?? 'ui-parent', breakdown: axis, node_kind, moku_name: n.moku_name ?? null, is_leaf: true }
 }
-const locationOf = (n: FixtureNode) => ({ row_id: n.node_id, origin_id: n.origin_id, ...Object.fromEntries(LOCATION_KEYS.map((k) => [k, n[k]])) })
+const locationOf = (n: FixtureNode) => ({ line_id: n.node_id, origin_id: n.origin_id, ...Object.fromEntries(LOCATION_KEYS.map((k) => [k, n[k]])) })
 
 /** 試験の結果を、server の tool が返す structuredContent の形にする */
 export function toServer(data: ViewData) {

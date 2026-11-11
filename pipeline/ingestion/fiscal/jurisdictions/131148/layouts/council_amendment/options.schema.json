@@ -1,0 +1,22 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "properties": {
+    "account": {"type": "string", "minLength": 1},
+    "table_id": {"type": "string", "minLength": 1},
+    "bill": {"type": "string", "minLength": 1, "description": "The printed bill name of the amendment (第7号議案)."},
+    "business_axis": {"type": "string", "minLength": 1, "description": "The axis of the 事務事業 in the budget book's table, so the lines meet its nodes."},
+    "headings": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "修正金額": {"type": "string", "minLength": 1},
+        "原案金額": {"type": "string", "minLength": 1},
+        "差": {"type": "string", "minLength": 1}
+      },
+      "required": ["修正金額", "原案金額", "差"]
+    }
+  },
+  "required": ["account", "table_id", "bill", "business_axis", "headings"]
+}

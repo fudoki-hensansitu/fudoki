@@ -21,8 +21,8 @@ parents as (
     -- 最新の年度の行の親の行が属する事業
     select l.project_id, any_value(py.project_id) as parent_project_id
     from latest l
-    join {{ ref('int_project__lines') }} line on line.detail_id = coalesce(l.budget_detail_id, l.settlement_detail_id)
-    join years py on line.parent_detail_id in (py.budget_detail_id, py.settlement_detail_id)
+    join {{ ref('int_project__lines') }} line on line.detail_id = coalesce(l.initial_expenditure_detail_id, l.settlement_expenditure_detail_id)
+    join years py on line.parent_detail_id in (py.initial_expenditure_detail_id, py.settlement_expenditure_detail_id)
     group by l.project_id
 )
 select l.project_id, l.jurisdiction_code, l.name, l.account_name,

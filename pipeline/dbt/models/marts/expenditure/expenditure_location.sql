@@ -7,7 +7,7 @@ with r as (
     where r.row_id in (select subject_id from {{ ref('expenditure_subject') }})
        or r.row_id in (select detail_id from {{ ref('expenditure_detail') }})
 )
-select row_id,
+select row_id as line_id,
     origin_id,
     case when format = 'csv' then 'csv' else 'pdf' end as kind,
     case when format <> 'csv' then source_page end as source_page,

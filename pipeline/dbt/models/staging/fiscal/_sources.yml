@@ -3812,6 +3812,22 @@ sources:
       direction: expenditure
       table_id: elderly-medical-initial
       kind: nodes
+  - name: j131148_2025_initial_general_amendment_amounts
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-amendment
+      kind: amounts
+  - name: j131148_2025_initial_general_amendment_nodes
+    meta:
+      jurisdiction: '131148'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-amendment
+      kind: nodes
   - name: j131148_2025_initial_general_initial_amounts
     meta:
       jurisdiction: '131148'
