@@ -477,7 +477,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "214471960e54b3b2672a2d50ea393ab408f40fe776e099ad575fefa962c4ce1f",
+      "input_fingerprint": "50f330f1f9da8c6f4ed7bb3c0e0da3b1a2addfe028a88f66a4b85546e1133adc",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -506,7 +506,7 @@
     {
       "table_id": "land-initial",
       "conversion_id": "land-initial",
-      "input_fingerprint": "5450986fd40473224848207bcf458e76def365ab0073ca28a60a78d1051a587a",
+      "input_fingerprint": "d3120a7cb328af5e2e003fbd7cc85d829e45aea305474ec201dd9d3200d51db9",
       "account": "用地特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -535,7 +535,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "23ac5fcb6219ceb63a0a00c309fd142a6d758f29a63e9289aec8da45f47321ad",
+      "input_fingerprint": "4ce05bb3f56045ee3b8fcb63cf8f0ae5c88d6bbf0dcc49e270ca564678c5c32a",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -564,7 +564,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "acb92bdb5747654a322367dc619674ab9573e4e5a7898b21945a1f100aca3206",
+      "input_fingerprint": "81df98a4a0b901d4387c9fff112b9ed45f008b3d38aaaae8948f5f0db74f28c5",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -593,7 +593,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "246df5a578df933288a8c6a1b0de439393df23c689609c99e03b3ddb6564fcc1",
+      "input_fingerprint": "480efa111c936d82b207802edbc8fb38ed819d92102d44f0ec140754ccf5b6f1",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
