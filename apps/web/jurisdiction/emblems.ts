@@ -1,11 +1,15 @@
 // 自治体の紋章（都章・区章・市章・町村章）。SVG は public/jurisdictions/<code>/emblem.svg に置く。
-// どれも Wikimedia Commons で Public domain（CC0 を含む）とされている SVG をそのまま使う。file は Commons の File 名、license は Commons の著作権タグ。候補は Wikidata の全国地方公共団体コード（P429）の紋章の画像（P94、無ければ P158）
+// どれも Wikimedia Commons の SVG をそのまま使う。file は Commons の File 名、license は Commons の著作権タグかライセンス名。
+// 候補は Wikidata の全国地方公共団体コード（P429）の紋章の画像（P94、無ければ P158）、無ければ日本語版 Wikipedia の記事の基礎情報の紋章。
+// Public domain（CC0 を含む）でないもの（CC BY・CC BY-SA）は author を持ち、利用規約の頁に作者とライセンスを表示する。OG 画像には使わない
 /** 自治体ごとの資産（public/jurisdictions/<code>/ の紋章など）の URL */
 export const assetPath = (code: string, file: string) => `/jurisdictions/${code}/${file}`
 
 export interface Emblem {
   file: string
   license: string
+  /** 帰属表示が要るとき（CC BY・CC BY-SA）の Commons の作者 */
+  author?: string
 }
 
 export const EMBLEMS: Record<string, Emblem> = {
@@ -207,6 +211,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '023213': { file: 'Emblem_of_Ajigasawa,_Aomori.svg', license: 'PD-Japan-exempt' }, // 鰺ヶ沢町
   '023230': { file: 'Emblem_of_Fukaura,_Aomori.svg', license: 'PD-Japan-exempt' }, // 深浦町
   '023434': { file: 'Emblem_of_Nishimeya,_Aomori.svg', license: 'PD-Japan-organization' }, // 西目屋村
+  '023612': { file: 'Emblem_of_Fujisaki,_Aomori.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 藤崎町
   '023621': { file: 'Emblem_of_Ōwani,_Aomori.svg', license: 'PD-Japan-organization' }, // 大鰐町
   '023671': { file: 'Emblem_of_Inakadate,_Aomori.svg', license: 'PD-Japan-organization' }, // 田舎館村
   '023817': { file: 'Emblem_of_Itayanagi_Aomori.svg', license: 'PD-Japan-organization' }, // 板柳町
@@ -269,7 +274,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '042030': { file: 'Emblem_of_Shiogama,_Miyagi.svg', license: 'PD-Japan-organization' }, // 塩竈市
   '042056': { file: 'Emblem_of_Kesennuma,_Miyagi.svg', license: 'PD-Japan-exempt' }, // 気仙沼市
   '042064': { file: 'Emblem_of_Shiroishi,_Miyagi.svg', license: 'PD-Japan-exempt' }, // 白石市
-  '042072': { file: 'Emblem_of_Natori,_Miyagi.svg', license: 'PD-Japan-organization / PD-u</nowiki>''' }, // 名取市
+  '042072': { file: 'Emblem_of_Natori,_Miyagi.svg', license: 'PD-Japan-organization' }, // 名取市
   '042081': { file: 'Emblem_of_Kakuda,_Miyagi.svg', license: 'PD-Japan-exempt' }, // 角田市
   '042099': { file: 'Emblem_of_Tagajō,_Miyagi.svg', license: 'PD-Japan-exempt' }, // 多賀城市
   '042111': { file: 'Emblem_of_Iwanuma,_Miyagi.svg', license: 'PD-Japan-organization' }, // 岩沼市
@@ -437,6 +442,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '082163': { file: 'Emblem_of_Kasama,_Ibaraki.svg', license: 'PD-ineligible' }, // 笠間市
   '082171': { file: 'Emblem_of_Toride,_Ibaraki.svg', license: 'PD-Japan-organization' }, // 取手市
   '082198': { file: 'Emblem_of_Ushiku,_Ibaraki.svg', license: 'PD-Japan-organization' }, // 牛久市
+  '082201': { file: 'Emblem_of_Tsukuba,_Ibaraki.svg', license: 'CC BY-SA 3.0', author: 'Kilom691' }, // つくば市
   '082210': { file: 'Emblem_of_Hitachinaka,_Ibaraki.svg', license: 'PD-ineligible / PD-Japan-exempt' }, // ひたちなか市
   '082228': { file: 'Emblem_of_Kashima,_Ibaraki.svg', license: 'PD-Japan-exempt' }, // 鹿嶋市
   '082236': { file: 'Emblem_of_Itako,_Ibaraki.svg', license: 'PD-Japan-organization' }, // 潮来市
@@ -503,17 +509,20 @@ export const EMBLEMS: Record<string, Emblem> = {
   '102091': { file: 'Emblem_of_Fujioka,_Gunma.svg', license: 'PD-Japan-exempt' }, // 藤岡市
   '102105': { file: 'Emblem_of_Tomioka,_Gunma.svg', license: 'PD-Japan-exempt' }, // 富岡市
   '102113': { file: 'Emblem_of_Annaka,_Gunma.svg', license: 'PD-Japan-exempt' }, // 安中市
+  '102121': { file: 'Emblem_of_Midori,_Gunma.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // みどり市
   '103446': { file: 'Emblem_of_Shinto,_Gunma.svg', license: 'PD-Japan-exempt' }, // 榛東村
   '103454': { file: 'Emblem_of_Yoshioka,_Gunma.svg', license: 'PD-ineligible' }, // 吉岡町
   '103667': { file: 'Emblem_of_Ueno,_Gunma.svg', license: 'PD-Japan-organization' }, // 上野村
   '103675': { file: 'Emblem_of_Kanna,_Gunma.svg', license: 'PD-self' }, // 神流町
   '103829': { file: 'Emblem_of_Shimonita,_Gunma.svg', license: 'PD-Japan-exempt' }, // 下仁田町
+  '103837': { file: 'Emblem_of_Nanmoku,_Gunma.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 南牧村
   '103845': { file: 'Emblem_of_Kanra,_Gunma.svg', license: 'PD-self' }, // 甘楽町
   '104213': { file: 'Emblem_of_Nakanojo,_Gunma.svg', license: 'PD-Japan-exempt' }, // 中之条町
   '104248': { file: 'Emblem_of_Naganohara,_Gunma.svg', license: 'PD-Japan-exempt' }, // 長野原町
   '104256': { file: 'Emblem_of_Tsumagoi,_Gunma.svg', license: 'PD-Japan-exempt' }, // 嬬恋村
   '104264': { file: 'Emblem_of_Kusatsu,_Gunma.svg', license: 'PD-Japan-organization' }, // 草津町
   '104281': { file: 'Emblem_of_Takayama,_Gunma.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 高山村
+  '104299': { file: 'Emblem_of_Higashiagazuma,_Gunma.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 東吾妻町
   '104434': { file: 'Emblem_of_Katashina,_Gunma.svg', license: 'PD-Japan-exempt' }, // 片品村
   '104442': { file: 'Emblem_of_Kawaba,_Gunma.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 川場村
   '104485': { file: 'Emblem_of_Shōwa,_Gunma.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 昭和村
@@ -574,6 +583,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '113433': { file: 'Emblem_of_Ogawa,_Saitama.svg', license: 'PD-Japan-exempt' }, // 小川町
   '113468': { file: 'Emblem_of_Kawajima,_Saitama.svg', license: 'PD-Japan-organization' }, // 川島町
   '113476': { file: 'Emblem_of_Yoshimi,_Saitama.svg', license: 'PD-Japan-organization' }, // 吉見町
+  '113484': { file: 'Emblem_of_Hatoyama,_Saitama.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 鳩山町
   '113492': { file: 'Emblem_of_Tokigawa,_Saitama.svg', license: 'PD-Japan-exempt' }, // ときがわ町
   '113611': { file: 'Emblem_of_Yokoze,_Saitama.svg', license: 'PD-Japan-exempt' }, // 横瀬町
   '113620': { file: 'Emblem_of_Minano,_Saitama.svg', license: 'PD-Japan-organization' }, // 皆野町
@@ -595,6 +605,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '122050': { file: '千葉県館山市市章.svg', license: 'PD-Japan-organization' }, // 館山市
   '122068': { file: '千葉県木更津市市章.svg', license: 'PD-Japan-organization' }, // 木更津市
   '122076': { file: 'Emblem_of_Matsudo,_Chiba.svg', license: 'PD-Japan-organization' }, // 松戸市
+  '122084': { file: 'Emblem_of_Noda,_Chiba.svg', license: 'PD-Japan-organization' }, // 野田市
   '122106': { file: 'Emblem_of_Mobara,_Chiba.svg', license: 'PD-Japan-organization' }, // 茂原市
   '122114': { file: 'Emblem_of_Narita,_Chiba.svg', license: 'PD-Japan-exempt' }, // 成田市
   '122122': { file: 'Emblem_of_Sakura,_Chiba.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 佐倉市
@@ -610,6 +621,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '122238': { file: 'Emblem_of_Kamogawa,_Chiba.svg', license: 'PD-Japan-exempt' }, // 鴨川市
   '122246': { file: 'Emblem_of_Kamagaya,_Chiba.svg', license: 'PD-ineligible' }, // 鎌ケ谷市
   '122254': { file: 'Emblem_of_Kimitsu,_Chiba.svg', license: 'PD-Japan-organization' }, // 君津市
+  '122262': { file: 'Emblem_of_Futtsu,_Chiba.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 富津市
   '122271': { file: 'Emblem_of_Urayasu,_Chiba.svg', license: 'PD-Japan-exempt' }, // 浦安市
   '122289': { file: 'Emblem_of_Yotsukaido,_Chiba.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 四街道市
   '122297': { file: 'Emblem_of_Sodegaura,_Chiba.svg', license: 'PD-Japan-exempt' }, // 袖ケ浦市
@@ -750,6 +762,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '152129': { file: 'Emblem_of_Murakami,_Niigata.svg', license: 'PD-Japan-exempt' }, // 村上市
   '152137': { file: 'Emblem_of_Tsubame,_Niigata.svg', license: 'PD-Japan-exempt' }, // 燕市
   '152161': { file: 'Emblem_of_Itoigawa,_Niigata.svg', license: 'PD-Japan-exempt' }, // 糸魚川市
+  '152170': { file: 'Emblem_of_Myōkō,_Niigata.svg', license: 'PD-Japan-exempt' }, // 妙高市
   '152188': { file: 'Emblem_of_Gosen,_Niigata.svg', license: 'PD-Japan-exempt' }, // 五泉市
   '152226': { file: 'Emblem_of_Jōetsu,_Niigata.svg', license: 'PD-Japan-exempt' }, // 上越市
   '152234': { file: 'Emblem_of_Agano,_Niigata.svg', license: 'PD-ineligible' }, // 阿賀野市
@@ -760,6 +773,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '153079': { file: 'Emblem_of_Seiro,_Niigata.svg', license: 'PD-Japan-exempt' }, // 聖籠町
   '153427': { file: 'Emblem_of_Yahiko,_Niigata.svg', license: 'PD-Japan-exempt / PD-shape' }, // 弥彦村
   '153613': { file: 'Emblem_of_Tagami,_Niigata.svg', license: 'PD-Japan-exempt' }, // 田上町
+  '153851': { file: 'Emblem_of_Aga,_Niigata.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 阿賀町
   '154059': { file: 'Emblem_of_Izumosaki,_Niigata.svg', license: 'PD-Japan-organization' }, // 出雲崎町
   '154610': { file: 'Emblem_of_Yuzawa,_Niigata.svg', license: 'PD-Japan-organization' }, // 湯沢町
   '154822': { file: 'Emblem_of_Tsunan,_Niigata.svg', license: 'PD-Japan-exempt' }, // 津南町
@@ -772,12 +786,14 @@ export const EMBLEMS: Record<string, Emblem> = {
   '162043': { file: 'Emblem_of_Uozu,_Toyama.svg', license: 'PD-ineligible' }, // 魚津市
   '162051': { file: 'Emblem_of_Himi,_Toyama.svg', license: 'PD-textlogo / PD-Japan-organization' }, // 氷見市
   '162060': { file: 'Emblem_of_Namerikawa,_Toyama.svg', license: 'PD-ineligible' }, // 滑川市
+  '162078': { file: 'Emblem_of_Kurobe,_Toyama.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 黒部市
   '162086': { file: 'Emblem_of_Tonami,_Toyama.svg', license: 'PD-ineligible' }, // 砺波市
   '162094': { file: 'Emblem_of_Oyabe,_Toyama.svg', license: 'PD-Japan-organization' }, // 小矢部市
   '162108': { file: 'Emblem_of_Nanto,_Toyama.svg', license: 'PD-ineligible' }, // 南砺市
   '162116': { file: 'Emblem_of_Imizu,_Toyama.svg', license: 'PD-Japan-exempt' }, // 射水市
   '163210': { file: 'Emblem_of_Funahashi,_Toyama.svg', license: 'PD-Japan-exempt' }, // 舟橋村
   '163228': { file: 'Emblem_of_Kamiichi,_Toyama.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 上市町
+  '163236': { file: 'Emblem_of_Tateyama,_Toyama.svg', license: 'CC BY 4.0', author: 'ReneeWrites' }, // 立山町
   '163422': { file: 'Emblem_of_Nyuzen,_Toyama.svg', license: 'PD-Japan-organization' }, // 入善町
   '163431': { file: 'Emblem_of_Asahi,_Toyama.svg', license: 'PD-Japan-organization' }, // 朝日町
   '170003': { file: 'Emblem_of_Ishikawa_Prefecture.svg', license: 'PD-Japan-exempt' }, // 石川県
@@ -790,6 +806,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '172073': { file: 'Emblem_of_Hakui,_Ishikawa.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 羽咋市
   '172090': { file: 'Emblem_of_Kahoku,_Ishikawa.svg', license: 'PD-Japan-exempt' }, // かほく市
   '172103': { file: 'Emblem_of_Hakusan,_Ishikawa.svg', license: 'PD-Japan-exempt' }, // 白山市
+  '172111': { file: 'Emblem_of_Nomi,_Ishikawa.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 能美市
   '172120': { file: 'Emblem_of_Nonoichi,_Ishikawa.svg', license: 'PD-Japan-organization' }, // 野々市市
   '173240': { file: 'Emblem_of_Kawakita,_Ishikawa.svg', license: 'PD-Japan-organization' }, // 川北町
   '173614': { file: 'Emblem_of_Tsubata,_Ishikawa.svg', license: 'PD-Japan-organization' }, // 津幡町
@@ -797,6 +814,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '173843': { file: 'Emblem_of_Shika,_Ishikawa.svg', license: 'PD-Japan-exempt' }, // 志賀町
   '173860': { file: 'Emblem_of_Hodatsushimizu,_Ishikawa.svg', license: 'PD-Japan-exempt' }, // 宝達志水町
   '174076': { file: 'Emblem_of_Nakanoto,_Ishikawa.svg', license: 'PD-Japan-exempt' }, // 中能登町
+  '174611': { file: 'Emblem_of_Anamizu,_Ishikawa.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 穴水町
   '174637': { file: 'Emblem_of_Noto,_Ishikawa.svg', license: 'PD-Japan-exempt' }, // 能登町
   '180009': { file: 'Emblem_of_Fukui_Prefecture.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 福井県
   '182010': { file: 'Emblem_of_Fukui,_Fukui.svg', license: 'PD-Japan-organization' }, // 福井市
@@ -809,6 +827,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '182095': { file: 'Emblem_of_Echizen,_Fukui.svg', license: 'PD-ineligible' }, // 越前市
   '182109': { file: 'Emblem_of_Sakai,_Fukui.svg', license: 'PD-Japan-exempt' }, // 坂井市
   '183229': { file: 'Emblem_of_Eiheiji,_Fukui.svg', license: 'PD-ineligible' }, // 永平寺町
+  '183822': { file: 'Emblem_of_Ikeda,_Fukui.svg', license: 'CC BY 4.0', author: 'ReneeWrites' }, // 池田町
   '184047': { file: 'Emblem_of_Minamiechizen,_Fukui.svg', license: 'PD-Japan-exempt' }, // 南越前町
   '184233': { file: 'Emblem_of_Echizen_Town,_Fukui.svg', license: 'CC0' }, // 越前町
   '184420': { file: 'Emblem_of_Mihama,_Fukui.svg', license: 'PD-Japan-organization' }, // 美浜町
@@ -860,9 +879,12 @@ export const EMBLEMS: Record<string, Emblem> = {
   '202142': { file: 'Emblem_of_Chino,_Nagano.svg', license: 'PD-Japan-organization' }, // 茅野市
   '202151': { file: 'Emblem_of_Shiojiri,_Nagano.svg', license: 'PD-Japan-organization' }, // 塩尻市
   '202177': { file: 'Emblem_of_Saku,_Nagano.svg', license: 'PD-ineligible' }, // 佐久市
+  '202185': { file: 'Emblem_of_Chikuma,_Nagano.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 千曲市
   '202193': { file: 'Emblem_of_Tōmi,_Nagano.svg', license: 'PD-Japan-exempt' }, // 東御市
+  '202207': { file: 'Emblem_of_Azumino,_Nagano.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 安曇野市
   '203033': { file: 'Emblem_of_Koumi,_Nagano.svg', license: 'PD-Japan-organization' }, // 小海町
   '203041': { file: 'Emblem_of_Kawakami,_Nagano.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 川上村
+  '203050': { file: 'Emblem_of_Minamimaki,_Nagano.svg', license: 'CC BY 4.0', author: 'ReneeWrites' }, // 南牧村
   '203068': { file: 'Emblem_of_Minamiaiki,_Nagano.svg', license: 'PD-Japan-exempt' }, // 南相木村
   '203076': { file: 'Emblem_of_Kitaaiki,_Nagano.svg', license: 'PD-Japan-exempt' }, // 北相木村
   '203092': { file: 'Emblem_of_Sakuho,_Nagano.svg', license: 'PD-Japan-exempt' }, // 佐久穂町
@@ -884,6 +906,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '204030': { file: 'Emblem_of_Takamori,_Nagano.svg', license: 'PD-Japan-organization' }, // 高森町
   '204048': { file: 'Emblem_of_Anan,_Nagano.svg', license: 'PD-Japan-organization' }, // 阿南町
   '204072': { file: 'Emblem_of_Achi,_Nagano.svg', license: 'PD-Japan-exempt' }, // 阿智村
+  '204099': { file: 'Emblem_of_Hiraya,_Nagano.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 平谷村
   '204102': { file: 'Emblem_of_Neba,_Nagano.svg', license: 'PD-Japan-exempt' }, // 根羽村
   '204111': { file: 'Emblem_of_Shimojo,_Nagano.svg', license: 'PD-Japan-organization' }, // 下條村
   '204129': { file: 'Emblem_of_Urugi,_Nagano.svg', license: 'PD-ineligible' }, // 売木村
@@ -901,6 +924,8 @@ export const EMBLEMS: Record<string, Emblem> = {
   '204463': { file: 'Emblem_of_Omi,_Nagano.svg', license: 'PD-Japan-exempt' }, // 麻績村
   '204480': { file: 'Emblem_of_Ikusaka,_Nagano.svg', license: 'PD-Japan-exempt' }, // 生坂村
   '204501': { file: 'Emblem_of_Yamagata,_Nagano.svg', license: 'PD-Japan-exempt' }, // 山形村
+  '204510': { file: 'Emblem_of_Asahi,_Nagano.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 朝日村
+  '204528': { file: 'Emblem_of_of_Chikuhoku,_Nagano.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 筑北村
   '204811': { file: 'Emblem_of_Ikeda,_Nagano.svg', license: 'PD-Japan-exempt' }, // 池田町
   '204820': { file: 'Emblem_of_Matsukawa_Village,_Nagano.svg', license: 'PD-Japan-organization' }, // 松川村
   '204854': { file: 'Emblem_of_Hakuba,_Nagano.svg', license: 'PD-Japan-organization' }, // 白馬村
@@ -914,6 +939,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '205834': { file: 'Emblem_of_Shinano,_Nagano.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 信濃町
   '205885': { file: 'Emblem_of_Ogawa,_Nagano.svg', license: 'PD-ineligible' }, // 小川村
   '205907': { file: 'Emblem_of_Iizuna,_Nagano.svg', license: 'PD-Japan-exempt' }, // 飯綱町
+  '206024': { file: 'Emblem_of_Sakae,_Nagano.svg', license: 'CC BY 4.0', author: 'ReneeWrites' }, // 栄村
   '210005': { file: 'Emblem_of_Gifu_Prefecture.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 岐阜県
   '212016': { file: 'Emblem_of_Gifu,_Gifu.svg', license: 'PD-Japan-organization' }, // 岐阜市
   '212024': { file: 'Emblem_of_Ōgaki,_Gifu.svg', license: 'PD-Japan-organization' }, // 大垣市
@@ -950,6 +976,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '214213': { file: 'Emblem_of_Kitagata,_Gifu.svg', license: 'PD-Japan-organization' }, // 北方町
   '215015': { file: 'Emblem_of_Sakahogi,_Gifu.svg', license: 'PD-ineligible' }, // 坂祝町
   '215023': { file: 'Emblem_of_Tomika,_Gifu.svg', license: 'PD-Japan-exempt' }, // 富加町
+  '215031': { file: 'Emblem_of_Kawabe,_Gifu.svg', license: 'PD-ineligible' }, // 川辺町
   '215040': { file: 'Emblem_of_Hichisō,_Gifu.svg', license: 'PD-Japan-exempt' }, // 七宗町
   '215058': { file: 'Emblem_of_Yaotsu,_Gifu.svg', license: 'PD-Japan-organization' }, // 八百津町
   '215066': { file: 'Emblem_of_Shirakawa_Town,_Gifu.svg', license: 'PD-Japan-organization' }, // 白川町
@@ -981,6 +1008,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '222259': { file: 'Emblem_of_Izunokuni,_Shizuoka.svg', license: 'PD-Japan-exempt' }, // 伊豆の国市
   '222267': { file: 'Emblem_of_Makinohara,_Shizuoka.svg', license: 'PD-ineligible' }, // 牧之原市
   '223018': { file: 'Emblem_of_Higashiizu,_Shizuoka.svg', license: 'PD-Japan-exempt' }, // 東伊豆町
+  '223026': { file: 'Emblem_of_Kawazu,_Shizuoka.svg', license: 'PD-Japan-exempt' }, // 河津町
   '223042': { file: 'Emblem_of_Minamiizu,_Shizuoka.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 南伊豆町
   '223051': { file: 'Emblem_of_Matsuzaki,_Shizuoka.svg', license: 'PD-Japan-organization' }, // 松崎町
   '223069': { file: 'Emblem_of_Nishiizu,_Shizuoka.svg', license: 'PD-Japan-exempt' }, // 西伊豆町
@@ -995,6 +1023,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '231002': { file: 'Emblem_of_Nagoya,_Aichi.svg', license: 'PD-textlogo' }, // 名古屋市
   '232017': { file: 'Emblem_of_Toyohashi,_Aichi.svg', license: 'PD-Japan-exempt' }, // 豊橋市
   '232025': { file: 'Emblem_of_Okazaki,_Aichi.svg', license: 'PD-ineligible' }, // 岡崎市
+  '232033': { file: 'Emblem_of_Ichinomiya,_Aichi.svg', license: 'PD-self / PD-ineligible' }, // 一宮市
   '232041': { file: 'Emblem_of_Seto,_Aichi.svg', license: 'PD-Japan-organization' }, // 瀬戸市
   '232050': { file: 'Emblem_of_Handa,_Aichi.svg', license: 'PD-Japan-organization' }, // 半田市
   '232068': { file: 'Emblem_of_Kasugai,_Aichi.svg', license: 'PD-Japan-organization' }, // 春日井市
@@ -1032,6 +1061,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '233021': { file: 'Emblem_of_Togo,_Aichi.svg', license: 'PD-ineligible' }, // 東郷町
   '233421': { file: 'Emblem_of_Toyoyama,_Aichi.svg', license: 'PD-Japan-exempt' }, // 豊山町
   '233617': { file: 'Emblem_of_Oguchi,_Aichi.svg', license: 'PD-Japan-exempt' }, // 大口町
+  '233625': { file: 'Emblem_of_Fuso,_Aichi.svg', license: 'PD-ineligible' }, // 扶桑町
   '234249': { file: 'Emblem_of_Oharu,_Aichi.svg', license: 'PD-Japan-organization' }, // 大治町
   '234257': { file: 'Emblem_of_Kanie,_Aichi.svg', license: 'PD-Japan-organization' }, // 蟹江町
   '234273': { file: 'Emblem_of_Tobishima,_Aichi.svg', license: 'PD-Japan-exempt' }, // 飛島村
@@ -1075,12 +1105,23 @@ export const EMBLEMS: Record<string, Emblem> = {
   '245615': { file: 'Emblem_of_Mihama,_Mie.svg', license: 'PD-Japan-exempt' }, // 御浜町
   '245623': { file: 'Emblem_of_Kiho,_Mie.svg', license: 'PD-Japan-exempt' }, // 紀宝町
   '250007': { file: 'Emblem_of_Shiga_Prefecture.svg', license: 'PD-Japan-organization' }, // 滋賀県
+  '252018': { file: 'Emblem_of_Ōtsu,_Shiga.svg', license: 'PD-Japan-exempt' }, // 大津市
+  '252026': { file: 'Emblem_of_Hikone,_Shiga.svg', license: 'PD-Japan-organization' }, // 彦根市
   '252034': { file: 'Emblem_of_Nagahama,_Shiga.svg', license: 'PD-Japan-organization' }, // 長浜市
   '252042': { file: 'Emblem_of_Ōmihachiman,_Shiga.svg', license: 'PD-Japan-organization' }, // 近江八幡市
+  '252069': { file: 'Emblem_of_Kusatsu,_Shiga.svg', license: 'PD-textlogo' }, // 草津市
   '252077': { file: 'Emblem_of_Moriyama,_Shiga.svg', license: 'PD-Japan-organization' }, // 守山市
+  '252085': { file: 'Emblem_of_Rittō,_Shiga.svg', license: 'PD-Japan-organization' }, // 栗東市
   '252093': { file: 'Emblem_of_Kōka,_Shiga.svg', license: 'PD-Japan-exempt' }, // 甲賀市
+  '252107': { file: 'Emblem_of_Yasu,_Shiga.svg', license: 'PD-Japan-exempt' }, // 野洲市
+  '252115': { file: 'Emblem_of_Konan,_Shiga.svg', license: 'PD-Japan-exempt' }, // 湖南市
   '252123': { file: 'Emblem_of_Takashima,_Shiga.svg', license: 'PD-Japan-exempt' }, // 高島市
+  '252131': { file: 'Emblem_of_Higashiōmi,_Shiga.svg', license: 'PD-Japan-exempt' }, // 東近江市
+  '252140': { file: 'Emblem_of_Maibara,_Shiga.svg', license: 'PD-Japan-exempt' }, // 米原市
   '253839': { file: 'Emblem_of_Hino,_Shiga.svg', license: 'PD-Japan-organization' }, // 日野町
+  '253847': { file: 'Emblem_of_Ryuo,_Shiga.svg', license: 'PD-Japan-exempt' }, // 竜王町
+  '254258': { file: 'Emblem_of_Aishō,_Shiga.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 愛荘町
+  '254410': { file: 'Emblem_of_Toyosato,_Shiga.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 豊郷町
   '254428': { file: 'Emblem_of_Kōra,_Shiga.svg', license: 'PD-self / PD-ineligible' }, // 甲良町
   '254436': { file: 'Emblem_of_Taga,_Shiga.svg', license: 'PD-Japan-exempt' }, // 多賀町
   '260002': { file: 'Emblem_of_Kyoto_Prefecture.svg', license: 'PD-Japan-exempt' }, // 京都府
@@ -1097,6 +1138,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '262102': { file: 'Emblem_of_Yawata,_Kyoto.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 八幡市
   '262111': { file: 'Emblem_of_Kyōtanabe,_Kyoto.svg', license: 'PD-Japan-organization' }, // 京田辺市
   '262129': { file: 'Emblem_of_Kyōtango,_Kyoto.svg', license: 'PD-Japan-exempt' }, // 京丹後市
+  '262137': { file: 'Emblem_of_Nantan,_Kyoto.svg', license: 'PD-Japan-exempt' }, // 南丹市
   '262145': { file: 'Emblem_of_Kizugawa,_Kyoto.svg', license: 'PD-Japan-exempt' }, // 木津川市
   '263036': { file: 'Emblem_of_Ōyamazaki,_Kyoto.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 大山崎町
   '263222': { file: 'Emblem_of_Kumiyama,_Kyoto.svg', license: 'PD-Japan-exempt' }, // 久御山町
@@ -1104,8 +1146,11 @@ export const EMBLEMS: Record<string, Emblem> = {
   '263443': { file: 'Emblem_of_Ujitawara,_Kyoto.svg', license: 'PD-Japan-exempt' }, // 宇治田原町
   '263648': { file: 'Emblem_of_Kasagi,_Kyoto.svg', license: 'PD-Japan-exempt' }, // 笠置町
   '263656': { file: 'Emblem_of_Wazuka,_Kyoto.svg', license: 'PD-self / PD-ineligible' }, // 和束町
+  '263664': { file: 'Emblem_of_Seika,_Kyoto.svg', license: 'PD-ineligible' }, // 精華町
   '263672': { file: 'Emblem_of_Minamiyamashiro,_Kyoto.svg', license: 'PD-Japan-organization' }, // 南山城村
+  '264075': { file: 'Emblem_of_Kyōtamba,_Kyoto.svg', license: 'PD-Japan-exempt' }, // 京丹波町
   '264636': { file: 'Emblem_of_Ine,_Kyoto.svg', license: 'PD-Japan-organization' }, // 伊根町
+  '264652': { file: 'Emblem_of_Yosano,_Kyoto.svg', license: 'PD-Japan-exempt' }, // 与謝野町
   '270008': { file: 'Emblem_of_Osaka_Prefecture.svg', license: 'PD-ineligible' }, // 大阪府
   '271004': { file: 'Emblem_of_Osaka,_Osaka.svg', license: 'PD-Japan-organization' }, // 大阪市
   '271403': { file: 'Emblem_of_Sakai,_Osaka.svg', license: 'PD-Japan-organization' }, // 堺市
@@ -1152,22 +1197,39 @@ export const EMBLEMS: Record<string, Emblem> = {
   '280003': { file: 'Emblem_of_Hyogo_Prefecture.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 兵庫県
   '281000': { file: 'Emblem_of_Kobe,_Hyogo.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 神戸市
   '282014': { file: 'Emblem_of_Himeji,_Hyogo.svg', license: 'PD-Japan-organization' }, // 姫路市
+  '282022': { file: 'Emblem_of_Amagasaki,_Hyogo.svg', license: 'PD-Japan-exempt' }, // 尼崎市
   '282031': { file: 'Emblem_of_Akashi,_Hyogo.svg', license: 'PD-textlogo' }, // 明石市
+  '282049': { file: 'Emblem_of_Nishinomiya,_Hyogo.svg', license: 'PD-Japan-organization' }, // 西宮市
   '282057': { file: 'Emblem_of_Sumoto,_Hyogo.svg', license: 'PD-Japan-organization / PD-1996' }, // 洲本市
   '282065': { file: 'Emblem_of_Ashiya,_Hyogo.svg', license: 'PD-textlogo / PD-Japan-organization' }, // 芦屋市
   '282073': { file: 'Emblem_of_Itami,_Hyogo.svg', license: 'PD-Japan-organization / PD-1996' }, // 伊丹市
+  '282081': { file: 'Emblem_of_Aioi,_Hyogo.svg', license: 'PD-Japan-organization' }, // 相生市
   '282090': { file: 'Emblem_of_Toyooka,_Hyogo.svg', license: 'PD-Japan-exempt' }, // 豊岡市
+  '282103': { file: 'Emblem_of_Kakogawa,_Hyogo.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 加古川市
   '282120': { file: 'Emblem_of_Akō,_Hyōgo.svg', license: 'PD-Japan-organization' }, // 赤穂市
   '282138': { file: 'Emblem_of_Nishiwaki,_Hyōgo.svg', license: 'PD-Japan-exempt' }, // 西脇市
   '282146': { file: 'Emblem_of_Takarazuka,_Hyogo.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 宝塚市
+  '282162': { file: 'Emblem_of_Takasago,_Hyogo.svg', license: 'PD-Japan-organization' }, // 高砂市
+  '282171': { file: 'Emblem_of_Kawanishi,_Hyogo.svg', license: 'PD-Japan-organization' }, // 川西市
+  '282189': { file: 'Emblem_of_Ono,_Hyogo.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 小野市
+  '282197': { file: 'Emblem_of_Sanda,_Hyōgo.svg', license: 'PD-Japan-organization' }, // 三田市
+  '282201': { file: 'Emblem_of_Kasai,_Hyōgo.svg', license: 'PD-Japan-exempt' }, // 加西市
   '282219': { file: 'Emblem_of_Tambasasayama,_Hyogo.svg', license: 'PD-Japan-exempt' }, // 丹波篠山市
   '282227': { file: 'Emblem_of_Yabu,_Hyogo.svg', license: 'PD-Japan-exempt' }, // 養父市
+  '282235': { file: 'Emblem_of_Tanba,_Hyogo.svg', license: 'PD-ineligible' }, // 丹波市
+  '282243': { file: 'Emblem_of_Minamiawaji,_Hyōgo.svg', license: 'PD-Japan-exempt' }, // 南あわじ市
+  '282251': { file: 'Emblem_of_Asago,_Hyōgo.svg', license: 'PD-Japan-exempt' }, // 朝来市
   '282260': { file: 'Emblem_of_Awaji,_Hyōgo.svg', license: 'PD-ineligible' }, // 淡路市
   '282278': { file: 'Emblem_of_Shisō,_Hyōgo.svg', license: 'PD-Japan-exempt' }, // 宍粟市
+  '282286': { file: 'Emblem_of_Katō,_Hyōgo.svg', license: 'PD-Japan-exempt' }, // 加東市
   '282294': { file: 'Emblem_of_Tatsuno,_Hyōgo.svg', license: 'PD-Japan-exempt' }, // たつの市
+  '283011': { file: 'Emblem_of_Inagawa,_Hyogo.svg', license: 'PD-Japan-organization' }, // 猪名川町
+  '283657': { file: 'Emblem_of_Taka,_Hyogo.svg', license: 'PD-Japan-exempt' }, // 多可町
   '283819': { file: 'Emblem_of_Inami,_Hyōgo.svg', license: 'PD-Japan-exempt' }, // 稲美町
+  '283827': { file: 'Emblem_of_Harima,_Hyogo.svg', license: 'PD-Japan-organization' }, // 播磨町
   '284424': { file: 'Emblem_of_Ichikawa,_Hyogo.svg', license: 'PD-Japan-organization' }, // 市川町
   '284432': { file: 'Emblem_of_Fukusaki,_Hyogo.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 福崎町
+  '284467': { file: 'Emblem_of_Kamikawa,_Hyogo.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 神河町
   '284645': { file: 'Emblem_of_Taishi,_Hyogo.svg', license: 'PD-Japan-organization / PD-Japan-exempt' }, // 太子町
   '284815': { file: 'Emblem_of_Kamigori,_Hyogo.svg', license: 'PD-Japan-organization' }, // 上郡町
   '285013': { file: 'Emblem_of_Sayo,_Hyogo.svg', license: 'PD-Japan-exempt' }, // 佐用町
@@ -1187,6 +1249,9 @@ export const EMBLEMS: Record<string, Emblem> = {
   '292117': { file: 'Emblem_of_Katsuragi,_Nara.svg', license: 'PD-Japan-exempt' }, // 葛城市
   '292125': { file: 'Emblem_of_Uda,_Nara.svg', license: 'PD-Japan-exempt' }, // 宇陀市
   '293229': { file: 'Emblem_of_Yamazoe,_Nara.svg', license: 'PD-Japan-exempt' }, // 山添村
+  '293423': { file: 'Emblem_of_Heguri,_Nara.svg', license: 'PD-ineligible' }, // 平群町
+  '293431': { file: 'Emblem_of_Sango,_Nara.svg', license: 'PD-Japan-organization' }, // 三郷町
+  '293440': { file: 'Emblem_of_Ikaruga,_Nara.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 斑鳩町
   '293458': { file: 'Emblem_of_Ando,_Nara.svg', license: 'PD-ineligible' }, // 安堵町
   '293610': { file: 'Emblem_of_Kawanishi,_Nara.svg', license: 'PD-Japan-organization' }, // 川西町
   '293628': { file: 'Emblem_of_Miyake,_Nara.svg', license: 'PD-Japan-exempt' }, // 三宅町
@@ -1195,32 +1260,51 @@ export const EMBLEMS: Record<string, Emblem> = {
   '293865': { file: 'Emblem_of_Mitsue,_Nara.svg', license: 'PD-ineligible' }, // 御杖村
   '294012': { file: 'Emblem_of_Takatori,_Nara.svg', license: 'PD-Japan-exempt' }, // 高取町
   '294021': { file: 'Emblem_of_Asuka,_Nara.svg', license: 'PD-self / PD-ineligible' }, // 明日香村
+  '294241': { file: 'Emblem_of_Kanmaki,_Nara.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 上牧町
   '294250': { file: 'Emblem_of_Oji,_Nara.svg', license: 'PD-Japan-exempt / PD-textlogo' }, // 王寺町
   '294268': { file: 'Emblem_of_Kōryō,_Nara.svg', license: 'PD-Japan-organization' }, // 広陵町
   '294276': { file: 'Emblem_of_Kawai,_Nara.svg', license: 'PD-Japan-exempt' }, // 河合町
+  '294411': { file: 'Emblem_of_Yoshino,_Nara.svg', license: 'PD-Japan-exempt' }, // 吉野町
   '294420': { file: 'Emblem_of_Oyodo,_Nara.svg', license: 'PD-Japan-exempt' }, // 大淀町
   '294438': { file: 'Emblem_of_Shimoichi,_Nara.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 下市町
   '294446': { file: 'Emblem_of_Kurotaki,_Nara.svg', license: 'PD-ineligible' }, // 黒滝村
+  '294462': { file: 'Emblem_of_Tenkawa,_Nara.svg', license: 'PD-Japan-exempt' }, // 天川村
+  '294471': { file: 'Emblem_of_Nosegawa,_Nara.svg', license: 'PD-Japan-exempt' }, // 野迫川村
   '294497': { file: 'Emblem_of_Totsukawa,_Nara.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 十津川村
+  '294501': { file: 'Emblem_of_Shimokitayama,_Nara.svg', license: 'PD-ineligible' }, // 下北山村
+  '294519': { file: 'Emblem_of_Kamikitayama,_Nara.svg', license: 'CC BY-SA 4.0', author: 'OperationSakura6144' }, // 上北山村
+  '294527': { file: 'Emblem_of_Kawakami,_Nara.svg', license: 'PD-Japan-exempt' }, // 川上村
   '294535': { file: 'Emblem_of_Higashiyoshino,_Nara.svg', license: 'PD-Japan-exempt / PD-textlogo' }, // 東吉野村
   '300004': { file: 'Emblem_of_Wakayama_Prefecture.svg', license: 'PD-ineligible' }, // 和歌山県
   '302015': { file: 'Emblem_of_Wakayama,_Wakayama.svg', license: 'PD-Japan-organization' }, // 和歌山市
+  '302023': { file: 'Emblem_of_Kainan,_Wakayama.svg', license: 'PD-Japan-exempt' }, // 海南市
+  '302031': { file: 'Emblem_of_Hashimoto,_Wakayama.svg', license: 'PD-Japan-organization' }, // 橋本市
   '302040': { file: 'Emblem_of_Arida,_Wakayama.svg', license: 'PD-Japan-organization' }, // 有田市
   '302058': { file: 'Emblem_of_Gobo,_Wakayama.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 御坊市
+  '302066': { file: 'Emblem_of_Tanabe,_Wakayama.svg', license: 'PD-Japan-organization' }, // 田辺市
+  '302074': { file: 'Emblem_of_Shingū,_Wakayama.svg', license: 'PD-Japan-organization' }, // 新宮市
+  '302082': { file: 'Emblem_of_Kinokawa,_Wakayama.svg', license: 'PD-Japan-exempt' }, // 紀の川市
   '302091': { file: 'Emblem_of_Iwade,_Wakayama.svg', license: 'PD-Japan-organization' }, // 岩出市
+  '303046': { file: 'Emblem_of_Kimino,_Wakayama.svg', license: 'PD-ineligible' }, // 紀美野町
   '303411': { file: 'Emblem_of_Katsuragi,_Wakayama.svg', license: 'PD-Japan-organization' }, // かつらぎ町
   '303437': { file: 'Emblem_of_Kudoyama,_Wakayama.svg', license: 'PD-Japan-organization' }, // 九度山町
   '303445': { file: 'Emblem_of_Koya,_Wakayama.svg', license: 'PD-Japan-organization' }, // 高野町
+  '303615': { file: 'Emblem_of_Yuasa,_Wakayama.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 湯浅町
   '303623': { file: 'Emblem_of_Hirogawa,_Wakayama.svg', license: 'PD-Japan-exempt / PD-textlogo' }, // 広川町
   '303666': { file: 'Emblem_of_Aridagawa,_Wakayama.svg', license: 'PD-Japan-exempt' }, // 有田川町
+  '303810': { file: 'Emblem_of_Mihama,_Wakayama.svg', license: 'PD-Japan-exempt' }, // 美浜町
   '303828': { file: 'Emblem_of_Hidaka,_Wakayama.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 日高町
   '303836': { file: 'Emblem_of_Yura,_Wakayama.svg', license: 'PD-Japan-organization' }, // 由良町
   '303909': { file: 'Emblem_of_Inami,_Wakayama.svg', license: 'PD-Japan-organization' }, // 印南町
   '303917': { file: 'Emblem_of_Minabe,_Wakayama.svg', license: 'PD-ineligible' }, // みなべ町
   '303925': { file: 'Emblem_of_Hidakagawa,_Wakayama.svg', license: 'PD-Japan-exempt' }, // 日高川町
+  '304018': { file: 'Emblem_of_Shirahama,_Wakayama.svg', license: 'PD-Japan-organization' }, // 白浜町
+  '304042': { file: 'Emblem_of_Kamitonda,_Wakayama.svg', license: 'PD-ineligible' }, // 上富田町
   '304069': { file: 'Emblem_of_Susami,_Wakayama.svg', license: 'PD-Japan-organization / PD-textlogo' }, // すさみ町
+  '304212': { file: 'Emblem_of_Nachikatsuura,_Wakayama.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 那智勝浦町
   '304221': { file: 'Emblem_of_Taiji,_Wakayama.svg', license: 'PD-Japan-exempt' }, // 太地町
   '304247': { file: 'Emblem_of_Kozagawa,_Wakayama.svg', license: 'PD-Japan-exempt' }, // 古座川町
+  '304271': { file: 'Emblem_of_Kitayama,_Wakayama.svg', license: 'PD-Japan-exempt' }, // 北山村
   '304280': { file: 'Emblem_of_Kushimoto,_Wakayama.svg', license: 'PD-Japan-exempt' }, // 串本町
   '310000': { file: 'Emblem_of_Tottori_Prefecture.svg', license: 'PD-ineligible' }, // 鳥取県
   '312011': { file: 'Emblem_of_Tottori,_Tottori.svg', license: 'PD-Japan-organization' }, // 鳥取市
@@ -1229,6 +1313,7 @@ export const EMBLEMS: Record<string, Emblem> = {
   '312045': { file: 'Emblem_of_Sakaiminato,_Tottori.svg', license: 'PD-Japan-organization' }, // 境港市
   '313025': { file: 'Emblem_of_Iwami,_Tottori.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 岩美町
   '313254': { file: 'Emblem_of_Wakasa,_Tottori.svg', license: 'PD-Japan-exempt' }, // 若桜町
+  '313289': { file: 'Emblem_of_Chizu,_Tottori.svg', license: 'PD-Japan-organization' }, // 智頭町
   '313297': { file: 'Emblem_of_Yazu,_Tottori.svg', license: 'PD-Japan-exempt' }, // 八頭町
   '313645': { file: 'Emblem_of_Misasa,_Tottori.svg', license: 'PD-Japan-exempt' }, // 三朝町
   '313700': { file: 'Emblem_of_Yurihama,_Tottori.svg', license: 'PD-Japan-exempt' }, // 湯梨浜町
@@ -1238,17 +1323,25 @@ export const EMBLEMS: Record<string, Emblem> = {
   '313866': { file: 'Emblem_of_Daisen,_Tottori.svg', license: 'PD-ineligible' }, // 大山町
   '313891': { file: 'Emblem_of_Nanbu,_Tottori.svg', license: 'PD-Japan-exempt' }, // 南部町
   '313904': { file: 'Emblem_of_Hoki,_Tottori.svg', license: 'PD-Japan-exempt' }, // 伯耆町
+  '314013': { file: 'Emblem_of_Nichinan,_Tottori.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 日南町
   '314021': { file: 'Emblem_of_Hino,_Tottori.svg', license: 'PD-Japan-organization' }, // 日野町
   '314030': { file: 'Emblem_of_Kōfu,_Tottori.svg', license: 'PD-Japan-organization' }, // 江府町
   '320005': { file: 'Emblem_of_Shimane_Prefecture.svg', license: 'PD-ineligible' }, // 島根県
+  '322016': { file: 'Emblem_of_Matsue,_Shimane.svg', license: 'PD-Japan-organization' }, // 松江市
+  '322024': { file: 'Emblem_of_Hamada,_Shimane.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 浜田市
   '322032': { file: 'Emblem_of_Izumo,_Shimane.svg', license: 'PD-Japan-exempt' }, // 出雲市
+  '322041': { file: 'Emblem_of_Masuda,_Shimane.svg', license: 'PD-textlogo' }, // 益田市
   '322059': { file: 'Emblem_of_Ōda,_Shimane.svg', license: 'PD-Japan-organization' }, // 大田市
   '322067': { file: 'Emblem_of_Yasugi,_Shimane.svg', license: 'PD-Japan-exempt' }, // 安来市
+  '322075': { file: 'Emblem_of_Gōtsu,_Shimane.svg', license: 'PD-Japan-exempt' }, // 江津市
   '322091': { file: 'Emblem_of_Unnan,_Shimane.svg', license: 'PD-Japan-exempt' }, // 雲南市
+  '323438': { file: 'Emblem_of_Okuizumo,_Shimane.svg', license: 'PD-Japan-exempt' }, // 奥出雲町
+  '323861': { file: 'Emblem_of_Iinan,_Shimane.svg', license: 'PD-Japan-exempt' }, // 飯南町
   '324418': { file: 'Emblem_of_Kawamoto,_Shimane.svg', license: 'PD-Japan-organization' }, // 川本町
   '324485': { file: 'Emblem_of_Misato,_Shimane.svg', license: 'PD-Japan-exempt' }, // 美郷町
   '324493': { file: 'Emblem_of_Ōnan,_Shimane.svg', license: 'PD-Japan-exempt' }, // 邑南町
   '325015': { file: 'Emblem_of_Tsuwano,_Shimane.svg', license: 'PD-Japan-exempt' }, // 津和野町
+  '325058': { file: 'Emblem_of_Yoshika_Shimane.svg', license: 'PD-shape' }, // 吉賀町
   '325252': { file: 'Emblem_of_Ama,_Shimane.svg', license: 'PD-Japan-organization' }, // 海士町
   '325261': { file: 'Emblem_of_Nishinoshima,_Shimane.svg', license: 'PD-Japan-exempt' }, // 西ノ島町
   '325279': { file: 'Emblem_of_Chibu,_Shimane.svg', license: 'PD-Japan-organization' }, // 知夫村
@@ -1256,14 +1349,27 @@ export const EMBLEMS: Record<string, Emblem> = {
   '330001': { file: 'Emblem_of_Okayama_Prefecture.svg', license: 'PD-ineligible' }, // 岡山県
   '331007': { file: 'Emblem_of_Okayama,_Okayama.svg', license: 'PD-Japan-organization' }, // 岡山市
   '332020': { file: 'Emblem_of_Kurashiki,_Okayama.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 倉敷市
+  '332038': { file: 'Emblem_of_Tsuyama,_Okayama.svg', license: 'PD-Japan-organization' }, // 津山市
+  '332046': { file: 'Emblem_of_Tamano,_Okayama.svg', license: 'PD-Japan-organization' }, // 玉野市
   '332054': { file: 'Emblem_of_Kasaoka,_Okayama.svg', license: 'PD-Japan-organization' }, // 笠岡市
   '332071': { file: 'Emblem_of_Ibara,_Okayama.svg', license: 'PD-Japan-exempt' }, // 井原市
+  '332089': { file: 'Emblem_of_Sōja,_Okayama.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 総社市
+  '332097': { file: 'Emblem_of_Takahashi,_Okayama.svg', license: 'PD-Japan-organization' }, // 高梁市
+  '332101': { file: 'Emblem_of_Niimi,_Okayama.svg', license: 'PD-Japan-organization' }, // 新見市
+  '332119': { file: 'Emblem_of_Bizen,_Okayama.svg', license: 'PD-Japan-exempt' }, // 備前市
+  '332127': { file: 'Emblem_of_Setouchi,_Okayama.svg', license: 'PD-Japan-exempt' }, // 瀬戸内市
+  '332135': { file: 'Emblem_of_Akaiwa,_Okayama.svg', license: 'PD-ineligible / PD-Japan-exempt' }, // 赤磐市
   '332143': { file: 'Emblem_of_Maniwa,_Okayama.svg', license: 'PD-ineligible' }, // 真庭市
   '332151': { file: 'Emblem_of_Mimasaka,_Okayama.svg', license: 'PD-Japan-exempt' }, // 美作市
+  '332160': { file: 'Emblem_of_Asakuchi,_Okayama.svg', license: 'PD-Japan-exempt' }, // 浅口市
+  '333468': { file: 'Emblem_of_Wake,_Okayama.svg', license: 'PD-Japan-exempt' }, // 和気町
+  '334235': { file: 'Emblem_of_Hayashima,_Okayama.svg', license: 'PD-Japan-organization' }, // 早島町
   '334456': { file: 'Emblem_of_Satosho,_Okayama.svg', license: 'PD-Japan-exempt' }, // 里庄町
   '334618': { file: 'Emblem_of_Yakage,_Okayama.svg', license: 'PD-Japan-exempt' }, // 矢掛町
   '335860': { file: 'Emblem_of_Shinjō,_Okayama.svg', license: 'PD-Japan-exempt' }, // 新庄村
+  '336068': { file: 'Emblem_of_Kagamino,_Okayama.svg', license: 'PD-Japan-exempt' }, // 鏡野町
   '336220': { file: 'Emblem_of_Shoo,_Okayama.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 勝央町
+  '336238': { file: 'Emblem_of_Nagi,_Okayama.svg', license: 'PD-Japan-exempt' }, // 奈義町
   '336432': { file: 'Emblem_of_Nishiawakura,_Okayama.svg', license: 'PD-Japan-exempt' }, // 西粟倉村
   '336637': { file: 'Emblem_of_Kumenan,_Okayama.svg', license: 'PD-Japan-exempt' }, // 久米南町
   '336661': { file: 'Emblem_of_Misaki,_Okayama.svg', license: 'PD-Japan-exempt' }, // 美咲町
@@ -1279,42 +1385,63 @@ export const EMBLEMS: Record<string, Emblem> = {
   '342092': { file: 'Emblem_of_Miyoshi,_Hiroshima.svg', license: 'PD-ineligible' }, // 三次市
   '342106': { file: 'Emblem_of_Shōbara,_Hiroshima.svg', license: 'PD-ineligible' }, // 庄原市
   '342114': { file: 'Emblem_of_Otake,_Hiroshima.svg', license: 'PD-Japan-organization' }, // 大竹市
+  '342122': { file: 'Emblem_of_Higashihiroshima,_Hiroshima.svg', license: 'PD-Japan-exempt' }, // 東広島市
   '342131': { file: 'Emblem_of_Hatsukaichi,_Hiroshima.svg', license: 'PD-Japan-exempt' }, // 廿日市市
   '342149': { file: 'Emblem_of_Akitakata,_Hiroshima.svg', license: 'PD-Japan-exempt' }, // 安芸高田市
   '342157': { file: 'Emblem_of_Etajima,_Hiroshima.svg', license: 'PD-Japan-exempt' }, // 江田島市
+  '343021': { file: 'Emblem_of_Fuchū_Town,_Hiroshima.svg', license: 'PD-Japan-organization' }, // 府中町
+  '343048': { file: 'Emblem_of_Kaita,_Hiroshima.svg', license: 'PD-Japan-exempt' }, // 海田町
   '343072': { file: 'Emblem_of_Kumano,_Hiroshima.svg', license: 'PD-Japan-organization' }, // 熊野町
   '343099': { file: 'Emblem_of_Saka,_Hiroshima.svg', license: 'PD-Japan-exempt' }, // 坂町
   '343684': { file: 'Emblem_of_Akiōta,_Hiroshima.svg', license: 'PD-ineligible' }, // 安芸太田町
+  '343692': { file: 'Emblem_of_Kitahiroshima,_Hiroshima.svg', license: 'PD-Japan-exempt' }, // 北広島町
   '344311': { file: 'Emblem_of_Osakikamijima,_Hiroshima.svg', license: 'PD-Japan-exempt' }, // 大崎上島町
+  '344621': { file: 'Emblem_of_Sera,_Hiroshima.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 世羅町
+  '345458': { file: 'Emblem_of_Jinsekikōgen,_Hiroshima.svg', license: 'PD-Japan-exempt' }, // 神石高原町
   '350001': { file: 'Emblem_of_Yamaguchi_Prefecture.svg', license: 'PD-ineligible' }, // 山口県
   '352012': { file: 'Emblem_of_Shimonoseki,_Yamaguchi.svg', license: 'PD-ineligible' }, // 下関市
   '352021': { file: 'Emblem_of_Ube,_Yamaguchi.svg', license: 'PD-Japan-exempt' }, // 宇部市
   '352039': { file: 'Emblem_of_Yamaguchi,_Yamaguchi.svg', license: 'PD-Japan-exempt' }, // 山口市
   '352047': { file: 'Emblem_of_Hagi,_Yamaguchi.svg', license: 'PD-Japan-exempt' }, // 萩市
+  '352063': { file: 'Emblem_of_Hofu,_Yamaguchi.svg', license: 'PD-Japan-organization' }, // 防府市
   '352071': { file: 'Emblem_of_Kudamatsu,_Yamaguchi.svg', license: 'PD-Japan-organization' }, // 下松市
+  '352080': { file: 'Emblem_of_Iwakuni,_Yamaguchi.svg', license: 'PD-Japan-organization' }, // 岩国市
   '352101': { file: 'Emblem_of_Hikari,_Yamaguchi.svg', license: 'PD-Japan-exempt' }, // 光市
   '352110': { file: 'Emblem_of_Nagato,_Yamaguchi.svg', license: 'PD-Japan-exempt' }, // 長門市
   '352128': { file: 'Emblem_of_Yanai,_Yamaguchi.svg', license: 'PD-Japan-exempt' }, // 柳井市
+  '352136': { file: 'Emblem_of_Mine,_Yamaguchi.svg', license: 'PD-Japan-exempt' }, // 美祢市
+  '352152': { file: 'Emblem_of_Shunan,_Yamaguchi.svg', license: 'PD-ineligible' }, // 周南市
+  '352161': { file: 'Emblem_of_San\'yō-Onoda,_Yamaguchi.svg', license: 'PD-ineligible' }, // 山陽小野田市
   '353051': { file: 'Emblem_of_Suo-Oshima,_Yamaguchi.svg', license: 'PD-Japan-exempt' }, // 周防大島町
   '353213': { file: 'Emblem_of_Waki,_Yamaguchi.svg', license: 'PD-Japan-exempt' }, // 和木町
+  '353418': { file: 'Emblem_of_Kaminoseki,_Yamaguchi.svg', license: 'PD-Japan-exempt' }, // 上関町
+  '353434': { file: 'Emblem_of_Tabuse,_Yamaguchi.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 田布施町
+  '353442': { file: 'Emblem_of_Hirao,_Yamaguchi.svg', license: 'PD-Japan-exempt' }, // 平生町
+  '355020': { file: 'Emblem_of_Abu,_Yamaguchi.svg', license: 'PD-Japan-organization' }, // 阿武町
   '360007': { file: 'Emblem_of_Tokushima_Prefecture.svg', license: 'PD-ineligible' }, // 徳島県
   '362018': { file: 'Emblem_of_Tokushima,_Tokushima.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 徳島市
   '362026': { file: 'Emblem_of_Naruto,_Tokushima.svg', license: 'PD-Japan-organization / PD-shape' }, // 鳴門市
   '362034': { file: 'Emblem_of_Komatsushima,_Tokushima.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 小松島市
   '362042': { file: 'Emblem_of_Anan,_Tokushima.svg', license: 'PD-Japan-organization' }, // 阿南市
-  '362051': { file: 'Emblem_of_Yoshinogawa,_Tokushima.svg', license: 'Pd-ineligible' }, // 吉野川市
+  '362051': { file: 'Emblem_of_Yoshinogawa,_Tokushima.svg', license: 'PD-ineligible' }, // 吉野川市
   '362069': { file: 'Emblem_of_Awa,_Tokushima.svg', license: 'PD-ineligible' }, // 阿波市
   '362077': { file: 'Emblem_of_Mima,_Tokushima.svg', license: 'PD-Japan-exempt' }, // 美馬市
   '362085': { file: 'Emblem_of_Miyoshi,_Tokushima.svg', license: 'PD-Japan-exempt' }, // 三好市
   '363014': { file: 'Emblem_of_Katsuura,_Tokushima.svg', license: 'PD-Japan-exempt' }, // 勝浦町
   '363022': { file: 'Emblem_of_Kamikatsu,_Tokushima.svg', license: 'PD-Japan-organization' }, // 上勝町
   '363219': { file: 'Emblem_of_Sanagochi,_Tokushima.svg', license: 'PD-ineligible' }, // 佐那河内村
+  '363413': { file: 'Emblem_of_Ishii,_Tokushima.svg', license: 'PD-Japan-organization' }, // 石井町
   '363421': { file: 'Emblem_of_Kamiyama,_Tokushima.svg', license: 'PD-Japan-organization' }, // 神山町
-  '363685': { file: 'Emblem_of_Naka,_Tokushima.svg', license: 'Pd-ineligible' }, // 那賀町
+  '363685': { file: 'Emblem_of_Naka,_Tokushima.svg', license: 'PD-ineligible' }, // 那賀町
+  '363839': { file: 'Emblem_of_Mugi,_Tokushima.svg', license: 'PD-Japan-organization' }, // 牟岐町
   '363871': { file: 'Emblem_of_Minami,_Tokushima.svg', license: 'PD-Japan-exempt' }, // 美波町
   '363880': { file: 'Emblem_of_Kaiyo,_Tokushima.svg', license: 'PD-ineligible' }, // 海陽町
   '364011': { file: 'Emblem_of_Matsushige,_Tokushima.svg', license: 'PD-Japan-organization' }, // 松茂町
+  '364029': { file: 'Emblem_of_Kitajima,_Tokushima.svg', license: 'PD-Japan-exempt' }, // 北島町
+  '364037': { file: 'Emblem_of_Aizumi,_Tokushima.svg', license: 'PD-Japan-organization' }, // 藍住町
+  '364045': { file: 'Emblem_of_Itano,_Tokushima.svg', license: 'PD-Japan-exempt' }, // 板野町
   '364053': { file: 'Emblem_of_Kamiita,_Tokushima.svg', license: 'PD-Japan-exempt' }, // 上板町
+  '364681': { file: 'Emblem_of_Tsurugi,_Tokushima.svg', license: 'CC0' }, // つるぎ町
   '364894': { file: 'Emblem_of_Higashimiyoshi,_Tokushima.svg', license: 'PD-Japan-exempt' }, // 東みよし町
   '370002': { file: 'Emblem_of_Kagawa_Prefecture.svg', license: 'PD-Japan-exempt / PD-shape / PD-Japan' }, // 香川県
   '372013': { file: 'Emblem_of_Takamatsu,_Kagawa.svg', license: 'PD-Japan-organization / PD-100' }, // 高松市
@@ -1335,6 +1462,8 @@ export const EMBLEMS: Record<string, Emblem> = {
   '374041': { file: 'Emblem_of_Tadotsu,_Kagawa.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 多度津町
   '374067': { file: 'Emblem_of_Manno,_Kagawa.svg', license: 'PD-Japan-exempt' }, // まんのう町
   '380008': { file: 'Emblem_of_Ehime_prefecture.svg', license: 'PD-Japan-exempt' }, // 愛媛県
+  '382019': { file: 'Emblem_of_Matsuyama,_Ehime.svg', license: 'PD-Japan-exempt' }, // 松山市
+  '382027': { file: 'Emblem_of_Imabari,_Ehime.svg', license: 'PD-Japan-exempt' }, // 今治市
   '382035': { file: 'Emblem_of_Uwajima,_Ehime.svg', license: 'PD-ineligible' }, // 宇和島市
   '382043': { file: 'Emblem_of_Yawatahama,_Ehime.svg', license: 'PD-ineligible' }, // 八幡浜市
   '382051': { file: 'Emblem_of_Niihama,_Ehime.svg', license: 'PD-Japan-organization' }, // 新居浜市
@@ -1348,6 +1477,9 @@ export const EMBLEMS: Record<string, Emblem> = {
   '383864': { file: 'Emblem_of_Kumakōgen,_Ehime.svg', license: 'PD-ineligible' }, // 久万高原町
   '384011': { file: 'Emblem_of_Masaki,_Ehime.svg', license: 'PD-Japan-organization' }, // 松前町
   '384020': { file: 'Emblem_of_Tobe,_Ehime.svg', license: 'PD-Japan-organization' }, // 砥部町
+  '384224': { file: 'Emblem_of_Uchiko,_Ehime.svg', license: 'PD-Japan-exempt' }, // 内子町
+  '384429': { file: 'Emblem_of_Ikata,_Ehime.svg', license: 'PD-Japan-exempt' }, // 伊方町
+  '384844': { file: 'Emblem_of_Matsuno,_Ehime.svg', license: 'PD-Japan-exempt' }, // 松野町
   '384887': { file: 'Emblem_of_Kihoku,_Ehime.svg', license: 'PD-Japan-exempt' }, // 鬼北町
   '385069': { file: 'Emblem_of_Ainan,_Ehime.svg', license: 'PD-ineligible' }, // 愛南町
   '390003': { file: 'Emblem_of_Kochi_Prefecture.svg', license: 'PD-textlogo / PD-self' }, // 高知県
@@ -1355,20 +1487,29 @@ export const EMBLEMS: Record<string, Emblem> = {
   '392022': { file: 'Emblem_of_Muroto,_Kōchi.svg', license: 'PD-Japan-exempt' }, // 室戸市
   '392031': { file: 'Emblem_of_Aki,_Kōchi.svg', license: 'PD-Japan-organization' }, // 安芸市
   '392049': { file: 'Emblem_of_Nankoku,_Kochi.svg', license: 'PD-Japan-organization' }, // 南国市
+  '392057': { file: 'Emblem_of_Tosa,_Kochi.svg', license: 'PD-Japan-organization' }, // 土佐市
   '392065': { file: 'Emblem_of_Susaki,_Kōchi.svg', license: 'PD-Japan-organization' }, // 須崎市
+  '392081': { file: 'Emblem_of_Sukumo,_Kochi.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 宿毛市
   '392090': { file: 'Emblem_of_Tosashimizu,_Kochi.svg', license: 'PD-Japan-organization' }, // 土佐清水市
   '392103': { file: 'Emblem_of_Shimanto,_Kōchi.svg', license: 'PD-Japan-exempt' }, // 四万十市
   '392111': { file: 'Emblem_of_Konan,_Kochi.svg', license: 'PD-Japan-exempt' }, // 香南市
+  '392120': { file: 'Emblem_of_Kami,_Kochi.svg', license: 'PD-Japan-exempt' }, // 香美市
   '393011': { file: 'Emblem_of_Toyo,_Kochi.svg', license: 'PD-Japan-organization' }, // 東洋町
   '393029': { file: 'Emblem_of_Nahari,_Kochi.svg', license: 'PD-Japan-exempt' }, // 奈半利町
   '393037': { file: 'Emblem_of_Tano,_Kochi.svg', license: 'PD-Japan-organization' }, // 田野町
+  '393045': { file: 'Emblem_of_Yasuda,_Kochi.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 安田町
   '393053': { file: 'Emblem_of_Kitagawa,_Kochi.svg', license: 'PD-Japan-organization / PD-100' }, // 北川村
   '393061': { file: 'Emblem_of_Umaji,_Kochi.svg', license: 'PD-Japan-exempt' }, // 馬路村
+  '393070': { file: 'Emblem_of_Geisei,_Kochi.svg', license: 'PD-Japan-exempt' }, // 芸西村
+  '393410': { file: 'Emblem_of_Motoyama,_Kochi.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 本山町
   '393444': { file: 'Emblem_of_Otoyo,_Kochi.svg', license: 'PD-Japan-exempt' }, // 大豊町
   '393631': { file: 'Emblem_of_Tosa-town,_Kochi.svg', license: 'PD-Japan-exempt' }, // 土佐町
+  '393649': { file: 'Emblem_of_Okawa,_Kochi.svg', license: 'PD-Japan-organization' }, // 大川村
   '393860': { file: 'Emblem_of_Ino,_Kochi.svg', license: 'PD-Japan-organization' }, // いの町
   '393878': { file: 'Emblem_of_Niyodogawa,_Kōchi.svg', license: 'PD-Japan-exempt' }, // 仁淀川町
   '394017': { file: 'Emblem_of_Nakatosa,_Kochi.svg', license: 'PD-Japan-exempt' }, // 中土佐町
+  '394025': { file: 'Emblem_of_Sakawa,_Kochi.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 佐川町
+  '394033': { file: 'Emblem_of_Ochi,_Kochi.svg', license: 'PD-Japan-organization' }, // 越知町
   '394050': { file: 'Emblem_of_Yusuhara,_Kochi.svg', license: 'PD-Japan-exempt' }, // 檮原町
   '394106': { file: 'Emblem_of_Hidaka,_Kochi.svg', license: 'PD-Japan-exempt' }, // 日高村
   '394114': { file: 'Emblem_of_Tsuno,_Kochi.svg', license: 'PD-Japan-exempt' }, // 津野町
@@ -1382,15 +1523,31 @@ export const EMBLEMS: Record<string, Emblem> = {
   '402028': { file: 'Emblem_of_Omuta,_Fukuoka.svg', license: 'PD-Japan-organization' }, // 大牟田市
   '402036': { file: 'Emblem_of_Kurume,_Fukuoka.svg', license: 'PD-Japan-organization' }, // 久留米市
   '402044': { file: 'Emblem_of_Nogata,_Fukuoka.svg', license: 'PD-textlogo / PD-Japan-organization' }, // 直方市
+  '402052': { file: 'Emblem_of_Iizuka,_Fukuoka.svg', license: 'PD-ineligible' }, // 飯塚市
   '402061': { file: 'Emblem_of_Tagawa,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 田川市
+  '402079': { file: 'Emblem_of_Yanagawa,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 柳川市
+  '402109': { file: 'Emblem_of_Yame,_Fukuoka.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 八女市
   '402117': { file: 'Emblem_of_Chikugo,_Fukuoka.svg', license: 'PD-Japan-organization' }, // 筑後市
+  '402125': { file: 'Emblem_of_Okawa,_Fukuoka.svg', license: 'PD-ineligible' }, // 大川市
+  '402133': { file: 'Emblem_of_Yukuhashi,_Fukuoka.svg', license: 'PD-ineligible' }, // 行橋市
   '402141': { file: 'Emblem_of_Buzen,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 豊前市
   '402150': { file: 'Emblem_of_Nakama,_Fukuoka.svg', license: 'PD-Japan-organization' }, // 中間市
+  '402168': { file: 'Emblem_of_Ogōri,_Fukuoka.svg', license: 'PD-Japan-organization' }, // 小郡市
+  '402176': { file: 'Emblem_of_Chikushino,_Fukuoka.svg', license: 'PD-Japan-organization' }, // 筑紫野市
   '402184': { file: 'Emblem_of_Kasuga,_Fukuoka.svg', license: 'PD-Japan-organization' }, // 春日市
+  '402192': { file: 'Emblem_of_Ōnojō,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 大野城市
   '402206': { file: 'Emblem_of_Munakata,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 宗像市
   '402214': { file: 'Emblem_of_Dazaifu,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 太宰府市
   '402231': { file: 'Emblem_of_Koga,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 古賀市
+  '402249': { file: 'Emblem_of_Fukutsu,_Fukuoka.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 福津市
+  '402257': { file: 'Emblem_of_Ukiha,_Fukuoka.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // うきは市
+  '402265': { file: 'Emblem_of_Miyawaka,_Fukuoka.svg', license: 'PD-ineligible' }, // 宮若市
+  '402273': { file: 'Emblem_of_Kama,_Fukuoka.svg', license: 'PD-ineligible' }, // 嘉麻市
   '402281': { file: 'Emblem_of_Asakura,_Fukuoka.svg', license: 'PD-ineligible' }, // 朝倉市
+  '402290': { file: 'Emblem_of_Miyama,_Fukuoka.svg', license: 'PD-ineligible' }, // みやま市
+  '402303': { file: 'Emblem_of_Itoshima,_Fukuoka.svg', license: 'PD-ineligible' }, // 糸島市
+  '402311': { file: 'Emblem_of_Nakagawa,_Fukuoka.svg', license: 'PD-self' }, // 那珂川市
+  '403415': { file: 'Emblem_of_Umi,_Fukuoka.svg', license: 'PD-ineligible' }, // 宇美町
   '403423': { file: 'Emblem_of_Sasaguri,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 篠栗町
   '403431': { file: 'Emblem_of_Shime,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 志免町
   '403440': { file: 'Emblem_of_Sue,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 須恵町
@@ -1402,14 +1559,19 @@ export const EMBLEMS: Record<string, Emblem> = {
   '403831': { file: 'Emblem_of_Okagaki,_Fukuoka.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 岡垣町
   '403849': { file: 'Emblem_of_Onga,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 遠賀町
   '404012': { file: 'Emblem_of_Kotake,_Fukuoka.svg', license: 'PD-Japan-organization' }, // 小竹町
+  '404021': { file: 'Emblem_of_Kurate,_Fukuoka.svg', license: 'PD-self' }, // 鞍手町
   '404217': { file: 'Emblem_of_Keisen,_Fukuoka.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 桂川町
+  '404471': { file: 'Emblem_of_Chikuzen,_Fukuoka.svg', license: 'PD-textlogo' }, // 筑前町
+  '404489': { file: 'Emblem_of_Tōhō,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 東峰村
   '405035': { file: 'Emblem_of_Tachiarai,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 大刀洗町
   '405221': { file: 'Emblem_of_Oki,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 大木町
   '405442': { file: 'Emblem_of_Hirokawa,_Fukuoka.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 広川町
+  '406015': { file: 'Emblem_of_Kawara,_Fukuoka.svg', license: 'CC0' }, // 香春町
   '406023': { file: 'Emblem_of_Soeda,_Fukuoka.svg', license: 'PD-100' }, // 添田町
   '406040': { file: 'Emblem_of_Itoda,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 糸田町
   '406058': { file: 'Emblem_of_Kawasaki,_Fukuoka.svg', license: 'PD-ineligible' }, // 川崎町
   '406082': { file: 'Emblem_of_Oto,_Fukuoka.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 大任町
+  '406091': { file: 'Emblem_of_Aka,_Fukuoka.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 赤村
   '406104': { file: 'Emblem_of_Fukuchi,_Fukuoka.svg', license: 'PD-Japan-exempt / PD-textlogo' }, // 福智町
   '406210': { file: 'Emblem_of_Kanda,_Fukuoka.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 苅田町
   '406252': { file: 'Emblem_of_Miyako,_Fukuoka.svg', license: 'PD-Japan-organization / PD-textlogo' }, // みやこ町
@@ -1418,89 +1580,165 @@ export const EMBLEMS: Record<string, Emblem> = {
   '406473': { file: 'Emblem_of_Chikujo,_Fukuoka.svg', license: 'PD-Japan-exempt' }, // 築上町
   '410004': { file: 'Emblem_of_Saga_Prefecture.svg', license: 'PD-Japan-organization / PD-1996' }, // 佐賀県
   '412015': { file: 'Emblem_of_Saga,_Saga.svg', license: 'PD-Japan-exempt' }, // 佐賀市
+  '412023': { file: 'Emblem_of_Karatsu,_Saga.svg', license: 'PD-Japan-organization' }, // 唐津市
+  '412040': { file: 'Emblem_of_Taku,_Saga.svg', license: 'PD-textlogo' }, // 多久市
+  '412058': { file: 'Emblem_of_Imari,_Saga.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 伊万里市
+  '412066': { file: 'Emblem_of_Takeo,_Saga.svg', license: 'PD-Japan-exempt' }, // 武雄市
+  '412074': { file: 'Emblem_of_Kashima,_Saga.svg', license: 'PD-textlogo' }, // 鹿島市
+  '412082': { file: 'Emblem_of_Ogi,_Saga.svg', license: 'PD-Japan-exempt' }, // 小城市
+  '412091': { file: 'Emblem_of_Ureshino,_Saga.svg', license: 'PD-Japan-exempt' }, // 嬉野市
   '412104': { file: 'Emblem_of_Kanzaki,_Saga.svg', license: 'PD-Japan-exempt' }, // 神埼市
+  '413275': { file: 'Emblem_of_Yoshinogari,_Saga.svg', license: 'PD-ineligible' }, // 吉野ヶ里町
   '413411': { file: 'Emblem_of_Kiyama,_Saga.svg', license: 'PD-Japan-exempt' }, // 基山町
+  '413453': { file: 'Emblem_of_Kamimine,_Saga.svg', license: 'PD-ineligible' }, // 上峰町
+  '413461': { file: 'Emblem_of_Miyaki,_Saga.svg', license: 'PD-ineligible' }, // みやき町
+  '413879': { file: 'Emblem_of_Genkai,_Saga.svg', license: 'PD-ineligible' }, // 玄海町
   '414018': { file: 'Emblem_of_Arita,_Saga.svg', license: 'PD-Japan-exempt' }, // 有田町
+  '414239': { file: 'Emblem_of_Omachi,_Saga.svg', license: 'PD-textlogo' }, // 大町町
+  '414247': { file: 'Emblem_of_Kohoku,_Saga.svg', license: 'PD-Japan-exempt' }, // 江北町
+  '414255': { file: 'Emblem_of_Shiroishi,_Saga.svg', license: 'PD-Japan-exempt' }, // 白石町
   '414417': { file: 'Emblem_of_Tara,_Saga.svg', license: 'PD-textlogo' }, // 太良町
   '420000': { file: 'Emblem_of_Nagasaki_Prefecture.svg', license: 'PD-Japan-exempt' }, // 長崎県
   '422011': { file: 'Nagasaki_Nagasaki_chapter.svg', license: 'PD-Japan-organization' }, // 長崎市
+  '422029': { file: 'Emblem_of_Sasebo,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 佐世保市
+  '422037': { file: 'Emblem_of_Shimabara,_Nagasaki.svg', license: 'PD-Japan-organization' }, // 島原市
   '422045': { file: 'Emblem_of_Isahaya,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 諫早市
+  '422053': { file: 'Emblem_of_Ōmura,_Nagasaki.svg', license: 'PD-ineligible' }, // 大村市
   '422070': { file: 'Emblem_of_Hirado,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 平戸市
   '422088': { file: 'Emblem_of_Matsuura,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 松浦市
+  '422096': { file: 'Emblem_of_Tsushima,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 対馬市
   '422100': { file: 'Emblem_of_Iki,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 壱岐市
+  '422118': { file: 'Emblem_of_Gotō,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 五島市
   '422126': { file: 'Emblem_of_Saikai,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 西海市
   '422134': { file: 'Emblem_of_Unzen,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 雲仙市
+  '422142': { file: 'Emblem_of_Minamishimabara,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 南島原市
+  '423076': { file: 'Emblem_of_Nagayo,_Nagasaki.svg', license: 'PD-Japan-exempt / PD-shape' }, // 長与町
   '423084': { file: 'Emblem_of_Togitsu,_Nagasaki.svg', license: 'PD-ineligible' }, // 時津町
+  '423211': { file: 'Emblem_of_Higashisonogi,_Nagasaki.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 東彼杵町
+  '423220': { file: 'Emblem_of_Kawatana,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 川棚町
+  '423238': { file: 'Emblem_of_Hasami,_Nagasaki.svg', license: 'CC BY-SA 4.0', author: 'OperationSakura6144' }, // 波佐見町
   '423831': { file: 'Emblem_of_Ojika,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 小値賀町
+  '423912': { file: 'Emblem_of_Saza,_Nagasaki.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 佐々町
   '424111': { file: 'Emblem_of_Shinkamigoto,_Nagasaki.svg', license: 'PD-Japan-exempt' }, // 新上五島町
   '430005': { file: 'Emblem_of_Kumamoto_Prefecture.svg', license: 'PD-Japan-organization' }, // 熊本県
   '431001': { file: 'Emblem_of_Kumamoto,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 熊本市
   '432024': { file: 'Emblem_of_Yatsushiro,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 八代市
   '432032': { file: 'Emblem_of_Hitoyoshi,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 人吉市
   '432041': { file: 'Emblem_of_Arao,_Kumamoto.svg', license: 'PD-Japan-organization' }, // 荒尾市
+  '432059': { file: 'Emblem_of_Minamata,_Kumamoto.svg', license: 'PD-ineligible' }, // 水俣市
+  '432067': { file: 'Emblem_of_Tamana,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 玉名市
+  '432083': { file: 'Emblem_of_Yamaga,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 山鹿市
   '432105': { file: 'Emblem_of_Kikuchi,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 菊池市
   '432113': { file: 'Emblem_of_Uto_Kumamoto.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 宇土市
   '432121': { file: 'Emblem_of_Kamiamakusa,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 上天草市
+  '432130': { file: 'Emblem_of_Uki,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 宇城市
+  '432148': { file: 'Emblem_of_Aso,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 阿蘇市
+  '432156': { file: 'Emblem_of_Amakusa,_Kumamoto.svg', license: 'CC BY-SA 3.0', author: 'Wgn' }, // 天草市
+  '432164': { file: 'Emblem_of_Koshi,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 合志市
   '433489': { file: 'Emblem_of_Misato,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 美里町
   '433641': { file: 'Emblem_of_Gyokuto,_Kumamoto.svg', license: 'PD-Japan-exempt / PD-textlogo' }, // 玉東町
+  '433675': { file: 'Emblem_of_Nankan,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 南関町
+  '433683': { file: 'Emblem_of_Nagasu,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 長洲町
   '433691': { file: 'Emblem_of_Nagomi,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 和水町
+  '434035': { file: 'Emblem_of_Ōzu,_Kumamoto.svg', license: 'PD-ineligible' }, // 大津町
   '434043': { file: 'Emblem_of_Kikuyo,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 菊陽町
+  '434230': { file: 'Emblem_of_Minamioguni,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 南小国町
   '434248': { file: 'Emblem_of_Oguni,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 小国町
   '434256': { file: 'Emblem_of_Ubuyama,_Kumamoto.svg', license: 'PD-Japan-exempt / PD-shape' }, // 産山村
+  '434281': { file: 'Emblem_of_Takamori,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 高森町
+  '434329': { file: 'Emblem_of_Nishihara,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 西原村
   '434337': { file: 'Emblem_of_Minamiaso,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 南阿蘇村
+  '434418': { file: 'Emblem_of_Mifune,_Kumamoto.svg', license: 'CC BY 4.0', author: 'OperationSakura6144' }, // 御船町
   '434426': { file: 'Emblem_of_Kashima,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 嘉島町
   '434434': { file: 'Emblem_of_Mashiki,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 益城町
+  '434442': { file: 'Emblem_of_Kōsa,_Kumamoto.svg', license: 'PD-Japan-organization' }, // 甲佐町
+  '434477': { file: 'Emblem_of_Yamato,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 山都町
   '434680': { file: 'Emblem_of_Hikawa,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 氷川町
   '434825': { file: 'Emblem_of_Ashikita,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 芦北町
   '434841': { file: 'Emblem_of_Tsunagi,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 津奈木町
+  '435015': { file: 'Emblem_of_Nishiki,_Kumamoto.svg', license: 'CC BY 4.0', author: 'OperationSakura6144' }, // 錦町
+  '435058': { file: 'Emblem_of_Taragi,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 多良木町
+  '435066': { file: 'Emblem_of_Yunomae,_Kumamoto.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 湯前町
   '435074': { file: 'Emblem_of_Mizukami,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 水上村
   '435104': { file: 'Emblem_of_Sagara,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 相良村
   '435112': { file: 'Emblem_of_Itsuki,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 五木村
+  '435121': { file: 'Emblem_of_Yamae,_Kumamoto.svg', license: 'PD-Japan-exempt' }, // 山江村
   '435139': { file: 'Emblem_of_Kuma,_Kumamoto.svg', license: 'PD-ineligible' }, // 球磨村
   '435147': { file: 'Emblem_of_Asagiri,_Kumamoto.svg', license: 'PD-ineligible' }, // あさぎり町
   '435317': { file: 'Emblem_of_Reihoku,_Kumamoto_(gradient).svg', license: 'PD-Japan-organization / PD-textlogo' }, // 苓北町
   '440001': { file: 'Emblem_of_Oita_Prefecture.svg', license: 'PD-ineligible' }, // 大分県
   '442011': { file: 'Emblem_of_Oita,_Oita.svg', license: 'PD-Japan-organization' }, // 大分市
+  '442020': { file: 'Emblem_of_Beppu,_Oita.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 別府市
+  '442038': { file: 'Emblem_of_Nakatsu,_Oita.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 中津市
   '442046': { file: 'Emblem_of_Hita,_Oita.svg', license: 'PD-Japan-exempt' }, // 日田市
   '442054': { file: 'Emblem_of_Saiki,_Oita.svg', license: 'PD-Japan-exempt' }, // 佐伯市
   '442062': { file: 'Emblem_of_Usuki,_Oita.svg', license: 'PD-Japan-exempt' }, // 臼杵市
   '442071': { file: 'Emblem_of_Tsukumi,_Oita.svg', license: 'PD-Japan-exempt' }, // 津久見市
+  '442089': { file: 'Emblem_of_Taketa,_Oita.svg', license: 'PD-Japan-exempt' }, // 竹田市
   '442097': { file: 'Emblem_of_Bungotakada,_Oita.svg', license: 'PD-Japan-exempt' }, // 豊後高田市
   '442101': { file: 'Emblem_of_Kitsuki,_Oita.svg', license: 'PD-Japan-exempt' }, // 杵築市
   '442119': { file: 'Emblem_of_Usa,_Oita.svg', license: 'PD-Japan-exempt' }, // 宇佐市
+  '442127': { file: 'Emblem_of_Bungoono,_Oita.svg', license: 'PD-Japan-exempt' }, // 豊後大野市
   '442135': { file: 'Emblem_of_Yufu,_Oita.svg', license: 'PD-Japan-exempt' }, // 由布市
   '442143': { file: 'Emblem_of_Kunisaki,_Oita.svg', license: 'PD-ineligible' }, // 国東市
+  '443221': { file: 'Emblem_of_Himeshima,_Oita.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 姫島村
+  '443417': { file: 'Emblem_of_Hiji,_Oita.svg', license: 'PD-Japan-organization' }, // 日出町
   '444618': { file: 'Emblem_of_Kokonoe,_Oita_(black).svg', license: 'PD-Japan-exempt' }, // 九重町
+  '444626': { file: 'Emblem_of_Kusu,_Oita.svg', license: 'PD-Japan-exempt' }, // 玖珠町
   '450006': { file: 'Emblem_of_Miyazaki_Prefecture.svg', license: 'PD-Japan-organization / PD-1923' }, // 宮崎県
+  '452017': { file: 'Emblem_of_Miyazaki,_Miyazaki.svg', license: 'PD-Japan-exempt' }, // 宮崎市
   '452025': { file: 'Emblem_of_Miyakonojo,_Miyazaki.svg', license: 'PD-ineligible' }, // 都城市
+  '452033': { file: 'Emblem_of_Nobeoka,_Miyazaki.svg', license: 'PD-ineligible' }, // 延岡市
   '452041': { file: 'Emblem_of_Nichinan,_Miyazaki.svg', license: 'PD-Japan-exempt' }, // 日南市
   '452050': { file: 'Emblem_of_Kobayashi,_Miyazaki.svg', license: 'PD-Japan-exempt' }, // 小林市
+  '452068': { file: 'Emblem_of_Hyuga,_Miyazaki.svg', license: 'PD-Japan-organization' }, // 日向市
+  '452076': { file: 'Emblem_of_Kushima,_Miyazaki.svg', license: 'PD-Japan-organization' }, // 串間市
+  '452084': { file: 'Emblem_of_Saito_Miyazaki.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 西都市
+  '452092': { file: 'Emblem_of_Ebino,_Miyazaki.svg', license: 'PD-textlogo / PD-Japan-exempt' }, // えびの市
   '453412': { file: 'Emblem_of_Mimata,_Miyazaki.svg', license: 'PD-Japan-organization' }, // 三股町
+  '453617': { file: 'Emblem_of_Takaharu,_Miyazaki.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 高原町
+  '453820': { file: 'Emblem_of_Kunitomi,_Miyazaki_(inverted).svg', license: 'PD-Japan-organization / PD-textlogo' }, // 国富町
+  '453838': { file: 'Emblem_of_Aya,_Miyazaki.svg', license: 'PD-Japan-organization' }, // 綾町
   '454010': { file: 'Emblem_of_Takanabe,_Miyazaki.svg', license: 'PD-Japan-organization' }, // 高鍋町
+  '454028': { file: 'Emblem_of_Shintomi_Miyazaki.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 新富町
+  '454036': { file: 'Emblem_of_Nishimera_Miyazaki.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 西米良村
+  '454044': { file: 'Emblem_of_Kijō,_Miyazaki.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 木城町
+  '454052': { file: 'Emblem_of_Kawaminami,_Miyazaki.svg', license: 'PD-Japan-organization' }, // 川南町
   '454061': { file: 'Emblem_of_Tsuno,_Miyazaki.svg', license: 'PD-Japan-organization' }, // 都農町
+  '454214': { file: 'Emblem_of_Kadogawa,_Miyazaki.svg', license: 'PD-Japan-exempt' }, // 門川町
+  '454290': { file: 'Emblem_of_Morotsuka_Miyazaki.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 諸塚村
   '454303': { file: 'Emblem_of_Shiiba_Miyazaki.svg', license: 'PD-Japan-exempt' }, // 椎葉村
   '454311': { file: 'Emblem_of_Misato,_Miyazaki.svg', license: 'PD-Japan-exempt' }, // 美郷町
+  '454419': { file: 'Emblem_of_Takachiho,_Miyazaki.svg', license: 'CC BY-SA 4.0', author: 'Mliu92' }, // 高千穂町
   '454427': { file: 'Emblem_of_Hinokage,_Miyazaki.svg', license: 'PD-Japan-organization' }, // 日之影町
   '454435': { file: 'Emblem_of_Gokase,_Miyazaki.svg', license: 'PD-Japan-organization' }, // 五ヶ瀬町
   '460001': { file: 'Emblem_of_Kagoshima_Prefecture.svg', license: 'PD-Japan-exempt' }, // 鹿児島県
   '462012': { file: 'Emblem_of_Kagoshima,_Kagoshima.svg', license: 'PD-Japan-organization' }, // 鹿児島市
   '462039': { file: 'Emblem_of_Kanoya,_Kagoshima.svg', license: 'PD-Japan-organization' }, // 鹿屋市
+  '462047': { file: 'Emblem_of_Makurazaki,_Kagoshima.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 枕崎市
+  '462063': { file: 'Emblem_of_Akune,_Kagoshima.svg', license: 'PD-Japan-organization' }, // 阿久根市
   '462080': { file: 'Emblem_of_Izumi,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 出水市
   '462101': { file: 'Emblem_of_Ibusuki,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 指宿市
   '462136': { file: 'Emblem_of_Nishinoomote,_Kagoshima.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 西之表市
   '462144': { file: 'Emblem_of_Tarumizu,_Kagoshima.svg', license: 'PD-Japan-organization' }, // 垂水市
   '462152': { file: 'Emblem_of_Satsumasendai,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 薩摩川内市
   '462161': { file: 'Emblem_of_Hioki,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 日置市
+  '462179': { file: 'Emblem_of_Soo,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 曽於市
   '462187': { file: 'Emblem_of_Kirishima,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 霧島市
+  '462195': { file: 'Emblem_of_Ichikikushikino,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // いちき串木野市
+  '462209': { file: 'Emblem_of_Minamisatsuma_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 南さつま市
+  '462217': { file: 'Emblem_of_Shibushi,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 志布志市
   '462225': { file: 'Emblem_of_Amami,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 奄美市
   '462233': { file: 'Emblem_of_Minamikyushu,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 南九州市
   '462241': { file: 'Emblem_of_Isa,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 伊佐市
+  '462250': { file: 'Emblem_of_Aira,_Kagoshima_(textless).svg', license: 'PD-Japan-exempt' }, // 姶良市
   '463035': { file: 'Emblem_of_Mishima,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 三島村
   '463043': { file: 'Emblem_of_Toshima,_Kagoshima.svg', license: 'PD-Japan-organization' }, // 十島村
   '463922': { file: 'Emblem_of_Satsuma,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // さつま町
   '464040': { file: 'Emblem_of_Nagashima,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 長島町
   '464520': { file: 'Emblem_of_Yusui,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 湧水町
   '464686': { file: 'Emblem_of_Ōsaki,_Kagoshima.svg', license: 'PD-Japan-organization' }, // 大崎町
+  '464821': { file: 'Emblem_of_Higashikushira,_Kagoshima.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 東串良町
   '464902': { file: 'Emblem_of_Kinko,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 錦江町
   '464911': { file: 'Emblem_of_Minamiosumi,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 南大隅町
   '464929': { file: 'Emblem_of_Kimotsuki,_Kagoshima.svg', license: 'PD-Japan-exempt' }, // 肝付町
@@ -1552,9 +1790,12 @@ export const EMBLEMS: Record<string, Emblem> = {
   '473553': { file: 'Emblem_of_Aguni,_Okinawa.svg', license: 'PD-Japan-exempt' }, // 粟国村
   '473561': { file: 'Emblem_of_Tonaki,_Okinawa.svg', license: 'PD-Japan-exempt' }, // 渡名喜村
   '473570': { file: 'Emblem_of_Minamidaito,_Okinawa.svg', license: 'PD-Japan-exempt' }, // 南大東村
+  '473588': { file: 'Emblem_of_Kitadaitō,_Okinawa.svg', license: 'PD-Japan-exempt' }, // 北大東村
   '473596': { file: 'Emblem_of_Iheya,_Okinawa.svg', license: 'PD-Japan-organization / PD-textlogo' }, // 伊平屋村
   '473600': { file: 'Emblem_of_Izena,_Okinawa.svg', license: 'PD-Japan-exempt' }, // 伊是名村
   '473618': { file: 'Emblem_of_Kumejima,_Okinawa.svg', license: 'PD-Japan-exempt' }, // 久米島町
   '473626': { file: 'Emblem_of_Yaese,_Okinawa.svg', license: 'PD-Japan-exempt' }, // 八重瀬町
+  '473758': { file: 'Emblem_of_Tarama,_Okinawa.svg', license: 'PD-Japan-exempt' }, // 多良間村
+  '473812': { file: 'Emblem_of_Taketomi,_Okinawa.svg', license: 'PD-Japan-exempt' }, // 竹富町
   '473821': { file: 'Emblem_of_Yonaguni,_Okinawa.svg', license: 'PD-Japan-exempt' }, // 与那国町
 }
