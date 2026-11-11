@@ -287,6 +287,13 @@ def full_rules(page) -> list[float]:
     # Tables stacked a few points aside (国分寺市) draw their full rules that far inside the page's outermost edges.
     reach = FULL_REACH + STACKED_SHIFT
     whole = sorted(r.y0 for r in layout._joined(horizontals) if r.x0 <= left + reach and r.x1 >= right - reach)
+    if layout.LINE_TOLERANCE.get() > 2.0:
+        # A skewed scan (`rules.skewed`, 国分寺市) loses the left end of a full rule where its line is pale: a rule
+        # that starts inside the first column and reaches the right edge is one.
+        verticals = sorted({round(r.x0) for r in page.rules if r.vertical and r.y1 - r.y0 > 40})
+        first = next((x for x in verticals if x > left + reach), None)
+        whole = sorted({*whole, *(r.y0 for r in layout._joined(horizontals) if first is not None
+                                   and left + reach < r.x0 < first - 10 and r.x1 >= right - reach)})
     if whole:
         return whole
     joined = []

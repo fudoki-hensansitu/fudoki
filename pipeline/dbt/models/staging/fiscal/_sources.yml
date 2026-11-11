@@ -9316,6 +9316,54 @@ sources:
       direction: expenditure
       table_id: national-health-insurance-initial
       kind: nodes
+  - name: j132144_2024_initial_general_initial_1_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: amounts
+  - name: j132144_2024_initial_general_initial_1_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: nodes
+  - name: j132144_2024_initial_general_initial_4_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-4
+      kind: amounts
+  - name: j132144_2024_initial_general_initial_4_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-4
+      kind: nodes
+  - name: j132144_2024_initial_general_initial_7_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-7
+      kind: amounts
+  - name: j132144_2024_initial_general_initial_7_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-7
+      kind: nodes
   - name: j132144_2024_settlement_general_settlement_amounts
     meta:
       jurisdiction: '132144'
@@ -9380,6 +9428,54 @@ sources:
       direction: expenditure
       table_id: kouki-settlement
       kind: nodes
+  - name: j132144_2025_initial_general_initial_1_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: amounts
+  - name: j132144_2025_initial_general_initial_1_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: nodes
+  - name: j132144_2025_initial_general_initial_3_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-3
+      kind: amounts
+  - name: j132144_2025_initial_general_initial_3_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-3
+      kind: nodes
+  - name: j132144_2025_initial_general_initial_7_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-7
+      kind: amounts
+  - name: j132144_2025_initial_general_initial_7_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-7
+      kind: nodes
   - name: j132144_2025_settlement_general_settlement_amounts
     meta:
       jurisdiction: '132144'
@@ -9443,6 +9539,54 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: kouki-settlement
+      kind: nodes
+  - name: j132144_2026_initial_general_initial_1_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: amounts
+  - name: j132144_2026_initial_general_initial_1_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-1
+      kind: nodes
+  - name: j132144_2026_initial_general_initial_6_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-6
+      kind: amounts
+  - name: j132144_2026_initial_general_initial_6_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-6
+      kind: nodes
+  - name: j132144_2026_initial_general_initial_7_amounts
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-7
+      kind: amounts
+  - name: j132144_2026_initial_general_initial_7_nodes
+    meta:
+      jurisdiction: '132144'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial-7
       kind: nodes
   - name: j132152_2024_settlement_general_expenditure_detail_amounts
     meta:
