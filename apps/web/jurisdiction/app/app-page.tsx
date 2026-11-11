@@ -9,8 +9,8 @@ import {
   BuildingsIcon,
   CalendarBlankIcon,
   CaretDownIcon,
+  CaretLeftIcon,
   CaretRightIcon,
-  ChartPieSliceIcon,
   ClipboardTextIcon,
   DotsThreeCircleIcon,
   FileTextIcon,
@@ -92,8 +92,8 @@ const perHead = (y: number, pop: number) => {
 const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
-type Selected = { kind: 'field' | 'project' | 'measure' | 'sheet'; id: string } | null
-type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go }
+type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | null
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go; openField: (id: string) => void }
 const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
 
@@ -334,7 +334,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
 }
 
 function Overview({ go }: { go: Go }) {
-  const { v, select, page } = useApp()
+  const { v, page, openField } = useApp()
   return (
     <div className="flex flex-col gap-8">
       <div className="grid gap-3 md:grid-cols-[1.3fr_1fr]">
@@ -359,7 +359,7 @@ function Overview({ go }: { go: Go }) {
       <section>
         <SectionHead title="分野" />
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 @3xl:grid-cols-5">
-          {v.fields.map((f, i) => <FieldTile key={f.id} f={f} i={i} onClick={() => select({ kind: 'field', id: f.id })} />)}
+          {v.fields.map((f, i) => <FieldTile key={f.id} f={f} i={i} onClick={() => openField(f.id)} />)}
         </div>
       </section>
 
@@ -608,9 +608,9 @@ function SheetDetail({ s }: { s: EvalSheet }) {
   )
 }
 
-/** 分野の詳細。分野はまとめのタイルから開く */
-function FieldDetail({ id }: { id: string }) {
-  const { v, d, go, select } = useApp()
+/** 分野の頁（/tokyo/shinagawa/fields/fukushi）。まとめのタイルから開く */
+function FieldPage({ id }: { id: string }) {
+  const { v, d } = useApp()
   const f = v.fields.find((x) => x.id === id)
   if (!f) return <p className="text-sm text-muted-foreground">{reiwa(v.year)}にはこの分野の予算がありません。</p>
   const ps = v.current.filter((p) => p.field === f.id)
@@ -635,12 +635,8 @@ function FieldDetail({ id }: { id: string }) {
           <Rows>{ms.map((m) => <MeasureRow key={m.id} m={m} />)}</Rows>
         </DetailSection>
       ) : null}
-      <DetailSection icon={ListBulletsIcon} title="お金のかかる事業" count={`${ps.length}件`}>
-        <Rows>{ps.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>
-        <Button variant="outline" size="sm" className="mt-3 w-full" onClick={() => { select(null); go('projects', { filter: 'all', field: f.id }) }}>
-          この分野の事業をすべて見る
-          <CaretRightIcon data-icon="inline-end" />
-        </Button>
+      <DetailSection icon={ListBulletsIcon} title="事業" count={`${ps.length}件`}>
+        <Infinite items={ps} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
       </DetailSection>
       {v.sheets.length ? (
         <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(v.year)}年度の事業`}>
@@ -654,10 +650,10 @@ function FieldDetail({ id }: { id: string }) {
 
 function Detail({ sel }: { sel: NonNullable<Selected> }) {
   const { d } = useApp()
-  const kind = { field: ['分野', ChartPieSliceIcon], project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon] } as const
+  const kind = { project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon] } as const
   const [label, I] = kind[sel.kind]
   const body =
-    sel.kind === 'field' ? <FieldDetail id={sel.id} /> : sel.kind === 'project' ? <ProjectDetail p={d.projects.find((p) => p.id === sel.id)!} /> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
+    sel.kind === 'project' ? <ProjectDetail p={d.projects.find((p) => p.id === sel.id)!} /> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
   return (
     <div key={`${sel.kind}${sel.id}`} className="app-in">
       <p className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground"><I className="size-3.5" aria-hidden="true" />{label}</p>
@@ -709,10 +705,12 @@ const TABS: { key: TabKey; label: string; icon: Icon }[] = [
 /** 頁の年度（新しい順に3年）。決算の年度と、決算より後の当初予算の年度 */
 const YEAR_COUNT = 3
 const pageYearsOf = (data: PageData) => [...new Set([...data.years.map((y) => y.year), ...data.budgets.map((b) => b.year)])].sort((a, b) => b - a).slice(0, YEAR_COUNT)
-/** 今の URL から年度の段を除いた、自治体の頁の path */
-const basePath = () => location.pathname.replace(/\/\d{4}\/?$/, '')
+/** 今の URL から年度の段と分野の段を除いた、自治体の頁の path */
+const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').replace(/\/\d{4}\/?$/, '')
+/** 今の URL の分野の段（/fields/fukushi）の id */
+const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
 
-export function AppPage({ data, sitekey, initialYear }: { data: PageData; sitekey: string; initialYear?: number }) {
+export function AppPage({ data, sitekey, initialYear, initialField }: { data: PageData; sitekey: string; initialYear?: number; initialField?: string }) {
   const vision = data.profile?.vision?.text
   const emblem = EMBLEMS[data.code] ? assetPath(data.code, 'emblem.svg') : null
   const years = React.useMemo(() => pageYearsOf(data), [data])
@@ -728,7 +726,8 @@ export function AppPage({ data, sitekey, initialYear }: { data: PageData; siteke
   // 年度を選んだら、その年度の頁の path にする（既定の年度は自治体の頁そのもの）。頁は読み直さないので title も合わせる
   const setYear = (y: number) => {
     setYearState(y)
-    history.replaceState(null, '', yearPath(basePath(), y, years[0]!))
+    const f = fieldOfPath()
+    history.replaceState(null, '', yearPath(basePath(), y, years[0]!) + (f ? `/fields/${f}` : ''))
     document.title = pageHead(data, y === years[0] ? undefined : y).title
   }
   const [tab, setTab] = React.useState<TabKey>('overview')
@@ -736,6 +735,28 @@ export function AppPage({ data, sitekey, initialYear }: { data: PageData; siteke
   const [filter, setFilter] = React.useState('all')
   const [grade, setGrade] = React.useState('A')
   const [selected, select] = React.useState<Selected>(null)
+  // 分野の頁。URL を /fields/<id> にして、戻るで自治体の頁へ帰る
+  const [fieldPage, setFieldPage] = React.useState<string | null>(initialField ?? null)
+  const pushed = React.useRef(false)
+  const openField = (id: string) => {
+    select(null)
+    history.pushState(null, '', `${yearPath(basePath(), year, years[0]!)}/fields/${id}`)
+    pushed.current = true
+    setFieldPage(id)
+    window.scrollTo({ top: 0 })
+  }
+  const closeField = () => {
+    select(null)
+    if (pushed.current) return history.back()
+    history.pushState(null, '', yearPath(basePath(), year, years[0]!))
+    setFieldPage(null)
+    window.scrollTo({ top: 0 })
+  }
+  React.useEffect(() => {
+    const onPop = () => { select(null); setFieldPage(fieldOfPath()); pushed.current = false }
+    window.addEventListener('popstate', onPop)
+    return () => window.removeEventListener('popstate', onPop)
+  }, [])
   const wide = useMedia('(min-width: 1280px)')
   const phone = useMedia('(max-width: 767px)')
   const v = React.useMemo(() => (d?.years[year] ? yearView(d, year) : undefined), [d, year])
@@ -843,6 +864,11 @@ export function AppPage({ data, sitekey, initialYear }: { data: PageData; siteke
             <Separator className="absolute inset-x-4 bottom-0 data-horizontal:w-auto" />
             {/* スクロールしたら上にタブを残し、右に年度の切り替えを出す。下に Separator を引いて中身と分ける */}
             <div className="flex items-center gap-3 px-4">
+            {fieldPage ? (
+              <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
+                <Button variant="ghost" onClick={closeField} className="-ml-2 text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" />{data.name}</Button>
+              </div>
+            ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
               {tabs.map((t) => (
                 <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
@@ -851,12 +877,15 @@ export function AppPage({ data, sitekey, initialYear }: { data: PageData; siteke
                 </TabsTrigger>
               ))}
             </TabsList>
+            )}
               {stuck ? <div className="app-in shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div> : null}
             </div>
           </div>
           {v ? (
-            <AppContext.Provider value={{ d: d!, page: data, years, v, select, selected, projects, go }}>
-              {phone ? (
+            <AppContext.Provider value={{ d: d!, page: data, years, v, select, selected, projects, go, openField }}>
+              {fieldPage ? (
+                <div key={fieldPage} className="app-in pt-6"><FieldPage id={fieldPage} /></div>
+              ) : phone ? (
                 <Carousel setApi={setApi} opts={{ startIndex: index }} className="pt-5">
                   <CarouselContent className="-ml-4 items-start transition-[height] duration-300" style={{ height }}>
                     {tabs.map((t, i) => (

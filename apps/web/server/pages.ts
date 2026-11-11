@@ -4,6 +4,7 @@ import type { Context } from 'hono'
 import { emptyHead, pageHead, type Head } from '../jurisdiction/html'
 import { pageYears } from '../jurisdiction/types'
 import type { Env } from './env'
+import { DOMAIN_FRAMES, OTHER_FRAME } from '../jurisdiction/domains'
 import { resolveJurisdiction, type JurisdictionView } from './jurisdiction-routes'
 
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
@@ -11,7 +12,7 @@ export const unavailable = () => new Response('風土記の API に繋がりま�
 
 /** 自治体の頁（/tokyo、/tokyo/nakano、/tokyo/nakano/2024）の props。sitekey は頁の中の「この自治体について聞く」の Turnstile。
  * year は既定でない年度の頁（/tokyo/nakano/2024）のときだけ持つ */
-export type JurisdictionProps = JurisdictionView & { sitekey: string; year?: number }
+export type JurisdictionProps = JurisdictionView & { sitekey: string; year?: number; /** 分野の頁（/tokyo/nakano/fields/fukushi）のときの分野の id */ field?: string }
 
 /** 年度の段（/tokyo/nakano/2024）。4桁の数字だけ */
 export const YEAR_SEGMENT = /^\d{4}$/
@@ -48,6 +49,21 @@ export async function jurisdictionProps(c: Context, path: string, yearSegment?: 
 export function siteKey(c: Context): string {
   const { hostname } = new URL(c.req.url)
   return hostname === 'localhost' || hostname === '127.0.0.1' ? TURNSTILE_TEST_SITE_KEY : ((c.env as unknown as Env).TURNSTILE_SITE_KEY ?? '')
+}
+
+const FIELD_IDS = new Set([...DOMAIN_FRAMES, OTHER_FRAME].map((f) => f.id))
+
+/** 分野の頁。分野の id が違えば 404 */
+export async function fieldProps(c: Context, path: string, field: string, yearSegment?: string): Promise<JurisdictionProps> {
+  if (!FIELD_IDS.has(field)) throw new HTTPException(404, { res: notFound() })
+  const to = `/fields/${field}`
+  try {
+    return { ...(await jurisdictionProps(c, path, yearSegment)), field }
+  } catch (e) {
+    // 既定の年度は年度の段の無い分野の頁へ寄せる
+    if (e instanceof HTTPException && e.status === 301) throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: path + to } }) })
+    throw e
+  }
 }
 
 export const jurisdictionHead = (p: JurisdictionProps): Head => (p.kind === 'page' ? pageHead(p.data, p.year) : emptyHead(p.entry))
