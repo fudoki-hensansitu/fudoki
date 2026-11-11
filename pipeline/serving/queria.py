@@ -1,7 +1,7 @@
 """Queria 用の marts（`dbt/models/marts/queria/`）を Queria の公開データセット fudoki（FDL 形式の DuckLake）に写す。
 
 表は marts と同名・同列のまま写す（モデル名 queria_<スキーマ>__<テーブル> → <スキーマ>.<テーブル>）。
-`fdl checkout` で作った作業用カタログに表を書き、作業ディレクトリに `dataset.yml`・`tables/fudoki.table.yml`・`README.md` を書く。
+`fdl checkout` で作った作業用カタログに表を書き、作業ディレクトリに `dataset.yml`・`tables/<スキーマ>.<テーブル>.table.yml`・`README.md` を書く。
 宣言の説明・主キー・キーは marts の `_models.yml` から引く。公開（`queria validate` → `fdl commit` → `fdl push`）は手で流す。
 
     bun run --cwd pipeline serving:queria                          # 全自治体
@@ -103,7 +103,8 @@ def write_tables(working: Path, codes: list[str], specs: list[dict], warehouse: 
     return {'rows': rows, 'codes': found, 'years': years}
 
 
-def table_yaml(specs: list[dict]) -> dict:
+def table_yaml(specs: list[dict]) -> list[dict]:
+    """表ごとの宣言。1表1ファイル（*.table.yml）にする。fdl は `tables:` で複数表をまとめた形を読まない。"""
     tables = []
     for spec in specs:
         schema, table = queria_name(spec['name'])
@@ -113,9 +114,10 @@ def table_yaml(specs: list[dict]) -> dict:
             if semantic := queria_meta(column).get('semantic'):
                 field['annotations'] = {'queria': {'semantic': semantic}}
             fields.append(field)
+        key = queria_meta(spec)['primary_key']
         tables.append({'schema': schema, 'name': table, 'description': spec['description'],
-                       'primary_key': queria_meta(spec)['primary_key'], 'fields': fields})
-    return {'tables': tables}
+                       'primary_key': [key] if isinstance(key, str) else key, 'fields': fields})
+    return tables
 
 
 def readme(specs: list[dict], written: dict) -> str:
@@ -156,7 +158,10 @@ def write_declarations(workdir: Path, specs: list[dict], written: dict) -> None:
         return yaml.dump(data, Dumper=Dumper, allow_unicode=True, sort_keys=False, width=1000)
 
     (workdir / 'dataset.yml').write_text(dump(dataset), encoding='utf-8')
-    (workdir / 'tables/fudoki.table.yml').write_text(dump(table_yaml(specs)), encoding='utf-8')
+    for stale in (workdir / 'tables').glob('*.table.yml'):
+        stale.unlink()
+    for table in table_yaml(specs):
+        (workdir / f'tables/{table["schema"]}.{table["name"]}.table.yml').write_text(dump(table), encoding='utf-8')
     (workdir / 'README.md').write_text(readme(specs, written), encoding='utf-8')
 
 
