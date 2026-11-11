@@ -25,6 +25,7 @@ select r.row_id as subject_id,
     not exists (
         select 1 from rows c
         where c.parent_node_id = r.node_id and c.document_kind = r.document_kind and c.is_subject_row
+            and not (c.kan_code is null and coalesce(c.amount_yen, 0) = 0)
     ) as is_leaf,
     r.cofog_status,
     r.cofog_code,
