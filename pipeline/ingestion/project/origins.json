@@ -89,6 +89,14 @@
     {
       "jurisdiction": "131130",
       "layout": "shibuya_press"
+    },
+    {
+      "jurisdiction": "131148",
+      "layout": "nakano_press"
+    },
+    {
+      "jurisdiction": "131156",
+      "layout": "suginami_press"
     }
   ]
 }
