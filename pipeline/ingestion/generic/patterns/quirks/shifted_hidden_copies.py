@@ -37,6 +37,8 @@ GAP = .15          # line heights between a figure and a letter of one word
 FIGURE = set('0123456789,△▲')  # the characters of an amount
 RUN = 10.          # pt: the gap that ends a run of glyphs on a line
 TWICE = 6          # glyphs of a run, at least, read twice over
+WHOLE = .8        # the share of white glyphs that makes a run a copy whole
+BLANK = .03       # the share of dark pixels a glyph's box may hold and print nothing (a rule may cross it)
 DRIFT = 5.         # line heights a copy may drift right of its twin (25 pt at the end of p69 `…事務局）`)
 
 
@@ -94,6 +96,37 @@ def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list
     def ink(box) -> float:
         region = image[int(box[1] * scale):int(box[3] * scale) + 1, int(box[0] * scale):int(box[2] * scale) + 1]
         return float((region < 160).mean()) if region.size else 0.
+    # A copy may also sit off its line, with no twin at the distance (p31 `国民健康保険事業会計関係事務従事職員の人件費`
+    # 135 pt above the printed line, and the 財源 of 款27 laid over 款26): the clip shows it, but where it falls
+    # the page prints no ink at all. Glyphs whose boxes hold next to no ink (a rule may cross one), many in one run, are not printed.
+    def blank(box) -> bool:
+        return ink(box) < BLANK
+    twin = {b: a for a, b in pairs}
+    unprinted = set()
+    for run in runs([i for i, (box, char, visible) in enumerate(glyphs) if visible and not char.isspace()], glyphs):
+        # One glyph's box can miss its own ink by a hair (`手数料 1`, `特財：`): only a run with many of them is a copy.
+        # A copy's glyph may fall on a rule or on printed text; those are told apart by the twins above, if at all.
+        # A run that is nearly all white is a copy whole: its other glyphs fall on ink they do not print
+        # (the `一` of a copied `一般会計繰入金` on the printed `762,898`).
+        white = [i for i in run if blank(glyphs[i][0])]
+        if len(white) < TWICE:
+            continue
+        if len(white) >= WHOLE * len(run):
+            unprinted.update(run)
+            continue
+        # The copy's glyph next to its white ones that falls on a rule (`一` of `一般会計繰入金` on the column's edge,
+        # right after the printed `762,898`) is the copy of a glyph printed at the distance to its left. A glyph whose
+        # twin there prints nothing is itself the printed one (`会` of `会計年度任用職員`, its copy left of it).
+        copy = set(white)
+        for at, index in enumerate(run):
+            if index in copy:
+                continue
+            beside = {run[j] for j in (at - 1, at + 1) if 0 <= j < len(run)}
+            if beside & copy and index in twin and not blank(glyphs[twin[index]][0]):
+                copy.add(index)
+        unprinted.update(copy)
+    glyphs = [(box, char, False) if index in unprinted else (box, char, visible)
+              for index, (box, char, visible) in enumerate(glyphs)]
     votes = {False: Counter(), True: Counter()}  # by half of the page: which copy shows ink
     for a, b in pairs:
         if glyphs[a][2] != glyphs[b][2]:  # the clip told the two apart
@@ -117,6 +150,26 @@ def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list
     hidden = {i for i in hidden - kept if glyphs[i][2]}
     return [(box, char, False) if index in hidden else (box, char, visible)
             for index, (box, char, visible) in enumerate(glyphs)]
+
+
+def runs(indexes: list[int], glyphs: list) -> list[list[int]]:
+    """The glyphs of `indexes` in runs: on one line (centres within `LEVEL` of the line's), each within `RUN` of the one
+    before. A small kana sits lower in its box (`の` among `職員の人件費`), so lines go by the centres."""
+    centre = lambda i: (glyphs[i][0][1] + glyphs[i][0][3]) / 2
+    lines: list[list[int]] = []
+    for index in sorted(indexes, key=centre):
+        if lines and centre(index) - centre(lines[-1][0]) < LEVEL * 2:
+            lines[-1].append(index)
+        else:
+            lines.append([index])
+    found: list[list[int]] = []
+    for line in lines:
+        for index in sorted(line, key=lambda i: glyphs[i][0][0]):
+            if found and found[-1][0] in line and glyphs[index][0][0] - glyphs[found[-1][-1]][0][2] < RUN:
+                found[-1].append(index)
+            else:
+                found.append([index])
+    return found
 
 
 def twice(glyphs: list) -> set:
