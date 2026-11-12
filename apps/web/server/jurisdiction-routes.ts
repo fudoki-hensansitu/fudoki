@@ -16,8 +16,18 @@ import { ACCOUNT, loadAccountTotals, loadCatalog, loadCofogFlow, loadDrillById, 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
 
-// 応答は CDN（Void の ISR、void.config.ts の routing.revalidate）に置く。Worker の中には置かず、毎回 API から組む
-export const catalog = (env: Env) => loadCatalog(env)
+// 応答は CDN（Void の ISR、void.config.ts の routing.revalidate）に置く。Worker の中には置かず、毎回 API から組む。
+// 自治体の一覧だけは、1つの頁を組むあいだに何度も引くので、同じ isolate の中で1分だけ使い回す
+const CATALOG_REUSE_MS = 60_000
+const catalogMemo = new WeakMap<Env, { at: number; p: Promise<CatalogEntry[]> }>()
+export const catalog = (env: Env) => {
+  const hit = catalogMemo.get(env)
+  if (hit && Date.now() - hit.at < CATALOG_REUSE_MS) return hit.p
+  const p = loadCatalog(env)
+  catalogMemo.set(env, { at: Date.now(), p })
+  p.catch(() => catalogMemo.get(env)?.p === p && catalogMemo.delete(env))
+  return p
+}
 const index = async (env: Env) => loadIndex(env, await catalog(env), jurisdictionPath)
 /** 自治体の頁と OG 画像が共有する、最新の決算の年度の頁のデータ */
 export const pageData = (env: Env, e: CatalogEntry): Promise<Omit<PageData, 'prefecturePath' | 'prefectureLogo' | 'emblem' | 'neighbors'> | null> => loadPage(env, e)

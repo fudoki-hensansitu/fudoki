@@ -1502,45 +1502,6 @@
           "type": "integer",
           "nullable": true,
           "description": "支出済額（円）。決算書の事業の行の金額。"
-        },
-        {
-          "name": "first_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "事業の始めた年度。project の first_year を写したもの（年度で絞って探すため）。"
-        },
-        {
-          "name": "first_year_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "project の first_year_kind を写したもの。",
-          "values": [
-            "confirmed",
-            "before_coverage"
-          ]
-        },
-        {
-          "name": "last_year",
-          "type": "integer",
-          "nullable": true,
-          "description": "事業の終えた年度。project の last_year を写したもの。last_year_kind が latest のときは NULL。"
-        },
-        {
-          "name": "last_year_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "project の last_year_kind を写したもの。",
-          "values": [
-            "confirmed",
-            "latest",
-            "unknown"
-          ]
-        },
-        {
-          "name": "parent_project_id",
-          "type": "string",
-          "nullable": true,
-          "description": "project の parent_project_id を写したもの。目の直下の事業は NULL。"
         }
       ]
     },

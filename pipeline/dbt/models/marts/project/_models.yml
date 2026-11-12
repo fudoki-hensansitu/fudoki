@@ -112,24 +112,3 @@ models:
     description: 当初予算額（円）。当初予算書の事業の行の金額。
   - name: settled_yen
     description: 支出済額（円）。決算書の事業の行の金額。
-  - name: first_year
-    description: 事業の始めた年度。project の first_year を写したもの（年度で絞って探すため）。
-    data_tests: [not_null]
-  - name: first_year_kind
-    description: project の first_year_kind を写したもの。
-    data_tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values: ['confirmed', 'before_coverage']
-  - name: last_year
-    description: 事業の終えた年度。project の last_year を写したもの。last_year_kind が latest のときは NULL。
-  - name: last_year_kind
-    description: project の last_year_kind を写したもの。
-    data_tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values: ['confirmed', 'latest', 'unknown']
-  - name: parent_project_id
-    description: project の parent_project_id を写したもの。目の直下の事業は NULL。
