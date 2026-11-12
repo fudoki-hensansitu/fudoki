@@ -404,29 +404,29 @@ export function Home({ entries, featured }: HomeProps) {
         }
       />
     )
-  else
+  else {
+    // はじめにやること（ツアー中はツアー）を頭に出すため、まちのデータが読めたら先に組む
+    const ctx = snap.d && snap.year != null && snap.d.years[String(snap.year)] ? buildCtx(town!, snap.d, snap.year, snap.setYear, vision) : null
     body = (
       <>
-        <div className="mb-3 flex justify-end">
+        {ctx ? tour.on ? <Tour steps={tourSteps(ctx, () => (tour.to('page'), visit(ctx.base)))} onDone={tour.done} total={5} /> : <Checklist items={checkItems(ctx)} /> : null}
+        {/* ほかのまちを見る導線。住んでいるまちを選んだあとも常に出す */}
+        <OtherTowns entries={entries} className="mb-3" />
+        {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
+        <div className="mb-2 flex justify-end">
           <button type="button" onClick={reset} className="text-[13px] text-muted-foreground hover:text-foreground">
             リセット
           </button>
         </div>
         <WithCtx town={town!} vision={vision} snap={snap}>
-          {(c) => (
-            <>
-              {tour.on ? <Tour steps={tourSteps(c, () => (tour.to('page'), visit(c.base)))} onDone={tour.done} total={5} /> : <Checklist items={checkItems(c)} />}
-              <Dashboard c={c} />
-            </>
-          )}
+          {(c) => <Dashboard c={c} />}
         </WithCtx>
       </>
     )
+  }
   return (
     <main className="mx-auto flex min-h-[calc(100svh-56px)] w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14 md:min-h-svh md:pb-10">
       <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />
-      {/* ほかのまちを見る導線。住んでいるまちを選んだあとも、ホームの頭に常に出す（選ぶ前は Empty の中に出す） */}
-      {ready && town ? <OtherTowns entries={entries} className="mb-6" /> : null}
       {body}
       <Footer />
     </main>
