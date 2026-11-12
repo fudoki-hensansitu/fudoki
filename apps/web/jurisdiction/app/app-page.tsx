@@ -1107,7 +1107,17 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
               ))}
             </TabsList>
             )}
-              {stuck ? <div className="app-in shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div> : null}
+              {/* 貼り付いた帯ではタブを優先する。幅が足りないとき（会話を横に開いたときなど）は年度を「今年度 ▾」の1つにまとめる */}
+              {stuck ? (
+                <div className="app-in shrink-0">
+                  {phone ? <YearMenu years={years} current={year} onChange={setYear} /> : (
+                    <>
+                      <div className="@max-4xl:hidden"><YearPicker years={years} current={year} onChange={setYear} /></div>
+                      <div className="@4xl:hidden"><YearMenu years={years} current={year} onChange={setYear} /></div>
+                    </>
+                  )}
+                </div>
+              ) : null}
             </div>
           </div>
           {v ? (
