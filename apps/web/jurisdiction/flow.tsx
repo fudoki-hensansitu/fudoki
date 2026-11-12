@@ -142,6 +142,7 @@ function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.Depen
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
   if (off) return {}
+  // design-allow: mask は不透明度だけを使い、色は画面に出ない
   const mask = `linear-gradient(to bottom, ${edge.top ? 'transparent 0, #000 48px' : '#000 0'}, ${edge.bottom ? '#000 calc(100% - 72px), transparent 100%' : '#000 100%'})`
   return { maskImage: mask, WebkitMaskImage: mask }
 }

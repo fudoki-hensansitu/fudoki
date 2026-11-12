@@ -12,6 +12,7 @@
     "sync-data:population": "uv run python scripts/sync-data/population.py",
     "build:map": "bun jurisdiction/map-build.ts",
     "test": "bun test server",
+    "check:design": "bun scripts/check-design.ts",
     "typecheck": "void prepare && tsc --noEmit",
     "build:origin": "uv run --no-project --exclude-newer 2026-10-09 --with pypdfium2==5.14.0 --with pillow==12.3.0 python brand/home_origin.py"
   },
