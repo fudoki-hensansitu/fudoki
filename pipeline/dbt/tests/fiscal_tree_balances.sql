@@ -9,7 +9,8 @@ with recursive rows as (
     select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}
 ), scoped as (
     select '' as scope, n.node_id, n.parent_node_id, n.document_kind, n.axis, n.amount_yen,
-        n.jurisdiction_code, n.fiscal_year, n.account_name, n.source_page, n.code, n.name, n.amendment_yen
+        n.jurisdiction_code, n.fiscal_year, n.account_name, n.source_page, n.code, n.name, n.amendment_yen,
+        n.is_subject
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }} n
     where not exists (
         select 1 from rows r where r.document_kind = n.document_kind and r.node_id = n.node_id
@@ -20,7 +21,8 @@ with recursive rows as (
     )
     union all
     select r.source_table_key, r.node_id, r.parent_node_id, r.document_kind, r.axis_header, r.amount_yen,
-        r.jurisdiction_code, r.fiscal_year, r.account_name, r.physical_page, r.code_text, r.name, null::bigint
+        r.jurisdiction_code, r.fiscal_year, r.account_name, r.physical_page, r.code_text, r.name, null::bigint,
+        r.axis_header = r.subject_axis
     from rows r where r.division is not null and not r.is_amendment
 ), nodes as (
     -- Whether a node has children on its own axis, read here because a third reference
@@ -76,9 +78,13 @@ union all
 -- and stays out, as do axes that never carry amounts. So does a parent with exactly
 -- one same-axis child that prints no amount: the original prints a lone child's
 -- amount once, on the parent row. The child stays NULL; nothing is distributed.
+-- An initial budget's breakdown (説明) lists what a printed amount covers in lines of words only
+-- (`市道6-3号延長400m`, `科目(内科)28校`): a branch whose lines all print no amount is that list,
+-- as the ingestion tree check reads it (`check_tree` skips such a group), not lost money.
 select p.node_id, 'missing_child_amounts' as failure
 from nodes p
 where coalesce(p.amount_yen, 0) <> 0
+    and not (p.document_kind = 'initial' and not p.is_subject)
     and p.has_axis_children
     and not exists (
         select 1 from printed_axes a

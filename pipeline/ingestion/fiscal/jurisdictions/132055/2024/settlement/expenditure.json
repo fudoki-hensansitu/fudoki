@@ -6839,7 +6839,7 @@
     {
       "table_id": "general-01-expenditure-detail",
       "conversion_id": "general-01",
-      "input_fingerprint": "6910a776b8bacdf26e8d276f2a92245d96b6a8bdfd3735adb2971d969cec434b",
+      "input_fingerprint": "f24248180e0589343e4a55a1d14a54df84b9df1c5a10dea8cb2f3e51a406d3f6",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -6870,7 +6870,7 @@
     {
       "table_id": "general-02-expenditure-detail",
       "conversion_id": "general-02",
-      "input_fingerprint": "806c1f8865eee650777c1d284c47a214641cd5452af0984eb67f4b4097bd3901",
+      "input_fingerprint": "29f8f6320b642f41e1abfdd440933275af32bb63bffb5c7b043b3f747b72fe1d",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -6902,7 +6902,7 @@
     {
       "table_id": "general-03-expenditure-detail",
       "conversion_id": "general-03",
-      "input_fingerprint": "cc73bc6b67e0a2c1a36e65063f1386c7d2da7c584ef36491114b53f1092b05df",
+      "input_fingerprint": "ec382d33621da42ea65286b6f0a1d8860e4b73f8e971337b9b72918ef5a7b860",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -6934,7 +6934,7 @@
     {
       "table_id": "general-04-expenditure-detail",
       "conversion_id": "general-04",
-      "input_fingerprint": "3cf32a963c97439566a9e3e46a11a72872713661f72f4cc6920c2f6d66620f55",
+      "input_fingerprint": "36e23e0636090fe038116341eb32f16d2e4ca5519e3306f2439b15529227d02c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -6966,7 +6966,7 @@
     {
       "table_id": "general-05-expenditure-detail",
       "conversion_id": "general-05",
-      "input_fingerprint": "fc706dba81665d99266a06d831a7186f65e81810dc496717ab8e5a93bb4f5701",
+      "input_fingerprint": "c0018181edeed768794b2365f751f26cd59d9d2659ca5920aa71d226aac74117",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -6997,7 +6997,7 @@
     {
       "table_id": "general-06-expenditure-detail",
       "conversion_id": "general-06",
-      "input_fingerprint": "df0ab0fc04c741718cb18ebfaf98424dad1ea81f145bbd9fed5170d9486a48bf",
+      "input_fingerprint": "79066dd74c380b783bd8120c0ef87566740676056c4678bffc1b4b3ba4395273",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7029,7 +7029,7 @@
     {
       "table_id": "general-07-expenditure-detail",
       "conversion_id": "general-07",
-      "input_fingerprint": "52b9e4d23ccd5c107c2e91840ab71dafc04eed570040a75ba03d13f1db48eb40",
+      "input_fingerprint": "18b4257e81cef45c3622dc1776a446360427d02e053e4f06e0a38423c9f09159",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7061,7 +7061,7 @@
     {
       "table_id": "general-08-expenditure-detail",
       "conversion_id": "general-08",
-      "input_fingerprint": "d63f839363e73b10ba33c8e3028f8c1c33e7484fa9606d9f95c6d1b381f063fc",
+      "input_fingerprint": "ad54f3af5161d47c4e2620d4212feb793412da7fa72053d1c3329561e4b5b7c7",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7093,7 +7093,7 @@
     {
       "table_id": "general-09-expenditure-detail",
       "conversion_id": "general-09",
-      "input_fingerprint": "ce17b192a39d557757398dcd674c7e4eda4815ebcfa16e0ce940f2b6761e3442",
+      "input_fingerprint": "284d971d1f0aed7b627f0f5d1d8625dde0a55960bf8ca02fa78726df4e601b7d",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7125,15 +7125,15 @@
     {
       "table_id": "general-10-expenditure-detail",
       "conversion_id": "general-10",
-      "input_fingerprint": "6e57fd7837c5d8270e6ab70e370cb951d0245c6fba2bbbcc43fd624a9e8b49be",
+      "input_fingerprint": "bbd67317928026b144bf20db201452bda1d2fdd1bc845c432ad4a625b1c67eca",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
         "金額の単位は printed 30頁 から決めた。分冊のため款の和 6,655,098,273 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 2 件（不用額 2）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（232 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
-        "原画で確かめた名称の誤読 19 件を、管理 JSON の name_corrections で印字に直した: 動車借上料→自動車借上料・4給食備品整備経費(学校給食センタ一)→4給食備品整備経費(学校給食センター)・5新学校給食センター建設経費(学校給食センタ一)→5新学校給食センター建設経費(学校給食センター)・12文化交流センタ一管理経費(社会教育課)→12文化交流センター管理経費(社会教育課)・支援員顺金→支援員報償金・備莆品購入費→備品購入費・說明板等作製委託料→説明板等作製委託料・光熱热水費→光熱水費・通通信運搬費→通信運搬費・器等借上料→器具等借上料・特別扶費→特別扶助費・消耗毛品費→消耗品費・自動車借料→自動車借上料・自車借上料→自動車借上料・消耗毛品費→消耗品費・消耗毛品費→消耗品費・一般職給合7人→一般職給7人・消耗毛品費→消耗品費・通通信運費→通信運搬費。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 22 件（p5:full-page:a0:result0:r12・p5:full-page:a0:result0:r12:w6・p7:full-page:a0:result1:r8・p7:full-page:a0:result1:r8:w4・p17:full-page:a0:result0:r12・p17:full-page:a0:result0:r12:w6・p21:full-page:a0:result0:r12・p21:full-page:a0:result0:r12:w6・p27:full-page:a0:result0:r12・p27:full-page:a0:result0:r12:w6・p29:full-page:a0:result1:r15・p29:full-page:a0:result1:r15:w4・p35:full-page:a0:result1:r9・p35:full-page:a0:result1:r9:w4・p41:full-page:a0:result1:r9・p41:full-page:a0:result1:r9:w4・p47:full-page:a0:result1:r12・p47:full-page:a0:result1:r12:w4・p49:full-page:a0:result1:r8・p49:full-page:a0:result1:r8:w4・p51:full-page:a0:result1:r8・p51:full-page:a0:result1:r8:w4）・增→増 32 件（p5:full-page:a0:result0:r12・p5:full-page:a0:result0:r12:w5・p7:full-page:a0:result1:r8・p7:full-page:a0:result1:r8:w3・p13:full-page:a0:result1:r8・p13:full-page:a0:result1:r8:w3・p17:full-page:a0:result0:r12・p17:full-page:a0:result0:r12:w5・p19:full-page:a0:result1:r15・p19:full-page:a0:result1:r15:w1・p21:full-page:a0:result0:r12・p21:full-page:a0:result0:r12:w5・p27:full-page:a0:result0:r12・p27:full-page:a0:result0:r12:w5・p29:full-page:a0:result1:r15・p29:full-page:a0:result1:r15:w3・p31:full-page:a0:result1:r11・p31:full-page:a0:result1:r11:w3・p35:full-page:a0:result1:r9・p35:full-page:a0:result1:r9:w3・p41:full-page:a0:result1:r9・p41:full-page:a0:result1:r9:w3・p45:full-page:a0:result1:r8・p45:full-page:a0:result1:r8:w3・p47:full-page:a0:result1:r12・p47:full-page:a0:result1:r12:w3・p49:full-page:a0:result1:r8・p49:full-page:a0:result1:r8:w3・p51:full-page:a0:result1:r8・p51:full-page:a0:result1:r8:w3・p59:full-page:a0:result0:r13・p59:full-page:a0:result0:r13:w3）・查→査 18 件（p12:full-page:a0:result1:r12・p12:full-page:a0:result1:r12:w1・p16:full-page:a0:result1:r36・p16:full-page:a0:result1:r36:w1・p20:full-page:a0:result1:r44・p20:full-page:a0:result1:r44:w1・p30:full-page:a0:result1:r4・p30:full-page:a0:result1:r4:w1・p42:full-page:a0:result1:r134・p42:full-page:a0:result1:r134:w1・p46:full-page:a0:result1:r4・p46:full-page:a0:result1:r4:w8・p46:full-page:a0:result1:r15・p46:full-page:a0:result1:r15:w3・p50:full-page:a0:result1:r117・p50:full-page:a0:result1:r117:w1・p60:full-page:a0:result1:r31・p60:full-page:a0:result1:r31:w1）・產→産 4 件（p18:full-page:a0:result1:r89・p18:full-page:a0:result1:r89:w0・p28:full-page:a0:result1:r47・p28:full-page:a0:result1:r47:w0）・继→継 10 件（p9:full-page:a0:result0:r2・p9:full-page:a0:result0:r2:w0・p11:full-page:a0:result0:r2・p11:full-page:a0:result0:r2:w0・p31:full-page:a0:result0:r2・p31:full-page:a0:result0:r2:w0・p33:full-page:a0:result0:r2・p33:full-page:a0:result0:r2:w0・p59:full-page:a0:result0:r4・p59:full-page:a0:result0:r4:w0）・额→額 6 件（p17:full-page:a0:result0:r7・p17:full-page:a0:result0:r7:w9・p17:full-page:a0:result0:r12・p17:full-page:a0:result0:r12:w2・p45:full-page:a0:result1:r8・p45:full-page:a0:result1:r8:w0）。"
+        "原画で確かめた名称の誤読 19 件を、管理 JSON の name_corrections で印字に直した: 動車借上料→自動車借上料・4給食備品整備経費(学校給食センタ一)→4給食備品整備経費(学校給食センター)・5新学校給食センター建設経費(学校給食センタ一)→5新学校給食センター建設経費(学校給食センター)・12文化交流センタ一管理経費(社会教育課)→12文化交流センター管理経費(社会教育課)・支援員顺金→支援員報償金・備莆品購入費→備品購入費・說明板等作製委託料→説明板等作製委託料（字形表で直っていた）・光熱热水費→光熱水費・通通信運搬費→通信運搬費・器等借上料→器具等借上料・特別扶費→特別扶助費・消耗毛品費→消耗品費・自動車借料→自動車借上料・自車借上料→自動車借上料・消耗毛品費→消耗品費・消耗毛品費→消耗品費・一般職給合7人→一般職給7人・消耗毛品費→消耗品費・通通信運費→通信運搬費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 22 件（p5:full-page:a0:result0:r12・p5:full-page:a0:result0:r12:w6・p7:full-page:a0:result1:r8・p7:full-page:a0:result1:r8:w4・p17:full-page:a0:result0:r12・p17:full-page:a0:result0:r12:w6・p21:full-page:a0:result0:r12・p21:full-page:a0:result0:r12:w6・p27:full-page:a0:result0:r12・p27:full-page:a0:result0:r12:w6・p29:full-page:a0:result1:r15・p29:full-page:a0:result1:r15:w4・p35:full-page:a0:result1:r9・p35:full-page:a0:result1:r9:w4・p41:full-page:a0:result1:r9・p41:full-page:a0:result1:r9:w4・p47:full-page:a0:result1:r12・p47:full-page:a0:result1:r12:w4・p49:full-page:a0:result1:r8・p49:full-page:a0:result1:r8:w4・p51:full-page:a0:result1:r8・p51:full-page:a0:result1:r8:w4）・增→増 32 件（p5:full-page:a0:result0:r12・p5:full-page:a0:result0:r12:w5・p7:full-page:a0:result1:r8・p7:full-page:a0:result1:r8:w3・p13:full-page:a0:result1:r8・p13:full-page:a0:result1:r8:w3・p17:full-page:a0:result0:r12・p17:full-page:a0:result0:r12:w5・p19:full-page:a0:result1:r15・p19:full-page:a0:result1:r15:w1・p21:full-page:a0:result0:r12・p21:full-page:a0:result0:r12:w5・p27:full-page:a0:result0:r12・p27:full-page:a0:result0:r12:w5・p29:full-page:a0:result1:r15・p29:full-page:a0:result1:r15:w3・p31:full-page:a0:result1:r11・p31:full-page:a0:result1:r11:w3・p35:full-page:a0:result1:r9・p35:full-page:a0:result1:r9:w3・p41:full-page:a0:result1:r9・p41:full-page:a0:result1:r9:w3・p45:full-page:a0:result1:r8・p45:full-page:a0:result1:r8:w3・p47:full-page:a0:result1:r12・p47:full-page:a0:result1:r12:w3・p49:full-page:a0:result1:r8・p49:full-page:a0:result1:r8:w3・p51:full-page:a0:result1:r8・p51:full-page:a0:result1:r8:w3・p59:full-page:a0:result0:r13・p59:full-page:a0:result0:r13:w3）・查→査 18 件（p12:full-page:a0:result1:r12・p12:full-page:a0:result1:r12:w1・p16:full-page:a0:result1:r36・p16:full-page:a0:result1:r36:w1・p20:full-page:a0:result1:r44・p20:full-page:a0:result1:r44:w1・p30:full-page:a0:result1:r4・p30:full-page:a0:result1:r4:w1・p42:full-page:a0:result1:r134・p42:full-page:a0:result1:r134:w1・p46:full-page:a0:result1:r4・p46:full-page:a0:result1:r4:w8・p46:full-page:a0:result1:r15・p46:full-page:a0:result1:r15:w3・p50:full-page:a0:result1:r117・p50:full-page:a0:result1:r117:w1・p60:full-page:a0:result1:r31・p60:full-page:a0:result1:r31:w1）・產→産 4 件（p18:full-page:a0:result1:r89・p18:full-page:a0:result1:r89:w0・p28:full-page:a0:result1:r47・p28:full-page:a0:result1:r47:w0）・继→継 10 件（p9:full-page:a0:result0:r2・p9:full-page:a0:result0:r2:w0・p11:full-page:a0:result0:r2・p11:full-page:a0:result0:r2:w0・p31:full-page:a0:result0:r2・p31:full-page:a0:result0:r2:w0・p33:full-page:a0:result0:r2・p33:full-page:a0:result0:r2:w0・p59:full-page:a0:result0:r4・p59:full-page:a0:result0:r4:w0）・說→説 2 件（p44:full-page:a0:result1:r36・p44:full-page:a0:result1:r36:w0）・额→額 6 件（p17:full-page:a0:result0:r7・p17:full-page:a0:result0:r7:w9・p17:full-page:a0:result0:r12・p17:full-page:a0:result0:r12:w2・p45:full-page:a0:result1:r8・p45:full-page:a0:result1:r8:w0）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -7157,7 +7157,7 @@
     {
       "table_id": "general-11-expenditure-detail",
       "conversion_id": "general-11",
-      "input_fingerprint": "8dd88459d2c01b523b2a1f3d3ce0560219a8956697595c69f6c3e7ebe82b03ef",
+      "input_fingerprint": "4e0ac459dccf28ee508750222bdcb6e9628e12994710c41caa664346ae23efdc",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7188,7 +7188,7 @@
     {
       "table_id": "general-12-expenditure-detail",
       "conversion_id": "general-12",
-      "input_fingerprint": "3a0deb321a859784b3d88ff3f6d99e9186af49f3c2877dc151736c1cdfe9c67f",
+      "input_fingerprint": "cef757f0d76555a676dcad67dcbd38d6809f32fc767e2463c4c240fe9e0ef67d",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7219,7 +7219,7 @@
     {
       "table_id": "general-13-expenditure-detail",
       "conversion_id": "general-13",
-      "input_fingerprint": "a0fd9913049af7e6ebec069f66d0bd2fbc04d6bc058ea046da9e71a05f59ff4e",
+      "input_fingerprint": "f0633d432a5b07f68529674db511806913d8374b4b6b497bfa42dc183ffacf0c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7250,7 +7250,7 @@
     {
       "table_id": "general-14-expenditure-detail",
       "conversion_id": "general-14",
-      "input_fingerprint": "cb4e57b6a7b250fa82b6d2dd0e8835a769b22a9a15a283c7e8b6861833a5c26a",
+      "input_fingerprint": "6390467eec9d40a5869334a3a035290a64509b8a612d76b9f67098b0e241eaf2",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7278,9 +7278,41 @@
       }
     },
     {
+      "table_id": "nhi-expenditure-detail",
+      "conversion_id": "nhi",
+      "input_fingerprint": "8ba7c9126391b69ae1d05111ef8df6436db48afbe60201fbec6625b0174e5f15",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
+        "金額の単位は printed 7頁 から決めた。款の和 13,799,824,051 と印字の「歳出合計」13,799,824,051 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（55 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 1None→1医療給付費分。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 8 件（p19:full-page:a0:result1:r59・p19:full-page:a0:result1:r59:w10・p24:full-page:a0:result0:r22・p24:full-page:a0:result0:r22:w4・p24:full-page:a0:result0:r29・p24:full-page:a0:result0:r29:w3・p25:full-page:a0:result1:r15・p25:full-page:a0:result1:r15:w4）・减→減 14 件（p18:full-page:a0:result1:r16・p18:full-page:a0:result1:r16:w3・p20:full-page:a0:result0:r12・p20:full-page:a0:result0:r12:w6・p22:full-page:a0:result0:r12・p22:full-page:a0:result0:r12:w6・p24:full-page:a0:result0:r12・p24:full-page:a0:result0:r12:w6・p26:full-page:a0:result0:r12・p26:full-page:a0:result0:r12:w6・p28:full-page:a0:result0:r12・p28:full-page:a0:result0:r12:w6・p30:full-page:a0:result0:r11・p30:full-page:a0:result0:r11:w6）・增→増 14 件（p18:full-page:a0:result1:r16・p18:full-page:a0:result1:r16:w2・p20:full-page:a0:result0:r12・p20:full-page:a0:result0:r12:w5・p22:full-page:a0:result0:r12・p22:full-page:a0:result0:r12:w5・p24:full-page:a0:result0:r12・p24:full-page:a0:result0:r12:w5・p26:full-page:a0:result0:r12・p26:full-page:a0:result0:r12:w5・p28:full-page:a0:result0:r12・p28:full-page:a0:result0:r12:w5・p30:full-page:a0:result0:r11・p30:full-page:a0:result0:r11:w5）・徵→徴 6 件（p20:full-page:a0:result0:r34・p20:full-page:a0:result0:r34:w1・p20:full-page:a0:result0:r40・p20:full-page:a0:result0:r40:w2・p21:full-page:a0:result1:r81・p21:full-page:a0:result1:r81:w2）・查→査 12 件（p22:full-page:a0:result0:r26・p22:full-page:a0:result0:r26:w3・p23:full-page:a0:result1:r20・p23:full-page:a0:result1:r20:w6・p26:full-page:a0:result0:r69・p26:full-page:a0:result0:r69:w0・p26:full-page:a0:result0:r76・p26:full-page:a0:result0:r76:w0・p27:full-page:a0:result1:r21・p27:full-page:a0:result1:r21:w7・p27:full-page:a0:result1:r41・p27:full-page:a0:result1:r41:w5）・產→産 2 件（p23:full-page:a0:result1:r71・p23:full-page:a0:result1:r71:w3）・齡→齢 4 件（p24:full-page:a0:result0:r96・p24:full-page:a0:result0:r96:w5・p25:full-page:a0:result1:r55・p25:full-page:a0:result1:r55:w3）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2024/settlement/expenditure/nhi-expenditure-detail-nodes.parquet",
+          "sha256": "76ef58ff4520ed7e93f62e86034f617ffbca2f29bda15b1b476ce48e620fd429",
+          "bytes": 13961
+        },
+        "row_count": 238
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2024/settlement/expenditure/nhi-expenditure-detail-amounts.parquet",
+          "sha256": "283d2e1208ad6d0beb026c53a4053402c0164a1485cc7871979af803ee43d65e",
+          "bytes": 17707
+        },
+        "row_count": 971
+      }
+    },
+    {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki",
-      "input_fingerprint": "c1c17d24579a7c965a41521be75008863de4773f214cc7bfd0f29f43cefc691d",
+      "input_fingerprint": "f4ff79b8a5db8865c44d3efc756e3c941229358b23612f301b2e3b4c5e722eb3",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7312,7 +7344,7 @@
     {
       "table_id": "kaigo-expenditure-detail",
       "conversion_id": "kaigo",
-      "input_fingerprint": "7b730c2a7f82a8ad9736dc3ae5e4d2be54efc99814fe5663fc2205bfc65d35fc",
+      "input_fingerprint": "f0094e6d2ea7deacea0d77c250b0153c6b5f6f4ee4bcb2057cad42d49b3ad7fa",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -7339,38 +7371,6 @@
           "bytes": 27526
         },
         "row_count": 1687
-      }
-    },
-    {
-      "table_id": "nhi-expenditure-detail",
-      "conversion_id": "nhi",
-      "input_fingerprint": "ea9ad57849d26448d1a29c2b8023c8aee2f73c070cdd2087bcc45d2667f6eb1b",
-      "account": "国民健康保険特別会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'position'}。",
-        "金額の単位は printed 7頁 から決めた。款の和 13,799,824,051 と印字の「歳出合計」13,799,824,051 が一致。",
-        "金額の注記 2 件（流用 2）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（55 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
-        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 1None→1医療給付費分。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 8 件（p19:full-page:a0:result1:r59・p19:full-page:a0:result1:r59:w10・p24:full-page:a0:result0:r22・p24:full-page:a0:result0:r22:w4・p24:full-page:a0:result0:r29・p24:full-page:a0:result0:r29:w3・p25:full-page:a0:result1:r15・p25:full-page:a0:result1:r15:w4）・减→減 14 件（p18:full-page:a0:result1:r16・p18:full-page:a0:result1:r16:w3・p20:full-page:a0:result0:r12・p20:full-page:a0:result0:r12:w6・p22:full-page:a0:result0:r12・p22:full-page:a0:result0:r12:w6・p24:full-page:a0:result0:r12・p24:full-page:a0:result0:r12:w6・p26:full-page:a0:result0:r12・p26:full-page:a0:result0:r12:w6・p28:full-page:a0:result0:r12・p28:full-page:a0:result0:r12:w6・p30:full-page:a0:result0:r11・p30:full-page:a0:result0:r11:w6）・增→増 14 件（p18:full-page:a0:result1:r16・p18:full-page:a0:result1:r16:w2・p20:full-page:a0:result0:r12・p20:full-page:a0:result0:r12:w5・p22:full-page:a0:result0:r12・p22:full-page:a0:result0:r12:w5・p24:full-page:a0:result0:r12・p24:full-page:a0:result0:r12:w5・p26:full-page:a0:result0:r12・p26:full-page:a0:result0:r12:w5・p28:full-page:a0:result0:r12・p28:full-page:a0:result0:r12:w5・p30:full-page:a0:result0:r11・p30:full-page:a0:result0:r11:w5）・徵→徴 6 件（p20:full-page:a0:result0:r34・p20:full-page:a0:result0:r34:w1・p20:full-page:a0:result0:r40・p20:full-page:a0:result0:r40:w2・p21:full-page:a0:result1:r81・p21:full-page:a0:result1:r81:w2）・查→査 12 件（p22:full-page:a0:result0:r26・p22:full-page:a0:result0:r26:w3・p23:full-page:a0:result1:r20・p23:full-page:a0:result1:r20:w6・p26:full-page:a0:result0:r69・p26:full-page:a0:result0:r69:w0・p26:full-page:a0:result0:r76・p26:full-page:a0:result0:r76:w0・p27:full-page:a0:result1:r21・p27:full-page:a0:result1:r21:w7・p27:full-page:a0:result1:r41・p27:full-page:a0:result1:r41:w5）・產→産 2 件（p23:full-page:a0:result1:r71・p23:full-page:a0:result1:r71:w3）・齡→齢 4 件（p24:full-page:a0:result0:r96・p24:full-page:a0:result0:r96:w5・p25:full-page:a0:result1:r55・p25:full-page:a0:result1:r55:w3）。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/132055/2024/settlement/expenditure/nhi-expenditure-detail-nodes.parquet",
-          "sha256": "76ef58ff4520ed7e93f62e86034f617ffbca2f29bda15b1b476ce48e620fd429",
-          "bytes": 13961
-        },
-        "row_count": 238
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/132055/2024/settlement/expenditure/nhi-expenditure-detail-amounts.parquet",
-          "sha256": "283d2e1208ad6d0beb026c53a4053402c0164a1485cc7871979af803ee43d65e",
-          "bytes": 17707
-        },
-        "row_count": 971
       }
     }
   ]

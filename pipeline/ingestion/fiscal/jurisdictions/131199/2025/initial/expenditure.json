@@ -1428,7 +1428,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "f0440e461d1ce02a3a56aec61d44797ed1bcf55565621476d823de788c414dc1",
+      "input_fingerprint": "9eb5a996bf8aef1554e56df6159c5b1c9722fa376b8cdf0a896a1be547ebc223",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1459,7 +1459,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "88910eb7eed0cdeaba7934b8e63a4da2259bc957e49f7a6fb788d118c187350c",
+      "input_fingerprint": "f928925a9d7bf143948b7a3f65dd4d9c6fcce042e928df2838acebc68003b700",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1490,14 +1490,14 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "5af90bfbbdec1496d92565a59502fbb7255840c3be80d6a4bf825a35c5571304",
+      "input_fingerprint": "b17304207a5fa80be3ae88713cce6f2fc8965a14b3e94215c01b2e819facf940",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
-        "金額の単位は column mark 10頁・carried 1頁 から決めた。款の和 48,167,000 と印字の「歳出合計」48,167,000 が一致。",
+        "金額の単位は column mark 11頁 から決めた。款の和 48,167,000 と印字の「歳出合計」48,167,000 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（3 件）を、印字された語から辞書の見出しに寄せた: 比較／金額→比較。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 16 件（p432:full-page:a0:result0:r11・p432:full-page:a0:result0:r11:w6・p436:full-page:a0:result0:r27・p436:full-page:a0:result0:r27:w10・p437:full-page:a0:result0:r76・p437:full-page:a0:result0:r76:w10・p439:full-page:a0:result0:r38・p439:full-page:a0:result0:r38:w5・p439:full-page:a0:result0:r60・p439:full-page:a0:result0:r60:w6・p440:full-page:a0:result0:r12・p440:full-page:a0:result0:r12:w5・p441:full-page:a0:result0:r32・p441:full-page:a0:result0:r32:w5・p441:full-page:a0:result0:r66・p441:full-page:a0:result0:r66:w10）・查→査 4 件（p442:full-page:a0:result0:r12・p442:full-page:a0:result0:r12:w3・p443:full-page:a0:result0:r30・p443:full-page:a0:result0:r30:w22）・齡→齢 2 件（p439:full-page:a0:result0:r74・p439:full-page:a0:result0:r74:w2）。"
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 16 件（p432:full-page:a0:result0:r11・p432:full-page:a0:result0:r11:w6・p436:full-page:a0:result0:r27・p436:full-page:a0:result0:r27:w10・p437:full-page:a0:result0:r76・p437:full-page:a0:result0:r76:w10・p439:full-page:a0:result0:r38・p439:full-page:a0:result0:r38:w5・p439:full-page:a0:result0:r60・p439:full-page:a0:result0:r60:w6・p440:full-page:a0:result0:r12・p440:full-page:a0:result0:r12:w5・p441:full-page:a0:result0:r32・p441:full-page:a0:result0:r32:w5・p441:full-page:a0:result0:r66・p441:full-page:a0:result0:r66:w10）・查→査 4 件（p442:full-page:a0:result0:r12・p442:full-page:a0:result0:r12:w3・p443:full-page:a0:result0:r30・p443:full-page:a0:result0:r30:w22）・說→説 2 件（p431:full-page:a0:result0:r2・p431:full-page:a0:result0:r2:w0）・齡→齢 2 件（p439:full-page:a0:result0:r74・p439:full-page:a0:result0:r74:w2）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -1521,7 +1521,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "4d0d393a1a38822dbf2da5031f88846cdd5f0ae1783f69446883b7c6390133e4",
+      "input_fingerprint": "25d4a824e11e08401422991404cb02e59d08801312b2f976f68b763245cbc917",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1552,7 +1552,7 @@
     {
       "table_id": "tobu-tojo-grade-separation-initial",
       "conversion_id": "tobu-tojo-grade-separation-initial",
-      "input_fingerprint": "beae7c85d470e669e982624efb545f8aa91fbaf4c37fd43dda8f4171c8eb293b",
+      "input_fingerprint": "239fdc8fc65b36fee9ba78aae22d2e3ef13592a31bf01a5fe59d3f345eed606d",
       "account": "東武東上線連続立体化事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",

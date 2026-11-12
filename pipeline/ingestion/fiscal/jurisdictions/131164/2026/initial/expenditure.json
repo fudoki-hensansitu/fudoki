@@ -384,11 +384,11 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "b8ba93a4c6fb931cc73a2c1d095c4e67a67e8513e6eb6d0a172d062630c109bf",
+      "input_fingerprint": "8126866cffdd96c176e5d88ee875f7b84a00196a874557d283defc075292a20f",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は column mark 64頁・carried 4頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は column mark 64頁・carried 4頁 から決めた。款の和 168,986,053（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -413,11 +413,11 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "0621b74febb073d39eeb0b836e3a62e78f3728f36e0da955650fa1039f550d02",
+      "input_fingerprint": "e4742767977cb74dbcae6542dccd51b1ba9f9ee4f765a1793fd4d0a6deed4457",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は column mark 20頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は column mark 20頁 から決めた。款の和 29,816,854（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -442,11 +442,11 @@
     {
       "table_id": "late-elderly-initial",
       "conversion_id": "late-elderly-initial",
-      "input_fingerprint": "ba1d4be777fc54870c4450cbbe4f44f6dd277a71c698b5ed15f45956cbbb701a",
+      "input_fingerprint": "0d46392a6aa0aa76f9ccc4400e22268c0cacdd425d40891bc11c31f9b27bdf7e",
       "account": "後期高齢者医療事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は column mark 9頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は column mark 9頁 から決めた。款の和 8,221,965（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -471,11 +471,11 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "e81afea678a2bfea6eb8d9ac0274be49b83b0f55bd1a32de8c079e9037745559",
+      "input_fingerprint": "8429800bbe6d215cb908a759831edbfdac9a05d20508fddf3e8c8a3f562e4c52",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は column mark 19頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は column mark 19頁 から決めた。款の和 22,986,678（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
