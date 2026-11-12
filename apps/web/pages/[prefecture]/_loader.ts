@@ -11,7 +11,8 @@ import { assetPath, EMBLEMS, emblemOf, prefectureCodeOf } from '../../jurisdicti
 import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
-import { appDataForPage, catalog, pageData } from '../../server/jurisdiction-routes'
+import { catalog, pageData } from '../../server/jurisdiction-routes'
+import { loadYearSnapshot } from '../../server/app-data'
 import type { Snapshot } from '../../jurisdiction/app/data'
 import { siteKey } from '../../server/site-key'
 
@@ -27,7 +28,7 @@ export type JurisdictionProps = JurisdictionView & {
   field?: string
   /** タブの頁（/tokyo/nakano/2026/projects）のときのタブ */
   tab?: Exclude<PageTab, 'overview'>
-  /** 開いた年度の事業・施策・評価シート（sliceSnapshot）。サーバーで本文まで描くために渡す。cache が冷えていて間に合わなければ無く、画面が取る */
+  /** 開いた年度の款項目・施策・評価シート・事業の一覧の1頁目。サーバーで本文まで描くために渡す。API に繋がらなければ無く、画面が取る */
   snapshot?: Snapshot
 }
 
@@ -110,26 +111,21 @@ export async function routeProps(c: Context, segments: string[]): Promise<Jurisd
   return withSnapshot(c, props)
 }
 
-/** 開いた年度の事業などを props に足す（年度の段が無ければ最新の年度） */
+/** 開いた年度の款項目・施策・評価シート・事業の一覧の1頁目を props に足す（年度の段が無ければ最新の年度） */
 async function withSnapshot(c: Context, props: JurisdictionProps): Promise<JurisdictionProps> {
   if (props.kind !== 'page') return props
   const env = c.env as unknown as Env
   const entry = (await catalog(env)).find((e) => e.code === props.data.code)
   const year = props.year ?? appPageYears(props.data)[0]
   if (!entry || year === undefined) return props
-  let waitUntil: ((p: Promise<unknown>) => void) | undefined
   try {
-    const ctx = c.executionCtx
-    waitUntil = (p) => ctx.waitUntil(p)
+    return { ...props, snapshot: await loadYearSnapshot(env, entry, year, { field: props.field }) }
   } catch {
-    // 試験など ExecutionContext の無いところでは、間に合わなかった分は捨てる
+    // API に繋がらなければ本文の無い頁を返し、画面が取り直す。本文の無い頁は CDN にもブラウザにも置かない
+    c.header('x-revalidate', '0')
+    c.header('Cache-Control', 'no-store')
+    return props
   }
-  const snapshot = await appDataForPage(env, entry, year, waitUntil)
-  if (snapshot) return { ...props, snapshot }
-  // 本文の無い頁は CDN にもブラウザにも置かない（置くと本文の無い HTML を返し続ける）
-  c.header('x-revalidate', '0')
-  c.header('Cache-Control', 'no-store')
-  return props
 }
 
 /** 分野の頁とタブの頁は、題・説明文・canonical をその頁のものにする */

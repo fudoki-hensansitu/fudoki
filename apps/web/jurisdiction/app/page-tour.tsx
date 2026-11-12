@@ -6,7 +6,10 @@ import { useRouter } from '@void/react'
 import { FloatSpot, InlineSpot, SpotTour, STEPS, TOTAL, stepAt, useTour, type Spot } from '../../home/tour'
 import { AskVisual, DoneMark, FieldsVisual, FieldVisual, ProjectsVisual, SelectVisual, Typing } from '../../home/tour-visuals'
 import type { AskControl } from '../ask-dock'
-import type { Proj, YearView } from './data'
+import type { YearView } from './data'
+
+/** 詳細の頭の吹き出しに渡す事業（一覧の行か、開いた事業の詳細） */
+type CoachProject = { name: string; dept: string | null; y?: Record<string, { b: number | null; s: number | null }>; yen?: number | null }
 
 export type TourCtl = {
   name: string
@@ -44,7 +47,7 @@ export function usePageTour(c: TourCtl) {
     const c = cur.current
     const v = c.v
     if (!v || !step) return
-    const first = v.current[0]
+    const first = v.top[0]
     if (step === 'fields') {
       c.selectProject(null)
       if (c.fieldPage || c.tab !== 'overview') c.toOverview()
@@ -62,7 +65,7 @@ export function usePageTour(c: TourCtl) {
       }
     } else if (step === 'ask') {
       c.selectProject(null)
-      const q = quote.current || v.current.find((p) => p.id === lastProject.current)?.name || first?.name || c.name
+      const q = quote.current || v.top.find((p) => p.id === lastProject.current)?.name || first?.name || c.name
       // 詳細を閉じて頁が落ち着いてから開く（閉じたときの選択の外れで、付けた文が消えないよう外から付ける）
       const t = setTimeout(() => c.ask.current?.open(q), 380)
       return () => clearTimeout(t)
@@ -95,9 +98,9 @@ export function usePageTour(c: TourCtl) {
 
   const v = c.v
   let overlay: React.ReactNode = null
-  let coach: ((p: Proj) => React.ReactNode) | null = null
+  let coach: ((p: CoachProject) => React.ReactNode) | null = null
   if (v && step) {
-    const first = v.current[0]
+    const first = v.top[0]
     if (step === 'fields') {
       const top = v.fields[0]
       const spot: Spot = {
@@ -113,12 +116,12 @@ export function usePageTour(c: TourCtl) {
     } else if (step === 'field') {
       const f = v.fields.find((x) => x.id === c.fieldPage) ?? v.fields[0]
       if (f) {
-        const ps = v.current.filter((p) => p.field === f.id)
+        const ps = v.top.filter((p) => v.fieldOf(p) === f.id)
         const spot: Spot = {
           target: 'field',
           title: `${f.name}にいくら使っているか`,
           body: 'この分野の金額と、何に使っているかの内訳、この分野の事業が並びます。次は、分野をまたいで事業を一覧で見ます。',
-          visual: <FieldVisual id={f.id} name={f.name} yen={f.yen} projects={ps.slice(0, 3).map((p) => ({ name: p.name, yen: v.amount(p) ?? null }))} />,
+          visual: <FieldVisual id={f.id} name={f.name} yen={f.yen} projects={ps.slice(0, 3).map((p) => ({ name: p.name, yen: p.yen ?? null }))} />,
           action: { label: '事業へ', run: () => (c.toProjects(), go(stepAt('projects'))) },
         }
         overlay = <SpotTour spot={spot} at={at} onSkip={skip} onBack={back('fields')} />
@@ -132,12 +135,12 @@ export function usePageTour(c: TourCtl) {
         body: first
           ? `${c.name}がお金を使っている事業を、金額の多い順に並べています。分野や「新しく始める」で絞り込めます。気になる事業を押してみてください。`
           : `${c.name}は事業ごとの金額をまだ収録していないので、予算書の目を事業の代わりに並べています。`,
-        visual: first ? <ProjectsVisual items={v.current.slice(0, 3).map((p) => ({ name: p.name, yen: v.amount(p) ?? null }))} /> : undefined,
+        visual: first ? <ProjectsVisual items={v.top.slice(0, 3).map((p) => ({ name: p.name, yen: p.yen ?? null }))} /> : undefined,
         action: first ? { label: '開く', run: () => c.selectProject(first.id) } : { label: '次へ', run: () => go(stepAt('ask')) },
       }
       overlay = <SpotTour spot={spot} at={at} onSkip={skip} onBack={back('field')} />
     } else if (step === 'detail') {
-      coach = (p: Proj) => (
+      coach = (p: CoachProject) => (
         <InlineSpot
           at={at}
           onSkip={skip}
@@ -145,13 +148,13 @@ export function usePageTour(c: TourCtl) {
           spot={{
             title: '文字を選んでアシスタントに質問',
             body: '事業の名前や金額の文字をなぞって選ぶと、その文を添えてアシスタントに質問できます。どこか文字を選んでみてください。',
-            visual: <SelectVisual path={p.dept ?? undefined} name={p.name} yen={v.amount(p) ?? null} />,
+            visual: <SelectVisual path={p.dept ?? undefined} name={p.name} yen={(p.y ? (v.kind === 'initial' ? p.y[String(v.year)]?.b : p.y[String(v.year)]?.s) : p.yen) ?? null} />,
             action: { label: '質問する', run: () => ((quote.current = p.name), go(stepAt('ask'))) },
           }}
         />
       )
     } else if (step === 'ask') {
-      const q = quote.current || v.current.find((p) => p.id === lastProject.current)?.name || first?.name || c.name
+      const q = quote.current || v.top.find((p) => p.id === lastProject.current)?.name || first?.name || c.name
       const spot: Spot = {
         target: 'ask',
         open: true,

@@ -3,7 +3,9 @@ import './jurisdiction.css'
 import { Link } from '../nav/link'
 import { RequestTown } from '../nav/request-town'
 import type { JurisdictionProps } from '../pages/[prefecture]/_loader'
+import { Skeleton } from '@/components/ui/skeleton'
 import { AppPage } from './app/app-page'
+import { ClientSuspense } from './app/resource'
 
 export function JurisdictionView(props: JurisdictionProps) {
   if (props.kind === 'empty')
@@ -35,7 +37,21 @@ export function JurisdictionView(props: JurisdictionProps) {
   return (
     <div id="j-app">
       {/* 自治体を移ると年度・開いた款などの状態を持ち越さないよう、自治体ごとに描き直す */}
-      <AppPage key={props.data.code} data={props.data} snapshot={props.snapshot} sitekey={props.sitekey} initialYear={props.year} initialField={props.field} initialTab={props.tab} />
+      {/* 本文のデータが届かなかったとき（API に繋がらなかった頁）は、画面が読み終えるまで形の近い skeleton を出す */}
+      <ClientSuspense fallback={<AppSkeleton />} ready={!!props.snapshot}>
+        <AppPage key={props.data.code} data={props.data} snapshot={props.snapshot} sitekey={props.sitekey} initialYear={props.year} initialField={props.field} initialTab={props.tab} />
+      </ClientSuspense>
+    </div>
+  )
+}
+
+function AppSkeleton() {
+  return (
+    <div className="mx-auto flex max-w-[1120px] flex-col gap-3 px-4 py-7" aria-busy="true" aria-label="読み込み中">
+      <Skeleton className="h-[108px] rounded-2xl" />
+      <Skeleton className="h-12 rounded-lg" />
+      <Skeleton className="h-28 rounded-2xl" />
+      <Skeleton className="h-48 rounded-2xl" />
     </div>
   )
 }

@@ -13,6 +13,8 @@ const GSI_GEOCODER = 'https://mreversegeocoder.gsi.go.jp'
 
 const sha256 = async (text: string) => btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))))
 
+const API_ORIGIN = 'https://api.fudoki.dev'
+
 let page: Promise<string> | undefined
 /** 頁（View の器以外の HTML）の policy。他のサイトの frame には入れさせない */
 export const pageCsp = () =>
@@ -23,7 +25,8 @@ export const pageCsp = () =>
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "font-src 'self' data:",
-      `connect-src 'self' ${INSIGHTS_REPORT} ${GSI_GEOCODER}`,
+      // 事業の一覧の続き・事業の詳細は、ブラウザが公開 API を直接読む
+      `connect-src 'self' ${API_ORIGIN} ${INSIGHTS_REPORT} ${GSI_GEOCODER}`,
       // View の器（同じ origin の /view-frame）と Turnstile の widget
       `frame-src 'self' ${TURNSTILE}`,
       "worker-src 'self'",

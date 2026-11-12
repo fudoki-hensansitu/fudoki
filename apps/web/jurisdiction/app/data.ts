@@ -1,106 +1,77 @@
-// 自治体の頁（アプリ型）のデータ。server/app-data.ts が API から組んだものを、年度ごとの見え方に組み直す。
-// 事業・施策（予算案のプレス発表）・評価シートの3つのオブジェクトを、事業を中心につなぐ
+// 自治体の頁（アプリ型）のデータ。server/app-data.ts が API から組んだ1年度の分を、画面の見え方に組み直す。
+// 事業は頁ごとに API から読む（1頁目はサーバーが lists に入れて渡す）。施策・評価シートは年度の分を全部持ち、事業とは歳出の内訳の ID で照らす
 import { DOMAIN_FRAMES, OTHER_FRAME, type DomainFrame } from '../domains'
+import { listKey, type ListPage, type ListQuery, type ProjRow, type ProjectFull } from './api'
 
-export type Amounts = { b?: number | null; s?: number | null }
-export type Proj = {
-  id: string
-  name: string
-  dept: string | null
-  path: (string | null)[]
-  field: string
-  /** 始めた年度（前の年度の資料にこの事業が無かったと確かめられたときだけ。DB の事業の first_year） */
-  started: number | null
-  /** 終えた年度（次の年度の資料にこの事業が無かったと確かめられたときだけ。DB の事業の last_year） */
-  ended: number | null
-  /** 年度ごとの当初予算（b）と決算（s） */
-  y: Record<string, Amounts>
-  /** 年度ごとの中の事業（名前・金額）。金額の多い順 */
-  kids: Record<string, [string, number | null][]>
-}
-export type Measure = { id: string; fy: number; title: string; new: boolean; yen: number | null; desc: string[]; project: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
+export type { ProjRow as Proj } from './api'
+export type Measure = { id: string; fy: number; title: string; new: boolean; yen: number | null; desc: string[]; /** 紐付けた当初予算書の内訳 */ detail: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
 export type DirectionCode = 'new' | 'expand' | 'keep' | 'statutory' | 'as_planned' | 'improve' | 'resize' | 'reduce' | 'merge' | 'complete' | 'end' | 'consider_end'
-export type Sheet = { id: string; fy: number; name: string; grade: 'A' | 'B' | 'C' | 'D' | null; dir: string | null; dc: DirectionCode | null; /** 方向性の区分の言い方（API の outlook.label） */ dl: string | null; div: string | null; acct: string; b: number | null; s: number | null; project: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
+export type Sheet = { id: string; fy: number; name: string; grade: 'A' | 'B' | 'C' | 'D' | null; dir: string | null; dc: DirectionCode | null; /** 方向性の区分の言い方（API の outlook.label） */ dl: string | null; div: string | null; acct: string; b: number | null; s: number | null; /** 紐付けた決算書の内訳 */ detail: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
 /** 予算書の款・項・目（当初予算）。上から下へ見ていく予算のタブに使う */
-export type Kan = { name: string; yen: number; kou: { name: string; yen: number; moku: { name: string; yen: number; field: string }[] }[] }
+export type Kan = { name: string; yen: number; kou: { name: string; yen: number; moku: { id: string; name: string; yen: number; field: string }[] }[] }
+export type YearData = {
+  /** 当初予算（initial）か、当初予算の無い年度の決算（settlement）か */
+  kind: 'initial' | 'settlement'
+  kan: Kan[]
+  total: number
+  fields: Record<string, number>
+  /** 分野ごとの末端の科目（目と、目の無い項）の ID。分野で事業を絞るのに使う */
+  fieldSubjects: Record<string, string[]>
+  origin: string | null
+  originTitle: string | null
+}
+/** 1年度の頁のデータ。years は全年度の款項目（前の年度との比べ・年度の切り替えに使う）、施策・評価シート・事業の1頁目はその年度の分 */
 export type Snapshot = {
   code: string
   name: string
   pop: number
-  years: Record<string, { /** 当初予算（initial）か、当初予算の無い年度の決算（settlement）か */ kind: 'initial' | 'settlement'; kan: Kan[]; total: number; fields: Record<string, number>; origin: string | null; originTitle: string | null }>
-  projects: Proj[]
+  year: number
+  years: Record<string, YearData>
   measures: Measure[]
   sheets: Sheet[]
-  /** 中の事業（kids）・施策・評価シートを持っている年度。無ければ全部の年度 */
-  loaded?: number[]
+  /** 評価のある最新の年度の評価シート（ホームのまちの札だけが読む） */
+  evaluated?: { fy: number; sheets: Sheet[] }
+  /** 事業の収録がある自治体か。無ければ目を事業の代わりに並べる */
+  hasProjects: boolean
+  /** 事業の一覧の1頁目（listKey ごと） */
+  lists: Record<string, ListPage>
 }
-
-/** 頁の年度の分だけにしたもの。年度ごとの総額・事業の年度ごとの金額は前の年度との比べに使うので全部残し、
- * 大きい中の事業・施策・評価シートだけをその年度に絞る（品川区は全年度で約540KB、1年度で約170〜320KB） */
-export function sliceSnapshot(d: Snapshot, year: number): Snapshot {
-  const ys = String(year)
-  return {
-    ...d,
-    projects: d.projects.map((p) => ({ ...p, kids: p.kids[ys] ? { [ys]: p.kids[ys] } : {} })),
-    measures: d.measures.filter((m) => m.fy === year),
-    sheets: d.sheets.filter((s) => s.fy === year),
-    loaded: [year],
-  }
-}
-
-/** 年度ごとに取った分を足し合わせる。同じ自治体の同じ版（server の cache が同じ）から切り出したものだけを渡す */
-export function mergeSnapshot(a: Snapshot, b: Snapshot): Snapshot {
-  const have = loadedYears(a)
-  const add = loadedYears(b).filter((y) => !have.includes(y))
-  if (!add.length) return a
-  const fresh = (fy: number) => add.includes(fy)
-  const kids = new Map(b.projects.map((p) => [p.id, p.kids]))
-  const ids = new Set(a.projects.map((p) => p.id))
-  return {
-    ...a,
-    projects: [
-      ...a.projects.map((p) => ({ ...p, kids: { ...p.kids, ...Object.fromEntries(Object.entries(kids.get(p.id) ?? {}).filter(([y]) => fresh(Number(y)))) } })),
-      ...b.projects.filter((p) => !ids.has(p.id)),
-    ],
-    measures: [...a.measures, ...b.measures.filter((m) => fresh(m.fy))],
-    sheets: [...a.sheets, ...b.sheets.filter((s) => fresh(s.fy))],
-    loaded: [...have, ...add],
-  }
-}
-
-/** 中の事業・施策・評価シートを持っている年度 */
-export const loadedYears = (d: Snapshot) => d.loaded ?? Object.keys(d.years).map(Number)
 
 export type Field = DomainFrame & { yen: number }
 
 /** 分野は金額の多い順。その他は常に最後 */
 const byYenOtherLast = (a: Field, b: Field) => Number(a.id === 'other') - Number(b.id === 'other') || b.yen - a.yen
 
+/** 一覧の条件（年度・資料は頁の年度のもの） */
+export function listQuery(d: Pick<Snapshot, 'code' | 'year' | 'years'>, filter: ListQuery['filter'], opt: { subjects?: string[]; q?: string } = {}): ListQuery {
+  const kind = d.years[String(d.year)]?.kind ?? 'settlement'
+  const prevKind = d.years[String(d.year - 1)]?.kind
+  return { code: d.code, year: d.year, kind, filter, ...(filter === 'ended' && prevKind ? { prevKind } : {}), ...opt }
+}
+
 export type YearView = ReturnType<typeof yearView>
 
-export function yearView(d: Snapshot, year: number) {
+export function yearView(d: Snapshot) {
+  const year = d.year
   const ys = String(year)
-  const prev = String(year - 1)
-  const hasPrev = !!d.years[prev]
+  const hasPrev = !!d.years[String(year - 1)]
   const y = d.years[ys]!
   const fields: Field[] = [...DOMAIN_FRAMES, OTHER_FRAME].map((f) => ({ ...f, yen: y.fields[f.id] ?? 0 })).filter((f) => f.yen > 0).sort(byYenOtherLast)
-  // 当初予算の無い年度は決算の額で並べる
-  const amt = (p: Proj, year: string) => (d.years[year]?.kind === 'settlement' ? p.y[year]?.s : p.y[year]?.b)
-  const budget = (p: Proj) => amt(p, ys)
-  const current = d.projects.filter((p) => budget(p) != null).sort((a, b) => budget(b)! - budget(a)!)
-  // やめた事業は前の年度で終えた事業（DB の事業の終えた年度）だけ
-  const isEnded = (p: Proj) => p.ended === year - 1
-  // 前の年度と比べられるのは、DB に事業の収録があり、前の年度もある頁だけ（事業の収録の無い自治体は NEW・やめたを出さない）
-  const comparable = hasPrev && d.projects.some((p) => p.started != null || p.ended != null)
-  const ended = d.projects.filter(isEnded).sort((a, b) => (amt(b, prev) ?? 0) - (amt(a, prev) ?? 0))
-  const measures = d.measures.filter((m) => m.fy === year)
-  const measuresOf = group(measures, (m) => m.project)
+  const fieldBySubject = new Map(Object.values(d.years).flatMap((x) => Object.entries(x.fieldSubjects).flatMap(([f, ids]) => ids.map((id) => [id, f] as const))))
+  const page = (filter: ListQuery['filter']) => d.lists[listKey(listQuery(d, filter))]
+  // 事業の収録の無い自治体は、目を事業の代わりにする（中の事業・所管課は持たない）
+  const mokuRows: ProjRow[] = y.kan
+    .flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => ({ id: `moku:${m.id}`, fy: year, name: m.name, dept: null, path: [k.name, o.name, m.name], subject: m.id, yen: m.yen, started: null, ended: null, details: [] }))))
+    .sort((a, b) => b.yen - a.yen)
+  const top = d.hasProjects ? (page('all')?.rows ?? []) : mokuRows.slice(0, 10)
+  const measures = d.measures
   // NEW はその年度に始めた事業（予算書に新しく出てきた事業）だけ。施策の新規はこの印に使わない
-  const isNew = (p: Proj) => p.started === year
-  const currentIds = new Set(current.map((p) => p.id))
+  const isNew = (p: Pick<ProjRow, 'started'>) => p.started === year
+  // やめた事業は前の年度で終えた事業（DB の事業の終えた年度）だけ
+  const isEnded = (p: Pick<ProjRow, 'ended'>) => p.ended === year - 1
   const fresh = measures.filter((m) => m.new).sort((a, b) => (b.yen ?? 0) - (a.yen ?? 0))
   // 評価シートは評価した事業を行った年度の頁に出す（R6 の事業の評価は R6 の頁）。まだ評価の無い年度は出さない
-  const sheets = d.sheets.filter((s) => s.fy === year)
+  const sheets = d.sheets
   return {
     year,
     total: y.total,
@@ -109,37 +80,34 @@ export function yearView(d: Snapshot, year: number) {
     origin: y.origin,
     originTitle: y.originTitle,
     fields,
-    current,
-    ended,
-    newProjects: current.filter(isNew),
-    freshUnlinked: fresh.filter((m) => !m.project || !currentIds.has(m.project)),
+    /** 事業の分野。科目の分からない事業はその他 */
+    fieldOf: (p: Pick<ProjRow, 'subject'>) => (p.subject ? fieldBySubject.get(p.subject) : undefined) ?? OTHER_FRAME.id,
+    /** 分野の末端の科目（頁の年度） */
+    subjectsOf: (field: string) => y.fieldSubjects[field] ?? [],
+    query: (filter: ListQuery['filter'], opt?: { subjects?: string[]; q?: string }) => listQuery(d, filter, opt),
+    page,
+    hasProjects: d.hasProjects,
+    /** お金のかかる事業（1頁目） */
+    top,
+    mokuRows,
+    /** 予算書に無い施策（予算書の事業に紐付けられなかった発表） */
+    freshUnlinked: fresh.filter((m) => !m.detail),
     fresh,
-    measuresOf,
     sheets,
-    sheetsOf: group(sheets, (s) => s.project),
+    /** 事業と中の事業に紐付いた施策・評価シート */
+    measuresFor: (p: ProjectFull) => measures.filter((m) => m.detail && p.initialDetails.includes(m.detail)),
+    sheetsFor: (p: ProjectFull) => sheets.filter((s) => s.detail && p.settlementDetails.includes(s.detail)),
     isNew,
     isEnded,
     kind: y.kind,
     hasPrev,
-    comparable,
+    // 前の年度と比べられるのは、DB に事業の収録があり、前の年度もある頁だけ（事業の収録の無い自治体は NEW・やめたを出さない）
+    comparable: hasPrev && d.hasProjects,
     /** 頁の金額が当初予算か決算か */
     word: y.kind === 'settlement' ? '決算' : '予算',
     /** その年度の並びに使う額の名前 */
     label: (year: number) => (d.years[String(year)]?.kind === 'settlement' ? '決算' : '当初予算'),
-    amount: (p: Proj, year = ys) => amt(p, year),
   }
-}
-
-function group<T>(items: T[], key: (t: T) => string | null) {
-  const m = new Map<string, T[]>()
-  for (const t of items) {
-    const k = key(t)
-    if (!k) continue
-    const a = m.get(k) ?? []
-    a.push(t)
-    m.set(k, a)
-  }
-  return m
 }
 
 /** 今後の方向性の区分（API の outlook.code）ごとの印。言い方は API の outlook.label */
