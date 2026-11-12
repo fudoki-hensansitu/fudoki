@@ -187,7 +187,7 @@ function Elsewhere() {
   ]
   return (
     <section>
-      <SectionHead title="ほかの自治体も見る" />
+      <SectionHead title="ほかの自治体を見る" />
       <div className="grid gap-x-6 sm:grid-cols-2">
         {places.map((x) => (
           <Link key={x.href} href={x.href} className="flex items-center gap-3 px-2.5 py-3 text-base text-foreground no-underline transition-colors hover:bg-card">
