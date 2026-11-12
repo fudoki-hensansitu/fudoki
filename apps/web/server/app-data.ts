@@ -5,12 +5,11 @@ import { hc, parseResponse } from 'hono/client'
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import type { Kan, Measure, Proj, Sheet, Snapshot } from '../jurisdiction/app/data'
 import { apiFetch, type Env } from './env'
-import type { CatalogEntry } from './jurisdiction'
+import { shownSettlementYears, type CatalogEntry } from './jurisdiction'
+import { appPageYears } from '../jurisdiction/types'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
 const ACCOUNT = '一般会計'
-/** 頁で切り替えられる年度の数（新しい順） */
-const YEAR_COUNT = 3
 /** 事業として並べる内訳の深さ。1 が目の直下の事業、2 がその中の事業。施策・評価シートの行から事業へたどるために 3 まで読む */
 const DETAIL_DEPTH = 3
 
@@ -76,9 +75,11 @@ const fieldOf = (cofog: string | null | undefined) => ((cofog ? frameOf(cofog) :
 const clean = (name: string) => name.replace(/【[^】]*】/g, '').trim()
 const short = (id: string) => id.slice(0, 12)
 
-/** 頁の年度。当初予算があれば当初予算、無ければ決算を読む（新しい順に YEAR_COUNT 年） */
+/** 頁の年度（自治体の頁で選べる年度と同じ。jurisdiction/types.ts の appPageYears）。当初予算があれば当初予算、無ければ決算を読む */
 export function appYears(entry: Pick<CatalogEntry, 'initialYears' | 'settlementYears'>): { year: number; kind: Kind }[] {
-  const years = [...new Set([...entry.initialYears, ...entry.settlementYears])].sort((a, b) => b - a).slice(0, YEAR_COUNT)
+  const settled = shownSettlementYears(entry.settlementYears)
+  const last = Math.max(0, ...settled)
+  const years = appPageYears({ years: settled.map((year) => ({ year })), budgets: entry.initialYears.filter((y) => y > last).map((year) => ({ year })) })
   return years.map((year) => ({ year, kind: entry.initialYears.includes(year) ? 'initial' : 'settlement' }))
 }
 

@@ -127,8 +127,9 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   }
   const snapshot = await appDataForPage(env, entry, year, waitUntil)
   if (snapshot) return { ...props, snapshot }
-  // 本文の無い頁は CDN に置かない（置くと1時間、本文の無い HTML を返し続ける）
+  // 本文の無い頁は CDN にもブラウザにも置かない（置くと本文の無い HTML を返し続ける）
   c.header('x-revalidate', '0')
+  c.header('Cache-Control', 'no-store')
   return props
 }
 

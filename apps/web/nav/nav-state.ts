@@ -7,7 +7,7 @@ export const NAV_KEY = 'sidebar_state'
 
 export const NAV_SCRIPT = [
   `(function(){var d=document,v;try{v=localStorage.getItem('${NAV_KEY}');`,
-  `if(v===null){var m=/(?:^|;\\s*)${NAV_KEY}=(true|false)(?:;|$)/.exec(d.cookie);if(m){v=m[1];localStorage.setItem('${NAV_KEY}',v);d.cookie='${NAV_KEY}=; path=/; max-age=0'}}}catch(e){}`,
+  `var m=/(?:^|;\\s*)${NAV_KEY}=(true|false)(?:;|$)/.exec(d.cookie);if(m){if(v===null){v=m[1];localStorage.setItem('${NAV_KEY}',v)}d.cookie='${NAV_KEY}=; path=/; max-age=0'}}catch(e){}`,
   `if(v==='false')d.documentElement.setAttribute('data-nav-closed','')})()`,
 ].join('')
 

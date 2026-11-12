@@ -25,7 +25,7 @@ export const themeColorMeta = (theme: Theme) =>
 export const THEME_SCRIPT = [
   '(function(){var d=document,r=d.documentElement,t;',
   // 前は cookie に置いていた。見つけたら localStorage へ移し、cookie は消す（cookie の付いた要求は CDN の cache を通らない）
-  `try{t=localStorage.getItem('${THEME_KEY}');if(!t){var m=/(?:^|;\\s*)${THEME_KEY}=(system|light|dark)(?:;|$)/.exec(d.cookie);if(m){t=m[1];localStorage.setItem('${THEME_KEY}',t);d.cookie='${THEME_KEY}=; path=/; max-age=0'}}}catch(e){}`,
+  `try{t=localStorage.getItem('${THEME_KEY}');var m=/(?:^|;\\s*)${THEME_KEY}=(system|light|dark)(?:;|$)/.exec(d.cookie);if(m){if(!t){t=m[1];localStorage.setItem('${THEME_KEY}',t)}d.cookie='${THEME_KEY}=; path=/; max-age=0'}}catch(e){}`,
   `if(t!=='system'&&t!=='dark')t='${DEFAULT_THEME}';if(t!=='system')r.dataset.theme=t;r.dataset.themeChoice=t;`,
   `if(t!=='${DEFAULT_THEME}')d.addEventListener('DOMContentLoaded',function(){d.querySelectorAll('meta[name="theme-color"]').forEach(function(x){x.remove()});d.head.insertAdjacentHTML('beforeend',t==='dark'?${JSON.stringify(themeColorMeta('dark'))}:${JSON.stringify(themeColorMeta('system'))})})`,
   '})()',

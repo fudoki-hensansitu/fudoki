@@ -67,7 +67,12 @@ const amountsOf = (d: PageData, year: number) => ({
 export function pageTitle(d: PageData, year: number, section?: Section): string {
   const y = reiwaFull(year)
   const subject = (() => {
-    if (!section) return latestBudget(d) ? 'の予算と決算' : 'の決算'
+    if (!section) {
+      // 入口（最新の年度）は予算と決算の両方を説明文に書くので両方を入れる。過去の年度はその年度にある金額で決める
+      if (year === defaultYear(d)) return latestBudget(d) ? 'の予算と決算' : 'の決算'
+      const { budget, settlement } = amountsOf(d, year)
+      return budget && settlement ? 'の予算と決算' : budget ? 'の予算' : 'の決算'
+    }
     if ('tab' in section) return section.tab === 'projects' ? 'の事業一覧' : section.tab === 'money' ? 'の当初予算' : 'の決算'
     return `の${FIELDS.find((f) => f.id === section.field)?.name ?? '分野'}`
   })()
@@ -78,7 +83,7 @@ export function pageTitle(d: PageData, year: number, section?: Section): string 
 export function pageDescriptionOf(d: PageData, year: number, section?: Section): string {
   const y = reiwaFull(year)
   const { budget, settlement } = amountsOf(d, year)
-  if (!section) return year === appPageYears(d)[0] ? pageDescription(d) : yearHead(d, year).description
+  if (!section) return year === appPageYears(d)[0] || year === defaultYear(d) ? pageDescription(d) : yearHead(d, year).description
   if ('tab' in section) {
     if (section.tab === 'projects')
       return `${d.name}の${y}の事業を、金額の大きい順に並べています。新しく始める事業・やめた事業や事業評価も、出典の資料と並べて見られます。`
@@ -115,6 +120,9 @@ export function yearHead(d: PageData, year: number): { description: string; name
   }
 }
 
+/** 年度の段の無い入口の頁の年度。説明文（pageDescription）と同じく、金額のある最新の当初予算か、無ければ最新の決算の年度 */
+const defaultYear = (d: PageData) => latestBudget(d)?.year ?? d.years.at(-1)!.year
+
 /** 頁の path の、年度の段より後ろ（/projects、/fields/fukushi） */
 const sectionPath = (section?: Section) => (!section ? '' : 'tab' in section ? `/${TAB_SLUGS[section.tab]}` : `/fields/${section.field}`)
 
@@ -123,8 +131,8 @@ export function pageHead(d: PageData, year?: number, section?: Section): Head {
   const latest = d.years.at(-1)!
   const budget = latestBudget(d)
   const base = jurisdictionPath(d.code)
-  const shown = year ?? appPageYears(d)[0]!
-  const past = shown !== appPageYears(d)[0] ? yearHead(d, shown) : null
+  const shown = year ?? defaultYear(d)
+  const past = year !== undefined && year !== appPageYears(d)[0] ? yearHead(d, shown) : null
   const title = pageTitle(d, shown, section)
   const description = pageDescriptionOf(d, shown, section)
   // 最新の年度の頁（/tokyo/nakano/2026）は入口（/tokyo/nakano）と同じ中身なので、canonical を入口にする。

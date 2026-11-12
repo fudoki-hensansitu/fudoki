@@ -4,7 +4,7 @@
 import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath } from '../jurisdiction/path'
 import { toMapEntry, type MapEntry } from '../jurisdiction/index-table'
-import { appPageYears, type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
+import { type Drill, type FlowDepth, type FlowView, type IndexEntry, type PageData, type Setsu } from '../jurisdiction/types'
 import { assetPath, EMBLEMS } from '../jurisdiction/emblems'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
@@ -12,7 +12,7 @@ import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
 import { appYears, loadAppData } from './app-data'
 import { sliceSnapshot, type Snapshot } from '../jurisdiction/app/data'
-import { ACCOUNT, loadAccountTotals, loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, shownSettlementYears, type CatalogEntry, type DocumentKind } from './jurisdiction'
+import { ACCOUNT, loadAccountTotals, loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, type CatalogEntry, type DocumentKind } from './jurisdiction'
 
 const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
@@ -45,11 +45,7 @@ export async function homeEntries(env: Env): Promise<MapEntry[]> {
 }
 
 /** 自治体の頁で選べる年度（新しい順）。頁のデータを読まずにカタログだけで決める（sitemap・ホームのリンク） */
-export function pageYearsOf(e: CatalogEntry): number[] {
-  const settled = shownSettlementYears(e.settlementYears)
-  const last = Math.max(0, ...settled)
-  return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) })
-}
+export const pageYearsOf = (e: CatalogEntry): number[] => appYears(e).map((y) => y.year)
 
 /** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする）。
  * 帰属表示の要る紋章（CC BY など）は、描き起こした人とライセンスを画像の隅に書く */
@@ -145,7 +141,7 @@ export async function accountsResponse(env: Env, request: Request, { code, year 
 }
 
 /** 自治体の頁（アプリ型）の全年度のデータ。頁の loader と /data/jurisdictions/app/:code が共有する。冷えていると API から組むのに十数秒かかる */
-export const appData = (env: Env, entry: CatalogEntry) => memo<Snapshot>(`app-${entry.code}-${entry.initialYears.at(-1)}-${entry.settlementYears.at(-1)}`, () => loadAppData(env, entry))
+export const appData = (env: Env, entry: CatalogEntry) => memo<Snapshot>(`app2-${entry.code}-${entry.initialYears.at(-1)}-${entry.settlementYears.at(-1)}`, () => loadAppData(env, entry))
 
 /** 頁の loader が待つ長さ。温まっていれば数十 ms で返る。冷えているときは待たずに頁を返し、画面が /data/jurisdictions/app から取る
  * （頁を移る時の JSON も loader を待つので、ここで長く待つとクリックしてから頁が変わらない） */

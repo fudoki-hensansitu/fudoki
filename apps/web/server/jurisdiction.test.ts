@@ -122,8 +122,8 @@ describe('自治体の個別ページ', () => {
     expect(pageHead(withBudget).title).toBe('中野区の予算と決算（令和8年度）｜風土記')
     expect(pageHead(withBudget).meta.find((m) => m.name === 'description')?.content).toMatch(/^中野区の令和8年度当初予算の歳出は約12\.3億円、令和7年度決算（一般会計）の歳出は約/)
     // 金額の無い当初予算は title に使わない
-    expect(pageHead({ ...data, budgets: [{ ...budget, amountMissing: true as const }] }).title).not.toContain('予算')
-    expect(pageHead({ ...data, budgets: [{ ...budget, yen: 0 }] }).title).not.toContain('予算')
+    expect(pageHead({ ...data, budgets: [{ ...budget, amountMissing: true as const }] }).title).toBe(head.title)
+    expect(pageHead({ ...data, budgets: [{ ...budget, yen: 0 }] }).title).toBe(head.title)
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano')
     // 紋章と決算のある自治体は og:image を自治体の画像に差し替え、紋章の無い自治体は全頁共通の画像のまま
     expect(head.meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/jurisdictions/131148/og.png' })
