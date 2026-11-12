@@ -17,8 +17,7 @@ export default defineMiddleware(async (c, next) => {
   await next()
   if (!c.res.headers.get('Content-Type')?.startsWith('text/html')) return
   // HTML には Vary: Accept を付けない（Void の ISR は X-VoidPages 以外の Vary が付いた応答を CDN に置かない）。
-  // CDN に置くのは HTML だけで、Markdown は下で置かないようにする。CDN の HTML を返すのは Accept に text/html を含む要求だけなので、
-  // text/markdown だけを望む要求は毎回 Markdown になる。text/html も受ける要求には、CDN に HTML があればそれを返す
+  // CDN に置くのは HTML だけで、Markdown は下で置かないようにする。Accept に text/markdown を含む要求は ISR を通らずここに届く（patches/@void%2Fisr@1.5.0.patch）
   c.res.headers.append('Link', DISCOVERY_LINK)
   if (c.res.status === 200 && wantsMarkdown(c.req.header('Accept'))) {
     const markdown = await htmlToMarkdown(c.env.AI, await c.res.clone().text(), c.req.url)
