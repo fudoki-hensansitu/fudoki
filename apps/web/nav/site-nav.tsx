@@ -22,8 +22,11 @@ import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, type Theme } from './theme'
+import { ListMagnifyingGlassIcon } from '@phosphor-icons/react'
+import { NavContent } from './nav-content'
 
-export const NAV_SECTIONS = ['home', 'assistant'] as const
+
+export const NAV_SECTIONS = ['home', 'assistant', 'search'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 export type SiteNavProps = { active?: NavSection; open: boolean; theme: Theme }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
@@ -38,7 +41,7 @@ const DOCS = 'https://docs.fudoki.dev'
 /** 開閉の状態を残す cookie（shadcn の SidebarProvider が書く名前） */
 export const SIDEBAR_COOKIE = 'sidebar_state'
 
-const Logo = ({ className }: { className?: string }) => (
+export const Logo = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
 )
 
@@ -64,12 +67,12 @@ function CollapsedToggle() {
 }
 
 /** サイドバーの項目。icon は shadcn の既定より一回り大きくし、閉じて icon だけのときだけ名前を tooltip で出す */
-const Item = ({ href, label, icon, active }: { href: string; label: string; icon: React.ReactNode; active?: boolean }) => {
+export const Item = ({ href, label, icon, active, onClick }: { href: string; label: string; icon: React.ReactNode; active?: boolean; onClick?: React.MouseEventHandler<HTMLAnchorElement> }) => {
   const { state, isMobile } = useSidebar()
   return (
     <SidebarMenuItem>
       <SidebarMenuButton
-        render={<NavLink href={href} aria-current={active ? 'page' : undefined} />}
+        render={<NavLink href={href} aria-current={active ? 'page' : undefined} onClick={onClick} />}
         isActive={active}
         tooltip={state === 'collapsed' && !isMobile ? label : undefined}
         className="h-10 gap-3 px-3 text-sm group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:p-2.5! [&_svg]:size-5"
@@ -196,6 +199,7 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
   const items = [
     { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
     { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
+    { href: '/search', label: '事業を検索', icon: <ListMagnifyingGlassIcon />, active: active === 'search' },
   ]
   return (
     <nav
@@ -207,14 +211,10 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
     >
       {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
       <Separator />
-      <ul className="grid h-14 grid-cols-3">
+      <ul data-tour="nav" className="grid h-14 grid-cols-4">
         {items.map((i) => (
           <li key={i.href}>
-            <NavLink
-              href={i.href}
-              aria-current={i.active ? 'page' : undefined}
-              className={BOTTOM_ITEM}
-            >
+            <NavLink href={i.href} aria-current={i.active ? 'page' : undefined} className={BOTTOM_ITEM}>
               {i.icon}
               {i.label}
             </NavLink>
@@ -249,11 +249,7 @@ export function SiteNav({ active, open, theme: initialTheme }: SiteNavProps) {
             <CollapsedToggle />
           </SidebarHeader>
           <SidebarContent>
-            <SidebarGroup>
-              <SidebarMenu>
-                <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={active === 'assistant'} />
-              </SidebarMenu>
-            </SidebarGroup>
+            <NavContent />
           </SidebarContent>
           <SidebarFooter className="gap-0 px-2 pt-2 pb-12">
             <SidebarMenu>

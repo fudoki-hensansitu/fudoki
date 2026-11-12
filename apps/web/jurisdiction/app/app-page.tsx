@@ -57,6 +57,7 @@ import { pageHead } from '../html'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
+import { PageTour } from '../../home/tour'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
@@ -232,17 +233,6 @@ function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, 
 type TabKey = PageTab
 type Go = (t: TabKey, opt?: { filter?: string; field?: string; grade?: string }) => void
 
-function CountCard({ icon, label, n, onClick }: { icon: React.ReactNode; label: string; n: number; onClick: () => void }) {
-  return (
-    <button type="button" onClick={onClick} className="block h-full w-full rounded-xl text-left transition-transform active:scale-[.98]"><Card className="h-full gap-1.5 bg-card px-4 py-3.5 text-left ring-0 transition-[background,transform] hover:bg-secondary active:scale-[.98]">
-      <span className="flex items-center gap-1.5 text-xs text-muted-foreground [&_svg]:size-4">{icon}{label}</span>
-      <span className="text-[26px] leading-tight tabular-nums">
-        {n}
-        <small className="ml-1 text-xs text-muted-foreground">件</small>
-      </span>
-    </Card></button>
-  )
-}
 
 function FieldTile({ f, i, onClick }: { f: YearView['fields'][number]; i: number; onClick: () => void }) {
   const { v } = useApp()
@@ -401,38 +391,16 @@ function Overview({ go }: { go: Go }) {
   const { v, page, openField } = useApp()
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid gap-3 md:grid-cols-[1.3fr_1fr]">
-        {/* 総額と1人あたりは同じ大きさで左右に半分ずつ並べ、間に大きな斜線を引いて分ける */}
-        <Card className="justify-center bg-card px-5 py-[18px] ring-0">
-          <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3 sm:gap-6">
-          <span className="flex flex-col">
-            <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}（一般会計）</span>
-            <Amt yen={v.total} className="mt-0.5 text-[40px] leading-tight text-primary max-sm:text-[28px]" />
-          </span>
-          {v.perHead != null ? (
-            <>
-            <span aria-hidden="true" className="self-stretch">
-              <svg viewBox="0 0 20 60" preserveAspectRatio="none" className="h-full w-4 stroke-border sm:w-5"><line x1="19" y1="1" x2="1" y2="59" strokeWidth="1.5" vectorEffect="non-scaling-stroke" /></svg>
-            </span>
-            <span className="flex flex-col">
-              <span className="text-xs text-muted-foreground">住民1人あたり</span>
-              <Amt yen={v.perHead} className="mt-0.5 text-[40px] leading-tight text-primary max-sm:text-[28px]" />
-            </span>
-            </>
-          ) : null}
-          </div>
-        </Card>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="col-span-2"><CountCard icon={<ListBulletsIcon />} label="事業" n={v.current.length} onClick={() => go('projects', { filter: 'all' })} /></div>
-          {v.comparable || v.newProjects.length || v.ended.length || v.fresh.length ? (
-            <>
-              <CountCard icon={<NewIcon className="text-primary" />} label="新しく始める事業" n={v.newProjects.length + v.freshUnlinked.length} onClick={() => go('projects', { filter: 'new' })} />
-              {v.comparable || v.ended.length ? <CountCard icon={<StopIcon className="text-primary" />} label="やめた事業" n={v.ended.length} onClick={() => go('projects', { filter: 'ended' })} /> : null}
-            </>
-          ) : null}
-          {v.sheets.length ? <div className="col-span-2"><CountCard icon={<ClipboardTextIcon />} label="評価した事業" n={v.sheets.length} onClick={() => go('projects', { filter: 'eval' })} /></div> : null}
-        </div>
-      </div>
+      {/* ホームのまちの札と同じく、濃い緑の地に総額と1人あたりを載せる。事業の件数は出さない */}
+      <section data-tour="budget" className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
+        <p className="text-sm opacity-80">{reiwa(v.year)}の{v.word}（一般会計）</p>
+        <Amt yen={v.total} className="mt-1 block text-[40px] leading-none font-bold sm:text-[48px]" />
+        {v.perHead != null ? (
+          <p className="mt-2 text-sm opacity-80">
+            1人あたり <Amt yen={v.perHead} />
+          </p>
+        ) : null}
+      </section>
 
       <section>
         <SectionHead title="分野" />
@@ -444,7 +412,7 @@ function Overview({ go }: { go: Go }) {
 
       <FreshCarousel items={v.fresh.slice(0, 12)} more={() => go('projects', { filter: 'new' })} />
 
-      <section>
+      <section data-tour="project">
         <SectionHead title="お金のかかる事業"><MoreLink onClick={() => go('projects', { filter: 'all' })} /></SectionHead>
         <Rows>{v.current.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>
       </section>
@@ -917,6 +885,15 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
   }
   const [field, setField] = React.useState('all')
   const [filter, setFilter] = React.useState('all')
+  // ?filter=new などで事業の絞り込みを開いた状態で来られる（ホームのはじめにやることから）。読んだら URL から外す
+  React.useEffect(() => {
+    const q = new URLSearchParams(location.search)
+    const f = q.get('filter')
+    if (!f) return
+    if (['all', 'new', 'ended', 'eval'].includes(f)) setFilter(f)
+    q.delete('filter')
+    history.replaceState(history.state, '', location.pathname + (q.size ? `?${q}` : '') + location.hash)
+  }, [])
   const [grade, setGrade] = React.useState('A')
   const [selected, select] = React.useState<Selected>(null)
   // 分野の頁。URL を /fields/<id> にして、戻るで自治体の頁へ帰る
@@ -1032,9 +1009,9 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
         {/* 自治体名の行の右に年度の切り替えを置く。切り替えのボタンで行が高くならないよう上下を詰める */}
         <div className="flex items-center justify-between gap-3">
           <h1 className="min-w-0 text-[22px] font-normal leading-tight sm:text-[26px]">{data.name}</h1>
-          <div className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
+          <div data-tour="year" className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
         </div>
-        {vision ? <p className="text-base leading-snug sm:text-[17px]">{vision}</p> : null}
+        {vision ? <p data-tour="select" className="mt-2 text-base leading-snug sm:mt-0 sm:text-[17px]">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
           <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
           {data.population ? (
@@ -1144,6 +1121,8 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
         </Tabs>
       </div>
       <AskDock name={data.name} sitekey={sitekey} year={year} section={TABS.find((t) => t.key === tab)?.label} />
+      {/* ホームで住んでいるまちを選んだ人にだけ出すツアーの続き。それ以外では何も描かない */}
+      <PageTour name={data.name} />
     </div>
   )
 }
