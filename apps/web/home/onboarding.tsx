@@ -6,7 +6,7 @@ import { ArrowRightIcon, CheckIcon, NavigationArrowIcon, XIcon } from '@phosphor
 import { useRouter } from '@void/react'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
-import { Logo, Mark } from '../nav/site-nav'
+import { Mark } from '../nav/site-nav'
 import { Picker as TownPicker } from './town-picker'
 import { LocateError, locateMunicipality } from './locate'
 import type { MapEntry } from '../jurisdiction/index-table'
@@ -35,24 +35,27 @@ export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPic
       {/* 一覧を読めなかったときに「未収録」と誤って伝えないよう、検索と現在地を出さない */}
       {entries.length ? (
         <>
-          <TownPicker entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
-          <div className="mt-3 text-foreground">
-            {loc ? (
-              <div className="ob-swap">
-                <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onClose={() => setLoc(null)} />
-              </div>
-            ) : (
-              <button
-                type="button"
-                onClick={() => void locate()}
-                className="inline-flex items-center gap-2 rounded-full bg-brand-foreground/15 px-4 py-2 text-[14px] font-bold text-brand-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-brand-foreground/25 active:scale-[0.97] motion-reduce:transition-none"
-              >
-                <NavigationArrowIcon className="size-4" />
-                現在地から選ぶ
-                <span className="text-[12px] font-normal opacity-75">位置は保存しません</span>
-              </button>
-            )}
+          {/* PC は名前の欄と「現在地から選ぶ」を1行に並べ、スマホは縦に積む */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <div className="min-w-0 flex-1">
+              <TownPicker entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
+            </div>
+            <button
+              type="button"
+              onClick={() => void locate()}
+              className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-foreground/15 px-5 text-[15px] font-bold text-brand-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-brand-foreground/25 active:scale-[0.97] motion-reduce:transition-none"
+            >
+              <NavigationArrowIcon className="size-4" />
+              現在地から選ぶ
+            </button>
           </div>
+          {loc ? (
+            <div className="ob-swap mt-3 text-foreground">
+              <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onClose={() => setLoc(null)} />
+            </div>
+          ) : (
+            <p className="mt-3 text-[12px] opacity-75">位置は保存しません</p>
+          )}
         </>
       ) : (
         <p className="text-[14px] opacity-80">今は自治体の一覧を読み込めません。少し時間をおいて開き直してください。</p>
@@ -142,11 +145,13 @@ export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
     )
   const shown = mode === 'full'
   return (
-    <header className={shown ? 'ob-rise mb-6' : 'sr-only'}>
-      {/* スマホはサイドバーが無くロゴが見えないので、見出しの上に出す。PC はサイドバーの頭にある */}
-      {shown ? <Logo className="mb-5 block h-7 w-auto text-primary md:hidden" /> : null}
-      <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">{title}</h1>
-      <p className="mt-1.5 text-[15px] text-muted-foreground">{lead}</p>
+    <header className={shown ? 'ob-rise mb-7 sm:mb-8' : 'sr-only'}>
+      {/* 見出しの頭にロゴのマーク（まちを選んだあとの1行の見出しと同じ並び） */}
+      <div className="flex items-center gap-3 sm:gap-4">
+        {shown ? <Mark className="size-9 shrink-0 text-primary sm:size-11" /> : null}
+        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">{title}</h1>
+      </div>
+      <p className="mt-2 text-[15px] text-muted-foreground">{lead}</p>
     </header>
   )
 }
@@ -156,7 +161,6 @@ export function Empty({ entries, onPick, reveal, again }: { entries: MapEntry[];
   return (
     <>
       {reveal ? <div key="reveal">{reveal}</div> : <AskTown entries={entries} onPick={onPick} again={again} />}
-      <OtherTowns entries={entries} className="mt-6" />
     </>
   )
 }
