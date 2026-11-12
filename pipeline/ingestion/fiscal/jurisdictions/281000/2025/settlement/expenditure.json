@@ -4047,7 +4047,7 @@
     {
       "table_id": "general-kaikei",
       "conversion_id": "general-kaikei",
-      "input_fingerprint": "1994d28bbf63e785c69010027fa223c43e0360e405b179f43a036ad26d3d1d24",
+      "input_fingerprint": "b513ae6ba9b8dadaa12eea7a445c5e1df15fd375a71fb63e20864cd881cfd33d",
       "account": "一般会計",
       "division": "会計室",
       "notes": [
@@ -4061,16 +4061,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kaikei-nodes.parquet",
-          "sha256": "f698259c21c6b41767571cb00340be093d5ff93b1cca5bc8fa582dff537ca8a7",
-          "bytes": 2557
+          "sha256": "47412e455786f0572d21881fc2ddecdb2d3065137750f73dd432fefbbeda9d07",
+          "bytes": 2614
         },
         "row_count": 9
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kaikei-amounts.parquet",
-          "sha256": "3dcfff432b65dde83a43f3bff15f2f77cf755011d2b046a8d16bcb0a92e51cc8",
-          "bytes": 3060
+          "sha256": "18084d00e00c4ec88d64e135e53b9f5ea103988b131e1a45e7e0dcabd4953e0c",
+          "bytes": 3121
         },
         "row_count": 66
       }
@@ -4078,7 +4078,7 @@
     {
       "table_id": "general-gyozai",
       "conversion_id": "general-gyozai",
-      "input_fingerprint": "86748fad2b916fcc104e3df05bdfc795dbd3d1eeb3aed37aaab77ee34d5eb591",
+      "input_fingerprint": "e35ebcaa650f523164ccdb85f1cb828a8f7a61e54817f1586a29a6ce682d0ebb",
       "account": "一般会計",
       "division": "行財政局",
       "notes": [
@@ -4093,16 +4093,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-gyozai-nodes.parquet",
-          "sha256": "ffe349860788ab6e15e6861c34a8ca22dfaa21b7a52b6399a27c1a29a45b0e76",
-          "bytes": 8218
+          "sha256": "201851112853d096a5584d2d548b3ce48e74b225359c85e2557d8c0e7bedb24c",
+          "bytes": 8292
         },
         "row_count": 130
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-gyozai-amounts.parquet",
-          "sha256": "2cbb8b48880d1b6a46312de6cc5c50bd90eb0c7ef9f13ad6da84107a49158c82",
-          "bytes": 15161
+          "sha256": "7084615145079df1f795fa16eabd65e8a3f5b7549f5be05563d23279d66fc81b",
+          "bytes": 15213
         },
         "row_count": 929
       }
@@ -4110,7 +4110,7 @@
     {
       "table_id": "debt-gyozai",
       "conversion_id": "debt-gyozai",
-      "input_fingerprint": "51e9a5630c51bb4d8dbd68a42bdd4172189e96890785aa5024f27b38303308d4",
+      "input_fingerprint": "1f508579cbfa520b83ccdae4d969e075231af473b277783089e262c9df868137",
       "account": "公債費",
       "division": "行財政局",
       "notes": [
@@ -4124,16 +4124,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/debt-gyozai-nodes.parquet",
-          "sha256": "4caf4f11596bdd0339bfe163631a985ee2008f8378bad679e5ac849a34eef955",
-          "bytes": 3292
+          "sha256": "7972f70546205f3bec45e9308ccf29ed4399345f5ea82e0d63895f7a0a433a14",
+          "bytes": 3366
         },
         "row_count": 16
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/debt-gyozai-amounts.parquet",
-          "sha256": "ef229e22985b06b18ae58e9cf067b95c6252edbf11faa05352f1e4acb4947e57",
-          "bytes": 4340
+          "sha256": "b13684f48f3274a644c68cf44822cc5bf958f083f33c35307a56f2b2d6f82330",
+          "bytes": 4366
         },
         "row_count": 124
       }
@@ -4141,7 +4141,7 @@
     {
       "table_id": "general-senkyo",
       "conversion_id": "general-senkyo",
-      "input_fingerprint": "cb3f8397f3cebf0d1fdee31e587800e3fee393218dc0725f987dd5483733a4c6",
+      "input_fingerprint": "9bec3949ae2bb48d43995e91f36136ffbc8bf52365c298c4c8d8e58aa9631545",
       "account": "一般会計",
       "division": "選挙管理委員会事務局",
       "notes": [
@@ -4155,16 +4155,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-senkyo-nodes.parquet",
-          "sha256": "9e8e67469248910735e3818d55ffbce294d20ea4818b74f80636f73b6a01e15b",
-          "bytes": 5441
+          "sha256": "337c98172fe8aa8a513516425bb4eb3f6ca9d3b2a1cf2d8fa67e1af61de603b6",
+          "bytes": 5514
         },
         "row_count": 70
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-senkyo-amounts.parquet",
-          "sha256": "877db3230e410fc6a9911fbb35b1689df99a7b461cc2e61a6e2b4249584eced6",
-          "bytes": 8198
+          "sha256": "205200bce3f0325a7a5b962cafdec0021c92ff6912c81df51a8edc1a2542ed48",
+          "bytes": 8273
         },
         "row_count": 464
       }
@@ -4172,7 +4172,7 @@
     {
       "table_id": "general-jinji",
       "conversion_id": "general-jinji",
-      "input_fingerprint": "cf0b776582e3586dac3e18f32c552e7b5dc4e096c728f6ce41cc5970cf97c508",
+      "input_fingerprint": "9cd6a5cb7823ce9e76e2011a9b7136b3da1938ba651198451ec8effea49be31f",
       "account": "一般会計",
       "division": "人事委員会事務局",
       "notes": [
@@ -4186,16 +4186,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-jinji-nodes.parquet",
-          "sha256": "fe3a05417a94309a5e2397c85cdffc1e34be91552da248aae54713e3e5995d77",
-          "bytes": 3426
+          "sha256": "a5d0a5f938a271d94866f0a2ccb8d5950610b71b769414054bde23913aae4688",
+          "bytes": 3510
         },
         "row_count": 20
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-jinji-amounts.parquet",
-          "sha256": "1e0bb168d2ec8900f0e6de6c195dd0d1f58702a5c096689241eaa34aae6137e0",
-          "bytes": 4121
+          "sha256": "094c9ae40ffb809bf9a8c17e1c73cb7d9f8a8376a4167cfb848661397b2c2403",
+          "bytes": 4197
         },
         "row_count": 140
       }
@@ -4203,7 +4203,7 @@
     {
       "table_id": "general-kansa",
       "conversion_id": "general-kansa",
-      "input_fingerprint": "461890301f78077d7474047cf1098a6d5c8c6de937e19023f0b6a8b6d8ea6f7b",
+      "input_fingerprint": "0340a1fc0aecd22722f7b834cc3bbb7ed6bc8710caf5478ed0a57bb784b0c65f",
       "account": "一般会計",
       "division": "監査事務局",
       "notes": [
@@ -4217,16 +4217,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kansa-nodes.parquet",
-          "sha256": "6f9669e224b0976741e7e08bb26fd816193be9724009dc6705b9c803a2e836e2",
-          "bytes": 3405
+          "sha256": "bb50a80697caead77879c4fc95c80aa07f833ee8be93ac33d2efbd3e22354985",
+          "bytes": 3489
         },
         "row_count": 20
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kansa-amounts.parquet",
-          "sha256": "ce02ffc5204f84c4df7fd390a142ea562d5d35c36824ed2a9137244b41f935a3",
-          "bytes": 3962
+          "sha256": "8c34eaf5be826ea2822dd286278444d0155abf30af2a56d2647b1bb3d6b543d2",
+          "bytes": 4020
         },
         "row_count": 133
       }
@@ -4234,7 +4234,7 @@
     {
       "table_id": "general-kikaku",
       "conversion_id": "general-kikaku",
-      "input_fingerprint": "e778de1df438275ec13a0c671ed56b5cfd3ae637e278ef5baded47807da418a1",
+      "input_fingerprint": "11181baf9e34dfe275c6b6bf3ec6a7a1ab19e277fd43883b200689afc79ff4fb",
       "account": "一般会計",
       "division": "企画調整局",
       "notes": [
@@ -4248,16 +4248,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kikaku-nodes.parquet",
-          "sha256": "535acf859bb773f4d15c6d615dc54430f685427d07ff86cc200e22109e1d7556",
-          "bytes": 5956
+          "sha256": "a53f52b86e4f36ab2e7ec4cb00bfa3be34701165e24fbde2a22624e07477d7e0",
+          "bytes": 6011
         },
         "row_count": 82
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kikaku-amounts.parquet",
-          "sha256": "075cf8e2e1dcf12374e6a997d8b40e4cf9c35ac25a2eface2a1e4df905b83340",
-          "bytes": 9204
+          "sha256": "81754cce815d3bbd31f221bc57f53ae1c9d048e7c9cd619d2d6eb86846de81df",
+          "bytes": 9279
         },
         "row_count": 478
       }
@@ -4265,7 +4265,7 @@
     {
       "table_id": "general-fukushi",
       "conversion_id": "general-fukushi",
-      "input_fingerprint": "14a3b206cde80e0a76cd0073d6e86a5f2ff3d954cbc708b6a8dfb13ca9303ed0",
+      "input_fingerprint": "1caf0d268698389c5c8e0c27c08c2f965fdf9493e29c2f8ea5ce1a515430ec27",
       "account": "一般会計",
       "division": "福祉局",
       "notes": [
@@ -4279,16 +4279,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-fukushi-nodes.parquet",
-          "sha256": "d704b59370d0beb4d209ae3286649afec5bb755af83d0d16e5b29428a1ae98fa",
-          "bytes": 7855
+          "sha256": "d6e7259343c30542b24f8d2a555a98f856cf30eed695378ccb07dbe537f914ac",
+          "bytes": 7905
         },
         "row_count": 175
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-fukushi-amounts.parquet",
-          "sha256": "6312373886692f97fe2e47bc18443eaf4989c5d348161e6fcd7896f0c2a99040",
-          "bytes": 12838
+          "sha256": "634acfe1353011b9f69a7f50e60c2a3216cd0cc003d884071911fb1cc2606737",
+          "bytes": 12642
         },
         "row_count": 1164
       }
@@ -4296,7 +4296,7 @@
     {
       "table_id": "nhi-fukushi",
       "conversion_id": "nhi-fukushi",
-      "input_fingerprint": "bd059ef8e4ca50ae2c28f17abb8a31e19d50a211290de28daa8501e8986a5290",
+      "input_fingerprint": "6a356e24dbe305db953e9ff05c9aadbc8d0b081e38d29c8a7660c7c44eccb745",
       "account": "国民健康保険事業費",
       "division": "福祉局",
       "notes": [
@@ -4310,16 +4310,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/nhi-fukushi-nodes.parquet",
-          "sha256": "235a7226dff975ff3cdc70c4e0052239df8a555fab9cb8ee377136711895d00e",
-          "bytes": 5069
+          "sha256": "dbe1e07870763d0984cb1f1b13842b8785053ba04e8258c9f43f556f6ad74bfc",
+          "bytes": 5144
         },
         "row_count": 61
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/nhi-fukushi-amounts.parquet",
-          "sha256": "5146a7c896829f0cfd3cb958d21e8b52091642f6ca48018c2caa02241be915e1",
-          "bytes": 7162
+          "sha256": "4a59733821e561071d11731c635b4c5d2c49d05565d28601aa7ca9b516de393f",
+          "bytes": 7243
         },
         "row_count": 442
       }
@@ -4327,7 +4327,7 @@
     {
       "table_id": "care-fukushi",
       "conversion_id": "care-fukushi",
-      "input_fingerprint": "5665530aa400387946cc8592e16e0d087d3a8a98e3faec37e2fb8c0e0ea4602d",
+      "input_fingerprint": "d1aa2b0aa215aee95da26f561a2ba6ef68d96a2aa6722134c78b975fed372ca1",
       "account": "介護保険事業費",
       "division": "福祉局",
       "notes": [
@@ -4341,16 +4341,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/care-fukushi-nodes.parquet",
-          "sha256": "fcc667b66dcca3c1797d4cd7439ac368196fcbadb8cfefe8fd6b356cf6dd8199",
-          "bytes": 6085
+          "sha256": "2d3d6a5ac0058bfd0d15a2f2b92882551f72bc62fb6e3c95b41ba395fc11133b",
+          "bytes": 6139
         },
         "row_count": 92
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/care-fukushi-amounts.parquet",
-          "sha256": "235e2717b80a4e6c5e129156bea02ccfa25d1574f159ddd9e65adab522593179",
-          "bytes": 8670
+          "sha256": "93ffcefce696b6d6c289603b6e59967216ead91a349f5b3e585c00786e231984",
+          "bytes": 8748
         },
         "row_count": 668
       }
@@ -4358,7 +4358,7 @@
     {
       "table_id": "elderly-fukushi",
       "conversion_id": "elderly-fukushi",
-      "input_fingerprint": "f128cbe821cbf4d7c2eb7b51fb41005f63d64801cf419931c13e246d443e6e1a",
+      "input_fingerprint": "16f0c6ba0ce9291ba060b88431f4300560381d228ecea0c665b77bc31e2e95ab",
       "account": "後期高齢者医療事業費",
       "division": "福祉局",
       "notes": [
@@ -4372,16 +4372,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/elderly-fukushi-nodes.parquet",
-          "sha256": "c9e1cd342f46f868e6a6737c69a5e500ef5ed71e9de8851b6e0338e7c27c5705",
-          "bytes": 3556
+          "sha256": "b63e90e1da15b2825986f6be553fb986bba0bfb81b4a3c28be46e15ad93e9400",
+          "bytes": 3637
         },
         "row_count": 23
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/elderly-fukushi-amounts.parquet",
-          "sha256": "d41884c3d6fe0fc27b6f8f55bfd6f3d76bd694fb2ca878d6f1918ee3b423647e",
-          "bytes": 4275
+          "sha256": "aed40afa12c1be57db9aad5a752632dc45f3c910ec9f76d92c833ecd6580ee16",
+          "bytes": 4340
         },
         "row_count": 174
       }
@@ -4389,7 +4389,7 @@
     {
       "table_id": "general-kensetsu",
       "conversion_id": "general-kensetsu",
-      "input_fingerprint": "56e3e4b848e89815f0c8ee4afe8dd19adb1d4cc14948d669eabd33e74902730a",
+      "input_fingerprint": "98a6ac6db97d35789dcf8150fa2d2136a91316c16a14bcd3cb176ee30b827245",
       "account": "一般会計",
       "division": "建設局",
       "notes": [
@@ -4404,16 +4404,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kensetsu-nodes.parquet",
-          "sha256": "85a28db83fca69eb79a261fe5e0a16f196755e2f4ee69982745c1e4b29190ab4",
-          "bytes": 12155
+          "sha256": "66ee683b153ab8f65d845a269b995526b9905dd83b1dca4b50a7c480d7dd1b25",
+          "bytes": 12222
         },
         "row_count": 274
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kensetsu-amounts.parquet",
-          "sha256": "d60b62cff9994e14f96bba1152a45fdcd9d4af75e6c66d98b986a678a9146780",
-          "bytes": 21093
+          "sha256": "d7d20588eb543c280b479f17f80fca7707543c0e6df10fb06c8031197711950d",
+          "bytes": 21160
         },
         "row_count": 1835
       }
@@ -4421,7 +4421,7 @@
     {
       "table_id": "parking-kensetsu",
       "conversion_id": "parking-kensetsu",
-      "input_fingerprint": "f7217bd8ddd9cd92ab71343c65733aebbbc5c43e803b446a3f59c8ed675ba979",
+      "input_fingerprint": "b965af04c3970a47703998ea63ca8ba08d6e0fe3b3a152c28238f39b429fdd23",
       "account": "駐車場事業費",
       "division": "建設局",
       "notes": [
@@ -4435,16 +4435,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/parking-kensetsu-nodes.parquet",
-          "sha256": "1cf5cf67ff7cff88310a09d90da1120a31e622b0169b5ad986a0508ab9951b68",
-          "bytes": 2845
+          "sha256": "e46ade34538b3353eb4eee17ec511b1e2b4838448823730dd5672658ee7eea15",
+          "bytes": 2905
         },
         "row_count": 12
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/parking-kensetsu-amounts.parquet",
-          "sha256": "d851900162107a87d0a91bb9e6b346e3ec2c1ba835071696963cc86a88073a26",
-          "bytes": 3176
+          "sha256": "fdd9a6090ed1d265c0a8d999c6f394a09020116d4782a3a7d65583c0688aa8bc",
+          "bytes": 3239
         },
         "row_count": 84
       }
@@ -4452,7 +4452,7 @@
     {
       "table_id": "general-kankyou",
       "conversion_id": "general-kankyou",
-      "input_fingerprint": "1722756c1e932a8ab1111710ee9410f3ef1d70805affbb3fd7385d2e3a3366c2",
+      "input_fingerprint": "a7447f5062dec1f05d2010c2328c835feec94050dc0bb2a8d509d1a44ecd61b0",
       "account": "一般会計",
       "division": "環境局",
       "notes": [
@@ -4461,23 +4461,23 @@
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 2 種（82 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予費出及び流用増減→予算現額／予備費支出及び流用増減・金額→節／金額。",
         "原画で確かめた名称の誤読 6 件を、管理 JSON の name_corrections で印字に直した: 13使用料及料賃借→13使用料及賃借料・13使用料及賃料→13使用料及賃借料・17備品購人費→17備品購入費・2リイクル推進費→2リサイクル推進費・2処設整費→2処理施設整備費・3業所等事整備費→3事業所等整備費。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p17:full-page:a0:result1:r55・p17:full-page:a0:result1:r55:w2・p18:full-page:a0:result1:r97・p18:full-page:a0:result1:r97:w2）・减→減 2 件（p18:full-page:a0:result1:r97・p18:full-page:a0:result1:r97:w0）・增→増 6 件（p17:full-page:a0:result0:r14・p17:full-page:a0:result0:r14:w1・p18:ink-2:a2:result0:r0・p18:ink-2:a2:result0:r0:w2・p19:ink-2:a2:result0:r0・p19:ink-2:a2:result0:r0:w2）・继→継 2 件（p17:full-page:a0:result1:r2・p17:full-page:a0:result1:r2:w0）・费→費 6 件（p17:full-page:a0:result0:r29・p17:full-page:a0:result0:r29:w5・p18:full-page:a0:result0:r82・p18:full-page:a0:result0:r82:w4・p19:full-page:a0:result0:r94・p19:full-page:a0:result0:r94:w6）。"
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p17:full-page:a0:result1:r55・p17:full-page:a0:result1:r55:w2・p18:full-page:a0:result1:r97・p18:full-page:a0:result1:r97:w2）・减→減 2 件（p18:full-page:a0:result1:r97・p18:full-page:a0:result1:r97:w0）・增→増 6 件（p17:full-page:a0:result0:r14・p17:full-page:a0:result0:r14:w1・p18:ink-2:a2:result0:r0・p18:ink-2:a2:result0:r0:w2・p19:ink-2:a2:result0:r0・p19:ink-2:a2:result0:r0:w2）・继→継 2 件（p17:full-page:a0:result1:r2・p17:full-page:a0:result1:r2:w0）・說→説 2 件（p19:full-page:a0:result1:r7・p19:full-page:a0:result1:r7:w0）・费→費 6 件（p17:full-page:a0:result0:r29・p17:full-page:a0:result0:r29:w5・p18:full-page:a0:result0:r82・p18:full-page:a0:result0:r82:w4・p19:full-page:a0:result0:r94・p19:full-page:a0:result0:r94:w6）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kankyou-nodes.parquet",
-          "sha256": "fafae48392e19653fa3f6d9e1ed7d225af9d72f5a37106cab21f0aac5fab5797",
-          "bytes": 6146
+          "sha256": "a06a4ae86495b686d478942618d07866a669ee3ebc2ed1fd822e5946384a10fd",
+          "bytes": 6218
         },
         "row_count": 82
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kankyou-amounts.parquet",
-          "sha256": "635f0116136834972a277e5897526ab8afc4d16aaeea02f36a44b150d9995c2a",
-          "bytes": 11178
+          "sha256": "e83c774eb45eb0a116cab3e8a3b612c11898be38c057c77f417c253bb76bae8a",
+          "bytes": 11237
         },
         "row_count": 552
       }
@@ -4485,7 +4485,7 @@
     {
       "table_id": "general-chiiki",
       "conversion_id": "general-chiiki",
-      "input_fingerprint": "c392d1bf6d19af774040fe8a2c69addf6d9ee5a3b0427e026c4186e1f0c3efc1",
+      "input_fingerprint": "24f20e47bc6e8a3f5a4a2e96cff36e42f2b286966ea0f37c1d9ca5acdeef557a",
       "account": "一般会計",
       "division": "地域協働局",
       "notes": [
@@ -4499,16 +4499,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-chiiki-nodes.parquet",
-          "sha256": "dfcf686954e337b9721090abff641bb6a667b07a932854b4fedeac5938855ac2",
-          "bytes": 6128
+          "sha256": "11adbfe74ded95b4c223dd25d06b9848180e0a76553b422505db5bd7f5aae812",
+          "bytes": 6197
         },
         "row_count": 85
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-chiiki-amounts.parquet",
-          "sha256": "0da6fb042cfa21211a7a522fe2f5a7482a25f1a8c42c573b47deaac2d138d886",
-          "bytes": 11041
+          "sha256": "47341d3689753dff34aaa892eb24848a7df9fbd4e19654f858a28c5743f3e086",
+          "bytes": 11100
         },
         "row_count": 477
       }
@@ -4516,7 +4516,7 @@
     {
       "table_id": "general-kenchikujyutaku",
       "conversion_id": "general-kenchikujyutaku",
-      "input_fingerprint": "006e9f5e67cbc26d16c4bd57b62de0ee8f37fd29612f6aa533babcd989f5ed99",
+      "input_fingerprint": "df9679a2a5fbed8a99cc1f9f11a789b75932dc264de3bdad1de398c388fb54fd",
       "account": "一般会計",
       "division": "建築住宅局",
       "notes": [
@@ -4532,16 +4532,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kenchikujyutaku-nodes.parquet",
-          "sha256": "34ce64bc2d46e165b25486da161fb8affcf860814b3d7c302cab86aa1f88c91b",
-          "bytes": 4418
+          "sha256": "509518d94232631f6efb06881adb9b5aea01df5e114b2b1145b4990b5812c084",
+          "bytes": 4497
         },
         "row_count": 41
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kenchikujyutaku-amounts.parquet",
-          "sha256": "c539871719c69a8360e16ca1c5245d7554cb5acd62935e13b3533e3d75bc9561",
-          "bytes": 5898
+          "sha256": "666bb4b3febcb3dc30ba35958650f471aa59e9fe1567f85013f005fce0bb3ac0",
+          "bytes": 5936
         },
         "row_count": 148
       }
@@ -4549,7 +4549,7 @@
     {
       "table_id": "general-keizai",
       "conversion_id": "general-keizai",
-      "input_fingerprint": "8359411fe6266d9070cecb92594379603295ed4cc581889ea61b90a600734cb4",
+      "input_fingerprint": "6e322dcc270844fbc0aabe926db89f6951d88bf9ffde91458050c3e43758b33a",
       "account": "一般会計",
       "division": "経済観光局",
       "notes": [
@@ -4563,16 +4563,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-keizai-nodes.parquet",
-          "sha256": "363b21b8995f2db24bb14432f399cc46d1e397f76df1a66c3e1b827610992532",
-          "bytes": 8776
+          "sha256": "422aaeadaa4a578588062c1a8dc5fcb9867ca172474f8910b37e6c6267db4be5",
+          "bytes": 8831
         },
         "row_count": 190
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-keizai-amounts.parquet",
-          "sha256": "7bf9ee04ad28612c64cdf701fa92cd5f740a018d2db534bd7065156c2b976dce",
-          "bytes": 19115
+          "sha256": "b9764cea1e343b536199916cd3120f58b3bac83610d40b6700108a0c1d9fef00",
+          "bytes": 19178
         },
         "row_count": 1296
       }
@@ -4580,7 +4580,7 @@
     {
       "table_id": "market-keizai",
       "conversion_id": "market-keizai",
-      "input_fingerprint": "565a3620ef23c7b2385a158080af63c5d34025f1dc207f8e41ee19c1b0b56260",
+      "input_fingerprint": "9d73b59a562fa3a956e5664a684d83d889685be74947a483916a0226cb9c34fa",
       "account": "市場事業費",
       "division": "経済観光局",
       "notes": [
@@ -4594,16 +4594,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/market-keizai-nodes.parquet",
-          "sha256": "a2fda6e57aeccc11c881395e04c3c4f180366c8b5ccc370a3aa6214390afae00",
-          "bytes": 4531
+          "sha256": "c566ad2fe0b2885ffd204578681866f674b632bd87a4b88fb1b140fd25001451",
+          "bytes": 4614
         },
         "row_count": 44
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/market-keizai-amounts.parquet",
-          "sha256": "c85d4d18c346c5a6371e87ba96681c40e138aa1cda47d80674a19c726f1dde0e",
-          "bytes": 7070
+          "sha256": "de538b2474402e10cabfcbff46ed6acd506a7f0bc04d829494a3f900895ac965",
+          "bytes": 7135
         },
         "row_count": 320
       }
@@ -4611,7 +4611,7 @@
     {
       "table_id": "meat-keizai",
       "conversion_id": "meat-keizai",
-      "input_fingerprint": "8f34622897462ee00f0876a69ec96eca45cb9dbeb15718bb43ee89a097104d46",
+      "input_fingerprint": "82774f387b68dec405c378e11e8cd8666a351f4a7f916e08ce3748fbb24a8e10",
       "account": "食肉センター事業費",
       "division": "経済観光局",
       "notes": [
@@ -4625,16 +4625,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/meat-keizai-nodes.parquet",
-          "sha256": "f6d93ff6411cf761557ca07a07928df313aaa7dfe4979a2a8f3a14462156b0b0",
-          "bytes": 4059
+          "sha256": "dbb0939348783ca906effbcc0ccb8e67728da10e43b1f96ce7883fdee0c78928",
+          "bytes": 4144
         },
         "row_count": 32
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/meat-keizai-amounts.parquet",
-          "sha256": "2ee2e66e14a5ab1fdf5c1c8f6a6f63880599b9a0b4a5322d2d641fbc90401099",
-          "bytes": 5489
+          "sha256": "ab56e04d75ea147ef1f529bbb21dcca1788b8b489be2277263255141525f4274",
+          "bytes": 5541
         },
         "row_count": 244
       }
@@ -4642,7 +4642,7 @@
     {
       "table_id": "general-kyoiku",
       "conversion_id": "general-kyoiku",
-      "input_fingerprint": "f1671601db61ddf87b223a3ac416acceeccdc0fc78e67306c1df28d8180f3a6e",
+      "input_fingerprint": "bfc566fce9110bce96531e89b34f52dce8d776621349f6d458e139366135a47f",
       "account": "一般会計",
       "division": "教育委員会",
       "notes": [
@@ -4651,23 +4651,23 @@
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（205 件）を、印字された語から辞書の見出しに寄せた: 金額→節／金額。",
         "原画で確かめた名称の誤読 8 件を、管理 JSON の name_corrections で印字に直した: 5校職員学厚生費→5学校職員厚生費・17備品購人費→17備品購入費・17備品購人費→17備品購入費・7特特別支援援学学校費費→7特別支援学校費・4特別支援学校→4特別支援学校建設費・13使用料及科→13使用料及賃借料・21補填補償及賠償金→21補償補填及賠償金・14教育設整費→14教育施設整備費。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p24:full-page:a0:result1:r29・p24:full-page:a0:result1:r29:w4・p33:full-page:a0:result1:r28・p33:full-page:a0:result1:r28:w0）・减→減 24 件（p22:full-page:a0:result0:r18・p22:full-page:a0:result0:r18:w3・p23:full-page:a0:result0:r17・p23:full-page:a0:result0:r17:w3・p24:full-page:a0:result0:r17・p24:full-page:a0:result0:r17:w3・p25:full-page:a0:result0:r16・p25:full-page:a0:result0:r16:w3・p26:full-page:a0:result0:r16・p26:full-page:a0:result0:r16:w3・p27:full-page:a0:result0:r16・p27:full-page:a0:result0:r16:w3・p28:full-page:a0:result0:r16・p28:full-page:a0:result0:r16:w3・p29:full-page:a0:result0:r16・p29:full-page:a0:result0:r16:w3・p30:full-page:a0:result0:r17・p30:full-page:a0:result0:r17:w3・p31:full-page:a0:result0:r16・p31:full-page:a0:result0:r16:w3・p32:full-page:a0:result0:r16・p32:full-page:a0:result0:r16:w3・p33:full-page:a0:result0:r18・p33:full-page:a0:result0:r18:w3）・别→別 2 件（p32:ink-1:a1:result0:r0・p32:ink-1:a1:result0:r0:w1）・增→増 24 件（p22:full-page:a0:result0:r18・p22:full-page:a0:result0:r18:w2・p23:full-page:a0:result0:r17・p23:full-page:a0:result0:r17:w2・p24:full-page:a0:result0:r17・p24:full-page:a0:result0:r17:w2・p25:full-page:a0:result0:r16・p25:full-page:a0:result0:r16:w2・p26:full-page:a0:result0:r16・p26:full-page:a0:result0:r16:w2・p27:full-page:a0:result0:r16・p27:full-page:a0:result0:r16:w2・p28:full-page:a0:result0:r16・p28:full-page:a0:result0:r16:w2・p29:full-page:a0:result0:r16・p29:full-page:a0:result0:r16:w2・p30:full-page:a0:result0:r17・p30:full-page:a0:result0:r17:w2・p31:full-page:a0:result0:r16・p31:full-page:a0:result0:r16:w2・p32:full-page:a0:result0:r16・p32:full-page:a0:result0:r16:w2・p33:full-page:a0:result0:r18・p33:full-page:a0:result0:r18:w2）・济→済 12 件（p24:full-page:a0:result0:r35・p24:full-page:a0:result0:r35:w3・p25:full-page:a0:result0:r39・p25:full-page:a0:result0:r39:w2・p26:full-page:a0:result0:r38・p26:full-page:a0:result0:r38:w2・p27:full-page:a0:result0:r38・p27:full-page:a0:result0:r38:w2・p28:full-page:a0:result0:r39・p28:full-page:a0:result0:r39:w2・p29:full-page:a0:result0:r40・p29:full-page:a0:result0:r40:w3）・產→産 2 件（p31:full-page:a0:result0:r55・p31:full-page:a0:result0:r55:w3）・继→継 2 件（p22:full-page:a0:result1:r2・p22:full-page:a0:result1:r2:w0）・费→費 4 件（p23:full-page:a0:result0:r56・p23:full-page:a0:result0:r56:w3・p25:full-page:a0:result0:r39・p25:full-page:a0:result0:r39:w3）・项→項 20 件（p23:full-page:a0:result0:r6・p23:full-page:a0:result0:r6:w1・p24:full-page:a0:result0:r6・p24:full-page:a0:result0:r6:w1・p25:full-page:a0:result0:r6・p25:full-page:a0:result0:r6:w1・p26:full-page:a0:result0:r6・p26:full-page:a0:result0:r6:w1・p27:full-page:a0:result0:r6・p27:full-page:a0:result0:r6:w1・p28:full-page:a0:result0:r6・p28:full-page:a0:result0:r6:w1・p29:full-page:a0:result0:r6・p29:full-page:a0:result0:r6:w1・p30:full-page:a0:result0:r6・p30:full-page:a0:result0:r6:w1・p32:full-page:a0:result0:r4・p32:full-page:a0:result0:r4:w1・p33:full-page:a0:result0:r5・p33:full-page:a0:result0:r5:w1）・额→額 14 件（p25:full-page:a0:result0:r15・p25:full-page:a0:result0:r15:w2・p26:full-page:a0:result0:r15・p26:full-page:a0:result0:r15:w2・p27:full-page:a0:result0:r15・p27:full-page:a0:result0:r15:w2・p28:full-page:a0:result0:r15・p28:full-page:a0:result0:r15:w2・p29:full-page:a0:result0:r15・p29:full-page:a0:result0:r15:w2・p30:full-page:a0:result0:r16・p30:full-page:a0:result0:r16:w2・p31:full-page:a0:result0:r15・p31:full-page:a0:result0:r15:w2）。"
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p24:full-page:a0:result1:r29・p24:full-page:a0:result1:r29:w4・p33:full-page:a0:result1:r28・p33:full-page:a0:result1:r28:w0）・减→減 24 件（p22:full-page:a0:result0:r18・p22:full-page:a0:result0:r18:w3・p23:full-page:a0:result0:r17・p23:full-page:a0:result0:r17:w3・p24:full-page:a0:result0:r17・p24:full-page:a0:result0:r17:w3・p25:full-page:a0:result0:r16・p25:full-page:a0:result0:r16:w3・p26:full-page:a0:result0:r16・p26:full-page:a0:result0:r16:w3・p27:full-page:a0:result0:r16・p27:full-page:a0:result0:r16:w3・p28:full-page:a0:result0:r16・p28:full-page:a0:result0:r16:w3・p29:full-page:a0:result0:r16・p29:full-page:a0:result0:r16:w3・p30:full-page:a0:result0:r17・p30:full-page:a0:result0:r17:w3・p31:full-page:a0:result0:r16・p31:full-page:a0:result0:r16:w3・p32:full-page:a0:result0:r16・p32:full-page:a0:result0:r16:w3・p33:full-page:a0:result0:r18・p33:full-page:a0:result0:r18:w3）・别→別 2 件（p32:ink-1:a1:result0:r0・p32:ink-1:a1:result0:r0:w1）・增→増 24 件（p22:full-page:a0:result0:r18・p22:full-page:a0:result0:r18:w2・p23:full-page:a0:result0:r17・p23:full-page:a0:result0:r17:w2・p24:full-page:a0:result0:r17・p24:full-page:a0:result0:r17:w2・p25:full-page:a0:result0:r16・p25:full-page:a0:result0:r16:w2・p26:full-page:a0:result0:r16・p26:full-page:a0:result0:r16:w2・p27:full-page:a0:result0:r16・p27:full-page:a0:result0:r16:w2・p28:full-page:a0:result0:r16・p28:full-page:a0:result0:r16:w2・p29:full-page:a0:result0:r16・p29:full-page:a0:result0:r16:w2・p30:full-page:a0:result0:r17・p30:full-page:a0:result0:r17:w2・p31:full-page:a0:result0:r16・p31:full-page:a0:result0:r16:w2・p32:full-page:a0:result0:r16・p32:full-page:a0:result0:r16:w2・p33:full-page:a0:result0:r18・p33:full-page:a0:result0:r18:w2）・济→済 12 件（p24:full-page:a0:result0:r35・p24:full-page:a0:result0:r35:w3・p25:full-page:a0:result0:r39・p25:full-page:a0:result0:r39:w2・p26:full-page:a0:result0:r38・p26:full-page:a0:result0:r38:w2・p27:full-page:a0:result0:r38・p27:full-page:a0:result0:r38:w2・p28:full-page:a0:result0:r39・p28:full-page:a0:result0:r39:w2・p29:full-page:a0:result0:r40・p29:full-page:a0:result0:r40:w3）・產→産 2 件（p31:full-page:a0:result0:r55・p31:full-page:a0:result0:r55:w3）・继→継 2 件（p22:full-page:a0:result1:r2・p22:full-page:a0:result1:r2:w0）・說→説 12 件（p22:full-page:a0:result1:r4・p22:full-page:a0:result1:r4:w0・p23:full-page:a0:result1:r4・p23:full-page:a0:result1:r4:w0・p25:full-page:a0:result1:r4・p25:full-page:a0:result1:r4:w0・p27:full-page:a0:result1:r4・p27:full-page:a0:result1:r4:w0・p28:full-page:a0:result1:r4・p28:full-page:a0:result1:r4:w0・p29:full-page:a0:result1:r4・p29:full-page:a0:result1:r4:w0）・费→費 4 件（p23:full-page:a0:result0:r56・p23:full-page:a0:result0:r56:w3・p25:full-page:a0:result0:r39・p25:full-page:a0:result0:r39:w3）・项→項 20 件（p23:full-page:a0:result0:r6・p23:full-page:a0:result0:r6:w1・p24:full-page:a0:result0:r6・p24:full-page:a0:result0:r6:w1・p25:full-page:a0:result0:r6・p25:full-page:a0:result0:r6:w1・p26:full-page:a0:result0:r6・p26:full-page:a0:result0:r6:w1・p27:full-page:a0:result0:r6・p27:full-page:a0:result0:r6:w1・p28:full-page:a0:result0:r6・p28:full-page:a0:result0:r6:w1・p29:full-page:a0:result0:r6・p29:full-page:a0:result0:r6:w1・p30:full-page:a0:result0:r6・p30:full-page:a0:result0:r6:w1・p32:full-page:a0:result0:r4・p32:full-page:a0:result0:r4:w1・p33:full-page:a0:result0:r5・p33:full-page:a0:result0:r5:w1）・额→額 14 件（p25:full-page:a0:result0:r15・p25:full-page:a0:result0:r15:w2・p26:full-page:a0:result0:r15・p26:full-page:a0:result0:r15:w2・p27:full-page:a0:result0:r15・p27:full-page:a0:result0:r15:w2・p28:full-page:a0:result0:r15・p28:full-page:a0:result0:r15:w2・p29:full-page:a0:result0:r15・p29:full-page:a0:result0:r15:w2・p30:full-page:a0:result0:r16・p30:full-page:a0:result0:r16:w2・p31:full-page:a0:result0:r15・p31:full-page:a0:result0:r15:w2）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kyoiku-nodes.parquet",
-          "sha256": "055f7db8a8eff373669f3dff8df8c03289a7808758c8540894ba89a4d0b9ef29",
-          "bytes": 11463
+          "sha256": "0585b36006dd801ecaba4117082a801e6b99c9a7a391179bae23b40866e274ce",
+          "bytes": 11528
         },
         "row_count": 242
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kyoiku-amounts.parquet",
-          "sha256": "990be61bca46186f3978c71291ab170209f670ab4a533d0da9057093b828b560",
-          "bytes": 26219
+          "sha256": "dfc36d89717563ac0282d876202b16180c4877e9f12ec511c5d0159f2ebcd6cb",
+          "bytes": 26290
         },
         "row_count": 1600
       }
@@ -4675,7 +4675,7 @@
     {
       "table_id": "general-kodomo",
       "conversion_id": "general-kodomo",
-      "input_fingerprint": "b3d86dadc6ffb7595d06a9373c302843492f8fbdcffe5fd816b14435ef1b21b3",
+      "input_fingerprint": "12f6764dc54a91b1c05e9d5fc71dc794cefb77e9c192425c4cf1f8c3b1126118",
       "account": "一般会計",
       "division": "こども家庭局",
       "notes": [
@@ -4690,16 +4690,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kodomo-nodes.parquet",
-          "sha256": "26e6161e43a7c58ea8cb329922087753855477224955508b33dd05d047806990",
-          "bytes": 9142
+          "sha256": "c4f74734322eeeb77fe241b5a99319fa4d7a0384c54605dd61141340b4b2d020",
+          "bytes": 9205
         },
         "row_count": 144
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kodomo-amounts.parquet",
-          "sha256": "b3a393f7c1e121c04703498578699ddfdc0849aafcca44f1ae60948b4af1f240",
-          "bytes": 20264
+          "sha256": "9b6cb371260ead9f2e95680629f361d7fb7b0d80617675e544aa0da4274cbb01",
+          "bytes": 20327
         },
         "row_count": 968
       }
@@ -4707,7 +4707,7 @@
     {
       "table_id": "single-parent-kodomo",
       "conversion_id": "single-parent-kodomo",
-      "input_fingerprint": "462cb7905d055c99afcda4e8c81ff2635ae712b3c366fab44ac26bc13cf2c0ae",
+      "input_fingerprint": "b04138265089f0ad5fffb28437cb30059da5e26e26e37ae4d2cbe2901b02d6de",
       "account": "母子父子寡婦福祉資金貸付事業費",
       "division": "こども家庭局",
       "notes": [
@@ -4721,16 +4721,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/single-parent-kodomo-nodes.parquet",
-          "sha256": "33b417d3ee81044496336ec4c1888c22e7da0715de22b9f83278c898a80e0549",
-          "bytes": 3836
+          "sha256": "c3d54e634776ac1313df23a06cc76b6d3418aa88ed68aea2eda664c02b9a6226",
+          "bytes": 3916
         },
         "row_count": 24
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/single-parent-kodomo-amounts.parquet",
-          "sha256": "fffc1b5bfab524fdd1f5219a8965cd691cff93f6e3ff525e93d85d094838c84d",
-          "bytes": 6090
+          "sha256": "d39d6a2d97b4d6f612bedd174b24746bb5cda7beb4b934d968436189c13a61f8",
+          "bytes": 6145
         },
         "row_count": 188
       }
@@ -4738,7 +4738,7 @@
     {
       "table_id": "general-kouwan",
       "conversion_id": "general-kouwan",
-      "input_fingerprint": "717985b7d29bdf464a7a056b1e4f89aa70dba1b35a5301c4cc8463cb24ba17b6",
+      "input_fingerprint": "117487d7c656bd87cd05be3fc9896897b3538b517d33b2e79ce3cf534aa53c8a",
       "account": "一般会計",
       "division": "港湾局",
       "notes": [
@@ -4753,16 +4753,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kouwan-nodes.parquet",
-          "sha256": "a58167779f004278c73798dd7efd69eb69e25563297968e0265b7e4c309c0192",
-          "bytes": 3571
+          "sha256": "8d8210516cf9c6b3b5e0e01cfff22746cca4adfa819cab59ae0f971c0d19075c",
+          "bytes": 3654
         },
         "row_count": 22
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kouwan-amounts.parquet",
-          "sha256": "8924a0c29e9cbf59efaccd936b805e1379f65f2f629675d394c0c282f4651fc2",
-          "bytes": 5352
+          "sha256": "15e089d06cf27a40b270e12f8d19e764717f9c984bb0ec3c7e4bae850090e9cb",
+          "bytes": 5394
         },
         "row_count": 156
       }
@@ -4770,7 +4770,7 @@
     {
       "table_id": "general-toshi",
       "conversion_id": "general-toshi",
-      "input_fingerprint": "99d36a1af8b636a53154d2f66d643ee91fff0d54bdae32c4213f924b376d03b1",
+      "input_fingerprint": "37cdd24681dadb55c43494bb9aa92c829e2c54ec8c600bc74cb496905aed1ffd",
       "account": "一般会計",
       "division": "都市局",
       "notes": [
@@ -4785,16 +4785,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-toshi-nodes.parquet",
-          "sha256": "f1772fe5801c68f2429f574ed0d12f0a8c92e100df4ae7b97363ec5a1f33e954",
-          "bytes": 7292
+          "sha256": "776b1468d20159dae1feff4fe485852973d442eb811447e1eea6813f4666fffb",
+          "bytes": 7377
         },
         "row_count": 112
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-toshi-amounts.parquet",
-          "sha256": "8e593c958ae3e9a2754c829730d0ec82b2096200a4519f12c17db25c35a3053a",
-          "bytes": 13304
+          "sha256": "5e3a01ce4224563e8b623c30a81a3ffb0a0c3efb035c9744f8f74ff461016562",
+          "bytes": 13364
         },
         "row_count": 739
       }
@@ -4802,7 +4802,7 @@
     {
       "table_id": "redevelopment-toshi",
       "conversion_id": "redevelopment-toshi",
-      "input_fingerprint": "82ceedcbaf93e74b0dd034045ab7f25448c6e80bae50b18d50fe9a9bba404c6f",
+      "input_fingerprint": "dbe73d607369c8f1c61ab4888ed4685d97c29db749a34931e332f198811666dc",
       "account": "市街地再開発事業費",
       "division": "都市局",
       "notes": [
@@ -4817,16 +4817,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/redevelopment-toshi-nodes.parquet",
-          "sha256": "03fc6ba6d327e32d420f832c044c1d25bfbb7bd468c2a82d6525171e12f43ba0",
-          "bytes": 4079
+          "sha256": "5ba29a9dd1e532224f05e8eaaa66e2207ec4dec2261ea399990d5ecb8f969a7a",
+          "bytes": 4151
         },
         "row_count": 32
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/redevelopment-toshi-amounts.parquet",
-          "sha256": "f260d76a757bccb4986a4adea50b98c22fa3b769f06c4b5655bfbb3db86285ab",
-          "bytes": 5541
+          "sha256": "ed883e49939571c83e651c202734dfd32f6cb1a29b631898bd7b2fb253dd2684",
+          "bytes": 5573
         },
         "row_count": 240
       }
@@ -4834,7 +4834,7 @@
     {
       "table_id": "general-bunka",
       "conversion_id": "general-bunka",
-      "input_fingerprint": "66b91c1db6acd2b6ed421ebec5a7b9fd6b879b8f4d0f546dc619406b17fb7896",
+      "input_fingerprint": "b611c15e30d7b58974dec45dab2370d9e0aafc451db004aaf720f15fd16ed66f",
       "account": "一般会計",
       "division": "文化スポーツ局",
       "notes": [
@@ -4848,16 +4848,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-bunka-nodes.parquet",
-          "sha256": "0a660c55b99cd05e94edf9cf3dea0435b2ecc69e2db9ac6da355898503e96cdb",
-          "bytes": 5622
+          "sha256": "83600f3ad03ba78de3b53268556291547d8f62dbe0788afe0de707d7fb860a98",
+          "bytes": 5697
         },
         "row_count": 77
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-bunka-amounts.parquet",
-          "sha256": "858ba6806d2de6798ced5d5fb74f49a0d532a32cfb9ed7c287f32c8bfd95255e",
-          "bytes": 8747
+          "sha256": "d520221e0ae629d9ba7799b01d5144b890d827316826806e6d20f71e5fe391a0",
+          "bytes": 8827
         },
         "row_count": 502
       }
@@ -4865,7 +4865,7 @@
     {
       "table_id": "general-kikikanri",
       "conversion_id": "general-kikikanri",
-      "input_fingerprint": "4643186e75b6cd30c5b1fcf4a2b5ba9a8120019a504ee3dfa63864b15f1247d0",
+      "input_fingerprint": "bd82d30bf32b16b680bae3eb4240b6a90b28c7139e1604e4a5777ee2492eca79",
       "account": "一般会計",
       "division": "危機管理局",
       "notes": [
@@ -4880,16 +4880,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kikikanri-nodes.parquet",
-          "sha256": "a93359b2a67f2f3baabf0a25258e7dfb56ea618eb9fc893c9fa316a4a8c13122",
-          "bytes": 3934
+          "sha256": "e26e7ae77a0ad941667334d4c5f6430f9e50d595bea6f07f47b5fed09ecf981f",
+          "bytes": 4010
         },
         "row_count": 28
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kikikanri-amounts.parquet",
-          "sha256": "227be989039709f33f2ad40c1d79bebc4a531ec122ca1705866c2faa3af0fd48",
-          "bytes": 5940
+          "sha256": "a5cc186bf4015d73c72841e13b49ad85ee0505d85130ed44b4f5209852c2fb24",
+          "bytes": 5983
         },
         "row_count": 196
       }
@@ -4897,7 +4897,7 @@
     {
       "table_id": "general-shobou",
       "conversion_id": "general-shobou",
-      "input_fingerprint": "c7242f02d5c7c260f999d0f81130042a8cb52640a8a718e43492fde66c021e61",
+      "input_fingerprint": "fea17fe7784fd7033d41b9d4ac5f139486eda43939cbfffc2ff35b5fbecc84e5",
       "account": "一般会計",
       "division": "消防局",
       "notes": [
@@ -4911,16 +4911,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-shobou-nodes.parquet",
-          "sha256": "17c5c14e5f5ea214be5087d021608040c656e7bee019b645f1f61fe7bf010099",
-          "bytes": 4445
+          "sha256": "e355834d3266756fe060873b401c804485b72ecf3955a8d7e4f13ae76116b25b",
+          "bytes": 4535
         },
         "row_count": 43
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-shobou-amounts.parquet",
-          "sha256": "8bcabe7b381f88fa7213eb145c298d167e557af8701ef5b1dcafb1b0d21aa9f9",
-          "bytes": 8166
+          "sha256": "31bc67f14d413273bc2326baa0a8911da38d48c9558d0b1b48c607e3edada3e0",
+          "bytes": 8231
         },
         "row_count": 282
       }
@@ -4928,7 +4928,7 @@
     {
       "table_id": "general-kenkou",
       "conversion_id": "general-kenkou",
-      "input_fingerprint": "4164e2503055180a8fd91111c2bca59ee62f378803987adb07998428b616622b",
+      "input_fingerprint": "e71541bdf5cc4479af7c78d76bc2d4662bad5023a08a3af44ebeeaa5db44a650",
       "account": "一般会計",
       "division": "健康局",
       "notes": [
@@ -4942,16 +4942,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kenkou-nodes.parquet",
-          "sha256": "6e27f693f3cc9e17c71fbee4530b50116cd96d0a0e3b2dadea4823a58a5ba6e2",
-          "bytes": 6528
+          "sha256": "6eec731d4688eb6798b82b7c18301d239de660f28ce5cb9d5ac56635cc9c5299",
+          "bytes": 6617
         },
         "row_count": 105
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-kenkou-amounts.parquet",
-          "sha256": "cb1887bb33a447ff8dd8e40ec2b1ddbf48278295c178abaeb4ac3612d79216ff",
-          "bytes": 11177
+          "sha256": "55daf9904db9e27db69c00669c0e4484ace862403450b72923b71a5cc13529c1",
+          "bytes": 11261
         },
         "row_count": 690
       }
@@ -4959,7 +4959,7 @@
     {
       "table_id": "care-kenkou",
       "conversion_id": "care-kenkou",
-      "input_fingerprint": "1057cd4e12cb67441cae02b8a86b3f260242821aeba31593cf11027fbb3f7a83",
+      "input_fingerprint": "4f0170c9649e957a61282a2914141c72fb8e35074eb801d04ecaac1246fb209d",
       "account": "介護保険事業費",
       "division": "健康局",
       "notes": [
@@ -4973,16 +4973,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/care-kenkou-nodes.parquet",
-          "sha256": "f8daf8dd7c1371c577def5076a5035036c8524ba1dd6b03cad06d271ab73c54e",
-          "bytes": 3192
+          "sha256": "64357181047ffc8e2a2d937c707b0a94584b49f91e0a3965b7734afc49a20ab7",
+          "bytes": 3276
         },
         "row_count": 15
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/care-kenkou-amounts.parquet",
-          "sha256": "bb8008d02cf52a5bee17972ec48fa722904885f14a34deaed879f051ba04e94b",
-          "bytes": 3506
+          "sha256": "400bb9df84632a7473d5aea618d4984f18db1d5038024f361dddb44220a3c693",
+          "bytes": 3564
         },
         "row_count": 106
       }
@@ -4990,7 +4990,7 @@
     {
       "table_id": "general",
       "conversion_id": "general",
-      "input_fingerprint": "8af64f65bd5bae250a5ac04ab0841dbf224554422a8c55a07e2509b2766ce6eb",
+      "input_fingerprint": "9647b45caca9b48221ecf01159738f7884ec6e44bdbd851efd2bf91ab3d590b0",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
@@ -5003,16 +5003,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-nodes.parquet",
-          "sha256": "407e25b46dc6da7fc05bd2731399bc6155cee377158dc2162deaa0d3439f266d",
-          "bytes": 6254
+          "sha256": "03a483a69f4a92b9a72edecb42155735cfd4225010c952f7abf91c702d190c03",
+          "bytes": 6286
         },
         "row_count": 78
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/281000/2025/settlement/expenditure/general-amounts.parquet",
-          "sha256": "837c9fdd3df5dc9232f82fbb5f73924c858bd06c17c7c01e4888ea8e18803fe4",
-          "bytes": 9061
+          "sha256": "1bfb695b7e186705514addf6e3cb13facbb9af0e4c2b778d36ca7943ebf5ecde",
+          "bytes": 9114
         },
         "row_count": 390
       }

@@ -806,13 +806,13 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "91ada010b07081f24938d2dcfd1536f105f2a93805473de6c894bf9530e3ba6c",
+      "input_fingerprint": "d0789fc33c11d4a14056d88f077b77fb4956db737b1bebccf8317219948987c1",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 83頁 から決めた。款の和 127,528,000 と印字の「歳出合計」127,528,000 が一致。",
         "金額の注記 52 件（積算 52）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（128 件）を、印字された語から辞書の見出しに寄せた: 歳出／比較増(△)減→歳出／比較増減・比較増(△)減→比較増減。",
+        "共有辞書に無い金額の見出し 2 種（128 件）を、印字された語から辞書の見出しに寄せた: 歳出／比較増(△)減→比較増減・比較増(△)減→比較増減。",
         "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: (区議会議員・区長→(区議会議員・区長選挙費)・4)3歳児健康診査→43歳児健康診査。"
       ],
       "unread_amount_count": 0,
@@ -828,8 +828,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131059/2024/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "557214457026caf36fa6ef9efc7def1b925e05bc962ed08a44ba4e7021832e34",
-          "bytes": 59472
+          "sha256": "6d0b7a83c7285ca6ba3f80ead0c7084249673da879ea4008611daf3d8f9b95ff",
+          "bytes": 59560
         },
         "row_count": 2851
       }
@@ -837,13 +837,13 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "4e295d9a3a1ddea3cde5de61f724d22d79098548e46d3634b32a842f58aac969",
+      "input_fingerprint": "e61dc4bb012441101a46da4903e0635f09495da7db72ca5e5e14d5585ce829d6",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 11頁 から決めた。款の和 21,191,000 と印字の「歳出合計」21,191,000 が一致。",
         "金額の注記 12 件（積算 12）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（39 件）を、印字された語から辞書の見出しに寄せた: 歳出／比較増(△)減→歳出／比較増減・比較増(△)減→比較増減。"
+        "共有辞書に無い金額の見出し 2 種（39 件）を、印字された語から辞書の見出しに寄せた: 歳出／比較増(△)減→比較増減・比較増(△)減→比較増減。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -858,8 +858,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131059/2024/initial/expenditure/national-health-initial-amounts.parquet",
-          "sha256": "9d7882eae8e4864f2e65e11070c105dc8a112eecf3328f9ba9f50c4288d282f2",
-          "bytes": 7989
+          "sha256": "33dc1ff99e8df67830b6958ed428389e47cfdf5a6d35e6e463e7ed947b82b036",
+          "bytes": 8000
         },
         "row_count": 263
       }
@@ -867,13 +867,13 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "edf43bc926298fdd8ec18bec0797da99f2559748f3d01cb81e35dd92ad13c7d0",
+      "input_fingerprint": "958c5693d7f6c31048a8f2b9b52d1c24caebe63be4613e9212703e682053878a",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 11頁 から決めた。款の和 17,896,000 と印字の「歳出合計」17,896,000 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（25 件）を、印字された語から辞書の見出しに寄せた: 歳出／比較増(△)減→歳出／比較増減・比較増(△)減→比較増減。"
+        "共有辞書に無い金額の見出し 2 種（25 件）を、印字された語から辞書の見出しに寄せた: 歳出／比較増(△)減→比較増減・比較増(△)減→比較増減。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -888,8 +888,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131059/2024/initial/expenditure/care-initial-amounts.parquet",
-          "sha256": "a082dd10221c2eb8af549cd818c4f7eafba5810a9493fc790aac796f51c12c57",
-          "bytes": 7875
+          "sha256": "3e42035355b2e51dc5ff0fd11bcb2ae289afd61c8d34d17b66217529b25f767b",
+          "bytes": 7872
         },
         "row_count": 244
       }
@@ -897,13 +897,13 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "eb664bad3887f2f05a03d2d0a64d18e2b932ace62e30b47a9692800c7ee92707",
+      "input_fingerprint": "350ada07c4dc2bf56929bd448a1fe745b0536e7674e010197ce536f43e9afdcb",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 4頁 から決めた。款の和 6,175,000 と印字の「歳出合計」6,175,000 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（14 件）を、印字された語から辞書の見出しに寄せた: 歳出／比較増(△)減→歳出／比較増減・比較増(△)減→比較増減。"
+        "共有辞書に無い金額の見出し 2 種（14 件）を、印字された語から辞書の見出しに寄せた: 歳出／比較増(△)減→比較増減・比較増(△)減→比較増減。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -918,8 +918,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131059/2024/initial/expenditure/elderly-medical-initial-amounts.parquet",
-          "sha256": "b923c067495684ebac5830dcb536a61d38c4a2eae89e0758292c1d716470f57e",
-          "bytes": 4073
+          "sha256": "0a5a79b91746d0a8b1933918ccf76d05cb376fb5044f90452a8fdd90719525f6",
+          "bytes": 4064
         },
         "row_count": 83
       }

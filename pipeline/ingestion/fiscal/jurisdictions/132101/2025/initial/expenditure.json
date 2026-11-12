@@ -103,11 +103,11 @@
     {
       "table_id": "general",
       "conversion_id": "general",
-      "input_fingerprint": "39ac6f1b30d6c34ebe4ee5b546eee6a9cff356aa7382fcf9a97b309677e84fa4",
+      "input_fingerprint": "21c350c9ecc2ac3a12bc03df45f3ae47fc32ab7c2e8d2c697a7214c4ac16b659",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '細節': 'shape', '説明': 'position'}。",
-        "金額の単位は column mark 182頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は column mark 182頁 から決めた。款の和 52,400,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,

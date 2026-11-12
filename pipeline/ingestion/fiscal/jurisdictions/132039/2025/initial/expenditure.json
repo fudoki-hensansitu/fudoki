@@ -85,11 +85,11 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "d3d3b1aab1f7750704c84a9ad8245cc3296ba6df4a18361fe96dde319c2b4617",
+      "input_fingerprint": "cdf08ca9a41f53cec9342bda6434783857ecd901b540f3b010a1fd9828514eef",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'区分': 'indent', '節の説明': 'indent', '説明': 'position'}。",
-        "金額の単位は column mark 145頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の単位は column mark 145頁 から決めた。分冊のため款の和 88,028,000 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
