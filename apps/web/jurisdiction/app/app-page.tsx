@@ -243,14 +243,14 @@ function FieldRow({ f, i, max, onClick }: { f: YearView['fields'][number]; i: nu
   const pct = (f.yen / v.total) * 100
   return (
     <button type="button" onClick={onClick} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 rounded-lg px-2.5 py-3 text-left transition-colors hover:bg-card sm:grid-cols-[10rem_minmax(0,1fr)_4.5rem]">
-      <span className="min-w-0">
+      <span className="col-start-1 row-start-1 min-w-0 sm:col-start-auto sm:row-start-auto">
         <span className="block truncate text-base font-medium">{f.name}</span>
         <span className="block text-xs text-muted-foreground"><Amt yen={f.yen} /> · 事業 {n}</span>
       </span>
-      <span className="col-span-2 row-start-2 block h-1.5 overflow-hidden rounded-full bg-secondary sm:col-span-1 sm:row-start-auto">
+      <span className="col-span-2 col-start-1 row-start-2 block h-1.5 overflow-hidden rounded-full bg-secondary sm:col-span-1 sm:col-start-auto sm:row-start-auto">
         <span className="app-grow block h-full rounded-full bg-primary" style={{ width: `${Math.max(1, (f.yen / max) * 100)}%`, animationDelay: `${i * 30}ms` }} />
       </span>
-      <span className="row-start-1 text-right text-[17px] tabular-nums sm:row-start-auto">
+      <span className="col-start-2 row-start-1 text-right text-[17px] tabular-nums sm:col-start-auto sm:row-start-auto">
         {pct.toFixed(1)}
         <small className="text-xs text-muted-foreground">%</small>
       </span>

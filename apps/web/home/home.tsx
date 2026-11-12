@@ -337,7 +337,7 @@ function FeaturedTowns({ featured, entries }: { featured: Featured[]; entries: M
   return (
     <section className="mt-10" aria-labelledby="featured-towns">
       <h2 id="featured-towns" className="mb-3 text-[17px] font-semibold">くわしく見られるまち</h2>
-      <ul className="grid gap-x-6 sm:grid-cols-2">
+      <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
         {items.map((t) => (
           <li key={t.code}>
             <Link href={t.href} className="flex items-center gap-3 rounded-lg px-2.5 py-3 text-foreground no-underline transition-colors hover:bg-card">
