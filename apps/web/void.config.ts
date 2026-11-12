@@ -40,8 +40,8 @@ export default defineConfig({
     // 頁の .server.ts の revalidate は使わない。頁の pattern（`/:prefecture/:name` など）が静的資産（/assets/*.js・紋章の SVG）にも当たり、資産の immutable な cache を失うため。
     // 自治体の頁は都道府県の slug ごとの path で書き、どれにも当たらない path（静的資産・会話の頁 /s/:id）は ISR に置かない
     revalidate: {
-      // 自治体の頁（都道府県自体の頁・市区町村の頁・年度・タブ・分野）。データは取り込みのときだけ変わる。
-      // ホーム（/）は置かない。ISR は Accept を見ずにキャッシュの HTML を返し、AI エージェントへの Markdown の応答（middleware/01.site.ts）が届かなくなるため
+      // ホームと自治体の頁（都道府県自体の頁・市区町村の頁・年度・タブ・分野）。データは取り込みのときだけ変わる
+      '/': 3600,
       ...Object.fromEntries(Object.values(prefectures.slugs).flatMap((slug) => [[`/${slug}`, 3600], [`/${slug}/*`, 3600]])),
       // 画面が取る自治体のデータ（routes/data/）
       '/data/*': 3600,

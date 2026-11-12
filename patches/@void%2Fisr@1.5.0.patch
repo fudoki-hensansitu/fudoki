@@ -1,0 +1,17 @@
+diff --git a/dist/core.mjs b/dist/core.mjs
+index 348ec4a142275a6feb17d1d105722bf121b1bfdb..c630dd783d8b1ece9f34437e5513e11970e7ac29 100644
+--- a/dist/core.mjs
++++ b/dist/core.mjs
+@@ -149,7 +149,11 @@ function acceptsEventStream(request) {
+ }
+ /** Return whether credentials or EventSource semantics require an ISR bypass. */
+ function shouldBypassIsr(request) {
+-	return request.headers.has("Cookie") || request.headers.has("Authorization") || request.headers.has("Cf-Access-Jwt-Assertion") || acceptsEventStream(request);
++	return request.headers.has("Cookie") || request.headers.has("Authorization") || request.headers.has("Cf-Access-Jwt-Assertion") || acceptsEventStream(request) || acceptsMarkdown(request);
++}
++/** fudoki: Accept に text/markdown がある要求（AI エージェント）は ISR を通さず、アプリの Markdown の応答に届ける */
++function acceptsMarkdown(request) {
++	return request.headers.get("accept")?.split(",").some((value) => value.trim().toLowerCase().split(";", 1)[0] === "text/markdown") ?? false;
+ }
+ /** Only document navigations may read a framework's shared HTML cache. */
+ function isFrameworkDocumentRequest(request) {
