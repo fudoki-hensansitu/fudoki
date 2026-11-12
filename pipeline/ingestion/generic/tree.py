@@ -577,7 +577,8 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
                 code, name = year.group(1), line_text[len(year.group(1)):]
         spaced = (len(label) > 1 and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) is not None
                   and label[1].x0 - label[0].x1 >= 2)  # the number is a word of its own, set apart from the name
-        if code is not None and COUNTED.match(line_text) and not YEAR_LED.match(line_text) and not script and not spaced:
+        if (code is not None and not project and COUNTED.match(line_text) and not YEAR_LED.match(line_text) and not script
+                and not spaced):
             code, name = None, line_text  # `110番非常通報装置`, `3歳児健康診査`: a count, not an item number
         if code is not None and not name and money:
             code = None  # a lone number left of an amount is not a code
