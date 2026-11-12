@@ -259,7 +259,8 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         jurisdictions = load_jurisdictions(JURISDICTIONS)
         con.execute('create or replace table ingestion.jurisdiction (jurisdiction_code varchar, name varchar, ocd_id varchar, official_url varchar)')
         con.executemany('insert into ingestion.jurisdiction values (?,?,?,?)', jurisdictions)
-        project_tables = project.load(remote=remote)
+        # 事業評価・プレスは自治体で絞るとき、その自治体のものが無ければ読まない（今は品川区だけ）
+        project_tables = project.load(remote=remote, jurisdictions=jurisdictions)
         project.write(con, project_tables)
         used = {root / 'manifest.json' for document in documents.values()
                 if (root := candidate_root(candidate, document['target'], document['direction'])) is not None}
@@ -293,7 +294,9 @@ def main() -> None:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
                         '--select', 'marts.expenditure+', '+marts.expenditure', '+jurisdiction',
-                        'cofog_master', '+marts.evaluation', '+marts.budget_proposal', '+marts.project'],
+                        'cofog_master', '+marts.evaluation', '+marts.budget_proposal', '+marts.project',
+                        # 自治体で絞ったとき、他の自治体を宣言した seed の検査をその自治体に絞る
+                        *(['--vars', json.dumps({'only_jurisdictions': sorted(args.jurisdiction)})] if args.jurisdiction else [])],
                        cwd=DBT, stdout=sys.stderr, check=True)
         result['dbt_build'] = 'passed'
     print(json.dumps(result, ensure_ascii=False))

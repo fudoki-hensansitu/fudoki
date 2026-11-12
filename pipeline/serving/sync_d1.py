@@ -551,11 +551,16 @@ def run_scoped(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, 
         log('dry-run: D1 には書いていない')
         return 0
     matches = read_schemas(d1, tables)
-    if stale := [name for name in TABLE_ORDER if not matches[name]]:
-        log(f'D1 に無いか列・index が違う表がある: {", ".join(stale)}。自治体を絞った同期では作り直さない。--jurisdiction なしで流す')
-        return 1
+    skipped = []
+    for name in [n for n in TABLE_ORDER if not matches[n]]:
+        # 列・index が違っても、その自治体の行がどちらにも無い表は触らずに済む
+        if warehouse_count(con, name, and_where('', scopes[name])) or count_rows(d1, name, scopes[name]):
+            log(f'{name}: D1 の列・index が違い、その自治体の行がある。自治体を絞った同期では作り直さない。--jurisdiction なしで流す')
+            return 1
+        skipped.append(name)
+        log(f'{name}: D1 の列・index が違うが、その自治体の行がどちらにも無いので触らない')
     diffs: dict[str, TableDiff] = {}
-    for name in TABLE_ORDER:
+    for name in [n for n in TABLE_ORDER if n not in skipped]:
         spec = tables[name]
         diff = diffs[name] = diff_table(d1, con, name, spec, name, scopes[name])
         rows = warehouse_count(con, name, and_where('', scopes[name]))

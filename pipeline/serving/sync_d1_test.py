@@ -434,12 +434,20 @@ class SyncTest(unittest.TestCase):
         self.assertEqual([r[0] for r in self.d1.rows('jurisdiction', 'jurisdiction_code')], ['000000', '000001', '000002'])
         self.assertEqual(self.d1.rows('project_year', 'project_year_id'), before['project_year'])
 
-    def test_jurisdiction_stops_on_schema_change(self):
+    def test_jurisdiction_stops_on_schema_change_with_its_rows(self):
         self.sync()
-        self.d1.con.execute('drop index "project_year_project_id"')
+        self.d1.con.execute('drop table "jurisdiction"')
         messages = []
         self.assertEqual(sync_d1.run(self.d1, self.duck, self.tables, False, ['000001'], False, messages.append), 1)
-        self.assertIn('project_year', messages[-1])
+        self.assertIn('jurisdiction', messages[-1])
+
+    def test_jurisdiction_skips_schema_change_without_its_rows(self):
+        """列が違っても、その自治体の行がどちらにも無い表（project_year は自治体 NULL）は触らずに同期する。"""
+        self.sync()
+        self.d1.con.execute('drop index "project_year_project_id"')
+        messages = self.sync(jurisdictions=['000001'])
+        self.assertTrue(any('project_year: D1 の列・index が違うが' in m for m in messages), messages)
+        self.assertNotIn('project_year_project_id', {r[0] for r in self.d1.con.execute("select name from sqlite_master where type='index'")})
 
 
 if __name__ == '__main__':
