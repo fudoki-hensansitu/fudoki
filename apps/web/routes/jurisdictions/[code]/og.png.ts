@@ -15,5 +15,6 @@ export const GET = defineHandler(async (c) => {
   const input = await ogInput(env, code, env.ASSETS)
   if (!input) return c.notFound()
   const png = await renderPng(ogSvg(input))
-  return new Response(png, { headers: { 'Content-Type': 'image/png', 'Cache-Control': `public, max-age=${MAX_AGE}` } })
+  // ISR の TTL は応答の x-revalidate が最優先。経路の表では `/:prefecture/:name/:year`（1時間）に先に当たるので、ここで1日にする
+  return new Response(png, { headers: { 'Content-Type': 'image/png', 'Cache-Control': `public, max-age=${MAX_AGE}`, 'x-revalidate': String(MAX_AGE) } })
 })

@@ -40,7 +40,7 @@ export default defineConfig({
       // 画面が取る自治体のデータ（routes/data/）。データは取り込みのときだけ変わる
       '/data/*': 3600,
       '/sitemap.xml': 3600,
-      // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く
+      // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く。経路の表の `/:prefecture/:name/:year` に先に当たるので、応答の x-revalidate でも1日にする
       '/jurisdictions/*': 86400,
     },
     // ISR の key は既定で query を落とす。流れ図・会計の総額は query で表示を分けるので key に残す
