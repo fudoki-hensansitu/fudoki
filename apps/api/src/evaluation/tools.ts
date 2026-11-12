@@ -14,8 +14,8 @@ export const SHEET_SEARCH_EXAMPLE = {
 }
 
 const GRADES =
-  'Each sheet is one project (a small project in Shinagawa) in one fiscal year (the year the project ran). grade_label and direction are printed on the sheet; grade_code maps grade_label to A (expand) / B (continue) / C (review) / D (end), and is null when the sheet has no grade or the label does not map. ' +
-  'Grades are the municipality\'s own self-evaluation; report them as printed and do not rank projects or municipalities by them. '
+  'Each sheet is one project (a small project in Shinagawa) in one fiscal year (the year the project ran). grade_label and direction are printed on the sheet and worded differently by each municipality; direction_code maps them to a shared code (new, expand, keep, statutory, as_planned, improve, resize, reduce, merge, complete, end, consider_end), and outlook groups that code into A (expand: new, expand) / B (continue: keep, statutory, as_planned) / C (review: improve, resize, reduce) / D (end: merge, complete, end, consider_end). direction_code and outlook are Fudoki judgments; both are null when the printed text does not map. outlook is not a column, so filter by direction_code in where. ' +
+  'The evaluation itself is each municipality\'s own; quote grade_label and direction as printed when citing it, and do not rank projects or municipalities by it. '
 
 const searchSheetsDescription =
   'Search project evaluation sheets (事務事業評価). ' +

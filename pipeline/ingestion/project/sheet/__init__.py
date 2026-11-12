@@ -12,11 +12,10 @@
       "skip": "施策評価シート",             # 任意。当たる頁は読まない
       "fields": ["事務事業名称 (?P<name>.+?) 款 (?P<kan_code>\\d+)", ...],
       "unit": "千円",                       # budget・settled の単位（千円 既定、円）。欄で違えば {"budget": "千円", "settled": "円"}
-      "grades": {"拡充|拡大": "A", "継続|現状維持": "B", "改善|見直|縮小": "C", "廃止|休止|終了|完了|統合": "D"}
     }
 
-`grades` は評価の区分の印字（grade）を、風土記の4区分（A 広げる・B 続ける・C 見直す・D 終える）に当てる正規表現。
-上から順に試し、最初に当たった区分にする。どれにも当たらなければ区分は空。印字は grade_label にそのまま残す。
+評価の区分の印字（grade）は grade_label にそのまま残す。共通の区分は付けず、今後の方向性の区分（direction_code）を
+入力準備で当てる（`DIRECTIONS`・宣言の `directions`）。A〜D のような4区分は API が方向性の区分からまとめる。
 
 `fields` の組の名前: name（必須）・account・kan・kou・moku・jigyo（科目の名前）・kan_code・kou_code・moku_code・
 jigyo_code（科目の番号）・department・division・budget（予算現額）・settled（決算額）・grade（評価の区分）・
@@ -40,6 +39,38 @@ GROUPS = ('name', 'account', 'kan', 'kou', 'moku', 'jigyo', 'kan_code', 'kou_cod
           'department', 'division', 'budget', 'settled', 'grade', 'direction')
 UNITS = {'千円': 1000, '円': 1}
 
+# 今後の方向性の印字を風土記の共通の区分（direction_code）に当てる既定の正規表現。上から順に試し、最初に当たったものにする。
+# 宣言の `directions` で自治体ごとの当て方を前に足せる（記号だけの様式など）。どれにも当たらなければ空。
+DIRECTIONS = {
+    '新規': 'new',
+    '廃止等に向けた検討': 'consider_end',
+    '法定受託|法定扶助': 'statutory',
+    '計画・規定どおり': 'as_planned',
+    '一部廃止': 'reduce',
+    '統合|移管': 'merge',
+    '完了|終了|完成': 'complete',
+    '廃止|休止': 'end',
+    '縮小': 'reduce',
+    '対象・規模等の見直し|^対象の見直し$': 'resize',
+    '改善|見直|再編|手法': 'improve',
+    '拡大|拡充|重点的に推進': 'expand',
+    '現状維持|維持|継続|変更なし|推進': 'keep',
+}
+DIRECTION_CODES = ('new', 'expand', 'keep', 'statutory', 'as_planned', 'improve', 'resize', 'reduce', 'merge',
+                   'complete', 'end', 'consider_end')
+
+
+def direction_code(text: str | None, overrides: dict[str, str] | None = None) -> str | None:
+    """今後の方向性の印字を共通の区分にする。宣言の当て方（overrides）を先に試す。"""
+    if not text:
+        return None
+    for pattern, code in {**(overrides or {}), **DIRECTIONS}.items():
+        if re.search(pattern, text):
+            if code not in DIRECTION_CODES:
+                raise ValueError(f'方向性の区分が違う: {code}')
+            return code
+    return None
+
 
 @dataclass
 class Sheet:
@@ -58,7 +89,6 @@ class Sheet:
     division: str | None = None
     budget_yen: int | None = None
     settled_yen: int | None = None
-    grade_code: str | None = None
     grade_label: str | None = None
     direction: str | None = None
     indicators: list = field(default_factory=list)
@@ -115,12 +145,9 @@ def parse(text: str, number: int, workflow: dict) -> Sheet | None:
         print(f'p{number}: 事業名が読めないので読まない', file=sys.stderr)
         return None
     grade = found.pop('grade', None)
-    code = None
-    if grade is not None:
-        code = next((c for pattern, c in workflow.get('grades', {}).items() if re.search(pattern, grade)), None)
     budget, settled = found.pop('budget', None), found.pop('settled', None)
     return Sheet(page=number, **found, budget_yen=amount(budget, units['budget']), settled_yen=amount(settled, units['settled']),
-                 grade_code=code, grade_label=grade)
+                 grade_label=grade)
 
 
 def pages(path) -> list[tuple[int, str]]:

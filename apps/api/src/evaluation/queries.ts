@@ -14,11 +14,13 @@ import type { Ctx } from '../shared/context'
 import { decodeToken, nextToken } from '../shared/paging'
 import { searchRows } from '../shared/query'
 import { DEFAULT_PAGE_SIZE, type SearchInput } from '../shared/search'
-import type { EvaluationOutput, SheetOutput, SheetSearchOutput } from './model'
+import { outlookOf, type EvaluationOutput, type SheetOutput, type SheetSearchOutput } from './model'
 
 const ORIGIN = { table: EVALUATION_ORIGIN_TABLE, selectList: selectListOf(EVALUATION_ORIGIN_TABLE) }
 const S = EVALUATION_SHEET_TABLE
 const rows = (table: string, results: Record<string, unknown>[]) => results.map((r) => toRow(columnsOf(table), r))
+/** シートの行に、方向性の区分から組み立てた outlook を足す */
+const withOutlook = <T extends Record<string, unknown>>(row: T) => ({ ...row, outlook: outlookOf((row.direction_code as string | null) ?? null) })
 
 export interface EvaluationInput {
   evaluation_id: string
@@ -43,7 +45,7 @@ export async function getEvaluation(ctx: Ctx, input: EvaluationInput): Promise<E
   const more = sheets!.results.length > limit
   return {
     evaluation: toRow(columnsOf(EVALUATION_TABLE), r),
-    sheets: rows(S.table, sheets!.results.slice(0, limit)),
+    sheets: rows(S.table, sheets!.results.slice(0, limit)).map(withOutlook),
     next_page_token: more ? await nextToken(offset + limit, fp) : null,
     origins: rows(ORIGIN.table, origins!.results),
   } as EvaluationOutput
@@ -67,7 +69,7 @@ export async function getSheet(ctx: Ctx, input: { sheet_id: string }): Promise<S
   const r = sheet!.results[0]
   if (!r) throw new ApiError(404, 'NOT_FOUND', `評価シートが見つかりません: ${id}`)
   return {
-    sheet: toRow(S.columns, r),
+    sheet: withOutlook(toRow(S.columns, r)),
     indicators: rows(I, indicators!.results),
     indicator_values: rows(V, values!.results),
     origins: rows(ORIGIN.table, origins!.results),
@@ -76,5 +78,5 @@ export async function getSheet(ctx: Ctx, input: { sheet_id: string }): Promise<S
 
 export async function searchSheets(ctx: Ctx, input: SearchInput): Promise<SheetSearchOutput> {
   const { rows: sheets, ...rest } = await searchRows(S, ORIGIN, ctx, input)
-  return { sheets, ...rest } as SheetSearchOutput
+  return { sheets: sheets.map(withOutlook), ...rest } as SheetSearchOutput
 }

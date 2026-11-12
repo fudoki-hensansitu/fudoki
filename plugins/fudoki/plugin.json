@@ -65,7 +65,7 @@
               "description": "事業評価の評価シートを引く。収録は list_jurisdictions の evaluations にある自治体・年度のみ。公開データのみ、認証不要。",
               "prompt": "品川区の2024年度の事業評価で、評価がCの事業を教えて。",
               "tools_triggered": "list_jurisdictions, search_evaluation_sheets",
-              "expected_behavior": "list_jurisdictionsで品川区（131091）の2024年度の事業評価があるか確かめ、search_evaluation_sheetsでfiscal_year=2024、jurisdiction_code=131091、grade_code を C で絞る。事業名と出典の資料名・物理頁を示し、評価で自治体どうしを順位付けせず、評価シートの金額を歳出に足さない。"
+              "expected_behavior": "list_jurisdictionsで品川区（131091）の2024年度の事業評価があるか確かめ、search_evaluation_sheetsでfiscal_year=2024、jurisdiction_code=131091、direction_code を C にまとまる区分（improve・resize・reduce）で絞る（返った outlook.grade が C）。事業名と出典の資料名・物理頁を示し、評価で自治体どうしを順位付けせず、評価シートの金額を歳出に足さない。"
             }
           ],
           "negative": [
