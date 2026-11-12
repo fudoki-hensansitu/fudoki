@@ -107,7 +107,7 @@ export function usePageTour(c: TourCtl) {
         title: 'お金は分野ごとに分かれています',
         body: `${c.name}の予算を、福祉・教育のような分野に分けて、それぞれにいくら使っているかを並べています。札を押すと、その分野の中身が開きます。`,
         visual: <FieldsVisual items={v.fields.map((f) => ({ id: f.id, name: f.name, pct: (f.yen / v.total) * 100 }))} />,
-        action: top ? { label: `${top.name}を開く`, run: () => c.openField(top.id) } : undefined,
+        action: top ? { label: '開く', run: () => c.openField(top.id) } : undefined,
       }
       overlay = <SpotTour spot={spot} at={at} onSkip={skip} onBack={() => (go(0), visit('/'))} />
     } else if (step === 'field') {
@@ -119,7 +119,7 @@ export function usePageTour(c: TourCtl) {
           title: `${f.name}にいくら使っているか`,
           body: 'この分野の金額と、何に使っているかの内訳、この分野の事業が並びます。次は、分野をまたいで事業を一覧で見ます。',
           visual: <FieldVisual id={f.id} name={f.name} yen={f.yen} projects={ps.slice(0, 3).map((p) => ({ name: p.name, yen: v.amount(p) ?? null }))} />,
-          action: { label: '事業のタブへ', run: () => (c.toProjects(), go(stepAt('projects'))) },
+          action: { label: '事業へ', run: () => (c.toProjects(), go(stepAt('projects'))) },
         }
         overlay = <SpotTour spot={spot} at={at} onSkip={skip} onBack={back('fields')} />
       }
@@ -133,7 +133,7 @@ export function usePageTour(c: TourCtl) {
           ? `${c.name}がお金を使っている事業を、金額の多い順に並べています。分野や「新しく始める」で絞り込めます。気になる事業を押してみてください。`
           : `${c.name}は事業ごとの金額をまだ収録していないので、予算書の目を事業の代わりに並べています。`,
         visual: first ? <ProjectsVisual items={v.current.slice(0, 3).map((p) => ({ name: p.name, yen: v.amount(p) ?? null }))} /> : undefined,
-        action: first ? { label: 'いちばん上を開く', run: () => c.selectProject(first.id) } : { label: '次へ', run: () => go(stepAt('ask')) },
+        action: first ? { label: '開く', run: () => c.selectProject(first.id) } : { label: '次へ', run: () => go(stepAt('ask')) },
       }
       overlay = <SpotTour spot={spot} at={at} onSkip={skip} onBack={back('field')} />
     } else if (step === 'detail') {
@@ -143,10 +143,10 @@ export function usePageTour(c: TourCtl) {
           onSkip={skip}
           onBack={() => c.selectProject(null)}
           spot={{
-            title: '文字を選んで、アシスタントに聞く',
+            title: '文字を選んでアシスタントに質問',
             body: '事業の名前や金額の文字をなぞって選ぶと、その文を添えてアシスタントに質問できます。どこか文字を選んでみてください。',
             visual: <SelectVisual path={p.dept ?? undefined} name={p.name} yen={v.amount(p) ?? null} />,
-            action: { label: 'この事業について聞く', run: () => ((quote.current = p.name), go(stepAt('ask'))) },
+            action: { label: '質問する', run: () => ((quote.current = p.name), go(stepAt('ask'))) },
           }}
         />
       )

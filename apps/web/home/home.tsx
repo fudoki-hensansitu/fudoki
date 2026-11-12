@@ -321,7 +321,7 @@ const checkItems = (c: Ctx): CheckItem[] => [
   { key: 'flow', label: 'お金の使い道を見る', href: flowHref(c) },
   { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects?filter=new` },
   { key: 'search', label: '事業を検索する', href: searchHref('', c.town.code) },
-  { key: 'assistant', label: 'アシスタントに聞く', href: '/assistant' },
+  { key: 'assistant', label: 'アシスタントに質問', href: '/assistant' },
 ]
 
 

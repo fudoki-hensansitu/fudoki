@@ -195,7 +195,7 @@ export function Checklist({ items, tour, onTour }: { items: CheckItem[]; tour: T
   const all = [{ key: 'town', label: '住んでいるまちを選ぶ', href: '' }, { key: 'tour', label: '使い方を見る', href: '' }, ...items]
   const isDone = (key: string) => st.done.includes(key) || (key === 'tour' && toured)
   const n = all.filter((x) => isDone(x.key)).length
-  // 途中で止めた歩（1歩目より先）。「続きから」に何歩目かを添える
+  // 途中で止めた歩（1歩目より先）があれば「続きから」
   const mid = tour && !toured && tour.at > 0 && tour.at < TOTAL ? tour.at : 0
   const complete = n === all.length
   return (
@@ -226,7 +226,7 @@ export function Checklist({ items, tour, onTour }: { items: CheckItem[]; tour: T
                     onClick={onTour}
                     className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none"
                   >
-                    {mid ? `続きから（${mid + 1} / ${TOTAL}）` : 'オンボ開始'}
+                    {mid ? '続きから' : 'オンボ開始'}
                     <ArrowRightIcon className="size-3.5" />
                   </button>
                 </li>
