@@ -205,7 +205,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 - **画面で集計しない。** 数字は API が返したものをそのまま載せる。同じ数字が2通りに計算されると、いずれ食い違う
 - **割合の分母は合計にする。** 割り当てられなかった分を分母から落とすと、使途が見えていない分まで見えていることになる
 - **色は役割の決まったものだけ使う。** 色が付いていたら意味があると読まれる。データの面に絵の色を出さず、款・分野ごとに色を分けない
-- **色は token の名前で塗る。** apps/web のコードに色の値（`#fff`・`rgb()`・`oklch()`・`color-mix()`）、Tailwind 標準の色名（`bg-gray-100`・`text-white`）、token に後から付ける透明度（`bg-primary/15`）を書かない。要る色は Tokens に足してから使う。`bun run --cwd apps/web lint`（oxlint の JS plugin、`apps/web/lint/design.js`）が CI で検出する。値を持ってよいのは tokens.css・theme.css・landing.css・CSS 変数の届かない出力（OGP 画像・PWA・ロゴ）と shadcn の部品（`chat/components/ui`）だけで、それ以外で要るときは直前の行に `oxlint-disable-next-line design/<rule> -- <理由>` を書く。CSS は oxlint が読まないので対象外
+- **色は token の名前で塗る。** apps/web のコードに色の値（`#fff`・`rgb()`・`oklch()`・`color-mix()`）、Tailwind 標準の色名（`bg-gray-100`・`text-white`）、token に後から付ける透明度（`bg-primary/15`）を書かない。要る色は Tokens に足してから使う。`bun run --cwd apps/web lint`（oxlint の JS plugin、`apps/web/lint/design.js`）が CI で検出する。値を持ってよいのは tokens.css・theme.css・landing.css・`tokens.ts`（theme-color と manifest に渡す背景色）・CSS 変数の届かない出力（OGP 画像・PWA・ロゴ）と shadcn の部品（`chat/components/ui`）だけで、それ以外で要るときは直前の行に `oxlint-disable-next-line design/<rule> -- <理由>` を書く。CSS は oxlint が読まないので対象外
 - **比べる数字には、比べ方の注意を同じ面に書く。** 人口あたりでない、年度が違う、などは脚注に逃がさず数字の隣に置く
 - **溢れるものはその要素の中でスクロールさせる。** ページ本体を横にスクロールさせない（`overflow-x: clip`）
 - **和文の段落は `--line-height-body`（1.8）で組む。** `word-break: keep-all` は本文に当てない

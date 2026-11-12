@@ -1,7 +1,7 @@
 // DESIGN.md の token 以外の色を見つける oxlint の JS plugin。色の値は styles/tokens.css（DESIGN.md の Tokens）にだけ置き、画面は token の名前で塗る
-const UTILITY = String.raw`(?:bg|text|border(?:-[xytrblse])?|ring|ring-offset|fill|stroke|outline|decoration|divide|from|via|to|shadow|caret|accent|placeholder)`
-const PALETTE = 'slate|gray|zinc|neutral|stone|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose'
-const TOKEN = String.raw`(?:background|foreground|card|popover|primary|secondary|muted|accent|destructive|border|input|ring|brand|emblem|sidebar|chart)(?:-[a-z0-9-]+)?`
+const UTILITY = String.raw`(?:bg|text|border(?:-[xytrblse])?|ring|ring-offset|inset-ring|fill|stroke|outline|decoration|divide|from|via|to|shadow|inset-shadow|drop-shadow|caret|accent|placeholder)`
+const PALETTE = 'slate|gray|zinc|neutral|stone|taupe|mauve|mist|olive|red|orange|amber|yellow|lime|green|emerald|teal|cyan|sky|blue|indigo|violet|purple|fuchsia|pink|rose'
+const TOKEN = String.raw`(?:background|foreground|card|popover|primary|secondary|muted|accent|destructive|border|input|ring|brand|emblem|sidebar|chart|hair|page|paper|night|shu|ai|kincha|sakura)(?:-[a-z0-9-]+)?`
 const EDGE_L = String.raw`(?<![\w-])`
 const EDGE_R = String.raw`(?![\w-])`
 
