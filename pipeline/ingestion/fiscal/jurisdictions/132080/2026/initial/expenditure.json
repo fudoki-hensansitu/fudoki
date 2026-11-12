@@ -1042,7 +1042,7 @@
     {
       "table_id": "general-initial-3",
       "conversion_id": "general-initial-3",
-      "input_fingerprint": "f8a8d04448e0b41ba394abd0fe55880dacdeb9acc72d33d99a19212cc2d4499f",
+      "input_fingerprint": "f8ceac2f613c1ccb63aab4cf1cb8e18374a312827c434921b66369c9e783da87",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1072,7 +1072,7 @@
     {
       "table_id": "general-initial-5",
       "conversion_id": "general-initial-5",
-      "input_fingerprint": "71bae7bb54b298b2621508ac3de076e54da90f6ecd6fcca63c1da464a698be07",
+      "input_fingerprint": "7ebc56747d9ffa20a82b463da715b51d4dbf622ece03e7ef37599ffdebffb0f1",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",

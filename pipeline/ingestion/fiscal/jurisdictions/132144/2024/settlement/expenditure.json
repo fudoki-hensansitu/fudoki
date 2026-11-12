@@ -112,7 +112,7 @@
     {
       "table_id": "general-settlement",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "72d9bee0175a18dc7033fffe143d1449ad10ab65d1db2051eec90c6c4d690d20",
+      "input_fingerprint": "8b39b1b50686c09212186fdc6385b7c40bdce42b3116a6ee2a781a7400dd584d",
       "account": "一般会計",
       "notes": [
         "監査委員の審査意見書の歳入歳出決算年度比較表（款だけ）。欄は今年度（年度の行の左の数字）と前年度（右の数字）の2列ずつで、前年度の欄は前年度予算額・前年度決算額・前年度／不用額・前年度／翌年度繰越額とした。不用額の欄の括弧書きは表の注記「※（ ）内は翌年度繰越額で外数」のとおり翌年度繰越額。構成割合・増減率・予算現額に対する割合の欄は取り込まない。項・目以下の印字はない。",
@@ -140,7 +140,7 @@
     {
       "table_id": "kokuho-settlement",
       "conversion_id": "kokuho-settlement",
-      "input_fingerprint": "c39ef61d35780a48555f80687702e21a16df3a6dd5eb4939cb28e23786596233",
+      "input_fingerprint": "00a8767e3c73e1d81cc5074905f3739a0b132fcdc3afaa67f8c052e32988bdee",
       "account": "国民健康保険特別会計",
       "notes": [
         "監査委員の審査意見書の歳入歳出決算年度比較表（款だけ）。欄は今年度（年度の行の左の数字）と前年度（右の数字）の2列ずつで、前年度の欄は前年度予算額・前年度決算額・前年度／不用額・前年度／翌年度繰越額とした。不用額の欄の括弧書きは表の注記「※（ ）内は翌年度繰越額で外数」のとおり翌年度繰越額。構成割合・増減率・予算現額に対する割合の欄は取り込まない。項・目以下の印字はない。",
@@ -168,7 +168,7 @@
     {
       "table_id": "kaigo-settlement",
       "conversion_id": "kaigo-settlement",
-      "input_fingerprint": "1d24a051def9c5e28646ff275c152d17f66de024f5b2841e110a334b75b2e26b",
+      "input_fingerprint": "cd2e090c2a3b1f50aa4af5d5192a2adffe57f6ffdab61e68565c1e05e12af99e",
       "account": "介護保険特別会計",
       "notes": [
         "監査委員の審査意見書の歳入歳出決算年度比較表（款だけ）。欄は今年度（年度の行の左の数字）と前年度（右の数字）の2列ずつで、前年度の欄は前年度予算額・前年度決算額・前年度／不用額・前年度／翌年度繰越額とした。不用額の欄の括弧書きは表の注記「※（ ）内は翌年度繰越額で外数」のとおり翌年度繰越額。構成割合・増減率・予算現額に対する割合の欄は取り込まない。項・目以下の印字はない。",
@@ -196,7 +196,7 @@
     {
       "table_id": "kouki-settlement",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "8a5bcea6ca91ed753df46fe3ba1611b56b4b6b95f748e29ad74bcc21cab71015",
+      "input_fingerprint": "fc9a6f5838f735ead56b5ecb467f9b49b3fdb7758ca094d6cd6f298f05b7298e",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "監査委員の審査意見書の歳入歳出決算年度比較表（款だけ）。欄は今年度（年度の行の左の数字）と前年度（右の数字）の2列ずつで、前年度の欄は前年度予算額・前年度決算額・前年度／不用額・前年度／翌年度繰越額とした。不用額の欄の括弧書きは表の注記「※（ ）内は翌年度繰越額で外数」のとおり翌年度繰越額。構成割合・増減率・予算現額に対する割合の欄は取り込まない。項・目以下の印字はない。",

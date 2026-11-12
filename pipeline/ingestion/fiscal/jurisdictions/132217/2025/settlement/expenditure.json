@@ -211,7 +211,7 @@
     {
       "table_id": "late-elderly-medical-setsu",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "30c94df8b9aef7fa5778477f35c667620954059b3ed1c53a644b84a064fbc53e",
+      "input_fingerprint": "700f54724688ef440df7f26b2b4ab3491373e816cab3ebccca173796a2bbc65f",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "後期高齢者医療特別会計の歳出事項別明細書（左右見開き）。左頁=科目・予算現額・節区分金額、右頁=支出済額・不用額（左頁明細行と同順・spread毎の系統的y差で対応）・備考フロー。備考の事業(x291)・節見出し(x299)・細目(x308)・細々目(x316)・所属・流用注記は字下げと書式で独立parseし、高さ・名称だけでは法定節へ結合しない。事業は目の執行y範囲で位置割当し、法定節対応は節番号一致+目内事業跨ぎL1金額合計==節支出済額の検証済みのみ。名称折り返しは改行結合、金額は桁区切り保持の文字列。左頁､と備考、の差は保持のまま。翌年度繰越額3細列・継続費繰越・予備費流用増減はscope内全行未印字のため不emit。単位円は右頁(単位：円）と 不用額=計−支出済額 の原典内exact一致で根拠付け。物理頁は左頁、右_物理頁は葉の備考頁（継続事業は左+1と異なる場合あり）。歳出合計は統制行として観測のみ。",
@@ -239,7 +239,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "e3087812d3aa4869101c1d245ae6c7b9ba93463eb987b98ef4d9b217d26aeedf",
+      "input_fingerprint": "e0701c8e3f9d3dcf002b2b8173f31918583f733613c180bece54665348cee585",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -269,7 +269,7 @@
     {
       "table_id": "parking-expenditure",
       "conversion_id": "parking-settlement",
-      "input_fingerprint": "6eab49075b3313a9617c1d5f537608da4aafcc1f5f55ed67a2547807bccc4b6e",
+      "input_fingerprint": "e5ed3e4718cb84a3ffef7580ad76049dc72f42602aefa34dd173a4c2aa1be4da",
       "account": "駐車場事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'備考': 'indent', '節': 'indent'}。",
@@ -299,7 +299,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "ef51da0a8a6af84221946e180be2590cf6a179cc6e305ee5e3488b800368eb9d",
+      "input_fingerprint": "633e77894ada7691fa638044a147b176532bb5f21f796fabc58ba3baa1c18369",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -329,7 +329,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "65f6f23016e56680fdca4966cdb0851aebed6ef90692f8e5a53505de06a05935",
+      "input_fingerprint": "b8ff11e8f357092e198a0f97df4dedde222b463d4dfb2c6e67e543553e58e438",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'indent', '備考': 'indent'}。",

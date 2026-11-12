@@ -196,7 +196,7 @@ def check_module_violations(path: Path, *, tree: ast.Module | None = None) -> li
     return sorted(set(found))
 
 
-def code_tree(path: Path, trees: dict | None = None) -> ast.Module:
+def code_tree(path: Path) -> ast.Module:
     """The parsed file, shared across calls. Callers must not modify the tree."""
     return _derived('tree', path, lambda data: ast.parse(data.decode()))
 
@@ -253,8 +253,7 @@ def _resource_references(path: Path) -> tuple[list[str], list | None]:
     return _derived('resources', path, make)
 
 
-def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict | None = None) -> list[str]:
-    trees = {} if trees is None else trees
+def dependencies(conversion: dict, *, patterns: dict | None = None) -> list[str]:
     pending = [conversion['converter'], options_schema(conversion)]
     workflow = conversion['options'].get('workflow')
     if workflow is not None:
@@ -319,8 +318,7 @@ def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict 
     return sorted(found)
 
 
-def resources(files: list[str], *, trees: dict | None = None) -> list[str]:
-    trees = {} if trees is None else trees
+def resources(files: list[str]) -> list[str]:
     found = set()
     references = []
     for relative in files:
@@ -510,7 +508,6 @@ def resolved_inputs(document: dict, conversion: dict, selection: dict | None = N
 def fingerprints(document: dict, conversions: list[dict] | None = None) -> dict[str, str]:
     selected = selection_for(document)
     hashes = {}
-    trees = {}
     result = {}
     for conversion in document['conversions'] if conversions is None else conversions:
         origins = resolved_inputs(document, conversion, selected)
@@ -519,7 +516,7 @@ def fingerprints(document: dict, conversions: list[dict] | None = None) -> dict[
         if workflow is not None:
             from ingestion.generic.workflow import selections
             patterns = selections(workflow)
-        files = dependencies(conversion, trees=trees, patterns=patterns)
+        files = dependencies(conversion, patterns=patterns)
         if workflow is None and 'generic/discovery.py' in files:
             patterns = discovery_patterns()
         for path in files:
@@ -535,7 +532,7 @@ def fingerprints(document: dict, conversions: list[dict] | None = None) -> dict[
         if 'generic/layout_settings.py' in files and 'workflow' not in conversion['options']:
             from ingestion.generic.layout_settings import load
             material['layout_settings'] = load(document['target'], document['direction'])
-        data = resources(files, trees=trees)
+        data = resources(files)
         if data:
             for path in data:
                 if PIPELINE / path not in hashes:
