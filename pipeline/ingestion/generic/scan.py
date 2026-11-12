@@ -637,6 +637,8 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
     on_bottom = bool((header or {}).get('agree_on_bottom'))
 
     def agreed(found):
+        if (header or {}).get('unagreed'):
+            return read_headers(found, header_readings)
         return agreed_headers(read_headers(found, header_readings), every, on_bottom)
 
     @cache
