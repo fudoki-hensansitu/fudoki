@@ -7,8 +7,9 @@ const OTHER = 'b'.repeat(64)
 
 function setup(pages: string[]) {
   const { db, sqlite } = testDb()
-  sqlite.query(`INSERT INTO expenditure_origin (origin_id, jurisdiction_code, fiscal_year, document_kind, title, url, format, sha256) VALUES (?,?,?,?,?,?,?,?)`)
-    .run('o1', '131091', 2026, 'initial', '予算書', 'https://city.example.jp/a.pdf', 'pdf', SHA)
+  sqlite
+    .query(`INSERT INTO evaluation_origin (origin_id, evaluation_id, jurisdiction_code, document_type, fiscal_year, title, url, landing_url, sha256) VALUES (?,?,?,?,?,?,?,?,?)`)
+    .run('o1', 'ev0', '131091', 'sheets', 2026, '評価シート', 'https://city.example.jp/a.pdf', null, SHA)
   const keys: string[] = []
   const bucket: SourceTextBucket = {
     async get(key) {
@@ -23,14 +24,16 @@ test('origin_id か sha256 で出典の頁の文字と公式の URL を返す', 
   const { db, bucket } = setup(['1頁', '2頁の本文'])
   for (const origin of ['o1', SHA]) {
     expect(await readSourcePage(db, bucket, { origin, page: 2 })).toEqual({
-      status: 'ok', origin_sha256: SHA, title: '予算書', url: 'https://city.example.jp/a.pdf', page: 2, page_count: 2, text: '2頁の本文', truncated: false,
+      status: 'ok', origin_sha256: SHA, title: '評価シート', url: 'https://city.example.jp/a.pdf', page: 2, page_count: 2, text: '2頁の本文', truncated: false,
     })
   }
 })
 
-test('風土記の出典に無いものは R2 を読まない（key を入力から組み立てない）', async () => {
-  const { db, bucket, keys } = setup(['x'])
-  for (const origin of [OTHER, '../fiscal/ingestion/x', `source-text/${SHA}.json`])
+test('風土記の出典に無いもの・予算決算の出典は R2 を読まない（key を入力から組み立てない）', async () => {
+  const { db, sqlite, bucket, keys } = setup(['x'])
+  sqlite.query(`INSERT INTO expenditure_origin (origin_id, jurisdiction_code, fiscal_year, document_kind, title, url, format, sha256) VALUES (?,?,?,?,?,?,?,?)`)
+    .run('x1', '131091', 2026, 'initial', '予算書', 'https://city.example.jp/x.pdf', 'pdf', OTHER)
+  for (const origin of [OTHER, 'x1', '../fiscal/ingestion/x', `source-text/${SHA}.json`])
     expect((await readSourcePage(db, bucket, { origin, page: 1 })).status).toBe('not_found')
   expect(keys).toEqual([])
 })

@@ -1,7 +1,7 @@
 # アシスタントに出典の頁を読ませる — 設計
 
 担当者: wwwyo / Claude
-更新日: `2026-11-08`
+更新日: `2026-11-12`
 状態: In Review
 
 ## Summary
@@ -10,10 +10,11 @@ web のアシスタント（`/api/chat`）が、事業の目的・内容・実�
 
 ## Goals / Non-Goals
 
-- Goal: アシスタントが、出典の sha256 か `origin_id` と物理頁を指定して、その頁の文字を読める。
+- Goal: アシスタントが、事業評価・予算案のプレス発表の出典の sha256 か `origin_id` と物理頁を指定して、その頁の文字を読める。
 - Goal: 頁の文字は AI だけに渡し、公開の REST・MCP、画面、会話の保存には出さない。
 - Goal: R2 には web から直接触れない。読む処理は apps/api の中だけにあり、書き込み・削除を呼ぶコードを持たない。
-- Non-Goal: 全文検索。どの頁を読むかは、他の tool の結果（評価シート・施策の `page`、印字の位置の `source_page`）で決める。
+- Non-Goal: 全文検索。どの頁を読むかは、他の tool の結果（評価シート・施策の `page`）で決める。
+- Non-Goal: 予算書・決算書（当初・補正・決算）。金額と説明欄は内訳の表（`expenditure_detail` の `source_heading`）にあり、アシスタントはそこから答え、原文は出典の url と `source_page` で案内する。
 - Non-Goal: 文字の層の無い PDF（scan）と CSV。scan は OCR の観測を使う形を後で検討する。
 
 ## Design
@@ -21,7 +22,7 @@ web のアシスタント（`/api/chat`）が、事業の目的・内容・実�
 ```mermaid
 flowchart LR
   ai["web のアシスタント<br/>tool: read_source_page"] -->|"Service Binding RPC<br/>entrypoint SourcePages"| api["apps/api<br/>readSourcePage"]
-  api -->|"sha256 を照合"| d1[("D1 の出典の表<br/>（歳出・事業評価・予算案）")]
+  api -->|"sha256 を照合"| d1[("D1 の出典の表<br/>（事業評価・予算案）")]
   api -->|"get source-text/&lt;sha256&gt;.json"| r2[("非公開 R2<br/>fudoki-inputs")]
   save["pipeline<br/>source-text:save"] -->|"出典 PDF を get"| r2
   save -->|"頁ごとの文字を put"| r2
@@ -29,7 +30,7 @@ flowchart LR
 
 ### 頁の文字を R2 に置く
 
-`bun run --cwd pipeline source-text:save`（`pipeline/source_text/save.py`）が、出典の選定（`selections`・`evaluation_selections`・`press_selections`）で R2 に保存済みの `pdf_type: text` の PDF と、事業の取り込みの宣言（`ingestion/project/origins.json` の `results`）が R2 の `project/` に保存した PDF を対象にする。R2 から出典を取って sha256 を選定と照らし、pdfium で頁ごとの文字を抜き出して `source-text/<sha256>.json` に置く。中身は `{schema_version: 1, sha256, pages: string[]}` で、`pages[i]` が物理頁 i+1 の文字。key は出典の内容で決まるので、R2 に同じ key があれば作り直さない。抜き出し方を変えたときは `--refresh` で作り直す。既定は計画の表示だけで、`--write` で書く。
+`bun run --cwd pipeline source-text:save`（`pipeline/source_text/save.py`）が、出典の選定の `evaluation_selections`・`press_selections` で R2 に保存済みの `pdf_type: text` の PDF と、事業の取り込みの宣言（`ingestion/project/origins.json` の `results`）が R2 の `project/` に保存した PDF を対象にする。R2 から出典を取って sha256 を選定と照らし、`pdftotext -bbox` の語の位置から頁ごとの文字を組み（`pipeline/source_text/layout.py`）、`source-text/<sha256>.json` に置く。語は縦の位置で行にまとめ、左端の位置まで空白で寄せて表の列を揃える。横長の頁で、幅の中ほど（35〜65%）に語の無い縦の隙間があり、左右の段の行の高さが揃っていなければ、左右の段に分けて左から並べる（縦長の頁の表の列の隙間や、見開きにまたがる1つの表は分けない）。語は Poppler の版で変わるので、mise.toml で固定した版で抜き出す（`ingestion/lib/poppler.py` の `require`）。中身は `{schema_version: 2, sha256, pages: string[]}` で、`pages[i]` が物理頁 i+1 の文字。key は出典の内容で決まるので、R2 に同じ key があれば作り直さない。抜き出し方を変えたときは `--refresh` で作り直す。既定は計画の表示だけで、`--write` で書く。
 
 Worker で PDF から文字を抜き出すと CPU の上限（apps/api は 200ms）に収まらないので、取り込みの側で作る。
 
@@ -40,9 +41,9 @@ Worker で PDF から文字を抜き出すと CPU の上限（apps/api は 200ms
 `readSourcePage` は次の順に処理する。
 
 1. 入力を検査する。`origin` は sha256（64桁の16進）か `origin_id`、`page` は1以上の整数。
-2. 出典を風土記の記録に照らす。D1 の歳出・事業評価・予算案の出典の表（`expenditure_origin`・`evaluation_origin`・`budget_proposal_origin`）を sha256 か `origin_id` で引く。見つからなければ `not_found`。
+2. 出典を風土記の記録に照らす。D1 の事業評価・予算案の出典の表（`evaluation_origin`・`budget_proposal_origin`）を sha256 か `origin_id` で引く。見つからなければ（予算・決算の出典を含む）`not_found`。
 3. key を `source-text/<sha256>` から組み立てて `get` する。入力から key を受け取らないので、取り込み表など他の object は読めない。
-4. 頁の文字を最大 8,000 文字で返す。タイトルと公式の URL を添える。事業評価・予算案の出典の `url` が Wayback Machine の写し（自治体から消えた資料）のときは、公式の URL として `landing_url` を返す。
+4. 頁の文字を最大 12,000 文字（列を揃える空白を含む）で返す。タイトルと公式の URL を添える。出典の `url` が Wayback Machine の写し（自治体から消えた資料）のときは、公式の URL として `landing_url` を返す。
 
 R2 の binding（`SOURCE_TEXT`）は Workers の仕様で読み書きの両方ができる。コードの型（`SourceTextBucket`）は `get` だけを持ち、書き込み・削除を呼ぶコードを置かない。
 
@@ -58,17 +59,18 @@ R2 の binding（`SOURCE_TEXT`）は Workers の仕様で読み書きの両方�
 - web に R2 の binding を持たせる: RPC の入口が要らない。web にデータの binding を持たせない規約（`pipeline/verify/boundaries.ts`）を変えることになるので採らない。
 - 読み取り専用の R2 API トークンで S3 API から読む: Cloudflare の側で書き込みを拒める。トークンの管理が増える。AI が使えるのは読む tool だけなので、binding とコードの制限で足りると判断した（2026-11-08）。
 - AI Search の chunk の本文を返す: 索引を削除する予定なので採らない。
-- Worker で PDF から文字を抜き出す: CPU の上限に収まらない。
+- Worker で PDF から文字を抜き出す: CPU の上限に収まらない。頁がわかっていても、フォント・object stream の取得と展開、日本語の CMap、行と列の組み立てが要る。R2 の Range 読みで減るのはメモリだけ。
+- 予算書・決算書の頁の文字も置く: 金額と説明欄は表にあり、補正予算は取り込まない方針なので、作り直しの時間（全件の約6割）に見合わない（2026-11-12）。
 
 ## Cross-Cutting Concerns
 
 - 利用条件: 評価資料などの利用条件は無断の転載を禁じている（[事業の評価の検索の設計](../evaluation-search/dd.md#返す量は所在と軽微な抜粋にする)）。頁の文字を公開の REST・MCP・画面に出さず、AI の答えは要約と公式の URL にする。
 - 費用: R2 の読み取り（Class B）が質問ごとに数回。会話の段数の上限（`MAX_STEPS`）がそのまま上限になる。
-- 保存容量: 出典 4,250 件の文字。R2 の `source-text/` に置き、出典の掃除の対象（`fiscal/` の下の prefix）と重ならない。
+- 保存容量: 事業評価・予算案の出典の文字。R2 の `source-text/` に置き、出典の掃除の対象（`fiscal/` の下の prefix）と重ならない。
 
 ## Validation / Rollout
 
 1. apps/api の `source-pages.test.ts` で、出典の記録に無いものは R2 を読まないこと、頁の範囲と文字の上限、評価資料は公式の頁を返すことを確かめる。web の `server/source-pages.test.ts` で、頁の文字が画面に流れる結果に入らず AI に渡す形にだけ入ることを確かめる。
-2. `source-text:save --write` で保存済みの出典の文字を R2 に置く（2026-11-08 に開始）。
+2. `source-text:save --write` で保存済みの出典の文字を R2 に置く（2026-11-08 に開始）。抜き出し方を schema_version 2（語の位置で行にまとめる）に変えたあとは、`source-text:save --write --refresh` で全部を作り直す。2026-11-08 に置いた予算・決算の出典の文字は R2 に残っているが、どこからも読まない。
 3. main に入ると deploy-api と deploy-web が別々に走り、順は決まらない。web が先に出ると、apps/api のデプロイが終わるまで `read_source_page` は失敗を返す（tool が例外を `unavailable` にし、会話は止まらない）。web のデプロイが entrypoint の不在で失敗したときは、deploy-api の完了後に deploy-web を手動で再実行する（失敗の間は前の版が残る）。
 4. Mac の dev サーバーで、事業の詳細を聞いて `read_source_page` が呼ばれ、公式の URL を示して答えることを確かめる。

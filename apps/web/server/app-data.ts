@@ -185,6 +185,7 @@ export async function loadAppData(env: Env, entry: CatalogEntry): Promise<Snapsh
       project: projectOf(m.expenditure_detail_id),
       field: fieldOf(d ? cofogBySubject.get(d.subject_id) : undefined),
       url: m.url ?? '',
+      origin: m.origin_id,
       page: m.page,
     }
   })
@@ -194,8 +195,10 @@ export async function loadAppData(env: Env, entry: CatalogEntry): Promise<Snapsh
       id: short(s.sheet_id),
       fy: s.fiscal_year,
       name: s.name,
-      grade: s.grade_code as Sheet['grade'],
+      grade: s.outlook?.grade ?? null,
       dir: s.direction,
+      dc: s.outlook?.code ?? null,
+      dl: s.outlook?.label ?? null,
       div: s.division,
       acct: s.account_name ?? '',
       b: s.budget_yen,
@@ -203,6 +206,7 @@ export async function loadAppData(env: Env, entry: CatalogEntry): Promise<Snapsh
       project,
       field: project ? (projects.get(project)?.field ?? 'other') : fieldOf(cofogByMoku.get(`${s.kan_name}/${s.kou_name}/${s.moku_name}`)),
       url: s.url ?? '',
+      origin: s.origin_id,
       page: s.page,
     }
   })

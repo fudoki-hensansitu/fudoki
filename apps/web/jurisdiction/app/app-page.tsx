@@ -60,7 +60,7 @@ import { Hint } from '@/components/hint'
 import { AskDock, type AskControl } from '../ask-dock'
 import { usePageTour } from './page-tour'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
-import { DIRECTIONS, GRADES, loadedYears, mergeSnapshot, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
+import { directionOf, DIRECTION_ICONS, GRADES, loadedYears, mergeSnapshot, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
 const FIELD_ICON: Record<string, Icon> = {
@@ -102,6 +102,30 @@ const r = (y: number) => `R${y - 2018}`
 // ---------- 選んだもの（詳細） ----------
 type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
 type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go; openField: (id: string) => void; /** オンボーディングの事業の詳細の歩で、詳細の頭に出す吹き出し */ coach: ((p: Proj) => React.ReactNode) | null }
+/** 文脈に添える、開いている事業の評価シート（評価は過去の年度にしか無いので全年度の新しい順）・施策の数の上限（文脈の長さの上限に収める） */
+const DETAIL_SOURCES = 3
+/** 詳細に開いているものを、アシスタントに渡す文脈の行にする。出典の origin_id と頁・科目の ID を添え、AI が検索し直さずに読めるようにする */
+function describeSelected(sel: Selected, d: Snapshot, v: YearView): string {
+  if (!sel) return ''
+  const source = (label: string, x: { fy: number; origin: string; page: number }, name: string) => `${label}: ${r(x.fy)}「${name}」（origin_id ${x.origin}、${x.page}頁）`
+  if (sel.kind === 'moku') return `開いている科目: ${[...(sel.moku.path ?? []), sel.moku.name].filter(Boolean).join(' > ')}（subject_id ${sel.moku.id}）`
+  if (sel.kind === 'sheet') {
+    const s = d.sheets.find((x) => x.id === sel.id)
+    return s ? source('開いている評価シート', s, s.name) : ''
+  }
+  if (sel.kind === 'measure') {
+    const m = d.measures.find((x) => x.id === sel.id)
+    return m ? source('開いている予算案の施策', m, m.title) : ''
+  }
+  const p = d.projects.find((x) => x.id === sel.id)
+  if (!p) return ''
+  const now = v.amount(p)
+  return [
+    `開いている事業: ${p.name}（${[p.path.filter(Boolean).join(' > '), p.dept].filter(Boolean).join('、')}）${now != null ? `、${r(v.year)}の${v.word} ${yenText(now)}` : ''}`,
+    ...[...(v.measuresOf.get(p.id) ?? []).map((m) => source('この事業の予算案の施策', m, m.title)), ...d.sheets.filter((s) => s.project === p.id).sort((a, b) => b.fy - a.fy).map((s) => source(`この事業の評価シート（${r(s.fy)}に行った事業の評価${s.fy < v.year ? `。見ている${r(v.year)}の${v.year - s.fy}年前` : ''}）`, s, s.name))].slice(0, DETAIL_SOURCES),
+  ].join('\n')
+}
+
 const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
 
@@ -175,7 +199,7 @@ function MeasureRow({ m }: { m: Measure }) {
 }
 function SheetRow({ s }: { s: EvalSheet }) {
   const { select, selected } = useApp()
-  const dir = s.dir ? DIRECTIONS[s.dir] : undefined
+  const dir = directionOf(s)
   return <Row icon={dir ? <Mark kind={dir.icon} label={dir.label} /> : <IconBox><ClipboardTextIcon /></IconBox>} title={s.name} sub={[s.div, dir?.label ?? s.dir].filter(Boolean).join(' · ')} yen={s.s} note={`${r(s.fy)} 決算`} selected={selected?.kind === 'sheet' && selected.id === s.id} onClick={() => select({ kind: 'sheet', id: s.id })} />
 }
 /** 行の間に Separator を挟む */
@@ -499,7 +523,10 @@ function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: 
   const t = q.trim()
   const all = React.useMemo(() => v.sheets.filter((s) => (field === 'all' || s.field === field) && (!t || s.name.includes(t) || (s.div ?? '').includes(t))), [v, field, t])
   const ss = React.useMemo(() => all.filter((s) => s.grade === grade).sort((a, b) => (b.s ?? 0) - (a.s ?? 0)), [all, grade])
-  const dirs = Object.entries(DIRECTIONS).map(([k, x]) => [x, ss.filter((s) => s.dir === k).length] as const).filter(([, n]) => n)
+  const dirs = (Object.keys(DIRECTION_ICONS) as (keyof typeof DIRECTION_ICONS)[])
+    .map((k) => ss.filter((s) => s.dc === k))
+    .filter((xs) => xs.length)
+    .map((xs) => [directionOf(xs[0]!)!, xs.length] as const)
   return (
     <div className="mt-1 flex flex-col gap-3">
       <GradeCards sheets={all} value={grade} onChange={setGrade} />
@@ -509,7 +536,7 @@ function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: 
         ))}
       </div>
       <Infinite items={ss} render={(s) => <SheetRow key={s.id} s={s} />} />
-      <p className="text-xs text-muted-foreground">区が {r(v.year)}年度に行った事業を自ら評価した結果（A〜D は区の区分）です。風土記は評価を加えていません。</p>
+      <p className="text-xs text-muted-foreground">自治体が {r(v.year)}年度に行った事業を自ら評価した結果です。A〜D と方向性は、自治体ごとに違う評価の書き方を共通の区分に揃えたもので、風土記は評価を加えていません。</p>
     </div>
   )
 }
@@ -596,11 +623,11 @@ function ProjectDetail({ p }: { p: Proj }) {
       {ss.length ? (
         <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(v.year)}年度の事業`}>
           {ss.map((s) => {
-            const dir = s.dir ? DIRECTIONS[s.dir] : undefined
+            const dir = directionOf(s)
             return (
               <button key={s.id} type="button" onClick={() => select({ kind: 'sheet', id: s.id })} className="mb-2 flex w-full items-start gap-2.5 rounded-xl bg-card p-3 text-left hover:bg-secondary">
                 {dir ? <Mark kind={dir.icon} /> : null}
-                <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">評価 {s.grade} {GRADES.find((g) => g[0] === s.grade)![1]} · {dir?.label ?? s.dir}</span></span>
+                <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">{[s.grade ? `評価 ${s.grade} ${GRADES.find((g) => g[0] === s.grade)?.[1] ?? ''}` : null, dir?.label ?? s.dir].filter(Boolean).join(' · ')}</span></span>
               </button>
             )
           })}
@@ -638,7 +665,7 @@ function MeasureDetail({ m }: { m: Measure }) {
 
 function SheetDetail({ s }: { s: EvalSheet }) {
   const { select, projects } = useApp()
-  const dir = s.dir ? DIRECTIONS[s.dir] : undefined
+  const dir = directionOf(s)
   const p = s.project ? projects.get(s.project) : undefined
   return (
     <>
@@ -646,15 +673,15 @@ function SheetDetail({ s }: { s: EvalSheet }) {
       <h2 className="mt-1.5 text-xl font-semibold leading-snug">{s.name}</h2>
       <div className="mt-4 grid grid-cols-2 gap-2.5">
         <Card className="gap-1 bg-accent px-3.5 py-3 ring-1 ring-primary">
-          <span className="flex items-center gap-1.5 text-[15px]"><span className="grid size-5 place-items-center rounded-full border border-current text-[11px]">{s.grade}</span>評価</span>
-          <span className="text-lg">{GRADES.find((g) => g[0] === s.grade)![1]}</span>
+          <span className="flex items-center gap-1.5 text-[15px]">{s.grade ? <span className="grid size-5 place-items-center rounded-full border border-current text-[11px]">{s.grade}</span> : null}評価</span>
+          <span className="text-lg">{GRADES.find((g) => g[0] === s.grade)?.[1] ?? '—'}</span>
         </Card>
         <Card className="gap-1 bg-background px-3.5 py-3 ring-1 ring-border">
           <span className="flex items-center gap-1.5 text-[15px]">{dir ? <Mark kind={dir.icon} className="size-5" /> : null}今後の方向</span>
           <span className="text-base">{dir?.label ?? s.dir ?? '—'}</span>
         </Card>
       </div>
-      <DetailSection icon={CalendarBlankIcon} title={`${r(s.fy)}年度の小事業`}>
+      <DetailSection icon={CalendarBlankIcon} title={`${r(s.fy)}年度の事業`}>
         <div className="flex gap-8 text-[15px]"><span>予算 <Amt yen={s.b} className="text-[15px]" /></span><span>決算 <Amt yen={s.s} className="text-[15px]" /></span></div>
       </DetailSection>
       {p ? (
@@ -665,7 +692,7 @@ function SheetDetail({ s }: { s: EvalSheet }) {
         </DetailSection>
       ) : null}
       <DetailSection icon={FileTextIcon} title="出典"><Ext href={`${s.url}#page=${s.page}`}>評価シート（{s.page}頁）</Ext></DetailSection>
-      <p className="mt-3 text-xs text-muted-foreground">評価は区が自ら付けたものです。風土記は評価を加えていません。</p>
+      <p className="mt-3 text-xs text-muted-foreground">評価は自治体が自ら付けたものです。A〜D と方向性は書き方を共通の区分に揃えたもので、風土記は評価を加えていません。</p>
     </>
   )
 }
@@ -1203,7 +1230,7 @@ export function AppPage({ data, snapshot, sitekey, initialYear, initialField, in
           )}
         </Tabs>
       </div>
-      <AskDock name={data.name} sitekey={sitekey} year={year} section={TABS.find((t) => t.key === tab)?.label} control={askControl} {...tour.askProps} />
+      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (d && v ? describeSelected(selected, d, v) : '')} section={TABS.find((t) => t.key === tab)?.label} control={askControl} {...tour.askProps} />
       {/* オンボーディングの続き（ホームでまちを選んだ人と、はじめにやることから再開した人だけ）。それ以外では何も描かない */}
       {tour.overlay}
     </div>

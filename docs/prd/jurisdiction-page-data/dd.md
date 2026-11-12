@@ -38,7 +38,7 @@
 | --- | --- | --- |
 | 新しくできた事業（名前・決算額・指標・評価・方向性・頁） | `profiles.ts` の `projects` | `project_evaluation_sheet`（新しくできた事業かは事業の始めた年度で決める。事業を作るまでは出さない）・`project_evaluation_indicator`・`project_evaluation_indicator_value` |
 | 新しくできた事業の分野 | `profiles.ts` の `cofog` | `project_evaluation_sheet.subject_id` の目の `cofog_code`（`fiscal_expenditure_subject` から引く） |
-| やめた事業・A〜C の一覧 | `profiles.ts` の `scrap.exits`・`graded` | `project_evaluation_sheet`（`grade_code`・`direction`） |
+| やめた事業・A〜C の一覧 | `profiles.ts` の `scrap.exits`・`graded` | `evaluation_sheet`（`direction_code`。A〜D は API の `outlook.grade`） |
 | 評価した数・A〜D の数 | `profiles.ts` の `scrap` | `project_evaluation_result` |
 | 予算の年度の新しい施策 | `budget-press.ts` | `project_budget_initiative` と seed `project_budget_initiative_link` |
 

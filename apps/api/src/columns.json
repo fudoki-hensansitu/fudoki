@@ -920,7 +920,7 @@
           "name": "name",
           "type": "string",
           "nullable": false,
-          "description": "シートの小事業名。"
+          "description": "シートの事業名（品川は小事業名）。"
         },
         {
           "name": "account_name",
@@ -968,37 +968,45 @@
           "name": "budget_yen",
           "type": "integer",
           "nullable": true,
-          "description": "シートの予算・決算（概要）の計の予算現額（円）。"
+          "description": "シートの予算額（円）。品川は予算・決算（概要）の計の予算現額。他の自治体は宣言（origins.json の note）の欄。"
         },
         {
           "name": "settled_yen",
           "type": "integer",
           "nullable": true,
-          "description": "シートの予算・決算（概要）の計の決算額（円）。"
-        },
-        {
-          "name": "grade_code",
-          "type": "string",
-          "nullable": false,
-          "description": "最終評価の区分の記号（A〜D）。",
-          "values": [
-            "A",
-            "B",
-            "C",
-            "D"
-          ]
+          "description": "シートの決算額（円）。品川は予算・決算（概要）の計の決算額。他の自治体は宣言（origins.json の note）の欄。"
         },
         {
           "name": "grade_label",
           "type": "string",
           "nullable": true,
-          "description": "最終評価の区分の名前（シートの表記、例「改善・見直しする事業」）。"
+          "description": "評価の区分の印字（シートの表記、例「改善・見直しする事業」「現状維持」）。自治体ごとに書き方が違うので、自治体をまたいで比べるときは direction_code を使う。"
         },
         {
           "name": "direction",
           "type": "string",
           "nullable": true,
-          "description": "最終評価の今後の取組の方向性（シートの表記、例「手法等の改善」）。"
+          "description": "今後の方向性の印字（シートの表記、例「手法等の改善」）。"
+        },
+        {
+          "name": "direction_code",
+          "type": "string",
+          "nullable": true,
+          "description": "風土記の判断。今後の方向性の印字（方向性の欄の無い様式は評価の区分の印字）を共通の区分に当てたもの。new（新しく始める）・expand（広げる）・keep（今のまま続ける）・statutory（法令で決まっている）・as_planned（計画どおり続ける）・improve（やり方を見直す）・resize（対象・規模を見直す）・reduce（縮小・一部をやめる）・merge（ほかの事業へ統合）・complete（完了）・end（やめる）・consider_end（やめるか検討中）。当て方は ingestion/project/sheet の既定と origins.json の directions。当たらなければ空。A〜D の4区分は持たず、API がこの区分からまとめる。",
+          "values": [
+            "new",
+            "expand",
+            "keep",
+            "statutory",
+            "as_planned",
+            "improve",
+            "resize",
+            "reduce",
+            "merge",
+            "complete",
+            "end",
+            "consider_end"
+          ]
         },
         {
           "name": "expenditure_subject_id",

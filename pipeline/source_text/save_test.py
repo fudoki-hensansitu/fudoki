@@ -16,16 +16,18 @@ def selection(kind_field: str, sha: str) -> dict:
 
 
 class LoadOriginsTest(unittest.TestCase):
-    def test_press_selections_are_press_and_project_origins_read_only_results(self):
+    def test_press_selections_are_press_budget_selections_are_skipped_and_project_origins_read_only_results(self):
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
-            (root / '131091.json').write_text(json.dumps(selection('press_selections', 'a' * 64)), encoding='utf-8')
+            (root / '131091.json').write_text(json.dumps({**selection('press_selections', 'a' * 64),
+                                                          **selection('selections', 'b' * 64)}), encoding='utf-8')
             declared = root / 'origins.json'
             declared.write_text(json.dumps({'press': [{'jurisdiction': '131091', 'layout': 'shinagawa_press'}],
                                             'results': []}), encoding='utf-8')
             self.assertEqual(project_origins(declared), [])
             press = [o for o in load_origins(root) if o.sha256 == 'a' * 64]
             self.assertEqual([(o.kind, o.r2_key) for o in press], [('press', f'fiscal/{"a" * 64}.pdf')])
+            self.assertNotIn('b' * 64, [o.sha256 for o in load_origins(root)])  # 予算・決算の頁の文字は作らない
 
 
 if __name__ == '__main__':
