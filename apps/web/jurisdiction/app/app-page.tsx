@@ -46,6 +46,7 @@ import { Separator } from '@/components/ui/separator'
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { cn } from '@/lib/utils'
 import { Link } from '../../nav/link'
@@ -56,8 +57,8 @@ import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
 import { pageHead } from '../html'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
-import { AskDock } from '../ask-dock'
-import { PageTour } from '../../home/tour'
+import { AskDock, type AskControl } from '../ask-dock'
+import { usePageTour } from './page-tour'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
 import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
@@ -100,7 +101,7 @@ const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
 type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
-type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go; openField: (id: string) => void }
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go; openField: (id: string) => void; /** オンボーディングの事業の詳細の歩で、詳細の頭に出す吹き出し */ coach: ((p: Proj) => React.ReactNode) | null }
 const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
 
@@ -359,14 +360,27 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     const controller = new AbortController()
     fetch(`/api/jurisdictions/accounts/${page.code}/${v.year}${phase === 'initial' ? '?phase=initial' : ''}`, { signal: controller.signal })
       .then((r) => (r.ok ? r.json() as Promise<AccountTotal[]> : []))
-      .then((x) => { if (!controller.signal.aborted) setAccounts(x) }, () => {})
+      .then((x) => { if (!controller.signal.aborted) setAccounts(x) }, () => { if (!controller.signal.aborted) setAccounts([]) })
     return () => controller.abort()
   }, [page.code, v.year, phase])
+  const expected = page.accounts?.[phase]?.[String(v.year)]?.length ?? 0
   const special = account === GENERAL ? undefined : accounts?.find((x) => x.name === account)
   const picked: YearTotal | undefined = special ? { year: v.year, yen: special.yen, kan: [] } : total
   const summary = picked ? <Amt yen={picked.yen} className="text-[26px] leading-snug text-primary" /> : null
   return (
     <div className="flex flex-col gap-3">
+      {/* 総額を読み込むまでは、収録した会計の数だけ札の場所を取っておき、下のお金の流れが後からずれないようにする */}
+      {!accounts && expected > 1 ? (
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" aria-busy="true" aria-label="会計">
+          {Array.from({ length: expected }, (_, i) => (
+            // 行の高さを本物の札と揃えるため、同じ文字の大きさの行に skeleton を入れる
+            <div key={i} className="flex flex-col items-start rounded-xl bg-card px-3.5 py-2.5">
+              <span className="text-xs"><Skeleton className="inline-block h-3 w-16 align-middle" /></span>
+              <span className="text-[17px]"><Skeleton className="inline-block h-4 w-24 align-middle" /></span>
+            </div>
+          ))}
+        </div>
+      ) : null}
       {accounts && accounts.length > 1 ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" role="radiogroup" aria-label="会計">
           {accounts.map((x) => (
@@ -392,7 +406,7 @@ function Overview({ go }: { go: Go }) {
   return (
     <div className="flex flex-col gap-8">
       {/* ホームのまちの札と同じく、濃い緑の地に総額と1人あたりを載せる。事業の件数は出さない */}
-      <section data-tour="budget" className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
+      <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
         <p className="text-sm opacity-80">{reiwa(v.year)}の{v.word}（一般会計）</p>
         <Amt yen={v.total} className="mt-1 block text-[40px] leading-none font-bold sm:text-[48px]" />
         {v.perHead != null ? (
@@ -402,7 +416,7 @@ function Overview({ go }: { go: Go }) {
         ) : null}
       </section>
 
-      <section>
+      <section data-tour="fields">
         <SectionHead title="分野" />
         {/* 札の中の行（割合・名前・金額・棒）を subgrid で横の札と揃え、名前が2行になっても金額と棒の位置を同じにする */}
         <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 @3xl:grid-cols-5">
@@ -412,7 +426,7 @@ function Overview({ go }: { go: Go }) {
 
       <FreshCarousel items={v.fresh.slice(0, 12)} more={() => go('projects', { filter: 'new' })} />
 
-      <section data-tour="project">
+      <section>
         <SectionHead title="お金のかかる事業"><MoreLink onClick={() => go('projects', { filter: 'all' })} /></SectionHead>
         <Rows>{v.current.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>
       </section>
@@ -442,7 +456,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
   }, [v, filter, field, q])
   const unlinked = filter === 'new' ? v.freshUnlinked.filter((m) => (field === 'all' || m.field === field) && (!q.trim() || m.title.includes(q.trim()))) : []
   return (
-    <div className="flex flex-col gap-2">
+    <div data-tour="projects" className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[220px] flex-1">
           <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -513,7 +527,7 @@ const Ext = ({ href, children }: { href: string; children: React.ReactNode }) =>
 )
 
 function ProjectDetail({ p }: { p: Proj }) {
-  const { v, d, select, years } = useApp()
+  const { v, d, select, years, coach } = useApp()
   const ys = String(v.year)
   const now = v.amount(p)
   const prev = v.amount(p, String(v.year - 1))
@@ -523,6 +537,7 @@ function ProjectDetail({ p }: { p: Proj }) {
   const ended = v.isEnded(p)
   return (
     <>
+      {coach?.(p)}
       <p className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">{p.path.filter(Boolean).map((x, i) => <React.Fragment key={i}>{i ? <CaretRightIcon className="size-2.5" /> : null}{x}</React.Fragment>)}</p>
       <h2 className="mt-1.5 mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
         {ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : null}
@@ -655,7 +670,8 @@ function SheetDetail({ s }: { s: EvalSheet }) {
 }
 
 /** 分野の頁（/tokyo/shinagawa/2026/fields/fukushi）。まとめのタイルから開く */
-const FieldChart = React.lazy(() => import('./field-chart'))
+const loadFieldChart = () => import('./field-chart')
+const FieldChart = React.lazy(loadFieldChart)
 /** 内訳の色。緑の濃さを金額の順に下げる（色に意味は持たせない）。その他は灰色。ink は切れの上に書く割合の文字色 */
 // oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで
 const SLICE_COLORS = [100, 78, 60, 44, 30].map((n) => `color-mix(in oklab, var(--primary) ${n}%, var(--background))`)
@@ -668,6 +684,8 @@ function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   const { v, d, page } = useApp()
   const [drills, setDrills] = React.useState<Drill[] | null>()
   const initial = d.years[String(v.year)]?.kind === 'initial'
+  // recharts の chunk は内訳のデータを待たずに読み始める
+  React.useEffect(() => { void loadFieldChart().catch(() => {}) }, [])
   React.useEffect(() => {
     setDrills(undefined)
     const controller = new AbortController()
@@ -688,10 +706,10 @@ function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   return (
     <DetailSection icon={ChartPieSliceIcon} title="内訳">
       {drills ? (
-        <React.Suspense fallback={<div className="h-[320px] animate-pulse rounded-xl bg-card" />}>
+        <React.Suspense fallback={<div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" />}>
           <FieldChart slices={slices} format={yenText} />
         </React.Suspense>
-      ) : <div className="h-[320px] animate-pulse rounded-xl bg-card" />}
+      ) : <div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" />}
     </DetailSection>
   )
 }
@@ -706,6 +724,7 @@ function FieldPage({ id }: { id: string }) {
   const ss = v.sheets.filter((s) => s.field === f.id)
   return (
     <>
+      <div data-tour="field">
       <div className="flex items-center gap-3">
         <span className="grid size-12 place-items-center rounded-2xl bg-card text-muted-foreground"><FieldIcon id={f.id} className="size-6" /></span>
         <div className="min-w-0">
@@ -717,6 +736,7 @@ function FieldPage({ id }: { id: string }) {
         <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}</span>
         <Amt yen={f.yen} className="block text-4xl leading-tight text-primary" />
         <span className="text-xs text-muted-foreground">{[`全体の ${((f.yen / v.total) * 100).toFixed(1)}%`, perHead(f.yen, d.pop)].filter(Boolean).join(' · ')}</span>
+      </div>
       </div>
       <FieldBreakdown frame={[...DOMAIN_FRAMES, OTHER_FRAME].find((x) => x.id === f.id) ?? OTHER_FRAME} />
       {ms.length ? (
@@ -916,6 +936,16 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
     setFieldPage(null)
     window.scrollTo({ top: 0 })
   }
+  // オンボーディングが頁を動かす。分野の頁を閉じてまとめ・事業のタブへ（分野の頁は履歴を置き換えて閉じる）
+  const leaveField = (t: TabKey) => {
+    select(null)
+    if (fieldPage) history.replaceState(null, '', `${basePath()}/${at.current.year}`)
+    setFieldPage(null)
+    setTabState(t)
+    showUrl(at.current.year, t)
+    window.scrollTo({ top: 0 })
+  }
+  const askControl = React.useRef<AskControl>(null)
   React.useEffect(() => {
     // 戻る・進むでは、URL の分野・タブ・年度に画面を合わせる
     const onPop = () => {
@@ -1013,9 +1043,9 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
         {/* 自治体名の行の右に年度の切り替えを置く。切り替えのボタンで行が高くならないよう上下を詰める */}
         <div className="flex items-center justify-between gap-3">
           <h1 className="min-w-0 text-[22px] font-normal leading-tight sm:text-[26px]">{data.name}</h1>
-          <div data-tour="year" className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
+          <div className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
         </div>
-        {vision ? <p data-tour="select" className="mt-2 text-base leading-snug sm:mt-0 sm:text-[17px]">{vision}</p> : null}
+        {vision ? <p className="mt-2 text-base leading-snug sm:mt-0 sm:text-[17px]">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
           <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
           {data.population ? (
@@ -1028,6 +1058,23 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
       </div>
     </header>
   )
+
+  const tour = usePageTour({
+    name: data.name,
+    v,
+    fieldPage,
+    tab,
+    project: selected?.kind === 'project' ? selected.id : null,
+    openField,
+    toOverview: () => leaveField('overview'),
+    toProjects: () => {
+      setFilter('all')
+      setField('all')
+      leaveField('projects')
+    },
+    selectProject: (id) => select(id ? { kind: 'project', id } : null),
+    ask: askControl,
+  })
 
   const panel = (key: TabKey) =>
     !v ? null : key === 'overview' ? <Overview go={go} /> : key === 'money' ? <MoneyTab phase="initial" /> : key === 'settled' ? <MoneyTab phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
@@ -1052,7 +1099,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
             ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
               {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
+                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none data-active:text-primary data-active:hover:text-primary data-active:focus-visible:text-primary dark:data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
                   <t.icon data-icon="inline-start" />
                   {t.label}
                 </TabsTrigger>
@@ -1063,7 +1110,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
             </div>
           </div>
           {v ? (
-            <AppContext.Provider value={{ d: d!, page: data, years, v, select, selected, projects, go, openField }}>
+            <AppContext.Provider value={{ d: d!, page: data, years, v, select, selected, projects, go, openField, coach: tour.coach }}>
               {fieldPage ? (
                 <div key={fieldPage} className="app-in pt-6"><FieldPage id={fieldPage} /></div>
               ) : phone ? (
@@ -1124,9 +1171,9 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
           )}
         </Tabs>
       </div>
-      <AskDock name={data.name} sitekey={sitekey} year={year} section={TABS.find((t) => t.key === tab)?.label} />
-      {/* ホームで住んでいるまちを選んだ人にだけ出すツアーの続き。それ以外では何も描かない */}
-      <PageTour name={data.name} />
+      <AskDock name={data.name} sitekey={sitekey} year={year} section={TABS.find((t) => t.key === tab)?.label} control={askControl} {...tour.askProps} />
+      {/* オンボーディングの続き（ホームでまちを選んだ人と、はじめにやることから再開した人だけ）。それ以外では何も描かない */}
+      {tour.overlay}
     </div>
   )
 }

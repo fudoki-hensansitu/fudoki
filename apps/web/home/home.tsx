@@ -17,7 +17,8 @@ import { reiwa, yearName } from '../jurisdiction/types'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { searchHref } from '../search/search'
 import { useMyTown, type Town } from './towns'
-import { onboarded, Tour, useTour, type TourStep } from './tour'
+import { onboarded, SpotTour, stepAt, TOTAL, useTour } from './tour'
+import { OpenVisual } from './tour-visuals'
 import { OtherTowns, Checklist, Empty, Intro, Steps, startChecklist, type CheckItem } from './onboarding'
 
 export interface Featured {
@@ -100,7 +101,7 @@ function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
             onClick={() => c.setYear(y)}
             aria-pressed={y === c.year}
             title={reiwa(y)}
-            className={cn('rounded-full px-3 py-1 text-[13px] transition-colors duration-150 ease-out', y === c.year ? (onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-background text-foreground shadow-sm') : onBrand ? 'hover:bg-brand-fill-hover hover:text-brand-fill-foreground' : 'text-muted-foreground hover:text-foreground')}
+            className={cn('rounded-full px-3 py-1 text-[13px] transition-colors duration-150 ease-out', y === c.year ? (onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-primary text-primary-foreground') : onBrand ? 'hover:bg-brand-fill-hover hover:text-brand-fill-foreground' : 'text-muted-foreground hover:text-foreground')}
           >
             {yearName(y)}
           </button>
@@ -317,17 +318,14 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
 }
 
 /** チェックリストの残りの項目。まちの頁・検索・アシスタントへ */
-const checkItems = (c: Ctx): CheckItem[] => [
+const checkItems = (c: Ctx, startAt: (at: number) => void): CheckItem[] => [
   { key: 'flow', label: 'お金の使い道を見る', href: flowHref(c) },
   { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects?filter=new` },
   { key: 'search', label: '事業を検索する', href: searchHref('', c.town.code) },
-  { key: 'assistant', label: 'アシスタントに聞く', href: '/assistant' },
+  // アシスタントへは、事業を選んで文を添えて聞くオンボーディングの歩から始める
+  { key: 'assistant', label: 'アシスタントに質問', start: () => startAt(stepAt('detail')) },
 ]
 
-/** 住んでいるまちを選んだ直後のツアーの1歩目。まちの頁を開かせ、続き（年度・予算・事業・文字を選んで聞く）はまちの頁の PageTour が出す */
-const tourSteps = (c: Ctx, go: () => void): TourStep[] => [
-  { target: 'open', title: 'まちの頁を開く', body: `${c.town.name}の予算・決算・事業を、まとめて見られる頁です。押して開いてみてください。`, mode: 'click', action: { label: '開く', run: go } },
-]
 
 const DOCS = 'https://docs.fudoki.dev'
 
@@ -363,7 +361,7 @@ function Footer() {
 
 export function Home({ entries, featured }: HomeProps) {
   const { ready, town, set } = useMyTown()
-  const tour = useTour('home')
+  const tour = useTour()
   const { visit } = useRouter()
   // はじめての流れで選んだまち。要点を見せてから「このまちにする」で決める
   const [pending, setPending] = React.useState<Town | null>(null)
@@ -373,7 +371,7 @@ export function Home({ entries, featured }: HomeProps) {
   const open = () => {
     if (!pending) return
     startChecklist()
-    tour.start()
+    tour.go(0)
     set(pending)
     setPending(null)
   }
@@ -408,9 +406,36 @@ export function Home({ entries, featured }: HomeProps) {
   else {
     // はじめにやること（ツアー中はツアー）を頭に出すため、まちのデータが読めたら先に組む
     const ctx = snap.d && snap.year != null && snap.d.years[String(snap.year)] ? buildCtx(town!, snap.d, snap.year, snap.setYear, vision) : null
+    // オンボーディングの1歩目（まちの頁を開く）はホームで出す。続きの歩で止めた人は、はじめにやることの「オンボ開始」からまちの頁の続きへ
+    const saved = tour.saved
+    const first = saved?.state === 'on' && saved.at === 0
+    // その歩からオンボーディングを始める。1歩目より先はまちの頁で続ける
+    const startAt = (at: number) => {
+      if (!ctx) return
+      tour.go(at)
+      if (at > 0) visit(ctx.base)
+    }
+    const resume = () => startAt(saved && saved.at > 0 && saved.at < TOTAL && saved.state !== 'done' ? saved.at : 0)
     body = (
       <>
-        {ctx ? tour.on ? <Tour steps={tourSteps(ctx, () => (tour.to('page'), visit(ctx.base)))} onDone={tour.done} total={5} /> : <Checklist items={checkItems(ctx)} /> : null}
+        {ctx ? (
+          first ? (
+            <SpotTour
+              at={0}
+              onSkip={tour.pause}
+              spot={{
+                target: 'open',
+                click: true,
+                title: 'まちの頁を開く',
+                body: `${ctx.town.name}の予算・決算・事業を、まとめて見られる頁です。押して開いてみてください。`,
+                visual: <OpenVisual town={ctx.town.name} total={ctx.v.total} />,
+                action: { label: '開く', run: () => (tour.go(1), visit(ctx.base)) },
+              }}
+            />
+          ) : (
+            <Checklist items={checkItems(ctx, startAt)} tour={saved} onTour={resume} />
+          )
+        ) : null}
         {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         <OtherTowns entries={entries} className="mb-3" />
         {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}

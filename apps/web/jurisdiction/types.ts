@@ -115,6 +115,8 @@ export interface PageData {
   projects: Project[]
   /** 基本構想の都市像（jurisdiction/visions.ts）。手で起こした自治体だけにある */
   vision?: Vision | null
+  /** 資料の種類・年度ごとに収録した会計の名前。予算・決算タブが総額を読み込む前に会計の札の場所を取っておくのに使う */
+  accounts?: Record<'initial' | 'settlement', Record<string, string[]>>
 }
 
 /** 自治体の頁で選べる年度（新しい順に3年）。決算の年度と、決算より後の当初予算の年度 */
