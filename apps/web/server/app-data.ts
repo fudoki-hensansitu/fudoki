@@ -81,7 +81,9 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   if (!me) throw new Error(`頁に無い年度: ${year}`)
   // ホームのまちの札は、評価のある最新の年度の評価シートを出す
   const evalYear = opt.evaluated ? Math.max(0, ...entry.evaluationYears.filter((y) => years.some((x) => x.year === y))) : 0
-  const [subjects, measures, sheets, evalSheets] = await Promise.all([
+  // 施策は当初予算書の内訳に紐づくので、決算の年度でも同じ年度の当初予算の科目から分野を引く
+  const measureYear = me.kind === 'settlement' && entry.initialYears.includes(year)
+  const [subjects, measures, sheets, evalSheets, initialSubjects] = await Promise.all([
     Promise.all(years.map(async (y) => {
       const r = await subjectsOf(env, entry.code, y.year, y.kind)
       const origin = r.last?.origins?.find((o) => o.origin_id === r.rows[0]?.origin_id)
@@ -90,9 +92,10 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     measuresOf(env, entry.code, year, year).then((r) => r.rows),
     sheetsOf(env, entry.code, year, year).then((r) => r.rows),
     evalYear && evalYear !== year ? sheetsOf(env, entry.code, evalYear, evalYear).then((r) => r.rows) : Promise.resolve(null),
+    measureYear ? subjectsOf(env, entry.code, year, 'initial').then((r) => r.rows) : Promise.resolve([]),
   ])
   const cofogByMoku = new Map(subjects.filter((y) => y.year === year).flatMap((y) => y.rows.filter((s) => s.level === '目').map((s) => [`${s.kan_name}/${s.kou_name}/${s.moku_name}`, s.cofog_code] as const)))
-  const cofogBySubject = new Map(subjects.flatMap((y) => y.rows.map((s) => [s.subject_id, s.cofog_code] as const)))
+  const cofogBySubject = new Map([...subjects.flatMap((y) => y.rows), ...initialSubjects].map((s) => [s.subject_id, s.cofog_code] as const))
 
   // 年度ごとの款・項・目と分野の合計
   const yearsOut: Snapshot['years'] = {}

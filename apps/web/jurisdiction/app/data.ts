@@ -7,10 +7,10 @@ export type { ProjRow as Proj } from './api'
 export type Measure = { id: string; fy: number; title: string; new: boolean; yen: number | null; desc: string[]; /** 紐付けた当初予算書の内訳 */ detail: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
 export type DirectionCode = 'new' | 'expand' | 'keep' | 'statutory' | 'as_planned' | 'improve' | 'resize' | 'reduce' | 'merge' | 'complete' | 'end' | 'consider_end'
 export type Sheet = { id: string; fy: number; name: string; grade: 'A' | 'B' | 'C' | 'D' | null; dir: string | null; dc: DirectionCode | null; /** 方向性の区分の言い方（API の outlook.label） */ dl: string | null; div: string | null; acct: string; b: number | null; s: number | null; /** 紐付けた決算書の内訳 */ detail: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
-/** 予算書の款・項・目（当初予算）。上から下へ見ていく予算のタブに使う */
+/** 款・項・目（年度の kind の資料）。上から下へ見ていく予算のタブに使う */
 export type Kan = { name: string; yen: number; kou: { name: string; yen: number; moku: { id: string; name: string; yen: number; field: string }[] }[] }
 export type YearData = {
-  /** 当初予算（initial）か、当初予算の無い年度の決算（settlement）か */
+  /** 決算のある年度は決算（settlement）、決算より後の年度は当初予算（initial） */
   kind: 'initial' | 'settlement'
   kan: Kan[]
   total: number
