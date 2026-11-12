@@ -1,5 +1,6 @@
 // 自治体の頁の AI に聞く入力欄（右下に畳める）。頁の文を選ぶとその文を質問の文脈に入れる
 import * as React from 'react'
+import { createPortal } from 'react-dom'
 import { ArrowSquareOutIcon, ArrowUpIcon, NotePencilIcon, QuotesIcon, RobotIcon, XIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
 import { StartForm } from '../chat/start-form'
@@ -401,7 +402,8 @@ export function AskDock({ name, sitekey, year, section, control, keepOpen, sugge
         <RobotIcon className="size-4 text-primary" aria-hidden="true" />
         {chat ? '会話に戻る' : `${name}について質問`}
       </button>
-      {chat ? (
+      {/* 会話のシートは body へ出す。頁の @container が重なりの文脈を作り、スマホの下のナビより後ろに回ってしまうため */}
+      {chat ? createPortal(
         <>
           {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
           <div aria-hidden="true" onClick={hideDrawer} className={`fixed inset-0 z-30 bg-foreground/20 md:hidden transition-opacity duration-300 motion-reduce:transition-none ${drawer ? '' : 'pointer-events-none opacity-0'}`} />
@@ -419,7 +421,8 @@ export function AskDock({ name, sitekey, year, section, control, keepOpen, sugge
               </React.Suspense>
             </div>
           </div>
-        </>
+        </>,
+        document.body,
       ) : null}
     </>
   )
