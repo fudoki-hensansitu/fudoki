@@ -693,6 +693,10 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "code_run_into_name": true,
+            "padded_runs": true
           }
         },
         "dropped_readings": [],

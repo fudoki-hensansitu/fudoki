@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="500" height="500" viewBox="-250,-277,500,500">
+	<title>Kunitomi, Miyazaki Chapter</title>
+	<polygon points="250,223 -250,223 -250,-277 250,-277" style="fill:none;stroke:none" />
+	<g id="A01">
+		<path d="M 0,-218 0,-158 A 158,158 0 0 1 158,0 158,158 0 0 1 152.21875,41.6875 L 205.375,72.375 A 218,218 0 0 0 218,0 218,218 0 0 0 0,-218 z" style="fill:#7e0a33;stroke:none" />
+		<path d="M -32,-240 0,-272 32,-240 32,-94 -32,-94 z" style="fill:#7e0a33;stroke:none" />
+	</g>
+	<use xlink:href="#A01" transform="rotate(120)" />
+	<use xlink:href="#A01" transform="rotate(-120)" />
+	<circle r="94" cx="0" cy="0" style="fill:none;stroke:#7e0a33;stroke-width:60"></circle>
+</svg>

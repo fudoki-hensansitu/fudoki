@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="-39.2 -30 91 60" width="455" height="300">
+<mask id="a">
+<path d="M-35-30h70v15h-70z" transform="skewX(-29)" fill="#fff"/>
+<path d="M-40-30H0V0H-40z" fill="#000"/>
+<circle r="30" fill="#fff"/>
+<circle r="15" fill="#000"/>
+<path d="M-40-10.5H0v21H-40z" fill="#000"/>
+<path d="M-35-7.5h70v15h-70z" transform="skewX(-29)" fill="#fff"/>
+</mask>
+<circle r="100" mask="url(#a)"/>
+</svg>

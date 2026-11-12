@@ -1,0 +1,17 @@
+<svg viewBox="-50 -35 100 70" width="500" height="350" xmlns="http://www.w3.org/2000/svg">
+<mask id="a">
+<path d="M50 0L0 35" stroke="#fff" stroke-width="16"/>
+<path d="M10 42 L-50 0" stroke="#000" stroke-width="20"/>
+<path d="M10 42 L-50 0" stroke="#fff" stroke-width="16"/>
+<path d="M-50 0l50-35" stroke="#fff" stroke-width="16"/>
+<path d="M-10-42L50 0" stroke="#000" stroke-width="20"/>
+<path d="M-10-42L50 0" stroke="#fff" stroke-width="16"/>
+<path d="M-50 0h100" stroke="#000" stroke-width="12"/>
+<path d="M-50 0h100" stroke="#fff" stroke-width="8"/>
+<path d="M30 14L46 2.8h0" stroke="#fff" stroke-width="16"/>
+</mask>
+<clipPath id="b">
+<path d="M-50 0l50 35 50-35-50-35z"/>
+</clipPath>
+<circle r="60" mask="url(#a)" clip-path="url(#b)" fill="#d60021"/>
+</svg>

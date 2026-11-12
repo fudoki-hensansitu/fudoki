@@ -742,11 +742,11 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "8cc8126d8a64713c3252854e2671ce2722a26323ad7de189354b6507e4405ac1",
+      "input_fingerprint": "d8043936d2cdc5833e8b18a045dc978b90a30d073e87322aa7f34552fde7c337",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 71頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の単位は printed 71頁 から決めた。分冊のため款の和 119,099,282 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 28 件（限度額 28）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -771,11 +771,11 @@
     {
       "table_id": "general-initial-2",
       "conversion_id": "general-initial-2",
-      "input_fingerprint": "6cb560623181a19cdfcacd483835f36a220a0bca0c2ce825b4e61979dc1b6988",
+      "input_fingerprint": "c799aee437a060b61c2d66eb0f45cc3693792cfd36db23c3f19e5867580a78f6",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 82頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の単位は printed 82頁 から決めた。分冊のため款の和 120,750,718 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -800,11 +800,11 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "cc8fabc17fdcdcbb308f029b9fbf078d895464df1ee5d920c951bf3837f81150",
+      "input_fingerprint": "c485923930c25499b60b540a9c1069ffcff339f53e936dc891d1afebc8a1526a",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 6頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 6頁 から決めた。款の和 12,513,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -829,11 +829,11 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "cb1f78b5cf337a04ac2c538fd5eebbcf00ad813ef446e4f94994adc6e624fe57",
+      "input_fingerprint": "5c1ebf71c4d7b2dd6e883bfd94aed3e45ca73a526050f745a653a9414edad0b3",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 13頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 13頁 から決めた。款の和 45,205,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 7 件（限度額 7）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -858,11 +858,11 @@
     {
       "table_id": "land-initial",
       "conversion_id": "land-initial",
-      "input_fingerprint": "a05cd4cd12830b937b645fdc9fe99916cf8637e40abeda7a2bbf23669bba4444",
+      "input_fingerprint": "17ed12c1c9551039bcd384a7eab67dbd23897264e498aa6851271aae15db1afe",
       "account": "用地特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 2頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 2頁 から決めた。款の和 489,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -887,11 +887,11 @@
     {
       "table_id": "parking-initial",
       "conversion_id": "parking-initial",
-      "input_fingerprint": "1c0a99cd220711b0befc607159eb8827a8ce5a30aed83d52e508d727a6e1e3a9",
+      "input_fingerprint": "9afb0b20084e511085cd2a10b623b14fec24f7dcead41c09c0d975282400c647",
       "account": "駐車場事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 3頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 3頁 から決めた。款の和 674,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
@@ -916,11 +916,11 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "8848b7c18e922fb24b32ef4f0bf36b27906db80841a778f678e0f7c39d38ae63",
+      "input_fingerprint": "af26ca253207545191fd48866110e77b419a5171dd99c5e199061e40709aea42",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
-        "金額の単位は printed 16頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 16頁 から決めた。款の和 49,150,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 2 件（積算 2）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,

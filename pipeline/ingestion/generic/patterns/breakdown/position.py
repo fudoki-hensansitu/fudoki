@@ -30,6 +30,8 @@ def position_levels(all_items, levels: dict[str, list[float]], depth_of) -> tupl
                 else:
                     number = number_span(first)
                     number = (number[0] - item.shift, number[1] - item.shift, number[2])
+                    if group.numbers_right is not None:  # the quirk `numbers_set_right`
+                        number = group.numbers_right.module.span(number)
                     key = nearest_position(number, [(k, numbers[group.axis][k]) for k in starts[group.axis] if k[0] == shape], first)
                     if shape == 'number':
                         circled = [(k, numbers[group.axis][k]) for k in starts[group.axis] if k[0] == 'circled']

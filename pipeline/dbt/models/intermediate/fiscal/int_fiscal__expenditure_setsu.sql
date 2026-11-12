@@ -3,7 +3,8 @@
 -- marks (、・, spaces), apply the small variant table (異体字・ひらがな), then
 -- exact-match the legal label stripped the same way, keeping the definition whose
 -- period covers the fiscal year (賃金 was removed in FY2020 with later numbers
--- shifted up). A name that matches no legal label exactly is read as a name cut
+-- shifted up). A legal label read with a number run into it (`9扶助費`, `2委託料`: the 節 number,
+-- or what OCR kept of it) is that label. A name that matches no legal label exactly is read as a name cut
 -- short at the foot of a page (`職員手当` for 職員手当等) when it is the beginning
 -- of exactly one legal label of that fiscal year (`setsu_match` = 'prefix');
 -- several labels, or none, stop the build instead of going NULL. Last, a name OCR
@@ -30,13 +31,14 @@ with recursive setsu_nodes as (
 ), matched as (
     select c.*,
         (select m.expenditure_setsu_id from {{ ref('setsu_master') }} m
-         where {{ fiscal_setsu_strip('m.label') }} = c.norm_name
+         where {{ fiscal_setsu_strip('m.label') }} in (c.norm_name, regexp_replace(c.norm_name, '^[0-9]+', ''))
            and c.fiscal_year >= coalesce(m.valid_from_fiscal_year, -2147483648)
            and c.fiscal_year <= coalesce(m.valid_to_fiscal_year, 2147483647)) as expenditure_setsu_id
     from canonicalized c
 ), by_code as (
-    -- The legal setsu sharing the printed number in that fiscal year, with the name distance.
-    select m.node_id, l.expenditure_setsu_id,
+    -- The legal setsu sharing the printed number in that fiscal year, with the name distance. Per document:
+    -- a settlement and an initial budget of one year can share a node_id, and must not double its count.
+    select m.node_id, m.document_kind, l.expenditure_setsu_id,
         {{ fiscal_char_distance(fiscal_setsu_strip('l.label'), 'm.norm_name') }} as distance
     from matched m
     join {{ ref('setsu_master') }} l
@@ -45,15 +47,15 @@ with recursive setsu_nodes as (
      and m.fiscal_year <= coalesce(l.valid_to_fiscal_year, 2147483647)
     where m.expenditure_setsu_id is null
 ), code_match as (
-    select node_id, count(*) as code_count,
+    select node_id, document_kind, count(*) as code_count,
         list(expenditure_setsu_id) filter (where distance <= 2) as code_ids,
         list(expenditure_setsu_id) as number_ids
-    from by_code group by node_id
+    from by_code group by node_id, document_kind
 ), resolved as (
     select m.*, {{ fiscal_setsu_prefix_ids('m.norm_name', 'm.fiscal_year') }} as prefix_ids,
         c.code_ids, c.number_ids, c.code_count
     from matched m
-    left join code_match c using (node_id)
+    left join code_match c using (node_id, document_kind)
 ), own as (
     select node_id, parent_node_id, document_kind, name,
         case when expenditure_setsu_id is not null then expenditure_setsu_id

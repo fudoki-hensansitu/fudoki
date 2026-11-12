@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="-50 -50 100 100">
+<clipPath id="c">
+<path d="M-50-50H-3v20h6v-20H50v46H-50zM-50 50H-3v-20h6v20H50v-46H-50z"/>
+</clipPath>
+<path d="M-50 0A50 50 0 0 1 50 0 50 50 0 0 1-50 0zm9 0A41 41 0 0 0 41 0 41 41 0 0 0-41 0zM-45-13H-6L0-24L6-13H45V13H-45z" fill="#074b9f" clip-path="url(#c)"/>
+</svg>

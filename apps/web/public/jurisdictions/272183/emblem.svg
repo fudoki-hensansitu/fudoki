@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="400" height="400" viewBox="-25 -30 50 50" xmlns="http://www.w3.org/2000/svg" version="1.1">
+  <desc>Emblem of Daito, Osaka</desc>
+  <defs>
+    <clipPath id="mask1">
+      <polyline points="-20,-20 20,-20 20,20 1,20 1,0 -1,0 -1,20 -20,20" />
+    </clipPath>
+    <clipPath id="mask2">
+      <rect x="-16" y="-32" width="32" height="60" />
+    </clipPath>
+  </defs>
+  <g stroke="#007524" stroke-width="8">
+    <g clip-path="url(#mask1)">
+      <circle cx="0" cy="0" r="12" fill="none" />
+    </g>
+    <g clip-path="url(#mask2)">
+      <line x1="0" y1="-12" x2="-40" y2="-12" transform="rotate(30)" />
+      <line x1="0" y1="-12" x2="40" y2="-12" transform="rotate(-30)" />
+    </g>
+    <line x1="0" y1="0" x2="0" y2="16" transform="rotate(30) translate(0, -32) rotate(-30) translate(-16, 0)" />
+  </g>
+</svg>

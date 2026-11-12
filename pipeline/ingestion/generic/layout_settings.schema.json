@@ -5,7 +5,7 @@
   "required": ["schema_version"],
   "properties": {
     "schema_version": {"const": 1},
-    "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["justified_names", "opening_cell", "overprint", "split_at_rules", "stacked_rows"]}},
+    "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["justified_names", "opening_cell", "overprint", "split_at_rules", "stacked_rows", "white_text"]}},
     "codes": {"const": "right"},
     "quirks": {"type": "object", "description": "Opt-in quirks the workflow selected (`generic/patterns/quirks/`); each module checks its own value."},
     "rules": {
@@ -14,8 +14,6 @@
       "properties": {
         "dark": {"type": "integer", "minimum": 129, "maximum": 255},
         "skewed": {"const": true, "description": "A scan set a little off level breaks each long horizontal rule into pieces a pixel row apart (国分寺市): the pieces are joined end to end before a rule's length is checked, and the words of one printed line are grouped with a wider tolerance (a line's amount at the right end sits up to 2.5pt above its name at the left)."},
-        "specks": {"const": true, "description": "The scan carries specks OCR reads as characters (国分寺市): a word boxed less than half as tall as the page's usual word, and no dash or sign, is dropped."},
-        "bracket_marks": {"const": true, "description": "OCR reads the opening bracket of a bracketed amount, printed apart from its figure, as a letter or digit (国分寺市: `C`, `L`, `7`, `（し`): such a one-mark word with an amount next right of it on its line is dropped."},
         "row_gaps": {"const": true, "description": "A vertical rule the page leaves out for a row lets the row's text run on into the next column (133086's 事業 names): an OCR line is cut only at the rules drawn across its middle."},
         "short_columns": {"const": true, "description": "A column rule drawn only over one short row (shorter than the page-wide detector keeps) is still a rule: a short vertical stroke joining two horizontal rules at the place of a vertical rule the page draws elsewhere closes the cell, as in a staircase (131199's 目 rows between 事務事業 blocks)."},
         "row_columns": {"const": true, "description": "A narrow stroke that runs the whole height between two horizontal rules is a column rule even where the page draws no rule at that place elsewhere (131164's 財源 columns under 説明, drawn only over a 目's row in the middle of a page)."}
@@ -47,6 +45,7 @@
           "inline": {"type": "boolean"},
           "heading": {"type": "string", "minLength": 1},
           "lines": {"type": "array", "minItems": 2, "uniqueItems": true, "items": {"type": "string", "minLength": 1}, "description": "One cell stacks the item's amounts a line each, the later ones in brackets (国分寺市: `1,147,465` / `(1,110,941)` / `(36,524)` under `本年度 (前年度) (比較)`): the heading of each line, top to bottom."},
+          "line_pitch": {"type": "number", "exclusiveMinimum": 0, "description": "The distance in points from one stacked line (`lines`) to the next, where the lines stand further apart than their height (国立市: 10pt figures 14pt apart). Without it a line is taken to be .82 of the name's height below the one above."},
           "excluded": {
             "type": "object",
             "additionalProperties": false,

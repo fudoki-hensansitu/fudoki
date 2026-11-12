@@ -210,7 +210,7 @@
     {
       "table_id": "care-expenditure",
       "conversion_id": "care-settlement",
-      "input_fingerprint": "fdf5e788d0c011451096a599701d120a65a02e77a8eaea58131861ebcdef9bc1",
+      "input_fingerprint": "acfaf968bbbdcc738480264cba01061fa3a3e775c9c7b2f6131423cbb75916e4",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -240,7 +240,7 @@
     {
       "table_id": "national-health-expenditure",
       "conversion_id": "national-health-settlement",
-      "input_fingerprint": "52d5a009afc90f590dc9f64dfc40f047734cd23fe4b291f220fdd88d8d647e78",
+      "input_fingerprint": "792d9c27e42047ea6eed665f75e50fa1188f84e4dc2a8cef86da0b46fc9c14dd",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -253,8 +253,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131091/2025/settlement/expenditure/national-health-expenditure-nodes.parquet",
-          "sha256": "85124bec44140a2c51f13ea728de7e5e398ec21925cfb752316507aecdbc55ea",
-          "bytes": 10313
+          "sha256": "dffecdd893dbb5bb982f53b668f26aec9b3ce28c7247187c8878839c45dfc04d",
+          "bytes": 10276
         },
         "row_count": 180
       },
@@ -270,7 +270,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "40fcff2663c326077159013b4257c5bd7b26d3d5cbca4752bb2744838a38cd53",
+      "input_fingerprint": "5e9ec1337fb781c169a5a04444d0865fdc9709bb9ac16ca4dfdd4525961d7399",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",

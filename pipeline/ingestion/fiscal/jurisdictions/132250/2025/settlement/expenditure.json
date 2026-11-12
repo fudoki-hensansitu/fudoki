@@ -37,6 +37,9 @@
                 "pattern": "position"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -76,6 +79,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -115,6 +121,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -154,6 +163,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },
@@ -193,6 +205,9 @@
                 "pattern": "indent"
               }
             }
+          },
+          "quirks": {
+            "spread_columns": true
           }
         }
       },

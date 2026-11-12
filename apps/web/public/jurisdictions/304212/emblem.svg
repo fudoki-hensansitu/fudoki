@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" version="1.1" width="500" height="500" viewBox="-250,-250,500,500">
+	<title>Nachikatsuura, Wakayama Chapter</title>
+	<polygon points="-250,250 -250,-250 250,-250 250,250 " style="fill:none;stroke:none" />
+	<circle cx="0" cy="0" r="240" style="fill:#0042ad;stroke:none" />
+	<path d="M -32,-225 A 1280,1280 0 0 1 -98.40625,187.625 212,212 0 0 0 0,212 212,212 0 0 0 97.6875,188.0625 1280,1280 0 0 1 32,-225 L -32,-225 z" style="fill:#f0f0f0;stroke:none" />
+	<circle cx="0" cy="0" r="226" style="fill:none;stroke:#f0f0f0;stroke-width:12" />
+</svg>

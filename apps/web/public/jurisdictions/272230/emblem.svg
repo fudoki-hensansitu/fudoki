@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="510" height="350" viewBox="-127.5 -175 255 175">
+<clipPath id="c">
+<path d="M-127.5-175h255v175h-255z"/>
+</clipPath>
+<g stroke="#000" stroke-width="15" fill="none" clip-path="url(#c)">
+<path d="M7.5 15V-184M0-9.5a90.5 90.5 0 0 0 0-181" transform="rotate(-40)"/>
+<path d="M-7.5 15V-184M0-9.5a90.5 90.5 0 0 1 0-181" transform="rotate(40)"/>
+<path d="M0-175v70"/>
+</g>
+</svg>

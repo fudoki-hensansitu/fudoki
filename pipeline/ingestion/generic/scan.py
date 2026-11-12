@@ -21,7 +21,7 @@ from ingestion.generic import layout
 from ingestion.generic.layout import SIGNS, _frames, _header_bottom, normalize
 from dataclasses import replace
 from ingestion.generic.observe import Page, Rule, Word
-from ingestion.generic.patterns import quirk
+from ingestion.generic.patterns import building, document_quirk, quirk
 from ingestion.generic.workflow import read_layout
 from ingestion.lib import pdf_rules
 from ingestion.lib.ocr_ink import superseded
@@ -116,12 +116,9 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
     # where the first ends. A share by width can be a digit off, and a sign makes the left part wider than it reads.
     joined = re.sub(r'\s+', '', word.text)
     together = RUN_TOGETHER.findall(joined)
-    if len(together) == len(inside) and ''.join(together) == joined and len(inside) > 1:
-        # One of the rules only clips the box's padding (`12,605,35811,404,052` 5pt past its second cell's right
-        # rule, 132080): the rule within a character of an end cuts no digit.
-        inner = [x for x in inside if x - word.x0 >= 1.5 * width and word.x1 - x >= 1.5 * width]
-        if len(inner) == len(inside) - 1:
-            inside = inner
+    if len(together) == len(inside) and ''.join(together) == joined and len(inside) > 1 \
+            and (padded := document_quirk('padded_runs')) is not None:
+        inside = padded.module.inside(word, inside, width)
     if len(together) == len(inside) + 1 and ''.join(together) == joined:
         edges = [word.x0, *inside, word.x1]
         return [Word(text, edges[i], word.y0, edges[i + 1], word.y1) for i, text in enumerate(together)]
@@ -618,11 +615,9 @@ def apply_name_corrections(observation: dict, rules: list[dict] | None) -> dict:
                             or rule['observation_id'] not in (o['id'], o.get('parent_id')):
                         continue
                     lost = corrected[:len(corrected) - len(observed)] if inserted and corrected.endswith(observed) else ''
-                    if lost and o['raw_text'].startswith(observed) and o.get('bbox_pdf_pt'):
-                        # The characters lost before the read ones stood left of them, a character (the box's
-                        # height) each: a letter-spaced `退 職 手 当` of which OCR read only `当`.
-                        x0, y0, x1, y1 = o['bbox_pdf_pt']
-                        o['bbox_pdf_pt'] = [x0 - len(lost) * (y1 - y0), y0, x1, y1]
+                    if lost and o['raw_text'].startswith(observed) and o.get('bbox_pdf_pt') \
+                            and (widened := document_quirk('lost_name_characters')) is not None:
+                        o['bbox_pdf_pt'] = widened.module.box(o['bbox_pdf_pt'], lost)
                     o['raw_text'] = o['raw_text'].replace(rule['observed_name'], rule['corrected_name'])
                     hit += 1
         if not hit:
@@ -1116,33 +1111,9 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
             bracket = box[2] - box[0] <= 16 and any(
                 b.lines and g.text.endswith((')', '）')) and box[1] - 3 <= (g.y0 + g.y1) / 2 <= box[3] + 3 and g.x0 - b.offset > box[2]
                 for logical in logicals_ for b in logical.bands if b.page == page_['page_number'] for g in b.words)
-            # A rule's piece OCR left over (国分寺市, a skewed scan): ink no taller than a line centred on a row rule
-            # of a band at that x, narrow ink over a column rule where it crosses a row rule, or a narrow mark centred on
-            # a column rule. A figure sits between the rules.
-            here = [b for logical in logicals_ for b in logical.bands if b.page == page_['page_number']
-                    and b.x0 - b.offset - 4 < cx < b.x1 - b.offset + 4]
-            edges = [x for b in here for x in (b.x0 - b.offset, b.x1 - b.offset)]
-            rows = [row for b in here for row in (*(b.rows or ()), b.body_top, b.body_bottom)]
-            on_row = box[3] - box[1] <= 16 and any(abs(cy - row) <= 3 for row in rows)
-            junction = (box[3] - box[1] <= 80 or box[2] - box[0] <= 24) and any(box[1] < row < box[3] for row in rows) \
-                and any(box[0] - 8 <= x <= box[2] + 8 for x in edges)
-            ruled = on_row or junction or (box[2] - box[0] <= 12 and any(abs(cx - x) <= 5 for x in edges))
-            # Ink that runs up past the body's top rule, centred just under it, is the heading's or the unit row's
-            # (`(比較)`, `千円` over the rule on a skewed scan): a figure starts below the rule.
-            heading = any(b.page == page_['page_number'] and b.x0 - b.offset < cx < b.x1 - b.offset
-                          and box[1] < b.body_top and cy < b.body_top + 10
-                          for logical in logicals_ for b in logical.bands)
-            # Ink on the line of a word of the column's heading read again in the column (`(前` `年 度)` of the header
-            # of a table stacked under another, 国分寺市): the rest of the heading.
-            heading = heading or any(
-                abs((o['bbox_pdf_pt'][1] + o['bbox_pdf_pt'][3]) / 2 - cy) <= 4 and max(o['bbox_pdf_pt'][0] - box[2], box[0] - o['bbox_pdf_pt'][2]) < 30
-                and not re.search(r'[0-9０-９]', o['raw_text']) and re.search(r'[一-龥ぁ-んァ-ン]', o['raw_text'])
-                for region in page_.get('regions', []) for o in region.get('observations', [])
-                if not o.get('parent_id') and o.get('bbox_pdf_pt') and any(
-                    b.kind == 'amount' and b.x0 - b.offset < (o['bbox_pdf_pt'][0] + o['bbox_pdf_pt'][2]) / 2 < b.x1 - b.offset
-                    and all(c in ''.join(b.header) for c in re.findall(r'[一-龥ぁ-んァ-ン]', o['raw_text']))
-                    for b in here))
-            if not unit and not bracket and not ruled and not heading and any(b.page == page_['page_number'] and b.kind == 'amount'
+            ink = document_quirk('rule_ink')
+            ruled = ink is not None and ink.module.ruled(box, page_, logicals_)
+            if not unit and not bracket and not ruled and any(b.page == page_['page_number'] and b.kind == 'amount'
                                 and b.x0 - b.offset < cx < b.x1 - b.offset and b.body_top < cy < b.body_bottom
                                 for logical in logicals_ for b in logical.bands):
                 built.unowned.append({'kind': 'unread ink in amount column', 'page': page_['page_number'], 'box': box})
@@ -1199,53 +1170,14 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
                     short_columns=bool(((settings or {}).get('rules') or {}).get('short_columns')),
                     skewed=bool(((settings or {}).get('rules') or {}).get('skewed')),
                     row_columns=bool(((settings or {}).get('rules') or {}).get('row_columns')))
-    if ((settings or {}).get('rules') or {}).get('specks'):
-        printed = drop_specks(printed)
+    if (specks := document_quirk('specks')) is not None:
+        printed = specks.module.drop(printed)
     printed = add_code_readings(printed, options.get('code_readings'))
     printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
                                 'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')
-    if ((settings or {}).get('rules') or {}).get('bracket_marks'):
-        printed = drop_bracket_marks(printed)
+    if (marks := document_quirk('bracket_marks')) is not None:
+        printed = marks.module.drop(printed)
     return read_units(printed, options.get('unit_readings')), observation, variants
-
-
-def drop_specks(printed: list[Page]) -> list[Page]:
-    """The layout setting `rules.specks`: a word boxed less than half as tall as the page's usual word, and no dash or
-    sign, is a speck of the scan OCR read as a character (国分寺市: `4` 1pt tall left of `300`, `电` over an amount)."""
-    result = []
-    for page in printed:
-        heights = sorted(w.y1 - w.y0 for w in page.words)
-        usual = heights[len(heights) // 2] if heights else 0
-        kept = [w for w in page.words if w.y1 - w.y0 >= usual / 2 or w.text.strip() in DASHES or w.text.strip() in SIGNS
-                or w.text.strip() in ('・', '.', ',', '，')]
-        result.append(replace(page, words=kept) if len(kept) != len(page.words) else page)
-    return result
-
-
-BRACKET_MARK = re.compile(r'[CLr71(（一|l]|[（(][しレ~（(]+')
-
-
-def drop_bracket_marks(printed: list[Page]) -> list[Page]:
-    """The layout setting `rules.bracket_marks`: the opening bracket of a bracketed amount, printed apart from its
-    figure, is read as a letter or digit (国分寺市: `C`, `L`, `7`, `（し` left of `22,517)`). A word of one such mark with an
-    amount next right of it on its line is the bracket and is dropped."""
-    result = []
-    for page in printed:
-        def bracket(w):
-            if not BRACKET_MARK.fullmatch(w.text.strip()):
-                return False
-            right = [o for o in page.words if o is not w and w.y0 - 3 <= (o.y0 + o.y1) / 2 <= w.y1 + 3
-                     and 0 <= o.x0 - w.x1 <= 50]
-            if not right:
-                return False
-            # A digit mark (`7`, `1`) may be a figure of its own: only before a bracketed or thousands amount is it
-            # the bracket.
-            amount = r'[0-9]{1,3}(,[0-9]{3})+[)）]?|[0-9]+[)）]' if w.text.strip() in '71' else r'[0-9,]+[)）]?'
-            nearest = min(right, key=lambda o: (abs((o.y0 + o.y1) / 2 - (w.y0 + w.y1) / 2) > 3, o.x0))
-            return re.fullmatch(amount, nearest.text.strip()) is not None
-        kept = [w for w in page.words if not bracket(w)]
-        result.append(replace(page, words=kept) if len(kept) != len(page.words) else page)
-    return result
 
 
 def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict | None = None):
@@ -1255,7 +1187,8 @@ def build_table(source: dict, options: dict, *, stop: bool = True, rules: dict |
     skewed = bool(((settings or {}).get('rules') or {}).get('skewed'))
     token = layout.LINE_TOLERANCE.set(layout.SKEWED_LINE_TOLERANCE if skewed else layout.LINE_TOLERANCE.get())
     try:
-        return _build_table(source, options, stop=stop, rules=rules)
+        with building(options.get('workflow')):
+            return _build_table(source, options, stop=stop, rules=rules)
     finally:
         layout.LINE_TOLERANCE.reset(token)
 

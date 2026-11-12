@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><svg width="450" height="442" viewBox="25 29 450 442" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+ <path xmlns="http://www.w3.org/2000/svg" id="a" d="m178.1 93.7a224 196 0 0 0-20.1 364.3 150 138 0 0 1 69.4-245.4c3.8-17.1 7.3-34.3 10.6-51.6a72 72 0 0 1-59.9-67.3z" fill="#009b4a"/>
+ <use xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" transform="matrix(-1 0 0 1 500 0)" xlink:href="#a"/>
+ <g xmlns="http://www.w3.org/2000/svg" fill="#f3aa00">
+  <circle cx="250" cy="90" r="60"/>
+  <path d="m250 162c-19 101.6-47.4 202.8-92 296 10.7 4.2 20.7 12 30.7 12 20 0 41.3-24 61.3-24s41.3 24 61.3 24c10 0 20-7.8 30.7-12-44.6-93.2-73-194.4-92-296z"/>
+ </g>
+</svg>

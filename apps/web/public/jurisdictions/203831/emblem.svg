@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" height="200" width="212" version="1.1">
+ <g transform="translate(0,14.468155)">
+  <path id="path4179" d="m100-10.468155h60l13.85641 24h-60z" fill-rule="evenodd"/>
+  <path d="m93.267578-10.130859a96 96 0 0 0 -89.267578 95.662109 96 96 0 0 0 96 96 96 96 0 0 0 96 -96 96 96 0 0 0 -0.30078 -6h-23.98828a72 72 0 0 1 0.28906 6 72 72 0 0 1 -72 72 72 72 0 0 1 -72 -72 72 72 0 0 1 72 -72 72 72 0 0 1 7.13477 0.357422l-13.867192-24.019531z"/>
+  <use xlink:href="#path4179" transform="translate(17.320505,30)" height="100%" width="100%" y="0" x="0" fill="#000000"/>
+  <use xlink:href="#path4179" transform="translate(34.641013,60)" height="100%" width="100%" y="0" x="0" fill="#000000"/>
+ </g>
+</svg>

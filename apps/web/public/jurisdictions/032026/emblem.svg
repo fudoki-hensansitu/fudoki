@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   version="1.1"
+   width="500"
+   height="500"
+   viewBox="-250 -250 500 500"
+   id="svg2"
+   inkscape:version="0.48.4 r"
+   sodipodi:docname="Symbol_of_Miyako_Iwate.svg">
+  <metadata
+     id="metadata20">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs18" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1280"
+     inkscape:window-height="961"
+     id="namedview16"
+     showgrid="false"
+     inkscape:zoom="1.1565563"
+     inkscape:cx="246.82203"
+     inkscape:cy="260.59322"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg2" />
+  <title
+     id="title4">Miyako Iwate Chapter</title>
+  <g
+     style="fill:#5d5df1;stroke:none"
+     id="g8">
+    <path
+       d="M -20,-239.15625 -20,-229.125 A 230,230 0 0 0 -230,0 230,230 0 0 0 -20,229.125 L -20,186.9375 A 188,188 0 0 1 -188,0 188,188 0 0 1 0,-188 188,188 0 0 1 188,0 188,188 0 0 1 20,186.9375 L 20,229.125 A 230,230 0 0 0 230,0 230,230 0 0 0 20,-229.125 L 20,-239.15625 A 240,240 0 0 0 -20,-239.15625 z"
+       id="path10" />
+    <path
+       d="M -20,-105 -20,-50 -160.4375,-50 A 168,168 0 0 0 -168,0 L -20,0 -20,20 -166.8125,20 A 168,168 0 0 0 0,168 168,168 0 0 0 166.8125,20 L 20,20 20,0 168,0 A 168,168 0 0 0 160.4375,-50 L 20,-50 20,-105 -20,-105 z M -110.8125,60 110.8125,60 A 128,128 0 0 1 0,126 128,128 0 0 1 -110.8125,60 z"
+       id="path12" />
+    <path
+       d="M 0,-168 A 168,168 0 0 0 -155.375,-64 L -108.5625,-64 A 126,126 0 0 1 0,-126 126,126 0 0 1 108.5625,-64 L 155.375,-64 A 168,168 0 0 0 0,-168 z"
+       id="path14" />
+  </g>
+</svg>

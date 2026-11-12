@@ -112,7 +112,8 @@
             }
           },
           "quirks": {
-            "digit_set_codes": 5
+            "digit_set_codes": 5,
+            "stacked_tables_apart": true
           }
         }
       },
@@ -205,7 +206,8 @@
             }
           },
           "quirks": {
-            "digit_set_codes": 5
+            "digit_set_codes": 5,
+            "stacked_tables_apart": true
           }
         }
       },
@@ -308,7 +310,8 @@
             }
           },
           "quirks": {
-            "digit_set_codes": 5
+            "digit_set_codes": 5,
+            "stacked_tables_apart": true
           }
         }
       },
@@ -401,7 +404,8 @@
             }
           },
           "quirks": {
-            "digit_set_codes": 5
+            "digit_set_codes": 5,
+            "stacked_tables_apart": true
           }
         }
       },
@@ -494,7 +498,8 @@
             }
           },
           "quirks": {
-            "digit_set_codes": 5
+            "digit_set_codes": 5,
+            "stacked_tables_apart": true
           }
         }
       },
@@ -587,7 +592,8 @@
             }
           },
           "quirks": {
-            "digit_set_codes": 5
+            "digit_set_codes": 5,
+            "stacked_tables_apart": true
           }
         }
       },

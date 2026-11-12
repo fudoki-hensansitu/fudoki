@@ -43,6 +43,37 @@ const ribbon = (xa: number, ya: number, ha: number, xb: number, yb: number, hb: 
   return `M${xa} ${ya}C${mid} ${ya},${mid} ${yb},${xb} ${yb}L${xb} ${yb + hb}C${mid} ${yb + hb},${mid} ${ya + ha},${xa} ${ya + ha}Z`
 }
 
+const end = (nodes: { top: number; size: number }[]) => (nodes.length ? nodes[nodes.length - 1]!.top + nodes[nodes.length - 1]!.size : 0)
+
+/** 款・項の金額から、列の位置と各段の高さを決める。高さ（total）は幅に依らない */
+const geometry = (kanValues: number[], kouValues: number[], width: number, height: number) => {
+  const narrow = width < 560
+  const left = narrow ? 104 : 180
+  const right = narrow ? 170 : 260
+  // ラベルの最小の高さだけで指定の高さを超えると帯の太さが0になるので、そのときは図を縦に伸ばして帯の分を残す
+  const floor = (n: number, slot: number, gap: number) => n * (slot + gap) + BAND_ROOM
+  const room = Math.max(height, floor(kanValues.length, KAN_SLOT, KAN_GAP), floor(kouValues.length, KOU_SLOT, KOU_GAP))
+  const scale = Math.min(fit(kanValues, KAN_SLOT, KAN_GAP, room), fit(kouValues, KOU_SLOT, KOU_GAP, room))
+  const kans = layout(kanValues, scale, KAN_SLOT, KAN_GAP)
+  const kouNodes = layout(kouValues, scale, KOU_SLOT, KOU_GAP)
+  const x0 = left
+  const x1 = Math.max(width - right - BAR, x0 + BAR + 40)
+  return { narrow, x0, x1, kans, kouNodes, total: Math.max(end(kans), end(kouNodes), 40) }
+}
+
+function useWidth(ref: React.RefObject<HTMLElement | null>) {
+  const [width, setWidth] = React.useState(0)
+  React.useEffect(() => {
+    const el = ref.current
+    if (!el) return
+    const observer = new ResizeObserver(() => setWidth(el.clientWidth))
+    observer.observe(el)
+    setWidth(el.clientWidth)
+    return () => observer.disconnect()
+  }, [ref])
+  return width
+}
+
 /** 款・項のラベルと棒は押せる。押すとその款（と項）の内訳へ移る */
 const pick = (fn: () => void) => ({
   role: 'button',
@@ -55,7 +86,6 @@ const pick = (fn: () => void) => ({
 /** total は割合の基準（その年度の全体）。ラベルは割合だけ出し、金額は hover・focus のツールチップで見せる */
 export function Overview({ flows, total: base, height = 520, levels = { kan: '款', kou: '項' }, onSelect }: { flows: Drill[]; total: number; height?: number; levels?: { kan: string; kou: string }; onSelect?: (kan: number, kou?: number) => void }) {
   const ref = React.useRef<HTMLDivElement>(null)
-  const [width, setWidth] = React.useState(0)
   // 図が画面に入ってから流れの動きを始める。動きを減らす設定なら、帯の上を流れる光も出さない
   const [seen, setSeen] = React.useState(false)
   const [still, setStill] = React.useState(true)
@@ -69,34 +99,14 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
   }, [])
   const flowId = React.useId()
   const pct = (yen: number, missing?: boolean) => formatShare(yen, base, missing) ?? '—'
-  React.useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new ResizeObserver(() => setWidth(el.clientWidth))
-    observer.observe(el)
-    setWidth(el.clientWidth)
-    return () => observer.disconnect()
-  }, [])
-  const narrow = width < 560
-  const left = narrow ? 104 : 180
-  const right = narrow ? 170 : 260
+  const width = useWidth(ref)
   const kous = flows.flatMap((flow, kanIndex) => flow.kou.map((kou, kouIndex) => ({ kanIndex, kouIndex, kou })))
-  const kanValues = flows.map((flow) => Math.max(0, flow.kan.yen))
-  const kouValues = kous.map(({ kou }) => Math.max(0, kou.yen))
-  // ラベルの最小の高さだけで指定の高さを超えると帯の太さが0になるので、そのときは図を縦に伸ばして帯の分を残す
-  const floor = (n: number, slot: number, gap: number) => n * (slot + gap) + BAND_ROOM
-  const room = Math.max(height, floor(kanValues.length, KAN_SLOT, KAN_GAP), floor(kouValues.length, KOU_SLOT, KOU_GAP))
-  const scale = Math.min(fit(kanValues, KAN_SLOT, KAN_GAP, room), fit(kouValues, KOU_SLOT, KOU_GAP, room))
-  const kans = layout(kanValues, scale, KAN_SLOT, KAN_GAP)
-  const kouNodes = layout(kouValues, scale, KOU_SLOT, KOU_GAP)
-  const x0 = left
-  const x1 = Math.max(width - right - BAR, x0 + BAR + 40)
+  const { narrow, x0, x1, kans, kouNodes, total } = geometry(flows.map((flow) => Math.max(0, flow.kan.yen)), kous.map(({ kou }) => Math.max(0, kou.yen)), width, height)
   const cut = (name: string, n: number) => (Array.from(name).length > n ? `${Array.from(name).slice(0, n - 1).join('')}…` : name)
   const offsets = new Map<number, number>()
-  const end = (nodes: { top: number; size: number }[]) => (nodes.length ? nodes[nodes.length - 1]!.top + nodes[nodes.length - 1]!.size : 0)
-  const total = Math.max(end(kans), end(kouNodes), 40)
   return (
-    <div ref={ref} className="relative w-full">
+    // 幅を測る前（最初の描画）から図の高さを取っておき、読み込み中の形から図に替わるときに下が動かないようにする
+    <div ref={ref} className="relative w-full" style={{ height: total + HEAD }}>
       {width ? (
         <svg width={width} height={total + HEAD} role="img" aria-label={`${levels.kan}から${levels.kou}への歳出の流れ`} data-seen={seen ? '' : undefined} className="flow-svg block font-sans">
           {/* 帯の上を左から右へ流れる光。大分類（款）から中分類（項）へお金が流れていく感じを出す。帯が伸びきったあとから流す */}
@@ -157,6 +167,65 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
               </AmountTip>
             )
           })}
+          </g>
+        </svg>
+      ) : null}
+    </div>
+  )
+}
+
+/** 読み込み中の全体図。図と同じ並べ方・高さで、款・項の棒と帯、ラベルの置き場を薄い色で出す。
+ * 款ごとの項の金額の比は、品川区 R8 当初予算の分野（大分類10・中分類24）を丸めた仮のもの。項の多い自治体・款・項では、図に替わるときに少し伸びる */
+const SKELETON = [[0.29, 0.06, 0.054, 0.052, 0.053], [0.108, 0.024], [0.051, 0.026, 0.002, 0.022], [0.059, 0.005], [0.019, 0.016, 0.008], [0.037, 0.004], [0.037, 0.002], [0.03, 0.008], [0.028], [0.006]]
+/** ラベルの置き場の長さ（px）。同じ長さが並ぶと縞に見えるので、少しずつ変える */
+const LABEL_WIDTHS = [64, 44, 56, 72, 40, 52]
+/** total は読み込む年度の総額。比に掛けて実際の図と同じ桁の金額で並べる（fit の二分探索の刻みが金額の桁で変わり、比のままだと図より高くなる） */
+export function OverviewSkeleton({ total: yen, height = 520, levels = { kan: '款', kou: '項' } }: { total: number; height?: number; levels?: { kan: string; kou: string } }) {
+  const ref = React.useRef<HTMLDivElement>(null)
+  const width = useWidth(ref)
+  const base = yen > 0 ? yen : 1e11
+  const kous = SKELETON.flatMap((kou, kanIndex) => kou.map((share) => ({ kanIndex, yen: share * base })))
+  const { narrow, x0, x1, kans, kouNodes, total } = geometry(SKELETON.map((kou) => kou.reduce((a, v) => a + v, 0) * base), kous.map((k) => k.yen), width, height)
+  const offsets = new Map<number, number>()
+  const line = narrow ? 8 : 10
+  return (
+    <div ref={ref} role="status" aria-label="お金の流れを読み込んでいます" className="relative w-full" style={{ height: total + HEAD }}>
+      {width ? (
+        <svg width={width} height={total + HEAD} aria-hidden="true" className="block animate-pulse font-sans">
+          <g className="fill-muted-foreground" fontSize={11}>
+            <text x={x0 + BAR} y={11} textAnchor="end">{levels.kan}</text>
+            <text x={x1} y={11}>{levels.kou}</text>
+          </g>
+          <g transform={`translate(0 ${HEAD})`}>
+            {kous.map(({ kanIndex }, i) => {
+              const source = kans[kanIndex]!
+              const offset = offsets.get(kanIndex) ?? 0
+              const h = kouNodes[i]!.height
+              offsets.set(kanIndex, offset + h)
+              return <path key={i} d={ribbon(x0 + BAR, source.y + offset, h, x1, kouNodes[i]!.y, h)} className="fill-muted/70" />
+            })}
+            {kans.map((node, i) => {
+              const w = (narrow ? 0.7 : 1) * LABEL_WIDTHS[i % LABEL_WIDTHS.length]!
+              const mid = node.top + node.size / 2
+              return (
+                <g key={i}>
+                  <rect x={x0} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-muted" />
+                  <rect x={x0 - 8 - w} y={mid - line - 1} width={w} height={line} rx={line / 2} className="fill-muted" />
+                  <rect x={x0 - 8 - 26} y={mid + 3} width={26} height={line - 2} rx={(line - 2) / 2} className="fill-muted" />
+                </g>
+              )
+            })}
+            {kouNodes.map((node, i) => {
+              const w = Math.min((narrow ? 0.8 : 1.4) * LABEL_WIDTHS[(i + 3) % LABEL_WIDTHS.length]!, width - x1 - BAR - 8 - 36)
+              const mid = node.top + node.size / 2
+              return (
+                <g key={i}>
+                  <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-muted" />
+                  <rect x={x1 + BAR + 8} y={mid - line / 2} width={Math.max(w, 24)} height={line} rx={line / 2} className="fill-muted" />
+                  <rect x={x1 + BAR + 8 + Math.max(w, 24) + 6} y={mid - (line - 2) / 2} width={24} height={line - 2} rx={(line - 2) / 2} className="fill-muted" />
+                </g>
+              )
+            })}
           </g>
         </svg>
       ) : null}

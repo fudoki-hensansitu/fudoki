@@ -1,6 +1,7 @@
 from collections import Counter, defaultdict
 import re
 from ingestion.generic.layout import SUBJECT_LEVELS, normalize
+from ingestion.generic.patterns import document_quirk
 from ingestion.generic.tree import subject_header
 
 
@@ -20,9 +21,12 @@ def select(bands):
     return subject_bands, "indent", None
 
 
-def alignment(all_items, codes_right):
+def alignment(all_items, codes_right, glued=None):
     # Codes set right in their column: a one-digit and a two-digit code of one level start a digit apart (4–6pt).
     # A wider spread is names or other levels sharing the column, not alignment.
+    # `glued`: the quirk `glued_subject_codes` (a code printed in one word with its name, `10.総`): its digits.
+    digits_of = glued.module.digits if glued is not None else (lambda glyph: glyph.text)
+    digit_width = glued.module.digit_width if glued is not None else (lambda glyph: glyph.x1 - glyph.x0)
     code_starts: dict[int, list[float]] = defaultdict(list)
     digit_widths: dict[int, list[float]] = defaultdict(list)
     for _, ordered, found in all_items:
@@ -37,11 +41,11 @@ def alignment(all_items, codes_right):
     # one digit before a one-digit code of its level, so it is read at the position the one-digit codes start.
     ones = [item.glyphs[0] for _, ordered, found in all_items for group in ordered
             if group.subject and group.mode == 'indent' for item in found[id(group)]
-            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]', item.glyphs[0].text)]
+            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]', digits_of(item.glyphs[0]))]
     twos = [item.glyphs[0] for _, ordered, found in all_items for group in ordered
             if group.subject and group.mode == 'indent' for item in found[id(group)]
-            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]{2}', item.glyphs[0].text)]
-    one_width = sorted(g.x1 - g.x0 for g in ones)[len(ones) // 2] if ones else 0
+            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]{2}', digits_of(item.glyphs[0]))]
+    one_width = sorted(digit_width(g) for g in ones)[len(ones) // 2] if ones else 0
     starts_of_ones = [g.x0 for g in ones]
     set_right = sum(any(abs(g.x0 + one_width - x) <= 1 for x in starts_of_ones) for g in twos)
     set_left = sum(any(abs(g.x0 - x) <= 1 for x in starts_of_ones) for g in twos)
@@ -59,6 +63,7 @@ def alignment(all_items, codes_right):
 
 def align(logical, group, kept, alignment):
     one_width, codes_set_right, right_set = alignment
+    run_into = document_quirk('code_run_into_name')
     # Join at the name's position before learning subject levels from the code's start.
     for item in kept:
         # The code leads the item: a name set a few points above its code's line (OCR) is not the start.
@@ -68,10 +73,10 @@ def align(logical, group, kept, alignment):
         item.indent = min(g.x0 for g in item.glyphs) if logical.ocr else (coded or item.glyphs[0]).x0
         band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
         narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
-        if (codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', item.code)
-                and item.glyphs[0].text.startswith(item.code)):
-            # (by the code: OCR reads a code run into its name, `45△市議会議員選挙` of a 目 that ended, as one word)
+        if run_into is not None and codes_set_right and item.code is not None and run_into.module.set_right(item):
             item.indent += one_width if len(item.code) == 2 else 0
+        elif run_into is None and codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', item.glyphs[0].text):
+            item.indent += one_width if len(item.glyphs[0].text) == 2 else 0
         elif band is not None and item.code is not None and narrow and item.level in right_set:
             # A staircase of narrow level columns with the codes set right: the column is the level,
             # not where the digits start (`5` and `10` of one 目 start 5pt apart).

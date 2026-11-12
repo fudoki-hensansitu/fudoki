@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="-5 -5 10 10" fill="#06c">
+<mask id="m">
+<path d="M-1-3h5v6H-2z" fill="#fff"/>
+<circle cx="0.9" cy="-2" r="2.5" fill="#000"/>
+</mask>
+<circle r="5"/>
+<circle cx="-1.5" r="2.5" fill="#fff"/>
+<circle cx="-0.9" cy="2" r="2.5"/>
+<circle cx="1.5" r="2.5" fill="#fff" mask="url(#m)"/>
+</svg>

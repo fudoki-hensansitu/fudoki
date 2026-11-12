@@ -256,7 +256,19 @@
               }
             }
           }
-        }
+        },
+        "name_corrections": [
+          {
+            "id": "p21-setsu-8",
+            "page": 21,
+            "code": "3",
+            "observed_name": "職員手当等10,1908旅費",
+            "corrected_code": "8",
+            "corrected_name": "旅費",
+            "y": 572.2,
+            "reason": "OCR が上の節の行と1行に合わせて読んだ（3 職員手当等 10,190 / 8 旅費）。行の金額 1,936 は 8 旅費 の行のもの。上の節（3 職員手当等 10,190）の金額は名前に入って読めず、その節は表に残らない。"
+          }
+        ]
       },
       "expected_tables": [
         {
@@ -395,7 +407,38 @@
               }
             }
           }
-        }
+        },
+        "name_corrections": [
+          {
+            "id": "p22-setsu-13",
+            "page": 22,
+            "code": "12",
+            "observed_name": "委託料29,68913使用料及び賃借料",
+            "corrected_code": "13",
+            "corrected_name": "使用料及び賃借料",
+            "y": 564.6,
+            "reason": "OCR が上の節の行と1行に合わせて読んだ（12 委託料 29,689 / 13 使用料及び賃借料）。行の金額 6,272 は 13 使用料及び賃借料 の行のもの。上の節（12 委託料 29,689）の金額は名前に入って読めず、その節は表に残らない。"
+          },
+          {
+            "id": "p24-setsu-2",
+            "page": 24,
+            "code": "1",
+            "observed_name": "報酬2,7682給料",
+            "corrected_code": "2",
+            "corrected_name": "給料",
+            "y": 275.4,
+            "reason": "OCR が上の節の行と1行に合わせて読んだ（1 報酬 2,768 / 2 給料）。行の金額 6,069 は 2 給料 の行のもの。上の節（1 報酬 2,768）の金額は名前に入って読めず、その節は表に残らない。"
+          },
+          {
+            "id": "p37-setsu-1",
+            "page": 37,
+            "code": "1",
+            "observed_name": "報酬3,1183",
+            "corrected_name": "報酬",
+            "y": 275.9,
+            "reason": "OCR が節「1 報酬 3,118」と次の行の節番号 3 を1行に読み、金額 3,118 と 3 が名前に入った。名前を報酬に戻す。金額と 3 の行は表に残らない。"
+          }
+        ]
       },
       "expected_tables": [
         {
@@ -555,7 +598,19 @@
               }
             }
           }
-        }
+        },
+        "name_corrections": [
+          {
+            "id": "p14-setsu-8",
+            "page": 14,
+            "code": "4",
+            "observed_name": "共済費4,9468旅費",
+            "corrected_code": "8",
+            "corrected_name": "旅費",
+            "y": 386.3,
+            "reason": "OCR が上の節の行と1行に合わせて読んだ（4 共済費 4,946 / 8 旅費）。行の金額 15 は 8 旅費 の行のもの。上の節（4 共済費 4,946）の金額は名前に入って読めず、その節は表に残らない。"
+          }
+        ]
       },
       "expected_tables": [
         {
@@ -594,7 +649,7 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "c4ccf63c4791b0a2c777dd94b2d0472b1657106a92d29c3c1038f283e8327d78",
+      "input_fingerprint": "beb02c38142b971ab0ae256570ee4ce52fb05775ff2c663ce41a76fd777b3d81",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -624,7 +679,7 @@
     {
       "table_id": "general-initial-2",
       "conversion_id": "general-initial-2",
-      "input_fingerprint": "386d459cae18189fc2c1f5a2bd2bc414eb6211d60e679d5ccb23e0bc6e1006f1",
+      "input_fingerprint": "aae4d32fa0e9ec529856c6f2449b36e346aebb12b762a175882cf663f4f90cce",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -654,13 +709,14 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "49d36f6e2a8a95ca7ba58f9c900fc730eb34a974e0400e4fd6fbec19b816aec6",
+      "input_fingerprint": "16a2919b4bb51b22f2b6176975bf86ac5fcef49771ba008703d11f1861f88cbe",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 20頁・carried 52頁 から決めた。款の和 14,449,283（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 2 件（積算 2）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（49 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 3職員手当等10,1908旅費→8旅費。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p28:full-page:a0:result0:r10・p28:full-page:a0:result0:r10:w2・p28:full-page:a0:result0:r16・p28:full-page:a0:result0:r16:w2）・徵→徴 6 件（p21:full-page:a0:result0:r10・p21:full-page:a0:result0:r10:w1・p21:full-page:a0:result0:r17・p21:full-page:a0:result0:r17:w1・p21:full-page:a0:result0:r72・p21:full-page:a0:result0:r72:w1）・查→査 6 件（p24:full-page:a0:result0:r10・p24:full-page:a0:result0:r10:w5・p32:full-page:a0:result0:r16・p32:full-page:a0:result0:r16:w5・p32:full-page:a0:result0:r22・p32:full-page:a0:result0:r22:w5）・產→産 6 件（p27:full-page:a0:result0:r10・p27:full-page:a0:result0:r10:w3・p27:full-page:a0:result0:r15・p27:full-page:a0:result0:r15:w3・p27:full-page:a0:result0:r59・p27:full-page:a0:result0:r59:w1）・齡→齢 4 件（p30:full-page:a0:result0:r11・p30:full-page:a0:result0:r11:w3・p30:full-page:a0:result0:r52・p30:full-page:a0:result0:r52:w3）。"
       ],
       "unread_amount_count": 0,
@@ -668,8 +724,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "5cc84be03bb0182307f8909cea0a26644eee679b3459c30240b8f6401ff90714",
-          "bytes": 9008
+          "sha256": "a34e51cd4685aa8834f01b33ef0c4b0c3c65d22a98baa4d791a04f69609989c2",
+          "bytes": 8992
         },
         "row_count": 124
       },
@@ -685,44 +741,46 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "7fe13c9f281722b3bd8f9bebce314e98679cc164f86cfa568952734f3982678d",
+      "input_fingerprint": "5cf5fbd43a9f316606654aca59328923d244364040d300e7bf78fd2cbc4826c1",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は column mark 25頁・carried 54頁 から決めた。款の和 10,078,197（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は column mark 25頁・carried 57頁 から決めた。款の和 10,078,197（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（48 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 14 件（p25:full-page:a0:result0:r75・p25:full-page:a0:result0:r75:w1・p26:full-page:a0:result0:r57・p26:full-page:a0:result0:r57:w1・p27:full-page:a0:result0:r63・p27:full-page:a0:result0:r63:w1・p28:full-page:a0:result0:r63・p28:full-page:a0:result0:r63:w1・p34:full-page:a0:result0:r15・p34:full-page:a0:result0:r15:w7・p37:full-page:a0:result0:r15・p37:full-page:a0:result0:r15:w0・p37:full-page:a0:result0:r70・p37:full-page:a0:result0:r70:w4）・徵→徴 6 件（p24:full-page:a0:result0:r10・p24:full-page:a0:result0:r10:w1・p24:full-page:a0:result0:r15・p24:full-page:a0:result0:r15:w1・p24:full-page:a0:result0:r74・p24:full-page:a0:result0:r74:w0）・查→査 6 件（p22:full-page:a0:result0:r10・p22:full-page:a0:result0:r10:w4・p29:full-page:a0:result0:r77・p29:full-page:a0:result0:r77:w3・p36:full-page:a0:result0:r10・p36:full-page:a0:result0:r10:w3）。"
+        "原画で確かめた名称の誤読 3 件を、管理 JSON の name_corrections で印字に直した: 12委託料29,68913使用料及び賃借料→13使用料及び賃借料・1報酬2,7682給料→2給料・1報酬3,1183→1報酬。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 14 件（p25:full-page:a0:result0:r75・p25:full-page:a0:result0:r75:w1・p26:full-page:a0:result0:r57・p26:full-page:a0:result0:r57:w1・p27:full-page:a0:result0:r63・p27:full-page:a0:result0:r63:w1・p28:full-page:a0:result0:r63・p28:full-page:a0:result0:r63:w1・p34:full-page:a0:result0:r15・p34:full-page:a0:result0:r15:w7・p37:full-page:a0:result0:r15・p37:full-page:a0:result0:r15:w0・p37:full-page:a0:result0:r70・p37:full-page:a0:result0:r70:w4）・徵→徴 6 件（p24:full-page:a0:result0:r10・p24:full-page:a0:result0:r10:w1・p24:full-page:a0:result0:r15・p24:full-page:a0:result0:r15:w1・p24:full-page:a0:result0:r74・p24:full-page:a0:result0:r74:w0）・查→査 6 件（p22:full-page:a0:result0:r10・p22:full-page:a0:result0:r10:w4・p29:full-page:a0:result0:r77・p29:full-page:a0:result0:r77:w3・p36:full-page:a0:result0:r10・p36:full-page:a0:result0:r10:w3）・說→説 6 件（p22:full-page:a0:result0:r57・p22:full-page:a0:result0:r57:w0・p22:full-page:a0:result0:r121・p22:full-page:a0:result0:r121:w0・p32:full-page:a0:result0:r53・p32:full-page:a0:result0:r53:w0）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/care-initial-nodes.parquet",
-          "sha256": "9650e94971e13be8834e4e1d65a0f2c30efa772a74df834b2772c8b5936ce674",
-          "bytes": 11098
+          "sha256": "d26b22795b5ce87c3bbca1ef419d1beb21a2e534e1be81032e4a80bf49673b15",
+          "bytes": 10570
         },
-        "row_count": 168
+        "row_count": 162
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/care-initial-amounts.parquet",
-          "sha256": "76ffafb92e44c116c72985eb98e37760b2eec88a252cd5681161bdf87c226787",
-          "bytes": 9144
+          "sha256": "b7de38549fa67d78e40e89311aedeef5d7d4a23d4a16ea2442003d2063304345",
+          "bytes": 8961
         },
-        "row_count": 261
+        "row_count": 257
       }
     },
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "d8a0cd807241ca9bd85cff5111aca9bee034913012894d43b970ee51af627e2b",
+      "input_fingerprint": "391c7b7ac2f3207a46ffe9e2da59f1da0ddd6fa91ea6c73796d9e75dc951f237",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 8頁・carried 19頁 から決めた。款の和 3,819,079（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 1 件（積算 1）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（24 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 4共済費4,9468旅費→8旅費。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 2 件（p19:full-page:a0:result0:r57・p19:full-page:a0:result0:r57:w2）・徵→徴 4 件（p15:full-page:a0:result0:r10・p15:full-page:a0:result0:r10:w1・p15:full-page:a0:result0:r15・p15:full-page:a0:result0:r15:w1）・查→査 2 件（p17:full-page:a0:result0:r20・p17:full-page:a0:result0:r20:w4）・齡→齢 4 件（p14:full-page:a0:result0:r34・p14:full-page:a0:result0:r34:w3・p19:full-page:a0:result0:r30・p19:full-page:a0:result0:r30:w3）。"
       ],
       "unread_amount_count": 0,
@@ -730,8 +788,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/elderly-medical-initial-nodes.parquet",
-          "sha256": "6175a49a822dc062db715e69f2fefc0c797aa439666718c0a92d56e2e3c0a90c",
-          "bytes": 5919
+          "sha256": "89c1350d7ed6fa399c0ca69d5232d32879c8cc68d1649a05fa358c27ec576943",
+          "bytes": 5906
         },
         "row_count": 58
       },
