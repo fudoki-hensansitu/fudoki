@@ -259,10 +259,10 @@ function Loading() {
 }
 
 /** うちのまちのデータが揃うまでの出し分け。揃ったら children に渡す */
-function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string; snap: ReturnType<typeof useSnapshot>; children: (c: Ctx) => React.ReactNode }) {
+function WithCtx({ town, vision, snap, loading, children }: { town: Town; vision?: string; snap: ReturnType<typeof useSnapshot>; loading?: React.ReactNode; children: (c: Ctx) => React.ReactNode }) {
   const { d, failed, year, setYear } = snap
   if (failed) return <p className="text-sm text-muted-foreground">今はこのまちのデータを読み込めません。少し時間をおいて開き直してください。</p>
-  if (!d || year == null) return <Loading />
+  if (!d || year == null) return <>{loading ?? <Loading />}</>
   if (!d.years[String(year)]) return <p className="text-sm text-muted-foreground">このまちの予算・決算は、まだ収録していません。</p>
   return <>{children(buildCtx(town, d, year, setYear, vision))}</>
 }
@@ -288,20 +288,40 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
       : []),
   ]
   return (
-    <section className="ob-swap rounded-[24px] border bg-background p-5 sm:p-7">
+    <RevealFrame town={town} onOpen={onOpen} onBack={onBack}>
+      {rows.map(([k, val], i) => (
+        <div key={k} className="ob-fade flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3 first:pt-1" style={{ '--d': `${0.12 + i * 0.12}s` } as React.CSSProperties}>
+          <dt className="text-[14px] text-muted-foreground">{k}</dt>
+          <dd>{val}</dd>
+        </div>
+      ))}
+    </RevealFrame>
+  )
+}
+
+/** Reveal の読み込み中。まち・ボタンは選んだ時点で決まっているので先に出し、数字の行だけを同じ高さの skeleton にする */
+function RevealLoading({ town, onOpen, onBack }: { town: Town; onOpen: () => void; onBack: () => void }) {
+  return (
+    <RevealFrame town={town} onOpen={onOpen} onBack={onBack} busy>
+      {[{ w: 'w-36', h: 'h-8 sm:h-9' }, { w: 'w-24', h: 'h-6' }, { w: 'w-40', h: 'h-6' }].map((x, i) => (
+        <div key={i} className="flex items-center justify-between gap-x-4 py-3 first:pt-1">
+          <dt><Skeleton className="h-4 w-24" /></dt>
+          <dd><Skeleton className={cn(x.h, x.w)} /></dd>
+        </div>
+      ))}
+    </RevealFrame>
+  )
+}
+
+function RevealFrame({ town, onOpen, onBack, busy, children }: { town: Town; onOpen: () => void; onBack: () => void; busy?: boolean; children: React.ReactNode }) {
+  return (
+    <section className="ob-swap rounded-[24px] border bg-background p-5 sm:p-7" aria-busy={busy || undefined}>
       <Steps at={2} of={2} />
       <div className="flex items-center gap-3">
         <Emblem code={town.code} name={town.name} className="size-11 rounded-xl p-1.5" />
         <h2 className="text-[22px] font-semibold">{town.name}</h2>
       </div>
-      <dl className="mt-2 divide-y">
-        {rows.map(([k, val], i) => (
-          <div key={k} className="ob-fade flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3 first:pt-1" style={{ '--d': `${0.12 + i * 0.12}s` } as React.CSSProperties}>
-            <dt className="text-[14px] text-muted-foreground">{k}</dt>
-            <dd>{val}</dd>
-          </div>
-        ))}
-      </dl>
+      <dl className="mt-2 divide-y">{children}</dl>
       {/* 1歩目の「現在地から選ぶ」と同じく、決めるボタンは右に置く（PC で左右に跳ばない）。スマホは幅いっぱいにして、選び直すは下 */}
       <div className="mt-5 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
         <button type="button" onClick={onBack} className="py-1 text-[13px] text-muted-foreground hover:text-foreground">
@@ -420,11 +440,11 @@ export function Home({ entries, featured }: HomeProps) {
         reveal={
           pending ? (
             <>
-              <WithCtx town={pending} vision={vision} snap={snap}>
+              <WithCtx town={pending} vision={vision} snap={snap} loading={<RevealLoading town={pending} onOpen={open} onBack={() => setPending(null)} />}>
                 {(c) => <Reveal c={c} onOpen={open} onBack={() => setPending(null)} />}
               </WithCtx>
-              {/* 読み込み中・失敗・年度なしでは Reveal が出ないので、選び直す導線をここに残す */}
-              {snap.d && snap.year != null && snap.d.years[String(snap.year)] ? null : (
+              {/* 失敗・年度なしでは Reveal が出ないので、選び直す導線をここに残す（読み込み中は RevealLoading が持つ） */}
+              {!snap.failed && (!snap.d || snap.year == null || snap.d.years[String(snap.year)]) ? null : (
                 <button type="button" onClick={() => setPending(null)} className="mt-3 text-[13px] text-muted-foreground hover:text-foreground">
                   違うまちを選ぶ
                 </button>
