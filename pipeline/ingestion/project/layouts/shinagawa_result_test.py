@@ -28,3 +28,8 @@ class ParseTest(unittest.TestCase):
         lines = [(4, '1 1 1 1'), (4, '合計 4 10'), (5, '1 1 1 1'), (5, '合計 4 10')]
         with self.assertRaisesRegex(ValueError, '2 個'):
             parse(lines)
+
+    def test_grade_counts_on_the_total_row_read_the_same(self):
+        result = parse([(4, '合計 652 16 339 271 26 1,522,098')])
+        self.assertEqual((result.evaluated_count, result.reduced_thousand), (652, 1522098))
+        self.assertEqual(result.grade_counts, {'A': 16, 'B': 339, 'C': 271, 'D': 26})

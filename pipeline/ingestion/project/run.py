@@ -32,9 +32,9 @@ ORIGINS = HERE / 'origins.json'
 SELECTIONS = HERE.parents[1] / 'source_selection'
 READINGS = CACHE / 'project'
 PAGE_TEXTS = CACHE / 'source-page-text'
-# 頁の文字を作るコード（語の層と並べ方）。直したらキャッシュを読み直す
-PAGE_TEXT_CODE = [PIPELINE / 'ingestion/generic/page_words.py', PIPELINE / 'ingestion/generic/observe.py',
-                  PIPELINE / 'source_text/layout.py']
+# 語の層のコード。取り込みと頁の文字のどちらも、直したらキャッシュを読み直す
+WORD_LAYER = [PIPELINE / 'ingestion/generic/page_words.py', PIPELINE / 'ingestion/generic/observe.py']
+PAGE_TEXT_CODE = [*WORD_LAYER, PIPELINE / 'source_text/layout.py']
 
 
 def origins() -> dict:
@@ -106,8 +106,11 @@ def code_fingerprint(origin: dict) -> str:
         files = sheet.modules() if workflow else [Path(layout(origin['layout']).__file__)]
     else:
         files = [*(press.modules(workflow) if workflow else [Path(layout(origin['layout']).__file__)]), HERE / 'layouts' / 'press.py']
-    digest = hashlib.sha256()
-    for path in files:
+    from ingestion.lib import poppler
+
+    # 語の層（page_words・observe）と固定した Poppler の版は、読む経路を問わず効く
+    digest = hashlib.sha256(poppler.pinned().encode())
+    for path in [*files, *WORD_LAYER]:
         digest.update(path.read_bytes())
     if workflow is not None:
         digest.update(json.dumps(workflow, ensure_ascii=False, sort_keys=True).encode())

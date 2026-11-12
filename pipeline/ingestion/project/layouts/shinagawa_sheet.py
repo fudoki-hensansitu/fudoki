@@ -1,6 +1,6 @@
 """品川区の事務事業評価シート（1小事業1頁、横置き2段組み）を読む。
 
-文字の層の語を座標で拾う。左の段は基本情報・目的・指標・取組、右の段は予算・決算・財務情報・評価。
+語の層（`page_words`）の語を座標で拾う。左の段は基本情報・目的・指標・取組、右の段は予算・決算・財務情報・評価。
 金額は千円の印字のまま返し、円への換算は呼び出し側が行う。様式の欄が見つからない頁は止める。
 """
 from __future__ import annotations
@@ -8,6 +8,9 @@ from __future__ import annotations
 import re
 import unicodedata
 from dataclasses import dataclass, field
+from pathlib import Path
+
+from ingestion.generic import page_words
 
 TITLE = re.compile(r'令和\s*(\d+)年度事務事業評価シート')
 ERA = 2018
@@ -90,8 +93,7 @@ def read_page(page, number: int) -> Sheet | None:
     """1頁を読む。評価シートの頁でなければ None（目次など）。"""
     # 座標は A3 横（幅 1191pt）に揃える。年度によって A4 横で出ている
     scale = WIDTH / page.width
-    words = [{**w, 'x0': w['x0'] * scale, 'x1': w['x1'] * scale, 'top': w['top'] * scale}
-             for w in page.extract_words(keep_blank_chars=False, use_text_flow=False)]
+    words = [{'text': w.text, 'x0': w.x0 * scale, 'x1': w.x1 * scale, 'top': w.y0 * scale} for w in page.words]
     rows = _lines(words)
     head = _norm(''.join(w['text'] for w in rows[0])) if rows else ''
     title = TITLE.search(head)
@@ -215,12 +217,9 @@ def _indicators(words: list[dict], number: int) -> list[Indicator]:
 
 
 def read(path) -> list[Sheet]:
-    import pdfplumber
     sheets = []
-    with pdfplumber.open(path) as pdf:
-        for number, page in enumerate(pdf.pages, start=1):
-            sheet = read_page(page, number)
-            if sheet is not None:
-                sheets.append(sheet)
-            page.flush_cache()
+    for page in page_words.pages(Path(path)):
+        sheet = read_page(page, page.number)
+        if sheet is not None:
+            sheets.append(sheet)
     return sheets

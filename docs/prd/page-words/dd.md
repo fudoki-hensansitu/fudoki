@@ -129,5 +129,5 @@ flowchart LR
 4. api の `readSourcePage` を D1 に切り替え、R2 の binding を外す（api の PR）。api は main に入ると deploy されるので、3 で本番 D1 に入ったことを確かめてから merge する。同じ PR で `apps/AGENTS.md`・`pipeline/AGENTS.md`・`pipeline/package.json` の `source-text:save`（目で確かめる `source-text:preview` は頁の文字を作る入口に移して残す。`source_text/` を移すなら `pipeline/pyproject.toml` の `module-name` も直す）・`.agents/skills/pipeline/references/source-text.md`・`docs/prd/source-reading/dd.md`・`apps/web/void.config.ts` のコメント・`apps/api/src/db.ts`・`apps/api/cloudflare.config.ts` を直す。
 5. R2 の `source-text/` を消す（確認を取ってから）。
 6. 取り込みを移す前の基準を取る。評価シート・指標・指標の値・評価の結果・施策の全件を、ID の元になる列（`origin_id`・`page`・`position`）を含めて、移す前の commit のコードで読む（`project:baseline --base <commit>`。その commit を作業ツリーに取り出して読み、今のコードの結果と全行で突き合わせる）。紐付けの seed（`dbt/seeds/project/budget_measure_link.csv`）の行が必ず `project_budget_measure` に当たることを確かめる dbt の検査を足す。足す前に `dbt:build` で当たらない行を数え、あれば取り込みを移す前に片付ける。
-7. 評価シート・評価の結果を語の層へ移し、基準と ID の列を含む全件が一致することを確かめる（取り込みの PR）。
+7. 評価シート・評価の結果を語の層へ移し、基準と ID の列を含む全件が一致することを確かめる（取り込みの PR）。品川の評価シート（`shinagawa_sheet.py`）と評価の結果（`shinagawa_result.py`）は移した。評価シートと評価の結果は全件一致した。指標は、令和5年度の冊で今まで拾えていなかった191件が増え、単位・定義・目標年度の欠けも埋まった（今までの指標で無くなったものは0件）。
 8. プレスを語の層へ移し、同じく全件で突き合わせる。個別の規則は1団体ずつ（取り込みの PR、団体ごとに分けてよい）。

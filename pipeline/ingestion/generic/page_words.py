@@ -54,3 +54,30 @@ def pages(pdf: Path) -> list[Page]:
         out.append(Page(number, width, height, [Word(w.text, w.x0, w.y0, w.x1, w.y1) for w in items]))
     return out
 
+
+
+def lines(page: Page) -> list[str]:
+    """頁の語を行に組む。縦の中心が行の中心から字の高さの半分より近い語を1行にまとめ、行の中は左からつなぐ（`join`）。行は上から。"""
+    rows: list[list[Word]] = []
+    for word in sorted(page.words, key=lambda w: ((w.y0 + w.y1) / 2, w.x0)):
+        middle, height = (word.y0 + word.y1) / 2, word.y1 - word.y0
+        if rows:
+            last = rows[-1]
+            center = sum((w.y0 + w.y1) / 2 for w in last) / len(last)
+            if abs(middle - center) <= min(height, min(w.y1 - w.y0 for w in last)) / 2:
+                last.append(word)
+                continue
+        rows.append([word])
+    return [join(sorted(row, key=lambda w: w.x0)) for row in rows]
+
+
+def join(row: list[Word]) -> str:
+    """行の語を左からつなぐ。隙間が字の幅の半分より狭ければ詰め（字の間を空けた見出しなど）、広ければ空白を1つ入れる。"""
+    def width(word: Word) -> float:
+        return (word.x1 - word.x0) / max(1, len(word.text))
+
+    out = row[0].text
+    for before, word in zip(row, row[1:]):
+        gap = word.x0 - before.x1
+        out += ('' if gap < min(width(before), width(word)) / 2 else ' ') + word.text
+    return out
