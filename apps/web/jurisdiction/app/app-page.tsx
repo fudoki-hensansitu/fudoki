@@ -102,6 +102,30 @@ const r = (y: number) => `R${y - 2018}`
 // ---------- 選んだもの（詳細） ----------
 type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
 type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go; openField: (id: string) => void; /** オンボーディングの事業の詳細の歩で、詳細の頭に出す吹き出し */ coach: ((p: Proj) => React.ReactNode) | null }
+/** 文脈に添える、開いている事業の評価シート（評価は過去の年度にしか無いので全年度の新しい順）・施策の数の上限（文脈の長さの上限に収める） */
+const DETAIL_SOURCES = 3
+/** 詳細に開いているものを、アシスタントに渡す文脈の行にする。出典の origin_id と頁・科目の ID を添え、AI が検索し直さずに読めるようにする */
+function describeSelected(sel: Selected, d: Snapshot, v: YearView): string {
+  if (!sel) return ''
+  const source = (label: string, x: { fy: number; origin: string; page: number }, name: string) => `${label}: ${r(x.fy)}「${name}」（origin_id ${x.origin}、${x.page}頁）`
+  if (sel.kind === 'moku') return `開いている科目: ${[...(sel.moku.path ?? []), sel.moku.name].filter(Boolean).join(' > ')}（subject_id ${sel.moku.id}）`
+  if (sel.kind === 'sheet') {
+    const s = d.sheets.find((x) => x.id === sel.id)
+    return s ? source('開いている評価シート', s, s.name) : ''
+  }
+  if (sel.kind === 'measure') {
+    const m = d.measures.find((x) => x.id === sel.id)
+    return m ? source('開いている予算案の施策', m, m.title) : ''
+  }
+  const p = d.projects.find((x) => x.id === sel.id)
+  if (!p) return ''
+  const now = v.amount(p)
+  return [
+    `開いている事業: ${p.name}（${[p.path.filter(Boolean).join(' > '), p.dept].filter(Boolean).join('、')}）${now != null ? `、${r(v.year)}の${v.word} ${yenText(now)}` : ''}`,
+    ...[...(v.measuresOf.get(p.id) ?? []).map((m) => source('この事業の予算案の施策', m, m.title)), ...d.sheets.filter((s) => s.project === p.id).sort((a, b) => b.fy - a.fy).map((s) => source(`この事業の評価シート（${r(s.fy)}に行った事業の評価${s.fy < v.year ? `。見ている${r(v.year)}の${v.year - s.fy}年前` : ''}）`, s, s.name))].slice(0, DETAIL_SOURCES),
+  ].join('\n')
+}
+
 const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
 
@@ -1182,7 +1206,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
           )}
         </Tabs>
       </div>
-      <AskDock name={data.name} sitekey={sitekey} year={year} section={TABS.find((t) => t.key === tab)?.label} control={askControl} {...tour.askProps} />
+      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (d && v ? describeSelected(selected, d, v) : '')} section={TABS.find((t) => t.key === tab)?.label} control={askControl} {...tour.askProps} />
       {/* オンボーディングの続き（ホームでまちを選んだ人と、はじめにやることから再開した人だけ）。それ以外では何も描かない */}
       {tour.overlay}
     </div>

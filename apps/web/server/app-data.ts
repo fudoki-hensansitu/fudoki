@@ -184,6 +184,7 @@ export async function loadAppData(env: Env, entry: CatalogEntry): Promise<Snapsh
       project: projectOf(m.expenditure_detail_id),
       field: fieldOf(d ? cofogBySubject.get(d.subject_id) : undefined),
       url: m.url ?? '',
+      origin: m.origin_id,
       page: m.page,
     }
   })
@@ -202,6 +203,7 @@ export async function loadAppData(env: Env, entry: CatalogEntry): Promise<Snapsh
       project,
       field: project ? (projects.get(project)?.field ?? 'other') : fieldOf(cofogByMoku.get(`${s.kan_name}/${s.kou_name}/${s.moku_name}`)),
       url: s.url ?? '',
+      origin: s.origin_id,
       page: s.page,
     }
   })
