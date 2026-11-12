@@ -373,9 +373,10 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       {!accounts && expected > 1 ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" aria-busy="true" aria-label="会計">
           {Array.from({ length: expected }, (_, i) => (
-            <div key={i} className="flex flex-col items-start gap-1.5 rounded-xl bg-card px-3.5 py-2.5">
-              <Skeleton className="h-4 w-16" />
-              <Skeleton className="h-[22px] w-24" />
+            // 行の高さを本物の札と揃えるため、同じ文字の大きさの行に skeleton を入れる
+            <div key={i} className="flex flex-col items-start rounded-xl bg-card px-3.5 py-2.5">
+              <span className="text-xs"><Skeleton className="inline-block h-3 w-16 align-middle" /></span>
+              <span className="text-[17px]"><Skeleton className="inline-block h-4 w-24 align-middle" /></span>
             </div>
           ))}
         </div>
