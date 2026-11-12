@@ -69,7 +69,7 @@ flowchart LR
   - この段で語の層に替えるのは、語（`extract_words`、字の大きさ・フォント名は `page_words.fonts`）と行（`extract_text`）だけ。
   - それ以外の pdfplumber の使い方は、この段では pdfplumber のまま残す。今あるのは `find_tables`（`find/table.py`・`fuchu_press.py`）、`extract_tables`（`inagi_press.py`）、`extract_text_lines`（`kiyose_press.py`）、`page.chars`（`setagaya_press.py`・`sumida_press.py`）、`page.rects`（`ota_press.py`）、`crop().extract_text`（`fuchu_press.py`）。規則ごとの一覧は移す PR に載せ、語の層の罫線から組む形は残った規則を移すときに別に決める。
   - 36 の個別の規則は1団体ずつ移して確かめる。
-- 指紋: `run.py` の `code_fingerprint` は、読む経路（`workflow` の宣言か個別の `layout`）を問わず `page_words.py` と `observe.py` を hash に足す。今の `code_fingerprint` は import を辿らずファイルの中身だけを hash し、個別の `layout` の出典は様式のファイルしか入れていないため、`sheet.modules()`・`press.modules()` に足すだけでは品川と36の規則のキャッシュが古くならない。
+- 指紋: `run.py` の `code_fingerprint` は、読む経路（`workflow` の宣言か個別の `layout`）を問わず `page_words.py` と `observe.py` を hash に足し、`poppler.pinned()` の版も足す。今の `code_fingerprint` は import を辿らずファイルの中身だけを hash し、個別の `layout` の出典は様式のファイルしか入れていないため、`sheet.modules()`・`press.modules()` に足すだけでは品川と36の規則のキャッシュが古くならない。
 
 ### 頁の文字を marts の表にする
 
@@ -99,7 +99,7 @@ flowchart LR
 
 - 公開の REST・MCP は、route・tool ごとに読む表を名前で指している（`columns.ts`）。`source_page_text` を読むのは内部の RPC（`source-pages.ts`）だけにする。表名の定数は `columns.ts` に置かず、`source-pages.ts` に書く。
 - 区別は apps/api の試験で守る。`src` の本番の `.ts`（`*.test.ts`・`testing.ts`・`gen/` を除く）のうち、`source_page_text` の表名を含むのが `source-pages.ts` だけであることと、`columns.json` の全部の表をなめるコードが本番に無いことを確かめる。
-- `readSourcePage` は R2 の代わりに D1 の `source_page_text` を `(sha256, page)` で引き、`page_count` は `max(page)` で引く。出典の照合（`evaluation_origin`・`budget_proposal_origin`）と `truncated` の返し方は今のまま。
+- `readSourcePage` は R2 の代わりに D1 の `source_page_text` を `(sha256, page)` で引き、`page_count` は `max(page)` で引く。出典の照合（`evaluation_origin`・`budget_proposal_origin`）は今のまま。本文は marts で切ってあるので、`truncated` は api で数え直さず D1 の列をそのまま返す。
 - R2 の binding `SOURCE_TEXT` と `SourceTextBucket` の型は消す。`pipeline/verify/boundaries.ts` に、api が R2 の binding を持たないことの検査を足す。web の `read_source_page` と Service Binding は変えない。
 
 ## Alternatives Considered
@@ -126,8 +126,8 @@ flowchart LR
 1. `page_words.py` を作る。`ingestion:refresh --plan` で fiscal の表が古くならないことを確かめる。
 2. 頁の文字を語の層から作り、今の R2 の `source-text/` と数百頁を突き合わせる。語の取り方が生の `-bbox` から `page_words`（見えない複製を落とす）に替わる分の差は、種類を確かめて許し、`drop_hidden_copies` が落とした語の数を報告に出す。品川の評価シート 211頁が `目標 258 324 390 418 418 / 実績 236 310 364` になることも確かめる。
 3. marts `source_page_text` と `sync_d1.py` の表ごとの読み戻し行数を足し、本番 D1 に写す（確認を取ってから）。
-4. api の `readSourcePage` を D1 に切り替え、R2 の binding を外す（api の PR）。api は main に入ると deploy されるので、3 で本番 D1 に入ったことを確かめてから merge する。同じ PR で `apps/AGENTS.md`・`pipeline/AGENTS.md`・`pipeline/package.json` の `source-text:*`・`.agents/skills/pipeline/references/source-text.md`・`docs/prd/source-reading/dd.md`・`apps/web/void.config.ts` のコメント・`apps/api/src/db.ts`・`apps/api/cloudflare.config.ts` を直す。
+4. api の `readSourcePage` を D1 に切り替え、R2 の binding を外す（api の PR）。api は main に入ると deploy されるので、3 で本番 D1 に入ったことを確かめてから merge する。同じ PR で `apps/AGENTS.md`・`pipeline/AGENTS.md`・`pipeline/package.json` の `source-text:save`（目で確かめる `source-text:preview` は頁の文字を作る入口に移して残す。`source_text/` を移すなら `pipeline/pyproject.toml` の `module-name` も直す）・`.agents/skills/pipeline/references/source-text.md`・`docs/prd/source-reading/dd.md`・`apps/web/void.config.ts` のコメント・`apps/api/src/db.ts`・`apps/api/cloudflare.config.ts` を直す。
 5. R2 の `source-text/` を消す（確認を取ってから）。
-6. 取り込みを移す前の基準を取る。評価シート・指標・指標の値・評価の結果・施策の全件を、ID の列（`sheet_id`・`measure_id`・`indicator_id` など）と `page`・`position` を含めて今のコードで書き出す。紐付けの seed（`dbt/seeds/project/budget_measure_link.csv`）の行が必ず `project_budget_measure` に当たることを確かめる dbt の検査を足す。
+6. 取り込みを移す前の基準を取る。評価シート・指標・指標の値・評価の結果・施策の全件を、ID の列（`sheet_id`・`measure_id`・`indicator_id` など）と `page`・`position` を含めて今のコードで書き出す。紐付けの seed（`dbt/seeds/project/budget_measure_link.csv`）の行が必ず `project_budget_measure` に当たることを確かめる dbt の検査を足す。足す前に `dbt:build` で当たらない行を数え、あれば取り込みを移す前に片付ける。
 7. 評価シート・評価の結果を語の層へ移し、基準と ID の列を含む全件が一致することを確かめる（取り込みの PR）。
 8. プレスを語の層へ移し、同じく全件で突き合わせる。個別の規則は1団体ずつ（取り込みの PR、団体ごとに分けてよい）。
