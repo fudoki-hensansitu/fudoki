@@ -29,7 +29,7 @@ flowchart LR
 
 ### 頁の文字を R2 に置く
 
-`bun run --cwd pipeline source-text:save`（`pipeline/source_text/save.py`）が、出典の選定（`selections`・`evaluation_selections`・`press_selections`）で R2 に保存済みの `pdf_type: text` の PDF と、事業の取り込みの宣言（`ingestion/project/origins.json` の `results`）が R2 の `project/` に保存した PDF を対象にする。R2 から出典を取って sha256 を選定と照らし、pdfium で頁ごとの文字を抜き出して `source-text/<sha256>.json` に置く。中身は `{schema_version: 1, sha256, pages: string[]}` で、`pages[i]` が物理頁 i+1 の文字。key は出典の内容で決まるので、R2 に同じ key があれば作り直さない。抜き出し方を変えたときは `--refresh` で作り直す。既定は計画の表示だけで、`--write` で書く。
+`bun run --cwd pipeline source-text:save`（`pipeline/source_text/save.py`）が、出典の選定（`selections`・`evaluation_selections`・`press_selections`）で R2 に保存済みの `pdf_type: text` の PDF と、事業の取り込みの宣言（`ingestion/project/origins.json` の `results`）が R2 の `project/` に保存した PDF を対象にする。R2 から出典を取って sha256 を選定と照らし、`pdftotext -bbox` の語の位置から頁ごとの文字を組み（`pipeline/source_text/layout.py`）、`source-text/<sha256>.json` に置く。語は縦の位置で行にまとめ、左端の位置まで空白で寄せて表の列を揃える。頁の幅の中ほどに語の無い縦の隙間があれば、左右の段に分けて左から並べる。中身は `{schema_version: 2, sha256, pages: string[]}` で、`pages[i]` が物理頁 i+1 の文字。key は出典の内容で決まるので、R2 に同じ key があれば作り直さない。抜き出し方を変えたときは `--refresh` で作り直す。既定は計画の表示だけで、`--write` で書く。
 
 Worker で PDF から文字を抜き出すと CPU の上限（apps/api は 200ms）に収まらないので、取り込みの側で作る。
 
@@ -42,7 +42,7 @@ Worker で PDF から文字を抜き出すと CPU の上限（apps/api は 200ms
 1. 入力を検査する。`origin` は sha256（64桁の16進）か `origin_id`、`page` は1以上の整数。
 2. 出典を風土記の記録に照らす。D1 の歳出・事業評価・予算案の出典の表（`expenditure_origin`・`evaluation_origin`・`budget_proposal_origin`）を sha256 か `origin_id` で引く。見つからなければ `not_found`。
 3. key を `source-text/<sha256>` から組み立てて `get` する。入力から key を受け取らないので、取り込み表など他の object は読めない。
-4. 頁の文字を最大 8,000 文字で返す。タイトルと公式の URL を添える。事業評価・予算案の出典の `url` が Wayback Machine の写し（自治体から消えた資料）のときは、公式の URL として `landing_url` を返す。
+4. 頁の文字を最大 12,000 文字（列を揃える空白を含む）で返す。タイトルと公式の URL を添える。事業評価・予算案の出典の `url` が Wayback Machine の写し（自治体から消えた資料）のときは、公式の URL として `landing_url` を返す。
 
 R2 の binding（`SOURCE_TEXT`）は Workers の仕様で読み書きの両方ができる。コードの型（`SourceTextBucket`）は `get` だけを持ち、書き込み・削除を呼ぶコードを置かない。
 
