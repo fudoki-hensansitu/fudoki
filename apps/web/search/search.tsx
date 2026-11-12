@@ -78,11 +78,11 @@ export function Search({ q, code, townName, towns, capped, failed, tooLong }: Pr
       <div className="mt-3 flex flex-wrap items-center gap-2">
         {/* 範囲: 全部のまち／うちのまち */}
         <div className="flex gap-1 rounded-full bg-secondary p-1 text-[13px]" role="group" aria-label="探す範囲">
-          <Link href={searchHref(q || EXAMPLES[0]!)} aria-current={!code ? 'page' : undefined} className={cn('rounded-full px-3 py-1 transition-colors', !code ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground')}>
+          <Link href={searchHref(q || EXAMPLES[0]!)} aria-current={!code ? 'page' : undefined} className={cn('rounded-full px-3 py-1 transition-colors', !code ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground')}>
             全部のまち
           </Link>
           {town || code ? (
-            <Link href={searchHref(q || EXAMPLES[0]!, code ?? town?.code)} aria-current={code ? 'page' : undefined} className={cn('rounded-full px-3 py-1 transition-colors', code ? 'bg-background shadow-sm' : 'text-muted-foreground hover:text-foreground')}>
+            <Link href={searchHref(q || EXAMPLES[0]!, code ?? town?.code)} aria-current={code ? 'page' : undefined} className={cn('rounded-full px-3 py-1 transition-colors', code ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground')}>
               {code ? (townName ?? code) : town?.name}だけ
             </Link>
           ) : null}

@@ -46,6 +46,7 @@ import { Separator } from '@/components/ui/separator'
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { cn } from '@/lib/utils'
 import { Link } from '../../nav/link'
@@ -362,11 +363,23 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       .then((x) => { if (!controller.signal.aborted) setAccounts(x) }, () => {})
     return () => controller.abort()
   }, [page.code, v.year, phase])
+  const expected = page.accounts?.[phase]?.[String(v.year)]?.length ?? 0
   const special = account === GENERAL ? undefined : accounts?.find((x) => x.name === account)
   const picked: YearTotal | undefined = special ? { year: v.year, yen: special.yen, kan: [] } : total
   const summary = picked ? <Amt yen={picked.yen} className="text-[26px] leading-snug text-primary" /> : null
   return (
     <div className="flex flex-col gap-3">
+      {/* 総額を読み込むまでは、収録した会計の数だけ札の場所を取っておき、下のお金の流れが後からずれないようにする */}
+      {!accounts && expected > 1 ? (
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" aria-busy="true" aria-label="会計">
+          {Array.from({ length: expected }, (_, i) => (
+            <div key={i} className="flex flex-col items-start gap-1.5 rounded-xl bg-card px-3.5 py-2.5">
+              <Skeleton className="h-4 w-16" />
+              <Skeleton className="h-[22px] w-24" />
+            </div>
+          ))}
+        </div>
+      ) : null}
       {accounts && accounts.length > 1 ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" role="radiogroup" aria-label="会計">
           {accounts.map((x) => (
@@ -1052,7 +1065,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
             ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
               {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
+                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
                   <t.icon data-icon="inline-start" />
                   {t.label}
                 </TabsTrigger>
