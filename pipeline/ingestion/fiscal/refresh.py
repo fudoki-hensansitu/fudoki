@@ -13,9 +13,14 @@ stored answer is reported as blocked; recording answers is the job of ``convert`
 """
 from __future__ import annotations
 
+from concurrent.futures import ProcessPoolExecutor, as_completed
 from copy import deepcopy
 import json
+import math
+import multiprocessing
 import os
+import re
+import subprocess
 from pathlib import Path
 import shutil
 import sys
@@ -25,7 +30,7 @@ import time
 import duckdb
 
 from ingestion.fiscal import manifest, run, storage, unit_checks
-from ingestion.lib import node_tables
+from ingestion.lib import heavy_lock, node_tables
 from ingestion.paths import PIPELINE
 
 CURRENT, REFRESHED, WOULD_REFRESH = 'current', 'refreshed', 'would-refresh'
@@ -272,21 +277,152 @@ def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path, eve
     return finish(WOULD_REFRESH if dry_run else REFRESHED)
 
 
-def refresh_all(paths: list[Path], *, remote: bool, dry_run: bool, output: Path, everything: bool = False) -> dict:
+# Manifests are refreshed in parallel processes. How many is decided from the machine at the start, so the
+# same command fits a laptop, a cloud container and a busy machine alike (`--jobs` overrides it).
+MAX_JOBS = 4
+# Peak RSS measured on 2026-11-12: 650 MB for 130001 2025 settlement (the largest), 200 MB for a typical
+# manifest. The budget leaves room for scan tables and the parent.
+WORKER_MEMORY = 1536 * 2 ** 20
+
+
+def available_cpus() -> int:
+    """CPUs this process may use: the affinity mask, narrowed by a cgroup CPU quota (containers)."""
+    count = len(os.sched_getaffinity(0)) if hasattr(os, 'sched_getaffinity') else (os.cpu_count() or 1)
+    try:
+        quota, period = Path('/sys/fs/cgroup/cpu.max').read_text().split()
+        if quota != 'max':
+            count = min(count, max(1, math.ceil(int(quota) / int(period))))
+    except (OSError, ValueError):
+        pass
+    return max(1, count)
+
+
+def available_memory() -> int | None:
+    """Bytes that can be used without swapping, or None when the platform does not say."""
+    try:
+        text = Path('/proc/meminfo').read_text()
+    except OSError:
+        text = None
+    if text is not None:
+        found = re.search(r'^MemAvailable:\s+(\d+) kB', text, re.M)
+        if not found:
+            return None
+        value = int(found.group(1)) * 1024
+        try:
+            limit = Path('/sys/fs/cgroup/memory.max').read_text().strip()
+            if limit != 'max':
+                value = min(value, int(limit) - int(Path('/sys/fs/cgroup/memory.current').read_text()))
+        except (OSError, ValueError):
+            pass
+        return max(0, value)
+    try:  # macOS: pages the kernel can hand out without paging (free, inactive, speculative, purgeable)
+        text = subprocess.run(['vm_stat'], capture_output=True, text=True, check=True, timeout=5).stdout
+    except (OSError, subprocess.SubprocessError):
+        return None
+    size = re.search(r'page size of (\d+) bytes', text)
+    pages = [re.search(rf'^{label}:\s+(\d+)', text, re.M)
+             for label in ('Pages free', 'Pages inactive', 'Pages speculative', 'Pages purgeable')]
+    if not size or not all(pages):
+        return None
+    return int(size.group(1)) * sum(int(page.group(1)) for page in pages)
+
+
+def auto_jobs(*, cpus=available_cpus, memory=available_memory, pressure=heavy_lock.memory_pressure_level) -> int:
+    """One CPU stays free for the machine, each process gets `WORKER_MEMORY`, never more than `MAX_JOBS`.
+    Memory pressure above normal, or memory that cannot be read, falls back to one process."""
+    level = pressure()
+    if level is not None and level > heavy_lock.MAX_PRESSURE_LEVEL:
+        return 1
+    free = memory()
+    if free is None:
+        return 1
+    return max(1, min(MAX_JOBS, cpus() - 1, free // WORKER_MEMORY))
+
+
+def origin_shas(path: Path) -> set[str]:
+    try:
+        document = manifest.read(path)
+        selected = manifest.selection_for(document)
+        return {item['sha256'] for conversion in document['conversions']
+                for item in manifest.resolved_inputs(document, conversion, selected)}
+    except Exception:
+        return set()
+
+
+def groups_of(paths: list[Path]) -> list[list[Path]]:
+    """Manifests that read the same original run in one process, one after another: the observation cache
+    of an original is written without a lock, so two processes must not build it at once."""
+    owner: dict[str, int] = {}
+    groups: list[list[Path]] = []
+    for path in paths:
+        shas = origin_shas(path)
+        joined = sorted({owner[sha] for sha in shas if sha in owner})
+        if not joined:
+            groups.append([path])
+            index = len(groups) - 1
+        else:
+            index = joined[0]
+            groups[index].append(path)
+            for other in reversed(joined[1:]):
+                groups[index].extend(groups[other])
+                groups[other] = []
+                for sha, value in owner.items():
+                    if value == other:
+                        owner[sha] = index
+        for sha in shas:
+            owner[sha] = index
+    return [group for group in groups if group]
+
+
+def refresh_one(path: Path, *, remote: bool, dry_run: bool, work: Path, everything: bool) -> dict:
+    try:
+        return refresh_manifest(path, remote=remote, dry_run=dry_run, work=work, everything=everything)
+    except Exception as error:
+        return {'manifest': str(path), 'status': ERROR, 'stage': 'read', 'reason': f'{type(error).__name__}: {error}'}
+
+
+def refresh_group(paths: list[Path], **options) -> list[tuple[Path, dict]]:
+    return [(path, refresh_one(path, **options)) for path in paths]
+
+
+def run_manifests(paths: list[Path], jobs: int, **options) -> list[dict]:
+    """Results in the order of ``paths``; progress lines as each manifest finishes."""
+    def report(item: dict) -> None:
+        print(f'{item["manifest"]}: {item["status"]}', file=sys.stderr, flush=True)
+
+    groups = groups_of(paths)
+    results: dict[Path, dict] = {}
+    if jobs <= 1 or len(groups) <= 1:
+        for path in paths:
+            results[path] = refresh_one(path, **options)
+            report(results[path])
+        return [results[path] for path in paths]
+    # spawn, not fork: DuckDB and the converters hold threads and file handles a forked child must not share.
+    with ProcessPoolExecutor(max_workers=min(jobs, len(groups)), mp_context=multiprocessing.get_context('spawn')) as pool:
+        futures = {pool.submit(refresh_group, group, **options): group for group in groups}
+        for future in as_completed(futures):
+            try:
+                finished = future.result()
+            except Exception as error:
+                finished = [(path, {'manifest': str(path), 'status': ERROR, 'stage': 'worker',
+                                    'reason': f'{type(error).__name__}: {error}'}) for path in futures[future]]
+            for path, item in finished:
+                results[path] = item
+                report(item)
+    return [results[path] for path in paths]
+
+
+def refresh_all(paths: list[Path], *, remote: bool, dry_run: bool, output: Path, everything: bool = False,
+                jobs: int | None = None) -> dict:
     started = time.monotonic()
     output.parent.mkdir(parents=True, exist_ok=True)
     # A caller waits for this file to appear to know the run finished. Drop a previous run's report
     # first, so an old file is never mistaken for this run's output.
     output.unlink(missing_ok=True)
     work = output.parent / 'candidates'
-    manifests = []
-    for path in paths:
-        try:
-            item = refresh_manifest(path, remote=remote, dry_run=dry_run, work=work, everything=everything)
-        except Exception as error:
-            item = {'manifest': str(path), 'status': ERROR, 'stage': 'read', 'reason': f'{type(error).__name__}: {error}'}
-        print(f'{item["manifest"]}: {item["status"]}', file=sys.stderr, flush=True)
-        manifests.append(item)
+    jobs = auto_jobs() if jobs is None else jobs
+    print(f'refresh: {len(paths)} manifests, {jobs} process(es)', file=sys.stderr, flush=True)
+    manifests = run_manifests(list(paths), jobs, remote=remote, dry_run=dry_run, work=work, everything=everything)
     statuses: dict[str, int] = {}
     tables = {SAME: 0, DIFFERENT: 0, BLOCKED: 0}
     for item in manifests:
@@ -294,7 +430,7 @@ def refresh_all(paths: list[Path], *, remote: bool, dry_run: bool, output: Path,
         for status, count in item.get('counts', {}).items():
             tables[status] += count
     ok = not {DIFFERENT, BLOCKED, ERROR} & set(statuses)
-    report = {'ok': ok, 'dry_run': dry_run, 'elapsed_seconds': round(time.monotonic() - started, 1),
+    report = {'ok': ok, 'dry_run': dry_run, 'jobs': jobs, 'elapsed_seconds': round(time.monotonic() - started, 1),
               'manifests': manifests}
     # Report first, atomically, so a reader never sees a half-written file.
     with tempfile.NamedTemporaryFile('w', dir=output.parent, delete=False, suffix='.tmp') as stream:
@@ -302,7 +438,7 @@ def refresh_all(paths: list[Path], *, remote: bool, dry_run: bool, output: Path,
         json.dump(report, stream, ensure_ascii=False, indent=1, default=str)
         stream.write('\n')
     os.replace(temporary, output)
-    summary = {'ok': ok, 'dry_run': dry_run, 'manifests': statuses, 'tables': tables,
+    summary = {'ok': ok, 'dry_run': dry_run, 'jobs': jobs, 'manifests': statuses, 'tables': tables,
                'elapsed_seconds': report['elapsed_seconds'], 'report': str(output),
                'attention': [{key: item[key] for key in ('manifest', 'status', 'stage', 'reason', 'counts', 'candidate')
                               if key in item} for item in manifests if item['status'] in {DIFFERENT, BLOCKED, ERROR}]}

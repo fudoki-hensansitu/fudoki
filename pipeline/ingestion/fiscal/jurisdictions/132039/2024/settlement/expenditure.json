@@ -617,7 +617,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "69a124840cc3b853e662e3e978dd3b0a1b3e48d802293344600a70bdf07ca060",
+      "input_fingerprint": "6e1f14630f731b048d7679fe217569d42584ea936fee2f7a0fe9e9b1a9cfd59b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -647,7 +647,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "4d374b4396c2683cbe3870a00baec06c517de4681e5834f7ce1fa56f77f151f4",
+      "input_fingerprint": "7eb36116f0c548c4e577e6116592ffc394607be309e487a7f5a44f145bca23b7",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -677,7 +677,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "49e0fb13a6fcbbbb464a3330cf3eb33d314977dad97e09973ef5b9a6602a26ac",
+      "input_fingerprint": "cb832243b4ed893433bea63950fb54f225843bbef658c4923fb8d1b80d257de5",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -707,7 +707,7 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "b580262e3a4bd17101783c8cc5c311ddd4b81d36cc9a81be108b64f4267ee79f",
+      "input_fingerprint": "d3a26e96f267534e81c54f04ff18045f333b70727083625414ac43f826fe0203",
       "account": "後期高齢者医療会計",
       "notes": [
         "武蔵野市後期高齢者医療会計の決算事項別明細書（歳出）。款・項・目の印字欄を所属する葉へ反復。最細は法定節（節がない予備費目は目）。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。目_備考は目の備考欄の原文（□事業・○経費・積算）。金額は円の原表記（△は減額符号）。歳出合計はlocal観測に残しraw行にしない。",
@@ -735,7 +735,7 @@
     {
       "table_id": "water-revenue-expenditure-detail",
       "conversion_id": "water-revenue",
-      "input_fingerprint": "ecbbf6f625521e4f723cad82de61069778aac839d5591fb166e338b39e0280ff",
+      "input_fingerprint": "593bcb0f72a2a984f265a13f0b99cdf3086e945258fbacbf16fda1873ba61c86",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",
@@ -765,7 +765,7 @@
     {
       "table_id": "water-capital-expenditure-detail",
       "conversion_id": "water-capital",
-      "input_fingerprint": "f8378384c6ade88331c495c79c0c31a58867aa2f23cd7bb31f4897c65f091437",
+      "input_fingerprint": "c690a15f5e95c1b03d2908a5498218d3eec477240e240d6b5c9281536f57c80c",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '備考': 'indent'}。",

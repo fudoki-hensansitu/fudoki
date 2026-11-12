@@ -1,5 +1,5 @@
 version = 1
-revision = 5
+revision = 3
 requires-python = "==3.13.*"
 resolution-markers = [
     "sys_platform == 'darwin'",
@@ -617,6 +617,7 @@ dependencies = [
     { name = "jsonschema" },
     { name = "numpy" },
     { name = "pdfplumber" },
+    { name = "pyarrow" },
     { name = "pypdfium2" },
 ]
 
@@ -644,6 +645,7 @@ requires-dist = [
     { name = "paddlex", marker = "extra == 'paddle-ocr'", specifier = "==3.7.2" },
     { name = "pdfplumber", specifier = "==0.11.10" },
     { name = "pillow", marker = "extra == 'paddle-ocr'", specifier = "==13.0.0" },
+    { name = "pyarrow", specifier = "==26.0.1" },
     { name = "pypdfium2", specifier = "==5.14.0" },
 ]
 provides-extras = ["paddle-ocr", "paddle-native"]
@@ -1402,6 +1404,21 @@ source = { registry = "https://pypi.org/simple" }
 sdist = { url = "https://files.pythonhosted.org/packages/37/a8/d832f7293ebb21690860d2e01d8115e5ff6f2ae8bbdc953f0eb0fa4bd2c7/py-cpuinfo-9.0.0.tar.gz", hash = "sha256:3cdbbf3fac90dc6f118bfd64384f309edeadd902d7c8fb17f02ffa1fc3f49690", size = 104716, upload-time = "2022-10-25T20:38:06.303Z" }
 wheels = [
     { url = "https://files.pythonhosted.org/packages/e0/a9/023730ba63db1e494a271cb018dcd361bd2c917ba7004c3e49d5daf795a2/py_cpuinfo-9.0.0-py3-none-any.whl", hash = "sha256:859625bc251f64e21f077d099d4162689c762b5d6a4c3c97553d56241c9674d5", size = 22335, upload-time = "2022-10-25T20:38:27.636Z" },
+]
+
+[[package]]
+name = "pyarrow"
+version = "26.0.1"
+source = { registry = "https://pypi.org/simple" }
+sdist = { url = "https://files.pythonhosted.org/packages/bc/5e/9cb2a56d5e293aab4e2fbecc5b0620d93227d66b8d5a63c554c31e1f80fe/pyarrow-26.0.1.tar.gz", hash = "sha256:93affcbd8a343e98dc19e9ec8fe17271ebf8fe98102d8b7454175074409f8b72", size = 1237985, upload-time = "2026-11-03T10:54:17.563Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/15/b8/c31c51fbe7df901817d88c73eeec25079d0da5f7c7b67fc0bf071f6a2df5/pyarrow-26.0.1-cp313-cp313-macosx_12_0_arm64.whl", hash = "sha256:4cb739ccb87292c673e1f69819b68432a73bb8bb456e8599641bba9183a8a1dd", size = 37292947, upload-time = "2026-11-03T10:50:12.333Z" },
+    { url = "https://files.pythonhosted.org/packages/fd/63/0c2559ae33ce59d2ca5ce74117676f8ff8da4cf102729a158ea46415eb50/pyarrow-26.0.1-cp313-cp313-macosx_12_0_x86_64.whl", hash = "sha256:50b40aea92f43b2b6da3427548a5337741b4b93b92e8015a8a3eefc0e75acca2", size = 39767535, upload-time = "2026-11-03T10:50:18.254Z" },
+    { url = "https://files.pythonhosted.org/packages/31/02/d9462d1ae4e54c3964af38316a802b29c28970b7d375722ef190af736640/pyarrow-26.0.1-cp313-cp313-manylinux_2_28_aarch64.whl", hash = "sha256:a3a79661404ba3d41b7c9a45cb56113246a244b38cb1393fadae289bc66b91b4", size = 51815955, upload-time = "2026-11-03T10:50:25.332Z" },
+    { url = "https://files.pythonhosted.org/packages/96/54/33c2df56948d88a4d83a52999a4a81a4871b2de481ff25ccd6f5ccd2589a/pyarrow-26.0.1-cp313-cp313-manylinux_2_28_x86_64.whl", hash = "sha256:f71221bbc7707e3fad920d0478db9350791d4714ec445299ee0d56559fbc156c", size = 55038406, upload-time = "2026-11-03T10:50:32.551Z" },
+    { url = "https://files.pythonhosted.org/packages/99/57/8e1f886ee96c7edab89ab6f15fbb00c85c2bb2173f3cb504925731d00564/pyarrow-26.0.1-cp313-cp313-musllinux_1_2_aarch64.whl", hash = "sha256:8ccfb9958bcd09f34678c64fb42a0e270b47cd092ae79578da51e0d7bb144296", size = 55437362, upload-time = "2026-11-03T10:50:39.89Z" },
+    { url = "https://files.pythonhosted.org/packages/8c/c3/d87939a5f6cd30bb406bad6c20926fcedafc52ec5629f6eb27e4cd5db709/pyarrow-26.0.1-cp313-cp313-musllinux_1_2_x86_64.whl", hash = "sha256:029e881af986375a2731da79c999fe734a72547fabb16503d65fc079d4bc7eb2", size = 58618865, upload-time = "2026-11-03T10:50:48.029Z" },
+    { url = "https://files.pythonhosted.org/packages/c1/9e/b6c8afec2ffc06bbd00a88326826f9d66e4bbca752c0837ee8e2dbf2238f/pyarrow-26.0.1-cp313-cp313-win_amd64.whl", hash = "sha256:8196f36a2f4cb8d2d6ef3651941b80e5ccf125d7653657d99af5bb298e7a7026", size = 28989592, upload-time = "2026-11-03T10:50:53.384Z" },
 ]
 
 [[package]]

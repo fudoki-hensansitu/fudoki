@@ -337,7 +337,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "3e166c0fbadf0c0e6fa48ee03e14bc6ad84114b74e7e930a1b7a088a08d968c3",
+      "input_fingerprint": "a48576a0c3f6d4a39da7ceb63a96cbce8c53934990dca5be15cd1b47a0584a58",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -366,7 +366,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "80a35294921f36e647c79b59b1a48550d4c3d41594481384e463a41c482b1864",
+      "input_fingerprint": "657978b9a4f487d18d679791cbde375edf86fd491a46c5ad9b9c23009980eb9d",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -395,7 +395,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "791e2daf4c5ea408f7fd3e69dffd720bed8e690609fd264fb7cbe6e85fe92c91",
+      "input_fingerprint": "deeada3088ad138017fd5e37c9e1fe92cb8407bdaff36b25419a63b672919c92",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -424,7 +424,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "eeaa6c1194819b2ba16fd392939a4e8c55e7d4cc90c6a0bbf41e1fd09fb7f53d",
+      "input_fingerprint": "7927375bb4ccee1545eb9ccce5d49bc18343e93c690ece471e604faf1df8a4fb",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -453,7 +453,7 @@
     {
       "table_id": "school-lunch-initial",
       "conversion_id": "school-lunch-initial",
-      "input_fingerprint": "9e9fac8d5f6b2d188850d3ff58f93ba3a216045289077c8902f60058340ebc20",
+      "input_fingerprint": "1c7ab088d303a25dcec6dba5043b20b2e6cf2a38b4158f881bc575c3a96d1500",
       "account": "学校給食費会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",

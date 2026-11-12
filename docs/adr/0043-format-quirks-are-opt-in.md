@@ -1,4 +1,4 @@
-# ADR 0041: 書式の癖は opt-in の quirks に置き、本体は全表に効く直しだけにする
+# ADR 0043: 書式の癖は opt-in の quirks に置き、本体は全表に効く直しだけにする
 
 状態: 採用（2026-11-11）。[ADR 0027](0027-refresh-fingerprints-by-table-content.md) の指紋の範囲と、[ADR 0036](0036-shared-coupled-pdf-readings.md) の選択式の部品を、層別の読み方（`generic_text`・`generic_scan`）の木の判定へ広げる。
 
