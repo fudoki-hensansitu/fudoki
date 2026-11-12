@@ -34,6 +34,15 @@ def column_mark(band: Band) -> str | None:
     if band.unit_mark:
         return band.unit_mark
     top = sorted(band.words, key=lambda w: w.y0)[:1]
+    if top:
+        # The mark's characters may be two words on baselines a hair apart (`円` 0.01pt above `千`, 小金井市): the
+        # words of its line in reading order make the mark when they read as one.
+        word = top[0]
+        line = sorted((w for w in band.words if min(w.y1, word.y1) - max(w.y0, word.y0) >= .5 * min(w.y1 - w.y0, word.y1 - word.y0)),
+                      key=lambda w: w.x0)
+        joined = ''.join(w.text for w in line)
+        if joined in MULTIPLIER:
+            return joined
     return top[0].text if top and top[0].text in MULTIPLIER else None
 
 
@@ -83,6 +92,9 @@ def kan_entries(nodes: list[dict], amounts: list[dict], document_kind: str
     amounts and units (a 款 of 0 may be left out of either), is that printing again and is not
     counted. Anything less (a different unit, a 款 with an amount missing or added, an unnamed
     款) counts in full, so a doubtful sum stops the build.
+
+    When no 款 prints an amount of the phase, the topmost subject rows that do (目 or 項) stand for
+    the 款, and the runs are cut on their numbers instead.
     """
     from ingestion.generic.headers import dictionary_header
     from ingestion.lib.node_tables import amount_phase
@@ -95,6 +107,14 @@ def kan_entries(nodes: list[dict], amounts: list[dict], document_kind: str
             printed.setdefault(amount['node_key'], []).append((number(amount['amount_text']), amount.get('unit_text')))
     yen = lambda value, unit: value * MULTIPLIER[unit] if unit in MULTIPLIER else (value, unit)
     roots = [n for n in nodes if n['axis_header'] == '科目' and n['parent_node_key'] is None and n['node_key'] in printed]
+    if not roots:
+        # A book that prints its amounts on the 目 only, not on the 款・項 over them (豊島 131164's 当初予算): the
+        # topmost subject rows that print an amount stand for the 款 they sum to.
+        subject = {n['node_key']: n for n in nodes if n['axis_header'] == '科目'}
+        def unprinted_above(node: dict) -> bool:
+            parent = subject.get(node['parent_node_key'])
+            return parent is None or (parent['node_key'] not in printed and unprinted_above(parent))
+        roots = [n for n in subject.values() if n['node_key'] in printed and unprinted_above(n)]
     conflicts = [{'node': n, 'printed': printed[n['node_key']]} for n in roots
                  if len({yen(v, u) for v, u in printed[n['node_key']]}) > 1]
     first = {key: values[0] for key, values in printed.items()}
@@ -153,6 +173,19 @@ def check(built, document_kind: str, account: str | None = None, partial: bool =
               'digits_ok': None, 'stopped': False,
               'conflicts': [{'code': c['node'].get('code_text'), 'name': c['node'].get('name_text'), 'printed': c['printed']}
                             for c in conflicts]}
+    # A 計 that equals the entries under one subject row above them (a 款 or a 項) is that row's subtotal,
+    # not the grand total (豊島 131164's 当初予算 prints amounts on the 目 only, and 計 under some 款・項).
+    subject = {n['node_key']: n for n in built.nodes if n['axis_header'] == '科目'}
+    subtotals: dict[str, int] = {}
+    tops = set()
+    for node, value, _ in entries:
+        parent = subject.get(node['parent_node_key'])
+        while parent:
+            subtotals[parent['node_key']] = subtotals.get(parent['node_key'], 0) + value
+            node, parent = parent, subject.get(parent['parent_node_key'])
+        tops.add(node['node_key'])
+    if len(units) <= 1 and len(tops) > 1:
+        printed = [n for n in printed if '合計' in (n.get('label') or '') or number(n['text']) not in subtotals.values()]
     if printed:
         # The grand total: a row named 合計 (歳出合計) if any, else the largest printed total
         # (other 計 rows are subtotals).

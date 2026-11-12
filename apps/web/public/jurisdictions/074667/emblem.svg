@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<svg xmlns:svg="http://www.w3.org/2000/svg" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1" width="500" height="500" viewBox="-250,-250,500,500">
+	<title>Yabuki, Fukushima Chapter</title>
+	<polygon points="-250,250 -250,-250 250,-250 250,250 " style="fill:none;stroke:none" />
+	<path d="M -24,-100 -24,-24 -238.8125,-24 A 240,240 0 0 0 -238.8125,24 L -24,24 -24,100 24,100 24,24 238.8125,24 A 240,240 0 0 0 238.8125,-24 L 24,-24 24,-100 -24,-100 z" style="fill:#4b811f;stroke:none" />
+	<path id="A01" d="M -24,-238.8125 A 240,240 0 0 0 -229,-72 L 229,-72 A 240,240 0 0 0 24,-238.53125 L 24,-190.3125 A 192,192 0 0 1 149.875,-120 L -149.875,-120 A 192,192 0 0 1 -24,-190.28125 L -24,-238.8125 z" style="fill:#4b811f;stroke:none" />
+	<use xlink:href="#A01" transform="rotate(180)" />
+</svg>

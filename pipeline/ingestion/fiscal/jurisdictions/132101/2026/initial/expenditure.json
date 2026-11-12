@@ -726,6 +726,12 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "unopened_brackets": true
           }
         },
         "name_corrections": [

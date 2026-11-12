@@ -537,6 +537,10 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "padded_runs": true,
+            "titles_on_one_line": true
           }
         },
         "dropped_readings": [
@@ -1196,6 +1200,10 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "padded_runs": true,
+            "titles_on_one_line": true
           }
         },
         "dropped_readings": [

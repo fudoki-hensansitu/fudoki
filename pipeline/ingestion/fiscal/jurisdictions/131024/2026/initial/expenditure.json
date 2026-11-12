@@ -83,6 +83,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
           }
         },
         "partial": true
@@ -169,6 +172,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
           }
         },
         "partial": true
@@ -255,6 +261,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
           }
         }
       },
@@ -340,6 +349,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
           }
         }
       },
@@ -425,6 +437,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
           }
         }
       },

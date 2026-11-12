@@ -18,7 +18,7 @@ const TTL = 3600
 const NODE_ID = /^[0-9a-f]{64}$/
 /** Worker の cache（無い環境では毎回取り直す）。同じ isolate の中でも一度だけ取る */
 const inflight = new Map<string, Promise<unknown>>()
-async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
+export async function memo<T>(key: string, fn: () => Promise<T>): Promise<T> {
   const url = `https://fudoki.dev/__cache/jurisdiction-v22/${key}`
   const cache = typeof caches === 'undefined' ? undefined : (caches as unknown as { default?: Cache }).default
   const hit = await cache?.match(url)
@@ -35,7 +35,7 @@ export const catalog = (env: Env) => memo<CatalogEntry[]>('catalog-evaluations',
 // catalog とは別の key で同じ TTL（1時間）を持つので、取り込みで自治体が増えてからホームの検索へ出るまで最大で約2時間かかる
 const index = (env: Env) => memo<IndexEntry[]>('index', async () => loadIndex(env, await catalog(env), jurisdictionPath))
 /** 自治体の頁と OG 画像が共有する、最新の決算の年度の頁のデータ */
-export const pageData = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
+export const pageData = (env: Env, e: CatalogEntry) => memo<Omit<PageData, 'prefecturePath' | 'prefectureLogo' | 'emblem' | 'neighbors'> | null>(`page-${e.code}-${e.settlementYears.at(-1)}`, () => loadPage(env, e))
 
 /** ホーム（/）に載せる全自治体の要約 */
 export async function homeEntries(env: Env): Promise<MapEntry[]> {
@@ -51,9 +51,11 @@ export function pageYearsOf(e: CatalogEntry): number[] {
   return appPageYears({ years: settled.map((year) => ({ year })), budgets: e.initialYears.filter((y) => y > last).map((year) => ({ year })) })
 }
 
-/** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする） */
+/** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする）。
+ * 帰属表示の要る紋章（CC BY など）は、描き起こした人とライセンスを画像の隅に書く */
 export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<(OgInput & { cacheKey: string }) | null> {
-  if (!EMBLEMS[code]) return null
+  const emblem = EMBLEMS[code]
+  if (!emblem) return null
   const entry = (await catalog(env)).find((e) => e.code === code)
   const data = entry && entry.settlementYears.length > 0 ? await pageData(env, entry) : null
   const areas = data?.cofogFlow.map((f) => ({ name: f.kan.name, yen: f.kan.yen })).filter((a) => a.yen > 0) ?? []
@@ -73,6 +75,7 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
     areas,
     emblemSvg,
     logoSvg,
+    ...(emblem.author ? { credit: `紋章の SVG 化: ${emblem.author} / ${emblem.license}` } : {}),
     // 同じ年度の決算なら同じ画像。字形・配置を変えたら版を上げる
     cacheKey: `og-v2/${code}-${latest.year}-${latest.yen}`,
   }

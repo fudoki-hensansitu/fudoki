@@ -17,3 +17,10 @@ test('OG 画像の書体は、SVG に書いた字だけを取る（data URI の�
   expect(chars).not.toContain('紋')
   expect(chars).not.toContain('<')
 })
+
+test('帰属表示の要る紋章は、描き起こした人とライセンスを OG 画像に書く', () => {
+  const base = { name: 'つくば市', prefecture: '茨城県', year: 2024, total: 1e10, areas: [{ name: '教育', yen: 1e10 }], emblemSvg: '<svg/>', logoSvg: '<svg/>' }
+  expect(ogChars(ogSvg({ ...base, credit: '紋章の SVG 化: Kilom691, Mike Rohsopht / CC BY-SA 3.0' }))).toContain('R')
+  expect(ogSvg({ ...base, credit: '紋章の SVG 化: Kilom691 / CC BY-SA 3.0' })).toContain('紋章の SVG 化: Kilom691 / CC BY-SA 3.0')
+  expect(ogSvg(base)).not.toContain('SVG 化')
+})

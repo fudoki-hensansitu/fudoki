@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="500" height="500" viewBox="-5 -5 10 10" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+  <desc>Emblem of Izumozaki, Niigata</desc>
+  <defs>
+    <clipPath id="m">
+      <rect id="r" y="-6" width="8" height="8" />
+      <use xlink:href="#r" transform="rotate(180)" />
+    </clipPath>
+  </defs>
+  <g clip-path="url(#m)">
+    <circle r="3" fill="none" stroke-width="2" stroke="#000000" />
+  </g>
+</svg>

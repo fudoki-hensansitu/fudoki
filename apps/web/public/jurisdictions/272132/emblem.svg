@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="300" height="300" viewBox="-30 -41 60 60" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+  <desc>Emblem of Izumisano, Osaka</desc>
+  <defs>
+    <clipPath id="m">
+      <rect id="r" x="-5" y="-37" width="50" height="25" transform="rotate(-47.5)" />
+    </clipPath>
+  </defs>
+  <g stroke="#41ad49" stroke-width="4">
+    <line y1="-8" y2="12" />
+    <g id="g1">
+      <line y1="-37" y2="12" transform="rotate(47.5)" />
+      <g clip-path="url(#m)">
+        <circle r="32" fill="none" />
+      </g>
+    </g>
+    <use xlink:href="#g1" transform="scale(-1,1)" />
+  </g>
+</svg>

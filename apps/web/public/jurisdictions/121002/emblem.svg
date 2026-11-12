@@ -1,0 +1,14 @@
+<svg viewBox="-300 -340 600 631" height="631" width="600" xmlns="http://www.w3.org/2000/svg">
+<mask id="a">
+<circle fill="#fff" r="300"/>
+<circle r="400" cx="200"/>
+</mask>
+<clipPath id="b">
+<circle r="300" cx="225"/>
+</clipPath>
+<circle mask="url(#a)" r="500"/>
+<circle transform="scale(-1 1)" mask="url(#a)" r="500"/>
+<circle clip-path="url(#b)" r="300" cx="-225"/>
+<circle transform="rotate(90)" clip-path="url(#b)" r="300" cx="-225"/>
+<circle r="60" cy="-280"/>
+</svg>

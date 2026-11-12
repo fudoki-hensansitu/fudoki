@@ -1,0 +1,115 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132039",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a200885b913f393caf6f3aa9464f3373d54b1d364298b1c98b92ef03c8721159"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "節／節の説明": {
+                  "kind": "label"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "区分": {
+                "pattern": "indent"
+              },
+              "節の説明": {
+                "pattern": "indent",
+                "quirks": {
+                  "under": "区分"
+                }
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "one_row_header": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "d3d3b1aab1f7750704c84a9ad8245cc3296ba6df4a18361fe96dde319c2b4617",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'区分': 'indent', '節の説明': 'indent', '説明': 'position'}。",
+        "金額の単位は column mark 145頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "69d399b382c80db1f2361daef5a5640e970d8b10a9a459b491939eb33c94623e",
+          "bytes": 208684
+        },
+        "row_count": 7263
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "38e3d0c5dfcd134ae12b875f273733a16696652d919df845d01afeaf2f515ee1",
+          "bytes": 152713
+        },
+        "row_count": 7854
+      }
+    }
+  ]
+}

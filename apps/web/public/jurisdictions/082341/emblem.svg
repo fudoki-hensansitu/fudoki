@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   width="250"
+   height="250.00014"
+   id="svg2"
+   version="1.1"
+   inkscape:version="0.48.4 r"
+   sodipodi:docname="Symbol of Hokota Ibaraki.svg">
+  <sodipodi:namedview
+     id="base"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageopacity="0.0"
+     inkscape:pageshadow="2"
+     inkscape:zoom="2.9599984"
+     inkscape:cx="125"
+     inkscape:cy="125.00007"
+     inkscape:document-units="px"
+     inkscape:current-layer="layer1"
+     showgrid="false"
+     inkscape:window-width="1280"
+     inkscape:window-height="961"
+     inkscape:window-x="-8"
+     inkscape:window-y="-8"
+     inkscape:window-maximized="1"
+     inkscape:object-paths="false"
+     fit-margin-top="0"
+     fit-margin-left="0"
+     fit-margin-right="0"
+     fit-margin-bottom="0" />
+  <defs
+     id="defs4">
+    <filter
+       color-interpolation-filters="sRGB"
+       inkscape:label="Dark and Glow"
+       inkscape:menu="Shadows and Glows"
+       inkscape:menu-tooltip="Darkens the edge with an inner blur and adds a flexible glow"
+       height="1.5"
+       y="-0.25"
+       id="filter3808">
+      <feGaussianBlur
+         result="result6"
+         stdDeviation="5"
+         id="feGaussianBlur3810" />
+      <feComposite
+         operator="atop"
+         in="SourceGraphic"
+         result="result8"
+         in2="result6"
+         id="feComposite3812" />
+      <feComposite
+         in="result8"
+         operator="over"
+         result="result9"
+         in2="SourceAlpha"
+         id="feComposite3814" />
+      <feColorMatrix
+         result="result10"
+         values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 1 0 "
+         id="feColorMatrix3816" />
+      <feBlend
+         mode="normal"
+         in="result10"
+         in2="result6"
+         id="feBlend3818" />
+    </filter>
+  </defs>
+  <metadata
+     id="metadata7">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title />
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     inkscape:label="レイヤー 1"
+     inkscape:groupmode="layer"
+     id="layer1"
+     transform="translate(-296.28125,-472.84362)">
+    <path
+       style="fill:#00a56b;fill-opacity:1;stroke:none"
+       d="m 304.51254,640.21788 c 27.04339,4.35401 82.32098,3.27358 105.24806,-8.63433 -14.67264,-5.54174 -30.70901,-9.99149 -51.22418,-12.53141 -18.06859,-2.23701 -39.08729,-1.71696 -60.56809,0.55349 1.03713,5.3012 4.86006,15.57427 6.54421,20.61225 z"
+       id="path3970"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="ccscc" />
+    <path
+       style="fill:#008cd7;fill-opacity:1;stroke:none"
+       d="m 544.28132,619.66005 0.0863,-0.51479 c -20.68385,-0.0666 -43.03755,-0.36815 -63.88332,2.50334 -57.44919,6.94545 -57.03511,24.13008 -129.12104,30.36735 -7.68035,0.66456 -27.16672,0.14104 -43.57191,-2.19263 19.71654,43.06005 62.99807,73.02043 113.46942,73.02043 61.58822,0 112.68719,-44.56275 123.02044,-103.1837 z"
+       id="path4021"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cccscscc" />
+    <path
+       style="fill:#00a56b;fill-opacity:1;stroke:none"
+       d="m 421.26088,472.84369 c -69.03909,0 -124.97963,55.98135 -124.97963,125.02044 0,4.91074 0.37722,9.7338 0.93878,14.4898 18.33625,-2.01757 36.63038,-2.16311 54.40818,-0.61225 3.10907,0.27482 6.13406,0.67899 9.18367,1.06123 -1.21019,-4.78756 -1.91837,-9.76782 -1.91837,-14.93878 0,-34.44455 27.92282,-62.36737 62.36737,-62.36737 34.44455,0 62.36736,27.92282 62.36736,62.36737 0,5.41267 -0.50606,9.82311 -1.87562,14.78947 17.9396,-2.18607 44.82323,-2.88462 63.87564,-2.74865 l 0.0408,0.0408 c 0.38225,-3.98014 0.61224,-8.00114 0.61224,-12.08164 0,-69.03909 -55.98135,-125.02044 -125.02044,-125.02044 z"
+       id="path3941"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cscccssscccssc" />
+  </g>
+</svg>

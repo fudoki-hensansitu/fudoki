@@ -46,6 +46,9 @@
                     "kind": "財源内訳",
                     "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
                   }
+                },
+                "本年度": {
+                  "kind": "amount"
                 }
               },
               "header": {
@@ -65,9 +68,15 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "glued_project_codes": true
+                }
               }
             }
+          },
+          "quirks": {
+            "partial_headings": true
           }
         }
       },
@@ -116,6 +125,9 @@
                     "kind": "財源内訳",
                     "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
                   }
+                },
+                "本年度": {
+                  "kind": "amount"
                 }
               },
               "header": {
@@ -135,9 +147,15 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "glued_project_codes": true
+                }
               }
             }
+          },
+          "quirks": {
+            "partial_headings": true
           }
         }
       },
@@ -186,6 +204,9 @@
                     "kind": "財源内訳",
                     "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
                   }
+                },
+                "本年度": {
+                  "kind": "amount"
                 }
               },
               "header": {
@@ -205,9 +226,15 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "glued_project_codes": true
+                }
               }
             }
+          },
+          "quirks": {
+            "partial_headings": true
           }
         }
       },
@@ -216,34 +243,114 @@
           "table_id": "elderly-medical-initial"
         }
       ]
+    },
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "995c1d1fb6614e7c978ff82fcc98377f9ae03ae11b16c67b18f531993a83f784"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の行の財源額の下に財源の種類（国庫支出金・都支出金等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "glued_project_codes": true,
+                  "names_over_pages": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "partial_headings": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "35d43b62c9c067b15e43deaaa4d47797bc1855e4cff0c155cbc48725c9cbaf01",
+      "input_fingerprint": "b6cbe153705a6733bc870c7df9dd338992836b22267a8be7bcc214c587d3e262",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
-        "金額の単位は printed 12頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 1 件（充用 1）を注記軸に置いた。"
+        "金額の単位は printed 12頁 から決めた。款の和 15,520,243（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132136/2025/initial/expenditure/national-health-insurance-initial-nodes.parquet",
-          "sha256": "c78262e8350ae6abb1a077646ffb70b226af613ea7ef90a68130b3ef8e3d3b94",
-          "bytes": 16494
+          "sha256": "a54f34b9d429c5284ad485e5dedd5e5515b1aedca4e4a8e0815708b9369cd0ed",
+          "bytes": 16842
         },
         "row_count": 374
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132136/2025/initial/expenditure/national-health-insurance-initial-amounts.parquet",
-          "sha256": "b123a324f5b2394a701037d25e2ab72536935960ffc78ce71a9992c7668a53c6",
-          "bytes": 12489
+          "sha256": "29a727b82cd9e71b6e483267d52cf24774145a880f9f85762ee66496620999d4",
+          "bytes": 12464
         },
         "row_count": 504
       }
@@ -251,28 +358,28 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "b00c8c930f4b3621c2fc53206044cf67c7f55e6a8350c33314ccd19c16de0fd2",
+      "input_fingerprint": "623107a8926b5a9d342f5fca8a9fe98495816b6914df7a07db5bc4da015185d3",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
-        "金額の単位は printed 11頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 1 件（充用 1）を注記軸に置いた。"
+        "金額の単位は printed 11頁 から決めた。款の和 14,850,807（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132136/2025/initial/expenditure/long-term-care-initial-nodes.parquet",
-          "sha256": "716e65ca1e72a077d545df0b00a65fada66594e10d9141f29200c09fca4ded68",
-          "bytes": 16000
+          "sha256": "4d865b8ebcf2361a39082be03690ab7b829349b3e1921aa568bfb7c8b0c3d8af",
+          "bytes": 16288
         },
         "row_count": 355
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132136/2025/initial/expenditure/long-term-care-initial-amounts.parquet",
-          "sha256": "62608546207d9de9b27cbebf1b844b7bab54493df82064d789ed180a6e96a1ca",
-          "bytes": 11884
+          "sha256": "a22032c57dfc20130000e30e0b7283ed13c894aee14d3765deda789c4d2a0dd9",
+          "bytes": 11877
         },
         "row_count": 423
       }
@@ -280,30 +387,59 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "51f83eda2b354c32d6388a148f9e8e11721b248c804a314e8ffe400335e9a1c0",
+      "input_fingerprint": "512d882b376a8b976520e17e8c9ba6fe23bd967e8c93c310bb85820e87007d6c",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
-        "金額の単位は printed 6頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 1 件（充用 1）を注記軸に置いた。"
+        "金額の単位は printed 6頁 から決めた。款の和 4,698,015（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132136/2025/initial/expenditure/elderly-medical-initial-nodes.parquet",
-          "sha256": "06ce7a60a5852cc8eb2aaa1d335dfb670a0af519a05c73cf4ecd37b2a2df007b",
-          "bytes": 9583
+          "sha256": "07685f31dd68cbed28d1cbbb3632c491e6a9bacc6e93d61f1054ac400756200b",
+          "bytes": 9567
         },
         "row_count": 153
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132136/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
-          "sha256": "a43e21782e591c6f4cb842ce6b6a159a2bec64cf84cd7f63d8d917ed316651a5",
-          "bytes": 6840
+          "sha256": "23c01d4f9a401c51ba731287e7608d0abf03117c8e52be0c9f3a8ca60eedc387",
+          "bytes": 6818
         },
         "row_count": 207
+      }
+    },
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "b79f030ebb217f29e5545f09857d6c998c08f776982b705789b69e121527c6ae",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 175頁 から決めた。款の和 69,729,040（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132136/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "70cc4daff115feeea4513ba97b120f923eb7dfae40d04fbb37faec05882cbbf9",
+          "bytes": 244587
+        },
+        "row_count": 8039
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132136/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "18c499b2171da534a21c027c7bf949d8c51156062b2ab208cb5f5b13f6054873",
+          "bytes": 164858
+        },
+        "row_count": 8331
       }
     }
   ]

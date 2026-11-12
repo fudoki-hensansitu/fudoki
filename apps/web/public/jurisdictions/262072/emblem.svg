@@ -1,0 +1,21 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="300" height="300" viewBox="-50 -50 100 100">
+<defs>
+<mask id="m" stroke="none">
+<circle r="55" fill="#fff"/>
+<path d="M-9.5 -50h5v12h-5zM-20 0A55 55 0 0 1-75 55L-35 30z" fill="#000"/>
+</mask>
+<mask id="m2" stroke="none">
+<circle r="55" fill="#fff"/>
+<path d="M-35-2.5h11v5h-11z" fill="#000"/>
+</mask>
+</defs>
+<g fill="none" stroke="#000" stroke-width="9">
+<g mask="url(#m)">
+<circle r="15.5"/>
+<circle r="45.5"/>
+<circle cx="75" r="45.5"/>
+</g>
+<circle cx="-75" r="45.5" mask="url(#m2)"/>
+</g>
+<path d="M-4.5-41h9V41h-9z"/>
+</svg>

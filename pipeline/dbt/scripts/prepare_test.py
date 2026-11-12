@@ -47,15 +47,24 @@ class PrepareTest(unittest.TestCase):
             con.execute('create schema ingestion')
             con.execute("create table ingestion.fixture_nodes as select 'preserved' as marker")
 
-    def load(self):
+    def load(self, jurisdictions=None):
         original = {'sha256': 'a' * 64, 'download_url': 'https://example.test/original.pdf',
                     'format': 'pdf', 'scope': [{'account': '一般会計'}]}
         with patch.object(prepare, 'DBT', self.dbt), \
              patch.object(prepare.manifest, 'validate', return_value=self.document), \
              patch.object(prepare.manifest, 'resolved_inputs', return_value=[original]), \
              patch.object(prepare.manifest, 'selection_for', return_value={'candidates': [{'title': 'original'}]}), \
-             patch.object(prepare.project, 'load', return_value={name: [] for name in prepare.project.SCHEMAS}):
-            return prepare.prepare(self.warehouse, self.candidate)
+             patch.object(prepare.project, 'load', return_value={name: [] for name in prepare.project.SCHEMAS}) as load:
+            result = prepare.prepare(self.warehouse, self.candidate, jurisdictions=jurisdictions)
+            self.project_load = load
+            return result
+
+    def test_project_documents_follow_the_jurisdiction_filter(self):
+        """事業評価・プレスは、絞らなければ全部、絞ればその自治体のものだけを読む。"""
+        self.load()
+        self.assertIsNone(self.project_load.call_args.kwargs['jurisdictions'])
+        self.load({'131041'})
+        self.assertEqual(self.project_load.call_args.kwargs['jurisdictions'], {'131041'})
 
     def test_missing_conversion_identifies_table(self):
         self.table['conversion_id'] = 'missing'

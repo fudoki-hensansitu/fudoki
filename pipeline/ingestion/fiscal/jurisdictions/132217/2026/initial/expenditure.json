@@ -64,11 +64,11 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "c2e1cb9508f37c349204e366fc75e269e884101cc818e5c71a3cd6e7a1f5afd7",
+      "input_fingerprint": "31761b6d9ee40cdb85c7c44c0075cd7d84628a7748f21f52da9dc32628db2071",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 98頁 から決めた。款の和 0（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は printed 98頁 から決めた。款の和 38,472,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,

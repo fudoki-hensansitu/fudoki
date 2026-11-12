@@ -25,6 +25,7 @@ from ingestion.generic.convert import (Table, canonical_headings, excluded_regio
                                        scope_pages, split_notes, write_files)
 from ingestion.generic.layout import normalize
 from ingestion.generic.observe import Page, observe
+from ingestion.generic.patterns import building
 from ingestion.generic.reading import Reading
 from ingestion.generic.repair import repair
 from ingestion.generic.runtime import page_titles
@@ -81,7 +82,8 @@ class Reader(Reading):
         if sha_file(source['path']) != source['sha256']:
             raise ValueError('Original SHA differs')
         inner = {'account': options['account'], 'table_id': options['table_id'], 'workflow': self.profile['workflow']}
-        table, dropped = self.build_table(source, inner)
+        with building(self.profile['workflow']):
+            table, dropped = self.build_table(source, inner)
         removed = self.take_out_counts(table)
         result = write_files(Path(destination), options['table_id'], table)
         result[options['table_id']]['notes'] += [

@@ -538,10 +538,10 @@ export function Landing() {
           <Dashes className="d-hero-r" />
           <p className="eyebrow">風土記</p>
           <h1>
-            まちのお金、
+            私のお金は
             <br />
             <span className="circled">
-              何に使ってる？
+              どこへ行った？
               <Circle />
             </span>
           </h1>
@@ -793,7 +793,7 @@ export function Landing() {
             <Link href="/" aria-label="風土記 ホーム">
               <svg className="logo" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} role="img" aria-label="風土記" dangerouslySetInnerHTML={{ __html: `<title>風土記</title>${LOGO_G}` }} />
             </Link>
-            <p>まちのお金、何に使ってる？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、出典の資料まで辿れます。</p>
+            <p>私のお金はどこへ行った？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。</p>
           </div>
           <div>
             <h2>使う</h2>

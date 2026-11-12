@@ -788,6 +788,12 @@
                 "pattern": "position"
               }
             }
+          },
+          "quirks": {
+            "department_heading_slack": true,
+            "spread_columns": true,
+            "title_depths": true,
+            "titles_on_one_line": true
           }
         },
         "header_readings": [
@@ -890,6 +896,13 @@
             "observation_id": "p127:full-page:a0:result0:r47",
             "observed": "0",
             "reason": "原画は上の行「16 重症心身障害児（者）通所運営費補助事業（障害福祉課」の折り返しの閉じ括弧「）」だけの行。OCR が括弧を数字の 0 と読み、上の行の金額 3,471 と食い違う金額になっていた。"
+          },
+          {
+            "id": "p139-bracket",
+            "page": 139,
+            "observation_id": "p139:full-page:a0:result0:r70",
+            "observed": "1",
+            "reason": "原画は上の行「10 認可外保育施設入所児童保護者助成事業（子育て支援課」の折り返しの閉じ括弧「）」だけの行。OCR が括弧を数字の 1 と読み、名前の無い内訳の行になっていた。"
           }
         ]
       },
@@ -904,7 +917,7 @@
     {
       "table_id": "general-initial-3",
       "conversion_id": "general-initial-3",
-      "input_fingerprint": "77c98c9682c1f9f3e11eac3572c88f38bf8691be51f61f8b2dd516f7d7d46f26",
+      "input_fingerprint": "7279e77f8393c5521d4cd77520b4a49391278c8f4f922f03fc3eb796974bf2ae",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'position', '説明': 'position'}。",
@@ -918,10 +931,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132225/2024/initial/expenditure/general-initial-3-nodes.parquet",
-          "sha256": "4607d024b9d6e612effae89d41f3b3990ea5d8e63880470ccaaca0969d2bd95e",
-          "bytes": 210663
+          "sha256": "65b2e3cf6ca13a3bcf6d49ffcbf8c7a41ec3bb52d86ce06d31f98f52c4261822",
+          "bytes": 210624
         },
-        "row_count": 5778
+        "row_count": 5777
       },
       "amounts": {
         "object": {

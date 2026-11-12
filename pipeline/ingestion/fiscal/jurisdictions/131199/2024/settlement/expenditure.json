@@ -1431,7 +1431,7 @@
     {
       "table_id": "general-expenditure-detail",
       "conversion_id": "general",
-      "input_fingerprint": "7600ded76a7f15a33d7688fe6ccae4afe4963c6952a7b6f66188753979970ec1",
+      "input_fingerprint": "086f4a91e7f3098819b3bf81c47da27bd99a9f266904e441349412f53df896b9",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -1463,14 +1463,14 @@
     {
       "table_id": "nhi-expenditure-detail",
       "conversion_id": "nhi",
-      "input_fingerprint": "09714c0f823937423218ca1919928190d176e5e1352f5f0964af8377913c865b",
+      "input_fingerprint": "3e79ac9164950643aa8a72b96d781977f08bd1212a38a90be1c2699389d7c8b8",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
         "金額の単位は column mark 16頁 から決めた。款の和 54,223,965,428 と印字の「歳出合計」54,223,965,428 が一致。",
         "金額の注記 5 件（充用 5）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 2 種（112 件）を、印字された語から辞書の見出しに寄せた: 予備費充用及び予算流用増減→予算現額／予備費充用及び予算流用増減・補正予算額→予算現額／補正予算額。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 6 件（p506:full-page:a0:result0:r36・p506:full-page:a0:result0:r36:w4・p506:full-page:a0:result0:r46・p506:full-page:a0:result0:r46:w4・p516:full-page:a0:result0:r43・p516:full-page:a0:result0:r43:w3）・增→増 16 件（p490:full-page:a0:result1:r6・p490:full-page:a0:result1:r6:w4・p494:full-page:a0:result1:r6・p494:full-page:a0:result1:r6:w4・p508:full-page:a0:result1:r6・p508:full-page:a0:result1:r6:w4・p510:full-page:a0:result1:r6・p510:full-page:a0:result1:r6:w4・p512:full-page:a0:result1:r6・p512:full-page:a0:result1:r6:w4・p514:full-page:a0:result1:r6・p514:full-page:a0:result1:r6:w4・p518:full-page:a0:result1:r6・p518:full-page:a0:result1:r6:w4・p520:full-page:a0:result1:r6・p520:full-page:a0:result1:r6:w4）・徵→徴 10 件（p492:full-page:a0:result0:r27・p492:full-page:a0:result0:r27:w2・p492:full-page:a0:result0:r30・p492:full-page:a0:result0:r30:w2・p494:full-page:a0:result0:r2・p494:full-page:a0:result0:r2:w2・p494:full-page:a0:result0:r14・p494:full-page:a0:result0:r14:w1・p494:full-page:a0:result0:r23・p494:full-page:a0:result0:r23:w2）・查→査 6 件（p500:full-page:a0:result0:r67・p500:full-page:a0:result0:r67:w3・p514:full-page:a0:result0:r30・p514:full-page:a0:result0:r30:w7・p514:full-page:a0:result0:r34・p514:full-page:a0:result0:r34:w7）・產→産 2 件（p504:full-page:a0:result0:r32・p504:full-page:a0:result0:r32:w3）・齡→齢 6 件（p510:full-page:a0:result0:r47・p510:full-page:a0:result0:r47:w5・p512:full-page:a0:result0:r2・p512:full-page:a0:result0:r2:w5・p512:full-page:a0:result0:r12・p512:full-page:a0:result0:r12:w3）。"
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 6 件（p506:full-page:a0:result0:r36・p506:full-page:a0:result0:r36:w4・p506:full-page:a0:result0:r46・p506:full-page:a0:result0:r46:w4・p516:full-page:a0:result0:r43・p516:full-page:a0:result0:r43:w3）・增→増 16 件（p490:full-page:a0:result1:r6・p490:full-page:a0:result1:r6:w4・p494:full-page:a0:result1:r6・p494:full-page:a0:result1:r6:w4・p508:full-page:a0:result1:r6・p508:full-page:a0:result1:r6:w4・p510:full-page:a0:result1:r6・p510:full-page:a0:result1:r6:w4・p512:full-page:a0:result1:r6・p512:full-page:a0:result1:r6:w4・p514:full-page:a0:result1:r6・p514:full-page:a0:result1:r6:w4・p518:full-page:a0:result1:r6・p518:full-page:a0:result1:r6:w4・p520:full-page:a0:result1:r6・p520:full-page:a0:result1:r6:w4）・徵→徴 10 件（p492:full-page:a0:result0:r27・p492:full-page:a0:result0:r27:w2・p492:full-page:a0:result0:r30・p492:full-page:a0:result0:r30:w2・p494:full-page:a0:result0:r2・p494:full-page:a0:result0:r2:w2・p494:full-page:a0:result0:r14・p494:full-page:a0:result0:r14:w1・p494:full-page:a0:result0:r23・p494:full-page:a0:result0:r23:w2）・查→査 6 件（p500:full-page:a0:result0:r67・p500:full-page:a0:result0:r67:w3・p514:full-page:a0:result0:r30・p514:full-page:a0:result0:r30:w7・p514:full-page:a0:result0:r34・p514:full-page:a0:result0:r34:w7）・產→産 2 件（p504:full-page:a0:result0:r32・p504:full-page:a0:result0:r32:w3）・說→説 2 件（p490:full-page:a0:result0:r46・p490:full-page:a0:result0:r46:w4）・齡→齢 6 件（p510:full-page:a0:result0:r47・p510:full-page:a0:result0:r47:w5・p512:full-page:a0:result0:r2・p512:full-page:a0:result0:r2:w5・p512:full-page:a0:result0:r12・p512:full-page:a0:result0:r12:w3）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -1494,15 +1494,15 @@
     {
       "table_id": "kaigo-expenditure-detail",
       "conversion_id": "kaigo",
-      "input_fingerprint": "b2ebb17b2306b64df23c12836665bb9d0b8744fa09a39a7191029991ed79cac0",
+      "input_fingerprint": "73e0792640fbeb9fac99da499b1512122fb804edc69891e7486614a5f1ac82e5",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
-        "金額の単位は column mark 12頁・carried 1頁 から決めた。款の和 47,898,782,678 と印字の「歳出合計」47,898,782,678 が一致。",
+        "金額の単位は column mark 13頁 から決めた。款の和 47,898,782,678 と印字の「歳出合計」47,898,782,678 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 2 種（64 件）を、印字された語から辞書の見出しに寄せた: 予備費充用及び予算流用増減→予算現額／予備費充用及び予算流用増減・補正予算額→予算現額／補正予算額。",
         "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 566頁 ル一プ→ループ・568頁 タ一→ター。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 24 件（p562:full-page:a0:result0:r11・p562:full-page:a0:result0:r11:w6・p562:full-page:a0:result0:r15・p562:full-page:a0:result0:r15:w5・p568:full-page:a0:result0:r16・p568:full-page:a0:result0:r16:w1・p568:full-page:a0:result0:r26・p568:full-page:a0:result0:r26:w10・p568:full-page:a0:result0:r27・p568:full-page:a0:result0:r27:w3・p568:full-page:a0:result0:r29・p568:full-page:a0:result0:r29:w5・p568:full-page:a0:result0:r40・p568:full-page:a0:result0:r40:w4・p570:full-page:a0:result0:r17・p570:full-page:a0:result0:r17:w5・p570:full-page:a0:result0:r28・p570:full-page:a0:result0:r28:w6・p572:full-page:a0:result0:r14・p572:full-page:a0:result0:r14:w5・p572:full-page:a0:result0:r24・p572:full-page:a0:result0:r24:w5・p578:full-page:a0:result0:r13・p578:full-page:a0:result0:r13:w3）・增→増 14 件（p558:full-page:a0:result1:r6・p558:full-page:a0:result1:r6:w4・p560:full-page:a0:result1:r6・p560:full-page:a0:result1:r6:w4・p562:full-page:a0:result1:r6・p562:full-page:a0:result1:r6:w4・p564:full-page:a0:result1:r6・p564:full-page:a0:result1:r6:w4・p566:full-page:a0:result1:r6・p566:full-page:a0:result1:r6:w4・p568:full-page:a0:result1:r6・p568:full-page:a0:result1:r6:w4・p574:full-page:a0:result1:r6・p574:full-page:a0:result1:r6:w4）・查→査 8 件（p558:full-page:a0:result0:r17・p558:full-page:a0:result0:r17:w3・p558:ink-0:a0:result0:r0・p558:ink-0:a0:result0:r0:w22・p574:full-page:a0:result0:r22・p574:full-page:a0:result0:r22:w3・p574:ink-0:a0:result0:r0・p574:ink-0:a0:result0:r0:w22）・齡→齢 2 件（p570:full-page:a0:result0:r35・p570:full-page:a0:result0:r35:w3）。"
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 24 件（p562:full-page:a0:result0:r11・p562:full-page:a0:result0:r11:w6・p562:full-page:a0:result0:r15・p562:full-page:a0:result0:r15:w5・p568:full-page:a0:result0:r16・p568:full-page:a0:result0:r16:w1・p568:full-page:a0:result0:r26・p568:full-page:a0:result0:r26:w10・p568:full-page:a0:result0:r27・p568:full-page:a0:result0:r27:w3・p568:full-page:a0:result0:r29・p568:full-page:a0:result0:r29:w5・p568:full-page:a0:result0:r40・p568:full-page:a0:result0:r40:w4・p570:full-page:a0:result0:r17・p570:full-page:a0:result0:r17:w5・p570:full-page:a0:result0:r28・p570:full-page:a0:result0:r28:w6・p572:full-page:a0:result0:r14・p572:full-page:a0:result0:r14:w5・p572:full-page:a0:result0:r24・p572:full-page:a0:result0:r24:w5・p578:full-page:a0:result0:r13・p578:full-page:a0:result0:r13:w3）・增→増 14 件（p558:full-page:a0:result1:r6・p558:full-page:a0:result1:r6:w4・p560:full-page:a0:result1:r6・p560:full-page:a0:result1:r6:w4・p562:full-page:a0:result1:r6・p562:full-page:a0:result1:r6:w4・p564:full-page:a0:result1:r6・p564:full-page:a0:result1:r6:w4・p566:full-page:a0:result1:r6・p566:full-page:a0:result1:r6:w4・p568:full-page:a0:result1:r6・p568:full-page:a0:result1:r6:w4・p574:full-page:a0:result1:r6・p574:full-page:a0:result1:r6:w4）・查→査 8 件（p558:full-page:a0:result0:r17・p558:full-page:a0:result0:r17:w3・p558:ink-0:a0:result0:r0・p558:ink-0:a0:result0:r0:w22・p574:full-page:a0:result0:r22・p574:full-page:a0:result0:r22:w3・p574:ink-0:a0:result0:r0・p574:ink-0:a0:result0:r0:w22）・說→説 2 件（p572:full-page:a0:result0:r46・p572:full-page:a0:result0:r46:w4）・齡→齢 2 件（p570:full-page:a0:result0:r35・p570:full-page:a0:result0:r35:w3）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -1526,11 +1526,11 @@
     {
       "table_id": "kouki-expenditure-detail",
       "conversion_id": "kouki",
-      "input_fingerprint": "e1152853313d1c4010904c7a36430b899c1f778a7bde0382c563c2b1c6a4657c",
+      "input_fingerprint": "1ebd0469da62e430a80ca2879fc558068c225705ca538fbf72431184b8e3dfb7",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
-        "金額の単位は column mark 5頁・carried 1頁 から決めた。款の和 14,973,420,107 と印字の「歳出合計」14,973,420,107 が一致。",
+        "金額の単位は column mark 6頁 から決めた。款の和 14,973,420,107 と印字の「歳出合計」14,973,420,107 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 2 種（36 件）を、印字された語から辞書の見出しに寄せた: 予備費充用及び予算流用増減→予算現額／予備費充用及び予算流用増減・補正予算額→予算現額／補正予算額。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 8 件（p598:full-page:a0:result1:r6・p598:full-page:a0:result1:r6:w4・p602:full-page:a0:result1:r6・p602:full-page:a0:result1:r6:w4・p606:full-page:a0:result1:r6・p606:full-page:a0:result1:r6:w4・p608:full-page:a0:result1:r6・p608:full-page:a0:result1:r6:w4）・查→査 2 件（p602:full-page:a0:result0:r15・p602:full-page:a0:result0:r15:w5）。"
@@ -1557,14 +1557,14 @@
     {
       "table_id": "tobu-expenditure-detail",
       "conversion_id": "tobu",
-      "input_fingerprint": "79da4bfc794d5233fbb83e04b52302bf405cd10be74252918da90d41c4d0d2fb",
+      "input_fingerprint": "7a1100cbeb59e28c27dd97a36278428b1fb0c64293e3a34e711562d21b110873",
       "account": "東武東上線連続立体化事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
         "金額の単位は column mark 3頁 から決めた。款の和 720,357,920 と印字の「歳出合計」720,357,920 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 2 種（18 件）を、印字された語から辞書の見出しに寄せた: 予備費充用及び予算流用増減→予算現額／予備費充用及び予算流用増減・補正予算額→予算現額／補正予算額。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 4 件（p624:full-page:a0:result1:r6・p624:full-page:a0:result1:r6:w4・p626:full-page:a0:result1:r6・p626:full-page:a0:result1:r6:w4）。"
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 4 件（p624:full-page:a0:result1:r6・p624:full-page:a0:result1:r6:w4・p626:full-page:a0:result1:r6・p626:full-page:a0:result1:r6:w4）・說→説 2 件（p622:full-page:a0:result0:r50・p622:full-page:a0:result0:r50:w4）。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,

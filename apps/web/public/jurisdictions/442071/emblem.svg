@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8"?><svg width="449" height="423" viewBox="27 40 449 423" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+ <path xmlns="http://www.w3.org/2000/svg" id="a" d="m284.8 300.2a160.7 160.7 0 0 1-139.3 80.4 80.4 80.4 0 0 1 0-160.7 120.6 120.6 0 0 0 0 241.1 241.1 241.1 0 0 0 208.9-120.6z" fill="#000000"/>
+ <use xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#a" transform="rotate(120 250 280.1)"/>
+ <use xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" xlink:href="#a" transform="rotate(240 250 280.1)"/>
+</svg>

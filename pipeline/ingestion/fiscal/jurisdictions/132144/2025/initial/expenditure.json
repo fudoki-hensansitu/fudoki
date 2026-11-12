@@ -369,9 +369,7 @@
               },
               "rules": {
                 "dark": 180,
-                "skewed": true,
-                "specks": true,
-                "bracket_marks": true
+                "skewed": true
               }
             }
           },
@@ -391,8 +389,9 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
-                  "opening_bracket_ink": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
                   "column_edge": true,
                   "group_heads": [
                     {
@@ -485,10 +484,19 @@
                       "y": 171.1,
                       "reason": "原画の「基金積立金 756,042」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
                     }
-                  ]
+                  ],
+                  "opening_bracket_ink": true
                 }
               }
             }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "letter_spaced_lines": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "specks": true,
+            "unopened_brackets": true
           }
         },
         "dropped_readings": [
@@ -1480,9 +1488,7 @@
               },
               "rules": {
                 "dark": 180,
-                "skewed": true,
-                "specks": true,
-                "bracket_marks": true
+                "skewed": true
               }
             }
           },
@@ -1502,8 +1508,9 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
-                  "opening_bracket_ink": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
                   "column_edge": true,
                   "group_heads": [
                     {
@@ -1601,10 +1608,19 @@
                       "y": 533.9,
                       "reason": "原画の「市民防災に要する経費 6,443」は、続く4つの事業の金額をまとめた見出しで（金額は4事業の和）、事業と同じ位置から印字されている。"
                     }
-                  ]
+                  ],
+                  "opening_bracket_ink": true
                 }
               }
             }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "letter_spaced_lines": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "specks": true,
+            "unopened_brackets": true
           }
         },
         "dropped_readings": [
@@ -2731,9 +2747,7 @@
               },
               "rules": {
                 "dark": 180,
-                "skewed": true,
-                "specks": true,
-                "bracket_marks": true
+                "skewed": true
               }
             }
           },
@@ -2753,8 +2767,9 @@
                 "options": {
                   "amount_brackets": true,
                   "wrap": "amount_on_last_line",
-                  "bare_amounts": true,
-                  "opening_bracket_ink": true,
+                  "bare_amounts": true
+                },
+                "quirks": {
                   "column_edge": true,
                   "group_heads": [
                     {
@@ -2802,10 +2817,19 @@
                       "y": 351.3,
                       "reason": "原画の「基幹統計調査等に要する経費 98,953」は、続く5つの事業の金額をまとめた見出しで（金額は5事業の和）、事業と同じ位置から印字されている。"
                     }
-                  ]
+                  ],
+                  "opening_bracket_ink": true
                 }
               }
             }
+          },
+          "quirks": {
+            "bracket_marks": true,
+            "letter_spaced_lines": true,
+            "partial_headings": true,
+            "rule_ink": true,
+            "specks": true,
+            "unopened_brackets": true
           }
         },
         "dropped_readings": [
@@ -3212,7 +3236,7 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "db4d449bf1e081ab90f56d0522251450cb74a8982783c5e718508f5a9f7b6073",
+      "input_fingerprint": "b649c9558875c5237e2319db3971c8ee77ba0702147f92e8e528b57a23d75dde",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -3243,7 +3267,7 @@
     {
       "table_id": "general-initial-3",
       "conversion_id": "general-initial-3",
-      "input_fingerprint": "1e7fa549fa12b46db3b0d101a21b9527aea99e817481e7383d08be3b6bd97fa0",
+      "input_fingerprint": "0f6c078e421a5c2e9811cc03a497003ee9a19ef0c63f3e17fc6dd1c5caf0cc9a",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -3274,7 +3298,7 @@
     {
       "table_id": "general-initial-7",
       "conversion_id": "general-initial-7",
-      "input_fingerprint": "d8d195cc79af08cc0faef0aa445137e69a7368fae0a3cfd17e74d86eb409c391",
+      "input_fingerprint": "ce612cf8397ee67ced2ead1fc8596528245b6c832e021bdcf5920c8fabbc121e",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",

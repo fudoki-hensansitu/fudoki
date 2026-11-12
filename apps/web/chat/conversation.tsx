@@ -92,7 +92,7 @@ export function Conversation({
   movableViews?: boolean
 }) {
   const viewContext = React.useRef(stored.viewContext ?? '')
-  // 頁の文脈は質問ごとに読み、その発言の metadata に持たせる（server が質問とは別の利用者の発言にして AI に渡す）
+  // 頁の文脈は質問ごとに読み、その発言の metadata に持たせる（server が選んだ文は質問の直前の利用者の発言に、見ている画面は最後の質問のものだけを system prompt に入れる）
   const contextRef = React.useRef(context)
   contextRef.current = context
   const transport = React.useMemo(
@@ -265,6 +265,7 @@ function ContextNote({ text }: { text: string }) {
   const { quote, screen } = splitContext(text)
   return (
     <div className="mb-1.5 ml-auto flex max-w-[85%] flex-col items-end gap-1 text-xs text-muted-foreground">
+      {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
       {quote ? <blockquote className="line-clamp-3 border-l-2 border-primary/60 pl-2.5 text-left">{quote}</blockquote> : null}
       {screen ? (
         <details className="group/ctx text-right">

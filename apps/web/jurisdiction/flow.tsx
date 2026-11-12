@@ -1,4 +1,4 @@
-// お金の流れ。初期は全款の款→項。横にスクロールすると款が一つずつ（snap）開き、縦にスクロールするとその款の項が一つずつ開く。
+// お金の流れ。初期は全款の款→項。横にスクロールすると款が一つずつ（snap）開き、縦にスクロールするとその款の項が画面に入ったものから順に開く（縦は snap しない）。
 // 項まで開くと、その項の目と節の上位を出す（節の金額は目ごとに大きい順、足し上げは作らない）。
 import * as React from 'react'
 import { createPortal } from 'react-dom'
@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
-import { Overview } from './sankey'
+import { Overview, OverviewSkeleton } from './sankey'
 import { formatShare, formatYen, type Drill, type FlowView, type Kou, type Moku, type PageData, type YearTotal } from './types'
 
 /** 分け方ごとの段の呼び名。機能分類は COFOG の大分類・中分類のあとに自治体の科目（目）とその内訳（節・事業）が来る */
@@ -51,7 +51,7 @@ function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: numbe
   // 割合は目の金額が印字されているときだけ。無いときは節の金額をそのまま出す
   const mokuYen = moku.amountMissing ? 0 : moku.yen
   return (
-    <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} className="grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[active=true]/kou:translate-y-0 group-data-[active=true]/kou:opacity-100 sm:grid-cols-[5fr_7fr] sm:gap-4">
+    <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} className="grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[drawn=true]/kou:translate-y-0 group-data-[drawn=true]/kou:opacity-100 sm:grid-cols-[5fr_7fr] sm:gap-4">
       <div className="min-w-0">
         <div className="text-[11px] text-muted-foreground sm:hidden">{levels.moku}</div>
         {onMoku ? (
@@ -77,7 +77,9 @@ function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: numbe
                 <span className="truncate">{s.name}</span>
                 <span className="text-right tabular-nums"><span className="font-semibold">{amountText(s.yen, s.amountMissing)}</span>{formatShare(s.yen, mokuYen, s.amountMissing) ? <span className="ml-1.5 text-muted-foreground">{formatShare(s.yen, mokuYen, s.amountMissing)}</span> : null}</span>
               </AmountTip>
+              {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
               <span className="col-span-2 h-1 overflow-hidden rounded-full bg-foreground/5 sm:hidden">
+                {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
                 <span className="block h-full rounded-full bg-primary/55" style={{ width: `${share(s.yen, base, s.amountMissing)}%` }} />
               </span>
             </li>
@@ -123,7 +125,7 @@ function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.Depen
       setEdge((e) => (e.top === top && e.bottom === bottom ? e : { top, bottom }))
     }
     update()
-    // 上端・下端でさらに回したら、箱の中で止めずに頁を送る（snap や跳ね返りで頁のスクロールに移らないことがあるため）
+    // 上端・下端でさらに回したら、箱の中で止めずに頁を送る（跳ね返りで頁のスクロールに移らないことがあるため）
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return
       const atTop = el.scrollTop <= 1
@@ -142,6 +144,7 @@ function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.Depen
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
   if (off) return {}
+  // oxlint-disable-next-line design/color-literal -- mask は不透明度だけを使い、色は画面に出ない
   const mask = `linear-gradient(to bottom, ${edge.top ? 'transparent 0, #000 48px' : '#000 0'}, ${edge.bottom ? '#000 calc(100% - 72px), transparent 100%' : '#000 100%'})`
   return { maskImage: mask, WebkitMaskImage: mask }
 }
@@ -193,6 +196,16 @@ function TickMenu({ items, current, onPick, side, label, className, children }: 
 function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void; levels: Levels; onMoku?: (m: Moku) => void }) {
   const box = React.useRef<HTMLElement | null>(null)
   const rib = React.useRef<HTMLDivElement>(null)
+  // 一度画面に入った項は開いたままにする。いま読んでいる項（active）だけを見せると、ほかの項の図形が消えて見えるため
+  const [seen, setSeen] = React.useState(false)
+  React.useEffect(() => {
+    const el = box.current
+    if (!el || seen) return
+    const observer = new IntersectionObserver(([e]) => { if (e?.isIntersecting) setSeen(true) }, { rootMargin: '0px 0px -15% 0px', threshold: 0.2 })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [seen])
+  const drawn = seen || active
   const [paths, setPaths] = React.useState<Ribbon[]>([])
   const [setsu, setSetsu] = React.useState<Ribbon[]>([])
   const [bar, setBar] = React.useState({ top: 0, height: 0 })
@@ -263,9 +276,9 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
     // 目の行は開くときに少し動くので、動き終わってから測り直す
     const settle = window.setTimeout(measure, 550)
     return () => { observer.disconnect(); window.clearTimeout(settle) }
-  }, [kou.moku.length, active])
+  }, [kou.moku.length, drawn])
   return (
-    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} className="group/kou grid min-h-[calc(100%-7.5rem)] snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
+    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} data-drawn={drawn} className="group/kou grid min-h-[calc(100%-7.5rem)] grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
       <div className="min-w-0 border-b pb-2 sm:border-0 sm:pb-0 sm:pr-2">
         <div className="text-[11px] text-muted-foreground">{levels.kou}</div>
         <div className="font-sans text-lg leading-snug">{kou.name}</div>
@@ -287,13 +300,16 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
               </linearGradient>
             </defs>
           ) : null}
-          {/* 項が開いたら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。帯は段ごとにまとめて一枚で伸ばす。閉じている項は出さない */}
-          <g key={`r${active}`} className={active ? 'flow-ribbon' : 'opacity-0'}>{paths.map((p, i) => <path key={i} d={p.d} className="fill-primary/20" />)}</g>
+          {/* 項が画面に入ったら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。帯は段ごとにまとめて一枚で伸ばす。光はいま読んでいる項だけに流す */}
+          {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
+          <g key={`r${drawn}`} className={drawn ? 'flow-ribbon' : 'opacity-0'}>{paths.map((p, i) => <path key={i} d={p.d} className="fill-primary/20" />)}</g>
           {active && !still ? paths.map((p, i) => <path key={`l${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
           {active && !still ? setsu.map((p, i) => <path key={`ls${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
-          {paths.map((p, i) => <rect key={`b${active}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${550 + Math.min(i * 15, 150)}ms` }} className={`fill-primary ${active ? 'flow-node' : 'opacity-0'}`} />)}
-          <g key={`s${active}`} style={{ animationDelay: '450ms' }} className={active ? 'flow-ribbon' : 'opacity-0'}>{setsu.map((p, i) => <path key={i} d={p.d} className={p.rest ? 'fill-primary/10' : 'fill-primary/15'} />)}</g>
-          {setsu.map((p, i) => <rect key={`t${active}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${1000 + Math.min(i * 10, 150)}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${active ? 'flow-node' : 'opacity-0'}`} />)}
+          {paths.map((p, i) => <rect key={`b${drawn}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${550 + Math.min(i * 15, 150)}ms` }} className={`fill-primary ${drawn ? 'flow-node' : 'opacity-0'}`} />)}
+          {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
+          <g key={`s${drawn}`} style={{ animationDelay: '450ms' }} className={drawn ? 'flow-ribbon' : 'opacity-0'}>{setsu.map((p, i) => <path key={i} d={p.d} className={p.rest ? 'fill-primary/10' : 'fill-primary/15'} />)}</g>
+          {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
+          {setsu.map((p, i) => <rect key={`t${drawn}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${1000 + Math.min(i * 10, 150)}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${drawn ? 'flow-node' : 'opacity-0'}`} />)}
         </svg>
       </div>
       <div className="flex min-w-0 flex-col gap-3 sm:pl-2.5">
@@ -308,38 +324,6 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
         )}
       </div>
     </section>
-  )
-}
-
-/** 読み込み中の全体図。左の総額の柱から右の款の柱へ帯が流れる形を、薄い色で点滅させる */
-const SKELETON_SHARES = [0.3, 0.2, 0.15, 0.12, 0.1, 0.07, 0.06]
-function FlowSkeleton() {
-  const H = 400, GAP = 8, LEFT = 14, RIGHT = 14, X0 = 0, X1 = 286
-  const usable = H - GAP * (SKELETON_SHARES.length - 1)
-  let left = 0
-  let right = 0
-  const bands = SKELETON_SHARES.map((share) => {
-    const h = usable * share
-    const band = { l: left, r: right, h }
-    left += h
-    right += h + GAP
-    return band
-  })
-  return (
-    <div role="status" aria-label="お金の流れを読み込んでいます" className="h-full animate-pulse">
-      <svg viewBox={`0 0 300 ${H}`} preserveAspectRatio="none" className="h-full max-h-[520px] w-full" aria-hidden="true">
-        <rect x={X0} y={0} width={LEFT} height={usable} rx={3} className="fill-muted" />
-        {bands.map((b, i) => {
-          const sx = X0 + LEFT, ex = X1, mx = (sx + ex) / 2
-          return (
-            <g key={i}>
-              <path d={`M${sx},${b.l} C${mx},${b.l} ${mx},${b.r} ${ex},${b.r} L${ex},${b.r + b.h} C${mx},${b.r + b.h} ${mx},${b.l + b.h} ${sx},${b.l + b.h} Z`} className="fill-muted/60" />
-              <rect x={X1} y={b.r} width={RIGHT} height={b.h} rx={3} className="fill-muted" />
-            </g>
-          )
-        })}
-      </svg>
-    </div>
   )
 }
 
@@ -386,6 +370,7 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: D
         >
           {drill.kou.map((k, i) => (
             <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} className="group/dot px-1.5 py-[3px]">
+              {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
               <i className={`block w-[5px] rounded-full transition-all ${i === current ? 'h-4 bg-primary' : 'h-[5px] bg-border group-hover/dot:bg-primary/50'}`} />
             </button>
           ))}
@@ -398,12 +383,10 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: D
         // 祖先に transform（スマホのタブのカルーセル）があると fixed が画面に効かないので、body に出す
         natural ? createPortal(ticks, document.body) : ticks
       ) : null}
-      <div ref={body} style={fade} className={natural ? '' : 'h-full snap-y snap-proximity scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'} tabIndex={-1}>
+      <div ref={body} style={fade} className={natural ? '' : 'h-full overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'} tabIndex={-1}>
         {drill.kou.map((k, i) => (
           <KouSection key={k.id} kou={k} active={i === current} loading={loading} levels={levels} onMoku={onMoku} onBox={(el) => { sections.current[i] = el }} />
         ))}
-        {/* 下端にも止まる所を置く。最後の段の頭にしか止まれないと、下端まで送れず頁のスクロールにも渡らない */}
-        {natural ? null : <div aria-hidden="true" className="h-px snap-end" />}
       </div>
     </div>
   )
@@ -421,7 +404,8 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
   const [detail, setDetail] = React.useState<Drill[]>()
   const [error, setError] = React.useState(false)
   const [attempt, setAttempt] = React.useState(0)
-  const [near, setNear] = React.useState(false)
+  // natural（自治体の頁のタブ）では図は開いたタブの中にあるので、近づくのを待たずにすぐ読む
+  const [near, setNear] = React.useState(!!natural)
   const [index, setIndex] = React.useState(0)
   const flows = detail ?? (isLatest ? (view === 'cofog' ? data.cofogFlow : data.flow) : [])
   const overviewFade = useEdgeFade(overview, [flows.length], natural)
@@ -440,17 +424,23 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
   // 項の内訳（目・節）は、図が近づいたら読み込む。クリックは要らない
   React.useEffect(() => {
     const el = root.current
-    if (!el) return
+    if (!el || near) return
     const observer = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) setNear(true) }, { rootMargin: '900px 0px' })
     observer.observe(el)
     return () => observer.disconnect()
-  }, [])
+  }, [near])
   React.useEffect(() => {
     if (!near || detail) return
     setError(false)
     const controller = new AbortController()
-    fetchJson<Drill[]>(`/api/jurisdictions/flow/${data.code}/${year.year}/setsu?${new URLSearchParams({ ...(view === 'cofog' ? { view: 'cofog' } : {}), ...(phase === 'initial' ? { phase: 'initial' } : {}), ...(account ? { account } : {}) })}`, controller.signal).then(
-      (value) => { if (!controller.signal.aborted) setDetail(value) },
+    const url = `/api/jurisdictions/flow/${data.code}/${year.year}/setsu?${new URLSearchParams({ ...(view === 'cofog' ? { view: 'cofog' } : {}), ...(phase === 'initial' ? { phase: 'initial' } : {}), ...(account ? { account } : {}) })}`
+    fetchJson<Drill[]>(url, controller.signal).then(
+      (value) => {
+        if (controller.signal.aborted) return
+        // 空の流れは読み込み中の形のまま残さず、読めなかったものとして扱う
+        if (value.length > 0) setDetail(value)
+        else setError(true)
+      },
       () => { if (!controller.signal.aborted) setError(true) },
     )
     return () => controller.abort()
@@ -486,6 +476,7 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
     else if (e.key === 'ArrowLeft') { go(-1); e.preventDefault() }
   }
   const total = flows.length
+  const overviewHeight = Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))
   const kan = index > 0 ? flows[index - 1] : undefined
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) || 1
   return (
@@ -519,10 +510,12 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
           className="mt-1 flex gap-0.5"
         >
           <button type="button" onClick={() => goTo(0)} aria-label="全体" aria-current={index === 0 || undefined} className="group/seg w-3.5 py-1">
+            {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
             <i className={`block h-1.5 rounded-sm transition-colors ${index === 0 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
           </button>
           {flows.map((f, i) => (
             <button key={f.kan.id} type="button" onClick={() => goTo(i + 1)} aria-label={f.kan.name} aria-current={index === i + 1 || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
+              {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
               <i className={`block h-1.5 rounded-sm transition-colors ${index === i + 1 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
             </button>
           ))}
@@ -544,9 +537,9 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
         >
           <div ref={overview} style={overviewFade} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
             {flows.length > 0 ? (
-              <Overview flows={flows} total={year.yen} levels={levels} onSelect={select} height={Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))} />
+              <Overview flows={flows} total={year.yen} levels={levels} onSelect={select} height={overviewHeight} />
             ) : (
-              error ? null : <FlowSkeleton />
+              error ? null : <OverviewSkeleton total={year.yen} levels={levels} height={overviewHeight} />
             )}
           </div>
           {flows.map((f, i) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} />)}

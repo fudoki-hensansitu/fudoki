@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="372" height="332" viewBox="-18.6 -18.7 37.2 33.2">
+<mask id="m">
+<path d="M-10-20h20V0H-10z" fill="#fff"/>
+<circle cy="-20" r="5" fill="#000"/>
+<circle cy="-7.5" r="4.5" fill="#000"/>
+</mask>
+<g id="a">
+<circle cy="-11" r="9" mask="url(#m)"/>
+<circle cy="9.2" r=".8"/>
+</g>
+<use xlink:href="#a" transform="rotate(120)"/>
+<use xlink:href="#a" transform="rotate(240)"/>
+</svg>

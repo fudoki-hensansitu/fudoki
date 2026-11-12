@@ -25,7 +25,7 @@ from pathlib import Path
 import re
 import unicodedata
 
-from ingestion.generic.patterns import load as load_pattern
+from ingestion.generic.patterns import document_quirk, load as load_pattern
 from ingestion.generic.observe import OPENING, Page, Rule, Word
 
 REPAIRS = Path(__file__).resolve().parents[1] / 'lib/text_repairs.csv'
@@ -169,8 +169,9 @@ def _drawn(rule, paths) -> bool:
 
 
 def words_from_glyphs(glyphs: list[tuple[tuple[float, float, float, float], str]], report: Report,
-                      rules: list | None = None, overprint: bool = False) -> list[Word]:
-    """Glyphs into words: neighbours that overlap vertically and sit close, never across a vertical rule."""
+                      rules: list | None = None, overprint: bool = False, gap: float = .8) -> list[Word]:
+    """Glyphs into words: neighbours that overlap vertically and sit closer than `gap` line heights, never across a
+    vertical rule."""
     verticals = [r for r in rules or [] if r.vertical]
     unique: list[tuple[tuple[float, float, float, float], str]] = []
     placed: dict[tuple, list] = defaultdict(list)  # the struck twin sits a hair off in y, so sorting by line does not bring it next
@@ -199,7 +200,7 @@ def words_from_glyphs(glyphs: list[tuple[tuple[float, float, float, float], str]
         for j in order[position + 1:]:
             b = unique[j][0]
             height = max(a[3] - a[1], b[3] - b[1], 1)
-            if b[0] - a[2] > .8 * height:
+            if b[0] - a[2] > gap * height:
                 break
             if min(a[3], b[3]) - max(a[1], b[1]) >= .3 * min(a[3] - a[1], b[3] - b[1]) and not any(
                     a[2] - .5 <= r.x0 <= b[0] + .5 and r.y0 <= (a[1] + a[3]) / 2 <= r.y1 for r in verticals):
@@ -366,7 +367,8 @@ def _continues(previous: Word, word: Word) -> bool:
     ending with a comma continues on its right (`5,` `184,344`, 132209), and touching digit groups join. A minus
     sign never continues a number."""
     comma_gap = 1.2 * (word.y1 - word.y0) if word.text.startswith(',') or previous.text.endswith(',') else 1.0
-    return bool(NUMERIC.match(previous.text) and NUMERIC.match(word.text) and word.x0 > previous.x0
+    rest = word.text if (yen := document_quirk('yen_split_amounts')) is None else yen.module.digits(word.text)
+    return bool(NUMERIC.match(previous.text) and NUMERIC.match(rest) and word.x0 > previous.x0
                 and not (word.text[:1] in '△▲' and previous.text[-1:] not in '△▲')
                 and -.5 * (word.x1 - word.x0) <= word.x0 - previous.x1 <= comma_gap)
 
@@ -553,6 +555,8 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
         crop_to_box(pdf_path, pages, report)
         try:
             drop_invisible(pdf_path, pages, report, repairs, form_clips, character_map)
+            if 'white_text' in repairs:
+                load_pattern("repairs", "white_text").drop(pdf_path, pages, report)
             if 'opening_cell' in repairs:
                 opening_brackets(pdf_path, pages)
         except Exception as error:  # pdfium's raw API failed: keep Poppler's words as they are

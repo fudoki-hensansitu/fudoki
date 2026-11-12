@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.1//EN" 
+  "http://www.w3.org/Graphics/SVG/1.1/DTD/svg11.dtd">
+<svg width="500" height="500" viewBox="-25 -25 50 50" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" version="1.1">
+  <desc>Emblem of Hirosaki, Aomori</desc>
+  <g fill="none" stroke="#be0026" stroke-width="12">
+    <path id="p" d="M14,-20 V0 H-14 V20" />
+    <use xlink:href="#p" transform="rotate(90)" />
+  </g>
+</svg>
