@@ -4,6 +4,7 @@
 with seed as (
     select jurisdiction_code, fiscal_year, document_kind, account_name, kan_name, kou_name, moku_name, path
     from {{ ref('project_line') }}
+    where {{ only_jurisdictions('jurisdiction_code') }}
 ),
 lines as (
     select jurisdiction_code, fiscal_year, document_kind, account_name, kan_name, kou_name, moku_name, path

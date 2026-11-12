@@ -3,7 +3,8 @@
 that with a seven-digit code glued to its name (`0201100職員給`). An item number has at most four digits (`tree.CODE`),
 so without the quirk the 事業 and the 細節 are lines without a number, and the 節 takes the first level beside the
 事業. With the quirk the six and seven digits are numbers, and a number of more than four digits is a numbering shape
-of its own length (`tree.shape_of`), so 事業, 節 and 細節 take three levels."""
+of its own length (`tree.shape_of`), so 事業, 節 and 細節 take three levels. A name that begins with a counter word (`1801133時間延長型保育サービス事業補助金`)
+keeps the glued code: the digits are the code's, not a count (`3時間`)."""
 import re
 
 SCOPE = 'axis'
