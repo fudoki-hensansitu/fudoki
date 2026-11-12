@@ -75,6 +75,17 @@ describe('crawler の除外', () => {
   })
 })
 
+describe('ブラウザからの読み取り（CORS）', () => {
+  test('/v1/ の下は誰でも読め、資格情報は許さない。preflight は D1 を読まない', async () => {
+    sqlite.query('DROP TABLE control').run()
+    const pre = await app.request(SEARCH, { method: 'OPTIONS', headers: { Origin: 'https://example.test', 'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'content-type' } }, { DB: db })
+    expect(pre.status).toBe(204)
+    expect(pre.headers.get('Access-Control-Allow-Origin')).toBe('*')
+    expect(pre.headers.get('Access-Control-Allow-Credentials')).toBeNull()
+    expect((await get('/mcp')).headers.get('Access-Control-Allow-Origin')).toBeNull()
+  })
+})
+
 describe('GET /health', () => {
   test('200 と {status: ok}、no-store', async () => {
     const res = await get('/health')

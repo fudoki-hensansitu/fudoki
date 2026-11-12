@@ -13,9 +13,12 @@ const ORGANIZATION = { '@context': 'https://schema.org', '@type': 'Organization'
 
 export const loader = defineHandler<Props>(async (c) => {
   c.header('Cache-Control', 'public, max-age=300')
-  // API に繋がらなくても頁は返す（一覧が空なら、ホームは「読み込めません」と出す）
+  // API に繋がらなくても頁は返す（一覧が空なら、ホームは「読み込めません」と出す）。その頁は CDN に置かない
   const env = c.env as unknown as Env
-  const [entries, jurisdictions] = await Promise.all([homeEntries(env).catch(() => []), catalog(env).catch(() => [])])
+  let failed = false
+  const fail = () => ((failed = true), [])
+  const [entries, jurisdictions] = await Promise.all([homeEntries(env).catch(fail), catalog(env).catch(fail)])
+  if (failed) c.header('x-revalidate', '0')
   // 事業評価のある自治体を先に並べる。評価の年度は、自治体の頁で選べる年度のうち評価を収録した最新の年度
   const featured = jurisdictions
     .filter((j) => j.evaluationYears.length > 0 || VISIONS[j.code])

@@ -1,4 +1,4 @@
-// GET /api/jurisdictions/drill/:id: 款・項の内訳（server/jurisdiction-routes.ts）
+// GET /data/jurisdictions/drill/:id: 款・項の内訳（server/jurisdiction-routes.ts）
 import { defineHandler } from 'void'
 import { drillResponse } from '../../../../server/jurisdiction-routes'
 import type { Env } from '../../../../server/env'

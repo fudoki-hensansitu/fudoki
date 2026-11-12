@@ -3,4 +3,5 @@ Content-Signal: search=yes, ai-input=yes, ai-train=no
 Allow: /
 Disallow: /s/
 Disallow: /api/
+Disallow: /data/
 Sitemap: https://fudoki.dev/sitemap.xml

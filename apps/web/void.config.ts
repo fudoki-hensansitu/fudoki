@@ -3,6 +3,9 @@
 // 例外は web 自身のデータの D1（binding DB・fudoki-web。AI との会話の保存と、外部サービスから引く参照データ）だけ。風土記のデータではなく、web だけが使う別の D1 にする
 import { defineConfig } from 'void/config'
 import { SW_REGISTER } from './pwa'
+import { THEME_SCRIPT } from './nav/theme'
+import { NAV_SCRIPT } from './nav/nav-state'
+import prefectures from '../../packages/jurisdictions/prefectures.json'
 
 // PR ごとの preview の build か。cf previews deploy と deploy-preview-web.yml が CLOUDFLARE_PREVIEW_BUILD=true で build する。
 // void は Cloudflare の設定を cf の形へ移すとき wrangler の previews を受け付けないので、preview の差し替えはここで分ける
@@ -31,6 +34,27 @@ const vars = {
 }
 
 export default defineConfig({
+  // CDN（Void の ISR）に置く応答。ISR_CACHE（KV、下の cloudflare.kv_namespaces）に置き、過ぎたら古い応答を返しながら裏で作り直す。
+  // cookie の付いた要求・/api の下・200 でない応答・no-store の応答は置かない。deploy のたびに空になる
+  routing: {
+    // 頁の .server.ts の revalidate は使わない。頁の pattern（`/:prefecture/:name` など）が静的資産（/assets/*.js・紋章の SVG）にも当たり、資産の immutable な cache を失うため。
+    // 自治体の頁は都道府県の slug ごとの path で書き、どれにも当たらない path（静的資産・会話の頁 /s/:id）は ISR に置かない
+    revalidate: {
+      // ホームと自治体の頁（都道府県自体の頁・市区町村の頁・年度・タブ・分野）。データは取り込みのときだけ変わる
+      '/': 3600,
+      ...Object.fromEntries(Object.values(prefectures.slugs).flatMap((slug) => [[`/${slug}`, 3600], [`/${slug}/*`, 3600]])),
+      // 画面が取る自治体のデータ（routes/data/）
+      '/data/*': 3600,
+      '/sitemap.xml': 3600,
+      // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く。同じ下にある紋章の SVG（静的資産）は外す
+      '/jurisdictions/*/og.png': 86400,
+    },
+    // ISR の key は既定で query を落とす。流れ図・会計の総額は query で表示を分けるので key に残す
+    revalidateQueryAllowlist: {
+      '/data/jurisdictions/flow/*': ['view', 'phase', 'account'],
+      '/data/jurisdictions/accounts/*': ['phase'],
+    },
+  },
   // 全頁の head の既定。頁ごとの title・説明・canonical は各頁の .server.ts の head。theme-color と View Transition の opt-in は middleware/01.site.ts
   head: {
     htmlAttrs: { lang: 'ja' },
@@ -54,9 +78,12 @@ export default defineConfig({
       { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
       { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       { rel: 'manifest', href: '/manifest.webmanifest' },
+      // AI 向けの案内（public/llms.txt）。API・MCP の文書は docs.fudoki.dev の llms.txt を指す
+      { rel: 'llms-txt', href: '/llms.txt' },
     ],
-    // service worker（routes/sw.js.ts）は繋がらないときの案内だけを持つ
-    script: [{ innerHTML: SW_REGISTER }],
+    // service worker（routes/sw.js.ts）は繋がらないときの案内だけを持つ。
+    // テーマ（nav/theme.ts）とサイドバーの開閉（nav/nav-state.ts）は描く前に当てる。サーバーはどちらでも HTML を書き分けない
+    script: [{ innerHTML: THEME_SCRIPT }, { innerHTML: NAV_SCRIPT }, { innerHTML: SW_REGISTER }],
   },
   worker: {
     compatibility_date: '2026-08-23',
@@ -86,6 +113,8 @@ export default defineConfig({
         ? { binding: 'DB', database_name: 'fudoki-web-preview', database_id: '5b2c16b3-f008-4901-8660-2c66db3c714d', migrations_dir: 'migrations' }
         : { binding: 'DB', database_name: 'fudoki-web', database_id: '760c7476-6e46-4b44-b174-1bfdd1b4f957', migrations_dir: 'migrations' },
     ],
+    // CDN（Void の ISR）が描いた HTML・データを置く KV。風土記のデータではなく、応答の写しだけを置く。preview は別の KV にする
+    kv_namespaces: [{ binding: 'ISR_CACHE', id: preview ? '37ad90e0b46d4d6a996f1aa4e794fa58' : '381b42a1f4334609b917b794d9feb9b7' }],
     // 以下は本番だけ。preview には渡さない
     ...(preview
       ? {}

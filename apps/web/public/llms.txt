@@ -1,0 +1,18 @@
+# 風土記
+
+> 私のお金はどこへ行った？ 自治体が何にいくら使い、どう振り返ったかを、事業の単位まで出典と並べて見せるサイト。同じデータを MCP と REST で配っています。
+
+自治体の頁は https://fudoki.dev/<都道府県>/<自治体>（例: https://fudoki.dev/tokyo/shinagawa）。年度の頁は /tokyo/shinagawa/2024、タブの頁は /projects（事業）・/budget（予算）・/settlement（決算）を年度の後ろに付けます。頁の一覧は sitemap にあります。
+
+## Docs
+
+- [風土記 Docs の llms.txt](https://docs.fudoki.dev/llms.txt): MCP・REST の使い方と、データの読み方の一覧
+- [MCP サーバー](https://docs.fudoki.dev/mcp): AI クライアントに登録して、自治体の歳出・事業評価・予算案を引く
+- [REST API](https://docs.fudoki.dev/rest): https://api.fudoki.dev に JSON で問い合わせる
+- [利用規約](https://docs.fudoki.dev/terms): データを使うときの条件
+
+## Pages
+
+- [ホーム](https://fudoki.dev/): まちを選んで、そのまちのお金の使い道を見る
+- [風土記について](https://fudoki.dev/about)
+- [sitemap](https://fudoki.dev/sitemap.xml)

@@ -101,6 +101,7 @@ describe('事業', () => {
       insert('project_year', {
         project_year_id: H(String(fy % 10)), project_id: P, jurisdiction_code: '131091', fiscal_year: fy, name: '子育て支援費', account_name: '一般会計',
         kan_name: '民生費', kou_name: '児童福祉費', moku_name: '児童福祉総務費', initial_expenditure_detail_id: budget, settlement_expenditure_detail_id: settled, budget_yen: 1000, settled_yen: settled ? 900 : null,
+        first_year: 2024, first_year_kind: 'before_coverage', last_year: null, last_year_kind: 'latest', parent_project_id: null,
       })
   })
 
@@ -127,7 +128,16 @@ describe('事業', () => {
     expect(body.project_years).toEqual([])
     const hit = ProjectSearchOutput.parse(await (await post('/v1/projects:search', { fiscal_year: { min: 2024, max: 2026 }, where: { name: { contains: '子育て' } } })).json())
     expect(hit.project_years.map((y) => y.fiscal_year).sort()).toEqual([2024, 2026])
-    expect(hit.projects.map((p) => p.project_id)).toEqual([P])
-    expect(body.projects).toEqual([])
+    expect(hit.project_years.map((y) => [y.first_year_kind, y.last_year_kind])).toEqual([['before_coverage', 'latest'], ['before_coverage', 'latest']])
+    expect([hit.total_size, hit.total_size_capped]).toEqual([2, false])
+  })
+
+  test('合計件数は 10,000 で数えるのをやめる', async () => {
+    const add = sqlite.prepare(`INSERT INTO project_year ("project_year_id", "project_id", "jurisdiction_code", "fiscal_year", "name", "account_name", "first_year", "first_year_kind", "last_year_kind") VALUES (?, ?, '131091', 2025, '事業', '一般会計', 2025, 'confirmed', 'latest')`)
+    sqlite.transaction(() => {
+      for (let i = 0; i < 10_001; i++) add.run(`py-${i}`, P)
+    })()
+    const body = ProjectSearchOutput.parse(await (await post('/v1/projects:search', { fiscal_year: { min: 2025, max: 2025 }, page_size: 1 })).json())
+    expect([body.total_size, body.total_size_capped, body.project_years.length]).toEqual([10_000, true, 1])
   })
 })

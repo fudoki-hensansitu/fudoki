@@ -59,8 +59,10 @@ import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock, type AskControl } from '../ask-dock'
 import { usePageTour } from './page-tour'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
 import { directionOf, DIRECTION_ICONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
+import { listKey, listPage, projectFull, projectOfDetail, type ListPage, type ListQuery, type ProjectFull } from './api'
+import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import './app.css'
 
 const FIELD_ICON: Record<string, Icon> = {
@@ -101,11 +103,11 @@ const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
 type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
-type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go; openField: (id: string) => void; /** オンボーディングの事業の詳細の歩で、詳細の頭に出す吹き出し */ coach: ((p: Proj) => React.ReactNode) | null }
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected) => void; selected: Selected; go: Go; openField: (id: string) => void; /** オンボーディングの事業の詳細の歩で、詳細の頭に出す吹き出し */ coach: ((p: ProjectFull) => React.ReactNode) | null }
 /** 文脈に添える、開いている事業の評価シート（評価は過去の年度にしか無いので全年度の新しい順）・施策の数の上限（文脈の長さの上限に収める） */
 const DETAIL_SOURCES = 3
 /** 詳細に開いているものを、アシスタントに渡す文脈の行にする。出典の origin_id と頁・科目の ID を添え、AI が検索し直さずに読めるようにする */
-function describeSelected(sel: Selected, d: Snapshot, v: YearView): string {
+function describeSelected(sel: Selected, d: Snapshot, v: YearView, res: Resources): string {
   if (!sel) return ''
   const source = (label: string, x: { fy: number; origin: string; page: number }, name: string) => `${label}: ${r(x.fy)}「${name}」（origin_id ${x.origin}、${x.page}頁）`
   if (sel.kind === 'moku') return `開いている科目: ${[...(sel.moku.path ?? []), sel.moku.name].filter(Boolean).join(' > ')}（subject_id ${sel.moku.id}）`
@@ -117,14 +119,16 @@ function describeSelected(sel: Selected, d: Snapshot, v: YearView): string {
     const m = d.measures.find((x) => x.id === sel.id)
     return m ? source('開いている予算案の施策', m, m.title) : ''
   }
-  const p = d.projects.find((x) => x.id === sel.id)
-  if (!p) return ''
-  const now = v.amount(p)
+  const p = res.peek<Loaded<ProjectFull>>(projectKey(sel.id, v.year))
+  if (!p || p === FAILED) return ''
+  const now = (v.kind === 'initial' ? p.y[String(v.year)]?.b : p.y[String(v.year)]?.s) ?? null
   return [
-    `開いている事業: ${p.name}（${[p.path.filter(Boolean).join(' > '), p.dept].filter(Boolean).join('、')}）${now != null ? `、${r(v.year)}の${v.word} ${yenText(now)}` : ''}`,
-    ...[...(v.measuresOf.get(p.id) ?? []).map((m) => source('この事業の予算案の施策', m, m.title)), ...d.sheets.filter((s) => s.project === p.id).sort((a, b) => b.fy - a.fy).map((s) => source(`この事業の評価シート（${r(s.fy)}に行った事業の評価${s.fy < v.year ? `。見ている${r(v.year)}の${v.year - s.fy}年前` : ''}）`, s, s.name))].slice(0, DETAIL_SOURCES),
+    `開いている事業: ${p.name}（${[p.path.filter(Boolean).join(' > '), p.dept].filter(Boolean).join('、')}）${now != null ? `、${r(v.year)}の${v.word} ${yenText(now)}` : ''}（project_id ${p.id}）`,
+    ...[...v.measuresFor(p).map((m) => source('この事業の予算案の施策', m, m.title)), ...v.sheetsFor(p).map((s) => source(`この事業の評価シート（${r(s.fy)}に行った事業の評価）`, s, s.name))].slice(0, DETAIL_SOURCES),
   ].join('\n')
 }
+
+const projectKey = (id: string, year: number) => `project:${id}:${year}`
 
 const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
@@ -188,10 +192,9 @@ const IconBox = ({ children }: { children: React.ReactNode }) => <span className
 function ProjectRow({ p, rank }: { p: Proj; rank?: number }) {
   const { v, select, selected } = useApp()
   const ended = v.isEnded(p)
-  const yen = ended ? v.amount(p, String(v.year - 1)) : v.amount(p)
   // 分野は sub に文字で書くので、分野のアイコンは出さない。新規・やめた事業の印と行の頭を揃えるため、印の幅だけ空ける
   const icon = ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : <span aria-hidden className="w-6 shrink-0" />
-  return <Row rank={rank} icon={icon} title={p.name} sub={[p.dept, fieldName(v, p.field)].filter(Boolean).join(' · ')} yen={yen} note={ended ? `${r(v.year - 1)} ${v.label(v.year - 1)}` : yen != null ? `${((yen / v.total) * 100).toFixed(1)}%` : undefined} selected={selected?.kind === 'project' && selected.id === p.id} onClick={() => select({ kind: 'project', id: p.id })} />
+  return <Row rank={rank} icon={icon} title={p.name} sub={[p.dept, fieldName(v, v.fieldOf(p))].filter(Boolean).join(' · ')} yen={p.yen} note={ended ? `${r(p.fy)} ${v.label(p.fy)}` : p.yen != null ? `${((p.yen / v.total) * 100).toFixed(1)}%` : undefined} selected={selected?.kind === 'project' && selected.id === p.id} onClick={() => select({ kind: 'project', id: p.id })} />
 }
 function MeasureRow({ m }: { m: Measure }) {
   const { v, select, selected } = useApp()
@@ -231,29 +234,83 @@ function Rows({ children }: { children: React.ReactNode[] }) {
 }
 const fieldName = (v: YearView, id: string) => v.fields.find((f) => f.id === id)?.name ?? 'その他'
 
-/** 一覧は下まで来たら続きを足す（無限スクロール） */
-function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, i: number) => React.ReactNode; step?: number }) {
-  const [n, setN] = React.useState(step)
+/** 末尾が見えたら続きを足す印。IntersectionObserver を置くだけで、取るのは呼び出し側 */
+function MoreDots({ onVisible }: { onVisible: () => void }) {
   const ref = React.useRef<HTMLDivElement>(null)
-  React.useEffect(() => setN(step), [items, step])
+  const latest = React.useRef(onVisible)
+  latest.current = onVisible
   React.useEffect(() => {
     const el = ref.current
     if (!el) return
-    const io = new IntersectionObserver(([e]) => e!.isIntersecting && setN((x) => x + step), { rootMargin: '600px 0px' })
+    const io = new IntersectionObserver(([e]) => e!.isIntersecting && latest.current(), { rootMargin: '600px 0px' })
     io.observe(el)
     return () => io.disconnect()
-  }, [n, items, step])
+  }, [])
+  return (
+    <div ref={ref} className="flex justify-center gap-1.5 py-5" aria-hidden="true">
+      {[0, 1, 2].map((i) => <span key={i} className="app-dot size-1.5 rounded-full bg-border" style={{ animationDelay: `${i * 150}ms` }} />)}
+    </div>
+  )
+}
+
+/** 手元に全部ある一覧（評価シート・目）は下まで来たら続きを描く */
+function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, i: number) => React.ReactNode; step?: number }) {
+  const [n, setN] = React.useState(step)
   return (
     <>
       <Rows>{items.slice(0, n).map(render)}</Rows>
-      {items.length > n ? (
-        <div ref={ref} className="flex justify-center gap-1.5 py-5" aria-hidden="true">
-          {[0, 1, 2].map((i) => <span key={i} className="app-dot size-1.5 rounded-full bg-border" style={{ animationDelay: `${i * 150}ms` }} />)}
-        </div>
-      ) : null}
+      {items.length > n ? <MoreDots key={n} onVisible={() => setN((x) => x + step)} /> : null}
     </>
   )
 }
+
+/** 一覧の1頁目。サーバーが渡した分はそのまま、無ければ API から読む（読み終えるまで Suspense の fallback） */
+function useListPage(q: ListQuery): Loaded<ListPage> {
+  const { res } = useApp()
+  return React.use(res.get(listKey(q), () => listPage(q)))
+}
+
+const RowsSkeleton = ({ n = 5 }: { n?: number }) => (
+  <div className="flex flex-col gap-2 py-1" aria-busy="true" aria-label="読み込み中">
+    {Array.from({ length: n }, (_, i) => <Skeleton key={i} className="h-12 rounded-lg" />)}
+  </div>
+)
+const LoadFailed = () => <p className="px-2.5 py-4 text-sm text-muted-foreground">読み込めませんでした。少し待ってから開き直してください。</p>
+
+/** 事業の一覧。1頁目のあと、末尾が見えたら公開 API から続きを読んで足す */
+function ProjectList({ q, head, render = (p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} /> }: { q: ListQuery; head?: (page: ListPage) => React.ReactNode; render?: (p: Proj, i: number) => React.ReactNode }) {
+  const { res } = useApp()
+  const page = useListPage(q)
+  const [tries, bump] = React.useReducer((x: number) => x + 1, 0)
+  const loading = React.useRef(false)
+  if (page === FAILED) return <LoadFailed />
+  const more = () => {
+    if (loading.current || !page.next) return
+    loading.current = true
+    listPage(q, page.next).then(
+      (p) => {
+        res.set(listKey(q), { ...page, rows: [...page.rows, ...p.rows], next: p.next })
+        loading.current = false
+        bump()
+      },
+      // 読めなければ少し待って末尾の印を置き直す（見えたままなら、もう一度読みに行く）
+      () => setTimeout(() => {
+        loading.current = false
+        bump()
+      }, 3000),
+    )
+  }
+  return (
+    <>
+      {head?.(page)}
+      <Rows>{page.rows.map(render)}</Rows>
+      {page.next ? <MoreDots key={`${page.rows.length}:${tries}`} onVisible={more} /> : null}
+    </>
+  )
+}
+
+/** 件数（数えるのを打ち切ったら「以上」） */
+const countOf = (p: Pick<ListPage, 'total' | 'capped'>) => `${p.total.toLocaleString('ja-JP')}件${p.capped ? '以上' : ''}`
 
 // ---------- 画面 ----------
 type TabKey = PageTab
@@ -263,13 +320,12 @@ type Go = (t: TabKey, opt?: { filter?: string; field?: string; grade?: string })
 /** 分野の行。名前・金額・棒・割合を1行に並べる。割合は前景色で、緑は棒だけに置く */
 function FieldRow({ f, i, max, onClick }: { f: YearView['fields'][number]; i: number; max: number; onClick: () => void }) {
   const { v } = useApp()
-  const n = v.current.filter((p) => p.field === f.id).length
   const pct = (f.yen / v.total) * 100
   return (
     <button type="button" onClick={onClick} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 rounded-lg px-2.5 py-3 text-left transition-colors hover:bg-card sm:grid-cols-[10rem_minmax(0,1fr)_4.5rem]">
       <span className="col-start-1 row-start-1 min-w-0 sm:col-start-auto sm:row-start-auto">
         <span className="block truncate text-base font-medium">{f.name}</span>
-        <span className="block text-xs text-muted-foreground"><Amt yen={f.yen} /> · 事業 {n}</span>
+        <span className="block text-xs text-muted-foreground"><Amt yen={f.yen} /></span>
       </span>
       <span className="col-span-2 col-start-1 row-start-2 block h-1.5 overflow-hidden rounded-full bg-secondary sm:col-span-1 sm:col-start-auto sm:row-start-auto">
         <span className="app-grow block h-full rounded-full bg-primary" style={{ width: `${Math.max(1, (f.yen / max) * 100)}%`, animationDelay: `${i * 30}ms` }} />
@@ -282,12 +338,11 @@ function FieldRow({ f, i, max, onClick }: { f: YearView['fields'][number]; i: nu
   )
 }
 
-/** 新しく始める事業のカード。施策のうち予算書の事業に当たったものは事業の詳細を開く */
+/** 新しく始める事業のカード。施策の詳細を開く（予算書の事業に当たったものは詳細から事業へ進める） */
 function FreshCard({ m }: { m: Measure }) {
-  const { v, select, projects } = useApp()
-  const p = m.project ? projects.get(m.project) : undefined
+  const { v, select } = useApp()
   return (
-    <button type="button" onClick={() => select(p ? { kind: 'project', id: p.id } : { kind: 'measure', id: m.id })} className="block h-full w-full rounded-xl text-left transition-transform active:scale-[.98]"><Card className="h-full h-full min-h-[132px] gap-2.5 bg-card p-3.5 text-left ring-0 transition-[background,transform] hover:bg-secondary active:scale-[.98]">
+    <button type="button" onClick={() => select({ kind: 'measure', id: m.id })} className="block h-full w-full rounded-xl text-left transition-transform active:scale-[.98]"><Card className="h-full h-full min-h-[132px] gap-2.5 bg-card p-3.5 text-left ring-0 transition-[background,transform] hover:bg-secondary active:scale-[.98]">
       <Mark kind={m.new ? 'new' : 'up'} />
       <span className="line-clamp-2 text-base font-semibold leading-normal">{m.title}</span>
       <span className="mt-auto flex items-end justify-between gap-2">
@@ -359,9 +414,29 @@ const VIEWS: { key: FlowView; label: string }[] = [
 const GENERAL = '一般会計'
 type AccountTotal = { name: string; yen: number; amountMissing?: true }
 
+/** 会計ごとの総額。読めなければ一般会計だけ */
+const accountsOf = (res: Resources, url: string) =>
+  res.get(url, () => fetch(url).then((r) => (r.ok ? (r.json() as Promise<AccountTotal[]>) : [])).catch(() => [] as AccountTotal[])) as Promise<AccountTotal[]>
+
+function AccountCards({ url, account, setAccount }: { url: string; account: string; setAccount: (a: string) => void }) {
+  const { res } = useApp()
+  const accounts = React.use(accountsOf(res, url))
+  if (accounts.length <= 1) return null
+  return (
+    <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" role="radiogroup" aria-label="会計">
+      {accounts.map((x) => (
+        <button key={x.name} type="button" role="radio" aria-checked={x.name === account} onClick={() => setAccount(x.name)} data-selected={x.name === account || undefined} className="flex flex-col items-start rounded-xl bg-card px-3.5 py-2.5 text-left ring-1 ring-inset ring-transparent transition-colors hover:bg-accent data-selected:bg-accent data-selected:ring-primary">
+          <span className="text-xs text-muted-foreground">{x.name}</span>
+          <Amt yen={x.yen} className="text-[17px] text-primary" />
+        </button>
+      ))}
+    </div>
+  )
+}
+
 /** 予算・決算。事業は下から積み上げる見方、こちらは大きい項目から下りていく見方。当初予算と決算の両方がある年度はタブを分ける */
 function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
-  const { v, d, page, select } = useApp()
+  const { v, d, page, select, res } = useApp()
   const [view, setView] = React.useState<FlowView>('cofog')
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = phase === 'settlement'
@@ -377,44 +452,29 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     </div>
   )
   // 会計ごとの総額。一般会計を先頭に並べ、押した会計の流れを下に出す
-  const [accounts, setAccounts] = React.useState<AccountTotal[]>()
   const [account, setAccount] = React.useState(GENERAL)
-  React.useEffect(() => {
-    setAccounts(undefined)
-    setAccount(GENERAL)
-    const controller = new AbortController()
-    fetch(`/api/jurisdictions/accounts/${page.code}/${v.year}${phase === 'initial' ? '?phase=initial' : ''}`, { signal: controller.signal })
-      .then((r) => (r.ok ? r.json() as Promise<AccountTotal[]> : []))
-      .then((x) => { if (!controller.signal.aborted) setAccounts(x) }, () => { if (!controller.signal.aborted) setAccounts([]) })
-    return () => controller.abort()
-  }, [page.code, v.year, phase])
+  const accountsUrl = `/data/jurisdictions/accounts/${page.code}/${v.year}${phase === 'initial' ? '?phase=initial' : ''}`
   const expected = page.accounts?.[phase]?.[String(v.year)]?.length ?? 0
-  const special = account === GENERAL ? undefined : accounts?.find((x) => x.name === account)
+  const special = account === GENERAL ? undefined : React.use(accountsOf(res, accountsUrl)).find((x) => x.name === account)
   const picked: YearTotal | undefined = special ? { year: v.year, yen: special.yen, kan: [] } : total
   const summary = picked ? <Amt yen={picked.yen} className="text-[26px] leading-snug text-primary" /> : null
   return (
     <div className="flex flex-col gap-3">
-      {/* 総額を読み込むまでは、収録した会計の数だけ札の場所を取っておき、下のお金の流れが後からずれないようにする */}
-      {!accounts && expected > 1 ? (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" aria-busy="true" aria-label="会計">
-          {Array.from({ length: expected }, (_, i) => (
-            // 行の高さを本物の札と揃えるため、同じ文字の大きさの行に skeleton を入れる
-            <div key={i} className="flex flex-col items-start rounded-xl bg-card px-3.5 py-2.5">
-              <span className="text-xs"><Skeleton className="inline-block h-3 w-16 align-middle" /></span>
-              <span className="text-[17px]"><Skeleton className="inline-block h-4 w-24 align-middle" /></span>
-            </div>
-          ))}
-        </div>
-      ) : null}
-      {accounts && accounts.length > 1 ? (
-        <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" role="radiogroup" aria-label="会計">
-          {accounts.map((x) => (
-            <button key={x.name} type="button" role="radio" aria-checked={x.name === account} onClick={() => setAccount(x.name)} data-selected={x.name === account || undefined} className="flex flex-col items-start rounded-xl bg-card px-3.5 py-2.5 text-left ring-1 ring-inset ring-transparent transition-colors hover:bg-accent data-selected:bg-accent data-selected:ring-primary">
-              <span className="text-xs text-muted-foreground">{x.name}</span>
-              <Amt yen={x.yen} className="text-[17px] text-primary" />
-            </button>
-          ))}
-        </div>
+      {expected > 1 ? (
+        // 総額を読み込むまでは、収録した会計の数だけ札の場所を取っておき、下のお金の流れが後からずれないようにする
+        <ClientSuspense fallback={
+          <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" aria-busy="true" aria-label="会計">
+            {Array.from({ length: expected }, (_, i) => (
+              // 行の高さを本物の札と揃えるため、同じ文字の大きさの行に skeleton を入れる
+              <div key={i} className="flex flex-col items-start rounded-xl bg-card px-3.5 py-2.5">
+                <span className="text-xs"><Skeleton className="inline-block h-3 w-16 align-middle" /></span>
+                <span className="text-[17px]"><Skeleton className="inline-block h-4 w-24 align-middle" /></span>
+              </div>
+            ))}
+          </div>
+        }>
+          <AccountCards url={accountsUrl} account={account} setAccount={setAccount} />
+        </ClientSuspense>
       ) : null}
       {picked ? (
         <Flow key={`${v.year}-${view}-${phase}-${account}`} data={page} total={picked} view={view} phase={phase} account={account === GENERAL ? undefined : account} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase, special: account !== GENERAL })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
@@ -453,7 +513,7 @@ function Overview({ go }: { go: Go }) {
 
       <section>
         <SectionHead title="お金のかかる事業"><MoreLink onClick={() => go('projects', { filter: 'all' })} /></SectionHead>
-        <Rows>{v.current.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>
+        <Rows>{v.top.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>
       </section>
 
       {v.sheets.length ? (
@@ -468,29 +528,39 @@ function Overview({ go }: { go: Go }) {
 }
 
 function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { filter: string; setFilter: (f: string) => void; field: string; setField: (f: string) => void; grade: string; setGrade: (g: string) => void }) {
-  const { v } = useApp()
+  const { v, res } = useApp()
   const by = filter === 'ended' ? v.year - 1 : v.year
   const byLabel = `${r(by)} ${v.label(by)}`
+  // 入力は少し待ってから絞る（打つたびに API を呼ばない）。待つあいだと読むあいだは前の一覧を出したまま
+  const [text, setText] = React.useState('')
   const [q, setQ] = React.useState('')
-  const items = React.useMemo(() => {
-    let ps = filter === 'ended' ? v.ended : filter === 'new' ? v.newProjects : v.current
-    if (field !== 'all') ps = ps.filter((p) => p.field === field)
-    const t = q.trim()
-    if (t) ps = ps.filter((p) => p.name.includes(t) || (p.dept ?? '').includes(t))
-    return ps
-  }, [v, filter, field, q])
-  const unlinked = filter === 'new' ? v.freshUnlinked.filter((m) => (field === 'all' || m.field === field) && (!q.trim() || m.title.includes(q.trim()))) : []
+  const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
+  const onText = (t: string) => {
+    setText(t)
+    clearTimeout(timer.current)
+    timer.current = setTimeout(() => React.startTransition(() => setQ(t.trim())), 300)
+  }
+  const list = filter === 'eval' ? null : v.query(filter as ListQuery['filter'], { ...(field !== 'all' ? { subjects: v.subjectsOf(field, filter as ListQuery['filter']) } : {}), ...(q ? { q } : {}) })
+  const unlinked = filter === 'new' ? v.freshUnlinked.filter((m) => (field === 'all' || m.field === field) && (!q || m.title.includes(q))) : []
+  const head = (n: string) => (
+    <p className="px-2.5 text-xs text-muted-foreground">
+      {filter === 'new' ? '予算書で新しく現れた事業・' : ''}
+      {n}・{byLabel}の多い順
+    </p>
+  )
+  // 事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある）
+  const moku = v.hasProjects ? [] : v.mokuRows.filter((p) => (field === 'all' || v.fieldOf(p) === field) && (!q || p.name.includes(q)))
   return (
     <div data-tour="projects" className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[220px] flex-1">
           <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-          <Input value={q} onChange={(e) => setQ(e.target.value)} placeholder="事業名・担当の課で探す" className="h-9 rounded-full pl-9" aria-label="事業を探す" />
+          <Input value={text} onChange={(e) => onText(e.target.value)} placeholder="事業名・担当の課で探す" className="h-9 rounded-full pl-9" aria-label="事業を探す" />
         </div>
         <ToggleGroup value={[filter]} onValueChange={(x) => x[0] && setFilter(x[0])} variant="outline" size="sm" spacing={0}>
           <ToggleGroupItem value="all">すべて</ToggleGroupItem>
-          {v.comparable || v.newProjects.length || v.fresh.length ? <ToggleGroupItem value="new"><NewIcon className="size-4 text-primary" />新しく始める</ToggleGroupItem> : null}
-          {v.comparable || v.ended.length ? <ToggleGroupItem value="ended"><StopIcon className="size-4 text-primary" />やめた</ToggleGroupItem> : null}
+          {v.comparable || v.fresh.length ? <ToggleGroupItem value="new"><NewIcon className="size-4 text-primary" />新しく始める</ToggleGroupItem> : null}
+          {v.comparable ? <ToggleGroupItem value="ended"><StopIcon className="size-4 text-primary" />やめた</ToggleGroupItem> : null}
           {v.sheets.length ? <ToggleGroupItem value="eval"><ClipboardTextIcon className="size-4" />評価した</ToggleGroupItem> : null}
         </ToggleGroup>
       </div>
@@ -501,11 +571,19 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
         ))}
       </ToggleGroup>
       {filter === 'eval' ? <EvalList grade={grade} setGrade={setGrade} field={field} q={q} /> : <>
-      <p className="px-2.5 text-xs text-muted-foreground">
-        {filter === 'new' ? '予算書で新しく現れた事業・' : ''}
-        {items.length}件・{byLabel}の多い順
-      </p>
-      <Infinite items={items} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
+      {!v.hasProjects ? (
+        // 目には始めた年度が無いので、新しく始める事業は施策（下）だけで出す
+        filter === 'all' ? (
+          <>
+            {head(`${moku.length}件`)}
+            <Infinite items={moku} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
+          </>
+        ) : null
+      ) : list ? (
+        <ClientSuspense fallback={<RowsSkeleton />} ready={!!res.peek(listKey(list))}>
+          <ProjectList q={list} head={(page) => head(countOf(page))} />
+        </ClientSuspense>
+      ) : null}
       {unlinked.length ? (
         <section className="mt-4">
           <p className="px-2.5 pb-1 text-xs text-muted-foreground">予算書の事業に紐付けられなかった発表 {unlinked.length}件</p>
@@ -554,15 +632,30 @@ const Ext = ({ href, children }: { href: string; children: React.ReactNode }) =>
   <a href={href} target="_blank" rel="noopener" className="inline-flex items-center gap-1 text-xs text-primary hover:underline">{children}<ArrowSquareOutIcon className="size-3" aria-hidden="true" /></a>
 )
 
-function ProjectDetail({ p }: { p: Proj }) {
+/** 事業の詳細。開いたときに公開 API から事業（年度ごとの額）と中の事業を読む。目を事業の代わりにした自治体は手元の目の行から作る */
+function ProjectDetail({ id }: { id: string }) {
+  const { v, res } = useApp()
+  if (id.startsWith('moku:')) {
+    const m = v.mokuRows.find((x) => x.id === id)
+    if (!m) return null
+    const yen = { b: v.kind === 'initial' ? m.yen : null, s: v.kind === 'initial' ? null : m.yen }
+    return <ProjectBody p={{ id, name: m.name, dept: null, path: m.path, started: null, ended: null, y: { [String(v.year)]: yen }, kids: [], subject: m.subject, initialDetails: [], settlementDetails: [] }} />
+  }
+  const loaded = React.use(res.get(projectKey(id, v.year), () => projectFull(id, v.year, v.kind)))
+  return loaded === FAILED ? <LoadFailed /> : <ProjectBody p={loaded} />
+}
+
+function ProjectBody({ p }: { p: ProjectFull }) {
   const { v, d, select, years, coach } = useApp()
   const ys = String(v.year)
-  const now = v.amount(p)
-  const prev = v.amount(p, String(v.year - 1))
-  const ms = v.measuresOf.get(p.id) ?? []
-  const ss = v.sheetsOf.get(p.id) ?? []
-  const kids = p.kids[ys] ?? []
+  const amt = (y: string) => (d.years[y]?.kind === 'settlement' ? p.y[y]?.s : p.y[y]?.b) ?? null
+  const now = amt(ys)
+  const prev = amt(String(v.year - 1))
+  const ms = v.measuresFor(p)
+  const ss = v.sheetsFor(p)
+  const kids = p.kids
   const ended = v.isEnded(p)
+  const field = v.fieldOf(p)
   return (
     <>
       {coach?.(p)}
@@ -572,7 +665,7 @@ function ProjectDetail({ p }: { p: Proj }) {
         {p.name}
       </h2>
       <div className="flex flex-wrap gap-1.5">
-        <Chip><FieldIcon id={p.field} />{fieldName(v, p.field)}</Chip>
+        <Chip><FieldIcon id={field} />{fieldName(v, field)}</Chip>
         {p.dept ? <Chip><BuildingsIcon />{p.dept}</Chip> : null}
       </div>
       <div className="mt-5">
@@ -635,7 +728,7 @@ function ProjectDetail({ p }: { p: Proj }) {
       ) : null}
       {kids.length ? (
         <DetailSection icon={TreeStructureIcon} title="中の事業" count={kids.length}>
-          <Rows>{kids.slice(0, 8).map(([name, yen], i) => (
+          <Rows>{kids.slice(0, 8).map(({ name, yen }, i) => (
             <div key={i} className="flex items-center gap-3 px-1.5 py-2 text-[15px]"><span className="flex-1">{name}</span><Amt yen={yen} className="text-base" /></div>
           ))}</Rows>
           {kids.length > 8 ? <p className="mt-1 text-xs text-muted-foreground">ほか {kids.length - 8} 件</p> : null}
@@ -658,15 +751,18 @@ function MeasureDetail({ m }: { m: Measure }) {
         {m.yen ? <span className="text-xs text-muted-foreground">{perHead(m.yen, d.pop)}</span> : null}
       </div>
       <DetailSection icon={ListBulletsIcon} title="ポイント"><ul className="list-disc pl-5 text-[15px] leading-loose">{m.desc.map((x, i) => <li key={i}>{x}</li>)}</ul></DetailSection>
+      {m.detail ? (
+        <ClientSuspense fallback={null}>
+          <LinkedProject detail={m.detail} year={m.fy} kind="initial" />
+        </ClientSuspense>
+      ) : null}
       <DetailSection icon={FileTextIcon} title="出典"><Ext href={`${m.url}#page=${m.page}`}>予算案のプレス発表（{m.page}頁）</Ext></DetailSection>
     </>
   )
 }
 
 function SheetDetail({ s }: { s: EvalSheet }) {
-  const { select, projects } = useApp()
   const dir = directionOf(s)
-  const p = s.project ? projects.get(s.project) : undefined
   return (
     <>
       <p className="text-xs text-muted-foreground">{s.acct} · {s.div}</p>
@@ -684,16 +780,28 @@ function SheetDetail({ s }: { s: EvalSheet }) {
       <DetailSection icon={CalendarBlankIcon} title={`${r(s.fy)}年度の事業`}>
         <div className="flex gap-8 text-[15px]"><span>予算 <Amt yen={s.b} className="text-[15px]" /></span><span>決算 <Amt yen={s.s} className="text-[15px]" /></span></div>
       </DetailSection>
-      {p ? (
-        <DetailSection icon={BriefcaseIcon} title="予算書の事業">
-          <button type="button" onClick={() => select({ kind: 'project', id: p.id })} className="flex w-full items-center gap-3 rounded-xl bg-card p-3 text-left hover:bg-secondary">
-            <span className="flex-1"><span className="block text-[15px] font-semibold">{p.name}</span><span className="text-xs text-muted-foreground">{p.dept}</span></span>
-          </button>
-        </DetailSection>
+      {s.detail ? (
+        <ClientSuspense fallback={null}>
+          <LinkedProject detail={s.detail} year={s.fy} kind="settlement" />
+        </ClientSuspense>
       ) : null}
       <DetailSection icon={FileTextIcon} title="出典"><Ext href={`${s.url}#page=${s.page}`}>評価シート（{s.page}頁）</Ext></DetailSection>
       <p className="mt-3 text-xs text-muted-foreground">評価は自治体が自ら付けたものです。A〜D と方向性は書き方を共通の区分に揃えたもので、風土記は評価を加えていません。</p>
     </>
+  )
+}
+
+/** 施策・評価シートを紐付けた予算書・決算書の事業。開いたときに公開 API から引く */
+function LinkedProject({ detail, year, kind }: { detail: string; year: number; kind: 'initial' | 'settlement' }) {
+  const { res, select } = useApp()
+  const p = React.use(res.get(`linked-project:${kind}:${detail}`, () => projectOfDetail(detail, year, kind)))
+  if (!p || p === FAILED) return null
+  return (
+    <DetailSection icon={BriefcaseIcon} title="予算書の事業">
+      <button type="button" onClick={() => select({ kind: 'project', id: p.id })} className="flex w-full items-center gap-3 rounded-xl bg-card p-3 text-left hover:bg-secondary">
+        <span className="flex-1"><span className="block text-[15px] font-semibold">{p.name}</span><span className="text-xs text-muted-foreground">{p.dept}</span></span>
+      </button>
+    </DetailSection>
   )
 }
 
@@ -709,44 +817,38 @@ const REST_COLOR = 'color-mix(in oklab, var(--muted-foreground) 22%, var(--backg
 
 /** 分野の内訳: COFOG の中分類ごとの金額。多い順に5つと、残りはまとめる */
 function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
-  const { v, d, page } = useApp()
-  const [drills, setDrills] = React.useState<Drill[] | null>()
-  const initial = d.years[String(v.year)]?.kind === 'initial'
-  // recharts の chunk は内訳のデータを待たずに読み始める
-  React.useEffect(() => { void loadFieldChart().catch(() => {}) }, [])
-  React.useEffect(() => {
-    setDrills(undefined)
-    const controller = new AbortController()
-    fetch(`/api/jurisdictions/flow/${page.code}/${v.year}/kou?${new URLSearchParams({ view: 'cofog', ...(initial ? { phase: 'initial' } : {}) })}`, { signal: controller.signal })
-      .then((r) => (r.ok ? (r.json() as Promise<Drill[]>) : Promise.reject(new Error(String(r.status)))))
-      .then((x) => !controller.signal.aborted && setDrills(x), () => !controller.signal.aborted && setDrills(null))
-    return () => controller.abort()
-  }, [page.code, v.year, initial])
+  return (
+    <ClientSuspense fallback={<DetailSection icon={ChartPieSliceIcon} title="内訳"><div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" /></DetailSection>}>
+      <FieldSlices frame={frame} />
+    </ClientSuspense>
+  )
+}
+
+function FieldSlices({ frame }: { frame: { cofog: string } }) {
+  const { v, page, res } = useApp()
+  const url = `/data/jurisdictions/flow/${page.code}/${v.year}/kou?${new URLSearchParams({ view: 'cofog', ...(v.kind === 'initial' ? { phase: 'initial' } : {}) })}`
+  const drills = React.use(res.get(url, () => fetch(url).then((r) => (r.ok ? (r.json() as Promise<Drill[]>) : Promise.reject(new Error(String(r.status)))))))
   const slices = React.useMemo(() => {
-    const drill = drills?.find((x) => x.kan.id === `cofog-${frame.cofog || 'none'}`)
+    const drill = drills === FAILED ? undefined : drills.find((x) => x.kan.id === `cofog-${frame.cofog || 'none'}`)
     const rows = (drill?.kou ?? []).filter((k) => !k.amountMissing && k.yen > 0).sort((a, b) => Number(!a.id.includes('.')) - Number(!b.id.includes('.')) || b.yen - a.yen)
     const many = rows.length > SLICE_COLORS.length + 1
     const top = (many ? rows.slice(0, SLICE_COLORS.length) : rows.slice(0, SLICE_COLORS.length + 1)).map((k, i) => ({ key: k.id, name: k.name, yen: k.yen, color: SLICE_COLORS[i] ?? REST_COLOR, ink: SLICE_INKS[i] ?? 'var(--foreground)' }))
     const rest = rows.slice(top.length).reduce((t, k) => t + k.yen, 0)
     return rest > 0 ? [...top, { key: 'rest', name: `ほか${rows.length - top.length}件`, yen: rest, color: REST_COLOR, ink: 'var(--foreground)' }] : top
   }, [drills, frame.cofog])
-  if (drills === null || (drills && !slices.length)) return null
+  if (!slices.length) return null
   return (
     <DetailSection icon={ChartPieSliceIcon} title="内訳">
-      {drills ? (
-        <React.Suspense fallback={<div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" />}>
-          <FieldChart slices={slices} format={yenText} />
-        </React.Suspense>
-      ) : <div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" />}
+      <React.Suspense fallback={<div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" />}>
+        <FieldChart slices={slices} format={yenText} />
+      </React.Suspense>
     </DetailSection>
   )
 }
 
 function FieldPage({ id }: { id: string }) {
-  const { v, d } = useApp()
+  const { v, d, res } = useApp()
   const f = v.fields.find((x) => x.id === id)
-  // 年度を切り替えると分野が消えることがあるので、hook は早期 return より前に呼ぶ
-  const ps = React.useMemo(() => v.current.filter((p) => p.field === id), [v, id])
   if (!f) return <p className="text-sm text-muted-foreground">{reiwa(v.year)}にはこの分野の予算がありません。</p>
   const ms = v.fresh.filter((m) => m.field === f.id)
   const ss = v.sheets.filter((s) => s.field === f.id)
@@ -772,9 +874,15 @@ function FieldPage({ id }: { id: string }) {
           <Rows>{ms.map((m) => <MeasureRow key={m.id} m={m} />)}</Rows>
         </DetailSection>
       ) : null}
-      <DetailSection icon={ListBulletsIcon} title="事業" count={`${ps.length}件`}>
-        <Infinite items={ps} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
-      </DetailSection>
+      {v.hasProjects ? (
+        <ClientSuspense fallback={<DetailSection icon={ListBulletsIcon} title="事業"><RowsSkeleton /></DetailSection>} ready={!!res.peek(listKey(v.query('all', { subjects: v.subjectsOf(f.id) })))}>
+          <FieldProjects id={f.id} />
+        </ClientSuspense>
+      ) : (
+        <DetailSection icon={ListBulletsIcon} title="事業" count={`${v.mokuRows.filter((p) => v.fieldOf(p) === f.id).length}件`}>
+          <Infinite items={v.mokuRows.filter((p) => v.fieldOf(p) === f.id)} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
+        </DetailSection>
+      )}
       {v.sheets.length ? (
         <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(v.year)}年度の事業`}>
           <GradeCards sheets={ss} />
@@ -785,15 +893,21 @@ function FieldPage({ id }: { id: string }) {
   )
 }
 
+/** 分野の事業。分野の末端の科目の ID で事業の年度を絞る（科目を1回、事業を1回読むだけ） */
+function FieldProjects({ id }: { id: string }) {
+  const { v } = useApp()
+  const q = v.query('all', { subjects: v.subjectsOf(id) })
+  const page = useListPage(q)
+  return (
+    <DetailSection icon={ListBulletsIcon} title="事業" count={page === FAILED ? undefined : countOf(page)}>
+      <ProjectList q={q} />
+    </DetailSection>
+  )
+}
+
 /** 予算タブの図で押した目。事業の詳細と同じ形で、目の金額・中の事業・節を出す */
 function MokuDetail({ moku, phase, special }: { moku: Moku; phase: 'initial' | 'settlement'; special?: boolean }) {
-  const { v, d, select } = useApp()
-  const ys = String(v.year)
-  const amountOf = (p: Proj) => (phase === 'initial' ? p.y[ys]?.b : p.y[ys]?.s) ?? null
-  // 款・項・目の名前が揃う事業。款・項が分からない古い応答では目の名前だけで引く
-  const ps = special ? [] : d.projects
-    .filter((p) => p.path[2] === moku.name && (!moku.path || (p.path[0] === moku.path[0] && p.path[1] === moku.path[1])) && amountOf(p) != null)
-    .sort((a, b) => (amountOf(b) ?? 0) - (amountOf(a) ?? 0))
+  const { v, d } = useApp()
   const setsu = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const base = moku.amountMissing ? Math.max(0, ...setsu.map((s) => s.yen)) : moku.yen
   return (
@@ -805,17 +919,11 @@ function MokuDetail({ moku, phase, special }: { moku: Moku; phase: 'initial' | '
         {moku.amountMissing ? <span className="block text-2xl leading-tight text-muted-foreground">金額未記載</span> : <Amt yen={moku.yen} className="block text-4xl leading-tight text-primary" />}
         {!moku.amountMissing && perHead(moku.yen, d.pop) ? <span className="text-xs text-muted-foreground">{perHead(moku.yen, d.pop)}</span> : null}
       </div>
-      {ps.length ? (
-        <DetailSection icon={BriefcaseIcon} title="中の事業" count={ps.length}>
-          <Rows>
-            {ps.map((p) => (
-              <button key={p.id} type="button" onClick={() => select({ kind: 'project', id: p.id })} className="flex w-full items-center gap-3 px-1.5 py-2.5 text-left hover:bg-secondary">
-                <span className="min-w-0 flex-1"><span className="block text-[15px]">{p.name}</span>{p.dept ? <span className="text-xs text-muted-foreground">{p.dept}</span> : null}</span>
-                <Amt yen={amountOf(p)} className="text-[15px]" />
-              </button>
-            ))}
-          </Rows>
-        </DetailSection>
+      {/* 事業は一般会計の分だけ持つので、特別会計の目では引かない */}
+      {!special && v.hasProjects && /^[0-9a-f]{64}$/.test(moku.id) ? (
+        <ClientSuspense fallback={<DetailSection icon={BriefcaseIcon} title="中の事業"><RowsSkeleton n={3} /></DetailSection>}>
+          <MokuProjects subject={moku.id} phase={phase} />
+        </ClientSuspense>
       ) : null}
       {setsu.length ? (
         <DetailSection icon={ListBulletsIcon} title="節" count={setsu.length}>
@@ -838,12 +946,33 @@ function MokuDetail({ moku, phase, special }: { moku: Moku; phase: 'initial' | '
   )
 }
 
+/** 目の中の事業。目の科目の ID で事業の年度を絞る */
+function MokuProjects({ subject, phase }: { subject: string; phase: 'initial' | 'settlement' }) {
+  const { v, select } = useApp()
+  const q: ListQuery = { ...v.query('all', { subjects: [subject] }), kind: phase }
+  const page = useListPage(q)
+  if (page === FAILED || !page.rows.length) return null
+  return (
+    <DetailSection icon={BriefcaseIcon} title="中の事業" count={countOf(page)}>
+      <ProjectList q={q} render={(p) => (
+        <button key={p.id} type="button" onClick={() => select({ kind: 'project', id: p.id })} className="flex w-full items-center gap-3 px-1.5 py-2.5 text-left hover:bg-secondary">
+          <span className="min-w-0 flex-1"><span className="block text-[15px]">{p.name}</span>{p.dept ? <span className="text-xs text-muted-foreground">{p.dept}</span> : null}</span>
+          <Amt yen={p.yen} className="text-[15px]" />
+        </button>
+      )} />
+    </DetailSection>
+  )
+}
+
 function Detail({ sel }: { sel: NonNullable<Selected> }) {
   const { d } = useApp()
   const kind = { project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon], moku: ['目', TreeStructureIcon] } as const
   const [label, I] = kind[sel.kind]
+  // 施策・評価シートは開いた年度の分だけ持つ（年度を変えると閉じる）。見つからなければ何も出さない
+  const m = sel.kind === 'measure' ? d.measures.find((x) => x.id === sel.id) : undefined
+  const s = sel.kind === 'sheet' ? d.sheets.find((x) => x.id === sel.id) : undefined
   const body =
-    sel.kind === 'moku' ? <MokuDetail moku={sel.moku} phase={sel.phase} special={sel.special} /> : sel.kind === 'project' ? <ProjectDetail p={d.projects.find((p) => p.id === sel.id)!} /> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
+    sel.kind === 'moku' ? <MokuDetail moku={sel.moku} phase={sel.phase} special={sel.special} /> : sel.kind === 'project' ? <ClientSuspense fallback={<RowsSkeleton n={4} />}><ProjectDetail id={sel.id} /></ClientSuspense> : m ? <MeasureDetail m={m} /> : s ? <SheetDetail s={s} /> : null
   return (
     <div key={`${sel.kind}${sel.id}`} className="app-in">
       <p className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground"><I className="size-3.5" aria-hidden="true" />{label}</p>
@@ -901,19 +1030,30 @@ const tabOfPath = (): TabKey => tabOfSlug(location.pathname.match(TAB_SEGMENT)?.
 /** 今の URL の分野の段（/fields/fukushi）の id */
 const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
 
-export function AppPage({ data, sitekey, initialYear, initialField, initialTab }: { data: PageData; sitekey: string; initialYear?: number; initialField?: string; initialTab?: TabKey }) {
+const snapshotKey = (year: number) => `snapshot:${year}`
+/** 年度の頁のデータを置き場に入れる。事業の一覧の1頁目も、一覧の key で入れる */
+function seedSnapshot(res: Resources, s: Snapshot) {
+  res.set(snapshotKey(s.year), s)
+  for (const [k, page] of Object.entries(s.lists)) if (!res.peek(k)) res.set(k, page)
+}
+async function loadSnapshot(res: Resources, code: string, year: number): Promise<Snapshot> {
+  const r = await fetch(`/data/jurisdictions/app/${code}/${year}`)
+  if (!r.ok) throw new Error(String(r.status))
+  const s = (await r.json()) as Snapshot
+  for (const [k, page] of Object.entries(s.lists)) if (!res.peek(k)) res.set(k, page)
+  return s
+}
+
+export function AppPage({ res, data, snapshot, sitekey, initialYear, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; snapshot?: Snapshot; sitekey: string; initialYear?: number; initialField?: string; initialTab?: TabKey }) {
   const vision = data.vision?.text
   const emblem = data.emblem?.src ?? null
   const years = React.useMemo(() => appPageYears(data), [data])
-  const [d, setD] = React.useState<Snapshot>()
-  const [failed, setFailed] = React.useState(false)
+  // 開いた年度の分はサーバーが props で渡し、本文までサーバーで描く。ほかの年度は切り替えたときに use() で読む（startTransition で前の年度を出したまま）
+  if (snapshot && !res.peek(snapshotKey(snapshot.year))) seedSnapshot(res, snapshot)
   React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: basePath() }), [data.code, data.name])
-  React.useEffect(() => {
-    fetch(`/api/jurisdictions/app/${data.code}`)
-      .then((r) => (r.ok ? (r.json() as Promise<Snapshot>) : Promise.reject(new Error(String(r.status)))))
-      .then(setD, () => setFailed(true))
-  }, [data.code])
   const [year, setYearState] = React.useState(initialYear && years.includes(initialYear) ? initialYear : years[0]!)
+  const loaded = React.use(res.get(snapshotKey(year), () => loadSnapshot(res, data.code, year)))
+  const d = loaded === FAILED ? undefined : loaded
   // 年度を選んだら、その年度の頁の path にする（既定の年度は自治体の頁そのもの）。頁は読み直さないので title も合わせる
   // タブごとに URL を分ける（まとめは自治体の頁、ほかは /projects・/budget・/settlement）。タブを移るたびに履歴を積まないよう置き換える
   const [tab, setTabState] = React.useState<TabKey>(initialTab ?? 'overview')
@@ -921,22 +1061,24 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
   const showUrl = (y: number, t: TabKey) => {
     at.current = { year: y, tab: t }
     const f = fieldOfPath()
-    const sub = f ? undefined : t === 'overview' ? undefined : { label: TAB_LABELS[t], path: `/${TAB_SLUGS[t]}` }
-    history.replaceState(history.state, '', `${basePath()}/${y}` + (f ? `/fields/${f}` : sub?.path ?? ''))
-    document.title = pageHead(data, y === years[0] ? undefined : y, sub).title
+    history.replaceState(history.state, '', `${basePath()}/${y}` + (f ? `/fields/${f}` : t === 'overview' ? '' : `/${TAB_SLUGS[t]}`))
+    document.title = pageHead(data, y, f ? { field: f } : t === 'overview' ? undefined : { tab: t }).title
   }
   const setYear = (y: number) => {
-    setYearState(y)
+    React.startTransition(() => setYearState(y))
     showUrl(y, at.current.tab)
-    // 目の詳細は開いた年度の図の値を持つので、年度を変えたら閉じる
-    select((s) => (s?.kind === 'moku' ? null : s))
+    // 目の詳細は開いた年度の図の値を、施策・評価シートはその年度の資料を持つので、年度を変えたら閉じる（事業は年度をまたいで同じ）
+    select((s) => (s?.kind === 'project' ? s : null))
   }
   const setTab = (t: TabKey) => {
     setTabState(t)
     if (t !== at.current.tab) showUrl(at.current.year, t)
   }
-  const [field, setField] = React.useState('all')
-  const [filter, setFilter] = React.useState('all')
+  // 絞り込みを変えたら一覧を読み直す。読み終えるまで前の一覧を出したままにする
+  const [field, setFieldState] = React.useState('all')
+  const [filter, setFilterState] = React.useState('all')
+  const setField = (f: string) => React.startTransition(() => setFieldState(f))
+  const setFilter = (f: string) => React.startTransition(() => setFilterState(f))
   // ?filter=new などで事業の絞り込みを開いた状態で来られる（ホームのはじめにやることから）。読んだら URL から外す
   React.useEffect(() => {
     const q = new URLSearchParams(location.search)
@@ -947,20 +1089,24 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
     history.replaceState(history.state, '', location.pathname + (q.size ? `?${q}` : '') + location.hash)
   }, [])
   const [grade, setGrade] = React.useState('A')
-  const [selected, select] = React.useState<Selected>(null)
+  // 事業を開いたら詳細を読む。読み終えるまで前の詳細を出したままにする
+  const [selected, setSelected] = React.useState<Selected>(null)
+  const select = (x: Selected | ((s: Selected) => Selected)) => React.startTransition(() => setSelected(x))
   // 分野の頁。URL を /fields/<id> にして、戻るで自治体の頁へ帰る
   const [fieldPage, setFieldPage] = React.useState<string | null>(initialField ?? null)
   // 頁の中で開いた分野の頁は履歴の state に印を付け、閉じるときは履歴を戻る（進むで戻ってきた場合も同じ）
   const openField = (id: string) => {
     select(null)
     history.pushState({ field: id }, '', `${basePath()}/${year}/fields/${id}`)
-    setFieldPage(id)
+    document.title = pageHead(data, year, { field: id }).title
+    React.startTransition(() => setFieldPage(id))
     window.scrollTo({ top: 0 })
   }
   const closeField = () => {
     select(null)
     if ((history.state as { field?: string } | null)?.field) return history.back()
     history.pushState(null, '', `${basePath()}/${year}` + (tab === 'overview' ? '' : `/${TAB_SLUGS[tab]}`))
+    document.title = pageHead(data, year, tab === 'overview' ? undefined : { tab }).title
     setFieldPage(null)
     window.scrollTo({ top: 0 })
   }
@@ -983,17 +1129,16 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
       const y = yearOfPath() ?? years[0]!
       at.current = { year: y, tab: t }
       setTabState(t)
-      setYearState(y)
-      const sub = fieldOfPath() || t === 'overview' ? undefined : { label: TAB_LABELS[t], path: `/${TAB_SLUGS[t]}` }
-      document.title = pageHead(data, y === years[0] ? undefined : y, sub).title
+      React.startTransition(() => setYearState(y))
+      const f = fieldOfPath()
+      document.title = pageHead(data, y, f ? { field: f } : t === 'overview' ? undefined : { tab: t }).title
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
   }, [data, years])
   const wide = useMedia('(min-width: 1280px)')
   const phone = useMedia('(max-width: 767px)')
-  const v = React.useMemo(() => (d?.years[year] ? yearView(d, year) : undefined), [d, year])
-  const projects = React.useMemo(() => new Map((d?.projects ?? []).map((p) => [p.id, p])), [d])
+  const v = React.useMemo(() => (d && d.years[year] ? yearView(d) : undefined), [d, year])
 
   // タブの真上の目印。これが画面の上へ消えたら、タブが上に貼り付いている
   const tabsTop = React.useRef<HTMLDivElement>(null)
@@ -1105,7 +1250,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
   })
 
   const panel = (key: TabKey) =>
-    !v ? null : key === 'overview' ? <Overview go={go} /> : key === 'money' ? <MoneyTab phase="initial" /> : key === 'settled' ? <MoneyTab phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
+    !v ? null : key === 'overview' ? <Overview go={go} /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
 
   return (
     <div className={cn('@container transition-[padding] duration-300', wide && selected && 'pr-[440px]')}>
@@ -1148,7 +1293,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
             </div>
           </div>
           {v ? (
-            <AppContext.Provider value={{ d: d!, page: data, years, v, select, selected, projects, go, openField, coach: tour.coach }}>
+            <AppContext.Provider value={{ d: d!, page: data, years, v, res, select, selected, go, openField, coach: tour.coach }}>
               {fieldPage ? (
                 <div key={fieldPage} className="app-in pt-6"><FieldPage id={fieldPage} /></div>
               ) : phone ? (
@@ -1201,15 +1346,22 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
               )}
             </AppContext.Provider>
           ) : (
-            failed ? (
+            loaded === FAILED ? (
               <p className="pt-6 text-sm text-muted-foreground">データを読み込めませんでした。頁を読み込み直してください。</p>
             ) : (
-              <div className="flex flex-col gap-3 pt-6">{[0, 1, 2].map((i) => <div key={i} className="h-24 animate-pulse rounded-2xl bg-card" />)}</div>
+              // 読み込むあいだも頭とタブは出したまま、中身だけを形の近い skeleton にする
+              <div className="flex flex-col gap-3 pt-6" aria-busy="true" aria-label="読み込み中">
+                <Skeleton className="h-28 rounded-2xl" />
+                <div className="grid gap-3 @3xl:grid-cols-2">
+                  <Skeleton className="h-48 rounded-2xl" />
+                  <Skeleton className="h-48 rounded-2xl" />
+                </div>
+              </div>
             )
           )}
         </Tabs>
       </div>
-      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (d && v ? describeSelected(selected, d, v) : '')} section={TABS.find((t) => t.key === tab)?.label} control={askControl} {...tour.askProps} />
+      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (d && v ? describeSelected(selected, d, v, res) : '')} section={TABS.find((t) => t.key === tab)?.label} control={askControl} {...tour.askProps} />
       {/* オンボーディングの続き（ホームでまちを選んだ人と、はじめにやることから再開した人だけ）。それ以外では何も描かない */}
       {tour.overlay}
     </div>

@@ -11,6 +11,7 @@ import type { Env } from './env'
 import prefectures from '../../../packages/jurisdictions/prefectures.json'
 import registry from '../../../packages/jurisdictions/jurisdictions.json'
 import { TOPIC_SEGMENTS } from '../jurisdiction/path'
+import { appYears } from './app-data'
 
 describe('金額と年度の表記', () => {
   test('1億円以上は億円、未満は万円。100億円以上は小数を出さない', () => {
@@ -112,14 +113,21 @@ const view = async (path: string, e: Env = env) => {
 const canonical = (h: Head) => h.link.find((l) => l.rel === 'canonical')?.href
 
 describe('自治体の個別ページ', () => {
+  test('当初予算と決算の両方がある年度は決算を読み、決算より後の年度だけ当初予算を読む', () => {
+    expect(appYears({ initialYears: [2024, 2025, 2026], settlementYears: [2024] })).toEqual([
+      { year: 2026, kind: 'initial' },
+      { year: 2025, kind: 'initial' },
+      { year: 2024, kind: 'settlement' },
+    ])
+  })
   test('款の和・事業・前年度の同じ目から組み、head に金額と自治体名を入れる', async () => {
     const data = await view('/tokyo/nakano')
     const head = pageHead(data)
-    expect(head.title).toBe('中野区の決算（令和7年度）｜何にいくら使った？｜風土記')
-    // 決算より後の当初予算があれば、title・説明文に予算と決算の両方を年度つきで入れる
+    expect(head.title).toBe('中野区の決算（令和7年度）｜風土記')
+    // 決算より後の当初予算があれば、title に予算と決算を、説明文に両方の金額を年度つきで入れる
     const budget = { year: 2026, yen: 1_234_000_000, kan: [], divisions: [], projects: [] }
     const withBudget = { ...data, budgets: [budget] }
-    expect(pageHead(withBudget).title).toBe('中野区の予算と決算｜令和8年度予算・令和7年度決算｜風土記')
+    expect(pageHead(withBudget).title).toBe('中野区の予算と決算（令和8年度）｜風土記')
     expect(pageHead(withBudget).meta.find((m) => m.name === 'description')?.content).toMatch(/^中野区の令和8年度当初予算の歳出は約12\.3億円、令和7年度決算（一般会計）の歳出は約/)
     // 金額の無い当初予算は title に使わない
     expect(pageHead({ ...data, budgets: [{ ...budget, amountMissing: true as const }] }).title).toBe(head.title)
@@ -170,7 +178,7 @@ describe('自治体の個別ページ', () => {
   test('年度の頁は、その年度の title と canonical を持ち、最新の年度は 200 で canonical を入口にし、選べない年度は 404', async () => {
     const data = await view('/tokyo/nakano')
     const head = pageHead(data, 2024)
-    expect(head.title).toBe('中野区の決算（令和6年度）｜何にいくら使った？｜風土記')
+    expect(head.title).toBe('中野区の決算（令和6年度）｜風土記')
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano/2024')
     expect(head.meta.find((m) => m.name === 'description')?.content).toStartWith('中野区の令和6年度決算（一般会計）の歳出は約')
     const headers = new Headers()
@@ -181,7 +189,7 @@ describe('自治体の個別ページ', () => {
     const status = (segment: string) => jurisdictionProps(c, '/tokyo/nakano', segment).then(() => 200, (e: { status: number; res?: Response }) => [e.status, e.res?.headers.get('Location') ?? null])
     expect(await status('2025')).toBe(200)
     expect(canonical(pageHead(data, 2025))).toBe('https://fudoki.dev/tokyo/nakano')
-    expect(canonical(pageHead(data, 2025, { label: '事業', path: '/projects' }))).toBe('https://fudoki.dev/tokyo/nakano/2025/projects')
+    expect(canonical(pageHead(data, 2025, { tab: 'projects' }))).toBe('https://fudoki.dev/tokyo/nakano/2025/projects')
     expect(await status('2019')).toEqual([404, null])
   })
 
@@ -248,7 +256,7 @@ describe('自治体の個別ページ', () => {
 describe('内訳の API', () => {
   test('全款を返し、1000件を超える項と目・節を省略しない', async () => {
     const north: Env = { ...env, API: fixtureApi({ code: '131172', name: '北区', extraNodes: Array.from({ length: 1001 }, (_, i) => node({ node_id: id(1000 + i), parent_node_id: id(2), node_kind: '項', name: `追加項${i}`, amount_yen: 0, fiscal_year: 2025 })) }) }
-    const res = await get('/api/jurisdictions/flow/131172/2025/setsu', north)
+    const res = await get('/data/jurisdictions/flow/131172/2025/setsu', north)
     expect(res.status).toBe(200)
     const flows = await res.json() as { kan: { id: string }; kou: { moku: { setsu: unknown[] }[] }[] }[]
     expect(flows).toHaveLength(2)
@@ -262,7 +270,7 @@ describe('内訳の API', () => {
       node({ node_id: id(21), parent_node_id: id(2), node_kind: '項', name: '総務管理費', amount_yen: 0, fiscal_year: 2025 }),
     ] }) }
     for (const depth of ['kou', 'moku']) {
-      const res = await get(`/api/jurisdictions/flow/132012/2025/${depth}`, missing)
+      const res = await get(`/data/jurisdictions/flow/132012/2025/${depth}`, missing)
       expect(res.status).toBe(200)
       const flows = await res.json() as { kan: { id: string }; kou: { yen: number; amountMissing?: true }[] }[]
       expect(flows.find((flow) => flow.kan.id === id(1))!.kou[0]!.amountMissing).toBe(true)
@@ -276,7 +284,7 @@ describe('内訳の API', () => {
       node({ node_id: id(31), parent_node_id: id(20), node_kind: '目', name: '学校費', amount_yen: 50, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '09.1' }),
       node({ node_id: id(32), parent_node_id: id(20), node_kind: '目', name: '保育費', amount_yen: 70, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '10' }),
     ] }) }
-    const res = await get('/api/jurisdictions/flow/132012/2025/moku?view=cofog', cofog)
+    const res = await get('/data/jurisdictions/flow/132012/2025/moku?view=cofog', cofog)
     expect(res.status).toBe(200)
     const flows = await res.json() as { kan: { id: string; name: string; yen: number; amountMissing?: true }; kou: { name: string; yen: number; amountMissing?: true; moku: { name: string }[] }[] }[]
     // 款（子ども教育費）は使わず、COFOG の名前で分ける
@@ -304,7 +312,7 @@ describe('内訳の API', () => {
         return page({ 節: [node({ axis: '節', is_subject: false, name: '負担金補助及び交付金', amount_yen: 3000 }), node({ axis: '節', is_subject: false, name: '旅費', amount_yen: 500 })] }, null)
       return new Response('invalid page token', { status: 400 })
     } } }
-    const res = await get(`/api/jurisdictions/setsu/${id(11)}`, paginated)
+    const res = await get(`/data/jurisdictions/setsu/${id(11)}`, paginated)
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual([
       { name: '負担金補助及び交付金', yen: 3000 },
@@ -314,13 +322,13 @@ describe('内訳の API', () => {
   })
 
   test('id の形が違えば 400、流量の binding が無ければ 503、正しければ内訳を返す', async () => {
-    expect((await get('/api/jurisdictions/drill/not-an-id')).status).toBe(400)
-    expect((await get(`/api/jurisdictions/setsu/${id(11)}`, { API })).status).toBe(503)
-    const ok = await get(`/api/jurisdictions/setsu/${id(11)}`)
+    expect((await get('/data/jurisdictions/drill/not-an-id')).status).toBe(400)
+    expect((await get(`/data/jurisdictions/setsu/${id(11)}`, { API })).status).toBe(503)
+    const ok = await get(`/data/jurisdictions/setsu/${id(11)}`)
     expect(ok.status).toBe(200)
     expect(await ok.json()).toEqual([{ name: '扶助費', yen: 250 }, { name: '委託料', yen: 50 }])
   })
   test('款でない科目の流れは返さない', async () => {
-    expect((await get(`/api/jurisdictions/drill/${id(11)}`)).status).toBe(502)
+    expect((await get(`/data/jurisdictions/drill/${id(11)}`)).status).toBe(502)
   })
 })

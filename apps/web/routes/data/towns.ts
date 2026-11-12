@@ -1,4 +1,4 @@
-// GET /api/towns。サイドバーの検索が引く、収録している自治体の一覧（ホームと同じ要約）
+// GET /data/towns。サイドバーの検索が引く、収録している自治体の一覧（ホームと同じ要約）
 import { defineHandler } from 'void'
 import { homeEntries } from '../../server/jurisdiction-routes'
 import type { Env } from '../../server/env'

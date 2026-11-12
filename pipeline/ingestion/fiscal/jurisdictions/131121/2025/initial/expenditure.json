@@ -10,7 +10,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "cdbafc8d64efb7802a50308526ab4147b34a8bf136beee2c5a6b70d6000ac008",
+      "input_fingerprint": "8b6c625a24cbc0acc9d2acba70b1ddc42f3df1f3b1d075c2605e96fa628e8808",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -40,7 +40,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "8b0418e92f9a54bd184cb17817bc75ac0f79fa6cbf2026349a9a374f8d5340a3",
+      "input_fingerprint": "41b005facae5077bd2abe778723f33f93667387fa97bda3cad8a5363b3226021",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -52,10 +52,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131121/2025/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "e3707c6c3b0d39520bf0c2874f2bdef12e930a1c9863601db4666b08b8992796",
-          "bytes": 10221
+          "sha256": "8415f22c0c233f2e0a1cd2066abab50bc12efa1b1e76764e0e74a79b2b7155f3",
+          "bytes": 10115
         },
-        "row_count": 174
+        "row_count": 172
       },
       "amounts": {
         "object": {
@@ -69,7 +69,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "7a5ad1a6f2911456022d5cd2a24619ff624c0cfde0695797ba5abb0c0c52be2f",
+      "input_fingerprint": "1778cf6e8aed5cb96eaaa4592d091eb297af53d0c84b0950865c6e93f3dae05b",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -98,7 +98,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "519c43ed6b906f3aefadcaa17cd47bc1bb75e755049487627c3f05071348245e",
+      "input_fingerprint": "eeb41768a8b7414153da9e6c84aba40f6224b8de4d56ae0f486da180b95e29d8",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -127,7 +127,7 @@
     {
       "table_id": "school-lunch-initial",
       "conversion_id": "school-lunch-initial",
-      "input_fingerprint": "af9c59956e2a689eefe30b35b51d509fcc9c03a7df2fa0fae4efca86dd1e222e",
+      "input_fingerprint": "bb04c2597536fa67cea34e3e432399bdae175b85a801c6f4e7ccbd623f54c80d",
       "account": "学校給食費会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -291,7 +291,29 @@
             }
           },
           "quirks": {
-            "shifted_hidden_copies": true
+            "shifted_hidden_copies": {
+              "pages": {
+                "31": {
+                  "hide": [
+                    [
+                      684.5,
+                      282.4
+                    ],
+                    [
+                      684.5,
+                      417.6
+                    ]
+                  ],
+                  "show": [
+                    [
+                      804.8,
+                      417.8
+                    ]
+                  ]
+                }
+              },
+              "reason": "p31 の文字層は、説明の「1 国民健康保険事業会計関係事務従事職員の人件費」の番号 1 の写しを 120pt 左（節の「給料」の後ろ）と、さらに 135pt 上の行にも持つ。写しは字の並びにならず描画でも印字と区別できないので、写しの2字を隠し、120pt 右の印字の 1 を残す。"
+            }
           }
         }
       },
