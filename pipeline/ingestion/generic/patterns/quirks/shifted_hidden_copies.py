@@ -29,11 +29,15 @@ OPTIONS = {'const': True}
 PLACE = .6        # pt: how far off the line a twin may sit
 REACH = (60, 200)  # pt: the distances a copy is looked for at
 SPREAD = .6        # pt: how far a twin may sit from the page's distance (`120.1` to `120.3` on one page)
-HAIR = (1., 3.)    # pt: the distances of a copy struck over the printed glyph
+HAIR = 3.          # pt: how far aside a copy struck over the printed glyph may sit
+LEVEL = 1.         # pt: and how far off its line
 LEAST = 20         # pairs at one distance that make a page one with a copy
-INK = .06
-GAP = .15   # line heights between a figure and a letter of one word
-FIGURE = set('0123456789,△▲')    # share of dark pixels by which one copy shows more ink than its twin
+INK = .06          # share of dark pixels by which one copy shows more ink than its twin
+GAP = .15          # line heights between a figure and a letter of one word
+FIGURE = set('0123456789,△▲')  # the characters of an amount
+RUN = 10.          # pt: the gap that ends a run of glyphs on a line
+TWICE = 6          # glyphs of a run, at least, read twice over
+DRIFT = 5.         # line heights a copy may drift right of its twin (25 pt at the end of p69 `…事務局）`)
 
 
 def render(pdf: Path, number: int):
@@ -51,15 +55,18 @@ def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list
     for index, (box, char, visible) in enumerate(glyphs):
         if not char.isspace():
             by_line.setdefault(char, []).append(index)
-    # A copy set a hair off the printed glyph (2 pt on 世田谷 p9, both drawn per the clip) prints on top of it: one of
-    # the two is kept, as a glyph struck twice is.
+    # A copy set a hair off the printed glyph (2 pt on 世田谷 p9; on p67 `千歳船橋…` 0 to 1.2 pt aside and 0.4 to 0.6 pt
+    # lower, both drawn per the clip) prints on top of it: one of the two is kept, as a glyph struck twice is. Two like
+    # characters printed side by side stand a character apart.
     doubled = set()
     for members in by_line.values():
         for a in members:
             for b in members:
-                if glyphs[a][2] and glyphs[b][2] and a not in doubled and HAIR[0] < glyphs[b][0][0] - glyphs[a][0][0] < HAIR[1] \
-                        and abs(glyphs[b][0][1] - glyphs[a][0][1]) < PLACE:
+                dx = glyphs[b][0][0] - glyphs[a][0][0]
+                if glyphs[a][2] and glyphs[b][2] and a not in doubled and b not in doubled and a != b \
+                        and (0 < dx < HAIR or (dx == 0 and a < b)) and abs(glyphs[b][0][1] - glyphs[a][0][1]) < LEVEL:
                     doubled.add(b)
+    doubled |= twice(glyphs)
     if doubled:
         glyphs = [(box, char, False) if index in doubled else (box, char, visible)
                   for index, (box, char, visible) in enumerate(glyphs)]
@@ -110,6 +117,60 @@ def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list
     hidden = {i for i in hidden - kept if glyphs[i][2]}
     return [(box, char, False) if index in hidden else (box, char, visible)
             for index, (box, char, visible) in enumerate(glyphs)]
+
+
+def twice(glyphs: list) -> set:
+    """A name struck twice over whose copy drifts along the line, more than a hair aside past its first characters (世田谷
+    p67 `千歳船橋駅周辺地区街づくりの推進（防災街づくり担当部）`, more than a character at its end): read in order, the run of
+    glyphs is two copies of one text, each glyph of the second coming after its twin by less than `DRIFT` line heights. Only a run
+    read wholly twice, of at least `TWICE` glyphs and not all figures, is taken for one: two like characters side by
+    side (`11`) are printed."""
+    lines: list[list[int]] = []
+    for i in sorted((i for i, (_, char, visible) in enumerate(glyphs) if visible and not char.isspace()),
+                    key=lambda i: glyphs[i][0][1]):
+        # (a chain of tops, each within `LEVEL` of the one before: the copy sits up to a point off its line)
+        if lines and glyphs[i][0][1] - glyphs[lines[-1][-1]][0][1] < LEVEL:
+            lines[-1].append(i)
+        else:
+            lines.append([i])
+    hidden = set()
+    for line in lines:
+        line.sort(key=lambda i: (glyphs[i][0][0], i))
+        runs, run = [], [line[0]]
+        for a, b in zip(line, line[1:]):
+            if glyphs[b][0][0] - glyphs[a][0][2] > RUN:
+                runs.append(run)
+                run = []
+            run.append(b)
+        runs.append(run)
+        for run in runs:
+            if len(run) < TWICE or all(glyphs[i][1] in FIGURE for i in run):
+                continue
+            waiting, copies = [], []
+            for i in run:
+                box, char = glyphs[i][0], glyphs[i][1]
+                first = waiting[0] if waiting else None
+                if first is not None and glyphs[first][1] == char and 0 <= box[0] - glyphs[first][0][0] < DRIFT * (box[3] - box[1]):
+                    waiting.pop(0)
+                    copies.append(i)
+                else:
+                    waiting.append(i)
+            if not waiting:
+                hidden.update(copies)
+                # A mark set off the line (`：`) is struck twice too: within the run, all but the first of each (a figure or a
+                # letter there is another word's).
+                left, right = glyphs[run[0]][0][0], max(glyphs[i][0][2] for i in run)
+                top, bottom = min(glyphs[i][0][1] for i in run), max(glyphs[i][0][3] for i in run)
+                taken = set(run)
+                marks: dict[str, list[int]] = {}
+                for i, (box, char, visible) in enumerate(glyphs):
+                    if visible and i not in taken and not char.isalnum() and char not in FIGURE and not char.isspace() \
+                            and left <= box[0] < right \
+                            and box[1] < bottom and top < box[3]:
+                        marks.setdefault(char, []).append(i)
+                for same in marks.values():
+                    hidden.update(sorted(same, key=lambda i: glyphs[i][0][0])[1:])
+    return hidden
 
 
 def rules(pdf: Path, number: int, width: float, image=None) -> list:
