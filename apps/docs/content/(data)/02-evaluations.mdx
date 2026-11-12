@@ -15,7 +15,7 @@ sidebar:
 | --- | --- | --- |
 | `get_evaluation` | `GET /v1/evaluations/{evaluation_id}` | 1 つの自治体・年度の事業評価と、評価シートの一覧（ページ送り） |
 | `get_evaluation_sheet` | `GET /v1/evaluations/sheets/{sheet_id}` | 評価シート 1 枚と、その指標・指標の値 |
-| `search_evaluation_sheets` | `POST /v1/evaluations/sheets:search` | 評価シートを年度・自治体・事業名・評価などで絞って一覧する |
+| `search_evaluation_sheets` | `POST /v1/evaluations/sheets:search` | 評価シートを年度・自治体・事業名・方向性の区分（`direction_code`）などで絞って一覧する |
 
 ## 予算案
 
@@ -39,6 +39,7 @@ sidebar:
 
 - 評価シートと施策の金額は、歳出の金額（支出済額・当初予算額）に足しません。
 - 事業は予算書の入れ子のまま親子を持ち、子の事業の額は親の事業の額に含まれます。事業どうしを足しません。
-- 評価（A〜D など）の意味は自治体ごとに違います。自治体どうしの順位付けには使えません。
+- 評価の印字（`grade_label`）と今後の方向性の印字（`direction`）は、自治体ごとに書き方が違います。`direction_code` はそれを共通の区分に当てたもの、`outlook.grade`（A 広げる・B 続ける・C 見直す・D 終える）はその区分を4つにまとめたもので、どちらも風土記の判断です。`outlook` は表の列ではないので `where` では絞れません。A〜D で絞るときは `direction_code` で絞ります（A は new・expand、B は keep・statutory・as_planned、C は improve・resize・reduce、D は merge・complete・end・consider_end）。
+- 評価は各自治体が自ら付けたものです。自治体どうしの順位付けには使いません。
 - 事業の年度の行は `origin_id` と `page` を持ちません。出典は `initial_expenditure_detail_id`・`settlement_expenditure_detail_id` を `get_expenditure_line` に渡して辿ります。
 - ほかの行の `origin_id` と `page` が、出典の資料と物理頁（PDF の 1 から数えた頁）を指します。出典は応答の `origins` にあります。資料の著作権は各自治体にあります。
