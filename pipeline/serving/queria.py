@@ -73,21 +73,18 @@ def write_tables(working: Path, codes: list[str], specs: list[dict], warehouse: 
     """作業用カタログに表を書き、表ごとの行数と、収録の自治体・年度を返す。"""
     import duckdb
 
+    def literal(path: Path) -> str:  # SQL の文字列リテラルの中に置くので ' を二重にする
+        return str(path).replace("'", "''")
+
     con = duckdb.connect()
     con.execute('install ducklake; install sqlite; load ducklake; load sqlite')
-    con.execute(f"attach '{warehouse}' as w (read_only)")
-    con.execute(f"attach 'ducklake:{working}' as q (data_path '{working}.data/', override_data_path true, "
-                "meta_type 'sqlite', data_inlining_row_limit 0)")
-    rows = {}
-    wanted = {queria_name(spec['name']) for spec in specs}
-    # checkout した前の版に、宣言から消した・改名した表が残らないようにする
-    for schema, table in con.execute(
-            "select schema_name, table_name from duckdb_tables() where database_name = 'q'").fetchall():
-        if (schema, table) not in wanted:
-            con.execute(f'drop table q.{schema}.{table}')
+    con.execute(f"attach '{literal(warehouse)}' as w (read_only)")
+    con.execute(f"attach 'ducklake:{literal(working)}' as q (data_path '{literal(working)}.data/', "
+                "override_data_path true, meta_type 'sqlite', data_inlining_row_limit 0)")
+    # 作業用カタログを書き換える前に全部の表を確かめ、止まるときは checkout した版を残す
+    rows, selects = {}, {}
     for spec in specs:
         model = spec['name']
-        schema, table = queria_name(model)
         columns = [r[0] for r in con.execute(
             "select column_name from information_schema.columns where table_catalog = 'w' and table_schema = 'main' "
             'and table_name = ? order by ordinal_position', [model]).fetchall()]
@@ -96,12 +93,20 @@ def write_tables(working: Path, codes: list[str], specs: list[dict], warehouse: 
         declared = [c['name'] for c in spec.get('columns', [])]
         if columns != declared:
             raise SystemExit(f'{model}: warehouse の列と _models.yml の列が食い違う\n  {columns}\n  {declared}')
-        sql, params = select_sql(model, columns, codes)
-        con.execute(f'create schema if not exists q.{schema}')
-        con.execute(f'create or replace table q.{schema}.{table} as {sql}', params)
-        rows[model] = con.execute(f'select count(*) from q.{schema}.{table}').fetchone()[0]
+        sql, params = selects[model] = select_sql(model, columns, codes)
+        rows[model] = con.execute(f'select count(*) from ({sql})', params).fetchone()[0]
         if rows[model] == 0 and model != 'queria_expenditure__detail':  # 内訳を印字しない資料もある
             raise SystemExit(f'{model}: 行が無い（自治体コードを確かめる）')
+    wanted = {queria_name(spec['name']) for spec in specs}
+    # checkout した前の版に、宣言から消した・改名した表が残らないようにする
+    for schema, table in con.execute(
+            "select schema_name, table_name from duckdb_tables() where database_name = 'q'").fetchall():
+        if (schema, table) not in wanted:
+            con.execute(f'drop table q.{schema}.{table}')
+    for model, (sql, params) in selects.items():
+        schema, table = queria_name(model)
+        con.execute(f'create schema if not exists q.{schema}')
+        con.execute(f'create or replace table q.{schema}.{table} as {sql}', params)
     found = [r[0] for r in con.execute(
         f'select distinct {CODE} from q.expenditure.expenditure order by 1').fetchall()]
     years = con.execute('select min(fiscal_year), max(fiscal_year) from q.expenditure.expenditure').fetchone()
