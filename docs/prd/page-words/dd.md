@@ -57,7 +57,7 @@ flowchart LR
 - 語は `observe.words`（`pdftotext -bbox`）と `observe.drop_hidden_copies` で取る。`observe.words` は Poppler の版を確かめないので、`page_words` が `poppler.require()` を呼ぶ。
 - 語の層に効く `observe` の直しは、`observe.words` と `drop_hidden_copies` の中の直しだけ。character map（fiscal の様式ごとの宣言 `text_layer.character_map` から渡す）、見えない文字を落とす処理（`repair.py`）、CropBox で切る処理（`observe.cropped`）は `observe.words` の外にあり、事業の出典には宣言の置き場も無い。使うかどうかは、事業の出典で要る例が出たときに決める。
 - `page_words.fonts(pdf, page) -> list[tuple[float, str]]` が、語ごとの字の大きさ・フォント名を返す。pdfplumber の文字（`page.chars`）を語の箱に当て、箱に入る文字の最頻値にする。プレスの規則が要るときだけ呼び、頁の文字の生成では呼ばない（全頁を pdfplumber で読むと重いため）。回転した頁・CropBox の原点が 0 でない頁では、Poppler と pdfplumber の座標を合わせてから当てる。
-- `page_words.lines(page) -> list[str]` が行を組む。縦の位置で行にまとめ、行の中の語を左から1つの空白でつなぐ。評価シートは今も `pdftotext -layout` の行の空白を1つに詰めて読み（`sheet/__init__.py`）、プレスは pdfplumber の `extract_text`（列を空白で揃えない形）を読んでいるので、どちらもこの形に合わせる。列を空白で揃えるのは、頁の文字の並べ方（`layout.py`）だけにする。
+- `page_words.lines(page) -> list[str]` が行を組む。縦の位置で行にまとめ（`page_words.rows`）、行の中の語を左からつなぐ。すき間の狭い全角どうしは詰め、ほかは空白を1つ入れる（`page_words.joins`。頁の文字の `layout.py` と同じ行まとめと詰め方）。評価シートは今も `pdftotext -layout` の行の空白を1つに詰めて読み（`sheet/__init__.py`）、プレスは pdfplumber の `extract_text`（列を空白で揃えない形）を読んでいるので、どちらもこの形に合わせる。列を空白で揃えるのは、頁の文字の並べ方（`layout.py`）だけにする。
 - 文字の層の無い頁は空のまま（OCR は Non-Goal）。
 
 ### 取り込み
