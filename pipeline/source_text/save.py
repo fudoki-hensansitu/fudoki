@@ -172,6 +172,9 @@ def main(argv: list[str]) -> int:
                       'saved': len(origins) - len(todo), 'to_write': len(todo)}, ensure_ascii=False), flush=True)
     if not args.write:
         return 0
+    from ingestion.lib import poppler
+
+    poppler.require()  # 語は Poppler の版で変わる（ingestion/lib/poppler.py）
     failed = 0
     with ProcessPoolExecutor(max_workers=args.jobs) as pool:
         futures = {pool.submit(save_one, origin, args.keep_cache): origin for origin in todo}

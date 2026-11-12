@@ -24,9 +24,12 @@ GUTTER_MIN = 0.01
 GUTTER_SIDE_MIN = 0.15
 # 右の段の語のうち、左の段の行と同じ高さにある語がこれ以上なら、左右にまたがる1つの表とみなして分けない
 GUTTER_SHARED_ROWS_MAX = 0.9
-# 同じ行とみなす縦の中心のずれ、続けて書く語の隙間（どちらも字の高さに対する割合）
+# 同じ行とみなす縦の中心のずれ、空白を挟まずに続ける全角の語の隙間（どちらも字の高さに対する割合）
 SAME_LINE = 0.5
 JOIN_GAP = 0.3
+# 左右の段の語が同じ行にあるとみなす縦の中心のずれ（字の高さに対する割合）。見開きの表は左右で数 pt ずれるので行まとめより広い。
+# 品川の資料の実測で、2段組みの評価シートは右の語の最大 87% が揃い、見開きにまたがる表は 91% 以上が揃う
+SHARED_ROW = 0.6
 
 Word = tuple[float, float, float, float, str]
 
@@ -72,16 +75,26 @@ def gutter(width: float, page_words: list[Word]) -> float | None:
 
 
 def shared_rows(page_words: list[Word], split: float) -> float:
-    """右の段の語のうち、左の段のどれかの語と同じ高さ（縦の中心のずれが字の高さの半分以内）にある語の割合。"""
+    """右の段の語のうち、左の段のどれかの語と同じ行（縦の中心のずれが字の高さの SHARED_ROW 以内）にある語の割合。"""
     height = median(w[3] - w[1] for w in page_words)
-    left = sorted((w[1] + w[3]) / 2 for w in page_words if w[2] <= split)
+    left = [(w[1] + w[3]) / 2 for w in page_words if w[2] <= split]
     right = [(w[1] + w[3]) / 2 for w in page_words if w[2] > split]
-    matched = sum(1 for center in right if any(abs(center - l) <= height * SAME_LINE for l in left))
+    matched = sum(1 for center in right if any(abs(center - l) <= height * SHARED_ROW for l in left))
     return matched / len(right) if right else 0.0
 
 
+def wide(c: str) -> bool:
+    return unicodedata.east_asian_width(c) in 'WF'
+
+
 def display_width(text: str) -> int:
-    return sum(2 if unicodedata.east_asian_width(c) in 'WF' else 1 for c in text)
+    return sum(2 if wide(c) else 1 for c in text)
+
+
+def joins(previous: Word, word: Word, height: float) -> bool:
+    """空白を挟まずに続けるか。重なる語と、すき間の狭い全角どうし（日本語の語の切れ目）だけを続け、半角の語の間には空白を残す。"""
+    gap = word[0] - previous[2]
+    return gap <= 0 or (gap < height * JOIN_GAP and wide(previous[4][-1]) and wide(word[4][0]))
 
 
 def lines(column: list[Word]) -> list[str]:
@@ -103,7 +116,7 @@ def lines(column: list[Word]) -> list[str]:
         text = ''
         previous: Word | None = None
         for w in row:
-            if previous is not None and w[0] - previous[2] < height * JOIN_GAP:
+            if previous is not None and joins(previous, w, height):
                 text += w[4]
             else:
                 pad = round((w[0] - left) / (height / 2)) - display_width(text)
@@ -120,6 +133,9 @@ def main(argv: list[str]) -> int:
     parser.add_argument('pdf', type=Path)
     parser.add_argument('pages', nargs='*', type=int, help='物理頁（1始まり）。省略すると最初の3頁')
     args = parser.parse_args(argv)
+    from ingestion.lib import poppler
+
+    poppler.require()  # 語は Poppler の版で変わる（ingestion/lib/poppler.py）
     texts = page_texts(args.pdf)
     for page in args.pages or range(1, min(3, len(texts)) + 1):
         text = texts[page - 1]

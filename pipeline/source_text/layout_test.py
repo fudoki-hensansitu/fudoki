@@ -24,9 +24,18 @@ class PageTextTest(unittest.TestCase):
         self.assertEqual(len(page_text(1000, 1400, words).split('\n')), 5)
 
     def test_two_columns_are_read_left_then_right(self):
-        words = [word(0, y, f'左{y}') for y in range(0, 100, 20)] + [word(800, y + 7, f'右{y}') for y in range(0, 100, 20)]
+        words = [word(0, y, f'左{y}') for y in range(0, 100, 20)] + [word(800, y + 10, f'右{y}') for y in range(0, 100, 20)]
         text = page_text(1400, 1000, words)
         self.assertLess(text.index('左80'), text.index('右0'))
+
+    def test_ascii_words_keep_a_space_but_japanese_words_join(self):
+        words = [word(0, 0, 'Hello', w=5), word(28, 0, 'World', w=5), word(100, 0, '258', w=5), word(117, 0, '324', w=5),
+                 word(200, 0, '保育', w=10), word(222, 0, '園費', w=10)]
+        self.assertEqual(page_text(400, 1000, words).split(), ['Hello', 'World', '258', '324', '保育園費'])
+
+    def test_spread_table_shifted_a_few_points_is_not_split(self):
+        words = [word(0, y, f'左{y}', h=12) for y in range(50, 230, 30)] + [word(900, y + 7, f'右{y}', h=12) for y in range(50, 230, 30)]
+        self.assertNotIn('\n\n', page_text(1400, 900, words))
 
     def test_empty_page(self):
         self.assertEqual(page_text(1400, 1000, []), '')

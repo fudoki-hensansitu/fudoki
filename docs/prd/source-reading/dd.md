@@ -29,7 +29,7 @@ flowchart LR
 
 ### 頁の文字を R2 に置く
 
-`bun run --cwd pipeline source-text:save`（`pipeline/source_text/save.py`）が、出典の選定（`selections`・`evaluation_selections`・`press_selections`）で R2 に保存済みの `pdf_type: text` の PDF と、事業の取り込みの宣言（`ingestion/project/origins.json` の `results`）が R2 の `project/` に保存した PDF を対象にする。R2 から出典を取って sha256 を選定と照らし、`pdftotext -bbox` の語の位置から頁ごとの文字を組み（`pipeline/source_text/layout.py`）、`source-text/<sha256>.json` に置く。語は縦の位置で行にまとめ、左端の位置まで空白で寄せて表の列を揃える。頁の幅の中ほどに語の無い縦の隙間があれば、左右の段に分けて左から並べる。中身は `{schema_version: 2, sha256, pages: string[]}` で、`pages[i]` が物理頁 i+1 の文字。key は出典の内容で決まるので、R2 に同じ key があれば作り直さない。抜き出し方を変えたときは `--refresh` で作り直す。既定は計画の表示だけで、`--write` で書く。
+`bun run --cwd pipeline source-text:save`（`pipeline/source_text/save.py`）が、出典の選定（`selections`・`evaluation_selections`・`press_selections`）で R2 に保存済みの `pdf_type: text` の PDF と、事業の取り込みの宣言（`ingestion/project/origins.json` の `results`）が R2 の `project/` に保存した PDF を対象にする。R2 から出典を取って sha256 を選定と照らし、`pdftotext -bbox` の語の位置から頁ごとの文字を組み（`pipeline/source_text/layout.py`）、`source-text/<sha256>.json` に置く。語は縦の位置で行にまとめ、左端の位置まで空白で寄せて表の列を揃える。横長の頁で、幅の中ほど（35〜65%）に語の無い縦の隙間があり、左右の段の行の高さが揃っていなければ、左右の段に分けて左から並べる（縦長の頁の表の列の隙間や、見開きにまたがる1つの表は分けない）。語は Poppler の版で変わるので、mise.toml で固定した版で抜き出す（`ingestion/lib/poppler.py` の `require`）。中身は `{schema_version: 2, sha256, pages: string[]}` で、`pages[i]` が物理頁 i+1 の文字。key は出典の内容で決まるので、R2 に同じ key があれば作り直さない。抜き出し方を変えたときは `--refresh` で作り直す。既定は計画の表示だけで、`--write` で書く。
 
 Worker で PDF から文字を抜き出すと CPU の上限（apps/api は 200ms）に収まらないので、取り込みの側で作る。
 
@@ -69,6 +69,6 @@ R2 の binding（`SOURCE_TEXT`）は Workers の仕様で読み書きの両方�
 ## Validation / Rollout
 
 1. apps/api の `source-pages.test.ts` で、出典の記録に無いものは R2 を読まないこと、頁の範囲と文字の上限、評価資料は公式の頁を返すことを確かめる。web の `server/source-pages.test.ts` で、頁の文字が画面に流れる結果に入らず AI に渡す形にだけ入ることを確かめる。
-2. `source-text:save --write` で保存済みの出典の文字を R2 に置く（2026-11-08 に開始）。
+2. `source-text:save --write` で保存済みの出典の文字を R2 に置く（2026-11-08 に開始）。抜き出し方を schema_version 2（語の位置で行にまとめる）に変えたあとは、`source-text:save --write --refresh` で全部を作り直す。
 3. main に入ると deploy-api と deploy-web が別々に走り、順は決まらない。web が先に出ると、apps/api のデプロイが終わるまで `read_source_page` は失敗を返す（tool が例外を `unavailable` にし、会話は止まらない）。web のデプロイが entrypoint の不在で失敗したときは、deploy-api の完了後に deploy-web を手動で再実行する（失敗の間は前の版が残る）。
 4. Mac の dev サーバーで、事業の詳細を聞いて `read_source_page` が呼ばれ、公式の URL を示して答えることを確かめる。
