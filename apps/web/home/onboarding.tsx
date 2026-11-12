@@ -9,6 +9,7 @@ import { Link } from '../nav/link'
 import { Mark } from '../nav/site-nav'
 import { Picker as TownPicker } from './town-picker'
 import { LocateError, locateMunicipality } from './locate'
+import { TOTAL, type TourSaved } from './tour'
 import type { MapEntry } from '../jurisdiction/index-table'
 import './onboarding.css'
 
@@ -170,7 +171,8 @@ export const startChecklist = () => {
   }
 }
 
-export function Checklist({ items }: { items: CheckItem[] }) {
+/** はじめにやること。2つ目はオンボーディング（「オンボ開始」で始め、スキップしたら同じボタンで止めた歩から続ける） */
+export function Checklist({ items, tour, onTour }: { items: CheckItem[]; tour: TourSaved | null; onTour: () => void }) {
   const [st, setSt] = React.useState<CheckState | null>(null)
   React.useEffect(() => {
     try {
@@ -189,8 +191,12 @@ export function Checklist({ items }: { items: CheckItem[] }) {
     }
   }
   if (!st || st.closed) return null
-  const all = [{ key: 'town', label: '住んでいるまちを選ぶ', href: '' }, ...items]
-  const n = all.filter((x) => st.done.includes(x.key)).length
+  const toured = tour?.state === 'done'
+  const all = [{ key: 'town', label: '住んでいるまちを選ぶ', href: '' }, { key: 'tour', label: '使い方を見る', href: '' }, ...items]
+  const isDone = (key: string) => st.done.includes(key) || (key === 'tour' && toured)
+  const n = all.filter((x) => isDone(x.key)).length
+  // 途中で止めた歩（1歩目より先）。「続きから」に何歩目かを添える
+  const mid = tour && !toured && tour.at > 0 && tour.at < TOTAL ? tour.at : 0
   const complete = n === all.length
   return (
     <section className="ob-rise mb-4 rounded-2xl border bg-background p-4 sm:p-5" aria-label="はじめにやること">
@@ -209,7 +215,22 @@ export function Checklist({ items }: { items: CheckItem[] }) {
       {complete ? null : (
         <ul className="mt-3 grid gap-1 sm:grid-cols-2">
           {all.map((x) => {
-            const done = st.done.includes(x.key)
+            const done = isDone(x.key)
+            if (x.key === 'tour' && !done)
+              return (
+                <li key={x.key} className="flex items-center gap-2.5 rounded-lg px-2 py-1.5 text-[14px] sm:col-span-2">
+                  <span className="grid size-5 shrink-0 place-items-center rounded-full border border-border" />
+                  <span className="flex-1">{x.label}</span>
+                  <button
+                    type="button"
+                    onClick={onTour}
+                    className="inline-flex items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none"
+                  >
+                    {mid ? `続きから（${mid + 1} / ${TOTAL}）` : 'オンボ開始'}
+                    <ArrowRightIcon className="size-3.5" />
+                  </button>
+                </li>
+              )
             const body = (
               <>
                 <span className={cn('grid size-5 shrink-0 place-items-center rounded-full border transition-colors duration-200', done ? 'border-primary bg-primary text-primary-foreground' : 'border-border')}>

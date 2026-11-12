@@ -44,6 +44,141 @@
   to { opacity: 1; }
 }
 
+/* オンボーディングの絵（tour-visuals.tsx）。動かさないときの見た目を終わりの様子にし、動きは no-preference の中でだけ足す。
+   1回りは 4.4 秒: 指が動いて押す（〜45%）→ 押した結果が出る（〜90%）→ 消えて頭へ戻る */
+.tv { --tv: 4.4s; }
+.tv-cursor { transform: translate(var(--x1), var(--y1)); }
+.tv-ripple { opacity: 0; }
+.tv-press, .tv-press-fill, .tv-send { position: relative; }
+.tv-press::after, .tv-press-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  box-shadow: 0 0 0 2px var(--primary);
+  background: color-mix(in oklab, var(--primary) 10%, transparent);
+  pointer-events: none;
+}
+.tv-press-fill::after {
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--brand-fill) 55%, transparent);
+  background: transparent;
+}
+.tv-grow { transform-origin: left; }
+.tv-mark { isolation: isolate; }
+.tv-mark::before {
+  content: '';
+  position: absolute;
+  inset: -1px -3px;
+  z-index: -1;
+  border-radius: 4px;
+  background: color-mix(in oklab, var(--primary) 24%, transparent);
+  transform-origin: left;
+}
+.tv-ibeam { left: 100%; }
+.tv-draw-ring, .tv-draw-check { stroke-dasharray: 1; stroke-dashoffset: 0; }
+.tv-spark { left: 50%; top: 50%; margin: -2px; opacity: 0; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .tv-cursor { animation: tv-cursor var(--tv) cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+  .tv-ripple { animation: tv-ripple var(--tv) ease-out infinite; }
+  .tv-press::after, .tv-press-fill::after { animation: tv-on var(--tv) ease-out infinite; }
+  .tv-grow { animation: tv-grow var(--tv) cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+  .tv-row { animation: tv-row var(--tv) cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+  .tv-slide { animation: tv-slide var(--tv) cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+  .tv-mark::before { animation: tv-sweep var(--tv) cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+  .tv-ibeam { animation: tv-ibeam var(--tv) cubic-bezier(0.4, 0, 0.2, 1) infinite; }
+  .tv-pop { animation: tv-pop var(--tv) cubic-bezier(0.22, 1, 0.36, 1) infinite; }
+  .tv-type { animation-name: tv-type; animation-duration: var(--tv); animation-iteration-count: infinite; }
+  .tv-caret { animation: tv-blink 1s steps(1) infinite; }
+  .tv-send::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 9999px;
+    border: 2px solid var(--primary);
+    opacity: 0;
+    animation: tv-send var(--tv) ease-out infinite;
+  }
+  .tv-dot { animation: tv-dot 1s ease-in-out infinite; }
+  .tv-draw-ring { animation: tv-draw 520ms cubic-bezier(0.65, 0, 0.35, 1) both; }
+  .tv-draw-check { animation: tv-draw 320ms cubic-bezier(0.65, 0, 0.35, 1) 420ms both; }
+  .tv-spark { animation: tv-spark 600ms cubic-bezier(0.22, 1, 0.36, 1) 560ms both; }
+}
+@keyframes tv-cursor {
+  0% { opacity: 0; transform: translate(var(--x0), var(--y0)); }
+  10% { opacity: 1; transform: translate(var(--x0), var(--y0)); }
+  40% { transform: translate(var(--x1), var(--y1)); }
+  45% { transform: translate(var(--x1), var(--y1)) scale(0.84); }
+  51% { transform: translate(var(--x1), var(--y1)) scale(1); }
+  88% { opacity: 1; transform: translate(var(--x1), var(--y1)); }
+  100% { opacity: 0; transform: translate(var(--x1), var(--y1)); }
+}
+@keyframes tv-ripple {
+  0%, 44% { opacity: 0; transform: scale(0.4); }
+  48% { opacity: 0.6; }
+  70%, 100% { opacity: 0; transform: scale(1.6); }
+}
+@keyframes tv-on {
+  0%, 45% { opacity: 0; }
+  50%, 90% { opacity: 1; }
+  100% { opacity: 0; }
+}
+@keyframes tv-grow {
+  0%, 4% { transform: scaleX(0); }
+  32%, 100% { transform: scaleX(1); }
+}
+@keyframes tv-row {
+  0%, 4% { opacity: 0; transform: translateY(4px); }
+  24%, 92% { opacity: 1; transform: none; }
+  100% { opacity: 0; }
+}
+@keyframes tv-slide {
+  0%, 50% { opacity: 0; transform: translateX(24px); }
+  62%, 90% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: none; }
+}
+@keyframes tv-sweep {
+  0%, 12% { transform: scaleX(0); opacity: 1; }
+  48%, 92% { transform: scaleX(1); opacity: 1; }
+  100% { transform: scaleX(1); opacity: 0; }
+}
+@keyframes tv-ibeam {
+  0% { left: 0; opacity: 0; }
+  10% { left: 0; opacity: 1; }
+  48% { left: 100%; }
+  88% { left: 100%; opacity: 1; }
+  100% { left: 100%; opacity: 0; }
+}
+@keyframes tv-pop {
+  0%, 52% { opacity: 0; transform: translateY(6px) scale(0.97); }
+  60%, 92% { opacity: 1; transform: none; }
+  100% { opacity: 0; transform: none; }
+}
+@keyframes tv-type {
+  0%, 8% { width: 0; }
+  56%, 100% { width: calc(var(--n) * 1em); }
+}
+@keyframes tv-blink {
+  50% { opacity: 0; }
+}
+@keyframes tv-send {
+  0%, 60% { opacity: 0; transform: scale(1); }
+  64% { opacity: 0.7; }
+  80%, 100% { opacity: 0; transform: scale(1.5); }
+}
+@keyframes tv-dot {
+  0%, 60%, 100% { transform: none; opacity: 0.5; }
+  30% { transform: translateY(-3px); opacity: 1; }
+}
+@keyframes tv-draw {
+  from { stroke-dashoffset: 1; }
+  to { stroke-dashoffset: 0; }
+}
+@keyframes tv-spark {
+  0% { opacity: 1; transform: rotate(var(--a)) translateY(-14px) scale(1); }
+  100% { opacity: 0; transform: rotate(var(--a)) translateY(-26px) scale(0.4); }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .ob-rise, .ob-fade, .ob-swap, .ob-ping::after, .tour-hole, .tour-tip {
     animation: none;

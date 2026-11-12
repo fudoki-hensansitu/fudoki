@@ -17,7 +17,8 @@ import { reiwa, yearName } from '../jurisdiction/types'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { searchHref } from '../search/search'
 import { useMyTown, type Town } from './towns'
-import { onboarded, Tour, useTour, type TourStep } from './tour'
+import { onboarded, SpotTour, TOTAL, useTour } from './tour'
+import { OpenVisual } from './tour-visuals'
 import { OtherTowns, Checklist, Empty, Intro, Steps, startChecklist, type CheckItem } from './onboarding'
 
 export interface Featured {
@@ -323,10 +324,6 @@ const checkItems = (c: Ctx): CheckItem[] => [
   { key: 'assistant', label: 'アシスタントに聞く', href: '/assistant' },
 ]
 
-/** 住んでいるまちを選んだ直後のツアーの1歩目。まちの頁を開かせ、続き（年度・予算・事業・文字を選んで聞く）はまちの頁の PageTour が出す */
-const tourSteps = (c: Ctx, go: () => void): TourStep[] => [
-  { target: 'open', title: 'まちの頁を開く', body: `${c.town.name}の予算・決算・事業を、まとめて見られる頁です。押して開いてみてください。`, mode: 'click', action: { label: '開く', run: go } },
-]
 
 const DOCS = 'https://docs.fudoki.dev'
 
@@ -362,7 +359,7 @@ function Footer() {
 
 export function Home({ entries, featured }: HomeProps) {
   const { ready, town, set } = useMyTown()
-  const tour = useTour('home')
+  const tour = useTour()
   const { visit } = useRouter()
   // はじめての流れで選んだまち。要点を見せてから「このまちにする」で決める
   const [pending, setPending] = React.useState<Town | null>(null)
@@ -372,7 +369,7 @@ export function Home({ entries, featured }: HomeProps) {
   const open = () => {
     if (!pending) return
     startChecklist()
-    tour.start()
+    tour.go(0)
     set(pending)
     setPending(null)
   }
@@ -407,9 +404,35 @@ export function Home({ entries, featured }: HomeProps) {
   else {
     // はじめにやること（ツアー中はツアー）を頭に出すため、まちのデータが読めたら先に組む
     const ctx = snap.d && snap.year != null && snap.d.years[String(snap.year)] ? buildCtx(town!, snap.d, snap.year, snap.setYear, vision) : null
+    // オンボーディングの1歩目（まちの頁を開く）はホームで出す。続きの歩で止めた人は、はじめにやることの「オンボ開始」からまちの頁の続きへ
+    const saved = tour.saved
+    const first = saved?.state === 'on' && saved.at === 0
+    const resume = () => {
+      if (!ctx) return
+      if (!saved || saved.at <= 0 || saved.at >= TOTAL) return tour.go(0)
+      tour.go(saved.at)
+      visit(ctx.base)
+    }
     body = (
       <>
-        {ctx ? tour.on ? <Tour steps={tourSteps(ctx, () => (tour.to('page'), visit(ctx.base)))} onDone={tour.done} total={5} /> : <Checklist items={checkItems(ctx)} /> : null}
+        {ctx ? (
+          first ? (
+            <SpotTour
+              at={0}
+              onSkip={tour.pause}
+              spot={{
+                target: 'open',
+                click: true,
+                title: 'まちの頁を開く',
+                body: `${ctx.town.name}の予算・決算・事業を、まとめて見られる頁です。押して開いてみてください。`,
+                visual: <OpenVisual town={ctx.town.name} total={ctx.v.total} />,
+                action: { label: '開く', run: () => (tour.go(1), visit(ctx.base)) },
+              }}
+            />
+          ) : (
+            <Checklist items={checkItems(ctx)} tour={saved} onTour={resume} />
+          )
+        ) : null}
         {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         <OtherTowns entries={entries} className="mb-3" />
         {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
