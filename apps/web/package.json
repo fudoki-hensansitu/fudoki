@@ -12,12 +12,11 @@
     "sync-data:population": "uv run python scripts/sync-data/population.py",
     "build:map": "bun jurisdiction/map-build.ts",
     "test": "bun test server",
-    "lint": "biome lint",
+    "lint": "oxlint",
     "typecheck": "void prepare && tsc --noEmit",
     "build:origin": "uv run --no-project --exclude-newer 2026-10-09 --with pypdfium2==5.14.0 --with pillow==12.3.0 python brand/home_origin.py"
   },
   "devDependencies": {
-    "@biomejs/biome": "2.6.5",
     "@tailwindcss/postcss": "4.3.4",
     "@tailwindcss/vite": "4.3.4",
     "@types/bun": "catalog:",
@@ -25,6 +24,7 @@
     "@types/react-dom": "catalog:",
     "@void/react": "1.5.0",
     "cf": "1.0.0-beta.27",
+    "oxlint": "1.91.0",
     "postcss": "8.5.32",
     "shadcn": "catalog:",
     "tailwindcss": "catalog:",

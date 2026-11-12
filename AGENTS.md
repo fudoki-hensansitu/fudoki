@@ -215,7 +215,7 @@ bun run dev:api                          # API をローカルで起動（web �
 bun run inspect:mcp                      # MCP Inspector を本番の MCP（api.fudoki.dev/mcp）向けに起動
 ```
 
-lint は apps/web の `bun run --cwd apps/web lint`（Biome。DESIGN.md の token 以外の色を見つける plugin だけを入れている）だけを持つ。
+lint は apps/web の `bun run --cwd apps/web lint`（oxlint。DESIGN.md の token 以外の色を見つける JS plugin だけを有効にしている）だけを持つ。
 
 unit テストは、金額の正しさ・公開 API の安全性（認証・入力の上限・SQL の bind・停止スイッチなど）・壊すと利用者に届く契約（MCP の出力 schema など）のように、間違えると困るものに限って書く。画面や細かい振る舞いはローカルの e2e（smoke）で確かめ、CI では回さない。CI は速さを優先する。
 

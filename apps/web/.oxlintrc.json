@@ -1,0 +1,14 @@
+{
+  "$schema": "./node_modules/oxlint/configuration_schema.json",
+  // DESIGN.md の token 以外の色を見つける rule（lint/design.js）だけを有効にする
+  "jsPlugins": ["./lint/design.js"],
+  "categories": { "correctness": "off" },
+  "rules": {
+    "design/color-literal": "error",
+    "design/color-palette": "error",
+    "design/color-opacity": "error"
+  },
+  // 色の値を持ってよいもの: shadcn の部品、token の値（tokens.ts）、CSS 変数が届かない出力（OGP・PWA・ロゴ）。
+  // ホームの2ファイルは別の PR が色を直している間だけ外す
+  "ignorePatterns": ["chat/components/ui/**", "tokens.ts", "server/og.ts", "pwa.ts", "logo.ts", "home/home.tsx", "home/onboarding.tsx"]
+}

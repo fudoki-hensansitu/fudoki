@@ -73,7 +73,7 @@ export function Composer({
             autoFocus={autoFocus}
             disabled={disabled}
             aria-invalid={over || undefined}
-            // biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで
+            // oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで
             className={cn('max-h-48 min-h-0 py-4 pl-5 text-base leading-6 placeholder:text-muted-foreground/80 md:text-base', compact ? 'sm:pl-6' : 'sm:py-[22px] sm:pl-7 sm:text-xl sm:leading-7 md:text-xl')}
             onFocus={onFocus}
             onChange={(e) => setText(e.target.value)}

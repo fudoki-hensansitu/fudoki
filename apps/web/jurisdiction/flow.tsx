@@ -77,9 +77,9 @@ function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: numbe
                 <span className="truncate">{s.name}</span>
                 <span className="text-right tabular-nums"><span className="font-semibold">{amountText(s.yen, s.amountMissing)}</span>{formatShare(s.yen, mokuYen, s.amountMissing) ? <span className="ml-1.5 text-muted-foreground">{formatShare(s.yen, mokuYen, s.amountMissing)}</span> : null}</span>
               </AmountTip>
-              {/* biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで */}
+              {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
               <span className="col-span-2 h-1 overflow-hidden rounded-full bg-foreground/5 sm:hidden">
-                {/* biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで */}
+                {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
                 <span className="block h-full rounded-full bg-primary/55" style={{ width: `${share(s.yen, base, s.amountMissing)}%` }} />
               </span>
             </li>
@@ -144,7 +144,7 @@ function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.Depen
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, deps)
   if (off) return {}
-  // biome-ignore lint/plugin/color-literal: mask は不透明度だけを使い、色は画面に出ない
+  // oxlint-disable-next-line design/color-literal -- mask は不透明度だけを使い、色は画面に出ない
   const mask = `linear-gradient(to bottom, ${edge.top ? 'transparent 0, #000 48px' : '#000 0'}, ${edge.bottom ? '#000 calc(100% - 72px), transparent 100%' : '#000 100%'})`
   return { maskImage: mask, WebkitMaskImage: mask }
 }
@@ -291,14 +291,14 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
             </defs>
           ) : null}
           {/* 項が開いたら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。帯は段ごとにまとめて一枚で伸ばす。閉じている項は出さない */}
-          {/* biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで */}
+          {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
           <g key={`r${active}`} className={active ? 'flow-ribbon' : 'opacity-0'}>{paths.map((p, i) => <path key={i} d={p.d} className="fill-primary/20" />)}</g>
           {active && !still ? paths.map((p, i) => <path key={`l${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
           {active && !still ? setsu.map((p, i) => <path key={`ls${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
           {paths.map((p, i) => <rect key={`b${active}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${550 + Math.min(i * 15, 150)}ms` }} className={`fill-primary ${active ? 'flow-node' : 'opacity-0'}`} />)}
-          {/* biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで */}
+          {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
           <g key={`s${active}`} style={{ animationDelay: '450ms' }} className={active ? 'flow-ribbon' : 'opacity-0'}>{setsu.map((p, i) => <path key={i} d={p.d} className={p.rest ? 'fill-primary/10' : 'fill-primary/15'} />)}</g>
-          {/* biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで */}
+          {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
           {setsu.map((p, i) => <rect key={`t${active}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${1000 + Math.min(i * 10, 150)}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${active ? 'flow-node' : 'opacity-0'}`} />)}
         </svg>
       </div>
@@ -360,7 +360,7 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: D
         >
           {drill.kou.map((k, i) => (
             <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} className="group/dot px-1.5 py-[3px]">
-              {/* biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで */}
+              {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
               <i className={`block w-[5px] rounded-full transition-all ${i === current ? 'h-4 bg-primary' : 'h-[5px] bg-border group-hover/dot:bg-primary/50'}`} />
             </button>
           ))}
@@ -502,12 +502,12 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
           className="mt-1 flex gap-0.5"
         >
           <button type="button" onClick={() => goTo(0)} aria-label="全体" aria-current={index === 0 || undefined} className="group/seg w-3.5 py-1">
-            {/* biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで */}
+            {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
             <i className={`block h-1.5 rounded-sm transition-colors ${index === 0 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
           </button>
           {flows.map((f, i) => (
             <button key={f.kan.id} type="button" onClick={() => goTo(i + 1)} aria-label={f.kan.name} aria-current={index === i + 1 || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
-              {/* biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで */}
+              {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
               <i className={`block h-1.5 rounded-sm transition-colors ${index === i + 1 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
             </button>
           ))}

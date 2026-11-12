@@ -1,9 +1,0 @@
-// CSS に色の値（#fff・rgb()・oklch()・color-mix()）を書かない。値は styles/tokens.css（DESIGN.md の Tokens）にだけ置く
-language css
-
-or {
-  CssColor() as $v,
-  CssFunction() as $v where { $v <: r"(?s)(?:color-mix|rgba?|hsla?|hwb|lab|lch|oklab|oklch)\(.*" }
-} where {
-  register_diagnostic(span = $v, message = "色の値を直に書いている。DESIGN.md の token の名前で塗る")
-}

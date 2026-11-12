@@ -134,7 +134,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
             const d = ribbon(x0 + BAR, source.y + offset, h, x1, kouNodes[i]!.y, h)
             return (
               <g key={kou.id}>
-                {/* biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで */}
+                {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
                 <path d={d} className="fill-primary/20" />
                 {!still ? <path d={d} fill={`url(#${CSS.escape(flowId)})`} /> : null}
               </g>
@@ -203,7 +203,7 @@ export function OverviewSkeleton({ total: yen, height = 520, levels = { kan: '�
               const offset = offsets.get(kanIndex) ?? 0
               const h = kouNodes[i]!.height
               offsets.set(kanIndex, offset + h)
-              // biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで
+              // oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで
               return <path key={i} d={ribbon(x0 + BAR, source.y + offset, h, x1, kouNodes[i]!.y, h)} className="fill-muted/70" />
             })}
             {kans.map((node, i) => {
