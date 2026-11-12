@@ -11,8 +11,6 @@ const TITLE = '風土記 — 私のお金はどこへ行った？'
 const DESCRIPTION = '私のお金はどこへ行った？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、出典の資料まで辿れます。'
 const ORGANIZATION = { '@context': 'https://schema.org', '@type': 'Organization', name: '風土記（fudoki）', url: 'https://fudoki.dev/', logo: 'https://fudoki.dev/icon.png', sameAs: ['https://github.com/fudoki-hensansitu', 'https://docs.fudoki.dev/'] }
 
-// CDN（Void の ISR）に1時間置く。過ぎたら古い頁を返しながら裏で描き直す（自治体の頁と同じ。pages/[prefecture]/_loader.ts）
-export const revalidate = 3600
 export const loader = defineHandler<Props>(async (c) => {
   c.header('Cache-Control', 'public, max-age=300')
   // API に繋がらなくても頁は返す（一覧が空なら、ホームは「読み込めません」と出す）。その頁は CDN に置かない

@@ -6,8 +6,6 @@ import { SESSION_HEAD, sessionProps, type SessionProps } from './_session'
 
 export type Props = JurisdictionProps | SessionProps
 
-// CDN（Void の ISR）に置く秒数（_loader.ts の PAGE_CACHE の下の説明）
-export const revalidate = 3600
 export const loader = defineHandler<Props>((c) => {
   const prefecture = c.req.param('prefecture') ?? ''
   const name = c.req.param('name') ?? ''

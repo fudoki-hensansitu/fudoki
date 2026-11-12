@@ -5,6 +5,7 @@ import { defineConfig } from 'void/config'
 import { SW_REGISTER } from './pwa'
 import { THEME_SCRIPT } from './nav/theme'
 import { NAV_SCRIPT } from './nav/nav-state'
+import prefectures from '../../packages/jurisdictions/prefectures.json'
 
 // PR ごとの preview の build か。cf previews deploy と deploy-preview-web.yml が CLOUDFLARE_PREVIEW_BUILD=true で build する。
 // void は Cloudflare の設定を cf の形へ移すとき wrangler の previews を受け付けないので、preview の差し替えはここで分ける
@@ -34,14 +35,19 @@ const vars = {
 
 export default defineConfig({
   // CDN（Void の ISR）に置く応答。ISR_CACHE（KV、下の cloudflare.kv_namespaces）に置き、過ぎたら古い応答を返しながら裏で作り直す。
-  // 自治体の頁は各頁の .server.ts の revalidate。cookie の付いた要求・/api の下・200 でない応答・no-store の応答は置かない。deploy のたびに空になる
+  // cookie の付いた要求・/api の下・200 でない応答・no-store の応答は置かない。deploy のたびに空になる
   routing: {
+    // 頁の .server.ts の revalidate は使わない。頁の pattern（`/:prefecture/:name` など）が静的資産（/assets/*.js・紋章の SVG）にも当たり、資産の immutable な cache を失うため。
+    // 自治体の頁は都道府県の slug ごとの path で書き、どれにも当たらない path（静的資産・会話の頁 /s/:id）は ISR に置かない
     revalidate: {
-      // 画面が取る自治体のデータ（routes/data/）。データは取り込みのときだけ変わる
+      // ホームと自治体の頁（都道府県自体の頁・市区町村の頁・年度・タブ・分野）。データは取り込みのときだけ変わる
+      '/': 3600,
+      ...Object.fromEntries(Object.values(prefectures.slugs).flatMap((slug) => [[`/${slug}`, 3600], [`/${slug}/*`, 3600]])),
+      // 画面が取る自治体のデータ（routes/data/）
       '/data/*': 3600,
       '/sitemap.xml': 3600,
-      // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く。経路の表の `/:prefecture/:name/:year` に先に当たるので、応答の x-revalidate でも1日にする
-      '/jurisdictions/*': 86400,
+      // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く。同じ下にある紋章の SVG（静的資産）は外す
+      '/jurisdictions/*/og.png': 86400,
     },
     // ISR の key は既定で query を落とす。流れ図・会計の総額は query で表示を分けるので key に残す
     revalidateQueryAllowlist: {

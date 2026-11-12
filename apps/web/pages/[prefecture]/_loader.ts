@@ -40,9 +40,8 @@ export const YEAR_SEGMENT = /^\d{4}$/
  */
 export const PAGE_CACHE = 'public, max-age=300'
 
-// 自治体の頁の .server.ts は `export const revalidate = 3600` で Void の ISR（CDN の cache）に1時間置く。過ぎたら古い頁を返しながら裏で描き直す。
-// Void は build のときにこの値を字面で読むので、定数を import せず各頁に数字で書く。データは取り込みのときだけ変わり、頁のデータの Worker の cache
-// （server/jurisdiction-routes.ts）も1時間なので揃える。cookie の付いた要求（サイドバーを閉じた人）は ISR を通らない
+// 自治体の頁は Void の ISR（CDN の cache）に1時間置く（void.config.ts の routing.revalidate に都道府県ごとの path で書く）。過ぎたら古い頁を返しながら裏で描き直す。
+// 頁の .server.ts に revalidate を書かないのは、`/:prefecture/:name` のような頁の pattern が静的資産（/assets/*.js など）にも当たり、資産まで ISR に載るため
 
 export async function jurisdictionProps(c: Context, path: string, yearSegment?: string): Promise<JurisdictionProps> {
   const env = c.env as unknown as Env
