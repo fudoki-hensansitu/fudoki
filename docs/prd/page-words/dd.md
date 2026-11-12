@@ -29,7 +29,7 @@
 
 - Goal: 頁の語と位置を取るコードを1か所にする。語の取り方の直しは、そこを直せば評価シート・プレス・アシスタントに効く。
 - Goal: 評価シート・プレスの取り込みは、その語の層から読む。移す前の取り込み結果と突き合わせ、変わらないことを確かめる。
-- Goal: 頁の文字は marts の表にし、`serving:sync` で D1 に写す。api は公開の REST・MCP には出さず、fudoki の web だけが呼べる内部の口から返す（[source-reading の設計](../source-reading/dd.md)の Goal を引き継ぐ）。
+- Goal: 頁の文字は marts の表にし、`serving:sync` で D1 に写す。api は公開の REST・MCP には出さず、fudoki の web だけが呼べる内部の口から返す（[source-reading の設計](../source-reading/dd.md)の Goal を引き継ぐ）。公開か内部かは api のインターフェースが決め、データの側には持たせない。
 - Goal: api から R2 の binding を外す。api が元の PDF に触れる口を無くす。
 - Non-Goal: fiscal の取り込みを語の層へ移すこと。fiscal は今の `observe.py` のまま使う。
 - Non-Goal: 予算書・決算書の頁の文字（#560 で外した）。元の PDF を配ること（中継は公式 URL から取るまま、[origin-pdf-viewer](../origin-pdf-viewer/dd.md)）。
@@ -88,8 +88,10 @@ flowchart LR
 
 ### api の公開と内部の区別
 
+公開か内部かは api のインターフェースだけが知る。D1・marts・`columns.json` には公開・内部の区別を持たせない。
+
 - 公開の REST・MCP は、route・tool ごとに読む表を名前で指している（`columns.ts`）。`source_page_text` を読むのは内部の RPC（`source-pages.ts`）だけにする。
-- 区別を検査で守る。`columns.json` の表に `internal: true` の印を付け（dbt の `_models.yml` の `meta` から `serving:columns` が写す）、apps/api の試験で、印の付いた表を参照するのが `source-pages.ts` だけであることを確かめる。
+- 区別は apps/api の試験で守る。`source_page_text` の表名を参照するモジュールが `source-pages.ts` だけであること（公開の route・MCP の tool から辿れないこと）を確かめる。
 - `readSourcePage` は R2 の代わりに D1 の `source_page_text` を `(sha256, page)` で引く。出典の照合（`evaluation_origin`・`budget_proposal_origin`）と、返す文字の上限 `MAX_PAGE_CHARS`（12,000字）は今のまま。
 - R2 の binding `SOURCE_TEXT` と `SourceTextBucket` の型は消す。web の `read_source_page` と Service Binding は変えない。
 
@@ -116,6 +118,6 @@ flowchart LR
 2. 評価シートを語の層へ移し、基準と全件で突き合わせる（取り込みの PR）。
 3. プレスを語の層へ移し、基準と全件で突き合わせる。個別の規則は1団体ずつ（取り込みの PR、団体ごとに分けてよい）。
 4. 頁の文字を語の層から作り、今の R2 の `source-text/` と数百頁を突き合わせる。語の取り方が生の `-bbox` から `page_words`（見えない複製を落とす）に替わる分の差は、種類を確かめて許す。品川の評価シート 211頁が `目標 258 324 390 418 418 / 実績 236 310 364` になることも確かめる。
-5. marts `source_page_text` と `internal` の印・試験を足し、本番 D1 に写す（確認を取ってから）。
+5. marts `source_page_text` を足し、本番 D1 に写す（確認を取ってから）。
 6. api の `readSourcePage` を D1 に切り替え、R2 の binding を外す（api の PR）。web は変えないので、deploy の順は問わない。
 7. R2 の `source-text/` を消す（確認を取ってから）。
