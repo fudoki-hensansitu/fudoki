@@ -64,7 +64,7 @@ function FieldChart({ slices, format }: { slices: Slice[]; format: (yen: number)
     <ul className="sr-only">
       {slices.map((s) => <li key={s.key}>{s.name} {format(s.yen)}</li>)}
     </ul>
-    <ChartContainer config={config} className="aspect-auto h-[320px] w-full" aria-hidden>
+    <ChartContainer config={config} className="aspect-auto h-[320px] w-full @3xl:h-[460px]" aria-hidden>
       <PieChart margin={{ top: 16, bottom: 16, left: 8, right: 8 }}>
         <Pie data={slices} dataKey="yen" nameKey="key" innerRadius={0} outerRadius="56%" startAngle={90} endAngle={-270} stroke="var(--background)" strokeWidth={2} isAnimationActive={grown ? false : 'auto'} animationBegin={0} animationDuration={GROW_MS} onAnimationEnd={() => setGrown(true)} labelLine={false} label={label}>
           {slices.map((s) => <Cell key={s.key} fill={s.color} className="outline-none" />)}
