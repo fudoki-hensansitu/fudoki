@@ -282,6 +282,17 @@ function FreshCard({ m }: { m: Measure }) {
   )
 }
 
+// タブのスワイプは、横に動かせる中身（新しく始めることの Carousel・横スクロールの列）の上では始めない。始めると中身より先にタブが動く
+function startsTabSwipe(api: NonNullable<CarouselApi>, evt: MouseEvent | TouchEvent) {
+  const root = api.rootNode()
+  for (let el = evt.target instanceof Element ? evt.target : null; el && el !== root; el = el.parentElement) {
+    if (el instanceof HTMLElement && el.dataset.slot === 'carousel') return false
+    const x = getComputedStyle(el).overflowX
+    if ((x === 'auto' || x === 'scroll') && el.scrollWidth > el.clientWidth) return false
+  }
+  return true
+}
+
 function FreshCarousel({ items, more }: { items: Measure[]; more?: () => void }) {
   if (!items.length) return null
   return (
@@ -989,7 +1000,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
   const index = Math.max(0, tabs.findIndex((t) => t.key === tab))
   // 始めの位置は Carousel を置いたときだけ渡す。タブのたびに変わると embla が作り直されて、滑らずに飛ぶ
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const carouselOpts = React.useMemo(() => ({ startIndex: index }), [phone, fieldPage])
+  const carouselOpts = React.useMemo(() => ({ startIndex: index, watchDrag: startsTabSwipe }), [phone, fieldPage])
   React.useEffect(() => {
     if (!api) return
     const onSelect = () => changeTab(tabsRef.current[api.selectedScrollSnap()]!.key)
