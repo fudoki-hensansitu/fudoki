@@ -1,17 +1,12 @@
-// 出典の1頁の文字を、非公開 R2 の `source-text/<sha256>.json`（pipeline の source_text.save が作る）から読む。
-// HTTP の route・MCP には載せず、web のアシスタントが内部の RPC（source-pages-entrypoint.ts）から呼ぶだけ（docs/prd/source-reading/dd.md）。
-// 出典の利用条件が無断の転載を禁じるため、本文は公開の REST・MCP には返さない。
+// 出典の1頁の文字を、D1 の表 source_page_text（pipeline の marts、docs/prd/page-words/dd.md）から読む。
+// HTTP の route・MCP には載せず、web のアシスタントが内部の RPC（source-pages-entrypoint.ts）から呼ぶだけ。
+// 出典の利用条件が無断の転載を禁じるため、本文は公開の REST・MCP には返さない。この表を読むモジュールはここだけにする（source-pages.test.ts）。
 import { z } from 'zod'
 import { BUDGET_PROPOSAL_ORIGIN_TABLE, EVALUATION_ORIGIN_TABLE } from './columns'
 import type { Db } from './db'
 
-/** R2 の binding のうち、ここで使う読み取りだけの型。書き込み・削除の関数を型に持たせない。 */
-export interface SourceTextBucket {
-  get(key: string): Promise<{ text(): Promise<string> } | null>
-}
-
-/** 1回に返す頁の文字の上限（Unicode の文字）。頁の文字は表の列を空白で揃えているので、空白を含めて数える。超えた分は切って truncated にする */
-export const MAX_PAGE_CHARS = 12000
+/** 頁の文字の表。公開の route・tool から読まないよう、表名は columns.ts に置かずここに書く */
+const PAGE_TEXT_TABLE = 'source_page_text'
 
 const SHA256 = /^[0-9a-f]{64}$/
 
@@ -46,30 +41,22 @@ async function resolveOrigin(db: Db, origin: string): Promise<Origin | null> {
   return row?.sha256 && SHA256.test(row.sha256) ? { sha256: row.sha256, title: row.title ?? '', url: officialUrl(row) } : null
 }
 
-/** 出典を風土記の出典の記録（D1 の事業評価・予算案の出典の表）に照らしてから、R2 の key を sha256 から組み立てて読む。
- * 利用者や AI から R2 の key は受け取らない（取り込み表など他の object を読ませない）。 */
-export async function readSourcePage(db: Db, bucket: SourceTextBucket | undefined, raw: unknown): Promise<SourcePageResult> {
+/** 出典を風土記の出典の記録（D1 の事業評価・予算案の出典の表）に照らしてから、その sha256 の頁を読む。
+ * 本文は pipeline が 12,000字で切ってあり、truncated は表の列をそのまま返す。 */
+export async function readSourcePage(db: Db, raw: unknown): Promise<SourcePageResult> {
   const parsed = sourcePageInput.safeParse(raw)
   if (!parsed.success) return { status: 'invalid', message: 'origin（sha256 か origin_id）と page（1以上の整数）を指定してください' }
   const { origin, page } = parsed.data
-  if (!bucket) return { status: 'unavailable', message: '出典の文字を読めません' }
   const found = await resolveOrigin(db, origin)
   if (!found) return { status: 'not_found', message: '風土記の出典に無い origin です' }
-  const object = await bucket.get(`source-text/${found.sha256}.json`)
-  if (!object) return { status: 'unavailable', message: 'この出典の文字はまだ用意していません（文字の層の無い PDF・CSV を含む）。url の公式の資料を案内してください' }
-  let pages: unknown
-  try {
-    pages = (JSON.parse(await object.text()) as { pages?: unknown }).pages
-  } catch {
-    pages = undefined
-  }
-  if (!Array.isArray(pages) || !pages.every((p) => typeof p === 'string')) return { status: 'unavailable', message: 'この出典の文字を読めません' }
-  if (page > pages.length) return { status: 'invalid', message: `この出典は ${pages.length} 頁です` }
-  const text = pages[page - 1] ?? ''
-  const chars = [...text]
+  // 文字のある出典は全頁の行があるので、頁数は最後の頁。文字の層の無い出典（スキャン）は行が無い
+  const count = await db.prepare(`SELECT MAX("page") AS "page_count" FROM ${PAGE_TEXT_TABLE} WHERE "sha256" = ?`).bind(found.sha256).first<{ page_count: number | null }>()
+  const pageCount = count?.page_count ?? 0
+  if (!pageCount) return { status: 'unavailable', message: 'この出典の文字はありません（文字の層の無い PDF を含む）。url の公式の資料を案内してください' }
+  if (page > pageCount) return { status: 'invalid', message: `この出典は ${pageCount} 頁です` }
+  const row = await db.prepare(`SELECT "text", "truncated" FROM ${PAGE_TEXT_TABLE} WHERE "sha256" = ? AND "page" = ?`).bind(found.sha256, page).first<{ text: string; truncated: number }>()
   return {
-    status: 'ok', origin_sha256: found.sha256, title: found.title, url: found.url, page, page_count: pages.length,
-    text: chars.length > MAX_PAGE_CHARS ? chars.slice(0, MAX_PAGE_CHARS).join('') : text,
-    truncated: chars.length > MAX_PAGE_CHARS,
+    status: 'ok', origin_sha256: found.sha256, title: found.title, url: found.url, page, page_count: pageCount,
+    text: row?.text ?? '', truncated: Boolean(row?.truncated),
   }
 }

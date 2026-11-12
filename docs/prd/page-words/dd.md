@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-11-12`
-状態: Draft
+状態: In Progress（手順 1〜4 を実装中）
 
 ## Summary
 

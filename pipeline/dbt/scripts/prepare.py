@@ -294,7 +294,7 @@ def main() -> None:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
                         '--select', 'marts.expenditure+', '+marts.expenditure', '+jurisdiction',
-                        'cofog_master', '+marts.evaluation', '+marts.budget_proposal', '+marts.project',
+                        'cofog_master', '+marts.evaluation', '+marts.budget_proposal', '+marts.project', '+marts.source',
                         # 自治体で絞ったとき、他の自治体を宣言した seed の検査をその自治体に絞る
                         *(['--vars', json.dumps({'only_jurisdictions': sorted(args.jurisdiction)})] if args.jurisdiction else [])],
                        cwd=DBT, stdout=sys.stderr, check=True)

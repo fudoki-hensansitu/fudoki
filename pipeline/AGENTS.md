@@ -13,7 +13,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
 | dbt | `dbt:prepare`（入力準備だけ）/ `dbt:build`（入力準備から marts まで。候補は `--candidate-dir`、保存済みで未キャッシュなら `--remote`、取り込みの表を自治体で絞るなら `--jurisdiction`） |
 | 配信 | `serving:columns`（`apps/api/src/columns.json` を warehouse の列と `_models.yml` の説明から生成。`--check` で最新か検査）/ `serving:sync`（marts の表を D1 へ同名・同列で写す。既定は変わった行だけを書く差分の同期。`--database-id <uuid>` か `--local`、`--persist-to`、`--dry-run`（D1 を読んで書く予定の行数を出す）、`--full`（全表を作り直す）、`--jurisdiction <code>`（その自治体の行だけを差分で書き、他の自治体の行は消さない。`dbt:build -- --remote --jurisdiction <code>` でその自治体だけ build した warehouse から本番へ流せる。build は生成 macro `fiscal_*_relations.sql` をその自治体だけに書き換えるので commit しない。絞った warehouse から `--jurisdiction` なしで同期すると他の自治体が消えるので、先に全件で build し直す）。ネットワーク・cf を使うので sandbox 外） |
 | 事業（事業評価・予算案のプレス発表） | `project:save`（`ingestion/project/origins.json` の評価の結果の PDF を取得し、宣言の sha256 と同じときだけ非公開 R2 の `project/<種類>/<自治体>/<年度>/<sha256>.pdf` に置く。ネットワーク・cf を使うので sandbox 外）/ `project:link-measures`（build 済みの warehouse から、seed `dbt/seeds/project/budget_measure_link.csv` に無い施策だけを当初予算書の内訳（事業）へ紐付けて足す。`--refresh` で全部やり直す。Jev を呼ぶので sandbox 外）/ `project:link-projects`（build 済みの warehouse の `int_project__lines` から、seed `dbt/seeds/project/project_line.csv` に無い事業の行だけを、同じ年度の当初予算・決算と前の年度とで結んで事業に振って足す。`--refresh` で全部やり直す） |
-| 出典の頁の文字 | `source-text:save`（事業評価・予算案のプレス発表の、保存済みの文字の層がある出典 PDF を R2 から取り、頁ごとの文字を非公開 R2 の `source-text/<sha256>.json` に置く。web のアシスタントが apps/api の内部 RPC から読む。既定は計画の表示だけ、`--write` で書き、R2 にある key は作り直さない。`--jurisdiction`・`--kind`・`--jobs`、抜き出し方を変えたら `--refresh`。ネットワーク・cf を使うので sandbox 外。`source-text:preview <pdf> [頁…]` で同じ組み方の頁の文字を表示して、書く前に目で確かめる） |
+| 出典の頁の文字 | アシスタントが読む頁の文字は、`dbt:prepare` が事業の取り込みの出典（評価・プレス）から語の層（`ingestion/generic/page_words.py`）と並べ方（`source_text/layout.py`）で作り、marts の `source_page_text` から `serving:sync` で D1 に写す。読んだ結果は出典の sha256・コードの指紋・Poppler の版で `.cache/source-page-text/` にキャッシュする。`source-text:preview <pdf> [頁…]` で同じ組み方の頁の文字を表示して、目で確かめる |
 | 検査 | `test`（bun）/ `test:python`（unittest）/ `test:dbt`（入力準備の unittest） |
 
 出典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。事業の評価の資料（`evaluation_selections`）は `archive.ts --evaluation` で決算書とは別の key（`.../evaluation-settlement[-<n>].pdf`）に保存する。`settlement-` で始めると決算書の保存が消す。予算案のプレス発表（`press_selections`）は `archive.ts --press` で予算書とは別の key（`.../press-initial[-<n>].pdf`）に保存する。dbt は入力準備（`dbt/scripts/`）、staging・intermediate・marts のモデル、seeds を持つ。
@@ -46,7 +46,7 @@ script はこの package が所有する。実行は `bun run --cwd pipeline <na
   | scan PDFのOCR観測 | 非公開R2の `fiscal/ingestion/<対象>/<方向>/ocr/<id>.json.gz` | 依頼とSHA（`ocr_inputs`）だけ |
   | Jev の聞き直しの答え（入力の fingerprint と確率。出典の文字は持たない） | `ingestion/fiscal/jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.digit-recheck.jsonl` | 管理する |
   | 変換設定・現在の表・ハッシュ・保存先 | `ingestion/fiscal/jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.json` | 管理する |
-  | 出典の頁ごとの文字 | 非公開R2の `source-text/<sha256>.json` | 管理しない（R2 の出典から `source-text:save` で作り直す） |
+  | 出典の頁ごとの文字 | D1 の `source_page_text`（marts から写す） | 管理しない（出典から `dbt:prepare` で作り直す） |
   | 評価の結果の PDF | 非公開R2の `project/<種類>/<自治体>/<年度>/<sha256>.pdf` | URL と sha256（`ingestion/project/origins.json`）だけ |
   | 分類・名称のマスタ | dbt seeds | 管理する |
   | 復元済み入力・PDF/OCR キャッシュ | `pipeline/.cache/` | 管理しない |

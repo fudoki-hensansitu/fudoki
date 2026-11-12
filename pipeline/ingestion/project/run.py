@@ -24,13 +24,17 @@ from pathlib import Path
 
 from ingestion.fiscal.manifest import BUCKET, sha_file
 from ingestion.fiscal.storage import fetch
-from ingestion.paths import CACHE
+from ingestion.paths import CACHE, PIPELINE
 from ingestion.project import press, sheet
 
 HERE = Path(__file__).parent
 ORIGINS = HERE / 'origins.json'
 SELECTIONS = HERE.parents[1] / 'source_selection'
 READINGS = CACHE / 'project'
+PAGE_TEXTS = CACHE / 'source-page-text'
+# 頁の文字を作るコード（語の層と並べ方）。直したらキャッシュを読み直す
+PAGE_TEXT_CODE = [PIPELINE / 'ingestion/generic/page_words.py', PIPELINE / 'ingestion/generic/observe.py',
+                  PIPELINE / 'source_text/layout.py']
 
 
 def origins() -> dict:
@@ -126,6 +130,45 @@ def read_cached(path: Path, origin: dict) -> object:
     return data
 
 
+def page_text_fingerprint() -> str:
+    """頁の文字の指紋（語の層と並べ方のコード、固定した Poppler の版）。"""
+    from ingestion.lib import poppler
+
+    digest = hashlib.sha256(poppler.pinned().encode())
+    for path in PAGE_TEXT_CODE:
+        digest.update(path.read_bytes())
+    return digest.hexdigest()[:16]
+
+
+def page_texts_cached(path: Path, sha256: str) -> list[str]:
+    """アシスタントが読む頁の文字（物理頁の順、文字の無い頁は空文字）。出典の sha256 と指紋ごとにキャッシュする。"""
+    cache = PAGE_TEXTS / f'{sha256}-{page_text_fingerprint()}.json'
+    if cache.exists():
+        return json.loads(cache.read_text(encoding='utf-8'))
+    from source_text.layout import page_texts
+
+    texts = page_texts(path)
+    cache.parent.mkdir(parents=True, exist_ok=True)
+    temporary = cache.with_suffix('.tmp')
+    temporary.write_text(json.dumps(texts, ensure_ascii=False), encoding='utf-8')
+    os.replace(temporary, cache)
+    return texts
+
+
+def page_text_rows(paths: dict[str, Path]) -> list[tuple]:
+    """出典ごとの頁の文字の行。文字が1字も無い出典（スキャン）は行を作らない。キャッシュに無い出典は CPU の数だけ並べて読む。"""
+    from concurrent.futures import ProcessPoolExecutor
+
+    items = sorted(paths.items())
+    with ProcessPoolExecutor(max_workers=max(1, min(len(items), os.cpu_count() or 1))) as pool:
+        read = list(pool.map(page_texts_cached, [p for _, p in items], [s for s, _ in items]))
+    rows = []
+    for (sha256, _), texts in zip(items, read):
+        if any(texts):
+            rows.extend((sha256, number, text) for number, text in enumerate(texts, start=1))
+    return rows
+
+
 def thousand(value: int | None) -> int | None:
     return None if value is None else value * 1000
 
@@ -141,9 +184,10 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None) -> dict
         declared = {kind: [o for o in entries if o['jurisdiction'] in jurisdictions] for kind, entries in declared.items()}
     tables: dict[str, list[tuple]] = {name: [] for name in (
         'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator', 'project_evaluation_indicator_value',
-        'project_evaluation_result', 'project_budget_measure')}
+        'project_evaluation_result', 'project_budget_measure', 'project_source_page_text')}
+    paths: dict[str, Path] = {}
     for origin in sheet_sources(declared['sheets']):
-        path = fetch(origin['reference'], remote=remote)
+        path = paths[origin['sha256']] = fetch(origin['reference'], remote=remote)
         sheets = read_cached(path, origin)
         tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'sheets', origin['fiscal_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
@@ -171,7 +215,7 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None) -> dict
                         origin_id(origin), item['page'], indicator['position'], int(year),
                         indicator['targets'].get(year), indicator['actuals'].get(year)))
     for origin in declared['results']:
-        path = fetch(reference('results', origin), remote=remote)
+        path = paths[origin['sha256']] = fetch(reference('results', origin), remote=remote)
         result = read_cached(path, origin)
         tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'result', origin['evaluated_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
@@ -180,7 +224,7 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None) -> dict
             origin_id(origin), origin['evaluated_year'], origin['budget_year'], result['page'],
             result['evaluated_count'], counts['A'], counts['B'], counts['C'], counts['D'], result['reduced_thousand']))
     for origin in press_sources(declared['press']):
-        path = fetch(origin['reference'], remote=remote)
+        path = paths[origin['sha256']] = fetch(origin['reference'], remote=remote)
         items = read_cached(path, origin)
         tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'press', origin['fiscal_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
@@ -188,6 +232,7 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None) -> dict
             tables['project_budget_measure'].append((
                 origin_id(origin), item['page'], item.get('position', 1), item['title'], json.dumps(item['names'], ensure_ascii=False),
                 item['is_new'], item['budget_thousand'], json.dumps(item['points'], ensure_ascii=False)))
+    tables['project_source_page_text'] = page_text_rows(paths)
     return tables
 
 
@@ -208,6 +253,7 @@ SCHEMAS = {
                          'reduced_thousand bigint',
     'project_budget_measure': 'origin_id varchar, page integer, position integer, title varchar, names varchar, is_new boolean, '
                   'budget_thousand bigint, points varchar',
+    'project_source_page_text': 'sha256 varchar, page integer, text varchar',
 }
 
 

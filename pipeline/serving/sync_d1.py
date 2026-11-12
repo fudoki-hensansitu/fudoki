@@ -66,6 +66,8 @@ MEMORY_LIMIT = '1GB'
 READ_ROWS_PER_CALL = 4000
 # 突き合わせの1範囲の行数。1回の cf 呼び出しで READ_ROWS_PER_CALL // RANGE_ROWS 範囲を読む
 RANGE_ROWS = 1000
+# 1行が大きい表の、1回の cf 呼び出しで読み戻す行数（1範囲もこの行数にする）。頁の文字は1行が最大約 36KB
+READ_ROWS_BY_TABLE = {'source_page_text': 200}
 # 変わる行が表のこの割合を超えたら、差分ではなく作り直す（既存の行の置き換えは delete と insert の2回分書く）
 REBUILD_RATIO = 0.5
 # delete の1文に入れる主キーの数
@@ -76,7 +78,8 @@ TABLE_ORDER = ['jurisdiction',
                'expenditure', 'expenditure_origin', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
                'expenditure_location',
                'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
-               'budget_proposal', 'budget_proposal_origin', 'budget_measure', 'project', 'project_year']
+               'budget_proposal', 'budget_proposal_origin', 'budget_measure', 'project', 'project_year',
+               'source_page_text']
 # 集約ごとの作り直し（docs/prd/aggregate-api/dd.md）より前の表。新しい Worker の deploy を確かめてから --drop-legacy で消す
 LEGACY_TABLES = ['fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expenditure_detail', 'fiscal_expenditure_location',
                  'fiscal_coverage', 'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator',
@@ -204,11 +207,15 @@ def and_where(where: str, condition: str) -> str:
     return f'{where} and {condition}' if where else f' where {condition}'
 
 
+def range_rows_of(table: str) -> int:
+    return min(RANGE_ROWS, READ_ROWS_BY_TABLE.get(table, RANGE_ROWS))
+
+
 def key_ranges(con: duckdb.DuckDBPyConnection, table: str, key: str, where: str = '') -> list[tuple[str | None, str | None]]:
-    """warehouse の主キー順に RANGE_ROWS 行ずつの範囲 [lo, hi)。両端は開いていて、D1 にだけある行もどれかの範囲に入る。"""
+    """warehouse の主キー順に、表の範囲の行数（range_rows_of）ずつの範囲 [lo, hi)。両端は開いていて、D1 にだけある行もどれかの範囲に入る。"""
     bounds = [r[0] for r in con.execute(
         f'select "{key}" from (select "{key}", row_number() over (order by "{key}") - 1 as i from main."{table}"{where}) '
-        f'where i > 0 and i % {RANGE_ROWS} = 0 order by 1').fetchall()]
+        f'where i > 0 and i % {range_rows_of(table)} = 0 order by 1').fetchall()]
     edges: list[str | None] = [None, *bounds, None]
     return list(zip(edges, edges[1:]))
 
@@ -371,7 +378,7 @@ def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d
                ranges: list[tuple[str | None, str | None]] | None = None) -> TableDiff:
     """主キーの範囲ごとに D1 の d1_table を読み、warehouse の name と全列で突き合わせる。
 
-    1回の cf 呼び出しは READ_ROWS_PER_CALL 行ほどにまとめる。メモリにあるのはその分と、差のある主キーだけ。
+    1回の cf 呼び出しは READ_ROWS_PER_CALL 行（1行が大きい表は READ_ROWS_BY_TABLE の行数）ほどにまとめる。メモリにあるのはその分と、差のある主キーだけ。
     scope（自治体の条件）は D1 と warehouse の両方に掛ける。範囲の外の D1 の行は読まず、消す行にも出ない。
     """
     names = [c['name'] for c in spec['columns']]
@@ -380,7 +387,7 @@ def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d
     where = and_where('', scope) if scope else ''
     d1_scope = f' and {scope}' if scope else ''
     ranges = key_ranges(con, name, key, where) if ranges is None else ranges
-    per_call = max(1, READ_ROWS_PER_CALL // RANGE_ROWS)
+    per_call = max(1, READ_ROWS_BY_TABLE.get(name, READ_ROWS_PER_CALL) // range_rows_of(name))
     diff = TableDiff()
     for i in range(0, len(ranges), per_call):
         group = ranges[i:i + per_call]

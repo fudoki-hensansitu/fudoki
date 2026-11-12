@@ -1486,6 +1486,53 @@
           "description": "支出済額（円）。決算書の事業の行の金額。"
         }
       ]
+    },
+    "source_page_text": {
+      "primary_key": "page_id",
+      "indexes": [
+        [
+          "sha256",
+          "page"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "page_id",
+          "type": "string",
+          "nullable": false,
+          "description": "頁の識別子。sha256 と頁から作る。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。jurisdiction の jurisdiction_code。"
+        },
+        {
+          "name": "sha256",
+          "type": "string",
+          "nullable": false,
+          "description": "出典 PDF の sha256。evaluation_origin・budget_proposal_origin の origin_id と同じ値。"
+        },
+        {
+          "name": "page",
+          "type": "integer",
+          "nullable": false,
+          "description": "物理頁（1始まり）。"
+        },
+        {
+          "name": "text",
+          "type": "string",
+          "nullable": false,
+          "description": "頁の文字。12,000字を超える分は切る。文字の無い頁は空文字。"
+        },
+        {
+          "name": "truncated",
+          "type": "boolean",
+          "nullable": false,
+          "description": "12,000字で切ったか。"
+        }
+      ]
     }
   }
 }

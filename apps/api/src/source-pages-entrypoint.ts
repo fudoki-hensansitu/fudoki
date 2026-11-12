@@ -7,6 +7,6 @@ import { readSourcePage, type SourcePageResult } from './source-pages'
 export class SourcePages extends WorkerEntrypoint<Env> {
   /** 出典の1頁の文字。入力は { origin: sha256 か origin_id, page: 物理頁 } */
   async readPage(input: unknown): Promise<SourcePageResult> {
-    return readSourcePage(this.env.DB, this.env.SOURCE_TEXT, input)
+    return readSourcePage(this.env.DB, input)
   }
 }
