@@ -3428,6 +3428,86 @@ sources:
       direction: expenditure
       table_id: general-expenditure
       kind: nodes
+  - name: j131121_2025_initial_care_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: amounts
+  - name: j131121_2025_initial_care_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: care-initial
+      kind: nodes
+  - name: j131121_2025_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j131121_2025_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j131121_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j131121_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j131121_2025_initial_national_health_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
+      kind: amounts
+  - name: j131121_2025_initial_national_health_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-initial
+      kind: nodes
+  - name: j131121_2025_initial_school_lunch_initial_amounts
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: school-lunch-initial
+      kind: amounts
+  - name: j131121_2025_initial_school_lunch_initial_nodes
+    meta:
+      jurisdiction: '131121'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: school-lunch-initial
+      kind: nodes
   - name: j131121_2026_initial_care_initial_amounts
     meta:
       jurisdiction: '131121'
