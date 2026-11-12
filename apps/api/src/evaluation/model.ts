@@ -43,14 +43,14 @@ export const BudgetSubject = z.strictObject({
   jigyo: z.string().nullable(),
 })
 
-/** 評価シート。1枚 = 小事業の1年度。出典と頁で1枚が決まる */
+/** 評価シート。1枚 = 事業（品川は小事業）の1年度。出典と頁で1枚が決まる */
 export const EvaluationSheet = z.strictObject({
   sheet_id: z.string(),
-  name: z.string().describe('小事業の名前。資料のまま'),
+  name: z.string().describe('事業（品川は小事業）の名前。資料のまま'),
   budget_subject: BudgetSubject,
   department: z.string().nullable(),
   division: z.string().nullable(),
-  budget_yen: Yen.nullable().describe('小事業の額。歳出の行とは足さない'),
+  budget_yen: Yen.nullable().describe('シートの事業の額。歳出の行とは足さない'),
   settled_yen: Yen.nullable(),
   grade: Grade.nullable().describe('風土記の4区分。区分の無い様式・当たらない印字は空'),
   grade_label: z.string().nullable().describe('シートの表記。読めない欄は空'),
@@ -139,7 +139,7 @@ export const SheetRow = z
       expenditure_detail_id: z.string().nullable(),
     })
   )
-  .meta({ id: 'EvaluationSheetRow', description: '評価シート（1枚 = 小事業の1年度）。' })
+  .meta({ id: 'EvaluationSheetRow', description: '評価シート（1枚 = 事業（品川は小事業）の1年度）。' })
 
 export const IndicatorRow = z
   .strictObject(

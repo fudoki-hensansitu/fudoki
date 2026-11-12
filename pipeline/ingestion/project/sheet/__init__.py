@@ -134,7 +134,10 @@ def pages(path) -> list[tuple[int, str]]:
 def read(path, workflow: dict) -> list[Sheet]:
     """シートの頁を読む。`start` があれば、1枚目の頁から次の1枚目の前までを1枚にする。"""
     groups: list[tuple[int, list[str]]] = []
-    for number, text in pages(path):
+    texts = pages(path)
+    if not any(text.strip() for _, text in texts):
+        print(f'{Path(path).name}: 文字の層が無い（スキャン）ので読まない', file=sys.stderr)
+    for number, text in texts:
         if 'skip' in workflow and re.search(workflow['skip'], text, re.M):
             continue
         if not re.search(workflow['page'], text, re.M):

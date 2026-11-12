@@ -14,7 +14,7 @@ export const SHEET_SEARCH_EXAMPLE = {
 }
 
 const GRADES =
-  'Each sheet is one small project in one fiscal year (the year the project ran). grade_label and direction are printed on the sheet; grade_code maps grade_label to A (expand) / B (continue) / C (review) / D (end), and is null when the sheet has no grade or the label does not map. ' +
+  'Each sheet is one project (a small project in Shinagawa) in one fiscal year (the year the project ran). grade_label and direction are printed on the sheet; grade_code maps grade_label to A (expand) / B (continue) / C (review) / D (end), and is null when the sheet has no grade or the label does not map. ' +
   'Grades are the municipality\'s own self-evaluation; report them as printed and do not rank projects or municipalities by them. '
 
 const searchSheetsDescription =
