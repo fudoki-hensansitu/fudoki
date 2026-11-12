@@ -316,7 +316,41 @@
           "quirks": {
             "partial_headings": true
           }
-        }
+        },
+        "name_corrections": [
+          {
+            "id": "p141-setsu-13",
+            "page": 141,
+            "code": "13",
+            "observed_name": "使用料及び",
+            "corrected_name": "使用料及び賃借料",
+            "reason": "原典の画像で、頁141の末尾の節「13 使用料及び」は名前が次の頁へ続き、頁142の先頭に「賃借料」と印字されている。続きが頁142の最初の節「18 負担金補助及び交付金」の名前の頭に付いて読まれた。"
+          },
+          {
+            "id": "p142-setsu-18",
+            "page": 142,
+            "code": "18",
+            "observed_name": "賃借料負担金補助及び交付金",
+            "corrected_name": "負担金補助及び交付金",
+            "reason": "原典の画像で、頁141の末尾の節「13 使用料及び」は名前が次の頁へ続き、頁142の先頭に「賃借料」と印字されている。続きが頁142の最初の節「18 負担金補助及び交付金」の名前の頭に付いて読まれた。"
+          },
+          {
+            "id": "p60-setsu-18",
+            "page": 60,
+            "code": "18",
+            "observed_name": "負担金補助",
+            "corrected_name": "負担金補助及び交付金",
+            "reason": "原典の画像で、頁60の末尾の節「18 負担金補助」は名前が次の頁へ続き、頁61の先頭に「及び交付金」と印字されている。続きが頁61の最初の節「26 公課費」の名前の頭に付いて読まれた。"
+          },
+          {
+            "id": "p61-setsu-26",
+            "page": 61,
+            "code": "26",
+            "observed_name": "及び交付金公課費",
+            "corrected_name": "公課費",
+            "reason": "原典の画像で、頁60の末尾の節「18 負担金補助」は名前が次の頁へ続き、頁61の先頭に「及び交付金」と印字されている。続きが頁61の最初の節「26 公課費」の名前の頭に付いて読まれた。"
+          }
+        ]
       },
       "expected_tables": [
         {
@@ -329,7 +363,7 @@
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "4cddcb73ded84ffb11ff495facfe15528a27e915c55d6b79b84fc9250a6cbee9",
+      "input_fingerprint": "c8eee282c6f4688a9007e00118bc7bf7aa2e0d0cbcee86290259c1ff96921cfd",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -358,7 +392,7 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "fcc22bac851163969432daacb219d7b7aed48caeb37eb527e9b05cf63306aa83",
+      "input_fingerprint": "a74ea589239cebd541bb76edd2e258589e8fbd1f04f63bfafeac83ca8c7f9997",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -387,7 +421,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "8931ada7e042e8af816107d9b3277781296e95c80498ea42f6c646e10eedaadf",
+      "input_fingerprint": "1c7238f6992fcb30f993eac9d9a5d95395ceeabf49e90e3500fb6de704852ca5",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -416,20 +450,21 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "70316813075c6d1d3c3f6bf0f201ef332c7fccaa6cd7c6f82faf6c1e2918b9c7",
+      "input_fingerprint": "d09da8c0d54803e5d13608832b1f9458f3ff1da2c80cd4e35bc1da3de9ab9572",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
         "金額の単位は printed 175頁 から決めた。款の和 69,729,040（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。"
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 4 件を、管理 JSON の name_corrections で印字に直した: 13使用料及び→13使用料及び賃借料・18賃借料負担金補助及び交付金→18負担金補助及び交付金・18負担金補助→18負担金補助及び交付金・26及び交付金公課費→26公課費。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132136/2025/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "70cc4daff115feeea4513ba97b120f923eb7dfae40d04fbb37faec05882cbbf9",
-          "bytes": 244587
+          "sha256": "522a33c44866011055f47c48b20b00d91e71f3d7f0cc3dbcdde6ec1f0dcd6ea8",
+          "bytes": 244579
         },
         "row_count": 8039
       },
