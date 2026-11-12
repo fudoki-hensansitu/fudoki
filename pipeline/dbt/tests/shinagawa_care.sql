@@ -7,7 +7,7 @@ with expected(node_id, expected_cofog, expected_recipient) as (
 )
 select e.node_id
 from expected e left join (select * from {{ ref('int_fiscal__expenditure_nodes') }} where document_kind = 'settlement') n using (node_id)
-where n.node_id is null
+where {{ only_jurisdictions("'131091'") }} and (n.node_id is null
    or (e.expected_cofog is not null and n.cofog_code is distinct from e.expected_cofog)
    or (e.expected_recipient is not null and
-       (not n.is_interfund_transfer or n.interfund_transfer_to is distinct from e.expected_recipient))
+       (not n.is_interfund_transfer or n.interfund_transfer_to is distinct from e.expected_recipient)))

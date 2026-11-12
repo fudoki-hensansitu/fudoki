@@ -121,9 +121,11 @@ def origin_id(origin: dict) -> str:
     return origin['sha256']
 
 
-def load(*, remote: bool = False) -> dict[str, list[tuple]]:
-    """入力準備の表の行。表名 → 行の list。"""
+def load(*, remote: bool = False, jurisdictions: set[str] | None = None) -> dict[str, list[tuple]]:
+    """入力準備の表の行。表名 → 行の list。jurisdictions を渡せば、その自治体の資料だけを読む。"""
     declared = origins()
+    if jurisdictions:
+        declared = {kind: [o for o in entries if o['jurisdiction'] in jurisdictions] for kind, entries in declared.items()}
     tables: dict[str, list[tuple]] = {name: [] for name in (
         'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator', 'project_evaluation_indicator_value',
         'project_evaluation_result', 'project_budget_measure')}

@@ -7,7 +7,7 @@ with lines as (
 )
 select a.jurisdiction_code || ':' || a.fiscal_year || ':' || a.table_id as key, 'undeclared_table' as failure
 from {{ ref('fiscal_budget_amendment') }} a
-where not exists (
+where {{ only_jurisdictions('a.jurisdiction_code') }} and not exists (
     select 1 from {{ source('fiscal_metadata', 'tables') }} t
     where t.jurisdiction_code = a.jurisdiction_code and t.fiscal_year = a.fiscal_year
         and t.document_kind = a.document_kind and t.table_id = a.table_id

@@ -193,25 +193,30 @@ class SwapTest(unittest.TestCase):
 
 
 class ScopeTest(unittest.TestCase):
-    def test_where_is_none_when_not_specified(self):
-        self.assertEqual(sync_d1.scope_where(None), '')
-        self.assertEqual(sync_d1.scope_where([]), '')
-
-    def test_where_selects_same_rows_in_duckdb_and_sqlite(self):
+    def test_condition_selects_same_rows_in_duckdb_and_sqlite(self):
+        """自治体コードの列を持つ表はその列で、持たない表は親の表の自治体で絞る。両者で同じ行を選ぶ。"""
         import duckdb
 
-        rows = [('132039', 'a'), ('131016', 'b'), ("13'x", 'c'), ('132039', 'd')]
+        origins = [('o1', '131202'), ('o2', '131091'), ("o'3", "13'x")]
+        locations = [('l1', 'o1'), ('l2', 'o2'), ('l3', "o'3"), ('l4', 'o1')]
         d = duckdb.connect()
-        d.execute('create table t (jurisdiction_code varchar, k varchar)')
-        d.executemany('insert into t values (?, ?)', rows)
         q = sqlite3.connect(':memory:')
-        q.execute('create table t (jurisdiction_code text, k text)')
-        q.executemany('insert into t values (?, ?)', rows)
-        for scope in (['132039'], ['132039', "13'x"], ['999999']):
-            where = sync_d1.scope_where(scope)
-            sql = f'select k from t{where} order by k'
-            self.assertEqual(d.execute(sql).fetchall(), q.execute(sql).fetchall())
-        self.assertEqual(d.execute('select k from t' + sync_d1.scope_where(['132039']) + ' order by k').fetchall(), [('a',), ('d',)])
+        for con in (d, q):
+            con.execute('create table expenditure_origin (origin_id varchar, jurisdiction_code varchar)')
+            con.execute('create table expenditure_location (line_id varchar, origin_id varchar)')
+            con.executemany('insert into expenditure_origin values (?, ?)', origins)
+            con.executemany('insert into expenditure_location values (?, ?)', locations)
+        for scope in (['131202'], ['131202', "13'x"], ['999999']):
+            for table, names in (('expenditure_origin', ['origin_id', 'jurisdiction_code']), ('expenditure_location', ['line_id', 'origin_id'])):
+                sql = f'select * from {table} where {sync_d1.scope_condition(table, names, scope)} order by 1'
+                self.assertEqual(d.execute(sql).fetchall(), q.execute(sql).fetchall())
+        sql = 'select line_id from expenditure_location where ' + sync_d1.scope_condition('expenditure_location', ['line_id', 'origin_id'], ['131202'])
+        self.assertEqual(sorted(d.execute(sql).fetchall()), [('l1',), ('l4',)])
+
+    def test_every_table_can_be_scoped(self):
+        """新しい表が自治体コードの列も親の表も持たなければ、ここで気づく。"""
+        for name, spec in columns.load().items():
+            sync_d1.scope_condition(name, [c['name'] for c in spec['columns']], ['131202'])
 
     def test_ranges_cover_all_keys_in_duckdb_and_sqlite(self):
         """範囲は両端が開いていて、warehouse に無い主キーもどれかの範囲に入る。範囲の式は両者で同じ行を選ぶ。"""
@@ -236,7 +241,7 @@ class ScopeTest(unittest.TestCase):
             self.assertEqual([r[0] for r in d.execute(f'select k from t where {cond} order by k').fetchall()], [k for k in got if k in keys])
             seen += got
         self.assertEqual(sorted(seen), sorted(keys + ['', 'zz', '0004']))
-        self.assertEqual(sync_d1.key_ranges(d, 't', 'k', sync_d1.scope_where(['9'])), [(None, None)])
+        self.assertEqual(sync_d1.key_ranges(d, 't', 'k', " where jurisdiction_code = '9'"), [(None, None)])
 
     def test_swap_with_empty_tables(self):
         """該当行が0件の表でも、空の表を作って入れ替えが通る。"""
@@ -336,7 +341,7 @@ class SyncTest(unittest.TestCase):
     def sync(self, **kw):
         self.d1.log.clear()
         messages = []
-        code = sync_d1.run(self.d1, self.duck, self.tables, False, None, kw.get('full', False), messages.append)
+        code = sync_d1.run(self.d1, self.duck, self.tables, False, kw.get('jurisdictions'), kw.get('full', False), messages.append)
         self.assertEqual(code, 0, messages)
         return messages
 
@@ -396,6 +401,72 @@ class SyncTest(unittest.TestCase):
         self.sync(full=True)
         self.assert_same()
         self.assertEqual(len([s for s in self.d1.log if s.startswith('alter table')]), len(self.tables))
+
+
+    def test_jurisdiction_writes_only_that_jurisdiction(self):
+        """その自治体だけの warehouse から流しても、他の自治体の行（親で絞る表も）は消えない。"""
+        def origin(key, code, title):
+            self.duck.execute('insert into main."expenditure_origin" ("origin_id", "jurisdiction_code", "title") values (?, ?, ?)',
+                              [key, code, title])
+
+        def location(key, origin_id):
+            self.duck.execute('insert into main."expenditure_location" ("line_id", "origin_id", "kind") values (?, ?, ?)',
+                              [key, origin_id, 'pdf'])
+
+        origin('a1', '000001', 'x')
+        origin('b1', '000002', 'x')
+        location('la', 'a1')
+        location('lb', 'b1')
+        self.sync()
+        before = {name: self.d1.rows(name, spec['primary_key']) for name, spec in self.tables.items()}
+        # 000002 だけを build し直した warehouse: 000001 の行は無く、000002 は1行変わり1行増え、位置が1行消える
+        for name in self.tables:
+            self.duck.execute(f'delete from main."{name}"')
+        self.add('jurisdiction', ['000002'], value='changed')
+        origin('b1', '000002', 'changed')
+        origin('b2', '000002', 'x')
+        location('lb2', 'b2')
+        messages = self.sync(jurisdictions=['000002'])
+        self.assertFalse([s for s in self.d1.log if s.startswith(('drop table "', 'alter table', 'create table'))], messages)
+        self.assertEqual(self.d1.rows('expenditure_origin', 'origin_id')[0], before['expenditure_origin'][0])  # a1
+        self.assertEqual([r[0] for r in self.d1.rows('expenditure_origin', 'origin_id')], ['a1', 'b1', 'b2'])
+        self.assertEqual([r[0] for r in self.d1.rows('expenditure_location', 'line_id')], ['la', 'lb2'])
+        self.assertEqual([r[0] for r in self.d1.rows('jurisdiction', 'jurisdiction_code')], ['000000', '000001', '000002'])
+        self.assertEqual(self.d1.rows('project_year', 'project_year_id'), before['project_year'])
+
+    def test_jurisdiction_stops_on_schema_change_with_its_rows(self):
+        self.sync()
+        self.d1.con.execute('drop table "jurisdiction"')
+        messages = []
+        self.assertEqual(sync_d1.run(self.d1, self.duck, self.tables, False, ['000001'], False, messages.append), 1)
+        self.assertIn('jurisdiction', messages[-1])
+
+    def test_jurisdiction_skips_schema_change_without_its_rows(self):
+        """列が違っても、その自治体の行がどちらにも無い表（project_year は自治体 NULL）は触らずに同期する。"""
+        self.sync()
+        self.d1.con.execute('drop index "project_year_project_id"')
+        messages = self.sync(jurisdictions=['000001'])
+        self.assertTrue(any('project_year: D1 の列・index が違うが' in m for m in messages), messages)
+        self.assertNotIn('project_year_project_id', {r[0] for r in self.d1.con.execute("select name from sqlite_master where type='index'")})
+
+
+    def test_jurisdiction_skips_missing_table_without_its_rows(self):
+        self.sync()
+        self.d1.con.execute('drop table "evaluation"')
+        messages = self.sync(jurisdictions=['000001'])
+        self.assertTrue(any('evaluation: D1 の列・index が違うが' in m for m in messages), messages)
+
+    def test_deletes_children_before_parents(self):
+        """親の行を消す前に子の行を消す。途中で止まっても、親の消えた子の行が残らない。"""
+        self.duck.execute('insert into main."expenditure_origin" ("origin_id", "jurisdiction_code") values (\'o1\', \'000001\')')
+        self.duck.execute('insert into main."expenditure_location" ("line_id", "origin_id", "kind") values (\'l1\', \'o1\', \'pdf\')')
+        self.sync()
+        self.duck.execute('delete from main."expenditure_location"')
+        self.duck.execute('delete from main."expenditure_origin"')
+        self.sync(jurisdictions=['000001'])
+        deletes = [s for s in self.d1.log if s.startswith('delete from')]
+        self.assertEqual([s.split('"')[1] for s in deletes], ['expenditure_location', 'expenditure_origin'])
+        self.assertEqual(self.d1.rows('expenditure_location', 'line_id'), [])
 
 
 if __name__ == '__main__':
