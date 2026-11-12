@@ -177,8 +177,8 @@ def origin_id(origin: dict) -> str:
     return origin['sha256']
 
 
-def load(*, remote: bool = False, jurisdictions: set[str] | None = None) -> dict[str, list[tuple]]:
-    """入力準備の表の行。表名 → 行の list。jurisdictions を渡せば、その自治体の資料だけを読む。"""
+def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_texts: bool = True) -> dict[str, list[tuple]]:
+    """入力準備の表の行。表名 → 行の list。jurisdictions を渡せば、その自治体の資料だけを読む。page_texts が偽なら頁の文字の表は空にする。"""
     declared = origins()
     if jurisdictions:
         declared = {kind: [o for o in entries if o['jurisdiction'] in jurisdictions] for kind, entries in declared.items()}
@@ -232,7 +232,8 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None) -> dict
             tables['project_budget_measure'].append((
                 origin_id(origin), item['page'], item.get('position', 1), item['title'], json.dumps(item['names'], ensure_ascii=False),
                 item['is_new'], item['budget_thousand'], json.dumps(item['points'], ensure_ascii=False)))
-    tables['project_source_page_text'] = page_text_rows(paths)
+    if page_texts:
+        tables['project_source_page_text'] = page_text_rows(paths)
     return tables
 
 
