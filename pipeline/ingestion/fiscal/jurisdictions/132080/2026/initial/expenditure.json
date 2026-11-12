@@ -397,6 +397,17 @@
           ]
         ],
         "partial": true,
+        "dropped_bands": [
+          {
+            "id": "p2-previous-volume",
+            "page": 2,
+            "y_range": [
+              120,
+              163
+            ],
+            "reason": "冊の頭の「・諸経費 477」と所管の行は、前の冊（-5）の最後の事業「介護予防・日常生活支援総合事業費」（79,872）の明細の続き（前の冊の明細の計は 79,395）。冊をまたいで親につなげられないので、この冊では読まない"
+          }
+        ],
         "workflow": {
           "layout": {
             "pattern": "running_titles",
@@ -665,7 +676,39 @@
             "reason": "原画で確かめた都市計画総務費の比較 −1,484,281（減額）。"
           }
         ],
-        "code_readings": []
+        "code_readings": [],
+        "name_corrections": [
+          {
+            "id": "p13-moku-15",
+            "page": 13,
+            "code": "5",
+            "observed_name": "母子等福祉費",
+            "corrected_code": "15",
+            "corrected_name": "母子等福祉費",
+            "y": 152.0,
+            "reason": "款項目の欄で「15」の「1」が縦の点線に重なり、OCR が「5」と読んだ（描いた頁で「15」を確かめた）。児童福祉費の目5は児童福祉総務費（5頁）。"
+          },
+          {
+            "id": "p67-kou-15",
+            "page": 67,
+            "code": "5",
+            "observed_name": "都市計画費",
+            "corrected_code": "15",
+            "corrected_name": "都市計画費",
+            "y": 127.4,
+            "reason": "款項目の欄で「15」の「1」が縦の点線に重なり、OCR が「5」と読んだ（描いた頁で「15」を確かめた）。土木費の項5は土木管理費（59頁）。"
+          },
+          {
+            "id": "p101-kou-15",
+            "page": 101,
+            "code": "5",
+            "observed_name": "中学校費",
+            "corrected_code": "15",
+            "corrected_name": "中学校費",
+            "y": 127.2,
+            "reason": "款項目の欄で「15」の「1」が縦の点線に重なり、OCR が「5」と読んだ（描いた頁で「15」を確かめた）。教育費の項5は教育総務費（83頁）。"
+          }
+        ]
       },
       "expected_tables": [
         {

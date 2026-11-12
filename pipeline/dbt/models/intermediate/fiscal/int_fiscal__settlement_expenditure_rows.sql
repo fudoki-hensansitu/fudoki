@@ -114,22 +114,33 @@ selected_amounts as (
      and coalesce(f.kou_code, '') = case n.node_kind when '項' then n.code_text else '' end
 ), hierarchy as (
     select n.*, n.code_text as kan_code, null::varchar as kou_code, null::varchar as moku_code,
-        n.name as kan_name, null::varchar as kou_name, n.axis_header as subject_axis, [n.node_key] as visited
+        n.name as kan_name, null::varchar as kou_name, n.axis_header as subject_axis, false as under_subject,
+        [n.node_key] as visited
     from amounts_checked n where n.parent_node_key is null
     union all
     select n.*, h.kan_code,
         case when n.node_kind = '項' and n.axis_header = h.subject_axis then n.code_text else h.kou_code end,
         case when n.node_kind = '目' and n.axis_header = h.subject_axis then n.code_text else h.moku_code end,
         h.kan_name, case when n.node_kind = '項' and n.axis_header = h.subject_axis then n.name else h.kou_name end,
-        h.subject_axis, list_append(h.visited, n.node_key)
+        h.subject_axis, h.axis_header = h.subject_axis, list_append(h.visited, n.node_key)
     from amounts_checked n join hierarchy h
       on n.source_table_key = h.source_table_key and n.parent_node_key = h.node_key
     where not list_contains(h.visited, n.node_key)
 ), siblings as (
-    select * exclude (visited),
+    -- Items printed with an amount right under a numbered 款・項・目 count as siblings across the tables of one
+    -- document and division: an account printed in volumes (132080) can print two same-named projects of one 目,
+    -- one in each volume, and they are two nodes. A copy printed without its amount (`continued_rows`) stays
+    -- within its table, so it still joins the row that prints the amount.
+    select * exclude (visited, under_subject, sibling_scope),
         row_number() over sibling as sibling_ordinal, count(*) over sibling_group as sibling_count
-    from hierarchy
-    window sibling_group as (partition by source_table_key, parent_node_key, axis_header, node_kind, code_text, name),
+    from (
+        select *, case when under_subject and axis_header <> subject_axis and amount_yen is not null and coalesce(moku_code, kou_code) is not null
+                       then to_json([jurisdiction_code, fiscal_year::varchar, document_kind, account_name, division,
+                                     coalesce(kan_code, 'name:' || kan_name), kou_code, moku_code])::varchar
+                       else to_json([source_table_key, parent_node_key])::varchar end as sibling_scope
+        from hierarchy
+    )
+    window sibling_group as (partition by sibling_scope, axis_header, node_kind, code_text, name),
         sibling as (sibling_group order by origin_id, physical_page, y0, x0, node_key)
 ), keyed as (
     -- A 款 identifies by its number, or by its name in an account-year declared in fiscal_kan_name_identity

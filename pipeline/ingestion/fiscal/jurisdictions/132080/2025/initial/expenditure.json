@@ -378,6 +378,17 @@
           ]
         ],
         "partial": true,
+        "dropped_bands": [
+          {
+            "id": "p2-previous-volume",
+            "page": 2,
+            "y_range": [
+              120,
+              187
+            ],
+            "reason": "冊の頭の「・地域リハビリテーション活動支援事業費 214」「・地域ケア会議運営費 100」「・諸経費 459」と所管の行は、前の冊の最後の事業の明細の続き（計 773）。冊をまたいで親につなげられないので、この冊では読まない"
+          }
+        ],
         "workflow": {
           "layout": {
             "pattern": "running_titles",
