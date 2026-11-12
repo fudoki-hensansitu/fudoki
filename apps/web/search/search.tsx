@@ -43,7 +43,7 @@ function TownCard({ t }: { t: TownHits }) {
     <section className="flex flex-col rounded-2xl border bg-background p-4">
       <div className="mb-2 flex items-center gap-2">
         <Emblem code={t.code} name={t.name} className="size-8 rounded-lg p-1" />
-        <span className="flex-1 font-bold">{t.name}</span>
+        <span className="flex-1 font-medium">{t.name}</span>
         <span className="text-xs text-muted-foreground">
           {reiwa(t.year)} 決算・{t.count}件
         </span>
@@ -71,7 +71,7 @@ export function Search({ q, code, townName, towns, capped, failed, tooLong }: Pr
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
       <header className="mb-5">
-        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em]">事業を検索</h1>
+        <h1 className="text-[26px] leading-[1.35] font-semibold tracking-[0.02em]">事業を検索</h1>
         <p className="mt-1 text-[15px] text-muted-foreground">言葉で、決算の中身を引きます。ほかのまちが同じことにいくら使っているかも見られます。</p>
       </header>
       <ProjectSearchBox q={q} code={code} />

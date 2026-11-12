@@ -76,7 +76,7 @@
 .landing .m-list li{display:grid;align-items:center;gap:4px 12px;padding:11px 0;border-top:1px solid var(--l-line);font-size:14px;line-height:1.45}
 .landing .m-list li{grid-template-columns:auto minmax(0,1fr) auto}
 .landing .m-list small{display:block;font-size:12px;color:var(--l-muted)}
-.landing .m-badge{display:inline-grid;place-items:center;flex:none;min-width:40px;height:22px;padding:0 8px;border-radius:999px;background:var(--l-acc);color:var(--l-on-acc);font:700 10px/1 var(--font-sans);letter-spacing:.04em}
+.landing .m-badge{display:inline-grid;place-items:center;flex:none;min-width:40px;height:22px;padding:0 8px;border-radius:999px;background:var(--l-acc);color:var(--l-on-acc);font:500 11px/1 var(--font-sans);letter-spacing:.04em}
 .landing .m-eval{display:grid;gap:8px}
 .landing .m-eval small{font-size:12px;color:var(--l-muted)}
 .landing .m-eval p{font-size:13px;color:var(--l-muted)}

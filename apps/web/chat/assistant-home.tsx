@@ -60,7 +60,7 @@ export function AssistantHome({ sitekey }: { sitekey: string }) {
       <div className="flex size-20 items-center justify-center rounded-full bg-accent">
         <Mark className="size-10 text-primary" />
       </div>
-      <h1 className="mt-6 mb-8 text-center text-2xl leading-[1.4] font-bold tracking-[0.02em] sm:text-[32px]">
+      <h1 className="mt-6 mb-8 text-center text-2xl leading-[1.4] font-semibold tracking-[0.02em] sm:text-[32px]">
         まちの何が知りたいですか？
       </h1>
       <div className="w-full">

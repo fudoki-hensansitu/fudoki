@@ -105,7 +105,7 @@ export function usePageTour(c: TourCtl) {
         maxH: 0.5,
         open: true,
         title: 'お金は分野ごとに分かれています',
-        body: `${c.name}の予算を、福祉・教育のような分野に分けて、それぞれにいくら使っているかを並べています。札を押すと、その分野の中身が開きます。`,
+        body: `${c.name}の予算を、福祉・教育のような分野に分けて、それぞれにいくら使っているかを並べています。行を押すと、その分野の中身が開きます。`,
         visual: <FieldsVisual items={v.fields.map((f) => ({ id: f.id, name: f.name, pct: (f.yen / v.total) * 100 }))} />,
         action: top ? { label: '開く', run: () => c.openField(top.id) } : undefined,
       }
@@ -167,10 +167,10 @@ export function usePageTour(c: TourCtl) {
             <div className="flex items-start gap-3">
               <DoneMark />
               <div className="min-w-0 flex-1">
-                <p className="text-[15px] font-bold">これでひととおりです</p>
+                <p className="text-[15px] font-medium">これでひととおりです</p>
                 <p className="mt-0.5 text-[13px] leading-relaxed text-muted-foreground">分野から事業へ、事業からアシスタントへ。ほかの年度やまちでも同じように見られます。</p>
               </div>
-              <button type="button" onClick={finish} className="shrink-0 rounded-full bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
+              <button type="button" onClick={finish} className="shrink-0 rounded-full bg-primary px-4 py-2 text-[13px] font-medium text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
                 終える
               </button>
             </div>

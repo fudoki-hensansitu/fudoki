@@ -6,7 +6,7 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 
 ## System
 - Genre · editorial（地誌・帳面）
-- Theme · 白い机に生成りの紙。見出しはゴシックで、太さと大きさで階層を作る。色はブランドの青丹とアクセントの金茶、朱と藍は絵の面にだけ置く
+- Theme · 白い机に生成りの紙。見出しはゴシックで、大きさと色で階層を作る。色はブランドの青丹とアクセントの金茶、朱と藍は絵の面にだけ置く
 - Vibe · 静か、紙、帳面、確かめられる、少しの諧謔
 
 **実データそのものが製品の説明を担う。** 紹介の最初の画面に置くのは、実際の自治体の予算を載せた、自治体の頁を模した札。
@@ -14,7 +14,8 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 
 画面は **読み物**（紹介 `/about`・利用条件・案内）と **データの面**（ホーム・自治体の頁・アシスタントなどの報告・分析）に分かれる。token と書体は共通で、
 絵の面（網点・大きな字・朱の楕円）を持つのは読み物だけ。データの面は紙・罫線・数字だけで組む。
-**画面はすべてゴシック（`--font-sans`）で組む。** アプリの中（ホーム・自治体の一覧・個別ページ・アシスタント・会話）も紹介（`/about`）も見出しを含めてゴシックにし、階層は太さと大きさで作る。紹介の見出しは太く（700）詰める。
+**画面はすべてゴシック（`--font-sans`）で組む。** アプリの中（ホーム・自治体の一覧・個別ページ・アシスタント・会話）も紹介（`/about`）も見出しを含めてゴシックにし、階層は大きさと色（前景・`--muted-foreground`）で作る。
+**太さはデータの面では 400〜600 にする。** 本文は 400、ラベル・ボタン・20px 未満の見出しは 500、20px 以上の見出しと要の金額は 600。700 は紹介の見出しだけで、太く詰める。
 
 ## Tokens
 
@@ -154,7 +155,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 ## Components
 
 ```css
-/* 見出しはゴシック。紹介の見出しは 700 で詰める */
+/* 見出しはゴシック。700 は紹介の見出しだけ。データの面の見出しは 600（20px 未満は 500） */
 .text-heading { font-family: var(--font-sans); font-weight: 700; font-style: normal; letter-spacing: var(--letter-spacing-heading); word-break: auto-phrase; text-wrap: balance; }
 .text-body { font-family: var(--font-sans); font-size: var(--text-body); line-height: var(--line-height-body); letter-spacing: var(--letter-spacing-body); line-break: strict; word-break: auto-phrase; overflow-wrap: break-word; text-wrap: pretty; }
 .num { font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: nowrap; }
