@@ -7,6 +7,7 @@ import gzip
 from copy import deepcopy
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import duckdb
@@ -700,16 +701,21 @@ def main() -> None:
     elif args.command == 'check':
         paths = [args.manifest] if args.manifest else manifest.paths()
         count = ready = tables = 0
+        stale = []
         for path in paths:
             document = manifest.read(path)
             for conversion in document['conversions']:
                 manifest.resolved_inputs(document, conversion)
             if document['tables']:
-                manifest.require_current(document)
+                # A stale fingerprint is reported, not refused: the scheduled refresh dry-run compares contents (ADR 0027).
+                stale.extend(f'{path}: {table_id}' for table_id in manifest.stale_tables(document))
                 ready += 1
             count += 1
             tables += len(document['tables'])
-        print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables}))
+        for item in stale:
+            print(f'stale: {item}', file=sys.stderr)
+        print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables,
+                          'stale_tables': len(stale)}))
     elif args.command == 'ocr':
         print(json.dumps(acquire_ocr(args.manifest, json.loads(args.inputs.read_text()),
                                      verify_only=args.verify, ids=args.id), ensure_ascii=False))
@@ -757,7 +763,10 @@ def main() -> None:
         raise SystemExit(1 if failed else 0)
     elif args.command == 'restore':
         document = manifest.read(args.manifest)
-        manifest.require_current(document)
+        if not document['tables']:
+            raise ValueError('Manifest has no complete saved table set')
+        for table_id in manifest.stale_tables(document):
+            print(f'stale: {args.manifest}: {table_id}', file=sys.stderr)
         for table in document['tables']:
             for reference in manifest.table_references(table).values():
                 restored = fetch(reference['object'], remote=args.remote)

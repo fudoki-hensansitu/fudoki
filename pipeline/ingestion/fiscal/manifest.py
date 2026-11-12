@@ -549,13 +549,18 @@ def fingerprint(document: dict, conversion: dict) -> str:
     return fingerprints(document, [conversion])[conversion['id']]
 
 
+def stale_tables(document: dict) -> list[str]:
+    """Saved tables whose fingerprint no longer matches the current code and inputs."""
+    values = fingerprints(document)
+    return [table['table_id'] for table in document['tables']
+            if table['input_fingerprint'] != values[table['conversion_id']]]
+
+
 def require_current(document: dict) -> None:
     if not document['tables']:
         raise ValueError('Manifest has no complete saved table set')
-    values = fingerprints(document)
-    for table in document['tables']:
-        if table['input_fingerprint'] != values[table['conversion_id']]:
-            raise ValueError(f'Stale saved table: {table["table_id"]}')
+    if stale := stale_tables(document):
+        raise ValueError(f'Stale saved table: {stale[0]}')
 
 
 def write(path: Path, document: dict) -> None:
