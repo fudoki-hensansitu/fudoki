@@ -20,7 +20,11 @@ test('紹介の頁は MCP とプライバシーポリシーへ繋ぎ、検索エ
   for (const path of ['/favicon.svg', '/favicon.ico', '/icon.png', '/apple-touch-icon.png', '/og.png', '/robots.txt', '/home/origin.webp', '/home/demo.mp4']) expect(served(path), path).toBe(true)
   expect((await get('/sitemap.xml')).status).toBe(200)
   // AI エージェントが API・MCP を見つける文書（server/agent-discovery.ts）
-  for (const path of ['/.well-known/api-catalog', '/.well-known/mcp/server-card.json']) expect((await get(path)).status, path).toBe(200)
+  const catalog = await get('/.well-known/api-catalog')
+  expect(catalog.headers.get('Content-Type')).toStartWith('application/linkset+json')
+  const card = await get('/.well-known/mcp/server-card.json')
+  expect(card.headers.get('Content-Type')).toBe('application/json')
+  expect(((await card.json()) as { description: string }).description.length).toBeLessThanOrEqual(100)
   const meta = config.head?.meta ?? []
   expect(meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/og.png' })
   // 自治体の OG 画像は Worker が紋章から描く（server/og.ts）。紋章のある自治体は emblem.svg を配る

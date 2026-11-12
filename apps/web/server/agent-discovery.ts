@@ -16,18 +16,20 @@ export const API_CATALOG = {
     },
   ],
 }
+/** RFC 9727 §2: api-catalog の応答（HEAD を含む）が自分を指す Link */
+export const API_CATALOG_LINK = '</.well-known/api-catalog>; rel="api-catalog"'
 export const API_CATALOG_TYPE = 'application/linkset+json; profile="https://www.rfc-editor.org/info/rfc9727"'
 
 /**
- * MCP Server Card（/.well-known/mcp/server-card.json）。name・title・version・説明は apps/api の MCP が initialize で返す値（src/app.ts の mcpServer）と揃える。
- * name は Server Card の規約で reverse-DNS の `<namespace>/<name>`
+ * MCP Server Card（/.well-known/mcp/server-card.json）。title・version は apps/api の MCP が initialize で返す値（src/app.ts の mcpServer）と揃える。
+ * name は Server Card の規約で reverse-DNS の `<namespace>/<name>`、description は schema の上限 100 文字に収め、instructions の要約にする
  */
 export const MCP_SERVER_CARD = {
   $schema: 'https://static.modelcontextprotocol.io/schemas/v1/server-card.schema.json',
   name: 'dev.fudoki/fudoki-api',
   title: '風土記(fudoki)',
   version: '1.0.0',
-  description: '風土記 provides read-only search of Japanese municipal expenditure budgets and settlements, project evaluation sheets, budget proposal press releases and projects followed across years.',
+  description: 'Read-only search of Japanese municipal budgets, settlements, project evaluations and press releases.',
   websiteUrl: 'https://fudoki.dev/',
   repository: { url: 'https://github.com/fudoki-hensansitu/fudoki', source: 'github', subfolder: 'apps/api' },
   remotes: [{ type: 'streamable-http', url: MCP_URL }],
@@ -35,7 +37,7 @@ export const MCP_SERVER_CARD = {
 
 /** 頁の応答に付ける Link ヘッダー（RFC 8288） */
 export const DISCOVERY_LINK = [
-  '</.well-known/api-catalog>; rel="api-catalog"',
+  API_CATALOG_LINK,
   `<${OPENAPI_URL}>; rel="service-desc"; type="${OPENAPI_TYPE}"`,
   `<${DOCS_URL}>; rel="service-doc"`,
 ].join(', ')
