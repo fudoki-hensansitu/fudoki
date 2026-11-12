@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-11-12`
-状態: In Review
+状態: Superseded（頁の文字の置き場と読み方は [page-words の設計](../page-words/dd.md) に移した。R2 の `source-text/` と api の R2 binding はやめ、D1 の `source_page_text` から読む。web の `read_source_page` と内部の RPC はこの設計のまま）
 
 ## Summary
 

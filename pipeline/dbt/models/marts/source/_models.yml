@@ -1,0 +1,28 @@
+version: 2
+models:
+- name: source_page_text
+  description: 出典の頁の文字（事業評価・予算案のプレス発表の PDF）。頁1つが1行。文字の層の語を行にまとめ、列を空白で揃えた形。文字が1字も無い出典は行が無い。
+  columns:
+  - name: page_id
+    description: 頁の識別子。sha256 と頁から作る。
+    data_tests: [not_null, unique]
+  - name: jurisdiction_code
+    description: 全国地方公共団体コード（6桁）。jurisdiction の jurisdiction_code。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('jurisdiction')
+          field: jurisdiction_code
+  - name: sha256
+    description: 出典 PDF の sha256。evaluation_origin・budget_proposal_origin の origin_id と同じ値。
+    data_tests: [not_null]
+  - name: page
+    description: 物理頁（1始まり）。
+    data_tests: [not_null]
+  - name: text
+    description: 頁の文字。12,000字を超える分は切る。文字の無い頁は空文字。
+    data_tests: [not_null]
+  - name: truncated
+    description: 12,000字で切ったか。
+    data_tests: [not_null]
