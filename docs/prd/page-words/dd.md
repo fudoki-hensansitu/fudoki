@@ -73,7 +73,7 @@ flowchart LR
 - key: `words/<sha256>/<物理頁>.json`。1頁1 object にし、1頁を読むたびに資料全体を読まない。資料ごとの `words/<sha256>/index.json` に `title`・`url`・`page_count` を置く。`url` は利用者に示す公式の URL（Wayback の写しなら `landing_url`）。
 - 頁の中身: `{schema_version, number, width, height, words: [[text, x0, y0, x1, y1, size]]}`。位置は 0.1pt に丸める。
 - 対象: 出典の選定の `evaluation_selections`・`press_selections`（`pdf_type: text`）と、事業の取り込みの `results`。どれも風土記が選定した出典なので、D1 に取り込み前の出典もここに入る。
-- 作り直し: 語の層のコードの指紋、または `title`・`url` が変わった出典だけを作り直す。`index.json` に作ったときの指紋と `title`・`url` を書いて比べる。
+- 作り直し: 語の層のコードの指紋、Poppler の版、または `title`・`url` が変わった出典だけを作り直す。`index.json` に作ったときの指紋・Poppler の版・`title`・`url` を書いて比べる。`index.json` は `page_count` 頁の object をすべて書いたあとに最後に書き、途中で止まった出典は次の実行で作り直される。
 - 既存の `source-text/` は、web が新しいバケットを読むようになってから消す（消すときに確認を取る）。
 
 ### web が頁の文字を作る
