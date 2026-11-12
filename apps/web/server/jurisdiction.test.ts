@@ -248,7 +248,7 @@ describe('自治体の個別ページ', () => {
 describe('内訳の API', () => {
   test('全款を返し、1000件を超える項と目・節を省略しない', async () => {
     const north: Env = { ...env, API: fixtureApi({ code: '131172', name: '北区', extraNodes: Array.from({ length: 1001 }, (_, i) => node({ node_id: id(1000 + i), parent_node_id: id(2), node_kind: '項', name: `追加項${i}`, amount_yen: 0, fiscal_year: 2025 })) }) }
-    const res = await get('/api/jurisdictions/flow/131172/2025/setsu', north)
+    const res = await get('/data/jurisdictions/flow/131172/2025/setsu', north)
     expect(res.status).toBe(200)
     const flows = await res.json() as { kan: { id: string }; kou: { moku: { setsu: unknown[] }[] }[] }[]
     expect(flows).toHaveLength(2)
@@ -262,7 +262,7 @@ describe('内訳の API', () => {
       node({ node_id: id(21), parent_node_id: id(2), node_kind: '項', name: '総務管理費', amount_yen: 0, fiscal_year: 2025 }),
     ] }) }
     for (const depth of ['kou', 'moku']) {
-      const res = await get(`/api/jurisdictions/flow/132012/2025/${depth}`, missing)
+      const res = await get(`/data/jurisdictions/flow/132012/2025/${depth}`, missing)
       expect(res.status).toBe(200)
       const flows = await res.json() as { kan: { id: string }; kou: { yen: number; amountMissing?: true }[] }[]
       expect(flows.find((flow) => flow.kan.id === id(1))!.kou[0]!.amountMissing).toBe(true)
@@ -276,7 +276,7 @@ describe('内訳の API', () => {
       node({ node_id: id(31), parent_node_id: id(20), node_kind: '目', name: '学校費', amount_yen: 50, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '09.1' }),
       node({ node_id: id(32), parent_node_id: id(20), node_kind: '目', name: '保育費', amount_yen: 70, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '10' }),
     ] }) }
-    const res = await get('/api/jurisdictions/flow/132012/2025/moku?view=cofog', cofog)
+    const res = await get('/data/jurisdictions/flow/132012/2025/moku?view=cofog', cofog)
     expect(res.status).toBe(200)
     const flows = await res.json() as { kan: { id: string; name: string; yen: number; amountMissing?: true }; kou: { name: string; yen: number; amountMissing?: true; moku: { name: string }[] }[] }[]
     // 款（子ども教育費）は使わず、COFOG の名前で分ける
@@ -304,7 +304,7 @@ describe('内訳の API', () => {
         return page({ 節: [node({ axis: '節', is_subject: false, name: '負担金補助及び交付金', amount_yen: 3000 }), node({ axis: '節', is_subject: false, name: '旅費', amount_yen: 500 })] }, null)
       return new Response('invalid page token', { status: 400 })
     } } }
-    const res = await get(`/api/jurisdictions/setsu/${id(11)}`, paginated)
+    const res = await get(`/data/jurisdictions/setsu/${id(11)}`, paginated)
     expect(res.status).toBe(200)
     expect(await res.json()).toEqual([
       { name: '負担金補助及び交付金', yen: 3000 },
@@ -314,13 +314,13 @@ describe('内訳の API', () => {
   })
 
   test('id の形が違えば 400、流量の binding が無ければ 503、正しければ内訳を返す', async () => {
-    expect((await get('/api/jurisdictions/drill/not-an-id')).status).toBe(400)
-    expect((await get(`/api/jurisdictions/setsu/${id(11)}`, { API })).status).toBe(503)
-    const ok = await get(`/api/jurisdictions/setsu/${id(11)}`)
+    expect((await get('/data/jurisdictions/drill/not-an-id')).status).toBe(400)
+    expect((await get(`/data/jurisdictions/setsu/${id(11)}`, { API })).status).toBe(503)
+    const ok = await get(`/data/jurisdictions/setsu/${id(11)}`)
     expect(ok.status).toBe(200)
     expect(await ok.json()).toEqual([{ name: '扶助費', yen: 250 }, { name: '委託料', yen: 50 }])
   })
   test('款でない科目の流れは返さない', async () => {
-    expect((await get(`/api/jurisdictions/drill/${id(11)}`)).status).toBe(502)
+    expect((await get(`/data/jurisdictions/drill/${id(11)}`)).status).toBe(502)
   })
 })

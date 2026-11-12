@@ -1,6 +1,6 @@
 // ホーム（/）。住んでいるまちのダッシュボード（総額・何に使っている・始めた事業・やめた事業・事業評価）と、ほかのまちを見る検索。
 // 住んでいるまちを決めていないときは、はじめての流れ（onboarding.tsx: まちを選ぶ → 要点 → ツアー → チェックリスト）を出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
-// データは自治体の頁と同じ /api/jurisdictions/app/:code を読み、yearView で年度ごとに見る
+// データは自治体の頁と同じ /data/jurisdictions/app/:code を読み、yearView で年度ごとに見る
 import * as React from 'react'
 import { useRouter } from '@void/react'
 import { ArrowRightIcon, ArrowSquareOutIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
@@ -49,7 +49,7 @@ function useSnapshot(code: string | null) {
     setD(null)
     setFailed(false)
     if (!code) return
-    fetch(`/api/jurisdictions/app/${code}`)
+    fetch(`/data/jurisdictions/app/${code}`)
       .then((r) => (r.ok ? (r.json() as Promise<Snapshot>) : Promise.reject(r)))
       .then((x) => {
         if (!alive) return

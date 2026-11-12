@@ -1,4 +1,4 @@
-// 自治体の個別ページ（/tokyo/nakano）・ホームの自治体の要約のデータと、画面が款・目の内訳を引く /api/jurisdictions/*・sitemap の応答。
+// 自治体の個別ページ（/tokyo/nakano）・ホームの自治体の要約のデータと、画面が款・目の内訳を引く /data/jurisdictions/*・sitemap の応答。
 // データは apps/api の歳出の検索から組み、変わるのは取り込みのときだけなので、Worker の cache に1時間置く。頁は pages/ の loader が、
 // 内訳の API と sitemap は routes/ がここを呼ぶ。内訳の API は誰でも読める GET で、IP ごとの流量と id の形の検査で守る
 import { sitemapXml } from '../jurisdiction/html'
@@ -53,7 +53,7 @@ export function pageYearsOf(e: CatalogEntry): number[] {
 
 /** OG 画像（server/og.ts）に描くもの。紋章が無い・決算が無い・分野の金額が無い自治体は null（404 にして全頁共通の画像のままにする）。
  * 帰属表示の要る紋章（CC BY など）は、描き起こした人とライセンスを画像の隅に書く */
-export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<(OgInput & { cacheKey: string }) | null> {
+export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<OgInput | null> {
   const emblem = EMBLEMS[code]
   if (!emblem) return null
   const entry = (await catalog(env)).find((e) => e.code === code)
@@ -76,8 +76,6 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
     emblemSvg,
     logoSvg,
     ...(emblem.author ? { credit: `紋章の SVG 化: ${emblem.author} / ${emblem.license}` } : {}),
-    // 同じ年度の決算なら同じ画像。字形・配置を変えたら版を上げる
-    cacheKey: `og-v2/${code}-${latest.year}-${latest.yen}`,
   }
 }
 
@@ -103,12 +101,12 @@ async function guarded(env: Env, request: Request, id: string, run: () => Promis
   }
 }
 
-/** 款・項の内訳（/api/jurisdictions/drill/:id） */
+/** 款・項の内訳（/data/jurisdictions/drill/:id） */
 export const drillResponse = (env: Env, request: Request, id: string) => guarded(env, request, id, () => memo<Drill>(`drill-${id}`, () => loadDrillById(env, id)))
-/** 目の節（/api/jurisdictions/setsu/:id） */
+/** 目の節（/data/jurisdictions/setsu/:id） */
 export const setsuResponse = (env: Env, request: Request, id: string) => guarded(env, request, id, () => memo<Setsu[]>(`setsu-${id}`, () => loadSetsu(env, id)))
 
-/** 一つの自治体・年度の全款の流れ（/api/jurisdictions/flow/:code/:year/:depth）。?view=cofog なら分野 → 款の流れ */
+/** 一つの自治体・年度の全款の流れ（/data/jurisdictions/flow/:code/:year/:depth）。?view=cofog なら分野 → 款の流れ */
 export async function flowResponse(env: Env, request: Request, { code, year, depth }: { code: string; year: string; depth: string }): Promise<Response> {
   try {
     if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(year) || !['kou', 'moku', 'setsu'].includes(depth))
@@ -131,7 +129,7 @@ export async function flowResponse(env: Env, request: Request, { code, year, dep
   }
 }
 
-/** 一つの自治体・年度の会計ごとの総額（/api/jurisdictions/accounts/:code/:year）。?phase=initial なら当初予算 */
+/** 一つの自治体・年度の会計ごとの総額（/data/jurisdictions/accounts/:code/:year）。?phase=initial なら当初予算 */
 export async function accountsResponse(env: Env, request: Request, { code, year }: { code: string; year: string }): Promise<Response> {
   try {
     if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(year)) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度の指定が違います')
@@ -146,10 +144,10 @@ export async function accountsResponse(env: Env, request: Request, { code, year 
   }
 }
 
-/** 自治体の頁（アプリ型）の全年度のデータ。頁の loader と /api/jurisdictions/app/:code が共有する。冷えていると API から組むのに十数秒かかる */
+/** 自治体の頁（アプリ型）の全年度のデータ。頁の loader と /data/jurisdictions/app/:code が共有する。冷えていると API から組むのに十数秒かかる */
 export const appData = (env: Env, entry: CatalogEntry) => memo<Snapshot>(`app-${entry.code}-${entry.initialYears.at(-1)}-${entry.settlementYears.at(-1)}`, () => loadAppData(env, entry))
 
-/** 頁の loader が待つ長さ。温まっていれば数十 ms で返る。冷えているときは待たずに頁を返し、画面が /api/jurisdictions/app から取る
+/** 頁の loader が待つ長さ。温まっていれば数十 ms で返る。冷えているときは待たずに頁を返し、画面が /data/jurisdictions/app から取る
  * （頁を移る時の JSON も loader を待つので、ここで長く待つとクリックしてから頁が変わらない） */
 const APP_DATA_WAIT_MS = 2500
 
@@ -170,16 +168,15 @@ export async function appDataForPage(env: Env, entry: CatalogEntry, year: number
   }
 }
 
-/** 自治体の頁（アプリ型）のデータ（/api/jurisdictions/app/:code）。年度ごとの款項目・事業・施策・評価シート。?year= ならその年度の分だけ（sliceSnapshot） */
-export async function appDataResponse(env: Env, request: Request, code: string): Promise<Response> {
+/** 自治体の頁（アプリ型）のデータ（/data/jurisdictions/app/:code）。年度ごとの款項目・事業・施策・評価シート。/data/jurisdictions/app/:code/:year はその年度の分だけ（sliceSnapshot） */
+export async function appDataResponse(env: Env, request: Request, code: string, yearParam?: string): Promise<Response> {
   try {
     if (!/^\d{6}$/.test(code)) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コードの形が違います')
-    const yearParam = new URL(request.url).searchParams.get('year')
-    if (yearParam !== null && !/^\d{4}$/.test(yearParam)) throw new HttpError(400, 'INVALID_ARGUMENT', '年度の形が違います')
+    if (yearParam !== undefined && !/^\d{4}$/.test(yearParam)) throw new HttpError(400, 'INVALID_ARGUMENT', '年度の形が違います')
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     const entry = (await catalog(env)).find((e) => e.code === code)
     if (!entry) throw new HttpError(404, 'NOT_FOUND', 'この自治体は収録されていません')
-    if (yearParam === null) return json(await appData(env, entry))
+    if (yearParam === undefined) return json(await appData(env, entry))
     const year = Number(yearParam)
     if (!appYears(entry).some((y) => y.year === year)) throw new HttpError(404, 'NOT_FOUND', 'この年度は頁にありません')
     return json(sliceSnapshot(await appData(env, entry), year))

@@ -4,6 +4,7 @@
 import { defineConfig } from 'void/config'
 import { SW_REGISTER } from './pwa'
 import { THEME_SCRIPT } from './nav/theme'
+import { NAV_SCRIPT } from './nav/nav-state'
 
 // PR ごとの preview の build か。cf previews deploy と deploy-preview-web.yml が CLOUDFLARE_PREVIEW_BUILD=true で build する。
 // void は Cloudflare の設定を cf の形へ移すとき wrangler の previews を受け付けないので、preview の差し替えはここで分ける
@@ -32,6 +33,22 @@ const vars = {
 }
 
 export default defineConfig({
+  // CDN（Void の ISR）に置く応答。ISR_CACHE（KV）の binding があるときだけ働き、過ぎたら古い応答を返しながら裏で作り直す。
+  // 自治体の頁は各頁の .server.ts の revalidate。cookie の付いた要求・/api の下・200 でない応答・no-store の応答は置かない。deploy のたびに空になる
+  routing: {
+    revalidate: {
+      // 画面が取る自治体のデータ（routes/data/）。データは取り込みのときだけ変わる
+      '/data/*': 3600,
+      '/sitemap.xml': 3600,
+      // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く
+      '/jurisdictions/*': 86400,
+    },
+    // ISR の key は既定で query を落とす。流れ図・会計の総額は query で表示を分けるので key に残す
+    revalidateQueryAllowlist: {
+      '/data/jurisdictions/flow/*': ['view', 'phase', 'account'],
+      '/data/jurisdictions/accounts/*': ['phase'],
+    },
+  },
   // 全頁の head の既定。頁ごとの title・説明・canonical は各頁の .server.ts の head。theme-color と View Transition の opt-in は middleware/01.site.ts
   head: {
     htmlAttrs: { lang: 'ja' },
@@ -59,8 +76,8 @@ export default defineConfig({
       { rel: 'llms-txt', href: '/llms.txt' },
     ],
     // service worker（routes/sw.js.ts）は繋がらないときの案内だけを持つ。
-    // テーマ（nav/theme.ts）は描く前に当てる。サーバーはテーマで HTML を書き分けない
-    script: [{ innerHTML: THEME_SCRIPT }, { innerHTML: SW_REGISTER }],
+    // テーマ（nav/theme.ts）とサイドバーの開閉（nav/nav-state.ts）は描く前に当てる。サーバーはどちらでも HTML を書き分けない
+    script: [{ innerHTML: THEME_SCRIPT }, { innerHTML: NAV_SCRIPT }, { innerHTML: SW_REGISTER }],
   },
   worker: {
     compatibility_date: '2026-08-23',

@@ -433,7 +433,7 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
     if (!near || detail) return
     setError(false)
     const controller = new AbortController()
-    const url = `/api/jurisdictions/flow/${data.code}/${year.year}/setsu?${new URLSearchParams({ ...(view === 'cofog' ? { view: 'cofog' } : {}), ...(phase === 'initial' ? { phase: 'initial' } : {}), ...(account ? { account } : {}) })}`
+    const url = `/data/jurisdictions/flow/${data.code}/${year.year}/setsu?${new URLSearchParams({ ...(view === 'cofog' ? { view: 'cofog' } : {}), ...(phase === 'initial' ? { phase: 'initial' } : {}), ...(account ? { account } : {}) })}`
     fetchJson<Drill[]>(url, controller.signal).then(
       (value) => {
         if (controller.signal.aborted) return

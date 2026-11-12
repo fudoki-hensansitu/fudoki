@@ -359,7 +359,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     setAccounts(undefined)
     setAccount(GENERAL)
     const controller = new AbortController()
-    fetch(`/api/jurisdictions/accounts/${page.code}/${v.year}${phase === 'initial' ? '?phase=initial' : ''}`, { signal: controller.signal })
+    fetch(`/data/jurisdictions/accounts/${page.code}/${v.year}${phase === 'initial' ? '?phase=initial' : ''}`, { signal: controller.signal })
       .then((r) => (r.ok ? r.json() as Promise<AccountTotal[]> : []))
       .then((x) => { if (!controller.signal.aborted) setAccounts(x) }, () => { if (!controller.signal.aborted) setAccounts([]) })
     return () => controller.abort()
@@ -690,7 +690,7 @@ function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   React.useEffect(() => {
     setDrills(undefined)
     const controller = new AbortController()
-    fetch(`/api/jurisdictions/flow/${page.code}/${v.year}/kou?${new URLSearchParams({ view: 'cofog', ...(initial ? { phase: 'initial' } : {}) })}`, { signal: controller.signal })
+    fetch(`/data/jurisdictions/flow/${page.code}/${v.year}/kou?${new URLSearchParams({ view: 'cofog', ...(initial ? { phase: 'initial' } : {}) })}`, { signal: controller.signal })
       .then((r) => (r.ok ? (r.json() as Promise<Drill[]>) : Promise.reject(new Error(String(r.status)))))
       .then((x) => !controller.signal.aborted && setDrills(x), () => !controller.signal.aborted && setDrills(null))
     return () => controller.abort()
@@ -892,7 +892,7 @@ export function AppPage({ data, snapshot, sitekey, initialYear, initialField, in
     if (ready) return
     const controller = new AbortController()
     setFailed(null)
-    fetch(`/api/jurisdictions/app/${data.code}?year=${year}`, { signal: controller.signal })
+    fetch(`/data/jurisdictions/app/${data.code}/${year}`, { signal: controller.signal })
       .then((r) => (r.ok ? (r.json() as Promise<Snapshot>) : Promise.reject(new Error(String(r.status)))))
       .then(
         (part) => setD((prev) => (prev ? mergeSnapshot(prev, part) : part)),

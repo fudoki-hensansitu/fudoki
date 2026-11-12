@@ -12,7 +12,7 @@ export type Town = RecentJurisdiction
 /** 収録している自治体の一覧。必要になったときに一度だけ読み、失敗したら次に読み直す */
 let townsPromise: Promise<MapEntry[]> | null = null
 export const loadTowns = () =>
-  (townsPromise ??= fetch('/api/towns')
+  (townsPromise ??= fetch('/data/towns')
     .then((r) => (r.ok ? (r.json() as Promise<MapEntry[]>) : Promise.reject(r)))
     .catch(() => {
       // 失敗は覚えず、次に引くときにもう一度取りに行く

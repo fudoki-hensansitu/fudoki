@@ -1,7 +1,8 @@
 // 頁の Content-Security-Policy。middleware/01.site.ts が HTML の応答に付け、View の器（routes/view-frame.ts）は自分の policy を持つ。
-// script は自分の配る JS・service worker の登録とテーマ（inline、hash で許す）・Turnstile・Cloudflare Web Analytics だけ。style は React の style 属性と inline の <style> があるので unsafe-inline を残す
+// script は自分の配る JS・service worker の登録・テーマ・サイドバーの開閉（inline、hash で許す）・Turnstile・Cloudflare Web Analytics だけ。style は React の style 属性と inline の <style> があるので unsafe-inline を残す
 import { SW_REGISTER } from '../pwa'
 import { THEME_SCRIPT } from '../nav/theme'
+import { NAV_SCRIPT } from '../nav/nav-state'
 
 const TURNSTILE = 'https://challenges.cloudflare.com'
 // Cloudflare Web Analytics。zone の設定で edge が HTML に beacon の script を差し込み、計測を cloudflareinsights.com へ送る
@@ -15,7 +16,7 @@ const sha256 = async (text: string) => btoa(String.fromCharCode(...new Uint8Arra
 let page: Promise<string> | undefined
 /** 頁（View の器以外の HTML）の policy。他のサイトの frame には入れさせない */
 export const pageCsp = () =>
-  (page ??= Promise.all([SW_REGISTER, THEME_SCRIPT].map(sha256)).then((hashes) =>
+  (page ??= Promise.all([SW_REGISTER, THEME_SCRIPT, NAV_SCRIPT].map(sha256)).then((hashes) =>
     [
       "default-src 'self'",
       `script-src 'self' ${hashes.map((h) => `'sha256-${h}'`).join(' ')} ${TURNSTILE} ${INSIGHTS_SCRIPT}`,
