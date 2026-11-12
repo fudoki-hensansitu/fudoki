@@ -303,10 +303,11 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
 function RevealLoading({ town, onOpen, onBack }: { town: Town; onOpen: () => void; onBack: () => void }) {
   return (
     <RevealFrame town={town} onOpen={onOpen} onBack={onBack} busy>
-      {[{ w: 'w-36', h: 'h-8 sm:h-9' }, { w: 'w-24', h: 'h-6' }, { w: 'w-40', h: 'h-6' }].map((x, i) => (
+      {/* 行の高さは読み込んだあとの文字の行の高さ（32px・20px・18px の 1.5 倍）に合わせ、札の高さを跳ばさない */}
+      {[{ box: 'h-[42px] sm:h-12', bar: 'h-8 w-36' }, { box: 'h-[30px]', bar: 'h-6 w-24' }, { box: 'h-[27px]', bar: 'h-6 w-40' }].map((x, i) => (
         <div key={i} className="flex items-center justify-between gap-x-4 py-3 first:pt-1">
           <dt><Skeleton className="h-4 w-24" /></dt>
-          <dd><Skeleton className={cn(x.h, x.w)} /></dd>
+          <dd className={cn('flex items-center', x.box)}><Skeleton className={x.bar} /></dd>
         </div>
       ))}
     </RevealFrame>
