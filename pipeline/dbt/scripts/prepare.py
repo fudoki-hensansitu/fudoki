@@ -160,8 +160,19 @@ def load_jurisdictions(path: Path, selections: Path = SELECTIONS) -> list[tuple[
     return [(code, entry['name'], entry['ocdId'], official_url(code)) for code, entry in sorted(registry.items())]
 
 
-def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = False) -> dict:
+def only_jurisdictions(declarations: list[dict], jurisdictions: set[str]) -> list[dict]:
+    """取り込みの表を、その自治体のものだけに絞る（その自治体だけを build して serving:sync --jurisdiction で流す）。"""
+    for source in declarations:
+        if source['name'] in ('fiscal_pdf', 'fiscal_csv'):
+            source['tables'] = [t for t in source['tables'] if t['meta']['jurisdiction'] in jurisdictions]
+    return declarations
+
+
+def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = False,
+            jurisdictions: set[str] | None = None) -> dict:
     declarations = yaml.safe_load((DBT / 'models/staging/fiscal/_sources.yml').read_text())['sources']
+    if jurisdictions:
+        declarations = only_jurisdictions(declarations, jurisdictions)
     write_relations(declarations)
     provided = set(candidate.rglob('manifest.json')) if candidate is not None else set()
     if candidate is not None and not provided:
@@ -268,6 +279,8 @@ def main() -> None:
                              '(legacy jurisdiction/manifest.json also supported); other targets use cached saved objects')
     parser.add_argument('--remote', action='store_true', help='Restore missing saved objects with cf (read only)')
     parser.add_argument('--build', action='store_true', help='Build and test the expenditure marts after preparation')
+    parser.add_argument('--jurisdiction', action='append', metavar='CODE',
+                        help='Load only these jurisdictions\' fiscal tables (repeatable), for serving:sync --jurisdiction')
     args = parser.parse_args()
     if args.remote and args.candidate_dir:
         parser.error('--remote and --candidate-dir are mutually exclusive')
@@ -275,7 +288,7 @@ def main() -> None:
     profile = yaml.safe_load((DBT / 'profiles.yml').read_text())['fudoki']['outputs']['dev']
     warehouse = (DBT / profile['path']).resolve()
     candidate = args.candidate_dir.resolve() if args.candidate_dir else None
-    result = prepare(warehouse, candidate, remote=args.remote)
+    result = prepare(warehouse, candidate, remote=args.remote, jurisdictions=set(args.jurisdiction or []))
     if args.build:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
