@@ -53,7 +53,8 @@ export type ListPage = { rows: ProjRow[]; total: number; capped: boolean; next: 
 export const listKey = (q: ListQuery) => JSON.stringify([q.code, q.year, q.kind, q.filter, q.prevKind ?? null, q.subjects ?? null, q.q?.trim() || null])
 
 const clean = (name: string) => name.replace(/【[^】]*】/g, '').trim()
-const deptOf = (name: string) => name.match(/【([^】]*)】\s*$/)?.[1] ?? null
+/** 出典の事業名の【】は所管課。名前からは外して別に持つ */
+const deptOf = (name: string) => name.match(/【([^】]*)】/)?.[1] ?? null
 
 function toRow(y: YearRow, kind: Kind): ProjRow {
   return {
