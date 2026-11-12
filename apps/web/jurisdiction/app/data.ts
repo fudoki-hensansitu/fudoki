@@ -30,7 +30,45 @@ export type Snapshot = {
   projects: Proj[]
   measures: Measure[]
   sheets: Sheet[]
+  /** 中の事業（kids）・施策・評価シートを持っている年度。無ければ全部の年度 */
+  loaded?: number[]
 }
+
+/** 頁の年度の分だけにしたもの。年度ごとの総額・事業の年度ごとの金額は前の年度との比べに使うので全部残し、
+ * 大きい中の事業・施策・評価シートだけをその年度に絞る（品川区は全年度で約540KB、1年度で約170〜320KB） */
+export function sliceSnapshot(d: Snapshot, year: number): Snapshot {
+  const ys = String(year)
+  return {
+    ...d,
+    projects: d.projects.map((p) => ({ ...p, kids: p.kids[ys] ? { [ys]: p.kids[ys] } : {} })),
+    measures: d.measures.filter((m) => m.fy === year),
+    sheets: d.sheets.filter((s) => s.fy === year),
+    loaded: [year],
+  }
+}
+
+/** 年度ごとに取った分を足し合わせる。同じ自治体の同じ版（server の cache が同じ）から切り出したものだけを渡す */
+export function mergeSnapshot(a: Snapshot, b: Snapshot): Snapshot {
+  const have = loadedYears(a)
+  const add = loadedYears(b).filter((y) => !have.includes(y))
+  if (!add.length) return a
+  const fresh = (fy: number) => add.includes(fy)
+  const kids = new Map(b.projects.map((p) => [p.id, p.kids]))
+  const ids = new Set(a.projects.map((p) => p.id))
+  return {
+    ...a,
+    projects: [
+      ...a.projects.map((p) => ({ ...p, kids: { ...p.kids, ...Object.fromEntries(Object.entries(kids.get(p.id) ?? {}).filter(([y]) => fresh(Number(y)))) } })),
+      ...b.projects.filter((p) => !ids.has(p.id)),
+    ],
+    measures: [...a.measures, ...b.measures.filter((m) => fresh(m.fy))],
+    sheets: [...a.sheets, ...b.sheets.filter((s) => fresh(s.fy))],
+    loaded: [...have, ...add],
+  }
+}
+
+/** 中の事業・施策・評価シートを持っている年度 */
+export const loadedYears = (d: Snapshot) => d.loaded ?? Object.keys(d.years).map(Number)
 
 export type Field = DomainFrame & { yen: number }
 

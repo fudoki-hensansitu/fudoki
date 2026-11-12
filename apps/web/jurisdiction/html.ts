@@ -3,9 +3,13 @@
 import type { CatalogEntry } from '../server/jurisdiction'
 import { assetPath } from './assets'
 import { jurisdictionPath } from './path'
-import { appPageYears, formatYen, TAB_SLUGS, type PageData } from './types'
+import { appPageYears, formatYen, TAB_SLUGS, type PageData, type PageTab } from './types'
+import { DOMAIN_FRAMES, OTHER_FRAME } from './domains'
 
 const ORIGIN = 'https://fudoki.dev'
+/** 風土記のデータを配る条件（利用規約）。構造化データの Dataset の license に書く */
+const LICENSE_URL = 'https://docs.fudoki.dev/terms'
+const FIELDS = [...DOMAIN_FRAMES, OTHER_FRAME]
 /** JSON を script の中に置くときに </script> や <!-- で抜けないようにする */
 const inlineJson = (v: unknown) => JSON.stringify(v).replace(/</g, '\\u003c').replace(/\u2028/g, '\\u2028').replace(/\u2029/g, '\\u2029')
 
@@ -50,17 +54,44 @@ export function pageDescription(d: PageData): string {
   return `${d.name}の${reiwaFull(latest.year)}決算（一般会計）の歳出は約${formatYen(latest.yen)}。いちばん大きい分野は${topText}。決算書の歳出を事業の単位まで、出典の頁と並べて見られます。`
 }
 
-/** 個別ページの title。検索語の「◯◯区 予算」「◯◯区 決算」「令和6年度」を入れる。予算があれば予算・決算の両方を年度つきで出す */
-export function pageTitle(d: PageData): string {
-  const latest = d.years.at(-1)!
-  const budget = latestBudget(d)
-  return budget
-    ? `${d.name}の予算と決算｜${reiwaFull(budget.year)}予算・${reiwaFull(latest.year)}決算｜風土記`
-    : `${d.name}の決算（${reiwaFull(latest.year)}）｜何にいくら使った？｜風土記`
+/** 頁の区分。まとめ（無し）・タブの頁・分野の頁 */
+export type Section = { tab: Exclude<PageTab, 'overview'> } | { field: string }
+
+/** その年度の当初予算と決算（一般会計）の歳出の総額。金額の欠けたものは無いことにする */
+const amountsOf = (d: PageData, year: number) => ({
+  budget: d.budgets.find((b) => b.year === year && !b.amountMissing && b.yen > 0)?.yen ?? null,
+  settlement: d.years.find((y) => y.year === year)?.yen ?? null,
+})
+
+/** 頁の title。「◯◯区の予算と決算（令和8年度）｜風土記」のように、何の頁か・年度・サイト名だけにする。検索語の「◯◯区 予算」「◯◯区 決算」「令和8年度」を入れる */
+export function pageTitle(d: PageData, year: number, section?: Section): string {
+  const y = reiwaFull(year)
+  const subject = (() => {
+    if (!section) return latestBudget(d) ? 'の予算と決算' : 'の決算'
+    if ('tab' in section) return section.tab === 'projects' ? 'の事業一覧' : section.tab === 'money' ? 'の当初予算' : 'の決算'
+    return `の${FIELDS.find((f) => f.id === section.field)?.name ?? '分野'}`
+  })()
+  return `${d.name}${subject}（${y}）｜風土記`
 }
 
-/** 既定でない年度の頁（/tokyo/shinagawa/2024）の title・説明文。その年度に載っている決算か当初予算の金額で書く */
-export function yearHead(d: PageData, year: number): { title: string; description: string; name: string } {
+/** 頁の説明文。検索結果に出るので、金額は API の値だけで書く（人口や仮の値は入れない）。タブ・分野の頁はその頁に何があるかを書く */
+export function pageDescriptionOf(d: PageData, year: number, section?: Section): string {
+  const y = reiwaFull(year)
+  const { budget, settlement } = amountsOf(d, year)
+  if (!section) return year === appPageYears(d)[0] ? pageDescription(d) : yearHead(d, year).description
+  if ('tab' in section) {
+    if (section.tab === 'projects')
+      return `${d.name}の${y}の事業を、金額の大きい順に並べています。新しく始める事業・やめた事業や事業評価も、出典の資料と並べて見られます。`
+    if (section.tab === 'money')
+      return `${d.name}の${y}当初予算（一般会計）の歳出${budget ? `は約${formatYen(budget)}。その` : 'の'}お金の流れを、分野ごと・款項目ごとに図で見られます。予算書の頁と並べて確かめられます。`
+    return `${d.name}の${y}決算（一般会計）の歳出${settlement ? `は約${formatYen(settlement)}。` : '。'}何にいくら使ったかを、分野ごと・款項目ごとに図で見られます。決算書の頁と並べて確かめられます。`
+  }
+  const field = FIELDS.find((f) => f.id === section.field)
+  return `${d.name}の${y}の${field?.name ?? 'この分野'}の分野にかけるお金と、その事業。出典の資料と並べて見られます。`
+}
+
+/** 既定でない年度の頁（/tokyo/shinagawa/2024）の説明文と Dataset の名前。その年度に載っている決算か当初予算の金額で書く */
+export function yearHead(d: PageData, year: number): { description: string; name: string } {
   const settlement = d.years.find((y) => y.year === year)
   const budget = d.budgets.find((b) => b.year === year && !b.amountMissing && b.yen > 0)
   const y = reiwaFull(year)
@@ -68,47 +99,51 @@ export function yearHead(d: PageData, year: number): { title: string; descriptio
     // cofogFlow は最新の決算の年度の分だけ持つ
     const top = settlement.year === d.years.at(-1)!.year ? d.cofogFlow.find((f) => f.kan.id !== 'cofog-none')?.kan : undefined
     return {
-      title: `${d.name}の決算（${y}）｜何にいくら使った？｜風土記`,
       description: `${d.name}の${y}決算（一般会計）の歳出は約${formatYen(settlement.yen)}。${top ? `いちばん大きい分野は${top.name}（${formatYen(top.yen)}）。` : ''}決算書の歳出を事業の単位まで、出典の頁と並べて見られます。`,
       name: `${d.name}の歳出（${y}決算・一般会計）`,
     }
   }
   if (budget) {
     return {
-      title: `${d.name}の予算（${y}）｜何にいくら使う？｜風土記`,
       description: `${d.name}の${y}当初予算（一般会計）の歳出は約${formatYen(budget.yen)}。予算書の歳出を事業の単位まで、出典の頁と並べて見られます。`,
       name: `${d.name}の歳出（${y}当初予算・一般会計）`,
     }
   }
   return {
-    title: `${d.name}の事業（${y}）｜風土記`,
     description: `${d.name}の${y}の事業と、その振り返り。出典の資料と並べて見られます。`,
     name: `${d.name}の事業（${y}）`,
   }
 }
 
-/** 自治体の頁の head。year は既定でない年度の頁のときだけ渡す */
-/** sub は分野・タブの頁。題の頭に名前を足し、canonical をその頁にする */
-export function pageHead(d: PageData, year?: number, sub?: { label: string; path: string }): Head {
+/** 頁の path の、年度の段より後ろ（/projects、/fields/fukushi） */
+const sectionPath = (section?: Section) => (!section ? '' : 'tab' in section ? `/${TAB_SLUGS[section.tab]}` : `/fields/${section.field}`)
+
+/** 自治体の頁の head。year は年度の段のある頁のときだけ渡す。section は分野・タブの頁 */
+export function pageHead(d: PageData, year?: number, section?: Section): Head {
   const latest = d.years.at(-1)!
   const budget = latestBudget(d)
   const base = jurisdictionPath(d.code)
-  const past = year !== undefined && year !== appPageYears(d)[0] ? yearHead(d, year) : null
-  const title = (sub ? `${sub.label}｜` : '') + (past?.title ?? pageTitle(d))
-  const description = past?.description ?? pageDescription(d)
+  const shown = year ?? appPageYears(d)[0]!
+  const past = shown !== appPageYears(d)[0] ? yearHead(d, shown) : null
+  const title = pageTitle(d, shown, section)
+  const description = pageDescriptionOf(d, shown, section)
   // 最新の年度の頁（/tokyo/nakano/2026）は入口（/tokyo/nakano）と同じ中身なので、canonical を入口にする。
   // 分野・タブの頁は年度の段の無い URL が 301 なので、最新の年度でも年度の段つきにする
-  const canonical = `${ORIGIN}${year !== undefined && (past || sub) ? `${base}/${year}` : base}${sub?.path ?? ''}`
+  const canonical = `${ORIGIN}${past || section ? `${base}/${shown}` : base}${sectionPath(section)}`
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
     name: past?.name ?? (budget ? `${d.name}の歳出（${reiwaFull(budget.year)}当初予算・${reiwaFull(latest.year)}決算・一般会計）` : `${d.name}の歳出（${reiwaFull(latest.year)}決算・一般会計）`),
     keywords: [`${d.name} 決算`, ...(budget ? [`${d.name} 予算`] : []), '歳出', '一般会計'],
-    temporalCoverage: past ? `${year}-04-01/${year! + 1}-03-31` : `${d.years[0]!.year}-04-01/${(budget?.year ?? latest.year) + 1}-03-31`,
+    temporalCoverage: past ? `${shown}-04-01/${shown + 1}-03-31` : `${d.years[0]!.year}-04-01/${(budget?.year ?? latest.year) + 1}-03-31`,
     description,
     url: canonical,
     inLanguage: 'ja',
-    spatialCoverage: { '@type': 'AdministrativeArea', name: `${d.prefecture}${d.name}` },
+    // 配る条件（docs.fudoki.dev の利用規約）。Google のデータセット検索は license の無い Dataset に警告を出す
+    license: LICENSE_URL,
+    isAccessibleForFree: true,
+    // spatialCoverage は Place を求める。AdministrativeArea は Place の下位の型だが、警告が出るので Place に名前と住所の国・地域を書く
+    spatialCoverage: { '@type': 'Place', name: `${d.prefecture === d.name ? '' : d.prefecture}${d.name}`, address: { '@type': 'PostalAddress', addressCountry: 'JP', addressRegion: d.prefecture } },
     creator: { '@type': 'Organization', name: '風土記', url: `${ORIGIN}/` },
     ...(d.originTitle ? { isBasedOn: d.originTitle } : {}),
   }

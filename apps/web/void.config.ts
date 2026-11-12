@@ -54,6 +54,8 @@ export default defineConfig({
       { rel: 'icon', href: '/favicon.svg', type: 'image/svg+xml' },
       { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
       { rel: 'manifest', href: '/manifest.webmanifest' },
+      // AI 向けの案内（public/llms.txt）。API・MCP の文書は docs.fudoki.dev の llms.txt を指す
+      { rel: 'llms-txt', href: '/llms.txt' },
     ],
     // service worker（routes/sw.js.ts）は繋がらないときの案内だけを持つ
     script: [{ innerHTML: SW_REGISTER }],

@@ -115,15 +115,15 @@ describe('自治体の個別ページ', () => {
   test('款の和・事業・前年度の同じ目から組み、head に金額と自治体名を入れる', async () => {
     const data = await view('/tokyo/nakano')
     const head = pageHead(data)
-    expect(head.title).toBe('中野区の決算（令和7年度）｜何にいくら使った？｜風土記')
-    // 決算より後の当初予算があれば、title・説明文に予算と決算の両方を年度つきで入れる
+    expect(head.title).toBe('中野区の決算（令和7年度）｜風土記')
+    // 決算より後の当初予算があれば、title に予算と決算を、説明文に両方の金額を年度つきで入れる
     const budget = { year: 2026, yen: 1_234_000_000, kan: [], divisions: [], projects: [] }
     const withBudget = { ...data, budgets: [budget] }
-    expect(pageHead(withBudget).title).toBe('中野区の予算と決算｜令和8年度予算・令和7年度決算｜風土記')
+    expect(pageHead(withBudget).title).toBe('中野区の予算と決算（令和8年度）｜風土記')
     expect(pageHead(withBudget).meta.find((m) => m.name === 'description')?.content).toMatch(/^中野区の令和8年度当初予算の歳出は約12\.3億円、令和7年度決算（一般会計）の歳出は約/)
     // 金額の無い当初予算は title に使わない
-    expect(pageHead({ ...data, budgets: [{ ...budget, amountMissing: true as const }] }).title).toBe(head.title)
-    expect(pageHead({ ...data, budgets: [{ ...budget, yen: 0 }] }).title).toBe(head.title)
+    expect(pageHead({ ...data, budgets: [{ ...budget, amountMissing: true as const }] }).title).not.toContain('予算')
+    expect(pageHead({ ...data, budgets: [{ ...budget, yen: 0 }] }).title).not.toContain('予算')
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano')
     // 紋章と決算のある自治体は og:image を自治体の画像に差し替え、紋章の無い自治体は全頁共通の画像のまま
     expect(head.meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/jurisdictions/131148/og.png' })
@@ -170,7 +170,7 @@ describe('自治体の個別ページ', () => {
   test('年度の頁は、その年度の title と canonical を持ち、最新の年度は 200 で canonical を入口にし、選べない年度は 404', async () => {
     const data = await view('/tokyo/nakano')
     const head = pageHead(data, 2024)
-    expect(head.title).toBe('中野区の決算（令和6年度）｜何にいくら使った？｜風土記')
+    expect(head.title).toBe('中野区の決算（令和6年度）｜風土記')
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano/2024')
     expect(head.meta.find((m) => m.name === 'description')?.content).toStartWith('中野区の令和6年度決算（一般会計）の歳出は約')
     const headers = new Headers()
@@ -181,7 +181,7 @@ describe('自治体の個別ページ', () => {
     const status = (segment: string) => jurisdictionProps(c, '/tokyo/nakano', segment).then(() => 200, (e: { status: number; res?: Response }) => [e.status, e.res?.headers.get('Location') ?? null])
     expect(await status('2025')).toBe(200)
     expect(canonical(pageHead(data, 2025))).toBe('https://fudoki.dev/tokyo/nakano')
-    expect(canonical(pageHead(data, 2025, { label: '事業', path: '/projects' }))).toBe('https://fudoki.dev/tokyo/nakano/2025/projects')
+    expect(canonical(pageHead(data, 2025, { tab: 'projects' }))).toBe('https://fudoki.dev/tokyo/nakano/2025/projects')
     expect(await status('2019')).toEqual([404, null])
   })
 

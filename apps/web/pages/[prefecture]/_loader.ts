@@ -3,7 +3,7 @@
 import { HTTPException } from 'hono/http-exception'
 import type { Context } from 'hono'
 import { emptyHead, pageHead, type Head } from '../../jurisdiction/html'
-import { appPageYears, hasTab, tabOfSlug, TAB_LABELS, TAB_SLUGS, type PageData, type PageTab } from '../../jurisdiction/types'
+import { appPageYears, hasTab, tabOfSlug, type PageData, type PageTab } from '../../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../../jurisdiction/path'
@@ -11,7 +11,8 @@ import { assetPath, EMBLEMS, emblemOf, prefectureCodeOf } from '../../jurisdicti
 import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
-import { catalog, pageData } from '../../server/jurisdiction-routes'
+import { appDataForPage, catalog, pageData } from '../../server/jurisdiction-routes'
+import type { Snapshot } from '../../jurisdiction/app/data'
 import { siteKey } from '../../server/site-key'
 
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
@@ -19,7 +20,16 @@ export const unavailable = () => new Response('風土記の API に繋がりま�
 
 /** 自治体の頁（/tokyo、/tokyo/nakano、/tokyo/nakano/2024）の props。sitekey は頁の中の「この自治体について質問」の Turnstile。
  * year は年度の段のある頁（/tokyo/nakano/2026、/tokyo/nakano/2024）のときだけ持つ。年度の段の無い /tokyo/nakano は最新の年度を出す入口 */
-export type JurisdictionProps = JurisdictionView & { sitekey: string; year?: number; /** 分野の頁（/tokyo/nakano/2026/fields/fukushi）のときの分野の id */ field?: string; /** タブの頁（/tokyo/nakano/2026/projects）のときのタブ */ tab?: Exclude<PageTab, 'overview'> }
+export type JurisdictionProps = JurisdictionView & {
+  sitekey: string
+  year?: number
+  /** 分野の頁（/tokyo/nakano/2026/fields/fukushi）のときの分野の id */
+  field?: string
+  /** タブの頁（/tokyo/nakano/2026/projects）のときのタブ */
+  tab?: Exclude<PageTab, 'overview'>
+  /** 開いた年度の事業・施策・評価シート（sliceSnapshot）。サーバーで本文まで描くために渡す。cache が冷えていて間に合わなければ無く、画面が取る */
+  snapshot?: Snapshot
+}
 
 /** 年度の段（/tokyo/nakano/2024）。4桁の数字だけ */
 export const YEAR_SEGMENT = /^\d{4}$/
@@ -75,12 +85,50 @@ export async function tabProps(c: Context, path: string, slug: string, yearSegme
   return { ...props, tab }
 }
 
-/** 分野の頁とタブの頁は、題と canonical に分野・タブを足す */
+/**
+ * 自治体の頁の path（/ で分けた段）から props を作る。pages/[prefecture]/ の下の loader はどれもここを呼ぶ。
+ * 都道府県自体の頁（/tokyo/2024/projects）は市区町村の段が無いので、ルーターが当てる経路が市区町村の頁と1段ずれる。段の中身で読み分ける
+ */
+export async function routeProps(c: Context, segments: string[]): Promise<JurisdictionProps> {
+  const [prefecture = '', ...rest] = segments
+  const head = rest[0]
+  const named = head !== undefined && !YEAR_SEGMENT.test(head) && head !== 'fields' && !tabOfSlug(head)
+  const path = named ? `/${prefecture}/${head}` : `/${prefecture}`
+  const [a, b, f, ...extra] = named ? rest.slice(1) : rest
+  const props = await (async () => {
+    if (extra.length) throw new HTTPException(404, { res: notFound() })
+    if (a === undefined) return jurisdictionProps(c, path)
+    if (a === 'fields') return b !== undefined && f === undefined ? fieldProps(c, path, b) : Promise.reject(new HTTPException(404, { res: notFound() }))
+    if (!YEAR_SEGMENT.test(a)) return b === undefined ? tabProps(c, path, a) : Promise.reject(new HTTPException(404, { res: notFound() }))
+    if (b === undefined) return jurisdictionProps(c, path, a)
+    if (b === 'fields') return f !== undefined ? fieldProps(c, path, f, a) : Promise.reject(new HTTPException(404, { res: notFound() }))
+    return f === undefined ? tabProps(c, path, b, a) : Promise.reject(new HTTPException(404, { res: notFound() }))
+  })()
+  return withSnapshot(c, props)
+}
+
+/** 開いた年度の事業などを props に足す（年度の段が無ければ最新の年度） */
+async function withSnapshot(c: Context, props: JurisdictionProps): Promise<JurisdictionProps> {
+  if (props.kind !== 'page') return props
+  const env = c.env as unknown as Env
+  const entry = (await catalog(env)).find((e) => e.code === props.data.code)
+  const year = props.year ?? appPageYears(props.data)[0]
+  if (!entry || year === undefined) return props
+  let waitUntil: ((p: Promise<unknown>) => void) | undefined
+  try {
+    const ctx = c.executionCtx
+    waitUntil = (p) => ctx.waitUntil(p)
+  } catch {
+    // 試験など ExecutionContext の無いところでは、間に合わなかった分は捨てる
+  }
+  const snapshot = await appDataForPage(env, entry, year, waitUntil)
+  return snapshot ? { ...props, snapshot } : props
+}
+
+/** 分野の頁とタブの頁は、題・説明文・canonical をその頁のものにする */
 export const jurisdictionHead = (p: JurisdictionProps): Head => {
   if (p.kind !== 'page') return emptyHead(p.entry)
-  const field = p.field ? [...DOMAIN_FRAMES, OTHER_FRAME].find((f) => f.id === p.field) : undefined
-  const sub = field ? { label: field.name, path: `/fields/${field.id}` } : p.tab ? { label: TAB_LABELS[p.tab], path: `/${TAB_SLUGS[p.tab]}` } : undefined
-  return pageHead(p.data, p.year, sub)
+  return pageHead(p.data, p.year, p.field ? { field: p.field } : p.tab ? { tab: p.tab } : undefined)
 }
 
 /** 最後の節に出す近くの自治体の数 */

@@ -59,8 +59,8 @@ import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock, type AskControl } from '../ask-dock'
 import { usePageTour } from './page-tour'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
-import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
+import { DIRECTIONS, GRADES, loadedYears, mergeSnapshot, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
 const FIELD_ICON: Record<string, Icon> = {
@@ -874,19 +874,32 @@ const tabOfPath = (): TabKey => tabOfSlug(location.pathname.match(TAB_SEGMENT)?.
 /** 今の URL の分野の段（/fields/fukushi）の id */
 const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
 
-export function AppPage({ data, sitekey, initialYear, initialField, initialTab }: { data: PageData; sitekey: string; initialYear?: number; initialField?: string; initialTab?: TabKey }) {
+export function AppPage({ data, snapshot, sitekey, initialYear, initialField, initialTab }: { data: PageData; snapshot?: Snapshot; sitekey: string; initialYear?: number; initialField?: string; initialTab?: TabKey }) {
   const vision = data.vision?.text
   const emblem = data.emblem?.src ?? null
   const years = React.useMemo(() => appPageYears(data), [data])
-  const [d, setD] = React.useState<Snapshot>()
-  const [failed, setFailed] = React.useState(false)
-  React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: basePath() }), [data.code, data.name])
+  // 開いた年度の分はサーバーが props で渡し、本文までサーバーで描く。ほかの年度は切り替えたときに取って足す
+  const [d, setD] = React.useState<Snapshot | undefined>(snapshot)
+  const [failed, setFailed] = React.useState<number | null>(null)
   React.useEffect(() => {
-    fetch(`/api/jurisdictions/app/${data.code}`)
-      .then((r) => (r.ok ? (r.json() as Promise<Snapshot>) : Promise.reject(new Error(String(r.status)))))
-      .then(setD, () => setFailed(true))
-  }, [data.code])
+    // 同じ自治体の中で頁を移ると、移った先の年度の分が props で届く
+    if (snapshot) setD((prev) => (prev ? mergeSnapshot(prev, snapshot) : snapshot))
+  }, [snapshot])
+  React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: basePath() }), [data.code, data.name])
   const [year, setYearState] = React.useState(initialYear && years.includes(initialYear) ? initialYear : years[0]!)
+  const ready = !!d && loadedYears(d).includes(year)
+  React.useEffect(() => {
+    if (ready) return
+    const controller = new AbortController()
+    setFailed(null)
+    fetch(`/api/jurisdictions/app/${data.code}?year=${year}`, { signal: controller.signal })
+      .then((r) => (r.ok ? (r.json() as Promise<Snapshot>) : Promise.reject(new Error(String(r.status)))))
+      .then(
+        (part) => setD((prev) => (prev ? mergeSnapshot(prev, part) : part)),
+        () => void (controller.signal.aborted || setFailed(year)),
+      )
+    return () => controller.abort()
+  }, [data.code, year, ready])
   // 年度を選んだら、その年度の頁の path にする（既定の年度は自治体の頁そのもの）。頁は読み直さないので title も合わせる
   // タブごとに URL を分ける（まとめは自治体の頁、ほかは /projects・/budget・/settlement）。タブを移るたびに履歴を積まないよう置き換える
   const [tab, setTabState] = React.useState<TabKey>(initialTab ?? 'overview')
@@ -894,9 +907,8 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
   const showUrl = (y: number, t: TabKey) => {
     at.current = { year: y, tab: t }
     const f = fieldOfPath()
-    const sub = f ? undefined : t === 'overview' ? undefined : { label: TAB_LABELS[t], path: `/${TAB_SLUGS[t]}` }
-    history.replaceState(history.state, '', `${basePath()}/${y}` + (f ? `/fields/${f}` : sub?.path ?? ''))
-    document.title = pageHead(data, y === years[0] ? undefined : y, sub).title
+    history.replaceState(history.state, '', `${basePath()}/${y}` + (f ? `/fields/${f}` : t === 'overview' ? '' : `/${TAB_SLUGS[t]}`))
+    document.title = pageHead(data, y, f ? { field: f } : t === 'overview' ? undefined : { tab: t }).title
   }
   const setYear = (y: number) => {
     setYearState(y)
@@ -927,6 +939,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
   const openField = (id: string) => {
     select(null)
     history.pushState({ field: id }, '', `${basePath()}/${year}/fields/${id}`)
+    document.title = pageHead(data, year, { field: id }).title
     setFieldPage(id)
     window.scrollTo({ top: 0 })
   }
@@ -934,6 +947,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
     select(null)
     if ((history.state as { field?: string } | null)?.field) return history.back()
     history.pushState(null, '', `${basePath()}/${year}` + (tab === 'overview' ? '' : `/${TAB_SLUGS[tab]}`))
+    document.title = pageHead(data, year, tab === 'overview' ? undefined : { tab }).title
     setFieldPage(null)
     window.scrollTo({ top: 0 })
   }
@@ -957,15 +971,15 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
       at.current = { year: y, tab: t }
       setTabState(t)
       setYearState(y)
-      const sub = fieldOfPath() || t === 'overview' ? undefined : { label: TAB_LABELS[t], path: `/${TAB_SLUGS[t]}` }
-      document.title = pageHead(data, y === years[0] ? undefined : y, sub).title
+      const f = fieldOfPath()
+      document.title = pageHead(data, y, f ? { field: f } : t === 'overview' ? undefined : { tab: t }).title
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
   }, [data, years])
   const wide = useMedia('(min-width: 1280px)')
   const phone = useMedia('(max-width: 767px)')
-  const v = React.useMemo(() => (d?.years[year] ? yearView(d, year) : undefined), [d, year])
+  const v = React.useMemo(() => (d && ready && d.years[year] ? yearView(d, year) : undefined), [d, year, ready])
   const projects = React.useMemo(() => new Map((d?.projects ?? []).map((p) => [p.id, p])), [d])
 
   // タブの真上の目印。これが画面の上へ消えたら、タブが上に貼り付いている
@@ -1174,10 +1188,17 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
               )}
             </AppContext.Provider>
           ) : (
-            failed ? (
+            failed === year ? (
               <p className="pt-6 text-sm text-muted-foreground">データを読み込めませんでした。頁を読み込み直してください。</p>
             ) : (
-              <div className="flex flex-col gap-3 pt-6">{[0, 1, 2].map((i) => <div key={i} className="h-24 animate-pulse rounded-2xl bg-card" />)}</div>
+              // 読み込むあいだも頭とタブは出したまま、中身だけを形の近い skeleton にする
+              <div className="flex flex-col gap-3 pt-6" aria-busy="true" aria-label="読み込み中">
+                <Skeleton className="h-28 rounded-2xl" />
+                <div className="grid gap-3 @3xl:grid-cols-2">
+                  <Skeleton className="h-48 rounded-2xl" />
+                  <Skeleton className="h-48 rounded-2xl" />
+                </div>
+              </div>
             )
           )}
         </Tabs>

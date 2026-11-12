@@ -10,8 +10,8 @@ import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
-import { loadAppData } from './app-data'
-import type { Snapshot } from '../jurisdiction/app/data'
+import { appYears, loadAppData } from './app-data'
+import { sliceSnapshot, type Snapshot } from '../jurisdiction/app/data'
 import { ACCOUNT, loadAccountTotals, loadCatalog, loadCofogFlow, loadDrillById, loadFlow, loadIndex, loadPage, loadSetsu, shownSettlementYears, type CatalogEntry, type DocumentKind } from './jurisdiction'
 
 const TTL = 3600
@@ -146,14 +146,43 @@ export async function accountsResponse(env: Env, request: Request, { code, year 
   }
 }
 
-/** 自治体の頁（アプリ型）のデータ（/api/jurisdictions/app/:code）。年度ごとの款項目・事業・施策・評価シート */
+/** 自治体の頁（アプリ型）の全年度のデータ。頁の loader と /api/jurisdictions/app/:code が共有する。冷えていると API から組むのに十数秒かかる */
+export const appData = (env: Env, entry: CatalogEntry) => memo<Snapshot>(`app-${entry.code}-${entry.initialYears.at(-1)}-${entry.settlementYears.at(-1)}`, () => loadAppData(env, entry))
+
+/** 頁の loader が待つ長さ。温まっていれば数十 ms で返る。冷えているときは待たずに頁を返し、画面が /api/jurisdictions/app から取る
+ * （頁を移る時の JSON も loader を待つので、ここで長く待つとクリックしてから頁が変わらない） */
+const APP_DATA_WAIT_MS = 2500
+
+/** 頁の年度の分のデータ。間に合わなければ undefined を返し、組み立ては waitUntil で続けて cache に置く */
+export async function appDataForPage(env: Env, entry: CatalogEntry, year: number, waitUntil?: (p: Promise<unknown>) => void): Promise<Snapshot | undefined> {
+  if (!appYears(entry).some((y) => y.year === year)) return undefined
+  const pending = appData(env, entry)
+  waitUntil?.(pending.catch(() => {}))
+  let timer: Parameters<typeof clearTimeout>[0]
+  const late = new Promise<undefined>((resolve) => void (timer = setTimeout(resolve, APP_DATA_WAIT_MS)))
+  try {
+    const d = await Promise.race([pending, late])
+    return d && sliceSnapshot(d, year)
+  } catch {
+    return undefined
+  } finally {
+    clearTimeout(timer)
+  }
+}
+
+/** 自治体の頁（アプリ型）のデータ（/api/jurisdictions/app/:code）。年度ごとの款項目・事業・施策・評価シート。?year= ならその年度の分だけ（sliceSnapshot） */
 export async function appDataResponse(env: Env, request: Request, code: string): Promise<Response> {
   try {
     if (!/^\d{6}$/.test(code)) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コードの形が違います')
+    const yearParam = new URL(request.url).searchParams.get('year')
+    if (yearParam !== null && !/^\d{4}$/.test(yearParam)) throw new HttpError(400, 'INVALID_ARGUMENT', '年度の形が違います')
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     const entry = (await catalog(env)).find((e) => e.code === code)
     if (!entry) throw new HttpError(404, 'NOT_FOUND', 'この自治体は収録されていません')
-    return json(await memo<Snapshot>(`app-${code}-${entry.initialYears.at(-1)}-${entry.settlementYears.at(-1)}`, () => loadAppData(env, entry)))
+    if (yearParam === null) return json(await appData(env, entry))
+    const year = Number(yearParam)
+    if (!appYears(entry).some((y) => y.year === year)) throw new HttpError(404, 'NOT_FOUND', 'この年度は頁にありません')
+    return json(sliceSnapshot(await appData(env, entry), year))
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
