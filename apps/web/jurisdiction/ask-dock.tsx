@@ -86,11 +86,15 @@ function BackToTop({ hidden }: { hidden: boolean }) {
 /** 外（オンボーディング）から聞く欄を動かす。open(quote) で欄を開き、quote を選んだ文として付ける */
 export type AskControl = { open: (quote?: string) => void }
 
-export function AskDock({ name, sitekey, year, section, control, keepOpen, suggest, onReveal, onChat }: {
+export function AskDock({ name, code, sitekey, year, section, detail, control, keepOpen, suggest, onReveal, onChat }: {
   name: string
+  /** 6桁の自治体コード。AI が収録の自治体を確かめ直さずに調べられるよう、文脈に入れる */
+  code: string
   sitekey: string
   year: number
   section?: string
+  /** 詳細に開いている事業・評価シートなど（送るときに読む） */
+  detail?: () => string
   control?: React.RefObject<AskControl | null>
   /** スクロールしても畳まない（オンボーディングで欄を見せている間） */
   keepOpen?: boolean
@@ -195,10 +199,13 @@ export function AskDock({ name, sitekey, year, section, control, keepOpen, sugge
     const screen = screenText([dock.current, sheet.current])
     return [
       `${name}の頁（${location.pathname}）を見ている`,
+      `自治体コード: ${code}`,
       `年度: ${reiwa(year)}（${year}年度）`,
       section ? `いま読んでいる節: ${section}` : '',
-      screen ? `画面に見えている文字: ${screen}` : '',
+      detail?.() ?? '',
       quote ? `${QUOTE_PREFIX}「${quote}」` : '',
+      // 長さの上限（MAX_CONTEXT）で切られるときは、画面の文字の末尾から落ちるよう最後に置く
+      screen ? `画面に見えている文字: ${screen}` : '',
     ]
       .filter(Boolean)
       .join('\n')
