@@ -9,6 +9,7 @@ import { Link } from '../nav/link'
 import { Mark } from '../nav/site-nav'
 import { Picker as TownPicker } from './town-picker'
 import { LocateError, locateMunicipality } from './locate'
+import { TOTAL, type TourSaved } from './tour'
 import type { MapEntry } from '../jurisdiction/index-table'
 import './onboarding.css'
 
@@ -160,7 +161,8 @@ export function Empty({ entries, onPick, reveal, again }: { entries: MapEntry[];
   )
 }
 
-export type CheckItem = { key: string; label: string; href: string }
+/** はじめにやることの項目。href へ移るか、start でオンボーディングをその歩から始める。押しても済みにはしない（済みは丸を押したときだけ） */
+export type CheckItem = { key: string; label: string; href?: string; start?: () => void }
 const CHECK = 'fudoki:checklist'
 type CheckState = { done: string[]; closed?: boolean }
 
@@ -173,7 +175,8 @@ export const startChecklist = () => {
   }
 }
 
-export function Checklist({ items }: { items: CheckItem[] }) {
+/** はじめにやること。2つ目はオンボーディング（「オンボ開始」で始め、スキップしたら同じボタンで止めた歩から続ける）。済みにするのは丸を押したときだけで、もう一度押すと外せる */
+export function Checklist({ items, tour, onTour }: { items: CheckItem[]; tour: TourSaved | null; onTour: () => void }) {
   const [st, setSt] = React.useState<CheckState | null>(null)
   React.useEffect(() => {
     try {
@@ -192,9 +195,15 @@ export function Checklist({ items }: { items: CheckItem[] }) {
     }
   }
   if (!st || st.closed) return null
-  const all = [{ key: 'town', label: '住んでいるまちを選ぶ', href: '' }, ...items]
-  const n = all.filter((x) => st.done.includes(x.key)).length
+  const all: CheckItem[] = [{ key: 'town', label: '住んでいるまちを選ぶ' }, { key: 'tour', label: '使い方を見る', start: onTour }, ...items]
+  const isDone = (key: string) => st.done.includes(key)
+  // 丸を押したときだけ済み・未了を切り替える
+  const toggle = (key: string) => save({ ...st, done: isDone(key) ? st.done.filter((k) => k !== key) : [...st.done, key] })
+  const n = all.filter((x) => isDone(x.key)).length
+  // 途中で止めた歩（1歩目より先）があれば「続きから」
+  const mid = tour && tour.state !== 'done' && tour.at > 0 && tour.at < TOTAL ? tour.at : 0
   const complete = n === all.length
+  const row = 'flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-2 text-left text-[14px] transition-colors hover:bg-secondary'
   return (
     <section className="ob-rise mb-4 rounded-2xl border bg-background p-4 sm:p-5" aria-label="はじめにやること">
       <div className="flex items-center gap-3">
@@ -209,33 +218,52 @@ export function Checklist({ items }: { items: CheckItem[] }) {
       <span className="mt-2.5 block h-1.5 overflow-hidden rounded-full bg-secondary">
         <span className="block h-full origin-left rounded-full bg-primary transition-[width] duration-500 ease-out" style={{ width: `${(n / all.length) * 100}%` }} />
       </span>
-      {complete ? null : (
-        <ul className="mt-3 grid gap-1 sm:grid-cols-2">
-          {all.map((x) => {
-            const done = st.done.includes(x.key)
-            const body = (
-              <>
-                <span className={cn('grid size-5 shrink-0 place-items-center rounded-full border transition-colors duration-200', done ? 'border-primary bg-primary text-primary-foreground' : 'border-border')}>
+      <ul className="mt-3 grid gap-1 sm:grid-cols-2">
+        {all.map((x) => {
+          const done = isDone(x.key)
+          const label = <span className={cn('min-w-0 flex-1', done && 'text-muted-foreground line-through decoration-border')}>{x.label}</span>
+          return (
+            <li key={x.key} className={cn('flex items-center gap-1', x.key === 'tour' && 'sm:col-span-2')}>
+              <button
+                type="button"
+                onClick={() => toggle(x.key)}
+                aria-pressed={done}
+                aria-label={done ? `${x.label}を未了に戻す` : `${x.label}を済みにする`}
+                className="grid size-9 shrink-0 place-items-center rounded-full transition-colors hover:bg-secondary"
+              >
+                <span className={cn('grid size-5 place-items-center rounded-full border transition-colors duration-200', done ? 'border-primary bg-primary text-primary-foreground' : 'border-border')}>
                   {done ? <CheckIcon className="size-3" weight="bold" /> : null}
                 </span>
-                <span className={cn('flex-1', done && 'text-muted-foreground line-through decoration-border')}>{x.label}</span>
-                {done ? null : <ArrowRightIcon className="size-3.5 text-muted-foreground" />}
-              </>
-            )
-            return (
-              <li key={x.key}>
-                {done || !x.href ? (
-                  <span className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-[14px]">{body}</span>
-                ) : (
-                  <Link href={x.href} onClick={() => save({ ...st, done: [...st.done, x.key] })} className="flex items-center gap-2.5 rounded-lg px-2 py-2 text-[14px] transition-colors hover:bg-secondary">
-                    {body}
-                  </Link>
-                )}
-              </li>
-            )
-          })}
-        </ul>
-      )}
+              </button>
+              {x.key === 'tour' ? (
+                <>
+                  <span className="flex min-w-0 flex-1 px-1 py-2 text-[14px]">{label}</span>
+                  <button
+                    type="button"
+                    onClick={onTour}
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none"
+                  >
+                    {mid ? '続きから' : 'オンボ開始'}
+                    <ArrowRightIcon className="size-3.5" />
+                  </button>
+                </>
+              ) : x.start ? (
+                <button type="button" onClick={x.start} className={row}>
+                  {label}
+                  <ArrowRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
+                </button>
+              ) : x.href ? (
+                <Link href={x.href} className={row}>
+                  {label}
+                  <ArrowRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
+                </Link>
+              ) : (
+                <span className="flex min-w-0 flex-1 px-2 py-2 text-[14px]">{label}</span>
+              )}
+            </li>
+          )
+        })}
+      </ul>
     </section>
   )
 }

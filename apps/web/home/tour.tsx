@@ -1,56 +1,92 @@
-// 住んでいるまちを選んだあとに1回だけ出すツアー（marketingskills の onboarding skill の Guided Tours: 3〜5歩・いつでも閉じられる・2回目からは出さない。Do, don't show）。
-// 流れは頁の上から: まちの頁を開く（ホーム）→ 年度の切り替え → 予算 → 事業 → 文字を選んでアシスタント（まちの頁）。頁をまたぐので、どこまで進んだかを localStorage に置く。
-// 画面を暗くして [data-tour="…"] の部分を1か所ずつ光らせ、その横に吹き出しで説明を重ねる。光らせた所は、押す・選ぶの歩だけ触れる
+// 住んでいるまちを選んだあとのオンボーディング（marketingskills の onboarding skill の Guided Tours: いつでも閉じられる・閉じても続きから再開できる。Do, don't show）。
+// 流れ: まちの頁を開く（ホーム）→ 分野の説明 → 分野の頁 → 事業のタブ → 事業を選ぶ → 文を選んでアシスタントに質問 → 答えが返ったら終わり。
+// 頁をまたぐので、どの歩にいるか（at）と、進めている・止めた・終えたを localStorage に置く。止めた歩はホームの「はじめにやること」の「オンボ開始」から続ける。
+// 画面を暗くして [data-tour="…"] の部分を1か所だけ光らせ、その横に吹き出しを重ねる。吹き出しには文字だけでなく、操作の様子を動きで見せる絵（tour-visuals.tsx）を載せる
 import * as React from 'react'
 import { createPortal } from 'react-dom'
-import { useRouter } from '@void/react'
 import { cn } from '@/lib/utils'
 import './onboarding.css'
 
-export type TourStep = {
-  /** data-tour の名前。「a|b」は a が無ければ b */
-  target: string
-  title: string
-  body: string
-  /** click: 光らせた所を押して進む（action も出す）。select: 光らせた所の文字を選んだら終わる */
-  mode?: 'click' | 'select'
-  action?: { label: string; run: () => void }
-}
+/** 歩の並び。at はこの添字 */
+export const STEPS = ['open', 'fields', 'field', 'projects', 'detail', 'ask', 'answer'] as const
+export type StepKey = (typeof STEPS)[number]
+export const TOTAL = STEPS.length
+export const stepAt = (k: StepKey) => STEPS.indexOf(k)
 
+export type TourSaved = { at: number; state: 'on' | 'paused' | 'done' }
 const KEY = 'fudoki:tour'
-type Phase = 'home' | 'page' | 'done'
+const EVENT = 'fudoki:tour'
 
-const write = (p: Phase) => {
+/** 前の版の保存（'home'・'page'・'done' の文字）も読む */
+const parse = (raw: string | null): TourSaved | null => {
+  if (raw == null) return null
+  if (raw === 'home') return { at: 0, state: 'on' }
+  if (raw === 'page') return { at: 1, state: 'on' }
+  if (raw === 'done') return { at: TOTAL, state: 'done' }
   try {
-    localStorage.setItem(KEY, p)
+    const s = JSON.parse(raw) as TourSaved
+    return typeof s?.at === 'number' && ['on', 'paused', 'done'].includes(s.state) ? s : null
+  } catch {
+    return null
+  }
+}
+const read = () => {
+  try {
+    return parse(localStorage.getItem(KEY))
+  } catch {
+    return null
+  }
+}
+const write = (s: TourSaved) => {
+  try {
+    localStorage.setItem(KEY, JSON.stringify(s))
   } catch {
     // 保存できなければ、この頁だけで進む
   }
+  window.dispatchEvent(new CustomEvent(EVENT, { detail: s }))
 }
 
-/** 前にはじめての流れを通った（ツアーの保存がある）か。ホームのリセットのあとは、はじめての流れ・ツアーを出さずにまちだけ選び直す */
-export const onboarded = () => {
-  try {
-    return localStorage.getItem(KEY) !== null
-  } catch {
-    return false
-  }
-}
+/** 前にはじめての流れを通った（オンボーディングの保存がある）か。ホームのリセットのあとは、はじめての流れを出さずにまちだけ選び直す */
+export const onboarded = () => read() !== null
 
-/** ツアーのどこにいるか。phase の頁で on になる。まちを選んだときに start()、頁を移るときに to('page')、終わったら done() で二度と出さない */
-export function useTour(phase: Phase) {
-  const [on, setOn] = React.useState(false)
+/** オンボーディングの進み。go(at) でその歩から進め、pause() で止め（続きから再開できる）、finish() で終える。同じ頁の別の部品にも知らせる */
+export function useTour() {
+  const [saved, setSaved] = React.useState<TourSaved | null>(null)
   React.useEffect(() => {
-    try {
-      setOn(localStorage.getItem(KEY) === phase)
-    } catch {
-      setOn(false)
+    const sync = (e?: Event) => setSaved(e instanceof CustomEvent ? (e.detail as TourSaved) : read())
+    sync()
+    const onStorage = () => sync()
+    window.addEventListener(EVENT, sync)
+    window.addEventListener('storage', onStorage)
+    return () => {
+      window.removeEventListener(EVENT, sync)
+      window.removeEventListener('storage', onStorage)
     }
-  }, [phase])
-  const start = React.useCallback(() => (write('home'), setOn(phase === 'home')), [phase])
-  const to = React.useCallback((p: Phase) => (write(p), setOn(p === phase)), [phase])
-  const done = React.useCallback(() => (write('done'), setOn(false)), [])
-  return { on, start, to, done }
+  }, [])
+  // 保存できない環境でも、止めたときにこの頁で進んだ歩を残す
+  const last = React.useRef(0)
+  if (saved) last.current = saved.at
+  const go = React.useCallback((at: number) => write({ at, state: 'on' }), [])
+  const pause = React.useCallback(() => write({ at: Math.min(read()?.at ?? last.current, TOTAL - 1), state: 'paused' }), [])
+  const finish = React.useCallback(() => write({ at: TOTAL, state: 'done' }), [])
+  return { saved, go, pause, finish }
+}
+
+export type Spot = {
+  /** data-tour の名前。「a|b」は a が無ければ b。無ければ光らせずに吹き出しだけを出す */
+  target?: string
+  title: string
+  body: React.ReactNode
+  /** 操作の様子を動きで見せる絵（tour-visuals.tsx）。実際のまちの名前・金額で描く */
+  visual?: React.ReactNode
+  /** 吹き出しの主のボタン。無ければ「次へ」も出さない（光らせた所の操作で進む） */
+  action?: { label: string; run: () => void }
+  /** 光らせた所を触れるようにする（押す・選ぶ・書くで進む歩） */
+  open?: boolean
+  /** 光らせた所を押したら action と同じにする（リンクの移動は action に任せる） */
+  click?: boolean
+  /** 光らせる高さを画面のこの割合までにする（長い一覧の頭だけを光らせる） */
+  maxH?: number
 }
 
 const visible = (el: HTMLElement) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden'
@@ -62,219 +98,246 @@ const find = (target: string) => {
   }
   return null
 }
+/** 画面に固定した部品の中か（送っても動かないので、送らない） */
+const pinned = (el: HTMLElement | null) => {
+  for (let n = el; n; n = n.parentElement) if (getComputedStyle(n).position === 'fixed') return true
+  return false
+}
 
 type Box = { top: number; left: number; width: number; height: number }
 const PAD = 8
 const GAP = 12
 // oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで
 const SHADE = 'rgb(0 0 0 / .55)'
+const smooth = () => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth')
 
-/** steps を順に光らせる。offset・total は頁をまたいだ通し番号（例: ホームで 1、まちの頁で 2〜5） */
-export function Tour({ steps, onDone, onBack, offset = 0, total }: { steps: TourStep[]; onDone: () => void; onBack?: () => void; offset?: number; total?: number }) {
-  // 対象が描かれるのを待ってから、見える対象のある歩だけを残す（データを読み込む頁があるので、少しのあいだ待つ）
-  const [live, setLive] = React.useState<TourStep[] | null>(null)
-  const [i, setI] = React.useState(0)
+/** 何歩目か。点と「3 / 7」 */
+function Dots({ at }: { at: number }) {
+  return (
+    <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
+      <span className="flex gap-1">
+        {STEPS.map((k, i) => (
+          <span key={k} className={cn('h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out motion-reduce:transition-none', i <= at ? 'w-4 bg-primary' : 'w-1.5 bg-border')} />
+        ))}
+      </span>
+      <span className="tabular-nums">
+        {at + 1} / {TOTAL}
+      </span>
+    </div>
+  )
+}
+
+/** 吹き出しの中身。光らせる吹き出しと、頁の中に置く吹き出し（InlineSpot）が使う */
+function SpotBody({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip: () => void; onBack?: () => void }) {
+  return (
+    <>
+      {spot.visual ?? null}
+      <div className={cn('mb-2', spot.visual && 'mt-3.5')}>
+        <Dots at={at} />
+      </div>
+      <h2 id="tour-title" className="text-[16px] font-bold">
+        {spot.title}
+      </h2>
+      {/* 狭い札では文節で折ると行末が大きく空くので、この札だけ文字の単位で折る */}
+      <div className="mt-1 text-[14px] leading-relaxed text-muted-foreground [text-wrap:wrap] [word-break:normal]">{spot.body}</div>
+      <div className="mt-4 flex items-center gap-3">
+        <button type="button" onClick={onSkip} className="shrink-0 whitespace-nowrap text-[13px] text-muted-foreground hover:text-foreground">
+          スキップ
+        </button>
+        <span className="flex-1" />
+        {onBack ? (
+          <button type="button" onClick={onBack} className="shrink-0 whitespace-nowrap rounded-full px-3 py-2 text-[13px] hover:bg-secondary">
+            もどる
+          </button>
+        ) : null}
+        {spot.action ? (
+          <button
+            type="button"
+            onClick={spot.action.run}
+            className="rounded-full bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none"
+          >
+            {spot.action.label}
+          </button>
+        ) : null}
+      </div>
+    </>
+  )
+}
+
+/**
+ * 1歩ぶんの吹き出し。target を光らせ、その下か上に吹き出しを置く。target が出てくるまで少し待ち（自治体の頁はデータが冷えていると15秒ほどかかる）、出なければ光らせずに出す。
+ * at は通しの何歩目か。onSkip で止める（続きから再開できる）
+ */
+export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip: () => void; onBack?: () => void }) {
+  const [el, setEl] = React.useState<HTMLElement | null | undefined>(undefined)
   const [box, setBox] = React.useState<Box | null>(null)
   const [tip, setTip] = React.useState<{ top: number; left: number; width: number } | null>(null)
   const card = React.useRef<HTMLDivElement>(null)
-  const targets = steps.map((s) => s.target).join()
+  const { target, maxH } = spot
 
   React.useEffect(() => {
+    setEl(undefined)
+    setBox(null)
+    if (!target) return setEl(null)
     let n = 0
     const t = setInterval(() => {
       n++
-      const found = steps.filter((s) => find(s.target))
-      // 自治体の頁はデータが冷えていると描くまで15秒ほどかかるので、それまで待ってから出せる歩だけに絞る
-      if (found.length === steps.length || n > 70) {
+      const found = find(target)
+      if (found || n > 70) {
         clearInterval(t)
-        setLive(found)
+        setEl(found)
       }
-    }, 300)
+    }, 150)
     return () => clearInterval(t)
-    // 親が描き直すたびに配列は作り直されるので、対象の並びが変わったときだけ数え直す
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [targets])
+  }, [target])
 
-  const step = live?.[i]
   const measure = React.useCallback(() => {
-    if (!step) return
-    const el = find(step.target)
-    if (!el) return
-    const r = el.getBoundingClientRect()
-    const b = { top: r.top - PAD, left: r.left - PAD, width: r.width + PAD * 2, height: r.height + PAD * 2 }
-    setBox(b)
     const vw = window.innerWidth
     const vh = window.innerHeight
-    const w = Math.min(340, vw - 24)
-    const h = card.current?.offsetHeight ?? 180
+    const w = Math.min(360, vw - 24)
+    const h = card.current?.offsetHeight ?? 280
+    // 対象が見つからなければ、画面の下の真ん中に吹き出しだけを置く
+    const live = el && el.isConnected ? el : target ? find(target) : null
+    if (!live) {
+      setBox(null)
+      setTip({ top: Math.max(12, vh - h - 96), left: (vw - w) / 2, width: w })
+      return
+    }
+    const r = live.getBoundingClientRect()
+    const height = maxH ? Math.min(r.height, vh * maxH) : r.height
+    const b = { top: r.top - PAD, left: r.left - PAD, width: r.width + PAD * 2, height: height + PAD * 2 }
+    setBox(b)
     // 下に入るなら下、入らなければ上、どちらも入らなければ画面の下端に置く。横は対象に揃え、画面からはみ出さない
     const below = b.top + b.height + GAP
     const above = b.top - GAP - h
     const top = below + h <= vh - 12 ? below : above >= 12 ? above : vh - h - 12
     const left = Math.min(Math.max(12, b.left), vw - w - 12)
     setTip({ top, left, width: w })
-  }, [step])
+  }, [el, target, maxH])
 
   React.useEffect(() => {
-    if (!step) return
-    const el = find(step.target)
-    if (!el) return
-    const r = el.getBoundingClientRect()
-    // 画面の外なら送ってから測る。固定の部品（スマホの下の帯は下へ送ると隠れる）は頭へ戻す
-    const behavior = matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth'
-    if (getComputedStyle(el.closest('nav') ?? el).position === 'fixed') window.scrollTo({ top: 0, behavior })
-    else if (r.top < 64 || r.bottom > window.innerHeight - 200) el.scrollIntoView({ block: r.height > window.innerHeight * 0.5 ? 'start' : 'center', behavior })
+    if (el === undefined) return
+    if (el && !pinned(el)) {
+      const r = el.getBoundingClientRect()
+      const tall = r.height > window.innerHeight * (maxH ?? 0.5)
+      if (r.top < 64 || r.bottom > window.innerHeight - 200) el.scrollIntoView({ block: tall ? 'start' : 'center', behavior: smooth() })
+    }
     measure()
     let raf = 0
     const tick = () => (cancelAnimationFrame(raf), (raf = requestAnimationFrame(measure)))
     window.addEventListener('scroll', tick, true)
     window.addEventListener('resize', tick)
-    const settle = setTimeout(measure, 450)
+    // 送り終わり・中身が動いたあとにも測り直す
+    const settle = [setTimeout(measure, 450), setTimeout(measure, 1200)]
+    const ro = el ? new ResizeObserver(tick) : null
+    if (el) ro?.observe(el)
     return () => {
       cancelAnimationFrame(raf)
-      clearTimeout(settle)
+      settle.forEach(clearTimeout)
+      ro?.disconnect()
       window.removeEventListener('scroll', tick, true)
       window.removeEventListener('resize', tick)
     }
-  }, [step, measure])
+  }, [el, measure, maxH])
 
-  // 文字を選ぶ歩: 光らせた所で文字が選ばれたら、選択が落ち着くのを待って閉じる（聞く欄は頁の側が開く）
+  // 押す歩: 光らせた所（リンク）を押したら、移る先はリンクに任せず action にそろえる
   React.useEffect(() => {
-    if (step?.mode !== 'select') return
-    let t = 0
-    const onSel = () => {
-      clearTimeout(t)
-      const sel = document.getSelection()
-      const el = find(step.target)
-      if (sel && !sel.isCollapsed && el?.contains(sel.anchorNode)) t = window.setTimeout(onDone, 500)
-    }
-    document.addEventListener('selectionchange', onSel)
-    return () => (clearTimeout(t), document.removeEventListener('selectionchange', onSel))
-  }, [step, onDone])
-
-  // 押す歩: 光らせた所（リンク）を押したら、移る先はリンクに任せて、ツアーの進みだけ action と揃える
-  React.useEffect(() => {
-    if (step?.mode !== 'click') return
-    const el = find(step.target)
+    if (!spot.click || !el || !spot.action) return
+    const run = spot.action.run
     const onClick = (e: MouseEvent) => {
-      if (!step.action) return
-      // 移るのは action に任せ、リンクの移動と二重にしない
       e.preventDefault()
-      step.action.run()
+      run()
     }
-    el?.addEventListener('click', onClick)
-    return () => el?.removeEventListener('click', onClick)
-  }, [step])
+    el.addEventListener('click', onClick)
+    return () => el.removeEventListener('click', onClick)
+  }, [el, spot.click, spot.action])
 
+  const shown = !!tip
   React.useEffect(() => {
-    if (live && !live.length) onDone()
-  }, [live, onDone])
+    if (shown && !spot.open) card.current?.focus({ preventScroll: true })
+  }, [shown, spot.open, spot.title])
 
-  // カードが描かれてから（box が入ってから）focus する
-  const shown = !!box
+  // aria-modal なので、フォーカスはカードと光らせた所（触れる歩）の中にとどめる
   React.useEffect(() => {
-    if (shown) card.current?.focus({ preventScroll: true })
-  }, [i, live, shown])
-
-  // aria-modal なので、フォーカスはカードと光らせた所（押す・選ぶの歩）の中にとどめる。覆いは pointer しか止めないので、Tab で外へ出たらカードへ戻す
-  React.useEffect(() => {
-    if (!shown || !step) return
+    if (!shown) return
     const onFocus = (e: FocusEvent) => {
       const t = e.target as Node | null
       if (!t || card.current?.contains(t)) return
-      if ((step.mode === 'click' || step.mode === 'select') && find(step.target)?.contains(t)) return
+      if ((spot.open || spot.click) && el?.contains(t)) return
+      // 外の iframe（Turnstile など）には触らない
+      if (t instanceof HTMLIFrameElement) return
       card.current?.focus({ preventScroll: true })
     }
     document.addEventListener('focusin', onFocus)
     return () => document.removeEventListener('focusin', onFocus)
-  }, [shown, step])
+  }, [shown, spot.open, spot.click, el])
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onDone()
+      if (e.key === 'Escape') onSkip()
     }
     document.addEventListener('keydown', onKey)
     return () => document.removeEventListener('keydown', onKey)
-  }, [onDone])
+  }, [onSkip])
 
-  if (!live || !step || !box) return null
-  const last = i === live.length - 1
-  const all = total ?? offset + live.length
-  const open = step.mode === 'click' || step.mode === 'select'
-  // 光らせた所の外を4枚で塞ぐ。押す・選ぶの歩は穴の中だけ触れる
-  const { top, left, width, height } = box
+  if (el === undefined || !tip) {
+    // 測るために一度だけ見えない吹き出しを描く
+    return el === undefined
+      ? null
+      : createPortal(
+          <div ref={card} className="fixed top-0 left-0 w-[360px] max-w-[calc(100vw-24px)] p-5" style={{ visibility: 'hidden' }}>
+            <SpotBody spot={spot} at={at} onSkip={onSkip} onBack={onBack} />
+          </div>,
+          document.body,
+        )
+  }
   const block = 'absolute pointer-events-auto'
   return createPortal(
     <div className="pointer-events-none fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-labelledby="tour-title">
-      <div className={block} style={{ top: 0, left: 0, right: 0, height: Math.max(0, top) }} />
-      <div className={block} style={{ top: top + height, left: 0, right: 0, bottom: 0 }} />
-      <div className={block} style={{ top, left: 0, width: Math.max(0, left), height }} />
-      <div className={block} style={{ top, left: left + width, right: 0, height }} />
-      {open ? null : <div className={block} style={box} />}
-      <div aria-hidden="true" className="tour-hole absolute rounded-[20px] transition-[top,left,width,height] duration-300 ease-out motion-reduce:transition-none" style={{ ...box, boxShadow: `0 0 0 9999px ${SHADE}` }} />
+      {box ? (
+        <>
+          {/* 光らせた所の外を4枚で塞ぐ。触れる歩は穴の中だけ触れる */}
+          <div className={block} style={{ top: 0, left: 0, right: 0, height: Math.max(0, box.top) }} />
+          <div className={block} style={{ top: box.top + box.height, left: 0, right: 0, bottom: 0 }} />
+          <div className={block} style={{ top: box.top, left: 0, width: Math.max(0, box.left), height: box.height }} />
+          <div className={block} style={{ top: box.top, left: box.left + box.width, right: 0, height: box.height }} />
+          {spot.open || spot.click ? null : <div className={block} style={box} />}
+          <div aria-hidden="true" className="tour-hole absolute rounded-[20px] transition-[top,left,width,height] duration-300 ease-out motion-reduce:transition-none" style={{ ...box, boxShadow: `0 0 0 9999px ${SHADE}` }} />
+        </>
+      ) : (
+        <div aria-hidden="true" className="tour-hole pointer-events-auto absolute inset-0" style={{ background: SHADE }} />
+      )}
       <div
         ref={card}
         tabIndex={-1}
-        key={i}
+        key={spot.title}
         className="tour-tip pointer-events-auto absolute rounded-2xl bg-background p-4 text-foreground shadow-xl outline-none sm:p-5"
-        style={tip ? { top: tip.top, left: tip.left, width: tip.width } : { visibility: 'hidden' }}
+        style={{ top: tip.top, left: tip.left, width: tip.width }}
       >
-        <div className="mb-2 flex items-center gap-2 text-[12px] text-muted-foreground">
-          <span className="flex gap-1">
-            {Array.from({ length: all }, (_, k) => (
-              <span key={k} className={cn('h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out', k <= offset + i ? 'w-4 bg-primary' : 'w-1.5 bg-border')} />
-            ))}
-          </span>
-          <span className="tabular-nums">
-            {offset + i + 1} / {all}
-          </span>
-        </div>
-        <h2 id="tour-title" className="text-[16px] font-bold">
-          {step.title}
-        </h2>
-        {/* 狭い札では文節で折ると行末が大きく空くので、この札だけ文字の単位で折る */}
-        <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground [text-wrap:wrap] [word-break:normal]">{step.body}</p>
-        <div className="mt-4 flex items-center gap-3">
-          <button type="button" onClick={onDone} className="text-[13px] text-muted-foreground hover:text-foreground">
-            スキップ
-          </button>
-          <span className="flex-1" />
-          {/* 頁の頭の歩では、前の頁の歩（onBack）へ戻る */}
-          {i > 0 || onBack ? (
-            <button type="button" onClick={() => (i > 0 ? setI(i - 1) : onBack?.())} className="rounded-full px-3 py-2 text-[13px] hover:bg-secondary">
-              もどる
-            </button>
-          ) : null}
-          <button
-            type="button"
-            onClick={() => (step.action ? step.action.run() : last ? onDone() : setI(i + 1))}
-            className="rounded-full bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none"
-          >
-            {step.action?.label ?? (last ? '終える' : '次へ')}
-          </button>
-        </div>
+        <SpotBody spot={spot} at={at} onSkip={onSkip} onBack={onBack} />
       </div>
     </div>,
     document.body,
   )
 }
 
-/** まちの頁（自治体の頁）の側のツアー。ホームから「まちの頁を開く」で来たときだけ出す。頁の上から順に説明し、頭の歩の「もどる」でホームの歩へ戻る */
-export function PageTour({ name }: { name: string }) {
-  const { on, done, to } = useTour('page')
-  const { visit } = useRouter()
-  if (!on) return null
+/** 頁の中に置く吹き出し（暗くしない）。事業の詳細のように、ダイアログの中で文字を選んでもらう歩に使う */
+export function InlineSpot({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip: () => void; onBack?: () => void }) {
   return (
-    <Tour
-      offset={1}
-      onDone={done}
-      onBack={() => (to('home'), visit('/'))}
-      steps={[
-        { target: 'year', title: '年度の切り替え', body: '年度を変えると、その年の予算・決算・事業に切り替わります。' },
-        { target: 'budget', title: '予算', body: 'この年度の一般会計の総額と、住民1人あたりの額です。「予算」「決算」のタブで、分野や款・項・目ごとの内訳を見られます。' },
-        { target: 'project', title: '事業', body: `${name}がお金を使っている事業です。押すと、事業の中身・予算・年ごとの動きが開きます。` },
-        { target: 'select|project', title: '文字を選んでアシスタントに聞く', body: '気になる文字を選ぶと、その文を添えてアシスタントに質問できます。ここの文字を選んでみてください。', mode: 'select' },
-      ]}
-    />
+    <section aria-labelledby="tour-title" className="tour-tip mb-5 rounded-2xl border border-primary bg-background p-4 shadow-md sm:p-5">
+      <SpotBody spot={spot} at={at} onSkip={onSkip} onBack={onBack} />
+    </section>
+  )
+}
+
+/** 画面の上に置く小さな札（暗くしない）。アシスタントが答えている間と、終わりの知らせに使う。会話の panel の左に収める */
+export function FloatSpot({ children }: { children: React.ReactNode }) {
+  return createPortal(
+    <div className="pointer-events-none fixed inset-x-3 top-3 z-[60] flex justify-center md:right-[calc(var(--side-panel,0px)+12px)] md:left-[calc(var(--nav-w,0px)+12px)]">
+      <div role="status" className="tour-tip pointer-events-auto w-full max-w-[380px] rounded-2xl border bg-background p-3.5 text-foreground shadow-xl sm:p-4">
+        {children}
+      </div>
+    </div>,
+    document.body,
   )
 }
