@@ -417,7 +417,7 @@ export function AskDock({ name, sitekey, year, section, control, keepOpen, sugge
           >
             <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
-                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} context={describe} beforeComposer={chip} onSend={() => ((pinnedQuote.current = false), setQuote(''))} onAnswered={(ok) => onChat?.(ok ? 'answered' : 'failed')} />
+                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} context={describe} beforeComposer={chip} onSend={() => ((pinnedQuote.current = false), setQuote(''), onChat?.('started'))} onAnswered={(ok) => onChat?.(ok ? 'answered' : 'failed')} />
               </React.Suspense>
             </div>
           </div>

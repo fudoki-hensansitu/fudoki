@@ -63,8 +63,11 @@ export function useTour() {
       window.removeEventListener('storage', onStorage)
     }
   }, [])
+  // 保存できない環境でも、止めたときにこの頁で進んだ歩を残す
+  const last = React.useRef(0)
+  if (saved) last.current = saved.at
   const go = React.useCallback((at: number) => write({ at, state: 'on' }), [])
-  const pause = React.useCallback(() => write({ at: Math.min(read()?.at ?? 0, TOTAL - 1), state: 'paused' }), [])
+  const pause = React.useCallback(() => write({ at: Math.min(read()?.at ?? last.current, TOTAL - 1), state: 'paused' }), [])
   const finish = React.useCallback(() => write({ at: TOTAL, state: 'done' }), [])
   return { saved, go, pause, finish }
 }
@@ -114,7 +117,7 @@ function Dots({ at }: { at: number }) {
     <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
       <span className="flex gap-1">
         {STEPS.map((k, i) => (
-          <span key={k} className={cn('h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out', i <= at ? 'w-4 bg-primary' : 'w-1.5 bg-border')} />
+          <span key={k} className={cn('h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out motion-reduce:transition-none', i <= at ? 'w-4 bg-primary' : 'w-1.5 bg-border')} />
         ))}
       </span>
       <span className="tabular-nums">

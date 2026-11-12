@@ -62,7 +62,7 @@ export function usePageTour(c: TourCtl) {
       }
     } else if (step === 'ask') {
       c.selectProject(null)
-      const q = quote.current || v.current.find((p) => p.id === lastProject.current)?.name || first?.name || ''
+      const q = quote.current || v.current.find((p) => p.id === lastProject.current)?.name || first?.name || c.name
       // 詳細を閉じて頁が落ち着いてから開く（閉じたときの選択の外れで、付けた文が消えないよう外から付ける）
       const t = setTimeout(() => c.ask.current?.open(q), 380)
       return () => clearTimeout(t)
