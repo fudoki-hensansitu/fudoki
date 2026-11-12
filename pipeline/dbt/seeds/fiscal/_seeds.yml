@@ -166,6 +166,28 @@ seeds:
         data_tests: [not_null]
       - name: basis
         data_tests: [not_null]
+  - name: fiscal_kan_code_fill
+    meta:
+      # **判断そのもの。** 出典が番号を印字しない款の番号。
+      role: judgment-rule
+    description: |
+      出典が款の名前だけを印字し番号を印字しない表の款に付ける番号。**fudoki の判断。** 自治体・年度・資料区分・会計・款の名前ごとに1行で、
+      款名と並びが地方自治法施行規則の歳出予算の款の区分と同じことを確かめてから、その区分の番号を宣言する。取り込みの表は印字のまま
+      番号を空に保ち、int_fiscal__settlement_expenditure_rows が番号の空いた款にだけ当てる。款の id は fiscal_kan_name_identity で名前から作るので、番号は id に入らない。
+    config:
+      column_types:
+        jurisdiction_code: varchar
+        fiscal_year: integer
+        document_kind: varchar
+        account_name: varchar
+        kan_name: varchar
+        kan_code: varchar
+        basis: varchar
+    columns:
+      - name: kan_code
+        data_tests: [not_null]
+      - name: basis
+        data_tests: [not_null]
   - name: fiscal_detail_breakdown
     meta:
       # **判断そのもの。** 内訳の枝の分け方の宣言。

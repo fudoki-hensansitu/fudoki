@@ -101,7 +101,10 @@ selected_amounts as (
     from mapped_amounts group by source_table_key, node_key, document_kind
 ), amounts_checked as (
     -- A 款・項 printed with its number only takes the name declared in fiscal_subject_name_fill.
-    select n.* replace (case when coalesce(n.name, '') = '' then coalesce(f.name, n.name) else n.name end as name),
+    -- A 款 printed with its name only takes the number declared in fiscal_kan_code_fill.
+    select n.* replace (case when coalesce(n.name, '') = '' then coalesce(f.name, n.name) else n.name end as name,
+                        case when n.node_kind = '款' and coalesce(n.code_text, '') = '' then coalesce(c.kan_code, n.code_text)
+                             else n.code_text end as code_text),
         a.amount_yen, a.proposed_yen, a.amount_source_page,
         a.amount_source_x0, a.amount_source_y0, a.amount_source_x1, a.amount_source_y1
     from checked_nodes n left join selected_amounts a using (source_table_key, node_key)
@@ -112,6 +115,10 @@ selected_amounts as (
      and f.document_kind = n.document_kind and f.account_name = n.account_name and f.node_kind = n.node_kind
      and f.kan_code = case n.node_kind when '款' then n.code_text else p.code_text end
      and coalesce(f.kou_code, '') = case n.node_kind when '項' then n.code_text else '' end
+    left join {{ ref('fiscal_kan_code_fill') }} c
+      on n.node_kind = '款' and coalesce(n.code_text, '') = '' and c.jurisdiction_code = n.jurisdiction_code
+     and c.fiscal_year = n.fiscal_year and c.document_kind = n.document_kind and c.account_name = n.account_name
+     and c.kan_name = n.name
 ), hierarchy as (
     select n.*, n.code_text as kan_code, null::varchar as kou_code, null::varchar as moku_code,
         n.name as kan_name, null::varchar as kou_name, n.axis_header as subject_axis, false as under_subject,
