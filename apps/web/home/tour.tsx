@@ -137,12 +137,12 @@ function SpotBody({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip
       {/* 狭い札では文節で折ると行末が大きく空くので、この札だけ文字の単位で折る */}
       <div className="mt-1 text-[14px] leading-relaxed text-muted-foreground [text-wrap:wrap] [word-break:normal]">{spot.body}</div>
       <div className="mt-4 flex items-center gap-3">
-        <button type="button" onClick={onSkip} className="text-[13px] text-muted-foreground hover:text-foreground">
+        <button type="button" onClick={onSkip} className="shrink-0 whitespace-nowrap text-[13px] text-muted-foreground hover:text-foreground">
           スキップ
         </button>
         <span className="flex-1" />
         {onBack ? (
-          <button type="button" onClick={onBack} className="rounded-full px-3 py-2 text-[13px] hover:bg-secondary">
+          <button type="button" onClick={onBack} className="shrink-0 whitespace-nowrap rounded-full px-3 py-2 text-[13px] hover:bg-secondary">
             もどる
           </button>
         ) : null}
