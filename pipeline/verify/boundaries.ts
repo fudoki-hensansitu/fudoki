@@ -79,6 +79,10 @@ for (const kv of (webConfig.cloudflare?.kv_namespaces as { binding?: string }[] 
 for (const key of Object.keys(webConfig.worker ?? {}))
   if (!WEB_WORKER_KEYS.has(key))
     throw new Error(`Public web must not bind data: web (worker.${key})`)
+// api は出典（非公開 R2 の fudoki-inputs）に触れない。元の PDF は公式の URL から中継し、頁の文字は D1 から読む（docs/prd/page-words/dd.md）
+const apiConfig = await readFile(join(REPO, 'apps', 'api', 'cloudflare.config.ts'), 'utf8')
+if (/\bbindings\.r2\s*\(/.test(apiConfig))
+  throw new Error('Public api must not bind R2 (source PDFs stay in the private bucket)')
 // docs は静的ファイルだけを配る。Worker のコードも binding（D1 などのデータ）も持たせない
 const docsConfig = await readFile(
   join(REPO, 'apps', 'docs', 'cloudflare.config.ts'),
@@ -91,5 +95,6 @@ console.log(
     publicAppsIndependent: true,
     sharedPackagesIndependent: true,
     publicAppsHaveNoDataBindings: true,
+    apiHasNoR2Binding: true,
   })
 )

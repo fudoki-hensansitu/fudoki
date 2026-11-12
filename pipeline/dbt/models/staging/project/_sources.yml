@@ -10,3 +10,4 @@ sources:
   - name: project_evaluation_indicator_value
   - name: project_evaluation_result
   - name: project_budget_measure
+  - name: project_source_page_text
