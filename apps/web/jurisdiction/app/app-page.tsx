@@ -671,7 +671,7 @@ function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   const [drills, setDrills] = React.useState<Drill[] | null>()
   const initial = d.years[String(v.year)]?.kind === 'initial'
   // recharts の chunk は内訳のデータを待たずに読み始める
-  React.useEffect(() => { void loadFieldChart() }, [])
+  React.useEffect(() => { void loadFieldChart().catch(() => {}) }, [])
   React.useEffect(() => {
     setDrills(undefined)
     const controller = new AbortController()
@@ -692,10 +692,10 @@ function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   return (
     <DetailSection icon={ChartPieSliceIcon} title="内訳">
       {drills ? (
-        <React.Suspense fallback={<div className="h-[320px] animate-pulse rounded-xl bg-card @3xl:h-[420px]" />}>
+        <React.Suspense fallback={<div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" />}>
           <FieldChart slices={slices} format={yenText} />
         </React.Suspense>
-      ) : <div className="h-[320px] animate-pulse rounded-xl bg-card @3xl:h-[420px]" />}
+      ) : <div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" />}
     </DetailSection>
   )
 }
