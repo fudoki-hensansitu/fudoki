@@ -72,8 +72,6 @@ EXCLUDE_YEAR: dict[tuple[str, int, str, str], str] = {
        for year in (2024, 2025)
        for table in ('general-initial', 'national-health-insurance-initial', 'long-term-care-initial',
                      'elderly-medical-initial', 'land-readjustment-initial')},
-    **{('131156', 2026, 'initial', table): 'kan/kou titles were read as moku names, so moku land under the wrong kou (款保健福祉費, 項国民年金費)'
-       for table in ('general-initial', 'care-initial', 'national-health-initial', 'elderly-medical-initial')},
     ('132080', 2026, 'initial', 'general-initial-3'): 'kou/moku numbers collide across kan (kou 5 holds both 中学校費 and 教育総務費)',
     **{(jurisdiction, year, kind, 'general-expenditure'): 'a kan-only table that prints no kan numbers; the subject table needs a kan code'
        for jurisdiction, year, kind in (('133639', 2024, 'initial'), ('133639', 2025, 'initial'), ('133817', 2024, 'settlement'))},

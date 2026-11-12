@@ -2260,10 +2260,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         opening = logical.reprints  # no subject with a code has begun on this page yet
         page_axes: set[str] = set()  # the breakdown axes with an item on this page so far (`repeated_at_top`)
         digit_set = quirk(document, 'digit_set_codes')
+        codeless_items = document_quirk('codeless_column_items')
         for _, _, item in events:
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
                     and (row[0].depth < subject_depth or item.code is None) and id(item) not in numbered_names \
                     and row[1] - .5 <= item.anchor <= row[2] + .5 \
+                    and not (id(item) in column_amount_items and codeless_items is not None) \
                     and (not item.amounts or (kind_of(item.name, words=True) is not None
                                               and not is_plain_name(layout, item))):
                 # A line in a subject's row annotates it when it prints no amount (a list of 議決 numbers) or
