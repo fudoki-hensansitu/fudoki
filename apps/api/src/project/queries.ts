@@ -33,7 +33,7 @@ export async function getProject(ctx: Ctx, input: { project_id: string }): Promi
 export async function searchProjects(ctx: Ctx, input: SearchInput): Promise<ProjectSearchOutput> {
   const { rows, next_page_token, total_size, total_size_capped } = await searchRows(PROJECT_YEAR_SEARCH, null, ctx, input, { count: true })
   const years = rows.map((r) => Object.fromEntries(Y.columns.map((c) => [c.name, r[c.name] ?? null])))
-  const ids = [...new Set(years.map((r) => r.project_id as string))]
+  const ids = [...new Set(years.map((r) => r.project_id as string))].sort()
   const { db } = ctx
   const projectSelect = selectListOf(PROJECT_TABLE)
   const chunks = Array.from({ length: Math.ceil(ids.length / MAX_BINDS) }, (_, i) => ids.slice(i * MAX_BINDS, (i + 1) * MAX_BINDS))

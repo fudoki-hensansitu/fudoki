@@ -63,9 +63,11 @@ export const useHydrated = () => React.useSyncExternalStore(noop, () => true, ()
 
 /** サーバーが渡さない値を読む部品の Suspense。サーバーの描画と hydration のあいだは fallback だけを描き、
  * ブラウザで描き終えてから中身を描いて読みに行く（サーバーで読みに行くと、応答の stream が読み終えるまで閉じない）。
- * サーバーが渡した値だけで描けるとき（ready）は Suspense で包まない。包むと React が大きな中身を後から差し込む inline script を出し、CSP がそれを止めて頁が壊れる */
+ * 初めて描くときにサーバーが渡した値だけで描けるなら（ready）、その後も Suspense で包まない。包むと React が大きな中身を後から差し込む inline script を出し、CSP がそれを止めて頁が壊れる。
+ * 包むかどうかは初めて描いた時のまま変えない（途中で包み始めると新しい境界が fallback を出し、切り替えのあいだ前の画面を出したままにできない） */
 export function ClientSuspense({ fallback, ready, children }: { fallback: React.ReactNode; /** サーバーが渡した値だけで描けるなら true（サーバーでも描く） */ ready?: boolean; children: React.ReactNode }) {
   const hydrated = useHydrated()
-  if (ready) return children
+  const [unwrapped] = React.useState(!!ready)
+  if (unwrapped) return children
   return hydrated ? React.createElement(React.Suspense, { fallback }, children) : fallback
 }
