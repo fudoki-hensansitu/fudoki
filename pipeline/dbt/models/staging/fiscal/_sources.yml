@@ -4,6 +4,566 @@ sources:
 - name: fiscal_pdf
   schema: ingestion
   tables:
+  - name: j092096_2023_settlement_care_service_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-service-expenditure
+      kind: amounts
+  - name: j092096_2023_settlement_care_service_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-service-expenditure
+      kind: nodes
+  - name: j092096_2023_settlement_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j092096_2023_settlement_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j092096_2023_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j092096_2023_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j092096_2023_settlement_holiday_clinic_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: holiday-clinic-expenditure
+      kind: amounts
+  - name: j092096_2023_settlement_holiday_clinic_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: holiday-clinic-expenditure
+      kind: nodes
+  - name: j092096_2023_settlement_industrial_park_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: industrial-park-expenditure
+      kind: amounts
+  - name: j092096_2023_settlement_industrial_park_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: industrial-park-expenditure
+      kind: nodes
+  - name: j092096_2023_settlement_long_term_care_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: amounts
+  - name: j092096_2023_settlement_long_term_care_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j092096_2023_settlement_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j092096_2023_settlement_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2023
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j092096_2024_settlement_care_service_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-service-expenditure
+      kind: amounts
+  - name: j092096_2024_settlement_care_service_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-service-expenditure
+      kind: nodes
+  - name: j092096_2024_settlement_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j092096_2024_settlement_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j092096_2024_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j092096_2024_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j092096_2024_settlement_holiday_clinic_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: holiday-clinic-expenditure
+      kind: amounts
+  - name: j092096_2024_settlement_holiday_clinic_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: holiday-clinic-expenditure
+      kind: nodes
+  - name: j092096_2024_settlement_industrial_park_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: industrial-park-expenditure
+      kind: amounts
+  - name: j092096_2024_settlement_industrial_park_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: industrial-park-expenditure
+      kind: nodes
+  - name: j092096_2024_settlement_long_term_care_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: amounts
+  - name: j092096_2024_settlement_long_term_care_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j092096_2024_settlement_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j092096_2024_settlement_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2024
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j092096_2025_initial_care_service_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: care-service-initial
+      kind: amounts
+  - name: j092096_2025_initial_care_service_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: care-service-initial
+      kind: nodes
+  - name: j092096_2025_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j092096_2025_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j092096_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j092096_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j092096_2025_initial_holiday_clinic_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: holiday-clinic-initial
+      kind: amounts
+  - name: j092096_2025_initial_holiday_clinic_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: holiday-clinic-initial
+      kind: nodes
+  - name: j092096_2025_initial_industrial_park_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: industrial-park-initial
+      kind: amounts
+  - name: j092096_2025_initial_industrial_park_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: industrial-park-initial
+      kind: nodes
+  - name: j092096_2025_initial_long_term_care_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: long-term-care-initial
+      kind: amounts
+  - name: j092096_2025_initial_long_term_care_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: long-term-care-initial
+      kind: nodes
+  - name: j092096_2025_initial_national_health_insurance_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-insurance-initial
+      kind: amounts
+  - name: j092096_2025_initial_national_health_insurance_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-insurance-initial
+      kind: nodes
+  - name: j092096_2025_settlement_care_service_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-service-expenditure
+      kind: amounts
+  - name: j092096_2025_settlement_care_service_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: care-service-expenditure
+      kind: nodes
+  - name: j092096_2025_settlement_elderly_medical_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: amounts
+  - name: j092096_2025_settlement_elderly_medical_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: elderly-medical-expenditure
+      kind: nodes
+  - name: j092096_2025_settlement_general_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: amounts
+  - name: j092096_2025_settlement_general_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: general-expenditure
+      kind: nodes
+  - name: j092096_2025_settlement_holiday_clinic_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: holiday-clinic-expenditure
+      kind: amounts
+  - name: j092096_2025_settlement_holiday_clinic_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: holiday-clinic-expenditure
+      kind: nodes
+  - name: j092096_2025_settlement_industrial_park_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: industrial-park-expenditure
+      kind: amounts
+  - name: j092096_2025_settlement_industrial_park_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: industrial-park-expenditure
+      kind: nodes
+  - name: j092096_2025_settlement_long_term_care_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: amounts
+  - name: j092096_2025_settlement_long_term_care_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: long-term-care-expenditure
+      kind: nodes
+  - name: j092096_2025_settlement_national_health_insurance_expenditure_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: amounts
+  - name: j092096_2025_settlement_national_health_insurance_expenditure_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2025
+      document_kind: settlement
+      direction: expenditure
+      table_id: national-health-insurance-expenditure
+      kind: nodes
+  - name: j092096_2026_initial_care_service_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: care-service-initial
+      kind: amounts
+  - name: j092096_2026_initial_care_service_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: care-service-initial
+      kind: nodes
+  - name: j092096_2026_initial_elderly_medical_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: amounts
+  - name: j092096_2026_initial_elderly_medical_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: elderly-medical-initial
+      kind: nodes
+  - name: j092096_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j092096_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j092096_2026_initial_holiday_clinic_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: holiday-clinic-initial
+      kind: amounts
+  - name: j092096_2026_initial_holiday_clinic_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: holiday-clinic-initial
+      kind: nodes
+  - name: j092096_2026_initial_industrial_park_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: industrial-park-initial
+      kind: amounts
+  - name: j092096_2026_initial_industrial_park_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: industrial-park-initial
+      kind: nodes
+  - name: j092096_2026_initial_long_term_care_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: long-term-care-initial
+      kind: amounts
+  - name: j092096_2026_initial_long_term_care_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: long-term-care-initial
+      kind: nodes
+  - name: j092096_2026_initial_national_health_insurance_initial_amounts
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-insurance-initial
+      kind: amounts
+  - name: j092096_2026_initial_national_health_insurance_initial_nodes
+    meta:
+      jurisdiction: 092096
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: national-health-insurance-initial
+      kind: nodes
   - name: j130001_2024_settlement_coastal_fishery_improvement_fund_expenditure_amounts
     meta:
       jurisdiction: '130001'
