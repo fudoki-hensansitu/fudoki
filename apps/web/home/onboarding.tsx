@@ -32,7 +32,7 @@ export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPic
   return (
     <section className={'ob-rise rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7'}>
       {again ? null : <Steps at={1} of={2} onBrand />}
-      <h2 className="mb-4 text-[20px] leading-snug font-bold sm:text-[24px]">住んでいるまちを選ぶ</h2>
+      <h2 className="mb-4 text-[20px] leading-snug font-semibold sm:text-[24px]">住んでいるまちを選ぶ</h2>
       {/* 一覧を読めなかったときに「未収録」と誤って伝えないよう、検索と現在地を出さない */}
       {entries.length ? (
         <>
@@ -44,7 +44,7 @@ export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPic
             <button
               type="button"
               onClick={() => void locate()}
-              className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border border-brand-foreground px-5 text-[15px] font-bold text-brand-foreground transition-[background-color,color,transform] duration-150 ease-out hover:bg-brand-fill hover:text-brand-fill-foreground active:scale-[0.97] motion-reduce:transition-none"
+              className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border border-brand-foreground px-5 text-[15px] font-medium text-brand-foreground transition-[background-color,color,transform] duration-150 ease-out hover:bg-brand-fill hover:text-brand-fill-foreground active:scale-[0.97] motion-reduce:transition-none"
             >
               <NavigationArrowIcon className="size-4" />
               現在地から選ぶ
@@ -98,7 +98,7 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
         <span className="min-w-0 flex-1 text-[14px]">
           現在地は <b className="text-[16px]">{loc.hit.name}</b> です
         </span>
-        <button type="button" onClick={() => onPick(loc.hit!)} className="rounded-full bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
+        <button type="button" onClick={() => onPick(loc.hit!)} className="rounded-full bg-primary px-4 py-2 text-[13px] font-medium text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
           このまちを選ぶ
         </button>
       </div>
@@ -108,7 +108,7 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
     <div role="status" className="flex items-start gap-2 text-[13px] leading-relaxed">
       <WarningCircleIcon className="mt-[3px] size-4 shrink-0 opacity-80" />
       <p className="min-w-0 flex-1">
-        <span className="font-bold">{loc.error}。</span>
+        <span className="font-medium">{loc.error}。</span>
         {loc.denied ? 'アドレスバーの鍵のアイコンから位置情報を許可するか、自治体名で探してください。' : '自治体名でも探せます。'}
         <button type="button" onClick={onRetry} className="ml-2 underline underline-offset-2 opacity-90 hover:opacity-100">
           もう一度
@@ -145,7 +145,7 @@ export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
     <header className={shown ? cn('mb-7 sm:mb-8', mode === 'full' && 'ob-rise') : 'sr-only'}>
       <div className="flex items-center gap-3 sm:gap-4">
         {shown ? <Mark className="size-9 shrink-0 text-primary sm:size-11" /> : null}
-        <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">{title}</h1>
+        <h1 className="text-[26px] leading-[1.35] font-semibold tracking-[0.02em] sm:text-[32px]">{title}</h1>
       </div>
       <p className="mt-2 text-[15px] text-muted-foreground">{lead}</p>
     </header>
@@ -207,7 +207,7 @@ export function Checklist({ items, tour, onTour }: { items: CheckItem[]; tour: T
   return (
     <section className="ob-rise mb-4 rounded-2xl border bg-background p-4 sm:p-5" aria-label="はじめにやること">
       <div className="flex items-center gap-3">
-        <h2 className="flex-1 text-[15px] font-bold">{complete ? 'ひととおり見ました' : 'はじめにやること'}</h2>
+        <h2 className="flex-1 text-[15px] font-medium">{complete ? 'ひととおり見ました' : 'はじめにやること'}</h2>
         <span className="text-[12px] text-muted-foreground tabular-nums">
           {n} / {all.length}
         </span>
@@ -241,7 +241,7 @@ export function Checklist({ items, tour, onTour }: { items: CheckItem[]; tour: T
                   <button
                     type="button"
                     onClick={onTour}
-                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none"
+                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-medium text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none"
                   >
                     {mid ? '続きから' : 'オンボ開始'}
                     <ArrowRightIcon className="size-3.5" />

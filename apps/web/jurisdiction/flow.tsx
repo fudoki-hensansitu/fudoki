@@ -369,9 +369,9 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: D
           className={natural ? 'fixed right-1 top-1/2 z-10 flex -translate-y-1/2 flex-col' : 'absolute right-0.5 top-1/2 z-10 flex -translate-y-1/2 flex-col'}
         >
           {drill.kou.map((k, i) => (
-            <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} className="group/dot px-1.5 py-[3px]">
+            <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} className="group/dot flex h-[11px] items-center px-1.5">
               {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
-              <i className={`block w-[5px] rounded-full transition-all ${i === current ? 'h-4 bg-primary' : 'h-[5px] bg-border group-hover/dot:bg-primary/50'}`} />
+              <i className={`block h-4 w-[5px] shrink-0 rounded-full transition-[transform,background-color] duration-150 motion-reduce:transition-none ${i === current ? 'bg-primary' : 'scale-y-[0.3125] bg-border group-hover/dot:bg-primary/50'}`} />
             </button>
           ))}
         </TickMenu>

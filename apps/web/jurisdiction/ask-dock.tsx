@@ -371,7 +371,7 @@ export function AskDock({ name, sitekey, year, section, control, keepOpen, sugge
         <div data-tour="ask" className="mx-auto max-w-[720px]">
           <StartForm
             sitekey={sitekey}
-            placeholder={`${name}について質問…`}
+            placeholder={`${name}について質問`}
             context={describe}
             onStart={start}
             before={chip}

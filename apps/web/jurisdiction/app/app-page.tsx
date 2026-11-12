@@ -165,7 +165,8 @@ function ProjectRow({ p, rank }: { p: Proj; rank?: number }) {
   const { v, select, selected } = useApp()
   const ended = v.isEnded(p)
   const yen = ended ? v.amount(p, String(v.year - 1)) : v.amount(p)
-  const icon = ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : <IconBox><FieldIcon id={p.field} /></IconBox>
+  // 分野は sub に文字で書くので、分野のアイコンは出さない。新規・やめた事業の印と行の頭を揃えるため、印の幅だけ空ける
+  const icon = ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : <span aria-hidden className="w-6 shrink-0" />
   return <Row rank={rank} icon={icon} title={p.name} sub={[p.dept, fieldName(v, p.field)].filter(Boolean).join(' · ')} yen={yen} note={ended ? `${r(v.year - 1)} ${v.label(v.year - 1)}` : yen != null ? `${((yen / v.total) * 100).toFixed(1)}%` : undefined} selected={selected?.kind === 'project' && selected.id === p.id} onClick={() => select({ kind: 'project', id: p.id })} />
 }
 function MeasureRow({ m }: { m: Measure }) {
@@ -235,25 +236,25 @@ type TabKey = PageTab
 type Go = (t: TabKey, opt?: { filter?: string; field?: string; grade?: string }) => void
 
 
-function FieldTile({ f, i, onClick }: { f: YearView['fields'][number]; i: number; onClick: () => void }) {
+/** 分野の行。名前・金額・棒・割合を1行に並べる。割合は前景色で、緑は棒だけに置く */
+function FieldRow({ f, i, max, onClick }: { f: YearView['fields'][number]; i: number; max: number; onClick: () => void }) {
   const { v } = useApp()
   const n = v.current.filter((p) => p.field === f.id).length
   const pct = (f.yen / v.total) * 100
   return (
-    <button type="button" onClick={onClick} className="row-span-4 grid w-full grid-rows-subgrid rounded-xl text-left transition-transform active:scale-[.98]"><Card className="row-span-4 grid grid-rows-subgrid gap-0 bg-background p-3.5 text-left ring-1 ring-border transition-[background,box-shadow,transform] hover:bg-accent hover:ring-primary active:scale-[.98]">
-      <span className="mb-2.5 flex items-center justify-between">
-        <IconBox><FieldIcon id={f.id} /></IconBox>
-        <span className="text-[22px] tabular-nums text-primary">
-          {pct.toFixed(1)}
-          <small className="text-xs">%</small>
-        </span>
+    <button type="button" onClick={onClick} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 rounded-lg px-2.5 py-3 text-left transition-colors hover:bg-card sm:grid-cols-[10rem_minmax(0,1fr)_4.5rem]">
+      <span className="col-start-1 row-start-1 min-w-0 sm:col-start-auto sm:row-start-auto">
+        <span className="block truncate text-base font-medium">{f.name}</span>
+        <span className="block text-xs text-muted-foreground"><Amt yen={f.yen} /> · 事業 {n}</span>
       </span>
-      <span className="text-base font-semibold">{f.name}</span>
-      <span className="mb-2.5 text-xs text-muted-foreground"><Amt yen={f.yen} /> · 事業 {n}</span>
-      <span className="block h-1 overflow-hidden rounded-full bg-secondary">
-        <span className="app-grow block h-full rounded-full bg-primary" style={{ width: `${Math.max(2, pct * 1.8)}%`, animationDelay: `${i * 30}ms` }} />
+      <span className="col-span-2 col-start-1 row-start-2 block h-1.5 overflow-hidden rounded-full bg-secondary sm:col-span-1 sm:col-start-auto sm:row-start-auto">
+        <span className="app-grow block h-full rounded-full bg-primary" style={{ width: `${Math.max(1, (f.yen / max) * 100)}%`, animationDelay: `${i * 30}ms` }} />
       </span>
-    </Card></button>
+      <span className="col-start-2 row-start-1 text-right text-[17px] tabular-nums sm:col-start-auto sm:row-start-auto">
+        {pct.toFixed(1)}
+        <small className="text-xs text-muted-foreground">%</small>
+      </span>
+    </button>
   )
 }
 
@@ -408,7 +409,7 @@ function Overview({ go }: { go: Go }) {
       {/* ホームのまちの札と同じく、濃い緑の地に総額と1人あたりを載せる。事業の件数は出さない */}
       <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
         <p className="text-sm opacity-80">{reiwa(v.year)}の{v.word}（一般会計）</p>
-        <Amt yen={v.total} className="mt-1 block text-[40px] leading-none font-bold sm:text-[48px]" />
+        <Amt yen={v.total} className="mt-1 block text-[40px] leading-none font-semibold sm:text-[48px]" />
         {v.perHead != null ? (
           <p className="mt-2 text-sm opacity-80">
             1人あたり <Amt yen={v.perHead} />
@@ -418,9 +419,9 @@ function Overview({ go }: { go: Go }) {
 
       <section data-tour="fields">
         <SectionHead title="分野" />
-        {/* 札の中の行（割合・名前・金額・棒）を subgrid で横の札と揃え、名前が2行になっても金額と棒の位置を同じにする */}
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 @3xl:grid-cols-5">
-          {v.fields.map((f, i) => <FieldTile key={f.id} f={f} i={i} onClick={() => openField(f.id)} />)}
+        {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
+        <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
+          {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={Math.max(...v.fields.map((x) => x.yen))} onClick={() => openField(f.id)} />)}
         </div>
       </section>
 
@@ -1106,7 +1107,17 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
               ))}
             </TabsList>
             )}
-              {stuck ? <div className="app-in shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div> : null}
+              {/* 貼り付いた帯ではタブを優先する。幅が足りないとき（会話を横に開いたときなど）は年度を「今年度 ▾」の1つにまとめる */}
+              {stuck ? (
+                <div className="app-in shrink-0">
+                  {phone ? <YearMenu years={years} current={year} onChange={setYear} /> : (
+                    <>
+                      <div className="@max-4xl:hidden"><YearPicker years={years} current={year} onChange={setYear} /></div>
+                      <div className="@4xl:hidden"><YearMenu years={years} current={year} onChange={setYear} /></div>
+                    </>
+                  )}
+                </div>
+              ) : null}
             </div>
           </div>
           {v ? (

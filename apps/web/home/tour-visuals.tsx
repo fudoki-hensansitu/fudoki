@@ -34,8 +34,8 @@ export function OpenVisual({ town, total }: { town: string; total: number }) {
   return (
     <Stage>
       <div className="absolute inset-x-4 top-4 bottom-4 rounded-xl bg-brand px-4 py-3 text-brand-foreground">
-        <p className="text-[12px] font-bold">{town}</p>
-        <Amt yen={total} className="mt-1 block text-[26px] leading-none font-bold" />
+        <p className="text-[12px] font-medium">{town}</p>
+        <Amt yen={total} className="mt-1 block text-[26px] leading-none font-semibold" />
         <span className="tv-press-fill absolute right-3 bottom-3 inline-flex items-center gap-1 rounded-full bg-brand-fill px-2.5 py-1 text-[11px] text-brand-fill-foreground">
           詳細を見る
           <ArrowRightIcon className="size-3" />
@@ -62,7 +62,7 @@ export function FieldsVisual({ items }: { items: FieldItem[] }) {
                 <small className="text-[9px]">%</small>
               </span>
             </div>
-            <p className="mt-1.5 truncate text-[11px] font-bold">{f.name}</p>
+            <p className="mt-1.5 truncate text-[11px] font-medium">{f.name}</p>
             <span className="mt-1.5 block h-1 overflow-hidden rounded-full bg-secondary">
               <span className="tv-grow block h-full rounded-full bg-primary" style={{ width: `${Math.max(8, Math.min(100, f.pct * 2))}%`, animationDelay: `${i * 0.12}s` }} />
             </span>
@@ -82,8 +82,8 @@ export function FieldVisual({ id, name, yen, projects }: { id: string; name: str
         <span className="grid size-7 place-items-center rounded-lg bg-background text-muted-foreground">
           <FieldIcon id={id} className="size-4" />
         </span>
-        <span className="min-w-0 flex-1 truncate text-[12px] font-bold">{name}</span>
-        <Amt yen={yen} className="text-[18px] font-bold text-primary" />
+        <span className="min-w-0 flex-1 truncate text-[12px] font-medium">{name}</span>
+        <Amt yen={yen} className="text-[18px] font-medium text-primary" />
       </div>
       <ul className="absolute inset-x-4 top-12 divide-y rounded-lg bg-background px-2.5">
         {projects.slice(0, 3).map((p, i) => (
@@ -114,7 +114,7 @@ export function ProjectsVisual({ items }: { items: { name: string; yen: number |
       </ul>
       {top[0] ? (
         <div className="tv-slide absolute top-3 right-3 bottom-3 w-[32%] rounded-lg bg-background p-2 shadow-md ring-1 ring-border">
-          <p className="line-clamp-2 text-[10px] leading-snug font-bold">{top[0].name}</p>
+          <p className="line-clamp-2 text-[10px] leading-snug font-medium">{top[0].name}</p>
           <Amt yen={top[0].yen} className="mt-1 block text-[15px] text-primary" />
         </div>
       ) : null}
@@ -130,7 +130,7 @@ export function SelectVisual({ path, name, yen }: { path?: string; name: string;
     <Stage>
       <div className="absolute inset-x-4 top-3">
         {path ? <p className="truncate text-[10px] text-muted-foreground">{path}</p> : null}
-        <p className="mt-0.5 text-[15px] leading-snug font-bold">
+        <p className="mt-0.5 text-[15px] leading-snug font-medium">
           <span className="tv-mark relative whitespace-nowrap">
             {mark}
             <span className="tv-ibeam absolute top-1/2 -translate-y-1/2 text-foreground">

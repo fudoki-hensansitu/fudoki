@@ -135,7 +135,7 @@ function SpotBody({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip
       <div className={cn('mb-2', spot.visual && 'mt-3.5')}>
         <Dots at={at} />
       </div>
-      <h2 id="tour-title" className="text-[16px] font-bold">
+      <h2 id="tour-title" className="text-[16px] font-medium">
         {spot.title}
       </h2>
       {/* 狭い札では文節で折ると行末が大きく空くので、この札だけ文字の単位で折る */}
@@ -154,7 +154,7 @@ function SpotBody({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip
           <button
             type="button"
             onClick={spot.action.run}
-            className="rounded-full bg-primary px-4 py-2 text-[13px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none"
+            className="rounded-full bg-primary px-4 py-2 text-[13px] font-medium text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none"
           >
             {spot.action.label}
           </button>

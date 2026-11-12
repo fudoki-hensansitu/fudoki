@@ -166,7 +166,7 @@ function FieldBars({ c, limit }: { c: Ctx; limit: number }) {
 function Card({ title, icon, children, footer, className, tour }: { title: string; icon?: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; className?: string; tour?: string }) {
   return (
     <section data-tour={tour} className={cn('flex flex-col rounded-2xl border bg-background p-5 animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none', className)}>
-      <h3 className="mb-3 flex items-center gap-2 text-[15px] font-bold [&_svg]:size-5 [&>svg]:text-muted-foreground">
+      <h3 className="mb-3 flex items-center gap-2 text-[15px] font-medium [&_svg]:size-5 [&>svg]:text-muted-foreground">
         {icon}
         {title}
       </h3>
@@ -185,7 +185,7 @@ function Dashboard({ c }: { c: Ctx }) {
         <div className="flex items-start gap-4">
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
           <div className="min-w-0 flex-1">
-            <h2 className="text-2xl font-bold sm:text-[28px]">{town.name}</h2>
+            <h2 className="text-2xl font-semibold sm:text-[28px]">{town.name}</h2>
             <p className="mt-0.5 truncate text-sm opacity-80">{c.vision}</p>
           </div>
           {/* 年度は数字の頭に効くので上に、頁へ進む導線は数字を読んだあとの下に置く */}
@@ -196,7 +196,7 @@ function Dashboard({ c }: { c: Ctx }) {
             <p className="text-sm opacity-80">
               {yearName(year)}の{v.word === '決算' ? '決算' : '当初予算'}
             </p>
-            <p className="mt-1 text-[40px] leading-none font-bold sm:text-[48px]">
+            <p className="mt-1 text-[40px] leading-none font-semibold sm:text-[48px]">
               <Amt yen={v.total} />
             </p>
             {d.pop ? <p className="mt-2 text-sm opacity-80">1人あたり {perHeadText(v.total, d.pop)}</p> : null}
@@ -229,12 +229,12 @@ function Dashboard({ c }: { c: Ctx }) {
       {sheets.length ? (
         <Card title={`${yearName(fy)}の事業評価`} icon={<ClipboardTextIcon />} footer={<More href={`${town.path}/${fy}/projects`}>事業を見る</More>}>
           <p className="text-sm text-muted-foreground">
-            <span className="text-2xl font-bold text-foreground tabular-nums">{sheets.length}</span> 件の事業を振り返りました
+            <span className="text-2xl font-semibold text-foreground tabular-nums">{sheets.length}</span> 件の事業を振り返りました
           </p>
           <ul className="mt-4 grid grid-cols-4 gap-2">
             {GRADES.map(([g, label]) => (
               <li key={g} className="rounded-xl bg-card px-2 py-2.5 text-center">
-                <span className="block text-lg font-bold tabular-nums">{sheets.filter((s) => s.grade === g).length}</span>
+                <span className="block text-lg font-medium tabular-nums">{sheets.filter((s) => s.grade === g).length}</span>
                 <span className="block text-[11px] text-muted-foreground">{label}</span>
               </li>
             ))}
@@ -259,10 +259,10 @@ function Loading() {
 }
 
 /** うちのまちのデータが揃うまでの出し分け。揃ったら children に渡す */
-function WithCtx({ town, vision, snap, children }: { town: Town; vision?: string; snap: ReturnType<typeof useSnapshot>; children: (c: Ctx) => React.ReactNode }) {
+function WithCtx({ town, vision, snap, loading, children }: { town: Town; vision?: string; snap: ReturnType<typeof useSnapshot>; loading?: React.ReactNode; children: (c: Ctx) => React.ReactNode }) {
   const { d, failed, year, setYear } = snap
   if (failed) return <p className="text-sm text-muted-foreground">今はこのまちのデータを読み込めません。少し時間をおいて開き直してください。</p>
-  if (!d || year == null) return <Loading />
+  if (!d || year == null) return <>{loading ?? <Loading />}</>
   if (!d.years[String(year)]) return <p className="text-sm text-muted-foreground">このまちの予算・決算は、まだ収録していません。</p>
   return <>{children(buildCtx(town, d, year, setYear, vision))}</>
 }
@@ -272,13 +272,13 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
   const { town, d, v, year } = c
   const top = v.fields[0]
   const rows: [string, React.ReactNode][] = [
-    [`${yearName(year)}の${v.word === '決算' ? '決算' : '当初予算'}`, <Amt key="t" yen={v.total} className="text-[28px] font-bold sm:text-[32px]" />],
-    ...(d.pop ? ([['1人あたり', <span key="p" className="text-[20px] font-bold">{perHeadText(v.total, d.pop)}</span>]] as [string, React.ReactNode][]) : []),
+    [`${yearName(year)}の${v.word === '決算' ? '決算' : '当初予算'}`, <Amt key="t" yen={v.total} className="text-[28px] font-semibold sm:text-[32px]" />],
+    ...(d.pop ? ([['1人あたり', <span key="p" className="text-[20px] font-semibold">{perHeadText(v.total, d.pop)}</span>]] as [string, React.ReactNode][]) : []),
     ...(top
       ? ([
           [
             'いちばん多い分野',
-            <span key="f" className="flex items-center gap-1.5 text-[18px] font-bold">
+            <span key="f" className="flex items-center gap-1.5 text-[18px] font-medium">
               <FieldIcon id={top.id} className="size-5 text-muted-foreground" />
               {top.name}
               <span className="text-[13px] font-normal text-muted-foreground tabular-nums">{pct(top.yen, v.total)}</span>
@@ -288,26 +288,47 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
       : []),
   ]
   return (
-    <section className="ob-swap rounded-[24px] border bg-background p-5 sm:p-7">
+    <RevealFrame town={town} onOpen={onOpen} onBack={onBack}>
+      {rows.map(([k, val], i) => (
+        <div key={k} className="ob-fade flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3 first:pt-1" style={{ '--d': `${0.12 + i * 0.12}s` } as React.CSSProperties}>
+          <dt className="text-[14px] text-muted-foreground">{k}</dt>
+          <dd>{val}</dd>
+        </div>
+      ))}
+    </RevealFrame>
+  )
+}
+
+/** Reveal の読み込み中。まち・ボタンは選んだ時点で決まっているので先に出し、数字の行だけを同じ高さの skeleton にする */
+function RevealLoading({ town, onOpen, onBack }: { town: Town; onOpen: () => void; onBack: () => void }) {
+  return (
+    <RevealFrame town={town} onOpen={onOpen} onBack={onBack} busy>
+      {/* 行の高さは読み込んだあとの文字の行の高さに合わせ（preview で測った値）、札の高さを跳ばさない */}
+      {[{ box: 'h-12 sm:h-[54px]', bar: 'h-8 w-36' }, { box: 'h-[34px]', bar: 'h-6 w-24' }, { box: 'h-8', bar: 'h-6 w-40' }].map((x, i) => (
+        <div key={i} className="flex items-center justify-between gap-x-4 py-3 first:pt-1">
+          <dt><Skeleton className="h-4 w-24" /></dt>
+          <dd className={cn('flex items-center', x.box)}><Skeleton className={x.bar} /></dd>
+        </div>
+      ))}
+    </RevealFrame>
+  )
+}
+
+function RevealFrame({ town, onOpen, onBack, busy, children }: { town: Town; onOpen: () => void; onBack: () => void; busy?: boolean; children: React.ReactNode }) {
+  return (
+    <section className="ob-swap rounded-[24px] border bg-background p-5 sm:p-7" aria-busy={busy || undefined}>
       <Steps at={2} of={2} />
       <div className="flex items-center gap-3">
         <Emblem code={town.code} name={town.name} className="size-11 rounded-xl p-1.5" />
-        <h2 className="text-[22px] font-bold">{town.name}</h2>
+        <h2 className="text-[22px] font-semibold">{town.name}</h2>
       </div>
-      <dl className="mt-2 divide-y">
-        {rows.map(([k, val], i) => (
-          <div key={k} className="ob-fade flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3 first:pt-1" style={{ '--d': `${0.12 + i * 0.12}s` } as React.CSSProperties}>
-            <dt className="text-[14px] text-muted-foreground">{k}</dt>
-            <dd>{val}</dd>
-          </div>
-        ))}
-      </dl>
+      <dl className="mt-2 divide-y">{children}</dl>
       {/* 1歩目の「現在地から選ぶ」と同じく、決めるボタンは右に置く（PC で左右に跳ばない）。スマホは幅いっぱいにして、選び直すは下 */}
       <div className="mt-5 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
         <button type="button" onClick={onBack} className="py-1 text-[13px] text-muted-foreground hover:text-foreground">
           違うまちを選ぶ
         </button>
-        <button type="button" onClick={onOpen} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-[14px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
+        <button type="button" onClick={onOpen} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-[14px] font-medium text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
           このまちにする
           <ArrowRightIcon className="size-4" />
         </button>
@@ -326,6 +347,37 @@ const checkItems = (c: Ctx, startAt: (at: number) => void): CheckItem[] => [
   { key: 'assistant', label: 'アシスタントに質問', start: () => startAt(stepAt('detail')) },
 ]
 
+
+/** まちを選ぶ前のホームで、緑の札の下に置く。くわしく見られるまち（事業評価か都市像のあるまち）を、都市像と並べて開けるようにする。住んでいるまちは変えない */
+function FeaturedTowns({ featured, entries }: { featured: Featured[]; entries: MapEntry[] }) {
+  const items = featured.slice(0, 6).flatMap((f) => {
+    const e = entries.find((x) => x.code === f.code)
+    return e ? [{ ...f, prefecture: e.prefecture, href: e.latestYear ? `${f.path}/${e.latestYear}` : f.path }] : []
+  })
+  if (!items.length) return null
+  return (
+    <section className="mt-10" aria-labelledby="featured-towns">
+      <h2 id="featured-towns" className="mb-3 text-[17px] font-semibold">くわしく見られるまち</h2>
+      <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
+        {items.map((t) => (
+          <li key={t.code}>
+            <Link href={t.href} className="flex items-center gap-3 rounded-lg px-2.5 py-3 text-foreground no-underline transition-colors hover:bg-card">
+              <Emblem code={t.code} name={t.name} />
+              <span className="min-w-0 flex-1">
+                <span className="block text-base font-medium">
+                  {t.name}
+                  <span className="ml-2 text-xs font-normal text-muted-foreground">{t.prefecture}</span>
+                </span>
+                {t.vision ? <span className="block truncate text-xs text-muted-foreground">{t.vision}</span> : null}
+              </span>
+              <ArrowRightIcon className="size-4 shrink-0 text-muted-foreground" />
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </section>
+  )
+}
 
 const DOCS = 'https://docs.fudoki.dev'
 
@@ -389,11 +441,11 @@ export function Home({ entries, featured }: HomeProps) {
         reveal={
           pending ? (
             <>
-              <WithCtx town={pending} vision={vision} snap={snap}>
+              <WithCtx town={pending} vision={vision} snap={snap} loading={<RevealLoading town={pending} onOpen={open} onBack={() => setPending(null)} />}>
                 {(c) => <Reveal c={c} onOpen={open} onBack={() => setPending(null)} />}
               </WithCtx>
-              {/* 読み込み中・失敗・年度なしでは Reveal が出ないので、選び直す導線をここに残す */}
-              {snap.d && snap.year != null && snap.d.years[String(snap.year)] ? null : (
+              {/* 失敗・年度なしでは Reveal が出ないので、選び直す導線をここに残す（読み込み中は RevealLoading が持つ） */}
+              {!snap.failed && (!snap.d || snap.year == null || snap.d.years[String(snap.year)]) ? null : (
                 <button type="button" onClick={() => setPending(null)} className="mt-3 text-[13px] text-muted-foreground hover:text-foreground">
                   違うまちを選ぶ
                 </button>
@@ -450,10 +502,12 @@ export function Home({ entries, featured }: HomeProps) {
       </>
     )
   }
+  const featuredTowns = ready && !town && !pending ? <FeaturedTowns featured={featured} entries={entries} /> : null
   return (
     <main className="mx-auto flex min-h-[calc(100svh-56px)] w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14 md:min-h-svh md:pb-10">
       <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />
       {body}
+      {featuredTowns}
       <Footer />
     </main>
   )
