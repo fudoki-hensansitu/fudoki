@@ -18,7 +18,7 @@ const PROJECTS =
   'Projects nest like the budget book (parent_project_id): a child project\'s amount is included in its parent\'s, so never add projects together; open the lines with get_expenditure_line for sources. '
 
 const searchDescription =
-  'Search project years (one row per project and fiscal year). projects holds the projects of the returned years, with first_year (first_year_kind confirmed means the project started that year) and last_year. ' +
+  'Search project years (one row per project and fiscal year). Each row also carries its project\'s first_year and last_year (first_year_kind / last_year_kind confirmed means the project started / ended that year), parent_project_id, and the expenditure subject ids of its lines (initial_expenditure_subject_id, settlement_expenditure_subject_id). total_size counts the matching rows up to 10,000 (total_size_capped is true beyond that). ' +
   PROJECTS +
   `Required: fiscal_year {min, max} in Gregorian years (at most ${MAX_YEARS} years). ` +
   `where takes one condition per column, combined with AND: strings eq/not_eq (up to ${MAX_LIST} values), prefix/suffix/contains, is_null; integers eq/not_eq/min/max/is_null. Years plus condition values are limited to ${MAX_BINDS}.`

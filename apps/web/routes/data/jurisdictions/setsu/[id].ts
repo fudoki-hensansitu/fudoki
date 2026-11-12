@@ -1,4 +1,4 @@
-// GET /api/jurisdictions/setsu/:id: 目の節（server/jurisdiction-routes.ts）
+// GET /data/jurisdictions/setsu/:id: 目の節（server/jurisdiction-routes.ts）
 import { defineHandler } from 'void'
 import { setsuResponse } from '../../../../server/jurisdiction-routes'
 import type { Env } from '../../../../server/env'

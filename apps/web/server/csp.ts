@@ -1,6 +1,8 @@
 // 頁の Content-Security-Policy。middleware/01.site.ts が HTML の応答に付け、View の器（routes/view-frame.ts）は自分の policy を持つ。
-// script は自分の配る JS・service worker の登録（inline、hash で許す）・Turnstile・Cloudflare Web Analytics だけ。style は React の style 属性と inline の <style> があるので unsafe-inline を残す
+// script は自分の配る JS・service worker の登録・テーマ・サイドバーの開閉（inline、hash で許す）・Turnstile・Cloudflare Web Analytics だけ。style は React の style 属性と inline の <style> があるので unsafe-inline を残す
 import { SW_REGISTER } from '../pwa'
+import { THEME_SCRIPT } from '../nav/theme'
+import { NAV_SCRIPT } from '../nav/nav-state'
 
 const TURNSTILE = 'https://challenges.cloudflare.com'
 // Cloudflare Web Analytics。zone の設定で edge が HTML に beacon の script を差し込み、計測を cloudflareinsights.com へ送る
@@ -11,17 +13,20 @@ const GSI_GEOCODER = 'https://mreversegeocoder.gsi.go.jp'
 
 const sha256 = async (text: string) => btoa(String.fromCharCode(...new Uint8Array(await crypto.subtle.digest('SHA-256', new TextEncoder().encode(text)))))
 
+const API_ORIGIN = 'https://api.fudoki.dev'
+
 let page: Promise<string> | undefined
 /** 頁（View の器以外の HTML）の policy。他のサイトの frame には入れさせない */
 export const pageCsp = () =>
-  (page ??= sha256(SW_REGISTER).then((hash) =>
+  (page ??= Promise.all([SW_REGISTER, THEME_SCRIPT, NAV_SCRIPT].map(sha256)).then((hashes) =>
     [
       "default-src 'self'",
-      `script-src 'self' 'sha256-${hash}' ${TURNSTILE} ${INSIGHTS_SCRIPT}`,
+      `script-src 'self' ${hashes.map((h) => `'sha256-${h}'`).join(' ')} ${TURNSTILE} ${INSIGHTS_SCRIPT}`,
       "style-src 'self' 'unsafe-inline'",
       "img-src 'self' data: blob:",
       "font-src 'self' data:",
-      `connect-src 'self' ${INSIGHTS_REPORT} ${GSI_GEOCODER}`,
+      // 事業の一覧の続き・事業の詳細は、ブラウザが公開 API を直接読む
+      `connect-src 'self' ${API_ORIGIN} ${INSIGHTS_REPORT} ${GSI_GEOCODER}`,
       // View の器（同じ origin の /view-frame）と Turnstile の widget
       `frame-src 'self' ${TURNSTILE}`,
       "worker-src 'self'",

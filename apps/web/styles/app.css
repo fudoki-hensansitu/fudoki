@@ -48,3 +48,9 @@
 }
 @keyframes fudoki-flow-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 @keyframes fudoki-flow-node { from { opacity: 0; transform: translateX(-6px); } }
+
+/* サイドバーを閉じた人の、hydrate するまでの見た目（nav/nav-state.ts）。サーバーは開いて描くので、幅だけを閉じたときに揃えて本文がずれないようにし、
+   開いたときの中身は隠す。hydrate したら nav/site-nav.tsx が data-nav-ready を付けて、shadcn の Sidebar の状態の見た目に戻す */
+html[data-nav-closed]:not([data-nav-ready]) [data-slot="sidebar-gap"],
+html[data-nav-closed]:not([data-nav-ready]) [data-slot="sidebar-container"] { width: var(--sidebar-width-icon); transition: none; }
+html[data-nav-closed]:not([data-nav-ready]) [data-slot="sidebar-inner"] { visibility: hidden; }

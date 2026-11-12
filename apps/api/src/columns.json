@@ -1404,6 +1404,12 @@
         ],
         [
           "settlement_expenditure_detail_id"
+        ],
+        [
+          "initial_expenditure_subject_id"
+        ],
+        [
+          "settlement_expenditure_subject_id"
         ]
       ],
       "columns": [
@@ -1474,6 +1480,18 @@
           "description": "決算書の事業の行。expenditure_detail の detail_id。決算に無い年度は NULL。"
         },
         {
+          "name": "initial_expenditure_subject_id",
+          "type": "string",
+          "nullable": true,
+          "description": "当初予算書の事業の行が載る科目（目。目の無い項の下は項）。expenditure_subject の subject_id。当初予算に無い年度は NULL。科目の分野（COFOG）はこの ID で科目から引く。"
+        },
+        {
+          "name": "settlement_expenditure_subject_id",
+          "type": "string",
+          "nullable": true,
+          "description": "決算書の事業の行が載る科目（目。目の無い項の下は項）。expenditure_subject の subject_id。決算に無い年度は NULL。"
+        },
+        {
           "name": "budget_yen",
           "type": "integer",
           "nullable": true,
@@ -1484,6 +1502,45 @@
           "type": "integer",
           "nullable": true,
           "description": "支出済額（円）。決算書の事業の行の金額。"
+        },
+        {
+          "name": "first_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "事業の始めた年度。project の first_year を写したもの（年度で絞って探すため）。"
+        },
+        {
+          "name": "first_year_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "project の first_year_kind を写したもの。",
+          "values": [
+            "confirmed",
+            "before_coverage"
+          ]
+        },
+        {
+          "name": "last_year",
+          "type": "integer",
+          "nullable": true,
+          "description": "事業の終えた年度。project の last_year を写したもの。last_year_kind が latest のときは NULL。"
+        },
+        {
+          "name": "last_year_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "project の last_year_kind を写したもの。",
+          "values": [
+            "confirmed",
+            "latest",
+            "unknown"
+          ]
+        },
+        {
+          "name": "parent_project_id",
+          "type": "string",
+          "nullable": true,
+          "description": "project の parent_project_id を写したもの。目の直下の事業は NULL。"
         }
       ]
     },

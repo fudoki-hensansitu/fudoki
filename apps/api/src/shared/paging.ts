@@ -56,3 +56,6 @@ export async function decodeToken(token: string | undefined, parts: unknown[]): 
     throw invalid('page_token は別の問い合わせのものです。page_size 以外の入力を変えずに渡してください')
   return parsed.o
 }
+
+/** 合計件数（total_size）を数える上限。これを超えたら数えるのをやめ、上限の値と打ち切ったことを返す（D1 が読む行もここで止まる） */
+export const MAX_TOTAL_SIZE = 10_000

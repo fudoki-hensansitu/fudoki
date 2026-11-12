@@ -1,6 +1,6 @@
 // ホーム（/）。住んでいるまちのダッシュボード（総額・何に使っている・始めた事業・やめた事業・事業評価）と、ほかのまちを見る検索。
 // 住んでいるまちを決めていないときは、はじめての流れ（onboarding.tsx: まちを選ぶ → 要点 → ツアー → チェックリスト）を出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
-// データは自治体の頁と同じ /api/jurisdictions/app/:code を読み、yearView で年度ごとに見る
+// データは自治体の頁と同じ /data/jurisdictions/app/:code を読み、yearView で年度ごとに見る
 import * as React from 'react'
 import { useRouter } from '@void/react'
 import { ArrowRightIcon, ArrowSquareOutIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
@@ -39,42 +39,53 @@ export interface HomeProps {
 
 const toTown = (e: MapEntry): Town => ({ code: e.code, name: e.name, path: e.path })
 
-/** うちのまちのデータ。年度は収録の最新から始める */
+/** うちのまちのデータ。年度は収録の最新から始め、年度を切り替えたらその年度の分を読む（読んだ年度は持っておく） */
 function useSnapshot(code: string | null) {
-  const [d, setD] = React.useState<Snapshot | null>(null)
+  const [byYear, setByYear] = React.useState<Record<string, Snapshot>>({})
   const [failed, setFailed] = React.useState(false)
   const [year, setYear] = React.useState<number | null>(null)
   React.useEffect(() => {
-    let alive = true
-    setD(null)
+    setByYear({})
     setFailed(false)
-    if (!code) return
-    fetch(`/api/jurisdictions/app/${code}`)
+    setYear(null)
+  }, [code])
+  React.useEffect(() => {
+    if (!code || (year != null && byYear[String(year)])) return
+    let alive = true
+    fetch(`/data/jurisdictions/app/${code}${year == null ? '' : `/${year}`}`)
       .then((r) => (r.ok ? (r.json() as Promise<Snapshot>) : Promise.reject(r)))
       .then((x) => {
         if (!alive) return
-        setD(x)
-        setYear(Math.max(...Object.keys(x.years).map(Number)))
+        setByYear((m) => ({ ...m, [String(x.year)]: x }))
+        setYear(x.year)
+        setFailed(false)
       })
-      .catch(() => alive && setFailed(true))
+      .catch(() => {
+        if (!alive) return
+        // 読めている年度があればそこへ戻し、同じ年度をもう一度押せば読み直す
+        const back = Object.values(byYear)[0]
+        if (back) setYear(back.year)
+        else setFailed(true)
+      })
     return () => {
       alive = false
     }
-  }, [code])
-  return { d, failed, year, setYear }
+  }, [code, year, byYear])
+  const picked = year == null ? null : (byYear[String(year)] ?? Object.values(byYear)[0] ?? null)
+  // 評価のカードは最初に読んだ（年度なしの）応答の最新の評価を使い、年度を切り替えても残す
+  const evaluated = Object.values(byYear).find((s) => s.evaluated)?.evaluated
+  const d = picked && !picked.evaluated && evaluated ? { ...picked, evaluated } : picked
+  return { d, failed, year: d ? d.year : null, setYear }
 }
 
 type Ctx = { town: Town; d: Snapshot; v: YearView; year: number; years: number[]; setYear: (y: number) => void; base: string; vision?: string }
 
 function buildCtx(town: Town, d: Snapshot, year: number, setYear: (y: number) => void, vision?: string): Ctx {
-  return { town, d, v: yearView(d, year), year, years: Object.keys(d.years).map(Number).sort((a, b) => a - b), setYear, base: `${town.path}/${year}`, vision }
+  return { town, d, v: yearView(d), year, years: Object.keys(d.years).map(Number).sort((a, b) => a - b), setYear, base: `${town.path}/${year}`, vision }
 }
 
 const flowHref = (c: Ctx) => `${c.base}/${c.v.word === '決算' ? 'settlement' : 'budget'}`
-const sheetsOf = (d: Snapshot) => {
-  const fy = Math.max(0, ...d.sheets.map((s) => s.fy))
-  return { fy, sheets: d.sheets.filter((s) => s.fy === fy) }
-}
+const sheetsOf = (d: Snapshot) => d.evaluated ?? { fy: 0, sheets: [] }
 const pct = (yen: number, total: number) => `${((yen / total) * 100).toFixed(1)}%`
 
 const More = ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
@@ -212,18 +223,18 @@ function Dashboard({ c }: { c: Ctx }) {
           <FieldBars c={c} limit={6} />
         </Card>
       ) : null}
-      {v.comparable && v.newProjects.length ? (
+      {v.comparable && v.page('new')?.rows.length ? (
         <Card tour="projects" title={`${yearName(year)}に始めた事業`} icon={<span className="flex text-primary"><NewIcon /></span>} footer={<More href={`${c.base}/projects?filter=new`}>事業をすべて見る</More>}>
-          <ProjectList items={v.newProjects.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p) ?? null }))} rest={v.newProjects.length - 5} />
+          <ProjectList items={v.page('new')!.rows.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: p.yen }))} rest={v.page('new')!.total - 5} />
         </Card>
-      ) : v.current.length ? (
+      ) : v.top.length ? (
         <Card tour="projects" title="お金のかかる事業" icon={<CoinsIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
-          <ProjectList items={v.current.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p) ?? null }))} rest={0} />
+          <ProjectList items={v.top.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: p.yen }))} rest={0} />
         </Card>
       ) : null}
-      {v.comparable && v.ended.length ? (
+      {v.comparable && v.page('ended')?.rows.length ? (
         <Card title={`${yearName(year - 1)}でやめた事業`} icon={<span className="flex text-primary"><StopIcon /></span>} footer={<More href={`${c.base}/projects?filter=ended`}>事業をすべて見る</More>}>
-          <ProjectList items={v.ended.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p, String(year - 1)) ?? null }))} rest={v.ended.length - 5} />
+          <ProjectList items={v.page('ended')!.rows.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: p.yen }))} rest={v.page('ended')!.total - 5} />
         </Card>
       ) : null}
       {sheets.length ? (

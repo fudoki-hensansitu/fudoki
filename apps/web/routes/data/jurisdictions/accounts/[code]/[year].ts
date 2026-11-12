@@ -1,4 +1,4 @@
-// GET /api/jurisdictions/accounts/:code/:year: 一つの自治体・年度の会計ごとの総額（server/jurisdiction-routes.ts）
+// GET /data/jurisdictions/accounts/:code/:year: 一つの自治体・年度の会計ごとの総額（server/jurisdiction-routes.ts）
 import { defineHandler } from 'void'
 import { accountsResponse } from '../../../../../server/jurisdiction-routes'
 import type { Env } from '../../../../../server/env'

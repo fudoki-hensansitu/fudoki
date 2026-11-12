@@ -21,14 +21,15 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
-import { applyTheme, type Theme } from './theme'
+import { applyTheme, currentTheme, DEFAULT_THEME, type Theme } from './theme'
 import { ListMagnifyingGlassIcon } from '@phosphor-icons/react'
 import { NavContent } from './nav-content'
+import { readNavOpen, saveNavOpen } from './nav-state'
 
 
 export const NAV_SECTIONS = ['home', 'assistant', 'search'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
-export type SiteNavProps = { active?: NavSection; open: boolean; theme: Theme }
+export type SiteNavProps = { active?: NavSection }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
 function NavLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
   if (props.href.startsWith('https://')) return <a target="_blank" rel="noopener" {...props} />
@@ -38,8 +39,6 @@ function NavLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: 
 }
 
 const DOCS = 'https://docs.fudoki.dev'
-/** 開閉の状態を残す cookie（shadcn の SidebarProvider が書く名前） */
-export const SIDEBAR_COOKIE = 'sidebar_state'
 
 export const Logo = ({ className }: { className?: string }) => (
   <svg className={className} xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} aria-hidden="true" dangerouslySetInnerHTML={{ __html: LOGO_G }} />
@@ -229,8 +228,20 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
   )
 }
 
-export function SiteNav({ active, open, theme: initialTheme }: SiteNavProps) {
-  const [theme, setTheme] = React.useState(initialTheme)
+export function SiteNav({ active }: SiteNavProps) {
+  // サーバーは開閉を知らないので開いて描き、hydrate したら描く前に保存した状態へ合わせる（閉じた人の仮の見た目は <head> の NAV_SCRIPT と CSS）
+  const [open, setOpen] = React.useState(true)
+  React.useLayoutEffect(() => {
+    setOpen(readNavOpen())
+    document.documentElement.setAttribute('data-nav-ready', '')
+  }, [])
+  const changeOpen = (o: boolean) => {
+    setOpen(o)
+    saveNavOpen(o)
+  }
+  // サーバーはテーマを知らない（HTML を誰にでも同じにする）。選択肢の印は hydrate の後に <head> の script が付けた印から読む
+  const [theme, setTheme] = React.useState<Theme>(DEFAULT_THEME)
+  React.useEffect(() => setTheme(currentTheme()), [])
   const pickTheme = (t: Theme) => {
     setTheme(t)
     applyTheme(t)
@@ -238,7 +249,7 @@ export function SiteNav({ active, open, theme: initialTheme }: SiteNavProps) {
   return (
     <TooltipProvider>
       {/* 頁の本文は provider の外（.site-main）にあるので、provider の枠は箱を作らず（contents）、幅の変数だけを配る */}
-      <SidebarProvider defaultOpen={open} className="contents" style={{ '--sidebar-width': '13rem', '--sidebar-width-icon': '3.5rem' } as React.CSSProperties}>
+      <SidebarProvider open={open} onOpenChange={changeOpen} className="contents" style={{ '--sidebar-width': '13rem', '--sidebar-width-icon': '3.5rem' } as React.CSSProperties}>
         <BottomNav active={active} theme={theme} onPick={pickTheme} />
         <Sidebar collapsible="icon" aria-label="サイト">
           <SidebarHeader className="flex-row items-center justify-between gap-2 px-3 pt-5 pb-4 group-data-[collapsible=icon]:justify-center group-data-[collapsible=icon]:px-2">
