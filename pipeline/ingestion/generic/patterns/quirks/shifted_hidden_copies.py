@@ -15,6 +15,10 @@ A glyph with a twin of the same character at the distance on its line is a copy.
 on each half of the page by the pairs the clip tells apart and, for the others, by the render (the box that shows ink
 where its twin's does not). The clip is wrong where the copy falls on printed text of the next column, so the render
 alone cannot settle those pairs: the side the half votes for is kept and the other is hidden.
+
+Where the text layer also holds copies a line apart that the render cannot tell (世田谷 国保 p31, a stray `1` set 135
+pt above the printed line and 120 pt left of it), the workflow names the glyphs by page and the top left corner of
+their box: `{"pages": {"31": {"hide": [[684.5, 282.4]], "show": [[804.8, 417.8]]}}, "reason": "…"}`.
 """
 from __future__ import annotations
 
@@ -24,7 +28,14 @@ import subprocess
 import tempfile
 
 SCOPE = 'document'
-OPTIONS = {'const': True}
+OPTIONS = {'oneOf': [{'const': True}, {
+    'type': 'object', 'additionalProperties': False, 'required': ['pages', 'reason'],
+    'properties': {'reason': {'type': 'string', 'minLength': 1}, 'pages': {
+        'type': 'object', 'minProperties': 1, 'propertyNames': {'pattern': '^[1-9][0-9]*$'},
+        'additionalProperties': {'type': 'object', 'additionalProperties': False, 'minProperties': 1, 'properties': {
+            side: {'type': 'array', 'minItems': 1, 'items': {'type': 'array', 'minItems': 2, 'maxItems': 2,
+                                                             'items': {'type': 'number'}}}
+            for side in ('hide', 'show')}}}}}]}
 
 PLACE = .6        # pt: how far off the line a twin may sit
 REACH = (60, 200)  # pt: the distances a copy is looked for at
@@ -37,6 +48,8 @@ GAP = .15          # line heights between a figure and a letter of one word
 FIGURE = set('0123456789,△▲')  # the characters of an amount
 RUN = 10.          # pt: the gap that ends a run of glyphs on a line
 TWICE = 6          # glyphs of a run, at least, read twice over
+WHOLE = .8        # the share of white glyphs that makes a run a copy whole
+BLANK = .03       # the share of dark pixels a glyph's box may hold and print nothing (a rule may cross it)
 DRIFT = 5.         # line heights a copy may drift right of its twin (25 pt at the end of p69 `…事務局）`)
 
 
@@ -49,8 +62,29 @@ def render(pdf: Path, number: int):
         return np.array(Image.open(next(Path(directory).glob('page*.png'))).convert('L'))
 
 
+CORNER = .2       # pt: how far a declared glyph's corner may sit from the box's
+
+
 def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list:
     """`glyphs` are `(box, char, visible)`; the hidden copies come back as not visible."""
+    glyphs = _hide(pdf, number, width, glyphs, image)
+    from ingestion.generic.patterns import document_quirk
+    selected = document_quirk('shifted_hidden_copies')
+    declared = (selected.value if selected and isinstance(selected.value, dict) else {}).get('pages', {}).get(str(number))
+    if not declared:
+        return glyphs
+    def at(corners: list) -> set:
+        found = {index for index, (box, char, _) in enumerate(glyphs) for x, y in corners
+                 if not char.isspace() and abs(box[0] - x) < CORNER and abs(box[1] - y) < CORNER}
+        if len(found) != len(corners):
+            raise ValueError(f'shifted_hidden_copies: p{number} の宣言の字 {corners} が {len(found)} 字にしか当たらない')
+        return found
+    hidden, shown = at(declared.get('hide', [])), at(declared.get('show', []))
+    return [(box, char, False if index in hidden else True if index in shown else visible)
+            for index, (box, char, visible) in enumerate(glyphs)]
+
+
+def _hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list:
     by_line: dict[str, list[int]] = {}
     for index, (box, char, visible) in enumerate(glyphs):
         if not char.isspace():
@@ -94,6 +128,37 @@ def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list
     def ink(box) -> float:
         region = image[int(box[1] * scale):int(box[3] * scale) + 1, int(box[0] * scale):int(box[2] * scale) + 1]
         return float((region < 160).mean()) if region.size else 0.
+    # A copy may also sit off its line, with no twin at the distance (p31 `国民健康保険事業会計関係事務従事職員の人件費`
+    # 135 pt above the printed line, and the 財源 of 款27 laid over 款26): the clip shows it, but where it falls
+    # the page prints no ink at all. Glyphs whose boxes hold next to no ink (a rule may cross one), many in one run, are not printed.
+    def blank(box) -> bool:
+        return ink(box) < BLANK
+    twin = {b: a for a, b in pairs}
+    unprinted = set()
+    for run in runs([i for i, (box, char, visible) in enumerate(glyphs) if visible and not char.isspace()], glyphs):
+        # One glyph's box can miss its own ink by a hair (`手数料 1`, `特財：`): only a run with many of them is a copy.
+        # A copy's glyph may fall on a rule or on printed text; those are told apart by the twins above, if at all.
+        # A run that is nearly all white is a copy whole: its other glyphs fall on ink they do not print
+        # (the `一` of a copied `一般会計繰入金` on the printed `762,898`).
+        white = [i for i in run if blank(glyphs[i][0])]
+        if len(white) < TWICE:
+            continue
+        if len(white) >= WHOLE * len(run):
+            unprinted.update(run)
+            continue
+        # The copy's glyph next to its white ones that falls on a rule (`一` of `一般会計繰入金` on the column's edge,
+        # right after the printed `762,898`) is the copy of a glyph printed at the distance to its left. A glyph whose
+        # twin there prints nothing is itself the printed one (`会` of `会計年度任用職員`, its copy left of it).
+        copy = set(white)
+        for at, index in enumerate(run):
+            if index in copy:
+                continue
+            beside = {run[j] for j in (at - 1, at + 1) if 0 <= j < len(run)}
+            if beside & copy and index in twin and not blank(glyphs[twin[index]][0]):
+                copy.add(index)
+        unprinted.update(copy)
+    glyphs = [(box, char, False) if index in unprinted else (box, char, visible)
+              for index, (box, char, visible) in enumerate(glyphs)]
     votes = {False: Counter(), True: Counter()}  # by half of the page: which copy shows ink
     for a, b in pairs:
         if glyphs[a][2] != glyphs[b][2]:  # the clip told the two apart
@@ -117,6 +182,26 @@ def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list
     hidden = {i for i in hidden - kept if glyphs[i][2]}
     return [(box, char, False) if index in hidden else (box, char, visible)
             for index, (box, char, visible) in enumerate(glyphs)]
+
+
+def runs(indexes: list[int], glyphs: list) -> list[list[int]]:
+    """The glyphs of `indexes` in runs: on one line (centres within `LEVEL` of the line's), each within `RUN` of the one
+    before. A small kana sits lower in its box (`の` among `職員の人件費`), so lines go by the centres."""
+    centre = lambda i: (glyphs[i][0][1] + glyphs[i][0][3]) / 2
+    lines: list[list[int]] = []
+    for index in sorted(indexes, key=centre):
+        if lines and centre(index) - centre(lines[-1][0]) < LEVEL * 2:
+            lines[-1].append(index)
+        else:
+            lines.append([index])
+    found: list[list[int]] = []
+    for line in lines:
+        for index in sorted(line, key=lambda i: glyphs[i][0][0]):
+            if found and found[-1][0] in line and glyphs[index][0][0] - glyphs[found[-1][-1]][0][2] < RUN:
+                found[-1].append(index)
+            else:
+                found.append([index])
+    return found
 
 
 def twice(glyphs: list) -> set:
