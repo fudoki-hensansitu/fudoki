@@ -76,4 +76,11 @@ jobs:
           for item in report['manifests']:
               if item['status'] in ('different', 'blocked', 'error'):
                   print(f"- `{item['manifest']}`: {item['status']} {item.get('reason', '')[:200]}")
+                  for table in item.get('tables', []):
+                      if table.get('status') != 'same':
+                          content = table.get('diff', {}).get('content', {})
+                          rows = {kind: {key: part.get(key) for key in ('removed', 'added', 'changed')}
+                                  for kind, part in content.items() if not part.get('same', True)}
+                          receipt = [entry.get('field') for entry in table.get('diff', {}).get('receipt', [])]
+                          print(f"  - `{table['table_id']}`: {table.get('status')} rows={rows} receipt={receipt}")
           PY
