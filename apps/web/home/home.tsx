@@ -58,8 +58,15 @@ function useSnapshot(code: string | null) {
         if (!alive) return
         setByYear((m) => ({ ...m, [String(x.year)]: x }))
         setYear(x.year)
+        setFailed(false)
       })
-      .catch(() => alive && setFailed(true))
+      .catch(() => {
+        if (!alive) return
+        // 読めている年度があればそこへ戻し、同じ年度をもう一度押せば読み直す
+        const back = Object.values(byYear)[0]
+        if (back) setYear(back.year)
+        else setFailed(true)
+      })
     return () => {
       alive = false
     }
@@ -68,8 +75,7 @@ function useSnapshot(code: string | null) {
   // 評価のカードは最初に読んだ（年度なしの）応答の最新の評価を使い、年度を切り替えても残す
   const evaluated = Object.values(byYear).find((s) => s.evaluated)?.evaluated
   const d = picked && !picked.evaluated && evaluated ? { ...picked, evaluated } : picked
-  // 別の年度を読み損ねても、読めている年度があればそれを出したままにする
-  return { d, failed: failed && !d, year: d ? d.year : null, setYear }
+  return { d, failed, year: d ? d.year : null, setYear }
 }
 
 type Ctx = { town: Town; d: Snapshot; v: YearView; year: number; years: number[]; setYear: (y: number) => void; base: string; vision?: string }
