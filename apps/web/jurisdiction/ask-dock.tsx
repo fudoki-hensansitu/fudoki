@@ -411,7 +411,7 @@ export function AskDock({ name, sitekey, year, section, control, keepOpen, sugge
             aria-label={`${name}についての会話`}
             inert={!drawer}
             style={dragY ? { transform: `translateY(${dragY}px)`, transition: 'none' } : undefined}
-            className={`fixed inset-x-0 bottom-0 z-40 mx-auto flex h-[88dvh] max-w-4xl flex-col overflow-hidden rounded-t-[24px] border border-b-0 bg-background shadow-2xl transition-transform duration-300 ease-out motion-reduce:transition-none md:inset-x-auto md:right-0 md:top-0 md:h-auto md:w-[440px] md:max-w-none md:rounded-none md:border-y-0 md:border-r-0 md:shadow-xl ${drawer ? '' : 'translate-y-[calc(100%+48px)] md:translate-x-[calc(100%+48px)] md:translate-y-0'}`}
+            className={`fixed inset-x-0 bottom-0 z-50 mx-auto flex h-[88dvh] max-w-4xl flex-col overflow-hidden rounded-t-[24px] border border-b-0 bg-background shadow-2xl transition-transform duration-300 ease-out motion-reduce:transition-none md:inset-x-auto md:right-0 md:top-0 md:h-auto md:w-[440px] md:max-w-none md:rounded-none md:border-y-0 md:border-r-0 md:shadow-xl ${drawer ? '' : 'translate-y-[calc(100%+48px)] md:translate-x-[calc(100%+48px)] md:translate-y-0'}`}
           >
             <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
