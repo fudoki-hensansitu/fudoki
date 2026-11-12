@@ -129,5 +129,15 @@ describe('事業', () => {
     expect(hit.project_years.map((y) => y.fiscal_year).sort()).toEqual([2024, 2026])
     expect(hit.projects.map((p) => p.project_id)).toEqual([P])
     expect(body.projects).toEqual([])
+    expect([hit.total_size, hit.total_size_capped]).toEqual([2, false])
+  })
+
+  test('合計件数は 10,000 で数えるのをやめる', async () => {
+    const add = sqlite.prepare(`INSERT INTO project_year ("project_year_id", "project_id", "jurisdiction_code", "fiscal_year", "name", "account_name") VALUES (?, ?, '131091', 2025, '事業', '一般会計')`)
+    sqlite.transaction(() => {
+      for (let i = 0; i < 10_001; i++) add.run(`py-${i}`, P)
+    })()
+    const body = ProjectSearchOutput.parse(await (await post('/v1/projects:search', { fiscal_year: { min: 2025, max: 2025 }, page_size: 1 })).json())
+    expect([body.total_size, body.total_size_capped, body.project_years.length]).toEqual([10_000, true, 1])
   })
 })

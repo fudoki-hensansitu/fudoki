@@ -30,7 +30,7 @@ export async function getProject(ctx: Ctx, input: { project_id: string }): Promi
 }
 
 export async function searchProjects(ctx: Ctx, input: SearchInput): Promise<ProjectSearchOutput> {
-  const { rows, next_page_token } = await searchRows(Y, null, ctx, input)
+  const { rows, next_page_token, total_size, total_size_capped } = await searchRows(Y, null, ctx, input, { count: true })
   const ids = [...new Set(rows.map((r) => r.project_id as string))]
   const { db } = ctx
   const projectSelect = selectListOf(PROJECT_TABLE)
@@ -40,5 +40,5 @@ export async function searchProjects(ctx: Ctx, input: SearchInput): Promise<Proj
     : []
   const projectColumns = columnsOf(PROJECT_TABLE)
   const projects = found.flatMap((r) => r.results.map((p) => toRow(projectColumns, p as Record<string, unknown>)))
-  return { project_years: rows, projects, next_page_token } as ProjectSearchOutput
+  return { project_years: rows, projects, total_size, total_size_capped, next_page_token } as ProjectSearchOutput
 }
