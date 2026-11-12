@@ -66,6 +66,7 @@ const find = (target: string) => {
 type Box = { top: number; left: number; width: number; height: number }
 const PAD = 8
 const GAP = 12
+// biome-ignore lint/plugin/color-literal: 既存のずれ。直すか例外にするか決めるまで
 const SHADE = 'rgb(0 0 0 / .55)'
 
 /** steps を順に光らせる。offset・total は頁をまたいだ通し番号（例: ホームで 1、まちの頁で 2〜5） */

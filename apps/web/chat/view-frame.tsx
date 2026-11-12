@@ -410,6 +410,7 @@ export function ViewFrame({
                 <div
                   key={key}
                   role="presentation"
+                  // biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで
                   className={cn('flex max-w-56 shrink-0 items-center rounded-t-md border border-b-0 text-sm', selected ? 'bg-background text-foreground' : 'bg-secondary/60 text-muted-foreground hover:text-foreground')}
                 >
                   <button
@@ -433,6 +434,7 @@ export function ViewFrame({
                       tabIndex={-1}
                       aria-label={`「${label}」を閉じて会話の中へ元に戻す`}
                       onClick={() => closeAndFocus(t)}
+                      // biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで
                       className="mr-1 flex size-6 shrink-0 items-center justify-center rounded text-muted-foreground/60 hover:bg-secondary hover:text-muted-foreground"
                     >
                       <XIcon className="size-3.5" />
@@ -458,6 +460,7 @@ export function ViewFrame({
                 dragged.current = false
               }}
               className={cn(
+                // biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで
                 'absolute top-0.5 left-1/2 flex h-5 w-12 -translate-x-1/2 cursor-grab touch-none items-center justify-center rounded-full border bg-background/90 text-muted-foreground shadow-sm backdrop-blur select-none',
                 'pointer-events-none opacity-0 group-focus-within/view:pointer-events-auto group-focus-within/view:opacity-100 group-hover/view:pointer-events-auto group-hover/zone:pointer-events-auto group-hover/view:opacity-100 group-hover/zone:opacity-100 focus-visible:opacity-100 motion-safe:transition-opacity motion-safe:duration-150',
                 'hover:text-foreground active:cursor-grabbing',
@@ -493,6 +496,7 @@ export function ViewFrame({
         ref={(el) => { if (el && !el.matches(':popover-open')) el.showPopover() }}
         popover="manual"
         aria-hidden
+        // biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで
         className={`pointer-events-none fixed inset-y-0 right-0 left-auto m-0 flex h-auto w-1/2 items-center justify-center overflow-visible border-0 border-l-2 border-dashed p-0 text-sm transition-colors ${drag.over ? 'border-primary bg-primary/10 text-primary' : 'border-border bg-secondary/60 text-muted-foreground'}`}>
         ここに置くと右に開きます
       </div>,

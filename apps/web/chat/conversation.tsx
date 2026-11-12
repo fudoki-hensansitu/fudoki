@@ -265,6 +265,7 @@ function ContextNote({ text }: { text: string }) {
   const { quote, screen } = splitContext(text)
   return (
     <div className="mb-1.5 ml-auto flex max-w-[85%] flex-col items-end gap-1 text-xs text-muted-foreground">
+      {/* biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで */}
       {quote ? <blockquote className="line-clamp-3 border-l-2 border-primary/60 pl-2.5 text-left">{quote}</blockquote> : null}
       {screen ? (
         <details className="group/ctx text-right">

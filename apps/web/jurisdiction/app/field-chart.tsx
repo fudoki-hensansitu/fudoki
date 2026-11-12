@@ -40,6 +40,7 @@ export default function FieldChart({ slices, format }: { slices: Slice[]; format
     const tx = ex + (cos >= 0 ? 4 : -4)
     return (
       <g>
+        {/* biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで */}
         <path d={`M${sx},${sy}L${mx},${my}L${ex},${my}`} className="fill-none stroke-muted-foreground/50" />
         <text x={tx} y={my} textAnchor={anchor} className="fill-foreground tabular-nums">
           <title>{full}</title>

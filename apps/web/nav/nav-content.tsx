@@ -72,6 +72,7 @@ function TownSearch() {
         onPointerEnter={warm}
         aria-keyshortcuts="Meta+K Control+K"
         tooltip={state === 'collapsed' && !isMobile ? 'まちを探す' : undefined}
+        // biome-ignore lint/plugin/color-opacity: 既存のずれ。直すか例外にするか決めるまで
         className="h-10 gap-3 bg-sidebar-foreground/5 px-3 text-sm text-muted-foreground group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-2.5! group-data-[collapsible=icon]:text-sidebar-foreground [&_svg]:size-5"
       >
         <MagnifyingGlassIcon />

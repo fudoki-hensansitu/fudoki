@@ -209,12 +209,13 @@ bun run --cwd pipeline ingestion:check   # 取り込みの宣言・選定・fing
 bun run typecheck:all                    # 型検査（root と全 package）
 bun run test                             # テスト（web の入口と各 package）
 bun run --cwd pipeline test:python       # パイプラインの Python テスト
+bun run --cwd apps/web lint              # DESIGN.md の token 以外の色を検出
 bun run build:web                        # build（api・docs も build:api・build:docs）
 bun run dev:api                          # API をローカルで起動（web は dev:web）
 bun run inspect:mcp                      # MCP Inspector を本番の MCP（api.fudoki.dev/mcp）向けに起動
 ```
 
-lint の script は持たない。
+lint は apps/web の `bun run --cwd apps/web lint`（Biome。DESIGN.md の token 以外の色を見つける plugin だけを入れている）だけを持つ。
 
 unit テストは、金額の正しさ・公開 API の安全性（認証・入力の上限・SQL の bind・停止スイッチなど）・壊すと利用者に届く契約（MCP の出力 schema など）のように、間違えると困るものに限って書く。画面や細かい振る舞いはローカルの e2e（smoke）で確かめ、CI では回さない。CI は速さを優先する。
 
