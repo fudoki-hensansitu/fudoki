@@ -1,8 +1,10 @@
 // 全頁に共通するもの。HTML の応答に CSP（server/csp.ts）を付け、<head> に Void の head では書けないものを足す:
 // 既定（ライト）の theme-color（選んだテーマへの差し替えは <head> の THEME_SCRIPT）と、読み直しの移動でも View Transition でつなぐ opt-in（style）。
-// テーマ・サイドバーの開閉はブラウザで当て（nav/theme.ts・nav/nav-state.ts）、cookie を読まない。どの人にも同じ HTML を返し、CDN（Void の ISR）に置く
+// テーマ・サイドバーの開閉はブラウザで当て（nav/theme.ts・nav/nav-state.ts）、cookie を読まない。どの人にも同じ HTML を返し、CDN（Void の ISR）に置く。
+// AI エージェント向けに、API の在処を Link ヘッダーで示し、Accept で text/markdown を望む要求には頁を Markdown にして返す（server/agent-discovery.ts）
 import { defineMiddleware } from 'void'
 import { pageCsp } from '../server/csp'
+import { DISCOVERY_LINK, htmlToMarkdown, wantsMarkdown } from '../server/agent-discovery'
 import { DEFAULT_THEME, themeColorMeta } from '../nav/theme'
 
 /**
@@ -14,6 +16,22 @@ const PAGE_TRANSITION_STYLE = '<style>@media (prefers-reduced-motion: no-prefere
 export default defineMiddleware(async (c, next) => {
   await next()
   if (!c.res.headers.get('Content-Type')?.startsWith('text/html')) return
+  // Accept で Markdown に変えるので、違う表現を取り違えさせない
+  c.res.headers.append('Vary', 'Accept')
+  c.res.headers.append('Link', DISCOVERY_LINK)
+  if (c.res.status === 200 && wantsMarkdown(c.req.header('Accept'))) {
+    const markdown = await htmlToMarkdown(c.env.AI, await c.res.clone().text(), c.req.url)
+    if (markdown !== undefined) {
+      const headers = new Headers(c.res.headers)
+      headers.set('Content-Type', 'text/markdown; charset=utf-8')
+      headers.delete('Content-Length')
+      // ISR の key は path だけなので、Markdown を CDN に置かない（置くと HTML を望む人にも Markdown を返す）
+      headers.set('x-revalidate', '0')
+      headers.set('Cache-Control', 'no-store')
+      c.res = new Response(markdown, { status: 200, headers })
+      return
+    }
+  }
   // View の器（routes/view-frame.ts）のように自分の policy を持つ応答はそのままにする
   if (!c.res.headers.has('Content-Security-Policy')) c.res.headers.set('Content-Security-Policy', await pageCsp())
   c.res = new HTMLRewriter().on('head', { element: (e) => void e.append(`${themeColorMeta(DEFAULT_THEME)}\n${PAGE_TRANSITION_STYLE}`, { html: true }) }).transform(c.res)

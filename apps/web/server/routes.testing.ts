@@ -7,7 +7,7 @@ const dir = new URL('../routes/', import.meta.url).pathname
 
 export async function routesApp() {
   const app = new Hono<{ Bindings: Env }>()
-  for (const file of [...new Bun.Glob('**/*.ts').scanSync(dir)].sort()) {
+  for (const file of [...new Bun.Glob('**/*.ts').scanSync({ cwd: dir, dot: true })].sort()) {
     const path = `/${file.replace(/\.ts$/, '').replace(/\[([^\]]+)\]/g, ':$1')}`
     const mod = (await import(`${dir}${file}`)) as Partial<Record<(typeof METHODS)[number], Parameters<typeof app.on>[2]>>
     for (const m of METHODS) if (mod[m]) app.on(m, path, mod[m])
