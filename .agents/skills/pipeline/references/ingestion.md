@@ -149,7 +149,7 @@ PDFは出典の内部で重複して印字された数字どうしの一致で�
 
 ## 共通の規則を足すとき
 
-一つの書式のための判定は、本体（`tree.py`・`scan.py`・`layout.py` など）に書かず、`ingestion/generic/patterns/quirks/<名前>.py` に書式の癖として置き、使う変換の workflow の `quirks`（文書全体）か `hierarchy.breakdown.<段>.quirks`（内訳の段）で選ぶ。癖のモジュールは `SCOPE` と値の schema `OPTIONS` を持ち、カタログ（`patterns/catalog.json`）の `quirks` に登録する。本体からは `patterns.quirk(settings, 名前)` で引く。選んだ表だけが古くなるので、refresh はその表だけで済む（[ADR 0041](../../../../docs/adr/0041-format-quirks-are-opt-in.md)）。本体を直すのは、全表に効くべき直しと、癖の呼び出し口を足すときだけにし、呼び出し口はまとめて足す。共通の schema に癖ごとの項目を足さない。直した後は `bun run ingestion:refresh --plan` で古くなる変換を数え、選んだ表より多ければ置き場所を見直す。
+一つの書式のための判定は、本体（`tree.py`・`scan.py`・`layout.py` など）に書かず、`ingestion/generic/patterns/quirks/<名前>.py` に書式の癖として置き、使う変換の workflow の `quirks`（文書全体）か `hierarchy.breakdown.<段>.quirks`（内訳の段）で選ぶ。癖のモジュールは `SCOPE` と値の schema `OPTIONS` を持ち、カタログ（`patterns/catalog.json`）の `quirks` に登録する。本体からは `patterns.quirk(settings, 名前)` で引く。選んだ表だけが古くなるので、refresh はその表だけで済む（[ADR 0043](../../../../docs/adr/0043-format-quirks-are-opt-in.md)）。本体を直すのは、全表に効くべき直しと、癖の呼び出し口を足すときだけにし、呼び出し口はまとめて足す。共通の schema に癖ごとの項目を足さない。直した後は `bun run ingestion:refresh --plan` で古くなる変換を数え、選んだ表より多ければ置き場所を見直す。
 
 `ingestion/lib/`・`ingestion/generic/` の規則を足す・広げるときは、既存の全表を変更の前後で数え、出力が1行も変わらないことを確かめてから採る。変わった表があれば、規則を設定（`repairs` などの allowlist）へ閉じるか、款・項の文脈に限定する（`消費者行政` を共通の語にしたところ世田谷・青ヶ島の既存の目が変わり、産業経済費の商工費に限定した）。採否は不一致の総数で決めない — 修正で不一致が入れ替わるだけ（頁単位の増減が0）なら実質の改善ではない（昭島は 21→20 の入れ替わりで不採用）。
 

@@ -112,5 +112,5 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   const neighbors = nearby(entry, entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0))
     .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
   const data = entry.settlementYears.length > 0 ? await pageData(env, entry) : null
-  return data ? { kind: 'page', data: { ...data, prefecturePath, ...(prefecturePath && EMBLEMS[prefectureCode] ? { prefectureLogo: assetPath(prefectureCode, 'emblem.svg') } : {}), emblem: emblemOf(entry.code), neighbors, vision: VISIONS[entry.code] ?? null } } : { kind: 'empty', entry, neighbors }
+  return data ? { kind: 'page', data: { ...data, prefecturePath, ...(prefecturePath && EMBLEMS[prefectureCode] ? { prefectureLogo: assetPath(prefectureCode, 'emblem.svg') } : {}), emblem: emblemOf(entry.code), neighbors, vision: VISIONS[entry.code] ?? null, ...(entry.accounts ? { accounts: entry.accounts } : {}) } } : { kind: 'empty', entry, neighbors }
 }

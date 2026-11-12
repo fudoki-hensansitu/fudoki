@@ -124,6 +124,9 @@
                     "kind": "総括",
                     "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
                   }
+                },
+                "比較／金額": {
+                  "heading": "比較"
                 }
               },
               "rules": {
@@ -740,6 +743,9 @@
                     "kind": "総括",
                     "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
                   }
+                },
+                "比較／金額": {
+                  "heading": "比較"
                 }
               },
               "rules": {
@@ -964,6 +970,9 @@
                     "kind": "総括",
                     "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
                   }
+                },
+                "比較／金額": {
+                  "heading": "比較"
                 }
               },
               "rules": {
@@ -1188,6 +1197,9 @@
                     "kind": "総括",
                     "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
                   }
+                },
+                "比較／金額": {
+                  "heading": "比較"
                 }
               },
               "rules": {
@@ -1366,6 +1378,9 @@
                     "kind": "総括",
                     "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
                   }
+                },
+                "比較／金額": {
+                  "heading": "比較"
                 }
               },
               "rules": {
@@ -1428,13 +1443,12 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "9eb5a996bf8aef1554e56df6159c5b1c9722fa376b8cdf0a896a1be547ebc223",
+      "input_fingerprint": "943b9bd7102a0c4a3eeecd379c6f3381ff3923b85c554ffcecf932da978faf86",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
         "金額の単位は column mark 87頁 から決めた。款の和 275,300,000 と印字の「歳出合計」275,300,000 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（11 件）を、印字された語から辞書の見出しに寄せた: 比較／金額→比較。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 86 件（p169:full-page:a0:result0:r73・p169:full-page:a0:result0:r73:w5・p175:full-page:a0:result0:r42・p175:full-page:a0:result0:r42:w11・p175:full-page:a0:result0:r76・p175:full-page:a0:result0:r76:w6・p177:full-page:a0:result0:r36・p177:full-page:a0:result0:r36:w5・p177:full-page:a0:result0:r68・p177:full-page:a0:result0:r68:w4・p177:full-page:a0:result0:r82・p177:full-page:a0:result0:r82:w5・p187:full-page:a0:result0:r30・p187:full-page:a0:result0:r30:w4・p187:full-page:a0:result0:r44・p187:full-page:a0:result0:r44:w11・p195:full-page:a0:result0:r39・p195:full-page:a0:result0:r39:w4・p205:full-page:a0:result0:r56・p205:full-page:a0:result0:r56:w5・p207:full-page:a0:result0:r30・p207:full-page:a0:result0:r30:w7・p211:full-page:a0:result0:r24・p211:full-page:a0:result0:r24:w5・p217:full-page:a0:result0:r52・p217:full-page:a0:result0:r52:w5・p217:full-page:a0:result0:r56・p217:full-page:a0:result0:r56:w5・p223:full-page:a0:result0:r87・p223:full-page:a0:result0:r87:w3・p235:full-page:a0:result0:r48・p235:full-page:a0:result0:r48・p235:full-page:a0:result0:r48:w5・p235:full-page:a0:result0:r48:w8・p235:full-page:a0:result0:r60・p235:full-page:a0:result0:r60:w7・p239:full-page:a0:result0:r34・p239:full-page:a0:result0:r34:w4・p241:full-page:a0:result0:r54・p241:full-page:a0:result0:r54:w3・p247:full-page:a0:result0:r50・p247:full-page:a0:result0:r50:w6・p251:full-page:a0:result0:r43・p251:full-page:a0:result0:r43:w5・p253:full-page:a0:result0:r73・p253:full-page:a0:result0:r73:w6・p253:full-page:a0:result0:r84・p253:full-page:a0:result0:r84:w12・p273:full-page:a0:result0:r72・p273:full-page:a0:result0:r72:w4・p275:full-page:a0:result0:r52・p275:full-page:a0:result0:r52:w4・p275:full-page:a0:result0:r58・p275:full-page:a0:result0:r58:w4・p275:full-page:a0:result0:r66・p275:full-page:a0:result0:r66:w4・p279:full-page:a0:result0:r54・p279:full-page:a0:result0:r54:w4・p279:full-page:a0:result0:r69・p279:full-page:a0:result0:r69:w5・p279:full-page:a0:result0:r70・p279:full-page:a0:result0:r70:w4・p279:full-page:a0:result0:r74・p279:full-page:a0:result0:r74:w4・p285:full-page:a0:result0:r36・p285:full-page:a0:result0:r36:w5・p291:full-page:a0:result0:r77・p291:full-page:a0:result0:r77:w7・p291:full-page:a0:result0:r81・p291:full-page:a0:result0:r81:w6・p299:full-page:a0:result0:r75・p299:full-page:a0:result0:r75:w5・p299:full-page:a0:result0:r81・p299:full-page:a0:result0:r81:w4・p299:full-page:a0:result0:r85・p299:full-page:a0:result0:r85・p299:full-page:a0:result0:r85:w4・p299:full-page:a0:result0:r85:w8・p301:full-page:a0:result0:r74・p301:full-page:a0:result0:r74:w9・p303:full-page:a0:result0:r67・p303:full-page:a0:result0:r67:w6・p309:full-page:a0:result0:r40・p309:full-page:a0:result0:r40:w3・p311:full-page:a0:result0:r36・p311:full-page:a0:result0:r36:w6）・徵→徴 4 件（p217:full-page:a0:result0:r60・p217:full-page:a0:result0:r60:w6・p219:full-page:a0:result0:r38・p219:full-page:a0:result0:r38:w3）・查→査 34 件（p196:full-page:a0:result0:r12・p196:full-page:a0:result0:r12:w3・p197:full-page:a0:result0:r1・p197:full-page:a0:result0:r1:w6・p197:full-page:a0:result0:r37・p197:full-page:a0:result0:r37:w1・p197:full-page:a0:result0:r44・p197:full-page:a0:result0:r44:w1・p197:full-page:a0:result0:r48・p197:full-page:a0:result0:r48:w1・p197:full-page:a0:result0:r52・p197:full-page:a0:result0:r52:w1・p197:full-page:a0:result0:r56・p197:full-page:a0:result0:r56:w1・p211:full-page:a0:result0:r24・p211:full-page:a0:result0:r24:w7・p217:full-page:a0:result0:r52・p217:full-page:a0:result0:r52:w7・p219:full-page:a0:result0:r46・p219:full-page:a0:result0:r46:w11・p247:full-page:a0:result0:r26・p247:full-page:a0:result0:r26:w10・p249:full-page:a0:result0:r55・p249:full-page:a0:result0:r55:w7・p249:full-page:a0:result0:r57・p249:full-page:a0:result0:r57:w12・p249:full-page:a0:result0:r61・p249:full-page:a0:result0:r61:w11・p291:full-page:a0:result0:r77・p291:full-page:a0:result0:r77:w5・p305:full-page:a0:result0:r82・p305:full-page:a0:result0:r82:w9・p313:full-page:a0:result0:r55・p313:full-page:a0:result0:r55:w9）・產→産 70 件（p167:full-page:a0:result0:r42・p167:full-page:a0:result0:r42:w5・p180:full-page:a0:result0:r12・p180:full-page:a0:result0:r12:w2・p181:full-page:a0:result0:r46・p181:full-page:a0:result0:r46:w2・p203:full-page:a0:result0:r47・p203:full-page:a0:result0:r47・p203:full-page:a0:result0:r47:w3・p203:full-page:a0:result0:r47:w5・p227:full-page:a0:result0:r60・p227:full-page:a0:result0:r60:w4・p264:full-page:a0:result0:r23・p264:full-page:a0:result0:r23:w2・p264:full-page:a0:result0:r37・p264:full-page:a0:result0:r37:w2・p265:full-page:a0:result0:r25・p265:full-page:a0:result0:r25:w5・p265:full-page:a0:result0:r63・p265:full-page:a0:result0:r63:w0・p265:full-page:a0:result0:r71・p265:full-page:a0:result0:r71:w0・p265:full-page:a0:result0:r92・p265:full-page:a0:result0:r92:w0・p265:full-page:a0:result0:r98・p265:full-page:a0:result0:r98:w0・p267:full-page:a0:result0:r1・p267:full-page:a0:result0:r1:w5・p267:full-page:a0:result0:r24・p267:full-page:a0:result0:r24:w0・p267:full-page:a0:result0:r28・p267:full-page:a0:result0:r28:w0・p267:full-page:a0:result0:r32・p267:full-page:a0:result0:r32:w0・p267:full-page:a0:result0:r36・p267:full-page:a0:result0:r36:w0・p267:full-page:a0:result0:r40・p267:full-page:a0:result0:r40:w0・p267:full-page:a0:result0:r44・p267:full-page:a0:result0:r44:w0・p267:full-page:a0:result0:r48・p267:full-page:a0:result0:r48:w0・p267:full-page:a0:result0:r54・p267:full-page:a0:result0:r54:w0・p267:full-page:a0:result0:r58・p267:full-page:a0:result0:r58:w0・p267:full-page:a0:result0:r62・p267:full-page:a0:result0:r62:w0・p267:full-page:a0:result0:r66・p267:full-page:a0:result0:r66:w0・p267:full-page:a0:result0:r70・p267:full-page:a0:result0:r70:w0・p268:full-page:a0:result0:r12・p268:full-page:a0:result0:r12:w1・p269:full-page:a0:result0:r40・p269:full-page:a0:result0:r40:w0・p269:full-page:a0:result0:r59・p269:full-page:a0:result0:r59:w0・p269:full-page:a0:result0:r63・p269:full-page:a0:result0:r63:w0・p269:full-page:a0:result0:r67・p269:full-page:a0:result0:r67:w0・p269:full-page:a0:result0:r71・p269:full-page:a0:result0:r71:w0・p274:full-page:a0:result0:r27・p274:full-page:a0:result0:r27:w5・p278:full-page:a0:result0:r26・p278:full-page:a0:result0:r26:w5・p282:full-page:a0:result0:r67・p282:full-page:a0:result0:r67:w5）・齡→齢 6 件（p212:full-page:a0:result0:r27・p212:full-page:a0:result0:r27:w3・p219:full-page:a0:result0:r64・p219:full-page:a0:result0:r64:w5・p220:full-page:a0:result0:r11・p220:full-page:a0:result0:r11:w3）。"
       ],
       "unread_amount_count": 0,
@@ -1450,8 +1464,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131199/2025/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "32cf16b74136ddbd83addab9bb683574b07d97d2b844f9b0e6c8c61113c7bc11",
-          "bytes": 76251
+          "sha256": "f36b221cb5f2c1f523db7911e48ee521eed0d9eef7d54e23b93a2723ec1554b7",
+          "bytes": 76255
         },
         "row_count": 3020
       }
@@ -1459,13 +1473,12 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "f928925a9d7bf143948b7a3f65dd4d9c6fcce042e928df2838acebc68003b700",
+      "input_fingerprint": "4949cab5f4b5dc35590c6466b3243b7f67da7d316647f81d0606a288783f709f",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
         "金額の単位は column mark 11頁 から決めた。款の和 53,490,000 と印字の「歳出合計」53,490,000 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（6 件）を、印字された語から辞書の見出しに寄せた: 比較／金額→比較。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 8 件（p382:full-page:a0:result0:r12・p382:full-page:a0:result0:r12:w4・p383:full-page:a0:result0:r1・p383:full-page:a0:result0:r1:w6・p383:full-page:a0:result0:r31・p383:full-page:a0:result0:r31:w3・p389:full-page:a0:result0:r88・p389:full-page:a0:result0:r88:w3）・徵→徴 6 件（p374:full-page:a0:result0:r12・p374:full-page:a0:result0:r12:w2・p375:full-page:a0:result0:r1・p375:full-page:a0:result0:r1:w5・p375:full-page:a0:result0:r51・p375:full-page:a0:result0:r51:w2）・查→査 10 件（p376:full-page:a0:result0:r12・p376:full-page:a0:result0:r12:w3・p377:full-page:a0:result0:r31・p377:full-page:a0:result0:r31:w9・p388:full-page:a0:result0:r12・p388:full-page:a0:result0:r12:w7・p389:full-page:a0:result0:r1・p389:full-page:a0:result0:r1:w10・p389:full-page:a0:result0:r31・p389:full-page:a0:result0:r31:w7）・齡→齢 4 件（p384:full-page:a0:result0:r33・p384:full-page:a0:result0:r33:w5・p384:full-page:a0:result0:r45・p384:full-page:a0:result0:r45:w1）。"
       ],
       "unread_amount_count": 0,
@@ -1481,8 +1494,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131199/2025/initial/expenditure/national-health-initial-amounts.parquet",
-          "sha256": "efeab98a08a995530838e9f7d8f0ab2a4faf64f0fdfd2c00b1a9ff2c38f03c1d",
-          "bytes": 8894
+          "sha256": "d6f089df608d766b505c1876af496a6169d782257d387daa77a21deefa0b4448",
+          "bytes": 8903
         },
         "row_count": 219
       }
@@ -1490,13 +1503,12 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "b17304207a5fa80be3ae88713cce6f2fc8965a14b3e94215c01b2e819facf940",
+      "input_fingerprint": "657ea8110a0ea3bcde422e11c3242943a3e13e63cc139461a2d84eccbe9f9cb6",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
         "金額の単位は column mark 11頁 から決めた。款の和 48,167,000 と印字の「歳出合計」48,167,000 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（3 件）を、印字された語から辞書の見出しに寄せた: 比較／金額→比較。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 16 件（p432:full-page:a0:result0:r11・p432:full-page:a0:result0:r11:w6・p436:full-page:a0:result0:r27・p436:full-page:a0:result0:r27:w10・p437:full-page:a0:result0:r76・p437:full-page:a0:result0:r76:w10・p439:full-page:a0:result0:r38・p439:full-page:a0:result0:r38:w5・p439:full-page:a0:result0:r60・p439:full-page:a0:result0:r60:w6・p440:full-page:a0:result0:r12・p440:full-page:a0:result0:r12:w5・p441:full-page:a0:result0:r32・p441:full-page:a0:result0:r32:w5・p441:full-page:a0:result0:r66・p441:full-page:a0:result0:r66:w10）・查→査 4 件（p442:full-page:a0:result0:r12・p442:full-page:a0:result0:r12:w3・p443:full-page:a0:result0:r30・p443:full-page:a0:result0:r30:w22）・說→説 2 件（p431:full-page:a0:result0:r2・p431:full-page:a0:result0:r2:w0）・齡→齢 2 件（p439:full-page:a0:result0:r74・p439:full-page:a0:result0:r74:w2）。"
       ],
       "unread_amount_count": 0,
@@ -1512,8 +1524,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131199/2025/initial/expenditure/care-initial-amounts.parquet",
-          "sha256": "8fb616b2139a6e52df9e59c06504c08b3f254e620b581e8ed08a9667878774c9",
-          "bytes": 10389
+          "sha256": "cfcf054f459626c6ac7a2489ffbb65506dd23a709841383b01e136c6e53ff694",
+          "bytes": 10400
         },
         "row_count": 259
       }
@@ -1521,13 +1533,12 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "25d4a824e11e08401422991404cb02e59d08801312b2f976f68b763245cbc917",
+      "input_fingerprint": "42ac23301656b56aa1465b4012a143e5eb38b69bcdd00862ee3f534721eb0356",
       "account": "後期高齢者医療事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
         "金額の単位は column mark 4頁 から決めた。款の和 14,673,000 と印字の「歳出合計」14,673,000 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（5 件）を、印字された語から辞書の見出しに寄せた: 比較／金額→比較。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 查→査 2 件（p470:full-page:a0:result0:r12・p470:full-page:a0:result0:r12:w5）・齡→齢 2 件（p473:full-page:a0:result0:r26・p473:full-page:a0:result0:r26:w3）。"
       ],
       "unread_amount_count": 0,
@@ -1543,8 +1554,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131199/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
-          "sha256": "d0dd515dad4204a4ff59fdcb1a307210ec1ac0c070bd759e6b36bd31ae1e1dd1",
-          "bytes": 3781
+          "sha256": "b9bf3188b554472f1f889d738005e487b843fbe6b152a92b2321a3dd49ebde31",
+          "bytes": 3790
         },
         "row_count": 52
       }
@@ -1552,13 +1563,12 @@
     {
       "table_id": "tobu-tojo-grade-separation-initial",
       "conversion_id": "tobu-tojo-grade-separation-initial",
-      "input_fingerprint": "239fdc8fc65b36fee9ba78aae22d2e3ef13592a31bf01a5fe59d3f345eed606d",
+      "input_fingerprint": "05438afce2b4c47783061c86dc6e9a143e6a0a5356bd331b90a907a60a95d3b4",
       "account": "東武東上線連続立体化事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
         "金額の単位は column mark 2頁 から決めた。款の和 1,250,000 と印字の「歲出合計」1,250,000 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（1 件）を、印字された語から辞書の見出しに寄せた: 比較／金額→比較。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 產→産 2 件（p488:full-page:a0:result0:r63・p488:full-page:a0:result0:r63:w5）。"
       ],
       "unread_amount_count": 0,
@@ -1574,8 +1584,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131199/2025/initial/expenditure/tobu-tojo-grade-separation-initial-amounts.parquet",
-          "sha256": "b3da1d4856ff4cdc85883326e5734241ceef044587ed45743649726454e96463",
-          "bytes": 3042
+          "sha256": "9414b17749bf7aa26c3864188c6b380b70f54807c4b224dc34943b8cd36e3000",
+          "bytes": 3047
         },
         "row_count": 31
       }

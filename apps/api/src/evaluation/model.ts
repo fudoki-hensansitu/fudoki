@@ -1,5 +1,5 @@
 // 事業評価の集約: 自治体の1年度（評価した事業を行った年度）分の事務事業評価。評価結果の資料と評価シート全部を持つ。
-// 守ること: シートを取り込んだ年度は、シートの数・A〜D の数が評価結果の資料の件数と合う。
+// 守ること: シートを取り込んだ年度は、シートの数・A〜D（方向性の区分をまとめたもの）の数が評価結果の資料の件数と合う。
 import { z } from 'zod'
 import { EVALUATION_SHEET_TABLE, described } from '../columns'
 import { nextPageToken } from '../shared/paging'
@@ -7,7 +7,42 @@ import { yearSearchInputFor } from '../shared/search'
 import { FiscalYear, JurisdictionCode, PagedOrigin, RowId, Yen } from '../shared/model'
 
 export const Grade = z.enum(['A', 'B', 'C', 'D'])
+/** 今後の方向性の共通の区分（風土記の判断）。印字は direction */
+export const DirectionCode = z.enum(['new', 'expand', 'keep', 'statutory', 'as_planned', 'improve', 'resize', 'reduce', 'merge', 'complete', 'end', 'consider_end'])
 export const EvaluationOriginType = z.enum(['sheets', 'result'])
+
+/** 方向性の区分ごとの言い方と、まとめた4区分（風土記の判断）。品川の評価の区分（A〜D）とも一致する */
+export const DIRECTIONS: Record<z.infer<typeof DirectionCode>, { label: string; grade: z.infer<typeof Grade> }> = {
+  new: { label: '新しい取り組みを始める', grade: 'A' },
+  expand: { label: '拡大・拡充する', grade: 'A' },
+  keep: { label: '今のまま続ける', grade: 'B' },
+  statutory: { label: '法令で決まっている', grade: 'B' },
+  as_planned: { label: '計画どおり続ける', grade: 'B' },
+  improve: { label: 'やり方を見直す', grade: 'C' },
+  resize: { label: '対象・規模を見直す', grade: 'C' },
+  reduce: { label: '縮小・一部をやめる', grade: 'C' },
+  merge: { label: 'ほかの事業へ統合', grade: 'D' },
+  complete: { label: '完了した', grade: 'D' },
+  end: { label: 'やめた', grade: 'D' },
+  consider_end: { label: 'やめるか検討中', grade: 'D' },
+}
+export const GRADE_LABELS: Record<z.infer<typeof Grade>, string> = { A: '広げる', B: '続ける', C: '見直す', D: '終える' }
+
+/** 今後の方向性。印字（direction・grade_label）を自治体をまたいで比べられるようにまとめたもの */
+export const Outlook = z
+  .strictObject({
+    code: DirectionCode.describe('今後の方向性の区分（direction_code）'),
+    label: z.string().describe('区分の言い方'),
+    grade: Grade.describe('区分を4つにまとめたもの（A 広げる・B 続ける・C 見直す・D 終える）'),
+    grade_label: z.string().describe('4区分の言い方'),
+  })
+  .nullable()
+  .describe('今後の方向性の区分と、それを4つにまとめた区分（風土記の判断）。区分が当たらないシートは空')
+
+export function outlookOf(code: string | null): z.infer<typeof Outlook> {
+  const d = code ? DIRECTIONS[code as z.infer<typeof DirectionCode>] : undefined
+  return d ? { code: code as z.infer<typeof DirectionCode>, label: d.label, grade: d.grade, grade_label: GRADE_LABELS[d.grade] } : null
+}
 
 /** 評価結果の資料に載る数（資料の値） */
 export const GradeCounts = z.strictObject({
@@ -43,18 +78,18 @@ export const BudgetSubject = z.strictObject({
   jigyo: z.string().nullable(),
 })
 
-/** 評価シート。1枚 = 小事業の1年度。出典と頁で1枚が決まる */
+/** 評価シート。1枚 = 事業（品川は小事業）の1年度。出典と頁で1枚が決まる */
 export const EvaluationSheet = z.strictObject({
   sheet_id: z.string(),
-  name: z.string().describe('小事業の名前。資料のまま'),
+  name: z.string().describe('事業（品川は小事業）の名前。資料のまま'),
   budget_subject: BudgetSubject,
   department: z.string().nullable(),
   division: z.string().nullable(),
-  budget_yen: Yen.nullable().describe('小事業の額。歳出の行とは足さない'),
+  budget_yen: Yen.nullable().describe('シートの事業の額。歳出の行とは足さない'),
   settled_yen: Yen.nullable(),
-  grade: Grade,
   grade_label: z.string().nullable().describe('シートの表記。読めない欄は空'),
   direction: z.string().nullable().describe('今後の方向。シートの表記。読めない欄は空'),
+  outlook: Outlook,
   expenditure_detail_id: z.string().nullable().describe('紐付けた決算書の内訳（歳出の集約の内訳の ID。風土記の判断）'),
   indicators: z.array(Indicator),
   origin: PagedOrigin,
@@ -114,8 +149,8 @@ export const EvaluationOriginRow = z
   .meta({ id: 'EvaluationOriginRow', description: '事業評価の出典（評価シートの冊・評価結果の資料）。' })
 
 export const SheetRow = z
-  .strictObject(
-    described('evaluation_sheet', {
+  .strictObject({
+    ...described('evaluation_sheet', {
       sheet_id: z.string(),
       evaluation_id: z.string(),
       origin_id: z.string(),
@@ -132,14 +167,16 @@ export const SheetRow = z
       division: z.string().nullable(),
       budget_yen: z.int().nullable(),
       settled_yen: z.int().nullable(),
-      grade_code: Grade,
       grade_label: z.string().nullable(),
       direction: z.string().nullable(),
+      direction_code: DirectionCode.nullable(),
       expenditure_subject_id: z.string().nullable(),
       expenditure_detail_id: z.string().nullable(),
-    })
-  )
-  .meta({ id: 'EvaluationSheetRow', description: '評価シート（1枚 = 小事業の1年度）。' })
+    }),
+    // 表の列ではなく、direction_code から組み立てる
+    outlook: Outlook,
+  })
+  .meta({ id: 'EvaluationSheetRow', description: '評価シート（1枚 = 事業（品川は小事業）の1年度）。' })
 
 export const IndicatorRow = z
   .strictObject(

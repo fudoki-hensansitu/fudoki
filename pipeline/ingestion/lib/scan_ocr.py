@@ -139,8 +139,11 @@ def ink_areas(marks: Sequence[Sequence[float]], rules: PageRules,
             if box[1] <= middle <= box[3] and left <= (box[0] + box[2]) / 2 <= right and (
                     -6 <= box[0] - x1 <= 6 or -6 <= x0 - box[2] <= 6):
                 x0, x1 = min(x0, box[0]), max(x1, box[2])
-        areas.append((max(left, x0 - AREA_PAD_PT), max(0.0, middle - half), min(right, x1 + AREA_PAD_PT),
-                      min(rules.height, middle + half)))
+        area = (max(0.0, left, x0 - AREA_PAD_PT), max(0.0, middle - half), min(rules.width, right, x1 + AREA_PAD_PT),
+                min(rules.height, middle + half))
+        # (a mark at the page's edge, outside every cell, leaves no area inside the page to read)
+        if area[0] < area[2] and area[1] < area[3]:
+            areas.append(area)
     return areas
 
 

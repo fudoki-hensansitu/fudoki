@@ -417,5 +417,18 @@ class SaveGateTest(unittest.TestCase):
             gate(nodes, amounts, special, fixtures.scope(('150,000', 300.0, 360.0)))
 
 
+
+class GroupsOfTest(unittest.TestCase):
+    def groups(self, origins: dict[str, set[str]]) -> list[list[str]]:
+        with patch.object(refresh, 'origin_shas', side_effect=lambda path: origins[str(path)]):
+            return [[str(path) for path in group] for group in refresh.groups_of([Path(name) for name in origins])]
+
+    def test_manifests_that_share_an_original_run_in_one_group(self):
+        self.assertEqual(self.groups({'a': {'x'}, 'b': {'y'}, 'c': {'x'}}), [['a', 'c'], ['b']])
+
+    def test_a_later_manifest_that_bridges_two_groups_joins_them(self):
+        self.assertEqual(self.groups({'a': {'x'}, 'b': {'y'}, 'c': {'x', 'y'}, 'd': {'y'}}), [['a', 'c', 'b', 'd']])
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -11,10 +11,10 @@ with expected(jurisdiction_code, fiscal_year, account_name, moku_count, amount_y
 )
 select e.jurisdiction_code, 'moku_expected_count_sum' as failure from expected e
 left join actual a using (jurisdiction_code, fiscal_year, account_name)
-where a.moku_count is distinct from e.moku_count or a.amount_yen is distinct from e.amount_yen
+where {{ only_jurisdictions('e.jurisdiction_code') }} and (a.moku_count is distinct from e.moku_count or a.amount_yen is distinct from e.amount_yen)
 union all
 select e.jurisdiction_code, 'explanation_leaf_sum' from expected e
 left join leaves l on e.jurisdiction_code = l.jurisdiction_code and e.fiscal_year = l.fiscal_year
     and e.account_name = l.account_name and l.axis = '備考'
-where l.amount_yen is distinct from e.amount_yen
+where {{ only_jurisdictions('e.jurisdiction_code') }} and l.amount_yen is distinct from e.amount_yen
 

@@ -1,5 +1,6 @@
 // 自治体の頁の AI に聞く入力欄（右下に畳める）。頁の文を選ぶとその文を質問の文脈に入れる
 import * as React from 'react'
+import { createPortal } from 'react-dom'
 import { ArrowSquareOutIcon, ArrowUpIcon, NotePencilIcon, QuotesIcon, RobotIcon, XIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
 import { StartForm } from '../chat/start-form'
@@ -82,7 +83,28 @@ function BackToTop({ hidden }: { hidden: boolean }) {
 }
 
 
-export function AskDock({ name, sitekey, year, section }: { name: string; sitekey: string; year: number; section?: string }) {
+/** 外（オンボーディング）から聞く欄を動かす。open(quote) で欄を開き、quote を選んだ文として付ける */
+export type AskControl = { open: (quote?: string) => void }
+
+export function AskDock({ name, code, sitekey, year, section, detail, control, keepOpen, suggest, onReveal, onChat }: {
+  name: string
+  /** 6桁の自治体コード。AI が収録の自治体を確かめ直さずに調べられるよう、文脈に入れる */
+  code: string
+  sitekey: string
+  year: number
+  section?: string
+  /** 詳細に開いている事業・評価シートなど（送るときに読む） */
+  detail?: () => string
+  control?: React.RefObject<AskControl | null>
+  /** スクロールしても畳まない（オンボーディングで欄を見せている間） */
+  keepOpen?: boolean
+  /** 入力欄の下に出す質問の例。押すとその質問で会話を始める */
+  suggest?: string[]
+  /** 頁の文を選んで、聞く欄にその文が付いたとき */
+  onReveal?: (quote: string) => void
+  /** 会話を始めたとき・答えが返ってきたとき */
+  onChat?: (e: 'started' | 'answered' | 'failed') => void
+}) {
   const [open, setOpen] = React.useState(true)
   const [chat, setChat] = React.useState<{ id: string; session: StoredSession }>()
   const [drawer, setDrawer] = React.useState(false)
@@ -95,6 +117,12 @@ export function AskDock({ name, sitekey, year, section }: { name: string; siteke
   const held = React.useRef(false)
   /** 文脈で聞く欄を開く予約を取り消す。開く前に Escape で畳んだら、後から開き直さない */
   const cancelReveal = React.useRef(() => {})
+  /** 外から付けた選んだ文。頁の選択が外れても残し、別の文を選ぶか、外すか、送るまで持つ */
+  const pinnedQuote = React.useRef(false)
+  const onRevealRef = React.useRef(onReveal)
+  onRevealRef.current = onReveal
+  const keepOpenRef = React.useRef(keepOpen)
+  keepOpenRef.current = keepOpen
   /** 入力欄に focus した時刻。スマホでは focus で頁が動くので、その直後のスクロールでは閉じない */
   const focusedAt = React.useRef(0)
   const show = React.useCallback(() => {
@@ -107,6 +135,7 @@ export function AskDock({ name, sitekey, year, section }: { name: string; siteke
     if (!open || chat) return
     // 頁でもカードの中でも、スクロールしたら閉じる（上へ戻しても閉じる）。入力欄に書きかけの文があるときだけ残す
     const close = () => {
+      if (keepOpenRef.current) return
       const field = dock.current?.querySelector<HTMLTextAreaElement | HTMLInputElement>('textarea, input')
       if (field?.value.trim()) return
       if (field && document.activeElement === field) field.blur()
@@ -131,6 +160,8 @@ export function AskDock({ name, sitekey, year, section }: { name: string; siteke
       const inside = (n: Node | null | undefined) => !!n && (dock.current?.contains(n) || sheet.current?.contains(n))
       if (inside(node)) return
       const text = sel && !sel.isCollapsed ? sel.toString().replace(/\s+/g, ' ').trim() : ''
+      if (!text && pinnedQuote.current) return
+      pinnedQuote.current = false
       setQuote(text.slice(0, QUOTE_MAX))
     }
     document.addEventListener('selectionchange', onSelect)
@@ -142,6 +173,7 @@ export function AskDock({ name, sitekey, year, section }: { name: string; siteke
   React.useEffect(() => {
     if (!quote) return
     const reveal = () => {
+      if (!pinnedQuote.current) onRevealRef.current?.(quote)
       if (chat) {
         if (matchMedia(WIDE_QUERY).matches) setDrawer(true)
         return
@@ -167,10 +199,13 @@ export function AskDock({ name, sitekey, year, section }: { name: string; siteke
     const screen = screenText([dock.current, sheet.current])
     return [
       `${name}の頁（${location.pathname}）を見ている`,
+      `自治体コード: ${code}`,
       `年度: ${reiwa(year)}（${year}年度）`,
       section ? `いま読んでいる節: ${section}` : '',
-      screen ? `画面に見えている文字: ${screen}` : '',
+      detail?.() ?? '',
       quote ? `${QUOTE_PREFIX}「${quote}」` : '',
+      // 長さの上限（MAX_CONTEXT）で切られるときは、画面の文字の末尾から落ちるよう最後に置く
+      screen ? `画面に見えている文字: ${screen}` : '',
     ]
       .filter(Boolean)
       .join('\n')
@@ -277,11 +312,27 @@ export function AskDock({ name, sitekey, year, section }: { name: string; siteke
     setDragY(0)
   }
 
+  React.useImperativeHandle(control, () => ({
+    open: (q?: string) => {
+      if (q) {
+        pinnedQuote.current = true
+        setQuote(q.slice(0, QUOTE_MAX))
+      }
+      if (chat) return setDrawer(true)
+      anchor.current = window.scrollY
+      setOpen(true)
+      // キーボード・読み上げでもそのまま書けるよう、入力欄へ移す（付けた文は pinnedQuote で残る）
+      requestAnimationFrame(() => dock.current?.querySelector<HTMLElement>('textarea, input')?.focus({ preventScroll: true }))
+    },
+  }), [chat])
+
   const start = (id: string, session: StoredSession) => {
     setChat({ id, session })
     setDrawer(true)
     setOpen(false)
+    pinnedQuote.current = false
     setQuote('')
+    onChat?.('started')
   }
   const restart = () => {
     setChat(undefined)
@@ -315,7 +366,7 @@ export function AskDock({ name, sitekey, year, section }: { name: string; siteke
     <div className="mb-2 flex min-w-0 max-w-full items-center gap-2 self-start rounded-full border bg-background py-1 pl-3 pr-1 text-[12.5px] text-muted-foreground shadow-sm">
       <QuotesIcon className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
       <span className="min-w-0 truncate"><span className="sr-only">選んだ文: </span>{quote}</span>
-      <button type="button" onClick={() => setQuote('')} aria-label="選んだ文を外す" className="shrink-0 rounded-full p-1 hover:bg-secondary hover:text-foreground"><XIcon className="size-3" /></button>
+      <button type="button" onClick={() => ((pinnedQuote.current = false), setQuote(''))} aria-label="選んだ文を外す" className="shrink-0 rounded-full p-1 hover:bg-secondary hover:text-foreground"><XIcon className="size-3" /></button>
     </div>
   ) : null
 
@@ -324,8 +375,27 @@ export function AskDock({ name, sitekey, year, section }: { name: string; siteke
     <>
       <BackToTop hidden={docked || drawer} />
       <div ref={dock} onBlur={onDockBlur} onFocus={() => { focusedAt.current = Date.now(); anchor.current = window.scrollY }} className={`fixed inset-x-0 bottom-0 z-20 max-md:bottom-(--bottom-nav) md:left-(--nav-w) md:right-(--side-panel,0px) bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
-        <div className="mx-auto max-w-[720px]">
-          <StartForm sitekey={sitekey} placeholder={`${name}について質問…`} context={describe} onStart={start} before={chip} />
+        <div data-tour="ask" className="mx-auto max-w-[720px]">
+          <StartForm
+            sitekey={sitekey}
+            placeholder={`${name}について質問`}
+            context={describe}
+            onStart={start}
+            before={chip}
+            after={
+              suggest?.length
+                ? (ask, pending) => (
+                    <div className="mt-2 flex flex-wrap gap-1.5">
+                      {suggest.map((q) => (
+                        <button key={q} type="button" disabled={pending} onClick={() => void ask(q)} className="rounded-full border bg-background px-3 py-1.5 text-[13px] transition-colors hover:border-primary hover:text-primary disabled:opacity-50">
+                          {q}
+                        </button>
+                      ))}
+                    </div>
+                  )
+                : undefined
+            }
+          />
         </div>
       </div>
       <button
@@ -339,8 +409,10 @@ export function AskDock({ name, sitekey, year, section }: { name: string; siteke
         <RobotIcon className="size-4 text-primary" aria-hidden="true" />
         {chat ? '会話に戻る' : `${name}について質問`}
       </button>
-      {chat ? (
+      {/* 会話のシートは body へ出す。頁の @container が重なりの文脈を作り、スマホの下のナビより後ろに回ってしまうため */}
+      {chat ? createPortal(
         <>
+          {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
           <div aria-hidden="true" onClick={hideDrawer} className={`fixed inset-0 z-30 bg-foreground/20 md:hidden transition-opacity duration-300 motion-reduce:transition-none ${drawer ? '' : 'pointer-events-none opacity-0'}`} />
           <div
             ref={sheet}
@@ -348,15 +420,16 @@ export function AskDock({ name, sitekey, year, section }: { name: string; siteke
             aria-label={`${name}についての会話`}
             inert={!drawer}
             style={dragY ? { transform: `translateY(${dragY}px)`, transition: 'none' } : undefined}
-            className={`fixed inset-x-0 bottom-0 z-40 mx-auto flex h-[88dvh] max-w-4xl flex-col overflow-hidden rounded-t-[24px] border border-b-0 bg-background shadow-2xl transition-transform duration-300 ease-out motion-reduce:transition-none md:inset-x-auto md:right-0 md:top-0 md:h-auto md:w-[440px] md:max-w-none md:rounded-none md:border-y-0 md:border-r-0 md:shadow-xl ${drawer ? '' : 'translate-y-[calc(100%+48px)] md:translate-x-[calc(100%+48px)] md:translate-y-0'}`}
+            className={`fixed inset-x-0 bottom-0 z-50 mx-auto flex h-[88dvh] max-w-4xl flex-col overflow-hidden rounded-t-[24px] border border-b-0 bg-background shadow-2xl transition-transform duration-300 ease-out motion-reduce:transition-none md:inset-x-auto md:right-0 md:top-0 md:h-auto md:w-[440px] md:max-w-none md:rounded-none md:border-y-0 md:border-r-0 md:shadow-xl ${drawer ? '' : 'translate-y-[calc(100%+48px)] md:translate-x-[calc(100%+48px)] md:translate-y-0'}`}
           >
             <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
-                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} context={describe} beforeComposer={chip} onSend={() => setQuote('')} />
+                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} context={describe} beforeComposer={chip} onSend={() => ((pinnedQuote.current = false), setQuote(''), onChat?.('started'))} onAnswered={(ok) => onChat?.(ok ? 'answered' : 'failed')} />
               </React.Suspense>
             </div>
           </div>
-        </>
+        </>,
+        document.body,
       ) : null}
     </>
   )

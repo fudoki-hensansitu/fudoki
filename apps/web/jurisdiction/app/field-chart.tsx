@@ -1,5 +1,8 @@
 // 分野の頁の内訳の円グラフ（穴を空けると中に書く幅が足りないので、穴の無い円にする）（shadcn の chart）。スマホでも読めるよう、名前・割合・金額はツールチップでなくグラフに書き込む。
 // 太い切れは切れの中に、細い切れは外に線を引いて書く。recharts が重いので、分野の頁を開いたときだけ読む
+// recharts は Pie を描き直すたびに伸びる動きをやり直し、動いている間は書き込みを隠す。頁のほかの state（タブの貼り付きなど）で描き直されても消えないよう、
+// memo で描き直しを止め、動きは最初の1回だけ短く行う
+import * as React from 'react'
 import { Cell, Pie, PieChart, type PieLabelRenderProps } from 'recharts'
 import { ChartContainer, type ChartConfig } from '@/components/ui/chart'
 
@@ -12,9 +15,24 @@ const NAME_MAX = 6
 const RAD = Math.PI / 180
 const cut = (s: string, n: number) => (s.length > n ? `${s.slice(0, n - 1)}…` : s)
 
-export default function FieldChart({ slices, format }: { slices: Slice[]; format: (yen: number) => string }) {
-  const config = Object.fromEntries(slices.map((s) => [s.key, { label: s.name, color: s.color }])) satisfies ChartConfig
-  const label = (p: PieLabelRenderProps) => {
+/** 円が伸びきるまで。書き込みはその後に出るので短くする */
+const GROW_MS = 500
+/** グラフの幅がこれ以上なら外の書き込みを置く横幅が足りるので、円と高さを大きくする */
+const WIDE_MIN = 640
+
+function FieldChart({ slices, format }: { slices: Slice[]; format: (yen: number) => string }) {
+  const config = React.useMemo(() => Object.fromEntries(slices.map((s) => [s.key, { label: s.name, color: s.color }])) satisfies ChartConfig, [slices])
+  const [grown, setGrown] = React.useState(false)
+  const box = React.useRef<HTMLDivElement>(null)
+  const [wide, setWide] = React.useState(false)
+  React.useEffect(() => {
+    const el = box.current
+    if (!el) return
+    const ro = new ResizeObserver(() => setWide(el.clientWidth >= WIDE_MIN))
+    ro.observe(el)
+    return () => ro.disconnect()
+  }, [])
+  const label = React.useCallback((p: PieLabelRenderProps) => {
     const s = slices[Number(p.index)]!
     const percent = Number(p.percent ?? 0)
     const cx = Number(p.cx), cy = Number(p.cy), inner = Number(p.innerRadius), outer = Number(p.outerRadius), mid = Number(p.midAngle ?? 0)
@@ -40,6 +58,7 @@ export default function FieldChart({ slices, format }: { slices: Slice[]; format
     const tx = ex + (cos >= 0 ? 4 : -4)
     return (
       <g>
+        {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
         <path d={`M${sx},${sy}L${mx},${my}L${ex},${my}`} className="fill-none stroke-muted-foreground/50" />
         <text x={tx} y={my} textAnchor={anchor} className="fill-foreground tabular-nums">
           <title>{full}</title>
@@ -49,20 +68,24 @@ export default function FieldChart({ slices, format }: { slices: Slice[]; format
         </text>
       </g>
     )
-  }
+  }, [slices, format])
   // 切った名前の全文は、支援技術向けに一覧でも持つ
   return (
     <>
     <ul className="sr-only">
       {slices.map((s) => <li key={s.key}>{s.name} {format(s.yen)}</li>)}
     </ul>
-    <ChartContainer config={config} className="aspect-auto h-[320px] w-full" aria-hidden>
+    <div ref={box}>
+    <ChartContainer config={config} className={wide ? 'aspect-auto h-[420px] w-full' : 'aspect-auto h-[320px] w-full'} aria-hidden>
       <PieChart margin={{ top: 16, bottom: 16, left: 8, right: 8 }}>
-        <Pie data={slices} dataKey="yen" nameKey="key" innerRadius={0} outerRadius="56%" startAngle={90} endAngle={-270} stroke="var(--background)" strokeWidth={2} isAnimationActive labelLine={false} label={label}>
+        <Pie data={slices} dataKey="yen" nameKey="key" innerRadius={0} outerRadius={wide ? '72%' : '56%'} startAngle={90} endAngle={-270} stroke="var(--background)" strokeWidth={2} isAnimationActive={grown ? false : 'auto'} animationBegin={0} animationDuration={GROW_MS} onAnimationEnd={() => setGrown(true)} labelLine={false} label={label}>
           {slices.map((s) => <Cell key={s.key} fill={s.color} className="outline-none" />)}
         </Pie>
       </PieChart>
     </ChartContainer>
+    </div>
     </>
   )
 }
+
+export default React.memo(FieldChart)

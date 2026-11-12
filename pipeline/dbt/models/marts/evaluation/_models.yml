@@ -43,7 +43,7 @@ models:
     description: 読んだ PDF の sha256。
     data_tests: [not_null]
 - name: evaluation_sheet
-  description: 事務事業評価シート。1枚（1小事業）が1行。金額は出典の千円を円にしたもの。文章の欄（目的・取組・課題）は持たない。
+  description: 事務事業評価シート。1枚（1事業）が1行。金額は出典の印字（千円・円）を円にしたもの。文章の欄（目的・取組・課題）は持たない。
   columns:
   - name: sheet_id
     description: 行の ID。origin_id と頁から作る（sha256）。
@@ -74,7 +74,7 @@ models:
     description: 出典の PDF の頁（1始まり、印字の頁番号ではない）。
     data_tests: [not_null]
   - name: name
-    description: シートの小事業名。
+    description: シートの事業名（品川は小事業名）。
     data_tests: [not_null]
   - name: account_name
     description: シートの予算科目の会計。
@@ -91,20 +91,19 @@ models:
   - name: division
     description: シートの担当課。
   - name: budget_yen
-    description: シートの予算・決算（概要）の計の予算現額（円）。
+    description: シートの予算額（円）。品川は予算・決算（概要）の計の予算現額。他の自治体は宣言（origins.json の note）の欄。
   - name: settled_yen
-    description: シートの予算・決算（概要）の計の決算額（円）。
-  - name: grade_code
-    description: 最終評価の区分の記号（A〜D）。
+    description: シートの決算額（円）。品川は予算・決算（概要）の計の決算額。他の自治体は宣言（origins.json の note）の欄。
+  - name: grade_label
+    description: 評価の区分の印字（シートの表記、例「改善・見直しする事業」「現状維持」）。自治体ごとに書き方が違うので、自治体をまたいで比べるときは direction_code を使う。
+  - name: direction
+    description: 今後の方向性の印字（シートの表記、例「手法等の改善」）。
+  - name: direction_code
+    description: 風土記の判断。今後の方向性の印字（方向性の欄の無い様式は評価の区分の印字）を共通の区分に当てたもの。new（新しく始める）・expand（広げる）・keep（今のまま続ける）・statutory（法令で決まっている）・as_planned（計画どおり続ける）・improve（やり方を見直す）・resize（対象・規模を見直す）・reduce（縮小・一部をやめる）・merge（ほかの事業へ統合）・complete（完了）・end（やめる）・consider_end（やめるか検討中）。当て方は ingestion/project/sheet の既定と origins.json の directions。当たらなければ空。A〜D の4区分は持たず、API がこの区分からまとめる。
     data_tests:
-    - not_null
     - accepted_values:
         arguments:
-          values: ['A', 'B', 'C', 'D']
-  - name: grade_label
-    description: 最終評価の区分の名前（シートの表記、例「改善・見直しする事業」）。
-  - name: direction
-    description: 最終評価の今後の取組の方向性（シートの表記、例「手法等の改善」）。
+          values: ['new', 'expand', 'keep', 'statutory', 'as_planned', 'improve', 'resize', 'reduce', 'merge', 'complete', 'end', 'consider_end']
   - name: expenditure_subject_id
     description: 風土記の判断。シートの予算科目（会計・款・項・目の名前）が1つに当たる、同じ年度の決算書の目。expenditure_subject の subject_id。当たらなければ空。
     data_tests:

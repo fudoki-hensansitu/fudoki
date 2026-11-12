@@ -577,7 +577,8 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
                 code, name = year.group(1), line_text[len(year.group(1)):]
         spaced = (len(label) > 1 and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) is not None
                   and label[1].x0 - label[0].x1 >= 2)  # the number is a word of its own, set apart from the name
-        if code is not None and COUNTED.match(line_text) and not YEAR_LED.match(line_text) and not script and not spaced:
+        if (code is not None and not project and COUNTED.match(line_text) and not YEAR_LED.match(line_text) and not script
+                and not spaced):
             code, name = None, line_text  # `110番非常通報装置`, `3歳児健康診査`: a count, not an item number
         if code is not None and not name and money:
             code = None  # a lone number left of an amount is not a code
@@ -740,8 +741,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                     code = digits[:cut]
                     break
         if (code is not None and label and (previous_code is None or int(code) != previous_code + 1)
-                and (cities := document_quirk('counted_cities')) is not None
-                and cities.module.counted(normalize(label[0].text), raw)):
+                and any((counts := document_quirk(name)) is not None and counts.module.counted(normalize(label[0].text), raw)
+                        for name in ('counted_cities', 'counted_rates'))):
             entries[index] = (label, money, None, raw)
             code = None
         # Where the number before it is on another page or in another cell, the quirk says where the number ends.
@@ -1846,6 +1847,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     nodes, amounts, unowned, notes = [], [], [], []
     placed: list[Item] = []  # the items of `nodes`, in order
     repeated_codes: list = []
+    # A 目 the year drops, printed in brackets with no code, is a subject of its own, never the open one printed again.
+    bracketed = quirk(document, 'bracketed_subjects')
     # `repeated_heading_owns_nothing`: a heading the page prints again takes no amount of the line it is on.
     owners = ('node', 'total') if quirk(document, 'repeated_heading_owns_nothing') is not None else ('node', 'repeat', 'total')
     for logical in logicals:
@@ -1912,7 +1915,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             else:
                 for band in group.bands:
                     band.words = split_glued_numbers(band.words, edges)
-                group_items = subject_items(group, quirk(document, 'marked_subjects'),
+                group_items = subject_items(group, quirk(document, 'marked_subjects') or quirk(document, 'bracketed_subjects'),
                                             quirk(document, 'codeless_beside_repeated_code'))
             if not group.subject:
                 group_items = join_transfer_tails(group_items, layout)
@@ -2260,10 +2263,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         opening = logical.reprints  # no subject with a code has begun on this page yet
         page_axes: set[str] = set()  # the breakdown axes with an item on this page so far (`repeated_at_top`)
         digit_set = quirk(document, 'digit_set_codes')
+        codeless_items = document_quirk('codeless_column_items')
         for _, _, item in events:
             if not item.group.subject and item.role in ('node', 'note') and row is not None \
                     and (row[0].depth < subject_depth or item.code is None) and id(item) not in numbered_names \
                     and row[1] - .5 <= item.anchor <= row[2] + .5 \
+                    and not (id(item) in column_amount_items and codeless_items is not None) \
                     and (not item.amounts or (kind_of(item.name, words=True) is not None
                                               and not is_plain_name(layout, item))):
                 # A line in a subject's row annotates it when it prints no amount (a list of 議決 numbers) or
@@ -2274,8 +2279,16 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             if (item.role in ('node', 'note') and not item.group.subject and stack
                     and normalize(stack[-1].name) == '予備費' and RESERVE_DESTINATION.search(normalize(item.name))):
                 item.role = 'annotation'  # `02-01-04-03-14-01へ 1,630,000`: where the reserve was used (ADR 0024)
+            if (item.role in ('node', 'note') and not item.group.subject and item.amounts
+                    and (layout or {}).get(item.group.axis, {}).get('yen_notes')
+                    and all(yen_marked(logical, run) for _, run in item.amounts)):
+                item.role = 'annotation'  # `議長 1人 1,012,000円`: a reckoning in yen, no item of the 千円 under it (`yen_notes`)
+                item.hint = item.hint or '積算'
+                yen_target = next((p for p in reversed(branch.get(item.group.axis, [])) if p is not None), None)
+            else:
+                yen_target = None
             if item.role == 'annotation':
-                target = row[0] if row is not None else (stack[-1] if stack else None)
+                target = yen_target or (row[0] if row is not None else (stack[-1] if stack else None))
                 notes.append({'kind': 'annotation', 'page': item.page, 'text': item.name,
                               'amounts': [text(r) for _, r in item.amounts]})
                 if target is not None:
@@ -2333,7 +2346,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     # stacked titles the open ones are titles or the 款 of the summary: a 目 of the same code and name
                     # as its 款 is no repeat of it.)
                     previous = next((s for s in stack if s.level == item.level), None)
-                if previous is not None and repeats(previous, item, logical.ocr):
+                if previous is not None and repeats(previous, item, logical.ocr) and not (
+                        item.code is None and item.lines and bracketed is not None and bracketed.module.marked(item.lines[0])):
                     item.key = previous.key  # a repeated subject heading on a continuation page
                     item.role = 'repeat'
                     shown = next((g for g in item.glyphs[:3] if CODE.match(normalize(g.text))), None)

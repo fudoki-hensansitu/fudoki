@@ -59,7 +59,7 @@
     {
       "table_id": "akishima-enterprise-expenditure-revenue-detail",
       "conversion_id": "akishima-enterprise-expenditure",
-      "input_fingerprint": "b688058b15b9386090e2871a6fe1ee2344161270e778eb5b6bb045e9e63fc8c4",
+      "input_fingerprint": "47a17e4314ee50d7eacef8923c62d0300c01e641535d6f1dcfce6acfe9af8c46",
       "account": "下水道事業会計",
       "notes": [
         "（消費税抜き）。款項・目・節の金額（円）は決算の実績。備考の予算額は同じ節の別金額欄、その他の備考金額は同じ節の実績内訳。企業会計の節は原典のまま保持する。収益的支出と資本的支出は独立した表。",
@@ -87,7 +87,7 @@
     {
       "table_id": "akishima-enterprise-expenditure-capital-detail",
       "conversion_id": "akishima-enterprise-expenditure",
-      "input_fingerprint": "b688058b15b9386090e2871a6fe1ee2344161270e778eb5b6bb045e9e63fc8c4",
+      "input_fingerprint": "47a17e4314ee50d7eacef8923c62d0300c01e641535d6f1dcfce6acfe9af8c46",
       "account": "下水道事業会計",
       "notes": [
         "（消費税抜き）。款項・目・節の金額（円）は決算の実績。備考の予算額は同じ節の別金額欄、その他の備考金額は同じ節の実績内訳。企業会計の節は原典のまま保持する。収益的支出と資本的支出は独立した表。",

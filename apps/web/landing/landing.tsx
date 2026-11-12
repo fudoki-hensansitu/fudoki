@@ -375,7 +375,7 @@ const STAGE = [
       <ul className="m-list">
         {NEW_PROJECTS.map((p) => (
           <li key={p.name}>
-            <span className="m-badge">NEW</span>
+            <span className="m-badge">新規</span>
             <span>{p.name}</span>
             <b>
               {p.amount}
@@ -610,7 +610,7 @@ export function Landing() {
               <ul className="m-list">
                 {NEW_PROJECTS.map((p) => (
                   <li key={p.name}>
-                    <span className="m-badge">NEW</span>
+                    <span className="m-badge">新規</span>
                     <span>{p.name}</span>
                     <b>
                       {p.amount}
@@ -678,9 +678,9 @@ export function Landing() {
         <section className="sec wrap duo" aria-labelledby="pair-h">
           <div className="sec-h">
             <h2 id="pair-h">
-              隣のまちと、同じ物差しで。
+              隣のまちと、同じ物差しで
               <br />
-              数字は、出典の頁まで。
+              数字は、出典の頁まで
             </h2>
           </div>
           <div className="duo-g">
@@ -778,7 +778,7 @@ export function Landing() {
 
         <section className="wrap cta" aria-labelledby="cta-h">
           <Dashes className="d-cta" />
-          <h2 id="cta-h">あなたのまちを、のぞいてみよう。</h2>
+          <h2 id="cta-h">あなたのまちを、のぞいてみよう</h2>
           <p>まちの名前を選ぶだけ。登録はいりません。</p>
           <Link className="btn" href={HOME_PATH}>
             自分のまちを見る
@@ -793,7 +793,7 @@ export function Landing() {
             <Link href="/" aria-label="風土記 ホーム">
               <svg className="logo" xmlns="http://www.w3.org/2000/svg" viewBox={`0 0 ${LOGO_WIDTH} 40`} role="img" aria-label="風土記" dangerouslySetInnerHTML={{ __html: `<title>風土記</title>${LOGO_G}` }} />
             </Link>
-            <p>私のお金はどこへ行った？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、出典の資料まで辿れます。</p>
+            <p>私のお金はどこへ行った？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。</p>
           </div>
           <div>
             <h2>使う</h2>

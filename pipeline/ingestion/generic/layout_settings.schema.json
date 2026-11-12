@@ -78,6 +78,7 @@
         "staircase": {"enum": [true, "款項目節", "款項目事務事業"], "description": "The subject columns are a staircase: one header cell 款 項 目 over narrow code columns, and the 款・項 cells run down the page with no closing rule. \"款項目節\" also reads a header cell 款 項 目 節 over four columns, the fourth being 節."},
         "agree_on_bottom": {"const": true, "description": "Scan: the agreed header reading is moved onto each page aligned on the header's bottom rule, not the frame's top (a frame boxing the page title above the header on some pages)."},
         "merged_cells": {"type": "array", "minItems": 1, "items": {"type": "string", "minLength": 1}, "description": "Header cells (`説明`) whose columns are ruled only in some rows: in a row their rules leave out, one cell runs across them and its words are read as one column under the header cell."},
+        "unagreed": {"const": true, "description": "Scan: each page keeps the header it read, and no reading is agreed across pages (the layout draws the header again from the column rules: `redrawn_headers`)."},
         "agree_all_frames": {"const": true, "description": "Scan: every frame of a spread (not only the widest) takes the header reading most pages share, frame by frame from the left."},
         "kind_by_characters": {"const": true, "description": "A stacked kind under its group whose two printed lines the text layer or OCR read across (翌年度繰越額／継逓繰続費次越) is the known kind its characters spell, not the group (headers.canonical)."},
         "facing_pages": {"const": true, "description": "The layout pattern `running_titles`: a page without a subject column is the right half of the spread opened by the page before it with one, whatever horizontal rules each prints (東久留米市: the left page rules each 目, the right page each line of the 説明)."},
@@ -151,6 +152,7 @@
           "bare_amounts": {"type": "boolean"},
           "name_start_slack": {"type": "number", "exclusiveMinimum": 0, "maximum": 10, "description": "Points past the usual 3 a wrapped line may stand from the name's start, where a long number and the blank after it are not as wide as the estimate."},
           "notes": {"type": "array", "items": {"type": "string", "minLength": 1}},
+          "yen_notes": {"const": true, "description": "With `yen_marked`: a line whose amounts are all in yen (`議長 1人 1,012,000円`, the rates under 議員報酬) is a note of kind 積算 on the item above it, and is no item summed with the column's 千円."},
           "yen_marked": {"const": true, "description": "An amount that prints 円 after it in a column of another unit is in yen: a reckoning (`46.4円 × 1,115,000件 ＝ 51,736,000円`) set among the column's 千円."}
         }
       }

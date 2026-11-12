@@ -1574,7 +1574,7 @@
     {
       "table_id": "general-01",
       "conversion_id": "general-01",
-      "input_fingerprint": "4cf8fef8fd122a34baf57c4c15161f928aa463b5aed2c549b3f1b7799c875f9f",
+      "input_fingerprint": "af9f5732b9c468f51e6238e4d2a8bae5cd0a3363ee6b5bb35cd3891e9aba6db0",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1604,7 +1604,7 @@
     {
       "table_id": "general-02",
       "conversion_id": "general-02",
-      "input_fingerprint": "ec5d76af6fe1519c1e2648ab48edd7d8f855a1304da093468236cf7c61cde5c9",
+      "input_fingerprint": "60fd31f12c8c9600d658b9551315b13ea0fa01f18222fe198b05a2d092f8d960",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1634,7 +1634,7 @@
     {
       "table_id": "general-04",
       "conversion_id": "general-04",
-      "input_fingerprint": "0c984d3a2ea92fe9fc15ba9927ba5c2f8f3bee08a13f54fd006679176a160911",
+      "input_fingerprint": "0c803a6f73f1600a61d2a6d3100dcbbc368b34bcf815e0a858fa723ec6ce4e3b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1664,7 +1664,7 @@
     {
       "table_id": "general-05",
       "conversion_id": "general-05",
-      "input_fingerprint": "e979185dbe1a392623a733c43009eb40574dbddc0d8629ba3bf348d42234cf99",
+      "input_fingerprint": "f0012e34cd87397802b14f689997f88d2eadb865d58f778ab4241a496d79d95c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1694,7 +1694,7 @@
     {
       "table_id": "general-06",
       "conversion_id": "general-06",
-      "input_fingerprint": "a6518f441afa93a68d7f33a5258632a8ebdc7a4a60d7a582ae71636e397ad3e5",
+      "input_fingerprint": "d16b283fa9e5e00f163b329c2ae7260484decceafa52b4cf65ca1cc04e858482",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1724,7 +1724,7 @@
     {
       "table_id": "general-07",
       "conversion_id": "general-07",
-      "input_fingerprint": "c1c563a56702cd320315ce2985e97029191ef1d164504f272f67f5e2c1f580bb",
+      "input_fingerprint": "b2a6303d38c556a5f629b2aca9689545ad69e2b90c70162ace58ae7311f1eb2c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1754,7 +1754,7 @@
     {
       "table_id": "general-08",
       "conversion_id": "general-08",
-      "input_fingerprint": "742a80091bed62fb84073277ab1e3f2c281d972407a5ac32405c58d3ab121800",
+      "input_fingerprint": "176ad2fe6a5e8510081b747d3e9fc1a97ac944816c24af46752671b69892c771",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1784,7 +1784,7 @@
     {
       "table_id": "general-09",
       "conversion_id": "general-09",
-      "input_fingerprint": "e4cb3efeac81c64b26d55d827e6d09f794186e33138e323ed2bde9850e6e3ef0",
+      "input_fingerprint": "efc50b168e71374c6b09dc9a0dfc032fd0da7517de6d5d62f9db9add18abfaf9",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1814,7 +1814,7 @@
     {
       "table_id": "general-10",
       "conversion_id": "general-10",
-      "input_fingerprint": "90bb5e19edd27c2041502e35a525ae5737da6a26794aaa1fce171408019abfb8",
+      "input_fingerprint": "fae6758b8ffed495945750bde8b8e0f89fd88790bdbc70f5441fb966b43c0251",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1844,7 +1844,7 @@
     {
       "table_id": "general-13",
       "conversion_id": "general-13",
-      "input_fingerprint": "6b75ce8c26f9bfe0aba8ef71a266e2db0d43643404ea9c77033bb38b953aa945",
+      "input_fingerprint": "19dbcd5ad4bf0b7f170977009f15f4f22f62a51954d48600a1f0ec9e4dfd926e",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1874,7 +1874,7 @@
     {
       "table_id": "general-03",
       "conversion_id": "general-03",
-      "input_fingerprint": "b5ea90512a3ada2c9137e15e32ea9bf9377731e5224c7ff5b799eccf74dad596",
+      "input_fingerprint": "ff71a97e5ed2a0679bea3151921503b7ccf762025f4ad512add9c0ed9c2b0163",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1904,7 +1904,7 @@
     {
       "table_id": "general-11",
       "conversion_id": "general-11",
-      "input_fingerprint": "dd8f9ac9857175560ec49bbc020496d39a04e21154cd4ffe264545084502ffb0",
+      "input_fingerprint": "b9c471d101f9447da76c388ba912609e8fa54d008cf823ff0ab9d42fbfabb927",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1934,7 +1934,7 @@
     {
       "table_id": "general-12",
       "conversion_id": "general-12",
-      "input_fingerprint": "6c35442aaf687d3fea343e3246ddc89a373c54827196f860ba1b13cc2a7da0bd",
+      "input_fingerprint": "59a157b824824bb7966380d8390bf521137a54598eead2f03fb398ea1c6aa829",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",

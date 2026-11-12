@@ -169,9 +169,9 @@ def _drawn(rule, paths) -> bool:
 
 
 def words_from_glyphs(glyphs: list[tuple[tuple[float, float, float, float], str]], report: Report,
-                      rules: list | None = None, overprint: bool = False, gap: float = .8) -> list[Word]:
+                      rules: list | None = None, overprint: bool = False, gap: float = .8, joins=None) -> list[Word]:
     """Glyphs into words: neighbours that overlap vertically and sit closer than `gap` line heights, never across a
-    vertical rule."""
+    vertical rule. `joins(left, right)`, when given, is the gap in line heights for those two characters, at most `gap`."""
     verticals = [r for r in rules or [] if r.vertical]
     unique: list[tuple[tuple[float, float, float, float], str]] = []
     placed: dict[tuple, list] = defaultdict(list)  # the struck twin sits a hair off in y, so sorting by line does not bring it next
@@ -202,6 +202,8 @@ def words_from_glyphs(glyphs: list[tuple[tuple[float, float, float, float], str]
             height = max(a[3] - a[1], b[3] - b[1], 1)
             if b[0] - a[2] > gap * height:
                 break
+            if joins is not None and b[0] - a[2] > joins(unique[i][1], unique[j][1]) * height:
+                continue
             if min(a[3], b[3]) - max(a[1], b[1]) >= .3 * min(a[3] - a[1], b[3] - b[1]) and not any(
                     a[2] - .5 <= r.x0 <= b[0] + .5 and r.y0 <= (a[1] + a[3]) / 2 <= r.y1 for r in verticals):
                 parent[root(j)] = root(i)
@@ -251,9 +253,14 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: f
             # Glyphs placed off the page are not on it at all (Poppler skips them);
             # only invisible glyphs on the page call for a rebuild.
             glyphs = [g for g in glyphs if g[0][2] > 0 and g[0][0] < page.width and g[0][3] > 0 and g[0][1] < page.height]
+            shifted = document_quirk('shifted_hidden_copies')
+            if shifted is not None:
+                image = shifted.module.render(pdf_path, page.number)
+                glyphs = shifted.module.hide(pdf_path, page.number, page.width, glyphs, image)
+                page.rules = shifted.module.rules(pdf_path, page.number, page.width, image)
             if all(visible for _, _, visible in glyphs):
                 continue  # rules are filtered only on pages that draw invisible text
-            drawn = [rule for rule in page.rules if _drawn(rule, paths)]
+            drawn = [rule for rule in page.rules if shifted is not None or _drawn(rule, paths)]
             report.hidden_rules += len(page.rules) - len(drawn)
             page.rules = drawn
             hidden = sum(1 for _, _, visible in glyphs if not visible)
@@ -261,7 +268,10 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: f
             if hidden >= REBUILD_SHARE * len(glyphs):
                 # Most of the page is drawn twice: rebuild its words from the visible
                 # glyphs, whose boxes are exact, instead of Poppler's words.
-                page.words = words_from_glyphs([(box, char) for box, char, visible in glyphs if visible], report, page.rules, 'overprint' in repairs)
+                page.words = words_from_glyphs([(box, char) for box, char, visible in glyphs if visible], report, page.rules,
+                                               'overprint' in repairs, joins=shifted.module.joins if shifted else None)
+                if shifted is not None:
+                    page.words = shifted.module.rejoin(page.words)
             else:
                 page.words = _without_hidden(page.words, glyphs)
     finally:

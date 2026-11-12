@@ -46,6 +46,7 @@ import { Separator } from '@/components/ui/separator'
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Skeleton } from '@/components/ui/skeleton'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { cn } from '@/lib/utils'
 import { Link } from '../../nav/link'
@@ -56,9 +57,10 @@ import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
 import { pageHead } from '../html'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
-import { AskDock } from '../ask-dock'
+import { AskDock, type AskControl } from '../ask-dock'
+import { usePageTour } from './page-tour'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
-import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
+import { directionOf, DIRECTION_ICONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
 const FIELD_ICON: Record<string, Icon> = {
@@ -99,7 +101,31 @@ const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
 type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
-type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go; openField: (id: string) => void }
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; select: (s: Selected) => void; selected: Selected; projects: Map<string, Proj>; go: Go; openField: (id: string) => void; /** オンボーディングの事業の詳細の歩で、詳細の頭に出す吹き出し */ coach: ((p: Proj) => React.ReactNode) | null }
+/** 文脈に添える、開いている事業の評価シート（評価は過去の年度にしか無いので全年度の新しい順）・施策の数の上限（文脈の長さの上限に収める） */
+const DETAIL_SOURCES = 3
+/** 詳細に開いているものを、アシスタントに渡す文脈の行にする。出典の origin_id と頁・科目の ID を添え、AI が検索し直さずに読めるようにする */
+function describeSelected(sel: Selected, d: Snapshot, v: YearView): string {
+  if (!sel) return ''
+  const source = (label: string, x: { fy: number; origin: string; page: number }, name: string) => `${label}: ${r(x.fy)}「${name}」（origin_id ${x.origin}、${x.page}頁）`
+  if (sel.kind === 'moku') return `開いている科目: ${[...(sel.moku.path ?? []), sel.moku.name].filter(Boolean).join(' > ')}（subject_id ${sel.moku.id}）`
+  if (sel.kind === 'sheet') {
+    const s = d.sheets.find((x) => x.id === sel.id)
+    return s ? source('開いている評価シート', s, s.name) : ''
+  }
+  if (sel.kind === 'measure') {
+    const m = d.measures.find((x) => x.id === sel.id)
+    return m ? source('開いている予算案の施策', m, m.title) : ''
+  }
+  const p = d.projects.find((x) => x.id === sel.id)
+  if (!p) return ''
+  const now = v.amount(p)
+  return [
+    `開いている事業: ${p.name}（${[p.path.filter(Boolean).join(' > '), p.dept].filter(Boolean).join('、')}）${now != null ? `、${r(v.year)}の${v.word} ${yenText(now)}` : ''}`,
+    ...[...(v.measuresOf.get(p.id) ?? []).map((m) => source('この事業の予算案の施策', m, m.title)), ...d.sheets.filter((s) => s.project === p.id).sort((a, b) => b.fy - a.fy).map((s) => source(`この事業の評価シート（${r(s.fy)}に行った事業の評価${s.fy < v.year ? `。見ている${r(v.year)}の${v.year - s.fy}年前` : ''}）`, s, s.name))].slice(0, DETAIL_SOURCES),
+  ].join('\n')
+}
+
 const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
 
@@ -163,7 +189,8 @@ function ProjectRow({ p, rank }: { p: Proj; rank?: number }) {
   const { v, select, selected } = useApp()
   const ended = v.isEnded(p)
   const yen = ended ? v.amount(p, String(v.year - 1)) : v.amount(p)
-  const icon = ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : <IconBox><FieldIcon id={p.field} /></IconBox>
+  // 分野は sub に文字で書くので、分野のアイコンは出さない。新規・やめた事業の印と行の頭を揃えるため、印の幅だけ空ける
+  const icon = ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : <span aria-hidden className="w-6 shrink-0" />
   return <Row rank={rank} icon={icon} title={p.name} sub={[p.dept, fieldName(v, p.field)].filter(Boolean).join(' · ')} yen={yen} note={ended ? `${r(v.year - 1)} ${v.label(v.year - 1)}` : yen != null ? `${((yen / v.total) * 100).toFixed(1)}%` : undefined} selected={selected?.kind === 'project' && selected.id === p.id} onClick={() => select({ kind: 'project', id: p.id })} />
 }
 function MeasureRow({ m }: { m: Measure }) {
@@ -172,7 +199,7 @@ function MeasureRow({ m }: { m: Measure }) {
 }
 function SheetRow({ s }: { s: EvalSheet }) {
   const { select, selected } = useApp()
-  const dir = s.dir ? DIRECTIONS[s.dir] : undefined
+  const dir = directionOf(s)
   return <Row icon={dir ? <Mark kind={dir.icon} label={dir.label} /> : <IconBox><ClipboardTextIcon /></IconBox>} title={s.name} sub={[s.div, dir?.label ?? s.dir].filter(Boolean).join(' · ')} yen={s.s} note={`${r(s.fy)} 決算`} selected={selected?.kind === 'sheet' && selected.id === s.id} onClick={() => select({ kind: 'sheet', id: s.id })} />
 }
 /** 行の間に Separator を挟む */
@@ -186,7 +213,7 @@ function Elsewhere() {
   ]
   return (
     <section>
-      <SectionHead title="ほかの自治体も見る" />
+      <SectionHead title="ほかの自治体を見る" />
       <div className="grid gap-x-6 sm:grid-cols-2">
         {places.map((x) => (
           <Link key={x.href} href={x.href} className="flex items-center gap-3 px-2.5 py-3 text-base text-foreground no-underline transition-colors hover:bg-card">
@@ -232,37 +259,26 @@ function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, 
 type TabKey = PageTab
 type Go = (t: TabKey, opt?: { filter?: string; field?: string; grade?: string }) => void
 
-function CountCard({ icon, label, n, onClick }: { icon: React.ReactNode; label: string; n: number; onClick: () => void }) {
-  return (
-    <button type="button" onClick={onClick} className="block h-full w-full rounded-xl text-left transition-transform active:scale-[.98]"><Card className="h-full gap-1.5 bg-card px-4 py-3.5 text-left ring-0 transition-[background,transform] hover:bg-secondary active:scale-[.98]">
-      <span className="flex items-center gap-1.5 text-xs text-muted-foreground [&_svg]:size-4">{icon}{label}</span>
-      <span className="text-[26px] leading-tight tabular-nums">
-        {n}
-        <small className="ml-1 text-xs text-muted-foreground">件</small>
-      </span>
-    </Card></button>
-  )
-}
 
-function FieldTile({ f, i, onClick }: { f: YearView['fields'][number]; i: number; onClick: () => void }) {
+/** 分野の行。名前・金額・棒・割合を1行に並べる。割合は前景色で、緑は棒だけに置く */
+function FieldRow({ f, i, max, onClick }: { f: YearView['fields'][number]; i: number; max: number; onClick: () => void }) {
   const { v } = useApp()
   const n = v.current.filter((p) => p.field === f.id).length
   const pct = (f.yen / v.total) * 100
   return (
-    <button type="button" onClick={onClick} className="row-span-4 grid w-full grid-rows-subgrid rounded-xl text-left transition-transform active:scale-[.98]"><Card className="row-span-4 grid grid-rows-subgrid gap-0 bg-background p-3.5 text-left ring-1 ring-border transition-[background,box-shadow,transform] hover:bg-accent hover:ring-primary active:scale-[.98]">
-      <span className="mb-2.5 flex items-center justify-between">
-        <IconBox><FieldIcon id={f.id} /></IconBox>
-        <span className="text-[22px] tabular-nums text-primary">
-          {pct.toFixed(1)}
-          <small className="text-xs">%</small>
-        </span>
+    <button type="button" onClick={onClick} className="grid w-full grid-cols-[minmax(0,1fr)_auto] items-center gap-x-4 gap-y-1.5 rounded-lg px-2.5 py-3 text-left transition-colors hover:bg-card sm:grid-cols-[10rem_minmax(0,1fr)_4.5rem]">
+      <span className="col-start-1 row-start-1 min-w-0 sm:col-start-auto sm:row-start-auto">
+        <span className="block truncate text-base font-medium">{f.name}</span>
+        <span className="block text-xs text-muted-foreground"><Amt yen={f.yen} /> · 事業 {n}</span>
       </span>
-      <span className="text-base font-semibold">{f.name}</span>
-      <span className="mb-2.5 text-xs text-muted-foreground"><Amt yen={f.yen} /> · 事業 {n}</span>
-      <span className="block h-1 overflow-hidden rounded-full bg-secondary">
-        <span className="app-grow block h-full rounded-full bg-primary" style={{ width: `${Math.max(2, pct * 1.8)}%`, animationDelay: `${i * 30}ms` }} />
+      <span className="col-span-2 col-start-1 row-start-2 block h-1.5 overflow-hidden rounded-full bg-secondary sm:col-span-1 sm:col-start-auto sm:row-start-auto">
+        <span className="app-grow block h-full rounded-full bg-primary" style={{ width: `${Math.max(1, (f.yen / max) * 100)}%`, animationDelay: `${i * 30}ms` }} />
       </span>
-    </Card></button>
+      <span className="col-start-2 row-start-1 text-right text-[17px] tabular-nums sm:col-start-auto sm:row-start-auto">
+        {pct.toFixed(1)}
+        <small className="text-xs text-muted-foreground">%</small>
+      </span>
+    </button>
   )
 }
 
@@ -280,6 +296,17 @@ function FreshCard({ m }: { m: Measure }) {
       </span>
     </Card></button>
   )
+}
+
+// タブのスワイプは、横に動かせる中身（新しく始めることの Carousel・横スクロールの列）の上では始めない。始めると中身より先にタブが動く
+function startsTabSwipe(api: NonNullable<CarouselApi>, evt: MouseEvent | TouchEvent) {
+  const root = api.rootNode()
+  for (let el = evt.target instanceof Element ? evt.target : null; el && el !== root; el = el.parentElement) {
+    if (el instanceof HTMLElement && el.dataset.slot === 'carousel') return false
+    const x = getComputedStyle(el).overflowX
+    if ((x === 'auto' || x === 'scroll') && el.scrollWidth > el.clientWidth) return false
+  }
+  return true
 }
 
 function FreshCarousel({ items, more }: { items: Measure[]; more?: () => void }) {
@@ -358,14 +385,27 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     const controller = new AbortController()
     fetch(`/api/jurisdictions/accounts/${page.code}/${v.year}${phase === 'initial' ? '?phase=initial' : ''}`, { signal: controller.signal })
       .then((r) => (r.ok ? r.json() as Promise<AccountTotal[]> : []))
-      .then((x) => { if (!controller.signal.aborted) setAccounts(x) }, () => {})
+      .then((x) => { if (!controller.signal.aborted) setAccounts(x) }, () => { if (!controller.signal.aborted) setAccounts([]) })
     return () => controller.abort()
   }, [page.code, v.year, phase])
+  const expected = page.accounts?.[phase]?.[String(v.year)]?.length ?? 0
   const special = account === GENERAL ? undefined : accounts?.find((x) => x.name === account)
   const picked: YearTotal | undefined = special ? { year: v.year, yen: special.yen, kan: [] } : total
   const summary = picked ? <Amt yen={picked.yen} className="text-[26px] leading-snug text-primary" /> : null
   return (
     <div className="flex flex-col gap-3">
+      {/* 総額を読み込むまでは、収録した会計の数だけ札の場所を取っておき、下のお金の流れが後からずれないようにする */}
+      {!accounts && expected > 1 ? (
+        <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" aria-busy="true" aria-label="会計">
+          {Array.from({ length: expected }, (_, i) => (
+            // 行の高さを本物の札と揃えるため、同じ文字の大きさの行に skeleton を入れる
+            <div key={i} className="flex flex-col items-start rounded-xl bg-card px-3.5 py-2.5">
+              <span className="text-xs"><Skeleton className="inline-block h-3 w-16 align-middle" /></span>
+              <span className="text-[17px]"><Skeleton className="inline-block h-4 w-24 align-middle" /></span>
+            </div>
+          ))}
+        </div>
+      ) : null}
       {accounts && accounts.length > 1 ? (
         <div className="grid grid-cols-[repeat(auto-fill,minmax(10rem,1fr))] gap-2" role="radiogroup" aria-label="会計">
           {accounts.map((x) => (
@@ -390,44 +430,22 @@ function Overview({ go }: { go: Go }) {
   const { v, page, openField } = useApp()
   return (
     <div className="flex flex-col gap-8">
-      <div className="grid gap-3 md:grid-cols-[1.3fr_1fr]">
-        {/* 総額と1人あたりは同じ大きさで左右に半分ずつ並べ、間に大きな斜線を引いて分ける */}
-        <Card className="justify-center bg-card px-5 py-[18px] ring-0">
-          <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3 sm:gap-6">
-          <span className="flex flex-col">
-            <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}（一般会計）</span>
-            <Amt yen={v.total} className="mt-0.5 text-[40px] leading-tight text-primary max-sm:text-[28px]" />
-          </span>
-          {v.perHead != null ? (
-            <>
-            <span aria-hidden="true" className="self-stretch">
-              <svg viewBox="0 0 20 60" preserveAspectRatio="none" className="h-full w-4 stroke-border sm:w-5"><line x1="19" y1="1" x2="1" y2="59" strokeWidth="1.5" vectorEffect="non-scaling-stroke" /></svg>
-            </span>
-            <span className="flex flex-col">
-              <span className="text-xs text-muted-foreground">住民1人あたり</span>
-              <Amt yen={v.perHead} className="mt-0.5 text-[40px] leading-tight text-primary max-sm:text-[28px]" />
-            </span>
-            </>
-          ) : null}
-          </div>
-        </Card>
-        <div className="grid grid-cols-2 gap-3">
-          <div className="col-span-2"><CountCard icon={<ListBulletsIcon />} label="事業" n={v.current.length} onClick={() => go('projects', { filter: 'all' })} /></div>
-          {v.comparable || v.newProjects.length || v.ended.length || v.fresh.length ? (
-            <>
-              <CountCard icon={<NewIcon className="text-primary" />} label="新しく始める事業" n={v.newProjects.length + v.freshUnlinked.length} onClick={() => go('projects', { filter: 'new' })} />
-              {v.comparable || v.ended.length ? <CountCard icon={<StopIcon className="text-primary" />} label="やめた事業" n={v.ended.length} onClick={() => go('projects', { filter: 'ended' })} /> : null}
-            </>
-          ) : null}
-          {v.sheets.length ? <div className="col-span-2"><CountCard icon={<ClipboardTextIcon />} label="評価した事業" n={v.sheets.length} onClick={() => go('projects', { filter: 'eval' })} /></div> : null}
-        </div>
-      </div>
+      {/* ホームのまちの札と同じく、濃い緑の地に総額と1人あたりを載せる。事業の件数は出さない */}
+      <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7">
+        <p className="text-sm opacity-80">{reiwa(v.year)}の{v.word}（一般会計）</p>
+        <Amt yen={v.total} className="mt-1 block text-[40px] leading-none font-semibold sm:text-[48px]" />
+        {v.perHead != null ? (
+          <p className="mt-2 text-sm opacity-80">
+            1人あたり <Amt yen={v.perHead} />
+          </p>
+        ) : null}
+      </section>
 
-      <section>
+      <section data-tour="fields">
         <SectionHead title="分野" />
-        {/* 札の中の行（割合・名前・金額・棒）を subgrid で横の札と揃え、名前が2行になっても金額と棒の位置を同じにする */}
-        <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3 @3xl:grid-cols-5">
-          {v.fields.map((f, i) => <FieldTile key={f.id} f={f} i={i} onClick={() => openField(f.id)} />)}
+        {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
+        <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
+          {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={Math.max(...v.fields.map((x) => x.yen))} onClick={() => openField(f.id)} />)}
         </div>
       </section>
 
@@ -463,7 +481,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
   }, [v, filter, field, q])
   const unlinked = filter === 'new' ? v.freshUnlinked.filter((m) => (field === 'all' || m.field === field) && (!q.trim() || m.title.includes(q.trim()))) : []
   return (
-    <div className="flex flex-col gap-2">
+    <div data-tour="projects" className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[220px] flex-1">
           <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -505,7 +523,10 @@ function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: 
   const t = q.trim()
   const all = React.useMemo(() => v.sheets.filter((s) => (field === 'all' || s.field === field) && (!t || s.name.includes(t) || (s.div ?? '').includes(t))), [v, field, t])
   const ss = React.useMemo(() => all.filter((s) => s.grade === grade).sort((a, b) => (b.s ?? 0) - (a.s ?? 0)), [all, grade])
-  const dirs = Object.entries(DIRECTIONS).map(([k, x]) => [x, ss.filter((s) => s.dir === k).length] as const).filter(([, n]) => n)
+  const dirs = (Object.keys(DIRECTION_ICONS) as (keyof typeof DIRECTION_ICONS)[])
+    .map((k) => ss.filter((s) => s.dc === k))
+    .filter((xs) => xs.length)
+    .map((xs) => [directionOf(xs[0]!)!, xs.length] as const)
   return (
     <div className="mt-1 flex flex-col gap-3">
       <GradeCards sheets={all} value={grade} onChange={setGrade} />
@@ -515,7 +536,7 @@ function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: 
         ))}
       </div>
       <Infinite items={ss} render={(s) => <SheetRow key={s.id} s={s} />} />
-      <p className="text-xs text-muted-foreground">区が {r(v.year)}年度に行った事業を自ら評価した結果（A〜D は区の区分）です。風土記は評価を加えていません。</p>
+      <p className="text-xs text-muted-foreground">自治体が {r(v.year)}年度に行った事業を自ら評価した結果です。A〜D と方向性は、自治体ごとに違う評価の書き方を共通の区分に揃えたもので、風土記は評価を加えていません。</p>
     </div>
   )
 }
@@ -534,7 +555,7 @@ const Ext = ({ href, children }: { href: string; children: React.ReactNode }) =>
 )
 
 function ProjectDetail({ p }: { p: Proj }) {
-  const { v, d, select, years } = useApp()
+  const { v, d, select, years, coach } = useApp()
   const ys = String(v.year)
   const now = v.amount(p)
   const prev = v.amount(p, String(v.year - 1))
@@ -544,6 +565,7 @@ function ProjectDetail({ p }: { p: Proj }) {
   const ended = v.isEnded(p)
   return (
     <>
+      {coach?.(p)}
       <p className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">{p.path.filter(Boolean).map((x, i) => <React.Fragment key={i}>{i ? <CaretRightIcon className="size-2.5" /> : null}{x}</React.Fragment>)}</p>
       <h2 className="mt-1.5 mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
         {ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : null}
@@ -601,11 +623,11 @@ function ProjectDetail({ p }: { p: Proj }) {
       {ss.length ? (
         <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(v.year)}年度の事業`}>
           {ss.map((s) => {
-            const dir = s.dir ? DIRECTIONS[s.dir] : undefined
+            const dir = directionOf(s)
             return (
               <button key={s.id} type="button" onClick={() => select({ kind: 'sheet', id: s.id })} className="mb-2 flex w-full items-start gap-2.5 rounded-xl bg-card p-3 text-left hover:bg-secondary">
                 {dir ? <Mark kind={dir.icon} /> : null}
-                <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">評価 {s.grade} {GRADES.find((g) => g[0] === s.grade)![1]} · {dir?.label ?? s.dir}</span></span>
+                <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">{[s.grade ? `評価 ${s.grade} ${GRADES.find((g) => g[0] === s.grade)?.[1] ?? ''}` : null, dir?.label ?? s.dir].filter(Boolean).join(' · ')}</span></span>
               </button>
             )
           })}
@@ -643,7 +665,7 @@ function MeasureDetail({ m }: { m: Measure }) {
 
 function SheetDetail({ s }: { s: EvalSheet }) {
   const { select, projects } = useApp()
-  const dir = s.dir ? DIRECTIONS[s.dir] : undefined
+  const dir = directionOf(s)
   const p = s.project ? projects.get(s.project) : undefined
   return (
     <>
@@ -651,15 +673,15 @@ function SheetDetail({ s }: { s: EvalSheet }) {
       <h2 className="mt-1.5 text-xl font-semibold leading-snug">{s.name}</h2>
       <div className="mt-4 grid grid-cols-2 gap-2.5">
         <Card className="gap-1 bg-accent px-3.5 py-3 ring-1 ring-primary">
-          <span className="flex items-center gap-1.5 text-[15px]"><span className="grid size-5 place-items-center rounded-full border border-current text-[11px]">{s.grade}</span>評価</span>
-          <span className="text-lg">{GRADES.find((g) => g[0] === s.grade)![1]}</span>
+          <span className="flex items-center gap-1.5 text-[15px]">{s.grade ? <span className="grid size-5 place-items-center rounded-full border border-current text-[11px]">{s.grade}</span> : null}評価</span>
+          <span className="text-lg">{GRADES.find((g) => g[0] === s.grade)?.[1] ?? '—'}</span>
         </Card>
         <Card className="gap-1 bg-background px-3.5 py-3 ring-1 ring-border">
           <span className="flex items-center gap-1.5 text-[15px]">{dir ? <Mark kind={dir.icon} className="size-5" /> : null}今後の方向</span>
           <span className="text-base">{dir?.label ?? s.dir ?? '—'}</span>
         </Card>
       </div>
-      <DetailSection icon={CalendarBlankIcon} title={`${r(s.fy)}年度の小事業`}>
+      <DetailSection icon={CalendarBlankIcon} title={`${r(s.fy)}年度の事業`}>
         <div className="flex gap-8 text-[15px]"><span>予算 <Amt yen={s.b} className="text-[15px]" /></span><span>決算 <Amt yen={s.s} className="text-[15px]" /></span></div>
       </DetailSection>
       {p ? (
@@ -670,16 +692,19 @@ function SheetDetail({ s }: { s: EvalSheet }) {
         </DetailSection>
       ) : null}
       <DetailSection icon={FileTextIcon} title="出典"><Ext href={`${s.url}#page=${s.page}`}>評価シート（{s.page}頁）</Ext></DetailSection>
-      <p className="mt-3 text-xs text-muted-foreground">評価は区が自ら付けたものです。風土記は評価を加えていません。</p>
+      <p className="mt-3 text-xs text-muted-foreground">評価は自治体が自ら付けたものです。A〜D と方向性は書き方を共通の区分に揃えたもので、風土記は評価を加えていません。</p>
     </>
   )
 }
 
 /** 分野の頁（/tokyo/shinagawa/2026/fields/fukushi）。まとめのタイルから開く */
-const FieldChart = React.lazy(() => import('./field-chart'))
+const loadFieldChart = () => import('./field-chart')
+const FieldChart = React.lazy(loadFieldChart)
 /** 内訳の色。緑の濃さを金額の順に下げる（色に意味は持たせない）。その他は灰色。ink は切れの上に書く割合の文字色 */
+// oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで
 const SLICE_COLORS = [100, 78, 60, 44, 30].map((n) => `color-mix(in oklab, var(--primary) ${n}%, var(--background))`)
 const SLICE_INKS = ['var(--primary-foreground)', 'var(--primary-foreground)', 'var(--primary-foreground)', 'var(--foreground)', 'var(--foreground)']
+// oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで
 const REST_COLOR = 'color-mix(in oklab, var(--muted-foreground) 22%, var(--background))'
 
 /** 分野の内訳: COFOG の中分類ごとの金額。多い順に5つと、残りはまとめる */
@@ -687,6 +712,8 @@ function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   const { v, d, page } = useApp()
   const [drills, setDrills] = React.useState<Drill[] | null>()
   const initial = d.years[String(v.year)]?.kind === 'initial'
+  // recharts の chunk は内訳のデータを待たずに読み始める
+  React.useEffect(() => { void loadFieldChart().catch(() => {}) }, [])
   React.useEffect(() => {
     setDrills(undefined)
     const controller = new AbortController()
@@ -707,10 +734,10 @@ function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   return (
     <DetailSection icon={ChartPieSliceIcon} title="内訳">
       {drills ? (
-        <React.Suspense fallback={<div className="h-[320px] animate-pulse rounded-xl bg-card" />}>
+        <React.Suspense fallback={<div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" />}>
           <FieldChart slices={slices} format={yenText} />
         </React.Suspense>
-      ) : <div className="h-[320px] animate-pulse rounded-xl bg-card" />}
+      ) : <div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" />}
     </DetailSection>
   )
 }
@@ -725,6 +752,7 @@ function FieldPage({ id }: { id: string }) {
   const ss = v.sheets.filter((s) => s.field === f.id)
   return (
     <>
+      <div data-tour="field">
       <div className="flex items-center gap-3">
         <span className="grid size-12 place-items-center rounded-2xl bg-card text-muted-foreground"><FieldIcon id={f.id} className="size-6" /></span>
         <div className="min-w-0">
@@ -736,6 +764,7 @@ function FieldPage({ id }: { id: string }) {
         <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}</span>
         <Amt yen={f.yen} className="block text-4xl leading-tight text-primary" />
         <span className="text-xs text-muted-foreground">{[`全体の ${((f.yen / v.total) * 100).toFixed(1)}%`, perHead(f.yen, d.pop)].filter(Boolean).join(' · ')}</span>
+      </div>
       </div>
       <FieldBreakdown frame={[...DOMAIN_FRAMES, OTHER_FRAME].find((x) => x.id === f.id) ?? OTHER_FRAME} />
       {ms.length ? (
@@ -795,7 +824,9 @@ function MokuDetail({ moku, phase, special }: { moku: Moku; phase: 'initial' | '
               <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 text-[15px]">
                 <span className="truncate">{s.name}</span>
                 <span className="tabular-nums">{s.amountMissing ? <span className="text-xs text-muted-foreground">金額未記載</span> : <><Amt yen={s.yen} className="text-[15px]" />{!moku.amountMissing && moku.yen > 0 ? <span className="ml-2 inline-block w-[3.2em] text-right text-xs text-muted-foreground">{((s.yen / moku.yen) * 100).toFixed(0)}%</span> : null}</>}</span>
+                {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
                 <span className="col-span-2 mt-1 h-1 overflow-hidden rounded-full bg-foreground/5">
+                  {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
                   <span className="block h-full rounded-full bg-primary/55" style={{ width: `${s.amountMissing || base <= 0 ? 0 : Math.min(100, (s.yen / base) * 100)}%` }} />
                 </span>
               </li>
@@ -906,6 +937,15 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
   }
   const [field, setField] = React.useState('all')
   const [filter, setFilter] = React.useState('all')
+  // ?filter=new などで事業の絞り込みを開いた状態で来られる（ホームのはじめにやることから）。読んだら URL から外す
+  React.useEffect(() => {
+    const q = new URLSearchParams(location.search)
+    const f = q.get('filter')
+    if (!f) return
+    if (['all', 'new', 'ended', 'eval'].includes(f)) setFilter(f)
+    q.delete('filter')
+    history.replaceState(history.state, '', location.pathname + (q.size ? `?${q}` : '') + location.hash)
+  }, [])
   const [grade, setGrade] = React.useState('A')
   const [selected, select] = React.useState<Selected>(null)
   // 分野の頁。URL を /fields/<id> にして、戻るで自治体の頁へ帰る
@@ -924,6 +964,16 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
     setFieldPage(null)
     window.scrollTo({ top: 0 })
   }
+  // オンボーディングが頁を動かす。分野の頁を閉じてまとめ・事業のタブへ（分野の頁は履歴を置き換えて閉じる）
+  const leaveField = (t: TabKey) => {
+    select(null)
+    if (fieldPage) history.replaceState(null, '', `${basePath()}/${at.current.year}`)
+    setFieldPage(null)
+    setTabState(t)
+    showUrl(at.current.year, t)
+    window.scrollTo({ top: 0 })
+  }
+  const askControl = React.useRef<AskControl>(null)
   React.useEffect(() => {
     // 戻る・進むでは、URL の分野・タブ・年度に画面を合わせる
     const onPop = () => {
@@ -989,7 +1039,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
   const index = Math.max(0, tabs.findIndex((t) => t.key === tab))
   // 始めの位置は Carousel を置いたときだけ渡す。タブのたびに変わると embla が作り直されて、滑らずに飛ぶ
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const carouselOpts = React.useMemo(() => ({ startIndex: index }), [phone, fieldPage])
+  const carouselOpts = React.useMemo(() => ({ startIndex: index, watchDrag: startsTabSwipe }), [phone, fieldPage])
   React.useEffect(() => {
     if (!api) return
     const onSelect = () => changeTab(tabsRef.current[api.selectedScrollSnap()]!.key)
@@ -1023,7 +1073,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
           <h1 className="min-w-0 text-[22px] font-normal leading-tight sm:text-[26px]">{data.name}</h1>
           <div className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
         </div>
-        {vision ? <p className="text-base leading-snug sm:text-[17px]">{vision}</p> : null}
+        {vision ? <p className="mt-2 text-base leading-snug sm:mt-0 sm:text-[17px]">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
           <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
           {data.population ? (
@@ -1036,6 +1086,23 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
       </div>
     </header>
   )
+
+  const tour = usePageTour({
+    name: data.name,
+    v,
+    fieldPage,
+    tab,
+    project: selected?.kind === 'project' ? selected.id : null,
+    openField,
+    toOverview: () => leaveField('overview'),
+    toProjects: () => {
+      setFilter('all')
+      setField('all')
+      leaveField('projects')
+    },
+    selectProject: (id) => select(id ? { kind: 'project', id } : null),
+    ask: askControl,
+  })
 
   const panel = (key: TabKey) =>
     !v ? null : key === 'overview' ? <Overview go={go} /> : key === 'money' ? <MoneyTab phase="initial" /> : key === 'settled' ? <MoneyTab phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
@@ -1060,18 +1127,28 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
             ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
               {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
+                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none data-active:text-primary data-active:hover:text-primary data-active:focus-visible:text-primary dark:data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
                   <t.icon data-icon="inline-start" />
                   {t.label}
                 </TabsTrigger>
               ))}
             </TabsList>
             )}
-              {stuck ? <div className="app-in shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div> : null}
+              {/* 貼り付いた帯ではタブを優先する。幅が足りないとき（会話を横に開いたときなど）は年度を「今年度 ▾」の1つにまとめる */}
+              {stuck ? (
+                <div className="app-in shrink-0">
+                  {phone ? <YearMenu years={years} current={year} onChange={setYear} /> : (
+                    <>
+                      <div className="@max-4xl:hidden"><YearPicker years={years} current={year} onChange={setYear} /></div>
+                      <div className="@4xl:hidden"><YearMenu years={years} current={year} onChange={setYear} /></div>
+                    </>
+                  )}
+                </div>
+              ) : null}
             </div>
           </div>
           {v ? (
-            <AppContext.Provider value={{ d: d!, page: data, years, v, select, selected, projects, go, openField }}>
+            <AppContext.Provider value={{ d: d!, page: data, years, v, select, selected, projects, go, openField, coach: tour.coach }}>
               {fieldPage ? (
                 <div key={fieldPage} className="app-in pt-6"><FieldPage id={fieldPage} /></div>
               ) : phone ? (
@@ -1132,7 +1209,9 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
           )}
         </Tabs>
       </div>
-      <AskDock name={data.name} sitekey={sitekey} year={year} section={TABS.find((t) => t.key === tab)?.label} />
+      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (d && v ? describeSelected(selected, d, v) : '')} section={TABS.find((t) => t.key === tab)?.label} control={askControl} {...tour.askProps} />
+      {/* オンボーディングの続き（ホームでまちを選んだ人と、はじめにやることから再開した人だけ）。それ以外では何も描かない */}
+      {tour.overlay}
     </div>
   )
 }

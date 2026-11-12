@@ -47,7 +47,6 @@ class Sheet:
     division: str | None
     budget_thousand: int | None
     settled_thousand: int | None
-    grade_code: str | None
     grade_label: str | None
     direction: str | None
     indicators: list[Indicator]
@@ -131,19 +130,20 @@ def read_page(page, number: int) -> Sheet | None:
     final = next((i for i, row in enumerate(right) if _norm(''.join(w['text'] for w in row)) == '(2)最終評価'), None)
     if final is None:
         raise ValueError(f'p{number}: 欄「(2)最終評価」が無い')
-    grade_code = grade_label = direction = None
+    grade_row = grade_label = direction = None
     for row in right[final + 1:final + 4]:
+        # ◆A〜◆D の印字は最終評価の行の目印にだけ使い、保存しない
         if row and GRADE.match(_norm(row[0]['text'])):
-            grade_code = _norm(row[0]['text'])[1]
+            grade_row = row
             rest = [w['text'] for w in row[1:]]
             grade_label = rest[0] if rest else None
             direction = ''.join(rest[1:]).lstrip('◆') or None
             break
-    if grade_code is None:
+    if grade_row is None:
         raise ValueError(f'p{number}: 最終評価の区分（◆A〜◆D）が読めない')
 
     return Sheet(number, evaluation_year, evaluation_year - 1, _norm(name), account, kan, kou, moku, jigyo,
-                 department, division, budget_thousand, settled_thousand, grade_code, grade_label, direction,
+                 department, division, budget_thousand, settled_thousand, grade_label, direction,
                  _indicators(words, number))
 
 

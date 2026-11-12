@@ -546,7 +546,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "c3e09570cf05d0fe5997b1ecbdc4e2936f0ac09d32f70d92fd6575effc4b548b",
+      "input_fingerprint": "e5ec408ec402234e8f5e842f720c60554298d7c05c78876e8721ac994871ab5a",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -576,7 +576,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "5f34bade17e8d7a1fdd63713dc35caa8c51c87edce382be43b597695e9dcf351",
+      "input_fingerprint": "88f0e81542214076cc8e5e744b992afc3bebbbd79f8f379577272c8a06e04cc8",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -606,7 +606,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "41a869c13ecbe4f67626f63955d4591502bdef8ef36c5d33648fc4f63d780b9e",
+      "input_fingerprint": "ffba61054bc712f92c1c1a1a127eb2cf3dde1874e19caafa0607e0c749f5e2b3",
       "account": "介護保険会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -636,7 +636,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "f66b2526a8a120cb09a3d01a8e5ae93a4e635bb68310ddfe4c63fabd61fa9b45",
+      "input_fingerprint": "2c96006f547e6895e5aabf0b950d18a8f3a7031d0d4565c866a254e44700884a",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -666,7 +666,7 @@
     {
       "table_id": "geriatric-facility-initial",
       "conversion_id": "geriatric-facility-initial",
-      "input_fingerprint": "74eea72c85623afca9f6f694995df7beaa42ae213bb701bf2ea791fcfc2ca40f",
+      "input_fingerprint": "aa05121b9b51f9ee87eae01d14d834f5e7ad4cfbc77518fdd2fb7ba4c7140549",
       "account": "老人保健施設会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -696,7 +696,7 @@
     {
       "table_id": "hospital-initial",
       "conversion_id": "hospital-initial",
-      "input_fingerprint": "d90c5e5546027212c5d3af34ce46325d5561735435507003a8efb8a40b6f8070",
+      "input_fingerprint": "7d3807158ab425cc2eb9b39b2433b0c273e8fcf3ebc1fa88e262829bac72284c",
       "account": "病院施設会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",

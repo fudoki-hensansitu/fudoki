@@ -6,7 +6,7 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 
 ## System
 - Genre · editorial（地誌・帳面）
-- Theme · 白い机に生成りの紙。見出しはゴシックで、太さと大きさで階層を作る。色はブランドの青丹とアクセントの金茶、朱と藍は絵の面にだけ置く
+- Theme · 白い机に生成りの紙。見出しはゴシックで、大きさと色で階層を作る。色はブランドの青丹とアクセントの金茶、朱と藍は絵の面にだけ置く
 - Vibe · 静か、紙、帳面、確かめられる、少しの諧謔
 
 **実データそのものが製品の説明を担う。** 紹介の最初の画面に置くのは、実際の自治体の予算を載せた、自治体の頁を模した札。
@@ -14,7 +14,8 @@ Hallmark は検出すると pick をこれに従わせる。値を変えると�
 
 画面は **読み物**（紹介 `/about`・利用条件・案内）と **データの面**（ホーム・自治体の頁・アシスタントなどの報告・分析）に分かれる。token と書体は共通で、
 絵の面（網点・大きな字・朱の楕円）を持つのは読み物だけ。データの面は紙・罫線・数字だけで組む。
-**画面はすべてゴシック（`--font-sans`）で組む。** アプリの中（ホーム・自治体の一覧・個別ページ・アシスタント・会話）も紹介（`/about`）も見出しを含めてゴシックにし、階層は太さと大きさで作る。紹介の見出しは太く（700）詰める。
+**画面はすべてゴシック（`--font-sans`）で組む。** アプリの中（ホーム・自治体の一覧・個別ページ・アシスタント・会話）も紹介（`/about`）も見出しを含めてゴシックにし、階層は大きさと色（前景・`--muted-foreground`）で作る。
+**太さはデータの面では 400〜600 にする。** 本文は 400、ラベル・ボタン・20px 未満の見出しは 500、20px 以上の見出しと要の金額は 600。700 は紹介の見出しだけで、太く詰める。
 
 ## Tokens
 
@@ -23,7 +24,8 @@ shadcn/ui の語彙。色の役割は次のとおり。
 - ブランド色 `--primary`（青丹）: 操作・リンク・選んだ項目・グラフの系列・各節の要の数字（数字を全部塗らない）
 - アクセント `--kincha`（金茶）: 目を引きたい面（進み具合の棒、注意の印）と、ページ冒頭の使ったお金の数字。文字に使うときは白地で読める（コントラスト 4.5 以上）鮮やかな `--kincha-ink`（#b85c00）。暗くすると目立たなくなるので、濃さは彩度で出す
 - 増減（前年度比など）は良し悪しを表さないので、プラスもマイナスも色を付けない
-- 面の地: 主張したい面（ホームの「うちのまち」など、1画面に1枚）は `--brand` の緑の地に `--brand-foreground` の文字。`--brand` は明暗とも青丹の濃い緑。中の押せるものは `--brand-fill` に置く（明るいときは白、暗いときは半透明の白）。押せるもの（タブ・切り替え・カード）の状態（選んだ・選んでいない・hover）は生成り（`--secondary`・`--card`）。
+- 面の地: 主張したい面（ホームの「うちのまち」など、1画面に1枚）は `--brand` の緑の地に `--brand-foreground` の文字。`--brand` は明暗とも青丹の濃い緑。中の押せるものは `--brand-fill` に置く（明るいときは白、暗いときは半透明の白）。
+- 選んだ状態: タブ・チップ・切り替え（年度・絞り込み・分け方）で選んでいるものは `--primary` の地に `--primary-foreground` の文字（タブは文字と下線を `--primary`）。選んでいないものと hover は生成り（`--secondary`・`--card`・`--accent`）。緑の面の中では `--brand-fill` を選んだ印にする。カード（会計の札など）は地を `--accent`、縁を `--primary` にする
 - 絵の色 `--shu`・`--ai`・`--sakura`: 読み物の絵の面と帯だけ
 
 `--accent` は shadcn の名前で、hover の控えめな面に使う（アクセント色ではない）。
@@ -153,7 +155,7 @@ shadcn/ui の語彙。色の役割は次のとおり。
 ## Components
 
 ```css
-/* 見出しはゴシック。紹介の見出しは 700 で詰める */
+/* 見出しはゴシック。700 は紹介の見出しだけ。データの面の見出しは 600（20px 未満は 500） */
 .text-heading { font-family: var(--font-sans); font-weight: 700; font-style: normal; letter-spacing: var(--letter-spacing-heading); word-break: auto-phrase; text-wrap: balance; }
 .text-body { font-family: var(--font-sans); font-size: var(--text-body); line-height: var(--line-height-body); letter-spacing: var(--letter-spacing-body); line-break: strict; word-break: auto-phrase; overflow-wrap: break-word; text-wrap: pretty; }
 .num { font-variant-numeric: tabular-nums; letter-spacing: 0; white-space: nowrap; }
@@ -199,12 +201,14 @@ shadcn/ui の語彙。色の役割は次のとおり。
 
 ## Motion
 - 動くのは hover・選んだタブの色（150ms）、nav の浮き（300ms ease-out）、紹介の冒頭の札がタブを替えたときに浮き上がる動き（360ms）、FAQ の `+`、AI の節の録画だけ。スクロールに合わせて動かさない。紙・絵は動かさない
+- オンボーディングの吹き出しの絵は例外として動かす: 押す所へ指が動いて押す・文字をなぞって選ぶ・質問を打つ、を実際のまちの名前と金額で 4.4 秒ごとに繰り返す。色はデータの面と同じ役割で使う: 前景・`--muted-foreground`・罫線・`--card`・`--secondary`・`--primary`（選んだ文の地は `--primary` を薄めた色）、ホームの札をなぞる所は `--brand`・`--brand-fill`、終わりの印の粒だけ `--kincha`。動かさない設定では終わりの様子を止めて出す
 - すべて `prefers-reduced-motion: no-preference` の中に置く
 
 ## 守る規則
 - **画面で集計しない。** 数字は API が返したものをそのまま載せる。同じ数字が2通りに計算されると、いずれ食い違う
 - **割合の分母は合計にする。** 割り当てられなかった分を分母から落とすと、使途が見えていない分まで見えていることになる
 - **色は役割の決まったものだけ使う。** 色が付いていたら意味があると読まれる。データの面に絵の色を出さず、款・分野ごとに色を分けない
+- **色は token の名前で塗る。** apps/web のコードに色の値（`#fff`・`rgb()`・`oklch()`・`color-mix()`）、Tailwind 標準の色名（`bg-gray-100`・`text-white`）、token に後から付ける透明度（`bg-primary/15`）を書かない。要る色は Tokens に足してから使う。`bun run --cwd apps/web lint`（oxlint の JS plugin、`apps/web/lint/design.js`）が CI で検出する。値を持ってよいのは tokens.css・theme.css・landing.css・`tokens.ts`（theme-color と manifest に渡す背景色）・CSS 変数の届かない出力（OGP 画像・PWA・ロゴ）と shadcn の部品（`chat/components/ui`）だけで、それ以外で要るときは直前の行に `oxlint-disable-next-line design/<rule> -- <理由>` を書く。CSS は oxlint が読まないので対象外
 - **比べる数字には、比べ方の注意を同じ面に書く。** 人口あたりでない、年度が違う、などは脚注に逃がさず数字の隣に置く
 - **溢れるものはその要素の中でスクロールさせる。** ページ本体を横にスクロールさせない（`overflow-x: clip`）
 - **和文の段落は `--line-height-body`（1.8）で組む。** `word-break: keep-all` は本文に当てない
