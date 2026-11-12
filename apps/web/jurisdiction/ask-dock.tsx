@@ -313,6 +313,8 @@ export function AskDock({ name, sitekey, year, section, control, keepOpen, sugge
       if (chat) return setDrawer(true)
       anchor.current = window.scrollY
       setOpen(true)
+      // キーボード・読み上げでもそのまま書けるよう、入力欄へ移す（付けた文は pinnedQuote で残る）
+      requestAnimationFrame(() => dock.current?.querySelector<HTMLElement>('textarea, input')?.focus({ preventScroll: true }))
     },
   }), [chat])
 

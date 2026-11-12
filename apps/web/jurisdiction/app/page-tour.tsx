@@ -180,9 +180,9 @@ export function usePageTour(c: TourCtl) {
                 <Typing />
               </span>
               <p className="min-w-0 flex-1 text-[14px]">{answered === 'failed' ? '答えを受け取れませんでした。会話の欄からもう一度送ってください。' : 'アシスタントが答えています…'}</p>
-              <span className="text-[12px] text-muted-foreground tabular-nums">
-                {at + 1} / {TOTAL}
-              </span>
+              <button type="button" onClick={skip} className="shrink-0 whitespace-nowrap text-[13px] text-muted-foreground hover:text-foreground">
+                スキップ
+              </button>
             </div>
           )}
         </FloatSpot>
