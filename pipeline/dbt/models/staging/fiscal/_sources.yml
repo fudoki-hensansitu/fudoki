@@ -9172,6 +9172,22 @@ sources:
       direction: expenditure
       table_id: elderly-medical-initial
       kind: nodes
+  - name: j132136_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132136_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132136_2024_initial_long_term_care_initial_amounts
     meta:
       jurisdiction: '132136'
@@ -9284,6 +9300,22 @@ sources:
       direction: expenditure
       table_id: elderly-medical-initial
       kind: nodes
+  - name: j132136_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132136_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132136_2025_initial_long_term_care_initial_amounts
     meta:
       jurisdiction: '132136'
@@ -9395,6 +9427,22 @@ sources:
       document_kind: initial
       direction: expenditure
       table_id: elderly-medical-initial
+      kind: nodes
+  - name: j132136_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132136_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132136'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
       kind: nodes
   - name: j132136_2026_initial_long_term_care_initial_amounts
     meta:
