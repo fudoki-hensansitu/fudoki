@@ -410,7 +410,7 @@ export function Home({ entries, featured }: HomeProps) {
     body = (
       <>
         {ctx ? tour.on ? <Tour steps={tourSteps(ctx, () => (tour.to('page'), visit(ctx.base)))} onDone={tour.done} total={5} /> : <Checklist items={checkItems(ctx)} /> : null}
-        {/* ほかのまちを見る導線。住んでいるまちを選んだあとも常に出す */}
+        {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         <OtherTowns entries={entries} className="mb-3" />
         {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
         <div className="mb-2 flex justify-end">
