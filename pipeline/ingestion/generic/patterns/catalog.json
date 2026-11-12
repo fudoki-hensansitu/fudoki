@@ -84,6 +84,7 @@
     "bracket_marks": "ingestion.generic.patterns.quirks.bracket_marks",
     "bracketed_counts": "ingestion.generic.patterns.quirks.bracketed_counts",
     "bracketed_remainder": "ingestion.generic.patterns.quirks.bracketed_remainder",
+    "codeless_column_items": "ingestion.generic.patterns.quirks.codeless_column_items",
     "code_gap_wraps": "ingestion.generic.patterns.quirks.code_gap_wraps",
     "code_run_into_name": "ingestion.generic.patterns.quirks.code_run_into_name",
     "codeless_beside_repeated_code": "ingestion.generic.patterns.quirks.codeless_beside_repeated_code",
