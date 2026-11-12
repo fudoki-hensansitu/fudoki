@@ -138,6 +138,9 @@
       },
     },
   },
+  "patchedDependencies": {
+    "@void/isr@1.5.0": "patches/@void%2Fisr@1.5.0.patch",
+  },
   "catalog": {
     "@cloudflare/config": "0.30.0",
     "@cloudflare/vite-plugin": "2.0.0-beta.v.10",
