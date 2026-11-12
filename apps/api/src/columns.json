@@ -1001,6 +1001,26 @@
           "description": "今後の方向性の印字（シートの表記、例「手法等の改善」）。"
         },
         {
+          "name": "direction_code",
+          "type": "string",
+          "nullable": true,
+          "description": "風土記の判断。今後の方向性の印字（方向性の欄の無い様式は評価の区分の印字）を共通の区分に当てたもの。new（新しく始める）・expand（広げる）・keep（今のまま続ける）・statutory（法令で決まっている）・as_planned（計画どおり続ける）・improve（やり方を見直す）・resize（対象・規模を見直す）・reduce（縮小・一部をやめる）・merge（ほかの事業へ統合）・complete（完了）・end（やめる）・consider_end（やめるか検討中）。当て方は ingestion/project/sheet の既定と origins.json の directions。当たらなければ空。",
+          "values": [
+            "new",
+            "expand",
+            "keep",
+            "statutory",
+            "as_planned",
+            "improve",
+            "resize",
+            "reduce",
+            "merge",
+            "complete",
+            "end",
+            "consider_end"
+          ]
+        },
+        {
           "name": "expenditure_subject_id",
           "type": "string",
           "nullable": true,

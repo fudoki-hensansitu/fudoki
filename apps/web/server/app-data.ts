@@ -196,6 +196,7 @@ export async function loadAppData(env: Env, entry: CatalogEntry): Promise<Snapsh
       name: s.name,
       grade: s.grade_code as Sheet['grade'],
       dir: s.direction,
+      dc: s.direction_code as Sheet['dc'],
       div: s.division,
       acct: s.account_name ?? '',
       b: s.budget_yen,

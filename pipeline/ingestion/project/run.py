@@ -63,6 +63,7 @@ def sheet_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[d
                 out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': year, 'reader': 'sheet',
                             **({'layout': entry['layout']} if 'layout' in entry else {}),
                             **({'workflow': entry['workflow']} if 'workflow' in entry else {}),
+                            'directions': entry.get('directions', {}),
                             'title': candidate['title'], 'landing_url': candidate['landing_url'], 'url': url,
                             'sha256': stored['sha256'], 'reference': {'key': stored['key'], 'sha256': stored['sha256']}})
     return out
@@ -157,7 +158,9 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None) -> dict
                 item['kan'], item['kou'], item['moku'], item['jigyo'],
                 item.get('kan_code'), item.get('kou_code'), item.get('moku_code'), item.get('jigyo_code'),
                 item['department'], item['division'], budget, settled, item['grade_code'],
-                item['grade_label'], item['direction']))
+                item['grade_label'], item['direction'],
+                # 方向性の欄が無い様式は、評価の区分の印字（多くは今後の方向性）から当てる
+                sheet.direction_code(item['direction'] or item['grade_label'], origin['directions'])))
             for indicator in item['indicators']:
                 tables['project_evaluation_indicator'].append((
                     origin_id(origin), item['page'], indicator['position'], indicator['name'], indicator['unit'],
@@ -195,7 +198,7 @@ SCHEMAS = {
                         'kan varchar, kou varchar, moku varchar, jigyo varchar, '
                         'kan_code varchar, kou_code varchar, moku_code varchar, jigyo_code varchar, '
                         'department varchar, division varchar, budget_yen bigint, settled_yen bigint, '
-                        'grade_code varchar, grade_label varchar, direction varchar',
+                        'grade_code varchar, grade_label varchar, direction varchar, direction_code varchar',
     'project_evaluation_indicator': 'origin_id varchar, page integer, position integer, name varchar, unit varchar, '
                             'definition varchar, final_target_text varchar, final_target_year_text varchar',
     'project_evaluation_indicator_value': 'origin_id varchar, page integer, position integer, fiscal_year integer, '

@@ -54,7 +54,7 @@ select s.sheet_id, sha256(to_json(['evaluation', s.jurisdiction_code, s.fiscal_y
     s.account_name, s.kan as kan_name, s.kou as kou_name, s.moku as moku_name, s.jigyo as jigyo_name,
     s.department, s.division,
     s.budget_yen, s.settled_yen,
-    s.grade_code, s.grade_label, s.direction,
+    s.grade_code, s.grade_label, s.direction, s.direction_code,
     j.subject_id as expenditure_subject_id, coalesce(p.detail_id, d.detail_id) as expenditure_detail_id
 from sheet s
 left join subject j using (sheet_id)

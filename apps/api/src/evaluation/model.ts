@@ -7,6 +7,8 @@ import { yearSearchInputFor } from '../shared/search'
 import { FiscalYear, JurisdictionCode, PagedOrigin, RowId, Yen } from '../shared/model'
 
 export const Grade = z.enum(['A', 'B', 'C', 'D'])
+/** 今後の方向性の共通の区分（風土記の判断）。印字は direction */
+export const DirectionCode = z.enum(['new', 'expand', 'keep', 'statutory', 'as_planned', 'improve', 'resize', 'reduce', 'merge', 'complete', 'end', 'consider_end'])
 export const EvaluationOriginType = z.enum(['sheets', 'result'])
 
 /** 評価結果の資料に載る数（資料の値） */
@@ -55,6 +57,7 @@ export const EvaluationSheet = z.strictObject({
   grade: Grade.nullable().describe('風土記の4区分。区分の無い様式・当たらない印字は空'),
   grade_label: z.string().nullable().describe('シートの表記。読めない欄は空'),
   direction: z.string().nullable().describe('今後の方向。シートの表記。読めない欄は空'),
+  direction_code: DirectionCode.nullable().describe('今後の方向性を共通の区分に当てたもの（風土記の判断）。当たらなければ空'),
   expenditure_detail_id: z.string().nullable().describe('紐付けた決算書の内訳（歳出の集約の内訳の ID。風土記の判断）'),
   indicators: z.array(Indicator),
   origin: PagedOrigin,
@@ -135,6 +138,7 @@ export const SheetRow = z
       grade_code: Grade.nullable(),
       grade_label: z.string().nullable(),
       direction: z.string().nullable(),
+      direction_code: DirectionCode.nullable(),
       expenditure_subject_id: z.string().nullable(),
       expenditure_detail_id: z.string().nullable(),
     })

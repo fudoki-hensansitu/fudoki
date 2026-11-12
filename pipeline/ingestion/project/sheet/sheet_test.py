@@ -39,5 +39,19 @@ class ParseTest(unittest.TestCase):
         self.assertIsNone(sheet.parse('方向 縮小', 2, self.WORKFLOW))
 
 
+
+class DirectionTest(unittest.TestCase):
+    def test_default_order(self):
+        cases = {'対象・規模等の拡大': 'expand', '事業の廃止等に向けた検討': 'consider_end', '取組みの一部廃止': 'reduce',
+                 '成果拡大に向けて見直し': 'improve', '整理・統合に向けて見直し': 'merge', '休止・完了': 'complete',
+                 '事業の廃止': 'end', '重点的に推進': 'expand', '維持・推進': 'keep', 'その他・対象外': None, None: None}
+        for text, code in cases.items():
+            self.assertEqual(sheet.direction_code(text), code, text)
+
+    def test_overrides_come_first(self):
+        self.assertEqual(sheet.direction_code('E', {'^E$': 'keep'}), 'keep')
+        with self.assertRaises(ValueError):
+            sheet.direction_code('X', {'X': 'unknown'})
+
 if __name__ == '__main__':
     unittest.main()

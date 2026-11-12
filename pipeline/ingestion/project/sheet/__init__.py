@@ -40,6 +40,38 @@ GROUPS = ('name', 'account', 'kan', 'kou', 'moku', 'jigyo', 'kan_code', 'kou_cod
           'department', 'division', 'budget', 'settled', 'grade', 'direction')
 UNITS = {'千円': 1000, '円': 1}
 
+# 今後の方向性の印字を風土記の共通の区分（direction_code）に当てる既定の正規表現。上から順に試し、最初に当たったものにする。
+# 宣言の `directions` で自治体ごとの当て方を前に足せる（記号だけの様式など）。どれにも当たらなければ空。
+DIRECTIONS = {
+    '新規': 'new',
+    '廃止等に向けた検討': 'consider_end',
+    '法定受託|法定扶助': 'statutory',
+    '計画・規定どおり': 'as_planned',
+    '一部廃止': 'reduce',
+    '統合|移管': 'merge',
+    '完了|終了|完成': 'complete',
+    '廃止|休止': 'end',
+    '縮小': 'reduce',
+    '対象・規模等の見直し|^対象の見直し$': 'resize',
+    '改善|見直|再編|手法': 'improve',
+    '拡大|拡充|重点的に推進': 'expand',
+    '現状維持|維持|継続|変更なし|推進': 'keep',
+}
+DIRECTION_CODES = ('new', 'expand', 'keep', 'statutory', 'as_planned', 'improve', 'resize', 'reduce', 'merge',
+                   'complete', 'end', 'consider_end')
+
+
+def direction_code(text: str | None, overrides: dict[str, str] | None = None) -> str | None:
+    """今後の方向性の印字を共通の区分にする。宣言の当て方（overrides）を先に試す。"""
+    if not text:
+        return None
+    for pattern, code in {**(overrides or {}), **DIRECTIONS}.items():
+        if re.search(pattern, text):
+            if code not in DIRECTION_CODES:
+                raise ValueError(f'方向性の区分が違う: {code}')
+            return code
+    return None
+
 
 @dataclass
 class Sheet:
