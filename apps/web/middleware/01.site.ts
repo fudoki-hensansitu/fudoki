@@ -1,8 +1,10 @@
 // 全頁に共通するもの。サイドバーの開閉とテーマ（cookie）を layout へ渡し（useShared）、テーマを html の data-theme に書き、HTML の応答に CSP（server/csp.ts）を付け、<head> に Void の head では書けないものを足す:
-// ライト・ダークの theme-color（Void の head は meta を name で1つにまとめる）と、読み直しの移動でも View Transition でつなぐ opt-in（style）
+// ライト・ダークの theme-color（Void の head は meta を name で1つにまとめる）と、読み直しの移動でも View Transition でつなぐ opt-in（style）。
+// AI エージェント向けに、API の在処を Link ヘッダーで示し、Accept で text/markdown を望む要求には頁を Markdown にして返す（server/agent-discovery.ts）
 import { defineMiddleware } from 'void'
 import { SIDEBAR_COOKIE } from '../nav/site-nav'
 import { pageCsp } from '../server/csp'
+import { DISCOVERY_LINK, htmlToMarkdown, wantsMarkdown } from '../server/agent-discovery'
 import { themeColorMeta, themeFromCookie, type Theme } from '../nav/theme'
 
 declare module 'void' {
@@ -26,8 +28,20 @@ export default defineMiddleware(async (c, next) => {
   c.set('shared', { navOpen: navOpen(cookie), theme })
   await next()
   if (!c.res.headers.get('Content-Type')?.startsWith('text/html')) return
-  // サイドバーの開閉・テーマを cookie で変えて書くので、開閉の違う HTML を取り違えさせない
+  // サイドバーの開閉・テーマを cookie で変えて書き、Accept で Markdown に変えるので、違う表現を取り違えさせない
   c.res.headers.append('Vary', 'Cookie')
+  c.res.headers.append('Vary', 'Accept')
+  c.res.headers.append('Link', DISCOVERY_LINK)
+  if (c.res.status === 200 && wantsMarkdown(c.req.header('Accept'))) {
+    const markdown = await htmlToMarkdown(c.env.AI, await c.res.clone().text(), c.req.url)
+    if (markdown !== undefined) {
+      const headers = new Headers(c.res.headers)
+      headers.set('Content-Type', 'text/markdown; charset=utf-8')
+      headers.delete('Content-Length')
+      c.res = new Response(markdown, { status: 200, headers })
+      return
+    }
+  }
   // View の器（routes/view-frame.ts）のように自分の policy を持つ応答はそのままにする
   if (!c.res.headers.has('Content-Security-Policy')) c.res.headers.set('Content-Security-Policy', await pageCsp())
   c.res = new HTMLRewriter()
