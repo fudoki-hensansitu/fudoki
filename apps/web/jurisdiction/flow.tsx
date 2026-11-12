@@ -18,8 +18,6 @@ const LEVELS: Record<FlowView, { kan: string; kou: string; moku: string; setsu: 
 type Levels = (typeof LEVELS)[FlowView]
 
 const SETSU_SHOWN = 3
-/** 流れの読み込みを打ち切るまでの時間（ms）。冷えたキャッシュでも数秒で返る */
-const FETCH_TIMEOUT = 20_000
 /** 帯の上を流れる光の幅と速さ（px、px/秒） */
 const LIGHT = 140
 const LIGHT_SPEED = 320
@@ -420,9 +418,6 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
     if (!near || detail) return
     setError(false)
     const controller = new AbortController()
-    // 応答が返らないまま読み込み中の形で止まらないよう、時間を区切る。一度目は黙って読み直し、二度目で読み直しのボタンを出す
-    let timedOut = false
-    const timer = window.setTimeout(() => { timedOut = true; controller.abort() }, FETCH_TIMEOUT)
     const url = `/api/jurisdictions/flow/${data.code}/${year.year}/setsu?${new URLSearchParams({ ...(view === 'cofog' ? { view: 'cofog' } : {}), ...(phase === 'initial' ? { phase: 'initial' } : {}), ...(account ? { account } : {}) })}`
     fetchJson<Drill[]>(url, controller.signal).then(
       (value) => {
@@ -431,13 +426,9 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
         if (value.length > 0) setDetail(value)
         else setError(true)
       },
-      () => {
-        if (controller.signal.aborted && !timedOut) return
-        if (attempt === 0) setAttempt(1)
-        else setError(true)
-      },
-    ).finally(() => window.clearTimeout(timer))
-    return () => { window.clearTimeout(timer); controller.abort() }
+      () => { if (!controller.signal.aborted) setError(true) },
+    )
+    return () => controller.abort()
   }, [near, detail, data.code, year.year, view, phase, account, attempt])
   const onScroll = () => {
     const el = track.current
