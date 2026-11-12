@@ -231,7 +231,8 @@ export function Tour({ steps, onDone, onBack, offset = 0, total }: { steps: Tour
         <h2 id="tour-title" className="text-[16px] font-bold">
           {step.title}
         </h2>
-        <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground">{step.body}</p>
+        {/* 狭い札では文節で折ると行末が大きく空くので、この札だけ文字の単位で折る */}
+        <p className="mt-1 text-[14px] leading-relaxed text-muted-foreground [text-wrap:wrap] [word-break:normal]">{step.body}</p>
         <div className="mt-4 flex items-center gap-3">
           <button type="button" onClick={onDone} className="text-[13px] text-muted-foreground hover:text-foreground">
             スキップ
