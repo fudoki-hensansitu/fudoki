@@ -3,8 +3,8 @@ name: refresh-check
 # A pull request no longer stops on a stale fingerprint; this run finds a table that a shared-code change altered.
 on:
   schedule:
-    # 03:00 JST on days 1, 7, 13, 19, 25 and 31: at most 6 days apart, so the observation cache
-    # (evicted after 7 days without access) survives between runs.
+    # 18:00 UTC on days 1, 7, 13, 19, 25 and 31 (03:00 JST the next day): at most 6 days apart, so the
+    # observation cache (evicted after 7 days without access) survives between runs.
     - cron: '0 18 */6 * *'
   workflow_dispatch:
 permissions:
@@ -37,11 +37,13 @@ jobs:
       # Some scan tables read clipped words with mutool (generic/patterns/components/clipped_words.py).
       - run: mise install conda:mupdf@1.28.6
       # Page words read from the PDFs: the slow part of a cold run. A new key each run keeps the cache fresh.
+      # The words depend on the Poppler pinned in mise.toml but are cached without its version
+      # (ingestion/lib/poppler.py), so the key carries mise.toml and a Poppler change starts empty.
       - uses: actions/cache/restore@v6
         with:
           path: pipeline/.cache/generic-observation
-          key: generic-observation-${{ github.run_id }}
-          restore-keys: generic-observation-
+          key: generic-observation-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
+          restore-keys: generic-observation-${{ hashFiles('mise.toml') }}-
       - id: refresh
         run: bun run --cwd pipeline ingestion:refresh --remote --dry-run --output "$RUNNER_TEMP/refresh/report.json"
         env:
@@ -51,7 +53,7 @@ jobs:
         uses: actions/cache/save@v6
         with:
           path: pipeline/.cache/generic-observation
-          key: generic-observation-${{ github.run_id }}
+          key: generic-observation-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
       - if: always()
         uses: actions/upload-artifact@v6
         with:
