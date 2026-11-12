@@ -19,7 +19,8 @@ from concurrent.futures import ProcessPoolExecutor, as_completed
 from dataclasses import dataclass
 from pathlib import Path
 
-import pypdfium2 as pdfium
+from source_text.layout import page_texts
+
 
 PIPELINE = Path(__file__).resolve().parents[1]
 SELECTION_DIR = PIPELINE / 'source_selection'
@@ -27,7 +28,7 @@ PROJECT_ORIGINS = PIPELINE / 'ingestion/project/origins.json'
 CACHE = PIPELINE / '.cache/source-text'
 BUCKET = 'fudoki-inputs'
 PREFIX = 'source-text/'
-SCHEMA_VERSION = 1
+SCHEMA_VERSION = 2
 
 
 @dataclass(frozen=True)
@@ -80,27 +81,6 @@ def project_origins(path: Path = PROJECT_ORIGINS) -> list[Origin]:
     return [Origin(sha256=origin['sha256'], r2_key=project_key(field, origin), jurisdiction=origin['jurisdiction'],
                    fiscal_year=origin.get('budget_year', origin.get('fiscal_year')), kind=kind)
             for field, kind in (('results', 'evaluation'),) for origin in declared.get(field) or []]
-
-
-def page_texts(path: Path) -> list[str]:
-    """pdfium で抜き出した頁ごとの文字（物理頁の順）。改行は LF にそろえる。頁と textpage は都度閉じる。"""
-    document = pdfium.PdfDocument(str(path))
-    try:
-        texts = []
-        for index in range(len(document)):
-            page = document[index]
-            try:
-                textpage = page.get_textpage()
-                try:
-                    text = textpage.get_text_range()
-                finally:
-                    textpage.close()
-            finally:
-                page.close()
-            texts.append(text.replace('\r\n', '\n').replace('\r', '\n').strip())
-        return texts
-    finally:
-        document.close()
 
 
 def render(sha256: str, texts: list[str]) -> bytes:
@@ -164,7 +144,7 @@ def put(key: str, body: bytes) -> None:
 
 
 def save_one(origin: Origin, keep_cache: bool) -> tuple[int, int]:
-    """1つの出典を取り、頁の文字を R2 に置く。頁数と文字の無い頁の数を返す。pdfium は thread safe ではないので process で並べる。"""
+    """1つの出典を取り、頁の文字を R2 に置く。頁数と文字の無い頁の数を返す。"""
     path = fetch(origin)
     try:
         texts = page_texts(path)
@@ -192,6 +172,9 @@ def main(argv: list[str]) -> int:
                       'saved': len(origins) - len(todo), 'to_write': len(todo)}, ensure_ascii=False), flush=True)
     if not args.write:
         return 0
+    from ingestion.lib import poppler
+
+    poppler.require()  # 語は Poppler の版で変わる（ingestion/lib/poppler.py）
     failed = 0
     with ProcessPoolExecutor(max_workers=args.jobs) as pool:
         futures = {pool.submit(save_one, origin, args.keep_cache): origin for origin in todo}

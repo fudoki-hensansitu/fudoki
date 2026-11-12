@@ -20,6 +20,7 @@ user-invocable: false
 | C. dbt：保存済みの取り込み表からstagingを定義し、構築する | [references/dbt.md](references/dbt.md) |
 | 予算案のプレス発表を工程ごとのパターンの組み合わせ（宣言の workflow）で読む | [references/press-reading.md](references/press-reading.md) |
 | 資料の施策（プレス発表など）を予算書の内訳（事業）に紐付け、分野を付ける | [references/link-to-budget-detail.md](references/link-to-budget-detail.md) |
+| アシスタントが読む出典の頁の文字を作る・抜き出し方を変える（書く前に最初の数頁を目で確かめる） | [references/source-text.md](references/source-text.md) |
 
 ## 関連 skill
 

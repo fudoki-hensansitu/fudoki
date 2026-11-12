@@ -10,8 +10,8 @@ export interface SourceTextBucket {
   get(key: string): Promise<{ text(): Promise<string> } | null>
 }
 
-/** 1回に返す頁の文字の上限（Unicode の文字）。超えた分は切って truncated にする */
-export const MAX_PAGE_CHARS = 8000
+/** 1回に返す頁の文字の上限（Unicode の文字）。頁の文字は表の列を空白で揃えているので、空白を含めて数える。超えた分は切って truncated にする */
+export const MAX_PAGE_CHARS = 12000
 
 const SHA256 = /^[0-9a-f]{64}$/
 
