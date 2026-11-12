@@ -818,7 +818,7 @@ const REST_COLOR = 'color-mix(in oklab, var(--muted-foreground) 22%, var(--backg
 /** 分野の内訳: COFOG の中分類ごとの金額。多い順に5つと、残りはまとめる */
 function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   return (
-    <ClientSuspense fallback={<DetailSection icon={ChartPieSliceIcon} title="内訳"><div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" /></DetailSection>}>
+    <ClientSuspense fallback={<DetailSection icon={ChartPieSliceIcon} title="内訳"><Skeleton className="h-[320px] rounded-xl @2xl:h-[420px]" /></DetailSection>}>
       <FieldSlices frame={frame} />
     </ClientSuspense>
   )
@@ -839,7 +839,7 @@ function FieldSlices({ frame }: { frame: { cofog: string } }) {
   if (!slices.length) return null
   return (
     <DetailSection icon={ChartPieSliceIcon} title="内訳">
-      <React.Suspense fallback={<div className="h-[320px] animate-pulse rounded-xl bg-card @2xl:h-[420px]" />}>
+      <React.Suspense fallback={<Skeleton className="h-[320px] rounded-xl @2xl:h-[420px]" />}>
         <FieldChart slices={slices} format={yenText} />
       </React.Suspense>
     </DetailSection>
