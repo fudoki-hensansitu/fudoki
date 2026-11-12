@@ -15,6 +15,10 @@ A glyph with a twin of the same character at the distance on its line is a copy.
 on each half of the page by the pairs the clip tells apart and, for the others, by the render (the box that shows ink
 where its twin's does not). The clip is wrong where the copy falls on printed text of the next column, so the render
 alone cannot settle those pairs: the side the half votes for is kept and the other is hidden.
+
+Where the text layer also holds copies a line apart that the render cannot tell (世田谷 国保 p31, a stray `1` set 135
+pt above the printed line and 120 pt left of it), the workflow names the glyphs by page and the top left corner of
+their box: `{"pages": {"31": {"hide": [[684.5, 282.4]], "show": [[804.8, 417.8]]}}, "reason": "…"}`.
 """
 from __future__ import annotations
 
@@ -24,7 +28,14 @@ import subprocess
 import tempfile
 
 SCOPE = 'document'
-OPTIONS = {'const': True}
+OPTIONS = {'oneOf': [{'const': True}, {
+    'type': 'object', 'additionalProperties': False, 'required': ['pages', 'reason'],
+    'properties': {'reason': {'type': 'string', 'minLength': 1}, 'pages': {
+        'type': 'object', 'minProperties': 1, 'propertyNames': {'pattern': '^[1-9][0-9]*$'},
+        'additionalProperties': {'type': 'object', 'additionalProperties': False, 'minProperties': 1, 'properties': {
+            side: {'type': 'array', 'minItems': 1, 'items': {'type': 'array', 'minItems': 2, 'maxItems': 2,
+                                                             'items': {'type': 'number'}}}
+            for side in ('hide', 'show')}}}}}]}
 
 PLACE = .6        # pt: how far off the line a twin may sit
 REACH = (60, 200)  # pt: the distances a copy is looked for at
@@ -51,8 +62,29 @@ def render(pdf: Path, number: int):
         return np.array(Image.open(next(Path(directory).glob('page*.png'))).convert('L'))
 
 
+CORNER = .2       # pt: how far a declared glyph's corner may sit from the box's
+
+
 def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list:
     """`glyphs` are `(box, char, visible)`; the hidden copies come back as not visible."""
+    glyphs = _hide(pdf, number, width, glyphs, image)
+    from ingestion.generic.patterns import document_quirk
+    selected = document_quirk('shifted_hidden_copies')
+    declared = (selected.value if selected and isinstance(selected.value, dict) else {}).get('pages', {}).get(str(number))
+    if not declared:
+        return glyphs
+    def at(corners: list) -> set:
+        found = {index for index, (box, char, _) in enumerate(glyphs) for x, y in corners
+                 if not char.isspace() and abs(box[0] - x) < CORNER and abs(box[1] - y) < CORNER}
+        if len(found) != len(corners):
+            raise ValueError(f'shifted_hidden_copies: p{number} の宣言の字 {corners} が {len(found)} 字にしか当たらない')
+        return found
+    hidden, shown = at(declared.get('hide', [])), at(declared.get('show', []))
+    return [(box, char, False if index in hidden else True if index in shown else visible)
+            for index, (box, char, visible) in enumerate(glyphs)]
+
+
+def _hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list:
     by_line: dict[str, list[int]] = {}
     for index, (box, char, visible) in enumerate(glyphs):
         if not char.isspace():
