@@ -57,12 +57,12 @@ const sheetsOf = (env: Env, code: string, min: number, max: number) =>
 const fieldOf = (cofog: string | null | undefined) => ((cofog ? frameOf(cofog) : undefined) ?? OTHER_FRAME).id
 const short = (id: string) => id.slice(0, 12)
 
-/** 頁の年度（自治体の頁で選べる年度と同じ。jurisdiction/types.ts の appPageYears）。当初予算があれば当初予算、無ければ決算を読む */
+/** 頁の年度（自治体の頁で選べる年度と同じ。jurisdiction/types.ts の appPageYears）。決算のある年度は決算、決算より後の年度は当初予算を読む */
 export function appYears(entry: Pick<CatalogEntry, 'initialYears' | 'settlementYears'>): { year: number; kind: Kind }[] {
   const settled = shownSettlementYears(entry.settlementYears)
   const last = Math.max(0, ...settled)
   const years = appPageYears({ years: settled.map((year) => ({ year })), budgets: entry.initialYears.filter((y) => y > last).map((year) => ({ year })) })
-  return years.map((year) => ({ year, kind: entry.initialYears.includes(year) ? 'initial' : 'settlement' }))
+  return years.map((year) => ({ year, kind: year > last ? 'initial' : 'settlement' }))
 }
 
 /** 施策の内訳が載る科目。内訳を ID で引く（D1 の bind の上限に合わせて区切る） */

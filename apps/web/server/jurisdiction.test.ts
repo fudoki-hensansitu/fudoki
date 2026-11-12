@@ -11,6 +11,7 @@ import type { Env } from './env'
 import prefectures from '../../../packages/jurisdictions/prefectures.json'
 import registry from '../../../packages/jurisdictions/jurisdictions.json'
 import { TOPIC_SEGMENTS } from '../jurisdiction/path'
+import { appYears } from './app-data'
 
 describe('金額と年度の表記', () => {
   test('1億円以上は億円、未満は万円。100億円以上は小数を出さない', () => {
@@ -112,6 +113,13 @@ const view = async (path: string, e: Env = env) => {
 const canonical = (h: Head) => h.link.find((l) => l.rel === 'canonical')?.href
 
 describe('自治体の個別ページ', () => {
+  test('当初予算と決算の両方がある年度は決算を読み、決算より後の年度だけ当初予算を読む', () => {
+    expect(appYears({ initialYears: [2024, 2025, 2026], settlementYears: [2024] })).toEqual([
+      { year: 2026, kind: 'initial' },
+      { year: 2025, kind: 'initial' },
+      { year: 2024, kind: 'settlement' },
+    ])
+  })
   test('款の和・事業・前年度の同じ目から組み、head に金額と自治体名を入れる', async () => {
     const data = await view('/tokyo/nakano')
     const head = pageHead(data)
