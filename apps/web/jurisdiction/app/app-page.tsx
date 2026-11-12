@@ -187,7 +187,7 @@ function Elsewhere() {
   ]
   return (
     <section>
-      <SectionHead title="ほかの自治体も見る" />
+      <SectionHead title="ほかの自治体を見る" />
       <div className="grid gap-x-6 sm:grid-cols-2">
         {places.map((x) => (
           <Link key={x.href} href={x.href} className="flex items-center gap-3 px-2.5 py-3 text-base text-foreground no-underline transition-colors hover:bg-card">
@@ -658,8 +658,10 @@ function SheetDetail({ s }: { s: EvalSheet }) {
 /** 分野の頁（/tokyo/shinagawa/2026/fields/fukushi）。まとめのタイルから開く */
 const FieldChart = React.lazy(() => import('./field-chart'))
 /** 内訳の色。緑の濃さを金額の順に下げる（色に意味は持たせない）。その他は灰色。ink は切れの上に書く割合の文字色 */
+// oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで
 const SLICE_COLORS = [100, 78, 60, 44, 30].map((n) => `color-mix(in oklab, var(--primary) ${n}%, var(--background))`)
 const SLICE_INKS = ['var(--primary-foreground)', 'var(--primary-foreground)', 'var(--primary-foreground)', 'var(--foreground)', 'var(--foreground)']
+// oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで
 const REST_COLOR = 'color-mix(in oklab, var(--muted-foreground) 22%, var(--background))'
 
 /** 分野の内訳: COFOG の中分類ごとの金額。多い順に5つと、残りはまとめる */
@@ -777,7 +779,9 @@ function MokuDetail({ moku, phase, special }: { moku: Moku; phase: 'initial' | '
               <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] items-baseline gap-x-3 text-[15px]">
                 <span className="truncate">{s.name}</span>
                 <span className="tabular-nums">{s.amountMissing ? <span className="text-xs text-muted-foreground">金額未記載</span> : <><Amt yen={s.yen} className="text-[15px]" />{!moku.amountMissing && moku.yen > 0 ? <span className="ml-2 inline-block w-[3.2em] text-right text-xs text-muted-foreground">{((s.yen / moku.yen) * 100).toFixed(0)}%</span> : null}</>}</span>
+                {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
                 <span className="col-span-2 mt-1 h-1 overflow-hidden rounded-full bg-foreground/5">
+                  {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
                   <span className="block h-full rounded-full bg-primary/55" style={{ width: `${s.amountMissing || base <= 0 ? 0 : Math.min(100, (s.yen / base) * 100)}%` }} />
                 </span>
               </li>

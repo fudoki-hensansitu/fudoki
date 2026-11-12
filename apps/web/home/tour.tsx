@@ -104,6 +104,7 @@ const pinned = (el: HTMLElement | null) => {
 type Box = { top: number; left: number; width: number; height: number }
 const PAD = 8
 const GAP = 12
+// oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで
 const SHADE = 'rgb(0 0 0 / .55)'
 const smooth = () => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth')
 
@@ -320,7 +321,7 @@ export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number;
 /** 頁の中に置く吹き出し（暗くしない）。事業の詳細のように、ダイアログの中で文字を選んでもらう歩に使う */
 export function InlineSpot({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip: () => void; onBack?: () => void }) {
   return (
-    <section aria-labelledby="tour-title" className="tour-tip mb-5 rounded-2xl border border-primary/40 bg-background p-4 shadow-md sm:p-5">
+    <section aria-labelledby="tour-title" className="tour-tip mb-5 rounded-2xl border border-primary bg-background p-4 shadow-md sm:p-5">
       <SpotBody spot={spot} at={at} onSkip={onSkip} onBack={onBack} />
     </section>
   )

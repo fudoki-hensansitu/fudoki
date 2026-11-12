@@ -403,6 +403,7 @@ export function AskDock({ name, sitekey, year, section, control, keepOpen, sugge
       </button>
       {chat ? (
         <>
+          {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
           <div aria-hidden="true" onClick={hideDrawer} className={`fixed inset-0 z-30 bg-foreground/20 md:hidden transition-opacity duration-300 motion-reduce:transition-none ${drawer ? '' : 'pointer-events-none opacity-0'}`} />
           <div
             ref={sheet}

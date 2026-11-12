@@ -2,12 +2,17 @@
 // 緯度・経度と IP アドレスは国土地理院に届く（プライバシーポリシーに記載）。風土記のサーバーには送らない
 const REVERSE_GEOCODER = 'https://mreversegeocoder.gsi.go.jp/reverse-geocoder/LonLatToAddress'
 
-export class LocateError extends Error {}
+export class LocateError extends Error {
+  /** 位置情報がブロックされている。一度ブロックされるとサイトからは聞き直せず、ブラウザの設定で許可してもらうしかない */
+  constructor(message: string, readonly denied = false) {
+    super(message)
+  }
+}
 
 const position = () =>
   new Promise<GeolocationPosition>((resolve, reject) => {
     if (!('geolocation' in navigator)) return reject(new LocateError('このブラウザでは現在地を使えません'))
-    navigator.geolocation.getCurrentPosition(resolve, (e) => reject(new LocateError(e.code === e.PERMISSION_DENIED ? '位置情報の利用が許可されていません' : '現在地を取得できませんでした')), { timeout: 10_000, maximumAge: 600_000 })
+    navigator.geolocation.getCurrentPosition(resolve, (e) => reject(e.code === e.PERMISSION_DENIED ? new LocateError('位置情報の利用が許可されていません', true) : new LocateError('現在地を取得できませんでした')), { timeout: 10_000, maximumAge: 600_000 })
   })
 
 /** 現在地の市区町村コード（5桁）。日本の外や海の上など、市区町村に当たらないときは LocateError */

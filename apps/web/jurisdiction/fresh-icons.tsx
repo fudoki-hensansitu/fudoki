@@ -8,6 +8,7 @@ function Fill({ id }: { id: string }) {
   return (
     <defs>
       <linearGradient id={id} x1="0" y1="0" x2="1" y2="1">
+        {/* oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで */}
         <stop offset="0" style={{ stopColor: 'color-mix(in oklab, currentColor 55%, white)' }} />
         <stop offset="1" style={{ stopColor: 'currentColor' }} />
       </linearGradient>
