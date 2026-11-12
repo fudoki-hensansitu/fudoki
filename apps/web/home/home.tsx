@@ -92,7 +92,7 @@ function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
   const years = [...c.years].sort((a, b) => b - a)
   return (
     <>
-      <div className={cn('hidden gap-1 rounded-full p-1 sm:flex', onBrand ? 'bg-brand-fill/20' : 'bg-secondary')} role="group" aria-label="年度">
+      <div className={cn('hidden gap-1 rounded-full p-1 sm:flex', onBrand ? 'border border-brand-foreground' : 'bg-secondary')} role="group" aria-label="年度">
         {years.map((y) => (
           <button
             key={y}
@@ -100,7 +100,7 @@ function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
             onClick={() => c.setYear(y)}
             aria-pressed={y === c.year}
             title={reiwa(y)}
-            className={cn('rounded-full px-3 py-1 text-[13px] transition-colors duration-150 ease-out', y === c.year ? (onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-background text-foreground shadow-sm') : onBrand ? 'hover:bg-white/10' : 'text-muted-foreground hover:text-foreground')}
+            className={cn('rounded-full px-3 py-1 text-[13px] transition-colors duration-150 ease-out', y === c.year ? (onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-background text-foreground shadow-sm') : onBrand ? 'hover:bg-brand-fill-hover hover:text-brand-fill-foreground' : 'text-muted-foreground hover:text-foreground')}
           >
             {yearName(y)}
           </button>
@@ -153,7 +153,7 @@ function FieldBars({ c, limit }: { c: Ctx; limit: number }) {
               <Amt yen={f.yen} className="w-20 text-right text-sm font-medium" />
             </span>
             <span className="mt-1 block h-1.5 rounded-full bg-secondary">
-              <span className="block h-full rounded-full bg-primary/70" style={{ width: pct(f.yen, c.v.total) }} />
+              <span className="block h-full rounded-full bg-primary" style={{ width: pct(f.yen, c.v.total) }} />
             </span>
           </Link>
         </li>

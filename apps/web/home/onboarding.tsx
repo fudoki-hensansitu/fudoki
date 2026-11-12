@@ -70,7 +70,7 @@ export function Steps({ at, of, onBrand }: { at: number; of: number; onBrand?: b
     <div className={cn('mb-3 flex items-center gap-2 text-[12px]', onBrand ? 'opacity-80' : 'text-muted-foreground')}>
       <span className="flex gap-1">
         {Array.from({ length: of }, (_, i) => (
-          <span key={i} className={cn('h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out', i < at ? cn('w-5', onBrand ? 'bg-brand-foreground' : 'bg-primary') : cn('w-1.5', onBrand ? 'bg-brand-foreground/30' : 'bg-border'))} />
+          <span key={i} className={cn('h-1.5 rounded-full transition-[width,background-color] duration-300 ease-out', i < at ? cn('w-5', onBrand ? 'bg-brand-foreground' : 'bg-primary') : cn('w-1.5', onBrand ? 'bg-brand-foreground opacity-30' : 'bg-border'))} />
         ))}
       </span>
       <span className="tabular-nums">
@@ -218,7 +218,7 @@ export function Checklist({ items }: { items: CheckItem[] }) {
                 <span className={cn('grid size-5 shrink-0 place-items-center rounded-full border transition-colors duration-200', done ? 'border-primary bg-primary text-primary-foreground' : 'border-border')}>
                   {done ? <CheckIcon className="size-3" weight="bold" /> : null}
                 </span>
-                <span className={cn('flex-1', done && 'text-muted-foreground line-through decoration-muted-foreground/40')}>{x.label}</span>
+                <span className={cn('flex-1', done && 'text-muted-foreground line-through decoration-border')}>{x.label}</span>
                 {done ? null : <ArrowRightIcon className="size-3.5 text-muted-foreground" />}
               </>
             )

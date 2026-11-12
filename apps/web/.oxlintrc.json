@@ -10,5 +10,5 @@
   },
   // 色の値を持ってよいもの: shadcn の部品、token の値（tokens.ts）、CSS 変数が届かない出力（OGP・PWA・ロゴ）。
   // ホームの2ファイルは #537 が色を直している間だけ外す。入ったら外し、残りに oxlint-disable-next-line を付ける
-  "ignorePatterns": ["chat/components/ui/**", "tokens.ts", "server/og.ts", "pwa.ts", "logo.ts", "home/home.tsx", "home/onboarding.tsx"]
+  "ignorePatterns": ["chat/components/ui/**", "tokens.ts", "server/og.ts", "pwa.ts", "logo.ts"]
 }
