@@ -32,9 +32,9 @@ ORIGINS = HERE / 'origins.json'
 SELECTIONS = HERE.parents[1] / 'source_selection'
 READINGS = CACHE / 'project'
 PAGE_TEXTS = CACHE / 'source-page-text'
-# 語の層のコード。取り込みと頁の文字のどちらも、直したらキャッシュを読み直す
-WORD_LAYER = [PIPELINE / 'ingestion/generic/page_words.py', PIPELINE / 'ingestion/generic/observe.py']
-PAGE_TEXT_CODE = [*WORD_LAYER, PIPELINE / 'source_text/layout.py']
+# bbox のコード。取り込みと頁の文字のどちらも、直したらキャッシュを読み直す
+BBOX_CODE = [PIPELINE / 'ingestion/generic/page_words.py', PIPELINE / 'ingestion/generic/observe.py']
+PAGE_TEXT_CODE = [*BBOX_CODE, PIPELINE / 'source_text/layout.py']
 
 
 def origins() -> dict:
@@ -108,9 +108,9 @@ def code_fingerprint(origin: dict) -> str:
         files = [*(press.modules(workflow) if workflow else [Path(layout(origin['layout']).__file__)]), HERE / 'layouts' / 'press.py']
     from ingestion.lib import poppler
 
-    # 語の層（page_words・observe）と固定した Poppler の版は、読む経路を問わず効く
+    # bbox（page_words・observe）と固定した Poppler の版は、読む経路を問わず効く
     digest = hashlib.sha256(poppler.pinned().encode())
-    for path in [*files, *WORD_LAYER]:
+    for path in [*files, *BBOX_CODE]:
         digest.update(path.read_bytes())
     if workflow is not None:
         digest.update(json.dumps(workflow, ensure_ascii=False, sort_keys=True).encode())
@@ -134,7 +134,7 @@ def read_cached(path: Path, origin: dict) -> object:
 
 
 def page_text_fingerprint() -> str:
-    """頁の文字の指紋（語の層と並べ方のコード、固定した Poppler の版）。"""
+    """頁の文字の指紋（bbox と並べ方のコード、固定した Poppler の版）。"""
     from ingestion.lib import poppler
 
     digest = hashlib.sha256(poppler.pinned().encode())

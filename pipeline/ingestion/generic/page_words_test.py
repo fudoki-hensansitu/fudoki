@@ -1,4 +1,4 @@
-"""語の層の行組み。評価の結果・プレスの金額や年度の列が、隣の数とつながると数字が変わる。"""
+"""bbox の行組み。評価の結果・プレスの金額や年度の列が、隣の数とつながると数字が変わる。"""
 import unittest
 
 from ingestion.generic.page_words import Page, Word, lines
