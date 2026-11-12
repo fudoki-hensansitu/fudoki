@@ -293,9 +293,9 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
         <Emblem code={town.code} name={town.name} className="size-11 rounded-xl p-1.5" />
         <h2 className="text-[22px] font-bold">{town.name}</h2>
       </div>
-      <dl className="mt-5 divide-y">
+      <dl className="mt-2 divide-y">
         {rows.map(([k, val], i) => (
-          <div key={k} className="ob-fade flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3" style={{ '--d': `${0.12 + i * 0.12}s` } as React.CSSProperties}>
+          <div key={k} className="ob-fade flex flex-wrap items-baseline justify-between gap-x-4 gap-y-1 py-3 first:pt-1" style={{ '--d': `${0.12 + i * 0.12}s` } as React.CSSProperties}>
             <dt className="text-[14px] text-muted-foreground">{k}</dt>
             <dd>{val}</dd>
           </div>
@@ -304,7 +304,7 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
       {/* 1歩目の「現在地から選ぶ」と同じく、決めるボタンは右に置く（PC で左右に跳ばない）。スマホは幅いっぱいにして、選び直すは下 */}
       <div className="mt-5 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
         <button type="button" onClick={onBack} className="py-1 text-[13px] text-muted-foreground hover:text-foreground">
-          ちがうまちを選ぶ
+          違うまちを選ぶ
         </button>
         <button type="button" onClick={onOpen} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-[14px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
           このまちにする
@@ -397,7 +397,7 @@ export function Home({ entries, featured }: HomeProps) {
               {/* 読み込み中・失敗・年度なしでは Reveal が出ないので、選び直す導線をここに残す */}
               {snap.d && snap.year != null && snap.d.years[String(snap.year)] ? null : (
                 <button type="button" onClick={() => setPending(null)} className="mt-3 text-[13px] text-muted-foreground hover:text-foreground">
-                  ちがうまちを選ぶ
+                  違うまちを選ぶ
                 </button>
               )}
             </>
