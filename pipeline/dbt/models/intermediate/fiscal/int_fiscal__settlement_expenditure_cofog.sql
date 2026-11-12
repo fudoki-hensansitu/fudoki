@@ -12,20 +12,20 @@ with account_kinds as (
     select node_id, document_kind,
         {{ fiscal_match_text('jurisdiction_code') }} as jurisdiction_code,
         {{ fiscal_match_text('account_name') }} as fund_name,
-        {{ fiscal_match_text('kan_name') }} as kan_name,
-        {{ fiscal_match_text('kou_name') }} as kou_name,
+        {{ fiscal_cofog_name('kan_name') }} as kan_name,
+        {{ fiscal_cofog_name('kou_name') }} as kou_name,
         {{ fiscal_match_text('kan_code') }} as kan_code,
-        {{ fiscal_match_text('name') }} as moku_name, '' as setsu_name
+        {{ fiscal_cofog_name('name') }} as moku_name, '' as setsu_name
     from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
     where is_subject and node_kind = '目'
     union all
     select node_id, document_kind,
         {{ fiscal_match_text('jurisdiction_code') }} as jurisdiction_code,
         {{ fiscal_match_text('account_name') }} as fund_name,
-        {{ fiscal_match_text('kan_name') }} as kan_name,
-        {{ fiscal_match_text('kou_name') }} as kou_name,
+        {{ fiscal_cofog_name('kan_name') }} as kan_name,
+        {{ fiscal_cofog_name('kou_name') }} as kou_name,
         {{ fiscal_match_text('kan_code') }} as kan_code,
-        {{ fiscal_match_text('name') }} as moku_name, '' as setsu_name
+        {{ fiscal_cofog_name('name') }} as moku_name, '' as setsu_name
     from {{ ref('int_fiscal__csv_expenditure_nodes') }}
     where is_subject and node_kind = '目'
 ), mokus as (
@@ -43,7 +43,7 @@ with account_kinds as (
 ), rules as (
     select rule_id, priority, status, cofog_code, moku_mode, coalesce(tentative, false) as tentative,
     {% for col in ['applies_to', 'match_fund', 'match_account_kind', 'match_kan', 'match_kou', 'match_kan_code', 'match_moku', 'match_setsu'] %}
-        coalesce({{ fiscal_match_text(col) }}, '') as {{ col }}{% if not loop.last %},{% endif %}
+        coalesce({% if col in ['match_kan', 'match_kou', 'match_moku'] %}{{ fiscal_cofog_name(col) }}{% else %}{{ fiscal_match_text(col) }}{% endif %}, '') as {{ col }}{% if not loop.last %},{% endif %}
     {% endfor %}
     from {{ ref('cofog_rules') }}
 )

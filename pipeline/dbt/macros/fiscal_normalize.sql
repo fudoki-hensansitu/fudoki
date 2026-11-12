@@ -10,6 +10,13 @@
     regexp_replace({{ trim_cell(col) }}, '\s+', '', 'g')
 {%- endmacro %}
 
+{% macro fiscal_cofog_name(col) -%}
+    {#- A subject name as the COFOG rules match it: small kana read as their full-size kana (`橋りよう`・`コミュニテイ`, printed
+        or read without the small letters) and a 一 after katakana read as the long vowel (`センタ一`). -#}
+    regexp_replace(translate({{ fiscal_match_text(col) }}, 'ぁぃぅぇぉっゃゅょゎァィゥェォッャュョヮヵヶ', 'あいうえおつやゆよわアイウエオツヤユヨワカケ'),
+                   '([ア-ヺ])一', '\1ー', 'g')
+{%- endmacro %}
+
 {% macro fiscal_setsu_strip(col) -%}
     {#- Names arrive NFKC-normalized from staging. Separators go, and the conjunction printed in hiragana
         (`負担金、補助および交付金`, 132055) reads as the legal 及び. A leading enumerator `(1)` (葛飾の節の内訳番号) is not part of the name. Other words wait for a real case. -#}
