@@ -1044,12 +1044,11 @@ async function loadSnapshot(res: Resources, code: string, year: number): Promise
   return s
 }
 
-export function AppPage({ data, snapshot, sitekey, initialYear, initialField, initialTab }: { data: PageData; snapshot?: Snapshot; sitekey: string; initialYear?: number; initialField?: string; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot, sitekey, initialYear, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; snapshot?: Snapshot; sitekey: string; initialYear?: number; initialField?: string; initialTab?: TabKey }) {
   const vision = data.vision?.text
   const emblem = data.emblem?.src ?? null
   const years = React.useMemo(() => appPageYears(data), [data])
   // 開いた年度の分はサーバーが props で渡し、本文までサーバーで描く。ほかの年度は切り替えたときに use() で読む（startTransition で前の年度を出したまま）
-  const [res] = React.useState(() => new Resources())
   if (snapshot && !res.peek(snapshotKey(snapshot.year))) seedSnapshot(res, snapshot)
   React.useEffect(() => rememberJurisdiction({ code: data.code, name: data.name, path: basePath() }), [data.code, data.name])
   const [year, setYearState] = React.useState(initialYear && years.includes(initialYear) ? initialYear : years[0]!)

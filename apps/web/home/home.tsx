@@ -68,7 +68,8 @@ function useSnapshot(code: string | null) {
   // 評価のカードは最初に読んだ（年度なしの）応答の最新の評価を使い、年度を切り替えても残す
   const evaluated = Object.values(byYear).find((s) => s.evaluated)?.evaluated
   const d = picked && !picked.evaluated && evaluated ? { ...picked, evaluated } : picked
-  return { d, failed, year: d ? d.year : null, setYear }
+  // 別の年度を読み損ねても、読めている年度があればそれを出したままにする
+  return { d, failed: failed && !d, year: d ? d.year : null, setYear }
 }
 
 type Ctx = { town: Town; d: Snapshot; v: YearView; year: number; years: number[]; setYear: (y: number) => void; base: string; vision?: string }

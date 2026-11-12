@@ -1,11 +1,12 @@
 // 自治体の頁（都道府県・市区町村）の本文。収録の無い自治体は案内だけを出す
 import './jurisdiction.css'
+import * as React from 'react'
 import { Link } from '../nav/link'
 import { RequestTown } from '../nav/request-town'
 import type { JurisdictionProps } from '../pages/[prefecture]/_loader'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AppPage } from './app/app-page'
-import { ClientSuspense } from './app/resource'
+import { ClientSuspense, Resources } from './app/resource'
 
 export function JurisdictionView(props: JurisdictionProps) {
   if (props.kind === 'empty')
@@ -38,10 +39,18 @@ export function JurisdictionView(props: JurisdictionProps) {
     <div id="j-app">
       {/* 自治体を移ると年度・開いた款などの状態を持ち越さないよう、自治体ごとに描き直す */}
       {/* 本文のデータが届かなかったとき（API に繋がらなかった頁）は、画面が読み終えるまで形の近い skeleton を出す */}
-      <ClientSuspense fallback={<AppSkeleton />} ready={!!props.snapshot}>
-        <AppPage key={props.data.code} data={props.data} snapshot={props.snapshot} sitekey={props.sitekey} initialYear={props.year} initialField={props.field} initialTab={props.tab} />
-      </ClientSuspense>
+      <AppHost key={props.data.code} {...props} />
     </div>
+  )
+}
+
+/** 頁のデータの置き場は Suspense の外に持つ。AppPage が初めて描く前に読み込みで止まっても、置き場（読みかけの promise）は残る */
+function AppHost(props: Extract<JurisdictionProps, { kind: 'page' }>) {
+  const [res] = React.useState(() => new Resources())
+  return (
+    <ClientSuspense fallback={<AppSkeleton />} ready={!!props.snapshot}>
+      <AppPage res={res} data={props.data} snapshot={props.snapshot} sitekey={props.sitekey} initialYear={props.year} initialField={props.field} initialTab={props.tab} />
+    </ClientSuspense>
   )
 }
 
