@@ -111,17 +111,24 @@ export async function routeProps(c: Context, segments: string[]): Promise<Jurisd
   return withSnapshot(c, props)
 }
 
+/** 本文のデータを待つ上限。過ぎたら本文の無い頁を返す */
+const SNAPSHOT_WAIT_MS = 3000
+
 /** 開いた年度の款項目・施策・評価シート・事業の一覧の1頁目を props に足す（年度の段が無ければ最新の年度） */
 async function withSnapshot(c: Context, props: JurisdictionProps): Promise<JurisdictionProps> {
   if (props.kind !== 'page') return props
   const env = c.env as unknown as Env
-  const entry = (await catalog(env)).find((e) => e.code === props.data.code)
   const year = props.year ?? appPageYears(props.data)[0]
-  if (!entry || year === undefined) return props
+  if (year === undefined) return props
   try {
-    return { ...props, snapshot: await loadYearSnapshot(env, entry, year, { field: props.field }) }
+    const entry = (await catalog(env)).find((e) => e.code === props.data.code)
+    if (!entry) return props
+    let timer: ReturnType<typeof setTimeout> | undefined
+    const deadline = new Promise<never>((_, reject) => (timer = setTimeout(() => reject(new Error('snapshot deadline')), SNAPSHOT_WAIT_MS)))
+    const snapshot = await Promise.race([loadYearSnapshot(env, entry, year, { field: props.field }), deadline]).finally(() => clearTimeout(timer))
+    return { ...props, snapshot }
   } catch {
-    // API に繋がらなければ本文の無い頁を返し、画面が取り直す。本文の無い頁は CDN にもブラウザにも置かない
+    // API に繋がらない・待ちきれなければ本文の無い頁を返し、画面が取り直す。本文の無い頁は CDN にもブラウザにも置かない
     c.header('x-revalidate', '0')
     c.header('Cache-Control', 'no-store')
     return props

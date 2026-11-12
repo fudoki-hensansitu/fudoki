@@ -16,8 +16,9 @@ const PAGE_TRANSITION_STYLE = '<style>@media (prefers-reduced-motion: no-prefere
 export default defineMiddleware(async (c, next) => {
   await next()
   if (!c.res.headers.get('Content-Type')?.startsWith('text/html')) return
-  // Accept で Markdown に変えるので、違う表現を取り違えさせない
-  c.res.headers.append('Vary', 'Accept')
+  // HTML には Vary: Accept を付けない（Void の ISR は X-VoidPages 以外の Vary が付いた応答を CDN に置かない）。
+  // CDN に置くのは HTML だけで、Markdown は下で置かないようにする。CDN の HTML を返すのは Accept に text/html を含む要求だけなので、
+  // text/markdown だけを望む要求は毎回 Markdown になる。text/html も受ける要求には、CDN に HTML があればそれを返す
   c.res.headers.append('Link', DISCOVERY_LINK)
   if (c.res.status === 200 && wantsMarkdown(c.req.header('Accept'))) {
     const markdown = await htmlToMarkdown(c.env.AI, await c.res.clone().text(), c.req.url)
@@ -28,6 +29,7 @@ export default defineMiddleware(async (c, next) => {
       // ISR の key は path だけなので、Markdown を CDN に置かない（置くと HTML を望む人にも Markdown を返す）
       headers.set('x-revalidate', '0')
       headers.set('Cache-Control', 'no-store')
+      headers.append('Vary', 'Accept')
       c.res = new Response(markdown, { status: 200, headers })
       return
     }

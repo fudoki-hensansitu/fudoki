@@ -82,16 +82,16 @@ export function yearView(d: Snapshot) {
     fields,
     /** 事業の分野。科目の分からない事業はその他 */
     fieldOf: (p: Pick<ProjRow, 'subject'>) => (p.subject ? fieldBySubject.get(p.subject) : undefined) ?? OTHER_FRAME.id,
-    /** 分野の末端の科目（頁の年度） */
-    subjectsOf: (field: string) => y.fieldSubjects[field] ?? [],
+    /** 分野の末端の科目。やめた事業は前の年度の資料で探すので、前の年度の科目 */
+    subjectsOf: (field: string, filter?: ListQuery['filter']) => (filter === 'ended' ? d.years[String(year - 1)] : y)?.fieldSubjects[field] ?? [],
     query: (filter: ListQuery['filter'], opt?: { subjects?: string[]; q?: string }) => listQuery(d, filter, opt),
     page,
     hasProjects: d.hasProjects,
     /** お金のかかる事業（1頁目） */
     top,
     mokuRows,
-    /** 予算書に無い施策（予算書の事業に紐付けられなかった発表） */
-    freshUnlinked: fresh.filter((m) => !m.detail),
+    /** 予算書に無い施策（予算書の事業に紐付けられなかった発表）。事業の収録が無い自治体は、新しく始める事業を施策だけで出す */
+    freshUnlinked: d.hasProjects ? fresh.filter((m) => !m.detail) : fresh,
     fresh,
     sheets,
     /** 事業と中の事業に紐付いた施策・評価シート */

@@ -281,7 +281,7 @@ const LoadFailed = () => <p className="px-2.5 py-4 text-sm text-muted-foreground
 function ProjectList({ q, head, render = (p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} /> }: { q: ListQuery; head?: (page: ListPage) => React.ReactNode; render?: (p: Proj, i: number) => React.ReactNode }) {
   const { res } = useApp()
   const page = useListPage(q)
-  const [, bump] = React.useReducer((x: number) => x + 1, 0)
+  const [tries, bump] = React.useReducer((x: number) => x + 1, 0)
   const loading = React.useRef(false)
   if (page === FAILED) return <LoadFailed />
   const more = () => {
@@ -293,14 +293,18 @@ function ProjectList({ q, head, render = (p, i) => <ProjectRow key={p.id} p={p} 
         loading.current = false
         bump()
       },
-      () => void (loading.current = false),
+      // 読めなければ少し待って末尾の印を置き直す（見えたままなら、もう一度読みに行く）
+      () => setTimeout(() => {
+        loading.current = false
+        bump()
+      }, 3000),
     )
   }
   return (
     <>
       {head?.(page)}
       <Rows>{page.rows.map(render)}</Rows>
-      {page.next ? <MoreDots key={page.rows.length} onVisible={more} /> : null}
+      {page.next ? <MoreDots key={`${page.rows.length}:${tries}`} onVisible={more} /> : null}
     </>
   )
 }
@@ -536,7 +540,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
     clearTimeout(timer.current)
     timer.current = setTimeout(() => React.startTransition(() => setQ(t.trim())), 300)
   }
-  const list = filter === 'eval' ? null : v.query(filter as ListQuery['filter'], { ...(field !== 'all' ? { subjects: v.subjectsOf(field) } : {}), ...(q ? { q } : {}) })
+  const list = filter === 'eval' ? null : v.query(filter as ListQuery['filter'], { ...(field !== 'all' ? { subjects: v.subjectsOf(field, filter as ListQuery['filter']) } : {}), ...(q ? { q } : {}) })
   const unlinked = filter === 'new' ? v.freshUnlinked.filter((m) => (field === 'all' || m.field === field) && (!q || m.title.includes(q))) : []
   const head = (n: string) => (
     <p className="px-2.5 text-xs text-muted-foreground">
@@ -568,10 +572,13 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
       </ToggleGroup>
       {filter === 'eval' ? <EvalList grade={grade} setGrade={setGrade} field={field} q={q} /> : <>
       {!v.hasProjects ? (
-        <>
-          {head(`${moku.length}件`)}
-          <Infinite items={moku} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
-        </>
+        // 目には始めた年度が無いので、新しく始める事業は施策（下）だけで出す
+        filter === 'all' ? (
+          <>
+            {head(`${moku.length}件`)}
+            <Infinite items={moku} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
+          </>
+        ) : null
       ) : list ? (
         <ClientSuspense fallback={<RowsSkeleton />} ready={!!res.peek(listKey(list))}>
           <ProjectList q={list} head={(page) => head(countOf(page))} />
@@ -961,8 +968,11 @@ function Detail({ sel }: { sel: NonNullable<Selected> }) {
   const { d } = useApp()
   const kind = { project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon], moku: ['目', TreeStructureIcon] } as const
   const [label, I] = kind[sel.kind]
+  // 施策・評価シートは開いた年度の分だけ持つ（年度を変えると閉じる）。見つからなければ何も出さない
+  const m = sel.kind === 'measure' ? d.measures.find((x) => x.id === sel.id) : undefined
+  const s = sel.kind === 'sheet' ? d.sheets.find((x) => x.id === sel.id) : undefined
   const body =
-    sel.kind === 'moku' ? <MokuDetail moku={sel.moku} phase={sel.phase} special={sel.special} /> : sel.kind === 'project' ? <ClientSuspense fallback={<RowsSkeleton n={4} />}><ProjectDetail id={sel.id} /></ClientSuspense> : sel.kind === 'measure' ? <MeasureDetail m={d.measures.find((m) => m.id === sel.id)!} /> : <SheetDetail s={d.sheets.find((s) => s.id === sel.id)!} />
+    sel.kind === 'moku' ? <MokuDetail moku={sel.moku} phase={sel.phase} special={sel.special} /> : sel.kind === 'project' ? <ClientSuspense fallback={<RowsSkeleton n={4} />}><ProjectDetail id={sel.id} /></ClientSuspense> : m ? <MeasureDetail m={m} /> : s ? <SheetDetail s={s} /> : null
   return (
     <div key={`${sel.kind}${sel.id}`} className="app-in">
       <p className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground"><I className="size-3.5" aria-hidden="true" />{label}</p>
@@ -1058,8 +1068,8 @@ export function AppPage({ data, snapshot, sitekey, initialYear, initialField, in
   const setYear = (y: number) => {
     React.startTransition(() => setYearState(y))
     showUrl(y, at.current.tab)
-    // 目の詳細は開いた年度の図の値を持つので、年度を変えたら閉じる
-    select((s) => (s?.kind === 'moku' ? null : s))
+    // 目の詳細は開いた年度の図の値を、施策・評価シートはその年度の資料を持つので、年度を変えたら閉じる（事業は年度をまたいで同じ）
+    select((s) => (s?.kind === 'project' ? s : null))
   }
   const setTab = (t: TabKey) => {
     setTabState(t)

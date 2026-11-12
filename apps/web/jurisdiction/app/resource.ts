@@ -15,8 +15,12 @@ function settled<T>(value: T): Thenable<T> {
   return p
 }
 
+/** 読めなかった値を、開き直したときに読み直すまでの間 */
+const RETRY_AFTER_MS = 3000
+
 export class Resources {
   private map = new Map<string, Thenable<unknown>>()
+  private failedAt = new Map<string, number>()
 
   constructor(seed: Record<string, unknown> = {}) {
     for (const [k, v] of Object.entries(seed)) this.map.set(k, settled(v))
@@ -33,15 +37,18 @@ export class Resources {
     return p?.status === 'fulfilled' ? p.value : undefined
   }
 
-  /** key の値を読む promise。まだ無ければ load で読む。サーバーが渡さない値を読む部品は ClientSuspense の中に置く（サーバーでは描かない） */
+  /** key の値を読む promise。まだ無ければ load で読む。サーバーが渡さない値を読む部品は ClientSuspense の中に置く（サーバーでは描かない）。
+   * 読めなかった値は FAILED のまま置き、読み直した描画で同じ FAILED を返す（すぐ外すと、描き直すたびに読みに行き続ける）。
+   * 少し経ってから開き直したときだけ読み直す */
   get<T>(key: string, load: () => Promise<T>): Promise<Loaded<T>> {
     const hit = this.map.get(key) as Thenable<Loaded<T>> | undefined
-    if (hit) return hit
+    const failedAt = this.failedAt.get(key)
+    if (hit && !(failedAt !== undefined && Date.now() - failedAt > RETRY_AFTER_MS)) return hit
+    this.failedAt.delete(key)
     const p = load().then(
       (v) => Object.assign(p, { status: 'fulfilled', value: v }).value as Loaded<T>,
       () => {
-        // 次に開いたときに読み直せるよう置き場から外す
-        this.map.delete(key)
+        this.failedAt.set(key, Date.now())
         return Object.assign(p, { status: 'fulfilled', value: FAILED }).value as Loaded<T>
       },
     ) as Thenable<Loaded<T>>

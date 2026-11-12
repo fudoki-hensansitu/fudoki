@@ -11,8 +11,8 @@ import { appPageYears } from '../jurisdiction/types'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
 const ACCOUNT = '一般会計'
-/** 内訳を ID で引くときの1回の数（API の bind の上限 90 に収める） */
-const ID_CHUNK = 90
+/** 内訳を ID で引くときの1回の数（API の bind の上限 90 から資料区分・年度の2つを除く） */
+const ID_CHUNK = 88
 
 const api = (env: Env) => hc<AppType>(API_ORIGIN, { fetch: apiFetch(env) })
 type Api = ReturnType<typeof api>

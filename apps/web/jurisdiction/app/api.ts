@@ -52,6 +52,15 @@ export type ListPage = { rows: ProjRow[]; total: number; capped: boolean; next: 
 
 export const listKey = (q: ListQuery) => JSON.stringify([q.code, q.year, q.kind, q.filter, q.prevKind ?? null, q.subjects ?? null, q.q?.trim() || null])
 
+/** API の GLOB は前後の * と escape（* ? [ は3バイト）を含めて50バイトまで。長い検索語は収まるところまでで探す */
+const GLOB_BYTES = 50
+function fitSearch(q: string): string {
+  const bytes = (t: string) => new TextEncoder().encode(`*${t.replace(/[*?[]/g, '[$&]')}*`).length
+  let t = q
+  while (t && bytes(t) > GLOB_BYTES) t = Array.from(t).slice(0, -1).join('')
+  return t
+}
+
 const clean = (name: string) => name.replace(/【[^】]*】/g, '').trim()
 /** 出典の事業名の【】は所管課。名前からは外して別に持つ */
 const deptOf = (name: string) => name.match(/【([^】]*)】/)?.[1] ?? null
@@ -85,7 +94,7 @@ function bodyOf(q: ListQuery, pageSize: number, token?: string): { body: SearchB
     ...(ended ? { last_year: { eq: [fy] }, last_year_kind: { eq: ['confirmed'] } } : { [amount]: { is_null: false } }),
     ...(q.filter === 'new' ? { first_year: { eq: [q.year] }, first_year_kind: { eq: ['confirmed'] } } : {}),
     ...(q.subjects ? { [`${kind}_expenditure_subject_id`]: { eq: q.subjects } } : {}),
-    ...(q.q?.trim() ? { name: { contains: q.q.trim() } } : {}),
+    ...(q.q?.trim() ? { name: { contains: fitSearch(q.q.trim()) } } : {}),
   }
   return {
     kind,
