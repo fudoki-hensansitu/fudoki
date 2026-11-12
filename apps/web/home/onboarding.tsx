@@ -2,7 +2,7 @@
 // 1 住んでいるまちを選ぶ（名前／現在地）→ 2 選んだまちの要点を一枚で見せる（価値の瞬間）→ ツアー（tour.tsx）→ チェックリスト（1つ目は済み、閉じられる）。
 // まちの検索は、選ぶ前は住んでいるまちを選ぶ欄（AskTown）、選んだあとはほかのまちを見る欄（OtherTowns）の1つだけ出す。「ホーム」「見るまち」のような通じない言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
 import * as React from 'react'
-import { ArrowRightIcon, CheckIcon, NavigationArrowIcon, XIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, CheckIcon, NavigationArrowIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
@@ -12,7 +12,7 @@ import { LocateError, locateMunicipality } from './locate'
 import type { MapEntry } from '../jurisdiction/index-table'
 import './onboarding.css'
 
-type Locate = { busy?: boolean; error?: string; hit?: MapEntry }
+type Locate = { busy?: boolean; error?: string; denied?: boolean; hit?: MapEntry }
 
 /** 住んでいるまちを聞く札（はじめての流れの 1 / 2）。名前の入力欄をはじめから出し、「現在地から選ぶ」をスマホでは下、PC では右隣に置く。ホームの「リセット」のあともここに戻る */
 export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; again?: boolean }) {
@@ -25,7 +25,7 @@ export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPic
       const hit = entries.find((e) => e.code.startsWith(muni))
       setLoc(hit ? { hit } : { error: '現在地のまちは、まだ収録していません' })
     } catch (e) {
-      setLoc({ error: e instanceof LocateError ? e.message : '現在地を取得できませんでした' })
+      setLoc(e instanceof LocateError ? { error: e.message, denied: e.denied } : { error: '現在地を取得できませんでした' })
     }
   }
   return (
@@ -43,14 +43,14 @@ export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPic
             <button
               type="button"
               onClick={() => void locate()}
-              className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full bg-brand-foreground/15 px-5 text-[15px] font-bold text-brand-foreground transition-[background-color,transform] duration-150 ease-out hover:bg-brand-foreground/25 active:scale-[0.97] motion-reduce:transition-none"
+              className="inline-flex h-12 shrink-0 items-center justify-center gap-2 rounded-full border border-brand-foreground px-5 text-[15px] font-bold text-brand-foreground transition-[background-color,color,transform] duration-150 ease-out hover:bg-brand-fill hover:text-brand-fill-foreground active:scale-[0.97] motion-reduce:transition-none"
             >
               <NavigationArrowIcon className="size-4" />
               現在地から選ぶ
             </button>
           </div>
           {loc ? (
-            <div className="ob-swap mt-3 text-foreground">
+            <div className={cn('ob-swap mt-3', !loc.error && 'text-foreground')}>
               <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onClose={() => setLoc(null)} />
             </div>
           ) : (
@@ -102,17 +102,20 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
         </button>
       </div>
     )
+  // 失敗は帯の上に1行で控えめに出す。ブロックされているときはサイトから聞き直せないので、ブラウザでの許可か名前で探すことを案内する。「もう一度」は許可を直したあとに押せるよう残す
   return (
-    <div role="status" className="rounded-2xl bg-secondary px-4 py-3.5 text-[14px]">
-      <p>{loc.error}</p>
-      <div className="mt-2 flex gap-3 text-[13px]">
-        <button type="button" onClick={onRetry} className="text-primary hover:underline">
+    <div role="status" className="flex items-start gap-2 text-[13px] leading-relaxed">
+      <WarningCircleIcon className="mt-[3px] size-4 shrink-0 opacity-80" />
+      <p className="min-w-0 flex-1">
+        <span className="font-bold">{loc.error}。</span>
+        {loc.denied ? 'アドレスバーの鍵のアイコンから位置情報を許可するか、自治体名で探してください。' : '自治体名でも探せます。'}
+        <button type="button" onClick={onRetry} className="ml-2 underline underline-offset-2 opacity-90 hover:opacity-100">
           もう一度
         </button>
-        <button type="button" onClick={onClose} className="text-primary hover:underline">
-          閉じる
-        </button>
-      </div>
+      </p>
+      <button type="button" onClick={onClose} aria-label="閉じる" className="-m-1 shrink-0 p-1 opacity-70 hover:opacity-100">
+        <XIcon className="size-4" />
+      </button>
     </div>
   )
 }
@@ -134,7 +137,7 @@ export function OtherTowns({ entries, className }: { entries: MapEntry[]; classN
  */
 export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
   const title = '私のお金はどこへ行った？'
-  const lead = '自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。'
+  const lead = '住んでいるまちが何にいくら使い、どう振り返ったかを、事業ごとに見られます。'
   // まちを選ぶ前もあとも同じ見出しと説明。浮き上がりはまちを選ぶ前だけ
   const shown = mode !== 'hidden'
   return (

@@ -301,16 +301,17 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
           </div>
         ))}
       </dl>
-      <div className="mt-5 flex flex-wrap items-center gap-3">
-        <button type="button" onClick={onOpen} className="inline-flex items-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-[14px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
+      {/* 1歩目の「現在地から選ぶ」と同じく、決めるボタンは右に置く（PC で左右に跳ばない）。スマホは幅いっぱいにして、選び直すは下 */}
+      <div className="mt-5 flex flex-col-reverse items-stretch gap-3 sm:flex-row sm:items-center sm:justify-end">
+        <button type="button" onClick={onBack} className="py-1 text-[13px] text-muted-foreground hover:text-foreground">
+          ちがうまちを選ぶ
+        </button>
+        <button type="button" onClick={onOpen} className="inline-flex items-center justify-center gap-1.5 rounded-full bg-primary px-5 py-2.5 text-[14px] font-bold text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none">
           このまちにする
           <ArrowRightIcon className="size-4" />
         </button>
-        <button type="button" onClick={onBack} className="text-[13px] text-muted-foreground hover:text-foreground">
-          ちがうまちを選ぶ
-        </button>
       </div>
-      <p className="mt-3 text-[12px] text-muted-foreground">次に開いたときも、このまちから始まります。あとから変えられます。</p>
+      <p className="mt-3 text-[12px] text-muted-foreground sm:text-right">次に開いたときも、このまちから始まります。あとから変えられます。</p>
     </section>
   )
 }
