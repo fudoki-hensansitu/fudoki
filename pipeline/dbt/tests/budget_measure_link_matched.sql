@@ -1,6 +1,6 @@
 -- 施策の紐付けの seed（budget_measure_link）の行が、取り込みの施策（project_budget_measure）に必ず当たる。
 -- 当たらない行は、取り込みを直して施策の頁・位置がずれたもの。紐付けが黙って外れるので、
--- `bun run --cwd pipeline project:link-measures` で紐付け直す。
+-- `bun run --cwd pipeline project:link-measures` で紐付け直す（読んだ自治体の seed から当たらない行を落とし、その施策を紐付け直す）。
 select l.*
 from {{ ref('budget_measure_link') }} l
 left join {{ source('project', 'project_budget_measure') }} p

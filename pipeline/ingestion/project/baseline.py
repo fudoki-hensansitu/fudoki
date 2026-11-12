@@ -71,7 +71,7 @@ def compare(base: Path, head: Path, samples: int) -> int:
         print('  自治体ごと: ' + '、'.join(f'{code} {n}' for code, n in by_place.most_common()))
         keyed_before = {tuple(json.loads(r)[:width]): r for r in removed}
         keyed_after = {tuple(json.loads(r)[:width]): r for r in added}
-        for key in sorted(keyed_before.keys() | keyed_after.keys())[:samples]:
+        for key in sorted(keyed_before.keys() | keyed_after.keys(), key=str)[:samples]:
             print(f'  {key}')
             print(f'    基準: {keyed_before.get(key, "（無い）")}')
             print(f'    今　: {keyed_after.get(key, "（無い）")}')

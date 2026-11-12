@@ -119,6 +119,12 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
                      " p.budget_thousand * 1000, p.points"
                      " from ingestion.project_budget_measure p join ingestion.project_origin o using (origin_id)"
                      " order by 1, 2, 3, 4, 5").fetchall()]
+        # 取り込みを直して頁・位置が変わった施策の古い行は落とす（読んだ自治体の分だけ。warehouse に無い自治体の行は残す）
+        current = {(i['origin_id'], i['page'], i['position']) for i in items}
+        loaded = {i['jurisdiction_code'] for i in items}
+        stale = [k for k, v in seed.items() if k not in current and v['jurisdiction_code'] in loaded]
+        for k in stale:
+            del seed[k]
         todo = [i for i in items if (i['origin_id'], i['page'], i['position']) not in seed]
         kept = len(items) - len(todo)
         details: dict[tuple, list[dict]] = {}
@@ -159,7 +165,7 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
         write_seed({**previous, **seed})  # 途中で失敗したら、決まった分を足して前の行は残す
         raise
     write_seed(seed)
-    return {'linked': counts, 'kept': kept,
+    return {'linked': counts, 'kept': kept, 'dropped': len(stale),
             'no_initial_budget': [f'{j} {y}' for j, y in skipped]}
 
 
