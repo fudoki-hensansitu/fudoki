@@ -135,18 +135,10 @@ export function OtherTowns({ entries, className }: { entries: MapEntry[]; classN
 export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
   const title = '私のお金はどこへ行った？'
   const lead = '自治体が何にいくら使い、どう振り返ったかを、事業ごとに見られます。'
-  if (mode === 'compact')
-    return (
-      <header className="mb-5 flex items-center gap-2.5">
-        <Mark className="size-7 shrink-0 text-primary" />
-        <h1 className="text-lg leading-snug font-bold tracking-[0.02em] sm:text-xl">{title}</h1>
-        <p className="sr-only">{lead}</p>
-      </header>
-    )
-  const shown = mode === 'full'
+  // まちを選ぶ前もあとも同じ見出しと説明。浮き上がりはまちを選ぶ前だけ
+  const shown = mode !== 'hidden'
   return (
-    <header className={shown ? 'ob-rise mb-7 sm:mb-8' : 'sr-only'}>
-      {/* 見出しの頭にロゴのマーク（まちを選んだあとの1行の見出しと同じ並び） */}
+    <header className={shown ? cn('mb-7 sm:mb-8', mode === 'full' && 'ob-rise') : 'sr-only'}>
       <div className="flex items-center gap-3 sm:gap-4">
         {shown ? <Mark className="size-9 shrink-0 text-primary sm:size-11" /> : null}
         <h1 className="text-[26px] leading-[1.35] font-bold tracking-[0.02em] sm:text-[32px]">{title}</h1>
