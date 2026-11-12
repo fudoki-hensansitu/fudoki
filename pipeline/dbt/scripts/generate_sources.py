@@ -68,10 +68,11 @@ EXCLUDE: dict[tuple[str, str], str] = {
 # Tables of one year whose saved tree breaks the shared row contract, held out until they are converted again.
 # Keyed by (jurisdiction, fiscal_year, document_kind, table_id) because the same table_id carries other years.
 EXCLUDE_YEAR: dict[tuple[str, int, str, str], str] = {
-    **{('132098', year, 'initial', table): 'the book prints kan/kou numbers without names, so its kan/kou nodes fail the row contract'
-       for year in (2024, 2025)
-       for table in ('general-initial', 'national-health-insurance-initial', 'long-term-care-initial',
-                     'elderly-medical-initial', 'land-readjustment-initial')},
+    # 132098 prints kan/kou numbers without names; seed fiscal_subject_name_fill names them from the settlement where
+    # every 目 under them agrees. These two R6 accounts have no R6 settlement, and the R7 one orders their 目 differently.
+    **{('132098', 2024, 'initial', table): 'the book prints kan/kou numbers without names, and no settlement of the year '
+       'confirms the names (the R7 settlement orders the 目 differently)'
+       for table in ('national-health-insurance-initial', 'long-term-care-initial')},
     ('132080', 2026, 'initial', 'general-initial-3'): 'kou/moku numbers collide across kan (kou 5 holds both 中学校費 and 教育総務費)',
     **{(jurisdiction, year, kind, 'general-expenditure'): 'a kan-only table that prints no kan numbers; the subject table needs a kan code'
        for jurisdiction, year, kind in (('133639', 2024, 'initial'), ('133639', 2025, 'initial'), ('133817', 2024, 'settlement'))},

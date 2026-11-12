@@ -100,9 +100,18 @@ selected_amounts as (
              then min(y1) filter (where amount_role = target_phase and physical_page is not null) end as amount_source_y1
     from mapped_amounts group by source_table_key, node_key, document_kind
 ), amounts_checked as (
-    select n.*, a.amount_yen, a.proposed_yen, a.amount_source_page,
+    -- A 款・項 printed with its number only takes the name declared in fiscal_subject_name_fill.
+    select n.* replace (case when coalesce(n.name, '') = '' then coalesce(f.name, n.name) else n.name end as name),
+        a.amount_yen, a.proposed_yen, a.amount_source_page,
         a.amount_source_x0, a.amount_source_y0, a.amount_source_x1, a.amount_source_y1
     from checked_nodes n left join selected_amounts a using (source_table_key, node_key)
+    left join checked_nodes p
+      on n.node_kind = '項' and p.source_table_key = n.source_table_key and p.node_key = n.parent_node_key
+    left join {{ ref('fiscal_subject_name_fill') }} f
+      on coalesce(n.name, '') = '' and f.jurisdiction_code = n.jurisdiction_code and f.fiscal_year = n.fiscal_year
+     and f.document_kind = n.document_kind and f.account_name = n.account_name and f.node_kind = n.node_kind
+     and f.kan_code = case n.node_kind when '款' then n.code_text else p.code_text end
+     and coalesce(f.kou_code, '') = case n.node_kind when '項' then n.code_text else '' end
 ), hierarchy as (
     select n.*, n.code_text as kan_code, null::varchar as kou_code, null::varchar as moku_code,
         n.name as kan_name, null::varchar as kou_name, n.axis_header as subject_axis, [n.node_key] as visited

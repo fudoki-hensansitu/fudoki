@@ -136,6 +136,36 @@ seeds:
     columns:
       - name: basis
         data_tests: [not_null]
+  - name: fiscal_subject_name_fill
+    meta:
+      # **判断そのもの。** 出典が番号だけを印字した款・項の名前。
+      role: judgment-rule
+    description: |
+      出典が番号だけを印字し名前を印字しない款・項に付ける名前。**fudoki の判断。** 自治体・年度・資料区分・会計・段・款の番号
+      （項は款と項の番号）ごとに1行で、同じ自治体の決算などで同じ番号の款・項の名前を、その下の目の名前が全部一致することを
+      確かめてから宣言する。取り込みの表は印字のまま名前を空に保ち、int_fiscal__settlement_expenditure_rows が名前の空いた款・項にだけ当てる。
+      確かめられない会計・年度（目の並びが違う）は宣言せず、dbt の入力から外したままにする。
+    config:
+      column_types:
+        jurisdiction_code: varchar
+        fiscal_year: integer
+        document_kind: varchar
+        account_name: varchar
+        node_kind: varchar
+        kan_code: varchar
+        kou_code: varchar
+        name: varchar
+        basis: varchar
+    columns:
+      - name: node_kind
+        data_tests:
+          - accepted_values:
+              arguments:
+                values: ['款', '項']
+      - name: name
+        data_tests: [not_null]
+      - name: basis
+        data_tests: [not_null]
   - name: fiscal_detail_breakdown
     meta:
       # **判断そのもの。** 内訳の枝の分け方の宣言。
