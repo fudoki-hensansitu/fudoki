@@ -28,6 +28,9 @@
                     "kind": "本文",
                     "reason": "所属名の列を取り込まない。事業を担当する課の名前で、金額でも支出の目的の木の段でもない。"
                   }
+                },
+                "金額(千円)": {
+                  "heading": "本年度予算額"
                 }
               }
             }
@@ -81,6 +84,9 @@
                     "kind": "本文",
                     "reason": "所属名の列を取り込まない。事業を担当する課の名前で、金額でも支出の目的の木の段でもない。"
                   }
+                },
+                "金額(千円)": {
+                  "heading": "本年度予算額"
                 }
               }
             }
@@ -134,6 +140,9 @@
                     "kind": "本文",
                     "reason": "所属名の列を取り込まない。事業を担当する課の名前で、金額でも支出の目的の木の段でもない。"
                   }
+                },
+                "金額(千円)": {
+                  "heading": "本年度予算額"
                 }
               }
             }
@@ -187,6 +196,9 @@
                     "kind": "本文",
                     "reason": "所属名の列を取り込まない。事業を担当する課の名前で、金額でも支出の目的の木の段でもない。"
                   }
+                },
+                "金額(千円)": {
+                  "heading": "本年度予算額"
                 }
               }
             }
@@ -240,6 +252,9 @@
                     "kind": "本文",
                     "reason": "所属名の列を取り込まない。事業を担当する課の名前で、金額でも支出の目的の木の段でもない。"
                   }
+                },
+                "金額(千円)": {
+                  "heading": "本年度予算額"
                 }
               }
             }
@@ -277,13 +292,12 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "7793b1840943ac58b12acb9c4aa6c1a23d7b9f56d0d4e19daaf33e263def11a7",
+      "input_fingerprint": "f8991a59af250acdb291d1c31fa21d0af87d52f0a994ab48dddfe1a24ae50247",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
-        "金額の単位は column mark 81頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（4032 件）を、印字された語から辞書の見出しに寄せた: 金額(千円)→科目／目・金額(千円)→金額。"
+        "金額の単位は carried 80頁・default 1頁 から決めた。分冊のため款の和 168,470,198 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -298,8 +312,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132098/2025/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "76027afd6d138f6e689ac7107d6dd75e2e372efc9a559e7b5e6c1e403b7570b3",
-          "bytes": 73910
+          "sha256": "efe3d2f7ad01d39d9685b95102147160660abd7d742aaf5b1be1cad76abea501",
+          "bytes": 73725
         },
         "row_count": 4032
       }
@@ -307,13 +321,12 @@
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "329404cf941e892db09bcc82bb4f57e9dee4c4679644d285762082e1c1fe89e3",
+      "input_fingerprint": "4a45da502205bf7cacc5d39f0168d46304f482498d58e7a0259a84041050c743",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
-        "金額の単位は column mark 3頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（124 件）を、印字された語から辞書の見出しに寄せた: 金額(千円)→科目／目・金額(千円)→金額。"
+        "金額の単位は carried 2頁・default 1頁 から決めた。分冊のため款の和 39,588,173 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -328,8 +341,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132098/2025/initial/expenditure/national-health-insurance-initial-amounts.parquet",
-          "sha256": "d71aef6d56e7295e0b8fb3af63578b135765ed856bea6757fe3fe9114805f53b",
-          "bytes": 5643
+          "sha256": "c54217c014246ffb13b78c88caa2b860c48861059760921e7a744ddd4fafd888",
+          "bytes": 5653
         },
         "row_count": 124
       }
@@ -337,13 +350,12 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "78fde82052c2f33be0b56a15bb4bf1cbbf1a511c09040678e32557095ed4d21a",
+      "input_fingerprint": "2777e8d82dfd6d59d97640d2a51719b0415f0e9cb53bb4615f9c909298a54a97",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
-        "金額の単位は column mark 4頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（162 件）を、印字された語から辞書の見出しに寄せた: 金額(千円)→科目／目・金額(千円)→金額。"
+        "金額の単位は carried 3頁・default 1頁 から決めた。分冊のため款の和 40,232,965 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -358,8 +370,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132098/2025/initial/expenditure/long-term-care-initial-amounts.parquet",
-          "sha256": "4a6ab3b81ef7c9f8f60b759e3e1edbe82e346282662ab2482022c7687f461ae1",
-          "bytes": 6429
+          "sha256": "3b6128bada988161e8b3599ab49df3f15afe1a9282808868e828e6b9fc1b0910",
+          "bytes": 6434
         },
         "row_count": 162
       }
@@ -367,13 +379,12 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "7af6fa15ba18e15d367e93d15b2668984e45c4f14afba00e64e6ff7d4c10f04d",
+      "input_fingerprint": "09acbe986966d63b8093a34925f47a96eea7d0c7895bee62e8ced9b62101b987",
       "account": "後期高齢者医療事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
-        "金額の単位は column mark 2頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（54 件）を、印字された語から辞書の見出しに寄せた: 金額(千円)→科目／目・金額(千円)→金額。"
+        "金額の単位は carried 1頁・default 1頁 から決めた。分冊のため款の和 14,419,419 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -388,8 +399,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132098/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
-          "sha256": "104ebbae875f4855a704b970bc99189d325f9ccd84a4e8f765fe9f913e3b5386",
-          "bytes": 3896
+          "sha256": "e0404b783d85c93e180f4e38d34a40f7307479eb60b41d47849a4a708dc33588",
+          "bytes": 3914
         },
         "row_count": 54
       }
@@ -397,13 +408,12 @@
     {
       "table_id": "land-readjustment-initial",
       "conversion_id": "land-readjustment-initial",
-      "input_fingerprint": "bdb149586a183438c4f1e7b81f2f4224d1dc9a863ed1c55a94a0bb49acab249f",
+      "input_fingerprint": "e6793fd44ffe151fcb1971927be38336bb588965b79fa372ffaa9e18ea9e3936",
       "account": "鶴川駅南土地区画整理事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
-        "金額の単位は column mark 1頁 から決めた。分冊のため款の和 0 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（24 件）を、印字された語から辞書の見出しに寄せた: 金額(千円)→科目／目・金額(千円)→金額。"
+        "金額の単位は default 1頁 から決めた。分冊のため款の和 2,206,291 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -418,8 +428,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132098/2025/initial/expenditure/land-readjustment-initial-amounts.parquet",
-          "sha256": "7a1e684f03351c158f2677ccdd32c23cdb9825a36daa6835118a89906b491398",
-          "bytes": 2700
+          "sha256": "183bc23f62ffa85a1da2f1c9fd751af56b0297b9c42bfdb715a16c6d140671b3",
+          "bytes": 2722
         },
         "row_count": 24
       }

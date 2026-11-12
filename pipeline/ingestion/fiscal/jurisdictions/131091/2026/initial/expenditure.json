@@ -442,7 +442,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "5a1deca06e800aaee2c30514017fe79a8fe03ca66986ec279eb88ce89648ffaf",
+      "input_fingerprint": "19dea33bfe7acf7d7340766e26d01604fd7dd51e71b4e6f0493bc424aeb963c1",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -471,7 +471,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "dd226a12ef1f9b0f95a0ebac2a9834a45713b87c292441794e567f5f7130cff5",
+      "input_fingerprint": "cb896ea6bd2c05771181818f0955e45aadd5f9ebe0545cf185a16e34e3b4a484",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -500,7 +500,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "d71a20cac42295b56a72d50fcae85ba6cb0ebed4da002e4abc5a7bb6c6b5298a",
+      "input_fingerprint": "cfbed88e02e6dce0f0d966a8898a6d031a1597dfaa122df5eb4b14142a1a4e87",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -529,7 +529,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "e85bc64bec14d2707544aae166b72bd734024f50ca27bc646d4ef33a62939fb6",
+      "input_fingerprint": "6ac4361d18d2c775bd01461ba8aa504e3ddfd6704e02ba0a743a5db8143a3990",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -558,7 +558,7 @@
     {
       "table_id": "disaster-recovery-initial",
       "conversion_id": "disaster-recovery-initial",
-      "input_fingerprint": "46bca8cf877a63e2941684b1b11a9523062eeb13173e62b71041796a991459ed",
+      "input_fingerprint": "0b166f5ff274e88aba920fd1f8dfc91ab0a4de5b714eb9ea53ee6d1396b3be72",
       "account": "災害復旧特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",

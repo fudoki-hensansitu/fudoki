@@ -384,7 +384,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "8126866cffdd96c176e5d88ee875f7b84a00196a874557d283defc075292a20f",
+      "input_fingerprint": "cf5da90318319e4361a89d3df0279f7a8156286928f920191861289425409249",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -413,7 +413,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "e4742767977cb74dbcae6542dccd51b1ba9f9ee4f765a1793fd4d0a6deed4457",
+      "input_fingerprint": "680399447461b05fd66ae2d2406f85f01530f3d57941c6cc7c20fc58bf522023",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -442,7 +442,7 @@
     {
       "table_id": "late-elderly-initial",
       "conversion_id": "late-elderly-initial",
-      "input_fingerprint": "0d46392a6aa0aa76f9ccc4400e22268c0cacdd425d40891bc11c31f9b27bdf7e",
+      "input_fingerprint": "8f0a6ee8af8c87234dcf874d569d87b7315ebe8ac45f9392c6f7c12c38a94e91",
       "account": "後期高齢者医療事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -471,7 +471,7 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "8429800bbe6d215cb908a759831edbfdac9a05d20508fddf3e8c8a3f562e4c52",
+      "input_fingerprint": "7f61471c5fbc9353064575e64c6a7c9409603437a96fe0f0bb3654e75f52a885",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",

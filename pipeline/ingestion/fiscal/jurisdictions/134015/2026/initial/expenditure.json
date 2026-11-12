@@ -132,7 +132,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "dae093ac786d14b3dfe73d7cb7507e885f2d09ffa8c30bad8c2e0acfdb25bc27",
+      "input_fingerprint": "2b890384ea5201a9c15fa90d33c75a58bfeab6dc04c13dccd1a15362a6dcc9b3",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -161,7 +161,7 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "9ebabf8c74cd98287cda457b3e80f385a904909c31b3b9879575b5bbc4179d55",
+      "input_fingerprint": "129dd752a40f8b3edd5388699a236e8128d47d9dffd8acf60d09cc5a765e6c49",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -190,7 +190,7 @@
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "ad2eb9c67d12060d55fd1672f8f22fed6f21ba0e868cdd847bcc003533113821",
+      "input_fingerprint": "094945fa1680ede20802090155dc22b503d15d3295ebd2b64d8bbf6174be8806",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",

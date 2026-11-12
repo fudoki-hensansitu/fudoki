@@ -10,14 +10,14 @@ export function YearPicker({ years, current, onChange }: { years: number[]; curr
   const recent = years.slice(0, RECENT_YEARS)
   const older = years.slice(RECENT_YEARS)
   const olderPicked = older.includes(current)
-  const pill = (on: boolean) => `rounded-full px-2.5 py-1.5 text-[13px] ${on ? 'bg-secondary text-foreground' : 'text-muted-foreground hover:text-foreground'}`
+  const pill = (on: boolean) => `rounded-full px-2.5 py-1.5 text-[13px] ${on ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
   return (
     <div role="group" aria-label="年度" className="flex gap-1">
       {recent.map((y) => (
         <Hint key={y} label={reiwa(y)}>
           <button type="button" aria-pressed={y === current} onClick={() => onChange(y)} className={pill(y === current)}>
             {yearName(y)}
-            {yearName(y) !== reiwa(y) ? <span className="hidden text-muted-foreground lg:inline">（{reiwa(y).replace(/年度$/, '')}）</span> : null}
+            {yearName(y) !== reiwa(y) ? <span className={`hidden lg:inline ${y === current ? 'opacity-80' : 'text-muted-foreground'}`}>（{reiwa(y).replace(/年度$/, '')}）</span> : null}
           </button>
         </Hint>
       ))}

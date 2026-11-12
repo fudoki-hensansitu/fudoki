@@ -160,8 +160,19 @@ def load_jurisdictions(path: Path, selections: Path = SELECTIONS) -> list[tuple[
     return [(code, entry['name'], entry['ocdId'], official_url(code)) for code, entry in sorted(registry.items())]
 
 
-def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = False) -> dict:
+def only_jurisdictions(declarations: list[dict], jurisdictions: set[str]) -> list[dict]:
+    """取り込みの表を、その自治体のものだけに絞る（その自治体だけを build して serving:sync --jurisdiction で流す）。"""
+    for source in declarations:
+        if source['name'] in ('fiscal_pdf', 'fiscal_csv'):
+            source['tables'] = [t for t in source['tables'] if t['meta']['jurisdiction'] in jurisdictions]
+    return declarations
+
+
+def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = False,
+            jurisdictions: set[str] | None = None) -> dict:
     declarations = yaml.safe_load((DBT / 'models/staging/fiscal/_sources.yml').read_text())['sources']
+    if jurisdictions:
+        declarations = only_jurisdictions(declarations, jurisdictions)
     write_relations(declarations)
     provided = set(candidate.rglob('manifest.json')) if candidate is not None else set()
     if candidate is not None and not provided:
@@ -245,10 +256,11 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
                               for nodes, key, printed, children in inconsistencies)])
         con.execute('create or replace table ingestion.origin (origin_id varchar, jurisdiction_code varchar, fiscal_year integer, document_kind varchar, amendment_number integer, title varchar, url varchar, format varchar, sha256 varchar)')
         con.executemany('insert into ingestion.origin values (?,?,?,?,?,?,?,?,?)', list(origins.values()))
-        jurisdictions = load_jurisdictions(JURISDICTIONS)
+        registry = load_jurisdictions(JURISDICTIONS)
         con.execute('create or replace table ingestion.jurisdiction (jurisdiction_code varchar, name varchar, ocd_id varchar, official_url varchar)')
-        con.executemany('insert into ingestion.jurisdiction values (?,?,?,?)', jurisdictions)
-        project_tables = project.load(remote=remote)
+        con.executemany('insert into ingestion.jurisdiction values (?,?,?,?)', registry)
+        # 事業評価・プレスは自治体で絞るとき、その自治体のものが無ければ読まない（今は品川区だけ）
+        project_tables = project.load(remote=remote, jurisdictions=jurisdictions or None)
         project.write(con, project_tables)
         used = {root / 'manifest.json' for document in documents.values()
                 if (root := candidate_root(candidate, document['target'], document['direction'])) is not None}
@@ -256,7 +268,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             raise ValueError(f'Unused candidate manifests: {sorted(str(p) for p in provided - used)}')
         con.commit()
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
-            'origins': len(origins), 'jurisdictions': len(jurisdictions),
+            'origins': len(origins), 'jurisdictions': len(registry),
             'evaluation_sheets': len(project_tables['project_evaluation_sheet']), 'budget_measures': len(project_tables['project_budget_measure']),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
 
@@ -268,6 +280,8 @@ def main() -> None:
                              '(legacy jurisdiction/manifest.json also supported); other targets use cached saved objects')
     parser.add_argument('--remote', action='store_true', help='Restore missing saved objects with cf (read only)')
     parser.add_argument('--build', action='store_true', help='Build and test the expenditure marts after preparation')
+    parser.add_argument('--jurisdiction', action='append', metavar='CODE',
+                        help='Load only these jurisdictions\' fiscal tables (repeatable), for serving:sync --jurisdiction')
     args = parser.parse_args()
     if args.remote and args.candidate_dir:
         parser.error('--remote and --candidate-dir are mutually exclusive')
@@ -275,12 +289,14 @@ def main() -> None:
     profile = yaml.safe_load((DBT / 'profiles.yml').read_text())['fudoki']['outputs']['dev']
     warehouse = (DBT / profile['path']).resolve()
     candidate = args.candidate_dir.resolve() if args.candidate_dir else None
-    result = prepare(warehouse, candidate, remote=args.remote)
+    result = prepare(warehouse, candidate, remote=args.remote, jurisdictions=set(args.jurisdiction or []))
     if args.build:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
                         '--select', 'marts.expenditure+', '+marts.expenditure', '+jurisdiction',
-                        'cofog_master', '+marts.evaluation', '+marts.budget_proposal', '+marts.project'],
+                        'cofog_master', '+marts.evaluation', '+marts.budget_proposal', '+marts.project',
+                        # 自治体で絞ったとき、他の自治体を宣言した seed の検査をその自治体に絞る
+                        *(['--vars', json.dumps({'only_jurisdictions': sorted(args.jurisdiction)})] if args.jurisdiction else [])],
                        cwd=DBT, stdout=sys.stderr, check=True)
         result['dbt_build'] = 'passed'
     print(json.dumps(result, ensure_ascii=False))

@@ -9,6 +9,7 @@
 @source "../home";
 @source "../landing";
 @source "../pages";
+@source "../search";
 
 @layer base {
   * { border-color: var(--border); }

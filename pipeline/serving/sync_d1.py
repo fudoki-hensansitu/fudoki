@@ -2,7 +2,7 @@
 
     bun run --cwd pipeline serving:sync -- --database-id <uuid> [--dry-run] [--full]
     bun run --cwd pipeline serving:sync -- --local [--persist-to <dir>] [--dry-run] [--full]
-    ... --jurisdiction 132039 [--jurisdiction ...]   # 一部の自治体だけを入れる（動作確認用。自治体マスタも絞られる。--full と同じ作り直し）
+    ... --jurisdiction 131202 [--jurisdiction ...]   # その自治体の行だけを差分で書く（他の自治体の行には触れない）
 
 既定は差分の同期（ADR 0040）。D1 の書き込みは行数で課金されるので、変わった行だけを書く。
 1. 開始時に、前回の失敗の残骸 `<表>__new`・`<表>__old` を無条件に drop する（本名の表には触らない）。
@@ -14,6 +14,9 @@
 4. 差分の表に、消す行の delete と、書く行の `insert or replace` を流す。変わった範囲を読み戻して突き合わせ、行数も比べる。
 5. 作り直した表を、1つの batch で `drop table if exists <表>; alter table <表>__new rename to <表>;` と index の作成で入れ替える。
 `--full` は全表を作り直す。`--dry-run` は書かずに、書く予定の行数を出す（D1 を指定すれば D1 を読んで差分を数える）。
+`--jurisdiction` は、表ごとにその自治体の行だけを D1 と warehouse の両方から選んで突き合わせ、差を書く。他の自治体の行は読むだけで
+消さないので、その自治体だけを build した warehouse から本番へ流せる。自治体コードを持たない表は親の表の自治体で絞る（`PARENT_SCOPE`）。
+列・index が違う表があれば止める（作り直しは全自治体の行が要る）。
 
 可用性は担保しない。D1 は warehouse から作り直せる写しで、失敗した同期の途中や後では、API がエラーを返したり
 表の世代が混ざったりし得る（Cloudflare の公式文書は REST の query/raw に複数文を渡したときの原子性を保証していない）。
@@ -166,16 +169,23 @@ def open_warehouse(path: Path) -> duckdb.DuckDBPyConnection:
     return duckdb.connect(str(path), read_only=True, config={'memory_limit': MEMORY_LIMIT, 'threads': 2})
 
 
-def scope_where(jurisdictions: Sequence[str] | None) -> str:
-    """一部の自治体だけを入れるときの絞り込み。jurisdiction_code を持つ表をこれで絞る。DuckDB と SQLite のどちらでも同じ。"""
-    if not jurisdictions:
-        return ''
-    return ' where "jurisdiction_code" in (' + ', '.join(literal(j) for j in jurisdictions) + ')'
+# 自治体コードの列を持たない表を、どの列でどの親の表の自治体に絞るか。親の表はその列を主キーか自治体で絞れる列に持つ
+PARENT_SCOPE = {
+    'expenditure_origin_link': ('origin_id', 'expenditure_origin'),
+    'expenditure_location': ('origin_id', 'expenditure_origin'),
+    'evaluation_indicator': ('sheet_id', 'evaluation_sheet'),
+    'evaluation_indicator_value': ('indicator_id', 'evaluation_indicator'),
+}
 
 
-def scoped(where: str, names: list[str]) -> str:
-    """自治体コードの列を持たない表は、一部の自治体だけを入れるときも全行を入れる。"""
-    return where if 'jurisdiction_code' in names else ''
+def scope_condition(table: str, names: list[str], jurisdictions: Sequence[str]) -> str:
+    """その自治体の行を選ぶ条件。DuckDB と SQLite のどちらでも同じ行を選ぶ（親の表は同じ側の表を読む）。"""
+    if table in PARENT_SCOPE:
+        column, parent = PARENT_SCOPE[table]
+        return f'"{column}" in (select "{column}" from "{parent}" where {scope_condition(parent, ["jurisdiction_code"], jurisdictions)})'
+    if 'jurisdiction_code' not in names:
+        raise SystemExit(f'{table}: 自治体で絞る列が無い（PARENT_SCOPE に親の表を足す）')
+    return '"jurisdiction_code" in (' + ', '.join(literal(j) for j in jurisdictions) + ')'
 
 
 def table_rows(con: duckdb.DuckDBPyConnection, table: str, names: list[str], order: str, where: str = '') -> Iterator[tuple]:
@@ -357,22 +367,24 @@ class TableDiff:
         return len(self.deletes) + len(self.writes)
 
 
-def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d1_table: str, where: str = '',
+def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d1_table: str, scope: str = '',
                ranges: list[tuple[str | None, str | None]] | None = None) -> TableDiff:
     """主キーの範囲ごとに D1 の d1_table を読み、warehouse の name と全列で突き合わせる。
 
     1回の cf 呼び出しは READ_ROWS_PER_CALL 行ほどにまとめる。メモリにあるのはその分と、差のある主キーだけ。
-    where は warehouse だけに掛ける（D1 の表に余分な行があれば消す行として出る）。
+    scope（自治体の条件）は D1 と warehouse の両方に掛ける。範囲の外の D1 の行は読まず、消す行にも出ない。
     """
     names = [c['name'] for c in spec['columns']]
     key = spec['primary_key']
     cols = ', '.join(f'"{n}"' for n in names)
+    where = and_where('', scope) if scope else ''
+    d1_scope = f' and {scope}' if scope else ''
     ranges = key_ranges(con, name, key, where) if ranges is None else ranges
     per_call = max(1, READ_ROWS_PER_CALL // RANGE_ROWS)
     diff = TableDiff()
     for i in range(0, len(ranges), per_call):
         group = ranges[i:i + per_call]
-        results = d1.batch([{'sql': f'select {cols} from "{d1_table}" where {range_condition(key, lo, hi)} order by "{key}"'}
+        results = d1.batch([{'sql': f'select {cols} from "{d1_table}" where {range_condition(key, lo, hi)}{d1_scope} order by "{key}"'}
                             for lo, hi in group])
         for (lo, hi), result in zip(group, results):
             got = result['results']['rows']
@@ -386,23 +398,24 @@ def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d
     return diff
 
 
-def count_rows(d1: D1, table: str) -> int:
-    return d1.batch([{'sql': f'select count(*) from "{table}"'}])[0]['results']['rows'][0][0]
+def count_rows(d1: D1, table: str, scope: str = '') -> int:
+    return d1.batch([{'sql': f'select count(*) from "{table}"{and_where("", scope) if scope else ""}'}])[0]['results']['rows'][0][0]
 
 
 def warehouse_count(con: duckdb.DuckDBPyConnection, table: str, where: str = '') -> int:
     return con.execute(f'select count(*) from main."{table}"{where}').fetchone()[0]
 
 
-def verify(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d1_table: str, where: str = '',
+def verify(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d1_table: str, scope: str = '',
            ranges: list[tuple[str | None, str | None]] | None = None) -> list[str]:
-    """D1 の d1_table が warehouse と同じか。ranges を渡せばその範囲だけを読み戻す。行数は常に全体で比べる。"""
+    """D1 の d1_table が warehouse と同じか。ranges を渡せばその範囲だけを読み戻す。行数は常に（scope の）全体で比べる。"""
     problems = []
-    total, want = count_rows(d1, d1_table), warehouse_count(con, name, where)
+    where = and_where('', scope) if scope else ''
+    total, want = count_rows(d1, d1_table, scope), warehouse_count(con, name, where)
     if total != want:
         problems.append(f'{name}: 行数 D1 {total} != warehouse {want}')
     ranges = key_ranges(con, name, spec['primary_key'], where) if ranges is None else ranges
-    problems += diff_table(d1, con, name, spec, d1_table, where, ranges).problems[:5]
+    problems += diff_table(d1, con, name, spec, d1_table, scope, ranges).problems[:5]
     print(f'  読み戻し {name}: {len(ranges)} 範囲', flush=True)
     return problems
 
@@ -430,10 +443,10 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[
 
 def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], dry_run: bool,
         jurisdictions: Sequence[str] | None, full: bool, log: Callable[[str], None]) -> int:
-    where = scope_where(jurisdictions)
     if jurisdictions:
-        log(f'一部の自治体だけを入れる: {", ".join(jurisdictions)}（D1 は全自治体の写しにならない。全表を作り直す）')
-        full = True
+        if full:
+            raise SystemExit('--jurisdiction と --full は一緒に使えない（作り直しは全自治体の行が要る）')
+        return run_scoped(d1, con, tables, dry_run, jurisdictions, log)
     started = time.time()
     if d1 and not dry_run:
         d1.batch(cleanup_statements())
@@ -444,8 +457,7 @@ def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table],
     diffs: dict[str, TableDiff] = {}
     for name in TABLE_ORDER:
         spec = tables[name]
-        table_where = scoped(where, [c['name'] for c in spec['columns']])
-        rows = warehouse_count(con, name, table_where)
+        rows = warehouse_count(con, name)
         if not matches[name]:
             rebuild.append(name)
             reason = '--full' if full else 'D1 に無いか列・index が違う' if d1 else 'D1 を指定していない'
@@ -467,43 +479,26 @@ def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table],
     for name in rebuild:
         spec = tables[name]
         names = [c['name'] for c in spec['columns']]
-        table_where = scoped(where, names)
 
-        def statements(name=name, spec=spec, names=names, where=table_where) -> Iterator[str]:
+        def statements(name=name, spec=spec, names=names) -> Iterator[str]:
             yield f'drop table if exists "{new_name(name)}"'
             yield contract.create_table_sql(name, spec, new_name(name))
-            yield from insert_statements(new_name(name), names, table_rows(con, name, names, spec['primary_key'], where))
+            yield from insert_statements(new_name(name), names, table_rows(con, name, names, spec['primary_key']))
 
         calls = 0
         for batch in pack(statements()):
             calls += 1
             d1.batch(batch)
         log(f'{name}: __new に投入 / {calls} 回 / RSS最大 {rss_mb():.0f}MB')
-    problems = [p for name in rebuild
-                for p in verify(d1, con, name, tables[name], new_name(name), scoped(where, [c['name'] for c in tables[name]['columns']]))]
+    problems = [p for name in rebuild for p in verify(d1, con, name, tables[name], new_name(name))]
     if problems:
         for p in problems:
             log(f'照合に失敗: {p}')
         log('本名の表に書かずに中止（__new は残る）')
         return 1
 
-    # 3. 差分の表に書く。全範囲の delete を先に流す（範囲の切り方が両者でずれても、消してから書く順を守る）
-    for name, diff in diffs.items():
-        if not diff.changes:
-            continue
-        spec = tables[name]
-        names = [c['name'] for c in spec['columns']]
-        key = spec['primary_key']
-        writes = set(diff.writes)
-        rows = (row for row in table_rows(con, name, names, key) if row[names.index(key)] in writes)
-
-        def statements(name=name, key=key, diff=diff, names=names, rows=rows) -> Iterator[str]:
-            yield from delete_statements(name, key, diff.deletes)
-            yield from insert_statements(name, names, rows)
-
-        for batch in pack(statements()):
-            d1.batch(batch)
-        problems += verify(d1, con, name, spec, name, ranges=diff.ranges)
+    # 3. 差分の表に書く
+    problems += write_diffs(d1, con, tables, diffs)
     if problems:
         for p in problems:
             log(f'照合に失敗: {p}')
@@ -519,6 +514,78 @@ def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table],
     return 0
 
 
+def write_diffs(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], diffs: dict[str, TableDiff],
+                scopes: dict[str, str] | None = None) -> list[str]:
+    """差分の表に書いて、差のあった範囲を読み戻す。
+
+    消す行は参照する表から（TABLE_ORDER の逆順）、書く行は参照される表から流す。途中で止まっても、親より先に
+    子が消えるので、親の消えた子の行（自治体で絞った同期では親の自治体で選ぶので、次の差分に出ない）が残らない。
+    """
+    problems: list[str] = []
+    changed = [name for name in TABLE_ORDER if name in diffs and diffs[name].changes]
+    for name in reversed(changed):
+        key = tables[name]['primary_key']
+        for batch in pack(delete_statements(name, key, diffs[name].deletes)):
+            d1.batch(batch)
+    for name in changed:
+        diff = diffs[name]
+        spec = tables[name]
+        names = [c['name'] for c in spec['columns']]
+        key = spec['primary_key']
+        scope = (scopes or {}).get(name, '')
+        writes = set(diff.writes)
+        rows = (row for row in table_rows(con, name, names, key, and_where('', scope) if scope else '')
+                if row[names.index(key)] in writes)
+        for batch in pack(insert_statements(name, names, rows)):
+            d1.batch(batch)
+    for name in changed:
+        problems += verify(d1, con, name, tables[name], name, (scopes or {}).get(name, ''), diffs[name].ranges)
+    return problems
+
+
+def run_scoped(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], dry_run: bool,
+               jurisdictions: Sequence[str], log: Callable[[str], None]) -> int:
+    """その自治体の行だけを差分で書く。表を作り直さず、他の自治体の行を消さない。"""
+    log(f'自治体を絞って同期する: {", ".join(jurisdictions)}（その自治体の行だけを書き、他の自治体の行には触れない）')
+    started = time.time()
+    scopes = {name: scope_condition(name, [c['name'] for c in tables[name]['columns']], jurisdictions) for name in TABLE_ORDER}
+    if not d1:
+        for name in TABLE_ORDER:
+            log(f'{name}: {warehouse_count(con, name, and_where("", scopes[name]))} 行')
+        log('dry-run: D1 には書いていない')
+        return 0
+    matches = read_schemas(d1, tables)
+    existing = {r[0] for r in d1.batch([{'sql': "select name from sqlite_master where type = 'table'"}])[0]['results']['rows']}
+    skipped = []
+    for name in [n for n in TABLE_ORDER if not matches[n]]:
+        # 列・index が違っても（表が無くても）、その自治体の行がどちらにも無い表は触らずに済む。
+        # 親で絞る表は親の表も D1 に要る
+        parent = PARENT_SCOPE.get(name, (None, None))[1]
+        in_d1 = name in existing and (parent is None or parent in existing) and count_rows(d1, name, scopes[name])
+        if warehouse_count(con, name, and_where('', scopes[name])) or in_d1:
+            log(f'{name}: D1 の列・index が違い、その自治体の行がある。自治体を絞った同期では作り直さない。--jurisdiction なしで流す')
+            return 1
+        skipped.append(name)
+        log(f'{name}: D1 の列・index が違うが、その自治体の行がどちらにも無いので触らない')
+    diffs: dict[str, TableDiff] = {}
+    for name in [n for n in TABLE_ORDER if n not in skipped]:
+        spec = tables[name]
+        diff = diffs[name] = diff_table(d1, con, name, spec, name, scopes[name])
+        rows = warehouse_count(con, name, and_where('', scopes[name]))
+        cost = rows_written(len(diff.deletes), spec) + 2 * rows_written(len(diff.writes), spec)
+        log(f'{name}: 消す {len(diff.deletes)} 行・書く {len(diff.writes)} 行 / 書き込み約 {cost:,} 行（その自治体の {rows} 行中）')
+    if dry_run:
+        log('dry-run: D1 には書いていない')
+        return 0
+    if problems := write_diffs(d1, con, tables, diffs, scopes):
+        for p in problems:
+            log(f'照合に失敗: {p}')
+        log('中止。もう一度同期を流す')
+        return 1
+    log(f'完了: 差分 {sum(1 for d in diffs.values() if d.changes)} 表 / cf {d1.calls} 回 / {time.time() - started:.0f} 秒')
+    return 0
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.splitlines()[0])
     parser.add_argument('--database-id', help='D1 の database id（--local なら省略可）')
@@ -526,7 +593,7 @@ def main() -> int:
     parser.add_argument('--persist-to', type=Path, default=LOCAL_PERSIST_TO, help='--local の状態の置き場')
     parser.add_argument('--warehouse', type=Path, default=contract.WAREHOUSE)
     parser.add_argument('--jurisdiction', action='append', metavar='自治体コード',
-                        help='一部の自治体だけを入れる（複数指定可）。jurisdiction_code を持つ表を絞る。省略は全件')
+                        help='その自治体の行だけを差分で書く（複数指定可）。他の自治体の行には触れない。省略は全件')
     parser.add_argument('--dry-run', action='store_true', help='書かずに、書く予定の行数を出す（D1 を指定すれば D1 を読んで差分を数える）')
     parser.add_argument('--full', action='store_true', help='差分ではなく全表を作り直す')
     parser.add_argument('--drop-legacy', action='store_true',

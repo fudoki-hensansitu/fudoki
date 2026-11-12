@@ -477,7 +477,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "0aaaabb82582132c45dad1a4c9f41e1a1df91ef5fb3ae54a8cce9abfc2c37b51",
+      "input_fingerprint": "4925b36b358837b0c706c96422619438f01353b34b09ca47b24876e887b570e2",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -506,7 +506,7 @@
     {
       "table_id": "land-initial",
       "conversion_id": "land-initial",
-      "input_fingerprint": "f3e76f9a81d5ff820d1336ff6d7aea2379639678250cbe396b6733ebf35ad78b",
+      "input_fingerprint": "128daae92a5f49b95a5c25a211b6268c4f2ec7be13a8da24b9e88fb8bc7ca2f0",
       "account": "用地特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -535,7 +535,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "7ad650f5dcbdfcdf4ee230c56d78a6f30ba89f10e37f3279445aab3b15c21ad3",
+      "input_fingerprint": "a2b22888962e1dfb6bc062f9c2f302f43fc978cf3d7fde32deefc0e20e4d4a7f",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -564,7 +564,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "2aa33c684d1c200b241be3741d1dd3bb032c99b5d9891bb30e998b66e6345bf4",
+      "input_fingerprint": "f4f594e05687f515ea56791646b27725acfffaf0d2376288e067a60e7b73a3de",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -593,7 +593,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "5b2ac24b3da311824ceff9b5f205b68018375a6f2c56b332f3e425e0d8da0ecf",
+      "input_fingerprint": "5964bc775823c3aab8e6fb0a1349f35f8ca9ec021ee8a7c9eb88ec289df844db",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -622,7 +622,7 @@
     {
       "table_id": "general-amendment",
       "conversion_id": "general-amendment",
-      "input_fingerprint": "46b69df257ec1b10fb39925c1bddfeafe8859654e105f62663933c72211f7a74",
+      "input_fingerprint": "eca0448daf2e258df2feef6d039abddcbd7fe6a1705e2deb9c4b4d4197f4ec64",
       "account": "一般会計",
       "notes": [
         "議会の修正案（第7号議案）の歳出増減分の説明。修正した事務事業だけを載せる。修正金額を「本年度予算額」、原案金額を「予算案額」として読む。",

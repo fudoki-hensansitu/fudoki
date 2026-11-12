@@ -7,6 +7,7 @@ import gzip
 from copy import deepcopy
 import importlib.util
 import json
+import sys
 from pathlib import Path
 
 import duckdb
@@ -667,6 +668,7 @@ def main() -> None:
     refresh.add_argument('--remote', action='store_true', help='Restore missing originals and saved tables from R2 (read only; nothing is uploaded)')
     refresh.add_argument('--dry-run', action='store_true', help='Compare only; do not rewrite any manifest')
     refresh.add_argument('--all', action='store_true', help='Re-read every conversion, not only stale ones (after a Poppler change)')
+    refresh.add_argument('--jobs', type=int, help='Manifests refreshed at once (default: from free CPUs and memory, at most 4; 1 runs them one by one)')
     refresh.add_argument('--plan', action='store_true', help='List stale conversions only; no original reads, conversion, or writes')
     ocr = sub.add_parser('ocr', help='Read declared OCR requests and pin observation SHA (Paddle; run outside the sandbox)')
     ocr.add_argument('--manifest', type=Path, required=True)
@@ -682,11 +684,13 @@ def main() -> None:
     if args.command == 'refresh' and not manifests:
         manifests = manifest.paths()
     if args.command == 'refresh' and args.plan:
-        if args.remote or args.dry_run or args.output:
-            parser.error('--plan cannot be combined with --remote, --dry-run, or --output')
+        if args.remote or args.dry_run or args.output or args.jobs:
+            parser.error('--plan cannot be combined with --remote, --dry-run, --output, or --jobs')
         from ingestion.fiscal.refresh import plan
         print(json.dumps(plan(manifests), ensure_ascii=False))
         return
+    if args.command == 'refresh' and args.jobs is not None and args.jobs < 1:
+        parser.error('--jobs must be at least 1')
     if args.command in ('convert', 'refresh'):
         poppler.require()  # the words of a text PDF depend on the Poppler version (ingestion/lib/poppler.py)
     holder = heavy_lock.acquire(args.command, targets=manifests or ())
@@ -697,16 +701,21 @@ def main() -> None:
     elif args.command == 'check':
         paths = [args.manifest] if args.manifest else manifest.paths()
         count = ready = tables = 0
+        stale = []
         for path in paths:
             document = manifest.read(path)
             for conversion in document['conversions']:
                 manifest.resolved_inputs(document, conversion)
             if document['tables']:
-                manifest.require_current(document)
+                # A stale fingerprint is reported, not refused: the scheduled refresh dry-run compares contents (ADR 0027).
+                stale.extend(f'{path}: {table_id}' for table_id in manifest.stale_tables(document))
                 ready += 1
             count += 1
             tables += len(document['tables'])
-        print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables}))
+        for item in stale:
+            print(f'stale: {item}', file=sys.stderr)
+        print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables,
+                          'stale_tables': len(stale)}))
     elif args.command == 'ocr':
         print(json.dumps(acquire_ocr(args.manifest, json.loads(args.inputs.read_text()),
                                      verify_only=args.verify, ids=args.id), ensure_ascii=False))
@@ -754,7 +763,10 @@ def main() -> None:
         raise SystemExit(1 if failed else 0)
     elif args.command == 'restore':
         document = manifest.read(args.manifest)
-        manifest.require_current(document)
+        if not document['tables']:
+            raise ValueError('Manifest has no complete saved table set')
+        for table_id in manifest.stale_tables(document):
+            print(f'stale: {args.manifest}: {table_id}', file=sys.stderr)
         for table in document['tables']:
             for reference in manifest.table_references(table).values():
                 restored = fetch(reference['object'], remote=args.remote)
@@ -764,7 +776,8 @@ def main() -> None:
     elif args.command == 'refresh':
         from ingestion.fiscal.refresh import refresh_all
         report = refresh_all(args.manifest or manifest.paths(), remote=args.remote, dry_run=args.dry_run,
-                             output=args.output or BUILD / 'ingestion-refresh' / 'report.json', everything=args.all)
+                             output=args.output or BUILD / 'ingestion-refresh' / 'report.json', everything=args.all,
+                             jobs=args.jobs)
         print(json.dumps(report['summary'], ensure_ascii=False))
         raise SystemExit(0 if report['ok'] else 1)
     else:

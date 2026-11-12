@@ -378,6 +378,17 @@
           ]
         ],
         "partial": true,
+        "dropped_bands": [
+          {
+            "id": "p2-previous-volume",
+            "page": 2,
+            "y_range": [
+              120,
+              187
+            ],
+            "reason": "冊の頭の「・地域リハビリテーション活動支援事業費 214」「・地域ケア会議運営費 100」「・諸経費 459」と所管の行は、前の冊の最後の事業の明細の続き（計 773）。冊をまたいで親につなげられないので、この冊では読まない"
+          }
+        ],
         "workflow": {
           "layout": {
             "pattern": "running_titles",
@@ -1291,7 +1302,7 @@
     {
       "table_id": "general-initial-4",
       "conversion_id": "general-initial-4",
-      "input_fingerprint": "af09cd8b62e3dfc01dfd33cefd937e64e265e3abb6972168a94060213dc16528",
+      "input_fingerprint": "f338531e864249a7460486dc1626aa86131500053e4683ae2789d6becf1ec7d8",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1304,24 +1315,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132080/2025/initial/expenditure/general-initial-4-nodes.parquet",
-          "sha256": "3564de2916c011ca5dadaf9f8db1132c1501389c5b8d7c9668cc8158999e08ad",
-          "bytes": 94671
+          "sha256": "b274f953974bfe1c0649f2f774b8322fa308202bfaffb5f1cb8c01a12766332e",
+          "bytes": 94471
         },
-        "row_count": 2737
+        "row_count": 2734
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132080/2025/initial/expenditure/general-initial-4-amounts.parquet",
-          "sha256": "28294ceff5a99972cf4a2bb194bf4734fc5eb62a7f6839829b5e07eb8895f1f9",
-          "bytes": 73642
+          "sha256": "6a1795272837495b8e29b1462cd42ec18d9543fa86712e3248a8f54ba07d2490",
+          "bytes": 73543
         },
-        "row_count": 2954
+        "row_count": 2951
       }
     },
     {
       "table_id": "general-initial-6",
       "conversion_id": "general-initial-6",
-      "input_fingerprint": "2aa0288f5d86ee2780694a78d37f01f23fea63360ad6dba5dddfa76711cd660a",
+      "input_fingerprint": "dde07b10febf0004f417780119beb3f712412d33985d095a69ee049f26d4aceb",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",

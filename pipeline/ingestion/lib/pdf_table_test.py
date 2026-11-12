@@ -1,5 +1,6 @@
 """Public table assembly and Parquet boundaries, including unresolved data."""
 
+import math
 import tempfile
 import unittest
 from pathlib import Path
@@ -157,6 +158,21 @@ class ParquetBoundaries(unittest.TestCase):
             with self.assertRaises(FileExistsError):
                 write_parquet(path, [], columns=columns)
             self.assertEqual(path.read_bytes(), before)
+
+    def test_roundtrip_keeps_float_and_integer_edges(self):
+        columns = (ParquetColumn("x", "DOUBLE"), ParquetColumn("n", "BIGINT"), ParquetColumn("i", "INTEGER"))
+        values = [(float("nan"), -2 ** 63, -2 ** 31), (float("inf"), 2 ** 63 - 1, 2 ** 31 - 1),
+                  (float("-inf"), 0, None), (-0.0, None, 0), (1.7976931348623157e308, 1, 1), (3, 2, 2)]
+        rows = [{"x": x, "n": n, "i": i} for x, n, i in values]
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "data.parquet"
+            write_parquet(path, rows, columns=columns, batch_size=4)
+            with duckdb.connect() as connection:
+                actual = connection.execute("SELECT * FROM read_parquet(?)", [str(path)]).fetchall()
+        self.assertTrue(math.isnan(actual[0][0]))
+        self.assertEqual(actual[0][1:], values[0][1:])
+        self.assertEqual(actual[1:], [(float(x), n, i) for x, n, i in values[1:]])
+        self.assertEqual(math.copysign(1, actual[3][0]), -1)
 
     def test_bad_later_record_leaves_no_partial_file(self):
         columns = (ParquetColumn("amount", nullable=False),)
