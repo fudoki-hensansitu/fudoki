@@ -72,7 +72,7 @@ flowchart LR
 ### 頁の文字を marts の表にする
 
 - 今の `source_text/layout.py` の並べ方（行にまとめる・列を揃える・語のつなぎ方・見開きを分ける）は、入力を `page_words.pages` の語に替えて pipeline に残す。
-- 事業の取り込み（`ingestion/project/run.py`）と同じ流れで、事業評価・プレスの出典ごとに頁の文字を作り、warehouse の入力の表にする。読んだ結果は今の事業の取り込みと同じく、出典の sha256 と並べ方のコードの指紋でキャッシュする（`.cache/`）。
+- 事業の取り込み（`ingestion/project/run.py`）と同じ流れで、事業評価・プレスの出典ごとに頁の文字を作り、warehouse の入力の表にする。読んだ結果は今の事業の取り込みと同じく、出典の sha256、語の層と並べ方のコードの指紋、固定した Poppler の版（`mise.toml`）でキャッシュする（`.cache/`）。
 - marts の表 `source_page_text`（`marts/source/`）:
 
   | 列 | 型 | 説明 |
