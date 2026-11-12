@@ -64,16 +64,15 @@ function TownSearch() {
       </Command>
     </CommandDialog>
   )
-  // サイドバーの項目と同じ SidebarMenuButton で描き、icon・文字の位置と大きさを下の項目にそろえる。開いているときだけ枠を付けた欄に見せる
+  // サイドバーの項目と同じ SidebarMenuButton・同じ形（角丸・高さ・icon と文字の位置）で描き、枠を付けずに薄い地だけで欄とわかるようにする。閉じているときは他の項目と同じ icon だけにする
   return (
-    <SidebarMenuItem className="mb-3 group-data-[collapsible=icon]:mb-0">
+    <SidebarMenuItem className="mb-2 group-data-[collapsible=icon]:mb-0">
       <SidebarMenuButton
-        variant="outline"
         onClick={show}
         onPointerEnter={warm}
         aria-keyshortcuts="Meta+K Control+K"
         tooltip={state === 'collapsed' && !isMobile ? 'まちを探す' : undefined}
-        className="h-10 gap-3 rounded-full px-3 text-sm text-muted-foreground group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:rounded-md group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-2.5! group-data-[collapsible=icon]:text-sidebar-foreground group-data-[collapsible=icon]:shadow-none [&_svg]:size-5"
+        className="h-10 gap-3 bg-sidebar-foreground/5 px-3 text-sm text-muted-foreground group-data-[collapsible=icon]:size-10! group-data-[collapsible=icon]:bg-transparent group-data-[collapsible=icon]:p-2.5! group-data-[collapsible=icon]:text-sidebar-foreground [&_svg]:size-5"
       >
         <MagnifyingGlassIcon />
         <span>まちを探す</span>
