@@ -84,7 +84,7 @@ flowchart LR
   | `jurisdiction_code` | VARCHAR | 出典の自治体。`serving:sync --jurisdiction` で絞るため |
   | `sha256` | VARCHAR | 出典 PDF の sha256（評価・予算案の `origin_id` と同じ値） |
   | `page` | INTEGER | 物理頁（1始まり） |
-  | `text` | VARCHAR | 頁の文字。列を空白で揃えた形。12,000字（api の `MAX_PAGE_CHARS`）で切る |
+  | `text` | VARCHAR | 頁の文字。列を空白で揃えた形。12,000字（api が返す上限）で切る |
   | `truncated` | BOOLEAN | 12,000字で切ったか |
 
   index は `(sha256, page)`。`page_id` に unique の検査を付ける。タイトルと公式の URL は今と同じく `evaluation_origin`・`budget_proposal_origin` から引く。

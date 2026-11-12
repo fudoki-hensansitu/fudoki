@@ -3,6 +3,7 @@
     bun run --cwd pipeline serving:sync -- --database-id <uuid> [--dry-run] [--full]
     bun run --cwd pipeline serving:sync -- --local [--persist-to <dir>] [--dry-run] [--full]
     ... --jurisdiction 131202 [--jurisdiction ...]   # その自治体の行だけを差分で書く（他の自治体の行には触れない）
+    ... --table source_page_text [--table ...]       # その表だけを同期する（ほかの表には触れない）
 
 既定は差分の同期（ADR 0040）。D1 の書き込みは行数で課金されるので、変わった行だけを書く。
 1. 開始時に、前回の失敗の残骸 `<表>__new`・`<表>__old` を無条件に drop する（本名の表には触らない）。
@@ -350,14 +351,19 @@ def schema_matches(name: str, spec: Table, columns: list[list], indexes: set[str
     return got == want and indexes == {contract.index_name(name, cols) for cols in spec['indexes']}
 
 
+def ordered(tables: dict[str, Table]) -> list[str]:
+    """同期する表を TABLE_ORDER の順に（--table で絞ったときはその表だけ）。"""
+    return [name for name in TABLE_ORDER if name in tables]
+
+
 def read_schemas(d1: D1, tables: dict[str, Table]) -> dict[str, bool]:
     """表ごとに、D1 の列と index が columns.json と同じか。"""
-    results = d1.batch(schema_statements(TABLE_ORDER))
+    results = d1.batch(schema_statements(ordered(tables)))
     indexes: dict[str, set[str]] = {}
     for tbl, idx in results[-1]['results']['rows']:
         indexes.setdefault(tbl, set()).add(idx)
     return {name: schema_matches(name, tables[name], result['results']['rows'], indexes.get(name, set()))
-            for name, result in zip(TABLE_ORDER, results)}
+            for name, result in zip(ordered(tables), results)}
 
 
 class TableDiff:
@@ -437,12 +443,17 @@ def rss_mb() -> float:
 
 
 def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[str] | None = None, full: bool = False,
-         log: Callable[[str], None] = lambda m: print(m, flush=True)) -> int:
+         log: Callable[[str], None] = lambda m: print(m, flush=True), only: Sequence[str] | None = None) -> int:
     tables = contract.load()
     con = open_warehouse(warehouse)
     try:
         if contract.build(contract.warehouse_columns(warehouse, con)) != {'tables': tables}:
             raise SystemExit('columns.json が warehouse と食い違う。serving:columns で書き直す')
+        if only:
+            unknown = sorted(set(only) - tables.keys())
+            if unknown:
+                raise SystemExit(f'columns.json に無い表: {", ".join(unknown)}')
+            tables = {name: spec for name, spec in tables.items() if name in only}
         return run(d1, con, tables, dry_run, jurisdictions, full, log)
     finally:
         con.close()
@@ -459,10 +470,10 @@ def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table],
         d1.batch(cleanup_statements())
 
     # 1. 作り直す表と、差分で書く表を決める（D1 を読むだけ）
-    matches = read_schemas(d1, tables) if d1 and not full else {name: False for name in TABLE_ORDER}
+    matches = read_schemas(d1, tables) if d1 and not full else {name: False for name in ordered(tables)}
     rebuild: list[str] = []
     diffs: dict[str, TableDiff] = {}
-    for name in TABLE_ORDER:
+    for name in ordered(tables):
         spec = tables[name]
         rows = warehouse_count(con, name)
         if not matches[name]:
@@ -555,16 +566,16 @@ def run_scoped(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, 
     """その自治体の行だけを差分で書く。表を作り直さず、他の自治体の行を消さない。"""
     log(f'自治体を絞って同期する: {", ".join(jurisdictions)}（その自治体の行だけを書き、他の自治体の行には触れない）')
     started = time.time()
-    scopes = {name: scope_condition(name, [c['name'] for c in tables[name]['columns']], jurisdictions) for name in TABLE_ORDER}
+    scopes = {name: scope_condition(name, [c['name'] for c in tables[name]['columns']], jurisdictions) for name in ordered(tables)}
     if not d1:
-        for name in TABLE_ORDER:
+        for name in ordered(tables):
             log(f'{name}: {warehouse_count(con, name, and_where("", scopes[name]))} 行')
         log('dry-run: D1 には書いていない')
         return 0
     matches = read_schemas(d1, tables)
     existing = {r[0] for r in d1.batch([{'sql': "select name from sqlite_master where type = 'table'"}])[0]['results']['rows']}
     skipped = []
-    for name in [n for n in TABLE_ORDER if not matches[n]]:
+    for name in [n for n in ordered(tables) if not matches[n]]:
         # 列・index が違っても（表が無くても）、その自治体の行がどちらにも無い表は触らずに済む。
         # 親で絞る表は親の表も D1 に要る
         parent = PARENT_SCOPE.get(name, (None, None))[1]
@@ -575,7 +586,7 @@ def run_scoped(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, 
         skipped.append(name)
         log(f'{name}: D1 の列・index が違うが、その自治体の行がどちらにも無いので触らない')
     diffs: dict[str, TableDiff] = {}
-    for name in [n for n in TABLE_ORDER if n not in skipped]:
+    for name in [n for n in ordered(tables) if n not in skipped]:
         spec = tables[name]
         diff = diffs[name] = diff_table(d1, con, name, spec, name, scopes[name])
         rows = warehouse_count(con, name, and_where('', scopes[name]))
@@ -603,6 +614,8 @@ def main() -> int:
                         help='その自治体の行だけを差分で書く（複数指定可）。他の自治体の行には触れない。省略は全件')
     parser.add_argument('--dry-run', action='store_true', help='書かずに、書く予定の行数を出す（D1 を指定すれば D1 を読んで差分を数える）')
     parser.add_argument('--full', action='store_true', help='差分ではなく全表を作り直す')
+    parser.add_argument('--table', action='append', metavar='表',
+                        help='その表だけを同期する（複数指定可）。ほかの表には触れない。省略は全表')
     parser.add_argument('--drop-legacy', action='store_true',
                         help='同期せず、作り直し前の表（LEGACY_TABLES）を drop する。新しい Worker の deploy を確かめてから流す')
     args = parser.parse_args()
@@ -616,7 +629,7 @@ def main() -> int:
             d1.batch(statements)
         print('\n'.join(s['sql'] for s in statements) + ('\ndry-run: D1 には書いていない' if args.dry_run or not d1 else ''))
         return 0
-    return sync(d1, args.warehouse, args.dry_run, args.jurisdiction, args.full)
+    return sync(d1, args.warehouse, args.dry_run, args.jurisdiction, args.full, only=args.table)
 
 
 if __name__ == '__main__':

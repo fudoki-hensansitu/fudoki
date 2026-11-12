@@ -434,6 +434,22 @@ class SyncTest(unittest.TestCase):
         self.assertEqual([r[0] for r in self.d1.rows('jurisdiction', 'jurisdiction_code')], ['000000', '000001', '000002'])
         self.assertEqual(self.d1.rows('project_year', 'project_year_id'), before['project_year'])
 
+    def test_only_listed_tables_are_synced(self):
+        """--table で絞った同期は、その表だけを作り直し、ほかの表の D1 の行には触れない。"""
+        self.sync()
+        before = {name: self.d1.rows(name, spec['primary_key']) for name, spec in self.tables.items()}
+        self.add('jurisdiction', ['000009'], value='new')
+        self.duck.execute('insert into main."expenditure_origin" ("origin_id", "jurisdiction_code", "title") values (?, ?, ?)',
+                          ['z9', '000009', 'x'])
+        self.d1.log.clear()
+        messages = []
+        only = {'expenditure_origin': self.tables['expenditure_origin']}
+        self.assertEqual(sync_d1.run(self.d1, self.duck, only, False, None, False, messages.append), 0, messages)
+        self.assertIn('z9', [r[0] for r in self.d1.rows('expenditure_origin', 'origin_id')])
+        for name in self.tables:
+            if name != 'expenditure_origin':
+                self.assertEqual(self.d1.rows(name, self.tables[name]['primary_key']), before[name], name)
+
     def test_jurisdiction_stops_on_schema_change_with_its_rows(self):
         self.sync()
         self.d1.con.execute('drop table "jurisdiction"')
