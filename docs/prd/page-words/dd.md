@@ -8,7 +8,7 @@
 
 出典 PDF の頁から「語と位置」を取る処理を1つにし、取り込み（評価シート・予算案のプレス発表）と、web のアシスタントが読む頁の文字の両方がそこから作られるようにする。今は同じ PDF を4通りの方法で読んでいるので、OCR や語の取り方の直しが、それぞれの読み方に別々に要る。
 
-あわせて、アシスタント用の頁の文字の持ち主を整理する。pipeline が持つのは語の層（取り込みの成果物）までにする。それをアシスタント向けの文に並べるのは、読む側の web が受け持つ。
+あわせて、アシスタント用の頁の文字の置き場を、ほかのデータと同じ経路にする。pipeline が marts の表まで作って D1 に写し、api が fudoki 用の内部の口からだけ読ませる。R2 の `source-text/` と、api の R2 binding はやめる。
 
 ## 今の形
 
@@ -23,14 +23,14 @@
 
 - 直しが伝わらない。fiscal の `observe.py` は見えない複製を落とすことや character map を持つが、評価シート・プレス・アシスタントの読み方はどれもそれを使っていない。
 - スキャンの資料が読めない。fiscal には固定した OCR の観測があるが、評価シートとアシスタントは文字の層の無い頁を空として扱う。
-- 頁の文字は web だけが使うのに、作って置くのは pipeline、配るのは api になっている。api の R2 binding（`SOURCE_TEXT`）は非公開の `fudoki-inputs` 全体を指しているので、仕組みの上では元の PDF も読める。
+- 頁の文字だけが、marts → D1 の経路の外（R2 の別の prefix）にある。api の R2 binding（`SOURCE_TEXT`）は非公開の `fudoki-inputs` 全体を指しているので、仕組みの上では元の PDF も読める。
 
 ## Goals / Non-Goals
 
 - Goal: 頁の語と位置を取るコードを1か所にする。語の取り方の直しは、そこを直せば評価シート・プレス・アシスタントに効く。
 - Goal: 評価シート・プレスの取り込みは、その語の層から読む。移す前の取り込み結果と突き合わせ、変わらないことを確かめる。
-- Goal: アシスタントの頁の文字は、web が語の層を並べて作る。pipeline は語の層を R2 に置くまでを受け持つ。
-- Goal: 語の層は web からだけ読める。公開の REST・MCP、画面、会話の保存には出さない（[source-reading の設計](../source-reading/dd.md)の Goal を引き継ぐ）。web は元の PDF のバケットに binding を持たない。
+- Goal: 頁の文字は marts の表にし、`serving:sync` で D1 に写す。api は公開の REST・MCP には出さず、fudoki の web だけが呼べる内部の口から返す（[source-reading の設計](../source-reading/dd.md)の Goal を引き継ぐ）。
+- Goal: api から R2 の binding を外す。api が元の PDF に触れる口を無くす。
 - Non-Goal: fiscal の取り込みを語の層へ移すこと。fiscal は今の `observe.py` のまま使う。
 - Non-Goal: 予算書・決算書の頁の文字（#560 で外した）。元の PDF を配ること（中継は公式 URL から取るまま、[origin-pdf-viewer](../origin-pdf-viewer/dd.md)）。
 - Non-Goal: 事業の出典に OCR をかけること。スキャンの評価資料・プレスの OCR の観測をどこに宣言し保存するかは、語の層ができたあとに決める（fiscal の `scan.read_pages` は管理 JSON の `ocr_inputs` を前提にしている）。
@@ -42,8 +42,11 @@ flowchart LR
   pdf[("非公開 R2 fudoki-inputs<br/>出典 PDF")] --> words["pipeline<br/>generic/page_words.py"]
   words --> sheet["評価シートの取り込み"]
   words --> press["プレスの取り込み"]
-  words -->|"page-words:save"| bucket[("R2 fudoki-page-words<br/>words/&lt;sha256&gt;/&lt;頁&gt;.json")]
-  bucket -->|"R2 binding PAGE_WORDS"| web["web<br/>read_source_page<br/>語を頁の文字に並べる"]
+  words --> text["pipeline<br/>頁の文字に並べる（layout.py）"]
+  text --> marts["marts<br/>source_page_text"]
+  marts -->|"serving:sync"| d1[("D1 fudoki-api")]
+  d1 --> api["api<br/>内部 RPC SourcePages"]
+  api -->|"Service Binding"| web["web<br/>read_source_page"]
 ```
 
 ### 語の層
@@ -64,43 +67,47 @@ flowchart LR
   - `extract_text` の行は `page_words.lines` に替える。
   - 表（`find/table.py`・`fuchu_press.py` の `find_tables`、`inagi_press.py` の `extract_tables`）は、この段では pdfplumber のまま残す。語の層の罫線から表を組む形は、残った規則を移すときに別に決める。
   - 36 の個別の規則は1団体ずつ移して確かめる。
-- 指紋: `sheet.modules()`・`press.modules()` に `page_words.py` と `observe.py` を足す（今の `run.py` の `code_fingerprint` は project のモジュールだけを hash している）。アシスタント向けの並べ方は web にあるので、それを直しても取り込みは古くならない。
+- 指紋: `sheet.modules()`・`press.modules()` に `page_words.py` と `observe.py` を足す（今の `run.py` の `code_fingerprint` は project のモジュールだけを hash している）。
 
-### 語の層を R2 に置く
+### 頁の文字を marts の表にする
 
-`bun run --cwd pipeline page-words:save`（今の `source-text:save` を置き換える）が、事業評価・プレスの出典ごとに語の層を作り、専用のバケット `fudoki-page-words` に置く。
+- 今の `source_text/layout.py` の並べ方（行にまとめる・列を揃える・語のつなぎ方・見開きを分ける）は、入力を `page_words.pages` の語に替えて pipeline に残す。
+- 事業の取り込み（`ingestion/project/run.py`）と同じ流れで、事業評価・プレスの出典ごとに頁の文字を作り、warehouse の入力の表にする。読んだ結果は今の事業の取り込みと同じく、出典の sha256 と並べ方のコードの指紋でキャッシュする（`.cache/`）。
+- marts の表 `source_page_text`（`marts/source/`）:
 
-- key: `words/<sha256>/<物理頁>.json`。1頁1 object にし、1頁を読むたびに資料全体を読まない。資料ごとの `words/<sha256>/index.json` に `title`・`url`・`page_count` を置く。`url` は利用者に示す公式の URL（Wayback の写しなら `landing_url`）。
-- 頁の中身: `{schema_version, number, width, height, words: [[text, x0, y0, x1, y1, size]]}`。位置は 0.1pt に丸める。
-- 対象: 出典の選定の `evaluation_selections`・`press_selections`（`pdf_type: text`）と、事業の取り込みの `results`。どれも風土記が選定した出典なので、D1 に取り込み前の出典もここに入る。
-- 作り直し: 語の層のコードの指紋、Poppler の版、または `title`・`url` が変わった出典だけを作り直す。`index.json` に作ったときの指紋・Poppler の版・`title`・`url` を書いて比べる。`index.json` は `page_count` 頁の object をすべて書いたあとに最後に書き、途中で止まった出典は次の実行で作り直される。
-- 既存の `source-text/` は、web が新しいバケットを読むようになってから消す（消すときに確認を取る）。
+  | 列 | 型 | 説明 |
+  | --- | --- | --- |
+  | `page_id` | VARCHAR（主キー） | sha256 と頁から作る |
+  | `sha256` | VARCHAR | 出典 PDF の sha256（評価・予算案の `origin_id` と同じ値） |
+  | `page` | INTEGER | 物理頁（1始まり） |
+  | `text` | VARCHAR | 頁の文字。列を空白で揃えた形。文字の無い頁は空文字 |
 
-### web が頁の文字を作る
+  index は `(sha256, page)`。タイトルと公式の URL は今と同じく `evaluation_origin`・`budget_proposal_origin` から引く。
+- 対象は D1 に出典の記録がある事業評価・プレスの出典だけにする（marts で出典の表と結ぶ）。
+- `serving:columns` が `columns.json` に表を足し、`serving:sync` がほかの表と同じく差分で D1 に写す。
 
-- `apps/web/void.config.ts` に R2 binding `PAGE_WORDS`（バケット `fudoki-page-words`）を足す。preview も同じバケットを読む（中身は本番と同じで、コードは読むだけ）。
-- `pipeline/verify/boundaries.ts`: `WEB_CLOUDFLARE_KEYS` に R2 の key を足し、R2 の binding は名前 `PAGE_WORDS`・バケット `fudoki-page-words` の1つだけを許す検査を足す。`apps/AGENTS.md` と `void.config.ts` の冒頭の注記の「web はデータの binding を持たない」も、この例外を書き足す。
-- binding は Workers の仕様で put・delete もできる。コードの型は `get` だけを持たせ、書き込み・削除を呼ぶコードを置かない。
-- `server/source-pages.ts` は Service Binding（`SOURCES`）をやめ、`words/<sha256>/index.json` と `words/<sha256>/<頁>.json` を get する。入力は出典の sha256（評価・予算案の `origin_id` は sha256 と同じ値）と物理頁。sha256 の形と頁の整数を検査してから key を組み立て、ほかの object は読めない。
-- 語を頁の文字に並べる処理（今の `source_text/layout.py`: 行にまとめる・列を揃える・語のつなぎ方・見開きを分ける）を TypeScript に移す（`apps/web/server/page-text.ts`）。返す文字の上限 `MAX_PAGE_CHARS`（12,000字）もここへ移す。
-- 目で確かめる手順（`.agents/skills/pipeline/references/source-text.md`）: `page-words:preview <pdf> [頁…]`（pipeline）が語の JSON を出し、`bun run --cwd apps/web page-text:preview <語の JSON>` が並べる。
-- apps/api の `SourcePages`・`source-pages.ts`・R2 の binding `SOURCE_TEXT` は、web の切り替えを本番で確かめたあとに消す。
+### api の公開と内部の区別
+
+- 公開の REST・MCP は、route・tool ごとに読む表を名前で指している（`columns.ts`）。`source_page_text` を読むのは内部の RPC（`source-pages.ts`）だけにする。
+- 区別を検査で守る。`columns.json` の表に `internal: true` の印を付け（dbt の `_models.yml` の `meta` から `serving:columns` が写す）、apps/api の試験で、印の付いた表を参照するのが `source-pages.ts` だけであることを確かめる。
+- `readSourcePage` は R2 の代わりに D1 の `source_page_text` を `(sha256, page)` で引く。出典の照合（`evaluation_origin`・`budget_proposal_origin`）と、返す文字の上限 `MAX_PAGE_CHARS`（12,000字）は今のまま。
+- R2 の binding `SOURCE_TEXT` と `SourceTextBucket` の型は消す。web の `read_source_page` と Service Binding は変えない。
 
 ## Alternatives Considered
 
-- pipeline が語の層から頁の文字まで作って置く（今の形の入力だけを替える）: 変更は小さい。web だけが使う文の並べ方を pipeline が持ち続け、並べ方を直すたびに全件を作り直す。
-- 取り込みは今の読み方のまま、AI 用だけ語の層から作る: OCR や語の取り方の直しが取り込みに伝わらない問題が残る。
-- `observe.py` に `size` を足して共通の入口にする: fiscal の全表の指紋が古くなり、全表 refresh が要る。fiscal は変えずに済む新しいモジュールにする。
+- 頁の文字を R2 に置き、web だけに binding を持たせ、並べ方を web（TypeScript）に移す: api を通らずに済む。一方で、保存の経路が marts → D1 と別にもう1本でき、web にデータの binding を持たせない規約（`pipeline/verify/boundaries.ts`）に例外が要る。並べ方の移植と、Python との突き合わせも要る。
+- 今のまま R2 の `source-text/` に置き、api が読む: 変更は小さい。api の R2 binding が元の PDF のバケット全体を指したまま残る。
+- `observe.py` に `size` を足して共通の入口にする: fiscal の全表の指紋が古くなり、全表 refresh が要る。
 - 評価シート・プレスも fiscal の汎用の変換器（木の組み立て）に載せる: 書式が違いすぎる。語の層を共通にするだけで目的は足りる。
-- 資料ごとに1つの JSON: 1頁を読むたびに全頁を `JSON.parse` することになり、大きい資料で Worker の CPU に響く。
-- 頁の文字を api が作る: api は配るデータの担い手で、これは配らないデータなので持たせない。
+- 取り込みは今の読み方のまま、AI 用だけ語の層から作る: OCR や語の取り方の直しが取り込みに伝わらない問題が残る。
 
 ## Cross-Cutting Concerns
 
-- 利用条件: 語の層も資料の文章そのもの。公開の REST・MCP・画面に出さない。
-- 容量: 語ごとに位置を持つので、今の頁の文字より数倍大きくなる見込み。最初に50件で測ってから全件を置く。
-- 費用: R2 の読み取り（Class B）が1頁あたり2回（index と頁）。会話の段数の上限（`MAX_STEPS`）がそのまま上限になる。
-- Poppler の版: 語は版で変わるので、`page-words:save` と取り込みは mise で固定した版を確かめる（`ingestion/lib/poppler.py` の `require`）。
+- 利用条件: 頁の文字は資料の文章そのもの。公開の REST・MCP・画面に出さない。
+- 容量: 今の source-text は全 4,245件で 402MB（中央値 25KB）。評価・プレスはその一部で、D1 の上限（10GB）に収まる。最初に全件の合計を測ってから写す。
+- D1 の書き込み: 初回は頁の数だけ行を書く（評価・プレス 1,674件、平均50頁として約8万行）。以降は `serving:sync` の差分だけ。本番 D1 への書き込みは確認を取ってから。
+- 1行の大きさ: 頁の文字は 12,000字を超えるものがある。D1 の1行の上限（2MB）と1文の上限（100KB、`sync_d1.py` の `MAX_STATEMENT_BYTES`）に収まるかを確かめ、収まらない頁は分けて持つか切る。
+- Poppler の版: 語は版で変わるので、取り込みと頁の文字は mise で固定した版を確かめる（`ingestion/lib/poppler.py` の `require`）。
 
 ## Validation / Rollout
 
@@ -108,8 +115,7 @@ flowchart LR
 1. `page_words.py` を作る。`ingestion:refresh --plan` で fiscal の表が古くならないことを確かめる。
 2. 評価シートを語の層へ移し、基準と全件で突き合わせる（取り込みの PR）。
 3. プレスを語の層へ移し、基準と全件で突き合わせる。個別の規則は1団体ずつ（取り込みの PR、団体ごとに分けてよい）。
-4. `page-words:save` を作り、50件で容量を測ってから全件を置く。
-5. `page-text.ts` を作る。今の `source-text/` の評価・プレスから数百頁を選び、Python の `layout.py` の出力を基準に TS の出力と差を取る。語の取り方が生の `-bbox` から `page_words`（見えない複製を落とす）に替わる分の差は、種類を確かめて許す。品川の評価シート 211頁が `目標 258 324 390 418 418 / 実績 236 310 364` になることも確かめる。
-6. web に binding を足して `read_source_page` を新しいバケットへ切り替える（web の PR。api は変えない）。本番で事業の詳細を聞いて読めることを確かめる。
-7. apps/api の `SourcePages` と binding を消す（api の PR）。`deploy-web.yml` は api も変わった push では deploy-api を待ってから web を出すので、6 と同じ PR にすると、web が消えた entrypoint を呼ぶ時間ができる。
-8. R2 の `source-text/` を消す（確認を取ってから）。
+4. 頁の文字を語の層から作り、今の R2 の `source-text/` と数百頁を突き合わせる。語の取り方が生の `-bbox` から `page_words`（見えない複製を落とす）に替わる分の差は、種類を確かめて許す。品川の評価シート 211頁が `目標 258 324 390 418 418 / 実績 236 310 364` になることも確かめる。
+5. marts `source_page_text` と `internal` の印・試験を足し、本番 D1 に写す（確認を取ってから）。
+6. api の `readSourcePage` を D1 に切り替え、R2 の binding を外す（api の PR）。web は変えないので、deploy の順は問わない。
+7. R2 の `source-text/` を消す（確認を取ってから）。
