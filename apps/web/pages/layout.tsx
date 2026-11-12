@@ -12,12 +12,12 @@ const sectionOf = (path: string): NavSection | undefined => {
 }
 
 export default function Layout({ children }: { children: React.ReactNode }) {
-  const { navOpen, theme } = useShared()
+  const { navOpen } = useShared()
   const { path } = useRouter()
   return (
     <div className="site">
       <div id="site-nav">
-        <SiteNav active={sectionOf(path)} open={navOpen} theme={theme} />
+        <SiteNav active={sectionOf(path)} open={navOpen} />
       </div>
       <div className="site-main">{children}</div>
     </div>

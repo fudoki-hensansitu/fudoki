@@ -40,6 +40,10 @@ export const YEAR_SEGMENT = /^\d{4}$/
  */
 export const PAGE_CACHE = 'public, max-age=300'
 
+// 自治体の頁の .server.ts は `export const revalidate = 3600` で Void の ISR（CDN の cache）に1時間置く。過ぎたら古い頁を返しながら裏で描き直す。
+// Void は build のときにこの値を字面で読むので、定数を import せず各頁に数字で書く。データは取り込みのときだけ変わり、頁のデータの Worker の cache
+// （server/jurisdiction-routes.ts）も1時間なので揃える。cookie の付いた要求（サイドバーを閉じた人）は ISR を通らない
+
 export async function jurisdictionProps(c: Context, path: string, yearSegment?: string): Promise<JurisdictionProps> {
   const env = c.env as unknown as Env
   let view: JurisdictionView | null
@@ -122,7 +126,10 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
     // 試験など ExecutionContext の無いところでは、間に合わなかった分は捨てる
   }
   const snapshot = await appDataForPage(env, entry, year, waitUntil)
-  return snapshot ? { ...props, snapshot } : props
+  if (snapshot) return { ...props, snapshot }
+  // 本文の無い頁は CDN に置かない（置くと1時間、本文の無い HTML を返し続ける）
+  c.header('x-revalidate', '0')
+  return props
 }
 
 /** 分野の頁とタブの頁は、題・説明文・canonical をその頁のものにする */

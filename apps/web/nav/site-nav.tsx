@@ -21,14 +21,14 @@ import { TooltipProvider } from '@/components/ui/tooltip'
 import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
-import { applyTheme, type Theme } from './theme'
+import { applyTheme, currentTheme, DEFAULT_THEME, type Theme } from './theme'
 import { ListMagnifyingGlassIcon } from '@phosphor-icons/react'
 import { NavContent } from './nav-content'
 
 
 export const NAV_SECTIONS = ['home', 'assistant', 'search'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
-export type SiteNavProps = { active?: NavSection; open: boolean; theme: Theme }
+export type SiteNavProps = { active?: NavSection; open: boolean }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
 function NavLink(props: React.AnchorHTMLAttributes<HTMLAnchorElement> & { href: string }) {
   if (props.href.startsWith('https://')) return <a target="_blank" rel="noopener" {...props} />
@@ -229,8 +229,10 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
   )
 }
 
-export function SiteNav({ active, open, theme: initialTheme }: SiteNavProps) {
-  const [theme, setTheme] = React.useState(initialTheme)
+export function SiteNav({ active, open }: SiteNavProps) {
+  // サーバーはテーマを知らない（HTML を誰にでも同じにする）。選択肢の印は hydrate の後に <head> の script が付けた印から読む
+  const [theme, setTheme] = React.useState<Theme>(DEFAULT_THEME)
+  React.useEffect(() => setTheme(currentTheme()), [])
   const pickTheme = (t: Theme) => {
     setTheme(t)
     applyTheme(t)

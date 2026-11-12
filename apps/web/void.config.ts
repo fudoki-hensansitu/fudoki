@@ -3,6 +3,7 @@
 // 例外は web 自身のデータの D1（binding DB・fudoki-web。AI との会話の保存と、外部サービスから引く参照データ）だけ。風土記のデータではなく、web だけが使う別の D1 にする
 import { defineConfig } from 'void/config'
 import { SW_REGISTER } from './pwa'
+import { THEME_SCRIPT } from './nav/theme'
 
 // PR ごとの preview の build か。cf previews deploy と deploy-preview-web.yml が CLOUDFLARE_PREVIEW_BUILD=true で build する。
 // void は Cloudflare の設定を cf の形へ移すとき wrangler の previews を受け付けないので、preview の差し替えはここで分ける
@@ -57,8 +58,9 @@ export default defineConfig({
       // AI 向けの案内（public/llms.txt）。API・MCP の文書は docs.fudoki.dev の llms.txt を指す
       { rel: 'llms-txt', href: '/llms.txt' },
     ],
-    // service worker（routes/sw.js.ts）は繋がらないときの案内だけを持つ
-    script: [{ innerHTML: SW_REGISTER }],
+    // service worker（routes/sw.js.ts）は繋がらないときの案内だけを持つ。
+    // テーマ（nav/theme.ts）は描く前に当てる。サーバーはテーマで HTML を書き分けない
+    script: [{ innerHTML: THEME_SCRIPT }, { innerHTML: SW_REGISTER }],
   },
   worker: {
     compatibility_date: '2026-08-23',

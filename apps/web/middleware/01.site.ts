@@ -1,13 +1,14 @@
-// 全頁に共通するもの。サイドバーの開閉とテーマ（cookie）を layout へ渡し（useShared）、テーマを html の data-theme に書き、HTML の応答に CSP（server/csp.ts）を付け、<head> に Void の head では書けないものを足す:
-// ライト・ダークの theme-color（Void の head は meta を name で1つにまとめる）と、読み直しの移動でも View Transition でつなぐ opt-in（style）
+// 全頁に共通するもの。サイドバーの開閉（cookie）を layout へ渡し（useShared）、HTML の応答に CSP（server/csp.ts）を付け、<head> に Void の head では書けないものを足す:
+// 既定（ライト）の theme-color（選んだテーマへの差し替えは <head> の THEME_SCRIPT）と、読み直しの移動でも View Transition でつなぐ opt-in（style）。
+// テーマはブラウザで当てるので、cookie の無い要求にはどの人にも同じ HTML を返す（CDN の cache に置ける）
 import { defineMiddleware } from 'void'
 import { SIDEBAR_COOKIE } from '../nav/site-nav'
 import { pageCsp } from '../server/csp'
-import { themeColorMeta, themeFromCookie, type Theme } from '../nav/theme'
+import { DEFAULT_THEME, themeColorMeta } from '../nav/theme'
 
 declare module 'void' {
   interface CloudContextVariables {
-    shared: { navOpen: boolean; theme: Theme }
+    shared: { navOpen: boolean }
   }
 }
 
@@ -22,16 +23,13 @@ export const navOpen = (cookie: string | undefined) => !new RegExp(`(?:^|;\\s*)$
 
 export default defineMiddleware(async (c, next) => {
   const cookie = c.req.header('Cookie')
-  const theme = themeFromCookie(cookie)
-  c.set('shared', { navOpen: navOpen(cookie), theme })
+  c.set('shared', { navOpen: navOpen(cookie) })
   await next()
   if (!c.res.headers.get('Content-Type')?.startsWith('text/html')) return
-  // サイドバーの開閉・テーマを cookie で変えて書くので、開閉の違う HTML を取り違えさせない
-  c.res.headers.append('Vary', 'Cookie')
+  // サイドバーを閉じた人（cookie あり）には閉じた HTML を書くので、ブラウザの cache で取り違えさせない。
+  // cookie の無い要求の HTML は誰にでも同じなので Vary を付けない（Vary の付いた応答は ISR の cache に置かれない。cookie の付いた要求は ISR を通らない）
+  if (cookie) c.res.headers.append('Vary', 'Cookie')
   // View の器（routes/view-frame.ts）のように自分の policy を持つ応答はそのままにする
   if (!c.res.headers.has('Content-Security-Policy')) c.res.headers.set('Content-Security-Policy', await pageCsp())
-  c.res = new HTMLRewriter()
-    .on('html', { element: (e) => void (theme !== 'system' && e.setAttribute('data-theme', theme)) })
-    .on('head', { element: (e) => void e.append(`${themeColorMeta(theme)}\n${PAGE_TRANSITION_STYLE}`, { html: true }) })
-    .transform(c.res)
+  c.res = new HTMLRewriter().on('head', { element: (e) => void e.append(`${themeColorMeta(DEFAULT_THEME)}\n${PAGE_TRANSITION_STYLE}`, { html: true }) }).transform(c.res)
 })
