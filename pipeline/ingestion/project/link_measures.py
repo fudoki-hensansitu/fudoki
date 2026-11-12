@@ -1,6 +1,6 @@
 """予算案のプレス発表の施策を、同じ年度の当初予算書の内訳（事業）の1行に紐付け、seed に書く（風土記の判断）。
 
-    bun run --cwd pipeline project:link-measures            # seed に無い施策だけ紐付ける（Jev を呼ぶ。CI では回さない）
+    bun run --cwd pipeline project:link-measures            # seed に無い施策だけ紐付ける。読んだ自治体の seed で施策に当たらない行は落とす（Jev を呼ぶ。CI では回さない）
     bun run --cwd pipeline project:link-measures --refresh  # 全部を紐付け直す
 
 入力は dbt を build した warehouse（`ingestion.project_budget_measure` と `expenditure_detail`）。手順は
