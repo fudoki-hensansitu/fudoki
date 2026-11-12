@@ -11,8 +11,8 @@ import { appPageYears } from '../jurisdiction/types'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
 const ACCOUNT = '一般会計'
-/** 内訳を ID で引くときの1回の数（API の bind の上限 90 から資料区分・年度の2つを除く） */
-const ID_CHUNK = 88
+/** 内訳を ID で引くときの1回の数（API の bind の上限 90 から資料区分・年度・自治体の3つを除く） */
+const ID_CHUNK = 87
 
 const api = (env: Env) => hc<AppType>(API_ORIGIN, { fetch: apiFetch(env) })
 type Api = ReturnType<typeof api>
@@ -65,10 +65,10 @@ export function appYears(entry: Pick<CatalogEntry, 'initialYears' | 'settlementY
   return years.map((year) => ({ year, kind: year > last ? 'initial' : 'settlement' }))
 }
 
-/** 施策の内訳が載る科目。内訳を ID で引く（D1 の bind の上限に合わせて区切る） */
-async function subjectOfDetails(env: Env, year: number, ids: string[]): Promise<Map<string, string>> {
+/** 施策の内訳が載る科目。内訳を ID で引く（D1 の bind の上限に合わせて区切る）。自治体でも絞らないと、D1 が年度の索引でその年度の内訳を全部読む */
+async function subjectOfDetails(env: Env, code: string, year: number, ids: string[]): Promise<Map<string, string>> {
   const chunks = Array.from({ length: Math.ceil(ids.length / ID_CHUNK) }, (_, i) => ids.slice(i * ID_CHUNK, (i + 1) * ID_CHUNK))
-  const pages = await Promise.all(chunks.map((c) => parseResponse(api(env).v1.expenditures['details:search'].$post({ json: { document_kind: 'initial', fiscal_year: { min: year, max: year }, where: { detail_id: { eq: c } }, page_size: 1000 } as SubjectBody }))))
+  const pages = await Promise.all(chunks.map((c) => parseResponse(api(env).v1.expenditures['details:search'].$post({ json: { document_kind: 'initial', fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, detail_id: { eq: c } }, page_size: 1000 } as SubjectBody }))))
   return new Map(pages.flatMap((r) => r.details.map((d) => [d.detail_id, d.subject_id] as const)))
 }
 
@@ -124,7 +124,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const measureDetails = [...new Set(measures.flatMap((m) => (m.expenditure_detail_id ? [m.expenditure_detail_id] : [])))]
   const [pages, subjectOfDetail] = await Promise.all([
     Promise.all(queries.map((q) => listPage(q, undefined, apiFetch(env)).then((p) => [listKey(q), p] as const))),
-    measureDetails.length ? subjectOfDetails(env, year, measureDetails) : Promise.resolve(new Map<string, string>()),
+    measureDetails.length ? subjectOfDetails(env, entry.code, year, measureDetails) : Promise.resolve(new Map<string, string>()),
   ])
 
   const measuresOut: Measure[] = measures.map((m) => ({

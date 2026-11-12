@@ -1,7 +1,7 @@
 // 事業の集約（docs/prd/jurisdiction-page-data/project-domain-model.md）: 予算書の事業の行を1つずつ事業にし、年度をまたいでつないだ木。
 // 守ること: 1つの年度に事業の金額は1つ。1つの内訳は高々1つの事業の年度に入る。金額は事業の木で足さず、資料ごとに末端の内訳を足す。
 import { z } from 'zod'
-import { described, PROJECT_YEAR_TABLE } from '../columns'
+import { described, PROJECT_YEAR_SEARCH } from '../columns'
 import { FiscalYear, JurisdictionCode, RowId } from '../shared/model'
 import { MAX_TOTAL_SIZE, nextPageToken } from '../shared/paging'
 import { yearSearchInputFor } from '../shared/search'
@@ -81,11 +81,6 @@ export const ProjectYearRow = z
       settlement_expenditure_subject_id: z.string().nullable(),
       budget_yen: z.int().nullable(),
       settled_yen: z.int().nullable(),
-      first_year: z.int(),
-      first_year_kind: z.enum(['confirmed', 'before_coverage']),
-      last_year: z.int().nullable(),
-      last_year_kind: z.enum(['confirmed', 'latest', 'unknown']),
-      parent_project_id: z.string().nullable(),
     })
   )
   .meta({ id: 'ProjectYearRow', description: '事業の1年度（当初予算と決算の事業の行）。' })
@@ -102,9 +97,11 @@ export const ProjectOutput = z.strictObject({
 })
 export type ProjectOutput = z.infer<typeof ProjectOutput>
 
-export const ProjectSearchInput = yearSearchInputFor(PROJECT_YEAR_TABLE)
+/** 条件には事業の年度の列に加え、事業の始め・終え・親（first_year・first_year_kind・last_year・last_year_kind・parent_project_id）も使える */
+export const ProjectSearchInput = yearSearchInputFor(PROJECT_YEAR_SEARCH)
 export const ProjectSearchOutput = z.strictObject({
   project_years: z.array(ProjectYearRow),
+  projects: z.array(ProjectRow).describe('この頁の事業の年度が属する事業（project_id の順）。'),
   total_size: z.int().min(0).describe(`条件に当たる事業の年度の数（頁をまたいだ合計）。${MAX_TOTAL_SIZE.toLocaleString('en-US')} で数えるのをやめる。`),
   total_size_capped: z.boolean().describe(`true なら ${MAX_TOTAL_SIZE.toLocaleString('en-US')} 件で数えるのをやめていて、total_size は下限。`),
   next_page_token: nextPageToken,

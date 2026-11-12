@@ -116,6 +116,24 @@ export const BUDGET_MEASURE_TABLE = fiscalTable('budget_measures', 'budget_measu
 export const PROJECT_TABLE = 'project'
 export const PROJECT_YEAR_TABLE = fiscalTable('project_years', 'project_year')
 
+/** 事業の年度を事業の列（始め・終え・親）でも絞るための列。値は project にだけあり、検索の中で JOIN して引く（同じ事業の集約の中） */
+export const PROJECT_FILTER_COLUMNS = ['first_year', 'first_year_kind', 'last_year', 'last_year_kind', 'parent_project_id'] as const
+
+/** 事業の年度の検索の対象。行は事業の年度の列だけを返し、条件には事業の列も使える */
+export const PROJECT_YEAR_SEARCH: FiscalTable = (() => {
+  const y = PROJECT_YEAR_TABLE
+  const extra = PROJECT_FILTER_COLUMNS.map((n) => TABLES[PROJECT_TABLE]!.columns.find((c) => c.name === n)!)
+  const columns = [...y.columns, ...extra]
+  const yearList = y.columns.map((c) => `y."${c.name}"`).join(', ')
+  const projectList = PROJECT_FILTER_COLUMNS.map((n) => `p."${n}"`).join(', ')
+  return {
+    ...y,
+    table: `(SELECT ${yearList}, ${projectList} FROM ${y.table} y JOIN ${PROJECT_TABLE} p ON p."project_id" = y."project_id")`,
+    columns,
+    types: new Map(columns.map((c) => [c.name, c.type])),
+  }
+})()
+
 /**
  * 手で書いた行の schema の各列に、columns.json（dbt の _models.yml）の説明を付ける。
  * 列の集合・型・null の可否・accepted_values が columns.json と合うかは model.test.ts が照合する。

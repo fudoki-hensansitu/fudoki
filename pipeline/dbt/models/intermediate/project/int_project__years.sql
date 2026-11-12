@@ -1,5 +1,5 @@
 -- 事業の1年度。当初予算と決算の事業の行を、seed（project_line）の事業ID で1行にまとめる。
--- marts の project（始めた年度・終えた年度・親）と project_year（それを写す）の両方の元にする。
+-- marts の project（始めた年度・終えた年度・親）と project_year（年度ごとの行）の元にする。
 -- 事業の行は資料ごとに1つ。金額は出典の金額で、事業の木では足さない（子の事業の額は親の額に含まれる）。
 with lines as (
     select s.project_id, l.*

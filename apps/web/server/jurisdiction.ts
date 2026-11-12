@@ -348,6 +348,9 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
   if (latest === undefined) return null
   const years = shownSettlementYears(entry.settlementYears)
   const range = { min: years[0]!, max: latest }
+  // 流れ図・予算は款・目と別に読めるので、先に並べて投げる（順に待つと API の往復が積み重なる）
+  const rest = Promise.all([loadFlow(env, entry.code, latest), loadCofogFlow(env, entry.code, latest), Promise.all(entry.initialYears.filter((y) => y > latest).map((y) => loadBudget(env, entry.code, y)))])
+  rest.catch(() => {})
   const [kanRes, mokuRes] = await Promise.all([search(env, entry.code, range, '款'), search(env, entry.code, { min: latest, max: latest }, '目', {}, CANDIDATES)])
   // 積立・公債・予備費の款は「事業」ではないので、力を入れている事業の候補から外す
   const picked = mokuRes.subjects.filter((n) => !NOT_PROJECT_KAN.has(n.kan_name ?? '')).slice(0, PROJECT_COUNT)
@@ -355,6 +358,7 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
     years.includes(latest - 1) && picked.length > 0
       ? await search(env, entry.code, { min: latest - 1, max: latest - 1 }, '目', { name: { eq: [...new Set(picked.map((n) => n.name))] } }, 200)
       : { subjects: [] as ApiSubject[] }
+  const [flow, cofogFlow, budgets] = await rest
   const totals: YearTotal[] = years.map((year) => {
     const kan = kanRes.subjects.filter((n) => n.fiscal_year === year).map(line)
     return { year, yen: kan.reduce((s, k) => s + k.yen, 0), kan }
@@ -376,9 +380,9 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
     population: entry.population,
     originTitle: kanRes.origins?.find((o) => o.origin_id === kanRes.subjects.find((n) => n.fiscal_year === latest)?.origin_id)?.title ?? null,
     years: totals,
-    flow: await loadFlow(env, entry.code, latest),
-    cofogFlow: await loadCofogFlow(env, entry.code, latest),
-    budgets: await Promise.all(entry.initialYears.filter((y) => y > latest).map((y) => loadBudget(env, entry.code, y))),
+    flow,
+    cofogFlow,
+    budgets,
     projects,
   }
 }

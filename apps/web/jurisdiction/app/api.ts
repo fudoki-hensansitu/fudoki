@@ -65,7 +65,10 @@ const clean = (name: string) => name.replace(/【[^】]*】/g, '').trim()
 /** 出典の事業名の【】は所管課。名前からは外して別に持つ */
 const deptOf = (name: string) => name.match(/【([^】]*)】/)?.[1] ?? null
 
-function toRow(y: YearRow, kind: Kind): ProjRow {
+type ProjectOf = Awaited<ReturnType<typeof searchYears>>['projects'][number]
+
+/** 事業の年度の行と、その事業（始め・終えは事業の列） */
+function toRow(y: YearRow, kind: Kind, p: ProjectOf | undefined): ProjRow {
   return {
     id: y.project_id,
     fy: y.fiscal_year,
@@ -74,13 +77,19 @@ function toRow(y: YearRow, kind: Kind): ProjRow {
     path: [y.kan_name, y.kou_name, y.moku_name],
     subject: (kind === 'initial' ? y.initial_expenditure_subject_id : y.settlement_expenditure_subject_id) ?? y.initial_expenditure_subject_id ?? y.settlement_expenditure_subject_id,
     yen: kind === 'initial' ? y.budget_yen : y.settled_yen,
-    started: y.first_year_kind === 'confirmed' ? y.first_year : null,
-    ended: y.last_year_kind === 'confirmed' ? y.last_year : null,
+    started: p?.first_year_kind === 'confirmed' ? p.first_year : null,
+    ended: p?.last_year_kind === 'confirmed' ? p.last_year : null,
     details: [y.initial_expenditure_detail_id, y.settlement_expenditure_detail_id].filter((x): x is string => !!x),
   }
 }
 
 const searchYears = (f: typeof fetch | undefined, json: SearchBody) => parseResponse(client(f).v1['projects:search'].$post({ json }))
+
+/** 検索の応答の行を、行の事業と合わせて組む */
+const rowsOf = (r: Awaited<ReturnType<typeof searchYears>>, kind: Kind) => {
+  const projects = new Map(r.projects.map((p) => [p.project_id, p]))
+  return r.project_years.map((y) => toRow(y, kind, projects.get(y.project_id)))
+}
 
 function bodyOf(q: ListQuery, pageSize: number, token?: string): { body: SearchBody; kind: Kind } {
   const ended = q.filter === 'ended'
@@ -107,7 +116,7 @@ export async function listPage(q: ListQuery, token?: string, f?: typeof fetch): 
   if (q.subjects && !q.subjects.length) return { rows: [], total: 0, capped: false, next: null }
   const { body, kind } = bodyOf(q, token ? NEXT_PAGE : FIRST_PAGE, token)
   const r = await searchYears(f, body)
-  return { rows: r.project_years.map((y) => toRow(y, kind)), total: r.total_size, capped: r.total_size_capped, next: r.next_page_token ?? null }
+  return { rows: rowsOf(r, kind), total: r.total_size, capped: r.total_size_capped, next: r.next_page_token ?? null }
 }
 
 /** 事業の詳細: 年度ごとの額と、開いた年度の中の事業 */
@@ -157,6 +166,5 @@ export async function projectFull(id: string, year: number, kind: Kind, f?: type
 /** 施策（当初予算）・評価シート（決算）を紐付けた内訳が載る事業 */
 export async function projectOfDetail(detail: string, year: number, kind: Kind, f?: typeof fetch): Promise<ProjRow | null> {
   const r = await searchYears(f, { fiscal_year: { min: year, max: year }, where: { [`${kind}_expenditure_detail_id`]: { eq: [detail] } }, page_size: 1 } as SearchBody)
-  const y = r.project_years[0]
-  return y ? toRow(y, kind) : null
+  return rowsOf(r, kind)[0] ?? null
 }
