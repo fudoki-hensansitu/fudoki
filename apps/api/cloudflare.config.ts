@@ -20,8 +20,6 @@ export default defineConfig({
     env: {
       DB: bindings.d1({ name: 'fudoki-api', id: 'b9b6f209-083e-45b3-a896-1014a17a15f9' }),
       ORIGIN_PDF: bindings.durableObject({ worker: 'fudoki-api', exportName: 'OriginPdfRelay' }),
-      // 出典の頁の文字（source-text/）。コードからは get だけを使う（src/source-pages.ts の型が読み取りだけ）
-      SOURCE_TEXT: bindings.r2({ name: 'fudoki-inputs' }),
     },
   },
 })

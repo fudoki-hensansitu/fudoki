@@ -3,6 +3,7 @@
     bun run --cwd pipeline serving:sync -- --database-id <uuid> [--dry-run] [--full]
     bun run --cwd pipeline serving:sync -- --local [--persist-to <dir>] [--dry-run] [--full]
     ... --jurisdiction 131202 [--jurisdiction ...]   # その自治体の行だけを差分で書く（他の自治体の行には触れない）
+    ... --table source_page_text [--table ...]       # その表だけを同期する（ほかの表には触れない）
 
 既定は差分の同期（ADR 0040）。D1 の書き込みは行数で課金されるので、変わった行だけを書く。
 1. 開始時に、前回の失敗の残骸 `<表>__new`・`<表>__old` を無条件に drop する（本名の表には触らない）。
@@ -66,6 +67,8 @@ MEMORY_LIMIT = '1GB'
 READ_ROWS_PER_CALL = 4000
 # 突き合わせの1範囲の行数。1回の cf 呼び出しで READ_ROWS_PER_CALL // RANGE_ROWS 範囲を読む
 RANGE_ROWS = 1000
+# 1行が大きい表の、1回の cf 呼び出しで読み戻す行数（1範囲もこの行数にする）。頁の文字は1行が最大約 36KB
+READ_ROWS_BY_TABLE = {'source_page_text': 200}
 # 変わる行が表のこの割合を超えたら、差分ではなく作り直す（既存の行の置き換えは delete と insert の2回分書く）
 REBUILD_RATIO = 0.5
 # delete の1文に入れる主キーの数
@@ -76,7 +79,8 @@ TABLE_ORDER = ['jurisdiction',
                'expenditure', 'expenditure_origin', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
                'expenditure_location',
                'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
-               'budget_proposal', 'budget_proposal_origin', 'budget_measure', 'project', 'project_year']
+               'budget_proposal', 'budget_proposal_origin', 'budget_measure', 'project', 'project_year',
+               'source_page_text']
 # 集約ごとの作り直し（docs/prd/aggregate-api/dd.md）より前の表。新しい Worker の deploy を確かめてから --drop-legacy で消す
 LEGACY_TABLES = ['fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expenditure_detail', 'fiscal_expenditure_location',
                  'fiscal_coverage', 'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator',
@@ -204,11 +208,15 @@ def and_where(where: str, condition: str) -> str:
     return f'{where} and {condition}' if where else f' where {condition}'
 
 
+def range_rows_of(table: str) -> int:
+    return min(RANGE_ROWS, READ_ROWS_BY_TABLE.get(table, RANGE_ROWS))
+
+
 def key_ranges(con: duckdb.DuckDBPyConnection, table: str, key: str, where: str = '') -> list[tuple[str | None, str | None]]:
-    """warehouse の主キー順に RANGE_ROWS 行ずつの範囲 [lo, hi)。両端は開いていて、D1 にだけある行もどれかの範囲に入る。"""
+    """warehouse の主キー順に、表の範囲の行数（range_rows_of）ずつの範囲 [lo, hi)。両端は開いていて、D1 にだけある行もどれかの範囲に入る。"""
     bounds = [r[0] for r in con.execute(
         f'select "{key}" from (select "{key}", row_number() over (order by "{key}") - 1 as i from main."{table}"{where}) '
-        f'where i > 0 and i % {RANGE_ROWS} = 0 order by 1').fetchall()]
+        f'where i > 0 and i % {range_rows_of(table)} = 0 order by 1').fetchall()]
     edges: list[str | None] = [None, *bounds, None]
     return list(zip(edges, edges[1:]))
 
@@ -343,14 +351,19 @@ def schema_matches(name: str, spec: Table, columns: list[list], indexes: set[str
     return got == want and indexes == {contract.index_name(name, cols) for cols in spec['indexes']}
 
 
+def ordered(tables: dict[str, Table]) -> list[str]:
+    """同期する表を TABLE_ORDER の順に（--table で絞ったときはその表だけ）。"""
+    return [name for name in TABLE_ORDER if name in tables]
+
+
 def read_schemas(d1: D1, tables: dict[str, Table]) -> dict[str, bool]:
     """表ごとに、D1 の列と index が columns.json と同じか。"""
-    results = d1.batch(schema_statements(TABLE_ORDER))
+    results = d1.batch(schema_statements(ordered(tables)))
     indexes: dict[str, set[str]] = {}
     for tbl, idx in results[-1]['results']['rows']:
         indexes.setdefault(tbl, set()).add(idx)
     return {name: schema_matches(name, tables[name], result['results']['rows'], indexes.get(name, set()))
-            for name, result in zip(TABLE_ORDER, results)}
+            for name, result in zip(ordered(tables), results)}
 
 
 class TableDiff:
@@ -371,7 +384,7 @@ def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d
                ranges: list[tuple[str | None, str | None]] | None = None) -> TableDiff:
     """主キーの範囲ごとに D1 の d1_table を読み、warehouse の name と全列で突き合わせる。
 
-    1回の cf 呼び出しは READ_ROWS_PER_CALL 行ほどにまとめる。メモリにあるのはその分と、差のある主キーだけ。
+    1回の cf 呼び出しは READ_ROWS_PER_CALL 行（1行が大きい表は READ_ROWS_BY_TABLE の行数）ほどにまとめる。メモリにあるのはその分と、差のある主キーだけ。
     scope（自治体の条件）は D1 と warehouse の両方に掛ける。範囲の外の D1 の行は読まず、消す行にも出ない。
     """
     names = [c['name'] for c in spec['columns']]
@@ -380,7 +393,7 @@ def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d
     where = and_where('', scope) if scope else ''
     d1_scope = f' and {scope}' if scope else ''
     ranges = key_ranges(con, name, key, where) if ranges is None else ranges
-    per_call = max(1, READ_ROWS_PER_CALL // RANGE_ROWS)
+    per_call = max(1, READ_ROWS_BY_TABLE.get(name, READ_ROWS_PER_CALL) // range_rows_of(name))
     diff = TableDiff()
     for i in range(0, len(ranges), per_call):
         group = ranges[i:i + per_call]
@@ -430,12 +443,17 @@ def rss_mb() -> float:
 
 
 def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[str] | None = None, full: bool = False,
-         log: Callable[[str], None] = lambda m: print(m, flush=True)) -> int:
+         log: Callable[[str], None] = lambda m: print(m, flush=True), only: Sequence[str] | None = None) -> int:
     tables = contract.load()
     con = open_warehouse(warehouse)
     try:
         if contract.build(contract.warehouse_columns(warehouse, con)) != {'tables': tables}:
             raise SystemExit('columns.json が warehouse と食い違う。serving:columns で書き直す')
+        if only:
+            unknown = sorted(set(only) - tables.keys())
+            if unknown:
+                raise SystemExit(f'columns.json に無い表: {", ".join(unknown)}')
+            tables = {name: spec for name, spec in tables.items() if name in only}
         return run(d1, con, tables, dry_run, jurisdictions, full, log)
     finally:
         con.close()
@@ -452,10 +470,10 @@ def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table],
         d1.batch(cleanup_statements())
 
     # 1. 作り直す表と、差分で書く表を決める（D1 を読むだけ）
-    matches = read_schemas(d1, tables) if d1 and not full else {name: False for name in TABLE_ORDER}
+    matches = read_schemas(d1, tables) if d1 and not full else {name: False for name in ordered(tables)}
     rebuild: list[str] = []
     diffs: dict[str, TableDiff] = {}
-    for name in TABLE_ORDER:
+    for name in ordered(tables):
         spec = tables[name]
         rows = warehouse_count(con, name)
         if not matches[name]:
@@ -548,16 +566,16 @@ def run_scoped(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, 
     """その自治体の行だけを差分で書く。表を作り直さず、他の自治体の行を消さない。"""
     log(f'自治体を絞って同期する: {", ".join(jurisdictions)}（その自治体の行だけを書き、他の自治体の行には触れない）')
     started = time.time()
-    scopes = {name: scope_condition(name, [c['name'] for c in tables[name]['columns']], jurisdictions) for name in TABLE_ORDER}
+    scopes = {name: scope_condition(name, [c['name'] for c in tables[name]['columns']], jurisdictions) for name in ordered(tables)}
     if not d1:
-        for name in TABLE_ORDER:
+        for name in ordered(tables):
             log(f'{name}: {warehouse_count(con, name, and_where("", scopes[name]))} 行')
         log('dry-run: D1 には書いていない')
         return 0
     matches = read_schemas(d1, tables)
     existing = {r[0] for r in d1.batch([{'sql': "select name from sqlite_master where type = 'table'"}])[0]['results']['rows']}
     skipped = []
-    for name in [n for n in TABLE_ORDER if not matches[n]]:
+    for name in [n for n in ordered(tables) if not matches[n]]:
         # 列・index が違っても（表が無くても）、その自治体の行がどちらにも無い表は触らずに済む。
         # 親で絞る表は親の表も D1 に要る
         parent = PARENT_SCOPE.get(name, (None, None))[1]
@@ -568,7 +586,7 @@ def run_scoped(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, 
         skipped.append(name)
         log(f'{name}: D1 の列・index が違うが、その自治体の行がどちらにも無いので触らない')
     diffs: dict[str, TableDiff] = {}
-    for name in [n for n in TABLE_ORDER if n not in skipped]:
+    for name in [n for n in ordered(tables) if n not in skipped]:
         spec = tables[name]
         diff = diffs[name] = diff_table(d1, con, name, spec, name, scopes[name])
         rows = warehouse_count(con, name, and_where('', scopes[name]))
@@ -596,6 +614,8 @@ def main() -> int:
                         help='その自治体の行だけを差分で書く（複数指定可）。他の自治体の行には触れない。省略は全件')
     parser.add_argument('--dry-run', action='store_true', help='書かずに、書く予定の行数を出す（D1 を指定すれば D1 を読んで差分を数える）')
     parser.add_argument('--full', action='store_true', help='差分ではなく全表を作り直す')
+    parser.add_argument('--table', action='append', metavar='表',
+                        help='その表だけを同期する（複数指定可）。ほかの表には触れない。省略は全表')
     parser.add_argument('--drop-legacy', action='store_true',
                         help='同期せず、作り直し前の表（LEGACY_TABLES）を drop する。新しい Worker の deploy を確かめてから流す')
     args = parser.parse_args()
@@ -609,7 +629,7 @@ def main() -> int:
             d1.batch(statements)
         print('\n'.join(s['sql'] for s in statements) + ('\ndry-run: D1 には書いていない' if args.dry_run or not d1 else ''))
         return 0
-    return sync(d1, args.warehouse, args.dry_run, args.jurisdiction, args.full)
+    return sync(d1, args.warehouse, args.dry_run, args.jurisdiction, args.full, only=args.table)
 
 
 if __name__ == '__main__':

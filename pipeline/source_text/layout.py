@@ -1,21 +1,15 @@
-"""PDF の頁の文字を、語の位置で行にまとめて並べる。
+"""PDF の頁の文字を、語の位置で行にまとめて並べる。アシスタントが読む頁の文字（marts の `source_page_text`）になる。
 
-`pdftotext -bbox` の語（文字の層の単語と座標）から、縦の位置で行にまとめ、語の左端の位置まで空白で寄せる。
+語の層（`ingestion/generic/page_words.py`）の語から、縦の位置で行にまとめ、語の左端の位置まで空白で寄せる。
 表の列が行をまたいで揃い、見出しの年度と値の対応が文字列からも読める。
 横長の頁で、幅の中ほどにどの語も跨がない縦の隙間があり、左右の行の高さが揃っていなければ、
 左右の段（見開き・2段組み）に分けて左から順に並べる。縦長の頁の表の列の隙間や、見開きにまたがる表の行は分けない。
 """
 from __future__ import annotations
 
-import html
-import re
-import subprocess
 import unicodedata
 from pathlib import Path
 from statistics import median
-
-PAGE = re.compile(r'<page width="([\d.]+)" height="([\d.]+)">(.*?)</page>', re.S)
-WORD = re.compile(r'<word xMin="([\d.]+)" yMin="([\d.]+)" xMax="([\d.]+)" yMax="([\d.]+)">(.*?)</word>')
 
 # 段の境目を探す範囲（頁の幅に対する割合）と、境目とみなす隙間の最小の幅
 GUTTER_RANGE = (0.35, 0.65)
@@ -36,13 +30,9 @@ Word = tuple[float, float, float, float, str]
 
 def page_texts(path: Path) -> list[str]:
     """頁ごとの文字（物理頁の順）。文字の層の無い頁は空文字。"""
-    out = subprocess.run(['pdftotext', '-bbox', '-enc', 'UTF-8', str(path), '-'],
-                         check=True, capture_output=True, text=True).stdout
-    return [page_text(float(width), float(height), words(body)) for width, height, body in PAGE.findall(out)]
+    from ingestion.generic import page_words
 
-
-def words(body: str) -> list[Word]:
-    return [(float(x0), float(y0), float(x1), float(y1), html.unescape(text)) for x0, y0, x1, y1, text in WORD.findall(body)]
+    return [page_text(p.width, p.height, [(w.x0, w.y0, w.x1, w.y1, w.text) for w in p.words]) for p in page_words.pages(path)]
 
 
 def page_text(width: float, height: float, page_words: list[Word]) -> str:
@@ -129,13 +119,10 @@ def lines(column: list[Word]) -> list[str]:
 def main(argv: list[str]) -> int:
     import argparse
 
-    parser = argparse.ArgumentParser(description='PDF の頁の文字を、R2 に置くときと同じ組み方で表示する（抜き出しの目視の確認用）')
+    parser = argparse.ArgumentParser(description='PDF の頁の文字を、marts に入れるときと同じ組み方で表示する（抜き出しの目視の確認用）')
     parser.add_argument('pdf', type=Path)
     parser.add_argument('pages', nargs='*', type=int, help='物理頁（1始まり）。省略すると最初の3頁')
     args = parser.parse_args(argv)
-    from ingestion.lib import poppler
-
-    poppler.require()  # 語は Poppler の版で変わる（ingestion/lib/poppler.py）
     texts = page_texts(args.pdf)
     for page in args.pages or range(1, min(3, len(texts)) + 1):
         text = texts[page - 1]

@@ -136,12 +136,15 @@ selected_amounts as (
 ), siblings as (
     -- Items printed with an amount right under a numbered 款・項・目 count as siblings across the tables of one
     -- document and division: an account printed in volumes (132080) can print two same-named projects of one 目,
-    -- one in each volume, and they are two nodes. A copy printed without its amount (`continued_rows`) stays
-    -- within its table, so it still joins the row that prints the amount.
+    -- one in each volume, and they are two nodes. A copy printed without its amount on the first page of its table
+    -- (`continued_rows`) stays within its table, so it still joins the row that prints the amount. An item printed
+    -- without its amount further on is an item of its own (132195 R7 決算 p219 `プール指導員配置`, beside the one
+    -- on p211), so it counts among the siblings of the 目 like the items that print one.
     select * exclude (visited, under_subject, sibling_scope),
         row_number() over sibling as sibling_ordinal, count(*) over sibling_group as sibling_count
     from (
-        select *, case when under_subject and axis_header <> subject_axis and amount_yen is not null and coalesce(moku_code, kou_code) is not null
+        select *, case when under_subject and axis_header <> subject_axis and coalesce(moku_code, kou_code) is not null
+                            and (amount_yen is not null or physical_page > min(physical_page) over (partition by source_table_key))
                        then to_json([jurisdiction_code, fiscal_year::varchar, document_kind, account_name, division,
                                      coalesce(kan_code, 'name:' || kan_name), kou_code, moku_code])::varchar
                        else to_json([source_table_key, parent_node_key])::varchar end as sibling_scope
