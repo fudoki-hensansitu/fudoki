@@ -920,7 +920,7 @@
           "name": "name",
           "type": "string",
           "nullable": false,
-          "description": "シートの小事業名。"
+          "description": "シートの事業名（品川は小事業名）。"
         },
         {
           "name": "account_name",
@@ -968,19 +968,19 @@
           "name": "budget_yen",
           "type": "integer",
           "nullable": true,
-          "description": "シートの予算・決算（概要）の計の予算現額（円）。"
+          "description": "シートの予算額（円）。品川は予算・決算（概要）の計の予算現額。他の自治体は宣言（origins.json の note）の欄。"
         },
         {
           "name": "settled_yen",
           "type": "integer",
           "nullable": true,
-          "description": "シートの予算・決算（概要）の計の決算額（円）。"
+          "description": "シートの決算額（円）。品川は予算・決算（概要）の計の決算額。他の自治体は宣言（origins.json の note）の欄。"
         },
         {
           "name": "grade_code",
           "type": "string",
-          "nullable": false,
-          "description": "最終評価の区分の記号（A〜D）。",
+          "nullable": true,
+          "description": "風土記の判断。評価の区分を4区分（A 広げる・B 続ける・C 見直す・D 終える）に当てたもの。品川はシートの記号のまま、他の自治体は grade_label の印字を宣言（origins.json の grades）で当てる。当たらない・区分の無い様式は空。",
           "values": [
             "A",
             "B",
@@ -992,13 +992,13 @@
           "name": "grade_label",
           "type": "string",
           "nullable": true,
-          "description": "最終評価の区分の名前（シートの表記、例「改善・見直しする事業」）。"
+          "description": "評価の区分の印字（シートの表記、例「改善・見直しする事業」「現状維持」）。"
         },
         {
           "name": "direction",
           "type": "string",
           "nullable": true,
-          "description": "最終評価の今後の取組の方向性（シートの表記、例「手法等の改善」）。"
+          "description": "今後の方向性の印字（シートの表記、例「手法等の改善」）。"
         },
         {
           "name": "expenditure_subject_id",

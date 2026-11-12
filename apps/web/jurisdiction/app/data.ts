@@ -19,7 +19,7 @@ export type Proj = {
   kids: Record<string, [string, number | null][]>
 }
 export type Measure = { id: string; fy: number; title: string; new: boolean; yen: number | null; desc: string[]; project: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
-export type Sheet = { id: string; fy: number; name: string; grade: 'A' | 'B' | 'C' | 'D'; dir: string | null; div: string | null; acct: string; b: number | null; s: number | null; project: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
+export type Sheet = { id: string; fy: number; name: string; grade: 'A' | 'B' | 'C' | 'D' | null; dir: string | null; div: string | null; acct: string; b: number | null; s: number | null; project: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
 /** 予算書の款・項・目（当初予算）。上から下へ見ていく予算のタブに使う */
 export type Kan = { name: string; yen: number; kou: { name: string; yen: number; moku: { name: string; yen: number; field: string }[] }[] }
 export type Snapshot = {

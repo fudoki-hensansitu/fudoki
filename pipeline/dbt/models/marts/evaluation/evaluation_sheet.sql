@@ -1,4 +1,4 @@
--- 事務事業評価シート。1枚（1小事業）が1行。金額は出典の千円を円にしたもの。
+-- 事務事業評価シート。1枚（1事業）が1行。金額は出典の印字を円にしたもの。
 -- 決算書の目・内訳への紐付けは風土記の判断（列の説明を参照）。
 with recursive sheet as (
     select s.*, o.jurisdiction_code, o.fiscal_year,
@@ -53,7 +53,7 @@ select s.sheet_id, sha256(to_json(['evaluation', s.jurisdiction_code, s.fiscal_y
     s.origin_id, s.jurisdiction_code, s.fiscal_year, s.page, s.name,
     s.account_name, s.kan as kan_name, s.kou as kou_name, s.moku as moku_name, s.jigyo as jigyo_name,
     s.department, s.division,
-    s.budget_thousand * 1000 as budget_yen, s.settled_thousand * 1000 as settled_yen,
+    s.budget_yen, s.settled_yen,
     s.grade_code, s.grade_label, s.direction,
     j.subject_id as expenditure_subject_id, coalesce(p.detail_id, d.detail_id) as expenditure_detail_id
 from sheet s
