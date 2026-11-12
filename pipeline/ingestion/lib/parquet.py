@@ -2,7 +2,6 @@
 
 from __future__ import annotations
 
-import json
 import os
 import tempfile
 from dataclasses import dataclass
@@ -13,6 +12,8 @@ from typing import Iterable, Mapping, Sequence
 
 _PYTHON_TYPES = {"VARCHAR": (str,), "BIGINT": (int,), "INTEGER": (int,),
                  "DOUBLE": (int, float), "BOOLEAN": (bool,)}
+_ARROW_TYPES = {"VARCHAR": "string", "BIGINT": "int64", "INTEGER": "int32",
+                "DOUBLE": "float64", "BOOLEAN": "bool_"}
 
 
 @dataclass(frozen=True)
@@ -48,6 +49,7 @@ def write_parquet(path: Path, rows: Iterable[Mapping[str, object]], *,
     order and duplicate rows are retained. Failure leaves no partial output.
     """
     import duckdb
+    import pyarrow
 
     names = tuple(column.name for column in columns)
     name_set = set(names)
@@ -65,40 +67,35 @@ def write_parquet(path: Path, rows: Iterable[Mapping[str, object]], *,
     while order_column.lower() in folded_names:
         order_column += "_"
     declarations = [f"{_quote(c.name)} {c.type}" + ("" if c.nullable else " NOT NULL") for c in columns]
-    placeholders = ",".join("?" for _ in range(len(names) + 1))
-    # Rows reach DuckDB as JSON lines read with the declared types: binding them one by one
-    # (`executemany`) took most of a refresh. A value JSON cannot carry exactly (NaN, infinity)
-    # sends the batch through the bound insert instead.
-    fields = {"_o": "BIGINT", **{f"_{index}": column.type for index, column in enumerate(columns)}}
-    json_columns = "{" + ", ".join(f"'{key}': '{kind}'" for key, kind in fields.items()) + "}"
+    # Rows reach DuckDB as one Arrow table per batch, typed as declared: binding them row by row
+    # (`executemany`) took most of a refresh.
+    schema = pyarrow.schema([("order", pyarrow.int64()),
+                             *[(f"c{index}", getattr(pyarrow, _ARROW_TYPES[column.type])())
+                               for index, column in enumerate(columns)]])
     source = iter(rows)
     count = 0
     handle, temporary_name = tempfile.mkstemp(prefix=".parquet-", suffix=".parquet", dir=path.parent)
     os.close(handle)
     temporary = Path(temporary_name)
-    handle, lines_name = tempfile.mkstemp(prefix=".parquet-", suffix=".jsonl", dir=path.parent)
-    os.close(handle)
-    lines = Path(lines_name)
     try:
         with duckdb.connect() as connection:
             connection.execute(f"CREATE TABLE data ({_quote(order_column)} BIGINT, {', '.join(declarations)})")
             while batch := list(islice(source, batch_size)):
-                values = []
+                values: list[list[object]] = [[] for _ in range(len(names) + 1)]
                 for row in batch:
                     if set(row) != name_set:
                         raise ValueError("Record columns differ from declared schema")
                     for column in columns:
                         column.validate(row[column.name])
-                    values.append((count, *(row[name] for name in names)))
+                    values[0].append(count)
+                    for index, name in enumerate(names, 1):
+                        values[index].append(row[name])
                     count += 1
-                try:
-                    text = "".join(json.dumps(dict(zip(fields, value)), allow_nan=False) + "\n" for value in values)
-                except ValueError:
-                    connection.executemany(f"INSERT INTO data VALUES ({placeholders})", values)
-                    continue
-                lines.write_text(text, encoding="utf-8")
-                connection.execute(f"INSERT INTO data SELECT {', '.join(fields)} FROM read_json(?, "
-                                   f"format='newline_delimited', columns={json_columns})", [str(lines)])
+                arrow = pyarrow.Table.from_arrays(
+                    [pyarrow.array(items, type=field.type) for items, field in zip(values, schema)], schema=schema)
+                connection.register("batch", arrow)
+                connection.execute("INSERT INTO data SELECT * FROM batch")
+                connection.unregister("batch")
             selection = ",".join(_quote(name) for name in names)
             connection.execute(
                 f"COPY (SELECT {selection} FROM data ORDER BY {_quote(order_column)}) TO ? (FORMAT PARQUET, COMPRESSION ZSTD)",
@@ -107,5 +104,4 @@ def write_parquet(path: Path, rows: Iterable[Mapping[str, object]], *,
         os.link(temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
-        lines.unlink(missing_ok=True)
     return count
