@@ -1,4 +1,4 @@
-// お金の流れ。初期は全款の款→項。横にスクロールすると款が一つずつ（snap）開き、縦にスクロールするとその款の項が一つずつ開く。
+// お金の流れ。初期は全款の款→項。横にスクロールすると款が一つずつ（snap）開き、縦にスクロールするとその款の項が画面に入ったものから順に開く（縦は snap しない）。
 // 項まで開くと、その項の目と節の上位を出す（節の金額は目ごとに大きい順、足し上げは作らない）。
 import * as React from 'react'
 import { createPortal } from 'react-dom'
@@ -51,7 +51,7 @@ function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: numbe
   // 割合は目の金額が印字されているときだけ。無いときは節の金額をそのまま出す
   const mokuYen = moku.amountMissing ? 0 : moku.yen
   return (
-    <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} className="grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[active=true]/kou:translate-y-0 group-data-[active=true]/kou:opacity-100 sm:grid-cols-[5fr_7fr] sm:gap-4">
+    <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} className="grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[drawn=true]/kou:translate-y-0 group-data-[drawn=true]/kou:opacity-100 sm:grid-cols-[5fr_7fr] sm:gap-4">
       <div className="min-w-0">
         <div className="text-[11px] text-muted-foreground sm:hidden">{levels.moku}</div>
         {onMoku ? (
@@ -123,7 +123,7 @@ function useEdgeFade(ref: React.RefObject<HTMLElement | null>, deps: React.Depen
       setEdge((e) => (e.top === top && e.bottom === bottom ? e : { top, bottom }))
     }
     update()
-    // 上端・下端でさらに回したら、箱の中で止めずに頁を送る（snap や跳ね返りで頁のスクロールに移らないことがあるため）
+    // 上端・下端でさらに回したら、箱の中で止めずに頁を送る（跳ね返りで頁のスクロールに移らないことがあるため）
     const onWheel = (e: WheelEvent) => {
       if (e.ctrlKey || Math.abs(e.deltaY) <= Math.abs(e.deltaX)) return
       const atTop = el.scrollTop <= 1
@@ -193,6 +193,16 @@ function TickMenu({ items, current, onPick, side, label, className, children }: 
 function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void; levels: Levels; onMoku?: (m: Moku) => void }) {
   const box = React.useRef<HTMLElement | null>(null)
   const rib = React.useRef<HTMLDivElement>(null)
+  // 一度画面に入った項は開いたままにする。いま読んでいる項（active）だけを見せると、ほかの項の図形が消えて見えるため
+  const [seen, setSeen] = React.useState(false)
+  React.useEffect(() => {
+    const el = box.current
+    if (!el || seen) return
+    const observer = new IntersectionObserver(([e]) => { if (e?.isIntersecting) setSeen(true) }, { rootMargin: '0px 0px -15% 0px' })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [seen])
+  const drawn = seen || active
   const [paths, setPaths] = React.useState<Ribbon[]>([])
   const [setsu, setSetsu] = React.useState<Ribbon[]>([])
   const [bar, setBar] = React.useState({ top: 0, height: 0 })
@@ -263,9 +273,9 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
     // 目の行は開くときに少し動くので、動き終わってから測り直す
     const settle = window.setTimeout(measure, 550)
     return () => { observer.disconnect(); window.clearTimeout(settle) }
-  }, [kou.moku.length, active])
+  }, [kou.moku.length, drawn])
   return (
-    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} className="group/kou grid min-h-[calc(100%-7.5rem)] snap-start snap-always grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
+    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} data-drawn={drawn} className="group/kou grid min-h-[calc(100%-7.5rem)] grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
       <div className="min-w-0 border-b pb-2 sm:border-0 sm:pb-0 sm:pr-2">
         <div className="text-[11px] text-muted-foreground">{levels.kou}</div>
         <div className="font-sans text-lg leading-snug">{kou.name}</div>
@@ -287,13 +297,13 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
               </linearGradient>
             </defs>
           ) : null}
-          {/* 項が開いたら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。帯は段ごとにまとめて一枚で伸ばす。閉じている項は出さない */}
-          <g key={`r${active}`} className={active ? 'flow-ribbon' : 'opacity-0'}>{paths.map((p, i) => <path key={i} d={p.d} className="fill-primary/20" />)}</g>
+          {/* 項が画面に入ったら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。帯は段ごとにまとめて一枚で伸ばす。光はいま読んでいる項だけに流す */}
+          <g key={`r${drawn}`} className={drawn ? 'flow-ribbon' : 'opacity-0'}>{paths.map((p, i) => <path key={i} d={p.d} className="fill-primary/20" />)}</g>
           {active && !still ? paths.map((p, i) => <path key={`l${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
           {active && !still ? setsu.map((p, i) => <path key={`ls${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
-          {paths.map((p, i) => <rect key={`b${active}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${550 + Math.min(i * 15, 150)}ms` }} className={`fill-primary ${active ? 'flow-node' : 'opacity-0'}`} />)}
-          <g key={`s${active}`} style={{ animationDelay: '450ms' }} className={active ? 'flow-ribbon' : 'opacity-0'}>{setsu.map((p, i) => <path key={i} d={p.d} className={p.rest ? 'fill-primary/10' : 'fill-primary/15'} />)}</g>
-          {setsu.map((p, i) => <rect key={`t${active}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${1000 + Math.min(i * 10, 150)}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${active ? 'flow-node' : 'opacity-0'}`} />)}
+          {paths.map((p, i) => <rect key={`b${drawn}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${550 + Math.min(i * 15, 150)}ms` }} className={`fill-primary ${drawn ? 'flow-node' : 'opacity-0'}`} />)}
+          <g key={`s${drawn}`} style={{ animationDelay: '450ms' }} className={drawn ? 'flow-ribbon' : 'opacity-0'}>{setsu.map((p, i) => <path key={i} d={p.d} className={p.rest ? 'fill-primary/10' : 'fill-primary/15'} />)}</g>
+          {setsu.map((p, i) => <rect key={`t${drawn}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${1000 + Math.min(i * 10, 150)}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${drawn ? 'flow-node' : 'opacity-0'}`} />)}
         </svg>
       </div>
       <div className="flex min-w-0 flex-col gap-3 sm:pl-2.5">
@@ -366,12 +376,10 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: D
         // 祖先に transform（スマホのタブのカルーセル）があると fixed が画面に効かないので、body に出す
         natural ? createPortal(ticks, document.body) : ticks
       ) : null}
-      <div ref={body} style={fade} className={natural ? '' : 'h-full snap-y snap-proximity scroll-pt-10 overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'} tabIndex={-1}>
+      <div ref={body} style={fade} className={natural ? '' : 'h-full overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'} tabIndex={-1}>
         {drill.kou.map((k, i) => (
           <KouSection key={k.id} kou={k} active={i === current} loading={loading} levels={levels} onMoku={onMoku} onBox={(el) => { sections.current[i] = el }} />
         ))}
-        {/* 下端にも止まる所を置く。最後の段の頭にしか止まれないと、下端まで送れず頁のスクロールにも渡らない */}
-        {natural ? null : <div aria-hidden="true" className="h-px snap-end" />}
       </div>
     </div>
   )
