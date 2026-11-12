@@ -874,6 +874,15 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
   }
   const [field, setField] = React.useState('all')
   const [filter, setFilter] = React.useState('all')
+  // ?filter=new などで事業の絞り込みを開いた状態で来られる（ホームのはじめにやることから）。読んだら URL から外す
+  React.useEffect(() => {
+    const q = new URLSearchParams(location.search)
+    const f = q.get('filter')
+    if (!f) return
+    if (['all', 'new', 'ended', 'eval'].includes(f)) setFilter(f)
+    q.delete('filter')
+    history.replaceState(history.state, '', location.pathname + (q.size ? `?${q}` : '') + location.hash)
+  }, [])
   const [grade, setGrade] = React.useState('A')
   const [selected, select] = React.useState<Selected>(null)
   // 分野の頁。URL を /fields/<id> にして、戻るで自治体の頁へ帰る

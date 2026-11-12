@@ -212,7 +212,7 @@ function Dashboard({ c }: { c: Ctx }) {
         </Card>
       ) : null}
       {v.comparable && v.newProjects.length ? (
-        <Card tour="projects" title={`${yearName(year)}に始めた事業`} icon={<span className="flex text-primary"><NewIcon /></span>} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
+        <Card tour="projects" title={`${yearName(year)}に始めた事業`} icon={<span className="flex text-primary"><NewIcon /></span>} footer={<More href={`${c.base}/projects?filter=new`}>事業をすべて見る</More>}>
           <ProjectList items={v.newProjects.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p) ?? null }))} rest={v.newProjects.length - 5} />
         </Card>
       ) : v.current.length ? (
@@ -221,7 +221,7 @@ function Dashboard({ c }: { c: Ctx }) {
         </Card>
       ) : null}
       {v.comparable && v.ended.length ? (
-        <Card title={`${yearName(year - 1)}でやめた事業`} icon={<span className="flex text-primary"><StopIcon /></span>} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
+        <Card title={`${yearName(year - 1)}でやめた事業`} icon={<span className="flex text-primary"><StopIcon /></span>} footer={<More href={`${c.base}/projects?filter=ended`}>事業をすべて見る</More>}>
           <ProjectList items={v.ended.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: v.amount(p, String(year - 1)) ?? null }))} rest={v.ended.length - 5} />
         </Card>
       ) : null}
@@ -318,7 +318,7 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
 /** チェックリストの残りの項目。まちの頁・検索・アシスタントへ */
 const checkItems = (c: Ctx): CheckItem[] => [
   { key: 'flow', label: 'お金の使い道を見る', href: flowHref(c) },
-  { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects` },
+  { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects?filter=new` },
   { key: 'search', label: '事業を検索する', href: searchHref('', c.town.code) },
   { key: 'assistant', label: 'アシスタントに聞く', href: '/assistant' },
 ]

@@ -61,13 +61,17 @@ export function useMyTown() {
       const home = loadHomeCode()
       // 今のホームで選んだだけのまちは名前が手元に無いので、一覧から引く
       if (!t && home) {
-        void loadTowns().then((list) => {
-          // 引いている間に外れた・別のまちに変わったときは捨てる
-          if (!alive || loadHomeCode() !== home) return
-          const e = list.find((x) => x.code === home)
-          if (e) setMyTown({ code: e.code, name: e.name, path: e.path })
-          else setReady(true)
-        })
+        const look = (wait: number) =>
+          void loadTowns().then((list) => {
+            // 引いている間に外れた・別のまちに変わったときは捨てる
+            if (!alive || loadHomeCode() !== home) return
+            // 一覧を引けなかったときは、選んだまちが無いとは扱わず引き直す（初めての人の画面を出さない）
+            if (!list.length) return void setTimeout(() => look(Math.min(wait * 2, 30_000)), wait)
+            const e = list.find((x) => x.code === home)
+            if (e) setMyTown({ code: e.code, name: e.name, path: e.path })
+            else setReady(true)
+          })
+        look(2_000)
       } else setReady(true)
       setTown(t)
       setRecent(loadRecent())
