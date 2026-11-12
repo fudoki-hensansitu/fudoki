@@ -450,5 +450,24 @@ class SyncTest(unittest.TestCase):
         self.assertNotIn('project_year_project_id', {r[0] for r in self.d1.con.execute("select name from sqlite_master where type='index'")})
 
 
+    def test_jurisdiction_skips_missing_table_without_its_rows(self):
+        self.sync()
+        self.d1.con.execute('drop table "evaluation"')
+        messages = self.sync(jurisdictions=['000001'])
+        self.assertTrue(any('evaluation: D1 の列・index が違うが' in m for m in messages), messages)
+
+    def test_deletes_children_before_parents(self):
+        """親の行を消す前に子の行を消す。途中で止まっても、親の消えた子の行が残らない。"""
+        self.duck.execute('insert into main."expenditure_origin" ("origin_id", "jurisdiction_code") values (\'o1\', \'000001\')')
+        self.duck.execute('insert into main."expenditure_location" ("line_id", "origin_id", "kind") values (\'l1\', \'o1\', \'pdf\')')
+        self.sync()
+        self.duck.execute('delete from main."expenditure_location"')
+        self.duck.execute('delete from main."expenditure_origin"')
+        self.sync(jurisdictions=['000001'])
+        deletes = [s for s in self.d1.log if s.startswith('delete from')]
+        self.assertEqual([s.split('"')[1] for s in deletes], ['expenditure_location', 'expenditure_origin'])
+        self.assertEqual(self.d1.rows('expenditure_location', 'line_id'), [])
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -516,11 +516,19 @@ def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table],
 
 def write_diffs(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], diffs: dict[str, TableDiff],
                 scopes: dict[str, str] | None = None) -> list[str]:
-    """差分の表に書いて、差のあった範囲を読み戻す。全範囲の delete を先に流す（範囲の切り方が両者でずれても、消してから書く順を守る）。"""
+    """差分の表に書いて、差のあった範囲を読み戻す。
+
+    消す行は参照する表から（TABLE_ORDER の逆順）、書く行は参照される表から流す。途中で止まっても、親より先に
+    子が消えるので、親の消えた子の行（自治体で絞った同期では親の自治体で選ぶので、次の差分に出ない）が残らない。
+    """
     problems: list[str] = []
-    for name, diff in diffs.items():
-        if not diff.changes:
-            continue
+    changed = [name for name in TABLE_ORDER if name in diffs and diffs[name].changes]
+    for name in reversed(changed):
+        key = tables[name]['primary_key']
+        for batch in pack(delete_statements(name, key, diffs[name].deletes)):
+            d1.batch(batch)
+    for name in changed:
+        diff = diffs[name]
         spec = tables[name]
         names = [c['name'] for c in spec['columns']]
         key = spec['primary_key']
@@ -528,14 +536,10 @@ def write_diffs(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table]
         writes = set(diff.writes)
         rows = (row for row in table_rows(con, name, names, key, and_where('', scope) if scope else '')
                 if row[names.index(key)] in writes)
-
-        def statements(name=name, key=key, diff=diff, names=names, rows=rows) -> Iterator[str]:
-            yield from delete_statements(name, key, diff.deletes)
-            yield from insert_statements(name, names, rows)
-
-        for batch in pack(statements()):
+        for batch in pack(insert_statements(name, names, rows)):
             d1.batch(batch)
-        problems += verify(d1, con, name, spec, name, scope, diff.ranges)
+    for name in changed:
+        problems += verify(d1, con, name, tables[name], name, (scopes or {}).get(name, ''), diffs[name].ranges)
     return problems
 
 
@@ -551,10 +555,14 @@ def run_scoped(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, 
         log('dry-run: D1 には書いていない')
         return 0
     matches = read_schemas(d1, tables)
+    existing = {r[0] for r in d1.batch([{'sql': "select name from sqlite_master where type = 'table'"}])[0]['results']['rows']}
     skipped = []
     for name in [n for n in TABLE_ORDER if not matches[n]]:
-        # 列・index が違っても、その自治体の行がどちらにも無い表は触らずに済む
-        if warehouse_count(con, name, and_where('', scopes[name])) or count_rows(d1, name, scopes[name]):
+        # 列・index が違っても（表が無くても）、その自治体の行がどちらにも無い表は触らずに済む。
+        # 親で絞る表は親の表も D1 に要る
+        parent = PARENT_SCOPE.get(name, (None, None))[1]
+        in_d1 = name in existing and (parent is None or parent in existing) and count_rows(d1, name, scopes[name])
+        if warehouse_count(con, name, and_where('', scopes[name])) or in_d1:
             log(f'{name}: D1 の列・index が違い、その自治体の行がある。自治体を絞った同期では作り直さない。--jurisdiction なしで流す')
             return 1
         skipped.append(name)

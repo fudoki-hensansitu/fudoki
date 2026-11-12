@@ -256,11 +256,11 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
                               for nodes, key, printed, children in inconsistencies)])
         con.execute('create or replace table ingestion.origin (origin_id varchar, jurisdiction_code varchar, fiscal_year integer, document_kind varchar, amendment_number integer, title varchar, url varchar, format varchar, sha256 varchar)')
         con.executemany('insert into ingestion.origin values (?,?,?,?,?,?,?,?,?)', list(origins.values()))
-        jurisdictions = load_jurisdictions(JURISDICTIONS)
+        registry = load_jurisdictions(JURISDICTIONS)
         con.execute('create or replace table ingestion.jurisdiction (jurisdiction_code varchar, name varchar, ocd_id varchar, official_url varchar)')
-        con.executemany('insert into ingestion.jurisdiction values (?,?,?,?)', jurisdictions)
+        con.executemany('insert into ingestion.jurisdiction values (?,?,?,?)', registry)
         # 事業評価・プレスは自治体で絞るとき、その自治体のものが無ければ読まない（今は品川区だけ）
-        project_tables = project.load(remote=remote, jurisdictions=jurisdictions)
+        project_tables = project.load(remote=remote, jurisdictions=jurisdictions or None)
         project.write(con, project_tables)
         used = {root / 'manifest.json' for document in documents.values()
                 if (root := candidate_root(candidate, document['target'], document['direction'])) is not None}
@@ -268,7 +268,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             raise ValueError(f'Unused candidate manifests: {sorted(str(p) for p in provided - used)}')
         con.commit()
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
-            'origins': len(origins), 'jurisdictions': len(jurisdictions),
+            'origins': len(origins), 'jurisdictions': len(registry),
             'evaluation_sheets': len(project_tables['project_evaluation_sheet']), 'budget_measures': len(project_tables['project_budget_measure']),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
 
