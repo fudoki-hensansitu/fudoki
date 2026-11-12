@@ -851,14 +851,13 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "2919f329f327fea4abf2e1ba4940da9b5686c0465349d98bda94332dc9deba17",
+      "input_fingerprint": "85e6d0ccd7d42d3cba11da172f0d14f305ff338fe22dcd37119914722ff94dbd",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 20頁・carried 52頁 から決めた。款の和 14,449,283（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 2 件（積算 2）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（49 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。",
-        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 3職員手当等10,1908旅費→8旅費。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p28:full-page:a0:result0:r10・p28:full-page:a0:result0:r10:w2・p28:full-page:a0:result0:r16・p28:full-page:a0:result0:r16:w2）・徵→徴 6 件（p21:full-page:a0:result0:r10・p21:full-page:a0:result0:r10:w1・p21:full-page:a0:result0:r17・p21:full-page:a0:result0:r17:w1・p21:full-page:a0:result0:r72・p21:full-page:a0:result0:r72:w1）・查→査 6 件（p24:full-page:a0:result0:r10・p24:full-page:a0:result0:r10:w5・p32:full-page:a0:result0:r16・p32:full-page:a0:result0:r16:w5・p32:full-page:a0:result0:r22・p32:full-page:a0:result0:r22:w5）・產→産 6 件（p27:full-page:a0:result0:r10・p27:full-page:a0:result0:r10:w3・p27:full-page:a0:result0:r15・p27:full-page:a0:result0:r15:w3・p27:full-page:a0:result0:r59・p27:full-page:a0:result0:r59:w1）・齡→齢 4 件（p30:full-page:a0:result0:r11・p30:full-page:a0:result0:r11:w3・p30:full-page:a0:result0:r52・p30:full-page:a0:result0:r52:w3）。"
       ],
       "unread_amount_count": 0,
@@ -866,31 +865,30 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "a34e51cd4685aa8834f01b33ef0c4b0c3c65d22a98baa4d791a04f69609989c2",
-          "bytes": 8992
+          "sha256": "cd02265216e6a3cfaed756cd76c6f2fea02698973ce6825c993760c1eca076bb",
+          "bytes": 9020
         },
-        "row_count": 124
+        "row_count": 125
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/national-health-initial-amounts.parquet",
-          "sha256": "a77491a67f51115c60c2bc7936c42c520b1e245500b792d08d51c0cca186c957",
-          "bytes": 8070
+          "sha256": "dbcb45edc6ae0336c17906096b67b2342fd49e76e1b95dc439139b3086d6ef4e",
+          "bytes": 8124
         },
-        "row_count": 222
+        "row_count": 223
       }
     },
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "1c29030806776a50010405a18074c653c7530fee87dd1a9dd47ae66e45f77a54",
+      "input_fingerprint": "3f5ef3ef021a71f25a85ad56a81a5307002c4c773fdea376c308f5f98669bcf8",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 25頁・carried 57頁 から決めた。款の和 10,078,197（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（48 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。",
-        "原画で確かめた名称の誤読 3 件を、管理 JSON の name_corrections で印字に直した: 12委託料29,68913使用料及び賃借料→13使用料及び賃借料・1報酬2,7682給料→2給料・1報酬3,1183→1報酬。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 14 件（p25:full-page:a0:result0:r75・p25:full-page:a0:result0:r75:w1・p26:full-page:a0:result0:r57・p26:full-page:a0:result0:r57:w1・p27:full-page:a0:result0:r63・p27:full-page:a0:result0:r63:w1・p28:full-page:a0:result0:r63・p28:full-page:a0:result0:r63:w1・p34:full-page:a0:result0:r15・p34:full-page:a0:result0:r15:w7・p37:full-page:a0:result0:r15・p37:full-page:a0:result0:r15:w0・p37:full-page:a0:result0:r70・p37:full-page:a0:result0:r70:w4）・徵→徴 6 件（p24:full-page:a0:result0:r10・p24:full-page:a0:result0:r10:w1・p24:full-page:a0:result0:r15・p24:full-page:a0:result0:r15:w1・p24:full-page:a0:result0:r74・p24:full-page:a0:result0:r74:w0）・查→査 6 件（p22:full-page:a0:result0:r10・p22:full-page:a0:result0:r10:w4・p29:full-page:a0:result0:r77・p29:full-page:a0:result0:r77:w3・p36:full-page:a0:result0:r10・p36:full-page:a0:result0:r10:w3）・說→説 6 件（p22:full-page:a0:result0:r57・p22:full-page:a0:result0:r57:w0・p22:full-page:a0:result0:r121・p22:full-page:a0:result0:r121:w0・p32:full-page:a0:result0:r53・p32:full-page:a0:result0:r53:w0）。"
       ],
       "unread_amount_count": 0,
@@ -898,31 +896,30 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/care-initial-nodes.parquet",
-          "sha256": "d26b22795b5ce87c3bbca1ef419d1beb21a2e534e1be81032e4a80bf49673b15",
-          "bytes": 10570
+          "sha256": "c8179ac8a3d8550d65eb4fa80716854412fc529b06cefbc3a42b16105692344c",
+          "bytes": 10637
         },
-        "row_count": 162
+        "row_count": 164
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/care-initial-amounts.parquet",
-          "sha256": "b7de38549fa67d78e40e89311aedeef5d7d4a23d4a16ea2442003d2063304345",
-          "bytes": 8961
+          "sha256": "9ce5d4d2d505bfa892de28e626ab06d08afe55101c0979641b50b8bf5bc8ef76",
+          "bytes": 9093
         },
-        "row_count": 257
+        "row_count": 260
       }
     },
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "5e49fb0af787ddc52c8b305741b4c65cc98f72c1174c34ffc7ad07192c4dccb4",
+      "input_fingerprint": "f041357b065b1fc216345901cfefe452178bd9fce9f68e9edc932b88aa597fed",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 8頁・carried 19頁 から決めた。款の和 3,819,079（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 1 件（積算 1）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（24 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。",
-        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 4共済費4,9468旅費→8旅費。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 2 件（p19:full-page:a0:result0:r57・p19:full-page:a0:result0:r57:w2）・徵→徴 4 件（p15:full-page:a0:result0:r10・p15:full-page:a0:result0:r10:w1・p15:full-page:a0:result0:r15・p15:full-page:a0:result0:r15:w1）・查→査 2 件（p17:full-page:a0:result0:r20・p17:full-page:a0:result0:r20:w4）・齡→齢 4 件（p14:full-page:a0:result0:r34・p14:full-page:a0:result0:r34:w3・p19:full-page:a0:result0:r30・p19:full-page:a0:result0:r30:w3）。"
       ],
       "unread_amount_count": 0,
@@ -930,18 +927,18 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/elderly-medical-initial-nodes.parquet",
-          "sha256": "89c1350d7ed6fa399c0ca69d5232d32879c8cc68d1649a05fa358c27ec576943",
-          "bytes": 5906
+          "sha256": "55ba96df0f9c0650624db7c93b3d8c1af97bb315ab710ec7482b6ef3a34b398f",
+          "bytes": 5954
         },
-        "row_count": 58
+        "row_count": 59
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
-          "sha256": "7d64a5f1d01ba542fe629773bb5cb5d3bbdf8a845b5c929f973078e999b6a6a3",
-          "bytes": 5266
+          "sha256": "0a9333aab88806f2c9487e9b64070e77b4df443006aedff91276e172bb792aac",
+          "bytes": 5308
         },
-        "row_count": 106
+        "row_count": 107
       }
     }
   ]
