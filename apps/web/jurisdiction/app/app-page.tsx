@@ -360,7 +360,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     const controller = new AbortController()
     fetch(`/api/jurisdictions/accounts/${page.code}/${v.year}${phase === 'initial' ? '?phase=initial' : ''}`, { signal: controller.signal })
       .then((r) => (r.ok ? r.json() as Promise<AccountTotal[]> : []))
-      .then((x) => { if (!controller.signal.aborted) setAccounts(x) }, () => {})
+      .then((x) => { if (!controller.signal.aborted) setAccounts(x) }, () => { if (!controller.signal.aborted) setAccounts([]) })
     return () => controller.abort()
   }, [page.code, v.year, phase])
   const expected = page.accounts?.[phase]?.[String(v.year)]?.length ?? 0
@@ -1066,7 +1066,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
             ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
               {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
+                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none data-active:text-primary data-active:hover:text-primary data-active:focus-visible:text-primary dark:data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
                   <t.icon data-icon="inline-start" />
                   {t.label}
                 </TabsTrigger>
