@@ -27,11 +27,11 @@ beforeEach(() => {
   insert('evaluation', { evaluation_id: EV, jurisdiction_code: '131091', fiscal_year: 2024, kind: 'with_result', result_origin_id: 'r1', result_page: 3, evaluated_count: 3, grade_a: 1, grade_b: 1, grade_c: 1, grade_d: 0 })
   insert('evaluation_origin', { origin_id: 's1', evaluation_id: EV, jurisdiction_code: '131091', document_type: 'sheets', fiscal_year: 2024, title: '評価シート', url: 'https://example.test/s1.pdf', landing_url: null, sha256: H('1') })
   insert('evaluation_origin', { origin_id: 'r1', evaluation_id: EV, jurisdiction_code: '131091', document_type: 'result', fiscal_year: 2024, title: '評価結果', url: 'https://example.test/r1.pdf', landing_url: null, sha256: H('2') })
-  for (const [i, grade] of ['A', 'B', 'C'].entries())
+  for (const [i, code] of ['expand', 'keep', 'improve'].entries())
     insert('evaluation_sheet', {
       sheet_id: H(String(i)), evaluation_id: EV, origin_id: 's1', jurisdiction_code: '131091', fiscal_year: 2024, page: i + 1,
       name: `子ども事業${i}`, account_name: '一般会計', kan_name: '民生費', kou_name: null, moku_name: null, jigyo_name: null,
-      department: null, division: null, budget_yen: 1000 * (i + 1), settled_yen: 900 * (i + 1), grade_code: grade, grade_label: null, direction: null, expenditure_subject_id: null, expenditure_detail_id: null,
+      department: null, division: null, budget_yen: 1000 * (i + 1), settled_yen: 900 * (i + 1), grade_label: null, direction: null, direction_code: code, expenditure_subject_id: null, expenditure_detail_id: null,
     })
   insert('evaluation_indicator', { indicator_id: 'i1', sheet_id: H('0'), position: 1, name: '参加者数', unit: '人', definition: null, final_target_text: '100', final_target_year_text: '令和8年度' })
   insert('evaluation_indicator_value', { value_id: 'v1', indicator_id: 'i1', fiscal_year: 2024, target_text: '80', actual_text: '75' })
@@ -47,7 +47,7 @@ beforeEach(() => {
 describe('事業評価', () => {
   test('根・出典・シートを返し、シートはページに切る', async () => {
     const first = await (await get(`/v1/evaluations/${EV}?page_size=2`)).json()
-    expect(EvaluationOutput.parse(first).sheets.map((s) => s.grade_code)).toEqual(['A', 'B'])
+    expect(EvaluationOutput.parse(first).sheets.map((s) => s.outlook?.grade)).toEqual(['A', 'B'])
     expect(first.evaluation.grade_a).toBe(1)
     expect(first.origins.map((o: { document_type: string }) => o.document_type).sort()).toEqual(['result', 'sheets'])
     const second = await (await get(`/v1/evaluations/${EV}?page_size=2&page_token=${first.next_page_token}`)).json()
@@ -64,7 +64,7 @@ describe('事業評価', () => {
 
   test('シートの検索は年度が必須で、値は bind する', async () => {
     const body = SheetSearchOutput.parse(
-      await (await post('/v1/evaluations/sheets:search', { fiscal_year: { min: 2024, max: 2024 }, where: { name: { contains: '子ども' }, grade_code: { eq: ['A', 'C'] } } })).json()
+      await (await post('/v1/evaluations/sheets:search', { fiscal_year: { min: 2024, max: 2024 }, where: { name: { contains: '子ども' }, direction_code: { eq: ['expand', 'improve'] } } })).json()
     )
     expect([body.sheets.length, body.origins.map((o) => o.origin_id)]).toEqual([2, ['s1']])
     expect((await post('/v1/evaluations/sheets:search', { where: {} })).status).toBe(400)

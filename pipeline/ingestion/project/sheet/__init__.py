@@ -12,11 +12,10 @@
       "skip": "施策評価シート",             # 任意。当たる頁は読まない
       "fields": ["事務事業名称 (?P<name>.+?) 款 (?P<kan_code>\\d+)", ...],
       "unit": "千円",                       # budget・settled の単位（千円 既定、円）。欄で違えば {"budget": "千円", "settled": "円"}
-      "grades": {"拡充|拡大": "A", "継続|現状維持": "B", "改善|見直|縮小": "C", "廃止|休止|終了|完了|統合": "D"}
     }
 
-`grades` は評価の区分の印字（grade）を、風土記の4区分（A 広げる・B 続ける・C 見直す・D 終える）に当てる正規表現。
-上から順に試し、最初に当たった区分にする。どれにも当たらなければ区分は空。印字は grade_label にそのまま残す。
+評価の区分の印字（grade）は grade_label にそのまま残す。共通の区分は付けず、今後の方向性の区分（direction_code）を
+入力準備で当てる（`DIRECTIONS`・宣言の `directions`）。A〜D のような4区分は API が方向性の区分からまとめる。
 
 `fields` の組の名前: name（必須）・account・kan・kou・moku・jigyo（科目の名前）・kan_code・kou_code・moku_code・
 jigyo_code（科目の番号）・department・division・budget（予算現額）・settled（決算額）・grade（評価の区分）・
@@ -90,7 +89,6 @@ class Sheet:
     division: str | None = None
     budget_yen: int | None = None
     settled_yen: int | None = None
-    grade_code: str | None = None
     grade_label: str | None = None
     direction: str | None = None
     indicators: list = field(default_factory=list)
@@ -147,12 +145,9 @@ def parse(text: str, number: int, workflow: dict) -> Sheet | None:
         print(f'p{number}: 事業名が読めないので読まない', file=sys.stderr)
         return None
     grade = found.pop('grade', None)
-    code = None
-    if grade is not None:
-        code = next((c for pattern, c in workflow.get('grades', {}).items() if re.search(pattern, grade)), None)
     budget, settled = found.pop('budget', None), found.pop('settled', None)
     return Sheet(page=number, **found, budget_yen=amount(budget, units['budget']), settled_yen=amount(settled, units['settled']),
-                 grade_code=code, grade_label=grade)
+                 grade_label=grade)
 
 
 def pages(path) -> list[tuple[int, str]]:

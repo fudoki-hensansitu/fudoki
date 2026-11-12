@@ -60,7 +60,7 @@ import { Hint } from '@/components/hint'
 import { AskDock, type AskControl } from '../ask-dock'
 import { usePageTour } from './page-tour'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_LABELS, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
-import { DIRECTIONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
+import { directionOf, DIRECTION_ICONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import './app.css'
 
 const FIELD_ICON: Record<string, Icon> = {
@@ -199,7 +199,7 @@ function MeasureRow({ m }: { m: Measure }) {
 }
 function SheetRow({ s }: { s: EvalSheet }) {
   const { select, selected } = useApp()
-  const dir = s.dc ? DIRECTIONS[s.dc] : undefined
+  const dir = directionOf(s)
   return <Row icon={dir ? <Mark kind={dir.icon} label={dir.label} /> : <IconBox><ClipboardTextIcon /></IconBox>} title={s.name} sub={[s.div, dir?.label ?? s.dir].filter(Boolean).join(' · ')} yen={s.s} note={`${r(s.fy)} 決算`} selected={selected?.kind === 'sheet' && selected.id === s.id} onClick={() => select({ kind: 'sheet', id: s.id })} />
 }
 /** 行の間に Separator を挟む */
@@ -523,7 +523,10 @@ function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: 
   const t = q.trim()
   const all = React.useMemo(() => v.sheets.filter((s) => (field === 'all' || s.field === field) && (!t || s.name.includes(t) || (s.div ?? '').includes(t))), [v, field, t])
   const ss = React.useMemo(() => all.filter((s) => s.grade === grade).sort((a, b) => (b.s ?? 0) - (a.s ?? 0)), [all, grade])
-  const dirs = Object.entries(DIRECTIONS).map(([k, x]) => [x, ss.filter((s) => s.dc === k).length] as const).filter(([, n]) => n)
+  const dirs = (Object.keys(DIRECTION_ICONS) as (keyof typeof DIRECTION_ICONS)[])
+    .map((k) => ss.filter((s) => s.dc === k))
+    .filter((xs) => xs.length)
+    .map((xs) => [directionOf(xs[0]!)!, xs.length] as const)
   return (
     <div className="mt-1 flex flex-col gap-3">
       <GradeCards sheets={all} value={grade} onChange={setGrade} />
@@ -620,7 +623,7 @@ function ProjectDetail({ p }: { p: Proj }) {
       {ss.length ? (
         <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(v.year)}年度の事業`}>
           {ss.map((s) => {
-            const dir = s.dc ? DIRECTIONS[s.dc] : undefined
+            const dir = directionOf(s)
             return (
               <button key={s.id} type="button" onClick={() => select({ kind: 'sheet', id: s.id })} className="mb-2 flex w-full items-start gap-2.5 rounded-xl bg-card p-3 text-left hover:bg-secondary">
                 {dir ? <Mark kind={dir.icon} /> : null}
@@ -662,7 +665,7 @@ function MeasureDetail({ m }: { m: Measure }) {
 
 function SheetDetail({ s }: { s: EvalSheet }) {
   const { select, projects } = useApp()
-  const dir = s.dc ? DIRECTIONS[s.dc] : undefined
+  const dir = directionOf(s)
   const p = s.project ? projects.get(s.project) : undefined
   return (
     <>

@@ -22,7 +22,6 @@ class ParseTest(unittest.TestCase):
             '^方向 (?P<grade>\\S+)',
         ],
         'unit': '千円',
-        'grades': {'成果拡大': 'A', '見直し|縮小': 'C', '現状維持': 'B'},
     }
 
     def test_fields(self):
@@ -31,11 +30,9 @@ class ParseTest(unittest.TestCase):
         self.assertEqual(got.name, '広報活動')
         self.assertEqual(got.budget_yen, 1_500)
         self.assertEqual(got.settled_yen, 2_000)
-        self.assertEqual((got.grade_code, got.grade_label), ('A', '成果拡大に向けて見直し'))
+        self.assertEqual(got.grade_label, '成果拡大に向けて見直し')
 
-    def test_unmapped_grade_is_empty_and_missing_name_is_skipped(self):
-        got = sheet.parse('事業名 X\nY 課\n方向 その他', 1, self.WORKFLOW)
-        self.assertEqual((got.grade_code, got.grade_label), (None, 'その他'))
+    def test_missing_name_is_skipped(self):
         self.assertIsNone(sheet.parse('方向 縮小', 2, self.WORKFLOW))
 
 

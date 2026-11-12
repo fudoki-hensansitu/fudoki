@@ -20,7 +20,7 @@ export type Proj = {
 }
 export type Measure = { id: string; fy: number; title: string; new: boolean; yen: number | null; desc: string[]; project: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
 export type DirectionCode = 'new' | 'expand' | 'keep' | 'statutory' | 'as_planned' | 'improve' | 'resize' | 'reduce' | 'merge' | 'complete' | 'end' | 'consider_end'
-export type Sheet = { id: string; fy: number; name: string; grade: 'A' | 'B' | 'C' | 'D' | null; dir: string | null; dc: DirectionCode | null; div: string | null; acct: string; b: number | null; s: number | null; project: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
+export type Sheet = { id: string; fy: number; name: string; grade: 'A' | 'B' | 'C' | 'D' | null; dir: string | null; dc: DirectionCode | null; /** 方向性の区分の言い方（API の outlook.label） */ dl: string | null; div: string | null; acct: string; b: number | null; s: number | null; project: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
 /** 予算書の款・項・目（当初予算）。上から下へ見ていく予算のタブに使う */
 export type Kan = { name: string; yen: number; kou: { name: string; yen: number; moku: { name: string; yen: number; field: string }[] }[] }
 export type Snapshot = {
@@ -104,20 +104,25 @@ function group<T>(items: T[], key: (t: T) => string | null) {
   return m
 }
 
-/** 今後の方向性の共通の区分（API の direction_code）ごとの印と言い方 */
-export const DIRECTIONS: Record<DirectionCode, { icon: string; label: string }> = {
-  new: { icon: 'new', label: '新しい取り組みを始める' },
-  expand: { icon: 'up', label: '拡大・拡充する' },
-  keep: { icon: 'keep', label: '今のまま続ける' },
-  statutory: { icon: 'law', label: '法令で決まっている' },
-  as_planned: { icon: 'plan', label: '計画どおり続ける' },
-  improve: { icon: 'fix', label: 'やり方を見直す' },
-  resize: { icon: 'size', label: '対象・規模を見直す' },
-  reduce: { icon: 'cut', label: '縮小・一部をやめる' },
-  merge: { icon: 'join', label: 'ほかの事業へ統合' },
-  complete: { icon: 'done', label: '完了した' },
-  end: { icon: 'stop', label: 'やめた' },
-  consider_end: { icon: 'maybe', label: 'やめるか検討中' },
+/** 今後の方向性の区分（API の outlook.code）ごとの印。言い方は API の outlook.label */
+export const DIRECTION_ICONS: Record<DirectionCode, string> = {
+  new: 'new',
+  expand: 'up',
+  keep: 'keep',
+  statutory: 'law',
+  as_planned: 'plan',
+  improve: 'fix',
+  resize: 'size',
+  reduce: 'cut',
+  merge: 'join',
+  complete: 'done',
+  end: 'stop',
+  consider_end: 'maybe',
+}
+
+/** シートの方向性の印と言い方。区分が当たらないシートは undefined */
+export function directionOf(s: Pick<Sheet, 'dc' | 'dl'>): { code: DirectionCode; icon: string; label: string } | undefined {
+  return s.dc ? { code: s.dc, icon: DIRECTION_ICONS[s.dc], label: s.dl ?? '' } : undefined
 }
 
 export const GRADES = [

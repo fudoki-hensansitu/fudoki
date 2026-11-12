@@ -977,22 +977,10 @@
           "description": "シートの決算額（円）。品川は予算・決算（概要）の計の決算額。他の自治体は宣言（origins.json の note）の欄。"
         },
         {
-          "name": "grade_code",
-          "type": "string",
-          "nullable": true,
-          "description": "風土記の判断。評価の区分を4区分（A 広げる・B 続ける・C 見直す・D 終える）に当てたもの。品川はシートの記号のまま、他の自治体は grade_label の印字を宣言（origins.json の grades）で当てる。当たらない・区分の無い様式は空。",
-          "values": [
-            "A",
-            "B",
-            "C",
-            "D"
-          ]
-        },
-        {
           "name": "grade_label",
           "type": "string",
           "nullable": true,
-          "description": "評価の区分の印字（シートの表記、例「改善・見直しする事業」「現状維持」）。"
+          "description": "評価の区分の印字（シートの表記、例「改善・見直しする事業」「現状維持」）。自治体ごとに書き方が違うので、自治体をまたいで比べるときは direction_code を使う。"
         },
         {
           "name": "direction",
@@ -1004,7 +992,7 @@
           "name": "direction_code",
           "type": "string",
           "nullable": true,
-          "description": "風土記の判断。今後の方向性の印字（方向性の欄の無い様式は評価の区分の印字）を共通の区分に当てたもの。new（新しく始める）・expand（広げる）・keep（今のまま続ける）・statutory（法令で決まっている）・as_planned（計画どおり続ける）・improve（やり方を見直す）・resize（対象・規模を見直す）・reduce（縮小・一部をやめる）・merge（ほかの事業へ統合）・complete（完了）・end（やめる）・consider_end（やめるか検討中）。当て方は ingestion/project/sheet の既定と origins.json の directions。当たらなければ空。",
+          "description": "風土記の判断。今後の方向性の印字（方向性の欄の無い様式は評価の区分の印字）を共通の区分に当てたもの。new（新しく始める）・expand（広げる）・keep（今のまま続ける）・statutory（法令で決まっている）・as_planned（計画どおり続ける）・improve（やり方を見直す）・resize（対象・規模を見直す）・reduce（縮小・一部をやめる）・merge（ほかの事業へ統合）・complete（完了）・end（やめる）・consider_end（やめるか検討中）。当て方は ingestion/project/sheet の既定と origins.json の directions。当たらなければ空。A〜D の4区分は持たず、API がこの区分からまとめる。",
           "values": [
             "new",
             "expand",
