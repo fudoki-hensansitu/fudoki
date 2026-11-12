@@ -68,9 +68,14 @@ interface MarkdownConverter {
 export async function htmlToMarkdown(ai: unknown, html: string, url: string): Promise<string | undefined> {
   if (!ai) return undefined
   const cssSelector = /<main[\s>]/.test(html) ? 'main' : undefined
-  const result = await (ai as MarkdownConverter).toMarkdown(
-    { name: 'page.html', blob: new Blob([html], { type: 'text/html' }) },
-    { conversionOptions: { html: { hostname: url, cssSelector } } },
-  )
-  return result.format === 'markdown' && result.data ? result.data : undefined
+  try {
+    const result = await (ai as MarkdownConverter).toMarkdown(
+      { name: 'page.html', blob: new Blob([html], { type: 'text/html' }) },
+      { conversionOptions: { html: { hostname: url, cssSelector } } },
+    )
+    return result.format === 'markdown' && result.data ? result.data : undefined
+  } catch {
+    // Workers AI が落ちていても頁は HTML で返す
+    return undefined
+  }
 }
