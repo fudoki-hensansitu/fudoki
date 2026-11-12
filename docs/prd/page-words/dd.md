@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-11-12`
-状態: In Progress（手順 1〜4 を実装中）
+状態: In Progress（手順 1〜6 済み、7〜8 を実装中）
 
 ## Summary
 
@@ -128,6 +128,6 @@ flowchart LR
 3. marts `source_page_text` と `sync_d1.py` の表ごとの読み戻し行数を足し、本番 D1 に写す（確認を取ってから）。
 4. api の `readSourcePage` を D1 に切り替え、R2 の binding を外す（api の PR）。api は main に入ると deploy されるので、3 で本番 D1 に入ったことを確かめてから merge する。同じ PR で `apps/AGENTS.md`・`pipeline/AGENTS.md`・`pipeline/package.json` の `source-text:save`（目で確かめる `source-text:preview` は頁の文字を作る入口に移して残す。`source_text/` を移すなら `pipeline/pyproject.toml` の `module-name` も直す）・`.agents/skills/pipeline/references/source-text.md`・`docs/prd/source-reading/dd.md`・`apps/web/void.config.ts` のコメント・`apps/api/src/db.ts`・`apps/api/cloudflare.config.ts` を直す。
 5. R2 の `source-text/` を消す（確認を取ってから）。
-6. 取り込みを移す前の基準を取る。評価シート・指標・指標の値・評価の結果・施策の全件を、ID の列（`sheet_id`・`measure_id`・`indicator_id` など）と `page`・`position` を含めて今のコードで書き出す。紐付けの seed（`dbt/seeds/project/budget_measure_link.csv`）の行が必ず `project_budget_measure` に当たることを確かめる dbt の検査を足す。足す前に `dbt:build` で当たらない行を数え、あれば取り込みを移す前に片付ける。
+6. 取り込みを移す前の基準を取る。評価シート・指標・指標の値・評価の結果・施策の全件を、ID の元になる列（`origin_id`・`page`・`position`）を含めて、移す前の commit のコードで読む（`project:baseline --base <commit>`。その commit を作業ツリーに取り出して読み、今のコードの結果と全行で突き合わせる）。紐付けの seed（`dbt/seeds/project/budget_measure_link.csv`）の行が必ず `project_budget_measure` に当たることを確かめる dbt の検査を足す。足す前に `dbt:build` で当たらない行を数え、あれば取り込みを移す前に片付ける。
 7. 評価シート・評価の結果を語の層へ移し、基準と ID の列を含む全件が一致することを確かめる（取り込みの PR）。
 8. プレスを語の層へ移し、同じく全件で突き合わせる。個別の規則は1団体ずつ（取り込みの PR、団体ごとに分けてよい）。
