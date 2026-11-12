@@ -656,7 +656,8 @@ function SheetDetail({ s }: { s: EvalSheet }) {
 }
 
 /** 分野の頁（/tokyo/shinagawa/2026/fields/fukushi）。まとめのタイルから開く */
-const FieldChart = React.lazy(() => import('./field-chart'))
+const loadFieldChart = () => import('./field-chart')
+const FieldChart = React.lazy(loadFieldChart)
 /** 内訳の色。緑の濃さを金額の順に下げる（色に意味は持たせない）。その他は灰色。ink は切れの上に書く割合の文字色 */
 // oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで
 const SLICE_COLORS = [100, 78, 60, 44, 30].map((n) => `color-mix(in oklab, var(--primary) ${n}%, var(--background))`)
@@ -669,6 +670,8 @@ function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
   const { v, d, page } = useApp()
   const [drills, setDrills] = React.useState<Drill[] | null>()
   const initial = d.years[String(v.year)]?.kind === 'initial'
+  // recharts の chunk は内訳のデータを待たずに読み始める
+  React.useEffect(() => { void loadFieldChart() }, [])
   React.useEffect(() => {
     setDrills(undefined)
     const controller = new AbortController()
