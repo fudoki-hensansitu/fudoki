@@ -17,7 +17,7 @@ import { reiwa, yearName } from '../jurisdiction/types'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { searchHref } from '../search/search'
 import { useMyTown, type Town } from './towns'
-import { onboarded, SpotTour, TOTAL, useTour } from './tour'
+import { onboarded, SpotTour, stepAt, TOTAL, useTour } from './tour'
 import { OpenVisual } from './tour-visuals'
 import { OtherTowns, Checklist, Empty, Intro, Steps, startChecklist, type CheckItem } from './onboarding'
 
@@ -317,11 +317,12 @@ function Reveal({ c, onOpen, onBack }: { c: Ctx; onOpen: () => void; onBack: () 
 }
 
 /** チェックリストの残りの項目。まちの頁・検索・アシスタントへ */
-const checkItems = (c: Ctx): CheckItem[] => [
+const checkItems = (c: Ctx, startAt: (at: number) => void): CheckItem[] => [
   { key: 'flow', label: 'お金の使い道を見る', href: flowHref(c) },
   { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects?filter=new` },
   { key: 'search', label: '事業を検索する', href: searchHref('', c.town.code) },
-  { key: 'assistant', label: 'アシスタントに質問', href: '/assistant' },
+  // アシスタントへは、事業を選んで文を添えて聞くオンボーディングの歩から始める
+  { key: 'assistant', label: 'アシスタントに質問', start: () => startAt(stepAt('detail')) },
 ]
 
 
@@ -407,12 +408,13 @@ export function Home({ entries, featured }: HomeProps) {
     // オンボーディングの1歩目（まちの頁を開く）はホームで出す。続きの歩で止めた人は、はじめにやることの「オンボ開始」からまちの頁の続きへ
     const saved = tour.saved
     const first = saved?.state === 'on' && saved.at === 0
-    const resume = () => {
+    // その歩からオンボーディングを始める。1歩目より先はまちの頁で続ける
+    const startAt = (at: number) => {
       if (!ctx) return
-      if (!saved || saved.at <= 0 || saved.at >= TOTAL) return tour.go(0)
-      tour.go(saved.at)
-      visit(ctx.base)
+      tour.go(at)
+      if (at > 0) visit(ctx.base)
     }
+    const resume = () => startAt(saved && saved.at > 0 && saved.at < TOTAL && saved.state !== 'done' ? saved.at : 0)
     body = (
       <>
         {ctx ? (
@@ -430,7 +432,7 @@ export function Home({ entries, featured }: HomeProps) {
               }}
             />
           ) : (
-            <Checklist items={checkItems(ctx)} tour={saved} onTour={resume} />
+            <Checklist items={checkItems(ctx, startAt)} tour={saved} onTour={resume} />
           )
         ) : null}
         {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
