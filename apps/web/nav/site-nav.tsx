@@ -132,6 +132,7 @@ const GITHUB = 'https://github.com/fudoki-hensansitu/fudoki'
 const X = 'https://x.com/fudokijp'
 
 const Social = ({ href, label, icon, className }: { href: string; label: string; icon: React.ReactNode; className?: string }) => (
+  // oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで
   <a href={href} aria-label={label} target="_blank" rel="noopener noreferrer" className={cn('flex size-10 items-center justify-center rounded-md text-sidebar-foreground/70 transition-colors hover:bg-sidebar-accent hover:text-sidebar-foreground [&_svg]:size-5', className)}>
     {icon}
   </a>

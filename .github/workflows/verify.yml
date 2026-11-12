@@ -33,6 +33,7 @@ jobs:
           exit 1
       - run: bun run typecheck:all
       - run: bun run test
+      - run: bun run --cwd apps/web lint
       - run: bun pipeline/source_selection/check.ts
       - run: bun run --cwd pipeline ingestion:check
       - run: bun run --cwd pipeline test:python
