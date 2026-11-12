@@ -33,7 +33,7 @@ const vars = {
 }
 
 export default defineConfig({
-  // CDN（Void の ISR）に置く応答。ISR_CACHE（KV）の binding があるときだけ働き、過ぎたら古い応答を返しながら裏で作り直す。
+  // CDN（Void の ISR）に置く応答。ISR_CACHE（KV、下の cloudflare.kv_namespaces）に置き、過ぎたら古い応答を返しながら裏で作り直す。
   // 自治体の頁は各頁の .server.ts の revalidate。cookie の付いた要求・/api の下・200 でない応答・no-store の応答は置かない。deploy のたびに空になる
   routing: {
     revalidate: {
@@ -107,6 +107,8 @@ export default defineConfig({
         ? { binding: 'DB', database_name: 'fudoki-web-preview', database_id: '5b2c16b3-f008-4901-8660-2c66db3c714d', migrations_dir: 'migrations' }
         : { binding: 'DB', database_name: 'fudoki-web', database_id: '760c7476-6e46-4b44-b174-1bfdd1b4f957', migrations_dir: 'migrations' },
     ],
+    // CDN（Void の ISR）が描いた HTML・データを置く KV。風土記のデータではなく、応答の写しだけを置く。preview は別の KV にする
+    kv_namespaces: [{ binding: 'ISR_CACHE', id: preview ? '37ad90e0b46d4d6a996f1aa4e794fa58' : '381b42a1f4334609b917b794d9feb9b7' }],
     // 以下は本番だけ。preview には渡さない
     ...(preview
       ? {}
