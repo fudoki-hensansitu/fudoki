@@ -2,7 +2,7 @@
 // HTTP の route・MCP には載せず、web のアシスタントが内部の RPC（source-pages-entrypoint.ts）から呼ぶだけ（docs/prd/source-reading/dd.md）。
 // 出典の利用条件が無断の転載を禁じるため、本文は公開の REST・MCP には返さない。
 import { z } from 'zod'
-import { BUDGET_PROPOSAL_ORIGIN_TABLE, EVALUATION_ORIGIN_TABLE, ORIGIN_TABLE } from './columns'
+import { BUDGET_PROPOSAL_ORIGIN_TABLE, EVALUATION_ORIGIN_TABLE } from './columns'
 import type { Db } from './db'
 
 /** R2 の binding のうち、ここで使う読み取りだけの型。書き込み・削除の関数を型に持たせない。 */
@@ -29,10 +29,10 @@ export type SourcePageResult =
 
 interface Origin { sha256: string; title: string; url: string }
 
-// 出典の表（歳出・事業評価・予算案）を1つに並べる。評価・予算案の url は自治体から消えた資料だと Wayback Machine の写しになるので、landing_url（自治体の公式の頁）も引く
+// 頁の文字があるのは事業評価・予算案の出典だけ（予算・決算は金額と説明欄を表にしてあるので作らない）。
+// url は自治体から消えた資料だと Wayback Machine の写しになるので、landing_url（自治体の公式の頁）も引く
 const ORIGINS =
-  `SELECT "origin_id", "sha256", "title", "url", NULL AS "landing_url" FROM ${ORIGIN_TABLE} ` +
-  `UNION ALL SELECT "origin_id", "sha256", "title", "url", "landing_url" FROM ${EVALUATION_ORIGIN_TABLE} ` +
+  `SELECT "origin_id", "sha256", "title", "url", "landing_url" FROM ${EVALUATION_ORIGIN_TABLE} ` +
   `UNION ALL SELECT "origin_id", "sha256", "title", "url", "landing_url" FROM ${BUDGET_PROPOSAL_ORIGIN_TABLE}`
 
 type OriginRecord = { sha256: string | null; title: string | null; url: string; landing_url: string | null }
@@ -46,7 +46,7 @@ async function resolveOrigin(db: Db, origin: string): Promise<Origin | null> {
   return row?.sha256 && SHA256.test(row.sha256) ? { sha256: row.sha256, title: row.title ?? '', url: officialUrl(row) } : null
 }
 
-/** 出典を風土記の出典の記録（D1 の歳出・事業評価・予算案の出典の表）に照らしてから、R2 の key を sha256 から組み立てて読む。
+/** 出典を風土記の出典の記録（D1 の事業評価・予算案の出典の表）に照らしてから、R2 の key を sha256 から組み立てて読む。
  * 利用者や AI から R2 の key は受け取らない（取り込み表など他の object を読ませない）。 */
 export async function readSourcePage(db: Db, bucket: SourceTextBucket | undefined, raw: unknown): Promise<SourcePageResult> {
   const parsed = sourcePageInput.safeParse(raw)
