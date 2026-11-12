@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import json
 import os
 import tempfile
 from dataclasses import dataclass
@@ -65,11 +66,19 @@ def write_parquet(path: Path, rows: Iterable[Mapping[str, object]], *,
         order_column += "_"
     declarations = [f"{_quote(c.name)} {c.type}" + ("" if c.nullable else " NOT NULL") for c in columns]
     placeholders = ",".join("?" for _ in range(len(names) + 1))
+    # Rows reach DuckDB as JSON lines read with the declared types: binding them one by one
+    # (`executemany`) took most of a refresh. A value JSON cannot carry exactly (NaN, infinity)
+    # sends the batch through the bound insert instead.
+    fields = {"_o": "BIGINT", **{f"_{index}": column.type for index, column in enumerate(columns)}}
+    json_columns = "{" + ", ".join(f"'{key}': '{kind}'" for key, kind in fields.items()) + "}"
     source = iter(rows)
     count = 0
     handle, temporary_name = tempfile.mkstemp(prefix=".parquet-", suffix=".parquet", dir=path.parent)
     os.close(handle)
     temporary = Path(temporary_name)
+    handle, lines_name = tempfile.mkstemp(prefix=".parquet-", suffix=".jsonl", dir=path.parent)
+    os.close(handle)
+    lines = Path(lines_name)
     try:
         with duckdb.connect() as connection:
             connection.execute(f"CREATE TABLE data ({_quote(order_column)} BIGINT, {', '.join(declarations)})")
@@ -82,7 +91,14 @@ def write_parquet(path: Path, rows: Iterable[Mapping[str, object]], *,
                         column.validate(row[column.name])
                     values.append((count, *(row[name] for name in names)))
                     count += 1
-                connection.executemany(f"INSERT INTO data VALUES ({placeholders})", values)
+                try:
+                    text = "".join(json.dumps(dict(zip(fields, value)), allow_nan=False) + "\n" for value in values)
+                except ValueError:
+                    connection.executemany(f"INSERT INTO data VALUES ({placeholders})", values)
+                    continue
+                lines.write_text(text, encoding="utf-8")
+                connection.execute(f"INSERT INTO data SELECT {', '.join(fields)} FROM read_json(?, "
+                                   f"format='newline_delimited', columns={json_columns})", [str(lines)])
             selection = ",".join(_quote(name) for name in names)
             connection.execute(
                 f"COPY (SELECT {selection} FROM data ORDER BY {_quote(order_column)}) TO ? (FORMAT PARQUET, COMPRESSION ZSTD)",
@@ -91,4 +107,5 @@ def write_parquet(path: Path, rows: Iterable[Mapping[str, object]], *,
         os.link(temporary, path)
     finally:
         temporary.unlink(missing_ok=True)
+        lines.unlink(missing_ok=True)
     return count

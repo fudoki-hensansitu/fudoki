@@ -35,13 +35,31 @@ def sha_file(path: Path) -> str:
         return hashlib.file_digest(stream, 'sha256').hexdigest()
 
 
+# Parsing and walking the syntax trees dominated `fingerprints` (a refresh calls it several times per manifest,
+# and every manifest walks the same shared modules). What is derived from one file's text is kept per process,
+# keyed by the file's path and the hash of its bytes, so an edited file is read again and nothing stale is served.
+_DERIVED: dict[tuple[str, str, str], object] = {}
+
+
+def _derived(kind: str, path: Path, make):
+    data = path.read_bytes()
+    key = (kind, str(path), hashlib.sha256(data).hexdigest())
+    if key not in _DERIVED:
+        _DERIVED[key] = make(data)
+    return _DERIVED[key]
+
+
 def sha_code(path: Path) -> str:
     """The fingerprint of a code file. A Python file is hashed by its syntax tree without docstrings, so editing a
     comment, a docstring or the layout of the code leaves the tables it built current; other files by their bytes.
     The tree's dump belongs to the Python version, so a new Python makes every table stale once."""
     if path.suffix != '.py':
         return sha_file(path)
-    tree = ast.parse(path.read_text())
+    return _derived('sha_code', path, lambda data: _sha_tree(data.decode()))
+
+
+def _sha_tree(text: str) -> str:
+    tree = ast.parse(text)
     for node in ast.walk(tree):
         if isinstance(node, (ast.Module, ast.ClassDef, ast.FunctionDef, ast.AsyncFunctionDef)) and node.body:
             first = node.body[0]
@@ -178,10 +196,61 @@ def check_module_violations(path: Path, *, tree: ast.Module | None = None) -> li
     return sorted(set(found))
 
 
-def code_tree(path: Path, trees: dict) -> ast.Module:
-    if path not in trees:
-        trees[path] = ast.parse(path.read_text())
-    return trees[path]
+def code_tree(path: Path, trees: dict | None = None) -> ast.Module:
+    """The parsed file, shared across calls. Callers must not modify the tree."""
+    return _derived('tree', path, lambda data: ast.parse(data.decode()))
+
+
+def _module_references(path: Path) -> list[list[str] | str]:
+    """Per syntax node of ``path``, in walk order: the ``ingestion.`` modules it names (a list), or a string
+    constant ending in .json/.toml/.swift that may name a declaration file next to the code."""
+    def make(data: bytes) -> list[list[str] | str]:
+        found: list[list[str] | str] = []
+        for node in ast.walk(code_tree(path)):
+            modules = []
+            if isinstance(node, ast.Import):
+                modules = [alias.name for alias in node.names]
+            elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
+                modules = [node.module, *[node.module + '.' + alias.name for alias in node.names]]
+            elif isinstance(node, ast.ImportFrom) and node.level:
+                base = list(path.relative_to(INGESTION).parent.parts)
+                base = base[:len(base) - node.level + 1]
+                module = 'ingestion.' + '.'.join([*base, *node.module.split('.')] if node.module else base)
+                modules = [module, *[module + '.' + alias.name for alias in node.names]]
+            elif isinstance(node, ast.Constant) and isinstance(node.value, str):
+                if node.value.startswith('ingestion.'):
+                    modules = [node.value]
+                if node.value.endswith(('.json', '.toml', '.swift')):
+                    found.append(node.value)
+            modules = [module for module in modules if module.startswith('ingestion.')]
+            if modules:
+                found.append(modules)
+        return found
+    return _derived('modules', path, make)
+
+
+def _resource_references(path: Path) -> tuple[list[str], list | None]:
+    """The CSV constants and ``shared`` modules ``path`` refers to, and its ``FINGERPRINT_RESOURCES`` values."""
+    def make(data: bytes) -> tuple[list[str], list | None]:
+        tree = code_tree(path)
+        references = []
+        for node in ast.walk(tree):
+            if isinstance(node, ast.Constant) and isinstance(node.value, str) and node.value.endswith('.csv'):
+                references.append(node.value)
+            elif isinstance(node, ast.Import):
+                references.extend(alias.name.replace('.', '/') + '.py'
+                                  for alias in node.names if alias.name.startswith('shared.'))
+            elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
+                modules = ([node.module] if node.module.startswith('shared.') else
+                           ['shared.' + alias.name for alias in node.names] if node.module == 'shared' else [])
+                references.extend(module.replace('.', '/') + '.py' for module in modules)
+        declared = None
+        for node in tree.body:
+            if isinstance(node, ast.Assign) and any(isinstance(target, ast.Name) and target.id == 'FINGERPRINT_RESOURCES'
+                                                    for target in node.targets):
+                declared = [*(declared or []), *ast.literal_eval(node.value)]
+        return references, declared
+    return _derived('resources', path, make)
 
 
 def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict | None = None) -> list[str]:
@@ -223,30 +292,15 @@ def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict 
             if (INGESTION / initializer).is_file():
                 pending.append(str(initializer))
         importer = relative
-        tree = code_tree(path, trees)
-        for node in ast.walk(tree):
-            modules = []
-            if isinstance(node, ast.Import):
-                modules = [alias.name for alias in node.names]
-            elif isinstance(node, ast.ImportFrom) and node.level == 0 and node.module:
-                modules = [node.module, *[node.module + '.' + alias.name for alias in node.names]]
-            elif isinstance(node, ast.ImportFrom) and node.level:
-                base = list(path.relative_to(INGESTION).parent.parts)
-                base = base[:len(base) - node.level + 1]
-                module = 'ingestion.' + '.'.join([*base, *node.module.split('.')] if node.module else base)
-                modules = [module, *[module + '.' + alias.name for alias in node.names]]
-            elif isinstance(node, ast.Constant) and isinstance(node.value, str):
-                if node.value.startswith('ingestion.'):
-                    modules = [node.value]
-                if node.value.endswith(('.json', '.toml', '.swift')):
-                    candidate = path.with_suffix(node.value) if node.value.startswith('.') else path.parent / node.value
-                    if candidate.is_file() and candidate.resolve().is_relative_to(INGESTION.resolve()):
-                        dependency = str(candidate.relative_to(INGESTION))
-                        if dependency != 'generic/patterns/catalog.json':
-                            pending.append(dependency)
-            for module in modules:
-                if not module.startswith('ingestion.'):
-                    continue
+        for reference in _module_references(path):
+            if isinstance(reference, str):
+                candidate = path.with_suffix(reference) if reference.startswith('.') else path.parent / reference
+                if candidate.is_file() and candidate.resolve().is_relative_to(INGESTION.resolve()):
+                    dependency = str(candidate.relative_to(INGESTION))
+                    if dependency != 'generic/patterns/catalog.json':
+                        pending.append(dependency)
+                continue
+            for module in reference:
                 target = INGESTION / Path(*module.split('.')[1:])
                 candidate = target / '__init__.py' if target.is_dir() else target.with_suffix('.py')
                 if not candidate.is_file():
@@ -255,7 +309,9 @@ def dependencies(conversion: dict, *, trees: dict | None = None, patterns: dict 
                 if dependency in FINGERPRINT_EXCLUDED:
                     continue
                 if is_check_module(dependency) and (importer, dependency) not in RESULT_SHAPES_TABLE:
-                    violations = check_module_violations(candidate, tree=code_tree(candidate, trees))
+                    violations = _derived('violations', candidate,
+                                          lambda data, candidate=candidate: check_module_violations(
+                                              candidate, tree=code_tree(candidate)))
                     if violations:
                         raise ValueError(f'Check module {dependency} must not produce tables: {"; ".join(violations)}')
                     continue
@@ -271,22 +327,10 @@ def resources(files: list[str], *, trees: dict | None = None) -> list[str]:
         path = code_path(relative)
         if path.suffix != '.py':
             continue
-        tree = code_tree(path, trees)
-        for node in ast.walk(tree):
-            if isinstance(node, ast.Constant) and isinstance(node.value, str) and node.value.endswith('.csv'):
-                references.append((relative, node.value))
-            elif isinstance(node, ast.Import):
-                references.extend((relative, alias.name.replace('.', '/') + '.py')
-                                  for alias in node.names if alias.name.startswith('shared.'))
-            elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
-                modules = ([node.module] if node.module.startswith('shared.') else
-                           ['shared.' + alias.name for alias in node.names] if node.module == 'shared' else [])
-                references.extend((relative, module.replace('.', '/') + '.py') for module in modules)
-        for node in tree.body:
-            if not isinstance(node, ast.Assign) or not any(isinstance(target, ast.Name)
-                    and target.id == 'FINGERPRINT_RESOURCES' for target in node.targets):
-                continue
-            for value in ast.literal_eval(node.value):
+        constants, declared = _resource_references(path)
+        references.extend((relative, value) for value in constants)
+        if declared is not None:
+            for value in declared:
                 if not isinstance(value, str):
                     raise ValueError('Fingerprint resource must be a relative path')
                 resource = PIPELINE / value
