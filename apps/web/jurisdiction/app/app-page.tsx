@@ -991,7 +991,7 @@ export function AppPage({ data, sitekey, initialYear, initialField, initialTab }
           <h1 className="min-w-0 text-[22px] font-normal leading-tight sm:text-[26px]">{data.name}</h1>
           <div data-tour="year" className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
         </div>
-        {vision ? <p data-tour="select" className="text-base leading-snug sm:text-[17px]">{vision}</p> : null}
+        {vision ? <p data-tour="select" className="mt-2 text-base leading-snug sm:mt-0 sm:text-[17px]">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
           <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
           {data.population ? (
