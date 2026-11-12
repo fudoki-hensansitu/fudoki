@@ -77,8 +77,15 @@ export const ProjectYearRow = z
       moku_name: z.string().nullable(),
       initial_expenditure_detail_id: z.string().nullable(),
       settlement_expenditure_detail_id: z.string().nullable(),
+      initial_expenditure_subject_id: z.string().nullable(),
+      settlement_expenditure_subject_id: z.string().nullable(),
       budget_yen: z.int().nullable(),
       settled_yen: z.int().nullable(),
+      first_year: z.int(),
+      first_year_kind: z.enum(['confirmed', 'before_coverage']),
+      last_year: z.int().nullable(),
+      last_year_kind: z.enum(['confirmed', 'latest', 'unknown']),
+      parent_project_id: z.string().nullable(),
     })
   )
   .meta({ id: 'ProjectYearRow', description: '事業の1年度（当初予算と決算の事業の行）。' })
@@ -98,7 +105,6 @@ export type ProjectOutput = z.infer<typeof ProjectOutput>
 export const ProjectSearchInput = yearSearchInputFor(PROJECT_YEAR_TABLE)
 export const ProjectSearchOutput = z.strictObject({
   project_years: z.array(ProjectYearRow),
-  projects: z.array(ProjectRow).describe('この頁の事業の年度が属する事業（始めた年度・終えた年度）。'),
   total_size: z.int().min(0).describe(`条件に当たる事業の年度の数（頁をまたいだ合計）。${MAX_TOTAL_SIZE.toLocaleString('en-US')} で数えるのをやめる。`),
   total_size_capped: z.boolean().describe(`true なら ${MAX_TOTAL_SIZE.toLocaleString('en-US')} 件で数えるのをやめていて、total_size は下限。`),
   next_page_token: nextPageToken,

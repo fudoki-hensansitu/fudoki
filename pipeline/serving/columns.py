@@ -52,7 +52,8 @@ INDEXES = {
     'budget_proposal_origin': [['budget_proposal_id']],
     'budget_measure': [['budget_proposal_id'], ['jurisdiction_code', 'fiscal_year'], ['expenditure_detail_id']],
     'project': [['jurisdiction_code'], ['parent_project_id']],
-    'project_year': [['project_id'], ['fiscal_year', 'jurisdiction_code'], ['initial_expenditure_detail_id'], ['settlement_expenditure_detail_id']],
+    'project_year': [['project_id'], ['fiscal_year', 'jurisdiction_code'], ['initial_expenditure_detail_id'], ['settlement_expenditure_detail_id'],
+                     ['initial_expenditure_subject_id'], ['settlement_expenditure_subject_id']],
 }
 
 TYPES = {'VARCHAR': 'string', 'INTEGER': 'integer', 'BIGINT': 'integer', 'HUGEINT': 'integer', 'BOOLEAN': 'boolean',

@@ -1,6 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { McpServer, createMcpHandler, preloadSchemas } from '@modelcontextprotocol/server'
 import { HTTPException } from 'hono/http-exception'
+import { cors } from 'hono/cors'
 import iconSvg from './favicon.svg?raw'
 import { ApiError, errorBody, invalid } from './errors'
 import { VIEW_HTML, VIEW_URI } from './gen/view'
@@ -246,6 +247,10 @@ export function createApp() {
     c.res.headers.set('Access-Control-Allow-Origin', '*')
     c.res.headers.set('Access-Control-Expose-Headers', 'X-Origin-Url, X-Origin-Fetched-At')
   })
+
+  // REST はブラウザからも直接読める（風土記の web の無限スクロールも同じ口を使う）。資格情報は送らせない。
+  // kill switch より前に置き、preflight（OPTIONS）は D1 を読まずに返す。
+  app.use('/v1/*', cors({ origin: '*', allowMethods: ['GET', 'POST'], allowHeaders: ['Content-Type'], maxAge: 86400 }))
 
   // kill switch: control の serving が 'on' 以外なら 503。読めないときも止める。
   app.use('*', async (c, next) => {

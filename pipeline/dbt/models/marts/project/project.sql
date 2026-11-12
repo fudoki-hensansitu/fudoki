@@ -1,7 +1,7 @@
 -- 事業。予算書・決算書の事業の行を年度をまたいでつないだもの（つなぎ方は風土記の判断。seed の project_line）。
 -- 始めた年度・終えた年度は、その自治体・会計の収録の年度で決まる。親の事業は、最新の年度の行の1つ上の事業の行の事業。
 with years as (
-    select * from {{ ref('project_year') }}
+    select * from {{ ref('int_project__years') }}
 ),
 coverage as (
     -- 自治体・会計ごとの、事業の行がある年度

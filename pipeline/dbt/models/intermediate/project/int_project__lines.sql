@@ -34,7 +34,7 @@ paths as (
     select c.detail_id, list_append(p.path, c.label)
     from labeled c join paths p on c.parent_detail_id = p.detail_id
 )
-select l.detail_id, l.parent_detail_id, l.jurisdiction_code, l.fiscal_year, l.document_kind, l.account_name,
+select l.detail_id, l.parent_detail_id, l.subject_id, l.jurisdiction_code, l.fiscal_year, l.document_kind, l.account_name,
     l.kan_name, l.kou_name, l.moku_name, to_json(p.path)::varchar as path, len(p.path) as depth, l.name, l.amount_yen, l.print_order
 from labeled l
 join paths p using (detail_id)

@@ -4,7 +4,7 @@ import { columnsOf, PROJECT_TABLE, PROJECT_YEAR_TABLE, selectListOf, toRow } fro
 import { ApiError } from '../errors'
 import type { Ctx } from '../shared/context'
 import { searchRows } from '../shared/query'
-import { MAX_BINDS, type SearchInput } from '../shared/search'
+import type { SearchInput } from '../shared/search'
 import { MAX_CHILDREN, type ProjectOutput, type ProjectSearchOutput } from './model'
 
 const Y = PROJECT_YEAR_TABLE
@@ -31,14 +31,5 @@ export async function getProject(ctx: Ctx, input: { project_id: string }): Promi
 
 export async function searchProjects(ctx: Ctx, input: SearchInput): Promise<ProjectSearchOutput> {
   const { rows, next_page_token, total_size, total_size_capped } = await searchRows(Y, null, ctx, input, { count: true })
-  const ids = [...new Set(rows.map((r) => r.project_id as string))]
-  const { db } = ctx
-  const projectSelect = selectListOf(PROJECT_TABLE)
-  const chunks = Array.from({ length: Math.ceil(ids.length / MAX_BINDS) }, (_, i) => ids.slice(i * MAX_BINDS, (i + 1) * MAX_BINDS))
-  const found = chunks.length
-    ? await db.batch(chunks.map((c) => db.prepare(`SELECT ${projectSelect} FROM ${PROJECT_TABLE} WHERE "project_id" IN (${c.map(() => '?').join(', ')}) ORDER BY "project_id"`).bind(...c)))
-    : []
-  const projectColumns = columnsOf(PROJECT_TABLE)
-  const projects = found.flatMap((r) => r.results.map((p) => toRow(projectColumns, p as Record<string, unknown>)))
-  return { project_years: rows, projects, total_size, total_size_capped, next_page_token } as ProjectSearchOutput
+  return { project_years: rows, total_size, total_size_capped, next_page_token } as ProjectSearchOutput
 }
