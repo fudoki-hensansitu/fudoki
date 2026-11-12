@@ -47,8 +47,8 @@ jobs:
       - id: refresh
         run: bun run --cwd pipeline ingestion:refresh --remote --dry-run --output "$RUNNER_TEMP/refresh/report.json"
         env:
-          # Read-only R2 token for the private input bucket; refresh never writes R2.
-          CLOUDFLARE_API_TOKEN: ${{ secrets.R2_READ_API_TOKEN }}
+          # The deploy token also reads the private input bucket (R2 read only); --dry-run never writes R2.
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       - if: always()
         uses: actions/cache/save@v6
         with:
