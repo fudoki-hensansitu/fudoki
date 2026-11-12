@@ -49,7 +49,8 @@
 .tv { --tv: 4.4s; }
 .tv-cursor { transform: translate(var(--x1), var(--y1)); }
 .tv-ripple { opacity: 0; }
-.tv-press, .tv-press-fill, .tv-send { position: relative; }
+/* 絵の部品の位置（absolute）を上書きしないよう、詳細度を 0 にする */
+:where(.tv-press, .tv-send) { position: relative; }
 .tv-press::after, .tv-press-fill::after {
   content: '';
   position: absolute;

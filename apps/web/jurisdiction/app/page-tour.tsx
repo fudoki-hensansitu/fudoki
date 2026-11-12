@@ -31,7 +31,7 @@ export function usePageTour(c: TourCtl) {
   const on = saved?.state === 'on' && saved.at >= 1 && saved.at < TOTAL
   const at = on ? saved!.at : -1
   const step = on ? STEPS[at] : null
-  const [answered, setAnswered] = React.useState(false)
+  const [answered, setAnswered] = React.useState<'waiting' | 'done' | 'failed'>('waiting')
   const quote = React.useRef('')
   const started = React.useRef(false)
   const lastProject = React.useRef<string | null>(null)
@@ -163,7 +163,7 @@ export function usePageTour(c: TourCtl) {
     } else if (step === 'answer') {
       overlay = (
         <FloatSpot>
-          {answered ? (
+          {answered === 'done' ? (
             <div className="flex items-start gap-3">
               <DoneMark />
               <div className="min-w-0 flex-1">
@@ -179,7 +179,7 @@ export function usePageTour(c: TourCtl) {
               <span className="grid size-10 shrink-0 place-items-center rounded-full bg-card">
                 <Typing />
               </span>
-              <p className="min-w-0 flex-1 text-[14px]">アシスタントが答えています…</p>
+              <p className="min-w-0 flex-1 text-[14px]">{answered === 'failed' ? '答えを受け取れませんでした。会話の欄からもう一度送ってください。' : 'アシスタントが答えています…'}</p>
               <span className="text-[12px] text-muted-foreground tabular-nums">
                 {at + 1} / {TOTAL}
               </span>
@@ -204,13 +204,13 @@ export function usePageTour(c: TourCtl) {
         quote.current = q
         go(stepAt('ask'))
       },
-      onChat: (e: 'started' | 'answered') => {
+      onChat: (e: 'started' | 'answered' | 'failed') => {
         if (e === 'started' && step === 'ask') {
           started.current = true
-          setAnswered(false)
+          setAnswered('waiting')
           go(stepAt('answer'))
         }
-        if (e === 'answered' && step === 'answer') setAnswered(true)
+        if (e !== 'started' && step === 'answer') setAnswered(e === 'answered' ? 'done' : 'failed')
       },
     },
   }

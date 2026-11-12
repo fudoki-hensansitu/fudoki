@@ -89,8 +89,8 @@ export function Conversation({
   beforeComposer?: React.ReactNode
   /** 続けて聞いたとき（選んだ文を外すなど） */
   onSend?: () => void
-  /** 答えを書き終えたとき（オンボーディングの終わりの合図） */
-  onAnswered?: () => void
+  /** 答えを書き終えたとき（オンボーディングの終わりの合図）。ok は途中で切れず、失敗もしなかったか */
+  onAnswered?: (ok: boolean) => void
   /** 表とグラフを会話の横のパネルへ移せるか。会話の頁だけ。自治体の頁のように会話がパネルの中にあるときは移さない */
   movableViews?: boolean
 }) {
@@ -115,8 +115,8 @@ export function Conversation({
     id,
     messages: (stored.messages ?? []) as ChatMessage[],
     transport,
-    onFinish: ({ messages }) => {
-      onAnsweredRef.current?.()
+    onFinish: ({ messages, isError, isAbort, isDisconnect }) => {
+      onAnsweredRef.current?.(!isError && !isAbort && !isDisconnect)
       return saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages, ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) })
     },
   })

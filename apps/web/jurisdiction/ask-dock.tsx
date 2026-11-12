@@ -98,7 +98,7 @@ export function AskDock({ name, sitekey, year, section, control, keepOpen, sugge
   /** 頁の文を選んで、聞く欄にその文が付いたとき */
   onReveal?: (quote: string) => void
   /** 会話を始めたとき・答えが返ってきたとき */
-  onChat?: (e: 'started' | 'answered') => void
+  onChat?: (e: 'started' | 'answered' | 'failed') => void
 }) {
   const [open, setOpen] = React.useState(true)
   const [chat, setChat] = React.useState<{ id: string; session: StoredSession }>()
@@ -412,7 +412,7 @@ export function AskDock({ name, sitekey, year, section, control, keepOpen, sugge
           >
             <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
-                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} context={describe} beforeComposer={chip} onSend={() => ((pinnedQuote.current = false), setQuote(''))} onAnswered={() => onChat?.('answered')} />
+                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} context={describe} beforeComposer={chip} onSend={() => ((pinnedQuote.current = false), setQuote(''))} onAnswered={(ok) => onChat?.(ok ? 'answered' : 'failed')} />
               </React.Suspense>
             </div>
           </div>
