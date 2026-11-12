@@ -122,7 +122,7 @@ function describeSelected(sel: Selected, d: Snapshot, v: YearView): string {
   const now = v.amount(p)
   return [
     `開いている事業: ${p.name}（${[p.path.filter(Boolean).join(' > '), p.dept].filter(Boolean).join('、')}）${now != null ? `、${r(v.year)}の${v.word} ${yenText(now)}` : ''}`,
-    ...[...(v.measuresOf.get(p.id) ?? []).map((m) => source('この事業の予算案の施策', m, m.title)), ...d.sheets.filter((s) => s.project === p.id).sort((a, b) => b.fy - a.fy).map((s) => source('この事業の評価シート', s, s.name))].slice(0, DETAIL_SOURCES),
+    ...[...(v.measuresOf.get(p.id) ?? []).map((m) => source('この事業の予算案の施策', m, m.title)), ...d.sheets.filter((s) => s.project === p.id).sort((a, b) => b.fy - a.fy).map((s) => source(`この事業の評価シート（${r(s.fy)}に行った事業の評価${s.fy < v.year ? `。見ている${r(v.year)}の${v.year - s.fy}年前` : ''}）`, s, s.name))].slice(0, DETAIL_SOURCES),
   ].join('\n')
 }
 
