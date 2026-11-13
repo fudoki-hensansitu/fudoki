@@ -27,6 +27,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 20,
+                      "end": 20
+                    },
+                    {
                       "start": 68,
                       "end": 371
                     }
@@ -791,6 +795,10 @@
                   "direction": "expenditure",
                   "pages": [
                     {
+                      "start": 20,
+                      "end": 20
+                    },
+                    {
                       "start": 68,
                       "end": 373
                     }
@@ -977,6 +985,10 @@
                   "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
+                    {
+                      "start": 14,
+                      "end": 14
+                    },
                     {
                       "start": 62,
                       "end": 371

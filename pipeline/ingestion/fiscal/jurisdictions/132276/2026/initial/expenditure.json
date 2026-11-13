@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132276",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71246f9922458d2b98beec96da7494a93933a3956f36ceac5dd2d8218a5500fa"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "carried_names": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "spaced_project_codes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            20,
+            20
+          ],
+          [
+            68,
+            371
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p370-expenditure-total",
+            "page": 370,
+            "bbox": [
+              40,
+              190,
+              560,
+              295
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳出合計」の表。題字を枠の外に印字し、行に名前が無いので合計の行と読めない。款の和と比べる統制値で、総括の頁の歳出合計と同じ額。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "4ed1da0f58b7aec98ec4f9372284da9ef81f1d3f1b9ba9330fa81381e33b5c91",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は column mark 153頁 から決めた。款の和 26,864,000 と印字の「歳出合計」26,864,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132276/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "7266f00f32235cad3a45d71e44ff93de17b83ba23708b1b373c518f489ef0c4d",
+          "bytes": 218572
+        },
+        "row_count": 6874
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132276/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "7163c71795e9091b45df893644cbdaa340764c8788ee9f994c97cb971d7297fb",
+          "bytes": 126455
+        },
+        "row_count": 6216
+      }
+    }
+  ]
+}

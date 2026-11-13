@@ -461,7 +461,9 @@ def _build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
                                                (layout or {}).get('header'))
     fine_sections(all_nodes)
     plain = [name for hints in ((layout or {}).get('breakdown') or {}).values() for name in hints.get('plain_names', ())]
-    return Table(all_nodes, all_amounts, unresolved, excluded_regions(built, logicals, codes, observed),
+    # A block the reading cannot tell from the table it reads (`excluded_boxes`): its declared kind and reason.
+    declared = [{k: v for k, v in box.items() if k != 'id'} for box in options.get('excluded_boxes', ())]
+    return Table(all_nodes, all_amounts, unresolved, excluded_regions(built, logicals, codes, observed) + declared,
                  built, report, observed, logicals, headings, plain, ocr_numbers)
 
 
