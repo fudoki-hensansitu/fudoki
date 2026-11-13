@@ -13,7 +13,7 @@ from pathlib import Path
 import duckdb
 
 from ingestion.fiscal import manifest, unit_checks
-from ingestion.fiscal.storage import fetch, fetch_ocr, save, save_ocr, cleanup, verify, write_ocr
+from ingestion.fiscal.storage import fetch, fetch_ocr, keep, save_ocr, cleanup, verify, write_ocr
 from ingestion.paths import BUILD
 from ingestion.lib import coverage_checks, digit_recheck, heavy_lock, node_tables, poppler, source_inconsistencies, tree_checks
 
@@ -226,11 +226,13 @@ def coverage_peers(document: dict, converted: dict) -> dict:
     return {ident: pooled[origin] for ident, origin in origins.items()}
 
 
-def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bool = False,
+def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bool = False, record: bool = False,
             conversion_ids: list[str] | None = None, extend_plan: Path | None = None,
             persist_answers: bool = True, ask_answers: bool = True) -> dict:
     """Convert and check tables.
 
+    ``remote`` restores missing inputs and retained tables from R2 (read only). ``record`` writes the
+    passing tables to the Git manifest and the local object cache; R2 is written only by ``store`` (ADR 0045).
     A caller may read the Jev answers without extending or writing them (refresh): a read-only run
     must not change tracked files or spend API calls.
     """
@@ -497,23 +499,26 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
     candidate = output / 'manifest.json'
     # Candidate is not a saved manifest; it stays outside the Git registry.
     candidate.write_text(json.dumps(result, ensure_ascii=False, indent=2) + '\n')
-    if remote:
+    if record:
         if original_bytes is not None and path.read_bytes() != original_bytes:
-            raise ValueError('Saved manifest changed before extension upload')
-        # Observations go first so a saved table never points at a missing OCR input.
-        for conversion, item in manifest.ocr_inputs(result):
-            if conversion['id'] in chosen:
-                save_ocr(result, item)
+            raise ValueError('Saved manifest changed before extension record')
         for table in tables:
             if table['conversion_id'] not in chosen:
                 continue
-            save(result, table, outputs[table['table_id']], remote=True, scope=scopes.get(table['table_id']))
+            keep(result, table, outputs[table['table_id']], scope=scopes.get(table['table_id']))
         manifest.require_current(result)
         if original_bytes is not None and path.read_bytes() != original_bytes:
             raise ValueError('Saved manifest changed before extension registration')
         manifest.write(path, result)
         # Deletion is always a separate operation, including legacy-only documents.
-    return {'status': 'saved' if remote else 'candidate', 'tables': len(tables), 'jev': recheck.summary(),
+    files = {}
+    for table in tables:
+        if table['conversion_id'] in chosen:
+            for kind, reference in manifest.table_references(table).items():
+                output_file = outputs[table['table_id']]
+                files[reference['object']['key']] = str(output_file[kind] if kind is not None else output_file)
+    return {'status': 'recorded' if record else 'candidate', 'tables': len(tables), 'jev': recheck.summary(),
+            'files': files,
             'units': {'tables': {ident: item['status'] for ident, item in sorted(unit_results.items())},
                       'counts': unit_checks.summarize(unit_results)},
             'rows': sum(r['row_count'] for t in tables for r in manifest.table_references(t).values()), 'candidate': str(candidate)}
@@ -650,10 +655,11 @@ def main() -> None:
     run.add_argument('--manifest', type=Path, required=True)
     run.add_argument('--inputs', type=Path, required=True, help='JSON: original SHA-256 to local file path')
     run.add_argument('--output', type=Path, required=True)
-    run.add_argument('--remote', action='store_true')
+    run.add_argument('--remote', action='store_true', help='Restore missing inputs and retained tables from R2 (read only)')
+    run.add_argument('--dry-run', action='store_true', help='Write the candidate only; leave the manifest and the object cache untouched')
     run.add_argument('--conversion', action='append', help='Re-run these conversion IDs, preserving all untouched tables')
     run.add_argument('--extend-plan', type=Path,
-                     help='JSON in the existing manifest schema: same target/direction, unchanged existing conversions plus one new conversion/table, tables=[]. Retains verified saved tables and converts/uploads only the new table; registers only after full success. Local mode writes the candidate only.')
+                     help='JSON in the existing manifest schema: same target/direction, unchanged existing conversions plus one new conversion/table, tables=[]. Retains verified saved tables and converts only the new table; records only after full success.')
     restore = sub.add_parser('restore')
     restore.add_argument('--manifest', type=Path, required=True)
     restore.add_argument('--remote', action='store_true')
@@ -672,15 +678,20 @@ def main() -> None:
     refresh.add_argument('--plan', action='store_true', help='List stale conversions only; no original reads, conversion, or writes')
     ocr = sub.add_parser('ocr', help='Read declared OCR requests and pin observation SHA (Paddle; run outside the sandbox)')
     ocr.add_argument('--manifest', type=Path, required=True)
-    ocr.add_argument('--inputs', type=Path, required=True, help='JSON: original SHA-256 to local file path')
+    ocr.add_argument('--inputs', type=Path, help='JSON: original SHA-256 to local file path (not with --save)')
     ocr.add_argument('--id', action='append', help='Only these OCR input IDs')
     ocr.add_argument('--verify', action='store_true', help='Re-read and compare with the pinned SHA; write nothing')
+    ocr.add_argument('--save', action='store_true', help='Upload the pinned observations to R2 (the one R2 write left to a thread)')
+    store = sub.add_parser('store', help='Re-convert the tables recorded since a commit, compare with their records, and upload them to R2 (CI after merge)')
+    store.add_argument('--since', required=True, help='Commit to diff the manifests against')
+    store.add_argument('--dry-run', action='store_true', help='Re-convert and compare only; write nothing')
     clean = sub.add_parser('cleanup')
     clean.add_argument('--manifest', type=Path, required=True)
     args = parser.parse_args()
     # The heavy commands take one machine-wide lock (ingestion/lib/heavy_lock.py): a second run exits
     # with the holder instead of sharing the machine and the R2 objects. Released on exit.
-    manifests = [args.manifest] if isinstance(getattr(args, 'manifest', None), Path) else args.manifest
+    manifest_arg = getattr(args, 'manifest', None)  # schema・store は --manifest を持たない
+    manifests = [manifest_arg] if isinstance(manifest_arg, Path) else manifest_arg
     if args.command == 'refresh' and not manifests:
         manifests = manifest.paths()
     if args.command == 'refresh' and args.plan:
@@ -691,7 +702,7 @@ def main() -> None:
         return
     if args.command == 'refresh' and args.jobs is not None and args.jobs < 1:
         parser.error('--jobs must be at least 1')
-    if args.command in ('convert', 'refresh'):
+    if args.command in ('convert', 'refresh', 'store'):
         poppler.require()  # the words of a text PDF depend on the Poppler version (ingestion/lib/poppler.py)
     holder = heavy_lock.acquire(args.command, targets=manifests or ())
     if holder is not None:
@@ -711,14 +722,27 @@ def main() -> None:
             count += 1
             tables += len(document['tables'])
         print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables}))
+    elif args.command == 'ocr' and args.save:
+        document = manifest.read(args.manifest)
+        saved = [item['id'] for _, item in manifest.ocr_inputs(document) if not args.id or item['id'] in args.id]
+        for _, item in manifest.ocr_inputs(document):
+            if item['id'] in saved:
+                save_ocr(document, item)
+        print(json.dumps({'saved': saved}, ensure_ascii=False))
+    elif args.command == 'store':
+        from ingestion.fiscal.store import store as store_recorded
+        print(json.dumps(store_recorded(args.since, dry_run=args.dry_run), ensure_ascii=False))
     elif args.command == 'ocr':
+        if args.inputs is None:
+            parser.error('ocr requires --inputs unless --save')
         print(json.dumps(acquire_ocr(args.manifest, json.loads(args.inputs.read_text()),
                                      verify_only=args.verify, ids=args.id), ensure_ascii=False))
     elif args.command == 'originals':
         print(json.dumps(originals(args.manifest, args.output, remote=args.remote)))
     elif args.command == 'convert':
         print(json.dumps(convert(args.manifest, json.loads(args.inputs.read_text()), args.output,
-                                 remote=args.remote, conversion_ids=args.conversion, extend_plan=args.extend_plan)))
+                                 remote=args.remote, record=not args.dry_run, conversion_ids=args.conversion,
+                                 extend_plan=args.extend_plan)))
     elif args.command == 'verify':
         output = args.output or BUILD / 'ingestion-verify'
         if args.candidate is not None:

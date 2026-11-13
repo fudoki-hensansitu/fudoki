@@ -1,5 +1,6 @@
 name: sync-d1
 # main に入った取り込み・dbt の変更を、marts に build して本番 D1（fudoki-api）へ差分で写す（ADR 0040）。
+# publish の前に、取り込みの PR が管理 JSON に記録した表を変換し直し、記録と一致したものだけ R2 に置く（ingestion:store、ADR 0045）。
 # 範囲は serving/publish.py（bun run --cwd pipeline publish）が差分から決める。取り込みの宣言・選定・自治体の列を持つ seed だけならその自治体だけ、
 # 全自治体に効く変更なら全件。施策・事業の紐付けの seed（project:link-*）は取り込みの PR で commit しておく。
 on:
@@ -56,8 +57,11 @@ jobs:
           last=$(gh api "repos/${{ github.repository }}/actions/workflows/sync-d1.yml/runs?branch=main&event=push&status=success&per_page=1" --jq '.workflow_runs[0].head_sha // empty')
           if [ -n "$last" ] && git cat-file -e "$last^{commit}" 2>/dev/null && git merge-base --is-ancestor "$last" HEAD; then
             echo "args=--since $last" >> "$GITHUB_OUTPUT"
+            echo "since=$last" >> "$GITHUB_OUTPUT"
           else
             echo "args=--all" >> "$GITHUB_OUTPUT"
+            # R2 に置く表は、成功した同期が無くてもこの push の差分から決める
+            echo "since=${{ github.event.before }}" >> "$GITHUB_OUTPUT"
           fi
       - uses: jdx/mise-action@v5
         with:
@@ -80,6 +84,14 @@ jobs:
           path: pipeline/.cache
           key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
           restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
+      # 一部の scan の表は mutool で字を読む（generic/patterns/components/clipped_words.py）
+      - if: steps.scope.outputs.since != ''
+        run: mise install conda:mupdf@1.28.6
+      # 手動の実行は R2 に置かない（置くのは merge された記録だけ）
+      - if: steps.scope.outputs.since != ''
+        run: bun run --cwd pipeline ingestion:store -- --since ${{ steps.scope.outputs.since }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       - run: bun run --cwd pipeline publish -- --database-id b9b6f209-083e-45b3-a896-1014a17a15f9 ${{ steps.scope.outputs.args }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

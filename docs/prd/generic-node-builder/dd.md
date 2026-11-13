@@ -852,7 +852,7 @@ A の規則のままでは 0 件一致。崩れる箇所は次の3つで、い�
 
 | 項目 | 内容 |
 | --- | --- |
-| 追加の仕方 | 保存済みの一般会計の表と、未保存の新しい変換は、同じ管理 JSON に共存できない（`Saved manifest must contain every expected table`）。1変換ずつ `ingestion:convert --extend-plan`（既存の変換を変えず、表1つを足す）で足す。ローカルでは候補だけを書き、`--remote` で保存と登録を行う |
+| 追加の仕方 | 保存済みの一般会計の表と、未保存の新しい変換は、同じ管理 JSON に共存できない（`Saved manifest must contain every expected table`）。1変換ずつ `ingestion:convert --extend-plan`（既存の変換を変えず、表1つを足す）で足す。`--dry-run` では候補だけを書き、付けなければ記録する（R2 には merge 後の CI が置く） |
 | 保存の関門 | 木の検査・網羅の検査（Jev の聞き直しを含む）・単位の確かめ（#134 で `*_checks.py` に移った検査）。聞き直しの答えは `expenditure.digit-recheck.jsonl` に残る |
 
 ### 結果

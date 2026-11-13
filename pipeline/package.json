@@ -13,6 +13,7 @@
     "ingestion:restore": "uv run python -m ingestion.fiscal.run restore",
     "ingestion:cleanup": "uv run python -m ingestion.fiscal.run cleanup",
     "ingestion:originals": "uv run python -m ingestion.fiscal.run originals",
+    "ingestion:store": "uv run python -m ingestion.fiscal.run store",
     "ingestion:refresh": "uv run python -m ingestion.fiscal.run refresh",
     "ingestion:ocr": "uv run --extra paddle-ocr python -m ingestion.fiscal.run ocr",
     "project:baseline": "uv run python -m ingestion.project.baseline",

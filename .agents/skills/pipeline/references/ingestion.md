@@ -1,6 +1,6 @@
 # B. ingestion
 
-選定・保存済みの出典から取り込みの表を作り、検査して R2 に保存し、管理 JSON に登録するまで。表の形は [dbt モデルの設計](../../../../docs/prd/fiscal-dbt-models/dd.md#取り込みの出力-ノードの表と金額の表)、保存と管理 JSON は [保存設計](../../../../docs/prd/ingestion-storage/dd.md)、型は [管理 schema](../../../../pipeline/ingestion/fiscal/manifest.schema.json) が正本。
+選定・保存済みの出典から取り込みの表を作り、検査して管理 JSON に記録するまで（R2 には merge 後の CI が置く）。表の形は [dbt モデルの設計](../../../../docs/prd/fiscal-dbt-models/dd.md#取り込みの出力-ノードの表と金額の表)、保存と管理 JSON は [保存設計](../../../../docs/prd/ingestion-storage/dd.md)、型は [管理 schema](../../../../pipeline/ingestion/fiscal/manifest.schema.json) が正本。
 
 ## 原則
 
@@ -35,8 +35,8 @@
 
 ## 保存と指紋
 
-- `ingestion:convert --remote` で全表を保存してから管理 JSON を更新する。保存済みの対象に会計を足すときは、既存の表を変えずに1変換ずつ足す。
-- 指紋が古いのは、表を作るコード・設定・出典が変わった合図で、中身が変わった証拠ではない。`ingestion:refresh` で作り直して中身を比べ、同じなら指紋だけを書き換える。違えば許可を取って保存し直す（[ADR 0027](../../../../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。refresh は PR ごとに回さず、全部 merge した後に1回回す。
+- `ingestion:convert` は検査が通った表を管理 JSON に記録する（R2 には書かない）。R2 に置くのは merge 後の CI の `ingestion:store` だけで、記録と変換し直した表が一致したものを置く（[ADR 0045](../../../../docs/adr/0045-ingestion-tables-uploaded-by-ci.md)）。スレッドが R2 に書くのは OCR 結果（`ingestion:ocr --save`）だけ。保存済みの対象に会計を足すときは、既存の表を変えずに1変換ずつ足す。
+- 指紋が古いのは、表を作るコード・設定・出典が変わった合図で、中身が変わった証拠ではない。`ingestion:refresh` で作り直して中身を比べ、同じなら指紋だけを書き換える。違えば convert で記録し直す（[ADR 0027](../../../../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。refresh は PR ごとに回さず、全部 merge した後に1回回す。
 - 合否だけを決める検査のコード（`*_checks.py`）は指紋の外にある。検査を厳しくしたら、保存済みの全表に当て直して通ることを確かめる。
 
 ## 関連文書

@@ -48,8 +48,8 @@ class DirectNodeTest(unittest.TestCase):
         manifest.write(self.path, self.document)
 
     def test_tree_is_saved_without_migration_note(self):
-        with patch('ingestion.fiscal.run.save') as save:
-            result = run.convert(self.path, self.files, self.root / 'saved', remote=True)
+        with patch('ingestion.fiscal.run.keep') as save:
+            result = run.convert(self.path, self.files, self.root / 'saved', remote=True, record=True)
         self.assertEqual(result['rows'], 4)
         table = manifest.read(self.path)['tables'][0]
         self.assertEqual((table['account'], table['notes']), ('一般会計', ['原典の注記']))
@@ -60,9 +60,9 @@ class DirectNodeTest(unittest.TestCase):
         self.document['conversions'][0]['options']['child'] = '999'
         manifest.write(self.path, self.document)
         before = self.path.read_bytes()
-        with patch('ingestion.fiscal.run.save') as save:
+        with patch('ingestion.fiscal.run.keep') as save:
             with self.assertRaisesRegex(ValueError, 'tree check'):
-                run.convert(self.path, self.files, self.root / 'rejected', remote=True)
+                run.convert(self.path, self.files, self.root / 'rejected', remote=True, record=True)
         save.assert_not_called()
         self.assertEqual(self.path.read_bytes(), before)
         self.assertFalse(Path(self.root / 'rejected/manifest.json').exists())
@@ -95,9 +95,9 @@ class DirectNodeTest(unittest.TestCase):
         self.document['conversions'][0]['options'] = {'table_id': 'one', 'header': '当初予算額', 'parent': '1,000', 'child': '1,000'}
         manifest.write(self.path, self.document)
         before = self.path.read_bytes()
-        with patch('ingestion.fiscal.run.save') as save:
+        with patch('ingestion.fiscal.run.keep') as save:
             with self.assertRaisesRegex(ValueError, 'Unit check failed'):
-                run.convert(self.path, self.files, self.root / 'wrong-unit', remote=True)
+                run.convert(self.path, self.files, self.root / 'wrong-unit', remote=True, record=True)
         save.assert_not_called()
         self.assertEqual(self.path.read_bytes(), before)
         self.assertFalse(Path(self.root / 'wrong-unit/manifest.json').exists())
@@ -105,8 +105,8 @@ class DirectNodeTest(unittest.TestCase):
     def test_the_unit_check_result_is_reported_for_a_passing_table(self):
         self.document['conversions'][0]['options'] = {'table_id': 'one', 'header': '当初予算額', 'parent': '500,000', 'child': '500,000'}
         manifest.write(self.path, self.document)
-        with patch('ingestion.fiscal.run.save'):
-            result = run.convert(self.path, self.files, self.root / 'right-unit', remote=True)
+        with patch('ingestion.fiscal.run.keep'):
+            result = run.convert(self.path, self.files, self.root / 'right-unit', remote=True, record=True)
         self.assertEqual(result['units'], {'tables': {'one': 'digits'}, 'counts': {'digits': 1}})
 
 
