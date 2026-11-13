@@ -10,7 +10,7 @@
 | 本番への反映 | main への merge で自動 | 下記 |
 
 - 取り込みの完了条件は形式で違う。CSV は全セルの一致、PDF は木の検査と単位の確かめ、text PDF はさらに数字の網羅を通ること。
-- `ingestion:check` は管理情報・選定・指紋の検査で、財政の値の正しさは認定しない。
+- `ingestion:check` は管理情報・選定の検査で、財政の値の正しさは認定しない。
 - 出典は source_selection、表と保存先は管理 JSON に置く。独立した provenance ファイルは作らない。
 - dbt は管理 JSON と保存済みの表だけを読み、取り込みの検査をやり直さない。取り込みの成功と dbt の構築の成功は分けて扱う。
 - 本番への反映は main への merge で自動に行う（`.github/workflows/sync-d1.yml` が変わった範囲だけを marts に build し、本番 D1 へ差分で写す。入口は `publish`）。取り込みの PR では本番へ手で同期しない。

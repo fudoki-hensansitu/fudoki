@@ -2,7 +2,7 @@
 
 状態: 採用（2026-10-13）。2026-11-12 に「古い指紋で止める」を改めた（下の「改定（2026-11-12）」）。[保存設計](../prd/ingestion-storage/dd.md)の「fingerprintで入力条件の変更を検知する」を補う。fingerprintの計算（出典SHA・scope・変換設定・参照するコードの中身のハッシュ）は変えない。
 
-fingerprintは「表が変わったかもしれない」という合図として持ち続ける。`ingestion:check` は今までどおり、古ければ止める（2026-11-12 改定で、止めずに表示する）。合図が出たら `ingestion:refresh` が変換をローカルでやり直し、保存済みの表と**中身**を比べる。全表が同じなら管理JSONの `input_fingerprint` だけを書き換える（Gitのみ。R2には書かない）。違う表が1つでもあれば、その管理JSONは書き換えず、増えた・消えた・変わった行の数と例を出す。違いは本当の変更なので、件数と差分を見せ、許可を取って `ingestion:convert --remote` で保存し直す。
+fingerprintは「表が変わったかもしれない」という合図として持ち続ける。`ingestion:check` は今までどおり、古ければ止める（2026-11-12 改定で、止めずに表示する。2026-11-13 改定で表示もやめ、古い表は `ingestion:refresh --plan` で見る）。合図が出たら `ingestion:refresh` が変換をローカルでやり直し、保存済みの表と**中身**を比べる。全表が同じなら管理JSONの `input_fingerprint` だけを書き換える（Gitのみ。R2には書かない）。違う表が1つでもあれば、その管理JSONは書き換えず、増えた・消えた・変わった行の数と例を出す。違いは本当の変更なので、件数と差分を見せ、許可を取って `ingestion:convert --remote` で保存し直す。
 
 共有のコードを直す PR は、`ingestion:refresh` を回して指紋を更新した管理JSONを含める。PR の差分が「どの表の中身が変わったか」を示し、回帰の検査を兼ねる。
 
@@ -55,7 +55,7 @@ fingerprintはコードのファイルの中身のハッシュなので、1文�
 
 古い指紋を PR の関門にしない。
 
-- `ingestion:check` と `ingestion:restore` は、指紋が古い保存済みの表を止めずに表示する（`stale:` の行と `stale_tables` の件数）。保存済みの表は sha256 で検証したものなので、そのまま使える。
+- `ingestion:restore` は、指紋が古い保存済みの表を止めずに表示する。`ingestion:check` は指紋を見ない（2026-11-13。CI を速くするため。古い表の一覧は `ingestion:refresh --plan`、中身の比較は定期の refresh-check）。保存済みの表は sha256 で検証したものなので、そのまま使える。
 - 共有のコードを直す PR で `ingestion:refresh --remote` を回すことを必須にしない。
 - 全表の `ingestion:refresh --remote --dry-run` を CI の schedule で6日ごとに回し、中身が違う表・止まる表があればジョブを落とす。差が出たら、前回の実行からの commit を辿って原因を探す。中身が同じ表の指紋の書き換えと、違う表の保存し直しは、これまでどおり `refresh` と許可を取った `convert --remote` で行う。
 - 変換したときのコードの commit は記録しない。保存し直した時点は管理JSONの git の履歴で辿る。

@@ -42,8 +42,8 @@ mise install
 bun install --frozen-lockfile
 uv sync --frozen
 
-bun run --cwd pipeline ingestion:check   # 取り込みの宣言・選定・fingerprint を検査
 bun run typecheck:all
+bun run lint
 bun run test
 ```
 
