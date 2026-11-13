@@ -6,7 +6,7 @@ select sha256(to_json([p.origin_id, p.page::varchar, p.position::varchar])) as m
     p.budget_thousand * 1000 as budget_yen,
     array_to_string(from_json(p.points, '["VARCHAR"]'), chr(10)) as description,
     -- A link into a year with no initial-budget detail served (its book not yet taken in, or held out by
-    -- dbt/scripts/generate_sources.py EXCLUDE_YEAR) waits for the detail; a link into a year that has detail
+    -- dbt/scripts/fiscal_inputs.py EXCLUDE_YEAR) waits for the detail; a link into a year that has detail
     -- but misses its row still fails the relationship test.
     case when held.held then null else nullif(l.detail_id, '') end as expenditure_detail_id,
     case when held.held then null else l.method end as link_method,

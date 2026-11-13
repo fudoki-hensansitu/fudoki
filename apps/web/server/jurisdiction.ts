@@ -1,39 +1,32 @@
 // 自治体の個別ページのデータ。apps/api（Service Binding）の歳出の検索から、決算の款・事業・お金の流れを組む。
 // 金額は API が返した円をそのまま持つ。足すのは「同じ年度・会計の款（兄弟）の和」だけで、api の sum_rules に従う
-import { jurisdictionKind, populationForYear, type Drill, type FlowDepth, type IndexEntry, type Kou, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal, type BudgetTotal } from '../jurisdiction/types'
-import { COFOG_GROUPS } from '@fudoki/fiscal/cofog-master'
+import { type Drill, type FlowDepth, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal, type BudgetTotal } from '../jurisdiction/types'
+import { cofogFlowOf } from '../jurisdiction/cofog-flow'
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
-import type { AppType } from '@fudoki/api/rpc'
-import { hc, parseResponse } from 'hono/client'
-import { apiFetch, type Env } from './env'
+import type { Env } from './env'
+import { apiCall, FudokiApiError, type WebOpInput, type WebOpOutput } from './fudoki-api'
 import { jurisdictionPath } from '../jurisdiction/path'
 import { loadPopulations } from './population'
 
-const API_ORIGIN = 'https://api.fudoki.dev'
 export const ACCOUNT = '一般会計'
 /** 推移に出す最大の年数。API の fiscal_year の幅は 5 年以内 */
 const MAX_YEARS = 5
 const PROJECT_COUNT = 5
-const SETSU_COUNT = 3
 /** 目を金額で並べるときに先に取る件数。事業でない款（積立・公債・予備費）を除いても足りるようにする */
 const CANDIDATES = 40
 const NOT_PROJECT_KAN = new Set(['諸支出金', '公債費', '予備費'])
 
-/** apps/api の REST を Hono RPC で呼ぶ。通信は Service Binding（apiFetch）で、型は api の route の定義（@fudoki/api/rpc）から来る */
-const api = (env: Env) => hc<AppType>(API_ORIGIN, { fetch: apiFetch(env) })
-type Api = ReturnType<typeof api>
-type SearchBody = Parameters<Api['v1']['expenditures']['subjects:search']['$post']>[0]['json']
+/** apps/api の操作を内部の RPC で呼ぶ（server/fudoki-api.ts）。型は api の操作の schema（@fudoki/api/rpc）から来る */
+type SearchBody = WebOpInput<'search_expenditure_subjects'>
 type Where = NonNullable<SearchBody['where']>
 
-const searchSubjects = (env: Env, json: SearchBody) => parseResponse(api(env).v1.expenditures['subjects:search'].$post({ json }))
-const searchDetails = (env: Env, json: SearchBody) => parseResponse(api(env).v1.expenditures['details:search'].$post({ json }))
-const getLine = (env: Env, id: string, token?: string) =>
-  parseResponse(api(env).v1.expenditures.lines[':line_id'].$get({ param: { line_id: id }, query: token ? { page_token: token } : {} }))
+const searchSubjects = (env: Env, json: SearchBody) => apiCall(env)('search_expenditure_subjects', json)
+const searchDetails = (env: Env, json: SearchBody) => apiCall(env)('search_expenditure_details', json)
 
 /** 科目の表（款・項・目）の1行 */
-type ApiSubject = Awaited<ReturnType<typeof searchSubjects>>['subjects'][number]
+type ApiSubject = WebOpOutput<'search_expenditure_subjects'>['subjects'][number]
 /** 内訳の表の1行。breakdown は分け方（事業・節・その他） */
-type ApiDetail = Awaited<ReturnType<typeof searchDetails>>['details'][number]
+type ApiDetail = WebOpOutput<'search_expenditure_details'>['details'][number]
 export interface CatalogEntry {
   code: string
   name: string
@@ -56,89 +49,51 @@ export interface CatalogEntry {
 const amount = (n: { amount_yen: number | null }) => ({ yen: n.amount_yen ?? 0, ...(n.amount_yen === null ? { amountMissing: true as const } : {}) })
 const line = (n: ApiSubject): Line => ({ id: n.subject_id, name: n.name, ...amount(n) })
 
-/** 自治体と、一般会計の決算がある年度。収録が無い自治体は settlementYears が空。人口は web の D1 から足す */
-export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
-  const out: CatalogEntry[] = []
-  let token: string | undefined
-  do {
-    const r = await parseResponse(api(env).v1.jurisdictions.$get({ query: token ? { page_token: token } : {} }))
-    for (const j of r.jurisdictions) {
-      out.push({
-        code: j.jurisdiction_code,
-        name: j.name,
-        prefecture: j.prefecture_name,
-        settlementYears: j.coverage.filter((c) => c.document_kind === 'settlement' && c.accounts.some((a) => a.account_name === ACCOUNT)).map((c) => c.fiscal_year).sort((a, b) => a - b),
-        initialYears: [...new Set(j.coverage.filter((c) => c.document_kind === 'initial' && c.accounts.some((a) => a.account_name === ACCOUNT)).map((c) => c.fiscal_year))].sort((a, b) => a - b),
-        accounts: {
-          initial: Object.fromEntries(j.coverage.filter((c) => c.document_kind === 'initial').map((c) => [String(c.fiscal_year), c.accounts.map((a) => a.account_name)])),
-          settlement: Object.fromEntries(j.coverage.filter((c) => c.document_kind === 'settlement').map((c) => [String(c.fiscal_year), c.accounts.map((a) => a.account_name)])),
-        },
-        evaluationYears: j.evaluations.map((e) => e.fiscal_year).sort((a, b) => a - b),
-        officialUrl: j.official_url,
-        population: null,
-        populations: [],
-      })
-    }
-    token = r.next_page_token ?? undefined
-  } while (token)
-  const populations = await loadPopulations(env, out.map((e) => e.code))
-  for (const e of out) {
-    e.populations = populations.get(e.code) ?? []
-    e.population = e.populations.at(-1) ?? null
+type ApiJurisdiction = WebOpOutput<'list_jurisdictions'>['jurisdictions'][number]
+const listJurisdictions = (env: Env, token?: string) => apiCall(env)('list_jurisdictions', token ? { page_token: token } : {})
+
+/** API の自治体の1件を、頁が使う形にする。人口は web の D1 から足す */
+function toCatalogEntry(j: Pick<ApiJurisdiction, 'jurisdiction_code' | 'name' | 'prefecture_name' | 'official_url' | 'coverage' | 'evaluations'>, populations: Population[]): CatalogEntry {
+  const general = (kind: DocumentKind) => [...new Set(j.coverage.filter((c) => c.document_kind === kind && c.accounts.some((a) => a.account_name === ACCOUNT)).map((c) => c.fiscal_year))].sort((a, b) => a - b)
+  const accountsOf = (kind: DocumentKind) => Object.fromEntries(j.coverage.filter((c) => c.document_kind === kind).map((c) => [String(c.fiscal_year), c.accounts.map((a) => a.account_name)]))
+  return {
+    code: j.jurisdiction_code,
+    name: j.name,
+    prefecture: j.prefecture_name,
+    settlementYears: general('settlement'),
+    initialYears: general('initial'),
+    accounts: { initial: accountsOf('initial'), settlement: accountsOf('settlement') },
+    evaluationYears: j.evaluations.map((e) => e.fiscal_year).sort((a, b) => a - b),
+    officialUrl: j.official_url,
+    population: populations.at(-1) ?? null,
+    populations,
   }
-  return out
 }
 
-/** 一覧の1回の検索に載せる自治体の数。API は年と条件の値の bind を合わせて 90 個までにしている */
-const INDEX_BATCH = 60
+/** 全自治体と収録範囲（list jurisdictions）。一覧が要る頁（ホーム・都道府県・検索・sitemap）だけが使う */
+export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
+  const rows: ApiJurisdiction[] = []
+  let token: string | undefined
+  do {
+    const r = await listJurisdictions(env, token)
+    rows.push(...r.jurisdictions)
+    token = r.next_page_token ?? undefined
+  } while (token)
+  const populations = await loadPopulations(env, rows.map((j) => j.jurisdiction_code))
+  return rows.map((j) => toCatalogEntry(j, populations.get(j.jurisdiction_code) ?? []))
+}
 
-/**
- * ホームの検索に使う自治体の要約のデータ。収録している自治体の款を、自治体をまとめて検索して最新の決算ごとに足す。
- * 総額の足し方は個別ページ（loadPage の totals）と同じ「一般会計の款の和」
- */
-export async function loadIndex(env: Env, entries: CatalogEntry[], pathOf: (code: string) => string): Promise<IndexEntry[]> {
-  const have = entries.filter((e) => e.settlementYears.length > 0)
-  const latest = new Map(have.map((e) => [e.code, e.settlementYears.at(-1)!]))
-  const kan = new Map<string, { name: string; yen: number | null }[]>()
-  // 最新の年度が同じ自治体ごとに引く（他の年度の款を取らない）
-  for (const year of new Set(latest.values())) {
-    const sameYear = have.filter((e) => latest.get(e.code) === year).map((e) => e.code)
-    for (let i = 0; i < sameYear.length; i += INDEX_BATCH) {
-      let token: string | undefined
-      do {
-        const r = await searchSubjects(env, {
-          document_kind: 'settlement',
-          fiscal_year: { min: year, max: year },
-          where: { jurisdiction_code: { eq: sameYear.slice(i, i + INDEX_BATCH) }, account_name: { eq: [ACCOUNT] }, level: { eq: ['款'] } },
-          page_size: 1000,
-          ...(token ? { page_token: token } : {}),
-        })
-        for (const n of r.subjects) kan.set(n.jurisdiction_code, [...(kan.get(n.jurisdiction_code) ?? []), { name: n.name, yen: n.amount_yen }])
-        token = r.next_page_token ?? undefined
-      } while (token)
-    }
-  }
-  return have.flatMap((e) => {
-    const all = kan.get(e.code) ?? []
-    // 印字の無い款は 0 円と数えず、総額が一部の款の和であることを amountMissing で画面に伝える
-    const list = all.flatMap((k) => (k.yen === null ? [] : [{ name: k.name, yen: k.yen }])).sort((a, b) => b.yen - a.yen)
-    // 収録範囲に年度があっても款が引けない自治体は、金額を 0 と出さずに一覧から外す
-    if (list.length === 0) return []
-    const yen = list.reduce((s, k) => s + k.yen, 0)
-    const population = populationForYear(e.populations, latest.get(e.code)!)
-    return [{
-      code: e.code,
-      name: e.name,
-      prefecture: e.prefecture,
-      kind: jurisdictionKind(e.code, e.name),
-      path: pathOf(e.code),
-      year: latest.get(e.code)!,
-      yen,
-      population,
-      perCapita: population && population.people > 0 ? yen / population.people : null,
-      ...(list.length < all.length ? { amountMissing: true as const } : {}),
-    }]
-  })
+/** 1つの自治体と収録範囲（get jurisdiction）。収録の無いコードは null */
+export async function loadCatalogEntry(env: Env, code: string): Promise<CatalogEntry | null> {
+  const [j, populations] = await Promise.all([
+    apiCall(env)('get_jurisdiction', { jurisdiction_code: code }).catch((e) => {
+      if (e instanceof FudokiApiError && e.status === 404) return null
+      throw e
+    }),
+    loadPopulations(env, [code]),
+  ])
+  if (!j) return null
+  return toCatalogEntry(j, populations.get(code) ?? [])
 }
 
 const search = (env: Env, code: string, years: { min: number; max: number }, level: string | string[] | undefined, extra: Record<string, unknown> = {}, pageSize = 200, pageToken?: string) =>
@@ -182,9 +137,10 @@ const pickBreakdown = (byBreakdown: Record<string, ApiDetail[]>) => byBreakdown[
 /** 目の直下の内訳（節、無ければ事業）。目の id ごとに大きい順 */
 async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: string[], kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<Map<string, Setsu[]>> {
   const setsuByMoku = new Map<string, Setsu[]>()
-  // 年度・資料・自治体・会計・分け方・深さの条件と合わせても API の bind 上限（90）に収まる件数。
-  for (let i = 0; i < mokuIds.length; i += 50) {
-    const rows = await searchAll(env, 'details', code, year, { depth: { eq: [1] }, breakdown: { eq: ['節', '事業'] }, subject_id: { eq: mokuIds.slice(i, i + 50) } }, kind, account)
+  // 年度・資料・自治体・会計・分け方・深さの条件と合わせても API の bind 上限（90）に収まる件数。区切った分は並べて読む
+  const chunks = Array.from({ length: Math.ceil(mokuIds.length / 50) }, (_, i) => mokuIds.slice(i * 50, (i + 1) * 50))
+  const pages = await Promise.all(chunks.map((ids) => searchAll(env, 'details', code, year, { depth: { eq: [1] }, breakdown: { eq: ['節', '事業'] }, subject_id: { eq: ids } }, kind, account)))
+  for (const rows of pages) {
     const groups = new Map<string, Record<string, ApiDetail[]>>()
     for (const n of rows) {
       const byBreakdown = groups.get(n.subject_id) ?? {}
@@ -198,6 +154,11 @@ async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: st
 
 /** すべての款を同じ深さで表示する。節は目の直下の内訳を取り、分け方の違う数字を混ぜない。 */
 export async function loadFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou', kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<Drill[]> {
+  return (await loadFlowParts(env, code, year, depth, kind, account)).drills
+}
+
+/** 款 → 項 → 目 の流れと、木に入らない（親の項の行が無い）目。分野の図は両方から組む（jurisdiction/cofog-flow.ts の cofogFlowOfDrills） */
+export async function loadFlowParts(env: Env, code: string, year: number, depth: FlowDepth = 'kou', kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<{ drills: Drill[]; loose: Moku[] }> {
   const subjects = await searchAll(env, 'subjects', code, year, { level: { eq: depth === 'kou' ? ['款', '項'] : ['款', '項', '目'] } }, kind, account)
   const byParent = new Map<string, ApiSubject[]>()
   for (const n of subjects) {
@@ -207,44 +168,28 @@ export async function loadFlow(env: Env, code: string, year: number, depth: Flow
     byParent.set(n.parent_subject_id, siblings)
   }
   const setsuByMoku = depth === 'setsu' ? await loadSetsuByMoku(env, code, year, subjects.filter((n) => n.level === '目').map((n) => n.subject_id), kind, account) : new Map<string, Setsu[]>()
-  return subjects.filter((n) => n.level === '款').sort(byAmount).map((kan) => ({
+  const placed = new Set<string>()
+  const mokuOf = (m: ApiSubject, path: [string | null, string | null]): Moku => ({ ...line(m), setsu: setsuByMoku.get(m.subject_id) ?? [], path, cofog: m.cofog_code ?? null })
+  const drills = subjects.filter((n) => n.level === '款').sort(byAmount).map((kan) => ({
     kan: line(kan),
     kou: (byParent.get(kan.subject_id) ?? []).filter((n) => n.level === '項').sort(byAmount).map((kou) => ({
       ...line(kou),
-      moku: (byParent.get(kou.subject_id) ?? []).filter((n) => n.level === '目').sort(byAmount).map((moku) => ({ ...line(moku), setsu: setsuByMoku.get(moku.subject_id) ?? [], path: [kan.name, kou.name] as [string, string] })),
+      moku: (byParent.get(kou.subject_id) ?? []).filter((n) => n.level === '目').sort(byAmount).map((moku) => (placed.add(moku.subject_id), mokuOf(moku, [kan.name, kou.name]))),
     })),
   }))
+  const loose = subjects.filter((n) => n.level === '目' && !placed.has(n.subject_id)).sort(byAmount).map((m) => mokuOf(m, [m.kan_name ?? null, m.kou_name ?? null]))
+  return { drills, loose }
 }
 
 const sumYen = (lines: { yen: number; amountMissing?: true }[]) => lines.reduce((s, l) => s + (l.amountMissing ? 0 : l.yen), 0)
 /** 金額の印字が無い目を含む和は、印字された分だけの和であることを amountMissing で画面に伝える（一覧の総額と同じ扱い） */
 const partial = (lines: { amountMissing?: true }[]) => (lines.some((l) => l.amountMissing) ? { amountMissing: true as const } : {})
 
-/**
- * 分野（COFOG の大分類）→ 中分類 → 目 の流れ。款・項は使わない。目に付いた COFOG のコードで大分類・中分類を決め、
- * 金額は目の和（api の sum_rules: COFOG は目を前方一致で集めて足す。分類できない目・対象外の目は「その他」に入れ、全分類の和が総額になる。印字の無い目を含む分類は amountMissing を付ける）。
- * 並びは金額の順で「その他」を最後に置く。中分類も、未分類（中分類まで決めていない目）は金額に関係なく最後に置く。depth が kou なら目を返さない（全体図だけに使う）
- */
+/** 分野（COFOG の大分類）→ 中分類 → 目 の流れ（jurisdiction/cofog-flow.ts）。款・項は使わない。depth が kou なら目を返さない（全体図だけに使う） */
 export async function loadCofogFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou', kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<Drill[]> {
   const moku = await searchAll(env, 'subjects', code, year, { level: { eq: ['目'] } }, kind, account)
   const setsuByMoku = depth === 'setsu' ? await loadSetsuByMoku(env, code, year, moku.map((n) => n.subject_id), kind, account) : new Map<string, Setsu[]>()
-  // COFOG の大分類 → 中分類 → 目。款・項は使わない（COFOG で分けた図に自治体の科目の階層を混ぜない）。コードの無い目は空文字
-  const divisions = new Map<string, Map<string, ApiSubject[]>>()
-  for (const n of moku) {
-    const [division = '', group] = n.cofog_code?.split('.') ?? []
-    const key = group ? `${division}.${group}` : division
-    const byGroup = divisions.get(division) ?? new Map<string, ApiSubject[]>()
-    byGroup.set(key, [...(byGroup.get(key) ?? []), n])
-    divisions.set(division, byGroup)
-  }
-  return [...divisions].map(([division, byGroup]) => {
-    const kou = [...byGroup].map(([group, list]) => {
-      const mokuLines = list.sort(byAmount).map((m) => ({ ...line(m), setsu: setsuByMoku.get(m.subject_id) ?? [], path: [m.kan_name ?? null, m.kou_name ?? null] as [string | null, string | null] }))
-      return { id: `cofog-${group || 'none'}-g`, name: cofogGroupName(group), yen: sumYen(mokuLines), ...partial(mokuLines), page: null, moku: depth === 'kou' ? [] : mokuLines }
-    }).sort((a, b) => Number(!a.id.includes('.')) - Number(!b.id.includes('.')) || b.yen - a.yen)
-    const kan = { id: `cofog-${division || 'none'}`, name: (division ? frameOf(division) : OTHER_FRAME)?.name ?? `COFOG ${division}`, yen: kou.reduce((sum, k) => sum + k.yen, 0), ...partial(kou), page: null }
-    return { kan, kou }
-  }).sort((a, b) => Number(a.kan.id === 'cofog-none') - Number(b.kan.id === 'cofog-none') || b.kan.yen - a.kan.yen)
+  return cofogFlowOf(moku.map((m) => ({ ...line(m), setsu: setsuByMoku.get(m.subject_id) ?? [], path: [m.kan_name ?? null, m.kou_name ?? null], cofog: m.cofog_code ?? null })), depth !== 'kou')
 }
 
 /** 会計ごとの総額（款の和）。一般会計を先頭に、あとは金額の大きい順。印字の無い款を含む会計は amountMissing を付ける */
@@ -255,55 +200,6 @@ export async function loadAccountTotals(env: Env, code: string, year: number, ki
     return { name: account, yen: sumYen(lines), ...partial(lines) }
   }))
   return totals.filter((t) => t.yen > 0 || t.amountMissing).sort((a, b) => Number(b.name === ACCOUNT) - Number(a.name === ACCOUNT) || b.yen - a.yen)
-}
-
-/** 中分類の名前。大分類までしか決めていない目・コードの無い目はそう書く */
-function cofogGroupName(group: string) {
-  if (!group) return '分類を決められない支出'
-  if (!group.includes('.')) return '未分類'
-  // 名前の表は規則が使うコードを全部持つ（cofog-master.ts）。漏れたときもページは落とさずコードを出す
-  return COFOG_GROUPS[group] ?? `COFOG ${group}`
-}
-
-/** 科目の子の科目と、直下の内訳（分け方ごと）。内訳の続きは最後まで引く */
-async function subjectOf(env: Env, id: string): Promise<{ subject: ApiSubject; children: ApiSubject[]; details: Record<string, ApiDetail[]> }> {
-  const details: Record<string, ApiDetail[]> = {}
-  let first: Awaited<ReturnType<typeof getLine>> | undefined
-  let token: string | undefined
-  do {
-    const r = await getLine(env, id, token)
-    first ??= r
-    for (const [breakdown, rows] of Object.entries(r.details)) (details[breakdown] ??= []).push(...rows)
-    token = r.next_page_token ?? undefined
-  } while (token)
-  const line = first!.line
-  if (line.kind !== 'subject') throw new Error('科目ではありません')
-  const { kind: _, ...subject } = line
-  return { subject, children: first!.child_subjects, details }
-}
-
-/** 目の内訳。節があれば節、無ければ事業の一覧を上位だけ返す */
-export async function loadSetsu(env: Env, mokuId: string) {
-  const { details } = await subjectOf(env, mokuId)
-  return pickBreakdown(details).filter((n) => (n.amount_yen ?? 0) > 0).sort(byAmount).slice(0, SETSU_COUNT).map((n) => ({ name: n.name, yen: n.amount_yen ?? 0 }))
-}
-
-/** 款の流れ。項は全部、一番大きい項だけ目（上位2つ）と節まで引く */
-export async function loadDrillById(env: Env, kanId: string): Promise<Drill> {
-  const { subject } = await subjectOf(env, kanId)
-  if (subject.level !== '款') throw new Error('款ではありません')
-  return loadDrill(env, line(subject))
-}
-
-export async function loadDrill(env: Env, kan: Line): Promise<Drill> {
-  const kouSubjects = (await subjectOf(env, kan.id)).children.filter((n) => n.level === '項').sort(byAmount)
-  const kou: Kou[] = kouSubjects.map((n) => ({ ...line(n), moku: [] }))
-  const top = kouSubjects[0]
-  if (top) {
-    const mokuSubjects = (await subjectOf(env, top.subject_id)).children.filter((n) => n.level === '目').sort(byAmount).slice(0, 2)
-    kou[0]!.moku = await Promise.all(mokuSubjects.map(async (n): Promise<Moku> => ({ ...line(n), setsu: await loadSetsu(env, n.subject_id) })))
-  }
-  return { kan, kou }
 }
 
 /**
@@ -349,8 +245,8 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
   if (latest === undefined) return null
   const years = shownSettlementYears(entry.settlementYears)
   const range = { min: years[0]!, max: latest }
-  // 流れ図・予算は款・目と別に読めるので、先に並べて投げる（順に待つと API の往復が積み重なる）
-  const rest = Promise.all([loadFlow(env, entry.code, latest), loadCofogFlow(env, entry.code, latest), Promise.all(entry.initialYears.filter((y) => y > latest).map((y) => loadBudget(env, entry.code, y)))])
+  // 分野の流れ・予算は款・目と別に読めるので、先に並べて投げる（順に待つと API の往復が積み重なる）
+  const rest = Promise.all([loadCofogFlow(env, entry.code, latest), Promise.all(entry.initialYears.filter((y) => y > latest).map((y) => loadBudget(env, entry.code, y)))])
   rest.catch(() => {})
   const [kanRes, mokuRes] = await Promise.all([search(env, entry.code, range, '款'), search(env, entry.code, { min: latest, max: latest }, '目', {}, CANDIDATES)])
   // 積立・公債・予備費の款は「事業」ではないので、力を入れている事業の候補から外す
@@ -359,7 +255,7 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
     years.includes(latest - 1) && picked.length > 0
       ? await search(env, entry.code, { min: latest - 1, max: latest - 1 }, '目', { name: { eq: [...new Set(picked.map((n) => n.name))] } }, 200)
       : { subjects: [] as ApiSubject[] }
-  const [flow, cofogFlow, budgets] = await rest
+  const [cofogFlow, budgets] = await rest
   const totals: YearTotal[] = years.map((year) => {
     const kan = kanRes.subjects.filter((n) => n.fiscal_year === year).map(line)
     return { year, yen: kan.reduce((s, k) => s + k.yen, 0), kan }
@@ -382,7 +278,6 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
     population: entry.population,
     originTitle: kanRes.origins?.find((o) => o.origin_id === kanRes.subjects.find((n) => n.fiscal_year === latest)?.origin_id)?.title ?? null,
     years: totals,
-    flow,
     cofogFlow,
     budgets,
     projects,

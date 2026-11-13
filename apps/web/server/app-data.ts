@@ -1,25 +1,21 @@
 // 自治体の頁（アプリ型）のデータ。apps/api の歳出・事業・予算案・事業評価の検索から、1年度の款項目・施策・評価シートと事業の一覧の1頁目を組む。
-// 事業の続き・詳細は画面が公開 API から読む（jurisdiction/app/api.ts）。紐付け（施策・評価シート → 事業）は api が持つ歳出の行の参照をたどるだけで、新しく判断しない
-import type { AppType } from '@fudoki/api/rpc'
-import { hc, parseResponse } from 'hono/client'
+// 事業の続き・詳細は画面が web の /api から読む（jurisdiction/app/api.ts）。紐付け（施策・評価シート → 事業）は api が持つ歳出の行の参照をたどるだけで、新しく判断しない
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
-import { listQuery, type Kan, type Measure, type Sheet, type Snapshot } from '../jurisdiction/app/data'
-import { listKey, listPage } from '../jurisdiction/app/api'
-import { apiFetch, type Env } from './env'
-import { shownSettlementYears, type CatalogEntry } from './jurisdiction'
+import { listQuery, type Kan, type YearData, type Measure, type Sheet, type Snapshot } from '../jurisdiction/app/data'
+import { listKey, readListPage } from '../jurisdiction/app/api'
+import type { Env } from './env'
+import { apiCall, type WebOpInput } from './fudoki-api'
+import { loadAccountTotals, shownSettlementYears, type CatalogEntry } from './jurisdiction'
 import { appPageYears } from '../jurisdiction/types'
 
-const API_ORIGIN = 'https://api.fudoki.dev'
 const ACCOUNT = '一般会計'
 /** 内訳を ID で引くときの1回の数（API の bind の上限 90 から資料区分・年度・自治体の3つを除く） */
 const ID_CHUNK = 87
 
-const api = (env: Env) => hc<AppType>(API_ORIGIN, { fetch: apiFetch(env) })
-type Api = ReturnType<typeof api>
-type Body<F> = F extends (args: { json: infer J }) => unknown ? J : never
-type SubjectBody = Body<Api['v1']['expenditures']['subjects:search']['$post']>
-type MeasureBody = Body<Api['v1']['budget-proposals']['measures:search']['$post']>
-type SheetBody = Body<Api['v1']['evaluations']['sheets:search']['$post']>
+type SubjectBody = WebOpInput<'search_expenditure_subjects'>
+type DetailBody = WebOpInput<'search_expenditure_details'>
+type MeasureBody = WebOpInput<'search_budget_measures'>
+type SheetBody = WebOpInput<'search_evaluation_sheets'>
 
 type Kind = 'initial' | 'settlement'
 
@@ -38,19 +34,19 @@ async function all<R extends { next_page_token?: string | null }, T>(page: (toke
 
 const subjectsOf = (env: Env, code: string, year: number, kind: Kind) =>
   all(
-    (token) => parseResponse(api(env).v1.expenditures['subjects:search'].$post({ json: { document_kind: kind, fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SubjectBody })),
+    (token) => apiCall(env)('search_expenditure_subjects', { document_kind: kind, fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SubjectBody),
     (r) => r.subjects,
   )
 
 const measuresOf = (env: Env, code: string, min: number, max: number) =>
   all(
-    (token) => parseResponse(api(env).v1['budget-proposals']['measures:search'].$post({ json: { fiscal_year: { min, max }, where: { jurisdiction_code: { eq: [code] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as MeasureBody })),
+    (token) => apiCall(env)('search_budget_measures', { fiscal_year: { min, max }, where: { jurisdiction_code: { eq: [code] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as MeasureBody),
     (r) => r.measures.map((m) => ({ ...m, url: r.origins.find((o) => o.origin_id === m.origin_id)?.url ?? null })),
   )
 
 const sheetsOf = (env: Env, code: string, min: number, max: number) =>
   all(
-    (token) => parseResponse(api(env).v1.evaluations['sheets:search'].$post({ json: { fiscal_year: { min, max }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SheetBody })),
+    (token) => apiCall(env)('search_evaluation_sheets', { fiscal_year: { min, max }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SheetBody),
     (r) => r.sheets.map((s) => ({ ...s, url: r.origins.find((o) => o.origin_id === s.origin_id)?.url ?? null })),
   )
 
@@ -68,11 +64,11 @@ export function appYears(entry: Pick<CatalogEntry, 'initialYears' | 'settlementY
 /** 施策の内訳が載る科目。内訳を ID で引く（D1 の bind の上限に合わせて区切る）。自治体でも絞らないと、D1 が年度の索引でその年度の内訳を全部読む */
 async function subjectOfDetails(env: Env, code: string, year: number, ids: string[]): Promise<Map<string, string>> {
   const chunks = Array.from({ length: Math.ceil(ids.length / ID_CHUNK) }, (_, i) => ids.slice(i * ID_CHUNK, (i + 1) * ID_CHUNK))
-  const pages = await Promise.all(chunks.map((c) => parseResponse(api(env).v1.expenditures['details:search'].$post({ json: { document_kind: 'initial', fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, detail_id: { eq: c } }, page_size: 1000 } as SubjectBody }))))
+  const pages = await Promise.all(chunks.map((c) => apiCall(env)('search_expenditure_details', { document_kind: 'initial', fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, detail_id: { eq: c } }, page_size: 1000 } as DetailBody)))
   return new Map(pages.flatMap((r) => r.details.map((d) => [d.detail_id, d.subject_id] as const)))
 }
 
-/** 頁の1年度のデータ。全年度の款項目と、その年度の施策・評価シート・事業の一覧の1頁目（すべて・新しく始める・やめた、分野の頁なら分野）。
+/** 頁の1年度のデータ。開いた年度と前の年度の款項目、その年度の施策・評価シート・会計ごとの総額・事業の一覧の1頁目（すべて・新しく始める・やめた、分野の頁なら分野）。
  * 1つの年度で API を十回ほど並べて呼ぶだけで、全件は読まない */
 export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: number, opt: { field?: string; evaluated?: boolean } = {}): Promise<Snapshot> {
   const { field } = opt
@@ -83,8 +79,12 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const evalYear = opt.evaluated ? Math.max(0, ...entry.evaluationYears.filter((y) => years.some((x) => x.year === y))) : 0
   // 施策は当初予算書の内訳に紐づくので、決算の年度でも同じ年度の当初予算の科目から分野を引く
   const measureYear = me.kind === 'settlement' && entry.initialYears.includes(year)
-  const [subjects, measures, sheets, evalSheets, initialSubjects] = await Promise.all([
-    Promise.all(years.map(async (y) => {
+  // 款項目は開いた年度と前の年度だけ読む（前の年度は「やめた事業」を分野で絞るのと、その行の分野の名前に使う）。ほかの年度は資料の種類だけを coverage から持つ
+  const prev = years.find((y) => y.year === year - 1)
+  // 会計の札（予算・決算のタブ）。一般会計のほかにも会計を収録した年度だけ、会計ごとの総額を読む
+  const accounts = entry.accounts?.[me.kind]?.[String(year)] ?? []
+  const [subjects, measures, sheets, evalSheets, initialSubjects, accountTotals] = await Promise.all([
+    Promise.all([me, ...(prev ? [prev] : [])].map(async (y) => {
       const r = await subjectsOf(env, entry.code, y.year, y.kind)
       const origin = r.last?.origins?.find((o) => o.origin_id === r.rows[0]?.origin_id)
       return { ...y, rows: r.rows, origin: origin?.url ?? null, originTitle: origin?.title ?? null }
@@ -93,6 +93,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     sheetsOf(env, entry.code, year, year).then((r) => r.rows),
     evalYear && evalYear !== year ? sheetsOf(env, entry.code, evalYear, evalYear).then((r) => r.rows) : Promise.resolve(null),
     measureYear ? subjectsOf(env, entry.code, year, 'initial').then((r) => r.rows) : Promise.resolve([]),
+    accounts.length > 1 ? loadAccountTotals(env, entry.code, year, me.kind, accounts) : Promise.resolve(undefined),
   ])
   const cofogByMoku = new Map(subjects.filter((y) => y.year === year).flatMap((y) => y.rows.filter((s) => s.level === '目').map((s) => [`${s.kan_name}/${s.kou_name}/${s.moku_name}`, s.cofog_code] as const)))
   const cofogBySubject = new Map([...subjects.flatMap((y) => y.rows), ...initialSubjects].map((s) => [s.subject_id, s.cofog_code] as const))
@@ -104,18 +105,23 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     const kan: Kan[] = []
     const fields: Record<string, number> = {}
     const fieldSubjects: Record<string, string[]> = {}
+    const looseMoku: YearData['looseMoku'] = []
+    let lastKou: string | undefined
     for (const r of rows) {
       const yen = r.amount_yen ?? 0
       if (r.is_leaf) (fieldSubjects[fieldOf(r.cofog_code)] ??= []).push(r.subject_id)
       if (r.level === '款') kan.push({ name: r.name, yen, kou: [] })
-      else if (r.level === '項') kan.at(-1)?.kou.push({ name: r.name, yen, moku: [] })
-      else if (r.level === '目') {
+      else if (r.level === '項') {
+        kan.at(-1)?.kou.push({ name: r.name, yen, moku: [] })
+        lastKou = r.subject_id
+      } else if (r.level === '目') {
         const field = fieldOf(r.cofog_code)
-        kan.at(-1)?.kou.at(-1)?.moku.push({ id: r.subject_id, name: r.name, yen, field })
+        const kou = r.parent_subject_id === lastKou ? kan.at(-1)?.kou.at(-1) : undefined
+        ;(kou?.moku ?? looseMoku).push({ id: r.subject_id, name: r.name, yen, field, cofog: r.cofog_code ?? null })
         fields[field] = (fields[field] ?? 0) + yen
       }
     }
-    yearsOut[y.year] = { kind: y.kind, kan, total: kan.reduce((s, k) => s + k.yen, 0), fields, fieldSubjects, origin: y.origin, originTitle: y.originTitle }
+    yearsOut[y.year] = { kind: y.kind, kan, total: kan.reduce((s, k) => s + k.yen, 0), fields, fieldSubjects, looseMoku, origin: y.origin, originTitle: y.originTitle }
   }
 
   const base = { code: entry.code, year, years: yearsOut }
@@ -123,7 +129,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   if (field) queries.push(listQuery(base, 'all', { subjects: yearsOut[year]!.fieldSubjects[field] ?? [] }))
   const measureDetails = [...new Set(measures.flatMap((m) => (m.expenditure_detail_id ? [m.expenditure_detail_id] : [])))]
   const [pages, subjectOfDetail] = await Promise.all([
-    Promise.all(queries.map((q) => listPage(q, undefined, apiFetch(env)).then((p) => [listKey(q), p] as const))),
+    Promise.all(queries.map((q) => readListPage(apiCall(env), q).then((p) => [listKey(q), p] as const))),
     measureDetails.length ? subjectOfDetails(env, entry.code, year, measureDetails) : Promise.resolve(new Map<string, string>()),
   ])
 
@@ -165,7 +171,9 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     name: entry.name,
     pop: entry.population?.people ?? 0,
     year,
+    kinds: Object.fromEntries(years.map((y) => [String(y.year), y.kind])),
     years: yearsOut,
+    ...(accountTotals ? { accounts: accountTotals } : {}),
     measures: measuresOut,
     sheets: sheetsOut,
     ...(evalYear ? { evaluated: { fy: evalYear, sheets: evalSheets ? evalSheets.map(toSheet) : sheetsOut } } : {}),

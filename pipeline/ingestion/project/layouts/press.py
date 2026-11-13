@@ -7,7 +7,11 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from collections.abc import Iterator
 from dataclasses import dataclass, field
+from pathlib import Path
+
+from ingestion.generic import page_words
 
 NUMBERED = re.compile(r'^[①-⑳]')
 DIGITS = re.compile(r'^[\d,]+$')
@@ -29,8 +33,69 @@ def norm(text: str) -> str:
     return unicodedata.normalize('NFKC', text).strip()
 
 
+def page_lines(path) -> Iterator[tuple[int, list[str]]]:
+    """頁の番号（1始まり）と、bbox の行（`page_words.lines`）。"""
+    for page in page_words.pages(Path(path)):
+        yield page.number, page_words.lines(page)
+
+
+@dataclass
+class BboxPage:
+    """bbox の頁を、様式の規則が使う pdfplumber の頁と同じ形で渡す。語は text・x0・x1・top・bottom と、字の大きさの目安 size（語の高さ）を持つ。"""
+    width: float
+    height: float
+    items: list[dict]
+    printed: list[str]
+
+    def extract_words(self, **_) -> list[dict]:
+        return [dict(w) for w in self.items]
+
+    def extract_text(self) -> str:
+        return '\n'.join(self.printed)
+
+    def flush_cache(self) -> None:
+        pass
+
+
+class BboxPdf:
+    """`pdfplumber.open` の代わりに bbox（`page_words`）で頁を読む。"""
+
+    def __init__(self, path, fonts: bool = False) -> None:
+        """fonts なら語の字の大きさ size とフォント名 fontname を `page_words.fonts` で取る。無ければ size は語の高さで代える。"""
+        read = page_words.pages(Path(path))
+        styles = page_words.fonts(Path(path), read) if fonts else {}
+        self.pages = []
+        for page in read:
+            items = []
+            for index, w in enumerate(page.words):
+                size, name = styles[page.number][index] if fonts else (w.y1 - w.y0, '')
+                items.append({'text': w.text, 'x0': w.x0, 'x1': w.x1, 'top': w.y0, 'bottom': w.y1, 'size': size, 'fontname': name})
+            self.pages.append(BboxPage(page.width, page.height, items, page_words.lines(page)))
+
+    def __enter__(self) -> BboxPdf:
+        return self
+
+    def __exit__(self, *_) -> None:
+        pass
+
+
 def words(page) -> list[dict]:
     return page.extract_words(keep_blank_chars=False, use_text_flow=False, extra_attrs=['size'])
+
+
+def merge_close(items: list[dict], ratio: float = 0.3, tolerance: float = 3) -> list[dict]:
+    """同じ行で、間が字の大きさの ratio 倍より狭い語を1語にする（Poppler は「令和」「6」「年度」のように細かく切る）。"""
+    out: list[dict] = []
+    for row in lines(items, tolerance):
+        merged = [dict(row[0])]
+        for word in row[1:]:
+            last = merged[-1]
+            if word['x0'] - last['x1'] < ratio * min(word['size'], last['size']):
+                last.update(text=last['text'] + word['text'], x1=word['x1'], bottom=max(last['bottom'], word['bottom']))
+            else:
+                merged.append(dict(word))
+        out += merged
+    return out
 
 
 def lines(items: list[dict], tolerance: float = 3) -> list[list[dict]]:

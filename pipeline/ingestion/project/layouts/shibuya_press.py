@@ -6,7 +6,7 @@
 """
 from __future__ import annotations
 
-from ingestion.project.layouts.press import PressItem, amount_text, lines, text, words
+from ingestion.project.layouts.press import BboxPdf, PressItem, amount_text, lines, text, words
 
 
 def read_page(page, number: int) -> PressItem | None:
@@ -29,9 +29,8 @@ def read_page(page, number: int) -> PressItem | None:
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
-    with pdfplumber.open(path) as pdf:
+    with BboxPdf(path) as pdf:
         for number, page in enumerate(pdf.pages, start=1):
             item = read_page(page, number)
             page.flush_cache()

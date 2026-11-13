@@ -16,7 +16,8 @@ const shared = {
   ai: { binding: 'AI' },
   // 風土記の MCP（apps/api）。workers.dev を閉じているので Worker 間で直接呼ぶ
   services: [
-    { binding: 'API', service: 'fudoki-api' },
+    // apps/api の内部の RPC（apps/api の Web）。web が api を読むのはこれだけ（server/fudoki-api.ts）
+    { binding: 'WEB', service: 'fudoki-api', entrypoint: 'Web' },
     // 出典の頁の文字を読む内部の RPC（apps/api の SourcePages）。頁の文字は apps/api が D1 から読む
     { binding: 'SOURCES', service: 'fudoki-api', entrypoint: 'SourcePages' },
   ],
@@ -43,17 +44,12 @@ export default defineConfig({
       // ホームと自治体の頁（都道府県自体の頁・市区町村の頁・年度・タブ・分野）。データは取り込みのときだけ変わる
       '/': 3600,
       ...Object.fromEntries(Object.values(prefectures.slugs).flatMap((slug) => [[`/${slug}`, 3600], [`/${slug}/*`, 3600]])),
-      // 画面が取る自治体のデータ（routes/data/）
-      '/data/*': 3600,
       '/sitemap.xml': 3600,
       // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く。同じ下にある紋章の SVG（静的資産）は外す
       '/jurisdictions/*/og.png': 86400,
     },
-    // ISR の key は既定で query を落とす。流れ図・会計の総額は query で表示を分けるので key に残す
-    revalidateQueryAllowlist: {
-      '/data/jurisdictions/flow/*': ['view', 'phase', 'account'],
-      '/data/jurisdictions/accounts/*': ['phase'],
-    },
+    // ISR の key は既定で query を落とす。予算・決算のタブの頁は ?account= で流れの会計を分けるので key に残す
+    revalidateQueryAllowlist: Object.fromEntries(Object.values(prefectures.slugs).map((slug) => [`/${slug}/*`, ['account']])),
   },
   // 全頁の head の既定。頁ごとの title・説明・canonical は各頁の .server.ts の head。theme-color と View Transition の opt-in は middleware/01.site.ts
   head: {

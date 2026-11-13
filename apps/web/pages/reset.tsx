@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-/** ブラウザに置いた風土記の保存（fudoki: で始まる鍵。住んでいるまち・最近見たまち・ツアー・チェックリスト）を全部消し、ホームを読み直す */
+/** ブラウザに置いた風土記の保存（fudoki: で始まる鍵。住んでいるまち・最近見たまち・チェックリスト）を全部消し、ホームを読み直す */
 export default function Reset() {
   React.useEffect(() => {
     try {

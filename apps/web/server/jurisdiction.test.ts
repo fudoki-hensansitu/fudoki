@@ -1,13 +1,16 @@
 import { describe, expect, test } from 'bun:test'
-import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../jurisdiction/types'
+import { changePct, formatYen, kanChanges, reiwa, type FlowDepth, type YearTotal } from '../jurisdiction/types'
 import { fetchRoute } from './routes.testing'
 import { emptyHead, pageHead, type Head } from '../jurisdiction/html'
 import { homeEntries } from './jurisdiction-routes'
+import { loadCofogFlow, loadFlow, loadFlowParts } from './jurisdiction'
+import { cofogFlowOfDrills } from '../jurisdiction/cofog-flow'
 import { jurisdictionProps, resolveJurisdiction } from '../pages/[prefecture]/_loader'
 import type { Context } from 'hono'
 import { DETAIL_TABLE, SUBJECT_TABLE } from '../../api/src/columns'
 import { searchInputFor } from '../../api/src/shared/search'
 import type { Env } from './env'
+import { restRpc } from './fudoki-api'
 import prefectures from '../../../packages/jurisdictions/prefectures.json'
 import registry from '../../../packages/jurisdictions/jurisdictions.json'
 import { TOPIC_SEGMENTS } from '../jurisdiction/path'
@@ -75,12 +78,17 @@ function fixtureApi({ code = '131148', name = '中野区', extraNodes = [] as Ro
   const details = rows.filter((n) => !n.is_subject).map(toDetail) as Record<string, unknown>[]
   return { fetch: async (req: Request) => {
     const url = new URL(req.url)
-    if (url.pathname === '/v1/jurisdictions')
-      return Response.json({ jurisdictions: [
-        { jurisdiction_code: code, name, prefecture_name: '東京都', population: [], evaluations: [], coverage: [2024, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) },
-        { jurisdiction_code: '131016', name: '千代田区', prefecture_name: '東京都', population: [], evaluations: [], coverage: [] },
-        { jurisdiction_code: '130001', name: '東京都', prefecture_name: '東京都', population: [], evaluations: [], coverage: [] },
-      ] })
+    const jurisdictions = [
+      { jurisdiction_code: code, name, prefecture_name: '東京都', population: [], evaluations: [], coverage: [2024, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) },
+      { jurisdiction_code: '131016', name: '千代田区', prefecture_name: '東京都', population: [], evaluations: [], coverage: [] },
+      { jurisdiction_code: '130001', name: '東京都', prefecture_name: '東京都', population: [], evaluations: [], coverage: [] },
+    ]
+    if (url.pathname === '/v1/jurisdictions') return Response.json({ jurisdictions })
+    const one = url.pathname.match(/^\/v1\/jurisdictions\/(\d{6})$/)
+    if (one) {
+      const j = jurisdictions.find((x) => x.jurisdiction_code === one[1])
+      return j ? Response.json(j) : Response.json({ error: { code: 'NOT_FOUND' } }, { status: 404 })
+    }
     const kind = url.pathname === '/v1/expenditures/subjects:search' ? 'subjects' : url.pathname === '/v1/expenditures/details:search' ? 'details' : undefined
     if (kind) {
       const parsed = (kind === 'subjects' ? subjectSearch : detailSearch).safeParse(await req.json())
@@ -103,7 +111,9 @@ function fixtureApi({ code = '131148', name = '中野区', extraNodes = [] as Ro
   } }
 }
 const API = fixtureApi()
-const env: Env = { API, VIEW_RATE_LIMIT: { limit: async () => ({ success: true }) } }
+/** 試験の api（公開の REST と同じ形の偽物）を、内部の RPC の代わりの口（restRpc）で繋ぐ */
+const web = (f: { fetch(req: Request): Promise<Response> }): Pick<Env, 'WEB'> => ({ WEB: restRpc((req) => f.fetch(req)) })
+const env: Env = { ...web(API), VIEW_RATE_LIMIT: { limit: async () => ({ success: true }) } }
 const get = (path: string, e: Env = env) => fetchRoute(new Request(`https://fudoki.dev${path}`), e)
 const view = async (path: string, e: Env = env) => {
   const v = await resolveJurisdiction(e, path)
@@ -149,8 +159,9 @@ describe('自治体の個別ページ', () => {
     expect(data.years.map((y) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
     // 積立の款は事業の候補から外し、前年度の同じ目（款・項・名前が一致）だけを前年に使う
     expect(data.projects.map((p) => [p.name, p.prevYen])).toEqual([['保育園費', 200]])
-    expect(data.flow.map((d) => [d.kan.name, d.kou.map((k) => k.name)])).toEqual([['子ども教育費', ['子ども費']], ['総務費', ['総務管理費']]])
-    expect(data.flow[0]!.kou[0]!.moku).toEqual([])
+    const flow = await loadFlow(env, '131148', 2025)
+    expect(flow.map((d) => [d.kan.name, d.kou.map((k) => k.name)])).toEqual([['子ども教育費', ['子ども費']], ['総務費', ['総務管理費']]])
+    expect(flow[0]!.kou[0]!.moku).toEqual([])
   })
 
   test('収録の無い自治体は検索に出さず、名前が違えば 404、sitemap には収録のある自治体だけ', async () => {
@@ -193,13 +204,8 @@ describe('自治体の個別ページ', () => {
     expect(await status('2019')).toEqual([404, null])
   })
 
-  test('ホームの自治体の要約は収録のある自治体だけを、最新の決算の款の和で載せる', async () => {
-    expect((await homeEntries(env)).map((e) => [e.name, e.yen, e.path])).toEqual([['中野区', 1000, '/tokyo/nakano']])
-  })
-
-  test('一覧の自治体の総額は金額の印字が無い款を 0 と数えない', async () => {
-    const api = fixtureApi({ extraNodes: [node({ node_id: id(99), node_kind: '款', name: '予備費', amount_yen: null, fiscal_year: 2025 })] })
-    expect((await homeEntries({ ...env, API: api })).map((e) => e.yen)).toEqual([1000])
+  test('ホームの自治体の要約は決算を収録している自治体だけを載せる', async () => {
+    expect((await homeEntries(env)).map((e) => [e.name, e.path, e.latestYear])).toEqual([['中野区', '/tokyo/nakano', 2025]])
   })
 
 
@@ -217,7 +223,7 @@ describe('自治体の個別ページ', () => {
   })
 
   test('収録年度が離れていても最新年度から5年間の決算を表示する', async () => {
-    const sparse: Env = { API: { fetch: async (req) => {
+    const sparse: Env = web({ fetch: async (req) => {
       const url = new URL(req.url)
       if (url.pathname === '/v1/jurisdictions')
         return Response.json({ jurisdictions: [{ jurisdiction_code: '131148', name: '中野区', prefecture_name: '東京都', population: [], evaluations: [], coverage: [2019, 2020, 2021, 2023, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) }] })
@@ -230,7 +236,7 @@ describe('自治体の個別ページ', () => {
         return Response.json({ subjects: rows.filter((n) => n.fiscal_year >= body.fiscal_year.min && n.fiscal_year <= body.fiscal_year.max).map(toSubject) })
       }
       return API.fetch(req)
-    } } }
+    } })
     const data = await view('/tokyo/nakano', sparse)
     expect(data.years.map((y: YearTotal) => [y.year, y.yen])).toEqual([[2021, 250], [2023, 300], [2025, 1000]])
     expect(data.projects[0]!.prevYen).toBeNull()
@@ -242,7 +248,7 @@ describe('自治体の個別ページ', () => {
   })
 
   test('API に繋がらないときは投げて（頁は 502）、sitemap は入口・アシスタントだけで答える', async () => {
-    const down: Env = { API: { fetch: async () => new Response('x', { status: 500 }) } }
+    const down: Env = web({ fetch: async () => new Response('x', { status: 500 }) })
     await expect(resolveJurisdiction(down, '/tokyo/nakano')).rejects.toThrow()
     await expect(homeEntries(down)).rejects.toThrow()
     const sitemap = await get('/sitemap.xml', down)
@@ -253,40 +259,39 @@ describe('自治体の個別ページ', () => {
   })
 })
 
-describe('内訳の API', () => {
+describe('お金の流れ', () => {
   test('全款を返し、1000件を超える項と目・節を省略しない', async () => {
-    const north: Env = { ...env, API: fixtureApi({ code: '131172', name: '北区', extraNodes: Array.from({ length: 1001 }, (_, i) => node({ node_id: id(1000 + i), parent_node_id: id(2), node_kind: '項', name: `追加項${i}`, amount_yen: 0, fiscal_year: 2025 })) }) }
-    const res = await get('/data/jurisdictions/flow/131172/2025/setsu', north)
-    expect(res.status).toBe(200)
-    const flows = await res.json() as { kan: { id: string }; kou: { moku: { setsu: unknown[] }[] }[] }[]
+    const north: Env = { ...env, ...web(fixtureApi({ code: '131172', name: '北区', extraNodes: Array.from({ length: 1001 }, (_, i) => node({ node_id: id(1000 + i), parent_node_id: id(2), node_kind: '項', name: `追加項${i}`, amount_yen: 0, fiscal_year: 2025 })) })) }
+    const flows = await loadFlow(north, '131172', 2025, 'setsu')
     expect(flows).toHaveLength(2)
     expect(flows.find((flow) => flow.kan.id === id(2))!.kou).toHaveLength(1002)
     expect(flows.find((flow) => flow.kan.id === id(1))!.kou[0]!.moku[0]!.setsu).toHaveLength(2)
   })
 
   test('印字のない項金額と印字された0円を区別して返す', async () => {
-    const missing: Env = { ...env, API: fixtureApi({ code: '132012', name: '八王子市', extraNodes: [
+    const missing: Env = { ...env, ...web(fixtureApi({ code: '132012', name: '八王子市', extraNodes: [
       node({ node_id: id(20), parent_node_id: id(1), node_kind: '項', name: '子ども費', amount_yen: null, fiscal_year: 2025 }),
       node({ node_id: id(21), parent_node_id: id(2), node_kind: '項', name: '総務管理費', amount_yen: 0, fiscal_year: 2025 }),
-    ] }) }
+    ] })) }
     for (const depth of ['kou', 'moku']) {
-      const res = await get(`/data/jurisdictions/flow/132012/2025/${depth}`, missing)
-      expect(res.status).toBe(200)
-      const flows = await res.json() as { kan: { id: string }; kou: { yen: number; amountMissing?: true }[] }[]
+      const flows = await loadFlow(missing, '132012', 2025, depth as FlowDepth)
       expect(flows.find((flow) => flow.kan.id === id(1))!.kou[0]!.amountMissing).toBe(true)
       expect(flows.find((flow) => flow.kan.id === id(2))!.kou[0]!.amountMissing).toBeUndefined()
       expect(flows.find((flow) => flow.kan.id === id(2))!.kou[0]!.yen).toBe(0)
     }
   })
   test('機能分類の流れは COFOG の大分類・中分類で目を分け、印字のない目を含む分類に amountMissing を付ける', async () => {
-    const cofog: Env = { ...env, API: fixtureApi({ code: '132012', name: '八王子市', extraNodes: [
+    const cofog: Env = { ...env, ...web(fixtureApi({ code: '132012', name: '八王子市', extraNodes: [
       node({ node_id: id(30), parent_node_id: id(20), node_kind: '目', name: '児童手当費', amount_yen: null, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '10.4' }),
       node({ node_id: id(31), parent_node_id: id(20), node_kind: '目', name: '学校費', amount_yen: 50, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '09.1' }),
       node({ node_id: id(32), parent_node_id: id(20), node_kind: '目', name: '保育費', amount_yen: 70, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '10' }),
-    ] }) }
-    const res = await get('/data/jurisdictions/flow/132012/2025/moku?view=cofog', cofog)
-    expect(res.status).toBe(200)
-    const flows = await res.json() as { kan: { id: string; name: string; yen: number; amountMissing?: true }; kou: { name: string; yen: number; amountMissing?: true; moku: { name: string }[] }[] }[]
+    ] })) }
+    const flows = await loadCofogFlow(cofog, '132012', 2025, 'moku')
+    // 予算・決算のタブは款 → 項 → 目の流れと、木に入らない目（試験の表の親の無い目）から画面で組み直す。サーバーで組んだものと同じになる
+    const shape = (fs: typeof flows) => fs.map((f) => [f.kan, f.kou.map((k) => [k.name, k.yen, k.moku.map((m) => m.name)])])
+    const parts = await loadFlowParts(cofog, '132012', 2025, 'moku')
+    expect(parts.loose.length).toBeGreaterThan(0)
+    expect(shape(cofogFlowOfDrills(parts.drills, parts.loose))).toEqual(shape(flows))
     // 款（子ども教育費）は使わず、COFOG の名前で分ける
     const social = flows.find((f) => f.kan.id === 'cofog-10')!
     expect(social.kan).toMatchObject({ name: '福祉・子育て', yen: 70, amountMissing: true })
@@ -298,37 +303,49 @@ describe('内訳の API', () => {
     expect(flows.at(-1)!.kan.id).toBe('cofog-none')
     expect(flows.at(-1)!.kan.amountMissing).toBeUndefined()
   })
-  test('後続ページの節を優先し、全ページの金額から上位の内訳を選ぶ', async () => {
-    const paginated: Env = { ...env, API: { fetch: async (req) => {
-      const url = new URL(req.url)
-      if (url.pathname !== `/v1/expenditures/lines/${id(11)}`) return API.fetch(req)
-      const token = url.searchParams.get('page_token')
-      const page = (details: Record<string, Row[]>, next: string | null) => Response.json({ line: { kind: 'subject', ...toSubject(MOKU_2025[1]!) }, child_subjects: [], details: Object.fromEntries(Object.entries(details).map(([k, rows]) => [k, rows.map(toDetail)])), next_page_token: next })
-      if (!token)
-        return page({ 事業: Array.from({ length: 100 }, (_, i) => node({ node_id: id(100 + i), parent_node_id: id(11), axis: '事業', is_subject: false, name: `事業${i}`, amount_yen: 5000 })) }, 'next1')
-      if (token === 'next1')
-        return page({ 節: [node({ axis: '節', is_subject: false, name: '委託料', amount_yen: 1000 }), node({ axis: '節', is_subject: false, name: '扶助費', amount_yen: 2000 })] }, 'next2')
-      if (token === 'next2')
-        return page({ 節: [node({ axis: '節', is_subject: false, name: '負担金補助及び交付金', amount_yen: 3000 }), node({ axis: '節', is_subject: false, name: '旅費', amount_yen: 500 })] }, null)
-      return new Response('invalid page token', { status: 400 })
-    } } }
-    const res = await get(`/data/jurisdictions/setsu/${id(11)}`, paginated)
-    expect(res.status).toBe(200)
-    expect(await res.json()).toEqual([
-      { name: '負担金補助及び交付金', yen: 3000 },
-      { name: '扶助費', yen: 2000 },
-      { name: '委託料', yen: 1000 },
-    ])
-  })
+})
 
-  test('id の形が違えば 400、流量の binding が無ければ 503、正しければ内訳を返す', async () => {
-    expect((await get('/data/jurisdictions/drill/not-an-id')).status).toBe(400)
-    expect((await get(`/data/jurisdictions/setsu/${id(11)}`, { API })).status).toBe(503)
-    const ok = await get(`/data/jurisdictions/setsu/${id(11)}`)
-    expect(ok.status).toBe(200)
-    expect(await ok.json()).toEqual([{ name: '扶助費', yen: 250 }, { name: '委託料', yen: 50 }])
+describe('自治体の検索（/api/jurisdictions）', () => {
+  test('語に当たる自治体だけを返し、引数の形が違えば 400、流量の binding が無ければ 503', async () => {
+    const hits = (await (await get('/api/jurisdictions?q=中野')).json()) as { name: string; path: string }[]
+    expect(hits.map((h) => [h.name, h.path])).toEqual([['中野区', '/tokyo/nakano']])
+    expect(await (await get('/api/jurisdictions?q=存在しない')).json()).toEqual([])
+    // うちのまちの名前はコードで引く。決算の収録の無い自治体は返さない
+    expect(((await (await get('/api/jurisdictions?code=131148')).json()) as { name: string }[]).map((h) => h.name)).toEqual(['中野区'])
+    expect(await (await get('/api/jurisdictions?code=131016')).json()).toEqual([])
+    expect((await get('/api/jurisdictions?code=nakano')).status).toBe(400)
+    expect((await get(`/api/jurisdictions?q=${'あ'.repeat(51)}`)).status).toBe(400)
+    expect((await get('/api/jurisdictions?q=中野', web(API))).status).toBe(503)
   })
-  test('款でない科目の流れは返さない', async () => {
-    expect((await get(`/data/jurisdictions/drill/${id(11)}`)).status).toBe(502)
+})
+
+describe('事業の読み込み（/api/projects）', () => {
+  const H = 'a'.repeat(64)
+  const query = { code: '131148', year: 2025, kind: 'settlement', filter: 'all' }
+  const post = (body: unknown, e: Env = env) => fetchRoute(new Request('https://fudoki.dev/api/projects', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }), e)
+  test('内部の RPC で読み、引数の形が違えば 400、流量の binding が無ければ 503', async () => {
+    const seen: unknown[] = []
+    const WEB: Env['WEB'] = {
+      call: async (name, input) => (seen.push([name, input]), { ok: true, value: { project_years: [], projects: [], total_size: 0, total_size_capped: false, next_page_token: null } as never }),
+      mcp: async () => new Response('x'),
+    }
+    const ok = await post({ query }, { ...env, WEB })
+    expect(ok.status).toBe(200)
+    expect(await ok.json()).toEqual({ rows: [], total: 0, capped: false, next: null })
+    expect(seen.map((s) => (s as [string])[0])).toEqual(['search_projects'])
+    expect((await post({ query: { ...query, code: 'nakano' } })).status).toBe(400)
+    expect((await post({ query: { ...query, subjects: ['x'] } })).status).toBe(400)
+    expect((await post({ query, token: 'a'.repeat(513) })).status).toBe(400)
+    expect((await get(`/api/projects/${H}?year=2025&kind=other`)).status).toBe(400)
+    expect((await get('/api/projects/xyz?year=2025&kind=settlement')).status).toBe(400)
+    expect((await get(`/api/projects?detail=${H}&year=20255&kind=initial`)).status).toBe(400)
+    expect((await post({ query }, web(API))).status).toBe(503)
+  })
+  test('うちのまちの札（/api/jurisdictions/:code）は形が違えば 400、未収録・頁に無い年度は 404、API に繋がらなければ 502', async () => {
+    expect((await get('/api/jurisdictions/nakano?year=2025')).status).toBe(400)
+    expect((await get('/api/jurisdictions/131148?year=25')).status).toBe(400)
+    expect((await get('/api/jurisdictions/131016')).status).toBe(404)
+    expect((await get('/api/jurisdictions/131148?year=1999')).status).toBe(404)
+    expect((await get('/api/jurisdictions/131148?year=2025', { ...env, ...web({ fetch: async () => new Response('x', { status: 500 }) }) })).status).toBe(502)
   })
 })

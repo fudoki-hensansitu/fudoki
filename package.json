@@ -33,6 +33,7 @@
     "dev:api": "bun run --cwd apps/api dev",
     "dev:web": "bun run --cwd apps/web dev",
     "inspect:mcp": "bun run --cwd apps/api inspect",
+    "lint": "bun run --filter '@fudoki/*' lint",
     "test": "bun run --filter '@fudoki/*' test",
     "typecheck": "tsc --noEmit",
     "typecheck:all": "bun run typecheck && bun run --filter '@fudoki/*' typecheck",
