@@ -51,7 +51,7 @@ export function NavContent() {
   const { path } = useRouter()
   return (
     <SidebarGroup className="pt-1">
-      <SidebarMenu data-tour="nav">
+      <SidebarMenu>
         <TownSearch />
         <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
         <Item href="/search" label="事業を検索" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/search')} />
