@@ -96,7 +96,7 @@ flowchart LR
 
 取り込み（B）は出典の事実を木として出す。dbt は構造を復元せず、段の名前と金額の段階への対応（判断）、単位換算、自治体の統合、COFOG、検査を受け持つ。
 
-- **入力準備**は dbt の外に置く。dbt の sources yml に列挙した表について、管理 JSON から SHA 照合済みの Parquet を復元し、warehouse の `ingestion` schema に読み込む。管理 JSON の表の会計名・注記と、出典選定の記録から作る出典の表も置く。
+- **入力準備**は dbt の外に置く。管理 JSON に登録した表（一覧は `pipeline/dbt/scripts/fiscal_inputs.py` が build のたびに作る）について、管理 JSON から SHA 照合済みの Parquet を復元し、warehouse の `ingestion` schema に読み込む。管理 JSON の表の会計名・注記と、出典選定の記録から作る出典の表も置く。
 - **marts** は DuckDB の表とビューである。MCP・自治体別 CSV・Fiscal Data Package は、ここから作る配布経路として後で扱う。
 
 ### 取り込みの出力: ノードの表と金額の表
@@ -295,7 +295,7 @@ erDiagram
 
 #### staging: 取り込みの行と1対1のまま型を整える
 
-- PDF は `stg_fiscal__nodes` と `stg_fiscal__amounts` の2モデルで、sources yml に列挙した全表を `union all` する。
+- PDF は `stg_fiscal__nodes` と `stg_fiscal__amounts` の2モデルで、入力準備が読み込んだ全表を `union all` する（表は `ingestion_table()` で引く）。
 - CSV は原文の表のまま取り込まれる（後述）。CSV の書式ごとに staging を作り、原文の行と1対1のまま列名と型を整える。どの列が款・項・目・節の番号・名称・金額かは、この staging の yml で宣言する。
 - 各行に `source_table_key`（対象・方向・表 ID）を付け、取り込みの行へ戻れるようにする。`node_key` は表の中でだけ一意なので、ノードの識別・親・金額の参照は (`source_table_key`, `node_key`) の組で扱う。
 - 文字列は `trim_cell`、金額は原文の `amount_text` を残して `staging_amount` で数値を足す。単位は出典のままにする。132012 の括弧のように装飾を外す必要がある見出しは seed で宣言し、宣言した形でない値は例外にする。
@@ -342,7 +342,7 @@ slice の期待値は、現行の横持ちの表の実測から次のとおり�
 ### slice を実装する手順
 
 1. B: 横持ちの表からノードの表と金額の表を作る共通の変換を実装する。131156 の目の名称と説明の段の宣言を直し、slice の表に適用して、全段で子の和の検査を通してから R2 に保存する。132021の修正済みの説明の表も含める。
-2. dbt の sources yml に slice の表を列挙し、入力準備を実装する。出典の表の生成と、N1・N2 の検査を含める。
+2. dbt の sources yml に slice の表を列挙し（当時。今は管理 JSON から一覧を作る）、入力準備を実装する。出典の表の生成と、N1・N2 の検査を含める。
 3. staging の2モデルを作り、staging の検査を通す。
 4. seed に段の対応と金額の対応を根拠付きで書き、木の intermediate を作る。親子・子の和・目と款の和の検査を通す。
 5. seed の `cofog_rules` に3自治体の規則を根拠付きで足し、COFOG の intermediate を作る。
