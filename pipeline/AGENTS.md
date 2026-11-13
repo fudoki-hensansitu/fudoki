@@ -1,65 +1,77 @@
 # pipeline
 
-出典から提供用データを作る層。実行手順と、出典調査・取り込み・PDF抽出・dbt構築のハマりどころは `.agents/skills/pipeline/` を参照する。
+出典から提供用データを作る層。作業の進め方は `.agents/skills/pipeline/`、自治体固有の実測・出典の癖は `ingestion/fiscal/jurisdictions/<自治体コード>/README.md` にある。
 
-## Scripts
+## 構造
 
-script はこの package が所有する。実行は `bun run --cwd pipeline <name>`（または `pipeline/` で `bun run <name>`）。
-
-| group | scripts |
+| dir | 持つもの |
 |---|---|
-| 取り込み・保存 | `ingestion:schema` / `ingestion:check` / `ingestion:originals` / `ingestion:convert`（検査が通れば管理 JSON に記録し手元の cache に置く。R2 には書かない。`--dry-run` は候補だけ）/ `ingestion:store`（記録された表を変換し直して照らし、一致すれば R2 に置く。merge 後の CI が流す。ADR 0045）/ `ingestion:restore` / `ingestion:refresh`（指紋が古い管理 JSON の表を再変換して保存済みの表と中身で比べ、同じなら指紋だけを書き換える。R2 は読むだけ。`--remote`・`--dry-run`。`--plan` は指紋の比較だけで対象を列挙し、変換も書き換えもしない）/ `ingestion:cleanup` |
-| 取り込み表の合計検査 | `ingestion:verify`（ノードの表・金額の表の全段の木の検査（保存済み可）と印字された数字の網羅の検査（候補の scope 付きのみ。弱い規則で通した数字と帯の外の数字を Jev が金額と読めば止める。convert が聞いて保存した答えを verify は API なしで再現し、無ければ止める）を保存済み・候補の表に当てる。CIでは回さない） |
-| dbt | `dbt:prepare`（入力準備だけ）/ `dbt:build`（入力準備から marts まで。候補は `--candidate-dir`、保存済みで未キャッシュなら `--remote`、取り込みの表を自治体で絞るなら `--jurisdiction`） |
-| 配信 | `serving:columns`（`apps/api/src/columns.json` を warehouse の列と `_models.yml` の説明から生成。`--check` で最新か検査）/ `serving:sync`（marts の表を D1 へ同名・同列で写す。既定は変わった行だけを書く差分の同期。`--database-id <uuid>` か `--local`、`--persist-to`、`--dry-run`（D1 を読んで書く予定の行数を出す）、`--full`（全表を作り直す）、`--jurisdiction <code>`（その自治体の行だけを差分で書き、他の自治体の行は消さない。`dbt:build -- --remote --jurisdiction <code>` でその自治体だけ build した warehouse から本番へ流せる。build は生成 macro `fiscal_*_relations.sql` をその自治体だけに書き換えるので commit しない。絞った warehouse から `--jurisdiction` なしで同期すると他の自治体が消えるので、先に全件で build し直す）、`--table <表>`（その表だけを同期し、ほかの表には触れない。新しい表を足すとき、ほかの表の build が通らなくても写せる）。ネットワーク・cf を使うので sandbox 外）/ `serving:queria`（Queria 用の marts を Queria の作業用カタログに写し、宣言を書く。下の「Queria への配布」） |
-| 事業（事業評価・予算案のプレス発表） | `project:baseline -- --base <commit>`（その commit のコードで読んだ評価シート・指標・施策の全行と、今のコードの結果を突き合わせる。読み方を直したときに使う）/ `project:link-measures`（build 済みの warehouse から、seed `dbt/seeds/project/budget_measure_link.csv` に無い施策だけを当初予算書の内訳（事業）へ紐付けて足す。warehouse で読んだ自治体の seed のうち施策に当たらない行（取り込みを直して頁・位置が変わったもの）は落とす。`--refresh` で全部やり直す。Jev を呼ぶので sandbox 外）/ `project:link-projects`（build 済みの warehouse の `int_project__lines` から、seed `dbt/seeds/project/project_line.csv` に無い事業の行だけを、同じ年度の当初予算・決算と前の年度とで結んで事業に振って足す。`--refresh` で全部やり直す） |
-| 出典の頁の文字 | アシスタントが読む頁の文字は、`dbt:prepare` が事業の取り込みの出典（評価・プレス）から bbox（`ingestion/generic/page_words.py`）と並べ方（`source_text/layout.py`）で作り、marts の `source_page_text` から `serving:sync` で D1 に写す。読んだ結果は出典の sha256・コードの指紋・Poppler の版で `.cache/source-page-text/` にキャッシュする。`source-text:preview <pdf> [頁…]` で同じ組み方の頁の文字を表示して、目で確かめる |
-| 検査 | `test`（bun のテスト・出典選定の検査・`ingestion:check`・`test:python` をまとめて流す。CI はこれを回す）/ `test:python`（unittest）/ `test:dbt`（入力準備の unittest）/ `lint`（repo の決まり: `verify/boundaries.ts`・`python.ts`・`docs.ts`） |
+| `source_selection/` | 出典の選定（自治体ごとの JSON、`schema.ts`）と、検査 `check.ts`・保存 `archive.ts` |
+| `ingestion/fiscal/` | 予算書・決算書の取り込み。管理 JSON（`jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.json`、型は `manifest.schema.json`、対象間の制約は `manifest.py`）、書式別の変換器（`layouts/`）、自治体ごとの宣言（`jurisdictions/<自治体>/layouts/`） |
+| `ingestion/generic/` | 自治体の書式を書かない汎用の変換器。固定した読み方は管理 JSON の `options.workflow`、選べる実装は `patterns/` |
+| `ingestion/lib/` | 共通処理。木の検査・網羅の検査・OCR の入口（`scan_ocr.py`、[説明](ingestion/lib/scan_ocr.md)）・PDF の表の組み立て（`pdf_table.py`、[説明](ingestion/lib/pdf_table.md)） |
+| `ingestion/project/` | 事業評価の評価シートと予算案のプレス発表の取り込み。様式ごとの読み方は `layouts/`、プレスの工程ごとのパターンは `press/` |
+| `shared/` | 取り込みと dbt を横断する辞書。取り込みは直接読み、dbt は seed として読む |
+| `dbt/` | 入力準備（`scripts/`）、staging・intermediate・marts、seeds、検査（`tests/`） |
+| `serving/` | marts を D1 へ写す同期（`sync_d1.py`）、列の契約（`columns.py`）、配信の入口（`publish.py`）、Queria への配布 |
+| `source_text/` | アシスタントが読む出典の頁の文字の組み方 |
+| `verify/` | repo の決まりの検査（`bun run lint`） |
 
-出典選定は `bun pipeline/source_selection/check.ts` と `archive.ts`。事業の評価の資料（`evaluation_selections`）は `archive.ts --evaluation` で決算書とは別の key（`.../evaluation-settlement[-<n>].pdf`）に保存する。`settlement-` で始めると決算書の保存が消す。予算案のプレス発表（`press_selections`）は `archive.ts --press` で予算書とは別の key（`.../press-initial[-<n>].pdf`）に保存する。dbt は入力準備（`dbt/scripts/`）、staging・intermediate・marts のモデル、seeds を持つ。
+script はこの package の `package.json` が持つ。使い方は各 script の `--help`。
 
-## 生成物・観測・取得の規約
+## 決まり
 
-- **commit した生成物には生成手段を残す。** 生成物だけ残して作り方を消すと、作り直せず検証もできない出所不明のデータになる。置き場は調査スクリプト置き場ではなく、生成物と consumer の近く。
-- **観測は commit しない。** `ingestion/fiscal/observations/` に書き出し、主張に使うときは実測日を添える。
-- **ネットワークを叩く script はサンドボックスを外して回し、CI では回さない。** 開発環境の HTTP プロキシが応答を途中で切り `IncompleteRead` が出る（取得元の問題と取り違えない。実測の詳細は `.agents/skills/pipeline/references/ingestion.md`）。
+### 全体
 
-## 技術スタック
+- 自治体ごとの差は出典の選定の宣言と書式設定に置き、取得・変換の処理は自治体をまたいで使う。年度・会計だけでコードを複製しない
+- schema・宣言は最小の形から始める。フィールドは原則 nullable にし、必須化・union 型・汎用の枠は実例が出てから足す
+- commit した生成物には生成手段を残す。置き場は生成物と consumer の近く
+- 観測は commit しない（`ingestion/fiscal/observations/`）。主張に使うときは実測日を添える
+- ネットワークを叩く script は sandbox を外して回し、CI では回さない
+- Python は 3.13 に固定する
+- `.agent/` へ runtime・依存物・出典群・全量の warehouse を検証ごとに複製しない
 
-- **汎用層として作る**: 自治体ごとの差は出典選定の宣言・書式設定に置き、取得・変換の処理を再利用できる形にする。「他自治体でも動く」をコードで示す。
-- **schema・宣言は最小形から始める**: フィールドは原則 nullable にし、必須化・union 型化・汎用 scope 枠のような拡張は実例が出てから足す。最初から過剰な提案を出すとユーザーに削らせる往復になる（2026-10、source_selection schema の scope/inspection を連続して削らせた観測）。
-- **取り込み**: Bは選定済みのCSV/PDFと対象情報を受け取り、ローカルParquetへ変換する。管理JSONはschema_version 1で入出力と変換だけを持ち、型は `ingestion/fiscal/manifest.schema.json`、対象間の制約は `manifest.py`。自治体の書式を書かない text PDF は汎用の変換器 `ingestion/fiscal/layouts/generic_text`（実体は `ingestion/generic/convert.py`。会計・表IDと `options.workflow` の固定した読み方を使い、頁は選定の scope）が `{nodes, amounts}` を直接返し、`run.py` が wide 表の移行を通さずに検査する。木の検査は表の作り手によらず `ingestion/lib/tree_checks.py` の `check_tree` の1つで、子（と同じ軸の子孫）が金額を1つも印字しない親は比べない（細節が金額を省く作り。一部の子だけ印字が無ければ今までどおり不一致）。CLIとCIで `ingestion:check` を実行する。PDF表の合計検査は `ingestion:verify` でノードの表・金額の表の全段の木の検査（`check_tree`）、同じ出典PDFの同じ頁を読む全表の採用金額・ノードを集めた網羅の照合と印字された数字の網羅の検査（`ingestion/lib/coverage_checks.py` の `check_digit_coverage`、text PDF の金額帯の取りこぼしは保存前に停止。弱い規則で非金額とした数字と帯の外の数字は `ingestion/lib/digit_recheck.py` で Jev に聞き直し、金額と読んだものを同じく停止する。Jev は止める方向だけに使い、通す判断には使わない）を当てる。非採用範囲は既存の観測用の読み分けから実行時に生成し、種類の語彙は `node_tables.EXCLUSION_KINDS` に置く。人は種類と理由だけを定める。単位の確かめ（款の和＝印字の歳出合計、会計が一般会計なら合計の桁が単位に合うこと。木の検査は全段が同じ倍率で間違うと検出できない）は、変換器を問わず全ての PDF 表の保存の関門（`convert`・`prepare_save`・`verify`）に当てる（`ingestion/fiscal/unit_checks.py`。規則は汎用の組み立ての `generic/units.py` の `check` と同じ。印字の合計は変換器の対象範囲（`<表ID>.coverage.json`）の歳出合計の行から、同じ頁の款の金額の右端に揃う列に置く。対象範囲を持たない scan と保存済みの表、置けない表は桁だけを確かめ、分冊は報告だけ。指紋の外なので、厳しくしたときは `ingestion:convert`（ローカルの候補）→ `ingestion:verify --candidate <候補dir>` で当て直す。[ADR 0028](../docs/adr/0028-unit-check-in-the-save-gate.md)）。木と網羅だけでは支出済額の段階や款が丸ごと欠けた表を素通りさせるため、決算・歳出のうち公営企業会計以外は保存の前に款の軸と目の支出済額の過半も確かめる（`ingestion/fiscal/subject_checks.py`。止まった理由は `unit_checks.describe` が「款の科目軸がない」「款の支出済額がない」「目の支出済額が過半に満たない」として返す。[ADR 0029](../docs/adr/0029-structural-check-in-the-save-gate.md)）。汎用PDFの固定した読み方は `options.workflow`、候補の比較は `generic/discovery.py`、選択実装は `generic/patterns/`。指紋は共通コードと選んだ実装・参照する辞書を含み、未選択パターンの追加・変更では変わらない。設定・移行・検証の境界は [PDF workflow の設計](../docs/prd/pdf-workflow-patterns/dd.md) を参照する。指紋（`input_fingerprint`）はコード・設定・入力の内容のハッシュで、「変わったかもしれない」という合図である。古くても `restore` は止めずに表示し、`ingestion:check` は見ない（古い表の一覧は `ingestion:refresh --plan`）。全表の `ingestion:refresh --remote --dry-run` は CI の schedule でまとめて回し、共有のコードを直す PR で refresh を回すことは必須にしない。中身が同じ表の指紋の書き換えは `ingestion:refresh --remote`、中身が違う表は本当の変更なので、`ingestion:convert` で記録し直す（R2 には merge 後の CI の `ingestion:store` が置く。[ADR 0045](../docs/adr/0045-ingestion-tables-uploaded-by-ci.md)）。表を作らず合否だけを決める検査のコード（`tree_checks.py`・`coverage_checks.py`・`fiscal/unit_checks.py`・`fiscal/subject_checks.py`）は `*_checks.py` に置き、指紋から外す（`manifest.dependencies` が、表を書く関数・呼び出しがあれば停止する。検査の戻り値で段のパターンを選ぶ汎用の組み立てだけは `manifest.RESULT_SHAPES_TABLE` で `tree_checks.py` を指紋に残す）。外した検査を厳しくした PR は、指紋では保存済みの表が古く見えないので、`ingestion:verify --remote` を全表に当てる（[ADR 0027](../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。配置と保存の手順は [ingestion手順](../.agents/skills/pipeline/references/ingestion.md)、判断は [保存設計](../docs/prd/ingestion-storage/dd.md) を参照する。
-- **金額の注記**: 流用元・流用先や不用額、基準額の文言と金額・単位・印字位置を「注記」軸で保持する。`shared/fiscal_annotation_map.csv` の共通の見出しで種類を解き、phaseを付けず、木の合計・歳出のintermediateから外す。同じ備考欄の折返しだけを継承し、月額は既存の月額セル、回数単価は同じ括弧内の円付き金額に限定する（[ADR 0024](../docs/adr/0024-monetary-annotations-without-phase.md)）。
-- **共通辞書**: 取り込みと dbt を横断する辞書は `shared/` に置き、取り込みは直接読み、dbt は seed として読む。
-- **コード配置**: 共通処理は `ingestion/lib/`、書式別の共通処理は `ingestion/fiscal/layouts/`、採用中のPDFの読み方は `ingestion/generic/patterns/` の共有ルールに置き、自治体ごとの実測・訂正のJSON宣言は `ingestion/fiscal/jurisdictions/<自治体>/layouts/` に置く。結び付きの強い文字PDFの読み方は `readings/`、独立に選べる部品は `components/`。独立検査・未採用資料の支持コードは自治体側に保持する（[ADR 0036](../docs/adr/0036-shared-coupled-pdf-readings.md)）。年度・会計だけでコードを複製しない。
-- **OCR**: 新しいBの共通入口は `ingestion/lib/scan_ocr.py`。エンジンはPaddleOCR PP-OCRv6 smallをONNX Runtime（CPU）で動かす `paddle_ocr.py`（依頼は `engine: "paddle"`。頁の縦分割数・検出解像度は `config`。[ADR 0032](../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。Apple Visionの処理は全冊の移行後に消した。取得時にOCRの箱にも罫線にも覆われない墨を探して、その範囲を同じエンジンで、残りを行の文脈ごとVLM（`vlm_ocr.py`）で読み直し、観測に固定する。名称と金額の誤読は `ocr_names.py` の宣言で直し、生の観測は書き換えない。OCRは変換器の外で `ingestion:ocr` が取得し、観測のSHAを管理JSONの `ocr_inputs` に書く。観測は表と一緒に非公開R2へ保存し、変換器へ渡す（[ADR 0019](../docs/adr/0019-freeze-scan-ocr-observations.md)）。設定と検証範囲は [OCRの説明](ingestion/lib/scan_ocr.md)、実行と欠落セルの再読は `.agents/skills/pipeline/references/ingestion.md` を参照する。
-- **変換**: dbt-duckdb。取り込みの表の一覧は、build のたびに `dbt/scripts/fiscal_inputs.py` が管理 JSON から作る（ファイルに保存せず、モデルは `ingestion_table()` で引く）。PDF はノードの表・金額の表を全自治体共通の staging 2モデルで読み、CSV（当初予算・決算の歳出）は書式ごとの staging で読み、金額の列名と単位（円・千円）は変換の宣言（`amount_column`・`amount_unit`）で決める。intermediate で段の名前（共通規則）・資料区分ごとの金額の段階の選択（決算は支出済額・当初予算は当初予算額）・表をまたぐ款項目の統合・円換算・COFOG を行い、決算と当初予算の木を `int_fiscal__expenditure_nodes` に union し、`int_fiscal__expenditure_rows` で科目の行と内訳の枝（分け方 `breakdown` を枝の根の欄から継ぐ）に分ける。marts は集約ごとの dir（`marts/expenditure`・`evaluation`・`budget_proposal`・`jurisdiction`）に置く。歳出は根 `expenditure`（自治体・年度・資料区分・補正号・会計）・科目の表 `expenditure_subject`（款・項・目）・内訳の表 `expenditure_detail`（目の下の事業・節・その他）・印字の位置 `expenditure_location`（`kind` が pdf か csv）・出典 `expenditure_origin`（冊ごと）・根と冊の組 `expenditure_origin_link`。設計は [集約ごとの作り直し](../docs/prd/aggregate-api/dd.md)。内訳の欄をどの分け方と読むかは出典ごとの宣言 `seeds/fiscal/fiscal_detail_breakdown.csv`（自治体・年度・資料区分・欄の見出しごと。見出しが「節」の欄は既定で節、それ以外の宣言の無い欄は検査で落ちる。手順は `.agents/skills/pipeline/`）。自治体マスタは `packages/jurisdictions/jurisdictions.json` を入力準備が読み、都道府県の名称は seed から引く。印字の位置は行の ID（`line_id`）ごとに出典の頁（`source_page`・印字の枠 `source_x0`ほか、金額は `amount_source_*`。座標は PDF だけで、複数の印字を足した金額は NULL）を持ち、`expenditure_origin.sha256` までたどれる。比較は科目の表の目（`level='目'`）で行う。設計は [配信する表の設計](../docs/prd/fiscal-serving-tables/dd.md)・[dbt モデルの設計](../docs/prd/fiscal-dbt-models/dd.md)。
-- **事業（事業評価・予算案のプレス発表）**: 評価シートも予算案の施策も行き先は予算書・決算書の事業なので、1つの領域（project）にまとめる。行は資料の粒度のまま（評価シート1枚、施策1件）。評価シートは出典の選定（`evaluation_selections`）、予算案のプレス発表は出典の選定（`press_selections`、分冊は冊ごと）で保存済みの PDF を入力準備が読む。評価の結果の資料（評価した数・A〜D の数）は取り込まない（A〜D は評価シートの方向性から API が組み立てる）。様式ごとの読み方は `ingestion/project/layouts/`（宣言の `layout`）で、PDF の文字の層の語を座標で拾う。プレス発表は、工程（読む範囲・件の見つけ方・名前と金額の組み立て・札と説明）ごとにパターンを選んで組み合わせる宣言の `workflow` で読み（`ingestion/project/press/`）、組み合わせに収まらない自治体だけ `<自治体>_press.py`（宣言の `layout`）で読む。宣言の `note` に、読む章・読まない頁・0 件で正しい理由など資料の癖を書く。新しい自治体はまず組み合わせで宣言する。読んだ結果は PDF と読み方のコード（選んだパターンだけ）・宣言の指紋ごとに `.cache/project/` に置き、同じ PDF を読み直さない。入力準備は毎回これらの PDF を読むので、`--candidate-dir` で準備する前に一度 `--remote` で準備してキャッシュに置く。marts は事業評価の根 `evaluation`（自治体×事業を行った年度）・`evaluation_origin`・`evaluation_sheet`（1枚1行。文章の欄は持たない）・`evaluation_indicator`・`evaluation_indicator_value`と、予算案の根 `budget_proposal`・`budget_proposal_origin`・`budget_measure`（施策）。取り込みの表（`ingestion.project_*`）の名前は、施策の表を `project_budget_measure` に変えたほかは変えない。評価シートの決算書の目・事業への紐付け（名前の一致で1つに決まるものだけ）、施策の予算書の内訳への紐付けは風土記の判断で、列の説明に書く。分野（COFOG）は表に写さず、紐付けた目・内訳から `expenditure_subject` の `cofog_code` を引く。施策の紐付けは seed `budget_measure_link` で持ち、`project:link-measures` が足す（手順は `.agents/skills/pipeline/references/link-to-budget-detail.md`）。事業 `project`・`project_year` は、予算書・決算書の内訳の事業の行（`int_project__lines`、seed `project_jurisdiction` の自治体だけ）を seed `project_line` の事業ID でまとめたもの。seed は `project:link-projects` が足し、seed と事業の行が1対1で当たらないと検査 `project_lines_seeded` で止まる（取り込みを直したら流し直す）。
-- **公式サイト**: 出典の選定の `official_url` を `jurisdiction` に載せる。人口は pipeline で扱わない（web の D1 に Queria から入れる。[ADR 0042](../docs/adr/0042-external-reference-data-in-web.md)）。
-- **配信の入口（publish）**: `publish`（`serving/publish.py`）が範囲を決めて `dbt:build --remote` と `serving:sync` を続けて流す。既定は `--since`（省略時は origin/main との分岐点）から HEAD までの差分で、取り込みの宣言・出典の選定・1列目が自治体コードの seed だけの変更はその自治体だけ（`--jurisdiction`）、それ以外の marts に効く変更は全件、効かない変更は何もしない。`--all` で全件、`--jurisdiction <コード>` で指定。`--database-id <uuid>` か `--local`、`--dry-run`。main への merge で `.github/workflows/sync-d1.yml` が最後に成功した同期（push の run）からの差分で本番 D1 に流す（手動は Actions の `workflow_dispatch`、自治体コードを空白区切り・空なら全件）。施策・事業の紐付けの seed（`project:link-*`）は取り込みの PR で commit する。
-- **配信**: `serving/` が marts の表（`serving/columns.py` の `TABLES`）を同名・同列のまま D1 に写す（[ADR 0022](../docs/adr/0022-serve-marts-via-worker-d1-rest-and-mcp.md)・[ADR 0038](../docs/adr/0038-split-serving-tables-by-grain.md)）。表名は集約の名前で始める。旧い表は、新しい表を写して API を切り替えた後に `serving:sync --drop-legacy` で消す。列の契約は `serving/columns.py`、同期は `serving/sync_d1.py`（[ADR 0040](../docs/adr/0040-sync-d1-by-row-diff.md)。主キーの範囲ごとに D1 と全列で突き合わせて変わった行だけを書き、列か index が変わった表は `<表>__new` に全件投入して照合後に rename。書き込むのはこの script だけで同時に2つ流さない）。D1 には control 以外の表を migration で作らない（`apps/api/migrations/`）。`--local` の状態は `apps/api/.cloudflare/state`（gitignore 済み）。反映後の収録は REST の `/v1/jurisdictions?page_size=100` で確かめる（MCP の `list_jurisdictions` は既定 20 件で、全件は `next_page_token` を辿らないと見えない）。収録団体数は宣言の grep では数えられない — CSV から取り込んだ対象は `conversions[].options.account` を持たず、marts 全体を数えると都外の団体が混じる。`expenditure` を年度・資料区分・会計で切り分けて数える。
-- **Queria への配布**: Queria の公開データセット `fudoki` には、Queria 用の marts（`dbt/models/marts/queria/`、モデル名 `queria_<スキーマ>__<テーブル>`）を同名・同列のまま写す。Queria の規約（団体コードは `local_government_code`、説明は短く）に合わせた形はこの marts で作り、写す側では変えない。主キー・キーの宣言は `_models.yml` の `meta.queria`。手順（`F="uvx --from fdl-cli --with queria fdl"`。`--with queria` は push の認証の helper が queria コマンドを呼ぶために要る）: (1) `mkdir -p pipeline/.build/queria` のあと、`pipeline/.build/queria` で `$F checkout https://data.queria.io/datasets/wwwyo/fudoki/ .fdl/work.sqlite` (2) repo 直下で `bun run --cwd pipeline dbt:build -- --remote`（`--jurisdiction` なしの全件。`serving:queria` に `--jurisdiction` を付けなくても、絞って build した warehouse に無い自治体は戻らない）のあと、`bun run --cwd pipeline serving:queria`（作業用カタログに表を書き、`pipeline/.build/queria` に `dataset.yml`・`tables/`・`README.md` を書く。`--jurisdiction <コード>` は試し用で、公開する版は全自治体で作る） (3) `pipeline/.build/queria` で `FDL_WORKING=.fdl/work.sqlite uvx queria validate` → `$F commit .fdl/work.sqlite -m "…" --author <名前>` → `$F push .fdl/work.sqlite`（`queria login` か `FDL_TOKEN` が要る）。push した時点で公開される。Queria の無料枠は最新の版だけを残すので、戻すときは前の commit で作り直して push する。
-- **保存**: Git はコード・宣言・判断・入力一覧、非公開 R2 は出典・取り込み表。`.cache/` と `.build/` は再生成可能なローカル作業領域。
+### 保存
 
-  | 内容 | 保存先 | Git |
-  |---|---|---|
-  | 出典 CSV/PDF | 非公開R2の `fiscal/source-selection/` | 選定・保存参照だけ |
-  | 取り込みParquet | 非公開R2の `fiscal/ingestion/<対象>/<方向>/` の固定key | 対象別JSONだけ |
-  | scan PDFのOCR観測 | 非公開R2の `fiscal/ingestion/<対象>/<方向>/ocr/<id>.json.gz` | 依頼とSHA（`ocr_inputs`）だけ |
-  | Jev の聞き直しの答え（入力の fingerprint と確率。出典の文字は持たない） | `ingestion/fiscal/jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.digit-recheck.jsonl` | 管理する |
-  | 変換設定・現在の表・ハッシュ・保存先 | `ingestion/fiscal/jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.json` | 管理する |
-  | 出典の頁ごとの文字 | D1 の `source_page_text`（marts から写す） | 管理しない（出典から `dbt:prepare` で作り直す） |
-  | 分類・名称のマスタ | dbt seeds | 管理する |
-  | 復元済み入力・PDF/OCR キャッシュ | `pipeline/.cache/` | 管理しない |
-  | DuckDB・dbt manifest・検査結果・ローカル報告 | `pipeline/.build/` | 管理しない |
+| 内容 | 保存先 | Git |
+|---|---|---|
+| 出典 CSV・PDF | 非公開 R2 の `fiscal/source-selection/` | 選定と保存の参照だけ |
+| 取り込みの表（Parquet） | 非公開 R2 の `fiscal/ingestion/<対象>/<方向>/` | 管理 JSON だけ |
+| scan PDF の OCR の観測 | 非公開 R2 の `fiscal/ingestion/<対象>/<方向>/ocr/<id>.json.gz` | 依頼と SHA（`ocr_inputs`）だけ |
+| Jev の聞き直しの答え | 管理 JSON の隣の `<方向>.digit-recheck.jsonl` | 管理する |
+| 出典の頁ごとの文字 | D1 の `source_page_text`（marts から写す） | 管理しない |
+| 分類・名称のマスタ・判断の seed | dbt の seeds | 管理する |
+| 復元した入力・キャッシュ | `pipeline/.cache/` | 管理しない |
+| DuckDB・dbt manifest・検査結果 | `pipeline/.build/` | 管理しない |
 
-  再構築に必要な出典・取り込み表・コード・宣言を保持する。独立したprovenanceファイルは生成・保存しない。
-  scan測定の観測は `docs/prd/generic-node-builder/scan/plans/` の `tables=[]`・`ocr_inputs` 付き管理JSONで宣言し、取得時にR2へ保存できる。掃除はこの参照も保護し、採用時は正規管理JSONへ移して測定用から外す（[ADR 0019](../docs/adr/0019-freeze-scan-ocr-observations.md)）。
-- **一時検証の保存**: `.agent/` へ runtime・依存物・出典群・キャッシュ・全量 warehouse を検証ごとに複製しない。ハッシュ固定した既存出典を読み取り参照し、変更コードのスナップショット・ハッシュ一覧・対象範囲の再抽出と検査結果を保存する。全件走査・全ファイルのハッシュ計算は対象を絞る。採用後の再生成可能な一時DB・重複CSVは整理するが、未採用の出典・取り込み表・支持コード・証跡は保持する。
+- 取り込みの表は `ingestion:convert` が管理 JSON に記録し、R2 には merge 後の CI の `ingestion:store` だけが置く（[ADR 0045](../docs/adr/0045-ingestion-tables-uploaded-by-ci.md)）
+- OCR は変換器の外で一度だけ取り、観測を固定する（[ADR 0019](../docs/adr/0019-freeze-scan-ocr-observations.md)）。エンジンは PaddleOCR を ONNX Runtime で動かす（[ADR 0032](../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。誤読は宣言で直し、観測は書き換えない
+- 独立した provenance ファイルは作らない
 
-**Python の版は 3.13 に固定してある。** dbt-duckdb 1.11.0 が classifiers で 3.14 を宣言していないため（`requires-python` は `>=3.10` なので入りはするが、テストされていない組み合わせになる）。
+### 取り込み
 
-## 参照
+- PDF はノードの表と金額の表、CSV は原文の行と1対1の表にする（[ADR 0020](../docs/adr/0020-ingestion-outputs-node-tables.md)）
+- 保存の関門: 木の検査（`ingestion/lib/tree_checks.py`）、text PDF の印字された数字の網羅（`coverage_checks.py`。Jev の聞き直しは止める方向だけ、[ADR 0026](../docs/adr/0026-jev-recheck-printed-digits-stop-only.md)）、単位の確かめ（[ADR 0028](../docs/adr/0028-unit-check-in-the-save-gate.md)）、決算の款の軸と支出済額（[ADR 0029](../docs/adr/0029-structural-check-in-the-save-gate.md)）
+- 合否だけを決める検査のコードは `*_checks.py` に置き、指紋から外す。検査を厳しくしたら保存済みの全表に `ingestion:verify --remote` を当てる
+- 指紋（`input_fingerprint`）は「変わったかもしれない」という合図で、古くても止めない。中身が同じなら `ingestion:refresh` で指紋だけを書き換え、違えば `ingestion:convert` で記録し直す（[ADR 0027](../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。全表の確かめは定期の `refresh-check.yml` が流す
+- PDF の読み方は書式ごとの固定した workflow（[ADR 0035](../docs/adr/0035-fixed-pdf-workflow-patterns.md)・[PDF workflow の設計](../docs/prd/pdf-workflow-patterns/dd.md)）。1つの書式のための判定は opt-in の quirk にする（[ADR 0043](../docs/adr/0043-format-quirks-are-opt-in.md)）。結び付きの強い読み方は `readings/`、独立に選べる部品は `components/`（[ADR 0036](../docs/adr/0036-shared-coupled-pdf-readings.md)）
+- 金額の注記は段階を付けず、木の合計に足さない（[ADR 0024](../docs/adr/0024-monetary-annotations-without-phase.md)）
+- 統計の決算・普通会計の表は取り込まない（[ADR 0037](../docs/adr/0037-do-not-ingest-statistical-settlements.md)）。補正予算は当面取り込まない（[ADR 0039](../docs/adr/0039-defer-supplementary-budget-ingestion.md)）
+- 事業評価の評価シートと予算案のプレス発表は、どちらも出典の選定（`evaluation_selections`・`press_selections`）で保存した PDF を入力準備が読む。評価の結果の資料は取り込まない
 
-- 自治体固有の実測・出典の癖 → `ingestion/fiscal/jurisdictions/<自治体コード>/README.md`
-- パイプライン（選定・取り込み・PDF抽出・dbt）の手順 → `.agents/skills/pipeline/`
+### dbt
+
+- 取り込みの表の一覧は build のたびに管理 JSON から作る（`dbt/scripts/fiscal_inputs.py`）。手で表を足さない
+- PDF のノードの表・金額の表は全自治体共通の staging で読み、CSV は書式ごとの staging で読む
+- 段の名前は共通の規則で付け（[ADR 0025](../docs/adr/0025-level-names-by-shared-rule.md)）、見出しから金額の段階への対応は共通の辞書に置く（[ADR 0021](../docs/adr/0021-level-and-phase-map-in-dbt-seed.md)）。会計の種類は語の辞書で付ける（[ADR 0023](../docs/adr/0023-account-kind-and-no-consolidation.md)）
+- 内訳の欄の分け方は seed `fiscal_detail_breakdown` に宣言する。見出しが「節」の欄は既定で節
+- marts は集約ごとの dir に置く（`marts/expenditure`・`evaluation`・`budget_proposal`・`project`・`jurisdiction`・`source`・`queria`）。設計は [集約ごとの作り直し](../docs/prd/aggregate-api/dd.md)
+- 評価シート・施策・事業の行の紐付けは風土記の判断で、seed（`budget_measure_link`・`project_line`）に置き、列の説明に判断と書く。分野（COFOG）は表に写さず、紐付けた目・内訳から引く
+- 自治体マスタは `packages/jurisdictions/jurisdictions.json`。人口は pipeline で扱わない（[ADR 0042](../docs/adr/0042-external-reference-data-in-web.md)）
+
+### 配信
+
+- marts の表を同名・同列のまま D1 に写す（[ADR 0022](../docs/adr/0022-serve-marts-via-worker-d1-rest-and-mcp.md)・[ADR 0038](../docs/adr/0038-split-serving-tables-by-grain.md)）。表名は集約の名前で始める
+- 同期は変わった行だけを書く（[ADR 0040](../docs/adr/0040-sync-d1-by-row-diff.md)）。D1 に書くのは `serving/sync_d1.py` だけで、同時に2つ流さない。D1 には control 以外の表を migration で作らない
+- main への merge で `sync-d1.yml` が変わった範囲を build し、本番 D1 へ写す（入口は `publish`）。取り込みの PR では R2 にも本番にも手で書かない
+- Queria の公開データセットには、Queria 用の marts（`marts/queria/`）を同名・同列のまま写す。Queria の規約に合わせた形はこの marts で作り、写す側では変えない。手順は `.agents/skills/pipeline/references/queria.md`
