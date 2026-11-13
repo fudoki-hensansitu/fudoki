@@ -39,7 +39,7 @@ export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPic
           {/* PC は名前の欄と「現在地から選ぶ」を1行に並べ、スマホは縦に積む */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="min-w-0 flex-1">
-              <TownPicker entries={entries} onPick={onPick} placeholder="自治体名で探す（例：品川）" />
+              <TownPicker entries={entries} onPick={onPick} placeholder="住んでいるまちの名前（例：品川区）" />
             </div>
             <button
               type="button"
@@ -55,7 +55,7 @@ export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPic
               <LocateResult loc={loc} onPick={onPick} onRetry={() => void locate()} onClose={() => setLoc(null)} />
             </div>
           ) : (
-            <p className="mt-3 text-[12px] opacity-75">位置は保存しません</p>
+            <p className="mt-3 text-[12px] opacity-75">{LOCATION_NOTE}</p>
           )}
         </>
       ) : (
@@ -64,6 +64,9 @@ export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPic
     </section>
   )
 }
+
+/** 現在地から選ぶときに添える一言。押す前と調べている間の両方に出す */
+const LOCATION_NOTE = '位置情報は保存されません'
 
 /** 何歩目か。点と「1 / 2」 */
 export function Steps({ at, of, onBrand }: { at: number; of: number; onBrand?: boolean }) {
@@ -89,7 +92,10 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
         <span className="ob-ping relative grid size-9 place-items-center rounded-full bg-background text-primary">
           <NavigationArrowIcon className="size-[18px]" />
         </span>
-        現在地のまちを調べています…
+        <span className="flex flex-col gap-0.5">
+          現在地のまちを調べています…
+          <span className="text-[12px] text-muted-foreground">{LOCATION_NOTE}</span>
+        </span>
       </div>
     )
   if (loc.hit)
