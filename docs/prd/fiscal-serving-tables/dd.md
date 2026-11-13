@@ -96,7 +96,7 @@ erDiagram
 
 ### 分け方（breakdown）の宣言
 
-内訳の枝の根（科目の直下のノード）の見出しに、分け方を宣言する。宣言は seed `fiscal_detail_breakdown`（`jurisdiction_code`・`fiscal_year`・`document_kind`・`source_heading`・`breakdown`・`basis`）で、出典（自治体・年度・資料区分）ごとに1行ずつ書く。全自治体に効く行は持たない。見出しの語が同じでも中身が自治体で違い（上の備考）、自治体だけで書くと別の年度の資料に誤って効くためである。
+内訳の枝の根（科目の直下のノード）の見出しに、分け方を宣言する。宣言は seed `fiscal_detail_breakdown`（`jurisdiction_code`・`fiscal_year`・`document_kind`・`source_heading`・`breakdown`・`basis`）で、出典（自治体・年度・資料区分）ごとに1行ずつ書く。全自治体に効く行は持たない。見出しの語が同じでも中身が自治体で違い（上の備考）、自治体だけで書くと別の年度の資料に誤って効くためである。ただし見出しが「節」の枝は、宣言が無ければ `節` とする（2026-11-13 時点で宣言376行のうち202行がすべて「節→節」だった）。節でない分け方のときだけ宣言を書く。
 
 | breakdown | 意味 | 例 |
 | --- | --- | --- |
