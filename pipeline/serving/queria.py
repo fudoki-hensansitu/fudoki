@@ -2,7 +2,7 @@
 
 表は marts と同名・同列のまま写す（モデル名 queria_<スキーマ>__<テーブル> → <スキーマ>.<テーブル>）。
 `fdl checkout` で作った作業用カタログに表を書き、作業ディレクトリに `dataset.yml`・`tables/<スキーマ>.<テーブル>.table.yml`・`README.md` を書く。
-宣言の説明・主キー・キーは marts の `_models.yml` から引く。公開（`queria validate` → `uvx --from fdl-cli fdl commit` → `fdl push`）は手で流す。手順は pipeline/AGENTS.md の「Queria への配布」。
+宣言の説明・主キー・キーは marts の `_models.yml` から引く。公開（`queria validate` → `uvx --from fdl-cli fdl commit` → `fdl push`）は手で流す。手順は .agents/skills/pipeline/references/queria.md。
 
     bun run --cwd pipeline serving:queria                          # 全自治体
     bun run --cwd pipeline serving:queria -- --jurisdiction 131091  # 試しに一部の自治体だけ

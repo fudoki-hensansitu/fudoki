@@ -93,7 +93,7 @@ class LineTest(unittest.TestCase):
 
 
 class TrialRulesTest(unittest.TestCase):
-    """Shared rules added after trying three jurisdictions the rules had not seen (trial.md)."""
+    """Shared rules added after trying three jurisdictions the rules had not seen."""
 
     def test_a_line_of_only_a_grouped_amount_is_an_amount_not_an_item_numbered_10(self):
         label, money = _split_line([glyph('10', 1127, 685, 9), glyph(',000', 1136, 685, 18)])

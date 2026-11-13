@@ -27,7 +27,7 @@
 ## 2024年度決算・一般会計（2026-10-20）
 
 出典は決算の事項別明細書（選定の scope の頁）。汎用の生成機で読み、専用の変換器は持たない。ノード 6,748・金額 12,297、木 3,332/0、款の和 51,527,072,727 円＝印字の歳出合計（頁161）、単位 matched、網羅 blocked 0。
-組版の設定（`2024/settlement/expenditure.layout.json`）は、名前だけの見出し（`headings`）・注記の語を含む名前（`plain_names`）・括弧金額（`amount_brackets`）・金額だけの数字の行（`bare_amounts`）・括弧書きの所属（`bracketed_remainder`）・執行率の欄を読まない（`columns`）。判断と根拠は 設計書（汎用のノード生成の設計書。消した、git の履歴に残る） の「昭島 2024（採用）・奥多摩 2024（停止）」。
+組版の設定（`2024/settlement/expenditure.layout.json`）は、名前だけの見出し（`headings`）・注記の語を含む名前（`plain_names`）・括弧金額（`amount_brackets`）・金額だけの数字の行（`bare_amounts`）・括弧書きの所属（`bracketed_remainder`）・執行率の欄を読まない（`columns`）。判断と根拠は、汎用のノード生成の設計書の「昭島 2024（採用）・奥多摩 2024（停止）」に書いていた（設計書は消した。git の履歴で読める）。
 
 ## なぜこの自治体が1自治体目か
 

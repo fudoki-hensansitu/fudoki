@@ -52,7 +52,7 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 
 - PDF はノードの表と金額の表、CSV は原文の行と1対1の表にする（[ADR 0020](../docs/adr/0020-ingestion-outputs-node-tables.md)）
 - 保存の関門: 木の検査（`ingestion/lib/tree_checks.py`）、text PDF の印字された数字の網羅（`coverage_checks.py`。Jev の聞き直しは止める方向だけ、[ADR 0026](../docs/adr/0026-jev-recheck-printed-digits-stop-only.md)）、単位の確かめ（[ADR 0028](../docs/adr/0028-unit-check-in-the-save-gate.md)）、決算の款の軸と支出済額（[ADR 0029](../docs/adr/0029-structural-check-in-the-save-gate.md)）
-- 合否だけを決める検査のコードは `*_checks.py` に置き、指紋から外す。検査を厳しくしたら保存済みの全表に `ingestion:verify --remote` を当てる
+- 合否だけを決める検査のコードは `*_checks.py` に置き、指紋から外す。検査を厳しくしたら保存済みの全表に `ingestion:verify --remote` を当てる。候補の対象範囲が要る検査（網羅・印字の合計）は `ingestion:convert` の候補に `ingestion:verify --candidate <dir>` を当てる
 - 指紋（`input_fingerprint`）は「変わったかもしれない」という合図で、古くても止めない。中身が同じなら `ingestion:refresh` で指紋だけを書き換え、違えば `ingestion:convert` で記録し直す（[ADR 0027](../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。全表の確かめは定期の `refresh-check.yml` が流す
 - PDF の読み方は書式ごとの固定した workflow（[ADR 0035](../docs/adr/0035-fixed-pdf-workflow-patterns.md)・[PDF workflow の設計](../docs/prd/pdf-workflow-patterns/dd.md)）。1つの書式のための判定は opt-in の quirk にする（[ADR 0043](../docs/adr/0043-format-quirks-are-opt-in.md)）。結び付きの強い読み方は `readings/`、独立に選べる部品は `components/`（[ADR 0036](../docs/adr/0036-shared-coupled-pdf-readings.md)）
 - 金額の注記は段階を付けず、木の合計に足さない（[ADR 0024](../docs/adr/0024-monetary-annotations-without-phase.md)）

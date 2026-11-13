@@ -42,7 +42,7 @@ PDFの書式を調べるagentが、表・見出し・科目階層・内訳の読
 
 共有の変換コードの修正は、多くの表を古い扱いにする。`ingestion:refresh` はその変換を再実行し、保存済みの表と同じなら指紋だけ更新する。保存し直さなくても再変換の負担は残る。
 
-判断の記録: [ADR 0035](../../adr/0035-fixed-pdf-workflow-patterns.md)。関連する設計: [内容比較による指紋更新](../../adr/0027-refresh-fingerprints-by-table-content.md)。既存設計の試作時の件数・所要時間は、今回の現状測定には使わない。
+判断の記録: [ADR 0035](../../adr/0035-fixed-pdf-workflow-patterns.md)。関連する設計: [内容比較による指紋更新](../../adr/0027-refresh-fingerprints-by-table-content.md)。汎用のノード生成の試作（設計書は消した）で測った件数・所要時間は、今回の現状測定には使わない。
 
 ## Design
 
