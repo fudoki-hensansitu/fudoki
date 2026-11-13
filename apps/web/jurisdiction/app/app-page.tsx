@@ -453,8 +453,9 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     setAccountState(a)
     pickAccount(a)
   }
-  const drills = flow && flow.year === v.year && flow.phase === phase && flow.account === account ? flow.drills : undefined
-  const flows = React.useMemo(() => (drills && view === 'cofog' ? cofogFlowOfDrills(drills) : drills), [drills, view])
+  const current = flow && flow.year === v.year && flow.phase === phase && flow.account === account ? flow : undefined
+  const drills = current?.drills
+  const flows = React.useMemo(() => (current && view === 'cofog' ? cofogFlowOfDrills(current.drills, current.loose) : current?.drills), [current, view])
   const router = useRouter()
   const accounts = d.accounts ?? []
   const special = account === GENERAL ? undefined : accounts.find((x) => x.name === account)
@@ -814,7 +815,11 @@ function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
 function FieldSlices({ frame }: { frame: { cofog: string } }) {
   const { v, d } = useApp()
   // 中分類は開いた年度の目の COFOG のコードから組む（予算・決算のタブの分野の図と同じ分け方）
-  const drills = React.useMemo(() => cofogFlowOf((d.years[String(v.year)]?.kan ?? []).flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => ({ id: m.id, name: m.name, yen: m.yen, setsu: [], cofog: m.cofog })))), false), [d, v.year])
+  const drills = React.useMemo(() => {
+    const y = d.years[String(v.year)]
+    const moku = [...(y?.kan ?? []).flatMap((k) => k.kou.flatMap((o) => o.moku)), ...(y?.looseMoku ?? [])]
+    return cofogFlowOf(moku.map((m) => ({ id: m.id, name: m.name, yen: m.yen, setsu: [], cofog: m.cofog })), false)
+  }, [d, v.year])
   const slices = React.useMemo(() => {
     const drill = drills.find((x) => x.kan.id === `cofog-${frame.cofog || 'none'}`)
     const rows = (drill?.kou ?? []).filter((k) => !k.amountMissing && k.yen > 0).sort((a, b) => Number(!a.id.includes('.')) - Number(!b.id.includes('.')) || b.yen - a.yen)
@@ -1032,9 +1037,9 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
   const pageHref = (y: number, t: TabKey) => `${data.path}/${y}` + (t === 'overview' ? '' : `/${TAB_SLUGS[t]}`)
   // 年度・タブを移っても、選んでいる状態とスクロールは持ち越す。履歴は積まずに置き換える
   const move = (href: string) => void router.visit(href, { replace: true, preserveState: true, preserveScroll: true })
-  // 年度のリンクは今のタブを引き継ぐが、その年度に無いタブ（決算の無い年度の決算、当初予算の無い年度の予算）はまとめへ向ける
+  // 年度のリンクは今のタブを引き継ぐが、その年度に無いタブ（決算の無い年度の決算、当初予算の無い年度の予算）はまとめへ向ける。分野の頁なら同じ分野のまま年度を移る
   const tabIn = (y: number): TabKey => (tab === 'settled' && !hasTab(data, y, 'settled')) || (tab === 'money' && d.kinds[String(y)] !== 'initial') ? 'overview' : tab
-  const yearHref = (y: number) => pageHref(y, tabIn(y))
+  const yearHref = (y: number) => (fieldPage ? `${data.path}/${y}/fields/${fieldPage}` : pageHref(y, tabIn(y)))
   const setYear = (y: number) => {
     if (y === year) return
     move(yearHref(y))

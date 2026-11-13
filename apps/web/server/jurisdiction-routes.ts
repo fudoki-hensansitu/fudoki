@@ -11,9 +11,7 @@ import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
 import { appYears, loadYearSnapshot } from './app-data'
-import { ACCOUNT, loadCatalog, loadCatalogEntry, loadCofogFlow, loadFlow, loadPage, type CatalogEntry, type DocumentKind } from './jurisdiction'
-
-const TTL = 3600
+import { loadCatalog, loadCatalogEntry, loadPage, type CatalogEntry } from './jurisdiction'
 
 // 応答は CDN（Void の ISR、void.config.ts の routing.revalidate）に置く。Worker の中には置かず、毎回 API から組む。
 // 自治体の一覧だけは、1つの頁を組むあいだに何度も引くので、同じ isolate の中で1分だけ使い回す
@@ -76,8 +74,6 @@ export async function sitemapResponse(env: Env): Promise<Response> {
     return new Response(sitemapXml([]), { headers: { 'Content-Type': 'application/xml; charset=utf-8', 'Cache-Control': 'no-store' } })
   }
 }
-
-const json = (body: unknown) => new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${TTL}` } })
 
 /** 町の検索に返す数 */
 const TOWN_LIMIT = 10

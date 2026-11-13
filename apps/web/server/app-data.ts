@@ -3,7 +3,7 @@
 import type { AppType } from '@fudoki/api/rpc'
 import { hc, parseResponse } from 'hono/client'
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
-import { listQuery, type Kan, type Measure, type Sheet, type Snapshot } from '../jurisdiction/app/data'
+import { listQuery, type Kan, type YearData, type Measure, type Sheet, type Snapshot } from '../jurisdiction/app/data'
 import { listKey, listPage } from '../jurisdiction/app/api'
 import { apiFetch, type Env } from './env'
 import { loadAccountTotals, shownSettlementYears, type CatalogEntry } from './jurisdiction'
@@ -109,18 +109,23 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     const kan: Kan[] = []
     const fields: Record<string, number> = {}
     const fieldSubjects: Record<string, string[]> = {}
+    const looseMoku: YearData['looseMoku'] = []
+    let lastKou: string | undefined
     for (const r of rows) {
       const yen = r.amount_yen ?? 0
       if (r.is_leaf) (fieldSubjects[fieldOf(r.cofog_code)] ??= []).push(r.subject_id)
       if (r.level === '款') kan.push({ name: r.name, yen, kou: [] })
-      else if (r.level === '項') kan.at(-1)?.kou.push({ name: r.name, yen, moku: [] })
-      else if (r.level === '目') {
+      else if (r.level === '項') {
+        kan.at(-1)?.kou.push({ name: r.name, yen, moku: [] })
+        lastKou = r.subject_id
+      } else if (r.level === '目') {
         const field = fieldOf(r.cofog_code)
-        kan.at(-1)?.kou.at(-1)?.moku.push({ id: r.subject_id, name: r.name, yen, field, cofog: r.cofog_code ?? null })
+        const kou = r.parent_subject_id === lastKou ? kan.at(-1)?.kou.at(-1) : undefined
+        ;(kou?.moku ?? looseMoku).push({ id: r.subject_id, name: r.name, yen, field, cofog: r.cofog_code ?? null })
         fields[field] = (fields[field] ?? 0) + yen
       }
     }
-    yearsOut[y.year] = { kind: y.kind, kan, total: kan.reduce((s, k) => s + k.yen, 0), fields, fieldSubjects, origin: y.origin, originTitle: y.originTitle }
+    yearsOut[y.year] = { kind: y.kind, kan, total: kan.reduce((s, k) => s + k.yen, 0), fields, fieldSubjects, looseMoku, origin: y.origin, originTitle: y.originTitle }
   }
 
   const base = { code: entry.code, year, years: yearsOut }

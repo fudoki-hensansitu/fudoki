@@ -59,7 +59,7 @@ function Reload() {
   const router = useRouter()
   const [wait, setWait] = React.useState(1000)
   React.useEffect(() => {
-    const timer = setTimeout(() => void router.refresh({ preserveState: true, preserveScroll: true }).finally(() => setWait((w) => Math.min(w * 2, RELOAD_MAX_MS))), wait)
+    const timer = setTimeout(() => void router.refresh({ preserveState: true, preserveScroll: true }).catch(() => {}).finally(() => setWait((w) => Math.min(w * 2, RELOAD_MAX_MS))), wait)
     return () => clearTimeout(timer)
   }, [router, wait])
   return <AppSkeleton />

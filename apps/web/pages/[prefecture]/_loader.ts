@@ -12,7 +12,7 @@ import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
 import { catalog, pageData } from '../../server/jurisdiction-routes'
-import { ACCOUNT, loadFlow } from '../../server/jurisdiction'
+import { ACCOUNT, loadFlowParts } from '../../server/jurisdiction'
 import { loadYearSnapshot } from '../../server/app-data'
 import type { Snapshot } from '../../jurisdiction/app/data'
 import { siteKey } from '../../server/site-key'
@@ -135,10 +135,14 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   // 流れの会計は ?account= で選ぶ。無ければ一般会計。収録の無い会計は 404
   const phase = props.tab === 'money' ? 'initial' : props.tab === 'settled' ? 'settlement' : undefined
   const account = new URL(c.req.url).searchParams.get('account') || ACCOUNT
-  if (phase && entry && account !== ACCOUNT && !entry.accounts?.[phase]?.[String(year)]?.includes(account)) throw new HTTPException(404, { res: notFound() })
+  // 会計で中身の変わらない頁（予算・決算のタブ以外）の ?account= も 404 にして、CDN の key（void.config.ts の revalidateQueryAllowlist）を増やさせない
+  if (account !== ACCOUNT && (!phase || (entry && !entry.accounts?.[phase]?.[String(year)]?.includes(account)))) throw new HTTPException(404, { res: notFound() })
   const [snapshot, flow] = await Promise.all([
     entry ? within(loadYearSnapshot(env, entry, year, { field: props.field }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
-    entry && phase ? within(loadFlow(env, entry.code, year, 'setsu', phase, account), FLOW_WAIT_MS).then((drills): PageFlow => ({ year, phase, account, drills })).catch(() => undefined) : undefined,
+    entry && phase ? within(loadFlowParts(env, entry.code, year, 'setsu', phase, account), FLOW_WAIT_MS)
+      // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
+      .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))
+      .catch(() => undefined) : undefined,
   ])
   if (!snapshot || (phase && !flow)) {
     // API に繋がらない・待ちきれなければ、読めた分だけの頁を返し、画面が読み直す。欠けた頁は CDN にもブラウザにも置かない

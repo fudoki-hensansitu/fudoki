@@ -1,6 +1,6 @@
 // 自治体の個別ページのデータ。apps/api（Service Binding）の歳出の検索から、決算の款・事業・お金の流れを組む。
 // 金額は API が返した円をそのまま持つ。足すのは「同じ年度・会計の款（兄弟）の和」だけで、api の sum_rules に従う
-import { type Drill, type FlowDepth, type Line, type PageData, type Population, type Project, type Setsu, type YearTotal, type BudgetTotal } from '../jurisdiction/types'
+import { type Drill, type FlowDepth, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal, type BudgetTotal } from '../jurisdiction/types'
 import { cofogFlowOf } from '../jurisdiction/cofog-flow'
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import type { AppType } from '@fudoki/api/rpc'
@@ -153,6 +153,11 @@ async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: st
 
 /** すべての款を同じ深さで表示する。節は目の直下の内訳を取り、分け方の違う数字を混ぜない。 */
 export async function loadFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou', kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<Drill[]> {
+  return (await loadFlowParts(env, code, year, depth, kind, account)).drills
+}
+
+/** 款 → 項 → 目 の流れと、木に入らない（親の項の行が無い）目。分野の図は両方から組む（jurisdiction/cofog-flow.ts の cofogFlowOfDrills） */
+export async function loadFlowParts(env: Env, code: string, year: number, depth: FlowDepth = 'kou', kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<{ drills: Drill[]; loose: Moku[] }> {
   const subjects = await searchAll(env, 'subjects', code, year, { level: { eq: depth === 'kou' ? ['款', '項'] : ['款', '項', '目'] } }, kind, account)
   const byParent = new Map<string, ApiSubject[]>()
   for (const n of subjects) {
@@ -162,13 +167,17 @@ export async function loadFlow(env: Env, code: string, year: number, depth: Flow
     byParent.set(n.parent_subject_id, siblings)
   }
   const setsuByMoku = depth === 'setsu' ? await loadSetsuByMoku(env, code, year, subjects.filter((n) => n.level === '目').map((n) => n.subject_id), kind, account) : new Map<string, Setsu[]>()
-  return subjects.filter((n) => n.level === '款').sort(byAmount).map((kan) => ({
+  const placed = new Set<string>()
+  const mokuOf = (m: ApiSubject, path: [string | null, string | null]): Moku => ({ ...line(m), setsu: setsuByMoku.get(m.subject_id) ?? [], path, cofog: m.cofog_code ?? null })
+  const drills = subjects.filter((n) => n.level === '款').sort(byAmount).map((kan) => ({
     kan: line(kan),
     kou: (byParent.get(kan.subject_id) ?? []).filter((n) => n.level === '項').sort(byAmount).map((kou) => ({
       ...line(kou),
-      moku: (byParent.get(kou.subject_id) ?? []).filter((n) => n.level === '目').sort(byAmount).map((moku) => ({ ...line(moku), setsu: setsuByMoku.get(moku.subject_id) ?? [], path: [kan.name, kou.name] as [string, string], cofog: moku.cofog_code ?? null })),
+      moku: (byParent.get(kou.subject_id) ?? []).filter((n) => n.level === '目').sort(byAmount).map((moku) => (placed.add(moku.subject_id), mokuOf(moku, [kan.name, kou.name]))),
     })),
   }))
+  const loose = subjects.filter((n) => n.level === '目' && !placed.has(n.subject_id)).sort(byAmount).map((m) => mokuOf(m, [m.kan_name ?? null, m.kou_name ?? null]))
+  return { drills, loose }
 }
 
 const sumYen = (lines: { yen: number; amountMissing?: true }[]) => lines.reduce((s, l) => s + (l.amountMissing ? 0 : l.yen), 0)

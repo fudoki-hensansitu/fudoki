@@ -17,6 +17,8 @@ export type YearData = {
   fields: Record<string, number>
   /** 分野ごとの末端の科目（目と、目の無い項）の ID。分野で事業を絞るのに使う */
   fieldSubjects: Record<string, string[]>
+  /** 項の行が無い目（款の木に入らない）。分野の合計には入るので、分野の内訳はこれも足す */
+  looseMoku: Kan['kou'][number]['moku']
   origin: string | null
   originTitle: string | null
 }

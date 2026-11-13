@@ -40,5 +40,5 @@ export function cofogFlowOf(moku: Moku[], withMoku = true): Drill[] {
   }).sort((a, b) => Number(a.kan.id === 'cofog-none') - Number(b.kan.id === 'cofog-none') || b.kan.yen - a.kan.yen)
 }
 
-/** 款 → 項 → 目 の流れの目を、分野の流れに組み直す */
-export const cofogFlowOfDrills = (drills: Drill[]) => cofogFlowOf(drills.flatMap((d) => d.kou.flatMap((k) => k.moku)))
+/** 款 → 項 → 目 の流れの目と、木に入らない（項の行が無い）目を、分野の流れに組み直す */
+export const cofogFlowOfDrills = (drills: Drill[], loose: Moku[] = []) => cofogFlowOf([...drills.flatMap((d) => d.kou.flatMap((k) => k.moku)), ...loose])

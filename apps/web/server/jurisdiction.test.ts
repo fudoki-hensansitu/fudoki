@@ -3,7 +3,7 @@ import { changePct, formatYen, kanChanges, reiwa, type FlowDepth, type YearTotal
 import { fetchRoute } from './routes.testing'
 import { emptyHead, pageHead, type Head } from '../jurisdiction/html'
 import { homeEntries } from './jurisdiction-routes'
-import { loadCofogFlow, loadFlow } from './jurisdiction'
+import { loadCofogFlow, loadFlow, loadFlowParts } from './jurisdiction'
 import { cofogFlowOfDrills } from '../jurisdiction/cofog-flow'
 import { jurisdictionProps, resolveJurisdiction } from '../pages/[prefecture]/_loader'
 import type { Context } from 'hono'
@@ -284,9 +284,11 @@ describe('お金の流れ', () => {
       node({ node_id: id(32), parent_node_id: id(20), node_kind: '目', name: '保育費', amount_yen: 70, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '10' }),
     ] }) }
     const flows = await loadCofogFlow(cofog, '132012', 2025, 'moku')
-    // 予算・決算のタブは款 → 項 → 目の流れから画面で組み直す。サーバーで組んだものと同じになる（試験の表の親の無い目は款の流れに入らないので、その他は比べない）
-    const shape = (fs: typeof flows) => fs.filter((f) => f.kan.id !== 'cofog-none').map((f) => [f.kan, f.kou.map((k) => [k.name, k.yen, k.moku.map((m) => m.name)])])
-    expect(shape(cofogFlowOfDrills(await loadFlow(cofog, '132012', 2025, 'moku')))).toEqual(shape(flows))
+    // 予算・決算のタブは款 → 項 → 目の流れと、木に入らない目（試験の表の親の無い目）から画面で組み直す。サーバーで組んだものと同じになる
+    const shape = (fs: typeof flows) => fs.map((f) => [f.kan, f.kou.map((k) => [k.name, k.yen, k.moku.map((m) => m.name)])])
+    const parts = await loadFlowParts(cofog, '132012', 2025, 'moku')
+    expect(parts.loose.length).toBeGreaterThan(0)
+    expect(shape(cofogFlowOfDrills(parts.drills, parts.loose))).toEqual(shape(flows))
     // 款（子ども教育費）は使わず、COFOG の名前で分ける
     const social = flows.find((f) => f.kan.id === 'cofog-10')!
     expect(social.kan).toMatchObject({ name: '福祉・子育て', yen: 70, amountMissing: true })
@@ -311,5 +313,12 @@ describe('自治体の検索（/api/jurisdictions）', () => {
     expect((await get('/api/jurisdictions?code=nakano')).status).toBe(400)
     expect((await get(`/api/jurisdictions?q=${'あ'.repeat(51)}`)).status).toBe(400)
     expect((await get('/api/jurisdictions?q=中野', { API })).status).toBe(503)
+  })
+  test('うちのまちの札（/api/jurisdictions/:code）は形が違えば 400、未収録・頁に無い年度は 404、API に繋がらなければ 502', async () => {
+    expect((await get('/api/jurisdictions/nakano?year=2025')).status).toBe(400)
+    expect((await get('/api/jurisdictions/131148?year=25')).status).toBe(400)
+    expect((await get('/api/jurisdictions/131016')).status).toBe(404)
+    expect((await get('/api/jurisdictions/131148?year=1999')).status).toBe(404)
+    expect((await get('/api/jurisdictions/131148?year=2025', { ...env, API: { fetch: async () => new Response('x', { status: 500 }) } })).status).toBe(502)
   })
 })
