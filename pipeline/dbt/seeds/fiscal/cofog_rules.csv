@@ -503,3 +503,7 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1663,ogasawara-termite,134210,一般会計,,衛生費,保健衛生費,,シロアリ対策費,eq,,assigned,07.4,retained,目,,小笠原村 シロアリ対策費は島の家屋のシロアリの駆除への支援で、保健衛生費の下の害虫対策として公衆衛生 07.4 に置く。名称からの判断。,true
 1664,ogasawara-cemetery,134210,一般会計,,衛生費,保健衛生費,,墓園費,eq,,assigned,06.2,retained,目,,小笠原村 墓園費は村営墓地の管理で、vocab-cemetery（霊園・斎場）と同じ 06.2 に置く。,true
 1665,ogasawara-housing-land,134210,一般会計,,土木費,住宅費,,用地造成費,contains,,assigned,06.1,retained,目,,小笠原村 住宅費の用地造成費は住宅用地の造成で、住宅開発 06.1 に置く（R6 は出典の印 × を名前に含めて読むので contains）。名称からの判断。,true
+1666,kind-fallback-industrial-park,,,産業団地整備,,,,,,,assigned,04.1,retained,目,,産業団地の造成・分譲の会計（例: 092096 真岡市の産業団地整備事業特別会計）は企業誘致による産業の振興であり UN COFOG 04.1 一般経済・商業。用地の会計と違い目的が産業に限られる。地域開発（06.2）との境界のため暫定とする。,true
+1667,kind-fallback-holiday-clinic,,,急患診療所,,,,,,,assigned,07.2,retained,目,,休日・夜間の急患診療所の会計（例: 092096 真岡市の休日夜間急患診療所特別会計）は 07.2 外来サービス。一般会計の休日診療（vocab-holiday-clinic）と同じ。名称からの判断のため暫定とする。,true
+1668,keyword-health-guidance,,一般会計,,,,,保健指導,contains,,assigned,07.4,retained,目,,保健指導（健診後の生活習慣の指導など）を UN COFOG 07.4 公衆衛生サービスに分類する。栄養指導（keyword-medicine-nutrition）と同じ。名称からの判断のため暫定とする。,true
+1669,moka-nature-observation,092096,一般会計,,衛生費,,,自然観察センター|水辺観察センター,contains,,assigned,05.4,retained,目,,真岡市 衛生費の根本山自然観察センター費・鬼怒水辺観察センター費は自然環境の保全と学習の施設であり COFOG 05.4 生物多様性・景観の保護。名称からの判断のため暫定とする。,true

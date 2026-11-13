@@ -211,6 +211,66 @@
                     "kind": "財源内訳",
                     "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
                   }
+                },
+                "本年度の財源内／特定財源／訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債責": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
                 }
               }
             }
@@ -310,6 +370,22 @@
             "observed_name": "総合福祉保健センタ一複合化施設管理費",
             "corrected_name": "総合福祉保健センター複合化施設管理費",
             "reason": "「センター」「サービス」の長音「ー」を Paddle が漢数字の「一」に読んだ。字形の対応表は1字ずつで、カタカナの直後の「一」だけを直す規則は置けないので、この行だけを宣言する。"
+          },
+          {
+            "id": "p63-kou-wrap",
+            "page": 63,
+            "observation_id": "p63:full-page:a0:result0:r42",
+            "observed_name": "道路橋りよ",
+            "corrected_name": "道路橋りよう費",
+            "reason": "項の名前「道路橋りよう費」の折り返し。項の名前は番号と別の欄に印字し、欄の幅で折り返す。続きの行（「う費」）は目の名前の位置に来て目の行と読まれるので除き、1行目の読みに続きを足す。"
+          },
+          {
+            "id": "p82-kou-wrap",
+            "page": 82,
+            "observation_id": "p82:full-page:a0:result0:r19",
+            "observed_name": "普通財產取",
+            "corrected_name": "普通財產取得費",
+            "reason": "項の名前「普通財産取得費」の折り返し。項の名前は番号と別の欄に印字し、欄の幅で折り返す。続きの行（「得費」）は目の名前の位置に来て目の行と読まれるので除き、1行目の読みに続きを足す。"
           }
         ],
         "dropped_readings": [
@@ -319,6 +395,20 @@
             "observation_id": "p58:full-page:a0:result0:r20",
             "observed": "費",
             "reason": "款の名前「農林水産業費」の折り返しの2行目。款の名前は番号と別の欄に印字し、続きの行が目の名前の位置に来るので目の行と読まれる。この読みは使わず、名前の訂正で款の名前に戻す。"
+          },
+          {
+            "id": "p63-kou-wrap-1",
+            "page": 63,
+            "observation_id": "p63:full-page:a0:result0:r50",
+            "observed": "う費",
+            "reason": "項の名前「道路橋りよう費」の折り返し。項の名前は番号と別の欄に印字し、欄の幅で折り返す。続きの行（「う費」）は目の名前の位置に来て目の行と読まれるので除き、1行目の読みに続きを足す。"
+          },
+          {
+            "id": "p82-kou-wrap-1",
+            "page": 82,
+            "observation_id": "p82:full-page:a0:result0:r24",
+            "observed": "得費",
+            "reason": "項の名前「普通財産取得費」の折り返し。項の名前は番号と別の欄に印字し、欄の幅で折り返す。続きの行（「得費」）は目の名前の位置に来て目の行と読まれるので除き、1行目の読みに続きを足す。"
           }
         ],
         "amount_corrections": [
@@ -460,6 +550,66 @@
                   }
                 },
                 "本年度の財源／内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債責": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／その他": {
                   "excluded": {
                     "kind": "財源内訳",
                     "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
@@ -643,6 +793,66 @@
                   }
                 },
                 "本年度の財源／内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債責": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／その他": {
                   "excluded": {
                     "kind": "財源内訳",
                     "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
@@ -831,6 +1041,66 @@
                   }
                 },
                 "本年度の財源／内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債責": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／その他": {
                   "excluded": {
                     "kind": "財源内訳",
                     "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
@@ -1027,6 +1297,66 @@
                     "kind": "財源内訳",
                     "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
                   }
+                },
+                "本年度の財源内／特定財源／訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債責": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
                 }
               }
             }
@@ -1163,6 +1493,66 @@
                   }
                 },
                 "本年度の財源／内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債責": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／その他": {
                   "excluded": {
                     "kind": "財源内訳",
                     "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
@@ -1327,6 +1717,66 @@
                     "kind": "財源内訳",
                     "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
                   }
+                },
+                "本年度の財源内／特定財源／訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債責": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／特定財源／内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
                 }
               }
             }
@@ -1389,13 +1839,13 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "784165a7a9a10c45981b4996faa0fd7a1b01c7fde9437c5f16a0f4cae85e267e",
+      "input_fingerprint": "ed767b9220aba3e03ba5705c7f747ac404cafbcaa098bffe42de5bc6c7aabebb",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
         "金額の単位は printed 1頁・carried 45頁 から決めた。款の和 39,430,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "原画で確かめた名称の誤読 7 件を、管理 JSON の name_corrections で印字に直した: 5根本山自然観察センタ一費→5根本山自然観察センター費・少年指導センタ一活動費→少年指導センター活動費・第一学校給食センタ一管理費→第一学校給食センター管理費・第二学校給食センタ一管理費→第二学校給食センター管理費・総合福祉保健センタ一複合化施設管理費→総合福祉保健センター複合化施設管理費・58頁 農林水産業→農林水産業費・74頁 般教育振興費→一般教育振興費。",
+        "原画で確かめた名称の誤読 9 件を、管理 JSON の name_corrections で印字に直した: 5根本山自然観察センタ一費→5根本山自然観察センター費・少年指導センタ一活動費→少年指導センター活動費・第一学校給食センタ一管理費→第一学校給食センター管理費・第二学校給食センタ一管理費→第二学校給食センター管理費・総合福祉保健センタ一複合化施設管理費→総合福祉保健センター複合化施設管理費・58頁 農林水産業→農林水産業費・74頁 般教育振興費→一般教育振興費・63頁 道路橋りよ→道路橋りよう費・82頁 普通財產取→普通財產取得費。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 12 件（p48:full-page:a0:result1:r13・p48:full-page:a0:result1:r13:w4・p49:full-page:a0:result1:r44・p49:full-page:a0:result1:r44:w4・p50:full-page:a0:result1:r53・p50:full-page:a0:result1:r53:w2・p51:full-page:a0:result0:r18・p51:full-page:a0:result0:r18:w6・p51:full-page:a0:result1:r64・p51:full-page:a0:result1:r64:w2・p63:full-page:a0:result1:r19・p63:full-page:a0:result1:r19:w2）・徵→徴 2 件（p51:full-page:a0:result1:r78・p51:full-page:a0:result1:r78:w5）・查→査 20 件（p39:full-page:a0:result1:r32・p39:full-page:a0:result1:r32:w1・p44:full-page:a0:result1:r22・p44:full-page:a0:result1:r22:w7・p46:full-page:a0:result0:r53・p46:full-page:a0:result0:r53:w0・p46:full-page:a0:result1:r53・p46:full-page:a0:result1:r53:w8・p47:full-page:a0:result1:r11・p47:full-page:a0:result1:r11:w1・p48:full-page:a0:result1:r70・p48:full-page:a0:result1:r70:w9・p48:full-page:a0:result1:r73・p48:full-page:a0:result1:r73:w9・p53:full-page:a0:result1:r45・p53:full-page:a0:result1:r45:w6・p53:full-page:a0:result1:r49・p53:full-page:a0:result1:r49:w3・p63:full-page:a0:result1:r40・p63:full-page:a0:result1:r40:w4）・產→産 46 件（p39:full-page:a0:result1:r73・p39:full-page:a0:result1:r73:w5・p40:full-page:a0:result1:r36・p40:full-page:a0:result1:r36:w5・p41:full-page:a0:result1:r14・p41:full-page:a0:result1:r14:w1・p44:full-page:a0:result1:r22・p44:full-page:a0:result1:r22:w3・p50:full-page:a0:result1:r59・p50:full-page:a0:result1:r59:w1・p50:full-page:a0:result1:r87・p50:full-page:a0:result1:r87:w5・p52:full-page:a0:result1:r42・p52:full-page:a0:result1:r42:w1・p54:full-page:a0:result1:r20・p54:full-page:a0:result1:r20:w3・p59:full-page:a0:result1:r13・p59:full-page:a0:result1:r13:w3・p59:full-page:a0:result1:r50・p59:full-page:a0:result1:r50:w2・p59:full-page:a0:result1:r52・p59:full-page:a0:result1:r52:w1・p59:full-page:a0:result1:r82・p59:full-page:a0:result1:r82:w1・p60:full-page:a0:result1:r0・p60:full-page:a0:result1:r0:w5・p61:full-page:a0:result1:r42・p61:full-page:a0:result1:r42:w0・p61:full-page:a0:result1:r53・p61:full-page:a0:result1:r53:w5・p64:full-page:a0:result1:r53・p64:full-page:a0:result1:r53:w5・p65:full-page:a0:result1:r14・p65:full-page:a0:result1:r14:w5・p66:full-page:a0:result1:r30・p66:full-page:a0:result1:r30:w5・p71:full-page:a0:result1:r60・p71:full-page:a0:result1:r60:w5・p72:full-page:a0:result1:r34・p72:full-page:a0:result1:r34:w5・p78:full-page:a0:result1:r68・p78:full-page:a0:result1:r68:w5・p82:full-page:a0:result0:r19・p82:full-page:a0:result0:r19:w3・p82:full-page:a0:result1:r6・p82:full-page:a0:result1:r6:w5）・說→説 20 件（p41:full-page:a0:result1:r2・p41:full-page:a0:result1:r2:w0・p52:full-page:a0:result1:r2・p52:full-page:a0:result1:r2:w0・p56:full-page:a0:result1:r2・p56:full-page:a0:result1:r2:w0・p57:full-page:a0:result1:r2・p57:full-page:a0:result1:r2:w0・p59:full-page:a0:result1:r2・p59:full-page:a0:result1:r2:w0・p60:full-page:a0:result1:r2・p60:full-page:a0:result1:r2:w0・p62:full-page:a0:result1:r2・p62:full-page:a0:result1:r2:w0・p67:full-page:a0:result1:r2・p67:full-page:a0:result1:r2:w0・p79:full-page:a0:result1:r2・p79:full-page:a0:result1:r2:w0・p81:full-page:a0:result1:r2・p81:full-page:a0:result1:r2:w0）・齡→齢 4 件（p48:full-page:a0:result1:r130・p48:full-page:a0:result1:r130:w1・p49:full-page:a0:result1:r14・p49:full-page:a0:result1:r14:w1）。"
       ],
       "unread_amount_count": 0,
@@ -1403,24 +1853,24 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/092096/2026/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "3989db75d2c948c886676a3ff754d986d25c642bed6e7146c0be87e317e23e54",
-          "bytes": 46539
+          "sha256": "cc21ac692dd974940619d93cc8c288790eb6ade2c989ab188d3ceeaa9eaff1b6",
+          "bytes": 46425
         },
-        "row_count": 1438
+        "row_count": 1436
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/092096/2026/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "1b833a63dd3b39488e77178e4364957f12c094f0133b38181e84e9efb067b000",
-          "bytes": 43203
+          "sha256": "bde07e3651f8ef098602936f15e238686c9576024b6afa49f4d7a54a6b5c1947",
+          "bytes": 42981
         },
-        "row_count": 1743
+        "row_count": 1738
       }
     },
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "9a30f452c932685e3c18ce4e95407cb5543dbf16be6a353803db585324587363",
+      "input_fingerprint": "7728e71d28066bde2096fef43c5812bd7fc85cfc6d34df4835e47700230696c9",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1442,16 +1892,16 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/092096/2026/initial/expenditure/national-health-insurance-initial-amounts.parquet",
-          "sha256": "75fb430859b0f50b3bc298037a9114d335189f4c8207d1ff379436c54a8e7dea",
-          "bytes": 8553
+          "sha256": "b5d056016095d420dd6ecdd6f3c93783be0cb8032bef37994865c0ca619c4d8b",
+          "bytes": 8403
         },
-        "row_count": 256
+        "row_count": 243
       }
     },
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "5d6b91c7ceea95b65c69404a2a3fc01e5eeb6c911b00eafa40af391dfc2fc6cc",
+      "input_fingerprint": "6fea251ef51a9e4d2856a1d800a9f483aec8d3b2e37be3c33d0e398398ce04fd",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1482,7 +1932,7 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "b633a6e6756880b19952997ea965f686920556b2b5ce8004c67d26c1db4aa293",
+      "input_fingerprint": "f010428978e81ec832b0a94f2276adc0c338a93acef42317020cac563b63d7cd",
       "account": "介護保険特別会計（保険事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1513,7 +1963,7 @@
     {
       "table_id": "care-service-initial",
       "conversion_id": "care-service-initial",
-      "input_fingerprint": "81dc6033d1a2f29a5bc829017e63b1126eb733a3ca7953eb4ec5ad047a2dfb96",
+      "input_fingerprint": "c65e7fc12552623a1b8105609a6f5931663dd098ef68738c7b87779927dbf448",
       "account": "介護保険特別会計（介護サービス事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1533,16 +1983,16 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/092096/2026/initial/expenditure/care-service-initial-amounts.parquet",
-          "sha256": "0f301928e0077fdc9476b568a28a024321b69cba0d8f47020c9052877b1729e7",
-          "bytes": 2845
+          "sha256": "980cc66ff622a25996070877710d89c5d46a49370f2e7ac2101622f0ac7e537f",
+          "bytes": 2761
         },
-        "row_count": 37
+        "row_count": 34
       }
     },
     {
       "table_id": "holiday-clinic-initial",
       "conversion_id": "holiday-clinic-initial",
-      "input_fingerprint": "6162adfb580303721457bfb1db2bc112a428783333a1e951b47ef900f56d161f",
+      "input_fingerprint": "b8078770f1b7ca59d9af4ab8c7e7ba3c279613ec59655516e97d536ed5848694",
       "account": "休日夜間急患診療所特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1572,7 +2022,7 @@
     {
       "table_id": "industrial-park-initial",
       "conversion_id": "industrial-park-initial",
-      "input_fingerprint": "0055337ec81845748ca6526fecf1f9885a8f59704af3b0d77e8aa9f44e15f701",
+      "input_fingerprint": "6396b495f7be0bc9c05fab11485415bbbcd72d18633aae6ab410368e2afda902",
       "account": "産業団地整備事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1594,10 +2044,10 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/092096/2026/initial/expenditure/industrial-park-initial-amounts.parquet",
-          "sha256": "bfed746ce627667d9795ab6fccd292c0a6dda596ccd47edb10b3ce458b14c04d",
-          "bytes": 3245
+          "sha256": "1ae07da40ea917821249f18ffcece643eb592a56bcfab6950397fd33e2b3c096",
+          "bytes": 3130
         },
-        "row_count": 47
+        "row_count": 43
       }
     }
   ]
