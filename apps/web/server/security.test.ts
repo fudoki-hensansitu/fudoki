@@ -2,6 +2,7 @@
 import { describe, expect, test } from 'bun:test'
 import { fetchRoute } from './routes.testing'
 import type { Env, RateLimiter } from './env'
+import { restRpc } from './fudoki-api'
 import { CHAT_RATE_LIMIT, MAX_MESSAGES, MAX_USER_TEXT, VIEW_RATE_LIMIT } from './limits'
 import { QUOTE_HEADING, parseChat } from './chat'
 import { parseRelay } from './relay'
@@ -160,7 +161,7 @@ describe('/api/* の入口', () => {
 test('上流の MCP が JSON でない応答を返したら 502', async () => {
   const s = await issueSession(SECRET)
   const API = { fetch: async () => new Response('<html>Bad Gateway</html>', { status: 502, headers: { 'Content-Type': 'text/html' } }) }
-  const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: {} } }, { Authorization: `Bearer ${s.token}` }), env({ API }))
+  const res = await call(post('/api/mcp', { method: 'tools/call', params: { name: 'search_expenditure_subjects', arguments: {} } }, { Authorization: `Bearer ${s.token}` }), env({ WEB: restRpc(API.fetch) }))
   expect(res.status).toBe(502)
 })
 

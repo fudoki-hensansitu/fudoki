@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-from ingestion.project.layouts.press import PressItem, lines, text, words
+from ingestion.project.layouts.press import BboxPdf, PressItem, lines, merge_close, text, words
 
 # 見出しが絵の中にあり、規則で事業名が決まらない頁（PDF の sha256 の先頭8桁, 頁）→ 資料の表記の事業名
 TITLES = {
@@ -19,9 +19,9 @@ MILLION = re.compile(r'(?:([\d,]+)億)?([\d,]+)百万円')
 
 
 def read_page(page, number: int, digest: str = '') -> PressItem | None:
-    items = [w for w in words(page) if w['top'] < 130]
+    items = [w for w in merge_close(words(page)) if w['top'] < 130]
     rows = lines(items, tolerance=4)
-    amounts = [r for r in rows if MILLION.search(text(r)) and max(w['size'] for w in r) >= 13]
+    amounts = [r for r in rows if MILLION.search(text(r)) and (max(w['size'] for w in r) >= 13 or text(r).startswith('予算額'))]
     if not amounts:
         return None
     amount_row = amounts[0]
@@ -44,7 +44,7 @@ def read_page(page, number: int, digest: str = '') -> PressItem | None:
             return None
         biggest = max(w['size'] for w in body)
         name = ''.join(text(r) for r in lines([w for w in body if w['size'] >= biggest - 1], tolerance=4))
-    name = TITLES.get((digest, number), name)
+    name = TITLES.get((digest, number), name.removesuffix('事業名'))  # 見出しの右に欄の札が続けて組まれた頁
     if not name:
         return None
     return PressItem(number, name, [name], False, budget, [], 1)
@@ -53,12 +53,10 @@ def read_page(page, number: int, digest: str = '') -> PressItem | None:
 def read(path) -> list[PressItem]:
     from pathlib import Path
 
-    import pdfplumber
-
     from ingestion.fiscal.manifest import sha_file
     digest = sha_file(Path(path))[:8]
     items: list[PressItem] = []
-    with pdfplumber.open(path) as pdf:
+    with BboxPdf(path, fonts=True) as pdf:
         for number, page in enumerate(pdf.pages, start=1):
             item = read_page(page, number, digest)
             page.flush_cache()
