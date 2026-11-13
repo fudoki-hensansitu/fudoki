@@ -89,7 +89,7 @@ REST の client ── Authorization: Bearer <API キー> ──▶ api.fudoki.d
 - 資格情報は `Authorization: Bearer <API キー>` だけで受ける。OAuth のトークンは受けない（MCP の resource 向けのトークンを別の resource で受けないため）。
 - 401 には `WWW-Authenticate: Bearer` を付け、資格情報が無効なときは `error="invalid_token"` も付ける（RFC 6750）。`resource_metadata` は MCP だけに付ける。
 - query string に資格情報らしい値（`api_key`・`key`・`token`・`access_token`）が付いた要求は、値を使わずに 400 を返す。
-- Workers Logs の invocation log は要求の URL を記録するので、api の Worker では invocation log を切る（`observability.logs.invocation_logs: false`）。アプリが書く `console` のログと traces は残す。traces に URL の query が載るかは実装の前に確かめ、載るなら traces も切る。
+- Workers Logs の invocation log と traces は要求の URL を記録するので、`apps/api/cloudflare.config.ts` の `observability` に `redactQueryString: true` を足し、URL から query string を落とす。invocation log と traces は切らない。
 - WorkOS のキーの接頭辞が無い値と、長さが上限（実際のキーで確かめて決める）を超える値は WorkOS を呼ばずに 401 にする。長さは固定しない。
 - 形式が合う値は、WorkOS の検証 API（`POST https://api.workos.com/api_keys/validations`）で確かめる。`api_key.owner.type` が `user`、`owner.organization_id` が developers、permission に `fudoki:read` があることを確かめ、`owner.id` を利用者 ID にする。api の Worker に secret `WORKOS_API_KEY` を置く。
 - 検証の結果（通す: 利用者 ID／401: 無効／403: 理由つきの拒否）は、キーの SHA-256 を鍵にして Workers の Cache API に 5 分置く。失効や permission の追加が効くまで最長 5 分かかる。Cache API は data center ごとで複製されないので、拠点が変わると WorkOS を呼び直す。キーの値そのものはキャッシュの鍵にもログにも残さない。
@@ -124,7 +124,7 @@ REST の client ── Authorization: Bearer <API キー> ──▶ api.fudoki.d
 2. アカウントの頁を作って公開する。
 3. api に認証・記録・流量の制限を入れ、`/mcp` と `/v1/*` を同時に認証必須に切り替える。匿名の猶予は設けない。
 4. 同じ PR で docs.fudoki.dev・llms.txt・`/.well-known/mcp/server-card.json`・agent readiness の案内・plugin bundle（`plugins/fudoki`）・OpenAPI（`OPENAPI_CONFIG` に `http`/`bearer` の securityScheme、PDF の中継以外の operation に `security`。docs.fudoki.dev のリファレンスはここから作られる）・[policies](../mcp-distribution/policies.md)・privacy・terms・[submission](../mcp-distribution/submission.md)（「アカウント・API key は不要」と審査の test case）を認証つきに直す。
-5. ChatGPT のアプリと Claude の connector を OAuth の設定で出し直し、審査を受ける。審査用には専用の Google アカウントを作って渡す。OpenAI は MFA・確認コードなしで入れるテスト用のアカウントを求めるが、Google は見慣れない端末からのログインに本人確認を求めることがある。それで差し戻されたら、AuthKit でパスワードのログインを足す。3 から審査が通るまで、ChatGPT に掲載中のアプリは使えない（2026-11-13 yuito 了承）。
+5. ChatGPT のアプリと Claude の connector を OAuth の設定で出し直し、審査を受ける。審査用には専用の Google アカウントを作って渡す。OpenAI は MFA・確認コードなしで入れるテスト用のアカウントを求めるが、Google は見慣れない端末からのログインに本人確認を求めることがある。それで差し戻されたら、審査の通し方を yuito と決め直す（AuthKit のパスワードのログインは環境全体の設定で、審査用のアカウントだけには限れないため、足すなら Google だけという決定を変えることになる）。3 から審査が通るまで、ChatGPT に掲載中のアプリは使えない（2026-11-13 yuito 了承）。
 
 ## テスト
 
@@ -137,7 +137,7 @@ AGENTS.md の方針に従い、公開 API の安全性に当たるものを unit
 - WorkOS・JWKS が落ちているときは 503 で、キャッシュに残らない。
 - PDF の中継・`/health`・`/.well-known/oauth-protected-resource/mcp` は資格情報なしで通る。
 - 資格情報の無い要求で D1 を読まない。
-- アプリの `console` のログにキーの値が出ない。invocation log・traces に出ないことは、移行の 3 で本番に `?api_key=` を投げて Workers Logs を見て確かめる。
+- アプリの `console` のログにキーの値が出ない。invocation log・traces に出ないことは、移行の 3 で本番に `?api_key=` を投げ、Workers Logs に保存された URL に query が無いことで確かめる（`wrangler tail` では確かめない）。
 - `/openapi.json` が Bearer の securityScheme を持ち、PDF の中継以外の operation に `security` が付く。
 
 JWT の検証は、テストで作った鍵の JWKS を渡して確かめる。WorkOS の検証 API は fetch を差し替える。
