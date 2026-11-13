@@ -1,0 +1,1293 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132021",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-ocr-1",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              19,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83,
+              84
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4a4cb16cf35d4360d7f20a6a2f0d36296f12535da42851296a3d0e780116c184",
+          "bytes": 1830004
+        },
+        {
+          "id": "general-initial-ocr-2",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93,
+              94
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "25b5a6ae7b110572da233c20aef716fb579c291ea922c2be541a0e09726e9289",
+          "bytes": 1356183
+        },
+        {
+          "id": "general-initial-ocr-3",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103,
+              104
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "43b85bb0a3043227cca9ad10670fcd605164816ee1accba98910fcef4c77af52",
+          "bytes": 1649276
+        },
+        {
+          "id": "general-initial-ocr-4",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113,
+              114
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "0a0df0f70dca1270f55ac8424a01e6be6dd93845d335623aaaf4eefc7ec3702e",
+          "bytes": 1586715
+        },
+        {
+          "id": "general-initial-ocr-5",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "69770ebe51d2ec0409c14e0430693563ae4a38640cbbe9aae79c3ce1d2c8192e",
+          "bytes": 1588872
+        },
+        {
+          "id": "general-initial-ocr-6",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131,
+              132,
+              133,
+              134
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f963622dcda16a9b0b9a15c45ebd45d3f85d104dcdb97ca3c3c3bfb8ec95d997",
+          "bytes": 1934086
+        },
+        {
+          "id": "general-initial-ocr-7",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              135,
+              136,
+              137,
+              138,
+              139,
+              140,
+              141,
+              142,
+              143,
+              144
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "49505cd8c3863db0cff053237ecea67f1666d33569374df31666906b188938a8",
+          "bytes": 1730337
+        },
+        {
+          "id": "general-initial-ocr-8",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              145,
+              146,
+              147,
+              148,
+              149,
+              150,
+              151,
+              152,
+              153,
+              154
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f679741dbde13052e08894138c68e221c20e5fff089d751ab2275cbf6798adbd",
+          "bytes": 1620122
+        },
+        {
+          "id": "general-initial-ocr-9",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              155,
+              156,
+              157,
+              158,
+              159,
+              160,
+              161,
+              162,
+              163,
+              164
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "76aa7a23434bc9e041447c98aa6483c0f511f6ddf2586e94c8b96736c61f0b98",
+          "bytes": 1515627
+        },
+        {
+          "id": "general-initial-ocr-10",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              165,
+              166,
+              167,
+              168,
+              169,
+              170,
+              171,
+              172,
+              173,
+              174
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "51cb8b9122f2260d73df31271809ba9cf76a2537c95e972f7be03b78500dcacc",
+          "bytes": 1626705
+        },
+        {
+          "id": "general-initial-ocr-11",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183,
+              184
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "112d14d779efa40f091f0d306db5fb304321e5ba783f974200a5a308aa820b2c",
+          "bytes": 1634251
+        },
+        {
+          "id": "general-initial-ocr-12",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              185,
+              186,
+              187,
+              188,
+              189,
+              190,
+              191,
+              192,
+              193,
+              194
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "821364636c84ae2c14c51a0caffdd0f0750d371a69236ad15f52ccd1d9c136a2",
+          "bytes": 1851904
+        },
+        {
+          "id": "general-initial-ocr-13",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              195,
+              196,
+              197,
+              198,
+              199,
+              200,
+              201,
+              202,
+              203,
+              204
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "64e1a5eabb02f67e31164a7916d41da2d6a9c28aa840d63c4dce15e994a9578c",
+          "bytes": 1452271
+        },
+        {
+          "id": "general-initial-ocr-14",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              205,
+              206,
+              207,
+              208,
+              209,
+              210,
+              211,
+              212,
+              213,
+              214
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e9cf117677c220f19b777519da9456599710f2598fe7c78f182748304d113fcc",
+          "bytes": 1752898
+        },
+        {
+          "id": "general-initial-ocr-15",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              215,
+              216,
+              217,
+              218,
+              219,
+              220,
+              221,
+              222,
+              223,
+              224
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "dbf6896548af7bf687afb8e5c89ca149dfb9692f79e76f722ed65f88bc7291d4",
+          "bytes": 1627571
+        },
+        {
+          "id": "general-initial-ocr-16",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              225,
+              226,
+              227,
+              228,
+              229,
+              230,
+              231,
+              232,
+              233,
+              234
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4a8eb74b2f69c4c9dc8b16f7e08fb2a0a90175eb6446f16c3e79c4079006b1d6",
+          "bytes": 1679980
+        },
+        {
+          "id": "general-initial-ocr-17",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              235,
+              236,
+              237,
+              238,
+              239,
+              240,
+              241,
+              242,
+              243,
+              244
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "436207b37a2e911d9e1010400bf7b93f73dfd2242913899290ca0d9fb9f3e95b",
+          "bytes": 1475027
+        },
+        {
+          "id": "general-initial-ocr-18",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              245,
+              246,
+              247,
+              248,
+              249,
+              250,
+              251,
+              252,
+              253,
+              254
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "83c06cdd139ae695d0ddd213eec44873203a62738bef135e99814f219d7a6d83",
+          "bytes": 1547780
+        },
+        {
+          "id": "general-initial-ocr-19",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              255,
+              256,
+              257,
+              258,
+              259,
+              260,
+              261,
+              262,
+              263,
+              264
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "443279c5e3b07c2ee8be4c549e62382b479be2c29aa66a9abae9fbea4354695b",
+          "bytes": 1787682
+        },
+        {
+          "id": "general-initial-ocr-20",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              265,
+              266,
+              267,
+              268,
+              269,
+              270,
+              271,
+              272,
+              273,
+              274
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ee5891174635ee3e78ff6738373578594319344ddc04c68f460b683616c470f6",
+          "bytes": 1582367
+        },
+        {
+          "id": "general-initial-ocr-21",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              275,
+              276,
+              277,
+              278,
+              279,
+              280,
+              281,
+              282,
+              283,
+              284
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "666d3ff48475289feec41fab0b660c5cb5fb443490219eef3a800c0983c24f93",
+          "bytes": 1727305
+        },
+        {
+          "id": "general-initial-ocr-22",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              285,
+              286,
+              287,
+              288,
+              289,
+              290,
+              291,
+              292,
+              293,
+              294
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9b92a9ce33a613d017c8750c5fec36d0a0b3a8e43ceecf04bf525b4df1eb933c",
+          "bytes": 1800487
+        },
+        {
+          "id": "general-initial-ocr-23",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              295,
+              296,
+              297,
+              298,
+              299,
+              300,
+              301,
+              302,
+              303,
+              304
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e0ae95ae8c9cef69b689503ba5bd626622bef6544446b9ea10428f6925598c2a",
+          "bytes": 1823075
+        },
+        {
+          "id": "general-initial-ocr-24",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              305,
+              306,
+              307,
+              308,
+              309,
+              310,
+              311,
+              312,
+              313,
+              314
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7ceb2f3ad5f0be0a1b7cca78cac6ca236c8322c6f793162c645952f9595e1a1e",
+          "bytes": 1794277
+        },
+        {
+          "id": "general-initial-ocr-25",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              315,
+              316,
+              317,
+              318,
+              319,
+              320,
+              321,
+              322,
+              323,
+              324
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a91e68c16a8bc7cba3fd0734099ce8fab49a882dbd24c40e1c35110b83ce33eb",
+          "bytes": 1758274
+        },
+        {
+          "id": "general-initial-ocr-26",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              325,
+              326,
+              327,
+              328,
+              329,
+              330,
+              331,
+              332,
+              333,
+              334
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "15352692825940b4f9ca380346cc6b0acdb8519319593b0d0be012379306888a",
+          "bytes": 1791416
+        },
+        {
+          "id": "general-initial-ocr-27",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              335,
+              336,
+              337,
+              338,
+              339,
+              340,
+              341,
+              342,
+              343,
+              344
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5b28505d9763e198f9c9dc92925dd516ddfce1add989a4dab6fada176a6d9ce0",
+          "bytes": 1501034
+        },
+        {
+          "id": "general-initial-ocr-28",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              345,
+              346,
+              347,
+              348,
+              349,
+              350,
+              351,
+              352,
+              353,
+              354
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1487f60edcf29792e582333d293a622492c44fffd6d77439b293713760769a92",
+          "bytes": 1632995
+        },
+        {
+          "id": "general-initial-ocr-29",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              355,
+              356,
+              357,
+              358,
+              359,
+              360,
+              361,
+              362,
+              363,
+              364
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c49d0afcc49e1705583de567ad72e93dba4dd3f3dd01f68f2c8978033f7d17bd",
+          "bytes": 1820829
+        },
+        {
+          "id": "general-initial-ocr-30",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              365,
+              366,
+              367,
+              368,
+              369,
+              370,
+              371,
+              372,
+              373,
+              374
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "07546c0e5808d50d6c3255fe4e299258497ecd86e0b5f892501fe80c0e3d0d72",
+          "bytes": 1849341
+        },
+        {
+          "id": "general-initial-ocr-31",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              375,
+              376,
+              377,
+              378,
+              379,
+              380,
+              381,
+              382,
+              383,
+              384
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1d18f016927f085c37e1446e9f1f0dcc885ce199a5340928b390256b5de2d559",
+          "bytes": 1560191
+        },
+        {
+          "id": "general-initial-ocr-32",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              385,
+              386,
+              387,
+              388,
+              389,
+              390,
+              391,
+              392,
+              393,
+              394
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6e22f8fe8b1eae28c88f0484efa1ee42882f7bdc05f5c67ad0ae724456e1eff6",
+          "bytes": 1605245
+        },
+        {
+          "id": "general-initial-ocr-33",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              395,
+              396,
+              397,
+              398,
+              399,
+              400,
+              401,
+              402,
+              403,
+              404
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "74d7944424d6abbee3035671344c8c03d86f73e4469d6539f8e0097220650d15",
+          "bytes": 1738438
+        },
+        {
+          "id": "general-initial-ocr-34",
+          "origin_sha256": "7ff68fba9baf3d247a9c765b0f84ce0c879b99c74a371e5d8f4aba05b1d1c1c5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              405,
+              406,
+              407,
+              408,
+              409
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6253abcee06e493b7533c6569107f21a3f40f5773a5c04c315fff83b78fd1548",
+          "bytes": 992846
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat",
+                "quirks": {
+                  "legal_setsu_codes": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true,
+                  "note_kinds": {
+                    "（特定財源": "財源内訳",
+                    "(（特定財源": "財源内訳"
+                  }
+                },
+                "quirks": {
+                  "head_counts": true,
+                  "codeless_at_names": 18
+                }
+              }
+            }
+          },
+          "quirks": {
+            "dropped_notes": true,
+            "gapped_column_rules": true,
+            "unnumbered_abolished_names": true
+          }
+        },
+        "pages": [
+          [
+            78,
+            409
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p156-minsei-r14",
+            "page": 156,
+            "observation_id": "p156:full-page:a0:result0:r14",
+            "observed": "3民生費45,222,21443,192,989",
+            "reason": "物理156頁の款「3 民生費」の行。OCR が款の番号・名前と本年度・前年度の額を1つの読み（3民生費45,222,21443,192,989）にした。原典の描画で番号 3・名前・本年度 45,222,214・前年度 43,192,989 を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p384-houshou-r24",
+            "page": 384,
+            "observation_id": "p384:full-page:a0:result0:r24",
+            "observed": "749|",
+            "reason": "物理384頁の目「3 文化財保護費」の節「7 報償費」の行。OCR が左の財源内訳の額 749 と節の番号・名前を、749| と 7報償 に読み、節の行が欠けて額 473 が目の名前の折り返し（保護費）に付いた。原典の描画で財源 749・番号 7・名前 報償 を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p384-houshou-r25",
+            "page": 384,
+            "observation_id": "p384:full-page:a0:result0:r25",
+            "observed": "7報償",
+            "reason": "物理384頁の目「3 文化財保護費」の節「7 報償費」の行。OCR が左の財源内訳の額 749 と節の番号・名前を、749| と 7報償 に読み、節の行が欠けて額 473 が目の名前の折り返し（保護費）に付いた。原典の描画で財源 749・番号 7・名前 報償 を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p384-ryohi-r28",
+            "page": 384,
+            "observation_id": "p384:full-page:a0:result0:r28",
+            "observed": "5728旅",
+            "reason": "物理384頁の目「3 文化財保護費」の節「8 旅費」の行。OCR が左の財源内訳の額 572 と節の番号・名前を1つの読み（5728旅）にし、節の番号を 28 と読んだ。原典の描画で財源 572・番号 8・名前 旅 を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p241-r17",
+            "page": 241,
+            "observation_id": "p241:full-page:a0:result0:r17",
+            "observed": "96·9か月児健康診査事業",
+            "reason": "物理241頁の説明の行「9 6・9か月児健康診査事業」。OCR が番号と名前の頭の数字を続けて1つの読み（96·9か月児健康診査事業）にし、番号を 96 と読んだ。原典の描画で番号 9 と名前の間の空きを確かめ、この読みは使わず code_readings で宣言する。"
+          },
+          {
+            "id": "p241-r28",
+            "page": 241,
+            "observation_id": "p241:full-page:a0:result0:r28",
+            "observed": "126・9か月児健康診査委託料",
+            "reason": "物理241頁の説明の行「12 6・9か月児健康診査委託料」。OCR が番号と名前の頭の数字を続けて1つの読み（126・9か月児健康診査委託料）にし、番号を 126 と読んだ。原典の描画で番号 12 と名前の間の空きを確かめ、この読みは使わず code_readings で宣言する。"
+          },
+          {
+            "id": "p241-r32",
+            "page": 241,
+            "observation_id": "p241:full-page:a0:result0:r32",
+            "observed": "101歳6か月児健康診査事業",
+            "reason": "物理241頁の説明の行「10 1歳6か月児健康診査事業」。OCR が番号と名前の頭の数字を続けて1つの読み（101歳6か月児健康診査事業）にし、番号を 101 と読んだ。原典の描画で番号 10 と名前の間の空きを確かめ、この読みは使わず code_readings で宣言する。"
+          },
+          {
+            "id": "p127-r34",
+            "page": 127,
+            "observation_id": "p127:full-page:a0:result0:r34",
+            "observed": "299,445",
+            "reason": "物理127頁の事業「1 市民会館管理運営事務」の額 299,445。OCR がこの額の枠を名前の行より 2pt 上に読み、額が上の事業の最後の行（11 郵便料 など）に付いて食い違った。原典の描画で額が名前と同じ行（目の境の罫の下）に印字されているのを確かめ、この読みは使わず amount_readings で名前の行の高さに宣言する。"
+          },
+          {
+            "id": "p221-r29",
+            "page": 221,
+            "observation_id": "p221:full-page:a0:result0:r29",
+            "observed": "101,109",
+            "reason": "物理221頁の事業「2 学童保育所管理運営」の額 101,109。OCR がこの額の枠を名前の行より 2pt 上に読み、額が上の事業の最後の行（11 郵便料 など）に付いて食い違った。原典の描画で額が名前と同じ行（目の境の罫の下）に印字されているのを確かめ、この読みは使わず amount_readings で名前の行の高さに宣言する。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p156-minsei",
+            "page": 156,
+            "box": [
+              77.0,
+              476.5,
+              81.5,
+              490.5
+            ],
+            "code": "3",
+            "name": "民生費",
+            "name_box": [
+              82.0,
+              476.5,
+              153.0,
+              490.5
+            ],
+            "reason": "物理156頁の款「3 民生費」の行。OCR が款の番号・名前と本年度・前年度の額を1つの読み（3民生費45,222,21443,192,989）にした。原典の描画で番号 3・名前・本年度 45,222,214・前年度 43,192,989 を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p384-houshou",
+            "page": 384,
+            "box": [
+              422.0,
+              683.0,
+              426.5,
+              691.0
+            ],
+            "code": "7",
+            "name": "報償",
+            "name_box": [
+              428.5,
+              683.0,
+              459.5,
+              691.0
+            ],
+            "reason": "物理384頁の目「3 文化財保護費」の節「7 報償費」の行。OCR が左の財源内訳の額 749 と節の番号・名前を、749| と 7報償 に読み、節の行が欠けて額 473 が目の名前の折り返し（保護費）に付いた。原典の描画で財源 749・番号 7・名前 報償 を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p384-ryohi",
+            "page": 384,
+            "box": [
+              422.0,
+              699.0,
+              426.5,
+              706.5
+            ],
+            "code": "8",
+            "name": "旅",
+            "name_box": [
+              427.5,
+              699.0,
+              439.5,
+              706.5
+            ],
+            "reason": "物理384頁の目「3 文化財保護費」の節「8 旅費」の行。OCR が左の財源内訳の額 572 と節の番号・名前を1つの読み（5728旅）にし、節の番号を 28 と読んだ。原典の描画で財源 572・番号 8・名前 旅 を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p241-r17-code",
+            "page": 241,
+            "box": [
+              74.5,
+              261.1,
+              78.5,
+              270.4
+            ],
+            "code": "9",
+            "name": "6・9か月児健康診査事業",
+            "name_box": [
+              86.0,
+              261.1,
+              199.6,
+              270.4
+            ],
+            "reason": "物理241頁の説明の行「9 6・9か月児健康診査事業」。OCR が番号と名前の頭の数字を続けて1つの読み（96·9か月児健康診査事業）にし、番号を 96 と読んだ。原典の描画で番号 9 と名前の間の空きを確かめ、この読みは使わず code_readings で宣言する。"
+          },
+          {
+            "id": "p241-r28-code",
+            "page": 241,
+            "box": [
+              113.5,
+              324.4,
+              122.0,
+              333.3
+            ],
+            "code": "12",
+            "name": "6・9か月児健康診査委託料",
+            "name_box": [
+              129.5,
+              324.4,
+              251.4,
+              333.3
+            ],
+            "reason": "物理241頁の説明の行「12 6・9か月児健康診査委託料」。OCR が番号と名前の頭の数字を続けて1つの読み（126・9か月児健康診査委託料）にし、番号を 126 と読んだ。原典の描画で番号 12 と名前の間の空きを確かめ、この読みは使わず code_readings で宣言する。"
+          },
+          {
+            "id": "p241-r32-code",
+            "page": 241,
+            "box": [
+              70.0,
+              355.6,
+              79.0,
+              364.5
+            ],
+            "code": "10",
+            "name": "1歳6か月児健康診査事業",
+            "name_box": [
+              87.0,
+              355.6,
+              199.4,
+              364.5
+            ],
+            "reason": "物理241頁の説明の行「10 1歳6か月児健康診査事業」。OCR が番号と名前の頭の数字を続けて1つの読み（101歳6か月児健康診査事業）にし、番号を 101 と読んだ。原典の描画で番号 10 と名前の間の空きを確かめ、この読みは使わず code_readings で宣言する。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p156-minsei-approved",
+            "page": 156,
+            "boxes": [
+              [
+                159.0,
+                476.5,
+                206.5,
+                490.5
+              ]
+            ],
+            "amount": "45,222,214",
+            "reason": "物理156頁の款「3 民生費」の行。OCR が款の番号・名前と本年度・前年度の額を1つの読み（3民生費45,222,21443,192,989）にした。原典の描画で番号 3・名前・本年度 45,222,214・前年度 43,192,989 を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p156-minsei-previous",
+            "page": 156,
+            "boxes": [
+              [
+                211.0,
+                476.5,
+                258.6,
+                490.5
+              ]
+            ],
+            "amount": "43,192,989",
+            "reason": "物理156頁の款「3 民生費」の行。OCR が款の番号・名前と本年度・前年度の額を1つの読み（3民生費45,222,21443,192,989）にした。原典の描画で番号 3・名前・本年度 45,222,214・前年度 43,192,989 を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p384-houshou-funds",
+            "page": 384,
+            "boxes": [
+              [
+                401.5,
+                683.0,
+                414.0,
+                691.0
+              ]
+            ],
+            "amount": "749",
+            "reason": "物理384頁の目「3 文化財保護費」の節「7 報償費」の行。OCR が左の財源内訳の額 749 と節の番号・名前を、749| と 7報償 に読み、節の行が欠けて額 473 が目の名前の折り返し（保護費）に付いた。原典の描画で財源 749・番号 7・名前 報償 を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p384-ryohi-funds",
+            "page": 384,
+            "boxes": [
+              [
+                401.0,
+                699.0,
+                414.0,
+                706.5
+              ]
+            ],
+            "amount": "572",
+            "reason": "物理384頁の目「3 文化財保護費」の節「8 旅費」の行。OCR が左の財源内訳の額 572 と節の番号・名前を1つの読み（5728旅）にし、節の番号を 28 と読んだ。原典の描画で財源 572・番号 8・名前 旅 を確かめ、この読みは使わず code_readings と amount_readings で宣言する。"
+          },
+          {
+            "id": "p127-r34-amount",
+            "page": 127,
+            "boxes": [
+              [
+                465.4,
+                355.4,
+                498.5,
+                363.3
+              ]
+            ],
+            "amount": "299,445",
+            "reason": "物理127頁の事業「1 市民会館管理運営事務」の額 299,445。OCR がこの額の枠を名前の行より 2pt 上に読み、額が上の事業の最後の行（11 郵便料 など）に付いて食い違った。原典の描画で額が名前と同じ行（目の境の罫の下）に印字されているのを確かめ、この読みは使わず amount_readings で名前の行の高さに宣言する。"
+          },
+          {
+            "id": "p221-r29-amount",
+            "page": 221,
+            "boxes": [
+              [
+                465.9,
+                355.4,
+                498.5,
+                363.1
+              ]
+            ],
+            "amount": "101,109",
+            "reason": "物理221頁の事業「2 学童保育所管理運営」の額 101,109。OCR がこの額の枠を名前の行より 2pt 上に読み、額が上の事業の最後の行（11 郵便料 など）に付いて食い違った。原典の描画で額が名前と同じ行（目の境の罫の下）に印字されているのを確かめ、この読みは使わず amount_readings で名前の行の高さに宣言する。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p194-r81-rule",
+            "page": 194,
+            "observation_id": "p194:full-page:a0:result0:r81",
+            "observed_name": "100,987|",
+            "corrected_name": "100,987",
+            "reason": "物理194頁の目「1 児童福祉総務費」の節「3 職員手当等」の行。OCR が財源内訳の額の右の縦の罫を字（|）に読み、その字が節の名前の頭に付いた。原典の描画で罫であることを確かめ、字を外す。"
+          },
+          {
+            "id": "p284-r18-rule",
+            "page": 284,
+            "observation_id": "p284:full-page:a0:result0:r18",
+            "observed_name": "9|",
+            "corrected_name": "9",
+            "reason": "物理284頁の目「4 農地費」の節「10 需用費」の行。OCR が財源内訳の額の右の縦の罫を字（|）に読み、その字が節の名前の頭に付いた。原典の描画で罫であることを確かめ、字を外す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "498d19f7cc8e7a19eca7707dba95b4e523857457d89d5d7b462dd93e87480fb6",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'indent'}。",
+        "金額の単位は printed 166頁 から決めた。款の和 86,372,000 と印字の「歳出合計」86,372,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 194頁 100,987|→100,987・284頁 9|→9。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 654 件（p83:full-page:a0:result0:r79・p83:full-page:a0:result0:r79:w3・p85:full-page:a0:result0:r30・p85:full-page:a0:result0:r30:w4・p85:full-page:a0:result0:r37・p85:full-page:a0:result0:r37:w3・p87:full-page:a0:result0:r3・p87:full-page:a0:result0:r3:w3・p89:full-page:a0:result0:r30・p89:full-page:a0:result0:r30:w3・p91:full-page:a0:result0:r77・p91:full-page:a0:result0:r77:w3・p93:full-page:a0:result0:r58・p93:full-page:a0:result0:r58:w4・p93:full-page:a0:result0:r67・p93:full-page:a0:result0:r67:w4・p93:full-page:a0:result0:r71・p93:full-page:a0:result0:r71:w4・p95:full-page:a0:result0:r32・p95:full-page:a0:result0:r32:w3・p99:full-page:a0:result0:r8・p99:full-page:a0:result0:r8:w4・p101:full-page:a0:result0:r51・p101:full-page:a0:result0:r51:w6・p101:full-page:a0:result0:r82・p101:full-page:a0:result0:r82:w9・p101:full-page:a0:result0:r83・p101:full-page:a0:result0:r83:w4・p103:full-page:a0:result0:r30・p103:full-page:a0:result0:r30:w4・p103:full-page:a0:result0:r34・p103:full-page:a0:result0:r34:w4・p103:full-page:a0:result0:r36・p103:full-page:a0:result0:r36:w3・p103:full-page:a0:result0:r38・p103:full-page:a0:result0:r38:w3・p105:full-page:a0:result0:r14・p105:full-page:a0:result0:r14:w3・p107:full-page:a0:result0:r44・p107:full-page:a0:result0:r44:w4・p109:full-page:a0:result0:r42・p109:full-page:a0:result0:r42:w7・p109:full-page:a0:result0:r72・p109:full-page:a0:result0:r72:w3・p111:full-page:a0:result0:r5・p111:full-page:a0:result0:r5:w1・p111:full-page:a0:result0:r56・p111:full-page:a0:result0:r56:w2・p113:full-page:a0:result0:r12・p113:full-page:a0:result0:r12:w5・p113:full-page:a0:result0:r54・p113:full-page:a0:result0:r54:w5・p113:full-page:a0:result0:r56・p113:full-page:a0:result0:r56:w3・p115:full-page:a0:result0:r83・p115:full-page:a0:result0:r83:w6・p117:full-page:a0:result0:r5・p117:full-page:a0:result0:r5:w5・p117:full-page:a0:result0:r64・p117:full-page:a0:result0:r64:w4・p121:full-page:a0:result0:r55・p121:full-page:a0:result0:r55:w6・p123:full-page:a0:result0:r27・p123:full-page:a0:result0:r27:w4・p123:full-page:a0:result0:r31・p123:full-page:a0:result0:r31:w4・p123:full-page:a0:result0:r33・p123:full-page:a0:result0:r33:w3・p123:full-page:a0:result0:r35・p123:full-page:a0:result0:r35:w3・p125:full-page:a0:result0:r24・p125:full-page:a0:result0:r24:w4・p125:full-page:a0:result0:r26・p125:full-page:a0:result0:r26:w3・p125:full-page:a0:result0:r36・p125:full-page:a0:result0:r36:w3・p127:full-page:a0:result0:r41・p127:full-page:a0:result0:r41:w5・p129:full-page:a0:result0:r80・p129:full-page:a0:result0:r80:w4・p131:full-page:a0:result0:r58・p131:full-page:a0:result0:r58:w3・p133:full-page:a0:result0:r21・p133:full-page:a0:result0:r21:w3・p133:full-page:a0:result0:r23・p133:full-page:a0:result0:r23:w2・p133:full-page:a0:result0:r34・p133:full-page:a0:result0:r34:w4・p133:full-page:a0:result0:r36・p133:full-page:a0:result0:r36:w4・p133:full-page:a0:result0:r56・p133:full-page:a0:result0:r56:w7・p137:full-page:a0:result0:r4・p137:full-page:a0:result0:r4:w4・p137:full-page:a0:result0:r28・p137:full-page:a0:result0:r28:w4・p137:full-page:a0:result0:r71・p137:full-page:a0:result0:r71:w4・p139:full-page:a0:result0:r25・p139:full-page:a0:result0:r25:w4・p139:full-page:a0:result0:r39・p139:full-page:a0:result0:r39:w3・p141:full-page:a0:result0:r55・p141:full-page:a0:result0:r55:w4・p143:full-page:a0:result0:r24・p143:full-page:a0:result0:r24:w4・p143:full-page:a0:result0:r81・p143:full-page:a0:result0:r81:w4・p147:full-page:a0:result0:r41・p147:full-page:a0:result0:r41:w11・p149:full-page:a0:result0:r13・p149:full-page:a0:result0:r13:w3・p151:full-page:a0:result0:r11・p151:full-page:a0:result0:r11:w5・p153:full-page:a0:result0:r4・p153:full-page:a0:result0:r4・p153:full-page:a0:result0:r4:w4・p153:full-page:a0:result0:r4:w8・p153:full-page:a0:result0:r17・p153:full-page:a0:result0:r17:w4・p153:full-page:a0:result0:r34・p153:full-page:a0:result0:r34:w4・p153:full-page:a0:result0:r49・p153:full-page:a0:result0:r49:w4・p153:full-page:a0:result0:r69・p153:full-page:a0:result0:r69:w4・p155:full-page:a0:result0:r22・p155:full-page:a0:result0:r22:w4・p157:full-page:a0:result0:r4・p157:full-page:a0:result0:r4:w8・p157:full-page:a0:result0:r47・p157:full-page:a0:result0:r47:w6・p157:full-page:a0:result0:r76・p157:full-page:a0:result0:r76:w3・p159:full-page:a0:result0:r48・p159:full-page:a0:result0:r48:w2・p161:full-page:a0:result0:r74・p161:full-page:a0:result0:r74:w6・p163:full-page:a0:result0:r36・p163:full-page:a0:result0:r36・p163:full-page:a0:result0:r36:w6・p163:full-page:a0:result0:r36:w12・p163:full-page:a0:result0:r67・p163:full-page:a0:result0:r67:w6・p165:full-page:a0:result0:r12・p165:full-page:a0:result0:r12:w5・p167:full-page:a0:result0:r34・p167:full-page:a0:result0:r34:w3・p169:full-page:a0:result0:r35・p169:full-page:a0:result0:r35:w3・p169:full-page:a0:result0:r39・p169:full-page:a0:result0:r39:w4・p169:full-page:a0:result0:r43・p169:full-page:a0:result0:r43:w4・p169:full-page:a0:result0:r45・p169:full-page:a0:result0:r45:w3・p169:full-page:a0:result0:r47・p169:full-page:a0:result0:r47:w3・p173:full-page:a0:result0:r57・p173:full-page:a0:result0:r57:w5・p181:full-page:a0:result0:r30・p181:full-page:a0:result0:r30:w2・p181:full-page:a0:result0:r58・p181:full-page:a0:result0:r58:w3・p183:full-page:a0:result0:r59・p183:full-page:a0:result0:r59:w3・p187:full-page:a0:result0:r22・p187:full-page:a0:result0:r22:w5・p189:full-page:a0:result0:r30・p189:full-page:a0:result0:r30:w5・p189:full-page:a0:result0:r86・p189:full-page:a0:result0:r86:w3・p191:full-page:a0:result0:r7・p191:full-page:a0:result0:r7:w4・p191:full-page:a0:result0:r11・p191:full-page:a0:result0:r11:w4・p191:full-page:a0:result0:r13・p191:full-page:a0:result0:r13:w3・p191:full-page:a0:result0:r15・p191:full-page:a0:result0:r15:w3・p191:full-page:a0:result0:r35・p191:full-page:a0:result0:r35:w4・p191:full-page:a0:result0:r39・p191:full-page:a0:result0:r39:w7・p191:full-page:a0:result0:r61・p191:full-page:a0:result0:r61:w9・p193:full-page:a0:result0:r17・p193:full-page:a0:result0:r17:w5・p193:full-page:a0:result0:r20・p193:full-page:a0:result0:r20:w6・p193:full-page:a0:result0:r34・p193:full-page:a0:result0:r34:w3・p193:full-page:a0:result0:r66・p193:full-page:a0:result0:r66:w6・p193:full-page:a0:result0:r70・p193:full-page:a0:result0:r70:w4・p195:full-page:a0:result0:r7・p195:full-page:a0:result0:r7:w4・p197:full-page:a0:result0:r77・p197:full-page:a0:result0:r77:w3・p199:full-page:a0:result0:r34・p199:full-page:a0:result0:r34:w3・p201:full-page:a0:result0:r46・p201:full-page:a0:result0:r46:w7・p201:full-page:a0:result0:r63・p201:full-page:a0:result0:r63:w3・p203:full-page:a0:result0:r52・p203:full-page:a0:result0:r52:w7・p203:full-page:a0:result0:r74・p203:full-page:a0:result0:r74:w6・p207:full-page:a0:result0:r7・p207:full-page:a0:result0:r7:w3・p207:full-page:a0:result0:r20・p207:full-page:a0:result0:r20:w4・p207:full-page:a0:result0:r24・p207:full-page:a0:result0:r24:w4・p211:full-page:a0:result0:r71・p211:full-page:a0:result0:r71:w11・p215:full-page:a0:result0:r5・p215:full-page:a0:result0:r5:w8・p215:full-page:a0:result0:r20・p215:full-page:a0:result0:r20:w7・p215:full-page:a0:result0:r70・p215:full-page:a0:result0:r70:w4・p217:full-page:a0:result0:r23・p217:full-page:a0:result0:r23:w4・p217:full-page:a0:result0:r27・p217:full-page:a0:result0:r27:w4・p217:full-page:a0:result0:r29・p217:full-page:a0:result0:r29:w3・p217:full-page:a0:result0:r31・p217:full-page:a0:result0:r31:w3・p219:full-page:a0:result0:r29・p219:full-page:a0:result0:r29:w5・p219:full-page:a0:result0:r53・p219:full-page:a0:result0:r53:w16・p221:full-page:a0:result0:r31・p221:full-page:a0:result0:r31:w6・p221:full-page:a0:result0:r52・p221:full-page:a0:result0:r52:w4・p221:full-page:a0:result0:r56・p221:full-page:a0:result0:r56:w4・p221:full-page:a0:result0:r58・p221:full-page:a0:result0:r58:w3・p221:full-page:a0:result0:r60・p221:full-page:a0:result0:r60:w3・p221:full-page:a0:result0:r78・p221:full-page:a0:result0:r78:w2・p225:full-page:a0:result0:r16・p225:full-page:a0:result0:r16:w6・p227:full-page:a0:result0:r50・p227:full-page:a0:result0:r50:w6・p227:full-page:a0:result0:r67・p227:full-page:a0:result0:r67:w3・p229:full-page:a0:result0:r62・p229:full-page:a0:result0:r62:w7・p229:full-page:a0:result0:r64・p229:full-page:a0:result0:r64:w7・p231:full-page:a0:result0:r5・p231:full-page:a0:result0:r5:w7・p231:full-page:a0:result0:r75・p231:full-page:a0:result0:r75:w3・p233:full-page:a0:result0:r20・p233:full-page:a0:result0:r20:w3・p233:full-page:a0:result0:r22・p233:full-page:a0:result0:r22:w3・p233:full-page:a0:result0:r24・p233:full-page:a0:result0:r24:w4・p233:full-page:a0:result0:r28・p233:full-page:a0:result0:r28:w4・p233:full-page:a0:result0:r30・p233:full-page:a0:result0:r30:w3・p233:full-page:a0:result0:r32・p233:full-page:a0:result0:r32:w3・p235:full-page:a0:result0:r6・p235:full-page:a0:result0:r6:w10・p239:full-page:a0:result0:r64・p239:full-page:a0:result0:r64:w3・p239:full-page:a0:result0:r75・p239:full-page:a0:result0:r75:w3・p239:full-page:a0:result0:r81・p239:full-page:a0:result0:r81:w3・p241:full-page:a0:result0:r66・p241:full-page:a0:result0:r66:w3・p243:full-page:a0:result0:r7・p243:full-page:a0:result0:r7:w3・p243:full-page:a0:result0:r37・p243:full-page:a0:result0:r37:w4・p243:full-page:a0:result0:r71・p243:full-page:a0:result0:r71:w6・p245:full-page:a0:result0:r74・p245:full-page:a0:result0:r74:w3・p251:full-page:a0:result0:r77・p251:full-page:a0:result0:r77:w10・p255:full-page:a0:result0:r57・p255:full-page:a0:result0:r57:w4・p255:full-page:a0:result0:r59・p255:full-page:a0:result0:r59:w3・p257:full-page:a0:result0:r23・p257:full-page:a0:result0:r23:w6・p257:full-page:a0:result0:r29・p257:full-page:a0:result0:r29・p257:full-page:a0:result0:r29:w3・p257:full-page:a0:result0:r29:w6・p257:full-page:a0:result0:r42・p257:full-page:a0:result0:r42:w4・p257:full-page:a0:result0:r62・p257:full-page:a0:result0:r62:w7・p261:full-page:a0:result0:r31・p261:full-page:a0:result0:r31:w3・p261:full-page:a0:result0:r80・p261:full-page:a0:result0:r80:w3・p265:full-page:a0:result0:r36・p265:full-page:a0:result0:r36:w4・p265:full-page:a0:result0:r38・p265:full-page:a0:result0:r38:w4・p265:full-page:a0:result0:r40・p265:full-page:a0:result0:r40:w3・p265:full-page:a0:result0:r42・p265:full-page:a0:result0:r42:w3・p267:full-page:a0:result0:r52・p267:full-page:a0:result0:r52:w3・p267:full-page:a0:result0:r56・p267:full-page:a0:result0:r56:w3・p269:full-page:a0:result0:r53・p269:full-page:a0:result0:r53:w5・p271:full-page:a0:result0:r26・p271:full-page:a0:result0:r26:w3・p271:full-page:a0:result0:r28・p271:full-page:a0:result0:r28:w3・p273:full-page:a0:result0:r20・p273:full-page:a0:result0:r20:w4・p273:full-page:a0:result0:r37・p273:full-page:a0:result0:r37:w4・p273:full-page:a0:result0:r39・p273:full-page:a0:result0:r39:w3・p275:full-page:a0:result0:r12・p275:full-page:a0:result0:r12:w4・p275:full-page:a0:result0:r14・p275:full-page:a0:result0:r14:w4・p275:full-page:a0:result0:r16・p275:full-page:a0:result0:r16:w3・p275:full-page:a0:result0:r74・p275:full-page:a0:result0:r74:w3・p277:full-page:a0:result0:r82・p277:full-page:a0:result0:r82:w3・p283:full-page:a0:result0:r62・p283:full-page:a0:result0:r62:w4・p283:full-page:a0:result0:r69・p283:full-page:a0:result0:r69:w4・p283:full-page:a0:result0:r80・p283:full-page:a0:result0:r80:w3・p285:full-page:a0:result0:r80・p285:full-page:a0:result0:r80:w3・p287:full-page:a0:result0:r43・p287:full-page:a0:result0:r43:w4・p289:full-page:a0:result0:r71・p289:full-page:a0:result0:r71:w5・p291:full-page:a0:result0:r76・p291:full-page:a0:result0:r76:w3・p293:full-page:a0:result0:r35・p293:full-page:a0:result0:r35:w6・p295:full-page:a0:result0:r39・p295:full-page:a0:result0:r39:w3・p295:full-page:a0:result0:r76・p295:full-page:a0:result0:r76:w3・p299:full-page:a0:result0:r9・p299:full-page:a0:result0:r9:w4・p299:full-page:a0:result0:r80・p299:full-page:a0:result0:r80:w4・p301:full-page:a0:result0:r7・p301:full-page:a0:result0:r7:w4・p301:full-page:a0:result0:r9・p301:full-page:a0:result0:r9:w4・p301:full-page:a0:result0:r11・p301:full-page:a0:result0:r11:w3・p301:full-page:a0:result0:r55・p301:full-page:a0:result0:r55:w6・p305:full-page:a0:result0:r75・p305:full-page:a0:result0:r75:w6・p307:full-page:a0:result0:r20・p307:full-page:a0:result0:r20・p307:full-page:a0:result0:r20:w2・p307:full-page:a0:result0:r20:w4・p311:full-page:a0:result0:r18・p311:full-page:a0:result0:r18・p311:full-page:a0:result0:r18・p311:full-page:a0:result0:r18・p311:full-page:a0:result0:r18・p311:full-page:a0:result0:r18:w3・p311:full-page:a0:result0:r18:w5・p311:full-page:a0:result0:r18:w9・p311:full-page:a0:result0:r18:w12・p311:full-page:a0:result0:r18:w14・p311:full-page:a0:result0:r27・p311:full-page:a0:result0:r27・p311:full-page:a0:result0:r27・p311:full-page:a0:result0:r27・p311:full-page:a0:result0:r27・p311:full-page:a0:result0:r27:w3・p311:full-page:a0:result0:r27:w5・p311:full-page:a0:result0:r27:w9・p311:full-page:a0:result0:r27:w12・p311:full-page:a0:result0:r27:w14・p311:full-page:a0:result0:r39・p311:full-page:a0:result0:r39:w9・p311:full-page:a0:result0:r56・p311:full-page:a0:result0:r56・p311:full-page:a0:result0:r56:w3・p311:full-page:a0:result0:r56:w5・p311:full-page:a0:result0:r65・p311:full-page:a0:result0:r65:w5・p311:full-page:a0:result0:r84・p311:full-page:a0:result0:r84:w4・p313:full-page:a0:result0:r3・p313:full-page:a0:result0:r3:w4・p313:full-page:a0:result0:r5・p313:full-page:a0:result0:r5:w3・p313:full-page:a0:result0:r19・p313:full-page:a0:result0:r19:w3・p317:full-page:a0:result0:r36・p317:full-page:a0:result0:r36:w4・p321:full-page:a0:result0:r32・p321:full-page:a0:result0:r32:w4・p321:full-page:a0:result0:r34・p321:full-page:a0:result0:r34:w3・p323:full-page:a0:result0:r12・p323:full-page:a0:result0:r12:w4・p323:full-page:a0:result0:r16・p323:full-page:a0:result0:r16:w4・p323:full-page:a0:result0:r18・p323:full-page:a0:result0:r18:w3・p323:full-page:a0:result0:r75・p323:full-page:a0:result0:r75:w6・p325:full-page:a0:result0:r74・p325:full-page:a0:result0:r74:w3・p327:full-page:a0:result0:r38・p327:full-page:a0:result0:r38:w3・p327:full-page:a0:result0:r42・p327:full-page:a0:result0:r42:w4・p327:full-page:a0:result0:r46・p327:full-page:a0:result0:r46:w4・p327:full-page:a0:result0:r48・p327:full-page:a0:result0:r48:w3・p327:full-page:a0:result0:r50・p327:full-page:a0:result0:r50:w3・p329:full-page:a0:result0:r36・p329:full-page:a0:result0:r36:w4・p329:full-page:a0:result0:r49・p329:full-page:a0:result0:r49:w4・p329:full-page:a0:result0:r71・p329:full-page:a0:result0:r71:w5・p331:full-page:a0:result0:r12・p331:full-page:a0:result0:r12:w3・p331:full-page:a0:result0:r16・p331:full-page:a0:result0:r16:w3・p331:full-page:a0:result0:r28・p331:full-page:a0:result0:r28:w5・p331:full-page:a0:result0:r41・p331:full-page:a0:result0:r41:w3・p331:full-page:a0:result0:r60・p331:full-page:a0:result0:r60:w4・p331:full-page:a0:result0:r62・p331:full-page:a0:result0:r62:w3・p333:full-page:a0:result0:r20・p333:full-page:a0:result0:r20:w3・p333:full-page:a0:result0:r22・p333:full-page:a0:result0:r22:w4・p333:full-page:a0:result0:r24・p333:full-page:a0:result0:r24:w3・p333:full-page:a0:result0:r45・p333:full-page:a0:result0:r45:w4・p335:full-page:a0:result0:r41・p335:full-page:a0:result0:r41:w18・p335:full-page:a0:result0:r66・p335:full-page:a0:result0:r66:w7・p335:full-page:a0:result0:r68・p335:full-page:a0:result0:r68:w2・p335:full-page:a0:result0:r76・p335:full-page:a0:result0:r76:w3・p337:full-page:a0:result0:r22・p337:full-page:a0:result0:r22:w6・p339:full-page:a0:result0:r30・p339:full-page:a0:result0:r30:w3・p341:full-page:a0:result0:r28・p341:full-page:a0:result0:r28:w6・p341:full-page:a0:result0:r61・p341:full-page:a0:result0:r61:w4・p341:full-page:a0:result0:r77・p341:full-page:a0:result0:r77:w3・p345:full-page:a0:result0:r37・p345:full-page:a0:result0:r37:w4・p345:full-page:a0:result0:r76・p345:full-page:a0:result0:r76:w2・p347:full-page:a0:result0:r10・p347:full-page:a0:result0:r10:w8・p347:full-page:a0:result0:r18・p347:full-page:a0:result0:r18:w4・p347:full-page:a0:result0:r72・p347:full-page:a0:result0:r72:w3・p349:full-page:a0:result0:r24・p349:full-page:a0:result0:r24:w8・p349:full-page:a0:result0:r50・p349:full-page:a0:result0:r50:w6・p351:full-page:a0:result0:r26・p351:full-page:a0:result0:r26:w3・p351:full-page:a0:result0:r28・p351:full-page:a0:result0:r28:w3・p351:full-page:a0:result0:r32・p351:full-page:a0:result0:r32:w4・p351:full-page:a0:result0:r36・p351:full-page:a0:result0:r36:w4・p353:full-page:a0:result0:r56・p353:full-page:a0:result0:r56:w3・p355:full-page:a0:result0:r16・p355:full-page:a0:result0:r16:w4・p355:full-page:a0:result0:r20・p355:full-page:a0:result0:r20:w5・p355:full-page:a0:result0:r56・p355:full-page:a0:result0:r56:w4・p357:full-page:a0:result0:r47・p357:full-page:a0:result0:r47:w3・p357:full-page:a0:result0:r49・p357:full-page:a0:result0:r49:w8・p359:full-page:a0:result0:r5・p359:full-page:a0:result0:r5:w3・p359:full-page:a0:result0:r42・p359:full-page:a0:result0:r42:w3・p359:full-page:a0:result0:r44・p359:full-page:a0:result0:r44:w8・p359:full-page:a0:result0:r46・p359:full-page:a0:result0:r46・p359:full-page:a0:result0:r46:w2・p359:full-page:a0:result0:r46:w5・p361:full-page:a0:result0:r50・p361:full-page:a0:result0:r50:w12・p363:full-page:a0:result0:r6・p363:full-page:a0:result0:r6:w6・p363:full-page:a0:result0:r60・p363:full-page:a0:result0:r60:w3・p363:full-page:a0:result0:r62・p363:full-page:a0:result0:r62:w3・p363:full-page:a0:result0:r66・p363:full-page:a0:result0:r66:w4・p363:full-page:a0:result0:r70・p363:full-page:a0:result0:r70:w4・p365:full-page:a0:result0:r77・p365:full-page:a0:result0:r77:w3・p367:full-page:a0:result0:r38・p367:full-page:a0:result0:r38:w4・p367:full-page:a0:result0:r42・p367:full-page:a0:result0:r42:w5・p367:full-page:a0:result0:r46・p367:full-page:a0:result0:r46:w6・p369:full-page:a0:result0:r35・p369:full-page:a0:result0:r35:w3・p369:full-page:a0:result0:r71・p369:full-page:a0:result0:r71:w3・p371:full-page:a0:result0:r12・p371:full-page:a0:result0:r12:w3・p371:full-page:a0:result0:r16・p371:full-page:a0:result0:r16・p371:full-page:a0:result0:r16:w2・p371:full-page:a0:result0:r16:w5・p373:full-page:a0:result0:r51・p373:full-page:a0:result0:r51・p373:full-page:a0:result0:r51:w6・p373:full-page:a0:result0:r51:w10・p375:full-page:a0:result0:r3・p375:full-page:a0:result0:r3・p375:full-page:a0:result0:r3:w17・p375:full-page:a0:result0:r3:w23・p381:full-page:a0:result0:r46・p381:full-page:a0:result0:r46:w4・p381:full-page:a0:result0:r51・p381:full-page:a0:result0:r51:w4・p383:full-page:a0:result0:r7・p383:full-page:a0:result0:r7:w3・p383:full-page:a0:result0:r40・p383:full-page:a0:result0:r40:w4・p383:full-page:a0:result0:r44・p383:full-page:a0:result0:r44:w4・p383:full-page:a0:result0:r46・p383:full-page:a0:result0:r46:w3・p385:full-page:a0:result0:r40・p385:full-page:a0:result0:r40:w7・p387:full-page:a0:result0:r33・p387:full-page:a0:result0:r33:w4・p387:full-page:a0:result0:r47・p387:full-page:a0:result0:r47:w3・p387:full-page:a0:result0:r76・p387:full-page:a0:result0:r76:w3・p387:full-page:a0:result0:r78・p387:full-page:a0:result0:r78:w4・p387:full-page:a0:result0:r82・p387:full-page:a0:result0:r82:w4・p387:full-page:a0:result0:r84・p387:full-page:a0:result0:r84:w3・p389:full-page:a0:result0:r3・p389:full-page:a0:result0:r3:w3・p389:full-page:a0:result0:r46・p389:full-page:a0:result0:r46:w4・p389:full-page:a0:result0:r50・p389:full-page:a0:result0:r50:w4・p389:full-page:a0:result0:r52・p389:full-page:a0:result0:r52:w3・p391:full-page:a0:result0:r7・p391:full-page:a0:result0:r7:w4・p391:full-page:a0:result0:r11・p391:full-page:a0:result0:r11:w4・p391:full-page:a0:result0:r13・p391:full-page:a0:result0:r13:w3・p391:full-page:a0:result0:r15・p391:full-page:a0:result0:r15:w3・p393:full-page:a0:result0:r20・p393:full-page:a0:result0:r20:w3・p395:full-page:a0:result0:r3・p395:full-page:a0:result0:r3:w3・p395:full-page:a0:result0:r18・p395:full-page:a0:result0:r18:w4・p395:full-page:a0:result0:r22・p395:full-page:a0:result0:r22:w4・p395:full-page:a0:result0:r24・p395:full-page:a0:result0:r24:w3・p395:full-page:a0:result0:r41・p395:full-page:a0:result0:r41:w4・p395:full-page:a0:result0:r43・p395:full-page:a0:result0:r43:w4・p395:full-page:a0:result0:r45・p395:full-page:a0:result0:r45:w4・p395:full-page:a0:result0:r47・p395:full-page:a0:result0:r47:w3・p399:full-page:a0:result0:r49・p399:full-page:a0:result0:r49:w3・p399:full-page:a0:result0:r51・p399:full-page:a0:result0:r51:w3・p401:full-page:a0:result0:r76・p401:full-page:a0:result0:r76:w3・p401:full-page:a0:result0:r80・p401:full-page:a0:result0:r80:w4・p401:full-page:a0:result0:r84・p401:full-page:a0:result0:r84:w4・p403:full-page:a0:result0:r3・p403:full-page:a0:result0:r3:w3・p403:full-page:a0:result0:r5・p403:full-page:a0:result0:r5:w3・p403:full-page:a0:result0:r48・p403:full-page:a0:result0:r48:w5・p405:full-page:a0:result0:r13・p405:full-page:a0:result0:r13:w6・p405:full-page:a0:result0:r73・p405:full-page:a0:result0:r73:w4・p405:full-page:a0:result0:r75・p405:full-page:a0:result0:r75:w3）・徵→徴 6 件（p134:full-page:a0:result0:r14・p134:full-page:a0:result0:r14:w1・p136:full-page:a0:result0:r1・p136:full-page:a0:result0:r1:w4・p136:full-page:a0:result0:r13・p136:full-page:a0:result0:r13:w3）・查→査 256 件（p93:full-page:a0:result0:r25・p93:full-page:a0:result0:r25:w7・p93:full-page:a0:result0:r39・p93:full-page:a0:result0:r39:w9・p95:full-page:a0:result0:r51・p95:full-page:a0:result0:r51:w7・p95:full-page:a0:result0:r70・p95:full-page:a0:result0:r70:w7・p95:full-page:a0:result0:r76・p95:full-page:a0:result0:r76:w7・p105:full-page:a0:result0:r56・p105:full-page:a0:result0:r56:w7・p105:full-page:a0:result0:r67・p105:full-page:a0:result0:r67:w10・p109:full-page:a0:result0:r33・p109:full-page:a0:result0:r33:w17・p129:full-page:a0:result0:r45・p129:full-page:a0:result0:r45:w1・p135:full-page:a0:result0:r30・p135:full-page:a0:result0:r30・p135:full-page:a0:result0:r30:w12・p135:full-page:a0:result0:r30:w17・p135:full-page:a0:result0:r33・p135:full-page:a0:result0:r33:w7・p137:full-page:a0:result0:r18・p137:full-page:a0:result0:r18:w9・p137:full-page:a0:result0:r84・p137:full-page:a0:result0:r84:w6・p139:full-page:a0:result0:r75・p139:full-page:a0:result0:r75:w4・p150:full-page:a0:result0:r18・p150:full-page:a0:result0:r18:w4・p150:full-page:a0:result0:r25・p150:full-page:a0:result0:r25:w4・p152:full-page:a0:result0:r21・p152:full-page:a0:result0:r21:w1・p153:full-page:a0:result0:r75・p153:full-page:a0:result0:r75:w2・p154:full-page:a0:result0:r14・p154:full-page:a0:result0:r14:w2・p154:full-page:a0:result0:r19・p154:full-page:a0:result0:r19:w2・p155:full-page:a0:result0:r3・p155:full-page:a0:result0:r3:w8・p155:full-page:a0:result0:r57・p155:full-page:a0:result0:r57:w3・p155:full-page:a0:result0:r66・p155:full-page:a0:result0:r66:w6・p155:full-page:a0:result0:r68・p155:full-page:a0:result0:r68:w5・p155:full-page:a0:result0:r70・p155:full-page:a0:result0:r70:w5・p156:full-page:a0:result0:r1・p156:full-page:a0:result0:r1:w5・p163:full-page:a0:result0:r80・p163:full-page:a0:result0:r80:w4・p163:full-page:a0:result0:r86・p163:full-page:a0:result0:r86:w6・p165:full-page:a0:result0:r21・p165:full-page:a0:result0:r21:w11・p165:full-page:a0:result0:r31・p165:full-page:a0:result0:r31:w5・p167:full-page:a0:result0:r52・p167:full-page:a0:result0:r52:w7・p169:full-page:a0:result0:r55・p169:full-page:a0:result0:r55:w3・p169:full-page:a0:result0:r65・p169:full-page:a0:result0:r65:w4・p171:full-page:a0:result0:r5・p171:full-page:a0:result0:r5:w7・p171:full-page:a0:result0:r38・p171:full-page:a0:result0:r38:w5・p171:full-page:a0:result0:r59・p171:full-page:a0:result0:r59:w3・p171:full-page:a0:result0:r63・p171:full-page:a0:result0:r63:w3・p171:full-page:a0:result0:r65・p171:full-page:a0:result0:r65:w9・p185:full-page:a0:result0:r55・p185:full-page:a0:result0:r55:w3・p191:full-page:a0:result0:r25・p191:full-page:a0:result0:r25:w7・p191:full-page:a0:result0:r61・p191:full-page:a0:result0:r61・p191:full-page:a0:result0:r61:w8・p191:full-page:a0:result0:r61:w17・p203:full-page:a0:result0:r27・p203:full-page:a0:result0:r27:w3・p203:full-page:a0:result0:r46・p203:full-page:a0:result0:r46:w3・p205:full-page:a0:result0:r51・p205:full-page:a0:result0:r51:w3・p205:full-page:a0:result0:r66・p205:full-page:a0:result0:r66:w3・p207:full-page:a0:result0:r63・p207:full-page:a0:result0:r63:w3・p213:full-page:a0:result0:r14・p213:full-page:a0:result0:r14:w8・p213:full-page:a0:result0:r20・p213:full-page:a0:result0:r20:w5・p213:full-page:a0:result0:r79・p213:full-page:a0:result0:r79:w3・p217:full-page:a0:result0:r43・p217:full-page:a0:result0:r43:w3・p217:full-page:a0:result0:r51・p217:full-page:a0:result0:r51:w4・p217:full-page:a0:result0:r69・p217:full-page:a0:result0:r69:w7・p221:full-page:a0:result0:r72・p221:full-page:a0:result0:r72:w3・p225:full-page:a0:result0:r26・p225:full-page:a0:result0:r26:w1・p227:full-page:a0:result0:r75・p227:full-page:a0:result0:r75:w4・p229:full-page:a0:result0:r5・p229:full-page:a0:result0:r5:w6・p229:full-page:a0:result0:r7・p229:full-page:a0:result0:r7:w6・p233:full-page:a0:result0:r42・p233:full-page:a0:result0:r42:w7・p233:full-page:a0:result0:r58・p233:full-page:a0:result0:r58:w7・p233:full-page:a0:result0:r64・p233:full-page:a0:result0:r64:w8・p239:full-page:a0:result0:r41・p239:full-page:a0:result0:r41:w7・p239:full-page:a0:result0:r43・p239:full-page:a0:result0:r43:w12・p239:full-page:a0:result0:r46・p239:full-page:a0:result0:r46:w8・p239:full-page:a0:result0:r60・p239:full-page:a0:result0:r60:w9・p239:full-page:a0:result0:r62・p239:full-page:a0:result0:r62:w3・p241:full-page:a0:result0:r7・p241:full-page:a0:result0:r7:w4・p241:full-page:a0:result0:r13・p241:full-page:a0:result0:r13:w5・p241:full-page:a0:result0:r53・p241:full-page:a0:result0:r53:w9・p241:full-page:a0:result0:r76・p241:full-page:a0:result0:r76:w8・p243:full-page:a0:result0:r70・p243:full-page:a0:result0:r70:w8・p243:full-page:a0:result0:r78・p243:full-page:a0:result0:r78:w9・p249:full-page:a0:result0:r43・p249:full-page:a0:result0:r43:w7・p251:full-page:a0:result0:r13・p251:full-page:a0:result0:r13:w8・p251:full-page:a0:result0:r22・p251:full-page:a0:result0:r22:w8・p255:full-page:a0:result0:r67・p255:full-page:a0:result0:r67:w5・p257:full-page:a0:result0:r48・p257:full-page:a0:result0:r48:w10・p257:full-page:a0:result0:r52・p257:full-page:a0:result0:r52:w8・p261:full-page:a0:result0:r43・p261:full-page:a0:result0:r43:w4・p263:full-page:a0:result0:r7・p263:full-page:a0:result0:r7:w5・p271:full-page:a0:result0:r48・p271:full-page:a0:result0:r48:w5・p289:full-page:a0:result0:r32・p289:full-page:a0:result0:r32:w12・p299:full-page:a0:result0:r66・p299:full-page:a0:result0:r66:w13・p301:full-page:a0:result0:r33・p301:full-page:a0:result0:r33:w5・p301:full-page:a0:result0:r37・p301:full-page:a0:result0:r37:w4・p317:full-page:a0:result0:r60・p317:full-page:a0:result0:r60:w5・p317:full-page:a0:result0:r63・p317:full-page:a0:result0:r63:w3・p317:full-page:a0:result0:r82・p317:full-page:a0:result0:r82:w9・p319:full-page:a0:result0:r3・p319:full-page:a0:result0:r3:w7・p319:full-page:a0:result0:r5・p319:full-page:a0:result0:r5:w8・p319:full-page:a0:result0:r11・p319:full-page:a0:result0:r11:w7・p319:full-page:a0:result0:r27・p319:full-page:a0:result0:r27:w7・p321:full-page:a0:result0:r38・p321:full-page:a0:result0:r38:w9・p323:full-page:a0:result0:r24・p323:full-page:a0:result0:r24:w8・p323:full-page:a0:result0:r34・p323:full-page:a0:result0:r34:w7・p323:full-page:a0:result0:r80・p323:full-page:a0:result0:r80:w10・p325:full-page:a0:result0:r7・p325:full-page:a0:result0:r7:w6・p339:full-page:a0:result0:r36・p339:full-page:a0:result0:r36:w8・p343:full-page:a0:result0:r34・p343:full-page:a0:result0:r34:w10・p345:full-page:a0:result0:r76・p345:full-page:a0:result0:r76:w8・p347:full-page:a0:result0:r10・p347:full-page:a0:result0:r10:w7・p351:full-page:a0:result0:r38・p351:full-page:a0:result0:r38:w9・p351:full-page:a0:result0:r56・p351:full-page:a0:result0:r56:w7・p353:full-page:a0:result0:r23・p353:full-page:a0:result0:r23:w16・p359:full-page:a0:result0:r11・p359:full-page:a0:result0:r11:w3・p361:full-page:a0:result0:r7・p361:full-page:a0:result0:r7:w6・p361:full-page:a0:result0:r17・p361:full-page:a0:result0:r17:w7・p361:full-page:a0:result0:r19・p361:full-page:a0:result0:r19:w4・p361:full-page:a0:result0:r23・p361:full-page:a0:result0:r23:w4・p361:full-page:a0:result0:r25・p361:full-page:a0:result0:r25:w10・p363:full-page:a0:result0:r72・p363:full-page:a0:result0:r72:w9・p365:full-page:a0:result0:r13・p365:full-page:a0:result0:r13:w7・p365:full-page:a0:result0:r19・p365:full-page:a0:result0:r19:w7・p365:full-page:a0:result0:r49・p365:full-page:a0:result0:r49:w16・p371:full-page:a0:result0:r55・p371:full-page:a0:result0:r55:w6・p371:full-page:a0:result0:r65・p371:full-page:a0:result0:r65:w7・p371:full-page:a0:result0:r67・p371:full-page:a0:result0:r67:w4・p371:full-page:a0:result0:r71・p371:full-page:a0:result0:r71:w4・p371:full-page:a0:result0:r73・p371:full-page:a0:result0:r73:w10・p381:full-page:a0:result0:r48・p381:full-page:a0:result0:r48:w6・p383:full-page:a0:result0:r64・p383:full-page:a0:result0:r64:w8・p385:full-page:a0:result0:r47・p385:full-page:a0:result0:r47:w7・p391:full-page:a0:result0:r29・p391:full-page:a0:result0:r29:w9・p391:full-page:a0:result0:r57・p391:full-page:a0:result0:r57:w4・p403:full-page:a0:result0:r33・p403:full-page:a0:result0:r33:w8・p403:full-page:a0:result0:r37・p403:full-page:a0:result0:r37:w27・p407:full-page:a0:result0:r3・p407:full-page:a0:result0:r3:w9）・產→産 112 件（p102:full-page:a0:result0:r19・p102:full-page:a0:result0:r19:w2・p103:full-page:a0:result0:r40・p103:full-page:a0:result0:r40:w2・p103:full-page:a0:result0:r42・p103:full-page:a0:result0:r42:w0・p103:full-page:a0:result0:r67・p103:full-page:a0:result0:r67:w5・p105:full-page:a0:result0:r18・p105:full-page:a0:result0:r18:w2・p119:full-page:a0:result0:r66・p119:full-page:a0:result0:r66:w4・p119:full-page:a0:result0:r77・p119:full-page:a0:result0:r77:w2・p123:full-page:a0:result0:r49・p123:full-page:a0:result0:r49:w10・p135:full-page:a0:result0:r30・p135:full-page:a0:result0:r30:w8・p139:full-page:a0:result0:r52・p139:full-page:a0:result0:r52:w2・p163:full-page:a0:result0:r80・p163:full-page:a0:result0:r80:w1・p211:full-page:a0:result0:r47・p211:full-page:a0:result0:r47:w5・p211:full-page:a0:result0:r53・p211:full-page:a0:result0:r53:w5・p217:full-page:a0:result0:r71・p217:full-page:a0:result0:r71:w7・p227:full-page:a0:result0:r75・p227:full-page:a0:result0:r75:w1・p239:full-page:a0:result0:r43・p239:full-page:a0:result0:r43:w5・p245:full-page:a0:result0:r74・p245:full-page:a0:result0:r74:w2・p264:full-page:a0:result0:r30・p264:full-page:a0:result0:r30:w1・p277:full-page:a0:result0:r5・p277:full-page:a0:result0:r5:w1・p277:full-page:a0:result0:r21・p277:full-page:a0:result0:r21:w1・p277:full-page:a0:result0:r30・p277:full-page:a0:result0:r30:w1・p279:full-page:a0:result0:r11・p279:full-page:a0:result0:r11:w1・p281:full-page:a0:result0:r16・p281:full-page:a0:result0:r16:w1・p281:full-page:a0:result0:r43・p281:full-page:a0:result0:r43:w3・p281:full-page:a0:result0:r44・p281:full-page:a0:result0:r44:w1・p281:full-page:a0:result0:r49・p281:full-page:a0:result0:r49:w2・p281:full-page:a0:result0:r52・p281:full-page:a0:result0:r52:w1・p281:full-page:a0:result0:r70・p281:full-page:a0:result0:r70:w1・p281:full-page:a0:result0:r78・p281:full-page:a0:result0:r78:w1・p283:full-page:a0:result0:r5・p283:full-page:a0:result0:r5:w1・p283:full-page:a0:result0:r10・p283:full-page:a0:result0:r10:w3・p283:full-page:a0:result0:r20・p283:full-page:a0:result0:r20:w1・p283:full-page:a0:result0:r64・p283:full-page:a0:result0:r64:w1・p283:full-page:a0:result0:r86・p283:full-page:a0:result0:r86:w6・p285:full-page:a0:result0:r16・p285:full-page:a0:result0:r16:w1・p287:full-page:a0:result0:r34・p287:full-page:a0:result0:r34:w1・p287:full-page:a0:result0:r47・p287:full-page:a0:result0:r47:w3・p289:full-page:a0:result0:r73・p289:full-page:a0:result0:r73:w1・p291:full-page:a0:result0:r15・p291:full-page:a0:result0:r15:w4・p291:full-page:a0:result0:r21・p291:full-page:a0:result0:r21:w4・p291:full-page:a0:result0:r25・p291:full-page:a0:result0:r25:w1・p291:full-page:a0:result0:r52・p291:full-page:a0:result0:r52:w2・p291:full-page:a0:result0:r53・p291:full-page:a0:result0:r53:w1・p291:full-page:a0:result0:r59・p291:full-page:a0:result0:r59:w2・p291:full-page:a0:result0:r65・p291:full-page:a0:result0:r65:w2・p300:full-page:a0:result0:r30・p300:full-page:a0:result0:r30:w4・p302:full-page:a0:result0:r33・p302:full-page:a0:result0:r33:w4・p310:full-page:a0:result0:r26・p310:full-page:a0:result0:r26:w4・p312:full-page:a0:result0:r22・p312:full-page:a0:result0:r22:w4・p313:full-page:a0:result0:r15・p313:full-page:a0:result0:r15:w0・p351:full-page:a0:result0:r78・p351:full-page:a0:result0:r78:w0・p365:full-page:a0:result0:r31・p365:full-page:a0:result0:r31:w0・p383:full-page:a0:result0:r74・p383:full-page:a0:result0:r74:w0・p391:full-page:a0:result0:r51・p391:full-page:a0:result0:r51:w0・p395:full-page:a0:result0:r55・p395:full-page:a0:result0:r55:w11・p404:full-page:a0:result0:r19・p404:full-page:a0:result0:r19:w4）・齡→齢 14 件（p123:full-page:a0:result0:r3・p123:full-page:a0:result0:r3:w1・p181:full-page:a0:result0:r64・p181:full-page:a0:result0:r64:w3・p183:full-page:a0:result0:r9・p183:full-page:a0:result0:r9:w3・p183:full-page:a0:result0:r63・p183:full-page:a0:result0:r63:w1・p183:full-page:a0:result0:r69・p183:full-page:a0:result0:r69:w3・p379:full-page:a0:result0:r38・p379:full-page:a0:result0:r38:w2・p379:full-page:a0:result0:r47・p379:full-page:a0:result0:r47:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132021/2024/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "492823ed8717b352ab0baf8c4e74b64de854b5cb6923fba039ff25fdbe6f442e",
+          "bytes": 195501
+        },
+        "row_count": 5803
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132021/2024/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "332f5b58db54746946510fff42842eb232099b4d9f3d0563b53669c82cc01982",
+          "bytes": 142244
+        },
+        "row_count": 6085
+      }
+    }
+  ]
+}

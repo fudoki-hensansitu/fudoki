@@ -62,6 +62,8 @@ TOTAL = re.compile(r'(合計|総計)$|^計$')
 # A reserve's remark that names where it went: `…へ`, `…へ充当`.
 RESERVE_DESTINATION = re.compile(r'へ(?:予備費)?(?:充当|充用|補充)?$')
 
+NUMBER_SLACK = 6.0  # pt: how far apart two numbers of one level may start (`codeless_at_names`; `18` set right of `1`)
+
 
 @dataclass
 class Group:
@@ -103,6 +105,8 @@ class Item:
     hint: str | None = None  # the kind of the note whose parts this item prints (`note_breakdown`)
     title_depth: int = 1  # the depth of a title (level -1): 1 for a 款, 2 for a 項 (`Logical.level_titles`)
     unnumbered_shift: int = 0  # levels an unnumbered line sits below its indent (the quirk `unnumbered_shift`)
+    level_start: float | None = None  # where the numbers of the item's level start (`codeless_at_names`)
+    name_aligned: float = 0.0  # how far right of the number above an unnumbered line may start and be its sibling (`codeless_at_names`)
     kinds: list[tuple[list[Glyph], list[Glyph], str]] = field(default_factory=list)  # (label, amount run, heading) of kind lines
     shift: float = 0.0  # how far right of the axis's usual column edge the item's column stands (`column_edge`)
     sums: bool = False  # a heading over the items after it at its own level, up to their sum (`group_heads`)
@@ -760,6 +764,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         # Where the number before it is on another page or in another cell, the quirk says where the number ends.
         if glued is not None and (held := glued.module.number(raw, glued.value)) is not None:
             entries[index] = (label, money, held, raw[len(held):])
+            code = held
+        if code is not None and (legal := quirk(settings, 'legal_setsu_codes')) is not None \
+                and (held := legal.module.number(code, name or '')) != code:
+            entries[index] = (label, money, held, name)
             code = held
         if label and code is not None and code.isdigit():
             last_at[slot] = int(code)
@@ -1798,6 +1806,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
                 item.level = marks[mark] - 1
         elif unnumbered is not None and unnumbered.module.shift(item, note, unnumbered.value, id(item) in column_amount_items):
             item.unnumbered_shift = unnumbered.value
+        if (aligned := quirk(settings, 'codeless_at_names')) is not None:
+            item.name_aligned = float(aligned.value)
         previous = result[-1] if result else None
         if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
                 and normalize(previous.name).startswith(('(', '（')) and not re.search(r'[)）]', normalize(previous.name))
@@ -2487,6 +2497,22 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 elif item.unnumbered_shift:
                     depth = 1 + (min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 0) + item.unnumbered_shift
                 axis = item.group.axis
+                if item.name_aligned and item.lines and item.lines[0]:
+                    # The quirk `codeless_at_names`: an unnumbered line set where the names of the numbered line above
+                    # start is that line's sibling, and so is a numbered line whose number starts where that one's does
+                    # (its name read glued to the number, `4議員共済会負担金`, starts its indent at the name).
+                    x = item.lines[0][0].x0
+                    opened = list(branch.get(axis) or [])
+                    level = next((i for i in range(len(opened) - 1, -1, -1) if opened[i] is not None
+                                  and opened[i].level_start is not None
+                                  and (0 <= x - opened[i].level_start <= item.name_aligned if item.code is None
+                                       else abs(x - opened[i].level_start) <= NUMBER_SLACK)), None)
+                    if level is not None:
+                        level = next(i for i, o in enumerate(opened) if o is opened[level])  # (a deeper copy pads the levels between)
+                        depth = level + 1
+                        item.level_start = opened[level].level_start
+                    elif item.code is not None:
+                        item.level_start = x
                 if item.sums and item.amounts:
                     # A declared heading (`group_heads`): the items after it at its level are its, one level down,
                     # until they add up to its amount; their own items go one level down with them.

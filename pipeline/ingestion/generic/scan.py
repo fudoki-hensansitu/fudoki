@@ -306,6 +306,7 @@ def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.D
     # horizontal rules at the place of a vertical rule the page draws elsewhere closes a cell: the deepest
     # level column on a page's last row (281000).
     columns = []
+    gapped = document_quirk('gapped_column_rules')
     for x in sorted({round(r.position, 1) for r in vertical}) if staircase else ():
         across = [r for r in horizontal if r.start - 1 <= x <= r.end + 1]
         for upper, lower in zip(across, across[1:]):
@@ -315,7 +316,8 @@ def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.D
             if any(abs(r.position - x) <= 1 and r.start <= top + 1 and bottom - 1 <= r.end for r in vertical):
                 continue
             px, y0, y1 = round(x * scale), round(top * scale) + 1, round(bottom * scale)
-            if y1 > y0 and np.any(np.all(image[y0:y1, max(0, px - 1):px + 2] < dark, axis=0)):
+            strip = image[y0:y1, max(0, px - 1):px + 2] < dark
+            if y1 > y0 and (np.any(np.all(strip, axis=0)) or (gapped is not None and gapped.module.inked(strip))):
                 columns.append(pdf_rules.Rule(x, top, bottom, vertical[0].thickness))
     # And with the layout setting `rules.row_columns`, a narrow stroke that runs the whole height between two
     # horizontal rules is a column rule even where the page draws none elsewhere (131164's 財源 columns under 説明,
