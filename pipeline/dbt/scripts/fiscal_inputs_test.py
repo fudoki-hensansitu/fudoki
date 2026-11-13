@@ -1,32 +1,27 @@
-"""The committed source declarations must match the management JSONs."""
+"""Every manifest table is loaded or excluded with a reason."""
 import unittest
-from pathlib import Path
 
-import generate_sources
+import fiscal_inputs
 
 
-class GenerateSourcesTest(unittest.TestCase):
-    def test_committed_sources_match_manifests(self):
-        path = Path(generate_sources.DBT / 'models/staging/fiscal/_sources.yml')
-        self.assertEqual(path.read_text(), generate_sources.render())
-
+class FiscalInputsTest(unittest.TestCase):
     def test_every_manifest_table_is_collected_or_excluded_with_reason(self):
         import json
-        names = {e['name'] for e in generate_sources.collect()}
+        names = {e['name'] for e in fiscal_inputs.collect()}
         patterns = ('*/*/settlement/expenditure.json', '*/*/initial/expenditure.json')
         manifests = sorted({p for pattern in patterns
-                            for p in (generate_sources.PIPELINE / 'ingestion/fiscal/jurisdictions').glob(pattern)})
+                            for p in (fiscal_inputs.PIPELINE / 'ingestion/fiscal/jurisdictions').glob(pattern)})
         for path in manifests:
             document = json.loads(path.read_text())
             target = document['target']
             jurisdiction = target['jurisdiction']
             for table in document['tables']:
                 key = (jurisdiction, table['table_id'])
-                entry = generate_sources.relation_name(
+                entry = fiscal_inputs.relation_name(
                     jurisdiction, target['fiscal_year'], target['document_kind'], table['table_id'])
                 year_key = (jurisdiction, target['fiscal_year'], target['document_kind'], table['table_id'])
-                if key in generate_sources.EXCLUDE or year_key in generate_sources.EXCLUDE_YEAR:
-                    self.assertTrue(generate_sources.EXCLUDE.get(key) or generate_sources.EXCLUDE_YEAR[year_key])
+                if key in fiscal_inputs.EXCLUDE or year_key in fiscal_inputs.EXCLUDE_YEAR:
+                    self.assertTrue(fiscal_inputs.EXCLUDE.get(key) or fiscal_inputs.EXCLUDE_YEAR[year_key])
                     self.assertNotIn(entry + '_nodes', names)
                     self.assertNotIn(entry, names)
                 elif 'nodes' in table:

@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 
-from ingestion.project.layouts.press import PressItem, amount_text, lines, norm, text, words
+from ingestion.project.layouts.press import BboxPdf, PressItem, amount_text, lines, merge_close, norm, text, words
 
 NUMBER = re.compile(r'^[(（](\d+)[)）]')
 KEYS = re.compile(r'[(（](\d+)[)）]')
@@ -32,7 +32,7 @@ def _blocks(items):
 
 
 def read_page(page, number: int) -> list[PressItem]:
-    items = words(page)
+    items = merge_close(words(page))
     out: list[PressItem] = []
     for header, end, title in _blocks(items):
         inside = [w for w in items if header['top'] + 3 < w['top'] < end - 2]
@@ -85,9 +85,8 @@ def read_page(page, number: int) -> list[PressItem]:
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
-    with pdfplumber.open(path) as pdf:
+    with BboxPdf(path) as pdf:
         for number, page in enumerate(pdf.pages, start=1):
             items.extend(read_page(page, number))
             page.flush_cache()
