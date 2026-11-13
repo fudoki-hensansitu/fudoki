@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132233",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "680ae458c80f00747efb900f1208dfb856a0faea7cba78b31739f15891632a44"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "numbered_names": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            430
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "d97632bbd4b034d9b8f3b0feec1b5ee31b55ddd8b54431f8198a882134d2de13",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 215頁 から決めた。款の和 35,053,866 と印字の「歳出合計」35,053,866 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "5885d47273e067dc3008182e6a0533162f4b7e1d15e262216324a0eb3411acb5",
+          "bytes": 266134
+        },
+        "row_count": 9779
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132233/2025/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "8ee21b0628886ee1df5f97d114272684b3961bf1098fbd2bfea698ddc562d779",
+          "bytes": 157277
+        },
+        "row_count": 7803
+      }
+    }
+  ]
+}

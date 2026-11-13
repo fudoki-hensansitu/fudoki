@@ -385,6 +385,8 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
         if not money and (listed := document_quirk('list_cut')) is not None and listed.module.cut(parts):
             break
         money.insert(0, parts.pop())
+    if (numbered := document_quirk('numbered_names')) is not None and numbered.module.keeps(parts, money):
+        parts.append(money.pop(0))  # `消耗品費 1 … 104`: the number after the name is the name's
     # Full-width digits without a comma before a half-width grouped amount are part of the name (`…東京２０２４ 1,619,271`).
     while len(money) > 1 and WIDE_DIGITS.fullmatch(text(money[0])) and GROUPED.fullmatch(normalize(text(money[-1]))) \
             and not WIDE_DIGITS.search(text(money[-1])):
@@ -1278,6 +1280,9 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
                 continue
             same = [i for i, (band, _) in enumerate(tokens) if band == band_index(piece[0])]
             owner_of[position] = same[0] if len(same) == 1 else deepest_token
+        apart = []  # the quirk `codeless_deeper_names`: names in a column deeper than every code of the row
+        if (deeper := document_quirk('codeless_deeper_names')) is not None:
+            apart = deeper.module.apart(names, owner_of, [band for band, _ in tokens], band_index)
         for index, (band, piece) in enumerate(tokens):
             code, name = _split_code(normalize(text(piece)))
             own = [piece]
@@ -1290,6 +1295,12 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
                 own = [part[2] for part in parts]
             item = Item(group, piece[0].page, own, code, name, 0, level=band, fixed_anchor=centre(piece))
             item.indent = piece[0].x0
+            result.append(item)
+        if apart:
+            pieces = sorted(apart, key=centre)
+            item = Item(group, pieces[0][0].page, pieces, None, ''.join(normalize(text(p)) for p in pieces), 0,
+                        level=band_index(pieces[0][0]), fixed_anchor=centre(pieces[0]))
+            item.indent = pieces[0][0].x0
             result.append(item)
     if order:
         add_totals(order[-1])

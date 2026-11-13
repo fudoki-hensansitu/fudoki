@@ -11700,6 +11700,38 @@ sources:
       direction: expenditure
       table_id: general-initial-3
       kind: nodes
+  - name: j132233_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132233_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j132233_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132233_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132233_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132233'
@@ -11779,6 +11811,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: toshikaku-expenditure
+      kind: nodes
+  - name: j132233_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132233_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132233'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
       kind: nodes
   - name: j132241_2024_settlement_elderly_medical_expenditure_amounts
     meta:
