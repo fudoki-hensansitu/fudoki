@@ -146,7 +146,7 @@ function useAnnounce(spot: Spot) {
       live.id = 'tour-live'
       live.className = 'sr-only'
       live.setAttribute('aria-live', 'polite')
-      document.body.append(live)
+      document.body.appendChild(live)
     }
     const el = live
     // 挿入したばかりの live region にも届くよう、次の手番で差し替える
