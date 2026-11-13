@@ -354,7 +354,7 @@ const checkItems = (c: Ctx, startAt: (at: number) => void): CheckItem[] => [
   { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects?filter=new` },
   { key: 'search', label: '事業を検索する', href: searchHref('', c.town.code) },
   // アシスタントへは、事業を選んで文を添えて聞くオンボーディングの歩から始める
-  { key: 'assistant', label: 'アシスタントに質問', start: () => startAt(stepAt('detail')) },
+  { key: 'assistant', label: 'アシスタントに質問', start: () => startAt(stepAt('ask')) },
 ]
 
 

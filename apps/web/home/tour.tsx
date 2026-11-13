@@ -15,6 +15,10 @@ export const TOTAL = STEPS.length
 export const stepAt = (k: StepKey) => STEPS.indexOf(k)
 
 export type TourSaved = { at: number; state: 'on' | 'paused' | 'done' }
+/** 保存の版。2 で事業タブの歩を外した（7 歩 → 6 歩） */
+const VERSION = 2
+/** 版の無い保存（7 歩の頃）の at を今の歩へ移す。事業タブ（3）は分野の頁へ、事業の詳細・質問・答えは質問の歩へ */
+const FROM_V1 = [0, 1, 2, 2, 3, 4, 4]
 const KEY = 'fudoki:tour'
 const EVENT = 'fudoki:tour'
 
@@ -25,8 +29,10 @@ const parse = (raw: string | null): TourSaved | null => {
   if (raw === 'page') return { at: 1, state: 'on' }
   if (raw === 'done') return { at: TOTAL, state: 'done' }
   try {
-    const s = JSON.parse(raw) as TourSaved
-    return typeof s?.at === 'number' && ['on', 'paused', 'done'].includes(s.state) ? s : null
+    const s = JSON.parse(raw) as TourSaved & { v?: number }
+    if (typeof s?.at !== 'number' || !['on', 'paused', 'done'].includes(s.state)) return null
+    if (s.v === VERSION || s.state === 'done') return { at: s.state === 'done' ? TOTAL : s.at, state: s.state }
+    return { at: FROM_V1[s.at] ?? 0, state: s.state }
   } catch {
     return null
   }
@@ -40,7 +46,7 @@ const read = () => {
 }
 const write = (s: TourSaved) => {
   try {
-    localStorage.setItem(KEY, JSON.stringify(s))
+    localStorage.setItem(KEY, JSON.stringify({ ...s, v: VERSION }))
   } catch {
     // 保存できなければ、この頁だけで進む
   }
@@ -154,17 +160,16 @@ function SpotBody({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip
   )
 }
 
-/** 対象を探し、出てくるまで少し待つ（自治体の頁はデータが冷えていると15秒ほどかかる）。undefined は探している間、null は見つからなかった */
+/** 対象を探す（自治体の頁はデータが冷えていると15秒ほどかかる）。undefined は探している間、null は target が無い */
 function useTarget(target: string | undefined, first?: boolean) {
   const [el, setEl] = React.useState<HTMLElement | null | undefined>(undefined)
   React.useEffect(() => {
     setEl(undefined)
     if (!target) return setEl(null)
-    let n = 0
+    // 頁のデータが遅くても追いつけるよう、見つかるまで探し続ける（歩を離れたら止まる）
     const t = setInterval(() => {
-      n++
       const found = find(target, first)
-      if (found || n > 70) {
+      if (found) {
         clearInterval(t)
         setEl(found)
       }
@@ -265,9 +270,15 @@ export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number;
   const area = useBox(areaEl, around, false)
   const card = React.useRef<HTMLDivElement>(null)
   const [h, setH] = React.useState(180)
+  // 幅が変わって文が折り返し直したときも、置き場所を測り直す
   React.useLayoutEffect(() => {
-    if (card.current) setH(card.current.offsetHeight)
-  }, [spot.title, el])
+    const c = card.current
+    if (!c) return
+    setH(c.offsetHeight)
+    const ro = new ResizeObserver(() => setH(c.offsetHeight))
+    ro.observe(c)
+    return () => ro.disconnect()
+  }, [spot.title])
 
   // 指した所を押したら歩を進める。リンクの移動はそのまま任せる
   React.useEffect(() => {
@@ -284,7 +295,6 @@ export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number;
     return () => document.removeEventListener('keydown', onKey)
   }, [onSkip])
 
-  if (el === undefined) return null
   const tip = place(area ?? box, h)
   return createPortal(
     <div className="pointer-events-none fixed inset-0 z-[60]">
@@ -292,6 +302,7 @@ export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number;
       <div
         ref={card}
         role="region"
+        aria-live="polite"
         aria-labelledby="tour-title"
         key={spot.title}
         className="tour-tip pointer-events-auto absolute rounded-2xl border bg-background p-4 text-foreground shadow-xl"
