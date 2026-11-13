@@ -27,7 +27,7 @@
 - Goal: 補助金などの別のサービスも、同じログイン・同じ利用者 ID を使える。
 - Non-Goal: web の閲覧・アシスタントにログインを求めること。web は今のまま誰でも使える。
 - Non-Goal: 有料のプランや課金。商用での利用は今と同じく問い合わせで受ける。
-- Non-Goal: Google 以外のログイン手段（審査用のアカウントの扱いは未決事項）。
+- Non-Goal: Google 以外のログイン手段。
 
 ## 全体の形
 
@@ -122,7 +122,7 @@ REST の client ── Authorization: Bearer <API キー> ──▶ api.fudoki.d
 2. アカウントの頁を作って公開する。
 3. api に認証・記録・流量の制限を入れ、`/mcp` と `/v1/*` を同時に認証必須に切り替える。匿名の猶予は設けない。
 4. 同じ PR で docs.fudoki.dev・llms.txt・`/.well-known/mcp/server-card.json`・agent readiness の案内・plugin bundle（`plugins/fudoki`）・[policies](../mcp-distribution/policies.md)・privacy・terms・[submission](../mcp-distribution/submission.md)（「アカウント・API key は不要」と審査の test case）を認証つきに直す。
-5. ChatGPT のアプリと Claude の connector を OAuth の設定で出し直し、審査を受ける。3 から審査が通るまで、ChatGPT に掲載中のアプリは使えない（2026-11-13 yuito 了承）。
+5. ChatGPT のアプリと Claude の connector を OAuth の設定で出し直し、審査を受ける。審査用には専用の Google アカウントを作って渡す。OpenAI は MFA・確認コードなしで入れるテスト用のアカウントを求めるが、Google は見慣れない端末からのログインに本人確認を求めることがある。それで差し戻されたら、AuthKit でパスワードのログインを足す。3 から審査が通るまで、ChatGPT に掲載中のアプリは使えない（2026-11-13 yuito 了承）。
 
 ## テスト
 
@@ -141,7 +141,6 @@ JWT の検証は、テストで作った鍵の JWKS を渡して確かめる。W
 
 ## 未決事項
 
-- 審査用のアカウント。OpenAI の審査は MFA・メールのコードなしで入れるテスト用のアカウントを求める。Google の新しいアカウントは別の端末からのログインで本人確認を求められやすい。AuthKit でメールとパスワードのログインも有効にするか、審査用の Google アカウントで通すかを決める。Claude の提出の要件も確かめる。
 - アカウントの頁の repo 名とドメイン（風土記と補助金で共通の名前にするか）。
 - 流量の上限の最初の値。
 - ChatGPT・Claude の client が CIMD と DCR のどちらで来るか。両方を有効にするので動作は変わらないが、5 で確かめる。
