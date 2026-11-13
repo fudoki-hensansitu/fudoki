@@ -38,6 +38,7 @@
 - `model.ts` は副作用・I/O を持たない（zod と型だけ）。web が import しても Worker の処理を引き込まないようにする。
 - 既存の `@fudoki/fiscal`（COFOG・節のマスタ）と `@fudoki/jurisdictions`（自治体の registry）はマスタとして残し、`model.ts` から参照する。
 - 列の説明の正は dbt の `_models.yml`（→ `columns.json`）の1つにする。zod の schema は列の説明を `columns.json` から引いて `.describe()` に付ける。型と `_models.yml` の照合（列の集合・nullable・accepted_values）は、warehouse を使わず yml と TS を突き合わせる静的な検査にし、CI の verify で回す。
+- web が Hono RPC で公開 API を呼ぶ記述は [ADR 0044](../../adr/0044-separate-web-and-public-api.md) で置き換えた（2026-11-13）。web は api の内部の RPC を使う。
 - api の各集約の dir は `model.ts`（zod の schema と型）・`routes.ts`（Hono の route）・`tools.ts`（MCP の tool）・`queries.ts`（SQL）・`assemble.ts`（D1 の行から応答の型を組み立てる）を持つ。REST は `@hono/zod-openapi` の `createRoute` と `.openapi()` を集約ごとに書き下ろし、`app.route()` でまとめて `AppType` を export する（今は操作の一覧からループで登録しているので型が外に出ない）。web は Hono RPC（`hc<AppType>`）に Service Binding の `fetch` を渡して型付きで呼ぶ。MCP の tool は同じ zod の schema と `queries.ts` を使って登録する。1つの schema から REST・OpenAPI・MCP の tool・web の型が出る。検索の共通部品（`search.ts` の where の組み立て・上限）と、3つの出典の表を `sha256`・`origin_id` で引く照会は `apps/api/src/shared/` に置く。
 
 ## 型の名前
@@ -112,7 +113,7 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 - 事業評価・予算案の `get` も歳出と同じく表の行のまま返す（`EvaluationOutput` は `evaluation`・`sheets`（ページ）・`origins`、`SheetOutput` は `sheet`・`indicators`・`indicator_values`・`origins`、`BudgetProposalOutput` は `budget_proposal`・`measures`（1,000 件まで）・`origins`）。ドメインの型（`Evaluation` など）には組み直さない。
 - kill switch・流量・入力の上限は今の仕組みを全操作に掛ける。
 - MCP Apps の View（`apps/api/ui/`）は tool 名と応答の形で描き方を決めている（`ui/types.ts` の `toolFor`、`render_expenditure_view`、web の `VIEW_TOOLS`・`bridge.ts`）。新しい tool 名に付け替え、`src/gen/view.ts` を作り直す。`render_expenditure_view` は名前を残す。
-- web の呼び出し（MCP と REST）は同じ PR で新しい名前に直し、jurisdiction の cache の版（`jurisdiction-vN`）を上げる。
+- web の呼び出し（MCP と REST）は同じ PR で新しい名前に直し、jurisdiction の cache の版（`jurisdiction-vN`）を上げる。（web が公開 API を呼ぶ前提は ADR 0044 で置き換えた。2026-11-13）
 
 ### AI Search を外すときに消すもの
 
