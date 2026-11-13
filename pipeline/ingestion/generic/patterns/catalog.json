@@ -95,6 +95,7 @@
     "full_width_names": "ingestion.generic.patterns.quirks.full_width_names",
     "department_amounts": "ingestion.generic.patterns.quirks.department_amounts",
     "abolished_marks": "ingestion.generic.patterns.quirks.abolished_marks",
+    "codeless_priced_moku": "ingestion.generic.patterns.quirks.codeless_priced_moku",
     "department_heading_slack": "ingestion.generic.patterns.quirks.department_heading_slack",
     "department_line": "ingestion.generic.patterns.quirks.department_line",
     "digit_set_codes": "ingestion.generic.patterns.quirks.digit_set_codes",

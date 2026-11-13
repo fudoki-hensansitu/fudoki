@@ -2035,6 +2035,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         and (previous.code is not None or (logical.level_titles is not None and id(previous) in column_amount_items))
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts
+                        # (a line that opens with a bracket starts an item of its own: `bracketed_subjects`)
+                        and not (bracketed is not None and item.lines and bracketed.module.marked(item.lines[0]))
                         # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)
                         # (no rule between them in the amount columns: a subject of its own has its amount in a cell of its own)
                         and (id(item) not in column_amount_items
@@ -2057,6 +2059,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         column_amount_items.add(id(previous))
                     continue
                 kept.append(item)
+            if group.subject and (dropped_moku := quirk(document, 'codeless_priced_moku')) is not None:
+                dropped_moku.module.shift(kept, group, column_amount_items,
+                                          lambda item: bracketed is not None and bool(item.lines) and bracketed.module.marked(item.lines[0]))
             if group.mode == "indent":
                 subject_pattern.align(logical, group, kept, alignment)
                 if group.subject and (digit_set := quirk(document, 'digit_set_codes')) is not None:
@@ -2292,6 +2297,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         headings = heading_names(logical)
         subject_depth = max((g.levels or len(g.bands) for g in ordered if g.subject), default=3) \
             + (titled if any(title_shift(g) for g in ordered if g.subject) else 0)
+        if ((document or {}).get('hierarchy') or {}).get('subject', {}).get('fourth_level_axis'):
+            # The level below 目 is a breakdown (`fourth_level_axis`): a 目 is the deepest subject, and the lines of
+            # its row are its items (奥多摩町's 予算書 prints the 目's 節 on its row, its 事業 below).
+            subject_depth = min(subject_depth, 3)
         row = None  # (subject item, top, bottom) of the latest subject row
         opening = logical.reprints  # no subject with a code has begun on this page yet
         page_axes: set[str] = set()  # the breakdown axes with an item on this page so far (`repeated_at_top`)
@@ -2798,7 +2807,8 @@ def repeated_parent_rows(nodes: list[dict], amounts: list[dict], unowned: list[d
 
     A row has no name and no row of its own, and each of its printed amounts is equal, to the yen and in the
     same column (or a column of the same amount phase: a 節 column's `金額` and the account's `計` both
-    stand for the 予算現額), to the amount of the nearest 款・項・目 row above it on the page. One amount that differs keeps
+    stand for the 予算現額), to the amount of the nearest 款・項・目 row above it on the page (on the page before, for
+    a row that no such row precedes on its page). One amount that differs keeps
     the whole row unowned (the check stops). The row is recorded, not dropped: its glyphs become an excluded
     region of kind `親の繰り返し`.
     """
@@ -2818,6 +2828,13 @@ def repeated_parent_rows(nodes: list[dict], amounts: list[dict], unowned: list[d
                      and (a['header_path'] == record['header']
                           or (phase is not None and header_phase(a['header_path']) == phase))
                      and a['y1'] is not None and a['y1'] <= y0 + 1]
+            if not above:
+                # A row at the top of a page reprints the account the page goes on with (奥多摩町's `09 （地域振興費）`
+                # with its amounts): the last 款・項・目 row of the page before.
+                above = [a for a in amounts if a['node_key'] in subject and a['physical_page'] == page - 1
+                         and (a['header_path'] == record['header']
+                              or (phase is not None and header_phase(a['header_path']) == phase))
+                         and a['y1'] is not None]
             nearest = max(above, key=lambda a: a['y1'], default=None)
             same = nearest is not None and normalize(nearest['amount_text']) == normalize(record['text'])
             matched.append(same)
