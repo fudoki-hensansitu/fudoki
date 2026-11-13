@@ -102,6 +102,7 @@ function groupYears(rows: YearRow[]) {
 export interface ListInput {
   name?: string
   code?: string
+  prefecture_code?: string
   page_size?: number
   page_token?: string
 }
@@ -110,6 +111,7 @@ export async function listJurisdictions(ctx: Ctx, input: ListInput): Promise<Jur
   const { db } = ctx
   const name = input.name?.normalize('NFKC').trim() || undefined
   const code = input.code
+  const prefecture = input.prefecture_code
   const limit = input.page_size ?? DEFAULT_JURISDICTION_PAGE_SIZE
   const conds: string[] = []
   const params: string[] = []
@@ -122,8 +124,12 @@ export async function listJurisdictions(ctx: Ctx, input: ListInput): Promise<Jur
     conds.push(code.length === 5 ? 'substr("jurisdiction_code", 1, 5) = ?' : '"jurisdiction_code" = ?')
     params.push(code)
   }
+  if (prefecture !== undefined) {
+    conds.push('"prefecture_code" = ?')
+    params.push(prefecture)
+  }
   const where = conds.length > 0 ? conds.join(' AND ') : '1 = 1'
-  const fp = ['jurisdictions', name ?? null, code ?? null]
+  const fp = ['jurisdictions', name ?? null, code ?? null, prefecture ?? null]
   const offset = await decodeToken(input.page_token, fp)
   const pageSql = `SELECT "jurisdiction_code" FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY "jurisdiction_code" LIMIT ? OFFSET ?`
   const pageParams = [...params, limit, offset]
