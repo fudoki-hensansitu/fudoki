@@ -393,6 +393,9 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
         if not money and (listed := document_quirk('list_cut')) is not None and listed.module.cut(parts):
             break
         money.insert(0, parts.pop())
+    if (not money and parts and len(parts[-1]) > 1 and (short := document_quirk('short_amounts_at_line_end')) is not None
+            and short.module.ends_line(text(parts[-1][:-1]), normalize(parts[-1][-1].text))):
+        money.append([parts[-1].pop()])  # `…委員報償金81`: the short amount set close after the name, one run with it
     if (numbered := document_quirk('numbered_names')) is not None and numbered.module.keeps(parts, money):
         parts.append(money.pop(0))  # `消耗品費 1 … 104`: the number after the name is the name's
     # Full-width digits without a comma before a half-width grouped amount are part of the name (`…東京２０２４ 1,619,271`).

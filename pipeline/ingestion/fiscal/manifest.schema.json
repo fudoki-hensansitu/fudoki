@@ -192,6 +192,10 @@
               "const": true,
               "description": "Cut a name box taller than the page's usual line (two printed lines the detector boxed as one) at the blank rows between its lines and read each line alone. For a scan whose wrapped names sit almost touching; omission leaves the observation as the engine read it."
             },
+            "letterspaced_names": {
+              "const": true,
+              "description": "For a scan with letterspaced names whose first and last characters the detector drops: two re-reads of one line that read across each other are joined into one, and a mark still missed is read with the rest of its line in the cell by the engine, its characters taken only where that reading differs from OCR's by one insertion at the mark. Omission leaves the observation as the engine read it."
+            },
             "dashed_rules": {
               "const": true,
               "description": "The scan draws vertical dashed rules (調布市, between the levels of the 款・項・目 codes). Their dashes are not missed ink and are whitened where missed ink is read again, so the digit beside them is read alone."

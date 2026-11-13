@@ -34,6 +34,7 @@
     "shape": "ingestion.generic.patterns.breakdown.shape",
     "position": "ingestion.generic.patterns.breakdown.position",
     "flat": "ingestion.generic.patterns.breakdown.flat",
+    "amount_ends": "ingestion.generic.patterns.breakdown.amount_ends",
     "numbered": "ingestion.generic.patterns.breakdown.numbered",
     "setsu_lines": "ingestion.generic.patterns.breakdown.setsu_lines"
   },
@@ -114,6 +115,7 @@
     "full_width_numbers": "ingestion.generic.patterns.quirks.full_width_numbers",
     "glued_project_codes": "ingestion.generic.patterns.quirks.glued_project_codes",
     "spaced_project_codes": "ingestion.generic.patterns.quirks.spaced_project_codes",
+    "short_amounts_at_line_end": "ingestion.generic.patterns.quirks.short_amounts_at_line_end",
     "gapped_column_rules": "ingestion.generic.patterns.quirks.gapped_column_rules",
     "glued_number_stops": "ingestion.generic.patterns.quirks.glued_number_stops",
     "repeated_at_top": "ingestion.generic.patterns.quirks.repeated_at_top",
