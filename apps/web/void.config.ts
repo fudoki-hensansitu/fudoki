@@ -16,7 +16,8 @@ const shared = {
   ai: { binding: 'AI' },
   // 風土記の MCP（apps/api）。workers.dev を閉じているので Worker 間で直接呼ぶ
   services: [
-    { binding: 'API', service: 'fudoki-api' },
+    // apps/api の内部の RPC（apps/api の Web）。web が api を読むのはこれだけ（server/fudoki-api.ts）
+    { binding: 'WEB', service: 'fudoki-api', entrypoint: 'Web' },
     // 出典の頁の文字を読む内部の RPC（apps/api の SourcePages）。頁の文字は apps/api が D1 から読む
     { binding: 'SOURCES', service: 'fudoki-api', entrypoint: 'SourcePages' },
   ],

@@ -1,4 +1,4 @@
-// 事業評価の集約の REST。route は書き下ろし、型を AppType に載せる（web が Hono RPC で呼ぶ）。
+// 事業評価の集約の REST。route は書き下ろし、型を AppType に載せる。
 import { createRoute, z } from '@hono/zod-openapi'
 import { getErrors, ok, postErrors, routes } from '../shared/http'
 import { pageTokenOf, queryPageSize } from '../shared/paging'

@@ -41,7 +41,7 @@ def page_lines(path) -> Iterator[tuple[int, list[str]]]:
 
 @dataclass
 class BboxPage:
-    """bbox の頁を、様式の規則が使う pdfplumber の頁と同じ形で渡す。語は text・x0・x1・top・bottom と、字の大きさの目安 size（語の高さ）を持つ。"""
+    """bbox の頁を、様式の規則が使う pdfplumber の頁と同じ形で渡す。語は text・x0・x1・top・bottom と、字の大きさの目安 size を持つ（既定は語の高さ、`BboxPdf(path, fonts=True)` なら pdfplumber の文字の大きさで、fontname も持つ）。"""
     width: float
     height: float
     items: list[dict]
@@ -60,11 +60,17 @@ class BboxPage:
 class BboxPdf:
     """`pdfplumber.open` の代わりに bbox（`page_words`）で頁を読む。"""
 
-    def __init__(self, path) -> None:
-        self.pages = [BboxPage(page.width, page.height, [{'text': w.text, 'x0': w.x0, 'x1': w.x1, 'top': w.y0, 'bottom': w.y1,
-                                                          'size': w.y1 - w.y0} for w in page.words],
-                               page_words.lines(page))
-                      for page in page_words.pages(Path(path))]
+    def __init__(self, path, fonts: bool = False) -> None:
+        """fonts なら語の字の大きさ size とフォント名 fontname を `page_words.fonts` で取る。無ければ size は語の高さで代える。"""
+        read = page_words.pages(Path(path))
+        styles = page_words.fonts(Path(path), read) if fonts else {}
+        self.pages = []
+        for page in read:
+            items = []
+            for index, w in enumerate(page.words):
+                size, name = styles[page.number][index] if fonts else (w.y1 - w.y0, '')
+                items.append({'text': w.text, 'x0': w.x0, 'x1': w.x1, 'top': w.y0, 'bottom': w.y1, 'size': size, 'fontname': name})
+            self.pages.append(BboxPage(page.width, page.height, items, page_words.lines(page)))
 
     def __enter__(self) -> BboxPdf:
         return self

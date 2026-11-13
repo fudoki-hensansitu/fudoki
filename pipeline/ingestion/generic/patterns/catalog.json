@@ -15,6 +15,7 @@
     "purpose_section": "ingestion.generic.patterns.layout.purpose_section",
     "subject_cards": "ingestion.generic.patterns.layout.subject_cards",
     "listed_sources": "ingestion.generic.patterns.layout.listed_sources",
+    "redrawn_facing_pages": "ingestion.generic.patterns.layout.redrawn_facing_pages",
     "redrawn_headers": "ingestion.generic.patterns.layout.redrawn_headers"
   },
   "headers": {
@@ -32,7 +33,8 @@
     "indent": "ingestion.generic.patterns.breakdown.indent",
     "shape": "ingestion.generic.patterns.breakdown.shape",
     "position": "ingestion.generic.patterns.breakdown.position",
-    "flat": "ingestion.generic.patterns.breakdown.flat"
+    "flat": "ingestion.generic.patterns.breakdown.flat",
+    "numbered": "ingestion.generic.patterns.breakdown.numbered"
   },
   "repairs": {
     "line_clips": "ingestion.generic.patterns.repairs.line_clips",
@@ -88,7 +90,6 @@
     "bracket_marks": "ingestion.generic.patterns.quirks.bracket_marks",
     "bracketed_counts": "ingestion.generic.patterns.quirks.bracketed_counts",
     "bracketed_remainder": "ingestion.generic.patterns.quirks.bracketed_remainder",
-    "codeless_deeper_names": "ingestion.generic.patterns.quirks.codeless_deeper_names",
     "codeless_column_items": "ingestion.generic.patterns.quirks.codeless_column_items",
     "code_gap_wraps": "ingestion.generic.patterns.quirks.code_gap_wraps",
     "code_run_into_name": "ingestion.generic.patterns.quirks.code_run_into_name",
@@ -98,6 +99,7 @@
     "counted_cities": "ingestion.generic.patterns.quirks.counted_cities",
     "full_width_names": "ingestion.generic.patterns.quirks.full_width_names",
     "deducted_formulas": "ingestion.generic.patterns.quirks.deducted_formulas",
+    "delta_minus": "ingestion.generic.patterns.quirks.delta_minus",
     "department_amounts": "ingestion.generic.patterns.quirks.department_amounts",
     "abolished_marks": "ingestion.generic.patterns.quirks.abolished_marks",
     "codeless_priced_moku": "ingestion.generic.patterns.quirks.codeless_priced_moku",
@@ -114,6 +116,7 @@
     "glued_numbers": "ingestion.generic.patterns.quirks.glued_numbers",
     "glued_subject_codes": "ingestion.generic.patterns.quirks.glued_subject_codes",
     "group_heads": "ingestion.generic.patterns.quirks.group_heads",
+    "glyph_strokes": "ingestion.generic.patterns.quirks.glyph_strokes",
     "heading_repeated_over_code": "ingestion.generic.patterns.quirks.heading_repeated_over_code",
     "headings": "ingestion.generic.patterns.quirks.headings",
     "inner_tables": "ingestion.generic.patterns.quirks.inner_tables",
