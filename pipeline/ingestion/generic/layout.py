@@ -174,10 +174,12 @@ def repeated_header(page: Page, frame, header_bottom: float, body: list[tuple[in
                   and header_bottom + 1 < h.y0 <= bottom + 1)
     rows = list(zip([header_bottom] + full, full))
     inside = lambda w, a, b: x0 < (w.x0 + w.x1) / 2 < x1 and a < (w.y0 + w.y1) / 2 < b
+    characters = document_quirk('header_characters')
+    known = (lambda text: characters.module.matches(text, header)) if characters is not None else (lambda text: text in header)
     skip: set[int] = set()
     for number, (upper, lower) in enumerate(rows):
         words = [(i, w) for i, w in body if inside(w, upper, lower)]
-        if len(words) < 4 or sum(normalize(w.text) in header for _, w in words) < REPEATED_HEADER * len(words):
+        if len(words) < 4 or sum(known(normalize(w.text)) for _, w in words) < REPEATED_HEADER * len(words):
             continue
         skip.update(i for i, _ in words)
         if number:

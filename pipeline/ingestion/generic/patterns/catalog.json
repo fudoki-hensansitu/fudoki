@@ -146,6 +146,7 @@
     "skewed_frames": "ingestion.generic.patterns.quirks.skewed_frames",
     "broken_column_rules": "ingestion.generic.patterns.quirks.broken_column_rules",
     "glued_titles": "ingestion.generic.patterns.quirks.glued_titles",
+    "header_characters": "ingestion.generic.patterns.quirks.header_characters",
     "project_blocks": "ingestion.generic.patterns.quirks.project_blocks",
     "specks": "ingestion.generic.patterns.quirks.specks",
     "spread_columns": "ingestion.generic.patterns.quirks.spread_columns",
