@@ -173,7 +173,7 @@ export function Empty({ entries, onPick, reveal, again }: { entries: MapEntry[];
   )
 }
 
-/** はじめにやることの項目。href へ移る。押しても済みにはしない（済みは丸を押したときだけ） */
+/** はじめにやることの項目。押すと済みにして href へ移る */
 export type CheckItem = { key: string; label: string; href?: string }
 const CHECK = 'fudoki:checklist'
 type CheckState = { done: string[]; closed?: boolean }
@@ -196,7 +196,7 @@ export const startChecklist = () => {
   }
 }
 
-/** はじめにやること。各行は頁へ移るだけ。済みにするのは丸を押したときだけで、もう一度押すと外せる */
+/** はじめにやること。行を押すと済みにして頁へ移る。丸を押すと済み・未了を切り替えられる */
 export function Checklist({ items }: { items: CheckItem[] }) {
   const [st, setSt] = React.useState<CheckState | null>(null)
   React.useEffect(() => {
@@ -218,7 +218,10 @@ export function Checklist({ items }: { items: CheckItem[] }) {
   if (!st || st.closed) return null
   const all: CheckItem[] = [{ key: 'town', label: '住んでいるまちを選ぶ' }, ...items]
   const isDone = (key: string) => st.done.includes(key)
-  // 丸を押したときだけ済み・未了を切り替える
+  // 丸は済み・未了を切り替え、行は済みにしてから移る
+  const markDone = (key: string) => {
+    if (!isDone(key)) save({ ...st, done: [...st.done, key] })
+  }
   const toggle = (key: string) => save({ ...st, done: isDone(key) ? st.done.filter((k) => k !== key) : [...st.done, key] })
   const n = all.filter((x) => isDone(x.key)).length
   const complete = n === all.length
@@ -255,7 +258,7 @@ export function Checklist({ items }: { items: CheckItem[] }) {
                 </span>
               </button>
               {x.href ? (
-                <Link href={x.href} className={row}>
+                <Link href={x.href} className={row} onClick={() => markDone(x.key)}>
                   {label}
                   <ArrowRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
                 </Link>
