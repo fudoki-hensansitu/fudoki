@@ -39,6 +39,40 @@ def page_lines(path) -> Iterator[tuple[int, list[str]]]:
         yield page.number, page_words.lines(page)
 
 
+@dataclass
+class BboxPage:
+    """bbox の頁を、様式の規則が使う pdfplumber の頁と同じ形で渡す。語は text・x0・x1・top・bottom と、字の大きさの目安 size（語の高さ）を持つ。"""
+    width: float
+    height: float
+    items: list[dict]
+    printed: list[str]
+
+    def extract_words(self, **_) -> list[dict]:
+        return [dict(w) for w in self.items]
+
+    def extract_text(self) -> str:
+        return '\n'.join(self.printed)
+
+    def flush_cache(self) -> None:
+        pass
+
+
+class BboxPdf:
+    """`pdfplumber.open` の代わりに bbox（`page_words`）で頁を読む。"""
+
+    def __init__(self, path) -> None:
+        self.pages = [BboxPage(page.width, page.height, [{'text': w.text, 'x0': w.x0, 'x1': w.x1, 'top': w.y0, 'bottom': w.y1,
+                                                          'size': w.y1 - w.y0} for w in page.words],
+                               page_words.lines(page))
+                      for page in page_words.pages(Path(path))]
+
+    def __enter__(self) -> BboxPdf:
+        return self
+
+    def __exit__(self, *_) -> None:
+        pass
+
+
 def words(page) -> list[dict]:
     return page.extract_words(keep_blank_chars=False, use_text_flow=False, extra_attrs=['size'])
 

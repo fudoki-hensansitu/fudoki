@@ -15,7 +15,7 @@ from __future__ import annotations
 import re
 from pathlib import Path
 
-from ingestion.project.layouts.press import PressItem, big_amounts, lines, norm, text, words
+from ingestion.project.layouts.press import BboxPdf, PressItem, big_amounts, lines, norm, text, words
 
 AMOUNT_SIZE = 19
 NUMBERED_TITLE = re.compile(r'^\d+[ー-]\d+\s*')  # 「１ー①」は NFKC で「1ー1」になる
@@ -102,11 +102,10 @@ def _block_title(items: list[dict], amounts: list, amount) -> str:
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     from ingestion.fiscal.manifest import sha_file
     digest = sha_file(Path(path))[:8]
     items: list[PressItem] = []
-    with pdfplumber.open(path) as pdf:
+    with BboxPdf(path) as pdf:
         for number, page in enumerate(pdf.pages, start=1):
             items.extend(read_page(page, number, digest))
             page.flush_cache()
