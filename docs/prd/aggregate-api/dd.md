@@ -100,7 +100,7 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 | --- | --- | --- |
 | 自治体 | `GET /v1/jurisdictions`（要約: 人口の推移・歳出の収録の年度と会計・事業評価と予算案の年度）・`GET /v1/jurisdictions/{code}`（会計ごとの出典まで） | `list_jurisdictions` |
 | 歳出 | `POST /v1/expenditures/subjects:search`・`POST /v1/expenditures/details:search`・`GET /v1/expenditures/lines/{line_id}`（科目か内訳と、その直下。印字の位置と出典まで）・`GET /v1/expenditures/origins/{origin_id}/pdf` | `search_expenditure_subjects`・`search_expenditure_details`・`get_expenditure_line` |
-| 事業評価 | `GET /v1/evaluations/{evaluation_id}`（根・件数・シートの要約。シートはページ）・`GET /v1/evaluations/sheets/{sheet_id}`（指標まで）・`POST /v1/evaluations/sheets:search` | `get_evaluation`・`get_evaluation_sheet`・`search_evaluation_sheets` |
+| 事業評価 | `GET /v1/evaluations/{evaluation_id}`（根・出典・シートの要約。シートはページ）・`GET /v1/evaluations/sheets/{sheet_id}`（指標まで）・`POST /v1/evaluations/sheets:search` | `get_evaluation`・`get_evaluation_sheet`・`search_evaluation_sheets` |
 | 予算案 | `GET /v1/budget-proposals/{budget_proposal_id}`（施策まで）・`POST /v1/budget-proposals/measures:search` | `get_budget_proposal`・`search_budget_measures` |
 | 事業 | `GET /v1/projects/{project_id}`（年度と直下の事業まで。評価シート・施策は返さない）・`POST /v1/projects:search` | `get_project`・`search_projects` |
 
