@@ -59,8 +59,7 @@ import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
 import { pageHead } from '../html'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
-import { AskDock, type AskControl } from '../ask-dock'
-import { usePageTour } from './page-tour'
+import { AskDock } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView, type Moku, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, hasTab, type PageTab } from '../types'
 import { directionOf, DIRECTION_ICONS, GRADES, yearView, type AccountTotal, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import { listKey, listPage, projectFull, projectOfDetail, type ListPage, type ListQuery, type ProjectFull } from './api'
@@ -105,7 +104,7 @@ const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
 type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
-type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected) => void; selected: Selected; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void; /** オンボーディングの事業の詳細の歩で、詳細の頭に出す吹き出し */ coach: ((p: ProjectFull) => React.ReactNode) | null }
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected) => void; selected: Selected; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void }
 /** 文脈に添える、開いている事業の評価シート（評価は過去の年度にしか無いので全年度の新しい順）・施策の数の上限（文脈の長さの上限に収める） */
 const DETAIL_SOURCES = 3
 /** 詳細に開いているものを、アシスタントに渡す文脈の行にする。出典の origin_id と頁・科目の ID を添え、AI が検索し直さずに読めるようにする */
@@ -489,7 +488,7 @@ function Overview({ go }: { go: Go }) {
         ) : null}
       </section>
 
-      <section data-tour="fields">
+      <section>
         <SectionHead title="分野" />
         {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
         <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
@@ -539,7 +538,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
   // 事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある）
   const moku = v.hasProjects ? [] : v.mokuRows.filter((p) => (field === 'all' || v.fieldOf(p) === field) && (!q || p.name.includes(q)))
   return (
-    <div data-tour="projects" className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[220px] flex-1">
           <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -634,7 +633,7 @@ function ProjectDetail({ id }: { id: string }) {
 }
 
 function ProjectBody({ p }: { p: ProjectFull }) {
-  const { v, d, select, years, coach } = useApp()
+  const { v, d, select, years } = useApp()
   const ys = String(v.year)
   const amt = (y: string) => (d.kinds[y] === 'settlement' ? p.y[y]?.s : p.y[y]?.b) ?? null
   const now = amt(ys)
@@ -646,7 +645,6 @@ function ProjectBody({ p }: { p: ProjectFull }) {
   const field = v.fieldOf(p)
   return (
     <>
-      {coach?.(p)}
       <p className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">{p.path.filter(Boolean).map((x, i) => <React.Fragment key={i}>{i ? <CaretRightIcon className="size-2.5" /> : null}{x}</React.Fragment>)}</p>
       <h2 className="mt-1.5 mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
         {ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : null}
@@ -846,7 +844,7 @@ function FieldPage({ id }: { id: string }) {
   const ss = v.sheets.filter((s) => s.field === f.id)
   return (
     <>
-      <div data-tour="field">
+      <div>
       <div className="flex items-center gap-3">
         <span className="grid size-12 place-items-center rounded-2xl bg-card text-muted-foreground"><FieldIcon id={f.id} className="size-6" /></span>
         <div className="min-w-0">
@@ -1089,14 +1087,6 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
     void router.visit(pageHref(year, tab), { preserveState: true })
     window.scrollTo({ top: 0 })
   }
-  // オンボーディングが頁を動かす。分野の頁を閉じてまとめ・事業のタブへ
-  const leaveField = (t: TabKey) => {
-    select(null)
-    setFieldPage(null)
-    setTab(t)
-    window.scrollTo({ top: 0 })
-  }
-  const askControl = React.useRef<AskControl>(null)
   React.useEffect(() => {
     // 戻る・進むでは、URL の分野に画面を合わせる（年度・タブは移った頁の loader が渡す）
     const onPop = () => {
@@ -1202,23 +1192,6 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
     </header>
   )
 
-  const tour = usePageTour({
-    name: data.name,
-    v,
-    fieldPage,
-    tab,
-    project: selected?.kind === 'project' ? selected.id : null,
-    openField,
-    toOverview: () => leaveField('overview'),
-    toProjects: () => {
-      setFilter('all')
-      setField('all')
-      leaveField('projects')
-    },
-    selectProject: (id) => select(id ? { kind: 'project', id } : null),
-    ask: askControl,
-  })
-
   const panel = (key: TabKey) =>
     !v ? null : key === 'overview' ? <Overview go={go} /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
 
@@ -1263,7 +1236,7 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
             </div>
           </div>
           {v ? (
-            <AppContext.Provider value={{ d, page: data, years, v, res, select, selected, go, openField, flow, flowFailed, pickAccount, coach: tour.coach }}>
+            <AppContext.Provider value={{ d, page: data, years, v, res, select, selected, go, openField, flow, flowFailed, pickAccount }}>
               {fieldPage ? (
                 <div key={fieldPage} className="app-in pt-6"><FieldPage id={fieldPage} /></div>
               ) : phone ? (
@@ -1320,9 +1293,7 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
           )}
         </Tabs>
       </div>
-      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? describeSelected(selected, d, v, res) : '')} section={TABS.find((t) => t.key === tab)?.label} control={askControl} {...tour.askProps} />
-      {/* オンボーディングの続き（ホームでまちを選んだ人と、はじめにやることから再開した人だけ）。それ以外では何も描かない */}
-      {tour.overlay}
+      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? describeSelected(selected, d, v, res) : '')} section={TABS.find((t) => t.key === tab)?.label} />
     </div>
   )
 }

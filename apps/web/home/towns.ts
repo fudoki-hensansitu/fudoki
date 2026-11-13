@@ -46,6 +46,12 @@ export function setMyTown(t: Town | null) {
   window.dispatchEvent(new Event(EVENT))
 }
 
+/** アシスタントに渡す文脈の1行。住んでいるまちを選んでいれば、そのまちを伝える（選んでいなければ空） */
+export function myTownContext() {
+  const t = read()
+  return t ? `利用者が住んでいるまち（本人が選んだもの）: ${t.name}（自治体コード: ${t.code}）` : ''
+}
+
 /** うちのまちと最近見たまち（うちのまちを除く）。描いたあとに読む（サーバーの HTML では空） */
 export function useMyTown() {
   const [town, setTown] = React.useState<Town | null>(null)
