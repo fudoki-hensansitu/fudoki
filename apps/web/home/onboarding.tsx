@@ -2,12 +2,12 @@
 // 1 住んでいるまちを選ぶ（名前／現在地）→ 2 選んだまちの要点を一枚で見せる（価値の瞬間）→ ツアー（tour.tsx）→ チェックリスト（1つ目は済み、閉じられる）。
 // まちの検索は、選ぶ前は住んでいるまちを選ぶ欄（AskTown）、選んだあとはほかのまちを見る欄（OtherTowns）の1つだけ出す。「ホーム」「見るまち」のような通じない言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
 import * as React from 'react'
-import { ArrowRightIcon, CheckIcon, NavigationArrowIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
-import { useRouter } from '@void/react'
+import { ArrowRightIcon, CheckIcon, MagnifyingGlassIcon, NavigationArrowIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { Mark } from '../nav/site-nav'
 import { Picker as TownPicker } from './town-picker'
+import { TownPalette, warmTowns } from '../nav/town-palette'
 import { LocateError, locateMunicipality } from './locate'
 import { TOTAL, type TourSaved } from './tour'
 import type { MapEntry } from '../jurisdiction/index-table'
@@ -128,12 +128,20 @@ function LocateResult({ loc, onPick, onRetry, onClose }: { loc: Locate; onPick: 
 }
 
 /** ほかのまちを見る検索。住んでいるまちを選んだあとのホームに出し、選んだまちの頁へ移るだけ（住んでいるまちは変えない） */
-export function OtherTowns({ entries, className }: { entries: MapEntry[]; className?: string }) {
-  const { visit } = useRouter()
-  if (!entries.length) return null
+export function OtherTowns({ className }: { className?: string }) {
+  const [open, setOpen] = React.useState(false)
   return (
     <section className={cn('ob-rise', className)} aria-label="ほかのまちを見る">
-      <TownPicker plain entries={entries} onPick={(e) => visit(e.path)} placeholder="自治体名で探す（例：世田谷）" />
+      <button
+        type="button"
+        onClick={() => (warmTowns(), setOpen(true))}
+        onPointerEnter={warmTowns}
+        className="flex h-12 w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-[15px] text-muted-foreground transition-colors hover:bg-card"
+      >
+        <MagnifyingGlassIcon className="size-5 shrink-0" aria-hidden="true" />
+        まちを探す
+      </button>
+      <TownPalette open={open} onOpenChange={setOpen} />
     </section>
   )
 }

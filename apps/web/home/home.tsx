@@ -370,7 +370,7 @@ function FeaturedTowns({ featured, entries }: { featured: Featured[]; entries: M
     <section className="mt-10" aria-labelledby="featured-towns">
       <h2 id="featured-towns" className="mb-3 text-[17px] font-semibold">他のまちを見る</h2>
       {/* 住んでいるまちは変えずに、そのまちの頁を開く（緑の札の「住んでいるまちを選ぶ」とは別の、地のままの検索欄） */}
-      <OtherTowns entries={entries} className="mb-3" />
+      <OtherTowns className="mb-3" />
       <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
         {items.map((t) => (
           <li key={t.code}>
@@ -502,7 +502,7 @@ export function Home({ entries, featured }: HomeProps) {
           )
         ) : null}
         {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
-        <OtherTowns entries={entries} className="mb-3" />
+        <OtherTowns className="mb-3" />
         {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
         <div className="mb-2 flex justify-end">
           <button type="button" onClick={reset} className="text-[13px] text-muted-foreground hover:text-foreground">
