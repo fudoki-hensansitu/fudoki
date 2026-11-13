@@ -818,6 +818,19 @@ def items(group: Group, header: str, margins: set[int] | None = None,
               if sum(entries[i][2] is not None for i in ix) == 1 and len(ix) > 1
               and sum(bool(entries[i][1]) for i in ix) <= 1 and len({beside(entries[i][0]) for i in ix} - {frozenset()}) <= 1
               and wraps(0, ix) for i in ix}
+    if 0 in single and quirk(settings, 'name_tails_over_pages') is not None:
+        # The page's first lines (before its first number) are the rest of the name that ended the page before, not
+        # the start of this cell's item.
+        leading = set()
+        for i in sorted(single[0]):
+            if entries[i][2] is not None or entries[i][1]:
+                break
+            leading.add(i)
+        rest = tuple(i for i in single[0] if i not in leading)
+        for i in single[0]:
+            single.pop(i, None)
+        if len(rest) > 1:
+            single.update({i: rest for i in rest})
     repeated_headings: set[int] = set()
     if (repeated := quirk(settings, 'heading_repeated_over_code')
             or quirk(settings, 'repeated_subject_headings')) is not None:
@@ -2194,6 +2207,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 previous.name += first.name
                 previous.lines += first.lines
                 previous.amounts += first.amounts
+            elif previous is not None and (tail := quirk((layout or {}).get(group.axis), 'name_tails_over_pages')) is not None:
+                while mine and tail.module.runs_on(previous, mine[0]):
+                    first = mine.pop(0)
+                    previous.name += first.name
+                    previous.lines += first.lines
             if mine:
                 tails[group.axis] = mine[-1]
     for axis, hints in (layout or {}).items():

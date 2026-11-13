@@ -35,10 +35,13 @@
     "flat": "ingestion.generic.patterns.breakdown.flat"
   },
   "repairs": {
+    "line_clips": "ingestion.generic.patterns.repairs.line_clips",
     "opening_cell": "ingestion.generic.patterns.repairs.opening_cell",
     "overprint": "ingestion.generic.patterns.repairs.overprint",
+    "spaced_codes": "ingestion.generic.patterns.repairs.spaced_codes",
     "split_at_rules": "ingestion.generic.patterns.repairs.split_at_rules",
     "stacked_rows": "ingestion.generic.patterns.repairs.stacked_rows",
+    "em_boxes": "ingestion.generic.patterns.repairs.em_boxes",
     "justified_names": "ingestion.generic.patterns.repairs.justified_names",
     "white_text": "ingestion.generic.patterns.repairs.white_text"
   },
@@ -135,6 +138,7 @@
     "names_in_own_column": "ingestion.generic.patterns.quirks.names_in_own_column",
     "open_subject_cells": "ingestion.generic.patterns.quirks.open_subject_cells",
     "names_over_pages": "ingestion.generic.patterns.quirks.names_over_pages",
+    "name_tails_over_pages": "ingestion.generic.patterns.quirks.name_tails_over_pages",
     "numbers_set_right": "ingestion.generic.patterns.quirks.numbers_set_right",
     "office_departments": "ingestion.generic.patterns.quirks.office_departments",
     "one_row_header": "ingestion.generic.patterns.quirks.one_row_header",

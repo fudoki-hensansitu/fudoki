@@ -1,0 +1,138 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132187",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b77bc54c6920912738417fa87cb0a3ff7224cfdd2e7a20a5865d0185f96d1c30"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "facing_pages",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true,
+                  "yen_marked": true,
+                  "yen_notes": true
+                },
+                "quirks": {
+                  "headings": true,
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "repairs": [
+            "em_boxes",
+            "line_clips",
+            "spaced_codes"
+          ]
+        },
+        "pages": [
+          [
+            60,
+            285
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p285-reserve-amount",
+            "page": 285,
+            "bbox": [
+              178,
+              214,
+              216,
+              228
+            ],
+            "kind": "親の繰り返し",
+            "reason": "予備費の節の欄の金額。予備費は節の区分を印字せず金額だけを印字し、その額は目（予備費）の額と同じ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "939737d7a2cf2e1e5a38fbe490b50ea33aba679ed78463ddb3318faa7d4120a9",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 113頁 から決めた。款の和 35,540,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132187/2024/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "f432f250b976cec973213dcf4dd11e07eb331b429f17ae96b74589c1d69df213",
+          "bytes": 160903
+        },
+        "row_count": 5075
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132187/2024/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "5146069c1e9a54f2b10dc548e2cda0393189960c3e4886fc4df1c808d541f000",
+          "bytes": 119085
+        },
+        "row_count": 5276
+      }
+    }
+  ]
+}
