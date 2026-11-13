@@ -4,7 +4,7 @@ import { ListMagnifyingGlassIcon, MagnifyingGlassIcon, RobotIcon } from '@phosph
 import { useRouter } from '@void/react'
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { Item } from './site-nav'
-import { TownPalette, warmTowns } from './town-palette'
+import { TownPalette } from './town-palette'
 
 /** まちを探す。欄を押すか ⌘K で、画面の中央に候補のパレット（TownPalette）を開く。選んだまちの頁へ移る */
 function TownSearch() {
@@ -14,24 +14,19 @@ function TownSearch() {
     const onKey = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault()
-        warmTowns()
         setOpen((o) => !o)
       }
     }
     window.addEventListener('keydown', onKey)
     return () => window.removeEventListener('keydown', onKey)
   }, [])
-  const show = () => {
-    warmTowns()
-    setOpen(true)
-  }
+  const show = () => setOpen(true)
   const palette = <TownPalette open={open} onOpenChange={setOpen} />
   // サイドバーの項目と同じ SidebarMenuButton・同じ形（角丸・高さ・icon と文字の位置）で描き、枠を付けずに薄い地だけで欄とわかるようにする。閉じているときは他の項目と同じ icon だけにする
   return (
     <SidebarMenuItem className="mb-2 group-data-[collapsible=icon]:mb-0">
       <SidebarMenuButton
         onClick={show}
-        onPointerEnter={warmTowns}
         aria-keyshortcuts="Meta+K Control+K"
         tooltip={state === 'collapsed' && !isMobile ? 'まちを探す' : undefined}
         // oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで
@@ -51,7 +46,7 @@ export function NavContent() {
   const { path } = useRouter()
   return (
     <SidebarGroup className="pt-1">
-      <SidebarMenu data-tour="nav">
+      <SidebarMenu>
         <TownSearch />
         <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
         <Item href="/search" label="事業を検索" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/search')} />

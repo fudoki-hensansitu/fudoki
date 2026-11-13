@@ -26,7 +26,7 @@ from pathlib import Path
 import re
 
 from ingestion.generic import mixed, observe as observe_module, scan as scan_module
-from ingestion.generic.patterns import building
+from ingestion.generic.patterns import building, document_quirk
 from ingestion.generic.runtime import run_pages
 from ingestion.generic.workflow import effective_settings
 from ingestion.generic.headers import canonical
@@ -120,6 +120,12 @@ def lay_notes(built) -> tuple[list[dict], list[dict], list[dict], set, list]:
         # The dictionary first; then what the account says (a reserve's remarks are 充用); then the
         # transfer words of a remark.
         kind = kind_of(label) or record.get('hint') or kind_of(label, words=record['kind'] == 'annotation')
+        if (record['kind'] == 'annotation' and (notes := document_quirk('dropped_notes')) is not None
+                and record.get('hint') in notes.module.REASONS):
+            # The funding of the item (`（特定財源 9,533 一般財源 3,016,275）`), or its head count (`２６人`): no note on it.
+            dropped_notes = built.__dict__.setdefault('dropped_notes', {})
+            dropped_notes.setdefault(record['hint'], []).extend([*record['label'], *(g for run in record['runs'] for g in run)])
+            continue
         if kind is None:
             if record['kind'] == 'annotation' and record['runs']:
                 where = record['runs'][0][0] if record['runs'] else (record['label'][0] if record['label'] else None)
@@ -198,6 +204,10 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     """
     regions = coverage_regions([(g.page, g.original, g.text) for g in codes], kind='本文',
                                reason='注記の文言に印字された流用元・流用先の科目コード。金額は注記金額として取り込み済み。')
+    if (notes := document_quirk('dropped_notes')) is not None:
+        for kind, glyphs in built.__dict__.get('dropped_notes', {}).items():
+            regions += coverage_regions([(g.page, g.original, g.text) for g in glyphs], kind=kind,
+                                        reason=notes.module.REASONS[kind])
     for logical in logicals:
         for band in logical.bands:
             # The digits a column sets past its right rule (`overhang`) are still the column's.
@@ -282,7 +292,9 @@ def formula_words(observed) -> list[tuple]:
                             if abs(other[0].y0 - run[0].y0) <= 1.5)
             spaced = ((LONE_PRICE.fullmatch(joined) and SPACED_COUNT.match(after))
                       or (AMOUNT_TERM.fullmatch(joined) and after.startswith('×')))
-            if lone or spaced or ('×' in joined and FORMULA.fullmatch(joined)):
+            deducted = document_quirk('deducted_formulas')
+            if lone or spaced or ('×' in joined and (FORMULA.fullmatch(joined) or (
+                    deducted is not None and deducted.module.reckoning(joined, FORMULA, PRICE)))):
                 found += [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for w in run]
     return found
 

@@ -1,4 +1,4 @@
--- 内訳の枝の根（科目の直下）の見出しには、出典（自治体・年度・資料区分）ごとの分け方の宣言が要る。
+-- 内訳の枝の根（科目の直下）の見出しには、出典（自治体・年度・資料区分）ごとの分け方の宣言が要る（見出し「節」は宣言が無ければ節）。
 -- 宣言の無い枝は内訳の表に入らないので、新しい出典・見出しが黙って落ちないよう止める。
 -- 宣言の書き方は seed fiscal_detail_breakdown の説明と .agents/skills/pipeline/ を見る。
 select distinct jurisdiction_code, fiscal_year, document_kind, source_heading, 'undeclared_heading' as failure
