@@ -8,6 +8,9 @@ from __future__ import annotations
 
 import re
 
+from pathlib import Path
+
+from ingestion.generic import page_words
 from ingestion.project.layouts.press import PressItem, norm
 
 START = re.compile(r'^\d+ 予算のポイント')
@@ -22,53 +25,51 @@ def _open(text: str) -> bool:
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
     inside = False
-    with pdfplumber.open(path) as pdf:
-        for number, page in enumerate(pdf.pages, start=1):
-            rows = [(norm(line['text']), line['x0']) for line in page.extract_text_lines()]
-            page.flush_cache()
-            position = 0
-            current: PressItem | None = None
-            state = None  # name → points
-            for row, x0 in rows:
-                if START.match(row):
-                    inside = True
-                    continue
-                if END.match(row):
-                    inside = False
-                    break
-                if not inside:
-                    continue
-                entry = ENTRY.match(row)
-                if entry:
-                    position += 1
-                    amount = entry.group(3)
-                    current = PressItem(number, entry.group(2), [], entry.group(1) == '新',
-                                        int(amount.replace(',', '')) if amount else None, [], position)
-                    items.append(current)
-                    current_x0 = x0
-                    state = 'name'
-                    continue
-                if current is None:
-                    continue
-                if state == 'name' and not OTHER.match(row) and x0 >= current_x0 + 6:
-                    amount = re.search(r' ([\d,]+) ?千円$', row)
-                    if amount and current.budget_thousand is None:
-                        current.budget_thousand = int(amount.group(1).replace(',', ''))
-                        row = row[:amount.start()]
-                    current.title += row
-                    continue
-                if row.startswith('(') and not ACCOUNT.match(row) and state in ('name', 'points') and \
-                        (state == 'name' or not current.points or not _open(''.join(current.points))):
-                    current.points.append(row)
-                    state = 'points'
-                    continue
-                if state == 'points' and current.points and _open(''.join(current.points)):
-                    current.points.append(row)
-                    continue
-                state = None
+    for page in page_words.pages(Path(path)):
+        number = page.number
+        rows = [(norm(line), row[0].x0) for line, row in zip(page_words.lines(page), page_words.rows(page.words)[1])]
+        position = 0
+        current: PressItem | None = None
+        state = None  # name → points
+        for row, x0 in rows:
+            if START.match(row):
+                inside = True
+                continue
+            if END.match(row):
+                inside = False
+                break
+            if not inside:
+                continue
+            entry = ENTRY.match(row)
+            if entry:
+                position += 1
+                amount = entry.group(3)
+                current = PressItem(number, entry.group(2), [], entry.group(1) == '新',
+                                    int(amount.replace(',', '')) if amount else None, [], position)
+                items.append(current)
+                current_x0 = x0
+                state = 'name'
+                continue
+            if current is None:
+                continue
+            if state == 'name' and not OTHER.match(row) and x0 >= current_x0 + 6:
+                amount = re.search(r' ([\d,]+) ?千円$', row)
+                if amount and current.budget_thousand is None:
+                    current.budget_thousand = int(amount.group(1).replace(',', ''))
+                    row = row[:amount.start()]
+                current.title += row
+                continue
+            if row.startswith('(') and not ACCOUNT.match(row) and state in ('name', 'points') and \
+                    (state == 'name' or not current.points or not _open(''.join(current.points))):
+                current.points.append(row)
+                state = 'points'
+                continue
+            if state == 'points' and current.points and _open(''.join(current.points)):
+                current.points.append(row)
+                continue
+            state = None
     out = []
     for item in items:
         if '再掲' in item.title or '歳入' in item.title:

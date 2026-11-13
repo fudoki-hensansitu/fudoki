@@ -106,10 +106,12 @@ def code_fingerprint(origin: dict) -> str:
         files = sheet.modules() if workflow else [Path(layout(origin['layout']).__file__)]
     else:
         files = [*(press.modules(workflow) if workflow else [Path(layout(origin['layout']).__file__)]), HERE / 'layouts' / 'press.py']
+    from importlib.metadata import version
+
     from ingestion.lib import poppler
 
-    # bbox（page_words・observe）と固定した Poppler の版は、読む経路を問わず効く
-    digest = hashlib.sha256(poppler.pinned().encode())
+    # bbox（page_words・observe）と固定した Poppler・pdfplumber の版は、読む経路を問わず効く
+    digest = hashlib.sha256(f'{poppler.pinned()} pdfplumber {version("pdfplumber")}'.encode())
     for path in [*files, *BBOX_CODE]:
         digest.update(path.read_bytes())
     if workflow is not None:

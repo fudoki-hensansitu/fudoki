@@ -6,9 +6,9 @@ from __future__ import annotations
 
 import re
 
-from ingestion.project.layouts.press import PressItem, norm
+from ingestion.project.layouts.press import PressItem, norm, page_lines
 
-AMOUNT = re.compile(r'([\d,]+)千円\(')
+AMOUNT = re.compile(r'(\d{1,3}(?: ?,\d{3})*)千円\(')  # bbox は「2 ,180 ,090千円」と桁の区切りの前で語を切る
 
 
 def _items(row: str):
@@ -21,24 +21,21 @@ def _items(row: str):
                 end = index
                 break
         if end is not None:
-            yield int(match.group(1).replace(',', '')), row[match.end():end].strip()
+            yield int(re.sub(r'[ ,]', '', match.group(1))), row[match.end():end].strip()
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
-    with pdfplumber.open(path) as pdf:
-        for number, page in enumerate(pdf.pages, start=1):
-            rows = [norm(line) for line in (page.extract_text() or '').split('\n')]
-            page.flush_cache()
-            position = 0
-            for index, row in enumerate(rows):
-                if row.count('(') > row.count(')') and AMOUNT.search(row):
-                    for following in rows[index + 1:index + 3]:
-                        if ')' in following and '千円' not in following:
-                            row += following
-                            break
-                for amount, name in _items(row):
-                    position += 1
-                    items.append(PressItem(number, name, [name], False, amount, [], position))
+    for number, printed in page_lines(path):
+        rows = [norm(line) for line in printed]
+        position = 0
+        for index, row in enumerate(rows):
+            if row.count('(') > row.count(')') and AMOUNT.search(row):
+                for following in rows[index + 1:index + 3]:
+                    if ')' in following and '千円' not in following:
+                        row += following[following.rfind(' ', 0, following.index(')')) + 1:]  # bbox は同じ高さの図の字を行の頭に並べる
+                        break
+            for amount, name in _items(row):
+                position += 1
+                items.append(PressItem(number, name, [name], False, amount, [], position))
     return items

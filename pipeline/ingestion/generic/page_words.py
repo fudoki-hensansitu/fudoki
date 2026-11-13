@@ -65,13 +65,13 @@ def pages(pdf: Path) -> list[Page]:
 
 def fonts(pdf: Path, pages_: list[Page]) -> dict[int, list[tuple[float, str]]]:
     """頁ごとに、語ごとの字の大きさとフォント名。pdfplumber の文字を語の箱に当て、箱に中心が入る文字の最頻値にする。
-    当たる文字の無い語は (語の高さ, '')。プレスの規則が要るときだけ呼ぶ（全頁を pdfplumber で読むので重い）。"""
+    当たる文字の無い語は (語の高さ, '')。回転した頁では pdfplumber の size が字の送り幅になる。プレスの規則が要るときだけ呼ぶ（全頁を pdfplumber で読むので重い）。"""
     import pdfplumber
     out: dict[int, list[tuple[float, str]]] = {}
     with pdfplumber.open(pdf) as doc:
         for page in pages_:
             plumbed = doc.pages[page.number - 1]
-            # Poppler の座標は CropBox の左上が原点。pdfplumber の頁の原点（bbox の左上）に合わせる
+            # Poppler の原点（MediaBox の左上）に合わせる。pdfplumber は頁の bbox の左上から測る
             dx, dy = plumbed.bbox[0], plumbed.bbox[1]
             chars = [((c['x0'] + c['x1']) / 2 - dx, (c['top'] + c['bottom']) / 2 - dy, round(c['size'], 2), c['fontname'])
                      for c in plumbed.chars if c['text'].strip()]
