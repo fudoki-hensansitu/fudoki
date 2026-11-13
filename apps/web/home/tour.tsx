@@ -133,6 +133,28 @@ function Dots({ at }: { at: number }) {
   )
 }
 
+/**
+ * 歩の見出しと本文を読み上げに伝える。吹き出しは歩ごとに作り直すので、頁に1つだけ置いて残す live region の中身を差し替える
+ * （内容の入った live region を新しく挿入しても読み上げられないため）
+ */
+function useAnnounce(spot: Spot) {
+  const text = `${spot.title}。${typeof spot.body === 'string' ? spot.body : ''}`
+  React.useEffect(() => {
+    let live = document.getElementById('tour-live')
+    if (!live) {
+      live = document.createElement('div')
+      live.id = 'tour-live'
+      live.className = 'sr-only'
+      live.setAttribute('aria-live', 'polite')
+      document.body.append(live)
+    }
+    const el = live
+    // 挿入したばかりの live region にも届くよう、次の手番で差し替える
+    const t = setTimeout(() => (el.textContent = text), 120)
+    return () => clearTimeout(t)
+  }, [text])
+}
+
 /** 吹き出しの中身。次へ進むボタンは置かない（指した所を本人が操作して進む） */
 function SpotBody({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip: () => void; onBack?: () => void }) {
   return (
@@ -269,6 +291,7 @@ export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number;
   const areaEl = useTarget(around)
   const area = useBox(areaEl, around, false)
   const card = React.useRef<HTMLDivElement>(null)
+  useAnnounce(spot)
   const [h, setH] = React.useState(180)
   // 幅が変わって文が折り返し直したときも、置き場所を測り直す
   React.useLayoutEffect(() => {
@@ -297,8 +320,7 @@ export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number;
 
   const tip = place(area ?? box, h)
   return createPortal(
-    // 歩をまたいで残る外側を live region にし、吹き出しの差し替えを内容の更新として読み上げさせる
-    <div aria-live="polite" className="pointer-events-none fixed inset-0 z-[60]">
+    <div className="pointer-events-none fixed inset-0 z-[60]">
       {box ? <Pointer box={box} gesture={spot.gesture} /> : null}
       <div
         ref={card}
@@ -317,6 +339,7 @@ export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number;
 
 /** 頁の中に置く吹き出し（暗くしない）。事業の詳細のように、ダイアログの中で文字を選んでもらう歩に使う */
 export function InlineSpot({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip: () => void; onBack?: () => void }) {
+  useAnnounce(spot)
   return (
     <section aria-labelledby="tour-title" className="tour-tip mb-5 rounded-2xl border border-primary bg-background p-4 shadow-md sm:p-5">
       <SpotBody spot={spot} at={at} onSkip={onSkip} onBack={onBack} />
