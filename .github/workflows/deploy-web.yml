@@ -45,7 +45,7 @@ jobs:
           BASE: ${{ github.event.workflow_run.head_sha || github.event.before }}
         run: |
           git fetch --no-tags --depth=1 origin "$BASE"
-          if git diff --name-only "$BASE" HEAD | grep -qE '^(apps/api/|package\.json$|bun\.lock$|bunfig\.toml$|mise\.toml$|tsconfig\.json$|\.github/workflows/deploy-api\.yml$)'; then
+          if git diff --name-only "$BASE" HEAD | grep -qE '^(apps/api/|packages/|package\.json$|bun\.lock$|bunfig\.toml$|mise\.toml$|tsconfig\.json$|\.github/workflows/deploy-api\.yml$)'; then
             echo "wait=true" >> "$GITHUB_OUTPUT"
           fi
       - if: steps.order.outputs.wait != 'true'
