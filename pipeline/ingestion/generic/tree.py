@@ -2231,7 +2231,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     carried: dict[str, tuple[Item, str | None, list[Glyph]]] = {}
     revision = quirk(document, 'revision_history')
     histories: dict[str, list] = {}  # per column: a `補正経過` the page ended in, its rounds going on over the page
-    paid_last: dict[str, Item] = {}  # per column: the item its last amount went to, on this page or before
+    paid_last: dict[str, Item] = {}  # per column: the item its last amount went to, on the latest page read
     # `amounts_next_row`: the last subject item of the page before, still without an amount (its amounts row is the
     # first row of this page), and the items that took an amount.
     waiting_subject: Item | None = None
@@ -2475,6 +2475,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             revisions: list[list] = []  # [item, top, bottom, page, label line] of each `補正経過` block on the page
             for header_ in [h for h in carried if h not in present]:
                 drop_carried_round(carried.pop(header_))  # the column does not go on on this page
+            for header_ in [h for h in paid_last if h not in present]:
+                del paid_last[header_]  # a history opening the next page belongs to this page's items only
             for band in logical.bands:
                 if band.kind != 'amount':
                     continue
@@ -2680,6 +2682,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     histories['／'.join(band.header)] = history  # the history goes on at the top of the next page
                 if previous is not None:
                     paid_last['／'.join(band.header)] = previous[0]
+                else:
+                    paid_last.pop('／'.join(band.header), None)  # no amount on this page: none to open the next
                 drop_carried_round(carry)  # no amount line in this column at all
                 if unpaid and previous is not None and stacked[1] == previous[1]:
                     carried['／'.join(band.header)] = (previous[0], stacked[0], stacked_label)
