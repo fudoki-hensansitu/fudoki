@@ -297,12 +297,12 @@ export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number;
 
   const tip = place(area ?? box, h)
   return createPortal(
-    <div className="pointer-events-none fixed inset-0 z-[60]">
+    // 歩をまたいで残る外側を live region にし、吹き出しの差し替えを内容の更新として読み上げさせる
+    <div aria-live="polite" className="pointer-events-none fixed inset-0 z-[60]">
       {box ? <Pointer box={box} gesture={spot.gesture} /> : null}
       <div
         ref={card}
         role="region"
-        aria-live="polite"
         aria-labelledby="tour-title"
         key={spot.title}
         className="tour-tip pointer-events-auto absolute rounded-2xl border bg-background p-4 text-foreground shadow-xl"
