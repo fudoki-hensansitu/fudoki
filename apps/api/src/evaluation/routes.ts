@@ -10,7 +10,7 @@ const getRoute = createRoute({
   method: 'get',
   path: '/v1/evaluations/{evaluation_id}',
   operationId: t.get.name,
-  summary: '事業評価の1年度（評価結果の件数・出典・評価シート）を取得する',
+  summary: '事業評価の1年度（出典・評価シート）を取得する',
   description: t.get.description,
   request: {
     params: z.strictObject({ evaluation_id: EvaluationId }),

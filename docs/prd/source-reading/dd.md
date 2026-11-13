@@ -30,7 +30,7 @@ flowchart LR
 
 ### 頁の文字を R2 に置く
 
-`bun run --cwd pipeline source-text:save`（`pipeline/source_text/save.py`）が、出典の選定の `evaluation_selections`・`press_selections` で R2 に保存済みの `pdf_type: text` の PDF と、事業の取り込みの宣言（`ingestion/project/origins.json` の `results`）が R2 の `project/` に保存した PDF を対象にする。R2 から出典を取って sha256 を選定と照らし、`pdftotext -bbox` の語の位置から頁ごとの文字を組み（`pipeline/source_text/layout.py`）、`source-text/<sha256>.json` に置く。語は縦の位置で行にまとめ、左端の位置まで空白で寄せて表の列を揃える。横長の頁で、幅の中ほど（35〜65%）に語の無い縦の隙間があり、左右の段の行の高さが揃っていなければ、左右の段に分けて左から並べる（縦長の頁の表の列の隙間や、見開きにまたがる1つの表は分けない）。語は Poppler の版で変わるので、mise.toml で固定した版で抜き出す（`ingestion/lib/poppler.py` の `require`）。中身は `{schema_version: 2, sha256, pages: string[]}` で、`pages[i]` が物理頁 i+1 の文字。key は出典の内容で決まるので、R2 に同じ key があれば作り直さない。抜き出し方を変えたときは `--refresh` で作り直す。既定は計画の表示だけで、`--write` で書く。
+`bun run --cwd pipeline source-text:save`（`pipeline/source_text/save.py`）が、出典の選定の `evaluation_selections`・`press_selections` で R2 に保存済みの `pdf_type: text` の PDF を対象にする。R2 から出典を取って sha256 を選定と照らし、`pdftotext -bbox` の語の位置から頁ごとの文字を組み（`pipeline/source_text/layout.py`）、`source-text/<sha256>.json` に置く。語は縦の位置で行にまとめ、左端の位置まで空白で寄せて表の列を揃える。横長の頁で、幅の中ほど（35〜65%）に語の無い縦の隙間があり、左右の段の行の高さが揃っていなければ、左右の段に分けて左から並べる（縦長の頁の表の列の隙間や、見開きにまたがる1つの表は分けない）。語は Poppler の版で変わるので、mise.toml で固定した版で抜き出す（`ingestion/lib/poppler.py` の `require`）。中身は `{schema_version: 2, sha256, pages: string[]}` で、`pages[i]` が物理頁 i+1 の文字。key は出典の内容で決まるので、R2 に同じ key があれば作り直さない。抜き出し方を変えたときは `--refresh` で作り直す。既定は計画の表示だけで、`--write` で書く。
 
 Worker で PDF から文字を抜き出すと CPU の上限（apps/api は 200ms）に収まらないので、取り込みの側で作る。
 

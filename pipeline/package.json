@@ -15,7 +15,6 @@
     "ingestion:originals": "uv run python -m ingestion.fiscal.run originals",
     "ingestion:refresh": "uv run python -m ingestion.fiscal.run refresh",
     "ingestion:ocr": "uv run --extra paddle-ocr python -m ingestion.fiscal.run ocr",
-    "project:save": "uv run python -m ingestion.project.run save",
     "project:baseline": "uv run python -m ingestion.project.baseline",
     "project:link-measures": "uv run python -m ingestion.project.link_measures",
     "project:link-projects": "uv run python -m ingestion.project.link_projects",

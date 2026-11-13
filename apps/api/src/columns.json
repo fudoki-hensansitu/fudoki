@@ -742,58 +742,6 @@
           "type": "integer",
           "nullable": false,
           "description": "評価した事業を実施した会計年度（西暦）。"
-        },
-        {
-          "name": "kind",
-          "type": "string",
-          "nullable": false,
-          "description": "with_result（評価結果の資料があり件数を持つ）か sheets_only（評価シートだけで件数は空）。",
-          "values": [
-            "with_result",
-            "sheets_only"
-          ]
-        },
-        {
-          "name": "result_origin_id",
-          "type": "string",
-          "nullable": true,
-          "description": "評価結果の資料。evaluation_origin の origin_id。sheets_only なら空。"
-        },
-        {
-          "name": "result_page",
-          "type": "integer",
-          "nullable": true,
-          "description": "評価結果の資料で合計の行を読んだ頁。"
-        },
-        {
-          "name": "evaluated_count",
-          "type": "integer",
-          "nullable": true,
-          "description": "評価した事業の数（評価結果の資料の値）。"
-        },
-        {
-          "name": "grade_a",
-          "type": "integer",
-          "nullable": true,
-          "description": "A 評価の事業の数（評価結果の資料の値）。"
-        },
-        {
-          "name": "grade_b",
-          "type": "integer",
-          "nullable": true,
-          "description": "B 評価の事業の数（評価結果の資料の値）。"
-        },
-        {
-          "name": "grade_c",
-          "type": "integer",
-          "nullable": true,
-          "description": "C 評価の事業の数（評価結果の資料の値）。"
-        },
-        {
-          "name": "grade_d",
-          "type": "integer",
-          "nullable": true,
-          "description": "D 評価の事業の数（評価結果の資料の値）。"
         }
       ]
     },
@@ -822,16 +770,6 @@
           "type": "string",
           "nullable": false,
           "description": "全国地方公共団体コード（6桁）。jurisdiction の jurisdiction_code。"
-        },
-        {
-          "name": "document_type",
-          "type": "string",
-          "nullable": false,
-          "description": "資料の種類。sheets（事務事業評価シート）・result（事務事業評価の結果）。",
-          "values": [
-            "sheets",
-            "result"
-          ]
         },
         {
           "name": "fiscal_year",

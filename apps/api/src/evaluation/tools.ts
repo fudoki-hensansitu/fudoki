@@ -26,9 +26,8 @@ const searchSheetsDescription =
   'Use get_evaluation_sheet for indicators.'
 
 const getEvaluationDescription =
-  'Return one project evaluation year of a municipality by evaluation_id: the result document counts when published (kind "with_result": evaluated_count and grade_a–grade_d as printed), the sources, and the evaluation sheets (paged with page_size and page_token). ' +
-  GRADES +
-  'The number of sheets matches evaluated_count only when every sheet was ingested.'
+  'Return one project evaluation year of a municipality by evaluation_id: the sources and the evaluation sheets (paged with page_size and page_token). ' +
+  GRADES
 
 const getSheetDescription =
   'Return one evaluation sheet by sheet_id with its indicators and the target and actual value per fiscal year, as printed on the sheet (text, not numbers). ' + GRADES
