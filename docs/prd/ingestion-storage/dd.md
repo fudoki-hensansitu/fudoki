@@ -156,7 +156,7 @@ LLMのcontextへ表やOCRの全量を出さず、詳細はファイルへ、CLI�
 
 ## Validation / Rollout
 
-`ingestion:check` をCIで実行し、全管理JSONの構造・選定との対応・保存済み表の入力条件と、合計検査の宣言の型を確認する。PDF表の合計は `ingestion:verify` で、R2の表を復元できる環境で確かめる（CIでは回さない）。変換テストでは複数出典、原文保持、対象・key・所有者の違反、局所再実行の欠落、アップロード失敗を検査する。
+`ingestion:check` をCIで実行し、全管理JSONの構造・選定との対応（会計名の scope を含む）と、合計検査の宣言の型を確認する（指紋は見ない。古い表は `ingestion:refresh --plan` と定期の refresh-check。[ADR 0027](../../adr/0027-refresh-fingerprints-by-table-content.md)）。PDF表の合計は `ingestion:verify` で、R2の表を復元できる環境で確かめる（CIでは回さない）。変換テストでは複数出典、原文保持、対象・key・所有者の違反、局所再実行の欠落、アップロード失敗を検査する。
 
 ### text PDF の網羅検査の単位と非採用範囲
 

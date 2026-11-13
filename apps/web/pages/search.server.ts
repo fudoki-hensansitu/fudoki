@@ -4,7 +4,21 @@ import { defineHandler, defineHead } from 'void'
 import { jurisdictionPath } from '../jurisdiction/path'
 import { catalog } from '../server/jurisdiction-routes'
 import type { Env } from '../server/env'
-import { apiPostAll, type DetailRow } from '../server/api-fetch'
+import { apiCall, type WebOpInput, type WebOpOutput } from '../server/fudoki-api'
+
+type DetailPage = WebOpOutput<'search_expenditure_details'>
+
+/** next_page_token が無くなるまで読む（頁数に上限を置く） */
+async function searchAll(env: Env, body: WebOpInput<'search_expenditure_details'>, maxPages: number): Promise<DetailPage[]> {
+  const out: DetailPage[] = []
+  let token: string | undefined
+  do {
+    const r = await apiCall(env)('search_expenditure_details', { ...body, ...(token ? { page_token: token } : {}) })
+    out.push(r)
+    token = r.next_page_token ?? undefined
+  } while (token && out.length < maxPages)
+  return out
+}
 
 const YEARS = [2025, 2024]
 /** 1年度で読む頁の上限（1頁1000行） */
@@ -45,7 +59,7 @@ export const loader = defineHandler<Props>(async (c) => {
   try {
     const byYear = await Promise.all(
       YEARS.map((y) =>
-        apiPostAll<{ details: DetailRow[]; next_page_token?: string | null }>(env, '/v1/expenditures/details:search', {
+        searchAll(env, {
           document_kind: 'settlement',
           fiscal_year: { min: y, max: y },
           where: { name: { contains: q }, account_name: { eq: ['一般会計'] }, ...(code ? { jurisdiction_code: { eq: [code] } } : {}) },

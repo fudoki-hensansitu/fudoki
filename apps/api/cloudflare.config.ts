@@ -15,6 +15,8 @@ export default defineConfig({
       EvaluationSearchQuota: exports.durableObject({ state: 'deleted' }),
       // web のアシスタントだけが Service Binding で呼ぶ内部の RPC（src/source-pages-entrypoint.ts）
       SourcePages: exports.worker(),
+      // web の Worker だけが Service Binding で呼ぶ内部の RPC（src/web-entrypoint.ts）。web が api を読む口（ADR 0044）
+      Web: exports.worker(),
     },
     observability: { enabled: true, headSamplingRate: 1, traces: { enabled: true, headSamplingRate: 1 } },
     env: {

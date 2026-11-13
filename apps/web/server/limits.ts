@@ -2,7 +2,7 @@
 // 値は void.config.ts と二重に持つ（apps/api と同じ。config は build のたびに評価されるので、Worker のコードを import させない）。
 /** 1つの IP が1分に始められる会話と送れるメッセージの数（session の開始と /api/chat を合わせて数える） */
 export const CHAT_RATE_LIMIT = { limit: 10, period: 60 } as const
-/** View が表の移動・追加ページで呼ぶ tool の中継。1つの IP が1分に呼べる回数 */
+/** 閲覧の読み込み（View の tool の中継・自治体の検索と札・事業の一覧の続きと詳細）を合わせて、1つの IP が1分に呼べる回数 */
 export const VIEW_RATE_LIMIT = { limit: 60, period: 60 } as const
 
 /** 1回の応答で AI が tool を呼んで考え直す段数の上限 */

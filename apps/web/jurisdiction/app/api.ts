@@ -1,20 +1,16 @@
-// 自治体の頁が事業を読む口。外の利用者と同じ公開 API（api.fudoki.dev）の事業の検索・事業を、サーバーの loader とブラウザの両方から呼ぶ。
-// 一覧は頁ごとに読む（1頁目はサーバーが描き、続きは末尾が見えたときにブラウザが取る）。分野・目で絞るときは科目の ID で絞る
-import type { AppType } from '@fudoki/api/rpc'
-import { hc, parseResponse } from 'hono/client'
+// 自治体の頁が事業を読む口。サーバーは api の内部の RPC（server/fudoki-api.ts の ApiCall）で事業の検索・事業を読み、ブラウザは web の /api（routes/api/projects）を通して同じものを読む。
+// ブラウザは api.fudoki.dev を直接は呼ばない（ADR 0044）。一覧は頁ごとに読む（1頁目はサーバーが描き、続きは末尾が見えたときにブラウザが取る）。分野・目で絞るときは科目の ID で絞る
+import type { ApiCall, WebOpInput, WebOpOutput } from '../../server/fudoki-api'
 
-export const API_ORIGIN = 'https://api.fudoki.dev'
 const ACCOUNT = '一般会計'
 /** 一覧の1頁目の件数。続きは NEXT_PAGE ずつ */
 export const FIRST_PAGE = 10
 const NEXT_PAGE = 30
 
-type Kind = 'initial' | 'settlement'
-const client = (f?: typeof fetch) => hc<AppType>(API_ORIGIN, f ? { fetch: f } : {})
-type Api = ReturnType<typeof client>
-type Body<F> = F extends (args: { json: infer J }) => unknown ? J : never
-type SearchBody = Body<Api['v1']['projects:search']['$post']>
-type YearRow = Awaited<ReturnType<typeof searchYears>>['project_years'][number]
+export type Kind = 'initial' | 'settlement'
+type SearchBody = WebOpInput<'search_projects'>
+type SearchResult = WebOpOutput<'search_projects'>
+type YearRow = SearchResult['project_years'][number]
 
 /** 一覧に出す事業の1年度 */
 export type ProjRow = {
@@ -65,7 +61,7 @@ const clean = (name: string) => name.replace(/【[^】]*】/g, '').trim()
 /** 出典の事業名の【】は所管課。名前からは外して別に持つ */
 const deptOf = (name: string) => name.match(/【([^】]*)】/)?.[1] ?? null
 
-type ProjectOf = Awaited<ReturnType<typeof searchYears>>['projects'][number]
+type ProjectOf = SearchResult['projects'][number]
 
 /** 事業の年度の行と、その事業（始め・終えは事業の列） */
 function toRow(y: YearRow, kind: Kind, p: ProjectOf | undefined): ProjRow {
@@ -83,10 +79,10 @@ function toRow(y: YearRow, kind: Kind, p: ProjectOf | undefined): ProjRow {
   }
 }
 
-const searchYears = (f: typeof fetch | undefined, json: SearchBody) => parseResponse(client(f).v1['projects:search'].$post({ json }))
+const searchYears = (call: ApiCall, json: SearchBody) => call('search_projects', json)
 
 /** 検索の応答の行を、行の事業と合わせて組む */
-const rowsOf = (r: Awaited<ReturnType<typeof searchYears>>, kind: Kind) => {
+const rowsOf = (r: SearchResult, kind: Kind) => {
   const projects = new Map(r.projects.map((p) => [p.project_id, p]))
   return r.project_years.map((y) => toRow(y, kind, projects.get(y.project_id)))
 }
@@ -111,11 +107,11 @@ function bodyOf(q: ListQuery, pageSize: number, token?: string): { body: SearchB
   }
 }
 
-/** 一覧の1頁。分野・目の科目が無ければ空 */
-export async function listPage(q: ListQuery, token?: string, f?: typeof fetch): Promise<ListPage> {
+/** 一覧の1頁（サーバー）。分野・目の科目が無ければ空 */
+export async function readListPage(call: ApiCall, q: ListQuery, token?: string): Promise<ListPage> {
   if (q.subjects && !q.subjects.length) return { rows: [], total: 0, capped: false, next: null }
   const { body, kind } = bodyOf(q, token ? NEXT_PAGE : FIRST_PAGE, token)
-  const r = await searchYears(f, body)
+  const r = await searchYears(call, body)
   return { rows: rowsOf(r, kind), total: r.total_size, capped: r.total_size_capped, next: r.next_page_token ?? null }
 }
 
@@ -138,11 +134,11 @@ export type ProjectFull = {
   settlementDetails: string[]
 }
 
-export async function projectFull(id: string, year: number, kind: Kind, f?: typeof fetch): Promise<ProjectFull> {
-  const api = client(f)
+/** 事業の詳細（サーバー） */
+export async function readProjectFull(call: ApiCall, id: string, year: number, kind: Kind): Promise<ProjectFull> {
   const [p, kids] = await Promise.all([
-    parseResponse(api.v1.projects[':project_id'].$get({ param: { project_id: id } })),
-    searchYears(f, { fiscal_year: { min: year, max: year }, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody),
+    call('get_project', { project_id: id }),
+    searchYears(call, { fiscal_year: { min: year, max: year }, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody),
   ])
   const latest = p.years.at(-1)
   const here = p.years.find((y) => y.fiscal_year === year) ?? latest
@@ -163,8 +159,28 @@ export async function projectFull(id: string, year: number, kind: Kind, f?: type
   }
 }
 
-/** 施策（当初予算）・評価シート（決算）を紐付けた内訳が載る事業 */
-export async function projectOfDetail(detail: string, year: number, kind: Kind, f?: typeof fetch): Promise<ProjRow | null> {
-  const r = await searchYears(f, { fiscal_year: { min: year, max: year }, where: { [`${kind}_expenditure_detail_id`]: { eq: [detail] } }, page_size: 1 } as SearchBody)
+/** 施策（当初予算）・評価シート（決算）を紐付けた内訳が載る事業（サーバー） */
+export async function readProjectOfDetail(call: ApiCall, detail: string, year: number, kind: Kind): Promise<ProjRow | null> {
+  const r = await searchYears(call, { fiscal_year: { min: year, max: year }, where: { [`${kind}_expenditure_detail_id`]: { eq: [detail] } }, page_size: 1 } as SearchBody)
   return rowsOf(r, kind)[0] ?? null
 }
+
+// ブラウザから読む口。web の /api（routes/api/projects.ts・routes/api/projects/[id].ts）がサーバーで上の read* を呼ぶ
+
+async function webApi<T>(path: string, init?: RequestInit): Promise<T> {
+  const r = await fetch(path, init)
+  if (!r.ok) throw new Error(`${path} ${r.status}`)
+  return (await r.json()) as T
+}
+
+/** 一覧の1頁 */
+export const listPage = (q: ListQuery, token?: string): Promise<ListPage> =>
+  webApi('/api/projects', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ query: q, ...(token ? { token } : {}) }) })
+
+/** 事業の詳細: 年度ごとの額と、開いた年度の中の事業 */
+export const projectFull = (id: string, year: number, kind: Kind): Promise<ProjectFull> =>
+  webApi(`/api/projects/${encodeURIComponent(id)}?${new URLSearchParams({ year: String(year), kind })}`)
+
+/** 施策・評価シートを紐付けた内訳が載る事業 */
+export const projectOfDetail = (detail: string, year: number, kind: Kind): Promise<ProjRow | null> =>
+  webApi(`/api/projects?${new URLSearchParams({ detail, year: String(year), kind })}`)

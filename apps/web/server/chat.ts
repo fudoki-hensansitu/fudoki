@@ -4,7 +4,7 @@ import { createMCPClient, mcpAppClientCapabilities } from '@ai-sdk/mcp'
 import { convertToModelMessages, stepCountIs, streamText, type ToolSet, type UIMessage } from 'ai'
 import { createWorkersAI } from 'workers-ai-provider'
 import type { ApiRequest } from './api'
-import { apiFetch, MCP_URL } from './env'
+import { MCP_URL, mcpFetch } from './fudoki-api'
 import { HttpError } from './http'
 import { MAX_MESSAGES, MAX_OUTPUT_TOKENS, MAX_STEPS, MAX_USER_TEXT, MAX_VIEW_CONTEXT } from './limits'
 import { toolText } from '../tool-text'
@@ -173,7 +173,7 @@ export async function handleChat(c: ApiRequest): Promise<Response> {
   const connectStarted = Date.now()
   try {
     mcp = await createMCPClient({
-      transport: { type: 'http', url: MCP_URL, fetch: apiFetch(env) },
+      transport: { type: 'http', url: MCP_URL, fetch: mcpFetch(env) },
       clientName: 'fudoki-web',
       capabilities: mcpAppClientCapabilities,
     })
