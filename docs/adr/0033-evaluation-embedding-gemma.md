@@ -1,6 +1,6 @@
 # ADR 0033: 評価の検索の埋め込みを embeddinggemma-300m（chunk 512）に変え、索引を fudoki-evaluation-v2 に移す
 
-状態: 採用（2026-10-20）。同日に `fudoki-evaluation-v2` を作り、2026-10-21 までに全1,033出典を登録し、2026-10-22 に Worker の binding を切り替えて v1 を削除した（[v2 への移行](../prd/evaluation-search/dd.md#v2-への移行の確かめ)）。[評価の検索の設計](../prd/evaluation-search/dd.md)の頁単位の登録、[ADR 0031](0031-evaluation-text-items-for-unreadable-pdfs.md) の文字の item を前提とする。
+状態: 廃止（2026-11-10）。AI Search による評価の検索をやめ、`fudoki-evaluation-v2` を消した。評価シートは構造化した表で引く。
 
 本番の評価の検索（`POST /v1/evaluations:search`）は、2026-10-14〜20 の81件のうち20件（24.7%）が8秒の打ち切りで503になった。Worker の中（D1 の kill switch・rate limit・Durable Object の回数）は中央値82ms で、所要のほとんどは AI Search の検索だった（中央値5.3秒）。AI Search を直接引くと、全文検索だけ（keyword）は中央値0.5秒・最大1.3秒で安定し、意味の近さの側（vector）は中央値2.5秒・最大8.3秒だった。インスタンス `fudoki-evaluation-v1` の埋め込み `@cf/qwen/qwen3-embedding-0.6b` を Workers AI で直接呼ぶと、検索文1つで中央値1〜5秒・最大20秒かかった。同じ時間帯に `@cf/google/embeddinggemma-300m` は中央値0.8秒・最大1.7秒、`@cf/baai/bge-m3` は中央値0.7秒・最大1.0秒だった。索引が246 item だった 2026-10-14 にも2〜6秒かかっていたので、遅さは索引の大きさではなく、検索文の埋め込みによる。計測の方法は本文のとおり。生データは調査の作業 dir（`.cache/evaluation-search-latency/`、Git 管理外）に置いたため残っていない。
 

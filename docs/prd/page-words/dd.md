@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-11-12`
-状態: In Progress（手順 1〜6 済み、7〜8 を実装中）
+状態: Done（手順 1〜8 を実装済み）
 
 ## Summary
 
@@ -29,7 +29,7 @@
 
 - Goal: 頁の語と位置を取るコードを1か所にする。語の取り方の直しは、そこを直せば評価シート・プレス・アシスタントに効く。
 - Goal: 評価シート・プレスの取り込みは、その bbox から読む。移す前の取り込み結果と突き合わせ、変わらないことを確かめる。
-- Goal: 頁の文字は marts の表にし、`serving:sync` で D1 に写す。api は公開の REST・MCP には出さず、fudoki の web だけが呼べる内部の口から返す（[source-reading の設計](../source-reading/dd.md)の Goal を引き継ぐ）。公開か内部かは api のインターフェースが決め、データの側には持たせない。
+- Goal: 頁の文字は marts の表にし、`serving:sync` で D1 に写す。api は公開の REST・MCP には出さず、fudoki の web だけが呼べる内部の口から返す。公開か内部かは api のインターフェースが決め、データの側には持たせない。
 - Goal: api から R2 の binding を外す。api が元の PDF に触れる口を無くす。
 - Non-Goal: fiscal の取り込みを bbox へ移すこと。fiscal は今の `observe.py` のまま使う。
 - Non-Goal: 予算書・決算書の頁の文字（#560 で外した）。元の PDF を配ること（中継は公式 URL から取るまま、[origin-pdf-viewer](../origin-pdf-viewer/dd.md)）。

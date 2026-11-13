@@ -2,7 +2,7 @@
 
 ## 中継と保持
 
-`GET /v1/fiscal/origins/{origin_id}/pdf` は D1 の `fiscal_origin` から URL・形式を読む。URL を入力として受けず、query の追加も拒否する。PDF の HTTP(S) URL の直接取得だけを対象とし、認証情報、非標準ポート、IP アドレス、localhost、内部向けホスト名を拒否する。リダイレクトは追わない。自治体側の移転には出典 URL を案内する。この境界なら、公開 URL に付随する任意の転送先を中継する権限を持たずに済む。
+`GET /v1/expenditures/origins/{origin_id}/pdf` は D1 の `expenditure_origin` から URL・形式を読む。URL を入力として受けず、query の追加も拒否する。PDF の HTTP(S) URL の直接取得だけを対象とし、認証情報、非標準ポート、IP アドレス、localhost、内部向けホスト名を拒否する。リダイレクトは追わない。自治体側の移転には出典 URL を案内する。この境界なら、公開 URL に付随する任意の転送先を中継する権限を持たずに済む。
 
 表示用の SQLite Durable Object `OriginPdfRelay` を1つ使う。取得 URL をキーに成功した PDF・取得日時を24時間保持し、期限後は条件付き要求を使わず全文を再取得する。成功には HTTP 200、PDF の Content-Type、先頭の `%PDF-` が必要。ファイル内容と取り込み時の sha256 は比較しない。非公開 R2 は参照しない。
 

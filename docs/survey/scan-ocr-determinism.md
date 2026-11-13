@@ -2,14 +2,14 @@
 
 2026-10-11に、同じPDF・同じ頁・同じ設定でPaddleOCRを同じMacで繰り返し実行し、native出力が一致するかを測った。native JSONのファイルはどの実行でもバイト単位では一致しなかった。差はすべて所要時間とキャッシュ状態の欄で、文字・座標・confidence・観測ID・観測の順序・描画画素はすべての実行で一致した。
 
-本書は実測値と条件を保存する。OCR結果を取り込みの入力としてどう扱うかの決定は [ADR 0019](adr/0019-freeze-scan-ocr-observations.md)、OCRエンジンの選定は [ADR 0018](adr/0018-paddle-small-for-scan-pdf.md) を参照する。
+本書は実測値と条件を保存する。OCR結果を取り込みの入力としてどう扱うかの決定は [ADR 0019](../adr/0019-freeze-scan-ocr-observations.md)、OCRエンジンの選定は [ADR 0018](../adr/0018-paddle-small-for-scan-pdf.md) を参照する。
 
 ## 実行条件
 
 - マシン: Apple M1（8コア: 高性能4・高効率4）、メモリ16GB。
 - OS: macOS 27.0（build 26A428）、arm64。
 - Python 3.13.15。paddleocr 3.7.0、paddlepaddle 3.3.1、paddlex 3.7.2、numpy 2.3.5、pillow 12.3.0、opencv-contrib-python 4.10.0.84（`uv sync --extra paddle-ocr --frozen`、main `7f3b236` のlock）。
-- モデル: [固定宣言](../pipeline/ingestion/lib/paddle_ocr_models.json) のPP-OCRv6 small。宣言ファイルSHA-256 `c1205e5310d9cd0ae117874933be6c494e78e2bdf241a55b9a672e979488955a`。重み・設定ファイルのSHAは宣言に記載したもので、読み込み時に照合した。
+- モデル: [固定宣言](../../pipeline/ingestion/lib/paddle_ocr_models.json) のPP-OCRv6 small。宣言ファイルSHA-256 `c1205e5310d9cd0ae117874933be6c494e78e2bdf241a55b9a672e979488955a`。重み・設定ファイルのSHAは宣言に記載したもので、読み込み時に照合した。
 - 描画: CoreGraphics、300dpi。Swift 6.4（swiftlang-6.4.0.34.1）、`-Onone` でコンパイルしたrenderer（binary SHA-256 `4eb15488b0eba70537fb94c4a1633fa912725a258602f31d49451d40350e57d8`）。
 - OCRコード: `paddle_ocr.py` SHA-256 `fe04326886d1916a77c0c5b319454a7cffaff4bd8941ae19467d43e60b4a5e95`（main `7f3b236`）。
 - 入口: `scan_ocr` の既定設定 `PaddleConfig()`（検出長辺1280px・原解像度認識・CPU 10 thread・認識batch 6、`retry_regions` なし）。132039のOCR取得に使った `ocr.py` と同じ値である。
@@ -45,7 +45,7 @@
 
 ## 凍結済みのnativeとの比較
 
-132039の変換が入力に使う凍結native（SHA-256 `41956f0115d9bac0835fa38959ce1ef96a4ed6a534fd99cf83a5f782d466b2b8`）は、このcheckoutのgitignore配下に無く、直接は比べていない。代わりに、凍結nativeの観測IDに結び付いた書式設定 [settlement-84743fdd.json](../pipeline/ingestion/fiscal/jurisdictions/132039/layouts/enterprise_statement/settlement-84743fdd.json) を、新しく取得したnativeで再生した。設定はメモリ上でnativeのSHAだけを差し替え、Git管理のファイルは変えていない。
+132039の変換が入力に使う凍結native（SHA-256 `41956f0115d9bac0835fa38959ce1ef96a4ed6a534fd99cf83a5f782d466b2b8`）は、このcheckoutのgitignore配下に無く、直接は比べていない。代わりに、凍結nativeの観測IDに結び付いた書式設定 [settlement-84743fdd.json](../../pipeline/ingestion/fiscal/jurisdictions/132039/layouts/enterprise_statement/settlement-84743fdd.json) を、新しく取得したnativeで再生した。設定はメモリ上でnativeのSHAだけを差し替え、Git管理のファイルは変えていない。
 
 - 訂正と見出しが参照する観測ID 131件はすべて新しいnativeに存在した。
 - 訂正22件はすべて、観測ID・セル枠・元の文字列の照合を通って適用された。見出しの対応36件も、観測ID・枠・native文字列が一致した。
