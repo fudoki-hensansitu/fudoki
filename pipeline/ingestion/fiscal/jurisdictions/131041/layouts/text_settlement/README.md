@@ -1,6 +1,6 @@
 # 新宿区の text 決算書
 
-2025決算の一般・介護・国保・後期の4表を汎用text変換へ移行した。出典SHAは `ca3f8658f6dbe295978db484227ec1c7adbdc15eeb136f109fa406798511c1eb`。頁の範囲は選定のscope、会計と表IDは管理宣言、見開きの綴じ位置は `expenditure.layout.json` の `spread.gutter=0.5` から読む。構築と保存の関門は [汎用の設計](../../../../../../../docs/prd/generic-node-builder/dd.md) と [組版設定](../../../../../../../docs/prd/generic-node-builder/layout-settings.md) に従う。
+2025決算の一般・介護・国保・後期の4表を汎用text変換へ移行した。出典SHAは `ca3f8658f6dbe295978db484227ec1c7adbdc15eeb136f109fa406798511c1eb`。頁の範囲は選定のscope、会計と表IDは管理宣言、見開きの綴じ位置は `expenditure.layout.json` の `spread.gutter=0.5` から読む。構築と保存の関門は、移行した当時の汎用のノード生成の設計書と組版設定の説明に従った（どちらも消し、git の履歴で読める）。今の読み方は [PDF workflow の設計](../../../../../../../docs/prd/pdf-workflow-patterns/dd.md)。
 
 | 会計 | ノード 前→後 | 金額件数 前→後 | 追加した節 |
 | --- | ---: | ---: | ---: |
