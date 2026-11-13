@@ -479,7 +479,7 @@ def apply_dictionary(page: Page, report: Report) -> None:
     page.words = repaired
 
 
-def join_vertical(page: Page, report: Report, stacked_rows: bool = False) -> None:
+def join_vertical(page: Page, report: Report, stacked_rows: bool = False, spaced_letters: bool = False) -> None:
     """Single characters stacked tightly in one column with no neighbour on their line are one
     vertically printed word (款・項 names in a narrow column); read it top to bottom."""
     singles = [w for w in page.words if len(w.text) == 1 and not NUMERIC.match(w.text) and w.text.strip()]
@@ -500,7 +500,8 @@ def join_vertical(page: Page, report: Report, stacked_rows: bool = False) -> Non
         # lines of a stack rows of a table, not one vertically printed word.
         return not any(_same_line(word, other) and other is not word and not walled(word, other) and
                        (abs(other.x0 - word.x1) < reach or abs(word.x0 - other.x1) < reach
-                        or (stacked_rows and load_pattern("repairs", "stacked_rows").row_neighbor(word, other)))
+                        or (stacked_rows and load_pattern("repairs", "stacked_rows").row_neighbor(word, other))
+                        or (spaced_letters and load_pattern("repairs", "spaced_letters").letter_neighbor(word, other)))
                        for other in page.words)
 
     stacks: list[list[Word]] = []
@@ -621,7 +622,7 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
         if strokes is not None:
             strokes.module.drop(page)
         repair_positions(page, report, 'split_at_rules' in repairs)
-        join_vertical(page, report, 'stacked_rows' in repairs)
+        join_vertical(page, report, 'stacked_rows' in repairs, 'spaced_letters' in repairs)
         if 'justified_names' in repairs:
             load_pattern("repairs", "justified_names").join(page)
     report.health = health(pages)
