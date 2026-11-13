@@ -3,7 +3,7 @@
 import { HTTPException } from 'hono/http-exception'
 import type { Context } from 'hono'
 import { emptyHead, pageHead, type Head } from '../../jurisdiction/html'
-import { appPageYears, hasTab, tabOfSlug, type PageData, type PageTab } from '../../jurisdiction/types'
+import { appPageYears, hasTab, tabOfSlug, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
 import { jurisdictionPath, PREFECTURE_SLUGS } from '../../jurisdiction/path'
@@ -12,6 +12,7 @@ import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
 import { catalog, pageData } from '../../server/jurisdiction-routes'
+import { ACCOUNT, loadFlowParts } from '../../server/jurisdiction'
 import { loadYearSnapshot } from '../../server/app-data'
 import type { Snapshot } from '../../jurisdiction/app/data'
 import { siteKey } from '../../server/site-key'
@@ -30,6 +31,8 @@ export type JurisdictionProps = JurisdictionView & {
   tab?: Exclude<PageTab, 'overview'>
   /** 開いた年度の款項目・施策・評価シート・事業の一覧の1頁目。サーバーで本文まで描くために渡す。API に繋がらなければ無く、画面が取る */
   snapshot?: Snapshot
+  /** 予算・決算のタブの頁（/tokyo/nakano/2025/settlement?account=…）の流れ。API に繋がらなければ無く、画面が読み直しを出す */
+  flow?: PageFlow
 }
 
 /** 年度の段（/tokyo/nakano/2024）。4桁の数字だけ */
@@ -113,26 +116,40 @@ export async function routeProps(c: Context, segments: string[]): Promise<Jurisd
 
 /** 本文のデータを待つ上限。過ぎたら本文の無い頁を返す */
 const SNAPSHOT_WAIT_MS = 3000
+/** 予算・決算の流れ（目の内訳まで）を待つ上限 */
+const FLOW_WAIT_MS = 6000
 
-/** 開いた年度の款項目・施策・評価シート・事業の一覧の1頁目を props に足す（年度の段が無ければ最新の年度） */
+const within = <T,>(p: Promise<T>, ms: number): Promise<T> => {
+  let timer: ReturnType<typeof setTimeout> | undefined
+  const deadline = new Promise<never>((_, reject) => (timer = setTimeout(() => reject(new Error('deadline')), ms)))
+  return Promise.race([p, deadline]).finally(() => clearTimeout(timer))
+}
+
+/** 開いた年度の款項目・施策・評価シート・事業の一覧の1頁目を props に足す（年度の段が無ければ最新の年度）。予算・決算のタブの頁なら、その流れも足す */
 async function withSnapshot(c: Context, props: JurisdictionProps): Promise<JurisdictionProps> {
   if (props.kind !== 'page') return props
   const env = c.env as unknown as Env
   const year = props.year ?? appPageYears(props.data)[0]
   if (year === undefined) return props
-  try {
-    const entry = (await catalog(env)).find((e) => e.code === props.data.code)
-    if (!entry) return props
-    let timer: ReturnType<typeof setTimeout> | undefined
-    const deadline = new Promise<never>((_, reject) => (timer = setTimeout(() => reject(new Error('snapshot deadline')), SNAPSHOT_WAIT_MS)))
-    const snapshot = await Promise.race([loadYearSnapshot(env, entry, year, { field: props.field }), deadline]).finally(() => clearTimeout(timer))
-    return { ...props, snapshot }
-  } catch {
-    // API に繋がらない・待ちきれなければ本文の無い頁を返し、画面が取り直す。本文の無い頁は CDN にもブラウザにも置かない
+  const entry = (await catalog(env).catch(() => [])).find((e) => e.code === props.data.code)
+  // 流れの会計は ?account= で選ぶ。無ければ一般会計。収録の無い会計は 404
+  const phase = props.tab === 'money' ? 'initial' : props.tab === 'settled' ? 'settlement' : undefined
+  const account = new URL(c.req.url).searchParams.get('account') || ACCOUNT
+  // 会計で中身の変わらない頁（予算・決算のタブ以外）の ?account= も 404 にして、CDN の key（void.config.ts の revalidateQueryAllowlist）を増やさせない
+  if (account !== ACCOUNT && (!phase || (entry && !entry.accounts?.[phase]?.[String(year)]?.includes(account)))) throw new HTTPException(404, { res: notFound() })
+  const [snapshot, flow] = await Promise.all([
+    entry ? within(loadYearSnapshot(env, entry, year, { field: props.field }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+    entry && phase ? within(loadFlowParts(env, entry.code, year, 'setsu', phase, account), FLOW_WAIT_MS)
+      // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
+      .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))
+      .catch(() => undefined) : undefined,
+  ])
+  if (!snapshot || (phase && !flow)) {
+    // API に繋がらない・待ちきれなければ、読めた分だけの頁を返し、画面が読み直す。欠けた頁は CDN にもブラウザにも置かない
     c.header('x-revalidate', '0')
     c.header('Cache-Control', 'no-store')
-    return props
   }
+  return { ...props, ...(snapshot ? { snapshot } : {}), ...(flow ? { flow } : {}) }
 }
 
 /** 分野の頁とタブの頁は、題・説明文・canonical をその頁のものにする */
@@ -172,5 +189,5 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   const neighbors = (entry.code === prefectureCode ? [...samePrefecture].sort((a, b) => a.code.localeCompare(b.code)) : nearby(entry, samePrefecture))
     .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
   const data = entry.settlementYears.length > 0 ? await pageData(env, entry) : null
-  return data ? { kind: 'page', data: { ...data, prefecturePath, ...(prefecturePath && EMBLEMS[prefectureCode] ? { prefectureLogo: assetPath(prefectureCode, 'emblem.svg') } : {}), emblem: emblemOf(entry.code), neighbors, vision: VISIONS[entry.code] ?? null, ...(entry.accounts ? { accounts: entry.accounts } : {}) } } : { kind: 'empty', entry, neighbors }
+  return data ? { kind: 'page', data: { ...data, prefecturePath, ...(prefecturePath && EMBLEMS[prefectureCode] ? { prefectureLogo: assetPath(prefectureCode, 'emblem.svg') } : {}), emblem: emblemOf(entry.code), neighbors, vision: VISIONS[entry.code] ?? null } } : { kind: 'empty', entry, neighbors }
 }

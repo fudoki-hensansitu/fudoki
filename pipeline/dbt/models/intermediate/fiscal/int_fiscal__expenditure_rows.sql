@@ -1,6 +1,6 @@
 -- 歳出の木のノードを、科目の表（款・項・目）と内訳の表（科目の下）に振り分ける準備。
 -- 科目は科目の軸（is_subject）かつ段が款・項・目のノード。軸の名前（科目・款項・款項目）では選ばない。
--- 内訳の枝の根（科目の直下）の見出しに、出典ごとの宣言 fiscal_detail_breakdown で分け方を付け、子孫へ継ぐ。
+-- 内訳の枝の根（科目の直下）の見出しに、出典ごとの宣言 fiscal_detail_breakdown（見出し「節」は宣言が無ければ節）で分け方を付け、子孫へ継ぐ。
 -- 子孫の見出しは宣言で引かない（132047 の事項の下の節は「事業」の枝の中の節）。
 -- 行の ID は資料区分・補正号・node_id から作る（node_id は当初予算と決算で同じ値になるため）。
 with recursive nodes as (
@@ -16,7 +16,8 @@ with recursive nodes as (
 ), roots as (
     select c.node_id, c.document_kind, c.source_heading,
         p.row_id as subject_row_id,
-        b.breakdown
+        -- 見出しが「節」の枝は法定の節で分けたもの。宣言が無くても節とし、宣言があればそちらを使う
+        coalesce(b.breakdown, case when c.source_heading = '節' then '節' end) as breakdown
     from heading c
     join heading p on p.node_id = c.parent_node_id and p.document_kind = c.document_kind and p.is_subject_row
     left join {{ ref('fiscal_detail_breakdown') }} b

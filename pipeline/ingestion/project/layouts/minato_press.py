@@ -12,7 +12,7 @@ from __future__ import annotations
 
 import re
 
-from ingestion.project.layouts.press import DIGITS, PressItem, lines, norm, text, words
+from ingestion.project.layouts.press import BboxPdf, DIGITS, PressItem, lines, norm, text, words
 
 NAME_SIZE = (11.5, 12.6)
 FUNDS = ('一', '国', '都', '他')
@@ -91,9 +91,8 @@ def read_page(page, number: int) -> list[PressItem]:
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
-    with pdfplumber.open(path) as pdf:
+    with BboxPdf(path) as pdf:
         for number, page in enumerate(pdf.pages, start=1):
             items.extend(read_page(page, number))
             page.flush_cache()

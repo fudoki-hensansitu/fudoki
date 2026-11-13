@@ -13,7 +13,7 @@ select t.source_table_key,
     "{{ item['amount_column'] }}" as amount_text, {{ staging_amount('"' ~ item['amount_column'] ~ '"') }} as amount,
     source_line_start::integer as source_line_start,
     source_line_end::integer as source_line_end
-from {{ source('fiscal_csv', relation) }}
+from {{ ingestion_table(relation) }}
 cross join {{ source('fiscal_metadata', 'csv_tables') }} t
 where t.relation_prefix = '{{ relation }}'
 {% if not loop.last %}union all{% endif %}
