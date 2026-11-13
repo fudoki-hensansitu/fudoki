@@ -8,6 +8,7 @@ import type { StoredSession } from '../chat/store'
 import { QUOTE_PREFIX } from '../chat/history'
 import { Hint } from '@/components/hint'
 import { reiwa } from './types'
+import { myTownContext } from '../home/towns'
 /** AI に聞く入力欄。最初は開いておき、読み進めるか Escape で右下のボタンに畳む。押すか「/」、頁の文を選んで文脈が入ったときに開く。
  * 送ると頁を移らずに会話を開く。広い画面では右の side panel（頁は読み続けられる）、スマホでは下からの drawer。閉じても会話は残り、右下のボタンで戻れる */
 const DOCK_CLOSE_AFTER = 80
@@ -83,10 +84,7 @@ function BackToTop({ hidden }: { hidden: boolean }) {
 }
 
 
-/** 外（オンボーディング）から聞く欄を動かす。open(quote) で欄を開き、quote を選んだ文として付ける */
-export type AskControl = { open: (quote?: string) => void }
-
-export function AskDock({ name, code, sitekey, year, section, detail, control, keepOpen, suggest, onReveal, onChat }: {
+export function AskDock({ name, code, sitekey, year, section, detail }: {
   name: string
   /** 6桁の自治体コード。AI が収録の自治体を確かめ直さずに調べられるよう、文脈に入れる */
   code: string
@@ -95,15 +93,6 @@ export function AskDock({ name, code, sitekey, year, section, detail, control, k
   section?: string
   /** 詳細に開いている事業・評価シートなど（送るときに読む） */
   detail?: () => string
-  control?: React.RefObject<AskControl | null>
-  /** スクロールしても畳まない（オンボーディングで欄を見せている間） */
-  keepOpen?: boolean
-  /** 入力欄の下に出す質問の例。押すとその質問で会話を始める */
-  suggest?: string[]
-  /** 頁の文を選んで、聞く欄にその文が付いたとき */
-  onReveal?: (quote: string) => void
-  /** 会話を始めたとき・答えが返ってきたとき */
-  onChat?: (e: 'started' | 'answered' | 'failed') => void
 }) {
   const [open, setOpen] = React.useState(true)
   const [chat, setChat] = React.useState<{ id: string; session: StoredSession }>()
@@ -117,12 +106,6 @@ export function AskDock({ name, code, sitekey, year, section, detail, control, k
   const held = React.useRef(false)
   /** 文脈で聞く欄を開く予約を取り消す。開く前に Escape で畳んだら、後から開き直さない */
   const cancelReveal = React.useRef(() => {})
-  /** 外から付けた選んだ文。頁の選択が外れても残し、別の文を選ぶか、外すか、送るまで持つ */
-  const pinnedQuote = React.useRef(false)
-  const onRevealRef = React.useRef(onReveal)
-  onRevealRef.current = onReveal
-  const keepOpenRef = React.useRef(keepOpen)
-  keepOpenRef.current = keepOpen
   /** 入力欄に focus した時刻。スマホでは focus で頁が動くので、その直後のスクロールでは閉じない */
   const focusedAt = React.useRef(0)
   const show = React.useCallback(() => {
@@ -135,7 +118,6 @@ export function AskDock({ name, code, sitekey, year, section, detail, control, k
     if (!open || chat) return
     // 頁でもカードの中でも、スクロールしたら閉じる（上へ戻しても閉じる）。入力欄に書きかけの文があるときだけ残す
     const close = () => {
-      if (keepOpenRef.current) return
       const field = dock.current?.querySelector<HTMLTextAreaElement | HTMLInputElement>('textarea, input')
       if (field?.value.trim()) return
       if (field && document.activeElement === field) field.blur()
@@ -160,8 +142,6 @@ export function AskDock({ name, code, sitekey, year, section, detail, control, k
       const inside = (n: Node | null | undefined) => !!n && (dock.current?.contains(n) || sheet.current?.contains(n))
       if (inside(node)) return
       const text = sel && !sel.isCollapsed ? sel.toString().replace(/\s+/g, ' ').trim() : ''
-      if (!text && pinnedQuote.current) return
-      pinnedQuote.current = false
       setQuote(text.slice(0, QUOTE_MAX))
     }
     document.addEventListener('selectionchange', onSelect)
@@ -173,7 +153,6 @@ export function AskDock({ name, code, sitekey, year, section, detail, control, k
   React.useEffect(() => {
     if (!quote) return
     const reveal = () => {
-      if (!pinnedQuote.current) onRevealRef.current?.(quote)
       if (chat) {
         if (matchMedia(WIDE_QUERY).matches) setDrawer(true)
         return
@@ -201,6 +180,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, control, k
       `${name}の頁（${location.pathname}）を見ている`,
       `自治体コード: ${code}`,
       `年度: ${reiwa(year)}（${year}年度）`,
+      myTownContext(),
       section ? `いま読んでいる節: ${section}` : '',
       detail?.() ?? '',
       quote ? `${QUOTE_PREFIX}「${quote}」` : '',
@@ -312,27 +292,11 @@ export function AskDock({ name, code, sitekey, year, section, detail, control, k
     setDragY(0)
   }
 
-  React.useImperativeHandle(control, () => ({
-    open: (q?: string) => {
-      if (q) {
-        pinnedQuote.current = true
-        setQuote(q.slice(0, QUOTE_MAX))
-      }
-      if (chat) return setDrawer(true)
-      anchor.current = window.scrollY
-      setOpen(true)
-      // キーボード・読み上げでもそのまま書けるよう、入力欄へ移す（付けた文は pinnedQuote で残る）
-      requestAnimationFrame(() => dock.current?.querySelector<HTMLElement>('textarea, input')?.focus({ preventScroll: true }))
-    },
-  }), [chat])
-
   const start = (id: string, session: StoredSession) => {
     setChat({ id, session })
     setDrawer(true)
     setOpen(false)
-    pinnedQuote.current = false
     setQuote('')
-    onChat?.('started')
   }
   const restart = () => {
     setChat(undefined)
@@ -366,7 +330,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, control, k
     <div className="mb-2 flex min-w-0 max-w-full items-center gap-2 self-start rounded-full border bg-background py-1 pl-3 pr-1 text-[12.5px] text-muted-foreground shadow-sm">
       <QuotesIcon className="size-3.5 shrink-0 text-primary" aria-hidden="true" />
       <span className="min-w-0 truncate"><span className="sr-only">選んだ文: </span>{quote}</span>
-      <button type="button" onClick={() => ((pinnedQuote.current = false), setQuote(''))} aria-label="選んだ文を外す" className="shrink-0 rounded-full p-1 hover:bg-secondary hover:text-foreground"><XIcon className="size-3" /></button>
+      <button type="button" onClick={() => setQuote('')} aria-label="選んだ文を外す" className="shrink-0 rounded-full p-1 hover:bg-secondary hover:text-foreground"><XIcon className="size-3" /></button>
     </div>
   ) : null
 
@@ -375,26 +339,13 @@ export function AskDock({ name, code, sitekey, year, section, detail, control, k
     <>
       <BackToTop hidden={docked || drawer} />
       <div ref={dock} onBlur={onDockBlur} onFocus={() => { focusedAt.current = Date.now(); anchor.current = window.scrollY }} className={`fixed inset-x-0 bottom-0 z-20 max-md:bottom-(--bottom-nav) md:left-(--nav-w) md:right-(--side-panel,0px) bg-gradient-to-t from-background from-60% to-transparent px-4 pb-[max(14px,env(safe-area-inset-bottom))] pt-3 transition-[opacity,transform] duration-200 motion-reduce:transition-none ${docked ? '' : 'pointer-events-none translate-y-4 opacity-0'}`} inert={!docked}>
-        <div data-tour="ask" className="mx-auto max-w-[720px]">
+        <div className="mx-auto max-w-[720px]">
           <StartForm
             sitekey={sitekey}
             placeholder={`${name}について質問`}
             context={describe}
             onStart={start}
             before={chip}
-            after={
-              suggest?.length
-                ? (ask, pending) => (
-                    <div data-tour="ask-suggest" className="mt-2 flex flex-wrap gap-1.5">
-                      {suggest.map((q) => (
-                        <button key={q} type="button" disabled={pending} onClick={() => void ask(q)} className="rounded-full border bg-background px-3 py-1.5 text-[13px] transition-colors hover:border-primary hover:text-primary disabled:opacity-50">
-                          {q}
-                        </button>
-                      ))}
-                    </div>
-                  )
-                : undefined
-            }
           />
         </div>
       </div>
@@ -424,7 +375,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, control, k
           >
             <div ref={scroller} className="min-h-0 flex-1 overflow-y-auto overscroll-contain">
               <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
-                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} context={describe} beforeComposer={chip} onSend={() => ((pinnedQuote.current = false), setQuote(''), onChat?.('started'))} onAnswered={(ok) => onChat?.(ok ? 'answered' : 'failed')} />
+                <Conversation key={chat.id} id={chat.id} stored={chat.session} header={header} scroller={scroller} context={describe} beforeComposer={chip} onSend={() => setQuote('')} />
               </React.Suspense>
             </div>
           </div>

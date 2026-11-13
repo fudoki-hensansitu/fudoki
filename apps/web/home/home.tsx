@@ -1,8 +1,7 @@
 // ホーム（/）。住んでいるまちのダッシュボード（総額・何に使っている・始めた事業・やめた事業・事業評価）と、ほかのまちを見る検索。
-// 住んでいるまちを決めていないときは、はじめての流れ（onboarding.tsx: まちを選ぶ → 要点 → ツアー → チェックリスト）を出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
+// 住んでいるまちを決めていないときは、はじめての流れ（onboarding.tsx: まちを選ぶ → 要点 → チェックリスト）を出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
 // データは自治体の頁と同じ /data/jurisdictions/app/:code を読み、yearView で年度ごとに見る
 import * as React from 'react'
-import { useRouter } from '@void/react'
 import { ArrowRightIcon, ArrowSquareOutIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { FEEDBACK } from '../nav/feedback'
@@ -17,8 +16,7 @@ import { reiwa, yearName } from '../jurisdiction/types'
 import { Amt, FieldIcon, perHeadText } from './parts'
 import { searchHref } from '../search/search'
 import { useMyTown, type Town } from './towns'
-import { onboarded, SpotTour, stepAt, TOTAL, useTour } from './tour'
-import { OtherTowns, Checklist, Empty, Intro, Steps, startChecklist, type CheckItem } from './onboarding'
+import { OtherTowns, Checklist, Empty, Intro, Steps, onboarded, startChecklist, type CheckItem } from './onboarding'
 
 export interface Featured {
   code: string
@@ -173,9 +171,9 @@ function FieldBars({ c, limit }: { c: Ctx; limit: number }) {
   )
 }
 
-function Card({ title, icon, children, footer, className, tour }: { title: string; icon?: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; className?: string; tour?: string }) {
+function Card({ title, icon, children, footer, className }: { title: string; icon?: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; className?: string }) {
   return (
-    <section data-tour={tour} className={cn('flex flex-col rounded-2xl border bg-background p-5 animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none', className)}>
+    <section className={cn('flex flex-col rounded-2xl border bg-background p-5 animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none', className)}>
       <h3 className="mb-3 flex items-center gap-2 text-[15px] font-medium [&_svg]:size-5 [&>svg]:text-muted-foreground">
         {icon}
         {title}
@@ -191,7 +189,7 @@ function Dashboard({ c }: { c: Ctx }) {
   const { fy, sheets } = sheetsOf(d)
   return (
     <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-      <section data-tour="total" className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7 md:col-span-2">
+      <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7 md:col-span-2">
         <div className="flex items-start gap-4">
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
           <div className="min-w-0 flex-1">
@@ -211,23 +209,23 @@ function Dashboard({ c }: { c: Ctx }) {
             </p>
             {d.pop ? <p className="mt-2 text-sm opacity-80">1人あたり {perHeadText(v.total, d.pop)}</p> : null}
           </div>
-          <Link data-tour="open" href={c.base} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
+          <Link href={c.base} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
             詳細を見る
             <ArrowRightIcon className="size-4" />
           </Link>
         </div>
       </section>
       {v.fields.length ? (
-        <Card tour="fields" title="何に使っている？" icon={<CoinsIcon />} footer={<More href={flowHref(c)}>お金の流れを見る</More>}>
+        <Card title="何に使っている？" icon={<CoinsIcon />} footer={<More href={flowHref(c)}>お金の流れを見る</More>}>
           <FieldBars c={c} limit={6} />
         </Card>
       ) : null}
       {v.comparable && v.page('new')?.rows.length ? (
-        <Card tour="projects" title={`${yearName(year)}に始めた事業`} icon={<span className="flex text-primary"><NewIcon /></span>} footer={<More href={`${c.base}/projects?filter=new`}>事業をすべて見る</More>}>
+        <Card title={`${yearName(year)}に始めた事業`} icon={<span className="flex text-primary"><NewIcon /></span>} footer={<More href={`${c.base}/projects?filter=new`}>事業をすべて見る</More>}>
           <ProjectList items={v.page('new')!.rows.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: p.yen }))} rest={v.page('new')!.total - 5} />
         </Card>
       ) : v.top.length ? (
-        <Card tour="projects" title="お金のかかる事業" icon={<CoinsIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
+        <Card title="お金のかかる事業" icon={<CoinsIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
           <ProjectList items={v.top.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: p.yen }))} rest={0} />
         </Card>
       ) : null}
@@ -349,12 +347,11 @@ function RevealFrame({ town, onOpen, onBack, busy, children }: { town: Town; onO
 }
 
 /** チェックリストの残りの項目。まちの頁・検索・アシスタントへ */
-const checkItems = (c: Ctx, startAt: (at: number) => void): CheckItem[] => [
+const checkItems = (c: Ctx): CheckItem[] => [
   { key: 'flow', label: 'お金の使い道を見る', href: flowHref(c) },
   { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects?filter=new` },
   { key: 'search', label: '事業を検索する', href: searchHref('', c.town.code) },
-  // アシスタントへは、事業を選んで文を添えて聞くオンボーディングの歩から始める
-  { key: 'assistant', label: 'アシスタントに質問', start: () => startAt(stepAt('ask')) },
+  { key: 'assistant', label: 'アシスタントに質問', href: '/assistant' },
 ]
 
 
@@ -425,11 +422,6 @@ function Footer() {
 
 export function Home({ entries, featured }: HomeProps) {
   const { ready, town, set } = useMyTown()
-  const tour = useTour()
-  const { visit } = useRouter()
-  // まちの頁のリンクを押したら歩だけ進める（移動はリンクに任せる）
-  const { go: tourGo } = tour
-  const openPage = React.useCallback(() => tourGo(1), [tourGo])
   // はじめての流れで選んだまち。要点を見せてから「このまちにする」で決める
   const [pending, setPending] = React.useState<Town | null>(null)
   const shown = town ?? pending
@@ -438,7 +430,6 @@ export function Home({ entries, featured }: HomeProps) {
   const open = () => {
     if (!pending) return
     startChecklist()
-    tour.go(0)
     set(pending)
     setPending(null)
   }
@@ -471,36 +462,11 @@ export function Home({ entries, featured }: HomeProps) {
       />
     )
   else {
-    // はじめにやること（ツアー中はツアー）を頭に出すため、まちのデータが読めたら先に組む
+    // はじめにやることを頭に出すため、まちのデータが読めたら先に組む
     const ctx = snap.d && snap.year != null && snap.d.years[String(snap.year)] ? buildCtx(town!, snap.d, snap.year, snap.setYear, vision) : null
-    // オンボーディングの1歩目（まちの頁を開く）はホームで出す。続きの歩で止めた人は、はじめにやることの「オンボ開始」からまちの頁の続きへ
-    const saved = tour.saved
-    const first = saved?.state === 'on' && saved.at === 0
-    // その歩からオンボーディングを始める。1歩目より先はまちの頁で続ける
-    const startAt = (at: number) => {
-      if (!ctx) return
-      tour.go(at)
-      if (at > 0) visit(ctx.base)
-    }
-    const resume = () => startAt(saved && saved.at > 0 && saved.at < TOTAL && saved.state !== 'done' ? saved.at : 0)
     body = (
       <>
-        {ctx ? (
-          first ? (
-            <SpotTour
-              at={0}
-              onSkip={tour.pause}
-              spot={{
-                target: 'open',
-                title: 'まちの頁を開く',
-                body: `${ctx.town.name}の予算・決算・事業を、まとめて見られる頁です。押して開いてみてください。`,
-                onPress: openPage,
-              }}
-            />
-          ) : (
-            <Checklist items={checkItems(ctx, startAt)} tour={saved} onTour={resume} />
-          )
-        ) : null}
+        {ctx ? <Checklist items={checkItems(ctx)} /> : null}
         {/* ほかのまちを見る導線。選ぶ前は AskTown の欄だけなので、ここは選んだあとだけ */}
         <OtherTowns className="mb-3" />
         {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
