@@ -50,8 +50,8 @@
 - 約50自治体の決算、品川区の R6〜R8 当初予算と事業評価
 - sitemap 送信済み（54件）、パンくずの構造化データ
 - ChatGPT の plugin ディレクトリに掲載、Claude などは URL 1つで追加できる
-- 週次レポート（毎週月曜、Search Console と Cloudflare Web Analytics）
-- Web Analytics は fudoki.dev だけを計測（プレビュー・docs は外した）
+- 週次レポート（毎週月曜、Search Console と GA4）
+- アクセス解析は 2026-11-13 に Cloudflare Web Analytics から GA4（Cloudflare Zaraz 経由）へ切り替えた。fudoki.dev だけを計測（プレビュー・docs は外す）
 
 **進行中:** 自治体ごとの OG 画像（PR #462）、未収録のまちの行き止まりをなくす（PR #463）。MCP の公開レジストリへの掲載文の下書き（掲載は後回しと決定）。title・説明文（#457）と年度ごとの URL（#459）は済み
 
@@ -106,7 +106,7 @@
 **計画**
 - 検索から来た人が最初の画面で「何にいくら」と「今年新しく始まること」を読めるか確かめる（品川区は済み。予算の無い自治体でも同じ体験にする）
 - 自分のまちが未収録のときの行き止まりをなくす（近いまち・収録予定を出す）
-- ホームから自治体の頁へ進んだかを、頁ごとの表示数の比（自治体の頁 ÷ ホーム）で見る（人ごとの遷移は Cloudflare Web Analytics では取れない）
+- ホームから自治体の頁へ進んだかを、頁ごとの表示数の比（自治体の頁 ÷ ホーム）で見る（GA4 に切り替えたので、人ごとの遷移も見られる）
 - MCP は「AI に貼り付けて接続する」文が入口。追加後の最初の質問の例を整える
 
 **skill:** cro・onboarding・copywriting（コピーは yuito が「これで」と言うまで repo に入れない）
@@ -179,7 +179,7 @@
 | 段階 | skill | 道具 |
 | --- | --- | --- |
 | 集める | seo-audit・programmatic-seo・ai-seo・schema・social・content-strategy・launch | Search Console（環境変数の service account、mcp-marketing の composio） |
-| 初めて使う | cro・onboarding・copywriting | Cloudflare Web Analytics（mcp-marketing の cloudflare small） |
+| 初めて使う | cro・onboarding・copywriting | GA4 |
 | また来る | emails（やると決めたら） | — |
 | 教える | social | OG 画像の生成（web 側） |
 | 計測 | analytics | 週次レポート（毎週月曜） |
@@ -220,11 +220,11 @@
 
 ## 13. 計測・決めること
 
-**北極星:** 自治体の頁を読んだ人の数。人数は直接は取れないので、Cloudflare Web Analytics の本番の訪問のうち自治体の頁に入った訪問を代わりに数える（同じ人の別の日の訪問も数え、サイトの中の移動は数えない）。週次で見る。
+**北極星:** 自治体の頁を読んだ人の数。人数は直接は取れないので、GA4 で自治体の頁を表示したユーザー数を数える（2026-11-12 までは Cloudflare Web Analytics の本番の訪問のうち自治体の頁に入った訪問で代えていた）。週次で見る。
 
 **先行指標**
 - 集める: Search Console の表示・クリック・平均順位、自治体の頁の表示数
-- 初めて使う: 自治体の頁の表示数 ÷ ホームの表示数（Cloudflare Web Analytics は人を追わずイベントも取れないので、頁ごとの表示数の比で代える）
+- 初めて使う: ホームを見た人のうち自治体の頁へ進んだ人の割合（GA4。2026-11-12 までは頁ごとの表示数の比で代えていた）
 - また来る: 参照元が無い（ブックマーク・直接入力）自治体の頁の訪問数。同じ人の再訪そのものは取らない
 - 教える: X・外部サイトからの流入
 

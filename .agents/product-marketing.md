@@ -135,7 +135,7 @@
 
 **Primary goal:** 自治体の頁に検索から人が来て、自分のまちのお金を読んで帰る状態をつくる
 **Key conversion action:** 自治体の頁を開く（ホームなら「うちのまち」を選ぶ）。開発者は MCP を追加する
-**Current metrics:** Search Console 直近28日で表示161・クリック1・平均順位7.0（2026-11-09）。Cloudflare Web Analytics の本番の訪問は週数十件
+**Current metrics:** Search Console 直近28日で表示161・クリック1・平均順位7.0（2026-11-09）。Cloudflare Web Analytics の本番の訪問は週数十件（2026-11-13 に GA4 へ切り替え）
 
 ## Learnings
 
