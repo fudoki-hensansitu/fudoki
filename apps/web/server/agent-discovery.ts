@@ -1,5 +1,5 @@
 // AI エージェントが風土記の API・MCP を見つけるための入口。/.well-known の文書（routes/.well-known/）と、頁の応答の Link ヘッダー・Markdown の応答（middleware/01.site.ts）
-import { MCP_URL } from './env'
+import { MCP_URL } from './fudoki-api'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
 const OPENAPI_URL = `${API_ORIGIN}/openapi.json`

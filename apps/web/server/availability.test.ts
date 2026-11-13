@@ -29,7 +29,8 @@ test('紹介の頁は MCP とプライバシーポリシーへ繋ぎ、検索エ
   expect(meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/og.png' })
   // 自治体の OG 画像は Worker が紋章から描く（server/og.ts）。紋章のある自治体は emblem.svg を配る
   for (const code of Object.keys(EMBLEMS)) expect(served(`/jurisdictions/${code}/emblem.svg`), code).toBe(true)
-})
+  // 最初の fetchRoute が全 route を読み込む。CI で他の package の試験と並んで走ると 5 秒の既定を超えるので延ばす
+}, 30_000)
 
 test('PWA: manifest・service worker・アイコン・オフラインの頁を返し、全頁の head から繋ぐ', async () => {
   const manifest = await get('/manifest.webmanifest')

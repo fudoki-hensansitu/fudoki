@@ -12,7 +12,7 @@ from __future__ import annotations
 import re
 from collections import Counter
 
-from ingestion.project.layouts.press import PressItem, lines, norm, text, words
+from ingestion.project.layouts.press import BboxPdf, PressItem, lines, norm, text, words
 
 AMOUNT = re.compile(r'([\d,]+)千円$')
 TAGS = ('新規', '充実')
@@ -31,7 +31,10 @@ def read_page(page, number: int) -> tuple[list[PressItem], bool]:
         items = [w for w in items if w['top'] < stop - 30]  # 見出しの番号「６」は少し上に印字する
         if not items:
             return [], True
-    body = Counter(round(w['size']) for w in items).most_common(1)[0][0]
+    body = Counter()  # 本文の字の大きさ（語の数でなく字の数で数える。語の切れ方に依らない）
+    for w in items:
+        body[round(w['size'])] += len(w['text'])
+    body = body.most_common(1)[0][0]
     rows = [row for row in lines(items, tolerance=2)]
     out: list[PressItem] = []
     pending: list[dict] | None = None  # 予算額の無い事業名の行（次の行に折り返す）
@@ -61,9 +64,8 @@ def read_page(page, number: int) -> tuple[list[PressItem], bool]:
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
-    with pdfplumber.open(path) as pdf:
+    with BboxPdf(path, fonts=True) as pdf:
         for number, page in enumerate(pdf.pages, start=1):
             found, stopped = read_page(page, number)
             items.extend(found)
