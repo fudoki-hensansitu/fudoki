@@ -106,7 +106,7 @@
             }
           },
           "quirks": {
-            "dotted_abolished_marks": true
+            "abolished_marks": true
           }
         },
         "pages": [
@@ -131,7 +131,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "cfa78629be7ec2191121babf219bb4e736ec796a6ce0cf03486fb677eedceeb1",
+      "input_fingerprint": "ba30a9036ebb24f48aa1da3ae09ed80b4cea2814cc53d8b8bbeb122a4a47ee56",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",

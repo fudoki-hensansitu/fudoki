@@ -1232,10 +1232,10 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
                     result[-1].lines.append(piece)
                     result[-1].name += normalize(text(piece))
                 continue
-            abolished = document_quirk('dotted_abolished_marks')
+            abolished = document_quirk('abolished_marks')
             for piece in free:  # a printed line without a code (a total row)
                 name = normalize(text(piece))
-                if abolished is not None:  # `△. 東京都知事選挙費`: the mark of a dropped 目 is no part of its name
+                if abolished is not None:  # `△. 東京都知事選挙費`, `△ 東京都知事選`: the mark of a dropped 目 is no part of its name
                     name = abolished.module.strip(name)
                 item = Item(group, piece[0].page, [piece], None, name, 0)
                 _measure(item, piece, None)
