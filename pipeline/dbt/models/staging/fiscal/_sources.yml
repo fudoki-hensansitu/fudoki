@@ -8900,6 +8900,22 @@ sources:
       direction: expenditure
       table_id: kouyouchi-initial
       kind: nodes
+  - name: j132071_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132071'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132071_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132071'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132071_2024_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132071'
