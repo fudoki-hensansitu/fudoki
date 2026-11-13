@@ -121,6 +121,7 @@
     "letter_spaced_lines": "ingestion.generic.patterns.quirks.letter_spaced_lines",
     "line_starts": "ingestion.generic.patterns.quirks.line_starts",
     "list_cut": "ingestion.generic.patterns.quirks.list_cut",
+    "numbered_names": "ingestion.generic.patterns.quirks.numbered_names",
     "listed_highlights": "ingestion.generic.patterns.quirks.listed_highlights",
     "long_numbers": "ingestion.generic.patterns.quirks.long_numbers",
     "lost_name_characters": "ingestion.generic.patterns.quirks.lost_name_characters",

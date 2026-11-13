@@ -389,6 +389,8 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
         if not money and (listed := document_quirk('list_cut')) is not None and listed.module.cut(parts):
             break
         money.insert(0, parts.pop())
+    if (numbered := document_quirk('numbered_names')) is not None and numbered.module.keeps(parts, money):
+        parts.append(money.pop(0))  # `消耗品費 1 … 104`: the number after the name is the name's
     # Full-width digits without a comma before a half-width grouped amount are part of the name (`…東京２０２４ 1,619,271`).
     while len(money) > 1 and WIDE_DIGITS.fullmatch(text(money[0])) and GROUPED.fullmatch(normalize(text(money[-1]))) \
             and not WIDE_DIGITS.search(text(money[-1])):
