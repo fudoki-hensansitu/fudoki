@@ -2,7 +2,7 @@
 
 `pipeline/ingestion/lib/pdf_table.py` は、単語・OCR観測を同じ座標系へ配置し、書式設定に従って行・列へまとめる。階層見出しの継承と確認済みの折り返し結合も提供する。`pipeline/ingestion/lib/parquet.py` は、明示した型の表をParquetへ保存する。
 
-出典別の抽出器から呼ぶ共通ライブラリで、`fiscal/layouts/statement/` と複数の自治体の変換器が使う。この文書は移行前の横持ちの表を組み立てる処理を説明する。新しい取り込みの出力（ノードの表と金額の表）は [ADR 0020](adr/0020-ingestion-outputs-node-tables.md) を参照する。財政科目や事業・節の意味、罫線の自動検出、折り返しかどうかの判定は呼び出し側が担当する。
+出典別の抽出器から呼ぶ共通ライブラリで、`fiscal/layouts/statement/` と複数の自治体の変換器が使う。この文書は移行前の横持ちの表を組み立てる処理を説明する。新しい取り込みの出力（ノードの表と金額の表）は [ADR 0020](../../../docs/adr/0020-ingestion-outputs-node-tables.md) を参照する。財政科目や事業・節の意味、罫線の自動検出、折り返しかどうかの判定は呼び出し側が担当する。
 
 変換レイヤーは、渡されたCSV/PDFを読み取り、出典の表を復元してrawのParquetへ保存する。自治体・年度・会計・資料区分・補正号・歳入／歳出などの対象情報は上流から受け取り、その対応を管理情報として保持する。対象情報を固定値の財政データ列として追加せず、出典の値の共通形式への正規化は後段で行う。印字された年度・会計・方向は原文として残す。出典の取得や情報の判定、出典の選定（source_selection）と対象別JSONの管理は上流が担当する。
 
@@ -26,7 +26,7 @@ layoutの区分は年度・会計ではなく書式で決める。同じ列配�
 `Token` は出典ID・物理頁・観測ID・`raw_text`・元のbbox・単位を持つ。OCRではkind・confidence・parent IDも保持する。座標は正立した表示頁の左上原点、単位はptまたはpx。CropBox・回転の反映は抽出側で済ませる。
 
 - `tokens_from_bbox_layout(xml, origin_id=..., first_page=...)` はPoppler XMLの単語を読む。文字単位に分割せず、同じ文字・位置の観測も黙って削除しない。
-- `tokens_from_ocr(result, kind=..., region_ids=..., unit=...)` は [共通OCR入口](../pipeline/ingestion/lib/scan_ocr.md) のPaddleの出力を読む。region・word・numberのいずれか一種類と領域を明示し、親観測と部分観測の重複を避ける。ptはPDFだけに使える。
+- `tokens_from_ocr(result, kind=..., region_ids=..., unit=...)` は [共通OCR入口](scan_ocr.md) のPaddleの出力を読む。region・word・numberのいずれか一種類と領域を明示し、親観測と部分観測の重複を避ける。ptはPDFだけに使える。
 
 枠のないOCR観測はbboxをNoneにして保持する。同じ出典内の観測IDが重複した入力は表の組み立て時に拒否する。異なるIDで重複印字された文字は自動削除せず、呼び出し側で出典の印字層を確認する。
 
@@ -103,21 +103,21 @@ result = write_conversion(pdf_parquet_path, records, columns=columns, context=pd
 
 PDFの観測・セル・階層の処理は既存の共通関数を組み合わせ、Parquetへの保存と出力情報の返却にこの入口を使う。一般的なPDF書式の自動選択や罫線の自動検出は、この入口の機能ではない。
 
-変換モジュールは受け取った出典参照を保持し、R2や管理JSONを更新しない。管理JSONへの記録は管理側の `ingestion:convert`、非公開R2への保存は merge 後の CI の `ingestion:store` が行う（[取り込み保存の設計](prd/ingestion-storage/dd.md)）。
+変換モジュールは受け取った出典参照を保持し、R2や管理JSONを更新しない。管理JSONへの記録は管理側の `ingestion:convert`、非公開R2への保存は merge 後の CI の `ingestion:store` が行う（[取り込み保存の設計](../../../docs/prd/ingestion-storage/dd.md)）。
 
 ## 検証記録（2026-10-07）
 
 - 公開APIの13テストが通過した。見開き・行結合・未割当・折り返し・階層継承・未検出と0の区別、Parquetの型・NULL・空文字・重複・上書き防止を確認した。実行は `mise exec -- uv run --frozen python -m unittest ingestion.lib.pdf_table_test`。
 - 昭島市2025年度一般会計予算書の物理109頁をPopplerで実際に抽出し、124単語を新しいアダプターで読み取った。原文・物理頁・枠をParquet保存後に照合した。財政明細への意味付けを検査した結果ではない。
-- 多摩市の保存済みOCR出力と手動で宣言したセル座標を使い、列ごとの107/109、再読後の109/109の金額一致を再現した。28行×4列の112セルを保存し、印字された109金額以外の3セルも観測なしのNULLとして保持した。OCRは再実行していない。出典と評価条件は [Vision OCRの検証記録](vision-ocr-evaluation.md) を参照する。
+- 多摩市の保存済みOCR出力と手動で宣言したセル座標を使い、列ごとの107/109、再読後の109/109の金額一致を再現した。28行×4列の112セルを保存し、印字された109金額以外の3セルも観測なしのNULLとして保持した。OCRは再実行していない。出典と評価条件は Vision OCRの検証記録（Vision の処理と一緒に消した。git の履歴に残る） を参照する。
 
 コードレビューでは型定義の重複と繰り返しの探索・集合生成を整理し、13テストを再実行した。全体の `bun run typecheck:all` も通過した。Python専用のlint・型検査設定はなく、対象Pythonファイルの構文検査を行った。
 
-実データの確認出力はGit管理外の `.agent/pdf-table-module/` にある。[保存済みOCRの再検証コード](../.agent/pdf-table-module/verify_scan.py)、[再検証結果](../.agent/pdf-table-module/final/verification.json)、[取り込みParquet](../.agent/pdf-table-module/final/columns-with-retry.parquet)を残した。既存の抽出器・固定入力への採用と一般的なセル検出は、この検証の対象外である。
+実データの確認出力はGit管理外の `.agent/pdf-table-module/` にある。[保存済みOCRの再検証コード](../../../.agent/pdf-table-module/verify_scan.py)、[再検証結果](../../../.agent/pdf-table-module/final/verification.json)、[取り込みParquet](../../../.agent/pdf-table-module/final/columns-with-retry.parquet)を残した。既存の抽出器・固定入力への採用と一般的なセル検出は、この検証の対象外である。
 
 変換入口の追加後は、`conversion_test` の6テストと `pdf_table_test` の13テストが通過した。CSVのcp932・区切り文字・引用符内の改行・物理行範囲・空文字・文字列のNULL・重複・型付き空表、失敗時の部分出力防止、PDFの組み立てた行と未検出NULL、出力情報のJSON化を確認した。
 
-昭島市の同じtext PDFの物理109頁を再度Popplerで抽出し、新しい `write_conversion()` で124単語の原文・頁・枠をParquetへ保存した。読み戻した全行・値の一致を確認した。[出力情報](../.agent/conversion-api/result.json)と[単語のParquet](../.agent/conversion-api/text-pdf-words.parquet)をGit管理外に残した。財政明細への意味付けやscan PDFのOCR再実行は、この追加検証に含めていない。R2操作・入力一覧の更新は行っていない。
+昭島市の同じtext PDFの物理109頁を再度Popplerで抽出し、新しい `write_conversion()` で124単語の原文・頁・枠をParquetへ保存した。読み戻した全行・値の一致を確認した。[出力情報](../../../.agent/conversion-api/result.json)と[単語のParquet](../../../.agent/conversion-api/text-pdf-words.parquet)をGit管理外に残した。財政明細への意味付けやscan PDFのOCR再実行は、この追加検証に含めていない。R2操作・入力一覧の更新は行っていない。
 
 main追従後（2026-10-07）は、保存済み選定情報の受け渡しを追加した。分冊・非連続の物理頁範囲・自治体独自の会計名・text/scan指定の保持と、未保存・出典のSHA不一致・歳入のみの対象の拒否をfixtureで確認した。実R2取得・保存は未実行。
 
