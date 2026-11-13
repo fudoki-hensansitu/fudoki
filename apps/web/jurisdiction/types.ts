@@ -22,6 +22,8 @@ export interface Moku extends Line {
   setsu: Setsu[]
   /** 自治体の科目の款・項の名前。分野で分けた図でも、目から事業を引くのに使う */
   path?: [string | null, string | null]
+  /** 目に付いた COFOG のコード（09.1 など）。分野の流れに組み直すのに使う */
+  cofog?: string | null
 }
 
 export interface Kou extends Line {
@@ -36,6 +38,16 @@ export interface Drill {
 }
 
 export type FlowDepth = 'kou' | 'moku' | 'setsu'
+
+/** 予算・決算のタブの頁が loader で読む、一つの年度・資料・会計の流れ（款 → 項 → 目 → 節）。分野の図は画面が目から組み直す（cofog-flow.ts） */
+export interface PageFlow {
+  year: number
+  phase: 'initial' | 'settlement'
+  account: string
+  drills: Drill[]
+  /** 項の行が無い目（drills の木に入らない）。分野の図はこれも足す */
+  loose: Moku[]
+}
 /** お金の流れの分け方。cofog は分野（COFOG の大分類）→ 中分類、kan は自治体の科目（款 → 項） */
 export type FlowView = 'cofog' | 'kan'
 
@@ -99,8 +111,6 @@ export interface PageData {
   originTitle: string | null
   /** 西暦、古い順 */
   years: YearTotal[]
-  /** 最新年度の全款から全項への流れ */
-  flow: Drill[]
   /** 最新年度の COFOG の流れ。Drill の kan に大分類、kou に中分類が入る */
   cofogFlow: Drill[]
   /** 最新の決算より後の年度の当初予算（古い順）。決算の無い年度の概要に使う */
@@ -108,8 +118,6 @@ export interface PageData {
   projects: Project[]
   /** 基本構想の都市像（jurisdiction/visions.ts）。手で起こした自治体だけにある */
   vision?: Vision | null
-  /** 資料の種類・年度ごとに収録した会計の名前。予算・決算タブが総額を読み込む前に会計の札の場所を取っておくのに使う */
-  accounts?: Record<'initial' | 'settlement', Record<string, string[]>>
 }
 
 /** 自治体の頁で選べる年度（新しい順に3年）。決算の年度と、決算より後の当初予算の年度 */

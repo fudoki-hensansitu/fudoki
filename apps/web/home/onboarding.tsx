@@ -7,7 +7,7 @@ import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { Mark } from '../nav/site-nav'
 import { Picker as TownPicker } from './town-picker'
-import { TownPalette, warmTowns } from '../nav/town-palette'
+import { TownPalette } from '../nav/town-palette'
 import { LocateError, locateMunicipality } from './locate'
 import type { MapEntry } from '../jurisdiction/index-table'
 import './onboarding.css'
@@ -133,8 +133,7 @@ export function OtherTowns({ className }: { className?: string }) {
     <section className={cn('ob-rise', className)} aria-label="ほかのまちを見る">
       <button
         type="button"
-        onClick={() => (warmTowns(), setOpen(true))}
-        onPointerEnter={warmTowns}
+        onClick={() => setOpen(true)}
         className="flex h-12 w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-[15px] text-muted-foreground transition-colors hover:bg-card"
       >
         <MagnifyingGlassIcon className="size-5 shrink-0" aria-hidden="true" />

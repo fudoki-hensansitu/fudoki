@@ -4,9 +4,8 @@ import { MagnifyingGlassIcon } from '@phosphor-icons/react'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
 import { InputGroupAddon } from '@/components/ui/input-group'
 import { cn } from '@/lib/utils'
-import type { MapEntry } from '../jurisdiction/index-table'
 import { RequestTown } from '../nav/request-town'
-import { townMatches } from './towns'
+import { townMatches, type MapEntry } from '../jurisdiction/index-table'
 
 const emblem = (code: string) => `/jurisdictions/${code}/emblem.svg`
 const matches = townMatches
