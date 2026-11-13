@@ -9,6 +9,7 @@
 5. 公開側の呼び出しは、利用者（キー・OAuth の client）ごとに記録し、流量の上限も利用者ごとにかける。
 6. 公開の REST・MCP の契約は外部の利用者のために決め、web の画面の都合では変えない。内部の口は web と同じ PR で変え、互換を保たない。
 7. 問い合わせの処理は両方の口で共有し、口ごとに分けるのは入口（route・tool・RPC の method）だけにする。
+8. 出典の PDF の中継（`/v1/expenditures/origins/{id}/pdf`）は 2 と 4 の例外にし、認証なし・CORS `*` のまま公開する。MCP Apps の View は sandbox の iframe（opaque origin）から資格情報なしで読むため。中継は宣言済みの公式 PDF を返すだけで D1 の検索を持たない。
 
 2026-11-13 時点で、web のサーバーは Service Binding で公開の `/v1/*` と `/mcp` を呼び、事業一覧の無限スクロールと事業の詳細はブラウザが `api.fudoki.dev` を直接呼んでいた（CORS は `*`）。api はエラーしかログに出さず、呼び出し元を記録していなかった。外部の利用の件数は web の閲覧と混ざって数えられず、WAF の流量の制限（IP あたり 20回/10秒）は住民のブラウザにもかかっていた。web の画面を直すたびに公開 API の形も変わっていた。
 
@@ -22,4 +23,6 @@
 
 - 移行は、内部の口を作って web を移す → ブラウザの直接の呼び出しを `/data/*` に移す → 公開側に認証をかけ CORS を絞る、の順に行う。認証をかけるまでは公開側は匿名のまま動く。
 - claude.ai・ChatGPT などのコネクタは OAuth で繋ぐことになる。docs.fudoki.dev・llms.txt・`/.well-known/mcp/server-card.json`・AI 向けの案内（agent readiness）の記述を、認証つきに合わせて直す。
+- ブラウザの読み取りを `/data/*` に移した経路にも、既存の `/data/*` と同じく IP ごとの上限（`VIEW_RATE_LIMIT`）と CDN のキャッシュをかける。WAF の制限（`/v1/*`・`/mcp`）はかからなくなる。
+- 掲載済みの Claude の connector・ChatGPT の plugin（[submission](../prd/mcp-distribution/submission.md)）は OAuth への再設定と再審査が要る。[policies](../prd/mcp-distribution/policies.md) の「API はアカウント・OAuth・決済を持たず」と privacy の記述を、利用者ごとに記録する内容と保持期間に合わせて直す。
 - 公開側の利用者の記録と、利用者ごとの流量の上限の置き場（Analytics Engine・Rate Limiting binding など）は dd で決める。
