@@ -53,7 +53,7 @@
 | 分野 | `Field` | `classified`（確定・暫定）・`unclassified`（分類できない・対象外） |
 | 内訳 | `Detail` | `project`（事業）・`other`（節・その他） |
 | 印字の位置 | `Location` | `pdf`・`csv` |
-| 事業評価 | `Evaluation` | `with_result`（評価結果の資料と件数がある）・`sheets_only` |
+| 事業評価 | `Evaluation` | |
 | 評価シート / 指標 | `EvaluationSheet` / `Indicator` | |
 | 予算案 / 施策 | `BudgetProposal` / `Measure` | |
 | 事業 / 事業の金額 | `Project` / `ProjectYear` | `both`・`initial`・`settlement` |
@@ -62,7 +62,6 @@
 
 ドメインモデルの直し（この PR で文書も合わせる）:
 
-- 事業評価は、評価結果の資料が無い年度（シートだけ）があるので、出典と件数を持つかで union にする（評価結果だけの年度は、シートが空の `with_result`）。
 - 人口の出典は資料名・SHA256 を持たない（総務省の集計の URL と基準日だけ）ので、人口の出典は `{ 基準日, URL }` の型にする。
 
 ## 表
@@ -78,8 +77,8 @@
 | `expenditure_origin_link` | なし | `link_id` | 根と冊を結ぶ（品川など 245冊・359根・456組） |
 | `expenditure_subject`・`expenditure_detail` | `fiscal_expenditure_*` | 今と同じ | `expenditure_id` を足す。根で決まる列（`fiscal_year`・`document_kind`・`account_name` など）は検索のために残す |
 | `expenditure_location` | `fiscal_expenditure_location` | `line_id` | `kind`（`pdf`・`csv`）を足し、CSV は行番号の列にする |
-| `evaluation` | `project_evaluation_result` | `evaluation_id` | 1行 = 自治体・事業を行った年度。シートだけの年度も1行（件数の列は空） |
-| `evaluation_origin` | `project_origin`（`sheets`・`result`） | `origin_id` | `evaluation_id` と資料の種類を持つ |
+| `evaluation` | `project_origin`（`sheets`） | `evaluation_id` | 1行 = 自治体・事業を行った年度 |
+| `evaluation_origin` | `project_origin`（`sheets`） | `origin_id` | `evaluation_id` を持つ |
 | `evaluation_sheet`・`evaluation_indicator`・`evaluation_indicator_value` | `project_evaluation_*` | 今と同じ | シートに `evaluation_id` を足す |
 | `budget_proposal` | なし | `budget_proposal_id` | 1行 = 自治体・予算の年度 |
 | `budget_proposal_origin` | `project_origin`（`press`） | `origin_id` | `budget_proposal_id` を持つ |

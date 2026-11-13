@@ -9,8 +9,8 @@ const OTHER = 'b'.repeat(64)
 function setup(pages: string[], sha = SHA) {
   const { db, sqlite } = testDb()
   sqlite
-    .query(`INSERT INTO evaluation_origin (origin_id, evaluation_id, jurisdiction_code, document_type, fiscal_year, title, url, landing_url, sha256) VALUES (?,?,?,?,?,?,?,?,?)`)
-    .run('o1', 'ev0', '131091', 'sheets', 2026, '評価シート', 'https://city.example.jp/a.pdf', null, SHA)
+    .query(`INSERT INTO evaluation_origin (origin_id, evaluation_id, jurisdiction_code, fiscal_year, title, url, landing_url, sha256) VALUES (?,?,?,?,?,?,?,?)`)
+    .run('o1', 'ev0', '131091', 2026, '評価シート', 'https://city.example.jp/a.pdf', null, SHA)
   addPages(sqlite, sha, pages)
   return { db, sqlite }
 }
@@ -57,8 +57,8 @@ test('文字の層の無い出典（行が無い）は unavailable', async () =>
 test('事業評価の出典は、Wayback Machine の写しでなく自治体の公式の頁を返す', async () => {
   const { db, sqlite } = setup([])
   sqlite
-    .query(`INSERT INTO evaluation_origin (origin_id, evaluation_id, jurisdiction_code, document_type, fiscal_year, title, url, landing_url, sha256) VALUES (?,?,?,?,?,?,?,?,?)`)
-    .run('e1', 'ev1', '131016', 'sheets', 2020, '評価', 'https://web.archive.org/web/2025id_/https://city.example.jp/r2.pdf', 'https://city.example.jp/r2.html', OTHER)
+    .query(`INSERT INTO evaluation_origin (origin_id, evaluation_id, jurisdiction_code, fiscal_year, title, url, landing_url, sha256) VALUES (?,?,?,?,?,?,?,?)`)
+    .run('e1', 'ev1', '131016', 2020, '評価', 'https://web.archive.org/web/2025id_/https://city.example.jp/r2.pdf', 'https://city.example.jp/r2.html', OTHER)
   addPages(sqlite, OTHER, ['本文'])
   for (const origin of [OTHER, 'e1']) {
     const r = await readSourcePage(db, { origin, page: 1 })

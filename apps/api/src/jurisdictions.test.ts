@@ -60,7 +60,7 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
   })
 
   test('一覧は事業評価・予算案を収録した年度を返す', async () => {
-    sqlite.exec(`INSERT INTO evaluation (evaluation_id, jurisdiction_code, fiscal_year, kind) VALUES ('e2', '132039', 2025, 'sheets_only'), ('e1', '132039', 2024, 'with_result')`)
+    sqlite.exec(`INSERT INTO evaluation (evaluation_id, jurisdiction_code, fiscal_year) VALUES ('e2', '132039', 2025), ('e1', '132039', 2024)`)
     sqlite.exec(`INSERT INTO budget_proposal (budget_proposal_id, jurisdiction_code, fiscal_year) VALUES ('b1', '132039', 2026)`)
     const [j] = (await list('?code=132039')).jurisdictions
     expect(j).not.toHaveProperty('population')

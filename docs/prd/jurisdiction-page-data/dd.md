@@ -15,7 +15,7 @@
 
 > 出典の PDF（非公開 R2）→ 入力準備で読む（`ingestion/project/layouts/`）→ dbt の marts → D1
 
-1. 事務事業評価シート・事務事業評価の結果・予算案のプレス発表を、様式ごとの読み方で PDF の文字の層から読む。
+1. 事務事業評価シート・予算案のプレス発表を、様式ごとの読み方で PDF の文字の層から読む。
 2. 出典に無い値（決算書の目・事業への紐付け、COFOG、新しくできた事業の印、施策の予算書の内訳への紐付け）は **風土記の判断** として、列の説明にそう書く。施策の紐付けは Jev を使うので seed に置き、取り込みのときに一度だけ作る。
 3. marts の6表を D1 に写す。公開 API の操作と、web を D1 から組み立てる切り替えは次の段階で行う。
 
@@ -39,7 +39,7 @@
 | 新しくできた事業（名前・決算額・指標・評価・方向性・頁） | `profiles.ts` の `projects` | `project_evaluation_sheet`（新しくできた事業かは事業の始めた年度で決める。事業を作るまでは出さない）・`project_evaluation_indicator`・`project_evaluation_indicator_value` |
 | 新しくできた事業の分野 | `profiles.ts` の `cofog` | `project_evaluation_sheet.subject_id` の目の `cofog_code`（`fiscal_expenditure_subject` から引く） |
 | やめた事業・A〜C の一覧 | `profiles.ts` の `scrap.exits`・`graded` | `evaluation_sheet`（`direction_code`。A〜D は API の `outlook.grade`） |
-| 評価した数・A〜D の数 | `profiles.ts` の `scrap` | `project_evaluation_result` |
+| 評価した数・A〜D の数 | `profiles.ts` の `scrap` | `evaluation_sheet` の数（A〜D は API の `outlook.grade`）。評価の結果の資料は取り込まない |
 | 予算の年度の新しい施策 | `budget-press.ts` | `project_budget_initiative` と seed `project_budget_initiative_link` |
 
 ### 確かめたこと（2026-11-08）
@@ -55,7 +55,7 @@
 
 ### 全体の流れ
 
-1. `project:save` が、`ingestion/project/origins.json` の評価の結果の PDF を取得し、宣言の sha256 と同じときだけ非公開 R2 の `project/<種類>/<自治体>/<年度>/<sha256>.pdf` に置く。評価シートは出典の選定（`evaluation_selections`）、プレス発表は出典の選定（`press_selections`）で保存済みのものを使う。
+1. 評価シートは出典の選定（`evaluation_selections`）、プレス発表は出典の選定（`press_selections`）で保存済みの PDF を使う。
 2. 入力準備（`dbt/scripts/prepare.py`）が PDF を宣言の様式で読み、`ingestion` スキーマの表にする。読んだ結果は PDF と読み方のコードの指紋ごとに `.cache/project/` に置く（評価シート1冊を読むのに約1分かかる）。
 3. dbt の marts が、出典の値に判断の列を足す。施策の紐付けは seed `project_budget_initiative_link` を読む。
 4. `serving:sync` が marts の6表を D1 に写す。
@@ -68,16 +68,15 @@
 
 ### 宣言
 
-`ingestion/project/origins.json` に、評価の結果は自治体・年度・様式（`layout`）・URL・sha256 を書く。評価シートとプレス発表は自治体と様式だけを書き、どの PDF を読むかは出典の選定に従う。
+`ingestion/project/origins.json` には自治体と様式だけを書き、どの PDF を読むかは出典の選定に従う。
 
-評価の結果は、人口（`ingestion/population/origins.json`）と同じく出典の選定の schema に入れない。金額の表ではなく、`fiscal_coverage` の対象にもしないため。プレス発表は自治体・年度ごとに資料を選ぶので、出典の選定の `press_selections` で選ぶ。
+評価の結果の資料（評価した数・A〜D の数・削減額の合計）は取り込まない。A〜D の数は評価シートの方向性から組み立てられ、品川では資料の件数と一致する。
 
 ### 読み方（`ingestion/project/layouts/`）
 
 | 様式 | 読む欄 | 止める条件 |
 | --- | --- | --- |
 | `shinagawa_sheet` | 小事業名・会計/款/項/目/事業・担当・予算・決算の計・指標（名前・単位・定義・年度ごとの目標と実績・最終目標）・最終評価の区分と方向性 | 欄が見つからない、指標の見出しが5列でない、目標と実績の段が揃わない |
-| `shinagawa_result` | 合計の行（「合計」「全体集計」）の評価した数・削減額と、その上の A〜D の数 | 合計の行が1つでない、A〜D の和が評価した数と合わない |
 | `shinagawa_press` | 見出しと副題・事業名（1行1つ、括弧書きと「および」の行は前の行に続ける）・新規の印・予算額・POINT | 事業名が読めない |
 
 座標は A3 横の幅に揃える。R5 のシートは A4 横で出ている。
@@ -86,11 +85,10 @@
 
 | 表 | 1行 | 主キー |
 | --- | --- | --- |
-| `project_origin` | 資料（PDF）1つ。`document_type` は sheets・result・press | `origin_id`（sha256） |
+| `project_origin` | 資料（PDF）1つ。`document_type` は sheets・press | `origin_id`（sha256） |
 | `project_evaluation_sheet` | 評価シート1枚 | `sheet_id`（出典と頁） |
 | `project_evaluation_indicator` | シートの指標1つ | `indicator_id`（シートと順） |
 | `project_evaluation_indicator_value` | 指標の1年度の目標と実績 | `value_id`（指標と年度） |
-| `project_evaluation_result` | 評価の結果の資料1つ | `origin_id` |
 | `project_budget_initiative` | 予算案の施策1件（品川はプレス発表の1頁） | `initiative_id`（出典と頁） |
 
 金額は千円の印字を円にする。指標の値は単位や「令和8年度」を含むのでシートの表記のまま文字列で持つ。プレス発表の事業名は JSON の文字列の配列で、POINT の箇条書きは改行でつないだ説明（`description`）で持つ。
