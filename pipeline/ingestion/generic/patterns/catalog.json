@@ -44,6 +44,7 @@
     "spaced_codes": "ingestion.generic.patterns.repairs.spaced_codes",
     "split_at_rules": "ingestion.generic.patterns.repairs.split_at_rules",
     "stacked_rows": "ingestion.generic.patterns.repairs.stacked_rows",
+    "spaced_letters": "ingestion.generic.patterns.repairs.spaced_letters",
     "em_boxes": "ingestion.generic.patterns.repairs.em_boxes",
     "justified_names": "ingestion.generic.patterns.repairs.justified_names",
     "white_text": "ingestion.generic.patterns.repairs.white_text"
