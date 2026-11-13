@@ -34,7 +34,7 @@ def _norm(text: str) -> str:
     return unicodedata.normalize('NFKC', text).strip()
 
 
-def _lines(words: list[dict], tolerance: float = 3) -> list[list[dict]]:
+def _lines(words: list[dict], tolerance: float = 4) -> list[list[dict]]:
     rows: list[list[dict]] = []
     for word in sorted(words, key=lambda w: (w['top'], w['x0'])):
         if rows and abs(rows[-1][0]['top'] - word['top']) <= tolerance:
@@ -50,7 +50,9 @@ def _row_text(row: list[dict]) -> str:
 
 
 def read_page(page, number: int) -> PressItem | None:
-    words = page.extract_words(keep_blank_chars=False, use_text_flow=False, extra_attrs=['size'])
+    from ingestion.project.layouts.press import merge_close
+
+    words = merge_close(page.extract_words(keep_blank_chars=False, use_text_flow=False, extra_attrs=['size']))  # bbox は語を細かく切る
     labels = {_norm(w['text']): w for w in words if _norm(w['text']) in LABELS}
     if '事業名' not in labels or '予算額' not in labels:
         return None
@@ -86,9 +88,10 @@ def read_page(page, number: int) -> PressItem | None:
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
+    from ingestion.project.layouts.press import BboxPdf
+
     items = []
-    with pdfplumber.open(path) as pdf:
+    with BboxPdf(path, fonts=True) as pdf:
         for number, page in enumerate(pdf.pages, start=1):
             item = read_page(page, number)
             if item is not None:

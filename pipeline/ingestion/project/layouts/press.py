@@ -41,7 +41,7 @@ def page_lines(path) -> Iterator[tuple[int, list[str]]]:
 
 @dataclass
 class BboxPage:
-    """bbox の頁を、様式の規則が使う pdfplumber の頁と同じ形で渡す。語は text・x0・x1・top・bottom と、字の大きさの目安 size（語の高さ）を持つ。"""
+    """bbox の頁を、様式の規則が使う pdfplumber の頁と同じ形で渡す。語は text・x0・x1・top・bottom と、字の大きさの目安 size を持つ（既定は語の高さ、`BboxPdf(path, fonts=True)` なら pdfplumber の文字の大きさで、fontname も持つ）。"""
     width: float
     height: float
     items: list[dict]
