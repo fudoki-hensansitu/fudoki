@@ -7,7 +7,11 @@ from __future__ import annotations
 
 import re
 import unicodedata
+from collections.abc import Iterator
 from dataclasses import dataclass, field
+from pathlib import Path
+
+from ingestion.generic import page_words
 
 NUMBERED = re.compile(r'^[①-⑳]')
 DIGITS = re.compile(r'^[\d,]+$')
@@ -27,6 +31,12 @@ class PressItem:
 
 def norm(text: str) -> str:
     return unicodedata.normalize('NFKC', text).strip()
+
+
+def page_lines(path) -> Iterator[tuple[int, list[str]]]:
+    """頁の番号（1始まり）と、bbox の行（`page_words.lines`）。"""
+    for page in page_words.pages(Path(path)):
+        yield page.number, page_words.lines(page)
 
 
 def words(page) -> list[dict]:
