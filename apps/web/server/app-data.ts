@@ -1,25 +1,21 @@
 // 自治体の頁（アプリ型）のデータ。apps/api の歳出・事業・予算案・事業評価の検索から、1年度の款項目・施策・評価シートと事業の一覧の1頁目を組む。
-// 事業の続き・詳細は画面が公開 API から読む（jurisdiction/app/api.ts）。紐付け（施策・評価シート → 事業）は api が持つ歳出の行の参照をたどるだけで、新しく判断しない
-import type { AppType } from '@fudoki/api/rpc'
-import { hc, parseResponse } from 'hono/client'
+// 事業の続き・詳細は画面が web の /api から読む（jurisdiction/app/api.ts）。紐付け（施策・評価シート → 事業）は api が持つ歳出の行の参照をたどるだけで、新しく判断しない
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { listQuery, type Kan, type YearData, type Measure, type Sheet, type Snapshot } from '../jurisdiction/app/data'
-import { listKey, listPage } from '../jurisdiction/app/api'
-import { apiFetch, type Env } from './env'
+import { listKey, readListPage } from '../jurisdiction/app/api'
+import type { Env } from './env'
+import { apiCall, type WebOpInput } from './fudoki-api'
 import { loadAccountTotals, shownSettlementYears, type CatalogEntry } from './jurisdiction'
 import { appPageYears } from '../jurisdiction/types'
 
-const API_ORIGIN = 'https://api.fudoki.dev'
 const ACCOUNT = '一般会計'
 /** 内訳を ID で引くときの1回の数（API の bind の上限 90 から資料区分・年度・自治体の3つを除く） */
 const ID_CHUNK = 87
 
-const api = (env: Env) => hc<AppType>(API_ORIGIN, { fetch: apiFetch(env) })
-type Api = ReturnType<typeof api>
-type Body<F> = F extends (args: { json: infer J }) => unknown ? J : never
-type SubjectBody = Body<Api['v1']['expenditures']['subjects:search']['$post']>
-type MeasureBody = Body<Api['v1']['budget-proposals']['measures:search']['$post']>
-type SheetBody = Body<Api['v1']['evaluations']['sheets:search']['$post']>
+type SubjectBody = WebOpInput<'search_expenditure_subjects'>
+type DetailBody = WebOpInput<'search_expenditure_details'>
+type MeasureBody = WebOpInput<'search_budget_measures'>
+type SheetBody = WebOpInput<'search_evaluation_sheets'>
 
 type Kind = 'initial' | 'settlement'
 
@@ -38,19 +34,19 @@ async function all<R extends { next_page_token?: string | null }, T>(page: (toke
 
 const subjectsOf = (env: Env, code: string, year: number, kind: Kind) =>
   all(
-    (token) => parseResponse(api(env).v1.expenditures['subjects:search'].$post({ json: { document_kind: kind, fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SubjectBody })),
+    (token) => apiCall(env)('search_expenditure_subjects', { document_kind: kind, fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SubjectBody),
     (r) => r.subjects,
   )
 
 const measuresOf = (env: Env, code: string, min: number, max: number) =>
   all(
-    (token) => parseResponse(api(env).v1['budget-proposals']['measures:search'].$post({ json: { fiscal_year: { min, max }, where: { jurisdiction_code: { eq: [code] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as MeasureBody })),
+    (token) => apiCall(env)('search_budget_measures', { fiscal_year: { min, max }, where: { jurisdiction_code: { eq: [code] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as MeasureBody),
     (r) => r.measures.map((m) => ({ ...m, url: r.origins.find((o) => o.origin_id === m.origin_id)?.url ?? null })),
   )
 
 const sheetsOf = (env: Env, code: string, min: number, max: number) =>
   all(
-    (token) => parseResponse(api(env).v1.evaluations['sheets:search'].$post({ json: { fiscal_year: { min, max }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SheetBody })),
+    (token) => apiCall(env)('search_evaluation_sheets', { fiscal_year: { min, max }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SheetBody),
     (r) => r.sheets.map((s) => ({ ...s, url: r.origins.find((o) => o.origin_id === s.origin_id)?.url ?? null })),
   )
 
@@ -68,7 +64,7 @@ export function appYears(entry: Pick<CatalogEntry, 'initialYears' | 'settlementY
 /** 施策の内訳が載る科目。内訳を ID で引く（D1 の bind の上限に合わせて区切る）。自治体でも絞らないと、D1 が年度の索引でその年度の内訳を全部読む */
 async function subjectOfDetails(env: Env, code: string, year: number, ids: string[]): Promise<Map<string, string>> {
   const chunks = Array.from({ length: Math.ceil(ids.length / ID_CHUNK) }, (_, i) => ids.slice(i * ID_CHUNK, (i + 1) * ID_CHUNK))
-  const pages = await Promise.all(chunks.map((c) => parseResponse(api(env).v1.expenditures['details:search'].$post({ json: { document_kind: 'initial', fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, detail_id: { eq: c } }, page_size: 1000 } as SubjectBody }))))
+  const pages = await Promise.all(chunks.map((c) => apiCall(env)('search_expenditure_details', { document_kind: 'initial', fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, detail_id: { eq: c } }, page_size: 1000 } as SubjectBody)))
   return new Map(pages.flatMap((r) => r.details.map((d) => [d.detail_id, d.subject_id] as const)))
 }
 
@@ -133,7 +129,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   if (field) queries.push(listQuery(base, 'all', { subjects: yearsOut[year]!.fieldSubjects[field] ?? [] }))
   const measureDetails = [...new Set(measures.flatMap((m) => (m.expenditure_detail_id ? [m.expenditure_detail_id] : [])))]
   const [pages, subjectOfDetail] = await Promise.all([
-    Promise.all(queries.map((q) => listPage(q, undefined, apiFetch(env)).then((p) => [listKey(q), p] as const))),
+    Promise.all(queries.map((q) => readListPage(apiCall(env), q).then((p) => [listKey(q), p] as const))),
     measureDetails.length ? subjectOfDetails(env, entry.code, year, measureDetails) : Promise.resolve(new Map<string, string>()),
   ])
 

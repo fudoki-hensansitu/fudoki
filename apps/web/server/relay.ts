@@ -1,7 +1,8 @@
 // MCP Apps の View が host に頼む tools/call・resources/read を apps/api の MCP へ中継する。
 // View は sandbox の iframe の中で動き、許可した tool と風土記の View の resource だけを呼べる。
 import type { ApiRequest } from './api'
-import { apiFetch, MCP_URL, type Env } from './env'
+import type { Env } from './env'
+import { MCP_URL, mcpFetch } from './fudoki-api'
 import { HttpError, json } from './http'
 import { VIEW_RESOURCE, VIEW_TOOLS } from './limits'
 import { writeUsage } from './usage'
@@ -31,7 +32,7 @@ export function parseRelay(body: unknown): RelayRequest {
 
 /** JSON-RPC を1つ送り、JSON か SSE の data 行から result を取り出す */
 export async function callMcp(env: Env, method: string, params: unknown) {
-  const res = await apiFetch(env)(MCP_URL, {
+  const res = await mcpFetch(env)(MCP_URL, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
