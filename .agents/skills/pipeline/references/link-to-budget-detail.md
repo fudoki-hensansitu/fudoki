@@ -8,4 +8,4 @@
 2. 残りは単語の重なりで候補を絞り、TypeSafe の Jev に選ばせる。確信度が足りないものと「どれでもない」は紐付けず、分野は「その他」にする。名前からの推測で分野を決めない。
 3. 紐付けは取り込みのときに一度作って seed（`budget_measure_link`）に置く。画面を開くたびに聞かない。入口は `project:link-measures`、しきい値や候補数はコードが正。
 
-鍵は `TYPESAFE_API_KEY`（root の `fnox.toml`、AGENTS.md の「secret」）。
+鍵は `TYPESAFE_API_KEY`（root の `fnox.toml`、`.agents/skills/secret/`）。

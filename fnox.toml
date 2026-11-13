@@ -1,6 +1,6 @@
 #:schema https://fnox.jdx.dev/schema.json
 # 手元で使う secret。値は age で recipients 全員の公開鍵宛てに暗号化して commit する（平文は置かない）。
-# 鍵は fudoki 専用（個人の他の secret を開ける鍵は使わない）。手順は AGENTS.md の「secret」を参照。
+# 鍵は fudoki 専用（個人の他の secret を開ける鍵は使わない）。手順は .agents/skills/secret/ を参照。
 # CI・deploy の secret は GitHub secret / Cloudflare の Worker secret に置き、ここには入れない。
 default_provider = "age"
 # fnox activate の shell には export せず、fnox exec の command にだけ渡す
