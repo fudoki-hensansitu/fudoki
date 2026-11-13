@@ -15,6 +15,7 @@
     "purpose_section": "ingestion.generic.patterns.layout.purpose_section",
     "subject_cards": "ingestion.generic.patterns.layout.subject_cards",
     "listed_sources": "ingestion.generic.patterns.layout.listed_sources",
+    "redrawn_facing_pages": "ingestion.generic.patterns.layout.redrawn_facing_pages",
     "redrawn_headers": "ingestion.generic.patterns.layout.redrawn_headers"
   },
   "headers": {
@@ -32,7 +33,8 @@
     "indent": "ingestion.generic.patterns.breakdown.indent",
     "shape": "ingestion.generic.patterns.breakdown.shape",
     "position": "ingestion.generic.patterns.breakdown.position",
-    "flat": "ingestion.generic.patterns.breakdown.flat"
+    "flat": "ingestion.generic.patterns.breakdown.flat",
+    "numbered": "ingestion.generic.patterns.breakdown.numbered"
   },
   "repairs": {
     "opening_cell": "ingestion.generic.patterns.repairs.opening_cell",
