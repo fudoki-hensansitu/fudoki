@@ -1,13 +1,17 @@
-"""main に入った変更から、D1 へ写し直す範囲を決める（.github/workflows/sync-d1.yml が使う）。
+"""変わったところだけを marts に build して、D1 へ差分で写す（serving:sync の入口。CI の sync-d1.yml もこれを呼ぶ）。
 
-    uv run python -m serving.scope --base <commit> --head <commit>
+    bun run --cwd pipeline publish -- --database-id <uuid> [--since <commit>] [--dry-run]
+    ... --all                              # 全件を build して同期する
+    ... --jurisdiction 131016 [...]        # その自治体を指定して流す
+    ... --local                            # ローカルの D1 に写す
 
-出力は JSON 1行: {"mode": "none" | "jurisdictions" | "full", "jurisdictions": [...]}
-- jurisdictions: 取り込みの宣言・出典の選定・自治体の列を持つ seed の行だけが変わった。その自治体だけを build して
-  `serving:sync --jurisdiction` で流す（他の自治体の行には触れない）
-- full: dbt のモデル・共通の辞書・配信のコードなど、全自治体に効くものが変わった。全件で build して差分で同期する
-- none: marts に効く変更が無い
-迷うものは full に倒す（同期は D1 との差分しか書かないので、広く流しても書き込みは増えない）。
+既定は `--since`（省略時は origin/main と HEAD の分岐点）から HEAD までの差分で範囲を決める。
+- 取り込みの宣言・出典の選定・1列目が自治体コードの seed の行だけが変わった → その自治体だけ
+  （build と sync に同じ `--jurisdiction` を渡す。他の自治体の行は消さない）
+- dbt のモデル・共通の辞書・配信のコードなど、全自治体に効くものが変わった → 全件
+- marts に効く変更が無い → 何もしない
+迷うものは全件に倒す（同期は D1 との差分しか書かないので、広く流しても書き込みは増えない）。
+自治体で絞った build は生成 macro `fiscal_*_relations.sql` を書き換えるので、終わったら元に戻す。
 """
 import argparse
 import json
@@ -90,12 +94,48 @@ def scope(base: str, head: str) -> dict:
     return {'mode': 'jurisdictions', 'jurisdictions': sorted(jurisdictions)}
 
 
+RELATIONS = ('pipeline/dbt/macros/fiscal_csv_relations.sql', 'pipeline/dbt/macros/fiscal_pdf_relations.sql')
+
+
+def run(*command: str) -> None:
+    print('$', ' '.join(command), flush=True)
+    subprocess.run(command, cwd=ROOT / 'pipeline', check=True)
+
+
 def main() -> None:
     parser = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    parser.add_argument('--base', required=True)
-    parser.add_argument('--head', required=True)
+    target = parser.add_mutually_exclusive_group(required=True)
+    target.add_argument('--database-id', help='D1 の database id')
+    target.add_argument('--local', action='store_true', help='ローカルの D1（miniflare）に写す')
+    which = parser.add_mutually_exclusive_group()
+    which.add_argument('--since', help='この commit から HEAD までの差分で範囲を決める（既定: origin/main との分岐点）')
+    which.add_argument('--all', action='store_true', help='全件を build して同期する')
+    which.add_argument('--jurisdiction', action='append', metavar='CODE', help='その自治体を流す（複数指定可）')
+    parser.add_argument('--dry-run', action='store_true', help='D1 に書かず、書く予定の行数を出す（build はする）')
     args = parser.parse_args()
-    print(json.dumps(scope(args.base, args.head), ensure_ascii=False))
+
+    if args.all:
+        found = {'mode': 'full', 'jurisdictions': []}
+    elif args.jurisdiction:
+        if bad := [c for c in args.jurisdiction if not re.fullmatch(r'\d{6}', c)]:
+            parser.error(f'not a jurisdiction code: {bad}')
+        found = {'mode': 'jurisdictions', 'jurisdictions': sorted(set(args.jurisdiction))}
+    else:
+        base = args.since or git('merge-base', 'origin/main', 'HEAD').strip()
+        found = scope(base, 'HEAD')
+    print(json.dumps(found, ensure_ascii=False), flush=True)
+    if found['mode'] == 'none':
+        return
+    scoped = [a for code in found['jurisdictions'] for a in ('--jurisdiction', code)]
+    dirty = bool(git('status', '--porcelain', '--', *RELATIONS).strip())
+    try:
+        run('uv', 'run', 'python', 'dbt/scripts/prepare.py', '--build', '--remote', *scoped)
+        run('uv', 'run', 'python', '-m', 'serving.sync_d1',
+            *(['--local'] if args.local else ['--database-id', args.database_id]),
+            *scoped, *(['--dry-run'] if args.dry_run else []))
+    finally:
+        if scoped and not dirty:
+            git('checkout', '--', *RELATIONS)
 
 
 if __name__ == '__main__':
