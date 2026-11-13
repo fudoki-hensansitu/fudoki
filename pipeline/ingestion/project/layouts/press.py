@@ -77,6 +77,21 @@ def words(page) -> list[dict]:
     return page.extract_words(keep_blank_chars=False, use_text_flow=False, extra_attrs=['size'])
 
 
+def merge_close(items: list[dict], ratio: float = 0.3, tolerance: float = 3) -> list[dict]:
+    """同じ行で、間が字の大きさの ratio 倍より狭い語を1語にする（Poppler は「令和」「6」「年度」のように細かく切る）。"""
+    out: list[dict] = []
+    for row in lines(items, tolerance):
+        merged = [dict(row[0])]
+        for word in row[1:]:
+            last = merged[-1]
+            if word['x0'] - last['x1'] < ratio * min(word['size'], last['size']):
+                last.update(text=last['text'] + word['text'], x1=word['x1'], bottom=max(last['bottom'], word['bottom']))
+            else:
+                merged.append(dict(word))
+        out += merged
+    return out
+
+
 def lines(items: list[dict], tolerance: float = 3) -> list[list[dict]]:
     """上端が tolerance 以内の語を1行にまとめ、行の中は左から並べる。"""
     rows: list[list[dict]] = []
