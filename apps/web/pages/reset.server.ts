@@ -1,4 +1,4 @@
-// 手元の保存を消してホームへ戻す（/reset）。はじめての流れ・ツアーを見直すためのデバッグ用で、画面からはリンクしない
+// 手元の保存を消してホームへ戻す（/reset）。はじめての流れを見直すためのデバッグ用で、画面からはリンクしない
 import { defineHandler, defineHead } from 'void'
 
 export const loader = defineHandler((c) => {

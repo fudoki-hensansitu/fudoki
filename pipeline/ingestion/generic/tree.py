@@ -326,8 +326,12 @@ def _cell(band: Band, y: float) -> tuple[float, float]:
     return (above[-1] if above else band.body_top, below[0] if below else band.body_bottom)
 
 
-def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: bool = False) -> tuple[list[Glyph], list[list[Glyph]]]:
+def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: bool = False,
+                unit_marked=None) -> tuple[list[Glyph], list[list[Glyph]]]:
     parts = runs(line)
+    if unit_marked is not None and parts:  # the quirk `unit_marked`: `救急指定増嵩経費分 229,000千円`
+        if (kept := unit_marked.module.amount_length(normalize(text(parts[-1])), unit_marked.value)) is not None:
+            parts[-1] = _cut(parts[-1], kept)[0]
     closing = normalize(text(line))[-1:]
     if amount_brackets and closing in BRACKET_PAIRS:  # `(187,037,067)`, and the 事業 total over it `[187,037,067]`
         for start in range(len(parts) - 1, -1, -1):
@@ -528,14 +532,14 @@ def strip_ancestor_codes(group: Group) -> list[Glyph]:
 
 def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: bool = False,
                bare_amounts: bool = False, numbers=None, long_numbers=None, stops=None, name_line=None,
-               projects=None) -> list[tuple]:
+               projects=None, unit_marked=None) -> list[tuple]:
     """Printed lines of a label group as (label glyphs, amount runs, code, name). `numbers`: the quirk `full_width_numbers`;
     `long_numbers`: the quirk `long_numbers`; `stops`: the quirk `glued_number_stops`; `name_line`: the quirk
     `name_line` (a line that is a number alone starts with an item number wherever it starts); `projects`: the quirk
-    `glued_project_codes`."""
+    `glued_project_codes`; `unit_marked`: the quirk `unit_marked`."""
     entries = []
     for line in lines([w for band in group.bands for w in band.words]):
-        label, money = _split_line(line, amount_brackets, bare_amounts)
+        label, money = _split_line(line, amount_brackets, bare_amounts, unit_marked)
         line_text = normalize(text(label))
         if label and not money and UNIT_NOTATION.fullmatch(line_text):
             continue  # `(単位:円・税抜)` printed over a column names the unit; it is no item of the column
@@ -706,7 +710,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')),
                          numbers, quirk(settings, 'long_numbers'), quirk(settings, 'glued_number_stops'),
                          quirk(settings, 'name_line'),
-                         quirk(settings, 'glued_project_codes') or quirk(settings, 'spaced_project_codes'))
+                         quirk(settings, 'glued_project_codes') or quirk(settings, 'spaced_project_codes'),
+                         quirk(settings, 'unit_marked'))
     settings = settings or {}
     if (shares := quirk(settings, 'department_amounts')) is not None:
         for index, (label, money, code, name) in enumerate(entries):
@@ -1751,6 +1756,10 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             # `1項1目18節から 169,664`, 132055) is the note it says it is.
             note = False
             item.code, item.name, item.indent = None, raw, waiting.indent
+        if ((counts := quirk(settings, 'head_counts')) is not None and item.code is not None and not item.amounts
+                and id(item) not in column_amount_items and counts.module.matches(raw)):
+            # A line that prints only the head count of the item above (`議員報酬 174,972` / `２６人`), not an item.
+            note, item.hint, item.role = False, counts.module.HINT, 'annotation'
         mark = next((m for m in ordered_marks
                      if (shape_of(item) == shapes[m] if m in shapes else raw.startswith(normalize(m)))), None)
         if note:
@@ -2032,7 +2041,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 previous = kept[-1] if kept else None
                 # (Under stacked titles a 目 abolished this year prints no number: `退職被保険` / `者等療養費` `0 1 △1`.)
                 if (previous is not None and previous.name
-                        and (previous.code is not None or (logical.level_titles is not None and id(previous) in column_amount_items))
+                        and (previous.code is not None or (id(previous) in column_amount_items and (
+                            logical.level_titles is not None
+                            or (document_quirk('unnumbered_abolished_names') is not None and not TOTAL.search(previous.name)))))
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts
                         # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)
@@ -2724,6 +2735,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                        'unit': remark['unit'], 'hint': remark.get('hint')})
     nest_by_rows(nodes, placed, layout)
     repeated_amounts = repeated_parent_rows(nodes, amounts, unowned, unowned_runs)
+    if (cells := document_quirk('repeated_breakdown_cells')) is not None:
+        repeated_amounts += cells.module.take(nodes, amounts)
     return Built(nodes, _dedupe(amounts, unowned), unowned, notes, marked, skipped, repeated_codes, repeated_amounts, unpaid_rounds)
 
 

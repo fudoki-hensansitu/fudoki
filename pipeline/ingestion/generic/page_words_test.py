@@ -11,8 +11,14 @@ def page(*words: Word) -> Page:
 class LinesTest(unittest.TestCase):
     def test_numbers_and_ascii_keep_a_space_but_japanese_words_join(self):
         words = [Word('Hello', 0, 0, 30, 10), Word('World', 32, 0, 62, 10), Word('258', 64, 0, 79, 10),
-                 Word('324', 81, 0, 96, 10), Word('保育', 98, 0, 118, 10), Word('園費', 119, 0, 139, 10)]
+                 Word('324', 81, 0, 96, 10), Word('保育', 100, 0, 120, 10), Word('園費', 121, 0, 141, 10)]
         self.assertEqual(lines(page(*words)), ['Hello World 258 324 保育園費'])
+
+    def test_a_number_set_close_to_japanese_joins_it(self):
+        # 「1,221万4千円」「AIを活用」は、半角と全角の間が狭ければ詰める
+        words = [Word('1,221', 0, 0, 25, 10), Word('万', 26, 0, 36, 10), Word('4', 37, 0, 42, 10),
+                 Word('千円', 43, 0, 63, 10)]
+        self.assertEqual(lines(page(*words)), ['1,221万4千円'])
 
     def test_a_word_slightly_off_the_baseline_stays_on_the_row(self):
         # 行の字の高さは中央値で見るので、低い字の語が少しずれても別の行にならない

@@ -37,6 +37,7 @@ import re
 from dataclasses import dataclass, field
 from pathlib import Path
 
+from ingestion.generic import page_words
 from ingestion.project.layouts.press import PressItem, amount, norm
 
 
@@ -112,7 +113,7 @@ def finish(candidate: Candidate, marks: dict) -> Candidate | None:
 
 
 def read(path, workflow: dict) -> list[PressItem]:
-    import pdfplumber
+    """頁の行は bbox（`page_words`）から組む。表・札で見つける様式だけ、罫線と字の位置を pdfplumber の頁で読む。"""
     scope, marks = workflow.get('scope', {}), workflow.get('marks', {})
     finder = pattern('find', workflow['find']['pattern'])
     options = workflow['find'].get('options', {})
@@ -123,14 +124,18 @@ def read(path, workflow: dict) -> list[PressItem]:
     state = finder.State(options) if hasattr(finder, 'State') else None
     items: list[PressItem] = []
     inside, stopped = start is None, False
-    with pdfplumber.open(path) as pdf:
-        for number, page in enumerate(pdf.pages, start=1):
-            text = page.extract_text() or ''
-            if page_text and not page_text.search(norm(text).replace('\n', '')):
-                page.flush_cache()
+    pdf = None
+    if getattr(finder, 'NEEDS_PAGE', False):
+        import pdfplumber
+        pdf = pdfplumber.open(path)
+    try:
+        for words in page_words.pages(Path(path)):
+            number = words.number
+            lines = [norm(r) for r in page_words.lines(words)]
+            if page_text and not page_text.search(''.join(lines)):
                 continue
             rows = []
-            for row in (norm(r) for r in text.split('\n')):
+            for row in lines:
                 if start and start.search(row):
                     inside = True
                     continue
@@ -140,10 +145,10 @@ def read(path, workflow: dict) -> list[PressItem]:
                 if inside:
                     rows.append(row)
             if (start or end) and not rows:
-                page.flush_cache()
                 if stopped:
                     break
                 continue
+            page = pdf.pages[number - 1] if pdf else None
             current = Page(number, page, rows)
             found = finder.find(current, options, state)
             for step, step_options in steps:
@@ -156,7 +161,11 @@ def read(path, workflow: dict) -> list[PressItem]:
                 position += 1
                 items.append(PressItem(number, kept.name, [kept.name, *kept.names], kept.is_new,
                                        amount(kept.amount, marks.get('unit', '千円')), kept.points, position))
-            page.flush_cache()
+            if page is not None:
+                page.flush_cache()
             if stopped:
                 break
+    finally:
+        if pdf is not None:
+            pdf.close()
     return items
