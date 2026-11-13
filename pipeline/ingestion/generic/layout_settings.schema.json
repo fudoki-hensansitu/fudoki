@@ -5,7 +5,7 @@
   "required": ["schema_version"],
   "properties": {
     "schema_version": {"const": 1},
-    "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["justified_names", "opening_cell", "overprint", "split_at_rules", "stacked_rows", "white_text"]}},
+    "repairs": {"type": "array", "uniqueItems": true, "items": {"enum": ["em_boxes", "justified_names", "line_clips", "opening_cell", "overprint", "spaced_codes", "split_at_rules", "stacked_rows", "white_text"]}},
     "codes": {"const": "right"},
     "quirks": {"type": "object", "description": "Opt-in quirks the workflow selected (`generic/patterns/quirks/`); each module checks its own value."},
     "rules": {

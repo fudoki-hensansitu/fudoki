@@ -82,7 +82,8 @@ def rules() -> tuple[tuple[str, str, re.Pattern | None], ...]:
 
 # --- 1. invisible glyphs -----------------------------------------------------
 
-def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, character_map: dict[str, str] | None = None):
+def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, character_map: dict[str, str] | None = None,
+            line_clips: bool = False, em_boxes: bool = False):
     """(box, character, visible) of every drawn character, in Poppler's top-left coordinates.
 
     Visibility belongs to the text object that draws the character: visible
@@ -90,6 +91,8 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
     `text_layer.form_clips`): text drawn inside a form gives its clip in the form's space, where the
     object's own bounds are too, so either the character box or the object's bounds meeting it is visible
     (281000 draws each page as a form scaled from 72×72).
+    `line_clips` (the repair `line_clips`): `patterns/repairs/line_clips.py`. `em_boxes` (the repair `em_boxes`): a
+    character's box is its em square, not its ink (`patterns/repairs/em_boxes.py`).
     """
     import pypdfium2.raw as raw
     page = pdf[number - 1]
@@ -120,6 +123,7 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         return clip is None or (box[0] < clip[2] and box[2] > clip[0] and box[1] < clip[3] and box[3] > clip[1])
 
     paths = []
+    flat_paths: set[int] = set()
     for index in range(raw.FPDFPage_CountObjects(page.raw)):
         handle = raw.FPDFPage_GetObject(page.raw, index)
         if raw.FPDFPageObj_GetType(handle) == raw.FPDF_PAGEOBJ_PATH:
@@ -127,7 +131,10 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
             raw.FPDFPageObj_GetBounds(handle, l, b, r, t)
             paths.append(((l.value - left, top - t.value, r.value - left, top - b.value),
                           inside((l.value, b.value, r.value, t.value), clip_of(handle))))
+            if line_clips and not paths[-1][1] and load_pattern("repairs", "line_clips").flat(clip_of(handle)):
+                flat_paths.add(len(paths) - 1)
     found = []
+    flat: set[int] = set()
     for index in range(textpage.count_chars()):
         code = raw.FPDFText_GetUnicode(textpage.raw, index)
         if code in (0, 10, 13, 32, 0x3000):
@@ -135,6 +142,10 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         l, r, b, t = (ctypes.c_double() for _ in range(4))
         if not raw.FPDFText_GetCharBox(textpage.raw, index, l, r, b, t):
             continue
+        if em_boxes:
+            rect = raw.FS_RECTF()
+            if raw.FPDFText_GetLooseCharBox(textpage.raw, index, rect):
+                l, r = ctypes.c_double(rect.left), ctypes.c_double(rect.right)
         if opening and chr(code) in OPENING:  # the ink of a full-width opening bracket sits right in its cell: the cell starts at the origin
             l = load_pattern("repairs", "opening_cell").left_edge(raw, textpage, index, l)
         handle = raw.FPDFText_GetTextObject(textpage.raw, index)
@@ -146,7 +157,14 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
             raw.FPDFPageObj_GetBounds(handle, ol, ob, orr, ot)
             visible = inside((ol.value, ob.value, orr.value, ot.value), clip_of(handle))
         found.append(((l.value - left, top - t.value, r.value - left, top - b.value), (character_map or {}).get(chr(code), chr(code)), visible))
+        if line_clips and not visible and handle and load_pattern("repairs", "line_clips").flat(clip_of(handle)):
+            flat.add(len(found) - 1)
+    width = page.get_width()
     textpage.close(); page.close()
+    if (flat or flat_paths) and not load_pattern("repairs", "line_clips").prints_own_copy(found, width):
+        shown = load_pattern("repairs", "line_clips").SHOWN
+        found = [(box, char, shown if index in flat else visible) for index, (box, char, visible) in enumerate(found)]
+        paths = [(box, visible or index in flat_paths) for index, (box, visible) in enumerate(paths)]
     return found, paths
 
 
@@ -248,8 +266,12 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: f
     import pypdfium2 as pdfium
     pdf = pdfium.PdfDocument(str(pdf_path))
     try:
+        read = lambda number: _glyphs(pdf, number, 'opening_cell' in repairs, form_clips, character_map, 'line_clips' in repairs,
+                                      'em_boxes' in repairs)
+        cached = {page.number: read(page.number) for page in pages} if 'line_clips' in repairs else {}
+        offset = load_pattern("repairs", "line_clips").offset([found for found, _ in cached.values()]) if cached else 0.0
         for page in pages:
-            glyphs, paths = _glyphs(pdf, page.number, 'opening_cell' in repairs, form_clips, character_map)
+            glyphs, paths = cached.get(page.number) or read(page.number)
             # Glyphs placed off the page are not on it at all (Poppler skips them);
             # only invisible glyphs on the page call for a rebuild.
             glyphs = [g for g in glyphs if g[0][2] > 0 and g[0][0] < page.width and g[0][3] > 0 and g[0][1] < page.height]
@@ -258,18 +280,26 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: f
                 image = shifted.module.render(pdf_path, page.number)
                 glyphs = shifted.module.hide(pdf_path, page.number, page.width, glyphs, image)
                 page.rules = shifted.module.rules(pdf_path, page.number, page.width, image)
-            if all(visible for _, _, visible in glyphs):
+            flat_shown = 'line_clips' in repairs and any(
+                visible is load_pattern("repairs", "line_clips").SHOWN for _, _, visible in glyphs)
+            if flat_shown:
+                glyphs = load_pattern("repairs", "line_clips").moved(glyphs, offset)
+            if all(visible for _, _, visible in glyphs) and not flat_shown:
                 continue  # rules are filtered only on pages that draw invisible text
             drawn = [rule for rule in page.rules if shifted is not None or _drawn(rule, paths)]
+            if 'line_clips' in repairs:
+                drawn = load_pattern("repairs", "line_clips").without_outlines(drawn)
             report.hidden_rules += len(page.rules) - len(drawn)
             page.rules = drawn
             hidden = sum(1 for _, _, visible in glyphs if not visible)
             report.hidden_glyphs += hidden
-            if hidden >= REBUILD_SHARE * len(glyphs):
+            if hidden >= REBUILD_SHARE * len(glyphs) or flat_shown:
                 # Most of the page is drawn twice: rebuild its words from the visible
-                # glyphs, whose boxes are exact, instead of Poppler's words.
+                # glyphs, whose boxes are exact, instead of Poppler's words (`line_clips`: also a page it shows).
+                joins = (shifted.module.joins if shifted else
+                         load_pattern("repairs", "spaced_codes").joins if 'spaced_codes' in repairs else None)
                 page.words = words_from_glyphs([(box, char) for box, char, visible in glyphs if visible], report, page.rules,
-                                               'overprint' in repairs, joins=shifted.module.joins if shifted else None)
+                                               'overprint' in repairs, joins=joins)
                 if shifted is not None:
                     page.words = shifted.module.rejoin(page.words)
             else:
@@ -305,7 +335,15 @@ def _amount_start(text: str) -> int:
     return 0
 
 
-def repair_positions(page: Page, report: Report) -> None:
+def repair_positions(page: Page, report: Report, walls: bool = False) -> None:
+    """`walls` (the repair `split_at_rules`): two whole numbers touching across a column rule stay apart
+    (`1,740,497` in 比較 against `12,039,004` in the next column, 132209)."""
+    verticals = [r for r in page.rules if r.vertical] if walls else []
+
+    def walled(previous: Word, word: Word) -> bool:
+        y = (word.y0 + word.y1) / 2
+        return (not previous.text.endswith(',') and not word.text.startswith(',')
+                and any(previous.x1 - 1 <= r.x0 <= word.x0 + 1 and r.y0 <= y <= r.y1 for r in verticals))
     # A minus sign starts a number, it is never inside one: `0△22,990,000` is `0` and `△22,990,000`, and
     # `…へ流用△100,325円` is the words of a note and its amount, set without a gap.
     split: list[Word] = []
@@ -338,11 +376,14 @@ def repair_positions(page: Page, report: Report) -> None:
             narrow = min(previous.x1 - previous.x0, word.x1 - word.x0)
             if (len(previous.text) == 1 and len(word.text) == 1 and not NUMERIC.match(previous.text + word.text)
                     and overlap >= .6 * narrow):
-                result[-1] = Word(previous.text + word.text, min(previous.x0, word.x0), min(previous.y0, word.y0),
+                # A circled number drawn as a circle over a smaller digit reads circle first (`○1`), even when the
+                # digit's centre rounds to the line above the circle's (132209).
+                first, second = (word, previous) if word.text in '〇○' and previous.text.isdigit() else (previous, word)
+                result[-1] = Word(first.text + second.text, min(previous.x0, word.x0), min(previous.y0, word.y0),
                                   max(previous.x1, word.x1), max(previous.y1, word.y1))
                 report.composite_glyphs += 1  # one printed character drawn as two glyphs
                 continue
-            if _continues(previous, word):
+            if _continues(previous, word) and not walled(previous, word):
                 result[-1] = Word(previous.text + word.text, previous.x0, min(previous.y0, word.y0),
                                   max(previous.x1, word.x1), max(previous.y1, word.y1))
                 report.joined_numbers += 1
@@ -361,7 +402,7 @@ def repair_positions(page: Page, report: Report) -> None:
     joined: list[Word] = []
     for row in rows:
         for word in sorted(row, key=lambda w: w.x0):
-            if joined and _same_line(joined[-1], word) and _continues(joined[-1], word):
+            if joined and _same_line(joined[-1], word) and _continues(joined[-1], word) and not walled(joined[-1], word):
                 previous = joined[-1]
                 joined[-1] = Word(previous.text + word.text, previous.x0, min(previous.y0, word.y0),
                                   max(previous.x1, word.x1), max(previous.y1, word.y1))
@@ -579,7 +620,7 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
             minus.module.replace(page)
         if strokes is not None:
             strokes.module.drop(page)
-        repair_positions(page, report)
+        repair_positions(page, report, 'split_at_rules' in repairs)
         join_vertical(page, report, 'stacked_rows' in repairs)
         if 'justified_names' in repairs:
             load_pattern("repairs", "justified_names").join(page)

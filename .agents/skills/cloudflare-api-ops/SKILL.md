@@ -1,21 +1,14 @@
 ---
 name: cloudflare-api-ops
-description: fudoki の apps/api（Cloudflare Workers + D1、REST と MCP）をデプロイ・運用するときに参照する。公開直後に想定外の 403 が出た、といった非自明なハマりどころを持つ。
+description: fudoki の apps（api・web・docs の Cloudflare Workers）をデプロイ・運用するときに参照する。CI の cf deploy が止まる、公開直後に想定外の 403 が出る、deploy の token の権限を変える、といったときに読む。
 user-invocable: false
 ---
 
 # cloudflare-api-ops
 
-`apps/api`（api.fudoki.dev）の運用で得た、コードや AGENTS.md からは読めないハマりどころの正本。設計判断そのもの（why この形にしたか）は `apps/AGENTS.md` が正本なので、ここは重複させない。
-
-## Routing table
+apps の Cloudflare の運用で、コードからは読めないこと。構成は `apps/AGENTS.md`、決定の理由は `docs/adr/` にある。
 
 | やること | 読む reference |
 | --- | --- |
-| 公開直後に特定クライアントだけ 403 になる | [references/cloudflare-zone.md](references/cloudflare-zone.md) |
-| CI の `cf deploy`（apps/docs）が「差分がある」と中止する・デプロイ後に route が消えないか確かめる | [references/cf-deploy.md](references/cf-deploy.md) |
-
-## 関連 skill
-
-- apps/api の設計判断・トレードオフは `apps/AGENTS.md` が正本（このスキルは重複させない）
-- dbt / duckdb 側のハマりどころは `.agents/skills/pipeline/`
+| 公開直後に特定のクライアントだけ 403 になる | [references/cloudflare-zone.md](references/cloudflare-zone.md) |
+| CI の `cf deploy` が「差分がある」と中止する・deploy の token の権限を変える | [references/cf-deploy.md](references/cf-deploy.md) |

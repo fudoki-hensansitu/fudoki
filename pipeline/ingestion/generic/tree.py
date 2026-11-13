@@ -774,6 +774,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         anchor = label[0] if label else money[0][0]
         y = (anchor.y0 + anchor.y1) / 2
         cells[_cell(band_of(anchor), y)].append(index)
+    marks = tuple((settings or {}).get('marks') or ())  # the axis's declared marks (`breakdown.<axis>.options.marks`)
+
     def wraps(index: int, ix: list[int]) -> bool:
         """Whether every codeless line of the cell starts where its one code's name can wrap: from the
         code's own start to the start of its name. A line indented past the name (a 内訳 of the item above,
@@ -802,6 +804,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                 continue
             if not start - 3 <= entries[i][0][0].x0 <= name_start + slack:
                 return False
+            if any(entries[i][0][0].text.startswith(mark) for mark in marks):
+                return False  # a line led by a declared mark (`○1 消耗品費` under `10 需用費`, 東大和市) is an item of its own
             # A name goes on a second line because it did not fit with the amount: the line before runs up
             # to where the amount is printed. A short line over an indented line with an amount is two items.
             if entries[i][1] and position and limit is not None:
@@ -814,6 +818,19 @@ def items(group: Group, header: str, margins: set[int] | None = None,
               if sum(entries[i][2] is not None for i in ix) == 1 and len(ix) > 1
               and sum(bool(entries[i][1]) for i in ix) <= 1 and len({beside(entries[i][0]) for i in ix} - {frozenset()}) <= 1
               and wraps(0, ix) for i in ix}
+    if 0 in single and quirk(settings, 'name_tails_over_pages') is not None:
+        # The page's first lines (before its first number) are the rest of the name that ended the page before, not
+        # the start of this cell's item.
+        leading = set()
+        for i in sorted(single[0]):
+            if entries[i][2] is not None or entries[i][1]:
+                break
+            leading.add(i)
+        rest = tuple(i for i in single[0] if i not in leading)
+        for i in single[0]:
+            single.pop(i, None)
+        if len(rest) > 1:
+            single.update({i: rest for i in rest})
     repeated_headings: set[int] = set()
     if (repeated := quirk(settings, 'heading_repeated_over_code')
             or quirk(settings, 'repeated_subject_headings')) is not None:
@@ -2181,6 +2198,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 previous.name += first.name
                 previous.lines += first.lines
                 previous.amounts += first.amounts
+            elif previous is not None and (tail := quirk((layout or {}).get(group.axis), 'name_tails_over_pages')) is not None:
+                while mine and tail.module.runs_on(previous, mine[0]):
+                    first = mine.pop(0)
+                    previous.name += first.name
+                    previous.lines += first.lines
             if mine:
                 tails[group.axis] = mine[-1]
     for axis, hints in (layout or {}).items():

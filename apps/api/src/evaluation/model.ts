@@ -1,5 +1,4 @@
-// 事業評価の集約: 自治体の1年度（評価した事業を行った年度）分の事務事業評価。評価結果の資料と評価シート全部を持つ。
-// 守ること: シートを取り込んだ年度は、シートの数・A〜D（方向性の区分をまとめたもの）の数が評価結果の資料の件数と合う。
+// 事業評価の集約: 自治体の1年度（評価した事業を行った年度）分の事務事業評価。評価シート全部を持つ。
 import { z } from 'zod'
 import { EVALUATION_SHEET_TABLE, described } from '../columns'
 import { nextPageToken } from '../shared/paging'
@@ -9,7 +8,6 @@ import { FiscalYear, JurisdictionCode, PagedOrigin, RowId, Yen } from '../shared
 export const Grade = z.enum(['A', 'B', 'C', 'D'])
 /** 今後の方向性の共通の区分（風土記の判断）。印字は direction */
 export const DirectionCode = z.enum(['new', 'expand', 'keep', 'statutory', 'as_planned', 'improve', 'resize', 'reduce', 'merge', 'complete', 'end', 'consider_end'])
-export const EvaluationOriginType = z.enum(['sheets', 'result'])
 
 /** 方向性の区分ごとの言い方と、まとめた4区分（風土記の判断）。品川の評価の区分（A〜D）とも一致する */
 export const DIRECTIONS: Record<z.infer<typeof DirectionCode>, { label: string; grade: z.infer<typeof Grade> }> = {
@@ -43,15 +41,6 @@ export function outlookOf(code: string | null): z.infer<typeof Outlook> {
   const d = code ? DIRECTIONS[code as z.infer<typeof DirectionCode>] : undefined
   return d ? { code: code as z.infer<typeof DirectionCode>, label: d.label, grade: d.grade, grade_label: GRADE_LABELS[d.grade] } : null
 }
-
-/** 評価結果の資料に載る数（資料の値） */
-export const GradeCounts = z.strictObject({
-  evaluated: z.int().min(0).describe('評価した数'),
-  A: z.int().min(0),
-  B: z.int().min(0),
-  C: z.int().min(0),
-  D: z.int().min(0),
-})
 
 export const IndicatorYear = z.strictObject({
   fiscal_year: FiscalYear,
@@ -96,23 +85,16 @@ export const EvaluationSheet = z.strictObject({
 })
 export type EvaluationSheet = z.infer<typeof EvaluationSheet>
 
-const rootCommon = {
+/** 事業評価の根 */
+export const Evaluation = z.strictObject({
   evaluation_id: z.string(),
   jurisdiction_code: JurisdictionCode,
   fiscal_year: FiscalYear.describe('評価した事業を行った年度'),
-  sheets: z.array(EvaluationSheet).describe('シートを取り込んでいない年度は空'),
-}
-
-/** 事業評価の根。評価結果の資料があるかで形が違う */
-export const Evaluation = z.discriminatedUnion('kind', [
-  z.strictObject({ ...rootCommon, kind: z.literal('with_result'), result: PagedOrigin, counts: GradeCounts }),
-  z.strictObject({ ...rootCommon, kind: z.literal('sheets_only') }),
-])
+  sheets: z.array(EvaluationSheet),
+})
 export type Evaluation = z.infer<typeof Evaluation>
 
 // API の行。列は表（columns.json）のまま。列の集合・型・null の可否・accepted_values は model.test.ts が照合する。
-
-export const EvaluationKind = z.enum(['with_result', 'sheets_only'])
 
 export const EvaluationRow = z
   .strictObject(
@@ -120,14 +102,6 @@ export const EvaluationRow = z
       evaluation_id: z.string(),
       jurisdiction_code: z.string(),
       fiscal_year: z.int(),
-      kind: EvaluationKind,
-      result_origin_id: z.string().nullable(),
-      result_page: z.int().nullable(),
-      evaluated_count: z.int().nullable(),
-      grade_a: z.int().nullable(),
-      grade_b: z.int().nullable(),
-      grade_c: z.int().nullable(),
-      grade_d: z.int().nullable(),
     })
   )
   .meta({ id: 'EvaluationRow', description: '事業評価の根（自治体 × 評価した事業を行った年度）。' })
@@ -138,7 +112,6 @@ export const EvaluationOriginRow = z
       origin_id: z.string(),
       evaluation_id: z.string(),
       jurisdiction_code: z.string(),
-      document_type: EvaluationOriginType,
       fiscal_year: z.int(),
       title: z.string().nullable(),
       url: z.string(),
@@ -146,7 +119,7 @@ export const EvaluationOriginRow = z
       sha256: z.string(),
     })
   )
-  .meta({ id: 'EvaluationOriginRow', description: '事業評価の出典（評価シートの冊・評価結果の資料）。' })
+  .meta({ id: 'EvaluationOriginRow', description: '事業評価の出典（評価シートの冊）。' })
 
 export const SheetRow = z
   .strictObject({
@@ -205,16 +178,16 @@ export const IndicatorValueRow = z
   )
   .meta({ id: 'EvaluationIndicatorValueRow', description: '指標の年度ごとの目標と実績（シートの表記のまま）。' })
 
-const ORIGINS_HELP = '結果の行が指す出典。行の origin_id・result_origin_id から引く。'
+const ORIGINS_HELP = '結果の行が指す出典。行の origin_id から引く。'
 
 export const EvaluationId = RowId('evaluation_id from a sheet or search_evaluation_sheets')
 export const SheetId = RowId('sheet_id from get_evaluation or search_evaluation_sheets')
 
 export const EvaluationOutput = z.strictObject({
   evaluation: EvaluationRow,
-  sheets: z.array(SheetRow).describe('評価シート（ページ）。シートを取り込んでいない年度は空。'),
+  sheets: z.array(SheetRow).describe('評価シート（ページ）。'),
   next_page_token: nextPageToken.describe('sheets の次のページの token。無ければ null。'),
-  origins: z.array(EvaluationOriginRow).describe('この年度の事業評価の出典（評価シートの冊と評価結果の資料）。'),
+  origins: z.array(EvaluationOriginRow).describe('この年度の事業評価の出典（評価シートの冊）。'),
 })
 export type EvaluationOutput = z.infer<typeof EvaluationOutput>
 

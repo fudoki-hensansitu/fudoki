@@ -183,22 +183,22 @@ _Avoid_: 団体マスタ
 ```
 .
 ├── pipeline/         # source_selection、ingestion/fiscal、dbt（マスタと正規化macro）
-├── packages/         # fiscal の純粋な型・名称、jurisdictions
+├── packages/         # fiscal の純粋な型・名称、jurisdictions、ui
 ├── apps/             # web（ホーム・紹介・自治体の頁・AI との会話）、api、docs
 ├── docs/
 │   ├── prd/<topic>/{prd,dd}.md   # 要件と設計書。同じ topic に併置する
 │   ├── adr/                      # 決定の記録
-│   └── survey/                   # データ源の実測
+│   └── survey/                   # データ源・道具の実測
 └── .agent/           # 個人メモ・試作（gitignore）
 ```
 
-docs/ は共有文書として Git で管理し、判断の記録はコードと同じ寿命を持たせる。置き場の規約は prd skill に従う。
+docs/ は共有文書として Git で管理し、判断の記録はコードと同じ寿命を持たせる。置き場の規約は `docs/AGENTS.md` に従う。
 
 各 dir の構造・判断・手順の詳細はその dir の AGENTS.md に置く（`pipeline/`・`apps/`・`packages/`・`docs/`）。
 
 ## セットアップ
 
-ツールは mise で管理している。mise は cwd の `mise.toml` で版を選ぶので、`cf` など mise で管理する tool は repo の中から実行する（scratchpad から叩くと別の版になり、引数や PATH が違って落ちる）。
+ツールは mise で管理している。`cf` など mise で管理する tool は repo の中から実行する。
 
 ```bash
 mise install
@@ -215,7 +215,7 @@ bun run inspect:mcp                      # MCP Inspector を本番の MCP（api.
 
 CI（verify）は `typecheck:all`・`lint`・`test` だけを回す。build は deploy と web の preview に任せる。lint の rule は apps/web の oxlint（DESIGN.md の token 以外の色を見つける JS plugin だけを有効にしている）と、repo の決まりの検査（`pipeline/verify/`）だけを持つ。
 
-unit テストは、金額の正しさ・公開 API の安全性（認証・入力の上限・SQL の bind・停止スイッチなど）・壊すと利用者に届く契約（MCP の出力 schema など）のように、間違えると困るものに限って書く。画面や細かい振る舞いはローカルの e2e（smoke）で確かめ、CI では回さない。CI は速さを優先する。
+unit テストは、金額の正しさ・公開 API の安全性（認証・入力の上限・SQL の bind・停止スイッチなど）・壊すと利用者に届く契約（MCP の出力 schema など）のように、間違えると困るものに限って書く。画面や細かい振る舞いはローカルの e2e（smoke）で確かめ、CI では回さない。
 
 依存は exact ピン留めにする。公開から7日未満の版は `bunfig.toml`（`minimumReleaseAge`）と root の `pyproject.toml`（`exclude-newer`）で解決から外す。セキュリティ修正は severity に関わらず cooldown の例外として直ちに適用し、例外を解除できる日時を PR 本文に書き、公開から7日経ったら例外と補助の固定を外す。
 
@@ -240,9 +240,9 @@ unit テストは、金額の正しさ・公開 API の安全性（認証・入�
 構造・判断・手順の詳細は各 dir の AGENTS.md と文書へ逃がしてある。この文書には書かない。
 
 - パイプラインの実装・script・技術スタックを触るとき → `pipeline/AGENTS.md`
-- 学び・ハマりどころ・過去の失敗 → `.agents/skills/<topic>/`
+- 作業の範囲・順序・判断の方針 → `.agents/skills/<topic>/`。SKILL.md と reference には作業の方針と、コードや宣言から読めない事実と対処だけを書き、tips・コマンド・コードや宣言にあることは書かない。決定の理由は `docs/adr/` に置く
 - データ源を調べるとき → `docs/survey/`
 - マーケティングの計画・marketingskills が読む product-marketing、repo をまたいで使うアカウント（X・メールなど）→ home repo（`fudoki-hensansitu/home`、private）
 - 歳出・歳入のドメインモデルとクラス図 → `docs/prd/fiscal-records/fiscal-domain-model.md`
 - 外部から取り込んだ skill → `.agents/skills/shadcn/`（`shadcn/ui` から skillctrl で取得。取得元と hash は `skills-lock.json`・`.agents/skillctrl/lock.json`）。他の `.agents/skills/` は repo で書いたもの。Claude Code へは `.claude/skills/` の相対 symlink で渡す
-- PR レビュー → Pullfrog。設定の正本は `.github/pullfrog.config.sh`（backend の値は git から見えないので、変えるときはこの script を直して実行する）。public repo なので追加コミットも自動で再レビューし（`review.re-review=true`）、`@pullfrog` で手動依頼もできる
+- PR レビュー → Pullfrog。設定の正本は `.github/pullfrog.config.sh`（変えるときはこの script を直して実行する）。追加コミットも自動で再レビューし（`review.re-review=true`）、`@pullfrog` で手動依頼もできる
