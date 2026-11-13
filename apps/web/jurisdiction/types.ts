@@ -93,6 +93,8 @@ export interface PageData {
   code: string
   name: string
   prefecture: string
+  /** 自治体の頁の path（/tokyo/shinagawa）。年度・タブのリンクの先を作る */
+  path: string
   /** 都道府県自体の頁（/tokyo）。header の都道府県名から移る。都道府県自体の頁と、都道府県の頁が無いときは null */
   prefecturePath: string | null
   /** 都道府県の紋章の URL（prefecturePath があり、紋章のあるときだけ） */

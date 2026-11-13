@@ -390,6 +390,33 @@ function FeaturedTowns({ featured, entries }: { featured: Featured[]; entries: M
   )
 }
 
+/** 頁の末尾の手前。収録しているまちを都道府県ごとにリンクで並べる。検索エンジンがホームから全部の自治体の頁を辿れるよう、まちの有無に関わらずサーバーの HTML にも載せる */
+function TownIndex({ entries }: { entries: MapEntry[] }) {
+  if (!entries.length) return null
+  const groups = [...Map.groupBy(entries, (e) => e.prefecture)]
+  return (
+    <section className="mt-14" aria-labelledby="town-index">
+      <h2 id="town-index" className="mb-3 text-[15px] font-medium">風土記で見られるまち</h2>
+      <div className="flex flex-col gap-3">
+        {groups.map(([prefecture, towns]) => (
+          <div key={prefecture} className="flex flex-col gap-1 sm:flex-row sm:gap-4">
+            <h3 className="w-16 shrink-0 text-[13px] text-muted-foreground">{prefecture}</h3>
+            <ul className="flex flex-wrap gap-x-3 gap-y-1 text-sm">
+              {[...towns].sort((a, b) => a.code.localeCompare(b.code)).map((t) => (
+                <li key={t.code}>
+                  <Link href={t.latestYear ? `${t.path}/${t.latestYear}` : t.path} className="text-foreground no-underline hover:text-primary">
+                    {t.name}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </div>
+        ))}
+      </div>
+    </section>
+  )
+}
+
 const DOCS = 'https://docs.fudoki.dev'
 
 /** 頁の末尾。風土記について・利用規約・プライバシーポリシーへはここから辿る（前のホームと同じ並び） */
@@ -519,6 +546,7 @@ export function Home({ entries, featured }: HomeProps) {
       <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />
       {body}
       {featuredTowns}
+      <TownIndex entries={entries} />
       <Footer />
     </main>
   )

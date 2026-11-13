@@ -1064,6 +1064,9 @@ export function AppPage({ res, data, snapshot, sitekey, initialYear, initialFiel
     history.replaceState(history.state, '', `${basePath()}/${y}` + (f ? `/fields/${f}` : t === 'overview' ? '' : `/${TAB_SLUGS[t]}`))
     document.title = pageHead(data, y, f ? { field: f } : t === 'overview' ? undefined : { tab: t }).title
   }
+  /** 年度・タブの頁の URL（showUrl と同じ形）。リンクの先にして検索エンジンにも辿らせる */
+  const pageHref = (y: number, t: TabKey) => `${data.path}/${y}` + (t === 'overview' ? '' : `/${TAB_SLUGS[t]}`)
+  const yearHref = (y: number) => pageHref(y, tab)
   const setYear = (y: number) => {
     React.startTransition(() => setYearState(y))
     showUrl(y, at.current.tab)
@@ -1216,7 +1219,7 @@ export function AppPage({ res, data, snapshot, sitekey, initialYear, initialFiel
         {/* 自治体名の行の右に年度の切り替えを置く。切り替えのボタンで行が高くならないよう上下を詰める */}
         <div className="flex items-center justify-between gap-3">
           <h1 className="min-w-0 text-[22px] font-normal leading-tight sm:text-[26px]">{data.name}</h1>
-          <div className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} />}</div>
+          <div className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} hrefOf={yearHref} />}</div>
         </div>
         {vision ? <p className="mt-2 text-base leading-snug sm:mt-0 sm:text-[17px]">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
@@ -1272,7 +1275,7 @@ export function AppPage({ res, data, snapshot, sitekey, initialYear, initialFiel
             ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
               {tabs.map((t) => (
-                <TabsTrigger key={t.key} value={t.key} className="h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none data-active:text-primary data-active:hover:text-primary data-active:focus-visible:text-primary dark:data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
+                <TabsTrigger key={t.key} value={t.key} nativeButton={false} render={<a href={pageHref(year, t.key)} />} onClick={(e) => (e.button !== 0 || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey ? e.preventBaseUIHandler() : e.preventDefault())} className="no-underline h-full flex-none gap-1.5 px-3 py-0 has-data-[icon=inline-start]:pl-2.5 focus-visible:border-transparent focus-visible:outline-none focus-visible:ring-0 focus-visible:text-foreground text-[15px] leading-none data-active:text-primary data-active:hover:text-primary data-active:focus-visible:text-primary dark:data-active:text-primary group-data-horizontal/tabs:after:-bottom-[0.5px] group-data-horizontal/tabs:after:h-[2.5px] after:bg-primary sm:text-[17px]">
                   <t.icon data-icon="inline-start" />
                   {t.label}
                 </TabsTrigger>
@@ -1284,7 +1287,7 @@ export function AppPage({ res, data, snapshot, sitekey, initialYear, initialFiel
                 <div className="app-in shrink-0">
                   {phone ? <YearMenu years={years} current={year} onChange={setYear} /> : (
                     <>
-                      <div className="@max-4xl:hidden"><YearPicker years={years} current={year} onChange={setYear} /></div>
+                      <div className="@max-4xl:hidden"><YearPicker years={years} current={year} onChange={setYear} hrefOf={yearHref} /></div>
                       <div className="@4xl:hidden"><YearMenu years={years} current={year} onChange={setYear} /></div>
                     </>
                   )}
