@@ -10,7 +10,7 @@
 
 この設計は次の4点を定める（互換は保たない。2026-11-06 に yuito と合意）。
 
-1. 歳出を、款・項・目の **科目の表** `fiscal_expenditure_subject` と、科目の下の **内訳の表** `fiscal_expenditure_detail` に分ける。内訳の枝には分け方（`breakdown`: `事業`・`節`・`その他`）を付ける。分け方は出典（自治体・年度・資料区分）と見出しごとに宣言する風土記の判断で、宣言の無い見出しは dbt の検査で止める。
+1. 歳出を、款・項・目の **科目の表** `fiscal_expenditure_subject` と、科目の下の **内訳の表** `fiscal_expenditure_detail` に分ける。内訳の枝には分け方（`breakdown`: `事業`・`節`・`その他`）を付ける。分け方は出典（自治体・年度・資料区分）と見出しごとに宣言する風土記の判断で、宣言が要るのに無い見出し（見出しが「節」の枝は既定で `節`）は dbt の検査で止める。
 2. 当初予算と決算を、資料区分・補正号・金額の段階の列を持つ一つの表にまとめる（[ADR 0022](../../adr/0022-serve-marts-via-worker-d1-rest-and-mcp.md) の「資料区分ごとに表を分ける」を改める）。印字の位置（頁と枠の座標16列）は **印字の位置の表** `fiscal_expenditure_location` に出す。
 3. 配信の表名を「領域_中身」に揃える（`jurisdiction`・`fiscal_origin`・`fiscal_coverage`・`population_origin`・`population`）。
 4. 公開 API（REST・MCP）の操作・パス・列名を新しい表に合わせて作り直し、web と MCP の表示も移す。
@@ -96,7 +96,7 @@ erDiagram
 
 ### 分け方（breakdown）の宣言
 
-内訳の枝の根（科目の直下のノード）の見出しに、分け方を宣言する。宣言は seed `fiscal_detail_breakdown`（`jurisdiction_code`・`fiscal_year`・`document_kind`・`source_heading`・`breakdown`・`basis`）で、出典（自治体・年度・資料区分）ごとに1行ずつ書く。全自治体に効く行は持たない。見出しの語が同じでも中身が自治体で違い（上の備考）、自治体だけで書くと別の年度の資料に誤って効くためである。ただし見出しが「節」の枝は、宣言が無ければ `節` とする（2026-11-13 時点で宣言376行のうち202行がすべて「節→節」だった）。節でない分け方のときだけ宣言を書く。
+内訳の枝の根（科目の直下のノード）の見出しに、分け方を宣言する。宣言は seed `fiscal_detail_breakdown`（`jurisdiction_code`・`fiscal_year`・`document_kind`・`source_heading`・`breakdown`・`basis`）で、出典（自治体・年度・資料区分）ごとに1行ずつ書く。全自治体に効く行は持たない。見出しの語が同じでも中身が自治体で違い（上の備考）、自治体だけで書くと別の年度の資料に誤って効くためである。ただし見出しが「節」の枝は、宣言が無ければ `節` とする（2026-11-13 時点で宣言390行のうち202行がすべて「節→節」だった）。見出しが「節」でない枝は、分け方が `節` でも宣言を書く。
 
 | breakdown | 意味 | 例 |
 | --- | --- | --- |
