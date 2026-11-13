@@ -1,14 +1,15 @@
 // 住んでいるまちを選んだあとのオンボーディング（marketingskills の onboarding skill の Guided Tours: いつでも閉じられる・閉じても続きから再開できる。Do, don't show）。
-// 流れ: まちの頁を開く（ホーム）→ 分野の説明 → 分野の頁 → 事業のタブ → 事業を選ぶ → 文を選んでアシスタントに質問 → 答えが返ったら終わり。
+// 流れ: まちの頁を開く（ホーム）→ 分野を押す → 分野の頁で事業を押す → 事業の名前を選ぶ → アシスタントに質問 → 答えが返ったら終わり。どの歩も本人の操作で進む（自動では進めない）。
 // 頁をまたぐので、どの歩にいるか（at）と、進めている・止めた・終えたを localStorage に置く。止めた歩はホームの「はじめにやること」の「オンボ開始」から続ける。
-// 画面を暗くして [data-tour="…"] の部分を1か所だけ光らせ、その横に吹き出しを重ねる。吹き出しには文字だけでなく、操作の様子を動きで見せる絵（tour-visuals.tsx）を載せる
+// 画面は暗くせず、操作する所（[data-tour="…"]）を緑の枠で囲んで指のアイコンで示し、その上か下に吹き出しを置く
 import * as React from 'react'
 import { createPortal } from 'react-dom'
+import { HandPointingIcon } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import './onboarding.css'
 
 /** 歩の並び。at はこの添字 */
-export const STEPS = ['open', 'fields', 'field', 'projects', 'detail', 'ask', 'answer'] as const
+export const STEPS = ['open', 'fields', 'field', 'detail', 'ask', 'answer'] as const
 export type StepKey = (typeof STEPS)[number]
 export const TOTAL = STEPS.length
 export const stepAt = (k: StepKey) => STEPS.indexOf(k)
@@ -73,28 +74,27 @@ export function useTour() {
 }
 
 export type Spot = {
-  /** data-tour の名前。「a|b」は a が無ければ b。無ければ光らせずに吹き出しだけを出す */
+  /** data-tour の名前。「a|b」は a が無ければ b。無ければ枠と指を出さずに吹き出しだけを出す */
   target?: string
+  /** 対象の中の最初のボタン・リンクを指す（分野や事業の一覧の1行目） */
+  first?: boolean
   title: string
   body: React.ReactNode
-  /** 操作の様子を動きで見せる絵（tour-visuals.tsx）。実際のまちの名前・金額で描く */
-  visual?: React.ReactNode
-  /** 吹き出しの主のボタン。無ければ「次へ」も出さない（光らせた所の操作で進む） */
-  action?: { label: string; run: () => void }
-  /** 光らせた所を触れるようにする（押す・選ぶ・書くで進む歩） */
-  open?: boolean
-  /** 光らせた所を押したら action と同じにする（リンクの移動は action に任せる） */
-  click?: boolean
-  /** 光らせる高さを画面のこの割合までにする（長い一覧の頭だけを光らせる） */
-  maxH?: number
+  /** 指の動き。tap は押す所で軽く押し、select は文字の上を左から右へなぞる */
+  gesture?: 'tap' | 'select'
+  /** 指した所を押したときに歩を進める（リンクの移動は止めない） */
+  onPress?: () => void
 }
 
 const visible = (el: HTMLElement) => el.getClientRects().length > 0 && getComputedStyle(el).visibility !== 'hidden'
 /** 見えている対象。サイドバーと下の帯のように同じ名前が2つあるときは、見えている方 */
-const find = (target: string) => {
+const find = (target: string, first?: boolean) => {
   for (const name of target.split('|')) {
     const el = [...document.querySelectorAll<HTMLElement>(`[data-tour="${name}"]`)].find(visible)
-    if (el) return el
+    if (!el) continue
+    if (!first) return el
+    const hit = [...el.querySelectorAll<HTMLElement>('a[href], button:not([disabled])')].find(visible)
+    if (hit) return hit
   }
   return null
 }
@@ -105,13 +105,11 @@ const pinned = (el: HTMLElement | null) => {
 }
 
 type Box = { top: number; left: number; width: number; height: number }
-const PAD = 8
-const GAP = 12
-// oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで
-const SHADE = 'rgb(0 0 0 / .55)'
+const PAD = 6
+const GAP = 14
 const smooth = () => (matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth')
 
-/** 何歩目か。点と「3 / 7」 */
+/** 何歩目か。点と「3 / 6」 */
 function Dots({ at }: { at: number }) {
   return (
     <div className="flex items-center gap-2 text-[12px] text-muted-foreground">
@@ -127,12 +125,11 @@ function Dots({ at }: { at: number }) {
   )
 }
 
-/** 吹き出しの中身。光らせる吹き出しと、頁の中に置く吹き出し（InlineSpot）が使う */
+/** 吹き出しの中身。次へ進むボタンは置かない（指した所を本人が操作して進む） */
 function SpotBody({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip: () => void; onBack?: () => void }) {
   return (
     <>
-      {spot.visual ?? null}
-      <div className={cn('mb-2', spot.visual && 'mt-3.5')}>
+      <div className="mb-2">
         <Dots at={at} />
       </div>
       <h2 id="tour-title" className="text-[16px] font-medium">
@@ -140,23 +137,14 @@ function SpotBody({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip
       </h2>
       {/* 狭い札では文節で折ると行末が大きく空くので、この札だけ文字の単位で折る */}
       <div className="mt-1 text-[14px] leading-relaxed text-muted-foreground [text-wrap:wrap] [word-break:normal]">{spot.body}</div>
-      <div className="mt-4 flex items-center gap-3">
+      <div className="mt-3 flex items-center gap-3">
         <button type="button" onClick={onSkip} className="shrink-0 whitespace-nowrap text-[13px] text-muted-foreground hover:text-foreground">
           スキップ
         </button>
         <span className="flex-1" />
         {onBack ? (
-          <button type="button" onClick={onBack} className="shrink-0 whitespace-nowrap rounded-full px-3 py-2 text-[13px] hover:bg-secondary">
+          <button type="button" onClick={onBack} className="shrink-0 whitespace-nowrap rounded-full px-3 py-1.5 text-[13px] hover:bg-secondary">
             もどる
-          </button>
-        ) : null}
-        {spot.action ? (
-          <button
-            type="button"
-            onClick={spot.action.run}
-            className="rounded-full bg-primary px-4 py-2 text-[13px] font-medium text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none"
-          >
-            {spot.action.label}
           </button>
         ) : null}
       </div>
@@ -164,113 +152,125 @@ function SpotBody({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip
   )
 }
 
-/**
- * 1歩ぶんの吹き出し。target を光らせ、その下か上に吹き出しを置く。target が出てくるまで少し待ち（自治体の頁はデータが冷えていると15秒ほどかかる）、出なければ光らせずに出す。
- * at は通しの何歩目か。onSkip で止める（続きから再開できる）
- */
-export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip: () => void; onBack?: () => void }) {
+/** 対象を探し、出てくるまで少し待つ（自治体の頁はデータが冷えていると15秒ほどかかる）。undefined は探している間、null は見つからなかった */
+function useTarget(target: string | undefined, first?: boolean) {
   const [el, setEl] = React.useState<HTMLElement | null | undefined>(undefined)
-  const [box, setBox] = React.useState<Box | null>(null)
-  const [tip, setTip] = React.useState<{ top: number; left: number; width: number } | null>(null)
-  const card = React.useRef<HTMLDivElement>(null)
-  const { target, maxH } = spot
-
   React.useEffect(() => {
     setEl(undefined)
-    setBox(null)
     if (!target) return setEl(null)
     let n = 0
     const t = setInterval(() => {
       n++
-      const found = find(target)
+      const found = find(target, first)
       if (found || n > 70) {
         clearInterval(t)
         setEl(found)
       }
     }, 150)
     return () => clearInterval(t)
-  }, [target])
+  }, [target, first])
+  return el
+}
 
-  const measure = React.useCallback(() => {
-    const vw = window.innerWidth
-    const vh = window.innerHeight
-    const w = Math.min(360, vw - 24)
-    const h = card.current?.offsetHeight ?? 280
-    // 対象が見つからなければ、画面の下の真ん中に吹き出しだけを置く
-    const live = el && el.isConnected ? el : target ? find(target) : null
-    if (!live) {
-      setBox(null)
-      setTip({ top: Math.max(12, vh - h - 96), left: (vw - w) / 2, width: w })
-      return
-    }
-    const r = live.getBoundingClientRect()
-    const height = maxH ? Math.min(r.height, vh * maxH) : r.height
-    const b = { top: r.top - PAD, left: r.left - PAD, width: r.width + PAD * 2, height: height + PAD * 2 }
-    setBox(b)
-    // 下に入るなら下、入らなければ上、どちらも入らなければ画面の下端に置く。横は対象に揃え、画面からはみ出さない
-    const below = b.top + b.height + GAP
-    const above = b.top - GAP - h
-    const top = below + h <= vh - 12 ? below : above >= 12 ? above : vh - h - 12
-    const left = Math.min(Math.max(12, b.left), vw - w - 12)
-    setTip({ top, left, width: w })
-  }, [el, target, maxH])
-
+/** 対象の位置を追う。画面の外なら送って見せ、スクロール・大きさの変化のたびに測り直す */
+function useBox(el: HTMLElement | null | undefined, target: string | undefined, first: boolean | undefined) {
+  const [box, setBox] = React.useState<Box | null>(null)
   React.useEffect(() => {
-    if (el === undefined) return
-    if (el && !pinned(el)) {
+    if (!el) return setBox(null)
+    if (!pinned(el)) {
       const r = el.getBoundingClientRect()
-      const tall = r.height > window.innerHeight * (maxH ?? 0.5)
-      if (r.top < 64 || r.bottom > window.innerHeight - 200) el.scrollIntoView({ block: tall ? 'start' : 'center', behavior: smooth() })
+      if (r.top < 64 || r.bottom > window.innerHeight - 220) el.scrollIntoView({ block: 'center', behavior: smooth() })
+    }
+    const measure = () => {
+      // 頁が描き直されて対象が入れ替わったら、探し直す
+      const live = el.isConnected ? el : target ? find(target, first) : null
+      if (!live) return setBox(null)
+      const r = live.getBoundingClientRect()
+      setBox({ top: r.top, left: r.left, width: r.width, height: r.height })
     }
     measure()
     let raf = 0
     const tick = () => (cancelAnimationFrame(raf), (raf = requestAnimationFrame(measure)))
     window.addEventListener('scroll', tick, true)
     window.addEventListener('resize', tick)
-    // 送り終わり・中身が動いたあとにも測り直す
     const settle = [setTimeout(measure, 450), setTimeout(measure, 1200)]
-    const ro = el ? new ResizeObserver(tick) : null
-    if (el) ro?.observe(el)
+    const ro = new ResizeObserver(tick)
+    ro.observe(el)
     return () => {
       cancelAnimationFrame(raf)
       settle.forEach(clearTimeout)
-      ro?.disconnect()
+      ro.disconnect()
       window.removeEventListener('scroll', tick, true)
       window.removeEventListener('resize', tick)
     }
-  }, [el, measure, maxH])
+  }, [el, target, first])
+  return box
+}
 
-  // 押す歩: 光らせた所（リンク）を押したら、移る先はリンクに任せず action にそろえる
-  React.useEffect(() => {
-    if (!spot.click || !el || !spot.action) return
-    const run = spot.action.run
-    const onClick = (e: MouseEvent) => {
-      e.preventDefault()
-      run()
-    }
-    el.addEventListener('click', onClick)
-    return () => el.removeEventListener('click', onClick)
-  }, [el, spot.click, spot.action])
+/** 指した所の枠と指。頁は暗くせず、触るのも妨げない（枠と指は押しても下に通る） */
+function Pointer({ box, gesture = 'tap' }: { box: Box; gesture?: 'tap' | 'select' }) {
+  // 指先がアイコンの左上寄りにあるので、その分ずらす。行の真ん中は文字に重なるので、左から少し入った所を押す
+  const x = gesture === 'select' ? box.left : box.left + Math.min(box.width / 2, 96)
+  const y = gesture === 'select' ? box.top + box.height * 0.7 : box.top + box.height / 2
+  return (
+    <>
+      <div aria-hidden="true" className="tour-ring pointer-events-none fixed rounded-[14px] border-2 border-primary" style={{ top: box.top - PAD, left: box.left - PAD, width: box.width + PAD * 2, height: box.height + PAD * 2 }} />
+      {gesture === 'select' ? (
+        <span aria-hidden="true" className="tour-sweep pointer-events-none fixed rounded-[4px] bg-primary" style={{ top: box.top, left: box.left, width: Math.min(box.width, 320), height: box.height }} />
+      ) : (
+        <span aria-hidden="true" className="tour-ripple pointer-events-none fixed size-10 rounded-full border-2 border-primary" style={{ top: y - 20, left: x - 20 }} />
+      )}
+      <span
+        aria-hidden="true"
+        className={cn('pointer-events-none fixed', gesture === 'select' ? 'tour-finger-select' : 'tour-finger')}
+        style={{ top: y - 3, left: x - 11, '--w': `${Math.min(box.width, 320)}px` } as React.CSSProperties}
+      >
+        <HandPointingIcon weight="fill" className="size-8 text-foreground drop-shadow-md" />
+      </span>
+    </>
+  )
+}
 
-  const shown = !!tip
-  React.useEffect(() => {
-    if (shown && !spot.open) card.current?.focus({ preventScroll: true })
-  }, [shown, spot.open, spot.title])
+/** 吹き出しを置く所。対象をふさがないよう、下に入れば下、入らなければ上、どちらも無理なら画面の下端 */
+const place = (box: Box | null, h: number) => {
+  const vw = window.innerWidth
+  const vh = window.innerHeight
+  const width = Math.min(340, vw - 24)
+  if (!box) return { top: Math.max(12, vh - h - 96), left: (vw - width) / 2, width }
+  const below = box.top + box.height + PAD + GAP
+  const above = box.top - PAD - GAP - h
+  const top = below + h <= vh - 12 ? below : above >= 12 ? above : vh - h - 12
+  const left = Math.min(Math.max(12, box.left), vw - width - 12)
+  return { top, left, width }
+}
 
-  // aria-modal なので、フォーカスはカードと光らせた所（触れる歩）の中にとどめる
+/** 押す所を指で示すだけ（吹き出しは別の所に置く歩に使う） */
+export function PointAt({ target, first, gesture }: Pick<Spot, 'target' | 'first' | 'gesture'>) {
+  const el = useTarget(target, first)
+  const box = useBox(el, target, first)
+  return box ? createPortal(<div className="pointer-events-none fixed inset-0 z-[60]"><Pointer box={box} gesture={gesture} /></div>, document.body) : null
+}
+
+/**
+ * 1歩ぶんの吹き出し。target を枠で囲んで指で示し、その下か上に吹き出しを置く。画面は暗くせず、ほかの所も触れる。
+ * 進むのは指した所を本人が操作したとき。at は通しの何歩目か。onSkip で止める（続きから再開できる）
+ */
+export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip: () => void; onBack?: () => void }) {
+  const { target, first, onPress } = spot
+  const el = useTarget(target, first)
+  const box = useBox(el, target, first)
+  const card = React.useRef<HTMLDivElement>(null)
+  const [h, setH] = React.useState(180)
+  React.useLayoutEffect(() => {
+    if (card.current) setH(card.current.offsetHeight)
+  }, [spot.title, el])
+
+  // 指した所を押したら歩を進める。リンクの移動はそのまま任せる
   React.useEffect(() => {
-    if (!shown) return
-    const onFocus = (e: FocusEvent) => {
-      const t = e.target as Node | null
-      if (!t || card.current?.contains(t)) return
-      if ((spot.open || spot.click) && el?.contains(t)) return
-      // 外の iframe（Turnstile など）には触らない
-      if (t instanceof HTMLIFrameElement) return
-      card.current?.focus({ preventScroll: true })
-    }
-    document.addEventListener('focusin', onFocus)
-    return () => document.removeEventListener('focusin', onFocus)
-  }, [shown, spot.open, spot.click, el])
+    if (!el || !onPress) return
+    el.addEventListener('click', onPress)
+    return () => el.removeEventListener('click', onPress)
+  }, [el, onPress])
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
@@ -280,39 +280,18 @@ export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number;
     return () => document.removeEventListener('keydown', onKey)
   }, [onSkip])
 
-  if (el === undefined || !tip) {
-    // 測るために一度だけ見えない吹き出しを描く
-    return el === undefined
-      ? null
-      : createPortal(
-          <div ref={card} className="fixed top-0 left-0 w-[360px] max-w-[calc(100vw-24px)] p-5" style={{ visibility: 'hidden' }}>
-            <SpotBody spot={spot} at={at} onSkip={onSkip} onBack={onBack} />
-          </div>,
-          document.body,
-        )
-  }
-  const block = 'absolute pointer-events-auto'
+  if (el === undefined) return null
+  const tip = place(box, h)
   return createPortal(
-    <div className="pointer-events-none fixed inset-0 z-[60]" role="dialog" aria-modal="true" aria-labelledby="tour-title">
-      {box ? (
-        <>
-          {/* 光らせた所の外を4枚で塞ぐ。触れる歩は穴の中だけ触れる */}
-          <div className={block} style={{ top: 0, left: 0, right: 0, height: Math.max(0, box.top) }} />
-          <div className={block} style={{ top: box.top + box.height, left: 0, right: 0, bottom: 0 }} />
-          <div className={block} style={{ top: box.top, left: 0, width: Math.max(0, box.left), height: box.height }} />
-          <div className={block} style={{ top: box.top, left: box.left + box.width, right: 0, height: box.height }} />
-          {spot.open || spot.click ? null : <div className={block} style={box} />}
-          <div aria-hidden="true" className="tour-hole absolute rounded-[20px] transition-[top,left,width,height] duration-300 ease-out motion-reduce:transition-none" style={{ ...box, boxShadow: `0 0 0 9999px ${SHADE}` }} />
-        </>
-      ) : (
-        <div aria-hidden="true" className="tour-hole pointer-events-auto absolute inset-0" style={{ background: SHADE }} />
-      )}
+    <div className="pointer-events-none fixed inset-0 z-[60]">
+      {box ? <Pointer box={box} gesture={spot.gesture} /> : null}
       <div
         ref={card}
-        tabIndex={-1}
+        role="region"
+        aria-labelledby="tour-title"
         key={spot.title}
-        className="tour-tip pointer-events-auto absolute rounded-2xl bg-background p-4 text-foreground shadow-xl outline-none sm:p-5"
-        style={{ top: tip.top, left: tip.left, width: tip.width }}
+        className="tour-tip pointer-events-auto absolute rounded-2xl border bg-background p-4 text-foreground shadow-xl"
+        style={tip}
       >
         <SpotBody spot={spot} at={at} onSkip={onSkip} onBack={onBack} />
       </div>

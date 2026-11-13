@@ -18,7 +18,6 @@ import { Amt, FieldIcon, perHeadText } from './parts'
 import { searchHref } from '../search/search'
 import { useMyTown, type Town } from './towns'
 import { onboarded, SpotTour, stepAt, TOTAL, useTour } from './tour'
-import { OpenVisual } from './tour-visuals'
 import { OtherTowns, Checklist, Empty, Intro, Steps, startChecklist, type CheckItem } from './onboarding'
 
 export interface Featured {
@@ -428,6 +427,9 @@ export function Home({ entries, featured }: HomeProps) {
   const { ready, town, set } = useMyTown()
   const tour = useTour()
   const { visit } = useRouter()
+  // まちの頁のリンクを押したら歩だけ進める（移動はリンクに任せる）
+  const { go: tourGo } = tour
+  const openPage = React.useCallback(() => tourGo(1), [tourGo])
   // はじめての流れで選んだまち。要点を見せてから「このまちにする」で決める
   const [pending, setPending] = React.useState<Town | null>(null)
   const shown = town ?? pending
@@ -490,11 +492,9 @@ export function Home({ entries, featured }: HomeProps) {
               onSkip={tour.pause}
               spot={{
                 target: 'open',
-                click: true,
                 title: 'まちの頁を開く',
                 body: `${ctx.town.name}の予算・決算・事業を、まとめて見られる頁です。押して開いてみてください。`,
-                visual: <OpenVisual town={ctx.town.name} total={ctx.v.total} />,
-                action: { label: '開く', run: () => (tour.go(1), visit(ctx.base)) },
+                onPress: openPage,
               }}
             />
           ) : (

@@ -385,7 +385,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, control, k
             after={
               suggest?.length
                 ? (ask, pending) => (
-                    <div className="mt-2 flex flex-wrap gap-1.5">
+                    <div data-tour="ask-suggest" className="mt-2 flex flex-wrap gap-1.5">
                       {suggest.map((q) => (
                         <button key={q} type="button" disabled={pending} onClick={() => void ask(q)} className="rounded-full border bg-background px-3 py-1.5 text-[13px] transition-colors hover:border-primary hover:text-primary disabled:opacity-50">
                           {q}

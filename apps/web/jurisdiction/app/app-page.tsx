@@ -551,7 +551,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
   // 事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある）
   const moku = v.hasProjects ? [] : v.mokuRows.filter((p) => (field === 'all' || v.fieldOf(p) === field) && (!q || p.name.includes(q)))
   return (
-    <div data-tour="projects" className="flex flex-col gap-2">
+    <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[220px] flex-1">
           <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -662,7 +662,7 @@ function ProjectBody({ p }: { p: ProjectFull }) {
       <p className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">{p.path.filter(Boolean).map((x, i) => <React.Fragment key={i}>{i ? <CaretRightIcon className="size-2.5" /> : null}{x}</React.Fragment>)}</p>
       <h2 className="mt-1.5 mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
         {ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : null}
-        {p.name}
+        <span data-tour="detail-name">{p.name}</span>
       </h2>
       <div className="flex flex-wrap gap-1.5">
         <Chip><FieldIcon id={field} />{fieldName(v, field)}</Chip>
@@ -854,7 +854,7 @@ function FieldPage({ id }: { id: string }) {
   const ss = v.sheets.filter((s) => s.field === f.id)
   return (
     <>
-      <div data-tour="field">
+      <div>
       <div className="flex items-center gap-3">
         <span className="grid size-12 place-items-center rounded-2xl bg-card text-muted-foreground"><FieldIcon id={f.id} className="size-6" /></span>
         <div className="min-w-0">
@@ -876,12 +876,14 @@ function FieldPage({ id }: { id: string }) {
       ) : null}
       {v.hasProjects ? (
         <ClientSuspense fallback={<DetailSection icon={ListBulletsIcon} title="事業"><RowsSkeleton /></DetailSection>} ready={!!res.peek(listKey(v.query('all', { subjects: v.subjectsOf(f.id) })))}>
-          <FieldProjects id={f.id} />
+          <div data-tour="field-projects"><FieldProjects id={f.id} /></div>
         </ClientSuspense>
       ) : (
-        <DetailSection icon={ListBulletsIcon} title="事業" count={`${v.mokuRows.filter((p) => v.fieldOf(p) === f.id).length}件`}>
-          <Infinite items={v.mokuRows.filter((p) => v.fieldOf(p) === f.id)} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
-        </DetailSection>
+        <div data-tour="field-projects">
+          <DetailSection icon={ListBulletsIcon} title="事業" count={`${v.mokuRows.filter((p) => v.fieldOf(p) === f.id).length}件`}>
+            <Infinite items={v.mokuRows.filter((p) => v.fieldOf(p) === f.id)} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
+          </DetailSection>
+        </div>
       )}
       {v.sheets.length ? (
         <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(v.year)}年度の事業`}>
@@ -1246,11 +1248,6 @@ export function AppPage({ res, data, snapshot, sitekey, initialYear, initialFiel
     project: selected?.kind === 'project' ? selected.id : null,
     openField,
     toOverview: () => leaveField('overview'),
-    toProjects: () => {
-      setFilter('all')
-      setField('all')
-      leaveField('projects')
-    },
     selectProject: (id) => select(id ? { kind: 'project', id } : null),
     ask: askControl,
   })
