@@ -3,7 +3,7 @@
 状態: 採用（2026-11-13）。[ADR 0022](0022-serve-marts-via-worker-d1-rest-and-mcp.md) の「認証なしで公開する」を置き換える。web が公開 API を使い web 専用の口を作らないとした 2026-11-12 の方針（[aggregate-api の dd](../prd/aggregate-api/dd.md) の Hono RPC の項）も置き換える。
 
 1. web（サーバーの loader・アシスタント）は、apps/api の内部の RPC（`WorkerEntrypoint`、HTTP の route を持たない）だけを Service Binding で呼ぶ。出典の頁の文字の RPC（`SourcePages`）と同じ形にし、web 用の口は一つの entrypoint にまとめる。
-2. ブラウザから `api.fudoki.dev` を呼ばない。事業一覧の続きの頁・事業の詳細など、画面が後から取るデータは web 自身の route（`/data/*`）を経由する。
+2. ブラウザから `api.fudoki.dev` を呼ばない。頁を開くときのデータは loader が渡し、頁を開いたあとに遷移せずに取るデータ（事業一覧の続きの頁・事業の詳細など）は web 自身の GET の route（`/data/*`）を経由する。
 3. web のアシスタントも内部の口を使う。tool の処理は公開の MCP と同じ問い合わせ（`queries.ts`・`model.ts`）を呼ぶ。
 4. 公開の REST と MCP は認証を必須にする。REST は API キー、MCP は OAuth で受ける。キー・OAuth の client の発行には登録を要する。発行の仕組みは dd で決める。
 5. 公開側の呼び出しは、利用者（キー・OAuth の client）ごとに記録し、流量の上限も利用者ごとにかける。
