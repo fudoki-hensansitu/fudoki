@@ -21,7 +21,7 @@ bun run --cwd pipeline ingestion:convert \
 bun run --cwd pipeline ingestion:verify --candidate ../.agent/akishima-new-candidate
 ```
 
-出力dirは新しいものを指定する。converterは管理JSONやR2を更新しない。R2への保存は管理入口の `--remote` による別の操作である。
+出力dirは新しいものを指定する。converterは管理JSONやR2を更新しない。管理JSONへの記録は管理入口の `ingestion:convert`、R2への保存は merge 後の CI の `ingestion:store` が行う。
 
 2026-10-11の保存済みノードの組はノード7060行・金額7629行。款13、項29、目110（前年のみの番号なし2目を含む）の本年度予算額は56,360,000千円。共通の木の検査2,747件が一致し、未読・所属未確認は0。説明空白の目は、予備費と前年のみの2目である。
 

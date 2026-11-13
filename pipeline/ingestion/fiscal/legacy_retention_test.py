@@ -43,19 +43,19 @@ def convert(inputs, destination, options):
                  patch.object(manifest, 'code_path', return_value=converter), \
                  patch.object(manifest, 'fingerprints', return_value={'one': 'b'*64}), \
                  patch.object(manifest, 'validate'), patch.object(manifest, 'write') as register, \
-                 patch.object(run, 'fetch', return_value=stored), patch.object(run, 'save') as save, \
+                 patch.object(run, 'fetch', return_value=stored), patch.object(run, 'keep') as save, \
                  patch.object(run, 'cleanup') as cleanup:
                 # No declared hierarchy, and a hierarchy that fails the tree gate.
                 for index, migration in enumerate((ValueError('unsupported hierarchy'), node_tables.NodeTables([], []))):
                     with patch.object(node_tables, 'migrate_rows', side_effect=(migration if isinstance(migration, Exception)
                                       else lambda *args: migration)):
-                        run.convert(root/'manifest.json', {sha: str(original)}, root/f'candidate-{index}', remote=True)
+                        run.convert(root/'manifest.json', {sha: str(original)}, root/f'candidate-{index}', remote=True, record=True)
                     self.assertEqual(register.call_args.args[1]['tables'], [{**old, 'input_fingerprint': 'b'*64}])
                 save.reset_mock()
                 register.reset_mock()
                 conversion['options']['text'] = 'changed'
                 with self.assertRaisesRegex(ValueError, 'hash/size'):
-                    run.convert(root/'manifest.json', {sha: str(original)}, root/'rejected', remote=True)
+                    run.convert(root/'manifest.json', {sha: str(original)}, root/'rejected', remote=True, record=True)
                 save.assert_not_called()
                 register.assert_not_called()
                 cleanup.assert_not_called()

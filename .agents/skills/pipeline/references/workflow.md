@@ -5,7 +5,7 @@
 | 工程 | 終点 | reference |
 | --- | --- | --- |
 | A. 出典の選定 | 1資料を選び、R2 に保存する | [source-selection](source-selection.md) |
-| B. 取り込み | 表を作って検査を通し、R2 に保存して管理 JSON に登録する | [ingestion](ingestion.md) |
+| B. 取り込み | 表を作って検査を通し、管理 JSON に記録する（R2 には merge 後の CI が置く） | [ingestion](ingestion.md) |
 | C. dbt | 保存済みの表から staging・intermediate・marts を作る | [dbt](dbt.md) |
 | 本番への反映 | main への merge で自動 | 下記 |
 
@@ -13,7 +13,7 @@
 - `ingestion:check` は管理情報・選定の検査で、財政の値の正しさは認定しない。
 - 出典は source_selection、表と保存先は管理 JSON に置く。独立した provenance ファイルは作らない。
 - dbt は管理 JSON と保存済みの表だけを読み、取り込みの検査をやり直さない。取り込みの成功と dbt の構築の成功は分けて扱う。
-- 本番への反映は main への merge で自動に行う（`.github/workflows/sync-d1.yml` が変わった範囲だけを marts に build し、本番 D1 へ差分で写す。入口は `publish`）。取り込みの PR では本番へ手で同期しない。
+- 本番への反映は main への merge で自動に行う（`.github/workflows/sync-d1.yml` が記録された表を R2 に置き（`ingestion:store`）、変わった範囲だけを marts に build し、本番 D1 へ差分で写す。入口は `publish`）。取り込みの PR では R2 にも本番にも手で書かない。
 
 ## 重い実行
 

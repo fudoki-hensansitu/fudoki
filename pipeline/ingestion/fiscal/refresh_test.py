@@ -129,7 +129,7 @@ class RefreshFixture:
     def save_and_stage(self):
         """Convert once with uploads stubbed at the `cf` call, so the stand-in R2 holds what refresh restores."""
         with patch('ingestion.fiscal.storage.subprocess.run'), patch('ingestion.fiscal.run.cleanup'):
-            run.convert(self.path, self.files, self.root / 'saved', remote=True)
+            run.convert(self.path, self.files, self.root / 'saved', remote=True, record=True)
         self.saved = manifest.read(self.path)
         for receipt in self.selection['archive']['files']:
             target = self.objects / receipt['key']
@@ -383,7 +383,7 @@ class SaveGateTest(unittest.TestCase):
             with self.assertRaisesRegex(ValueError, 'tree check'):
                 storage.prepare_save(document, table, paths)
             with self.assertRaisesRegex(ValueError, 'tree check'):
-                storage.save(document, table, paths, remote=True)
+                storage.keep(document, table, paths)
         with patch('ingestion.lib.node_tables.read_rows', return_value=[]), \
              patch('ingestion.lib.tree_checks.check_tree', return_value={'passed': True}):
             with self.assertRaisesRegex(ValueError, 'tree check'):
