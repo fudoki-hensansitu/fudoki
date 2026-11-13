@@ -251,7 +251,9 @@ def _cell_words(pieces: list[Word], cuts: list[float], reach: float = 0) -> list
     ``reach``: how far past a piece's left edge a rule still lies in front of it. A Paddle character box
     can start a little left of the rule its character sits right of (`同` 0.6pt, 131181)."""
     words: list[Word] = []
-    for piece in sorted((p for w in pieces for p in _split(w, cuts)), key=lambda w: w.x0):
+    ordered = sorted((p for w in pieces for p in _split(w, cuts)), key=lambda w: w.x0)
+    short = document_quirk('short_amounts_at_line_end')
+    for piece in ordered:
         if words:
             last = words[-1]
             height = max(last.y1 - last.y0, piece.y1 - piece.y0)
@@ -263,6 +265,8 @@ def _cell_words(pieces: list[Word], cuts: list[float], reach: float = 0) -> list
             # "2" "款" "1" "項" join; a name and its amount stay apart even when they nearly touch.
             amount_with_text = _amount(last.text) != _amount(piece.text) and not (
                 NUMBER.fullmatch(_text(last.text)) and NUMBER.fullmatch(_text(piece.text)))
+            if short is not None and piece is ordered[-1] and short.module.ends_line(last.text, piece.text):
+                amount_with_text = True
             # Characters of two printed lines stacked in one box (Paddle reads `使` over `賃` of a name set on
             # two lines, 281000) are two words: the one line's words overlap in height.
             stacked = min(last.y1, piece.y1) - max(last.y0, piece.y0) < STACKED_SHARE * min(last.y1 - last.y0, piece.y1 - piece.y0)
