@@ -1,7 +1,7 @@
 // お金の流れ。初期は全款の款→項。横にスクロールすると款が一つずつ（snap）開き、縦にスクロールするとその款の項が画面に入ったものから順に開く（縦は snap しない）。
 // 項まで開くと、その項の目と節の上位を出す（節の金額は目ごとに大きい順、足し上げは作らない）。
 import * as React from 'react'
-import { createPortal } from 'react-dom'
+import { createPortal, flushSync } from 'react-dom'
 import { CaretLeftIcon, CaretRightIcon } from '@phosphor-icons/react'
 import { Button } from '@/components/ui/button'
 import { cn } from '@/lib/utils'
@@ -395,6 +395,10 @@ export function Flow({ flows: given, total: year, view = 'kan', tabs, summary, c
   const overview = React.useRef<HTMLDivElement>(null)
   const [index, setIndex] = React.useState(0)
   const flows = given ?? []
+  // 款の面は、今の面と左右の面、一度開いた面だけ中身を描く。全部の款の目・節を描くと、大きい自治体の決算で HTML が 1MB を超えるため
+  const [opened, setOpened] = React.useState<ReadonlySet<number>>(() => new Set())
+  React.useEffect(() => setOpened((s) => (s.has(index) ? s : new Set(s).add(index))), [index])
+  const drawsPanel = (i: number) => Math.abs(index - i) <= 1 || opened.has(i)
   const error = !!onRetry
   const overviewFade = useEdgeFade(overview, [flows.length], natural)
   // natural のときは、横に並ぶ面のうち今の面の高さに枠を合わせる（ほかの面の高さで下が空かないように）
@@ -419,6 +423,8 @@ export function Flow({ flows: given, total: year, view = 'kan', tabs, summary, c
   const select = (kanIndex: number, kouIndex?: number) => {
     const el = track.current
     if (!el) return
+    // 遠い款の面はまだ中身が無いので、項まで送る前に描いておく
+    flushSync(() => setOpened((s) => new Set(s).add(kanIndex + 1)))
     el.scrollTo({ left: (kanIndex + 1) * el.clientWidth, behavior: 'smooth' })
     const panel = el.querySelectorAll<HTMLElement>('[data-panel]')[kanIndex]
     const body = panel?.lastElementChild as HTMLElement | null
@@ -506,7 +512,9 @@ export function Flow({ flows: given, total: year, view = 'kan', tabs, summary, c
               error ? null : <OverviewSkeleton total={year.yen} levels={levels} height={overviewHeight} />
             )}
           </div>
-          {flows.map((f, i) => <KanPanel key={f.kan.id} drill={f} loading={!given && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} />)}
+          {flows.map((f, i) => drawsPanel(i + 1)
+            ? <KanPanel key={f.kan.id} drill={f} loading={!given && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} />
+            : <div key={f.kan.id} className={cn('w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel aria-hidden="true" />)}
         </div>
       </div>
       {error ? (
