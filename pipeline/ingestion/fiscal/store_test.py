@@ -56,5 +56,15 @@ class StoreTest(unittest.TestCase):
         upload.assert_not_called()
 
 
+class StoreCliTest(unittest.TestCase):
+    def test_the_cli_reaches_store_without_a_manifest_argument(self):
+        from ingestion.fiscal import run
+        with patch('sys.argv', ['run.py', 'store', '--since', 'base', '--dry-run']), \
+             patch.object(run.poppler, 'require'), patch.object(run.heavy_lock, 'acquire', return_value=None), \
+             patch.object(store, 'store', return_value={'manifests': []}) as stored, patch('builtins.print'):
+            run.main()
+        stored.assert_called_once_with('base', dry_run=True)
+
+
 if __name__ == '__main__':
     unittest.main()

@@ -23,5 +23,5 @@
 
 - merge から本番への反映が、変換し直す時間だけ延びる。
 - 変換の結果が環境で変わる依存（Poppler・mupdf など）は、手元・クラウド・CI で版を揃え続ける必要がある。揃っていなければ `ingestion-store-check` が merge 前に止める。
-- CI の `CLOUDFLARE_API_TOKEN` に、取り込みの bucket への書き込みが要る。
+- CI の `CLOUDFLARE_API_TOKEN` に、取り込みの bucket への書き込みが要る。同じ token は同じ repo の branch の PR（`ingestion-store-check`・`deploy-preview-web`）にも渡る。branch を push できる人は PR の workflow を書き換えて secret を使えるので、渡る範囲は push の権限と同じとみなす。fork の PR には渡らない。
 - merge から store までの間、R2 の同じ key には前の表が残り、管理 JSON の sha と合わない。publish は store の後に流すので、本番の build は前の表を読まない。

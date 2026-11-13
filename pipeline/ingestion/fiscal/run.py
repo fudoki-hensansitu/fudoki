@@ -690,7 +690,8 @@ def main() -> None:
     args = parser.parse_args()
     # The heavy commands take one machine-wide lock (ingestion/lib/heavy_lock.py): a second run exits
     # with the holder instead of sharing the machine and the R2 objects. Released on exit.
-    manifests = [args.manifest] if isinstance(getattr(args, 'manifest', None), Path) else args.manifest
+    manifest_arg = getattr(args, 'manifest', None)  # schema・store は --manifest を持たない
+    manifests = [manifest_arg] if isinstance(manifest_arg, Path) else manifest_arg
     if args.command == 'refresh' and not manifests:
         manifests = manifest.paths()
     if args.command == 'refresh' and args.plan:

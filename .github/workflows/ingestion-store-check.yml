@@ -12,7 +12,8 @@ concurrency:
   cancel-in-progress: true
 jobs:
   check:
-    # fork の PR には secret が渡らない
+    # fork の PR には secret が渡らない。同じ repo の branch を push できる人は、PR の workflow を書き換えて
+    # この secret（R2 の書き込みを持つ）を使えるので、この check を足しても渡る範囲は変わらない（ADR 0045）
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
     timeout-minutes: 120
