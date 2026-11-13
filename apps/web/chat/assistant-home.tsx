@@ -3,6 +3,7 @@ import * as React from 'react'
 import { ChartBarIcon, ScalesIcon } from '@phosphor-icons/react'
 import { Mark } from '../nav/site-nav'
 import { StartForm } from './start-form'
+import { myTownContext } from '../home/towns'
 
 /** 入力欄の placeholder に打っては消して見せる問いの例。収録のある自治体で答えられるものにする */
 const TYPED_EXAMPLES = [
@@ -67,6 +68,7 @@ export function AssistantHome({ sitekey }: { sitekey: string }) {
         <StartForm
           sitekey={sitekey}
           placeholder={placeholder}
+          context={myTownContext}
           after={(start, pending) => (
             <ul className="mt-6 grid gap-3 sm:grid-cols-2 sm:gap-4">
               {EXAMPLES.map((e) => (

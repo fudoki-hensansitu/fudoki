@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import re
 
-from ingestion.project.layouts.press import PressItem, lines, norm, text, words
+from ingestion.project.layouts.press import BboxPdf, PressItem, lines, norm, text, words
 
 MILLION = re.compile(r'([\d,]+)百万円')
 BUDGET = re.compile(r'予算額([\d,]+)千円')
@@ -80,9 +80,8 @@ def _r8(items: list[dict], rows: list[list[dict]], number: int) -> list[PressIte
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
-    with pdfplumber.open(path) as pdf:
+    with BboxPdf(path) as pdf:
         first = pdf.pages[0].extract_text() or ''
         if '施設整備' in first:  # 資料第２号（施設整備、組織・定数編）
             return []

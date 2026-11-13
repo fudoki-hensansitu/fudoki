@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 
-from ingestion.project.layouts.press import PressItem, norm
+from ingestion.project.layouts.press import PressItem, norm, page_lines
 
 BAND = re.compile(r'(当初予算|議案関係|^施政方針)')
 HEADING = re.compile(r'^\d+ (\S.*?)\|?$')
@@ -20,7 +20,6 @@ BLOCK_END = re.compile(r'^(【歳入】|【担 ?当】|【債務負担行為】|
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
     current: dict | None = None
 
@@ -28,37 +27,35 @@ def read(path) -> list[PressItem]:
         if current and current['names']:
             items.append(PressItem(current['page'], current['title'], current['names'], False, current['total'], [], 1))
 
-    with pdfplumber.open(path) as pdf:
-        for number, page in enumerate(pdf.pages, start=1):
-            rows = [norm(r) for r in (page.extract_text() or '').split('\n')]
-            page.flush_cache()
-            if len(rows) > 1 and BAND.search(rows[0]) and HEADING.match(rows[1]) and not COST.match(rows[1]):
-                close()
-                title = HEADING.match(rows[1]).group(1).split('|')[0]
-                if len(rows) > 2 and 0 < len(rows[2]) <= 30 and '。' not in rows[2] and not re.match(r'^(\d+ |~|\(|\|)', rows[2]):
-                    title += rows[2]
-                current = {'title': title, 'names': [], 'total': 0, 'page': None}
-            if current is None:
+    for number, printed in page_lines(path):
+        rows = [norm(r) for r in printed]
+        if len(rows) > 1 and BAND.search(rows[0]) and HEADING.match(rows[1]) and not COST.match(rows[1]):
+            close()
+            title = HEADING.match(rows[1]).group(1).split('|')[0]
+            if len(rows) > 2 and 0 < len(rows[2]) <= 30 and '。' not in rows[2] and not re.match(r'^(\d+ |~|\(|\|)', rows[2]):
+                title += rows[2]
+            current = {'title': title, 'names': [], 'total': 0, 'page': None}
+        if current is None:
+            continue
+        spending = False
+        in_cost = False
+        for row in rows:
+            if COST.match(row):
+                in_cost, spending = True, False
                 continue
-            spending = False
-            in_cost = False
-            for row in rows:
-                if COST.match(row):
-                    in_cost, spending = True, False
-                    continue
-                if not in_cost:
-                    continue
-                if row.startswith('【歳出】'):
-                    spending = True
-                elif BLOCK_END.match(row):
-                    in_cost = spending = False
-                    continue
-                found = LINE.match(row)
-                if spending and found and not row.startswith(('(', '※')):
-                    name = re.sub(r'\(※\)$', '', found.group(1)).strip()
-                    if name not in current['names']:
-                        current['names'].append(name)
-                    current['total'] += int(found.group(2).replace(',', ''))
-                    current['page'] = current['page'] or number
+            if not in_cost:
+                continue
+            if row.startswith('【歳出】'):
+                spending = True
+            elif BLOCK_END.match(row):
+                in_cost = spending = False
+                continue
+            found = LINE.match(row)
+            if spending and found and not row.startswith(('(', '※')):
+                name = re.sub(r'\(※\)$', '', found.group(1)).strip()
+                if name not in current['names']:
+                    current['names'].append(name)
+                current['total'] += int(found.group(2).replace(',', ''))
+                current['page'] = current['page'] or number
     close()
     return items

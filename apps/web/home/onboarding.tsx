@@ -1,5 +1,5 @@
 // はじめて開いたときの流れ（marketingskills の onboarding skill に沿う）。
-// 1 住んでいるまちを選ぶ（名前／現在地）→ 2 選んだまちの要点を一枚で見せる（価値の瞬間）→ ツアー（tour.tsx）→ チェックリスト（1つ目は済み、閉じられる）。
+// 1 住んでいるまちを選ぶ（名前／現在地）→ 2 選んだまちの要点を一枚で見せる（価値の瞬間）→ チェックリスト（1つ目は済み、閉じられる）。使い方のツアーは置かない（見せるより、本人に触ってもらう）。
 // まちの検索は、選ぶ前は住んでいるまちを選ぶ欄（AskTown）、選んだあとはほかのまちを見る欄（OtherTowns）の1つだけ出す。「ホーム」「見るまち」のような通じない言葉は使わない（2026-11-11 yuito）。文言は何が起きるかをそのまま書き、キャッチーにしない
 import * as React from 'react'
 import { ArrowRightIcon, CheckIcon, MagnifyingGlassIcon, NavigationArrowIcon, WarningCircleIcon, XIcon } from '@phosphor-icons/react'
@@ -7,9 +7,8 @@ import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { Mark } from '../nav/site-nav'
 import { Picker as TownPicker } from './town-picker'
-import { TownPalette, warmTowns } from '../nav/town-palette'
+import { TownPalette } from '../nav/town-palette'
 import { LocateError, locateMunicipality } from './locate'
-import { TOTAL, type TourSaved } from './tour'
 import type { MapEntry } from '../jurisdiction/index-table'
 import './onboarding.css'
 
@@ -134,8 +133,7 @@ export function OtherTowns({ className }: { className?: string }) {
     <section className={cn('ob-rise', className)} aria-label="ほかのまちを見る">
       <button
         type="button"
-        onClick={() => (warmTowns(), setOpen(true))}
-        onPointerEnter={warmTowns}
+        onClick={() => setOpen(true)}
         className="flex h-12 w-full items-center gap-3 rounded-full border border-border bg-background px-4 text-left text-[15px] text-muted-foreground transition-colors hover:bg-card"
       >
         <MagnifyingGlassIcon className="size-5 shrink-0" aria-hidden="true" />
@@ -175,10 +173,19 @@ export function Empty({ entries, onPick, reveal, again }: { entries: MapEntry[];
   )
 }
 
-/** はじめにやることの項目。href へ移るか、start でオンボーディングをその歩から始める。押しても済みにはしない（済みは丸を押したときだけ） */
-export type CheckItem = { key: string; label: string; href?: string; start?: () => void }
+/** はじめにやることの項目。押すと済みにして href へ移る */
+export type CheckItem = { key: string; label: string; href?: string }
 const CHECK = 'fudoki:checklist'
 type CheckState = { done: string[]; closed?: boolean }
+
+/** 前にはじめての流れを通った（チェックリストか、前の版のツアーの保存がある）か。ホームのリセットのあとは、はじめての流れを出さずにまちだけ選び直す */
+export const onboarded = () => {
+  try {
+    return localStorage.getItem(CHECK) !== null || localStorage.getItem('fudoki:tour') !== null
+  } catch {
+    return false
+  }
+}
 
 /** まちの画面のチェックリスト。まちを選んだときに startChecklist() で始め、1つ目（まちを選ぶ）は済みにしておく */
 export const startChecklist = () => {
@@ -189,8 +196,8 @@ export const startChecklist = () => {
   }
 }
 
-/** はじめにやること。2つ目はオンボーディング（「オンボ開始」で始め、スキップしたら同じボタンで止めた歩から続ける）。済みにするのは丸を押したときだけで、もう一度押すと外せる */
-export function Checklist({ items, tour, onTour }: { items: CheckItem[]; tour: TourSaved | null; onTour: () => void }) {
+/** はじめにやること。行を押すと済みにして頁へ移る。丸を押すと済み・未了を切り替えられる */
+export function Checklist({ items }: { items: CheckItem[] }) {
   const [st, setSt] = React.useState<CheckState | null>(null)
   React.useEffect(() => {
     try {
@@ -209,13 +216,14 @@ export function Checklist({ items, tour, onTour }: { items: CheckItem[]; tour: T
     }
   }
   if (!st || st.closed) return null
-  const all: CheckItem[] = [{ key: 'town', label: '住んでいるまちを選ぶ' }, { key: 'tour', label: '使い方を見る', start: onTour }, ...items]
+  const all: CheckItem[] = [{ key: 'town', label: '住んでいるまちを選ぶ' }, ...items]
   const isDone = (key: string) => st.done.includes(key)
-  // 丸を押したときだけ済み・未了を切り替える
+  // 丸は済み・未了を切り替え、行は済みにしてから移る
+  const markDone = (key: string) => {
+    if (!isDone(key)) save({ ...st, done: [...st.done, key] })
+  }
   const toggle = (key: string) => save({ ...st, done: isDone(key) ? st.done.filter((k) => k !== key) : [...st.done, key] })
   const n = all.filter((x) => isDone(x.key)).length
-  // 途中で止めた歩（1歩目より先）があれば「続きから」
-  const mid = tour && tour.state !== 'done' && tour.at > 0 && tour.at < TOTAL ? tour.at : 0
   const complete = n === all.length
   const row = 'flex min-w-0 flex-1 items-center gap-2 rounded-lg px-2 py-2 text-left text-[14px] transition-colors hover:bg-secondary'
   return (
@@ -237,7 +245,7 @@ export function Checklist({ items, tour, onTour }: { items: CheckItem[]; tour: T
           const done = isDone(x.key)
           const label = <span className={cn('min-w-0 flex-1', done && 'text-muted-foreground line-through decoration-border')}>{x.label}</span>
           return (
-            <li key={x.key} className={cn('flex items-center gap-1', x.key === 'tour' && 'sm:col-span-2')}>
+            <li key={x.key} className="flex items-center gap-1">
               <button
                 type="button"
                 onClick={() => toggle(x.key)}
@@ -249,25 +257,8 @@ export function Checklist({ items, tour, onTour }: { items: CheckItem[]; tour: T
                   {done ? <CheckIcon className="size-3" weight="bold" /> : null}
                 </span>
               </button>
-              {x.key === 'tour' ? (
-                <>
-                  <span className="flex min-w-0 flex-1 px-1 py-2 text-[14px]">{label}</span>
-                  <button
-                    type="button"
-                    onClick={onTour}
-                    className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-primary px-3.5 py-1.5 text-[13px] font-medium text-primary-foreground transition-transform duration-150 ease-out active:scale-[0.97] motion-reduce:transition-none"
-                  >
-                    {mid ? '続きから' : 'オンボ開始'}
-                    <ArrowRightIcon className="size-3.5" />
-                  </button>
-                </>
-              ) : x.start ? (
-                <button type="button" onClick={x.start} className={row}>
-                  {label}
-                  <ArrowRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
-                </button>
-              ) : x.href ? (
-                <Link href={x.href} className={row}>
+              {x.href ? (
+                <Link href={x.href} className={row} onClick={() => markDone(x.key)}>
                   {label}
                   <ArrowRightIcon className="size-3.5 shrink-0 text-muted-foreground" />
                 </Link>

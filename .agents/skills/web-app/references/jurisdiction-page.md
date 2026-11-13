@@ -3,7 +3,7 @@
 ## 組み立て
 
 - 頁は `apps/web/pages/[prefecture]/` の下にある。全自治体が同じ頁・同じ loader（`_loader.ts`）を通る。自治体ごとの分岐やデータを頁・コンポーネントに書かない
-- 金額・事業・施策・事業評価は apps/api から取る（`server/app-data.ts`。開いた年度の分は loader の props、ほかの年度は `/data/jurisdictions/app/:code/:year`）。手で起こしたデータを web に置かない。web が持つのは API に無い都市像（`jurisdiction/visions.ts`）と紋章（`jurisdiction/emblems.ts`）だけ
+- 金額・事業・施策・事業評価は apps/api から取る（`server/app-data.ts`。年度・タブ・流れ図の会計は頁の URL で、loader が props で渡す）。手で起こしたデータを web に置かない。web が持つのは API に無い都市像（`jurisdiction/visions.ts`）と紋章（`jurisdiction/emblems.ts`）だけ
 - データの取得は `server/jurisdiction-routes.ts`（Worker の中には置かず CDN の ISR に置く）。頁・OG 画像・sitemap が同じ関数を使う。事業は公開 API を頁ごとに読む（`jurisdiction/app/api.ts`、全件を手元に取らない）
 - サイト内のリンクは年度つきの URL（`/tokyo/shinagawa/2026/projects`）にする。年度の無い URL は最新の年度を出すか、タブの頁なら年度つきへ転送する
 - 描画は `jurisdiction/app/app-page.tsx`、AI に質問する欄は `jurisdiction/ask-dock.tsx`

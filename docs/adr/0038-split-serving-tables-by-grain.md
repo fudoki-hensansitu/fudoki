@@ -20,7 +20,7 @@
 
 足してよい組を、列の組合せではなく表・`level`・`breakdown` で決められる。`describe_expenditure_columns` の `sum_rules` もこの規則で書く。
 
-新しい出典を取り込むたびに、内訳の見出しの宣言が要る。宣言の無い見出しは dbt の検査で止まる（手順は `.agents/skills/pipeline/references/dbt.md`）。
+新しい出典を取り込むたびに、内訳の見出しの宣言が要る。見出しが「節」の枝は既定で `節` とし、それ以外の宣言の無い見出しは dbt の検査で止まる（手順は `.agents/skills/pipeline/references/dbt.md`）。
 
 切り替えは、本番の D1 に新しい表を写してから merge し（旧い表は残る）、api と web の deploy の後に `serving:sync --drop-legacy` で旧い表を消す。api と web は別々に deploy されるので、数分は旧い web が新しい api を呼んで失敗しうる。利用者が少ないので、この窓は許容する。
 
