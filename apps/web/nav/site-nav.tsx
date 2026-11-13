@@ -199,7 +199,7 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
   const items = [
     { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
     { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
-    { href: '/compare', label: '比べる', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
+    { href: '/compare', label: 'まち比べ', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
   ]
   return (
     <nav

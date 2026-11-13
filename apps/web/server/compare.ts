@@ -48,13 +48,17 @@ export function fieldTotalsOf(env: Env, year: number): Promise<Map<string, Field
   return p
 }
 
-const share = (t: FieldTotals, field: string) => (t.total ? (t.fields[field] ?? 0) / t.total : 0)
-
-/** 使い方が近いまち。分野ごとの割合の差（の絶対値）の和が小さい順。金額の大きさではなく割合で比べるので、まちの規模に依らない */
-export function closestByUse(me: FieldTotals, others: [code: string, FieldTotals][], n: number): string[] {
+/** 使い方が近いまち。分野ごとの1人あたりの金額の差（の絶対値）の和が小さい順。base は割る数（人口）。人口の無いまちは候補にしない */
+export function closestByUse(me: FieldTotals & { base: number }, others: [code: string, FieldTotals & { base: number }][], n: number): string[] {
   const fields = [...new Set([me, ...others.map(([, t]) => t)].flatMap((t) => Object.keys(t.fields)))]
-  const dist = (t: FieldTotals) => fields.reduce((s, f) => s + Math.abs(share(t, f) - share(me, f)), 0)
-  return others.map(([code, t]) => [code, dist(t)] as const).sort((a, b) => a[1] - b[1]).slice(0, n).map(([code]) => code)
+  const per = (t: FieldTotals & { base: number }, f: string) => (t.fields[f] ?? 0) / t.base
+  const dist = (t: FieldTotals & { base: number }) => fields.reduce((s, f) => s + Math.abs(per(t, f) - per(me, f)), 0)
+  return others
+    .filter(([, t]) => t.base > 0)
+    .map(([code, t]) => [code, dist(t)] as const)
+    .sort((a, b) => a[1] - b[1])
+    .slice(0, n)
+    .map(([code]) => code)
 }
 
 /** 人口が近いまち。比（何倍か）で近さを測る */

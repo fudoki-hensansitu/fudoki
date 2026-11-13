@@ -5,6 +5,7 @@ import { ArrowsLeftRightIcon, CaretRightIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Separator } from '@/components/ui/separator'
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
@@ -13,6 +14,7 @@ import { reiwa } from '../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../jurisdiction/domains'
 import { Emblem } from '../home/town-picker'
 import { useMyTown } from '../home/towns'
+import { AskDock } from '../jurisdiction/ask-dock'
 import type { CompareTown, Props, TownRef } from '../pages/compare.server'
 
 type Option = Props['options'][number]
@@ -20,7 +22,7 @@ type Option = Props['options'][number]
 type Measure = 'head' | 'share'
 const FIELDS = [...DOMAIN_FRAMES.filter((f) => f.id !== 'boei'), OTHER_FRAME]
 
-export const compareHref = (a: string, b?: string | null, year?: number | null) => `/compare?a=${a}${b ? `&b=${b}` : ''}${year ? `&year=${year}` : ''}`
+export const compareHref = (a: string, b?: string | null, ay?: number | null, by?: number | null) => `/compare?a=${a}${ay ? `&ay=${ay}` : ''}${b ? `&b=${b}` : ''}${by ? `&by=${by}` : ''}`
 
 function value(t: CompareTown, field: string, m: Measure): number {
   const yen = t.fields[field] ?? 0
@@ -57,7 +59,8 @@ function TownPicker({ options, exclude = [], onPick, placeholder = 'まちを変
 }
 
 /** まちの札。紋章・名前・人口と、1人あたりの総額 */
-function TownCard({ t, mark, options, exclude, onPick }: { t: CompareTown; mark: React.ReactNode; options: Option[]; exclude: string[]; onPick: (code: string) => void }) {
+function TownCard({ t, mark, options, onPick, onYear }: { t: CompareTown; mark: React.ReactNode; options: Option[]; onPick: (code: string) => void; onYear: (year: number) => void }) {
+  const items = t.years.map((y) => ({ value: String(y), label: `${reiwa(y)} 決算` }))
   return (
     <section className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border bg-background p-4">
       <div className="flex items-center gap-3">
@@ -70,6 +73,10 @@ function TownCard({ t, mark, options, exclude, onPick }: { t: CompareTown; mark:
           <p className="truncate text-xs text-muted-foreground">{popText(t.pop)}</p>
         </div>
       </div>
+      <Select items={items} value={String(t.year)} onValueChange={(v) => v && onYear(Number(v))}>
+        <SelectTrigger size="sm" aria-label={`${t.name}の年度`} className="w-full rounded-full sm:w-auto sm:self-start"><SelectValue /></SelectTrigger>
+        <SelectContent>{items.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
+      </Select>
       {t.pop ? (
         <div>
           <p className="text-xs text-muted-foreground">1人あたり</p>
@@ -82,7 +89,7 @@ function TownCard({ t, mark, options, exclude, onPick }: { t: CompareTown; mark:
           <Num n={t.total} m="yen" className="text-[28px] leading-tight font-semibold text-primary" />
         </div>
       )}
-      <TownPicker options={options} exclude={exclude} onPick={onPick} />
+      <TownPicker options={options} onPick={onPick} />
     </section>
   )
 }
@@ -98,9 +105,9 @@ function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) 
   return (
     <div className="flex flex-col gap-1">
       <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3 pb-2 text-sm font-medium">
-        <span className="flex items-center justify-end gap-1.5"><MarkA />{a.name}</span>
+        <span className="flex items-center justify-end gap-1.5"><MarkA />{a.name} {reiwa(a.year)}</span>
         <span className="w-24 sm:w-36" />
-        <span className="flex items-center gap-1.5"><MarkB />{b.name}</span>
+        <span className="flex items-center gap-1.5"><MarkB />{b.name} {reiwa(b.year)}</span>
       </div>
       {FIELDS.map((f) => {
         const va = value(a, f.id, m)
@@ -126,19 +133,20 @@ function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) 
   )
 }
 
-function SimilarList({ title, items, current, onPick }: { title: string; items: TownRef[]; current: string | null; onPick: (code: string) => void }) {
+/** 似たまち。いま比べているまちは出さない */
+function SimilarList({ title, items, onPick }: { title?: string; items: TownRef[]; onPick: (code: string) => void }) {
   return (
     <div className="min-w-0 flex-1">
-      <h3 className="mb-1 px-2.5 text-sm font-medium text-muted-foreground">{title}</h3>
+      {title ? <h3 className="mb-1 px-2.5 text-sm font-medium text-muted-foreground">{title}</h3> : null}
       <div className="flex flex-col">
         {items.map((s) => (
-          <button key={s.code} type="button" onClick={() => onPick(s.code)} data-selected={s.code === current || undefined} className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-card data-selected:bg-accent">
+          <button key={s.code} type="button" onClick={() => onPick(s.code)} className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-card">
             <Emblem code={s.code} name={s.name} className="size-[30px] rounded-[9px] p-1" />
             <span className="min-w-0 flex-1">
               <span className="block text-[15px]">{s.name}</span>
               <span className="block text-xs text-muted-foreground">{popText(s.pop)}</span>
             </span>
-            {s.code === current ? <span className="text-xs text-primary">比べている</span> : <CaretRightIcon className="size-4 text-muted-foreground" />}
+            <CaretRightIcon className="size-4 text-muted-foreground" />
           </button>
         ))}
       </div>
@@ -158,59 +166,57 @@ function Sample({ body }: { body: React.ReactNode }) {
 }
 
 export function Compare(props: Props) {
-  const { year, years, a, b, byUse, byPopulation, options, failed, sample } = props
+  const { a, b, byUse, byPopulation, options, failed, sample } = props
   const { visit } = useRouter()
   const [picked, setM] = React.useState<Measure>('head')
   // 人口の無いまちは1人あたりを出せないので、割合だけにする
   const perHead = !!a?.pop && !!b?.pop
   const m: Measure = perHead ? picked : 'share'
-  const go = (na: string, nb: string | null, y?: number | null) => void visit(compareHref(na, nb, y))
+  const go = (na: string, ay: number | null, nb: string | null, by: number | null) => void visit(compareHref(na, nb, ay, by))
   const body = (a: CompareTown) => (
         <>
           <div className="flex items-stretch gap-2 sm:gap-4">
-            <TownCard t={a} mark={<MarkA />} options={options} exclude={[a.code, b?.code ?? '']} onPick={(c) => go(c, b?.code ?? null)} />
+            <TownCard t={a} mark={<MarkA />} options={options} onPick={(c) => go(c, null, b?.code ?? null, b?.year ?? null)} onYear={(y) => go(a.code, y, b?.code ?? null, b?.year ?? null)} />
             {b ? (
               <>
-                <button type="button" aria-label="左右を入れ替える" onClick={() => go(b.code, a.code, year)} className="grid size-9 shrink-0 place-items-center self-center rounded-full border bg-background text-muted-foreground hover:bg-card">
+                <button type="button" aria-label="左右を入れ替える" onClick={() => go(b.code, b.year, a.code, a.year)} className="grid size-9 shrink-0 place-items-center self-center rounded-full border bg-background text-muted-foreground hover:bg-card">
                   <ArrowsLeftRightIcon className="size-4" />
                 </button>
-                <TownCard t={b} mark={<MarkB />} options={options} exclude={[a.code, b.code]} onPick={(c) => go(a.code, c)} />
+                <TownCard t={b} mark={<MarkB />} options={options} onPick={(c) => go(a.code, a.year, c, null)} onYear={(y) => go(a.code, a.year, b.code, y)} />
               </>
             ) : null}
           </div>
 
-          {b && year ? (
+          {b ? (
             <>
-              <div className="mt-6 flex flex-wrap items-center justify-between gap-2">
+              <div className="mt-6">
                 <ToggleGroup value={[m]} onValueChange={(x) => x[0] && setM(x[0] as Measure)} variant="outline" size="sm" spacing={0}>
                   <ToggleGroupItem value="head" disabled={!perHead}>1人あたり</ToggleGroupItem>
                   <ToggleGroupItem value="share">割合</ToggleGroupItem>
                 </ToggleGroup>
-                <ToggleGroup value={[String(year)]} onValueChange={(x) => x[0] && go(a.code, b.code, Number(x[0]))} variant="outline" size="sm" spacing={0}>
-                  {years.map((y) => <ToggleGroupItem key={y} value={String(y)}>{reiwa(y)} 決算</ToggleGroupItem>)}
-                </ToggleGroup>
               </div>
               <div className="mt-5"><Butterfly a={a} b={b} m={m} /></div>
+              <AskDock name={a.code === b.code ? a.name : `${a.name}と${b.name}`} code={a.code} year={a.year} sitekey={props.sitekey} page="比べる頁" detail={() => `比べている: ${a.name}（${a.code}）の${reiwa(a.year)}の決算と、${b.name}（${b.code}）の${reiwa(b.year)}の決算。一般会計の目を COFOG の分野へ分けて足したもの。表示: ${m === 'head' ? '1人あたり' : '割合'}`} />
             </>
-          ) : <p className="mt-8 text-sm text-muted-foreground">{b ? `${a.name}と${b.name}に、同じ年度の決算がありません。` : '比べるまちを選んでください。'}</p>}
+          ) : <p className="mt-8 text-sm text-muted-foreground">比べるまちを選んでください。</p>}
 
           {byUse.length || byPopulation.length ? (
             <section className="mt-12">
-              <h2 className="mb-3 text-[17px] font-semibold">{a.name}に似たまち</h2>
+              <h2 className="text-[17px] font-semibold">{a.name}に似たまち</h2>
+              <p className="mt-1 mb-3 text-sm text-muted-foreground">1人あたりの一般会計を、分野ごとに比べて近いまちです。</p>
               <div className="flex flex-col gap-6 sm:flex-row">
-                {byUse.length ? <SimilarList title="使い方が近い" items={byUse} current={b?.code ?? null} onPick={(c) => go(a.code, c)} /> : null}
-                {byPopulation.length ? <SimilarList title="人口が近い" items={byPopulation} current={b?.code ?? null} onPick={(c) => go(a.code, c)} /> : null}
+                {byUse.length ? <SimilarList items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.year, c, null)} /> : null}
+                {byPopulation.length ? <SimilarList title="人口が近い" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.year, c, null)} /> : null}
               </div>
             </section>
           ) : null}
 
-          <p className="mt-10 px-2.5 text-xs leading-relaxed text-muted-foreground">一般会計の決算を、目ごとに COFOG（政府支出の機能別分類）の分野へ分けて足しています。1人あたりは住民基本台帳の人口で割っています。使い方が近いまちは、分野ごとの割合の差が小さいまちです。</p>
         </>
   )
   return (
     <main className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
       <header className="mb-5">
-        <h1 className="text-[26px] leading-[1.35] font-semibold tracking-[0.02em]">比べる</h1>
+        <h1 className="text-[26px] leading-[1.35] font-semibold tracking-[0.02em]">まち比べ</h1>
         <p className="mt-1 text-[15px] text-muted-foreground">2つのまちのお金の使い方を、分野ごとに並べます。</p>
       </header>
       {failed || !a ? <p className="text-sm text-muted-foreground">今は読み込めません。少し時間をおいてやり直してください。</p> : sample ? <Sample body={body(a)} /> : body(a)}

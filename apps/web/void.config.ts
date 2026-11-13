@@ -53,7 +53,7 @@ export default defineConfig({
     // ISR の key は既定で query を落とす。予算・決算のタブの頁は ?account= で流れの会計を、比べる頁は ?a=&b=&year= でまちと年度を分けるので key に残す
     revalidateQueryAllowlist: {
       ...Object.fromEntries(Object.values(prefectures.slugs).map((slug) => [`/${slug}/*`, ['account']])),
-      '/compare': ['a', 'b', 'year'],
+      '/compare': ['a', 'ay', 'b', 'by'],
     },
   },
   // 全頁の head の既定。頁ごとの title・説明・canonical は各頁の .server.ts の head。theme-color と View Transition の opt-in は middleware/01.site.ts
