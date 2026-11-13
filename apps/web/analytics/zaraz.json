@@ -47,20 +47,6 @@
           "value": "file_download"
         }
       ]
-    },
-    "trgSearch": {
-      "name": "search",
-      "description": "zaraz.track(\"search\")",
-      "excludeRules": [],
-      "clientRules": [],
-      "loadRules": [
-        {
-          "id": "trgSearchr",
-          "match": "{{ client.__zarazTrack }}",
-          "op": "EQUALS",
-          "value": "search"
-        }
-      ]
     }
   },
   "tools": {
@@ -130,18 +116,6 @@
             "file_name": "{{ client.file_name }}",
             "link_url": "{{ client.link_url }}",
             "link_text": "{{ client.link_text }}"
-          }
-        },
-        "search": {
-          "actionType": "event",
-          "blockingTriggers": [],
-          "firingTriggers": [
-            "trgSearch"
-          ],
-          "data": {
-            "__zaraz_setting_name": "search",
-            "en": "search",
-            "search_term": "{{ client.search_term }}"
           }
         }
       }

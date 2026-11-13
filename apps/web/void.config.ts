@@ -44,12 +44,17 @@ export default defineConfig({
       // ホームと自治体の頁（都道府県自体の頁・市区町村の頁・年度・タブ・分野）。データは取り込みのときだけ変わる
       '/': 3600,
       ...Object.fromEntries(Object.values(prefectures.slugs).flatMap((slug) => [[`/${slug}`, 3600], [`/${slug}/*`, 3600]])),
+      // 比べる頁（まちと年度は query）
+      '/compare': 3600,
       '/sitemap.xml': 3600,
       // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く。同じ下にある紋章の SVG（静的資産）は外す
       '/jurisdictions/*/og.png': 86400,
     },
-    // ISR の key は既定で query を落とす。予算・決算のタブの頁は ?account= で流れの会計を分けるので key に残す
-    revalidateQueryAllowlist: Object.fromEntries(Object.values(prefectures.slugs).map((slug) => [`/${slug}/*`, ['account']])),
+    // ISR の key は既定で query を落とす。予算・決算のタブの頁は ?account= で流れの会計を、比べる頁は ?a=&b=&year= でまちと年度を分けるので key に残す
+    revalidateQueryAllowlist: {
+      ...Object.fromEntries(Object.values(prefectures.slugs).map((slug) => [`/${slug}/*`, ['account']])),
+      '/compare': ['a', 'b', 'year'],
+    },
   },
   // 全頁の head の既定。頁ごとの title・説明・canonical は各頁の .server.ts の head。theme-color と View Transition の opt-in は middleware/01.site.ts
   head: {

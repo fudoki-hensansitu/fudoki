@@ -8,7 +8,7 @@ import { SiteNav, type NavSection } from '../nav/site-nav'
 /** サイドバーで今いる場所として出す項目。ホームは「ホーム」（狭い画面の下の帯だけ）、会話を始める頁と会話（/s/:id）は「アシスタント」 */
 const sectionOf = (path: string): NavSection | undefined => {
   if (path === '/') return 'home'
-  if (path === '/search') return 'search'
+  if (path === '/compare') return 'compare'
   if (path === '/assistant' || path.startsWith('/s/')) return 'assistant'
   return undefined
 }

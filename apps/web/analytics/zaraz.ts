@@ -2,7 +2,6 @@
 // Zaraz の script は middleware/01.site.ts が本番（fudoki.dev）の HTML にだけ入れる（server/zaraz.ts）。無い所（preview・手元）では window.zaraz が無く、ここは何もしない。
 // 頁の表示（SPA の移動も含む）は Zaraz の設定で送る。gtag.js の拡張計測は Zaraz では動かないので、要るもの（外部リンク・PDF・スクロール・検索）だけをここで送る。名前と項目は GA4 の拡張計測に合わせる
 
-import { redact } from '../redact'
 
 declare global {
   interface Window {
@@ -63,9 +62,4 @@ export function installTracking() {
     },
     { passive: true },
   )
-}
-
-/** 事業の検索（/search?q=…）で言葉を引いたとき。メールアドレス・電話番号の形は伏せる（頁の URL の query は Zaraz の設定で落とす） */
-export const trackSearch = (term: string) => {
-  if (term) track('search', { search_term: redact(term).slice(0, 100) })
 }

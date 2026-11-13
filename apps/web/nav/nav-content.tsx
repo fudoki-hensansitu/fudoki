@@ -1,6 +1,6 @@
-// サイドバーの中身。項目は まちを探す（頭の検索欄）・アシスタント・事業を検索 の3つだけ。住んでいるまちはホームなので置かない（ホームへはロゴから）
+// サイドバーの中身。項目は まちを探す（頭の検索欄）・アシスタント・比べる の3つだけ。住んでいるまちはホームなので置かない（ホームへはロゴから）
 import * as React from 'react'
-import { ListMagnifyingGlassIcon, MagnifyingGlassIcon, RobotIcon } from '@phosphor-icons/react'
+import { ArrowsLeftRightIcon, MagnifyingGlassIcon, RobotIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { Item } from './site-nav'
@@ -49,7 +49,7 @@ export function NavContent() {
       <SidebarMenu>
         <TownSearch />
         <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
-        <Item href="/search" label="事業を検索" icon={<ListMagnifyingGlassIcon />} active={path.startsWith('/search')} />
+        <Item href="/compare" label="比べる" icon={<ArrowsLeftRightIcon />} active={path === '/compare'} />
       </SidebarMenu>
     </SidebarGroup>
   )
