@@ -1,4 +1,4 @@
-// 比べる頁（/compare）のデータ。一つの年度の、収録している全部のまちの一般会計の決算を、目ごとに分野（COFOG の大分類）へ分けて足す。
+// まち比べ（/compare）のデータ。一つの年度・資料（決算か当初予算）の、収録している全部のまちの一般会計を、目ごとに分野（COFOG の大分類）へ分けて足す。
 // 似たまちを探すのに全部のまちが要るので、まちごとではなく年度ごとに読む。足すのは同じまちの目の金額だけで、まちどうしは足さない
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { ACCOUNT } from './jurisdiction'
@@ -10,14 +10,15 @@ export type FieldTotals = { total: number; fields: Record<string, number> }
 // 頁は query ごとに CDN に置くが、まちの組み合わせごとに全部のまちを読み直さないよう、同じ isolate の中では年度ごとに使い回す。
 // データは取り込みのときだけ変わるので、CDN の置き時間（void.config.ts の 3600 秒）と同じだけ持つ
 const REUSE_MS = 3_600_000
-const memo = new WeakMap<Env, Map<number, { at: number; p: Promise<Map<string, FieldTotals>> }>>()
+export type DocKind = 'settlement' | 'initial'
+const memo = new WeakMap<Env, Map<string, { at: number; p: Promise<Map<string, FieldTotals>> }>>()
 
-async function read(env: Env, year: number): Promise<Map<string, FieldTotals>> {
+async function read(env: Env, year: number, kind: DocKind): Promise<Map<string, FieldTotals>> {
   const out = new Map<string, FieldTotals>()
   let token: string | undefined
   do {
     const r = await apiCall(env)('search_expenditure_subjects', {
-      document_kind: 'settlement',
+      document_kind: kind,
       fiscal_year: { min: year, max: year },
       where: { account_name: { eq: [ACCOUNT] }, level: { eq: ['目'] } },
       page_size: 1000,
@@ -36,15 +37,16 @@ async function read(env: Env, year: number): Promise<Map<string, FieldTotals>> {
   return out
 }
 
-/** 年度の、まちごとの分野の合計 */
-export function fieldTotalsOf(env: Env, year: number): Promise<Map<string, FieldTotals>> {
-  const byYear = memo.get(env) ?? new Map()
-  memo.set(env, byYear)
-  const hit = byYear.get(year)
+/** 年度・資料の、まちごとの分野の合計 */
+export function fieldTotalsOf(env: Env, year: number, kind: DocKind): Promise<Map<string, FieldTotals>> {
+  const byKey = memo.get(env) ?? new Map()
+  memo.set(env, byKey)
+  const key = `${kind}:${year}`
+  const hit = byKey.get(key)
   if (hit && Date.now() - hit.at < REUSE_MS) return hit.p
-  const p = read(env, year)
-  byYear.set(year, { at: Date.now(), p })
-  p.catch(() => byYear.get(year)?.p === p && byYear.delete(year))
+  const p = read(env, year, kind)
+  byKey.set(key, { at: Date.now(), p })
+  p.catch(() => byKey.get(key)?.p === p && byKey.delete(key))
   return p
 }
 

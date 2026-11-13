@@ -15,14 +15,19 @@ import { DOMAIN_FRAMES, OTHER_FRAME } from '../jurisdiction/domains'
 import { Emblem } from '../home/town-picker'
 import { useMyTown } from '../home/towns'
 import { AskDock } from '../jurisdiction/ask-dock'
-import type { CompareTown, Props, TownRef } from '../pages/compare.server'
+import type { CompareTown, Props, TownRef, Version } from '../pages/compare.server'
 
 type Option = Props['options'][number]
 
 type Measure = 'head' | 'share'
 const FIELDS = [...DOMAIN_FRAMES.filter((f) => f.id !== 'boei'), OTHER_FRAME]
 
-export const compareHref = (a: string, b?: string | null, ay?: number | null, by?: number | null) => `/compare?a=${a}${ay ? `&ay=${ay}` : ''}${b ? `&b=${b}` : ''}${by ? `&by=${by}` : ''}`
+const versionQuery = (side: 'a' | 'b', v?: Version | null) => (v ? `&${side}y=${v.year}&${side}k=${v.kind}` : '')
+export const compareHref = (a: string, b?: string | null, av?: Version | null, bv?: Version | null) => `/compare?a=${a}${versionQuery('a', av)}${b ? `&b=${b}` : ''}${versionQuery('b', bv)}`
+const KIND_LABEL = { settlement: '決算', initial: '当初予算' } as const
+/** 「R6年度 決算」 */
+export const versionLabel = (v: Version) => `${reiwa(v.year)} ${KIND_LABEL[v.kind]}`
+const versionKey = (v: Version) => `${v.year}-${v.kind}`
 
 function value(t: CompareTown, field: string, m: Measure): number {
   const yen = t.fields[field] ?? 0
@@ -59,8 +64,8 @@ function TownPicker({ options, exclude = [], onPick, placeholder = 'まちを変
 }
 
 /** まちの札。紋章・名前・人口と、1人あたりの総額 */
-function TownCard({ t, mark, options, onPick, onYear }: { t: CompareTown; mark: React.ReactNode; options: Option[]; onPick: (code: string) => void; onYear: (year: number) => void }) {
-  const items = t.years.map((y) => ({ value: String(y), label: `${reiwa(y)} 決算` }))
+function TownCard({ t, mark, options, onPick, onVersion }: { t: CompareTown; mark: React.ReactNode; options: Option[]; onPick: (code: string) => void; onVersion: (v: Version) => void }) {
+  const items = t.versions.map((v) => ({ value: versionKey(v), label: versionLabel(v) }))
   return (
     <section className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border bg-background p-4">
       <div className="flex items-center gap-3">
@@ -73,8 +78,8 @@ function TownCard({ t, mark, options, onPick, onYear }: { t: CompareTown; mark: 
           <p className="truncate text-xs text-muted-foreground">{popText(t.pop)}</p>
         </div>
       </div>
-      <Select items={items} value={String(t.year)} onValueChange={(v) => v && onYear(Number(v))}>
-        <SelectTrigger size="sm" aria-label={`${t.name}の年度`} className="w-full rounded-full sm:w-auto sm:self-start"><SelectValue /></SelectTrigger>
+      <Select items={items} value={versionKey(t.version)} onValueChange={(k) => { const v = t.versions.find((x) => versionKey(x) === k); if (v) onVersion(v) }}>
+        <SelectTrigger size="sm" aria-label={`${t.name}の年度と資料`} className="w-full rounded-full sm:w-auto sm:self-start"><SelectValue /></SelectTrigger>
         <SelectContent>{items.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
       </Select>
       {t.pop ? (
@@ -105,9 +110,9 @@ function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) 
   return (
     <div className="flex flex-col gap-1">
       <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3 pb-2 text-sm font-medium">
-        <span className="flex items-center justify-end gap-1.5"><MarkA />{a.name} {reiwa(a.year)}</span>
+        <span className="flex items-center justify-end gap-1.5"><MarkA />{a.name} {versionLabel(a.version)}</span>
         <span className="w-24 sm:w-36" />
-        <span className="flex items-center gap-1.5"><MarkB />{b.name} {reiwa(b.year)}</span>
+        <span className="flex items-center gap-1.5"><MarkB />{b.name} {versionLabel(b.version)}</span>
       </div>
       {FIELDS.map((f) => {
         const va = value(a, f.id, m)
@@ -172,17 +177,17 @@ export function Compare(props: Props) {
   // 人口の無いまちは1人あたりを出せないので、割合だけにする
   const perHead = !!a?.pop && !!b?.pop
   const m: Measure = perHead ? picked : 'share'
-  const go = (na: string, ay: number | null, nb: string | null, by: number | null) => void visit(compareHref(na, nb, ay, by))
+  const go = (na: string, av: Version | null, nb: string | null, bv: Version | null) => void visit(compareHref(na, nb, av, bv))
   const body = (a: CompareTown) => (
         <>
           <div className="flex items-stretch gap-2 sm:gap-4">
-            <TownCard t={a} mark={<MarkA />} options={options} onPick={(c) => go(c, null, b?.code ?? null, b?.year ?? null)} onYear={(y) => go(a.code, y, b?.code ?? null, b?.year ?? null)} />
+            <TownCard t={a} mark={<MarkA />} options={options} onPick={(c) => go(c, null, b?.code ?? null, b?.version ?? null)} onVersion={(v) => go(a.code, v, b?.code ?? null, b?.version ?? null)} />
             {b ? (
               <>
-                <button type="button" aria-label="左右を入れ替える" onClick={() => go(b.code, b.year, a.code, a.year)} className="grid size-9 shrink-0 place-items-center self-center rounded-full border bg-background text-muted-foreground hover:bg-card">
+                <button type="button" aria-label="左右を入れ替える" onClick={() => go(b.code, b.version, a.code, a.version)} className="grid size-9 shrink-0 place-items-center self-center rounded-full border bg-background text-muted-foreground hover:bg-card">
                   <ArrowsLeftRightIcon className="size-4" />
                 </button>
-                <TownCard t={b} mark={<MarkB />} options={options} onPick={(c) => go(a.code, a.year, c, null)} onYear={(y) => go(a.code, a.year, b.code, y)} />
+                <TownCard t={b} mark={<MarkB />} options={options} onPick={(c) => go(a.code, a.version, c, null)} onVersion={(v) => go(a.code, a.version, b.code, v)} />
               </>
             ) : null}
           </div>
@@ -196,7 +201,7 @@ export function Compare(props: Props) {
                 </ToggleGroup>
               </div>
               <div className="mt-5"><Butterfly a={a} b={b} m={m} /></div>
-              <AskDock name={a.code === b.code ? a.name : `${a.name}と${b.name}`} code={a.code} year={a.year} sitekey={props.sitekey} page="比べる頁" detail={() => `比べている: ${a.name}（${a.code}）の${reiwa(a.year)}の決算と、${b.name}（${b.code}）の${reiwa(b.year)}の決算。一般会計の目を COFOG の分野へ分けて足したもの。表示: ${m === 'head' ? '1人あたり' : '割合'}`} />
+              <AskDock name={a.code === b.code ? a.name : `${a.name}と${b.name}`} code={a.code} year={a.version.year} sitekey={props.sitekey} page="まち比べの頁" detail={() => `比べている: ${a.name}（${a.code}）の${versionLabel(a.version)}と、${b.name}（${b.code}）の${versionLabel(b.version)}。一般会計の目を COFOG の分野へ分けて足したもの。表示: ${m === 'head' ? '1人あたり' : '割合'}`} />
             </>
           ) : <p className="mt-8 text-sm text-muted-foreground">比べるまちを選んでください。</p>}
 
@@ -205,8 +210,8 @@ export function Compare(props: Props) {
               <h2 className="text-[17px] font-semibold">{a.name}に似たまち</h2>
               <p className="mt-1 mb-3 text-sm text-muted-foreground">1人あたりの一般会計を、分野ごとに比べて近いまちです。</p>
               <div className="flex flex-col gap-6 sm:flex-row">
-                {byUse.length ? <SimilarList items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.year, c, null)} /> : null}
-                {byPopulation.length ? <SimilarList title="人口が近い" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.year, c, null)} /> : null}
+                {byUse.length ? <SimilarList items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
+                {byPopulation.length ? <SimilarList title="人口が近い" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
               </div>
             </section>
           ) : null}
