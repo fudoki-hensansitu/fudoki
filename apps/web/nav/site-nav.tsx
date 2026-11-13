@@ -211,7 +211,7 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
     >
       {/* 上にだけ線を引いて中身と分ける。下端は画面の端なので線を引かない */}
       <Separator />
-      <ul data-tour="nav" className="grid h-14 grid-cols-4">
+      <ul className="grid h-14 grid-cols-4">
         {items.map((i) => (
           <li key={i.href}>
             <NavLink href={i.href} aria-current={i.active ? 'page' : undefined} className={BOTTOM_ITEM}>
