@@ -14,10 +14,12 @@ import { expenditureTools } from './expenditure/tools'
 import { jurisdictionTools } from './jurisdiction/tools'
 import { apiRoutes } from './rpc'
 import type { Ctx } from './shared/context'
+import type { Env } from './db'
 import { MAX_BODY_BYTES, routes } from './shared/http'
 import type { Tool } from './shared/tool'
 import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
 import { suggestionsFor } from './suggestions'
+import { serving } from './web-ops'
 
 /** MCP の tool。並びは tools/list の順 */
 export const tools: Tool[] = [
@@ -227,6 +229,43 @@ function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
   return server
 }
 
+/** MCP の要求に答える。公開の /mcp と、web の内部の RPC（web-entrypoint.ts）が同じものを使う。body は検査・parse 済みの値 */
+export async function mcpResponse(ctx: Ctx, raw: Request, body: unknown, apiOrigin: string): Promise<Response> {
+  const json = (value: unknown, status: number) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json' } })
+  // JSON-RPC の batch は1回の HTTP で検索を何十件も実行できるので、単一の要求だけを受ける。
+  if (Array.isArray(body)) return json(jsonRpcError(-32600, 'JSON-RPC の batch は受け付けません。要求を1つずつ送ってください'), 400)
+  // subscriptions/listen は SSE を開いたままにする長い接続で、Workers では持てない（通知を流す元も無い）。
+  if ((body as { method?: unknown } | null)?.method === 'subscriptions/listen')
+    return json({ ...jsonRpcError(-32601, 'subscriptions/listen は受け付けません'), id: (body as { id?: unknown }).id ?? null }, 400)
+  // Workers はリクエストをまたいで状態を持てないので、リクエストごとに handler を作る。
+  // 2026-07-28 の規格（initialize なし・Mcp-Session-Id なし）を話し、2025 年代の client も legacy: 'stateless' で1要求ずつ捌く。
+  const handler = createMcpHandler(() => mcpServer(ctx, apiOrigin), {
+    legacy: 'stateless',
+    // 'json' だと要求ごとに「通知が落ちる」警告が console に出る。tool は途中の通知を出さないので auto でも JSON 1つで返る
+    responseMode: 'auto',
+    maxRequestBodySize: MAX_BODY_BYTES,
+    // 内部エラーの詳細は応答に出さず、ログにだけ残す
+    onerror: (e) => console.error(e),
+  })
+  return handler.fetch(raw, { parsedBody: body })
+}
+
+/** web のアシスタントの MCP（内部の RPC、web-entrypoint.ts）。公開の /mcp と同じ検査（kill switch・body の大きさ・JSON）を通し、同じ tool に答える */
+export async function webMcp(env: Env, request: Request): Promise<Response> {
+  const json = (value: unknown, status: number) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } })
+  if (request.method !== 'POST') return json(errorBody('INVALID_ARGUMENT', 'MCP は POST だけを受け付けます'), 405)
+  if (!(await serving(env.DB))) return json(errorBody('UNAVAILABLE', '提供を停止しています'), 503)
+  let body: unknown
+  try {
+    if (!JSON_CONTENT_TYPE.test(request.headers.get('content-type') ?? '')) throw new ApiError(415, 'UNSUPPORTED_MEDIA_TYPE', 'Content-Type は application/json にしてください')
+    body = parseJsonBody(await readLimitedText(request))
+  } catch (e) {
+    if (!(e instanceof ApiError)) throw e
+    return json(jsonRpcError(e.status === 400 ? -32700 : -32600, e.message), e.status)
+  }
+  return mcpResponse({ db: env.DB }, request, body, new URL(request.url).origin)
+}
+
 export function createApp() {
   const app = routes()
 
@@ -256,13 +295,7 @@ export function createApp() {
   app.use('*', async (c, next) => {
     // /health は D1 を読まない（叩かれても課金が増えず、kill switch が off でも Worker の生死を返す）
     if (c.req.path === '/health') return next()
-    let on = false
-    try {
-      const row = await c.env.DB.prepare(`SELECT value FROM control WHERE key = 'serving'`).first<{ value: string }>()
-      on = row?.value === 'on'
-    } catch {
-      on = false
-    }
+    const on = await serving(c.env.DB)
     if (!on) {
       return c.json(errorBody('UNAVAILABLE', '提供を停止しています'), 503, { 'Cache-Control': 'no-store' })
     }
@@ -330,23 +363,8 @@ export function createApp() {
   app.all('/mcp', async (c) => {
     if (c.req.method !== 'POST')
       return c.json(errorBody('INVALID_ARGUMENT', 'MCP は POST だけを受け付けます'), 405, { Allow: 'POST' })
-    // JSON-RPC の batch は1回の HTTP で検索を何十件も実行できるので、単一の要求だけを受ける。
-    const body = c.get('json')
-    if (Array.isArray(body)) return c.json(jsonRpcError(-32600, 'JSON-RPC の batch は受け付けません。要求を1つずつ送ってください'), 400)
-    // subscriptions/listen は SSE を開いたままにする長い接続で、Workers では持てない（通知を流す元も無い）。
-    if ((body as { method?: unknown } | null)?.method === 'subscriptions/listen')
-      return c.json({ ...jsonRpcError(-32601, 'subscriptions/listen は受け付けません'), id: (body as { id?: unknown }).id ?? null }, 400)
-    const ctx = c.get('ctx')
-    const handler = createMcpHandler(() => mcpServer(ctx, new URL(c.req.url).origin), {
-      legacy: 'stateless',
-      // 'json' だと要求ごとに「通知が落ちる」警告が console に出る。tool は途中の通知を出さないので auto でも JSON 1つで返る
-      responseMode: 'auto',
-      maxRequestBodySize: MAX_BODY_BYTES,
-      // 内部エラーの詳細は応答に出さず、ログにだけ残す
-      onerror: (e) => console.error(e),
-    })
-    // body は上で検査済み。handler には parse 済みの値を渡し、二重に読ませない
-    return handler.fetch(c.req.raw, { parsedBody: body })
+    // body は上の middleware で検査済み。handler には parse 済みの値を渡し、二重に読ませない
+    return mcpResponse(c.get('ctx'), c.req.raw, c.get('json'), new URL(c.req.url).origin)
   })
 
   app.notFound((c) => c.json(errorBody('NOT_FOUND', '存在しないパスです'), 404))
