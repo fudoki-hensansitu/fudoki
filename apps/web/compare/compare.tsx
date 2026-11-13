@@ -146,36 +146,26 @@ function SimilarList({ title, items, current, onPick }: { title: string; items: 
   )
 }
 
-/** a の無い /compare。住んでいるまちがあればそのまちで開き直し、無ければ選んでもらう */
-function PickFirst({ options }: { options: Option[] }) {
-  const { town } = useMyTown()
+/** 住んでいるまちの無い /compare は、見本の組み合わせ（品川区と、使い方が一番近いまち）を選んだ状態で開く。住んでいるまちがあれば、そのまちで開き直す */
+function Sample({ body }: { body: React.ReactNode }) {
+  const { ready, town } = useMyTown()
   const { visit } = useRouter()
   React.useEffect(() => {
     if (town) void visit(compareHref(town.code), { replace: true })
   }, [town, visit])
-  if (town) return null
-  return (
-    <section className="max-w-md">
-      <p className="mb-2 text-[15px]">まず、比べたいまちを1つ選んでください。</p>
-      <TownPicker options={options} onPick={(c) => void visit(compareHref(c))} placeholder="まちの名前" />
-    </section>
-  )
+  // 住んでいるまちを読むまでは、見本が一瞬出て切り替わらないよう何も描かない
+  return !ready || town ? <div className="min-h-[60vh]" /> : body
 }
 
-export function Compare({ year, years, a, b, byUse, byPopulation, options, failed }: Props) {
+export function Compare(props: Props) {
+  const { year, years, a, b, byUse, byPopulation, options, failed, sample } = props
   const { visit } = useRouter()
   const [picked, setM] = React.useState<Measure>('head')
   // 人口の無いまちは1人あたりを出せないので、割合だけにする
   const perHead = !!a?.pop && !!b?.pop
   const m: Measure = perHead ? picked : 'share'
   const go = (na: string, nb: string | null, y?: number | null) => void visit(compareHref(na, nb, y))
-  return (
-    <main className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
-      <header className="mb-5">
-        <h1 className="text-[26px] leading-[1.35] font-semibold tracking-[0.02em]">比べる</h1>
-        <p className="mt-1 text-[15px] text-muted-foreground">2つのまちのお金の使い方を、分野ごとに並べます。</p>
-      </header>
-      {failed ? <p className="text-sm text-muted-foreground">今は読み込めません。少し時間をおいてやり直してください。</p> : !a ? <PickFirst options={options} /> : (
+  const body = (a: CompareTown) => (
         <>
           <div className="flex items-stretch gap-2 sm:gap-4">
             <TownCard t={a} mark={<MarkA />} options={options} exclude={[a.code, b?.code ?? '']} onPick={(c) => go(c, b?.code ?? null)} />
@@ -216,7 +206,14 @@ export function Compare({ year, years, a, b, byUse, byPopulation, options, faile
 
           <p className="mt-10 px-2.5 text-xs leading-relaxed text-muted-foreground">一般会計の決算を、目ごとに COFOG（政府支出の機能別分類）の分野へ分けて足しています。1人あたりは住民基本台帳の人口で割っています。使い方が近いまちは、分野ごとの割合の差が小さいまちです。</p>
         </>
-      )}
+  )
+  return (
+    <main className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
+      <header className="mb-5">
+        <h1 className="text-[26px] leading-[1.35] font-semibold tracking-[0.02em]">比べる</h1>
+        <p className="mt-1 text-[15px] text-muted-foreground">2つのまちのお金の使い方を、分野ごとに並べます。</p>
+      </header>
+      {failed || !a ? <p className="text-sm text-muted-foreground">今は読み込めません。少し時間をおいてやり直してください。</p> : sample ? <Sample body={body(a)} /> : body(a)}
     </main>
   )
 }
