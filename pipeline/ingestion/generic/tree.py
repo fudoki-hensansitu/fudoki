@@ -1285,9 +1285,6 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
                 continue
             same = [i for i, (band, _) in enumerate(tokens) if band == band_index(piece[0])]
             owner_of[position] = same[0] if len(same) == 1 else deepest_token
-        apart = []  # the quirk `codeless_deeper_names`: names in a column deeper than every code of the row
-        if (deeper := document_quirk('codeless_deeper_names')) is not None:
-            apart = deeper.module.apart(names, owner_of, [band for band, _ in tokens], band_index)
         for index, (band, piece) in enumerate(tokens):
             code, name = _split_code(normalize(text(piece)))
             own = [piece]
@@ -1300,12 +1297,6 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
                 own = [part[2] for part in parts]
             item = Item(group, piece[0].page, own, code, name, 0, level=band, fixed_anchor=centre(piece))
             item.indent = piece[0].x0
-            result.append(item)
-        if apart:
-            pieces = sorted(apart, key=centre)
-            item = Item(group, pieces[0][0].page, pieces, None, ''.join(normalize(text(p)) for p in pieces), 0,
-                        level=band_index(pieces[0][0]), fixed_anchor=centre(pieces[0]))
-            item.indent = pieces[0][0].x0
             result.append(item)
     if order:
         add_totals(order[-1])
