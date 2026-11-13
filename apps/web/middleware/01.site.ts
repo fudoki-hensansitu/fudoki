@@ -6,7 +6,7 @@ import { defineMiddleware } from 'void'
 import { pageCsp } from '../server/csp'
 import { DISCOVERY_LINK, htmlToMarkdown, wantsMarkdown } from '../server/agent-discovery'
 import { DEFAULT_THEME, themeColorMeta } from '../nav/theme'
-import { ZARAZ_HOST, ZARAZ_SCRIPT } from '../analytics/zaraz'
+import { ZARAZ_HOST, ZARAZ_SCRIPT } from '../server/zaraz'
 
 /**
  * 頁を読み直す移動（他のサイトから来たとき・再読み込み）も View Transition でつなぐ opt-in。<head> に直接書く。
