@@ -138,7 +138,7 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   // 会計で中身の変わらない頁（予算・決算のタブ以外）の ?account= も 404 にして、CDN の key（void.config.ts の revalidateQueryAllowlist）を増やさせない
   if (account !== ACCOUNT && (!phase || (entry && !entry.accounts?.[phase]?.[String(year)]?.includes(account)))) throw new HTTPException(404, { res: notFound() })
   const [snapshot, flow] = await Promise.all([
-    entry ? within(loadYearSnapshot(env, entry, year, { field: props.field }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+    entry ? within(loadYearSnapshot(env, entry, year, { field: props.field, tab: props.tab ?? 'overview' }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
     entry && phase ? within(loadFlowParts(env, entry.code, year, 'setsu', phase, account), FLOW_WAIT_MS)
       // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
       .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))
