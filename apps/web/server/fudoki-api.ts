@@ -23,7 +23,16 @@ export class FudokiApiError extends Error {
 /** 操作を名前で呼び、失敗は FudokiApiError で投げる */
 export type ApiCall = <N extends WebOpName>(name: N, input: WebOpInput<N>) => Promise<WebOpOutput<N>>
 
-export const fudokiApi = (env: Pick<Env, 'WEB'>): WebRpc => env.WEB ?? restRpc((r) => fetch(r))
+let warned = false
+/** binding が無いとき（手元の開発・試験）だけ公開の REST に読み替える。本番で binding を落としたと気づけるよう、一度だけ警告を出す */
+export const fudokiApi = (env: Pick<Env, 'WEB'>): WebRpc => {
+  if (env.WEB) return env.WEB
+  if (!warned) {
+    warned = true
+    console.warn('WEB binding が無いので、公開の api（api.fudoki.dev）に読み替えます。手元の開発・試験のほかでは起きてはいけません')
+  }
+  return restRpc((r) => fetch(r))
+}
 
 export function apiCall(env: Pick<Env, 'WEB'>): ApiCall {
   const rpc = fudokiApi(env)

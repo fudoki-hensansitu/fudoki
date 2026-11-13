@@ -287,7 +287,7 @@ export function createApp() {
     c.res.headers.set('Access-Control-Expose-Headers', 'X-Origin-Url, X-Origin-Fetched-At')
   })
 
-  // REST はブラウザからも直接読める（風土記の web の無限スクロールも同じ口を使う）。資格情報は送らせない。
+  // REST はブラウザからも直接読める（風土記の web は使わず、内部の RPC で読む）。資格情報は送らせない。
   // kill switch より前に置き、preflight（OPTIONS）は D1 を読まずに返す。
   app.use('/v1/*', cors({ origin: '*', allowMethods: ['GET', 'POST'], allowHeaders: ['Content-Type'], maxAge: 86400 }))
 
@@ -352,7 +352,7 @@ export function createApp() {
   )
   app.all('/health', (c) => c.json(errorBody('METHOD_NOT_ALLOWED', 'GET だけを受け付けます'), 405, { Allow: 'GET' }))
 
-  // 集約ごとの route（rpc.ts。型は web の Hono RPC が使う）
+  // 集約ごとの route（rpc.ts）
   app.route('/', apiRoutes)
   app.all(ORIGIN_PDF_PATH, (c) => c.json(errorBody('METHOD_NOT_ALLOWED', 'GET だけを受け付けます'), 405, { Allow: 'GET' }))
 
