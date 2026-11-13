@@ -1229,7 +1229,12 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     arranged, taken, items, levels = explained_projects.arrange(observed, explained, continued) if explained \
         else (observed, [], [], {})
     laid, blocks = inner_tables.cut(arranged, inner) if inner else (arranged, [])
+    if (projects := quirk(settings, 'project_blocks')) is not None:
+        laid = projects.module.join_subject(laid)
     logical = _layout(laid, columns, spread=spread, header=header)
+    left_out = []
+    if projects is not None:
+        logical, left_out = projects.module.arrange(logical)
     kind = source['target']['document_kind']
     built, report.pattern = build_reading(logical, kind, layout=(settings or {}).get('breakdown'),
                                          codes_right=(settings or {}).get('codes') == 'right',
@@ -1270,6 +1275,9 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     amounts, headings = canonical_headings([*kept, *amounts], nodes, kind, header)
     fine_sections(nodes)
     excluded = excluded_regions(built, logical, codes, observed)
+    for why in dict.fromkeys((k, r) for _, k, r in left_out):
+        excluded += coverage_regions([(g.page, g.original, g.text) for g, *rest in left_out
+                                      if tuple(rest) == why and re.search(r'[0-9０-９]', g.text)], kind=why[0], reason=why[1])
     excluded += coverage_regions([(page, (w.x0, w.y0, w.x1, w.y1), w.text) for page, w in prose
                                   if re.search(r'[0-9０-９]', w.text)], kind='本文',
                                  reason='科目の下の説明（事業説明・残額説明）の文の中の数字。金額の欄ではない。')

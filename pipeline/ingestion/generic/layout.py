@@ -413,6 +413,8 @@ def page_bands(page: Page, spread: dict | None = None,
     `row_gaps` (the layout setting `rules.row_gaps`): a vertical rule the page leaves out for a row lets the row's
     text run on into the next column. A word that Poppler cut off where the name crossed the column's edge, touching
     the word before it on the line, stays in that word's band when no rule is drawn across the line there."""
+    if (broken := document_quirk('broken_column_rules')) is not None:
+        page = broken.module.repaired(page, spread, header)
     verticals = [r for r in page.rules if r.vertical]
     horizontals = [r for r in page.rules if not r.vertical]
     # Header words split at rules (a spanning header prints 款項 as one word);
