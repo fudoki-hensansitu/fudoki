@@ -1,0 +1,14 @@
+# 取り込みの表そのもの（fiscal_pdf・fiscal_csv）は表ごとに宣言しない。prepare.py が管理 JSON から読み込み、
+# モデルは ingestion_table() で引く（表の一覧は scripts/fiscal_inputs.py）。
+sources:
+- name: fiscal_metadata
+  schema: ingestion
+  tables:
+  - name: tables
+  - name: csv_tables
+  - name: origin
+  - name: source_inconsistencies
+- name: registry
+  schema: ingestion
+  tables:
+  - name: jurisdiction
