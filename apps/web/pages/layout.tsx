@@ -2,7 +2,7 @@
 import '../styles/app.css'
 import { useEffect } from 'react'
 import { useRouter } from '@void/react'
-import { installTracking } from '../analytics/zaraz'
+import { installTracking, resetScroll } from '../analytics/zaraz'
 import { SiteNav, type NavSection } from '../nav/site-nav'
 
 /** サイドバーで今いる場所として出す項目。ホームは「ホーム」（狭い画面の下の帯だけ）、会話を始める頁と会話（/s/:id）は「アシスタント」 */
@@ -16,6 +16,7 @@ const sectionOf = (path: string): NavSection | undefined => {
 export default function Layout({ children }: { children: React.ReactNode }) {
   const { path } = useRouter()
   useEffect(installTracking, [])
+  useEffect(resetScroll, [path])
   return (
     <div className="site">
       <div id="site-nav">

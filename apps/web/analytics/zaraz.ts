@@ -2,6 +2,8 @@
 // Zaraz の script は middleware/01.site.ts が本番（fudoki.dev）の HTML にだけ入れる。無い所（preview・手元）では window.zaraz が無く、ここは何もしない。
 // 頁の表示（SPA の移動も含む）は Zaraz の設定で送る。gtag.js の拡張計測は Zaraz では動かないので、要るもの（外部リンク・PDF・スクロール・検索）だけをここで送る。名前と項目は GA4 の拡張計測に合わせる
 
+import { redact } from '../redact'
+
 declare global {
   interface Window {
     zaraz?: { track: (name: string, properties?: Record<string, string | number>) => unknown }
@@ -16,6 +18,13 @@ export const ZARAZ_SCRIPT = '<script src="/cdn-cgi/zaraz/i.js" referrerpolicy="o
 const track = (name: string, properties: Record<string, string | number>) => void window.zaraz?.track(name, properties)
 
 let installed = false
+// 頁の表示ごとに一度だけ送る。layout が頁を移るたびに resetScroll で戻す
+let scrolled = false
+
+/** SPA で頁を移ったとき（同じ頁へ戻ったときも）スクロールを数え直す */
+export const resetScroll = () => {
+  scrolled = false
+}
 
 /** 外部リンク・PDF のクリックと、頁の 90% までのスクロールを送る。layout が一度だけ呼ぶ */
 export function installTracking() {
@@ -38,22 +47,20 @@ export function installTracking() {
     },
     { capture: true },
   )
-  // 頁ごとに一度だけ。SPA で移ると URL が変わるので数え直す
-  let scrolled = ''
   addEventListener(
     'scroll',
     () => {
-      if (scrolled === location.href) return
+      if (scrolled) return
       const height = document.documentElement.scrollHeight
       if (height <= innerHeight || scrollY + innerHeight < height * 0.9) return
-      scrolled = location.href
+      scrolled = true
       track('scroll', { percent_scrolled: 90 })
     },
     { passive: true },
   )
 }
 
-/** 事業の検索（/search?q=…）で言葉を引いたとき */
+/** 事業の検索（/search?q=…）で言葉を引いたとき。メールアドレス・電話番号の形は伏せる（頁の URL の query は Zaraz の設定で落とす） */
 export const trackSearch = (term: string) => {
-  if (term) track('search', { search_term: term.slice(0, 100) })
+  if (term) track('search', { search_term: redact(term).slice(0, 100) })
 }
