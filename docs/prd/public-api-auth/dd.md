@@ -38,7 +38,7 @@
 
 MCP の client（claude.ai など）──OAuth（CIMD / DCR、PKCE）──▶ AuthKit ──access token（JWT）
         │
-        └── Authorization: Bearer <JWT> ──▶ mcp.fudoki.dev/mcp ──JWKS で検証
+        └── Authorization: Bearer <JWT> ──▶ api.fudoki.dev/mcp ──JWKS で検証
 
 REST の client ── Authorization: Bearer <API キー> ──▶ api.fudoki.dev/v1/*
                                          │
@@ -67,20 +67,20 @@ REST の client ── Authorization: Bearer <API キー> ──▶ api.fudoki.d
 ### MCP（OAuth）
 
 - AuthKit を認可サーバーにする。WorkOS の Connect で CIMD（Client ID Metadata Documents）を有効にし、DCR も古い client のために有効にする。MCP の規格（2026-07-28）では CIMD が SHOULD、DCR は互換のための MAY（非推奨）。
-- 認証つきの MCP は新しい host `mcp.fudoki.dev/mcp` で出す（同じ api の Worker に domain を足す）。今の `api.fudoki.dev/mcp` は移行が終わるまで匿名のまま残し、終わったら 401 にする。client は 401 を受けて初めて OAuth を始めるので、匿名と認証つきを同じ URL で並べて出せないため（下の移行の順序）。
-- Resource Indicator に `https://mcp.fudoki.dev/mcp` を登録し、既定の Resource Indicator にもする。
-- api は `https://mcp.fudoki.dev/.well-known/oauth-protected-resource/mcp` で次を返す（RFC 9728 の 3.3 により、`resource` は well-known の接尾辞を除いた URL と一致させる）。`scopes_supported` は書かない。
+- MCP の URL は今の `api.fudoki.dev/mcp` のまま変えない。匿名の期間は設けず、切り替えた時点で認証を必須にする（client は 401 を受けて初めて OAuth を始めるので、同じ URL で匿名と認証つきを並べられない）。
+- Resource Indicator に `https://api.fudoki.dev/mcp` を登録し、既定の Resource Indicator にもする。
+- api は `https://api.fudoki.dev/.well-known/oauth-protected-resource/mcp` で次を返す（RFC 9728 の 3.3 により、`resource` は well-known の接尾辞を除いた URL と一致させる）。`scopes_supported` は書かない。
 
   ```json
   {
-    "resource": "https://mcp.fudoki.dev/mcp",
+    "resource": "https://api.fudoki.dev/mcp",
     "authorization_servers": ["https://<authkit のドメイン>"],
     "bearer_methods_supported": ["header"]
   }
   ```
 
-- トークンが無い・不正・期限切れのときは 401 と `WWW-Authenticate: Bearer resource_metadata="https://mcp.fudoki.dev/.well-known/oauth-protected-resource/mcp"` を返す。
-- 検証は `jose` の `jwtVerify` で、JWKS（`https://<authkit のドメイン>/oauth2/jwks`、`createRemoteJWKSet` が Worker の isolate の中でキャッシュする）・`iss`・`aud`（`https://mcp.fudoki.dev/mcp` だけ）・`exp` を確かめる。`sub` を利用者 ID にする。WorkOS の文書に従い、`sub_profile` が `ai_agent` のトークンは拒む。
+- トークンが無い・不正・期限切れのときは 401 と `WWW-Authenticate: Bearer resource_metadata="https://api.fudoki.dev/.well-known/oauth-protected-resource/mcp"` を返す。
+- 検証は `jose` の `jwtVerify` で、JWKS（`https://<authkit のドメイン>/oauth2/jwks`、`createRemoteJWKSet` が Worker の isolate の中でキャッシュする）・`iss`・`aud`（`https://api.fudoki.dev/mcp` だけ）・`exp` を確かめる。`sub` を利用者 ID にする。WorkOS の文書に従い、`sub_profile` が `ai_agent` のトークンは拒む。
 - scope は使わない。読み取り専用で、権限を分ける操作が無いため。書き込みの tool を足すときに scope を決める。
 - access token の寿命は AuthKit の既定（5 分）のまま。refresh token には期限が無いので、利用を止めさせるのは WorkOS で利用者か承認を消すことで行う。
 
@@ -99,7 +99,7 @@ REST の client ── Authorization: Bearer <API キー> ──▶ api.fudoki.d
 
 ### 適用する範囲と順序
 
-- 認証は `/v1/*`（PDF の中継を除く）と `mcp.fudoki.dev/mcp` にかける。`/`・`/health`・`/openapi.json`・`/robots.txt`・`/.well-known/*` はかけない。
+- 認証は `/v1/*`（PDF の中継を除く）と `api.fudoki.dev/mcp` にかける。`/`・`/health`・`/openapi.json`・`/robots.txt`・`/.well-known/*` はかけない。
 - 認証の middleware は kill switch（D1 を読む）より前に置く。資格情報の無い要求は D1 を読まずに 401 を返す。
 - 検証した利用者 ID と資格情報の種類（`api_key`・`oauth`）、OAuth の場合は client ID を、request の context（`c.var.caller`）に置く。問い合わせの処理（`queries.ts`・`model.ts`）には渡さない。
 - `/v1/*` の CORS は外す。キーをブラウザの JavaScript に置かせないため。PDF の中継の CORS `*` は残す。
@@ -120,10 +120,9 @@ REST の client ── Authorization: Bearer <API キー> ──▶ api.fudoki.d
 
 1. WorkOS の環境を作る（Google のログイン、Connect の CIMD・DCR、Resource Indicator、developers の organization、API キーの permission）。
 2. アカウントの頁を作って公開する。
-3. api に認証・記録・流量の制限を入れる。`mcp.fudoki.dev/mcp` は最初から認証を必須にする。`api.fudoki.dev/mcp` と `/v1/*` は、資格情報が無ければ今のまま通し、API キーが付いていれば検証して記録する。不正なキーは 401 にする。
-4. docs.fudoki.dev・llms.txt・`/.well-known/mcp/server-card.json`・agent readiness の案内・plugin bundle（`plugins/fudoki`）・[policies](../mcp-distribution/policies.md)・privacy・terms・[submission](../mcp-distribution/submission.md)（「アカウント・API key は不要」と審査の test case）を認証つきに直し、匿名の利用がいつ止まるかを告知する。
-5. ChatGPT の plugin と Claude の connector を `mcp.fudoki.dev/mcp` で出し直し、審査を受ける。
-6. 両方の審査が通り、告知した日を過ぎたら、`api.fudoki.dev/mcp` と `/v1/*` の資格情報の無い要求を 401 にする。掲載中の匿名の版の利用者はここで切れる。
+3. api に認証・記録・流量の制限を入れ、`/mcp` と `/v1/*` を同時に認証必須に切り替える。匿名の猶予は設けない。
+4. 同じ PR で docs.fudoki.dev・llms.txt・`/.well-known/mcp/server-card.json`・agent readiness の案内・plugin bundle（`plugins/fudoki`）・[policies](../mcp-distribution/policies.md)・privacy・terms・[submission](../mcp-distribution/submission.md)（「アカウント・API key は不要」と審査の test case）を認証つきに直す。
+5. ChatGPT のアプリと Claude の connector を OAuth の設定で出し直し、審査を受ける。3 から審査が通るまで、ChatGPT に掲載中のアプリは使えない（2026-11-13 yuito 了承）。
 
 ## テスト
 
@@ -144,8 +143,6 @@ JWT の検証は、テストで作った鍵の JWKS を渡して確かめる。W
 
 - 審査用のアカウント。OpenAI の審査は MFA・メールのコードなしで入れるテスト用のアカウントを求める。Google の新しいアカウントは別の端末からのログインで本人確認を求められやすい。AuthKit でメールとパスワードのログインも有効にするか、審査用の Google アカウントで通すかを決める。Claude の提出の要件も確かめる。
 - アカウントの頁の repo 名とドメイン（風土記と補助金で共通の名前にするか）。
-- 認証つきの MCP の host（`mcp.fudoki.dev` 案）。
-- 資格情報の無い要求を止めるまでの猶予（3 の公開から 6 まで）。
 - 流量の上限の最初の値。
 - ChatGPT・Claude の client が CIMD と DCR のどちらで来るか。両方を有効にするので動作は変わらないが、5 で確かめる。
 
