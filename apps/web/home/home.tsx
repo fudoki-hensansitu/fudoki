@@ -359,16 +359,18 @@ const checkItems = (c: Ctx, startAt: (at: number) => void): CheckItem[] => [
 ]
 
 
-/** まちを選ぶ前のホームで、緑の札の下に置く。くわしく見られるまち（事業評価か都市像のあるまち）を、都市像と並べて開けるようにする。住んでいるまちは変えない */
+/** まちを選ぶ前のホームで、緑の札の下に置く。他のまちを名前で探す欄と、見本のまち（事業評価か都市像のあるまち）を都市像と並べて開けるようにする。住んでいるまちは変えない */
 function FeaturedTowns({ featured, entries }: { featured: Featured[]; entries: MapEntry[] }) {
   const items = featured.slice(0, 6).flatMap((f) => {
     const e = entries.find((x) => x.code === f.code)
     return e ? [{ ...f, prefecture: e.prefecture, href: e.latestYear ? `${f.path}/${e.latestYear}` : f.path }] : []
   })
-  if (!items.length) return null
+  if (!items.length && !entries.length) return null
   return (
     <section className="mt-10" aria-labelledby="featured-towns">
-      <h2 id="featured-towns" className="mb-3 text-[17px] font-semibold">くわしく見られるまち</h2>
+      <h2 id="featured-towns" className="mb-3 text-[17px] font-semibold">他のまちを見る</h2>
+      {/* 住んでいるまちは変えずに、そのまちの頁を開く（緑の札の「住んでいるまちを選ぶ」とは別の、地のままの検索欄） */}
+      <OtherTowns entries={entries} className="mb-3" />
       <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
         {items.map((t) => (
           <li key={t.code}>
