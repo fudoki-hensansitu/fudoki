@@ -24,12 +24,14 @@
     {
       "jurisdiction": "132063",
       "workflow": {
-        "page": "^事務事業評価シート |PDCAサイクルの確認と評価|構成事業一覧",
-        "start": "^事務事業評価シート ",
+        "page": "^事務事業評価シート( |$)|PDCAサイクルの確認と評価|構成事業一覧",
+        "start": "^事務事業評価シート( |$)",
         "fields": [
-          "^事 務 事 業 名 (?P<name>.+?) (?P<jigyo_code>\\d{8})$",
-          "主 担 当 部 課 名 (?P<department>\\S+) (?P<division>\\S+)$",
+          "^事務事業名 (?P<name>.+?) (?P<jigyo_code>\\d{8})$",
+          "主担当部課名 (?P<department>\\S+) (?P<division>\\S+)\\n総合 (?P<division_more>\\S+担当)$",
+          "主担当部課名 (?P<department>\\S+) (?P<division>\\S+)$",
           "^合 計 (?P<budget>[\\d,]+) (?P<settled>[\\d,]+)",
+          "年度における事業の位置付け[\\s\\S]*?記載\\) (?P<grade>[ABCD])(?: |$)",
           "年度における事業の位置付け[\\s\\S]*?^(?P<grade>[ABCD])$"
         ],
         "unit": "円"
@@ -59,6 +61,7 @@
         "fields": [
           "^(?P<name>.+?) 款項目 (?P<kan_code>\\d+) (?P<kou_code>\\d+) (?P<moku_code>\\d+) 事\\n事業名 業 (?P<jigyo_code>\\d+)\\n(?P<name_more>.+?) 所管課 (?P<division>\\S+)",
           "^(?P<name>.+?) 款項目 (?P<kan_code>\\d+) (?P<kou_code>\\d+) (?P<moku_code>\\d+) 事\\n事業名 業 (?P<jigyo_code>\\d+)$",
+          "^事業名 (?P<name>.+?) (?P<division>\\S+部\\S*課\\S*) 業 (?P<jigyo_code>\\d+)\\n所管課 (?P<division_more>\\S+)",
           "^事業名 (?P<name>.+?) 業 (?P<jigyo_code>\\d+)$",
           "^款項目 (?P<kan_code>\\d+) (?P<kou_code>\\d+) (?P<moku_code>\\d+) 事\\n事業名 (?P<name>.+?) 所管課 (?P<division>\\S+)",
           "^事業名\\n(?P<name>.+?) 所管課 (?P<division>\\S+)",
@@ -85,7 +88,9 @@
       "workflow": {
         "page": "^事務事業見直し評価シート",
         "fields": [
-          "^事 務 事 業 名 (?P<name>.+?) 主管課 (?P<division>\\S+)",
+          "^(?P<name>\\S+)\\n事務事業名 主管課 (?P<division>\\S+)\\n(?P<name_more>\\S+)$",
+          "^事務事業名 (?P<name>.+?) (?P<division>\\S+)\\n主管課\\n(?P<name_more>\\S+)$",
+          "^事務事業名 (?P<name>.+?) 主管課 (?P<division>\\S+)",
           "^(?P<kan_code>\\d+) (?P<kou_code>\\d+) (?P<moku_code>\\d+) (?:\\S+ )?開始",
           "^事業費 [^\\n]*?(?P<settled>[\\d,]+) 円$",
           "^果 2\\n今後の方向性 [^\\n]*?○ [ivx]+ (?P<grade>再編|廃止|縮小|業務改善・効率化|その他)",
@@ -105,7 +110,8 @@
           "^款 (?P<kan_code>\\d+) 項 (?P<kou_code>\\d+) 目 (?P<moku_code>\\d+) 細目 (?P<jigyo_code>\\d+) 細々目 \\d+ 部 (?P<department>\\S+)",
           "^款名 (?P<kan>\\S+) 課 (?P<division>\\S+)",
           "^直接事業費 千円 [\\d,]+ (?P<budget>[\\d,]+) (?P<settled>[\\d,]+) [\\d,]+",
-          "今後の方向性 \\(前年度[^)]*\\) ?→ (?P<grade>[A-F])\\b"
+          "今後の方向性 \\(前年度[^)]*\\) ?→ (?P<grade>[A-F])\\b",
+          "今後の方向性\\n[^\\n]* (?P<grade>[A-F]) \\S+\\n[^\\n]*\\) ?→"
         ],
         "unit": "千円"
       },
@@ -132,11 +138,13 @@
       "workflow": {
         "page": "事務事業評価\\(内部評価\\)シート",
         "fields": [
+          "^(?P<name>\\S+)\\n課 (?P<division>\\S+) 担当[^\\n]*\\n基 (?P<name_more>\\S+)$",
           "^(?P<name>.+?) 課 (?P<division>\\S+) 担当",
           "^部 (?P<department>\\S+) 課長",
           "予算科目コード 款 (?P<kan_code>\\d+) 項 (?P<kou_code>\\d+) 目 (?P<moku_code>\\d+) 細目 (?P<jigyo_code>\\d+)",
           "直接事業費 千円 [\\d,]+ (?P<budget>[\\d,]+) (?P<settled>[\\d,]+) [\\d,]+",
-          "\\)→\\n\\S+ (?P<grade>[A-F])$"
+          "\\)→\\n\\S+ (?P<grade>[A-F])$",
+          "今後の方向性\\n[^\\n]* (?P<grade>[A-F]) \\S+\\n[^\\n]*\\) ?→"
         ],
         "unit": "千円"
       },
@@ -153,7 +161,31 @@
       "workflow": {
         "page": "事務事業評価\\(内部評価\\)シート",
         "fields": [
-          "^主 要 事 業 名 (?P<name>.+?) 担当課・係 (?P<division>.+)$",
+          "^主要事業名 (?P<name>.+?) 担当課・係 (?P<division>[^\\n]+\\([^)\\n]*)\\n(?P<division_more>[^\\n]*\\))$",
+          "^(?P<name>.+?) (?P<division>\\S+課 \\S+係\\([^)\\n]*)\\n主要事業名 担当課・係 (?P<division_more>[^\\n]*\\))\\n(?P<name_more>\\S+)$",
+          "^(?P<division>[^\\n]+)\\n主要事業名 (?P<name>.+?) 担当課・係\\n(?P<division_more>\\([^)\\n]*\\))$",
+          "^主要事業名 (?P<name>.+?) 担当課・係 (?P<division>.+)$",
+          "会 計 (?P<account>\\S+)$",
+          "款 (?P<kan_code>\\d+) 項 (?P<kou_code>\\d+) 目 (?P<moku_code>\\d+)",
+          "事業費計 (?:[\\d,]+ ){2}(?P<budget>[\\d,]+) (?P<settled>[\\d,]+)",
+          "今後の方向性についての検討内容[\\s\\S]{0,400}?(?:^| )(?P<grade>現状維持|拡充|拡大|\\S+に向けて見直し|休止|廃止|完了|縮小)$"
+        ],
+        "unit": "千円"
+      },
+      "note": "1頁1枚。冒頭の評価結果一覧は読まない。金額は投入指標の事業費計の実施年度の当初と決算（千円）。区分は今後の方向性（「〜に向けて見直し」は improve、整理・統合は merge）。令和6年度実施分の冊は R5〜R7 の欄の R6 を読む",
+      "years": [
+        2024
+      ]
+    },
+    {
+      "jurisdiction": "133051",
+      "workflow": {
+        "page": "事務事業評価\\(内部評価\\)シート",
+        "fields": [
+          "^主要事業名 (?P<name>.+?) 担当課・係 (?P<division>[^\\n]+\\([^)\\n]*)\\n(?P<division_more>[^\\n]*\\))$",
+          "^(?P<name>.+?) (?P<division>\\S+課 \\S+係\\([^)\\n]*)\\n主要事業名 担当課・係 (?P<division_more>[^\\n]*\\))\\n(?P<name_more>\\S+)$",
+          "^(?P<division>[^\\n]+)\\n主要事業名 (?P<name>.+?) 担当課・係\\n(?P<division_more>\\([^)\\n]*\\))$",
+          "^主要事業名 (?P<name>.+?) 担当課・係 (?P<division>.+)$",
           "会 計 (?P<account>\\S+)$",
           "款 (?P<kan_code>\\d+) 項 (?P<kou_code>\\d+) 目 (?P<moku_code>\\d+)",
           "事業費計 (?:[\\d,]+ ){4}(?P<budget>[\\d,]+) (?P<settled>[\\d,]+)",
@@ -161,16 +193,19 @@
         ],
         "unit": "千円"
       },
-      "note": "1頁1枚。冒頭の評価結果一覧は読まない。金額は投入指標の事業費計の実施年度の当初と決算（千円）。区分は今後の方向性（「〜に向けて見直し」は improve、整理・統合は merge）"
+      "note": "1頁1枚。冒頭の評価結果一覧は読まない。金額は投入指標の事業費計の実施年度の当初と決算（千円）。区分は今後の方向性（「〜に向けて見直し」は improve、整理・統合は merge）。令和7年度実施分の冊は R5〜R7 の欄の R7 を読む",
+      "years": [
+        2025
+      ]
     },
     {
       "jurisdiction": "131067",
       "workflow": {
         "page": "事務事業評価シート$",
         "fields": [
-          "^所\\n(?P<department>\\S+)\\n事務事業名 (?P<name>.+?) 管\\n(?P<division>\\S+)$",
-          "^事務事業名 (?P<name>.+?) 管$",
-          "決算額 \\(単位:千円\\)\\n(?:\\S )?[\\d,-]+ [\\d,-]+ (?P<settled>[\\d,-]+)$",
+          "^(?P<department>\\S+)\\n所\\n事務事業名 (?P<name>.+?)\\n管\\n(?P<division>\\S+)$",
+          "^事務事業名 (?P<name>.+?)\\n管$",
+          "決算額 \\(単位:千円\\)\\n(?:\\S\\n)?(?:\\S )?[\\d,-]+ [\\d,-]+ (?P<settled>[\\d,-]+)$",
           "評価結果[\\s\\S]{0,400}?(?:^| )(?P<grade>拡大|拡充|維持|継続|改善|縮小|廃止|休止|統合|終了|完了)$"
         ],
         "unit": "千円"
@@ -183,6 +218,7 @@
         "page": "^事務事業評価 評価対象年度",
         "fields": [
           "事業名: ?(?P<name>.+)$",
+          "^主管課: ?(?P<division>\\S+)\\n(?P<division_more>\\S+課)$",
           "^主管課: ?(?P<division>\\S+)",
           "^事業費全体 \\S+ \\S+ (?P<budget>\\S+)",
           "^評価 (?P<grade>\\S+)"
@@ -264,8 +300,9 @@
         "page": "^\\(1\\)実施計画決算",
         "fields": [
           "^事業名 (?P<name>.+)$",
-          "部名 (?P<department>\\S+) 課名 (?P<division>\\S+)",
-          "^予算科目 款 (?P<kan>\\S+) 項 (?P<kou>\\S+) 目 (?P<moku>\\S+) 大事業 (?P<jigyo>\\S+)$",
+          "^(?P<division>\\S+)\\n[^\\n]*部名 (?P<department>\\S+) 課名 係名 [^\\n]*\\n(?P<division_more>\\S+)$",
+          "部名 (?P<department>\\S+) 課名 (?P<division>(?!係名 )\\S+)",
+          "^予算科目 款 ?(?P<kan>\\S+) 項 ?(?P<kou>\\S+) 目 ?(?P<moku>\\S+) 大事業 ?(?P<jigyo>\\S+)$",
           "予算現額\\(千円\\) (?P<budget>[\\d,]+)",
           "^合計 (?P<settled>[\\d,]+)$",
           "二次評価 (?P<grade>[SABCD] \\S+?である。)"
@@ -298,7 +335,7 @@
         "page": "事務事業評価シート No\\.|^No\\. \\d+$",
         "start": "事務事業評価シート No\\.",
         "fields": [
-          "^事 業 名 (?P<name>.+)$",
+          "^事 ?業 ?名 ?(?P<name>.+?)(?: \\d+)?$",
           "^主管課 (?P<division>\\S+)",
           "^予算現額\\(令和\\d+年度は当初予算\\) [^\\n]*? (?P<budget>\\S+) \\S+$",
           "^A\\.決算額\\(令和\\d+年度は見込み\\) [^\\n]*? (?P<settled>\\S+) \\S+$",
@@ -321,7 +358,7 @@
         "page": "事務事業評価シート$|^評価結果 評価についての説明|^予算現額\\(事業費\\)",
         "start": "事務事業評価シート$",
         "fields": [
-          "^事 業 名 (?P<name>.+?)(?: \\d+)?$",
+          "^事 ?業 ?名 ?(?P<name>.+?)(?: \\d+)?$",
           "^主管課 (?P<division>\\S+)",
           "^予算現額\\(事業費\\) [^\\n]*? (?P<budget>\\S+) \\S+$",
           "^A\\.決算額\\(令和\\d+年度は見込み\\) [^\\n]*? (?P<settled>\\S+) \\S+$",
@@ -338,12 +375,14 @@
         2024
       ],
       "workflow": {
-        "page": "^評 価 表$",
+        "page": "^評価表$",
         "fields": [
-          "^(?P<name>.+?) 担当部 (?P<department>\\S+) 内訳[^\\n]*\\n事務事業名 (?P<name_more>\\S+)",
+          "^(?P<name>.+?) 担当部 (?P<department>\\S+) 内訳[^\\n]*\\n事務事業名 関係課 \\S+\\n(?P<name_more>\\S+) 担当課 (?P<division>\\S+)",
+          "^(?P<name>.+?) 担当部 (?P<department>\\S+) 内訳[^\\n]*\\n事務事業名 (?P<name_more>(?!関係課)\\S+)",
           "^事務事業名 (?P<name>.+?) 担当部 (?P<department>\\S+)",
-          "^事務事業名 (?P<name>.+?) 関係課 ",
+          "^事務事業名 (?P<name>.+?) 関係課(?: |$)",
           "担当部 (?P<department>\\S+) 内訳",
+          "^担当課 \\S+ 1当初予算\\n(?:\\S*[^課\\s] )?(?P<division>\\S+課) ",
           "^担当課 (?P<division>\\S+)",
           "会計 (?P<account>\\S+) 款 (?P<kan_code>\\d+) 項 (?P<kou_code>\\d+) 目 (?P<moku_code>\\d+)",
           "小計\\(1\\+2\\+3\\+4\\) [^\\n]*? (?P<budget>\\S+) \\S+$",
@@ -359,8 +398,11 @@
       "workflow": {
         "page": "^事業カルテ \\(|事業カルテ作成対象外事業",
         "fields": [
+          "^\\d\\d-\\d\\d-\\d\\d-\\d+(?: \\d\\d-\\d\\d-\\d\\d-\\d+)+ (?P<name>[^\\d\\n][^\\n]*)$",
+          "^\\d\\d-\\d\\d-\\d\\d-\\d+\\n(?P<name>[^\\d\\n][^\\n]*)\\n\\d\\d-\\d\\d-\\d\\d-\\d+$",
           "^(?P<kan_code>\\d\\d)-(?P<kou_code>\\d\\d)-(?P<moku_code>\\d\\d)-(?P<jigyo_code>\\d+) (?P<name>.+)$",
           "^事業カルテ \\( ?\\d+年度決算 ?\\) (?P<division>\\S+)$",
+          "^事業カルテ \\( ?\\d+年度決算 ?\\) 合体カルテ\\S* (?P<division>\\S+)$",
           "^(?P<division>\\S+)\\n\\d\\d-\\d\\d-\\d\\d-\\d+ ",
           {
             "pattern": "^決算額\\(単位:千円\\) [^\\n]*?(?P<settled>[\\d,]+) 千円$",

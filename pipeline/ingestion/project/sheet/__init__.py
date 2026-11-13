@@ -1,6 +1,6 @@
 """事務事業評価シートを、宣言（`workflow`）の正規表現で読む。1枚（1事業）が1件。
 
-頁の文字（`pdftotext -layout`）を NFKC にして行ごとに空白を1つに詰め（空の行は残る。行をまたぐ正規表現は `\\n+` にする）、宣言の正規表現の名前付きの組で欄を拾う。座標は使わない。
+頁の文字（bbox の語を `page_words.lines` で行に組んだもの）を NFKC にして行ごとに空白を1つに詰め、字の間を空けて組んだ語（「事 務 事 業 名」）を詰め、宣言の正規表現の名前付きの組で欄を拾う。座標は使わない。
 様式が座標でしか読めない自治体（品川）は `layouts/<自治体>_sheet.py` で読む。
 
 宣言の形:
@@ -27,13 +27,12 @@ direction（今後の方向性）。`<名前>_more` の組は、名前が折り�
 from __future__ import annotations
 
 import re
-import subprocess
 import sys
 import unicodedata
 from dataclasses import dataclass, field
 from pathlib import Path
 
-from ingestion.lib import poppler
+from ingestion.generic import page_words
 
 GROUPS = ('name', 'account', 'kan', 'kou', 'moku', 'jigyo', 'kan_code', 'kou_code', 'moku_code', 'jigyo_code',
           'department', 'division', 'budget', 'settled', 'grade', 'direction')
@@ -150,12 +149,18 @@ def parse(text: str, number: int, workflow: dict) -> Sheet | None:
                  grade_label=grade)
 
 
+# 字の間を空けて組んだ語（「事 務 事 業 名」）。1字ずつの全角が3字以上、空白1つずつで並ぶ
+SPACED = re.compile(r'(?<!\S)(?:[^\x00-\x7f\s] ){2,}[^\x00-\x7f\s](?!\S)')
+
+
+def unspace(text: str) -> str:
+    """字の間を空けて組んだ語を詰める（「事 務 事 業 名」→「事務事業名」）。"""
+    return SPACED.sub(lambda m: m.group(0).replace(' ', ''), text)
+
+
 def pages(path) -> list[tuple[int, str]]:
-    """頁ごとの文字。mise で固定した Poppler の `pdftotext -layout` で、段の並びを保ったまま行にする。"""
-    poppler.require()
-    text = subprocess.run(['pdftotext', '-layout', '-enc', 'UTF-8', str(path), '-'],
-                          capture_output=True, check=True).stdout.decode('utf-8')
-    return [(number, norm(page)) for number, page in enumerate(text.split('\f')[:-1] or [''], start=1)]
+    """頁ごとの文字。bbox（`page_words`）の語を行に組み、行ごとに空白を1つに詰め、字の間を空けた語を詰める。"""
+    return [(page.number, unspace(norm('\n'.join(page_words.lines(page))))) for page in page_words.pages(Path(path))]
 
 
 def read(path, workflow: dict) -> list[Sheet]:

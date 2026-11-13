@@ -1,4 +1,4 @@
-# 頁の語の層を、取り込みとアシスタントで共通にする — 設計
+# 頁の bbox を、取り込みとアシスタントで共通にする — 設計
 
 担当者: wwwyo / Claude
 更新日: `2026-11-12`
@@ -28,12 +28,12 @@
 ## Goals / Non-Goals
 
 - Goal: 頁の語と位置を取るコードを1か所にする。語の取り方の直しは、そこを直せば評価シート・プレス・アシスタントに効く。
-- Goal: 評価シート・プレスの取り込みは、その語の層から読む。移す前の取り込み結果と突き合わせ、変わらないことを確かめる。
+- Goal: 評価シート・プレスの取り込みは、その bbox から読む。移す前の取り込み結果と突き合わせ、変わらないことを確かめる。
 - Goal: 頁の文字は marts の表にし、`serving:sync` で D1 に写す。api は公開の REST・MCP には出さず、fudoki の web だけが呼べる内部の口から返す（[source-reading の設計](../source-reading/dd.md)の Goal を引き継ぐ）。公開か内部かは api のインターフェースが決め、データの側には持たせない。
 - Goal: api から R2 の binding を外す。api が元の PDF に触れる口を無くす。
-- Non-Goal: fiscal の取り込みを語の層へ移すこと。fiscal は今の `observe.py` のまま使う。
+- Non-Goal: fiscal の取り込みを bbox へ移すこと。fiscal は今の `observe.py` のまま使う。
 - Non-Goal: 予算書・決算書の頁の文字（#560 で外した）。元の PDF を配ること（中継は公式 URL から取るまま、[origin-pdf-viewer](../origin-pdf-viewer/dd.md)）。
-- Non-Goal: 事業の出典に OCR をかけること。スキャンの評価資料・プレスの OCR の観測をどこに宣言し保存するかは、語の層ができたあとに決める（fiscal の `scan.read_pages` は管理 JSON の `ocr_inputs` を前提にしている）。
+- Non-Goal: 事業の出典に OCR をかけること。スキャンの評価資料・プレスの OCR の観測をどこに宣言し保存するかは、 bbox ができたあとに決める（fiscal の `scan.read_pages` は管理 JSON の `ocr_inputs` を前提にしている）。
 
 ## Design
 
@@ -49,15 +49,15 @@ flowchart LR
   api -->|"Service Binding"| web["web<br/>read_source_page"]
 ```
 
-### 語の層
+### bbox（語と位置）
 
 新しいモジュール `ingestion/generic/page_words.py` を共通の入口にする。fiscal の変換器はこれを import しないので、ここを直しても fiscal の表の指紋は古くならない（fiscal の指紋は変換器が import する `generic/*.py` の AST を辿る。`manifest.py` の `fingerprints`）。`observe.py` は触らない。
 
 - `page_words.pages(pdf) -> list[Page]`。`Page` は `number`・`width`・`height`・`words`。`Word` は `text`・`x0`・`y0`・`x1`・`y1`（このモジュールの型。`observe.Word` は変えない）。
 - 語は `observe.words`（`pdftotext -bbox`）と `observe.drop_hidden_copies` で取る。`observe.words` は Poppler の版を確かめないので、`page_words` が `poppler.require()` を呼ぶ。
-- 語の層に効く `observe` の直しは、`observe.words` と `drop_hidden_copies` の中の直しだけ。character map（fiscal の様式ごとの宣言 `text_layer.character_map` から渡す）、見えない文字を落とす処理（`repair.py`）、CropBox で切る処理（`observe.cropped`）は `observe.words` の外にあり、事業の出典には宣言の置き場も無い。使うかどうかは、事業の出典で要る例が出たときに決める。
+- bbox に効く `observe` の直しは、`observe.words` と `drop_hidden_copies` の中の直しだけ。character map（fiscal の様式ごとの宣言 `text_layer.character_map` から渡す）、見えない文字を落とす処理（`repair.py`）、CropBox で切る処理（`observe.cropped`）は `observe.words` の外にあり、事業の出典には宣言の置き場も無い。使うかどうかは、事業の出典で要る例が出たときに決める。
 - `page_words.fonts(pdf, page) -> list[tuple[float, str]]` が、語ごとの字の大きさ・フォント名を返す。pdfplumber の文字（`page.chars`）を語の箱に当て、箱に入る文字の最頻値にする。プレスの規則が要るときだけ呼び、頁の文字の生成では呼ばない（全頁を pdfplumber で読むと重いため）。回転した頁・CropBox の原点が 0 でない頁では、Poppler と pdfplumber の座標を合わせてから当てる。
-- `page_words.lines(page) -> list[str]` が行を組む。縦の位置で行にまとめ、行の中の語を左から1つの空白でつなぐ。評価シートは今も `pdftotext -layout` の行の空白を1つに詰めて読み（`sheet/__init__.py`）、プレスは pdfplumber の `extract_text`（列を空白で揃えない形）を読んでいるので、どちらもこの形に合わせる。列を空白で揃えるのは、頁の文字の並べ方（`layout.py`）だけにする。
+- `page_words.lines(page) -> list[str]` が行を組む。縦の位置で行にまとめ（`page_words.rows`）、行の中の語を左からつなぐ。すき間の狭い全角どうしは詰め、ほかは空白を1つ入れる（`page_words.joins`。頁の文字の `layout.py` と同じ行まとめと詰め方）。評価シートは今も `pdftotext -layout` の行の空白を1つに詰めて読み（`sheet/__init__.py`）、プレスは pdfplumber の `extract_text`（列を空白で揃えない形）を読んでいるので、どちらもこの形に合わせる。列を空白で揃えるのは、頁の文字の並べ方（`layout.py`）だけにする。
 - 文字の層の無い頁は空のまま（OCR は Non-Goal）。
 
 ### 取り込み
@@ -66,15 +66,15 @@ flowchart LR
 - 評価シート（`sheet/`）: `pages()` を `page_words.lines` に替える。品川の `shinagawa_sheet.py` も `page_words.pages` の語に替える。宣言の正規表現が合わない団体は宣言を直す。
 - 評価の結果（`layouts/shinagawa_result.py`、`extract_text(layout=True)`）も評価シートと同じ段で `page_words.lines` に替える。
 - プレス（`press/`・`layouts/*_press.py`）:
-  - この段で語の層に替えるのは、語（`extract_words`、字の大きさ・フォント名は `page_words.fonts`）と行（`extract_text`）だけ。
-  - それ以外の pdfplumber の使い方は、この段では pdfplumber のまま残す。今あるのは `find_tables`（`find/table.py`・`fuchu_press.py`）、`extract_tables`（`inagi_press.py`）、`extract_text_lines`（`kiyose_press.py`）、`page.chars`（`setagaya_press.py`・`sumida_press.py`）、`page.rects`（`ota_press.py`）、`crop().extract_text`（`fuchu_press.py`）。規則ごとの一覧は移す PR に載せ、語の層の罫線から組む形は残った規則を移すときに別に決める。
+  - この段で bbox に替えるのは、語（`extract_words`、字の大きさ・フォント名は `page_words.fonts`）と行（`extract_text`）だけ。
+  - それ以外の pdfplumber の使い方は、この段では pdfplumber のまま残す。今あるのは `find_tables`（`find/table.py`・`fuchu_press.py`）、`extract_tables`（`inagi_press.py`）、`extract_text_lines`（`kiyose_press.py`）、`page.chars`（`setagaya_press.py`・`sumida_press.py`）、`page.rects`（`ota_press.py`）、`crop().extract_text`（`fuchu_press.py`）。規則ごとの一覧は移す PR に載せ、 bbox の罫線から組む形は残った規則を移すときに別に決める。
   - 36 の個別の規則は1団体ずつ移して確かめる。
 - 指紋: `run.py` の `code_fingerprint` は、読む経路（`workflow` の宣言か個別の `layout`）を問わず `page_words.py` と `observe.py` を hash に足し、`poppler.pinned()` の版も足す。今の `code_fingerprint` は import を辿らずファイルの中身だけを hash し、個別の `layout` の出典は様式のファイルしか入れていないため、`sheet.modules()`・`press.modules()` に足すだけでは品川と36の規則のキャッシュが古くならない。
 
 ### 頁の文字を marts の表にする
 
 - 今の `source_text/layout.py` の並べ方（行にまとめる・列を揃える・語のつなぎ方・見開きを分ける）は、入力を `page_words.pages` の語に替えて pipeline に残す。
-- 事業の取り込み（`ingestion/project/run.py`）と同じ流れで、事業評価・プレスの出典ごとに頁の文字を作り、warehouse の入力の表にする。読んだ結果は `.cache/` にキャッシュし、key は出典の sha256、語の層と並べ方のコードの指紋、`poppler.pinned()` の版にする（今の事業の取り込みのキャッシュの key は Poppler の版を含まない）。
+- 事業の取り込み（`ingestion/project/run.py`）と同じ流れで、事業評価・プレスの出典ごとに頁の文字を作り、warehouse の入力の表にする。読んだ結果は `.cache/` にキャッシュし、key は出典の sha256、 bbox と並べ方のコードの指紋、`poppler.pinned()` の版にする（今の事業の取り込みのキャッシュの key は Poppler の版を含まない）。
 - 文字が1字も無い出典（スキャンなど）は行を作らない。行が無ければ api は今と同じく `unavailable` を返し、公式の資料を案内させる。文字のある出典は全頁の行を作る（文字の無い頁は空文字）ので、頁数は `max(page)` で引ける。
 - marts の表 `source_page_text`（`marts/source/`）:
 
@@ -107,8 +107,8 @@ flowchart LR
 - 頁の文字を R2 に置き、web だけに binding を持たせ、並べ方を web（TypeScript）に移す: api を通らずに済む。一方で、保存の経路が marts → D1 と別にもう1本でき、web にデータの binding を持たせない規約（`pipeline/verify/boundaries.ts`）に例外が要る。並べ方の移植と、Python との突き合わせも要る。
 - 今のまま R2 の `source-text/` に置き、api が読む: 変更は小さい。api の R2 binding が元の PDF のバケット全体を指したまま残る。
 - `observe.py` に `size` を足して共通の入口にする: fiscal の全表の指紋が古くなり、全表 refresh が要る。
-- 評価シート・プレスも fiscal の汎用の変換器（木の組み立て）に載せる: 書式が違いすぎる。語の層を共通にするだけで目的は足りる。
-- 取り込みは今の読み方のまま、AI 用だけ語の層から作る: OCR や語の取り方の直しが取り込みに伝わらない問題が残る。
+- 評価シート・プレスも fiscal の汎用の変換器（木の組み立て）に載せる: 書式が違いすぎる。 bbox を共通にするだけで目的は足りる。
+- 取り込みは今の読み方のまま、AI 用だけ bbox から作る: OCR や語の取り方の直しが取り込みに伝わらない問題が残る。
 - 頁を分けて12,000字を超える分も持つ: api は12,000字までしか返さないので、持っても使わない。
 
 ## Cross-Cutting Concerns
@@ -124,10 +124,10 @@ flowchart LR
 頁の文字の移し替え（1〜5）は取り込みの移し替え（6〜8）を待たない。先に済ませて R2 の binding を外す。
 
 1. `page_words.py` を作る。`ingestion:refresh --plan` で fiscal の表が古くならないことを確かめる。
-2. 頁の文字を語の層から作り、今の R2 の `source-text/` と数百頁を突き合わせる。語の取り方が生の `-bbox` から `page_words`（見えない複製を落とす）に替わる分の差は、種類を確かめて許し、`drop_hidden_copies` が落とした語の数を報告に出す。品川の評価シート 211頁が `目標 258 324 390 418 418 / 実績 236 310 364` になることも確かめる。
+2. 頁の文字を bbox から作り、今の R2 の `source-text/` と数百頁を突き合わせる。語の取り方が生の `-bbox` から `page_words`（見えない複製を落とす）に替わる分の差は、種類を確かめて許し、`drop_hidden_copies` が落とした語の数を報告に出す。品川の評価シート 211頁が `目標 258 324 390 418 418 / 実績 236 310 364` になることも確かめる。
 3. marts `source_page_text` と `sync_d1.py` の表ごとの読み戻し行数を足し、本番 D1 に写す（確認を取ってから）。
 4. api の `readSourcePage` を D1 に切り替え、R2 の binding を外す（api の PR）。api は main に入ると deploy されるので、3 で本番 D1 に入ったことを確かめてから merge する。同じ PR で `apps/AGENTS.md`・`pipeline/AGENTS.md`・`pipeline/package.json` の `source-text:save`（目で確かめる `source-text:preview` は頁の文字を作る入口に移して残す。`source_text/` を移すなら `pipeline/pyproject.toml` の `module-name` も直す）・`.agents/skills/pipeline/references/source-text.md`・`docs/prd/source-reading/dd.md`・`apps/web/void.config.ts` のコメント・`apps/api/src/db.ts`・`apps/api/cloudflare.config.ts` を直す。
 5. R2 の `source-text/` を消す（確認を取ってから）。
 6. 取り込みを移す前の基準を取る。評価シート・指標・指標の値・評価の結果・施策の全件を、ID の元になる列（`origin_id`・`page`・`position`）を含めて、移す前の commit のコードで読む（`project:baseline --base <commit>`。その commit を作業ツリーに取り出して読み、今のコードの結果と全行で突き合わせる）。紐付けの seed（`dbt/seeds/project/budget_measure_link.csv`）の行が必ず `project_budget_measure` に当たることを確かめる dbt の検査を足す。足す前に `dbt:build` で当たらない行を数え、あれば取り込みを移す前に片付ける。
-7. 評価シート・評価の結果を語の層へ移し、基準と ID の列を含む全件が一致することを確かめる（取り込みの PR）。
-8. プレスを語の層へ移し、同じく全件で突き合わせる。個別の規則は1団体ずつ（取り込みの PR、団体ごとに分けてよい）。
+7. 評価シート・評価の結果を bbox へ移し、基準と ID の列を含む全件が一致することを確かめる（取り込みの PR）。品川の評価シート（`shinagawa_sheet.py`）と評価の結果（`shinagawa_result.py`）は移した。品川の評価シートと評価の結果は全件一致した。指標は、令和5年度の冊で今まで拾えていなかった191件が増え、単位・定義・目標年度の欠けも埋まった（今までの指標で無くなったものは0件）。宣言（正規表現）で読む評価シートも bbox の行で読むようにし、字の間を空けて組んだ見出し（「事 務 事 業 名」）は詰めてから宣言を当てる。行の組み方が変わってずれた10団体は宣言を書き直し、今までの結果と全件で突き合わせた。評価シートは 13,571 行から 13,641 行になった。無くなった行は0件で、増えた70行は今まで頁を見つけられなかったシートだった。変わった行は、今まで読めなかった欄が取れたもの・折り返した名前や所管課が続けて取れたもの・隣の欄の数字とくっついていた金額が直ったものだった。前に入っていた値が空になったのは、多摩の合体カルテ1枚の科目コードだけだった（コードが別の行に分かれて組まれ、どれか1つに決められない）。日の出町の令和6年度実施分は、実施年度の次の年度の欄を読んでいたので直した。
+8. プレスを bbox へ移し、同じく全件で突き合わせる。個別の規則は1団体ずつ（取り込みの PR、団体ごとに分けてよい）。
