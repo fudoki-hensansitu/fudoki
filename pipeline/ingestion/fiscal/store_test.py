@@ -14,7 +14,8 @@ def table(sha: str) -> dict:
 
 
 class StoreTest(unittest.TestCase):
-    def run_store(self, recorded: dict, converted: dict, previous: dict, *, dry_run: bool = False):
+    def run_store(self, recorded: dict, converted: dict, previous: dict, *, dry_run: bool = False,
+                  already_stored: bool = False):
         with tempfile.TemporaryDirectory() as root:
             root = Path(root)
             path = root / 'expenditure.json'
@@ -27,6 +28,7 @@ class StoreTest(unittest.TestCase):
             with patch.object(manifest, 'read', return_value={'tables': [recorded]}), \
                  patch.object(manifest, 'fingerprints', return_value={'c': 'f'}), \
                  patch.object(store, 'previous', return_value=previous), \
+                 patch.object(store, 'stored', return_value=already_stored), \
                  patch.object(store.run, 'original_files', return_value={}), \
                  patch.object(store.run, 'convert', return_value=result) as convert, \
                  patch.object(store.storage, 'verify'), \
@@ -51,6 +53,12 @@ class StoreTest(unittest.TestCase):
 
     def test_an_unchanged_record_is_not_re_converted(self):
         report, convert, upload = self.run_store(table('a' * 64), table('a' * 64), {'tables': [table('a' * 64)]})
+        self.assertEqual(report['tables'], [])
+        convert.assert_not_called()
+        upload.assert_not_called()
+
+    def test_a_table_already_in_r2_is_not_re_converted(self):
+        report, convert, upload = self.run_store(table('a' * 64), table('b' * 64), {'tables': []}, already_stored=True)
         self.assertEqual(report['tables'], [])
         convert.assert_not_called()
         upload.assert_not_called()

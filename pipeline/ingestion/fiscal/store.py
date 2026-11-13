@@ -45,11 +45,23 @@ def changed_manifests(since: str) -> list[Path]:
     return sorted(path for path in (PIPELINE.parent / name for name in names) if path.resolve() in current)
 
 
+def stored(reference: dict) -> bool:
+    """R2 already holds exactly the recorded bytes (fetch verifies sha256 and size)."""
+    try:
+        storage.fetch(reference, remote=True)
+        return True
+    except (ValueError, FileNotFoundError, subprocess.CalledProcessError):
+        return False
+
+
 def store_manifest(path: Path, since: str, *, dry_run: bool) -> dict:
     document = manifest.read(path)
     before = references(previous(path, since))
     recorded = {table['table_id']: table for table in document['tables']}
     changed = {ident for ident, refs in references(document).items() if before.get(ident) != refs}
+    # Tables a thread uploaded before this flow, or a previous run already stored, are not converted again.
+    changed = {ident for ident in changed if not all(stored(reference['object'])
+                                                    for reference in manifest.table_references(recorded[ident]).values())}
     if not changed:
         return {'manifest': str(path), 'tables': []}
     # convert refuses to retain a stale table untouched, so stale conversions are re-read too (and not uploaded).

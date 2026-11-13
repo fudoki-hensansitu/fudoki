@@ -4,7 +4,7 @@
 
 1. `ingestion:convert` は、検査が通った表を管理 JSON に記録し（key・sha256・バイト数・行数・メタデータ）、手元の object cache（`pipeline/.cache/objects`）の同じ key に置く。R2 には書かない。記録しないで候補だけを作るときは `--dry-run` を付ける。`--remote` は手元に無い入力と保存済みの表を R2 から戻すだけで、書き込みはしない。
 2. 表の Parquet は git に入れない。PR に入るのは管理 JSON の記録と、Jev の聞き直しの答え（`*.digit-recheck.jsonl`）だけにする。
-3. `ingestion:store --since <commit>` が、その commit から参照が変わった表を、R2 にある出典と OCR 結果から変換し直す。そして記録と照らす。照らすのは指紋を除く記録の全体で、sha256・バイト数・行数・メタデータを含む。全部が一致した管理 JSON の表だけを R2 に置く。一致しない表が1つでもあれば、その管理 JSON の表は置かずに止める。
+3. `ingestion:store --since <commit>` が、その commit から参照が変わり、R2 にまだ記録どおりのバイトが無い表を、R2 にある出典と OCR 結果から変換し直す。そして記録と照らす。照らすのは指紋を除く記録の全体で、sha256・バイト数・行数・メタデータを含む。全部が一致した管理 JSON の表だけを R2 に置く。一致しない表が1つでもあれば、その管理 JSON の表は置かずに止める。
 4. 指紋（`input_fingerprint`）は照らさない。古い指紋は [ADR 0027](0027-refresh-fingerprints-by-table-content.md) のとおり refresh が書き換えるまで許す。指紋が古い変換は、変換し直す対象に含めるが R2 には置かない。
 5. Jev には聞かない。答えは git の jsonl から読み、答えの無い数字があれば止める。CI は Jev の key を持たない。
 6. merge 後の `sync-d1` は、publish の前に `ingestion:store` を流す。範囲は publish と同じで、最後に成功した同期の head からの差分にする。手動の実行（workflow_dispatch）は R2 に置かない。
