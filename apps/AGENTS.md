@@ -37,7 +37,7 @@
 ## 配信
 
 - web は `https://fudoki.dev/`（`web/void.config.ts`）。公開 web の絶対 URL（`canonical`・`og:image`）はこのドメインを指す
-- main に入ると GitHub Actions がデプロイする（`deploy-web.yml`・`deploy-api.yml`・`deploy-docs.yml`、パスで対象を分ける）。手元の `deploy:*` は手動で出し直すときだけ使う。D1 の migration は自動では流さない
+- main に入ると GitHub Actions がデプロイする（`deploy-web.yml`・`deploy-api.yml`・`deploy-docs.yml`、パスで対象を分ける）。手元の `deploy:*` は手動で出し直すときだけ使う。web の D1 の migration は deploy-web・deploy-preview-web が deploy の前に当てる。api の D1 の migration は自動では流さない
 - web を変える PR は `deploy-preview-web.yml` が Worker Previews で `pr-<番号>.fudoki.dev` に出す（binding・var は `void.config.ts` の `preview` の分岐。PR を閉じたら消す。fork の PR は出さない）。preview は Cloudflare Access の「fudoki previews」の背後に置き（宛先は Worker 単位の `preview_worker`）、noindex は付けない
 - build・deploy は公開 app のコードだけを扱い、dbt・出典の全量生成は実行しない
 - 公開 app は `pipeline/` を import しない（`pipeline/verify/boundaries.ts`）

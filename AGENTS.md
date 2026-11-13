@@ -240,7 +240,7 @@ unit テストは、金額の正しさ・公開 API の安全性（認証・入�
 構造・判断・手順の詳細は各 dir の AGENTS.md と文書へ逃がしてある。この文書には書かない。
 
 - パイプラインの実装・script・技術スタックを触るとき → `pipeline/AGENTS.md`
-- 作業の範囲・順序・判断の方針 → `.agents/skills/<topic>/`。skill には方針だけを書き、tips・コマンド・コードや宣言にあることは書かない。決定の理由は `docs/adr/` に置く
+- 作業の範囲・順序・判断の方針 → `.agents/skills/<topic>/`。SKILL.md と reference には作業の方針と、コードや宣言から読めない事実と対処だけを書き、tips・コマンド・コードや宣言にあることは書かない。決定の理由は `docs/adr/` に置く
 - データ源を調べるとき → `docs/survey/`
 - マーケティングの計画・marketingskills が読む product-marketing、repo をまたいで使うアカウント（X・メールなど）→ home repo（`fudoki-hensansitu/home`、private）
 - 歳出・歳入のドメインモデルとクラス図 → `docs/prd/fiscal-records/fiscal-domain-model.md`
