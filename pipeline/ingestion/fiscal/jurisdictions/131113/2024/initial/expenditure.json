@@ -10,7 +10,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "4e95cc9c10527cad4f9470c871e06215a690edea3a3f315f685c97abf82b9320",
+      "input_fingerprint": "de4bdb8808b75e439d54e013c5b25577489c98317e962a968ff722f3616ff0c6",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'numbered'}。",
@@ -23,10 +23,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131113/2024/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "7f1be0f8c0c384e25fbf03158622143f3f6c593850fa99d891e7c1fbd657088e",
-          "bytes": 67454
+          "sha256": "2b79fb81cef3049c055509815ec04ed5668c24ed6562c0af9be8590ff318d7ae",
+          "bytes": 67314
         },
-        "row_count": 1740
+        "row_count": 1738
       },
       "amounts": {
         "object": {
@@ -40,7 +40,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "ac09ac732bf23431c2653d9d98829cd2f657f7472ba797799a943884a3eb3062",
+      "input_fingerprint": "213125660f3ad43cd90b1f279b491ecfe2083f7fea17c0d9367c77f5d9f7c19f",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'numbered'}。",
@@ -70,7 +70,7 @@
     {
       "table_id": "late-elderly-initial",
       "conversion_id": "late-elderly-initial",
-      "input_fingerprint": "54a5362fbdfe0f2c2df7fd7546527d3e971e7e566fa382f0f664eecf1bec956d",
+      "input_fingerprint": "7a5bc3133dcc3267a28cee71a3716816ca81322b2a462f7ced1f71cb4b2182d2",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'numbered'}。",
@@ -100,7 +100,7 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "85e9181ed99f6c489b5d2dbb35391d6949b2fc0d757812172ee77b10145ef740",
+      "input_fingerprint": "32c37a4701b3261829d8362d8dddc78a7d86e3042ac5005cd262a7f11c190d29",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'numbered'}。",
@@ -221,6 +221,20 @@
             "observation_id": "p119:ink-17:a17:result0:r2",
             "observed": "4,9981 原子爆弹被爆者見舞金支給（福祉部）",
             "reason": "墨の読み直しが報酬の金額4,998と説明の行を1語に読み、欄の罫線で切るときに金額を499と切った。この読みは使わず、金額をその数字の位置で読む（説明の欄は取り込まない）。"
+          },
+          {
+            "id": "p118-rule-ink",
+            "page": 118,
+            "observation_id": "p118:ink-66:a66:result0:r0",
+            "observed": "11",
+            "reason": "目の番号の欄の罫線の墨を「11」と読んだ。印字は無く、名前の無い目ができて障害福祉費の節がその下に入るので、この読みは使わない。"
+          },
+          {
+            "id": "p119-digit-reread",
+            "page": 119,
+            "observation_id": "p119:digit-2:r0",
+            "observed": "1",
+            "reason": "節の欄の罫線の脇の墨を「1」と読んだ。印字は無く、名前の無い節ができるので、この読みは使わない。"
           }
         ],
         "amount_corrections": [
