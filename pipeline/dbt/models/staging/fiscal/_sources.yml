@@ -12068,6 +12068,22 @@ sources:
       direction: expenditure
       table_id: general
       kind: nodes
+  - name: j132276_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132276'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132276_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132276'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132276_2024_settlement_care_expenditure_detail_amounts
     meta:
       jurisdiction: '132276'
@@ -12148,6 +12164,22 @@ sources:
       direction: expenditure
       table_id: nishiguchi-expenditure-detail
       kind: nodes
+  - name: j132276_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132276'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132276_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132276'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132276_2025_settlement_general_expenditure_amounts
     meta:
       jurisdiction: '132276'
@@ -12163,6 +12195,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: general-expenditure
+      kind: nodes
+  - name: j132276_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132276'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132276_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132276'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
       kind: nodes
   - name: j132284_2024_settlement_elderly_medical_expenditure_amounts
     meta:
