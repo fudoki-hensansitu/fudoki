@@ -43,7 +43,7 @@ function Num({ n, m, className }: { n: number; m: Measure | 'yen'; className?: s
 }
 const popText = (n: number) => (n ? `人口 ${(n / 1e4).toFixed(1)}万人` : '')
 
-function TownPicker({ options, exclude = [], onPick, placeholder = 'ほかのまちにする' }: { options: Option[]; exclude?: string[]; onPick: (code: string) => void; placeholder?: string }) {
+function TownPicker({ options, exclude = [], onPick, placeholder = 'まちを変える' }: { options: Option[]; exclude?: string[]; onPick: (code: string) => void; placeholder?: string }) {
   const items = options.filter((o) => !exclude.includes(o.code))
   return (
     <Combobox items={items} itemToStringLabel={(o: Option) => o.name} value={null} onValueChange={(o) => o && onPick((o as Option).code)}>
@@ -67,7 +67,7 @@ function TownCard({ t, mark, options, exclude, onPick }: { t: CompareTown; mark:
             {t.name}
             {mark}
           </Link>
-          <p className="text-xs text-muted-foreground">{popText(t.pop)}</p>
+          <p className="truncate text-xs text-muted-foreground">{popText(t.pop)}</p>
         </div>
       </div>
       {t.pop ? (
