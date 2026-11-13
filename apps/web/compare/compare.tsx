@@ -6,11 +6,11 @@ import { useRouter } from '@void/react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList } from '@/components/ui/combobox'
+import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { FieldIcon, yenParts } from '../home/parts'
-import { reiwa } from '../jurisdiction/types'
+import { reiwa, TAB_SLUGS } from '../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../jurisdiction/domains'
 import { Emblem } from '../home/town-picker'
 import { useMyTown } from '../home/towns'
@@ -28,6 +28,8 @@ const KIND_LABEL = { settlement: '決算', initial: '当初予算' } as const
 /** 「R6年度 決算」 */
 export const versionLabel = (v: Version) => `${reiwa(v.year)} ${KIND_LABEL[v.kind]}`
 const versionKey = (v: Version) => `${v.year}-${v.kind}`
+/** そのまちの頁の、選んでいる年度の決算・予算のタブ */
+const docHref = (t: CompareTown) => `${t.path}/${t.version.year}/${t.version.kind === 'settlement' ? TAB_SLUGS.settled : TAB_SLUGS.money}`
 
 function value(t: CompareTown, field: string, m: Measure): number {
   const yen = t.fields[field] ?? 0
@@ -50,12 +52,15 @@ function Num({ n, m, className }: { n: number; m: Measure | 'yen'; className?: s
 }
 const popText = (n: number) => (n ? `人口 ${(n / 1e4).toFixed(1)}万人` : '')
 
-function TownPicker({ options, exclude = [], onPick, placeholder = 'まちを変える' }: { options: Option[]; exclude?: string[]; onPick: (code: string) => void; placeholder?: string }) {
-  const items = options.filter((o) => !exclude.includes(o.code))
+/** まちの名前そのものが選ぶ欄。押すと名前で探せる候補が開く */
+function TownPicker({ options, current, onPick, children }: { options: Option[]; current: string; onPick: (code: string) => void; children: React.ReactNode }) {
   return (
-    <Combobox items={items} itemToStringLabel={(o: Option) => o.name} value={null} onValueChange={(o) => o && onPick((o as Option).code)}>
-      <ComboboxInput placeholder={placeholder} className="h-8 w-full rounded-full text-sm" />
-      <ComboboxContent>
+    <Combobox items={options} itemToStringLabel={(o: Option) => o.name} value={options.find((o) => o.code === current) ?? null} onValueChange={(o) => o && (o as Option).code !== current && onPick((o as Option).code)}>
+      <ComboboxTrigger aria-label="まちを選ぶ" className="flex max-w-full min-w-0 items-center gap-1 rounded-lg px-1.5 py-0.5 -mx-1.5 text-left text-[17px] font-semibold text-foreground hover:bg-card">
+        {children}
+      </ComboboxTrigger>
+      <ComboboxContent className="w-64">
+        <ComboboxInput showTrigger={false} placeholder="まちの名前" className="h-9" />
         <ComboboxEmpty>見つかりません</ComboboxEmpty>
         <ComboboxList>{(o: Option) => <ComboboxItem key={o.code} value={o}>{o.name}</ComboboxItem>}</ComboboxList>
       </ComboboxContent>
@@ -69,12 +74,12 @@ function TownCard({ t, mark, options, onPick, onVersion }: { t: CompareTown; mar
   return (
     <section className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border bg-background p-4">
       <div className="flex items-center gap-3">
-        <Emblem code={t.code} name={t.name} className="size-10" />
+        <Emblem code={t.code} name={t.name} className="hidden size-10 sm:grid" />
         <div className="min-w-0 flex-1">
-          <Link href={t.path} className="flex items-center gap-1 text-[17px] font-semibold text-foreground no-underline hover:underline">
-            {t.name}
+          <TownPicker options={options} current={t.code} onPick={onPick}>
+            <span className="truncate">{t.name}</span>
             {mark}
-          </Link>
+          </TownPicker>
           <p className="truncate text-xs text-muted-foreground">{popText(t.pop)}</p>
         </div>
       </div>
@@ -94,7 +99,6 @@ function TownCard({ t, mark, options, onPick, onVersion }: { t: CompareTown; mar
           <Num n={t.total} m="yen" className="text-[28px] leading-tight font-semibold text-primary" />
         </div>
       )}
-      <TownPicker options={options} onPick={onPick} />
     </section>
   )
 }
@@ -110,9 +114,9 @@ function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) 
   return (
     <div className="flex flex-col gap-1">
       <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3 pb-2 text-sm font-medium">
-        <span className="flex items-center justify-end gap-1.5"><MarkA />{a.name} {versionLabel(a.version)}</span>
+        <Link href={docHref(a)} className="flex items-center justify-end gap-1.5 text-foreground underline-offset-2 hover:underline"><MarkA />{a.name} {versionLabel(a.version)}</Link>
         <span className="w-24 sm:w-36" />
-        <span className="flex items-center gap-1.5"><MarkB />{b.name} {versionLabel(b.version)}</span>
+        <Link href={docHref(b)} className="flex items-center gap-1.5 text-foreground underline-offset-2 hover:underline"><MarkB />{b.name} {versionLabel(b.version)}</Link>
       </div>
       {FIELDS.map((f) => {
         const va = value(a, f.id, m)
@@ -139,10 +143,11 @@ function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) 
 }
 
 /** 似たまち。いま比べているまちは出さない */
-function SimilarList({ title, items, onPick }: { title?: string; items: TownRef[]; onPick: (code: string) => void }) {
+function SimilarList({ title, note, items, onPick }: { title: string; note: string; items: TownRef[]; onPick: (code: string) => void }) {
   return (
     <div className="min-w-0 flex-1">
-      {title ? <h3 className="mb-1 px-2.5 text-sm font-medium text-muted-foreground">{title}</h3> : null}
+      <h3 className="px-2.5 text-[15px] font-medium">{title}</h3>
+      <p className="mb-1 px-2.5 text-xs text-muted-foreground">{note}</p>
       <div className="flex flex-col">
         {items.map((s) => (
           <button key={s.code} type="button" onClick={() => onPick(s.code)} className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-card">
@@ -207,11 +212,10 @@ export function Compare(props: Props) {
 
           {byUse.length || byPopulation.length ? (
             <section className="mt-12">
-              <h2 className="text-[17px] font-semibold">{a.name}に似たまち</h2>
-              <p className="mt-1 mb-3 text-sm text-muted-foreground">1人あたりの一般会計を、分野ごとに比べて近いまちです。</p>
+              <h2 className="mb-3 text-[17px] font-semibold">{a.name}に似たまち</h2>
               <div className="flex flex-col gap-6 sm:flex-row">
-                {byUse.length ? <SimilarList items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
-                {byPopulation.length ? <SimilarList title="人口が近い" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
+                {byUse.length ? <SimilarList title="金額が近い" note="1人あたりの一般会計を、分野ごとに比べて近いまち" items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
+                {byPopulation.length ? <SimilarList title="人口が近い" note="住民基本台帳の人口が近いまち" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
               </div>
             </section>
           ) : null}
