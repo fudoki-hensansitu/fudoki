@@ -2231,6 +2231,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     carried: dict[str, tuple[Item, str | None, list[Glyph]]] = {}
     revision = quirk(document, 'revision_history')
     histories: dict[str, list] = {}  # per column: a `補正経過` the page ended in, its rounds going on over the page
+    paid_last: dict[str, Item] = {}  # per column: the item its last amount went to, on the latest page read
     # `amounts_next_row`: the last subject item of the page before, still without an amount (its amounts row is the
     # first row of this page), and the items that took an amount.
     waiting_subject: Item | None = None
@@ -2474,6 +2475,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             revisions: list[list] = []  # [item, top, bottom, page, label line] of each `補正経過` block on the page
             for header_ in [h for h in carried if h not in present]:
                 drop_carried_round(carried.pop(header_))  # the column does not go on on this page
+            for header_ in [h for h in paid_last if h not in present]:
+                del paid_last[header_]  # a history opening the next page belongs to this page's items only
             for band in logical.bands:
                 if band.kind != 'amount':
                     continue
@@ -2492,14 +2495,20 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 # A `補正経過` is printed in the subject's own columns: the amounts a breakdown axis prints in its column
                 # beside the rounds (`2 給料 86,968` beside `補正経過`, 131113) are that axis's items, not rounds.
                 breakdown_column = band.header[:1] and band.header[0] in {g.axis for g in ordered if not g.subject}
-                for line in lines(_signed_amounts(words_)):
+                for position, line in enumerate(lines(_signed_amounts(words_))):
                     whole = normalize(text(line))
+                    # (a total set against `計` is printed on its line: half a line's height either way, on a scan)
+                    reach = max(1, (max(g.y1 for g in line) - min(g.y0 for g in line)) / 2) if revision is not None else 1
                     block = None if breakdown_column else next(
-                        (b for b in revisions if b[3] == money_page(line) and b[1] - 1 <= line_middle(line) <= b[2] + 1), None)
-                    if revision is not None and revision.module.opens(whole) and previous is not None:
+                        (b for b in revisions if b[3] == money_page(line) and b[1] - reach <= line_middle(line) <= b[2] + reach), None)
+                    # (a `補正経過` at the top of a page is the history of the item the column's last amount went to on
+                    # the page before)
+                    opener = previous[0] if previous is not None else (
+                        paid_last.get('／'.join(band.header)) if position == 0 else None)
+                    if revision is not None and revision.module.opens(whole) and opener is not None:
                         # The history of the year's supplementary budgets (the quirk `revision_history`).
-                        history = [previous[0], [], False]  # the item, its label lines, a round waiting for its amount
-                        revisions.append([previous[0], line_middle(line), line_middle(line), money_page(line), []])
+                        history = [opener, [], False]  # the item, its label lines, a round waiting for its amount
+                        revisions.append([opener, line_middle(line), line_middle(line), money_page(line), []])
                         continue
                     if history is not None and (REVISION_LABEL.fullmatch(whole) or whole.strip('()') == '計'):
                         history[1].append(line)
@@ -2671,6 +2680,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     previous = (target, _cell(band, y))
                 if history is not None:
                     histories['／'.join(band.header)] = history  # the history goes on at the top of the next page
+                if previous is not None:
+                    paid_last['／'.join(band.header)] = previous[0]
+                else:
+                    paid_last.pop('／'.join(band.header), None)  # no amount on this page: none to open the next
                 drop_carried_round(carry)  # no amount line in this column at all
                 if unpaid and previous is not None and stacked[1] == previous[1]:
                     carried['／'.join(band.header)] = (previous[0], stacked[0], stacked_label)
