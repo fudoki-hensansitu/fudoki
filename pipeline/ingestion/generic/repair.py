@@ -305,7 +305,15 @@ def _amount_start(text: str) -> int:
     return 0
 
 
-def repair_positions(page: Page, report: Report) -> None:
+def repair_positions(page: Page, report: Report, walls: bool = False) -> None:
+    """`walls` (the repair `split_at_rules`): two whole numbers touching across a column rule stay apart
+    (`1,740,497` in 比較 against `12,039,004` in the next column, 132209)."""
+    verticals = [r for r in page.rules if r.vertical] if walls else []
+
+    def walled(previous: Word, word: Word) -> bool:
+        y = (word.y0 + word.y1) / 2
+        return (not previous.text.endswith(',') and not word.text.startswith(',')
+                and any(previous.x1 - 1 <= r.x0 <= word.x0 + 1 and r.y0 <= y <= r.y1 for r in verticals))
     # A minus sign starts a number, it is never inside one: `0△22,990,000` is `0` and `△22,990,000`, and
     # `…へ流用△100,325円` is the words of a note and its amount, set without a gap.
     split: list[Word] = []
@@ -338,11 +346,14 @@ def repair_positions(page: Page, report: Report) -> None:
             narrow = min(previous.x1 - previous.x0, word.x1 - word.x0)
             if (len(previous.text) == 1 and len(word.text) == 1 and not NUMERIC.match(previous.text + word.text)
                     and overlap >= .6 * narrow):
-                result[-1] = Word(previous.text + word.text, min(previous.x0, word.x0), min(previous.y0, word.y0),
+                # A circled number drawn as a circle over a smaller digit reads circle first (`○1`), even when the
+                # digit's centre rounds to the line above the circle's (132209).
+                first, second = (word, previous) if word.text in '〇○' and previous.text.isdigit() else (previous, word)
+                result[-1] = Word(first.text + second.text, min(previous.x0, word.x0), min(previous.y0, word.y0),
                                   max(previous.x1, word.x1), max(previous.y1, word.y1))
                 report.composite_glyphs += 1  # one printed character drawn as two glyphs
                 continue
-            if _continues(previous, word):
+            if _continues(previous, word) and not walled(previous, word):
                 result[-1] = Word(previous.text + word.text, previous.x0, min(previous.y0, word.y0),
                                   max(previous.x1, word.x1), max(previous.y1, word.y1))
                 report.joined_numbers += 1
@@ -361,7 +372,7 @@ def repair_positions(page: Page, report: Report) -> None:
     joined: list[Word] = []
     for row in rows:
         for word in sorted(row, key=lambda w: w.x0):
-            if joined and _same_line(joined[-1], word) and _continues(joined[-1], word):
+            if joined and _same_line(joined[-1], word) and _continues(joined[-1], word) and not walled(joined[-1], word):
                 previous = joined[-1]
                 joined[-1] = Word(previous.text + word.text, previous.x0, min(previous.y0, word.y0),
                                   max(previous.x1, word.x1), max(previous.y1, word.y1))
@@ -579,7 +590,7 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
             minus.module.replace(page)
         if strokes is not None:
             strokes.module.drop(page)
-        repair_positions(page, report)
+        repair_positions(page, report, 'split_at_rules' in repairs)
         join_vertical(page, report, 'stacked_rows' in repairs)
         if 'justified_names' in repairs:
             load_pattern("repairs", "justified_names").join(page)

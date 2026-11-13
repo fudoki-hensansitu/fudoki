@@ -774,6 +774,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         anchor = label[0] if label else money[0][0]
         y = (anchor.y0 + anchor.y1) / 2
         cells[_cell(band_of(anchor), y)].append(index)
+    marks = tuple((settings or {}).get('marks') or ())  # the axis's declared marks (`breakdown.<axis>.options.marks`)
+
     def wraps(index: int, ix: list[int]) -> bool:
         """Whether every codeless line of the cell starts where its one code's name can wrap: from the
         code's own start to the start of its name. A line indented past the name (a 内訳 of the item above,
@@ -802,6 +804,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                 continue
             if not start - 3 <= entries[i][0][0].x0 <= name_start + slack:
                 return False
+            if any(entries[i][0][0].text.startswith(mark) for mark in marks):
+                return False  # a line led by a declared mark (`○1 消耗品費` under `10 需用費`, 東大和市) is an item of its own
             # A name goes on a second line because it did not fit with the amount: the line before runs up
             # to where the amount is printed. A short line over an indented line with an amount is two items.
             if entries[i][1] and position and limit is not None:
