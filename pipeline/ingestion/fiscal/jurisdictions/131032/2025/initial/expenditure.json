@@ -1,0 +1,1736 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131032",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "tables": [],
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "506307fdaacf6df85c56e3b964e0717ec6653fb3894cc715d31e7b87768d024e"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-1",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-1-ocr-1",
+          "origin_sha256": "506307fdaacf6df85c56e3b964e0717ec6653fb3894cc715d31e7b87768d024e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c2f54c1483ff3d7472d18d5156bc776fd69c47b9d8c656148bf934e84b1115f3",
+          "bytes": 484703
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-2",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "afe95485d9bd5462f0c1704ad1296263d7d1f71f3a2c690339bddb5034225e9f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-2",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-2-ocr-1",
+          "origin_sha256": "afe95485d9bd5462f0c1704ad1296263d7d1f71f3a2c690339bddb5034225e9f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "585f8de2cc39289c0627f6a829fa8c226568b6b5d4aabef2ddfd40ef07975c27",
+          "bytes": 2881156
+        },
+        {
+          "id": "general-initial-2-ocr-2",
+          "origin_sha256": "afe95485d9bd5462f0c1704ad1296263d7d1f71f3a2c690339bddb5034225e9f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3bec408dfd7d61511a9d484e133bde66a75a411c9a04ef333400e5246d1cd4a6",
+          "bytes": 2779452
+        },
+        {
+          "id": "general-initial-2-ocr-3",
+          "origin_sha256": "afe95485d9bd5462f0c1704ad1296263d7d1f71f3a2c690339bddb5034225e9f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a023c8d4dd2d79c900b589423f9e02d43850761615d5c92620320dbcb313e8fa",
+          "bytes": 1866919
+        },
+        {
+          "id": "general-initial-2-ocr-4",
+          "origin_sha256": "afe95485d9bd5462f0c1704ad1296263d7d1f71f3a2c690339bddb5034225e9f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6eebd5ad1bb2c491d0db2590ff377056751c2774d40977bf192c1f44a5d0cebd",
+          "bytes": 613575
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial-2"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-3",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "548a438cda0512ff0fe2fd1726dd12399464e10e28d0cd0f47a5fe0b4a07e686"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-3",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-3-ocr-1",
+          "origin_sha256": "548a438cda0512ff0fe2fd1726dd12399464e10e28d0cd0f47a5fe0b4a07e686",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "529b756642ecc9b008985dbf29ba94e9366f9d108bef523857b85b6daac0a1d9",
+          "bytes": 2115877
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial-3"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-4",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0cdf2ebd12a749311ac91833d54097ae26b1ab1a4b3c8534138013555dcecd5b"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-4",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-4-ocr-1",
+          "origin_sha256": "0cdf2ebd12a749311ac91833d54097ae26b1ab1a4b3c8534138013555dcecd5b",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "647a0c6da1dd7efbded51b08904cec36bd79ad48f2d6ee2cf4107455e403a337",
+          "bytes": 3236254
+        },
+        {
+          "id": "general-initial-4-ocr-2",
+          "origin_sha256": "0cdf2ebd12a749311ac91833d54097ae26b1ab1a4b3c8534138013555dcecd5b",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "121b25f2bee63b2b71f6f0e712fc4a2de0609c5a98d27da9ccaf0f83aefa20be",
+          "bytes": 2721872
+        },
+        {
+          "id": "general-initial-4-ocr-3",
+          "origin_sha256": "0cdf2ebd12a749311ac91833d54097ae26b1ab1a4b3c8534138013555dcecd5b",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "547c3717027bac0d99fe1f98b611fbaa91feb6fb4684462e214d274f4a0f6cce",
+          "bytes": 749191
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial-4"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-5",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "031157451634d35d083fe8bc86ca38fa8272cb155845b8f83ffe052aba8ad3ea"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-5",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-5-ocr-1",
+          "origin_sha256": "031157451634d35d083fe8bc86ca38fa8272cb155845b8f83ffe052aba8ad3ea",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2f0f8217be31266e252f0793daf9b28728d582358cc4730602de0b739cb47bb6",
+          "bytes": 1978506
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial-5"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-6",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "11b91c46934647c9d2a9c759c5d685989151be658a628a63be207b034c62aba6"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-6",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-6-ocr-1",
+          "origin_sha256": "11b91c46934647c9d2a9c759c5d685989151be658a628a63be207b034c62aba6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2764a8c0bd2a98f92ab58bd83f5dbbfb85c864d27455dcf50e63deacce55055e",
+          "bytes": 1180869
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial-6"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-7",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "785d291a1a0a5c32627db23fce61dbbcbe3ada9ec8ed16c3e5454ac0c5fff7cb"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-7",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-7-ocr-1",
+          "origin_sha256": "785d291a1a0a5c32627db23fce61dbbcbe3ada9ec8ed16c3e5454ac0c5fff7cb",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "238c8fa049261a5e4aa17251b78333d617bdcef7f93db4130cdd17ab6f406ef2",
+          "bytes": 2625961
+        },
+        {
+          "id": "general-initial-7-ocr-2",
+          "origin_sha256": "785d291a1a0a5c32627db23fce61dbbcbe3ada9ec8ed16c3e5454ac0c5fff7cb",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d74c28b87ebb713480c827b7a679d5f6ae4f2671bcf282c716c4e3982afd45df",
+          "bytes": 1778605
+        },
+        {
+          "id": "general-initial-7-ocr-3",
+          "origin_sha256": "785d291a1a0a5c32627db23fce61dbbcbe3ada9ec8ed16c3e5454ac0c5fff7cb",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b29e8fa1806169145ccebc47121c2baa5c38d9dbfa9d35906b7f7ebe51d807d8",
+          "bytes": 763657
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial-7"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-8",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c7c4f687df959da1214f1f028ca5b698077c0ef381c35b22cc9762954a28684e"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-8",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-8-ocr-1",
+          "origin_sha256": "c7c4f687df959da1214f1f028ca5b698077c0ef381c35b22cc9762954a28684e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9aaf058c5b320b6f3b49cb0ebdfc2bc167be8088f243647397bc8f102e95c9ba",
+          "bytes": 2463769
+        },
+        {
+          "id": "general-initial-8-ocr-2",
+          "origin_sha256": "c7c4f687df959da1214f1f028ca5b698077c0ef381c35b22cc9762954a28684e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b99f7261eefb615fc6d430736edc36319ea98abfcf1682557d6fe73c6717d30d",
+          "bytes": 2172791
+        },
+        {
+          "id": "general-initial-8-ocr-3",
+          "origin_sha256": "c7c4f687df959da1214f1f028ca5b698077c0ef381c35b22cc9762954a28684e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "44680011828ccb62b458b476a67ba4eac47eb3d2c0bba814ae925ce7836b6c5e",
+          "bytes": 795013
+        },
+        {
+          "id": "general-initial-8-ocr-4",
+          "origin_sha256": "c7c4f687df959da1214f1f028ca5b698077c0ef381c35b22cc9762954a28684e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              25,
+              26
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d5fe8110205e75273424d9fc05a9bbeb1c955a7b25fd3756076d4dcb968df916",
+          "bytes": 80127
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial-8"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-9",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "526385059aca67e01bf7807843aeb0f37f07140e1deaf3cad51f51d8d489e235"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-9",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "partial": true
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-9-ocr-1",
+          "origin_sha256": "526385059aca67e01bf7807843aeb0f37f07140e1deaf3cad51f51d8d489e235",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "913fad1a6fbc4414d70954e832e26ef8b4e35f76c545cfb9db4500ee87fe5b21",
+          "bytes": 790677
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial-9"
+        }
+      ]
+    },
+    {
+      "id": "nhi-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "933cb1ffb9a718b2c03b0f40a699e881f3be8cdd43dcb5e3daec0091792b9ef3"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "nhi-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p29-ink-reread",
+            "page": 29,
+            "observation_id": "p29:ink-7:a7:result0:r0",
+            "observed": "13,5801安心できる地域保健・地域医療体制の推進",
+            "reason": "墨の読み直しが負担金、補助及び交付金の金額13,580と説明の行を1語に読み、欄の罫線で切るときに金額を1,358と切った。この読みは使わず、金額をその数字の位置で読む（説明の欄は取り込まない）。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p29-ink-reread",
+            "page": 29,
+            "boxes": [
+              [
+                172.3,
+                235.4,
+                199.1,
+                246.0
+              ]
+            ],
+            "amount": "13,580",
+            "reason": "原典の画像で、頁29の葬祭費の負担金、補助及び交付金は13,580と印字されている。墨の読み直しを使わないので、数字の位置で読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-initial-ocr-1",
+          "origin_sha256": "933cb1ffb9a718b2c03b0f40a699e881f3be8cdd43dcb5e3daec0091792b9ef3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "22bbcb4d249495fedaedfdbd85459db1510e5088e8e34222ab06c76e7442cc5e",
+          "bytes": 1165029
+        },
+        {
+          "id": "nhi-initial-ocr-2",
+          "origin_sha256": "933cb1ffb9a718b2c03b0f40a699e881f3be8cdd43dcb5e3daec0091792b9ef3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7f59b3a2b634d428a8b1461123821dafad63cde2f7d7af9d9260b0bc46cffc27",
+          "bytes": 661857
+        },
+        {
+          "id": "nhi-initial-ocr-3",
+          "origin_sha256": "933cb1ffb9a718b2c03b0f40a699e881f3be8cdd43dcb5e3daec0091792b9ef3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "be465bac989e9e6b7a0e3f944b9c14bcc82636a54beaed7d9293942d4b45a6ff",
+          "bytes": 833757
+        },
+        {
+          "id": "nhi-initial-ocr-4",
+          "origin_sha256": "933cb1ffb9a718b2c03b0f40a699e881f3be8cdd43dcb5e3daec0091792b9ef3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              45,
+              46,
+              47,
+              48,
+              49
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "043900d4da6eac637f430349a31d3fd7caf79f2b1a3d3cfe5202fbff8f658326",
+          "bytes": 323801
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-initial"
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1b6b9f8c2015e695313819a4e02ebcc3aeb031acb3676ffda6a37cdb50f1514f"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "kouki-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-initial-ocr-1",
+          "origin_sha256": "1b6b9f8c2015e695313819a4e02ebcc3aeb031acb3676ffda6a37cdb50f1514f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8765baefb660711ec407f3c3923f99c58e222a94bbf0e4ac7fb911656c962efd",
+          "bytes": 748718
+        },
+        {
+          "id": "kouki-initial-ocr-2",
+          "origin_sha256": "1b6b9f8c2015e695313819a4e02ebcc3aeb031acb3676ffda6a37cdb50f1514f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              23,
+              24,
+              25
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "794453864e138b6432dca4cabe41b472fe1d77e9b752f849225affd456f3b1f0",
+          "bytes": 137595
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "dd03c1a6acdffa91297ce24bf8b286ebd7915459aba950c89385f39d29aaf1ab"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "kaigo-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-initial-ocr-1",
+          "origin_sha256": "dd03c1a6acdffa91297ce24bf8b286ebd7915459aba950c89385f39d29aaf1ab",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "81505625e2b1fa863a94385279a8d81dabfe74da890bdc4778929b65f177c1fb",
+          "bytes": 1292943
+        },
+        {
+          "id": "kaigo-initial-ocr-2",
+          "origin_sha256": "dd03c1a6acdffa91297ce24bf8b286ebd7915459aba950c89385f39d29aaf1ab",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f88bde13cf3c0ba68f406c4ef476c355231cca5ffd959c63ad734e31ec740a63",
+          "bytes": 761156
+        },
+        {
+          "id": "kaigo-initial-ocr-3",
+          "origin_sha256": "dd03c1a6acdffa91297ce24bf8b286ebd7915459aba950c89385f39d29aaf1ab",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "66edf7701cddb17d322a5c9710de5efc2494dc338b19ef28ebea85da3b19d6b1",
+          "bytes": 134714
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ]
+    }
+  ]
+}
