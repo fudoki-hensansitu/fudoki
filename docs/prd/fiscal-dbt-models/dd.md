@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-10-11`
-状態: Draft
+状態: Done（実装済み。配信する表は [fiscal-serving-tables](../fiscal-serving-tables/dd.md)・[aggregate-api](../aggregate-api/dd.md) で改めた）
 
 > 2026-11-06: marts と配信の表（木の表 `settlement_expenditure_node`・`initial_expenditure_node` ほか）は、科目・内訳・印字の位置の表に分けた（[配信する表の設計](../fiscal-serving-tables/dd.md)、[ADR 0038](../../adr/0038-split-serving-tables-by-grain.md)）。取り込みと intermediate の木の設計はこの文書のまま。
 

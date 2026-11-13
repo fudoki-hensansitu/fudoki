@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-11-12`
-状態: In Progress（手順 1〜6 済み、7〜8 を実装中）
+状態: Done（手順 1〜8 を実装済み）
 
 ## Summary
 
@@ -29,7 +29,7 @@
 
 - Goal: 頁の語と位置を取るコードを1か所にする。語の取り方の直しは、そこを直せば評価シート・プレス・アシスタントに効く。
 - Goal: 評価シート・プレスの取り込みは、その bbox から読む。移す前の取り込み結果と突き合わせ、変わらないことを確かめる。
-- Goal: 頁の文字は marts の表にし、`serving:sync` で D1 に写す。api は公開の REST・MCP には出さず、fudoki の web だけが呼べる内部の口から返す（[source-reading の設計](../source-reading/dd.md)の Goal を引き継ぐ）。公開か内部かは api のインターフェースが決め、データの側には持たせない。
+- Goal: 頁の文字は marts の表にし、`serving:sync` で D1 に写す。api は公開の REST・MCP には出さず、fudoki の web だけが呼べる内部の口から返す。公開か内部かは api のインターフェースが決め、データの側には持たせない。
 - Goal: api から R2 の binding を外す。api が元の PDF に触れる口を無くす。
 - Non-Goal: fiscal の取り込みを bbox へ移すこと。fiscal は今の `observe.py` のまま使う。
 - Non-Goal: 予算書・決算書の頁の文字（#560 で外した）。元の PDF を配ること（中継は公式 URL から取るまま、[origin-pdf-viewer](../origin-pdf-viewer/dd.md)）。
@@ -126,7 +126,7 @@ flowchart LR
 1. `page_words.py` を作る。`ingestion:refresh --plan` で fiscal の表が古くならないことを確かめる。
 2. 頁の文字を bbox から作り、今の R2 の `source-text/` と数百頁を突き合わせる。語の取り方が生の `-bbox` から `page_words`（見えない複製を落とす）に替わる分の差は、種類を確かめて許し、`drop_hidden_copies` が落とした語の数を報告に出す。品川の評価シート 211頁が `目標 258 324 390 418 418 / 実績 236 310 364` になることも確かめる。
 3. marts `source_page_text` と `sync_d1.py` の表ごとの読み戻し行数を足し、本番 D1 に写す（確認を取ってから）。
-4. api の `readSourcePage` を D1 に切り替え、R2 の binding を外す（api の PR）。api は main に入ると deploy されるので、3 で本番 D1 に入ったことを確かめてから merge する。同じ PR で `apps/AGENTS.md`・`pipeline/AGENTS.md`・`pipeline/package.json` の `source-text:save`（目で確かめる `source-text:preview` は頁の文字を作る入口に移して残す。`source_text/` を移すなら `pipeline/pyproject.toml` の `module-name` も直す）・`.agents/skills/pipeline/references/source-text.md`・`docs/prd/source-reading/dd.md`・`apps/web/void.config.ts` のコメント・`apps/api/src/db.ts`・`apps/api/cloudflare.config.ts` を直す。
+4. api の `readSourcePage` を D1 に切り替え、R2 の binding を外す（api の PR）。api は main に入ると deploy されるので、3 で本番 D1 に入ったことを確かめてから merge する。同じ PR で `apps/AGENTS.md`・`pipeline/AGENTS.md`・`pipeline/package.json` の `source-text:save`（目で確かめる `source-text:preview` は頁の文字を作る入口に移して残す。`source_text/` を移すなら `pipeline/pyproject.toml` の `module-name` も直す）・`.agents/skills/pipeline/references/source-text.md`・`apps/web/void.config.ts` のコメント・`apps/api/src/db.ts`・`apps/api/cloudflare.config.ts` を直す。
 5. R2 の `source-text/` を消す（確認を取ってから）。
 6. 取り込みを移す前の基準を取る。評価シート・指標・指標の値・評価の結果・施策の全件を、ID の元になる列（`origin_id`・`page`・`position`）を含めて、移す前の commit のコードで読む（`project:baseline --base <commit>`。その commit を作業ツリーに取り出して読み、今のコードの結果と全行で突き合わせる）。紐付けの seed（`dbt/seeds/project/budget_measure_link.csv`）の行が必ず `project_budget_measure` に当たることを確かめる dbt の検査を足す。足す前に `dbt:build` で当たらない行を数え、あれば取り込みを移す前に片付ける。
 7. 評価シート・評価の結果を bbox へ移し、基準と ID の列を含む全件が一致することを確かめる（取り込みの PR）。品川の評価シート（`shinagawa_sheet.py`）と評価の結果（`shinagawa_result.py`）は移した。品川の評価シートと評価の結果は全件一致した（評価の結果は、のちに取り込みをやめた）。指標は、令和5年度の冊で今まで拾えていなかった191件が増え、単位・定義・目標年度の欠けも埋まった（今までの指標で無くなったものは0件）。宣言（正規表現）で読む評価シートも bbox の行で読むようにし、字の間を空けて組んだ見出し（「事 務 事 業 名」）は詰めてから宣言を当てる。行の組み方が変わってずれた10団体は宣言を書き直し、今までの結果と全件で突き合わせた。評価シートは 13,571 行から 13,641 行になった。無くなった行は0件で、増えた70行は今まで頁を見つけられなかったシートだった。変わった行は、今まで読めなかった欄が取れたもの・折り返した名前や所管課が続けて取れたもの・隣の欄の数字とくっついていた金額が直ったものだった。前に入っていた値が空になったのは、多摩の合体カルテ1枚の科目コードだけだった（コードが別の行に分かれて組まれ、どれか1つに決められない）。日の出町の令和6年度実施分は、実施年度の次の年度の欄を読んでいたので直した。

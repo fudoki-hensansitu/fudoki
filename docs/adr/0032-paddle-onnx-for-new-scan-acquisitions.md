@@ -209,4 +209,4 @@ VLM を既定のまま（`vlm_fallback` なし）で取ると、12領域が埋�
 
 ## 全冊を Paddle へ移した後、Vision の処理を消した
 
-2026-10-23、管理 JSON の `ocr_inputs[].request.engine` がすべて `paddle` になったので、Vision の処理を消した（`vision_ocr.py`・`vision_ocr.swift`・語彙 `ocr_vocabulary.json`、`scan_ocr` の `backend="vision"`・`column_tiles`、manifest schema の `engine: "vision"`・`column_tiles`）。測定用の plans のうち Vision の依頼だけで書かれた19件も外した（git の履歴に残る）。Vision の経緯と比較は ADR 0017・0018・0019 と `docs/vision-ocr-evaluation.md` に歴史として残す。
+2026-10-23、管理 JSON の `ocr_inputs[].request.engine` がすべて `paddle` になったので、Vision の処理を消した（`vision_ocr.py`・`vision_ocr.swift`・語彙 `ocr_vocabulary.json`、`scan_ocr` の `backend="vision"`・`column_tiles`、manifest schema の `engine: "vision"`・`column_tiles`）。測定用の plans のうち Vision の依頼だけで書かれた19件も外した（git の履歴に残る）。Vision の経緯と比較は ADR 0017・0018・0019 に歴史として残す。
