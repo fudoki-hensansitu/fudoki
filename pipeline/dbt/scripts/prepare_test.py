@@ -1,4 +1,5 @@
 """Input-contract failures must stop loading and preserve the previous warehouse."""
+import copy
 import hashlib
 import json
 import shutil
@@ -36,11 +37,10 @@ class PrepareTest(unittest.TestCase):
         self.document = {'target': self.target, 'direction': 'expenditure',
                          'conversions': [{'id': 'detail'}], 'tables': [self.table]}
         self.dbt = self.root / 'dbt'
-        sources = self.dbt / 'models/staging/fiscal/_sources.yml'
-        sources.parent.mkdir(parents=True)
+        self.dbt.mkdir(parents=True)
         declared = [{'name': 'fixture_' + kind, 'meta': {**self.target, 'direction': 'expenditure',
                      'table_id': self.table['table_id'], 'kind': kind}} for kind in ('nodes', 'amounts')]
-        sources.write_text(yaml.safe_dump({'sources': [{'name': 'fiscal_pdf', 'tables': declared}]}))
+        self.declarations = [{'name': 'fiscal_pdf', 'tables': declared}]
         (self.candidate / '131041/manifest.json').write_text(json.dumps(self.document))
         self.warehouse = self.root / 'warehouse.duckdb'
         with duckdb.connect(str(self.warehouse)) as con:
@@ -51,6 +51,7 @@ class PrepareTest(unittest.TestCase):
         original = {'sha256': 'a' * 64, 'download_url': 'https://example.test/original.pdf',
                     'format': 'pdf', 'scope': [{'account': '一般会計'}]}
         with patch.object(prepare, 'DBT', self.dbt), \
+             patch.object(prepare.fiscal_inputs, 'declarations', return_value=copy.deepcopy(self.declarations)), \
              patch.object(prepare.manifest, 'validate', return_value=self.document), \
              patch.object(prepare.manifest, 'resolved_inputs', return_value=[original]), \
              patch.object(prepare.manifest, 'selection_for', return_value={'candidates': [{'title': 'original'}]}), \
@@ -72,10 +73,7 @@ class PrepareTest(unittest.TestCase):
             self.load()
 
     def test_duplicate_pdf_source_stops(self):
-        path = self.dbt / 'models/staging/fiscal/_sources.yml'
-        declaration = yaml.safe_load(path.read_text())
-        declaration['sources'] *= 2
-        path.write_text(yaml.safe_dump(declaration))
+        self.declarations *= 2
         with self.assertRaisesRegex(ValueError, 'exactly one fiscal_pdf'):
             self.load()
 

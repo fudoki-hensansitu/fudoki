@@ -29,13 +29,12 @@ INPUTS = (
     re.compile(r'^apps/api/src/columns\.json$'),
     re.compile(r'^(uv\.lock|pyproject\.toml|mise\.toml)$'),
 )
-# 入力の中で marts に効かないもの・管理 JSON から生成するもの
+# 入力の中で marts に効かないもの・build が管理 JSON から生成するもの
 IGNORED = (
     re.compile(r'\.md$'),
     re.compile(r'(^|/)[^/]*_test\.py$'),
     re.compile(r'\.test\.ts$'),
     re.compile(r'\.digit-recheck\.jsonl$'),
-    re.compile(r'^pipeline/dbt/models/staging/fiscal/_sources\.yml$'),
     re.compile(r'^pipeline/dbt/macros/fiscal_(csv|pdf)_relations\.sql$'),
 )
 # 自治体の取り込みの宣言（管理 JSON）と出典の選定。保存し直した表は管理 JSON の変更として現れる

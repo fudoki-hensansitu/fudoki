@@ -52,7 +52,6 @@ class ClassifyTest(unittest.TestCase):
             'pipeline/serving/sync_d1_test.py',
             'packages/fiscal/src/names.test.ts',
             'pipeline/ingestion/fiscal/jurisdictions/131016/2024/settlement/expenditure.digit-recheck.jsonl',
-            'pipeline/dbt/models/staging/fiscal/_sources.yml',
             'pipeline/dbt/macros/fiscal_pdf_relations.sql',
         ), {'mode': 'none', 'jurisdictions': []})
 
