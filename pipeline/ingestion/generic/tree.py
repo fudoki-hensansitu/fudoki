@@ -543,7 +543,8 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
         raw_text = text(label).strip()
         if code is None and numbers is not None and (held := numbers.module.split(raw_text, numbers.value)) is not None:
             code, name = normalize(held[0]), normalize(held[1])
-        project = code is None and projects is not None and (held := projects.module.split(raw_text)) is not None
+        project = code is None and projects is not None and (held := (
+            projects.module.split_words(label) if hasattr(projects.module, 'split_words') else projects.module.split(raw_text))) is not None
         if project:
             code, name = held[0], normalize(held[1])
         if code is not None and len(name) > 1 and re.match(r'[０-９]{3,}', raw_text):
@@ -704,7 +705,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     numbers = quirk(settings, 'full_width_numbers')
     entries = entries_of(group, margins, amount_brackets, bool((settings or {}).get('bare_amounts')),
                          numbers, quirk(settings, 'long_numbers'), quirk(settings, 'glued_number_stops'),
-                         quirk(settings, 'name_line'), quirk(settings, 'glued_project_codes'))
+                         quirk(settings, 'name_line'),
+                         quirk(settings, 'glued_project_codes') or quirk(settings, 'spaced_project_codes'))
     settings = settings or {}
     if (shares := quirk(settings, 'department_amounts')) is not None:
         for index, (label, money, code, name) in enumerate(entries):
@@ -1166,8 +1168,12 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
             order.append(cell)
         cells[cell].append(line)
     parsed: dict[tuple, tuple[list[tuple[int, list[Glyph]]], list[list[Glyph]]]] = {}
+    open_cells = document_quirk('open_subject_cells')
+    cell_totals: dict[tuple, list[list[Glyph]]] = {}
     for cell in order:
         tokens: list[tuple[int, list[Glyph]]] = []
+        totals: list[list[Glyph]] = []
+        opener = None
         names: list[list[Glyph]] = []
         for line in cells[cell]:
             pieces: list[tuple[int, list[Glyph]]] = []
@@ -1187,12 +1193,23 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
             for band, piece in pieces:
                 if marked is not None and marked.module.stray(piece):
                     continue
+                if open_cells is not None:  # `open_subject_cells`
+                    if open_cells.module.heading(piece):
+                        continue
+                    if open_cells.module.total(piece):
+                        totals.append(piece)
+                        continue
+                    if open_cells.module.wraps(piece, opener):  # `70周年・町制` under `13 日の出町合併`
+                        names.append(piece)
+                        continue
+                    opener = piece
                 if (CODE.match(normalize(text(piece))) or (marked is not None and marked.module.marked(piece))
                         or (dropped is not None and dropped.module.codeless(band, piece, pieces))):
                     tokens.append((band, piece))
                 else:
                     names.append(piece)
         parsed[cell] = (tokens, names)
+        cell_totals[cell] = totals
     extra: dict[tuple, list[list[Glyph]]] = defaultdict(list)
     if marked is not None:  # the rest of a marked item's name, on the lines under it (`marked_subjects`)
         heads = [(cell, i, piece) for cell, (tokens, _) in parsed.items()
@@ -1223,7 +1240,17 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
     for (cell, position), owner_token in claimed.items():
         extra[owner_token].append(parsed[cell][1][position])
     result: list[Item] = []
-    for cell in order:
+
+    def add_totals(cell: tuple) -> None:
+        """The 項's `計` in a cell with no rule over it (`open_subject_cells`): a line without a code, after the cell's items."""
+        for piece in cell_totals.get(cell, []):
+            item = Item(group, piece[0].page, [piece], None, normalize(text(piece)), 0)
+            _measure(item, piece, None)
+            result.append(item)
+
+    for at, cell in enumerate(order):
+        if at:
+            add_totals(order[at - 1])
         tokens, names = parsed[cell]
         free = [piece for position, piece in enumerate(names) if (cell, position) not in claimed]
         if not tokens:
@@ -1261,6 +1288,8 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
             item = Item(group, piece[0].page, own, code, name, 0, level=band, fixed_anchor=centre(piece))
             item.indent = piece[0].x0
             result.append(item)
+    if order:
+        add_totals(order[-1])
     return result
 
 

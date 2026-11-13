@@ -105,6 +105,35 @@ def carry_amounts(logicals) -> None:
                 band.words = kept[id(band)]
 
 
+def carried_names(logical: Logical) -> list[Glyph]:
+    """The first lines of each page's subject column when they only repeat the open 目 in brackets (`（文書広報費）`,
+    日の出町), as `running_titles.carried_names` reads them, with two differences: the row is priced only by the subject's
+    own amount columns (the page carries on the 目 on the row of its first 節, `18 負担金補助及 70`), and a long name
+    wraps over as many lines as it takes to close its bracket (`（ユートピアホ` / `ール管理運営` / `費）`)."""
+    breakdown = min((band.x0 for band in logical.bands if band.kind == 'label' and not layout._subject(band)),
+                    default=float('inf'))
+    found = []
+    for page in sorted({w.page for band in logical.bands for w in band.words}):
+        subject = [w for band in logical.bands if layout._subject(band) for w in band.words if w.page == page]
+        rows = sorted(layout.lines(subject), key=lambda line: min(g.y0 for g in line))
+        if not rows:
+            continue
+        first = rows[0]
+        middle = (min(g.y0 for g in first) + max(g.y1 for g in first)) / 2
+        if any(is_amount(w.text) and w.y0 <= middle <= w.y1 for band in logical.bands
+               if band.kind == 'amount' and band.x0 < breakdown for w in band.words if w.page == page):
+            continue
+        shown, taken = '', []
+        for row in rows:
+            shown += normalize(''.join(g.text for g in row))
+            taken += row
+            if re.search(r'[)）]', shown):
+                break
+        if running_titles.CARRIED.match(shown):
+            found.extend(taken)
+    return found
+
+
 def read(pages, **options):
     spread = options.get('spread')
     extended, upper, alone = [], {}, set()
@@ -135,6 +164,8 @@ def read(pages, **options):
     for logical in logicals:
         moved = running_titles.between_tables(logical, verticals, full)
         gone = {id(w) for _, w in moved}
+        if (options.get('header') or {}).get('carried_names'):  # `（議会費）` over the rows a page carries on (日の出町)
+            gone |= {id(w) for w in carried_names(logical)}
         for band in logical.bands:
             band.words = running_titles.rejoin_total_tails(running_titles.join_split_yen(running_titles.split_glued_yen(
                 running_titles.drop_units([w for w in band.words if id(w) not in gone]))))
