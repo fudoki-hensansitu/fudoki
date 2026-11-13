@@ -1,5 +1,5 @@
 -- 内訳の表: 科目の下の項目。枝の根（科目の直下）の見出しに出典ごとの宣言で分け方を付け、子孫へ継ぐ。
--- 宣言が「除外」の枝と、宣言の無い枝（検査 fiscal_detail_breakdown_declared が止める）は入れない。
+-- 宣言が「除外」の枝と、宣言の無い枝（見出しが「節」の枝は既定で節）（検査 fiscal_detail_breakdown_declared が止める）は入れない。
 -- 同じ科目・同じ分け方で depth = 1 の行を足すと、その科目の額になる（出典の金額が欠ける行を除く）。
 with rows as (select * from {{ ref('int_fiscal__expenditure_rows') }}),
 subjects as (select * from {{ ref('expenditure_subject') }})

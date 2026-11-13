@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import re
 
-from ingestion.project.layouts.press import PressItem, amount_text, norm
+from ingestion.project.layouts.press import PressItem, amount_text, norm, page_lines
 
 ENTRY = re.compile(r'^(\d{1,2}) (?!(?:月|時|日|年|歳|校|人|件)(?:から|まで|頃|~|の|に|間|、| )|[\d,])(\S.*)$')
 BUDGET = re.compile(r'予算額')
@@ -18,41 +18,38 @@ SUB = re.compile(r'^\(\d+\)')
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
     last = 0
-    with pdfplumber.open(path) as pdf:
-        for number, page in enumerate(pdf.pages, start=1):
-            rows = [norm(r).replace('憶', '億') for r in (page.extract_text() or '').split('\n')]
-            page.flush_cache()
-            position = 0
-            current: PressItem | None = None
-            state = None  # summary → body → budget
-            for row in rows:
-                entry = ENTRY.match(row)
-                # 見出しの番号は資料の中で1つずつ増える。施策の中の箇条書きの「1 …」は見出しにしない
-                if entry and (int(entry.group(1)) == last + 1 or (int(entry.group(1)) == 1 and current is None)):
-                    last = int(entry.group(1))
-                    position += 1
-                    current = PressItem(number, entry.group(2), [entry.group(2)], False, None, [], position)
-                    items.append(current)
-                    state = 'summary'
-                    continue
-                if current is None:
-                    continue
-                if END.match(row):
-                    current, state = None, None
-                    continue
-                if BUDGET.search(row):
-                    state = 'budget'
-                if state == 'budget':
-                    value = amount_text(row)
-                    if value is not None:
-                        current.budget_thousand = (current.budget_thousand or 0) + value
-                    continue
-                if state == 'summary':
-                    if SUB.match(row):
-                        state = 'body'
-                    else:
-                        current.points = [(current.points[0] if current.points else '') + row]
+    for number, printed in page_lines(path):
+        rows = [norm(r).replace('憶', '億') for r in printed]
+        position = 0
+        current: PressItem | None = None
+        state = None  # summary → body → budget
+        for row in rows:
+            entry = ENTRY.match(row)
+            # 見出しの番号は資料の中で1つずつ増える。施策の中の箇条書きの「1 …」は見出しにしない
+            if entry and (int(entry.group(1)) == last + 1 or (int(entry.group(1)) == 1 and current is None)):
+                last = int(entry.group(1))
+                position += 1
+                current = PressItem(number, entry.group(2), [entry.group(2)], False, None, [], position)
+                items.append(current)
+                state = 'summary'
+                continue
+            if current is None:
+                continue
+            if END.match(row):
+                current, state = None, None
+                continue
+            if BUDGET.search(row):
+                state = 'budget'
+            if state == 'budget':
+                value = amount_text(row)
+                if value is not None:
+                    current.budget_thousand = (current.budget_thousand or 0) + value
+                continue
+            if state == 'summary':
+                if SUB.match(row):
+                    state = 'body'
+                else:
+                    current.points = [(current.points[0] if current.points else '') + row]
     return items
