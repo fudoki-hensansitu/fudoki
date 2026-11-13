@@ -6,6 +6,7 @@ import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import type { AppType } from '@fudoki/api/rpc'
 import { hc, parseResponse } from 'hono/client'
 import { apiFetch, type Env } from './env'
+import { jurisdictionPath } from '../jurisdiction/path'
 import { loadPopulations } from './population'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
@@ -375,6 +376,7 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
   return {
     code: entry.code,
     name: entry.name,
+    path: jurisdictionPath(entry.code),
     prefecture: entry.prefecture,
     officialUrl: entry.officialUrl,
     population: entry.population,
