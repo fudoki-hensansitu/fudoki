@@ -98,6 +98,7 @@
     "deducted_formulas": "ingestion.generic.patterns.quirks.deducted_formulas",
     "delta_minus": "ingestion.generic.patterns.quirks.delta_minus",
     "department_amounts": "ingestion.generic.patterns.quirks.department_amounts",
+    "abolished_marks": "ingestion.generic.patterns.quirks.abolished_marks",
     "department_heading_slack": "ingestion.generic.patterns.quirks.department_heading_slack",
     "department_line": "ingestion.generic.patterns.quirks.department_line",
     "digit_set_codes": "ingestion.generic.patterns.quirks.digit_set_codes",
