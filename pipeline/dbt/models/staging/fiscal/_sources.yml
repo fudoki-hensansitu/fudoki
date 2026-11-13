@@ -7636,6 +7636,22 @@ sources:
       direction: expenditure
       table_id: nhi-initial
       kind: nodes
+  - name: j132012_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132012'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132012_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132012'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j132012_2024_settlement_kaigo_detail_amounts
     meta:
       jurisdiction: '132012'
@@ -7667,6 +7683,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: kouki-detail
+      kind: nodes
+  - name: j132012_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132012'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132012_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132012'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
       kind: nodes
   - name: j132012_2025_settlement_general_detail_amounts
     meta:
@@ -7715,6 +7747,22 @@ sources:
       document_kind: settlement
       direction: expenditure
       table_id: kouki-detail
+      kind: nodes
+  - name: j132012_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '132012'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j132012_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '132012'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
       kind: nodes
   - name: j132021_2024_settlement_care_expenditure_detail_amounts
     meta:

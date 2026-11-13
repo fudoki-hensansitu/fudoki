@@ -348,6 +348,8 @@ def _continued_subject_boxes(words, control_tables, tolerance):
     return matched
 
 
+# A rate with its percent sign in one word, in brackets or not (`<24.5%増>`).
+RATE = re.compile(r'[<＜(（]?[△▲]?[0-9][0-9,.]*[%％](?:増|減)?[>＞)）]?')
 # Digits a weak rule passed or that no band owns: the only ones Jev is asked.
 RECHECKED = ('non_amount', 'reported')
 
@@ -594,6 +596,11 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
                 if re.match(r'(?:人|名|件|食|回|日|個|台|戸|世帯|本|床|箇所|校|番|丁目|歳|か月|号|基|㎡|km|路線)', _word_key(text)):
                     word['covered'] = 'non_amount'
                     break
+    # A rate printed with its percent sign in one word, in brackets
+    # (`<24.5%増>` under 本年度・前年度・比較, 八王子市), is never an amount.
+    for word in normalized:
+        if word['covered'] is None and RATE.fullmatch(word['key']):
+            word['covered'] = 'non_amount'
     # A bare number immediately followed by a percent word on its baseline is
     # an execution rate, never an adopted amount. Percent signs carry no
     # digits, so marks come from every scope word, not only digit words.

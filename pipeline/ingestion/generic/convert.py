@@ -56,6 +56,9 @@ LONE_PRICE = re.compile(r'[0-9][0-9,]*円')
 SPACED_COUNT = re.compile(r'延[0-9][0-9,]*(?:人|名|回|月|か月|日|件|台|個|世帯)')
 AMOUNT_TERM = re.compile(r'[0-9]{1,3}(?:,[0-9]{3})*')
 BRACKET_CODE = re.compile(r'[【\[][0-9０-９]+[】\]]')
+# A 事業's funding printed in brackets under its line (`（特定財源 400 一般財源 40,694）`, 八王子市): the split of the
+# amount above by source, the 財源内訳 the table does not take in.
+FUNDING_LINE = re.compile(r'[(（]特定財源.*一般財源.*[0-9][)）]')
 # The part number a work's name ends with (`舗装補修工事(7-1)`): digits of a name, a hyphen between them.
 NAME_PART_NUMBER = re.compile(r'[^0-9０-９(（][(（][0-9０-９]{1,2}[-－][0-9０-９]{1,2}[)）]')
 RATIO_HEADER = re.compile(r'割合|比率|構成比|率$')
@@ -243,6 +246,8 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
                                 reason='名前のない行（予備費の節の行）。印字された金額はすべて、直上の款・項・目の同じ列の金額と一致する。親の金額の繰り返しで、新しい金額ではない。')
     regions += coverage_regions([(g.page, g.original, g.text) for g in built.unpaid_rounds], kind='本文',
                                 reason='金額が印字されていない補正の回次の見出し（第２次補正）。回次の数字で、金額ではない。')
+    regions += coverage_regions(funding_words(observed), kind='財源内訳',
+                                reason='事業の行の下に括弧で印字された財源の内訳（（特定財源 400 一般財源 40,694））。上の行の金額を財源別に分けた数字で、取り込まない。')
     regions += coverage_regions(zero_marks(logicals), kind='本文',
                                 reason='名前の前に数字で描かれた箇条書きの印（00）。項目の番号は1から始まり、金額ではない。')
     for logical in built.skipped:
@@ -259,6 +264,27 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     regions += [{'kind': '総括', 'reason': '合計の行。款の和には入れない統制値。見開きでは見出しの語が反対の頁にある。',
                  'page': note['page'], 'bbox': list(note['box'])} for note in totals]
     return regions
+
+
+def funding_words(observed) -> list[tuple]:
+    """The words of every line that is a bracketed funding split (`（特定財源 0 一般財源 171,617）`)."""
+    found = []
+    for page in observed:
+        lines: list[list] = []
+        for word in sorted(page.words, key=lambda w: (round(w.y0), w.x0)):
+            if lines and abs(lines[-1][-1].y0 - word.y0) <= 1.5:
+                lines[-1].append(word)
+            else:
+                lines.append([word])
+        for line in lines:
+            start = next((i for i, w in enumerate(line) if normalize(w.text).startswith(('(特定財源', '（特定財源'))), None)
+            if start is None:
+                continue
+            end = next((i for i in range(start, len(line)) if normalize(line[i].text).endswith((')', '）'))), None)
+            run = line[start:end + 1] if end is not None else []
+            if run and FUNDING_LINE.fullmatch(normalize(''.join(w.text for w in run))):
+                found += [(page.number, (w.x0, w.y0, w.x1, w.y1), w.text) for w in run]
+    return found
 
 
 def formula_words(observed) -> list[tuple]:

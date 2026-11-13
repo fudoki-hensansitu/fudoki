@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132012",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3882232b257c70691f3eafe7d493f8224a32ba5394602897313839c5c490503d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度(前年度)<比較>": {
+                  "lines": [
+                    "本年度予算額",
+                    "前年度予算額",
+                    "比較"
+                  ],
+                  "line_pitch": 24
+                },
+                "財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "（特定財源"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "pages": [
+          [
+            180,
+            343
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p342-expenditure-total",
+            "page": 342,
+            "bbox": [
+              60,
+              257,
+              256,
+              340
+            ],
+            "kind": "総括",
+            "reason": "明細の最後の頁の「歳出合計」の行。本年度・(前年度)・<比較> を3段に印字し、題字は中段にだけあるので、上段・下段の金額が合計の行と読めない。款の和と比べる統制値。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "9a0851783c8129265c8c3848e723e6d03215ae21f866542645cb2ea5bc8e27ce",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 81頁 から決めた。款の和 227,200,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2024/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "6b139cfb152817fca18798e95ea43bc9878945c53836e31b11a49579b5fcb37e",
+          "bytes": 83586
+        },
+        "row_count": 2717
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2024/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "2b49fec017f99961c4353c04a2cdb8ee502474c48fe5124c91454fa39b4cce78",
+          "bytes": 61680
+        },
+        "row_count": 3034
+      }
+    }
+  ]
+}
