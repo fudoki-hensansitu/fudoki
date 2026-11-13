@@ -7,7 +7,7 @@
 """
 from __future__ import annotations
 
-from ingestion.project.layouts.press import DIGITS, PressItem, lines, norm, text, words
+from ingestion.project.layouts.press import BboxPdf, DIGITS, PressItem, lines, norm, text, words
 
 HEADERS = ('担当課', '事業名', '事業内容', '予算額', '新')
 
@@ -46,9 +46,8 @@ def read_page(page, number: int) -> list[PressItem]:
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
-    with pdfplumber.open(path) as pdf:
+    with BboxPdf(path) as pdf:
         if '資料編' not in (pdf.pages[0].extract_text() or '') + (pdf.pages[1].extract_text() or ''):
             return []
         for number, page in enumerate(pdf.pages, start=1):

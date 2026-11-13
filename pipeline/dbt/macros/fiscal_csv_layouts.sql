@@ -5,7 +5,7 @@
 {% macro fiscal_csv_layout_relations(layout) %}
     {% set found = [] %}
     {% for item in fiscal_csv_relations() %}
-        {% set relation = source('fiscal_csv', item['relation']) %}
+        {% set relation = ingestion_table(item['relation']) %}
         {% if execute %}
             {% set names = adapter.get_columns_in_relation(relation) | map(attribute='name') | list %}
             {% if '01会計' in names %}{% set kind = 'numbered' %}

@@ -16,6 +16,9 @@ import re
 from ingestion.project.layouts.press import norm
 from ingestion.project.press import Candidate, Page
 
+# 罫線・字の位置を読むので、pdfplumber の頁を渡してもらう
+NEEDS_PAGE = True
+
 AMOUNT = re.compile(r'^△?[\d,]+(?:千円)?$')
 
 

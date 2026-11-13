@@ -22,6 +22,8 @@ export interface Moku extends Line {
   setsu: Setsu[]
   /** 自治体の科目の款・項の名前。分野で分けた図でも、目から事業を引くのに使う */
   path?: [string | null, string | null]
+  /** 目に付いた COFOG のコード（09.1 など）。分野の流れに組み直すのに使う */
+  cofog?: string | null
 }
 
 export interface Kou extends Line {
@@ -36,6 +38,16 @@ export interface Drill {
 }
 
 export type FlowDepth = 'kou' | 'moku' | 'setsu'
+
+/** 予算・決算のタブの頁が loader で読む、一つの年度・資料・会計の流れ（款 → 項 → 目 → 節）。分野の図は画面が目から組み直す（cofog-flow.ts） */
+export interface PageFlow {
+  year: number
+  phase: 'initial' | 'settlement'
+  account: string
+  drills: Drill[]
+  /** 項の行が無い目（drills の木に入らない）。分野の図はこれも足す */
+  loose: Moku[]
+}
 /** お金の流れの分け方。cofog は分野（COFOG の大分類）→ 中分類、kan は自治体の科目（款 → 項） */
 export type FlowView = 'cofog' | 'kan'
 
@@ -74,15 +86,6 @@ export interface Population {
   asOf: string
 }
 
-/**
- * 年度の金額と比べる人口。N 年度には N+1 年1月1日（年度末に近い基準日）の値を当て、まだ無ければいちばん新しい基準日の値で代える。
- * 代えたかどうかは asOf を見れば分かる
- */
-export function populationForYear(list: Population[], fiscalYear: number): Population | null {
-  return list.find((p) => p.asOf === `${fiscalYear + 1}-01-01`) ?? list.at(-1) ?? null
-}
-
-
 /** 人口。1万人以上は万人の小数1桁（41.6万人）、それ未満は人単位（303人） */
 export const formatPeople = (people: number) => (people >= 1e4 ? `${(people / 1e4).toFixed(1)}万人` : `${people.toLocaleString('ja-JP')}人`)
 
@@ -108,8 +111,6 @@ export interface PageData {
   originTitle: string | null
   /** 西暦、古い順 */
   years: YearTotal[]
-  /** 最新年度の全款から全項への流れ */
-  flow: Drill[]
   /** 最新年度の COFOG の流れ。Drill の kan に大分類、kou に中分類が入る */
   cofogFlow: Drill[]
   /** 最新の決算より後の年度の当初予算（古い順）。決算の無い年度の概要に使う */
@@ -117,8 +118,6 @@ export interface PageData {
   projects: Project[]
   /** 基本構想の都市像（jurisdiction/visions.ts）。手で起こした自治体だけにある */
   vision?: Vision | null
-  /** 資料の種類・年度ごとに収録した会計の名前。予算・決算タブが総額を読み込む前に会計の札の場所を取っておくのに使う */
-  accounts?: Record<'initial' | 'settlement', Record<string, string[]>>
 }
 
 /** 自治体の頁で選べる年度（新しい順に3年）。決算の年度と、決算より後の当初予算の年度 */
@@ -181,25 +180,6 @@ export function formatShare(yen: number, base: number, missing?: boolean): strin
 
 /** 一覧での自治体の種類。名称の末尾で分ける（自治体マスタに種類の列が無いため） */
 export type JurisdictionKind = '都道府県' | '区' | '市' | '町村'
-
-/** 一覧の1自治体。決算を収録している自治体だけを載せる */
-export interface IndexEntry {
-  code: string
-  name: string
-  prefecture: string
-  kind: JurisdictionKind
-  /** 個別ページの path（/tokyo/shinagawa） */
-  path: string
-  /** 最新の決算の年度と、一般会計の歳出の総額（款の和） */
-  year: number
-  yen: number
-  /** 最新の決算の年度と比べる人口（populationForYear）。無ければ null */
-  population: Population | null
-  /** 歳出の総額を population で割った1人あたりの金額 */
-  perCapita: number | null
-  /** 出典に金額の印字が無い款があり、yen はそれを除いた款の和 */
-  amountMissing?: true
-}
 
 /** 名称の末尾から種類を決める。都道府県は自治体コードの5桁目までが 0（130001 → 13000） */
 export function jurisdictionKind(code: string, name: string): JurisdictionKind {

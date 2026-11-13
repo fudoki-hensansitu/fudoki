@@ -8,7 +8,7 @@ import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
 import { Overview, OverviewSkeleton } from './sankey'
-import { formatShare, formatYen, type Drill, type FlowView, type Kou, type Moku, type PageData, type YearTotal } from './types'
+import { formatShare, formatYen, type Drill, type FlowView, type Kou, type Moku, type YearTotal } from './types'
 
 /** 分け方ごとの段の呼び名。機能分類は COFOG の大分類・中分類のあとに自治体の科目（目）とその内訳（節・事業）が来る */
 const LEVELS: Record<FlowView, { kan: string; kou: string; moku: string; setsu: string }> = {
@@ -27,12 +27,6 @@ const MOKU_BAR = 8
 const SETSU_BAR = 5
 /** 帯を描かない幅。項の段の並び（sm: で横並びになる）と同じ境目にする。ずれると、横並びなのに帯が出ない幅ができる */
 const MOBILE_QUERY = '(max-width: 639.98px)'
-
-const fetchJson = async <T,>(url: string, signal?: AbortSignal): Promise<T> => {
-  const res = await fetch(url, { signal })
-  if (!res.ok) throw new Error(String(res.status))
-  return (await res.json()) as T
-}
 
 const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記載' : formatYen(yen))
 const share = (yen: number, max: number, missing?: boolean) => (missing || max <= 0 ? 0 : Math.min(100, (Math.max(0, yen) / max) * 100))
@@ -392,22 +386,16 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: D
   )
 }
 
-/** 款→項の全体図と款ごとの内訳。最新年度の款→項はページに埋めてあり、それ以外の年度は図が近づいたら読み込む */
+/** 款→項の全体図と款ごとの内訳。流れ（目の内訳まで）は頁の loader が読んで渡す。flows が無い間は読み込み中の形を出す */
 /** tabs はカードの左上に置く切り替え（分け方）、summary は全体図のときに出す総額。view は分野（COFOG の枠）か款か */
-export function Flow({ data, total: year, view = 'kan', phase = 'settlement', tabs, summary, className, bare, onMoku, account, natural }: { data: PageData; total: YearTotal; view?: FlowView; /** 決算の無い年度は当初予算（initial）の流れを読む */ phase?: 'settlement' | 'initial'; tabs?: React.ReactNode; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 特別会計の流れを読むときの会計の名前。無ければ一般会計 */ account?: string; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean }) {
+export function Flow({ flows: given, total: year, view = 'kan', tabs, summary, className, bare, onMoku, natural, onRetry }: { /** 款（分野）→ 項（中分類）→ 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; view?: FlowView; tabs?: React.ReactNode; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
   const levels = LEVELS[view]
-  // 頁に埋めてある最新の決算の流れは一般会計のものだけ
-  const isLatest = !account && phase === 'settlement' && year.year === data.years.at(-1)?.year
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
   const overview = React.useRef<HTMLDivElement>(null)
-  const [detail, setDetail] = React.useState<Drill[]>()
-  const [error, setError] = React.useState(false)
-  const [attempt, setAttempt] = React.useState(0)
-  // natural（自治体の頁のタブ）では図は開いたタブの中にあるので、近づくのを待たずにすぐ読む
-  const [near, setNear] = React.useState(!!natural)
   const [index, setIndex] = React.useState(0)
-  const flows = detail ?? (isLatest ? (view === 'cofog' ? data.cofogFlow : data.flow) : [])
+  const flows = given ?? []
+  const error = !!onRetry
   const overviewFade = useEdgeFade(overview, [flows.length], natural)
   // natural のときは、横に並ぶ面のうち今の面の高さに枠を合わせる（ほかの面の高さで下が空かないように）
   const [trackHeight, setTrackHeight] = React.useState<number>()
@@ -421,30 +409,6 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
     for (const p of panels) observer.observe(p)
     return () => observer.disconnect()
   }, [natural, index, flows.length])
-  // 項の内訳（目・節）は、図が近づいたら読み込む。クリックは要らない
-  React.useEffect(() => {
-    const el = root.current
-    if (!el || near) return
-    const observer = new IntersectionObserver((entries) => { if (entries.some((e) => e.isIntersecting)) setNear(true) }, { rootMargin: '900px 0px' })
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [near])
-  React.useEffect(() => {
-    if (!near || detail) return
-    setError(false)
-    const controller = new AbortController()
-    const url = `/data/jurisdictions/flow/${data.code}/${year.year}/setsu?${new URLSearchParams({ ...(view === 'cofog' ? { view: 'cofog' } : {}), ...(phase === 'initial' ? { phase: 'initial' } : {}), ...(account ? { account } : {}) })}`
-    fetchJson<Drill[]>(url, controller.signal).then(
-      (value) => {
-        if (controller.signal.aborted) return
-        // 空の流れは読み込み中の形のまま残さず、読めなかったものとして扱う
-        if (value.length > 0) setDetail(value)
-        else setError(true)
-      },
-      () => { if (!controller.signal.aborted) setError(true) },
-    )
-    return () => controller.abort()
-  }, [near, detail, data.code, year.year, view, phase, account, attempt])
   const onScroll = () => {
     const el = track.current
     if (!el) return
@@ -542,13 +506,13 @@ export function Flow({ data, total: year, view = 'kan', phase = 'settlement', ta
               error ? null : <OverviewSkeleton total={year.yen} levels={levels} height={overviewHeight} />
             )}
           </div>
-          {flows.map((f, i) => <KanPanel key={f.kan.id} drill={f} loading={!detail && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} />)}
+          {flows.map((f, i) => <KanPanel key={f.kan.id} drill={f} loading={!given && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} />)}
         </div>
       </div>
       {error ? (
         <div role="alert" className="flex flex-wrap items-center gap-2 px-5 pb-4 text-sm text-destructive">
-          <p>内訳を読み込めませんでした。</p>
-          <Button variant="outline" onClick={() => { setDetail(undefined); setAttempt((n) => n + 1) }}>もう一度読み込む</Button>
+          <p>お金の流れを読み込めませんでした。</p>
+          <Button variant="outline" onClick={onRetry}>もう一度読み込む</Button>
         </div>
       ) : null}
     </div>

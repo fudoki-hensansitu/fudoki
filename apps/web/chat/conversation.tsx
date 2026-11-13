@@ -73,7 +73,6 @@ export function Conversation({
   context,
   beforeComposer,
   onSend,
-  onAnswered,
   movableViews = false,
 }: {
   id: string
@@ -89,14 +88,10 @@ export function Conversation({
   beforeComposer?: React.ReactNode
   /** 続けて聞いたとき（選んだ文を外すなど） */
   onSend?: () => void
-  /** 答えを書き終えたとき（オンボーディングの終わりの合図）。ok は途中で切れず、失敗もしなかったか */
-  onAnswered?: (ok: boolean) => void
   /** 表とグラフを会話の横のパネルへ移せるか。会話の頁だけ。自治体の頁のように会話がパネルの中にあるときは移さない */
   movableViews?: boolean
 }) {
   const viewContext = React.useRef(stored.viewContext ?? '')
-  const onAnsweredRef = React.useRef(onAnswered)
-  onAnsweredRef.current = onAnswered
   // 頁の文脈は質問ごとに読み、その発言の metadata に持たせる（server が選んだ文は質問の直前の利用者の発言に、見ている画面は最後の質問のものだけを system prompt に入れる）
   const contextRef = React.useRef(context)
   contextRef.current = context
@@ -115,8 +110,7 @@ export function Conversation({
     id,
     messages: (stored.messages ?? []) as ChatMessage[],
     transport,
-    onFinish: ({ messages, isError, isAbort, isDisconnect }) => {
-      onAnsweredRef.current?.(!isError && !isAbort && !isDisconnect)
+    onFinish: ({ messages }) => {
       return saveSession(id, { token: stored.token, expiresAt: stored.expiresAt, messages, ...(stored.entry ? { entry: stored.entry } : {}), ...(viewContext.current ? { viewContext: viewContext.current } : {}) })
     },
   })
