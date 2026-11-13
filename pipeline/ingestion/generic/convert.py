@@ -128,6 +128,11 @@ def lay_notes(built) -> tuple[list[dict], list[dict], list[dict], set, list]:
             # The funding of the item (`（特定財源 9,533 一般財源 3,016,275）`), or its head count (`２６人`): no note on it.
             dropped_notes = built.__dict__.setdefault('dropped_notes', {})
             dropped_notes.setdefault(record['hint'], []).extend([*record['label'], *(g for run in record['runs'] for g in run)])
+            for run in record['runs']:
+                x0, y0, x1, y1 = union(run)
+                built.__dict__.setdefault('dropped_note_amounts', []).append(
+                    {'amount_text': ''.join(g.text for g in run), 'unit_text': record['unit'], 'physical_page': run[0].page,
+                     'x0': x0, 'y0': y0, 'x1': x1, 'y1': y1})
             continue
         if kind is None:
             if record['kind'] == 'annotation' and record['runs']:
@@ -169,7 +174,8 @@ def split_notes(built) -> tuple[list[dict], list[dict], list[dict], list[dict], 
     # contradictory readings at one position, or an ordinary amount still keeps its conflict.
     position = lambda a: tuple(a[k] for k in ('physical_page', 'x0', 'y0', 'x1', 'y1'))
     identity = lambda a: (*position(a), normalize(a['amount_text']), a['unit_text'])
-    adopted = {identity(a) for a in amounts}
+    # (A note `dropped_notes` keeps off the 注記 axis is printed on its own too.)
+    adopted = {identity(a) for a in [*amounts, *built.__dict__.get('dropped_note_amounts', [])]}
 
     def resolved_note_conflict(issue):
         sources = issue.get('sources', [])
