@@ -1,7 +1,7 @@
 // 集約の型（*/model.ts）の enum と、dbt の accepted_values（columns.json）が同じ値かを照合する（docs/prd/aggregate-api/dd.md）。
 import { describe, expect, test } from 'bun:test'
 import { TABLES } from './columns'
-import { DIRECTIONS, DirectionCode, EvaluationOriginRow, EvaluationOriginType, EvaluationRow, IndicatorRow, IndicatorValueRow, SheetRow } from './evaluation/model'
+import { DIRECTIONS, DirectionCode, EvaluationOriginRow, EvaluationRow, IndicatorRow, IndicatorValueRow, SheetRow } from './evaluation/model'
 import { BudgetProposalOriginRow, BudgetProposalRow, MeasureRow } from './budget-proposal/model'
 import { ProjectRow, ProjectYearRow } from './project/model'
 import { z } from 'zod'
@@ -23,8 +23,6 @@ describe('型と表の値', () => {
     ['expenditure_detail', 'document_kind', DocumentKind.options],
     ['expenditure_detail', 'breakdown', Breakdown.options],
     ['expenditure_location', 'kind', LocationKind.options],
-    ['evaluation', 'kind', ['with_result', 'sheets_only'] as const],
-    ['evaluation_origin', 'document_type', EvaluationOriginType.options],
     ['evaluation_sheet', 'direction_code', DirectionCode.options],
     ['evaluation_sheet', 'direction_code', Object.keys(DIRECTIONS)],
   ] as const)('%s.%s', (table, column, options) => {

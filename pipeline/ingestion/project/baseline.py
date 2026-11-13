@@ -1,6 +1,6 @@
 """事業の資料の取り込み結果を、別の commit の読み方の結果と全件で突き合わせる（docs/prd/page-words/dd.md の手順 6〜8）。
 
-評価シート・指標・指標の値・評価の結果・施策の全行を、公開の ID の元になる列（`origin_id`・`page`・`position`）ごと比べる。
+評価シート・指標・指標の値・施策の全行を、公開の ID の元になる列（`origin_id`・`page`・`position`）ごと比べる。
 基準は `--base` の commit のコードで読んだ結果で、その commit を `.cache/worktrees/` に取り出して読む。
 出典の PDF と読んだ結果のキャッシュ（`.cache/objects`・`.cache/project`）は今の作業ツリーと共有する。
 
@@ -24,7 +24,6 @@ KEYS = {
     'project_evaluation_sheet': 2,
     'project_evaluation_indicator': 3,
     'project_evaluation_indicator_value': 4,
-    'project_evaluation_result': 1,
     'project_budget_measure': 3,
 }
 

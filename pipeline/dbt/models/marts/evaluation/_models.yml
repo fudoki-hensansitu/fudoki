@@ -1,7 +1,7 @@
 version: 2
 models:
 - name: evaluation_origin
-  description: 事業評価の資料（評価シート・評価の結果）の出典。PDF 1つが1行。
+  description: 事業評価の資料（評価シート）の出典。PDF 1つが1行。
   columns:
   - name: origin_id
     description: 出典の識別子。PDF の sha256。
@@ -22,13 +22,6 @@ models:
         arguments:
           to: ref('jurisdiction')
           field: jurisdiction_code
-  - name: document_type
-    description: 資料の種類。sheets（事務事業評価シート）・result（事務事業評価の結果）。
-    data_tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values: ['sheets', 'result']
   - name: fiscal_year
     description: 評価した事業を実施した会計年度（西暦）。
     data_tests: [not_null]
@@ -167,7 +160,7 @@ models:
   - name: actual_text
     description: その年度の実績（シートの表記のまま）。
 - name: evaluation
-  description: 事業評価の根。自治体の1年度（評価した事業を行った年度）分の事務事業評価。評価シートか評価結果の資料のどちらかがある年度が1行。
+  description: 事業評価の根。自治体の1年度（評価した事業を行った年度）分の事務事業評価。評価シートがある年度が1行。
   columns:
   - name: evaluation_id
     description: 自治体コードと年度から作る ID（sha256）。
@@ -183,24 +176,3 @@ models:
   - name: fiscal_year
     description: 評価した事業を実施した会計年度（西暦）。
     data_tests: [not_null]
-  - name: kind
-    description: with_result（評価結果の資料があり件数を持つ）か sheets_only（評価シートだけで件数は空）。
-    data_tests:
-    - not_null
-    - accepted_values:
-        arguments:
-          values: ['with_result', 'sheets_only']
-  - name: result_origin_id
-    description: 評価結果の資料。evaluation_origin の origin_id。sheets_only なら空。
-  - name: result_page
-    description: 評価結果の資料で合計の行を読んだ頁。
-  - name: evaluated_count
-    description: 評価した事業の数（評価結果の資料の値）。
-  - name: grade_a
-    description: A 評価の事業の数（評価結果の資料の値）。
-  - name: grade_b
-    description: B 評価の事業の数（評価結果の資料の値）。
-  - name: grade_c
-    description: C 評価の事業の数（評価結果の資料の値）。
-  - name: grade_d
-    description: D 評価の事業の数（評価結果の資料の値）。

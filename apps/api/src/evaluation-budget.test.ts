@@ -24,9 +24,8 @@ const insert = (table: string, row: Record<string, string | number | null>) => {
 
 beforeEach(() => {
   ;({ db, sqlite } = testDb())
-  insert('evaluation', { evaluation_id: EV, jurisdiction_code: '131091', fiscal_year: 2024, kind: 'with_result', result_origin_id: 'r1', result_page: 3, evaluated_count: 3, grade_a: 1, grade_b: 1, grade_c: 1, grade_d: 0 })
-  insert('evaluation_origin', { origin_id: 's1', evaluation_id: EV, jurisdiction_code: '131091', document_type: 'sheets', fiscal_year: 2024, title: '評価シート', url: 'https://example.test/s1.pdf', landing_url: null, sha256: H('1') })
-  insert('evaluation_origin', { origin_id: 'r1', evaluation_id: EV, jurisdiction_code: '131091', document_type: 'result', fiscal_year: 2024, title: '評価結果', url: 'https://example.test/r1.pdf', landing_url: null, sha256: H('2') })
+  insert('evaluation', { evaluation_id: EV, jurisdiction_code: '131091', fiscal_year: 2024 })
+  insert('evaluation_origin', { origin_id: 's1', evaluation_id: EV, jurisdiction_code: '131091', fiscal_year: 2024, title: '評価シート', url: 'https://example.test/s1.pdf', landing_url: null, sha256: H('1') })
   for (const [i, code] of ['expand', 'keep', 'improve'].entries())
     insert('evaluation_sheet', {
       sheet_id: H(String(i)), evaluation_id: EV, origin_id: 's1', jurisdiction_code: '131091', fiscal_year: 2024, page: i + 1,
@@ -48,8 +47,7 @@ describe('事業評価', () => {
   test('根・出典・シートを返し、シートはページに切る', async () => {
     const first = await (await get(`/v1/evaluations/${EV}?page_size=2`)).json()
     expect(EvaluationOutput.parse(first).sheets.map((s) => s.outlook?.grade)).toEqual(['A', 'B'])
-    expect(first.evaluation.grade_a).toBe(1)
-    expect(first.origins.map((o: { document_type: string }) => o.document_type).sort()).toEqual(['result', 'sheets'])
+    expect(first.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(['s1'])
     const second = await (await get(`/v1/evaluations/${EV}?page_size=2&page_token=${first.next_page_token}`)).json()
     expect([second.sheets.length, second.next_page_token]).toEqual([1, null])
     expect((await get(`/v1/evaluations/${H('f')}`)).status).toBe(404)
