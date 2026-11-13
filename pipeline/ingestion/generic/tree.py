@@ -296,10 +296,13 @@ def note_breakdown(items: list['Item'], subject_starts: tuple[float, ...] = (), 
 
 def _stacked_word(glyph: Glyph) -> Glyph:
     """A word of a column of stacked lines (`columns.<見出し>.lines`): the closing bracket of `(1,532)` read on the
-    figure (`90)`) is no digit, and `A` read for the `△` before a figure is its sign (国分寺市)."""
+    figure (`90)`) is no digit, and `A` read for the `△` before a figure is its sign (国分寺市). A line printed whole
+    in its brackets (`(746,216)`, `<182,525>`, 八王子市) is its figure."""
     if glyph.text == 'A':
         return replace(glyph, text='△')
     bare = glyph.text.rstrip(')）')
+    if not (bare and is_amount(bare)):
+        bare = glyph.text.strip('()（）<>＜＞')
     return replace(glyph, text=bare) if bare != glyph.text and bare and is_amount(bare) else glyph
 
 
@@ -2268,6 +2271,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     # Per amount column: (item, kind word) of a stacked kind word left at the foot of a page with its amount still to come.
     carried: dict[str, tuple[Item, str | None, list[Glyph]]] = {}
     revision = quirk(document, 'revision_history')
+    # per column of stacked lines: the item whose cell at the foot of the page has lines left, and how many it has
+    lines_left: dict[str, tuple[Item, int]] = {}
     histories: dict[str, list] = {}  # per column: a `補正経過` the page ended in, its rounds going on over the page
     paid_last: dict[str, Item] = {}  # per column: the item its last amount went to, on the latest page read
     # `amounts_next_row`: the last subject item of the page before, still without an amount (its amounts row is the
@@ -2524,12 +2529,15 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     continue
                 sign = None
                 carry = carried.pop('／'.join(band.header), None)
+                open_lines = lines_left.pop('／'.join(band.header), None)
                 stacked = None  # (kind word, rule-bounded cell) of the last kind word printed in this column
                 stacked_label = []  # the printed line of that kind word
                 unpaid = False  # no amount has followed that kind word yet
                 waiting = None  # (heading, y) of a kind word alone on its line in an inline-kind band
                 previous = None  # (item, rule-bounded cell) of the last amount this column gave to an item
                 stacked_lines = Counter()  # amounts a column of stacked lines (`band.lines`) gave to each item
+                if open_lines is not None:
+                    stacked_lines[open_lines[0].key] = open_lines[1]
                 words_ = [_stacked_word(g) for g in band.words if g.text not in BRACKETS] if band.lines else band.words
                 history = histories.pop('／'.join(band.header), None)  # [item, label lines, a round waiting] of a `補正経過`
                 if history is not None:
@@ -2641,6 +2649,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         cell = _cell(band, sum((g.y0 + g.y1) / 2 for g in money) / len(money))
                         if stacked[1] == cell and previous[1] == cell:
                             target = previous[0]
+                    if (target is None and open_lines is not None and _cell(band, money[0].y0)[0] == band.body_top
+                            and stacked_lines[open_lines[0].key] < len(band.lines)
+                            and not any(i.role == 'node' and i.anchor < money[0].y0 and i.lines and i.lines[0][0].page == money[0].page
+                                        for g in ordered if g.subject for i in found[id(g)])):
+                        # The lines of a stacked cell that run on over the page break (`2 選挙啓発費 652` at the foot,
+                        # `(468)` / `<184>` in the first row of the next page, no name before them): the open item's.
+                        target = open_lines[0]
                     if target is None and carry is not None and _cell(band, money[0].y0)[0] == band.body_top:
                         # `繰越明許費` at the foot of a page, its amount in the first row of the next page's column
                         # (a row that prints nothing else): the cell runs on over the page break.
@@ -2722,6 +2737,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     previous = (target, _cell(band, y))
                 if history is not None:
                     histories['／'.join(band.header)] = history  # the history goes on at the top of the next page
+                if (band.lines and previous is not None and previous[1][1] >= band.body_bottom - .5
+                        and stacked_lines[previous[0].key] < len(band.lines)):
+                    lines_left['／'.join(band.header)] = (previous[0], stacked_lines[previous[0].key])
                 if previous is not None:
                     paid_last['／'.join(band.header)] = previous[0]
                 else:
