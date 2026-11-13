@@ -13844,6 +13844,38 @@ sources:
       direction: expenditure
       table_id: nhi-clinic-expenditure-detail
       kind: nodes
+  - name: j133078_2025_initial_general_initial_amounts
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j133078_2025_initial_general_initial_nodes
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2025
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j133078_2026_initial_general_initial_amounts
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j133078_2026_initial_general_initial_nodes
+    meta:
+      jurisdiction: '133078'
+      fiscal_year: 2026
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
   - name: j133086_2024_settlement_general_expenditure_detail_amounts
     meta:
       jurisdiction: '133086'
