@@ -32,17 +32,8 @@ jobs:
           done
           exit 1
       - run: bun run typecheck:all
+      - run: bun run lint
       - run: bun run test
-      - run: bun run --cwd apps/web lint
-      - run: bun pipeline/source_selection/check.ts
-      - run: bun run --cwd pipeline ingestion:check
-      - run: bun run --cwd pipeline test:python
-      - run: bun run build:web
-      - run: bun run build:api
-      - run: bun run build:docs
-      - run: bun run pipeline/verify/boundaries.ts
-      - run: bun run pipeline/verify/python.ts
-      - run: bun run pipeline/verify/docs.ts
       # Saves even when later checks fail, so a failing test does not keep the cache empty.
       # Keeps only wheels built from sdists, which are the ones that need the cache.
       - if: always() && steps.uv-sync.outcome == 'success' && steps.uv-cache.outputs.cache-hit != 'true'

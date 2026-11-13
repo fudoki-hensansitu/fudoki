@@ -5,6 +5,7 @@ on:
     branches: [main]
     paths:
       - apps/api/**
+      - packages/**
       - package.json
       - bun.lock
       - bunfig.toml

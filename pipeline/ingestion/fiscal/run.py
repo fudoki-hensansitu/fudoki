@@ -699,23 +699,18 @@ def main() -> None:
     if args.command == 'schema':
         print(manifest.SCHEMA.read_text())
     elif args.command == 'check':
+        # Structure and selection only. Stale fingerprints are listed by `refresh --plan`, and the scheduled
+        # refresh dry-run compares contents (ADR 0027).
         paths = [args.manifest] if args.manifest else manifest.paths()
         count = ready = tables = 0
-        stale = []
         for path in paths:
             document = manifest.read(path)
             for conversion in document['conversions']:
                 manifest.resolved_inputs(document, conversion)
-            if document['tables']:
-                # A stale fingerprint is reported, not refused: the scheduled refresh dry-run compares contents (ADR 0027).
-                stale.extend(f'{path}: {table_id}' for table_id in manifest.stale_tables(document))
-                ready += 1
+            ready += bool(document['tables'])
             count += 1
             tables += len(document['tables'])
-        for item in stale:
-            print(f'stale: {item}', file=sys.stderr)
-        print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables,
-                          'stale_tables': len(stale)}))
+        print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables}))
     elif args.command == 'ocr':
         print(json.dumps(acquire_ocr(args.manifest, json.loads(args.inputs.read_text()),
                                      verify_only=args.verify, ids=args.id), ensure_ascii=False))

@@ -9,6 +9,7 @@ from __future__ import annotations
 import re
 import subprocess
 import unicodedata
+from collections import Counter
 from dataclasses import dataclass
 from pathlib import Path
 from statistics import median
@@ -60,6 +61,27 @@ def pages(pdf: Path) -> list[Page]:
         out.append(Page(number, width, height, [Word(w.text, w.x0, w.y0, w.x1, w.y1) for w in items]))
     return out
 
+
+
+def fonts(pdf: Path, pages_: list[Page]) -> dict[int, list[tuple[float, str]]]:
+    """頁ごとに、語ごとの字の大きさとフォント名。pdfplumber の文字を語の箱に当て、箱に中心が入る文字の最頻値にする。
+    当たる文字の無い語は (語の高さ, '')。プレスの規則が要るときだけ呼ぶ（全頁を pdfplumber で読むので重い）。"""
+    import pdfplumber
+    out: dict[int, list[tuple[float, str]]] = {}
+    with pdfplumber.open(pdf) as doc:
+        for page in pages_:
+            plumbed = doc.pages[page.number - 1]
+            # Poppler の座標は CropBox の左上が原点。pdfplumber の頁の原点（bbox の左上）に合わせる
+            dx, dy = plumbed.bbox[0], plumbed.bbox[1]
+            chars = [((c['x0'] + c['x1']) / 2 - dx, (c['top'] + c['bottom']) / 2 - dy, round(c['size'], 2), c['fontname'])
+                     for c in plumbed.chars if c['text'].strip()]
+            found = []
+            for w in page.words:
+                inside = Counter((size, name) for x, y, size, name in chars if w.x0 <= x <= w.x1 and w.y0 <= y <= w.y1)
+                found.append(inside.most_common(1)[0][0] if inside else (w.y1 - w.y0, ''))
+            out[page.number] = found
+            plumbed.flush_cache()
+    return out
 
 
 def wide(c: str) -> bool:

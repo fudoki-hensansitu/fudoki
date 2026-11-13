@@ -572,7 +572,13 @@ def repair(pdf_path: Path | None, pages: list[Page], repairs: frozenset = frozen
         except Exception as error:  # pdfium's raw API failed: keep Poppler's words as they are
             report.invisible_error = f'{type(error).__name__}: {error}'
             report.hidden_glyphs = report.hidden_rules = 0
+    minus = document_quirk('delta_minus')
+    strokes = document_quirk('glyph_strokes')
     for page in pages:
+        if minus is not None:
+            minus.module.replace(page)
+        if strokes is not None:
+            strokes.module.drop(page)
         repair_positions(page, report)
         join_vertical(page, report, 'stacked_rows' in repairs)
         if 'justified_names' in repairs:
