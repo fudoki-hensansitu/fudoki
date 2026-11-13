@@ -3,7 +3,7 @@
 状態: 採用（2026-11-13）。[ADR 0022](0022-serve-marts-via-worker-d1-rest-and-mcp.md) の「認証なしで公開する」を置き換える。web が公開 API を使い web 専用の口を作らないとした 2026-11-12 の方針（[aggregate-api の dd](../prd/aggregate-api/dd.md) の Hono RPC の項）も置き換える。
 
 1. web（サーバーの loader・アシスタント）は、apps/api の内部の RPC（`WorkerEntrypoint`、HTTP の route を持たない）だけを Service Binding で呼ぶ。出典の頁の文字の RPC（`SourcePages`）と同じ形にし、web 用の口は一つの entrypoint にまとめる。
-2. ブラウザから `api.fudoki.dev` を呼ばない。頁を開くときのデータは loader が渡し、頁を開いたあとに遷移せずに取るデータ（事業一覧の続きの頁・事業の詳細など）は web 自身の GET の route（`/data/*`）を経由する。
+2. ブラウザから `api.fudoki.dev` を呼ばない。頁を開くときのデータは loader が渡し、頁を開いたあとに遷移せずに取るデータは web 自身の route を経由する。CDN に置くデータ（年度の切り替えで取る自治体の頁の本体など）は `/data/*`、置かないデータ（事業一覧の続きの頁・事業の詳細など）は `/api/*` に置く。
 3. web のアシスタントも内部の口を使う。tool の処理は公開の MCP と同じ問い合わせ（`queries.ts`・`model.ts`）を呼ぶ。
 4. 公開の REST と MCP は認証を必須にする。REST は API キー、MCP は OAuth で受ける。キー・OAuth の client の発行には登録を要する。発行の仕組みは dd で決める。
 5. 公開側の呼び出しは、利用者（キー・OAuth の client）ごとに記録し、流量の上限も利用者ごとにかける。
@@ -21,8 +21,8 @@
 
 ## Consequences
 
-- 移行は、内部の口を作って web を移す → ブラウザの直接の呼び出しを `/data/*` に移す → 公開側に認証をかけ CORS を絞る、の順に行う。認証をかけるまでは公開側は匿名のまま動く。
+- 移行は、内部の口を作って web を移す → ブラウザの直接の呼び出しを web の `/api/*` に移す → 公開側に認証をかけ CORS を絞る、の順に行う。認証をかけるまでは公開側は匿名のまま動く。
 - claude.ai・ChatGPT などのコネクタは OAuth で繋ぐことになる。docs.fudoki.dev・llms.txt・`/.well-known/mcp/server-card.json`・AI 向けの案内（agent readiness）の記述を、認証つきに合わせて直す。
-- ブラウザの読み取りを `/data/*` に移した経路にも、既存の `/data/*` と同じく IP ごとの上限（`VIEW_RATE_LIMIT`）と CDN のキャッシュをかける。WAF の制限（`/v1/*`・`/mcp`）はかからなくなる。
+- ブラウザの読み取りを `/api/*` に移した経路には、既存の `/data/*` と同じ IP ごとの上限（`VIEW_RATE_LIMIT`）をかける。会話の3経路の Turnstile の token は要らない。WAF の制限（`/v1/*`・`/mcp`）はかからなくなる。
 - 掲載済みの Claude の connector・ChatGPT の plugin（[submission](../prd/mcp-distribution/submission.md)）は OAuth への再設定と再審査が要る。[policies](../prd/mcp-distribution/policies.md) の「API はアカウント・OAuth・決済を持たず」と privacy の記述を、利用者ごとに記録する内容と保持期間に合わせて直す。
 - 公開側の利用者の記録と、利用者ごとの流量の上限の置き場（Analytics Engine・Rate Limiting binding など）は dd で決める。
