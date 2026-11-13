@@ -18,6 +18,7 @@
 - `ingestion:check` は管理情報・選定・scope・fingerprintの検査で、財政値の正しさを認定しない。fingerprintが古いときは `ingestion:refresh --remote` が再変換して保存済みの表と中身を比べ、同じなら指紋だけを書き換える（違えば `ingestion:convert --remote`。手順は [ingestion](ingestion.md#指紋が古くなったとき)）。refresh は Jev の答え（`*.digit-recheck.jsonl`）を読むだけで、問い直しも書き込みもしない。答えの無い数字がある表は `blocked` になるので、その表は `ingestion:convert`（ローカルの候補でもよい）で答えを記録してから refresh をやり直す。dry-run でも commit 対象のファイルは変わらない。PDF表の木と印字された数字の網羅は保存時に必ず検査され、`ingestion:verify` で保存済み・候補の表に当て直せる（網羅の再検査は候補の scope 付きのみ）。
 - 出典はsource_selection、表は対象・方向別のingestion領域に保存し、保存先と出典参照は対象別JSONに置く。独立したprovenanceファイルは作らない。
 - C（dbt）は対象別JSONと保存済みParquetを読む。入口は `dbt:build`（[dbt](dbt.md)）。
+- 本番への反映は main への merge で自動に行う（`.github/workflows/sync-d1.yml` が変わった範囲だけを marts に build し、本番 D1 へ差分で写す。入口は `publish`）。取り込みの PR では本番へ手で同期しない。
 
 ## 重い実行の判定と待ち合わせ
 
