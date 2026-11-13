@@ -24,5 +24,5 @@
 - 移行は、内部の口を作って web を移す → ブラウザの直接の呼び出しを web の `/api/*` に移す → 公開側に認証をかけ CORS を絞る、の順に行う。認証をかけるまでは公開側は匿名のまま動く。
 - claude.ai・ChatGPT などのコネクタは OAuth で繋ぐことになる。docs.fudoki.dev・llms.txt・`/.well-known/mcp/server-card.json`・AI 向けの案内（agent readiness）の記述を、認証つきに合わせて直す。
 - ブラウザの読み取りを `/api/*` に移した経路には、既存の `/data/*` と同じ IP ごとの上限（`VIEW_RATE_LIMIT`）をかける。会話の3経路の Turnstile の token は要らない。WAF の制限（`/v1/*`・`/mcp`）はかからなくなる。
-- 掲載済みの Claude の connector・ChatGPT の plugin（[submission](../prd/mcp-distribution/submission.md)）は OAuth への再設定と再審査が要る。[policies](../prd/mcp-distribution/policies.md) の「API はアカウント・OAuth・決済を持たず」と privacy の記述を、利用者ごとに記録する内容と保持期間に合わせて直す。
+- 審査に提出済みの Claude の connector と掲載済みの ChatGPT の plugin（[submission](../prd/mcp-distribution/submission.md)）は OAuth への再設定と再審査が要る。[policies](../prd/mcp-distribution/policies.md) の「API はアカウント・OAuth・決済を持たず」と privacy の記述を、利用者ごとに記録する内容と保持期間に合わせて直す。
 - 公開側の利用者の記録と、利用者ごとの流量の上限の置き場（Analytics Engine・Rate Limiting binding など）は dd で決める。
