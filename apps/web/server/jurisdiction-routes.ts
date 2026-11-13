@@ -1,17 +1,17 @@
-// 自治体の個別ページ（/tokyo/nakano）・ホームの自治体の要約のデータと、画面が取る /data/jurisdictions/*・sitemap の応答。
-// データは apps/api の歳出の検索から組み、応答ごと CDN に置く（Worker の中には置かない）。頁は pages/ の loader が、
-// /data と sitemap は routes/ がここを呼ぶ。/data は誰でも読める GET で、IP ごとの流量と引数の形の検査で守る
+// 自治体の個別ページ（/tokyo/nakano）・ホームの自治体の要約のデータと、自治体の検索（/api/jurisdictions）・sitemap の応答。
+// データは apps/api の歳出の検索から組む。頁は pages/ の loader が呼んで CDN に置き、/api/jurisdictions と sitemap は routes/ が呼ぶ。
+// /api/jurisdictions は誰でも読める GET で、IP ごとの流量と引数の形の検査で守る（CDN には置かない）
 import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath } from '../jurisdiction/path'
-import type { MapEntry } from '../jurisdiction/index-table'
-import { jurisdictionKind, type FlowDepth, type FlowView, type PageData } from '../jurisdiction/types'
+import { townMatches, type MapEntry } from '../jurisdiction/index-table'
+import { jurisdictionKind, type PageData } from '../jurisdiction/types'
 import { assetPath, EMBLEMS } from '../jurisdiction/emblems'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
 import { appYears, loadYearSnapshot } from './app-data'
-import { ACCOUNT, loadAccountTotals, loadCatalog, loadCatalogEntry, loadCofogFlow, loadFlow, loadPage, type CatalogEntry, type DocumentKind } from './jurisdiction'
+import { ACCOUNT, loadCatalog, loadCatalogEntry, loadCofogFlow, loadFlow, loadPage, type CatalogEntry, type DocumentKind } from './jurisdiction'
 
 const TTL = 3600
 
@@ -79,46 +79,34 @@ export async function sitemapResponse(env: Env): Promise<Response> {
 
 const json = (body: unknown) => new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': `public, max-age=${TTL}` } })
 
-/** 一つの自治体・年度の全款の流れ（/data/jurisdictions/flow/:code/:year/:depth）。?view=cofog なら分野 → 款の流れ */
-export async function flowResponse(env: Env, request: Request, { code, year, depth }: { code: string; year: string; depth: string }): Promise<Response> {
-  try {
-    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(year) || !['kou', 'moku', 'setsu'].includes(depth))
-      throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度・表示階層の指定が違います')
-    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
-    const view: FlowView = new URL(request.url).searchParams.get('view') === 'cofog' ? 'cofog' : 'kan'
-    // ?phase=initial なら当初予算、無ければ決算を読む
-    const kind: DocumentKind = new URL(request.url).searchParams.get('phase') === 'initial' ? 'initial' : 'settlement'
-    // ?account= で特別会計も読む。無ければ一般会計
-    const account = new URL(request.url).searchParams.get('account') || ACCOUNT
-    const entry = await loadCatalogEntry(env, code)
-    const ok = entry?.accounts?.[kind]?.[year]?.includes(account) ?? (account === ACCOUNT && (kind === 'initial' ? entry?.initialYears : entry?.settlementYears)?.includes(Number(year)))
-    if (!ok) throw new HttpError(404, 'NOT_FOUND', `この自治体・年度の${account}の${kind === 'initial' ? '当初予算' : '決算'}は収録されていません`)
-    const load = view === 'cofog' ? loadCofogFlow : loadFlow
-    return json(await load(env, code, Number(year), depth as FlowDepth, kind, account))
-  } catch (e) {
-    if (e instanceof HttpError) return errorResponse(e)
-    return errorResponse(new HttpError(502, 'UNAVAILABLE', '決算データを表示できませんでした。少し待ってからもう一度開いてください。'))
-  }
-}
+/** 町の検索に返す数 */
+const TOWN_LIMIT = 10
+/** 探す語の長さの上限 */
+const QUERY_MAX = 50
+/** /api の応答はブラウザにだけ少し置く（CDN は /api を置かない） */
+const BROWSER_CACHE = 'public, max-age=300'
 
-/** 一つの自治体・年度の会計ごとの総額（/data/jurisdictions/accounts/:code/:year）。?phase=initial なら当初予算 */
-export async function accountsResponse(env: Env, request: Request, { code, year }: { code: string; year: string }): Promise<Response> {
+/** 町を探す（/api/jurisdictions?q=）。語に当たる自治体を上位 TOWN_LIMIT 件だけ返す。?code= ならその自治体だけ（うちのまちの名前を引く） */
+export async function jurisdictionSearchResponse(env: Env, request: Request): Promise<Response> {
   try {
-    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(year)) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体・年度の指定が違います')
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
-    const kind: DocumentKind = new URL(request.url).searchParams.get('phase') === 'initial' ? 'initial' : 'settlement'
-    const accounts = (await loadCatalogEntry(env, code))?.accounts?.[kind]?.[year]
-    if (!accounts?.length) throw new HttpError(404, 'NOT_FOUND', 'この自治体・年度の資料は収録されていません')
-    return json(await loadAccountTotals(env, code, Number(year), kind, accounts))
+    const params = new URL(request.url).searchParams
+    const code = params.get('code')
+    const q = params.get('q') ?? ''
+    if ((code !== null && !/^\d{6}$/.test(code)) || q.length > QUERY_MAX) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コードか探す語の形が違います')
+    const entries = await homeEntries(env)
+    const hits = code !== null ? entries.filter((e) => e.code === code) : entries.filter((e) => townMatches(e, q)).sort((a, b) => Number(b.name.startsWith(q.trim())) - Number(a.name.startsWith(q.trim()))).slice(0, TOWN_LIMIT)
+    return new Response(JSON.stringify(hits), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
   }
 }
 
-/** 頁の1年度のデータ（/data/jurisdictions/app/:code/:year）。年度の無い /data/jurisdictions/app/:code は最新の年度（ホームのまちの札） */
-export async function appDataResponse(env: Env, request: Request, code: string, yearParam?: string): Promise<Response> {
+/** 頁の1年度のデータ。ホームのうちのまちの札（/api/jurisdictions/:code?year=）が読む。年度が無ければ最新の年度と、評価のある最新の年度の評価シート */
+export async function jurisdictionSnapshotResponse(env: Env, request: Request, code: string): Promise<Response> {
   try {
+    const yearParam = new URL(request.url).searchParams.get('year') ?? undefined
     if (!/^\d{6}$/.test(code)) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コードの形が違います')
     if (yearParam !== undefined && !/^\d{4}$/.test(yearParam)) throw new HttpError(400, 'INVALID_ARGUMENT', '年度の形が違います')
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
@@ -126,7 +114,7 @@ export async function appDataResponse(env: Env, request: Request, code: string, 
     if (!entry) throw new HttpError(404, 'NOT_FOUND', 'この自治体は収録されていません')
     const year = yearParam === undefined ? appYears(entry)[0]?.year : Number(yearParam)
     if (year === undefined || !appYears(entry).some((y) => y.year === year)) throw new HttpError(404, 'NOT_FOUND', 'この年度は頁にありません')
-    return json(await loadYearSnapshot(env, entry, year, { evaluated: yearParam === undefined }))
+    return new Response(JSON.stringify(await loadYearSnapshot(env, entry, year, { evaluated: yearParam === undefined })), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))

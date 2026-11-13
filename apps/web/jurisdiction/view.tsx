@@ -1,12 +1,13 @@
 // 自治体の頁（都道府県・市区町村）の本文。収録の無い自治体は案内だけを出す
 import './jurisdiction.css'
 import * as React from 'react'
+import { useRouter } from '@void/react'
 import { Link } from '../nav/link'
 import { RequestTown } from '../nav/request-town'
 import type { JurisdictionProps } from '../pages/[prefecture]/_loader'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AppPage } from './app/app-page'
-import { ClientSuspense, Resources } from './app/resource'
+import { Resources } from './app/resource'
 
 export function JurisdictionView(props: JurisdictionProps) {
   if (props.kind === 'empty')
@@ -38,20 +39,30 @@ export function JurisdictionView(props: JurisdictionProps) {
   return (
     <div id="j-app">
       {/* 自治体を移ると年度・開いた款などの状態を持ち越さないよう、自治体ごとに描き直す */}
-      {/* 本文のデータが届かなかったとき（API に繋がらなかった頁）は、画面が読み終えるまで形の近い skeleton を出す */}
       <AppHost key={props.data.code} {...props} />
     </div>
   )
 }
 
-/** 頁のデータの置き場は Suspense の外に持つ。AppPage が初めて描く前に読み込みで止まっても、置き場（読みかけの promise）は残る */
+/** 頁のデータの置き場は自治体ごとに1つ持ち、年度・タブを移っても読んだ事業の一覧・詳細を使い回す */
 function AppHost(props: Extract<JurisdictionProps, { kind: 'page' }>) {
   const [res] = React.useState(() => new Resources())
-  return (
-    <ClientSuspense fallback={<AppSkeleton />} ready={!!props.snapshot}>
-      <AppPage res={res} data={props.data} snapshot={props.snapshot} sitekey={props.sitekey} initialYear={props.year} initialField={props.field} initialTab={props.tab} />
-    </ClientSuspense>
-  )
+  // 本文のデータが届かなかった頁（API に繋がらなかった）は、形の近い skeleton を出して頁を読み直す
+  if (!props.snapshot) return <Reload />
+  return <AppPage res={res} data={props.data} snapshot={props.snapshot} flow={props.flow} sitekey={props.sitekey} initialField={props.field} initialTab={props.tab} />
+}
+
+/** 読み直す間を、回ごとに倍にする上限 */
+const RELOAD_MAX_MS = 30_000
+
+function Reload() {
+  const router = useRouter()
+  const [wait, setWait] = React.useState(1000)
+  React.useEffect(() => {
+    const timer = setTimeout(() => void router.refresh({ preserveState: true, preserveScroll: true }).finally(() => setWait((w) => Math.min(w * 2, RELOAD_MAX_MS))), wait)
+    return () => clearTimeout(timer)
+  }, [router, wait])
+  return <AppSkeleton />
 }
 
 function AppSkeleton() {

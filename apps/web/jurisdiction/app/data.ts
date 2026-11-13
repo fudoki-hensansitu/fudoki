@@ -8,7 +8,7 @@ export type Measure = { id: string; fy: number; title: string; new: boolean; yen
 export type DirectionCode = 'new' | 'expand' | 'keep' | 'statutory' | 'as_planned' | 'improve' | 'resize' | 'reduce' | 'merge' | 'complete' | 'end' | 'consider_end'
 export type Sheet = { id: string; fy: number; name: string; grade: 'A' | 'B' | 'C' | 'D' | null; dir: string | null; dc: DirectionCode | null; /** 方向性の区分の言い方（API の outlook.label） */ dl: string | null; div: string | null; acct: string; b: number | null; s: number | null; /** 紐付けた決算書の内訳 */ detail: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
 /** 款・項・目（年度の kind の資料）。上から下へ見ていく予算のタブに使う */
-export type Kan = { name: string; yen: number; kou: { name: string; yen: number; moku: { id: string; name: string; yen: number; field: string }[] }[] }
+export type Kan = { name: string; yen: number; kou: { name: string; yen: number; moku: { id: string; name: string; yen: number; field: string; /** COFOG のコード。分野の頁の内訳（中分類）に使う */ cofog: string | null }[] }[] }
 export type YearData = {
   /** 決算のある年度は決算（settlement）、決算より後の年度は当初予算（initial） */
   kind: 'initial' | 'settlement'
@@ -20,13 +20,19 @@ export type YearData = {
   origin: string | null
   originTitle: string | null
 }
-/** 1年度の頁のデータ。years は全年度の款項目（前の年度との比べ・年度の切り替えに使う）、施策・評価シート・事業の1頁目はその年度の分 */
+/** 会計ごとの総額（款の和）。一般会計が先頭 */
+export type AccountTotal = { name: string; yen: number; amountMissing?: true }
+/** 1年度の頁のデータ。years は開いた年度と前の年度の款項目（前の年度との比べに使う）、施策・評価シート・事業の1頁目はその年度の分 */
 export type Snapshot = {
   code: string
   name: string
   pop: number
   year: number
+  /** 頁で選べる年度ごとの資料の種類（年度の切り替えに使う） */
+  kinds: Record<string, YearData['kind']>
   years: Record<string, YearData>
+  /** 一般会計のほかにも会計を収録した年度の、会計ごとの総額 */
+  accounts?: AccountTotal[]
   measures: Measure[]
   sheets: Sheet[]
   /** 評価のある最新の年度の評価シート（ホームのまちの札だけが読む） */
@@ -106,7 +112,7 @@ export function yearView(d: Snapshot) {
     /** 頁の金額が当初予算か決算か */
     word: y.kind === 'settlement' ? '決算' : '予算',
     /** その年度の並びに使う額の名前 */
-    label: (year: number) => (d.years[String(year)]?.kind === 'settlement' ? '決算' : '当初予算'),
+    label: (year: number) => (d.kinds[String(year)] === 'settlement' ? '決算' : '当初予算'),
   }
 }
 

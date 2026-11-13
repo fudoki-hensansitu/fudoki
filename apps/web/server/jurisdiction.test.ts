@@ -1,8 +1,10 @@
 import { describe, expect, test } from 'bun:test'
-import { changePct, formatYen, kanChanges, reiwa, type YearTotal } from '../jurisdiction/types'
+import { changePct, formatYen, kanChanges, reiwa, type FlowDepth, type YearTotal } from '../jurisdiction/types'
 import { fetchRoute } from './routes.testing'
 import { emptyHead, pageHead, type Head } from '../jurisdiction/html'
 import { homeEntries } from './jurisdiction-routes'
+import { loadCofogFlow, loadFlow } from './jurisdiction'
+import { cofogFlowOfDrills } from '../jurisdiction/cofog-flow'
 import { jurisdictionProps, resolveJurisdiction } from '../pages/[prefecture]/_loader'
 import type { Context } from 'hono'
 import { DETAIL_TABLE, SUBJECT_TABLE } from '../../api/src/columns'
@@ -154,8 +156,9 @@ describe('自治体の個別ページ', () => {
     expect(data.years.map((y) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
     // 積立の款は事業の候補から外し、前年度の同じ目（款・項・名前が一致）だけを前年に使う
     expect(data.projects.map((p) => [p.name, p.prevYen])).toEqual([['保育園費', 200]])
-    expect(data.flow.map((d) => [d.kan.name, d.kou.map((k) => k.name)])).toEqual([['子ども教育費', ['子ども費']], ['総務費', ['総務管理費']]])
-    expect(data.flow[0]!.kou[0]!.moku).toEqual([])
+    const flow = await loadFlow(env, '131148', 2025)
+    expect(flow.map((d) => [d.kan.name, d.kou.map((k) => k.name)])).toEqual([['子ども教育費', ['子ども費']], ['総務費', ['総務管理費']]])
+    expect(flow[0]!.kou[0]!.moku).toEqual([])
   })
 
   test('収録の無い自治体は検索に出さず、名前が違えば 404、sitemap には収録のある自治体だけ', async () => {
@@ -253,12 +256,10 @@ describe('自治体の個別ページ', () => {
   })
 })
 
-describe('内訳の API', () => {
+describe('お金の流れ', () => {
   test('全款を返し、1000件を超える項と目・節を省略しない', async () => {
     const north: Env = { ...env, API: fixtureApi({ code: '131172', name: '北区', extraNodes: Array.from({ length: 1001 }, (_, i) => node({ node_id: id(1000 + i), parent_node_id: id(2), node_kind: '項', name: `追加項${i}`, amount_yen: 0, fiscal_year: 2025 })) }) }
-    const res = await get('/data/jurisdictions/flow/131172/2025/setsu', north)
-    expect(res.status).toBe(200)
-    const flows = await res.json() as { kan: { id: string }; kou: { moku: { setsu: unknown[] }[] }[] }[]
+    const flows = await loadFlow(north, '131172', 2025, 'setsu')
     expect(flows).toHaveLength(2)
     expect(flows.find((flow) => flow.kan.id === id(2))!.kou).toHaveLength(1002)
     expect(flows.find((flow) => flow.kan.id === id(1))!.kou[0]!.moku[0]!.setsu).toHaveLength(2)
@@ -270,9 +271,7 @@ describe('内訳の API', () => {
       node({ node_id: id(21), parent_node_id: id(2), node_kind: '項', name: '総務管理費', amount_yen: 0, fiscal_year: 2025 }),
     ] }) }
     for (const depth of ['kou', 'moku']) {
-      const res = await get(`/data/jurisdictions/flow/132012/2025/${depth}`, missing)
-      expect(res.status).toBe(200)
-      const flows = await res.json() as { kan: { id: string }; kou: { yen: number; amountMissing?: true }[] }[]
+      const flows = await loadFlow(missing, '132012', 2025, depth as FlowDepth)
       expect(flows.find((flow) => flow.kan.id === id(1))!.kou[0]!.amountMissing).toBe(true)
       expect(flows.find((flow) => flow.kan.id === id(2))!.kou[0]!.amountMissing).toBeUndefined()
       expect(flows.find((flow) => flow.kan.id === id(2))!.kou[0]!.yen).toBe(0)
@@ -284,9 +283,10 @@ describe('内訳の API', () => {
       node({ node_id: id(31), parent_node_id: id(20), node_kind: '目', name: '学校費', amount_yen: 50, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '09.1' }),
       node({ node_id: id(32), parent_node_id: id(20), node_kind: '目', name: '保育費', amount_yen: 70, fiscal_year: 2025, kan_name: '子ども教育費', kou_name: '子ども費', cofog_code: '10' }),
     ] }) }
-    const res = await get('/data/jurisdictions/flow/132012/2025/moku?view=cofog', cofog)
-    expect(res.status).toBe(200)
-    const flows = await res.json() as { kan: { id: string; name: string; yen: number; amountMissing?: true }; kou: { name: string; yen: number; amountMissing?: true; moku: { name: string }[] }[] }[]
+    const flows = await loadCofogFlow(cofog, '132012', 2025, 'moku')
+    // 予算・決算のタブは款 → 項 → 目の流れから画面で組み直す。サーバーで組んだものと同じになる（試験の表の親の無い目は款の流れに入らないので、その他は比べない）
+    const shape = (fs: typeof flows) => fs.filter((f) => f.kan.id !== 'cofog-none').map((f) => [f.kan, f.kou.map((k) => [k.name, k.yen, k.moku.map((m) => m.name)])])
+    expect(shape(cofogFlowOfDrills(await loadFlow(cofog, '132012', 2025, 'moku')))).toEqual(shape(flows))
     // 款（子ども教育費）は使わず、COFOG の名前で分ける
     const social = flows.find((f) => f.kan.id === 'cofog-10')!
     expect(social.kan).toMatchObject({ name: '福祉・子育て', yen: 70, amountMissing: true })
@@ -298,10 +298,18 @@ describe('内訳の API', () => {
     expect(flows.at(-1)!.kan.id).toBe('cofog-none')
     expect(flows.at(-1)!.kan.amountMissing).toBeUndefined()
   })
-  test('引数の形が違えば 400、流量の binding が無ければ 503、収録の無い自治体は 404', async () => {
-    expect((await get('/data/jurisdictions/flow/nakano/2025/kou')).status).toBe(400)
-    expect((await get('/data/jurisdictions/flow/131148/2025/kou', { API })).status).toBe(503)
-    expect((await get('/data/jurisdictions/flow/131016/2025/kou')).status).toBe(404)
-    expect((await get('/data/jurisdictions/flow/131148/2025/kou')).status).toBe(200)
+})
+
+describe('自治体の検索（/api/jurisdictions）', () => {
+  test('語に当たる自治体だけを返し、引数の形が違えば 400、流量の binding が無ければ 503', async () => {
+    const hits = (await (await get('/api/jurisdictions?q=中野')).json()) as { name: string; path: string }[]
+    expect(hits.map((h) => [h.name, h.path])).toEqual([['中野区', '/tokyo/nakano']])
+    expect(await (await get('/api/jurisdictions?q=存在しない')).json()).toEqual([])
+    // うちのまちの名前はコードで引く。決算の収録の無い自治体は返さない
+    expect(((await (await get('/api/jurisdictions?code=131148')).json()) as { name: string }[]).map((h) => h.name)).toEqual(['中野区'])
+    expect(await (await get('/api/jurisdictions?code=131016')).json()).toEqual([])
+    expect((await get('/api/jurisdictions?code=nakano')).status).toBe(400)
+    expect((await get(`/api/jurisdictions?q=${'あ'.repeat(51)}`)).status).toBe(400)
+    expect((await get('/api/jurisdictions?q=中野', { API })).status).toBe(503)
   })
 })

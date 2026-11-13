@@ -1,6 +1,6 @@
 // ホーム（/）。住んでいるまちのダッシュボード（総額・何に使っている・始めた事業・やめた事業・事業評価）と、ほかのまちを見る検索。
 // 住んでいるまちを決めていないときは、はじめての流れ（onboarding.tsx: まちを選ぶ → 要点 → ツアー → チェックリスト）を出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
-// データは自治体の頁と同じ /data/jurisdictions/app/:code を読み、yearView で年度ごとに見る
+// データは自治体の頁と同じ1年度の分（server/app-data.ts）を /api/jurisdictions/:code で読み、yearView で年度ごとに見る
 import * as React from 'react'
 import { useRouter } from '@void/react'
 import { ArrowRightIcon, ArrowSquareOutIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
@@ -52,7 +52,7 @@ function useSnapshot(code: string | null) {
   React.useEffect(() => {
     if (!code || (year != null && byYear[String(year)])) return
     let alive = true
-    fetch(`/data/jurisdictions/app/${code}${year == null ? '' : `/${year}`}`)
+    fetch(`/api/jurisdictions/${code}${year == null ? '' : `?year=${year}`}`)
       .then((r) => (r.ok ? (r.json() as Promise<Snapshot>) : Promise.reject(r)))
       .then((x) => {
         if (!alive) return
@@ -81,7 +81,7 @@ function useSnapshot(code: string | null) {
 type Ctx = { town: Town; d: Snapshot; v: YearView; year: number; years: number[]; setYear: (y: number) => void; base: string; vision?: string }
 
 function buildCtx(town: Town, d: Snapshot, year: number, setYear: (y: number) => void, vision?: string): Ctx {
-  return { town, d, v: yearView(d), year, years: Object.keys(d.years).map(Number).sort((a, b) => a - b), setYear, base: `${town.path}/${year}`, vision }
+  return { town, d, v: yearView(d), year, years: Object.keys(d.kinds).map(Number).sort((a, b) => a - b), setYear, base: `${town.path}/${year}`, vision }
 }
 
 const flowHref = (c: Ctx) => `${c.base}/${c.v.word === '決算' ? 'settlement' : 'budget'}`
