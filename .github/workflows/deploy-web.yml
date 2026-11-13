@@ -60,6 +60,12 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+      # アクセス解析（Cloudflare Zaraz → GA4）の設定を apps/web/analytics/zaraz.json に揃える。自動差し込みを切ってから HTML を出す
+      - if: steps.order.outputs.wait != 'true'
+        working-directory: apps/web
+        run: bun run zaraz
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       - if: steps.order.outputs.wait != 'true'
         run: bun run deploy:web
         env:

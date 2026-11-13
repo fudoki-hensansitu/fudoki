@@ -1,0 +1,150 @@
+{
+  "settings": {
+    "autoInjectScript": false,
+    "hideIPAddress": true,
+    "hideQueryParams": true
+  },
+  "historyChange": true,
+  "triggers": {
+    "trgScroll": {
+      "name": "scroll",
+      "description": "zaraz.track(\"scroll\")",
+      "excludeRules": [],
+      "clientRules": [],
+      "loadRules": [
+        {
+          "id": "trgScrollr",
+          "match": "{{ client.__zarazTrack }}",
+          "op": "EQUALS",
+          "value": "scroll"
+        }
+      ]
+    },
+    "trgClick": {
+      "name": "click",
+      "description": "zaraz.track(\"click\")",
+      "excludeRules": [],
+      "clientRules": [],
+      "loadRules": [
+        {
+          "id": "trgClickr",
+          "match": "{{ client.__zarazTrack }}",
+          "op": "EQUALS",
+          "value": "click"
+        }
+      ]
+    },
+    "trgDownload": {
+      "name": "file_download",
+      "description": "zaraz.track(\"file_download\")",
+      "excludeRules": [],
+      "clientRules": [],
+      "loadRules": [
+        {
+          "id": "trgDownloadr",
+          "match": "{{ client.__zarazTrack }}",
+          "op": "EQUALS",
+          "value": "file_download"
+        }
+      ]
+    },
+    "trgSearch": {
+      "name": "search",
+      "description": "zaraz.track(\"search\")",
+      "excludeRules": [],
+      "clientRules": [],
+      "loadRules": [
+        {
+          "id": "trgSearchr",
+          "match": "{{ client.__zarazTrack }}",
+          "op": "EQUALS",
+          "value": "search"
+        }
+      ]
+    }
+  },
+  "tools": {
+    "ga4fudoki": {
+      "type": "component",
+      "component": "google-analytics-4",
+      "name": "Google Analytics 4",
+      "enabled": true,
+      "blockingTriggers": [],
+      "defaultFields": {},
+      "permissions": [
+        "access_client_kv",
+        "server_network_requests"
+      ],
+      "settings": {
+        "tid": "G-B06LJF9XEG",
+        "hideOriginalIP": true
+      },
+      "actions": {
+        "pageview": {
+          "actionType": "pageview",
+          "blockingTriggers": [],
+          "firingTriggers": [
+            "Pageview"
+          ],
+          "data": {
+            "__zaraz_setting_name": "Page view"
+          }
+        },
+        "scroll": {
+          "actionType": "event",
+          "blockingTriggers": [],
+          "firingTriggers": [
+            "trgScroll"
+          ],
+          "data": {
+            "__zaraz_setting_name": "scroll",
+            "en": "scroll",
+            "percent_scrolled": "{{ client.percent_scrolled }}"
+          }
+        },
+        "click": {
+          "actionType": "event",
+          "blockingTriggers": [],
+          "firingTriggers": [
+            "trgClick"
+          ],
+          "data": {
+            "__zaraz_setting_name": "click",
+            "en": "click",
+            "link_url": "{{ client.link_url }}",
+            "link_domain": "{{ client.link_domain }}",
+            "link_text": "{{ client.link_text }}",
+            "outbound": "{{ client.outbound }}"
+          }
+        },
+        "download": {
+          "actionType": "event",
+          "blockingTriggers": [],
+          "firingTriggers": [
+            "trgDownload"
+          ],
+          "data": {
+            "__zaraz_setting_name": "file_download",
+            "en": "file_download",
+            "file_extension": "{{ client.file_extension }}",
+            "file_name": "{{ client.file_name }}",
+            "link_url": "{{ client.link_url }}",
+            "link_text": "{{ client.link_text }}"
+          }
+        },
+        "search": {
+          "actionType": "event",
+          "blockingTriggers": [],
+          "firingTriggers": [
+            "trgSearch"
+          ],
+          "data": {
+            "__zaraz_setting_name": "search",
+            "en": "search",
+            "search_term": "{{ client.search_term }}"
+          }
+        }
+      }
+    }
+  }
+}
