@@ -4,6 +4,7 @@ import * as React from 'react'
 import { Link } from '../nav/link'
 import { Button } from '@/components/ui/button'
 import { loadSession, type StoredSession } from './store'
+import { myTownContext } from '../home/towns'
 
 // 会話の本体（AI SDK など）は重いので、この頁で会話を描く時だけ読む。同じ route（/:prefecture/:name）の自治体の頁へ移る時に一緒に読まないようにする
 const Conversation = React.lazy(() => import('./conversation').then((m) => ({ default: m.Conversation })))
@@ -36,7 +37,7 @@ export function SessionPage({ id }: { id: string }) {
       <noscript>会話には JavaScript を有効にしてください。</noscript>
       {stored === undefined ? null : stored ? (
         <React.Suspense fallback={<p className="p-6 text-sm text-muted-foreground">会話を開いています…</p>}>
-          <Conversation key={id} id={id} stored={stored} header={header} movableViews />
+          <Conversation key={id} id={id} stored={stored} header={header} movableViews context={myTownContext} />
         </React.Suspense>
       ) : (
         <Expired />

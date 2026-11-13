@@ -3,10 +3,10 @@
 import type { AppType } from '@fudoki/api/rpc'
 import { hc, parseResponse } from 'hono/client'
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
-import { listQuery, type Kan, type Measure, type Sheet, type Snapshot } from '../jurisdiction/app/data'
+import { listQuery, type Kan, type YearData, type Measure, type Sheet, type Snapshot } from '../jurisdiction/app/data'
 import { listKey, listPage } from '../jurisdiction/app/api'
 import { apiFetch, type Env } from './env'
-import { shownSettlementYears, type CatalogEntry } from './jurisdiction'
+import { loadAccountTotals, shownSettlementYears, type CatalogEntry } from './jurisdiction'
 import { appPageYears } from '../jurisdiction/types'
 
 const API_ORIGIN = 'https://api.fudoki.dev'
@@ -72,7 +72,7 @@ async function subjectOfDetails(env: Env, code: string, year: number, ids: strin
   return new Map(pages.flatMap((r) => r.details.map((d) => [d.detail_id, d.subject_id] as const)))
 }
 
-/** 頁の1年度のデータ。全年度の款項目と、その年度の施策・評価シート・事業の一覧の1頁目（すべて・新しく始める・やめた、分野の頁なら分野）。
+/** 頁の1年度のデータ。開いた年度と前の年度の款項目、その年度の施策・評価シート・会計ごとの総額・事業の一覧の1頁目（すべて・新しく始める・やめた、分野の頁なら分野）。
  * 1つの年度で API を十回ほど並べて呼ぶだけで、全件は読まない */
 export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: number, opt: { field?: string; evaluated?: boolean } = {}): Promise<Snapshot> {
   const { field } = opt
@@ -83,8 +83,12 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const evalYear = opt.evaluated ? Math.max(0, ...entry.evaluationYears.filter((y) => years.some((x) => x.year === y))) : 0
   // 施策は当初予算書の内訳に紐づくので、決算の年度でも同じ年度の当初予算の科目から分野を引く
   const measureYear = me.kind === 'settlement' && entry.initialYears.includes(year)
-  const [subjects, measures, sheets, evalSheets, initialSubjects] = await Promise.all([
-    Promise.all(years.map(async (y) => {
+  // 款項目は開いた年度と前の年度だけ読む（前の年度は「やめた事業」を分野で絞るのと、その行の分野の名前に使う）。ほかの年度は資料の種類だけを coverage から持つ
+  const prev = years.find((y) => y.year === year - 1)
+  // 会計の札（予算・決算のタブ）。一般会計のほかにも会計を収録した年度だけ、会計ごとの総額を読む
+  const accounts = entry.accounts?.[me.kind]?.[String(year)] ?? []
+  const [subjects, measures, sheets, evalSheets, initialSubjects, accountTotals] = await Promise.all([
+    Promise.all([me, ...(prev ? [prev] : [])].map(async (y) => {
       const r = await subjectsOf(env, entry.code, y.year, y.kind)
       const origin = r.last?.origins?.find((o) => o.origin_id === r.rows[0]?.origin_id)
       return { ...y, rows: r.rows, origin: origin?.url ?? null, originTitle: origin?.title ?? null }
@@ -93,6 +97,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     sheetsOf(env, entry.code, year, year).then((r) => r.rows),
     evalYear && evalYear !== year ? sheetsOf(env, entry.code, evalYear, evalYear).then((r) => r.rows) : Promise.resolve(null),
     measureYear ? subjectsOf(env, entry.code, year, 'initial').then((r) => r.rows) : Promise.resolve([]),
+    accounts.length > 1 ? loadAccountTotals(env, entry.code, year, me.kind, accounts) : Promise.resolve(undefined),
   ])
   const cofogByMoku = new Map(subjects.filter((y) => y.year === year).flatMap((y) => y.rows.filter((s) => s.level === '目').map((s) => [`${s.kan_name}/${s.kou_name}/${s.moku_name}`, s.cofog_code] as const)))
   const cofogBySubject = new Map([...subjects.flatMap((y) => y.rows), ...initialSubjects].map((s) => [s.subject_id, s.cofog_code] as const))
@@ -104,18 +109,23 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     const kan: Kan[] = []
     const fields: Record<string, number> = {}
     const fieldSubjects: Record<string, string[]> = {}
+    const looseMoku: YearData['looseMoku'] = []
+    let lastKou: string | undefined
     for (const r of rows) {
       const yen = r.amount_yen ?? 0
       if (r.is_leaf) (fieldSubjects[fieldOf(r.cofog_code)] ??= []).push(r.subject_id)
       if (r.level === '款') kan.push({ name: r.name, yen, kou: [] })
-      else if (r.level === '項') kan.at(-1)?.kou.push({ name: r.name, yen, moku: [] })
-      else if (r.level === '目') {
+      else if (r.level === '項') {
+        kan.at(-1)?.kou.push({ name: r.name, yen, moku: [] })
+        lastKou = r.subject_id
+      } else if (r.level === '目') {
         const field = fieldOf(r.cofog_code)
-        kan.at(-1)?.kou.at(-1)?.moku.push({ id: r.subject_id, name: r.name, yen, field })
+        const kou = r.parent_subject_id === lastKou ? kan.at(-1)?.kou.at(-1) : undefined
+        ;(kou?.moku ?? looseMoku).push({ id: r.subject_id, name: r.name, yen, field, cofog: r.cofog_code ?? null })
         fields[field] = (fields[field] ?? 0) + yen
       }
     }
-    yearsOut[y.year] = { kind: y.kind, kan, total: kan.reduce((s, k) => s + k.yen, 0), fields, fieldSubjects, origin: y.origin, originTitle: y.originTitle }
+    yearsOut[y.year] = { kind: y.kind, kan, total: kan.reduce((s, k) => s + k.yen, 0), fields, fieldSubjects, looseMoku, origin: y.origin, originTitle: y.originTitle }
   }
 
   const base = { code: entry.code, year, years: yearsOut }
@@ -165,7 +175,9 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     name: entry.name,
     pop: entry.population?.people ?? 0,
     year,
+    kinds: Object.fromEntries(years.map((y) => [String(y.year), y.kind])),
     years: yearsOut,
+    ...(accountTotals ? { accounts: accountTotals } : {}),
     measures: measuresOut,
     sheets: sheetsOut,
     ...(evalYear ? { evaluated: { fy: evalYear, sheets: evalSheets ? evalSheets.map(toSheet) : sheetsOut } } : {}),

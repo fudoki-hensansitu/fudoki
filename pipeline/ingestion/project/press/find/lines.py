@@ -21,5 +21,5 @@ def find(page: Page, options: dict, state=None) -> list[Candidate]:
         if not found or previous and not (index and previous.search(page.rows[index - 1])):
             continue
         groups = found.groupdict()
-        out.append(Candidate(page.number, groups['name'], groups.get('amount'), groups.get('tag'), index=index))
+        out.append(Candidate(page.number, groups['name'] or '', groups.get('amount'), groups.get('tag'), index=index))
     return out

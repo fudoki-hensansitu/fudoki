@@ -8,7 +8,7 @@ from __future__ import annotations
 
 import re
 
-from ingestion.project.layouts.press import PressItem, norm
+from ingestion.project.layouts.press import PressItem, norm, page_lines
 
 START = re.compile(r'総合計画(?:事業の予算| 実施計画)$')
 END = re.compile(r'^第一節 ')
@@ -18,43 +18,40 @@ TOTAL = re.compile(r'^(?:小 ?)?計 ([\d,]+)千円$')
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
     inside = False
     group: str | None = None
     lines: list[str] = []
     priced = False
-    with pdfplumber.open(path) as pdf:
-        for number, page in enumerate(pdf.pages, start=1):
-            rows = [norm(r) for r in (page.extract_text() or '').split('\n')]
-            page.flush_cache()
-            position = 0
-            for row in rows:
-                if START.search(row) and not re.search(r'\d+$', row):
-                    inside = True
-                    continue
-                if not inside:
-                    continue
-                if END.match(row):
-                    return items
-                found = GROUP.match(row)
-                if found:
-                    group, lines, priced = found.group(1), [], False
-                    continue
-                found = LINE.match(row)
-                if found and group:
-                    lines.append(found.group(1))
-                    if found.group(2):
-                        priced = True
-                        position += 1
-                        items.append(PressItem(number, found.group(1), [found.group(1)], False,
-                                               int(found.group(2).replace(',', '')), [], position))
-                    continue
-                found = TOTAL.match(row)
-                if found and group:
-                    if not priced and lines:
-                        position += 1
-                        items.append(PressItem(number, group, [group, *lines], False,
-                                               int(found.group(1).replace(',', '')), [], position))
-                    group, lines, priced = None, [], False
+    for number, printed in page_lines(path):
+        rows = [norm(r) for r in printed]
+        position = 0
+        for row in rows:
+            if START.search(row) and not re.search(r'\d+$', row):
+                inside = True
+                continue
+            if not inside:
+                continue
+            if END.match(row):
+                return items
+            found = GROUP.match(row)
+            if found:
+                group, lines, priced = found.group(1), [], False
+                continue
+            found = LINE.match(row)
+            if found and group:
+                lines.append(found.group(1))
+                if found.group(2):
+                    priced = True
+                    position += 1
+                    items.append(PressItem(number, found.group(1), [found.group(1)], False,
+                                           int(found.group(2).replace(',', '')), [], position))
+                continue
+            found = TOTAL.match(row)
+            if found and group:
+                if not priced and lines:
+                    position += 1
+                    items.append(PressItem(number, group, [group, *lines], False,
+                                           int(found.group(1).replace(',', '')), [], position))
+                group, lines, priced = None, [], False
     return items
