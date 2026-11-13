@@ -59,7 +59,7 @@ import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock, type AskControl } from '../ask-dock'
 import { usePageTour } from './page-tour'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_SLUGS, tabOfSlug, type PageTab } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type FlowView, type Moku, type PageData, type YearTotal, TAB_SLUGS, tabOfSlug, hasTab, type PageTab } from '../types'
 import { directionOf, DIRECTION_ICONS, GRADES, yearView, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
 import { listKey, listPage, projectFull, projectOfDetail, type ListPage, type ListQuery, type ProjectFull } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
@@ -1066,7 +1066,10 @@ export function AppPage({ res, data, snapshot, sitekey, initialYear, initialFiel
   }
   /** 年度・タブの頁の URL（showUrl と同じ形）。リンクの先にして検索エンジンにも辿らせる */
   const pageHref = (y: number, t: TabKey) => `${data.path}/${y}` + (t === 'overview' ? '' : `/${TAB_SLUGS[t]}`)
-  const yearHref = (y: number) => pageHref(y, tab)
+  // 年度のリンクは今のタブを引き継ぐが、その年度に無いタブ（決算の無い年度の決算、当初予算が分からない年度の予算）はまとめへ向ける。
+  // 予算は決算より後の当初予算（budgets）しか頁のデータに無く、ほかの年度の有無は年度のデータを読むまで分からない
+  const tabIn = (y: number): TabKey => (tab === 'settled' && !hasTab(data, y, 'settled')) || (tab === 'money' && y !== year && !data.budgets.some((b) => b.year === y)) ? 'overview' : tab
+  const yearHref = (y: number) => pageHref(y, tabIn(y))
   const setYear = (y: number) => {
     React.startTransition(() => setYearState(y))
     showUrl(y, at.current.tab)
