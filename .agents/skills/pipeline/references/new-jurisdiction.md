@@ -10,11 +10,12 @@
 
 ## 進め方
 
+- 選定より前に自治体マスタ（`packages/jurisdictions/jurisdictions.json`）へ登録する。
 - 最初に公開の頁を調べ、資料ごとの年度・様式・会計を1表にして、取る範囲を依頼者へ1回だけ伝える。
 - 1年度・1会計で読み方を固めてから、同じ宣言を他の年度・会計へ写す。
 - 待ち時間の長い OCR は早く始め、その間に text PDF・評価・プレスを進める。
 - 款の和を、出典に印字された総額（会計別の総括など）と全会計で突き合わせる。
-- 自治体に固有の読み方は宣言（opt-in の rule）に書き、共通コードを変えない。
+- 自治体に固有の読み方は宣言（`quirks` など）に書き、共通コードを変えない。
 - 決めたこと・取れなかったものは自治体の README に残す。refresh は回さない（全部 merge した後に1回）。
 
 ## 関連文書
@@ -22,3 +23,4 @@
 - 選定 → [source-selection](source-selection.md)
 - 取り込みと検査 → [ingestion](ingestion.md)
 - dbt の入力と構築 → [dbt](dbt.md)
+- プレス発表 → [press-reading](press-reading.md)、事業評価 → [自治体の頁のデータの設計](../../../../docs/prd/jurisdiction-page-data/dd.md)
