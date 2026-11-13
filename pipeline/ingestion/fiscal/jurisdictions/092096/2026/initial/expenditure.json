@@ -1,0 +1,1548 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "092096",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6a64ef6547a60766e92fff8ce86111956f0e3d2f276610f439f9116cf90c8e9a"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-ocr-1",
+          "origin_sha256": "6a64ef6547a60766e92fff8ce86111956f0e3d2f276610f439f9116cf90c8e9a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "74f0677e407ebd24806daf9ac662c4e62dafe7599ffa5ae53e6514746e2ee9c8",
+          "bytes": 2595135
+        },
+        {
+          "id": "general-initial-ocr-2",
+          "origin_sha256": "6a64ef6547a60766e92fff8ce86111956f0e3d2f276610f439f9116cf90c8e9a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "0fd97f699d84789c91abfc5e22673d83145b275ccb6d5008af152dbe1ec76657",
+          "bytes": 3262015
+        },
+        {
+          "id": "general-initial-ocr-3",
+          "origin_sha256": "6a64ef6547a60766e92fff8ce86111956f0e3d2f276610f439f9116cf90c8e9a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "8fe0c478d1b67e9ee15c4ad429c68a9318b24c4224fe2bcda2ad3e3cee418a13",
+          "bytes": 2710845
+        },
+        {
+          "id": "general-initial-ocr-4",
+          "origin_sha256": "6a64ef6547a60766e92fff8ce86111956f0e3d2f276610f439f9116cf90c8e9a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "725d48a1ad6c92133018d983c8b5aa7ab3d8d419735665bf9586aea16c1e1648",
+          "bytes": 2453716
+        },
+        {
+          "id": "general-initial-ocr-5",
+          "origin_sha256": "6a64ef6547a60766e92fff8ce86111956f0e3d2f276610f439f9116cf90c8e9a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              78,
+              79,
+              80,
+              81,
+              82,
+              83
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c2e472849ea1623eb814090740ab4451d057aa41f71d0e7687c54afbcef6419c",
+          "bytes": 815527
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "quirks": {
+                  "line_starts": [
+                    {
+                      "page": 73,
+                      "y": 213.6,
+                      "shift": -7.4,
+                      "reason": "原画は「一般教育振興費」で、ほかの説明の名前と同じ位置から始まる。OCR が頭の「一」の分だけ名前の始まりを右に置き、上の行の内訳と読まれる。"
+                    },
+                    {
+                      "page": 74,
+                      "y": 237.3,
+                      "shift": -7.9,
+                      "reason": "原画は「一般教育振興費」で、ほかの説明の名前と同じ位置から始まる。OCR が頭の「一」の分だけ名前の始まりを右に置き、上の行の内訳と読まれる。"
+                    },
+                    {
+                      "page": 81,
+                      "y": 237.3,
+                      "shift": -7.4,
+                      "reason": "原画は「一時借入金利子」で、ほかの説明の名前と同じ位置から始まる。OCR が頭の「一」の分だけ名前の始まりを右に置き、上の行の内訳と読まれる。"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p58-kan-wrap",
+            "page": 58,
+            "observation_id": "p58:full-page:a0:result0:r12",
+            "observed_name": "農林水産業",
+            "corrected_name": "農林水産業費",
+            "reason": "原典の画像で、頁58の款の名前は「農林水産業費」を欄の幅で2行に折り返して印字している。OCR は2行目からを別の読みにしたので、1行目の読みに続きを足す。"
+          },
+          {
+            "id": "p74-1-ichi",
+            "page": 74,
+            "observation_id": "p74:full-page:a0:result1:r17",
+            "observed_name": "般教育振興費",
+            "corrected_name": "一般教育振興費",
+            "reason": "原典の画像で、頁74の説明は「一般教育振興費」と印字されている。Paddle は頭の「一」を読まなかった。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p58-kan-wrap-1",
+            "page": 58,
+            "observation_id": "p58:full-page:a0:result0:r20",
+            "observed": "費",
+            "reason": "款の名前「農林水産業費」の折り返しの2行目。款の名前は番号と別の欄に印字し、続きの行が目の名前の位置に来るので目の行と読まれる。この読みは使わず、名前の訂正で款の名前に戻す。"
+          }
+        ],
+        "amount_corrections": [
+          {
+            "id": "p39-somukanri-hikaku",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result0:r20",
+            "observed_amount": "7,013,173|△1, 717,629",
+            "corrected_amount": "7,013,173△1,717,629",
+            "reason": "原典の画像で、頁39の総務管理費の比較は△1,717,629と印字されている。Paddle は△を左の罫線と1語に読み、金額から離した。"
+          },
+          {
+            "id": "p73-gakkokanri-hoshu",
+            "page": 73,
+            "observation_id": "p73:full-page:a0:result1:r43",
+            "observed_amount": "22,9231",
+            "corrected_amount": "22,923",
+            "reason": "原典の画像で、頁73の学校管理費（中学校費）の報酬は22,923と印字されている。Paddle は右の罫線を1と読んで末尾に足した。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c39591d6aa97c4bb8009605cebeb675cbd6db99ded5e496fb1d80b2bda72816b",
+          "bytes": 1633964
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "quirks": {
+                  "line_starts": [
+                    {
+                      "page": 16,
+                      "y": 225.3,
+                      "shift": -6.2,
+                      "reason": "原画は「一般管理費」で、ほかの説明の名前と同じ位置から始まる。OCR が頭の「一」の分だけ名前の始まりを右に置き、上の行の内訳と読まれる。"
+                    },
+                    {
+                      "page": 17,
+                      "y": 238.0,
+                      "shift": -6.5,
+                      "reason": "原画は「一般被保険者療養費」で、ほかの説明の名前と同じ位置から始まる。OCR が頭の「一」の分だけ名前の始まりを右に置き、上の行の内訳と読まれる。"
+                    },
+                    {
+                      "page": 17,
+                      "y": 320.1,
+                      "shift": -3.8,
+                      "reason": "原画は「一般被保険者高額療養費」で、ほかの説明の名前と同じ位置から始まる。OCR が頭の「一」の分だけ名前の始まりを右に置き、上の行の内訳と読まれる。"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p18-kan-wrap",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r13",
+            "observed_name": "事業費納付",
+            "corrected_name": "事業費納付金",
+            "reason": "原典の画像で、頁18の款の名前は「事業費納付金」を欄の幅で2行に折り返して印字している。OCR は2行目からを別の読みにしたので、1行目の読みに続きを足す。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p18-kan-wrap-1",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r18",
+            "observed": "金",
+            "reason": "款の名前「事業費納付金」の折り返しの2行目。款の名前は番号と別の欄に印字し、続きの行が目の名前の位置に来るので目の行と読まれる。この読みは使わず、名前の訂正で款の名前に戻す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              38,
+              39,
+              40,
+              41
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c1b4dcf178d7a5b6fc34089c4011c80f6966ab7a93a9d2b0e4862b17cf22fcaf",
+          "bytes": 530224
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p39-kan-wrap",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result0:r10",
+            "observed_name": "後期高齢者",
+            "corrected_name": "後期高齢者医療広域連合納付金",
+            "reason": "原典の画像で、頁39の款の名前は「後期高齢者医療広域連合納付金」を欄の幅で3行に折り返して印字している。OCR は2行目からを別の読みにしたので、1行目の読みに続きを足す。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p39-kan-wrap-1",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result0:r16",
+            "observed": "医療広域連",
+            "reason": "款の名前「後期高齢者医療広域連合納付金」の折り返しの2行目。款の名前は番号と別の欄に印字し、続きの行が目の名前の位置に来るので目の行と読まれる。この読みは使わず、名前の訂正で款の名前に戻す。"
+          },
+          {
+            "id": "p39-kan-wrap-2",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result0:r17",
+            "observed": "合納付金",
+            "reason": "款の名前「後期高齢者医療広域連合納付金」の折り返しの3行目。款の名前は番号と別の欄に印字し、続きの行が目の名前の位置に来るので目の行と読まれる。この読みは使わず、名前の訂正で款の名前に戻す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "def79a26171ece049ec186282609462335fb07b6a192c4a687052f134d1318d3",
+          "bytes": 2612335
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              69,
+              70
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "57d28c5b17204f8334091cab5a876d29d113760d4437fa900e9273015e359767",
+          "bytes": 191654
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計（保険事業勘定）",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "quirks": {
+                  "line_starts": [
+                    {
+                      "page": 59,
+                      "y": 225.3,
+                      "shift": -6.2,
+                      "reason": "原画は「一般管理費」で、ほかの説明の名前と同じ位置から始まる。OCR が頭の「一」の分だけ名前の始まりを右に置き、上の行の内訳と読まれる。"
+                    },
+                    {
+                      "page": 64,
+                      "y": 530.3,
+                      "shift": -9.1,
+                      "reason": "原画は「一般介護予防事業費」で、ほかの説明の名前と同じ位置から始まる。OCR が頭の「一」の分だけ名前の始まりを右に置き、上の行の内訳と読まれる。"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p64-kan-wrap",
+            "page": 64,
+            "observation_id": "p64:full-page:a0:result0:r17",
+            "observed_name": "地域支援事",
+            "corrected_name": "地域支援事業費",
+            "reason": "原典の画像で、頁64の款の名前は「地域支援事業費」を欄の幅で2行に折り返して印字している。OCR は2行目からを別の読みにしたので、1行目の読みに続きを足す。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p64-kan-wrap-1",
+            "page": 64,
+            "observation_id": "p64:full-page:a0:result0:r24",
+            "observed": "業費",
+            "reason": "款の名前「地域支援事業費」の折り返しの2行目。款の名前は番号と別の欄に印字し、続きの行が目の名前の位置に来るので目の行と読まれる。この読みは使わず、名前の訂正で款の名前に戻す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-service-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-service-initial-ocr-1",
+          "origin_sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              82,
+              83,
+              84
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "cbc14e23bc382b1a5d6230b3001dd7a0e7f50750daa10bbc125b6436fe856238",
+          "bytes": 279544
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計（介護サービス事業勘定）",
+        "table_id": "care-service-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-service-initial"
+        }
+      ]
+    },
+    {
+      "id": "holiday-clinic-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "holiday-clinic-initial-ocr-1",
+          "origin_sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              98,
+              99
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "eb0bdb0fc56aefa3e396c6595193711b5d416c9eac6da17971192ac109f99b22",
+          "bytes": 250724
+        }
+      ],
+      "options": {
+        "account": "休日夜間急患診療所特別会計",
+        "table_id": "holiday-clinic-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p98-kan-wrap",
+            "page": 98,
+            "observation_id": "p98:full-page:a0:result0:r12",
+            "observed_name": "急患診療所",
+            "corrected_name": "急患診療所運営費",
+            "reason": "原典の画像で、頁98の款の名前は「急患診療所運営費」を欄の幅で2行に折り返して印字している。OCR は2行目からを別の読みにしたので、1行目の読みに続きを足す。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p98-kan-wrap-1",
+            "page": 98,
+            "observation_id": "p98:full-page:a0:result0:r19",
+            "observed": "運営費",
+            "reason": "款の名前「急患診療所運営費」の折り返しの2行目。款の名前は番号と別の欄に印字し、続きの行が目の名前の位置に来るので目の行と読まれる。この読みは使わず、名前の訂正で款の名前に戻す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "holiday-clinic-initial"
+        }
+      ]
+    },
+    {
+      "id": "industrial-park-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "industrial-park-initial-ocr-1",
+          "origin_sha256": "b21d269930b2d58295c2b81bcaa0f060c26bf251fba28673d1328a3eef1379d7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              113,
+              114,
+              115
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7b827bfc2b16f7d103a79d83fdad181c08682bf21abba00d0d90bc0b587dfbb3",
+          "bytes": 363938
+        }
+      ],
+      "options": {
+        "account": "産業団地整備事業特別会計",
+        "table_id": "industrial-park-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内／訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源／内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "quirks": {
+                  "line_starts": [
+                    {
+                      "page": 114,
+                      "y": 237.3,
+                      "shift": -7.4,
+                      "reason": "原画は「一時借入金利子」で、ほかの説明の名前と同じ位置から始まる。OCR が頭の「一」の分だけ名前の始まりを右に置き、上の行の内訳と読まれる。"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p113-kan-wrap",
+            "page": 113,
+            "observation_id": "p113:full-page:a0:result0:r12",
+            "observed_name": "產業団地整",
+            "corrected_name": "產業団地整備事業費",
+            "reason": "原典の画像で、頁113の款の名前は「產業団地整備事業費」を欄の幅で2行に折り返して印字している。OCR は2行目からを別の読みにしたので、1行目の読みに続きを足す。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p113-kan-wrap-1",
+            "page": 113,
+            "observation_id": "p113:full-page:a0:result0:r19",
+            "observed": "備事業費",
+            "reason": "款の名前「產業団地整備事業費」の折り返しの2行目。款の名前は番号と別の欄に印字し、続きの行が目の名前の位置に来るので目の行と読まれる。この読みは使わず、名前の訂正で款の名前に戻す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "industrial-park-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "a0aa3f36918e300a3d5a07f915d9dc794630df7c9f9aae00bf944d31ae7d73a7",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 45頁 から決めた。款の和 39,430,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 58頁 農林水産業→農林水産業費・74頁 般教育振興費→一般教育振興費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 12 件（p48:full-page:a0:result1:r13・p48:full-page:a0:result1:r13:w4・p49:full-page:a0:result1:r44・p49:full-page:a0:result1:r44:w4・p50:full-page:a0:result1:r53・p50:full-page:a0:result1:r53:w2・p51:full-page:a0:result0:r18・p51:full-page:a0:result0:r18:w6・p51:full-page:a0:result1:r64・p51:full-page:a0:result1:r64:w2・p63:full-page:a0:result1:r19・p63:full-page:a0:result1:r19:w2）・徵→徴 2 件（p51:full-page:a0:result1:r78・p51:full-page:a0:result1:r78:w5）・查→査 20 件（p39:full-page:a0:result1:r32・p39:full-page:a0:result1:r32:w1・p44:full-page:a0:result1:r22・p44:full-page:a0:result1:r22:w7・p46:full-page:a0:result0:r53・p46:full-page:a0:result0:r53:w0・p46:full-page:a0:result1:r53・p46:full-page:a0:result1:r53:w8・p47:full-page:a0:result1:r11・p47:full-page:a0:result1:r11:w1・p48:full-page:a0:result1:r70・p48:full-page:a0:result1:r70:w9・p48:full-page:a0:result1:r73・p48:full-page:a0:result1:r73:w9・p53:full-page:a0:result1:r45・p53:full-page:a0:result1:r45:w6・p53:full-page:a0:result1:r49・p53:full-page:a0:result1:r49:w3・p63:full-page:a0:result1:r40・p63:full-page:a0:result1:r40:w4）・產→産 46 件（p39:full-page:a0:result1:r73・p39:full-page:a0:result1:r73:w5・p40:full-page:a0:result1:r36・p40:full-page:a0:result1:r36:w5・p41:full-page:a0:result1:r14・p41:full-page:a0:result1:r14:w1・p44:full-page:a0:result1:r22・p44:full-page:a0:result1:r22:w3・p50:full-page:a0:result1:r59・p50:full-page:a0:result1:r59:w1・p50:full-page:a0:result1:r87・p50:full-page:a0:result1:r87:w5・p52:full-page:a0:result1:r42・p52:full-page:a0:result1:r42:w1・p54:full-page:a0:result1:r20・p54:full-page:a0:result1:r20:w3・p59:full-page:a0:result1:r13・p59:full-page:a0:result1:r13:w3・p59:full-page:a0:result1:r50・p59:full-page:a0:result1:r50:w2・p59:full-page:a0:result1:r52・p59:full-page:a0:result1:r52:w1・p59:full-page:a0:result1:r82・p59:full-page:a0:result1:r82:w1・p60:full-page:a0:result1:r0・p60:full-page:a0:result1:r0:w5・p61:full-page:a0:result1:r42・p61:full-page:a0:result1:r42:w0・p61:full-page:a0:result1:r53・p61:full-page:a0:result1:r53:w5・p64:full-page:a0:result1:r53・p64:full-page:a0:result1:r53:w5・p65:full-page:a0:result1:r14・p65:full-page:a0:result1:r14:w5・p66:full-page:a0:result1:r30・p66:full-page:a0:result1:r30:w5・p71:full-page:a0:result1:r60・p71:full-page:a0:result1:r60:w5・p72:full-page:a0:result1:r34・p72:full-page:a0:result1:r34:w5・p78:full-page:a0:result1:r68・p78:full-page:a0:result1:r68:w5・p82:full-page:a0:result0:r19・p82:full-page:a0:result0:r19:w3・p82:full-page:a0:result1:r6・p82:full-page:a0:result1:r6:w5）・說→説 20 件（p41:full-page:a0:result1:r2・p41:full-page:a0:result1:r2:w0・p52:full-page:a0:result1:r2・p52:full-page:a0:result1:r2:w0・p56:full-page:a0:result1:r2・p56:full-page:a0:result1:r2:w0・p57:full-page:a0:result1:r2・p57:full-page:a0:result1:r2:w0・p59:full-page:a0:result1:r2・p59:full-page:a0:result1:r2:w0・p60:full-page:a0:result1:r2・p60:full-page:a0:result1:r2:w0・p62:full-page:a0:result1:r2・p62:full-page:a0:result1:r2:w0・p67:full-page:a0:result1:r2・p67:full-page:a0:result1:r2:w0・p79:full-page:a0:result1:r2・p79:full-page:a0:result1:r2:w0・p81:full-page:a0:result1:r2・p81:full-page:a0:result1:r2:w0）・齡→齢 4 件（p48:full-page:a0:result1:r130・p48:full-page:a0:result1:r130:w1・p49:full-page:a0:result1:r14・p49:full-page:a0:result1:r14:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "1c6aae3ecd1dd7f869d407c154af31804d41fc3dd81bb1310d2794ded603d507",
+          "bytes": 46555
+        },
+        "row_count": 1438
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "1b833a63dd3b39488e77178e4364957f12c094f0133b38181e84e9efb067b000",
+          "bytes": 43203
+        },
+        "row_count": 1743
+      }
+    },
+    {
+      "table_id": "national-health-insurance-initial",
+      "conversion_id": "national-health-insurance-initial",
+      "input_fingerprint": "9a30f452c932685e3c18ce4e95407cb5543dbf16be6a353803db585324587363",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 7頁 から決めた。款の和 8,159,419（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 18頁 事業費納付→事業費納付金。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 徵→徴 2 件（p16:full-page:a0:result0:r46・p16:full-page:a0:result0:r46:w3）・查→査 10 件（p17:full-page:a0:result0:r42・p17:full-page:a0:result0:r42:w3・p17:full-page:a0:result1:r17・p17:full-page:a0:result1:r17:w4・p19:full-page:a0:result0:r27・p19:full-page:a0:result0:r27:w0・p19:full-page:a0:result0:r35・p19:full-page:a0:result0:r35:w0・p19:full-page:a0:result1:r6・p19:full-page:a0:result1:r6:w8）・產→産 2 件（p17:full-page:a0:result0:r80・p17:full-page:a0:result0:r80:w1）・說→説 4 件（p16:full-page:a0:result1:r3・p16:full-page:a0:result1:r3:w0・p20:full-page:a0:result1:r2・p20:full-page:a0:result1:r2:w0）・齡→齢 4 件（p18:full-page:a0:result0:r34・p18:full-page:a0:result0:r34:w3・p18:full-page:a0:result1:r11・p18:full-page:a0:result1:r11:w12）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/national-health-insurance-initial-nodes.parquet",
+          "sha256": "7c31647e07b3b08cf3b7746cd4a3d7d533f1c102b8c136f76053afdb29965093",
+          "bytes": 8986
+        },
+        "row_count": 132
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/national-health-insurance-initial-amounts.parquet",
+          "sha256": "75fb430859b0f50b3bc298037a9114d335189f4c8207d1ff379436c54a8e7dea",
+          "bytes": 8553
+        },
+        "row_count": 256
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "5d6b91c7ceea95b65c69404a2a3fc01e5eeb6c911b00eafa40af391dfc2fc6cc",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 3頁 から決めた。款の和 1,208,507（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 39頁 後期高齢者→後期高齢者医療広域連合納付金。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 徵→徴 4 件（p38:full-page:a0:result0:r31・p38:full-page:a0:result0:r31:w0・p38:full-page:a0:result0:r37・p38:full-page:a0:result0:r37:w2）・說→説 4 件（p38:full-page:a0:result1:r3・p38:full-page:a0:result1:r3:w0・p39:full-page:a0:result1:r2・p39:full-page:a0:result1:r2:w0）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "aefab44f170d2e0fbc643d88f09fe938abce29d7f4b582c17a3fdf0789493ae8",
+          "bytes": 4581
+        },
+        "row_count": 37
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "c650b83a96aa99af48bcb3d1d3707f38e29814c94195f4d2bb49a7cef5169e81",
+          "bytes": 3989
+        },
+        "row_count": 71
+      }
+    },
+    {
+      "table_id": "long-term-care-initial",
+      "conversion_id": "long-term-care-initial",
+      "input_fingerprint": "dc9d6ba1debabce0e08135ed74dd28c5134196831428023e6a33fcf86b483664",
+      "account": "介護保険特別会計（保険事業勘定）",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 11頁 から決めた。款の和 6,535,078（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 64頁 地域支援事→地域支援事業費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 6 件（p64:full-page:a0:result0:r26・p64:full-page:a0:result0:r26:w4・p64:full-page:a0:result0:r102・p64:full-page:a0:result0:r102:w2・p65:full-page:a0:result0:r28・p65:full-page:a0:result0:r28:w5）・徵→徴 4 件（p59:full-page:a0:result0:r40・p59:full-page:a0:result0:r40:w0・p59:full-page:a0:result0:r45・p59:full-page:a0:result0:r45:w4）・查→査 16 件（p59:full-page:a0:result0:r56・p59:full-page:a0:result0:r56:w0・p59:full-page:a0:result0:r62・p59:full-page:a0:result0:r62:w0・p59:full-page:a0:result0:r63・p59:full-page:a0:result0:r63:w4・p59:full-page:a0:result1:r50・p59:full-page:a0:result1:r50:w8・p62:full-page:a0:result0:r91・p62:full-page:a0:result0:r91:w3・p62:full-page:a0:result1:r38・p62:full-page:a0:result1:r38:w4・p64:full-page:a0:result0:r61・p64:full-page:a0:result0:r61:w3・p64:full-page:a0:result1:r28・p64:full-page:a0:result1:r28:w2）・說→説 8 件（p62:full-page:a0:result1:r2・p62:full-page:a0:result1:r2:w0・p63:full-page:a0:result1:r2・p63:full-page:a0:result1:r2:w0・p66:full-page:a0:result1:r2・p66:full-page:a0:result1:r2:w0・p67:full-page:a0:result1:r2・p67:full-page:a0:result1:r2:w0）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/long-term-care-initial-nodes.parquet",
+          "sha256": "f83a9b27e8060ef71d70bd19d1f27faa6ad657ad937e7a5c1417ea000e736a72",
+          "bytes": 13111
+        },
+        "row_count": 244
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/long-term-care-initial-amounts.parquet",
+          "sha256": "dfbe868cb49c9900a79f060c732de289c8e7896c1276a81609d1941fa101626e",
+          "bytes": 11769
+        },
+        "row_count": 392
+      }
+    },
+    {
+      "table_id": "care-service-initial",
+      "conversion_id": "care-service-initial",
+      "input_fingerprint": "81dc6033d1a2f29a5bc829017e63b1126eb733a3ca7953eb4ec5ad047a2dfb96",
+      "account": "介護保険特別会計（介護サービス事業勘定）",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 2頁 から決めた。款の和 23,793（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/care-service-initial-nodes.parquet",
+          "sha256": "794419af1cb11014b6a88d56a4a38d5e332ba35f003819883e961adfc528a81c",
+          "bytes": 3410
+        },
+        "row_count": 17
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/care-service-initial-amounts.parquet",
+          "sha256": "0f301928e0077fdc9476b568a28a024321b69cba0d8f47020c9052877b1729e7",
+          "bytes": 2845
+        },
+        "row_count": 37
+      }
+    },
+    {
+      "table_id": "holiday-clinic-initial",
+      "conversion_id": "holiday-clinic-initial",
+      "input_fingerprint": "6162adfb580303721457bfb1db2bc112a428783333a1e951b47ef900f56d161f",
+      "account": "休日夜間急患診療所特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 1頁 から決めた。款の和 69,374（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 98頁 急患診療所→急患診療所運営費。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/holiday-clinic-initial-nodes.parquet",
+          "sha256": "59170cad0a09a65c3d349206ce0ff90b0037beefee48f0b4570c2e035f0d21b3",
+          "bytes": 3582
+        },
+        "row_count": 20
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/holiday-clinic-initial-amounts.parquet",
+          "sha256": "d96a30eb3d9d48718cc80f3528a9bfc4f9accdab54c7ec0fc813d00d80309ff2",
+          "bytes": 2921
+        },
+        "row_count": 32
+      }
+    },
+    {
+      "table_id": "industrial-park-initial",
+      "conversion_id": "industrial-park-initial",
+      "input_fingerprint": "0055337ec81845748ca6526fecf1f9885a8f59704af3b0d77e8aa9f44e15f701",
+      "account": "産業団地整備事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 2頁 から決めた。款の和 1,093,853（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 113頁 產業団地整→產業団地整備事業費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 產→産 10 件（p113:full-page:a0:result0:r12・p113:full-page:a0:result0:r12:w0・p113:full-page:a0:result0:r21・p113:full-page:a0:result0:r21:w0・p113:full-page:a0:result0:r29・p113:full-page:a0:result0:r29:w2・p113:full-page:a0:result1:r0・p113:full-page:a0:result1:r0:w2・p113:full-page:a0:result1:r12・p113:full-page:a0:result1:r12:w3）・說→説 4 件（p113:full-page:a0:result1:r3・p113:full-page:a0:result1:r3:w0・p114:full-page:a0:result1:r2・p114:full-page:a0:result1:r2:w0）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/industrial-park-initial-nodes.parquet",
+          "sha256": "853c885783741567d0053bc70efa457e88efbc34f01a7b3cbbc296bb0197fd4b",
+          "bytes": 3853
+        },
+        "row_count": 23
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/092096/2026/initial/expenditure/industrial-park-initial-amounts.parquet",
+          "sha256": "bfed746ce627667d9795ab6fccd292c0a6dda596ccd47edb10b3ce458b14c04d",
+          "bytes": 3245
+        },
+        "row_count": 47
+      }
+    }
+  ]
+}

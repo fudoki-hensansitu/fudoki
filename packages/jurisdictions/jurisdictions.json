@@ -2,6 +2,11 @@
   "note": "全国地方公共団体コードをキーにした自治体の同一性。**層に依存しない。**予算・調達はこのキーで束ねる。tokyoCatalogDatasets は東京都カタログでの公開データセット数（母集団の目安）で、都外の自治体は持たない。都道府県（コードの3〜5桁目が000）の ocdId は city を持たない。slug は個別ページの URL に使うローマ字（ヘボン式・長音記号なし・小文字）。都道府県の行は prefectures.json と同じ slug、市区町村は「区」「市」などの種別を付けない（shinagawa）。同じ都道府県の中で読みが重なるときだけ、後から加わった側に種別を付けて一意にする（豊島区は toshima、利島村は toshima-mura）。",
   "generatedAt": "2026-08-10",
   "jurisdictions": {
+    "092096": {
+      "name": "真岡市",
+      "ocdId": "ocd-division/country:jp/prefecture:09/city:092096",
+      "slug": "moka"
+    },
     "130001": {
       "name": "東京都",
       "ocdId": "ocd-division/country:jp/prefecture:13",
