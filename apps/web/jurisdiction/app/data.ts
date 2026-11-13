@@ -24,7 +24,8 @@ export type YearData = {
 }
 /** 会計ごとの総額（款の和）。一般会計が先頭 */
 export type AccountTotal = { name: string; yen: number; amountMissing?: true }
-/** 1年度の頁のデータ。years は開いた年度と前の年度の款項目（前の年度との比べに使う）、施策・評価シート・事業の1頁目はその年度の分 */
+/** 1年度の頁のデータ。years は開いた年度の款項目、施策・評価シート・事業の1頁目はその年度の分。
+ * タブの頁ごとに、そのタブが描かないもの（予算・決算のタブの施策・評価シート・事業の一覧、事業のタブ以外の前の年度の科目）は空で来る */
 export type Snapshot = {
   code: string
   name: string
@@ -33,6 +34,8 @@ export type Snapshot = {
   /** 頁で選べる年度ごとの資料の種類（年度の切り替えに使う） */
   kinds: Record<string, YearData['kind']>
   years: Record<string, YearData>
+  /** 前の年度。分野ごとの科目はやめた事業を分野で絞るのに使い、事業のタブの頁だけが持つ */
+  prev?: { year: number; kind: YearData['kind']; fieldSubjects?: YearData['fieldSubjects'] }
   /** 一般会計のほかにも会計を収録した年度の、会計ごとの総額 */
   accounts?: AccountTotal[]
   measures: Measure[]
@@ -51,9 +54,9 @@ export type Field = DomainFrame & { yen: number }
 const byYenOtherLast = (a: Field, b: Field) => Number(a.id === 'other') - Number(b.id === 'other') || b.yen - a.yen
 
 /** 一覧の条件（年度・資料は頁の年度のもの） */
-export function listQuery(d: Pick<Snapshot, 'code' | 'year' | 'years'>, filter: ListQuery['filter'], opt: { subjects?: string[]; q?: string } = {}): ListQuery {
+export function listQuery(d: Pick<Snapshot, 'code' | 'year' | 'years' | 'prev'>, filter: ListQuery['filter'], opt: { subjects?: string[]; q?: string } = {}): ListQuery {
   const kind = d.years[String(d.year)]?.kind ?? 'settlement'
-  const prevKind = d.years[String(d.year - 1)]?.kind
+  const prevKind = d.prev?.kind
   return { code: d.code, year: d.year, kind, filter, ...(filter === 'ended' && prevKind ? { prevKind } : {}), ...opt }
 }
 
@@ -62,10 +65,10 @@ export type YearView = ReturnType<typeof yearView>
 export function yearView(d: Snapshot) {
   const year = d.year
   const ys = String(year)
-  const hasPrev = !!d.years[String(year - 1)]
+  const hasPrev = !!d.prev
   const y = d.years[ys]!
   const fields: Field[] = [...DOMAIN_FRAMES, OTHER_FRAME].map((f) => ({ ...f, yen: y.fields[f.id] ?? 0 })).filter((f) => f.yen > 0).sort(byYenOtherLast)
-  const fieldBySubject = new Map(Object.values(d.years).flatMap((x) => Object.entries(x.fieldSubjects).flatMap(([f, ids]) => ids.map((id) => [id, f] as const))))
+  const fieldBySubject = new Map([d.prev?.fieldSubjects ?? {}, y.fieldSubjects].flatMap((x) => Object.entries(x).flatMap(([f, ids]) => ids.map((id) => [id, f] as const))))
   const page = (filter: ListQuery['filter']) => d.lists[listKey(listQuery(d, filter))]
   // 事業の収録の無い自治体は、目を事業の代わりにする（中の事業・所管課は持たない）
   const mokuRows: ProjRow[] = y.kan
@@ -91,7 +94,7 @@ export function yearView(d: Snapshot) {
     /** 事業の分野。科目の分からない事業はその他 */
     fieldOf: (p: Pick<ProjRow, 'subject'>) => (p.subject ? fieldBySubject.get(p.subject) : undefined) ?? OTHER_FRAME.id,
     /** 分野の末端の科目。やめた事業は前の年度の資料で探すので、前の年度の科目 */
-    subjectsOf: (field: string, filter?: ListQuery['filter']) => (filter === 'ended' ? d.years[String(year - 1)] : y)?.fieldSubjects[field] ?? [],
+    subjectsOf: (field: string, filter?: ListQuery['filter']) => (filter === 'ended' ? d.prev : y)?.fieldSubjects?.[field] ?? [],
     query: (filter: ListQuery['filter'], opt?: { subjects?: string[]; q?: string }) => listQuery(d, filter, opt),
     page,
     hasProjects: d.hasProjects,

@@ -6,7 +6,7 @@ import { listKey, readListPage } from '../jurisdiction/app/api'
 import type { Env } from './env'
 import { apiCall, type WebOpInput } from './fudoki-api'
 import { loadAccountTotals, shownSettlementYears, type CatalogEntry } from './jurisdiction'
-import { appPageYears } from '../jurisdiction/types'
+import { appPageYears, type PageTab } from '../jurisdiction/types'
 
 const ACCOUNT = '一般会計'
 /** 内訳を ID で引くときの1回の数（API の bind の上限 90 から資料区分・年度・自治体の3つを除く） */
@@ -68,10 +68,15 @@ async function subjectOfDetails(env: Env, code: string, year: number, ids: strin
   return new Map(pages.flatMap((r) => r.details.map((d) => [d.detail_id, d.subject_id] as const)))
 }
 
-/** 頁の1年度のデータ。開いた年度と前の年度の款項目、その年度の施策・評価シート・会計ごとの総額・事業の一覧の1頁目（すべて・新しく始める・やめた、分野の頁なら分野）。
- * 1つの年度で API を十回ほど並べて呼ぶだけで、全件は読まない */
-export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: number, opt: { field?: string; evaluated?: boolean } = {}): Promise<Snapshot> {
-  const { field } = opt
+/** 頁の1年度のデータ。開いた年度の款項目、前の年度の分野ごとの科目、その年度の施策・評価シート・会計ごとの総額・事業の一覧の1頁目（すべて・新しく始める・やめた、分野の頁なら分野）。
+ * 1つの年度で API を十回ほど並べて呼ぶだけで、全件は読まない。
+ * tab を渡すと、そのタブの頁が描くものだけを読む（予算・決算のタブは施策・評価シート・事業の一覧を、まとめは前の年度の科目と新しく始める・やめた事業の一覧を持たない）。無ければ全部（ホームのまちの札） */
+export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: number, opt: { field?: string; evaluated?: boolean; tab?: PageTab } = {}): Promise<Snapshot> {
+  const { field, tab } = opt
+  // 前の年度との比べ（やめた事業とその分野）は事業のタブだけが描く
+  const compare = !tab || tab === 'projects'
+  // 施策・評価シート・事業の一覧は、まとめ・事業のタブと分野の頁が描く
+  const items = tab !== 'money' && tab !== 'settled'
   const years = appYears(entry)
   const me = years.find((y) => y.year === year)
   if (!me) throw new Error(`頁に無い年度: ${year}`)
@@ -81,25 +86,27 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const measureYear = me.kind === 'settlement' && entry.initialYears.includes(year)
   // 款項目は開いた年度と前の年度だけ読む（前の年度は「やめた事業」を分野で絞るのと、その行の分野の名前に使う）。ほかの年度は資料の種類だけを coverage から持つ
   const prev = years.find((y) => y.year === year - 1)
+  const prevRead = prev && compare ? prev : undefined
   // 会計の札（予算・決算のタブ）。一般会計のほかにも会計を収録した年度だけ、会計ごとの総額を読む
   const accounts = entry.accounts?.[me.kind]?.[String(year)] ?? []
   const [subjects, measures, sheets, evalSheets, initialSubjects, accountTotals] = await Promise.all([
-    Promise.all([me, ...(prev ? [prev] : [])].map(async (y) => {
+    Promise.all([me, ...(prevRead ? [prevRead] : [])].map(async (y) => {
       const r = await subjectsOf(env, entry.code, y.year, y.kind)
       const origin = r.last?.origins?.find((o) => o.origin_id === r.rows[0]?.origin_id)
       return { ...y, rows: r.rows, origin: origin?.url ?? null, originTitle: origin?.title ?? null }
     })),
-    measuresOf(env, entry.code, year, year).then((r) => r.rows),
-    sheetsOf(env, entry.code, year, year).then((r) => r.rows),
+    items ? measuresOf(env, entry.code, year, year).then((r) => r.rows) : Promise.resolve([]),
+    items ? sheetsOf(env, entry.code, year, year).then((r) => r.rows) : Promise.resolve([]),
     evalYear && evalYear !== year ? sheetsOf(env, entry.code, evalYear, evalYear).then((r) => r.rows) : Promise.resolve(null),
-    measureYear ? subjectsOf(env, entry.code, year, 'initial').then((r) => r.rows) : Promise.resolve([]),
+    measureYear && items ? subjectsOf(env, entry.code, year, 'initial').then((r) => r.rows) : Promise.resolve([]),
     accounts.length > 1 ? loadAccountTotals(env, entry.code, year, me.kind, accounts) : Promise.resolve(undefined),
   ])
   const cofogByMoku = new Map(subjects.filter((y) => y.year === year).flatMap((y) => y.rows.filter((s) => s.level === '目').map((s) => [`${s.kan_name}/${s.kou_name}/${s.moku_name}`, s.cofog_code] as const)))
   const cofogBySubject = new Map([...subjects.flatMap((y) => y.rows), ...initialSubjects].map((s) => [s.subject_id, s.cofog_code] as const))
 
-  // 年度ごとの款・項・目と分野の合計
+  // 年度ごとの款・項・目と分野の合計。前の年度は分野ごとの科目だけを渡す
   const yearsOut: Snapshot['years'] = {}
+  let prevOut: Snapshot['prev']
   for (const y of subjects) {
     const rows = [...y.rows].sort((a, b) => `${a.kan_code}/${a.kou_code}/${a.moku_code}`.localeCompare(`${b.kan_code}/${b.kou_code}/${b.moku_code}`))
     const kan: Kan[] = []
@@ -121,11 +128,13 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
         fields[field] = (fields[field] ?? 0) + yen
       }
     }
-    yearsOut[y.year] = { kind: y.kind, kan, total: kan.reduce((s, k) => s + k.yen, 0), fields, fieldSubjects, looseMoku, origin: y.origin, originTitle: y.originTitle }
+    if (y.year === year) yearsOut[y.year] = { kind: y.kind, kan, total: kan.reduce((s, k) => s + k.yen, 0), fields, fieldSubjects, looseMoku, origin: y.origin, originTitle: y.originTitle }
+    else prevOut = { year: y.year, kind: y.kind, fieldSubjects }
   }
+  if (prev && !prevOut) prevOut = { year: prev.year, kind: prev.kind }
 
-  const base = { code: entry.code, year, years: yearsOut }
-  const queries = [listQuery(base, 'all'), ...(yearsOut[year - 1] ? [listQuery(base, 'new'), listQuery(base, 'ended')] : [])]
+  const base = { code: entry.code, year, years: yearsOut, prev: prevOut }
+  const queries = [listQuery(base, 'all'), ...(prevOut?.fieldSubjects ? [listQuery(base, 'new'), listQuery(base, 'ended')] : [])]
   if (field) queries.push(listQuery(base, 'all', { subjects: yearsOut[year]!.fieldSubjects[field] ?? [] }))
   const measureDetails = [...new Set(measures.flatMap((m) => (m.expenditure_detail_id ? [m.expenditure_detail_id] : [])))]
   const [pages, subjectOfDetail] = await Promise.all([
@@ -173,11 +182,12 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     year,
     kinds: Object.fromEntries(years.map((y) => [String(y.year), y.kind])),
     years: yearsOut,
+    ...(prevOut ? { prev: prevOut } : {}),
     ...(accountTotals ? { accounts: accountTotals } : {}),
     measures: measuresOut,
     sheets: sheetsOut,
     ...(evalYear ? { evaluated: { fy: evalYear, sheets: evalSheets ? evalSheets.map(toSheet) : sheetsOut } } : {}),
     hasProjects: (lists[listKey(queries[0]!)]?.total ?? 0) > 0,
-    lists,
+    lists: items ? lists : {},
   }
 }
