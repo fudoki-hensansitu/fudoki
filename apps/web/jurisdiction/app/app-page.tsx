@@ -1136,12 +1136,11 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
   }, [d, tabs, tab])
   const tabsRef = React.useRef(tabs)
   tabsRef.current = tabs
-  // 事業評価は評価した事業を行った年度にだけある。評価の無い年度へ移ったら絞り込みを戻す（予算・決算のタブの頁は評価シートを持たないので見ない）
+  // 事業評価は評価した事業を行った年度にだけある。評価の無い年度へ移ったら絞り込みを戻す
   const hasEval = !!v?.sheets.length
-  const loadsSheets = initialTab !== 'money' && initialTab !== 'settled'
   React.useEffect(() => {
-    if (v && loadsSheets && !hasEval && filter === 'eval') setFilter('all')
-  }, [v, loadsSheets, hasEval, filter])
+    if (v && !hasEval && filter === 'eval') setFilter('all')
+  }, [v, hasEval, filter])
   const index = Math.max(0, tabs.findIndex((t) => t.key === tab))
   // 始めの位置は Carousel を置いたときだけ渡す。タブのたびに変わると embla が作り直されて、滑らずに飛ぶ
   // eslint-disable-next-line react-hooks/exhaustive-deps

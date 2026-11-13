@@ -70,13 +70,12 @@ async function subjectOfDetails(env: Env, code: string, year: number, ids: strin
 
 /** 頁の1年度のデータ。開いた年度の款項目、前の年度の分野ごとの科目、その年度の施策・評価シート・会計ごとの総額・事業の一覧の1頁目（すべて・新しく始める・やめた、分野の頁なら分野）。
  * 1つの年度で API を十回ほど並べて呼ぶだけで、全件は読まない。
- * tab を渡すと、そのタブの頁が描くものだけを読む（予算・決算のタブは施策・評価シート・事業の一覧を、まとめは前の年度の科目と新しく始める・やめた事業の一覧を持たない）。無ければ全部（ホームのまちの札） */
+ * tab を渡すと、事業のタブのほかは前の年度の科目と新しく始める・やめた事業の一覧を持たない。無ければ全部（ホームのまちの札）。
+ * 施策・評価シートと事業の一覧の1頁目はどのタブでも持つ（予算・決算のタブで開く事業の詳細が施策・評価シートを出し、スマホは全部のタブの中身を並べて描くため） */
 export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: number, opt: { field?: string; evaluated?: boolean; tab?: PageTab } = {}): Promise<Snapshot> {
   const { field, tab } = opt
   // 前の年度との比べ（やめた事業とその分野）は事業のタブだけが描く
   const compare = !tab || tab === 'projects'
-  // 施策・評価シート・事業の一覧は、まとめ・事業のタブと分野の頁が描く
-  const items = tab !== 'money' && tab !== 'settled'
   const years = appYears(entry)
   const me = years.find((y) => y.year === year)
   if (!me) throw new Error(`頁に無い年度: ${year}`)
@@ -95,10 +94,10 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
       const origin = r.last?.origins?.find((o) => o.origin_id === r.rows[0]?.origin_id)
       return { ...y, rows: r.rows, origin: origin?.url ?? null, originTitle: origin?.title ?? null }
     })),
-    items ? measuresOf(env, entry.code, year, year).then((r) => r.rows) : Promise.resolve([]),
-    items ? sheetsOf(env, entry.code, year, year).then((r) => r.rows) : Promise.resolve([]),
+    measuresOf(env, entry.code, year, year).then((r) => r.rows),
+    sheetsOf(env, entry.code, year, year).then((r) => r.rows),
     evalYear && evalYear !== year ? sheetsOf(env, entry.code, evalYear, evalYear).then((r) => r.rows) : Promise.resolve(null),
-    measureYear && items ? subjectsOf(env, entry.code, year, 'initial').then((r) => r.rows) : Promise.resolve([]),
+    measureYear ? subjectsOf(env, entry.code, year, 'initial').then((r) => r.rows) : Promise.resolve([]),
     accounts.length > 1 ? loadAccountTotals(env, entry.code, year, me.kind, accounts) : Promise.resolve(undefined),
   ])
   const cofogByMoku = new Map(subjects.filter((y) => y.year === year).flatMap((y) => y.rows.filter((s) => s.level === '目').map((s) => [`${s.kan_name}/${s.kou_name}/${s.moku_name}`, s.cofog_code] as const)))
@@ -188,6 +187,6 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     sheets: sheetsOut,
     ...(evalYear ? { evaluated: { fy: evalYear, sheets: evalSheets ? evalSheets.map(toSheet) : sheetsOut } } : {}),
     hasProjects: (lists[listKey(queries[0]!)]?.total ?? 0) > 0,
-    lists: items ? lists : {},
+    lists,
   }
 }
