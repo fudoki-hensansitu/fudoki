@@ -3,13 +3,11 @@
 import { type Drill, type FlowDepth, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal, type BudgetTotal } from '../jurisdiction/types'
 import { cofogFlowOf } from '../jurisdiction/cofog-flow'
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
-import type { AppType } from '@fudoki/api/rpc'
-import { hc, parseResponse } from 'hono/client'
-import { apiFetch, type Env } from './env'
+import type { Env } from './env'
+import { apiCall, FudokiApiError, type WebOpInput, type WebOpOutput } from './fudoki-api'
 import { jurisdictionPath } from '../jurisdiction/path'
 import { loadPopulations } from './population'
 
-const API_ORIGIN = 'https://api.fudoki.dev'
 export const ACCOUNT = '一般会計'
 /** 推移に出す最大の年数。API の fiscal_year の幅は 5 年以内 */
 const MAX_YEARS = 5
@@ -18,19 +16,17 @@ const PROJECT_COUNT = 5
 const CANDIDATES = 40
 const NOT_PROJECT_KAN = new Set(['諸支出金', '公債費', '予備費'])
 
-/** apps/api の REST を Hono RPC で呼ぶ。通信は Service Binding（apiFetch）で、型は api の route の定義（@fudoki/api/rpc）から来る */
-const api = (env: Env) => hc<AppType>(API_ORIGIN, { fetch: apiFetch(env) })
-type Api = ReturnType<typeof api>
-type SearchBody = Parameters<Api['v1']['expenditures']['subjects:search']['$post']>[0]['json']
+/** apps/api の操作を内部の RPC で呼ぶ（server/fudoki-api.ts）。型は api の操作の schema（@fudoki/api/rpc）から来る */
+type SearchBody = WebOpInput<'search_expenditure_subjects'>
 type Where = NonNullable<SearchBody['where']>
 
-const searchSubjects = (env: Env, json: SearchBody) => parseResponse(api(env).v1.expenditures['subjects:search'].$post({ json }))
-const searchDetails = (env: Env, json: SearchBody) => parseResponse(api(env).v1.expenditures['details:search'].$post({ json }))
+const searchSubjects = (env: Env, json: SearchBody) => apiCall(env)('search_expenditure_subjects', json)
+const searchDetails = (env: Env, json: SearchBody) => apiCall(env)('search_expenditure_details', json)
 
 /** 科目の表（款・項・目）の1行 */
-type ApiSubject = Awaited<ReturnType<typeof searchSubjects>>['subjects'][number]
+type ApiSubject = WebOpOutput<'search_expenditure_subjects'>['subjects'][number]
 /** 内訳の表の1行。breakdown は分け方（事業・節・その他） */
-type ApiDetail = Awaited<ReturnType<typeof searchDetails>>['details'][number]
+type ApiDetail = WebOpOutput<'search_expenditure_details'>['details'][number]
 export interface CatalogEntry {
   code: string
   name: string
@@ -53,8 +49,8 @@ export interface CatalogEntry {
 const amount = (n: { amount_yen: number | null }) => ({ yen: n.amount_yen ?? 0, ...(n.amount_yen === null ? { amountMissing: true as const } : {}) })
 const line = (n: ApiSubject): Line => ({ id: n.subject_id, name: n.name, ...amount(n) })
 
-type ApiJurisdiction = Awaited<ReturnType<typeof listJurisdictions>>['jurisdictions'][number]
-const listJurisdictions = (env: Env, token?: string) => parseResponse(api(env).v1.jurisdictions.$get({ query: token ? { page_token: token } : {} }))
+type ApiJurisdiction = WebOpOutput<'list_jurisdictions'>['jurisdictions'][number]
+const listJurisdictions = (env: Env, token?: string) => apiCall(env)('list_jurisdictions', token ? { page_token: token } : {})
 
 /** API の自治体の1件を、頁が使う形にする。人口は web の D1 から足す */
 function toCatalogEntry(j: Pick<ApiJurisdiction, 'jurisdiction_code' | 'name' | 'prefecture_name' | 'official_url' | 'coverage' | 'evaluations'>, populations: Population[]): CatalogEntry {
@@ -89,9 +85,14 @@ export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
 
 /** 1つの自治体と収録範囲（get jurisdiction）。収録の無いコードは null */
 export async function loadCatalogEntry(env: Env, code: string): Promise<CatalogEntry | null> {
-  const res = await api(env).v1.jurisdictions[':jurisdiction_code'].$get({ param: { jurisdiction_code: code } })
-  if (res.status === 404) return null
-  const [j, populations] = await Promise.all([parseResponse(res), loadPopulations(env, [code])])
+  const [j, populations] = await Promise.all([
+    apiCall(env)('get_jurisdiction', { jurisdiction_code: code }).catch((e) => {
+      if (e instanceof FudokiApiError && e.status === 404) return null
+      throw e
+    }),
+    loadPopulations(env, [code]),
+  ])
+  if (!j) return null
   return toCatalogEntry(j, populations.get(code) ?? [])
 }
 

@@ -1,4 +1,4 @@
-// 自治体の集約の REST。route は書き下ろし、型を AppType に載せる（web が Hono RPC で呼ぶ）。
+// 自治体の集約の REST。route は書き下ろし、型を AppType に載せる。
 import { createRoute, z } from '@hono/zod-openapi'
 import { JurisdictionCode } from '../shared/model'
 import { getErrors, ok, routes } from '../shared/http'
