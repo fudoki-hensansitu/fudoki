@@ -13,11 +13,11 @@ import { FieldIcon, yenParts } from '../home/parts'
 import { reiwa, TAB_SLUGS } from '../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../jurisdiction/domains'
 import { Emblem } from '../home/town-picker'
-import { useMyTown } from '../home/towns'
+import { searchTowns, useMyTown } from '../home/towns'
+import type { MapEntry } from '../jurisdiction/index-table'
 import { AskDock } from '../jurisdiction/ask-dock'
 import type { CompareTown, Props, TownRef, Version } from '../pages/compare.server'
 
-type Option = Props['options'][number]
 
 type Measure = 'head' | 'share'
 const FIELDS = [...DOMAIN_FRAMES.filter((f) => f.id !== 'boei'), OTHER_FRAME]
@@ -52,31 +52,54 @@ function Num({ n, m, className }: { n: number; m: Measure | 'yen'; className?: s
 }
 const popText = (n: number) => (n ? `人口 ${(n / 1e4).toFixed(1)}万人` : '')
 
-/** まちの名前そのものが選ぶ欄。押すと名前で探せる候補が開く */
-function TownPicker({ options, current, onPick, children }: { options: Option[]; current: string; onPick: (code: string) => void; children: React.ReactNode }) {
+/** 打ち終えるのを待つ間 */
+const TYPING_MS = 150
+
+/** まちの名前そのものが選ぶ欄。押すと名前で探せる候補が開く。候補は頁に全部を載せず、打った語でサーバー（/api/jurisdictions?q=）に上位だけを聞く */
+function TownPicker({ current, onPick, children }: { current: string; onPick: (code: string) => void; children: React.ReactNode }) {
+  const [open, setOpen] = React.useState(false)
+  const [q, setQ] = React.useState('')
+  // null は読めなかった
+  const [items, setItems] = React.useState<MapEntry[] | null>([])
+  React.useEffect(() => {
+    if (!open) return
+    const controller = new AbortController()
+    const timer = setTimeout(() => void searchTowns(q, controller.signal).then((e) => !controller.signal.aborted && setItems(e)), q ? TYPING_MS : 0)
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [open, q])
   return (
-    <Combobox items={options} itemToStringLabel={(o: Option) => o.name} value={options.find((o) => o.code === current) ?? null} onValueChange={(o) => o && (o as Option).code !== current && onPick((o as Option).code)}>
-      <ComboboxTrigger aria-label="まちを選ぶ" className="flex max-w-full min-w-0 items-center gap-1 rounded-lg px-1.5 py-0.5 -mx-1.5 text-left text-[17px] font-semibold text-foreground hover:bg-card">
+    <Combobox open={open} onOpenChange={setOpen} items={items ?? []} filter={null} itemToStringLabel={(e: MapEntry) => e.name} value={null} onInputValueChange={(v) => setQ(v)} onValueChange={(e) => e && (e as MapEntry).code !== current && onPick((e as MapEntry).code)}>
+      <ComboboxTrigger aria-label="まちを選ぶ" className="-mx-1.5 flex max-w-full min-w-0 items-center gap-1 rounded-lg px-1.5 py-0.5 text-left text-[17px] font-semibold text-foreground hover:bg-card">
         {children}
       </ComboboxTrigger>
       <ComboboxContent className="w-64">
         <ComboboxInput showTrigger={false} placeholder="まちの名前" className="h-9" />
-        <ComboboxEmpty>見つかりません</ComboboxEmpty>
-        <ComboboxList>{(o: Option) => <ComboboxItem key={o.code} value={o}>{o.name}</ComboboxItem>}</ComboboxList>
+        <ComboboxEmpty>{items === null ? '読み込めませんでした' : '見つかりません'}</ComboboxEmpty>
+        <ComboboxList>
+          {(e: MapEntry) => (
+            <ComboboxItem key={e.code} value={e}>
+              {e.name}
+              <small className="text-[11px] text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</small>
+            </ComboboxItem>
+          )}
+        </ComboboxList>
       </ComboboxContent>
     </Combobox>
   )
 }
 
 /** まちの札。紋章・名前・人口と、1人あたりの総額 */
-function TownCard({ t, mark, options, onPick, onVersion }: { t: CompareTown; mark: React.ReactNode; options: Option[]; onPick: (code: string) => void; onVersion: (v: Version) => void }) {
+function TownCard({ t, mark, onPick, onVersion }: { t: CompareTown; mark: React.ReactNode; onPick: (code: string) => void; onVersion: (v: Version) => void }) {
   const items = t.versions.map((v) => ({ value: versionKey(v), label: versionLabel(v) }))
   return (
     <section className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border bg-background p-4">
       <div className="flex items-center gap-3">
         <Emblem code={t.code} name={t.name} className="hidden size-10 sm:grid" />
         <div className="min-w-0 flex-1">
-          <TownPicker options={options} current={t.code} onPick={onPick}>
+          <TownPicker current={t.code} onPick={onPick}>
             <span className="truncate">{t.name}</span>
             {mark}
           </TownPicker>
@@ -176,7 +199,7 @@ function Sample({ body }: { body: React.ReactNode }) {
 }
 
 export function Compare(props: Props) {
-  const { a, b, byUse, byPopulation, options, failed, sample } = props
+  const { a, b, byUse, byPopulation, failed, sample } = props
   const { visit } = useRouter()
   const [picked, setM] = React.useState<Measure>('head')
   // 人口の無いまちは1人あたりを出せないので、割合だけにする
@@ -186,13 +209,13 @@ export function Compare(props: Props) {
   const body = (a: CompareTown) => (
         <>
           <div className="flex items-stretch gap-2 sm:gap-4">
-            <TownCard t={a} mark={<MarkA />} options={options} onPick={(c) => go(c, null, b?.code ?? null, b?.version ?? null)} onVersion={(v) => go(a.code, v, b?.code ?? null, b?.version ?? null)} />
+            <TownCard t={a} mark={<MarkA />} onPick={(c) => go(c, null, b?.code ?? null, b?.version ?? null)} onVersion={(v) => go(a.code, v, b?.code ?? null, b?.version ?? null)} />
             {b ? (
               <>
                 <button type="button" aria-label="左右を入れ替える" onClick={() => go(b.code, b.version, a.code, a.version)} className="grid size-9 shrink-0 place-items-center self-center rounded-full border bg-background text-muted-foreground hover:bg-card">
                   <ArrowsLeftRightIcon className="size-4" />
                 </button>
-                <TownCard t={b} mark={<MarkB />} options={options} onPick={(c) => go(a.code, a.version, c, null)} onVersion={(v) => go(a.code, a.version, b.code, v)} />
+                <TownCard t={b} mark={<MarkB />} onPick={(c) => go(a.code, a.version, c, null)} onVersion={(v) => go(a.code, a.version, b.code, v)} />
               </>
             ) : null}
           </div>

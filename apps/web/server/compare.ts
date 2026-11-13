@@ -13,14 +13,14 @@ const REUSE_MS = 3_600_000
 export type DocKind = 'settlement' | 'initial'
 const memo = new WeakMap<Env, Map<string, { at: number; p: Promise<Map<string, FieldTotals>> }>>()
 
-async function read(env: Env, year: number, kind: DocKind): Promise<Map<string, FieldTotals>> {
+async function read(env: Env, year: number, kind: DocKind, codes?: string[]): Promise<Map<string, FieldTotals>> {
   const out = new Map<string, FieldTotals>()
   let token: string | undefined
   do {
     const r = await apiCall(env)('search_expenditure_subjects', {
       document_kind: kind,
       fiscal_year: { min: year, max: year },
-      where: { account_name: { eq: [ACCOUNT] }, level: { eq: ['目'] } },
+      where: { ...(codes ? { jurisdiction_code: { eq: codes } } : {}), account_name: { eq: [ACCOUNT] }, level: { eq: ['目'] } },
       page_size: 1000,
       ...(token ? { page_token: token } : {}),
     })
@@ -37,7 +37,10 @@ async function read(env: Env, year: number, kind: DocKind): Promise<Map<string, 
   return out
 }
 
-/** 年度・資料の、まちごとの分野の合計 */
+/** 選んだまちだけの、年度・資料の分野の合計。比べる2つのまちを読むのに使う */
+export const fieldTotalsFor = (env: Env, codes: string[], year: number, kind: DocKind) => read(env, year, kind, codes)
+
+/** 年度・資料の、全部のまちの分野の合計。似たまちを探すのに使う */
 export function fieldTotalsOf(env: Env, year: number, kind: DocKind): Promise<Map<string, FieldTotals>> {
   const byKey = memo.get(env) ?? new Map()
   memo.set(env, byKey)
