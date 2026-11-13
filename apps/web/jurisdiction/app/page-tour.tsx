@@ -128,6 +128,7 @@ export function usePageTour(c: TourCtl) {
       const spot: Spot = {
         target: 'ask-suggest',
         first: true,
+        around: 'ask',
         title: 'アシスタントに質問する',
         body: '選んだ文が入力欄の上に付いています。下の例を押すか、聞きたいことを書いて送ってください。',
       }

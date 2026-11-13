@@ -78,6 +78,8 @@ export type Spot = {
   target?: string
   /** 対象の中の最初のボタン・リンクを指す（分野や事業の一覧の1行目） */
   first?: boolean
+  /** 吹き出しにふさがせない範囲の data-tour。無ければ指した所（聞く欄の例を指すとき、入力欄と選んだ文も見えるようにする） */
+  around?: string
   title: string
   body: React.ReactNode
   /** 指の動き。tap は押す所で軽く押し、select は文字の上を左から右へなぞる */
@@ -214,7 +216,7 @@ function Pointer({ box, gesture = 'tap' }: { box: Box; gesture?: 'tap' | 'select
   const y = gesture === 'select' ? box.top + box.height * 0.7 : box.top + box.height / 2
   return (
     <>
-      <div aria-hidden="true" className="tour-ring pointer-events-none fixed rounded-[14px] border-2 border-primary" style={{ top: box.top - PAD, left: box.left - PAD, width: box.width + PAD * 2, height: box.height + PAD * 2 }} />
+      <div aria-hidden="true" className="tour-ring pointer-events-none fixed rounded-[14px] border-2 border-primary" style={{ top: box.top - PAD, left: box.left - PAD, width: box.width + PAD * 2, height: box.height + PAD * 2, boxShadow: '0 0 0 2px var(--background)' }} />
       {gesture === 'select' ? (
         <span aria-hidden="true" className="tour-sweep pointer-events-none fixed rounded-[4px] bg-primary" style={{ top: box.top, left: box.left, width: Math.min(box.width, 320), height: box.height }} />
       ) : (
@@ -256,9 +258,11 @@ export function PointAt({ target, first, gesture }: Pick<Spot, 'target' | 'first
  * 進むのは指した所を本人が操作したとき。at は通しの何歩目か。onSkip で止める（続きから再開できる）
  */
 export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number; onSkip: () => void; onBack?: () => void }) {
-  const { target, first, onPress } = spot
+  const { target, first, onPress, around } = spot
   const el = useTarget(target, first)
   const box = useBox(el, target, first)
+  const areaEl = useTarget(around)
+  const area = useBox(areaEl, around, false)
   const card = React.useRef<HTMLDivElement>(null)
   const [h, setH] = React.useState(180)
   React.useLayoutEffect(() => {
@@ -281,7 +285,7 @@ export function SpotTour({ spot, at, onSkip, onBack }: { spot: Spot; at: number;
   }, [onSkip])
 
   if (el === undefined) return null
-  const tip = place(box, h)
+  const tip = place(area ?? box, h)
   return createPortal(
     <div className="pointer-events-none fixed inset-0 z-[60]">
       {box ? <Pointer box={box} gesture={spot.gesture} /> : null}
