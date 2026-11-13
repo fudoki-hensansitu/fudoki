@@ -34,7 +34,8 @@
     "shape": "ingestion.generic.patterns.breakdown.shape",
     "position": "ingestion.generic.patterns.breakdown.position",
     "flat": "ingestion.generic.patterns.breakdown.flat",
-    "numbered": "ingestion.generic.patterns.breakdown.numbered"
+    "numbered": "ingestion.generic.patterns.breakdown.numbered",
+    "setsu_lines": "ingestion.generic.patterns.breakdown.setsu_lines"
   },
   "repairs": {
     "line_clips": "ingestion.generic.patterns.repairs.line_clips",
@@ -91,6 +92,7 @@
     "bracketed_counts": "ingestion.generic.patterns.quirks.bracketed_counts",
     "bracketed_remainder": "ingestion.generic.patterns.quirks.bracketed_remainder",
     "codeless_column_items": "ingestion.generic.patterns.quirks.codeless_column_items",
+    "code_after_amount": "ingestion.generic.patterns.quirks.code_after_amount",
     "code_gap_wraps": "ingestion.generic.patterns.quirks.code_gap_wraps",
     "code_run_into_name": "ingestion.generic.patterns.quirks.code_run_into_name",
     "codeless_at_names": "ingestion.generic.patterns.quirks.codeless_at_names",

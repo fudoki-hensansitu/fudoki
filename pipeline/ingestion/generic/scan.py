@@ -112,6 +112,9 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
         # (`448` of `134,271 448`, `296` 3pt past it, 281000), and no whole digit fits in that sliver. The box
         # still ends at the rule, as a cut keeping every character gives it (`422` 1pt past it, 132152).
         return [word] if _amount(word.text) else [Word(word.text, word.x0, word.y0, min(inside), word.y1)]
+    if len(inside) == 1 and (after := document_quirk('code_after_amount')) is not None \
+            and after.module.overrun(_text(word.text), word.x1 - inside[0], width):
+        return [Word(word.text, word.x0, word.y0, inside[0], word.y1)]
     # Two grouped amounts run together across one rule (`△77,756,000103,232,000`, 132276): the groups of three say
     # where the first ends. A share by width can be a digit off, and a sign makes the left part wider than it reads.
     joined = re.sub(r'\s+', '', word.text)
@@ -119,6 +122,9 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
     if len(together) == len(inside) and ''.join(together) == joined and len(inside) > 1 \
             and (padded := document_quirk('padded_runs')) is not None:
         inside = padded.module.inside(word, inside, width)
+    if len(inside) == 1 and (after := document_quirk('code_after_amount')) is not None \
+            and (cut := after.module.pieces(joined)) is not None:
+        return [Word(cut[0], word.x0, word.y0, inside[0], word.y1), Word(cut[1], inside[0], word.y0, word.x1, word.y1)]
     if len(together) == len(inside) + 1 and ''.join(together) == joined:
         edges = [word.x0, *inside, word.x1]
         return [Word(text, edges[i], word.y0, edges[i + 1], word.y1) for i, text in enumerate(together)]
