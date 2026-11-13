@@ -5636,6 +5636,70 @@ sources:
       direction: expenditure
       table_id: national-health-initial
       kind: nodes
+  - name: j131172_2024_initial_general_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: amounts
+  - name: j131172_2024_initial_general_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: general-initial
+      kind: nodes
+  - name: j131172_2024_initial_kaigo_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: amounts
+  - name: j131172_2024_initial_kaigo_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: kaigo-initial
+      kind: nodes
+  - name: j131172_2024_initial_kouki_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: amounts
+  - name: j131172_2024_initial_kouki_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: kouki-initial
+      kind: nodes
+  - name: j131172_2024_initial_nhi_initial_amounts
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
+      kind: amounts
+  - name: j131172_2024_initial_nhi_initial_nodes
+    meta:
+      jurisdiction: '131172'
+      fiscal_year: 2024
+      document_kind: initial
+      direction: expenditure
+      table_id: nhi-initial
+      kind: nodes
   - name: j131172_2024_settlement_general_setsu_amounts
     meta:
       jurisdiction: '131172'
