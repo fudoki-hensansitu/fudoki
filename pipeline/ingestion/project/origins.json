@@ -435,7 +435,7 @@
         "page": "実施計画成果シート$|^4\\.今後の方向性",
         "start": "実施計画成果シート$",
         "fields": [
-          "^実施計画事業名 (?P<jigyo_code>\\d+) (?P<name>.+)$",
+          "^実施計画事業名 (?P<jigyo_code>\\d+) ?(?P<name>.+)$",
           "^事務事業名 (?P<jigyo>.+?) (?P<department>\\S+部)$",
           "予算科目 款 (?P<kan_code>\\d+) 項 (?P<kou_code>\\d+) 目 (?P<moku_code>\\d+) 事業コード \\d+ (?P<division>\\S+)$",
           "予算額\\(千円\\) (?P<budget>[\\d,]+)"
@@ -669,7 +669,7 @@
           {
             "pattern": "amount_next",
             "options": {
-              "pattern": "(?:^|】 ?)(?P<amount>[\\d,]+) ?\\(.*\\)$",
+              "pattern": "^(?:(?P<name>.*?[】〜)]) ?)?(?P<amount>[\\d,]+) ?\\(.*\\)$",
               "lookahead": 3,
               "join": true
             }
@@ -915,7 +915,7 @@
         "find": {
           "pattern": "lines",
           "options": {
-            "item": "^(?!予算科目)(?:(?P<tag>新規|拡充|見直し) ?)?(?P<name>.*?) ?担当課(?: .*)?$"
+            "item": "^(?!予算科目)(?:(?P<tag>新規|拡充|見直し) ?)?(?:\\d+ \\d+ \\d+ )?(?P<name>.*?) ?担当課(?: .*)?$"
           }
         },
         "assemble": [
@@ -1030,13 +1030,22 @@
         2025
       ],
       "workflow": {
+        "scope": {
+          "page": "^(?!.*資料の見方)"
+        },
         "find": {
           "pattern": "lines",
           "options": {
-            "item": "^(?:(?P<tag>新) )?(?P<name>.+?) (?:(?:-|[\\d,]+) )?(?:-|[\\d,]+) (?P<amount>[\\d,]+) (?:△?[\\d,]+|-)(?: .*)? \\d+$"
+            "item": "^(?:(?P<tag>新) )?(?:(?P<name>[^-\\s].*?) )?(?:(?:-|[\\d,]+) )?(?:-|[\\d,]+) (?P<amount>[\\d,]+) (?:△ ?[\\d,]+|[\\d,]+|-)(?: .*)?$"
           }
         },
         "assemble": [
+          {
+            "pattern": "name_around",
+            "options": {
+              "before": "^(?P<name>[^【_\\s][^ ]*)$"
+            }
+          },
           {
             "pattern": "group_name",
             "options": {

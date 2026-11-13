@@ -83,10 +83,10 @@ def rows(words: list[Word]) -> tuple[float, list[list[Word]]]:
 
 
 def joins(previous: Word, word: Word, height: float) -> bool:
-    """空白を挟まずに続けるか。重なる語と、すき間の狭い全角どうし（日本語の語の切れ目・字の間を空けた見出し）だけを続け、
-    半角の語（数・英字）の間には空白を残す。"""
+    """空白を挟まずに続けるか。重なる語と、すき間の狭い語のうち片方が全角のもの（日本語の語の切れ目・字の間を空けた見出し・
+    「1,221万」）だけを続け、半角の語（数・英字）どうしの間には空白を残す。"""
     gap = word.x0 - previous.x1
-    return gap <= 0 or (gap < height * JOIN_GAP and wide(previous.text[-1]) and wide(word.text[0]))
+    return gap <= 0 or (gap < height * JOIN_GAP and (wide(previous.text[-1]) or wide(word.text[0])))
 
 
 def lines(page: Page) -> list[str]:
