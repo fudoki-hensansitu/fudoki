@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-11-13`
-状態: Draft（別の agent のレビューを反映済み。未決事項は yuito の判断待ち）
+状態: Accepted（2026-11-13 yuito と合意。実装は WorkOS の環境ができてから）
 
 ## Summary
 
@@ -114,7 +114,7 @@ REST の client ── Authorization: Bearer <API キー> ──▶ api.fudoki.d
 
 ### アカウントの頁（非公開 repo）
 
-- 風土記の外に repo と Worker を1つ作る。repo 名・ドメインは未定（下の未決事項）。
+- 風土記の外に非公開の repo（`fudoki-hensansitu/auth`）と Worker を1つ作り、`auth.fudoki.dev` で出す。補助金などのサービスも同じ頁でキーを発行する。
 - 持つ機能は、Google でのログインと、キーの発行・一覧・失効（WorkOS の API Keys widget を user scope で使う）だけにする。自分の呼び出し回数の表示は、Analytics Engine を読む token が要るので後回しにする。
 - 利用者の削除（退会）は、WorkOS の利用者を消すことで行う。キーは organization の所属が消えると失効する。OAuth の承認は利用者の削除で消える。
 
@@ -144,7 +144,6 @@ JWT の検証は、テストで作った鍵の JWKS を渡して確かめる。W
 
 ## 未決事項
 
-- アカウントの頁の repo 名とドメイン（風土記と補助金で共通の名前にするか）。
 - ChatGPT・Claude の client が CIMD と DCR のどちらで来るか。両方を有効にするので動作は変わらないが、5 で確かめる。
 
 ## 参考
