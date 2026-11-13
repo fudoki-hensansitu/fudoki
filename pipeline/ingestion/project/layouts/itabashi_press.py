@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import re
 
-from ingestion.project.layouts.press import PressItem, amount_text, lines, norm, text, words
+from ingestion.project.layouts.press import BboxPdf, PressItem, amount_text, lines, norm, text, words
 
 YEN = re.compile(r'[\d,]+千円')
 
@@ -53,10 +53,9 @@ def read_page(items, previous, number: int) -> list[PressItem]:
 
 
 def read(path) -> list[PressItem]:
-    import pdfplumber
     items: list[PressItem] = []
     previous: list[dict] = []
-    with pdfplumber.open(path) as pdf:
+    with BboxPdf(path, fonts=True) as pdf:
         for number, page in enumerate(pdf.pages, start=1):
             current = words(page)
             items.extend(read_page(current, previous, number))
