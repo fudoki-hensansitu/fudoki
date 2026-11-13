@@ -6,7 +6,7 @@ user-invocable: false
 
 # web-app
 
-`apps/web`（fudoki.dev）を作るときの、コードや AGENTS.md からは読めない決まりとハマりどころの正本。
+`apps/web`（fudoki.dev）を作るときの、コードからは読めない決まり。構成は `apps/AGENTS.md`、決定の理由は `docs/adr/` にある。
 
 ## Routing table
 
@@ -17,6 +17,6 @@ user-invocable: false
 
 ## 関連 skill
 
-- 全体設計・配布の方針は repo ルートの `AGENTS.md` が正本（このスキルは重複させない）
-- apps/api 側の運用ハマりどころは `.agents/skills/cloudflare-api-ops/`
+- 全体設計・配布の方針は repo root の `AGENTS.md`
+- Cloudflare の運用（deploy・token・ゾーン設定）は `.agents/skills/cloudflare-api-ops/`
 - web が出すデータ（事業評価・プレス発表の施策・その紐付けなど）は pipeline で作る。作り方は `.agents/skills/pipeline/`

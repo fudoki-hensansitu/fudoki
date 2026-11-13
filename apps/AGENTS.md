@@ -1,18 +1,44 @@
 # apps
 
-公開 web は**ホーム**（`/`。住んでいるまちのダッシュボードと、ほかのまちの検索。はじめての人にはまちを選ぶ流れ）と**事業の検索**（`/search`。決算の内訳を言葉で引く）と**紹介の読み物**（`/about`）、`/favicon.svg`・`/robots.txt`、サイドバーの「アシスタント」（`/assistant`）から始める**風土記の AI との会話**（`/s/:id` と `/api/*`）、**自治体の頁**（`/tokyo/nakano`）を返す（他は 404）。ファイル（icon・録画・出典の切り抜き）は `web/public/` に置き、Workers static assets で配る。D1 などのデータの binding は持たせず、データは apps/api の内部の RPC（entrypoint `Web`）に Service Binding で問い合わせる（例外は web 自身のデータ（今は会話の保存）を書く D1 `fudoki-web`、binding `DB`）。ディレクトリ掲載の作者 URL に使う。API・MCP は ADR 0022 の構成（Worker + D1）に置き換わった。`web/server/availability.test.ts` が web の配るファイルと PWA の繋ぎを確認し、root の `bun run test` から実行される。
+公開面。web（fudoki.dev）・api（api.fudoki.dev）・docs（docs.fudoki.dev）の3つの Cloudflare Workers。
 
-- `api/`（`@fudoki/api`）: Cloudflare Workers + D1。集約ごとの dir（`src/jurisdiction/`・`src/expenditure/` など）に型（`model.ts`）・問い合わせ（`queries.ts`）・REST の route（`routes.ts`、`@hono/zod-openapi` で書き下ろす）・MCP の tool（`tools.ts`）を置き、`src/rpc.ts` が route をまとめて型 `AppType` と、web 用の内部の RPC の型（`WebRpc`）を export する。web は公開の REST・MCP を使わず、内部の RPC `Web`（`src/web-entrypoint.ts`、操作は `src/web-ops.ts`。MCP の tool と同じ名前・schema・問い合わせ）だけを Service Binding（entrypoint）で呼ぶ（ADR 0044、web 側は `web/server/fudoki-api.ts`）。`src/app.ts` が middleware・MCP（`/mcp`）・`/openapi.json` を持つ（REST は `/v1/jurisdictions*`・`/v1/expenditures/*`・`/v1/evaluations/*`・`/v1/budget-proposals/*`・`/v1/projects*`）。設計は `docs/prd/aggregate-api/dd.md`。検索の入力（構造化 JSON）の schema と SQL の組み立ては `src/shared/search.ts`、MCP Apps の View（結果の表）は `ui/` で、`bun run --cwd apps/api view` が bundle して生成物 `src/gen/view.ts` に書く（`src/gen/` は commit しない。依存の更新のたびに生成物の差分が出て CI が落ちていたため。`test`・`typecheck`・`dev`・`deploy`・`openapi` の script が先に作り直すので、生成物を import する script を足すときは同じく `bun run view &&` を前に付ける）、D1 の migration は `migrations/`、公開列の契約は生成物 `src/columns.json`。出典の頁の文字を読む内部の RPC `SourcePages`（`src/source-pages-entrypoint.ts`、処理は `src/source-pages.ts`）は HTTP の route・MCP に載せず、web だけが Service Binding（entrypoint）で呼ぶ。頁の文字は D1 の `source_page_text` を出典の記録に照らした sha256 で引く。api は R2 の binding を持たない（`pipeline/verify/boundaries.ts`）（設計は `docs/prd/page-words/dd.md`）。公開か内部かは api のインターフェース（REST の route・MCP の tool・内部の RPC）だけが持ち、D1・marts・`columns.json` には持たせない。内部の RPC だけが読む表は、その表を参照するモジュールを試験で限る。描画できる tool を変えるときは `src/app.ts` の `RENDER_DESCRIPTION` も同じ commit で直す（描画 tool の enum は tool の `view` から作られるが、description に並べた tool の名前は手書き）。デプロイ・運用のハマりどころは `.agents/skills/cloudflare-api-ops/`
-- `web/`（`@fudoki/web`）: [Void](https://void.cloud/)（Vite）で build する Cloudflare Workers。設定は `void.config.ts`、build（`vite build`）が cf の Build Output（`.cloudflare/output/v0`）を書き出し、deploy・preview は cf がそれを読む。頁（ホーム・事業の検索・紹介・アシスタント・会話・自治体の頁）は `pages/`（Void の Pages。layout のサイドバーを残したまま頁の間を SPA で移る）、API・sitemap・PWA は `routes/`。会話はアシスタントの入力 → Turnstile → `/s/:id` で、`server/` が Workers AI と apps/api の MCP（Service Binding）を繋ぎ、出典の頁を読む tool `read_source_page`（`server/source-pages.ts`、頁の文字は AI にだけ渡し画面と保存には出さない）を足し、結果は apps/api の MCP Apps の View を sandbox の iframe に描く。画面の会話の履歴はブラウザに置き、利用状況を Analytics Engine に、会話（質問と回答。復元と分析に使い、ログインしていない会話は90日）を D1 `fudoki-web`（binding `DB`）に保存する。構成・上限・手で設定するもの・集計の SQL は `web/README.md`。brand・map の資産生成（`build:brand` / `fetch:boundaries`）はこの package の script。自治体の OG 画像は `/jurisdictions/<code>/og.png` を Worker が頁と同じデータから描き、書体はその場で Google Fonts から使う字だけを取る（`server/og-render.ts`）。DESIGN.md・自治体の頁の作り・都市像の集め方は `.agents/skills/web-app/`
-- `docs/`（`@fudoki/docs`）: API・MCP の利用者向け文書（docs.fudoki.dev）。Blume で `content/` の MDX を静的に書き出し、Worker のコードを持たない assets だけの Worker で配る（`workers.dev`・preview URL は閉じる）。API リファレンスは build の前に `apps/api` の route 定義から書き出す `openapi.json`（`apps/api/openapi.ts`）から生成するので、操作の説明は各集約の `apps/api/src/<集約>/tools.ts`・`routes.ts` を直す。ページに書くのは接続方法・データの読み方など schema に無いことだけ。見た目は `theme.css` で本体サイト（DESIGN.md の色・書体・薄緑のサイドバー）に揃え、icon は `public/icons/` の Phosphor（regular）の SVG を `/icons/<name>.svg` で指す（Blume の既定は Lucide）。`<img>` で出るので `theme.css` の mask で文字色に塗る。SVG を frontmatter や import で渡すと「Markdown としてコピー」・llms-full.txt に SVG や JSX が混ざるので使わない。ロゴは fudoki.dev への戻り口
+## web（`@fudoki/web`）
 
-## 公開 web の配信
+- 頁: ホーム（`/`。住んでいるまちのダッシュボードと、ほかのまちの検索）、事業の検索（`/search`）、紹介（`/about`）、アシスタント（`/assistant`）と会話（`/s/:id`・`/api/*`）、自治体の頁（`/tokyo/nakano`）、`/favicon.svg`・`/robots.txt`。他は 404
+- [Void](https://void.cloud/)（Vite）で build する。設定は `void.config.ts`。頁は `pages/`（layout のサイドバーを残して SPA で移る）、API・sitemap・PWA は `routes/`、ファイル（icon・録画・出典の切り抜き）は `public/`（Workers static assets）
+- データは apps/api の内部の RPC（entrypoint `Web`）を Service Binding で呼んで読む（`server/fudoki-api.ts`）。公開の REST・MCP は使わず、ブラウザは api.fudoki.dev を呼ばない（ADR 0044）
+- web が持つデータの binding は、web 自身の D1 `fudoki-web`（binding `DB`。会話の保存と、外部サービスから引く参照データ（ADR 0042））だけ
+- 会話: アシスタントの入力 → Turnstile → `/s/:id`。`server/` が Workers AI と apps/api の MCP を繋ぎ、出典の頁を読む tool `read_source_page`（`server/source-pages.ts`）を足す。頁の文字は AI にだけ渡し、画面と保存には出さない。結果は apps/api の MCP Apps の View を sandbox の iframe に描く。構成・上限・手で設定するもの・集計の SQL は `web/README.md`
+- 自治体の OG 画像は `/jurisdictions/<code>/og.png` を Worker が頁と同じデータから描く（`server/og-render.ts`）
+- brand・map の資産生成（`build:brand`・`fetch:boundaries`）はこの package の script
+- `web/server/availability.test.ts` が配るファイルと PWA の繋ぎを確かめる
+- DESIGN.md・自治体の頁の作り・都市像の集め方は `.agents/skills/web-app/`
 
-**公開 web は `https://fudoki.dev/` で配信する。** これは派生物であって正本ではない。公開 web の絶対 URL（`canonical` / `og:image`）はこのドメインを指す。
+## api（`@fudoki/api`）
 
-- 置き場は Cloudflare。
-- 配信は Cloudflare Workers（`web/void.config.ts`、domain は `fudoki.dev`）。main に入ると `.github/workflows/deploy-web.yml` が自動でデプロイする（手元からは `bun run --cwd apps/web deploy`）。web を変える PR は `.github/workflows/deploy-preview-web.yml` が Worker Previews（`cf previews deploy`。binding・var は `void.config.ts` の `preview` の分岐）で `pr-<番号>.fudoki.dev` に出す（PR を閉じたら消す。fork の PR は出さない。preview は Cloudflare Access の「fudoki previews」で Cloudflare アカウントのログインだけを通す。Access の宛先はホスト名のパターンでなく Worker 単位の `preview_worker` にする — Deployment URL は `abc123-pr-12.fudoki.dev` のように前置きが付き、ホスト名のパターンでは当たらない。検索エンジンも Access で止まるので noindex は付けない）
-- build/deploy は公開 app のコードだけを扱い、dbt・出典の全量生成は実行しない
-- api・docs は main に入ると GitHub Actions がデプロイする（`.github/workflows/deploy-api.yml`・`deploy-docs.yml`、パスで対象を分ける）。認証は repo の secret `CLOUDFLARE_API_TOKEN`・`CLOUDFLARE_ACCOUNT_ID`。手元の `deploy:*` は手動で出し直すときだけ使う。D1 の migration とデータの投入は自動では行わない
-  - `CLOUDFLARE_API_TOKEN` は deploy-api・deploy-docs・deploy-web・deploy-preview-web の共用。権限は Workers の Admin（fudoki だけ。preview の削除に要る）と Editor（fudoki-api・fudoki-docs）、D1 の書き込み（fudoki-web・fudoki-web-preview の migration）、Zone（fudoki.dev）の Workers Routes: Edit（custom domain は Worker 単位の権限に未対応）と Zaraz: Edit（deploy-web が `apps/web/analytics/zaraz.json` を反映する）。preview も本番と同じ Worker の上に出すので token は分けない
-- 公開 app は `pipeline/` を import しない（`pipeline/verify/boundaries.ts` が検査する）
+- Cloudflare Workers + D1（ADR 0022・0038）。集約ごとの dir（`src/jurisdiction/`・`src/expenditure/` など）に型（`model.ts`）・問い合わせ（`queries.ts`）・REST の route（`routes.ts`、`@hono/zod-openapi`）・MCP の tool（`tools.ts`）を置く。設計は `docs/prd/aggregate-api/dd.md`
+- `src/app.ts` が middleware・MCP（`/mcp`）・`/openapi.json` を持つ。REST は `/v1/jurisdictions*`・`/v1/expenditures/*`・`/v1/evaluations/*`・`/v1/budget-proposals/*`・`/v1/projects*`
+- `src/rpc.ts` が型 `AppType` と、web 用の内部の RPC の型（`WebRpc`）を export する。内部の RPC `Web`（`src/web-entrypoint.ts`、操作は `src/web-ops.ts`）は MCP の tool と同じ名前・schema・問い合わせを使う
+- 出典の頁の文字を読む内部の RPC `SourcePages`（`src/source-pages-entrypoint.ts`）は HTTP の route・MCP に載せない。頁の文字は D1 の `source_page_text` を出典の sha256 で引く（`docs/prd/page-words/dd.md`）
+- 公開か内部かは api のインターフェース（REST の route・MCP の tool・内部の RPC）だけが持ち、D1・marts・`columns.json` には持たせない。内部の RPC だけが読む表は、参照するモジュールを試験で限る
+- api は R2 の binding を持たない（`pipeline/verify/boundaries.ts`）
+- 検索の入力の schema と SQL の組み立ては `src/shared/search.ts`。公開列の契約は生成物 `src/columns.json`。D1 の migration は `migrations/`
+- MCP Apps の View（結果の表）は `ui/`。`bun run --cwd apps/api view` が生成物 `src/gen/view.ts` に書く。`src/gen/` は commit せず、生成物を import する script は `bun run view &&` を前に付ける
+- 描画できる tool を変えるときは `src/app.ts` の `RENDER_DESCRIPTION` も同じ commit で直す
+- デプロイ・運用のハマりどころは `.agents/skills/cloudflare-api-ops/`
+
+## docs（`@fudoki/docs`）
+
+- API・MCP の利用者向け文書。Blume で `content/` の MDX を静的に書き出し、assets だけの Worker で配る（`workers.dev`・preview URL は閉じる）
+- API リファレンスは `apps/api/openapi.ts` が書き出す `openapi.json` から生成する。操作の説明は `apps/api/src/<集約>/tools.ts`・`routes.ts` を直し、頁には接続方法・データの読み方など schema に無いことだけを書く
+- 見た目は `theme.css` で本体（DESIGN.md の色・書体・薄緑のサイドバー）に揃える。icon は `public/icons/` の Phosphor（regular）の SVG を `/icons/<name>.svg` で指し、`theme.css` の mask で文字色に塗る。SVG を frontmatter や import で渡さない
+- ロゴは fudoki.dev への戻り口
+
+## 配信
+
+- web は `https://fudoki.dev/`（`web/void.config.ts`）。公開 web の絶対 URL（`canonical`・`og:image`）はこのドメインを指す
+- main に入ると GitHub Actions がデプロイする（`deploy-web.yml`・`deploy-api.yml`・`deploy-docs.yml`、パスで対象を分ける）。手元の `deploy:*` は手動で出し直すときだけ使う。D1 の migration は自動では流さない
+- web を変える PR は `deploy-preview-web.yml` が Worker Previews で `pr-<番号>.fudoki.dev` に出す（binding・var は `void.config.ts` の `preview` の分岐。PR を閉じたら消す。fork の PR は出さない）。preview は Cloudflare Access の「fudoki previews」の背後に置き（宛先は Worker 単位の `preview_worker`）、noindex は付けない
+- build・deploy は公開 app のコードだけを扱い、dbt・出典の全量生成は実行しない
+- 公開 app は `pipeline/` を import しない（`pipeline/verify/boundaries.ts`）
+- deploy の token の権限は `.agents/skills/cloudflare-api-ops/references/cf-deploy.md`
