@@ -1,6 +1,6 @@
 import { describe, expect, test } from 'bun:test'
 import { readFileSync } from 'node:fs'
-import { COFOG_DIVISION_LABELS, COFOG_DIVISIONS } from '@fudoki/fiscal/cofog-master'
+import { COFOG_DIVISION_LABELS, COFOG_DIVISIONS, COFOG_NAMES } from '@fudoki/fiscal/cofog-master'
 import { DOMAIN_FRAMES, frameOf } from '../jurisdiction/domains'
 
 // 分野の枠から事業が漏れると、ページから黙って消える
@@ -20,6 +20,11 @@ describe('分野の枠', () => {
   test('大分類の言い換えは正式名と同じコードを持ち、分野は大分類と一対一', () => {
     expect(Object.keys(COFOG_DIVISION_LABELS).sort()).toEqual(Object.keys(COFOG_DIVISIONS).sort())
     expect(DOMAIN_FRAMES.map((f) => f.cofog).sort()).toEqual(Object.keys(COFOG_DIVISIONS).sort())
+  })
+  test('dbt の COFOG マスタのコードは、画面の名前の表（cofog-master.ts）にも全部ある', () => {
+    // CSV だけに足すと、画面の分野の図に「COFOG 09.4」とコードのまま出る
+    const names = Object.assign({}, ...Object.values(COFOG_NAMES)) as Record<string, string>
+    expect(masterCodes.filter((code) => !names[code!])).toEqual([])
   })
   test('枠の id は重ならない', () => {
     expect(new Set(DOMAIN_FRAMES.map((f) => f.id)).size).toBe(DOMAIN_FRAMES.length)

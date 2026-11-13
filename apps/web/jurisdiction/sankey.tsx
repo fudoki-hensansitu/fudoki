@@ -16,8 +16,9 @@ const HEAD = 20
 const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記載' : formatYen(yen))
 
 const fit = (values: number[], slot: number, gap: number, height: number) => {
+  // 帯の倍率は金額の和に反比例する（東京都の約9兆円で 1e-11 ほど）。上限を和で割っておかないと、40回の二分探索の刻みが倍率より粗くなり帯の太さが0になる
   let low = 0
-  let high = height
+  let high = height / Math.max(1, values.reduce((sum, value) => sum + value, 0))
   for (let i = 0; i < 40; i++) {
     const mid = (low + high) / 2
     const used = values.reduce((sum, value) => sum + Math.max(value * mid, slot) + gap, 0)
