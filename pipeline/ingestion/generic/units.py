@@ -190,6 +190,8 @@ def check(built, document_kind: str, account: str | None = None, partial: bool =
         # The grand total: a row named 合計 (歳出合計) if any, else the largest printed total
         # (other 計 rows are subtotals).
         named = [n for n in printed if '合計' in (n.get('label') or '')]
+        # Each 項 may close on a `合計` of its own (奥多摩町's 予算書): the `歳出合計` row is the grand total.
+        named = [n for n in named if '歳出' in n.get('label', '')] or named
         chosen = named[-1] if named else max(printed, key=lambda n: abs(number(n['text']) or 0))
         total = number(chosen['text'])
         result['total_label'] = chosen.get('label')

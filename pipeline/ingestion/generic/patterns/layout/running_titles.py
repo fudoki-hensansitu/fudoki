@@ -491,7 +491,9 @@ def carry_amounts(logicals) -> None:
     logical page: it is read on that name's line, and keeps the page and place it is printed at."""
     for before, after in zip(logicals, logicals[1:]):
         for band in after.bands:
-            if band.kind != 'label' or not band.words:
+            # A subject column prints no amount: a code alone at the top of its page (`03` of the next 目, 奥多摩町) is
+            # that item's.
+            if band.kind != 'label' or not band.words or layout._subject(band):
                 continue
             target = next((b for b in before.bands if b.kind == 'label' and b.header == band.header and b.words), None)
             if target is None:
@@ -628,7 +630,10 @@ def read(pages, **options):
         wide = drop_outside_columns(page)
         headless = headless_top(wide)
         inside = in_headless_top(wide, headless) if headless else None
-        wide = extend_columns(without_headless_rules(wide, headless) if headless else wide)
+        wide = without_headless_rules(wide, headless) if headless else wide
+        # `rules.row_gaps`: the page leaves a column's rule out for a row on purpose (a name runs on across it), and
+        # draws the rest of the rule: it is not run on over the gap.
+        wide = wide if options.get('row_gaps') else extend_columns(wide)
         page.words = inside_rules(page.words, wide.rules)
         if headless:
             upper[page.number] = [w for w in page.words if inside(w)]
