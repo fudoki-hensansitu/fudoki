@@ -8,6 +8,7 @@ on:
       - apps/web/**
       - apps/api/src/rpc.ts
       - apps/api/src/*/model.ts
+      - packages/**
       - package.json
       - bun.lock
       - bunfig.toml
