@@ -84,8 +84,10 @@ function BackToTop({ hidden }: { hidden: boolean }) {
 }
 
 
-export function AskDock({ name, code, sitekey, year, section, detail, page }: {
+export function AskDock({ name, code, sitekey, year, section, detail, page, ask = `${name}について質問` }: {
   name: string
+  /** 入力欄と右下のボタンの文言。無ければ「name について質問」 */
+  ask?: string
   /** 見ている頁の説明。無ければ「name の頁」（比べる頁のように、自治体の頁でないときに渡す） */
   page?: string
   /** 6桁の自治体コード。AI が収録の自治体を確かめ直さずに調べられるよう、文脈に入れる */
@@ -344,7 +346,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page }: {
         <div className="mx-auto max-w-[720px]">
           <StartForm
             sitekey={sitekey}
-            placeholder={`${name}について質問`}
+            placeholder={ask}
             context={describe}
             onStart={start}
             before={chip}
@@ -360,7 +362,7 @@ export function AskDock({ name, code, sitekey, year, section, detail, page }: {
         aria-hidden={docked || drawer}
       >
         <RobotIcon className="size-4 text-primary" aria-hidden="true" />
-        {chat ? '会話に戻る' : `${name}について質問`}
+        {chat ? '会話に戻る' : ask}
       </button>
       {/* 会話のシートは body へ出す。頁の @container が重なりの文脈を作り、スマホの下のナビより後ろに回ってしまうため */}
       {chat ? createPortal(

@@ -1,7 +1,7 @@
 // 比べる。2つのまちを、同じ年度の一般会計の決算の分野で並べる。真ん中に分野、左に a（住んでいるまち）、右に b の棒を伸ばし、下に a に似たまちを出す。
 // a は緑、b は灰で分け、印（塗り・輪）でも見分けられるようにする。まちどうしの順位や良し悪しの色は付けない
 import * as React from 'react'
-import { ArrowsLeftRightIcon, CaretRightIcon } from '@phosphor-icons/react'
+import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Separator } from '@/components/ui/separator'
@@ -27,7 +27,6 @@ export const compareHref = (a: string, b?: string | null, av?: Version | null, b
 const KIND_LABEL = { settlement: '決算', initial: '当初予算' } as const
 /** 「R6年度 決算」 */
 export const versionLabel = (v: Version) => `${reiwa(v.year)} ${KIND_LABEL[v.kind]}`
-const versionKey = (v: Version) => `${v.year}-${v.kind}`
 /** そのまちの頁の、選んでいる年度の決算・予算のタブ */
 const docHref = (t: CompareTown) => `${t.path}/${t.version.year}/${t.version.kind === 'settlement' ? TAB_SLUGS.settled : TAB_SLUGS.money}`
 
@@ -56,7 +55,7 @@ const popText = (n: number) => (n ? `人口 ${(n / 1e4).toFixed(1)}万人` : '')
 const TYPING_MS = 150
 
 /** まちの名前そのものが選ぶ欄。押すと名前で探せる候補が開く。候補は頁に全部を載せず、打った語でサーバー（/api/jurisdictions?q=）に上位だけを聞く */
-function TownPicker({ current, onPick, children }: { current: string; onPick: (code: string) => void; children: React.ReactNode }) {
+function TownPicker({ current, onPick, children, className }: { current: string; onPick: (code: string) => void; children: React.ReactNode; className?: string }) {
   const [open, setOpen] = React.useState(false)
   const [q, setQ] = React.useState('')
   // null は読めなかった
@@ -72,7 +71,7 @@ function TownPicker({ current, onPick, children }: { current: string; onPick: (c
   }, [open, q])
   return (
     <Combobox open={open} onOpenChange={setOpen} items={items ?? []} filter={null} itemToStringLabel={(e: MapEntry) => e.name} value={null} onInputValueChange={(v) => setQ(v)} onValueChange={(e) => e && (e as MapEntry).code !== current && onPick((e as MapEntry).code)}>
-      <ComboboxTrigger aria-label="まちを選ぶ" className="-mx-1.5 flex max-w-full min-w-0 items-center gap-1 rounded-lg px-1.5 py-0.5 text-left text-[17px] font-semibold text-foreground hover:bg-card">
+      <ComboboxTrigger aria-label="まちを選ぶ" className={cn('-mx-1.5 flex max-w-full min-w-0 items-center gap-1 rounded-lg px-1.5 py-0.5 text-left text-[17px] font-semibold text-foreground hover:bg-card', className)}>
         {children}
       </ComboboxTrigger>
       <ComboboxContent className="w-64">
@@ -91,25 +90,45 @@ function TownPicker({ current, onPick, children }: { current: string; onPick: (c
   )
 }
 
-/** まちの札。紋章・名前・人口と、1人あたりの総額 */
-function TownCard({ t, mark, onPick, onVersion }: { t: CompareTown; mark: React.ReactNode; onPick: (code: string) => void; onVersion: (v: Version) => void }) {
-  const items = t.versions.map((v) => ({ value: versionKey(v), label: versionLabel(v) }))
+/** 資料（当初予算・決算）と年度を分けて選ぶ。資料を替えたとき同じ年度が無ければ、その資料の最新の年度にする */
+function VersionPicker({ t, onVersion }: { t: CompareTown; onVersion: (v: Version) => void }) {
+  const kinds = (['initial', 'settlement'] as const).filter((k) => t.versions.some((v) => v.kind === k))
+  const years = t.versions.filter((v) => v.kind === t.version.kind).map((v) => v.year)
+  const items = years.map((y) => ({ value: String(y), label: reiwa(y) }))
+  const pickKind = (kind: Version['kind']) => {
+    const same = t.versions.find((v) => v.kind === kind && v.year === t.version.year)
+    const next = same ?? t.versions.find((v) => v.kind === kind)
+    if (next) onVersion(next)
+  }
   return (
-    <section className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border bg-background p-3 sm:p-4">
-      <div className="flex items-center gap-3">
-        <Emblem code={t.code} name={t.name} className="hidden size-10 sm:grid" />
-        <div className="min-w-0 flex-1">
-          <TownPicker current={t.code} onPick={onPick}>
-            <span className="truncate">{t.name}</span>
-            {mark}
-          </TownPicker>
-          <p className="truncate text-xs text-muted-foreground">{popText(t.pop)}</p>
-        </div>
-      </div>
-      <Select items={items} value={versionKey(t.version)} onValueChange={(k) => { const v = t.versions.find((x) => versionKey(x) === k); if (v) onVersion(v) }}>
-        <SelectTrigger size="sm" aria-label={`${t.name}の年度と資料`} className="w-full rounded-full px-2.5 sm:w-auto sm:self-start sm:px-3"><SelectValue /></SelectTrigger>
+    <div className="flex flex-wrap items-center gap-2">
+      <ToggleGroup aria-label={`${t.name}の資料`} value={[t.version.kind]} onValueChange={(x) => x[0] && pickKind(x[0] as Version['kind'])} variant="outline" size="sm" spacing={0}>
+        {kinds.map((k) => <ToggleGroupItem key={k} value={k}>{KIND_LABEL[k]}</ToggleGroupItem>)}
+      </ToggleGroup>
+      <Select items={items} value={String(t.version.year)} onValueChange={(y) => y && onVersion({ year: Number(y), kind: t.version.kind })}>
+        <SelectTrigger size="sm" aria-label={`${t.name}の年度`} className="rounded-full px-3"><SelectValue /></SelectTrigger>
         <SelectContent>{items.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
       </Select>
+    </div>
+  )
+}
+
+/** まちの札。紋章・名前・人口と、1人あたりの総額 */
+function TownCard({ t, mark, onPick, onVersion }: { t: CompareTown; mark: React.ReactNode; onPick: (code: string) => void; onVersion: (v: Version) => void }) {
+  return (
+    <section className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border bg-background p-3 sm:p-4">
+      {/* 紋章・名前・人口のまとまり全体で、まちを選ぶ */}
+      <TownPicker current={t.code} onPick={onPick} className="-m-1.5 max-w-none gap-3 rounded-xl p-1.5">
+        <Emblem code={t.code} name={t.name} className="hidden size-10 sm:grid" />
+        <span className="min-w-0 flex-1">
+          <span className="flex min-w-0 items-center gap-1.5">
+            <span className="truncate">{t.name}</span>
+            {mark}
+          </span>
+          <span className="block truncate text-xs font-normal text-muted-foreground">{popText(t.pop)}</span>
+        </span>
+      </TownPicker>
+      <VersionPicker t={t} onVersion={onVersion} />
       {!t.total ? (
         <p className="text-sm text-muted-foreground">この資料の金額はまだありません</p>
       ) : t.pop ? (
@@ -186,13 +205,16 @@ function SimilarList({ title, note, items, onPick }: { title: string; note: stri
       <p className="mb-2 text-xs text-muted-foreground">{note}</p>
       <div className="-mx-2.5 flex flex-col">
         {items.map((s) => (
-          <button key={s.code} type="button" onClick={() => onPick(s.code)} className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-card">
+          <button key={s.code} type="button" onClick={() => onPick(s.code)} className="group flex items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-card">
             <Emblem code={s.code} name={s.name} className="size-[30px] rounded-[9px] p-1" />
             <span className="min-w-0 flex-1">
               <span className="block text-[15px]">{s.name}</span>
               <span className="block text-xs text-muted-foreground">{popText(s.pop)}</span>
             </span>
-            <CaretRightIcon className="size-4 text-muted-foreground" />
+            <span className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground group-hover:text-foreground">
+              <ArrowsLeftRightIcon className="size-4" aria-hidden="true" />
+              入れ替える
+            </span>
           </button>
         ))}
       </div>
@@ -200,15 +222,15 @@ function SimilarList({ title, note, items, onPick }: { title: string; note: stri
   )
 }
 
-/** 住んでいるまちの無い /compare は、見本の組み合わせ（品川区と、使い方が一番近いまち）を選んだ状態で開く。住んでいるまちがあれば、そのまちで開き直す */
+/** まちの指定の無い /compare は、見本の組み合わせ（品川区と、使い方が一番近いまち）を SSR で最初から出す。
+ * サイトのナビは住んでいるまちを付けて開くので、ここで開き直すのは URL を直に開いたときだけ */
 function Sample({ body }: { body: React.ReactNode }) {
-  const { ready, town } = useMyTown()
+  const { town } = useMyTown()
   const { visit } = useRouter()
   React.useEffect(() => {
     if (town) void visit(compareHref(town.code), { replace: true })
   }, [town, visit])
-  // 住んでいるまちを読むまでは、見本が一瞬出て切り替わらないよう何も描かない
-  return !ready || town ? <div className="min-h-[60vh]" /> : body
+  return body
 }
 
 export function Compare(props: Props) {
@@ -242,7 +264,7 @@ export function Compare(props: Props) {
                 </ToggleGroup>
               </div>
               <div className="mt-5"><Butterfly a={a} b={b} m={m} /></div>
-              <AskDock name={a.code === b.code ? a.name : `${a.name}と${b.name}`} code={a.code} year={a.version.year} sitekey={props.sitekey} page="まち比べの頁" detail={() => `比べている: ${a.name}（${a.code}）の${versionLabel(a.version)}と、${b.name}（${b.code}）の${versionLabel(b.version)}。一般会計の目を COFOG の分野へ分けて足したもの。表示: ${m === 'head' ? '1人あたり' : '割合'}`} />
+              <AskDock name={a.code === b.code ? a.name : `${a.name}と${b.name}`} code={a.code} year={a.version.year} sitekey={props.sitekey} page="まち比べの頁" ask="AIに質問" detail={() => `比べている: ${a.name}（${a.code}）の${versionLabel(a.version)}と、${b.name}（${b.code}）の${versionLabel(b.version)}。一般会計の目を COFOG の分野へ分けて足したもの。表示: ${m === 'head' ? '1人あたり' : '割合'}`} />
             </>
           ) : (
             <div className="mt-8 flex flex-col items-start gap-2">
@@ -255,7 +277,12 @@ export function Compare(props: Props) {
 
           {byUse.length || byPopulation.length ? (
             <section className="mt-12">
-              <h2 className="mb-3 text-[17px] font-semibold">{a.name}に似たまち</h2>
+              {b ? (
+                <>
+                  <h2 className="flex flex-wrap items-center gap-1.5 text-[17px] font-semibold"><MarkB />{b.name}と入れ替える</h2>
+                  <p className="mt-1 mb-3 text-sm text-muted-foreground">{a.name}に似たまちから選べます</p>
+                </>
+              ) : <h2 className="mb-3 text-[17px] font-semibold">{a.name}に似たまち</h2>}
               <div className="flex flex-col gap-6 sm:flex-row">
                 {byUse.length ? <SimilarList title="使い方が近い" note="一般会計を分野ごとの割合で比べて近いまち" items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
                 {byPopulation.length ? <SimilarList title="人口が近い" note="住民基本台帳の人口が近いまち" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}

@@ -5,6 +5,7 @@ import { useRouter } from '@void/react'
 import { SidebarGroup, SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from '@/components/ui/sidebar'
 import { Item } from './site-nav'
 import { TownPalette } from './town-palette'
+import { useMyTown } from '../home/towns'
 
 /** まちを探す。欄を押すか ⌘K で、画面の中央に候補のパレット（TownPalette）を開く。選んだまちの頁へ移る */
 function TownSearch() {
@@ -40,16 +41,23 @@ function TownSearch() {
   )
 }
 
+/** まち比べへのリンク。住んでいるまちがあれば最初からそのまちで開く（頁で読み直して開き直さずに済むよう） */
+export function useCompareHref() {
+  const { town } = useMyTown()
+  return town ? `/compare?a=${town.code}` : '/compare'
+}
+
 const isAssistant = (path: string) => path === '/assistant' || path.startsWith('/s/')
 
 export function NavContent() {
   const { path } = useRouter()
+  const compare = useCompareHref()
   return (
     <SidebarGroup className="pt-1">
       <SidebarMenu>
         <TownSearch />
         <Item href="/assistant" label="アシスタント" icon={<RobotIcon />} active={isAssistant(path)} />
-        <Item href="/compare" label="まち比べ" icon={<ArrowsLeftRightIcon />} active={path === '/compare'} />
+        <Item href={compare} label="まち比べ" icon={<ArrowsLeftRightIcon />} active={path === '/compare'} />
       </SidebarMenu>
     </SidebarGroup>
   )
