@@ -115,36 +115,36 @@ export async function jurisdictionSnapshotResponse(env: Env, request: Request, c
   }
 }
 
-/** 頁の1年度の、最初の画面に要らない分（extras）と、分野ごとの末端の科目（field-subjects）。/jurisdiction-years/:code/:year/<part> が返し、CDN に1時間置く。
- * 資料の種類は自治体の収録から決め、頁に無い自治体・年度は 404（CDN の key を増やさない） */
-export async function yearPartResponse(env: Env, code: string, yearText: string, part: 'extras' | 'field-subjects'): Promise<Response> {
+/** 頁の1年度の、最初の画面に要らない分（extras）と、分野ごとの末端の科目（field-subjects）。/api/jurisdictions/:code/:year/<part> が返す。
+ * 誰でも呼べるので IP ごとの流量と形の検査で守り、資料の種類は自治体の収録から決める（頁に無い自治体・年度は 404） */
+export async function yearPartResponse(env: Env, request: Request, code: string, yearText: string, part: 'extras' | 'field-subjects'): Promise<Response> {
   try {
-    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(yearText)) throw new HttpError(404, 'NOT_FOUND', '自治体コードか年度の形が違います')
+    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(yearText)) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コードか年度の形が違います')
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     const entry = await loadCatalogEntry(env, code)
     const me = entry && appYears(entry).find((y) => y.year === Number(yearText))
     if (!entry || !me) throw new HttpError(404, 'NOT_FOUND', 'この年度は頁にありません')
     const body = part === 'extras' ? await loadYearExtras(env, code, me.year, me.kind) : await loadFieldSubjects(env, code, me.year, me.kind)
-    return new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE, 'x-revalidate': String(PART_REVALIDATE) } })
+    return new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
   }
 }
-const PART_REVALIDATE = 3600
 
-/** 予算・決算のタブの流れの図の、目ごとの節（/jurisdiction-years/:code/:year/setsu/:phase[/:account]）。CDN に1時間置く。
- * 収録の無い年度・資料・会計は 404（CDN の key を増やさない） */
-export async function setsuResponse(env: Env, code: string, yearText: string, phase: string, accountParam?: string): Promise<Response> {
+/** 予算・決算のタブの流れの図の、目ごとの節（/api/jurisdictions/:code/:year/setsu/:phase[/:account]）。収録の無い年度・資料・会計は 404 */
+export async function setsuResponse(env: Env, request: Request, code: string, yearText: string, phase: string, accountParam?: string): Promise<Response> {
   try {
-    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(yearText) || (phase !== 'initial' && phase !== 'settlement')) throw new HttpError(404, 'NOT_FOUND', '自治体コード・年度・資料の形が違います')
-    // 会計の名前は path の1段。router が % を戻していなければ戻す（戻せない形は収録に無い会計として 404）
+    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(yearText) || (phase !== 'initial' && phase !== 'settlement')) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コード・年度・資料の形が違います')
+    // 会計の名前は path の1段。router が % を戻していなければ戻す
     let account = accountParam || ACCOUNT
-    if (account.includes('%')) try { account = decodeURIComponent(account) } catch { throw new HttpError(404, 'NOT_FOUND', '会計の形が違います') }
+    if (account.includes('%')) try { account = decodeURIComponent(account) } catch { throw new HttpError(400, 'INVALID_ARGUMENT', '会計の形が違います') }
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     const entry = await loadCatalogEntry(env, code)
     const year = Number(yearText)
     const years = phase === 'initial' ? entry?.initialYears : entry?.settlementYears
     if (!entry || !years?.includes(year) || (account !== ACCOUNT && !entry.accounts?.[phase]?.[yearText]?.includes(account))) throw new HttpError(404, 'NOT_FOUND', 'この年度・資料・会計は収録していません')
-    return new Response(JSON.stringify(await loadSetsu(env, code, year, phase, account)), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE, 'x-revalidate': String(PART_REVALIDATE) } })
+    return new Response(JSON.stringify(await loadSetsu(env, code, year, phase, account)), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))

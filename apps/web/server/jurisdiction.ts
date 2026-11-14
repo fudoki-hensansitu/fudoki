@@ -140,7 +140,7 @@ async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: st
   return setsuByMoku
 }
 
-/** 目ごとの直下の内訳（節、無ければ事業）。予算・決算のタブの流れの図は節を最初の画面に出さないので、頁を描いた後にブラウザが読んで足す（/jurisdiction-years/:code/:year/setsu/:phase） */
+/** 目ごとの直下の内訳（節、無ければ事業）。予算・決算のタブの流れの図は節を最初の画面に出さないので、頁を描いた後にブラウザが読んで足す（/api/jurisdictions/:code/:year/setsu/:phase） */
 export async function loadSetsu(env: Env, code: string, year: number, kind: DocumentKind, account: string = ACCOUNT): Promise<Record<string, Setsu[]>> {
   const moku = await searchAll(env, 'subjects', code, year, { level: { eq: ['目'] } }, kind, account)
   return Object.fromEntries(await loadSetsuByMoku(env, code, year, moku.map((n) => n.subject_id), kind, account))
