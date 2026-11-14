@@ -92,9 +92,9 @@ class ManifestWorkflowTest(unittest.TestCase):
     def test_csv_preservation_failure_stops_before_saving_or_registry_update(self):
         before = self.path.read_bytes()
         with patch('ingestion.lib.conversion.verify_csv', side_effect=ValueError('CSV preservation failed')), \
-             patch('ingestion.fiscal.run.save') as save, patch('ingestion.fiscal.run.cleanup') as cleanup:
+             patch('ingestion.fiscal.run.keep') as save, patch('ingestion.fiscal.run.cleanup') as cleanup:
             with self.assertRaisesRegex(ValueError, 'CSV preservation failed'):
-                convert(self.path, self.files, self.root/'rejected', remote=True)
+                convert(self.path, self.files, self.root/'rejected', remote=True, record=True)
         save.assert_not_called()
         cleanup.assert_not_called()
         self.assertEqual(self.path.read_bytes(), before)
@@ -114,8 +114,8 @@ class ManifestWorkflowTest(unittest.TestCase):
         code = self.code/'fiscal/layouts/csv/convert.py'
         code.write_text(code.read_text().replace('    return {table_id: output}',
             f"    return {{table_id: {{'path': output, 'metadata': {metadata!r}}}}}"))
-        with patch('ingestion.fiscal.run.save'), patch('ingestion.fiscal.run.cleanup'):
-            convert(self.path, self.files, self.root/'annotated', remote=True)
+        with patch('ingestion.fiscal.run.keep'), patch('ingestion.fiscal.run.cleanup'):
+            convert(self.path, self.files, self.root/'annotated', remote=True, record=True)
         saved = manifest.read(self.path)
         self.assertEqual(saved['tables'][0]['metadata'], metadata)
         # A path-only caller can retain annotations only for identical inputs and bytes.
@@ -133,8 +133,8 @@ class ManifestWorkflowTest(unittest.TestCase):
         self.assertEqual(values, [('1,000',)])
 
     def test_csv_tables_are_out_of_scope_for_tree_checks(self):
-        with patch('ingestion.fiscal.run.save'), patch('ingestion.fiscal.run.cleanup'):
-            convert(self.path, self.files, self.root/'saved', remote=True)
+        with patch('ingestion.fiscal.run.keep'), patch('ingestion.fiscal.run.cleanup'):
+            convert(self.path, self.files, self.root/'saved', remote=True, record=True)
         saved = manifest.read(self.path)
         # CSV tables are verified by cell retention at conversion, not by printed sums.
         results = verify_sums(saved, lambda table: self.root/'saved'/f'{table["table_id"]}.parquet')
@@ -146,9 +146,9 @@ class ManifestWorkflowTest(unittest.TestCase):
         code.write_text(code.read_text().replace('    return {table_id: output}',
             f"    return {{table_id: {{'path': output, 'metadata': {metadata!r}}}}}"))
         before = self.path.read_bytes()
-        with patch('ingestion.fiscal.run.save') as save:
+        with patch('ingestion.fiscal.run.keep') as save:
             with self.assertRaisesRegex(ValueError, 'missing Parquet columns'):
-                convert(self.path, self.files, self.root/'bad-metadata', remote=True)
+                convert(self.path, self.files, self.root/'bad-metadata', remote=True, record=True)
         save.assert_not_called()
         self.assertEqual(self.path.read_bytes(), before)
         for invalid in (
@@ -167,9 +167,9 @@ class ManifestWorkflowTest(unittest.TestCase):
         code.write_text(code.read_text().replace('    return {table_id: output}',
                                                 "    source['path'].write_text('changed')\n    return {table_id: output}"))
         before = self.path.read_bytes()
-        with patch('ingestion.fiscal.run.save') as save:
+        with patch('ingestion.fiscal.run.keep') as save:
             with self.assertRaisesRegex(ValueError, 'original changed during conversion'):
-                convert(self.path, self.files, self.root/'changed', remote=True)
+                convert(self.path, self.files, self.root/'changed', remote=True, record=True)
         save.assert_not_called()
         self.assertEqual(self.path.read_bytes(), before)
         self.assertFalse((self.root/'changed/manifest.json').exists())
@@ -340,9 +340,9 @@ class ManifestWorkflowTest(unittest.TestCase):
                  for t in saved['tables']}
         old_bytes = {sha: path.read_bytes() for sha, path in local.items()}
         with patch('ingestion.fiscal.run.fetch', side_effect=lambda ref, **kwargs: local[ref['sha256']]), \
-             patch('ingestion.fiscal.run.save') as save, patch('ingestion.fiscal.run.cleanup'):
+             patch('ingestion.fiscal.run.keep') as save, patch('ingestion.fiscal.run.cleanup'):
             convert(self.path, self.files, self.root/'partial-remote',
-                    conversion_ids=['two'], remote=True)
+                    conversion_ids=['two'], remote=True, record=True)
         save.assert_called_once()
         self.assertEqual(save.call_args.args[1]['table_id'], 'two')
         published = manifest.read(self.path)
@@ -353,10 +353,10 @@ class ManifestWorkflowTest(unittest.TestCase):
 
     def test_failed_upload_does_not_replace_registry_or_delete_old_objects(self):
         before = self.path.read_bytes()
-        with patch('ingestion.fiscal.run.save', side_effect=[None, RuntimeError('upload failed')]), \
+        with patch('ingestion.fiscal.run.keep', side_effect=[None, RuntimeError('upload failed')]), \
              patch('ingestion.fiscal.run.cleanup') as cleanup:
             with self.assertRaisesRegex(RuntimeError, 'upload failed'):
-                convert(self.path, self.files, self.root/'failed-upload', remote=True)
+                convert(self.path, self.files, self.root/'failed-upload', remote=True, record=True)
         self.assertEqual(self.path.read_bytes(), before)
         cleanup.assert_not_called()
 
@@ -394,7 +394,7 @@ class ManifestWorkflowTest(unittest.TestCase):
         old_bytes = {sha: path.read_bytes() for sha, path in local.items()}
         fingerprints = manifest.fingerprints(saved)
         with patch('ingestion.fiscal.run.fetch', side_effect=lambda ref, **kwargs: local[ref['sha256']]), \
-             patch('ingestion.fiscal.run.save') as save, patch('ingestion.fiscal.run.cleanup') as cleanup:
+             patch('ingestion.fiscal.run.keep') as save, patch('ingestion.fiscal.run.cleanup') as cleanup:
             result = convert(self.path, new_files, self.root/'extended-local', extend_plan=plan_path)
             candidate = json.loads(Path(result['candidate']).read_text())
             self.assertEqual(result['tables'], 3)
@@ -404,7 +404,7 @@ class ManifestWorkflowTest(unittest.TestCase):
             cleanup.assert_not_called()
             self.assertEqual({sha: path.read_bytes() for sha, path in local.items()}, old_bytes)
             with patch('ingestion.fiscal.run.manifest.write', wraps=manifest.write) as write:
-                result = convert(self.path, new_files, self.root/'extended-remote', extend_plan=plan_path, remote=True)
+                result = convert(self.path, new_files, self.root/'extended-remote', extend_plan=plan_path, remote=True, record=True)
                 write.assert_called_once()
             save.assert_called_once()
             self.assertEqual(save.call_args.args[1]['table_id'], 'three')
@@ -420,10 +420,10 @@ class ManifestWorkflowTest(unittest.TestCase):
         saved, local, plan, plan_path, new_files = self.retained_extension()
         before = self.path.read_bytes()
         with patch('ingestion.fiscal.run.fetch', side_effect=lambda ref, **kwargs: local[ref['sha256']]), \
-             patch('ingestion.fiscal.run.save', side_effect=RuntimeError('new upload failed')) as save, \
+             patch('ingestion.fiscal.run.keep', side_effect=RuntimeError('new upload failed')) as save, \
              patch('ingestion.fiscal.run.cleanup') as cleanup, patch('ingestion.fiscal.run.manifest.write') as write:
             with self.assertRaisesRegex(RuntimeError, 'new upload failed'):
-                convert(self.path, new_files, self.root/'extension-failed', extend_plan=plan_path, remote=True)
+                convert(self.path, new_files, self.root/'extension-failed', extend_plan=plan_path, remote=True, record=True)
             self.assertEqual(self.path.read_bytes(), before)
             self.assertEqual(save.call_args.args[1]['table_id'], 'three')
             cleanup.assert_not_called()
@@ -438,9 +438,9 @@ class ManifestWorkflowTest(unittest.TestCase):
                 wrong.write_bytes(b'changed')
             manifest.write(self.path, invalid)
             before = self.path.read_bytes()
-            with patch('ingestion.fiscal.run.fetch', return_value=wrong), patch('ingestion.fiscal.run.save') as save:
+            with patch('ingestion.fiscal.run.fetch', return_value=wrong), patch('ingestion.fiscal.run.keep') as save:
                 with self.subTest(case=case), self.assertRaisesRegex(ValueError, 'hash/size'):
-                    convert(self.path, new_files, self.root/('corrupt-' + case), extend_plan=plan_path, remote=True)
+                    convert(self.path, new_files, self.root/('corrupt-' + case), extend_plan=plan_path, remote=True, record=True)
                 self.assertEqual(self.path.read_bytes(), before)
                 save.assert_not_called()
 
@@ -457,13 +457,13 @@ class ManifestWorkflowTest(unittest.TestCase):
             lambda p: p['conversions'][-1]['expected_tables'].append({'table_id': 'four'}),
             lambda p: p['conversions'].pop(),
         )
-        with patch('ingestion.fiscal.run.fetch') as fetch, patch('ingestion.fiscal.run.save') as save:
+        with patch('ingestion.fiscal.run.fetch') as fetch, patch('ingestion.fiscal.run.keep') as save:
             for index, mutate in enumerate(changes):
                 invalid = deepcopy(plan)
                 mutate(invalid)
                 plan_path.write_text(json.dumps(invalid))
                 with self.subTest(case=index), self.assertRaises((ValueError, jsonschema.ValidationError)):
-                    convert(self.path, new_files, self.root/f'invalid-{index}', extend_plan=plan_path, remote=True)
+                    convert(self.path, new_files, self.root/f'invalid-{index}', extend_plan=plan_path, remote=True, record=True)
                 self.assertEqual(self.path.read_bytes(), before)
             plan_path.write_text(json.dumps(plan))
             for ids in (['one'], ['three', 'three'], ['one', 'three']):

@@ -17,7 +17,7 @@ export function Emblem({ code, name, className = 'size-10' }: { code: string; na
   const [failed, setFailed] = React.useState(false)
   return (
     <span className={cn('grid shrink-0 place-items-center rounded-xl border bg-emblem p-1.5', className)}>
-      {failed ? <span className="text-sm text-foreground">{name[0]}</span> : <img src={emblem(code)} alt="" loading="lazy" className="size-full object-contain" onError={() => setFailed(true)} />}
+      {failed ? <span className="text-sm text-foreground">{name[0]}</span> : <img src={emblem(code)} alt="" loading="lazy" className="size-full min-h-0 min-w-0 object-contain" onError={() => setFailed(true)} />}
     </span>
   )
 }

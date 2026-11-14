@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-11-10`
-状態: Draft（別の agent のレビューを反映済み）
+状態: Done（実装済み。web が内部の RPC だけで読む形は [ADR 0044](../../adr/0044-separate-web-and-public-api.md) で改めた）
 
 ## Summary
 

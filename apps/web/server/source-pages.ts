@@ -1,5 +1,5 @@
 // 出典の1頁を読む tool（read_source_page）。apps/api の内部の RPC（entrypoint SourcePages）を Service Binding で呼ぶ。
-// 頁の文字は AI にだけ渡し、画面（UI message stream）と会話の保存には書かない。出典の利用条件が無断の転載を禁じるため（docs/prd/source-reading/dd.md）
+// 頁の文字は AI にだけ渡し、画面（UI message stream）と会話の保存には書かない。出典の利用条件が無断の転載を禁じるため
 import { dynamicTool, jsonSchema } from 'ai'
 
 export const SOURCE_PAGE_TOOL = 'read_source_page'

@@ -8,7 +8,7 @@
 
 出典はsource_selectionの非公開R2領域に保存し、取り込みParquetは出典対象と方向ごとの固定keyに保存する。Gitでは同じ対象の変換設定と保存済み表を一つのJSONで管理する。構造はJSON Schema、ファイルの配置・表の所有者・出典との対応は実行時の検査で強制する。
 
-変換は受け取ったCSV/PDFと対象情報を使う。全表をローカルで準備し、全アップロード成功後にJSONを更新する。その後、対象と方向が同じ領域の不要な表を削除する。現在版だけを保存し、別年度・別補正号は別対象として保持する。
+変換は受け取ったCSV/PDFと対象情報を使う。全表をローカルで準備し、検査が通ればJSONに記録する。R2へは merge 後の CI（`ingestion:store`）が、記録と変換し直した表が一致したときだけ保存する（[ADR 0045](../../adr/0045-ingestion-tables-uploaded-by-ci.md)）。その後、対象と方向が同じ領域の不要な表を削除する。現在版だけを保存し、別年度・別補正号は別対象として保持する。
 
 ## Goals / Non-Goals
 
@@ -30,10 +30,10 @@ flowchart LR
   A[選定済み出典とscope] --> B[入力照合・ローカル変換]
   J[対象別JSONの変換設定] --> B
   B --> P[全表の候補Parquet]
-  P --> R[private R2へ全表保存]
-  R --> M[対象別JSONの保存参照を更新]
-  M --> D[同じ対象・方向の不要表を削除]
-  M --> C[Cへ受け渡し]
+  P --> M[対象別JSONに記録・ローカルcacheに置く]
+  M --> S[merge後のCIが変換し直し、記録と一致すればprivate R2へ保存]
+  S --> D[同じ対象・方向の不要表を削除]
+  S --> C[Cへ受け渡し]
 ```
 
 ### 対象のJSONと書式のコードを近くに置く
@@ -103,7 +103,7 @@ fudoki-inputs/
     settlement-1.pdf
     settlement-2.pdf
     supplementary-<号>.pdf
-    evaluation-settlement[-<n>].pdf   # 事業の評価の資料（docs/prd/evaluation-search/dd.md）
+    evaluation-settlement[-<n>].pdf   # 事業評価の評価シート（evaluation_selections）
     press-initial[-<n>].pdf           # 予算案のプレス発表（press_selections）
   fiscal/ingestion/<自治体>/<年度>/<initial|settlement|supplementary-号>/
     expenditure/<表ID>-nodes.parquet
@@ -125,19 +125,20 @@ fingerprintは、対象・方向、使用した出典SHAとscope、変換設定�
 
 fingerprintは変更検知の仕組みである。固定keyへの上書きと保存参照の置換により、同じ入力の再実行で表が重複しない。OCRの出力が常に同じバイト列になることは保証しない。
 
-fingerprintは「変わったかもしれない」という合図であり、表の中身が変わった証拠ではない。古いときは `ingestion:refresh` が変換をローカルでやり直し、保存済みの表と中身（列・型・行とその順序・値と、変換が管理JSONへ書くメタデータ）を比べる。全表が同じなら管理JSONの `input_fingerprint` だけを書き換え、保存済みのParquetとその `sha256`・サイズ、R2は変えない。違う表が1つでもあれば管理JSONは書き換えず、増えた・消えた・変わった行の数と例を出す。保存前の関門は `storage.prepare_save` を共有して当て直す。中身が違う表は、これまでどおり `ingestion:convert --remote` で全表を保存し直す。表を作らず合否だけを決める検査のコード（`tree_checks.py`・`coverage_checks.py`・`fiscal/unit_checks.py`）は `*_checks.py` と名付けて指紋の対象外とし、書き込みの関数・呼び出しがあれば `manifest.dependencies` が停止する。検査の戻り値で段のパターンを選ぶ汎用の組み立てだけは、`manifest.RESULT_SHAPES_TABLE` で `tree_checks.py` を指紋に残す。検査を厳しくしたときは保存済みの表が古く見えないので、`ingestion:verify --remote` を保存済みの全表に当てて確かめる。共有のコードを直す PR は、この比べ直しで指紋を更新した管理JSONを含める。判断は [ADR 0027](../../adr/0027-refresh-fingerprints-by-table-content.md)。
+fingerprintは「変わったかもしれない」という合図であり、表の中身が変わった証拠ではない。古いときは `ingestion:refresh` が変換をローカルでやり直し、保存済みの表と中身（列・型・行とその順序・値と、変換が管理JSONへ書くメタデータ）を比べる。全表が同じなら管理JSONの `input_fingerprint` だけを書き換え、保存済みのParquetとその `sha256`・サイズ、R2は変えない。違う表が1つでもあれば管理JSONは書き換えず、増えた・消えた・変わった行の数と例を出す。保存前の関門は `storage.prepare_save` を共有して当て直す。中身が違う表は `ingestion:convert` で記録し直し、merge 後の CI（`ingestion:store`）が R2 に置く（[ADR 0045](../../adr/0045-ingestion-tables-uploaded-by-ci.md)）。表を作らず合否だけを決める検査のコード（`tree_checks.py`・`coverage_checks.py`・`fiscal/unit_checks.py`）は `*_checks.py` と名付けて指紋の対象外とし、書き込みの関数・呼び出しがあれば `manifest.dependencies` が停止する。検査の戻り値で段のパターンを選ぶ汎用の組み立てだけは、`manifest.RESULT_SHAPES_TABLE` で `tree_checks.py` を指紋に残す。検査を厳しくしたときは保存済みの表が古く見えないので、`ingestion:verify --remote` を保存済みの全表に当てて確かめる。共有のコードを直す PR は、この比べ直しで指紋を更新した管理JSONを含める。判断は [ADR 0027](../../adr/0027-refresh-fingerprints-by-table-content.md)。
 
-### 全表を保存してから管理情報を更新する
+### 管理情報に記録し、merge 後に CI が保存する
 
-同じ対象・方向の変換、保存、読み取りは逐次実行する。局所再処理でも変更しない表の参照を残し、その入力条件が現在のままであることを確認する。
+同じ対象・方向の変換、記録、読み取りは逐次実行する。局所再処理でも変更しない表の参照を残し、その入力条件が現在のままであることを確認する。
 
 1. 全表をローカルで用意し、行数・列型・空表・期待する表集合を検査する。
-2. 入力条件が変わっていないことを確認し、全表を固定keyへアップロードする。
-3. 全保存成功後にGitの管理JSONを置換する。
-4. 現在の管理JSONが変わっていないことを確認し、同じ対象と方向の領域を全ページ一覧取得する。参照されていない直下のParquetだけを削除する。
-5. 後段は全表の存在・fingerprintと取得した表のSHAを検査して読む。
+2. 入力条件が変わっていないことを確認し、全表をローカルcacheの固定keyに置いて、Gitの管理JSONを置換する（`ingestion:convert`）。
+3. PRでは `ingestion-store-check` が、参照の変わった表をR2の出典・OCR結果から変換し直し、記録（指紋を除く）と一致するかを見る。
+4. merge後の `sync-d1` が同じ変換をし、一致した管理JSONの表だけを固定keyへアップロードしてから（`ingestion:store`）、dbt・D1へ流す。
+5. 現在の管理JSONが変わっていないことを確認し、同じ対象と方向の領域を全ページ一覧取得する。参照されていない直下のParquetだけを削除する。
+6. 後段は全表の存在・fingerprintと取得した表のSHAを検査して読む。
 
-途中のアップロード失敗では管理JSONを更新せず、削除もしない。ただしR2の一部のkeyは上書き済みになり得る。後段は止め、同じ条件で全表を再保存する。更新の完了と掃除の完了は分け、掃除だけ失敗した場合は `ingestion:cleanup` を再実行する。世代切替や分散ロックを省くため、同時更新と読み取り中の更新には対応しない。
+一致しない表があればその管理JSONの表はアップロードせず、CIを止める。途中のアップロード失敗ではR2の一部のkeyは上書き済みになり得るが、次の同期が最後に成功した同期からの差分で同じ表を置き直す。更新の完了と掃除の完了は分け、掃除だけ失敗した場合は `ingestion:cleanup` を再実行する。世代切替や分散ロックを省くため、同時更新と読み取り中の更新には対応しない。
 
 ## Alternatives Considered
 

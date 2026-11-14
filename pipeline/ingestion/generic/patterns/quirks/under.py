@@ -22,6 +22,10 @@ def nest(nodes: list[dict], placed: list, axis: str, under: str) -> None:
             # The lines go on over a page break (`12 委託料` with `審査支払事務委託` … at the foot of a page and
             # `療養費審査委託` at the top of the next): the last item of the axis on the page before.
             before = [h for h in hosts if h.parent is item.parent and h.page == item.page - 1]
+            if not before and not any(h.page == item.page - 1 for h in hosts):
+                # Facing pages print the 節 on the right page of each spread only: the page before (the spread's left
+                # page) prints none, and the last 節 is two pages back (檜原村 R6).
+                before = [h for h in hosts if h.parent is item.parent and h.page == item.page - 2]
             found = [max(before, key=lambda h: h.anchor)] if before else []
         if len(found) != 1:
             continue

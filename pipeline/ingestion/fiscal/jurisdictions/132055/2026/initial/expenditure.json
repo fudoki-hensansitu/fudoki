@@ -1,0 +1,3846 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132055",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c8ff78d4f48254ca946d7890b7f32118c766b5d4365b96b7f9f4a52153b2cc11"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-1-ocr-1",
+          "origin_sha256": "c8ff78d4f48254ca946d7890b7f32118c766b5d4365b96b7f9f4a52153b2cc11",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true,
+            "merged_lines": true
+          },
+          "sha256": "32023d8c1b76e15a04f62eab6297366fb830502cce4d18610a03a1f7def0a836",
+          "bytes": 478734
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-1",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            4
+          ]
+        ],
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-2",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "aa73a266769c2e5fe52ae2c172e67d459370973c980d53fa0a16a66b0e93e450"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-2-ocr-1",
+          "origin_sha256": "aa73a266769c2e5fe52ae2c172e67d459370973c980d53fa0a16a66b0e93e450",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "062e295cdfbd8ad4c3f408e2f7614ba9b4c4e992ddcfb2efe5162b46b72a418a",
+          "bytes": 2154904
+        },
+        {
+          "id": "general-initial-2-ocr-2",
+          "origin_sha256": "aa73a266769c2e5fe52ae2c172e67d459370973c980d53fa0a16a66b0e93e450",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "4d06726e48950c1a02594d4babe7d3c5c0c6a65b6df95fa83685f0698c57fcd5",
+          "bytes": 2247841
+        },
+        {
+          "id": "general-initial-2-ocr-3",
+          "origin_sha256": "aa73a266769c2e5fe52ae2c172e67d459370973c980d53fa0a16a66b0e93e450",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "569e90516cbd45f1ad3e7d76b39b983d5ea5b8a042791c7c1f7bbdb6d1056442",
+          "bytes": 1956724
+        },
+        {
+          "id": "general-initial-2-ocr-4",
+          "origin_sha256": "aa73a266769c2e5fe52ae2c172e67d459370973c980d53fa0a16a66b0e93e450",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "1609109308e6ef40892ece40466edd9e922fc18e92d6b43e922adefe4db344ae",
+          "bytes": 1764877
+        },
+        {
+          "id": "general-initial-2-ocr-5",
+          "origin_sha256": "aa73a266769c2e5fe52ae2c172e67d459370973c980d53fa0a16a66b0e93e450",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "baee2ee2c42d56cb8ccb7400dca3c6ad1239dcec6c58d93b6e64ae2c9444eed8",
+          "bytes": 1801626
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-2",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            50
+          ]
+        ],
+        "partial": true,
+        "dropped_readings": [
+          {
+            "id": "p2-hoppou-ink2",
+            "page": 2,
+            "observation_id": "p2:ink-2:a2:result0:r0",
+            "observed": "5",
+            "reason": "物理2頁の節「18 負担金補助及び交付金」の説明「北方領土の返還を求める都民会議負担金」の行。額 5 の字を OCR が2度読み、2つの読みが55と並んだ。原典の描画で額 5 を確かめ、重なった2つ目の読みは使わない。"
+          },
+          {
+            "id": "p32-fukusha-9080",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r55",
+            "observed": "9080",
+            "reason": "物理32頁の説明「12 小曾木市民センター経費」の「電子複写機賃借料」と「事務機器賃借料」の行。OCR が2行の額 90 と 80 を1つの読み（9080）にした。原典の描画で額を確かめ、この読みは使わず amount_readings で宣言する。"
+          },
+          {
+            "id": "p32-fukusha-mark",
+            "page": 32,
+            "observation_id": "p32:full-page:a0:result0:r56",
+            "observed": "1",
+            "reason": "物理32頁の「電子複写機賃借料」の行。名前の末尾の字の端を OCR が1と読んだ。原典の描画に1は無い。"
+          },
+          {
+            "id": "p38-chara-187",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result0:r51",
+            "observed": "187",
+            "reason": "物理38頁の説明「2 シティプロモーション推進経費」の「市公式キャラクターPR用品等作製委託料」の行。OCR の額の読みの枠が名前の末尾まで延び、額が名前の欄に入った。原典の描画で額 187 を確かめ、この読みは使わず amount_readings で宣言する。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p32-fukusha",
+            "page": 32,
+            "boxes": [
+              [
+                533.9,
+                458.5,
+                548.0,
+                469.5
+              ]
+            ],
+            "amount": "90",
+            "reason": "物理32頁の説明「12 小曾木市民センター経費」の「電子複写機賃借料」の額。OCR が下の行の額と1つの読み（9080）にしたので、原典の描画で 90 を確かめて宣言する。"
+          },
+          {
+            "id": "p32-jimuki",
+            "page": 32,
+            "boxes": [
+              [
+                533.9,
+                471.0,
+                548.0,
+                481.5
+              ]
+            ],
+            "amount": "80",
+            "reason": "物理32頁の説明「12 小曾木市民センター経費」の「事務機器賃借料」の額。OCR が上の行の額と1つの読み（9080）にしたので、原典の描画で 80 を確かめて宣言する。"
+          },
+          {
+            "id": "p38-chara",
+            "page": 38,
+            "boxes": [
+              [
+                529.0,
+                338.5,
+                547.5,
+                350.0
+              ]
+            ],
+            "amount": "187",
+            "reason": "物理38頁の「市公式キャラクターPR用品等作製委託料」の額。OCR の読みの枠が名前まで延びたので、原典の描画で 187 を確かめて額の欄の枠で宣言する。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "nf-p2-297",
+            "page": 2,
+            "code": null,
+            "observed_name": "般職",
+            "corrected_name": "一般職",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（一般職）を確かめた。"
+          },
+          {
+            "id": "nf-p2-470",
+            "page": 2,
+            "code": null,
+            "observed_name": "負金",
+            "corrected_name": "負担金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（負担金）を確かめた。"
+          },
+          {
+            "id": "nf-p2-624",
+            "page": 2,
+            "code": null,
+            "observed_name": "通信福搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p4-497",
+            "page": 4,
+            "code": null,
+            "observed_name": "消肖耗品1費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p6-403",
+            "page": 6,
+            "code": null,
+            "observed_name": "普通旅",
+            "corrected_name": "普通旅費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（普通旅費）を確かめた。"
+          },
+          {
+            "id": "nf-p6-615",
+            "page": 6,
+            "code": null,
+            "observed_name": "印本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p8-269",
+            "page": 8,
+            "code": null,
+            "observed_name": "手数",
+            "corrected_name": "手数料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（手数料）を確かめた。"
+          },
+          {
+            "id": "nf-p12-191",
+            "page": 12,
+            "code": null,
+            "observed_name": "負担",
+            "corrected_name": "負担金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（負担金）を確かめた。"
+          },
+          {
+            "id": "nf-p12-655",
+            "page": 12,
+            "code": null,
+            "observed_name": "施設管理委託料管",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p14-166",
+            "page": 14,
+            "code": null,
+            "observed_name": "原材料",
+            "corrected_name": "原材料費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（原材料費）を確かめた。"
+          },
+          {
+            "id": "nf-p18-404",
+            "page": 18,
+            "code": null,
+            "observed_name": "講師報償金金",
+            "corrected_name": "講師報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（講師報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p20-456",
+            "page": 20,
+            "code": null,
+            "observed_name": "熱水費",
+            "corrected_name": "光熱水費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（光熱水費）を確かめた。"
+          },
+          {
+            "id": "nf-p22-256",
+            "page": 22,
+            "code": null,
+            "observed_name": "通費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p22-455",
+            "page": 22,
+            "code": null,
+            "observed_name": "通信搬費費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p22-616",
+            "page": 22,
+            "code": null,
+            "observed_name": "印、費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p26-550",
+            "page": 26,
+            "code": null,
+            "observed_name": "印、費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p28-271",
+            "page": 28,
+            "code": "6",
+            "observed_name": "市民センタ一運営経費(市民活動推進課)",
+            "corrected_name": "市民センター運営経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（市民センター運営経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p28-324",
+            "page": 28,
+            "code": "7",
+            "observed_name": "青梅市民センタ一経費(市民活動推進課)",
+            "corrected_name": "青梅市民センター経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（青梅市民センター経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p28-563",
+            "page": 28,
+            "code": "8",
+            "observed_name": "長淵市民センタ一経費(市民活動推進課)",
+            "corrected_name": "長淵市民センター経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（長淵市民センター経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p30-205",
+            "page": 30,
+            "code": "9",
+            "observed_name": "大門市民センタ一経費(市民活動推進課)",
+            "corrected_name": "大門市民センター経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（大門市民センター経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p30-350",
+            "page": 30,
+            "code": null,
+            "observed_name": "施設管理委計理理委託料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p30-444",
+            "page": 30,
+            "code": "10",
+            "observed_name": "梅郷市民センタ一経費(市民活動推進課)",
+            "corrected_name": "梅郷市民センター経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（梅郷市民センター経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p30-576",
+            "page": 30,
+            "code": null,
+            "observed_name": "施設管理委理託料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p30-656",
+            "page": 30,
+            "code": null,
+            "observed_name": "備品購入費購",
+            "corrected_name": "備品購入費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（備品購入費）を確かめた。"
+          },
+          {
+            "id": "nf-p30-669",
+            "page": 30,
+            "code": "11",
+            "observed_name": "沢井市民センタ一経費(市民活動推進課)",
+            "corrected_name": "沢井市民センター経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（沢井市民センター経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p30-695",
+            "page": 30,
+            "code": null,
+            "observed_name": "講青師報償金金",
+            "corrected_name": "講師報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（講師報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p30-748",
+            "page": 30,
+            "code": null,
+            "observed_name": "修料",
+            "corrected_name": "修繕料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（修繕料）を確かめた。"
+          },
+          {
+            "id": "nf-p30-761",
+            "page": 30,
+            "code": null,
+            "observed_name": "通信搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p32-191",
+            "page": 32,
+            "code": null,
+            "observed_name": "施施設管理委託料料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p32-204",
+            "page": 32,
+            "code": null,
+            "observed_name": "設設備保守委託料料",
+            "corrected_name": "設備保守委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（設備保守委託料）を確かめた。",
+            "y": 204.0
+          },
+          {
+            "id": "nf-p32-257",
+            "page": 32,
+            "code": null,
+            "observed_name": "原7材料費",
+            "corrected_name": "原材料費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（原材料費）を確かめた。"
+          },
+          {
+            "id": "nf-p32-284",
+            "page": 32,
+            "code": null,
+            "observed_name": "講師報償金金",
+            "corrected_name": "講師報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（講師報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p32-417",
+            "page": 32,
+            "code": null,
+            "observed_name": "施設管理施委託料料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p32-429",
+            "page": 32,
+            "code": null,
+            "observed_name": "設設備保守委託料料",
+            "corrected_name": "設備保守委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（設備保守委託料）を確かめた。",
+            "y": 429.3
+          },
+          {
+            "id": "nf-p32-522",
+            "page": 32,
+            "code": "13",
+            "observed_name": "成木市民センタ一経費(市民活動推進課)",
+            "corrected_name": "成木市民センター経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（成木市民センター経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p32-587",
+            "page": 32,
+            "code": null,
+            "observed_name": "光熱1水費",
+            "corrected_name": "光熱水費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（光熱水費）を確かめた。"
+          },
+          {
+            "id": "nf-p32-655",
+            "page": 32,
+            "code": null,
+            "observed_name": "施施設管理委理料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p32-668",
+            "page": 32,
+            "code": null,
+            "observed_name": "設設備保守委託料料",
+            "corrected_name": "設備保守委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（設備保守委託料）を確かめた。",
+            "y": 668.4
+          },
+          {
+            "id": "nf-p32-682",
+            "page": 32,
+            "code": null,
+            "observed_name": "テテレビ受信料料",
+            "corrected_name": "テレビ受信料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（テレビ受信料）を確かめた。"
+          },
+          {
+            "id": "nf-p34-179",
+            "page": 34,
+            "code": "14",
+            "observed_name": "東青梅市民センタ一経費(市民活動推進課)",
+            "corrected_name": "東青梅市民センター経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（東青梅市民センター経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p34-336",
+            "page": 34,
+            "code": null,
+            "observed_name": "施設管理委理託料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p34-444",
+            "page": 34,
+            "code": "15",
+            "observed_name": "新町市民センタ一経費(市民活動推進課)",
+            "corrected_name": "新町市民センター経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（新町市民センター経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p34-575",
+            "page": 34,
+            "code": null,
+            "observed_name": "管理",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p34-655",
+            "page": 34,
+            "code": "16",
+            "observed_name": "河辺市民センタ一経費(市民活動推進課)",
+            "corrected_name": "河辺市民センター経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（河辺市民センター経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p36-189",
+            "page": 36,
+            "code": null,
+            "observed_name": "施設管理委託",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p36-286",
+            "page": 36,
+            "code": "17",
+            "observed_name": "今井市民センタ一経費(市民活動推進課)",
+            "corrected_name": "今井市民センター経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（今井市民センター経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p36-429",
+            "page": 36,
+            "code": null,
+            "observed_name": "施施設管理委託料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p36-643",
+            "page": 36,
+            "code": "20",
+            "observed_name": "市民センタ一施設整備経費(市民活動推進課)",
+            "corrected_name": "市民センター施設整備経費(市民活動推進課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（市民センター施設整備経費(市民活動推進課)）を確かめた。"
+          },
+          {
+            "id": "nf-p38-469",
+            "page": 38,
+            "code": null,
+            "observed_name": "印刷製本費費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p38-683",
+            "page": 38,
+            "code": null,
+            "observed_name": "おふたり0meでとう!お祝い金",
+            "corrected_name": "おふたりOmeでとう!お祝い金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（おふたりOmeでとう!お祝い金）を確かめた。"
+          },
+          {
+            "id": "nf-p40-496",
+            "page": 40,
+            "code": null,
+            "observed_name": "印了刷製本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p40-545",
+            "page": 40,
+            "code": null,
+            "observed_name": "手数六料",
+            "corrected_name": "手数料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（手数料）を確かめた。"
+          },
+          {
+            "id": "nf-p44-257",
+            "page": 44,
+            "code": null,
+            "observed_name": "熱水費",
+            "corrected_name": "光熱水費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（光熱水費）を確かめた。"
+          },
+          {
+            "id": "nf-p44-270",
+            "page": 44,
+            "code": null,
+            "observed_name": "修料",
+            "corrected_name": "修繕料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（修繕料）を確かめた。"
+          },
+          {
+            "id": "nf-p44-746",
+            "page": 44,
+            "code": null,
+            "observed_name": "印刷費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p46-707",
+            "page": 46,
+            "code": null,
+            "observed_name": "印刷本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p48-348",
+            "page": 48,
+            "code": null,
+            "observed_name": "通信運搬",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-2"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-3",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d769fab9e6bd78ab99ad87ffce674fb40abfd93806e434e2f26dbc183320b720"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-3-ocr-1",
+          "origin_sha256": "d769fab9e6bd78ab99ad87ffce674fb40abfd93806e434e2f26dbc183320b720",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "ef8db7881184706060e6dc44d364aa9e04c5019e080ea0ba966c0dda4c98cf21",
+          "bytes": 2541471
+        },
+        {
+          "id": "general-initial-3-ocr-2",
+          "origin_sha256": "d769fab9e6bd78ab99ad87ffce674fb40abfd93806e434e2f26dbc183320b720",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "51882c9eb845bc9bb2c2664f571fe9dfd40826831ded1074c6c5b7c7104b4701",
+          "bytes": 2380346
+        },
+        {
+          "id": "general-initial-3-ocr-3",
+          "origin_sha256": "d769fab9e6bd78ab99ad87ffce674fb40abfd93806e434e2f26dbc183320b720",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "4599bea2b07131c5fd2724eebe92052353102fb66432e0a6eb2e1a27f95f4102",
+          "bytes": 2241545
+        },
+        {
+          "id": "general-initial-3-ocr-4",
+          "origin_sha256": "d769fab9e6bd78ab99ad87ffce674fb40abfd93806e434e2f26dbc183320b720",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "381a6c8c93ae54ed445c9033bef66b14cc80a9f58ad48f308f809d2bb2221eb1",
+          "bytes": 2458278
+        },
+        {
+          "id": "general-initial-3-ocr-5",
+          "origin_sha256": "d769fab9e6bd78ab99ad87ffce674fb40abfd93806e434e2f26dbc183320b720",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              42
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "c48eabcb078d3ba48cee9d429a58e5930e81a14f090b75caf23195e5cc6af34d",
+          "bytes": 369651
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-3",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            42
+          ]
+        ],
+        "partial": true,
+        "name_corrections": [
+          {
+            "id": "nf-p4-708",
+            "page": 4,
+            "code": null,
+            "observed_name": "印刷製本本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p6-204",
+            "page": 6,
+            "code": null,
+            "observed_name": "消毛品費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p6-458",
+            "page": 6,
+            "code": "17",
+            "observed_name": "地域支援センタ一管理経費(地域福祉課)",
+            "corrected_name": "地域支援センター管理経費(地域福祉課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（地域支援センター管理経費(地域福祉課)）を確かめた。"
+          },
+          {
+            "id": "nf-p6-577",
+            "page": 6,
+            "code": "18",
+            "observed_name": "地域支援センタ一建設経費(地域福祉課)",
+            "corrected_name": "地域支援センター建設経費(地域福祉課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（地域支援センター建設経費(地域福祉課)）を確かめた。"
+          },
+          {
+            "id": "nf-p8-453",
+            "page": 8,
+            "code": null,
+            "observed_name": "手料",
+            "corrected_name": "手数料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（手数料）を確かめた。"
+          },
+          {
+            "id": "nf-p8-749",
+            "page": 8,
+            "code": "4",
+            "observed_name": "地域密着型介護サ一ビス施設整備支援事業経費(介護保険課)",
+            "corrected_name": "地域密着型介護サービス施設整備支援事業経費(介護保険課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（地域密着型介護サービス施設整備支援事業経費(介護保険課)）を確かめた。"
+          },
+          {
+            "id": "nf-p10-590",
+            "page": 10,
+            "code": null,
+            "observed_name": "報償品",
+            "corrected_name": "報償品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（報償品費）を確かめた。"
+          },
+          {
+            "id": "nf-p10-731",
+            "page": 10,
+            "code": null,
+            "observed_name": "補金助",
+            "corrected_name": "補助金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（補助金）を確かめた。"
+          },
+          {
+            "id": "nf-p12-339",
+            "page": 12,
+            "code": null,
+            "observed_name": "老人ホ一ム入所判定委員会委員報償金",
+            "corrected_name": "老人ホーム入所判定委員会委員報償金",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（老人ホーム入所判定委員会委員報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p12-549",
+            "page": 12,
+            "code": null,
+            "observed_name": "印J刷製本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p14-271",
+            "page": 14,
+            "code": null,
+            "observed_name": "印刷本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p14-325",
+            "page": 14,
+            "code": "10",
+            "observed_name": "シルバー人材センター経費(高齢者支援課))",
+            "corrected_name": "シルバー人材センター経費(高齢者支援課)",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（シルバー人材センター経費(高齢者支援課)）を確かめた。"
+          },
+          {
+            "id": "nf-p14-431",
+            "page": 14,
+            "code": "11",
+            "observed_name": "福祉センタ一運営経費(高齢者支援課)",
+            "corrected_name": "福祉センター運営経費(高齢者支援課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（福祉センター運営経費(高齢者支援課)）を確かめた。"
+          },
+          {
+            "id": "nf-p14-576",
+            "page": 14,
+            "code": null,
+            "observed_name": "施施設管理委託料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p14-762",
+            "page": 14,
+            "code": null,
+            "observed_name": "認知症サポー卜検診実施委託料",
+            "corrected_name": "認知症サポート検診実施委託料",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（認知症サポート検診実施委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p16-220",
+            "page": 16,
+            "code": "13",
+            "observed_name": "地域包括支援センタ一事業経費(高齢者支援課)",
+            "corrected_name": "地域包括支援センター事業経費(高齢者支援課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（地域包括支援センター事業経費(高齢者支援課)）を確かめた。"
+          },
+          {
+            "id": "nf-p16-312",
+            "page": 16,
+            "code": null,
+            "observed_name": "介護予防リーダ一養成講座実施委託料",
+            "corrected_name": "介護予防リーダー養成講座実施委託料",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（介護予防リーダー養成講座実施委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p18-271",
+            "page": 18,
+            "code": null,
+            "observed_name": "消耗費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p18-280",
+            "page": 18,
+            "code": null,
+            "observed_name": "印了刷製本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p20-509",
+            "page": 20,
+            "code": null,
+            "observed_name": "通信運費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p22-284",
+            "page": 22,
+            "code": null,
+            "observed_name": "印本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p22-298",
+            "page": 22,
+            "code": null,
+            "observed_name": "通信運搬",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p22-617",
+            "page": 22,
+            "code": "16",
+            "observed_name": "障害者就労支援センタ一事業経費(障がい者福祉課)",
+            "corrected_name": "障害者就労支援センター事業経費(障がい者福祉課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（障害者就労支援センター事業経費(障がい者福祉課)）を確かめた。"
+          },
+          {
+            "id": "nf-p22-670",
+            "page": 22,
+            "code": "17",
+            "observed_name": "自立センタ一管理運営経費(障がい者福祉課)",
+            "corrected_name": "自立センター管理運営経費(障がい者福祉課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（自立センター管理運営経費(障がい者福祉課)）を確かめた。"
+          },
+          {
+            "id": "nf-p24-258",
+            "page": 24,
+            "code": "19",
+            "observed_name": "自立センタ一施設整備経費(障がい者福祉課)",
+            "corrected_name": "自立センター施設整備経費(障がい者福祉課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（自立センター施設整備経費(障がい者福祉課)）を確かめた。"
+          },
+          {
+            "id": "nf-p24-710",
+            "page": 24,
+            "code": "4",
+            "observed_name": "子育て支援センタ一事業経費(子育て応援課)",
+            "corrected_name": "子育て支援センター事業経費(子育て応援課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（子育て支援センター事業経費(子育て応援課)）を確かめた。"
+          },
+          {
+            "id": "nf-p24-721",
+            "page": 24,
+            "code": null,
+            "observed_name": "消肖耗品費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p26-378",
+            "page": 26,
+            "code": "6",
+            "observed_name": "育児支援へルパ一事業経費(子育て応援課)",
+            "corrected_name": "育児支援へルパー事業経費(子育て応援課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（育児支援へルパー事業経費(子育て応援課)）を確かめた。"
+          },
+          {
+            "id": "nf-p26-616",
+            "page": 26,
+            "code": null,
+            "observed_name": "消耗費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p28-656",
+            "page": 28,
+            "code": null,
+            "observed_name": "管理運営委託料料",
+            "corrected_name": "管理運営委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（管理運営委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p32-270",
+            "page": 32,
+            "code": null,
+            "observed_name": "通運搬費費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p32-445",
+            "page": 32,
+            "code": null,
+            "observed_name": "通信",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p32-615",
+            "page": 32,
+            "code": null,
+            "observed_name": "通信費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p32-630",
+            "page": 32,
+            "code": null,
+            "observed_name": "補金",
+            "corrected_name": "補助金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（補助金）を確かめた。"
+          },
+          {
+            "id": "nf-p32-709",
+            "page": 32,
+            "code": null,
+            "observed_name": "普通旅",
+            "corrected_name": "普通旅費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（普通旅費）を確かめた。"
+          },
+          {
+            "id": "nf-p32-721",
+            "page": 32,
+            "code": null,
+            "observed_name": "消1耗品費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p34-271",
+            "page": 34,
+            "code": null,
+            "observed_name": "通信信運搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p36-365",
+            "page": 36,
+            "code": "18",
+            "observed_name": "認可外保育施設等事業経費(こども育成課))",
+            "corrected_name": "認可外保育施設等事業経費(こども育成課)",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（認可外保育施設等事業経費(こども育成課)）を確かめた。"
+          },
+          {
+            "id": "nf-p36-746",
+            "page": 36,
+            "code": null,
+            "observed_name": "費1用弁償",
+            "corrected_name": "費用弁償",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（費用弁償）を確かめた。"
+          },
+          {
+            "id": "nf-p38-165",
+            "page": 38,
+            "code": null,
+            "observed_name": "特5別旅費",
+            "corrected_name": "特別旅費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（特別旅費）を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-3"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-4",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "5e28fa3bdbc7a8323e186c334c9181cf7f31a15c70b2df82e0629d46d35f2aca"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-4-ocr-1",
+          "origin_sha256": "5e28fa3bdbc7a8323e186c334c9181cf7f31a15c70b2df82e0629d46d35f2aca",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "155a7644bb49e08c6530a934fad96d32127fd564295c5eba5799ad887372bace",
+          "bytes": 2170705
+        },
+        {
+          "id": "general-initial-4-ocr-2",
+          "origin_sha256": "5e28fa3bdbc7a8323e186c334c9181cf7f31a15c70b2df82e0629d46d35f2aca",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "2ef8a41d30863b948dfcb1e545db07b3573bbf9f38955e9a39615683fadf7dfe",
+          "bytes": 2250423
+        },
+        {
+          "id": "general-initial-4-ocr-3",
+          "origin_sha256": "5e28fa3bdbc7a8323e186c334c9181cf7f31a15c70b2df82e0629d46d35f2aca",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "6ad179a8a0a9d9a8592b1d48d9961add2d24e66f4a1bf2587d8f9ac1a68bcdee",
+          "bytes": 469277
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-4",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            24
+          ]
+        ],
+        "partial": true,
+        "name_corrections": [
+          {
+            "id": "nf-p2-311",
+            "page": 2,
+            "code": null,
+            "observed_name": "通旅費",
+            "corrected_name": "普通旅費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（普通旅費）を確かめた。"
+          },
+          {
+            "id": "nf-p2-484",
+            "page": 2,
+            "code": null,
+            "observed_name": "西多摩在宅安心サポ一卜事業費補助金",
+            "corrected_name": "西多摩在宅安心サポート事業費補助金",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（西多摩在宅安心サポート事業費補助金）を確かめた。"
+          },
+          {
+            "id": "nf-p2-509",
+            "page": 2,
+            "code": null,
+            "observed_name": "耗品費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p2-511",
+            "page": 2,
+            "code": null,
+            "observed_name": "消熱水費",
+            "corrected_name": "光熱水費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（光熱水費）を確かめた。"
+          },
+          {
+            "id": "nf-p4-469",
+            "page": 4,
+            "code": null,
+            "observed_name": "印了刷製本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p4-550",
+            "page": 4,
+            "code": null,
+            "observed_name": "骨髄ドナ一支援事業助成金",
+            "corrected_name": "骨髄ドナー支援事業助成金",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（骨髄ドナー支援事業助成金）を確かめた。"
+          },
+          {
+            "id": "nf-p4-616",
+            "page": 4,
+            "code": null,
+            "observed_name": "医師等報償金師等",
+            "corrected_name": "医師等報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（医師等報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p4-681",
+            "page": 4,
+            "code": null,
+            "observed_name": "印費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p4-694",
+            "page": 4,
+            "code": null,
+            "observed_name": "通信搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p6-643",
+            "page": 6,
+            "code": "17",
+            "observed_name": "健康センタ一施設整備経費(健康課)",
+            "corrected_name": "健康センター施設整備経費(健康課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（健康センター施設整備経費(健康課)）を確かめた。"
+          },
+          {
+            "id": "nf-p8-270",
+            "page": 8,
+            "code": null,
+            "observed_name": "印本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p8-283",
+            "page": 8,
+            "code": null,
+            "observed_name": "通信搬費費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p8-310",
+            "page": 8,
+            "code": null,
+            "observed_name": "康診査委託",
+            "corrected_name": "健康診査委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（健康診査委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p10-244",
+            "page": 10,
+            "code": null,
+            "observed_name": "普通旅費費",
+            "corrected_name": "普通旅費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（普通旅費）を確かめた。"
+          },
+          {
+            "id": "nf-p10-271",
+            "page": 10,
+            "code": null,
+            "observed_name": "通信信運搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p10-336",
+            "page": 10,
+            "code": null,
+            "observed_name": "消,耗品費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p10-349",
+            "page": 10,
+            "code": null,
+            "observed_name": "印了刷製本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p10-363",
+            "page": 10,
+            "code": null,
+            "observed_name": "通信搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p12-218",
+            "page": 12,
+            "code": null,
+            "observed_name": "施設管理委託料料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p12-378",
+            "page": 12,
+            "code": null,
+            "observed_name": "住宅用省エネルギ一等設備普及促進補助金",
+            "corrected_name": "住宅用省エネルギー等設備普及促進補助金",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（住宅用省エネルギー等設備普及促進補助金）を確かめた。"
+          },
+          {
+            "id": "nf-p12-431",
+            "page": 12,
+            "code": null,
+            "observed_name": "講師報償金金",
+            "corrected_name": "講師報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（講師報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p12-681",
+            "page": 12,
+            "code": null,
+            "observed_name": "消耗費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p12-708",
+            "page": 12,
+            "code": null,
+            "observed_name": "通信運搬費費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p14-681",
+            "page": 14,
+            "code": null,
+            "observed_name": "印製本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p16-205",
+            "page": 16,
+            "code": null,
+            "observed_name": "熱水費",
+            "corrected_name": "光熱水費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（光熱水費）を確かめた。"
+          },
+          {
+            "id": "nf-p18-577",
+            "page": 18,
+            "code": null,
+            "observed_name": "備購費",
+            "corrected_name": "備品購入費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（備品購入費）を確かめた。"
+          },
+          {
+            "id": "nf-p18-590",
+            "page": 18,
+            "code": null,
+            "observed_name": "補",
+            "corrected_name": "補助金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（補助金）を確かめた。"
+          },
+          {
+            "id": "nf-p18-721",
+            "page": 18,
+            "code": null,
+            "observed_name": "印刷製本費費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p22-509",
+            "page": 22,
+            "code": null,
+            "observed_name": "講師金",
+            "corrected_name": "講師報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（講師報償金）を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-4"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-5",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d591a8862f0867bce246389e73e63ad29667c0a74dfc780ab5b77ec348ea9157"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-5-ocr-1",
+          "origin_sha256": "d591a8862f0867bce246389e73e63ad29667c0a74dfc780ab5b77ec348ea9157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "5e04e0b384aacc58e06ab9b79ab1d7e9c76f5f409b9e62a2e7a360aa6ceaa604",
+          "bytes": 170005
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-5",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            2
+          ]
+        ],
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-5"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-6",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "907eccee04a569d623c1ba73bf7b9ba80bfea15843e0185659782254a385cd4e"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-6-ocr-1",
+          "origin_sha256": "907eccee04a569d623c1ba73bf7b9ba80bfea15843e0185659782254a385cd4e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "7d92daa3b08e079f74ee8afb2141e34a90836813ae40d2732a36e6c99f5855cf",
+          "bytes": 2295228
+        },
+        {
+          "id": "general-initial-6-ocr-2",
+          "origin_sha256": "907eccee04a569d623c1ba73bf7b9ba80bfea15843e0185659782254a385cd4e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "4321679cb66575987d4cd20519b903d0522acdb17e27728cb29f27cd0f95b1d7",
+          "bytes": 55405
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-6",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            12
+          ]
+        ],
+        "partial": true,
+        "name_corrections": [
+          {
+            "id": "nf-p2-364",
+            "page": 2,
+            "code": null,
+            "observed_name": "通運搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p2-667",
+            "page": 2,
+            "code": null,
+            "observed_name": "通通信運搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p2-721",
+            "page": 2,
+            "code": null,
+            "observed_name": "講師金",
+            "corrected_name": "講師報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（講師報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p4-334",
+            "page": 4,
+            "code": null,
+            "observed_name": "保料",
+            "corrected_name": "保険料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（保険料）を確かめた。"
+          },
+          {
+            "id": "nf-p4-377",
+            "page": 4,
+            "code": null,
+            "observed_name": "使料",
+            "corrected_name": "使用料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（使用料）を確かめた。"
+          },
+          {
+            "id": "nf-p4-522",
+            "page": 4,
+            "code": null,
+            "observed_name": "印刷本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p4-532",
+            "page": 4,
+            "code": null,
+            "observed_name": "通通信搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p6-426",
+            "page": 6,
+            "code": null,
+            "observed_name": "負金担",
+            "corrected_name": "負担金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（負担金）を確かめた。"
+          },
+          {
+            "id": "nf-p10-176",
+            "page": 10,
+            "code": null,
+            "observed_name": "通通信運搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p10-721",
+            "page": 10,
+            "code": null,
+            "observed_name": "1耗品費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-6"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-7",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "8629c21654e951499b9501a8c78062729a84056967f0f5016acb6b1b883c2746"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-7-ocr-1",
+          "origin_sha256": "8629c21654e951499b9501a8c78062729a84056967f0f5016acb6b1b883c2746",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "51467c56621b33ac1c94d9117a68e77418db52534fd0bf302d9ab0c08ab175a6",
+          "bytes": 1693497
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-7",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            10
+          ]
+        ],
+        "partial": true,
+        "name_corrections": [
+          {
+            "id": "nf-p6-272",
+            "page": 6,
+            "code": "3",
+            "observed_name": "OmeB1ue推進事業経費(シティプロモーション課)",
+            "corrected_name": "OmeBlue推進事業経費(シティプロモーション課)",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（OmeBlue推進事業経費(シティプロモーション課)）を確かめた。"
+          },
+          {
+            "id": "nf-p6-431",
+            "page": 6,
+            "code": null,
+            "observed_name": "講師報償",
+            "corrected_name": "講師報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（講師報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p6-442",
+            "page": 6,
+            "code": null,
+            "observed_name": "報1償品費",
+            "corrected_name": "報償品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（報償品費）を確かめた。"
+          },
+          {
+            "id": "nf-p6-469",
+            "page": 6,
+            "code": null,
+            "observed_name": "印了刷製本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p8-589",
+            "page": 8,
+            "code": null,
+            "observed_name": "消肖耗品費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-7"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-8",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "11b42b2c600a66594ac65c7228db6f2957666b1d9e9cb0837a9b2435d6b1db8e"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-8-ocr-1",
+          "origin_sha256": "11b42b2c600a66594ac65c7228db6f2957666b1d9e9cb0837a9b2435d6b1db8e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "2b6e13a9f116472782191392d754a5adbecf2c4a66d528f0f728631c02762ba6",
+          "bytes": 2266407
+        },
+        {
+          "id": "general-initial-8-ocr-2",
+          "origin_sha256": "11b42b2c600a66594ac65c7228db6f2957666b1d9e9cb0837a9b2435d6b1db8e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "d8fcec3bd09342a69618dd7a2960a30dc88406b4cb254a8d88f138ebc12766f2",
+          "bytes": 1730521
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-8",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            18
+          ]
+        ],
+        "partial": true,
+        "dropped_readings": [
+          {
+            "id": "p4-terebi-81",
+            "page": 4,
+            "observation_id": "p4:full-page:a0:result0:r85",
+            "observed": "81",
+            "reason": "物理4頁の説明「1 道路橋りょう管理経費」の「テレビ受信料」と「使用料」の行。OCR が2行の額 8 と 1 を1つの読み（81）にした。原典の描画で額を確かめ、この読みは使わず amount_readings で宣言する。"
+          },
+          {
+            "id": "p8-shoumou-49",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r101",
+            "observed": "49",
+            "reason": "物理8頁の説明「1 都市計画審議会経費」の「消耗品費」と「食糧費」の行。OCR が2行の額 4 と 9 を1つの読み（49）にした。原典の描画で額を確かめ、この読みは使わず amount_readings で宣言する。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p4-terebi",
+            "page": 4,
+            "boxes": [
+              [
+                538.0,
+                564.0,
+                548.2,
+                575.0
+              ]
+            ],
+            "amount": "8",
+            "reason": "物理4頁の「テレビ受信料」の額。OCR が下の行の額と1つの読み（81）にしたので、原典の描画で 8 を確かめて宣言する。"
+          },
+          {
+            "id": "p4-shiyouryou",
+            "page": 4,
+            "boxes": [
+              [
+                538.0,
+                577.0,
+                548.2,
+                588.0
+              ]
+            ],
+            "amount": "1",
+            "reason": "物理4頁の「使用料」の額。OCR が上の行の額と1つの読み（81）にしたので、原典の描画で 1 を確かめて宣言する。"
+          },
+          {
+            "id": "p8-shoumou",
+            "page": 8,
+            "boxes": [
+              [
+                538.0,
+                617.0,
+                549.0,
+                628.0
+              ]
+            ],
+            "amount": "4",
+            "reason": "物理8頁の「消耗品費」の額。OCR が下の行の額と1つの読み（49）にしたので、原典の描画で 4 を確かめて宣言する。"
+          },
+          {
+            "id": "p8-shokuryou",
+            "page": 8,
+            "boxes": [
+              [
+                538.0,
+                630.0,
+                549.0,
+                641.5
+              ]
+            ],
+            "amount": "9",
+            "reason": "物理8頁の「食糧費」の額。OCR が上の行の額と1つの読み（49）にしたので、原典の描画で 9 を確かめて宣言する。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "nf-p2-324",
+            "page": 2,
+            "code": null,
+            "observed_name": "ライセンス購入費購",
+            "corrected_name": "ライセンス購入費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（ライセンス購入費）を確かめた。"
+          },
+          {
+            "id": "nf-p4-457",
+            "page": 4,
+            "code": null,
+            "observed_name": "施設管里委託料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p4-469",
+            "page": 4,
+            "code": null,
+            "observed_name": "設設備保守委託料",
+            "corrected_name": "設備保守委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（設備保守委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p6-668",
+            "page": 6,
+            "code": null,
+            "observed_name": "測量委託王",
+            "corrected_name": "測量委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（測量委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p6-678",
+            "page": 6,
+            "code": null,
+            "observed_name": "設計委料",
+            "corrected_name": "設計委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（設計委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p8-615",
+            "page": 8,
+            "code": null,
+            "observed_name": "消品費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p10-391",
+            "page": 10,
+            "code": null,
+            "observed_name": "補金",
+            "corrected_name": "補助金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（補助金）を確かめた。"
+          },
+          {
+            "id": "nf-p10-630",
+            "page": 10,
+            "code": null,
+            "observed_name": "通信",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p12-536",
+            "page": 12,
+            "code": null,
+            "observed_name": "精品購入費",
+            "corrected_name": "備品購入費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（備品購入費）を確かめた。"
+          },
+          {
+            "id": "nf-p12-682",
+            "page": 12,
+            "code": null,
+            "observed_name": "計委託料",
+            "corrected_name": "設計委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（設計委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p12-694",
+            "page": 12,
+            "code": null,
+            "observed_name": "調周査委託料",
+            "corrected_name": "調査委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（調査委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p14-375",
+            "page": 14,
+            "code": null,
+            "observed_name": "信運搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p14-536",
+            "page": 14,
+            "code": null,
+            "observed_name": "光",
+            "corrected_name": "光熱水費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（光熱水費）を確かめた。"
+          },
+          {
+            "id": "nf-p14-562",
+            "page": 14,
+            "code": null,
+            "observed_name": "設計料",
+            "corrected_name": "設計委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（設計委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p16-378",
+            "page": 16,
+            "code": null,
+            "observed_name": "通信搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p16-602",
+            "page": 16,
+            "code": null,
+            "observed_name": "印J刷製本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p18-256",
+            "page": 18,
+            "code": null,
+            "observed_name": "印刷費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p18-416",
+            "page": 18,
+            "code": null,
+            "observed_name": "印刷本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-8"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-9",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "785988a8ec55eb759a3f23e22a201e4af186393342e1d5c974b883fe00d65f07"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-9-ocr-1",
+          "origin_sha256": "785988a8ec55eb759a3f23e22a201e4af186393342e1d5c974b883fe00d65f07",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "3997426bd5652d84adac77af8583e23fc2c1e65e7ed7125fcd1b4acab4c4debb",
+          "bytes": 1210042
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-9",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            6
+          ]
+        ],
+        "partial": true,
+        "name_corrections": [
+          {
+            "id": "nf-p2-430",
+            "page": 2,
+            "code": null,
+            "observed_name": "報償品",
+            "corrected_name": "報償品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（報償品費）を確かめた。"
+          },
+          {
+            "id": "nf-p2-638",
+            "page": 2,
+            "code": null,
+            "observed_name": "負金担",
+            "corrected_name": "負担金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（負担金）を確かめた。"
+          },
+          {
+            "id": "nf-p4-576",
+            "page": 4,
+            "code": null,
+            "observed_name": "光水費",
+            "corrected_name": "光熱水費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（光熱水費）を確かめた。"
+          },
+          {
+            "id": "nf-p4-641",
+            "page": 4,
+            "code": null,
+            "observed_name": "施設管理委託",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p6-510",
+            "page": 6,
+            "code": null,
+            "observed_name": "普通旅",
+            "corrected_name": "普通旅費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（普通旅費）を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-9"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-10",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "385f112e4aab70ce5af80793f48a50960240d238accd7b8c799b8b7626e9533e"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-10-ocr-1",
+          "origin_sha256": "385f112e4aab70ce5af80793f48a50960240d238accd7b8c799b8b7626e9533e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "c247d8316fb91d0df4c6bb829d8ad8c92817257c54833ac1fcd0ba8d8c194073",
+          "bytes": 2383721
+        },
+        {
+          "id": "general-initial-10-ocr-2",
+          "origin_sha256": "385f112e4aab70ce5af80793f48a50960240d238accd7b8c799b8b7626e9533e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "438d0e8a21f08d258585c2813471957a17a03f080bed278f12fb76a6c6d32ceb",
+          "bytes": 2240193
+        },
+        {
+          "id": "general-initial-10-ocr-3",
+          "origin_sha256": "385f112e4aab70ce5af80793f48a50960240d238accd7b8c799b8b7626e9533e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "5fb5a9b9d8bc2aa74e354e7a512d4da14874031335fc9f0dd5eb90c5915a62aa",
+          "bytes": 2121381
+        },
+        {
+          "id": "general-initial-10-ocr-4",
+          "origin_sha256": "385f112e4aab70ce5af80793f48a50960240d238accd7b8c799b8b7626e9533e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "ef801a4abc66af6fa4a8878a27f31657cb46e46d993aabcbd72d20044eebe432",
+          "bytes": 1857657
+        },
+        {
+          "id": "general-initial-10-ocr-5",
+          "origin_sha256": "385f112e4aab70ce5af80793f48a50960240d238accd7b8c799b8b7626e9533e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "914ecc6138c432c8ce00a3e39f1f4b661f23302f9bbf858d59668f87ba078252",
+          "bytes": 1983163
+        },
+        {
+          "id": "general-initial-10-ocr-6",
+          "origin_sha256": "385f112e4aab70ce5af80793f48a50960240d238accd7b8c799b8b7626e9533e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              51,
+              52
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "1a3d698361bf6a15d5dbaffa81a61fe40cf4a570e6ef454856a5b999a1522a93",
+          "bytes": 202881
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-10",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            52
+          ]
+        ],
+        "partial": true,
+        "dropped_readings": [
+          {
+            "id": "p52-kei-name",
+            "page": 52,
+            "observation_id": "p52:full-page:a0:result0:r63",
+            "observed": "大計",
+            "reason": "物理52頁の目「1 スポーツ推進費」の説明の終わり。OCR が「備品購入費」の「入」と下の行の「計」を縦に重ねて1つの読み（大計）にした。「計」の行は説明の合計で項目ではないので、この読みは使わない。"
+          },
+          {
+            "id": "p52-kei-amount",
+            "page": 52,
+            "observation_id": "p52:full-page:a0:result0:r65",
+            "observed": "648,718",
+            "reason": "物理52頁の目「1 スポーツ推進費」の説明の終わりの「計」の行の額。目の額と同じ説明の合計で項目ではないので、この読みは使わない。"
+          }
+        ],
+        "amount_corrections": [
+          {
+            "id": "p50-higashihara-suiei",
+            "page": 50,
+            "observation_id": "p50:full-page:a0:result0:r97",
+            "observed_amount": ")38,139",
+            "corrected_amount": "38,139",
+            "reason": "物理50頁の説明「19 東原公園水泳場管理経費(スポーツ推進課)」の額。OCR が名前の閉じ括弧を名前と額の両方の読みに入れた。原典の描画で額は 38,139 だけと確かめた。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "nf-p2-550",
+            "page": 2,
+            "code": null,
+            "observed_name": "筆耕翻訳",
+            "corrected_name": "筆耕翻訳料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（筆耕翻訳料）を確かめた。"
+          },
+          {
+            "id": "nf-p2-628",
+            "page": 2,
+            "code": null,
+            "observed_name": "特職",
+            "corrected_name": "特別職",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（特別職）を確かめた。"
+          },
+          {
+            "id": "nf-p2-641",
+            "page": 2,
+            "code": null,
+            "observed_name": "般職",
+            "corrected_name": "一般職",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（一般職）を確かめた。"
+          },
+          {
+            "id": "nf-p8-722",
+            "page": 8,
+            "code": null,
+            "observed_name": "補金",
+            "corrected_name": "補助金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（補助金）を確かめた。"
+          },
+          {
+            "id": "nf-p10-284",
+            "page": 10,
+            "code": null,
+            "observed_name": "通費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p10-351",
+            "page": 10,
+            "code": null,
+            "observed_name": "講金",
+            "corrected_name": "講師報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（講師報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p10-417",
+            "page": 10,
+            "code": null,
+            "observed_name": "記1念品費",
+            "corrected_name": "記念品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（記念品費）を確かめた。"
+          },
+          {
+            "id": "nf-p12-323",
+            "page": 12,
+            "code": null,
+            "observed_name": "消耗費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p14-537",
+            "page": 14,
+            "code": null,
+            "observed_name": "消耗品",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p14-550",
+            "page": 14,
+            "code": null,
+            "observed_name": "印製本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p14-577",
+            "page": 14,
+            "code": null,
+            "observed_name": "補金",
+            "corrected_name": "補助金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（補助金）を確かめた。"
+          },
+          {
+            "id": "nf-p16-748",
+            "page": 16,
+            "code": null,
+            "observed_name": "負担",
+            "corrected_name": "負担金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（負担金）を確かめた。"
+          },
+          {
+            "id": "nf-p18-509",
+            "page": 18,
+            "code": null,
+            "observed_name": "講師報償",
+            "corrected_name": "講師報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（講師報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p20-204",
+            "page": 20,
+            "code": null,
+            "observed_name": "校外活動扶助費費",
+            "corrected_name": "校外活動扶助費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（校外活動扶助費）を確かめた。"
+          },
+          {
+            "id": "nf-p20-350",
+            "page": 20,
+            "code": null,
+            "observed_name": "校外活動費費",
+            "corrected_name": "校外活動費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（校外活動費）を確かめた。"
+          },
+          {
+            "id": "nf-p20-723",
+            "page": 20,
+            "code": null,
+            "observed_name": "施施設管理委託料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p22-205",
+            "page": 22,
+            "code": null,
+            "observed_name": "消品費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p22-563",
+            "page": 22,
+            "code": null,
+            "observed_name": "通信運費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p24-680",
+            "page": 24,
+            "code": null,
+            "observed_name": "備費",
+            "corrected_name": "備品購入費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（備品購入費）を確かめた。"
+          },
+          {
+            "id": "nf-p24-692",
+            "page": 24,
+            "code": null,
+            "observed_name": "負金担",
+            "corrected_name": "負担金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（負担金）を確かめた。"
+          },
+          {
+            "id": "nf-p26-456",
+            "page": 26,
+            "code": null,
+            "observed_name": "印刷製本本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p26-722",
+            "page": 26,
+            "code": null,
+            "observed_name": "修学旅行支度金金",
+            "corrected_name": "修学旅行支度金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（修学旅行支度金）を確かめた。"
+          },
+          {
+            "id": "nf-p26-750",
+            "page": 26,
+            "code": null,
+            "observed_name": "医",
+            "corrected_name": "医療扶助費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（医療扶助費）を確かめた。"
+          },
+          {
+            "id": "nf-p28-496",
+            "page": 28,
+            "code": null,
+            "observed_name": "会借上料",
+            "corrected_name": "会場借上料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（会場借上料）を確かめた。"
+          },
+          {
+            "id": "nf-p28-682",
+            "page": 28,
+            "code": null,
+            "observed_name": "入場",
+            "corrected_name": "入場料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（入場料）を確かめた。"
+          },
+          {
+            "id": "nf-p30-444",
+            "page": 30,
+            "code": null,
+            "observed_name": "自動車借上料車",
+            "corrected_name": "自動車借上料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（自動車借上料）を確かめた。"
+          },
+          {
+            "id": "nf-p32-402",
+            "page": 32,
+            "code": null,
+            "observed_name": "通運搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p32-550",
+            "page": 32,
+            "code": null,
+            "observed_name": "運営役員報償金金",
+            "corrected_name": "運営役員報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（運営役員報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p32-589",
+            "page": 32,
+            "code": null,
+            "observed_name": "通信搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p34-298",
+            "page": 34,
+            "code": "8",
+            "observed_name": "青少年リーダ一育成経費(社会教育課)",
+            "corrected_name": "青少年リーダー育成経費(社会教育課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（青少年リーダー育成経費(社会教育課)）を確かめた。"
+          },
+          {
+            "id": "nf-p34-602",
+            "page": 34,
+            "code": null,
+            "observed_name": "信運搬費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p34-657",
+            "page": 34,
+            "code": "12",
+            "observed_name": "文化交流センタ一管理経費(社会教育課)",
+            "corrected_name": "文化交流センター管理経費(社会教育課)",
+            "reason": "カタカナの長音「ー」を OCR が漢数字の「一」と読んだ。原典の描画で印字（文化交流センター管理経費(社会教育課)）を確かめた。"
+          },
+          {
+            "id": "nf-p36-176",
+            "page": 36,
+            "code": null,
+            "observed_name": "施設管理委託",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p36-587",
+            "page": 36,
+            "code": null,
+            "observed_name": "印刷製本費費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p38-298",
+            "page": 38,
+            "code": null,
+            "observed_name": "施施設管理委託料料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。",
+            "y": 297.8
+          },
+          {
+            "id": "nf-p38-602",
+            "page": 38,
+            "code": null,
+            "observed_name": "施施設管理委託料料",
+            "corrected_name": "施設管理委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（施設管理委託料）を確かめた。",
+            "y": 601.9
+          },
+          {
+            "id": "nf-p42-297",
+            "page": 42,
+            "code": null,
+            "observed_name": "講師報金",
+            "corrected_name": "講師報償金",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（講師報償金）を確かめた。"
+          },
+          {
+            "id": "nf-p42-560",
+            "page": 42,
+            "code": null,
+            "observed_name": "理運営委託料",
+            "corrected_name": "管理運営委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（管理運営委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p44-254",
+            "page": 44,
+            "code": null,
+            "observed_name": "管管理運営委託料",
+            "corrected_name": "管理運営委託料",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（管理運営委託料）を確かめた。"
+          },
+          {
+            "id": "nf-p46-418",
+            "page": 46,
+            "code": null,
+            "observed_name": "印製本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p46-429",
+            "page": 46,
+            "code": null,
+            "observed_name": "通搬費費",
+            "corrected_name": "通信運搬費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（通信運搬費）を確かめた。"
+          },
+          {
+            "id": "nf-p48-389",
+            "page": 48,
+            "code": null,
+            "observed_name": "印刷本費",
+            "corrected_name": "印刷製本費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（印刷製本費）を確かめた。"
+          },
+          {
+            "id": "nf-p50-284",
+            "page": 50,
+            "code": null,
+            "observed_name": "消耗品」費",
+            "corrected_name": "消耗品費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（消耗品費）を確かめた。"
+          },
+          {
+            "id": "nf-p52-507",
+            "page": 52,
+            "code": null,
+            "observed_name": "備品購費",
+            "corrected_name": "備品購入費",
+            "reason": "字の間を空けて印字した名前を、OCR が字を重ねて読む・読み落とす・近い字形に読むなどした。原典の描画で印字（備品購入費）を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-10"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-11",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "74cc861aa931abcaf06db3a14b36b5c027676a8ae6a34c0b3e5504d6807227d2"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-11-ocr-1",
+          "origin_sha256": "74cc861aa931abcaf06db3a14b36b5c027676a8ae6a34c0b3e5504d6807227d2",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "0ab2d7fd0a89480482130d6c8c44e85b29cf8c9eae62ca77f58240c9f2fa1e33",
+          "bytes": 1293080
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-11",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            6
+          ]
+        ],
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-11"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial-1",
+      "conversion_id": "general-initial-1",
+      "input_fingerprint": "ab69a629ed14dabd59ef9798a911d88f623be66de799793a245d152b14569f2d",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
+        "金額の単位は printed 2頁 から決めた。分冊のため款の和 424,613 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-1-nodes.parquet",
+          "sha256": "40f787434f124725f4a554277b71f0735bd32e78f677dcc3ad9c3edf19c11c55",
+          "bytes": 5855
+        },
+        "row_count": 58
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-1-amounts.parquet",
+          "sha256": "079e5b67761334b36229e8c52336df082f676e31a8d5bafb720e1eb30e7f23ff",
+          "bytes": 4367
+        },
+        "row_count": 64
+      }
+    },
+    {
+      "table_id": "general-initial-2",
+      "conversion_id": "general-initial-2",
+      "input_fingerprint": "44576db3b6c1ea18667f94d5572308633b1360934ed6b9c43582d71b7e530404",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
+        "金額の単位は printed 25頁 から決めた。分冊のため款の和 6,863,800 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 57 件を、管理 JSON の name_corrections で印字に直した: 般職→一般職・負金→負担金・通信福搬費→通信運搬費・消肖耗品1費→消耗品費・普通旅→普通旅費・印本費→印刷製本費・手数→手数料・負担→負担金・施設管理委託料管→施設管理委託料・原材料→原材料費・講師報償金金→講師報償金・熱水費→光熱水費・通費→通信運搬費・通信搬費費→通信運搬費・印、費→印刷製本費・印、費→印刷製本費・6市民センタ一運営経費(市民活動推進課)→6市民センター運営経費(市民活動推進課)・7青梅市民センタ一経費(市民活動推進課)→7青梅市民センター経費(市民活動推進課)・8長淵市民センタ一経費(市民活動推進課)→8長淵市民センター経費(市民活動推進課)・9大門市民センタ一経費(市民活動推進課)→9大門市民センター経費(市民活動推進課)・施設管理委計理理委託料→施設管理委託料・10梅郷市民センタ一経費(市民活動推進課)→10梅郷市民センター経費(市民活動推進課)・施設管理委理託料→施設管理委託料・備品購入費購→備品購入費・11沢井市民センタ一経費(市民活動推進課)→11沢井市民センター経費(市民活動推進課)・講青師報償金金→講師報償金・修料→修繕料・通信搬費→通信運搬費・施施設管理委託料料→施設管理委託料・設設備保守委託料料→設備保守委託料・原7材料費→原材料費・講師報償金金→講師報償金・施設管理施委託料料→施設管理委託料・設設備保守委託料料→設備保守委託料・13成木市民センタ一経費(市民活動推進課)→13成木市民センター経費(市民活動推進課)・光熱1水費→光熱水費・施施設管理委理料→施設管理委託料・設設備保守委託料料→設備保守委託料・テテレビ受信料料→テレビ受信料・14東青梅市民センタ一経費(市民活動推進課)→14東青梅市民センター経費(市民活動推進課)・施設管理委理託料→施設管理委託料・15新町市民センタ一経費(市民活動推進課)→15新町市民センター経費(市民活動推進課)・管理→施設管理委託料・16河辺市民センタ一経費(市民活動推進課)→16河辺市民センター経費(市民活動推進課)・施設管理委託→施設管理委託料・17今井市民センタ一経費(市民活動推進課)→17今井市民センター経費(市民活動推進課)・施施設管理委託料→施設管理委託料・20市民センタ一施設整備経費(市民活動推進課)→20市民センター施設整備経費(市民活動推進課)・印刷製本費費→印刷製本費・おふたり0meでとう!お祝い金→おふたりOmeでとう!お祝い金・印了刷製本費→印刷製本費・手数六料→手数料・熱水費→光熱水費・修料→修繕料・印刷費→印刷製本費・印刷本費→印刷製本費・通信運搬→通信運搬費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 22 件（p14:full-page:a0:result0:r66・p14:full-page:a0:result0:r66:w6・p14:full-page:a0:result0:r68・p14:full-page:a0:result0:r68:w4・p14:full-page:a0:result0:r72・p14:full-page:a0:result0:r72:w4・p17:full-page:a0:result0:r20・p17:full-page:a0:result0:r20:w5・p24:full-page:a0:result0:r86・p24:full-page:a0:result0:r86:w2・p25:full-page:a0:result0:r25・p25:full-page:a0:result0:r25・p25:full-page:a0:result0:r25:w5・p25:full-page:a0:result0:r25:w8・p37:full-page:a0:result0:r17・p37:full-page:a0:result0:r17:w5・p38:full-page:a0:result0:r107・p38:full-page:a0:result0:r107:w5・p39:full-page:a0:result0:r37・p39:full-page:a0:result0:r37:w5・p48:full-page:a0:result0:r71・p48:full-page:a0:result0:r71:w3）・徵→徴 4 件（p39:full-page:a0:result0:r23・p39:full-page:a0:result0:r23:w1・p40:full-page:a0:result0:r132・p40:full-page:a0:result0:r132:w10）・查→査 50 件（p7:full-page:a0:result0:r25・p7:full-page:a0:result0:r25:w12・p9:full-page:a0:result0:r14・p9:full-page:a0:result0:r14:w3・p10:full-page:a0:result0:r76・p10:full-page:a0:result0:r76・p10:full-page:a0:result0:r76:w3・p10:full-page:a0:result0:r76:w10・p14:full-page:a0:result0:r40・p14:full-page:a0:result0:r40:w1・p14:full-page:a0:result0:r72・p14:full-page:a0:result0:r72:w12・p14:full-page:a0:result0:r80・p14:full-page:a0:result0:r80:w9・p14:full-page:a0:result0:r102・p14:full-page:a0:result0:r102:w7・p14:full-page:a0:result0:r106・p14:full-page:a0:result0:r106:w7・p16:full-page:a0:result0:r58・p16:full-page:a0:result0:r58:w5・p16:full-page:a0:result0:r69・p16:full-page:a0:result0:r69:w5・p22:full-page:a0:result0:r15・p22:full-page:a0:result0:r15:w7・p39:full-page:a0:result0:r37・p39:full-page:a0:result0:r37:w11・p42:full-page:a0:result0:r22・p42:full-page:a0:result0:r22:w6・p43:full-page:a0:result0:r33・p43:full-page:a0:result0:r33:w8・p47:full-page:a0:result0:r19・p47:full-page:a0:result0:r19:w5・p47:full-page:a0:result0:r24・p47:full-page:a0:result0:r24:w6・p47:full-page:a0:result0:r27・p47:full-page:a0:result0:r27:w8・p47:full-page:a0:result0:r29・p47:full-page:a0:result0:r29:w3・p47:full-page:a0:result0:r33・p47:full-page:a0:result0:r33:w3・p48:full-page:a0:result0:r60・p48:full-page:a0:result0:r60:w6・p48:full-page:a0:result0:r67・p48:full-page:a0:result0:r67:w7・p48:full-page:a0:result0:r93・p48:full-page:a0:result0:r93・p48:full-page:a0:result0:r93:w3・p48:full-page:a0:result0:r93:w10・p48:full-page:a0:result0:r126・p48:full-page:a0:result0:r126:w5）・產→産 14 件（p12:full-page:a0:result0:r80・p12:full-page:a0:result0:r80:w1・p12:full-page:a0:result0:r104・p12:full-page:a0:result0:r104:w2・p14:full-page:a0:result0:r80・p14:full-page:a0:result0:r80:w5・p14:full-page:a0:result0:r102・p14:full-page:a0:result0:r102:w3・p40:full-page:a0:result0:r134・p40:full-page:a0:result0:r134:w3・p42:full-page:a0:result0:r26・p42:full-page:a0:result0:r26:w3・p42:full-page:a0:result0:r120・p42:full-page:a0:result0:r120:w2）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-2-nodes.parquet",
+          "sha256": "c96326bca771d32dd0afbd865b9912ca6e5a0673610c46d955a97928df583d95",
+          "bytes": 47793
+        },
+        "row_count": 1249
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-2-amounts.parquet",
+          "sha256": "916a051842d064f93d5bab713f8de3e8c8ef637b052c984c496bb5a81fcf5457",
+          "bytes": 34635
+        },
+        "row_count": 1305
+      }
+    },
+    {
+      "table_id": "general-initial-3",
+      "conversion_id": "general-initial-3",
+      "input_fingerprint": "2826b140689376f757ca624d0c08da0589dd15115cd42effdad44bd5405e3c67",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
+        "金額の単位は printed 21頁 から決めた。分冊のため款の和 32,676,232 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 40 件を、管理 JSON の name_corrections で印字に直した: 印刷製本本費→印刷製本費・消毛品費→消耗品費・17地域支援センタ一管理経費(地域福祉課)→17地域支援センター管理経費(地域福祉課)・18地域支援センタ一建設経費(地域福祉課)→18地域支援センター建設経費(地域福祉課)・手料→手数料・4地域密着型介護サ一ビス施設整備支援事業経費(介護保険課)→4地域密着型介護サービス施設整備支援事業経費(介護保険課)・報償品→報償品費・補金助→補助金・老人ホ一ム入所判定委員会委員報償金→老人ホーム入所判定委員会委員報償金・印J刷製本費→印刷製本費・印刷本費→印刷製本費・10シルバー人材センター経費(高齢者支援課))→10シルバー人材センター経費(高齢者支援課)・11福祉センタ一運営経費(高齢者支援課)→11福祉センター運営経費(高齢者支援課)・施施設管理委託料→施設管理委託料・認知症サポー卜検診実施委託料→認知症サポート検診実施委託料・13地域包括支援センタ一事業経費(高齢者支援課)→13地域包括支援センター事業経費(高齢者支援課)・介護予防リーダ一養成講座実施委託料→介護予防リーダー養成講座実施委託料・消耗費→消耗品費・印了刷製本費→印刷製本費・通信運費→通信運搬費・印本費→印刷製本費・通信運搬→通信運搬費・16障害者就労支援センタ一事業経費(障がい者福祉課)→16障害者就労支援センター事業経費(障がい者福祉課)・17自立センタ一管理運営経費(障がい者福祉課)→17自立センター管理運営経費(障がい者福祉課)・19自立センタ一施設整備経費(障がい者福祉課)→19自立センター施設整備経費(障がい者福祉課)・4子育て支援センタ一事業経費(子育て応援課)→4子育て支援センター事業経費(子育て応援課)・消肖耗品費→消耗品費・6育児支援へルパ一事業経費(子育て応援課)→6育児支援へルパー事業経費(子育て応援課)・消耗費→消耗品費・管理運営委託料料→管理運営委託料・通運搬費費→通信運搬費・通信→通信運搬費・通信費→通信運搬費・補金→補助金・普通旅→普通旅費・消1耗品費→消耗品費・通信信運搬費→通信運搬費・18認可外保育施設等事業経費(こども育成課))→18認可外保育施設等事業経費(こども育成課)・費1用弁償→費用弁償・特5別旅費→特別旅費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 44 件（p2:full-page:a0:result0:r67・p2:full-page:a0:result0:r67:w2・p4:full-page:a0:result0:r24・p4:full-page:a0:result0:r24:w2・p7:full-page:a0:result0:r42・p7:full-page:a0:result0:r42:w7・p8:full-page:a0:result0:r53・p8:full-page:a0:result0:r53・p8:full-page:a0:result0:r53・p8:full-page:a0:result0:r53:w2・p8:full-page:a0:result0:r53:w6・p8:full-page:a0:result0:r53:w8・p8:full-page:a0:result0:r55・p8:full-page:a0:result0:r55:w2・p9:full-page:a0:result0:r50・p9:full-page:a0:result0:r50・p9:full-page:a0:result0:r50:w5・p9:full-page:a0:result0:r50:w8・p12:full-page:a0:result0:r101・p12:full-page:a0:result0:r101:w2・p13:full-page:a0:result0:r16・p13:full-page:a0:result0:r16:w7・p25:full-page:a0:result0:r19・p25:full-page:a0:result0:r19・p25:full-page:a0:result0:r19:w5・p25:full-page:a0:result0:r19:w8・p25:full-page:a0:result0:r25・p25:full-page:a0:result0:r25:w5・p27:full-page:a0:result0:r17・p27:full-page:a0:result0:r17・p27:full-page:a0:result0:r17:w5・p27:full-page:a0:result0:r17:w8・p28:full-page:a0:result0:r12・p28:full-page:a0:result0:r12・p28:full-page:a0:result0:r12:w3・p28:full-page:a0:result0:r12:w6・p28:full-page:a0:result0:r31・p28:full-page:a0:result0:r31:w3・p31:full-page:a0:result0:r31・p31:full-page:a0:result0:r31:w5・p37:full-page:a0:result0:r29・p37:full-page:a0:result0:r29:w5・p37:full-page:a0:result0:r35・p37:full-page:a0:result0:r35:w5）・查→査 34 件（p2:full-page:a0:result0:r106・p2:full-page:a0:result0:r106:w12・p2:full-page:a0:result0:r117・p2:full-page:a0:result0:r117:w3・p8:full-page:a0:result0:r85・p8:full-page:a0:result0:r85:w1・p16:full-page:a0:result0:r23・p16:full-page:a0:result0:r23:w1・p18:full-page:a0:result0:r25・p18:full-page:a0:result0:r25:w1・p19:full-page:a0:result0:r50・p19:full-page:a0:result0:r50:w15・p20:full-page:a0:result0:r45・p20:full-page:a0:result0:r45:w10・p20:full-page:a0:result0:r47・p20:full-page:a0:result0:r47:w9・p24:full-page:a0:result0:r23・p24:full-page:a0:result0:r23:w1・p24:ink-3:a3:result0:r1・p24:ink-3:a3:result0:r1:w0・p26:full-page:a0:result0:r100・p26:full-page:a0:result0:r100:w1・p32:full-page:a0:result0:r27・p32:full-page:a0:result0:r27:w1・p32:full-page:a0:result0:r39・p32:full-page:a0:result0:r39:w1・p32:full-page:a0:result0:r47・p32:full-page:a0:result0:r47:w1・p32:full-page:a0:result0:r55・p32:full-page:a0:result0:r55:w1・p38:full-page:a0:result0:r101・p38:full-page:a0:result0:r101:w1・p40:full-page:a0:result0:r127・p40:full-page:a0:result0:r127:w5）・產→産 2 件（p14:full-page:a0:result0:r77・p14:full-page:a0:result0:r77:w0）・齡→齢 4 件（p13:full-page:a0:result0:r16・p13:full-page:a0:result0:r16:w1・p14:full-page:a0:result0:r85・p14:full-page:a0:result0:r85:w11）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-3-nodes.parquet",
+          "sha256": "894d7c538d0180591f41be8650b2e24e61a951bf31343c4a01f099c77445b873",
+          "bytes": 41251
+        },
+        "row_count": 992
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-3-amounts.parquet",
+          "sha256": "4bc86d19232e94de34d7357c99dccad46340fa8ec55e57871ec1cb1572f9abe2",
+          "bytes": 29370
+        },
+        "row_count": 1030
+      }
+    },
+    {
+      "table_id": "general-initial-4",
+      "conversion_id": "general-initial-4",
+      "input_fingerprint": "0e39d67ee1f834c49d7fc6b49d28bbe517b65323424e732809b4ee0f6c69bd38",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
+        "金額の単位は printed 12頁 から決めた。分冊のため款の和 6,532,600 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 29 件を、管理 JSON の name_corrections で印字に直した: 通旅費→普通旅費・西多摩在宅安心サポ一卜事業費補助金→西多摩在宅安心サポート事業費補助金・耗品費→消耗品費・消熱水費→光熱水費・印了刷製本費→印刷製本費・骨髄ドナ一支援事業助成金→骨髄ドナー支援事業助成金・医師等報償金師等→医師等報償金・印費→印刷製本費・通信搬費→通信運搬費・17健康センタ一施設整備経費(健康課)→17健康センター施設整備経費(健康課)・印本費→印刷製本費・通信搬費費→通信運搬費・康診査委託→健康診査委託料・普通旅費費→普通旅費・通信信運搬費→通信運搬費・消,耗品費→消耗品費・印了刷製本費→印刷製本費・通信搬費→通信運搬費・施設管理委託料料→施設管理委託料・住宅用省エネルギ一等設備普及促進補助金→住宅用省エネルギー等設備普及促進補助金・講師報償金金→講師報償金・消耗費→消耗品費・通信運搬費費→通信運搬費・印製本費→印刷製本費・熱水費→光熱水費・備購費→備品購入費・補→補助金・印刷製本費費→印刷製本費・講師金→講師報償金。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 10 件（p1:full-page:a0:result0:r38・p1:full-page:a0:result0:r38・p1:full-page:a0:result0:r38:w5・p1:full-page:a0:result0:r38:w8・p14:full-page:a0:result0:r37・p14:full-page:a0:result0:r37:w2・p14:full-page:a0:result0:r45・p14:full-page:a0:result0:r45:w7・p14:full-page:a0:result0:r83・p14:full-page:a0:result0:r83:w6）・查→査 46 件（p1:full-page:a0:result0:r62・p1:full-page:a0:result0:r62:w8・p4:full-page:a0:result0:r86・p4:full-page:a0:result0:r86:w5・p4:full-page:a0:result0:r93・p4:full-page:a0:result0:r93:w3・p4:full-page:a0:result0:r101・p4:full-page:a0:result0:r101:w10・p6:full-page:a0:result0:r46・p6:full-page:a0:result0:r46:w9・p7:full-page:a0:result0:r38・p7:full-page:a0:result0:r38:w8・p8:full-page:a0:result0:r44・p8:full-page:a0:result0:r44:w2・p8:full-page:a0:result0:r57・p8:full-page:a0:result0:r57:w3・p8:full-page:a0:result0:r71・p8:full-page:a0:result0:r71:w3・p8:full-page:a0:result0:r75・p8:full-page:a0:result0:r75:w1・p8:full-page:a0:result0:r94・p8:full-page:a0:result0:r94:w1・p8:ink-6:a6:result0:r0・p8:ink-6:a6:result0:r0:w1・p8:ink-7:a7:result0:r0・p8:ink-7:a7:result0:r0:w1・p9:full-page:a0:result0:r25・p9:full-page:a0:result0:r25:w3・p10:full-page:a0:result0:r16・p10:full-page:a0:result0:r16:w1・p10:full-page:a0:result0:r49・p10:full-page:a0:result0:r49:w7・p11:full-page:a0:result0:r43・p11:full-page:a0:result0:r43:w6・p14:full-page:a0:result0:r63・p14:full-page:a0:result0:r63:w6・p14:full-page:a0:result0:r65・p14:full-page:a0:result0:r65:w7・p14:full-page:a0:result0:r71・p14:full-page:a0:result0:r71:w4・p14:full-page:a0:result0:r75・p14:full-page:a0:result0:r75:w6・p16:full-page:a0:result0:r82・p16:full-page:a0:result0:r82:w1・p16:full-page:a0:result0:r88・p16:full-page:a0:result0:r88:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-4-nodes.parquet",
+          "sha256": "89b55d36f6cf7946b9e1f26d111ea3d19e0075130f91206ed7e6e4e14822913c",
+          "bytes": 26414
+        },
+        "row_count": 567
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-4-amounts.parquet",
+          "sha256": "64b678f281cdeb408d4855f4b29481c0b95fcfef9b2136d651345a330b8b1b1c",
+          "bytes": 18456
+        },
+        "row_count": 585
+      }
+    },
+    {
+      "table_id": "general-initial-5",
+      "conversion_id": "general-initial-5",
+      "input_fingerprint": "8e4c5fb621e018eda000ea24854d8e87cfe12d96cef776e8f96abe5e0e8b81e8",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 11,253 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-5-nodes.parquet",
+          "sha256": "510195ccc155eea706d318ca1016a7692c20d3d2c5860631b0d612ce1e444789",
+          "bytes": 3336
+        },
+        "row_count": 14
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-5-amounts.parquet",
+          "sha256": "f2b5088cb900310038cafd9eb88be62e4acb790502cb71aaf652c869ee2fbd16",
+          "bytes": 2514
+        },
+        "row_count": 20
+      }
+    },
+    {
+      "table_id": "general-initial-6",
+      "conversion_id": "general-initial-6",
+      "input_fingerprint": "66019e57e9c4cd81a618925b4aeb906f22ba87653ec33cd5fa7e60decf44d524",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
+        "金額の単位は printed 6頁 から決めた。分冊のため款の和 426,159 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 10 件を、管理 JSON の name_corrections で印字に直した: 通運搬費→通信運搬費・通通信運搬費→通信運搬費・講師金→講師報償金・保料→保険料・使料→使用料・印刷本費→印刷製本費・通通信搬費→通信運搬費・負金担→負担金・通通信運搬費→通信運搬費・1耗品費→消耗品費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 查→査 4 件（p10:full-page:a0:result0:r51・p10:full-page:a0:result0:r51:w3・p10:full-page:a0:result0:r77・p10:full-page:a0:result0:r77:w3）・產→産 34 件（p1:full-page:a0:result0:r19・p1:full-page:a0:result0:r19:w1・p1:full-page:a0:result0:r54・p1:full-page:a0:result0:r54:w4・p1:full-page:a0:result0:r57・p1:full-page:a0:result0:r57:w3・p2:full-page:a0:result0:r81・p2:full-page:a0:result0:r81:w17・p4:full-page:a0:result0:r100・p4:full-page:a0:result0:r100:w20・p4:full-page:a0:result0:r108・p4:full-page:a0:result0:r108:w16・p6:full-page:a0:result0:r25・p6:full-page:a0:result0:r25:w18・p6:full-page:a0:result0:r31・p6:full-page:a0:result0:r31:w17・p6:full-page:a0:result0:r39・p6:full-page:a0:result0:r39:w17・p6:full-page:a0:result0:r64・p6:full-page:a0:result0:r64:w19・p6:full-page:a0:result0:r86・p6:full-page:a0:result0:r86:w19・p7:full-page:a0:result0:r41・p7:full-page:a0:result0:r41:w3・p7:full-page:a0:result0:r46・p7:full-page:a0:result0:r46:w16・p8:full-page:a0:result0:r65・p8:full-page:a0:result0:r65:w12・p9:full-page:a0:result0:r14・p9:full-page:a0:result0:r14:w2・p9:full-page:a0:result0:r19・p9:full-page:a0:result0:r19:w2・p10:full-page:a0:result0:r94・p10:full-page:a0:result0:r94:w19）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-6-nodes.parquet",
+          "sha256": "1deb4d25b18aec7889f0504d18c4c4ad7a8a69c9e17f2a31c6973c668ddf7705",
+          "bytes": 15135
+        },
+        "row_count": 265
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-6-amounts.parquet",
+          "sha256": "23c8e0f53192b81e1f98d8296256202932d442764eee3859ebde523d4dc67193",
+          "bytes": 11127
+        },
+        "row_count": 283
+      }
+    },
+    {
+      "table_id": "general-initial-7",
+      "conversion_id": "general-initial-7",
+      "input_fingerprint": "27664170ce6abcbfada23d74dfceca8c6423ddec6b04ccb9458a93d058a4dd1e",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
+        "金額の単位は printed 5頁 から決めた。分冊のため款の和 505,036 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 5 件を、管理 JSON の name_corrections で印字に直した: 3OmeB1ue推進事業経費(シティプロモーション課)→3OmeBlue推進事業経費(シティプロモーション課)・講師報償→講師報償金・報1償品費→報償品費・印了刷製本費→印刷製本費・消肖耗品費→消耗品費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 產→産 4 件（p1:full-page:a0:result0:r33・p1:full-page:a0:result0:r33:w5・p2:full-page:a0:result0:r77・p2:full-page:a0:result0:r77:w0）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-7-nodes.parquet",
+          "sha256": "7dbeb5e1c004b942b2c1dc0e64f86fe4b47ad5305729608ab01cc793b4e5c9ab",
+          "bytes": 13071
+        },
+        "row_count": 212
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-7-amounts.parquet",
+          "sha256": "f719d610ad7b1b257dafc8486b2a282524fb74475285b3d079ae66911725073b",
+          "bytes": 9439
+        },
+        "row_count": 224
+      }
+    },
+    {
+      "table_id": "general-initial-8",
+      "conversion_id": "general-initial-8",
+      "input_fingerprint": "eaad5410f77298f1bdfc10482bffebf8e96bd12692869bdc2d8917fd35fa17bb",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
+        "金額の単位は printed 9頁 から決めた。分冊のため款の和 5,287,912 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 18 件を、管理 JSON の name_corrections で印字に直した: ライセンス購入費購→ライセンス購入費・施設管里委託料→施設管理委託料・設設備保守委託料→設備保守委託料・測量委託王→測量委託料・設計委料→設計委託料・消品費→消耗品費・補金→補助金・通信→通信運搬費・精品購入費→備品購入費・計委託料→設計委託料・調周査委託料→調査委託料・信運搬費→通信運搬費・光→光熱水費・設計料→設計委託料・通信搬費→通信運搬費・印J刷製本費→印刷製本費・印刷費→印刷製本費・印刷本費→印刷製本費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 20 件（p9:full-page:a0:result0:r23・p9:full-page:a0:result0:r23:w5・p9:full-page:a0:result0:r25・p9:full-page:a0:result0:r25・p9:full-page:a0:result0:r25:w5・p9:full-page:a0:result0:r25:w8・p13:full-page:a0:result0:r14・p13:full-page:a0:result0:r14:w5・p14:full-page:a0:result0:r74・p14:full-page:a0:result0:r74・p14:full-page:a0:result0:r74:w9・p14:full-page:a0:result0:r74:w11・p14:full-page:a0:result0:r104・p14:full-page:a0:result0:r104・p14:full-page:a0:result0:r104:w8・p14:full-page:a0:result0:r104:w10・p15:full-page:a0:result0:r20・p15:full-page:a0:result0:r20:w6・p15:full-page:a0:result0:r33・p15:full-page:a0:result0:r33:w5）・查→査 14 件（p4:full-page:a0:result0:r100・p4:full-page:a0:result0:r100:w5・p4:full-page:a0:result0:r118・p4:full-page:a0:result0:r118:w6・p6:full-page:a0:result0:r10・p6:full-page:a0:result0:r10:w5・p6:ink-17:a17:result0:r1・p6:ink-17:a17:result0:r1:w0・p8:full-page:a0:result0:r70・p8:full-page:a0:result0:r70:w0・p12:full-page:a0:result0:r25・p12:full-page:a0:result0:r25:w1・p12:full-page:a0:result0:r95・p12:full-page:a0:result0:r95:w1）・產→産 10 件（p6:full-page:a0:result0:r114・p6:full-page:a0:result0:r114:w4・p6:full-page:a0:result0:r120・p6:full-page:a0:result0:r120:w2・p10:full-page:a0:result0:r21・p10:full-page:a0:result0:r21:w1・p14:full-page:a0:result0:r113・p14:full-page:a0:result0:r113:w2・p16:full-page:a0:result0:r70・p16:full-page:a0:result0:r70:w0）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-8-nodes.parquet",
+          "sha256": "3d9c6a4f3a7cbd60a043119a1a40f8e0bf8669fd7b321b8cafc34830261b6e06",
+          "bytes": 23106
+        },
+        "row_count": 475
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-8-amounts.parquet",
+          "sha256": "a8a4c830c43532db0856f394446eb45bd720201ac34495a2e7977a8ea6f9a0d7",
+          "bytes": 17380
+        },
+        "row_count": 513
+      }
+    },
+    {
+      "table_id": "general-initial-9",
+      "conversion_id": "general-initial-9",
+      "input_fingerprint": "70dcb9fb60dba600881409e8241be892115757f4cc5d25aa9b090bea2984a29f",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
+        "金額の単位は printed 3頁 から決めた。分冊のため款の和 2,020,828 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 5 件を、管理 JSON の name_corrections で印字に直した: 報償品→報償品費・負金担→負担金・光水費→光熱水費・施設管理委託→施設管理委託料・普通旅→普通旅費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 2 件（p1:full-page:a0:result0:r32・p1:full-page:a0:result0:r32:w5）・查→査 2 件（p6:full-page:a0:result0:r74・p6:full-page:a0:result0:r74:w0）・產→産 2 件（p4:full-page:a0:result0:r88・p4:full-page:a0:result0:r88:w0）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-9-nodes.parquet",
+          "sha256": "6d5651a3815b9649cdda4ce30046d8b256c2ef5fb0cecf5b0a0932c5477455af",
+          "bytes": 10458
+        },
+        "row_count": 154
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-9-amounts.parquet",
+          "sha256": "a917a286d7c92e3fff1a367e4051aefcde5e3a493aeb138e3a383cd501da0601",
+          "bytes": 7547
+        },
+        "row_count": 162
+      }
+    },
+    {
+      "table_id": "general-initial-10",
+      "conversion_id": "general-initial-10",
+      "input_fingerprint": "9c487537c66c847c1425d61bc11cb4eb1eef49b973ccb287982747c3c0c74891",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
+        "金額の単位は printed 26頁 から決めた。分冊のため款の和 11,157,518 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 44 件を、管理 JSON の name_corrections で印字に直した: 筆耕翻訳→筆耕翻訳料・特職→特別職・般職→一般職・補金→補助金・通費→通信運搬費・講金→講師報償金・記1念品費→記念品費・消耗費→消耗品費・消耗品→消耗品費・印製本費→印刷製本費・補金→補助金・負担→負担金・講師報償→講師報償金・校外活動扶助費費→校外活動扶助費・校外活動費費→校外活動費・施施設管理委託料→施設管理委託料・消品費→消耗品費・通信運費→通信運搬費・備費→備品購入費・負金担→負担金・印刷製本本費→印刷製本費・修学旅行支度金金→修学旅行支度金・医→医療扶助費・会借上料→会場借上料・入場→入場料・自動車借上料車→自動車借上料・通運搬費→通信運搬費・運営役員報償金金→運営役員報償金・通信搬費→通信運搬費・8青少年リーダ一育成経費(社会教育課)→8青少年リーダー育成経費(社会教育課)・信運搬費→通信運搬費・12文化交流センタ一管理経費(社会教育課)→12文化交流センター管理経費(社会教育課)・施設管理委託→施設管理委託料・印刷製本費費→印刷製本費・施施設管理委託料料→施設管理委託料・施施設管理委託料料→施設管理委託料・講師報金→講師報償金・理運営委託料→管理運営委託料・管管理運営委託料→管理運営委託料・印製本費→印刷製本費・通搬費費→通信運搬費・印刷本費→印刷製本費・消耗品」費→消耗品費・備品購費→備品購入費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 20 件（p1:full-page:a0:result0:r61・p1:full-page:a0:result0:r61:w9・p8:full-page:a0:result0:r42・p8:full-page:a0:result0:r42:w5・p9:full-page:a0:result0:r20・p9:full-page:a0:result0:r20:w9・p21:full-page:a0:result0:r25・p21:full-page:a0:result0:r25・p21:full-page:a0:result0:r25:w5・p21:full-page:a0:result0:r25:w8・p37:full-page:a0:result0:r18・p37:full-page:a0:result0:r18・p37:full-page:a0:result0:r18:w5・p37:full-page:a0:result0:r18:w8・p43:full-page:a0:result0:r14・p43:full-page:a0:result0:r14・p43:full-page:a0:result0:r14:w5・p43:full-page:a0:result0:r14:w8・p46:full-page:a0:result0:r80・p46:full-page:a0:result0:r80:w2）・徵→徴 2 件（p12:full-page:a0:result0:r103・p12:full-page:a0:result0:r103:w5）・查→査 18 件（p1:full-page:a0:result0:r55・p1:full-page:a0:result0:r55:w6・p3:full-page:a0:result0:r22・p3:full-page:a0:result0:r22:w6・p10:full-page:a0:result0:r46・p10:full-page:a0:result0:r46:w1・p18:full-page:a0:result0:r50・p18:full-page:a0:result0:r50:w1・p26:ink-8:a8:result0:r1・p26:ink-8:a8:result0:r1:w0・p35:full-page:a0:result0:r29・p35:full-page:a0:result0:r29:w10・p40:full-page:a0:result0:r29・p40:full-page:a0:result0:r29:w8・p40:full-page:a0:result0:r40・p40:full-page:a0:result0:r40:w3・p52:ink-7:a7:result0:r1・p52:ink-7:a7:result0:r1:w0）・產→産 8 件（p12:full-page:a0:result0:r100・p12:full-page:a0:result0:r100:w0・p16:full-page:a0:result0:r96・p16:full-page:a0:result0:r96:w0・p24:full-page:a0:result0:r91・p24:full-page:a0:result0:r91:w0・p38:full-page:a0:result0:r48・p38:full-page:a0:result0:r48:w0）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-10-nodes.parquet",
+          "sha256": "e4010457d44ed0f16ec6ae9dab8afb8bf8589bd5b5d24320bc9be62ab3d39718",
+          "bytes": 51257
+        },
+        "row_count": 1350
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-10-amounts.parquet",
+          "sha256": "990e52851f3795ad64d90c6a129ea66531e2d8625455895afc35652a4ae092ee",
+          "bytes": 36760
+        },
+        "row_count": 1406
+      }
+    },
+    {
+      "table_id": "general-initial-11",
+      "conversion_id": "general-initial-11",
+      "input_fingerprint": "ee0c2093a74aacacd4a16292af9791a4855d3a82d8252e7ae8fee1a826955cf1",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
+        "金額の単位は printed 3頁 から決めた。分冊のため款の和 3,924,049 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p1:full-page:a0:result0:r64・p1:full-page:a0:result0:r64:w0・p1:full-page:a0:result0:r70・p1:full-page:a0:result0:r70:w0）・產→産 8 件（p1:full-page:a0:result0:r31・p1:full-page:a0:result0:r31:w1・p1:full-page:a0:result0:r38・p1:full-page:a0:result0:r38:w1・p5:full-page:a0:result0:r20・p5:full-page:a0:result0:r20:w13・p6:full-page:a0:result0:r48・p6:full-page:a0:result0:r48:w19）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-11-nodes.parquet",
+          "sha256": "cea3a6be1ecd398737fa19fd87d18223565dffcdc85feff13749b00a9f265801",
+          "bytes": 8344
+        },
+        "row_count": 100
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132055/2026/initial/expenditure/general-initial-11-amounts.parquet",
+          "sha256": "8a9bbe1f8776ae015b27a6d30396bf4a679dce28b5b6b2408f28c913f29db24a",
+          "bytes": 6796
+        },
+        "row_count": 168
+      }
+    }
+  ]
+}

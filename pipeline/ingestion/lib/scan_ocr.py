@@ -502,11 +502,11 @@ def settle_seams(page: dict) -> dict:
                  and o["bbox_pdf_pt"][0] < box[2] and o["bbox_pdf_pt"][2] > box[0]]
         if any(o["bbox_pdf_pt"][0] <= box[0] + SEAM_COVER_PT and o["bbox_pdf_pt"][2] >= box[2] - SEAM_COVER_PT for _, o in found):
             continue
-        taken = {o["id"] for region, o in found if region["id"].startswith(("ink-", "vlm-"))}
+        taken = {o["id"] for region, o in found if region["id"].startswith(("ink-", "vlm-", "line-"))}
         for region in page["regions"]:
             region["observations"] = [o for o in region["observations"]
                                       if o["id"] not in taken and o.get("parent_id") not in taken]
-        page["regions"] = [r for r in page["regions"] if r["observations"] or not r["id"].startswith(("ink-", "vlm-"))]
+        page["regions"] = [r for r in page["regions"] if r["observations"] or not r["id"].startswith(("ink-", "vlm-", "line-"))]
         area = [round(v, 1) for v in box]
         if area not in unread:
             unread.append(area)
@@ -519,18 +519,75 @@ def settle_seams(page: dict) -> dict:
     return page
 
 
+def _join_overlapping_rereads(page: dict) -> None:
+    """Join two re-read areas of one letterspaced line that read across each other (``letterspaced_names``).
+
+    The missed first and last characters of a line are two areas, and each re-read takes the rest of the line with
+    it (`電子複写機賃借` and `子複写機賃借料`): kept side by side, the line reads twice. Where the left reading ends
+    with what the right one begins with (two characters at least), they are one reading of the whole line."""
+    rereads = [(region, region["observations"][0]) for region in page["regions"] if region["id"].startswith("ink-")
+               and len([o for o in region["observations"] if o["kind"] == "region"]) == 1
+               and region["observations"][0]["kind"] == "region" and region["observations"][0].get("bbox_pdf_pt")]
+    dropped = set()
+    for (left, a), (right, b) in ((x, y) for x in rereads for y in rereads if x[0] is not y[0]):
+        if id(left) in dropped or id(right) in dropped:
+            continue
+        p, q = a["bbox_pdf_pt"], b["bbox_pdf_pt"]
+        if not (p[0] <= q[0] and p[2] <= q[2] and min(p[3], q[3]) - max(p[1], q[1]) >= 0.5 * min(p[3] - p[1], q[3] - q[1])
+                and min(p[2], q[2]) - max(p[0], q[0]) > 0):
+            continue
+        first, second = "".join(a["raw_text"].split()), "".join(b["raw_text"].split())
+        shared = next((n for n in range(min(len(first), len(second)), 1, -1) if first.endswith(second[:n])), 0)
+        if not shared:
+            continue
+        a["raw_text"] = first + second[shared:]
+        a["bbox_pdf_pt"] = [min(p[0], q[0]), min(p[1], q[1]), max(p[2], q[2]), max(p[3], q[3])]
+        left["observations"] = [a]
+        if right.get("supersedes"):
+            left["supersedes"] = sorted({*left.get("supersedes", ()), *right["supersedes"]})
+        dropped.add(id(right))
+    page["regions"] = [region for region in page["regions"] if id(region) not in dropped]
+
+
+def _read_lines(path: Path, number: int, config: PaddleConfig, page: dict, rest: Sequence[Sequence[float]],
+                rules: PageRules, dashed: bool) -> None:
+    """Read each missed mark's whole line in its cell with the engine, as the VLM would (``letterspaced_names``).
+
+    A letterspaced name (`電 子 複 写 機 賃 借 料`) loses its first and last characters to the page's detector,
+    and alone each is too small a crop for the recogniser; read with the rest of its line it is read. The line's
+    reading is trusted only where it differs from what OCR read by exactly one insertion at the mark (``_fill``);
+    the inserted characters become regions ``line-<n>`` and anything else stays missed ink."""
+    lines = [_line(area, rules) for area in rest]
+    regions = [OcrRegion(f"line-{i}", (b[0] / rules.width, b[1] / rules.height, b[2] / rules.width, b[3] / rules.height))
+               for i, b in enumerate(lines)]
+    read = {region["id"]: region for region in _read_without_rules(path, number, config, regions, rules.width, dashed)["regions"]}
+    added = []
+    for index, (area, line) in enumerate(zip(rest, lines)):
+        found = sorted((o for o in read.get(f"line-{index}", {}).get("observations", ())
+                        if o["kind"] == "region" and o.get("bbox_pdf_pt")), key=lambda o: o["bbox_pdf_pt"][0])
+        text = _fill(" ".join(o["raw_text"] for o in found), _tokens(page, line), area) if found else None
+        if not text or text == vlm_ocr.UNREADABLE:
+            continue
+        added.append({"id": f"line-{index}", "engine": config.recognition_model_name, "observations": [
+            {"id": f"p{number}:line-{index}:r0", "kind": "region", "parent_id": None, "raw_text": text,
+             "bbox_pdf_pt": [round(v, 1) for v in area], "bbox_status": "available"}]})
+    page["regions"].extend(added)
+
+
 def supplement(path: Path, page: dict, config: PaddleConfig, previous: Mapping[str, str], *,
                vlm_fallback: bool = True, ink_dark: int = pdf_rules.DARK, unit_marks: bool = False,
-               merged_lines: bool = False, rule_steps: bool = False, dashed: bool = False) -> dict:
+               merged_lines: bool = False, rule_steps: bool = False, dashed: bool = False,
+               letterspaced_names: bool = False) -> dict:
     """``_supplement``, then the seam pairs it left (``settle_seams``)."""
     return settle_seams(_supplement(path, page, config, previous, vlm_fallback=vlm_fallback, ink_dark=ink_dark,
                                     unit_marks=unit_marks, merged_lines=merged_lines, rule_steps=rule_steps,
-                                    dashed=dashed))
+                                    dashed=dashed, letterspaced_names=letterspaced_names))
 
 
 def _supplement(path: Path, page: dict, config: PaddleConfig, previous: Mapping[str, str], *,
                 vlm_fallback: bool = True, ink_dark: int = pdf_rules.DARK, unit_marks: bool = False,
-                merged_lines: bool = False, rule_steps: bool = False, dashed: bool = False) -> dict:
+                merged_lines: bool = False, rule_steps: bool = False, dashed: bool = False,
+                letterspaced_names: bool = False) -> dict:
     """Read the ink OCR missed on one page: the engine on those areas, then the VLM on what remains.
 
     The engine reads each tight area (``ink_areas``) as a new region ``ink-<n>``. A reading that
@@ -588,8 +645,13 @@ def _supplement(path: Path, page: dict, config: PaddleConfig, previous: Mapping[
             if replaced:
                 region["supersedes"] = sorted(replaced)
             page["regions"].append(region)
+    if letterspaced_names:
+        _join_overlapping_rereads(page)
     _read_zeros(path, number, config, page, missed())
     rest = ink_areas(missed(), rules)
+    if letterspaced_names and rest:
+        _read_lines(path, number, config, page, rest, rules, dashed)
+        rest = ink_areas(missed(), rules)
     if not vlm_fallback:
         if rest:
             page['unread_ink'] = [[round(v, 1) for v in area] for area in rest]
@@ -775,7 +837,7 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
     result["pages"] = [supplement(path, page, config, pinned, vlm_fallback=request.get('vlm_fallback', True),
                           ink_dark=request.get('ink_dark', pdf_rules.DARK), unit_marks=bool(request.get('unit_marks')),
                           rule_steps=bool(request.get('rule_steps')), dashed=bool(request.get('dashed_rules')),
-                          merged_lines=bool(request.get('merged_lines')))
+                          merged_lines=bool(request.get('merged_lines')), letterspaced_names=bool(request.get('letterspaced_names')))
                        for page in result["pages"]]
     observation = {"schema_version": 1, "request": dict(request), "vlm": _vlm_identity(),
                    "origin": {k: result["origin"][k] for k in ("sha256", "bytes")},

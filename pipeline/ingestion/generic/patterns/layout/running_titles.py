@@ -39,6 +39,7 @@ from dataclasses import dataclass, replace
 from ingestion.generic import layout
 from ingestion.generic.layout import Glyph, is_amount, lines, normalize, runs, text
 from ingestion.generic.observe import Rule, Word
+from ingestion.generic.patterns import document_quirk
 from ingestion.generic.patterns.layout import stacked_titles
 
 STACKED_SHIFT = 6  # how far aside a scan sets one table of a page from the one above it (国分寺市)
@@ -160,6 +161,8 @@ def title_segments(parts: list[list[Glyph]]) -> list[list[list[Glyph]]]:
     (`（款） 1 議会費 （項） 1 議会費 （単位：千円）`), 東久留米市 `2款 総務費 1項 総務管理費`. The unit notation is no
     title's."""
     segments: list[list[list[Glyph]]] = []
+    if (glued := document_quirk('glued_titles')) is not None:
+        parts = glued.module.split(parts)
     for run in parts:
         shown = normalize(text(run))
         if UNIT_NOTE.match(shown):

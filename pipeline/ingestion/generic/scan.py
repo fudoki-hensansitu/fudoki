@@ -112,6 +112,9 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
         # (`448` of `134,271 448`, `296` 3pt past it, 281000), and no whole digit fits in that sliver. The box
         # still ends at the rule, as a cut keeping every character gives it (`422` 1pt past it, 132152).
         return [word] if _amount(word.text) else [Word(word.text, word.x0, word.y0, min(inside), word.y1)]
+    if len(inside) == 1 and (after := document_quirk('code_after_amount')) is not None \
+            and after.module.overrun(_text(word.text), word.x1 - inside[0], width):
+        return [Word(word.text, word.x0, word.y0, inside[0], word.y1)]
     # Two grouped amounts run together across one rule (`△77,756,000103,232,000`, 132276): the groups of three say
     # where the first ends. A share by width can be a digit off, and a sign makes the left part wider than it reads.
     joined = re.sub(r'\s+', '', word.text)
@@ -119,6 +122,9 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
     if len(together) == len(inside) and ''.join(together) == joined and len(inside) > 1 \
             and (padded := document_quirk('padded_runs')) is not None:
         inside = padded.module.inside(word, inside, width)
+    if len(inside) == 1 and (after := document_quirk('code_after_amount')) is not None \
+            and (cut := after.module.pieces(joined)) is not None:
+        return [Word(cut[0], word.x0, word.y0, inside[0], word.y1), Word(cut[1], inside[0], word.y0, word.x1, word.y1)]
     if len(together) == len(inside) + 1 and ''.join(together) == joined:
         edges = [word.x0, *inside, word.x1]
         return [Word(text, edges[i], word.y0, edges[i + 1], word.y1) for i, text in enumerate(together)]
@@ -245,7 +251,9 @@ def _cell_words(pieces: list[Word], cuts: list[float], reach: float = 0) -> list
     ``reach``: how far past a piece's left edge a rule still lies in front of it. A Paddle character box
     can start a little left of the rule its character sits right of (`同` 0.6pt, 131181)."""
     words: list[Word] = []
-    for piece in sorted((p for w in pieces for p in _split(w, cuts)), key=lambda w: w.x0):
+    ordered = sorted((p for w in pieces for p in _split(w, cuts)), key=lambda w: w.x0)
+    short = document_quirk('short_amounts_at_line_end')
+    for piece in ordered:
         if words:
             last = words[-1]
             height = max(last.y1 - last.y0, piece.y1 - piece.y0)
@@ -257,6 +265,8 @@ def _cell_words(pieces: list[Word], cuts: list[float], reach: float = 0) -> list
             # "2" "款" "1" "項" join; a name and its amount stay apart even when they nearly touch.
             amount_with_text = _amount(last.text) != _amount(piece.text) and not (
                 NUMBER.fullmatch(_text(last.text)) and NUMBER.fullmatch(_text(piece.text)))
+            if short is not None and piece is ordered[-1] and short.module.ends_line(last.text, piece.text):
+                amount_with_text = True
             # Characters of two printed lines stacked in one box (Paddle reads `使` over `賃` of a name set on
             # two lines, 281000) are two words: the one line's words overlap in height.
             stacked = min(last.y1, piece.y1) - max(last.y0, piece.y0) < STACKED_SHARE * min(last.y1 - last.y0, piece.y1 - piece.y0)
@@ -306,6 +316,7 @@ def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.D
     # horizontal rules at the place of a vertical rule the page draws elsewhere closes a cell: the deepest
     # level column on a page's last row (281000).
     columns = []
+    gapped = document_quirk('gapped_column_rules')
     for x in sorted({round(r.position, 1) for r in vertical}) if staircase else ():
         across = [r for r in horizontal if r.start - 1 <= x <= r.end + 1]
         for upper, lower in zip(across, across[1:]):
@@ -315,7 +326,8 @@ def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.D
             if any(abs(r.position - x) <= 1 and r.start <= top + 1 and bottom - 1 <= r.end for r in vertical):
                 continue
             px, y0, y1 = round(x * scale), round(top * scale) + 1, round(bottom * scale)
-            if y1 > y0 and np.any(np.all(image[y0:y1, max(0, px - 1):px + 2] < dark, axis=0)):
+            strip = image[y0:y1, max(0, px - 1):px + 2] < dark
+            if y1 > y0 and (np.any(np.all(strip, axis=0)) or (gapped is not None and gapped.module.inked(strip))):
                 columns.append(pdf_rules.Rule(x, top, bottom, vertical[0].thickness))
     # And with the layout setting `rules.row_columns`, a narrow stroke that runs the whole height between two
     # horizontal rules is a column rule even where the page draws none elsewhere (131164's 財源 columns under 説明,
@@ -1229,7 +1241,12 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     arranged, taken, items, levels = explained_projects.arrange(observed, explained, continued) if explained \
         else (observed, [], [], {})
     laid, blocks = inner_tables.cut(arranged, inner) if inner else (arranged, [])
+    if (projects := quirk(settings, 'project_blocks')) is not None:
+        laid = projects.module.join_subject(laid)
     logical = _layout(laid, columns, spread=spread, header=header)
+    left_out = []
+    if projects is not None:
+        logical, left_out = projects.module.arrange(logical)
     kind = source['target']['document_kind']
     built, report.pattern = build_reading(logical, kind, layout=(settings or {}).get('breakdown'),
                                          codes_right=(settings or {}).get('codes') == 'right',
@@ -1270,6 +1287,9 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     amounts, headings = canonical_headings([*kept, *amounts], nodes, kind, header)
     fine_sections(nodes)
     excluded = excluded_regions(built, logical, codes, observed)
+    for why in dict.fromkeys((k, r) for _, k, r in left_out):
+        excluded += coverage_regions([(g.page, g.original, g.text) for g, *rest in left_out
+                                      if tuple(rest) == why and re.search(r'[0-9０-９]', g.text)], kind=why[0], reason=why[1])
     excluded += coverage_regions([(page, (w.x0, w.y0, w.x1, w.y1), w.text) for page, w in prose
                                   if re.search(r'[0-9０-９]', w.text)], kind='本文',
                                  reason='科目の下の説明（事業説明・残額説明）の文の中の数字。金額の欄ではない。')

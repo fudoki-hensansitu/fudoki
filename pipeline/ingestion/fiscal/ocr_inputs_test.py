@@ -258,13 +258,13 @@ class OcrManifestTest(unittest.TestCase):
         code.write_text(code.read_text().replace(signature, signature + (
             "\n    (destination / (options['table_id'] + '.ocr')).write_text("
             "repr([(o['id'], str(o['path'])) for item in inputs for o in item['ocr']]))"), 1))
-        with patch('ingestion.fiscal.run.save'), patch('ingestion.fiscal.run.save_ocr') as save_ocr:
-            run.convert(self.path, self.files, self.root / 'saved', remote=True)
+        with patch('ingestion.fiscal.run.keep'), patch('ingestion.fiscal.run.save_ocr') as save_ocr:
+            run.convert(self.path, self.files, self.root / 'saved', remote=True, record=True)
         cached = str(self.objects / manifest.ocr_key(self.document, 'one-pages'))
         self.assertEqual((self.root / 'saved/one.ocr').read_text(), repr([('one-pages', cached)]))
         self.assertEqual((self.root / 'saved/two.ocr').read_text(), '[]')
-        save_ocr.assert_called_once()
-        self.assertEqual(save_ocr.call_args.args[1]['id'], 'one-pages')
+        # Recording never writes R2; the thread uploads observations with `ocr --save`.
+        save_ocr.assert_not_called()
         saved = manifest.read(self.path)
         manifest.require_current(saved)
         # Re-pinning a different observation makes the conversion's saved table stale.

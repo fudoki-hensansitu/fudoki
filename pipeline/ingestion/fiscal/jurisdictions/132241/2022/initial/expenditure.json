@@ -1,0 +1,75 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132241",
+    "fiscal_year": 2022,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "csv-4ccb155bd86b154b",
+      "converter": "fiscal/layouts/csv/convert.py",
+      "inputs": [
+        {
+          "sha256": "4ccb155bd86b154b5c5ebf1e64be52660355fc7aa4e9b731d17752046e569e9b"
+        }
+      ],
+      "options": {
+        "encoding": "cp932",
+        "table_id": "csv-4ccb155bd86b154b",
+        "amount_column": "予算額",
+        "amount_unit": "千円"
+      },
+      "expected_tables": [
+        {
+          "table_id": "csv-4ccb155bd86b154b"
+        }
+      ]
+    },
+    {
+      "id": "csv-e94593f2cce5bde4",
+      "converter": "fiscal/layouts/csv/convert.py",
+      "inputs": [
+        {
+          "sha256": "e94593f2cce5bde405f4e953fe0b133133c719556e79287413eb0af8a95efd63"
+        }
+      ],
+      "options": {
+        "encoding": "cp932",
+        "table_id": "csv-e94593f2cce5bde4",
+        "amount_column": "予算額",
+        "amount_unit": "千円"
+      },
+      "expected_tables": [
+        {
+          "table_id": "csv-e94593f2cce5bde4"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "csv-4ccb155bd86b154b",
+      "conversion_id": "csv-4ccb155bd86b154b",
+      "input_fingerprint": "aa082daea11fc4eadcb5781c346b11478dc63ea13151eae368a65d01d149d60d",
+      "object": {
+        "key": "fiscal/ingestion/132241/2022/initial/expenditure/csv-4ccb155bd86b154b.parquet",
+        "sha256": "e00bb9f7695ca1a420248ff561548947c09d90e33d416199ed6398684156aa82",
+        "bytes": 8266
+      },
+      "row_count": 189
+    },
+    {
+      "table_id": "csv-e94593f2cce5bde4",
+      "conversion_id": "csv-e94593f2cce5bde4",
+      "input_fingerprint": "31b86a7e5cb97b00d23d8ee0481e711e40f5d3d44007f88f27c46dc16e908607",
+      "object": {
+        "key": "fiscal/ingestion/132241/2022/initial/expenditure/csv-e94593f2cce5bde4.parquet",
+        "sha256": "203fd99726344d8bb43c79d2f86a182ba4a11ca684b1e68187917e3bc48f460b",
+        "bytes": 23896
+      },
+      "row_count": 1440
+    }
+  ]
+}

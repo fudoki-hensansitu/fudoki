@@ -1,0 +1,113 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132128",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0e371f35a5ebd201b14c1ca57afc126b41efc1afa75059ecad0970a2b76fda3d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の種類と額が目ごとに複数行で印字され、廃目の行には名前のない0だけが印字される。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "増減率": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "amount_brackets": true
+                },
+                "quirks": {
+                  "unit_marked": "千円"
+                }
+              }
+            }
+          },
+          "quirks": {
+            "deducted_formulas": true,
+            "unnumbered_abolished_names": true
+          },
+          "repairs": [
+            "spaced_letters"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "7a4c894472916a53756b69f1d5f74445c4b1d642136c2346127830c842c0eee7",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
+        "金額の単位は column mark 177頁 から決めた。款の和 83,775,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 2 件（充用 2）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "80512ca7e2ecf73c3b577b9a9f8815720056722e38b917c878138e7fa4b56649",
+          "bytes": 246193
+        },
+        "row_count": 7808
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132128/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "cc97e39e67c05e04b05ba2ddaaa4dcb1bb5dec3de5ffedc285ceaea3c3ecb62d",
+          "bytes": 162694
+        },
+        "row_count": 8148
+      }
+    }
+  ]
+}

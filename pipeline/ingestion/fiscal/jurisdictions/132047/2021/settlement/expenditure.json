@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132047",
+    "fiscal_year": 2021,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "csv-15fdf95a79ab65a3",
+      "converter": "fiscal/layouts/csv/convert.py",
+      "inputs": [
+        {
+          "sha256": "15fdf95a79ab65a36ae9f01d25d5bf644f4784340294d37dcc2f1c2b43121fcc"
+        }
+      ],
+      "options": {
+        "encoding": "cp932",
+        "table_id": "csv-15fdf95a79ab65a3",
+        "amount_column": "08決算額",
+        "amount_unit": "円"
+      },
+      "expected_tables": [
+        {
+          "table_id": "csv-15fdf95a79ab65a3"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "csv-15fdf95a79ab65a3",
+      "conversion_id": "csv-15fdf95a79ab65a3",
+      "input_fingerprint": "caebbe791655a7e9a9a01bf9944aede17b4c70dfdad9e4ad6ee0c76f9c34b4b8",
+      "object": {
+        "key": "fiscal/ingestion/132047/2021/settlement/expenditure/csv-15fdf95a79ab65a3.parquet",
+        "sha256": "085a488a6dc054dabb890f46b6ce4054e15e1e33d18214bf82b4680e6641c733",
+        "bytes": 97442
+      },
+      "row_count": 5139
+    }
+  ]
+}

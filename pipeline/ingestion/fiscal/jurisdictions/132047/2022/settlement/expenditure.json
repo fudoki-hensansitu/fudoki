@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132047",
+    "fiscal_year": 2022,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "csv-82318db762d08b20",
+      "converter": "fiscal/layouts/csv/convert.py",
+      "inputs": [
+        {
+          "sha256": "82318db762d08b2057fc36899fb14a9765cafe6eb2c798cd48215862c58afed1"
+        }
+      ],
+      "options": {
+        "encoding": "cp932",
+        "table_id": "csv-82318db762d08b20",
+        "amount_column": "08決算額",
+        "amount_unit": "円"
+      },
+      "expected_tables": [
+        {
+          "table_id": "csv-82318db762d08b20"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "csv-82318db762d08b20",
+      "conversion_id": "csv-82318db762d08b20",
+      "input_fingerprint": "4face31befb348974268519f754366e287adf9420fa56dd15b22a0f8dd0c707f",
+      "object": {
+        "key": "fiscal/ingestion/132047/2022/settlement/expenditure/csv-82318db762d08b20.parquet",
+        "sha256": "7f3981f04c331cb1e17ad5a5bdea2fd32bd7a1d7de004ec24921dd0db405b9ab",
+        "bytes": 98938
+      },
+      "row_count": 5236
+    }
+  ]
+}

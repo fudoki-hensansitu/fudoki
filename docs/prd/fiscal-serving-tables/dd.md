@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-11-06`
-状態: Draft（別の agent のレビューを反映済み）
+状態: Done（実装済み。表名と API は [aggregate-api](../aggregate-api/dd.md) で集約ごとに改めた）
 
 ## Summary
 

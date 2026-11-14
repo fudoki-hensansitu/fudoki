@@ -31,7 +31,7 @@ def verify_ocr(path: Path, reference: dict) -> bytes:
 
 
 def write_ocr(document: dict, item: dict, data: bytes, run: dict) -> Path:
-    """Cache a freshly acquired observation at its fixed key; save_ocr uploads it independently."""
+    """Cache a freshly acquired observation at its fixed key; `ingestion:ocr --save` uploads it."""
     path = OBJECTS / safe_relative(ocr_key(document, item['id']))
     path.parent.mkdir(parents=True, exist_ok=True)
     # mtime=0 keeps the gzip bytes stable for identical observations.
@@ -155,17 +155,23 @@ def prepare_save(document: dict, table: dict, path: Path | dict[str, Path], *,
     return prepared
 
 
-def save(document: dict, table: dict, path: Path | dict[str, Path], *, remote: bool, scope: dict | None = None) -> None:
-    if not remote:
-        raise ValueError('A saved manifest requires successful private R2 uploads')
-    prepared = prepare_save(document, table, path, scope=scope)
-    for key, file in prepared:
-        subprocess.run(['cf', 'r2', 'objects', 'put', key, '--bucket-name', BUCKET,
-                        '--file', str(file), '--quiet'], check=True, stdout=subprocess.DEVNULL)
-        cached = OBJECTS / key
+def keep(document: dict, table: dict, path: Path | dict[str, Path], *, scope: dict | None = None) -> None:
+    """Pass the save gate and place the table in the local object cache at its key. R2 is not written:
+    `ingestion:store` uploads the recorded tables after merge (ADR 0045)."""
+    for key, file in prepare_save(document, table, path, scope=scope):
+        cached = OBJECTS / safe_relative(key)
         cached.parent.mkdir(parents=True, exist_ok=True)
         if cached.resolve() != file.resolve():
             shutil.copyfile(file, cached)
+
+
+def upload(key: str, file: Path, reference: dict) -> None:
+    """Put one verified object at its fixed key. Only `ingestion:store` (CI) calls this."""
+    verify(file, reference)
+    if file.stat().st_size > 300_000_000:
+        raise ValueError('cf REST upload limit exceeded; configure a file-based S3 multipart transport')
+    subprocess.run(['cf', 'r2', 'objects', 'put', key, '--bucket-name', BUCKET,
+                    '--file', str(file), '--quiet'], check=True, stdout=subprocess.DEVNULL)
 
 
 def cleanup(document: dict) -> int:

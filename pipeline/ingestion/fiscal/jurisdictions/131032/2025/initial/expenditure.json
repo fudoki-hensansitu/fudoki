@@ -10,7 +10,7 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "9374272ca9d1f556312c35e9ac0a83dfb0286ab5df7ffb48504fcccfbfdcfdcf",
+      "input_fingerprint": "97e461de50884e177500519b266bc8c29651d395b51d2c82ac1be1d2588dde51",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
@@ -40,7 +40,7 @@
     {
       "table_id": "general-initial-2",
       "conversion_id": "general-initial-2",
-      "input_fingerprint": "c6529efece8640bf29d3815d75090c74d7e8ae025352785f728fc23102614339",
+      "input_fingerprint": "7ca3b28cce20629753b7a73704495bc23b7777af5fde669754d3eedfdeb65670",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
@@ -70,7 +70,7 @@
     {
       "table_id": "general-initial-3",
       "conversion_id": "general-initial-3",
-      "input_fingerprint": "0e15978390c67c1fe76bd2f5a26ca162eaa5cdbf16888ddc1b841ccd836c555b",
+      "input_fingerprint": "c622be1df5a1be78cc46e0623cbd4126aaa086da7a23781aceae75d9fef5540f",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
@@ -100,7 +100,7 @@
     {
       "table_id": "general-initial-4",
       "conversion_id": "general-initial-4",
-      "input_fingerprint": "8cd33698af5eb42051ba995025d65cbbbca829910aff80e4b1698ccc4531b034",
+      "input_fingerprint": "f76914536b115834b7e92d856f9b2925dafe222f4a72ad7a4feb4f71acc0d4c1",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
@@ -130,12 +130,13 @@
     {
       "table_id": "general-initial-5",
       "conversion_id": "general-initial-5",
-      "input_fingerprint": "948d11d938a8809dca41ddfdacefa647321b733766175a5ef552519628c75f0c",
+      "input_fingerprint": "e449c7bb826a0133294ca1d7a5653180c0e9b41fbcb675d5893454835995dd52",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
         "金額の単位は printed 2頁・carried 1頁・default 1頁 から決めた。分冊のため款の和 9,276,721 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 5公費害病補償→5公害病補償費。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 182 件（p2:full-page:a0:result0:r28・p2:full-page:a0:result0:r28:w0・p2:full-page:a0:result0:r32・p2:full-page:a0:result0:r32:w0・p2:full-page:a0:result0:r34・p2:full-page:a0:result0:r34:w0・p2:full-page:a0:result0:r39・p2:full-page:a0:result0:r39:w0・p2:full-page:a0:result0:r41・p2:full-page:a0:result0:r41:w0・p2:full-page:a0:result0:r45・p2:full-page:a0:result0:r45・p2:full-page:a0:result0:r45:w0・p2:full-page:a0:result0:r45:w6・p2:full-page:a0:result0:r47・p2:full-page:a0:result0:r47:w0・p2:full-page:a0:result0:r51・p2:full-page:a0:result0:r51:w0・p2:full-page:a0:result0:r53・p2:full-page:a0:result0:r53:w0・p2:full-page:a0:result0:r57・p2:full-page:a0:result0:r57・p2:full-page:a0:result0:r57:w0・p2:full-page:a0:result0:r57:w7・p2:full-page:a0:result0:r63・p2:full-page:a0:result0:r63:w0・p2:full-page:a0:result0:r66・p2:full-page:a0:result0:r66:w0・p2:full-page:a0:result0:r73・p2:full-page:a0:result0:r73・p2:full-page:a0:result0:r73:w0・p2:full-page:a0:result0:r73:w4・p2:full-page:a0:result0:r80・p2:full-page:a0:result0:r80:w0・p2:full-page:a0:result0:r85・p2:full-page:a0:result0:r85:w0・p2:full-page:a0:result0:r87・p2:full-page:a0:result0:r87:w0・p2:full-page:a0:result0:r90・p2:full-page:a0:result0:r90:w0・p2:full-page:a0:result0:r92・p2:full-page:a0:result0:r92:w0・p2:full-page:a0:result0:r94・p2:full-page:a0:result0:r94:w0・p2:full-page:a0:result0:r96・p2:full-page:a0:result0:r96:w0・p2:full-page:a0:result0:r98・p2:full-page:a0:result0:r98:w0・p2:full-page:a0:result0:r100・p2:full-page:a0:result0:r100・p2:full-page:a0:result0:r100:w0・p2:full-page:a0:result0:r100:w3・p2:full-page:a0:result0:r112・p2:full-page:a0:result0:r112:w0・p2:full-page:a0:result0:r114・p2:full-page:a0:result0:r114:w0・p2:full-page:a0:result0:r116・p2:full-page:a0:result0:r116:w0・p2:full-page:a0:result0:r118・p2:full-page:a0:result0:r118:w0・p2:full-page:a0:result0:r122・p2:full-page:a0:result0:r122・p2:full-page:a0:result0:r122:w0・p2:full-page:a0:result0:r122:w5・p2:full-page:a0:result0:r124・p2:full-page:a0:result0:r124:w0・p2:full-page:a0:result0:r126・p2:full-page:a0:result0:r126:w0・p2:full-page:a0:result0:r130・p2:full-page:a0:result0:r130:w0・p2:full-page:a0:result0:r136・p2:full-page:a0:result0:r136:w0・p4:full-page:a0:result0:r8・p4:full-page:a0:result0:r8:w0・p4:full-page:a0:result0:r10・p4:full-page:a0:result0:r10:w0・p4:full-page:a0:result0:r12・p4:full-page:a0:result0:r12:w0・p4:full-page:a0:result0:r14・p4:full-page:a0:result0:r14:w0・p4:full-page:a0:result0:r16・p4:full-page:a0:result0:r16:w0・p4:full-page:a0:result0:r20・p4:full-page:a0:result0:r20:w0・p4:full-page:a0:result0:r32・p4:full-page:a0:result0:r32:w0・p4:full-page:a0:result0:r41・p4:full-page:a0:result0:r41:w0・p4:full-page:a0:result0:r47・p4:full-page:a0:result0:r47:w0・p4:full-page:a0:result0:r53・p4:full-page:a0:result0:r53:w0・p4:full-page:a0:result0:r57・p4:full-page:a0:result0:r57:w0・p4:full-page:a0:result0:r90・p4:full-page:a0:result0:r90:w0・p4:full-page:a0:result0:r92・p4:full-page:a0:result0:r92・p4:full-page:a0:result0:r92:w0・p4:full-page:a0:result0:r92:w2・p4:full-page:a0:result0:r97・p4:full-page:a0:result0:r97:w0・p4:full-page:a0:result0:r99・p4:full-page:a0:result0:r99:w0・p4:full-page:a0:result0:r103・p4:full-page:a0:result0:r103:w0・p4:full-page:a0:result0:r105・p4:full-page:a0:result0:r105:w0・p4:full-page:a0:result0:r121・p4:full-page:a0:result0:r121:w0・p4:full-page:a0:result0:r132・p4:full-page:a0:result0:r132:w0・p6:full-page:a0:result0:r11・p6:full-page:a0:result0:r11:w0・p6:full-page:a0:result0:r14・p6:full-page:a0:result0:r14:w0・p6:full-page:a0:result0:r20・p6:full-page:a0:result0:r20:w0・p6:full-page:a0:result0:r22・p6:full-page:a0:result0:r22:w0・p6:full-page:a0:result0:r28・p6:full-page:a0:result0:r28:w0・p6:full-page:a0:result0:r30・p6:full-page:a0:result0:r30:w0・p6:full-page:a0:result0:r32・p6:full-page:a0:result0:r32:w0・p6:full-page:a0:result0:r67・p6:full-page:a0:result0:r67:w0・p6:full-page:a0:result0:r71・p6:full-page:a0:result0:r71:w0・p6:full-page:a0:result0:r73・p6:full-page:a0:result0:r73:w0・p6:full-page:a0:result0:r77・p6:full-page:a0:result0:r77:w0・p6:full-page:a0:result0:r79・p6:full-page:a0:result0:r79:w0・p6:full-page:a0:result0:r83・p6:full-page:a0:result0:r83:w0・p6:full-page:a0:result0:r85・p6:full-page:a0:result0:r85:w0・p6:full-page:a0:result0:r89・p6:full-page:a0:result0:r89・p6:full-page:a0:result0:r89:w0・p6:full-page:a0:result0:r89:w5・p6:full-page:a0:result0:r92・p6:full-page:a0:result0:r92・p6:full-page:a0:result0:r92:w0・p6:full-page:a0:result0:r92:w8・p6:full-page:a0:result0:r94・p6:full-page:a0:result0:r94・p6:full-page:a0:result0:r94:w0・p6:full-page:a0:result0:r94:w9・p6:full-page:a0:result0:r98・p6:full-page:a0:result0:r98・p6:full-page:a0:result0:r98:w0・p6:full-page:a0:result0:r98:w9・p6:full-page:a0:result0:r101・p6:full-page:a0:result0:r101・p6:full-page:a0:result0:r101:w0・p6:full-page:a0:result0:r101:w9・p6:full-page:a0:result0:r104・p6:full-page:a0:result0:r104:w0・p6:full-page:a0:result0:r106・p6:full-page:a0:result0:r106:w0・p6:full-page:a0:result0:r108・p6:full-page:a0:result0:r108:w0・p6:full-page:a0:result0:r110・p6:full-page:a0:result0:r110:w0・p6:full-page:a0:result0:r112・p6:full-page:a0:result0:r112・p6:full-page:a0:result0:r112:w0・p6:full-page:a0:result0:r112:w4・p6:full-page:a0:result0:r114・p6:full-page:a0:result0:r114:w0・p6:full-page:a0:result0:r116・p6:full-page:a0:result0:r116:w0・p6:full-page:a0:result0:r118・p6:full-page:a0:result0:r118:w0・p6:full-page:a0:result0:r130・p6:full-page:a0:result0:r130:w0・p6:full-page:a0:result0:r132・p6:full-page:a0:result0:r132:w0）・查→査 22 件（p2:full-page:a0:result0:r80・p2:full-page:a0:result0:r80:w7・p2:full-page:a0:result0:r85・p2:full-page:a0:result0:r85:w9・p2:full-page:a0:result0:r90・p2:full-page:a0:result0:r90:w6・p2:full-page:a0:result0:r94・p2:full-page:a0:result0:r94:w7・p2:full-page:a0:result0:r122・p2:full-page:a0:result0:r122:w9・p4:full-page:a0:result0:r14・p4:full-page:a0:result0:r14:w6・p4:full-page:a0:result0:r32・p4:full-page:a0:result0:r32:w4・p6:full-page:a0:result0:r20・p6:full-page:a0:result0:r20:w6・p6:full-page:a0:result0:r22・p6:full-page:a0:result0:r22:w6・p6:full-page:a0:result0:r28・p6:full-page:a0:result0:r28:w7・p6:full-page:a0:result0:r118・p6:full-page:a0:result0:r118:w11）・產→産 2 件（p2:full-page:a0:result0:r100・p2:full-page:a0:result0:r100:w2）・說→説 2 件（p2:full-page:a0:result0:r2・p2:full-page:a0:result0:r2:w0）。"
       ],
       "unread_amount_count": 0,
@@ -143,7 +144,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131032/2025/initial/expenditure/general-initial-5-nodes.parquet",
-          "sha256": "7b4e2c61ba0abdc36642c54f5bcae8d312baa4e0fc01fed984928f8d8c5b4baa",
+          "sha256": "9ac5dc464c544eba52219f4db730098bd1c5a96f0ea5cd146bb8ca6a65e0f8af",
           "bytes": 5446
         },
         "row_count": 59
@@ -160,7 +161,7 @@
     {
       "table_id": "general-initial-6",
       "conversion_id": "general-initial-6",
-      "input_fingerprint": "62dee44d4df78d22ecd47bce6868c7e894e4c489e655cdf127f8f6b7102feefc",
+      "input_fingerprint": "689175aa979903aca4bf082e1644754448a4c5c3e80c36d080755b71ec78e01b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
@@ -190,7 +191,7 @@
     {
       "table_id": "general-initial-7",
       "conversion_id": "general-initial-7",
-      "input_fingerprint": "04f04694d638f23731167a48408bdca1ccf25a35007a58614301941d4b6e93e4",
+      "input_fingerprint": "16aa2468ba430203d6a64b48fff802cab737fc6f7fce23e0ae13bbdcbaed292e",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
@@ -220,7 +221,7 @@
     {
       "table_id": "general-initial-8",
       "conversion_id": "general-initial-8",
-      "input_fingerprint": "a67353d5b334c6f987ff8f6aa4e384ba0ac94e7528a0297647626d01b4de8322",
+      "input_fingerprint": "2049bba3bd517635eec33196ee6f31544b955b1497c60e35db82229dc7188f61",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
@@ -250,7 +251,7 @@
     {
       "table_id": "general-initial-9",
       "conversion_id": "general-initial-9",
-      "input_fingerprint": "034b1057a1014288085e2fe5ae62c003139ba4d12fd957626839213e8a8e8808",
+      "input_fingerprint": "81ad9db1d728cb8b051879095da81cf51f4904a3d5a5c83d7f5ac04c280ec5d6",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
@@ -280,7 +281,7 @@
     {
       "table_id": "nhi-initial",
       "conversion_id": "nhi-initial",
-      "input_fingerprint": "1b2e3482c0073060827bda857422645bc459188ee317c7245a76c05d59129dc2",
+      "input_fingerprint": "c9143e4b0c2157a3a850c9604ebae3459bd651167941c2ce34e6c64549a50106",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
@@ -310,7 +311,7 @@
     {
       "table_id": "kouki-initial",
       "conversion_id": "kouki-initial",
-      "input_fingerprint": "43ab7f8b3540c8a2857454d34f80ac41cb222b7c0aa5acd49bd8164d48d4388e",
+      "input_fingerprint": "77d3cdffc16023c9625d2b64315999c97119018f9a1e489cd9481652c6232616",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
@@ -340,7 +341,7 @@
     {
       "table_id": "kaigo-initial",
       "conversion_id": "kaigo-initial",
-      "input_fingerprint": "d8f8e3a8e41eff8268686e9bd979a9f537ae136fd00530b2c6b10e4213f20649",
+      "input_fingerprint": "0c8f3726e05fe407a0efb3de182de2d304e448ed985259076fd40b584bf2143f",
       "account": "介護保険会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
@@ -1007,7 +1008,17 @@
             "rule_ink": true
           }
         },
-        "partial": true
+        "partial": true,
+        "name_corrections": [
+          {
+            "id": "p5-wrapped-name",
+            "page": 5,
+            "code": "5",
+            "observed_name": "公費害病補償",
+            "corrected_name": "公害病補償費",
+            "reason": "原典の画像では「公害病補償」と次の行の「費」の2行に折り返して印字されている。OCR が1行目の「公」と2行目の「費」を1語に読み、名前が「公費害病補償」になった。"
+          }
+        ]
       },
       "ocr_inputs": [
         {
