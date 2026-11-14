@@ -1,0 +1,606 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131024",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8b84a1d3abfd3ed1b8a16d8e1c5c9b03fb78805af2c1a9faea110fea5716dc02"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-1",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {}
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "支給額": "積算",
+                    "支給件数": "積算",
+                    "1路線": "積算",
+                    "2路線": "積算",
+                    "その他1路線": "積算",
+                    "その他2路線": "積算",
+                    "その他3路線": "積算",
+                    "その他4路線": "積算",
+                    "その他5路線": "積算",
+                    "その他6路線": "積算",
+                    "その他7路線": "積算",
+                    "その他8路線": "積算",
+                    "その他9路線": "積算",
+                    "3路線": "積算",
+                    "4路線": "積算",
+                    "5路線": "積算",
+                    "6路線": "積算",
+                    "7路線": "積算",
+                    "8路線": "積算",
+                    "9路線": "積算",
+                    "中央区先": "積算",
+                    "中央区明明石石町町19番番先": "積算"
+                  }
+                },
+                "quirks": {
+                  "office_departments": true,
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        },
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-2",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "176ec188dd8535b68da8d2b48bbafd7c4f6ed9fa3d7eed4c5024d3d959e491d2"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-2",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {}
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "支給額": "積算",
+                    "支給件数": "積算",
+                    "1路線": "積算",
+                    "2路線": "積算",
+                    "その他1路線": "積算",
+                    "その他2路線": "積算",
+                    "その他3路線": "積算",
+                    "その他4路線": "積算",
+                    "その他5路線": "積算",
+                    "その他6路線": "積算",
+                    "その他7路線": "積算",
+                    "その他8路線": "積算",
+                    "その他9路線": "積算",
+                    "3路線": "積算",
+                    "4路線": "積算",
+                    "5路線": "積算",
+                    "6路線": "積算",
+                    "7路線": "積算",
+                    "8路線": "積算",
+                    "9路線": "積算",
+                    "中央区先": "積算"
+                  }
+                },
+                "quirks": {
+                  "office_departments": true,
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        },
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-2"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "80adab60cf07b7838d0d1a7e5778b50dfe004862fefea06e4e832e293e6575e1"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {}
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "支給額": "積算",
+                    "支給件数": "積算",
+                    "1路線": "積算",
+                    "2路線": "積算",
+                    "その他1路線": "積算",
+                    "その他2路線": "積算",
+                    "その他3路線": "積算",
+                    "その他4路線": "積算",
+                    "その他5路線": "積算",
+                    "その他6路線": "積算",
+                    "その他7路線": "積算",
+                    "その他8路線": "積算",
+                    "その他9路線": "積算",
+                    "3路線": "積算",
+                    "4路線": "積算",
+                    "5路線": "積算",
+                    "6路線": "積算",
+                    "7路線": "積算",
+                    "8路線": "積算",
+                    "9路線": "積算",
+                    "中央区先": "積算"
+                  }
+                },
+                "quirks": {
+                  "office_departments": true,
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a8d32b2424086a04b3303f49b0b221461864f3f94ec5e22bc03d67a2bdb42325"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {}
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "支給額": "積算",
+                    "支給件数": "積算",
+                    "1路線": "積算",
+                    "2路線": "積算",
+                    "その他1路線": "積算",
+                    "その他2路線": "積算",
+                    "その他3路線": "積算",
+                    "その他4路線": "積算",
+                    "その他5路線": "積算",
+                    "その他6路線": "積算",
+                    "その他7路線": "積算",
+                    "その他8路線": "積算",
+                    "その他9路線": "積算",
+                    "3路線": "積算",
+                    "4路線": "積算",
+                    "5路線": "積算",
+                    "6路線": "積算",
+                    "7路線": "積算",
+                    "8路線": "積算",
+                    "9路線": "積算",
+                    "中央区先": "積算"
+                  }
+                },
+                "quirks": {
+                  "office_departments": true,
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "488a2ee959da85678d208c65148e179433c5acc7bc8ebda672cccdda2add185b"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "subject_cards",
+            "options": {}
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  },
+                  "note_kinds": {
+                    "支給額": "積算",
+                    "支給件数": "積算",
+                    "1路線": "積算",
+                    "2路線": "積算",
+                    "その他1路線": "積算",
+                    "その他2路線": "積算",
+                    "その他3路線": "積算",
+                    "その他4路線": "積算",
+                    "その他5路線": "積算",
+                    "その他6路線": "積算",
+                    "その他7路線": "積算",
+                    "その他8路線": "積算",
+                    "その他9路線": "積算",
+                    "3路線": "積算",
+                    "4路線": "積算",
+                    "5路線": "積算",
+                    "6路線": "積算",
+                    "7路線": "積算",
+                    "8路線": "積算",
+                    "9路線": "積算",
+                    "中央区先": "積算"
+                  }
+                },
+                "quirks": {
+                  "office_departments": true,
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial-1",
+      "conversion_id": "general-initial-1",
+      "input_fingerprint": "791cb4bc26feae844144c77a7de079581be4a8780dc608c65382fc6156080ca5",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 39頁・carried 156頁 から決めた。分冊のため款の和 77,179,052 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 3 件（積算 3）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（62 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2023/initial/expenditure/general-initial-1-nodes.parquet",
+          "sha256": "9117c67f4b286c733dda0d97c5c3c0f269a73a52161f1dfddf2470de51edb441",
+          "bytes": 48803
+        },
+        "row_count": 1258
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2023/initial/expenditure/general-initial-1-amounts.parquet",
+          "sha256": "51844b16f8fec68f7fb55a45506137120fe50b2e13ff32ff0cc9b290029a3a2a",
+          "bytes": 37127
+        },
+        "row_count": 1382
+      }
+    },
+    {
+      "table_id": "general-initial-2",
+      "conversion_id": "general-initial-2",
+      "input_fingerprint": "fc434c58ff586da889d24a8ae52e2c4c2d37824b8bac3117a32c86e77a638106",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 15頁・carried 46頁 から決めた。分冊のため款の和 71,214,712 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（29 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2023/initial/expenditure/general-initial-2-nodes.parquet",
+          "sha256": "bdf2079b7ce2f7aa7a78ac6e04285353d47ecb774bfd04373c48268088a5f44b",
+          "bytes": 17311
+        },
+        "row_count": 335
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2023/initial/expenditure/general-initial-2-amounts.parquet",
+          "sha256": "cb8e2bd139f6b974fb14a6bd41be436bbfa4dfd9be28445063c8be7bd204f41f",
+          "bytes": 13257
+        },
+        "row_count": 393
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "05ec952b66efd00c68e9aa66d6da8a3508d7b45568e89a941aafdfaea2aebb4a",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 24頁・carried 62頁 から決めた。款の和 14,044,404（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 1 件（積算 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（61 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2023/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "1457af5697132550da278939ca1114942c798812f5acdac10961d0283f340c0b",
+          "bytes": 9586
+        },
+        "row_count": 156
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2023/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "59314edcc162815486703c38f7bef04a15bd9b5d205747d10b97d72f5fc779ca",
+          "bytes": 7692
+        },
+        "row_count": 278
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "72b2e8bbcfadf676362bdd4da8f011787d700aa0a0c2c7843cd1e60de847bd80",
+      "account": "介護保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 24頁・carried 59頁 から決めた。款の和 9,260,607（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（48 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2023/initial/expenditure/care-initial-nodes.parquet",
+          "sha256": "b9b20ec18ed29d3f154ee422447eb009751ca942361472d96f0e03b72a74ea17",
+          "bytes": 10596
+        },
+        "row_count": 180
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2023/initial/expenditure/care-initial-amounts.parquet",
+          "sha256": "66317ad9cd073054136615c73383232896999b810140a77284b467a0eeaa06be",
+          "bytes": 8475
+        },
+        "row_count": 276
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "bc6702102e76fb8ad3d9ad14809f55f1330c5841f45164f1b6e247ad5890ccf7",
+      "account": "後期高齢者医療会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 8頁・carried 19頁 から決めた。款の和 3,502,836（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 1 件（積算 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（24 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2023/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "6c8935a05264d8015394f67205e3474ac1c79fcb33cc33d942b94423f5ca2ee1",
+          "bytes": 5517
+        },
+        "row_count": 58
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131024/2023/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "e0617ffaae63e47891db444143bcaeb6ae9640ee2c4a89ad30f1106d60df0a00",
+          "bytes": 4495
+        },
+        "row_count": 106
+      }
+    }
+  ]
+}
