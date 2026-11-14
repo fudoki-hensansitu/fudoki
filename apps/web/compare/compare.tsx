@@ -257,7 +257,7 @@ export function Compare(props: Props) {
             <section className="mt-12">
               <h2 className="mb-3 text-[17px] font-semibold">{a.name}に似たまち</h2>
               <div className="flex flex-col gap-6 sm:flex-row">
-                {byUse.length ? <SimilarList title="金額が近い" note="1人あたりの一般会計を、分野ごとに比べて近いまち" items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
+                {byUse.length ? <SimilarList title="使い方が近い" note="一般会計を分野ごとの割合で比べて近いまち" items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
                 {byPopulation.length ? <SimilarList title="人口が近い" note="住民基本台帳の人口が近いまち" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
               </div>
             </section>
@@ -269,7 +269,7 @@ export function Compare(props: Props) {
     <main className="mx-auto w-full max-w-4xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
       <header className="mb-5">
         <h1 className="text-[26px] leading-[1.35] font-semibold tracking-[0.02em]">まち比べ</h1>
-        <p className="mt-1 text-[15px] text-muted-foreground">2つのまちのお金の使い方を、分野ごとに並べます。</p>
+        <p className="mt-1 text-[15px] text-muted-foreground">2つのまちのお金の使い方を、分野ごとに並べます</p>
       </header>
       {failed || !a ? <p className="text-sm text-muted-foreground">今は読み込めません。少し時間をおいてやり直してください。</p> : sample ? <Sample body={body(a)} /> : body(a)}
     </main>
