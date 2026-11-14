@@ -56,7 +56,7 @@ export default defineConfig({
       '/compare': ['a', 'ay', 'ak', 'b', 'by', 'bk'],
     },
   },
-  // 全頁の head の既定。頁ごとの title・説明・canonical は各頁の .server.ts の head。theme-color と View Transition の opt-in は middleware/01.site.ts
+  // 全頁の head の既定。頁ごとの title・説明・canonical は各頁の .server.ts の head。theme-color は middleware/01.site.ts
   head: {
     htmlAttrs: { lang: 'ja' },
     meta: [
