@@ -46,7 +46,7 @@ function Num({ n, m, className }: { n: number; m: Measure | 'yen'; className?: s
   return (
     <span className={cn('whitespace-nowrap tabular-nums', className)}>
       {v}
-      <small className="ml-px text-[0.6em]">{u}</small>
+      <small className="ml-px text-[max(0.6em,11px)]">{u}</small>
     </span>
   )
 }
@@ -95,7 +95,7 @@ function TownPicker({ current, onPick, children }: { current: string; onPick: (c
 function TownCard({ t, mark, onPick, onVersion }: { t: CompareTown; mark: React.ReactNode; onPick: (code: string) => void; onVersion: (v: Version) => void }) {
   const items = t.versions.map((v) => ({ value: versionKey(v), label: versionLabel(v) }))
   return (
-    <section className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border bg-background p-4">
+    <section className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border bg-background p-3 sm:p-4">
       <div className="flex items-center gap-3">
         <Emblem code={t.code} name={t.name} className="hidden size-10 sm:grid" />
         <div className="min-w-0 flex-1">
@@ -107,7 +107,7 @@ function TownCard({ t, mark, onPick, onVersion }: { t: CompareTown; mark: React.
         </div>
       </div>
       <Select items={items} value={versionKey(t.version)} onValueChange={(k) => { const v = t.versions.find((x) => versionKey(x) === k); if (v) onVersion(v) }}>
-        <SelectTrigger size="sm" aria-label={`${t.name}の年度と資料`} className="w-full rounded-full sm:w-auto sm:self-start"><SelectValue /></SelectTrigger>
+        <SelectTrigger size="sm" aria-label={`${t.name}の年度と資料`} className="w-full rounded-full px-2.5 sm:w-auto sm:self-start sm:px-3"><SelectValue /></SelectTrigger>
         <SelectContent>{items.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
       </Select>
       {!t.total ? (
@@ -132,6 +132,16 @@ function TownCard({ t, mark, onPick, onVersion }: { t: CompareTown; mark: React.
 const MarkA = () => <span aria-hidden className="inline-block size-2.5 shrink-0 rounded-full bg-primary" />
 const MarkB = () => <span aria-hidden className="inline-block size-2.5 shrink-0 rounded-full border-2 border-muted-foreground bg-background" />
 
+/** 棒の列の見出し。狭い幅では1行に収まるよう、まちの名前だけ（同じまちどうしなら資料だけ）にする */
+function ColumnLabel({ t, sameTown }: { t: CompareTown; sameTown: boolean }) {
+  return (
+    <span className="truncate">
+      <span className={cn(sameTown && 'hidden sm:inline')}>{t.name}</span>
+      <span className={cn(!sameTown && 'hidden sm:inline')}> {versionLabel(t.version)}</span>
+    </span>
+  )
+}
+
 /** 真ん中に分野、左に a・右に b の棒。棒の長さは全部の分野で同じ物差し */
 function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) {
   const max = Math.max(...FIELDS.flatMap((f) => [value(a, f.id, m), value(b, f.id, m)]))
@@ -139,9 +149,9 @@ function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) 
   return (
     <div className="flex flex-col gap-1">
       <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3 pb-2 text-sm font-medium">
-        <Link href={docHref(a)} className="flex items-center justify-end gap-1.5 text-foreground underline-offset-2 hover:underline"><MarkA />{a.name} {versionLabel(a.version)}</Link>
+        <Link href={docHref(a)} className="flex min-w-0 items-center justify-end gap-1.5 text-foreground underline-offset-2 hover:underline"><MarkA /><ColumnLabel t={a} sameTown={a.code === b.code} /></Link>
         <span className="w-24 sm:w-36" />
-        <Link href={docHref(b)} className="flex items-center gap-1.5 text-foreground underline-offset-2 hover:underline"><MarkB />{b.name} {versionLabel(b.version)}</Link>
+        <Link href={docHref(b)} className="flex min-w-0 items-center gap-1.5 text-foreground underline-offset-2 hover:underline"><MarkB /><ColumnLabel t={b} sameTown={a.code === b.code} /></Link>
       </div>
       {FIELDS.map((f) => {
         const va = value(a, f.id, m)
@@ -171,9 +181,9 @@ function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) 
 function SimilarList({ title, note, items, onPick }: { title: string; note: string; items: TownRef[]; onPick: (code: string) => void }) {
   return (
     <div className="min-w-0 flex-1">
-      <h3 className="px-2.5 text-[15px] font-medium">{title}</h3>
-      <p className="mb-1 px-2.5 text-xs text-muted-foreground">{note}</p>
-      <div className="flex flex-col">
+      <h3 className="text-[15px] font-medium">{title}</h3>
+      <p className="mb-2 text-xs text-muted-foreground">{note}</p>
+      <div className="-mx-2.5 flex flex-col">
         {items.map((s) => (
           <button key={s.code} type="button" onClick={() => onPick(s.code)} className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-card">
             <Emblem code={s.code} name={s.name} className="size-[30px] rounded-[9px] p-1" />
@@ -210,11 +220,11 @@ export function Compare(props: Props) {
   const go = (na: string, av: Version | null, nb: string | null, bv: Version | null) => void visit(compareHref(na, nb, av, bv))
   const body = (a: CompareTown) => (
         <>
-          <div className="flex items-stretch gap-2 sm:gap-4">
+          <div className="flex flex-col items-stretch gap-2 min-[360px]:flex-row sm:gap-4">
             <TownCard t={a} mark={<MarkA />} onPick={(c) => go(c, null, b?.code ?? null, b?.version ?? null)} onVersion={(v) => go(a.code, v, b?.code ?? null, b?.version ?? null)} />
             {b ? (
               <>
-                <button type="button" aria-label="左右を入れ替える" onClick={() => go(b.code, b.version, a.code, a.version)} className="grid size-9 shrink-0 place-items-center self-center rounded-full border bg-background text-muted-foreground hover:bg-card">
+                <button type="button" aria-label="左右を入れ替える" onClick={() => go(b.code, b.version, a.code, a.version)} className="grid size-9 shrink-0 rotate-90 place-items-center self-center rounded-full border bg-background text-muted-foreground transition-colors hover:bg-card min-[360px]:rotate-0">
                   <ArrowsLeftRightIcon className="size-4" />
                 </button>
                 <TownCard t={b} mark={<MarkB />} onPick={(c) => go(a.code, a.version, c, null)} onVersion={(v) => go(a.code, a.version, b.code, v)} />
