@@ -67,6 +67,38 @@ export function appYears(entry: Pick<CatalogEntry, 'initialYears' | 'settlementY
   return years.map((year) => ({ year, kind: year > last ? 'initial' : 'settlement' }))
 }
 
+type TreeSubject = CodedSubject & { subject_id: string; parent_subject_id: string | null; level: string; name: string; amount_yen: number | null; is_leaf: boolean; cofog_code?: string | null }
+/** 1年度の款・項・目の木と、分野ごとの合計・末端の科目。親の項の行が無い目は looseMoku */
+export function subjectTree(subjects: readonly TreeSubject[]) {
+  const rows = [...subjects].sort(bySubjectCode)
+  const kan: Kan[] = []
+  const fields: Record<string, number> = {}
+  const fieldSubjects: Record<string, string[]> = {}
+  const looseMoku: YearData['looseMoku'] = []
+  // 親は parent_subject_id で引く（並びの前後に頼らない）。款・項・目の順に段ごとに読むので、親は子より先に入る
+  const kanById = new Map<string, Kan>()
+  const kouById = new Map<string, Kan['kou'][number]>()
+  for (const r of (['款', '項', '目'] as const).flatMap((level) => rows.filter((x) => x.level === level))) {
+    const yen = r.amount_yen ?? 0
+    if (r.is_leaf) (fieldSubjects[fieldOf(r.cofog_code)] ??= []).push(r.subject_id)
+    if (r.level === '款') {
+      const k: Kan = { name: r.name, yen, kou: [] }
+      kan.push(k)
+      kanById.set(r.subject_id, k)
+    } else if (r.level === '項') {
+      const o = { name: r.name, yen, moku: [] }
+      kanById.get(r.parent_subject_id ?? '')?.kou.push(o)
+      kouById.set(r.subject_id, o)
+    } else if (r.level === '目') {
+      const field = fieldOf(r.cofog_code)
+      const kou = kouById.get(r.parent_subject_id ?? '')
+      ;(kou?.moku ?? looseMoku).push({ id: r.subject_id, name: r.name, yen, field, cofog: r.cofog_code ?? null })
+      fields[field] = (fields[field] ?? 0) + yen
+    }
+  }
+  return { kan, fields, fieldSubjects, looseMoku }
+}
+
 /** 施策の内訳が載る科目。内訳を ID で引く（D1 の bind の上限に合わせて区切る）。自治体でも絞らないと、D1 が年度の索引でその年度の内訳を全部読む */
 async function subjectOfDetails(env: Env, code: string, year: number, ids: string[]): Promise<Map<string, string>> {
   const chunks = Array.from({ length: Math.ceil(ids.length / ID_CHUNK) }, (_, i) => ids.slice(i * ID_CHUNK, (i + 1) * ID_CHUNK))
@@ -117,32 +149,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const yearsOut: Snapshot['years'] = {}
   let prevOut: Snapshot['prev']
   for (const y of subjects) {
-    const rows = [...y.rows].sort(bySubjectCode)
-    const kan: Kan[] = []
-    const fields: Record<string, number> = {}
-    const fieldSubjects: Record<string, string[]> = {}
-    const looseMoku: YearData['looseMoku'] = []
-    // 親は parent_subject_id で引く（並びの前後に頼らない）。款・項・目の順に段ごとに読むので、親は子より先に入る
-    const kanById = new Map<string, Kan>()
-    const kouById = new Map<string, Kan['kou'][number]>()
-    for (const r of (['款', '項', '目'] as const).flatMap((level) => rows.filter((x) => x.level === level))) {
-      const yen = r.amount_yen ?? 0
-      if (r.is_leaf) (fieldSubjects[fieldOf(r.cofog_code)] ??= []).push(r.subject_id)
-      if (r.level === '款') {
-        const k: Kan = { name: r.name, yen, kou: [] }
-        kan.push(k)
-        kanById.set(r.subject_id, k)
-      } else if (r.level === '項') {
-        const o = { name: r.name, yen, moku: [] }
-        kanById.get(r.parent_subject_id ?? '')?.kou.push(o)
-        kouById.set(r.subject_id, o)
-      } else if (r.level === '目') {
-        const field = fieldOf(r.cofog_code)
-        const kou = kouById.get(r.parent_subject_id ?? '')
-        ;(kou?.moku ?? looseMoku).push({ id: r.subject_id, name: r.name, yen, field, cofog: r.cofog_code ?? null })
-        fields[field] = (fields[field] ?? 0) + yen
-      }
-    }
+    const { kan, fields, fieldSubjects, looseMoku } = subjectTree(y.rows)
     if (y.year === year) yearsOut[y.year] = { kind: y.kind, kan, total: kan.reduce((s, k) => s + k.yen, 0), fields, fieldSubjects, looseMoku, origin: y.origin, originTitle: y.originTitle }
     else prevOut = { year: y.year, kind: y.kind, fieldSubjects }
   }
