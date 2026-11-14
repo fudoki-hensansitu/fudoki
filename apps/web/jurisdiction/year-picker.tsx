@@ -19,7 +19,7 @@ export function YearPicker({ years, current, onChange, hrefOf }: { years: number
   const recent = years.slice(0, RECENT_YEARS)
   const older = years.slice(RECENT_YEARS)
   const olderPicked = older.includes(current)
-  const pill = (on: boolean) => `rounded-full px-2.5 py-1.5 text-[13px] ${on ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
+  const pill = (on: boolean) => `inline-flex h-8 items-center rounded-full px-2.5 text-[13px] ${on ? 'bg-primary text-primary-foreground' : 'text-muted-foreground hover:text-foreground'}`
   const label = (y: number) => (
     <>
       {yearName(y)}

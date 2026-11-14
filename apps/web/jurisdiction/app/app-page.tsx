@@ -987,7 +987,8 @@ function useMedia(query: string) {
 function YearMenu({ years, current, onChange }: { years: number[]; current: number; onChange: (y: number) => void }) {
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger className="inline-flex items-center gap-1 rounded-full bg-secondary px-3 py-1.5 text-[15px] text-foreground">
+      {/* 高さは自治体名の行（h1 の leading-7・sm:leading-8）に揃える */}
+      <DropdownMenuTrigger render={<Button variant="secondary" size="sm" className="rounded-full px-3 text-[15px] font-normal text-foreground sm:h-8" />}>
         {yearName(current)}
         <CaretDownIcon className="size-3.5" aria-hidden="true" />
       </DropdownMenuTrigger>
@@ -1173,10 +1174,10 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
         {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
       </div>
       <div className="flex min-w-0 flex-col gap-1.5">
-        {/* 自治体名の行の右に年度の切り替えを置く。切り替えのボタンで行が高くならないよう上下を詰める */}
+        {/* 自治体名の行の右に年度の切り替えを置く。自治体名の行の高さ（スマホ 28px・広い画面 32px）と切り替えの高さを揃える */}
         <div className="flex items-center justify-between gap-3">
-          <h1 className="min-w-0 text-[22px] font-normal leading-tight sm:text-[26px]">{data.name}</h1>
-          <div className="-my-2 shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} hrefOf={yearHref} />}</div>
+          <h1 className="min-w-0 text-[22px] font-normal leading-7 sm:text-[26px] sm:leading-8">{data.name}</h1>
+          <div className="shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} hrefOf={yearHref} />}</div>
         </div>
         {vision ? <p className="mt-2 text-base leading-snug sm:mt-0 sm:text-[17px]">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
