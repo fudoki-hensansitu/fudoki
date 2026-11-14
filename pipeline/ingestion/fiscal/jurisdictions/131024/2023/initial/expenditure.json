@@ -74,7 +74,8 @@
                     "7路線": "積算",
                     "8路線": "積算",
                     "9路線": "積算",
-                    "中央区先": "積算"
+                    "中央区先": "積算",
+                    "中央区明明石石町町19番番先": "積算"
                   }
                 },
                 "quirks": {
@@ -454,12 +455,12 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "cdfc15dcdc1edd29d197e28687d24fa3ef353d8fc98f16c0988dd7203ed0908b",
+      "input_fingerprint": "791cb4bc26feae844144c77a7de079581be4a8780dc608c65382fc6156080ca5",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 39頁・carried 156頁 から決めた。分冊のため款の和 77,179,052 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
-        "金額の注記 2 件（積算 2）を注記軸に置いた。",
+        "金額の注記 3 件（積算 3）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（62 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
       ],
       "unread_amount_count": 0,
@@ -467,16 +468,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2023/initial/expenditure/general-initial-1-nodes.parquet",
-          "sha256": "eb4b628931a36062468095b65d63300af9fca624731f204a4ac4ea937455aa99",
-          "bytes": 48815
+          "sha256": "9117c67f4b286c733dda0d97c5c3c0f269a73a52161f1dfddf2470de51edb441",
+          "bytes": 48803
         },
         "row_count": 1258
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2023/initial/expenditure/general-initial-1-amounts.parquet",
-          "sha256": "d9ac166b48cb346ee4b54a5690331000dd8fc1ef29be11df0c90595481e01c8a",
-          "bytes": 37126
+          "sha256": "51844b16f8fec68f7fb55a45506137120fe50b2e13ff32ff0cc9b290029a3a2a",
+          "bytes": 37127
         },
         "row_count": 1382
       }
