@@ -80,12 +80,13 @@ def store_manifest(path: Path, since: str, *, dry_run: bool) -> dict:
                    for ident in sorted(changed) for reference in manifest.table_references(recorded[ident]).values()]
         for key, file, reference in uploads:
             storage.verify(file, reference)
-            # The local cache holds exactly the recorded bytes, so the dbt build that follows reads them
-            # without fetching from R2 (where a pull request's tables are not yet stored).
-            storage.cache(key, file)
-        if not dry_run:
-            for key, file, reference in uploads:
+        # The cache then holds exactly the recorded bytes, so the dbt build that follows reads them without
+        # fetching from R2 (where a pull request's tables are not yet stored). An upload caches only after it
+        # succeeds: `stored` trusts the cache, so a table must not be cached that R2 lacks.
+        for key, file, reference in uploads:
+            if not dry_run:
                 storage.upload(key, file, reference)
+            storage.cache(key, file)
     return {'manifest': str(path), 'tables': sorted(changed), 'uploaded': not dry_run}
 
 
