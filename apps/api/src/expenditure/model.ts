@@ -251,7 +251,7 @@ export type OriginRow = z.infer<typeof OriginRow>
 
 // --- 歳出の根の額（web のまち比べだけが内部の RPC で使う） ---
 
-/** 総額と COFOG の大分類ごとの額の列（科目の表の末端の行の和） */
+/** 総額（款の和）・COFOG の大分類ごとの額（末端の科目の和）・分類の無い額（総額との差）の列 */
 export const COFOG_DIVISIONS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] as const
 export const AMOUNT_COLUMNS = ['total_yen', ...COFOG_DIVISIONS.map((d) => `cofog_${d}_yen` as const), 'cofog_unclassified_yen'] as const
 

@@ -53,7 +53,7 @@ export const loader = defineHandler<Props>(async (c) => {
     // 指定が無ければ最新の決算（無ければ最新の資料）
     const aVersion = aVersions.find((v) => same(v, asked('a'))) ?? aVersions.find((v) => v.kind === 'settlement') ?? aVersions[0]!
     const { byUse, byPopulation } = await similarTowns(env, { code: a.code, pop: a.population?.people ?? 0 }, aVersion.year, aVersion.kind, SIMILAR + 1)
-    // b の指定が無ければ、金額が一番近いまち（無ければ人口が一番近いまち）
+    // b の指定が無ければ、分野の割合が一番近いまち（無ければ人口が一番近いまち）
     const fallback = askedB && versionsOf(askedB).length ? null : await entryOf(env, (byUse[0] ?? byPopulation[0])?.code)
     const b = askedB && versionsOf(askedB).length ? askedB : fallback
     // b の資料: 指定が無ければ a と同じ資料。同じまちどうしなら、同じ年度の当初予算、無ければ1つ前の年度の同じ資料
