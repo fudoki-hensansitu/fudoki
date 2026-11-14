@@ -430,7 +430,7 @@ function AccountCards({ accounts, account, setAccount }: { accounts: AccountTota
 
 /** 予算・決算。事業は下から積み上げる見方、こちらは大きい項目から下りていく見方。当初予算と決算の両方がある年度はタブを分ける */
 function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
-  const { v, d, res, page, select, flow, flowFailed, pickAccount } = useApp()
+  const { v, d, page, select, flow, flowFailed, pickAccount } = useApp()
   const [view, setView] = React.useState<FlowView>('cofog')
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = y?.kind === (phase === 'settlement' ? 'settlement' : 'initial') ? { year: v.year, yen: y.total, kan: [] } : undefined
@@ -450,8 +450,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     setAccountState(a)
     pickAccount(a)
   }
-  const shown = flow && flow.year === v.year && flow.phase === phase && flow.account === account ? flow : undefined
-  const current = shown
+  const current = flow && flow.year === v.year && flow.phase === phase && flow.account === account ? flow : undefined
   const drills = current?.drills
   const flows = React.useMemo(() => (current && view === 'cofog' ? cofogFlowOfDrills(current.drills, current.loose) : current?.drills), [current, view])
   const router = useRouter()
