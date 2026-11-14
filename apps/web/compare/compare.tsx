@@ -55,7 +55,7 @@ const popText = (n: number) => (n ? `人口 ${(n / 1e4).toFixed(1)}万人` : '')
 const TYPING_MS = 150
 
 /** まちの名前そのものが選ぶ欄。押すと名前で探せる候補が開く。候補は頁に全部を載せず、打った語でサーバー（/api/jurisdictions?q=）に上位だけを聞く */
-function TownPicker({ current, onPick, children }: { current: string; onPick: (code: string) => void; children: React.ReactNode }) {
+function TownPicker({ current, onPick, children, className }: { current: string; onPick: (code: string) => void; children: React.ReactNode; className?: string }) {
   const [open, setOpen] = React.useState(false)
   const [q, setQ] = React.useState('')
   // null は読めなかった
@@ -71,7 +71,7 @@ function TownPicker({ current, onPick, children }: { current: string; onPick: (c
   }, [open, q])
   return (
     <Combobox open={open} onOpenChange={setOpen} items={items ?? []} filter={null} itemToStringLabel={(e: MapEntry) => e.name} value={null} onInputValueChange={(v) => setQ(v)} onValueChange={(e) => e && (e as MapEntry).code !== current && onPick((e as MapEntry).code)}>
-      <ComboboxTrigger aria-label="まちを選ぶ" className="-mx-1.5 flex max-w-full min-w-0 items-center gap-1 rounded-lg px-1.5 py-0.5 text-left text-[17px] font-semibold text-foreground hover:bg-card">
+      <ComboboxTrigger aria-label="まちを選ぶ" className={cn('-mx-1.5 flex max-w-full min-w-0 items-center gap-1 rounded-lg px-1.5 py-0.5 text-left text-[17px] font-semibold text-foreground hover:bg-card', className)}>
         {children}
       </ComboboxTrigger>
       <ComboboxContent className="w-64">
@@ -117,16 +117,17 @@ function VersionPicker({ t, onVersion }: { t: CompareTown; onVersion: (v: Versio
 function TownCard({ t, mark, onPick, onVersion }: { t: CompareTown; mark: React.ReactNode; onPick: (code: string) => void; onVersion: (v: Version) => void }) {
   return (
     <section className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border bg-background p-3 sm:p-4">
-      <div className="flex items-center gap-3">
+      {/* 紋章・名前・人口のまとまり全体で、まちを選ぶ */}
+      <TownPicker current={t.code} onPick={onPick} className="-m-1.5 max-w-none gap-3 rounded-xl p-1.5">
         <Emblem code={t.code} name={t.name} className="hidden size-10 sm:grid" />
-        <div className="min-w-0 flex-1">
-          <TownPicker current={t.code} onPick={onPick}>
+        <span className="min-w-0 flex-1">
+          <span className="flex min-w-0 items-center gap-1.5">
             <span className="truncate">{t.name}</span>
             {mark}
-          </TownPicker>
-          <p className="truncate text-xs text-muted-foreground">{popText(t.pop)}</p>
-        </div>
-      </div>
+          </span>
+          <span className="block truncate text-xs font-normal text-muted-foreground">{popText(t.pop)}</span>
+        </span>
+      </TownPicker>
       <VersionPicker t={t} onVersion={onVersion} />
       {!t.total ? (
         <p className="text-sm text-muted-foreground">この資料の金額はまだありません</p>
@@ -197,21 +198,21 @@ function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) 
 }
 
 /** 似たまち。いま比べているまちは出さない */
-function SimilarList({ title, note, items, onPick }: { title: string; note: string; items: TownRef[]; onPick: (code: string) => void }) {
+function SimilarList({ title, note, items, hrefOf }: { title: string; note: string; items: TownRef[]; hrefOf: (code: string) => string }) {
   return (
     <div className="min-w-0 flex-1">
       <h3 className="text-[15px] font-medium">{title}</h3>
       <p className="mb-2 text-xs text-muted-foreground">{note}</p>
       <div className="-mx-2.5 flex flex-col">
         {items.map((s) => (
-          <button key={s.code} type="button" onClick={() => onPick(s.code)} className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-card">
+          <Link key={s.code} href={hrefOf(s.code)} className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-left no-underline transition-colors hover:bg-card">
             <Emblem code={s.code} name={s.name} className="size-[30px] rounded-[9px] p-1" />
             <span className="min-w-0 flex-1">
               <span className="block text-[15px]">{s.name}</span>
               <span className="block text-xs text-muted-foreground">{popText(s.pop)}</span>
             </span>
             <CaretRightIcon className="size-4 text-muted-foreground" />
-          </button>
+          </Link>
         ))}
       </div>
     </div>
@@ -275,8 +276,8 @@ export function Compare(props: Props) {
             <section className="mt-12">
               <h2 className="mb-3 text-[17px] font-semibold">{a.name}に似たまち</h2>
               <div className="flex flex-col gap-6 sm:flex-row">
-                {byUse.length ? <SimilarList title="使い方が近い" note="一般会計を分野ごとの割合で比べて近いまち" items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
-                {byPopulation.length ? <SimilarList title="人口が近い" note="住民基本台帳の人口が近いまち" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
+                {byUse.length ? <SimilarList title="使い方が近い" note="一般会計を分野ごとの割合で比べて近いまち" items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} hrefOf={(c) => compareHref(a.code, c, a.version)} /> : null}
+                {byPopulation.length ? <SimilarList title="人口が近い" note="住民基本台帳の人口が近いまち" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} hrefOf={(c) => compareHref(a.code, c, a.version)} /> : null}
               </div>
             </section>
           ) : null}
