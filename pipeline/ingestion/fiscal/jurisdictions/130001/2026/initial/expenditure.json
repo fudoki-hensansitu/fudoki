@@ -1,0 +1,2943 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "130001",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            111,
+            323
+          ]
+        ],
+        "name_corrections": [
+          {
+            "id": "p244-area-6460",
+            "page": 244,
+            "observation_id": "p244:full-page:a0:result0:r44",
+            "observed_name": "6,460",
+            "corrected_name": "6,460㎡",
+            "reason": "原典の画像で、頁244の計上説明「1 用地費」の行は面積を「6,460㎡」と印字している。Paddle は小さい字の㎡を読まず、数字だけを金額のように読んだ。"
+          },
+          {
+            "id": "p254-area-137201",
+            "page": 254,
+            "observation_id": "p254:full-page:a0:result0:r38",
+            "observed_name": "137,201",
+            "corrected_name": "137,201㎡",
+            "reason": "原典の画像で、頁254の計上説明「1 公園の造成」の行は面積を「137,201㎡」と印字している。Paddle は小さい字の㎡を読まず、数字だけを金額のように読んだ。"
+          },
+          {
+            "id": "p223-katakana-a",
+            "page": 223,
+            "observation_id": "p223:full-page:a0:result0:r44",
+            "observed_name": "了人件費",
+            "corrected_name": "ア人件費",
+            "reason": "原典の画像で、頁223の計上説明は「ア 人件費」と項目の記号アを印字している。Paddle はアを「了」と読んだ。"
+          },
+          {
+            "id": "p253-area-46683",
+            "page": 253,
+            "observation_id": "p253:full-page:a0:result0:r110",
+            "observed_name": "46,683",
+            "corrected_name": "46,683㎡",
+            "reason": "原典の画像で、頁253の計上説明「3 施設維持管理費」の下の「葬儀所」の行は面積を「46,683㎡」と印字している。Paddle は小さい字の㎡を読まず、数字だけを金額のように読んだ。"
+          },
+          {
+            "id": "p166-ippan-sainyu",
+            "page": 166,
+            "observation_id": "p166:full-page:a0:result0:r31",
+            "observed_name": "一般歲入",
+            "corrected_name": "一般歳入",
+            "reason": "原典の画像で、頁166の目の名前は「一般歳入」と印字している。Paddle は「歳」を異体字の「歲」と読んだ。"
+          }
+        ],
+        "rule_ink": [
+          {
+            "id": "p188-row-rule",
+            "page": 188,
+            "boxes": [
+              [
+                120.5,
+                406.8,
+                158.5,
+                420.8
+              ],
+              [
+                190.4,
+                406.8,
+                204.5,
+                420.8
+              ]
+            ],
+            "reason": "原典の画像で、頁188のこの墨は目の行を閉じる横罫の一片。OCR の取得は罫線として読まず、左に次の行の名前が掛かるため罫線の片とも見分けられなかった。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p240-area-368417",
+            "page": 240,
+            "observation_id": "p240:full-page:a0:result0:r37",
+            "observed": "368,4172",
+            "reason": "原典の画像で、頁240の計上説明「2 塗装」の行は面積を「368,417㎡」と印字している。Paddle は㎡の小さい2を数字の続きと読み（368,4172）、金額の欄の2,827,739と並ぶ金額になる。数字を直す宣言は無いため、この面積の読みを除く（金額は2,827,739のまま）。"
+          },
+          {
+            "id": "p136-setsu-45",
+            "page": 136,
+            "observation_id": "p136:full-page:a0:result0:r100",
+            "observed": "4545",
+            "reason": "原典の画像で、頁136の「10需用費」と「(02)一般需用費」の金額の欄は、どちらも「45」と2行に分けて印字している。Paddle は2行の数字を1つの読み「4545」にまとめた。この読みは使わず、金額をそれぞれの行の位置で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p136-setsu-45",
+            "page": 136,
+            "boxes": [
+              [
+                514.0,
+                441.5,
+                527.2,
+                451.5
+              ],
+              [
+                514.0,
+                452.5,
+                527.2,
+                463.0
+              ]
+            ],
+            "amount": "45",
+            "reason": "原典の画像で、頁136の「10需用費」と「(02)一般需用費」の金額の欄は、どちらも「45」と2行に分けて印字している。Paddle は2行の数字を1つの読み「4545」にまとめた。この読みは使わず、金額をそれぞれの行の位置で読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f8f39b3a1e942719f9c48c15109755041eee1bbf77624af3f5db52a82539280d",
+          "bytes": 3067069
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7d4d88d26851ac52bc3f7f961da9f528905d2c2c65a6469268dd2474b82df708",
+          "bytes": 3209622
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              131,
+              132,
+              133,
+              134,
+              135,
+              136,
+              137,
+              138,
+              139,
+              140
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "06083342daba61533d732d4fa80c57cdc73fe911f11c8c075a69a5fcfd48d9fe",
+          "bytes": 3147237
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              141,
+              142,
+              143,
+              144,
+              145,
+              146,
+              147,
+              148,
+              149,
+              150
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7d58d0acb9a90a1930673d5f412baa8a199aca7a85066340b6119ba04f932c40",
+          "bytes": 3022254
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              151,
+              152,
+              153,
+              154,
+              155,
+              156,
+              157,
+              158,
+              159,
+              160
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7b026155d68a19c3bf6847a4d12f7de864c55a70ddbc8b1019cf39123aca05be",
+          "bytes": 3580003
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              161,
+              162,
+              163,
+              164,
+              165,
+              166,
+              167,
+              168,
+              169,
+              170
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "91c697745f57d6bf248bd411afe4b65ca0653bb23ea99360712916fc36ca37b4",
+          "bytes": 3073109
+        },
+        {
+          "id": "general-ocr-7",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              171,
+              172,
+              173,
+              174,
+              175,
+              176,
+              177,
+              178,
+              179,
+              180
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6067bcc93904a37c6bc1a6acafeb736c922638c6208bac9b96cf35e9e7cf72b8",
+          "bytes": 3311305
+        },
+        {
+          "id": "general-ocr-8",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              181,
+              182,
+              183,
+              184,
+              185,
+              186,
+              187,
+              188,
+              189,
+              190
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6b0d1f437d33152c0bccaf7b7e8dbf4f017d00181dbde35c88bda75015bc5972",
+          "bytes": 3847147
+        },
+        {
+          "id": "general-ocr-9",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              191,
+              192,
+              193,
+              194,
+              195,
+              196,
+              197,
+              198,
+              199,
+              200
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a97b7e4f14a34b308b1ffcb1dd21195106aba626e6a3db2026abc595b9c30ce2",
+          "bytes": 3397827
+        },
+        {
+          "id": "general-ocr-10",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              201,
+              202,
+              203,
+              204,
+              205,
+              206,
+              207,
+              208,
+              209,
+              210
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "843a3135662e0f4e72994ebf04e369dd80e471c79cb717bf98dc1d64756618e1",
+          "bytes": 3661382
+        },
+        {
+          "id": "general-ocr-11",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              211,
+              212,
+              213,
+              214,
+              215,
+              216,
+              217,
+              218,
+              219,
+              220
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3e65b4f47c77f085e25453098214a8270029aae168bfa9662fc4cd1b819e5410",
+          "bytes": 3439109
+        },
+        {
+          "id": "general-ocr-12",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              221,
+              222,
+              223,
+              224,
+              225,
+              226,
+              227,
+              228,
+              229,
+              230
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c209cba04e238b99b95930e26915b24824623391887e68b42491ccbab068af33",
+          "bytes": 3819515
+        },
+        {
+          "id": "general-ocr-13",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              231,
+              232,
+              233,
+              234,
+              235,
+              236,
+              237,
+              238,
+              239,
+              240
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b680371fe64daa80901a32520b10a0c6ef7973e6b606dd7f0c5ff958e4aaa9d1",
+          "bytes": 2868795
+        },
+        {
+          "id": "general-ocr-14",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              241,
+              242,
+              243,
+              244,
+              245,
+              246,
+              247,
+              248,
+              249,
+              250
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7cd949d72a124531344bc0425ea6d89d31ced7a22739dc2d16c859b726719966",
+          "bytes": 3401497
+        },
+        {
+          "id": "general-ocr-15",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              251,
+              252,
+              253,
+              254,
+              255,
+              256,
+              257,
+              258,
+              259,
+              260
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "71b3e28b5856ac6f69559d2a38c42f282dd221992b96ee2c2d91068579464c49",
+          "bytes": 2893288
+        },
+        {
+          "id": "general-ocr-16",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              261,
+              262,
+              263,
+              264,
+              265,
+              266,
+              267,
+              268,
+              269,
+              270
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f16a95ad7833cfa7f578d6b22403592d655493f665440533c0cd5fab86b10a17",
+          "bytes": 2950781
+        },
+        {
+          "id": "general-ocr-17",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              271,
+              272,
+              273,
+              274,
+              275,
+              276,
+              277,
+              278,
+              279,
+              280
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ea3429617dfd9ec97e2ce35a91b00dc54612c1201551de9fd9eaa220ca7624eb",
+          "bytes": 3569991
+        },
+        {
+          "id": "general-ocr-18",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              281,
+              282,
+              283,
+              284,
+              285,
+              286,
+              287,
+              288,
+              289,
+              290
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "59439122a7c2b751971f2c0e8a2a39860ad6692720b0a113bc6c91a9cbd0e446",
+          "bytes": 3363844
+        },
+        {
+          "id": "general-ocr-19",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              291,
+              292,
+              293,
+              294,
+              295,
+              296,
+              297,
+              298,
+              299,
+              300
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b17706b1d76919d1e5872e84f0bff56ff6b9f52dd64952278f06b5cf62ea0df9",
+          "bytes": 2993597
+        },
+        {
+          "id": "general-ocr-20",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              301,
+              302,
+              303,
+              304,
+              305,
+              306,
+              307,
+              308,
+              309,
+              310
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c99550b46a987fd12e9df6e251d1d643f0fc8ca3091cfdf0ae7d5490c758b011",
+          "bytes": 3242490
+        },
+        {
+          "id": "general-ocr-21",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              311,
+              312,
+              313,
+              314,
+              315,
+              316,
+              317,
+              318,
+              319,
+              320
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "13d9eda999d9a155b18b12d3369deda9d4593817d0fc955499c90315231ad971",
+          "bytes": 3272790
+        },
+        {
+          "id": "general-ocr-22",
+          "origin_sha256": "a5765bb313198085c90124404d098342c3d83d69c6ad3265d29f1ad8f0172293",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              321,
+              322,
+              323
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "584398b7b91f7026d17f5f40bddc88c3deeedc3d555f77b7db718373a06c5145",
+          "bytes": 358818
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "ward-fiscal-adjustment",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "特別区財政調整会計",
+        "table_id": "ward-fiscal-adjustment-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            6
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "ward-fiscal-adjustment-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e32b1a218a322d0637ec1a3d03e3ebd1145b159816885429dcddf735c1d4782e",
+          "bytes": 243146
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "ward-fiscal-adjustment-initial"
+        }
+      ]
+    },
+    {
+      "id": "local-consumption-tax-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "地方消費税清算会計",
+        "table_id": "local-consumption-tax-settlement-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            10,
+            11
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "local-consumption-tax-settlement-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              10,
+              11
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2249eba594273c1bc4d83c9ebb23bf362e3df14b159d2d37a49b5a423a14f9a6",
+          "bytes": 361689
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "local-consumption-tax-settlement-initial"
+        }
+      ]
+    },
+    {
+      "id": "ogasawara-reconstruction-fund",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "小笠原諸島生活再建資金会計",
+        "table_id": "ogasawara-reconstruction-fund-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            15,
+            15
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "ogasawara-reconstruction-fund-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              15
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d50f656da56b56450938800a33b45a5d0627199b80a7e56c48fa9ec8f33c9dfa",
+          "bytes": 150299
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "ogasawara-reconstruction-fund-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            22,
+            26
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p24-explanation-1-1",
+            "page": 24,
+            "observation_id": "p24:full-page:a0:result0:r54",
+            "observed": "11",
+            "reason": "原典の画像で、頁24の計上説明「3 出産育児関係事務費拠出金」と「4 病床転換支援金」の金額は、どちらも「1」と2行に分けて印字している。Paddle は2行の数字を1つの読み「11」にまとめた。この読みは使わず、金額をそれぞれの行の位置で読む。"
+          },
+          {
+            "id": "p25-explanation-1-1",
+            "page": 25,
+            "observation_id": "p25:full-page:a0:result0:r23",
+            "observed": "11",
+            "reason": "原典の画像で、頁25の計上説明「1 流行初期医療確保拠出金」と「2 流行初期医療確保関係事務費拠出金」の金額は、どちらも「1」と2行に分けて印字している。Paddle は2行の数字を1つの読み「11」にまとめた。この読みは使わず、金額をそれぞれの行の位置で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p24-explanation-1-1",
+            "page": 24,
+            "boxes": [
+              [
+                801.0,
+                292.0,
+                809.5,
+                302.5
+              ],
+              [
+                801.0,
+                303.5,
+                809.5,
+                312.5
+              ]
+            ],
+            "amount": "1",
+            "reason": "原典の画像で、頁24の計上説明「3 出産育児関係事務費拠出金」と「4 病床転換支援金」の金額は、どちらも「1」と2行に分けて印字している。Paddle は2行の数字を1つの読み「11」にまとめた。この読みは使わず、金額をそれぞれの行の位置で読む。"
+          },
+          {
+            "id": "p25-explanation-1-1",
+            "page": 25,
+            "boxes": [
+              [
+                803.0,
+                130.5,
+                810.5,
+                140.5
+              ],
+              [
+                803.0,
+                141.5,
+                810.5,
+                151.5
+              ]
+            ],
+            "amount": "1",
+            "reason": "原典の画像で、頁25の計上説明「1 流行初期医療確保拠出金」と「2 流行初期医療確保関係事務費拠出金」の金額は、どちらも「1」と2行に分けて印字している。Paddle は2行の数字を1つの読み「11」にまとめた。この読みは使わず、金額をそれぞれの行の位置で読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6a1619306227483a956441ebf5bd4465ddae5d140fb905d635df738eef2b0549",
+          "bytes": 1379081
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "single-parent-welfare-loan",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "母子父子福祉貸付資金会計",
+        "table_id": "single-parent-welfare-loan-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            37,
+            38
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "single-parent-welfare-loan-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              37,
+              38
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a0c785875a8def611226f04d5884a9b654ad8daae0d39aa14f0acfde6bf96711",
+          "bytes": 432726
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "single-parent-welfare-loan-initial"
+        }
+      ]
+    },
+    {
+      "id": "disability-support-pension",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "心身障害者扶養年金会計",
+        "table_id": "disability-support-pension-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            43,
+            43
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "disability-support-pension-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              43
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9fa8477e68c4c2e0293a260eefd20d01b038d4801409fd49d59e05c137d6ca84",
+          "bytes": 256259
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "disability-support-pension-initial"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-hospital-loan",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
+        "table_id": "metropolitan-hospital-loan-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            47,
+            48
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "metropolitan-hospital-loan-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              47,
+              48
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d837a3006bc4028b2954ed1d9c0308b2d652fffd4f09b2e96b7bba83c4518e90",
+          "bytes": 486676
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-hospital-loan-initial"
+        }
+      ]
+    },
+    {
+      "id": "sme-equipment-fund",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "中小企業設備導入等資金会計",
+        "table_id": "sme-equipment-fund-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            59,
+            60
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "sme-equipment-fund-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              59,
+              60
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f9722e5f5f417accbbfe0ab6afa36662783da14f1387e2807646cb1fe29045c8",
+          "bytes": 467634
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "sme-equipment-fund-initial"
+        }
+      ]
+    },
+    {
+      "id": "forestry-improvement-fund",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "林業・木材産業改善資金助成会計",
+        "table_id": "forestry-improvement-fund-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            65,
+            65
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p65-setsu-57-77",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result0:r52",
+            "observed": "575777",
+            "reason": "原典の画像で、頁65の節の金額の欄は「08旅費」「(01)普通旅費」を「57」、「10需用費」「(02)一般需用費」を「77」と4行に分けて印字している。Paddle は4行の数字を1つの読み「575777」にまとめた。この読みは使わず、金額をそれぞれの行の位置で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p65-setsu-57",
+            "page": 65,
+            "boxes": [
+              [
+                514.0,
+                350.2,
+                530.0,
+                359.5
+              ],
+              [
+                514.0,
+                361.0,
+                530.0,
+                371.5
+              ]
+            ],
+            "amount": "57",
+            "reason": "原典の画像で、頁65の節の金額の欄は「08旅費」「(01)普通旅費」を「57」、「10需用費」「(02)一般需用費」を「77」と4行に分けて印字している。Paddle は4行の数字を1つの読み「575777」にまとめた。この読みは使わず、金額をそれぞれの行の位置で読む。"
+          },
+          {
+            "id": "p65-setsu-77",
+            "page": 65,
+            "boxes": [
+              [
+                514.0,
+                373.0,
+                530.0,
+                383.5
+              ],
+              [
+                514.0,
+                385.0,
+                530.0,
+                394.5
+              ]
+            ],
+            "amount": "77",
+            "reason": "原典の画像で、頁65の節の金額の欄は「08旅費」「(01)普通旅費」を「57」、「10需用費」「(02)一般需用費」を「77」と4行に分けて印字している。Paddle は4行の数字を1つの読み「575777」にまとめた。この読みは使わず、金額をそれぞれの行の位置で読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "forestry-improvement-fund-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              65
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d3ef129098e26bbae215240ef48dded2fbd076278cc5d96dc08d533b58ceb424",
+          "bytes": 205997
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "forestry-improvement-fund-initial"
+        }
+      ]
+    },
+    {
+      "id": "coastal-fishery-improvement-fund",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "沿岸漁業改善資金助成会計",
+        "table_id": "coastal-fishery-improvement-fund-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            69,
+            69
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "coastal-fishery-improvement-fund-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              69
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e193eefe05c5eefd96bac9187ca0421bf63c65915b794692ddb74ac99e631e9a",
+          "bytes": 202025
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "coastal-fishery-improvement-fund-initial"
+        }
+      ]
+    },
+    {
+      "id": "slaughterhouse",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "と場会計",
+        "table_id": "slaughterhouse-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            74,
+            76
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "slaughterhouse-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              74,
+              75,
+              76
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6fd19c804a122530f2dfc249f245b119377dc05954af22612aae65c95290b8e4",
+          "bytes": 680073
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "slaughterhouse-initial"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-housing",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "都営住宅等事業会計",
+        "table_id": "metropolitan-housing-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            91,
+            95
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "metropolitan-housing-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              91,
+              92,
+              93,
+              94,
+              95
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a9053abf5b8244659d7bcd051b6b3278b6f91fbfcf824cd09d1b9dcc7b5765b0",
+          "bytes": 1357966
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-housing-initial"
+        }
+      ]
+    },
+    {
+      "id": "metropolitan-housing-deposit",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "都営住宅等保証金会計",
+        "table_id": "metropolitan-housing-deposit-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            109,
+            111
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "metropolitan-housing-deposit-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              109,
+              110,
+              111
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8da003f8401dd8aa7dc3fdba57ffe2c0857bfb5433499a17c87bffc537d21576",
+          "bytes": 583434
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "metropolitan-housing-deposit-initial"
+        }
+      ]
+    },
+    {
+      "id": "urban-development-fund",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "都市開発資金会計",
+        "table_id": "urban-development-fund-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            116,
+            117
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "urban-development-fund-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              116,
+              117
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d54f089a167525aa49656cd8c799d79a06e9c07d21aa9ee12f46ff1a31f01e82",
+          "bytes": 363910
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "urban-development-fund-initial"
+        }
+      ]
+    },
+    {
+      "id": "land-acquisition",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "用地会計",
+        "table_id": "land-acquisition-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            123,
+            124
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "land-acquisition-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              123,
+              124
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "293334eef7343fc45480e0ec2431617b3ab9e053870e3aa27070268eeb5b3e7c",
+          "bytes": 390668
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "land-acquisition-initial"
+        }
+      ]
+    },
+    {
+      "id": "public-debt",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "公債費会計",
+        "table_id": "public-debt-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            131,
+            133
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "public-debt-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              131,
+              132,
+              133
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ec8d7919133c545ad2a777ac97458546cc0c35dfcd66fdd867285fdc8498b519",
+          "bytes": 844439
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "public-debt-initial"
+        }
+      ]
+    },
+    {
+      "id": "waterfront-infrastructure",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "臨海都市基盤整備事業会計",
+        "table_id": "waterfront-infrastructure-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            139,
+            141
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "waterfront-infrastructure-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              139,
+              140,
+              141
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5e17d343803967c0f3cc55baa3a771d9d117f7d031924d2e514b27abe13afd70",
+          "bytes": 584447
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "waterfront-infrastructure-initial"
+        }
+      ]
+    },
+    {
+      "id": "industrial-water-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86"
+        }
+      ],
+      "options": {
+        "account": "工業用水道事業清算会計",
+        "table_id": "industrial-water-settlement-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "drawn_header",
+            "options": {
+              "columns": {
+                "本年度の財源内訳": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。財源の種類の名前の下に金額を印字し、本年度予算額の別の切り口のため。目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "unagreed": true,
+                "title_amount": "本年度予算額"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            152,
+            152
+          ]
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "industrial-water-settlement-ocr-1",
+          "origin_sha256": "7ef91514c5ed78c57321171025c322868ecbcbf7bdabb63f6b06d6abee3cfc86",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              152
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3bd10dd2b98c8b617fc9947d1d22a6d05c1e2541d5b621c8e28d948cfa0ef72c",
+          "bytes": 243019
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "industrial-water-settlement-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general",
+      "input_fingerprint": "2a35b5f9e776d2b7bda231733fe18863a5bae368e3f580027016e8eccf3fcd7d",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 129頁・carried 84頁 から決めた。款の和 9,653,000,000 と印字の「歳出合計」9,653,000,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 5 件を、管理 JSON の name_corrections で印字に直した: 244頁 6,460→6,460㎡・254頁 137,201→137,201㎡・223頁 了人件費→ア人件費・253頁 46,683→46,683㎡・166頁 一般歲入→一般歳入。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 50 件（p126:full-page:a0:result0:r60・p126:full-page:a0:result0:r60:w4・p145:full-page:a0:result0:r139・p145:full-page:a0:result0:r139:w2・p155:full-page:a0:result0:r66・p155:full-page:a0:result0:r66:w5・p173:full-page:a0:result0:r111・p173:full-page:a0:result0:r111:w6・p180:full-page:a0:result0:r93・p180:full-page:a0:result0:r93:w9・p181:full-page:a0:result0:r45・p181:full-page:a0:result0:r45:w4・p182:full-page:a0:result0:r26・p182:full-page:a0:result0:r26:w3・p195:full-page:a0:result0:r38・p195:full-page:a0:result0:r38:w6・p200:full-page:a0:result0:r75・p200:full-page:a0:result0:r75:w7・p203:full-page:a0:result0:r57・p203:full-page:a0:result0:r57:w2・p203:full-page:a0:result0:r62・p203:full-page:a0:result0:r62:w2・p203:full-page:a0:result0:r93・p203:full-page:a0:result0:r93:w10・p213:full-page:a0:result0:r88・p213:full-page:a0:result0:r88:w5・p214:full-page:a0:result0:r72・p214:full-page:a0:result0:r72:w4・p219:full-page:a0:result0:r66・p219:full-page:a0:result0:r66:w4・p219:full-page:a0:result0:r117・p219:full-page:a0:result0:r117:w9・p219:full-page:a0:result0:r138・p219:full-page:a0:result0:r138:w6・p219:ink-13:a13:result0:r0・p219:ink-13:a13:result0:r0:w10・p220:full-page:a0:result0:r121・p220:full-page:a0:result0:r121:w2・p221:full-page:a0:result0:r67・p221:full-page:a0:result0:r67:w3・p229:full-page:a0:result0:r50・p229:full-page:a0:result0:r50:w3・p230:full-page:a0:result0:r23・p230:full-page:a0:result0:r23:w7・p271:full-page:a0:result0:r43・p271:full-page:a0:result0:r43:w2・p284:full-page:a0:result0:r126・p284:full-page:a0:result0:r126:w5・p304:full-page:a0:result0:r131・p304:full-page:a0:result0:r131:w5）・减→減 176 件（p112:full-page:a0:result0:r4・p112:full-page:a0:result0:r4:w1・p114:full-page:a0:result0:r6・p114:full-page:a0:result0:r6:w1・p118:full-page:a0:result0:r6・p118:full-page:a0:result0:r6:w1・p119:full-page:a0:result0:r5・p119:full-page:a0:result0:r5:w1・p120:full-page:a0:result0:r6・p120:full-page:a0:result0:r6:w1・p121:full-page:a0:result0:r6・p121:full-page:a0:result0:r6:w1・p122:full-page:a0:result0:r5・p122:full-page:a0:result0:r5:w1・p124:full-page:a0:result0:r6・p124:full-page:a0:result0:r6:w1・p127:full-page:a0:result0:r5・p127:full-page:a0:result0:r5:w1・p129:full-page:a0:result0:r6・p129:full-page:a0:result0:r6:w1・p134:full-page:a0:result0:r6・p134:full-page:a0:result0:r6:w1・p136:full-page:a0:result0:r6・p136:full-page:a0:result0:r6:w1・p137:full-page:a0:result0:r6・p137:full-page:a0:result0:r6:w1・p145:full-page:a0:result0:r6・p145:full-page:a0:result0:r6:w1・p146:full-page:a0:result0:r6・p146:full-page:a0:result0:r6:w1・p147:full-page:a0:result0:r4・p147:full-page:a0:result0:r4:w1・p148:full-page:a0:result0:r6・p148:full-page:a0:result0:r6:w1・p150:full-page:a0:result0:r6・p150:full-page:a0:result0:r6:w1・p155:full-page:a0:result0:r6・p155:full-page:a0:result0:r6:w1・p156:full-page:a0:result0:r6・p156:full-page:a0:result0:r6:w1・p157:full-page:a0:result0:r6・p157:full-page:a0:result0:r6:w1・p161:full-page:a0:result0:r6・p161:full-page:a0:result0:r6:w1・p162:full-page:a0:result0:r6・p162:full-page:a0:result0:r6:w1・p163:full-page:a0:result0:r6・p163:full-page:a0:result0:r6:w1・p165:full-page:a0:result0:r6・p165:full-page:a0:result0:r6:w1・p168:full-page:a0:result0:r6・p168:full-page:a0:result0:r6:w1・p174:full-page:a0:result0:r6・p174:full-page:a0:result0:r6:w1・p175:full-page:a0:result0:r6・p175:full-page:a0:result0:r6:w1・p179:full-page:a0:result0:r6・p179:full-page:a0:result0:r6:w1・p182:full-page:a0:result0:r6・p182:full-page:a0:result0:r6:w1・p183:full-page:a0:result0:r6・p183:full-page:a0:result0:r6:w1・p185:full-page:a0:result0:r6・p185:full-page:a0:result0:r6:w1・p186:full-page:a0:result0:r6・p186:full-page:a0:result0:r6:w1・p188:full-page:a0:result0:r6・p188:full-page:a0:result0:r6:w1・p191:full-page:a0:result0:r6・p191:full-page:a0:result0:r6:w1・p194:full-page:a0:result0:r6・p194:full-page:a0:result0:r6:w1・p195:full-page:a0:result0:r4・p195:full-page:a0:result0:r4:w1・p196:full-page:a0:result0:r6・p196:full-page:a0:result0:r6:w1・p197:full-page:a0:result0:r6・p197:full-page:a0:result0:r6:w1・p202:full-page:a0:result0:r6・p202:full-page:a0:result0:r6:w1・p207:full-page:a0:result0:r6・p207:full-page:a0:result0:r6:w1・p208:full-page:a0:result0:r6・p208:full-page:a0:result0:r6:w1・p211:full-page:a0:result0:r6・p211:full-page:a0:result0:r6:w1・p217:full-page:a0:result0:r6・p217:full-page:a0:result0:r6:w1・p218:full-page:a0:result0:r6・p218:full-page:a0:result0:r6:w1・p220:full-page:a0:result0:r6・p220:full-page:a0:result0:r6:w1・p222:full-page:a0:result0:r6・p222:full-page:a0:result0:r6:w1・p223:full-page:a0:result0:r6・p223:full-page:a0:result0:r6:w1・p224:full-page:a0:result0:r6・p224:full-page:a0:result0:r6:w1・p225:full-page:a0:result0:r6・p225:full-page:a0:result0:r6:w1・p226:full-page:a0:result0:r6・p226:full-page:a0:result0:r6:w1・p229:full-page:a0:result0:r6・p229:full-page:a0:result0:r6:w1・p234:full-page:a0:result0:r5・p234:full-page:a0:result0:r5:w1・p236:full-page:a0:result0:r6・p236:full-page:a0:result0:r6:w1・p237:full-page:a0:result0:r5・p237:full-page:a0:result0:r5:w1・p238:full-page:a0:result0:r6・p238:full-page:a0:result0:r6:w1・p242:full-page:a0:result0:r6・p242:full-page:a0:result0:r6:w1・p243:full-page:a0:result0:r5・p243:full-page:a0:result0:r5:w1・p244:full-page:a0:result0:r6・p244:full-page:a0:result0:r6:w1・p256:full-page:a0:result0:r10・p256:full-page:a0:result0:r10:w1・p259:full-page:a0:result0:r6・p259:full-page:a0:result0:r6:w1・p260:full-page:a0:result0:r6・p260:full-page:a0:result0:r6:w1・p268:full-page:a0:result0:r5・p268:full-page:a0:result0:r5:w1・p272:full-page:a0:result0:r6・p272:full-page:a0:result0:r6:w1・p273:full-page:a0:result0:r6・p273:full-page:a0:result0:r6:w1・p286:full-page:a0:result0:r5・p286:full-page:a0:result0:r5:w1・p287:full-page:a0:result0:r6・p287:full-page:a0:result0:r6:w1・p289:full-page:a0:result0:r6・p289:full-page:a0:result0:r6:w1・p291:full-page:a0:result0:r6・p291:full-page:a0:result0:r6:w1・p292:full-page:a0:result0:r6・p292:full-page:a0:result0:r6:w1・p293:full-page:a0:result0:r6・p293:full-page:a0:result0:r6:w1・p295:full-page:a0:result0:r10・p295:full-page:a0:result0:r10:w1・p296:full-page:a0:result0:r6・p296:full-page:a0:result0:r6:w1・p297:full-page:a0:result0:r6・p297:full-page:a0:result0:r6:w1・p298:full-page:a0:result0:r6・p298:full-page:a0:result0:r6:w1・p304:full-page:a0:result0:r6・p304:full-page:a0:result0:r6:w1・p307:full-page:a0:result0:r6・p307:full-page:a0:result0:r6:w1・p308:full-page:a0:result0:r6・p308:full-page:a0:result0:r6:w1・p310:full-page:a0:result0:r6・p310:full-page:a0:result0:r6:w1・p312:full-page:a0:result0:r6・p312:full-page:a0:result0:r6:w1・p313:full-page:a0:result0:r6・p313:full-page:a0:result0:r6:w1・p314:full-page:a0:result0:r10・p314:full-page:a0:result0:r10:w1・p315:full-page:a0:result0:r64・p315:full-page:a0:result0:r64:w2・p316:full-page:a0:result0:r6・p316:full-page:a0:result0:r6:w1・p317:full-page:a0:result0:r6・p317:full-page:a0:result0:r6:w1・p318:full-page:a0:result0:r6・p318:full-page:a0:result0:r6:w1・p319:full-page:a0:result0:r6・p319:full-page:a0:result0:r6:w1・p321:full-page:a0:result0:r10・p321:full-page:a0:result0:r10:w1）・别→別 8 件（p234:full-page:a0:result0:r23・p234:full-page:a0:result0:r23:w6・p280:full-page:a0:result0:r29・p280:full-page:a0:result0:r29:w2・p289:ink-5:a5:result0:r0・p289:ink-5:a5:result0:r0:w10・p289:ink-7:a7:result0:r0・p289:ink-7:a7:result0:r0:w6）・增→増 430 件（p111:full-page:a0:result0:r6・p111:full-page:a0:result0:r6:w1・p112:full-page:a0:result0:r3・p112:full-page:a0:result0:r3:w1・p113:full-page:a0:result0:r5・p113:full-page:a0:result0:r5:w1・p114:full-page:a0:result0:r5・p114:full-page:a0:result0:r5:w1・p115:full-page:a0:result0:r5・p115:full-page:a0:result0:r5:w1・p116:full-page:a0:result0:r4・p116:full-page:a0:result0:r4:w1・p117:full-page:a0:result0:r5・p117:full-page:a0:result0:r5:w1・p118:full-page:a0:result0:r5・p118:full-page:a0:result0:r5:w1・p119:full-page:a0:result0:r4・p119:full-page:a0:result0:r4:w1・p120:full-page:a0:result0:r5・p120:full-page:a0:result0:r5:w1・p121:full-page:a0:result0:r5・p121:full-page:a0:result0:r5:w1・p122:full-page:a0:result0:r4・p122:full-page:a0:result0:r4:w1・p123:full-page:a0:result0:r5・p123:full-page:a0:result0:r5:w1・p124:full-page:a0:result0:r5・p124:full-page:a0:result0:r5:w1・p125:full-page:a0:result0:r5・p125:full-page:a0:result0:r5:w1・p126:full-page:a0:result0:r5・p126:full-page:a0:result0:r5:w1・p127:full-page:a0:result0:r4・p127:full-page:a0:result0:r4:w1・p128:full-page:a0:result0:r5・p128:full-page:a0:result0:r5:w1・p129:full-page:a0:result0:r5・p129:full-page:a0:result0:r5:w1・p130:full-page:a0:result0:r5・p130:full-page:a0:result0:r5:w1・p131:full-page:a0:result0:r5・p131:full-page:a0:result0:r5:w1・p132:full-page:a0:result0:r4・p132:full-page:a0:result0:r4:w1・p133:full-page:a0:result0:r4・p133:full-page:a0:result0:r4:w1・p134:full-page:a0:result0:r5・p134:full-page:a0:result0:r5:w1・p135:full-page:a0:result0:r5・p135:full-page:a0:result0:r5:w1・p136:full-page:a0:result0:r5・p136:full-page:a0:result0:r5:w1・p137:full-page:a0:result0:r5・p137:full-page:a0:result0:r5:w1・p138:full-page:a0:result0:r5・p138:full-page:a0:result0:r5:w1・p139:full-page:a0:result0:r4・p139:full-page:a0:result0:r4:w1・p140:full-page:a0:result0:r5・p140:full-page:a0:result0:r5:w1・p141:full-page:a0:result0:r3・p141:full-page:a0:result0:r3:w1・p142:full-page:a0:result0:r5・p142:full-page:a0:result0:r5:w1・p143:full-page:a0:result0:r5・p143:full-page:a0:result0:r5:w1・p144:full-page:a0:result0:r5・p144:full-page:a0:result0:r5:w1・p145:full-page:a0:result0:r5・p145:full-page:a0:result0:r5:w1・p146:full-page:a0:result0:r5・p146:full-page:a0:result0:r5:w1・p147:full-page:a0:result0:r3・p147:full-page:a0:result0:r3:w1・p148:full-page:a0:result0:r5・p148:full-page:a0:result0:r5:w1・p149:full-page:a0:result0:r4・p149:full-page:a0:result0:r4:w1・p150:full-page:a0:result0:r5・p150:full-page:a0:result0:r5:w1・p151:full-page:a0:result0:r5・p151:full-page:a0:result0:r5:w1・p152:full-page:a0:result0:r5・p152:full-page:a0:result0:r5:w1・p153:full-page:a0:result0:r5・p153:full-page:a0:result0:r5:w1・p154:full-page:a0:result0:r5・p154:full-page:a0:result0:r5:w1・p155:full-page:a0:result0:r5・p155:full-page:a0:result0:r5:w1・p155:full-page:a0:result0:r62・p155:full-page:a0:result0:r62:w9・p156:full-page:a0:result0:r5・p156:full-page:a0:result0:r5:w1・p157:full-page:a0:result0:r5・p157:full-page:a0:result0:r5:w1・p158:full-page:a0:result0:r5・p158:full-page:a0:result0:r5:w1・p159:full-page:a0:result0:r5・p159:full-page:a0:result0:r5:w1・p160:full-page:a0:result0:r5・p160:full-page:a0:result0:r5:w1・p161:full-page:a0:result0:r5・p161:full-page:a0:result0:r5:w1・p162:full-page:a0:result0:r5・p162:full-page:a0:result0:r5:w1・p163:full-page:a0:result0:r5・p163:full-page:a0:result0:r5:w1・p164:full-page:a0:result0:r5・p164:full-page:a0:result0:r5:w1・p165:full-page:a0:result0:r5・p165:full-page:a0:result0:r5:w1・p166:full-page:a0:result0:r4・p166:full-page:a0:result0:r4:w1・p167:full-page:a0:result0:r5・p167:full-page:a0:result0:r5:w1・p168:full-page:a0:result0:r5・p168:full-page:a0:result0:r5:w1・p169:full-page:a0:result0:r5・p169:full-page:a0:result0:r5:w1・p170:full-page:a0:result0:r5・p170:full-page:a0:result0:r5:w1・p171:full-page:a0:result0:r5・p171:full-page:a0:result0:r5:w1・p172:full-page:a0:result0:r5・p172:full-page:a0:result0:r5:w1・p173:full-page:a0:result0:r5・p173:full-page:a0:result0:r5:w1・p174:full-page:a0:result0:r5・p174:full-page:a0:result0:r5:w1・p175:full-page:a0:result0:r5・p175:full-page:a0:result0:r5:w1・p176:full-page:a0:result0:r5・p176:full-page:a0:result0:r5:w1・p177:full-page:a0:result0:r5・p177:full-page:a0:result0:r5:w1・p178:full-page:a0:result0:r5・p178:full-page:a0:result0:r5:w1・p179:full-page:a0:result0:r5・p179:full-page:a0:result0:r5:w1・p180:full-page:a0:result0:r5・p180:full-page:a0:result0:r5:w1・p181:full-page:a0:result0:r5・p181:full-page:a0:result0:r5:w1・p182:full-page:a0:result0:r5・p182:full-page:a0:result0:r5:w1・p183:full-page:a0:result0:r5・p183:full-page:a0:result0:r5:w1・p184:full-page:a0:result0:r5・p184:full-page:a0:result0:r5:w1・p185:full-page:a0:result0:r5・p185:full-page:a0:result0:r5:w1・p186:full-page:a0:result0:r5・p186:full-page:a0:result0:r5:w1・p187:full-page:a0:result0:r5・p187:full-page:a0:result0:r5:w1・p188:full-page:a0:result0:r5・p188:full-page:a0:result0:r5:w1・p189:full-page:a0:result0:r5・p189:full-page:a0:result0:r5:w1・p190:full-page:a0:result0:r5・p190:full-page:a0:result0:r5:w1・p191:full-page:a0:result0:r5・p191:full-page:a0:result0:r5:w1・p192:full-page:a0:result0:r5・p192:full-page:a0:result0:r5:w1・p193:full-page:a0:result0:r5・p193:full-page:a0:result0:r5:w1・p194:full-page:a0:result0:r5・p194:full-page:a0:result0:r5:w1・p195:full-page:a0:result0:r3・p195:full-page:a0:result0:r3:w1・p196:full-page:a0:result0:r5・p196:full-page:a0:result0:r5:w1・p197:full-page:a0:result0:r5・p197:full-page:a0:result0:r5:w1・p198:full-page:a0:result0:r5・p198:full-page:a0:result0:r5:w1・p199:full-page:a0:result0:r5・p199:full-page:a0:result0:r5:w1・p199:full-page:a0:result0:r136・p199:full-page:a0:result0:r136:w5・p200:full-page:a0:result0:r5・p200:full-page:a0:result0:r5:w1・p201:full-page:a0:result0:r5・p201:full-page:a0:result0:r5:w1・p202:full-page:a0:result0:r5・p202:full-page:a0:result0:r5:w1・p203:full-page:a0:result0:r5・p203:full-page:a0:result0:r5:w1・p204:full-page:a0:result0:r5・p204:full-page:a0:result0:r5:w1・p205:full-page:a0:result0:r5・p205:full-page:a0:result0:r5:w1・p206:full-page:a0:result0:r4・p206:full-page:a0:result0:r4:w1・p207:full-page:a0:result0:r5・p207:full-page:a0:result0:r5:w1・p208:full-page:a0:result0:r5・p208:full-page:a0:result0:r5:w1・p209:full-page:a0:result0:r5・p209:full-page:a0:result0:r5:w1・p210:full-page:a0:result0:r5・p210:full-page:a0:result0:r5:w1・p211:full-page:a0:result0:r5・p211:full-page:a0:result0:r5:w1・p212:full-page:a0:result0:r5・p212:full-page:a0:result0:r5:w1・p213:full-page:a0:result0:r5・p213:full-page:a0:result0:r5:w1・p214:full-page:a0:result0:r5・p214:full-page:a0:result0:r5:w1・p215:full-page:a0:result0:r5・p215:full-page:a0:result0:r5:w1・p216:full-page:a0:result0:r5・p216:full-page:a0:result0:r5:w1・p217:full-page:a0:result0:r5・p217:full-page:a0:result0:r5:w1・p218:full-page:a0:result0:r5・p218:full-page:a0:result0:r5:w1・p219:full-page:a0:result0:r5・p219:full-page:a0:result0:r5:w1・p220:full-page:a0:result0:r5・p220:full-page:a0:result0:r5:w1・p221:full-page:a0:result0:r5・p221:full-page:a0:result0:r5:w1・p222:full-page:a0:result0:r5・p222:full-page:a0:result0:r5:w1・p223:full-page:a0:result0:r5・p223:full-page:a0:result0:r5:w1・p224:full-page:a0:result0:r5・p224:full-page:a0:result0:r5:w1・p225:full-page:a0:result0:r5・p225:full-page:a0:result0:r5:w1・p226:full-page:a0:result0:r5・p226:full-page:a0:result0:r5:w1・p227:full-page:a0:result0:r5・p227:full-page:a0:result0:r5:w1・p228:full-page:a0:result0:r5・p228:full-page:a0:result0:r5:w1・p229:full-page:a0:result0:r5・p229:full-page:a0:result0:r5:w1・p230:full-page:a0:result0:r4・p230:full-page:a0:result0:r4:w1・p231:full-page:a0:result0:r5・p231:full-page:a0:result0:r5:w1・p232:full-page:a0:result0:r5・p232:full-page:a0:result0:r5:w1・p233:full-page:a0:result0:r9・p233:full-page:a0:result0:r9:w1・p234:full-page:a0:result0:r4・p234:full-page:a0:result0:r4:w1・p235:full-page:a0:result0:r5・p235:full-page:a0:result0:r5:w1・p236:full-page:a0:result0:r5・p236:full-page:a0:result0:r5:w1・p237:full-page:a0:result0:r4・p237:full-page:a0:result0:r4:w1・p238:full-page:a0:result0:r5・p238:full-page:a0:result0:r5:w1・p239:full-page:a0:result0:r5・p239:full-page:a0:result0:r5:w1・p240:full-page:a0:result0:r5・p240:full-page:a0:result0:r5:w1・p241:full-page:a0:result0:r5・p241:full-page:a0:result0:r5:w1・p242:full-page:a0:result0:r5・p242:full-page:a0:result0:r5:w1・p243:full-page:a0:result0:r4・p243:full-page:a0:result0:r4:w1・p244:full-page:a0:result0:r5・p244:full-page:a0:result0:r5:w1・p245:full-page:a0:result0:r5・p245:full-page:a0:result0:r5:w1・p246:full-page:a0:result0:r5・p246:full-page:a0:result0:r5:w1・p247:full-page:a0:result0:r5・p247:full-page:a0:result0:r5:w1・p248:full-page:a0:result0:r5・p248:full-page:a0:result0:r5:w1・p249:full-page:a0:result0:r5・p249:full-page:a0:result0:r5:w1・p250:full-page:a0:result0:r5・p250:full-page:a0:result0:r5:w1・p251:full-page:a0:result0:r5・p251:full-page:a0:result0:r5:w1・p252:full-page:a0:result0:r5・p252:full-page:a0:result0:r5:w1・p253:full-page:a0:result0:r5・p253:full-page:a0:result0:r5:w1・p254:full-page:a0:result0:r5・p254:full-page:a0:result0:r5:w1・p255:full-page:a0:result0:r5・p255:full-page:a0:result0:r5:w1・p256:full-page:a0:result0:r9・p256:full-page:a0:result0:r9:w1・p257:full-page:a0:result0:r5・p257:full-page:a0:result0:r5:w1・p258:full-page:a0:result0:r4・p258:full-page:a0:result0:r4:w1・p259:full-page:a0:result0:r5・p259:full-page:a0:result0:r5:w1・p260:full-page:a0:result0:r5・p260:full-page:a0:result0:r5:w1・p261:full-page:a0:result0:r5・p261:full-page:a0:result0:r5:w1・p262:full-page:a0:result0:r5・p262:full-page:a0:result0:r5:w1・p263:full-page:a0:result0:r5・p263:full-page:a0:result0:r5:w1・p264:full-page:a0:result0:r5・p264:full-page:a0:result0:r5:w1・p265:full-page:a0:result0:r5・p265:full-page:a0:result0:r5:w1・p266:full-page:a0:result0:r5・p266:full-page:a0:result0:r5:w1・p267:full-page:a0:result0:r5・p267:full-page:a0:result0:r5:w1・p268:full-page:a0:result0:r4・p268:full-page:a0:result0:r4:w1・p269:full-page:a0:result0:r5・p269:full-page:a0:result0:r5:w1・p270:full-page:a0:result0:r5・p270:full-page:a0:result0:r5:w1・p271:full-page:a0:result0:r5・p271:full-page:a0:result0:r5:w1・p272:full-page:a0:result0:r5・p272:full-page:a0:result0:r5:w1・p273:full-page:a0:result0:r5・p273:full-page:a0:result0:r5:w1・p274:full-page:a0:result0:r5・p274:full-page:a0:result0:r5:w1・p275:full-page:a0:result0:r5・p275:full-page:a0:result0:r5:w1・p276:full-page:a0:result0:r5・p276:full-page:a0:result0:r5:w1・p277:full-page:a0:result0:r5・p277:full-page:a0:result0:r5:w1・p278:full-page:a0:result0:r5・p278:full-page:a0:result0:r5:w1・p279:full-page:a0:result0:r5・p279:full-page:a0:result0:r5:w1・p280:full-page:a0:result0:r5・p280:full-page:a0:result0:r5:w1・p281:full-page:a0:result0:r4・p281:full-page:a0:result0:r4:w1・p282:full-page:a0:result0:r4・p282:full-page:a0:result0:r4:w1・p283:full-page:a0:result0:r5・p283:full-page:a0:result0:r5:w1・p284:full-page:a0:result0:r5・p284:full-page:a0:result0:r5:w1・p285:full-page:a0:result0:r5・p285:full-page:a0:result0:r5:w1・p286:full-page:a0:result0:r4・p286:full-page:a0:result0:r4:w1・p287:full-page:a0:result0:r5・p287:full-page:a0:result0:r5:w1・p288:full-page:a0:result0:r5・p288:full-page:a0:result0:r5:w1・p289:full-page:a0:result0:r5・p289:full-page:a0:result0:r5:w1・p290:full-page:a0:result0:r8・p290:full-page:a0:result0:r8:w1・p291:full-page:a0:result0:r5・p291:full-page:a0:result0:r5:w1・p292:full-page:a0:result0:r5・p292:full-page:a0:result0:r5:w1・p293:full-page:a0:result0:r5・p293:full-page:a0:result0:r5:w1・p294:full-page:a0:result0:r5・p294:full-page:a0:result0:r5:w1・p295:full-page:a0:result0:r9・p295:full-page:a0:result0:r9:w1・p296:full-page:a0:result0:r5・p296:full-page:a0:result0:r5:w1・p297:full-page:a0:result0:r5・p297:full-page:a0:result0:r5:w1・p298:full-page:a0:result0:r5・p298:full-page:a0:result0:r5:w1・p299:full-page:a0:result0:r5・p299:full-page:a0:result0:r5:w1・p300:full-page:a0:result0:r5・p300:full-page:a0:result0:r5:w1・p301:full-page:a0:result0:r5・p301:full-page:a0:result0:r5:w1・p302:full-page:a0:result0:r5・p302:full-page:a0:result0:r5:w1・p303:full-page:a0:result0:r5・p303:full-page:a0:result0:r5:w1・p304:full-page:a0:result0:r5・p304:full-page:a0:result0:r5:w1・p305:full-page:a0:result0:r8・p305:full-page:a0:result0:r8:w1・p306:full-page:a0:result0:r4・p306:full-page:a0:result0:r4:w1・p307:full-page:a0:result0:r5・p307:full-page:a0:result0:r5:w1・p308:full-page:a0:result0:r5・p308:full-page:a0:result0:r5:w1・p309:full-page:a0:result0:r5・p309:full-page:a0:result0:r5:w1・p310:full-page:a0:result0:r5・p310:full-page:a0:result0:r5:w1・p311:full-page:a0:result0:r5・p311:full-page:a0:result0:r5:w1・p312:full-page:a0:result0:r5・p312:full-page:a0:result0:r5:w1・p313:full-page:a0:result0:r5・p313:full-page:a0:result0:r5:w1・p314:full-page:a0:result0:r9・p314:full-page:a0:result0:r9:w1・p315:full-page:a0:result0:r5・p315:full-page:a0:result0:r5:w1・p316:full-page:a0:result0:r5・p316:full-page:a0:result0:r5:w1・p317:full-page:a0:result0:r5・p317:full-page:a0:result0:r5:w1・p318:full-page:a0:result0:r5・p318:full-page:a0:result0:r5:w1・p319:full-page:a0:result0:r5・p319:full-page:a0:result0:r5:w1・p320:full-page:a0:result0:r4・p320:full-page:a0:result0:r4:w1・p321:full-page:a0:result0:r9・p321:full-page:a0:result0:r9:w1・p322:full-page:a0:result0:r4・p322:full-page:a0:result0:r4:w1・p323:full-page:a0:result0:r9・p323:full-page:a0:result0:r9:w1）・徵→徴 18 件（p137:full-page:a0:result0:r21・p137:full-page:a0:result0:r21:w1・p137:full-page:a0:result0:r36・p137:full-page:a0:result0:r36:w1・p137:full-page:a0:result0:r109・p137:full-page:a0:result0:r109:w4・p138:full-page:a0:result0:r108・p138:full-page:a0:result0:r108:w0・p139:full-page:a0:result0:r91・p139:full-page:a0:result0:r91:w1・p139:full-page:a0:result0:r101・p139:full-page:a0:result0:r101:w4・p140:full-page:a0:result0:r62・p140:full-page:a0:result0:r62:w1・p140:full-page:a0:result0:r121・p140:full-page:a0:result0:r121:w0・p141:full-page:a0:result0:r78・p141:full-page:a0:result0:r78:w0）・查→査 72 件（p112:full-page:a0:result0:r32・p112:full-page:a0:result0:r32:w1・p126:full-page:a0:result0:r60・p126:full-page:a0:result0:r60:w6・p128:full-page:a0:result0:r44・p128:full-page:a0:result0:r44:w5・p128:full-page:a0:result0:r100・p128:full-page:a0:result0:r100:w8・p133:full-page:a0:result0:r30・p133:full-page:a0:result0:r30:w2・p137:full-page:a0:result0:r96・p137:full-page:a0:result0:r96:w7・p137:full-page:a0:result0:r101・p137:full-page:a0:result0:r101:w7・p145:full-page:a0:result0:r46・p145:full-page:a0:result0:r46:w6・p151:full-page:a0:result0:r88・p151:full-page:a0:result0:r88:w5・p151:full-page:a0:result0:r105・p151:full-page:a0:result0:r105:w7・p154:full-page:a0:result0:r54・p154:full-page:a0:result0:r54:w5・p154:full-page:a0:result0:r55・p154:full-page:a0:result0:r55:w0・p154:full-page:a0:result0:r85・p154:full-page:a0:result0:r85:w0・p157:full-page:a0:result0:r62・p157:full-page:a0:result0:r62:w6・p157:full-page:a0:result0:r82・p157:full-page:a0:result0:r82:w1・p169:full-page:a0:result0:r52・p169:full-page:a0:result0:r52:w1・p177:full-page:a0:result0:r32・p177:full-page:a0:result0:r32:w5・p208:full-page:a0:result0:r29・p208:full-page:a0:result0:r29:w3・p209:full-page:a0:result0:r52・p209:full-page:a0:result0:r52:w3・p221:full-page:a0:result0:r33・p221:full-page:a0:result0:r33:w3・p226:full-page:a0:result0:r57・p226:full-page:a0:result0:r57:w6・p226:full-page:a0:result0:r79・p226:full-page:a0:result0:r79:w3・p229:full-page:a0:result0:r111・p229:full-page:a0:result0:r111:w9・p242:full-page:a0:result0:r70・p242:full-page:a0:result0:r70:w1・p242:full-page:a0:result0:r133・p242:full-page:a0:result0:r133:w1・p244:full-page:a0:result0:r57・p244:full-page:a0:result0:r57:w1・p271:full-page:a0:result0:r25・p271:full-page:a0:result0:r25:w3・p277:full-page:a0:result0:r103・p277:full-page:a0:result0:r103:w4・p279:full-page:a0:result0:r132・p279:full-page:a0:result0:r132:w4・p287:full-page:a0:result0:r90・p287:full-page:a0:result0:r90:w10・p301:full-page:a0:result0:r31・p301:full-page:a0:result0:r31:w5・p302:full-page:a0:result0:r101・p302:full-page:a0:result0:r101:w3・p302:full-page:a0:result0:r112・p302:full-page:a0:result0:r112:w3・p310:full-page:a0:result0:r46・p310:full-page:a0:result0:r46:w1・p310:full-page:a0:result0:r123・p310:full-page:a0:result0:r123:w14・p310:full-page:a0:result0:r128・p310:full-page:a0:result0:r128:w4）・產→産 154 件（p117:full-page:a0:result0:r78・p117:full-page:a0:result0:r78:w1・p137:full-page:a0:result0:r42・p137:full-page:a0:result0:r42:w1・p137:full-page:a0:result0:r96・p137:full-page:a0:result0:r96:w3・p137:full-page:a0:result0:r101・p137:full-page:a0:result0:r101:w3・p139:full-page:a0:result0:r55・p139:full-page:a0:result0:r55:w3・p139:full-page:a0:result0:r60・p139:full-page:a0:result0:r60:w3・p143:full-page:a0:result0:r97・p143:full-page:a0:result0:r97:w1・p150:full-page:a0:result0:r30・p150:full-page:a0:result0:r30:w1・p151:full-page:a0:result0:r99・p151:full-page:a0:result0:r99:w3・p156:full-page:a0:result0:r31・p156:full-page:a0:result0:r31:w1・p157:full-page:a0:result0:r69・p157:full-page:a0:result0:r69:w1・p159:full-page:a0:result0:r94・p159:full-page:a0:result0:r94:w4・p160:full-page:a0:result0:r56・p160:full-page:a0:result0:r56:w1・p165:full-page:a0:result0:r113・p165:full-page:a0:result0:r113:w2・p165:full-page:a0:result0:r117・p165:full-page:a0:result0:r117:w2・p172:full-page:a0:result0:r45・p172:full-page:a0:result0:r45:w4・p175:full-page:a0:result0:r31・p175:full-page:a0:result0:r31:w1・p189:full-page:a0:result0:r45・p189:full-page:a0:result0:r45:w1・p189:full-page:a0:result0:r75・p189:full-page:a0:result0:r75:w1・p213:full-page:a0:result0:r99・p213:full-page:a0:result0:r99:w1・p214:full-page:a0:result0:r21・p214:full-page:a0:result0:r21:w2・p214:full-page:a0:result0:r97・p214:full-page:a0:result0:r97:w0・p215:full-page:a0:result0:r93・p215:full-page:a0:result0:r93:w2・p215:full-page:a0:result0:r105・p215:full-page:a0:result0:r105:w0・p216:full-page:a0:result0:r101・p216:full-page:a0:result0:r101:w2・p217:full-page:a0:result0:r107・p217:full-page:a0:result0:r107:w0・p218:full-page:a0:result0:r98・p218:full-page:a0:result0:r98:w0・p219:full-page:a0:result0:r163・p219:full-page:a0:result0:r163:w0・p219:ink-9:a9:result0:r0・p219:ink-9:a9:result0:r0:w8・p220:full-page:a0:result0:r23・p220:full-page:a0:result0:r23:w5・p220:full-page:a0:result0:r121・p220:full-page:a0:result0:r121:w1・p220:full-page:a0:result0:r125・p220:full-page:a0:result0:r125:w0・p221:full-page:a0:result0:r138・p221:full-page:a0:result0:r138:w3・p222:full-page:a0:result0:r21・p222:full-page:a0:result0:r21:w4・p222:full-page:a0:result0:r91・p222:full-page:a0:result0:r91:w5・p224:full-page:a0:result0:r115・p224:full-page:a0:result0:r115:w12・p224:full-page:a0:result0:r176・p224:full-page:a0:result0:r176:w0・p225:full-page:a0:result0:r51・p225:full-page:a0:result0:r51:w4・p225:full-page:a0:result0:r90・p225:full-page:a0:result0:r90:w2・p225:full-page:a0:result0:r144・p225:full-page:a0:result0:r144:w0・p226:full-page:a0:result0:r45・p226:full-page:a0:result0:r45:w4・p226:full-page:a0:result0:r143・p226:full-page:a0:result0:r143:w0・p227:full-page:a0:result0:r61・p227:full-page:a0:result0:r61:w1・p227:full-page:a0:result0:r107・p227:full-page:a0:result0:r107:w4・p227:full-page:a0:result0:r117・p227:full-page:a0:result0:r117:w0・p228:full-page:a0:result0:r34・p228:full-page:a0:result0:r34:w1・p228:full-page:a0:result0:r102・p228:full-page:a0:result0:r102:w0・p229:full-page:a0:result0:r133・p229:full-page:a0:result0:r133:w0・p230:full-page:a0:result0:r143・p230:full-page:a0:result0:r143:w0・p232:full-page:a0:result0:r118・p232:full-page:a0:result0:r118:w0・p233:full-page:a0:result0:r45・p233:full-page:a0:result0:r45:w0・p234:full-page:a0:result0:r31・p234:full-page:a0:result0:r31:w1・p236:full-page:a0:result0:r47・p236:full-page:a0:result0:r47:w4・p237:full-page:a0:result0:r39・p237:full-page:a0:result0:r39:w4・p241:full-page:a0:result0:r74・p241:full-page:a0:result0:r74:w4・p241:full-page:a0:result0:r121・p241:full-page:a0:result0:r121:w4・p242:full-page:a0:result0:r93・p242:full-page:a0:result0:r93:w4・p243:full-page:a0:result0:r52・p243:full-page:a0:result0:r52:w4・p244:full-page:a0:result0:r87・p244:full-page:a0:result0:r87:w4・p245:full-page:a0:result0:r33・p245:full-page:a0:result0:r33:w1・p248:full-page:a0:result0:r105・p248:full-page:a0:result0:r105:w4・p249:full-page:a0:result0:r102・p249:full-page:a0:result0:r102:w4・p250:full-page:a0:result0:r47・p250:full-page:a0:result0:r47:w4・p250:full-page:a0:result0:r89・p250:full-page:a0:result0:r89:w4・p251:full-page:a0:result0:r44・p251:full-page:a0:result0:r44:w1・p254:full-page:a0:result0:r88・p254:full-page:a0:result0:r88:w4・p261:full-page:a0:result0:r24・p261:full-page:a0:result0:r24:w1・p262:full-page:a0:result0:r59・p262:full-page:a0:result0:r59:w4・p280:full-page:a0:result0:r38・p280:full-page:a0:result0:r38:w1・p282:full-page:a0:result0:r82・p282:full-page:a0:result0:r82:w6・p289:full-page:a0:result0:r88・p289:full-page:a0:result0:r88:w4・p304:full-page:a0:result0:r35・p304:full-page:a0:result0:r35:w1・p304:full-page:a0:result0:r143・p304:full-page:a0:result0:r143:w4・p306:full-page:a0:result0:r45・p306:full-page:a0:result0:r45:w1・p315:full-page:a0:result0:r24・p315:full-page:a0:result0:r24:w7・p316:full-page:a0:result0:r81・p316:full-page:a0:result0:r81:w2・p316:full-page:a0:result0:r93・p316:full-page:a0:result0:r93:w3）・說→説 10 件（p198:full-page:a0:result0:r11・p198:full-page:a0:result0:r11:w0・p219:full-page:a0:result0:r11・p219:full-page:a0:result0:r11:w0・p257:full-page:a0:result0:r11・p257:full-page:a0:result0:r11:w0・p268:full-page:a0:result0:r10・p268:full-page:a0:result0:r10:w0・p305:full-page:a0:result0:r15・p305:full-page:a0:result0:r15:w0）・额→額 2 件（p290:full-page:a0:result0:r5・p290:full-page:a0:result0:r5:w1）・齡→齢 14 件（p131:full-page:a0:result0:r86・p131:full-page:a0:result0:r86:w3・p188:full-page:a0:result0:r54・p188:full-page:a0:result0:r54:w1・p188:full-page:a0:result0:r61・p188:full-page:a0:result0:r61:w3・p188:full-page:a0:result0:r122・p188:full-page:a0:result0:r122:w1・p188:full-page:a0:result0:r131・p188:full-page:a0:result0:r131:w3・p188:full-page:a0:result0:r168・p188:full-page:a0:result0:r168:w3・p201:full-page:a0:result0:r107・p201:full-page:a0:result0:r107:w3）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "dc1b18018da75203b4db111e4ec9659e4a97af77e21234855a4c34ad115e682a",
+          "bytes": 212094
+        },
+        "row_count": 6580
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "5f8ca08a8e350d17fc71dc78dc22c4de3e8dd8ea2d7240213dc46e034a1c4935",
+          "bytes": 182817
+        },
+        "row_count": 7368
+      }
+    },
+    {
+      "table_id": "ward-fiscal-adjustment-initial",
+      "conversion_id": "ward-fiscal-adjustment",
+      "input_fingerprint": "7cf8789e7c8a56abea8e161bc9e7575b205cfb30dc05f2309dd736a2ed2d9925",
+      "account": "特別区財政調整会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 1,360,389,000 と印字の「歳出合計」1,360,389,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p6:full-page:a0:result0:r7・p6:full-page:a0:result0:r7:w1）・增→増 2 件（p6:full-page:a0:result0:r6・p6:full-page:a0:result0:r6:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/ward-fiscal-adjustment-initial-nodes.parquet",
+          "sha256": "7e53a9c74ef849001402ff65dba45862753c922f339e1ed9b2b3e31ec7ab1854",
+          "bytes": 2548
+        },
+        "row_count": 6
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/ward-fiscal-adjustment-initial-amounts.parquet",
+          "sha256": "a6a03730aba3522f8d34ce27ebc807dea788805be71af06a424cb7008da28bda",
+          "bytes": 2216
+        },
+        "row_count": 14
+      }
+    },
+    {
+      "table_id": "local-consumption-tax-settlement-initial",
+      "conversion_id": "local-consumption-tax-settlement",
+      "input_fingerprint": "34cf702052d7b7b9660a09992e360e5101188d3755dae023d51eb383f3d7d5e2",
+      "account": "地方消費税清算会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 1頁・carried 1頁 から決めた。款の和 3,193,126,000 と印字の「歳出合計」3,193,126,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p11:full-page:a0:result0:r10・p11:full-page:a0:result0:r10:w1）・增→増 4 件（p10:full-page:a0:result0:r6・p10:full-page:a0:result0:r6:w1・p11:full-page:a0:result0:r9・p11:full-page:a0:result0:r9:w1）・徵→徴 4 件（p10:full-page:a0:result0:r55・p10:full-page:a0:result0:r55:w5・p10:full-page:a0:result0:r56・p10:full-page:a0:result0:r56:w0）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/local-consumption-tax-settlement-initial-nodes.parquet",
+          "sha256": "aa4e279fb4964e0b46e3163e397507086c37e834fd05ce3108ed1ba1c795ccbb",
+          "bytes": 2699
+        },
+        "row_count": 8
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/local-consumption-tax-settlement-initial-amounts.parquet",
+          "sha256": "58f6b33efe8a34354bb0470c32c54788a880dcc19ebf765de2a7e06198de2f21",
+          "bytes": 2413
+        },
+        "row_count": 18
+      }
+    },
+    {
+      "table_id": "ogasawara-reconstruction-fund-initial",
+      "conversion_id": "ogasawara-reconstruction-fund",
+      "input_fingerprint": "5a587537534bab2d94d0d29cbb039014ce962fa421542a34ff3cbfc611956e74",
+      "account": "小笠原諸島生活再建資金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は default 1頁 から決めた。款の和 372,000 と印字の「歳出合計」372,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 2 件（p15:full-page:a0:result0:r6・p15:full-page:a0:result0:r6:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/ogasawara-reconstruction-fund-initial-nodes.parquet",
+          "sha256": "f9ad5ce0ea6d2230daec087382021d85d9d2db93461fd79e388d8125824e9e6e",
+          "bytes": 2198
+        },
+        "row_count": 4
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/ogasawara-reconstruction-fund-initial-amounts.parquet",
+          "sha256": "d42ce9da1234b01ae9a0b2a898361428e64102ea780be95a1f3ad1d2959fc909",
+          "bytes": 2126
+        },
+        "row_count": 10
+      }
+    },
+    {
+      "table_id": "national-health-insurance-initial",
+      "conversion_id": "national-health-insurance",
+      "input_fingerprint": "97b424a52f50dc7dd31b2989a8e328e41f106c1f895e1d46a840632924c2214e",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 3頁・carried 1頁・default 1頁 から決めた。款の和 1,090,350,000 と印字の「歳出合計」1,090,350,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 6 件（p22:full-page:a0:result0:r7・p22:full-page:a0:result0:r7:w1・p23:full-page:a0:result0:r6・p23:full-page:a0:result0:r6:w1・p25:full-page:a0:result0:r6・p25:full-page:a0:result0:r6:w1）・别→別 2 件（p23:full-page:a0:result0:r109・p23:full-page:a0:result0:r109:w3）・增→増 10 件（p22:full-page:a0:result0:r6・p22:full-page:a0:result0:r6:w1・p23:full-page:a0:result0:r5・p23:full-page:a0:result0:r5:w1・p24:full-page:a0:result0:r5・p24:full-page:a0:result0:r5:w1・p25:full-page:a0:result0:r5・p25:full-page:a0:result0:r5:w1・p26:full-page:a0:result0:r5・p26:full-page:a0:result0:r5:w1）・產→産 6 件（p22:full-page:a0:result0:r35・p22:full-page:a0:result0:r35:w1・p24:full-page:a0:result0:r53・p24:full-page:a0:result0:r53:w1・p26:full-page:a0:result0:r59・p26:full-page:a0:result0:r59:w1）・齡→齢 20 件（p22:full-page:a0:result0:r30・p22:full-page:a0:result0:r30:w3・p22:full-page:a0:result0:r53・p22:full-page:a0:result0:r53:w3・p23:full-page:a0:result0:r111・p23:full-page:a0:result0:r111:w3・p24:full-page:a0:result0:r29・p24:full-page:a0:result0:r29:w5・p24:full-page:a0:result0:r45・p24:full-page:a0:result0:r45:w3・p24:full-page:a0:result0:r49・p24:full-page:a0:result0:r49:w3・p24:full-page:a0:result0:r59・p24:full-page:a0:result0:r59:w5・p24:full-page:a0:result0:r74・p24:full-page:a0:result0:r74:w3・p24:full-page:a0:result0:r77・p24:full-page:a0:result0:r77:w3・p26:full-page:a0:result0:r54・p26:full-page:a0:result0:r54:w3）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/national-health-insurance-initial-nodes.parquet",
+          "sha256": "876494bae27bb54a4b2914284f96dc0b9233121d9abbe059914988ba5f3d3237",
+          "bytes": 6186
+        },
+        "row_count": 65
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/national-health-insurance-initial-amounts.parquet",
+          "sha256": "8f876d14e2c7ccbfabf74ba84a784ab266d0d70df7122ce643fe2e2d72772231",
+          "bytes": 5435
+        },
+        "row_count": 93
+      }
+    },
+    {
+      "table_id": "single-parent-welfare-loan-initial",
+      "conversion_id": "single-parent-welfare-loan",
+      "input_fingerprint": "e53928eca44557d24c96260f98c27a0b67d76bbb47eaf72721b18f617a45400b",
+      "account": "母子父子福祉貸付資金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 1頁・default 1頁 から決めた。款の和 2,897,000 と印字の「歳出合計」2,897,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p38:full-page:a0:result0:r10・p38:full-page:a0:result0:r10:w1）・增→増 4 件（p37:full-page:a0:result0:r6・p37:full-page:a0:result0:r6:w1・p38:full-page:a0:result0:r9・p38:full-page:a0:result0:r9:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/single-parent-welfare-loan-initial-nodes.parquet",
+          "sha256": "7de5bf2b5d63c6ead3395aa44eb0704d5ffcc4ca0b2fe0070a7ec8da78a7c140",
+          "bytes": 4342
+        },
+        "row_count": 32
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/single-parent-welfare-loan-initial-amounts.parquet",
+          "sha256": "46d16bea57c52d34b97361a48931a593ed8d203e67ab3907ab4d296c7fef8bfc",
+          "bytes": 3565
+        },
+        "row_count": 40
+      }
+    },
+    {
+      "table_id": "disability-support-pension-initial",
+      "conversion_id": "disability-support-pension",
+      "input_fingerprint": "105d14ec598aff7e362e2b0f3cc5f07332b471674e063749a718bd1a6e06a163",
+      "account": "心身障害者扶養年金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 3,078,000 と印字の「歳出合計」3,078,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 2 件（p43:full-page:a0:result0:r6・p43:full-page:a0:result0:r6:w1）・產→産 2 件（p43:full-page:a0:result0:r49・p43:full-page:a0:result0:r49:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/disability-support-pension-initial-nodes.parquet",
+          "sha256": "dcf7afed44f8ce40cf2dfda1e533c25b8abc72ff04fd2899fa961a9cf903cb3f",
+          "bytes": 3052
+        },
+        "row_count": 14
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/disability-support-pension-initial-amounts.parquet",
+          "sha256": "4b27c17326ef28f5572a26e442eedb8c41f138b21c9f529626a1592a36385738",
+          "bytes": 2534
+        },
+        "row_count": 20
+      }
+    },
+    {
+      "table_id": "metropolitan-hospital-loan-initial",
+      "conversion_id": "metropolitan-hospital-loan",
+      "input_fingerprint": "ab09cf6edceff6867d8c907ce18cb360f4dc4974191157c90ef47c79d1688eb0",
+      "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。款の和 36,871,000 と印字の「歳出合計」36,871,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 4 件（p47:full-page:a0:result0:r7・p47:full-page:a0:result0:r7:w1・p48:full-page:a0:result0:r4・p48:full-page:a0:result0:r4:w1）・增→増 4 件（p47:full-page:a0:result0:r6・p47:full-page:a0:result0:r6:w1・p48:full-page:a0:result0:r3・p48:full-page:a0:result0:r3:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/metropolitan-hospital-loan-initial-nodes.parquet",
+          "sha256": "1881ac66ec7d232307c2f72552c8e74c44bf88fff733f28d2cf98301ab4bb669",
+          "bytes": 4493
+        },
+        "row_count": 34
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/metropolitan-hospital-loan-initial-amounts.parquet",
+          "sha256": "453f49a5cfe24842770608db592230690af06a574bef8db61544cb0beb9eb3da",
+          "bytes": 3704
+        },
+        "row_count": 46
+      }
+    },
+    {
+      "table_id": "sme-equipment-fund-initial",
+      "conversion_id": "sme-equipment-fund",
+      "input_fingerprint": "af66782acc6cdf34bfed036f15a6ac418509dc69d19a99da8bbb1f11131811c5",
+      "account": "中小企業設備導入等資金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。款の和 367,000 と印字の「歳出合計」367,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p60:full-page:a0:result0:r4・p60:full-page:a0:result0:r4:w1）・增→増 4 件（p59:full-page:a0:result0:r6・p59:full-page:a0:result0:r6:w1・p60:full-page:a0:result0:r3・p60:full-page:a0:result0:r3:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/sme-equipment-fund-initial-nodes.parquet",
+          "sha256": "f9c12e959d2ddcb9b6dd834f39ccc0c57a56c67777a5bc787c0772c09e435316",
+          "bytes": 4684
+        },
+        "row_count": 37
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/sme-equipment-fund-initial-amounts.parquet",
+          "sha256": "a6c0272fabe382682851fb24c9705e38f73d8f609c1b1988ec0e9db276f44c8a",
+          "bytes": 3744
+        },
+        "row_count": 47
+      }
+    },
+    {
+      "table_id": "forestry-improvement-fund-initial",
+      "conversion_id": "forestry-improvement-fund",
+      "input_fingerprint": "03571948a6a04e20c8f4b9747d1a0f4c5e7fd8436e9f1accd39c4a79e7b9fcf7",
+      "account": "林業・木材産業改善資金助成会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は default 1頁 から決めた。款の和 51,000 と印字の「歳出合計」51,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 2 件（p65:full-page:a0:result0:r87・p65:full-page:a0:result0:r87:w2）・减→減 2 件（p65:full-page:a0:result0:r7・p65:full-page:a0:result0:r7:w1）・增→増 2 件（p65:full-page:a0:result0:r6・p65:full-page:a0:result0:r6:w1）・產→産 2 件（p65:full-page:a0:result0:r87・p65:full-page:a0:result0:r87:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/forestry-improvement-fund-initial-nodes.parquet",
+          "sha256": "caed3c77b9a7268a3aa23788609934cf43c0a2641881a17d1a301869d201d72e",
+          "bytes": 2985
+        },
+        "row_count": 13
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/forestry-improvement-fund-initial-amounts.parquet",
+          "sha256": "a29deef143e2559b1b6730393c0eb5c3a0b707b5a36d61e8c95bfb78e134f72a",
+          "bytes": 2397
+        },
+        "row_count": 19
+      }
+    },
+    {
+      "table_id": "coastal-fishery-improvement-fund-initial",
+      "conversion_id": "coastal-fishery-improvement-fund",
+      "input_fingerprint": "0a14fcbb38326c7a17809dc8509afd380ac41b7b8a9544cabac8006c89b9a20d",
+      "account": "沿岸漁業改善資金助成会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 48,000 と印字の「歳出合計」48,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 增→増 2 件（p69:full-page:a0:result0:r6・p69:full-page:a0:result0:r6:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/coastal-fishery-improvement-fund-initial-nodes.parquet",
+          "sha256": "7bc42a730960cc79f9c210f492166bbf969e8b0d1c80ca17f0dddbe17706fb29",
+          "bytes": 2973
+        },
+        "row_count": 13
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/coastal-fishery-improvement-fund-initial-amounts.parquet",
+          "sha256": "80524ac4464a6d04d576c1e03cb82c60e7f233af9be678ce1e2291cbd790c81a",
+          "bytes": 2461
+        },
+        "row_count": 19
+      }
+    },
+    {
+      "table_id": "slaughterhouse-initial",
+      "conversion_id": "slaughterhouse",
+      "input_fingerprint": "03dddc62eb106fd96d8f9ff244ddb73b01ac971db5f573391fb5143872fb7ee5",
+      "account": "と場会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 1頁・carried 2頁 から決めた。款の和 7,791,000 と印字の「歳出合計」7,791,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p76:full-page:a0:result0:r4・p76:full-page:a0:result0:r4:w1）・增→増 6 件（p74:full-page:a0:result0:r6・p74:full-page:a0:result0:r6:w1・p75:full-page:a0:result0:r4・p75:full-page:a0:result0:r4:w1・p76:full-page:a0:result0:r3・p76:full-page:a0:result0:r3:w1）・說→説 2 件（p76:full-page:a0:result0:r10・p76:full-page:a0:result0:r10:w0）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/slaughterhouse-initial-nodes.parquet",
+          "sha256": "4a3484999bf6c17647d506828d1a3ff2e9a088b2a6882c5c7a7a9570d5d77896",
+          "bytes": 5598
+        },
+        "row_count": 58
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/slaughterhouse-initial-amounts.parquet",
+          "sha256": "7ecfc8dd4fc75beed301f30499e2eeffedf14f716d6b22cabb7bb2d303df9e9c",
+          "bytes": 4681
+        },
+        "row_count": 70
+      }
+    },
+    {
+      "table_id": "metropolitan-housing-initial",
+      "conversion_id": "metropolitan-housing",
+      "input_fingerprint": "04a8bab5657b88bfa17810ecf3a373d33b0da8e3318e808b3cdc8df3e243934a",
+      "account": "都営住宅等事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 3頁・carried 2頁 から決めた。款の和 194,971,000 と印字の「歳出合計」194,971,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 6 件（p91:full-page:a0:result0:r7・p91:full-page:a0:result0:r7:w1・p92:full-page:a0:result0:r6・p92:full-page:a0:result0:r6:w1・p94:full-page:a0:result0:r6・p94:full-page:a0:result0:r6:w1）・增→増 10 件（p91:full-page:a0:result0:r6・p91:full-page:a0:result0:r6:w1・p92:full-page:a0:result0:r5・p92:full-page:a0:result0:r5:w1・p93:full-page:a0:result0:r5・p93:full-page:a0:result0:r5:w1・p94:full-page:a0:result0:r5・p94:full-page:a0:result0:r5:w1・p95:full-page:a0:result0:r9・p95:full-page:a0:result0:r9:w1）・產→産 6 件（p92:full-page:a0:result0:r127・p92:full-page:a0:result0:r127:w1・p93:full-page:a0:result0:r75・p93:full-page:a0:result0:r75:w4・p94:full-page:a0:result0:r44・p94:full-page:a0:result0:r44:w4）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/metropolitan-housing-initial-nodes.parquet",
+          "sha256": "d11d81082b5199aec672dce0cf9de45e7e05b1d7f1b85961de0d2a0e7254005a",
+          "bytes": 8165
+        },
+        "row_count": 110
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/metropolitan-housing-initial-amounts.parquet",
+          "sha256": "9d3c24e0f3aeab6bbe5bd428a5ec72afb2efd4da3e028a1b86834bbc007d9c03",
+          "bytes": 6817
+        },
+        "row_count": 124
+      }
+    },
+    {
+      "table_id": "metropolitan-housing-deposit-initial",
+      "conversion_id": "metropolitan-housing-deposit",
+      "input_fingerprint": "cce268a54127413e6232ef49708c0a1258a8817556522b73f06a1fb59bafaf14",
+      "account": "都営住宅等保証金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 3頁 から決めた。款の和 2,579,000 と印字の「歳出合計」2,579,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p110:full-page:a0:result0:r6・p110:full-page:a0:result0:r6:w1）・增→増 6 件（p109:full-page:a0:result0:r6・p109:full-page:a0:result0:r6:w1・p110:full-page:a0:result0:r5・p110:full-page:a0:result0:r5:w1・p111:full-page:a0:result0:r4・p111:full-page:a0:result0:r4:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/metropolitan-housing-deposit-initial-nodes.parquet",
+          "sha256": "f48c81b158c2decef4d11ff38e9140c78f5f0e17418ab22c4dd46ab85824af53",
+          "bytes": 3446
+        },
+        "row_count": 15
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/metropolitan-housing-deposit-initial-amounts.parquet",
+          "sha256": "388f2ec1ed8cb33e34814fa2d1cdc6b6f87417e872b4b05e9d7bb79250998c58",
+          "bytes": 3088
+        },
+        "row_count": 35
+      }
+    },
+    {
+      "table_id": "urban-development-fund-initial",
+      "conversion_id": "urban-development-fund",
+      "input_fingerprint": "721689118ffe833f7eff1ef3f3388882bc8a8d639e39def83e2ac60c575f141b",
+      "account": "都市開発資金会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。款の和 3,352,000 と印字の「歳出合計」3,352,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 4 件（p116:full-page:a0:result0:r7・p116:full-page:a0:result0:r7:w1・p117:full-page:a0:result0:r6・p117:full-page:a0:result0:r6:w1）・增→増 4 件（p116:full-page:a0:result0:r6・p116:full-page:a0:result0:r6:w1・p117:full-page:a0:result0:r5・p117:full-page:a0:result0:r5:w1）・產→産 4 件（p116:full-page:a0:result0:r25・p116:full-page:a0:result0:r25:w4・p116:full-page:a0:result0:r82・p116:full-page:a0:result0:r82:w4）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/urban-development-fund-initial-nodes.parquet",
+          "sha256": "356e7703a45ba2841865d5cc8eb42f35b68e27fd54b96b4e8a8cc1bdee2e86e4",
+          "bytes": 3730
+        },
+        "row_count": 20
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/urban-development-fund-initial-amounts.parquet",
+          "sha256": "541250afc4951a36f80c6eca3ee845132b0bced9f4e3ebcf46fc9c52baae0ce0",
+          "bytes": 3039
+        },
+        "row_count": 30
+      }
+    },
+    {
+      "table_id": "land-acquisition-initial",
+      "conversion_id": "land-acquisition",
+      "input_fingerprint": "68c12d3cbf67c678d7ac512e0fa55697afbece5b908a85507082ddbb4a70fbe7",
+      "account": "用地会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。款の和 12,068,000 と印字の「歳出合計」12,068,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p124:full-page:a0:result0:r4・p124:full-page:a0:result0:r4:w1）・增→増 4 件（p123:full-page:a0:result0:r6・p123:full-page:a0:result0:r6:w1・p124:full-page:a0:result0:r3・p124:full-page:a0:result0:r3:w1）・產→産 4 件（p123:full-page:a0:result0:r39・p123:full-page:a0:result0:r39:w7・p124:full-page:a0:result0:r23・p124:full-page:a0:result0:r23:w4）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/land-acquisition-initial-nodes.parquet",
+          "sha256": "7f7971f7840c064964e01bae3c5ecdfbd8ddcea4721b4c2606a2a87b22ee66b4",
+          "bytes": 3934
+        },
+        "row_count": 24
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/land-acquisition-initial-amounts.parquet",
+          "sha256": "46a73a2f9e87be32bfa5f0ed71e4e42e8580ea3b9811c40fd142ca39bdf07799",
+          "bytes": 3120
+        },
+        "row_count": 30
+      }
+    },
+    {
+      "table_id": "public-debt-initial",
+      "conversion_id": "public-debt",
+      "input_fingerprint": "77420cb2e60b6d081502e2aeb203bb5fe81d1555bd25b133070bf6b5649bf52f",
+      "account": "公債費会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 1頁・carried 1頁・default 1頁 から決めた。款の和 1,074,557,000 と印字の「歳出合計」1,074,557,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p131:full-page:a0:result0:r7・p131:full-page:a0:result0:r7:w1）・增→増 6 件（p131:full-page:a0:result0:r6・p131:full-page:a0:result0:r6:w1・p132:full-page:a0:result0:r4・p132:full-page:a0:result0:r4:w1・p133:full-page:a0:result0:r4・p133:full-page:a0:result0:r4:w1）・產→産 4 件（p131:full-page:a0:result0:r25・p131:full-page:a0:result0:r25:w7・p132:full-page:a0:result0:r58・p132:full-page:a0:result0:r58:w7）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/public-debt-initial-nodes.parquet",
+          "sha256": "9d43095e220590d8de31120142e684d13bdf33ab3c405595f9f0df7d2e7b0068",
+          "bytes": 6003
+        },
+        "row_count": 64
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/public-debt-initial-amounts.parquet",
+          "sha256": "5800ab565452da9a4f4cacf161e2252423cf453b2dffbf8ac536df666e59416a",
+          "bytes": 5162
+        },
+        "row_count": 78
+      }
+    },
+    {
+      "table_id": "waterfront-infrastructure-initial",
+      "conversion_id": "waterfront-infrastructure",
+      "input_fingerprint": "3e0bdcfd721a9bd1328ca52bcf3e6310db6f4e617ee3e6aa82ec566df34f81c2",
+      "account": "臨海都市基盤整備事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は printed 3頁 から決めた。款の和 803,000 と印字の「歳出合計」803,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p141:full-page:a0:result0:r10・p141:full-page:a0:result0:r10:w1）・增→増 6 件（p139:full-page:a0:result0:r6・p139:full-page:a0:result0:r6:w1・p140:full-page:a0:result0:r5・p140:full-page:a0:result0:r5:w1・p141:full-page:a0:result0:r9・p141:full-page:a0:result0:r9:w1）・說→説 2 件（p141:full-page:a0:result0:r15・p141:full-page:a0:result0:r15:w0）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/waterfront-infrastructure-initial-nodes.parquet",
+          "sha256": "8e8fee4d0bfa7598e5eb4b4826f8a074a2e5a5d1ed8656af0cacccabcd74df41",
+          "bytes": 5264
+        },
+        "row_count": 50
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/waterfront-infrastructure-initial-amounts.parquet",
+          "sha256": "5c61ea2d3eec026ff36759c94a0085432f4fb5efc99fdfb4e30790b4db1ed5ab",
+          "bytes": 4317
+        },
+        "row_count": 58
+      }
+    },
+    {
+      "table_id": "industrial-water-settlement-initial",
+      "conversion_id": "industrial-water-settlement",
+      "input_fingerprint": "b7679198e970a1dab1a2d3271b30b5445055e74e5b5dd7f7a182ffe5c1eb4cd4",
+      "account": "工業用水道事業清算会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
+        "金額の単位は default 1頁 から決めた。款の和 8,104,000 と印字の「歳出合計」8,104,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p152:full-page:a0:result0:r7・p152:full-page:a0:result0:r7:w1）・增→増 2 件（p152:full-page:a0:result0:r6・p152:full-page:a0:result0:r6:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/industrial-water-settlement-initial-nodes.parquet",
+          "sha256": "aac75ef59958ecb8a79190e00eca148949c5ac90dead0779f59aa7a208b1aa9e",
+          "bytes": 2920
+        },
+        "row_count": 11
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/130001/2026/initial/expenditure/industrial-water-settlement-initial-amounts.parquet",
+          "sha256": "5e279383461dce746cb40935dc4b0f44425f9d3ecace6eb5c426bd9d96b2886a",
+          "bytes": 2445
+        },
+        "row_count": 17
+      }
+    }
+  ]
+}
