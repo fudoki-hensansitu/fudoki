@@ -85,8 +85,10 @@
                 "pattern": "shape",
                 "options": {
                   "bare_amounts": true,
-                  "yen_marked": true,
-                  "yen_notes": true
+                  "note_kinds": {
+                    "識見者": "基準額",
+                    "議会選出者": "基準額"
+                  }
                 },
                 "quirks": {
                   "full_width_numbers": true
@@ -386,28 +388,28 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "f941eea6fe415521f0718b5b0013a53fa4cac4e36250735c2845236cbb44e1e3",
+      "input_fingerprint": "273dd3dc8b12fa0413d0dcd6da4afd2fa1b40201e161066a90595e444f0d3f9c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
         "金額の単位は column mark 59頁・carried 7頁 から決めた。款の和 136,150,789（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 1 件（積算 1）を注記軸に置いた。"
+        "金額の注記 1 件（基準額 1）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131164/2023/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "df690fda7295aa89f7494a14bb839e89d740f2f6b53b42ab725dafda163c6215",
-          "bytes": 76235
+          "sha256": "60294132761e101716d9385fb7f6e1121c00905fc0143e93e0cb86aa44f67bfc",
+          "bytes": 76250
         },
         "row_count": 2479
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131164/2023/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "843e21faeb47168330324f000e9ef34edbb87a32055708d5486e27488db2413b",
-          "bytes": 54300
+          "sha256": "97d49c1cd1ea6fd4b77030056abdef5962995658d51702026290debe0924c9d4",
+          "bytes": 54296
         },
         "row_count": 2589
       }
