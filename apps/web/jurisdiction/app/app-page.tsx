@@ -104,7 +104,7 @@ const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
 type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
-type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected) => void; selected: Selected; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void }
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected | ((s: Selected) => Selected)) => void; selected: Selected; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void }
 /** 文脈に添える、開いている事業の評価シート（評価は過去の年度にしか無いので全年度の新しい順）・施策の数の上限（文脈の長さの上限に収める） */
 const DETAIL_SOURCES = 3
 /** 詳細に開いているものを、アシスタントに渡す文脈の行にする。出典の origin_id と頁・科目の ID を添え、AI が検索し直さずに読めるようにする */
@@ -471,6 +471,11 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     }
   }, [setsuKey])
   const current = React.useMemo(() => (shown && setsu?.key === setsuKey ? withSetsu(shown, setsu.byMoku) : shown), [shown, setsu, setsuKey])
+  // 節を読む前に開いた目の詳細にも、読み終えた節を足す
+  React.useEffect(() => {
+    if (setsu?.key !== setsuKey) return
+    select((s) => (s?.kind === 'moku' && s.phase === phase && !s.moku.setsu.length && setsu.byMoku[s.id] ? { ...s, moku: { ...s.moku, setsu: setsu.byMoku[s.id]! } } : s))
+  }, [setsu, setsuKey])
   const drills = current?.drills
   const flows = React.useMemo(() => (current && view === 'cofog' ? cofogFlowOfDrills(current.drills, current.loose) : current?.drills), [current, view])
   const router = useRouter()
@@ -519,7 +524,7 @@ function Overview({ go }: { go: Go }) {
       <section>
         <SectionHead title="お金のかかる事業"><MoreLink onClick={() => go('projects', { filter: 'all' })} /></SectionHead>
         {/* 事業は最初の画面の下にあるので、頁を描いた後に読む（読み終えるまで骨組み） */}
-        {v.pending && v.hasProjects === undefined ? <RowsSkeleton /> : <Rows>{v.top.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>}
+        {v.hasProjects === undefined ? v.failed ? <LoadFailed /> : <RowsSkeleton /> : <Rows>{v.top.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>}
       </section>
 
       {v.sheets.length ? (
@@ -580,7 +585,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
       </ToggleGroup>
       {filter === 'eval' ? <EvalList grade={grade} setGrade={setGrade} field={field} q={q} /> : <>
       {v.hasProjects === undefined ? (
-        <RowsSkeleton />
+        v.failed ? <LoadFailed /> : <RowsSkeleton />
       ) : !v.hasProjects ? (
         // 目には始めた年度が無いので、新しく始める事業は施策（下）だけで出す
         filter === 'all' ? (
@@ -902,7 +907,7 @@ function FieldPage({ id }: { id: string }) {
         </DetailSection>
       ) : null}
       {v.hasProjects === undefined ? (
-        <DetailSection icon={ListBulletsIcon} title="事業"><RowsSkeleton /></DetailSection>
+        <DetailSection icon={ListBulletsIcon} title="事業">{v.failed ? <LoadFailed /> : <RowsSkeleton />}</DetailSection>
       ) : v.hasProjects ? (
         <ClientSuspense fallback={<DetailSection icon={ListBulletsIcon} title="事業"><RowsSkeleton /></DetailSection>} ready={!!res.peek(listKey(v.query('all', { subjects: v.subjectsOf(f.id) })))}>
           <FieldProjects id={f.id} />
@@ -1059,18 +1064,19 @@ const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] 
 export function AppPage({ res, data, snapshot: base, flow, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; sitekey: string; initialField?: string; initialTab?: TabKey }) {
   // 最初の画面に要らない分（施策・評価シート・お金のかかる事業）は、描いた後に読んで足す。年度ごとに置き場に残し、戻ったときは読み直さない
   const extrasKey = `extras:${base.code}:${base.year}`
-  const [extras, setExtras] = React.useState<{ key: string; x: YearExtras }>()
+  const [extras, setExtras] = React.useState<{ key: string; x: YearExtras | typeof FAILED }>()
   React.useEffect(() => {
     if (!base.pending) return
     let live = true
     void res.get(extrasKey, () => yearExtras(base.code, base.year)).then((x) => {
-      if (live && x !== FAILED) setExtras({ key: extrasKey, x })
+      if (live) setExtras({ key: extrasKey, x })
     })
     return () => {
       live = false
     }
   }, [extrasKey, base.pending])
-  const d = React.useMemo(() => (base.pending && extras?.key === extrasKey ? withExtras(base, extras.x) : base), [base, extras, extrasKey])
+  // 読めなかったら、読み込み中のまま止めずに読めなかったと出す
+  const d = React.useMemo(() => (base.pending && extras?.key === extrasKey ? (extras.x === FAILED ? { ...base, failed: true as const } : withExtras(base, extras.x)) : base), [base, extras, extrasKey])
   const vision = data.vision?.text
   const emblem = data.emblem?.src ?? null
   const years = React.useMemo(() => appPageYears(data), [data])
@@ -1197,7 +1203,7 @@ export function AppPage({ res, data, snapshot: base, flow, sitekey, initialField
   // 事業評価は評価した事業を行った年度にだけある。評価の無い年度へ移ったら絞り込みを戻す
   const hasEval = !!v?.sheets.length
   React.useEffect(() => {
-    if (v && !hasEval && filter === 'eval') setFilter('all')
+    if (v && !v.pending && !hasEval && filter === 'eval') setFilter('all')
   }, [v, hasEval, filter])
   const index = Math.max(0, tabs.findIndex((t) => t.key === tab))
   // 始めの位置は Carousel を置いたときだけ渡す。タブのたびに変わると embla が作り直されて、滑らずに飛ぶ

@@ -48,6 +48,8 @@ export type Snapshot = {
   lists: Record<string, ListPage>
   /** 施策・評価シートなど、最初の画面に要らない分（YearExtras）をまだ持たない */
   pending?: true
+  /** 残り（YearExtras）を読めなかった */
+  failed?: true
 }
 
 /** 最初の画面に要らない、1年度の残りのデータ。施策・評価シートと、事業の一覧（すべて）の1頁目。
@@ -63,7 +65,9 @@ export type YearExtras = {
 function fieldResolver(y: YearData) {
   const byId = new Map(Object.entries(y.fieldSubjects).flatMap(([f, ids]) => ids.map((id) => [id, f] as const)))
   const byPath = new Map<string, string>(y.kan.flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => [`${k.name}/${o.name}/${m.name}`, m.field] as const))))
-  return (subject: string | null, path: string[] | null) => (subject ? byId.get(subject) : undefined) ?? (path ? byPath.get(path.join('/')) : undefined) ?? OTHER_FRAME.id
+  // 項に属さない目は款・項の名前を持たないので、目の名前で引く
+  const byLoose = new Map<string, string>(y.looseMoku.map((m) => [m.name, m.field] as const))
+  return (subject: string | null, path: string[] | null) => (subject ? byId.get(subject) : undefined) ?? (path ? (byPath.get(path.join('/')) ?? byLoose.get(path.at(-1) ?? '')) : undefined) ?? OTHER_FRAME.id
 }
 
 /** 頁のデータに残り（YearExtras）を足す */
@@ -133,6 +137,8 @@ export function yearView(d: Snapshot) {
     hasProjects: d.hasProjects,
     /** 施策・評価シートなどをまだ読んでいない */
     pending: !!d.pending,
+    /** 施策・評価シートなどを読めなかった */
+    failed: !!d.failed,
     /** お金のかかる事業（1頁目） */
     top,
     mokuRows,
