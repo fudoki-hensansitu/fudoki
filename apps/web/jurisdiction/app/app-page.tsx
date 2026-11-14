@@ -636,6 +636,8 @@ function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: 
     .map((k) => ss.filter((s) => s.dc === k))
     .filter((xs) => xs.length)
     .map((xs) => [directionOf(xs[0]!)!, xs.length] as const)
+  // 評価シートを読めなかったら、0件と見せずに読めなかったと出す
+  if (v.failed) return <LoadFailed />
   return (
     <div className="mt-1 flex flex-col gap-3">
       <GradeCards sheets={all} value={grade} onChange={setGrade} />
