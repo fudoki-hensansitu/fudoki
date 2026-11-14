@@ -1,5 +1,5 @@
 /* 全頁の CSS。layout（pages/layout.tsx）が読む。Tailwind（preflight 込み）と shadcn の token の対応、色・字の token、
-   サイドバーと本文の骨組み、頁の間の View Transition を置く。頁ごとの見た目は各頁の CSS（landing/landing.css・jurisdiction/jurisdiction.css）に置く */
+   サイドバーと本文の骨組み、お金の流れの全体図の動きを置く。頁ごとの見た目は各頁の CSS（landing/landing.css・jurisdiction/jurisdiction.css）に置く */
 @import "tailwindcss" source(none);
 @import "./tokens.css";
 @import "../chat/theme.css";
