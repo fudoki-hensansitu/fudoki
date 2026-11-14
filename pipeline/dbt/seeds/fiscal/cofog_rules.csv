@@ -510,3 +510,4 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1670,musashimurayama-adult-health,132233,一般会計,,衛生費,保健衛生費,,成人衛生費,eq,,assigned,07,retained,目,,武蔵村山市 成人衛生費（健康教室・健康相談・がん検診・特定健康診査・歯周疾患検診）を保健に分類する。vocab-health-checkup-control（成人健康）にならう。名称と説明の事業名からの判断。,true
 1671,musashimurayama-health-consultation-center,132233,一般会計,,衛生費,保健衛生費,,保健相談センター費,eq,,assigned,07,retained,目,,武蔵村山市 保健相談センターの経費を保健に分類する。保健センターの規則（vocab-health-center）と同じ扱い。名称からの判断。,true
 1672,musashimurayama-prenatal-fund,132233,一般会計,,衛生費,保健衛生費,,妊婦健康診査基金費,eq,,out-of-scope,,retained,目,,武蔵村山市 妊婦健康診査基金費は節が積立金だけの基金への積立で、金融資産への振替として対象外とする（kind-x-fund-accumulation と同じ）。,false
+1673,chiyoda-public-utility-payment-fund,131016,一般会計,,諸支出金,,,公共料金支払基金繰出金,eq,,out-of-scope,,retained,目,,千代田区 諸支出金の公共料金支払基金繰出金は基金への積立で金融資産への振替のため対象外とする（vocab-fund-contribution と同じ扱い）。名称からの判断。,false
