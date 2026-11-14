@@ -3,8 +3,8 @@
 // a が無ければ見本（品川区）で開き、画面が住んでいるまちがあればそのまちで開き直す。b が無ければ a と分野の割合が一番近いまちにする。並びは良し悪しの順位にしない
 import { defineHandler, defineHead } from 'void'
 import { jurisdictionPath } from '../jurisdiction/path'
-import { fieldTotalsKey, loadCatalogEntry, shownSettlementYears, type CatalogEntry, type DocumentKind } from '../server/jurisdiction'
-import { similarTowns, type TownRef } from '../server/compare'
+import { loadCatalogEntry, shownSettlementYears, type CatalogEntry, type DocumentKind } from '../server/jurisdiction'
+import { loadFieldTotals, similarTowns, type FieldTotals, type TownRef } from '../server/compare'
 import type { Env } from '../server/env'
 import { siteKey } from '../server/site-key'
 
@@ -63,8 +63,10 @@ export const loader = defineHandler<Props>(async (c) => {
         ? (bVersions.find((v) => v.year === aVersion.year && v.kind !== aVersion.kind) ?? bVersions.find((v) => v.kind === aVersion.kind && v.year < aVersion.year) ?? aVersion)
         : (bVersions.find((v) => same(v, aVersion)) ?? bVersions[0])
     const bVersion = bVersions.find((v) => same(v, asked('b'))) ?? bDefault
-    // 分野の額は自治体の1件（歳出の根の額）に入っているので、科目の表は読まない
-    const town = (e: CatalogEntry, v: Version, vs: Version[]): CompareTown => ({ code: e.code, name: e.name, pop: e.population?.people ?? 0, path: jurisdictionPath(e.code), version: v, versions: vs, ...(e.fieldTotals[fieldTotalsKey(v.kind, v.year)] ?? { total: 0, fields: {} }) })
+    // 分野の額は比べる2つの資料の歳出の根だけを引く（科目の表は読まない）
+    const totalsOf = await loadFieldTotals(env, [{ code: a.code, ...aVersion }, ...(b && bVersion ? [{ code: b.code, ...bVersion }] : [])]).catch(() => () => undefined)
+    const empty: FieldTotals = { total: 0, fields: {} }
+    const town = (e: CatalogEntry, v: Version, vs: Version[]): CompareTown => ({ code: e.code, name: e.name, pop: e.population?.people ?? 0, path: jurisdictionPath(e.code), version: v, versions: vs, ...(totalsOf({ code: e.code, ...v }) ?? empty) })
     const ta = town(a, aVersion, aVersions)
     const tb = b && bVersion ? town(b, bVersion, bVersions) : null
     return { sample, sitekey: siteKey(c), a: ta, b: tb, byUse, byPopulation, failed: false }

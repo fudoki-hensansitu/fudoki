@@ -13,7 +13,7 @@ import {
 import { ApiError } from '../errors'
 import type { Ctx } from '../shared/context'
 import { decodeToken, nextToken } from '../shared/paging'
-import { AMOUNT_COLUMNS, COFOG_DIVISIONS, type Coverage, type CoverageWithOrigins, type JurisdictionDetail, type JurisdictionList, type SimilarInput, type SimilarList } from './model'
+import type { Coverage, CoverageWithOrigins, JurisdictionDetail, JurisdictionList } from './model'
 
 /**
  * 収録の無い自治体・年度・資料区分で、利用者を案内する統計の出典。数字は風土記に取り込まない（ADR 0037）。
@@ -36,7 +36,7 @@ export const UNCOVERED_SOURCES = [
 export const MAX_JURISDICTION_PAGE_SIZE = 100
 export const DEFAULT_JURISDICTION_PAGE_SIZE = 20
 
-interface CoverageRow extends Record<string, unknown> {
+interface CoverageRow {
   jurisdiction_code: string
   fiscal_year: number
   document_kind: string
@@ -61,7 +61,7 @@ function nestCoverage(rows: CoverageRow[], withOrigins: boolean) {
     }
     let account = cov.accounts.at(-1)
     if (!account || account.account_name !== r.account_name) {
-      account = { account_name: r.account_name, account_kind: r.account_kind, ...amountsOf(r), origins: [] }
+      account = { account_name: r.account_name, account_kind: r.account_kind, origins: [] }
       cov.accounts.push(account)
     }
     if (withOrigins) account.origins.push({ origin_id: r.origin_id!, title: r.title!, url: r.url!, format: r.format! })
@@ -69,17 +69,14 @@ function nestCoverage(rows: CoverageRow[], withOrigins: boolean) {
   return out
 }
 
-const amountsOf = (r: CoverageRow) => Object.fromEntries(AMOUNT_COLUMNS.map((c) => [c, (r[c] as number | null) ?? null])) as Omit<Coverage['accounts'][number], 'account_name' | 'account_kind'>
-const AMOUNT_SELECT = AMOUNT_COLUMNS.map((c) => `c."${c}"`).join(', ')
-
 const coverageSql = (codes: string, withOrigins: boolean) =>
   withOrigins
-    ? `SELECT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind", ${AMOUNT_SELECT}, o."origin_id", o."title", o."url", o."format" ` +
+    ? `SELECT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind", o."origin_id", o."title", o."url", o."format" ` +
       `FROM ${COVERAGE_TABLE} c JOIN ${ORIGIN_LINK_TABLE} l ON l."expenditure_id" = c."expenditure_id" ` +
       `JOIN ${ORIGIN_TABLE} o ON o."origin_id" = l."origin_id" ` +
       `WHERE c."jurisdiction_code" IN (${codes}) ` +
       `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name", o."title", o."origin_id"`
-    : `SELECT DISTINCT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind", ${AMOUNT_SELECT} ` +
+    : `SELECT DISTINCT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind" ` +
       `FROM ${COVERAGE_TABLE} c WHERE c."jurisdiction_code" IN (${codes}) ` +
       `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name"`
 
@@ -171,23 +168,4 @@ export async function getJurisdiction(ctx: Ctx, code: string): Promise<Jurisdict
     budget_proposals: y?.budget_proposals ?? [],
     uncovered_sources: UNCOVERED_SOURCES,
   } as JurisdictionDetail
-}
-
-const SHARE_COLUMNS = [...COFOG_DIVISIONS.map((d) => `cofog_${d}_yen`), 'cofog_unclassified_yen']
-const shareDistance = SHARE_COLUMNS.map((c) => `abs(c."${c}" * 1.0 / c."total_yen" - me."${c}" * 1.0 / me."total_yen")`).join(' + ')
-
-/** 分野の割合が近い自治体。比べるのは同じ年度・資料区分の一般会計どうしで、D1 の中で並べて上位だけを返す */
-export async function similarJurisdictions(ctx: Ctx, input: SimilarInput): Promise<SimilarList> {
-  const among = input.among ? `AND c."jurisdiction_code" IN (SELECT value FROM json_each(?))` : ''
-  const sql =
-    `WITH me AS (SELECT * FROM ${COVERAGE_TABLE} WHERE "jurisdiction_code" = ? AND "fiscal_year" = ? AND "document_kind" = ? AND "account_kind" = '一般会計' AND "total_yen" > 0 LIMIT 1) ` +
-    `SELECT c."jurisdiction_code", j."name", c."total_yen" FROM ${COVERAGE_TABLE} c ` +
-    `JOIN me ON c."fiscal_year" = me."fiscal_year" AND c."document_kind" = me."document_kind" ` +
-    `JOIN ${JURISDICTION_TABLE} j ON j."jurisdiction_code" = c."jurisdiction_code" ` +
-    `WHERE c."account_kind" = '一般会計' AND c."total_yen" > 0 AND c."jurisdiction_code" <> me."jurisdiction_code" ` +
-    `AND (substr(c."jurisdiction_code", 3, 3) = '000') = (substr(me."jurisdiction_code", 3, 3) = '000') ${among} ` +
-    `ORDER BY ${shareDistance}, c."jurisdiction_code" LIMIT ?`
-  const params: unknown[] = [input.jurisdiction_code, input.fiscal_year, input.document_kind, ...(input.among ? [JSON.stringify(input.among)] : []), input.limit]
-  const { results } = await ctx.db.prepare(sql).bind(...params).all<SimilarList['jurisdictions'][number]>()
-  return { jurisdictions: results }
 }

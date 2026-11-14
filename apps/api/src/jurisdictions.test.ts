@@ -3,14 +3,8 @@ import type { Database } from 'bun:sqlite'
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/validators/cf-worker'
 import { createApp } from './app'
 import { UNCOVERED_SOURCES } from './jurisdiction/queries'
-import { callWebOp } from './web-ops'
 import type { Db } from './db'
 import { insertCoverage, insertJurisdiction, insertOrigin, insertSubject, testDb } from './testing'
-
-// 歳出の根の額の列。科目の表の無い根は全部 NULL
-const AMOUNT_KEYS = ['total_yen', ...['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'].map((d) => `cofog_${d}_yen`), 'cofog_unclassified_yen']
-const NO_AMOUNTS = Object.fromEntries(AMOUNT_KEYS.map((k) => [k, null]))
-const MUSASHINO_2024 = { ...Object.fromEntries(AMOUNT_KEYS.map((k) => [k, 0])), total_yen: 70_000, cofog_10_yen: 40_000, cofog_09_yen: 20_000, cofog_unclassified_yen: 10_000 }
 
 let db: Db
 let sqlite: Database
@@ -41,28 +35,28 @@ beforeEach(() => {
   insertOrigin(sqlite, { origin_id: 'o2', title: '令和6年度決算書（特別会計）', url: 'https://example.test/o2.pdf', sha256: 'b' })
   insertOrigin(sqlite, { origin_id: 'o3', title: '令和6年度予算', url: 'https://example.test/o3.csv', document_kind: 'initial', format: 'csv', sha256: 'c' })
   insertCoverage(sqlite, { jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement', account_name: '国民健康保険事業会計', account_kind: '国民健康保険', origin_id: 'o2' })
-  insertCoverage(sqlite, { jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement', account_name: '一般会計', origin_id: 'o1', amounts: MUSASHINO_2024 })
+  insertCoverage(sqlite, { jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement', account_name: '一般会計', origin_id: 'o1' })
   insertCoverage(sqlite, { jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'initial', account_name: '一般会計', origin_id: 'o3' })
   insertCoverage(sqlite, { jurisdiction_code: '132063', fiscal_year: 2024, document_kind: 'settlement', account_name: '一般会計', origin_id: 'o2' })
   insertCoverage(sqlite, { jurisdiction_code: '132063', fiscal_year: 2024, document_kind: 'settlement', account_name: '一般会計', origin_id: 'o1' })
 })
 
 describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions）', () => {
-  test('一覧は出典を含めず、年度・資料区分・会計と、会計の総額・分野ごとの額を返す', async () => {
+  test('一覧は出典を含めず、年度・資料区分・会計だけを返す', async () => {
     const body = await list(`?name=${encodeURIComponent('武蔵野市')}`)
     expect(body.jurisdictions[0].coverage.map((c: { document_kind: string; accounts: unknown[] }) => [c.document_kind, c.accounts])).toEqual([
-      ['initial', [{ account_name: '一般会計', account_kind: '一般会計', ...NO_AMOUNTS }]],
+      ['initial', [{ account_name: '一般会計', account_kind: '一般会計' }]],
       [
         'settlement',
         [
-          { account_name: '一般会計', account_kind: '一般会計', ...MUSASHINO_2024 },
-          { account_name: '国民健康保険事業会計', account_kind: '国民健康保険', ...NO_AMOUNTS },
+          { account_name: '一般会計', account_kind: '一般会計' },
+          { account_name: '国民健康保険事業会計', account_kind: '国民健康保険' },
         ],
       ],
     ])
     // 出典が複数あっても、会計は1つにまとまる
     const fuchu = await list(`?code=132063`)
-    expect(fuchu.jurisdictions[0].coverage[0].accounts).toEqual([{ account_name: '一般会計', account_kind: '一般会計', ...NO_AMOUNTS }])
+    expect(fuchu.jurisdictions[0].coverage[0].accounts).toEqual([{ account_name: '一般会計', account_kind: '一般会計' }])
   })
 
   test('一覧は事業評価・予算案を収録した年度を返す', async () => {
@@ -90,17 +84,16 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
             {
               fiscal_year: 2024,
               document_kind: 'initial',
-              accounts: [{ account_name: '一般会計', account_kind: '一般会計', ...NO_AMOUNTS, origins: [{ origin_id: 'o3', title: '令和6年度予算', url: 'https://example.test/o3.csv', format: 'csv' }] }],
+              accounts: [{ account_name: '一般会計', account_kind: '一般会計', origins: [{ origin_id: 'o3', title: '令和6年度予算', url: 'https://example.test/o3.csv', format: 'csv' }] }],
             },
             {
               fiscal_year: 2024,
               document_kind: 'settlement',
               accounts: [
-                { account_name: '一般会計', account_kind: '一般会計', ...MUSASHINO_2024, origins: [{ origin_id: 'o1', title: '令和6年度決算書', url: 'https://example.test/o1.pdf', format: 'pdf' }] },
+                { account_name: '一般会計', account_kind: '一般会計', origins: [{ origin_id: 'o1', title: '令和6年度決算書', url: 'https://example.test/o1.pdf', format: 'pdf' }] },
                 {
                   account_name: '国民健康保険事業会計',
                   account_kind: '国民健康保険',
-                  ...NO_AMOUNTS,
                   origins: [{ origin_id: 'o2', title: '令和6年度決算書（特別会計）', url: 'https://example.test/o2.pdf', format: 'pdf' }],
                 },
               ],
@@ -195,36 +188,5 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
     const found = await res.json()
     expect(found.subjects).toHaveLength(1)
     expect(found.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(a.origins.map((o: { origin_id: string }) => o.origin_id))
-  })
-})
-
-describe('分野の割合が近い自治体（web の list_similar_jurisdictions）', () => {
-  const amounts = (total: number, c10: number, c09: number, rest: number) => ({ ...Object.fromEntries(AMOUNT_KEYS.map((k) => [k, 0])), total_yen: total, cofog_10_yen: c10, cofog_09_yen: c09, cofog_unclassified_yen: rest })
-  beforeEach(() => {
-    // 武蔵野市は 10 が 4/7・09 が 2/7・分類なしが 1/7。千代田区は同じ割合で額が10倍、広島の府中市は 09 だけ
-    insertCoverage(sqlite, { jurisdiction_code: '131016', fiscal_year: 2024, document_kind: 'settlement', account_name: '一般会計', origin_id: 'o1', amounts: amounts(700_000, 400_000, 200_000, 100_000) })
-    insertCoverage(sqlite, { jurisdiction_code: '342076', fiscal_year: 2024, document_kind: 'settlement', account_name: '一般会計', origin_id: 'o1', amounts: amounts(10_000, 0, 10_000, 0) })
-    insertCoverage(sqlite, { jurisdiction_code: '342076', fiscal_year: 2024, document_kind: 'initial', account_name: '一般会計', origin_id: 'o3', amounts: amounts(10_000, 10_000, 0, 0) })
-  })
-  const similar = async (input: Record<string, unknown>) => {
-    const res = await callWebOp({ DB: db } as never, 'list_similar_jurisdictions', input)
-    expect(res.ok).toBe(true)
-    return (res as { value: { jurisdictions: { jurisdiction_code: string; name: string; total_yen: number }[] } }).value.jurisdictions
-  }
-
-  test('同じ年度・資料区分の一般会計で、割合の近い順に返す（自分と総額の無い会計は除く）', async () => {
-    expect(await similar({ jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement' })).toEqual([
-      { jurisdiction_code: '131016', name: '千代田区', total_yen: 700_000 },
-      { jurisdiction_code: '342076', name: '府中市', total_yen: 10_000 },
-    ])
-  })
-
-  test('among を渡すとその中から、limit の数だけ返す', async () => {
-    expect((await similar({ jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement', among: ['342076'] })).map((r) => r.jurisdiction_code)).toEqual(['342076'])
-    expect(await similar({ jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement', limit: 1 })).toHaveLength(1)
-  })
-
-  test('比べる資料に総額が無ければ空', async () => {
-    expect(await similar({ jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'initial' })).toEqual([])
   })
 })

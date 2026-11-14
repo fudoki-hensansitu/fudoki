@@ -18,7 +18,7 @@ const setup = () => {
 
 test('web の内部の口は、公開の MCP と同じ tool と get_jurisdiction を同じ入力で呼ぶ', async () => {
   const { env } = setup()
-  expect(Object.keys(WEB_OPS).sort()).toEqual([...tools.map((t) => t.name), 'get_jurisdiction', 'list_similar_jurisdictions'].sort())
+  expect(Object.keys(WEB_OPS).sort()).toEqual([...tools.map((t) => t.name), 'get_jurisdiction', 'list_expenditures', 'list_similar_expenditures'].sort())
   const list = await callWebOp(env, 'list_jurisdictions', { name: '品川' })
   expect(list.ok && (list.value as { jurisdictions: { name: string }[] }).jurisdictions.map((j) => j.name)).toEqual(['品川区'])
   const one = await callWebOp(env, 'get_jurisdiction', { jurisdiction_code: '131091' })

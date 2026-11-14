@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import { described } from '../columns'
 import { nextPageToken } from '../shared/paging'
-import { DocumentKind, FiscalYear, JurisdictionCode, Yen } from '../shared/model'
+import { DocumentKind, JurisdictionCode } from '../shared/model'
 
 export const Jurisdiction = z.strictObject({
   jurisdiction_code: JurisdictionCode,
@@ -20,15 +20,7 @@ export const CoverageOrigin = z
   .strictObject(described('expenditure_origin', { origin_id: z.string(), title: z.string(), url: z.string(), format: z.string() }))
   .meta({ id: 'CoverageOrigin', description: '明細が指す出典（予算書・決算書の1冊）。' })
 
-/** 総額と COFOG の大分類ごとの額の列（科目の表の末端の行の和）。自治体をまたいで分野の使い方を比べるのに使う */
-export const COFOG_DIVISIONS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] as const
-const amountColumns = {
-  total_yen: Yen.nullable(),
-  ...(Object.fromEntries(COFOG_DIVISIONS.map((d) => [`cofog_${d}_yen`, Yen.nullable()])) as Record<`cofog_${(typeof COFOG_DIVISIONS)[number]}_yen`, z.ZodNullable<typeof Yen>>),
-  cofog_unclassified_yen: Yen.nullable(),
-}
-export const AMOUNT_COLUMNS = Object.keys(amountColumns)
-const coverageAccount = described('expenditure', { account_name: z.string(), account_kind: z.string(), ...amountColumns })
+const coverageAccount = described('expenditure', { account_name: z.string(), account_kind: z.string() })
 const coverageOf = <A extends z.ZodObject>(account: A, id: string) =>
   z
     .strictObject({
@@ -101,19 +93,3 @@ export const JurisdictionDetail = z.strictObject({
   uncovered_sources: z.array(UncoveredSource).describe(UNCOVERED_SOURCES_HELP),
 })
 export type JurisdictionDetail = z.infer<typeof JurisdictionDetail>
-
-/** 分野の割合が近い自治体（web のまち比べだけが内部の RPC で使う） */
-export const SimilarInput = z.strictObject({
-  jurisdiction_code: JurisdictionCode,
-  fiscal_year: FiscalYear,
-  document_kind: DocumentKind,
-  among: z.array(JurisdictionCode).min(1).max(100).optional().describe('この自治体の中から探す'),
-  limit: z.int().min(1).max(100).default(5),
-})
-export type SimilarInput = z.output<typeof SimilarInput>
-export const SimilarList = z.strictObject({
-  jurisdictions: z
-    .array(z.strictObject({ jurisdiction_code: z.string(), name: z.string(), total_yen: z.number() }))
-    .describe('同じ年度・資料区分の一般会計で、COFOG の大分類ごとの割合の差（の絶対値）の和が小さい順。都道府県は都道府県どうし、市区町村は市区町村どうし'),
-})
-export type SimilarList = z.infer<typeof SimilarList>
