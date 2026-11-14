@@ -511,3 +511,4 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1671,musashimurayama-health-consultation-center,132233,一般会計,,衛生費,保健衛生費,,保健相談センター費,eq,,assigned,07,retained,目,,武蔵村山市 保健相談センターの経費を保健に分類する。保健センターの規則（vocab-health-center）と同じ扱い。名称からの判断。,true
 1672,musashimurayama-prenatal-fund,132233,一般会計,,衛生費,保健衛生費,,妊婦健康診査基金費,eq,,out-of-scope,,retained,目,,武蔵村山市 妊婦健康診査基金費は節が積立金だけの基金への積立で、金融資産への振替として対象外とする（kind-x-fund-accumulation と同じ）。,false
 1673,chiyoda-public-utility-payment-fund,131016,一般会計,,諸支出金,,,公共料金支払基金繰出金|(公共料金支払基金繰出金),eq,,out-of-scope,,retained,目,,千代田区 諸支出金の公共料金支払基金繰出金は基金への積立で金融資産への振替のため対象外とする（vocab-fund-contribution と同じ扱い）。名称からの判断。,false
+1674,toshima-sdgs-future-city,131164,一般会計,,政策経営費,政策経営費,,SDGs未来都市推進費,eq,,unclassifiable,,retained,目,,豊島区 SDGs未来都市推進費は環境・福祉・まちづくりなどを併せて進める目で、機能を1つに決められない。名称からの判断。,false
