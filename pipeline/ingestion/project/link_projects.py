@@ -12,7 +12,7 @@
 3. 前の年度の事業の1年度と、上の段から結ぶ。目の直下は会計・款・項・目と名前、その下は親が同じ事業の中で名前が、
    両方に1つずつあるときだけ同じ事業にする。前の年度に無い事業は新しい事業にする（手順4の Jev はまだ使わない）。
 
-名前は NFKC にし、【所管課】から後ろと空白を除いて比べる。事業ID は seed で一度だけ振る（最初の行の鍵の sha256）。
+名前は NFKC にし、【所管課】から後ろ・「(うち…)」の注記・空白を除いて比べる。事業ID は seed で一度だけ振る（最初の行の鍵の sha256）。
 """
 from __future__ import annotations
 
@@ -36,9 +36,9 @@ COLUMNS = (*KEY, 'project_id', 'method')
 
 
 def normalize(name: str) -> str:
-    """名前を比べる形。NFKC、【所管課】から後ろ（所管課と注記）と空白を除く。"""
+    """名前を比べる形。NFKC、【所管課】から後ろ（所管課と注記）、「(うち…)」の内訳の注記（職員費の退職手当負担金の額など、年度で変わる）と空白を除く。"""
     text = unicodedata.normalize('NFKC', name)
-    return re.sub(r'\s', '', re.sub(r'【.*$', '', text))
+    return re.sub(r'\s', '', re.sub(r'\(うち[^)]*\)', '', re.sub(r'【.*$', '', text)))
 
 
 @dataclass
