@@ -4,7 +4,7 @@
 
 ## web（`@fudoki/web`）
 
-- 頁: ホーム（`/`。住んでいるまちのダッシュボードと、ほかのまちの検索）、事業の検索（`/search`）、紹介（`/about`）、アシスタント（`/assistant`）と会話（`/s/:id`・`/api/*`）、自治体の頁（`/tokyo/nakano`）、`/favicon.svg`・`/robots.txt`。他は 404
+- 頁: ホーム（`/`。住んでいるまちのダッシュボードと、ほかのまちの検索）、まち比べ（`/compare`。2つのまちの一般会計を分野ごとに並べる）、紹介（`/about`）、アシスタント（`/assistant`）と会話（`/s/:id`・`/api/*`）、自治体の頁（`/tokyo/nakano`）、`/favicon.svg`・`/robots.txt`。他は 404
 - [Void](https://void.cloud/)（Vite）で build する。設定は `void.config.ts`。頁は `pages/`（layout のサイドバーを残して SPA で移る）、API・sitemap・PWA は `routes/`、ファイル（icon・録画・出典の切り抜き）は `public/`（Workers static assets）
 - データは apps/api の内部の RPC（entrypoint `Web`）を Service Binding で呼んで読む（`server/fudoki-api.ts`）。公開の REST・MCP は使わず、ブラウザは api.fudoki.dev を呼ばない（ADR 0044）
 - web が持つデータの binding は、web 自身の D1 `fudoki-web`（binding `DB`。会話の保存と、外部サービスから引く参照データ（ADR 0042））だけ

@@ -22,12 +22,12 @@ import { cn } from '@/lib/utils'
 import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, currentTheme, DEFAULT_THEME, type Theme } from './theme'
-import { ListMagnifyingGlassIcon } from '@phosphor-icons/react'
+import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
 import { NavContent } from './nav-content'
 import { readNavOpen, saveNavOpen } from './nav-state'
 
 
-export const NAV_SECTIONS = ['home', 'assistant', 'search'] as const
+export const NAV_SECTIONS = ['home', 'assistant', 'compare'] as const
 export type NavSection = (typeof NAV_SECTIONS)[number]
 export type SiteNavProps = { active?: NavSection }
 /** site の中の頁へは Void の Link で頁を読み直さずに移り、外（docs・mail・SNS）へは普通の a で出る */
@@ -199,7 +199,7 @@ function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Them
   const items = [
     { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
     { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
-    { href: '/search', label: '事業を検索', icon: <ListMagnifyingGlassIcon />, active: active === 'search' },
+    { href: '/compare', label: 'まち比べ', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
   ]
   return (
     <nav

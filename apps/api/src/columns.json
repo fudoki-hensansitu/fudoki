@@ -95,6 +95,78 @@
           "type": "string",
           "nullable": false,
           "description": "自治体共通の会計の種類（風土記の判断）。"
+        },
+        {
+          "name": "total_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無ければNULL。出典が金額を欠く行は足していない。"
+        },
+        {
+          "name": "cofog_01_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "COFOG の大分類 01（行政・議会）の額（円）。科目の表の末端の行のうち cofog_code が 01 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。"
+        },
+        {
+          "name": "cofog_02_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "COFOG の大分類 02（防衛）の額（円）。科目の表の末端の行のうち cofog_code が 02 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。"
+        },
+        {
+          "name": "cofog_03_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "COFOG の大分類 03（防災・安全）の額（円）。科目の表の末端の行のうち cofog_code が 03 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。"
+        },
+        {
+          "name": "cofog_04_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "COFOG の大分類 04（産業・交通）の額（円）。科目の表の末端の行のうち cofog_code が 04 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。"
+        },
+        {
+          "name": "cofog_05_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "COFOG の大分類 05（環境）の額（円）。科目の表の末端の行のうち cofog_code が 05 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。"
+        },
+        {
+          "name": "cofog_06_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "COFOG の大分類 06（住まい・まちづくり）の額（円）。科目の表の末端の行のうち cofog_code が 06 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。"
+        },
+        {
+          "name": "cofog_07_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "COFOG の大分類 07（健康・医療）の額（円）。科目の表の末端の行のうち cofog_code が 07 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。"
+        },
+        {
+          "name": "cofog_08_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "COFOG の大分類 08（文化・スポーツ）の額（円）。科目の表の末端の行のうち cofog_code が 08 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。"
+        },
+        {
+          "name": "cofog_09_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "COFOG の大分類 09（教育）の額（円）。科目の表の末端の行のうち cofog_code が 09 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。"
+        },
+        {
+          "name": "cofog_10_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "COFOG の大分類 10（福祉・子育て）の額（円）。科目の表の末端の行のうち cofog_code が 10 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。"
+        },
+        {
+          "name": "cofog_unclassified_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "total_yen から大分類の額の和を引いた残り（円）。COFOG コードの無い末端の行（cofog_status が unclassifiable・out-of-scope の目と、目の無い項）と、末端の和に入らない額（目を立てずに印字された項の内訳など）。大分類の額とこの額を足すと total_yen になる。科目の表に行が無ければNULL。"
         }
       ]
     },

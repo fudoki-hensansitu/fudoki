@@ -9,7 +9,7 @@
 @source "../home";
 @source "../landing";
 @source "../pages";
-@source "../search";
+@source "../compare";
 
 @layer base {
   * { border-color: var(--border); }

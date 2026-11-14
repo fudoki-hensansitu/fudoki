@@ -248,3 +248,40 @@ export type SubjectRow = z.infer<typeof SubjectRow>
 export type DetailRow = z.infer<typeof DetailRow>
 export type LocationRow = z.infer<typeof LocationRow>
 export type OriginRow = z.infer<typeof OriginRow>
+
+// --- 歳出の根の額（web のまち比べだけが内部の RPC で使う） ---
+
+/** 総額（款の和）・COFOG の大分類ごとの額（末端の科目の和）・分類の無い額（総額との差）の列 */
+export const COFOG_DIVISIONS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] as const
+export const AMOUNT_COLUMNS = ['total_yen', ...COFOG_DIVISIONS.map((d) => `cofog_${d}_yen` as const), 'cofog_unclassified_yen'] as const
+
+/** 歳出の根の1行（資料×会計）と、その額 */
+export const ExpenditureTotals = z.strictObject(
+  described('expenditure', {
+    jurisdiction_code: z.string(),
+    fiscal_year: z.int(),
+    document_kind: DocumentKind,
+    account_name: z.string(),
+    account_kind: z.string(),
+    ...(Object.fromEntries(AMOUNT_COLUMNS.map((c) => [c, Yen.nullable()])) as Record<(typeof AMOUNT_COLUMNS)[number], z.ZodNullable<typeof Yen>>),
+  })
+)
+export type ExpenditureTotals = z.infer<typeof ExpenditureTotals>
+
+const Version = z.strictObject({ jurisdiction_code: JurisdictionCode, fiscal_year: FiscalYear, document_kind: DocumentKind })
+export const ExpenditureListInput = z.strictObject({ versions: z.array(Version).min(1).max(10).describe('引く資料（自治体・年度・資料区分）') })
+export type ExpenditureListInput = z.output<typeof ExpenditureListInput>
+export const ExpenditureList = z.strictObject({ expenditures: z.array(ExpenditureTotals).describe('指定した資料の会計すべて。一般会計が先') })
+export type ExpenditureList = z.infer<typeof ExpenditureList>
+
+export const SimilarInput = Version.extend({
+  among: z.array(JurisdictionCode).min(1).max(100).optional().describe('この自治体の中から探す'),
+  limit: z.int().min(1).max(100).default(5),
+})
+export type SimilarInput = z.output<typeof SimilarInput>
+export const SimilarList = z.strictObject({
+  expenditures: z
+    .array(z.strictObject({ jurisdiction_code: z.string(), name: z.string(), total_yen: z.number() }))
+    .describe('同じ年度・資料区分の一般会計で、COFOG の大分類ごとの割合の差（の絶対値）の和が小さい順。都道府県は都道府県どうし、市区町村は市区町村どうし'),
+})
+export type SimilarList = z.infer<typeof SimilarList>

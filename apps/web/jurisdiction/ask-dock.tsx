@@ -84,8 +84,10 @@ function BackToTop({ hidden }: { hidden: boolean }) {
 }
 
 
-export function AskDock({ name, code, sitekey, year, section, detail }: {
+export function AskDock({ name, code, sitekey, year, section, detail, page }: {
   name: string
+  /** 見ている頁の説明。無ければ「name の頁」（比べる頁のように、自治体の頁でないときに渡す） */
+  page?: string
   /** 6桁の自治体コード。AI が収録の自治体を確かめ直さずに調べられるよう、文脈に入れる */
   code: string
   sitekey: string
@@ -177,7 +179,7 @@ export function AskDock({ name, code, sitekey, year, section, detail }: {
   const describe = () => {
     const screen = screenText([dock.current, sheet.current])
     return [
-      `${name}の頁（${location.pathname}）を見ている`,
+      `${page ?? `${name}の頁`}（${location.pathname}）を見ている`,
       `自治体コード: ${code}`,
       `年度: ${reiwa(year)}（${year}年度）`,
       myTownContext(),

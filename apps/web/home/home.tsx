@@ -14,7 +14,7 @@ import { GRADES, yearView, type Snapshot, type YearView } from '../jurisdiction/
 import { NewIcon, StopIcon } from '../jurisdiction/fresh-icons'
 import { reiwa, yearName } from '../jurisdiction/types'
 import { Amt, FieldIcon, perHeadText } from './parts'
-import { searchHref } from '../search/search'
+import { compareHref } from '../compare/compare'
 import { useMyTown, type Town } from './towns'
 import { OtherTowns, Checklist, Empty, Intro, Steps, onboarded, startChecklist, type CheckItem } from './onboarding'
 
@@ -346,11 +346,11 @@ function RevealFrame({ town, onOpen, onBack, busy, children }: { town: Town; onO
   )
 }
 
-/** チェックリストの残りの項目。まちの頁・検索・アシスタントへ */
+/** チェックリストの残りの項目。まちの頁・比べる・アシスタントへ */
 const checkItems = (c: Ctx): CheckItem[] => [
   { key: 'flow', label: 'お金の使い道を見る', href: flowHref(c) },
   { key: 'projects', label: '新しく始めた事業を見る', href: `${c.base}/projects?filter=new` },
-  { key: 'search', label: '事業を検索する', href: searchHref('', c.town.code) },
+  { key: 'compare', label: 'ほかのまちと比べる', href: compareHref(c.town.code) },
   { key: 'assistant', label: 'アシスタントに質問', href: '/assistant' },
 ]
 
