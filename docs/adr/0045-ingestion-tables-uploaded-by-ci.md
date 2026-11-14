@@ -8,7 +8,7 @@
 4. 指紋（`input_fingerprint`）は照らさない。古い指紋は [ADR 0027](0027-refresh-fingerprints-by-table-content.md) のとおり refresh が書き換えるまで許す。指紋が古い変換は、変換し直す対象に含めるが R2 には置かない。
 5. Jev には聞かない。答えは git の jsonl から読み、答えの無い数字があれば止める。CI は Jev の key を持たない。
 6. merge 後の `sync-d1` は、publish の前に `ingestion:store` を流す。範囲は publish と同じで、最後に成功した同期の head からの差分にする。手動の実行（workflow_dispatch）は R2 に置かない。
-7. 管理 JSON を変える PR では、`ingestion-store-check` が同じ変換を `--dry-run` で流し、merge 前に食い違いを止める。R2 は読むだけにする。
+7. 管理 JSON を変える PR では、`ingestion-store-check` が同じ変換を `--dry-run` で流し、merge 前に食い違いを止める。続けて、一致した表を手元の cache に置き、`publish --dry-run` で merge 後と同じ範囲の dbt を build し、検査の落ちも merge 前に止める。R2 と D1 は読むだけにする。
 8. OCR 結果は CI で作り直さない。PaddleOCR の結果は環境で揺れるおそれがあるため。スレッドが `ingestion:ocr --save` で R2 に置く。これがスレッドに残る唯一の R2 への書き込みになる。出典の保存（source_selection）は、自治体のサイトが海外の IP・ブラウザ以外を弾くことがあり、差し替え前に押さえる必要もあるので、今までどおり選定のときにスレッドが行う。
 
 2026-11-13 時点で、スレッドが `convert --remote` で表を R2 に上げるたびに、auto mode の許可待ちで止まっていた。表の R2 の key は自治体・年度・表で決まり sha を含まないので、`--remote` を付けた試しの変換が保存済みの表を上書きする事故も起きた（2026-11-05 の新宿区）。同じ入力・同じ版の依存なら変換のバイトは同じになる（あきる野 R8 を2回変換し、R2 の sha256 と一致することを確かめた）。
