@@ -211,12 +211,12 @@ def setsu_lines(words: list[Word], x0: float, x1: float) -> list[Word]:
         legal.setdefault(code, []).append(_strip(label))
     words = list(words)
     # (the scan cuts such a word at the rule by its share of the characters: `565,0650` `4勤勉手当`,
-    # `2,024,2780` `1)普通旅費`)
+    # `2,024,2780` `1)普通旅費`, `10` `2一般需用費`)
     for i, w in enumerate(words):
         if x0 - 2 < w.x0 < x0 + 6 and re.fullmatch(r'[0-9][)）]?[^0-9,()（）].*', w.text):
             left = next((j for j, o in enumerate(words) if o.x1 <= x0 + 2 and o.x1 > x0 - 40
                          and abs((o.y0 + o.y1) / 2 - (w.y0 + w.y1) / 2) <= 3
-                         and re.fullmatch(r'[0-9]{1,3}(?:,[0-9]{3})+', o.text)), None)
+                         and re.fullmatch(r'[0-9]{1,3}(?:,[0-9]{3})+|[0-9]{2,3}', o.text)), None)
             if left is not None:
                 # (the figure is regrouped as read, `5,650,650`: its digits but the last are the 財源's)
                 o = words[left]
@@ -225,6 +225,9 @@ def setsu_lines(words: list[Word], x0: float, x1: float) -> list[Word]:
                 words[i] = Word(digits[-1] + w.text, w.x0, w.y0, w.x1, w.y1)
     out = []
     for w in words:
+        # (the column's rule read as a stroke on the name, `|(01)扶養手当`)
+        if x0 - 4 < w.x0 < x0 + 6 and w.text[:1] in '|｜' and len(w.text) > 1:
+            w = Word(w.text[1:], w.x0, w.y0, w.x1, w.y1)
         if w.x0 < x0 - 2 < w.x1 and (glued := GLUED_FUND.fullmatch(w.text)):
             out += [Word(glued.group(1), w.x0, w.y0, x0 - 1, w.y1), Word(glued.group(2), x0 + 1, w.y0, w.x1, w.y1)]
             w = out.pop()
@@ -295,7 +298,8 @@ def carried_subjects(pages: list[Page]) -> None:
             continue
         top, xs = found
         line = top + HEADER
-        first = min((r.y0 for r in page.rules if not r.vertical and r.y0 > line + 1
+        # (the frame's top rule read twice, a piece 2pt under the header's bottom, 東京都 R6 p135: no row's)
+        first = min((r.y0 for r in page.rules if not r.vertical and r.y0 > line + NEAR
                      and r.x0 <= xs[2] + NEAR and r.x1 >= xs[3] - NEAR), default=page.height)
         column = sorted((w for w in page.words if xs[1] - 2 < w.x0 < xs[3] and line < w.y0), key=lambda w: w.y0)
         # (a row's name with no code, `一般歳入`, prints its 本年度予算額 on its line: a row of its own)
@@ -341,8 +345,10 @@ def drawn(page: Page) -> Page:
     # (a row rule OCR read from the columns right of the 目 only, its piece under the 目 lost: it closes the 目's cell
     # too, unless a word runs over it there)
     def subject_above(r: Rule) -> bool:
-        # (a 目 printed in the cell the rule closes: the cell is a 目's row, not the rows a page carries over)
-        closing = max((o.y0 for o in kept_rules if not o.vertical and o.y0 < r.y0 - 2 and o.x0 <= xs[2] + 1),
+        # (a 目 printed in the cell the rule closes: the cell is a 目's row, not the rows a page carries over; a speck
+        # on the frame's side, 1pt wide, closes no cell, 東京都 R6 p280)
+        closing = max((o.y0 for o in kept_rules if not o.vertical and o.y0 < r.y0 - 2 and o.x0 <= xs[2] + 1
+                       and o.x1 >= xs[2] + NEAR),
                       default=line)
         return any(xs[2] < w.x0 < xs[3] and closing < (w.y0 + w.y1) / 2 < r.y0 for w in page.words)
     kept_rules = [Rule(xs[2], r.y0, r.x1, r.y1) if (
@@ -351,7 +357,7 @@ def drawn(page: Page) -> Page:
         and not any(not o.vertical and abs(o.y0 - r.y0) <= 2 and o.x0 <= xs[2] + 1 for o in kept_rules)
         and not any(w.x0 < r.x0 and w.x1 > xs[2] and w.y0 < r.y0 - 3 and w.y1 > r.y0 + 3 for w in page.words)) else r
         for r in kept_rules]
-    # (a row rule read in pieces on one line, its gaps under no word that runs over it: one rule)
+    # (a row rule read in pieces on one line, overlapping or with gaps under no word that runs over it: one rule)
     joined: list[Rule] = []
     rows: list[list[Rule]] = []
     for r in sorted((r for r in kept_rules if not r.vertical), key=lambda r: r.y0):
@@ -363,18 +369,27 @@ def drawn(page: Page) -> Page:
         pieces: list[Rule] = []
         for r in sorted(row, key=lambda r: r.x0):
             last = pieces[-1] if pieces else None
-            if (last is not None and r.y0 > line + 1 and r.x0 > last.x1
+            if (last is not None and r.y0 > line + 1
                     and not any(w.x0 < r.x0 and w.x1 > last.x1 and w.y0 < r.y0 - 1 and w.y1 > r.y0 + 1
                                 for w in page.words)):
                 pieces[-1] = Rule(last.x0, last.y0, max(last.x1, r.x1), last.y1)
             else:
                 pieces.append(r)
         joined += pieces
+    # (a row rule read from the 目 to the 説明's rule, its piece under the 説明 lost: it closes the 説明's cell too,
+    # unless a word runs over it there)
+    joined = [Rule(r.x0, r.y0, xs[-1], r.y1) if (
+        r.y0 > line + 1 and r.x0 <= xs[2] + NEAR and abs(r.x1 - xs[9]) <= NEAR
+        and not any(o is not r and abs(o.y0 - r.y0) <= 2 and o.x1 > xs[9] + NEAR for o in joined)
+        and not any(w.x1 > xs[9] and w.x0 < xs[-1] and w.y0 < r.y0 - 2 and w.y1 > r.y0 + 2 for w in page.words))
+        else r for r in joined]
     kept_rules = [r for r in kept_rules if r.vertical] + joined
     # (the frame's bottom rule read in pieces a few points apart, none from side to side: it is drawn where the
     # frame's sides end)
-    sides = [r.y1 for r in kept_rules if r.vertical and r.y1 - r.y0 >= LONG / 3
-             and (abs(r.x0 - xs[0]) <= NEAR / 2 or abs(r.x0 - xs[-1]) <= NEAR / 2)]
+    # (each side where it ends lowest: a side read in pieces, as a thin line beside the thick one, ends where its
+    # last piece does, 東京都 R6 p245)
+    sides = [max(ends) for x in (xs[0], xs[-1]) if (ends := [r.y1 for r in kept_rules if r.vertical
+             and r.y1 - r.y0 >= LONG / 3 and abs(r.x0 - x) <= NEAR / 2])]
     if sides:
         bottom = min(sides)
         near = lambda r: not r.vertical and abs(r.y0 - bottom) <= 4
@@ -384,15 +399,17 @@ def drawn(page: Page) -> Page:
     # pieces where row rules cross it, its gaps under no such name are the rule's)
     for index in (1, 2):
         x = xs[index]
-        pieces = sorted((r for r in kept_rules if r.vertical and abs(r.x0 - x) <= NEAR / 2 and r.y1 > line + 1),
-                        key=lambda r: r.y0)
+        # (a stub under the header, 2pt long, is the header's rule run on, not the column's: 東京都 R6 p30)
+        pieces = sorted((r for r in kept_rules if r.vertical and abs(r.x0 - x) <= NEAR / 2 and r.y1 > line + 1
+                         and r.y1 - r.y0 > NEAR), key=lambda r: r.y0)
         if not pieces:
             # (none read on the page: the rule runs from the row under the last name that runs over it to the foot)
             over = [w.y1 for w in page.words if w.x0 < x - 1 and w.x1 > x + 1 and w.y0 > line - 1]
             below = [h.y0 for h in kept_rules if not h.vertical and h.x0 <= x + 1 and h.x1 >= x - 1
                      and h.y0 > (max(over) if over else line - 1)]
             foot = max((r.y1 for r in kept_rules if r.vertical and abs(r.x0 - xs[0]) <= NEAR / 2), default=line)
-            start = min(below) if below else None
+            # (no row rule read under that name either, 東京都 R6 p30's 款: from under the name)
+            start = min(below) if below else (max(over) + 1 if over else None)
             if start is not None and start < foot - LINE:
                 kept_rules.append(Rule(x, start, x, foot))
             continue
@@ -442,6 +459,14 @@ def drawn(page: Page) -> Page:
             name = max(above, key=lambda o: o.y0)
             body = [Word(o.text + w.text.replace(' ', ''), o.x0, o.y0, max(o.x1, w.x1), o.y1) if o is name else o
                     for o in body if o is not w]
+    # (a 説明's number read a little below its name, `4` 2.3pt under `女性・若者・シニア創業サポート`: on the name's line,
+    # as the builder joins a number to the words it shares a line with)
+    # (two numbers read as one over two lines, `45`, are `stacked`'s)
+    for w in [w for w in body if xs[9] < w.x0 < xs[9] + 2 * LINE and w.text.isdigit() and w.y1 - w.y0 < LINE + NEAR]:
+        right = [o for o in body if 0 <= o.x0 - w.x1 <= LINE + NEAR and abs(o.y0 - w.y0) < LINE / 2 and not o.text[:1].isdigit()]
+        if right:
+            name = min(right, key=lambda o: abs(o.y0 - w.y0))
+            body = [Word(o.text, o.x0, name.y0, o.x1, name.y1) if o is w else o for o in body]
     body = setsu_lines(lettered(stacked(bracketed(body, xs[2], xs[3]), xs[9], xs[10]), xs[9], xs[10]), xs[7], xs[8])
     return Page(page.number, page.width, page.height, body + words, kept_rules + rules)
 
