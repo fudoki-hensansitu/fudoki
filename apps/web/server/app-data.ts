@@ -1,5 +1,5 @@
 // 自治体の頁（アプリ型）のデータ。apps/api の歳出・事業・予算案・事業評価の検索から、1年度の款項目・施策・評価シートと事業の一覧の1頁目を組む。
-// 頁の loader は最初の画面に要る分（loadYearSnapshot）だけを読み、残り（loadYearExtras）は頁を描いた後にブラウザが web の /api/jurisdictions/:code/:year/extras から読む。
+// 頁の loader は款項目など（loadYearSnapshot）と残り（loadYearExtras）を並べて読み、withExtras で足す。
 // 事業の続き・詳細は画面が web の /api から読む（jurisdiction/app/api.ts）。紐付け（施策・評価シート → 事業）は api が持つ歳出の行の参照をたどるだけで、新しく判断しない
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { listQuery, withExtras, type Kan, type YearData, type YearExtras, type Snapshot } from '../jurisdiction/app/data'
@@ -115,7 +115,7 @@ function yearDataOf(rows0: { rows: SubjectRows; kind: Kind; origin: string | nul
 type SubjectRows = Awaited<ReturnType<typeof subjectsOf>>['rows']
 
 /** 頁の1年度の、最初の画面に要る分。開いた年度の款項目と、タブが要るもの（予算・決算は会計ごとの総額、事業は一覧の1頁目）だけを読む。
- * 施策・評価シート・お金のかかる事業は残り（loadYearExtras）として、頁を描いた後にブラウザが読む（pending）。
+ * 施策・評価シート・お金のかかる事業は残り（loadYearExtras）として別に読む（pending）。
  * tab を渡さない（ホームのまちの札）ときは残りもここで読んで足し、評価のある最新の年度の評価シートも持つ（evaluated） */
 export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: number, opt: { evaluated?: boolean; tab?: PageTab } = {}): Promise<Snapshot> {
   const { tab } = opt

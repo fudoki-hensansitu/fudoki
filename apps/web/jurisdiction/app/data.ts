@@ -25,7 +25,7 @@ export type YearData = {
 /** 会計ごとの総額（款の和）。一般会計が先頭 */
 export type AccountTotal = { name: string; yen: number; amountMissing?: true }
 /** 1年度の頁のデータ。years は開いた年度の款項目、施策・評価シート・事業の1頁目はその年度の分。
- * 自治体の頁の loader は最初の画面に要る分だけを読み（pending）、残り（YearExtras）は頁を描いた後にブラウザが読んで withExtras で足す */
+ * 自治体の頁の loader は款項目など（pending）と残り（YearExtras）を並べて読み、withExtras で足して渡す */
 export type Snapshot = {
   code: string
   name: string

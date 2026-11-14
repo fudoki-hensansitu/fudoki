@@ -3,7 +3,7 @@
 // テーマ・サイドバーの開閉はブラウザで当て（nav/theme.ts・nav/nav-state.ts）、cookie を読まない。どの人にも同じ HTML を返し、CDN（Void の ISR）に置く。
 // AI エージェント向けに、API の在処を Link ヘッダーで示し、Accept で text/markdown を望む要求には頁を Markdown にして返す（server/agent-discovery.ts）
 import { defineMiddleware } from 'void'
-import { PAGE_CSP } from '../server/csp'
+import { pageCsp } from '../server/csp'
 import { DISCOVERY_LINK, htmlToMarkdown, wantsMarkdown } from '../server/agent-discovery'
 import { DEFAULT_THEME, themeColorMeta } from '../nav/theme'
 import { ZARAZ_HOST, ZARAZ_SCRIPT } from '../server/zaraz'
@@ -29,7 +29,7 @@ export default defineMiddleware(async (c, next) => {
     }
   }
   // View の器（routes/view-frame.ts）のように自分の policy を持つ応答はそのままにする
-  if (!c.res.headers.has('Content-Security-Policy')) c.res.headers.set('Content-Security-Policy', PAGE_CSP)
+  if (!c.res.headers.has('Content-Security-Policy')) c.res.headers.set('Content-Security-Policy', await pageCsp())
   // アクセス解析（Cloudflare Zaraz → GA4）は本番だけ。preview・手元には入れない（analytics/zaraz.ts）
   const analytics = new URL(c.req.url).hostname === ZARAZ_HOST ? `\n${ZARAZ_SCRIPT}` : ''
   c.res = new HTMLRewriter().on('head', { element: (e) => void e.append(`${themeColorMeta(DEFAULT_THEME)}${analytics}`, { html: true }) }).transform(c.res)

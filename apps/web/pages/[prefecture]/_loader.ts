@@ -1,7 +1,6 @@
 // 自治体の頁（/tokyo、/tokyo/nakano と、その下の年度・タブ・分野の頁）の loader が使う props と head。pages/[prefecture]/ の下の .server.ts だけが読む。
 // Void は pages/ の下の `_` で始まるファイルを頁にしない。データの取得と cache は server/jurisdiction-routes.ts（OG 画像・sitemap と共有）
 import { HTTPException } from 'hono/http-exception'
-import { defer } from 'void'
 import type { Context } from 'hono'
 import { emptyHead, pageHead, type Head } from '../../jurisdiction/html'
 import { appPageYears, hasTab, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
@@ -12,10 +11,9 @@ import { assetPath, EMBLEMS, emblemOf, prefectureCodeOf } from '../../jurisdicti
 import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
-import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadSetsuByMoku, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
+import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
 import { appYears, loadYearExtras, loadYearSnapshot } from '../../server/app-data'
-import type { Snapshot, YearExtras } from '../../jurisdiction/app/data'
-import type { Setsu } from '../../jurisdiction/types'
+import { withExtras, type Snapshot } from '../../jurisdiction/app/data'
 import { siteKey } from '../../server/site-key'
 
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
@@ -34,10 +32,6 @@ export type JurisdictionProps = JurisdictionView & {
   snapshot?: Snapshot
   /** 予算・決算のタブの頁（/tokyo/nakano/2025/settlement?account=…）の流れ。API に繋がらなければ無く、画面が読み直しを出す */
   flow?: PageFlow
-  /** 最初の画面に要らない残り（施策・評価シート・お金のかかる事業）。defer で HTML の後ろに流す */
-  extras?: Promise<YearExtras>
-  /** 流れの目ごとの節。defer で HTML の後ろに流す */
-  setsu?: Promise<Record<string, Setsu[]>>
 }
 
 /** 年度の段（/tokyo/nakano/2024）。4桁の数字だけ */
@@ -146,14 +140,18 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   // 当初予算の年度を開いたときの最新の決算だけを本文と同じ段で読む
   const latestSettled = props.data.settlementYears.at(-1)
   const newest = year === appPageYears(props.data)[0]
-  const [snapshot, flow, settledSummary] = await Promise.all([
+  // 施策・評価シート・お金のかかる事業（extras）も並べて読み、HTML に入れる。頁は ISR で CDN に置くので、待つのは描き直しの1回目だけ
+  const kind = entry ? appYears(entry).find((y) => y.year === year)?.kind : undefined
+  const [base, extras, flow, settledSummary] = await Promise.all([
     entry ? within(loadYearSnapshot(env, entry, year, { tab: props.tab ?? 'overview' }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
-    entry && phase ? within(loadFlowParts(env, entry.code, year, 'moku', phase, account), FLOW_WAIT_MS)
+    entry && kind ? within(loadYearExtras(env, entry.code, year, kind), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+    entry && phase ? within(loadFlowParts(env, entry.code, year, 'setsu', phase, account), FLOW_WAIT_MS)
       // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
       .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))
       .catch(() => undefined) : undefined,
     newest && latestSettled !== undefined && latestSettled !== year ? within(loadSettlementSummary(env, props.data.code, latestSettled), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
   ])
+  const snapshot = base && extras ? withExtras(base, extras) : base
   const opened = snapshot?.years[String(year)]
   const headline: Headline | undefined = newest
     ? {
@@ -161,17 +159,12 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
         ...(opened && opened.kind === 'initial' && opened.total > 0 ? { budget: { year, yen: opened.total } } : {}),
       }
     : undefined
-  if (!snapshot || (phase && !flow)) {
+  if (!snapshot || snapshot.pending || (phase && !flow)) {
     // API に繋がらない・待ちきれなければ、読めた分だけの頁を返し、画面が読み直す。欠けた頁は CDN にもブラウザにも置かない
     c.header('x-revalidate', '0')
     c.header('Cache-Control', 'no-store')
   }
-  // 最初の画面に要らない分は defer で渡し、頁を描いた後に同じ応答の後ろで届ける
-  const kind = entry ? appYears(entry).find((y) => y.year === year)?.kind : undefined
-  const extras = entry && kind ? defer(() => loadYearExtras(env, entry.code, year, kind)) : undefined
-  const mokuIds = flow ? [...flow.drills.flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => m.id))), ...flow.loose.map((m) => m.id)] : []
-  const setsu = entry && flow && phase ? defer(async () => Object.fromEntries(await loadSetsuByMoku(env, entry.code, year, mokuIds, phase, account))) : undefined
-  return { ...props, ...(headline ? { data: { ...props.data, headline } } : {}), ...(snapshot ? { snapshot } : {}), ...(flow ? { flow } : {}), ...(extras ? { extras } : {}), ...(setsu ? { setsu } : {}) }
+  return { ...props, ...(headline ? { data: { ...props.data, headline } } : {}), ...(snapshot ? { snapshot } : {}), ...(flow ? { flow } : {}) }
 }
 
 /** 本文の分野ごとの和（目の和）を、分野の流れ（loadSettlementSummary の areas）と同じ並び（大きい順、「その他」は最後）にする */
