@@ -123,7 +123,7 @@ const byAmount = (a: { amount_yen: number | null }, b: { amount_yen: number | nu
 const pickBreakdown = (byBreakdown: Record<string, ApiDetail[]>) => byBreakdown['節']?.length ? byBreakdown['節'] : (byBreakdown['事業'] ?? [])
 
 /** 目の直下の内訳（節、無ければ事業）。目の id ごとに大きい順 */
-async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: string[], kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<Map<string, Setsu[]>> {
+export async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: string[], kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<Map<string, Setsu[]>> {
   const setsuByMoku = new Map<string, Setsu[]>()
   // 年度・資料・自治体・会計・分け方・深さの条件と合わせても API の bind 上限（90）に収まる件数。区切った分は並べて読む
   const chunks = Array.from({ length: Math.ceil(mokuIds.length / 50) }, (_, i) => mokuIds.slice(i * 50, (i + 1) * 50))
@@ -141,11 +141,6 @@ async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: st
 }
 
 /** 目ごとの直下の内訳（節、無ければ事業）。予算・決算のタブの流れの図は節を最初の画面に出さないので、頁を描いた後にブラウザが読んで足す（/api/jurisdictions/:code/:year/setsu/:phase） */
-export async function loadSetsu(env: Env, code: string, year: number, kind: DocumentKind, account: string = ACCOUNT): Promise<Record<string, Setsu[]>> {
-  const moku = await searchAll(env, 'subjects', code, year, { level: { eq: ['目'] } }, kind, account)
-  return Object.fromEntries(await loadSetsuByMoku(env, code, year, moku.map((n) => n.subject_id), kind, account))
-}
-
 /** すべての款を同じ深さで表示する。節は目の直下の内訳を取り、分け方の違う数字を混ぜない。 */
 export async function loadFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou', kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<Drill[]> {
   return (await loadFlowParts(env, code, year, depth, kind, account)).drills

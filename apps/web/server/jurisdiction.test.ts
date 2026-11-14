@@ -350,16 +350,13 @@ describe('事業の読み込み（/api/projects）', () => {
   })
 })
 
-describe('最初の画面に要らない分（/api/jurisdictions/:code/:year/extras）', () => {
-  test('形が違えば 400、未収録・頁に無い年度・会計は 404、流量の binding が無ければ 503', async () => {
-    expect((await get('/api/jurisdictions/nakano/2025/extras')).status).toBe(400)
-    expect((await get('/api/jurisdictions/131148/25/extras')).status).toBe(400)
-    expect((await get('/api/jurisdictions/131148/2025/setsu/other')).status).toBe(400)
-    expect((await get('/api/jurisdictions/131148/2025/setsu/settlement/%E0%A4%A')).status).toBe(400)
-    expect((await get('/api/jurisdictions/131016/2025/extras')).status).toBe(404)
-    expect((await get('/api/jurisdictions/131148/2019/field-subjects')).status).toBe(404)
-    expect((await get(`/api/jurisdictions/131148/2025/setsu/settlement/${encodeURIComponent('特別会計')}`)).status).toBe(404)
-    expect((await get('/api/jurisdictions/131148/2025/extras', web(API))).status).toBe(503)
+describe('最初の画面に要らない分', () => {
+  test('前の年度の分野の科目（/api/jurisdictions/:code/:year/field-subjects）は形・資料の種類が違えば 400、流量の binding が無ければ 503', async () => {
+    expect((await get('/api/jurisdictions/nakano/2025/field-subjects?kind=initial')).status).toBe(400)
+    expect((await get('/api/jurisdictions/131148/25/field-subjects?kind=initial')).status).toBe(400)
+    expect((await get('/api/jurisdictions/131148/2025/field-subjects')).status).toBe(400)
+    expect((await get('/api/jurisdictions/131148/2025/field-subjects?kind=other')).status).toBe(400)
+    expect((await get('/api/jurisdictions/131148/2025/field-subjects?kind=initial', web(API))).status).toBe(503)
   })
   test('施策・評価シートの分野は、開いた年度の款項目から科目の ID、無ければ款・項・目の名前で引く', () => {
     const base: Snapshot = {

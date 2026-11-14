@@ -71,7 +71,9 @@ async function subjectOfDetails(env: Env, code: string, year: number, ids: strin
 
 /** 款項目の行から、款・項・目の木と分野の合計を組む */
 function yearDataOf(rows0: { rows: SubjectRows; kind: Kind; origin: string | null; originTitle: string | null }): YearData {
-  const rows = [...rows0.rows].sort((a, b) => `${a.kan_code}/${a.kou_code}/${a.moku_code}`.localeCompare(`${b.kan_code}/${b.kou_code}/${b.moku_code}`))
+  // 款・項の行（項・目の番号が null）を子の目より前に並べる。null を文字列にすると "null" が数字より後ろになり、目が親の項を見失う
+  const order = (r: SubjectRows[number]) => `${r.kan_code ?? ''}/${r.kou_code ?? ''}/${r.moku_code ?? ''}`
+  const rows = [...rows0.rows].sort((a, b) => order(a).localeCompare(order(b)))
   const kan: Kan[] = []
   const fields: Record<string, number> = {}
   const fieldSubjects: Record<string, string[]> = {}

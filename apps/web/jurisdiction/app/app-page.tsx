@@ -62,7 +62,7 @@ import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasTab, type PageTab } from '../types'
 import { directionOf, DIRECTION_ICONS, GRADES, withExtras, yearView, type AccountTotal, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearExtras, type YearView } from './data'
-import { fieldSubjects, listKey, listPage, projectFull, projectOfDetail, setsuOf, yearExtras, type ListPage, type ListQuery, type ProjectFull } from './api'
+import { fieldSubjects, listKey, listPage, projectFull, projectOfDetail, type ListPage, type ListQuery, type ProjectFull } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import './app.css'
 
@@ -104,7 +104,7 @@ const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
 type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
-type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected | ((s: Selected) => Selected)) => void; selected: Selected; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void }
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected | ((s: Selected) => Selected)) => void; selected: Selected; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>> }
 /** 文脈に添える、開いている事業の評価シート（評価は過去の年度にしか無いので全年度の新しい順）・施策の数の上限（文脈の長さの上限に収める） */
 const DETAIL_SOURCES = 3
 /** 詳細に開いているものを、アシスタントに渡す文脈の行にする。出典の origin_id と頁・科目の ID を添え、AI が検索し直さずに読めるようにする */
@@ -436,7 +436,7 @@ const withSetsu = (flow: PageFlow, byMoku: Record<string, Setsu[]>): PageFlow =>
 }
 
 function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
-  const { v, d, res, page, select, flow, flowFailed, pickAccount } = useApp()
+  const { v, d, res, page, select, flow, flowFailed, pickAccount, setsu: setsuProp } = useApp()
   const [view, setView] = React.useState<FlowView>('cofog')
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = y?.kind === (phase === 'settlement' ? 'settlement' : 'initial') ? { year: v.year, yen: y.total, kan: [] } : undefined
@@ -463,13 +463,13 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   React.useEffect(() => {
     if (!shown) return
     let live = true
-    void res.get(setsuKey, () => setsuOf(d.code, shown.year, shown.phase, shown.account)).then((x) => {
+    void res.get(setsuKey, () => setsuProp ?? Promise.reject(new Error('節が渡されていない'))).then((x) => {
       if (live) setSetsu({ key: setsuKey, byMoku: x })
     })
     return () => {
       live = false
     }
-  }, [setsuKey])
+  }, [setsuKey, setsuProp])
   const byMoku = setsu?.key === setsuKey ? setsu.byMoku : undefined
   const current = React.useMemo(() => (shown && byMoku && byMoku !== FAILED ? withSetsu(shown, byMoku) : shown), [shown, byMoku])
   // 節を読む前に開いた目の詳細にも、読み終えた節を足す
@@ -620,7 +620,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
 function EndedFieldList({ field, q, head }: { field: string; q: string; head: (n: string) => React.ReactNode }) {
   const { v, d, res } = useApp()
   const prev = d.prev
-  const subjects = prev ? React.use(res.get(`field-subjects:${d.code}:${prev.year}`, () => fieldSubjects(d.code, prev.year))) : FAILED
+  const subjects = prev ? React.use(res.get(`field-subjects:${d.code}:${prev.year}`, () => fieldSubjects(d.code, prev.year, prev.kind))) : FAILED
   if (subjects === FAILED) return <LoadFailed />
   const list = v.query('ended', { subjects: subjects[field] ?? [], ...(q ? { q } : {}) })
   return <ProjectList q={list} head={(page) => head(countOf(page))} />
@@ -1065,20 +1065,20 @@ const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').repl
 /** 今の URL の分野の段（/fields/fukushi）の id */
 const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
 
-export function AppPage({ res, data, snapshot: base, flow, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; sitekey: string; initialField?: string; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（施策・評価シート・お金のかかる事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; initialField?: string; initialTab?: TabKey }) {
   // 最初の画面に要らない分（施策・評価シート・お金のかかる事業）は、描いた後に読んで足す。年度ごとに置き場に残し、戻ったときは読み直さない
   const extrasKey = `extras:${base.code}:${base.year}`
   const [extras, setExtras] = React.useState<{ key: string; x: YearExtras | typeof FAILED }>()
   React.useEffect(() => {
     if (!base.pending) return
     let live = true
-    void res.get(extrasKey, () => yearExtras(base.code, base.year)).then((x) => {
+    void res.get(extrasKey, () => extrasProp ?? Promise.reject(new Error('残りが渡されていない'))).then((x) => {
       if (live) setExtras({ key: extrasKey, x })
     })
     return () => {
       live = false
     }
-  }, [extrasKey, base.pending])
+  }, [extrasKey, base.pending, extrasProp])
   // 読めなかったら、読み込み中のまま止めずに読めなかったと出す
   const d = React.useMemo(() => (base.pending && extras?.key === extrasKey ? (extras.x === FAILED ? { ...base, failed: true as const } : withExtras(base, extras.x)) : base), [base, extras, extrasKey])
   const vision = data.vision?.text
@@ -1173,7 +1173,7 @@ export function AppPage({ res, data, snapshot: base, flow, sitekey, initialField
     const prev = d.prev
     if (filter !== 'ended' || !prev) return
     let live = true
-    void res.get(prevKey, () => fieldSubjects(d.code, prev.year)).then((x) => {
+    void res.get(prevKey, () => fieldSubjects(d.code, prev.year, prev.kind)).then((x) => {
       if (live && x !== FAILED) setPrevFields({ key: prevKey, x })
     })
     return () => {
@@ -1319,7 +1319,7 @@ export function AppPage({ res, data, snapshot: base, flow, sitekey, initialField
             </div>
           </div>
           {v ? (
-            <AppContext.Provider value={{ d, page: data, years, v, res, select, selected, go, openField, flow, flowFailed, pickAccount }}>
+            <AppContext.Provider value={{ d, page: data, years, v, res, select, selected, go, openField, flow, flowFailed, pickAccount, setsu }}>
               {fieldPage ? (
                 <div key={fieldPage} className={cn('pt-6', moved && 'app-in')}><FieldPage id={fieldPage} /></div>
               ) : phone ? (

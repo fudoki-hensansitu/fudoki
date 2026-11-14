@@ -1,6 +1,7 @@
 // 自治体の頁（/tokyo、/tokyo/nakano と、その下の年度・タブ・分野の頁）の loader が使う props と head。pages/[prefecture]/ の下の .server.ts だけが読む。
 // Void は pages/ の下の `_` で始まるファイルを頁にしない。データの取得と cache は server/jurisdiction-routes.ts（OG 画像・sitemap と共有）
 import { HTTPException } from 'hono/http-exception'
+import { defer } from 'void'
 import type { Context } from 'hono'
 import { emptyHead, pageHead, type Head } from '../../jurisdiction/html'
 import { appPageYears, hasTab, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
@@ -11,9 +12,10 @@ import { assetPath, EMBLEMS, emblemOf, prefectureCodeOf } from '../../jurisdicti
 import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
-import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
-import { loadYearSnapshot } from '../../server/app-data'
-import type { Snapshot } from '../../jurisdiction/app/data'
+import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadSetsuByMoku, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
+import { appYears, loadYearExtras, loadYearSnapshot } from '../../server/app-data'
+import type { Snapshot, YearExtras } from '../../jurisdiction/app/data'
+import type { Setsu } from '../../jurisdiction/types'
 import { siteKey } from '../../server/site-key'
 
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
@@ -32,6 +34,10 @@ export type JurisdictionProps = JurisdictionView & {
   snapshot?: Snapshot
   /** 予算・決算のタブの頁（/tokyo/nakano/2025/settlement?account=…）の流れ。API に繋がらなければ無く、画面が読み直しを出す */
   flow?: PageFlow
+  /** 最初の画面に要らない残り（施策・評価シート・お金のかかる事業）。defer で HTML の後ろに流す */
+  extras?: Promise<YearExtras>
+  /** 流れの目ごとの節。defer で HTML の後ろに流す */
+  setsu?: Promise<Record<string, Setsu[]>>
 }
 
 /** 年度の段（/tokyo/nakano/2024）。4桁の数字だけ */
@@ -160,7 +166,12 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
     c.header('x-revalidate', '0')
     c.header('Cache-Control', 'no-store')
   }
-  return { ...props, ...(headline ? { data: { ...props.data, headline } } : {}), ...(snapshot ? { snapshot } : {}), ...(flow ? { flow } : {}) }
+  // 最初の画面に要らない分は defer で渡し、頁を描いた後に同じ応答の後ろで届ける
+  const kind = entry ? appYears(entry).find((y) => y.year === year)?.kind : undefined
+  const extras = entry && kind ? defer(() => loadYearExtras(env, entry.code, year, kind)) : undefined
+  const mokuIds = flow ? [...flow.drills.flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => m.id))), ...flow.loose.map((m) => m.id)] : []
+  const setsu = entry && flow && phase ? defer(async () => Object.fromEntries(await loadSetsuByMoku(env, entry.code, year, mokuIds, phase, account))) : undefined
+  return { ...props, ...(headline ? { data: { ...props.data, headline } } : {}), ...(snapshot ? { snapshot } : {}), ...(flow ? { flow } : {}), ...(extras ? { extras } : {}), ...(setsu ? { setsu } : {}) }
 }
 
 /** 本文の分野ごとの和（目の和）を、分野の流れ（loadSettlementSummary の areas）と同じ並び（大きい順、「その他」は最後）にする */

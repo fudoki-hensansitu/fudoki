@@ -183,15 +183,8 @@ export const listPage = (q: ListQuery, token?: string): Promise<ListPage> =>
 export const projectFull = (id: string, year: number, kind: Kind): Promise<ProjectFull> =>
   webApi(`/api/projects/${encodeURIComponent(id)}?${new URLSearchParams({ year: String(year), kind })}`)
 
-/** 頁の1年度の、最初の画面に要らない分（施策・評価シート・事業の1頁目）。/api/jurisdictions/:code/:year/extras を読む */
-export const yearExtras = (code: string, year: number): Promise<YearExtras> => webApi(`/api/jurisdictions/${code}/${year}/extras`)
-
 /** その年度の分野ごとの末端の科目（やめた事業を分野で絞るとき、前の年度の分を読む） */
-export const fieldSubjects = (code: string, year: number): Promise<Record<string, string[]>> => webApi(`/api/jurisdictions/${code}/${year}/field-subjects`)
-
-/** 予算・決算のタブの流れの図の、目ごとの節（無ければ事業）。/api/jurisdictions/:code/:year/setsu/:phase を読む */
-export const setsuOf = (code: string, year: number, phase: Kind, account: string): Promise<Record<string, Setsu[]>> =>
-  webApi(`/api/jurisdictions/${code}/${year}/setsu/${phase}${account === ACCOUNT ? '' : `/${encodeURIComponent(account)}`}`)
+export const fieldSubjects = (code: string, year: number, kind: Kind): Promise<Record<string, string[]>> => webApi(`/api/jurisdictions/${code}/${year}/field-subjects?kind=${kind}`)
 
 /** 施策・評価シートを紐付けた内訳が載る事業 */
 export const projectOfDetail = (detail: string, year: number, kind: Kind): Promise<ProjRow | null> =>
