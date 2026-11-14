@@ -459,23 +459,24 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   const shown = flow && flow.year === v.year && flow.phase === phase && flow.account === account ? flow : undefined
   // 目ごとの節は最初の画面に出さないので、描いた後に読んで流れに足す（読み終えるまで節の無い流れを出す）
   const setsuKey = shown ? `setsu:${d.code}:${shown.year}:${shown.phase}:${shown.account}` : ''
-  const [setsu, setSetsu] = React.useState<{ key: string; byMoku: Record<string, Setsu[]> }>()
+  const [setsu, setSetsu] = React.useState<{ key: string; byMoku: Record<string, Setsu[]> | typeof FAILED }>()
   React.useEffect(() => {
     if (!shown) return
     let live = true
     void res.get(setsuKey, () => setsuOf(d.code, shown.year, shown.phase, shown.account)).then((x) => {
-      if (live && x !== FAILED) setSetsu({ key: setsuKey, byMoku: x })
+      if (live) setSetsu({ key: setsuKey, byMoku: x })
     })
     return () => {
       live = false
     }
   }, [setsuKey])
-  const current = React.useMemo(() => (shown && setsu?.key === setsuKey ? withSetsu(shown, setsu.byMoku) : shown), [shown, setsu, setsuKey])
+  const byMoku = setsu?.key === setsuKey ? setsu.byMoku : undefined
+  const current = React.useMemo(() => (shown && byMoku && byMoku !== FAILED ? withSetsu(shown, byMoku) : shown), [shown, byMoku])
   // 節を読む前に開いた目の詳細にも、読み終えた節を足す
   React.useEffect(() => {
-    if (setsu?.key !== setsuKey) return
-    select((s) => (s?.kind === 'moku' && s.phase === phase && !s.moku.setsu.length && setsu.byMoku[s.id] ? { ...s, moku: { ...s.moku, setsu: setsu.byMoku[s.id]! } } : s))
-  }, [setsu, setsuKey])
+    if (!byMoku || byMoku === FAILED) return
+    select((s) => (s?.kind === 'moku' && s.phase === phase && !s.moku.setsu.length && byMoku[s.id] ? { ...s, moku: { ...s.moku, setsu: byMoku[s.id]! } } : s))
+  }, [byMoku])
   const drills = current?.drills
   const flows = React.useMemo(() => (current && view === 'cofog' ? cofogFlowOfDrills(current.drills, current.loose) : current?.drills), [current, view])
   const router = useRouter()
@@ -491,6 +492,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       ) : (
         <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の{label}は、まだ収録していません</p>
       )}
+      {byMoku === FAILED ? <p className="text-xs text-muted-foreground">目の内訳（節）を読み込めませんでした。少し待ってから開き直してください。</p> : null}
       <p className="text-xs text-muted-foreground">分野は使い道を目的ごとに分ける世界共通の分類（COFOG）で、風土記が独自で区別しています。款・項は予算書・決算書の分け方のままです。</p>
     </div>
   )
@@ -1162,7 +1164,22 @@ export function AppPage({ res, data, snapshot: base, flow, sitekey, initialField
   }, [])
   const wide = useMedia('(min-width: 1280px)')
   const phone = useMedia('(max-width: 767px)')
-  const v = React.useMemo(() => (d.years[year] ? yearView(d) : undefined), [d, year])
+  // やめた事業は前の年度の科目を持つので、やめた事業を出すときは前の年度の分野の科目を読んで分野を引く
+  const prevKey = d.prev ? `field-subjects:${d.code}:${d.prev.year}` : ''
+  const [prevFields, setPrevFields] = React.useState<{ key: string; x: Record<string, string[]> }>()
+  React.useEffect(() => {
+    const prev = d.prev
+    if (filter !== 'ended' || !prev) return
+    let live = true
+    void res.get(prevKey, () => fieldSubjects(d.code, prev.year)).then((x) => {
+      if (live && x !== FAILED) setPrevFields({ key: prevKey, x })
+    })
+    return () => {
+      live = false
+    }
+  }, [filter, prevKey])
+  const prevFieldSubjects = prevFields?.key === prevKey ? prevFields.x : undefined
+  const v = React.useMemo(() => (d.years[year] ? yearView(d, prevFieldSubjects) : undefined), [d, year, prevFieldSubjects])
 
   // タブの真上の目印。これが画面の上へ消えたら、タブが上に貼り付いている
   const tabsTop = React.useRef<HTMLDivElement>(null)

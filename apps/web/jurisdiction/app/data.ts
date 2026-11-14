@@ -98,13 +98,16 @@ export function listQuery(d: Pick<Snapshot, 'code' | 'year' | 'years' | 'prev'>,
 
 export type YearView = ReturnType<typeof yearView>
 
-export function yearView(d: Snapshot) {
+/** prevFieldSubjects: 前の年度の分野の末端の科目。やめた事業は前の年度の科目を持つので、分野を引くのに使う */
+export function yearView(d: Snapshot, prevFieldSubjects?: Record<string, string[]>) {
   const year = d.year
   const ys = String(year)
   const hasPrev = !!d.prev
   const y = d.years[ys]!
   const fields: Field[] = [...DOMAIN_FRAMES, OTHER_FRAME].map((f) => ({ ...f, yen: y.fields[f.id] ?? 0 })).filter((f) => f.yen > 0).sort(byYenOtherLast)
-  const fieldBySubject = new Map(Object.entries(y.fieldSubjects).flatMap(([f, ids]) => ids.map((id) => [id, f] as const)))
+  const bySubject = (fs: Record<string, string[]>) => new Map(Object.entries(fs).flatMap(([f, ids]) => ids.map((id) => [id, f] as const)))
+  const fieldBySubject = bySubject(y.fieldSubjects)
+  const prevFieldBySubject = prevFieldSubjects ? bySubject(prevFieldSubjects) : undefined
   const page = (filter: ListQuery['filter']) => d.lists[listKey(listQuery(d, filter))]
   // 事業の収録の無い自治体は、目を事業の代わりにする（中の事業・所管課は持たない）
   const mokuRows: ProjRow[] = y.kan
@@ -128,7 +131,7 @@ export function yearView(d: Snapshot) {
     originTitle: y.originTitle,
     fields,
     /** 事業の分野。科目の分からない事業はその他 */
-    fieldOf: (p: Pick<ProjRow, 'subject'>) => (p.subject ? fieldBySubject.get(p.subject) : undefined) ?? OTHER_FRAME.id,
+    fieldOf: (p: Pick<ProjRow, 'subject'>) => (p.subject ? (fieldBySubject.get(p.subject) ?? prevFieldBySubject?.get(p.subject)) : undefined) ?? OTHER_FRAME.id,
     /** 分野の末端の科目（開いた年度）。やめた事業は前の年度の資料で探すので、前の年度の科目を別に読む（prevFieldSubjects） */
     subjectsOf: (field: string) => y.fieldSubjects[field] ?? [],
     query: (filter: ListQuery['filter'], opt?: { subjects?: string[]; q?: string }) => listQuery(d, filter, opt),

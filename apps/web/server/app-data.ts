@@ -111,7 +111,9 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const wantAccounts = (!tab || tab === 'money' || tab === 'settled') && accounts.length > 1
   // 事業のタブは一覧の1頁目（すべて）が最初の画面。年度と資料の種類だけで決まるので、款項目を待たずに読む
   const allQuery = listQuery({ code: entry.code, year, years: { [year]: { kind: me.kind } as YearData }, prev: undefined }, 'all')
-  const [subjects, accountTotals, allPage, extras, evalSheets] = await Promise.all([
+  // ホームのまちの札は「新しく始めた事業」「やめた事業」も出す
+  const homeLists = !tab && prev ? (['new', 'ended'] as const).map((f) => listQuery({ code: entry.code, year, years: { [year]: { kind: me.kind } as YearData }, prev: { year: prev.year, kind: prev.kind } }, f)) : []
+  const [subjects, accountTotals, allPage, extras, evalSheets, homePages] = await Promise.all([
     subjectsOf(env, entry.code, year, me.kind).then((r) => {
       const origin = r.last?.origins?.find((o) => o.origin_id === r.rows[0]?.origin_id)
       return { kind: me.kind, rows: r.rows, origin: origin?.url ?? null, originTitle: origin?.title ?? null }
@@ -120,6 +122,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     tab === 'projects' ? readListPage(apiCall(env), allQuery) : Promise.resolve(undefined),
     tab ? Promise.resolve(undefined) : loadYearExtras(env, entry.code, year, me.kind),
     evalYear && evalYear !== year ? sheetsOf(env, entry.code, evalYear, evalYear).then((r) => r.rows.map(toSheet)) : Promise.resolve(null),
+    Promise.all(homeLists.map((q) => readListPage(apiCall(env), q).then((p) => [listKey(q), p] as const))),
   ])
   const snapshot: Snapshot = {
     code: entry.code,
@@ -136,7 +139,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     pending: true,
   }
   if (!extras) return snapshot
-  const full = withExtras(snapshot, extras)
+  const full = withExtras(snapshot, { ...extras, lists: { ...extras.lists, ...Object.fromEntries(homePages) } })
   return evalYear ? { ...full, evaluated: { fy: evalYear, sheets: evalSheets ? withExtras(snapshot, { ...extras, measures: [], sheets: evalSheets }).sheets : full.sheets } } : full
 }
 
