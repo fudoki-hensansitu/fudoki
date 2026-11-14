@@ -15,6 +15,7 @@ import prefectures from '../../../packages/jurisdictions/prefectures.json'
 import registry from '../../../packages/jurisdictions/jurisdictions.json'
 import { TOPIC_SEGMENTS } from '../jurisdiction/path'
 import { appYears } from './app-data'
+import { withExtras, type Snapshot } from '../jurisdiction/app/data'
 
 describe('金額と年度の表記', () => {
   test('1億円以上は億円、未満は万円。100億円以上は小数を出さない', () => {
@@ -346,5 +347,35 @@ describe('事業の読み込み（/api/projects）', () => {
     expect((await get('/api/jurisdictions/131016')).status).toBe(404)
     expect((await get('/api/jurisdictions/131148?year=1999')).status).toBe(404)
     expect((await get('/api/jurisdictions/131148?year=2025', { ...env, ...web({ fetch: async () => new Response('x', { status: 500 }) }) })).status).toBe(502)
+  })
+})
+
+describe('最初の画面に要らない分（/jurisdiction-years/:code/:year/extras）', () => {
+  test('形が違う・未収録・頁に無い年度は 404（CDN の key を増やさない）', async () => {
+    expect((await get('/jurisdiction-years/nakano/2025/extras')).status).toBe(404)
+    expect((await get('/jurisdiction-years/131148/25/extras')).status).toBe(404)
+    expect((await get('/jurisdiction-years/131016/2025/extras')).status).toBe(404)
+    expect((await get('/jurisdiction-years/131148/2019/field-subjects')).status).toBe(404)
+    expect((await get('/jurisdiction-years/131148/2025/setsu/other')).status).toBe(404)
+    expect((await get(`/jurisdiction-years/131148/2025/setsu/settlement/${encodeURIComponent('特別会計')}`)).status).toBe(404)
+    expect((await get('/jurisdiction-years/131148/2025/setsu/settlement/%E0%A4%A')).status).toBe(404)
+  })
+  test('施策・評価シートの分野は、開いた年度の款項目から科目の ID、無ければ款・項・目の名前で引く', () => {
+    const base: Snapshot = {
+      code: '131148', name: '中野区', pop: 0, year: 2025, kinds: { 2025: 'settlement' }, measures: [], sheets: [], lists: {}, pending: true,
+      years: { 2025: { kind: 'settlement', total: 300, fields: { welfare: 300 }, fieldSubjects: { welfare: [id(11)] }, looseMoku: [], origin: null, originTitle: null, kan: [{ name: '子ども教育費', yen: 300, kou: [{ name: '子ども費', yen: 300, moku: [{ id: id(11), name: '保育園費', yen: 300, field: 'welfare', cofog: null }] }] }] } },
+    }
+    const m = { id: 'm', fy: 2025, title: '', new: true, yen: 1, desc: [], detail: null, url: '', origin: 'o', page: 1 }
+    const s = { id: 's', fy: 2025, name: '', grade: null, dir: null, dc: null, dl: null, div: null, acct: '', b: null, s: null, detail: null, url: '', origin: 'o', page: 1 }
+    const d = withExtras(base, {
+      measures: [{ ...m, subject: id(11), path: null }, { ...m, subject: id(99), path: ['子ども教育費', '子ども費', '保育園費'] }, { ...m, subject: null, path: null }],
+      sheets: [{ ...s, path: ['子ども教育費', '子ども費', '保育園費'] }, { ...s, path: ['総務費', '総務管理費', '一般管理費'] }],
+      hasProjects: true,
+      lists: {},
+    })
+    expect(d.measures.map((x) => x.field)).toEqual(['welfare', 'welfare', 'other'])
+    expect(d.sheets.map((x) => x.field)).toEqual(['welfare', 'other'])
+    expect(d.pending).toBeUndefined()
+    expect(d.hasProjects).toBe(true)
   })
 })

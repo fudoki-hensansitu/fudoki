@@ -1,6 +1,8 @@
 // 自治体の頁が事業を読む口。サーバーは api の内部の RPC（server/fudoki-api.ts の ApiCall）で事業の検索・事業を読み、ブラウザは web の /api（routes/api/projects）を通して同じものを読む。
 // ブラウザは api.fudoki.dev を直接は呼ばない（ADR 0044）。一覧は頁ごとに読む（1頁目はサーバーが描き、続きは末尾が見えたときにブラウザが取る）。分野・目で絞るときは科目の ID で絞る
 import type { ApiCall, WebOpInput, WebOpOutput } from '../../server/fudoki-api'
+import type { YearExtras } from './data'
+import type { Setsu } from '../types'
 
 const ACCOUNT = '一般会計'
 /** 一覧の1頁目の件数。続きは NEXT_PAGE ずつ */
@@ -180,6 +182,16 @@ export const listPage = (q: ListQuery, token?: string): Promise<ListPage> =>
 /** 事業の詳細: 年度ごとの額と、開いた年度の中の事業 */
 export const projectFull = (id: string, year: number, kind: Kind): Promise<ProjectFull> =>
   webApi(`/api/projects/${encodeURIComponent(id)}?${new URLSearchParams({ year: String(year), kind })}`)
+
+/** 頁の1年度の、最初の画面に要らない分（施策・評価シート・事業の1頁目）。CDN に置いた /jurisdiction-years/:code/:year/extras を読む */
+export const yearExtras = (code: string, year: number): Promise<YearExtras> => webApi(`/jurisdiction-years/${code}/${year}/extras`)
+
+/** その年度の分野ごとの末端の科目（やめた事業を分野で絞るとき、前の年度の分を読む） */
+export const fieldSubjects = (code: string, year: number): Promise<Record<string, string[]>> => webApi(`/jurisdiction-years/${code}/${year}/field-subjects`)
+
+/** 予算・決算のタブの流れの図の、目ごとの節（無ければ事業）。CDN に置いた /jurisdiction-years/:code/:year/setsu/:phase を読む */
+export const setsuOf = (code: string, year: number, phase: Kind, account: string): Promise<Record<string, Setsu[]>> =>
+  webApi(`/jurisdiction-years/${code}/${year}/setsu/${phase}${account === ACCOUNT ? '' : `/${encodeURIComponent(account)}`}`)
 
 /** 施策・評価シートを紐付けた内訳が載る事業 */
 export const projectOfDetail = (detail: string, year: number, kind: Kind): Promise<ProjRow | null> =>

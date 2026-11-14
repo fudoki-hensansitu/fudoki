@@ -141,8 +141,8 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   const latestSettled = props.data.settlementYears.at(-1)
   const newest = year === appPageYears(props.data)[0]
   const [snapshot, flow, settledSummary] = await Promise.all([
-    entry ? within(loadYearSnapshot(env, entry, year, { field: props.field, tab: props.tab ?? 'overview' }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
-    entry && phase ? within(loadFlowParts(env, entry.code, year, 'setsu', phase, account), FLOW_WAIT_MS)
+    entry ? within(loadYearSnapshot(env, entry, year, { tab: props.tab ?? 'overview' }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+    entry && phase ? within(loadFlowParts(env, entry.code, year, 'moku', phase, account), FLOW_WAIT_MS)
       // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
       .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))
       .catch(() => undefined) : undefined,

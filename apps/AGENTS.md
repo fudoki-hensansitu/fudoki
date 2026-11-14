@@ -10,6 +10,7 @@
 - web が持つデータの binding は、web 自身の D1 `fudoki-web`（binding `DB`。会話の保存と、外部サービスから引く参照データ（ADR 0042））だけ
 - 会話: アシスタントの入力 → Turnstile → `/s/:id`。`server/` が Workers AI と apps/api の MCP を繋ぎ、出典の頁を読む tool `read_source_page`（`server/source-pages.ts`）を足す。頁の文字は AI にだけ渡し、画面と保存には出さない。結果は apps/api の MCP Apps の View を sandbox の iframe に描く。構成・上限・手で設定するもの・集計の SQL は `web/README.md`
 - 自治体の OG 画像は `/jurisdictions/<code>/og.png` を Worker が頁と同じデータから描く（`server/og-render.ts`）
+- 自治体の頁の loader は最初の画面に要る分だけを読む。施策・評価シート・お金のかかる事業・流れの図の節は、頁を描いた後にブラウザが `/jurisdiction-years/<code>/<year>/*` から読む（頁と同じく CDN に置く）
 - brand・map の資産生成（`build:brand`・`fetch:boundaries`）はこの package の script
 - `web/server/availability.test.ts` が配るファイルと PWA の繋ぎを確かめる
 - DESIGN.md・自治体の頁の作り・都市像の集め方は `.agents/skills/web-app/`

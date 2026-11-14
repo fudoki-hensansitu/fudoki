@@ -60,9 +60,9 @@ import { pageHead } from '../html'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView, type Moku, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, hasTab, type PageTab } from '../types'
-import { directionOf, DIRECTION_ICONS, GRADES, yearView, type AccountTotal, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
-import { listKey, listPage, projectFull, projectOfDetail, type ListPage, type ListQuery, type ProjectFull } from './api'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasTab, type PageTab } from '../types'
+import { directionOf, DIRECTION_ICONS, GRADES, withExtras, yearView, type AccountTotal, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearExtras, type YearView } from './data'
+import { fieldSubjects, listKey, listPage, projectFull, projectOfDetail, setsuOf, yearExtras, type ListPage, type ListQuery, type ProjectFull } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import './app.css'
 
@@ -429,8 +429,14 @@ function AccountCards({ accounts, account, setAccount }: { accounts: AccountTota
 }
 
 /** 予算・決算。事業は下から積み上げる見方、こちらは大きい項目から下りていく見方。当初予算と決算の両方がある年度はタブを分ける */
+/** 流れの目に節を足す */
+const withSetsu = (flow: PageFlow, byMoku: Record<string, Setsu[]>): PageFlow => {
+  const moku = (m: Moku): Moku => ({ ...m, setsu: byMoku[m.id] ?? m.setsu })
+  return { ...flow, drills: flow.drills.map((k) => ({ ...k, kou: k.kou.map((o) => ({ ...o, moku: o.moku.map(moku) })) })), loose: flow.loose.map(moku) }
+}
+
 function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
-  const { v, d, page, select, flow, flowFailed, pickAccount } = useApp()
+  const { v, d, res, page, select, flow, flowFailed, pickAccount } = useApp()
   const [view, setView] = React.useState<FlowView>('cofog')
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = y?.kind === (phase === 'settlement' ? 'settlement' : 'initial') ? { year: v.year, yen: y.total, kan: [] } : undefined
@@ -450,7 +456,21 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     setAccountState(a)
     pickAccount(a)
   }
-  const current = flow && flow.year === v.year && flow.phase === phase && flow.account === account ? flow : undefined
+  const shown = flow && flow.year === v.year && flow.phase === phase && flow.account === account ? flow : undefined
+  // 目ごとの節は最初の画面に出さないので、描いた後に読んで流れに足す（読み終えるまで節の無い流れを出す）
+  const setsuKey = shown ? `setsu:${d.code}:${shown.year}:${shown.phase}:${shown.account}` : ''
+  const [setsu, setSetsu] = React.useState<{ key: string; byMoku: Record<string, Setsu[]> }>()
+  React.useEffect(() => {
+    if (!shown) return
+    let live = true
+    void res.get(setsuKey, () => setsuOf(d.code, shown.year, shown.phase, shown.account)).then((x) => {
+      if (live && x !== FAILED) setSetsu({ key: setsuKey, byMoku: x })
+    })
+    return () => {
+      live = false
+    }
+  }, [setsuKey])
+  const current = React.useMemo(() => (shown && setsu?.key === setsuKey ? withSetsu(shown, setsu.byMoku) : shown), [shown, setsu, setsuKey])
   const drills = current?.drills
   const flows = React.useMemo(() => (current && view === 'cofog' ? cofogFlowOfDrills(current.drills, current.loose) : current?.drills), [current, view])
   const router = useRouter()
@@ -498,7 +518,8 @@ function Overview({ go }: { go: Go }) {
 
       <section>
         <SectionHead title="お金のかかる事業"><MoreLink onClick={() => go('projects', { filter: 'all' })} /></SectionHead>
-        <Rows>{v.top.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>
+        {/* 事業は最初の画面の下にあるので、頁を描いた後に読む（読み終えるまで骨組み） */}
+        {v.pending && v.hasProjects === undefined ? <RowsSkeleton /> : <Rows>{v.top.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>}
       </section>
 
       {v.sheets.length ? (
@@ -525,7 +546,9 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
     clearTimeout(timer.current)
     timer.current = setTimeout(() => React.startTransition(() => setQ(t.trim())), 300)
   }
-  const list = filter === 'eval' ? null : v.query(filter as ListQuery['filter'], { ...(field !== 'all' ? { subjects: v.subjectsOf(field, filter as ListQuery['filter']) } : {}), ...(q ? { q } : {}) })
+  // やめた事業を分野で絞るときは、前の年度の分野の科目を読んでから一覧を引く（EndedFieldList）
+  const endedField = filter === 'ended' && field !== 'all'
+  const list = filter === 'eval' || endedField ? null : v.query(filter as ListQuery['filter'], { ...(field !== 'all' ? { subjects: v.subjectsOf(field) } : {}), ...(q ? { q } : {}) })
   const unlinked = filter === 'new' ? v.freshUnlinked.filter((m) => (field === 'all' || m.field === field) && (!q || m.title.includes(q))) : []
   const head = (n: string) => (
     <p className="px-2.5 text-xs text-muted-foreground">
@@ -534,7 +557,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
     </p>
   )
   // 事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある）
-  const moku = v.hasProjects ? [] : v.mokuRows.filter((p) => (field === 'all' || v.fieldOf(p) === field) && (!q || p.name.includes(q)))
+  const moku = v.hasProjects !== false ? [] : v.mokuRows.filter((p) => (field === 'all' || v.fieldOf(p) === field) && (!q || p.name.includes(q)))
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
@@ -556,7 +579,9 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
         ))}
       </ToggleGroup>
       {filter === 'eval' ? <EvalList grade={grade} setGrade={setGrade} field={field} q={q} /> : <>
-      {!v.hasProjects ? (
+      {v.hasProjects === undefined ? (
+        <RowsSkeleton />
+      ) : !v.hasProjects ? (
         // 目には始めた年度が無いので、新しく始める事業は施策（下）だけで出す
         filter === 'all' ? (
           <>
@@ -568,6 +593,10 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
         <ClientSuspense fallback={<RowsSkeleton />} ready={!!res.peek(listKey(list))}>
           <ProjectList q={list} head={(page) => head(countOf(page))} />
         </ClientSuspense>
+      ) : endedField ? (
+        <ClientSuspense fallback={<RowsSkeleton />}>
+          <EndedFieldList field={field} q={q} head={head} />
+        </ClientSuspense>
       ) : null}
       {unlinked.length ? (
         <section className="mt-4">
@@ -578,6 +607,16 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
       </>}
     </div>
   )
+}
+
+/** やめた事業を分野で絞った一覧。やめた事業は前の年度の資料で引くので、前の年度の分野の科目を読んでから絞る */
+function EndedFieldList({ field, q, head }: { field: string; q: string; head: (n: string) => React.ReactNode }) {
+  const { v, d, res } = useApp()
+  const prev = d.prev
+  const subjects = prev ? React.use(res.get(`field-subjects:${d.code}:${prev.year}`, () => fieldSubjects(d.code, prev.year))) : FAILED
+  if (subjects === FAILED) return <LoadFailed />
+  const list = v.query('ended', { subjects: subjects[field] ?? [], ...(q ? { q } : {}) })
+  return <ProjectList q={list} head={(page) => head(countOf(page))} />
 }
 
 /** 事業の一覧の「評価した」。評価は事業の属性なので、別のタブにせず事業の絞り込みの1つにする */
@@ -862,7 +901,9 @@ function FieldPage({ id }: { id: string }) {
           <Rows>{ms.map((m) => <MeasureRow key={m.id} m={m} />)}</Rows>
         </DetailSection>
       ) : null}
-      {v.hasProjects ? (
+      {v.hasProjects === undefined ? (
+        <DetailSection icon={ListBulletsIcon} title="事業"><RowsSkeleton /></DetailSection>
+      ) : v.hasProjects ? (
         <ClientSuspense fallback={<DetailSection icon={ListBulletsIcon} title="事業"><RowsSkeleton /></DetailSection>} ready={!!res.peek(listKey(v.query('all', { subjects: v.subjectsOf(f.id) })))}>
           <FieldProjects id={f.id} />
         </ClientSuspense>
@@ -1015,7 +1056,21 @@ const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').repl
 /** 今の URL の分野の段（/fields/fukushi）の id */
 const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
 
-export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; sitekey: string; initialField?: string; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot: base, flow, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; sitekey: string; initialField?: string; initialTab?: TabKey }) {
+  // 最初の画面に要らない分（施策・評価シート・お金のかかる事業）は、描いた後に読んで足す。年度ごとに置き場に残し、戻ったときは読み直さない
+  const extrasKey = `extras:${base.code}:${base.year}`
+  const [extras, setExtras] = React.useState<{ key: string; x: YearExtras }>()
+  React.useEffect(() => {
+    if (!base.pending) return
+    let live = true
+    void res.get(extrasKey, () => yearExtras(base.code, base.year)).then((x) => {
+      if (live && x !== FAILED) setExtras({ key: extrasKey, x })
+    })
+    return () => {
+      live = false
+    }
+  }, [extrasKey, base.pending])
+  const d = React.useMemo(() => (base.pending && extras?.key === extrasKey ? withExtras(base, extras.x) : base), [base, extras, extrasKey])
   const vision = data.vision?.text
   const emblem = data.emblem?.src ?? null
   const years = React.useMemo(() => appPageYears(data), [data])

@@ -10,8 +10,8 @@ import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
-import { appYears, loadYearSnapshot } from './app-data'
-import { loadCatalog, loadCatalogEntry, loadSettlementSummary, type CatalogEntry } from './jurisdiction'
+import { appYears, loadFieldSubjects, loadYearExtras, loadYearSnapshot } from './app-data'
+import { ACCOUNT, loadCatalog, loadCatalogEntry, loadSetsu, loadSettlementSummary, type CatalogEntry } from './jurisdiction'
 
 // 応答は CDN（Void の ISR、void.config.ts の routing.revalidate）に置く。Worker の中には置かず、毎回 API から組む。
 // 自治体の一覧だけは、1つの頁を組むあいだに何度も引くので、同じ isolate の中で1分だけ使い回す
@@ -109,6 +109,42 @@ export async function jurisdictionSnapshotResponse(env: Env, request: Request, c
     const year = yearParam === undefined ? appYears(entry)[0]?.year : Number(yearParam)
     if (year === undefined || !appYears(entry).some((y) => y.year === year)) throw new HttpError(404, 'NOT_FOUND', 'この年度は頁にありません')
     return new Response(JSON.stringify(await loadYearSnapshot(env, entry, year, { evaluated: yearParam === undefined })), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
+  } catch (e) {
+    if (e instanceof HttpError) return errorResponse(e)
+    return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
+  }
+}
+
+/** 頁の1年度の、最初の画面に要らない分（extras）と、分野ごとの末端の科目（field-subjects）。/jurisdiction-years/:code/:year/<part> が返し、CDN に1時間置く。
+ * 資料の種類は自治体の収録から決め、頁に無い自治体・年度は 404（CDN の key を増やさない） */
+export async function yearPartResponse(env: Env, code: string, yearText: string, part: 'extras' | 'field-subjects'): Promise<Response> {
+  try {
+    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(yearText)) throw new HttpError(404, 'NOT_FOUND', '自治体コードか年度の形が違います')
+    const entry = await loadCatalogEntry(env, code)
+    const me = entry && appYears(entry).find((y) => y.year === Number(yearText))
+    if (!entry || !me) throw new HttpError(404, 'NOT_FOUND', 'この年度は頁にありません')
+    const body = part === 'extras' ? await loadYearExtras(env, code, me.year, me.kind) : await loadFieldSubjects(env, code, me.year, me.kind)
+    return new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE, 'x-revalidate': String(PART_REVALIDATE) } })
+  } catch (e) {
+    if (e instanceof HttpError) return errorResponse(e)
+    return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
+  }
+}
+const PART_REVALIDATE = 3600
+
+/** 予算・決算のタブの流れの図の、目ごとの節（/jurisdiction-years/:code/:year/setsu/:phase[/:account]）。CDN に1時間置く。
+ * 収録の無い年度・資料・会計は 404（CDN の key を増やさない） */
+export async function setsuResponse(env: Env, code: string, yearText: string, phase: string, accountParam?: string): Promise<Response> {
+  try {
+    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(yearText) || (phase !== 'initial' && phase !== 'settlement')) throw new HttpError(404, 'NOT_FOUND', '自治体コード・年度・資料の形が違います')
+    // 会計の名前は path の1段。router が % を戻していなければ戻す（戻せない形は収録に無い会計として 404）
+    let account = accountParam || ACCOUNT
+    if (account.includes('%')) try { account = decodeURIComponent(account) } catch { throw new HttpError(404, 'NOT_FOUND', '会計の形が違います') }
+    const entry = await loadCatalogEntry(env, code)
+    const year = Number(yearText)
+    const years = phase === 'initial' ? entry?.initialYears : entry?.settlementYears
+    if (!entry || !years?.includes(year) || (account !== ACCOUNT && !entry.accounts?.[phase]?.[yearText]?.includes(account))) throw new HttpError(404, 'NOT_FOUND', 'この年度・資料・会計は収録していません')
+    return new Response(JSON.stringify(await loadSetsu(env, code, year, phase, account)), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE, 'x-revalidate': String(PART_REVALIDATE) } })
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))

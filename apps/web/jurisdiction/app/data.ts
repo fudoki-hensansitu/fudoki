@@ -25,7 +25,7 @@ export type YearData = {
 /** 会計ごとの総額（款の和）。一般会計が先頭 */
 export type AccountTotal = { name: string; yen: number; amountMissing?: true }
 /** 1年度の頁のデータ。years は開いた年度の款項目、施策・評価シート・事業の1頁目はその年度の分。
- * 前の年度の科目と、新しく始める・やめた事業の一覧の1頁目は、事業のタブの頁だけが持つ */
+ * 自治体の頁の loader は最初の画面に要る分だけを読み（pending）、残り（YearExtras）は頁を描いた後にブラウザが読んで withExtras で足す */
 export type Snapshot = {
   code: string
   name: string
@@ -34,18 +34,50 @@ export type Snapshot = {
   /** 頁で選べる年度ごとの資料の種類（年度の切り替えに使う） */
   kinds: Record<string, YearData['kind']>
   years: Record<string, YearData>
-  /** 前の年度。分野ごとの科目はやめた事業を分野で絞るのに使い、事業のタブの頁だけが持つ */
-  prev?: { year: number; kind: YearData['kind']; fieldSubjects?: YearData['fieldSubjects'] }
+  /** 前の年度（資料の種類だけ）。やめた事業の一覧を前の年度の資料で引くのに使う */
+  prev?: { year: number; kind: YearData['kind'] }
   /** 一般会計のほかにも会計を収録した年度の、会計ごとの総額 */
   accounts?: AccountTotal[]
   measures: Measure[]
   sheets: Sheet[]
   /** 評価のある最新の年度の評価シート（ホームのまちの札だけが読む） */
   evaluated?: { fy: number; sheets: Sheet[] }
-  /** 事業の収録がある自治体か。無ければ目を事業の代わりに並べる */
-  hasProjects: boolean
+  /** 事業の収録がある自治体か。無ければ目を事業の代わりに並べる。まだ分からない（事業の1頁目を読んでいない）ときは undefined */
+  hasProjects?: boolean
   /** 事業の一覧の1頁目（listKey ごと） */
   lists: Record<string, ListPage>
+  /** 施策・評価シートなど、最初の画面に要らない分（YearExtras）をまだ持たない */
+  pending?: true
+}
+
+/** 最初の画面に要らない、1年度の残りのデータ。施策・評価シートと、事業の一覧（すべて）の1頁目。
+ * 分野は開いた年度の款項目から画面で引く（同じ款項目を2度読まない）ので、施策は内訳の載る科目、評価シートは款・項・目の名前を持つ */
+export type YearExtras = {
+  measures: (Omit<Measure, 'field'> & { subject: string | null; path: string[] | null })[]
+  sheets: (Omit<Sheet, 'field'> & { path: string[] })[]
+  hasProjects: boolean
+  lists: Record<string, ListPage>
+}
+
+/** 款項目から分野を引く。科目の ID で当たらなければ款・項・目の名前で引く（決算の年度の施策は当初予算書の内訳に紐づき、科目の ID が違う） */
+function fieldResolver(y: YearData) {
+  const byId = new Map(Object.entries(y.fieldSubjects).flatMap(([f, ids]) => ids.map((id) => [id, f] as const)))
+  const byPath = new Map<string, string>(y.kan.flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => [`${k.name}/${o.name}/${m.name}`, m.field] as const))))
+  return (subject: string | null, path: string[] | null) => (subject ? byId.get(subject) : undefined) ?? (path ? byPath.get(path.join('/')) : undefined) ?? OTHER_FRAME.id
+}
+
+/** 頁のデータに残り（YearExtras）を足す */
+export function withExtras(d: Snapshot, x: YearExtras): Snapshot {
+  const y = d.years[String(d.year)]
+  const fieldOf = y ? fieldResolver(y) : () => OTHER_FRAME.id
+  const { pending: _, ...rest } = d
+  return {
+    ...rest,
+    measures: x.measures.map(({ subject, path, ...m }) => ({ ...m, field: fieldOf(subject, path) })),
+    sheets: x.sheets.map(({ path, ...s }) => ({ ...s, field: fieldOf(null, path) })),
+    hasProjects: d.hasProjects ?? x.hasProjects,
+    lists: { ...x.lists, ...d.lists },
+  }
 }
 
 export type Field = DomainFrame & { yen: number }
@@ -68,13 +100,13 @@ export function yearView(d: Snapshot) {
   const hasPrev = !!d.prev
   const y = d.years[ys]!
   const fields: Field[] = [...DOMAIN_FRAMES, OTHER_FRAME].map((f) => ({ ...f, yen: y.fields[f.id] ?? 0 })).filter((f) => f.yen > 0).sort(byYenOtherLast)
-  const fieldBySubject = new Map([d.prev?.fieldSubjects ?? {}, y.fieldSubjects].flatMap((x) => Object.entries(x).flatMap(([f, ids]) => ids.map((id) => [id, f] as const))))
+  const fieldBySubject = new Map(Object.entries(y.fieldSubjects).flatMap(([f, ids]) => ids.map((id) => [id, f] as const)))
   const page = (filter: ListQuery['filter']) => d.lists[listKey(listQuery(d, filter))]
   // 事業の収録の無い自治体は、目を事業の代わりにする（中の事業・所管課は持たない）
   const mokuRows: ProjRow[] = y.kan
     .flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => ({ id: `moku:${m.id}`, fy: year, name: m.name, dept: null, path: [k.name, o.name, m.name], subject: m.id, yen: m.yen, started: null, ended: null, details: [] }))))
     .sort((a, b) => b.yen - a.yen)
-  const top = d.hasProjects ? (page('all')?.rows ?? []) : mokuRows.slice(0, 10)
+  const top = d.hasProjects ? (page('all')?.rows ?? []) : d.hasProjects === false ? mokuRows.slice(0, 10) : []
   const measures = d.measures
   // NEW はその年度に始めた事業（予算書に新しく出てきた事業）だけ。施策の新規はこの印に使わない
   const isNew = (p: Pick<ProjRow, 'started'>) => p.started === year
@@ -93,11 +125,14 @@ export function yearView(d: Snapshot) {
     fields,
     /** 事業の分野。科目の分からない事業はその他 */
     fieldOf: (p: Pick<ProjRow, 'subject'>) => (p.subject ? fieldBySubject.get(p.subject) : undefined) ?? OTHER_FRAME.id,
-    /** 分野の末端の科目。やめた事業は前の年度の資料で探すので、前の年度の科目 */
-    subjectsOf: (field: string, filter?: ListQuery['filter']) => (filter === 'ended' ? d.prev : y)?.fieldSubjects?.[field] ?? [],
+    /** 分野の末端の科目（開いた年度）。やめた事業は前の年度の資料で探すので、前の年度の科目を別に読む（prevFieldSubjects） */
+    subjectsOf: (field: string) => y.fieldSubjects[field] ?? [],
     query: (filter: ListQuery['filter'], opt?: { subjects?: string[]; q?: string }) => listQuery(d, filter, opt),
     page,
+    /** まだ分からないときは undefined */
     hasProjects: d.hasProjects,
+    /** 施策・評価シートなどをまだ読んでいない */
+    pending: !!d.pending,
     /** お金のかかる事業（1頁目） */
     top,
     mokuRows,
@@ -113,7 +148,7 @@ export function yearView(d: Snapshot) {
     kind: y.kind,
     hasPrev,
     // 前の年度と比べられるのは、DB に事業の収録があり、前の年度もある頁だけ（事業の収録の無い自治体は NEW・やめたを出さない）
-    comparable: hasPrev && d.hasProjects,
+    comparable: hasPrev && !!d.hasProjects,
     /** 頁の金額が当初予算か決算か */
     word: y.kind === 'settlement' ? '決算' : '予算',
     /** その年度の並びに使う額の名前 */

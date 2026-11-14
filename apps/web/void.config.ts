@@ -49,6 +49,9 @@ export default defineConfig({
       '/sitemap.xml': 3600,
       // 自治体の OG 画像（routes/jurisdictions/[code]/og.png.ts）。最新の決算の金額から描く。同じ下にある紋章の SVG（静的資産）は外す
       '/jurisdictions/*/og.png': 86400,
+      // 自治体の頁の1年度の、最初の画面に要らない分（施策・評価シート・事業の1頁目、流れの図の節、分野ごとの科目。routes/jurisdiction-years/）。
+      // 頁を描いた後にブラウザが読む。query は使わない（会計も path に入れる）
+      '/jurisdiction-years/*': 3600,
     },
     // ISR の key は既定で query を落とす。予算・決算のタブの頁は ?account= で流れの会計を、まち比べは ?a=&ay=&ak=&b=&by=&bk= でまちと年度・資料を分けるので key に残す
     revalidateQueryAllowlist: {
