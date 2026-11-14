@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132047",
+    "fiscal_year": 2020,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "csv-9be56f42fec28833",
+      "converter": "fiscal/layouts/csv/convert.py",
+      "inputs": [
+        {
+          "sha256": "9be56f42fec2883318470b91897ff6ec1fc7a0cf517b7eaaf637bd427af407a1"
+        }
+      ],
+      "options": {
+        "encoding": "cp932",
+        "table_id": "csv-9be56f42fec28833",
+        "amount_column": "08決算額",
+        "amount_unit": "円"
+      },
+      "expected_tables": [
+        {
+          "table_id": "csv-9be56f42fec28833"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "csv-9be56f42fec28833",
+      "conversion_id": "csv-9be56f42fec28833",
+      "input_fingerprint": "5efe1c7236e750e1246f569905a2a1d11db4aa1b417c9f855c8ff1291ad8192a",
+      "object": {
+        "key": "fiscal/ingestion/132047/2020/settlement/expenditure/csv-9be56f42fec28833.parquet",
+        "sha256": "6746ae70860a5a7f1c2199bfbe7b06f537230f8b35487e606a19164f9068c337",
+        "bytes": 94866
+      },
+      "row_count": 4933
+    }
+  ]
+}

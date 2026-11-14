@@ -1,0 +1,44 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132047",
+    "fiscal_year": 2017,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "csv-1de7ad1644f337b8",
+      "converter": "fiscal/layouts/csv/convert.py",
+      "inputs": [
+        {
+          "sha256": "1de7ad1644f337b867263207e5972eaba2dc58ec37fa29e0cbc22d1840dc4bab"
+        }
+      ],
+      "options": {
+        "encoding": "cp932",
+        "table_id": "csv-1de7ad1644f337b8",
+        "amount_column": "08予算額",
+        "amount_unit": "千円"
+      },
+      "expected_tables": [
+        {
+          "table_id": "csv-1de7ad1644f337b8"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "csv-1de7ad1644f337b8",
+      "conversion_id": "csv-1de7ad1644f337b8",
+      "input_fingerprint": "888e986f79c028e69b7176f9ad7549920242c9fa180d2c8425502f0ef07b6b8a",
+      "object": {
+        "key": "fiscal/ingestion/132047/2017/initial/expenditure/csv-1de7ad1644f337b8.parquet",
+        "sha256": "152d2cca45340ca4c75e06ddc2d5d726a92b02c5fb46989293885ece27ede050",
+        "bytes": 90101
+      },
+      "row_count": 5074
+    }
+  ]
+}
