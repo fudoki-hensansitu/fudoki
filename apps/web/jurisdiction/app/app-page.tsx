@@ -433,9 +433,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   const { v, d, page, select, flow, flowFailed, pickAccount } = useApp()
   const [view, setView] = React.useState<FlowView>('cofog')
   const y = d.years[String(v.year)]
-  const total: YearTotal | undefined = phase === 'settlement'
-    ? page.years.find((t) => t.year === v.year)
-    : y?.kind === 'initial' ? { year: v.year, yen: y.total, kan: [] } : undefined
+  const total: YearTotal | undefined = y?.kind === (phase === 'settlement' ? 'settlement' : 'initial') ? { year: v.year, yen: y.total, kan: [] } : undefined
   const label = phase === 'initial' ? '当初予算' : '決算'
   const tabs = (
     <div className="flex items-center justify-between gap-3">
@@ -1044,8 +1042,11 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
     // 目の詳細は開いた年度の図の値を、施策・評価シートはその年度の資料を持つので、年度を変えたら閉じる（事業は年度をまたいで同じ）
     select((s) => (s?.kind === 'project' ? s : null))
   }
+  // 開いた直後の表示はフェードさせない（LCP を遅らせない）。タブ・分野を移ったときだけ動かす
+  const [moved, setMoved] = React.useState(false)
   const setTab = (t: TabKey) => {
     setTabState(t)
+    setMoved(true)
     if (t !== at.current.tab || fieldOfPath()) move(pageHref(at.current.year, t))
   }
   /** 流れの会計を変える。一般会計は ?account= を付けない */
@@ -1074,6 +1075,7 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
   const [fieldPage, setFieldPage] = React.useState<string | null>(initialField ?? null)
   // 頁の中で開いた分野の頁は履歴の state に印を付け、閉じるときは履歴を戻る（進むで戻ってきた場合も同じ）
   const openField = (id: string) => {
+    setMoved(true)
     select(null)
     history.pushState({ ...history.state, field: id }, '', `${basePath()}/${year}/fields/${id}`)
     document.title = pageHead(data, year, { field: id }).title
@@ -1127,7 +1129,7 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
   const [api, setApi] = React.useState<CarouselApi>()
   // 当初予算の流れは当初予算のある年度、決算の流れは決算のある年度だけ
   const hasInitial = d.kinds[String(year)] === 'initial'
-  const hasSettled = data.years.some((t) => t.year === year)
+  const hasSettled = data.settlementYears.includes(year)
   const tabs = React.useMemo(() => TABS.filter((t) => (t.key === 'money' ? hasInitial : t.key === 'settled' ? hasSettled : true)), [hasInitial, hasSettled])
   // 移った年度に今のタブが無ければ、もう一方のお金のタブへ
   React.useEffect(() => {
@@ -1238,7 +1240,7 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
           {v ? (
             <AppContext.Provider value={{ d, page: data, years, v, res, select, selected, go, openField, flow, flowFailed, pickAccount }}>
               {fieldPage ? (
-                <div key={fieldPage} className="app-in pt-6"><FieldPage id={fieldPage} /></div>
+                <div key={fieldPage} className={cn('pt-6', moved && 'app-in')}><FieldPage id={fieldPage} /></div>
               ) : phone ? (
                 <Carousel setApi={setApi} opts={carouselOpts} className="-mx-4 pt-5">
                   <CarouselContent className="ml-0 items-start transition-[height] duration-300" style={{ height }}>
@@ -1251,7 +1253,7 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
                 </Carousel>
               ) : (
                 tabs.map((t) => (
-                  <TabsContent key={t.key} value={t.key} className="app-in pt-6">
+                  <TabsContent key={t.key} value={t.key} className={cn('pt-6', moved && 'app-in')}>
                     {panel(t.key)}
                   </TabsContent>
                 ))

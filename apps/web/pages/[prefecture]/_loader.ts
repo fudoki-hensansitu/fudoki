@@ -3,16 +3,15 @@
 import { HTTPException } from 'hono/http-exception'
 import type { Context } from 'hono'
 import { emptyHead, pageHead, type Head } from '../../jurisdiction/html'
-import { appPageYears, hasTab, tabOfSlug, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
+import { appPageYears, hasTab, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
-import { jurisdictionPath, PREFECTURE_SLUGS } from '../../jurisdiction/path'
+import { codeOfPath, jurisdictionPath } from '../../jurisdiction/path'
 import { assetPath, EMBLEMS, emblemOf, prefectureCodeOf } from '../../jurisdiction/emblems'
 import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
-import { catalog, pageData } from '../../server/jurisdiction-routes'
-import { ACCOUNT, loadFlowParts } from '../../server/jurisdiction'
+import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
 import { loadYearSnapshot } from '../../server/app-data'
 import type { Snapshot } from '../../jurisdiction/app/data'
 import { siteKey } from '../../server/site-key'
@@ -131,31 +130,52 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   const env = c.env as unknown as Env
   const year = props.year ?? appPageYears(props.data)[0]
   if (year === undefined) return props
-  const entry = (await catalog(env).catch(() => [])).find((e) => e.code === props.data.code)
+  const entry = ENTRY_OF.get(props.data)
   // 流れの会計は ?account= で選ぶ。無ければ一般会計。収録の無い会計は 404
   const phase = props.tab === 'money' ? 'initial' : props.tab === 'settled' ? 'settlement' : undefined
   const account = new URL(c.req.url).searchParams.get('account') || ACCOUNT
   // 会計で中身の変わらない頁（予算・決算のタブ以外）の ?account= も 404 にして、CDN の key（void.config.ts の revalidateQueryAllowlist）を増やさせない
   if (account !== ACCOUNT && (!phase || (entry && !entry.accounts?.[phase]?.[String(year)]?.includes(account)))) throw new HTTPException(404, { res: notFound() })
-  const [snapshot, flow] = await Promise.all([
+  // 入口（最新の年度の頁）の題・説明文は、最新の決算と、決算より後の最新の当初予算の金額を書く。開いた年度の分は本文から作り、
+  // 当初予算の年度を開いたときの最新の決算だけを本文と同じ段で読む
+  const latestSettled = props.data.settlementYears.at(-1)
+  const newest = year === appPageYears(props.data)[0]
+  const [snapshot, flow, settledSummary] = await Promise.all([
     entry ? within(loadYearSnapshot(env, entry, year, { field: props.field, tab: props.tab ?? 'overview' }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
     entry && phase ? within(loadFlowParts(env, entry.code, year, 'setsu', phase, account), FLOW_WAIT_MS)
       // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
       .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))
       .catch(() => undefined) : undefined,
+    newest && latestSettled !== undefined && latestSettled !== year ? within(loadSettlementSummary(env, props.data.code, latestSettled), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
   ])
+  const opened = snapshot?.years[String(year)]
+  const headline: Headline | undefined = newest
+    ? {
+        ...(settledSummary ? { settlement: settledSummary } : opened && opened.kind === 'settlement' ? { settlement: { year, yen: opened.total, areas: areasOfFields(opened.fields) } } : {}),
+        ...(opened && opened.kind === 'initial' && opened.total > 0 ? { budget: { year, yen: opened.total } } : {}),
+      }
+    : undefined
   if (!snapshot || (phase && !flow)) {
     // API に繋がらない・待ちきれなければ、読めた分だけの頁を返し、画面が読み直す。欠けた頁は CDN にもブラウザにも置かない
     c.header('x-revalidate', '0')
     c.header('Cache-Control', 'no-store')
   }
-  return { ...props, ...(snapshot ? { snapshot } : {}), ...(flow ? { flow } : {}) }
+  return { ...props, ...(headline ? { data: { ...props.data, headline } } : {}), ...(snapshot ? { snapshot } : {}), ...(flow ? { flow } : {}) }
 }
+
+/** 本文の分野ごとの和（目の和）を、分野の流れ（loadSettlementSummary の areas）と同じ並び（大きい順、「その他」は最後）にする */
+const areasOfFields = (fields: Record<string, number>) =>
+  [...DOMAIN_FRAMES, OTHER_FRAME]
+    .map((f) => ({ name: f.name, yen: fields[f.id] ?? 0, other: f.id === OTHER_FRAME.id }))
+    .filter((a) => a.yen > 0)
+    .sort((a, b) => Number(a.other) - Number(b.other) || b.yen - a.yen)
 
 /** 分野の頁とタブの頁は、題・説明文・canonical をその頁のものにする */
 export const jurisdictionHead = (p: JurisdictionProps): Head => {
   if (p.kind !== 'page') return emptyHead(p.entry)
-  return pageHead(p.data, p.year, p.field ? { field: p.field } : p.tab ? { tab: p.tab } : undefined)
+  const year = p.year ?? appPageYears(p.data)[0]
+  const opened = year === undefined ? undefined : p.snapshot?.years[String(year)]
+  return pageHead(p.data, p.year, p.field ? { field: p.field } : p.tab ? { tab: p.tab } : undefined, opened && year !== undefined ? { year, kind: opened.kind, yen: opened.total, originTitle: opened.originTitle, areas: areasOfFields(opened.fields) } : undefined)
 }
 
 /** 最後の節に出す近くの自治体の数 */
@@ -177,17 +197,24 @@ export type JurisdictionView = { kind: 'page'; data: PageData } | { kind: 'empty
 
 /** /<都道府県のローマ字>/<自治体のローマ字>、都道府県自体は /<都道府県のローマ字>。API に繋がらなければ投げる */
 export async function resolveJurisdiction(env: Env, path: string): Promise<JurisdictionView | null> {
-  if (!PREFECTURE_SLUGS.has(path.split('/')[1] ?? '')) return null
-  const entries = await catalog(env)
-  const entry = entries.find((e) => jurisdictionPath(e.code) === path)
+  const code = codeOfPath(path)
+  if (!code) return null
+  // 自分の1件と、近隣に並べる同じ都道府県の自治体を並べて読む。全国の一覧は読まない
+  const prefectureCode = prefectureCodeOf(code)
+  const [entry, entries] = await Promise.all([loadCatalogEntry(env, code), loadCatalog(env, code.slice(0, 2), false)])
   if (!entry) return null
-  // 都道府県名は都道府県自体の頁へ。都道府県自体の頁と、都道府県がカタログに無い（頁が無い）ときはリンクしない
-  const prefectureCode = prefectureCodeOf(entry.code)
-  const prefecturePath = entry.code !== prefectureCode && entries.some((e) => e.code === prefectureCode) ? jurisdictionPath(prefectureCode) : null
+  // 都道府県の頁はある前提でリンクする（都道府県自体の頁ではリンクしない）
+  const prefecturePath = entry.code !== prefectureCode ? jurisdictionPath(prefectureCode) : null
   // 都道府県自体の頁には、その都道府県で収録のある自治体を全部並べる（検索エンジンが都道府県の頁からすべての自治体の頁を辿れるように）
-  const samePrefecture = entries.filter((e) => e.code.slice(0, 2) === entry.code.slice(0, 2) && e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0)
+  const samePrefecture = entries.filter((e) => e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0)
   const neighbors = (entry.code === prefectureCode ? [...samePrefecture].sort((a, b) => a.code.localeCompare(b.code)) : nearby(entry, samePrefecture))
     .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
-  const data = entry.settlementYears.length > 0 ? await pageData(env, entry) : null
-  return data ? { kind: 'page', data: { ...data, prefecturePath, ...(prefecturePath && EMBLEMS[prefectureCode] ? { prefectureLogo: assetPath(prefectureCode, 'emblem.svg') } : {}), emblem: emblemOf(entry.code), neighbors, vision: VISIONS[entry.code] ?? null } } : { kind: 'empty', entry, neighbors }
+  const data = pageBase(entry)
+  if (!data) return { kind: 'empty', entry, neighbors }
+  const page: PageData = { ...data, prefecturePath, ...(prefecturePath && EMBLEMS[prefectureCode] ? { prefectureLogo: assetPath(prefectureCode, 'emblem.svg') } : {}), emblem: emblemOf(entry.code), neighbors, vision: VISIONS[entry.code] ?? null }
+  ENTRY_OF.set(page, entry)
+  return { kind: 'page', data: page }
 }
+
+/** 頁のデータを作ったときの自治体の収録範囲。本文（withSnapshot）が読み直さずに使う。props には載せない（画面に送らない） */
+const ENTRY_OF = new WeakMap<PageData, CatalogEntry>()

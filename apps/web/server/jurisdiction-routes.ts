@@ -11,7 +11,7 @@ import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
 import { appYears, loadYearSnapshot } from './app-data'
-import { loadCatalog, loadCatalogEntry, loadPage, type CatalogEntry } from './jurisdiction'
+import { loadCatalog, loadCatalogEntry, loadSettlementSummary, type CatalogEntry } from './jurisdiction'
 
 // 応答は CDN（Void の ISR、void.config.ts の routing.revalidate）に置く。Worker の中には置かず、毎回 API から組む。
 // 自治体の一覧だけは、1つの頁を組むあいだに何度も引くので、同じ isolate の中で1分だけ使い回す
@@ -25,8 +25,6 @@ export const catalog = (env: Env) => {
   p.catch(() => catalogMemo.get(env)?.p === p && catalogMemo.delete(env))
   return p
 }
-/** 自治体の頁と OG 画像が共有する、最新の決算の年度の頁のデータ */
-export const pageData = (env: Env, e: CatalogEntry): Promise<Omit<PageData, 'prefecturePath' | 'prefectureLogo' | 'emblem' | 'neighbors'> | null> => loadPage(env, e)
 
 /** ホーム（/）とサイドバーの検索に載せる、決算を収録している自治体 */
 export async function homeEntries(env: Env): Promise<MapEntry[]> {
@@ -44,21 +42,21 @@ export async function ogInput(env: Env, code: string, assets: Fetcher): Promise<
   const emblem = EMBLEMS[code]
   if (!emblem) return null
   const entry = await loadCatalogEntry(env, code)
-  const data = entry && entry.settlementYears.length > 0 ? await pageData(env, entry) : null
-  const areas = data?.cofogFlow.map((f) => ({ name: f.kan.name, yen: f.kan.yen })).filter((a) => a.yen > 0) ?? []
-  if (!entry || !data || areas.length === 0) return null
+  const latest = entry?.settlementYears.at(-1)
+  const summary = entry && latest !== undefined ? await loadSettlementSummary(env, code, latest) : null
+  const areas = summary?.areas.map((a) => ({ name: a.name, yen: a.yen })) ?? []
+  if (!entry || !summary || areas.length === 0) return null
   const asset = async (path: string) => {
     const r = await assets.fetch(new Request(`https://fudoki.dev${path}`))
     if (!r.ok) throw new Error(`${path} が読めません（${r.status}）`)
     return r.text()
   }
   const [emblemSvg, logoSvg] = await Promise.all([asset(assetPath(code, 'emblem.svg')), asset('/logo.svg')])
-  const latest = data.years.at(-1)!
   return {
     name: entry.name,
     prefecture: code.slice(2, 5) === '000' ? null : entry.prefecture,
-    year: latest.year,
-    total: latest.yen,
+    year: summary.year,
+    total: summary.yen,
     areas,
     emblemSvg,
     logoSvg,
