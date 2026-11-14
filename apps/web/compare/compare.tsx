@@ -277,12 +277,12 @@ export function Compare(props: Props) {
 
           {byUse.length || byPopulation.length ? (
             <section className="mt-12">
-              <h2 className="text-[17px] font-semibold">{a.name}に似たまち</h2>
               {b ? (
-                <p className="mt-1 mb-3 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
-                  押すと、右の<MarkB /><span className="text-foreground">{b.name}</span>と入れ替えて比べます
-                </p>
-              ) : <div className="mb-3" />}
+                <>
+                  <h2 className="flex flex-wrap items-center gap-1.5 text-[17px] font-semibold"><MarkB />{b.name}と入れ替える</h2>
+                  <p className="mt-1 mb-3 text-sm text-muted-foreground">{a.name}に似たまちから選べます</p>
+                </>
+              ) : <h2 className="mb-3 text-[17px] font-semibold">{a.name}に似たまち</h2>}
               <div className="flex flex-col gap-6 sm:flex-row">
                 {byUse.length ? <SimilarList title="使い方が近い" note="一般会計を分野ごとの割合で比べて近いまち" items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
                 {byPopulation.length ? <SimilarList title="人口が近い" note="住民基本台帳の人口が近いまち" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
