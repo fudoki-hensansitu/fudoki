@@ -35,7 +35,7 @@ jurisdiction_code,fiscal_year,document_kind,account_name,kan_name,kou_name,moku_
 092096,2025,initial,一般会計,土木費,道路橋りよう費,道路新設改良費,"[""産業団地道路整備事業費""]",8b6e81de658eb92a80cd315d29596ae19de67ba944592eeabb4b78997483ec2e,new
 092096,2025,initial,一般会計,土木費,道路橋りよう費,道路新設改良費,"[""職員費""]",b809ea060b9c16d2a9bdd43c18ccb05a40f520e1bdca4318a86555f59a8c3f19,new
 092096,2025,initial,一般会計,土木費,道路橋りよう費,道路新設改良費,"[""道路改良事業費""]",0f20bc5b200564192ea66a7e4d8a44b926d67b8e2ddfd1f075d1542192066540,new
-092096,2025,initial,一般会計,土木費,道路橋りよう費,道路新設改良費,"[""道路舖装事業費""]",fc42dccb8d6cf64773ba94ac4a81365099bcd1a915263d337906827da9b8d9af,new
+092096,2025,initial,一般会計,土木費,道路橋りよう費,道路新設改良費,"[""道路舗装事業費""]",34052ee3ff4383af81d5162df2a41a6f8d42e5dc85e0cc3079097bece4e1768f,new
 092096,2025,initial,一般会計,土木費,道路橋りよう費,道路橋りよう総務費,"[""会計年度任用職員費""]",7f9e0147ed524f56b3ddcca3a448d558db2119adda45f7d322dd45f66569fefc,new
 092096,2025,initial,一般会計,土木費,道路橋りよう費,道路橋りよう総務費,"[""職員費""]",d348f250314b090fc3d4e6777245ab15e378e30b1133e7fe95c3929dc75c329f,new
 092096,2025,initial,一般会計,土木費,道路橋りよう費,道路橋りよう総務費,"[""道路橋りよう総務事務費""]",c70d136852b28772cb6c070b968ef4aa944b665e69c8377faf37c5d38ad52ea0,new
@@ -192,7 +192,7 @@ jurisdiction_code,fiscal_year,document_kind,account_name,kan_name,kou_name,moku_
 092096,2025,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""妊産婦医療給付費""]",a0e3e3b0a7a182bb695cca04cee5138a2c9e4865999381d39010b6e8c4cda4c2,new
 092096,2025,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""母子・父子家庭自立支援及び女性支援相談事業費""]",4a31be04a3ca24e6cd0cf329ef8b36de23639f34660641e290b505347e3671e0,new
 092096,2025,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""産後ケア事業費""]",05cbd35880749e042929a1dc558cf341e7c430bc97e2f94d1e764a5cebb343f9,new
-092096,2025,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""赤ちやん誕生祝金支給事業費""]",cd689b6165093c29618f86fc34e5fb0412a9f318e630f043f4284df1b61bd790,new
+092096,2025,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""赤ちゃん誕生祝金支給事業費""]",8a690c9e8e6846b0e8e665e4e4e2d314fec89136509395bf862bc0983d6acd7a,new
 092096,2025,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""養育医療給付費""]",b64c345b271103cd0178f6486d3a86b50ea2fe6df4966c65b9281851a50787b4,new
 092096,2025,initial,一般会計,民生費,児童福祉費,特定地域型保育事業費,"[""特定地域型保育事業費""]",e88cc4b3827c8d07af4b7788fe1b1caea6f9606b3755407d4810a1d0378a35d4,new
 092096,2025,initial,一般会計,民生費,児童福祉費,特定教育・保育施設費,"[""保育士対策事業費""]",78dde99379f8be9209ddece213789a7b2d8d1eb8f39abd9448bae8da0066d2da,new
@@ -680,7 +680,7 @@ jurisdiction_code,fiscal_year,document_kind,account_name,kan_name,kou_name,moku_
 092096,2026,initial,一般会計,教育費,教育総務費,事務局費,"[""幼児教育推進費""]",d795c25b3013dbaff140a9cdf7c3d09e5d4929a76eb76dcc1a5d983c6c4da81d,continued
 092096,2026,initial,一般会計,教育費,教育総務費,事務局費,"[""施設等利用給付費""]",abe1dd30f7d41f1ddbedb023baa4c5ce6e8f5a747d6ccf571913ed4af6d6725f,continued
 092096,2026,initial,一般会計,教育費,教育総務費,事務局費,"[""特別職費""]",cf06c7706d554c9c35e24d3033bee6d3f2cbe5aec7d9eb0608b79f4f680cbf59,continued
-092096,2026,initial,一般会計,教育費,教育総務費,事務局費,"[""職員費(うち退職手当負担金62,349千円)""]",67faa652d53b07f2f41fba04b2c5fb06b0908b69a68d69367e796d483416a82c,new
+092096,2026,initial,一般会計,教育費,教育総務費,事務局費,"[""職員費(うち退職手当負担金62,349千円)""]",b37a98134131b67198cb91979ce52709385e2624d597e8f9769debb27bcbebd7,continued
 092096,2026,initial,一般会計,教育費,教育総務費,教育委員会費,"[""教育委員会事務費""]",9784c343d4086f8bef1f256ee72a998b8dd3e7ae7d560e8291f265085af4a652,continued
 092096,2026,initial,一般会計,教育費,教育総務費,教育振興費,"[""ICT教育推進事業費""]",0f159137125bd3fb984bfd401e70ab0d5d94673a23446f7c828ae410c78ad43d,new
 092096,2026,initial,一般会計,教育費,教育総務費,教育振興費,"[""不登校対策費""]",5ffb4c02acbedefc4a65f64dde4f02501bafd4351edd4ad661ef147433507eb1,continued
@@ -698,7 +698,7 @@ jurisdiction_code,fiscal_year,document_kind,account_name,kan_name,kou_name,moku_
 092096,2026,initial,一般会計,教育費,社会教育費,公民館費,"[""会計年度任用職員費""]",06e65ea5867e4b36b978b8ecfa9c5de18c7db8833fd1e348a79e6a1c46cadca2,continued
 092096,2026,initial,一般会計,教育費,社会教育費,公民館費,"[""公民館等一般管理費""]",09867a6161dbd458a7c14915a3f7866c7f7588dab2ba82f70a8be7cf0af86715,continued
 092096,2026,initial,一般会計,教育費,社会教育費,公民館費,"[""地域公民館振興費""]",d939c0acd6cc67312b8c57e906f46357d3224d6f645518ddf25f6360d1446508,continued
-092096,2026,initial,一般会計,教育費,社会教育費,公民館費,"[""大內分館管理費""]",f72d0bd07269c22fa985ad7547ad82e03388f6d8a8d9d8d13bf2c65a05cab54e,new
+092096,2026,initial,一般会計,教育費,社会教育費,公民館費,"[""大内分館管理費""]",51e4d867cb9c04673453c7515da0a4b8dccd4f7c5575cd613ab1832c325fa715,continued
 092096,2026,initial,一般会計,教育費,社会教育費,公民館費,"[""山前分館管理費""]",f36f2736aef7580091848df2580bee5ae2cb26605ae05ed231d4b08b73ff1149,continued
 092096,2026,initial,一般会計,教育費,社会教育費,公民館費,"[""生涯学習館管理費""]",e0e9d0a1cd36f23371381a171b43c34143064e977f0407f87c0638061acefc2f,continued
 092096,2026,initial,一般会計,教育費,社会教育費,公民館費,"[""職員費""]",156f164910faa00930b2b91c47a90ea622c80c0440e69c6d405280d3a9f87f8e,continued
@@ -765,7 +765,7 @@ jurisdiction_code,fiscal_year,document_kind,account_name,kan_name,kou_name,moku_
 092096,2026,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""妊産婦医療給付費""]",a0e3e3b0a7a182bb695cca04cee5138a2c9e4865999381d39010b6e8c4cda4c2,continued
 092096,2026,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""母子・父子家庭自立支援及び女性支援相談事業費""]",4a31be04a3ca24e6cd0cf329ef8b36de23639f34660641e290b505347e3671e0,continued
 092096,2026,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""産後ケア事業費""]",05cbd35880749e042929a1dc558cf341e7c430bc97e2f94d1e764a5cebb343f9,continued
-092096,2026,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""赤ちゃん誕生祝金支給事業費""]",3a43baf9f7dd5443c96bc886f153ec7e29af66f1685799ac6fbe89687c15a641,new
+092096,2026,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""赤ちゃん誕生祝金支給事業費""]",8a690c9e8e6846b0e8e665e4e4e2d314fec89136509395bf862bc0983d6acd7a,continued
 092096,2026,initial,一般会計,民生費,児童福祉費,母子福祉費,"[""養育医療給付費""]",b64c345b271103cd0178f6486d3a86b50ea2fe6df4966c65b9281851a50787b4,continued
 092096,2026,initial,一般会計,民生費,児童福祉費,特定地域型保育事業費,"[""特定地域型保育事業費""]",e88cc4b3827c8d07af4b7788fe1b1caea6f9606b3755407d4810a1d0378a35d4,continued
 092096,2026,initial,一般会計,民生費,児童福祉費,特定教育・保育施設費,"[""保育士対策事業費""]",78dde99379f8be9209ddece213789a7b2d8d1eb8f39abd9448bae8da0066d2da,continued
@@ -895,7 +895,7 @@ jurisdiction_code,fiscal_year,document_kind,account_name,kan_name,kou_name,moku_
 092096,2026,initial,一般会計,総務費,総務管理費,一般管理費,"[""秘書事務費""]",602689963d780d8eef2967f47a14dc738c9e4eb58e8c9bfa330434daf57c8aad,continued
 092096,2026,initial,一般会計,総務費,総務管理費,一般管理費,"[""結婚支援事業費""]",5ccff9abd0cc5f72061b7f123232be80b7092aa1ae87d51cf6692e6c4aed748d,continued
 092096,2026,initial,一般会計,総務費,総務管理費,一般管理費,"[""総務事務費""]",564137902241104def195bc91d59a02a182a23a2e3bcfb2ea5efa4a7c12f9e31,continued
-092096,2026,initial,一般会計,総務費,総務管理費,一般管理費,"[""職員費(うち退職手当負担金256,573千円)""]",b8968cf4b3b22e1199cf87f0b3acb5a95d1664a9c36fbc453c7fa3fbb4f6f88d,new
+092096,2026,initial,一般会計,総務費,総務管理費,一般管理費,"[""職員費(うち退職手当負担金256,573千円)""]",e3af4ede4d617de96c0c62537ae8c03a4c22f446a6a3c6177251fda05b021330,continued
 092096,2026,initial,一般会計,総務費,総務管理費,一般管理費,"[""自治会活動費""]",acd31f39378bed8062084820e75b7ee77cb25a8bdad885dc012f92e9aff1ae2c,continued
 092096,2026,initial,一般会計,総務費,総務管理費,一般管理費,"[""複合交流拠点管理費""]",fc4f63ca9a928b0e3579efdf2fdf88b386d09d18ab9624b50fad52558e0bb89f,continued
 092096,2026,initial,一般会計,総務費,総務管理費,一般管理費,"[""防災対策費""]",60c5e7a885635cc55a0d4040c2ba436e064850badfce36d7546cdb2ac84a82ee,continued
@@ -1084,7 +1084,7 @@ jurisdiction_code,fiscal_year,document_kind,account_name,kan_name,kou_name,moku_
 092096,2026,initial,介護保険特別会計（保険事業勘定）,地域支援事業費,包括的支援事業・任意事業費,生活支援体制整備事業費,"[""生活支援体制整備事業費""]",b308550bf6cd341a6a5f84b3df2f9aa04d6656e7b8919330f7b53d145647c64a,continued
 092096,2026,initial,介護保険特別会計（保険事業勘定）,地域支援事業費,包括的支援事業・任意事業費,総合相談事業費,"[""会計年度任用職員費""]",8c8561c1f60fa550d327196a8602865106787c8c3acaa44ed8aca7dd842bf0f1,continued
 092096,2026,initial,介護保険特別会計（保険事業勘定）,地域支援事業費,包括的支援事業・任意事業費,総合相談事業費,"[""総合相談事業費""]",2b6e49c0212180e805c0a4db608db9daa22c56d396d39faa1a0d00edba918afe,continued
-092096,2026,initial,介護保険特別会計（保険事業勘定）,地域支援事業費,包括的支援事業・任意事業費,総合相談事業費,"[""職員費(うち退職手当負担金2,461千円)""]",3882d6eeeca3fdd868d62656b720bd1c941826bc99a57488e4b9571558448346,new
+092096,2026,initial,介護保険特別会計（保険事業勘定）,地域支援事業費,包括的支援事業・任意事業費,総合相談事業費,"[""職員費(うち退職手当負担金2,461千円)""]",b7fb7e7f4b21ee98bcb90ffa96c93aacd0b51287551d7f85266d80e14c3b206c,continued
 092096,2026,initial,介護保険特別会計（保険事業勘定）,地域支援事業費,包括的支援事業・任意事業費,認知症総合支援事業費,"[""会計年度任用職員費""]",fdb651b6b1c08137a1e3774e590c21c3e1a09b2cc128273d1d728e753d76005b,continued
 092096,2026,initial,介護保険特別会計（保険事業勘定）,地域支援事業費,包括的支援事業・任意事業費,認知症総合支援事業費,"[""認知症総合支援事業費""]",c816870e354485254801aeb841f82dbbffbc1a464680b474ea6389dedc990e50,continued
 092096,2026,initial,介護保険特別会計（保険事業勘定）,基金積立金,基金積立金,介護給付費準備基金積立金,"[""介護給付費準備基金積立金""]",ae1cc6c27283646e580b3f8abf0c7fb381edfdee295b5d3c9a55dd2dbf465d6d,continued
@@ -1095,7 +1095,7 @@ jurisdiction_code,fiscal_year,document_kind,account_name,kan_name,kou_name,moku_
 092096,2026,initial,介護保険特別会計（保険事業勘定）,総務費,徴収費,賦課徴収費,"[""賦課事務費""]",36393033a83203cf284eb6cdb559976a82923043a19e606d0aa03001c25e7118,continued
 092096,2026,initial,介護保険特別会計（保険事業勘定）,総務費,総務管理費,一般管理費,"[""一般管理費""]",332904b9da7abbbd6db3c8d35d9a1b85bc046c2858db9b03743a01a9db9f8d14,continued
 092096,2026,initial,介護保険特別会計（保険事業勘定）,総務費,総務管理費,一般管理費,"[""会計年度任用職員費""]",6acee7aa536b4f774d09b35106580413a26b46249525676a927a8219a34222c8,continued
-092096,2026,initial,介護保険特別会計（保険事業勘定）,総務費,総務管理費,一般管理費,"[""職員費(うち退職手当負担金5,845千円)""]",7dd3777586eae0afffd90d03a7b63cc8c3e31a53ba892a30bf9c1976a0b3d18e,new
+092096,2026,initial,介護保険特別会計（保険事業勘定）,総務費,総務管理費,一般管理費,"[""職員費(うち退職手当負担金5,845千円)""]",abd02bc12d0004e667269c8edec36468fc0ffe9565154000da4192dbde18342e,continued
 092096,2026,initial,介護保険特別会計（保険事業勘定）,総務費,総務管理費,連合会負担金,"[""県国保連合会負担金""]",922e3c0a2a7747bd0462d8821afad0a2ac08324879f047405dab333c23f78f41,continued
 092096,2026,initial,休日夜間急患診療所特別会計,急患診療所運営費,急患診療所運営費,急患診療所運営費,"[""急患診療所運営費""]",9bedaad0d6facc3311ce68364e836f3dd9dd30df10778931851bb6643968af1e,continued
 092096,2026,initial,国民健康保険特別会計,事業費納付金,介護納付金分,介護納付金分,"[""介護納付金分""]",54efe076ba960584098e3d1ffdacd867c2986a9c2aa8039d14f252d7bb8b249d,continued
@@ -1119,19 +1119,19 @@ jurisdiction_code,fiscal_year,document_kind,account_name,kan_name,kou_name,moku_
 092096,2026,initial,国民健康保険特別会計,総務費,徴税費,賦課徴収費,"[""賦課事務費""]",4b28596cad631471766044bddb83fca78725598ec037a2d79750dd2c892d49ec,continued
 092096,2026,initial,国民健康保険特別会計,総務費,総務管理費,一般管理費,"[""一般管理費""]",562b561ee023812b5ff450f71ac00ab4324ba2bc62e446839da7f427304b6e91,continued
 092096,2026,initial,国民健康保険特別会計,総務費,総務管理費,一般管理費,"[""会計年度任用職員費""]",12ffd04c56360dd800d9c53ce19789d4d2e5972851f89ea883d74186acbac3d2,continued
-092096,2026,initial,国民健康保険特別会計,総務費,総務管理費,一般管理費,"[""職員費(うち退職手当負担金6,094千円)""]",ba6934e8c3ee2388904661f66c1d18b9c97a961a7f486b7f11e7aada571d012e,new
+092096,2026,initial,国民健康保険特別会計,総務費,総務管理費,一般管理費,"[""職員費(うち退職手当負担金6,094千円)""]",5b1e9d00181ce410009f731c67d658b540f9d03ecbe8c167aba8e855717a62a7,continued
 092096,2026,initial,国民健康保険特別会計,総務費,総務管理費,連合会負担金,"[""県国保連合会負担金""]",bfe5eb71b8fc09be382d33d2dabb67ca9b0deeb81d246aed3cdbf3c1fb1878d4,continued
 092096,2026,initial,国民健康保険特別会計,総務費,運営協議会,運営協議会費,"[""運営協議会運営費""]",35afea3e5554674e4280b6c7e6bcc7029412c4a012a3777091e3121e6cdf1379,continued
 092096,2026,initial,後期高齢者医療特別会計,後期高齢者医療広域連合納付金,後期高齢者医療広域連合納付金,後期高齢者医療広域連合納付金,"[""後期高齢者医療広域連合納付金""]",89311ac72d0d5df3861092cc115ad6ed813156d26fb471570b3e4ba265d078c1,continued
 092096,2026,initial,後期高齢者医療特別会計,総務費,徴収費,徴収費,"[""収納事務費""]",a2d2b533cdaeb343e1b0dd3b8ae0513f58f04f49026a1575a62f25f9a0fbb784,continued
 092096,2026,initial,後期高齢者医療特別会計,総務費,徴収費,徴収費,"[""賦課事務費""]",a84f65e77de195739ca9ba3fea5351fb9d768ff2424175f75f97a4e5fd3d937c,continued
 092096,2026,initial,後期高齢者医療特別会計,総務費,総務管理費,一般管理費,"[""一般管理費""]",dae762dea7a89dcbb43d5e7e07baefef5543693112a8a09c0f6c51981800a364,continued
-092096,2026,initial,後期高齢者医療特別会計,総務費,総務管理費,一般管理費,"[""職員費(うち退職手当負担金2,706千円)""]",0b72bd5af8463d5cf47a5bc5940c6d118a17f1ec0cd0fc5c887901224f5dce64,new
+092096,2026,initial,後期高齢者医療特別会計,総務費,総務管理費,一般管理費,"[""職員費(うち退職手当負担金2,706千円)""]",470996a587c5cbb43276c5c99481b3823527abcfd79c157de3e07c5b77a195d3,continued
 092096,2026,initial,産業団地整備事業特別会計,公債費,公債費,元金,"[""償還元金""]",450e52d4e0f441d99f91b10bef79edaa3911d46527eeae5afc93e0b6f4e1eb9b,continued
 092096,2026,initial,産業団地整備事業特別会計,公債費,公債費,利子,"[""一時借入金利子""]",16a66576b04c7c202f041e304f4422b8138ba55de3bfa2d360f4ec72827cf4e6,continued
 092096,2026,initial,産業団地整備事業特別会計,公債費,公債費,利子,"[""償還利子""]",9789c2e310fe51710df0f7b2d80147a26245891c9a4016ed6fd550b4a1cc8ce3,continued
 092096,2026,initial,産業団地整備事業特別会計,産業団地整備事業費,産業団地整備事業費,産業団地整備事業費,"[""産業団地整備事業費""]",2bbd6e0bdc1e029cff5886d193abcd9590cbe388bafc1e87dad04e847ecfa982,continued
-092096,2026,initial,産業団地整備事業特別会計,産業団地整備事業費,産業団地整備事業費,産業団地整備事業費,"[""職員費(うち退職手当負担金1,353千円)""]",567b698dd88a52607e7b578263b3f1c1c3ea061df9ec8058cae4d55767576434,new
+092096,2026,initial,産業団地整備事業特別会計,産業団地整備事業費,産業団地整備事業費,産業団地整備事業費,"[""職員費(うち退職手当負担金1,353千円)""]",088469738ed03e0d71e24ba21c2449df3f7f713a6d74bbb735a3cdc7db695633,continued
 131091,2024,initial,一般会計,公債費,公債費,公債費,"[""一時借入金利子【会計管理室】""]",e83a4fb47fb6529dcb36b3803b1ae846dcff456c6357a4a16bb076c6dc1e1da0,new
 131091,2024,initial,一般会計,公債費,公債費,公債費,"[""起債償還元金【財政課】""]",4261af4c9709d0d64cb3dbe1f09df406c0d78f4cb310a2872ffbed0404de9a5d,new
 131091,2024,initial,一般会計,公債費,公債費,公債費,"[""起債利子【財政課】""]",9e961a6b4245c8ae9d5cdcdcd7ab55ea3571b32378d5360b0b48bad702fb0f55,new

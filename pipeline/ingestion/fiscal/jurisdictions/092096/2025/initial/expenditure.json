@@ -358,6 +358,22 @@
             "observed_name": "道路橋りよ",
             "corrected_name": "道路橋りよう費",
             "reason": "項の名前「道路橋りよう費」の折り返し。項の名前は番号と別の欄に印字し、欄の幅で折り返す。続きの行（「う費」）は目の名前の位置に来て目の行と読まれるので除き、1行目の読みに続きを足す。"
+          },
+          {
+            "id": "p51-akachan",
+            "page": 51,
+            "code": null,
+            "observed_name": "赤ちやん誕生祝金支給事業費",
+            "corrected_name": "赤ちゃん誕生祝金支給事業費",
+            "reason": "原典の画像で、頁51の説明の名前は「赤ちゃん誕生祝金支給事業費」と印字している。OCR が小書きの「ゃ」を並字の「や」と読んだので、印字どおりに直す。"
+          },
+          {
+            "id": "p65-hosou",
+            "page": 65,
+            "code": null,
+            "observed_name": "道路舖装事業費",
+            "corrected_name": "道路舗装事業費",
+            "reason": "原典の画像で、頁65の説明の名前は「道路舗装事業費」と印字している。OCR が「舗」を異体字の「舖」と読んだので、印字どおりに直す。"
           }
         ],
         "dropped_readings": [
@@ -1800,13 +1816,13 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "d98c7789f1c9f69ea1daff480fef1bd8a7dfc5c1c4726b4c55f9eaab1a955118",
+      "input_fingerprint": "0e3255dcec9a247af1ee76ac9d62adb7d50aa918a1017b36eb44f41af51be66c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
         "金額の単位は printed 1頁・carried 45頁 から決めた。款の和 38,860,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "原画で確かめた名称の誤読 7 件を、管理 JSON の name_corrections で印字に直した: 5根本山自然観察センタ一費→5根本山自然観察センター費・子育て支援センタ一管理費→子育て支援センター管理費・少年指導センタ一活動費→少年指導センター活動費・市民活動推進センタ一運営費→市民活動推進センター運営費・第一学校給食センタ一管理費→第一学校給食センター管理費・59頁 農林水産業→農林水産業費・64頁 道路橋りよ→道路橋りよう費。",
+        "原画で確かめた名称の誤読 9 件を、管理 JSON の name_corrections で印字に直した: 5根本山自然観察センタ一費→5根本山自然観察センター費・子育て支援センタ一管理費→子育て支援センター管理費・少年指導センタ一活動費→少年指導センター活動費・市民活動推進センタ一運営費→市民活動推進センター運営費・第一学校給食センタ一管理費→第一学校給食センター管理費・赤ちやん誕生祝金支給事業費→赤ちゃん誕生祝金支給事業費・道路舖装事業費→道路舗装事業費・59頁 農林水産業→農林水産業費・64頁 道路橋りよ→道路橋りよう費。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 10 件（p49:full-page:a0:result1:r15・p49:full-page:a0:result1:r15:w4・p51:full-page:a0:result1:r61・p51:full-page:a0:result1:r61:w2・p52:full-page:a0:result0:r13・p52:full-page:a0:result0:r13:w6・p52:full-page:a0:result1:r56・p52:full-page:a0:result1:r56:w2・p64:full-page:a0:result1:r19・p64:full-page:a0:result1:r19:w2）・徵→徴 4 件（p44:full-page:a0:result0:r12・p44:full-page:a0:result0:r12:w0・p52:full-page:a0:result1:r69・p52:full-page:a0:result1:r69:w5）・查→査 8 件（p39:full-page:a0:result1:r34・p39:full-page:a0:result1:r34:w1・p44:full-page:a0:result1:r31・p44:full-page:a0:result1:r31:w7・p49:full-page:a0:result1:r78・p49:full-page:a0:result1:r78:w9・p54:full-page:a0:result1:r58・p54:full-page:a0:result1:r58:w3）・產→産 32 件（p40:full-page:a0:result1:r40・p40:full-page:a0:result1:r40:w5・p41:full-page:a0:result1:r17・p41:full-page:a0:result1:r17:w2・p53:full-page:a0:result1:r30・p53:full-page:a0:result1:r30:w1・p55:full-page:a0:result1:r25・p55:full-page:a0:result1:r25:w3・p60:full-page:a0:result1:r10・p60:full-page:a0:result1:r10:w1・p60:full-page:a0:result1:r50・p60:full-page:a0:result1:r50:w1・p60:full-page:a0:result1:r93・p60:full-page:a0:result1:r93:w1・p62:full-page:a0:result1:r50・p62:full-page:a0:result1:r50:w0・p65:full-page:a0:result1:r44・p65:full-page:a0:result1:r44:w4・p65:full-page:a0:result1:r66・p65:full-page:a0:result1:r66:w0・p66:full-page:a0:result1:r6・p66:full-page:a0:result1:r6:w5・p67:full-page:a0:result1:r19・p67:full-page:a0:result1:r19:w5・p72:full-page:a0:result1:r30・p72:full-page:a0:result1:r30:w5・p73:full-page:a0:result1:r85・p73:full-page:a0:result1:r85:w4・p82:full-page:a0:result0:r19・p82:full-page:a0:result0:r19:w3・p82:ink-0:a0:result0:r0・p82:ink-0:a0:result0:r0:w4）・說→説 8 件（p38:full-page:a0:result1:r3・p38:full-page:a0:result1:r3:w0・p45:full-page:a0:result1:r2・p45:full-page:a0:result1:r2:w0・p46:full-page:a0:result1:r2・p46:full-page:a0:result1:r2:w0・p77:full-page:a0:result1:r2・p77:full-page:a0:result1:r2:w0）。"
       ],
       "unread_amount_count": 0,
@@ -1814,7 +1830,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/092096/2025/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "f24db48900de7abc193be2777d4c23ae175fa64ca5c5f2ab234bde7b666efb43",
+          "sha256": "9a5363d33d989f98b4e014eee5a9b24652c77647c952e5bbc35a53fb12848db4",
           "bytes": 48461
         },
         "row_count": 1466
@@ -1831,7 +1847,7 @@
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "b686f4261332de827f1cfcfd3dab1eb241c971b455e570921c0d9e5d3bc3053f",
+      "input_fingerprint": "c0c871038d109d99513fb3e565fb37113107c4f5a21d2d1a5ad52fd4cf36bd4a",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1862,7 +1878,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "07fec1d72cab9cc0d9e6b08528b74ebdb45b6309c284bcfa6b46019c1c5e2f54",
+      "input_fingerprint": "ad4fbc685b2ebc2944ffebbd9e2d485e52b6347aea5590ecb7893525dc0acefa",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1893,7 +1909,7 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "7e0c74982d30a7f0beafb07bcefc64ad4ad15a2c8c09f6ae3c659f11d323d4fd",
+      "input_fingerprint": "9982dc350544230b6799e661007100bc232d28e6215d41e62cb40fbc6f73e4ab",
       "account": "介護保険特別会計（保険事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1924,7 +1940,7 @@
     {
       "table_id": "care-service-initial",
       "conversion_id": "care-service-initial",
-      "input_fingerprint": "7a7a6fdab96efbada3392b143fbd1ebcd8b4b8250c680ba2591d6cd9402ec4c4",
+      "input_fingerprint": "00dbd82e2ede7371a6547892761a2fab90920b029b405337649f9ddbd8d26628",
       "account": "介護保険特別会計（介護サービス事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1953,7 +1969,7 @@
     {
       "table_id": "holiday-clinic-initial",
       "conversion_id": "holiday-clinic-initial",
-      "input_fingerprint": "c6fa6617339f445f80f9af2453cde34b3adde0f974f149079efe63698abc1e9d",
+      "input_fingerprint": "4fc0cc14de679fa99946b3a6e78115c53b14e084554e8c49f34e1207a78d17f2",
       "account": "休日夜間急患診療所特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -1984,7 +2000,7 @@
     {
       "table_id": "industrial-park-initial",
       "conversion_id": "industrial-park-initial",
-      "input_fingerprint": "aec0474001582d18309fc198372526806522c2e08820723e9d77fc1da5d08223",
+      "input_fingerprint": "300a152dd8d5e6272a78308204c32306fa6509e01a2ad10c2ad019da4c175fa9",
       "account": "産業団地整備事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",

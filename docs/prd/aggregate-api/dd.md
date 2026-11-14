@@ -128,7 +128,7 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 ドメインモデルの「事業を作る」の手順1〜3・5〜7を作る。dbt は seed に書けないので、`project:link-measures` と同じく Python の script が判断して seed の CSV を書く。
 
 - script `project:link-projects` が、手順1〜3（名前の並びで決まる規則）で前年度と結び、seed（`project_line`: 自治体・年度・資料区分・会計・款・項・目・名前の並び → `project_id`）に書く。2回目からは seed を正にし、seed に無い行だけを新しく判断して足す。手順4に回る事業は新しい事業として始める。
-- 事業の行と鍵（名前の並び。同じ親・同じ名前は印字の順で `#2` を付ける）は dbt の `int_project__lines` が作り、script はそれを読んで判断し、dbt はその鍵で seed と結ぶ（鍵の作り方を1か所に置く）。対象の自治体は seed `project_jurisdiction`（今は品川だけ）。
+- 事業の行と鍵（名前の並び。同じ親・同じ名前は印字の順で `#2` を付ける）は dbt の `int_project__lines` が作り、script はそれを読んで判断し、dbt はその鍵で seed と結ぶ（鍵の作り方を1か所に置く）。対象の自治体は seed `project_jurisdiction`（今は品川・真岡）。
 - 手順4（Jev）はまだ使わず、手順3で決まらない事業は新しい事業にする。
 - `project_year` は検索に使うので、ドメインモデルの表の案より列を足し、名前・会計・款・項・目・当初予算額・支出済額を持つ。`search_projects` はこの表を年度で引く（事業の表は年度を持たないため）。
 - dbt は seed と `expenditure_detail` を名前の並びで結んで `project`・`project_year` を作る。seed の行が `expenditure_detail` のどの行にも当たらない（取り込みを直して名前が変わった）ときは dbt の検査で止め、script を流し直す。
