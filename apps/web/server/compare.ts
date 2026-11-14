@@ -55,14 +55,14 @@ export async function similarTowns(env: Env, a: { code: string; pop: number }, y
     const pops = await loadPopulations(env, rows.map((r) => r.jurisdiction_code))
     return rows.map((r) => ({ code: r.jurisdiction_code, name: r.name, pop: pops.get(r.jurisdiction_code)?.at(-1)?.people ?? 0 }))
   }
-  const useOf = async () => withPop((await api('list_similar_expenditures', { ...query, limit: n })).expenditures)
+  const useOf = async () => withPop((await api('search_similar_expenditures', { ...query, limit: n })).expenditures)
   const populationOf = async () => {
     // D1 が無い（preview・手元の試験）ときは探さない
     const statement = env.DB?.prepare(POPULATION_SQL).bind(a.code, a.pop, POPULATION_CANDIDATES)
     if (!a.pop || !statement?.all) return []
     const { results } = await statement.all<{ jurisdiction_code: string }>()
     if (!results.length) return []
-    const covered = await api('list_similar_expenditures', { ...query, among: results.map((r) => r.jurisdiction_code), limit: POPULATION_CANDIDATES })
+    const covered = await api('search_similar_expenditures', { ...query, among: results.map((r) => r.jurisdiction_code), limit: POPULATION_CANDIDATES })
     return (await withPop(covered.expenditures)).filter((t) => t.pop > 0).sort(byRatio(a.pop)).slice(0, n)
   }
   const safe = (p: Promise<TownRef[]>) => p.catch((e) => (logError(e), [] as TownRef[]))

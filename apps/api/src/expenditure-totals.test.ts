@@ -4,7 +4,7 @@ import type { Db } from './db'
 import { insertCoverage, insertJurisdiction, insertOrigin, testDb } from './testing'
 import { callWebOp } from './web-ops'
 
-// 歳出の根の額（web のまち比べの list_expenditures・list_similar_expenditures）
+// 歳出の根の額（web のまち比べの list_expenditures・search_similar_expenditures）
 const AMOUNT_KEYS = ['total_yen', ...['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'].map((d) => `cofog_${d}_yen`), 'cofog_unclassified_yen']
 const amounts = (total: number, c10: number, c09: number, rest: number) => ({ ...Object.fromEntries(AMOUNT_KEYS.map((k) => [k, 0])), total_yen: total, cofog_10_yen: c10, cofog_09_yen: c09, cofog_unclassified_yen: rest })
 const NO_AMOUNTS = Object.fromEntries(AMOUNT_KEYS.map((k) => [k, null]))
@@ -47,8 +47,8 @@ describe('比べる資料の歳出の根（list_expenditures）', () => {
   })
 })
 
-describe('分野の割合が近いまち（list_similar_expenditures）', () => {
-  const similar = async (input: Record<string, unknown>) => (await call('list_similar_expenditures', input)).expenditures!
+describe('分野の割合が近いまち（search_similar_expenditures）', () => {
+  const similar = async (input: Record<string, unknown>) => (await call('search_similar_expenditures', input)).expenditures!
   const base = { jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement' }
 
   test('同じ年度・資料区分の一般会計で、割合の近い順に返す（自分・総額の無い会計・都道府県は除く）', async () => {
