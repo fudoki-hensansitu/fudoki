@@ -1,0 +1,505 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131164",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "39fd08136c6401a2d2a67bae70b9accf60661978061de9e1775aa04bfc17c7e6"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "columns": {
+                "説明／本年度特定財源内訳／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／国庫支出金都支出金特別区債その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                }
+              },
+              "header": {
+                "merged_cells": [
+                  "説明"
+                ]
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "full_width_numbers": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "bare_amounts": true,
+                  "note_kinds": {
+                    "識見者": "基準額",
+                    "議会選出者": "基準額"
+                  }
+                },
+                "quirks": {
+                  "full_width_numbers": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "39fd08136c6401a2d2a67bae70b9accf60661978061de9e1775aa04bfc17c7e6"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "columns": {
+                "説明／本年度特定財源内訳／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／国庫支出金都支出金特別区債その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                }
+              },
+              "header": {
+                "merged_cells": [
+                  "説明"
+                ]
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "full_width_numbers": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "full_width_numbers": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "39fd08136c6401a2d2a67bae70b9accf60661978061de9e1775aa04bfc17c7e6"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "late-elderly-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "columns": {
+                "説明／本年度特定財源内訳／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／国庫支出金都支出金特別区債その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                }
+              },
+              "header": {
+                "merged_cells": [
+                  "説明"
+                ]
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "full_width_numbers": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "full_width_numbers": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "39fd08136c6401a2d2a67bae70b9accf60661978061de9e1775aa04bfc17c7e6"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "columns": {
+                "説明／本年度特定財源内訳／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                },
+                "説明／本年度特定財源内訳／国庫支出金都支出金特別区債その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "説明の欄の財源の列（本年度の特定財源内訳・一般財源）を取り込まない。目の行に財源の額だけが印字され、歳出の目の和は本年度の額で確かめる。説明の行は列の罫線が無く、説明の欄として読む。"
+                  }
+                }
+              },
+              "header": {
+                "merged_cells": [
+                  "説明"
+                ]
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "full_width_numbers": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "full_width_numbers": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "273dd3dc8b12fa0413d0dcd6da4afd2fa1b40201e161066a90595e444f0d3f9c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 59頁・carried 7頁 から決めた。款の和 136,150,789（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 1 件（基準額 1）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131164/2023/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "60294132761e101716d9385fb7f6e1121c00905fc0143e93e0cb86aa44f67bfc",
+          "bytes": 76250
+        },
+        "row_count": 2479
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131164/2023/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "97d49c1cd1ea6fd4b77030056abdef5962995658d51702026290debe0924c9d4",
+          "bytes": 54296
+        },
+        "row_count": 2589
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "1af191025a9cdc87b5e4c9132b991e43e4c0afe03595ff70220f2465b75df2a4",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 20頁 から決めた。款の和 31,768,226（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131164/2023/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "b4b13fb4e706776102265fef8b078693cfcb25556960d3b54ceef938d0e718ce",
+          "bytes": 9884
+        },
+        "row_count": 154
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131164/2023/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "51614e2d7984df4be1d2ea89cac5042e8f251b970882fe523fc6c30705e070d1",
+          "bytes": 7594
+        },
+        "row_count": 207
+      }
+    },
+    {
+      "table_id": "late-elderly-initial",
+      "conversion_id": "late-elderly-initial",
+      "input_fingerprint": "6ee2d3d1dbcc000c8ea417d9ede11a308a8f3fc7d13d02416fc0f658131851d6",
+      "account": "後期高齢者医療事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 9頁 から決めた。款の和 6,954,919（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131164/2023/initial/expenditure/late-elderly-initial-nodes.parquet",
+          "sha256": "018e8dc1d3aae9b0d68c3805d032bace27893695be1c5c11cc01ee067f0846ed",
+          "bytes": 6181
+        },
+        "row_count": 68
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131164/2023/initial/expenditure/late-elderly-initial-amounts.parquet",
+          "sha256": "dbfb51c92cf013bd8ac110fd7215f7bb2ec7b52c4025205f4d11023767662240",
+          "bytes": 4483
+        },
+        "row_count": 75
+      }
+    },
+    {
+      "table_id": "long-term-care-initial",
+      "conversion_id": "long-term-care-initial",
+      "input_fingerprint": "f287195766beac4404b6a8c46c95e894daed3a1d9cc6414ae57787a764c5ea05",
+      "account": "介護保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
+        "金額の単位は column mark 19頁 から決めた。款の和 21,292,966（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131164/2023/initial/expenditure/long-term-care-initial-nodes.parquet",
+          "sha256": "6e991345b36cdf39446f2c418163e22cc6f2b9c7c06239ba19e5ba5f0345382d",
+          "bytes": 12366
+        },
+        "row_count": 213
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131164/2023/initial/expenditure/long-term-care-initial-amounts.parquet",
+          "sha256": "d1a771d709c827b51c31354b9ba19ee17c1542aa34dc003e8ea96f5797bff041",
+          "bytes": 9842
+        },
+        "row_count": 259
+      }
+    }
+  ]
+}
