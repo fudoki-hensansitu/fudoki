@@ -171,6 +171,21 @@ def lettered(words: list[Word], x0: float, x1: float) -> list[Word]:
     return out
 
 
+def bracketed(words: list[Word], x0: float, x1: float) -> list[Word]:
+    """A 目 the year drops, printed in brackets over lines (`(参議院議` `員選挙費ほ` `か1目)`), is one name: its lines
+    are joined until the bracket closes."""
+    inside = sorted((w for w in words if x0 < w.x0 < x1), key=lambda w: w.y0)
+    out = [w for w in words if not x0 < w.x0 < x1]
+    while inside:
+        w = inside.pop(0)
+        while (w.text.count('(') + w.text.count('（') > w.text.count(')') + w.text.count('）') and inside
+               and inside[0].y0 - w.y1 < 4 and abs(inside[0].x0 - w.x0) <= 12):
+            n = inside.pop(0)
+            w = Word(w.text + n.text, min(w.x0, n.x0), w.y0, max(w.x1, n.x1), n.y1)
+        out.append(w)
+    return out
+
+
 GLUED_FUND = re.compile(r'([0-9]{1,3}(?:,[0-9]{3})+)([0-9]{2}[^0-9,].*)')
 CODED = re.compile(r'([0-9]{2})([^0-9,()（）].*)')
 HALF_BRACKETED = re.compile(r'([(（]?)([0-9]{2})([)）]?)([^0-9,()（）].*)')
@@ -216,16 +231,45 @@ def setsu_lines(words: list[Word], x0: float, x1: float) -> list[Word]:
     return out
 
 
-def drawn(page: Page) -> Page:
+def frame(page: Page) -> tuple[float, list[float]] | None:
+    """The frame's top and its columns' rules, or None for a page whose rules do not fit the columns."""
     long = sorted(r.y0 for r in page.rules if not r.vertical and r.x1 - r.x0 >= LONG)
     read_xs = verticals(page)
     count, left = fit(read_xs)
     if not long or count < SURE:
+        return None
+    return long[0], [min(read_xs, key=lambda x: abs(x - left - place))
+                     if any(abs(x - left - place) <= NEAR for x in read_xs) else left + place for place in PLACES]
+
+
+def carried(pages: list[Page]) -> None:
+    """A 節's name the page cuts (`16公有財産購`) goes on at the top of the next page with no number (`入費`): the
+    rest is put back on the name's last line (read alone, it was taken as the start of the next 節's name)."""
+    before: tuple[Page, Word] | None = None
+    for page in pages:
+        found = frame(page)
+        if found is None:
+            before = None
+            continue
+        top, xs = found
+        foot = max((r.y1 for r in page.rules if r.vertical and abs(r.x0 - xs[0]) <= NEAR / 2), default=page.height)
+        column = sorted((w for w in page.words if xs[7] - 2 < w.x0 < xs[7] + 12 and top + HEADER - 1 < w.y0
+                         and w.y1 < foot + 1), key=lambda w: w.y0)
+        if before is not None and column and not re.search(r'[0-9(（]', column[0].text):
+            other, last = before
+            other.words = [Word(w.text + column[0].text, w.x0, w.y0, w.x1, w.y1) if w is last else w
+                           for w in other.words]
+            page.words = [w for w in page.words if w is not column[0]]
+            column = column[1:]
+        before = (page, column[-1]) if column else None
+
+
+def drawn(page: Page) -> Page:
+    found = frame(page)
+    if found is None:
         return page
-    top = long[0]
+    top, xs = found
     line, half = top + HEADER, top + HEADER / 3
-    xs = [min(read_xs, key=lambda x: abs(x - left - place)) if any(abs(x - left - place) <= NEAR for x in read_xs)
-          else left + place for place in PLACES]
     inner = {index for _, first, end in SPANNING for index in range(first + 1, end)}
     rules = [Rule(xs[0], top, xs[-1], top), Rule(xs[0], line, xs[-1], line)]
     rules += [Rule(x, half if index in inner else top, x, line) for index, x in enumerate(xs)]
@@ -237,7 +281,7 @@ def drawn(page: Page) -> Page:
     for index, (heading, (x0, x1)) in enumerate(zip(HEADINGS, pairwise(xs))):
         words.append(word(heading, x0, x1, (half + line) / 2 if index in spanned else (top + line) / 2))
     inside = lambda w: xs[0] < (w.x0 + w.x1) / 2 < xs[-1] and top < (w.y0 + w.y1) / 2 < line
-    kept_rules = [r for r in page.rules if not (not r.vertical and top - 1 < r.y0 < line + 3)
+    kept_rules = [r for r in page.rules if not (not r.vertical and top - 1 < r.y0 < line + 1)
                   and not (r.vertical and r.y0 < line - 1 and xs[0] - 1 <= r.x0 <= xs[-1] + 1)]
     # (a column rule read from the frame's top is cut at the header's bottom: the drawn header has its own)
     kept_rules += [Rule(r.x0, line, r.x1, r.y1) for r in page.rules
@@ -245,10 +289,18 @@ def drawn(page: Page) -> Page:
     # (a column rule read in pieces a point apart is one rule, at the column's place: pieces short of a rule each)
     kept_rules = [next((Rule(x, r.y0, x, r.y1) for x in xs if abs(r.x0 - x) <= NEAR / 2), r) if r.vertical else r
                   for r in kept_rules]
-    # (a row rule OCR read from the amount columns only, its piece under the 目 lost: it closes the 目's cell too)
+    # (a row rule OCR read from the columns right of the 目 only, its piece under the 目 lost: it closes the 目's cell
+    # too, unless a word runs over it there)
+    def subject_above(r: Rule) -> bool:
+        # (a 目 printed in the cell the rule closes: the cell is a 目's row, not the rows a page carries over)
+        closing = max((o.y0 for o in kept_rules if not o.vertical and o.y0 < r.y0 - 2 and o.x0 <= xs[2] + 1),
+                      default=line)
+        return any(xs[2] < w.x0 < xs[3] and closing < (w.y0 + w.y1) / 2 < r.y0 for w in page.words)
     kept_rules = [Rule(xs[2], r.y0, r.x1, r.y1) if (
-        not r.vertical and r.y0 > line + 1 and r.x1 - r.x0 >= LONG / 3 and xs[2] + 1 < r.x0 <= xs[3] + NEAR
-        and not any(not o.vertical and abs(o.y0 - r.y0) <= 2 and o.x0 <= xs[2] + 1 for o in kept_rules)) else r
+        not r.vertical and r.y0 > line + 1 and r.x1 - r.x0 >= LONG / 3 and xs[2] + 1 < r.x0 <= xs[9]
+        and (r.x0 <= xs[3] + NEAR or subject_above(r))
+        and not any(not o.vertical and abs(o.y0 - r.y0) <= 2 and o.x0 <= xs[2] + 1 for o in kept_rules)
+        and not any(w.x0 < r.x0 and w.x1 > xs[2] and w.y0 < r.y0 - 3 and w.y1 > r.y0 + 3 for w in page.words)) else r
         for r in kept_rules]
     # (a row rule read in pieces on one line, its gaps under no word that runs over it: one rule)
     joined: list[Rule] = []
@@ -285,6 +337,16 @@ def drawn(page: Page) -> Page:
         x = xs[index]
         pieces = sorted((r for r in kept_rules if r.vertical and abs(r.x0 - x) <= NEAR / 2 and r.y1 > line + 1),
                         key=lambda r: r.y0)
+        if not pieces:
+            # (none read on the page: the rule runs from the row under the last name that runs over it to the foot)
+            over = [w.y1 for w in page.words if w.x0 < x - 1 and w.x1 > x + 1 and w.y0 > line - 1]
+            below = [h.y0 for h in kept_rules if not h.vertical and h.x0 <= x + 1 and h.x1 >= x - 1
+                     and h.y0 > (max(over) if over else line - 1)]
+            foot = max((r.y1 for r in kept_rules if r.vertical and abs(r.x0 - xs[0]) <= NEAR / 2), default=line)
+            start = min(below) if below else None
+            if start is not None and start < foot - LINE:
+                kept_rules.append(Rule(x, start, x, foot))
+            continue
         end = line
         for rule in pieces:
             if rule.y0 > end + 1 and not any(w.x0 < x - 1 and w.x1 > x + 1 and end < (w.y0 + w.y1) / 2 < rule.y0
@@ -310,7 +372,7 @@ def drawn(page: Page) -> Page:
     fund = lambda w: (Word(w.text, xs[6] + .5, w.y0, w.x1, w.y1)
                       if w.x0 < xs[6] < w.x1 - 2 and not re.search(r'[0-9]', w.text) else w)
     body = [fund(w) for w in page.words if not inside(w) and not sliver(w)]
-    body = setsu_lines(lettered(stacked(body, xs[9], xs[10]), xs[9], xs[10]), xs[7], xs[8])
+    body = setsu_lines(lettered(stacked(bracketed(body, xs[2], xs[3]), xs[9], xs[10]), xs[9], xs[10]), xs[7], xs[8])
     return Page(page.number, page.width, page.height, body + words, kept_rules + rules)
 
 
@@ -324,6 +386,7 @@ def read(pages, **options):
         count, left = fit(verticals(page))
         if count >= SURE:
             lefts[page.number] = left
+    carried(pages)
     # The scan places each page a few points apart (the frame's left side at 31 to 37), and the builder reads where
     # the numbers of the 節 and the 説明 start by where they are on the page: each page is read moved to the place
     # most pages print the frame, and its words and columns keep how far they were moved (`offset`), as a spread's do.
