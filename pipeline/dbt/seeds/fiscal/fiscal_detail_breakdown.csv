@@ -242,4 +242,4 @@ jurisdiction_code,fiscal_year,document_kind,source_heading,breakdown,basis
 132241,2021,initial,科目,事業,CSV の細目（目の下の事業）
 132241,2022,initial,科目,事業,CSV の細目（目の下の事業）
 132241,2023,initial,科目,事業,CSV の細目（目の下の事業）
-131016,2021,settlement,備考,事業,備考が目の額を事業ごとに分ける（品目名は目の直下の0%）
+131016,2021,settlement,備考,除外,金額の無い流用の注記（金額は注記の軸に入る）
