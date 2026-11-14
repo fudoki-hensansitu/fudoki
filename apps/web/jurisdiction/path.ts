@@ -18,3 +18,14 @@ export const jurisdictionPath = (code: string) => {
   const prefecture = `/${PREFECTURES[code.slice(0, 2)]}`
   return code.slice(2, 5) === '000' ? prefecture : `${prefecture}/${SLUGS.get(code) ?? code}`
 }
+
+let codesByPath: Map<string, string> | undefined
+/** jurisdictionPath の逆。自治体マスタに無い自治体は path の最後の段が6桁のコードそのもの（jurisdictionPath がコードで代える）。都道府県の slug でない path・知らない名前は undefined */
+export const codeOfPath = (path: string): string | undefined => {
+  codesByPath ??= new Map([...SLUGS.keys()].map((code) => [jurisdictionPath(code), code]))
+  const hit = codesByPath.get(path)
+  if (hit) return hit
+  const [, prefectureSlug, name, ...rest] = path.split('/')
+  const prefecture = Object.entries(PREFECTURES).find(([, slug]) => slug === prefectureSlug)?.[0]
+  return prefecture && name && rest.length === 0 && /^\d{6}$/.test(name) && name.startsWith(prefecture) && name.slice(2, 5) !== '000' ? name : undefined
+}

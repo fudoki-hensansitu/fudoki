@@ -138,6 +138,13 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
     expect(seen).toEqual(['131016', '132039', '132063', '342076'])
   })
 
+  test('都道府県のコードで、その都道府県の自治体だけを返す', async () => {
+    const codes = async (q: string) => (await list(q)).jurisdictions.map((j: { jurisdiction_code: string }) => j.jurisdiction_code)
+    expect(await codes('?prefecture_code=13')).toEqual(['131016', '132039', '132063'])
+    expect(await codes('?prefecture_code=34')).toEqual(['342076'])
+    expect(await codes('?prefecture_code=01')).toEqual([])
+  })
+
   test('page_token は同じ条件の問い合わせにだけ使える', async () => {
     const first = await list('?page_size=1')
     const res = await get(`/v1/jurisdictions?page_size=1&name=${encodeURIComponent('府中')}&page_token=${first.next_page_token}`)
@@ -145,7 +152,7 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
   })
 
   test('入力の誤りは 400', async () => {
-    for (const q of ['?code=1320', '?code=1320391', '?code=13203a', '?page_size=0', '?page_size=101', `?name=${'a'.repeat(51)}`, '?extra=1'])
+    for (const q of ['?code=1320', '?code=1320391', '?code=13203a', '?page_size=0', '?page_size=101', '?prefecture_code=1', '?prefecture_code=1a', `?name=${'a'.repeat(51)}`, '?extra=1'])
       expect((await get(`/v1/jurisdictions${q}`)).status, q).toBe(400)
   })
 

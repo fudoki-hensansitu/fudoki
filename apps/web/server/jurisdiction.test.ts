@@ -130,35 +130,33 @@ describe('自治体の個別ページ', () => {
       { year: 2024, kind: 'settlement' },
     ])
   })
-  test('款の和・事業・前年度の同じ目から組み、head に金額と自治体名を入れる', async () => {
-    const data = await view('/tokyo/nakano')
+  test('head に最新の決算・当初予算の金額と自治体名を入れる', async () => {
+    const base = await view('/tokyo/nakano')
+    // 金額（headline）は loader が本文と同じ段で足す
+    const data = { ...base, headline: { settlement: { year: 2025, yen: 1000, areas: [{ name: '教育', yen: 600, other: false }, { name: 'その他', yen: 400, other: true }] } } }
     const head = pageHead(data)
     expect(head.title).toBe('中野区の決算（令和7年度）｜風土記')
     // 決算より後の当初予算があれば、title に予算と決算を、説明文に両方の金額を年度つきで入れる
-    const budget = { year: 2026, yen: 1_234_000_000, kan: [], divisions: [], projects: [] }
-    const withBudget = { ...data, budgets: [budget] }
+    const withBudget = { ...data, budgetYears: [2026], headline: { ...data.headline, budget: { year: 2026, yen: 1_234_000_000 } } }
     expect(pageHead(withBudget).title).toBe('中野区の予算と決算（令和8年度）｜風土記')
     expect(pageHead(withBudget).meta.find((m) => m.name === 'description')?.content).toMatch(/^中野区の令和8年度当初予算の歳出は約12\.3億円、令和7年度決算（一般会計）の歳出は約/)
-    // 金額の無い当初予算は title に使わない
-    expect(pageHead({ ...data, budgets: [{ ...budget, amountMissing: true as const }] }).title).toBe(head.title)
-    expect(pageHead({ ...data, budgets: [{ ...budget, yen: 0 }] }).title).toBe(head.title)
+    // 金額の無い当初予算（headline に無い）は title に使わない
+    expect(pageHead({ ...data, budgetYears: [2026] }).title).toBe(head.title)
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano')
     // 紋章と決算のある自治体は og:image を自治体の画像に差し替え、紋章の無い自治体は全頁共通の画像のまま
     expect(head.meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/jurisdictions/131148/og.png' })
     expect(pageHead({ ...data, emblem: null }).meta.some((m) => m.property === 'og:image')).toBe(false)
     // 画像の金額は最新の決算なので、過去の年度の頁・決算の分野が無い頁は全頁共通の画像のまま
     expect(pageHead(data, 2024).meta.some((m) => m.property === 'og:image')).toBe(false)
-    expect(pageHead({ ...data, cofogFlow: [] }).meta.some((m) => m.property === 'og:image')).toBe(false)
+    expect(pageHead({ ...data, headline: { settlement: { ...data.headline.settlement, areas: [] } } }).meta.some((m) => m.property === 'og:image')).toBe(false)
     const ld = JSON.parse(head.script![0]!.innerHTML!) as { '@type': string; itemListElement?: { position: number; name: string; item: string }[] }[]
     expect(ld.find((x) => x['@type'] === 'BreadcrumbList')?.itemListElement?.map((x) => [x.position, x.name, x.item])).toEqual([
       [1, '風土記', 'https://fudoki.dev/'],
       [2, '東京都', 'https://fudoki.dev/tokyo'],
       [3, '中野区', 'https://fudoki.dev/tokyo/nakano'],
     ])
-    // 年度ごとの総額は、その年度の款（兄弟）の和
-    expect(data.years.map((y) => [y.year, y.yen])).toEqual([[2024, 500], [2025, 1000]])
-    // 積立の款は事業の候補から外し、前年度の同じ目（款・項・名前が一致）だけを前年に使う
-    expect(data.projects.map((p) => [p.name, p.prevYen])).toEqual([['保育園費', 200]])
+    // 頁のデータは API を読まずにカタログの1件から決まる（金額は持たない）
+    expect(base.settlementYears).toEqual([2024, 2025])
     const flow = await loadFlow(env, '131148', 2025)
     expect(flow.map((d) => [d.kan.name, d.kou.map((k) => k.name)])).toEqual([['子ども教育費', ['子ども費']], ['総務費', ['総務管理費']]])
     expect(flow[0]!.kou[0]!.moku).toEqual([])
@@ -188,7 +186,8 @@ describe('自治体の個別ページ', () => {
 
   test('年度の頁は、その年度の title と canonical を持ち、最新の年度は 200 で canonical を入口にし、選べない年度は 404', async () => {
     const data = await view('/tokyo/nakano')
-    const head = pageHead(data, 2024)
+    // 年度の頁の金額は、本文が読んだその年度の款項目（opened）から書く
+    const head = pageHead(data, 2024, undefined, { year: 2024, kind: 'settlement', yen: 500, originTitle: null })
     expect(head.title).toBe('中野区の決算（令和6年度）｜風土記')
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano/2024')
     expect(head.meta.find((m) => m.name === 'description')?.content).toStartWith('中野区の令和6年度決算（一般会計）の歳出は約')
@@ -225,8 +224,9 @@ describe('自治体の個別ページ', () => {
   test('収録年度が離れていても最新年度から5年間の決算を表示する', async () => {
     const sparse: Env = web({ fetch: async (req) => {
       const url = new URL(req.url)
-      if (url.pathname === '/v1/jurisdictions')
-        return Response.json({ jurisdictions: [{ jurisdiction_code: '131148', name: '中野区', prefecture_name: '東京都', population: [], evaluations: [], coverage: [2019, 2020, 2021, 2023, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) }] })
+      const nakano = { jurisdiction_code: '131148', name: '中野区', prefecture_name: '東京都', population: [], evaluations: [], coverage: [2019, 2020, 2021, 2023, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) }
+      if (url.pathname === '/v1/jurisdictions') return Response.json({ jurisdictions: [nakano] })
+      if (url.pathname === '/v1/jurisdictions/131148') return Response.json(nakano)
       if (url.pathname === '/v1/expenditures/subjects:search') {
         const body = await req.json() as { fiscal_year: { min: number; max: number }; where: { level: { eq: string[] } } }
         if (body.fiscal_year.max - body.fiscal_year.min > 4) return Response.json({ error: 'fiscal_year は 5 年以内にしてください' }, { status: 400 })
@@ -238,8 +238,7 @@ describe('自治体の個別ページ', () => {
       return API.fetch(req)
     } })
     const data = await view('/tokyo/nakano', sparse)
-    expect(data.years.map((y: YearTotal) => [y.year, y.yen])).toEqual([[2021, 250], [2023, 300], [2025, 1000]])
-    expect(data.projects[0]!.prevYen).toBeNull()
+    expect(data.settlementYears).toEqual([2021, 2023, 2025])
     const xml = await (await get('/sitemap.xml', sparse)).text()
     expect(xml).toContain('https://fudoki.dev/tokyo/nakano/2023')
     expect(xml).toContain('https://fudoki.dev/tokyo/nakano/2021')

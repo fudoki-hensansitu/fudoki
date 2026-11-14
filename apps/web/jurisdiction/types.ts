@@ -108,21 +108,25 @@ export interface PageData {
   neighbors: { code: string; name: string; path: string; /** 紋章の URL（emblems.ts に紋章がある自治体だけ） */ logo?: string }[]
   officialUrl: string | null
   population: Population | null
-  originTitle: string | null
-  /** 西暦、古い順 */
-  years: YearTotal[]
-  /** 最新年度の COFOG の流れ。Drill の kan に大分類、kou に中分類が入る */
-  cofogFlow: Drill[]
-  /** 最新の決算より後の年度の当初予算（古い順）。決算の無い年度の概要に使う */
-  budgets: BudgetTotal[]
-  projects: Project[]
+  /** 頁で見せる決算の年度（西暦、古い順） */
+  settlementYears: number[]
+  /** 最新の決算より後の、当初予算を収録した年度（古い順） */
+  budgetYears: number[]
+  /** 頁の題・説明文に書く金額。最新の年度の頁（入口）だけが持つ。本文と同じ段で読み、読めなければ無い */
+  headline?: Headline
   /** 基本構想の都市像（jurisdiction/visions.ts）。手で起こした自治体だけにある */
   vision?: Vision | null
 }
 
+/** 入口の頁の題・説明文に書く、最新の決算（総額と分野）と、決算より後の最新の当初予算（金額のあるときだけ）の総額 */
+export interface Headline {
+  settlement?: { year: number; yen: number; areas: { name: string; yen: number; other: boolean }[] }
+  budget?: { year: number; yen: number }
+}
+
 /** 自治体の頁で選べる年度（新しい順に3年）。決算の年度と、決算より後の当初予算の年度 */
-export const appPageYears = (d: { years: { year: number }[]; budgets: { year: number }[] }) =>
-  [...new Set([...d.years.map((y) => y.year), ...d.budgets.map((b) => b.year)])].sort((a, b) => b - a).slice(0, 3)
+export const appPageYears = (d: { settlementYears: number[]; budgetYears: number[] }) =>
+  [...new Set([...d.settlementYears, ...d.budgetYears])].sort((a, b) => b - a).slice(0, 3)
 
 /** 自治体の頁のタブ。まとめは自治体の頁そのもの、ほかは1段下げる（/tokyo/shinagawa/projects） */
 export type PageTab = 'overview' | 'projects' | 'money' | 'settled'
@@ -130,7 +134,7 @@ export const TAB_SLUGS = { projects: 'projects', money: 'budget', settled: 'sett
 export const TAB_LABELS: Record<Exclude<PageTab, 'overview'>, string> = { projects: '事業', money: '予算', settled: '決算' }
 export const tabOfSlug = (slug: string) => (Object.entries(TAB_SLUGS).find(([, s]) => s === slug)?.[0] as Exclude<PageTab, 'overview'> | undefined)
 /** 決算のタブは決算のある年度だけ。予算のタブの有無は頁のデータ（当初予算の有無）を読むまで分からないので、無ければ画面で別のタブへ移す */
-export const hasTab = (d: { years: { year: number }[] }, year: number, tab: PageTab) => tab !== 'settled' || d.years.some((y) => y.year === year)
+export const hasTab = (d: { settlementYears: number[] }, year: number, tab: PageTab) => tab !== 'settled' || d.settlementYears.includes(year)
 
 
 /** 今日を含む会計年度（4月始まり） */

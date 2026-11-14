@@ -57,7 +57,7 @@ const short = (id: string) => id.slice(0, 12)
 export function appYears(entry: Pick<CatalogEntry, 'initialYears' | 'settlementYears'>): { year: number; kind: Kind }[] {
   const settled = shownSettlementYears(entry.settlementYears)
   const last = Math.max(0, ...settled)
-  const years = appPageYears({ years: settled.map((year) => ({ year })), budgets: entry.initialYears.filter((y) => y > last).map((year) => ({ year })) })
+  const years = appPageYears({ settlementYears: settled, budgetYears: entry.initialYears.filter((y) => y > last) })
   return years.map((year) => ({ year, kind: year > last ? 'initial' : 'settlement' }))
 }
 
@@ -88,6 +88,10 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const prevRead = prev && compare ? prev : undefined
   // 会計の札（予算・決算のタブ）。一般会計のほかにも会計を収録した年度だけ、会計ごとの総額を読む
   const accounts = entry.accounts?.[me.kind]?.[String(year)] ?? []
+  // 事業の一覧の1頁目（すべて）は年度と資料の種類だけで決まるので、款項目を待たずに読み始める
+  const allQuery = listQuery({ code: entry.code, year, years: { [year]: { kind: me.kind } as YearData }, prev: undefined }, 'all')
+  const allPage = readListPage(apiCall(env), allQuery).then((p) => [listKey(allQuery), p] as const)
+  allPage.catch(() => {})
   const [subjects, measures, sheets, evalSheets, initialSubjects, accountTotals] = await Promise.all([
     Promise.all([me, ...(prevRead ? [prevRead] : [])].map(async (y) => {
       const r = await subjectsOf(env, entry.code, y.year, y.kind)
@@ -133,11 +137,11 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   if (prev && !prevOut) prevOut = { year: prev.year, kind: prev.kind }
 
   const base = { code: entry.code, year, years: yearsOut, prev: prevOut }
-  const queries = [listQuery(base, 'all'), ...(prevOut?.fieldSubjects ? [listQuery(base, 'new'), listQuery(base, 'ended')] : [])]
+  const queries = [...(prevOut?.fieldSubjects ? [listQuery(base, 'new'), listQuery(base, 'ended')] : [])]
   if (field) queries.push(listQuery(base, 'all', { subjects: yearsOut[year]!.fieldSubjects[field] ?? [] }))
   const measureDetails = [...new Set(measures.flatMap((m) => (m.expenditure_detail_id ? [m.expenditure_detail_id] : [])))]
   const [pages, subjectOfDetail] = await Promise.all([
-    Promise.all(queries.map((q) => readListPage(apiCall(env), q).then((p) => [listKey(q), p] as const))),
+    Promise.all([allPage, ...queries.map((q) => readListPage(apiCall(env), q).then((p) => [listKey(q), p] as const))]),
     measureDetails.length ? subjectOfDetails(env, entry.code, year, measureDetails) : Promise.resolve(new Map<string, string>()),
   ])
 
@@ -186,7 +190,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     measures: measuresOut,
     sheets: sheetsOut,
     ...(evalYear ? { evaluated: { fy: evalYear, sheets: evalSheets ? evalSheets.map(toSheet) : sheetsOut } } : {}),
-    hasProjects: (lists[listKey(queries[0]!)]?.total ?? 0) > 0,
+    hasProjects: (lists[listKey(allQuery)]?.total ?? 0) > 0,
     lists,
   }
 }

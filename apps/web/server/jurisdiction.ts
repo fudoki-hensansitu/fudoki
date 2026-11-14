@@ -1,8 +1,7 @@
 // 自治体の個別ページのデータ。apps/api（Service Binding）の歳出の検索から、決算の款・事業・お金の流れを組む。
 // 金額は API が返した円をそのまま持つ。足すのは「同じ年度・会計の款（兄弟）の和」だけで、api の sum_rules に従う
-import { type Drill, type FlowDepth, type Line, type Moku, type PageData, type Population, type Project, type Setsu, type YearTotal, type BudgetTotal } from '../jurisdiction/types'
+import { type Drill, type FlowDepth, type Line, type Moku, type PageData, type Population, type Setsu } from '../jurisdiction/types'
 import { cofogFlowOf } from '../jurisdiction/cofog-flow'
-import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import type { Env } from './env'
 import { apiCall, FudokiApiError, type WebOpInput, type WebOpOutput } from './fudoki-api'
 import { jurisdictionPath } from '../jurisdiction/path'
@@ -11,10 +10,6 @@ import { loadPopulations } from './population'
 export const ACCOUNT = '一般会計'
 /** 推移に出す最大の年数。API の fiscal_year の幅は 5 年以内 */
 const MAX_YEARS = 5
-const PROJECT_COUNT = 5
-/** 目を金額で並べるときに先に取る件数。事業でない款（積立・公債・予備費）を除いても足りるようにする */
-const CANDIDATES = 40
-const NOT_PROJECT_KAN = new Set(['諸支出金', '公債費', '予備費'])
 
 /** apps/api の操作を内部の RPC で呼ぶ（server/fudoki-api.ts）。型は api の操作の schema（@fudoki/api/rpc）から来る */
 type SearchBody = WebOpInput<'search_expenditure_subjects'>
@@ -50,7 +45,9 @@ const amount = (n: { amount_yen: number | null }) => ({ yen: n.amount_yen ?? 0, 
 const line = (n: ApiSubject): Line => ({ id: n.subject_id, name: n.name, ...amount(n) })
 
 type ApiJurisdiction = WebOpOutput<'list_jurisdictions'>['jurisdictions'][number]
-const listJurisdictions = (env: Env, token?: string) => apiCall(env)('list_jurisdictions', token ? { page_token: token } : {})
+/** 1回で最大の件数（api の MAX_JURISDICTION_PAGE_SIZE）を取り、ページ送りを減らす */
+const listJurisdictions = (env: Env, token?: string, prefectureCode?: string) =>
+  apiCall(env)('list_jurisdictions', { page_size: 100, ...(prefectureCode ? { prefecture_code: prefectureCode } : {}), ...(token ? { page_token: token } : {}) })
 
 /** API の自治体の1件を、頁が使う形にする。人口は web の D1 から足す */
 function toCatalogEntry(j: Pick<ApiJurisdiction, 'jurisdiction_code' | 'name' | 'prefecture_name' | 'official_url' | 'coverage' | 'evaluations'>, populations: Population[]): CatalogEntry {
@@ -70,16 +67,17 @@ function toCatalogEntry(j: Pick<ApiJurisdiction, 'jurisdiction_code' | 'name' | 
   }
 }
 
-/** 全自治体と収録範囲（list jurisdictions）。一覧が要る頁（ホーム・都道府県・検索・sitemap）だけが使う */
-export async function loadCatalog(env: Env): Promise<CatalogEntry[]> {
+/** 全自治体と収録範囲（list jurisdictions）。一覧が要る頁（ホーム・検索・sitemap）が使う。prefectureCode を渡すとその都道府県の分だけ（自治体の頁の近隣）。
+ * 人口（web の D1）は自治体の頁の近隣には要らないので、withPopulations が false なら読まない */
+export async function loadCatalog(env: Env, prefectureCode?: string, withPopulations = true): Promise<CatalogEntry[]> {
   const rows: ApiJurisdiction[] = []
   let token: string | undefined
   do {
-    const r = await listJurisdictions(env, token)
+    const r = await listJurisdictions(env, token, prefectureCode)
     rows.push(...r.jurisdictions)
     token = r.next_page_token ?? undefined
   } while (token)
-  const populations = await loadPopulations(env, rows.map((j) => j.jurisdiction_code))
+  const populations = withPopulations ? await loadPopulations(env, rows.map((j) => j.jurisdiction_code)) : new Map<string, Population[]>()
   return rows.map((j) => toCatalogEntry(j, populations.get(j.jurisdiction_code) ?? []))
 }
 
@@ -95,16 +93,6 @@ export async function loadCatalogEntry(env: Env, code: string): Promise<CatalogE
   if (!j) return null
   return toCatalogEntry(j, populations.get(code) ?? [])
 }
-
-const search = (env: Env, code: string, years: { min: number; max: number }, level: string | string[] | undefined, extra: Record<string, unknown> = {}, pageSize = 200, pageToken?: string) =>
-  searchSubjects(env, {
-    document_kind: 'settlement',
-    fiscal_year: years,
-    where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] }, ...(level ? { level: { eq: Array.isArray(level) ? level : [level] } } : {}), ...extra } as Where,
-    order_by: [{ column: 'amount_yen', desc: true }],
-    page_size: pageSize,
-    ...(pageToken ? { page_token: pageToken } : {}),
-  })
 
 /** 検索の続きを最後まで引く。科目の表と内訳の表のどちらにも使う */
 /** 資料の種類。決算か当初予算か。決算の無い年度だけ当初予算を読む */
@@ -194,44 +182,30 @@ export async function loadCofogFlow(env: Env, code: string, year: number, depth:
 
 /** 会計ごとの総額（款の和）。一般会計を先頭に、あとは金額の大きい順。印字の無い款を含む会計は amountMissing を付ける */
 export async function loadAccountTotals(env: Env, code: string, year: number, kind: DocumentKind, accounts: string[]): Promise<{ name: string; yen: number; amountMissing?: true }[]> {
-  const totals = await Promise.all(accounts.map(async (account) => {
-    const kan = await searchAll(env, 'subjects', code, year, { level: { eq: ['款'] } }, kind, account)
-    const lines = kan.map((n) => amount(n))
+  // 会計ごとに呼ばず、全会計の款を1回の検索で読んで会計ごとに足す
+  const kan = await searchAll(env, 'subjects', code, year, { account_name: { eq: accounts }, level: { eq: ['款'] } }, kind)
+  const totals = accounts.map((account) => {
+    const lines = kan.filter((n) => n.account_name === account).map((n) => amount(n))
     return { name: account, yen: sumYen(lines), ...partial(lines) }
-  }))
+  })
   return totals.filter((t) => t.yen > 0 || t.amountMissing).sort((a, b) => Number(b.name === ACCOUNT) - Number(a.name === ACCOUNT) || b.yen - a.yen)
 }
 
-/**
- * 決算がまだ無い年度の当初予算。総額と、目の COFOG の大分類ごとの和（loadCofogFlow の大分類と同じ分け方）。
- * 概要（区は何をしている？）で、決算の無い年度を選んだときに最新の決算の額ではなくその年度の予算を出すために使う
- */
-async function loadBudget(env: Env, code: string, year: number): Promise<BudgetTotal> {
-  const subjects = await searchAll(env, 'subjects', code, year, { level: { eq: ['款', '目'] } }, 'initial')
-  const moku = subjects.filter((n) => n.level === '目')
-  const byDivision = new Map<string, ApiSubject[]>()
-  for (const n of moku) {
-    const id = `cofog-${n.cofog_code?.split('.')[0] || 'none'}`
-    byDivision.set(id, [...(byDivision.get(id) ?? []), n])
-  }
-  const lines = moku.map(line)
-  // 大きな支出の節に出す事業。決算と同じく積立・公債・予備費の款は外す。前年度との比較は出さない（決算と予算を比べないため）
-  const projects: Project[] = moku.filter((n) => !NOT_PROJECT_KAN.has(n.kan_name ?? '')).sort(byAmount).slice(0, PROJECT_COUNT).map((n) => ({
-    ...line(n),
-    kanName: n.kan_name ?? '',
-    kouName: n.kou_name,
-    domain: ((n.cofog_code ? frameOf(n.cofog_code) : undefined) ?? OTHER_FRAME).name,
-    prevYen: null,
-  }))
-  return {
-    year,
-    yen: sumYen(lines),
-    ...partial(lines),
-    kan: subjects.filter((n) => n.level === '款').sort(byAmount).map(line),
-    divisions: [...byDivision].map(([id, list]) => ({ id, yen: sumYen(list.map(line)), ...partial(list.map(line)) })),
-    projects,
-  }
+/** その年度の当初予算（一般会計）の歳出の総額（款の和）。頁の題・説明文に書く。金額の欠けた款を含むものは amountMissing */
+export async function loadBudgetTotal(env: Env, code: string, year: number): Promise<{ year: number; yen: number; amountMissing?: true }> {
+  const kan = await searchAll(env, 'subjects', code, year, { level: { eq: ['款'] } }, 'initial')
+  const lines = kan.map((n) => amount(n))
+  return { year, yen: sumYen(lines), ...partial(lines) }
 }
+
+/** その年度の決算（一般会計）の歳出の総額（款の和）と分野（COFOG の大分類）の流れ。頁の題・説明文と OG 画像に書く */
+export async function loadSettlementSummary(env: Env, code: string, year: number): Promise<{ year: number; yen: number; areas: { name: string; yen: number; other: boolean }[] }> {
+  const [kan, flow] = await Promise.all([searchAll(env, 'subjects', code, year, { level: { eq: ['款'] } }), loadCofogFlow(env, code, year)])
+  return { year, yen: sumYen(kan.map((n) => amount(n))), areas: areasOf(flow) }
+}
+
+/** 分野の流れから、金額のある分野を大きい順に（「その他」は最後）。cofogFlowOf の並びのまま */
+export const areasOf = (flow: Drill[]) => flow.filter((f) => f.kan.yen > 0).map((f) => ({ name: f.kan.name, yen: f.kan.yen, other: f.kan.id === 'cofog-none' }))
 
 /** 頁で見せる決算の年度（最新から MAX_YEARS 年）。sitemap も同じ年度だけを載せる */
 export const shownSettlementYears = (settlementYears: number[]) => {
@@ -239,36 +213,11 @@ export const shownSettlementYears = (settlementYears: number[]) => {
   return latest === undefined ? [] : settlementYears.filter((year) => year >= latest - MAX_YEARS + 1)
 }
 
-/** 都道府県の頁へのリンク（prefecturePath）・同じ都道府県の自治体（neighbors）はカタログを見て route 側で決める */
-export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<PageData, 'prefecturePath' | 'prefectureLogo' | 'emblem' | 'neighbors'> | null> {
-  const latest = entry.settlementYears.at(-1)
+/** 自治体の頁の、API を読まずにカタログの1件から決まる部分。金額（頁の題・説明文の headline）は loader が本文と一緒に足す */
+export function pageBase(entry: CatalogEntry): Omit<PageData, 'prefecturePath' | 'prefectureLogo' | 'emblem' | 'neighbors'> | null {
+  const settlementYears = shownSettlementYears(entry.settlementYears)
+  const latest = settlementYears.at(-1)
   if (latest === undefined) return null
-  const years = shownSettlementYears(entry.settlementYears)
-  const range = { min: years[0]!, max: latest }
-  // 分野の流れ・予算は款・目と別に読めるので、先に並べて投げる（順に待つと API の往復が積み重なる）
-  const rest = Promise.all([loadCofogFlow(env, entry.code, latest), Promise.all(entry.initialYears.filter((y) => y > latest).map((y) => loadBudget(env, entry.code, y)))])
-  rest.catch(() => {})
-  const [kanRes, mokuRes] = await Promise.all([search(env, entry.code, range, '款'), search(env, entry.code, { min: latest, max: latest }, '目', {}, CANDIDATES)])
-  // 積立・公債・予備費の款は「事業」ではないので、力を入れている事業の候補から外す
-  const picked = mokuRes.subjects.filter((n) => !NOT_PROJECT_KAN.has(n.kan_name ?? '')).slice(0, PROJECT_COUNT)
-  const prevRes =
-    years.includes(latest - 1) && picked.length > 0
-      ? await search(env, entry.code, { min: latest - 1, max: latest - 1 }, '目', { name: { eq: [...new Set(picked.map((n) => n.name))] } }, 200)
-      : { subjects: [] as ApiSubject[] }
-  const [cofogFlow, budgets] = await rest
-  const totals: YearTotal[] = years.map((year) => {
-    const kan = kanRes.subjects.filter((n) => n.fiscal_year === year).map(line)
-    return { year, yen: kan.reduce((s, k) => s + k.yen, 0), kan }
-  })
-  const topKan = totals.at(-1)!.kan[0]
-  if (!topKan) throw new Error('収録済みの一般会計に款が見つかりません')
-  const projects: Project[] = picked.map((n) => ({
-    ...line(n),
-    kanName: n.kan_name ?? '',
-    kouName: n.kou_name,
-    domain: ((n.cofog_code ? frameOf(n.cofog_code) : undefined) ?? OTHER_FRAME).name,
-    prevYen: prevRes.subjects.find((p) => p.name === n.name && p.kan_name === n.kan_name && p.kou_name === n.kou_name)?.amount_yen ?? null,
-  }))
   return {
     code: entry.code,
     name: entry.name,
@@ -276,11 +225,8 @@ export async function loadPage(env: Env, entry: CatalogEntry): Promise<Omit<Page
     prefecture: entry.prefecture,
     officialUrl: entry.officialUrl,
     population: entry.population,
-    originTitle: kanRes.origins?.find((o) => o.origin_id === kanRes.subjects.find((n) => n.fiscal_year === latest)?.origin_id)?.title ?? null,
-    years: totals,
-    cofogFlow,
-    budgets,
-    projects,
+    settlementYears,
+    budgetYears: entry.initialYears.filter((y) => y > latest),
   }
 }
 

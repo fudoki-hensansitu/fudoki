@@ -19,7 +19,12 @@ const filters = {
     .regex(/^[0-9]{5,6}$/, 'code は5桁か6桁の数字です')
     .optional()
     .describe('Japanese local government code: six digits including the check digit, or five digits without it.'),
-  page_token: pageTokenOf('name and code'),
+  prefecture_code: z
+    .string()
+    .regex(/^[0-9]{2}$/, 'prefecture_code は2桁の数字です')
+    .optional()
+    .describe('Two-digit prefecture code (e.g. "13" for Tokyo). Returns the prefecture itself and its municipalities.'),
+  page_token: pageTokenOf('name, code and prefecture_code'),
 }
 
 export const ListInputSchema = z.strictObject({ ...filters, page_size: pageSize(MAX_JURISDICTION_PAGE_SIZE, DEFAULT_JURISDICTION_PAGE_SIZE, 'municipalities') })
