@@ -13,7 +13,7 @@ import {
 import { ApiError } from '../errors'
 import type { Ctx } from '../shared/context'
 import { decodeToken, nextToken } from '../shared/paging'
-import type { Coverage, CoverageWithOrigins, JurisdictionDetail, JurisdictionList } from './model'
+import { AMOUNT_COLUMNS, type Coverage, type CoverageWithOrigins, type JurisdictionDetail, type JurisdictionList } from './model'
 
 /**
  * 収録の無い自治体・年度・資料区分で、利用者を案内する統計の出典。数字は風土記に取り込まない（ADR 0037）。
@@ -36,7 +36,7 @@ export const UNCOVERED_SOURCES = [
 export const MAX_JURISDICTION_PAGE_SIZE = 100
 export const DEFAULT_JURISDICTION_PAGE_SIZE = 20
 
-interface CoverageRow {
+interface CoverageRow extends Record<string, unknown> {
   jurisdiction_code: string
   fiscal_year: number
   document_kind: string
@@ -61,7 +61,7 @@ function nestCoverage(rows: CoverageRow[], withOrigins: boolean) {
     }
     let account = cov.accounts.at(-1)
     if (!account || account.account_name !== r.account_name) {
-      account = { account_name: r.account_name, account_kind: r.account_kind, origins: [] }
+      account = { account_name: r.account_name, account_kind: r.account_kind, ...amountsOf(r), origins: [] }
       cov.accounts.push(account)
     }
     if (withOrigins) account.origins.push({ origin_id: r.origin_id!, title: r.title!, url: r.url!, format: r.format! })
@@ -69,14 +69,17 @@ function nestCoverage(rows: CoverageRow[], withOrigins: boolean) {
   return out
 }
 
+const amountsOf = (r: CoverageRow) => Object.fromEntries(AMOUNT_COLUMNS.map((c) => [c, (r[c] as number | null) ?? null])) as Omit<Coverage['accounts'][number], 'account_name' | 'account_kind'>
+const AMOUNT_SELECT = AMOUNT_COLUMNS.map((c) => `c."${c}"`).join(', ')
+
 const coverageSql = (codes: string, withOrigins: boolean) =>
   withOrigins
-    ? `SELECT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind", o."origin_id", o."title", o."url", o."format" ` +
+    ? `SELECT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind", ${AMOUNT_SELECT}, o."origin_id", o."title", o."url", o."format" ` +
       `FROM ${COVERAGE_TABLE} c JOIN ${ORIGIN_LINK_TABLE} l ON l."expenditure_id" = c."expenditure_id" ` +
       `JOIN ${ORIGIN_TABLE} o ON o."origin_id" = l."origin_id" ` +
       `WHERE c."jurisdiction_code" IN (${codes}) ` +
       `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name", o."title", o."origin_id"`
-    : `SELECT DISTINCT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind" ` +
+    : `SELECT DISTINCT c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_name", c."account_kind", ${AMOUNT_SELECT} ` +
       `FROM ${COVERAGE_TABLE} c WHERE c."jurisdiction_code" IN (${codes}) ` +
       `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name"`
 

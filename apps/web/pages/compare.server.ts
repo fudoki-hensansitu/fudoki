@@ -4,13 +4,13 @@
 import { defineHandler, defineHead } from 'void'
 import { jurisdictionPath } from '../jurisdiction/path'
 import { catalog } from '../server/jurisdiction-routes'
-import { loadCatalogEntry, shownSettlementYears, type CatalogEntry } from '../server/jurisdiction'
-import { closestByPopulation, closestByUse, fieldTotalsFor, fieldTotalsOf, type DocKind } from '../server/compare'
+import { fieldTotalsKey, loadCatalogEntry, shownSettlementYears, type CatalogEntry, type DocumentKind } from '../server/jurisdiction'
+import { closestByPopulation, closestByUse } from '../server/compare'
 import type { Env } from '../server/env'
 import { siteKey } from '../server/site-key'
 
 /** 比べる資料。year 年度の kind（決算・当初予算） */
-export type Version = { year: number; kind: DocKind }
+export type Version = { year: number; kind: DocumentKind }
 /** 比べる片方。version は選んでいる資料、versions はこのまちで選べる資料（新しい順） */
 export type CompareTown = { code: string; name: string; path: string; pop: number; version: Version; versions: Version[]; total: number; fields: Record<string, number> }
 export type TownRef = { code: string; name: string; pop: number }
@@ -38,7 +38,7 @@ function versionsOf(e: CatalogEntry): Version[] {
   return v.sort((x, y) => y.year - x.year || (x.kind === 'settlement' ? -1 : 1))
 }
 
-/** a に似たまち。全部のまちの分野の合計と人口が要る（自治体の一覧は他の頁と使い回す） */
+/** a に似たまち。全部のまちの分野の額と人口を、自治体の一覧（他の頁と使い回す）から読む */
 async function similarTo(env: Env, a: CatalogEntry, v: Version): Promise<{ byUse: TownRef[]; byPopulation: TownRef[] }> {
   const cat = await catalog(env)
   const popOf = (e?: CatalogEntry) => e?.population?.people ?? 0
@@ -46,10 +46,10 @@ async function similarTo(env: Env, a: CatalogEntry, v: Version): Promise<{ byUse
   const ref = (code: string): TownRef => ({ code, name: byCode.get(code)?.name ?? code, pop: popOf(byCode.get(code)) })
   // 都道府県は都道府県どうし、市区町村は市区町村どうしで探す
   const peers = cat.filter((e) => e.code !== a.code && isPrefecture(e.code) === isPrefecture(a.code))
-  const totals = await fieldTotalsOf(env, v.year, v.kind)
-  const mine = totals.get(a.code)
+  const key = fieldTotalsKey(v.kind, v.year)
+  const mine = a.fieldTotals[key]
   // 金額が近い: 1人あたりの分野の金額で探す。a の人口が無ければ探さない
-  const byUse = mine && popOf(a) ? closestByUse({ ...mine, base: popOf(a) }, peers.flatMap((e) => (totals.has(e.code) ? [[e.code, { ...totals.get(e.code)!, base: popOf(e) }] as [string, typeof mine & { base: number }]] : [])), SIMILAR + 1).map(ref) : []
+  const byUse = mine && popOf(a) ? closestByUse({ ...mine, base: popOf(a) }, peers.flatMap((e) => (e.fieldTotals[key] ? [[e.code, { ...e.fieldTotals[key], base: popOf(e) }] as [string, typeof mine & { base: number }]] : [])), SIMILAR + 1).map(ref) : []
   const byPopulation = popOf(a) ? closestByPopulation(popOf(a), peers.flatMap((e) => (popOf(e) ? [[e.code, popOf(e)] as [string, number]] : [])), SIMILAR + 1).map(ref) : []
   return { byUse, byPopulation }
 }
@@ -81,11 +81,10 @@ export const loader = defineHandler<Props>(async (c) => {
         ? (bVersions.find((v) => v.year === aVersion.year && v.kind !== aVersion.kind) ?? bVersions.find((v) => v.kind === aVersion.kind && v.year < aVersion.year) ?? aVersion)
         : (bVersions.find((v) => same(v, aVersion)) ?? bVersions[0])
     const bVersion = bVersions.find((v) => same(v, asked('b'))) ?? bDefault
-    // 科目の表も、選んでいるまちの分だけ読む。左右が同じ年度・資料なら1回で読む
-    const both = b && bVersion && same(aVersion, bVersion) ? fieldTotalsFor(env, [...new Set([a.code, b.code])], aVersion.year, aVersion.kind) : null
-    const read = (e: CatalogEntry, v: Version) => (both ?? fieldTotalsFor(env, [e.code], v.year, v.kind)).then((t) => t.get(e.code) ?? { total: 0, fields: {} })
-    const town = async (e: CatalogEntry, v: Version, vs: Version[]): Promise<CompareTown> => ({ code: e.code, name: e.name, pop: e.population?.people ?? 0, path: jurisdictionPath(e.code), version: v, versions: vs, ...(await read(e, v)) })
-    const [ta, tb] = await Promise.all([town(a, aVersion, aVersions), b && bVersion ? town(b, bVersion, bVersions) : null])
+    // 分野の額は自治体の1件（歳出の根の額）に入っているので、科目の表は読まない
+    const town = (e: CatalogEntry, v: Version, vs: Version[]): CompareTown => ({ code: e.code, name: e.name, pop: e.population?.people ?? 0, path: jurisdictionPath(e.code), version: v, versions: vs, ...(e.fieldTotals[fieldTotalsKey(v.kind, v.year)] ?? { total: 0, fields: {} }) })
+    const ta = town(a, aVersion, aVersions)
+    const tb = b && bVersion ? town(b, bVersion, bVersions) : null
     return { sample, sitekey: siteKey(c), a: ta, b: tb, byUse, byPopulation, failed: false }
   } catch {
     return { ...none, failed: true }

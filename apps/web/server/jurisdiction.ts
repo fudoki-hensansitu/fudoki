@@ -44,6 +44,24 @@ export interface CatalogEntry {
   population: Population | null
   /** 住民基本台帳人口の全基準日（古い順） */
   populations: Population[]
+  /** 一般会計の総額と分野（COFOG の大分類）ごとの額。鍵は `資料区分:年度`。api の歳出の根（科目の表の末端の行の和）から組む */
+  fieldTotals: Record<string, FieldTotals>
+}
+
+/** 総額と、分野（DOMAIN_FRAMES の id。分類できないものは other）ごとの額 */
+export type FieldTotals = { total: number; fields: Record<string, number> }
+export const fieldTotalsKey = (kind: DocumentKind, year: number) => `${kind}:${year}`
+
+type ApiAccount = WebOpOutput<'list_jurisdictions'>['jurisdictions'][number]['coverage'][number]['accounts'][number]
+const DIVISIONS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] as const
+/** 会計の額の列を分野ごとの額にする。総額の無い（科目の表の無い）会計は undefined */
+function fieldTotalsOf(a: ApiAccount): FieldTotals | undefined {
+  if (a.total_yen === null) return undefined
+  const fields: Record<string, number> = {}
+  const add = (id: string, yen: number | null) => yen && (fields[id] = (fields[id] ?? 0) + yen)
+  for (const d of DIVISIONS) add((frameOf(d) ?? OTHER_FRAME).id, a[`cofog_${d}_yen`])
+  add(OTHER_FRAME.id, a.cofog_unclassified_yen)
+  return { total: a.total_yen, fields }
 }
 
 const amount = (n: { amount_yen: number | null }) => ({ yen: n.amount_yen ?? 0, ...(n.amount_yen === null ? { amountMissing: true as const } : {}) })
@@ -67,6 +85,13 @@ function toCatalogEntry(j: Pick<ApiJurisdiction, 'jurisdiction_code' | 'name' | 
     officialUrl: j.official_url,
     population: populations.at(-1) ?? null,
     populations,
+    fieldTotals: Object.fromEntries(
+      j.coverage.flatMap((c) => {
+        const general = c.accounts.find((a) => a.account_name === ACCOUNT)
+        const t = general && fieldTotalsOf(general)
+        return t ? [[fieldTotalsKey(c.document_kind, c.fiscal_year), t]] : []
+      })
+    ),
   }
 }
 

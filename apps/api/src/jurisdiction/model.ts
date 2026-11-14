@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import { described } from '../columns'
 import { nextPageToken } from '../shared/paging'
-import { DocumentKind, JurisdictionCode } from '../shared/model'
+import { DocumentKind, JurisdictionCode, Yen } from '../shared/model'
 
 export const Jurisdiction = z.strictObject({
   jurisdiction_code: JurisdictionCode,
@@ -20,7 +20,15 @@ export const CoverageOrigin = z
   .strictObject(described('expenditure_origin', { origin_id: z.string(), title: z.string(), url: z.string(), format: z.string() }))
   .meta({ id: 'CoverageOrigin', description: '明細が指す出典（予算書・決算書の1冊）。' })
 
-const coverageAccount = described('expenditure', { account_name: z.string(), account_kind: z.string() })
+/** 総額と COFOG の大分類ごとの額の列（科目の表の末端の行の和）。自治体をまたいで分野の使い方を比べるのに使う */
+export const COFOG_DIVISIONS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] as const
+const amountColumns = {
+  total_yen: Yen.nullable(),
+  ...(Object.fromEntries(COFOG_DIVISIONS.map((d) => [`cofog_${d}_yen`, Yen.nullable()])) as Record<`cofog_${(typeof COFOG_DIVISIONS)[number]}_yen`, z.ZodNullable<typeof Yen>>),
+  cofog_unclassified_yen: Yen.nullable(),
+}
+export const AMOUNT_COLUMNS = Object.keys(amountColumns)
+const coverageAccount = described('expenditure', { account_name: z.string(), account_kind: z.string(), ...amountColumns })
 const coverageOf = <A extends z.ZodObject>(account: A, id: string) =>
   z
     .strictObject({

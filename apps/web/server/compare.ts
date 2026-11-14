@@ -1,57 +1,5 @@
-// まち比べ（/compare）のデータ。一つの年度・資料（決算か当初予算）の、収録している全部のまちの一般会計を、目ごとに分野（COFOG の大分類）へ分けて足す。
-// 似たまちを探すのに全部のまちが要るので、まちごとではなく年度ごとに読む。足すのは同じまちの目の金額だけで、まちどうしは足さない
-import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
-import { ACCOUNT } from './jurisdiction'
-import { apiCall } from './fudoki-api'
-import type { Env } from './env'
-
-export type FieldTotals = { total: number; fields: Record<string, number> }
-
-// 頁は query ごとに CDN に置くが、まちの組み合わせごとに全部のまちを読み直さないよう、同じ isolate の中では年度ごとに使い回す。
-// データは取り込みのときだけ変わるので、CDN の置き時間（void.config.ts の 3600 秒）と同じだけ持つ
-const REUSE_MS = 3_600_000
-export type DocKind = 'settlement' | 'initial'
-const memo = new WeakMap<Env, Map<string, { at: number; p: Promise<Map<string, FieldTotals>> }>>()
-
-async function read(env: Env, year: number, kind: DocKind, codes?: string[]): Promise<Map<string, FieldTotals>> {
-  const out = new Map<string, FieldTotals>()
-  let token: string | undefined
-  do {
-    const r = await apiCall(env)('search_expenditure_subjects', {
-      document_kind: kind,
-      fiscal_year: { min: year, max: year },
-      where: { ...(codes ? { jurisdiction_code: { eq: codes } } : {}), account_name: { eq: [ACCOUNT] }, level: { eq: ['目'] } },
-      page_size: 1000,
-      ...(token ? { page_token: token } : {}),
-    })
-    for (const s of r.subjects) {
-      const t = out.get(s.jurisdiction_code) ?? { total: 0, fields: {} }
-      const yen = s.amount_yen ?? 0
-      const field = ((s.cofog_code ? frameOf(s.cofog_code) : undefined) ?? OTHER_FRAME).id
-      t.fields[field] = (t.fields[field] ?? 0) + yen
-      t.total += yen
-      out.set(s.jurisdiction_code, t)
-    }
-    token = r.next_page_token ?? undefined
-  } while (token)
-  return out
-}
-
-/** 選んだまちだけの、年度・資料の分野の合計。比べる2つのまちを読むのに使う */
-export const fieldTotalsFor = (env: Env, codes: string[], year: number, kind: DocKind) => read(env, year, kind, codes)
-
-/** 年度・資料の、全部のまちの分野の合計。似たまちを探すのに使う */
-export function fieldTotalsOf(env: Env, year: number, kind: DocKind): Promise<Map<string, FieldTotals>> {
-  const byKey = memo.get(env) ?? new Map()
-  memo.set(env, byKey)
-  const key = `${kind}:${year}`
-  const hit = byKey.get(key)
-  if (hit && Date.now() - hit.at < REUSE_MS) return hit.p
-  const p = read(env, year, kind)
-  byKey.set(key, { at: Date.now(), p })
-  p.catch(() => byKey.get(key)?.p === p && byKey.delete(key))
-  return p
-}
+// まち比べ（/compare）の似たまちの探し方。分野の額は自治体の一覧の歳出の根の額（server/jurisdiction.ts の fieldTotals）を使う
+import type { FieldTotals } from './jurisdiction'
 
 /** 使い方が近いまち。分野ごとの1人あたりの金額の差（の絶対値）の和が小さい順。base は割る数（人口）。人口の無いまちは候補にしない */
 export function closestByUse(me: FieldTotals & { base: number }, others: [code: string, FieldTotals & { base: number }][], n: number): string[] {

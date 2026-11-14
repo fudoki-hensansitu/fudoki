@@ -109,13 +109,14 @@ export function insertJurisdiction(sqlite: Database, row: { jurisdiction_code: s
 /** 歳出の根の1行と、出典との組。ID は行の中身から作る（一意であればよい）。 */
 export function insertCoverage(
   sqlite: Database,
-  row: { jurisdiction_code: string; fiscal_year: number; document_kind: string; account_name: string; account_kind?: string; origin_id: string }
+  row: { jurisdiction_code: string; fiscal_year: number; document_kind: string; account_name: string; account_kind?: string; origin_id: string; amounts?: Record<string, number> }
 ) {
-  const full = { account_kind: row.account_name, ...row }
+  const { amounts = {}, ...full } = { account_kind: row.account_name, ...row }
   const id = JSON.stringify([full.jurisdiction_code, full.fiscal_year, full.document_kind, full.account_name])
+  const columns = ['expenditure_id', 'jurisdiction_code', 'fiscal_year', 'document_kind', 'account_name', 'account_kind', ...Object.keys(amounts)]
   sqlite
-    .query('INSERT OR IGNORE INTO expenditure (expenditure_id, jurisdiction_code, fiscal_year, document_kind, account_name, account_kind) VALUES (?, ?, ?, ?, ?, ?)')
-    .run(id, full.jurisdiction_code, full.fiscal_year, full.document_kind, full.account_name, full.account_kind)
+    .query(`INSERT OR IGNORE INTO expenditure (${columns.join(', ')}) VALUES (${columns.map(() => '?').join(', ')})`)
+    .run(id, full.jurisdiction_code, full.fiscal_year, full.document_kind, full.account_name, full.account_kind, ...Object.values(amounts))
   sqlite
     .query('INSERT INTO expenditure_origin_link (link_id, expenditure_id, origin_id) VALUES (?, ?, ?)')
     .run(JSON.stringify([id, full.origin_id]), id, full.origin_id)
