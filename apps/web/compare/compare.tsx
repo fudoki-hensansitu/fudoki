@@ -1,7 +1,7 @@
 // 比べる。2つのまちを、同じ年度の一般会計の決算の分野で並べる。真ん中に分野、左に a（住んでいるまち）、右に b の棒を伸ばし、下に a に似たまちを出す。
 // a は緑、b は灰で分け、印（塗り・輪）でも見分けられるようにする。まちどうしの順位や良し悪しの色は付けない
 import * as React from 'react'
-import { ArrowsLeftRightIcon, CaretRightIcon } from '@phosphor-icons/react'
+import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
 import { useRouter } from '@void/react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Separator } from '@/components/ui/separator'
@@ -198,21 +198,24 @@ function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) 
 }
 
 /** 似たまち。いま比べているまちは出さない */
-function SimilarList({ title, note, items, hrefOf }: { title: string; note: string; items: TownRef[]; hrefOf: (code: string) => string }) {
+function SimilarList({ title, note, items, onPick }: { title: string; note: string; items: TownRef[]; onPick: (code: string) => void }) {
   return (
     <div className="min-w-0 flex-1">
       <h3 className="text-[15px] font-medium">{title}</h3>
       <p className="mb-2 text-xs text-muted-foreground">{note}</p>
       <div className="-mx-2.5 flex flex-col">
         {items.map((s) => (
-          <Link key={s.code} href={hrefOf(s.code)} className="flex items-center gap-3 rounded-lg px-2.5 py-2 text-left no-underline transition-colors hover:bg-card">
+          <button key={s.code} type="button" onClick={() => onPick(s.code)} className="group flex items-center gap-3 rounded-lg px-2.5 py-2 text-left transition-colors hover:bg-card">
             <Emblem code={s.code} name={s.name} className="size-[30px] rounded-[9px] p-1" />
             <span className="min-w-0 flex-1">
               <span className="block text-[15px]">{s.name}</span>
               <span className="block text-xs text-muted-foreground">{popText(s.pop)}</span>
             </span>
-            <CaretRightIcon className="size-4 text-muted-foreground" />
-          </Link>
+            <span className="flex shrink-0 items-center gap-1 text-xs text-muted-foreground group-hover:text-foreground">
+              <ArrowsLeftRightIcon className="size-4" aria-hidden="true" />
+              入れ替える
+            </span>
+          </button>
         ))}
       </div>
     </div>
@@ -274,10 +277,15 @@ export function Compare(props: Props) {
 
           {byUse.length || byPopulation.length ? (
             <section className="mt-12">
-              <h2 className="mb-3 text-[17px] font-semibold">{a.name}に似たまち</h2>
+              <h2 className="text-[17px] font-semibold">{a.name}に似たまち</h2>
+              {b ? (
+                <p className="mt-1 mb-3 flex flex-wrap items-center gap-1 text-sm text-muted-foreground">
+                  押すと、右の<MarkB /><span className="text-foreground">{b.name}</span>と入れ替えて比べます
+                </p>
+              ) : <div className="mb-3" />}
               <div className="flex flex-col gap-6 sm:flex-row">
-                {byUse.length ? <SimilarList title="使い方が近い" note="一般会計を分野ごとの割合で比べて近いまち" items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} hrefOf={(c) => compareHref(a.code, c, a.version)} /> : null}
-                {byPopulation.length ? <SimilarList title="人口が近い" note="住民基本台帳の人口が近いまち" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} hrefOf={(c) => compareHref(a.code, c, a.version)} /> : null}
+                {byUse.length ? <SimilarList title="使い方が近い" note="一般会計を分野ごとの割合で比べて近いまち" items={byUse.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
+                {byPopulation.length ? <SimilarList title="人口が近い" note="住民基本台帳の人口が近いまち" items={byPopulation.filter((x) => x.code !== b?.code).slice(0, 5)} onPick={(c) => go(a.code, a.version, c, null)} /> : null}
               </div>
             </section>
           ) : null}
