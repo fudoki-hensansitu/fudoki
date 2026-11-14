@@ -461,12 +461,11 @@ def drawn(page: Page) -> Page:
                     for o in body if o is not w]
     # (a 説明's number read a little below its name, `4` 2.3pt under `女性・若者・シニア創業サポート`: on the name's line,
     # as the builder joins a number to the words it shares a line with)
-    # (two numbers read as one over two lines, `45`, are `stacked`'s: a box taller than a line or beside two names' lines)
+    # (two numbers read as one over two lines, `45`, are `stacked`'s: a box taller than a line, or one `stacked` splits)
     for w in [w for w in body if xs[9] < w.x0 < xs[9] + 2 * LINE and w.text.isdigit() and w.y1 - w.y0 < LINE + NEAR]:
         right = [o for o in body if 0 <= o.x0 - w.x1 <= LINE + NEAR and abs(o.y0 - w.y0) < LINE / 2 and not o.text[:1].isdigit()]
-        beside = [o for o in body if 0 <= o.x0 - w.x1 <= LINE + NEAR and w.y0 < (o.y0 + o.y1) / 2 < w.y1
-                  and not o.text[:1].isdigit()]
-        if right and len(beside) < 2:
+        beside = [o for o in body if w.x1 - 1 <= o.x0 <= w.x1 + 16 and w.y0 < (o.y0 + o.y1) / 2 < w.y1]
+        if right and not (len(w.text) >= 2 and len(beside) == len(w.text)):
             name = min(right, key=lambda o: abs(o.y0 - w.y0))
             body = [Word(o.text, o.x0, name.y0, o.x1, name.y1) if o is w else o for o in body]
     body = setsu_lines(lettered(stacked(bracketed(body, xs[2], xs[3]), xs[9], xs[10]), xs[9], xs[10]), xs[7], xs[8])
