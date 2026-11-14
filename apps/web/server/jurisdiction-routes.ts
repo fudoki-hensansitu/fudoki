@@ -10,7 +10,7 @@ import { clientIp, errorResponse, HttpError, rateLimit } from './http'
 import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
-import { appYears, loadYearSnapshot } from './app-data'
+import { appYears, loadFieldSubjects, loadYearSnapshot } from './app-data'
 import { loadCatalog, loadCatalogEntry, loadSettlementSummary, type CatalogEntry } from './jurisdiction'
 
 // 応答は CDN（Void の ISR、void.config.ts の routing.revalidate）に置く。Worker の中には置かず、毎回 API から組む。
@@ -109,6 +109,20 @@ export async function jurisdictionSnapshotResponse(env: Env, request: Request, c
     const year = yearParam === undefined ? appYears(entry)[0]?.year : Number(yearParam)
     if (year === undefined || !appYears(entry).some((y) => y.year === year)) throw new HttpError(404, 'NOT_FOUND', 'この年度は頁にありません')
     return new Response(JSON.stringify(await loadYearSnapshot(env, entry, year, { evaluated: yearParam === undefined })), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
+  } catch (e) {
+    if (e instanceof HttpError) return errorResponse(e)
+    return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
+  }
+}
+
+/** 分野ごとの末端の科目（/api/jurisdictions/:code/:year/field-subjects?kind=）。やめた事業を分野で絞るときに、前の年度の分を読む。
+ * 資料の種類は画面が持っているので受け取り、自治体の収録は読まない（収録の無い年度は空で返る）。誰でも呼べるので IP ごとの流量と形の検査で守る */
+export async function fieldSubjectsResponse(env: Env, request: Request, code: string, yearText: string): Promise<Response> {
+  try {
+    const kind = new URL(request.url).searchParams.get('kind')
+    if (!/^\d{6}$/.test(code) || !/^\d{4}$/.test(yearText) || (kind !== 'initial' && kind !== 'settlement')) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コード・年度・資料の形が違います')
+    await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
+    return new Response(JSON.stringify(await loadFieldSubjects(env, code, Number(yearText), kind)), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))

@@ -62,7 +62,7 @@ import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView, type Moku, type PageData, type PageFlow, type YearTotal, TAB_SLUGS, hasTab, type PageTab } from '../types'
 import { directionOf, DIRECTION_ICONS, GRADES, yearView, type AccountTotal, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearView } from './data'
-import { listKey, listPage, projectFull, projectOfDetail, type ListPage, type ListQuery, type ProjectFull } from './api'
+import { fieldSubjects, listKey, listPage, projectFull, projectOfDetail, type ListPage, type ListQuery, type ProjectFull } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import './app.css'
 
@@ -104,7 +104,7 @@ const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
 type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
-type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected) => void; selected: Selected; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void }
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected | ((s: Selected) => Selected)) => void; selected: Selected; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void }
 /** 文脈に添える、開いている事業の評価シート（評価は過去の年度にしか無いので全年度の新しい順）・施策の数の上限（文脈の長さの上限に収める） */
 const DETAIL_SOURCES = 3
 /** 詳細に開いているものを、アシスタントに渡す文脈の行にする。出典の origin_id と頁・科目の ID を添え、AI が検索し直さずに読めるようにする */
@@ -498,7 +498,7 @@ function Overview({ go }: { go: Go }) {
 
       <section>
         <SectionHead title="お金のかかる事業"><MoreLink onClick={() => go('projects', { filter: 'all' })} /></SectionHead>
-        <Rows>{v.top.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>
+        {v.hasProjects === undefined ? v.failed ? <LoadFailed /> : <RowsSkeleton /> : <Rows>{v.top.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>}
       </section>
 
       {v.sheets.length ? (
@@ -525,7 +525,9 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
     clearTimeout(timer.current)
     timer.current = setTimeout(() => React.startTransition(() => setQ(t.trim())), 300)
   }
-  const list = filter === 'eval' ? null : v.query(filter as ListQuery['filter'], { ...(field !== 'all' ? { subjects: v.subjectsOf(field, filter as ListQuery['filter']) } : {}), ...(q ? { q } : {}) })
+  // やめた事業を分野で絞るときは、前の年度の分野の科目を読んでから一覧を引く（EndedFieldList）
+  const endedField = filter === 'ended' && field !== 'all'
+  const list = filter === 'eval' || endedField ? null : v.query(filter as ListQuery['filter'], { ...(field !== 'all' ? { subjects: v.subjectsOf(field) } : {}), ...(q ? { q } : {}) })
   const unlinked = filter === 'new' ? v.freshUnlinked.filter((m) => (field === 'all' || m.field === field) && (!q || m.title.includes(q))) : []
   const head = (n: string) => (
     <p className="px-2.5 text-xs text-muted-foreground">
@@ -534,7 +536,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
     </p>
   )
   // 事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある）
-  const moku = v.hasProjects ? [] : v.mokuRows.filter((p) => (field === 'all' || v.fieldOf(p) === field) && (!q || p.name.includes(q)))
+  const moku = v.hasProjects !== false ? [] : v.mokuRows.filter((p) => (field === 'all' || v.fieldOf(p) === field) && (!q || p.name.includes(q)))
   return (
     <div className="flex flex-col gap-2">
       <div className="flex flex-wrap items-center gap-2">
@@ -556,7 +558,9 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
         ))}
       </ToggleGroup>
       {filter === 'eval' ? <EvalList grade={grade} setGrade={setGrade} field={field} q={q} /> : <>
-      {!v.hasProjects ? (
+      {v.hasProjects === undefined ? (
+        v.failed ? <LoadFailed /> : <RowsSkeleton />
+      ) : !v.hasProjects ? (
         // 目には始めた年度が無いので、新しく始める事業は施策（下）だけで出す
         filter === 'all' ? (
           <>
@@ -567,6 +571,10 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
       ) : list ? (
         <ClientSuspense fallback={<RowsSkeleton />} ready={!!res.peek(listKey(list))}>
           <ProjectList q={list} head={(page) => head(countOf(page))} />
+        </ClientSuspense>
+      ) : endedField ? (
+        <ClientSuspense fallback={<RowsSkeleton />}>
+          <EndedFieldList field={field} q={q} head={head} />
         </ClientSuspense>
       ) : null}
       {unlinked.length ? (
@@ -580,6 +588,16 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
   )
 }
 
+/** やめた事業を分野で絞った一覧。やめた事業は前の年度の資料で引くので、前の年度の分野の科目を読んでから絞る */
+function EndedFieldList({ field, q, head }: { field: string; q: string; head: (n: string) => React.ReactNode }) {
+  const { v, d, res } = useApp()
+  const prev = d.prev
+  const subjects = prev ? React.use(res.get(`field-subjects:${d.code}:${prev.year}`, () => fieldSubjects(d.code, prev.year, prev.kind))) : FAILED
+  if (subjects === FAILED) return <LoadFailed />
+  const list = v.query('ended', { subjects: subjects[field] ?? [], ...(q ? { q } : {}) })
+  return <ProjectList q={list} head={(page) => head(countOf(page))} />
+}
+
 /** 事業の一覧の「評価した」。評価は事業の属性なので、別のタブにせず事業の絞り込みの1つにする */
 function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: string) => void; field: string; q: string }) {
   const { v } = useApp()
@@ -590,6 +608,8 @@ function EvalList({ grade, setGrade, field, q }: { grade: string; setGrade: (g: 
     .map((k) => ss.filter((s) => s.dc === k))
     .filter((xs) => xs.length)
     .map((xs) => [directionOf(xs[0]!)!, xs.length] as const)
+  // 評価シートを読めなかったら、0件と見せずに読めなかったと出す
+  if (v.failed) return <LoadFailed />
   return (
     <div className="mt-1 flex flex-col gap-3">
       <GradeCards sheets={all} value={grade} onChange={setGrade} />
@@ -862,7 +882,9 @@ function FieldPage({ id }: { id: string }) {
           <Rows>{ms.map((m) => <MeasureRow key={m.id} m={m} />)}</Rows>
         </DetailSection>
       ) : null}
-      {v.hasProjects ? (
+      {v.hasProjects === undefined ? (
+        <DetailSection icon={ListBulletsIcon} title="事業">{v.failed ? <LoadFailed /> : <RowsSkeleton />}</DetailSection>
+      ) : v.hasProjects ? (
         <ClientSuspense fallback={<DetailSection icon={ListBulletsIcon} title="事業"><RowsSkeleton /></DetailSection>} ready={!!res.peek(listKey(v.query('all', { subjects: v.subjectsOf(f.id) })))}>
           <FieldProjects id={f.id} />
         </ClientSuspense>
@@ -1015,7 +1037,9 @@ const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').repl
 /** 今の URL の分野の段（/fields/fukushi）の id */
 const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
 
-export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; sitekey: string; initialField?: string; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot: base, flow, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; sitekey: string; initialField?: string; initialTab?: TabKey }) {
+  // 施策・評価シートなどを読みきれなかった頁（loader が待ちきれなかった）は、読めなかったと出す
+  const d = React.useMemo(() => (base.pending ? { ...base, failed: true as const } : base), [base])
   const vision = data.vision?.text
   const emblem = data.emblem?.src ?? null
   const years = React.useMemo(() => appPageYears(data), [data])
@@ -1097,7 +1121,22 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
   }, [])
   const wide = useMedia('(min-width: 1280px)')
   const phone = useMedia('(max-width: 767px)')
-  const v = React.useMemo(() => (d.years[year] ? yearView(d) : undefined), [d, year])
+  // やめた事業は前の年度の科目を持つので、やめた事業を出すときは前の年度の分野の科目を読んで分野を引く
+  const prevKey = d.prev ? `field-subjects:${d.code}:${d.prev.year}` : ''
+  const [prevFields, setPrevFields] = React.useState<{ key: string; x: Record<string, string[]> }>()
+  React.useEffect(() => {
+    const prev = d.prev
+    if (filter !== 'ended' || !prev) return
+    let live = true
+    void res.get(prevKey, () => fieldSubjects(d.code, prev.year, prev.kind)).then((x) => {
+      if (live && x !== FAILED) setPrevFields({ key: prevKey, x })
+    })
+    return () => {
+      live = false
+    }
+  }, [filter, prevKey])
+  const prevFieldSubjects = prevFields?.key === prevKey ? prevFields.x : undefined
+  const v = React.useMemo(() => (d.years[year] ? yearView(d, prevFieldSubjects) : undefined), [d, year, prevFieldSubjects])
 
   // タブの真上の目印。これが画面の上へ消えたら、タブが上に貼り付いている
   const tabsTop = React.useRef<HTMLDivElement>(null)
@@ -1138,7 +1177,7 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
   // 事業評価は評価した事業を行った年度にだけある。評価の無い年度へ移ったら絞り込みを戻す
   const hasEval = !!v?.sheets.length
   React.useEffect(() => {
-    if (v && !hasEval && filter === 'eval') setFilter('all')
+    if (v && !v.pending && !hasEval && filter === 'eval') setFilter('all')
   }, [v, hasEval, filter])
   const index = Math.max(0, tabs.findIndex((t) => t.key === tab))
   // 始めの位置は Carousel を置いたときだけ渡す。タブのたびに変わると embla が作り直されて、滑らずに飛ぶ

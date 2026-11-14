@@ -12,8 +12,8 @@ import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
 import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
-import { loadYearSnapshot } from '../../server/app-data'
-import type { Snapshot } from '../../jurisdiction/app/data'
+import { appYears, loadYearExtras, loadYearSnapshot } from '../../server/app-data'
+import { withExtras, type Snapshot } from '../../jurisdiction/app/data'
 import { siteKey } from '../../server/site-key'
 
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
@@ -140,14 +140,18 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   // 当初予算の年度を開いたときの最新の決算だけを本文と同じ段で読む
   const latestSettled = props.data.settlementYears.at(-1)
   const newest = year === appPageYears(props.data)[0]
-  const [snapshot, flow, settledSummary] = await Promise.all([
-    entry ? within(loadYearSnapshot(env, entry, year, { field: props.field, tab: props.tab ?? 'overview' }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+  // 施策・評価シート・お金のかかる事業（extras）も並べて読み、HTML に入れる。頁は ISR で CDN に置くので、待つのは描き直しの1回目だけ
+  const kind = entry ? appYears(entry).find((y) => y.year === year)?.kind : undefined
+  const [base, extras, flow, settledSummary] = await Promise.all([
+    entry ? within(loadYearSnapshot(env, entry, year, { tab: props.tab ?? 'overview' }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+    entry && kind ? within(loadYearExtras(env, entry.code, year, kind), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
     entry && phase ? within(loadFlowParts(env, entry.code, year, 'setsu', phase, account), FLOW_WAIT_MS)
       // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
       .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))
       .catch(() => undefined) : undefined,
     newest && latestSettled !== undefined && latestSettled !== year ? within(loadSettlementSummary(env, props.data.code, latestSettled), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
   ])
+  const snapshot = base && extras ? withExtras(base, extras) : base
   const opened = snapshot?.years[String(year)]
   const headline: Headline | undefined = newest
     ? {
@@ -155,7 +159,7 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
         ...(opened && opened.kind === 'initial' && opened.total > 0 ? { budget: { year, yen: opened.total } } : {}),
       }
     : undefined
-  if (!snapshot || (phase && !flow)) {
+  if (!snapshot || snapshot.pending || (phase && !flow)) {
     // API に繋がらない・待ちきれなければ、読めた分だけの頁を返し、画面が読み直す。欠けた頁は CDN にもブラウザにも置かない
     c.header('x-revalidate', '0')
     c.header('Cache-Control', 'no-store')
