@@ -173,7 +173,7 @@ function FieldBars({ c, limit }: { c: Ctx; limit: number }) {
 
 function Card({ title, icon, children, footer, className }: { title: string; icon?: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; className?: string }) {
   return (
-    <section className={cn('flex flex-col rounded-2xl border bg-background p-5 animate-in fade-in slide-in-from-bottom-1 duration-300 ease-out motion-reduce:animate-none', className)}>
+    <section className={cn('flex flex-col rounded-2xl border bg-background p-5', className)}>
       <h3 className="mb-3 flex items-center gap-2 text-[15px] font-medium [&_svg]:size-5 [&>svg]:text-muted-foreground">
         {icon}
         {title}

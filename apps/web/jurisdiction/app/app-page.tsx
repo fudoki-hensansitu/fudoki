@@ -962,7 +962,7 @@ function Detail({ sel }: { sel: NonNullable<Selected> }) {
   const body =
     sel.kind === 'moku' ? <MokuDetail moku={sel.moku} phase={sel.phase} special={sel.special} /> : sel.kind === 'project' ? <ClientSuspense fallback={<RowsSkeleton n={4} />}><ProjectDetail id={sel.id} /></ClientSuspense> : m ? <MeasureDetail m={m} /> : s ? <SheetDetail s={s} /> : null
   return (
-    <div key={`${sel.kind}${sel.id}`} className="app-in">
+    <div key={`${sel.kind}${sel.id}`}>
       <p className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground"><I className="size-3.5" aria-hidden="true" />{label}</p>
       {body}
     </div>
@@ -1043,11 +1043,8 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
     // 目の詳細は開いた年度の図の値を、施策・評価シートはその年度の資料を持つので、年度を変えたら閉じる（事業は年度をまたいで同じ）
     select((s) => (s?.kind === 'project' ? s : null))
   }
-  // 開いた直後の表示はフェードさせない（LCP を遅らせない）。タブ・分野を移ったときだけ動かす
-  const [moved, setMoved] = React.useState(false)
   const setTab = (t: TabKey, { push = true } = {}) => {
     setTabState(t)
-    setMoved(true)
     if (t !== at.current.tab || fieldOfPath()) move(pageHref(at.current.year, t), { push })
   }
   /** 流れの会計を変える。一般会計は ?account= を付けない */
@@ -1076,7 +1073,6 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
   const [fieldPage, setFieldPage] = React.useState<string | null>(initialField ?? null)
   // 頁の中で開いた分野の頁は履歴の state に印を付け、閉じるときは履歴を戻る（進むで戻ってきた場合も同じ）
   const openField = (id: string) => {
-    setMoved(true)
     select(null)
     history.pushState({ ...history.state, field: id }, '', `${basePath()}/${year}/fields/${id}`)
     document.title = pageHead(data, year, { field: id }).title
@@ -1156,7 +1152,8 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [api])
   React.useEffect(() => {
-    if (api && api.selectedScrollSnap() !== index) api.scrollTo(index)
+    // タブを押したときは滑らせずに切り替える（指で横に動かしたときは指に付いて動く）
+    if (api && api.selectedScrollSnap() !== index) api.scrollTo(index, true)
   }, [api, index])
   const slides = React.useRef<(HTMLDivElement | null)[]>([])
   const [height, setHeight] = React.useState<number>()
@@ -1227,7 +1224,7 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
             )}
               {/* 貼り付いた帯ではタブを優先する。幅が足りないとき（会話を横に開いたときなど）は年度を「今年度 ▾」の1つにまとめる */}
               {stuck ? (
-                <div className="app-in shrink-0">
+                <div className="shrink-0">
                   {phone ? <YearMenu years={years} current={year} onChange={setYear} /> : (
                     <>
                       <div className="@max-4xl:hidden"><YearPicker years={years} current={year} onChange={setYear} hrefOf={yearHref} /></div>
@@ -1241,10 +1238,10 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
           {v ? (
             <AppContext.Provider value={{ d, page: data, years, v, res, select, selected, go, openField, flow, flowFailed, pickAccount }}>
               {fieldPage ? (
-                <div key={fieldPage} className={cn('pt-6', moved && 'app-in')}><FieldPage id={fieldPage} /></div>
+                <div key={fieldPage} className="pt-6"><FieldPage id={fieldPage} /></div>
               ) : phone ? (
                 <Carousel setApi={setApi} opts={carouselOpts} className="-mx-4 pt-5">
-                  <CarouselContent className="ml-0 items-start transition-[height] duration-300" style={{ height }}>
+                  <CarouselContent className="ml-0 items-start" style={{ height }}>
                     {tabs.map((t, i) => (
                       <CarouselItem key={t.key} className="px-4">
                         <div ref={(el) => void (slides.current[i] = el)}>{panel(t.key)}</div>
@@ -1254,7 +1251,7 @@ export function AppPage({ res, data, snapshot: d, flow, sitekey, initialField, i
                 </Carousel>
               ) : (
                 tabs.map((t) => (
-                  <TabsContent key={t.key} value={t.key} className={cn('pt-6', moved && 'app-in')}>
+                  <TabsContent key={t.key} value={t.key} className="pt-6">
                     {panel(t.key)}
                   </TabsContent>
                 ))
