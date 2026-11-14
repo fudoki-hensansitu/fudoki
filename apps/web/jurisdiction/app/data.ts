@@ -110,9 +110,9 @@ export function yearView(d: Snapshot, prevFieldSubjects?: Record<string, string[
   const prevFieldBySubject = prevFieldSubjects ? bySubject(prevFieldSubjects) : undefined
   const page = (filter: ListQuery['filter']) => d.lists[listKey(listQuery(d, filter))]
   // 事業の収録の無い自治体は、目を事業の代わりにする（中の事業・所管課は持たない）
-  // 項に属さない目（東京都の目など、親の項の行が無いもの）も並べる
-  const mokuRow = (m: YearData['looseMoku'][number], path: string[]): ProjRow => ({ id: `moku:${m.id}`, fy: year, name: m.name, dept: null, path, subject: m.id, yen: m.yen, started: null, ended: null, details: [] })
-  const mokuRows: ProjRow[] = [...y.kan.flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => mokuRow(m, [k.name, o.name, m.name])))), ...y.looseMoku.map((m) => mokuRow(m, [m.name]))].sort((a, b) => (b.yen ?? 0) - (a.yen ?? 0))
+  const mokuRows: ProjRow[] = y.kan
+    .flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => ({ id: `moku:${m.id}`, fy: year, name: m.name, dept: null, path: [k.name, o.name, m.name], subject: m.id, yen: m.yen, started: null, ended: null, details: [] }))))
+    .sort((a, b) => b.yen - a.yen)
   const top = d.hasProjects ? (page('all')?.rows ?? []) : d.hasProjects === false ? mokuRows.slice(0, 10) : []
   const measures = d.measures
   // NEW はその年度に始めた事業（予算書に新しく出てきた事業）だけ。施策の新規はこの印に使わない
