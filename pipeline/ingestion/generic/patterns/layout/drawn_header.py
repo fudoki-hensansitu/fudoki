@@ -387,7 +387,7 @@ def read(pages, **options):
         if count >= SURE:
             lefts[page.number] = left
     carried(pages)
-    # The scan places each page a few points apart (the frame's left side at 31 to 37), and the builder reads where
+    # The scan places each page a few points apart (the frame's left side some 28 to 38pt in), and the builder reads where
     # the numbers of the 節 and the 説明 start by where they are on the page: each page is read moved to the place
     # most pages print the frame, and its words and columns keep how far they were moved (`offset`), as a spread's do.
     place = sorted(lefts.values())[len(lefts) // 2] if lefts else 0.0
