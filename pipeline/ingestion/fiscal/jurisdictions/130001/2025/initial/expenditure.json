@@ -2328,7 +2328,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general",
-      "input_fingerprint": "e4c74e298457926e9b8a5e431c26d9a230eaa695fa48ed5dd21861bfdd056f1c",
+      "input_fingerprint": "0c5759464bf92779c2e02a9505b144e4c23aa1a8f107e602f578a71479589f2d",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2342,16 +2342,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "b8bd8487fb0dbcbcfbeed477b63a6312e6e2e05c618ae65a8ded982502df40a6",
-          "bytes": 217460
+          "sha256": "31b5c138640ca75f22ab5da9c62b05ec533d6698acd4c663ba7b02b9fb86ad2a",
+          "bytes": 217439
         },
         "row_count": 6597
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "2b15a01d186e849d81777841ed224dfe074e47f03d203ca88eabf44998cfee29",
-          "bytes": 190498
+          "sha256": "3c615739d2663984ab03bfaaf42624e9dd7153b2c8ed457a355486066888c9fc",
+          "bytes": 190588
         },
         "row_count": 7389
       }
@@ -2359,7 +2359,7 @@
     {
       "table_id": "ward-fiscal-adjustment-initial",
       "conversion_id": "ward-fiscal-adjustment",
-      "input_fingerprint": "8390f2445644489b962674ddf5166bb870c53f15c7c81237472a91683bdb1b3a",
+      "input_fingerprint": "f0fd28f8e2eb18f6b8018b3d602857bae3b7d2d2ab81dcecb8e61c4bb47ec719",
       "account": "特別区財政調整会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2389,7 +2389,7 @@
     {
       "table_id": "local-consumption-tax-settlement-initial",
       "conversion_id": "local-consumption-tax-settlement",
-      "input_fingerprint": "38dd2d257a1f58ffc4f92efbc5480b74610c8084766856599751841b4644c7f6",
+      "input_fingerprint": "95200dd530b21be8b2bf1f220603be44f9039d530f63f1b88eecacff85e47d09",
       "account": "地方消費税清算会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2419,7 +2419,7 @@
     {
       "table_id": "ogasawara-reconstruction-fund-initial",
       "conversion_id": "ogasawara-reconstruction-fund",
-      "input_fingerprint": "b357f3608941ed631e31153615d9662fc860c2b3182181d22b92ebf556feba51",
+      "input_fingerprint": "f2758cf11bba7dc4fe0866c11328e5b2b04a7f470270595b78d956a7c7b1ee9b",
       "account": "小笠原諸島生活再建資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2449,7 +2449,7 @@
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance",
-      "input_fingerprint": "7d7adc49a008aa0af8043ff70d5eeba8ab720ae4dd76090367d035be79f336ca",
+      "input_fingerprint": "5eebb2a7792362ed79d75e73ee718da5203599fc8aa757b7e0bc994501146792",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2462,16 +2462,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/national-health-insurance-initial-nodes.parquet",
-          "sha256": "521e4a2f7e2b2285997a350a1539c054f7ac367224ac318946870bd5b3c30fcb",
-          "bytes": 6379
+          "sha256": "844a72e9b71f82d3fca4ed5ebf3d27a10bbacd71fa192b3fea31e32b66219185",
+          "bytes": 6365
         },
         "row_count": 64
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/national-health-insurance-initial-amounts.parquet",
-          "sha256": "f627918ef8875cbf0d947d002e57ba352d57978dd4159e2a0f5cd2e7ce70b685",
-          "bytes": 5109
+          "sha256": "9de065be291cd4e4e9e950eec15f582b14ab17f16620a7d88277951609fc9854",
+          "bytes": 5112
         },
         "row_count": 90
       }
@@ -2479,7 +2479,7 @@
     {
       "table_id": "single-parent-welfare-loan-initial",
       "conversion_id": "single-parent-welfare-loan",
-      "input_fingerprint": "a402868315882f6e49ebeb5adf2680c8742d6d2cf0fa9087acd3a1ddfd0a820b",
+      "input_fingerprint": "4367c93854ec3d90165be9b54e77122ed3a8d0f9cc3b499e1d80fdc313712c34",
       "account": "母子父子福祉貸付資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2492,7 +2492,7 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/single-parent-welfare-loan-initial-nodes.parquet",
-          "sha256": "a6003086ea1ed1621d315d8993e3fe4b3a1799179cb1a11c92adbbad20fea9b9",
+          "sha256": "dc037c605231f30ecf2b6e6dc3c286b3ea6add406af8107de8308cd6eecf5df4",
           "bytes": 4388
         },
         "row_count": 33
@@ -2500,8 +2500,8 @@
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/single-parent-welfare-loan-initial-amounts.parquet",
-          "sha256": "7d0aa8fb02d5e23c70f91f6e29475ba952a0a0b0dc99ea6c4bc4f4e9a0f58263",
-          "bytes": 3437
+          "sha256": "eb4ea6c47fc0e096219fdc25ad1d1155ac44c63da005d72f984c8ebe578f13d0",
+          "bytes": 3438
         },
         "row_count": 41
       }
@@ -2509,7 +2509,7 @@
     {
       "table_id": "disability-support-pension-initial",
       "conversion_id": "disability-support-pension",
-      "input_fingerprint": "cc313fad32f3d4622190c3ac1b754c252d26a93655b7a3869a59c6343c63992b",
+      "input_fingerprint": "fce40455e06d883089690b25386d3d4eb481f7383a09c987fa9d11cef910ed0b",
       "account": "心身障害者扶養年金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2522,16 +2522,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/disability-support-pension-initial-nodes.parquet",
-          "sha256": "dfa5c029b5e2539c734a51c4256efd96d811339de7c2174efe68cd7697835eab",
-          "bytes": 2912
+          "sha256": "59bb8b2534365cf43676e08510093a990b2cd55e74db2e2d23fb5528407d2386",
+          "bytes": 2915
         },
         "row_count": 12
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/disability-support-pension-initial-amounts.parquet",
-          "sha256": "1e705a44c3e32865dd737fe8463ba036cfb70db7114dcee0e009cb8a8b76cd06",
-          "bytes": 2433
+          "sha256": "b8e8800d3342ecf3b7f14886e8fd6737f7aa23973064c751b09b1b4d5e979aea",
+          "bytes": 2435
         },
         "row_count": 18
       }
@@ -2539,7 +2539,7 @@
     {
       "table_id": "metropolitan-hospital-loan-initial",
       "conversion_id": "metropolitan-hospital-loan",
-      "input_fingerprint": "6b652964834e180ccb99d827054439be65209f3079fcb43d6711fbebed053759",
+      "input_fingerprint": "97c2db620f0ada6655bf19145a327d6adc5484eedc0f96c4776824614a03df34",
       "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2569,7 +2569,7 @@
     {
       "table_id": "sme-equipment-fund-initial",
       "conversion_id": "sme-equipment-fund",
-      "input_fingerprint": "7b5267c4303d740b5668e853802a6068125dbb57cebcefa10b8c1a2b607a07c8",
+      "input_fingerprint": "7d6ad0ec560ed09d3ec09588b03b6b70bac0eab307c8310812ba7da63c82ebd6",
       "account": "中小企業設備導入等資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2582,16 +2582,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/sme-equipment-fund-initial-nodes.parquet",
-          "sha256": "8958d2cd323eee08916dbaa99e5cf12df1d2810d1c49d890fc2991f8ecf1a599",
-          "bytes": 4518
+          "sha256": "afe480d9d6b7a785a30adb9790c967d78e84654f7a3692f4b327ed253f1d7560",
+          "bytes": 4519
         },
         "row_count": 37
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/sme-equipment-fund-initial-amounts.parquet",
-          "sha256": "90199cb083fe52def6b5b539e068c1c03f012b499945d3bd3fa304c741945ffa",
-          "bytes": 3548
+          "sha256": "042f6285677472e7cf07a35a7205b5a6ffe84927ca95f254eaec2edaa5c28924",
+          "bytes": 3555
         },
         "row_count": 47
       }
@@ -2599,7 +2599,7 @@
     {
       "table_id": "forestry-improvement-fund-initial",
       "conversion_id": "forestry-improvement-fund",
-      "input_fingerprint": "151126c2f443dcc6b29895519825798fd7eca02332a2abc87b00c0a0cc89a6aa",
+      "input_fingerprint": "f7c40e4745d0cf71fdc8ee45eae2acd8ca068785d2d1ef9ff92b1344ce37968d",
       "account": "林業・木材産業改善資金助成会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2629,7 +2629,7 @@
     {
       "table_id": "coastal-fishery-improvement-fund-initial",
       "conversion_id": "coastal-fishery-improvement-fund",
-      "input_fingerprint": "642d8ff9d76d0bc4bae130d479910c318363864bbadabf8bc15fd3eea2dceade",
+      "input_fingerprint": "d03df84051c921a2eb8987c64650cd390c9b1fb2f7b604e87b35a798a8377a90",
       "account": "沿岸漁業改善資金助成会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2659,7 +2659,7 @@
     {
       "table_id": "slaughterhouse-initial",
       "conversion_id": "slaughterhouse",
-      "input_fingerprint": "4ee8f4dd20e2b592c695416eb660d767e15244f8f0bb798cb8be72fdbbe08116",
+      "input_fingerprint": "842323d58c0638a900e2cfb835f04b12351456170b92f4c1b434de522cc5a3ac",
       "account": "と場会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2689,7 +2689,7 @@
     {
       "table_id": "metropolitan-housing-initial",
       "conversion_id": "metropolitan-housing",
-      "input_fingerprint": "0a5797d3b91a3f6cb0ff3cc50566ba093e69e6e938e0414a9c8d4c4d17c35274",
+      "input_fingerprint": "5e966689e7f81cba9bc8d13ee79a25872a9d66af0020b689173676eaf8dda5a7",
       "account": "都営住宅等事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2702,16 +2702,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/metropolitan-housing-initial-nodes.parquet",
-          "sha256": "e3935fe8f2825c7e0d4b07af2a7f49871470a1e92fd622b59c436d692767fd03",
-          "bytes": 7477
+          "sha256": "600ee4342bcb9cd81b7494c58c928b44d3b0732314f3e0903a74e06fac8b62a2",
+          "bytes": 7462
         },
         "row_count": 107
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/metropolitan-housing-initial-amounts.parquet",
-          "sha256": "11d9e998bb8996f586bcd02dcd1be0f57edf271d4117126284ddbb929dacee37",
-          "bytes": 6107
+          "sha256": "7ae09d2e03eb6905821d1728952d908d7eae13a56e8b435580ba73511fa82330",
+          "bytes": 6106
         },
         "row_count": 121
       }
@@ -2719,7 +2719,7 @@
     {
       "table_id": "metropolitan-housing-deposit-initial",
       "conversion_id": "metropolitan-housing-deposit",
-      "input_fingerprint": "d14f87784c430fb29496642a3a9519d2f48774b1f75b69ccc266ab2ac057aff2",
+      "input_fingerprint": "8b272d2890e99314a52a5234ca79be11d9c00e0d28cf0614d8bfc957b798de95",
       "account": "都営住宅等保証金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2749,7 +2749,7 @@
     {
       "table_id": "urban-development-fund-initial",
       "conversion_id": "urban-development-fund",
-      "input_fingerprint": "3dd95ab4860148f12225e68d8dd0461e839b461b113bc85cdfc18fca2f12c8a0",
+      "input_fingerprint": "24010e9fab3f24023fe3fe632e994a38e7d9dccb2630b7a9a0a8409c414b2abd",
       "account": "都市開発資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2779,7 +2779,7 @@
     {
       "table_id": "land-acquisition-initial",
       "conversion_id": "land-acquisition",
-      "input_fingerprint": "d57c60aa081f6a06816204587ee9ce3682305a9ec5ecbf95100aade5d8c538e7",
+      "input_fingerprint": "8640c96ad6128a0d7d522597acb4b8e1ab11c922ace017f5ae8deb4d634dd2b1",
       "account": "用地会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2792,15 +2792,15 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/land-acquisition-initial-nodes.parquet",
-          "sha256": "c9e455c7420beb16e1558a1bc0c946043bbbe976b3f1270771def2246cce07fd",
-          "bytes": 3879
+          "sha256": "9ab82aaa56543d5c44000854267fd49107244409cae35dbf9530b3df88211c37",
+          "bytes": 3875
         },
         "row_count": 24
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/land-acquisition-initial-amounts.parquet",
-          "sha256": "0a86c0c7926c57758fcdd6cc9d12e5a16d38e768c2fb9e5e249a72e894639718",
+          "sha256": "68668ff7a58edcb1a86dc56483cbd869bb2977a5d4862e20e10a1a73130197ff",
           "bytes": 3045
         },
         "row_count": 30
@@ -2809,7 +2809,7 @@
     {
       "table_id": "public-debt-initial",
       "conversion_id": "public-debt",
-      "input_fingerprint": "b79a0530143d295d9cfd3af3c4a374caf3150cc687ca7e9a98a846539816fc04",
+      "input_fingerprint": "c4ea0f0ae62fcd37fedccc182f06a8a6c0e0e4ff23a65fa4fd3c06fc84021a19",
       "account": "公債費会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2822,16 +2822,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/public-debt-initial-nodes.parquet",
-          "sha256": "18ca6b2839964d25fa22cfa5f6da789b336fc3ed2758d4c9aea340c89f046c46",
-          "bytes": 5762
+          "sha256": "e3d5eb590f784f776dab19bd737aba24b5817b50946517caeb9f7e0edcca11d2",
+          "bytes": 5751
         },
         "row_count": 64
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/public-debt-initial-amounts.parquet",
-          "sha256": "ffd38592979f250fc8726e0fe59f5ddfb20232a665a2c01940d6a356a69553a0",
-          "bytes": 4784
+          "sha256": "97dbd93ce1a0f3aed98e5ce8c405b117eb9e5043236d4bcf1a112e7c22740d99",
+          "bytes": 4791
         },
         "row_count": 78
       }
@@ -2839,7 +2839,7 @@
     {
       "table_id": "waterfront-infrastructure-initial",
       "conversion_id": "waterfront-infrastructure",
-      "input_fingerprint": "fafaa4188cf6ba2d89521036f97f3f8cd5f7dc62388a3d38557519b86e484b2b",
+      "input_fingerprint": "cf2277b75da1859dc28b08b3f8ff1f8e8223674c62cb20672c4cfd681ee2f0f1",
       "account": "臨海都市基盤整備事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2852,16 +2852,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/waterfront-infrastructure-initial-nodes.parquet",
-          "sha256": "28eed54f1fcf7c4afdf65261ee5760ad3ce9637caccb601d00abc2ab79a620e7",
-          "bytes": 4981
+          "sha256": "f745e2c157a9df141aa595d6340a9db3a10e8de2a3145e50e09ee605ded2fb6a",
+          "bytes": 4984
         },
         "row_count": 50
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/waterfront-infrastructure-initial-amounts.parquet",
-          "sha256": "4740151682b189252f5f13259f2642742d66c247dfa1d8d71e56ccf484d2f51c",
-          "bytes": 4023
+          "sha256": "6459a50c48cc8b1bdbaf943e833ffea33decc71e70b6db4cb78b33c7e5eeafba",
+          "bytes": 4022
         },
         "row_count": 58
       }
@@ -2869,7 +2869,7 @@
     {
       "table_id": "industrial-water-settlement-initial",
       "conversion_id": "industrial-water-settlement",
-      "input_fingerprint": "3c99cf928296751cca6d11e160cb9096ef0d2ed1a51466cc511c7a59271a4b83",
+      "input_fingerprint": "81db35a967158e659cc59f90a107a4318ffcb67617c71cda4c9df7e7ab3888d3",
       "account": "工業用水道事業清算会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2882,16 +2882,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/industrial-water-settlement-initial-nodes.parquet",
-          "sha256": "c6397f7b986f54819a7b18055a04bffdefd0323ff3dcad4e26696b21c4ab53bd",
-          "bytes": 2926
+          "sha256": "567ffeb3d339b2783704514771ee24d2dfa7f524fa92e6e54d3ebd120bb4f824",
+          "bytes": 2923
         },
         "row_count": 11
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/130001/2025/initial/expenditure/industrial-water-settlement-initial-amounts.parquet",
-          "sha256": "2c3965859eeee8427a037c46888bcbab6e462edd3afe6f67df648e0de27fb21c",
-          "bytes": 2385
+          "sha256": "878f9daef2ae9638dc5580542564ef39c3434632e3dae3aad94966c7cbe5ffdc",
+          "bytes": 2382
         },
         "row_count": 17
       }
