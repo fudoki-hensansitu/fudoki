@@ -26,7 +26,7 @@ SURE = 8        # inner and side rules read in place that tell the page's column
 # A version printed on a 説明's line (`２．０`), as OCR reads it.
 VERSION = re.compile(r'[0-9]+\. ?[0-9]+')
 # Words only a printed header holds.
-HEADED = re.compile(r'(本年度|前年度)?予算額|(本年度の)?財源内訳|区\s*分')
+HEADED = re.compile(r'予算額|財源内訳|区分')
 # The headings as the shared dictionary names them: the print's `節（細節）` is the 節 axis, its `計上説明` the 説明.
 HEADINGS = ('款', '項', '目', '本年度予算額', '前年度予算額', '比較増減', '本年度の財源内訳', '区分', '金額', '説明')
 # The columns' rules, from the frame's left side (pt).
@@ -249,12 +249,17 @@ def frame(page: Page) -> tuple[float, list[float]] | None:
         return None
     places = [place * scale for place in PLACES]
     top = long[0]
+    xs = [min(read_xs, key=lambda x: abs(x - left - place))
+          if any(abs(x - left - place) <= NEAR for x in read_xs) else left + place for place in places]
     # (a page that goes on from the one before it may print no header, its rows from the frame's top: its header is
-    # drawn above the frame)
-    if not any(HEADED.fullmatch(w.text) and top < (w.y0 + w.y1) / 2 < top + HEADER for w in page.words):
+    # drawn above the frame. The headings of the amounts', 財源's and 節's columns, however OCR cuts them, are read
+    # together: those columns' rows hold numbers and names that print none of them.)
+    band = sorted((w for w in page.words
+                   if top < (w.y0 + w.y1) / 2 < top + HEADER and xs[3] < (w.x0 + w.x1) / 2 < xs[9]),
+                  key=lambda w: (round(w.y0 / LINE), w.x0))
+    if not HEADED.search(''.join(w.text for w in band).replace(' ', '')):
         top -= HEADER
-    return top, [min(read_xs, key=lambda x: abs(x - left - place))
-                     if any(abs(x - left - place) <= NEAR for x in read_xs) else left + place for place in places]
+    return top, xs
 
 
 def carried(pages: list[Page]) -> None:
