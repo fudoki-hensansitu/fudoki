@@ -159,10 +159,15 @@ def keep(document: dict, table: dict, path: Path | dict[str, Path], *, scope: di
     """Pass the save gate and place the table in the local object cache at its key. R2 is not written:
     `ingestion:store` uploads the recorded tables after merge (ADR 0045)."""
     for key, file in prepare_save(document, table, path, scope=scope):
-        cached = OBJECTS / safe_relative(key)
-        cached.parent.mkdir(parents=True, exist_ok=True)
-        if cached.resolve() != file.resolve():
-            shutil.copyfile(file, cached)
+        cache(key, file)
+
+
+def cache(key: str, file: Path) -> None:
+    """Place a verified object at its key in the local object cache, where `fetch` finds it."""
+    cached = OBJECTS / safe_relative(key)
+    cached.parent.mkdir(parents=True, exist_ok=True)
+    if cached.resolve() != file.resolve():
+        shutil.copyfile(file, cached)
 
 
 def upload(key: str, file: Path, reference: dict) -> None:

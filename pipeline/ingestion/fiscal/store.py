@@ -7,7 +7,7 @@ metadata) equals the record. The input fingerprint is not compared (a stale one 
 difference means the record and the code disagree: nothing of that manifest is uploaded and the job fails.
 
 The Jev answers are read from Git and never asked (no API key in CI). ``dry_run`` compares only; a pull
-request runs it to find a mismatch before merge.
+request runs it to find a mismatch before merge, then builds dbt from the verified tables left in the cache.
 """
 from __future__ import annotations
 
@@ -80,9 +80,13 @@ def store_manifest(path: Path, since: str, *, dry_run: bool) -> dict:
                    for ident in sorted(changed) for reference in manifest.table_references(recorded[ident]).values()]
         for key, file, reference in uploads:
             storage.verify(file, reference)
-        if not dry_run:
-            for key, file, reference in uploads:
+        # The cache then holds exactly the recorded bytes, so the dbt build that follows reads them without
+        # fetching from R2 (where a pull request's tables are not yet stored). An upload caches only after it
+        # succeeds: `stored` trusts the cache, so a table must not be cached that R2 lacks.
+        for key, file, reference in uploads:
+            if not dry_run:
                 storage.upload(key, file, reference)
+            storage.cache(key, file)
     return {'manifest': str(path), 'tables': sorted(changed), 'uploaded': not dry_run}
 
 

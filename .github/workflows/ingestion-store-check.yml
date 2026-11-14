@@ -1,6 +1,7 @@
 name: ingestion-store-check
 # 取り込みの PR が管理 JSON に記録した表を、R2 にある出典・OCR 結果から変換し直し、記録と一致するかを見る（ADR 0045）。
-# merge 後の sync-d1 が同じ変換をして R2 に置くので、食い違いはここで merge 前に止める。R2 は読むだけ。
+# 一致した表を手元の cache に置き、merge 後の sync-d1 と同じ範囲で dbt を build する（D1 は読むだけで書かない）。
+# 変換の食い違いも、宣言の欠けや読み違いで dbt の検査が落ちるのも、ここで merge 前に止める。R2 は読むだけ。
 on:
   pull_request:
     paths:
@@ -16,7 +17,7 @@ jobs:
     # この secret（R2 の書き込みを持つ）を使えるので、この check を足しても渡る範囲は変わらない（ADR 0045）
     if: github.event.pull_request.head.repo.full_name == github.repository
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    timeout-minutes: 180
     steps:
       - uses: actions/checkout@v7
         with:
@@ -24,6 +25,7 @@ jobs:
       - uses: jdx/mise-action@v5
         with:
           version: 2026.8.6
+      - run: bun install --frozen-lockfile
       - uses: actions/cache/restore@v6
         with:
           path: ~/.cache/uv
@@ -36,11 +38,24 @@ jobs:
           done
           exit 1
       - run: mise install conda:mupdf@1.28.6
+      # sync-d1 が main で温めた cache（R2 から戻した表・出典、事業の PDF を読んだ結果）を読むだけ。PR からは保存しない
+      - uses: actions/cache/restore@v6
+        with:
+          path: pipeline/.cache
+          key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
+          restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
+      # scan の表の字の読み取りは refresh-check が温める
       - uses: actions/cache/restore@v6
         with:
           path: pipeline/.cache/generic-observation
           key: generic-observation-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
           restore-keys: generic-observation-${{ hashFiles('mise.toml') }}-
-      - run: bun run --cwd pipeline ingestion:store -- --dry-run --since "$(git merge-base origin/${{ github.base_ref }} HEAD)"
+      - id: base
+        run: echo "sha=$(git merge-base origin/${{ github.base_ref }} HEAD)" >> "$GITHUB_OUTPUT"
+      - run: bun run --cwd pipeline ingestion:store -- --dry-run --since ${{ steps.base.outputs.sha }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      # PR の表はまだ R2 に無いので、上で一致を確かめて cache に置いた表から build する
+      - run: bun run --cwd pipeline publish -- --dry-run --database-id b9b6f209-083e-45b3-a896-1014a17a15f9 --since ${{ steps.base.outputs.sha }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}

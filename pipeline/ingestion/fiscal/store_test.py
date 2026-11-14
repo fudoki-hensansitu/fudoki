@@ -15,7 +15,7 @@ def table(sha: str) -> dict:
 
 class StoreTest(unittest.TestCase):
     def run_store(self, recorded: dict, converted: dict, previous: dict, *, dry_run: bool = False,
-                  already_stored: bool = False):
+                  already_stored: bool = False, upload_error: Exception | None = None):
         with tempfile.TemporaryDirectory() as root:
             root = Path(root)
             path = root / 'expenditure.json'
@@ -32,8 +32,11 @@ class StoreTest(unittest.TestCase):
                  patch.object(store.run, 'original_files', return_value={}), \
                  patch.object(store.run, 'convert', return_value=result) as convert, \
                  patch.object(store.storage, 'verify'), \
-                 patch.object(store.storage, 'upload') as upload:
+                 patch.object(store.storage, 'upload', side_effect=upload_error) as upload, \
+                 patch.object(store.storage, 'cache') as self.cache:
                 report = store.store_manifest(path, 'base', dry_run=dry_run)
+                self.cache_calls = [(key, Path(file).read_bytes()) for key, file in
+                                    (c.args for c in self.cache.call_args_list)]
             return report, convert, upload
 
     def test_uploads_only_when_the_re_converted_receipt_equals_the_record(self):
@@ -47,9 +50,15 @@ class StoreTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'differ from their records: t'):
             self.run_store(table('a' * 64), table('b' * 64), {'tables': []})
 
-    def test_dry_run_compares_without_upload(self):
+    def test_dry_run_compares_without_upload_and_caches_for_the_dbt_build(self):
         _, _, upload = self.run_store(table('a' * 64), table('a' * 64), {'tables': []}, dry_run=True)
         upload.assert_not_called()
+        self.assertEqual(self.cache_calls, [('fiscal/ingestion/x/t.parquet', b'abc')])
+
+    def test_a_failed_upload_leaves_the_table_out_of_the_cache(self):
+        with self.assertRaises(RuntimeError):
+            self.run_store(table('a' * 64), table('a' * 64), {'tables': []}, upload_error=RuntimeError('cf'))
+        self.cache.assert_not_called()
 
     def test_an_unchanged_record_is_not_re_converted(self):
         report, convert, upload = self.run_store(table('a' * 64), table('a' * 64), {'tables': [table('a' * 64)]})
