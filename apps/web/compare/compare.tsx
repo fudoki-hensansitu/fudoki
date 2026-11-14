@@ -90,7 +90,7 @@ function TownPicker({ current, onPick, children, className }: { current: string;
   )
 }
 
-/** 年度と資料（当初予算・決算）を分けて選ぶ。資料を替えたとき同じ年度が無ければ、その資料の最新の年度にする */
+/** 資料（当初予算・決算）と年度を分けて選ぶ。資料を替えたとき同じ年度が無ければ、その資料の最新の年度にする */
 function VersionPicker({ t, onVersion }: { t: CompareTown; onVersion: (v: Version) => void }) {
   const kinds = (['initial', 'settlement'] as const).filter((k) => t.versions.some((v) => v.kind === k))
   const years = t.versions.filter((v) => v.kind === t.version.kind).map((v) => v.year)
@@ -102,13 +102,13 @@ function VersionPicker({ t, onVersion }: { t: CompareTown; onVersion: (v: Versio
   }
   return (
     <div className="flex flex-wrap items-center gap-2">
+      <ToggleGroup aria-label={`${t.name}の資料`} value={[t.version.kind]} onValueChange={(x) => x[0] && pickKind(x[0] as Version['kind'])} variant="outline" size="sm" spacing={0}>
+        {kinds.map((k) => <ToggleGroupItem key={k} value={k}>{KIND_LABEL[k]}</ToggleGroupItem>)}
+      </ToggleGroup>
       <Select items={items} value={String(t.version.year)} onValueChange={(y) => y && onVersion({ year: Number(y), kind: t.version.kind })}>
         <SelectTrigger size="sm" aria-label={`${t.name}の年度`} className="rounded-full px-3"><SelectValue /></SelectTrigger>
         <SelectContent>{items.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
       </Select>
-      <ToggleGroup aria-label={`${t.name}の資料`} value={[t.version.kind]} onValueChange={(x) => x[0] && pickKind(x[0] as Version['kind'])} variant="outline" size="sm" spacing={0}>
-        {kinds.map((k) => <ToggleGroupItem key={k} value={k}>{KIND_LABEL[k]}</ToggleGroupItem>)}
-      </ToggleGroup>
     </div>
   )
 }
