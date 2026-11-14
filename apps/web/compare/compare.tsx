@@ -27,7 +27,6 @@ export const compareHref = (a: string, b?: string | null, av?: Version | null, b
 const KIND_LABEL = { settlement: '決算', initial: '当初予算' } as const
 /** 「R6年度 決算」 */
 export const versionLabel = (v: Version) => `${reiwa(v.year)} ${KIND_LABEL[v.kind]}`
-const versionKey = (v: Version) => `${v.year}-${v.kind}`
 /** そのまちの頁の、選んでいる年度の決算・予算のタブ */
 const docHref = (t: CompareTown) => `${t.path}/${t.version.year}/${t.version.kind === 'settlement' ? TAB_SLUGS.settled : TAB_SLUGS.money}`
 
@@ -91,9 +90,31 @@ function TownPicker({ current, onPick, children }: { current: string; onPick: (c
   )
 }
 
+/** 年度と資料（当初予算・決算）を分けて選ぶ。資料を替えたとき同じ年度が無ければ、その資料の最新の年度にする */
+function VersionPicker({ t, onVersion }: { t: CompareTown; onVersion: (v: Version) => void }) {
+  const kinds = (['initial', 'settlement'] as const).filter((k) => t.versions.some((v) => v.kind === k))
+  const years = t.versions.filter((v) => v.kind === t.version.kind).map((v) => v.year)
+  const items = years.map((y) => ({ value: String(y), label: reiwa(y) }))
+  const pickKind = (kind: Version['kind']) => {
+    const same = t.versions.find((v) => v.kind === kind && v.year === t.version.year)
+    const next = same ?? t.versions.find((v) => v.kind === kind)
+    if (next) onVersion(next)
+  }
+  return (
+    <div className="flex flex-wrap items-center gap-2">
+      <Select items={items} value={String(t.version.year)} onValueChange={(y) => y && onVersion({ year: Number(y), kind: t.version.kind })}>
+        <SelectTrigger size="sm" aria-label={`${t.name}の年度`} className="rounded-full px-3"><SelectValue /></SelectTrigger>
+        <SelectContent>{items.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
+      </Select>
+      <ToggleGroup aria-label={`${t.name}の資料`} value={[t.version.kind]} onValueChange={(x) => x[0] && pickKind(x[0] as Version['kind'])} variant="outline" size="sm" spacing={0}>
+        {kinds.map((k) => <ToggleGroupItem key={k} value={k}>{KIND_LABEL[k]}</ToggleGroupItem>)}
+      </ToggleGroup>
+    </div>
+  )
+}
+
 /** まちの札。紋章・名前・人口と、1人あたりの総額 */
 function TownCard({ t, mark, onPick, onVersion }: { t: CompareTown; mark: React.ReactNode; onPick: (code: string) => void; onVersion: (v: Version) => void }) {
-  const items = t.versions.map((v) => ({ value: versionKey(v), label: versionLabel(v) }))
   return (
     <section className="flex min-w-0 flex-1 flex-col gap-3 rounded-2xl border bg-background p-3 sm:p-4">
       <div className="flex items-center gap-3">
@@ -106,10 +127,7 @@ function TownCard({ t, mark, onPick, onVersion }: { t: CompareTown; mark: React.
           <p className="truncate text-xs text-muted-foreground">{popText(t.pop)}</p>
         </div>
       </div>
-      <Select items={items} value={versionKey(t.version)} onValueChange={(k) => { const v = t.versions.find((x) => versionKey(x) === k); if (v) onVersion(v) }}>
-        <SelectTrigger size="sm" aria-label={`${t.name}の年度と資料`} className="w-full rounded-full px-2.5 sm:w-auto sm:self-start sm:px-3"><SelectValue /></SelectTrigger>
-        <SelectContent>{items.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
-      </Select>
+      <VersionPicker t={t} onVersion={onVersion} />
       {!t.total ? (
         <p className="text-sm text-muted-foreground">この資料の金額はまだありません</p>
       ) : t.pop ? (
