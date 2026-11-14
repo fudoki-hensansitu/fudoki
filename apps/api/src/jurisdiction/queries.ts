@@ -13,7 +13,7 @@ import {
 import { ApiError } from '../errors'
 import type { Ctx } from '../shared/context'
 import { decodeToken, nextToken } from '../shared/paging'
-import { AMOUNT_COLUMNS, type Coverage, type CoverageWithOrigins, type JurisdictionDetail, type JurisdictionList } from './model'
+import { AMOUNT_COLUMNS, COFOG_DIVISIONS, type Coverage, type CoverageWithOrigins, type JurisdictionDetail, type JurisdictionList, type SimilarInput, type SimilarList } from './model'
 
 /**
  * 収録の無い自治体・年度・資料区分で、利用者を案内する統計の出典。数字は風土記に取り込まない（ADR 0037）。
@@ -171,4 +171,23 @@ export async function getJurisdiction(ctx: Ctx, code: string): Promise<Jurisdict
     budget_proposals: y?.budget_proposals ?? [],
     uncovered_sources: UNCOVERED_SOURCES,
   } as JurisdictionDetail
+}
+
+const SHARE_COLUMNS = [...COFOG_DIVISIONS.map((d) => `cofog_${d}_yen`), 'cofog_unclassified_yen']
+const shareDistance = SHARE_COLUMNS.map((c) => `abs(c."${c}" * 1.0 / c."total_yen" - me."${c}" * 1.0 / me."total_yen")`).join(' + ')
+
+/** 分野の割合が近い自治体。比べるのは同じ年度・資料区分の一般会計どうしで、D1 の中で並べて上位だけを返す */
+export async function similarJurisdictions(ctx: Ctx, input: SimilarInput): Promise<SimilarList> {
+  const among = input.among ? `AND c."jurisdiction_code" IN (SELECT value FROM json_each(?))` : ''
+  const sql =
+    `WITH me AS (SELECT * FROM ${COVERAGE_TABLE} WHERE "jurisdiction_code" = ? AND "fiscal_year" = ? AND "document_kind" = ? AND "account_kind" = '一般会計' AND "total_yen" > 0 LIMIT 1) ` +
+    `SELECT c."jurisdiction_code", j."name", c."total_yen" FROM ${COVERAGE_TABLE} c ` +
+    `JOIN me ON c."fiscal_year" = me."fiscal_year" AND c."document_kind" = me."document_kind" ` +
+    `JOIN ${JURISDICTION_TABLE} j ON j."jurisdiction_code" = c."jurisdiction_code" ` +
+    `WHERE c."account_kind" = '一般会計' AND c."total_yen" > 0 AND c."jurisdiction_code" <> me."jurisdiction_code" ` +
+    `AND (substr(c."jurisdiction_code", 3, 3) = '000') = (substr(me."jurisdiction_code", 3, 3) = '000') ${among} ` +
+    `ORDER BY ${shareDistance}, c."jurisdiction_code" LIMIT ?`
+  const params: unknown[] = [input.jurisdiction_code, input.fiscal_year, input.document_kind, ...(input.among ? [JSON.stringify(input.among)] : []), input.limit]
+  const { results } = await ctx.db.prepare(sql).bind(...params).all<SimilarList['jurisdictions'][number]>()
+  return { jurisdictions: results }
 }

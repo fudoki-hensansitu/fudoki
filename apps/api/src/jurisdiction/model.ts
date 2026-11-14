@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import { described } from '../columns'
 import { nextPageToken } from '../shared/paging'
-import { DocumentKind, JurisdictionCode, Yen } from '../shared/model'
+import { DocumentKind, FiscalYear, JurisdictionCode, Yen } from '../shared/model'
 
 export const Jurisdiction = z.strictObject({
   jurisdiction_code: JurisdictionCode,
@@ -101,3 +101,19 @@ export const JurisdictionDetail = z.strictObject({
   uncovered_sources: z.array(UncoveredSource).describe(UNCOVERED_SOURCES_HELP),
 })
 export type JurisdictionDetail = z.infer<typeof JurisdictionDetail>
+
+/** 分野の割合が近い自治体（web のまち比べだけが内部の RPC で使う） */
+export const SimilarInput = z.strictObject({
+  jurisdiction_code: JurisdictionCode,
+  fiscal_year: FiscalYear,
+  document_kind: DocumentKind,
+  among: z.array(JurisdictionCode).min(1).max(100).optional().describe('この自治体の中から探す'),
+  limit: z.int().min(1).max(100).default(5),
+})
+export type SimilarInput = z.output<typeof SimilarInput>
+export const SimilarList = z.strictObject({
+  jurisdictions: z
+    .array(z.strictObject({ jurisdiction_code: z.string(), name: z.string(), total_yen: z.number() }))
+    .describe('同じ年度・資料区分の一般会計で、COFOG の大分類ごとの割合の差（の絶対値）の和が小さい順。都道府県は都道府県どうし、市区町村は市区町村どうし'),
+})
+export type SimilarList = z.infer<typeof SimilarList>

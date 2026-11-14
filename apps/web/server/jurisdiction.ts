@@ -56,7 +56,8 @@ type ApiAccount = WebOpOutput<'list_jurisdictions'>['jurisdictions'][number]['co
 const DIVISIONS = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'] as const
 /** 会計の額の列を分野ごとの額にする。総額の無い（科目の表の無い）会計は undefined */
 function fieldTotalsOf(a: ApiAccount): FieldTotals | undefined {
-  if (a.total_yen === null) return undefined
+  // 列の無い古い api の応答（undefined）も、総額が無いものとして扱う
+  if (a.total_yen == null || !(a.total_yen > 0)) return undefined
   const fields: Record<string, number> = {}
   const add = (id: string, yen: number | null) => yen && (fields[id] = (fields[id] ?? 0) + yen)
   for (const d of DIVISIONS) add((frameOf(d) ?? OTHER_FRAME).id, a[`cofog_${d}_yen`])

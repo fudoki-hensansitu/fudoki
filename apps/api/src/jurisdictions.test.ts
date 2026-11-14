@@ -3,6 +3,7 @@ import type { Database } from 'bun:sqlite'
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/validators/cf-worker'
 import { createApp } from './app'
 import { UNCOVERED_SOURCES } from './jurisdiction/queries'
+import { callWebOp } from './web-ops'
 import type { Db } from './db'
 import { insertCoverage, insertJurisdiction, insertOrigin, insertSubject, testDb } from './testing'
 
@@ -194,5 +195,36 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
     const found = await res.json()
     expect(found.subjects).toHaveLength(1)
     expect(found.origins.map((o: { origin_id: string }) => o.origin_id)).toEqual(a.origins.map((o: { origin_id: string }) => o.origin_id))
+  })
+})
+
+describe('分野の割合が近い自治体（web の list_similar_jurisdictions）', () => {
+  const amounts = (total: number, c10: number, c09: number, rest: number) => ({ ...Object.fromEntries(AMOUNT_KEYS.map((k) => [k, 0])), total_yen: total, cofog_10_yen: c10, cofog_09_yen: c09, cofog_unclassified_yen: rest })
+  beforeEach(() => {
+    // 武蔵野市は 10 が 4/7・09 が 2/7・分類なしが 1/7。千代田区は同じ割合で額が10倍、広島の府中市は 09 だけ
+    insertCoverage(sqlite, { jurisdiction_code: '131016', fiscal_year: 2024, document_kind: 'settlement', account_name: '一般会計', origin_id: 'o1', amounts: amounts(700_000, 400_000, 200_000, 100_000) })
+    insertCoverage(sqlite, { jurisdiction_code: '342076', fiscal_year: 2024, document_kind: 'settlement', account_name: '一般会計', origin_id: 'o1', amounts: amounts(10_000, 0, 10_000, 0) })
+    insertCoverage(sqlite, { jurisdiction_code: '342076', fiscal_year: 2024, document_kind: 'initial', account_name: '一般会計', origin_id: 'o3', amounts: amounts(10_000, 10_000, 0, 0) })
+  })
+  const similar = async (input: Record<string, unknown>) => {
+    const res = await callWebOp({ DB: db } as never, 'list_similar_jurisdictions', input)
+    expect(res.ok).toBe(true)
+    return (res as { value: { jurisdictions: { jurisdiction_code: string; name: string; total_yen: number }[] } }).value.jurisdictions
+  }
+
+  test('同じ年度・資料区分の一般会計で、割合の近い順に返す（自分と総額の無い会計は除く）', async () => {
+    expect(await similar({ jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement' })).toEqual([
+      { jurisdiction_code: '131016', name: '千代田区', total_yen: 700_000 },
+      { jurisdiction_code: '342076', name: '府中市', total_yen: 10_000 },
+    ])
+  })
+
+  test('among を渡すとその中から、limit の数だけ返す', async () => {
+    expect((await similar({ jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement', among: ['342076'] })).map((r) => r.jurisdiction_code)).toEqual(['342076'])
+    expect(await similar({ jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement', limit: 1 })).toHaveLength(1)
+  })
+
+  test('比べる資料に総額が無ければ空', async () => {
+    expect(await similar({ jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'initial' })).toEqual([])
   })
 })

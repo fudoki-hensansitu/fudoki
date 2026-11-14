@@ -110,7 +110,9 @@ function TownCard({ t, mark, onPick, onVersion }: { t: CompareTown; mark: React.
         <SelectTrigger size="sm" aria-label={`${t.name}の年度と資料`} className="w-full rounded-full sm:w-auto sm:self-start"><SelectValue /></SelectTrigger>
         <SelectContent>{items.map((i) => <SelectItem key={i.value} value={i.value}>{i.label}</SelectItem>)}</SelectContent>
       </Select>
-      {t.pop ? (
+      {!t.total ? (
+        <p className="text-sm text-muted-foreground">この資料の金額はまだありません</p>
+      ) : t.pop ? (
         <div>
           <p className="text-xs text-muted-foreground">1人あたり</p>
           <Num n={t.total / t.pop} m="head" className="text-[28px] leading-tight font-semibold text-primary" />
@@ -201,7 +203,7 @@ function Sample({ body }: { body: React.ReactNode }) {
 export function Compare(props: Props) {
   const { a, b, byUse, byPopulation, failed, sample } = props
   const { visit } = useRouter()
-  const [picked, setM] = React.useState<Measure>('head')
+  const [picked, setM] = React.useState<Measure>('share')
   // 人口の無いまちは1人あたりを出せないので、割合だけにする
   const perHead = !!a?.pop && !!b?.pop
   const m: Measure = perHead ? picked : 'share'
@@ -224,8 +226,8 @@ export function Compare(props: Props) {
             <>
               <div className="mt-6">
                 <ToggleGroup value={[m]} onValueChange={(x) => x[0] && setM(x[0] as Measure)} variant="outline" size="sm" spacing={0}>
-                  <ToggleGroupItem value="head" disabled={!perHead}>1人あたり</ToggleGroupItem>
                   <ToggleGroupItem value="share">割合</ToggleGroupItem>
+                  <ToggleGroupItem value="head" disabled={!perHead}>1人あたり</ToggleGroupItem>
                 </ToggleGroup>
               </div>
               <div className="mt-5"><Butterfly a={a} b={b} m={m} /></div>

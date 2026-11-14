@@ -1,20 +1,41 @@
-// まち比べ（/compare）の似たまちの探し方。分野の額は自治体の一覧の歳出の根の額（server/jurisdiction.ts の fieldTotals）を使う
-import type { FieldTotals } from './jurisdiction'
+// まち比べ（/compare）の似たまち。全部のまちを読まず、近い順の上位だけを api（分野の割合）と web の D1（人口）に聞く
+import type { DocumentKind } from './jurisdiction'
+import type { Env } from './env'
+import { apiCall } from './fudoki-api'
+import { logError } from './log'
+import { loadPopulations } from './population'
 
-/** 使い方が近いまち。分野ごとの1人あたりの金額の差（の絶対値）の和が小さい順。base は割る数（人口）。人口の無いまちは候補にしない */
-export function closestByUse(me: FieldTotals & { base: number }, others: [code: string, FieldTotals & { base: number }][], n: number): string[] {
-  const fields = [...new Set([me, ...others.map(([, t]) => t)].flatMap((t) => Object.keys(t.fields)))]
-  const per = (t: FieldTotals & { base: number }, f: string) => (t.fields[f] ?? 0) / t.base
-  const dist = (t: FieldTotals & { base: number }) => fields.reduce((s, f) => s + Math.abs(per(t, f) - per(me, f)), 0)
-  return others
-    .filter(([, t]) => t.base > 0)
-    .map(([code, t]) => [code, dist(t)] as const)
-    .sort((a, b) => a[1] - b[1])
-    .slice(0, n)
-    .map(([code]) => code)
-}
+export type TownRef = { code: string; name: string; pop: number }
 
-/** 人口が近いまち。比（何倍か）で近さを測る */
-export function closestByPopulation(me: number, others: [code: string, number][], n: number): string[] {
-  return others.map(([code, pop]) => [code, Math.abs(Math.log(pop / me))] as const).sort((a, b) => a[1] - b[1]).slice(0, n).map(([code]) => code)
+// 人口の近い順に、この数のまちを api に渡して収録のあるまちだけに絞る
+const POPULATION_CANDIDATES = 100
+const POPULATION_SQL =
+  'WITH latest AS (SELECT jurisdiction_code, population FROM population p WHERE reference_date = (SELECT max(reference_date) FROM population q WHERE q.jurisdiction_code = p.jurisdiction_code)) ' +
+  "SELECT jurisdiction_code FROM latest WHERE jurisdiction_code <> ?1 AND population > 0 AND (substr(jurisdiction_code, 3, 3) = '000') = (substr(?1, 3, 3) = '000') " +
+  'ORDER BY max(population, ?2) * 1.0 / min(population, ?2), jurisdiction_code LIMIT ?3'
+
+/** 人口の比（何倍か）で近い順 */
+const byRatio = (pop: number) => (x: TownRef, y: TownRef) => Math.max(x.pop, pop) / Math.min(x.pop, pop) - Math.max(y.pop, pop) / Math.min(y.pop, pop)
+
+/** a に似たまち。byUse は同じ年度・資料の一般会計で分野の割合が近い順、byPopulation は人口が近い順。どちらも同じ資料の収録があるまちだけ。読めなければ空 */
+export async function similarTowns(env: Env, a: { code: string; pop: number }, year: number, kind: DocumentKind, n: number): Promise<{ byUse: TownRef[]; byPopulation: TownRef[] }> {
+  const api = apiCall(env)
+  const query = { jurisdiction_code: a.code, fiscal_year: year, document_kind: kind }
+  const withPop = async (rows: { jurisdiction_code: string; name: string }[]): Promise<TownRef[]> => {
+    const pops = await loadPopulations(env, rows.map((r) => r.jurisdiction_code))
+    return rows.map((r) => ({ code: r.jurisdiction_code, name: r.name, pop: pops.get(r.jurisdiction_code)?.at(-1)?.people ?? 0 }))
+  }
+  const useOf = async () => withPop((await api('list_similar_jurisdictions', { ...query, limit: n })).jurisdictions)
+  const populationOf = async () => {
+    // D1 が無い（preview・手元の試験）ときは探さない
+    const statement = env.DB?.prepare(POPULATION_SQL).bind(a.code, a.pop, POPULATION_CANDIDATES)
+    if (!a.pop || !statement?.all) return []
+    const { results } = await statement.all<{ jurisdiction_code: string }>()
+    if (!results.length) return []
+    const covered = await api('list_similar_jurisdictions', { ...query, among: results.map((r) => r.jurisdiction_code), limit: POPULATION_CANDIDATES })
+    return (await withPop(covered.jurisdictions)).filter((t) => t.pop > 0).sort(byRatio(a.pop)).slice(0, n)
+  }
+  const safe = (p: Promise<TownRef[]>) => p.catch((e) => (logError(e), [] as TownRef[]))
+  const [byUse, byPopulation] = await Promise.all([safe(useOf()), safe(populationOf())])
+  return { byUse, byPopulation }
 }

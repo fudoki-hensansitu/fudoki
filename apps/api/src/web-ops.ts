@@ -7,8 +7,8 @@ import { budgetProposalTools } from './budget-proposal/tools'
 import { evaluationTools } from './evaluation/tools'
 import { expenditureTools } from './expenditure/tools'
 import { jurisdictionTools } from './jurisdiction/tools'
-import { getJurisdiction } from './jurisdiction/queries'
-import { JurisdictionDetail } from './jurisdiction/model'
+import { getJurisdiction, similarJurisdictions } from './jurisdiction/queries'
+import { JurisdictionDetail, SimilarInput, SimilarList } from './jurisdiction/model'
 import { projectTools } from './project/tools'
 import type { Ctx } from './shared/context'
 import { JurisdictionCode } from './shared/model'
@@ -16,10 +16,12 @@ import { JurisdictionCode } from './shared/model'
 const op = <I extends z.ZodObject, O extends z.ZodType>(input: I, output: O, run: (ctx: Ctx, input: z.output<I>) => Promise<unknown>) => ({ input, output, run })
 const ofTool = <T extends { input: z.ZodObject; output: z.ZodType; run: (ctx: Ctx, input: Record<string, unknown>) => Promise<unknown> }>(t: T) => op(t.input as T['input'], t.output as T['output'], (ctx, input) => t.run(ctx, input as Record<string, unknown>))
 
-/** web が呼べる操作。名前は公開の MCP の tool と同じ（get_jurisdiction は REST だけにある操作） */
+/** web が呼べる操作。名前は公開の MCP の tool と同じ（get_jurisdiction は REST だけ、list_similar_jurisdictions は web だけにある操作） */
 export const WEB_OPS = {
   list_jurisdictions: ofTool(jurisdictionTools.list),
   get_jurisdiction: op(z.strictObject({ jurisdiction_code: JurisdictionCode }), JurisdictionDetail, (ctx, input) => getJurisdiction(ctx, input.jurisdiction_code)),
+  // まち比べの似たまち。全自治体の額を web へ渡さず、D1 で並べて上位だけを返す
+  list_similar_jurisdictions: op(SimilarInput, SimilarList, (ctx, input) => similarJurisdictions(ctx, input)),
   search_expenditure_subjects: ofTool(expenditureTools.searchSubjects),
   search_expenditure_details: ofTool(expenditureTools.searchDetails),
   get_expenditure_line: ofTool(expenditureTools.getLine),
