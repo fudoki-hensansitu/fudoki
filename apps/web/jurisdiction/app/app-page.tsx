@@ -1097,8 +1097,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   at.current = { year, tab }
   /** 年度・タブの頁の URL。リンクの先にして検索エンジンにも辿らせる */
   const pageHref = (y: number, t: TabKey) => `${data.path}/${y}` + (t === 'overview' ? '' : `/${TAB_SLUGS[t]}`)
-  // 年度・タブを移っても、選んでいる状態とスクロールは持ち越す。履歴は積まずに置き換える
-  const move = (href: string) => void router.visit(href, { replace: true, preserveState: true, preserveScroll: true })
+  // 年度・タブを移っても、選んでいる状態とスクロールは持ち越す。タブは履歴に積み、戻るで前のタブとそのスクロールへ帰す。年度・会計は置き換える
+  const move = (href: string, { push = false } = {}) => void router.visit(href, { replace: !push, preserveState: true, preserveScroll: true })
   // 年度のリンクは今のタブを引き継ぐが、その年度に無いタブ（決算の無い年度の決算、当初予算の無い年度の予算）はまとめへ向ける。分野の頁なら同じ分野のまま年度を移る
   const tabIn = (y: number): TabKey => (tab === 'settled' && !hasTab(data, y, 'settled')) || (tab === 'money' && d.kinds[String(y)] !== 'initial') ? 'overview' : tab
   const yearHref = (y: number) => (fieldPage ? `${data.path}/${y}/fields/${fieldPage}` : pageHref(y, tabIn(y)))
@@ -1110,10 +1110,10 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   }
   // 開いた直後の表示はフェードさせない（LCP を遅らせない）。タブ・分野を移ったときだけ動かす
   const [moved, setMoved] = React.useState(false)
-  const setTab = (t: TabKey) => {
+  const setTab = (t: TabKey, { push = true } = {}) => {
     setTabState(t)
     setMoved(true)
-    if (t !== at.current.tab || fieldOfPath()) move(pageHref(at.current.year, t))
+    if (t !== at.current.tab || fieldOfPath()) move(pageHref(at.current.year, t), { push })
   }
   /** 流れの会計を変える。一般会計は ?account= を付けない */
   const pickAccount = (account: string) => move(pageHref(year, at.current.tab) + (account === GENERAL ? '' : `?${new URLSearchParams({ account })}`))
@@ -1215,7 +1215,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   // 移った年度に今のタブが無ければ、もう一方のお金のタブへ
   React.useEffect(() => {
     if (tabs.some((t) => t.key === tab)) return
-    setTab(tabs.find((t) => t.key === 'money' || t.key === 'settled')?.key ?? 'overview')
+    setTab(tabs.find((t) => t.key === 'money' || t.key === 'settled')?.key ?? 'overview', { push: false })
   }, [d, tabs, tab])
   const tabsRef = React.useRef(tabs)
   tabsRef.current = tabs

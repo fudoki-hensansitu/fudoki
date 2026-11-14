@@ -23,7 +23,7 @@ import { LOGO_G, LOGO_WIDTH } from '../logo'
 import { FEEDBACK } from './feedback'
 import { applyTheme, currentTheme, DEFAULT_THEME, type Theme } from './theme'
 import { ArrowsLeftRightIcon } from '@phosphor-icons/react'
-import { NavContent } from './nav-content'
+import { NavContent, useCompareHref } from './nav-content'
 import { readNavOpen, saveNavOpen } from './nav-state'
 
 
@@ -196,10 +196,11 @@ function SettingsMenu({ theme, onPick, className }: { theme: Theme; onPick: (t: 
 /** 幅の狭い画面では、サイドバーの代わりに画面の下へ並べる。入らないものは「設定」にまとめる */
 function BottomNav({ active, theme, onPick }: { active?: NavSection; theme: Theme; onPick: (t: Theme) => void }) {
   const [hidden, setHidden] = useHideOnScroll()
+  const compare = useCompareHref()
   const items = [
     { href: '/', label: 'ホーム', icon: <HouseIcon />, active: active === 'home' },
     { href: '/assistant', label: 'アシスタント', icon: <RobotIcon />, active: active === 'assistant' },
-    { href: '/compare', label: 'まち比べ', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
+    { href: compare, label: 'まち比べ', icon: <ArrowsLeftRightIcon />, active: active === 'compare' },
   ]
   return (
     <nav
