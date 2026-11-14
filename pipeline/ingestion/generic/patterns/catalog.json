@@ -3,6 +3,7 @@
     "ruled": "ingestion.generic.patterns.layout.ruled",
     "listed_projects": "ingestion.generic.patterns.layout.listed_projects",
     "open_edge": "ingestion.generic.patterns.layout.open_edge",
+    "drawn_header": "ingestion.generic.patterns.layout.drawn_header",
     "stacked_titles": "ingestion.generic.patterns.layout.stacked_titles",
     "funded_explanation": "ingestion.generic.patterns.layout.funded_explanation",
     "staircase_codes": "ingestion.generic.patterns.layout.staircase_codes",
