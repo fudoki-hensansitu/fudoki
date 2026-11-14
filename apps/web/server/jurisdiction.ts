@@ -140,7 +140,6 @@ async function loadSetsuByMoku(env: Env, code: string, year: number, mokuIds: st
   return setsuByMoku
 }
 
-/** 目ごとの直下の内訳（節、無ければ事業）。予算・決算のタブの流れの図は節を最初の画面に出さないので、頁を描いた後にブラウザが読んで足す（/api/jurisdictions/:code/:year/setsu/:phase） */
 /** すべての款を同じ深さで表示する。節は目の直下の内訳を取り、分け方の違う数字を混ぜない。 */
 export async function loadFlow(env: Env, code: string, year: number, depth: FlowDepth = 'kou', kind: DocumentKind = 'settlement', account: string = ACCOUNT): Promise<Drill[]> {
   return (await loadFlowParts(env, code, year, depth, kind, account)).drills
