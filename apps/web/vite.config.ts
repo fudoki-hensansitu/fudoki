@@ -27,8 +27,7 @@ const previewDomains = (): Plugin => ({
 })
 
 export default defineConfig({
-  // 頁の間の移動（Link・戻る・進む）を View Transition でつなぐ
-  plugins: [voidPlugin(), voidReact({ viewTransitions: true }), tailwindcss(), previewDomains()],
+  plugins: [voidPlugin(), voidReact(), tailwindcss(), previewDomains()],
   // chat の部品の `@/` を tsconfig と同じく chat/ へ向ける
   resolve: { alias: { '@': fileURLToPath(new URL('./chat', import.meta.url)) } },
   server: { host: '127.0.0.1', port: 5173, strictPort: true },

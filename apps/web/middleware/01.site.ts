@@ -8,12 +8,6 @@ import { DISCOVERY_LINK, htmlToMarkdown, wantsMarkdown } from '../server/agent-d
 import { DEFAULT_THEME, themeColorMeta } from '../nav/theme'
 import { ZARAZ_HOST, ZARAZ_SCRIPT } from '../server/zaraz'
 
-/**
- * 頁を読み直す移動（他のサイトから来たとき・再読み込み）も View Transition でつなぐ opt-in。<head> に直接書く。
- * 外部の CSS に置くと移動のたびに再検証で届くのが遅れ、Chrome が新しい頁を見せる時点で opt-in を見つけられず transition を飛ばしていた（2026-11-06 に本番で確認）
- */
-const PAGE_TRANSITION_STYLE = '<style>@media (prefers-reduced-motion: no-preference) { @view-transition { navigation: auto; } }</style>'
-
 export default defineMiddleware(async (c, next) => {
   await next()
   if (!c.res.headers.get('Content-Type')?.startsWith('text/html')) return
@@ -38,5 +32,5 @@ export default defineMiddleware(async (c, next) => {
   if (!c.res.headers.has('Content-Security-Policy')) c.res.headers.set('Content-Security-Policy', await pageCsp())
   // アクセス解析（Cloudflare Zaraz → GA4）は本番だけ。preview・手元には入れない（analytics/zaraz.ts）
   const analytics = new URL(c.req.url).hostname === ZARAZ_HOST ? `\n${ZARAZ_SCRIPT}` : ''
-  c.res = new HTMLRewriter().on('head', { element: (e) => void e.append(`${themeColorMeta(DEFAULT_THEME)}\n${PAGE_TRANSITION_STYLE}${analytics}`, { html: true }) }).transform(c.res)
+  c.res = new HTMLRewriter().on('head', { element: (e) => void e.append(`${themeColorMeta(DEFAULT_THEME)}${analytics}`, { html: true }) }).transform(c.res)
 })
