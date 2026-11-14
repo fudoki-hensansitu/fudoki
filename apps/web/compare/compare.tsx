@@ -218,15 +218,15 @@ function SimilarList({ title, note, items, onPick }: { title: string; note: stri
   )
 }
 
-/** 住んでいるまちの無い /compare は、見本の組み合わせ（品川区と、使い方が一番近いまち）を選んだ状態で開く。住んでいるまちがあれば、そのまちで開き直す */
+/** まちの指定の無い /compare は、見本の組み合わせ（品川区と、使い方が一番近いまち）を SSR で最初から出す。
+ * サイトのナビは住んでいるまちを付けて開くので、ここで開き直すのは URL を直に開いたときだけ */
 function Sample({ body }: { body: React.ReactNode }) {
-  const { ready, town } = useMyTown()
+  const { town } = useMyTown()
   const { visit } = useRouter()
   React.useEffect(() => {
     if (town) void visit(compareHref(town.code), { replace: true })
   }, [town, visit])
-  // 住んでいるまちを読むまでは、見本が一瞬出て切り替わらないよう何も描かない
-  return !ready || town ? <div className="min-h-[60vh]" /> : body
+  return body
 }
 
 export function Compare(props: Props) {
