@@ -20,8 +20,13 @@ TALL = 25.0     # pt: a vertical rule this tall is a column's (a page that ends 
 NEAR = 4.0      # pt: a rule read this close to a column's place is that column's
 LONG = 300.0    # pt: a horizontal rule this long is the frame's top or foot
 LINE = 10.0     # pt: the least pitch of the 説明's lines
+STRETCH = 0.015  # the most a page's scan is read smaller or larger than the print
 SURE = 8        # inner and side rules read in place that tell the page's columns
 
+# A version printed on a 説明's line (`２．０`), as OCR reads it.
+VERSION = re.compile(r'[0-9]+\. ?[0-9]+')
+# Words only a printed header holds.
+HEADED = re.compile(r'(本年度|前年度)?予算額|(本年度の)?財源内訳|区\s*分')
 # The headings as the shared dictionary names them: the print's `節（細節）` is the 節 axis, its `計上説明` the 説明.
 HEADINGS = ('款', '項', '目', '本年度予算額', '前年度予算額', '比較増減', '本年度の財源内訳', '区分', '金額', '説明')
 # The columns' rules, from the frame's left side (pt).
@@ -40,16 +45,20 @@ def verticals(page: Page) -> list[float]:
     return [sum(group) / len(group) for group in xs]
 
 
-def fit(xs: list[float]) -> tuple[int, float]:
-    """How many of the columns' rules are read in place, and the left side's x, at the best shift that reads both sides."""
-    best = (0, 0.0)
+def fit(xs: list[float]) -> tuple[int, float, float]:
+    """How many of the columns' rules are read in place, the left side's x and the scale, at the best shift and scale
+    that read both sides (a page scanned a little smaller or larger prints its columns that much closer or wider)."""
+    best = (0, 0.0, 1.0)
     for x in xs:
-        shift = x - PLACES[0]
-        hits = [next(y for y in xs if abs(y - shift - p) <= NEAR) - p for p in PLACES
-                if any(abs(y - shift - p) <= NEAR for y in xs)]
-        ends = all(any(abs(y - shift - p) <= NEAR for y in xs) for p in (PLACES[0], PLACES[-1]))
-        if ends and len(hits) > best[0]:
-            best = (len(hits), sum(hits) / len(hits))
+        for right in xs:
+            scale = (right - x) / PLACES[-1]
+            if abs(scale - 1) > STRETCH:
+                continue
+            places = [p * scale for p in PLACES]
+            hits = [next(y for y in xs if abs(y - x - p) <= NEAR) - p for p in places
+                    if any(abs(y - x - p) <= NEAR for y in xs)]
+            if (len(hits), -abs(scale - 1)) > (best[0], -abs(best[2] - 1)):
+                best = (len(hits), sum(hits) / len(hits), scale)
     return best
 
 
@@ -235,11 +244,17 @@ def frame(page: Page) -> tuple[float, list[float]] | None:
     """The frame's top and its columns' rules, or None for a page whose rules do not fit the columns."""
     long = sorted(r.y0 for r in page.rules if not r.vertical and r.x1 - r.x0 >= LONG)
     read_xs = verticals(page)
-    count, left = fit(read_xs)
+    count, left, scale = fit(read_xs)
     if not long or count < SURE:
         return None
-    return long[0], [min(read_xs, key=lambda x: abs(x - left - place))
-                     if any(abs(x - left - place) <= NEAR for x in read_xs) else left + place for place in PLACES]
+    places = [place * scale for place in PLACES]
+    top = long[0]
+    # (a page that goes on from the one before it may print no header, its rows from the frame's top: its header is
+    # drawn above the frame)
+    if not any(HEADED.fullmatch(w.text) and top < (w.y0 + w.y1) / 2 < top + HEADER for w in page.words):
+        top -= HEADER
+    return top, [min(read_xs, key=lambda x: abs(x - left - place))
+                     if any(abs(x - left - place) <= NEAR for x in read_xs) else left + place for place in places]
 
 
 def carried(pages: list[Page]) -> None:
@@ -256,6 +271,31 @@ def carried(pages: list[Page]) -> None:
         column = sorted((w for w in page.words if xs[7] - 2 < w.x0 < xs[7] + 12 and top + HEADER - 1 < w.y0
                          and w.y1 < foot + 1), key=lambda w: w.y0)
         if before is not None and column and not re.search(r'[0-9(（]', column[0].text):
+            other, last = before
+            other.words = [Word(w.text + column[0].text, w.x0, w.y0, w.x1, w.y1) if w is last else w
+                           for w in other.words]
+            page.words = [w for w in page.words if w is not column[0]]
+            column = column[1:]
+        before = (page, column[-1]) if column else None
+
+
+def carried_subjects(pages: list[Page]) -> None:
+    """A 項's or 目's name the page cuts (`02定期借地権保`) goes on in the first row of the next page with no code
+    (`証金返還金`): the rest is put back on the name's last line, as a 節's is."""
+    before: tuple[Page, Word] | None = None
+    for page in pages:
+        found = frame(page)
+        if found is None:
+            before = None
+            continue
+        top, xs = found
+        line = top + HEADER
+        first = min((r.y0 for r in page.rules if not r.vertical and r.y0 > line + 1
+                     and r.x0 <= xs[2] + NEAR and r.x1 >= xs[3] - NEAR), default=page.height)
+        column = sorted((w for w in page.words if xs[1] - 2 < w.x0 < xs[3] and line < w.y0), key=lambda w: w.y0)
+        # (a row's name with no code, `一般歳入`, prints its 本年度予算額 on its line: a row of its own)
+        if before is not None and column and column[0].y1 < first + 1 and not re.match(r'[0-9(（]', column[0].text) \
+                and not any(xs[3] < w.x0 < xs[4] and abs(w.y0 - column[0].y0) <= NEAR for w in page.words):
             other, last = before
             other.words = [Word(w.text + column[0].text, w.x0, w.y0, w.x1, w.y1) if w is last else w
                            for w in other.words]
@@ -289,6 +329,10 @@ def drawn(page: Page) -> Page:
     # (a column rule read in pieces a point apart is one rule, at the column's place: pieces short of a rule each)
     kept_rules = [next((Rule(x, r.y0, x, r.y1) for x in xs if abs(r.x0 - x) <= NEAR / 2), r) if r.vertical else r
                   for r in kept_rules]
+    # (a stroke read inside the 目's cell only, through a line of its name, `07教職員任免` over `費`: no rule)
+    kept_rules = [r for r in kept_rules if r.vertical or not (
+        xs[2] - NEAR <= r.x0 and r.x1 <= xs[3] + NEAR
+        and any(xs[2] < w.x0 < xs[3] and w.y0 + 2 < r.y0 < w.y1 - 2 for w in page.words))]
     # (a row rule OCR read from the columns right of the 目 only, its piece under the 目 lost: it closes the 目's cell
     # too, unless a word runs over it there)
     def subject_above(r: Rule) -> bool:
@@ -366,12 +410,33 @@ def drawn(page: Page) -> Page:
                 if closing.x0 > rule.x0 and closing in kept_rules:
                     kept_rules[kept_rules.index(closing)] = Rule(rule.x0, closing.y0, closing.x1, closing.y1)
     # (a sliver of a column rule OCR read as a stroke, `1`, on the rule)
-    sliver = lambda w: w.text in ('1', 'l', 'I', '|', '｜') and w.x1 - w.x0 <= 4 and any(
+    sliver = lambda w: w.text in ('1', 'l', 'I', '|', '｜') and w.x1 - w.x0 <= 6 and any(
         abs((w.x0 + w.x1) / 2 - x) <= 3 for x in xs)
     # (a 財源's name printed from its column's left rule, its first character's ink over the rule: the 財源's)
-    fund = lambda w: (Word(w.text, xs[6] + .5, w.y0, w.x1, w.y1)
-                      if w.x0 < xs[6] < w.x1 - 2 and not re.search(r'[0-9]', w.text) else w)
-    body = [fund(w) for w in page.words if not inside(w) and not sliver(w)]
+    # (the 比較増減 read with the 財源's name right of its rule as one word, `0繰入金`: the two, split at the rule)
+    def fund(w: Word) -> list[Word]:
+        if not w.x0 < xs[6] < w.x1 - 2:
+            return [w]
+        if not re.search(r'[0-9]', w.text):
+            return [Word(w.text, xs[6] + .5, w.y0, w.x1, w.y1)]
+        if joined := re.fullmatch(r'([△▲-]?[0-9][0-9,]*)([^0-9,].*)', w.text):
+            return [Word(joined[1], w.x0, w.y0, xs[6] - .5, w.y1), Word(joined[2], xs[6] + .5, w.y0, w.x1, w.y1)]
+        return [w]
+    body = [part for w in page.words if not inside(w) and not sliver(w) for part in fund(w)]
+    # (a 説明's name going on to a line that holds only a version, `２．０`, read `2. 0`: the name's, not an amount, which
+    # this print never writes with a point)
+    for w in [w for w in body if xs[9] < w.x0 and w.x1 < xs[9] + WIDE / 2 and re.fullmatch(r'[0-9]+\.', w.text)]:
+        after = [o for o in body if abs(o.y0 - w.y0) <= 2 and 0 <= o.x0 - w.x1 <= LINE and o.text.isascii()
+                 and o.text.isdigit()]
+        if after:
+            body = [Word(w.text + after[0].text, w.x0, w.y0, after[0].x1, w.y1) if o is w else o
+                    for o in body if o is not after[0]]
+    for w in [w for w in body if xs[9] < w.x0 and w.x1 < xs[9] + WIDE / 2 and VERSION.fullmatch(w.text)]:
+        above = [o for o in body if o is not w and abs(o.x0 - w.x0) <= NEAR and 0 < w.y0 - o.y0 <= LINE + NEAR]
+        if above:
+            name = max(above, key=lambda o: o.y0)
+            body = [Word(o.text + w.text.replace(' ', ''), o.x0, o.y0, max(o.x1, w.x1), o.y1) if o is name else o
+                    for o in body if o is not w]
     body = setsu_lines(lettered(stacked(bracketed(body, xs[2], xs[3]), xs[9], xs[10]), xs[9], xs[10]), xs[7], xs[8])
     return Page(page.number, page.width, page.height, body + words, kept_rules + rules)
 
@@ -383,10 +448,11 @@ def read(pages, **options):
         # The observed page itself carries the drawn header (digit coverage reads the same words).
         page.words, page.rules = changed.words, changed.rules
         pages[index] = page
-        count, left = fit(verticals(page))
+        count, left, _ = fit(verticals(page))
         if count >= SURE:
             lefts[page.number] = left
     carried(pages)
+    carried_subjects(pages)
     # The scan places each page a few points apart (the frame's left side some 28 to 38pt in), and the builder reads where
     # the numbers of the 節 and the 説明 start by where they are on the page: each page is read moved to the place
     # most pages print the frame, and its words and columns keep how far they were moved (`offset`), as a spread's do.
