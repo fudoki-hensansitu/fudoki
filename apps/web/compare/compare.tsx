@@ -145,7 +145,8 @@ function ColumnLabel({ t, sameTown }: { t: CompareTown; sameTown: boolean }) {
 /** 真ん中に分野、左に a・右に b の棒。棒の長さは全部の分野で同じ物差し */
 function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) {
   const max = Math.max(...FIELDS.flatMap((f) => [value(a, f.id, m), value(b, f.id, m)]))
-  const w = (n: number) => `${max ? (n / max) * 100 : 0}%`
+  // 一番長い棒を列の 75% にし、ほかの棒はその比で縮める（棒ごとに上限で切ると比が崩れる）
+  const w = (n: number) => `${max ? (n / max) * 75 : 0}%`
   return (
     <div className="flex flex-col gap-1">
       <div className="grid grid-cols-[1fr_auto_1fr] items-end gap-3 pb-2 text-sm font-medium">
@@ -160,14 +161,14 @@ function Butterfly({ a, b, m }: { a: CompareTown; b: CompareTown; m: Measure }) 
           <div key={f.id} className="grid grid-cols-[1fr_auto_1fr] items-center gap-3 py-1.5">
             <div className="flex items-center justify-end gap-2">
               <Num n={va} m={m} className="text-sm" />
-              <span className="h-4 rounded-l-[4px] bg-primary" style={{ width: w(va), maxWidth: '75%' }} />
+              <span className="h-4 rounded-l-[4px] bg-primary" style={{ width: w(va) }} />
             </div>
             <span className="flex w-24 flex-col items-center text-center text-xs sm:w-36 sm:text-sm">
               <FieldIcon id={f.id} className="mb-0.5 size-4 text-muted-foreground" />
               {f.name}
             </span>
             <div className="flex items-center gap-2">
-              <span className="h-4 rounded-r-[4px] bg-muted-foreground" style={{ width: w(vb), maxWidth: '75%' }} />
+              <span className="h-4 rounded-r-[4px] bg-muted-foreground" style={{ width: w(vb) }} />
               <Num n={vb} m={m} className="text-sm" />
             </div>
           </div>
@@ -243,7 +244,14 @@ export function Compare(props: Props) {
               <div className="mt-5"><Butterfly a={a} b={b} m={m} /></div>
               <AskDock name={a.code === b.code ? a.name : `${a.name}と${b.name}`} code={a.code} year={a.version.year} sitekey={props.sitekey} page="まち比べの頁" detail={() => `比べている: ${a.name}（${a.code}）の${versionLabel(a.version)}と、${b.name}（${b.code}）の${versionLabel(b.version)}。一般会計の目を COFOG の分野へ分けて足したもの。表示: ${m === 'head' ? '1人あたり' : '割合'}`} />
             </>
-          ) : <p className="mt-8 text-sm text-muted-foreground">比べるまちを選んでください。</p>}
+          ) : (
+            <div className="mt-8 flex flex-col items-start gap-2">
+              <p className="text-sm text-muted-foreground">比べるまちを選んでください。</p>
+              <TownPicker current={a.code} onPick={(c) => go(a.code, a.version, c, null)}>
+                <span className="text-sm">まちを選ぶ</span>
+              </TownPicker>
+            </div>
+          )}
 
           {byUse.length || byPopulation.length ? (
             <section className="mt-12">

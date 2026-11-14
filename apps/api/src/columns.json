@@ -100,7 +100,7 @@
           "name": "total_yen",
           "type": "integer",
           "nullable": true,
-          "description": "総額（円）。科目の表の末端の行（is_leaf）の金額の和。科目の表に行が無ければNULL。出典が金額を欠く行は足していない。"
+          "description": "総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無ければNULL。出典が金額を欠く行は足していない。"
         },
         {
           "name": "cofog_01_yen",
@@ -166,7 +166,7 @@
           "name": "cofog_unclassified_yen",
           "type": "integer",
           "nullable": true,
-          "description": "COFOG コードの無い末端の行（cofog_status が unclassifiable・out-of-scope の目と、目の無い項）の金額の和（円）。大分類の額とこの額を足すと total_yen になる。科目の表に行が無ければNULL。"
+          "description": "total_yen から大分類の額の和を引いた残り（円）。COFOG コードの無い末端の行（cofog_status が unclassifiable・out-of-scope の目と、目の無い項）と、末端の和に入らない額（目を立てずに印字された項の内訳など）。大分類の額とこの額を足すと total_yen になる。科目の表に行が無ければNULL。"
         }
       ]
     },

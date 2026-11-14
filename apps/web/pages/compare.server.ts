@@ -71,6 +71,8 @@ export const loader = defineHandler<Props>(async (c) => {
     const tb = b && bVersion ? town(b, bVersion, bVersions) : null
     return { sample, sitekey: siteKey(c), a: ta, b: tb, byUse, byPopulation, failed: false }
   } catch {
+    // 読めなかった頁は CDN に残さない（直ったあとも1時間エラーが出続けるため）
+    c.header('x-revalidate', '0')
     return { ...none, failed: true }
   }
 })
