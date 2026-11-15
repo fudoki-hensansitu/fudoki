@@ -5,9 +5,12 @@ select distinct jurisdiction_code, fiscal_year, document_kind, source_heading, '
 from {{ ref('int_fiscal__expenditure_rows') }}
 where not is_subject_row and depth = 1 and breakdown is null
 union all
-select distinct b.jurisdiction_code, b.fiscal_year, b.document_kind, b.source_heading, 'unused_declaration'
+select distinct b.jurisdiction_code, b.fiscal_year, b.document_kind, b.source_heading || coalesce(' / ' || b.subject_name, ''), 'unused_declaration'
 from {{ ref('fiscal_detail_breakdown') }} b
 where {{ only_jurisdictions('b.jurisdiction_code') }} and not exists (
     select 1 from {{ ref('int_fiscal__expenditure_rows') }} r
     where r.depth = 1 and r.jurisdiction_code = b.jurisdiction_code and r.fiscal_year = b.fiscal_year
-      and r.document_kind = b.document_kind and r.source_heading = b.source_heading)
+      and r.document_kind = b.document_kind and r.source_heading = b.source_heading
+      and (b.subject_name is null or exists (
+          select 1 from {{ ref('int_fiscal__expenditure_rows') }} s
+          where s.row_id = r.subject_row_id and s.name = b.subject_name)))

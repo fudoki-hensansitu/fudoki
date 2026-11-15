@@ -198,6 +198,8 @@ seeds:
       ただし見出しが「節」の枝は、行が無ければ `節` とする（int_fiscal__expenditure_rows）。見出しが「節」でない枝は、分け方が `節` でも行を書く。
       `事業` は科目の額を事業ごとに分けたもの、`節` は法定の節で分けたもの、`その他` は事業とも法定の節とも言えない出典の内訳、
       `除外` は配らない枝（金額でない・重複・財源の内訳）。根の分け方は子孫へ継ぎ、子孫の見出しはここで引かない。
+      `subject_name` を書いた行は、その名前の科目（款・項・目）の直下の枝だけに効き、書かない行より優先する。同じ見出しの欄のうち一部の科目の下だけ中身が違うとき
+      （130001 の目「一般歳入」の計上説明は財源の内訳）に使う。
       行が無い見出し（見出しが「節」の枝を除く）は検査 fiscal_detail_breakdown_declared が止める。新しい出典では目の直下の名称を見て行を書き、basis に確かめた中身を書く
       （docs/prd/fiscal-serving-tables/dd.md）。
     config:
@@ -206,6 +208,7 @@ seeds:
         fiscal_year: integer
         document_kind: varchar
         source_heading: varchar
+        subject_name: varchar
         breakdown: varchar
         basis: varchar
     columns:

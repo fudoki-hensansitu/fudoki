@@ -149,9 +149,9 @@ export function pageHead(d: PageData, year?: number, section?: Section, opened?:
     return head(title, `${d.name}の${reiwaFull(shown)}${missing === 'initial' ? '当初予算' : '決算'}はまだ収録していません。`, canonical, { meta: [{ name: 'robots', content: 'noindex' }] })
   }
   const description = pageDescriptionOf(d, shown, section, opened)
-  // 最新の年度の頁（/tokyo/nakano/2026）は入口（/tokyo/nakano）と同じ中身なので、canonical を入口にする。
-  // 分野・タブの頁は年度の段の無い URL が 301 なので、最新の年度でも年度の段つきにする
-  const canonical = `${ORIGIN}${past || section ? `${base}/${shown}` : base}${sectionPath(section)}`
+  // 年度の段つきの URL を正規にする。年度の段の無い入口（/tokyo/nakano）は最新の年度への pointer なので、canonical は /tokyo/nakano/2026
+  // 入口の年度は、本文・年度チップ・sitemap と同じ頁の最新の年度（金額の読めない当初予算の年度でも）
+  const canonical = `${ORIGIN}${base}/${year ?? appPageYears(d)[0] ?? shown}${sectionPath(section)}`
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',
@@ -187,8 +187,8 @@ export function pageHead(d: PageData, year?: number, section?: Section, opened?:
 export const emptyHead = (e: CatalogEntry): Head =>
   head(`${e.name}｜風土記`, `${e.name}の歳出は風土記にまだ収録されていません。`, `${ORIGIN}${jurisdictionPath(e.code)}`, { meta: [{ name: 'robots', content: 'noindex' }] })
 
-/** sitemap。自治体の頁（最新の年度の入口）に加え、過去の年度の頁（/tokyo/shinagawa/2024）と各年度のタブの頁を載せる。
- * 最新の年度の頁（/tokyo/shinagawa/2026）は canonical が入口なので載せない。years は頁で選べる年度（新しい順） */
+/** sitemap。年度の頁（/tokyo/shinagawa/2026）と各年度のタブの頁を載せる。
+ * 年度の段の無い入口（/tokyo/shinagawa）は最新の年度への pointer で canonical が年度つきなので載せない。years は頁で選べる年度（新しい順） */
 export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) => number[] = (e) => [...e.settlementYears].sort((a, b) => b - a)) =>
   `<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"><url><loc>${ORIGIN}/</loc></url><url><loc>${ORIGIN}/assistant</loc></url><url><loc>${ORIGIN}/about</loc></url>${entries
     .filter((e) => e.settlementYears.length > 0)
@@ -196,10 +196,10 @@ export const sitemapXml = (entries: CatalogEntry[], yearsOf: (e: CatalogEntry) =
       const base = jurisdictionPath(e.code)
       const years = yearsOf(e)
       // 年度ごとの頁と、そのタブの頁（事業・予算・決算）
-      return [base, ...years.flatMap((y, i) => {
+      return years.flatMap((y) => {
         const page = `${base}/${y}`
-        return [...(i === 0 ? [] : [page]), `${page}/${TAB_SLUGS.projects}`, ...(e.initialYears.includes(y) ? [`${page}/${TAB_SLUGS.money}`] : []), ...(e.settlementYears.includes(y) ? [`${page}/${TAB_SLUGS.settled}`] : [])]
-      })]
+        return [page, `${page}/${TAB_SLUGS.projects}`, ...(e.initialYears.includes(y) ? [`${page}/${TAB_SLUGS.money}`] : []), ...(e.settlementYears.includes(y) ? [`${page}/${TAB_SLUGS.settled}`] : [])]
+      })
     })
     .map((path) => `<url><loc>${ORIGIN}${path}</loc></url>`)
     .join('')}</urlset>\n`

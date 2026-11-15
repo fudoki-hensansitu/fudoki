@@ -1,5 +1,5 @@
 // 自治体の頁（アプリ型）のデータ。apps/api の歳出・事業・予算案・事業評価の検索から、1年度の款項目・施策・評価シートと事業の一覧の1頁目を組む。
-// 頁の loader は款項目など（loadYearSnapshot）と残り（loadYearExtras）を並べて読み、withExtras で足す。
+// 頁の loader は最初の画面に要る分（loadYearSnapshot）だけを読み、残り（loadYearExtras）は頁を描いた後にブラウザが web の /api/jurisdictions/:code/:year/extras から読む。
 // 事業の続き・詳細は画面が web の /api から読む（jurisdiction/app/api.ts）。紐付け（施策・評価シート → 事業）は api が持つ歳出の行の参照をたどるだけで、新しく判断しない
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { listQuery, withExtras, type Kan, type YearData, type YearExtras, type Snapshot } from '../jurisdiction/app/data'
@@ -115,7 +115,7 @@ function yearDataOf(rows0: { rows: SubjectRows; kind: Kind; origin: string | nul
 type SubjectRows = Awaited<ReturnType<typeof subjectsOf>>['rows']
 
 /** 頁の1年度の、最初の画面に要る分。開いた年度の款項目と、タブが要るもの（予算・決算は会計ごとの総額、事業は一覧の1頁目）だけを読む。
- * 施策・評価シート・お金のかかる事業は残り（loadYearExtras）として別に読む（pending）。
+ * 施策・評価シート・お金のかかる事業は残り（loadYearExtras）として、loader が defer で後から流す（pending）。
  * tab を渡さない（ホームのまちの札）ときは残りもここで読んで足し、評価のある最新の年度の評価シートも持つ（evaluated） */
 export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: number, opt: { evaluated?: boolean; tab?: PageTab } = {}): Promise<Snapshot> {
   const { tab } = opt
@@ -145,9 +145,10 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   ownSubjects.catch(() => undefined)
   // ホームのまちの札は、評価のある最新の年度の評価シートを出す
   const evalYear = opt.evaluated ? Math.max(0, ...entry.evaluationYears.filter((y) => years.some((x) => x.year === y))) : 0
-  // 会計の札（予算・決算のタブ）。一般会計のほかにも会計を収録した年度だけ、会計ごとの総額を読む
+  // 会計の札（予算・決算のタブ）。一般会計のほかにも会計を収録した年度だけ、会計ごとの総額を読む（検索1回）。
+  // まとめ・事業のタブの頁でも読んでおく（予算・決算のタブへ移ったとき、loader を待つあいだも札を出して流れの図がずれないように）
   const accounts = entry.accounts?.[docKind]?.[String(year)] ?? []
-  const wantAccounts = (!tab || tab === 'money' || tab === 'settled') && accounts.length > 1
+  const wantAccounts = accounts.length > 1
   // ホームのまちの札は「新しく始めた事業」「やめた事業」も出す
   const homeLists = !tab && prev ? (['new', 'ended'] as const).map((f) => listQuery({ code: entry.code, year, years: { [year]: { kind: me.kind } as YearData }, prev: { year: prev.year, kind: prev.kind } }, f)) : []
   const [projects, accountTotals, extras, evalSheets, homePages] = await Promise.all([
