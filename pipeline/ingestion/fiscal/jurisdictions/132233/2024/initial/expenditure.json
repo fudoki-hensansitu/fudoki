@@ -80,7 +80,8 @@
           },
           "quirks": {
             "numbered_names": true,
-            "codeless_beside_repeated_code": true
+            "codeless_beside_repeated_code": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -101,7 +102,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "37bfdaa2ef07b20fe746e15647fa0fbf79d845df20216df78c8bb84edcbda3b3",
+      "input_fingerprint": "4885b84605ffa7082de15293476cbd870a0b9bf1b675d12bfe98c17f82cab42a",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -113,10 +114,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132233/2024/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "8618658e7932d3eb42f2f7cb10c3674d93c628d8968f9dc597a5fdefccb1a8f6",
-          "bytes": 260826
+          "sha256": "df03358a6e80489a1ff67eb24854dd1ba923cebe846cbba30dae3a0e8cb25f58",
+          "bytes": 260786
         },
-        "row_count": 9692
+        "row_count": 9691
       },
       "amounts": {
         "object": {

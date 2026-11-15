@@ -50,6 +50,9 @@ class AcquireTest(unittest.TestCase):
         with patch.object(scan_ocr, 'recognize_pdf', return_value=empty):
             with self.assertRaisesRegex(ValueError, 'no text for pages \\[1\\]'):
                 scan_ocr.acquire(Path('x.pdf'), {'engine': 'paddle', 'pages': [1]})
+            # allow_blank は冊の途中の白紙を許すが、全頁が空の冊（読めていない）は止める
+            with self.assertRaisesRegex(ValueError, 'no text for pages \\[1\\]'):
+                scan_ocr.acquire(Path('x.pdf'), {'engine': 'paddle', 'pages': [1], 'allow_blank': True})
 
     def test_missed_ink_skips_rules_and_covered_text(self):
         dark = np.zeros((100, 200), bool)
