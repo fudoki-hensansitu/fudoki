@@ -22,7 +22,7 @@ OBJECTS = CACHE / 'objects'
 RECEIPTS_KEY = 'fiscal/ingestion/receipts.json'
 
 
-def _get(key: str, bucket: str, stream) -> None:
+def get_object(key: str, bucket: str, stream) -> None:
     """Download one object; R2 answers 429 when a full build fetches every table, so wait and retry that."""
     for attempt in range(5):
         stream.seek(0)
@@ -71,8 +71,7 @@ def fetch_ocr(document: dict, item: dict, *, remote: bool = False) -> Path:
         with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
             temporary = Path(stream.name)
             try:
-                subprocess.run(['cf', 'r2', 'objects', 'get', ocr_key(document, item['id']), '--bucket-name',
-                                BUCKET, '--quiet'], stdout=stream, check=True)
+                get_object(ocr_key(document, item['id']), BUCKET, stream)
                 verify_ocr(temporary, item)
                 os.replace(temporary, path)
             finally:
@@ -121,7 +120,7 @@ def fetch(reference: dict, *, remote: bool = False) -> Path:
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
         temporary = Path(stream.name)
         try:
-            _get(reference['key'], reference.get('bucket', BUCKET), stream)
+            get_object(reference['key'], reference.get('bucket', BUCKET), stream)
         except BaseException:
             temporary.unlink(missing_ok=True)
             raise
