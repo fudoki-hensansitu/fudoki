@@ -470,7 +470,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
         <Skeleton className="h-[480px] rounded-xl" />
       ) : (
         <div className="flex flex-col items-center gap-3 py-10 text-center text-sm text-muted-foreground">
-          <p>{reiwa(v.year)}の{label}は、まだ収録していません</p>
+          <p>{reiwa(v.year)}の{label}はまだ収録していません</p>
           <RequestTown className="text-[13px]">{label}の収録をリクエストする</RequestTown>
         </div>
       )}
