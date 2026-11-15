@@ -5,7 +5,9 @@ its reading, 港区 R6), ink running down a column rule far taller than wide, or
 rule's piece: a figure sits between the rules. A heavy rule (新宿区) is read up to 14pt wide and 18pt tall, and the
 column rules of a blank row are read as one line of ink across them (新宿区 R8 p41, 22–542; up to 50pt high across two
 rules or more, 80pt across three of the page's rules (大田区 R6 p168) and 32pt across one when twice as wide as tall
-(港区 R7 p41)); a row rule read in no piece leaves a line of ink with nothing read on its line to the left (p36, under
+(港区 R7 p41)); ink across two of the page's column rules or more, of any height, is one mark left of the rules of
+a block of rows (the pieces of a skewed rule held together, 大田区 R5 p86・p90・p170): a mark is one piece of ink, and a
+figure never runs across a column rule; a row rule read in no piece leaves a line of ink with nothing read on its line to the left (p36, under
 `14 工事請負費`). Ink that runs up past the body's top rule, centred just under it, is the heading's or the unit row's
 (`(比較)`, `千円` over the rule); so is ink on the line of a word of the column's heading read again in the column
 (`(前` `年 度)` of the header of a table stacked under another)."""
@@ -26,11 +28,13 @@ def ruled(box: list, page_: dict, logicals_: list) -> bool:
     junction = (box[3] - box[1] <= 80 or box[2] - box[0] <= 24) and any(box[1] < row < box[3] for row in rows) \
         and any(box[0] - 8 <= x <= box[2] + 8 for x in edges)
     crossed = sum(1 for x in set(edges) if box[0] + 4 < x < box[2] - 4)
+    # (ink across both a column rule and a row rule, of any size, is where they cross: 大田区 R5 p170, 84pt by 63)
+    junction = junction or (crossed and any(box[1] + 4 < row < box[3] - 4 for row in rows))
     columns = {x for logical in logicals_ for b in logical.bands if b.page == page_['page_number']
                for x in (b.x0 - b.offset, b.x1 - b.offset)}
     across = sum(1 for x in columns if box[0] + 4 < x < box[2] - 4)  # the page's column rules the ink runs across
     crossing = (box[3] - box[1] <= 24 and crossed) or (box[3] - box[1] <= 50 and crossed >= 2) \
-        or (box[3] - box[1] <= 80 and across >= 3) \
+        or (box[3] - box[1] <= 80 and across >= 3) or across >= 2 \
         or (box[3] - box[1] <= 32 and crossed and box[2] - box[0] >= 2 * (box[3] - box[1]))
     beside = box[2] - box[0] <= 14 and any(box[0] - 4 <= x <= box[2] + 4 for x in edges)
     # (a sliver a line tall or taller a little off the rule read in its place: the rule of a skewed page, read a few

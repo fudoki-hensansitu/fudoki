@@ -1804,7 +1804,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
         if settings.get('wrap'):
             item.indent = layout_name_start(item, settings.get('hang_chars'))
         raw = normalize(text(item.lines[0]))
-        note = raw.startswith(prefixes) or raw in whole_names
+        # `(仮称)` begins a name (`(仮称)中学生サミット実行委員会委員謝礼`, 132101), not a bracketed note.
+        note = (raw.startswith(prefixes) and not raw.startswith('(仮称)')) or raw in whole_names
         if not note and highlights is not None and highlights.module.listed(item) and id(item) not in column_amount_items:
             note, item.hint = True, highlights.module.KIND
         waiting = result[-1] if result else None
@@ -1842,11 +1843,14 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             item.name_aligned = float(aligned.value)
         previous = result[-1] if result else None
         if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
-                and normalize(previous.name).startswith(('(', '（')) and not re.search(r'[)）]', normalize(previous.name))
+                and (opened := ''.join(normalize(text(line)) for line in previous.lines)).startswith(('(', '（'))
+                and len(re.findall(r'[(（]', opened)) > len(re.findall(r'[)）]', opened))
                 and (item.amounts or re.search(r'[)）]$', normalize(text(item.lines[-1]))))
                 and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
             # A bracketed note wrapped before its count (`(投票用紙読取分類機` / `3台 2,805,000)`): the number
-            # starting the second line is the count, not an item's number.
+            # starting the second line is the count, not an item's number. The bracket left open decides, not any
+            # closing one: `(2) 住宅・土地統計調査費 (総務` / `課) 7,415,286` (132101) waits for its end, and the
+            # line's own text decides, since the name no longer holds its number in brackets.
             if id(item) in column_amount_items:
                 raise ValueError(f'Configured note carries separate-column money: p{item.page} {item.name!r}')
             previous.name += ''.join(normalize(text(line)) for line in item.lines)

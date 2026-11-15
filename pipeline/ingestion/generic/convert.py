@@ -30,7 +30,7 @@ from ingestion.generic.patterns import building, document_quirk
 from ingestion.generic.runtime import run_pages
 from ingestion.generic.workflow import effective_settings
 from ingestion.generic.headers import canonical
-from ingestion.generic.layout import is_amount, lines, normalize
+from ingestion.generic.layout import Glyph, is_amount, lines, normalize
 from ingestion.generic.notes import kind_of
 from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS, coverage_regions, phase_dictionary, write_coverage_words
 from ingestion.lib.parquet import write_parquet
@@ -128,6 +128,12 @@ def lay_notes(built) -> tuple[list[dict], list[dict], list[dict], set, list]:
             # The funding of the item (`（特定財源 9,533 一般財源 3,016,275）`), or its head count (`２６人`): no note on it.
             dropped_notes = built.__dict__.setdefault('dropped_notes', {})
             dropped_notes.setdefault(record['hint'], []).extend([*record['label'], *(g for run in record['runs'] for g in run)])
+            if record['runs'] and label[:1] in '(（':
+                # The bracket that closes the note may be one word with its last amount (`84,789）`, 132021 2023):
+                # the amount's box takes in the bracket's character after it.
+                last = record['runs'][-1][-1]
+                width = (last.x1 - last.x0) / max(len(last.text), 1)
+                dropped_notes[record['hint']].append(Glyph(last.text + '）', last.x0, last.y0, last.x1 + width, last.y1, last.page, last.offset))
             for run in record['runs']:
                 x0, y0, x1, y1 = union(run)
                 built.__dict__.setdefault('dropped_note_amounts', []).append(
