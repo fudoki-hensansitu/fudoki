@@ -3,7 +3,7 @@
 import { HTTPException } from 'hono/http-exception'
 import type { Context } from 'hono'
 import { emptyHead, pageHead, type Head } from '../../jurisdiction/html'
-import { appPageYears, hasTab, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
+import { appPageYears, hasDocument, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
 import { codeOfPath, jurisdictionPath } from '../../jurisdiction/path'
@@ -81,14 +81,12 @@ export async function fieldProps(c: Context, path: string, field: string, yearSe
   return { ...(await jurisdictionProps(c, path, yearSegment)), field }
 }
 
-/** タブの頁（/tokyo/nakano/projects、/tokyo/nakano/2024/budget）。タブの名前が違う、その年度に決算が無いなら 404 */
+/** タブの頁（/tokyo/nakano/projects、/tokyo/nakano/2024/budget）。タブの名前が違えば 404。予算・決算のタブは収録の無い年度にもあり、画面が「まだ収録していない」と出す */
 export async function tabProps(c: Context, path: string, slug: string, yearSegment?: string): Promise<JurisdictionProps> {
   const tab = tabOfSlug(slug)
   if (!tab) throw new HTTPException(404, { res: notFound() })
   if (yearSegment === undefined) return toLatestYear(c, path, `/${slug}`)
-  const props = await jurisdictionProps(c, path, yearSegment)
-  if (props.kind === 'page' && !hasTab(props.data, props.year ?? appPageYears(props.data)[0]!, tab)) throw new HTTPException(404, { res: notFound() })
-  return { ...props, tab }
+  return { ...(await jurisdictionProps(c, path, yearSegment)), tab }
 }
 
 /**
@@ -131,13 +129,14 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   const year = props.year ?? appPageYears(props.data)[0]
   if (year === undefined) return props
   const entry = ENTRY_OF.get(props.data)
-  // 流れの会計は ?account= で選ぶ。無ければ一般会計。収録の無い会計は 404
-  const phase = props.tab === 'money' ? 'initial' : props.tab === 'settled' ? 'settlement' : undefined
+  // 流れの会計は ?account= で選ぶ。無ければ一般会計。収録の無い会計は 404。その年度に収録の無い資料のタブは流れを読まない
+  const tabPhase = props.tab === 'money' ? 'initial' : props.tab === 'settled' ? 'settlement' : undefined
+  const phase = tabPhase && hasDocument(props.data, year, tabPhase) ? tabPhase : undefined
   const account = new URL(c.req.url).searchParams.get('account') || ACCOUNT
   // 会計で中身の変わらない頁（予算・決算のタブ以外）の ?account= も 404 にして、CDN の key（void.config.ts の revalidateQueryAllowlist）を増やさせない
   if (account !== ACCOUNT && (!phase || (entry && !entry.accounts?.[phase]?.[String(year)]?.includes(account)))) throw new HTTPException(404, { res: notFound() })
   // 入口（最新の年度の頁）の題・説明文は、最新の決算と、決算より後の最新の当初予算の金額を書く。開いた年度の分は本文から作り、
-  // 当初予算の年度を開いたときの最新の決算だけを本文と同じ段で読む
+  // 当初予算を開いたとき（決算のある年度の予算のタブも）の最新の決算だけを本文と同じ段で読む
   const latestSettled = props.data.settlementYears.at(-1)
   const newest = year === appPageYears(props.data)[0]
   // 施策・評価シート・お金のかかる事業（extras）も並べて読み、HTML に入れる。頁は ISR で CDN に置くので、待つのは描き直しの1回目だけ
@@ -149,7 +148,7 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
       // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
       .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))
       .catch(() => undefined) : undefined,
-    newest && latestSettled !== undefined && latestSettled !== year ? within(loadSettlementSummary(env, props.data.code, latestSettled), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
+    newest && latestSettled !== undefined && (latestSettled !== year || phase === 'initial') ? within(loadSettlementSummary(env, props.data.code, latestSettled), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
   ])
   const snapshot = base && extras ? withExtras(base, extras) : base
   const opened = snapshot?.years[String(year)]
