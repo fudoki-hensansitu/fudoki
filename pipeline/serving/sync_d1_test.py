@@ -383,12 +383,12 @@ class SyncTest(unittest.TestCase):
 
     def test_schema_change_rebuilds_that_table_only(self):
         self.sync()
-        self.d1.con.execute('drop index "project_year_project_id"')
+        self.d1.con.execute('drop index "project_year_project_id_fiscal_year"')
         messages = self.sync()
         self.assert_same()
         self.assertIn('alter table "project_year__new" rename to "project_year"', self.d1.log)
         self.assertEqual([s for s in self.d1.log if s.startswith('alter table')], ['alter table "project_year__new" rename to "project_year"'], messages)
-        self.assertIn('project_year_project_id', {r[0] for r in self.d1.con.execute("select name from sqlite_master where type='index'")})
+        self.assertIn('project_year_project_id_fiscal_year', {r[0] for r in self.d1.con.execute("select name from sqlite_master where type='index'")})
 
     def test_many_changes_rebuild(self):
         self.sync()
@@ -461,10 +461,10 @@ class SyncTest(unittest.TestCase):
     def test_jurisdiction_skips_schema_change_without_its_rows(self):
         """列が違っても、その自治体の行がどちらにも無い表（project_year は自治体 NULL）は触らずに同期する。"""
         self.sync()
-        self.d1.con.execute('drop index "project_year_project_id"')
+        self.d1.con.execute('drop index "project_year_project_id_fiscal_year"')
         messages = self.sync(jurisdictions=['000001'])
         self.assertTrue(any('project_year: D1 の列・index が違うが' in m for m in messages), messages)
-        self.assertNotIn('project_year_project_id', {r[0] for r in self.d1.con.execute("select name from sqlite_master where type='index'")})
+        self.assertNotIn('project_year_project_id_fiscal_year', {r[0] for r in self.d1.con.execute("select name from sqlite_master where type='index'")})
 
 
     def test_jurisdiction_skips_missing_table_without_its_rows(self):
