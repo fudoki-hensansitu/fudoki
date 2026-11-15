@@ -12,7 +12,7 @@ import duckdb
 import yaml
 
 import prepare
-from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS
+from ingestion.lib.table_columns import AMOUNT_COLUMNS, NODE_COLUMNS
 
 
 class PrepareTest(unittest.TestCase):

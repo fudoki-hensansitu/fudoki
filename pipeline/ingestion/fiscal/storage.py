@@ -84,10 +84,15 @@ def safe_relative(value: str) -> str:
     return str(path)
 
 
-def fetch(reference: dict, *, remote: bool = False) -> Path:
+def object_path(reference: dict) -> Path:
+    """Where `fetch` keeps the object in the cache (it may not be there)."""
     if reference.get('bucket', BUCKET) != BUCKET:
         raise ValueError('Only the private input bucket is supported')
-    path = OBJECTS / safe_relative(reference['key'])
+    return OBJECTS / safe_relative(reference['key'])
+
+
+def fetch(reference: dict, *, remote: bool = False) -> Path:
+    path = object_path(reference)
     if path.is_symlink() or not path.resolve().is_relative_to(OBJECTS.resolve()):
         raise ValueError('Object cache path escapes its root')
     if path.exists():
