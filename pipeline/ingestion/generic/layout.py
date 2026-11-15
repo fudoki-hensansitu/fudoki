@@ -889,5 +889,9 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
             continue
         result.append(Logical([page.number], bands, unit, glyphs, ocr=page.number in ocr_pages, foot=foot))
     for region in (headings or {}).get('regions', []):
-        next(logical for logical in result if region['page'] in logical.pages).excluded.append(region)
+        # 帯の無い頁は読まないので、除外の範囲も要らない
+        for logical in result:
+            if region['page'] in logical.pages:
+                logical.excluded.append(region)
+                break
     return result
