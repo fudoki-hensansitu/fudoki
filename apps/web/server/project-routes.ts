@@ -57,6 +57,7 @@ function sheetQueryOf(v: unknown): SheetQuery {
   return {
     code: q.code,
     year: yearOf(q.year),
+    kind: kindOf(q.kind),
     ...(q.subjects !== undefined ? { subjects: q.subjects as string[] } : {}),
     ...(q.q !== undefined ? { q: q.q as string } : {}),
     ...(q.codes !== undefined ? { codes: q.codes as SheetQuery['codes'] } : {}),

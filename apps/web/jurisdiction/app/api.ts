@@ -128,7 +128,9 @@ type SheetResult = WebOpOutput<'search_evaluation_sheets'>
 export type SheetQuery = {
   code: string
   year: number
-  /** 分野で絞るときの科目（決算書の目）の ID */
+  /** 頁が見せている資料。分野の科目はこの資料の目 */
+  kind: Kind
+  /** 分野で絞るときの科目（kind の資料の目）の ID */
   subjects?: string[]
   /** 事業名で絞る */
   q?: string
@@ -140,13 +142,13 @@ export type SheetPage = { rows: Sheet[]; next: string | null }
 /** 方向性の区分ごとのシートの数。区分の当たらないシートは code が null の1行 */
 export type SheetCount = { code: DirectionCode | null; label: string | null; grade: Sheet['grade']; n: number }
 
-export const sheetKey = (q: SheetQuery) => JSON.stringify(['sheets', q.code, q.year, q.subjects ?? null, q.q?.trim() || null, q.codes ?? null])
-export const sheetCountKey = (q: SheetQuery) => JSON.stringify(['sheet-counts', q.code, q.year, q.subjects ?? null, q.q?.trim() || null])
+export const sheetKey = (q: SheetQuery) => JSON.stringify(['sheets', q.code, q.year, q.kind, q.subjects ?? null, q.q?.trim() || null, q.codes ?? null])
+export const sheetCountKey = (q: SheetQuery) => JSON.stringify(['sheet-counts', q.code, q.year, q.kind, q.subjects ?? null, q.q?.trim() || null])
 
 const sheetWhere = (q: SheetQuery): Record<string, unknown> => ({
   jurisdiction_code: { eq: [q.code] },
   account_name: { eq: [ACCOUNT] },
-  ...(q.subjects ? { settlement_expenditure_subject_id: { eq: q.subjects } } : {}),
+  ...(q.subjects ? { [`${q.kind}_expenditure_subject_id`]: { eq: q.subjects } } : {}),
   ...(q.q?.trim() ? { name: { contains: fitSearch(q.q.trim()) } } : {}),
   ...(q.codes ? { direction_code: { eq: q.codes } } : {}),
 })

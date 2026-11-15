@@ -327,6 +327,7 @@ function ProjectList({ q, head, render = (p, i) => <ProjectRow key={p.id} p={p} 
 const sheetQueryOf = (d: Pick<Snapshot, 'code'>, v: YearView, field: string, q: string): SheetQuery => ({
   code: d.code,
   year: v.year,
+  kind: v.kind,
   ...(field !== 'all' ? { subjects: v.subjectsOf(field) } : {}),
   ...(q ? { q } : {}),
 })
