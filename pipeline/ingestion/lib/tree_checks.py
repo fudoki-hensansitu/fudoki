@@ -71,7 +71,8 @@ def check_tree(nodes: list[dict], amounts: list[dict], document_kind: str = 'set
         if key not in by_key:
             issues.append(f'金額のノードがない: {key}'); continue
         if not amount['header_path'] or not amount['unit_text'] or number(amount['amount_text']) is None:
-            issues.append(f'金額の見出し・単位・原文を解決できない: {key}'); continue
+            issues.append(f'金額の見出し・単位・原文を解決できない: {key} p{amount.get("physical_page")} '
+                          f'{amount["header_path"]!r} {amount["unit_text"]!r} {amount["amount_text"]!r}'); continue
         ident = (amount['header_path'], amount['unit_text'])
         value = number(amount['amount_text'])
         if ident in values[key] and values[key][ident] != value:
