@@ -1,0 +1,152 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133647",
+    "fiscal_year": 2022,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a7dcbcfce8d2ae3a50b58d7df5f74258b554a9f383bd813da6727d1d73f1e37c"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "pages": [
+          [
+            27,
+            119
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源内訳で、歳出の目の金額は本年度の予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "marks": {
+                    "◎": 2,
+                    "・": 3
+                  },
+                  "yen_marked": true,
+                  "yen_notes": true,
+                  "plain_names": [
+                    "長期債償還充当分"
+                  ],
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p117-principal-bonds",
+            "page": 117,
+            "bbox": [
+              830,
+              266,
+              1030,
+              386
+            ],
+            "kind": "経費内訳",
+            "reason": "元金の説明の下に、地方債の種類ごとの償還額（口数と円の額）。説明の項目の金額（千円）の内訳を、名前と円の額を1語に印字した行で、千円の項目の列に入らない。"
+          },
+          {
+            "id": "p117-interest-bonds",
+            "page": 117,
+            "bbox": [
+              830,
+              472,
+              1030,
+              610
+            ],
+            "kind": "経費内訳",
+            "reason": "利子の説明の下に、地方債の種類ごとの償還額（口数と円の額）。説明の項目の金額（千円）の内訳を、名前と円の額を1語に印字した行で、千円の項目の列に入らない。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "2bcacf0f21f6e0f689f174b1c43b59cce4aa355117f54fd3e7ac809314e34eba",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'flat', '説明': 'position'}。",
+        "金額の単位は printed 93頁 から決めた。款の和 3,029,409（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 28 件（積算 28）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133647/2022/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "2ffdd3dce55c9a68bf04e0f1e564f89ac0ee00ca3f84b42fc8ee6654c6f7cc97",
+          "bytes": 92542
+        },
+        "row_count": 3177
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133647/2022/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "4e8bb6750c0e959173d1c51de8153974d781f3c2f80f868942d0f4703a14bc85",
+          "bytes": 64200
+        },
+        "row_count": 3332
+      }
+    }
+  ]
+}
