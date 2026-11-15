@@ -1,9 +1,9 @@
-// 自治体の頁（アプリ型）のデータ。apps/api の歳出・事業・予算案・事業評価の検索から、1年度の款項目・施策・評価シートと事業の一覧の1頁目を組む。
+// 自治体の頁（アプリ型）のデータ。apps/api の歳出・事業・予算案・事業評価の検索から、1年度の款項目・施策・評価シートの区分ごとの数と事業の一覧の1頁目を組む。
 // 頁の loader は最初の画面に要る分（loadYearSnapshot）だけを読み、残り（loadYearExtras）は頁を描いた後にブラウザが web の /api/jurisdictions/:code/:year/extras から読む。
 // 事業の続き・詳細は画面が web の /api から読む（jurisdiction/app/api.ts）。紐付け（施策・評価シート → 事業）は api が持つ歳出の行の参照をたどるだけで、新しく判断しない
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { listQuery, withExtras, type Kan, type YearData, type YearExtras, type Snapshot } from '../jurisdiction/app/data'
-import { listKey, readListPage } from '../jurisdiction/app/api'
+import { listKey, readListPage, readSheetCounts, toSheet } from '../jurisdiction/app/api'
 import type { Env } from './env'
 import { apiCall, type WebOpInput } from './fudoki-api'
 import { loadAccountTotals, shownSettlementYears, type CatalogEntry } from './jurisdiction'
@@ -51,10 +51,11 @@ const measuresOf = (env: Env, code: string, min: number, max: number) =>
     (r) => r.measures.map((m) => ({ ...m, url: r.origins.find((o) => o.origin_id === m.origin_id)?.url ?? null })),
   )
 
-const sheetsOf = (env: Env, code: string, min: number, max: number) =>
+/** 1年度の評価シートを全部（ホームのまちの札だけが使う。自治体の頁は頁ごとに読む） */
+const sheetsOf = (env: Env, code: string, year: number) =>
   all(
-    (token) => apiCall(env)('search_evaluation_sheets', { fiscal_year: { min, max }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SheetBody),
-    (r) => r.sheets.map((s) => ({ ...s, url: r.origins.find((o) => o.origin_id === s.origin_id)?.url ?? null })),
+    (token) => apiCall(env)('search_evaluation_sheets', { fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SheetBody),
+    (r) => r.sheets.map((s) => toSheet(s, r.origins)),
   )
 
 const fieldOf = (cofog: string | null | undefined) => ((cofog ? frameOf(cofog) : undefined) ?? OTHER_FRAME).id
@@ -155,7 +156,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     projectPage,
     wantAccounts ? loadAccountTotals(env, entry.code, year, docKind, accounts) : Promise.resolve(undefined),
     tab ? Promise.resolve(undefined) : loadYearExtras(env, entry.code, year, me.kind),
-    evalYear && evalYear !== year ? sheetsOf(env, entry.code, evalYear, evalYear).then((r) => r.rows.map(toSheet)) : Promise.resolve(null),
+    evalYear ? sheetsOf(env, entry.code, evalYear).then((r) => r.rows) : Promise.resolve(null),
     Promise.all(homeLists.map((q) => readListPage(apiCall(env), q).then((p) => [listKey(q), p] as const))),
   ])
   // 事業を当初予算から並べるときは、分野で絞れるよう款項目も当初予算のものにする
@@ -174,40 +175,20 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     // 会計の札は款項目と同じ資料のものだけ渡す（事業のタブで当初予算の事業を並べたときは、決算で読んだ札を捨てる）
     ...(accountTotals && subjects.kind === docKind ? { accounts: accountTotals } : {}),
     measures: [],
-    sheets: [],
+    sheetCounts: [],
     ...(allPage ? { hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage } } : { lists: {} }),
     pending: true,
   }
   if (!extras) return snapshot
   const full = withExtras(snapshot, { ...extras, lists: { ...extras.lists, ...Object.fromEntries(homePages) } })
-  return evalYear ? { ...full, evaluated: { fy: evalYear, sheets: evalSheets ? withExtras(snapshot, { ...extras, measures: [], sheets: evalSheets }).sheets : full.sheets } } : full
+  return evalSheets ? { ...full, evaluated: { fy: evalYear, sheets: evalSheets } } : full
 }
 
-type RawSheet = YearExtras['sheets'][number]
-const toSheet = (s: Awaited<ReturnType<typeof sheetsOf>>['rows'][number]): RawSheet => ({
-  id: short(s.sheet_id),
-  fy: s.fiscal_year,
-  name: s.name,
-  grade: s.outlook?.grade ?? null,
-  dir: s.direction,
-  dc: s.outlook?.code ?? null,
-  dl: s.outlook?.label ?? null,
-  div: s.division,
-  acct: s.account_name ?? '',
-  b: s.budget_yen,
-  s: s.settled_yen,
-  detail: s.expenditure_detail_id,
-  path: [s.kan_name ?? '', s.kou_name ?? '', s.moku_name ?? ''],
-  url: s.url ?? '',
-  origin: s.origin_id,
-  page: s.page,
-})
-
-/** 頁の1年度の残り（最初の画面に要らない分）。その年度の施策・評価シートと、事業の一覧（すべて）の1頁目。
+/** 頁の1年度の残り（最初の画面に要らない分）。その年度の施策・評価シートの区分ごとの数と、事業の一覧（すべて）の1頁目。
  * 款項目は読まない（分野は画面が開いた年度の款項目から引く。withExtras） */
 export async function loadYearExtras(env: Env, code: string, year: number, kind: Kind): Promise<YearExtras> {
   const allQuery = listQuery({ code, year, years: { [year]: { kind } as YearData }, prev: undefined }, 'all')
-  const [measures, sheets, allPage] = await Promise.all([
+  const [measures, sheetCounts, allPage] = await Promise.all([
     measuresOf(env, code, year, year).then(async (r) => {
       const ids = [...new Set(r.rows.flatMap((m) => (m.expenditure_detail_id ? [m.expenditure_detail_id] : [])))]
       const subjectOf = ids.length ? await subjectOfDetails(env, code, year, ids) : new Map<string, { subject: string; path: string[] }>()
@@ -229,10 +210,10 @@ export async function loadYearExtras(env: Env, code: string, year: number, kind:
         }
       })
     }),
-    sheetsOf(env, code, year, year).then((r) => r.rows.map(toSheet)),
+    readSheetCounts(apiCall(env), { code, year }),
     readListPage(apiCall(env), allQuery),
   ])
-  return { measures, sheets, hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage } }
+  return { measures, sheetCounts, hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage } }
 }
 
 /** 前の年度の分野ごとの末端の科目。やめた事業を分野で絞るときだけ、画面が読む */

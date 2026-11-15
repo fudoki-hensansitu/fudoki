@@ -206,3 +206,8 @@ export const SheetSearchOutput = z.strictObject({
   origins: z.array(EvaluationOriginRow).describe(ORIGINS_HELP),
 })
 export type SheetSearchOutput = z.infer<typeof SheetSearchOutput>
+
+export const SheetCountOutput = z.strictObject({
+  counts: z.array(z.strictObject({ outlook: Outlook, size: z.int().min(0).describe('当たるシートの数') })).describe('方向性の区分ごとのシートの数。区分の当たらないシートは outlook が空の1行にまとめる'),
+})
+export type SheetCountOutput = z.infer<typeof SheetCountOutput>

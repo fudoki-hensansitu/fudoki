@@ -1,12 +1,12 @@
 // 自治体の頁（アプリ型）のデータ。server/app-data.ts が API から組んだ1年度の分を、画面の見え方に組み直す。
-// 事業は頁ごとに API から読む（1頁目はサーバーが lists に入れて渡す）。施策・評価シートは年度の分を全部持ち、事業とは歳出の内訳の ID で照らす
+// 事業・評価シートは頁ごとに API から読む（事業の1頁目はサーバーが lists に入れて渡す。評価シートは区分ごとの数だけを持つ）。施策は年度の分を全部持ち、事業とは歳出の内訳の ID で照らす
 import { DOMAIN_FRAMES, OTHER_FRAME, type DomainFrame } from '../domains'
-import { listKey, type ListPage, type ListQuery, type ProjRow, type ProjectFull } from './api'
+import { listKey, type ListPage, type ListQuery, type ProjRow, type ProjectFull, type SheetCount } from './api'
 
 export type { ProjRow as Proj } from './api'
 export type Measure = { id: string; fy: number; title: string; new: boolean; yen: number | null; desc: string[]; /** 紐付けた当初予算書の内訳 */ detail: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
 export type DirectionCode = 'new' | 'expand' | 'keep' | 'statutory' | 'as_planned' | 'improve' | 'resize' | 'reduce' | 'merge' | 'complete' | 'end' | 'consider_end'
-export type Sheet = { id: string; fy: number; name: string; grade: 'A' | 'B' | 'C' | 'D' | null; dir: string | null; dc: DirectionCode | null; /** 方向性の区分の言い方（API の outlook.label） */ dl: string | null; div: string | null; acct: string; b: number | null; s: number | null; /** 紐付けた決算書の内訳 */ detail: string | null; field: string; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
+export type Sheet = { id: string; fy: number; name: string; grade: 'A' | 'B' | 'C' | 'D' | null; dir: string | null; dc: DirectionCode | null; /** 方向性の区分の言い方（API の outlook.label） */ dl: string | null; div: string | null; acct: string; b: number | null; s: number | null; /** 紐付けた決算書の内訳 */ detail: string | null; url: string; /** 出典の origin_id。アシスタントが read_source_page で頁を読むのに使う */ origin: string; page: number }
 /** 款・項・目（年度の kind の資料）。上から下へ見ていく予算のタブに使う */
 export type Kan = { name: string; yen: number; kou: { name: string; yen: number; moku: { id: string; name: string; yen: number; field: string; /** COFOG のコード。分野の頁の内訳（中分類）に使う */ cofog: string | null }[] }[] }
 export type YearData = {
@@ -39,7 +39,8 @@ export type Snapshot = {
   /** 一般会計のほかにも会計を収録した年度の、会計ごとの総額 */
   accounts?: AccountTotal[]
   measures: Measure[]
-  sheets: Sheet[]
+  /** 評価シートの方向性の区分ごとの数（その年度に行った事業の評価） */
+  sheetCounts: SheetCount[]
   /** 評価のある最新の年度の評価シート（ホームのまちの札だけが読む） */
   evaluated?: { fy: number; sheets: Sheet[] }
   /** 事業の収録がある自治体か。無ければ目を事業の代わりに並べる。まだ分からない（事業の1頁目を読んでいない）ときは undefined */
@@ -52,11 +53,11 @@ export type Snapshot = {
   failed?: true
 }
 
-/** 最初の画面に要らない、1年度の残りのデータ。施策・評価シートと、事業の一覧（すべて）の1頁目。
- * 分野は開いた年度の款項目から画面で引く（同じ款項目を2度読まない）ので、施策は内訳の載る科目、評価シートは款・項・目の名前を持つ */
+/** 最初の画面に要らない、1年度の残りのデータ。施策・評価シートの区分ごとの数と、事業の一覧（すべて）の1頁目。
+ * 分野は開いた年度の款項目から画面で引く（同じ款項目を2度読まない）ので、施策は内訳の載る科目と款・項・目の名前を持つ */
 export type YearExtras = {
   measures: (Omit<Measure, 'field'> & { subject: string | null; path: string[] | null })[]
-  sheets: (Omit<Sheet, 'field'> & { path: string[] })[]
+  sheetCounts: SheetCount[]
   hasProjects: boolean
   lists: Record<string, ListPage>
 }
@@ -78,7 +79,7 @@ export function withExtras(d: Snapshot, x: YearExtras): Snapshot {
   return {
     ...rest,
     measures: x.measures.map(({ subject, path, ...m }) => ({ ...m, field: fieldOf(subject, path) })),
-    sheets: x.sheets.map(({ path, ...s }) => ({ ...s, field: fieldOf(null, path) })),
+    sheetCounts: x.sheetCounts,
     hasProjects: d.hasProjects ?? x.hasProjects,
     lists: { ...x.lists, ...d.lists },
   }
@@ -121,7 +122,7 @@ export function yearView(d: Snapshot, prevFieldSubjects?: Record<string, string[
   const isEnded = (p: Pick<ProjRow, 'ended'>) => p.ended === year - 1
   const fresh = measures.filter((m) => m.new).sort((a, b) => (b.yen ?? 0) - (a.yen ?? 0))
   // 評価シートは評価した事業を行った年度の頁に出す（R6 の事業の評価は R6 の頁）。まだ評価の無い年度は出さない
-  const sheets = d.sheets
+  const sheetCounts = d.sheetCounts
   return {
     year,
     total: y.total,
@@ -148,10 +149,11 @@ export function yearView(d: Snapshot, prevFieldSubjects?: Record<string, string[
     /** 予算書に無い施策（予算書の事業に紐付けられなかった発表）。事業の収録が無い自治体は、新しく始める事業を施策だけで出す */
     freshUnlinked: d.hasProjects ? fresh.filter((m) => !m.detail) : fresh,
     fresh,
-    sheets,
-    /** 事業と中の事業に紐付いた施策・評価シート */
+    sheetCounts,
+    /** その年度の評価シートの数 */
+    sheetTotal: sheetCounts.reduce((n, c) => n + c.n, 0),
+    /** 事業と中の事業に紐付いた施策（評価シートは事業の詳細が読む） */
     measuresFor: (p: ProjectFull) => measures.filter((m) => m.detail && p.initialDetails.includes(m.detail)),
-    sheetsFor: (p: ProjectFull) => sheets.filter((s) => s.detail && p.settlementDetails.includes(s.detail)),
     isNew,
     isEnded,
     kind: y.kind,
