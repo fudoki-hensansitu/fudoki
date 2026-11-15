@@ -100,7 +100,7 @@
           "name": "total_yen",
           "type": "integer",
           "nullable": true,
-          "description": "総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無いか、金額の無い款の下に金額のある行がある（子に金額の欠けがあり補えない）ならNULL。下に一つも金額の無い款（決算で支出の無い予備費など）は和に数えない。"
+          "description": "総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無ければNULL。"
         },
         {
           "name": "cofog_01_yen",
@@ -166,7 +166,7 @@
           "name": "cofog_unclassified_yen",
           "type": "integer",
           "nullable": true,
-          "description": "total_yen から大分類の額の和を引いた残り（円）。COFOG コードの無い末端の行（cofog_status が unclassifiable・out-of-scope の目と、目の無い項）と、末端の和に入らない額（目を立てずに印字された項の内訳など）。大分類の額とこの額を足すと total_yen になる。total_yen が NULL（科目の表に行が無いか、金額の無い款の下に金額のある行がある）ならNULL。"
+          "description": "total_yen から大分類の額の和を引いた残り（円）。COFOG コードの無い末端の行（cofog_status が unclassifiable・out-of-scope の目と、目の無い項）と、末端の和に入らない額（目を立てずに印字された項の内訳など）。大分類の額とこの額を足すと total_yen になる。科目の表に行が無ければNULL。"
         }
       ]
     },
@@ -419,8 +419,8 @@
         {
           "name": "amount_yen",
           "type": "integer",
-          "nullable": true,
-          "description": "資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親は子の和の集計で印字ではない。款・項の金額を印字しない資料では、子の金額がすべてある款・項に子の和を入れる（印字ではない。番号も金額も無い子の無い行、その年度に廃した目の括弧書きは数えない）。子に金額の欠けがある段は NULL。"
+          "nullable": false,
+          "description": "資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親と、款・項の金額を印字しない資料の款・項は子の和で、印字ではない。出典で空欄の末端（決算で支出の無い予備費、その年度に廃した目の括弧書きなど）は 0。"
         },
         {
           "name": "is_leaf",
