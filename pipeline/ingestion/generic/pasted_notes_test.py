@@ -38,6 +38,13 @@ class CoveredByNotesTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             covered_by_notes(page, words)
 
+    def test_a_note_whose_text_is_not_read_stops_the_reading(self):
+        # Poppler does not print the note's text: dropping the covered number would lose the item's code
+        words = [Word('6', 55.9, 474.6, 59.9, 482.6)]
+        page = SimpleNamespace(annots=[note('5', 53.8, 472.7, 68.8, 485.7)])
+        with self.assertRaises(ValueError):
+            covered_by_notes(page, words)
+
     def test_a_page_whose_media_box_does_not_start_at_zero(self):
         # pdfplumber counts the note from the MediaBox's corner (50, 50), Poppler counts the words from the page's
         words = [Word('6', 100.0, 92.8, 105.6, 102.1), Word('5', 100.0, 93.8, 105.6, 103.1)]

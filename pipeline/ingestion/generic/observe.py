@@ -135,7 +135,8 @@ def covered_by_notes(page, items: list[Word]) -> list[Word]:
     the printed words and the note's text both, so the words under the note are dropped and the note's text is kept
     (the last run of words in its box that reads as it: Poppler reads an annotation after the page) in their place. A note
     that covers nothing printed corrects nothing, and its text is not read. A note whose text sits inside a printed
-    word it covers only in part (a code Poppler joined to the name) cannot be read in place and stops the reading."""
+    word it covers only in part (a code Poppler joined to the name), or whose text Poppler does not read, cannot be
+    read in place and stops the reading."""
     left, top = (getattr(page, 'bbox', None) or (0, 0))[:2]  # pdfplumber counts from the MediaBox, Poppler from 0
     notes = []
     for note in page.annots or ():
@@ -157,6 +158,8 @@ def covered_by_notes(page, items: list[Word]) -> list[Word]:
         # The note's text: the last run of words in the box that reads as it
         own = next((inside[start:end] for end in range(len(inside), 0, -1) for start in range(end - 1, -1, -1)
                     if box[4] and ''.join(items[index].text for index in inside[start:end]) == box[4]), [])
+        if box[4] and inside and not own:  # the note's text is not read where it is pasted: what it corrects is unknown
+            raise ValueError(f'a note `{box[4]}` covers printed words but its text is not read in their place')
         covered = [items[index] for index in inside if index not in own]
         dropped.update(index for index in inside if index not in own)
         if own and not covered:
