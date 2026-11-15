@@ -14,6 +14,9 @@ on:
       - uv.lock
       - pyproject.toml
       - mise.toml
+  # 週に1回、写しがあっても D1 を全行読んで比べ、写しと D1 のずれ（手での書き込みなど）を直す（月曜 04:00 JST）
+  schedule:
+    - cron: '0 19 * * 0'
   workflow_dispatch:
     inputs:
       jurisdictions:
@@ -22,29 +25,34 @@ on:
         default: ''
 permissions:
   contents: read
-  actions: read
-# serving:sync は同時に2つ流せない（`<表>__new` が衝突する）。前の同期を止めず、順に流す。
-# 待てる run は1本だけで、それより前の待ちは取り消されるが、範囲は最後に成功した同期から決めるので取りこぼさない
-concurrency:
-  group: sync-d1
-  cancel-in-progress: false
+  # actions: write は古い pipeline-cache を消すため（読むだけなら read で足りる）
+  actions: write
+# R2 への保存（store）と D1 への同期（sync）は別の job にし、concurrency も分ける。
+# store は merge のたびにすぐ流し、前の run の D1 同期（全件だと30分を超える）の後ろに並ばない。
+# 後の PR の ingestion-store-check は main の表を R2 から読むので、保存が遅れるとその間 404 で落ちる
 jobs:
-  sync:
+  store:
     if: github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    timeout-minutes: 180
+    timeout-minutes: 120
+    # 保存は同時に2つ流さない（同じ表を続けて記録した merge が、古い表で新しい表を上書きしないよう順に流す）
+    concurrency:
+      group: ingestion-store
+      cancel-in-progress: false
+    outputs:
+      args: ${{ steps.scope.outputs.args }}
     steps:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      # 手動の実行は自治体コード（空なら全件）。push は最後に成功した push の同期からの差分
+      # 手動の実行は自治体コード（空なら全件）、週1の照合は全件。push は最後に成功した push の同期からの差分
       # （取り消された run・落ちた run の範囲も次の run が拾う）。見つからなければ全件
       - id: scope
         env:
           CODES: ${{ inputs.jurisdictions }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ "${{ github.event_name }}" = workflow_dispatch ]; then
+          if [ "${{ github.event_name }}" != push ]; then
             args=""
             for c in $CODES; do
               [[ "$c" =~ ^[0-9]{6}$ ]] || { echo "not a jurisdiction code: $c"; exit 1; }
@@ -63,6 +71,53 @@ jobs:
             # R2 に置く表は、成功した同期が無くてもこの push の差分から決める
             echo "since=${{ github.event.before }}" >> "$GITHUB_OUTPUT"
           fi
+      - if: steps.scope.outputs.since != ''
+        uses: jdx/mise-action@v5
+        with:
+          version: 2026.8.6
+      - if: steps.scope.outputs.since != ''
+        uses: actions/cache/restore@v6
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: uv-${{ runner.os }}-
+      - if: steps.scope.outputs.since != ''
+        run: |
+          for wait in 30 60 0; do
+            uv sync --frozen && exit 0
+            sleep "$wait"
+          done
+          exit 1
+      # 出典・OCR 結果を R2 から戻した cache。読むだけで、保存は sync job が行う
+      - if: steps.scope.outputs.since != ''
+        uses: actions/cache/restore@v6
+        with:
+          path: pipeline/.cache
+          key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
+          restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
+      # 一部の scan の表は mutool で字を読む（generic/patterns/components/clipped_words.py）
+      - if: steps.scope.outputs.since != ''
+        run: mise install conda:mupdf@1.28.6
+      # 手動の実行は R2 に置かない（置くのは merge された記録だけ）。since が古くても、R2 にある表は変換し直さない（store.stored）
+      - if: steps.scope.outputs.since != ''
+        run: bun run --cwd pipeline ingestion:store -- --since ${{ steps.scope.outputs.since }}
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+
+  sync:
+    needs: store
+    runs-on: ubuntu-latest
+    timeout-minutes: 180
+    # serving:sync は同時に2つ流せない（`<表>__new` が衝突する）。前の同期を止めず、順に流す。
+    # 待てる job は1本だけで、それより前の待ちは取り消される。範囲は store job が「最後に成功した run」から決めるので、
+    # 待っている間に前の同期が終わっても、範囲が広いだけで取りこぼさない（書くのは D1 との差分だけ）
+    concurrency:
+      group: sync-d1
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          fetch-depth: 0
       - uses: jdx/mise-action@v5
         with:
           version: 2026.8.6
@@ -78,25 +133,62 @@ jobs:
             sleep "$wait"
           done
           exit 1
-      # R2 から戻した取り込みの表・出典と、事業の PDF を読んだ結果。毎回新しい key で保存して温めておく
+      # R2 から戻した取り込みの表・出典と、事業の PDF を読んだ結果（約3GB）。build が読む。中身が増えた回だけ新しい key で保存する
       - uses: actions/cache/restore@v6
         with:
           path: pipeline/.cache
           key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
           restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
-      # 一部の scan の表は mutool で字を読む（generic/patterns/components/clipped_words.py）
-      - if: steps.scope.outputs.since != ''
-        run: mise install conda:mupdf@1.28.6
-      # 手動の実行は R2 に置かない（置くのは merge された記録だけ）
-      - if: steps.scope.outputs.since != ''
-        run: bun run --cwd pipeline ingestion:store -- --since ${{ steps.scope.outputs.since }}
+      - id: cache-before
+        run: echo "files=$(find pipeline/.cache -type f -printf '%P %s %T@\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
+      # 前回の同期で D1 に入れた表の写し。最新のものを戻し、D1 の印と合うかは sync_d1 が確かめる（合わなければ D1 を読む）
+      - uses: actions/cache/restore@v6
+        with:
+          path: ${{ runner.temp }}/d1-snapshot
+          key: d1-snapshot-${{ github.run_id }}
+          restore-keys: d1-snapshot-
+      - id: snapshot-before
+        run: echo "sha=$(sha256sum "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" 2>/dev/null | cut -c1-64)" >> "$GITHUB_OUTPUT"
+      - run: >-
+          bun run --cwd pipeline publish -- --database-id b9b6f209-083e-45b3-a896-1014a17a15f9 ${{ needs.store.outputs.args }}
+          --snapshot "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" ${{ github.event_name == 'schedule' && '--verify-all' || '' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - run: bun run --cwd pipeline publish -- --database-id b9b6f209-083e-45b3-a896-1014a17a15f9 ${{ steps.scope.outputs.args }}
+      # 同期が成功して写しが書き直された回だけ保存し、古い写しは消す
+      - id: snapshot-after
+        run: echo "sha=$(sha256sum "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" 2>/dev/null | cut -c1-64)" >> "$GITHUB_OUTPUT"
+      - id: snapshot-save
+        if: steps.snapshot-after.outputs.sha != '' && steps.snapshot-after.outputs.sha != steps.snapshot-before.outputs.sha
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ runner.temp }}/d1-snapshot
+          key: d1-snapshot-${{ github.run_id }}
+      - if: steps.snapshot-save.outcome == 'success'
         env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - if: always()
+          GH_TOKEN: ${{ github.token }}
+          KEEP: d1-snapshot-${{ github.run_id }}
+        run: |
+          gh cache list --repo "${{ github.repository }}" --key d1-snapshot- --limit 100 --json key --jq '.[].key' |
+            while read -r key; do
+              [ "$key" = "$KEEP" ] || gh cache delete "$key" --repo "${{ github.repository }}" || true
+            done
+      # 毎回 3GB を保存すると repo の cache の上限（10GB）から refresh-check の generic-observation が追い出される。
+      # 中身（file の名前・大きさ・更新時刻）が変わった回だけ保存し、古い pipeline-cache は消す
+      - id: cache-after
+        if: always()
+        run: echo "files=$(find pipeline/.cache -type f -printf '%P %s %T@\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
+      - id: cache-save
+        if: always() && steps.cache-after.outputs.files != steps.cache-before.outputs.files
         uses: actions/cache/save@v6
         with:
           path: pipeline/.cache
           key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
+      - if: always() && steps.cache-save.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEEP: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
+        run: |
+          gh cache list --repo "${{ github.repository }}" --key pipeline-cache- --limit 100 --json key --jq '.[].key' |
+            while read -r key; do
+              [ "$key" = "$KEEP" ] || gh cache delete "$key" --repo "${{ github.repository }}" || true
+            done

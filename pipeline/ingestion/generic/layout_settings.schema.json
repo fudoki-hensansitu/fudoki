@@ -117,7 +117,7 @@
       "type": "object",
       "additionalProperties": false,
       "properties": {
-        "character_map": {"type": "object", "minProperties": 1, "propertyNames": {"pattern": "^[\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f]$"}, "additionalProperties": {"type": "string", "minLength": 1, "maxLength": 1}, "description": "Explicit Unicode mapping for broken font maps, before XML parsing and glyph reconstruction."},
+        "character_map": {"type": "object", "minProperties": 1, "propertyNames": {"pattern": "^[\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\ufffd]$"}, "additionalProperties": {"type": "string", "maxLength": 1}, "description": "Explicit Unicode mapping for broken font maps, before XML parsing and glyph reconstruction. U+FFFD is the glyph Poppler could not map (栃木県 R4 の特別会計: an invisible mark after each header word); mapped to an empty string, a character is dropped."},
         "form_clips": {"const": true, "description": "Text drawn inside a form has its clip in the form's space: an object whose own bounds meet it is visible."},
         "image_rules": {"const": true, "description": "A page that draws no vector rule has its ruled grid in a background image: the rules are read from the render, as a scan's are."},
         "crop_box": {"const": true, "description": "Each page shows one half of a sheet printed two pages up through its CropBox (131211): the words and rules outside it are the other page's, observed as that page."}
