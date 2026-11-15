@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "source_inconsistencies": [
+    {
+      "table_id": "general-initial",
+      "page": 28,
+      "axis": "科目",
+      "parent": {
+        "code": "3",
+        "name": "区民費"
+      },
+      "printed": 3973260,
+      "children_sum": 691855,
+      "difference": -3281405,
+      "basis": "款「区民費」はこの冊の最終頁で始まり、残りの項・目は次の分冊に続く（款・項の題字の金額を読み `header.volume_titles`、次の分冊は `continued_rows` で同じ款・項の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial",
+      "page": 28,
+      "axis": "科目",
+      "parent": {
+        "code": "1",
+        "name": "区民行政費"
+      },
+      "printed": 691855,
+      "children_sum": 688579,
+      "difference": -3276,
+      "basis": "項「区民行政費」はこの冊の最終頁で始まり、残りの項・目は次の分冊に続く（款・項の題字の金額を読み `header.volume_titles`、次の分冊は `continued_rows` で同じ款・項の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial",
+      "page": 28,
+      "axis": "節",
+      "parent": {
+        "code": "1",
+        "name": "区民行政総務費"
+      },
+      "printed": 688579,
+      "children_sum": 416993,
+      "difference": -271586,
+      "basis": "目「区民行政総務費」の節の行はこの冊の最終頁で途切れ、残りの行は次の分冊の頭に続く（次の分冊は継ぎ目の宣言 `continued_rows` で同じ行の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial",
+      "page": 28,
+      "axis": "説明",
+      "parent": {
+        "code": "1",
+        "name": "区民行政総務費"
+      },
+      "printed": 688579,
+      "children_sum": 385102,
+      "difference": -303477,
+      "basis": "目「区民行政総務費」の説明の行はこの冊の最終頁で途切れ、残りの行は次の分冊の頭に続く（次の分冊は継ぎ目の宣言 `continued_rows` で同じ行の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-2",
+      "page": 23,
+      "axis": "科目",
+      "parent": {
+        "code": "5",
+        "name": "民生費"
+      },
+      "printed": 52770879,
+      "children_sum": 8623807,
+      "difference": -44147072,
+      "basis": "款「民生費」はこの冊の最終頁で始まり、残りの項・目は次の分冊に続く（款・項の題字の金額を読み `header.volume_titles`、次の分冊は `continued_rows` で同じ款・項の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-2",
+      "page": 23,
+      "axis": "科目",
+      "parent": {
+        "code": "1",
+        "name": "社会福祉費"
+      },
+      "printed": 8623807,
+      "children_sum": 4596087,
+      "difference": -4027720,
+      "basis": "項「社会福祉費」はこの冊の最終頁で始まり、残りの項・目は次の分冊に続く（款・項の題字の金額を読み `header.volume_titles`、次の分冊は `continued_rows` で同じ款・項の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-2",
+      "page": 23,
+      "axis": "節",
+      "parent": {
+        "code": "1",
+        "name": "社会福祉総務費"
+      },
+      "printed": 4596087,
+      "children_sum": 984957,
+      "difference": -3611130,
+      "basis": "目「社会福祉総務費」の節の行はこの冊の最終頁で途切れ、残りの行は次の分冊の頭に続く（次の分冊は継ぎ目の宣言 `continued_rows` で同じ行の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-3",
+      "page": 37,
+      "axis": "科目",
+      "parent": {
+        "code": "6",
+        "name": "衛生費"
+      },
+      "printed": 10180242,
+      "children_sum": 9748150,
+      "difference": -432092,
+      "basis": "款「衛生費」はこの冊の最終頁で始まり、残りの項・目は次の分冊に続く（款・項の題字の金額を読み `header.volume_titles`、次の分冊は `continued_rows` で同じ款・項の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-3",
+      "page": 37,
+      "axis": "科目",
+      "parent": {
+        "code": "1",
+        "name": "保健衛生費"
+      },
+      "printed": 9748150,
+      "children_sum": 1450554,
+      "difference": -8297596,
+      "basis": "項「保健衛生費」はこの冊の最終頁で始まり、残りの項・目は次の分冊に続く（款・項の題字の金額を読み `header.volume_titles`、次の分冊は `continued_rows` で同じ款・項の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-3",
+      "page": 37,
+      "axis": "説明",
+      "parent": {
+        "code": "1",
+        "name": "保健衛生総務費"
+      },
+      "printed": 1450554,
+      "children_sum": 1252955,
+      "difference": -197599,
+      "basis": "目「保健衛生総務費」の説明の行はこの冊の最終頁で途切れ、残りの行は次の分冊の頭に続く（次の分冊は継ぎ目の宣言 `continued_rows` で同じ行の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-3",
+      "page": 38,
+      "axis": "説明",
+      "parent": {
+        "code": "5",
+        "name": "協議会運営"
+      },
+      "printed": 915,
+      "children_sum": 189,
+      "difference": -726,
+      "basis": "事業「協議会運営」の説明の行はこの冊の最終頁で途切れ、残りの行は次の分冊の頭に続く（次の分冊は継ぎ目の宣言 `continued_rows` で同じ行の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-4",
+      "page": 25,
+      "axis": "科目",
+      "parent": {
+        "code": "8",
+        "name": "土木費"
+      },
+      "printed": 6329717,
+      "children_sum": 4126575,
+      "difference": -2203142,
+      "basis": "款「土木費」はこの冊の最終頁で始まり、残りの項・目は次の分冊に続く（款・項の題字の金額を読み `header.volume_titles`、次の分冊は `continued_rows` で同じ款・項の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-4",
+      "page": 25,
+      "axis": "科目",
+      "parent": {
+        "code": "1",
+        "name": "道路橋梁費"
+      },
+      "printed": 4126575,
+      "children_sum": 696874,
+      "difference": -3429701,
+      "basis": "項「道路橋梁費」はこの冊の最終頁で始まり、残りの項・目は次の分冊に続く（款・項の題字の金額を読み `header.volume_titles`、次の分冊は `continued_rows` で同じ款・項の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    },
+    {
+      "table_id": "general-initial-4",
+      "page": 25,
+      "axis": "説明",
+      "parent": {
+        "code": "1",
+        "name": "道路橋梁総務費"
+      },
+      "printed": 696874,
+      "children_sum": 687759,
+      "difference": -9115,
+      "basis": "目「道路橋梁総務費」の説明の行はこの冊の最終頁で途切れ、残りの行は次の分冊の頭に続く（次の分冊は継ぎ目の宣言 `continued_rows` で同じ行の下に付ける）。この冊だけの子の和は印字の額にならない。印字値は書き換えない。"
+    }
+  ]
+}

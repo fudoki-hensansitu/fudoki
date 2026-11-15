@@ -401,12 +401,18 @@ def level_cells(cells: list[tuple[tuple, str]], edges: list[float], levels: str 
     The columns name the levels in order, so a scan's reading that drops one of the spaced characters
     (`款目`) still gives 款・項・目 to its three columns. `levels` `款項目節` (`header.staircase: "款項目節"`) also
     reads a cell naming 節 over four columns, the fourth being 節 (武蔵野の水道事業の明細書), and `款項目事務事業`
-    a cell `款項目事務事業` over four columns, the fourth being 事務事業 (足立の事業別決算説明書)."""
+    a cell `款項目事務事業` over four columns, the fourth being 事務事業 (足立の事業別決算説明書), and `款項目名` a cell `款項目`
+    over four columns, the fourth being the names of the three levels (神戸市の各会計予算に関する説明書)."""
     result = []
     for key, value in cells:
         inner = [(left, right) for left, right in zip(edges, edges[1:]) if key[0] - 1 <= left and right <= key[1] + 1]
         four = levels == '款項目節' and '節' in value and len(inner) == 4
-        if levels == '款項目事務事業' and value == levels and len(inner) == 4:
+        if levels == '款項目名' and value == '款項目' and len(inner) == 4:
+            # 神戸市の各会計予算に関する説明書: the codes in three narrow columns, the names of every level in the fourth
+            # (`1 議 会 費` under the 款's code). The name column keeps the cell's heading, a subject heading of no level.
+            result.extend(((left, right, key[2], key[3]), level)
+                          for (left, right), level in zip(inner, ('款', '項', '目', value)))
+        elif levels == '款項目事務事業' and value == levels and len(inner) == 4:
             result.extend(((left, right, key[2], key[3]), level)
                           for (left, right), level in zip(inner, ('款', '項', '目', '事務事業')))
         elif (value.startswith('款') and set(value) <= set(levels) and len(set(value)) == len(value)

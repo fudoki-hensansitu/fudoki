@@ -1,4 +1,4 @@
-// まとめタブの財政の状況（借金と貯金・事業に使えるお金・ほかの数字）。総務省「市町村別決算状況調」の普通会計（PageData.finance）から描く。
+// まとめタブの財政の状況（借金と貯金・事業に使えるお金・財政の指標）。総務省「市町村別決算状況調」の普通会計（PageData.finance）から描く。
 // 開いた年度までの最新の決算の年度を出し、推移はそこまでの5年。評価の言葉や色は付けず、項目の意味だけを書く
 import * as React from 'react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
@@ -27,22 +27,24 @@ function Head({ title, term, tag }: { title: string; term?: string; tag: React.R
   )
 }
 
-/** 5年の推移。増減に色を付けず、両端に年度と値を書く */
-function Spark({ points, format, zero, width = 168 }: { points: { year: number; v: number }[]; format: (n: number) => string; zero?: boolean; width?: number }) {
+/** 5年の推移。増減に色を付けず、両端に年度と値を書く。横は % で置き、置いた枠の幅に伸ばしても線と点を歪めない（full は列の幅いっぱい） */
+function Spark({ points, format, zero, full }: { points: { year: number; v: number }[]; format: (n: number) => string; zero?: boolean; full?: boolean }) {
   if (points.length < 2) return null
   const h = 44
   const pad = 6
   const vs = points.map((p) => p.v)
   const lo = zero ? Math.min(0, ...vs) : Math.min(...vs)
   const hi = Math.max(...vs)
-  const x = (i: number) => pad + (i * (width - pad * 2)) / (points.length - 1)
+  const x = (i: number) => `${((i * 100) / (points.length - 1)).toFixed(2)}%`
   const y = (n: number) => (hi === lo ? h / 2 : h - pad - ((n - lo) / (hi - lo)) * (h - pad * 2))
   const first = points[0]!
   const last = points.at(-1)!
   return (
-    <figure className="m-0 inline-flex flex-col gap-0.5 self-start" style={{ width }}>
-      <svg viewBox={`0 0 ${width} ${h}`} width={width} height={h} aria-hidden="true" className="block overflow-visible">
-        <polyline points={points.map((p, i) => `${x(i).toFixed(1)},${y(p.v).toFixed(1)}`).join(' ')} fill="none" stroke="var(--primary)" strokeWidth={1.75} strokeLinejoin="round" strokeLinecap="round" />
+    <figure className={`m-0 flex flex-col gap-0.5 ${full ? 'w-full' : 'w-[168px] self-start'}`}>
+      <svg width="100%" height={h} aria-hidden="true" className="block overflow-visible">
+        {points.slice(1).map((p, i) => (
+          <line key={p.year} x1={x(i)} y1={y(points[i]!.v)} x2={x(i + 1)} y2={y(p.v)} stroke="var(--primary)" strokeWidth={1.75} strokeLinecap="round" />
+        ))}
         {points.map((p, i) => {
           const end = i === points.length - 1
           return <circle key={p.year} cx={x(i)} cy={y(p.v)} r={end ? 3 : 1.75} fill={end ? 'var(--primary)' : 'var(--background)'} stroke="var(--primary)" strokeWidth={1.25} />
@@ -103,11 +105,11 @@ function DebtAndFunds({ at, rows, people }: { at: LocalFinance; rows: LocalFinan
   return (
     <div className="grid gap-5 @xl:grid-cols-2 @xl:gap-0">
       <div className="@xl:pr-6">
-        <DebtSide label="借金" term="地方債現在高" yen={at.localBondBalance} people={people} spark={<Spark points={series(rows, (f) => f.localBondBalance)} format={okuText} width={200} />}
+        <DebtSide label="借金" term="地方債現在高" yen={at.localBondBalance} people={people} spark={<Spark points={series(rows, (f) => f.localBondBalance)} format={okuText} full />}
           say="地方債は、自治体が学校・道路・ごみ処理施設など長く使うものを建てるときに借りるお金です。何十年かけて返すので、その施設を使う世代みんなで負担します。地方債現在高は、年度末にまだ返していない残りの額です。" />
       </div>
       <div className="border-t pt-5 @xl:border-t-0 @xl:border-l @xl:pt-0 @xl:pl-6">
-        <DebtSide label="貯金" term="基金" yen={at.fundBalance} people={people} spark={<Spark points={series(rows, (f) => f.fundBalance)} format={okuText} width={200} />}
+        <DebtSide label="貯金" term="基金" yen={at.fundBalance} people={people} spark={<Spark points={series(rows, (f) => f.fundBalance)} format={okuText} full />}
           say="基金は、自治体が目的を決めて積み立てているお金です。使い道を決めていない財政調整基金は、災害や税収が減った年に取り崩します。ほかに、借金の返済や施設の建て替えなどに充てる基金があります。">
           <ul className="mt-2 max-w-[360px] border-t">
             {kinds.map(([name, yen]) => (
@@ -133,6 +135,30 @@ function Tile({ label, yen, sub, on }: { label: string; yen: number; sub?: strin
   )
 }
 
+/** 毎年決まって出ていくお金の3つの塗り。分類を見分けるだけで良し悪しを表さないので、ブランドの緑を使わず灰・生成り・墨で明るさをはっきり分ける */
+const DUTY_FILLS = ['bg-muted-foreground', 'bg-paper', 'bg-foreground']
+
+/** 歳出の内訳の帯。切れの間を空けて境を見せ、名前と割合は帯の下の凡例に書く（細い切れにも書けるように） */
+function ShareBar({ total, parts }: { total: number; parts: { name: string; yen: number; fill: string }[] }) {
+  const pct = (yen: number) => `${((yen / total) * 100).toFixed(1)}%`
+  return (
+    <div className="flex flex-col gap-2.5">
+      <div className="flex h-7 gap-0.5 overflow-hidden rounded-lg" role="img" aria-label={`歳出の内訳: ${parts.map((p) => `${p.name} ${pct(p.yen)}`).join('、')}`}>
+        {parts.map((p) => (p.yen > 0 ? <span key={p.name} className={`min-w-0.5 ${p.fill}`} style={{ flex: p.yen }} /> : null))}
+      </div>
+      <ul className="flex flex-wrap gap-x-5 gap-y-1.5 text-sm" aria-hidden="true">
+        {parts.map((p, i) => (
+          <li key={p.name} className="flex items-center gap-1.5">
+            <span className={`size-3 shrink-0 rounded-sm ${p.fill}`} />
+            <span className={i === 0 ? 'text-foreground' : 'text-muted-foreground'}>{p.name}</span>
+            <span className={`tabular-nums ${i === 0 ? 'text-primary' : 'text-muted-foreground'}`}>{pct(p.yen)}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )
+}
+
 function FreeMoney({ at, rows, people }: { at: LocalFinance; rows: LocalFinance[]; people: number | null }) {
   const duty = dutyOf(at)
   const free = freeOf(at)
@@ -148,14 +174,11 @@ function FreeMoney({ at, rows, people }: { at: LocalFinance; rows: LocalFinance[
         {op('−')}
         <Tile label="毎年決まって出ていくお金" yen={duty} sub={parts.map(([n, y]) => `${n} ${okuText(y ?? 0)}`).join('・')} />
       </div>
-      <div className="flex h-3 overflow-hidden rounded-full" role="img" aria-label="歳出のうち事業に回るお金と毎年決まって出ていくお金">
-        <span className="bg-primary" style={{ flex: free }} />
-        <span className="bg-secondary" style={{ flex: duty }} />
-      </div>
-      <div className="grid items-start gap-4 @3xl:grid-cols-[minmax(0,1fr)_auto] @3xl:gap-10">
-        <p className="text-sm leading-[1.7] text-muted-foreground">毎年決まって出ていくのは、法律で決まった給付（扶助費）、職員の給与（人件費）、借金の返済（公債費）の3つ（義務的経費）。残りが、学校や道路をつくる・直す、委託や補助金など、自治体が年ごとに決める事業に回ります。ただし国保などの会計への繰出金のように、この中にも毎年続くものがあります。</p>
-        <Spark points={series(rows, freeOf)} format={okuText} />
-      </div>
+      <ShareBar total={at.expenditureTotal} parts={[
+        { name: '事業に回るお金', yen: free, fill: 'bg-primary' },
+        ...parts.map(([name, yen], i) => ({ name, yen: yen ?? 0, fill: DUTY_FILLS[i]! })),
+      ]} />
+      <p className="text-sm leading-[1.7] text-muted-foreground">毎年決まって出ていくのは、法律で決まった給付（扶助費）、職員の給与（人件費）、借金の返済（公債費）の3つ（義務的経費）。残りが、学校や道路をつくる・直す、委託や補助金など、自治体が年ごとに決める事業に回ります。ただし国保などの会計への繰出金のように、この中にも毎年続くものがあります。</p>
     </div>
   )
 }
@@ -227,7 +250,7 @@ function OtherNumbers({ at, rows }: { at: LocalFinance; rows: LocalFinance[] }) 
   )
 }
 
-/** 開いた年度までの最新の決算の年度の、借金と貯金・事業に使えるお金・ほかの数字。決算状況調に載らない自治体（都道府県）は何も出さない */
+/** 開いた年度までの最新の決算の年度の、借金と貯金・事業に使えるお金・財政の指標。決算状況調に載らない自治体（都道府県）は何も出さない */
 export function FinanceSections({ finance, year, people }: { finance: LocalFinance[] | undefined; year: number; people: number | null }) {
   const upTo = (finance ?? []).filter((f) => f.year <= year)
   const at = upTo.at(-1)
@@ -246,10 +269,8 @@ export function FinanceSections({ finance, year, people }: { finance: LocalFinan
         <div className={card}><FreeMoney at={at} rows={rows} people={people} /></div>
       </section>
       <section>
-        <Head title="ほかの数字をくわしく" tag={tag} />
-        <p className="-mt-1 mb-2.5 text-[15px] leading-[1.7] text-muted-foreground">{reiwa(at.year)}の決算の数字です。項目を押すと、意味と5年の推移が開きます。</p>
+        <Head title="財政の指標" tag={tag} />
         <OtherNumbers at={at} rows={rows} />
-        <p className="mt-3 text-xs text-muted-foreground">出典: 総務省「市町村別決算状況調」{r(rows[0]!.year)}〜{r(at.year)}（普通会計）</p>
       </section>
     </>
   )

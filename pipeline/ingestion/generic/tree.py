@@ -243,6 +243,8 @@ PAREN_TAIL = re.compile(r'(?:[(（][^()（）]*[)）])+$')
 # An item number glued to a year it is followed by (`42025年…`: 4 and 2025年).
 YEAR_LED = re.compile(r'^([0-9]{1,2})(?:19|20)[0-9]{2}年')
 COUNTED = re.compile(r'^[0-9０-９]+(?:番(?!号)|歳|階|年|か月|ヶ月|箇所|世帯|人目|ミリ|キロ|メートル|インチ|時間(?!外))')
+# A line that is only a number and its counter (`１９０人` under `在宅療養者等歯科訪問健診`) is a count, not an item.
+ONLY_COUNT = re.compile(r'^[0-9]+(?:人|件|回|台|日|校|園|館|名|戸|か所|箇所)$')
 GROUPED = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+')
 YEN_AMOUNT = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+円')
 # An amount printed against text spilling in from the next band (`44,406,439,217明許`).
@@ -788,8 +790,9 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                     code = digits[:cut]
                     break
         if (code is not None and label and (previous_code is None or int(code) != previous_code + 1)
-                and any((counts := document_quirk(name)) is not None and counts.module.counted(normalize(label[0].text), raw)
-                        for name in ('counted_cities', 'counted_rates'))):
+                and (ONLY_COUNT.match(raw)
+                     or any((counts := document_quirk(name)) is not None and counts.module.counted(normalize(label[0].text), raw)
+                            for name in ('counted_cities', 'counted_rates')))):
             entries[index] = (label, money, None, raw)
             code = None
         # Where the number before it is on another page or in another cell, the quirk says where the number ends.
@@ -1167,7 +1170,11 @@ def is_plain_name(layout: dict | None, item: Item) -> bool:
     """A name the document's settings declare to be an item although it contains a note word
     (`補充用備品` holds `充用`)."""
     names = (layout or {}).get(item.group.axis, {}).get('plain_names')
-    return bool(names) and any(normalize(name) in normalize(item.name) for name in names)
+    # The rest of the name outside the declared one must not read as a note itself: `不用額のうち繰越明許費分`
+    # is a 不用額 note although it holds the plain name `繰越明許費分`.
+    return bool(names) and any(normalize(name) in normalize(item.name)
+                               and kind_of(PAREN_TAIL.sub('', normalize(item.name).replace(normalize(name), ''))) is None
+                               for name in names)
 
 
 def heads_items(layout: dict | None, items_: list[Item], position: int) -> bool:
@@ -2297,6 +2304,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 previous.name += first.name
                 previous.lines += first.lines
                 previous.amounts += first.amounts
+            elif (previous is not None and mine
+                  and (headings := quirk((layout or {}).get(group.axis), 'headings')) is not None
+                  and headings.module.heads_over_page(layout, previous, mine[0])):
+                previous.role = 'node'  # a heading at the foot of a page, its items at the top of the next
+                previous.heading = True
             elif previous is not None and (tail := quirk((layout or {}).get(group.axis), 'name_tails_over_pages')) is not None:
                 while mine and tail.module.runs_on(previous, mine[0]):
                     first = mine.pop(0)
