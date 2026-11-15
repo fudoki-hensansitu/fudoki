@@ -128,7 +128,7 @@ def lay_notes(built) -> tuple[list[dict], list[dict], list[dict], set, list]:
             # The funding of the item (`（特定財源 9,533 一般財源 3,016,275）`), or its head count (`２６人`): no note on it.
             dropped_notes = built.__dict__.setdefault('dropped_notes', {})
             dropped_notes.setdefault(record['hint'], []).extend([*record['label'], *(g for run in record['runs'] for g in run)])
-            if record['runs'] and label[:1] in '(（':
+            if record['runs'] and label[:1] and label[:1] in '(（':
                 # The bracket that closes the note may be one word with its last amount (`84,789）`, 132021 2023):
                 # the amount's box takes in the bracket's character after it.
                 last = record['runs'][-1][-1]
