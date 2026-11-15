@@ -1025,18 +1025,6 @@
           "description": "全国地方公共団体コード（6桁）。"
         },
         {
-          "name": "name",
-          "type": "string",
-          "nullable": false,
-          "description": "最新の年度の事業の名前（当初予算の表記を優先。所管課の【】・[] を含む出典の表記のまま）。"
-        },
-        {
-          "name": "account_name",
-          "type": "string",
-          "nullable": false,
-          "description": "最新の年度の会計の名前。"
-        },
-        {
           "name": "first_year",
           "type": "integer",
           "nullable": false,
@@ -1081,23 +1069,17 @@
       "primary_key": "project_year_id",
       "indexes": [
         [
-          "project_id"
+          "project_id",
+          "fiscal_year"
         ],
         [
-          "fiscal_year",
-          "jurisdiction_code"
+          "fiscal_year"
         ],
         [
           "initial_expenditure_detail_id"
         ],
         [
           "settlement_expenditure_detail_id"
-        ],
-        [
-          "initial_expenditure_subject_id"
-        ],
-        [
-          "settlement_expenditure_subject_id"
         ]
       ],
       "columns": [
@@ -1114,46 +1096,10 @@
           "description": "事業。project の project_id。"
         },
         {
-          "name": "jurisdiction_code",
-          "type": "string",
-          "nullable": false,
-          "description": "全国地方公共団体コード（6桁）。"
-        },
-        {
           "name": "fiscal_year",
           "type": "integer",
           "nullable": false,
           "description": "会計年度（西暦）。"
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "nullable": false,
-          "description": "この年度の事業の名前（当初予算の表記を優先）。"
-        },
-        {
-          "name": "account_name",
-          "type": "string",
-          "nullable": false,
-          "description": "会計の名前。"
-        },
-        {
-          "name": "kan_name",
-          "type": "string",
-          "nullable": true,
-          "description": "款の名前。"
-        },
-        {
-          "name": "kou_name",
-          "type": "string",
-          "nullable": true,
-          "description": "項の名前。"
-        },
-        {
-          "name": "moku_name",
-          "type": "string",
-          "nullable": true,
-          "description": "目の名前。目の無い項の下の事業は NULL。"
         },
         {
           "name": "initial_expenditure_detail_id",
@@ -1166,30 +1112,6 @@
           "type": "string",
           "nullable": true,
           "description": "決算書の事業の行。expenditure_detail の detail_id。決算に無い年度は NULL。"
-        },
-        {
-          "name": "initial_expenditure_subject_id",
-          "type": "string",
-          "nullable": true,
-          "description": "当初予算書の事業の行が載る科目（目。目の無い項の下は項）。expenditure_subject の subject_id。当初予算に無い年度は NULL。科目の分野（COFOG）はこの ID で科目から引く。"
-        },
-        {
-          "name": "settlement_expenditure_subject_id",
-          "type": "string",
-          "nullable": true,
-          "description": "決算書の事業の行が載る科目（目。目の無い項の下は項）。expenditure_subject の subject_id。決算に無い年度は NULL。"
-        },
-        {
-          "name": "budget_yen",
-          "type": "integer",
-          "nullable": true,
-          "description": "当初予算額（円）。当初予算書の事業の行の金額。"
-        },
-        {
-          "name": "settled_yen",
-          "type": "integer",
-          "nullable": true,
-          "description": "支出済額（円）。決算書の事業の行の金額。"
         }
       ]
     },

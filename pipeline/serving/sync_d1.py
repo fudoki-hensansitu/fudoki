@@ -198,6 +198,7 @@ PARENT_SCOPE = {
     'expenditure_location': ('origin_id', 'expenditure_origin'),
     'evaluation_indicator': ('sheet_id', 'evaluation_sheet'),
     'evaluation_indicator_value': ('indicator_id', 'evaluation_indicator'),
+    'project_year': ('project_id', 'project'),
 }
 
 

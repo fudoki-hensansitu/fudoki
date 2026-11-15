@@ -109,6 +109,30 @@ def above(rows: list[float], y: float) -> float:
     return max((r for r in rows if r <= y + 1), default=y - 2)
 
 
+def unpadded_lines(words: list[Word]) -> list[Word]:
+    """`療養給付費・・` (中央区): a name in the 目's frame or a 節区分 cell is filled out to the cell's width with dots
+    printed in white. They are no part of the name. Only the dots that end a word with nothing set right after it are
+    the filling: `結核・` / `精神医療給付金` is one name, and `・子育て支援課・` is a department between dots."""
+    moved, gone = {}, set()
+    for line in lines(words):
+        runs = [[line[0]]]
+        for before, word in zip(line, line[1:]):
+            if word.x0 - before.x1 < word.y1 - word.y0:
+                runs[-1].append(word)
+            else:
+                runs.append([word])
+        for run in runs:
+            while len(run) > 1 and not run[-1].text.strip('・'):
+                gone.add(id(run.pop()))  # (the dots set as words of their own)
+            word = run[-1]
+            text = word.text.rstrip('・')
+            if text == word.text or not text or word.text.startswith('・'):
+                continue
+            width = (word.x1 - word.x0) / len(word.text)
+            moved[id(word)] = Word(text, word.x0, word.y0, word.x1 - (len(word.text) - len(text)) * width, word.y1)
+    return [moved.get(id(w), w) for w in words if id(w) not in gone]
+
+
 def split_cards(page: Page, left: float, right: float):
     """The page's outside words above the first block, its blocks (subject / funds / setsu / notes) in order, and
     the foot (under the frame)."""
@@ -131,6 +155,8 @@ def split_cards(page: Page, left: float, right: float):
         end = marks[index + 1][1] if index + 1 < len(marks) else bottom
         heading = {id(w) for w in line} if found != 'header' else set()
         words = [w for w in page.words if top <= (w.y0 + w.y1) / 2 < end and id(w) not in heading and id(w) not in empty]
+        if found in ('header', 'setsu'):
+            words = unpadded_lines(words)
         blocks.append((found if found != 'header' else 'subject', top, end, words, line))
     first = marks[0][1]
     outside = [w for w in page.words if (w.y0 + w.y1) / 2 < first and id(w) not in empty]
@@ -476,6 +502,33 @@ def place_page(page: Page, columns: Columns | None):
                 gap = following[0][0].y0 - max(w.y0 for w in rest)
                 if bare and coded and 8 < gap < 16:
                     heads.update({id(w): following[0][0].y0 - 6 for w in rest})
+            # A 目 the year drops prints no number, and its name wraps over two lines with its amounts set between
+            # them (`(目) 退職被保険者等` / `療養給付費  0  1  △1`, 中央区 R6): the name's lines go on one line, the
+            # amounts' line, so that the name is read whole and the rows under it stay rows of their own.
+            ruled = sorted(r.y0 for r in page.rules if not r.vertical and r.x0 <= left + FRAME_REACH
+                           and r.x1 >= columns.inner[0] - FRAME_REACH and s_top < r.y0 < s_bottom)
+            printed_rows = defaultdict(list)
+            for row in rows_of:
+                printed_rows[sum(y < min(w.y0 for w in row[0]) for y in ruled)].append(row)
+            marked_rows = {sum(y < w.y0 for y in ruled) for w in body if MARK.match(norm(w.text))}
+            for key, printed in printed_rows.items():
+                names = [[w for w in row[0] if (w.x0 + w.x1) / 2 < columns.inner[0]] for row in printed]
+                if key not in marked_rows or any(w.x1 > columns.inner[0] + 2 for line in names for w in line):
+                    continue
+                names = [line for line in names if line]
+                amounts = [w for row in printed for w in row[0] if (w.x0 + w.x1) / 2 >= columns.inner[0]]
+                if (len(names) < 2 or len(lines(amounts)) != 1
+                        or any(re.match(r'[0-9]', norm(min(line, key=lambda w: w.x0).text)) for line in names)):
+                    continue
+                first = min(names[0], key=lambda w: w.x0)
+                whole = Word(''.join(w.text for line in names for w in sorted(line, key=lambda w: w.x0)), first.x0,
+                             first.y0, max(w.x1 for line in names for w in line), first.y1)
+                gone = {id(w) for line in names for w in line}
+                for row in printed:
+                    row[0] = [w for w in row[0] if id(w) not in gone]
+                printed[0][0].insert(0, whole)
+                heads[id(whole)] = min(w.y0 for w in amounts)
+            rows_of = [row for row in rows_of if row[0]]
             for rest, level in rows_of:
                 row_level = LEVEL_HEADINGS[0] if '合計' in norm(''.join(w.text for w in rest)) else level
                 offset = {'款': 0, '項': level_width, '目': shift}[row_level if row_level in columns.levels else '目']
