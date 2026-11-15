@@ -31,7 +31,7 @@ beforeEach(() => {
     insert('evaluation_sheet', {
       sheet_id: H(String(i)), evaluation_id: EV, origin_id: 's1', jurisdiction_code: '131091', fiscal_year: 2024, page: i + 1,
       name: `子ども事業${i}`, account_name: '一般会計', kan_name: '民生費', kou_name: null, moku_name: null, jigyo_name: null,
-      department: null, division: null, budget_yen: 1000 * (i + 1), settled_yen: 900 * (i + 1), grade_label: null, direction: null, direction_code: code, expenditure_subject_id: null, expenditure_detail_id: null,
+      department: null, division: null, budget_yen: 1000 * (i + 1), settled_yen: 900 * (i + 1), grade_label: null, direction: null, direction_code: code, kan_code: null, kou_code: null, moku_code: null, initial_expenditure_subject_id: null, settlement_expenditure_subject_id: null,
     })
   insert('evaluation_indicator', { indicator_id: 'i1', sheet_id: H('0'), position: 1, name: '参加者数', unit: '人', definition: null, final_target_text: '100', final_target_year_text: '令和8年度' })
   insert('evaluation_indicator_value', { value_id: 'v1', indicator_id: 'i1', fiscal_year: 2024, target_text: '80', actual_text: '75' })
@@ -78,7 +78,7 @@ describe('事業評価の数（web だけの count_evaluation_sheets）', () => 
     insert('evaluation_sheet', {
       sheet_id: H('9'), evaluation_id: EV, origin_id: 's1', jurisdiction_code: '131091', fiscal_year: 2024, page: 9,
       name: '区分の無い事業', account_name: '一般会計', kan_name: '民生費', kou_name: null, moku_name: null, jigyo_name: null,
-      department: null, division: null, budget_yen: 1, settled_yen: 1, grade_label: null, direction: null, direction_code: null, expenditure_subject_id: null, expenditure_detail_id: null,
+      department: null, division: null, budget_yen: 1, settled_yen: 1, grade_label: null, direction: null, direction_code: null, kan_code: null, kou_code: null, moku_code: null, initial_expenditure_subject_id: null, settlement_expenditure_subject_id: null,
     })
     const year = { min: 2024, max: 2024 }
     const all = await callWebOp({ DB: db }, 'count_evaluation_sheets', { fiscal_year: year, where: { jurisdiction_code: { eq: ['131091'] } } })
@@ -110,7 +110,7 @@ describe('事業', () => {
   const P = H('a')
   const CHILD = H('c')
   beforeEach(() => {
-    sqlite.query(`UPDATE evaluation_sheet SET expenditure_detail_id = 'd-settled' WHERE sheet_id = ?`).run(H('0'))
+    insert('evaluation_sheet_project', { link_id: H('e'), sheet_id: H('0'), jurisdiction_code: '131091', fiscal_year: 2024, project_id: P, method: 'code' })
     sqlite.query(`UPDATE budget_measure SET expenditure_detail_id = 'd-initial' WHERE measure_id = ?`).run(H('5'))
     for (const [id, name, parent] of [[P, '子育て支援費', null], [CHILD, '子育て相談', P]] as const)
       insert('project', { project_id: id, jurisdiction_code: '131091', name, account_name: '一般会計', first_year: 2024, first_year_kind: 'before_coverage', last_year: null, last_year_kind: 'latest', parent_project_id: parent })
@@ -121,15 +121,14 @@ describe('事業', () => {
       })
   })
 
-  test('事業は年度と直下の事業を返し、評価シートと施策は expenditure_detail_id の検索で引く', async () => {
+  test('事業は年度と直下の事業を返し、評価シートはつなぎの表、施策は expenditure_detail_id の検索で引く', async () => {
     const body = ProjectOutput.parse(await (await get(`/v1/projects/${P}`)).json())
     expect(body.years.map((y) => y.fiscal_year)).toEqual([2024, 2026])
     expect(body.children.map((c) => c.project_id)).toEqual([CHILD])
     expect(Object.keys(body).sort()).toEqual(['children', 'project', 'years'])
-    const settled = body.years.flatMap((y) => (y.settlement_expenditure_detail_id ? [y.settlement_expenditure_detail_id] : []))
     const initial = body.years.flatMap((y) => (y.initial_expenditure_detail_id ? [y.initial_expenditure_detail_id] : []))
-    const sheets = await (await post('/v1/evaluations/sheets:search', { fiscal_year: { min: 2024, max: 2026 }, where: { expenditure_detail_id: { eq: settled } } })).json()
-    expect(sheets.sheets.map((s: { sheet_id: string }) => s.sheet_id)).toEqual([H('0')])
+    const sheets = await (await post('/v1/evaluations/sheets:search', { fiscal_year: { min: 2024, max: 2026 }, project_ids: [P] })).json()
+    expect(sheets.sheets.map((s: { sheet_id: string; project_ids: string[] }) => [s.sheet_id, s.project_ids])).toEqual([[H('0'), [P]]])
     const measures = await (await post('/v1/budget-proposals/measures:search', { fiscal_year: { min: 2024, max: 2026 }, where: { expenditure_detail_id: { eq: initial } } })).json()
     expect(measures.measures.map((m: { measure_id: string }) => m.measure_id)).toEqual([H('5')])
     expect((await get(`/v1/projects/${H('f')}`)).status).toBe(404)
