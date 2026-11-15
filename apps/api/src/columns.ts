@@ -278,15 +278,18 @@ LEFT JOIN expenditure_subject ${a}g ON ${a}g."subject_id" = ${a}p."parent_subjec
 const lines = () => ({ i: lineOf('i', 'y."initial_expenditure_detail_id"'), s: lineOf('s', 'y."settlement_expenditure_detail_id"') })
 
 /** 事業の年度の行を組む SELECT（y が事業の年度、p が事業、i・s が当初予算・決算の内訳）。extra は足す列 */
+// 事業 p を外側に固定する（CROSS JOIN）。自由にすると SQLite は年度の索引で全自治体のその年度の事業の年度を先に読み、
+// 自治体の条件を後から当てるので、1自治体の検索が全国分を読む（D1 が overloaded になった）。p を先にすると、自治体・親・事業の ID の
+// 索引で事業を絞り、事業の年度は (project_id, fiscal_year) の索引で引く
 const projectYearSelect = (extra = '') => {
   const { i, s } = lines()
-  return `SELECT y."project_year_id", y."project_id", p."jurisdiction_code", y."fiscal_year",
+  return `SELECT y."project_year_id", p."project_id", p."jurisdiction_code", y."fiscal_year",
   COALESCE(${i.name}, ${s.name}) AS "name", COALESCE(${i.account_name}, ${s.account_name}) AS "account_name",
   COALESCE(${i.kan_name}, ${s.kan_name}) AS "kan_name", COALESCE(${i.kou_name}, ${s.kou_name}) AS "kou_name", COALESCE(${i.moku_name}, ${s.moku_name}) AS "moku_name",
   y."initial_expenditure_detail_id", y."settlement_expenditure_detail_id",
   i."subject_id" AS "initial_expenditure_subject_id", s."subject_id" AS "settlement_expenditure_subject_id",
   i."amount_yen" AS "budget_yen", s."amount_yen" AS "settled_yen"${extra}
-FROM ${PROJECT_YEAR_BASE} y JOIN ${PROJECT_TABLE} p ON p."project_id" = y."project_id"
+FROM ${PROJECT_TABLE} p CROSS JOIN ${PROJECT_YEAR_BASE} y ON y."project_id" = p."project_id"
 ${i.join}
 ${s.join}`
 }
