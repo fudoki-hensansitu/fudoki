@@ -1741,6 +1741,10 @@ def layout_name_start(item: Item, hang_chars: int | None = None) -> float:
     if found is None:
         return _name_start(item)
     remaining = len(found.group())
+    line = item.lines[0]
+    head = normalize(line[0].text)
+    if len(line) > 1 and re.fullmatch(r'[0-9]{1,4}', head) and remaining > len(head) and line[1].x0 - line[0].x1 >= 2:
+        remaining = len(head)  # a number set apart from a name that begins with digits (`6 ５Ｇ通信…`), as `_measure` reads it
     for glyph in item.lines[0]:
         if remaining < len(glyph.text):
             prefix = glyph.text[:remaining]
