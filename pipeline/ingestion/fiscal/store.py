@@ -15,6 +15,7 @@ from concurrent.futures import ProcessPoolExecutor
 import json
 import multiprocessing
 import subprocess
+import sys
 import tempfile
 from pathlib import Path
 
@@ -92,6 +93,42 @@ def store_manifest(path: Path, since: str, *, dry_run: bool) -> dict:
     return {'manifest': str(path), 'tables': sorted(changed), 'uploaded': not dry_run}
 
 
+def mirrored(path: Path) -> tuple[dict, dict[str, dict]]:
+    """A manifest's table records as receipts, keyed like the receipts list."""
+    document = manifest.read(path)
+    return document, {storage.receipt_id(document, table['table_id']): table for table in document['tables']}
+
+
+def update_receipts(stored_paths: list[Path]) -> dict:
+    """Mirror the Git records into the receipts list in R2 (stage 1 of docs/prd/ingestion-receipts/dd.md).
+
+    The first run seeds it from every manifest, keeping only tables whose recorded bytes R2 holds. Later runs
+    replace the entries of the manifests this run stored; a manifest that failed keeps its previous entries,
+    since nothing of it was uploaded."""
+    receipts = storage.read_receipts()
+    seeded = receipts is None
+    if seeded:
+        receipts, stored_paths = {}, manifest.paths()
+    else:
+        # A deleted or renamed manifest leaves no path to walk, so its entries are dropped here.
+        prefixes = tuple(storage.receipt_id(manifest.read(path), '') for path in manifest.paths())
+        for ident in [ident for ident in receipts if not ident.startswith(prefixes)]:
+            del receipts[ident]
+    missing = []
+    for path in stored_paths:
+        document, records = mirrored(path)
+        prefix = storage.receipt_id(document, '')
+        for ident in [ident for ident in receipts if ident.startswith(prefix) and ident not in records]:
+            del receipts[ident]
+        for ident, table in records.items():
+            if not all(stored(reference['object']) for reference in manifest.table_references(table).values()):
+                missing.append(ident)
+                continue
+            receipts[ident] = table
+    storage.write_receipts(receipts)
+    return {'seeded': seeded, 'tables': len(receipts), 'missing': missing}
+
+
 def store_group(paths: list[Path], since: str, dry_run: bool) -> list[tuple[Path, dict | str]]:
     """Each manifest's report, or its error as text (a worker reports every manifest, then the caller fails)."""
     outcomes: list[tuple[Path, dict | str]] = []
@@ -119,6 +156,14 @@ def store(since: str, *, dry_run: bool = False) -> dict:
     found = dict(outcomes)
     reports = [found[path] for path in paths if isinstance(found[path], dict)]
     failures = [found[path] for path in paths if isinstance(found[path], str)]
+    if not dry_run:
+        # Only this (parent) process writes the list, once, after every upload.
+        # Nothing reads the list yet, so failing to write it must not fail the store (and skip the D1 sync).
+        try:
+            receipts = update_receipts([path for path in paths if isinstance(found[path], dict)])
+        except Exception as error:
+            receipts = {'error': str(error) or type(error).__name__}
+        print(json.dumps({'receipts': receipts}, ensure_ascii=False), file=sys.stderr, flush=True)
     if failures:
         raise SystemExit('\n'.join(failures))
     return {'since': since, 'dry_run': dry_run, 'manifests': [report for report in reports if report['tables']]}

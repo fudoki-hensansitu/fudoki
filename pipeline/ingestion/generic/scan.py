@@ -207,6 +207,9 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
             child = Word(child.text, min(ordered[-1].x1, child.x1), child.y0, child.x1, child.y1)
         ordered.append(child)
     merged: list[Word] = []
+    gap = float(spaced.value) if (spaced := document_quirk('spaced_digits')) is not None else JOIN_GAP
+    if spaced is not None:
+        ordered = [spaced.module.half_width(child) for child in ordered]
     for child in ordered:
         last = merged[-1] if merged else None
         if (last is not None and NUMERIC_RUN.fullmatch(_text(child.text)) and NUMERIC_RUN.fullmatch(_text(last.text))
@@ -214,8 +217,8 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
                 # only crosses the first character's box (`1,981,045,000` over a rule 2pt from its left) does not
                 and not any(last.x1 - min(2, (last.x1 - last.x0) / 2) < x <= child.x0 + PADDLE_REACH for x in cuts)
                 # (a comma, or a minus sign set apart from its digits `△ 15,673,555`, sits farther from its neighbour)
-                and child.x0 - last.x1 <= (2 * JOIN_GAP if last.text.endswith(',') or child.text.startswith(',')
-                                           or re.fullmatch(r'[△▲−–-]', _text(last.text)) else JOIN_GAP)
+                and child.x0 - last.x1 <= (2 * gap if last.text.endswith(',') or child.text.startswith(',')
+                                           or re.fullmatch(r'[△▲−–-]', _text(last.text)) else gap)
                 * max(last.y1 - last.y0, child.y1 - child.y0)):
             merged[-1] = Word(last.text + child.text, last.x0, min(last.y0, child.y0), max(last.x1, child.x1),
                               max(last.y1, child.y1))
@@ -446,11 +449,24 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                     # Vision's word ranges may omit a minus whose line reading is intact.
                     # One complete number wholly inside a ruled cell outranks incomplete pieces.
                     pieces = None
+                if keep_marks and stacked(item, parts.get(item['id'])):
+                    # A text document's header cell prints its words a line each, a character over a character
+                    # (`継` `繰` `繰` down the cell of 継続費及び繰越事業費繰越額): Paddle reads the column as one
+                    # vertical line. Each character is a word of its own line, as the text layer of such a page reads it.
+                    words += parts[item['id']]
+                    continue
                 if keep_marks:
                     pieces = with_mark(item, pieces)
                 words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])],
                                      line_cuts(detected, item['bbox_pdf_pt']) if row_gaps else cuts, reach)
     return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
+
+
+def stacked(item: dict, pieces: list[Word] | None) -> bool:
+    """A Paddle line read down a column: a box taller than wide, its characters one under another."""
+    x0, y0, x1, y1 = item['bbox_pdf_pt']
+    return bool(pieces) and len(pieces) > 1 and y1 - y0 > 1.5 * (x1 - x0) and all(
+        len(p.text) == 1 for p in pieces) and all(b.y0 >= (a.y0 + a.y1) / 2 for a, b in zip(pieces, pieces[1:]))
 
 
 def line_cuts(detected: pdf_rules.PageRules, box: list[float] | None) -> list[float]:
@@ -845,7 +861,9 @@ def drop_readings(observation: dict, rules: list[dict] | None) -> dict:
     """OCR readings that read again the marks another reading already covers (two overlapping ink re-reads,
     `13億用料及` over `13使用料及`), as the conversion's options declare them from the rendered page
     (`dropped_readings`: page, observation id and the text read). The reading and its words are left out; one
-    not found as declared stops the conversion."""
+    not found as declared stops the conversion. A dropped re-read declared `restores` gives back the page readings it
+    replaced (its region's `supersedes`): the re-read glued marks the page reading had read apart (`81多様な…` over the
+    page's `8` and `1多様な…`, 港区 R7). Its region must hold nothing else then, kept or dropped without `restores`."""
     if not rules:
         return observation
     drop = {(r['page'], r['observation_id']): r for r in rules}
@@ -855,16 +873,23 @@ def drop_readings(observation: dict, rules: list[dict] | None) -> dict:
         regions = []
         for region in p['regions']:
             kept = []
+            restored, plain = False, False
             for o in region['observations']:
                 rule = drop.get((p['page_number'], o['id']))
                 if rule is not None:
                     if o['raw_text'] != rule['observed']:
                         raise ValueError(f'A dropped reading differs from the observation: {rule["id"]}')
                     found.add((p['page_number'], o['id']))
+                    restored = restored or bool(rule.get('restores'))
+                    plain = plain or not rule.get('restores')
                     continue
                 if (p['page_number'], o.get('parent_id')) in drop:
                     continue
                 kept.append(o)
+            if restored:
+                if kept or plain:
+                    raise ValueError(f'A restoring dropped reading shares its region with other readings: p{p["page_number"]} {region.get("id")}')
+                region = {**region, 'supersedes': []}
             regions.append({**region, 'observations': kept})
         pages_.append({**p, 'regions': regions})
     if missing := sorted(r['id'] for key, r in drop.items() if key not in found):
@@ -892,6 +917,21 @@ def add_code_readings(observed: list[Page], readings: list[dict] | None, key: st
             if any(w.x0 < n1 and n0 < w.x1 and w.y0 < m1 and m0 < w.y1 for w in words[reading['page']]):
                 raise ValueError(f'A name reading overlaps a reading: {reading["id"]}')
             words[reading['page']].append(Word(reading['name'], n0, m0, n1, m1))
+    return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
+
+
+def add_name_readings(observed: list[Page], readings: list[dict] | None) -> list[Page]:
+    """Names OCR left unread (`name_readings`), as the conversion's options declare them from the rendered page (page,
+    box in PDF points, the printed name): a line of a breakdown whose amount OCR read alone (港区 R7 当初予算の説明,
+    `・麻布地区区長と区政を語る会 (12)`, whose name the page reading missed). The box must hold no reading."""
+    words = {p.number: list(p.words) for p in observed}
+    for reading in readings or ():
+        x0, y0, x1, y1 = reading['box']
+        if reading['page'] not in words:
+            raise ValueError(f'A name reading needs a scoped page: {reading["id"]}')
+        if any(w.x0 < x1 and x0 < w.x1 and w.y0 < y1 and y0 < w.y1 for w in words[reading['page']]):
+            raise ValueError(f'A name reading overlaps a reading: {reading["id"]} {reading["box"]}')
+        words[reading['page']].append(Word(reading['name'], x0, y0, x1, y1))
     return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
 
 
@@ -1189,6 +1229,7 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
     printed = add_code_readings(printed, options.get('code_readings'))
     printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
                                 'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')
+    printed = add_name_readings(printed, options.get('name_readings'))
     if (marks := document_quirk('bracket_marks')) is not None:
         printed = marks.module.drop(printed)
     return read_units(printed, options.get('unit_readings')), observation, variants

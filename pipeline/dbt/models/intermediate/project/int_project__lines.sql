@@ -7,7 +7,7 @@
 with recursive business as (
     select d.detail_id, d.parent_detail_id, d.subject_id, d.name, d.amount_yen,
         e.jurisdiction_code, e.fiscal_year, e.document_kind, e.account_name,
-        coalesce(d.kan_name, '') as kan_name, coalesce(d.kou_name, '') as kou_name, coalesce(d.moku_name, '') as moku_name,
+        coalesce(sp.kan_name, '') as kan_name, coalesce(sp.kou_name, '') as kou_name, coalesce(sp.moku_name, '') as moku_name,
         row_number() over (
             partition by coalesce(d.parent_detail_id, d.subject_id), d.name
             order by l.origin_id, l.source_page, l.source_y0, l.source_line, d.detail_id
@@ -18,6 +18,7 @@ with recursive business as (
         ) as print_order
     from {{ ref('expenditure_detail') }} d
     join {{ ref('expenditure') }} e using (expenditure_id)
+    join {{ ref('int_fiscal__subject_path') }} sp on sp.subject_id = d.subject_id
     left join (
         select line_id, min(origin_id) as origin_id, min(source_page) as source_page, min(source_y0) as source_y0, min(source_line) as source_line
         from {{ ref('expenditure_location') }} group by line_id

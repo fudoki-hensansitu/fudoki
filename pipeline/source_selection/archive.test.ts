@@ -156,6 +156,20 @@ test('additive replacement retains three exact keys and bytes and puts only the 
   expect(sourceSelectionsSchema.safeParse([result]).success).toBe(true)
 })
 
+test('a replacement that adds parts to a document saved as one file keeps its unnumbered key', async () => {
+  // 栃木県の決算 R3: 一般会計の1冊だけを保存したあとで、OCR で読む特別会計の冊を足す
+  const previous = sourceSelectionsSchema.parse([{ ...withFiles([pdf]), archive: { bucket: 'fudoki-inputs', candidate_id: 'one',
+    archived_at: '2026-11-15T00:00:00Z', files: [{ key: 'fiscal/source-selection/132047/2024/initial.pdf', sha256: pdf.sha256!, final_url: pdf.download_url }] } }])[0]!
+  const replacement = withFiles([pdf, second])
+  expect(planFiles([replacement], previous).map(item => item.key).sort()).toEqual([
+    'fiscal/source-selection/132047/2024/initial-1.pdf', 'fiscal/source-selection/132047/2024/initial.pdf'])
+  const fake = transport()
+  const result = (await archiveGroup([replacement], fake.api, previous))[0]!
+  expect(fake.uploads.map(item => item.key)).toEqual(['fiscal/source-selection/132047/2024/initial-1.pdf'])
+  expect(fake.removed).toHaveLength(0)
+  expect(sourceSelectionsSchema.safeParse([result]).success).toBe(true)
+})
+
 test('replacement collision, changed original, invalid target and retained format stop without altering either selection', async () => {
   for (const reason of ['collision', 'changed', 'target', 'format', 'upload']) {
     const { previous, replacement, newBody } = additiveReplacement()
