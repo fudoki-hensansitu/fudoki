@@ -212,8 +212,25 @@ def _white_ground(raw, handle) -> bool:
     red, green, blue, alpha = (ctypes.c_uint() for _ in range(4))
     if not raw.FPDFPageObj_GetFillColor(handle, red, green, blue, alpha):
         return False
-    return (red.value, green.value, blue.value, alpha.value) == (255, 255, 255, 255) \
-        and raw.FPDFPath_CountSegments(handle) <= 5
+    if (red.value, green.value, blue.value, alpha.value) != (255, 255, 255, 255):
+        return False
+    # A rectangle: straight segments whose points take two x and two y values (a triangle's bounds are no ground),
+    # drawn without rotation or shear.
+    count = raw.FPDFPath_CountSegments(handle)
+    if not 4 <= count <= 5:
+        return False
+    xs, ys = set(), set()
+    for index in range(count):
+        segment = raw.FPDFPath_GetPathSegment(handle, index)
+        if raw.FPDFPathSegment_GetType(segment) == raw.FPDF_SEGMENT_BEZIERTO:
+            return False
+        x, y = ctypes.c_float(), ctypes.c_float()
+        raw.FPDFPathSegment_GetPoint(segment, x, y)
+        xs.add(round(x.value, 2)); ys.add(round(y.value, 2))
+    matrix = raw.FS_MATRIX()
+    if not raw.FPDFPageObj_GetMatrix(handle, matrix) or abs(matrix.b) > 1e-6 or abs(matrix.c) > 1e-6:
+        return False
+    return len(xs) == 2 and len(ys) == 2
 
 
 def _drawn(rule, paths) -> bool:
