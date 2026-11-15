@@ -2275,7 +2275,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 steps = (start(item) - item.group.x0 - origin) / (chars * height)
                 item.level = floor(steps + .4)
     if pattern == "indent":
-        subject_pattern.learn_levels(all_items, quirk(document, 'codeless_name_levels'))
+        subject_pattern.learn_levels(all_items, quirk(document, 'codeless_name_levels'),
+                                     quirk(document, 'stray_subject_starts'))
     for axis, hints in (layout or {}).items():
         if (edge := quirk(hints, 'column_edge')) is not None:
             edge.module.shift(all_items, axis)

@@ -102,6 +102,7 @@
     "codeless_beside_repeated_code": "ingestion.generic.patterns.quirks.codeless_beside_repeated_code",
     "codeless_name_levels": "ingestion.generic.patterns.quirks.codeless_name_levels",
     "column_edge": "ingestion.generic.patterns.quirks.column_edge",
+    "stray_subject_starts": "ingestion.generic.patterns.quirks.stray_subject_starts",
     "counted_cities": "ingestion.generic.patterns.quirks.counted_cities",
     "full_width_names": "ingestion.generic.patterns.quirks.full_width_names",
     "deducted_formulas": "ingestion.generic.patterns.quirks.deducted_formulas",
