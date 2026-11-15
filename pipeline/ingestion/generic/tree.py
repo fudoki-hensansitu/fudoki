@@ -569,6 +569,12 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
         if label and not money and UNIT_NOTATION.fullmatch(line_text):
             continue  # `(単位:円・税抜)` printed over a column names the unit; it is no item of the column
         code, name = _split_code(line_text)
+        if (code is None and len(label) > 1 and margins is not None and margins & set(_margins(label))
+                and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) and label[1].x0 - label[0].x1 >= 2
+                and AGE.match(normalize(text(label[1:])))):
+            # `1` `歳計現金利子`: the number is a word of its own in the column's number margin, so the 歳 after it
+            # starts the name and is no age (`1歳6箇月児…`, joined to the number, stays a name).
+            code, name = normalize(label[0].text), normalize(text(label[1:]))
         raw_text = text(label).strip()
         if code is None and numbers is not None and (held := numbers.module.split(raw_text, numbers.value)) is not None:
             code, name = normalize(held[0]), normalize(held[1])

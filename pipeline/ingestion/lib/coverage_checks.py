@@ -28,7 +28,8 @@ def _word_digits(text):
 # adopted tables keep it as an observation, not as amount rows, and every
 # converter asserts its shape. Digits sharing the total row's baseline are
 # classified as control totals, counted visibly, never silently passed.
-TOTAL_LABELS = frozenset({'歳出合計', '歳出総計'})
+# A table reads one direction's pages (`run_pages`), so a revenue table's scope prints only 歳入合計.
+TOTAL_LABELS = frozenset({'歳出合計', '歳出総計', '歳入合計', '歳入総計'})
 
 
 # A glued percent sign is never an adopted amount: converters keep rates as

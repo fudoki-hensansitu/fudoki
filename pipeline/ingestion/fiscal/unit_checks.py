@@ -1,4 +1,4 @@
-"""Unit check of a finished PDF node table: the 款 sum against the printed 歳出合計, and the digits of the unit.
+"""Unit check of a finished PDF node table: the 款 sum against the printed 歳出合計 (歳入合計), and the digits of the unit.
 
 A check module (ADR 0027): it only decides pass/fail and never builds or writes a table. Tree
 sums cannot see a unit mistake (every parent and child is wrong by the same 1,000), so this is the
@@ -73,7 +73,8 @@ def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict]) -> list[
         line.sort(key=lambda item: item[0][0])
     found = []
     for (page, top), line in lines.items():
-        if not any(label in ''.join(text for _, text in line) for label in TOTAL_LABELS):
+        label = next((label for label in TOTAL_LABELS if label in ''.join(text for _, text in line)), None)
+        if label is None:
             continue
         # On a spread the label is printed on the left page and the amounts go on across the right page,
         # on the same baseline, with nothing but numbers there (and the kind word a stacked carry-over cell
@@ -113,7 +114,7 @@ def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict]) -> list[
                     continue
                 header, unit = next(iter(placed))
                 found.append({'kind': 'total amount', 'page': row_page, 'text': text, 'header': header, 'unit': unit,
-                              'label': '歳出合計', 'box': [min(b[0] for b, _ in run), min(b[1] for b, _ in run),
+                              'label': label, 'box': [min(b[0] for b, _ in run), min(b[1] for b, _ in run),
                                                          right, max(b[3] for b, _ in run)]})
     return found
 

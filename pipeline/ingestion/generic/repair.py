@@ -253,7 +253,9 @@ def _without_hidden(words: list[Word], glyphs) -> list[Word]:
             near = [(abs((x0 + x1) / 2 - cx), visible) for cell in (-1, 0, 1)
                     for (x0, y0, x1, y1), value, visible in grid[int(cx // 20) + cell]
                     if value == char and abs((x0 + x1) / 2 - cx) <= max(2.0, width) and y0 - 2 <= cy <= y1 + 2]
-            flags.append(not near or min(near)[1])
+            # A character drawn twice at the same place, once hidden and once shown (a hidden copy of the page under
+            # its visible text, 品川区 R7 決算書 p97), is shown: of the nearest drawings, any visible one keeps it.
+            flags.append(not near or any(visible for distance, visible in near if distance <= min(near)[0] + .5))
         start = None
         for index, flag in enumerate(flags + [False]):
             if flag and start is None:
