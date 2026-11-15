@@ -1,0 +1,105 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "092011",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6d9cb086bb6da9af077c799ddf90677837fdd162192bc08ee34eddbaf8ea8549"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "区分": {
+                  "heading": "款"
+                },
+                "令和5年度／決算額": {
+                  "heading": "決算額"
+                },
+                "令和4年度／決算額": {
+                  "heading": "前年度決算額"
+                },
+                "令和5年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和4年度／構成比": {
+                  "kind": "ignore"
+                },
+                "増減／増減額": {
+                  "heading": "比較"
+                },
+                "増減／増減率": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {}
+          },
+          "quirks": {
+            "code_run_into_name": true,
+            "glued_subject_codes": true,
+            "rounded_items": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "593d42bc2b6b84c8b8ea684f685f77c0f6e79ac220c9d37b98dc6c3cb2da9b6c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 230,699,922 と印字の「合計」230,699,922 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/092011/2023/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "2e85377e1547ee0f8e7a072a58b902eaefcd722d13a70c07bf9c5643ec3e7832",
+          "bytes": 2930
+        },
+        "row_count": 13
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/092011/2023/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "05fa0b9f02d258484d2e5f88a2c7d59aa23baa91c16c90ce9fa847e209f06c12",
+          "bytes": 2805
+        },
+        "row_count": 39
+      }
+    }
+  ]
+}
