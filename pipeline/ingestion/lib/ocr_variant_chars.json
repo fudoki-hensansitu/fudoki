@@ -187,6 +187,12 @@
       "observed_char": "·",
       "corrected_char": "・",
       "reason": "国・都支出金返納金などの中点。U+00B7 は日本の科目名で使わず、中点は U+30FB。"
+    },
+    {
+      "id": "variant-30",
+      "observed_char": "讓",
+      "corrected_char": "譲",
+      "reason": "株式等譲渡所得割交付金・譲与税などの譲。日本の科目名では 讓 を正字として使わない。"
     }
   ]
 }

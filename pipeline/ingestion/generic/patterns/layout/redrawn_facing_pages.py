@@ -127,7 +127,12 @@ def join_wrapped_names(words: list[Word], xs: list[float], rules: list[Rule], li
     joined: dict[int, Word] = {}  # a name's first line by the index of its first word
     last = None  # (index of the name's first word, the last line's word)
     for index, w in sorted(((i, w) for i, w in enumerate(words) if name(w)), key=lambda p: (p[1].y0, p[1].x0)):
-        if last is not None and not coded(w) and -(w.y1 - w.y0) / 2 < w.y0 - last[1].y1 < (w.y1 - w.y0) / 2 \
+        height = w.y1 - w.y0
+        # (the rest of the last line, read as a word of its own after a box the scan read down over two lines:
+        # `護` over `費`, then `合算療養` right of `護`, 131032)
+        beside = (abs((w.y0 + w.y1) / 2 - (last[1].y0 + last[1].y1) / 2) <= height / 2
+                  and last[1].x0 < w.x0 and w.x0 - last[1].x1 <= height) if last is not None else False
+        if last is not None and not coded(w) and (-height / 2 < w.y0 - last[1].y1 < height / 2 or beside) \
                 and not ruled((last[1].y0 + last[1].y1) / 2, (w.y0 + w.y1) / 2):
             first = joined[last[0]]
             joined[last[0]] = Word(first.text + w.text, first.x0, first.y0, max(first.x1, w.x1), first.y1)

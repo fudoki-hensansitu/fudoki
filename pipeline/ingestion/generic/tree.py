@@ -32,6 +32,8 @@ from ingestion.generic.layout import (SIGNS, SUBJECT_LEVELS, UNIT_CELL, Band, Gl
                                       normalize, runs, text)
 
 # A leading item number; the separator after it (`1.議会費`, `1．`) is not part of the name.
+# The line a book prints for the subjects it dropped this year, with last year's amounts (`(廃目整理)`, `(廃項整理)`).
+ABOLISHED = re.compile(r'[(（]廃([款項目節])整理[)）]')
 CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]|$))?(?=\D|$)')
 UNIT_NOTATION = re.compile(r'[(（]単位[:：][^()（）]*[)）]')
 BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
@@ -234,10 +236,10 @@ BULLET = re.compile(r'^[〇○●◎□■◇◆]')
 CARRY_OVER_TAG = re.compile(r'[(（]?(?:一部)?(?:繰越明許費?|逓次繰越|事故繰越し?)[)）]?')
 # Every parenthesised remark at the end of a name (`委託料（…へ流用△280,000）（…から流用1,815,000）`).
 PAREN_TAIL = re.compile(r'(?:[(（][^()（）]*[)）])+$')
-# A number printed against a counter word (`110番`, `3歳児`, `3階`, `2025年`) is a count in a name.
+# A number printed against a counter word (`110番`, `3歳児`, `3階`, `2025年`, `2人目加算`) is a count in a name.
 # An item number glued to a year it is followed by (`42025年…`: 4 and 2025年).
 YEAR_LED = re.compile(r'^([0-9]{1,2})(?:19|20)[0-9]{2}年')
-COUNTED = re.compile(r'^[0-9０-９]+(?:番(?!号)|歳|階|年|か月|ヶ月|箇所|世帯|ミリ|キロ|メートル|インチ|時間(?!外))')
+COUNTED = re.compile(r'^[0-9０-９]+(?:番(?!号)|歳|階|年|か月|ヶ月|箇所|世帯|人目|ミリ|キロ|メートル|インチ|時間(?!外))')
 # A line that is only a number and its counter (`１９０人` under `在宅療養者等歯科訪問健診`) is a count, not an item.
 ONLY_COUNT = re.compile(r'^[0-9]+(?:人|件|回|台|日|校|園|館|名|戸|か所|箇所)$')
 GROUPED = re.compile(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+')
@@ -838,6 +840,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                 continue
             if not start - 3 <= entries[i][0][0].x0 <= name_start + slack:
                 return False
+            if ABOLISHED.fullmatch(normalize(text(entries[i][0]))):
+                return False  # the dropped subjects' amounts of last year (`(廃目整理)`) under the last 目: an item of its own
             if any(entries[i][0][0].text.startswith(mark) for mark in marks):
                 return False  # a line led by a declared mark (`○1 消耗品費` under `10 需用費`, 東大和市) is an item of its own
             # A name goes on a second line because it did not fit with the amount: the line before runs up
@@ -918,7 +922,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         whole = normalize(text(line_of(label, money)))
         if (previous is not None and code is None and whole[:1] in '(（' and whole[-1:] in ')）'
                 and not (amount_brackets and money) and not whole.startswith(note_prefixes(settings))
-                and not (bracket_heading is not None and not money and bracket_heading.module.heads(entries, index))):
+                and not (bracket_heading is not None and not money and bracket_heading.module.heads(entries, index))
+                and not ABOLISHED.fullmatch(whole)):
             previous.lines.append(label + [g for run in money for g in run])
             previous.name += whole  # a parenthesised remark on the previous item, not an amount of it
             continue
@@ -956,6 +961,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         marked = bool(label) and re.match(r'[〇○●◎□■◇◆]', label[0].text) is not None
         left_slack = remainder.module.slack(label) if label and remainder is not None else 3
         wrapped = (previous is not None and code is None and label and not previous.amounts and not marked
+                   and not ABOLISHED.fullmatch(label_text)
                    and not (beside(label) and any(beside(line) and not beside(line) & beside(label) for line in previous.lines))
                    and label[0].x0 >= previous.lines[0][0].x0 - left_slack
                    and not (headings is not None and headings.module.indented_under(label, previous))
@@ -1408,12 +1414,17 @@ def untitled(group: Group) -> bool:
     first = group.bands[0]
     if group.mode in ('bands', 'names') and first.header[-1] in SUBJECT_LEVELS[1:]:
         return True
+    if group.mode == 'indent' and len(group.bands) == 1 and first.header[-1] in SUBJECT_LEVELS[1:]:
+        return True  # one column of the 項 and the 目 (`項 目`, 栃木県の予算書) under a title naming the 款
     return first.header[-1] == '款項目' and not first.words and not first.stripped_codes
 
 
 def title_shift(group: Group) -> bool:
-    """Whether the group's columns sit one level below a title's 款 (an `indent` group's columns include the 款's)."""
-    return untitled(group) and group.mode != 'indent'
+    """Whether the group's columns sit one level below a title's 款 (an `indent` group's columns include the 款's,
+    unless its one column is headed by a level below: `項 目`)."""
+    if group.mode == 'indent':
+        return len(group.bands) == 1 and bool(group.bands[0].header) and group.bands[0].header[-1] in SUBJECT_LEVELS[1:]
+    return untitled(group)
 
 
 def heading_names(logical: Logical) -> dict[tuple[str, str], str]:
@@ -1657,6 +1668,8 @@ def repeats(previous: Item, item: Item, ocr: bool = False) -> bool:
     Printed text repeats the code (and the name). For OCR (`scan.near_code`), a line of codes only (`10 2 3`
     at the top of a page) repeats the open heading when its code is near, and a line with a name of three
     characters or more repeats it when its code is near and its name agrees to one character."""
+    if item.code is None and ABOLISHED.fullmatch(normalize(item.name or '')):
+        return False  # each dropped subject prints a line of its own (`(廃項整理)` twice, for two 項)
     if previous.code is None and item.code is None:
         # Without codes nothing backs the one character `same_heading` allows: 営業外費用 is no misread of the
         # open 営業費用 (132012 下水道事業会計), so a line repeats the heading only by the same name.
@@ -2111,12 +2124,18 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             for item in found[id(group)]:
                 previous = kept[-1] if kept else None
                 # (Under stacked titles a 目 abolished this year prints no number: `退職被保険` / `者等療養費` `0 1 △1`.)
+                abolished = document_quirk('unnumbered_abolished_names')
                 if (previous is not None and previous.name
                         and (previous.code is not None or (id(previous) in column_amount_items and (
                             logical.level_titles is not None
-                            or (document_quirk('unnumbered_abolished_names') is not None and not TOTAL.search(previous.name)))))
+                            or (abolished is not None and not TOTAL.search(previous.name))))
+                             # (its amounts on the name's last line: `(退職被保険者等` / `療養給付費) － 100 △100`)
+                             or (abolished is not None and id(previous) not in column_amount_items
+                                 and id(item) in column_amount_items and not TOTAL.search(previous.name)))
+                        and not (abolished is not None and id(previous) in column_amount_items
+                                 and not abolished.module.same_row(logical, previous, item, _cell))
                         and previous.role == item.role == 'node' and item.code is None and item.name
-                        and not item.amounts
+                        and not item.amounts and not ABOLISHED.fullmatch(item.name)
                         # (a line that opens with a bracket starts an item of its own: `bracketed_subjects`)
                         and not (bracketed is not None and item.lines and bracketed.module.marked(item.lines[0]))
                         # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)

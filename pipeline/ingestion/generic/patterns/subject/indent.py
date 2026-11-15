@@ -2,7 +2,7 @@ from collections import Counter, defaultdict
 import re
 from ingestion.generic.layout import SUBJECT_LEVELS, normalize
 from ingestion.generic.patterns import document_quirk
-from ingestion.generic.tree import subject_header
+from ingestion.generic.tree import ABOLISHED, subject_header, title_shift
 
 
 def select(bands):
@@ -130,11 +130,16 @@ def learn_levels(all_items, codeless=None):
         for group in ordered:
             if group.subject and group.mode == 'indent':
                 group.levels = len(centres) or 1
+                above = 1 if title_shift(group) else 0  # a column of the 項 and the 目 under a title naming the 款
                 for item in found[id(group)]:
                     if item.level == -1:
                         continue  # a title the layout read (`level_titles`): its level is the one it names
                     item.level = min(range(len(centres)), key=lambda i: abs(centres[i] - edge(item))) if centres else 0
-                    item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
+                    # The line of the subjects dropped this year names their level (`(廃項整理)`), wherever it starts.
+                    if item.code is None and (dropped := ABOLISHED.fullmatch(normalize(item.name or ''))) is not None \
+                            and dropped.group(1) in SUBJECT_LEVELS and 0 <= SUBJECT_LEVELS.index(dropped.group(1)) - above < len(centres):
+                        item.level = SUBJECT_LEVELS.index(dropped.group(1)) - above
+                    item.level_name = SUBJECT_LEVELS[item.level + above] if item.level + above < len(SUBJECT_LEVELS) else None
     # A 項・目 printed without its code: the quirk `codeless_name_levels`.
     if codeless is not None:
         codeless.module.relevel(coded_, nodes_, centres, edge)

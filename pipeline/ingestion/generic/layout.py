@@ -348,8 +348,10 @@ def _joined(horizontals):
     return joined
 
 
-def _header_bottom(page: Page, frame, one_row: bool = False) -> float:
-    """`one_row`: the quirk `one_row_header` (the header is one ruled row, ended by the first full rule)."""
+def _header_bottom(page: Page, frame, one_row: bool = False, title: bool = False) -> float:
+    """`one_row`: the quirk `one_row_header` (the header is one ruled row, ended by the first full rule). `title`: the
+    header option `ignore_frame_title`; a first row that no column rule crosses is the title box (`3 歳出` / `第 1款
+    議会費`, 栃木県の予算書), and its digits do not open the body."""
     x0, x1, top, bottom, _ = frame
     horizontals = _joined([r for r in page.rules if not r.vertical])
     apart = document_quirk('stacked_tables_apart')
@@ -362,7 +364,11 @@ def _header_bottom(page: Page, frame, one_row: bool = False) -> float:
                       if h.x0 <= x0 + reach and h.x1 - x0 >= .6 * (x1 - x0) and top - 1 <= h.y0 <= bottom + 1)
     if len(full) < 2:  # two ruled halves of one frame (see `_frames`): the rules that touch either end
         full = sorted({h.y0 for h in horizontals if (h.x0 <= x0 + 3 or h.x1 >= x1 - 3) and top - 1 <= h.y0 <= bottom + 1})
-    digits = [w.y0 for w in page.words if x0 < (w.x0 + w.x1) / 2 < x1 and top + 1 < w.y0 < bottom
+    above = top + 1
+    if title and (opening := [y for y in full if top + 1 < y]) and not any(
+            r.vertical and x0 + 3 < r.x0 < x1 - 3 and r.y0 < (top + opening[0]) / 2 < r.y1 for r in page.rules):
+        above = opening[0]  # the title box: no column rule runs through it
+    digits = [w.y0 for w in page.words if x0 < (w.x0 + w.x1) / 2 < x1 and above < w.y0 < bottom
               and re.search(r'[0-9０-９]', w.text)]
     first = min(digits) if digits else bottom
     candidates = [y for y in full if top + 1 < y <= first + 1]
@@ -438,26 +444,27 @@ def page_bands(page: Page, spread: dict | None = None,
     for frame in _frames(page, spread, staircase, bool((header or {}).get('open_frame'))):
         x0, x1, top, bottom, edges = frame
         first_band = len(bands)
-        header_bottom = _header_bottom(page, frame, one_row)
-        known = _carried_header(page, frame, carry) if carry is not None else None
+        header_bottom = _header_bottom(page, frame, one_row, bool((header or {}).get('ignore_frame_title')))
+        title_ignored = bool((header or {}).get('ignore_frame_title'))
+        # Under a title box the headings start below it (栃木県の予算書: the first page of a 款).
+        known = _carried_header(page, frame, carry, header_bottom if title_ignored else None) if carry is not None else None
         if known is not None:
             header_bottom = top
-        elif carry is not None:
+        elif carry is not None and not title_ignored:  # (a title box makes the header stand lower than the frame's top)
             header_bottom = _carried_bottom(page, frame, carry, header_bottom)
-        title_ignored = bool((header or {}).get('ignore_frame_title'))
         # Header cells: the rule-bounded rectangle around each header word.
         cells: dict[tuple, list[Word]] = defaultdict(list)
         for index, word in split:
             cx, cy = (word.x0 + word.x1) / 2, (word.y0 + word.y1) / 2
             if not (x0 < cx < x1 and top < cy < header_bottom):
                 continue
-            used.add(index)
             left = max([r.x0 for r in verticals if r.x0 <= cx and _crosses(r, cy)] or [x0])
             right = min([r.x0 for r in verticals if r.x0 >= cx and _crosses(r, cy)] or [x1])
             upper = max([h.y0 for h in horizontals if h.y0 <= cy and _covers(h, cx)] or [top])
             lower = min([h.y0 for h in horizontals if h.y0 >= cy and _covers(h, cx)] or [header_bottom])
             if title_ignored and left <= x0 + 3 and right >= x1 - 3:
-                continue  # the title of the page: it names no column, only the whole frame
+                continue  # the title of the page: it names no column, only the whole frame (a 款 title is read outside)
+            used.add(index)
             cells[left, right, upper, lower].append(word)
         header_cells = sorted(((key, normalize(reading(ws))) for key, ws in cells.items()), key=lambda c: c[0][2])
         if staircase:
@@ -508,15 +515,16 @@ def page_bands(page: Page, spread: dict | None = None,
     return bands, outside
 
 
-def _carried_header(page: Page, frame, carry: list) -> list | None:
+def _carried_header(page: Page, frame, carry: list, below: float | None = None) -> list | None:
     """The header cells of the latest frame in `carry` drawn with the same column rules, when this frame's top prints
-    fewer than half of that frame's heading words (see `page_bands`)."""
+    fewer than half of that frame's heading words (see `page_bands`). `below`: the header read under a title box ends
+    there (`header.ignore_frame_title`), and the top runs down to it."""
     x0, x1, top, _, edges = frame
     for known_edges, height, cells, words in reversed(carry):
         if len(known_edges) != len(edges) or any(abs(a - b) > 2 for a, b in zip(known_edges, edges)):
             continue
         printed = {normalize(w.text) for w in page.words
-                   if x0 < (w.x0 + w.x1) / 2 < x1 and top < (w.y0 + w.y1) / 2 < top + height}
+                   if x0 < (w.x0 + w.x1) / 2 < x1 and top < (w.y0 + w.y1) / 2 < max(top + height, below or top)}
         # A name in the body may print a character of a heading (`金`): the top is the header when it prints most of them.
         return None if len(printed & words) * 2 >= len(words) else cells
     return None
@@ -686,6 +694,7 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
     # half of its printed lines carry text; otherwise it holds amounts if any
     # grouped number or only zeros appear (item codes alone are labels).
     stats: dict[tuple, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    zero_kinds = document_quirk('zero_kind_lines')
     for page, bands, _ in per_page:
         if page.number in ocr_pages:
             continue
@@ -708,7 +717,8 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
                         kinds.add('code')
                 counts = stats[band.header]
                 counts['lines'] += 1
-                if len(band.header) > 1 and 'text' in kinds and 'grouped' in kinds and inline_kind(band, line):
+                amounted = 'grouped' in kinds or ('zero' in kinds and zero_kinds is not None)
+                if len(band.header) > 1 and 'text' in kinds and amounted and inline_kind(band, line):
                     counts['inline'] += 1
                 for kind in kinds:
                     counts[kind] += 1
