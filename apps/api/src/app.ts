@@ -11,6 +11,7 @@ import { evaluationTools } from './evaluation/tools'
 import { ORIGIN_PDF_PATH } from './expenditure/routes'
 import { expenditureTools } from './expenditure/tools'
 import { jurisdictionTools } from './jurisdiction/tools'
+import { revenueTools } from './revenue/tools'
 import { apiRoutes } from './rpc'
 import type { Ctx } from './shared/context'
 import type { Env } from './db'
@@ -26,6 +27,7 @@ export const tools: Tool[] = [
   expenditureTools.searchSubjects,
   expenditureTools.searchDetails,
   expenditureTools.getLine,
+  revenueTools.get,
   evaluationTools.get,
   evaluationTools.getSheet,
   evaluationTools.searchSheets,

@@ -4,9 +4,10 @@ import { evaluationRoutes } from './evaluation/routes'
 import { expenditureRoutes } from './expenditure/routes'
 import { jurisdictionRoutes } from './jurisdiction/routes'
 import { projectRoutes } from './project/routes'
+import { revenueRoutes } from './revenue/routes'
 import { routes } from './shared/http'
 
-export const apiRoutes = routes().route('/', jurisdictionRoutes).route('/', expenditureRoutes).route('/', evaluationRoutes).route('/', projectRoutes)
+export const apiRoutes = routes().route('/', jurisdictionRoutes).route('/', expenditureRoutes).route('/', evaluationRoutes).route('/', projectRoutes).route('/', revenueRoutes)
 
 /** 公開の REST の型。web は使わない（web は内部の RPC の WebRpc を使う） */
 export type AppType = typeof apiRoutes

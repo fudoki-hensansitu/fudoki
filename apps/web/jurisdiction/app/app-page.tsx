@@ -69,6 +69,7 @@ import { fieldSubjects, listKey, listPage, projectFull, projectOfId, sheetCountK
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import { Amt, yenParts } from './amount'
 import { FinanceSections, Tag } from './finance'
+import { RevenueSection } from './revenue'
 import './app.css'
 
 const FIELD_ICON: Record<string, Icon> = {
@@ -558,6 +559,9 @@ function Overview() {
           {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={Math.max(...v.fields.map((x) => x.yen))} onClick={() => openField(f.id)} />)}
         </div>
       </section>
+
+      {/* 一般会計の歳入（api の get_revenue を loader が頁のデータに入れる）。歳入の無い年度は節ごと出さない */}
+      <RevenueSection revenue={page.revenue} year={v.year} kind={v.kind} prefecture={page.prefecture} />
 
       {/* 借金と貯金・事業に使えるお金・財政の指標（総務省の決算状況調。web の D1 から loader が頁のデータに入れる） */}
       <FinanceSections finance={page.finance} year={v.year} people={page.population?.people ?? null} />

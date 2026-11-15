@@ -92,6 +92,7 @@ SNAPSHOT_META = '_snapshot'
 TABLE_ORDER = ['jurisdiction',
                'fiscal_origin', 'expenditure', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
                'expenditure_location',
+               'revenue', 'revenue_origin_link', 'revenue_subject', 'revenue_location', 'fiscal_revenue_category',
                'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
                'project', 'project_year',
                'evaluation_sheet_project', 'source_page_text']
@@ -198,15 +199,24 @@ PARENT_SCOPE = {
     'expenditure_detail': ('expenditure_id', 'expenditure'),
     'expenditure_origin_link': ('origin_id', 'fiscal_origin'),
     'expenditure_location': ('origin_id', 'fiscal_origin'),
+    'revenue_subject': ('revenue_id', 'revenue'),
+    'revenue_origin_link': ('origin_id', 'fiscal_origin'),
+    'revenue_location': ('origin_id', 'fiscal_origin'),
     'evaluation_indicator': ('sheet_id', 'evaluation_sheet'),
     'evaluation_indicator_value': ('indicator_id', 'evaluation_indicator'),
     'project_year': ('project_id', 'project'),
 }
 
 
+# 自治体に属さない表（判断の辞書）。自治体で絞った同期でも全行を warehouse に合わせる
+UNSCOPED = {'fiscal_revenue_category'}
+
+
 def scope_condition(table: str, names: list[str], jurisdictions: Sequence[str], prefix: str = '') -> str:
     """その自治体の行を選ぶ条件。DuckDB と SQLite のどちらでも同じ行を選ぶ（親の表は同じ側の表を読む）。
     prefix は親の表の前に付ける名前（DuckDB で写しや別の DB の表を読むとき。例: `snap.main.`）。"""
+    if table in UNSCOPED:
+        return 'true'
     if table in PARENT_SCOPE:
         column, parent = PARENT_SCOPE[table]
         return (f'"{column}" in (select "{column}" from {prefix}"{parent}" '

@@ -16,8 +16,10 @@ from pathlib import Path
 import yaml
 
 PIPELINE = Path(__file__).resolve().parents[1]
-MODELS = [PIPELINE / f'dbt/models/marts/{name}/_models.yml'
-          for name in ('jurisdiction', 'fiscal', 'expenditure', 'evaluation', 'project', 'source')]
+MODELS = [*(PIPELINE / f'dbt/models/marts/{name}/_models.yml'
+            for name in ('jurisdiction', 'fiscal', 'expenditure', 'revenue', 'evaluation', 'project', 'source')),
+          # 区分の辞書（判断の seed）も写す。API が款の名前で JOIN する
+          PIPELINE / 'dbt/seeds/fiscal/_seeds.yml']
 WAREHOUSE = PIPELINE / '.build/warehouse.duckdb'
 OUTPUT = PIPELINE.parent / 'apps/api/src/columns.json'
 
@@ -25,12 +27,15 @@ OUTPUT = PIPELINE.parent / 'apps/api/src/columns.json'
 TABLES = ['jurisdiction',
           'fiscal_origin', 'expenditure', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
           'expenditure_location',
+          'revenue', 'revenue_origin_link', 'revenue_subject', 'revenue_location', 'fiscal_revenue_category',
           'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_sheet_project', 'evaluation_indicator', 'evaluation_indicator_value',
           'project', 'project_year',
           'source_page_text']
 PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code',
                 'expenditure': 'expenditure_id', 'fiscal_origin': 'origin_id', 'expenditure_origin_link': 'link_id',
                 'expenditure_subject': 'subject_id', 'expenditure_detail': 'detail_id', 'expenditure_location': 'line_id',
+                'revenue': 'revenue_id', 'revenue_origin_link': 'link_id', 'revenue_subject': 'subject_id',
+                'revenue_location': 'line_id', 'fiscal_revenue_category': 'kan_name',
                 'evaluation': 'evaluation_id', 'evaluation_origin': 'origin_id', 'evaluation_sheet': 'sheet_id', 'evaluation_sheet_project': 'link_id',
                 'evaluation_indicator': 'indicator_id', 'evaluation_indicator_value': 'value_id',
                 'project': 'project_id', 'project_year': 'project_year_id',
@@ -42,6 +47,9 @@ INDEXES = {
     'expenditure_origin_link': [['expenditure_id'], ['origin_id']],
     'expenditure_subject': [['expenditure_id', 'level'], ['parent_subject_id']],
     'expenditure_detail': [['subject_id', 'breakdown', 'depth'], ['parent_detail_id'], ['expenditure_id', 'breakdown']],
+    'revenue': [['jurisdiction_code'], ['fiscal_year', 'document_kind', 'jurisdiction_code']],
+    'revenue_origin_link': [['revenue_id'], ['origin_id']],
+    'revenue_subject': [['revenue_id', 'level'], ['parent_subject_id']],
     'evaluation': [['jurisdiction_code']],
     'evaluation_origin': [['evaluation_id']],
     'evaluation_sheet': [['evaluation_id'], ['jurisdiction_code', 'fiscal_year']],
@@ -88,7 +96,8 @@ def warehouse_columns(path: Path = WAREHOUSE, con=None) -> dict[str, list[tuple[
 
 
 def models() -> list[dict]:
-    return [m for path in MODELS for m in yaml.safe_load(path.read_text(encoding='utf-8'))['models']]
+    docs = [yaml.safe_load(path.read_text(encoding='utf-8')) for path in MODELS]
+    return [m for doc in docs for m in doc.get('models', []) + doc.get('seeds', [])]
 
 
 def model_descriptions() -> dict[str, dict[str, str | None]]:
@@ -108,7 +117,8 @@ def model_accepted_values() -> dict[str, dict[str, list]]:
         for c in m.get('columns', []):
             for test in c.get('data_tests') or []:
                 if isinstance(test, dict) and 'accepted_values' in test:
-                    out.setdefault(m['name'], {})[c['name']] = test['accepted_values']['arguments']['values']
+                    spec = test['accepted_values']
+                    out.setdefault(m['name'], {})[c['name']] = spec.get('arguments', spec)['values']
     return out
 
 

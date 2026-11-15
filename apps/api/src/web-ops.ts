@@ -13,6 +13,7 @@ import { JurisdictionDetail } from './jurisdiction/model'
 import { ExpenditureList, ExpenditureListInput, SimilarInput, SimilarList } from './expenditure/model'
 import { listExpenditures, similarExpenditures } from './expenditure/queries'
 import { projectTools } from './project/tools'
+import { revenueTools } from './revenue/tools'
 import type { Ctx } from './shared/context'
 import { JurisdictionCode } from './shared/model'
 
@@ -29,6 +30,7 @@ export const WEB_OPS = {
   search_expenditure_subjects: ofTool(expenditureTools.searchSubjects),
   search_expenditure_details: ofTool(expenditureTools.searchDetails),
   get_expenditure_line: ofTool(expenditureTools.getLine),
+  get_revenue: ofTool(revenueTools.get),
   get_evaluation: ofTool(evaluationTools.get),
   get_evaluation_sheet: ofTool(evaluationTools.getSheet),
   search_evaluation_sheets: ofTool(evaluationTools.searchSheets),

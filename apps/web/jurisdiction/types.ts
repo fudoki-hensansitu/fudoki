@@ -153,6 +153,21 @@ export interface PageData {
   vision?: Vision | null
   /** 市町村の決算の指標（年度の古い順）。都道府県と、読めなかったときは空 */
   finance?: LocalFinance[]
+  /** 一般会計の歳入（資料ごと、新しい年度から）。収録の無い自治体と、読めなかったときは空 */
+  revenue?: RevenueDoc[]
+}
+
+/** 歳入の区分（風土記の判断。api の fiscal_revenue_category） */
+export type RevenueCategory = 'まちの税' | '国・都道府県から配られるお金' | '国・都道府県の支出金' | '借入れ' | 'その他'
+
+/** 一般会計の歳入の1つの資料。款を印字の順に持ち、款の和が総額 */
+export interface RevenueDoc {
+  year: number
+  kind: 'initial' | 'settlement'
+  total: number
+  kan: { name: string; yen: number | null; category: RevenueCategory | null; page: number | null }[]
+  /** 出典の資料（款を印字した冊） */
+  origin: { title: string; url: string } | null
 }
 
 /** 入口の頁の題・説明文に書く、最新の決算（総額と分野）と、決算より後の最新の当初予算（金額のあるときだけ）の総額 */
