@@ -271,7 +271,6 @@ export function FinanceSections({ finance, year, people }: { finance: LocalFinan
       <section>
         <Head title="ほかの数字をくわしく" tag={tag} />
         <OtherNumbers at={at} rows={rows} />
-        <p className="mt-3 text-xs text-muted-foreground">出典: 総務省「市町村別決算状況調」{r(rows[0]!.year)}〜{r(at.year)}（普通会計）</p>
       </section>
     </>
   )
