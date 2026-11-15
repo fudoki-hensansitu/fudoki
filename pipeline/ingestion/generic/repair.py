@@ -274,7 +274,11 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: f
         cached = {page.number: read(page.number) for page in pages} if 'line_clips' in repairs else {}
         offset = load_pattern("repairs", "line_clips").offset([found for found, _ in cached.values()]) if cached else 0.0
         for page in pages:
-            glyphs, paths = cached.get(page.number) or read(page.number)
+            traced = document_quirk('traced_glyphs')
+            if traced is not None:
+                glyphs, paths = traced.module.glyphs(pdf_path, page.number, character_map)
+            else:
+                glyphs, paths = cached.get(page.number) or read(page.number)
             # Glyphs placed off the page are not on it at all (Poppler skips them);
             # only invisible glyphs on the page call for a rebuild.
             glyphs = [g for g in glyphs if g[0][2] > 0 and g[0][0] < page.width and g[0][3] > 0 and g[0][1] < page.height]

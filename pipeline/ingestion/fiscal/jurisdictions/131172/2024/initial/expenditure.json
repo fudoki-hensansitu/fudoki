@@ -10,39 +10,39 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general",
-      "input_fingerprint": "31c6584b0ad624798cf3e4fd3087e7b1bde5a3790722bdfa15ea9698fe4d4da1",
+      "input_fingerprint": "847dfc46431b6392786efc44eb8e9e1b5b99d624a9777641b9487820e0c9324b",
       "account": "一般会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'shape'}。",
         "金額の単位は printed 89頁 から決めた。款の和 181,367,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。"
+        "金額の注記 22 件（基金現在高見込 10・積算 12）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131172/2024/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "267e9af0b13fed33878a7a303d4021fa75993aabd1f8cf7ad37b7007f8e5e7fc",
-          "bytes": 26799
+          "sha256": "02704b8ec455ee412e6fd21375f2ff8f22c927383e60a96e35f4b8584a522cfe",
+          "bytes": 53922
         },
-        "row_count": 1061
+        "row_count": 1928
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131172/2024/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "e220630f4f15d22fec67e6e012788b78e87d86b15b62e450a693c8d065fb4020",
-          "bytes": 26033
+          "sha256": "e46b8534fe3c7b6b57d934057e863350295d43b82822ae2b4500b3c33c824d92",
+          "bytes": 45197
         },
-        "row_count": 1282
+        "row_count": 2149
       }
     },
     {
       "table_id": "nhi-initial",
       "conversion_id": "nhi",
-      "input_fingerprint": "bdfccb5d7b823484e5105440e2067485319a55a00a6bcf353d433755b3e839a7",
+      "input_fingerprint": "35ef4db3d4f458f0d5398f44f55aeb5aabfde384d701f508cc6f7641a305ecbc",
       "account": "国民健康保険事業会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'shape'}。",
         "金額の単位は printed 22頁 から決めた。款の和 37,538,284（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
@@ -51,27 +51,27 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131172/2024/initial/expenditure/nhi-initial-nodes.parquet",
-          "sha256": "6541b6126e1258822bc31dbbe5d54b03ddb794ac65383e4cf667766394c04ed1",
-          "bytes": 6777
+          "sha256": "03d5f1bfb8d9722903888a01804a2ffc2ddd49aab20ca9cc02d5da5edd459fb8",
+          "bytes": 8326
         },
-        "row_count": 105
+        "row_count": 147
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131172/2024/initial/expenditure/nhi-initial-amounts.parquet",
-          "sha256": "d5acd5f034198f9443c6ec053a994fe83e760f56234921a458eed4609319a76d",
-          "bytes": 5290
+          "sha256": "53b6441b0c5ccd111a619d569828436dcad80d7db14d5d43528259ba4ef8f886",
+          "bytes": 6533
         },
-        "row_count": 163
+        "row_count": 205
       }
     },
     {
       "table_id": "kaigo-initial",
       "conversion_id": "kaigo",
-      "input_fingerprint": "bd28c69a4155410d71a4d9f978cb57abc34ccbb08bf2bde7c3f4654e5ef8f402",
+      "input_fingerprint": "5364f0fdee07bffc7fd025582d2a041fb1bc285ee7e486d9872a12e089389ca6",
       "account": "介護保険会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'shape'}。",
         "金額の単位は printed 20頁 から決めた。款の和 33,135,870（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
@@ -80,27 +80,27 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131172/2024/initial/expenditure/kaigo-initial-nodes.parquet",
-          "sha256": "16ef0e246bdaa7bb515132703606c11b874f8c5845c7d0da44bbbc79184bc4a6",
-          "bytes": 7087
+          "sha256": "899393bed7cf61b96fe1e89a4b68f0f19f6a8076cb02a9d40d75d3dc848bc579",
+          "bytes": 9017
         },
-        "row_count": 118
+        "row_count": 175
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131172/2024/initial/expenditure/kaigo-initial-amounts.parquet",
-          "sha256": "63296b22db3654e25d624801453621dea8e405fb309a49d612b25d045d94d23e",
-          "bytes": 5474
+          "sha256": "c6a47fbcf955381352772afdb85576a7a57946d51a8fe27c7949a857895c97bc",
+          "bytes": 7089
         },
-        "row_count": 172
+        "row_count": 229
       }
     },
     {
       "table_id": "kouki-initial",
       "conversion_id": "kouki",
-      "input_fingerprint": "663b7c1025945c081b290c8920fab3a901c9aa6e909ce3817e9db576425067a9",
+      "input_fingerprint": "717fa28484bbf49b67acccb978f9e9bf434b4a2681f1854250f889040c1ee4d8",
       "account": "後期高齢者医療会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'shape'}。",
         "金額の単位は printed 8頁 から決めた。款の和 10,327,418（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
@@ -109,18 +109,18 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131172/2024/initial/expenditure/kouki-initial-nodes.parquet",
-          "sha256": "50447fa89aa02b572a8740fd269ed7c17777f21c76fefd18885d1c5c83a178cf",
-          "bytes": 4527
+          "sha256": "f383b16230b3474f7bfb753e6e02ce9b74c123168bb5e9e8b49930efb49851be",
+          "bytes": 5158
         },
-        "row_count": 48
+        "row_count": 64
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131172/2024/initial/expenditure/kouki-initial-amounts.parquet",
-          "sha256": "8d3f7ba0dda1cae0573f03026633c8278327b307420a5a5e856bccb01f6b8c3a",
-          "bytes": 3338
+          "sha256": "d356156efc96789afa9b77ee0e6417612f7b418b1d355a5c968e3e6e6d048614",
+          "bytes": 4019
         },
-        "row_count": 60
+        "row_count": 76
       }
     }
   ],
@@ -166,12 +166,6 @@
                     "kind": "財源内訳",
                     "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
                   }
-                },
-                "説明": {
-                  "excluded": {
-                    "kind": "経費内訳",
-                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
-                  }
                 }
               },
               "header": {
@@ -189,12 +183,34 @@
             "breakdown": {
               "節": {
                 "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "rate_tables": "区分"
+                },
+                "options": {
+                  "bare_amounts": true,
+                  "notes": [
+                    "1人当り",
+                    "1件当り"
+                  ],
+                  "note_kinds": {
+                    "令和": "基金現在高見込"
+                  },
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2,
+                    "ア": 3
+                  }
+                }
               }
             }
           },
           "quirks": {
             "delta_minus": true,
-            "glyph_strokes": true
+            "glyph_strokes": true,
+            "bracketed_numbers": true
           }
         },
         "pages": [
@@ -251,12 +267,6 @@
                     "kind": "財源内訳",
                     "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
                   }
-                },
-                "説明": {
-                  "excluded": {
-                    "kind": "経費内訳",
-                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
-                  }
                 }
               },
               "header": {
@@ -274,12 +284,34 @@
             "breakdown": {
               "節": {
                 "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "rate_tables": "区分"
+                },
+                "options": {
+                  "bare_amounts": true,
+                  "notes": [
+                    "1人当り",
+                    "1件当り"
+                  ],
+                  "note_kinds": {
+                    "令和": "基金現在高見込"
+                  },
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2,
+                    "ア": 3
+                  }
+                }
               }
             }
           },
           "quirks": {
             "delta_minus": true,
-            "glyph_strokes": true
+            "glyph_strokes": true,
+            "bracketed_numbers": true
           }
         },
         "pages": [
@@ -336,12 +368,6 @@
                     "kind": "財源内訳",
                     "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
                   }
-                },
-                "説明": {
-                  "excluded": {
-                    "kind": "経費内訳",
-                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
-                  }
                 }
               },
               "header": {
@@ -359,12 +385,34 @@
             "breakdown": {
               "節": {
                 "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "rate_tables": "区分"
+                },
+                "options": {
+                  "bare_amounts": true,
+                  "notes": [
+                    "1人当り",
+                    "1件当り"
+                  ],
+                  "note_kinds": {
+                    "令和": "基金現在高見込"
+                  },
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2,
+                    "ア": 3
+                  }
+                }
               }
             }
           },
           "quirks": {
             "delta_minus": true,
-            "glyph_strokes": true
+            "glyph_strokes": true,
+            "bracketed_numbers": true
           }
         },
         "pages": [
@@ -421,12 +469,6 @@
                     "kind": "財源内訳",
                     "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
                   }
-                },
-                "説明": {
-                  "excluded": {
-                    "kind": "経費内訳",
-                    "reason": "説明の欄は今回取り込まない。事業の金額の間に罫線のない積算表（区分・単価・人員・年額）が印字され、事業の木を組めないため。目の和は節の金額で確かめる。"
-                  }
                 }
               },
               "header": {
@@ -444,12 +486,34 @@
             "breakdown": {
               "節": {
                 "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "rate_tables": "区分"
+                },
+                "options": {
+                  "bare_amounts": true,
+                  "notes": [
+                    "1人当り",
+                    "1件当り"
+                  ],
+                  "note_kinds": {
+                    "令和": "基金現在高見込"
+                  },
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2,
+                    "ア": 3
+                  }
+                }
               }
             }
           },
           "quirks": {
             "delta_minus": true,
-            "glyph_strokes": true
+            "glyph_strokes": true,
+            "bracketed_numbers": true
           }
         },
         "pages": [
