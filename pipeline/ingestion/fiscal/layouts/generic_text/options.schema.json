@@ -7,6 +7,14 @@
     "account": {"type": "string", "minLength": 1},
     "table_id": {"type": "string", "pattern": "^[a-z0-9][a-z0-9_-]{0,95}$"},
     "partial": {"const": true, "description": "The original is one volume of an account printed in several originals: its 款 are some of the account's, so the sum and digit checks of the unit are reported, not enforced."},
+    "continued_rows": {
+      "type": "object", "additionalProperties": false, "required": ["subjects", "rows"],
+      "description": "The original starts inside a 事業 the volume before it opened (an account printed in volumes cut anywhere): the 款・項・目 (`subjects`, outermost first, a name only when the original prints it) and the 事業 rows still open at the end of the volume before (`rows`, outermost first, as that volume prints them). They are put at the head as rows with no amount, which identify with the volume before's rows, and the rows read at the head with no parent are put under them. The 款・項・目 the first page prints itself are not touched.",
+      "properties": {
+        "subjects": {"type": "array", "minItems": 3, "maxItems": 3, "items": {"type": "object", "additionalProperties": false, "required": ["code"], "properties": {"code": {"type": "string", "pattern": "^[0-9]+$"}, "name": {"type": "string", "minLength": 1}}}},
+        "rows": {"type": "array", "minItems": 1, "items": {"type": "object", "additionalProperties": false, "required": ["code", "name"], "properties": {"code": {"type": "string", "pattern": "^[0-9]+$"}, "name": {"type": "string", "minLength": 1}}}}
+      }
+    },
     "pages": {
       "type": "array", "minItems": 1,
       "items": {"type": "array", "prefixItems": [{"type": "integer", "minimum": 1}, {"type": "integer", "minimum": 1}], "minItems": 2, "maxItems": 2},

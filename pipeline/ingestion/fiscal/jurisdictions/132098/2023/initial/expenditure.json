@@ -1,0 +1,543 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132098",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "dd31ba063559e1afeb1225a2a08efc285e544b05986e4d28f80ec490552ad841"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_projects",
+            "options": {
+              "columns": {
+                "所属名": {
+                  "excluded": {
+                    "kind": "本文",
+                    "reason": "所属名の列を取り込まない。事業を担当する課の名前で、金額でも支出の目的の木の段でもない。"
+                  }
+                },
+                "金額(千円)": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "事業名": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "white_text"
+          ],
+          "quirks": {
+            "full_width_names": true
+          }
+        },
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-2",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e4800833c198822ac3b489ff4988611944e62522572523f67936a0ac2b7468c2"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-2",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_projects",
+            "options": {
+              "columns": {
+                "所属名": {
+                  "excluded": {
+                    "kind": "本文",
+                    "reason": "所属名の列を取り込まない。事業を担当する課の名前で、金額でも支出の目的の木の段でもない。"
+                  }
+                },
+                "金額(千円)": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "事業名": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "white_text"
+          ],
+          "quirks": {
+            "full_width_names": true
+          }
+        },
+        "partial": true,
+        "continued_rows": {
+          "subjects": [
+            {
+              "code": "7"
+            },
+            {
+              "code": "1"
+            },
+            {
+              "code": "3",
+              "name": "消費生活費"
+            }
+          ],
+          "rows": [
+            {
+              "code": "02",
+              "name": "消費生活センター運営費"
+            }
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-2"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e4800833c198822ac3b489ff4988611944e62522572523f67936a0ac2b7468c2"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_projects",
+            "options": {
+              "columns": {
+                "所属名": {
+                  "excluded": {
+                    "kind": "本文",
+                    "reason": "所属名の列を取り込まない。事業を担当する課の名前で、金額でも支出の目的の木の段でもない。"
+                  }
+                },
+                "金額(千円)": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "事業名": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "white_text"
+          ],
+          "quirks": {
+            "full_width_names": true
+          }
+        },
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e4800833c198822ac3b489ff4988611944e62522572523f67936a0ac2b7468c2"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_projects",
+            "options": {
+              "columns": {
+                "所属名": {
+                  "excluded": {
+                    "kind": "本文",
+                    "reason": "所属名の列を取り込まない。事業を担当する課の名前で、金額でも支出の目的の木の段でもない。"
+                  }
+                },
+                "金額(千円)": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "事業名": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "white_text"
+          ],
+          "quirks": {
+            "full_width_names": true
+          }
+        },
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e4800833c198822ac3b489ff4988611944e62522572523f67936a0ac2b7468c2"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_projects",
+            "options": {
+              "columns": {
+                "所属名": {
+                  "excluded": {
+                    "kind": "本文",
+                    "reason": "所属名の列を取り込まない。事業を担当する課の名前で、金額でも支出の目的の木の段でもない。"
+                  }
+                },
+                "金額(千円)": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "事業名": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "white_text"
+          ],
+          "quirks": {
+            "full_width_names": true
+          }
+        },
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e4800833c198822ac3b489ff4988611944e62522572523f67936a0ac2b7468c2"
+        }
+      ],
+      "options": {
+        "account": "鶴川駅南土地区画整理事業会計",
+        "table_id": "land-readjustment-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "listed_projects",
+            "options": {
+              "columns": {
+                "所属名": {
+                  "excluded": {
+                    "kind": "本文",
+                    "reason": "所属名の列を取り込まない。事業を担当する課の名前で、金額でも支出の目的の木の段でもない。"
+                  }
+                },
+                "金額(千円)": {
+                  "heading": "本年度予算額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "事業名": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "white_text"
+          ],
+          "quirks": {
+            "full_width_names": true
+          }
+        },
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "257481886b4ea13da4f5699da2660e60e86498908b75608cdc4b8a34f8aa2116",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
+        "金額の単位は carried 49頁・default 1頁 から決めた。分冊のため款の和 108,262,105 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "e4d4bc3bd76cdc8dd2fc64f0eb7d8f587c1682f73b9f8d8394d490fbf74f697e",
+          "bytes": 65300
+        },
+        "row_count": 2519
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "3ee25a9211fe91db0fe850ec12a241d55497bb75472f9e00aa20b7234177faeb",
+          "bytes": 47404
+        },
+        "row_count": 2494
+      }
+    },
+    {
+      "table_id": "general-initial-2",
+      "conversion_id": "general-initial-2",
+      "input_fingerprint": "98ef28be12dd234b33746edaf7cffbc305702e6211f150aa2412d59db1bc2594",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
+        "金額の単位は carried 32頁・default 1頁 から決めた。分冊のため款の和 38,226,144 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/general-initial-2-nodes.parquet",
+          "sha256": "01e809c216a146d3b17ca9be4acdbe442f26d9301073d58aa580dd5bd5c8daf2",
+          "bytes": 41453
+        },
+        "row_count": 1624
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/general-initial-2-amounts.parquet",
+          "sha256": "f7de1923fcceba91e1726e2e8fc2f02e2e108ebc79a90184e7090845b14f773f",
+          "bytes": 31107
+        },
+        "row_count": 1603
+      }
+    },
+    {
+      "table_id": "national-health-insurance-initial",
+      "conversion_id": "national-health-insurance-initial",
+      "input_fingerprint": "e39346e429ac1a6426513830b845d41c342cf4bf699e034e84e07ecc5e8abd1a",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
+        "金額の単位は carried 2頁・default 1頁 から決めた。分冊のため款の和 41,835,783 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/national-health-insurance-initial-nodes.parquet",
+          "sha256": "1a7d341c31be19c3dce0808a55e616e0be6a91063d8274530956d9d5838102c2",
+          "bytes": 9860
+        },
+        "row_count": 170
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/national-health-insurance-initial-amounts.parquet",
+          "sha256": "203d9737a33d45cf4fbe94b30a211df061ed7423518b21e19e9627fd0928f106",
+          "bytes": 6012
+        },
+        "row_count": 146
+      }
+    },
+    {
+      "table_id": "long-term-care-initial",
+      "conversion_id": "long-term-care-initial",
+      "input_fingerprint": "c2b541b4408266b138f2c6231e446e419e6444ad9e65c1e5218abbb8e087801d",
+      "account": "介護保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
+        "金額の単位は carried 3頁・default 1頁 から決めた。分冊のため款の和 38,152,625 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/long-term-care-initial-nodes.parquet",
+          "sha256": "5c56cd54a53fca5bb9104aa0b64d6a66293712dc9c062509596b831895b551db",
+          "bytes": 9750
+        },
+        "row_count": 174
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/long-term-care-initial-amounts.parquet",
+          "sha256": "8a44039be6d61d28ec14954ea495b542d82ce817ca8e06fedf65bfc1f2a5157f",
+          "bytes": 6277
+        },
+        "row_count": 156
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "fb9aef5f8165791b88454f0f99ae75ac8b03e863d97b9b3ddb9ca65289d27c46",
+      "account": "後期高齢者医療事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
+        "金額の単位は carried 1頁・default 1頁 から決めた。分冊のため款の和 13,302,527 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/elderly-medical-initial-nodes.parquet",
+          "sha256": "7e4df005914858ed1182d385136839c3cd35e069290999dc512a5c8cc80cc725",
+          "bytes": 5753
+        },
+        "row_count": 64
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/elderly-medical-initial-amounts.parquet",
+          "sha256": "5faeebe965e2357a2105d582d1835d62514330f7a046f96678cdc4b665039964",
+          "bytes": 3832
+        },
+        "row_count": 52
+      }
+    },
+    {
+      "table_id": "land-readjustment-initial",
+      "conversion_id": "land-readjustment-initial",
+      "input_fingerprint": "bab4ed01d2c77e6567acecb783aecc40189f49e09d45cf7a4eb2730bb5de9f70",
+      "account": "鶴川駅南土地区画整理事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
+        "金額の単位は default 1頁 から決めた。分冊のため款の和 407,795 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/land-readjustment-initial-nodes.parquet",
+          "sha256": "b8fccd639da4aad9d8f320d03ed7cd7e890cadfea89ff37646506dc1f51d1b75",
+          "bytes": 3714
+        },
+        "row_count": 24
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/initial/expenditure/land-readjustment-initial-amounts.parquet",
+          "sha256": "7624767f7be222ad518c9903bd6b297ebc5191d52f6200a291e816dd5f233e24",
+          "bytes": 2503
+        },
+        "row_count": 18
+      }
+    }
+  ]
+}
