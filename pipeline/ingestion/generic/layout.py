@@ -370,12 +370,15 @@ def _header_bottom(page: Page, frame, one_row: bool = False) -> float:
         candidates = candidates[:1]
     # A row that prints only the unit (`千円` over each column) opens the body on the pages whose header rule is read
     # whole; a page that draws a full rule under it too (国分寺市) keeps it in the body as well: the header ends at the
-    # rule across most of the frame above that row.
+    # rule across most of the frame above that row. The body under the unit row may print text and no figures before
+    # the next full rule (新宿区: a continued page whose only row is the 計, the 財源's name run on from the page before
+    # under the unit): the unit line alone opens the body.
     if candidates:
         wide = [h.y0 for h in horizontals if h.x0 <= x0 + reach and h.x1 - x0 >= .6 * (x1 - x0) and top + 1 < h.y0 < candidates[-1] - 1]
         if wide:
             row = [w for w in page.words if x0 < (w.x0 + w.x1) / 2 < x1 and max(wide) < (w.y0 + w.y1) / 2 < candidates[-1]]
-            if row and all(normalize(w.text) in ('千円', '円') for w in row):
+            first_line = [w for w in row if w.y0 <= min(v.y1 for v in row)] if row else []
+            if first_line and all(normalize(w.text) in ('千円', '円') for w in first_line):
                 return max(wide)
     if candidates:
         return candidates[-1]
@@ -683,6 +686,7 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
     # half of its printed lines carry text; otherwise it holds amounts if any
     # grouped number or only zeros appear (item codes alone are labels).
     stats: dict[tuple, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    zero_kinds = document_quirk('zero_kind_lines')
     for page, bands, _ in per_page:
         if page.number in ocr_pages:
             continue
@@ -705,7 +709,8 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
                         kinds.add('code')
                 counts = stats[band.header]
                 counts['lines'] += 1
-                if len(band.header) > 1 and 'text' in kinds and 'grouped' in kinds and inline_kind(band, line):
+                amounted = 'grouped' in kinds or ('zero' in kinds and zero_kinds is not None)
+                if len(band.header) > 1 and 'text' in kinds and amounted and inline_kind(band, line):
                     counts['inline'] += 1
                 for kind in kinds:
                     counts[kind] += 1

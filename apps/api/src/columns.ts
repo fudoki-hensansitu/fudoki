@@ -27,10 +27,10 @@ const selectList = (columns: ColumnSpec[]) => columns.map((c) => `"${c.name}"`).
 /** 資料区分。科目・内訳の表の列で、検索は必ず一つに絞る（意味の違う金額を一つの応答に混ぜない） */
 export const DOCUMENT_KINDS = ['settlement', 'initial'] as const
 
-/** 検索の対象の表（歳出の科目・内訳、事業評価のシート、予算案の施策） */
+/** 検索の対象の表（歳出の科目・内訳、事業評価のシート、事業の年度） */
 export interface FiscalTable {
   /** 操作名に使う複数形（page_token の指紋に入れる） */
-  kind: 'subjects' | 'details' | 'evaluation_sheets' | 'budget_measures' | 'project_years'
+  kind: 'subjects' | 'details' | 'evaluation_sheets' | 'project_years'
   table: string
   primaryKey: string
   /** document_kind の列があり、検索で必ず1つに絞る表か */
@@ -110,10 +110,6 @@ export const EVALUATION_INDICATOR_VALUE_TABLE = 'evaluation_indicator_value'
 /** 評価シート。1枚 = 小事業の1年度 */
 export const EVALUATION_SHEET_TABLE = fiscalTable('evaluation_sheets', 'evaluation_sheet')
 export const EVALUATION_SHEET_PROJECT_TABLE = 'evaluation_sheet_project'
-export const BUDGET_PROPOSAL_TABLE = 'budget_proposal'
-export const BUDGET_PROPOSAL_ORIGIN_TABLE = 'budget_proposal_origin'
-/** 予算案の施策。資料の1件 */
-export const BUDGET_MEASURE_TABLE = fiscalTable('budget_measures', 'budget_measure')
 export const PROJECT_TABLE = 'project'
 export const PROJECT_YEAR_TABLE = fiscalTable('project_years', 'project_year')
 
