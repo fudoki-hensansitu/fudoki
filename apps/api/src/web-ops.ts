@@ -5,6 +5,8 @@ import type { Env } from './db'
 import { ApiError } from './errors'
 import { budgetProposalTools } from './budget-proposal/tools'
 import { evaluationTools } from './evaluation/tools'
+import { SheetCountOutput, SheetSearchInput } from './evaluation/model'
+import { countSheets } from './evaluation/queries'
 import { expenditureTools } from './expenditure/tools'
 import { jurisdictionTools } from './jurisdiction/tools'
 import { getJurisdiction } from './jurisdiction/queries'
@@ -18,7 +20,7 @@ import { JurisdictionCode } from './shared/model'
 const op = <I extends z.ZodObject, O extends z.ZodType>(input: I, output: O, run: (ctx: Ctx, input: z.output<I>) => Promise<unknown>) => ({ input, output, run })
 const ofTool = <T extends { input: z.ZodObject; output: z.ZodType; run: (ctx: Ctx, input: Record<string, unknown>) => Promise<unknown> }>(t: T) => op(t.input as T['input'], t.output as T['output'], (ctx, input) => t.run(ctx, input as Record<string, unknown>))
 
-/** web が呼べる操作。名前は公開の MCP の tool と同じ（get_jurisdiction は REST だけ、list_expenditures・search_similar_expenditures は web だけにある操作） */
+/** web が呼べる操作。名前は公開の MCP の tool と同じ（get_jurisdiction は REST だけ、list_expenditures・search_similar_expenditures・count_evaluation_sheets は web だけにある操作） */
 export const WEB_OPS = {
   list_jurisdictions: ofTool(jurisdictionTools.list),
   get_jurisdiction: op(z.strictObject({ jurisdiction_code: JurisdictionCode }), JurisdictionDetail, (ctx, input) => getJurisdiction(ctx, input.jurisdiction_code)),
@@ -31,6 +33,8 @@ export const WEB_OPS = {
   get_evaluation: ofTool(evaluationTools.get),
   get_evaluation_sheet: ofTool(evaluationTools.getSheet),
   search_evaluation_sheets: ofTool(evaluationTools.searchSheets),
+  // 事業評価の A〜D の札。条件に当たるシートを方向性の区分ごとに数える（シートを全部 web へ渡さない）
+  count_evaluation_sheets: op(SheetSearchInput, SheetCountOutput, (ctx, input) => countSheets(ctx, input)),
   get_budget_proposal: ofTool(budgetProposalTools.get),
   search_budget_measures: ofTool(budgetProposalTools.searchMeasures),
   get_project: ofTool(projectTools.get),

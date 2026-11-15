@@ -370,6 +370,22 @@ describe('事業の読み込み（/api/projects）', () => {
     expect((await get(`/api/projects?detail=${H}&year=20255&kind=initial`)).status).toBe(400)
     expect((await post({ query }, web(API))).status).toBe(503)
   })
+  test('評価シートの一覧・区分ごとの数（/api/sheets）は内部の RPC で読み、引数の形が違えば 400', async () => {
+    const seen: [string, unknown][] = []
+    const WEB: Env['WEB'] = {
+      call: async (name, input) => (seen.push([name, input]), { ok: true, value: (name === 'count_evaluation_sheets' ? { counts: [{ outlook: null, size: 2 }] } : { sheets: [], origins: [], total_size: 0, total_size_capped: false, next_page_token: null }) as never }),
+      mcp: async () => new Response('x'),
+    }
+    const sheets = (path: string, body: unknown, e: Env = env) => fetchRoute(new Request(`https://fudoki.dev${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }), e)
+    const q = { code: '131148', year: 2025, codes: ['keep'] }
+    expect(await (await sheets('/api/sheets', { query: q }, { ...env, WEB })).json()).toEqual({ rows: [], next: null })
+    expect(await (await sheets('/api/sheets/counts', { query: q }, { ...env, WEB })).json()).toEqual([{ code: null, label: null, grade: null, n: 2 }])
+    // 数えるときは区分で絞らない
+    expect(seen.map(([n, i]) => [n, (i as { where: Record<string, unknown> }).where.direction_code])).toEqual([['search_evaluation_sheets', { eq: ['keep'] }], ['count_evaluation_sheets', undefined]])
+    expect((await sheets('/api/sheets', { query: { ...q, codes: ['x'] } })).status).toBe(400)
+    expect((await sheets('/api/sheets', { query: { ...q, code: 'nakano' } })).status).toBe(400)
+    expect((await sheets('/api/sheets/counts', { query: { ...q, subjects: ['x'] } })).status).toBe(400)
+  })
   test('うちのまちの札（/api/jurisdictions/:code）は形が違えば 400、未収録・頁に無い年度は 404、API に繋がらなければ 502', async () => {
     expect((await get('/api/jurisdictions/nakano?year=2025')).status).toBe(400)
     expect((await get('/api/jurisdictions/131148?year=25')).status).toBe(400)
@@ -387,21 +403,19 @@ describe('最初の画面に要らない分', () => {
     expect((await get('/api/jurisdictions/131148/2025/field-subjects?kind=other')).status).toBe(400)
     expect((await get('/api/jurisdictions/131148/2025/field-subjects?kind=initial', web(API))).status).toBe(503)
   })
-  test('施策・評価シートの分野は、開いた年度の款項目から科目の ID、無ければ款・項・目の名前で引く', () => {
+  test('施策の分野は、開いた年度の款項目から科目の ID、無ければ款・項・目の名前で引く', () => {
     const base: Snapshot = {
-      code: '131148', name: '中野区', pop: 0, year: 2025, kinds: { 2025: 'settlement' }, measures: [], sheets: [], lists: {}, pending: true,
+      code: '131148', name: '中野区', pop: 0, year: 2025, kinds: { 2025: 'settlement' }, measures: [], sheetCounts: [], lists: {}, pending: true,
       years: { 2025: { kind: 'settlement', total: 300, fields: { welfare: 300 }, fieldSubjects: { welfare: [id(11)] }, looseMoku: [], origin: null, originTitle: null, kan: [{ name: '子ども教育費', yen: 300, kou: [{ name: '子ども費', yen: 300, moku: [{ id: id(11), name: '保育園費', yen: 300, field: 'welfare', cofog: null }] }] }] } },
     }
     const m = { id: 'm', fy: 2025, title: '', new: true, yen: 1, desc: [], detail: null, url: '', origin: 'o', page: 1 }
-    const s = { id: 's', fy: 2025, name: '', grade: null, dir: null, dc: null, dl: null, div: null, acct: '', b: null, s: null, detail: null, url: '', origin: 'o', page: 1 }
     const d = withExtras(base, {
       measures: [{ ...m, subject: id(11), path: null }, { ...m, subject: id(99), path: ['子ども教育費', '子ども費', '保育園費'] }, { ...m, subject: null, path: null }],
-      sheets: [{ ...s, path: ['子ども教育費', '子ども費', '保育園費'] }, { ...s, path: ['総務費', '総務管理費', '一般管理費'] }],
+      sheetCounts: [],
       hasProjects: true,
       lists: {},
     })
     expect(d.measures.map((x) => x.field)).toEqual(['welfare', 'welfare', 'other'])
-    expect(d.sheets.map((x) => x.field)).toEqual(['welfare', 'other'])
     expect(d.pending).toBeUndefined()
     expect(d.hasProjects).toBe(true)
   })

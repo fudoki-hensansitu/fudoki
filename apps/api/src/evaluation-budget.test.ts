@@ -4,7 +4,8 @@ import type { Database } from 'bun:sqlite'
 import { createApp } from './app'
 import { BudgetProposalOutput, MeasureSearchOutput } from './budget-proposal/model'
 import type { Db } from './db'
-import { EvaluationOutput, SheetOutput, SheetSearchOutput } from './evaluation/model'
+import { EvaluationOutput, SheetOutput, SheetSearchOutput, type SheetCountOutput } from './evaluation/model'
+import { callWebOp } from './web-ops'
 import { ProjectOutput, ProjectSearchOutput } from './project/model'
 import { testDb } from './testing'
 
@@ -69,6 +70,24 @@ describe('事業評価', () => {
     expect((await post('/v1/evaluations/sheets:search', { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } })).status).toBe(400)
     const injected = await (await post('/v1/evaluations/sheets:search', { fiscal_year: { min: 2024, max: 2024 }, where: { name: { eq: [`x' OR 1=1 --`] } } })).json()
     expect(injected.sheets).toEqual([])
+  })
+})
+
+describe('事業評価の数（web だけの count_evaluation_sheets）', () => {
+  test('条件に当たるシートを方向性の区分ごとに数え、区分の当たらないシートは outlook を空にまとめる', async () => {
+    insert('evaluation_sheet', {
+      sheet_id: H('9'), evaluation_id: EV, origin_id: 's1', jurisdiction_code: '131091', fiscal_year: 2024, page: 9,
+      name: '区分の無い事業', account_name: '一般会計', kan_name: '民生費', kou_name: null, moku_name: null, jigyo_name: null,
+      department: null, division: null, budget_yen: 1, settled_yen: 1, grade_label: null, direction: null, direction_code: null, expenditure_subject_id: null, expenditure_detail_id: null,
+    })
+    const year = { min: 2024, max: 2024 }
+    const all = await callWebOp({ DB: db }, 'count_evaluation_sheets', { fiscal_year: year, where: { jurisdiction_code: { eq: ['131091'] } } })
+    const counts = all.ok ? (all.value as SheetCountOutput).counts.map((c) => [c.outlook?.code ?? null, c.outlook?.grade ?? null, c.size]) : null
+    expect(counts).toEqual([[null, null, 1], ['expand', 'A', 1], ['improve', 'C', 1], ['keep', 'B', 1]])
+    // 検索と同じ条件で絞る
+    const some = await callWebOp({ DB: db }, 'count_evaluation_sheets', { fiscal_year: year, where: { name: { contains: '子ども' }, direction_code: { eq: ['expand', 'keep'] } } })
+    expect(some.ok && (some.value as SheetCountOutput).counts.map((c) => c.size)).toEqual([1, 1])
+    expect(await callWebOp({ DB: db }, 'count_evaluation_sheets', { where: {} })).toMatchObject({ ok: false, status: 400 })
   })
 })
 
