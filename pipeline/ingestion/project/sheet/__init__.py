@@ -126,7 +126,10 @@ class Sheet:
 
 
 def modules() -> list[Path]:
-    return [Path(__file__), Path(__file__).with_name('ocr.py')]
+    from ingestion.lib import ocr_ink
+
+    # OCR の観測から語を選ぶ処理（ocr.py が使う superseded）も読みの指紋に入れる
+    return [Path(__file__), Path(__file__).with_name('ocr.py'), Path(ocr_ink.__file__)]
 
 
 def norm(text: str) -> str:
