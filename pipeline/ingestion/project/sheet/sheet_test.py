@@ -88,5 +88,21 @@ class CsvTest(unittest.TestCase):
             sheet.read_csv('unused.csv', {'columns': {'name': 'a', 'budget': 'b'}})
 
 
+class RegionTest(unittest.TestCase):
+    from ingestion.generic.page_words import Word
+    W = staticmethod(lambda text, x, y: RegionTest.Word(text, x, y, x + 10 * len(text), y + 10))
+
+    def test_wrapped_name_and_named_groups(self):
+        anchor = self.W('3', 30, 100)
+        words = [self.W('技能功労褒賞事', 40, 95), anchor, self.W('業', 40, 105), self.W('ア', 120, 100),
+                 self.W('一般', 40, 140), self.W('5', 70, 140), self.W('1', 80, 140), self.W('業務量', 300, 140)]
+        self.assertEqual(sheet.region(words, anchor, {'x': [36, 110], 'y': [-10, 10]}), '技能功労褒賞事業')
+        self.assertEqual(sheet.region(words, anchor, {'from': '^業務量', 'x': [36, 110], 'y': [-2, 2],
+                                                      'pattern': '^(?P<account>\\D+)(?P<kan_code>\\d+) (?P<kou_code>\\d+)'}),
+                         {'account': '一般', 'kan_code': '5', 'kou_code': '1'})
+        # before の行から下は枠に入れない
+        self.assertEqual(sheet.region(words, anchor, {'x': [36, 110], 'y': [-10, 50], 'before': '^業務量'}), '技能功労褒賞事業')
+
+
 if __name__ == '__main__':
     unittest.main()
