@@ -49,7 +49,7 @@ function AppHost(props: Extract<JurisdictionProps, { kind: 'page' }>) {
   const [res] = React.useState(() => new Resources())
   // 本文のデータが届かなかった頁（API に繋がらなかった）は、形の近い skeleton を出して頁を読み直す
   if (!props.snapshot) return <Reload />
-  return <AppPage res={res} data={props.data} snapshot={props.snapshot} flow={props.flow} sitekey={props.sitekey} initialField={props.field} initialTab={props.tab} />
+  return <AppPage res={res} data={props.data} snapshot={props.snapshot} flow={props.flow} extras={props.extras} setsu={props.setsu} sitekey={props.sitekey} initialField={props.field} initialTab={props.tab} />
 }
 
 /** 読み直す間を、回ごとに倍にする上限 */
