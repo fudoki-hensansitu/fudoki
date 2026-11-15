@@ -156,16 +156,18 @@ export const PROJECT_COLUMNS = ordered(PROJECT_TABLE, PROJECT_JOINED, [
 export const PROJECT_FILTER_COLUMNS = ['first_year', 'first_year_kind', 'last_year', 'last_year_kind', 'parent_project_id'] as const
 
 /** 事業の年度の行を組む SELECT（y が事業の年度、p が事業、i・s が当初予算・決算の内訳）。extra は足す列 */
-// 事業 p を外側に固定する（CROSS JOIN）。自由にすると SQLite は年度の索引で全自治体のその年度の事業の年度を先に読み、
-// 自治体の条件を後から当てるので、1自治体の検索が全国分を読む（D1 が overloaded になった）。p を先にすると、自治体・親・事業の ID の
-// 索引で事業を絞り、事業の年度は (project_id, fiscal_year) の索引で引く
-const projectYearSelect = (extra = '') => `SELECT y."project_year_id", p."project_id", p."jurisdiction_code", y."fiscal_year",
+// 結び方は2つ。既定は事業 p を外側に固定する（CROSS JOIN）。自由にすると SQLite（D1 は統計を持たない）は年度の索引で全自治体の
+// その年度の事業の年度を先に読み、自治体の条件を後から当てるので、1自治体の検索が全国分を読む（2026-11-15 に D1 が overloaded になった）。
+// p を先にすると、自治体・親・事業の ID の索引で事業を絞り、事業の年度は (project_id, fiscal_year) の索引で引く。
+// 事業の年度の ID・内訳の ID で絞るときだけは p を先にすると全国の事業をなめるので、y を外側にし、年度の索引は使わせない（+）
+type ProjectYearJoin = 'project-first' | 'year-first'
+const projectYearSelect = (extra = '', join: ProjectYearJoin = 'project-first') => `SELECT y."project_year_id", p."project_id", p."jurisdiction_code", ${join === 'year-first' ? '+' : ''}y."fiscal_year" AS "fiscal_year",
   COALESCE(i."name", s."name") AS "name", COALESCE(i."account_name", s."account_name") AS "account_name",
   COALESCE(i."kan_name", s."kan_name") AS "kan_name", COALESCE(i."kou_name", s."kou_name") AS "kou_name", COALESCE(i."moku_name", s."moku_name") AS "moku_name",
   y."initial_expenditure_detail_id", y."settlement_expenditure_detail_id",
   i."subject_id" AS "initial_expenditure_subject_id", s."subject_id" AS "settlement_expenditure_subject_id",
   i."amount_yen" AS "budget_yen", s."amount_yen" AS "settled_yen"${extra}
-FROM ${PROJECT_TABLE} p CROSS JOIN ${PROJECT_YEAR_BASE} y ON y."project_id" = p."project_id"
+FROM ${join === 'year-first' ? `${PROJECT_YEAR_BASE} y CROSS JOIN ${PROJECT_TABLE} p` : `${PROJECT_TABLE} p CROSS JOIN ${PROJECT_YEAR_BASE} y`} ON y."project_id" = p."project_id"
 LEFT JOIN ${DETAIL_TABLE.table} i ON i."detail_id" = y."initial_expenditure_detail_id"
 LEFT JOIN ${DETAIL_TABLE.table} s ON s."detail_id" = y."settlement_expenditure_detail_id"`
 
@@ -182,12 +184,18 @@ const viewOf = (kind: FiscalTable['kind'], table: string, primaryKey: string, co
 /** 事業の年度（JOIN した後の行）。FROM に置く副問い合わせ */
 export const PROJECT_YEAR_TABLE = viewOf('project_years', `(${projectYearSelect()})`, TABLES[PROJECT_YEAR_BASE]!.primary_key, PROJECT_YEAR_COLUMNS)
 
-/** 事業の年度の検索の対象。行は事業の年度の列だけを返し、条件には事業の列も使える */
-export const PROJECT_YEAR_SEARCH: FiscalTable = (() => {
+const projectYearSearch = (join: ProjectYearJoin): FiscalTable => {
   const extra = PROJECT_FILTER_COLUMNS.map((n) => columnOf(PROJECT_TABLE, n))
   const columns = [...PROJECT_YEAR_COLUMNS, ...extra]
-  return viewOf('project_years', `(${projectYearSelect(PROJECT_FILTER_COLUMNS.map((n) => `, p."${n}"`).join(''))})`, TABLES[PROJECT_YEAR_BASE]!.primary_key, columns)
-})()
+  return viewOf('project_years', `(${projectYearSelect(PROJECT_FILTER_COLUMNS.map((n) => `, p."${n}"`).join(''), join)})`, TABLES[PROJECT_YEAR_BASE]!.primary_key, columns)
+}
+
+/** 事業の年度の検索の対象。行は事業の年度の列だけを返し、条件には事業の列も使える */
+export const PROJECT_YEAR_SEARCH = projectYearSearch('project-first')
+/** 事業の年度の ID・内訳の ID で絞る検索の対象（事業の年度を外側にする）。列は PROJECT_YEAR_SEARCH と同じ */
+export const PROJECT_YEAR_SEARCH_BY_YEAR_KEY = projectYearSearch('year-first')
+/** 事業の年度の表の索引で引ける列。where にこの列の eq があれば PROJECT_YEAR_SEARCH_BY_YEAR_KEY で探す */
+export const PROJECT_YEAR_KEY_COLUMNS = ['project_year_id', 'initial_expenditure_detail_id', 'settlement_expenditure_detail_id'] as const
 
 /** 事業の名前・会計を引く、最新の年度の行（事業 p の副問い合わせ） */
 const latestOf = (expr: string) => `(SELECT ${expr} FROM ${PROJECT_YEAR_BASE} y
