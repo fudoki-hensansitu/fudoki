@@ -22,6 +22,7 @@ def relevel(coded: list, nodes: list, centres: list[float], edge) -> None:
         for item in nodes:
             # A codeless line set where the codes start (`傷病手当金` at its 項's code, 131202) keeps its level.
             near = lambda xs: min(abs(x - edge(item)) for x in xs)
-            if item.code is None and near(starts.values()) < near(centres):
+            # A tie is a name set where the next level's codes start (132063: 項's names at 目's codes): the name wins.
+            if item.code is None and near(starts.values()) <= near(centres):
                 item.level = min(starts, key=lambda level: abs(starts[level] - edge(item)))
                 item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
