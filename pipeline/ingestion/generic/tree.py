@@ -578,6 +578,9 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             code, name = held[0], normalize(held[1])
         if code is not None and len(name) > 1 and re.match(r'[０-９]{3,}', raw_text):
             code, name = None, line_text  # `２０３０ビジョン…`: three or more full-width digits begin a name, not an item number (a one-character name stays `161`/`人`)
+        if (code is not None and (bracketed := document_quirk('bracketed_numbers')) is not None
+                and (held := bracketed.module.split(line_text)) is not None):
+            code, name = held  # `(2)７歳以上…` is item 2; `(26所 児童定員…)` is no item number
         if code is not None and (full := document_quirk('full_width_names')) is not None and full.module.names(raw_text):
             code, name = None, line_text
         script = re.match(r'([0-9]+)(?=[０-９])', raw_text)
@@ -1820,6 +1823,7 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     whole = quirk(settings, 'whole_name_notes')
     dots = quirk(settings, 'dot_bullets')
     whole_names = {normalize(name): kind for name, kind in whole.value.items()} if whole is not None else {}
+    tables, tabled = quirk(settings, 'rate_tables'), False
     for item in items:
         if rows is not None:
             rows.module.unnumber(item)
@@ -1829,6 +1833,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             dots.module.shift(item)
         raw = normalize(text(item.lines[0]))
         note = raw.startswith(prefixes) or raw in whole_names
+        if tables is not None and (tabled := tables.module.within(raw, item, tabled, tables.value)) and not note:
+            note, item.hint = True, tables.module.KIND
         if not note and highlights is not None and highlights.module.listed(item) and id(item) not in column_amount_items:
             note, item.hint = True, highlights.module.KIND
         waiting = result[-1] if result else None
