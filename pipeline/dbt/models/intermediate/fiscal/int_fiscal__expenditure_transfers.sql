@@ -11,7 +11,8 @@
 with recursive unioned as (
     select node_id, parent_node_id, jurisdiction_code, fiscal_year, document_kind,
         account_name, axis, is_subject, node_kind, code, name, amount_yen
-    from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
+    from {{ ref('int_fiscal__nodes') }}
+    where direction = 'expenditure'
     union all
     select node_id, parent_node_id, jurisdiction_code, fiscal_year, document_kind,
         account_name, axis, is_subject, node_kind, code, name, amount_yen
@@ -104,7 +105,7 @@ with recursive unioned as (
     left join nearest_moku nm using (node_id, document_kind)
     left join recipient_kinds r using (node_id, document_kind)
     left join ancestor_kinds ak using (node_id, document_kind)
-    left join {{ ref('int_fiscal__expenditure_accounts') }} a
+    left join {{ ref('int_fiscal__accounts') }} a
       using (jurisdiction_code, fiscal_year, account_name)
 ), section_recipient_axes as (
     -- A complete breakdown naming one recipient also explains a bare 節.
@@ -186,6 +187,6 @@ select u.node_id, u.document_kind,
          then error('Unknown transfer recipient (no account_kind_map keyword matches): ' || r.recipient_name)
          else r.recipient_kind end as interfund_transfer_to
 from unioned u
-left join {{ ref('int_fiscal__expenditure_accounts') }} a
+left join {{ ref('int_fiscal__accounts') }} a
   using (jurisdiction_code, fiscal_year, account_name)
 left join marked r using (node_id, document_kind)

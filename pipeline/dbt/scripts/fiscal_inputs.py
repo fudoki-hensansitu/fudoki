@@ -1,8 +1,9 @@
 """dbt に読み込む取り込みの表の一覧を、取り込みの管理 JSON から作る（prepare.py が build のたびに呼ぶ）。
 
 一覧は手で書かず、ファイルにも保存しない。自治体や表を足すときは管理 JSON
-（``ingestion/fiscal/jurisdictions/<自治体>/<年度>/{settlement,initial}/expenditure.json``）だけを足す。
-PDF のノードの表は ``fiscal_pdf``、CSV の表は ``fiscal_csv`` に分ける。
+（``ingestion/fiscal/jurisdictions/<自治体>/<年度>/{settlement,initial}/{expenditure,revenue}.json``）だけを足す。
+PDF のノードの表は ``fiscal_pdf``、CSV の表は ``fiscal_csv`` に分ける。歳入は PDF の表だけを読む
+（CSV の staging は書式ごとで、歳入の書式はまだ無い。docs/prd/fiscal-revenue/dd.md）。
 """
 from __future__ import annotations
 
@@ -65,14 +66,18 @@ EXCLUDE: dict[tuple[str, str], str] = {
 # Keyed by (jurisdiction, fiscal_year, document_kind, table_id) because the same table_id carries other years.
 EXCLUDE_YEAR: dict[tuple[str, int, str, str], str] = {}
 
-def relation_name(jurisdiction: str, fiscal_year: int, document_kind: str, table_id: str) -> str:
-    # 表 ID は自治体の中で年度・資料区分をまたいで同じ名前を使えるため、relation 名に両方を含める。
-    return f'j{jurisdiction}_{fiscal_year}_{document_kind}_' + table_id.replace('-', '_')
+def relation_name(jurisdiction: str, fiscal_year: int, document_kind: str, table_id: str,
+                  direction: str = 'expenditure') -> str:
+    # 表 ID は自治体の中で年度・資料区分・お金の向きをまたいで同じ名前を使えるため、relation 名にそれらを含める。
+    # 歳出の relation 名は向きを足す前の名前のままにする。
+    infix = '' if direction == 'expenditure' else f'{direction}_'
+    return f'j{jurisdiction}_{fiscal_year}_{document_kind}_{infix}' + table_id.replace('-', '_')
 
 
 def collect() -> list[dict]:
     entries = []
-    patterns = ('*/*/settlement/expenditure.json', '*/*/initial/expenditure.json')
+    patterns = ('*/*/settlement/expenditure.json', '*/*/initial/expenditure.json',
+                '*/*/settlement/revenue.json', '*/*/initial/revenue.json')
     manifests = sorted({p for pattern in patterns
                         for p in (PIPELINE / 'ingestion/fiscal/jurisdictions').glob(pattern)})
     for path in manifests:
@@ -81,10 +86,13 @@ def collect() -> list[dict]:
         target = document['target']
         direction = document['direction']
         for table in document['tables']:
-            if (target['jurisdiction'], table['table_id']) in EXCLUDE or (
-                    target['jurisdiction'], target['fiscal_year'], target['document_kind'], table['table_id']) in EXCLUDE_YEAR:
+            if direction == 'revenue' and 'nodes' not in table:
                 continue
-            prefix = relation_name(target['jurisdiction'], target['fiscal_year'], target['document_kind'], table['table_id'])
+            if direction == 'expenditure' and ((target['jurisdiction'], table['table_id']) in EXCLUDE or (
+                    target['jurisdiction'], target['fiscal_year'], target['document_kind'], table['table_id']) in EXCLUDE_YEAR):
+                continue
+            prefix = relation_name(target['jurisdiction'], target['fiscal_year'], target['document_kind'], table['table_id'],
+                                   direction)
             meta = {'jurisdiction': target['jurisdiction'], 'fiscal_year': target['fiscal_year'],
                     'document_kind': target['document_kind'], 'direction': direction,
                     'table_id': table['table_id']}

@@ -3,7 +3,7 @@
 with r as (
     select r.*, o.format
     from {{ ref('int_fiscal__expenditure_rows') }} r
-    join {{ ref('expenditure_origin') }} o using (origin_id)
+    join {{ ref('fiscal_origin') }} o using (origin_id)
     where r.row_id in (select subject_id from {{ ref('expenditure_subject') }})
        or r.row_id in (select detail_id from {{ ref('expenditure_detail') }})
 )

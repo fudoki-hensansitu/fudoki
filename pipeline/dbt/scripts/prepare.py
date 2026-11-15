@@ -49,7 +49,7 @@ def input_path(document: dict, table: dict, kind: str, candidate: Path | None,
     return path
 
 
-# The yen of one printed unit, as the rows model reads `unit_text` (int_fiscal__settlement_expenditure_rows).
+# The yen of one printed unit, as the rows model reads `unit_text` (int_fiscal__rows).
 UNIT_YEN = {'円': 1, '千円': 1000}
 
 
@@ -281,7 +281,7 @@ def main() -> None:
                         help='Overlay candidates at jurisdiction/year/document-slot/direction/manifest.json '
                              '(legacy jurisdiction/manifest.json also supported); other targets use cached saved objects')
     parser.add_argument('--remote', action='store_true', help='Restore missing saved objects with cf (read only)')
-    parser.add_argument('--build', action='store_true', help='Build and test the expenditure marts after preparation')
+    parser.add_argument('--build', action='store_true', help='Build and test the fiscal (expenditure and revenue) marts after preparation')
     parser.add_argument('--jurisdiction', action='append', metavar='CODE',
                         help='Load only these jurisdictions\' fiscal tables (repeatable), for serving:sync --jurisdiction')
     args = parser.parse_args()
@@ -295,7 +295,7 @@ def main() -> None:
     if args.build:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
-                        '--select', 'marts.expenditure+', '+marts.expenditure', '+jurisdiction',
+                        '--select', 'marts.expenditure+', '+marts.expenditure', '+marts.revenue', '+marts.fiscal', 'fiscal_revenue_category', '+jurisdiction',
                         'cofog_master', '+marts.evaluation', '+marts.project', '+marts.source',
                         # 自治体で絞ったとき、他の自治体を宣言した seed の検査をその自治体に絞る
                         *(['--vars', json.dumps({'only_jurisdictions': sorted(args.jurisdiction)})] if args.jurisdiction else [])],

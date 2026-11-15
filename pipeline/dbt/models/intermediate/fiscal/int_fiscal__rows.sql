@@ -1,4 +1,6 @@
 -- Keep source rows until cross-table identity and value checks have passed.
+-- One tree model for both directions (歳出・歳入): the level names, amount phases, volume sums and
+-- council amendments do not depend on the direction (docs/prd/fiscal-revenue/dd.md).
 -- Level names follow one shared rule (ADR 0025): the axis carrying 款 is the subject axis
 -- and its depths 1/2/3 are 款・項・目; any other axis uses its printed level_header,
 -- or 内訳{depth} when nothing is printed.
@@ -8,7 +10,7 @@ with recursive subject_axes as (
     where level_header = '款'
     group by source_table_key
 ) , mapped_nodes as (
-    select n.*, t.jurisdiction_code, t.fiscal_year, t.document_kind, t.account_name, t.division, t.origin_id,
+    select n.*, t.jurisdiction_code, t.fiscal_year, t.document_kind, t.direction, t.account_name, t.division, t.origin_id,
         -- A council amendment's table (seed fiscal_budget_amendment) is applied in the nodes model, not added to the tree.
         am.table_id is not null as is_amendment,
         case when s.subject_axis is null
@@ -32,8 +34,8 @@ with recursive subject_axes as (
     left join subject_axes s using (source_table_key)
     left join {{ ref('fiscal_budget_amendment') }} am
         on am.jurisdiction_code = t.jurisdiction_code and am.fiscal_year = t.fiscal_year
-        and am.document_kind = t.document_kind and am.table_id = t.table_id
-    where t.document_kind in ('settlement', 'initial') and t.direction = 'expenditure'
+        and am.document_kind = t.document_kind and am.table_id = t.table_id and t.direction = 'expenditure'
+    where t.document_kind in ('settlement', 'initial')
       and n.axis_header <> '注記'
 ), checked_nodes as (
     select * from mapped_nodes
@@ -111,12 +113,12 @@ selected_amounts as (
     left join checked_nodes p
       on n.node_kind = '項' and p.source_table_key = n.source_table_key and p.node_key = n.parent_node_key
     left join {{ ref('fiscal_subject_name_fill') }} f
-      on coalesce(n.name, '') = '' and f.jurisdiction_code = n.jurisdiction_code and f.fiscal_year = n.fiscal_year
+      on n.direction = 'expenditure' and coalesce(n.name, '') = '' and f.jurisdiction_code = n.jurisdiction_code and f.fiscal_year = n.fiscal_year
      and f.document_kind = n.document_kind and f.account_name = n.account_name and f.node_kind = n.node_kind
      and f.kan_code = case n.node_kind when '款' then n.code_text else p.code_text end
      and coalesce(f.kou_code, '') = case n.node_kind when '項' then n.code_text else '' end
     left join {{ ref('fiscal_kan_code_fill') }} c
-      on n.node_kind = '款' and coalesce(n.code_text, '') = '' and c.jurisdiction_code = n.jurisdiction_code
+      on n.direction = 'expenditure' and n.node_kind = '款' and coalesce(n.code_text, '') = '' and c.jurisdiction_code = n.jurisdiction_code
      and c.fiscal_year = n.fiscal_year and c.document_kind = n.document_kind and c.account_name = n.account_name
      and c.kan_name = n.name
 ), hierarchy as (
@@ -145,7 +147,7 @@ selected_amounts as (
     from (
         select *, case when under_subject and axis_header <> subject_axis and coalesce(moku_code, kou_code) is not null
                             and (amount_yen is not null or physical_page > min(physical_page) over (partition by source_table_key))
-                       then to_json([jurisdiction_code, fiscal_year::varchar, document_kind, account_name, division,
+                       then to_json([jurisdiction_code, fiscal_year::varchar, document_kind, direction, account_name, division,
                                      coalesce(kan_code, 'name:' || kan_name), kou_code, moku_code])::varchar
                        else to_json([source_table_key, parent_node_key])::varchar end as sibling_scope
         from hierarchy
@@ -161,10 +163,11 @@ selected_amounts as (
                      else n.kan_code end as kan_key
     from siblings n
     left join {{ ref('fiscal_kan_name_identity') }} k
-      on k.jurisdiction_code = n.jurisdiction_code and k.fiscal_year = n.fiscal_year and k.account_name = n.account_name
+      on n.direction = 'expenditure' and k.jurisdiction_code = n.jurisdiction_code and k.fiscal_year = n.fiscal_year
+     and k.account_name = n.account_name
 ), identified as (
     select n.* exclude (kan_key),
-        sha256(to_json([jurisdiction_code, fiscal_year::varchar, account_name, kan_key, kou_code, moku_code])) as node_id,
+        sha256(to_json({{ fiscal_subject_key('') }})) as node_id,
         null::varchar as parent_node_id
     from keyed n where parent_node_key is null
     union all
@@ -173,11 +176,11 @@ selected_amounts as (
     -- like non-subject nodes, keeping every printed row.
     select n.* exclude (kan_key),
         case when n.axis_header = n.subject_axis and n.node_kind = '款'
-             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_key, n.kou_code, n.moku_code]))
+             then sha256(to_json({{ fiscal_subject_key('n.') }}))
              when n.axis_header = n.subject_axis and n.node_kind = '項' and n.kou_code is not null
-             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_key, n.kou_code, n.moku_code]))
+             then sha256(to_json({{ fiscal_subject_key('n.') }}))
              when n.axis_header = n.subject_axis and n.node_kind = '目' and n.moku_code is not null
-             then sha256(to_json([n.jurisdiction_code, n.fiscal_year::varchar, n.account_name, n.kan_key, n.kou_code, n.moku_code]))
+             then sha256(to_json({{ fiscal_subject_key('n.') }}))
              else sha256(to_json([p.node_id, n.axis_header, n.node_kind, n.code_text, n.name,
                  case when n.sibling_count > 1 then n.sibling_ordinal::varchar end])) end,
         p.node_id

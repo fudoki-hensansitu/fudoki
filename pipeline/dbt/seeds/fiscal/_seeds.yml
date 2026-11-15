@@ -101,7 +101,7 @@ seeds:
       議会の修正案で当初予算を直す表の宣言。予算説明書が原案の額で印字され、議会が修正して可決した資料を1行で示す。
       `table_id` は同じ自治体・年度・資料区分の修正案の表（修正した事務事業だけを、修正金額を本年度予算額・原案金額を予算案額として持つ）。
       この表のノードは木に加えず、各行の 修正金額−原案金額 を、予算説明書の同じノードとその祖先（款まで）の承認額に足す
-      （int_fiscal__settlement_expenditure_nodes）。修正案が書かない枝（節など）は原案の額のまま残る。
+      （int_fiscal__nodes）。修正案が書かない枝（節など）は原案の額のまま残る。
     config:
       column_types:
         jurisdiction_code: varchar
@@ -143,7 +143,7 @@ seeds:
     description: |
       出典が番号だけを印字し名前を印字しない款・項に付ける名前。**fudoki の判断。** 自治体・年度・資料区分・会計・段・款の番号
       （項は款と項の番号）ごとに1行で、同じ自治体の決算などで同じ番号の款・項の名前を、その下の目の名前が全部一致することを
-      確かめてから宣言する。取り込みの表は印字のまま名前を空に保ち、int_fiscal__settlement_expenditure_rows が名前の空いた款・項にだけ当てる。
+      確かめてから宣言する。取り込みの表は印字のまま名前を空に保ち、int_fiscal__rows が名前の空いた款・項にだけ当てる。
       確かめられない会計・年度（目の並びが違う）は宣言せず、dbt の入力から外したままにする。
     config:
       column_types:
@@ -173,7 +173,7 @@ seeds:
     description: |
       出典が款の名前だけを印字し番号を印字しない表の款に付ける番号。**fudoki の判断。** 自治体・年度・資料区分・会計・款の名前ごとに1行で、
       款名と並びが地方自治法施行規則の歳出予算の款の区分と同じことを確かめてから、その区分の番号を宣言する。取り込みの表は印字のまま
-      番号を空に保ち、int_fiscal__settlement_expenditure_rows が番号の空いた款にだけ当てる。款の id は fiscal_kan_name_identity で名前から作るので、番号は id に入らない。
+      番号を空に保ち、int_fiscal__rows が番号の空いた款にだけ当てる。款の id は fiscal_kan_name_identity で名前から作るので、番号は id に入らない。
     config:
       column_types:
         jurisdiction_code: varchar
@@ -220,3 +220,30 @@ seeds:
                 values: ['事業', '節', 'その他', '除外']
       - name: basis
         data_tests: [not_null]
+
+  - name: fiscal_revenue_category
+    meta:
+      # **判断そのもの。** 歳入の款の名前と、自治体をまたいで比べる区分の対応。
+      role: judgment-rule
+    description: |
+      歳入の款の名前と、風土記が自治体の頁で使う区分（まちの税・国・都道府県から配られるお金・
+      国・都道府県の支出金・借入れ・その他）の対応。**fudoki の判断。** 款の名前は地方自治法施行規則で決まり、
+      自治体をまたいで揃う（特別区は特別区税・特別区交付金など名前が違うので、その名前の行を持つ）。
+      範囲は市区町村の一般会計（都道府県の税は「まちの税」ではなく、特別会計の保険料などを足すと割合の意味が変わる）。
+      款の名前は取り込みの印字を整えた名前（revenue_subject.name）と完全一致で突き合わせ、表記の揺れは行を足して吸収する。
+      区分は表に写さず、使う所で JOIN する。辞書に無い款の名前は tests/fiscal_revenue_category_coverage.sql が止める
+      （[docs/prd/fiscal-revenue/dd.md](../../../../docs/prd/fiscal-revenue/dd.md)）。
+    config:
+      fast: false
+      column_types:
+        kan_name: varchar
+        category: varchar
+    columns:
+      - name: kan_name
+        data_tests: [unique, not_null]
+      - name: category
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['まちの税', '国・都道府県から配られるお金', '国・都道府県の支出金', '借入れ', 'その他']
