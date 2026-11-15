@@ -1051,6 +1051,15 @@ def _name_start(item: Item) -> float:
     return item.indent
 
 
+def code_length(label: list[Glyph], length: int) -> int:
+    """How many characters of the label's normalised text are the code: a number set apart from a name that begins
+    with digits (`11 ２０歳のつどい事業`, `6 ５Ｇ通信…`) is only the number's own word, not the digits of the name."""
+    head = normalize(label[0].text)
+    if len(label) > 1 and re.fullmatch(r'[0-9]{1,4}', head) and length > len(head) and label[1].x0 - label[0].x1 >= 2:
+        return len(head)
+    return length
+
+
 def _measure(item: Item, label: list[Glyph], code: str | None, joined: bool = False, stops=None) -> None:
     """Indentation is where the name starts; subject level is the band of the first glyph. `joined`: a word
     that joins the code and the name is measured by the digits' own width. `stops`: the axis quirk
@@ -1061,10 +1070,7 @@ def _measure(item: Item, label: list[Glyph], code: str | None, joined: bool = Fa
         raw = ''.join(g.text for g in label)
         found = CODE.match(normalize(raw))
         length = found.end() if found else 0
-        head = normalize(first.text)
-        if (len(label) > 1 and re.fullmatch(r'[0-9]{1,4}', head) and length > len(head)
-                and label[1].x0 - first.x1 >= 2):
-            length = len(head)  # a number set apart from a name that begins with digits (`11 ２０歳のつどい事業`)
+        length = code_length(label, length)
         for glyph in label:
             if consumed + len(glyph.text) > length:
                 if stops is not None and (start := stops.module.name_start(glyph, length - consumed)) is not None:
@@ -1740,11 +1746,7 @@ def layout_name_start(item: Item, hang_chars: int | None = None) -> float:
     found = CODE.match(normalize(text(item.lines[0])))
     if found is None:
         return _name_start(item)
-    remaining = len(found.group())
-    line = item.lines[0]
-    head = normalize(line[0].text)
-    if len(line) > 1 and re.fullmatch(r'[0-9]{1,4}', head) and remaining > len(head) and line[1].x0 - line[0].x1 >= 2:
-        remaining = len(head)  # a number set apart from a name that begins with digits (`6 ５Ｇ通信…`), as `_measure` reads it
+    remaining = code_length(item.lines[0], len(found.group()))
     for glyph in item.lines[0]:
         if remaining < len(glyph.text):
             prefix = glyph.text[:remaining]

@@ -1763,6 +1763,18 @@ class OcrCodeWordTest(unittest.TestCase):
         _measure(item, [glyph], '10')
         self.assertAlmostEqual(item.indent, 422.2 + 2 * 35 / 5, places=3)
 
+class NumberApartFromDigitNameTest(unittest.TestCase):
+    def test_a_number_set_apart_from_a_name_that_begins_with_digits_is_only_the_number(self):
+        from ingestion.generic.tree import Group, Item, _measure, layout_name_start
+        # `6 ５Ｇ通信…`: the number is its own word and the name begins with a full-width digit.
+        number, name = Glyph('6', 378.1, 0, 383.1, 10, 1, 0), Glyph('５Ｇ通信インフラ整備事業', 388.1, 0, 508.1, 10, 1, 0)
+        shared = Group.__new__(Group)
+        shared.subject = False
+        item = Item(shared, 1, [[number, name]], '6', '５Ｇ通信インフラ整備事業', 0)
+        _measure(item, [number, name], '6')
+        self.assertAlmostEqual(item.indent, 388.1, places=3)
+        self.assertAlmostEqual(layout_name_start(item), 388.1, places=3)
+
 class HeadingsTest(unittest.TestCase):
     """`headings`: a name-only line heads the deeper lines under it, only in an axis that declares it."""
     SETTINGS = {'備考': {'quirks': {'headings': True}, 'plain_names': ['繰越明許費分']}}
