@@ -27,7 +27,7 @@
 | R2 への保存・marts の build・本番 D1 への同期 | merge 後の `sync-d1.yml` |
 
 - 共通コードを変えても、手元で `ingestion:refresh` や全表の変換を回さない。
-- 検査（`*_checks.py`）を厳しくしたら、保存済みの全表に `ingestion:verify --remote` を当てる（[ADR 0027](../../../../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。
+- 検査（`*_checks.py`）を厳しくしたら、保存済みの全表に `ingestion:verify --remote` を当てる。候補の対象範囲が要る検査（網羅・印字の合計）は `ingestion:convert` の候補に `ingestion:verify --candidate <dir>` を当てる（[ADR 0027](../../../../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。
 
 ## 重い実行
 
