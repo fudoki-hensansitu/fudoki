@@ -5,8 +5,8 @@ set right in its level's column: the 款 `10` starts a digit before the 款 `2`,
 level of its own. Here a code printed in a narrow code column starts at the column's left edge, so the column is
 its level (its box only grows to the left, over the column's padding: the printed digits stay inside it).
 
-A name too long for the name column wraps to a second line (`財政安定化基金` / `拠出金`), with nothing else on it.
-That line is read as the end of the line above, so it is no item of its own with no code.
+A name too long for the name column wraps to a second line (`財政安定化基金` / `拠出金`), or a third, with nothing
+else on them. Each such line is read as the end of the line above, so it is no item of its own with no code.
 
 Each spread prints the 款・項・目 rows on its left page and the 節 and 説明 of each 目 on its right page, in rows
 of its own height (a 目 row on the left is three ruled rows on the right), so `layout.same_rows` does not see one
@@ -35,7 +35,7 @@ HEAD = re.compile(r'^[(（](款|項)[)）][0-9]+')
 def wrapped_names(logical: layout.Logical, band: layout.Band) -> None:
     """The second line of a wrapped name joins the line above it (see the module doc): set right after it."""
     others = [g for b in logical.bands if b is not band for g in b.words]
-    joined = []
+    moved: dict[int, Glyph] = {}
     for page in sorted({w.page for w in band.words}):
         found = lines([w for w in band.words if w.page == page])
         for above, line in zip(found, found[1:]):
@@ -45,13 +45,14 @@ def wrapped_names(logical: layout.Logical, band: layout.Band) -> None:
                     or abs(line[0].x0 - above[0].x0) > 3
                     or any(g.page == page and abs((g.y0 + g.y1) / 2 - middle) <= height / 2 for g in others)):
                 continue
-            last = max(above, key=lambda g: g.x1)
+            # (a name over three lines, `介護予防・生活` / `支援サービス事` / `業費`: the third line follows the second where
+            # the second was set)
+            last = max((moved.get(id(g), g) for g in above), key=lambda g: g.x1)
             start = last.x1
             for glyph in line:
                 width = glyph.x1 - glyph.x0
-                joined.append((glyph, Glyph(glyph.text, start, last.y0, start + width, last.y1, glyph.page, glyph.offset)))
+                moved[id(glyph)] = Glyph(glyph.text, start, last.y0, start + width, last.y1, glyph.page, glyph.offset)
                 start += width
-    moved = {id(old): new for old, new in joined}
     band.words = [moved.get(id(w), w) for w in band.words]
 
 
