@@ -1,6 +1,7 @@
 -- 科目の表: 一つの資料の款・項・目。金額は印字の値（当初予算の CSV の親は子の和）。
 -- 款・項の金額を印字しない資料（予算書の事項別明細書が款・項を頁の見出しだけに書くもの）では、
 -- 子の金額がすべてある款・項に子の和を入れる。子に金額の欠けがあれば NULL のまま。
+-- 番号も金額も無い子（その年度に廃した目を前年度の額だけ括弧書きで載せたもの `(図書館費)`）はその年度の額が無いので数えない。
 -- 同じ資料の中で is_leaf の行（目と、目の無い項）を足すと総額になり、款の和も総額になる。
 with rows as (select * from {{ ref('int_fiscal__expenditure_rows') }}),
 subjects as (
@@ -11,10 +12,14 @@ subjects as (
         and not (r.kan_code is null and coalesce(r.amount_yen, 0) = 0)
 ),
 -- 印字の無い項は子（目）の和。款は項を埋めた後で子（項と、項に属さない目）の和
+dropped as (
+    select row_id from subjects where code is null and amount_yen is null
+),
 kou_sum as (
     select p.row_id, sum(c.amount_yen)::bigint as amount_yen
     from subjects p
     join subjects c on c.parent_node_id = p.node_id and c.document_kind = p.document_kind
+        and c.row_id not in (select row_id from dropped)
     where p.node_kind = '項' and p.amount_yen is null
     group by p.row_id
     having count(c.amount_yen) = count(*)
@@ -27,6 +32,7 @@ kan_sum as (
     select p.row_id, sum(c.amount_yen)::bigint as amount_yen
     from kou_filled p
     join kou_filled c on c.parent_node_id = p.node_id and c.document_kind = p.document_kind
+        and c.row_id not in (select row_id from dropped)
     where p.node_kind = '款' and p.amount_yen is null
     group by p.row_id
     having count(c.amount_yen) = count(*)
