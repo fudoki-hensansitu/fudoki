@@ -14,6 +14,7 @@
     "paren_titles": "ingestion.generic.patterns.layout.paren_titles",
     "facing_pages": "ingestion.generic.patterns.layout.facing_pages",
     "purpose_section": "ingestion.generic.patterns.layout.purpose_section",
+    "titled_table": "ingestion.generic.patterns.layout.titled_table",
     "subject_cards": "ingestion.generic.patterns.layout.subject_cards",
     "listed_sources": "ingestion.generic.patterns.layout.listed_sources",
     "redrawn_facing_pages": "ingestion.generic.patterns.layout.redrawn_facing_pages",
