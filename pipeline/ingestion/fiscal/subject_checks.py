@@ -9,7 +9,8 @@ from shared.amount import number
 
 def check_subject(nodes: list[dict], amounts: list[dict], document_kind: str,
                   statement_kind: str = 'ordinary', direction: str = 'expenditure', partial: bool = False) -> dict:
-    """Require 款 with executed amounts and a strict majority of printed 目 with them. A part of an account
+    """Require 款 with executed amounts and a strict majority of printed 目 with them (or with their whole adjusted
+    budget printed as 不用額: nothing spent). A part of an account
     (`partial`) that starts inside a 款 prints the 款 only in its running header, with no amount: there the printed
     目 alone are required (足立の分冊10 is all inside 教育費)."""
     if document_kind != 'settlement' or direction != 'expenditure' or statement_kind == 'public-enterprise':
@@ -24,8 +25,21 @@ def check_subject(nodes: list[dict], amounts: list[dict], document_kind: str,
                and number(a['amount_text']) is not None
                and amount_phase(dictionary_header(a['header_path'], document_kind), document_kind,
                                 n['axis_header'], n.get('level_header') or {1: '款', 2: '項', 3: '目'}.get(n['depth'])) == 'executed'}
+    # A 目 that spent nothing prints its whole adjusted budget as 不用額 and leaves 支出済額 blank (栃木県の特別会計):
+    # the blank is the print, read as such, not an amount the reading lost.
+    by_heading: dict[str, dict[str, int]] = {}
+    for a in amounts:
+        if a['node_key'] in moku and (value := number(a['amount_text'])) is not None:
+            heading = dictionary_header(a['header_path'], document_kind)
+            phase = 'adjusted' if amount_phase(heading, document_kind, subjects[a['node_key']]['axis_header'], '目') == 'adjusted' \
+                else heading
+            found = by_heading.setdefault(a['node_key'], {})
+            if phase != 'adjusted' or heading == '計' or phase not in found:  # 予算現額／計 over its parts
+                found[phase] = value
+    unspent = {key for key, found in by_heading.items()
+               if found.get('不用額') is not None and found.get('不用額') == found.get('adjusted') and found['不用額'] != 0}
     kan_printed = len({n['node_key'] for n in kan} & printed)
-    moku_printed = len(moku & printed)
+    moku_printed = len(moku & (printed | unspent))
     # Some accounts print only 款・項. No unprinted 目 is invented for that denominator;
     # the 款 still must print an executed amount, including a printed zero.
     unprinted_kan = partial and not {n['node_key'] for n in kan} & {a['node_key'] for a in amounts}

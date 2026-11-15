@@ -67,6 +67,17 @@ class UnitCheckTest(unittest.TestCase):
         result = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='一般会計')
         self.assertEqual((result['status'], result['subject_check']['executed_moku']), ('digits', 3))
 
+    def test_a_moku_that_spent_nothing_counts_by_its_unused_whole_budget(self):
+        nodes, amounts = table('45,000,000')
+        nodes += [node(f'm{i}', 'k1-1', '目', f'事業{i}', depth=3) for i in range(2)]
+        amounts += [amount('m0', '45,000,000'),
+                    amount('m1', '115,820,000', header='予算現額／計'), amount('m1', '115,820,000', header='不用額')]
+        result = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='特別会計')
+        self.assertEqual(result['subject_check']['executed_moku'], 2)
+        amounts[-1] = amount('m1', '115,000,000', header='不用額')  # some of it spent: the blank is a lost amount
+        result = unit_checks.check_table(nodes, amounts, document_kind='settlement', account='特別会計')
+        self.assertEqual((result['status'], result['subject_check']['executed_moku']), ('stopped', 1))
+
     def test_another_axis_and_annotations_do_not_fill_a_subjects_missing_amount(self):
         nodes, amounts = table('100,000,000')
         nodes += [node('m1', 'k1-1', None, '事業', depth=3),

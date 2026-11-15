@@ -733,6 +733,13 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         entries, origin = wrapped.module.join(entries)
         if roles is not None:  # the roles were judged on the lines before the join
             roles = {new: roles[old] for new, old in enumerate(origin) if old in roles}
+    if (tabled := quirk(settings, 'labels_over_amounts')) is not None:
+        # Each label of a table of notes with the amount under it is a note of its own (the quirk); the roles of the
+        # other lines keep their entries.
+        kept = {id(entries[i]): role for i, role in (roles or {}).items() if i < len(entries)}
+        entries, tabled_notes = tabled.module.split(entries, [w for band in group.bands for w in band.words])
+        roles = {i: kept[id(entry)] for i, entry in enumerate(entries) if id(entry) in kept}
+        roles.update({i: 'note' for i in tabled_notes})
 
     def measure(item, label, code) -> None:
         _measure(item, label, code, ocr or joined_codes, stops)

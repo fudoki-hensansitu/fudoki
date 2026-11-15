@@ -1,6 +1,6 @@
 import unittest
 
-from serving.publish import classify, seed_codes
+from serving.publish import build_modules, classify, seed_codes
 
 SEEDS = {
     'pipeline/dbt/seeds/fiscal/fiscal_detail_breakdown.csv': {'131016'},
@@ -9,8 +9,11 @@ SEEDS = {
 }
 
 
+BUILD = {'pipeline/ingestion/fiscal/manifest.py', 'pipeline/ingestion/lib/node_tables.py', 'pipeline/ingestion/project/run.py'}
+
+
 def scope(*paths: str) -> dict:
-    return classify(list(paths), SEEDS.__getitem__)
+    return classify(list(paths), SEEDS.__getitem__, BUILD)
 
 
 class ClassifyTest(unittest.TestCase):
@@ -29,7 +32,9 @@ class ClassifyTest(unittest.TestCase):
             'pipeline/dbt/models/marts/fiscal_line.sql',
             'pipeline/staging/__init__.py',
             'pipeline/ingestion/fiscal/manifest.py',
-            'pipeline/ingestion/generic/tree.py',
+            'pipeline/ingestion/lib/node_tables.py',
+            'pipeline/ingestion/lib/ocr_variant_chars.json',
+            'pipeline/ingestion/project/origins.json',
             'pipeline/serving/sync_d1.py',
             'packages/jurisdictions/src/index.ts',
             'apps/api/src/columns.json',
@@ -39,6 +44,15 @@ class ClassifyTest(unittest.TestCase):
         ):
             with self.subTest(path=path):
                 self.assertEqual(scope(path), {'mode': 'full', 'jurisdictions': [], 'reason': path})
+
+    def test_converter_code_that_build_does_not_import_does_nothing(self):
+        self.assertEqual(scope(
+            'pipeline/ingestion/generic/tree.py',
+            'pipeline/ingestion/fiscal/layouts/generic_scan/convert.py',
+            'pipeline/ingestion/fiscal/layouts/generic_text/options.schema.json',
+            'pipeline/ingestion/generic/patterns/catalog.json',
+            'pipeline/ingestion/fiscal/store.py',
+        ), {'mode': 'none', 'jurisdictions': []})
 
     def test_unknown_input_falls_to_full(self):
         self.assertEqual(scope('pipeline/something_new/thing.py')['mode'], 'full')
@@ -54,6 +68,35 @@ class ClassifyTest(unittest.TestCase):
             'pipeline/ingestion/fiscal/jurisdictions/131016/2024/settlement/expenditure.digit-recheck.jsonl',
             'pipeline/dbt/macros/fiscal_pdf_relations.sql',
         ), {'mode': 'none', 'jurisdictions': []})
+
+
+class BuildModulesTest(unittest.TestCase):
+    def test_follows_what_the_build_imports(self):
+        build = build_modules()
+        for path in ('pipeline/dbt/scripts/prepare.py', 'pipeline/ingestion/fiscal/manifest.py',
+                     'pipeline/ingestion/lib/node_tables.py', 'pipeline/ingestion/generic/page_words.py',
+                     'pipeline/ingestion/generic/layout_settings.py', 'pipeline/ingestion/project/link_projects.py'):
+            with self.subTest(path=path):
+                self.assertIn(path, build)
+        # manifest・storage が検査と指紋のときだけ import する変換器は入れない
+        for path in ('pipeline/ingestion/generic/tree.py', 'pipeline/ingestion/generic/convert.py',
+                     'pipeline/ingestion/fiscal/layouts/generic_scan/convert.py', 'pipeline/ingestion/fiscal/store.py'):
+            with self.subTest(path=path):
+                self.assertNotIn(path, build)
+
+
+    def test_relative_imports_are_followed(self):
+        import ast
+        from pathlib import Path
+        from unittest import mock
+        from serving import publish
+
+        source = 'from .lib import a\nfrom ..x.y import b\nfrom . import c\n'
+        with mock.patch.object(Path, 'read_text', return_value=source):
+            names = publish.imported(publish.PIPELINE / 'ingestion/fiscal/storage.py')
+        self.assertIn('ingestion.fiscal.lib.a', names)
+        self.assertIn('ingestion.x.y.b', names)
+        self.assertIn('ingestion.fiscal.c', names)
 
 
 class SeedCodesTest(unittest.TestCase):
