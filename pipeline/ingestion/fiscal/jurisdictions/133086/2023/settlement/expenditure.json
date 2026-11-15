@@ -1,0 +1,428 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "133086",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "tables": [
+    {
+      "table_id": "nhi-expenditure-detail",
+      "conversion_id": "nhi",
+      "input_fingerprint": "f5baab677291f868a2b0e7c788b60a4cd901c720306cd710f12f98662e636c8f",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 10頁 から決めた。款の和 664,528,714 と印字の「歳出合計」664,528,714 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（200 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費の別事故繰越→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2023/settlement/expenditure/nhi-expenditure-detail-nodes.parquet",
+          "sha256": "4fc543897394953ff576dc3f3d80dda650b4dc617f5a14326843bc0d82ca92dc",
+          "bytes": 10152
+        },
+        "row_count": 175
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2023/settlement/expenditure/nhi-expenditure-detail-amounts.parquet",
+          "sha256": "1a91e9a47af3823304d109944d075e4264d13714bdc705f6172eae4353351643",
+          "bytes": 10797
+        },
+        "row_count": 1047
+      }
+    },
+    {
+      "table_id": "kouki-expenditure-detail",
+      "conversion_id": "kouki",
+      "input_fingerprint": "ee887c378c1bfc3c9896b5c97c1f67c566942258ef33b5ae2ebdc9c48f5bbc02",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 231,997,251 と印字の「歳出合計」231,997,251 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（68 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費の別事故繰越→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2023/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
+          "sha256": "d54c1e6c76968865e2150ed12a22dbe8682cb9f4ab05422b297928fe4e29054f",
+          "bytes": 5671
+        },
+        "row_count": 64
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2023/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
+          "sha256": "be72359e2e99346794eb01a8c3f9e3aaf442570f1b7a9c6a88fb9f8a7b2fbc32",
+          "bytes": 6140
+        },
+        "row_count": 353
+      }
+    },
+    {
+      "table_id": "kaigo-expenditure-detail",
+      "conversion_id": "kaigo",
+      "input_fingerprint": "3a7c12188929483db54f40aaffc1cc41735e3ba2d44fff3818ca19e0e05000b1",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 8頁 から決めた。款の和 830,546,004 と印字の「歳出合計」830,546,004 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（164 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費の別事故繰越→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2023/settlement/expenditure/kaigo-expenditure-detail-nodes.parquet",
+          "sha256": "b08bbb3495628773db1cbb7fc6a0809a475a8680da0bb5ca07753be4d32b9490",
+          "bytes": 9828
+        },
+        "row_count": 164
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2023/settlement/expenditure/kaigo-expenditure-detail-amounts.parquet",
+          "sha256": "ede0887015c1d3a2ebd6270a3d6adf30759ccd9a0bf4926c24809c1ea42c1898",
+          "bytes": 9874
+        },
+        "row_count": 806
+      }
+    },
+    {
+      "table_id": "general-expenditure-detail",
+      "conversion_id": "general",
+      "input_fingerprint": "e12ce8c0a7b8bc0879fcf39e6ec97d0e3c3fb2899a854c369d7efd14f9186029",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は printed 101頁 から決めた。款の和 7,079,478,313 と印字の「歳出合計」7,079,478,313 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（2575 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費の別事故繰越→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2023/settlement/expenditure/general-expenditure-detail-nodes.parquet",
+          "sha256": "cc4f370fbace16ec895d4b0ab13f4ba7c40abfc9a0ec1090b736e28751f25410",
+          "bytes": 92923
+        },
+        "row_count": 3111
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/133086/2023/settlement/expenditure/general-expenditure-detail-amounts.parquet",
+          "sha256": "f11e00a2efdc19c83d14490069436ba93f47e3190689691ab72dbdf5db736192",
+          "bytes": 98569
+        },
+        "row_count": 9333
+      }
+    }
+  ],
+  "conversions": [
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0e2f77f88c65767f4b0fd97acaa322b369cac5fa24c62807a2af0762805d1af0"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-expenditure-detail",
+        "pages": [
+          [
+            13,
+            22
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "headings": true,
+                  "under": "節"
+                }
+              }
+            }
+          },
+          "quirks": {
+            "traced_glyphs": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4ed9da4512e5418e45203586a35da2547359b2085172729d6d4451efcf4141ec"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "pages": [
+          [
+            11,
+            14
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "headings": true,
+                  "under": "節"
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f98304c56a8d623e218443121b20efdc44cdd75f0d0e0f05dca7dc74945e0b07"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "pages": [
+          [
+            16,
+            23
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                },
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "headings": true,
+                  "under": "節"
+                }
+              }
+            }
+          },
+          "quirks": {
+            "traced_glyphs": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9afcc55b4ba80750b6783d74db07d843b5d9ba2a26c19728daa4362552f2d6dc"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "事業": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "予算現額／区分／節": {
+                  "kind": "label",
+                  "axis_header": "節"
+                }
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "amounts": "next_row",
+              "fourth_level_axis": "事業"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "plain_names": [
+                    "高額調整事務委託",
+                    "修繕費",
+                    "建物災害共済保険料"
+                  ]
+                },
+                "quirks": {
+                  "headings": true,
+                  "under": "節"
+                }
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            31,
+            131
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-detail"
+        }
+      ]
+    }
+  ]
+}

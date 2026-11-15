@@ -1,0 +1,1173 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131113",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "580e62b66edd530d036ba730a8c78e28144a1c89f64d04ea7e953bfe799ba4ee",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
+        "金額の単位は printed 5頁・carried 80頁・default 1頁 から決めた。款の和 314,768,636（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 236 件（補正回次 98・補正経過 138）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 4教育センタ一費→4教育センター費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 402 件（p61:full-page:a0:result0:r34・p61:full-page:a0:result0:r34:w2・p61:full-page:a0:result0:r56・p61:full-page:a0:result0:r56:w7・p61:full-page:a0:result0:r66・p61:full-page:a0:result0:r66:w5・p67:full-page:a0:result0:r125・p67:full-page:a0:result0:r125:w10・p69:full-page:a0:result0:r54・p69:full-page:a0:result0:r54:w2・p73:full-page:a0:result0:r71・p73:full-page:a0:result0:r71:w6・p73:full-page:a0:result0:r76・p73:full-page:a0:result0:r76:w6・p75:full-page:a0:result0:r77・p75:full-page:a0:result0:r77:w8・p75:full-page:a0:result0:r79・p75:full-page:a0:result0:r79:w6・p77:full-page:a0:result0:r30・p77:full-page:a0:result0:r30:w7・p77:full-page:a0:result0:r37・p77:full-page:a0:result0:r37:w6・p77:full-page:a0:result0:r55・p77:full-page:a0:result0:r55:w9・p77:full-page:a0:result0:r75・p77:full-page:a0:result0:r75:w6・p77:full-page:a0:result0:r91・p77:full-page:a0:result0:r91:w6・p79:full-page:a0:result0:r8・p79:full-page:a0:result0:r8:w6・p79:full-page:a0:result0:r51・p79:full-page:a0:result0:r51・p79:full-page:a0:result0:r51:w1・p79:full-page:a0:result0:r51:w4・p81:full-page:a0:result0:r32・p81:full-page:a0:result0:r32:w5・p81:full-page:a0:result0:r70・p81:full-page:a0:result0:r70:w3・p81:full-page:a0:result0:r74・p81:full-page:a0:result0:r74:w3・p81:full-page:a0:result0:r94・p81:full-page:a0:result0:r94:w4・p81:full-page:a0:result0:r113・p81:full-page:a0:result0:r113:w4・p83:full-page:a0:result0:r88・p83:full-page:a0:result0:r88:w11・p83:full-page:a0:result0:r94・p83:full-page:a0:result0:r94:w6・p83:full-page:a0:result0:r103・p83:full-page:a0:result0:r103:w6・p85:full-page:a0:result0:r36・p85:full-page:a0:result0:r36:w4・p85:full-page:a0:result0:r125・p85:full-page:a0:result0:r125:w10・p87:full-page:a0:result0:r10・p87:full-page:a0:result0:r10:w5・p91:full-page:a0:result0:r9・p91:full-page:a0:result0:r9・p91:full-page:a0:result0:r9:w12・p91:full-page:a0:result0:r9:w15・p91:full-page:a0:result0:r55・p91:full-page:a0:result0:r55・p91:full-page:a0:result0:r55:w0・p91:full-page:a0:result0:r55:w3・p91:full-page:a0:result0:r77・p91:full-page:a0:result0:r77:w9・p91:full-page:a0:result0:r93・p91:full-page:a0:result0:r93・p91:full-page:a0:result0:r93・p91:full-page:a0:result0:r93:w1・p91:full-page:a0:result0:r93:w3・p91:full-page:a0:result0:r93:w5・p93:full-page:a0:result0:r57・p93:full-page:a0:result0:r57:w7・p93:full-page:a0:result0:r74・p93:full-page:a0:result0:r74・p93:full-page:a0:result0:r74:w3・p93:full-page:a0:result0:r74:w7・p93:full-page:a0:result0:r91・p93:full-page:a0:result0:r91:w16・p93:full-page:a0:result0:r99・p93:full-page:a0:result0:r99:w16・p95:full-page:a0:result0:r6・p95:full-page:a0:result0:r6・p95:full-page:a0:result0:r6:w0・p95:full-page:a0:result0:r6:w3・p95:full-page:a0:result0:r25・p95:full-page:a0:result0:r25・p95:full-page:a0:result0:r25:w3・p95:full-page:a0:result0:r25:w16・p95:full-page:a0:result0:r47・p95:full-page:a0:result0:r47:w1・p95:full-page:a0:result0:r62・p95:full-page:a0:result0:r62:w1・p95:full-page:a0:result0:r77・p95:full-page:a0:result0:r77:w1・p95:full-page:a0:result0:r84・p95:full-page:a0:result0:r84:w1・p95:full-page:a0:result0:r115・p95:full-page:a0:result0:r115:w13・p95:full-page:a0:result0:r127・p95:full-page:a0:result0:r127・p95:full-page:a0:result0:r127:w9・p95:full-page:a0:result0:r127:w12・p97:full-page:a0:result0:r7・p97:full-page:a0:result0:r7・p97:full-page:a0:result0:r7:w10・p97:full-page:a0:result0:r7:w13・p97:full-page:a0:result0:r15・p97:full-page:a0:result0:r15:w12・p105:full-page:a0:result0:r17・p105:full-page:a0:result0:r17:w4・p109:full-page:a0:result0:r25・p109:full-page:a0:result0:r25:w6・p113:full-page:a0:result0:r29・p113:full-page:a0:result0:r29:w5・p113:full-page:a0:result0:r39・p113:full-page:a0:result0:r39:w4・p113:full-page:a0:result0:r80・p113:full-page:a0:result0:r80:w5・p113:full-page:a0:result0:r85・p113:full-page:a0:result0:r85:w5・p113:full-page:a0:result0:r96・p113:full-page:a0:result0:r96:w11・p113:full-page:a0:result0:r112・p113:full-page:a0:result0:r112・p113:full-page:a0:result0:r112:w8・p113:full-page:a0:result0:r112:w11・p113:full-page:a0:result0:r134・p113:full-page:a0:result0:r134:w10・p115:full-page:a0:result0:r79・p115:full-page:a0:result0:r79:w4・p117:full-page:a0:result0:r40・p117:full-page:a0:result0:r40:w6・p117:full-page:a0:result0:r50・p117:full-page:a0:result0:r50:w6・p117:full-page:a0:result0:r95・p117:full-page:a0:result0:r95:w8・p119:full-page:a0:result0:r37・p119:full-page:a0:result0:r37:w17・p125:full-page:a0:result0:r35・p125:full-page:a0:result0:r35:w4・p125:full-page:a0:result0:r73・p125:full-page:a0:result0:r73:w4・p125:full-page:a0:result0:r74・p125:full-page:a0:result0:r74:w2・p125:full-page:a0:result0:r76・p125:full-page:a0:result0:r76:w21・p127:full-page:a0:result0:r22・p127:full-page:a0:result0:r22:w3・p129:full-page:a0:result0:r27・p129:full-page:a0:result0:r27:w13・p129:full-page:a0:result0:r114・p129:full-page:a0:result0:r114:w2・p131:full-page:a0:result0:r67・p131:full-page:a0:result0:r67:w2・p131:full-page:a0:result0:r99・p131:full-page:a0:result0:r99:w7・p133:full-page:a0:result0:r31・p133:full-page:a0:result0:r31:w3・p135:full-page:a0:result0:r144・p135:full-page:a0:result0:r144:w2・p137:full-page:a0:result0:r111・p137:full-page:a0:result0:r111:w3・p143:full-page:a0:result0:r88・p143:full-page:a0:result0:r88:w5・p143:full-page:a0:result0:r90・p143:full-page:a0:result0:r90:w2・p143:full-page:a0:result0:r111・p143:full-page:a0:result0:r111:w2・p143:full-page:a0:result0:r141・p143:full-page:a0:result0:r141:w7・p143:full-page:a0:result0:r150・p143:full-page:a0:result0:r150:w4・p145:full-page:a0:result0:r10・p145:full-page:a0:result0:r10:w4・p145:full-page:a0:result0:r15・p145:full-page:a0:result0:r15:w4・p145:full-page:a0:result0:r58・p145:full-page:a0:result0:r58:w3・p145:full-page:a0:result0:r68・p145:full-page:a0:result0:r68:w6・p145:full-page:a0:result0:r88・p145:full-page:a0:result0:r88:w9・p145:full-page:a0:result0:r94・p145:full-page:a0:result0:r94:w9・p145:full-page:a0:result0:r98・p145:full-page:a0:result0:r98:w9・p145:full-page:a0:result0:r104・p145:full-page:a0:result0:r104:w4・p145:full-page:a0:result0:r107・p145:full-page:a0:result0:r107:w4・p145:full-page:a0:result0:r130・p145:full-page:a0:result0:r130:w2・p145:full-page:a0:result0:r133・p145:full-page:a0:result0:r133:w3・p147:full-page:a0:result0:r55・p147:full-page:a0:result0:r55:w7・p147:full-page:a0:result0:r77・p147:full-page:a0:result0:r77・p147:full-page:a0:result0:r77:w7・p147:full-page:a0:result0:r77:w10・p147:full-page:a0:result0:r129・p147:full-page:a0:result0:r129:w7・p149:full-page:a0:result0:r68・p149:full-page:a0:result0:r68:w7・p149:full-page:a0:result0:r72・p149:full-page:a0:result0:r72:w2・p149:full-page:a0:result0:r115・p149:full-page:a0:result0:r115:w4・p151:full-page:a0:result0:r110・p151:full-page:a0:result0:r110・p151:full-page:a0:result0:r110:w2・p151:full-page:a0:result0:r110:w5・p151:full-page:a0:result0:r119・p151:full-page:a0:result0:r119:w2・p155:full-page:a0:result0:r64・p155:full-page:a0:result0:r64:w9・p155:full-page:a0:result0:r70・p155:full-page:a0:result0:r70・p155:full-page:a0:result0:r70:w4・p155:full-page:a0:result0:r70:w9・p155:full-page:a0:result0:r74・p155:full-page:a0:result0:r74:w9・p157:full-page:a0:result0:r53・p157:full-page:a0:result0:r53:w7・p163:full-page:a0:result0:r48・p163:full-page:a0:result0:r48:w11・p163:full-page:a0:result0:r86・p163:full-page:a0:result0:r86:w1・p167:full-page:a0:result0:r57・p167:full-page:a0:result0:r57:w2・p167:full-page:a0:result0:r64・p167:full-page:a0:result0:r64:w2・p167:full-page:a0:result0:r69・p167:full-page:a0:result0:r69:w2・p167:full-page:a0:result0:r80・p167:full-page:a0:result0:r80:w2・p169:full-page:a0:result0:r9・p169:full-page:a0:result0:r9:w7・p169:full-page:a0:result0:r10・p169:full-page:a0:result0:r10:w2・p169:full-page:a0:result0:r45・p169:full-page:a0:result0:r45:w7・p171:full-page:a0:result0:r8・p171:full-page:a0:result0:r8:w11・p171:full-page:a0:result0:r43・p171:full-page:a0:result0:r43:w9・p171:full-page:a0:result0:r47・p171:full-page:a0:result0:r47:w4・p173:full-page:a0:result0:r22・p173:full-page:a0:result0:r22:w6・p173:full-page:a0:result0:r35・p173:full-page:a0:result0:r35:w6・p173:full-page:a0:result0:r38・p173:full-page:a0:result0:r38・p173:full-page:a0:result0:r38:w4・p173:full-page:a0:result0:r38:w7・p173:full-page:a0:result0:r71・p173:full-page:a0:result0:r71:w2・p173:full-page:a0:result0:r78・p173:full-page:a0:result0:r78:w2・p173:full-page:a0:result0:r93・p173:full-page:a0:result0:r93:w10・p175:full-page:a0:result0:r62・p175:full-page:a0:result0:r62:w6・p175:full-page:a0:result0:r70・p175:full-page:a0:result0:r70:w9・p177:full-page:a0:result0:r17・p177:full-page:a0:result0:r17:w4・p177:full-page:a0:result0:r108・p177:full-page:a0:result0:r108・p177:full-page:a0:result0:r108:w3・p177:full-page:a0:result0:r108:w5・p177:full-page:a0:result0:r114・p177:full-page:a0:result0:r114:w7・p179:full-page:a0:result0:r41・p179:full-page:a0:result0:r41:w2・p183:full-page:a0:result0:r69・p183:full-page:a0:result0:r69:w8・p183:full-page:a0:result0:r73・p183:full-page:a0:result0:r73:w2・p187:full-page:a0:result0:r8・p187:full-page:a0:result0:r8:w2・p187:full-page:a0:result0:r16・p187:full-page:a0:result0:r16:w2・p187:full-page:a0:result0:r22・p187:full-page:a0:result0:r22・p187:full-page:a0:result0:r22:w5・p187:full-page:a0:result0:r22:w8・p187:full-page:a0:result0:r25・p187:full-page:a0:result0:r25:w7・p187:full-page:a0:result0:r30・p187:full-page:a0:result0:r30:w7・p187:full-page:a0:result0:r58・p187:full-page:a0:result0:r58:w4・p191:full-page:a0:result0:r49・p191:full-page:a0:result0:r49:w3・p199:full-page:a0:result0:r95・p199:full-page:a0:result0:r95:w5・p201:full-page:a0:result0:r53・p201:full-page:a0:result0:r53:w3・p201:full-page:a0:result0:r55・p201:full-page:a0:result0:r55:w5・p201:full-page:a0:result0:r106・p201:full-page:a0:result0:r106:w13・p201:full-page:a0:result0:r122・p201:full-page:a0:result0:r122:w4・p203:full-page:a0:result0:r10・p203:full-page:a0:result0:r10:w11・p203:full-page:a0:result0:r14・p203:full-page:a0:result0:r14:w1・p203:full-page:a0:result0:r37・p203:full-page:a0:result0:r37:w3・p203:full-page:a0:result0:r71・p203:full-page:a0:result0:r71・p203:full-page:a0:result0:r71・p203:full-page:a0:result0:r71・p203:full-page:a0:result0:r71:w4・p203:full-page:a0:result0:r71:w14・p203:full-page:a0:result0:r71:w16・p203:full-page:a0:result0:r71:w18・p203:full-page:a0:result0:r73・p203:full-page:a0:result0:r73・p203:full-page:a0:result0:r73・p203:full-page:a0:result0:r73・p203:full-page:a0:result0:r73:w5・p203:full-page:a0:result0:r73:w7・p203:full-page:a0:result0:r73:w9・p203:full-page:a0:result0:r73:w11・p203:full-page:a0:result0:r74・p203:full-page:a0:result0:r74・p203:full-page:a0:result0:r74・p203:full-page:a0:result0:r74・p203:full-page:a0:result0:r74:w13・p203:full-page:a0:result0:r74:w15・p203:full-page:a0:result0:r74:w17・p203:full-page:a0:result0:r74:w19・p203:full-page:a0:result0:r79・p203:full-page:a0:result0:r79:w3・p203:full-page:a0:result0:r81・p203:full-page:a0:result0:r81:w7・p203:full-page:a0:result0:r98・p203:full-page:a0:result0:r98:w5・p203:full-page:a0:result0:r100・p203:full-page:a0:result0:r100:w5・p203:full-page:a0:result0:r112・p203:full-page:a0:result0:r112:w6・p205:full-page:a0:result0:r124・p205:full-page:a0:result0:r124:w2・p207:full-page:a0:result0:r12・p207:full-page:a0:result0:r12:w7・p211:full-page:a0:result0:r57・p211:full-page:a0:result0:r57:w8・p211:full-page:a0:result0:r96・p211:full-page:a0:result0:r96:w6・p213:full-page:a0:result0:r15・p213:full-page:a0:result0:r15:w7・p213:full-page:a0:result0:r18・p213:full-page:a0:result0:r18:w9・p213:full-page:a0:result0:r40・p213:full-page:a0:result0:r40:w8・p213:full-page:a0:result0:r57・p213:full-page:a0:result0:r57:w1・p213:full-page:a0:result0:r111・p213:full-page:a0:result0:r111:w4・p215:full-page:a0:result0:r8・p215:full-page:a0:result0:r8:w4・p215:full-page:a0:result0:r25・p215:full-page:a0:result0:r25:w6・p215:full-page:a0:result0:r56・p215:full-page:a0:result0:r56:w4・p215:full-page:a0:result0:r58・p215:full-page:a0:result0:r58:w4・p215:full-page:a0:result0:r60・p215:full-page:a0:result0:r60:w4・p215:full-page:a0:result0:r62・p215:full-page:a0:result0:r62:w4・p215:full-page:a0:result0:r64・p215:full-page:a0:result0:r64:w4・p219:full-page:a0:result0:r56・p219:full-page:a0:result0:r56:w8・p219:full-page:a0:result0:r94・p219:full-page:a0:result0:r94:w6・p219:full-page:a0:result0:r107・p219:full-page:a0:result0:r107:w7・p219:full-page:a0:result0:r110・p219:full-page:a0:result0:r110:w9・p221:full-page:a0:result0:r22・p221:full-page:a0:result0:r22:w8・p221:full-page:a0:result0:r32・p221:full-page:a0:result0:r32:w1・p221:full-page:a0:result0:r68・p221:full-page:a0:result0:r68:w6・p221:full-page:a0:result0:r80・p221:full-page:a0:result0:r80:w4・p221:full-page:a0:result0:r82・p221:full-page:a0:result0:r82:w4・p221:full-page:a0:result0:r84・p221:full-page:a0:result0:r84:w4・p225:full-page:a0:result0:r20・p225:full-page:a0:result0:r20:w14）・减→減 4 件（p125:full-page:a0:result0:r96・p125:full-page:a0:result0:r96:w8・p226:full-page:a0:result0:r37・p226:full-page:a0:result0:r37:w0）・增→増 12 件（p147:full-page:a0:result0:r53・p147:full-page:a0:result0:r53:w3・p211:full-page:a0:result0:r67・p211:full-page:a0:result0:r67:w5・p213:full-page:a0:result0:r42・p213:full-page:a0:result0:r42:w4・p215:full-page:a0:result0:r66・p215:full-page:a0:result0:r66:w2・p215:full-page:a0:result0:r68・p215:full-page:a0:result0:r68:w2・p219:full-page:a0:result0:r66・p219:full-page:a0:result0:r66:w4）・徵→徴 8 件（p102:full-page:a0:result0:r3・p102:full-page:a0:result0:r3:w1・p102:full-page:a0:result0:r12・p102:full-page:a0:result0:r12:w0・p102:full-page:a0:result0:r40・p102:full-page:a0:result0:r40:w2・p104:full-page:a0:result0:r3・p104:full-page:a0:result0:r3:w1）・查→査 242 件（p61:full-page:a0:result0:r66・p61:full-page:a0:result0:r66:w4・p65:full-page:a0:result0:r70・p65:full-page:a0:result0:r70:w3・p67:full-page:a0:result0:r21・p67:full-page:a0:result0:r21:w5・p67:full-page:a0:result0:r27・p67:full-page:a0:result0:r27:w7・p71:full-page:a0:result0:r31・p71:full-page:a0:result0:r31:w3・p73:full-page:a0:result0:r11・p73:full-page:a0:result0:r11:w14・p73:full-page:a0:result0:r76・p73:full-page:a0:result0:r76:w3・p75:full-page:a0:result0:r84・p75:full-page:a0:result0:r84:w11・p77:full-page:a0:result0:r118・p77:full-page:a0:result0:r118:w10・p81:full-page:a0:result0:r27・p81:full-page:a0:result0:r27・p81:full-page:a0:result0:r27:w6・p81:full-page:a0:result0:r27:w8・p81:full-page:a0:result0:r32・p81:full-page:a0:result0:r32:w11・p81:full-page:a0:result0:r34・p81:full-page:a0:result0:r34・p81:full-page:a0:result0:r34:w3・p81:full-page:a0:result0:r34:w8・p81:full-page:a0:result0:r39・p81:full-page:a0:result0:r39・p81:full-page:a0:result0:r39:w3・p81:full-page:a0:result0:r39:w10・p81:full-page:a0:result0:r47・p81:full-page:a0:result0:r47:w4・p81:full-page:a0:result0:r52・p81:full-page:a0:result0:r52:w3・p83:full-page:a0:result0:r113・p83:full-page:a0:result0:r113:w13・p107:full-page:a0:result0:r61・p107:full-page:a0:result0:r61・p107:full-page:a0:result0:r61:w4・p107:full-page:a0:result0:r61:w7・p107:full-page:a0:result0:r68・p107:full-page:a0:result0:r68:w7・p107:full-page:a0:result0:r70・p107:full-page:a0:result0:r70:w7・p107:full-page:a0:result0:r74・p107:full-page:a0:result0:r74:w7・p107:full-page:a0:result0:r76・p107:full-page:a0:result0:r76:w7・p107:full-page:a0:result0:r80・p107:full-page:a0:result0:r80:w7・p107:full-page:a0:result0:r82・p107:full-page:a0:result0:r82:w7・p110:full-page:a0:result0:r3・p110:full-page:a0:result0:r3:w2・p110:full-page:a0:result0:r12・p110:full-page:a0:result0:r12:w1・p110:full-page:a0:result0:r19・p110:full-page:a0:result0:r19:w1・p111:full-page:a0:result0:r18・p111:full-page:a0:result0:r18:w13・p111:full-page:a0:result0:r28・p111:full-page:a0:result0:r28・p111:full-page:a0:result0:r28:w3・p111:full-page:a0:result0:r28:w11・p111:full-page:a0:result0:r44・p111:full-page:a0:result0:r44:w10・p113:full-page:a0:result0:r134・p113:full-page:a0:result0:r134:w14・p117:full-page:a0:result0:r33・p117:full-page:a0:result0:r33:w4・p117:full-page:a0:result0:r38・p117:full-page:a0:result0:r38:w6・p133:full-page:a0:result0:r87・p133:full-page:a0:result0:r87:w7・p143:full-page:a0:result0:r135・p143:full-page:a0:result0:r135:w7・p143:full-page:a0:result0:r139・p143:full-page:a0:result0:r139:w10・p143:full-page:a0:result0:r141・p143:full-page:a0:result0:r141:w11・p145:full-page:a0:result0:r15・p145:full-page:a0:result0:r15:w3・p145:full-page:a0:result0:r17・p145:full-page:a0:result0:r17:w5・p145:full-page:a0:result0:r21・p145:full-page:a0:result0:r21・p145:full-page:a0:result0:r21:w3・p145:full-page:a0:result0:r21:w12・p145:full-page:a0:result0:r25・p145:full-page:a0:result0:r25:w5・p145:full-page:a0:result0:r27・p145:full-page:a0:result0:r27・p145:full-page:a0:result0:r27:w3・p145:full-page:a0:result0:r27:w19・p145:full-page:a0:result0:r94・p145:full-page:a0:result0:r94:w5・p145:full-page:a0:result0:r98・p145:full-page:a0:result0:r98:w5・p145:full-page:a0:result0:r130・p145:full-page:a0:result0:r130・p145:full-page:a0:result0:r130:w1・p145:full-page:a0:result0:r130:w9・p145:full-page:a0:result0:r133・p145:full-page:a0:result0:r133:w12・p147:full-page:a0:result0:r25・p147:full-page:a0:result0:r25:w5・p147:full-page:a0:result0:r67・p147:full-page:a0:result0:r67:w5・p147:full-page:a0:result0:r71・p147:full-page:a0:result0:r71:w8・p147:full-page:a0:result0:r90・p147:full-page:a0:result0:r90:w5・p147:full-page:a0:result0:r117・p147:full-page:a0:result0:r117:w9・p147:full-page:a0:result0:r123・p147:full-page:a0:result0:r123:w10・p149:full-page:a0:result0:r103・p149:full-page:a0:result0:r103:w7・p149:full-page:a0:result0:r105・p149:full-page:a0:result0:r105:w8・p149:full-page:a0:result0:r109・p149:full-page:a0:result0:r109:w9・p149:full-page:a0:result0:r111・p149:full-page:a0:result0:r111:w10・p149:full-page:a0:result0:r115・p149:full-page:a0:result0:r115:w12・p149:full-page:a0:result0:r119・p149:full-page:a0:result0:r119:w12・p149:full-page:a0:result0:r123・p149:full-page:a0:result0:r123:w10・p149:full-page:a0:result0:r137・p149:full-page:a0:result0:r137:w10・p151:full-page:a0:result0:r8・p151:full-page:a0:result0:r8:w10・p151:full-page:a0:result0:r25・p151:full-page:a0:result0:r25:w12・p151:full-page:a0:result0:r27・p151:full-page:a0:result0:r27:w10・p151:full-page:a0:result0:r40・p151:full-page:a0:result0:r40:w3・p151:full-page:a0:result0:r50・p151:full-page:a0:result0:r50:w14・p151:full-page:a0:result0:r51・p151:full-page:a0:result0:r51:w5・p151:full-page:a0:result0:r100・p151:full-page:a0:result0:r100:w3・p151:full-page:a0:result0:r110・p151:full-page:a0:result0:r110:w1・p153:full-page:a0:result0:r8・p153:full-page:a0:result0:r8:w3・p153:full-page:a0:result0:r10・p153:full-page:a0:result0:r10:w5・p153:full-page:a0:result0:r16・p153:full-page:a0:result0:r16:w5・p153:full-page:a0:result0:r20・p153:full-page:a0:result0:r20:w6・p153:full-page:a0:result0:r22・p153:full-page:a0:result0:r22:w1・p153:full-page:a0:result0:r24・p153:full-page:a0:result0:r24:w6・p155:full-page:a0:result0:r78・p155:full-page:a0:result0:r78:w8・p165:full-page:a0:result0:r11・p165:full-page:a0:result0:r11:w3・p165:full-page:a0:result0:r24・p165:full-page:a0:result0:r24:w5・p165:full-page:a0:result0:r63・p165:full-page:a0:result0:r63:w5・p167:full-page:a0:result0:r37・p167:full-page:a0:result0:r37:w9・p169:full-page:a0:result0:r25・p169:full-page:a0:result0:r25:w5・p177:full-page:a0:result0:r66・p177:full-page:a0:result0:r66:w10・p183:full-page:a0:result0:r27・p183:full-page:a0:result0:r27:w12・p183:full-page:a0:result0:r88・p183:full-page:a0:result0:r88:w5・p187:full-page:a0:result0:r16・p187:full-page:a0:result0:r16:w11・p190:full-page:a0:result0:r18・p190:full-page:a0:result0:r18:w3・p191:full-page:a0:result0:r36・p191:full-page:a0:result0:r36:w6・p199:full-page:a0:result0:r76・p199:full-page:a0:result0:r76:w5・p201:full-page:a0:result0:r34・p201:full-page:a0:result0:r34:w7・p201:full-page:a0:result0:r107・p201:full-page:a0:result0:r107:w11・p201:full-page:a0:result0:r122・p201:full-page:a0:result0:r122:w6・p203:full-page:a0:result0:r15・p203:full-page:a0:result0:r15:w6・p203:full-page:a0:result0:r112・p203:full-page:a0:result0:r112:w10・p211:full-page:a0:result0:r63・p211:full-page:a0:result0:r63:w12・p211:full-page:a0:result0:r104・p211:full-page:a0:result0:r104:w6・p213:full-page:a0:result0:r9・p213:full-page:a0:result0:r9:w3・p213:full-page:a0:result0:r11・p213:full-page:a0:result0:r11:w2・p213:full-page:a0:result0:r24・p213:full-page:a0:result0:r24:w3・p213:full-page:a0:result0:r34・p213:full-page:a0:result0:r34:w3・p213:full-page:a0:result0:r74・p213:full-page:a0:result0:r74:w12・p213:full-page:a0:result0:r75・p213:full-page:a0:result0:r75:w8・p213:full-page:a0:result0:r113・p213:full-page:a0:result0:r113:w6・p213:full-page:a0:result0:r117・p213:full-page:a0:result0:r117:w2・p213:full-page:a0:result0:r119・p213:full-page:a0:result0:r119:w3・p213:full-page:a0:result0:r123・p213:full-page:a0:result0:r123:w5・p213:full-page:a0:result0:r125・p213:full-page:a0:result0:r125:w4・p213:full-page:a0:result0:r131・p213:full-page:a0:result0:r131:w3・p219:full-page:a0:result0:r62・p219:full-page:a0:result0:r62:w12・p219:full-page:a0:result0:r96・p219:full-page:a0:result0:r96:w6・p219:full-page:a0:result0:r100・p219:full-page:a0:result0:r100:w3・p219:full-page:a0:result0:r103・p219:full-page:a0:result0:r103:w2・p221:full-page:a0:result0:r16・p221:full-page:a0:result0:r16:w3・p221:full-page:a0:result0:r55・p221:full-page:a0:result0:r55:w12・p221:full-page:a0:result0:r56・p221:full-page:a0:result0:r56・p221:full-page:a0:result0:r56:w3・p221:full-page:a0:result0:r56:w8）・污→汚 4 件（p151:full-page:a0:result0:r25・p151:full-page:a0:result0:r25:w4・p151:full-page:a0:result0:r27・p151:full-page:a0:result0:r27:w2）・產→産 18 件（p67:full-page:a0:result0:r88・p67:full-page:a0:result0:r88:w5・p70:full-page:a0:result0:r24・p70:full-page:a0:result0:r24:w1・p73:full-page:a0:result0:r49・p73:full-page:a0:result0:r49:w1・p85:full-page:a0:result0:r125・p85:full-page:a0:result0:r125:w9・p135:full-page:a0:result0:r20・p135:full-page:a0:result0:r20:w5・p137:full-page:a0:result0:r21・p137:full-page:a0:result0:r21:w4・p149:full-page:a0:result0:r72・p149:full-page:a0:result0:r72:w1・p154:full-page:a0:result0:r41・p154:full-page:a0:result0:r41:w0・p157:full-page:a0:result0:r27・p157:full-page:a0:result0:r27:w11）・說→説 14 件（p71:full-page:a0:result0:r2・p71:full-page:a0:result0:r2:w0・p89:full-page:a0:result0:r2・p89:full-page:a0:result0:r2:w0・p91:full-page:a0:result0:r2・p91:full-page:a0:result0:r2:w0・p103:full-page:a0:result0:r2・p103:full-page:a0:result0:r2:w0・p143:full-page:a0:result0:r2・p143:full-page:a0:result0:r2:w0・p175:full-page:a0:result0:r2・p175:full-page:a0:result0:r2:w0・p219:full-page:a0:result0:r2・p219:full-page:a0:result0:r2:w0）・项→項 50 件（p62:full-page:a0:result0:r5・p62:full-page:a0:result0:r5:w1・p66:full-page:a0:result0:r5・p66:full-page:a0:result0:r5:w1・p68:full-page:a0:result0:r5・p68:full-page:a0:result0:r5:w1・p70:full-page:a0:result0:r5・p70:full-page:a0:result0:r5:w1・p76:full-page:a0:result0:r5・p76:full-page:a0:result0:r5:w1・p84:full-page:a0:result0:r5・p84:full-page:a0:result0:r5:w1・p106:full-page:a0:result0:r5・p106:full-page:a0:result0:r5:w1・p110:full-page:a0:result0:r5・p110:full-page:a0:result0:r5:w1・p124:full-page:a0:result0:r2・p124:full-page:a0:result0:r2:w1・p130:full-page:a0:result0:r5・p130:full-page:a0:result0:r5:w1・p136:full-page:a0:result0:r5・p136:full-page:a0:result0:r5:w1・p138:full-page:a0:result0:r2・p138:full-page:a0:result0:r2:w1・p160:full-page:a0:result0:r5・p160:full-page:a0:result0:r5:w1・p162:full-page:a0:result0:r3・p162:full-page:a0:result0:r3:w1・p168:full-page:a0:result0:r2・p168:full-page:a0:result0:r2:w1・p170:full-page:a0:result0:r2・p170:full-page:a0:result0:r2:w1・p172:full-page:a0:result0:r5・p172:full-page:a0:result0:r5:w1・p174:full-page:a0:result0:r5・p174:full-page:a0:result0:r5:w1・p184:full-page:a0:result0:r2・p184:full-page:a0:result0:r2:w1・p194:full-page:a0:result0:r5・p194:full-page:a0:result0:r5:w1・p200:full-page:a0:result0:r2・p200:full-page:a0:result0:r2:w1・p210:full-page:a0:result0:r2・p210:full-page:a0:result0:r2:w1・p218:full-page:a0:result0:r2・p218:full-page:a0:result0:r2:w1・p222:full-page:a0:result0:r2・p222:full-page:a0:result0:r2:w1・p222:full-page:a0:result0:r5・p222:full-page:a0:result0:r5:w1）・齡→齢 28 件（p113:full-page:a0:result0:r133・p113:full-page:a0:result0:r133:w1・p124:full-page:a0:result0:r3・p124:full-page:a0:result0:r3:w2・p124:full-page:a0:result0:r12・p124:full-page:a0:result0:r12:w1・p124:full-page:a0:result0:r19・p124:full-page:a0:result0:r19:w1・p124:full-page:a0:result0:r40・p124:full-page:a0:result0:r40:w1・p125:full-page:a0:result0:r100・p125:full-page:a0:result0:r100:w2・p125:full-page:a0:result0:r116・p125:full-page:a0:result0:r116:w3・p126:full-page:a0:result0:r3・p126:full-page:a0:result0:r3:w2・p127:full-page:a0:result0:r16・p127:full-page:a0:result0:r16:w7・p127:full-page:a0:result0:r37・p127:full-page:a0:result0:r37:w4・p128:full-page:a0:result0:r3・p128:full-page:a0:result0:r3:w2・p129:full-page:a0:result0:r33・p129:full-page:a0:result0:r33:w4・p129:full-page:a0:result0:r51・p129:full-page:a0:result0:r51:w2・p129:full-page:a0:result0:r119・p129:full-page:a0:result0:r119:w2）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2023/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "96df4c7f7f92b967245dd44c3b3e06aa2e5acf71bf6089dbf49ba61bc9a305b6",
+          "bytes": 57677
+        },
+        "row_count": 1697
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2023/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "5812fa9d334a82c717d1763f07eed6c93288466b71b8bc4f14c6e6197eff0045",
+          "bytes": 57230
+        },
+        "row_count": 2014
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "0823802be550f1aee8fbfa1b0f2e26cef45ba25ac0bd41f49b3c1647d7d7650f",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
+        "金額の単位は printed 4頁・carried 13頁・default 1頁 から決めた。款の和 68,472,454（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 30 件（補正回次 10・補正経過 20）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 12 件（p15:full-page:a0:result0:r42・p15:full-page:a0:result0:r42:w4・p28:full-page:a0:result0:r3・p28:full-page:a0:result0:r3:w4・p28:full-page:a0:result0:r12・p28:full-page:a0:result0:r12:w2・p28:full-page:a0:result0:r19・p28:full-page:a0:result0:r19:w2・p29:full-page:a0:result0:r8・p29:full-page:a0:result0:r8:w4・p39:full-page:a0:result0:r8・p39:full-page:a0:result0:r8:w8）・查→査 14 件（p18:full-page:a0:result0:r64・p18:full-page:a0:result0:r64:w1・p19:full-page:a0:result0:r77・p19:full-page:a0:result0:r77:w3・p19:full-page:a0:result0:r79・p19:full-page:a0:result0:r79:w1・p38:full-page:a0:result0:r3・p38:full-page:a0:result0:r3:w7・p38:full-page:a0:result0:r24・p38:full-page:a0:result0:r24:w0・p38:full-page:a0:result0:r31・p38:full-page:a0:result0:r31:w0・p39:full-page:a0:result0:r8・p39:full-page:a0:result0:r8:w7）・說→説 4 件（p21:full-page:a0:result0:r2・p21:full-page:a0:result0:r2:w0・p29:full-page:a0:result0:r2・p29:full-page:a0:result0:r2:w0）・项→項 10 件（p22:full-page:a0:result0:r5・p22:full-page:a0:result0:r5:w1・p24:full-page:a0:result0:r5・p24:full-page:a0:result0:r5:w1・p32:full-page:a0:result0:r5・p32:full-page:a0:result0:r5:w1・p42:full-page:a0:result0:r5・p42:full-page:a0:result0:r5:w1・p46:full-page:a0:result0:r5・p46:full-page:a0:result0:r5:w1）・齡→齢 18 件（p19:full-page:a0:result0:r19・p19:full-page:a0:result0:r19:w3・p19:full-page:a0:result0:r24・p19:full-page:a0:result0:r24:w3・p21:full-page:a0:result0:r11・p21:full-page:a0:result0:r11:w3・p21:full-page:a0:result0:r18・p21:full-page:a0:result0:r18:w3・p34:full-page:a0:result0:r2・p34:full-page:a0:result0:r2:w8・p34:full-page:a0:result0:r11・p34:full-page:a0:result0:r11:w3・p34:full-page:a0:result0:r45・p34:full-page:a0:result0:r45:w0・p35:full-page:a0:result0:r8・p35:full-page:a0:result0:r8:w11・p35:full-page:a0:result0:r14・p35:full-page:a0:result0:r14:w12）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2023/initial/expenditure/national-health-initial-nodes.parquet",
+          "sha256": "64f8fbf03d76d859f703756f4842eefcea4cfd32d6383ddf18c0db3555ebcf30",
+          "bytes": 10334
+        },
+        "row_count": 159
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2023/initial/expenditure/national-health-initial-amounts.parquet",
+          "sha256": "59fc0d7621ec0d1e2b6f2a7f02a2a1c24df432b1c3cbd361a5611d841bd88ed7",
+          "bytes": 10614
+        },
+        "row_count": 273
+      }
+    },
+    {
+      "table_id": "late-elderly-initial",
+      "conversion_id": "late-elderly-initial",
+      "input_fingerprint": "d45b71638c2106e4b0cead0875cb9d2a60448ca638303a5efccab8922697f0da",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
+        "金額の単位は printed 2頁・carried 6頁・default 1頁 から決めた。款の和 19,319,784（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 14 件（補正回次 6・補正経過 8）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p17:full-page:a0:result0:r47・p17:full-page:a0:result0:r47:w6）・徵→徴 10 件（p14:full-page:a0:result0:r3・p14:full-page:a0:result0:r3:w1・p14:full-page:a0:result0:r12・p14:full-page:a0:result0:r12:w0・p14:full-page:a0:result0:r19・p14:full-page:a0:result0:r19:w0・p17:full-page:a0:result0:r18・p17:full-page:a0:result0:r18:w2・p17:full-page:a0:result0:r21・p17:full-page:a0:result0:r21:w2）・查→査 6 件（p17:full-page:a0:result0:r49・p17:full-page:a0:result0:r49:w1・p21:full-page:a0:result0:r8・p21:full-page:a0:result0:r8:w4・p21:full-page:a0:result0:r10・p21:full-page:a0:result0:r10:w3）・项→項 4 件（p18:full-page:a0:result0:r5・p18:full-page:a0:result0:r5:w1・p26:full-page:a0:result0:r5・p26:full-page:a0:result0:r5:w1）・齡→齢 16 件（p12:full-page:a0:result0:r40・p12:full-page:a0:result0:r40:w7・p16:full-page:a0:result0:r32・p16:full-page:a0:result0:r32:w3・p16:full-page:a0:result0:r49・p16:full-page:a0:result0:r49:w7・p18:full-page:a0:result0:r33・p18:full-page:a0:result0:r33:w7・p20:full-page:a0:result0:r43・p20:full-page:a0:result0:r43:w7・p24:full-page:a0:result0:r24・p24:full-page:a0:result0:r24:w7・p26:full-page:a0:result0:r30・p26:full-page:a0:result0:r30:w7・p28:full-page:a0:result0:r27・p28:full-page:a0:result0:r27:w7）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2023/initial/expenditure/late-elderly-initial-nodes.parquet",
+          "sha256": "6363982e498af8df90ac7993d1d21f916ac198c04368c8add9be3325adcc7354",
+          "bytes": 6300
+        },
+        "row_count": 73
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2023/initial/expenditure/late-elderly-initial-amounts.parquet",
+          "sha256": "acc5ce676991b6072c96a324d355be3c7b88866d99665e5a3b91505b7dd7e721",
+          "bytes": 6083
+        },
+        "row_count": 125
+      }
+    },
+    {
+      "table_id": "long-term-care-initial",
+      "conversion_id": "long-term-care-initial",
+      "input_fingerprint": "e2f190d3324eb9299235ef9ad0d8670d4dd86222ee6683935ce3bb4af500641f",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered'}。",
+        "金額の単位は printed 4頁・carried 8頁・default 1頁 から決めた。款の和 58,864,736（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 10 件（補正回次 4・補正経過 6）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 10 件（p15:full-page:a0:result0:r23・p15:full-page:a0:result0:r23:w9・p22:full-page:a0:result0:r26・p22:full-page:a0:result0:r26:w4・p23:full-page:a0:result0:r107・p23:full-page:a0:result0:r107:w5・p25:full-page:a0:result0:r15・p25:full-page:a0:result0:r15:w5・p25:ink-4:a4:result0:r0・p25:ink-4:a4:result0:r0:w7）・查→査 16 件（p16:full-page:a0:result0:r3・p16:full-page:a0:result0:r3:w7・p16:full-page:a0:result0:r17・p16:full-page:a0:result0:r17:w0・p16:full-page:a0:result0:r24・p16:full-page:a0:result0:r24:w0・p17:full-page:a0:result0:r9・p17:full-page:a0:result0:r9:w6・p17:full-page:a0:result0:r20・p17:full-page:a0:result0:r20:w4・p18:full-page:a0:result0:r61・p18:full-page:a0:result0:r61:w1・p19:full-page:a0:result0:r81・p19:full-page:a0:result0:r81:w2・p19:full-page:a0:result0:r84・p19:full-page:a0:result0:r84:w1）・项→項 6 件（p14:full-page:a0:result0:r3・p14:full-page:a0:result0:r3:w1・p22:full-page:a0:result0:r5・p22:full-page:a0:result0:r5:w1・p24:full-page:a0:result0:r5・p24:full-page:a0:result0:r5:w1）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2023/initial/expenditure/long-term-care-initial-nodes.parquet",
+          "sha256": "aebf76ef373d0504cb05228d8d73b915127bf75271cbc9f73da371d5b1ffef5b",
+          "bytes": 8625
+        },
+        "row_count": 117
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131113/2023/initial/expenditure/long-term-care-initial-amounts.parquet",
+          "sha256": "6099d59cc91f3b8b2860d91bd09f3bc1563662deb01d50899ded55fd28d085e3",
+          "bytes": 8150
+        },
+        "row_count": 193
+      }
+    }
+  ],
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "name_corrections": [
+          {
+            "id": "p202-y695",
+            "page": 202,
+            "observed_name": "教育センタ一費",
+            "corrected_name": "教育センター費",
+            "reason": "原画の頁202は「教育センター費」。OCR が長音「ー」を漢数字の「一」に読んだ。",
+            "y": 695.3,
+            "code": "4"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-initial-ocr-1",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "19ec6b57033e434e45a4b1cf067f05df324eb9a33324d2b7afa712802c2453c6",
+          "bytes": 2369243
+        },
+        {
+          "id": "general-initial-ocr-2",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "440d2a068dfa0fcda81b5996bba5846466cd2ebeebeaadb5a5214fb5d8044f40",
+          "bytes": 2189818
+        },
+        {
+          "id": "general-initial-ocr-3",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              80,
+              81,
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8d80aba40e9c746f6b5bdbf620d3837b391a304494d37a2c17e77a0584d93761",
+          "bytes": 2361783
+        },
+        {
+          "id": "general-initial-ocr-4",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              90,
+              91,
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "144c95991e93bf8932a7ebeb7ccb49c205089289cc3970464f9dd3783bca3e0f",
+          "bytes": 2288497
+        },
+        {
+          "id": "general-initial-ocr-5",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              100,
+              101,
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "066f7647f4e814c909b96a73aa24f40a94c519689404adb0a553b28b207be5d7",
+          "bytes": 1412421
+        },
+        {
+          "id": "general-initial-ocr-6",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              110,
+              111,
+              112,
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e5d5076ef063c0a1a37332452e9c05c08a049b9092db40ea9d128b0a8a428269",
+          "bytes": 2656256
+        },
+        {
+          "id": "general-initial-ocr-7",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "20e4e61842393524ea6fa10c0b2247603d853abf166b513c28fd4be493b8f1e3",
+          "bytes": 2819865
+        },
+        {
+          "id": "general-initial-ocr-8",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              130,
+              131,
+              132,
+              133,
+              134,
+              135,
+              136,
+              137,
+              138,
+              139
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "12199faa9211e4bfcbb60cce9804032da762573b43e71ddc1d7a06ef35dab3b3",
+          "bytes": 2623826
+        },
+        {
+          "id": "general-initial-ocr-9",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              140,
+              141,
+              142,
+              143,
+              144,
+              145,
+              146,
+              147,
+              148,
+              149
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2b42c38d50f317b5d93e35a4d121e7871a5e7555408c58fe405c5d18fde1d666",
+          "bytes": 2959590
+        },
+        {
+          "id": "general-initial-ocr-10",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              150,
+              151,
+              152,
+              153,
+              154,
+              155,
+              156,
+              157,
+              158,
+              159
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3b6354cfe69c696a50ce94cb439cba3be59e8aec82421a92c1e41065ac2a2dcc",
+          "bytes": 2245055
+        },
+        {
+          "id": "general-initial-ocr-11",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              160,
+              161,
+              162,
+              163,
+              164,
+              165,
+              166,
+              167,
+              168,
+              169
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e3ce4c840101b6e91e7499f40e1dcafa14799dc51460747a488c421c5fa9c62a",
+          "bytes": 2351594
+        },
+        {
+          "id": "general-initial-ocr-12",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              170,
+              171,
+              172,
+              173,
+              174,
+              175,
+              176,
+              177,
+              178,
+              179
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "82973360781d47b1ab3837cc2405d015bc3abef980592530c1ddcabb8be4f16e",
+          "bytes": 2574669
+        },
+        {
+          "id": "general-initial-ocr-13",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              180,
+              181,
+              182,
+              183,
+              184,
+              185,
+              186,
+              187,
+              188,
+              189
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f5d2a1d7750e8aa4285054d0e18b1e53087cca424c8a209c0bcb890173bbdc95",
+          "bytes": 1602087
+        },
+        {
+          "id": "general-initial-ocr-14",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              190,
+              191,
+              192,
+              193,
+              194,
+              195,
+              196,
+              197,
+              198,
+              199
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4e46c4e885f9413b3f2b6fc8cd40444544f3fdb77a8d1ed68f1dc9764f9db3cf",
+          "bytes": 1747833
+        },
+        {
+          "id": "general-initial-ocr-15",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              200,
+              201,
+              202,
+              203,
+              204,
+              205,
+              206,
+              207,
+              208,
+              209
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "49d7944651edf4d06707eb423a1a5c5b1f04b42175c63bef956d1001ed55098d",
+          "bytes": 2685150
+        },
+        {
+          "id": "general-initial-ocr-16",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              210,
+              211,
+              212,
+              213,
+              214,
+              215,
+              216,
+              217,
+              218,
+              219
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "51fa4e235e54892e13ea187556625def796f021d0fdc1d0f0a31aacafce68238",
+          "bytes": 2419235
+        },
+        {
+          "id": "general-initial-ocr-17",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              220,
+              221,
+              222,
+              223,
+              224,
+              225,
+              226,
+              227,
+              228,
+              229
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6696798313c782b29efc7625f8a84d32d6e7c97a1d29e693ae58c08f1f560ed3",
+          "bytes": 1136813
+        },
+        {
+          "id": "general-initial-ocr-18",
+          "origin_sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              230,
+              231
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b1548ef1f4c891c9b1805eb547425e8848303ff4b337c9558596d6a110ec7cbe",
+          "bytes": 96476
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c1809256c4a7f6cefa882a8a599d714f3d0498632a66dbd80e4b0fd562315109"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "national-health-initial-ocr-1",
+          "origin_sha256": "c1809256c4a7f6cefa882a8a599d714f3d0498632a66dbd80e4b0fd562315109",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8b2590af2abd824dd2d6befa4637ba05a98e3f5512d47a7363caa1d028bd874e",
+          "bytes": 1490644
+        },
+        {
+          "id": "national-health-initial-ocr-2",
+          "origin_sha256": "c1809256c4a7f6cefa882a8a599d714f3d0498632a66dbd80e4b0fd562315109",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1fd8103157c7f1134c7ab6d8a6f38f058802b459442aa6de03676dc7d3de3380",
+          "bytes": 768393
+        },
+        {
+          "id": "national-health-initial-ocr-3",
+          "origin_sha256": "c1809256c4a7f6cefa882a8a599d714f3d0498632a66dbd80e4b0fd562315109",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2964149fa1f4ed3688939c528c3f150f2a564c99c5cf57d816fa6c705ced90cf",
+          "bytes": 953634
+        },
+        {
+          "id": "national-health-initial-ocr-4",
+          "origin_sha256": "c1809256c4a7f6cefa882a8a599d714f3d0498632a66dbd80e4b0fd562315109",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              44,
+              45,
+              46,
+              47,
+              48,
+              49
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4434abe7f9bfc78e436a6a4ce50ebbd13890d806df573ac1cffbbe6d68340b0c",
+          "bytes": 267002
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "late-elderly-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a355d723407b65a8df0e75f00813f016ae4673ad71d36dea07dfc68d2029cdf9"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "late-elderly-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "late-elderly-initial-ocr-1",
+          "origin_sha256": "a355d723407b65a8df0e75f00813f016ae4673ad71d36dea07dfc68d2029cdf9",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ad002e9a875cf02e198064f8dca5052e6230dd35311dbcffda0f2f8d59a19e7c",
+          "bytes": 1137549
+        },
+        {
+          "id": "late-elderly-initial-ocr-2",
+          "origin_sha256": "a355d723407b65a8df0e75f00813f016ae4673ad71d36dea07dfc68d2029cdf9",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d110bdfb5fcedb5236609b4e14beb9b445de900c7bc15fdea52427e298767bf2",
+          "bytes": 440670
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "late-elderly-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "90ee6e11e5b0e5c5363fd99965fc7832b322bb1c5f4b5d145738254d925cdb5c"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "redrawn_facing_pages",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount",
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "kind": "amount",
+                  "heading": "前年度予算額"
+                },
+                "比較": {
+                  "kind": "amount"
+                },
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
+                  }
+                }
+              },
+              "rules": {
+                "dark": 215,
+                "skewed": true
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "numbered",
+                "quirks": {
+                  "amounts_beside_names": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "specks": true,
+            "revision_history": true,
+            "rule_ink": true
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "90ee6e11e5b0e5c5363fd99965fc7832b322bb1c5f4b5d145738254d925cdb5c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4481099530588c55c7390e1babc83d7d8aafe41b36aee9b90058469f82ff4ddd",
+          "bytes": 1952975
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "90ee6e11e5b0e5c5363fd99965fc7832b322bb1c5f4b5d145738254d925cdb5c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "41e6a7ab7caa6bd5c1422ee8684b357508c4d6963cfb791300581a5ef29b8489",
+          "bytes": 649448
+        },
+        {
+          "id": "long-term-care-initial-ocr-3",
+          "origin_sha256": "90ee6e11e5b0e5c5363fd99965fc7832b322bb1c5f4b5d145738254d925cdb5c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              34,
+              35,
+              36,
+              37,
+              38,
+              39
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7fbae0339ca66ec5e6905a6702a18654ea995fe297695798827b1d101c0ce0e4",
+          "bytes": 340969
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    }
+  ]
+}

@@ -86,7 +86,8 @@
             "bracketed_subjects": true,
             "one_row_header": true,
             "repeated_heading_owns_nothing": true,
-            "codeless_priced_moku": true
+            "codeless_priced_moku": true,
+            "traced_glyphs": true
           }
         },
         "pages": [
@@ -111,7 +112,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "f60eaa1d405dbadc597c4533e1ba72aa37b32599a754c521df73abe02fa87ec9",
+      "input_fingerprint": "488179162e39831e164435b73c78eafc34f4cc7ef7e60b412370022912e58475",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
