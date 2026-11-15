@@ -218,6 +218,7 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
             regions += coverage_regions([(g.page, g.original, g.text) for g in glyphs], kind=kind,
                                         reason=notes.module.REASONS[kind])
     for logical in logicals:
+        regions += logical.excluded  # the rows under another heading (`header.frame_headings`)
         for band in logical.bands:
             # The digits a column sets past its right rule (`overhang`) are still the column's.
             excluded = {k: v for k, v in (band.excluded or {}).items() if k != 'overhang'}
@@ -657,8 +658,10 @@ def receipt_notes(table: Table) -> list[str]:
     if variants:
         notes.append(f'Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: {"・".join(variants)}。')
     if table.ocr_pages:
+        learned = ('段の読み方は文字層の頁から当てはめた。' if {page.number for page in table.observed} - set(table.ocr_pages)
+                   else '文字層の頁が無いので、欄の種類も OCR の頁から決めた。')
         notes.append(f'文字層の無い頁 {len(table.ocr_pages)} 頁（{"・".join(map(str, table.ocr_pages))}）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、'
-                     '段の読み方は文字層の頁から当てはめた。')
+                     + learned)
     if table.report.skipped_pages:
         notes.append(f'選定の scope が共有していた別の方向（歳入）の頁 {len(table.report.skipped_pages)} 頁は読んでいない。')
     return notes

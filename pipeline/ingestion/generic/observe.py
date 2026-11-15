@@ -371,6 +371,8 @@ def merge_rules(rules: list[Rule], tolerance: float = 2.5, gap: float = 2.0) -> 
 def observe(pdf: Path, pages: list[int], cache: Path | None = None,
             character_map: dict[str, str] | None = None) -> list[Page]:
     """Observe the listed physical pages. A JSON cache keeps reruns cheap."""
+    if not pages:  # every page of the scope is read from OCR (a document whose glyphs are outlines)
+        return []
     if cache is not None and cache.exists():
         data = json.loads(cache.read_text())
         if data['pages'] == pages and data.get('character_map', {}) == (character_map or {}):
