@@ -22,10 +22,26 @@ class FetchTest(unittest.TestCase):
         self.cached.parent.mkdir(parents=True)
         self.cached.write_bytes(b'table before re-save')
 
-    def get(self, command, stdout, **_):
+    def get(self, command, stdout, stderr):
         self.assertEqual(command[:5], ['cf', 'r2', 'objects', 'get', self.reference['key']])
         stdout.write(self.body)
-        return subprocess.CompletedProcess(command, 0, stderr=b'')
+        return subprocess.CompletedProcess(command, 0, None, b'')
+
+    def test_rate_limited_get_waits_and_keeps_only_the_retried_body(self):
+        calls = []
+
+        def limited(command, stdout, stderr):
+            calls.append(command)
+            if len(calls) == 1:
+                stdout.write(b'partial')
+                return subprocess.CompletedProcess(command, 1, None, b'429 Too Many Requests')
+            return self.get(command, stdout, stderr)
+
+        with patch.object(storage.subprocess, 'run', side_effect=limited), patch('ingestion.r2.time.sleep') as sleep:
+            path = storage.fetch(self.reference, remote=True)
+        self.assertEqual(len(calls), 2)
+        sleep.assert_called_once()
+        self.assertEqual(path.read_bytes(), self.body)
 
     def test_remote_refetches_an_object_whose_cache_is_stale(self):
         with patch.object(storage.subprocess, 'run', side_effect=self.get) as run:

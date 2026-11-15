@@ -1,0 +1,1177 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "281000",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "market-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "市場事業費",
+        "table_id": "market-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "market-initial"
+        }
+      ]
+    },
+    {
+      "id": "meat-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "食肉センター事業費",
+        "table_id": "meat-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "meat-initial"
+        }
+      ]
+    },
+    {
+      "id": "nhi-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業費",
+        "table_id": "nhi-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-initial"
+        }
+      ]
+    },
+    {
+      "id": "single-parent-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "母子父子寡婦福祉資金貸付事業費",
+        "table_id": "single-parent-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "single-parent-initial"
+        }
+      ]
+    },
+    {
+      "id": "parking-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業費",
+        "table_id": "parking-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-initial"
+        }
+      ]
+    },
+    {
+      "id": "redevelopment-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "市街地再開発事業費",
+        "table_id": "redevelopment-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "redevelopment-initial"
+        }
+      ]
+    },
+    {
+      "id": "housing-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "市営住宅事業費",
+        "table_id": "housing-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "housing-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業費",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業費",
+        "table_id": "elderly-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-initial"
+        }
+      ]
+    },
+    {
+      "id": "airport-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "空港整備事業費",
+        "table_id": "airport-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "airport-initial"
+        }
+      ]
+    },
+    {
+      "id": "debt-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a"
+        }
+      ],
+      "options": {
+        "account": "公債費",
+        "table_id": "debt-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。特定財源は種類（国庫支出金・市債・その他など）と額を2行に印字し、歳出の目の和は本年度で確かめる。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "説明欄。「・市税システム関連経費」のような経費の説明で、金額を持たないため取り込まない。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": "款項目名"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "names"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "amounts_beside_names": true,
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "debt-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "d76286ed9ac54ee0abd4b655ea0922da29149001592bb640a806cf83bcf4a68b",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 125頁 から決めた。款の和 977,781,231（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "7f0fb49ab9af259dd526a321a7d785d013d15e607d8cd55606839a71f8c8d507",
+          "bytes": 51095
+        },
+        "row_count": 1763
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "57bd6c9b27bdc96932d78d5b703ccd81b083a1c7027d12d7378a9986bd700d39",
+          "bytes": 54952
+        },
+        "row_count": 2341
+      }
+    },
+    {
+      "table_id": "market-initial",
+      "conversion_id": "market-initial",
+      "input_fingerprint": "e4046d0a3a647baf8273c6b3bdc381332d17bd05f8b81c0657a55dec0305909b",
+      "account": "市場事業費",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 5頁 から決めた。款の和 10,073,986（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/market-initial-nodes.parquet",
+          "sha256": "83649ac7f01a8bcc903be16c1e204e0d6ddab7da7533c7876cec6529fbef243c",
+          "bytes": 4830
+        },
+        "row_count": 52
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/market-initial-amounts.parquet",
+          "sha256": "aef063f4b3b7f1866ac8f065248545ce1fa5ceea33b36060c324185eb662c6d0",
+          "bytes": 4121
+        },
+        "row_count": 80
+      }
+    },
+    {
+      "table_id": "meat-initial",
+      "conversion_id": "meat-initial",
+      "input_fingerprint": "32e73b9c67003adf1b434411390842b8d045ae95e985b5b90bbd492c7e20422e",
+      "account": "食肉センター事業費",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 5頁 から決めた。款の和 1,105,541（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/meat-initial-nodes.parquet",
+          "sha256": "f60af0ce8e2c6aa46563cc16221a6f3d2fe30b0c9d2912253d86b5799811f984",
+          "bytes": 4425
+        },
+        "row_count": 42
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/meat-initial-amounts.parquet",
+          "sha256": "4c65514b18c9b01861fb0de8fcb8cb2cdd3285c0183e4084e3cb425946283ac9",
+          "bytes": 3633
+        },
+        "row_count": 68
+      }
+    },
+    {
+      "table_id": "nhi-initial",
+      "conversion_id": "nhi-initial",
+      "input_fingerprint": "58bc99889aa62854db5496c1cf0434a696a80bc23f1ad5335c46df343b8fdd02",
+      "account": "国民健康保険事業費",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 7頁 から決めた。款の和 148,415,846（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/nhi-initial-nodes.parquet",
+          "sha256": "429745810edcd6b8c1f2105fe62dff885970aee61d187ed092c42819d3619eaa",
+          "bytes": 5531
+        },
+        "row_count": 68
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/nhi-initial-amounts.parquet",
+          "sha256": "40b3a8ba7a8a0549559330e92ce418eae9374fd4d7675c3d2e802e840b2cf81e",
+          "bytes": 4947
+        },
+        "row_count": 108
+      }
+    },
+    {
+      "table_id": "single-parent-initial",
+      "conversion_id": "single-parent-initial",
+      "input_fingerprint": "49e665502193ec352f398b93feddd3b74b3a9069db7c16bc04d914cfe52204ff",
+      "account": "母子父子寡婦福祉資金貸付事業費",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。款の和 185,232（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/single-parent-initial-nodes.parquet",
+          "sha256": "d716a22d7ab9bb9b63e183bea7d476a022a40737d007bab205571c844afc401d",
+          "bytes": 3576
+        },
+        "row_count": 24
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/single-parent-initial-amounts.parquet",
+          "sha256": "9d222037c6329b8668c4848a9841484852cd4987799a2288144be002a4fe1dcb",
+          "bytes": 2994
+        },
+        "row_count": 46
+      }
+    },
+    {
+      "table_id": "parking-initial",
+      "conversion_id": "parking-initial",
+      "input_fingerprint": "44d9d577d5d7995acbf662e23cbdc9770c632b272de19f6110f2c98675e3d3d3",
+      "account": "駐車場事業費",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 617,469（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/parking-initial-nodes.parquet",
+          "sha256": "8bcd39d8103a44ee4296962e888c64b1370c2781d9a24076a4fb0792312a7d36",
+          "bytes": 2743
+        },
+        "row_count": 10
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/parking-initial-amounts.parquet",
+          "sha256": "e6f5438ba3af48873b6b4c51b8e70469ae780ec1b26c4beadc38097cbc828166",
+          "bytes": 2173
+        },
+        "row_count": 16
+      }
+    },
+    {
+      "table_id": "redevelopment-initial",
+      "conversion_id": "redevelopment-initial",
+      "input_fingerprint": "3919e2b0104ae2cc31fa3997fdcf35c407c6613c7c31032c94df6ea1db8b0a30",
+      "account": "市街地再開発事業費",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 3,617,934（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/redevelopment-initial-nodes.parquet",
+          "sha256": "2bb426c7682d9272d7ec49e6b8e10003986728486bd17daab1e53e6ad41fbaee",
+          "bytes": 4152
+        },
+        "row_count": 34
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/redevelopment-initial-amounts.parquet",
+          "sha256": "2168940187f4c6f5cc8a5894717e03ae91f08b518ad7aafc5f052abf58773c83",
+          "bytes": 3310
+        },
+        "row_count": 56
+      }
+    },
+    {
+      "table_id": "housing-initial",
+      "conversion_id": "housing-initial",
+      "input_fingerprint": "94d5a44a360aea3d27aa62392499c52c551ae4904fed19eed4fb3037565b1f82",
+      "account": "市営住宅事業費",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 5頁 から決めた。款の和 34,057,660（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/housing-initial-nodes.parquet",
+          "sha256": "bce818fbf17b6ab89faeaaae84397fa9a838940e8a719225094571c16c61bb92",
+          "bytes": 5067
+        },
+        "row_count": 63
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/housing-initial-amounts.parquet",
+          "sha256": "92072a83fc4a1bef84b295588b7cbb6066cf60515412cd1057614a0015af6ec0",
+          "bytes": 4189
+        },
+        "row_count": 83
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "492d0ceee5a0b16c37dbfbcc89de314005330e8a16119425011e88286f9efc89",
+      "account": "介護保険事業費",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 8頁 から決めた。款の和 164,798,841（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/care-initial-nodes.parquet",
+          "sha256": "017e8d97c9f6a2f170fc72750b7f8c0de9f5971e0ba068d05ebc1f26dbf0db94",
+          "bytes": 6591
+        },
+        "row_count": 97
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/care-initial-amounts.parquet",
+          "sha256": "6c694a46c06fa36de15c0fbfa4b1e6e13ffd3b3834433bd40f3b50d86e2bcb42",
+          "bytes": 6018
+        },
+        "row_count": 155
+      }
+    },
+    {
+      "table_id": "elderly-initial",
+      "conversion_id": "elderly-initial",
+      "input_fingerprint": "b23162f39bf1c1bf01cf302e4a267a077bb7add187841b24da6c14c0d7b532e2",
+      "account": "後期高齢者医療事業費",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 53,504,912（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/elderly-initial-nodes.parquet",
+          "sha256": "afff23f6c35a1f00fa238e2e2ae787685693f7d11617712f6edb264ce5a2c9d3",
+          "bytes": 3815
+        },
+        "row_count": 25
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/elderly-initial-amounts.parquet",
+          "sha256": "ddc6f118e28925f928ec5ad11b848b4d02ca081bb84adcfcb216023e313dac8a",
+          "bytes": 3040
+        },
+        "row_count": 43
+      }
+    },
+    {
+      "table_id": "airport-initial",
+      "conversion_id": "airport-initial",
+      "input_fingerprint": "6ff99dbc73d50839d79c29f81102c94c9898a1a8c1e2be3b16593cc6799b8b66",
+      "account": "空港整備事業費",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 3,882,438（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/airport-initial-nodes.parquet",
+          "sha256": "415b0bd194d7c69d493de6d818aaad4660c4c016af2542b142b20dbd6a3b6f4a",
+          "bytes": 4166
+        },
+        "row_count": 35
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/airport-initial-amounts.parquet",
+          "sha256": "9f5c9f8855e126ed5c2189fbb088da044cd935edc95cf7e2ec5e9df1c82eb15b",
+          "bytes": 3369
+        },
+        "row_count": 55
+      }
+    },
+    {
+      "table_id": "debt-initial",
+      "conversion_id": "debt-initial",
+      "input_fingerprint": "3b97b059d5d842c9ed9381ddc811d0f212f570e9873f3ff6e4548d13abbab038",
+      "account": "公債費",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 332,641,608（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/debt-initial-nodes.parquet",
+          "sha256": "7d57cc9ee045054c3e6aaada674fb107ab927439a2a5f91c155d74dd3aa866f8",
+          "bytes": 3349
+        },
+        "row_count": 16
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/debt-initial-amounts.parquet",
+          "sha256": "a4e4e7f961aa4277bb0c1eef47b6d95c0be2efcbb76652a142ce1c7a42428708",
+          "bytes": 2723
+        },
+        "row_count": 30
+      }
+    }
+  ]
+}

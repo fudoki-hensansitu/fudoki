@@ -19,8 +19,9 @@ import sys
 import tempfile
 from pathlib import Path
 
+from ingestion import r2
 from ingestion.fiscal.manifest import BUCKET
-from ingestion.fiscal.storage import OBJECTS, get_object
+from ingestion.fiscal.storage import OBJECTS
 from ingestion.generic import page_words
 from ingestion.lib.ocr_ink import superseded
 
@@ -52,7 +53,7 @@ def fetch(source_sha256: str, pin: dict, *, remote: bool = False) -> bytes:
         with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
             temporary = Path(stream.name)
             try:
-                get_object(key(source_sha256), BUCKET, stream)
+                r2.objects('get', key(source_sha256), '--bucket-name', BUCKET, '--quiet', stdout=stream)
                 verify(temporary, pin)
                 os.replace(temporary, path)
             finally:
@@ -122,8 +123,8 @@ def main() -> None:
                 if sha not in observations:
                     raise SystemExit(f'{origin["fiscal_year"]} {sha[:12]}: 観測が宣言に固定されていない（先に --save なしで読む）')
                 fetch(sha, observations[sha])
-                subprocess.run(['cf', 'r2', 'objects', 'put', key(sha), '--bucket-name', BUCKET,
-                                '--file', str(cached(sha)), '--quiet'], check=True, stdout=subprocess.DEVNULL)
+                r2.objects('put', key(sha), '--bucket-name', BUCKET, '--file', str(cached(sha)), '--quiet',
+                           stdout=subprocess.DEVNULL)
                 print(f'{origin["fiscal_year"]} {sha[:12]}: R2 に置いた', file=sys.stderr)
                 continue
             if sha in observations:
