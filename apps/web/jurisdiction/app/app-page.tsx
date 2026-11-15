@@ -128,7 +128,7 @@ function describeSelected(sel: Selected, d: Snapshot, prevFieldSubjects: Record<
     const m = d.measures.find((x) => x.id === sel.id)
     return m ? source('開いている予算案の施策', m, m.title) : ''
   }
-  const p = res.peek<Loaded<ProjectFull>>(projectKey(sel.id, v.year))
+  const p = res.peek<Loaded<ProjectFull>>(projectKey(sel.id, v.year, v.kind))
   if (!p || p === FAILED) return ''
   const now = (v.kind === 'initial' ? p.y[String(v.year)]?.b : p.y[String(v.year)]?.s) ?? null
   return [
@@ -137,7 +137,8 @@ function describeSelected(sel: Selected, d: Snapshot, prevFieldSubjects: Record<
   ].join('\n')
 }
 
-const projectKey = (id: string, year: number) => `project:${id}:${year}`
+// 同じ年度でも当初予算と決算で事業の額が違う（予算のタブと事業のタブで資料が違うことがある）ので、資料の種類も鍵に入れる
+const projectKey = (id: string, year: number, kind: string) => `project:${id}:${year}:${kind}`
 
 const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
@@ -509,7 +510,8 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   const flows = React.useMemo(() => (current && view === 'cofog' ? cofogFlowOfDrills(current.drills, current.loose) : current?.drills), [current, view])
   const router = useRouter()
   const accounts = d.accounts ?? []
-  const special = account === GENERAL ? undefined : accounts.find((x) => x.name === account)
+  // 会計の総額は頁のデータの資料のもの。別の資料のタブ（スマホで隣に並ぶタブ）では使わない
+  const special = account === GENERAL || !total ? undefined : accounts.find((x) => x.name === account)
   const picked: YearTotal | undefined = special ? { year: v.year, yen: special.yen, kan: [] } : total
   const summary = picked ? <Amt yen={picked.yen} className="text-[26px] leading-snug text-primary" /> : null
   return (
@@ -730,7 +732,7 @@ function ProjectDetail({ id }: { id: string }) {
     const yen = { b: v.kind === 'initial' ? m.yen : null, s: v.kind === 'initial' ? null : m.yen }
     return <ProjectBody p={{ id, name: m.name, dept: null, path: m.path, started: null, ended: null, y: { [String(v.year)]: yen }, kids: [], subject: m.subject, initialDetails: [], settlementDetails: [] }} />
   }
-  const loaded = React.use(res.get(projectKey(id, v.year), () => projectFull(id, v.year, v.kind)))
+  const loaded = React.use(res.get(projectKey(id, v.year, v.kind), () => projectFull(id, v.year, v.kind)))
   return loaded === FAILED ? <LoadFailed /> : <ProjectBody p={loaded} />
 }
 

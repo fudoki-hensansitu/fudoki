@@ -136,7 +136,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   // 事業のタブは一覧の1頁目（すべて）が最初の画面。年度と資料の種類だけで決まるので、款項目を待たずに読む
   const fallback: Kind | undefined = tab === 'projects' && me.kind === 'settlement' && has('initial') ? 'initial' : undefined
   const projectPage = tab === 'projects'
-    ? Promise.all([readListPage(apiCall(env), queryOf(docKind)), fallback ? readListPage(apiCall(env), queryOf(fallback)) : undefined]).then(([own, alt]) =>
+    ? Promise.all([readListPage(apiCall(env), queryOf(docKind)), fallback ? readListPage(apiCall(env), queryOf(fallback)).catch(() => undefined) : undefined]).then(([own, alt]) =>
         own.total === 0 && alt && alt.total > 0 ? { kind: fallback!, page: alt } : { kind: docKind, page: own },
       )
     : Promise.resolve(undefined)
