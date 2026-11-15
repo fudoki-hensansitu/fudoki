@@ -111,32 +111,100 @@ export const EVALUATION_INDICATOR_VALUE_TABLE = 'evaluation_indicator_value'
 export const EVALUATION_SHEET_TABLE = fiscalTable('evaluation_sheets', 'evaluation_sheet')
 export const EVALUATION_SHEET_PROJECT_TABLE = 'evaluation_sheet_project'
 export const PROJECT_TABLE = 'project'
-export const PROJECT_YEAR_TABLE = fiscalTable('project_years', 'project_year')
+const PROJECT_YEAR_BASE = 'project_year'
+
+// 事業・事業の年度の表は外部キーだけを持ち、名前・会計・款項目・科目・金額は指した内訳（expenditure_detail）から、
+// 自治体は事業から JOIN で引く（表どうしで値を写さない）。API の行は JOIN した後の形で、引いた列の説明はここに書く。
+const joined = (name: string, type: ColumnType, description: string, nullable = true): ColumnSpec => ({ name, type, description, nullable })
+
+/** 事業の年度の行に JOIN で足す列 */
+const PROJECT_YEAR_JOINED: ColumnSpec[] = [
+  joined('jurisdiction_code', 'string', '全国地方公共団体コード（6桁）。事業（project）から引く。', false),
+  joined('name', 'string', 'この年度の事業の名前（当初予算の表記を優先）。指した内訳の名前。', false),
+  joined('account_name', 'string', '会計の名前。指した内訳の会計。', false),
+  joined('kan_name', 'string', '款の名前。'),
+  joined('kou_name', 'string', '項の名前。'),
+  joined('moku_name', 'string', '目の名前。目の無い項の下の事業は NULL。'),
+  joined('initial_expenditure_subject_id', 'string', '当初予算書の事業の行が載る科目（目。目の無い項の下は項）。expenditure_subject の subject_id。当初予算に無い年度は NULL。科目の分野（COFOG）はこの ID で科目から引く。'),
+  joined('settlement_expenditure_subject_id', 'string', '決算書の事業の行が載る科目（目。目の無い項の下は項）。expenditure_subject の subject_id。決算に無い年度は NULL。'),
+  joined('budget_yen', 'integer', '当初予算額（円）。当初予算書の事業の行の金額。'),
+  joined('settled_yen', 'integer', '支出済額（円）。決算書の事業の行の金額。'),
+]
+
+/** 事業の行に JOIN で足す列（最新の年度の行から引く） */
+const PROJECT_JOINED: ColumnSpec[] = [
+  joined('name', 'string', '最新の年度の事業の名前（当初予算の表記を優先。所管課の【】・[] を含む出典の表記のまま）。', false),
+  joined('account_name', 'string', '最新の年度の会計の名前。', false),
+]
+
+const columnOf = (table: string, name: string) => TABLES[table]!.columns.find((c) => c.name === name)!
+const ordered = (table: string, joinedCols: ColumnSpec[], order: string[]) =>
+  order.map((n) => joinedCols.find((c) => c.name === n) ?? columnOf(table, n))
+
+/** 事業の年度の行の列（表の列と JOIN で引く列） */
+export const PROJECT_YEAR_COLUMNS = ordered(PROJECT_YEAR_BASE, PROJECT_YEAR_JOINED, [
+  'project_year_id', 'project_id', 'jurisdiction_code', 'fiscal_year', 'name', 'account_name', 'kan_name', 'kou_name', 'moku_name',
+  'initial_expenditure_detail_id', 'settlement_expenditure_detail_id', 'initial_expenditure_subject_id', 'settlement_expenditure_subject_id',
+  'budget_yen', 'settled_yen',
+])
+/** 事業の行の列（表の列と JOIN で引く列） */
+export const PROJECT_COLUMNS = ordered(PROJECT_TABLE, PROJECT_JOINED, [
+  'project_id', 'jurisdiction_code', 'name', 'account_name', 'first_year', 'first_year_kind', 'last_year', 'last_year_kind', 'parent_project_id',
+])
 
 /** 事業の年度を事業の列（始め・終え・親）でも絞るための列。値は project にだけあり、検索の中で JOIN して引く（同じ事業の集約の中） */
 export const PROJECT_FILTER_COLUMNS = ['first_year', 'first_year_kind', 'last_year', 'last_year_kind', 'parent_project_id'] as const
 
+/** 事業の年度の行を組む SELECT（y が事業の年度、p が事業、i・s が当初予算・決算の内訳）。extra は足す列 */
+const projectYearSelect = (extra = '') => `SELECT y."project_year_id", y."project_id", p."jurisdiction_code", y."fiscal_year",
+  COALESCE(i."name", s."name") AS "name", COALESCE(i."account_name", s."account_name") AS "account_name",
+  COALESCE(i."kan_name", s."kan_name") AS "kan_name", COALESCE(i."kou_name", s."kou_name") AS "kou_name", COALESCE(i."moku_name", s."moku_name") AS "moku_name",
+  y."initial_expenditure_detail_id", y."settlement_expenditure_detail_id",
+  i."subject_id" AS "initial_expenditure_subject_id", s."subject_id" AS "settlement_expenditure_subject_id",
+  i."amount_yen" AS "budget_yen", s."amount_yen" AS "settled_yen"${extra}
+FROM ${PROJECT_YEAR_BASE} y JOIN ${PROJECT_TABLE} p ON p."project_id" = y."project_id"
+LEFT JOIN ${DETAIL_TABLE.table} i ON i."detail_id" = y."initial_expenditure_detail_id"
+LEFT JOIN ${DETAIL_TABLE.table} s ON s."detail_id" = y."settlement_expenditure_detail_id"`
+
+const viewOf = (kind: FiscalTable['kind'], table: string, primaryKey: string, columns: ColumnSpec[]): FiscalTable => ({
+  kind,
+  table,
+  primaryKey,
+  hasDocumentKind: false,
+  columns,
+  types: new Map(columns.map((c) => [c.name, c.type])),
+  selectList: selectList(columns),
+})
+
+/** 事業の年度（JOIN した後の行）。FROM に置く副問い合わせ */
+export const PROJECT_YEAR_TABLE = viewOf('project_years', `(${projectYearSelect()})`, TABLES[PROJECT_YEAR_BASE]!.primary_key, PROJECT_YEAR_COLUMNS)
+
 /** 事業の年度の検索の対象。行は事業の年度の列だけを返し、条件には事業の列も使える */
 export const PROJECT_YEAR_SEARCH: FiscalTable = (() => {
-  const y = PROJECT_YEAR_TABLE
-  const extra = PROJECT_FILTER_COLUMNS.map((n) => TABLES[PROJECT_TABLE]!.columns.find((c) => c.name === n)!)
-  const columns = [...y.columns, ...extra]
-  const yearList = y.columns.map((c) => `y."${c.name}"`).join(', ')
-  const projectList = PROJECT_FILTER_COLUMNS.map((n) => `p."${n}"`).join(', ')
-  return {
-    ...y,
-    table: `(SELECT ${yearList}, ${projectList} FROM ${y.table} y JOIN ${PROJECT_TABLE} p ON p."project_id" = y."project_id")`,
-    columns,
-    types: new Map(columns.map((c) => [c.name, c.type])),
-  }
+  const extra = PROJECT_FILTER_COLUMNS.map((n) => columnOf(PROJECT_TABLE, n))
+  const columns = [...PROJECT_YEAR_COLUMNS, ...extra]
+  return viewOf('project_years', `(${projectYearSelect(PROJECT_FILTER_COLUMNS.map((n) => `, p."${n}"`).join(''))})`, TABLES[PROJECT_YEAR_BASE]!.primary_key, columns)
 })()
+
+/** 事業の名前・会計を引く、最新の年度の行（事業 p の副問い合わせ） */
+const latestOf = (expr: string) => `(SELECT ${expr} FROM ${PROJECT_YEAR_BASE} y
+  LEFT JOIN ${DETAIL_TABLE.table} i ON i."detail_id" = y."initial_expenditure_detail_id"
+  LEFT JOIN ${DETAIL_TABLE.table} s ON s."detail_id" = y."settlement_expenditure_detail_id"
+  WHERE y."project_id" = p."project_id" ORDER BY y."fiscal_year" DESC LIMIT 1)`
+
+/** 事業（JOIN した後の行）。FROM に置く副問い合わせ */
+export const PROJECT_VIEW = `(SELECT p."project_id", p."jurisdiction_code",
+  ${latestOf('COALESCE(i."name", s."name")')} AS "name", ${latestOf('COALESCE(i."account_name", s."account_name")')} AS "account_name",
+  p."first_year", p."first_year_kind", p."last_year", p."last_year_kind", p."parent_project_id"
+FROM ${PROJECT_TABLE} p)`
+export const PROJECT_SELECT_LIST = selectList(PROJECT_COLUMNS)
 
 /**
  * 手で書いた行の schema の各列に、columns.json（dbt の _models.yml）の説明を付ける。
  * 列の集合・型・null の可否・accepted_values が columns.json と合うかは model.test.ts が照合する。
  */
-export function described<T extends z.ZodRawShape>(table: string, shape: T): T {
-  const columns = TABLES[table]!.columns
+export function described<T extends z.ZodRawShape>(table: string | ColumnSpec[], shape: T): T {
+  const columns = typeof table === 'string' ? TABLES[table]!.columns : table
   return Object.fromEntries(
     Object.entries(shape).map(([name, schema]) => [name, (schema as z.ZodType).describe(columns.find((c) => c.name === name)?.description ?? '')])
   ) as unknown as T
