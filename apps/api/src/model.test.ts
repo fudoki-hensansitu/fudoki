@@ -2,7 +2,6 @@
 import { describe, expect, test } from 'bun:test'
 import { TABLES } from './columns'
 import { DIRECTIONS, DirectionCode, EvaluationOriginRow, EvaluationRow, IndicatorRow, IndicatorValueRow, SheetRow } from './evaluation/model'
-import { BudgetProposalOriginRow, BudgetProposalRow, MeasureRow } from './budget-proposal/model'
 import { ProjectRow, ProjectYearRow } from './project/model'
 import { z } from 'zod'
 import { DocumentKind } from './shared/model'
@@ -63,9 +62,6 @@ describe('API の行の schema と表の列', () => {
     ['evaluation_sheet', shapeOf(SheetRow), false],
     ['evaluation_indicator', shapeOf(IndicatorRow), true],
     ['evaluation_indicator_value', shapeOf(IndicatorValueRow), true],
-    ['budget_proposal', shapeOf(BudgetProposalRow), true],
-    ['budget_proposal_origin', shapeOf(BudgetProposalOriginRow), true],
-    ['budget_measure', shapeOf(MeasureRow), true],
     ['project', shapeOf(ProjectRow), true],
     ['project_year', shapeOf(ProjectYearRow), true],
     // 一覧の要約は自治体マスタの全列と、組み立てた列（収録範囲・年度）

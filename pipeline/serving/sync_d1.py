@@ -93,8 +93,8 @@ TABLE_ORDER = ['jurisdiction',
                'expenditure', 'expenditure_origin', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
                'expenditure_location',
                'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
-               'budget_proposal', 'budget_proposal_origin', 'budget_measure', 'project', 'project_year',
-               'source_page_text']
+               'project', 'project_year',
+               'evaluation_sheet_project', 'source_page_text']
 # 集約ごとの作り直し（docs/prd/aggregate-api/dd.md）より前の表。新しい Worker の deploy を確かめてから --drop-legacy で消す
 LEGACY_TABLES = ['fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expenditure_detail', 'fiscal_expenditure_location',
                  'fiscal_coverage', 'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator',
@@ -102,7 +102,9 @@ LEGACY_TABLES = ['fiscal_origin', 'fiscal_expenditure_subject', 'fiscal_expendit
                  'jurisdiction_master', 'origin', 'settlement_expenditure_node', 'initial_expenditure_node',
                  'expenditure_coverage', 'jurisdiction_population',
                  # 人口は web の D1 へ移した（ADR 0042）
-                 'population_origin', 'population']
+                 'population_origin', 'population',
+                 # 予算案のプレス発表は消した（ADR 0049）
+                 'budget_proposal', 'budget_proposal_origin', 'budget_measure']
 
 Table = dict  # columns.json の1表
 

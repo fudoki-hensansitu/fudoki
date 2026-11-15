@@ -61,7 +61,7 @@ class PrepareTest(unittest.TestCase):
             return result
 
     def test_project_documents_follow_the_jurisdiction_filter(self):
-        """事業評価・プレスは、絞らなければ全部、絞ればその自治体のものだけを読む。"""
+        """事業評価は、絞らなければ全部、絞ればその自治体のものだけを読む。"""
         self.load()
         self.assertIsNone(self.project_load.call_args.kwargs['jurisdictions'])
         self.load({'131041'})

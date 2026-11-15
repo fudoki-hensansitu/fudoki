@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131059",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3d8e65a082d34cb5372f2f54875c672c512d17056caece98a46f801739c14bef"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "予算現額": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "carry_kind_words": true,
+            "wide_digits_in_names": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "22e69d5794153a82e1da28cd53ba801a76e806a6f4fcc5e2fc6fc40f0659d61c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'予算現額': 'flat'}。",
+        "金額の単位は column mark 40頁・default 1頁 から決めた。款の和 118,285,498,406 と印字の「歳出合計」118,285,498,406 が一致。",
+        "金額の注記 50 件（充用 6・流用 44）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（1275 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予備費支出及び流用増減額→予算現額・翌年度繰越額／継続費逓次繰越・繰越明許費・事故繰越→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131059/2023/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "f6cd9d26daee983bc09c5e0745690053c46d1825cf8a0cc83a6debca74403451",
+          "bytes": 35797
+        },
+        "row_count": 1183
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131059/2023/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "f300037ac5a9737509a72d9973d6591f3028e505edb3499d4942fcb7d5de6463",
+          "bytes": 64197
+        },
+        "row_count": 4291
+      }
+    }
+  ]
+}

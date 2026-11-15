@@ -79,6 +79,12 @@ models:
     description: シートの予算科目の目。
   - name: jigyo_name
     description: シートの予算科目の事業。
+  - name: kan_code
+    description: シートの予算科目の款の番号（印字のまま）。
+  - name: kou_code
+    description: シートの予算科目の項の番号（印字のまま）。
+  - name: moku_code
+    description: シートの予算科目の目の番号（印字のまま）。
   - name: department
     description: シートの担当部署。
   - name: division
@@ -97,20 +103,55 @@ models:
     - accepted_values:
         arguments:
           values: ['new', 'expand', 'keep', 'statutory', 'as_planned', 'improve', 'resize', 'reduce', 'merge', 'complete', 'end', 'consider_end']
-  - name: expenditure_subject_id
-    description: 風土記の判断。シートの予算科目（会計・款・項・目の名前）が1つに当たる、同じ年度の決算書の目。expenditure_subject の subject_id。当たらなければ空。
+  - name: initial_expenditure_subject_id
+    description: 風土記の判断。シートの予算科目（会計・款・項・目の番号。番号が無ければ名前）が1つに当たる、同じ年度の当初予算書の目。expenditure_subject の subject_id。会計は会計の種類か名前の頭で比べ、印字が無ければ全部の会計から1つに当たるときだけ採る。当たらなければ空。
     data_tests:
     - relationships:
         arguments:
           to: ref('expenditure_subject')
           field: subject_id
-  - name: expenditure_detail_id
-    description: 風土記の判断。expenditure_subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき、その内訳。さらにその子孫に、シートの事業名と同じ名前の事業の内訳が1つだけあれば、そちらの内訳。expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。
+  - name: settlement_expenditure_subject_id
+    description: 風土記の判断。initial_expenditure_subject_id と同じ当て方で、同じ年度の決算書の目。当たらなければ空。
     data_tests:
     - relationships:
         arguments:
-          to: ref('expenditure_detail')
-          field: detail_id
+          to: ref('expenditure_subject')
+          field: subject_id
+- name: evaluation_sheet_project
+  description: 評価シートと事業のつながり。シート×事業が1行。1枚が所管課ごとの複数の事業につながることも、複数の枚（小事業）が1つの事業につながることもある。シートの金額は事業の金額と足さない。つなぎ方は風土記の判断（ingestion/project/link_sheets.py、docs/prd/evaluation-model/dd.md）。
+  columns:
+  - name: link_id
+    description: 行の ID。シートと事業から作る（sha256）。
+    data_tests: [not_null, unique]
+  - name: sheet_id
+    description: evaluation_sheet の sheet_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('evaluation_sheet')
+          field: sheet_id
+  - name: jurisdiction_code
+    description: 全国地方公共団体コード（6桁）。
+    data_tests: [not_null]
+  - name: fiscal_year
+    description: シートの事業を実施した会計年度（西暦）。事業の年度は project_id とこの年度で決まる。
+    data_tests: [not_null]
+  - name: project_id
+    description: project の project_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('project')
+          field: project_id
+  - name: method
+    description: 風土記の判断の当て方。code（科目の番号で目を決め、その下で事業名が当たった）・subject_name（科目の名前で目を決めた）・name（目が決まらず、自治体・年度の中で事業名が1つの事業にだけ当たった）・seed（人の判断、seed の evaluation_sheet_link）。
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values: ['code', 'subject_name', 'name', 'seed']
 - name: evaluation_indicator
   description: 評価シートの指標。シートに印字された順に1つが1行。
   columns:

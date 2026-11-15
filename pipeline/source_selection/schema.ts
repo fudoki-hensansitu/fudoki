@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObjectKey, originObjectSlot, pressObjectKey, pressObjectSlot } from './storage'
+import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObjectKey, originObjectSlot } from './storage'
 
 const nonEmptyString = z.string().min(1).refine(value => value.trim().length > 0, { message: 'Blank text is not allowed' })
 const sha256Schema = z.string().regex(/^[a-f0-9]{64}$/)
@@ -23,7 +23,6 @@ const targetFields = {
 }
 
 const settlementTargetSchema = z.object({ ...targetFields, document_kind: z.literal('settlement') }).strict()
-const initialTargetSchema = z.object({ ...targetFields, document_kind: z.literal('initial') }).strict()
 
 /** 資料区分は金額の段階（phase）とは別。補正だけに出典の号数を持つ。 */
 export const sourceTargetSchema = z.discriminatedUnion('document_kind', [
@@ -287,26 +286,6 @@ function refineDocumentSelections<T extends SourceTarget>(slot: (target: T) => s
 
 export const evaluationSelectionsSchema = z.array(evaluationSelectionSchema).superRefine(refineDocumentSelections(evaluationObjectSlot, evaluationObjectKey))
 
-/** 予算案のプレス発表のPDF。主な施策を事業名と予算額つきで載せた発表資料。頁範囲が無ければ全頁。 */
-const pressPdfSchema = evaluationPdfSchema
-
-export const pressCandidateSchema = z.object({
-  ...candidateFields,
-  files: z.array(pressPdfSchema).min(1),
-}).strict().superRefine(rejectDuplicateFiles)
-
-/** 予算案のプレス発表の選定。target はその予算の当初予算。保存先は予算書とは別の slot（`press-initial`）。 */
-export const pressSelectionSchema = z.object({
-  target: initialTargetSchema,
-  candidates: z.array(pressCandidateSchema),
-  selected_candidate_id: nonEmptyString.nullable(),
-  archive: archivedOriginSchema.nullable(),
-  reason: nonEmptyString,
-}).strict()
-export type PressSelection = z.infer<typeof pressSelectionSchema>
-
-export const pressSelectionsSchema = z.array(pressSelectionSchema).superRefine(refineDocumentSelections(pressObjectSlot, pressObjectKey))
-
 /** ファイルや列挙順によらない出典対象の識別。 */
 export function targetKey(target: SourceTarget): string {
   return JSON.stringify([
@@ -324,10 +303,8 @@ export const jurisdictionSelectionsSchema = z.object({
   unresolved_candidates: unresolvedCandidatesSchema,
   /** 金額の出典とは別の、事業の評価の出典。取り込み・dbtは読まない。 */
   evaluation_selections: evaluationSelectionsSchema.optional(),
-  /** 予算案のプレス発表の出典。金額の出典ではなく、事業（project）の取り込みが読む。 */
-  press_selections: pressSelectionsSchema.optional(),
 }).strict().superRefine((file, ctx) => {
-  for (const [field, selections] of [['selections', file.selections], ['evaluation_selections', file.evaluation_selections ?? []], ['press_selections', file.press_selections ?? []]] as const) {
+  for (const [field, selections] of [['selections', file.selections], ['evaluation_selections', file.evaluation_selections ?? []]] as const) {
     for (const [index, selection] of selections.entries()) {
       if (selection.target.jurisdiction !== file.jurisdiction) {
         ctx.addIssue({ code: 'custom', path: [field, index, 'target', 'jurisdiction'], message: 'Target belongs to another jurisdiction' })

@@ -2,4 +2,3 @@
 select distinct sha256(to_json(['evaluation', jurisdiction_code, fiscal_year::varchar])) as evaluation_id,
     jurisdiction_code, fiscal_year
 from {{ source('project', 'project_origin') }}
-where document_type = 'sheets'

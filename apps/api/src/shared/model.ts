@@ -20,6 +20,6 @@ export const Origin = z.strictObject({
 })
 export type Origin = z.infer<typeof Origin>
 
-/** 頁つきの出典（評価シート・施策のように、1件が資料の1頁から決まるもの） */
+/** 頁つきの出典（評価シートのように、1件が資料の1頁から決まるもの） */
 export const PagedOrigin = Origin.extend({ page: z.int().min(1).describe('ファイルの中で1から数えた頁') })
 export type PagedOrigin = z.infer<typeof PagedOrigin>

@@ -25,6 +25,8 @@ def name_start(glyph, prefix: int) -> float | None:
     if glyph.text[prefix:prefix + 1] in ('.', '．'):
         prefix += 1  # the stop the item number leaves out before a full-width digit (`6．５歳児`)
     head, rest = glyph.text[:prefix], glyph.text[prefix:]
+    if head and not rest and head[-1] == '．' and head[:-1].isdigit() and head[:-1].isascii():
+        return glyph.x1  # the number and its stop stand as a word, the name begins with the next (`4．` `１歳６か月児…`)
     if not head or not rest or not all(c.isdigit() and c.isascii() or c in '.．' for c in head) \
             or not any(c.isdigit() for c in head):
         return None

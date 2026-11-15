@@ -1,6 +1,6 @@
 # 出典の頁の文字
 
-web のアシスタントが `read_source_page` で読む頁の文字（D1 の `source_page_text`）を作る。`dbt:prepare` が事業の取り込みの出典（評価・プレス）から作る。設計は [docs/prd/page-words/dd.md](../../../../docs/prd/page-words/dd.md)。
+web のアシスタントが `read_source_page` で読む頁の文字（D1 の `source_page_text`）を作る。`dbt:prepare` が事業評価の出典から作る。設計は [docs/prd/page-words/dd.md](../../../../docs/prd/page-words/dd.md)。
 
 ## 新しい種類の資料を足す・抜き出し方を変えるとき
 

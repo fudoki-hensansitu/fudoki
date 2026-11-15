@@ -10,7 +10,7 @@
 | `ingestion/fiscal/` | 予算書・決算書の取り込み。管理 JSON（`jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.json`、型は `manifest.schema.json`、対象間の制約は `manifest.py`）、書式別の変換器（`layouts/`）、自治体ごとの宣言（`jurisdictions/<自治体>/layouts/`） |
 | `ingestion/generic/` | 自治体の書式を書かない汎用の変換器。固定した読み方は管理 JSON の `options.workflow`、選べる実装は `patterns/` |
 | `ingestion/lib/` | 共通処理。木の検査・網羅の検査・OCR の入口（`scan_ocr.py`、[説明](ingestion/lib/scan_ocr.md)）・PDF の表の組み立て（`pdf_table.py`、[説明](ingestion/lib/pdf_table.md)） |
-| `ingestion/project/` | 事業評価の評価シートと予算案のプレス発表の取り込み。様式ごとの読み方は `layouts/`、プレスの工程ごとのパターンは `press/` |
+| `ingestion/project/` | 事業評価の評価シートの取り込みと、事業・評価シートのつなぎの規則。様式ごとの読み方は `layouts/`、工程ごとのパターンは `sheet/` |
 | `shared/` | 取り込みと dbt を横断する辞書。取り込みは直接読み、dbt は seed として読む |
 | `dbt/` | 入力準備（`scripts/`）、staging・intermediate・marts、seeds、検査（`tests/`） |
 | `serving/` | marts を D1 へ写す同期（`sync_d1.py`）、列の契約（`columns.py`）、配信の入口（`publish.py`）、Queria への配布 |
@@ -57,7 +57,7 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 - PDF の読み方は書式ごとの固定した workflow（[ADR 0035](../docs/adr/0035-fixed-pdf-workflow-patterns.md)・[PDF workflow の設計](../docs/prd/pdf-workflow-patterns/dd.md)）。他の書式にも効く処理は共通コードに入れ、1つの書式のための判定は opt-in の quirk にする（[ADR 0043](../docs/adr/0043-format-quirks-are-opt-in.md)）。結び付きの強い読み方は `readings/`、独立に選べる部品は `components/`（[ADR 0036](../docs/adr/0036-shared-coupled-pdf-readings.md)）
 - 金額の注記は段階を付けず、木の合計に足さない（[ADR 0024](../docs/adr/0024-monetary-annotations-without-phase.md)）
 - 統計の決算・普通会計の表は取り込まない（[ADR 0037](../docs/adr/0037-do-not-ingest-statistical-settlements.md)）。補正予算は当面取り込まない（[ADR 0039](../docs/adr/0039-defer-supplementary-budget-ingestion.md)）
-- 事業評価の評価シートと予算案のプレス発表は、どちらも出典の選定（`evaluation_selections`・`press_selections`）で保存した PDF を入力準備が読む。評価の結果の資料は取り込まない
+- 事業評価の評価シートは、出典の選定（`evaluation_selections`）で保存した PDF を入力準備が読む。評価の結果の資料と予算案のプレス発表は取り込まない（ADR 0049）
 
 ### dbt
 
@@ -65,8 +65,8 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 - PDF のノードの表・金額の表は全自治体共通の staging で読み、CSV は書式ごとの staging で読む
 - 段の名前は共通の規則で付け（[ADR 0025](../docs/adr/0025-level-names-by-shared-rule.md)）、見出しから金額の段階への対応は共通の辞書に置く（[ADR 0021](../docs/adr/0021-level-and-phase-map-in-dbt-seed.md)）。会計の種類は語の辞書で付ける（[ADR 0023](../docs/adr/0023-account-kind-and-no-consolidation.md)）
 - 内訳の欄の分け方は seed `fiscal_detail_breakdown` に宣言する。見出しが「節」の欄は既定で節
-- marts は集約ごとの dir に置く（`marts/expenditure`・`evaluation`・`budget_proposal`・`project`・`jurisdiction`・`source`・`queria`）。設計は [集約ごとの作り直し](../docs/prd/aggregate-api/dd.md)
-- 評価シート・施策の紐付けは風土記の判断で、seed（`budget_measure_link`）に置き、列の説明に判断と書く。事業は内訳の分け方が「事業」の行を、全自治体で build のたびに機械的な規則でつなぐ（`int_project__line_ids`）。自治体を選ぶ入口は持たない。分野（COFOG）は表に写さず、紐付けた目・内訳から引く
+- marts は集約ごとの dir に置く（`marts/expenditure`・`evaluation`・`project`・`jurisdiction`・`source`・`queria`）。設計は [集約ごとの作り直し](../docs/prd/aggregate-api/dd.md)
+- 事業と評価シートのつなぎは風土記の判断で、build のたびに規則で計算し（`int_evaluation__sheet_projects`、ADR 0048）、人の上書きだけを seed（`evaluation_sheet_link`）に置く。事業は内訳の分け方が「事業」の行を、全自治体で build のたびに機械的な規則でつなぐ（`int_project__line_ids`）。自治体を選ぶ入口は持たない。分野（COFOG）は表に写さず、紐付けた目・内訳から引く
 - 自治体マスタは `packages/jurisdictions/jurisdictions.json`。人口は pipeline で扱わない（[ADR 0042](../docs/adr/0042-external-reference-data-in-web.md)）
 
 ### 配信
