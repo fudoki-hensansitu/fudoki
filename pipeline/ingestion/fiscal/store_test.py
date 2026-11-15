@@ -76,10 +76,19 @@ class StoreTest(unittest.TestCase):
         self.cache.assert_not_called()
 
     def test_an_unchanged_record_is_not_re_converted(self):
-        report, convert, upload = self.run_store(table('a' * 64), table('a' * 64), {'tables': [table('a' * 64)]})
+        report, convert, upload = self.run_store(table('a' * 64), table('a' * 64),
+                                                 {'conversions': [{'id': 'c'}], 'tables': [table('a' * 64)]})
         self.assertEqual(report['tables'], [])
         convert.assert_not_called()
         upload.assert_not_called()
+
+    def test_a_redeclared_conversion_puts_back_the_record_r2_lacks(self):
+        # R2 holds what main converted in place of the record; the conversion declared again reads as recorded.
+        report, convert, upload = self.run_store(table('a' * 64), table('a' * 64),
+                                                 {'conversions': [{'id': 'c', 'options': {}}], 'tables': [table('a' * 64)]})
+        self.assertEqual(report['tables'], ['t'])
+        convert.assert_called_once()
+        upload.assert_called_once()
 
     def test_a_table_already_in_r2_is_not_re_converted(self):
         report, convert, upload = self.run_store(table('a' * 64), table('b' * 64), {'tables': []}, already_stored=True)
