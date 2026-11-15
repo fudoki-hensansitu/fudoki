@@ -327,6 +327,10 @@ def _split_code(line_text: str) -> tuple[str | None, str]:
     return found.group(1), line_text[found.end():].strip()
 
 
+def line_height(item: Item) -> float:
+    return max(g.y1 - g.y0 for g in item.glyphs)
+
+
 def _cell(band: Band, y: float) -> tuple[float, float]:
     above = [r for r in band.rows if r <= y + .5]
     below = [r for r in band.rows if r > y + .5]
@@ -2097,11 +2101,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         and not TOTAL.search(item.name) and item.page == previous.page
                         # (A line starting between the code's end and the name's start wraps that name: a name split from
                         # its code by the width of its characters starts too far right, `3その他公共施` / `設・公用施設`, 133078.)
-                        and (abs(item.indent - previous.indent) <= 3
+                        # (OCR places a line's start a third of a character either way: `高額介護サービ` / `ス等費`, 132101)
+                        and (abs(item.indent - previous.indent) <= max(3, line_height(item) / 3)
                              or (gaps is not None and gaps.module.wraps(previous, item))
                              if group.mode == 'indent' else
                              group.bands[item.level].header[-1] == group.bands[previous.level].header[-1])
-                        and (0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)
+                        # (OCR boxes of two lines can overlap by a little: `運営協議会` / `費`, 092096)
+                        and (-line_height(item) / 4 <= item.y0 - previous.y1 <= line_height(item)
                              # (under stacked titles a 目's name wraps over the lines of its ruled row, set further
                              # apart than a line: `地域密着型` / `サービス事` / `業者指定等` / `事務費`)
                              or (logical.level_titles is not None and within_row(logical, previous, item)))):
@@ -2143,6 +2149,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     continue
                 previous_head = None
                 for head in list(next_found[id(other)]):
+                    # The 款・項 titles a page prints again over its body (`running_titles`): already items before.
+                    if head.level == -1 and any(i.code == head.code and same_heading(i.name, head.name) for i in earlier + [tail]):
+                        continue
                     # The open headings printed again, outermost first, as one name or several lines.
                     if any(same_heading(''.join(reversed(opened[:count])), head.name) for count in range(1, len(opened) + 1)):
                         break
