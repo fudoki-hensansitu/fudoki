@@ -2808,8 +2808,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         # The quirk `carry_kind_words`: `明許 20,942,000`, the kind of the carried-over amount before it,
                         # in the unit of its column.
                         word = normalize(''.join(g.text for g in line if g not in money and g.text not in SIGNS))
-                        if (carried := tagged.module.heading(band.header, word)) is not None:
-                            carried_unit, header = logical.unit_of(header), carried
+                        if (kind_header := tagged.module.heading(band.header, word)) is not None:
+                            carried_unit, header = logical.unit_of(header), kind_header
                     y = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
                     if unpaid and stacked[1] != _cell(band, y) and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
                         unpaid_rounds.extend(stacked_label)  # the cell ended without an amount for it
