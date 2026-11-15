@@ -449,11 +449,24 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                     # Vision's word ranges may omit a minus whose line reading is intact.
                     # One complete number wholly inside a ruled cell outranks incomplete pieces.
                     pieces = None
+                if keep_marks and stacked(item, parts.get(item['id'])):
+                    # A text document's header cell prints its words a line each, a character over a character
+                    # (`継` `繰` `繰` down the cell of 継続費及び繰越事業費繰越額): Paddle reads the column as one
+                    # vertical line. Each character is a word of its own line, as the text layer of such a page reads it.
+                    words += parts[item['id']]
+                    continue
                 if keep_marks:
                     pieces = with_mark(item, pieces)
                 words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])],
                                      line_cuts(detected, item['bbox_pdf_pt']) if row_gaps else cuts, reach)
     return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
+
+
+def stacked(item: dict, pieces: list[Word] | None) -> bool:
+    """A Paddle line read down a column: a box taller than wide, its characters one under another."""
+    x0, y0, x1, y1 = item['bbox_pdf_pt']
+    return bool(pieces) and len(pieces) > 1 and y1 - y0 > 1.5 * (x1 - x0) and all(
+        len(p.text) == 1 for p in pieces) and all(b.y0 >= (a.y0 + a.y1) / 2 for a, b in zip(pieces, pieces[1:]))
 
 
 def line_cuts(detected: pdf_rules.PageRules, box: list[float] | None) -> list[float]:
