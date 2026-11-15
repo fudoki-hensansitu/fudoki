@@ -1,6 +1,6 @@
 <img src="docs/brand/cover.jpg" alt="風土記 — 私のお金はどこへ行った？ 諸国の使いが巻物の報告を役人に差し出す墨絵" width="640">
 
-[![CI](https://github.com/fudoki-hensansitu/fudoki/actions/workflows/verify.yml/badge.svg)](https://github.com/fudoki-hensansitu/fudoki/actions/workflows/verify.yml)
+[![verify-apps](https://github.com/fudoki-hensansitu/fudoki/actions/workflows/verify-apps.yml/badge.svg)](https://github.com/fudoki-hensansitu/fudoki/actions/workflows/verify-apps.yml) [![verify-pipeline](https://github.com/fudoki-hensansitu/fudoki/actions/workflows/verify-pipeline.yml/badge.svg)](https://github.com/fudoki-hensansitu/fudoki/actions/workflows/verify-pipeline.yml)
 [![License: MIT (code)](https://img.shields.io/badge/license-MIT%20(code)-blue)](#license)
 
 [ドキュメント](https://docs.fudoki.dev/) · [MCP で使う](https://docs.fudoki.dev/mcp) · [REST で使う](https://docs.fudoki.dev/rest) · [データの読み方](https://docs.fudoki.dev/data)

@@ -1,14 +1,29 @@
-name: verify
+name: verify-pipeline
+# pipeline の型検査・repo の決まりの検査・unit テストと、選定・管理 JSON の検査。実データ（R2）は読まない
 on:
   pull_request:
+    paths:
+      - pipeline/**
+      - packages/**
+      # 列の契約（serving/columns_test.py）が読む
+      - apps/api/src/columns.json
+      - docs/adr/**
+      - package.json
+      - bun.lock
+      - bunfig.toml
+      - mise.toml
+      - tsconfig.json
+      - pyproject.toml
+      - uv.lock
+      - .github/workflows/verify-pipeline.yml
   push:
     branches: [main]
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
-  fixture-and-code:
-    name: Synthetic fixture and code (not full fiscal build)
+  verify:
+    name: Pipeline
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
@@ -31,9 +46,10 @@ jobs:
             sleep "$wait"
           done
           exit 1
-      - run: bun run typecheck:all
-      - run: bun run lint
-      - run: bun run test
+      # root の tsc は pipeline と packages を見る
+      - run: bun run typecheck
+      - run: bun run --cwd pipeline lint
+      - run: bun run --cwd pipeline test
       # Saves even when later checks fail, so a failing test does not keep the cache empty.
       # Keeps only wheels built from sdists, which are the ones that need the cache.
       - if: always() && steps.uv-sync.outcome == 'success' && steps.uv-cache.outputs.cache-hit != 'true'
@@ -43,5 +59,3 @@ jobs:
         with:
           path: ~/.cache/uv
           key: ${{ steps.uv-cache.outputs.cache-primary-key }}
-      - name: 検証範囲を表示
-        run: echo '架空自治体の fixture とコードの検証。' >> "$GITHUB_STEP_SUMMARY"

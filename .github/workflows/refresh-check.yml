@@ -1,20 +1,28 @@
 name: refresh-check
 # Compares every saved table whose fingerprint is stale with a fresh conversion (ADR 0027, revised 2026-11-12).
 # A pull request no longer stops on a stale fingerprint; this run finds a table that a shared-code change altered.
+# On main it also rewrites the fingerprints of unchanged manifests and opens a pull request with them
+# (ADR 0027, revised 2026-11-15), so stale fingerprints do not pile up. On another branch it only compares.
 on:
   schedule:
     # Every day at 18:00 UTC (03:00 JST the next day), so a shared-code change that altered a table
     # shows up the next morning. Daily runs also keep the observation cache (evicted after 7 days without access).
     - cron: '0 18 * * *'
   workflow_dispatch:
+    inputs:
+      all:
+        description: Re-read every conversion, not only stale ones (after a Poppler change)
+        type: boolean
+        default: false
 permissions:
-  contents: read
+  contents: write
+  pull-requests: write
 concurrency:
   group: refresh-check
   cancel-in-progress: false
 jobs:
   refresh:
-    name: Saved tables against the current code (dry run)
+    name: Saved tables against the current code
     runs-on: ubuntu-latest
     timeout-minutes: 300
     steps:
@@ -45,10 +53,35 @@ jobs:
           key: generic-observation-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
           restore-keys: generic-observation-${{ hashFiles('mise.toml') }}-
       - id: refresh
-        run: bun run --cwd pipeline ingestion:refresh --remote --dry-run --output "$RUNNER_TEMP/refresh/report.json"
+        run: bun run --cwd pipeline ingestion:refresh --remote ${{ github.ref != 'refs/heads/main' && '--dry-run' || '' }} ${{ inputs.all && '--all' || '' }} --output "$RUNNER_TEMP/refresh/report.json"
         env:
-          # The deploy token also reads the private input bucket (R2 read only); --dry-run never writes R2.
+          # The deploy token also reads the private input bucket (R2 read only); refresh never writes R2,
+          # only the fingerprints in the Git manifests.
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      # Rewritten fingerprints only (refresh leaves a manifest with a different table untouched), so this
+      # runs even when the refresh step failed on such a table.
+      - if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
+        name: 書き換えた指紋の PR を出す
+        env:
+          GH_TOKEN: ${{ github.token }}
+          BRANCH: refresh-check/fingerprints
+        run: |
+          if git diff --quiet -- pipeline/ingestion/fiscal/jurisdictions; then
+            echo '書き換えた指紋はありません' >> "$GITHUB_STEP_SUMMARY"
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git switch -c "$BRANCH"
+          git add -u -- pipeline/ingestion/fiscal/jurisdictions
+          git commit -m 'chore(ingestion): 中身が同じだった表の指紋を書き換える（refresh-check）'
+          git push --force origin "$BRANCH"
+          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
+            gh pr create --head "$BRANCH" --base main \
+              --title 'chore(ingestion): 中身が同じだった表の指紋を書き換える' \
+              --body "refresh-check（${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}）が作り直して中身が同じだった管理 JSON の \`input_fingerprint\` だけを書き換えた。表と R2 は変えていない（ADR 0027）。"
+          fi
+          echo "指紋を書き換えた PR: branch \`$BRANCH\`" >> "$GITHUB_STEP_SUMMARY"
       - if: always()
         uses: actions/cache/save@v6
         with:
