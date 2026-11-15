@@ -1355,7 +1355,8 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     if report.unit['stopped'] and stop:
         raise ValueError(f'Unit check failed: {report.unit}')
     kept, notes, amounts, unresolved, codes = split_notes(built)
-    built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))
+    # A misread annotation (`教育センタ一費へ流用`, 131164 R5) is put right like a node.
+    built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names([*built.nodes, *notes], by_node))
     built.notes.extend({'kind': 'variant characters', 'text': text} for text in variants)
     nodes = [*built.nodes, *notes]
     amounts, headings = canonical_headings([*kept, *amounts], nodes, kind, header)
