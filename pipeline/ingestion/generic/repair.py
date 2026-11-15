@@ -26,7 +26,7 @@ import re
 import unicodedata
 
 from ingestion.generic.patterns import document_quirk, load as load_pattern
-from ingestion.generic.observe import OPENING, Page, Rule, Word
+from ingestion.generic.observe import OPENING, Page, Rule, Word, merge_rules, rule_glyphs
 
 REPAIRS = Path(__file__).resolve().parents[1] / 'lib/text_repairs.csv'
 FINGERPRINT_RESOURCES = ['ingestion/lib/text_repairs.csv']
@@ -216,13 +216,18 @@ def words_from_glyphs(glyphs: list[tuple[tuple[float, float, float, float], str]
             i = parent[i]
         return i
 
+    # The scan to the right stops past the reach of the tallest glyph: a short glyph of another line in between (a
+    # comma below `14,124`'s line) has a shorter reach of its own, and stopping at it split `14,` from `124` (092037).
+    tallest = max((box[3] - box[1] for box, _ in unique), default=1)
     for position, i in enumerate(order):
         a = unique[i][0]
         for j in order[position + 1:]:
             b = unique[j][0]
+            if b[0] - a[2] > gap * max(tallest, 1):
+                break
             height = max(a[3] - a[1], b[3] - b[1], 1)
             if b[0] - a[2] > gap * height:
-                break
+                continue
             if joins is not None and b[0] - a[2] > joins(unique[i][1], unique[j][1]) * height:
                 continue
             if min(a[3], b[3]) - max(a[1], b[1]) >= .3 * min(a[3] - a[1], b[3] - b[1]) and not any(
@@ -309,6 +314,13 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: f
                          load_pattern("repairs", "spaced_codes").joins if 'spaced_codes' in repairs else None)
                 page.words = words_from_glyphs([(box, char) for box, char, visible in glyphs if visible], report, page.rules,
                                                'overprint' in repairs, joins=joins)
+                if any('─' <= char <= '╿' for _, char, visible in glyphs if visible):
+                    # Rules drawn as box-drawing characters (┃━│…, 092037) are rules here too, as `observe` reads them
+                    # from Poppler's words; the rebuilt words would otherwise carry them as text.
+                    chars = [{'text': char, 'x0': box[0], 'top': box[1], 'x1': box[2], 'bottom': box[3]}
+                             for box, char, visible in glyphs if visible]
+                    page.words, glyph_rules = rule_glyphs(page.words, chars)
+                    page.rules = merge_rules(page.rules + glyph_rules)
                 if shifted is not None:
                     page.words = shifted.module.rejoin(page.words)
             else:

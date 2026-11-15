@@ -2341,7 +2341,11 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         # The number's line places the item: a name wrapped above it (`使用料及` / `13` / `賃借料`) starts
         # in the name column.
         first = lambda i: next((line[0] for line in i.lines if line and line[0].text[:1].isdigit()), i.lines[0][0])
-        start = lambda i: first(i).x0
+        # The quirk `opening_bracket_ink`: a line that starts with a full-width opening bracket boxes only its ink, half a
+        # character right of where the character starts (`（仮称）…`, 092037, whose rebuilt words box each glyph's ink).
+        ink = quirk(hints, 'opening_bracket_ink') is not None
+        start = lambda i: first(i).x0 - ((first(i).y1 - first(i).y0) / 2
+                                         if ink and i.code is None and first(i).text[:1] in '(（「『【〔' else 0)
         origin = min((start(i) - i.group.x0 for i in axis_items), default=0)
         # A character is the axis's usual line height: OCR that read only the top half of a line
         # (`4土` 2.4pt high among 6pt lines, 281000) must not make its step that small.

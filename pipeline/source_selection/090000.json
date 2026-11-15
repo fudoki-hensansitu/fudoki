@@ -1626,5 +1626,39 @@
     }
   ],
   "unresolved_candidates": [],
-  "evaluation_selections": []
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "090000",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（事業の粒度の評価なし）。栃木県は事務事業評価の評価シートを公表していない。総合政策課の「重点戦略マネジメント」（https://www.pref.tochigi.lg.jp/a01/management/jutenmane.html）は「とちぎ未来創造プラン」「新とちぎ未来創造プラン」のプロジェクト単位の現状評価・取組評価シート（施策の粒度）で、事業ごとの評価ではない。技術管理課の公共事業評価（https://www.pref.tochigi.lg.jp/h02/pref/seisakuhyouka/saihyouka/hyouka.html）は道路・河川などの個別工事の事前・再・事後評価で、予算の事業の評価ではない。確認日：2026-11-15。"
+    },
+    {
+      "target": {
+        "jurisdiction": "090000",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（事業の粒度の評価なし）。栃木県は事務事業評価の評価シートを公表していない。総合政策課の「重点戦略マネジメント」（https://www.pref.tochigi.lg.jp/a01/management/jutenmane.html）は「とちぎ未来創造プラン」「新とちぎ未来創造プラン」のプロジェクト単位の現状評価・取組評価シート（施策の粒度）で、事業ごとの評価ではない。技術管理課の公共事業評価（https://www.pref.tochigi.lg.jp/h02/pref/seisakuhyouka/saihyouka/hyouka.html）は道路・河川などの個別工事の事前・再・事後評価で、予算の事業の評価ではない。確認日：2026-11-15。"
+    },
+    {
+      "target": {
+        "jurisdiction": "090000",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（事業の粒度の評価なし）。栃木県は事務事業評価の評価シートを公表していない。総合政策課の「重点戦略マネジメント」（https://www.pref.tochigi.lg.jp/a01/management/jutenmane.html）は「とちぎ未来創造プラン」「新とちぎ未来創造プラン」のプロジェクト単位の現状評価・取組評価シート（施策の粒度）で、事業ごとの評価ではない。技術管理課の公共事業評価（https://www.pref.tochigi.lg.jp/h02/pref/seisakuhyouka/saihyouka/hyouka.html）は道路・河川などの個別工事の事前・再・事後評価で、予算の事業の評価ではない。確認日：2026-11-15。"
+    }
+  ]
 }
