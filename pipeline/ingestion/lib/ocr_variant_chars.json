@@ -159,6 +159,30 @@
       "reason": "土壌汚染調査などの壌。日本の科目名・事業名では 壤 を正字として使わない。"
     },
     {
+      "id": "variant-26",
+      "observed_char": "污",
+      "corrected_char": "汚",
+      "reason": "大気汚染・汚泥などの汚。日本の科目名・事業名では 污 を正字として使わない。"
+    },
+    {
+      "id": "variant-27",
+      "observed_char": "资",
+      "corrected_char": "資",
+      "reason": "資金・出資金などの資。日本の科目名・事業名では 资 を正字として使わない。"
+    },
+    {
+      "id": "variant-28",
+      "observed_char": "换",
+      "corrected_char": "換",
+      "reason": "転換などの換。日本の科目名・事業名では 换 を正字として使わない。"
+    },
+    {
+      "id": "variant-29",
+      "observed_char": "转",
+      "corrected_char": "転",
+      "reason": "転換・転宅などの転。日本の科目名・事業名では 转 を正字として使わない。"
+    },
+    {
       "id": "variant-middle-dot",
       "observed_char": "·",
       "corrected_char": "・",
