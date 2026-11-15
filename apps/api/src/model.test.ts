@@ -1,6 +1,6 @@
 // 集約の型（*/model.ts）の enum と、dbt の accepted_values（columns.json）が同じ値かを照合する（docs/prd/aggregate-api/dd.md）。
 import { describe, expect, test } from 'bun:test'
-import { TABLES } from './columns'
+import { PROJECT_COLUMNS, PROJECT_YEAR_COLUMNS, TABLES, type ColumnSpec } from './columns'
 import { DIRECTIONS, DirectionCode, EvaluationOriginRow, EvaluationRow, IndicatorRow, IndicatorValueRow, SheetRow } from './evaluation/model'
 import { ProjectRow, ProjectYearRow } from './project/model'
 import { z } from 'zod'
@@ -14,6 +14,8 @@ const values = (table: string, column: string) => {
   return [...spec.values].sort()
 }
 const sorted = (xs: readonly string[]) => [...xs].sort()
+/** 表の列に JOIN で引く列を足した API の行の列 */
+const VIEWS: Record<string, ColumnSpec[]> = { project: PROJECT_COLUMNS, project_year: PROJECT_YEAR_COLUMNS }
 
 describe('型と表の値', () => {
   test.each([
@@ -62,12 +64,13 @@ describe('API の行の schema と表の列', () => {
     ['evaluation_sheet', shapeOf(SheetRow), false],
     ['evaluation_indicator', shapeOf(IndicatorRow), true],
     ['evaluation_indicator_value', shapeOf(IndicatorValueRow), true],
-    ['project', shapeOf(ProjectRow), true],
-    ['project_year', shapeOf(ProjectYearRow), true],
     // 一覧の要約は自治体マスタの全列と、組み立てた列（収録範囲・年度）
     ['jurisdiction', jurisdiction, false],
+    // 事業・事業の年度は表の列と、表に写さず JOIN で引く列
+    ['project', shapeOf(ProjectRow), true],
+    ['project_year', shapeOf(ProjectYearRow), true],
   ] as const)('%s', (table, shape, exact) => {
-    const columns = TABLES[table]!.columns
+    const columns = VIEWS[table] ?? TABLES[table]!.columns
     if (exact) expect(Object.keys(shape).sort()).toEqual(columns.map((c) => c.name).sort())
     for (const c of columns) {
       const got = describeColumn(shape[c.name]!)
