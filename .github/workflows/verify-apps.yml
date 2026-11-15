@@ -1,0 +1,33 @@
+name: verify-apps
+# web・api・docs と、それらが使う packages の型検査・lint・unit テスト。Python は使わない
+on:
+  pull_request:
+    paths:
+      - apps/**
+      - packages/**
+      - DESIGN.md
+      - package.json
+      - bun.lock
+      - bunfig.toml
+      - mise.toml
+      - tsconfig.json
+      - .github/workflows/verify-apps.yml
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  verify:
+    name: Apps
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v5
+        with:
+          version: 2026.8.6
+          install_args: bun node
+      - run: bun install --frozen-lockfile
+      - run: bun run --filter './apps/*' --filter './packages/*' typecheck
+      - run: bun run --filter './apps/*' --filter './packages/*' lint
+      - run: bun run --filter './apps/*' --filter './packages/*' test
