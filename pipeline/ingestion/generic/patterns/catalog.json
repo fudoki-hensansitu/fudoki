@@ -179,6 +179,7 @@
     "repeated_heading_owns_nothing": "ingestion.generic.patterns.quirks.repeated_heading_owns_nothing",
     "repeated_subject_headings": "ingestion.generic.patterns.quirks.repeated_subject_headings",
     "revision_history": "ingestion.generic.patterns.quirks.revision_history",
+    "rounded_items": "ingestion.generic.patterns.quirks.rounded_items",
     "rows": "ingestion.generic.patterns.quirks.rows",
     "rows_from": "ingestion.generic.patterns.quirks.rows_from",
     "rule_ink": "ingestion.generic.patterns.quirks.rule_ink",
