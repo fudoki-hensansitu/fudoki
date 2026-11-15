@@ -7,6 +7,11 @@ on:
     # shows up the next morning. Daily runs also keep the observation cache (evicted after 7 days without access).
     - cron: '0 18 * * *'
   workflow_dispatch:
+    inputs:
+      all:
+        description: Re-read every conversion, not only stale ones (after a Poppler change)
+        type: boolean
+        default: false
 permissions:
   contents: read
 concurrency:
@@ -45,7 +50,7 @@ jobs:
           key: generic-observation-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
           restore-keys: generic-observation-${{ hashFiles('mise.toml') }}-
       - id: refresh
-        run: bun run --cwd pipeline ingestion:refresh --remote --dry-run --output "$RUNNER_TEMP/refresh/report.json"
+        run: bun run --cwd pipeline ingestion:refresh --remote --dry-run ${{ inputs.all && '--all' || '' }} --output "$RUNNER_TEMP/refresh/report.json"
         env:
           # The deploy token also reads the private input bucket (R2 read only); --dry-run never writes R2.
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
