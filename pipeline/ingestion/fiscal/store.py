@@ -192,12 +192,15 @@ def store(since: str, *, dry_run: bool = False) -> dict:
     failures = [found[path] for path in paths if isinstance(found[path], str)]
     if not dry_run:
         # Only this (parent) process writes the list, once, after every upload.
-        # Failing to write it must not fail the store: builds still read the Git records R2 holds.
+        # Failing to write it fails the store only when it holds replaced tables: builds read the other tables
+        # from their Git records, but a replaced table only from the list.
+        replaced = {ident: table for report in reports for ident, table in report.get('replaced', {}).items()}
         try:
-            receipts = update_receipts([path for path in paths if isinstance(found[path], dict)],
-                                       {ident: table for report in reports for ident, table in report.get('replaced', {}).items()})
+            receipts = update_receipts([path for path in paths if isinstance(found[path], dict)], replaced)
         except Exception as error:
             receipts = {'error': str(error) or type(error).__name__}
+            if replaced:
+                failures.append(f'receipts list not written; replaced tables unreadable: {receipts["error"]}')
         print(json.dumps({'receipts': receipts}, ensure_ascii=False), file=sys.stderr, flush=True)
     if failures:
         raise SystemExit('\n'.join(failures))

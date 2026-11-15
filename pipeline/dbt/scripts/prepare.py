@@ -136,9 +136,20 @@ def readable(document: dict, *, remote: bool) -> bool:
 
 
 def with_receipts(document: dict, receipts: dict[str, dict]) -> dict | None:
-    """The document with the tables R2 holds (the receipts list), when it has every table the document declares."""
+    """The document with the tables R2 holds (the receipts list), when it has every table the document declares
+    and each was converted from the declared inputs: its fingerprint is the recorded one or the current one (both
+    cover the inputs and options), so a table of a replaced original is not read under the new declaration."""
     tables = [receipts.get(storage.receipt_id(document, table['table_id'])) for table in document['tables']]
-    return None if any(table is None for table in tables) else {**document, 'tables': tables}
+    if any(table is None for table in tables):
+        return None
+    current = None
+    for recorded, stored in zip(document['tables'], tables):
+        if stored['input_fingerprint'] == recorded['input_fingerprint']:
+            continue
+        current = current if current is not None else manifest.fingerprints(document)
+        if stored['input_fingerprint'] != current.get(stored['conversion_id']):
+            return None
+    return {**document, 'tables': tables}
 
 
 def load_document(documents: dict, spec: dict, candidate: Path | None, *, remote: bool = False,
