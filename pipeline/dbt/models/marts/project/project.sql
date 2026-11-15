@@ -23,7 +23,12 @@ parents as (
     select l.project_id, any_value(py.project_id) as parent_project_id
     from latest l
     join {{ ref('int_project__lines') }} line on line.detail_id = coalesce(l.initial_expenditure_detail_id, l.settlement_expenditure_detail_id)
-    join years py on line.parent_detail_id in (py.initial_expenditure_detail_id, py.settlement_expenditure_detail_id)
+    -- 当初予算・決算の行を縦に並べて等号で結ぶ（`in (当初, 決算)` で結ぶと全組み合わせを比べ、20分かかる）
+    join (
+        select project_id, initial_expenditure_detail_id as detail_id from years where initial_expenditure_detail_id is not null
+        union all
+        select project_id, settlement_expenditure_detail_id from years where settlement_expenditure_detail_id is not null
+    ) py on py.detail_id = line.parent_detail_id
     group by l.project_id
 )
 select l.project_id, l.jurisdiction_code,

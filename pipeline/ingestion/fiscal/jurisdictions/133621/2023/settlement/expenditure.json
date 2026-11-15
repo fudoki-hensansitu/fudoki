@@ -112,7 +112,10 @@
                 "pattern": "indent"
               },
               "備考": {
-                "pattern": "position"
+                "pattern": "shape",
+                "quirks": {
+                  "dot_bullets": true
+                }
               }
             }
           }
@@ -207,7 +210,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "c0312e9d4ae21dd0fb7f6045f59bc416311b3a9050e9517bde35b8ff24d75460",
+      "input_fingerprint": "909ac9cb48c116b76d0ee47759ac5ecf9ad8af6d41ff29b6b7263130fda440c7",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -237,7 +240,7 @@
     {
       "table_id": "national-health-insurance-business-expenditure",
       "conversion_id": "national-health-insurance-business-settlement",
-      "input_fingerprint": "16fed58b943feed8c81b339a6aab0f8989ab5fa0eee08b40765d32aebc7affa3",
+      "input_fingerprint": "71d70f1132a4266cc11c7f533a4e93aa2fe194750aae48db3bf4828041158774",
       "account": "国民健康保険事業特別会計（事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
@@ -267,10 +270,10 @@
     {
       "table_id": "national-health-insurance-clinic-expenditure",
       "conversion_id": "national-health-insurance-clinic-settlement",
-      "input_fingerprint": "96036c18dfb9be0e6ba440742a3c947dfdd061db61002d47f6989864091342b8",
+      "input_fingerprint": "35e97a17f397f7c0135ee77254908d1b461aff81c0ff88a3f3e304ea42b6b913",
       "account": "国民健康保険事業特別会計（直診勘定）",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'position'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
         "金額の単位は printed 6頁 から決めた。款の和 71,631,256 と印字の「歳出合計」71,631,256 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 3 種（71 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額・翌年度繰越額／繰明許越費→翌年度繰越額。"
@@ -297,7 +300,7 @@
     {
       "table_id": "long-term-care-business-expenditure",
       "conversion_id": "long-term-care-business-settlement",
-      "input_fingerprint": "25033b4249b78a36cdbd5b7f9f5d6edd9cb25beb43bfd11eaf1ca40c476f2219",
+      "input_fingerprint": "cd4d50c42872235b7c92c7830b5ef2921ea871e35ade70acf027b533b998b655",
       "account": "介護保険事業特別会計（事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'position'}。",
@@ -327,7 +330,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "0307fb8acec59eae90a377cec812db8736b2f2eb0831638037947d28b980837d",
+      "input_fingerprint": "b8e684c73f2074fdab91e7905b007b4fa7c6962962e1c6a69e5293a71829b333",
       "account": "後期高齢者事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",

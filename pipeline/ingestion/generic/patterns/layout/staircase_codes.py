@@ -33,7 +33,8 @@ HEAD = re.compile(r'^[(（](款|項)[)）][0-9]+')
 
 
 def wrapped_names(logical: layout.Logical, band: layout.Band) -> None:
-    """The second line of a wrapped name joins the line above it (see the module doc): set right after it."""
+    """The second and later lines of a wrapped name join the line above them (see the module doc): each is set right
+    after the line above, where that line was set."""
     others = [g for b in logical.bands if b is not band for g in b.words]
     moved: dict[int, Glyph] = {}
     for page in sorted({w.page for w in band.words}):
