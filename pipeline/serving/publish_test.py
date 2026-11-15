@@ -51,6 +51,7 @@ class ClassifyTest(unittest.TestCase):
             'pipeline/ingestion/fiscal/layouts/generic_scan/convert.py',
             'pipeline/ingestion/fiscal/layouts/generic_text/options.schema.json',
             'pipeline/ingestion/generic/patterns/catalog.json',
+            'pipeline/ingestion/fiscal/jurisdictions/133612/layouts/purpose_summary_2023.json',
             'pipeline/ingestion/fiscal/store.py',
         ), {'mode': 'none', 'jurisdictions': []})
 

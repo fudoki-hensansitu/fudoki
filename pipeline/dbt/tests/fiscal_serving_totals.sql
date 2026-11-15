@@ -3,10 +3,12 @@
 -- その分の一部（役務費 132,000円）は内訳の表に is_subject_remainder として入るが、残りは冊をまたいで
 -- 足すノードが無いので内訳にも無い。ここでは旧い会計の合計の検査と同じく、取り込みの行から項の分を足す。
 with doc as (
-    select jurisdiction_code, fiscal_year, document_kind, account_name,
-        sum(amount_yen) filter (where level = '款') as kan_sum,
-        sum(amount_yen) filter (where is_leaf) as leaf_sum
-    from {{ ref('expenditure_subject') }}
+    select e.jurisdiction_code, e.fiscal_year, e.document_kind, e.account_name,
+        sum(s.amount_yen) filter (where s.level = '款') as kan_sum,
+        sum(s.amount_yen) filter (where sp.is_leaf) as leaf_sum
+    from {{ ref('expenditure_subject') }} s
+    join {{ ref('expenditure') }} e using (expenditure_id)
+    join {{ ref('int_fiscal__subject_path') }} sp using (subject_id)
     group by all
 ), rows as (
     select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}
@@ -18,7 +20,9 @@ with doc as (
                       and m.parent_node_key = k.node_key and m.node_kind = '目')
       -- 統合後に末端（is_leaf）になった項は leaf_sum に入っているので足さない
       and not exists (select 1 from {{ ref('expenditure_subject') }} s
-                      where s.node_key = k.node_id and s.document_kind = 'settlement' and s.is_leaf)
+                      join {{ ref('expenditure') }} e using (expenditure_id)
+                      join {{ ref('int_fiscal__subject_path') }} sp using (subject_id)
+                      where s.node_key = k.node_id and e.document_kind = 'settlement' and sp.is_leaf)
     group by all
 )
 select doc.jurisdiction_code || ':' || doc.fiscal_year || ':' || doc.document_kind || ':' || doc.account_name as key,
