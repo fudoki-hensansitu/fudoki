@@ -1,0 +1,18 @@
+{
+  "schema_version": 1,
+  "source_inconsistencies": [
+    {
+      "table_id": "general-initial",
+      "page": 93,
+      "axis": "説明",
+      "parent": {
+        "code": "4",
+        "name": "機器等保守点検"
+      },
+      "printed": 208,
+      "children_sum": 165,
+      "difference": -43,
+      "basis": "フィットネスルーム運営事業の 12 委託料 208 千円の内訳、機器等保守点検 208 千円の下に印字されるのはトレーニングマシーン等 165 千円の1行だけで、頁の最後の行。次の頁は 13 使用料及び賃借料から始まり、残りの 43 千円の内訳はどこにも印字されない。印字値は書き換えない。"
+    }
+  ]
+}

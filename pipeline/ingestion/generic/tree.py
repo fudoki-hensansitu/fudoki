@@ -612,6 +612,10 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             code, name = None, line_text  # `110番非常通報装置`, `3歳児健康診査`: a count, not an item number
         if code is not None and not name and money:
             code = None  # a lone number left of an amount is not a code
+        if code is not None and not name and not money and label[0].x0 > (group.x0 + group.x1) / 2:
+            # A short amount alone on its line in the right half of the column, under a long name (`新型コロナウイルス
+            # 感染症対策用消耗品費` / `962`, 132225 R5 決算書): the name's amount, not an item number.
+            label, money, code, name = [], [label], None, ''
         if code is not None and re.match(r'[0-9]{1,3}(?:,[0-9]{3})+', line_text):
             code, name = None, line_text  # `66,000)`: the end of a bracketed amount (`(翌年度へ繰越明許費`), not an item `66`
         if (code is not None and entries and not entries[-1][1] and entries[-1][0]
@@ -839,6 +843,11 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             if entries[i][2] is not None or not entries[i][0]:
                 continue
             if not start - 3 <= entries[i][0][0].x0 <= name_start + slack:
+                return False
+            following = entries[ordered[position + 1]][0] if i < code else None
+            if following and following[0].y0 - entries[i][0][0].y1 > entries[i][0][0].y1 - entries[i][0][0].y0:
+                # A line over the number with a blank line between is not the first line of its name: an
+                # amountless 内訳 at the top of a page over the next 事業 (`発達支援センター分室整備工事`, 132250 R5).
                 return False
             if ABOLISHED.fullmatch(normalize(text(entries[i][0]))):
                 return False  # the dropped subjects' amounts of last year (`(廃目整理)`) under the last 目: an item of its own
@@ -2669,6 +2678,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 carry = carried.pop('／'.join(band.header), None)
                 open_lines = lines_left.pop('／'.join(band.header), None)
                 stacked = None  # (kind word, rule-bounded cell) of the last kind word printed in this column
+                stacked_owner = None  # the item on the kind word's line
                 stacked_label = []  # the printed line of that kind word
                 unpaid = False  # no amount has followed that kind word yet
                 waiting = None  # (heading, y) of a kind word alone on its line in an inline-kind band
@@ -2759,6 +2769,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             # A round of a supplementary budget is unambiguous: it counts without a second amount in a cell.
                             stacked = (word, cell) if '／'.join(band.header) in stacking or SUPPLEMENT_ROUND.fullmatch(word) else None
                             stacked_label = line
+                            stacked_owner = owner(line, band, ordered, found, owners, ocr=logical.ocr, name_line=name_lines)
                             unpaid = stacked is not None
                         continue
                     if sign is not None and money[0].y0 - sign.y0 < 14 and not money[0].text.startswith(('△', '▲')):
@@ -2769,6 +2780,12 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         unowned.append({'kind': 'unreadable amount', 'page': money[0].page, 'text': candidate}); continue
                     target = owner(money, band, ordered, found, owners, ocr=logical.ocr, next_row=amounts_next_row,
                                    name_line=name_lines)
+                    if (target is not None and target.group.subject and target.code is None and stacked is not None
+                            and stacked_owner is not None and stacked_owner is not target and stacked_owner.group.subject
+                            and stacked[1] == _cell(band, sum((g.y0 + g.y1) / 2 for g in money) / len(money))):
+                        # The amount under a kind word of its cell (`繰越明許費` / `9,284,000`) is the item's on the kind
+                        # word's line, not its name's wrapped line beside the amount (`3 戸籍住民基本` / `台帳費`, 132187 R5).
+                        target = stacked_owner
                     if (target is None and amounts_next_row and waiting_subject is not None
                             and _cell(band, money[0].y0)[0] == band.body_top
                             and not any(i.role == 'node' and i.anchor < money[0].y0
