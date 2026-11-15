@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { subjectTree } from './app-data'
+import { subjectTree, totalOf } from './app-data'
 
 const row = (level: '款' | '項' | '目', id: string, parent: string | null, codes: [string, string | null, string | null], amount: number) => ({
   subject_id: id, parent_subject_id: parent, level, name: id, amount_yen: amount, is_leaf: level === '目',
@@ -25,5 +25,15 @@ describe('款・項・目の木', () => {
       ['k2', [['k2-1', ['m2-b', 'm2-a', 'haimoku']]]],
       ['k10', [['k10-1', ['m10']]]],
     ])
+  })
+})
+
+describe('年度の総額', () => {
+  test('款に金額があれば款の和、金額の無い款があれば末端の科目の印字された分の和', () => {
+    const rows = [row('款', 'k', null, ['1', null, null], 9), row('項', 'o', 'k', ['1', '1', null], 9), row('目', 'a', 'o', ['1', '1', '1'], 4), row('目', 'b', 'o', ['1', '1', '2'], 5)]
+    expect(totalOf(rows)).toBe(9)
+    const unprinted = rows.map((r) => (r.level === '目' ? r : { ...r, amount_yen: null }))
+    expect(totalOf(unprinted)).toBe(9)
+    expect(totalOf(unprinted.map((r) => (r.subject_id === 'b' ? { ...r, amount_yen: null } : r)))).toBe(4)
   })
 })

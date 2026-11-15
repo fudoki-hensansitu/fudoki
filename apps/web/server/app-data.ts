@@ -107,10 +107,17 @@ async function subjectOfDetails(env: Env, code: string, year: number, ids: strin
   return new Map(pages.flatMap((r) => r.details.map((d) => [d.detail_id, { subject: d.subject_id, path: [d.kan_name, d.kou_name ?? '', d.moku_name ?? ''] }] as const)))
 }
 
+/** 総額は款の和。金額の無い款がある資料（子に金額の欠けがあり款を埋められないもの）は、末端の科目の印字された分の和にする */
+export const totalOf = (rows: readonly Pick<TreeSubject, 'level' | 'amount_yen' | 'is_leaf'>[]) => {
+  const kan = rows.filter((r) => r.level === '款')
+  const lines = kan.length && kan.every((r) => r.amount_yen != null) ? kan : rows.filter((r) => r.is_leaf)
+  return lines.reduce((s, r) => s + (r.amount_yen ?? 0), 0)
+}
+
 /** 款項目の行から、款・項・目の木と分野の合計を組む */
 function yearDataOf(rows0: { rows: SubjectRows; kind: Kind; origin: string | null; originTitle: string | null }): YearData {
   const { kan, fields, fieldSubjects, looseMoku } = subjectTree(rows0.rows)
-  return { kind: rows0.kind, kan, total: kan.reduce((s, k) => s + k.yen, 0), fields, fieldSubjects, looseMoku, origin: rows0.origin, originTitle: rows0.originTitle }
+  return { kind: rows0.kind, kan, total: totalOf(rows0.rows), fields, fieldSubjects, looseMoku, origin: rows0.origin, originTitle: rows0.originTitle }
 }
 type SubjectRows = Awaited<ReturnType<typeof subjectsOf>>['rows']
 

@@ -103,7 +103,7 @@ models:
   - name: moku_name
     description: 所属する目の名称（name と同じ正規化）。款・項では NULL。
   - name: amount_yen
-    description: 資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親は子の和の集計で印字ではない。印字がない段は NULL。
+    description: 資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親は子の和の集計で印字ではない。款・項の金額を印字しない資料では、子の金額がすべてある款・項に子の和を入れる（印字ではない）。子に金額の欠けがある段は NULL。
   - name: is_leaf
     description: 科目の子を持たないか（目と、目の無い項）。同じ資料の is_leaf の行の和が歳出の総額。例外は神戸市の2025年度一般会計で、170,000円足りない（内訳の表の is_subject_remainder を見る）。
     data_tests: *id001
