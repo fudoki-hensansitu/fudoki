@@ -1,6 +1,6 @@
 import { JurisdictionView } from '../../../../jurisdiction/view'
-import type { RouteProps } from '../../_loader'
+import type { JurisdictionProps } from '../../_loader'
 
-export default function JurisdictionYearTab(props: RouteProps) {
+export default function JurisdictionYearTab(props: JurisdictionProps) {
   return <JurisdictionView {...props} />
 }

@@ -7,16 +7,9 @@ import { PAGE_CSP } from '../server/csp'
 import { DISCOVERY_LINK, htmlToMarkdown, wantsMarkdown } from '../server/agent-discovery'
 import { DEFAULT_THEME, themeColorMeta } from '../nav/theme'
 import { ZARAZ_HOST, ZARAZ_SCRIPT } from '../server/zaraz'
-import { NOT_FOUND_HEADER } from '../server/not-found'
 
 export default defineMiddleware(async (c, next) => {
   await next()
-  // 見つからない頁（server/not-found.ts）。Void は頁を 200 で描くので、HTML は 404 にする。頁を移るときの JSON は、画面が描けるよう 200 のままにする
-  if (c.res.headers.has(NOT_FOUND_HEADER)) {
-    if (c.res.headers.get('Content-Type')?.startsWith('text/html')) c.res = new Response(c.res.body, { status: 404, headers: c.res.headers })
-    // Hono は c.res を差し替えるとき前の応答の header を写すので、差し替えた後で外す
-    c.res.headers.delete(NOT_FOUND_HEADER)
-  }
   if (!c.res.headers.get('Content-Type')?.startsWith('text/html')) return
   // HTML には Vary: Accept を付けない（Void の ISR は X-VoidPages 以外の Vary が付いた応答を CDN に置かない）。
   // CDN に置くのは HTML だけで、Markdown は下で置かないようにする。Accept に text/markdown を含む要求は ISR を通らずここに届く（patches/@void%2Fisr@1.5.0.patch）

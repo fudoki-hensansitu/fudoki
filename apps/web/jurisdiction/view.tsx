@@ -1,17 +1,15 @@
-// 自治体の頁（都道府県・市区町村）の本文。収録の無い自治体は案内だけを出し、path に当たる頁が無ければ見つからない頁を出す
+// 自治体の頁（都道府県・市区町村）の本文。収録の無い自治体は案内だけを出す
 import './jurisdiction.css'
 import * as React from 'react'
 import { useRouter } from '@void/react'
 import { Link } from '../nav/link'
 import { RequestTown } from '../nav/request-town'
-import type { JurisdictionProps, RouteProps } from '../pages/[prefecture]/_loader'
-import { NotFound } from '../nav/not-found'
+import type { JurisdictionProps } from '../pages/[prefecture]/_loader'
 import { Skeleton } from '@/components/ui/skeleton'
 import { AppPage } from './app/app-page'
 import { Resources } from './app/resource'
 
-export function JurisdictionView(props: RouteProps) {
-  if (props.kind === 'not-found') return <NotFound />
+export function JurisdictionView(props: JurisdictionProps) {
   if (props.kind === 'empty')
     return (
       <main className="j-static">
