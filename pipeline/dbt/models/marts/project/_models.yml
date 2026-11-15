@@ -15,7 +15,7 @@ models:
           to: ref('jurisdiction')
           field: jurisdiction_code
   - name: name
-    description: 最新の年度の事業の名前（当初予算の表記を優先。所管課の【】を含む出典の表記のまま）。
+    description: 最新の年度の事業の名前（当初予算の表記を優先。所管課の【】・[] を含む出典の表記のまま）。
     data_tests: [not_null]
   - name: account_name
     description: 最新の年度の会計の名前。
