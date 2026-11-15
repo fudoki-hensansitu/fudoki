@@ -121,7 +121,7 @@ def update_receipts(stored_paths: list[Path]) -> dict:
         for ident in [ident for ident in receipts if ident.startswith(prefix) and ident not in records]:
             del receipts[ident]
         for ident, table in records.items():
-            if seeded and not all(stored(reference['object']) for reference in manifest.table_references(table).values()):
+            if not all(stored(reference['object']) for reference in manifest.table_references(table).values()):
                 missing.append(ident)
                 continue
             receipts[ident] = table
