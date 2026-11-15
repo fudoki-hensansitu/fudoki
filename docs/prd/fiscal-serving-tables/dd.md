@@ -162,7 +162,7 @@ erDiagram
 | `node_kind` | VARCHAR | 段の名前（今の `node_kind`。内訳1・事項・節・細々節・細目など） |
 | `depth` | INTEGER | 科目の直下が 1 |
 | `code` / `name` | VARCHAR | 今と同じ。名称は印字のまま（【所管課】も残す） |
-| `department` | VARCHAR | 名称の最後の【…】、または末尾の [課] などの中身（印字からの機械的な切り出し）。無ければ NULL。決算 3,110件・当初予算 1,278件 |
+| `department` | VARCHAR | 名称の最後の【…】、または末尾の [課] などの中身（印字からの機械的な切り出し）。無ければ NULL。件数は表を作った当初（【】だけを見ていた時点）で決算 3,110件・当初予算 1,278件 |
 | `amount_yen` | BIGINT | 科目と同じ意味 |
 | `is_leaf` | BOOLEAN | 内訳の子を持たないか |
 | `is_subject_remainder` | BOOLEAN | 末端でない科目の直下の枝の根か。科目の子の科目と並んで科目の額を構成する（281000 の1件） |
