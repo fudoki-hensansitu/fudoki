@@ -171,7 +171,8 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     kinds: { ...Object.fromEntries(years.map((y) => [String(y.year), y.kind])), [String(year)]: subjects.kind },
     years: { [year]: yearDataOf(subjects) },
     ...(prev ? { prev: { year: prev.year, kind: prev.kind } } : {}),
-    ...(accountTotals ? { accounts: accountTotals } : {}),
+    // 会計の札は款項目と同じ資料のものだけ渡す（事業のタブで当初予算の事業を並べたときは、決算で読んだ札を捨てる）
+    ...(accountTotals && subjects.kind === docKind ? { accounts: accountTotals } : {}),
     measures: [],
     sheets: [],
     ...(allPage ? { hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage } } : { lists: {} }),
