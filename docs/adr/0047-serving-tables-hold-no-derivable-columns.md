@@ -7,7 +7,7 @@
    - 子を持たないか（`is_leaf`）は持たない。子の有無から求める。
    - 根 `expenditure` が持つ値（`jurisdiction_code`・`fiscal_year`・`document_kind`・`amendment_number`・`amount_phase`・`account_name`・`account_kind`）は持たない。`expenditure_id` で引く。
 2. 科目の表に残すのは、ID と木（`subject_id`・`node_key`・`parent_subject_id`・`expenditure_id`）、印字の値（`level`・`code`・`name`・`amount_yen`）、風土記の判断（COFOG・繰出の列）、出典（`origin_id`）である。`level` は段の数からも求まるが、出典に印字された段の種類なので残す。
-3. 内訳の木は段の数が決まらず、辿るには再帰が要る。そのため、内訳の行が属する科目（`subject_id`）・分け方（`breakdown`）・深さ（`depth`）は、木から求まる値でも内訳の表に持つ。
+3. 内訳の行が属する科目（`subject_id`）・分け方（`breakdown`）・深さ（`depth`）は、木から求まる値でも内訳の表の全行に持つ。内訳の木は段の数が決まらないので、子孫の値を出すには根から再帰で辿ることになる。分け方で絞る検索（事業の内訳を全自治体から引くなど）で毎回それをやると、D1 が内訳の表を全行読む。
 4. API・MCP の検索で款の名前や末端で絞りたいときは、受け口をインターフェース（`apps/api/src/<集約>/model.ts`）に置き、SQL の中で JOIN する。表の列と API の入出力は一対一にしない。
 5. 1行で款・項・目まで読める平たい形が要る配布物（自治体別の CSV など）は、配布用の marts を別に作って JOIN で組み立てる。
 
