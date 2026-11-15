@@ -44,7 +44,7 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 | 復元した入力・キャッシュ | `pipeline/.cache/` | 管理しない |
 | DuckDB・dbt manifest・検査結果 | `pipeline/.build/` | 管理しない |
 
-- 取り込みの表は `ingestion:convert` が管理 JSON に記録し、R2 には merge 後の CI の `ingestion:store` だけが置く（[ADR 0045](../docs/adr/0045-ingestion-tables-uploaded-by-ci.md)）
+- 取り込みの表は `ingestion:convert` が管理 JSON に記録し、R2 には merge 後の CI の `ingestion:store` だけが置く（[ADR 0045](../docs/adr/0045-ingestion-tables-uploaded-by-ci.md)）。PR の check は記録と一致することを求める。merge 後の store は、この範囲で宣言が新しく・変わった変換なら、記録と違っても main のコードで変換して関門を通った表を置き、R2 の受領書の一覧に入れる（check の後に変換器が main に入ったすれ違い。build は Git の記録が R2 に無い資料を一覧から読む）。宣言が同じ変換の差は置かずに止める。store で落ちた資料があっても D1 の同期は流し、保存されたことの無い資料は build から外す（[受領書の設計](../docs/prd/ingestion-receipts/dd.md) の段階3の先取り）
 - OCR は変換器の外で一度だけ取り、観測を固定する（[ADR 0019](../docs/adr/0019-freeze-scan-ocr-observations.md)）。エンジンは PaddleOCR を ONNX Runtime で動かす（[ADR 0032](../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。誤読は宣言で直し、観測は書き換えない
 - 独立した provenance ファイルは作らない
 

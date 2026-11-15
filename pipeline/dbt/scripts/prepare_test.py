@@ -204,6 +204,13 @@ class ReceiptsFallbackTest(unittest.TestCase):
         self.assertEqual(document['tables'], [self.stored])
         self.assertEqual(fallbacks, ['ingestion/fiscal/jurisdictions/x.json'])
 
+    def test_a_manifest_r2_holds_no_table_of_is_left_out(self):
+        skipped = []
+        other = {'131041/2024/settlement/expenditure/t': self.stored}
+        with patch.object(prepare, 'fetch', side_effect=self.fetch):
+            self.assertIsNone(prepare.load_document({}, self.spec, None, remote=True, receipts=other, skipped=skipped))
+        self.assertEqual(skipped, ['ingestion/fiscal/jurisdictions/x.json'])
+
     def test_readable_tables_and_missing_receipts_keep_the_record(self):
         with patch.object(prepare, 'fetch', return_value=Path('/dev/null')):
             self.assertEqual(prepare.load_document({}, self.spec, None, remote=True, receipts=self.receipts)['tables'],
