@@ -72,7 +72,7 @@ ORDER BY day
 
 自治体の人口は、web の D1 の `population`（列は `migrations/0002_population.sql`）から読む（`server/population.ts`）。風土記が構造化したデータではないので apps/api には置かない（[ADR 0042](../../docs/adr/0042-external-reference-data-in-web.md)）。出典は総務省「住民基本台帳に基づく人口、人口動態及び世帯数」の総計で、Queria の `e_stat.resident_registry.population` から `bun run --cwd apps/web sync-data:population --write` が本番と preview の D1 の全行を入れ替える。住基は毎年1月1日時点で7月末に公表されるので、公表のあとに1回流す。外部のデータを足すときも `scripts/sync-data/<名前>.py` と `sync-data:<名前>` にする。D1 が無いか読めないときは、頁は人口と1人あたりの額を出さずに描く。アシスタントは tool `get_population` で同じ表を読む。
 
-市区町村の決算の指標（地方債現在高・基金・人件費・扶助費・公債費・財政力指数・実質収支・健全化判断比率など）は、web の D1 の `local_finance`（列は `migrations/0003_local_finance.sql`）に置く。出典は総務省「市町村別決算状況調」の普通会計で、`bun run --cwd apps/web sync-data:local-finance --write` が総務省の Excel（R2〜R6、特別区を含む）から全行を入れ替える。Queria に入ったら Queria から読む形に差し替える（#723）。自治体の頁のまとめタブは `server/local-finance.ts` で読み（頁のデータの `finance`）、開いた年度までの最新の年度の借金と貯金・事業に使えるお金（歳出から義務的経費を引いた額）・ほかの指標を5年の推移と並べる（`jurisdiction/app/finance.tsx`）。都道府県は決算状況調に載らないので出さない。
+市区町村の決算の指標（地方債現在高・基金・人件費・扶助費・公債費・財政力指数・実質収支・健全化判断比率など）は、web の D1 の `local_finance`（列は `migrations/0003_local_finance.sql`）に置く。出典は総務省「市町村別決算状況調」の普通会計で、`bun run --cwd apps/web sync-data:local-finance --write` が総務省の Excel（R2〜R6、特別区を含む）から全行を入れ替える。Queria に入ったら Queria から読む形に差し替える（#723）。自治体の頁のまとめタブは `server/local-finance.ts` で読み（頁のデータの `finance`）、開いた年度までの最新の年度の借金と貯金・事業に回ったお金（歳出から義務的経費を引いた額）・財政の指標を5年の推移と並べる（`jurisdiction/app/finance.tsx`）。都道府県は決算状況調に載らないので出さない。
 
 ### 会話の保存
 
