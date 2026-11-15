@@ -8,6 +8,11 @@ user-invocable: false
 
 `apps/web`（fudoki.dev）を作るときの、コードからは読めない決まり。構成は `apps/AGENTS.md`、決定の理由は `docs/adr/` にある。
 
+## データの読み方
+
+- api の応答を web の中（Worker の isolate・Cache API・KV など）に持って使い回さない。頁の応答のキャッシュは CDN（Void の ISR）だけに任せる
+- 一覧は api から全件を読んで web で絞り込んだり切ったりしない。最初の1頁を api から取り、続きは api の頁送り（`page_token`）で読み、画面は末尾が見えたら続きを足す。api に絞り込み・並びが足りなければ api に足す
+
 ## Routing table
 
 | やること | 読む reference |
