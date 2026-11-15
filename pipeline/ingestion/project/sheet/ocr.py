@@ -84,12 +84,12 @@ def distinct(words: list) -> list:
         y = min(small.y1, large.y1) - max(small.y0, large.y0)
         return x > 0 and y > 0 and x * y >= 0.6 * area(small)
 
-    ordered = sorted(words, key=area, reverse=True)
-    kept: list = []
-    for word in ordered:
-        if not any(covered(word, other) for other in kept):
-            kept.append(word)
-    return [word for word in words if word in kept]
+    order = sorted(range(len(words)), key=lambda i: area(words[i]), reverse=True)
+    kept: list[int] = []
+    for i in order:
+        if not any(covered(words[i], words[j]) for j in kept):
+            kept.append(i)
+    return [words[i] for i in sorted(kept)]
 
 
 def acquire(path: Path, request: dict) -> tuple[bytes, dict]:
@@ -118,12 +118,16 @@ def main() -> None:
         for origin in run.sheet_sources([entry]):
             sha = origin['sha256']
             if args.save:
+                if sha not in observations:
+                    raise SystemExit(f'{origin["fiscal_year"]} {sha[:12]}: 観測が宣言に固定されていない（先に --save なしで読む）')
                 fetch(sha, observations[sha])
                 subprocess.run(['cf', 'r2', 'objects', 'put', key(sha), '--bucket-name', BUCKET,
                                 '--file', str(cached(sha)), '--quiet'], check=True, stdout=subprocess.DEVNULL)
                 print(f'{origin["fiscal_year"]} {sha[:12]}: R2 に置いた', file=sys.stderr)
                 continue
-            if sha in observations and cached(sha).exists():
+            if sha in observations:
+                # 固定した観測は読み直さない（OCR は同じ出力にならないので、固定を書き換えてしまう）。手元に無ければ R2 から取る
+                fetch(sha, observations[sha], remote=True)
                 continue
             data, record = acquire(run.fetch(origin['reference'], remote=True), entry['ocr'].get('request', {}))
             path = cached(sha)

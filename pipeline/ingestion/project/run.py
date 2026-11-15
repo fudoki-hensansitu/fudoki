@@ -52,8 +52,8 @@ def sheet_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[d
                 out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': year, 'reader': 'sheet',
                             **({'layout': entry['layout']} if 'layout' in entry else {}),
                             **({'workflow': entry['workflow']} if 'workflow' in entry else {}),
-                            **({'ocr': entry['ocr']['observations'][stored['sha256']]}
-                               if stored['sha256'] in entry.get('ocr', {}).get('observations', {}) else {}),
+                            # OCR で読む冊は固定した観測（未固定なら None、読むときに止める）
+                            **({'ocr': entry['ocr'].get('observations', {}).get(stored['sha256'])} if 'ocr' in entry else {}),
                             'directions': entry.get('directions', {}),
                             'title': candidate['title'], 'landing_url': candidate['landing_url'], 'url': url,
                             'sha256': stored['sha256'], 'reference': {'key': stored['key'], 'sha256': stored['sha256']}})
@@ -103,7 +103,7 @@ def code_fingerprint(origin: dict) -> str:
         digest.update(path.read_bytes())
     if workflow is not None:
         digest.update(json.dumps(workflow, ensure_ascii=False, sort_keys=True).encode())
-    if 'ocr' in origin:
+    if origin.get('ocr'):
         digest.update(origin['ocr']['sha256'].encode())
     return digest.hexdigest()[:16]
 
@@ -118,6 +118,9 @@ def read_cached(path: Path, origin: dict, *, remote: bool = False) -> object:
         # 文字の層の無い・字形の壊れた冊は、固定した OCR の観測の行を語にして読む
         from ingestion.project.sheet import ocr
 
+        if origin['ocr'] is None:
+            raise ValueError(f'{origin["jurisdiction"]} {origin["fiscal_year"]} {origin["sha256"][:12]}: OCR の観測が宣言に固定されていない'
+                             '（python -m ingestion.project.sheet.ocr で読む）')
         result = sheet.read(path, origin['workflow'], ocr.pages(ocr.fetch(origin['sha256'], origin['ocr'], remote=remote)))
     elif 'workflow' in origin:
         result = (sheet if origin.get('reader') == 'sheet' else press).read(path, origin['workflow'])
