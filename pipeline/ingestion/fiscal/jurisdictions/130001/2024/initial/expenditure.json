@@ -47,12 +47,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -916,12 +920,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -997,12 +1005,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -1079,12 +1091,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -1160,12 +1176,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -1188,13 +1208,6 @@
             "observation_id": "p32:full-page:a0:result0:r108",
             "observed": "11",
             "reason": "原典の画像で、頁32の計上説明「1 流行初期医療確保拠出金」と「2 流行初期医療確保関係事務費拠出金」の金額は、どちらも「1」と2行に分けて印字している。Paddle は2行の数字を1つの読み「11」にまとめた。この読みは使わず、金額をそれぞれの行の位置で読む。"
-          },
-          {
-            "id": "p32-explanation-2-second-line",
-            "page": 32,
-            "observation_id": "p32:full-page:a0:result0:r110",
-            "observed": "金",
-            "reason": "原典の画像で、頁32の計上説明「2 流行初期医療確保関係事務費拠出金」の名前の2行目。名前は1行目の読みに戻したので（p32-explanation-2-continued）、この読みは使わない。"
           }
         ],
         "amount_readings": [
@@ -1237,16 +1250,6 @@
             ],
             "amount": "1",
             "reason": "原典の画像で、頁32の計上説明「1 流行初期医療確保拠出金」と「2 流行初期医療確保関係事務費拠出金」の金額は、どちらも「1」と2行に分けて印字している。Paddle は2行の数字を1つの読み「11」にまとめた。この読みは使わず、金額をそれぞれの行の位置で読む。"
-          }
-        ],
-        "name_corrections": [
-          {
-            "id": "p32-explanation-2-continued",
-            "page": 32,
-            "observation_id": "p32:full-page:a0:result0:r109",
-            "observed_name": "流行初期医療確保関係事務費拠出",
-            "corrected_name": "流行初期医療確保関係事務費拠出金",
-            "reason": "原典の画像で、頁32の計上説明「2 流行初期医療確保関係事務費拠出金」は名前の最後の「金」を2行目に1字だけ印字している。1字の行は名前の続きとして読まれず落ちるので、1行目に戻す（2行目の読みは使わない）。"
           }
         ]
       },
@@ -1320,12 +1323,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -1402,12 +1409,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -1483,12 +1494,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -1565,12 +1580,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -1647,12 +1666,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -1729,12 +1752,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -1810,12 +1837,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -1893,12 +1924,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -1978,12 +2013,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -2061,12 +2100,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -2143,12 +2186,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -2225,12 +2272,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -2323,12 +2374,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -2406,12 +2461,16 @@
                 "pattern": "indent"
               },
               "説明": {
-                "pattern": "shape"
+                "pattern": "shape",
+                "quirks": {
+                  "head_counts": true
+                }
               }
             }
           },
           "quirks": {
-            "rule_ink": true
+            "rule_ink": true,
+            "dropped_notes": true
           }
         },
         "pages": [
@@ -2453,7 +2512,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general",
-      "input_fingerprint": "aa44ee1e845183b5ac92b0f2d069c2eeb9659b3a15a99bd1cdf12b85994ece22",
+      "input_fingerprint": "26c4ac39c0611289ac517b8f9922f631f06095c86b5c4b0aa53e94e3d9b24faf",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2467,10 +2526,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2024/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "511d555afe55a131cd44b5db7e27a250a92534399bdf48fe7996b72adf7244e4",
-          "bytes": 228234
+          "sha256": "4fbc12c05a1615924ebafc434ce50b78803dd8ab4cd5639bace3b7de49244da7",
+          "bytes": 228531
         },
-        "row_count": 6533
+        "row_count": 6530
       },
       "amounts": {
         "object": {
@@ -2484,7 +2543,7 @@
     {
       "table_id": "ward-fiscal-adjustment-initial",
       "conversion_id": "ward-fiscal-adjustment",
-      "input_fingerprint": "6b3e73024bde7877e6dd11d957d6e2d6c2782e8bfafa9ac15441a94b37b75b6d",
+      "input_fingerprint": "fb26bd9dc86530834ab54ae523570c248db7285ea6496ed58d4fb6702b6c2a90",
       "account": "特別区財政調整会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2514,7 +2573,7 @@
     {
       "table_id": "local-consumption-tax-settlement-initial",
       "conversion_id": "local-consumption-tax-settlement",
-      "input_fingerprint": "a5da17cba2b0dad2cfb3dd323d8ca4053c9ac2e14af1dab5ea992730036c2aa2",
+      "input_fingerprint": "7e7a08c8086f9e37789f4338f78f0d58505899002fbd029434818a75e69849cd",
       "account": "地方消費税清算会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2544,7 +2603,7 @@
     {
       "table_id": "ogasawara-reconstruction-fund-initial",
       "conversion_id": "ogasawara-reconstruction-fund",
-      "input_fingerprint": "abba3f1907de695cf2b0e585b1e2c7328a8fbfcf25cdbdc3580bc0d5f588a32d",
+      "input_fingerprint": "d82fdef0f999ae0f0f9512be4a3792acfdcc1361475148c0f357adbf6e79e73b",
       "account": "小笠原諸島生活再建資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2574,13 +2633,12 @@
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance",
-      "input_fingerprint": "5776934459cee023d4461adf9b9905893f6d97f8b99fe7b77fc57568efb128ad",
+      "input_fingerprint": "3672a7b9569572b4c61445fbd2a26a1a728524895400dd2bd49ca13807274301",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
         "金額の単位は printed 3頁・carried 2頁 から決めた。款の和 1,125,698,000 と印字の「歳出合計」1,125,698,000 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
-        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 32頁 流行初期医療確保関係事務費拠出→流行初期医療確保関係事務費拠出金。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 6 件（p30:full-page:a0:result0:r6・p30:full-page:a0:result0:r6:w1・p32:full-page:a0:result0:r7・p32:full-page:a0:result0:r7:w1・p34:full-page:a0:result0:r4・p34:full-page:a0:result0:r4:w1）・别→別 2 件（p31:full-page:a0:result0:r88・p31:full-page:a0:result0:r88:w3）・增→増 6 件（p30:full-page:a0:result0:r5・p30:full-page:a0:result0:r5:w1・p32:full-page:a0:result0:r6・p32:full-page:a0:result0:r6:w1・p34:full-page:a0:result0:r12・p34:full-page:a0:result0:r12:w1）・產→産 8 件（p30:full-page:a0:result0:r34・p30:full-page:a0:result0:r34:w1・p30:full-page:a0:result0:r58・p30:full-page:a0:result0:r58:w1・p31:full-page:a0:result0:r96・p31:full-page:a0:result0:r96:w1・p32:full-page:a0:result0:r51・p32:full-page:a0:result0:r51:w1）・齡→齢 10 件（p30:full-page:a0:result0:r29・p30:full-page:a0:result0:r29:w3・p30:full-page:a0:result0:r53・p30:full-page:a0:result0:r53:w3・p32:full-page:a0:result0:r47・p32:full-page:a0:result0:r47:w3・p32:full-page:a0:result0:r72・p32:full-page:a0:result0:r72:w5・p32:full-page:a0:result0:r75・p32:full-page:a0:result0:r75:w5）。"
       ],
       "unread_amount_count": 0,
@@ -2588,8 +2646,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2024/initial/expenditure/national-health-insurance-initial-nodes.parquet",
-          "sha256": "c5b31ff6c2221435dfde077cdaa1a20968340e51027cd8b5abb820c70aecd849",
-          "bytes": 6239
+          "sha256": "ea9061b41d726dca78c80b78fe9961e7556181d247b72c032c4efb75e3cb3372",
+          "bytes": 6234
         },
         "row_count": 64
       },
@@ -2605,7 +2663,7 @@
     {
       "table_id": "single-parent-welfare-loan-initial",
       "conversion_id": "single-parent-welfare-loan",
-      "input_fingerprint": "1ddfe13f0051ef93f1bf006c401c98453741dce0d41b1c79f1e211355f30de32",
+      "input_fingerprint": "f5ef226439a01a21ea476574b55bceddca10fac2215d348bd24be6485d6f363f",
       "account": "母子父子福祉貸付資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2635,7 +2693,7 @@
     {
       "table_id": "disability-support-pension-initial",
       "conversion_id": "disability-support-pension",
-      "input_fingerprint": "a06cd0fde8e771b80c4409349112fbd249b36f87fb0962c95ef00b5138386078",
+      "input_fingerprint": "a17dc450e2aa7fea1d2357ba1eae8c097c248b407d2e41eeef4d223a1a445e11",
       "account": "心身障害者扶養年金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2665,7 +2723,7 @@
     {
       "table_id": "metropolitan-hospital-loan-initial",
       "conversion_id": "metropolitan-hospital-loan",
-      "input_fingerprint": "4ae0f019aa7d897be90f361af785787d64f8332dc335dc416329c3bff54b4088",
+      "input_fingerprint": "cae20a6ed5c4ff039faf773d99bcafc87eacfcd7d0eadc016aed85d12898ccdb",
       "account": "地方独立行政法人東京都立病院機構貸付等事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2695,7 +2753,7 @@
     {
       "table_id": "sme-equipment-fund-initial",
       "conversion_id": "sme-equipment-fund",
-      "input_fingerprint": "dea6f3c85b59493d99bbd18ebaa24ef0e95013af3f6b016e0643690f37e82b3c",
+      "input_fingerprint": "c5693fc97d017418329c6c9905da4f9ed1d2f4374d740c52f4a2d1cc35f638af",
       "account": "中小企業設備導入等資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2725,7 +2783,7 @@
     {
       "table_id": "forestry-improvement-fund-initial",
       "conversion_id": "forestry-improvement-fund",
-      "input_fingerprint": "cbd93c14fe20cb314e2297aa1a0c11730c318109ca69e1e47aabee1f9498cc15",
+      "input_fingerprint": "bc666f2c34e475af046eb60ac79e3b08e3c2c77e984ef72e860e47dab26a65e7",
       "account": "林業・木材産業改善資金助成会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2755,7 +2813,7 @@
     {
       "table_id": "coastal-fishery-improvement-fund-initial",
       "conversion_id": "coastal-fishery-improvement-fund",
-      "input_fingerprint": "17595253cbfbb0ba3fe710b64c5e68c7373520087d10bed83d4ca99adc736b62",
+      "input_fingerprint": "40279d1ec6405a6fd06e06dcb86e4ff6854c59bb97371458f0c06f10a5008e0c",
       "account": "沿岸漁業改善資金助成会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2785,7 +2843,7 @@
     {
       "table_id": "slaughterhouse-initial",
       "conversion_id": "slaughterhouse",
-      "input_fingerprint": "00a90507cd2917aba33fc5eb262d25fdd6dd3f998941e465dd5ae10bb3f3816a",
+      "input_fingerprint": "f6d4ee1660b149341321afe20d3608d8eeba655e65bc2826be84f59a43295afd",
       "account": "と場会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2815,7 +2873,7 @@
     {
       "table_id": "metropolitan-housing-initial",
       "conversion_id": "metropolitan-housing",
-      "input_fingerprint": "36b3053168b23b0b7e4e4831b4e8fdd66774572600fcf3508c51e02155764a9f",
+      "input_fingerprint": "b091d5dc63895ab469229194e6f7792cf41f15c1730565c5f6f89739df00bca7",
       "account": "都営住宅等事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2845,7 +2903,7 @@
     {
       "table_id": "metropolitan-housing-deposit-initial",
       "conversion_id": "metropolitan-housing-deposit",
-      "input_fingerprint": "43b5e4b302310f2a27bc69c53e476dd1bfa7bb4a015eaf69bf4a7f14b88259c4",
+      "input_fingerprint": "1943f59b7b606407258bd72f55a6b66d343619f5cd7bebbe849b2dc5da487e82",
       "account": "都営住宅等保証金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2875,7 +2933,7 @@
     {
       "table_id": "urban-development-fund-initial",
       "conversion_id": "urban-development-fund",
-      "input_fingerprint": "0632f3b66e2a1a111fd0533f499d47b1473b91e1c7cb5cf6e54da4417cdb5fe1",
+      "input_fingerprint": "ff69f6258a2ec796d01365ded4f79ac239157f19a41397b5716274d9dfe14da7",
       "account": "都市開発資金会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2905,7 +2963,7 @@
     {
       "table_id": "land-acquisition-initial",
       "conversion_id": "land-acquisition",
-      "input_fingerprint": "cbe469b975a63ee471e6271c457aeafb4480f1cbcbd2cce48e2690c435abf78e",
+      "input_fingerprint": "02b97160b4be2b99189285d5ed67147b2e3cb893cc24242d884ee052ac834aff",
       "account": "用地会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2935,7 +2993,7 @@
     {
       "table_id": "public-debt-initial",
       "conversion_id": "public-debt",
-      "input_fingerprint": "d8cf507bf54bbe3894eb8b50471a99d1c9be0974cc5757d4e79c896a24f25769",
+      "input_fingerprint": "bf2b32cf4e89cd36b689de9e505ba87be15b6d84500d37e41cdfb42fc4cd8bc5",
       "account": "公債費会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2948,8 +3006,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/130001/2024/initial/expenditure/public-debt-initial-nodes.parquet",
-          "sha256": "983167901ad9820b90fc3f2c891a092460346e11dca376f49fab08a94443cb9d",
-          "bytes": 6257
+          "sha256": "e853505744b3928ce9ae62f6f9e3be1127c220fe858c068297efb2f69d6cc7f4",
+          "bytes": 6263
         },
         "row_count": 68
       },
@@ -2965,7 +3023,7 @@
     {
       "table_id": "waterfront-infrastructure-initial",
       "conversion_id": "waterfront-infrastructure",
-      "input_fingerprint": "f6904ba461051c4424fe1e16a989e0452d8daf6903be116bdbc9f4dab188c944",
+      "input_fingerprint": "4b3e79451184c2cef6f56dd471920968e90c5668ddf8ab93eac6c824322aa579",
       "account": "臨海都市基盤整備事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",
@@ -2995,7 +3053,7 @@
     {
       "table_id": "industrial-water-settlement-initial",
       "conversion_id": "industrial-water-settlement",
-      "input_fingerprint": "7d358b0fbe3283ce80b7be340bb378aa860b2f96c4691feb60e68488c850c995",
+      "input_fingerprint": "3e76700776dafb027d848c6eaf4e3735e940b8aad493bdd3f607180eb35c1f7f",
       "account": "工業用水道事業清算会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'shape'}。",

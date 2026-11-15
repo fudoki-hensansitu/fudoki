@@ -169,6 +169,11 @@ def lettered(words: list[Word], x0: float, x1: float) -> list[Word]:
     """A 説明 item lettered in katakana with its name glued on (`イその他職員関係費`), set apart from the name (`イ その他…`)
     when the letter before it opens a line at its place (`ア 人件費`): read whole, its name starting with hiragana
     hides the letter."""
+    # (OCR reads `ア` as `了`: a line opening with `了` over a line opening with `イ` at its place is `ア`.)
+    words = [Word('ア' + w.text[1:], w.x0, w.y0, w.x1, w.y1)
+             if (x0 < w.x0 < x1 and w.text[:1] == '了' and len(w.text) > 1
+                 and any(abs(o.x0 - w.x0) <= 3 and o.text.startswith('イ') and 0 < o.y0 - w.y0 <= 3 * LINE for o in words))
+             else w for w in words]
     out = []
     for w in words:
         letter = w.text[:1]
@@ -459,6 +464,31 @@ def drawn(page: Page) -> Page:
             name = max(above, key=lambda o: o.y0)
             body = [Word(o.text + w.text.replace(' ', ''), o.x0, o.y0, max(o.x1, w.x1), o.y1) if o is name else o
                     for o in body if o is not w]
+    # (a 説明's name that fills its line goes on to a line of its own with nothing else on it, `流行初期医療確保関係事務費拠出` /
+    # `金`: the name's last characters, which the builder would read as a note of their own and leave out)
+    # (The line starts under the name, or under the number when the number is read with the name: `(1) 駅及び…バリアフ` /
+    # `リー化計画策定費補助` starts where the name does.)
+    # (Not a line that opens with an item's number or mark, nor a figure: `6,460㎡`. A name may go on over more lines,
+    # each full but the last: `2 農林水産振興事業に従事する職員` / `の給料、諸手当及び管理事務費を` / `計上`.)
+    goes_on = sorted((w for w in body if xs[9] < w.x0 < xs[9] + WIDE / 2 and not ITEM.match(w.text)
+                      and not LETTERED.match(w.text) and w.text[:1] not in '(（' and not re.search(r'[0-9][,.]?[0-9]', w.text)),
+                     key=lambda w: w.y0)
+    last_line = {}  # a joined name: its last printed line (start, top, end)
+    for w in goes_on:
+        if not any(o is w for o in body):
+            continue
+        above = []
+        for o in body:
+            start, top, end = last_line.get(id(o), (o.x0, o.y0, o.x1))
+            reach = start + (3 * LINE if id(o) not in last_line and ITEM.match(o.text) else NEAR)
+            if o is not w and start - NEAR <= w.x0 <= reach and 0 < w.y0 - top <= LINE + NEAR and end >= xs[9] + WIDE - LINE:
+                above.append((top, o))
+        alone = not [o for o in body if o is not w and abs(o.y0 - w.y0) < LINE / 2 and xs[9] < o.x0 < xs[-1]]
+        if above and alone:
+            name = max(above, key=lambda t: t[0])[1]
+            joined = Word(name.text + w.text, name.x0, name.y0, name.x1, name.y1)
+            last_line[id(joined)] = (w.x0, w.y0, w.x1)
+            body = [joined if o is name else o for o in body if o is not w]
     # (a 説明's number read a little below its name, `4` 2.3pt under `女性・若者・シニア創業サポート`: on the name's line,
     # as the builder joins a number to the words it shares a line with)
     # (two numbers read as one over two lines, `45`, are `stacked`'s: a box taller than a line, or one `stacked` splits)
