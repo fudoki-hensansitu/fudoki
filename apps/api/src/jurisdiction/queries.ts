@@ -103,6 +103,7 @@ export interface ListInput {
   name?: string
   code?: string
   prefecture_code?: string
+  document_kind?: 'initial' | 'settlement'
   page_size?: number
   page_token?: string
 }
@@ -112,12 +113,14 @@ export async function listJurisdictions(ctx: Ctx, input: ListInput): Promise<Jur
   const name = input.name?.normalize('NFKC').trim() || undefined
   const code = input.code
   const prefecture = input.prefecture_code
+  const kind = input.document_kind
   const limit = input.page_size ?? DEFAULT_JURISDICTION_PAGE_SIZE
   const conds: string[] = []
   const params: string[] = []
   if (name !== undefined) {
-    conds.push('instr("name", ?) > 0')
-    params.push(name)
+    // 名前の部分一致か、都道府県名の頭の一致（「東京」で東京都の自治体を全部返す）
+    conds.push('(instr("name", ?) > 0 OR instr("prefecture_name", ?) = 1)')
+    params.push(name, name)
   }
   if (code !== undefined) {
     // 5桁は検査数字を除いた同じコード。検査数字は先頭5桁で決まるので、先頭5桁の一致で一つに決まる
@@ -128,13 +131,20 @@ export async function listJurisdictions(ctx: Ctx, input: ListInput): Promise<Jur
     conds.push('"prefecture_code" = ?')
     params.push(prefecture)
   }
+  if (kind !== undefined) {
+    conds.push(`"jurisdiction_code" IN (SELECT "jurisdiction_code" FROM ${COVERAGE_TABLE} WHERE "document_kind" = ?)`)
+    params.push(kind)
+  }
   const where = conds.length > 0 ? conds.join(' AND ') : '1 = 1'
-  const fp = ['jurisdictions', name ?? null, code ?? null, prefecture ?? null]
+  // 名前で絞るときは、名前がその語で始まる自治体を先に並べる
+  const order = name !== undefined ? 'instr("name", ?) <> 1, "jurisdiction_code"' : '"jurisdiction_code"'
+  const orderParams = name !== undefined ? [name] : []
+  const fp = ['jurisdictions', name ?? null, code ?? null, prefecture ?? null, kind ?? null]
   const offset = await decodeToken(input.page_token, fp)
-  const pageSql = `SELECT "jurisdiction_code" FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY "jurisdiction_code" LIMIT ? OFFSET ?`
-  const pageParams = [...params, limit, offset]
+  const pageSql = `SELECT "jurisdiction_code" FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY ${order} LIMIT ? OFFSET ?`
+  const pageParams = [...params, ...orderParams, limit, offset]
   const [page, coverage, years] = await db.batch([
-    db.prepare(`SELECT ${JURISDICTION_SELECT_LIST} FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY "jurisdiction_code" LIMIT ? OFFSET ?`).bind(...params, limit + 1, offset),
+    db.prepare(`SELECT ${JURISDICTION_SELECT_LIST} FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY ${order} LIMIT ? OFFSET ?`).bind(...params, ...orderParams, limit + 1, offset),
     db.prepare(coverageSql(pageSql, false)).bind(...pageParams),
     db.prepare(yearsSql(pageSql)).bind(...pageParams, ...pageParams),
   ])

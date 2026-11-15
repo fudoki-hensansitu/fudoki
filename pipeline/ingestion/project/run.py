@@ -52,6 +52,8 @@ def sheet_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[d
                 out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': year, 'reader': 'sheet',
                             **({'layout': entry['layout']} if 'layout' in entry else {}),
                             **({'workflow': entry['workflow']} if 'workflow' in entry else {}),
+                            # OCR で読む冊は固定した観測（未固定なら None、読むときに止める）
+                            **({'ocr': entry['ocr'].get('observations', {}).get(stored['sha256'])} if 'ocr' in entry else {}),
                             'directions': entry.get('directions', {}),
                             'title': candidate['title'], 'landing_url': candidate['landing_url'], 'url': url,
                             'sha256': stored['sha256'], 'reference': {'key': stored['key'], 'sha256': stored['sha256']}})
@@ -101,16 +103,27 @@ def code_fingerprint(origin: dict) -> str:
         digest.update(path.read_bytes())
     if workflow is not None:
         digest.update(json.dumps(workflow, ensure_ascii=False, sort_keys=True).encode())
+    if origin.get('ocr'):
+        digest.update(origin['ocr']['sha256'].encode())
     return digest.hexdigest()[:16]
 
 
-def read_cached(path: Path, origin: dict) -> object:
+def read_cached(path: Path, origin: dict, *, remote: bool = False) -> object:
     """PDF を宣言の様式（またはパターンの組み合わせ）で読む。結果は dataclass を dict にしたもの。"""
+    if 'ocr' in origin and origin['ocr'] is None:
+        # 古い読み（空の一覧）のキャッシュで黙って飛ばさないよう、キャッシュを見る前に止める
+        raise ValueError(f'{origin["jurisdiction"]} {origin["fiscal_year"]} {origin["sha256"][:12]}: OCR の観測が宣言に固定されていない'
+                         '（python -m ingestion.project.sheet.ocr で読む）')
     name = origin.get('layout', origin.get('reader', 'press'))
     cache = READINGS / f'{origin["sha256"]}-{name}-{code_fingerprint(origin)}.json'
     if cache.exists():
         return json.loads(cache.read_text(encoding='utf-8'))
-    if 'workflow' in origin:
+    if 'ocr' in origin:
+        # 文字の層の無い・字形の壊れた冊は、固定した OCR の観測の行を語にして読む
+        from ingestion.project.sheet import ocr
+
+        result = sheet.read(path, origin['workflow'], ocr.pages(ocr.fetch(origin['sha256'], origin['ocr'], remote=remote)))
+    elif 'workflow' in origin:
         result = (sheet if origin.get('reader') == 'sheet' else press).read(path, origin['workflow'])
     else:
         result = layout(origin['layout']).read(path)
@@ -146,10 +159,10 @@ def page_texts_cached(path: Path, sha256: str) -> list[str]:
 
 
 def page_text_rows(paths: dict[str, Path]) -> list[tuple]:
-    """出典ごとの頁の文字の行。文字が1字も無い出典（スキャン）は行を作らない。キャッシュに無い出典は CPU の数だけ並べて読む。"""
+    """出典ごとの頁の文字の行。文字が1字も無い出典（スキャン）と、頁の無い出典（CSV）は行を作らない。キャッシュに無い出典は CPU の数だけ並べて読む。"""
     from concurrent.futures import ProcessPoolExecutor
 
-    items = sorted(paths.items())
+    items = sorted((sha256, path) for sha256, path in paths.items() if path.suffix.lower() == '.pdf')
     with ProcessPoolExecutor(max_workers=max(1, min(len(items), os.cpu_count() or 1))) as pool:
         read = list(pool.map(page_texts_cached, [p for _, p in items], [s for s, _ in items]))
     rows = []
@@ -177,8 +190,12 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
         'project_budget_measure', 'project_source_page_text')}
     paths: dict[str, Path] = {}
     for origin in sheet_sources(declared['sheets']):
-        path = paths[origin['sha256']] = fetch(origin['reference'], remote=remote)
-        sheets = read_cached(path, origin)
+        path = fetch(origin['reference'], remote=remote)
+        sheets = read_cached(path, origin, remote=remote)
+        if not sheets:
+            # 施策の冊などシートの無い冊は出典にしない
+            continue
+        paths[origin['sha256']] = path
         tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'sheets', origin['fiscal_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
         for item in sheets:
@@ -188,7 +205,7 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
             budget = item['budget_yen'] if 'budget_yen' in item else thousand(item['budget_thousand'])
             settled = item['settled_yen'] if 'settled_yen' in item else thousand(item['settled_thousand'])
             tables['project_evaluation_sheet'].append((
-                origin_id(origin), item['page'], item.get('evaluation_year'), item['name'], item['account'],
+                origin_id(origin), item['page'], item.get('position', 1), item.get('evaluation_year'), item['name'], item['account'],
                 item['kan'], item['kou'], item['moku'], item['jigyo'],
                 item.get('kan_code'), item.get('kou_code'), item.get('moku_code'), item.get('jigyo_code'),
                 item['department'], item['division'], budget, settled,
@@ -221,7 +238,7 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
 SCHEMAS = {
     'project_origin': 'origin_id varchar, jurisdiction_code varchar, document_type varchar, fiscal_year integer, '
                          'title varchar, url varchar, landing_url varchar, sha256 varchar',
-    'project_evaluation_sheet': 'origin_id varchar, page integer, evaluation_year integer, name varchar, account_name varchar, '
+    'project_evaluation_sheet': 'origin_id varchar, page integer, position integer, evaluation_year integer, name varchar, account_name varchar, '
                         'kan varchar, kou varchar, moku varchar, jigyo varchar, '
                         'kan_code varchar, kou_code varchar, moku_code varchar, jigyo_code varchar, '
                         'department varchar, division varchar, budget_yen bigint, settled_yen bigint, '

@@ -60,6 +60,8 @@ def words(pdf: Path, first: int, last: int, character_map: dict[str, str] | None
         # Map only characters XML cannot represent; never rewrite XML tags or entities.
         invalid = r'[\x00-\x08\x0b\x0c\x0e-\x1f]'
         source = re.sub(invalid, lambda hit: escape((character_map or {}).get(hit[0], '')), source)
+        if (unmapped := (character_map or {}).get('\ufffd')) is not None:
+            source = source.replace('\ufffd', escape(unmapped))  # a glyph Poppler could not map, declared
         pages = {}
         for number, page in enumerate(ET.fromstring(source).findall('.//{*}page'), first):
             items = [Word(w.text or '', *(float(w.get(k)) for k in ('xMin', 'yMin', 'xMax', 'yMax')))

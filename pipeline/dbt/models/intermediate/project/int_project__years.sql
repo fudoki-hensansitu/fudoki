@@ -1,13 +1,10 @@
--- 事業の1年度。当初予算と決算の事業の行を、seed（project_line）の事業ID で1行にまとめる。
+-- 事業の1年度。当初予算と決算の事業の行を、int_project__line_ids の事業ID で1行にまとめる。
 -- marts の project（始めた年度・終えた年度・親）と project_year（年度ごとの行）の元にする。
 -- 事業の行は資料ごとに1つ。金額は出典の金額で、事業の木では足さない（子の事業の額は親の額に含まれる）。
 with lines as (
-    select s.project_id, l.*
-    from {{ ref('project_line') }} s
-    join {{ ref('int_project__lines') }} l
-        on l.jurisdiction_code = s.jurisdiction_code and l.fiscal_year = s.fiscal_year and l.document_kind = s.document_kind
-        and l.account_name = s.account_name and l.kan_name = s.kan_name and l.kou_name = s.kou_name
-        and l.moku_name = s.moku_name and l.path = s.path
+    select i.project_id, l.*
+    from {{ ref('int_project__line_ids') }} i
+    join {{ ref('int_project__lines') }} l using (detail_id)
 )
 select sha256(to_json(['project_year', project_id, fiscal_year::varchar])) as project_year_id,
     project_id, any_value(jurisdiction_code) as jurisdiction_code, fiscal_year,

@@ -100,7 +100,7 @@
           "name": "total_yen",
           "type": "integer",
           "nullable": true,
-          "description": "総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無ければNULL。出典が金額を欠く行は足していない。"
+          "description": "総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無ければNULL。"
         },
         {
           "name": "cofog_01_yen",
@@ -419,8 +419,8 @@
         {
           "name": "amount_yen",
           "type": "integer",
-          "nullable": true,
-          "description": "資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親は子の和の集計で印字ではない。印字がない段は NULL。"
+          "nullable": false,
+          "description": "資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親と、款・項の金額を印字しない資料の款・項は子の和で、印字ではない。出典で空欄の末端（決算で支出の無い予備費、その年度に廃した目の括弧書きなど）は 0。"
         },
         {
           "name": "is_leaf",
@@ -894,7 +894,7 @@
           "name": "sheet_id",
           "type": "string",
           "nullable": false,
-          "description": "行の ID。origin_id と頁から作る（sha256）。"
+          "description": "行の ID。origin_id と頁（1頁に複数の事業を並べる様式は頁と頁の中の順）から作る（sha256）。"
         },
         {
           "name": "evaluation_id",
@@ -1338,7 +1338,7 @@
           "name": "project_id",
           "type": "string",
           "nullable": false,
-          "description": "事業の ID（代理キー）。seed で一度だけ振り、判断を直しても変えない。"
+          "description": "事業の ID（代理キー）。事業の最初の年度の行の鍵（自治体・年度・資料区分・会計・款・項・目・名前の並び）の sha256。収録を足して最初の年度・最初の行が変わると変わる。"
         },
         {
           "name": "jurisdiction_code",

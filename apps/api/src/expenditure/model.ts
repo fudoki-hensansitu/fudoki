@@ -174,7 +174,7 @@ const subjectShape = described('expenditure_subject', {
   level,
   code: z.string().nullable(),
   name: z.string(),
-  amount_yen: z.int().nullable(),
+  amount_yen: z.int(),
   is_leaf: z.boolean(),
   cofog_status: z.string().nullable(),
   cofog_code: z.string().nullable(),

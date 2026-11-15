@@ -830,7 +830,9 @@ def acquire(path: Path, request: Mapping, previous: Mapping | None = None) -> tu
     result = recognize_pdf(path, pages=request["pages"], config=config, regions=regions)
     empty = [page["page_number"] for page in result["pages"]
              if not any(region["observations"] for region in page["regions"])]
-    if empty:
+    # A whole volume read page by page (project sheets) holds blank pages; ``allow_blank`` keeps them as empty pages,
+    # but a volume with no text on any page is a failed read, not a blank one.
+    if empty and (not request.get("allow_blank") or len(empty) == len(result["pages"])):
         raise ValueError(f"OCR returned no text for pages {empty}")
     result["pages"] = [_slim(page) for page in result["pages"]]
     pinned = _pinned_answers(previous)

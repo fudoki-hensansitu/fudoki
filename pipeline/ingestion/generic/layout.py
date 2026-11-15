@@ -181,6 +181,8 @@ def repeated_header(page: Page, frame, header_bottom: float, body: list[tuple[in
         words = [(i, w) for i, w in body if inside(w, upper, lower)]
         if len(words) < 4 or sum(known(normalize(w.text)) for _, w in words) < REPEATED_HEADER * len(words):
             continue
+        if any(re.fullmatch(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+', normalize(w.text)) for _, w in words):
+            continue  # a header prints no grouped amount: a body row of letter-spaced words (`27 繰 出 金 52,842,000`)
         skip.update(i for i, _ in words)
         if number:
             above = [(i, w) for i, w in body if inside(w, *rows[number - 1])]
@@ -303,8 +305,10 @@ def _frames(page: Page, spread: dict | None = None,
         if len(spanning) < 2 and not edges_drawn:
             continue
         bottom = max([h.y0 for h in spanning] + [r.y1 for r in edges_drawn])
+        top = min([h.y0 for h in spanning] + [r.y0 for r in edges_drawn])
         if (skewed := document_quirk('skewed_frames')) is not None:
             bottom = skewed.module.bottom(page, frame, middle, horizontals, bottom)
+            top = skewed.module.top(page, frame, middle, horizontals, top)
         if staircase:
             # The rows of a staircase draw their rules from the deeper columns only: the frame ends at the lowest
             # rule its own sides reach that crosses most of its columns, or that is drawn where the sides end.
@@ -313,7 +317,7 @@ def _frames(page: Page, spread: dict | None = None,
             bottom = max([h.y0 for h in horizontals if bottom < h.y0 <= end + 2 and h.x0 < frame[-1] and h.x1 > frame[0]
                           and (abs(h.y0 - end) <= 2 or sum(1 for m in middle if _covers(h, m)) >= max(2, .6 * len(middle)))]
                          or [bottom])
-        result.append((frame[0], frame[-1], min([h.y0 for h in spanning] + [r.y0 for r in edges_drawn]), bottom, frame))
+        result.append((frame[0], frame[-1], top, bottom, frame))
     # A column that draws no row rules at all (the 支出済額 column printed between two ruled halves of one wide
     # page) splits a table in two. Two frames that start and end on the same rules, one column apart, with the
     # figures of that column printed between them, are one.

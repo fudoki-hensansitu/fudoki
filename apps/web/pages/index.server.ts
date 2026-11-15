@@ -1,4 +1,4 @@
-// ホーム（/）。全自治体の要約と、見本に出す自治体（事業評価か都市像のある自治体）を渡し、本文は home/home.tsx が描く。旧トップの紹介は /about
+// ホーム（/）。自治体の一覧を読めたかと、見本に出す自治体（事業評価か都市像のある自治体）を渡し、本文は home/home.tsx が描く。旧トップの紹介は /about
 import { defineHandler, defineHead } from 'void'
 import type { HomeProps } from '../home/home'
 import { VISIONS } from '../jurisdiction/visions'
@@ -27,9 +27,10 @@ export const loader = defineHandler<Props>(async (c) => {
       const e = entries.find((x) => x.code === j.code)
       const years = pageYearsOf(j)
       const evalYear = j.evaluationYears.filter((y) => years.includes(y)).at(-1)
-      return e ? [{ code: j.code, name: e.name, path: e.path, vision: VISIONS[j.code]?.text, ...(evalYear !== undefined ? { evalYear } : {}) }] : []
+      return e ? [{ code: j.code, name: e.name, path: e.path, prefecture: e.prefecture, ...(e.latestYear !== undefined ? { latestYear: e.latestYear } : {}), vision: VISIONS[j.code]?.text, ...(evalYear !== undefined ? { evalYear } : {}) }] : []
     })
-  return { entries, featured }
+  // 自治体の一覧そのものは渡さない（名前で探す欄はサーバーに少しずつ聞く）
+  return { listed: entries.length > 0, featured }
 })
 
 export const head = defineHead(() => ({

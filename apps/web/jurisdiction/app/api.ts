@@ -1,7 +1,7 @@
 // 自治体の頁が事業を読む口。サーバーは api の内部の RPC（server/fudoki-api.ts の ApiCall）で事業の検索・事業を読み、ブラウザは web の /api（routes/api/projects）を通して同じものを読む。
 // ブラウザは api.fudoki.dev を直接は呼ばない（ADR 0044）。一覧は頁ごとに読む（1頁目はサーバーが描き、続きは末尾が見えたときにブラウザが取る）。分野・目で絞るときは科目の ID で絞る
 import type { ApiCall, WebOpInput, WebOpOutput } from '../../server/fudoki-api'
-import type { YearExtras } from './data'
+import type { DirectionCode, Sheet } from './data'
 import type { Setsu } from '../types'
 
 const ACCOUNT = '一般会計'
@@ -117,6 +117,85 @@ export async function readListPage(call: ApiCall, q: ListQuery, token?: string):
   return { rows: rowsOf(r, kind), total: r.total_size, capped: r.total_size_capped, next: r.next_page_token ?? null }
 }
 
+// ---------- 評価シート ----------
+// 評価シートも一覧は頁ごとに読み、A〜D の札は api が数えた数を出す（シートを全部は手元に取らない）
+
+type SheetBody = WebOpInput<'search_evaluation_sheets'>
+type SheetResult = WebOpOutput<'search_evaluation_sheets'>
+
+/** 評価シートの一覧の条件。評価した事業を行った年度（year）の、一般会計のシート */
+export type SheetQuery = {
+  code: string
+  year: number
+  /** 分野で絞るときの科目（決算の目）の ID */
+  subjects?: string[]
+  /** 事業名で絞る */
+  q?: string
+  /** 方向性の区分で絞る（A〜D の札は、数えた区分の中からその札の区分を渡す） */
+  codes?: DirectionCode[]
+}
+/** 件数は持たない（A〜D の札の数は readSheetCounts） */
+export type SheetPage = { rows: Sheet[]; next: string | null }
+/** 方向性の区分ごとのシートの数。区分の当たらないシートは code が null の1行 */
+export type SheetCount = { code: DirectionCode | null; label: string | null; grade: Sheet['grade']; n: number }
+
+export const sheetKey = (q: SheetQuery) => JSON.stringify(['sheets', q.code, q.year, q.subjects ?? null, q.q?.trim() || null, q.codes ?? null])
+export const sheetCountKey = (q: SheetQuery) => JSON.stringify(['sheet-counts', q.code, q.year, q.subjects ?? null, q.q?.trim() || null])
+
+const sheetWhere = (q: SheetQuery): Record<string, unknown> => ({
+  jurisdiction_code: { eq: [q.code] },
+  account_name: { eq: [ACCOUNT] },
+  ...(q.subjects ? { expenditure_subject_id: { eq: q.subjects } } : {}),
+  ...(q.q?.trim() ? { name: { contains: fitSearch(q.q.trim()) } } : {}),
+  ...(q.codes ? { direction_code: { eq: q.codes } } : {}),
+})
+
+export const toSheet = (s: SheetResult['sheets'][number], origins: SheetResult['origins']): Sheet => ({
+  id: s.sheet_id,
+  fy: s.fiscal_year,
+  name: s.name,
+  grade: s.outlook?.grade ?? null,
+  dir: s.direction,
+  dc: s.outlook?.code ?? null,
+  dl: s.outlook?.label ?? null,
+  div: s.division,
+  acct: s.account_name ?? '',
+  b: s.budget_yen,
+  s: s.settled_yen,
+  detail: s.expenditure_detail_id,
+  url: origins.find((o) => o.origin_id === s.origin_id)?.url ?? '',
+  origin: s.origin_id,
+  page: s.page,
+})
+
+const searchSheets = async (call: ApiCall, year: number, where: Record<string, unknown>, pageSize: number, token?: string) => {
+  const r = await call('search_evaluation_sheets', { fiscal_year: { min: year, max: year }, where, order_by: [{ column: 'settled_yen', desc: true }], page_size: pageSize, ...(token ? { page_token: token } : {}) } as SheetBody)
+  return { rows: r.sheets.map((s) => toSheet(s, r.origins)), next: r.next_page_token ?? null }
+}
+
+/** 評価シートの一覧の1頁（サーバー）。決算の額の多い順。絞る科目・区分が空なら空 */
+export async function readSheetPage(call: ApiCall, q: SheetQuery, token?: string): Promise<SheetPage> {
+  if ((q.subjects && !q.subjects.length) || (q.codes && !q.codes.length)) return { rows: [], next: null }
+  return searchSheets(call, q.year, sheetWhere(q), token ? NEXT_PAGE : FIRST_PAGE, token)
+}
+
+/** 条件に当たる評価シートの、方向性の区分ごとの数（サーバー）。区分では絞らない */
+export async function readSheetCounts(call: ApiCall, q: SheetQuery): Promise<SheetCount[]> {
+  if (q.subjects && !q.subjects.length) return []
+  const r = await call('count_evaluation_sheets', { fiscal_year: { min: q.year, max: q.year }, where: sheetWhere({ ...q, codes: undefined }) } as WebOpInput<'count_evaluation_sheets'>)
+  return r.counts.map((c) => ({ code: c.outlook?.code ?? null, label: c.outlook?.label ?? null, grade: c.outlook?.grade ?? null, n: c.size }))
+}
+
+/** 内訳を ID で引くときの1回の数（API の bind の上限 90 から年度・自治体などの分を除く） */
+const ID_CHUNK = 80
+
+/** 事業と中の事業の決算の内訳に紐付いた評価シート（サーバー） */
+async function readSheetsOfDetails(call: ApiCall, year: number, details: string[]): Promise<Sheet[]> {
+  const chunks = Array.from({ length: Math.ceil(details.length / ID_CHUNK) }, (_, i) => details.slice(i * ID_CHUNK, (i + 1) * ID_CHUNK))
+  const pages = await Promise.all(chunks.map((c) => searchSheets(call, year, { account_name: { eq: [ACCOUNT] }, expenditure_detail_id: { eq: c } }, 1000)))
+  return pages.flatMap((p) => p.rows)
+}
+
 /** 事業の詳細: 年度ごとの額と、開いた年度の中の事業 */
 export type ProjectFull = {
   id: string
@@ -134,6 +213,8 @@ export type ProjectFull = {
   /** この事業と中の事業の、当初予算・決算の事業の行 */
   initialDetails: string[]
   settlementDetails: string[]
+  /** 開いた年度の、この事業と中の事業の決算の内訳に紐付いた評価シート */
+  sheets: Sheet[]
 }
 
 /** 事業の詳細（サーバー） */
@@ -143,9 +224,11 @@ export async function readProjectFull(call: ApiCall, id: string, year: number, k
     searchYears(call, { fiscal_year: { min: year, max: year }, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody),
   ])
   const latest = p.years.at(-1)
-  const here = p.years.find((y) => y.fiscal_year === year) ?? latest
   const pick = <K extends 'initial_expenditure_detail_id' | 'settlement_expenditure_detail_id'>(k: K) =>
     [...p.years.filter((y) => y.fiscal_year === year), ...kids.project_years].map((y) => y[k]).filter((x): x is string => !!x)
+  const settlementDetails = pick('settlement_expenditure_detail_id')
+  const sheets = settlementDetails.length ? await readSheetsOfDetails(call, year, settlementDetails) : []
+  const here = p.years.find((y) => y.fiscal_year === year) ?? latest
   return {
     id,
     name: clean(p.project.name),
@@ -157,7 +240,8 @@ export async function readProjectFull(call: ApiCall, id: string, year: number, k
     kids: kids.project_years.map((k) => ({ name: clean(k.name), yen: kind === 'initial' ? k.budget_yen : k.settled_yen })),
     subject: here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null,
     initialDetails: pick('initial_expenditure_detail_id'),
-    settlementDetails: pick('settlement_expenditure_detail_id'),
+    settlementDetails,
+    sheets,
   }
 }
 
@@ -174,6 +258,14 @@ async function webApi<T>(path: string, init?: RequestInit): Promise<T> {
   if (!r.ok) throw new Error(`${path} ${r.status}`)
   return (await r.json()) as T
 }
+
+/** 評価シートの一覧の1頁 */
+export const sheetPage = (q: SheetQuery, token?: string): Promise<SheetPage> =>
+  webApi('/api/sheets', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ query: q, ...(token ? { token } : {}) }) })
+
+/** 評価シートの方向性の区分ごとの数 */
+export const sheetCounts = (q: SheetQuery): Promise<SheetCount[]> =>
+  webApi('/api/sheets/counts', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ query: q }) })
 
 /** 一覧の1頁 */
 export const listPage = (q: ListQuery, token?: string): Promise<ListPage> =>

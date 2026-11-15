@@ -20,6 +20,13 @@ export default defineConfig({
   // 色・書体・サイドバーは theme.css で本体サイトに揃える
   theme: { accent: { light: '#2f5d43', dark: '#8fbfa2' }, mode: 'system' },
   deployment: { site: 'https://docs.fudoki.dev' },
+  // 共有カード（/og/*.png）にも本体のロゴを出し、色を theme.css の light に揃える
+  seo: {
+    og: {
+      logo: '/logo.svg',
+      palette: { accent: '#2f5d43', background: '#ffffff', foreground: '#2b2723', muted: '#6b655c', border: '#ddd6c8' },
+    },
+  },
   navigation: {
     tabs: [
       { label: 'ガイド', path: '/' },
