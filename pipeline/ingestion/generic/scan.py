@@ -207,6 +207,9 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
             child = Word(child.text, min(ordered[-1].x1, child.x1), child.y0, child.x1, child.y1)
         ordered.append(child)
     merged: list[Word] = []
+    gap = float(spaced.value) if (spaced := document_quirk('spaced_digits')) is not None else JOIN_GAP
+    if spaced is not None:
+        ordered = [spaced.module.half_width(child) for child in ordered]
     for child in ordered:
         last = merged[-1] if merged else None
         if (last is not None and NUMERIC_RUN.fullmatch(_text(child.text)) and NUMERIC_RUN.fullmatch(_text(last.text))
@@ -214,8 +217,8 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
                 # only crosses the first character's box (`1,981,045,000` over a rule 2pt from its left) does not
                 and not any(last.x1 - min(2, (last.x1 - last.x0) / 2) < x <= child.x0 + PADDLE_REACH for x in cuts)
                 # (a comma, or a minus sign set apart from its digits `△ 15,673,555`, sits farther from its neighbour)
-                and child.x0 - last.x1 <= (2 * JOIN_GAP if last.text.endswith(',') or child.text.startswith(',')
-                                           or re.fullmatch(r'[△▲−–-]', _text(last.text)) else JOIN_GAP)
+                and child.x0 - last.x1 <= (2 * gap if last.text.endswith(',') or child.text.startswith(',')
+                                           or re.fullmatch(r'[△▲−–-]', _text(last.text)) else gap)
                 * max(last.y1 - last.y0, child.y1 - child.y0)):
             merged[-1] = Word(last.text + child.text, last.x0, min(last.y0, child.y0), max(last.x1, child.x1),
                               max(last.y1, child.y1))

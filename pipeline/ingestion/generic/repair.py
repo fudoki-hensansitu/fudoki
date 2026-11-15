@@ -101,68 +101,38 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
     clips: dict[int, tuple | None] = {}
 
     def clip_of(handle):
-        """The clip rectangle of an object (page space), or None when it has none. The clip is the intersection of
-        its paths (a page placed in a page clips to the page's half and then to its own frame): paths that do not meet
-        leave an empty box, which nothing meets."""
+        """The clip rectangle of an object (page space), or None when it has none."""
         address = ctypes.cast(handle, ctypes.c_void_p).value
         if address not in clips:
             clip = raw.FPDFPageObj_GetClipPath(handle)
             box = None
             if clip and raw.FPDFClipPath_CountPaths(clip) > 0:
+                xs, ys = [], []
                 for i in range(raw.FPDFClipPath_CountPaths(clip)):
-                    xs, ys = [], []
                     for j in range(raw.FPDFClipPath_CountPathSegments(clip, i)):
                         segment = raw.FPDFClipPath_GetPathSegment(clip, i, j)
                         x, y = ctypes.c_float(), ctypes.c_float()
                         raw.FPDFPathSegment_GetPoint(segment, x, y)
                         xs.append(x.value); ys.append(y.value)
-                    if not xs:
-                        continue
-                    own = (min(xs), min(ys), max(xs), max(ys))
-                    box = own if box is None else (max(box[0], own[0]), max(box[1], own[1]),
-                                                   min(box[2], own[2]), min(box[3], own[3]))
+                box = (min(xs), min(ys), max(xs), max(ys)) if xs else None
             clips[address] = box
         return clips[address]
 
     def inside(box, clip) -> bool:
         # box and clip as (left, bottom, right, top) in PDF space
-        return clip is None or (clip[0] <= clip[2] and clip[1] <= clip[3]
-                                and box[0] < clip[2] and box[2] > clip[0] and box[1] < clip[3] and box[3] > clip[1])
-
-    # A white rectangle filled after a text object paints over it (a page placed over another, its ground covering the
-    # copy below: 131105's 決算書 2023): the characters under it are not shown.
-    order: dict[int, int] = {}       # text object → its place in the page's drawing order
-    grounds: list[tuple[int, tuple]] = []  # (place, box) of the white rectangles, each cut to its own clip
-    drawn_objects = []
-    for index in range(raw.FPDFPage_CountObjects(page.raw)):
-        handle = raw.FPDFPage_GetObject(page.raw, index)
-        kind = raw.FPDFPageObj_GetType(handle)
-        if kind == raw.FPDF_PAGEOBJ_TEXT:
-            order[ctypes.cast(handle, ctypes.c_void_p).value] = index
-        elif kind == raw.FPDF_PAGEOBJ_PATH:
-            l, b, r, t = (ctypes.c_float() for _ in range(4))
-            raw.FPDFPageObj_GetBounds(handle, l, b, r, t)
-            box = (l.value, b.value, r.value, t.value)
-            drawn_objects.append((index, handle, box))
-            if order and _white_ground(raw, handle):
-                clip = clip_of(handle)
-                shown = box if clip is None else (max(box[0], clip[0]), max(box[1], clip[1]),
-                                                  min(box[2], clip[2]), min(box[3], clip[3]))
-                if shown[0] < shown[2] and shown[1] < shown[3]:
-                    grounds.append((index, shown))
-
-    def covered(index: int, box) -> bool:
-        return any(place > index and ground[0] - .5 <= box[0] and box[2] <= ground[2] + .5
-                   and ground[1] - .5 <= box[1] and box[3] <= ground[3] + .5
-                   for place, ground in grounds)
+        return clip is None or (box[0] < clip[2] and box[2] > clip[0] and box[1] < clip[3] and box[3] > clip[1])
 
     paths = []
     flat_paths: set[int] = set()
-    for index, handle, box in drawn_objects:
-        paths.append(((box[0] - left, top - box[3], box[2] - left, top - box[1]),
-                      inside(box, clip_of(handle))))
-        if line_clips and not paths[-1][1] and load_pattern("repairs", "line_clips").flat(clip_of(handle)):
-            flat_paths.add(len(paths) - 1)
+    for index in range(raw.FPDFPage_CountObjects(page.raw)):
+        handle = raw.FPDFPage_GetObject(page.raw, index)
+        if raw.FPDFPageObj_GetType(handle) == raw.FPDF_PAGEOBJ_PATH:
+            l, b, r, t = (ctypes.c_float() for _ in range(4))
+            raw.FPDFPageObj_GetBounds(handle, l, b, r, t)
+            paths.append(((l.value - left, top - t.value, r.value - left, top - b.value),
+                          inside((l.value, b.value, r.value, t.value), clip_of(handle))))
+            if line_clips and not paths[-1][1] and load_pattern("repairs", "line_clips").flat(clip_of(handle)):
+                flat_paths.add(len(paths) - 1)
     found = []
     flat: set[int] = set()
     for index in range(textpage.count_chars()):
@@ -186,9 +156,6 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
             ol, ob, orr, ot = (ctypes.c_float() for _ in range(4))
             raw.FPDFPageObj_GetBounds(handle, ol, ob, orr, ot)
             visible = inside((ol.value, ob.value, orr.value, ot.value), clip_of(handle))
-        if visible and handle and grounds:
-            place = order.get(ctypes.cast(handle, ctypes.c_void_p).value)
-            visible = place is None or not covered(place, (l.value, b.value, r.value, t.value))
         char = (character_map or {}).get(chr(code), chr(code))
         if not char:
             continue  # declared to drop (`character_map`)
@@ -202,35 +169,6 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         found = [(box, char, shown if index in flat else visible) for index, (box, char, visible) in enumerate(found)]
         paths = [(box, visible or index in flat_paths) for index, (box, visible) in enumerate(paths)]
     return found, paths
-
-
-def _white_ground(raw, handle) -> bool:
-    """Whether a path fills a rectangle opaque white."""
-    mode, stroke = ctypes.c_int(), ctypes.c_int()
-    if not raw.FPDFPath_GetDrawMode(handle, mode, stroke) or mode.value == 0:
-        return False
-    red, green, blue, alpha = (ctypes.c_uint() for _ in range(4))
-    if not raw.FPDFPageObj_GetFillColor(handle, red, green, blue, alpha):
-        return False
-    if (red.value, green.value, blue.value, alpha.value) != (255, 255, 255, 255):
-        return False
-    # A rectangle: straight segments whose points take two x and two y values (a triangle's bounds are no ground),
-    # drawn without rotation or shear.
-    count = raw.FPDFPath_CountSegments(handle)
-    if not 4 <= count <= 5:
-        return False
-    xs, ys = set(), set()
-    for index in range(count):
-        segment = raw.FPDFPath_GetPathSegment(handle, index)
-        if raw.FPDFPathSegment_GetType(segment) == raw.FPDF_SEGMENT_BEZIERTO:
-            return False
-        x, y = ctypes.c_float(), ctypes.c_float()
-        raw.FPDFPathSegment_GetPoint(segment, x, y)
-        xs.add(round(x.value, 2)); ys.add(round(y.value, 2))
-    matrix = raw.FS_MATRIX()
-    if not raw.FPDFPageObj_GetMatrix(handle, matrix) or abs(matrix.b) > 1e-6 or abs(matrix.c) > 1e-6:
-        return False
-    return len(xs) == 2 and len(ys) == 2
 
 
 def _drawn(rule, paths) -> bool:
@@ -336,7 +274,11 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: f
         cached = {page.number: read(page.number) for page in pages} if 'line_clips' in repairs else {}
         offset = load_pattern("repairs", "line_clips").offset([found for found, _ in cached.values()]) if cached else 0.0
         for page in pages:
-            glyphs, paths = cached.get(page.number) or read(page.number)
+            traced = document_quirk('traced_glyphs')
+            if traced is not None:
+                glyphs, paths = traced.module.glyphs(pdf_path, page.number, character_map)
+            else:
+                glyphs, paths = cached.get(page.number) or read(page.number)
             # Glyphs placed off the page are not on it at all (Poppler skips them);
             # only invisible glyphs on the page call for a rebuild.
             glyphs = [g for g in glyphs if g[0][2] > 0 and g[0][0] < page.width and g[0][3] > 0 and g[0][1] < page.height]
