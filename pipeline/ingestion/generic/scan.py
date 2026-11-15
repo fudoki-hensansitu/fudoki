@@ -845,7 +845,9 @@ def drop_readings(observation: dict, rules: list[dict] | None) -> dict:
     """OCR readings that read again the marks another reading already covers (two overlapping ink re-reads,
     `13億用料及` over `13使用料及`), as the conversion's options declare them from the rendered page
     (`dropped_readings`: page, observation id and the text read). The reading and its words are left out; one
-    not found as declared stops the conversion."""
+    not found as declared stops the conversion. A dropped re-read declared `restores` gives back the page readings it
+    replaced (its region's `supersedes`): the re-read glued marks the page reading had read apart (`81多様な…` over the
+    page's `8` and `1多様な…`, 港区 R7). Its region must hold nothing else then."""
     if not rules:
         return observation
     drop = {(r['page'], r['observation_id']): r for r in rules}
@@ -855,16 +857,22 @@ def drop_readings(observation: dict, rules: list[dict] | None) -> dict:
         regions = []
         for region in p['regions']:
             kept = []
+            restored = False
             for o in region['observations']:
                 rule = drop.get((p['page_number'], o['id']))
                 if rule is not None:
                     if o['raw_text'] != rule['observed']:
                         raise ValueError(f'A dropped reading differs from the observation: {rule["id"]}')
                     found.add((p['page_number'], o['id']))
+                    restored = restored or bool(rule.get('restores'))
                     continue
                 if (p['page_number'], o.get('parent_id')) in drop:
                     continue
                 kept.append(o)
+            if restored:
+                if kept:
+                    raise ValueError(f'A restoring dropped reading leaves other readings in its region: p{p["page_number"]} {region.get("id")}')
+                region = {**region, 'supersedes': []}
             regions.append({**region, 'observations': kept})
         pages_.append({**p, 'regions': regions})
     if missing := sorted(r['id'] for key, r in drop.items() if key not in found):
@@ -892,6 +900,21 @@ def add_code_readings(observed: list[Page], readings: list[dict] | None, key: st
             if any(w.x0 < n1 and n0 < w.x1 and w.y0 < m1 and m0 < w.y1 for w in words[reading['page']]):
                 raise ValueError(f'A name reading overlaps a reading: {reading["id"]}')
             words[reading['page']].append(Word(reading['name'], n0, m0, n1, m1))
+    return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
+
+
+def add_name_readings(observed: list[Page], readings: list[dict] | None) -> list[Page]:
+    """Names OCR left unread (`name_readings`), as the conversion's options declare them from the rendered page (page,
+    box in PDF points, the printed name): a line of a breakdown whose amount OCR read alone (港区 R7 当初予算の説明,
+    `・麻布地区区長と区政を語る会 (12)`, whose name the page reading missed). The box must hold no reading."""
+    words = {p.number: list(p.words) for p in observed}
+    for reading in readings or ():
+        x0, y0, x1, y1 = reading['box']
+        if reading['page'] not in words:
+            raise ValueError(f'A name reading needs a scoped page: {reading["id"]}')
+        if any(w.x0 < x1 and x0 < w.x1 and w.y0 < y1 and y0 < w.y1 for w in words[reading['page']]):
+            raise ValueError(f'A name reading overlaps a reading: {reading["id"]} {reading["box"]}')
+        words[reading['page']].append(Word(reading['name'], x0, y0, x1, y1))
     return [Page(p.number, p.width, p.height, words[p.number], p.rules) for p in observed]
 
 
@@ -1189,6 +1212,7 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
     printed = add_code_readings(printed, options.get('code_readings'))
     printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
                                 'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')
+    printed = add_name_readings(printed, options.get('name_readings'))
     if (marks := document_quirk('bracket_marks')) is not None:
         printed = marks.module.drop(printed)
     return read_units(printed, options.get('unit_readings')), observation, variants

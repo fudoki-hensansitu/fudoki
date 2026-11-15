@@ -160,6 +160,7 @@
     "names_over_pages": "ingestion.generic.patterns.quirks.names_over_pages",
     "name_tails_over_pages": "ingestion.generic.patterns.quirks.name_tails_over_pages",
     "wrapped_names_over_pages": "ingestion.generic.patterns.quirks.wrapped_names_over_pages",
+    "wrapped_line_overlap": "ingestion.generic.patterns.quirks.wrapped_line_overlap",
     "numbers_set_right": "ingestion.generic.patterns.quirks.numbers_set_right",
     "office_departments": "ingestion.generic.patterns.quirks.office_departments",
     "wrapped_departments": "ingestion.generic.patterns.quirks.wrapped_departments",
