@@ -638,6 +638,8 @@ def same_rows(left: Page, right: Page) -> bool:
     if not a or not b:
         return False
     shorter, longer = (a, b) if len(a) <= len(b) else (b, a)
+    if (scaled := document_quirk('scaled_spread_pages')) is not None and scaled.module.matches(shorter, longer) / len(shorter) >= SPREAD_ROW_MATCH:
+        return True
     if (drifting := document_quirk('drifting_spread_rows')) is not None:
         return drifting.module.matches(shorter, longer) / len(shorter) >= SPREAD_ROW_MATCH
     shifts = {round(y - x, 1) for x in shorter for y in longer if abs(y - x) <= SPREAD_MAX_SHIFT} or {0.0}
