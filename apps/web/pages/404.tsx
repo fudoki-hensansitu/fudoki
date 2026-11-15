@@ -3,10 +3,9 @@ import { Button } from '@/components/ui/button'
 import { Empty, EmptyContent, EmptyDescription, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Link } from '../nav/link'
 import { OtherTowns } from '../home/onboarding'
-import type { Props } from './404.server'
 
-/** 見つからない頁。自治体の頁の下なら、その自治体の頁への導線を先に出す */
-export default function NotFound({ town }: Props) {
+/** 見つからない頁。ホームとまちの検索へ戻す */
+export default function NotFound() {
   return (
     <main className="mx-auto flex min-h-[calc(100dvh-4rem)] w-full max-w-xl items-center px-4 py-10">
       <Empty className="gap-6">
@@ -21,17 +20,10 @@ export default function NotFound({ town }: Props) {
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent className="max-w-sm gap-3">
-          <div className="flex flex-wrap justify-center gap-2">
-            {town ? (
-              <Button size="lg" className="px-4" nativeButton={false} render={<Link href={town.path} />}>
-                {town.name}の頁を見る
-              </Button>
-            ) : null}
-            <Button size="lg" variant={town ? 'outline' : 'default'} className="px-4" nativeButton={false} render={<Link href="/" />}>
-              <HouseIcon data-icon="inline-start" aria-hidden="true" />
-              ホームへ
-            </Button>
-          </div>
+          <Button size="lg" className="px-4" nativeButton={false} render={<Link href="/" />}>
+            <HouseIcon data-icon="inline-start" aria-hidden="true" />
+            ホームへ
+          </Button>
           <OtherTowns className="w-full" />
         </EmptyContent>
       </Empty>
