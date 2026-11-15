@@ -1,6 +1,6 @@
 import { JurisdictionView } from '../../../../jurisdiction/view'
-import type { JurisdictionProps } from '../../_loader'
+import type { RouteProps } from '../../_loader'
 
-export default function JurisdictionField(props: JurisdictionProps) {
+export default function JurisdictionField(props: RouteProps) {
   return <JurisdictionView {...props} />
 }

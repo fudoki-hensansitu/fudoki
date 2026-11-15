@@ -17,7 +17,9 @@ import { appYears, loadYearExtras, loadYearSnapshot } from '../../server/app-dat
 import type { Snapshot, YearExtras } from '../../jurisdiction/app/data'
 import type { Setsu } from '../../jurisdiction/types'
 import { siteKey } from '../../server/site-key'
+import { NOT_FOUND_HEAD, orNotFound, type NotFoundProps } from '../../server/not-found'
 
+/** 頁の中の 404。loader の入口（routeProps・会話の頁）が受けて見つからない頁を描く（server/not-found.ts） */
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
 export const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
 
@@ -101,7 +103,14 @@ export async function tabProps(c: Context, path: string, slug: string, yearSegme
  * 自治体の頁の path（/ で分けた段）から props を作る。pages/[prefecture]/ の下の loader はどれもここを呼ぶ。
  * 都道府県自体の頁（/tokyo/2024/projects）は市区町村の段が無いので、ルーターが当てる経路が市区町村の頁と1段ずれる。段の中身で読み分ける
  */
-export async function routeProps(c: Context, segments: string[]): Promise<JurisdictionProps> {
+export function routeProps(c: Context, segments: string[]): Promise<RouteProps> {
+  return orNotFound(c, () => loadRouteProps(c, segments))
+}
+
+/** 自治体の頁の loader が返すもの。path に当たる頁が無ければ見つからない頁 */
+export type RouteProps = JurisdictionProps | NotFoundProps
+
+async function loadRouteProps(c: Context, segments: string[]): Promise<JurisdictionProps> {
   const [prefecture = '', ...rest] = segments
   const head = rest[0]
   const named = head !== undefined && !YEAR_SEGMENT.test(head) && head !== 'fields' && !tabOfSlug(head)
@@ -183,7 +192,8 @@ const areasOfFields = (fields: Record<string, number>) =>
     .sort((a, b) => Number(a.other) - Number(b.other) || b.yen - a.yen)
 
 /** 分野の頁とタブの頁は、題・説明文・canonical をその頁のものにする */
-export const jurisdictionHead = (p: JurisdictionProps): Head => {
+export const jurisdictionHead = (p: RouteProps): Head => {
+  if (p.kind === 'not-found') return NOT_FOUND_HEAD
   if (p.kind !== 'page') return emptyHead(p.entry)
   const year = p.year ?? appPageYears(p.data)[0]
   const opened = year === undefined ? undefined : p.snapshot?.years[String(year)]
