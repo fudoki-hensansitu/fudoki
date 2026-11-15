@@ -5,6 +5,8 @@ on:
     paths:
       - pipeline/**
       - packages/**
+      # 列の契約（serving/columns_test.py）が読む
+      - apps/api/src/columns.json
       - docs/adr/**
       - package.json
       - bun.lock

@@ -5,6 +5,7 @@ on:
     paths:
       - apps/**
       - packages/**
+      - pipeline/verify/boundaries.ts
       - DESIGN.md
       - package.json
       - bun.lock
@@ -31,3 +32,5 @@ jobs:
       - run: bun run --filter './apps/*' --filter './packages/*' typecheck
       - run: bun run --filter './apps/*' --filter './packages/*' lint
       - run: bun run --filter './apps/*' --filter './packages/*' test
+      # 公開面が pipeline を import せず、web にデータの binding・api に R2 の binding が無いこと
+      - run: bun pipeline/verify/boundaries.ts
