@@ -163,6 +163,16 @@ describe('自治体の個別ページ', () => {
     expect(flow[0]!.kou[0]!.moku).toEqual([])
   })
 
+  test('予算・決算のタブはどの年度にもあり、収録の無い年度のタブは検索に出さない', async () => {
+    const data = await view('/tokyo/nakano')
+    const robots = (h: Head) => h.meta.find((m) => m.name === 'robots')?.content
+    // 決算は 2024・2025 だけ。2026 の決算のタブは「まだ収録していません」の頁
+    expect(robots(pageHead({ ...data, budgetYears: [2026] }, 2026, { tab: 'settled' }))).toBe('noindex')
+    expect(robots(pageHead(data, 2025, { tab: 'settled' }))).toBeUndefined()
+    expect(robots(pageHead({ ...data, initialYears: [] }, 2025, { tab: 'money' }))).toBe('noindex')
+    expect(robots(pageHead({ ...data, initialYears: [2025] }, 2025, { tab: 'money' }))).toBeUndefined()
+  })
+
   test('収録の無い自治体は検索に出さず、名前が違えば 404、sitemap には収録のある自治体だけ', async () => {
     const empty = await resolveJurisdiction(env, '/tokyo/chiyoda')
     expect(empty?.kind).toBe('empty')

@@ -3,7 +3,7 @@
 import type { CatalogEntry } from '../server/jurisdiction'
 import { assetPath } from './assets'
 import { jurisdictionPath } from './path'
-import { appPageYears, formatYen, TAB_SLUGS, type PageData, type PageTab } from './types'
+import { appPageYears, formatYen, hasDocument, TAB_SLUGS, type PageData, type PageTab } from './types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from './domains'
 
 const ORIGIN = 'https://fudoki.dev'
@@ -142,6 +142,12 @@ export function pageHead(d: PageData, year?: number, section?: Section, opened?:
   const shown = year ?? defaultYear(d)
   const past = year !== undefined && year !== appPageYears(d)[0] ? yearHead(d, shown, opened) : null
   const title = pageTitle(d, shown, section, opened)
+  // 予算・決算のタブは収録の無い年度にもある（中身は「まだ収録していません」）。検索に載せず、資料を名乗る Dataset も出さない
+  const missing = section && 'tab' in section && section.tab !== 'projects' ? (section.tab === 'money' ? 'initial' : 'settlement') : undefined
+  if (missing && !hasDocument(d, shown, missing)) {
+    const canonical = `${ORIGIN}${base}/${shown}${sectionPath(section)}`
+    return head(title, `${d.name}の${reiwaFull(shown)}${missing === 'initial' ? '当初予算' : '決算'}はまだ収録していません。`, canonical, { meta: [{ name: 'robots', content: 'noindex' }] })
+  }
   const description = pageDescriptionOf(d, shown, section, opened)
   // 最新の年度の頁（/tokyo/nakano/2026）は入口（/tokyo/nakano）と同じ中身なので、canonical を入口にする。
   // 分野・タブの頁は年度の段の無い URL が 301 なので、最新の年度でも年度の段つきにする

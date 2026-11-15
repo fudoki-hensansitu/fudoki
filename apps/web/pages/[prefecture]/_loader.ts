@@ -66,10 +66,12 @@ export async function jurisdictionProps(c: Context, path: string, yearSegment?: 
 
 const FIELD_IDS = new Set([...DOMAIN_FRAMES, OTHER_FRAME].map((f) => f.id))
 
-/** 年度の段の無い分野・タブの頁（/tokyo/nakano/projects）は、最新の年度の段つきの頁へ 301 */
-async function toLatestYear(c: Context, path: string, sub: string): Promise<never> {
+/** 年度の段の無い分野・タブの頁（/tokyo/nakano/projects）は、最新の年度の段つきの頁へ 301。予算・決算のタブは、その資料を収録した最新の年度へ */
+async function toLatestYear(c: Context, path: string, sub: string, tab?: PageTab): Promise<never> {
   const props = await jurisdictionProps(c, path)
-  const latest = props.kind === 'page' ? appPageYears(props.data)[0] : undefined
+  const years = props.kind === 'page' ? appPageYears(props.data) : []
+  const doc = tab === 'money' ? 'initial' : tab === 'settled' ? 'settlement' : undefined
+  const latest = (doc && props.kind === 'page' ? years.find((y) => hasDocument(props.data, y, doc)) : undefined) ?? years[0]
   if (latest === undefined) throw new HTTPException(404, { res: notFound() })
   throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${latest}${sub}` } }) })
 }
@@ -85,7 +87,7 @@ export async function fieldProps(c: Context, path: string, field: string, yearSe
 export async function tabProps(c: Context, path: string, slug: string, yearSegment?: string): Promise<JurisdictionProps> {
   const tab = tabOfSlug(slug)
   if (!tab) throw new HTTPException(404, { res: notFound() })
-  if (yearSegment === undefined) return toLatestYear(c, path, `/${slug}`)
+  if (yearSegment === undefined) return toLatestYear(c, path, `/${slug}`, tab)
   return { ...(await jurisdictionProps(c, path, yearSegment)), tab }
 }
 
