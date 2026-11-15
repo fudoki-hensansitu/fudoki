@@ -124,10 +124,10 @@ def write_macro(macro_name: str, relations: list[str]) -> None:
                      '{% endmacro %}\n')
 
 
-def readable(document: dict, *, remote: bool) -> bool:
-    """Whether every table of the document can be read (cached, or fetched from R2 with these bytes)."""
+def readable(tables: list[dict], *, remote: bool) -> bool:
+    """Whether every table can be read (cached, or fetched from R2 with these bytes)."""
     try:
-        for table in document['tables']:
+        for table in tables:
             for reference in manifest.table_references(table).values():
                 fetch(reference['object'], remote=remote)
     except (FileNotFoundError, ValueError, subprocess.CalledProcessError):
@@ -135,32 +135,46 @@ def readable(document: dict, *, remote: bool) -> bool:
     return True
 
 
-def with_receipts(document: dict, receipts: dict[str, dict]) -> dict | None:
-    """The document with the tables R2 holds (the receipts list), when it has every table the document declares
-    and each was converted from the declared inputs: its fingerprint is the recorded one or the current one (both
-    cover the inputs and options), so a table of a replaced original is not read under the new declaration."""
-    tables = [receipts.get(storage.receipt_id(document, table['table_id'])) for table in document['tables']]
-    if any(table is None for table in tables):
-        return None
-    current = None
-    for recorded, stored in zip(document['tables'], tables):
-        if stored['input_fingerprint'] == recorded['input_fingerprint']:
+def with_receipts(document: dict, receipts: dict[str, dict], *, remote: bool) -> tuple[list[dict], list[str], list[str]] | None:
+    """The tables to build when R2 lacks some recorded ones (merged, but `ingestion:store` failed or has not run;
+    docs/prd/ingestion-receipts/dd.md): each table as recorded when R2 holds it, else as the receipts list holds
+    it when it was converted from the declared inputs (its fingerprint is the recorded or the current one, both
+    covering the inputs and options), else left out when the list has no table of that ID: it was never stored,
+    so D1 holds no rows of it and the sync deletes nothing. Any other table (a receipt of other inputs, or one R2
+    cannot read) stops the build: leaving it out would delete its rows from D1. Returns the tables, the IDs read
+    from the list and the IDs left out."""
+    tables, from_receipts, left_out, current = [], [], [], None
+    for recorded in document['tables']:
+        if readable([recorded], remote=remote):
+            tables.append(recorded)
             continue
-        current = current if current is not None else manifest.fingerprints(document)
-        if stored['input_fingerprint'] != current.get(stored['conversion_id']):
+        stored = receipts.get(storage.receipt_id(document, recorded['table_id']))
+        if stored is None:
+            left_out.append(recorded['table_id'])
+            continue
+        if stored['input_fingerprint'] != recorded['input_fingerprint']:
+            current = current if current is not None else manifest.fingerprints(document)
+            if stored['input_fingerprint'] != current.get(stored['conversion_id']):
+                return None
+        if not readable([stored], remote=remote):
             return None
-    return {**document, 'tables': tables}
+        tables.append(stored)
+        from_receipts.append(recorded['table_id'])
+    return tables, from_receipts, left_out
+
+
+def document_key(spec: dict) -> tuple:
+    return spec['jurisdiction'], spec['fiscal_year'], spec['document_kind'], spec['direction']
 
 
 def load_document(documents: dict, spec: dict, candidate: Path | None, *, remote: bool = False,
                   receipts: dict[str, dict] | None = None, fallbacks: list[str] | None = None,
-                  skipped: list[str] | None = None) -> dict | None:
-    """The manifest of the spec. With the receipts list (a remote build), a manifest whose recorded tables R2 does
-    not hold yet (merged, but `ingestion:store` failed or has not run) is read with the tables R2 holds instead,
-    when it holds all of them (stage 2 of docs/prd/ingestion-receipts/dd.md). A manifest R2 holds no table of is
-    left out (None). Otherwise the build stops as before."""
+                  skipped: list[str] | None = None, left_tables: set | None = None) -> dict:
+    """The manifest of the spec. In a remote build with the receipts list, a manifest whose recorded tables R2
+    does not all hold is read with `with_receipts`; its left-out tables are absent from the returned document.
+    Otherwise (or when `with_receipts` refuses) the build stops on the unreadable table as before."""
     target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
-    key = (target['jurisdiction'], target['fiscal_year'], target['document_kind'], spec['direction'])
+    key = document_key(spec)
     if key not in documents:
         root = candidate_root(candidate, target, spec['direction'])
         path = root / 'manifest.json' if root else manifest.manifest_path(target, spec['direction'])
@@ -168,18 +182,19 @@ def load_document(documents: dict, spec: dict, candidate: Path | None, *, remote
                     else manifest.read(path, check_code=False))
         if document['target'] != target or document['direction'] != spec['direction']:
             raise ValueError(f'Manifest target differs: {path}')
-        if root is None and receipts is not None and not readable(document, remote=remote):
-            stored = with_receipts(document, receipts)
-            if stored is not None and readable(stored, remote=remote):
-                document = stored
-                if fallbacks is not None:
-                    fallbacks.append(str(path.relative_to(PIPELINE)))
-            elif receipts and not any(ident.startswith(storage.receipt_id(document, '')) for ident in receipts):
-                # Merged but never stored (its store failed): leave it out rather than stop every other
-                # jurisdiction's sync. D1 holds no rows of it, so the sync deletes nothing.
-                document = None
-                if skipped is not None:
-                    skipped.append(str(path.relative_to(PIPELINE)))
+        # An empty list (not written, or unreadable) leaves nothing out: every unreadable table would go.
+        if root is None and receipts and not readable(document['tables'], remote=remote):
+            resolved = with_receipts(document, receipts, remote=remote)
+            if resolved is not None:
+                tables, from_receipts, left_out = resolved
+                document = {**document, 'tables': tables}
+                name = str(path.relative_to(PIPELINE))
+                if from_receipts and fallbacks is not None:
+                    fallbacks.append(f'{name}: {", ".join(from_receipts)}')
+                if left_out and skipped is not None:
+                    skipped.append(f'{name}: {", ".join(left_out)}')
+                if left_tables is not None:
+                    left_tables.update((key, ident) for ident in left_out)
         documents[key] = document
     return documents[key]
 
@@ -228,6 +243,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
     fallbacks: list[str] = []
     skipped: list[str] = []
     left_out: set[str] = set()
+    left_tables: set[tuple] = set()
     provided = set(candidate.rglob('manifest.json')) if candidate is not None else set()
     if candidate is not None and not provided:
         raise ValueError('Candidate directory contains no manifest.json')
@@ -244,8 +260,8 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             spec = declared['meta']
             target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
             document = load_document(documents, spec, candidate, remote=remote, receipts=receipts, fallbacks=fallbacks,
-                                     skipped=skipped)
-            if document is None:
+                                     skipped=skipped, left_tables=left_tables)
+            if (document_key(spec), spec['table_id']) in left_tables:
                 left_out.add(declared['name'])
                 continue
             table = next((t for t in document['tables'] if t['table_id'] == spec['table_id']), None)
@@ -277,8 +293,8 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
                 spec = declared['meta']
                 target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
                 document = load_document(documents, spec, candidate, remote=remote, receipts=receipts, fallbacks=fallbacks,
-                                         skipped=skipped)
-                if document is None:
+                                         skipped=skipped, left_tables=left_tables)
+                if (document_key(spec), spec['table_id']) in left_tables:
                     left_out.add(declared['name'])
                     continue
                 table = next((t for t in document['tables'] if t['table_id'] == spec['table_id']), None)
@@ -324,8 +340,8 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         # 事業評価は自治体で絞るとき、その自治体のものだけ読む
         project_tables = project.load(remote=remote, jurisdictions=jurisdictions or None)
         project.write(con, project_tables)
-        used = {root / 'manifest.json' for document in documents.values() if document is not None
-                and (root := candidate_root(candidate, document['target'], document['direction'])) is not None}
+        used = {root / 'manifest.json' for document in documents.values()
+                if (root := candidate_root(candidate, document['target'], document['direction'])) is not None}
         if provided - used:
             raise ValueError(f'Unused candidate manifests: {sorted(str(p) for p in provided - used)}')
         con.commit()
