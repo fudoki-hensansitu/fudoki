@@ -12,10 +12,11 @@ export type Town = RecentJurisdiction
 /** 探す語に当たる自治体の1頁。next は続きの印（api の頁送り、無ければ null） */
 export type TownPage = { entries: MapEntry[]; next: string | null }
 
-/** 探す語に当たる自治体を1頁ぶん。cursor が無ければ最初の頁。サーバー（/api/jurisdictions?q=&cursor=）が api の頁送りのまま返す。読めなければ null */
+/** 探す語に当たる自治体を1頁ぶん。cursor が無ければ最初の頁。サーバー（/api/jurisdictions?name=&cursor=）が api の頁送りのまま返す。読めなければ null */
 const searchTowns = (q: string, cursor: string | null, signal?: AbortSignal): Promise<TownPage | null> =>
-  fetch(`/api/jurisdictions?${new URLSearchParams({ q, ...(cursor ? { cursor } : {}) })}`, { signal })
+  fetch(`/api/jurisdictions?${new URLSearchParams({ name: q, ...(cursor ? { cursor } : {}) })}`, { signal })
     .then((r) => (r.ok ? (r.json() as Promise<TownPage>) : null))
+    .then((p) => (p && Array.isArray(p.entries) ? p : null))
     .catch(() => null)
 
 /** 打ち終えるのを待つ間 */
@@ -31,10 +32,10 @@ export function useTownSearch(open: boolean, q: string) {
   const loading = React.useRef<AbortController | null>(null)
   const [tries, bump] = React.useReducer((n: number) => n + 1, 0)
   React.useEffect(() => {
-    if (!open) return
-    const controller = new AbortController()
     loading.current?.abort()
     loading.current = null
+    if (!open) return
+    const controller = new AbortController()
     const timer = setTimeout(() => void searchTowns(q, null, controller.signal).then((p) => !controller.signal.aborted && setPage(p && { ...p, q })), q ? TYPING_MS : 0)
     return () => {
       clearTimeout(timer)
@@ -57,7 +58,9 @@ export function useTownSearch(open: boolean, q: string) {
       }, p ? 0 : 3000)
     })
   }
-  return { entries: page === undefined ? undefined : (page?.entries ?? null), word: page?.q, hasMore: next !== null, more, moreKey: `${page?.entries.length ?? 0}:${tries}`, retry }
+  // 頁が空でも続きがあれば、当たらないとは言わずに読んでいる扱いにする（末尾の印が続きを読む）
+  const entries = page === undefined || (page && page.entries.length === 0 && next !== null) ? undefined : (page?.entries ?? null)
+  return { entries, word: page?.q, hasMore: next !== null, more, moreKey: `${page?.entries.length ?? 0}:${tries}`, retry }
 }
 
 /** 自治体コードで1つ引く（/api/jurisdictions?code=）。収録が無ければ undefined、読めなければ null */
