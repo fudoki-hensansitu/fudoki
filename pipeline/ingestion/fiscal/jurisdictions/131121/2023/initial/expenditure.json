@@ -378,7 +378,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "2d60d7f4a5c14626bcf666a50c46c914b8cdc1587b9aeeed2714831db74dc5bc",
+      "input_fingerprint": "10b296e3deb8276a6322c978360151db918b56b7f6e647b85ef4025da88e5a96",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -390,16 +390,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131121/2023/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "d1658d1c2b864b17b3f533445f910fae575d21836c63c99d9fa960aa9d3ca736",
-          "bytes": 103382
+          "sha256": "baa6c85bf2f4e0e68075f48ef7203f62b8bfc77375b2b42f81bf6de33ae4df04",
+          "bytes": 103388
         },
         "row_count": 2915
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131121/2023/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "e4ba98707b69569d45c5820e2ecc66463e26eee4253caa5fa702721742d3ea01",
-          "bytes": 89694
+          "sha256": "140a7d764b8c420cfa16e06b1fc7091ff4ba4ca2aa66073d1a9e006eb220adff",
+          "bytes": 89699
         },
         "row_count": 3254
       }
@@ -407,7 +407,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "fcd59978d6e7725c3e88db827e5c3a37d96baf2e7f54b6a5038a2e18431838f0",
+      "input_fingerprint": "a53dcb6c55c517fb6334a18ce8e1742f6a050e5b33024ab96813660a4dc24267",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -419,16 +419,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131121/2023/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "0338a601fc7d3abfacd72561aae671a279d655ffb74a3e3abd6dfc571e6d76ea",
-          "bytes": 12645
+          "sha256": "84653f24fd3afc9cc37e20b5ddf55300adc5c8cf660bf935254075e274f6d24c",
+          "bytes": 12643
         },
         "row_count": 230
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131121/2023/initial/expenditure/national-health-initial-amounts.parquet",
-          "sha256": "f5fa352b2bfafed27802918a2ec82f8569c74b4840e3a48b7f271be404c3c0cb",
-          "bytes": 11372
+          "sha256": "d053a4113edd733cc18a7973980db4516a186f315a7ac4d051360e49f1859129",
+          "bytes": 11368
         },
         "row_count": 344
       }
@@ -436,7 +436,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "958698371dc0aeaf253309cbcb80c2b68d74c56a3d81c5421d121e95d548f399",
+      "input_fingerprint": "08c1b6a71efbe4d81012ef5a1f1a43c75ad36f40427d4f223ccdd237df3d41a4",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -465,7 +465,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "07dc8455ce38980a7963cad793e27ff17becc2907a618cfac9747c203a650dd2",
+      "input_fingerprint": "dbab42e4ed2dae2403b9bb383b2581fb1dfd5a56420b887cda5f103f38badcf1",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -477,16 +477,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131121/2023/initial/expenditure/care-initial-nodes.parquet",
-          "sha256": "43b7f3f0d08195fa5f67689c512c80d93b0d83513816deb0ba24bb8e427c1d9e",
-          "bytes": 14626
+          "sha256": "8a48f45e3105e7ce776768a4e1c8055ad2735face275731fd2a1ee513ee2be12",
+          "bytes": 14630
         },
         "row_count": 301
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131121/2023/initial/expenditure/care-initial-amounts.parquet",
-          "sha256": "f0465eba1d6b0e62f42186e4bfb508d1b42c633df8805f0d474c5fb93708f2b0",
-          "bytes": 13167
+          "sha256": "7d3e7ee1414a3962a2638f1c97e1676a8ad971e4bc2ff48fb9affdd59f5de014",
+          "bytes": 13171
         },
         "row_count": 405
       }
@@ -494,7 +494,7 @@
     {
       "table_id": "school-lunch-initial",
       "conversion_id": "school-lunch-initial",
-      "input_fingerprint": "245dd9ef37525bf08dee2ed4b84ab65e2620935ec6c0c56bf47b921f6cd26cd1",
+      "input_fingerprint": "5a4291744cd55677839445c9f57a28fc3ccd2ecae114e535445039434ac15042",
       "account": "学校給食費会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
