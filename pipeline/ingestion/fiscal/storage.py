@@ -189,7 +189,7 @@ def receipt_id(document: dict, table_id: str) -> str:
 def read_receipts() -> dict[str, dict] | None:
     """The receipts list in R2, or None when it is not there yet. Always read from R2, never from the cache."""
     try:
-        shown = r2.objects('get', RECEIPTS_KEY, '--bucket-name', BUCKET, '--quiet')
+        shown = r2.objects('get', RECEIPTS_KEY, '--bucket-name', BUCKET, '--quiet', quiet=True)
     except subprocess.CalledProcessError as error:
         if b'10007' in error.stderr or b'does not exist' in error.stderr:
             return None

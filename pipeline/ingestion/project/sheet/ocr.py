@@ -123,8 +123,8 @@ def main() -> None:
                 if sha not in observations:
                     raise SystemExit(f'{origin["fiscal_year"]} {sha[:12]}: 観測が宣言に固定されていない（先に --save なしで読む）')
                 fetch(sha, observations[sha])
-                subprocess.run(['cf', 'r2', 'objects', 'put', key(sha), '--bucket-name', BUCKET,
-                                '--file', str(cached(sha)), '--quiet'], check=True, stdout=subprocess.DEVNULL)
+                r2.objects('put', key(sha), '--bucket-name', BUCKET, '--file', str(cached(sha)), '--quiet',
+                           stdout=subprocess.DEVNULL)
                 print(f'{origin["fiscal_year"]} {sha[:12]}: R2 に置いた', file=sys.stderr)
                 continue
             if sha in observations:
