@@ -129,7 +129,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "52262a6ef7a5ec3baa174ed219ff5ac3a207d787432abc473536782c7750f7a2",
+      "input_fingerprint": "daf5ae3d03153ef41fb4b13597eefb7f5da56490482d4380f67c9218fedf988b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
@@ -142,16 +142,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132209/2025/settlement/expenditure/general-expenditure-nodes.parquet",
-          "sha256": "86db5288788ace75eb21a1612189053c2ffa0eca68c6a13565bc37f3f31cffd8",
-          "bytes": 107599
+          "sha256": "de62506fd643f34f34ed572fa785ef64fd3ec951354f3cba86bcb09d1e9fb979",
+          "bytes": 107555
         },
         "row_count": 3780
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132209/2025/settlement/expenditure/general-expenditure-amounts.parquet",
-          "sha256": "9eb657fbc6f68b64d79b2f67d84dbb89a8cf53c9e35115e5d15806eb0311a5d9",
-          "bytes": 108855
+          "sha256": "52c9a426a56eb467e87d94e9dc51f42cb736c92ee227d8a5845c1fedda180784",
+          "bytes": 108912
         },
         "row_count": 8859
       }
@@ -159,7 +159,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "d2c7eae3011001c5f7f57b071488bff10571d20c299b4c8b1750b54621778cef",
+      "input_fingerprint": "e133f271a8c8deeaa28ef68e68ad1e0fb00fc01ab8467c13258eb1c06f03eb0e",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
@@ -172,16 +172,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132209/2025/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
-          "sha256": "3152369f0b73c9f1a88e109ee76c6f13f8d0ae6a445766e752d911463fce51fd",
-          "bytes": 10036
+          "sha256": "56751ccd4f965cfdc9405d3936e4adc6c04af3190a810244193c3f8cf6540bad",
+          "bytes": 10093
         },
         "row_count": 192
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132209/2025/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
-          "sha256": "fcaded78f4575c9d98b28b3106061e857ba0c42f4ed34b026d116caae3d03fb6",
-          "bytes": 12357
+          "sha256": "441eb6af926266d7251471e019be22ceef6bef2197fe59b1f5f54f64fce015ed",
+          "bytes": 12341
         },
         "row_count": 910
       }
@@ -189,7 +189,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "1671dc8a9ebc3b652d45eaf8479fdabccadd2dcf590336def73e9960f46882d6",
+      "input_fingerprint": "1cc30c8955cf1c5e404a645d0b457f9bd26361d070d940821e6298ec04721ba2",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
@@ -202,16 +202,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132209/2025/settlement/expenditure/elderly-medical-expenditure-nodes.parquet",
-          "sha256": "eb0d1366d4ef41b1190153af0aa890f2220fa9a648a388ba3aef67ebee9cdc30",
-          "bytes": 7574
+          "sha256": "cbe1adee6dc31017869ca99abdda7ef71c9e92c8ebab92e79efd076d2f0d4632",
+          "bytes": 7651
         },
         "row_count": 124
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132209/2025/settlement/expenditure/elderly-medical-expenditure-amounts.parquet",
-          "sha256": "0e108fb44e54bbcb1df6120320c352e275bc06f9bfcdf75ff1370d55c395b98e",
-          "bytes": 8471
+          "sha256": "9cda656fcfe266e02073858354a1a422e815431aedd3e7ed698d9bdaf301ce57",
+          "bytes": 8527
         },
         "row_count": 538
       }
