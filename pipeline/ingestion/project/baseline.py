@@ -35,6 +35,9 @@ def dump(out: Path, jurisdictions: set[str] | None, remote: bool) -> None:
 
     tables = run.load(remote=remote, jurisdictions=jurisdictions, page_texts=False)
     out.mkdir(parents=True, exist_ok=True)
+    # 前の実行の表を残さない（この commit が書かない表を、前の結果と比べないため）
+    for stale in out.glob('*.jsonl'):
+        stale.unlink()
     for name in KEYS:
         rows = sorted(json.dumps(list(row), ensure_ascii=False) for row in tables[name])
         (out / f'{name}.jsonl').write_text(''.join(f'{r}\n' for r in rows), encoding='utf-8')
@@ -51,7 +54,9 @@ def worktree(ref: str) -> Path:
 
 
 def read(directory: Path, name: str) -> list[list]:
-    return [json.loads(line) for line in (directory / f'{name}.jsonl').read_text(encoding='utf-8').splitlines()]
+    """表の行。基準の commit にまだ無い表は空とみなす。"""
+    path = directory / f'{name}.jsonl'
+    return [json.loads(line) for line in path.read_text(encoding='utf-8').splitlines()] if path.exists() else []
 
 
 def compare(base: Path, head: Path, samples: int) -> int:

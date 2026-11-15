@@ -186,7 +186,6 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
     for origin in list_sources(declared.get('lists', [])):
         path = fetch(origin['reference'], remote=remote)
         lines = read_cached(path, origin, remote=remote)
-        paths[origin['sha256']] = path
         tables['project_list_origin'].append((origin_id(origin), origin['jurisdiction'], origin['fiscal_year'],
                                               origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
         for line in lines:

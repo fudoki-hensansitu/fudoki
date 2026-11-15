@@ -111,7 +111,8 @@ def read(path: Path) -> list[Line]:
     if not out:
         raise ValueError(f'{path.name}: 主要事業の章が見つからない')
     for g in groups:
-        if not g['sum']:
+        # 小計が印字された項は、事業を1行も読めなくても確かめる（読み落としを通さない）
+        if not g['sum'] and g['printed'] is None:
             continue
         if g['printed'] is not None:
             ok = g['printed'] in (g['sum'], g['sum'] + g['extra'])

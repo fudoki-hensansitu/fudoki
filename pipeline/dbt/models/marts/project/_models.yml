@@ -149,7 +149,7 @@ models:
     description: 資料が新規の事業と印字したか（北区は「新」の印）。
     data_tests: [not_null]
   - name: subject_id
-    description: 当てた当初予算の科目。expenditure_subject の subject_id。会計と、一覧の款・項・目の名前で、下の段から当てる（風土記の判断）。当たらなければ NULL。
+    description: 当てた当初予算の科目。expenditure_subject の subject_id。会計と、一覧に印字された一番下の段（目・項・款）の名前で当てる（風土記の判断）。当たらなければ NULL（上の段には当てない）。
     data_tests:
     - relationships:
         arguments:
