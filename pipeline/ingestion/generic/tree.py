@@ -729,6 +729,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         for index, (label, money, code, name) in enumerate(entries):
             if label and not money and code is None and (found := shares.module.split(label, _cut)) is not None:
                 entries[index] = (found[0], [found[1]], None, normalize(text(found[0])))
+    if (wrapped := quirk(settings, 'wrapped_departments')) is not None:
+        entries = wrapped.module.join(entries)
 
     def measure(item, label, code) -> None:
         _measure(item, label, code, ocr or joined_codes, stops)
