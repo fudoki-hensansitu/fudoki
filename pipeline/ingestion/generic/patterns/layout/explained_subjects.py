@@ -51,7 +51,7 @@ HEAD = 80.0  # points: a table's header stands this far under its top
 OVER = 45.0  # points: the titles of a table stand this close over its top
 MARGIN = 20.0
 TITLE = re.compile(r'^(第[0-9]+[款項]|[（(][0-9]+[款項][)）]|[（(]?単位|.{0,5}歳[入出]予算の説明$)')
-END = re.compile(r'債務負担行為')  # the section after the 歳出 (`４ 債務負担行為`)
+END = re.compile(r'^[（(]?[0-9０-９]*[)）.．]?\s*債務負担行為')  # the section after the 歳出 (`４ 債務負担行為`), not a line that names one
 AMOUNT = re.compile(r'[0-9],[0-9]{3}|[0-9]千円')
 SUBJECT_HEAD = re.compile(r'(?:款|科目)(.*?)(?:本年度|(?:令和)?[0-9０-９]+年度)')  # the subject cells, then the first amount column's
 STRAY = re.compile(r'[A-Za-z]')  # a lone Latin letter in the subject cells (no 款・項・目 name is one)
@@ -199,9 +199,10 @@ class Block:
 
 
 def explanations(pages: list[Page], found: dict[int, list[Frame]], heading: re.Pattern | None,
-                 skip: re.Pattern | None = None, others: dict[int, list[Frame]] | None = None) -> tuple[list, list, list]:
-    """The explanation lines of the pages in reading order, cut into blocks at each heading: blocks, and the lines
-    before the first heading (an error unless none)."""
+                 skip: re.Pattern | None = None, others: dict[int, list[Frame]] | None = None) -> tuple[list, list, list, list]:
+    """The explanation lines of the pages in reading order, cut into blocks at each heading: blocks, the lines
+    before the first heading (an error unless none), the lines `skip` matches, and the lines under a table no
+    heading follows (orphans)."""
     blocks: list[Block] = []
     loose, skipped, orphans = [], [], []
     ended = False
@@ -355,6 +356,8 @@ def read(pages, *, header: dict | None = None, **options):
     spec = (header or {}).get('explanations') or {}
     heading = re.compile(spec['heading']) if spec.get('heading') else None
     item = re.compile(spec['item'])
+    if heading is not None and not {'code', 'name'} & set(heading.groupindex):
+        raise ValueError('header.explanations.heading names its 目 by a code or a name group')
     skip = re.compile(spec['skip']) if spec.get('skip') else None
     for page in pages:
         # On the observed page itself: digit coverage reads the same words (`runtime.run_pages`).
@@ -380,6 +383,8 @@ def read(pages, *, header: dict | None = None, **options):
         if re.search(r'[0-9]', text(line)):
             excluded.setdefault(page, []).append(region(page, line, SKIP_REASON))
     for page, line in orphans:
+        if item.match(text(line)):  # an item under a heading the pattern missed would be dropped with no trace
+            raise ValueError(f'An item under no heading: p{page} {text(line)!r}')
         if re.search(r'[0-9]', text(line)):
             excluded.setdefault(page, []).append(region(page, line, ORPHAN_REASON))
     inserts: dict[int, list] = {}  # table page → (bottom rule of the 目 row, lines)
@@ -400,6 +405,8 @@ def read(pages, *, header: dict | None = None, **options):
         if target is None:
             raise ValueError(f'No 目 {block.code} for the explanation on p{block.page}: {text(block.heading)!r}')
         frame, bottom = target
+        if any(f is frame and b == bottom for f, b, _ in inserts.get(frame.page, ())):
+            raise ValueError(f'Two explanations for one 目 row: p{block.page} {text(block.heading)!r}')
         inserts.setdefault(frame.page, []).append((frame, bottom, rows))
     synthetic, shifts_by_page = [], {}
     for page in pages:
@@ -489,6 +496,8 @@ def read(pages, *, header: dict | None = None, **options):
         logical.outside = [carry(g, shifts_by_page.get(g.page, ())) for g in logical.outside]
     for number, regions in excluded.items():
         owner = next((l for l in logicals if number in l.pages), None) or next(
-            (l for l in reversed(logicals) if l.pages and min(l.pages) <= number), logicals[0])
+            (l for l in reversed(logicals) if l.pages and min(l.pages) <= number), None) or (logicals or [None])[0]
+        if owner is None:
+            raise ValueError(f'No table of 款・項・目 to hold the excluded regions of p{number}')
         owner.excluded.extend(regions)
     return logicals
