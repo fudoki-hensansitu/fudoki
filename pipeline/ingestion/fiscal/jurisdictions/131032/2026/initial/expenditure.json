@@ -45,12 +45,6 @@
                     "kind": "財源内訳",
                     "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
                   }
-                },
-                "説明": {
-                  "excluded": {
-                    "kind": "経費内訳",
-                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
-                  }
                 }
               }
             }
@@ -66,6 +60,24 @@
             "breakdown": {
               "節": {
                 "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "wrapped_names_over_pages": true
+                },
+                "options": {
+                  "amount_brackets": true,
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "yen_notes": true,
+                  "wrap": "amount_on_last_line",
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2,
+                    "・": 3
+                  }
+                }
               }
             }
           }
@@ -121,12 +133,6 @@
                     "kind": "財源内訳",
                     "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
                   }
-                },
-                "説明": {
-                  "excluded": {
-                    "kind": "経費内訳",
-                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
-                  }
                 }
               }
             }
@@ -142,6 +148,24 @@
             "breakdown": {
               "節": {
                 "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "wrapped_names_over_pages": true
+                },
+                "options": {
+                  "amount_brackets": true,
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "yen_notes": true,
+                  "wrap": "amount_on_last_line",
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2,
+                    "・": 3
+                  }
+                }
               }
             }
           }
@@ -197,12 +221,6 @@
                     "kind": "財源内訳",
                     "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
                   }
-                },
-                "説明": {
-                  "excluded": {
-                    "kind": "経費内訳",
-                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
-                  }
                 }
               }
             }
@@ -218,6 +236,24 @@
             "breakdown": {
               "節": {
                 "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "wrapped_names_over_pages": true
+                },
+                "options": {
+                  "amount_brackets": true,
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "yen_notes": true,
+                  "wrap": "amount_on_last_line",
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2,
+                    "・": 3
+                  }
+                }
               }
             }
           }
@@ -273,12 +309,6 @@
                     "kind": "財源内訳",
                     "reason": "本年度の財源内訳の欄を取り込まない。特定財源の種類（国庫支出金・都支出金など）と額が名前の下に複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度の金額で確かめる。"
                   }
-                },
-                "説明": {
-                  "excluded": {
-                    "kind": "経費内訳",
-                    "reason": "説明の欄は今回取り込まない。事業・施策の行と括弧の小計、・の内訳、円で印字する月額などの積算が1つの欄に並び、事業の木をまだ組めないため。目の和は節の金額で確かめる。"
-                  }
                 }
               }
             }
@@ -294,6 +324,24 @@
             "breakdown": {
               "節": {
                 "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "shape",
+                "quirks": {
+                  "wrapped_names_over_pages": true
+                },
+                "options": {
+                  "amount_brackets": true,
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "yen_notes": true,
+                  "wrap": "amount_on_last_line",
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2,
+                    "・": 3
+                  }
+                }
               }
             }
           }
@@ -316,39 +364,39 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general",
-      "input_fingerprint": "0c6d376538ba3e058829c6ef78fb9b665bc064014db51676d927846474f6ae20",
+      "input_fingerprint": "779252b6889c823d20662e457f2d34b1a7c5ce981ef9c2989e0221545c23ab65",
       "account": "一般会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
         "金額の単位は printed 71頁 から決めた。款の和 214,300,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。"
+        "金額の注記 14 件（積算 14）を注記軸に置いた。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131032/2026/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "ccbdd712c8d46339eab84b1ab6f3378279f0b530a251bc8e4d76794cecce7c2d",
-          "bytes": 25592
+          "sha256": "0d20a8b6d5ac4a045ba0dfd08f79086a833efdc39cfb95c31d790b86a38ea0fc",
+          "bytes": 94248
         },
-        "row_count": 951
+        "row_count": 2918
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131032/2026/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "6cc596bb0032b58ac50a5850cb6eabc86bd223b02b4aa51b42547d6edb85ad7f",
-          "bytes": 25732
+          "sha256": "b23f5a790216d5c8d4a3ae9a1361ba750df3348e7ab5e7669574707e12e046f6",
+          "bytes": 66596
         },
-        "row_count": 1263
+        "row_count": 3230
       }
     },
     {
       "table_id": "nhi-initial",
       "conversion_id": "nhi",
-      "input_fingerprint": "8e4a356379152ba3ff5bb86dc82eb497b676bfa5ed98b7ba47d01037ac823ee1",
+      "input_fingerprint": "1eeb6ab07e12b87d350c515cb8fafa4acfccca51c5e3276ddcc1f294b71c299f",
       "account": "国民健康保険事業会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
         "金額の単位は printed 18頁 から決めた。款の和 25,504,463（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
@@ -357,27 +405,27 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131032/2026/initial/expenditure/nhi-initial-nodes.parquet",
-          "sha256": "5f60f28bb475b0ec3ba211c15a017fb562b2486fe10e918c6c9bbf0f72f09dac",
-          "bytes": 6611
+          "sha256": "93aa627715bb29f1a465c4cfb4254e777f8ff394276680ad09112e70fd22f500",
+          "bytes": 9167
         },
-        "row_count": 102
+        "row_count": 172
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131032/2026/initial/expenditure/nhi-initial-amounts.parquet",
-          "sha256": "04758624d5b97eb5bf127286575971b0248c88e80e02afe079426610bf5b880c",
-          "bytes": 5973
+          "sha256": "35665a3102b052db2b7477a99d2579932b57e4e74d15558a4dba39e7599b2244",
+          "bytes": 7746
         },
-        "row_count": 206
+        "row_count": 276
       }
     },
     {
       "table_id": "kouki-initial",
       "conversion_id": "kouki",
-      "input_fingerprint": "ce8f38c35a084bd0a82d2aebabc34ac4e6201af2c0c710ebea14e90caa7517dc",
+      "input_fingerprint": "03938c2720bd66ae831413e33a030752daf022e7a85ea816d566ce3bfbe3585e",
       "account": "後期高齢者医療会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
         "金額の単位は printed 6頁 から決めた。款の和 8,272,085（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
@@ -386,27 +434,27 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131032/2026/initial/expenditure/kouki-initial-nodes.parquet",
-          "sha256": "9bc866c140a137bc62d44c5db280ed24baab02f28284220240427f6603ac2c6c",
-          "bytes": 4080
+          "sha256": "dc80318fba6f6383f5b7066e6ce783f4893faae1feac5e6a6216f812ed48d8f2",
+          "bytes": 4807
         },
-        "row_count": 36
+        "row_count": 52
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131032/2026/initial/expenditure/kouki-initial-amounts.parquet",
-          "sha256": "d2e13d0eb895d57e80731303189c2f19ade8f5d3512fc7efb85f088cd8f37df2",
-          "bytes": 3338
+          "sha256": "04d5ac91a109f755fdd20052d7c542b2b9d6b588549e46d11e3aba94c6f11717",
+          "bytes": 3922
         },
-        "row_count": 72
+        "row_count": 88
       }
     },
     {
       "table_id": "kaigo-initial",
       "conversion_id": "kaigo",
-      "input_fingerprint": "29cb763a2c0ccbaaa07dbef202118594f8bb84969989f85ed54e9e3c9031d141",
+      "input_fingerprint": "d68a6d8eddfa71ea5d02286aeaf4b1115156606c0235d606d45d53dbd5ade982",
       "account": "介護保険会計",
       "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape'}。",
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'shape'}。",
         "金額の単位は printed 11頁 から決めた。款の和 20,007,381（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。"
       ],
@@ -415,18 +463,18 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131032/2026/initial/expenditure/kaigo-initial-nodes.parquet",
-          "sha256": "db755815d39f4ccbc538d036018406ea3b04a0839570669488a8fda4e647dc0a",
-          "bytes": 5538
+          "sha256": "f1178a67a7e479951083ed8abb4baf236a2ac8a31fb2f1ec5fb0f5f9b10a7ec7",
+          "bytes": 7815
         },
-        "row_count": 70
+        "row_count": 120
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131032/2026/initial/expenditure/kaigo-initial-amounts.parquet",
-          "sha256": "91408b6c99aa3c11a16ec9f6d56ca6493cffba5da73b4f8b712bfeaf3bda91dc",
-          "bytes": 4696
+          "sha256": "0446637c589e4b838088b873b227c5323ab54219d3bf2398031ef08cf8e13cc3",
+          "bytes": 6165
         },
-        "row_count": 136
+        "row_count": 186
       }
     }
   ]

@@ -578,6 +578,9 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             code, name = held[0], normalize(held[1])
         if code is not None and len(name) > 1 and re.match(r'[０-９]{3,}', raw_text):
             code, name = None, line_text  # `２０３０ビジョン…`: three or more full-width digits begin a name, not an item number (a one-character name stays `161`/`人`)
+        if (code is not None and (bracketed := document_quirk('bracketed_numbers')) is not None
+                and (held := bracketed.module.split(line_text)) is not None):
+            code, name = held  # `(2)７歳以上…` is item 2; `(26所 児童定員…)` is no item number
         if code is not None and (full := document_quirk('full_width_names')) is not None and full.module.names(raw_text):
             code, name = None, line_text
         script = re.match(r'([0-9]+)(?=[０-９])', raw_text)
@@ -1814,11 +1817,13 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     prefixes = note_prefixes(settings)
     rows = quirk(settings, 'rows')
     spaced = document_quirk('letter_spaced_lines')
+    overlap = quirk(settings, 'wrapped_line_overlap')
     unnumbered = quirk(settings, 'unnumbered_shift')
     highlights = quirk(settings, 'listed_highlights')
     whole = quirk(settings, 'whole_name_notes')
     dots = quirk(settings, 'dot_bullets')
     whole_names = {normalize(name): kind for name, kind in whole.value.items()} if whole is not None else {}
+    tables, tabled = quirk(settings, 'rate_tables'), False
     for item in items:
         if rows is not None:
             rows.module.unnumber(item)
@@ -1828,6 +1833,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             dots.module.shift(item)
         raw = normalize(text(item.lines[0]))
         note = raw.startswith(prefixes) or raw in whole_names
+        if tables is not None and (tabled := tables.module.within(raw, item, tabled, tables.value)) and not note:
+            note, item.hint = True, tables.module.KIND
         if not note and highlights is not None and highlights.module.listed(item) and id(item) not in column_amount_items:
             note, item.hint = True, highlights.module.KIND
         waiting = result[-1] if result else None
@@ -1899,7 +1906,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
                 and item.page == previous.page
                 and bisect_right(subject_starts, previous.anchor) == bisect_right(subject_starts, item.anchor)
                 and ((abs(item.indent - previous.indent) <= 3 + float(settings.get('name_start_slack', 0))
-                      and -(spaced.module.overlap(max(g.y1 - g.y0 for g in item.glyphs)) if spaced is not None else 0)
+                      and -max(spaced.module.overlap(max(g.y1 - g.y0 for g in item.glyphs)) if spaced is not None else 0,
+                               float(overlap.value) * max(g.y1 - g.y0 for g in item.glyphs) if overlap is not None else 0)
                       <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs))
                      or (spaced is not None and spaced.module.same_line_after(previous, item)))):
             if previous.role == 'annotation' and id(item) in column_amount_items:
@@ -2257,6 +2265,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                1 if (layout or {}).get(group.axis, {}).get('single_part_notes') else 2)
     # The amount of a label that ends a page is the first line of the next page, under the subject's row
     # repeated at its top (`wrap: amount_on_last_line`, `items` keeps that line as a nameless item).
+    # On facing pages the axis's next page is two physical pages on, past the subject page (港区 R8: `1 …をつくる` ends
+    # p207, its `18,101` heads p209); an axis that declares `wrapped_names_over_pages` (pages it continues over are
+    # facing pages) joins two pages on as well. `tails` keeps the last item of a page that prints the axis.
     tails: dict[str, Item] = {}
     for _, ordered, found in all_items:
         for group in ordered:
@@ -2269,13 +2280,18 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                  or quirk((layout or {}).get(group.axis), 'amount_over_page') is not None) and previous is not None
                     and mine and not mine[0].name and mine[0].amounts and mine[0].code is None
                     and not previous.amounts and previous.name
-                    and previous.role in ('node', 'note', 'annotation') and mine[0].page == previous.page + 1):
+                    and previous.role in ('node', 'note', 'annotation')
+                    and (mine[0].page - previous.page == 1
+                         or (mine[0].page - previous.page == 2
+                             and quirk((layout or {}).get(group.axis), 'wrapped_names_over_pages') is not None))):
                 first = mine.pop(0)
                 previous.lines += first.lines
                 previous.amounts += first.amounts
             elif (previous is not None and mine
-                  and (over := quirk((layout or {}).get(group.axis), 'names_over_pages')) is not None
-                  and over.module.runs_on(previous, mine[0])):
+                  and (((over := quirk((layout or {}).get(group.axis), 'names_over_pages')) is not None
+                        and over.module.runs_on(previous, mine[0]))
+                       or ((wrapped := quirk((layout or {}).get(group.axis), 'wrapped_names_over_pages')) is not None
+                           and wrapped.module.runs_on(previous, mine[0])))):
                 first = mine.pop(0)
                 previous.role = 'node'
                 previous.name += first.name
