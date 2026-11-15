@@ -1,0 +1,28 @@
+version: 2
+
+seeds:
+  - name: evaluation_sheet_link
+    meta:
+      role: judgment
+    description: |
+      評価シートを事業の行につないだ人の判断。**風土記の判断**。機械のつなぎ方（ingestion/project/link_sheets.py）が
+      当たらない・誤るシートだけに行を置き、行のあるシートは機械のつなぎ方を使わない。
+      シートは出典（origin_id）・頁・頁の中の順で引き、つなぐ先は内訳の detail_id（複数なら行を分ける）。
+      事業ID は前の年度を取り込むと変わる（ADR 0046）ので持たない。
+    config:
+      column_types:
+        jurisdiction_code: varchar
+        fiscal_year: integer
+        origin_id: varchar
+        page: integer
+        position: integer
+        detail_id: varchar
+        method: varchar
+    columns:
+      - name: method
+        description: seed（つなぐ先を人が決めた）・none（つながない。detail_id は空）。
+        data_tests:
+          - not_null
+          - accepted_values:
+              arguments:
+                values: ['seed', 'none']

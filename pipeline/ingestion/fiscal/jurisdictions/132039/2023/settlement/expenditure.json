@@ -1,0 +1,308 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132039",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ],
+      "id": "general-settlement",
+      "inputs": [
+        {
+          "sha256": "00bafcfae6cc494b21439402fe7f0f775b59c5cbd8b55694bd0d76aa2e6d3579"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "□": "説明",
+                    "○": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true
+          }
+        }
+      }
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "c4732ee73098adbefbdfa153408d676b5905297a8e53255423f9ef4de0c9962b"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "□": "説明",
+                    "○": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a048ff26262729517e81d851d1f000c70d0ace10098742138551ea551a236674"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "□": "説明",
+                    "○": 1
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-expenditure"
+        }
+      ]
+    },
+    {
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ],
+      "id": "kouki-settlement",
+      "inputs": [
+        {
+          "sha256": "8ab9d4dbe70708bba3e98aa519003247094e383ec6b7aab57af23b4ee15d4579"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "detail_pages": [
+          [
+            1,
+            3
+          ]
+        ],
+        "table_id": "kouki-expenditure-detail",
+        "workflow": {
+          "reading": {
+            "pattern": "rotated_columns",
+            "profile": "fiscal/jurisdictions/132039/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "carried_totals"
+          ]
+        }
+      }
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "kouki-expenditure-detail",
+      "conversion_id": "kouki-settlement",
+      "input_fingerprint": "33395840ee4e95e211df2080457bc41cea4d073d44a026318cf8ea95b2496dfc",
+      "account": "後期高齢者医療会計",
+      "notes": [
+        "武蔵野市後期高齢者医療会計の決算事項別明細書（歳出）。款・項・目の印字欄を所属する葉へ反復。最細は法定節（節がない予備費目は目）。節一覧と備考は同じ目の独立した分解であり相互の対応を推定していない。目_備考は目の備考欄の原文（□事業・○経費・積算）。金額は円の原表記（△は減額符号）。歳出合計はlocal観測に残しraw行にしない。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2023/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
+          "sha256": "3c637359f7911f091fb117c16190f4d2cbfe7d8672c14af8d69d91082899ad0c",
+          "bytes": 4862
+        },
+        "row_count": 48
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2023/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
+          "sha256": "3cfef6eb266e23d7c7c11c2a142a663f757233b03bb910f0847eafd4f2e906c2",
+          "bytes": 5055
+        },
+        "row_count": 249
+      }
+    },
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "7ee3186f3a61bd49ae19cd5654d3d7beac47a2b68e181734b99158097e402c64",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 89頁 から決めた。款の和 76,178,405,001 と印字の「歳出合計」76,178,405,001 が一致。",
+        "金額の注記 25 件（不用額 2・充用 23）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（984 件）を、印字された語から辞書の見出しに寄せた: 金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2023/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "c842b42eff8909bab708872131c23b0a80aeaa6ea2037ad48e546c5078618f69",
+          "bytes": 136396
+        },
+        "row_count": 4714
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2023/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "0795d16e38ee3188b1c2e3c51489cd06518bcc723a0357229b4303497734ef3f",
+          "bytes": 126856
+        },
+        "row_count": 8730
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "6d9b4e3f4cff2590b9b80ff4316e79067c6dd7d390258d6f779b62a1c8483081",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 7頁 から決めた。款の和 13,697,493,855 と印字の「歳出合計」13,697,493,855 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（45 件）を、印字された語から辞書の見出しに寄せた: 金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2023/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "46b0d4e2fd5836c204bb3f4aeb28dc27097f2cf097165950e29aeb5895d549e1",
+          "bytes": 10846
+        },
+        "row_count": 209
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2023/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "209672946d548542ab258dd3caaf0d7915d368a98a1db68cd879dee366d8674d",
+          "bytes": 9804
+        },
+        "row_count": 715
+      }
+    },
+    {
+      "table_id": "long-term-care-expenditure",
+      "conversion_id": "long-term-care-settlement",
+      "input_fingerprint": "af44fe6ede71e7a571b763b8ade5057f3a3a9a023c1411d971c9d79ec6eddd6d",
+      "account": "介護保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 5頁 から決めた。款の和 12,214,381,610 と印字の「歳出合計」12,214,381,610 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（48 件）を、印字された語から辞書の見出しに寄せた: 金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2023/settlement/expenditure/long-term-care-expenditure-nodes.parquet",
+          "sha256": "680358d21bfc32c1d639de0d8744ee7ab7af0e455453726f0ccfb85e22dd3989",
+          "bytes": 9576
+        },
+        "row_count": 190
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132039/2023/settlement/expenditure/long-term-care-expenditure-amounts.parquet",
+          "sha256": "bc1ea7435bc8a9c0f4c02c919b2ea5770499aadb2d4503038df7944b3be2863a",
+          "bytes": 9042
+        },
+        "row_count": 516
+      }
+    }
+  ]
+}

@@ -210,7 +210,7 @@ export async function loadYearExtras(env: Env, code: string, year: number, kind:
         }
       })
     }),
-    readSheetCounts(apiCall(env), { code, year }),
+    readSheetCounts(apiCall(env), { code, year, kind }),
     readListPage(apiCall(env), allQuery),
   ])
   return { measures, sheetCounts, hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage } }

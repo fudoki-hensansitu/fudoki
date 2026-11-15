@@ -62,6 +62,9 @@ ERA_INITIAL_DATE = re.compile(r'[(（]?[RHS][0-9]{1,2}[.．](?:0?[1-9]|1[0-2])[.
 FISCAL_YEAR_DOCUMENT_NUMBER = re.compile(
     DOCUMENT_NUMBER.pattern.replace('[0-9]+年)', '[0-9]+年度?)')
     .replace('(?:議案)?(?:(?:市|区|町|村)?議会議決', '[・．.、,]?(?:議案)?(?:(?:市|区|町|村)?議会議決'))
+# The derivation above silently does nothing if DOCUMENT_NUMBER is reworded; fail at import instead.
+assert FISCAL_YEAR_DOCUMENT_NUMBER.pattern != DOCUMENT_NUMBER.pattern and '年度?)' in FISCAL_YEAR_DOCUMENT_NUMBER.pattern \
+    and "[・．.、,]?(?:議案)?(?:(?:市|区|町|村)?議会議決" in FISCAL_YEAR_DOCUMENT_NUMBER.pattern
 
 
 ORDINAL_PHRASE = re.compile(r'(?:[^0-9,円]|第[0-9]+(?:款|項|目|節|条|土曜日|ブロック|期|農園?)|[0-9]+ブロック|同[款項目節][0-9]+)+')

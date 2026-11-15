@@ -109,6 +109,7 @@ export const EVALUATION_INDICATOR_TABLE = 'evaluation_indicator'
 export const EVALUATION_INDICATOR_VALUE_TABLE = 'evaluation_indicator_value'
 /** 評価シート。1枚 = 小事業の1年度 */
 export const EVALUATION_SHEET_TABLE = fiscalTable('evaluation_sheets', 'evaluation_sheet')
+export const EVALUATION_SHEET_PROJECT_TABLE = 'evaluation_sheet_project'
 export const BUDGET_PROPOSAL_TABLE = 'budget_proposal'
 export const BUDGET_PROPOSAL_ORIGIN_TABLE = 'budget_proposal_origin'
 /** 予算案の施策。資料の1件 */
