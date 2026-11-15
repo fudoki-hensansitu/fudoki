@@ -81,6 +81,18 @@ export async function loadCatalog(env: Env, prefectureCode?: string, withPopulat
   return rows.map((j) => toCatalogEntry(j, populations.get(j.jurisdiction_code) ?? []))
 }
 
+/** 名前で自治体を探す1頁（list_jurisdictions を決算を収録した自治体に絞り、page_token で続きを読む）。名前がその語で始まる自治体が先。人口は足さない */
+export async function searchCatalog(env: Env, input: { name?: string; code?: string; pageSize: number; pageToken?: string }): Promise<{ entries: CatalogEntry[]; next: string | null }> {
+  const r = await apiCall(env)('list_jurisdictions', {
+    document_kind: 'settlement',
+    page_size: input.pageSize,
+    ...(input.name ? { name: input.name } : {}),
+    ...(input.code ? { code: input.code } : {}),
+    ...(input.pageToken ? { page_token: input.pageToken } : {}),
+  })
+  return { entries: r.jurisdictions.map((j) => toCatalogEntry(j, [])), next: r.next_page_token ?? null }
+}
+
 /** 1つの自治体と収録範囲（get jurisdiction）。収録の無いコードは null */
 export async function loadCatalogEntry(env: Env, code: string): Promise<CatalogEntry | null> {
   const [j, populations] = await Promise.all([

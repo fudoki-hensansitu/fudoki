@@ -9,21 +9,23 @@ import { Mark } from '../nav/site-nav'
 import { Picker as TownPicker } from './town-picker'
 import { TownPalette } from '../nav/town-palette'
 import { LocateError, locateMunicipality } from './locate'
+import { townOf } from './towns'
+import { withCheckDigit } from '../jurisdiction/code'
 import type { MapEntry } from '../jurisdiction/index-table'
 import './onboarding.css'
 
 type Locate = { busy?: boolean; error?: string; denied?: boolean; hit?: MapEntry }
 
 /** 住んでいるまちを聞く札（はじめての流れの 1 / 2）。名前の入力欄をはじめから出し、「現在地から選ぶ」をスマホでは下、PC では右隣に置く。ホームの「リセット」のあともここに戻る */
-export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; again?: boolean }) {
+export function AskTown({ listed, onPick, again }: { listed: boolean; onPick: (e: MapEntry) => void; again?: boolean }) {
   const [loc, setLoc] = React.useState<Locate | null>(null)
   const locate = async () => {
     setLoc({ busy: true })
     try {
       const muni = await locateMunicipality()
-      // 自治体コードは検査数字を足した6桁なので、先頭5桁で引く
-      const hit = entries.find((e) => e.code.startsWith(muni))
-      setLoc(hit ? { hit } : { error: '現在地のまちは、まだ収録していません' })
+      // 自治体コードは検査数字を足した6桁なので、先頭5桁に検査数字を足して引く
+      const hit = await townOf(withCheckDigit(muni))
+      setLoc(hit ? { hit } : hit === undefined ? { error: '現在地のまちは、まだ収録していません' } : { error: '現在地のまちを調べられませんでした' })
     } catch (e) {
       setLoc(e instanceof LocateError ? { error: e.message, denied: e.denied } : { error: '現在地を取得できませんでした' })
     }
@@ -33,12 +35,12 @@ export function AskTown({ entries, onPick, again }: { entries: MapEntry[]; onPic
       {again ? null : <Steps at={1} of={2} onBrand />}
       <h2 className="mb-4 text-[20px] leading-snug font-semibold sm:text-[24px]">住んでいるまちを選ぶ</h2>
       {/* 一覧を読めなかったときに「未収録」と誤って伝えないよう、検索と現在地を出さない */}
-      {entries.length ? (
+      {listed ? (
         <>
           {/* PC は名前の欄と「現在地から選ぶ」を1行に並べ、スマホは縦に積む */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
             <div className="min-w-0 flex-1">
-              <TownPicker entries={entries} onPick={onPick} placeholder="住んでいるまちの名前（例：品川区）" />
+              <TownPicker onPick={onPick} placeholder="住んでいるまちの名前（例：品川区）" />
             </div>
             <button
               type="button"
@@ -165,10 +167,10 @@ export function Intro({ mode }: { mode: 'full' | 'compact' | 'hidden' }) {
 }
 
 /** まちを選んでいないときの画面。reveal があれば（まちを選んだ直後）2歩目の要点を出す */
-export function Empty({ entries, onPick, reveal, again }: { entries: MapEntry[]; onPick: (e: MapEntry) => void; reveal: React.ReactNode; again?: boolean }) {
+export function Empty({ listed, onPick, reveal, again }: { listed: boolean; onPick: (e: MapEntry) => void; reveal: React.ReactNode; again?: boolean }) {
   return (
     <>
-      {reveal ? <div key="reveal">{reveal}</div> : <AskTown entries={entries} onPick={onPick} again={again} />}
+      {reveal ? <div key="reveal">{reveal}</div> : <AskTown listed={listed} onPick={onPick} again={again} />}
     </>
   )
 }
