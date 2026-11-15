@@ -18,7 +18,7 @@ import urllib.request
 from pathlib import Path
 
 import duckdb
-from population import DATABASES, ROWS_PER_STATEMENT, write
+from population import DATABASES, write
 
 # 年度（西暦）ごとの Excel の番号（soumu.go.jp/main_content/<番号>.xlsx）。(1)概況・(4)性質別・(5)地方債現在高等の順
 FILES: dict[int, dict[str, tuple[str, str, str]]] = {
@@ -30,11 +30,11 @@ FILES: dict[int, dict[str, tuple[str, str, str]]] = {
 }
 
 # 列ごとに、見出し（上の8行をつないだもの）に含まれる語（= で始まるものは見出しと一致）。どれも1列にだけ当たることを確かめる。
-# 金額は千円で載るので円にする。比率は %、財政力指数は指数のまま
+# 金額は千円で載るので円にする（yen_na は「-」を0ではなく該当なしと読む）。比率は %、財政力指数は指数のまま
 COLUMNS: dict[int, dict[str, tuple[tuple[str, ...], str]]] = {
     0: {
         'expenditure_total_yen': (('歳出総額',), 'yen'),
-        'standard_fiscal_scale_yen': (('標準財政規模',), 'yen'),
+        'standard_fiscal_scale_yen': (('標準財政規模',), 'yen_na'),
         'real_balance_yen': (('実質収支(C)-(D)',), 'yen'),
         'real_balance_ratio': (('実質収支比率',), 'ratio'),
         'current_balance_ratio': (('=経常収支比率/(%)',), 'ratio'),
@@ -60,6 +60,8 @@ COLUMNS: dict[int, dict[str, tuple[tuple[str, ...], str]]] = {
 NAMES = [name for kind in COLUMNS.values() for name in kind]
 # 見出しの行（0 始まり）と、値が始まる前の行の数
 HEADER_ROWS = range(7, 15)
+# 1つの insert 文に載せる行の数。20列あるので、D1 の1文の上限（100KB）に余裕を持たせる
+ROWS_PER_STATEMENT = 200
 
 
 def download(number: str, folder: Path) -> Path:
@@ -79,11 +81,14 @@ def header(rows: list[tuple], column: int) -> str:
 
 
 def value(text: str | None, kind: str) -> float | int | None:
-    """'-'・空欄は数字の無い印（赤字が無いときの実質赤字比率など）なので null にする"""
-    if text is None or text.strip() in ('', '-', '－', '―', '…', '*'):
+    """「-」は、金額なら0（減債基金が無いなど）、比率と標準財政規模なら該当なし（赤字が無い、特別区など）で null にする"""
+    if text is None or text.strip() == '':
         return None
+    if text.strip() in ('-', '－', '―'):
+        return 0 if kind == 'yen' else None
     number = float(text.replace(',', ''))
-    return round(number * 1000) if kind == 'yen' else number
+    # 比率は Excel の浮動小数（78.099999…）を出典の桁に丸める
+    return round(number * 1000) if kind in ('yen', 'yen_na') else round(number, 3)
 
 
 def read_file(con: duckdb.DuckDBPyConnection, path: Path, columns: dict[str, tuple[tuple[str, ...], str]]) -> dict[str, dict[str, object]]:
