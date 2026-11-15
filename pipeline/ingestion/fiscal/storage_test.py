@@ -22,9 +22,10 @@ class FetchTest(unittest.TestCase):
         self.cached.parent.mkdir(parents=True)
         self.cached.write_bytes(b'table before re-save')
 
-    def get(self, command, stdout, check):
+    def get(self, command, stdout, **_):
         self.assertEqual(command[:5], ['cf', 'r2', 'objects', 'get', self.reference['key']])
         stdout.write(self.body)
+        return subprocess.CompletedProcess(command, 0, stderr=b'')
 
     def test_remote_refetches_an_object_whose_cache_is_stale(self):
         with patch.object(storage.subprocess, 'run', side_effect=self.get) as run:

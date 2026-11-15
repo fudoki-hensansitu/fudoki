@@ -5,7 +5,9 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
+import time
 from pathlib import Path, PurePosixPath
 
 import gzip
@@ -15,6 +17,21 @@ from ingestion.fiscal.manifest import BUCKET, object_key, ocr_key, sha_file, tab
 from ingestion.paths import CACHE
 
 OBJECTS = CACHE / 'objects'
+
+
+def _get(key: str, bucket: str, stream) -> None:
+    """Download one object; R2 answers 429 when a full build fetches every table, so wait and retry that."""
+    for attempt in range(5):
+        stream.seek(0)
+        stream.truncate()
+        done = subprocess.run(['cf', 'r2', 'objects', 'get', key, '--bucket-name', bucket, '--quiet'],
+                              stdout=stream, stderr=subprocess.PIPE)
+        if done.returncode == 0:
+            return
+        if b'429' not in done.stderr or attempt == 4:
+            sys.stderr.buffer.write(done.stderr)
+            raise subprocess.CalledProcessError(done.returncode, done.args, stderr=done.stderr)
+        time.sleep(2 ** attempt)
 
 
 def verify(path: Path, reference: dict) -> None:
@@ -101,8 +118,7 @@ def fetch(reference: dict, *, remote: bool = False) -> Path:
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
         temporary = Path(stream.name)
         try:
-            subprocess.run(['cf', 'r2', 'objects', 'get', reference['key'], '--bucket-name',
-                            reference.get('bucket', BUCKET), '--quiet'], stdout=stream, check=True)
+            _get(reference['key'], reference.get('bucket', BUCKET), stream)
         except BaseException:
             temporary.unlink(missing_ok=True)
             raise
