@@ -5,6 +5,7 @@ from types import SimpleNamespace
 from ingestion.generic.layout import Logical, logical_pages
 from ingestion.generic.mixed import aligned, completing, frame_rules, learn_frames, gated, learn_origins, moved_unread, numbers, shift, unlearned_amounts
 from ingestion.generic.observe import Page, Rule, Word
+from ingestion.generic.scan import stacked
 from ingestion.generic.tree import level_indents, mixed_document, snap_ocr_levels
 from ingestion.lib import pdf_rules
 
@@ -60,6 +61,21 @@ class MixedPagesTest(unittest.TestCase):
         taught = logical_pages(pages, ocr_pages=frozenset({2}))
         self.assertEqual(kinds(taught), [['label', 'amount'], ['label', 'amount']])
         self.assertEqual([logical.ocr for logical in taught], [False, True])
+
+    def test_a_document_of_ocr_pages_alone_learns_the_column_kinds_from_them(self):
+        # 栃木県の決算 R3 の特別会計: 文字が輪郭の図形で、どの頁も OCR で読む
+        words = [Word('科目', 20, 55, 38, 64), Word('支出済額', 110, 55, 146, 64), Word('総務費', 20, 120, 56, 129),
+                 Word('1,000', 150, 120, 172.5, 129)]
+        pages = [Page(number, 300, 500, list(words), frame(10, 200, {'wide': (100,), 'narrow': ()})) for number in (1, 2)]
+        logicals = logical_pages(pages, ocr_pages=frozenset({1, 2}))
+        self.assertEqual([[band.kind for band in logical.bands] for logical in logicals], [['label', 'amount']] * 2)
+
+    def test_a_column_paddle_reads_down_a_header_cell_is_a_word_a_character(self):
+        line = {'bbox_pdf_pt': [437.3, 91.4, 447.3, 119.0]}
+        pieces = [Word('継', 437.3, 91.4, 447.3, 100.8), Word('繰', 437.3, 100.8, 447.3, 111.1), Word('繰', 437.3, 109.4, 447.3, 119.0)]
+        self.assertTrue(stacked(line, pieces))
+        self.assertFalse(stacked({'bbox_pdf_pt': [294.0, 100.0, 359.0, 108.0]},
+                                 [Word('当', 294, 100, 307, 108), Word('初', 307, 100, 320, 108)]))
 
     def test_an_ocr_heading_the_text_pages_print_keeps_their_spelling(self):
         # The scan correction turns `事故繰越し` into `事故繰越` (a misread elsewhere); this document prints the し.

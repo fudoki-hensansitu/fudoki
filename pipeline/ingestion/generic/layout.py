@@ -695,8 +695,10 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
     # grouped number or only zeros appear (item codes alone are labels).
     stats: dict[tuple, dict[str, int]] = defaultdict(lambda: defaultdict(int))
     zero_kinds = document_quirk('zero_kind_lines')
+    # The text pages teach the kinds; a document read from OCR alone (glyphs drawn as outlines) learns from its OCR pages
+    teaching = ocr_pages if any(page.number not in ocr_pages for page, _, _ in per_page) else frozenset()
     for page, bands, _ in per_page:
-        if page.number in ocr_pages:
+        if page.number in teaching:
             continue
         for band in bands:
             for line in lines(band.words):
