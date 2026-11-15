@@ -52,7 +52,7 @@ def split(entries: list[tuple], words: list) -> tuple[list[tuple], set[int]]:
         labels = _labels(label) if label and not money and code is None else []
         amounts = _below(labels, words) if len(labels) > 1 and all(reads_as_note(text(g)) for g in labels) else None
         if amounts is None:
-            result.append((label, money, code, name))
+            result.append(entries[index])  # the same entry, so a role judged for it stays with it
             continue
         used = {id(w) for w in amounts}
         following = entries[index + 1] if index + 1 < len(entries) else None

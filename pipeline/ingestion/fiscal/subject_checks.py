@@ -33,7 +33,9 @@ def check_subject(nodes: list[dict], amounts: list[dict], document_kind: str,
             heading = dictionary_header(a['header_path'], document_kind)
             phase = 'adjusted' if amount_phase(heading, document_kind, subjects[a['node_key']]['axis_header'], '目') == 'adjusted' \
                 else heading
-            by_heading.setdefault(a['node_key'], {})[phase] = value
+            found = by_heading.setdefault(a['node_key'], {})
+            if phase != 'adjusted' or heading == '計' or phase not in found:  # 予算現額／計 over its parts
+                found[phase] = value
     unspent = {key for key, found in by_heading.items()
                if found.get('不用額') is not None and found.get('不用額') == found.get('adjusted') and found['不用額'] != 0}
     kan_printed = len({n['node_key'] for n in kan} & printed)
