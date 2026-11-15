@@ -6,6 +6,314 @@
     {
       "target": {
         "jurisdiction": "281000",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度神戸市各会計予算に関する説明書",
+          "landing_url": "https://www.city.kobe.lg.jp/a61436/shise/financial/yosankessan.html",
+          "inspected_at": "2026-11-15T14:46:16.733819+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/48584/2024yosannsetumeisyo.pdf",
+              "sha256": "0a17f0a61859c920079d0c785022a50c2031293394d50ca407d7787eeaf43519",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 52,
+                      "end": 179
+                    }
+                  ]
+                },
+                {
+                  "account": "市場事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 220,
+                      "end": 224
+                    }
+                  ]
+                },
+                {
+                  "account": "食肉センター事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 240,
+                      "end": 244
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 259,
+                      "end": 265
+                    }
+                  ]
+                },
+                {
+                  "account": "母子父子寡婦福祉資金貸付事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 280,
+                      "end": 281
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 287,
+                      "end": 288
+                    }
+                  ]
+                },
+                {
+                  "account": "市街地再開発事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 293,
+                      "end": 296
+                    }
+                  ]
+                },
+                {
+                  "account": "市営住宅事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 311,
+                      "end": 316
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 335,
+                      "end": 343
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 358,
+                      "end": 361
+                    }
+                  ]
+                },
+                {
+                  "account": "空港整備事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 368,
+                      "end": 370
+                    }
+                  ]
+                },
+                {
+                  "account": "公債費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 384,
+                      "end": 384
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "令和6年度当初予算の歳出明細。予算・決算のページ（a61436/shise/financial/yosankessan.html）に掲載の「令和6年度神戸市各会計予算に関する説明書」1冊（物理577頁、文字 PDF）を選定（2026-11-15確認）。各会計の歳入歳出予算事項別明細書の「３ 歳出」は、項ごとに（款）（項）の題字を枠の上に印字し、枠は款・項・目、本年度・前年度・比較、本年度の財源内訳（特定財源・一般財源）、節（区分・金額）、説明の欄を持つ。単位は千円（題字の行の「（単位：千円）」）。説明の欄は「・市税システム関連経費」のような経費の説明で金額を持たない。会計は一般会計と特別会計11（市場事業費・食肉センター事業費・国民健康保険事業費・母子父子寡婦福祉資金貸付事業費・駐車場事業費・市街地再開発事業費・市営住宅事業費・介護保険事業費・後期高齢者医療事業費・空港整備事業費・公債費）で、目次と予算第1〜12号議案が一致する。公営企業会計（下水道・産業団地整備・港湾・自動車・高速鉄道・水道・工業用水道、予算第13〜19号）は様式が違い対象外。同じページの「各会計予算」（予算書本体）は第1表の款・項だけで目を持たず不採用。事業の名前と金額は、市会の予算特別委員会に局が出した局別の「予算説明書」（giann_etc/r8/yosantokubetsu.html ほか）の歳出予算の説明に載るが、局の所管分の抜粋なので会計全体の科目には使わない。歳入は未確認。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/281000/2024/initial.pdf",
+            "sha256": "0a17f0a61859c920079d0c785022a50c2031293394d50ca407d7787eeaf43519",
+            "final_url": "https://www.city.kobe.lg.jp/documents/48584/2024yosannsetumeisyo.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T15:08:44.419Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "281000",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度神戸市各会計予算に関する説明書",
+          "landing_url": "https://www.city.kobe.lg.jp/a61436/shise/financial/yosankessan.html",
+          "inspected_at": "2026-11-15T14:46:16.733819+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/48584/2025yosannsetsumeisho.pdf",
+              "sha256": "225013ba389bd90d71d00d974db14d44349d7fb90e6da5d3acded7f804a5131f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 52,
+                      "end": 182
+                    }
+                  ]
+                },
+                {
+                  "account": "市場事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 226,
+                      "end": 230
+                    }
+                  ]
+                },
+                {
+                  "account": "食肉センター事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 246,
+                      "end": 250
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 265,
+                      "end": 271
+                    }
+                  ]
+                },
+                {
+                  "account": "母子父子寡婦福祉資金貸付事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 286,
+                      "end": 287
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 293,
+                      "end": 293
+                    }
+                  ]
+                },
+                {
+                  "account": "市街地再開発事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 298,
+                      "end": 301
+                    }
+                  ]
+                },
+                {
+                  "account": "市営住宅事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 315,
+                      "end": 319
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 338,
+                      "end": 345
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 361,
+                      "end": 364
+                    }
+                  ]
+                },
+                {
+                  "account": "空港整備事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 371,
+                      "end": 374
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "令和7年度当初予算の歳出明細。予算・決算のページ（a61436/shise/financial/yosankessan.html）に掲載の「令和7年度神戸市各会計予算に関する説明書」1冊（物理577頁、文字 PDF）を選定（2026-11-15確認）。各会計の歳入歳出予算事項別明細書の「３ 歳出」は、項ごとに（款）（項）の題字を枠の上に印字し、枠は款・項・目、本年度・前年度・比較、本年度の財源内訳（特定財源・一般財源）、節（区分・金額）、説明の欄を持つ。単位は千円（題字の行の「（単位：千円）」）。説明の欄は「・市税システム関連経費」のような経費の説明で金額を持たない。会計は一般会計と特別会計11（市場事業費・食肉センター事業費・国民健康保険事業費・母子父子寡婦福祉資金貸付事業費・駐車場事業費・市街地再開発事業費・市営住宅事業費・介護保険事業費・後期高齢者医療事業費・空港整備事業費・公債費）で、目次と予算第1〜12号議案が一致する。公営企業会計（下水道・産業団地整備・港湾・自動車・高速鉄道・水道・工業用水道、予算第13〜19号）は様式が違い対象外。公債費の歳出（物理390頁）は文字層の ToUnicode が壊れて文字化けしており、この冊は文字 PDF として選ぶため範囲に含めていない（公債費は scan で読む必要がある。出典は同じ冊）。同じページの「各会計予算」（予算書本体）は第1表の款・項だけで目を持たず不採用。事業の名前と金額は、市会の予算特別委員会に局が出した局別の「予算説明書」（giann_etc/r8/yosantokubetsu.html ほか）の歳出予算の説明に載るが、局の所管分の抜粋なので会計全体の科目には使わない。歳入は未確認。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/281000/2025/initial.pdf",
+            "sha256": "225013ba389bd90d71d00d974db14d44349d7fb90e6da5d3acded7f804a5131f",
+            "final_url": "https://www.city.kobe.lg.jp/documents/48584/2025yosannsetsumeisho.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T15:08:49.073Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "281000",
         "fiscal_year": 2025,
         "document_kind": "settlement"
       },
@@ -592,6 +900,165 @@
           }
         ],
         "archived_at": "2026-10-16T07:40:44.368Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "281000",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度神戸市各会計予算に関する説明書",
+          "landing_url": "https://www.city.kobe.lg.jp/a61436/shise/financial/yosankessan.html",
+          "inspected_at": "2026-11-15T14:46:16.733819+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/48584/2026yosansetumeisyo.pdf",
+              "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 52,
+                      "end": 176
+                    }
+                  ]
+                },
+                {
+                  "account": "市場事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 224,
+                      "end": 228
+                    }
+                  ]
+                },
+                {
+                  "account": "食肉センター事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 244,
+                      "end": 248
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 263,
+                      "end": 269
+                    }
+                  ]
+                },
+                {
+                  "account": "母子父子寡婦福祉資金貸付事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 284,
+                      "end": 285
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 290,
+                      "end": 290
+                    }
+                  ]
+                },
+                {
+                  "account": "市街地再開発事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 296,
+                      "end": 299
+                    }
+                  ]
+                },
+                {
+                  "account": "市営住宅事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 313,
+                      "end": 317
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 336,
+                      "end": 343
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 358,
+                      "end": 361
+                    }
+                  ]
+                },
+                {
+                  "account": "空港整備事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 368,
+                      "end": 371
+                    }
+                  ]
+                },
+                {
+                  "account": "公債費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 387,
+                      "end": 387
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "令和8年度当初予算の歳出明細。予算・決算のページ（a61436/shise/financial/yosankessan.html）に掲載の「令和8年度神戸市各会計予算に関する説明書」1冊（物理581頁、文字 PDF）を選定（2026-11-15確認）。各会計の歳入歳出予算事項別明細書の「３ 歳出」は、項ごとに（款）（項）の題字を枠の上に印字し、枠は款・項・目、本年度・前年度・比較、本年度の財源内訳（特定財源・一般財源）、節（区分・金額）、説明の欄を持つ。単位は千円（題字の行の「（単位：千円）」）。説明の欄は「・市税システム関連経費」のような経費の説明で金額を持たない。会計は一般会計と特別会計11（市場事業費・食肉センター事業費・国民健康保険事業費・母子父子寡婦福祉資金貸付事業費・駐車場事業費・市街地再開発事業費・市営住宅事業費・介護保険事業費・後期高齢者医療事業費・空港整備事業費・公債費）で、目次と予算第1〜12号議案が一致する。公営企業会計（下水道・産業団地整備・港湾・自動車・高速鉄道・水道・工業用水道、予算第13〜19号）は様式が違い対象外。同じページの「各会計予算」（予算書本体）は第1表の款・項だけで目を持たず不採用。事業の名前と金額は、市会の予算特別委員会に局が出した局別の「予算説明書」（giann_etc/r8/yosantokubetsu.html ほか）の歳出予算の説明に載るが、局の所管分の抜粋なので会計全体の科目には使わない。歳入は未確認。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/281000/2026/initial.pdf",
+            "sha256": "e0b3e9bc3665afe5aaf065450952a72ef0abfe2cff38184ee8a608581859ab5a",
+            "final_url": "https://www.city.kobe.lg.jp/documents/48584/2026yosansetumeisyo.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T15:08:57.556Z"
       }
     }
   ],
