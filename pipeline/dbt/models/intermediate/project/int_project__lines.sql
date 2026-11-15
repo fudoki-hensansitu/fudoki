@@ -1,9 +1,9 @@
 -- 事業の行（内訳の breakdown が「事業」の行）と、それを資料をまたいで引く鍵。
--- 鍵は自治体・年度・資料区分・会計・款・項・目と、枝の根からの名前の並び（path）。detail_id は名前を含む hash で取り込みを直すと変わるので、
--- 事業の seed（project_line）はこの鍵で行を引く（docs/prd/jurisdiction-page-data/project-domain-model.md の「事業を作る」）。
+-- 鍵は自治体・年度・資料区分・会計・款・項・目と、枝の根からの名前の並び（path）。事業ID はこの鍵から作る
+-- （int_project__line_ids、docs/prd/jurisdiction-page-data/project-domain-model.md の「事業を作る」）。
 -- 同じ親の下に同じ名前が複数あるときは、印字の順（出典・頁・上端・行）で2つ目から `#2` のように番号を付ける。
 -- print_order は資料の中の印字の順（同じ年度の当初予算と決算の行を、名前の並びが同じときに印字の順で結ぶのに使う）。
--- 対象は事業を作る自治体（seed の project_jurisdiction）だけ。
+-- 内訳の分け方を「事業」と宣言した自治体はすべて対象にする。
 with recursive business as (
     select d.detail_id, d.parent_detail_id, d.subject_id, d.name, d.amount_yen,
         e.jurisdiction_code, e.fiscal_year, e.document_kind, e.account_name,
@@ -23,7 +23,6 @@ with recursive business as (
         from {{ ref('expenditure_location') }} group by line_id
     ) l on l.line_id = d.detail_id
     where d.breakdown = '事業' and e.amendment_number is null
-        and e.jurisdiction_code in (select jurisdiction_code from {{ ref('project_jurisdiction') }})
 ),
 labeled as (
     select *, name || case when ordinal > 1 then '#' || ordinal else '' end as label from business

@@ -66,7 +66,7 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 - 段の名前は共通の規則で付け（[ADR 0025](../docs/adr/0025-level-names-by-shared-rule.md)）、見出しから金額の段階への対応は共通の辞書に置く（[ADR 0021](../docs/adr/0021-level-and-phase-map-in-dbt-seed.md)）。会計の種類は語の辞書で付ける（[ADR 0023](../docs/adr/0023-account-kind-and-no-consolidation.md)）
 - 内訳の欄の分け方は seed `fiscal_detail_breakdown` に宣言する。見出しが「節」の欄は既定で節
 - marts は集約ごとの dir に置く（`marts/expenditure`・`evaluation`・`budget_proposal`・`project`・`jurisdiction`・`source`・`queria`）。設計は [集約ごとの作り直し](../docs/prd/aggregate-api/dd.md)
-- 評価シート・施策・事業の行の紐付けは風土記の判断で、seed（`budget_measure_link`・`project_line`）に置き、列の説明に判断と書く。分野（COFOG）は表に写さず、紐付けた目・内訳から引く
+- 評価シート・施策の紐付けは風土記の判断で、seed（`budget_measure_link`）に置き、列の説明に判断と書く。事業は内訳の分け方が「事業」の行を、全自治体で build のたびに機械的な規則でつなぐ（`int_project__line_ids`）。自治体を選ぶ入口は持たない。分野（COFOG）は表に写さず、紐付けた目・内訳から引く
 - 自治体マスタは `packages/jurisdictions/jurisdictions.json`。人口は pipeline で扱わない（[ADR 0042](../docs/adr/0042-external-reference-data-in-web.md)）
 
 ### 配信

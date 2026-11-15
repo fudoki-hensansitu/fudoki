@@ -4,7 +4,7 @@ from serving.publish import classify, seed_codes
 
 SEEDS = {
     'pipeline/dbt/seeds/fiscal/fiscal_detail_breakdown.csv': {'131016'},
-    'pipeline/dbt/seeds/project/project_jurisdiction.csv': {'132098', '131016'},
+    'pipeline/dbt/seeds/project/budget_measure_link.csv': {'132098', '131016'},
     'pipeline/dbt/seeds/cofog/cofog_master.csv': None,
 }
 

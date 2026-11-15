@@ -25,7 +25,7 @@ class LinkProjectsTest(unittest.TestCase):
         pairs = {(y.initial.detail_id if y.initial else '', y.settlement.detail_id if y.settlement else '') for y in cur}
         self.assertEqual(pairs, {('c', 'f'), ('d', ''), ('e', ''), ('', 'g')})
         link_previous(cur, prev)
-        assign({2025: prev, 2026: cur}, {})
+        assign({2025: prev, 2026: cur})
         ids = {x.detail_id: y.project_id for ys in (prev, cur) for y in ys for x in y.lines}
         # 所管課が変わっても名前で同じ事業、子は親が同じ事業の中で名前で結ぶ
         self.assertEqual(ids['c'], ids['a'])
@@ -48,7 +48,7 @@ class LinkProjectsTest(unittest.TestCase):
                                         line('b', 2025, 'initial', ['運営費'], moku='目2')]})
         cur = build_years({'initial': [line('c', 2026, 'initial', ['運営費'], moku='目3')]})
         link_previous(cur, prev)
-        assign({2025: prev, 2026: cur}, {})
+        assign({2025: prev, 2026: cur})
         self.assertEqual(cur[0].method, 'new')
 
 
