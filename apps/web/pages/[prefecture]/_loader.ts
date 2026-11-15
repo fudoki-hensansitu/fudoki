@@ -209,9 +209,9 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   if (!entry) return null
   // 都道府県の頁はある前提でリンクする（都道府県自体の頁ではリンクしない）
   const prefecturePath = entry.code !== prefectureCode ? jurisdictionPath(prefectureCode) : null
-  // 都道府県自体の頁には、その都道府県で収録のある自治体を全部並べる（検索エンジンが都道府県の頁からすべての自治体の頁を辿れるように）
+  // 都道府県自体の頁も、同じ都道府県の中から近くの数件だけ並べる（全部の自治体の頁へは sitemap.xml から辿れる）
   const samePrefecture = entries.filter((e) => e.code !== entry.code && e.code !== prefectureCode && e.settlementYears.length > 0)
-  const neighbors = (entry.code === prefectureCode ? [...samePrefecture].sort((a, b) => a.code.localeCompare(b.code)) : nearby(entry, samePrefecture))
+  const neighbors = nearby(entry, samePrefecture)
     .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
   const data = pageBase(entry)
   if (!data) return { kind: 'empty', entry, neighbors }
