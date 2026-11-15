@@ -218,6 +218,7 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
             regions += coverage_regions([(g.page, g.original, g.text) for g in glyphs], kind=kind,
                                         reason=notes.module.REASONS[kind])
     for logical in logicals:
+        regions += logical.excluded  # the rows under another heading (`header.frame_headings`)
         for band in logical.bands:
             # The digits a column sets past its right rule (`overhang`) are still the column's.
             excluded = {k: v for k, v in (band.excluded or {}).items() if k != 'overhang'}

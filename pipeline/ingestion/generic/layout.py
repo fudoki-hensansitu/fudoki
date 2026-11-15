@@ -106,6 +106,8 @@ class Logical:
     # The page may open by printing the open 款・項・目 again, names only. False: every table of the page prints its
     # own header over its rows (`patterns/layout/framed_blocks`), so a name without a code is a subject of its own.
     reprints: bool = True
+    # Printed digits of the page that are another table's (`header.frame_headings`): coverage regions.
+    excluded: list = field(default_factory=list)
 
     def unit_of(self, header: str) -> str | None:
         """The unit of an amount under `header`: its column's own mark (`(千円)` over 当初予算額 on a 円 page), else the page's."""
@@ -417,7 +419,8 @@ def level_cells(cells: list[tuple[tuple, str]], edges: list[float], levels: str 
 
 def page_bands(page: Page, spread: dict | None = None,
                header: dict | None = None, split_text: bool = False,
-               row_gaps: bool = False, carry: list | None = None) -> tuple[list[Band], list[Word]]:
+               row_gaps: bool = False, carry: list | None = None,
+               headings: dict | None = None) -> tuple[list[Band], list[Word]]:
     """Bands of every frame on one physical page, and the words outside frames.
 
     `carry` (the layout setting `header.carried`, kept by `logical_pages` across the pages in order): the frames read
@@ -427,7 +430,10 @@ def page_bands(page: Page, spread: dict | None = None,
 
     `row_gaps` (the layout setting `rules.row_gaps`): a vertical rule the page leaves out for a row lets the row's
     text run on into the next column. A word that Poppler cut off where the name crossed the column's edge, touching
-    the word before it on the line, stays in that word's band when no rule is drawn across the line there."""
+    the word before it on the line, stays in that word's band when no rule is drawn across the line there.
+
+    `headings` (kept by `logical_pages` across the pages in order): the headings read so far for the layout setting
+    `header.frame_headings` (see `frames_under_headings`)."""
     if (broken := document_quirk('broken_column_rules')) is not None:
         page = broken.module.repaired(page, spread, header)
     verticals = [r for r in page.rules if r.vertical]
@@ -441,7 +447,9 @@ def page_bands(page: Page, spread: dict | None = None,
     whole = list(enumerate(page.words))
     staircase = bool((header or {}).get('staircase'))
     one_row = document_quirk('one_row_header') is not None
-    for frame in _frames(page, spread, staircase, bool((header or {}).get('open_frame'))):
+    frames = _frames(page, spread, staircase, bool((header or {}).get('open_frame')))
+    dropped, heading_words = under_other_headings(page, (header or {}).get('frame_headings'), headings)
+    for frame in frames:
         x0, x1, top, bottom, edges = frame
         first_band = len(bands)
         header_bottom = _header_bottom(page, frame, one_row, bool((header or {}).get('ignore_frame_title')))
@@ -484,6 +492,9 @@ def page_bands(page: Page, spread: dict | None = None,
                    for r in verticals if abs(r.x0 - x) <= 3]  # the rules as drawn: a rule ending early splits nothing below it
         body = [(index, piece) for index, word in whole for part in (split_text_at_rules(word, verticals) if split_text else [word])
                 for piece in split_digits_at_rules(part, between)]
+        if dropped or heading_words:  # (`header.frame_headings`)
+            body = [(index, word) for index, word in body if index not in heading_words
+                    and not any(a <= (word.y0 + word.y1) / 2 < b for a, b in dropped)]
         skip = repeated_header(page, frame, header_bottom, body, {normalize(w.text) for ws in cells.values() for w in ws})
         carried = run_on_starts(body, verticals) if row_gaps else {}
         for left, right in zip(edges, edges[1:]):
@@ -509,10 +520,64 @@ def page_bands(page: Page, spread: dict | None = None,
                     band.words.append(Glyph(word.text, word.x0, word.y0, word.x1, word.y1, page.number, 0))
                     used.add(index)
             bands.append(band)
+        if headings is not None:  # the rows under another heading: another table's digits
+            headings.setdefault('regions', []).extend(
+                {'kind': '別の表', 'reason': FRAME_HEADINGS_REASON, 'page': page.number,
+                 'bbox': [x0, max(a, header_bottom), x1, min(b, bottom)]}
+                for a, b in dropped if max(a, header_bottom) < min(b, bottom))
         for heading in (header or {}).get('merged_cells', []):
             bands.extend(merged_cells(bands[first_band:], heading, verticals))
     outside = [w for i, w in enumerate(page.words) if i not in used]
     return bands, outside
+
+
+FRAME_HEADINGS_REASON = '同じ枠に印字された別の見出しの下の行（収入、または別の区分の支出）。この表の金額ではない。'
+
+
+def under_other_headings(page: Page, setting: dict | None, state: dict | None) -> tuple[list[tuple[float, float]], set[int]]:
+    """The spans of the page under headings the table does not read, and the words of the heading lines, under the
+    layout setting `header.frame_headings`.
+
+    One frame runs over several tables, each opened by headings printed on lines of their own between its rows
+    (栃木県の公営企業の予算実施計画: `収益的収入及び支出` over `収入` and `支出`, then `資本的収入及び支出`). `levels` lists
+    the headings of each level; a heading read sets its level and clears the levels below it, and the rows keep the
+    headings read above them, on their page or the pages before (`state`, kept across the pages in order). The table
+    reads the rows whose headings are `keep`: the other spans' words are no body (their digits another table's,
+    `別の表`), and the heading lines are none either."""
+    if not setting:
+        return [], set()
+    levels = [{normalize(h).replace(' ', '') for h in level} for level in setting['levels']]
+    keep = [normalize(h).replace(' ', '') for h in setting['keep']]
+    state = state if state is not None else {}
+    found, heading_words = [], set()
+    glyphs = [Glyph(w.text, w.x0, w.y0, w.x1, w.y1, page.number, 0) for w in page.words]
+    index = {id(g): i for i, g in enumerate(glyphs)}
+    for line in lines(glyphs):
+        said = ''.join(normalize(g.text) for g in sorted(line, key=lambda g: g.x0)).replace(' ', '')
+        said = UNIT_NOTE.sub('', said)
+        level = next((i for i, names in enumerate(levels) if said in names), None)
+        if level is not None:
+            found.append((min(g.y0 for g in line), max(g.y1 for g in line), level, said, line))
+    found.sort(key=lambda f: f[0])
+    reads = lambda: [state.get(i) for i in range(len(levels))] == keep
+    dropped, start, kept = [], float('-inf'), reads()
+    def drop(end: float) -> None:  # a span next to the one dropped before it joins it
+        dropped[-1:] = [(dropped[-1][0], end)] if dropped and dropped[-1][1] == start else [*dropped[-1:], (start, end)]
+
+    for top, bottom, level, said, line in found:
+        if not kept:
+            drop(top)
+        state[level] = said
+        for deeper in range(level + 1, len(levels)):
+            state.pop(deeper, None)
+        start, kept = top, reads()
+        heading_words |= {index[id(g)] for g in line}
+    if not kept:
+        drop(float('inf'))
+    return dropped, heading_words
+
+
+UNIT_NOTE = re.compile(r'[(（]単位[:：]?[^)）]*[)）]$')
 
 
 def _carried_header(page: Page, frame, carry: list, below: float | None = None) -> list | None:
@@ -758,7 +823,7 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
                 # `本年度 (前年度) (比較)`): the declared headings, in the order of the lines.
                 band.kind, band.lines = 'amount', tuple(setting['lines'])
                 band.line_pitch = setting.get('line_pitch')
-            band.excluded = setting.get('excluded')
+            band.excluded = setting.get('excluded') or band.excluded
             if band.excluded:
                 band.kind = None  # not read: its words are no items and its digits a declared exclusion
 
@@ -771,7 +836,8 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
     `ocr_pages`: pages of a text document whose words OCR read (`mixed.py`). Their bands are classified by what
     the text pages teach (their headings corrected as a scan's are) and never teach anything themselves."""
     carry = [] if (header or {}).get('carried') else None
-    per_page = [(page, *page_bands(page, spread, header, split_text, row_gaps and page.number not in ocr_pages, carry))
+    headings: dict | None = {} if (header or {}).get('frame_headings') else None
+    per_page = [(page, *page_bands(page, spread, header, split_text, row_gaps and page.number not in ocr_pages, carry, headings))
                 for page in pages]
     if ocr_pages:
         from ingestion.generic.scan import header_path
@@ -822,4 +888,6 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
             previous.ocr = previous.ocr or page.number in ocr_pages
             continue
         result.append(Logical([page.number], bands, unit, glyphs, ocr=page.number in ocr_pages, foot=foot))
+    for region in (headings or {}).get('regions', []):
+        next(logical for logical in result if region['page'] in logical.pages).excluded.append(region)
     return result
