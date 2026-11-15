@@ -144,7 +144,8 @@ export function pageHead(d: PageData, year?: number, section?: Section, opened?:
   const title = pageTitle(d, shown, section, opened)
   const description = pageDescriptionOf(d, shown, section, opened)
   // 年度の段つきの URL を正規にする。年度の段の無い入口（/tokyo/nakano）は最新の年度への pointer なので、canonical は /tokyo/nakano/2026
-  const canonical = `${ORIGIN}${base}/${shown}${sectionPath(section)}`
+  // 入口の年度は、本文・年度チップ・sitemap と同じ頁の最新の年度（金額の読めない当初予算の年度でも）
+  const canonical = `${ORIGIN}${base}/${year ?? appPageYears(d)[0] ?? shown}${sectionPath(section)}`
   const ld = {
     '@context': 'https://schema.org',
     '@type': 'Dataset',

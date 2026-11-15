@@ -143,6 +143,8 @@ describe('自治体の個別ページ', () => {
     expect(pageHead(withBudget).meta.find((m) => m.name === 'description')?.content).toMatch(/^中野区の令和8年度当初予算の歳出は約12\.3億円、令和7年度決算（一般会計）の歳出は約/)
     // 金額の無い当初予算（headline に無い）は title に使わない
     expect(pageHead({ ...data, budgetYears: [2026] }).title).toBe(head.title)
+    // 金額の読めない当初予算が最新の年度でも、入口の canonical は本文・年度チップと同じ最新の年度
+    expect(canonical(pageHead({ ...data, budgetYears: [2026] }))).toBe('https://fudoki.dev/tokyo/nakano/2026')
     expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano/2025')
     // 紋章と決算のある自治体は og:image を自治体の画像に差し替え、紋章の無い自治体は全頁共通の画像のまま
     expect(head.meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/jurisdictions/131148/og.png' })
