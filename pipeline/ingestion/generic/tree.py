@@ -733,6 +733,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         for index, (label, money, code, name) in enumerate(entries):
             if label and not money and code is None and (found := shares.module.split(label, _cut)) is not None:
                 entries[index] = (found[0], [found[1]], None, normalize(text(found[0])))
+    if (wrapped := quirk(settings, 'wrapped_departments')) is not None:
+        entries, origin = wrapped.module.join(entries)
+        if roles is not None:  # the roles were judged on the lines before the join
+            roles = {new: roles[old] for new, old in enumerate(origin) if old in roles}
     if (tabled := quirk(settings, 'labels_over_amounts')) is not None:
         # Each label of a table of notes with the amount under it is a note of its own (the quirk); the roles of the
         # other lines keep their entries.
@@ -1521,10 +1525,12 @@ def _owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[in
             if above:
                 return max(above, key=lambda i: centre(i.lines[-1]))
     if band.inline:
+        # The quirk `tall_kind_stacks` lets a stack run to 8 heights (seven lines), not 6.
+        reach_in_heights = 8 if document_quirk('tall_kind_stacks') is not None else 6
         # Kind lines stacked in the cell of the item that opens them (`計` / `当初` / `補正` …, one line each): the
         # nearest item above in the nearest label group, within the height of the stack.
         for group in left:
-            stacked = [i for i in found[id(group)] if i.role in roles and 0 <= y - i.anchor <= 6 * height]
+            stacked = [i for i in found[id(group)] if i.role in roles and 0 <= y - i.anchor <= reach_in_heights * height]
             if stacked:
                 return max(stacked, key=lambda i: i.anchor)
     return None

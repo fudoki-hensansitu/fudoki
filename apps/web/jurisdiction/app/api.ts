@@ -59,9 +59,10 @@ function fitSearch(q: string): string {
   return t
 }
 
-const clean = (name: string) => name.replace(/【[^】]*】/g, '').trim()
-/** 出典の事業名の【】は所管課。名前からは外して別に持つ */
-const deptOf = (name: string) => name.match(/【([^】]*)】/)?.[1] ?? null
+/** 出典の事業名の最後の【】（後ろに人数などが続くこともある）と、末尾の []（中央区・八王子など。[1人分] のような注記は語尾で外す）は所管課。名前からは外して別に持つ */
+const BRACKET_DEPT = /\[([^[\]0-9０-９]*(?:課|部|局|室|所|係|センター|委員会|館))\]\s*$/
+const clean = (name: string) => name.replace(/【[^】]*】/g, '').replace(BRACKET_DEPT, '').trim()
+const deptOf = (name: string) => name.match(/【([^】]+)】[^【】]*$/)?.[1] ?? name.match(BRACKET_DEPT)?.[1] ?? null
 
 type ProjectOf = SearchResult['projects'][number]
 
