@@ -116,16 +116,16 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       - id: observation-after
-        if: always() && steps.scope.outputs.since != ''
+        if: ${{ !cancelled() && steps.scope.outputs.since != '' }}
         run: echo "files=$(find pipeline/.cache/generic-observation -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
       - id: observation-save
-        if: always() && steps.scope.outputs.since != '' && steps.observation-after.outputs.files != steps.observation-before.outputs.files
+        if: ${{ !cancelled() && steps.scope.outputs.since != '' && steps.observation-after.outputs.files != steps.observation-before.outputs.files }}
         uses: actions/cache/save@v6
         with:
           path: pipeline/.cache/generic-observation
           key: generic-observation-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
       # 古い generic-observation を消す。この job が戻した後に refresh-check などが保存したもの（started より後）は残す
-      - if: always() && steps.observation-save.outcome == 'success'
+      - if: ${{ !cancelled() && steps.observation-save.outcome == 'success' }}
         env:
           GH_TOKEN: ${{ github.token }}
           STARTED: ${{ steps.observation-before.outputs.started }}
