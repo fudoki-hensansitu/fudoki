@@ -12,11 +12,12 @@ from ingestion.generic.layout import normalize, text
 SCOPE = 'axis'
 OPTIONS = {'const': True}
 
-DEPARTMENT = re.compile(r'^【[^【】]+】(?:<[0-9]+>)?$')
+# The department's own name may wrap before its closing bracket (`【新型コロナウイルスワクチン接種対策室` / `】 <0131255> 32,681`): the line is the bracket alone.
+DEPARTMENT = re.compile(r'^(?:【[^【】]+】|】)(?:<[0-9]+>)?$')
 
 
 def continues(previous, label, money, code, left_slack: float) -> bool:
-    """The codeless line `【課】 <番号> 金額` ends the numbered name above, which has no amount yet."""
+    """The codeless line `【課】 <番号> 金額` (or only the closing `】 <番号> 金額`) ends the numbered name above, which has no amount yet."""
     return (previous is not None and code is None and bool(label) and bool(money)
             and previous.code is not None and not previous.amounts and bool(previous.lines)
             and label[0].x0 >= previous.lines[0][0].x0 - left_slack
