@@ -12,7 +12,16 @@
       "skip": "施策評価シート",             # 任意。当たる頁は読まない
       "fields": ["事務事業名称 (?P<name>.+?) 款 (?P<kan_code>\\d+)", ...],
       "unit": "千円",                       # budget・settled の単位（千円 既定、円）。欄で違えば {"budget": "千円", "settled": "円"}
+      "item": "^事業名称 ",                 # 任意。1枚に複数の事業を並べる様式で、事業ごとの先頭の行に当たる語。
+                                            # 当たる行から次に当たる行の前までを1件にし、最初に当たる行より前（見出し）は各件の後ろに足す
     }
+
+CSV の評価（1行1事業）は `columns` に組の名前 → 列の見出しを書き、行の順を頁の番号の代わりにする（見出しの行の次が1）:
+
+    "workflow": {"columns": {"name": "事務事業名", "division": "担当部課", "grade": "令和７年度評価"}}
+
+列の見出しを並べると、空でない最初の列を使う。`{"column": 見出し, "pattern": 正規表現}` は最初の括弧に当たる部分
+だけを取る（例: 番号つきの検索キー `{"column": "事務事業名（検索キー）", "pattern": "^\\d+ (.+)$"}`）。
 
 評価の区分の印字（grade）は grade_label にそのまま残す。共通の区分は付けず、今後の方向性の区分（direction_code）を
 入力準備で当てる（`DIRECTIONS`・宣言の `directions`）。A〜D のような4区分は API が方向性の区分からまとめる。
@@ -75,6 +84,7 @@ def direction_code(text: str | None, overrides: dict[str, str] | None = None) ->
 class Sheet:
     page: int
     name: str
+    position: int = 1
     account: str | None = None
     kan: str | None = None
     kou: str | None = None
@@ -121,7 +131,7 @@ def clean(value: str | None) -> str | None:
     return value or None
 
 
-def parse(text: str, number: int, workflow: dict) -> Sheet | None:
+def parse(text: str, number: int, workflow: dict, position: int = 1) -> Sheet | None:
     unit = workflow.get('unit', '千円')
     units = unit if isinstance(unit, dict) else {'budget': unit, 'settled': unit}
     found: dict[str, str] = {}
@@ -145,7 +155,7 @@ def parse(text: str, number: int, workflow: dict) -> Sheet | None:
         return None
     grade = found.pop('grade', None)
     budget, settled = found.pop('budget', None), found.pop('settled', None)
-    return Sheet(page=number, **found, budget_yen=amount(budget, units['budget']), settled_yen=amount(settled, units['settled']),
+    return Sheet(page=number, position=position, **found, budget_yen=amount(budget, units['budget']), settled_yen=amount(settled, units['settled']),
                  grade_label=grade)
 
 
@@ -163,8 +173,43 @@ def pages(path) -> list[tuple[int, str]]:
     return [(page.number, unspace(norm('\n'.join(page_words.lines(page))))) for page in page_words.pages(Path(path))]
 
 
+def read_csv(path, workflow: dict) -> list[Sheet]:
+    """CSV の評価を読む。1行が1事業で、行の順（見出しの次の行が1）を頁の番号にする。金額の列は読まない。"""
+    import csv
+    columns = workflow['columns']
+    if unknown := set(columns) - (set(GROUPS) - {'budget', 'settled'}):
+        raise ValueError(f'組の名前が違う（CSV は金額を読まない）: {sorted(unknown)}')
+    with open(path, encoding='utf-8-sig', newline='') as f:
+        rows = list(csv.DictReader(f))
+    specs = {key: [{'column': c} if isinstance(c, str) else c for c in (spec if isinstance(spec, list) else [spec])]
+             for key, spec in columns.items()}
+    if rows and (missing := {c['column'] for cs in specs.values() for c in cs} - set(rows[0])):
+        raise ValueError(f'CSV に列が無い: {sorted(missing)}')
+
+    def cell(row, spec):
+        value = clean(unicodedata.normalize('NFKC', row[spec['column']] or '')) or ''
+        if 'pattern' in spec:
+            value = (m.group(1) if (m := re.search(spec['pattern'], value)) else '').strip()
+        # 「―」だけの欄は空にする
+        return None if re.fullmatch(r'[―ー-]*', value) else value
+
+    sheets, unnamed = [], 0
+    for number, row in enumerate(rows, 1):
+        found = {key: next(filter(None, (cell(row, c) for c in cs)), None) for key, cs in specs.items()}
+        if not found.get('name'):
+            unnamed += 1
+            continue
+        grade = found.pop('grade', None)
+        sheets.append(Sheet(page=number, **{k: v for k, v in found.items() if v is not None}, grade_label=grade))
+    if unnamed:
+        print(f'{Path(path).name}: 事業名の無い {unnamed} 行は読まない', file=sys.stderr)
+    return sheets
+
+
 def read(path, workflow: dict) -> list[Sheet]:
     """シートの頁を読む。`start` があれば、1枚目の頁から次の1枚目の前までを1枚にする。"""
+    if 'columns' in workflow:
+        return read_csv(path, workflow)
     groups: list[tuple[int, list[str]]] = []
     texts = pages(path)
     if not any(text.strip() for _, text in texts):
@@ -178,5 +223,17 @@ def read(path, workflow: dict) -> list[Sheet]:
             groups.append((number, [text]))
         elif groups:
             groups[-1][1].append(text)
-    sheets = (parse('\n'.join(texts), number, workflow) for number, texts in groups)
+    sheets = (sheet for number, texts in groups for sheet in parse_items('\n'.join(texts), number, workflow))
     return [sheet for sheet in sheets if sheet is not None]
+
+
+def parse_items(text: str, number: int, workflow: dict) -> list[Sheet | None]:
+    """1枚を読む。`item` があれば事業ごとに分け、頁の中の順（position）を付ける。"""
+    if 'item' not in workflow:
+        return [parse(text, number, workflow)]
+    starts = [m.start() for m in re.finditer(workflow['item'], text, re.M)]
+    if not starts:
+        return []
+    header = text[:starts[0]]
+    chunks = [text[a:b] for a, b in zip(starts, [*starts[1:], len(text)])]
+    return [parse(f'{chunk}\n{header}', number, workflow, position) for position, chunk in enumerate(chunks, 1)]
