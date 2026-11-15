@@ -109,6 +109,11 @@ def update_receipts(stored_paths: list[Path]) -> dict:
     seeded = receipts is None
     if seeded:
         receipts, stored_paths = {}, manifest.paths()
+    else:
+        # A deleted or renamed manifest leaves no path to walk, so its entries are dropped here.
+        prefixes = tuple(storage.receipt_id(manifest.read(path), '') for path in manifest.paths())
+        for ident in [ident for ident in receipts if not ident.startswith(prefixes)]:
+            del receipts[ident]
     missing = []
     for path in stored_paths:
         document, records = mirrored(path)
@@ -153,7 +158,11 @@ def store(since: str, *, dry_run: bool = False) -> dict:
     failures = [found[path] for path in paths if isinstance(found[path], str)]
     if not dry_run:
         # Only this (parent) process writes the list, once, after every upload.
-        receipts = update_receipts([path for path in paths if isinstance(found[path], dict)])
+        # Nothing reads the list yet, so failing to write it must not fail the store (and skip the D1 sync).
+        try:
+            receipts = update_receipts([path for path in paths if isinstance(found[path], dict)])
+        except Exception as error:
+            receipts = {'error': str(error) or type(error).__name__}
         print(json.dumps({'receipts': receipts}, ensure_ascii=False), file=sys.stderr, flush=True)
     if failures:
         raise SystemExit('\n'.join(failures))
