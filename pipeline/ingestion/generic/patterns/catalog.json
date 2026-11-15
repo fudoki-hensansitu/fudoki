@@ -112,6 +112,7 @@
     "codeless_priced_moku": "ingestion.generic.patterns.quirks.codeless_priced_moku",
     "department_heading_slack": "ingestion.generic.patterns.quirks.department_heading_slack",
     "department_line": "ingestion.generic.patterns.quirks.department_line",
+    "bracket_heading_amount_below": "ingestion.generic.patterns.quirks.bracket_heading_amount_below",
     "digit_set_codes": "ingestion.generic.patterns.quirks.digit_set_codes",
     "explained_projects": "ingestion.generic.patterns.quirks.explained_projects",
     "fitted_names": "ingestion.generic.patterns.quirks.fitted_names",
