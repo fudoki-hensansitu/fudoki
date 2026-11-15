@@ -227,6 +227,7 @@ export function pageBase(entry: CatalogEntry): Omit<PageData, 'prefecturePath' |
     population: entry.population,
     settlementYears,
     budgetYears: entry.initialYears.filter((y) => y > latest),
+    initialYears: entry.initialYears,
   }
 }
 

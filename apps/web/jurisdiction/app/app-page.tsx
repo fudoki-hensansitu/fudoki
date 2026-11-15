@@ -1,4 +1,4 @@
-// 自治体の頁（アプリ型）。ヘッダーの下を「まとめ・事業・予算・決算」のタブにし、事業・施策・評価シートは一覧と詳細、分野は分野の頁に分ける。
+// 自治体の頁（アプリ型）。ヘッダーの下を「まとめ・事業・決算・予算」のタブにし（決算・予算のタブはどの年度にも出す）、事業・施策・評価シートは一覧と詳細、分野は分野の頁に分ける。
 // 一覧は名前と金額だけを出し、説明は詳細にだけ出す。部品は shadcn/ui（Tabs・Carousel・Sheet・Card・Input・ToggleGroup）
 import * as React from 'react'
 import { useNavigation, useRouter } from '@void/react'
@@ -48,6 +48,7 @@ import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Skeleton } from '@/components/ui/skeleton'
+import { RequestTown } from '../../nav/request-town'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { cn } from '@/lib/utils'
 import { Link } from '../../nav/link'
@@ -60,7 +61,7 @@ import { pageHead } from '../html'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasTab, type PageTab } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
 import { directionOf, DIRECTION_ICONS, GRADES, withExtras, yearView, type AccountTotal, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearExtras, type YearView } from './data'
 import { fieldSubjects, listKey, listPage, projectFull, projectOfDetail, type ListPage, type ListQuery, type ProjectFull } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
@@ -464,7 +465,9 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   const { v, d, res, page, select, flow, flowFailed, pickAccount, setsu: setsuProp } = useApp()
   const [view, setView] = React.useState<FlowView>('cofog')
   const y = d.years[String(v.year)]
-  const total: YearTotal | undefined = y?.kind === (phase === 'settlement' ? 'settlement' : 'initial') ? { year: v.year, yen: y.total, kan: [] } : undefined
+  const total: YearTotal | undefined = y?.kind === phase ? { year: v.year, yen: y.total, kan: [] } : undefined
+  // 収録はあるが、今の頁のデータが別の資料（スマホで隣のタブを開いた頁など）なら、タブへ移って loader が読むまで待つ
+  const recorded = hasDocument(page, v.year, phase)
   const label = phase === 'initial' ? '当初予算' : '決算'
   const tabs = (
     <div className="flex items-center justify-between gap-3">
@@ -511,11 +514,16 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   const summary = picked ? <Amt yen={picked.yen} className="text-[26px] leading-snug text-primary" /> : null
   return (
     <div className="flex flex-col gap-3">
-      <AccountCards accounts={accounts} account={account} setAccount={setAccount} />
+      {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
       {picked ? (
         <Flow key={`${v.year}-${view}-${phase}-${account}`} flows={flows} total={picked} view={view} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase, special: account !== GENERAL })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
+      ) : recorded ? (
+        <Skeleton className="h-[480px] rounded-xl" />
       ) : (
-        <p className="py-10 text-center text-sm text-muted-foreground">{reiwa(v.year)}の{label}は、まだ収録していません</p>
+        <div className="flex flex-col items-center gap-3 py-10 text-center text-sm text-muted-foreground">
+          <p>{reiwa(v.year)}の{label}はまだ収録していません</p>
+          <RequestTown className="text-[13px]">{label}の収録をリクエストする</RequestTown>
+        </div>
       )}
       {byMoku === FAILED ? <p className="text-xs text-muted-foreground">目の内訳（節）を読み込めませんでした。少し待ってから開き直してください。</p> : null}
       <p className="text-xs text-muted-foreground">分野は使い道を目的ごとに分ける世界共通の分類（COFOG）で、風土記が独自で区別しています。款・項は予算書・決算書の分け方のままです。</p>
@@ -1136,8 +1144,8 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
 const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'overview', label: 'まとめ', icon: SquaresFourIcon },
   { key: 'projects', label: '事業', icon: ListBulletsIcon },
-  { key: 'money', label: '予算', icon: WalletIcon },
   { key: 'settled', label: '決算', icon: ReceiptIcon },
+  { key: 'money', label: '予算', icon: WalletIcon },
 ]
 
 const TAB_SEGMENT = new RegExp(`/(${Object.values(TAB_SLUGS).join('|')})/?$`)
@@ -1167,9 +1175,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const pageHref = (y: number, t: TabKey) => `${data.path}/${y}` + (t === 'overview' ? '' : `/${TAB_SLUGS[t]}`)
   // 年度・タブを移っても、選んでいる状態とスクロールは持ち越す。タブは履歴に積み、戻るで前のタブとそのスクロールへ帰す。年度・会計は置き換える
   const move = (href: string, { push = false } = {}) => void router.visit(href, { replace: !push, preserveState: true, preserveScroll: true })
-  // 年度のリンクは今のタブを引き継ぐが、その年度に無いタブ（決算の無い年度の決算、当初予算の無い年度の予算）はまとめへ向ける。分野の頁なら同じ分野のまま年度を移る
-  const tabIn = (y: number): TabKey => (tab === 'settled' && !hasTab(data, y, 'settled')) || (tab === 'money' && d.kinds[String(y)] !== 'initial') ? 'overview' : tab
-  const yearHref = (y: number) => (fieldPage ? `${data.path}/${y}/fields/${fieldPage}` : pageHref(y, tabIn(y)))
+  // 年度のリンクは今のタブを引き継ぐ（予算・決算のタブはどの年度にもある）。分野の頁なら同じ分野のまま年度を移る
+  const yearHref = (y: number) => (fieldPage ? `${data.path}/${y}/fields/${fieldPage}` : pageHref(y, tab))
   const setYear = (y: number) => {
     if (y === year) return
     move(yearHref(y))
@@ -1272,15 +1279,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
 
   // スマホではタブの中身を左右のスワイプで切り替える（shadcn の Carousel）。高さは今のタブに合わせる
   const [api, setApi] = React.useState<CarouselApi>()
-  // 当初予算の流れは当初予算のある年度、決算の流れは決算のある年度だけ
-  const hasInitial = d.kinds[String(year)] === 'initial'
-  const hasSettled = data.settlementYears.includes(year)
-  const tabs = React.useMemo(() => TABS.filter((t) => (t.key === 'money' ? hasInitial : t.key === 'settled' ? hasSettled : true)), [hasInitial, hasSettled])
-  // 移った年度に今のタブが無ければ、もう一方のお金のタブへ
-  React.useEffect(() => {
-    if (tabs.some((t) => t.key === tab)) return
-    setTab(tabs.find((t) => t.key === 'money' || t.key === 'settled')?.key ?? 'overview', { push: false })
-  }, [d, tabs, tab])
+  // 予算・決算のタブはどの年度にも出す。収録の無い年度はタブの中で「まだ収録していない」と出す
+  const tabs = TABS
   const tabsRef = React.useRef(tabs)
   tabsRef.current = tabs
   // 事業評価は評価した事業を行った年度にだけある。評価の無い年度へ移ったら絞り込みを戻す

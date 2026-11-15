@@ -112,6 +112,8 @@ export interface PageData {
   settlementYears: number[]
   /** 最新の決算より後の、当初予算を収録した年度（古い順） */
   budgetYears: number[]
+  /** 当初予算を収録した年度（決算のある年度も含む、古い順）。予算のタブの中身の有無に使う */
+  initialYears: number[]
   /** 頁の題・説明文に書く金額。最新の年度の頁（入口）だけが持つ。本文と同じ段で読み、読めなければ無い */
   headline?: Headline
   /** 基本構想の都市像（jurisdiction/visions.ts）。手で起こした自治体だけにある */
@@ -133,8 +135,8 @@ export type PageTab = 'overview' | 'projects' | 'money' | 'settled'
 export const TAB_SLUGS = { projects: 'projects', money: 'budget', settled: 'settlement' } as const satisfies Record<Exclude<PageTab, 'overview'>, string>
 export const TAB_LABELS: Record<Exclude<PageTab, 'overview'>, string> = { projects: '事業', money: '予算', settled: '決算' }
 export const tabOfSlug = (slug: string) => (Object.entries(TAB_SLUGS).find(([, s]) => s === slug)?.[0] as Exclude<PageTab, 'overview'> | undefined)
-/** 決算のタブは決算のある年度だけ。予算のタブの有無は頁のデータ（当初予算の有無）を読むまで分からないので、無ければ画面で別のタブへ移す */
-export const hasTab = (d: { settlementYears: number[] }, year: number, tab: PageTab) => tab !== 'settled' || d.settlementYears.includes(year)
+/** その年度に当初予算・決算（一般会計）を収録しているか。予算・決算のタブはどの年度にも出し、収録の無い年度はタブの中で「まだ収録していない」と出す */
+export const hasDocument = (d: { settlementYears: number[]; initialYears: number[] }, year: number, kind: 'initial' | 'settlement') => (kind === 'initial' ? d.initialYears : d.settlementYears).includes(year)
 
 
 /** 今日を含む会計年度（4月始まり） */

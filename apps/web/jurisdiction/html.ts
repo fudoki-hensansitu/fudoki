@@ -3,7 +3,7 @@
 import type { CatalogEntry } from '../server/jurisdiction'
 import { assetPath } from './assets'
 import { jurisdictionPath } from './path'
-import { appPageYears, formatYen, TAB_SLUGS, type PageData, type PageTab } from './types'
+import { appPageYears, formatYen, hasDocument, TAB_SLUGS, type PageData, type PageTab } from './types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from './domains'
 
 const ORIGIN = 'https://fudoki.dev'
@@ -142,6 +142,12 @@ export function pageHead(d: PageData, year?: number, section?: Section, opened?:
   const shown = year ?? defaultYear(d)
   const past = year !== undefined && year !== appPageYears(d)[0] ? yearHead(d, shown, opened) : null
   const title = pageTitle(d, shown, section, opened)
+  // 予算・決算のタブは収録の無い年度にもある（中身は「まだ収録していません」）。検索に載せず、資料を名乗る Dataset も出さない
+  const missing = section && 'tab' in section && section.tab !== 'projects' ? (section.tab === 'money' ? 'initial' : 'settlement') : undefined
+  if (missing && !hasDocument(d, shown, missing)) {
+    const canonical = `${ORIGIN}${base}/${shown}${sectionPath(section)}`
+    return head(title, `${d.name}の${reiwaFull(shown)}${missing === 'initial' ? '当初予算' : '決算'}はまだ収録していません。`, canonical, { meta: [{ name: 'robots', content: 'noindex' }] })
+  }
   const description = pageDescriptionOf(d, shown, section, opened)
   // 年度の段つきの URL を正規にする。年度の段の無い入口（/tokyo/nakano）は最新の年度への pointer なので、canonical は /tokyo/nakano/2026
   // 入口の年度は、本文・年度チップ・sitemap と同じ頁の最新の年度（金額の読めない当初予算の年度でも）

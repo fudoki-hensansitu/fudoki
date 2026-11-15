@@ -123,33 +123,52 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const me = years.find((y) => y.year === year)
   if (!me) throw new Error(`頁に無い年度: ${year}`)
   const prev = years.find((y) => y.year === year - 1)
+  // 款項目を読む資料。予算・決算のタブはその資料（収録のある年度だけ）、ほかは年度の資料（決算のある年度は決算）。
+  // 事業のタブは、決算に事業の内訳が無く当初予算にはある年度（真岡のように決算書が事業を載せない自治体）なら当初予算の事業を並べる
+  const has = (k: Kind) => (k === 'initial' ? entry.initialYears : entry.settlementYears).includes(year)
+  const docKind: Kind = tab === 'money' && has('initial') ? 'initial' : tab === 'settled' && has('settlement') ? 'settlement' : me.kind
+  const queryOf = (k: Kind) => listQuery({ code: entry.code, year, years: { [year]: { kind: k } as YearData }, prev: undefined }, 'all')
+  const subjectsAs = (k: Kind) =>
+    subjectsOf(env, entry.code, year, k).then((r) => {
+      const origin = r.last?.origins?.find((o) => o.origin_id === r.rows[0]?.origin_id)
+      return { kind: k, rows: r.rows, origin: origin?.url ?? null, originTitle: origin?.title ?? null }
+    })
+  // 事業のタブは一覧の1頁目（すべて）が最初の画面。年度と資料の種類だけで決まるので、款項目を待たずに読む
+  const fallback: Kind | undefined = tab === 'projects' && me.kind === 'settlement' && has('initial') ? 'initial' : undefined
+  const projectPage = tab === 'projects'
+    ? Promise.all([readListPage(apiCall(env), queryOf(docKind)), fallback ? readListPage(apiCall(env), queryOf(fallback)) : undefined]).then(([own, alt]) =>
+        own.total === 0 && alt && alt.total > 0 ? { kind: fallback!, page: alt } : { kind: docKind, page: own },
+      )
+    : Promise.resolve(undefined)
+  const ownSubjects = subjectsAs(docKind)
+  // 事業を当初予算から並べると使わないので、読めなくても投げっぱなしにしない
+  ownSubjects.catch(() => undefined)
   // ホームのまちの札は、評価のある最新の年度の評価シートを出す
   const evalYear = opt.evaluated ? Math.max(0, ...entry.evaluationYears.filter((y) => years.some((x) => x.year === y))) : 0
   // 会計の札（予算・決算のタブ）。一般会計のほかにも会計を収録した年度だけ、会計ごとの総額を読む（検索1回）。
   // まとめ・事業のタブの頁でも読んでおく（予算・決算のタブへ移ったとき、loader を待つあいだも札を出して流れの図がずれないように）
-  const accounts = entry.accounts?.[me.kind]?.[String(year)] ?? []
+  const accounts = entry.accounts?.[docKind]?.[String(year)] ?? []
   const wantAccounts = accounts.length > 1
-  // 事業のタブは一覧の1頁目（すべて）が最初の画面。年度と資料の種類だけで決まるので、款項目を待たずに読む
-  const allQuery = listQuery({ code: entry.code, year, years: { [year]: { kind: me.kind } as YearData }, prev: undefined }, 'all')
   // ホームのまちの札は「新しく始めた事業」「やめた事業」も出す
   const homeLists = !tab && prev ? (['new', 'ended'] as const).map((f) => listQuery({ code: entry.code, year, years: { [year]: { kind: me.kind } as YearData }, prev: { year: prev.year, kind: prev.kind } }, f)) : []
-  const [subjects, accountTotals, allPage, extras, evalSheets, homePages] = await Promise.all([
-    subjectsOf(env, entry.code, year, me.kind).then((r) => {
-      const origin = r.last?.origins?.find((o) => o.origin_id === r.rows[0]?.origin_id)
-      return { kind: me.kind, rows: r.rows, origin: origin?.url ?? null, originTitle: origin?.title ?? null }
-    }),
-    wantAccounts ? loadAccountTotals(env, entry.code, year, me.kind, accounts) : Promise.resolve(undefined),
-    tab === 'projects' ? readListPage(apiCall(env), allQuery) : Promise.resolve(undefined),
+  const [projects, accountTotals, extras, evalSheets, homePages] = await Promise.all([
+    projectPage,
+    wantAccounts ? loadAccountTotals(env, entry.code, year, docKind, accounts) : Promise.resolve(undefined),
     tab ? Promise.resolve(undefined) : loadYearExtras(env, entry.code, year, me.kind),
     evalYear && evalYear !== year ? sheetsOf(env, entry.code, evalYear, evalYear).then((r) => r.rows.map(toSheet)) : Promise.resolve(null),
     Promise.all(homeLists.map((q) => readListPage(apiCall(env), q).then((p) => [listKey(q), p] as const))),
   ])
+  // 事業を当初予算から並べるときは、分野で絞れるよう款項目も当初予算のものにする
+  const subjects = await (projects && projects.kind !== docKind ? subjectsAs(projects.kind) : ownSubjects)
+  const allPage = projects?.page
+  const allQuery = queryOf(subjects.kind)
   const snapshot: Snapshot = {
     code: entry.code,
     name: entry.name,
     pop: entry.population?.people ?? 0,
     year,
-    kinds: Object.fromEntries(years.map((y) => [String(y.year), y.kind])),
+    // 開いた年度は、款項目を読んだ資料（予算のタブなら当初予算）
+    kinds: { ...Object.fromEntries(years.map((y) => [String(y.year), y.kind])), [String(year)]: subjects.kind },
     years: { [year]: yearDataOf(subjects) },
     ...(prev ? { prev: { year: prev.year, kind: prev.kind } } : {}),
     ...(accountTotals ? { accounts: accountTotals } : {}),
