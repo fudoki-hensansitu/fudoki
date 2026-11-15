@@ -128,7 +128,7 @@ type SheetResult = WebOpOutput<'search_evaluation_sheets'>
 export type SheetQuery = {
   code: string
   year: number
-  /** 分野で絞るときの科目（決算の目）の ID */
+  /** 分野で絞るときの科目（決算書の目）の ID */
   subjects?: string[]
   /** 事業名で絞る */
   q?: string
@@ -146,7 +146,7 @@ export const sheetCountKey = (q: SheetQuery) => JSON.stringify(['sheet-counts', 
 const sheetWhere = (q: SheetQuery): Record<string, unknown> => ({
   jurisdiction_code: { eq: [q.code] },
   account_name: { eq: [ACCOUNT] },
-  ...(q.subjects ? { expenditure_subject_id: { eq: q.subjects } } : {}),
+  ...(q.subjects ? { settlement_expenditure_subject_id: { eq: q.subjects } } : {}),
   ...(q.q?.trim() ? { name: { contains: fitSearch(q.q.trim()) } } : {}),
   ...(q.codes ? { direction_code: { eq: q.codes } } : {}),
 })
@@ -163,14 +163,14 @@ export const toSheet = (s: SheetResult['sheets'][number], origins: SheetResult['
   acct: s.account_name ?? '',
   b: s.budget_yen,
   s: s.settled_yen,
-  detail: s.expenditure_detail_id,
+  projects: s.project_ids,
   url: origins.find((o) => o.origin_id === s.origin_id)?.url ?? '',
   origin: s.origin_id,
   page: s.page,
 })
 
-const searchSheets = async (call: ApiCall, year: number, where: Record<string, unknown>, pageSize: number, token?: string) => {
-  const r = await call('search_evaluation_sheets', { fiscal_year: { min: year, max: year }, where, order_by: [{ column: 'settled_yen', desc: true }], page_size: pageSize, ...(token ? { page_token: token } : {}) } as SheetBody)
+const searchSheets = async (call: ApiCall, year: number, where: Record<string, unknown>, pageSize: number, token?: string, projectIds?: string[]) => {
+  const r = await call('search_evaluation_sheets', { fiscal_year: { min: year, max: year }, where, order_by: [{ column: 'settled_yen', desc: true }], page_size: pageSize, ...(projectIds ? { project_ids: projectIds } : {}), ...(token ? { page_token: token } : {}) } as SheetBody)
   return { rows: r.sheets.map((s) => toSheet(s, r.origins)), next: r.next_page_token ?? null }
 }
 
@@ -187,14 +187,15 @@ export async function readSheetCounts(call: ApiCall, q: SheetQuery): Promise<She
   return r.counts.map((c) => ({ code: c.outlook?.code ?? null, label: c.outlook?.label ?? null, grade: c.outlook?.grade ?? null, n: c.size }))
 }
 
-/** 内訳を ID で引くときの1回の数（API の bind の上限 90 から年度・自治体などの分を除く） */
-const ID_CHUNK = 80
+/** 事業を ID で引くときの1回の数（API の project_ids の上限） */
+const PROJECT_CHUNK = 200
 
-/** 事業と中の事業の決算の内訳に紐付いた評価シート（サーバー） */
-async function readSheetsOfDetails(call: ApiCall, year: number, details: string[]): Promise<Sheet[]> {
-  const chunks = Array.from({ length: Math.ceil(details.length / ID_CHUNK) }, (_, i) => details.slice(i * ID_CHUNK, (i + 1) * ID_CHUNK))
-  const pages = await Promise.all(chunks.map((c) => searchSheets(call, year, { account_name: { eq: [ACCOUNT] }, expenditure_detail_id: { eq: c } }, 1000)))
-  return pages.flatMap((p) => p.rows)
+/** 事業と中の事業につないだ評価シート（サーバー） */
+async function readSheetsOfProjects(call: ApiCall, year: number, projectIds: string[]): Promise<Sheet[]> {
+  const chunks = Array.from({ length: Math.ceil(projectIds.length / PROJECT_CHUNK) }, (_, i) => projectIds.slice(i * PROJECT_CHUNK, (i + 1) * PROJECT_CHUNK))
+  const pages = await Promise.all(chunks.map((c) => searchSheets(call, year, { account_name: { eq: [ACCOUNT] } }, 1000, undefined, c)))
+  const seen = new Set<string>()
+  return pages.flatMap((p) => p.rows).filter((s) => !seen.has(s.id) && seen.add(s.id))
 }
 
 /** 事業の詳細: 年度ごとの額と、開いた年度の中の事業 */
@@ -211,10 +212,9 @@ export type ProjectFull = {
   kids: { name: string; yen: number | null }[]
   /** 分野を引く科目（開いた年度、無ければ最新の年度の行） */
   subject: string | null
-  /** この事業と中の事業の、当初予算・決算の事業の行 */
+  /** この事業と中の事業の、当初予算の事業の行（施策を引く） */
   initialDetails: string[]
-  settlementDetails: string[]
-  /** 開いた年度の、この事業と中の事業の決算の内訳に紐付いた評価シート */
+  /** 開いた年度の、この事業と中の事業につないだ評価シート */
   sheets: Sheet[]
 }
 
@@ -225,10 +225,9 @@ export async function readProjectFull(call: ApiCall, id: string, year: number, k
     searchYears(call, { fiscal_year: { min: year, max: year }, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody),
   ])
   const latest = p.years.at(-1)
-  const pick = <K extends 'initial_expenditure_detail_id' | 'settlement_expenditure_detail_id'>(k: K) =>
+  const pick = <K extends 'initial_expenditure_detail_id'>(k: K) =>
     [...p.years.filter((y) => y.fiscal_year === year), ...kids.project_years].map((y) => y[k]).filter((x): x is string => !!x)
-  const settlementDetails = pick('settlement_expenditure_detail_id')
-  const sheets = settlementDetails.length ? await readSheetsOfDetails(call, year, settlementDetails) : []
+  const sheets = await readSheetsOfProjects(call, year, [id, ...kids.project_years.map((k) => k.project_id)])
   const here = p.years.find((y) => y.fiscal_year === year) ?? latest
   return {
     id,
@@ -241,12 +240,17 @@ export async function readProjectFull(call: ApiCall, id: string, year: number, k
     kids: kids.project_years.map((k) => ({ name: clean(k.name), yen: kind === 'initial' ? k.budget_yen : k.settled_yen })),
     subject: here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null,
     initialDetails: pick('initial_expenditure_detail_id'),
-    settlementDetails,
     sheets,
   }
 }
 
-/** 施策（当初予算）・評価シート（決算）を紐付けた内訳が載る事業（サーバー） */
+/** 評価シートをつないだ事業の、その年度の行（サーバー） */
+export async function readProjectOfId(call: ApiCall, id: string, year: number, kind: Kind): Promise<ProjRow | null> {
+  const r = await searchYears(call, { fiscal_year: { min: year, max: year }, where: { project_id: { eq: [id] } }, page_size: 1 } as SearchBody)
+  return rowsOf(r, kind)[0] ?? null
+}
+
+/** 施策（当初予算）を紐付けた内訳が載る事業（サーバー） */
 export async function readProjectOfDetail(call: ApiCall, detail: string, year: number, kind: Kind): Promise<ProjRow | null> {
   const r = await searchYears(call, { fiscal_year: { min: year, max: year }, where: { [`${kind}_expenditure_detail_id`]: { eq: [detail] } }, page_size: 1 } as SearchBody)
   return rowsOf(r, kind)[0] ?? null
@@ -279,6 +283,10 @@ export const projectFull = (id: string, year: number, kind: Kind): Promise<Proje
 /** その年度の分野ごとの末端の科目（やめた事業を分野で絞るとき、前の年度の分を読む） */
 export const fieldSubjects = (code: string, year: number, kind: Kind): Promise<Record<string, string[]>> => webApi(`/api/jurisdictions/${code}/${year}/field-subjects?kind=${kind}`)
 
-/** 施策・評価シートを紐付けた内訳が載る事業 */
+/** 評価シートをつないだ事業の、その年度の行 */
+export const projectOfId = (project: string, year: number, kind: Kind): Promise<ProjRow | null> =>
+  webApi(`/api/projects?${new URLSearchParams({ project, year: String(year), kind })}`)
+
+/** 施策を紐付けた内訳が載る事業 */
 export const projectOfDetail = (detail: string, year: number, kind: Kind): Promise<ProjRow | null> =>
   webApi(`/api/projects?${new URLSearchParams({ detail, year: String(year), kind })}`)

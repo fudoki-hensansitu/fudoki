@@ -66,7 +66,7 @@ import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
 import { directionOf, DIRECTION_ICONS, GRADES, withExtras, yearView, type AccountTotal, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearExtras, type YearView } from './data'
-import { fieldSubjects, listKey, listPage, projectFull, projectOfDetail, sheetCountKey, sheetCounts, sheetKey, sheetPage, type ListPage, type ListQuery, type ProjectFull, type SheetCount, type SheetQuery } from './api'
+import { fieldSubjects, listKey, listPage, projectFull, projectOfDetail, projectOfId, sheetCountKey, sheetCounts, sheetKey, sheetPage, type ListPage, type ListQuery, type ProjectFull, type ProjRow, type SheetCount, type SheetQuery } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import './app.css'
 
@@ -759,7 +759,7 @@ function ProjectDetail({ id }: { id: string }) {
     const m = v.mokuRows.find((x) => x.id === id)
     if (!m) return null
     const yen = { b: v.kind === 'initial' ? m.yen : null, s: v.kind === 'initial' ? null : m.yen }
-    return <ProjectBody p={{ id, name: m.name, dept: null, path: m.path, started: null, ended: null, y: { [String(v.year)]: yen }, kids: [], subject: m.subject, initialDetails: [], settlementDetails: [], sheets: [] }} />
+    return <ProjectBody p={{ id, name: m.name, dept: null, path: m.path, started: null, ended: null, y: { [String(v.year)]: yen }, kids: [], subject: m.subject, initialDetails: [], sheets: [] }} />
   }
   const loaded = React.use(res.get(projectKey(id, v.year, v.kind), () => projectFull(id, v.year, v.kind)))
   return loaded === FAILED ? <LoadFailed /> : <ProjectBody p={loaded} />
@@ -900,9 +900,9 @@ function SheetDetail({ s }: { s: EvalSheet }) {
       <DetailSection icon={CalendarBlankIcon} title={`${r(s.fy)}年度の事業`}>
         <div className="flex gap-8 text-[15px]"><span>予算 <Amt yen={s.b} className="text-[15px]" /></span><span>決算 <Amt yen={s.s} className="text-[15px]" /></span></div>
       </DetailSection>
-      {s.detail ? (
+      {s.projects.length ? (
         <ClientSuspense fallback={null}>
-          <LinkedProject detail={s.detail} year={s.fy} kind="settlement" />
+          <SheetProjects ids={s.projects} year={s.fy} />
         </ClientSuspense>
       ) : null}
       <DetailSection icon={FileTextIcon} title="出典"><Ext href={`${s.url}#page=${s.page}`}>評価シート（{s.page}頁）</Ext></DetailSection>
@@ -911,17 +911,33 @@ function SheetDetail({ s }: { s: EvalSheet }) {
   )
 }
 
-/** 施策・評価シートを紐付けた予算書・決算書の事業。開いたときに公開 API から引く */
+/** 施策を紐付けた予算書の事業。開いたときに公開 API から引く */
 function LinkedProject({ detail, year, kind }: { detail: string; year: number; kind: 'initial' | 'settlement' }) {
-  const { res, select } = useApp()
+  const { res } = useApp()
   const p = React.use(res.get(`linked-project:${kind}:${detail}`, () => projectOfDetail(detail, year, kind)))
   if (!p || p === FAILED) return null
+  return <DetailSection icon={BriefcaseIcon} title="予算書の事業"><ProjectButton p={p} /></DetailSection>
+}
+
+/** 評価シートをつないだ予算書の事業（所管課ごとに複数のことがある）。開いたときに公開 API から引く */
+function SheetProjects({ ids, year }: { ids: string[]; year: number }) {
+  const { res } = useApp()
+  const rows = React.use(res.get(`sheet-projects:${year}:${ids.join(',')}`, () => Promise.all(ids.map((id) => projectOfId(id, year, 'settlement')))))
+  const found = rows === FAILED ? [] : rows.filter((p): p is ProjRow => !!p)
+  if (!found.length) return null
   return (
     <DetailSection icon={BriefcaseIcon} title="予算書の事業">
-      <button type="button" onClick={() => select({ kind: 'project', id: p.id })} className="flex w-full items-center gap-3 rounded-xl bg-card p-3 text-left hover:bg-secondary">
-        <span className="flex-1"><span className="block text-[15px] font-semibold">{p.name}</span><span className="text-xs text-muted-foreground">{p.dept}</span></span>
-      </button>
+      <div className="flex flex-col gap-2">{found.map((p) => <ProjectButton key={p.id} p={p} />)}</div>
     </DetailSection>
+  )
+}
+
+function ProjectButton({ p }: { p: ProjRow }) {
+  const { select } = useApp()
+  return (
+    <button type="button" onClick={() => select({ kind: 'project', id: p.id })} className="flex w-full items-center gap-3 rounded-xl bg-card p-3 text-left hover:bg-secondary">
+      <span className="flex-1"><span className="block text-[15px] font-semibold">{p.name}</span><span className="text-xs text-muted-foreground">{p.dept}</span></span>
+    </button>
   )
 }
 

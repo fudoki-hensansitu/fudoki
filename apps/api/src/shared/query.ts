@@ -10,10 +10,19 @@ export interface OriginSource {
   selectList: string
 }
 
+/** 表の列の条件に足す条件（別の表を引く条件など）。sql は AND でつなぐ */
+export interface Condition {
+  sql: string
+  params: (string | number)[]
+}
+
+export const withExtra = (where: Condition, extra: Condition | undefined): Condition =>
+  extra ? { sql: `${where.sql} AND ${extra.sql}`, params: [...where.params, ...extra.params] } : where
+
 /** origin が null の表（事業の年度など、行が出典を指さない表）は出典を読まない。count のときは条件に当たる行の数も返す */
-export async function searchRows(t: FiscalTable, origin: OriginSource | null, ctx: Ctx, input: SearchInput, opts: { count?: boolean } = {}) {
+export async function searchRows(t: FiscalTable, origin: OriginSource | null, ctx: Ctx, input: SearchInput, opts: { count?: boolean; extra?: Condition } = {}) {
   const { db } = ctx
-  const where = buildWhere(t, input.document_kind, input.fiscal_year, input.where as never)
+  const where = withExtra(buildWhere(t, input.document_kind, input.fiscal_year, input.where as never), opts.extra)
   const order = [...(input.order_by ?? [])]
   if (!order.some((k) => k.column === t.primaryKey)) order.push({ column: t.primaryKey })
   const orderSql = order.map((k) => `"${k.column}"${k.desc ? ' DESC' : ''}`).join(', ')

@@ -26,14 +26,16 @@ sidebar:
 
 ## 事業
 
-予算書・決算書の事業の行を、年度をまたいでつないだものです。つなぎ方は風土記の判断で、今は品川区だけを収録しています。
+予算書・決算書の事業の行を、年度をまたいでつないだものです。つなぎ方は風土記の判断で、予算書・決算書に事業の内訳がある自治体を収録しています。
 
 | tool | REST | 返すもの |
 | --- | --- | --- |
 | `get_project` | `GET /v1/projects/{project_id}` | 事業 1 つの年度ごとの当初予算額・支出済額と、直下の事業 |
 | `search_projects` | `POST /v1/projects:search` | 事業の年度を年度・自治体・名前・款項目などで絞って一覧する |
 
-事業に付いた評価シートと施策は、事業の年度の `settlement_expenditure_detail_id`・`initial_expenditure_detail_id` を、`search_evaluation_sheets`・`search_budget_measures` の `where` の `expenditure_detail_id` に渡して引きます。
+評価シートは事業と多対多でつながります（予算書は1つの事業を所管課ごとの行に分け、評価シートは小事業ごとに1枚あることがあるため）。シートの `project_ids` がつながった事業で、事業に付いた評価シートは `search_evaluation_sheets` の `project_ids` に事業IDを渡して引きます。施策は、事業の年度の `initial_expenditure_detail_id` を `search_budget_measures` の `where` の `expenditure_detail_id` に渡して引きます。
+
+評価シートの `initial_expenditure_subject_id`・`settlement_expenditure_subject_id` は、シートの予算科目が当たった当初予算書・決算書の目です。つなぎ方は、シートの款・項・目の番号（無ければ名前）で目を決め、その目の下で事業名が当たる行を採ります。目が決まらないシートは、自治体・年度の中で事業名が1つの事業にだけ当たるときにつなぎます。つながらないシートは「評価されていない事業」を意味しません。
 
 ## 気をつけること
 
