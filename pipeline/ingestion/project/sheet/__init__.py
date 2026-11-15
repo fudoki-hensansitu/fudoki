@@ -35,6 +35,7 @@ CSV の評価（1行1事業）は `columns` に組の名前 → 列の見出し�
     }
 
 `from` は欄ごとの基準の語（錨の上で最も近い語）、`before` はそれに当たる語の行から下を枠から外す。
+`skip`（枠の list）のどれかに当たる行は読まず、`distinct` が真なら事業名・所管課・金額が同じ2つ目からの行を読まない。
 座標は `page_words` の語の座標。頁の文字の `fields` は枠で拾えなかった組を埋め、`carry_fields` は見出しの頁で拾った組を
 次に当たる頁まで後ろの頁へ引き継ぐ。1冊に様式の違う部分があれば `parts` に宣言を並べ、それぞれで読んだものを合わせる。
 
@@ -271,7 +272,7 @@ def parse_items(text: str, number: int, workflow: dict) -> list[Sheet | None]:
 
 
 def join(words: list) -> str:
-    """枠の中の語を、行（上から）と行の中（左から）の順につなぐ。英数字どうしの間だけ空白を置く。"""
+    """枠の中の語を、行（上から）と行の中（左から）の順につなぐ。半角の字どうしの間だけ空白を置く。"""
     lines: list[list] = []
     for word in sorted(words, key=lambda w: (w.y0, w.x0)):
         if lines and abs(lines[-1][0].y0 - word.y0) <= (word.y1 - word.y0) * page_words.SAME_LINE:
@@ -281,7 +282,7 @@ def join(words: list) -> str:
     out = ''
     for word in (word for line in lines for word in sorted(line, key=lambda w: w.x0)):
         text = unicodedata.normalize('NFKC', word.text)
-        if out and out[-1].isascii() and out[-1].isalnum() and text[:1].isascii() and text[:1].isalnum():
+        if out and out[-1].isascii() and text[:1].isascii():
             out += ' '
         out += text
     return out
@@ -341,6 +342,9 @@ def read_rows(path, workflow: dict) -> list[Sheet]:
             heads = [word.y0 for word in page.words if re.search(spec['below'], unicodedata.normalize('NFKC', word.text))]
             anchors = [word for word in anchors if heads and word.y0 > min(heads)]
         for position, anchor in enumerate(anchors, 1):
+            # 別の欄に載る事業を指す行（「金額については…に記載」）は `skip` の枠に当たれば読まない
+            if any(region(page.words, anchor, field_) is not None for field_ in rows.get('skip', [])):
+                continue
             found: dict[str, str] = {}
             for key, field_ in rows['fields'].items():
                 value = region(page.words, anchor, field_)
@@ -351,4 +355,9 @@ def read_rows(path, workflow: dict) -> list[Sheet]:
                 raise ValueError(f'組の名前が違う: {sorted(unknown)}')
             if sheet := build({**header, **found}, page.number, workflow, position, units):
                 sheets.append(sheet)
+    if rows.get('distinct'):
+        # 同じ事業を複数の施策・課題の下に重ねて載せる冊は、事業名・所管課・金額が同じ2つ目からを読まない
+        seen: set[tuple] = set()
+        sheets = [sheet for sheet in sheets if (key := (sheet.name, sheet.division, sheet.budget_yen, sheet.settled_yen)) not in seen
+                  and not seen.add(key)]
     return sheets
