@@ -125,9 +125,10 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const prev = years.find((y) => y.year === year - 1)
   // ホームのまちの札は、評価のある最新の年度の評価シートを出す
   const evalYear = opt.evaluated ? Math.max(0, ...entry.evaluationYears.filter((y) => years.some((x) => x.year === y))) : 0
-  // 会計の札（予算・決算のタブ）。一般会計のほかにも会計を収録した年度だけ、会計ごとの総額を読む
+  // 会計の札（予算・決算のタブ）。一般会計のほかにも会計を収録した年度だけ、会計ごとの総額を読む（検索1回）。
+  // まとめ・事業のタブの頁でも読んでおく（予算・決算のタブへ移ったとき、loader を待つあいだも札を出して流れの図がずれないように）
   const accounts = entry.accounts?.[me.kind]?.[String(year)] ?? []
-  const wantAccounts = (!tab || tab === 'money' || tab === 'settled') && accounts.length > 1
+  const wantAccounts = accounts.length > 1
   // 事業のタブは一覧の1頁目（すべて）が最初の画面。年度と資料の種類だけで決まるので、款項目を待たずに読む
   const allQuery = listQuery({ code: entry.code, year, years: { [year]: { kind: me.kind } as YearData }, prev: undefined }, 'all')
   // ホームのまちの札は「新しく始めた事業」「やめた事業」も出す
