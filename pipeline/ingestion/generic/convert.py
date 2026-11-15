@@ -507,7 +507,8 @@ def continue_volume(nodes: list[dict], spec: dict) -> str:
     and the 事業 rows above them are declared (`continued_rows`) and put at the head with no amount, on the first
     page; the rows read with no parent are put under the last of them. The rows with no amount identify with the
     volume before's rows (`continued` in the dbt rows model). Returns the note of what was put."""
-    from ingestion.generic.patterns.quirks.inner_tables import node_key
+    def node_key(page: int, box: tuple[float, float, float, float], axis: str) -> str:
+        return 'n-' + hashlib.sha256(f'{page}:{box[0]:.2f}:{box[1]:.2f}:{axis}'.encode()).hexdigest()[:24]
     subject = next((n['axis_header'] for n in nodes if n.get('level_header') in ('款', '項', '目')), None)
     orphans = [n for n in nodes if n['parent_node_key'] is None and n['axis_header'] != subject]
     if subject is None or not orphans:
