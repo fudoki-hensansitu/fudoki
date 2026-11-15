@@ -35,7 +35,7 @@ def join(entries: list) -> list:
 
     Three forms: the letter-spaced lines with drawn brackets (`子ども子育て支援課･` / `･保・育・課･`, the second line no
     item); a printed bracket left open on the 事業's line and closed on the next item's line in the same column
-    (`[シティプロモー]` or `[シティプロモー` over `[ション推進課]`, on a line of its own or at the end of the next item's line, taken off it); a bare department alone."""
+    (`[シティプロモー]` over `[ション推進課]`, or `[シティプロモー` over `ション推進課]`, on a line of its own or at the end of the next item's line, taken off it); a bare department alone."""
     out = list(entries)
     index = 0
     while index < len(out):
@@ -58,7 +58,8 @@ def join(entries: list) -> list:
             rest = 0 if alone else _column(tail)
             end = tail[rest:] if rest is not None else []
             closing = normalize(''.join(g.text for g in end))
-            if not end or not closing.endswith(']') or not _below(end, head) or closing.count('[') > (1 if whole else 0):
+            if not end or not closing.endswith(']') or not _below(end, head) or closing.count('[') != (1 if whole else 0) \
+                    or (whole and not closing.startswith('[')):
                 index += 1
                 continue
             text = (first[:-1] + closing[1:]) if whole else first + closing
