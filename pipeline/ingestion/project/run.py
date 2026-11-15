@@ -16,7 +16,7 @@ import json
 import os
 from pathlib import Path
 
-from ingestion.fiscal.storage import fetch
+from ingestion.fiscal.storage import fetch, object_path
 from ingestion.paths import CACHE, PIPELINE
 from ingestion.project import sheet
 
@@ -82,14 +82,17 @@ def code_fingerprint(origin: dict) -> str:
     return digest.hexdigest()[:16]
 
 
+def reading_cache(origin: dict) -> Path:
+    return READINGS / f'{origin["sha256"]}-{origin.get("layout", "sheet")}-{code_fingerprint(origin)}.json'
+
+
 def read_cached(path: Path, origin: dict, *, remote: bool = False) -> object:
     """PDF を宣言の様式（またはパターンの組み合わせ）で読む。結果は dataclass を dict にしたもの。"""
     if 'ocr' in origin and origin['ocr'] is None:
         # 古い読み（空の一覧）のキャッシュで黙って飛ばさないよう、キャッシュを見る前に止める
         raise ValueError(f'{origin["jurisdiction"]} {origin["fiscal_year"]} {origin["sha256"][:12]}: OCR の観測が宣言に固定されていない'
                          '（python -m ingestion.project.sheet.ocr で読む）')
-    name = origin.get('layout', 'sheet')
-    cache = READINGS / f'{origin["sha256"]}-{name}-{code_fingerprint(origin)}.json'
+    cache = reading_cache(origin)
     if cache.exists():
         return json.loads(cache.read_text(encoding='utf-8'))
     if 'ocr' in origin:
@@ -117,9 +120,13 @@ def page_text_fingerprint() -> str:
     return digest.hexdigest()[:16]
 
 
+def page_text_cache(sha256: str) -> Path:
+    return PAGE_TEXTS / f'{sha256}-{page_text_fingerprint()}.json'
+
+
 def page_texts_cached(path: Path, sha256: str) -> list[str]:
     """アシスタントが読む頁の文字（物理頁の順、文字の無い頁は空文字）。出典の sha256 と指紋ごとにキャッシュする。"""
-    cache = PAGE_TEXTS / f'{sha256}-{page_text_fingerprint()}.json'
+    cache = page_text_cache(sha256)
     if cache.exists():
         return json.loads(cache.read_text(encoding='utf-8'))
     from source_text.layout import page_texts
@@ -164,7 +171,9 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
         'project_source_page_text')}
     paths: dict[str, Path] = {}
     for origin in sheet_sources(declared['sheets']):
-        path = fetch(origin['reference'], remote=remote)
+        # 読んだ結果と頁の文字がキャッシュにあれば、PDF は取らない（読むのはキャッシュが無いときだけ）
+        cached = reading_cache(origin).exists() and (not page_texts or page_text_cache(origin['sha256']).exists())
+        path = object_path(origin['reference']) if cached else fetch(origin['reference'], remote=remote)
         sheets = read_cached(path, origin, remote=remote)
         if not sheets:
             # 施策の冊などシートの無い冊は出典にしない

@@ -14,7 +14,7 @@ import yaml
 
 from ingestion.fiscal import manifest
 from ingestion.fiscal.storage import fetch, verify
-from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS
+from ingestion.lib.table_columns import AMOUNT_COLUMNS, NODE_COLUMNS
 from ingestion.lib.source_inconsistencies import declared_for
 from ingestion.project import run as project
 
