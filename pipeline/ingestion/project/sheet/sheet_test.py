@@ -115,10 +115,12 @@ class RegionTest(unittest.TestCase):
     def test_cut_splits_word_across_columns(self):
         # OCR が事業名と所管課をつないだ行は、字の幅を等分に見て欄の境で切る
         anchor = self.W('100千円', 300, 100)
-        words = [anchor, self.Word('保育施設の運営幼児保育課', 70, 100, 190, 110), self.W('1', 52, 100)]
-        name = {'x': [69, 140], 'y': [-2, 2], 'cut': True, 'ignore': '^\\d+$'}
-        self.assertEqual(sheet.region(words, anchor, name), '保育施設の運営')
-        self.assertEqual(sheet.region(words, anchor, {'x': [140, 200], 'y': [-2, 2], 'cut': True}), '幼児保育課')
+        words = [anchor, self.Word('保育施設の運営幼児保育課', 75, 100, 195, 110), self.W('1', 64, 100)]
+        name = {'x': [69, 145], 'y': [-2, 2], 'cut': True}
+        # 欄にかかる事業番号は ignore で外す
+        self.assertEqual(sheet.region(words, anchor, name), '1保育施設の運営')
+        self.assertEqual(sheet.region(words, anchor, {**name, 'ignore': '^\\d+$'}), '保育施設の運営')
+        self.assertEqual(sheet.region(words, anchor, {'x': [145, 200], 'y': [-2, 2], 'cut': True}), '幼児保育課')
 
 
 class OcrTest(unittest.TestCase):

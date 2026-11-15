@@ -22,6 +22,7 @@ from pathlib import Path
 from ingestion.fiscal.manifest import BUCKET
 from ingestion.fiscal.storage import OBJECTS
 from ingestion.generic import page_words
+from ingestion.lib.ocr_ink import superseded
 
 # 冊を全頁読むので白紙の頁を空の頁として残す
 REQUEST = {'engine': 'paddle', 'vlm_fallback': False, 'allow_blank': True}
@@ -67,9 +68,10 @@ def pages(data: bytes) -> list[page_words.Page]:
     for page in observation['pages']:
         width, height = page['displayed_pdf_size_pt']
         # OCR は和文の中黒（・）を欧文の中点（·）で返すので、和文の中黒にそろえる
+        gone = superseded(page)  # 読み直しで置き換えた箱は使わない
         words = [page_words.Word(item['raw_text'].replace('·', '・'), *item['bbox_pdf_pt'])
                  for region in page['regions'] for item in region['observations']
-                 if item['kind'] == 'region' and item.get('bbox_pdf_pt') and item['raw_text'].strip()]
+                 if item['kind'] == 'region' and item.get('bbox_pdf_pt') and item['raw_text'].strip() and item['id'] not in gone]
         out.append(page_words.Page(page['page_number'], width, height, distinct(words)))
     return out
 
@@ -149,7 +151,10 @@ def pin_declaration(origins_path: Path, entry: dict, sha: str, pin: dict) -> Non
         target = next(e for e in declared['sheets'] if e['jurisdiction'] == entry['jurisdiction']
                       and e.get('years') == entry.get('years') and 'ocr' in e)
         target['ocr'].setdefault('observations', {})[sha] = pin
-        origins_path.write_text(json.dumps(declared, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        # 途中で落ちても宣言が壊れないよう、一時ファイルに書いて置き換える
+        temporary = origins_path.with_name(f'.{origins_path.name}.tmp')
+        temporary.write_text(json.dumps(declared, ensure_ascii=False, indent=2) + '\n', encoding='utf-8')
+        os.replace(temporary, origins_path)
 
 
 if __name__ == '__main__':

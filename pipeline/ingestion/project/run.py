@@ -110,6 +110,10 @@ def code_fingerprint(origin: dict) -> str:
 
 def read_cached(path: Path, origin: dict, *, remote: bool = False) -> object:
     """PDF を宣言の様式（またはパターンの組み合わせ）で読む。結果は dataclass を dict にしたもの。"""
+    if 'ocr' in origin and origin['ocr'] is None:
+        # 古い読み（空の一覧）のキャッシュで黙って飛ばさないよう、キャッシュを見る前に止める
+        raise ValueError(f'{origin["jurisdiction"]} {origin["fiscal_year"]} {origin["sha256"][:12]}: OCR の観測が宣言に固定されていない'
+                         '（python -m ingestion.project.sheet.ocr で読む）')
     name = origin.get('layout', origin.get('reader', 'press'))
     cache = READINGS / f'{origin["sha256"]}-{name}-{code_fingerprint(origin)}.json'
     if cache.exists():
@@ -118,9 +122,6 @@ def read_cached(path: Path, origin: dict, *, remote: bool = False) -> object:
         # 文字の層の無い・字形の壊れた冊は、固定した OCR の観測の行を語にして読む
         from ingestion.project.sheet import ocr
 
-        if origin['ocr'] is None:
-            raise ValueError(f'{origin["jurisdiction"]} {origin["fiscal_year"]} {origin["sha256"][:12]}: OCR の観測が宣言に固定されていない'
-                             '（python -m ingestion.project.sheet.ocr で読む）')
         result = sheet.read(path, origin['workflow'], ocr.pages(ocr.fetch(origin['sha256'], origin['ocr'], remote=remote)))
     elif 'workflow' in origin:
         result = (sheet if origin.get('reader') == 'sheet' else press).read(path, origin['workflow'])
