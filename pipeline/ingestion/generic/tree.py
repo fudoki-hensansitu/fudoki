@@ -35,7 +35,6 @@ from ingestion.generic.layout import (SIGNS, SUBJECT_LEVELS, UNIT_CELL, Band, Gl
 CODE = re.compile(r'^[(（]?([0-9０-９]{1,4})[)）]?(?:[.．](?=[^0-9０-９]|$))?(?=\D|$)')
 UNIT_NOTATION = re.compile(r'[(（]単位[:：][^()（）]*[)）]')
 BARE_CODE = re.compile(r'^[0-9０-９]{1,4}$')
-WIDE_DOT_NAME = re.compile(r'^[(（]?[0-9０-９]{1,4}[)）]?．[０-９]')
 # A reading in katakana printed in brackets right after a number (`73（ナナサン）`): the number is part of a name.
 READING = re.compile(r'[(（][ァ-ヶー]+[)）]')
 BRACKET_PAIRS = {')': '(', ']': '['}  # the closing and opening brackets of a bracketed amount
@@ -1072,8 +1071,6 @@ def _measure(item: Item, label: list[Glyph], code: str | None, joined: bool = Fa
         found = CODE.match(normalize(raw))
         length = found.end() if found else 0
         length = code_length(label, length)
-        if found and WIDE_DOT_NAME.match(re.sub(r'\s+', '', raw)) and length == len(found.group(0).rstrip('.')):
-            length += 1  # the full-width stop of a number before a name that begins with a digit (`4．１歳６か月児…`)
         for glyph in label:
             if consumed + len(glyph.text) > length:
                 if stops is not None and (start := stops.module.name_start(glyph, length - consumed)) is not None:
