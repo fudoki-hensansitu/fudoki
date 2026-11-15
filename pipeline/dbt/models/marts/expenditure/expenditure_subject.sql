@@ -18,9 +18,9 @@ leafs as (
 ),
 -- 印字の無い項は子（目）の和。款は項を埋めた後で子（項と、項に属さない目）の和
 kou_filled as (
-    select s.* replace (coalesce(s.amount_yen, (
+    select s.* replace (case when s.node_kind = '項' then coalesce(s.amount_yen, (
         select sum(c.amount_yen) from leafs c where c.parent_node_id = s.node_id and c.document_kind = s.document_kind
-    ))::bigint as amount_yen)
+    ))::bigint else s.amount_yen end as amount_yen)
     from leafs s
 ),
 filled as (
