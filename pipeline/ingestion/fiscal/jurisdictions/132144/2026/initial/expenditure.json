@@ -2054,6 +2054,11 @@
                       "page": 54,
                       "y": 240.7,
                       "reason": "原画の「借入金利子支払費 265,990」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
+                    },
+                    {
+                      "page": 56,
+                      "y": 165.3,
+                      "reason": "原画の「基金積立金 699,748」は、続く2つの事業の金額をまとめた見出しで（金額は2事業の和）、事業と同じ位置から印字されている。"
                     }
                   ],
                   "opening_bracket_ink": true
@@ -2362,7 +2367,7 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "ad57220c2664dfde062754d03df9d61d5aeeee2b6736aaf20198ead5df893a2e",
+      "input_fingerprint": "b9a33141b3b4235031831f24d410181f218819e7810938b6889b846b06d940f6",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -2394,7 +2399,7 @@
     {
       "table_id": "general-initial-6",
       "conversion_id": "general-initial-6",
-      "input_fingerprint": "d2b8cd3869a079b1cdb894e37877f880f964c8bead0a19d14986ff75d13f918a",
+      "input_fingerprint": "c66a038d2e27ae7c95f7c60249702c31dbc8b33560def7c21fd224689aa31841",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -2425,11 +2430,11 @@
     {
       "table_id": "general-initial-7",
       "conversion_id": "general-initial-7",
-      "input_fingerprint": "d82b76d0417c405c2921d421be83d9ab5ba1fc4344f7408ee6915a3504b92203",
+      "input_fingerprint": "00f9d6cc913547df345fa86bbe120b7b1d3f44068a17f775ae6c3df69acf8141",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",
-        "金額の単位は column mark 28頁 から決めた。分冊のため款の和 10,449,422 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の単位は column mark 28頁 から決めた。分冊のため款の和 11,299,170 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（55 件）を、印字された語から辞書の見出しに寄せた: 説／明→説明。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 24 件（p4:full-page:a0:result0:r60・p4:full-page:a0:result0:r60・p4:full-page:a0:result0:r60:w2・p4:full-page:a0:result0:r60:w5・p4:full-page:a0:result0:r90・p4:full-page:a0:result0:r90・p4:full-page:a0:result0:r90:w1・p4:full-page:a0:result0:r90:w9・p6:full-page:a0:result0:r17・p6:full-page:a0:result0:r17:w12・p12:full-page:a0:result0:r45・p12:full-page:a0:result0:r45:w7・p18:full-page:a0:result0:r58・p18:full-page:a0:result0:r58:w3・p28:full-page:a0:result0:r17・p28:full-page:a0:result0:r17:w3・p32:full-page:a0:result0:r125・p32:full-page:a0:result0:r125:w10・p38:full-page:a0:result0:r54・p38:full-page:a0:result0:r54・p38:full-page:a0:result0:r54:w7・p38:full-page:a0:result0:r54:w14・p46:full-page:a0:result0:r29・p46:full-page:a0:result0:r29:w5）・减→減 2 件（p12:full-page:a0:result0:r45・p12:full-page:a0:result0:r45:w16）・查→査 36 件（p2:full-page:a0:result0:r124・p2:full-page:a0:result0:r124:w6・p4:full-page:a0:result0:r15・p4:full-page:a0:result0:r15:w6・p6:full-page:a0:result0:r67・p6:full-page:a0:result0:r67:w4・p10:full-page:a0:result0:r60・p10:full-page:a0:result0:r60:w6・p20:full-page:a0:result0:r71・p20:full-page:a0:result0:r71:w8・p20:full-page:a0:result0:r73・p20:full-page:a0:result0:r73:w4・p20:full-page:a0:result0:r89・p20:full-page:a0:result0:r89:w6・p22:full-page:a0:result0:r14・p22:full-page:a0:result0:r14:w6・p22:full-page:a0:result0:r24・p22:full-page:a0:result0:r24:w5・p28:full-page:a0:result0:r125・p28:full-page:a0:result0:r125:w8・p30:full-page:a0:result0:r8・p30:full-page:a0:result0:r8:w4・p30:full-page:a0:result0:r20・p30:full-page:a0:result0:r20:w6・p30:full-page:a0:result0:r64・p30:full-page:a0:result0:r64:w5・p34:full-page:a0:result0:r103・p34:full-page:a0:result0:r103:w7・p36:full-page:a0:result0:r78・p36:full-page:a0:result0:r78:w4・p36:full-page:a0:result0:r87・p36:full-page:a0:result0:r87:w1・p36:full-page:a0:result0:r105・p36:full-page:a0:result0:r105:w6・p44:full-page:a0:result0:r143・p44:full-page:a0:result0:r143:w6）・產→産 6 件（p38:full-page:a0:result0:r85・p38:full-page:a0:result0:r85:w5・p38:full-page:a0:result0:r121・p38:full-page:a0:result0:r121:w5・p46:full-page:a0:result0:r17・p46:full-page:a0:result0:r17:w0）・說→説 2 件（p44:full-page:a0:result0:r2・p44:full-page:a0:result0:r2:w0）。"
@@ -2439,18 +2444,18 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132144/2026/initial/expenditure/general-initial-7-nodes.parquet",
-          "sha256": "c410e8f8da0aa9ff0e2ba54173e2bc269d8a05ca886810a9a2c86e2b495a1098",
-          "bytes": 66613
+          "sha256": "addf66877593522e568f913bcbf54c49b414a4d9da412bd9f9e3679767afe1a4",
+          "bytes": 66752
         },
-        "row_count": 1500
+        "row_count": 1502
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/132144/2026/initial/expenditure/general-initial-7-amounts.parquet",
-          "sha256": "1f7f357632af78dfcf6d13849bb53d07d458829eae2c7de09c2de07532fed768",
-          "bytes": 50482
+          "sha256": "5d58a30b552406eed4f0008deab1fbb08afb086f15570314221246cdbe234759",
+          "bytes": 50670
         },
-        "row_count": 1539
+        "row_count": 1545
       }
     }
   ]
