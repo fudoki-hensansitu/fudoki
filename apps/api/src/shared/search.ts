@@ -221,7 +221,7 @@ export function searchInputFor(t: FiscalTable) {
   return z.strictObject({ document_kind: DOCUMENT_KIND_INPUT, ...searchShape(t) }).superRefine(checkSearch)
 }
 
-/** 資料区分の無い表（評価シート・施策）の検索の入力（年度が必須） */
+/** 資料区分の無い表（評価シート）の検索の入力（年度が必須） */
 export function yearSearchInputFor(t: FiscalTable) {
   return z.strictObject(searchShape(t)).superRefine(checkSearch)
 }

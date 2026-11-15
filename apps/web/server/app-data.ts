@@ -1,5 +1,5 @@
 // 自治体の頁（アプリ型）のデータ。apps/api の歳出・事業・事業評価の検索から、1年度の款項目・評価シートの区分ごとの数と事業の一覧の1頁目を組む。
-// 頁の loader は最初の画面に要る分（loadYearSnapshot）だけを読み、残り（loadYearExtras）は頁を描いた後にブラウザが web の /api/jurisdictions/:code/:year/extras から読む。
+// 頁の loader は最初の画面に要る分（loadYearSnapshot）だけを読み、残り（loadYearExtras）は loader が defer で HTML の後ろに流す。
 // 事業の続き・詳細は画面が web の /api から読む（jurisdiction/app/api.ts）。評価シートと事業のつながりは api のつなぎの表を引くだけで、新しく判断しない
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { listQuery, withExtras, type Kan, type YearData, type YearExtras, type Snapshot } from '../jurisdiction/app/data'

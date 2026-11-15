@@ -1114,7 +1114,7 @@ const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').repl
 /** 今の URL の分野の段（/fields/fukushi）の id */
 const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
 
-export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（施策・評価シート・お金のかかる事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; initialField?: string; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; initialField?: string; initialTab?: TabKey }) {
   // 最初の画面に要らない分（評価シート・お金のかかる事業・新しく始めた事業）は loader が defer で流し、使う部分が Full（Suspense と use()）で待つ
   const d = base
   const vision = data.vision?.text
