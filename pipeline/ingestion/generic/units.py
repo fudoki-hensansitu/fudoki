@@ -149,12 +149,15 @@ def general_total(nodes: list[dict], amounts: list[dict], document_kind: str) ->
 
 
 def check(built, document_kind: str, account: str | None = None, partial: bool = False,
-          direction: str = 'expenditure') -> dict:
+          direction: str = 'expenditure', rounded=None) -> dict:
     """款 sum = printed 歳出合計 (in the phase the document reports), and a general account's digits fit the unit.
 
     `partial`: the original holds one volume of an account printed in several (西東京's 13 files). Its
     款 are some of the account's, so neither the sum against the printed total nor the digits of the sum say
-    anything: both are reported and never stop the table. A 款 printed with two amounts still does."""
+    anything: both are reported and never stop the table. A 款 printed with two amounts still does.
+
+    `rounded`: the quirk `rounded_items` when selected (each 款 and the total rounded on their own): a sum off the total by
+    no more than the rounding of the items matches, and the result says so (`rounded_match`)."""
     from ingestion.generic.headers import dictionary_header
     from ingestion.lib.node_tables import amount_phase
     from shared.amount import number
@@ -199,6 +202,8 @@ def check(built, document_kind: str, account: str | None = None, partial: bool =
         result['printed_total'] = total
         if len(units) <= 1:
             result['sum_matches'] = total == raw_sum
+            if rounded is not None and total is not None and total != raw_sum:
+                result['sum_matches'] = result['rounded_match'] = rounded.module.close(total, raw_sum, len(entries))
         else:
             result['sum_matches'] = chosen.get('unit') in MULTIPLIER and None not in units and \
                 total is not None and total * MULTIPLIER[chosen['unit']] == raw_sum
