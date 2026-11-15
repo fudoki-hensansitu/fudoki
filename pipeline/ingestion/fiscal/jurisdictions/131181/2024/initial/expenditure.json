@@ -898,7 +898,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "ef2fd749d2365a42c93afc3d693afc8dd9e2c8aa624bc58682b2a4f07ec92a65",
+      "input_fingerprint": "244b65a320180ab1d5997db740f2812521edf22add9e8539e9f83a2c3a2145d2",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -928,7 +928,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "a47ae27a11650330f0a4e7d418776de61befb4d3137da6bfe0cbfb982be48379",
+      "input_fingerprint": "9d3bf6952cd344d73c3f38f241b077af6782622373b85e7b93dc5a3e28adae54",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -958,7 +958,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "41b31f43c8c33bdd34b84308fec6b91c2a49a7d7811df1a60f5ce44b367721e6",
+      "input_fingerprint": "136557ddd791e5a232e1cae73ffd5e4073a765265154dc0a549aeaf58a91183b",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -988,7 +988,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "a557746daddfc883ca9e113d07252066944a663522592d49630d39732931fc39",
+      "input_fingerprint": "a655812e3a1986df898541407222d503d75391024ed902ac47619928796750ca",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1001,10 +1001,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131181/2024/initial/expenditure/care-initial-nodes.parquet",
-          "sha256": "70376e051587a72179ef1eb327882ce83aeb3f3a5a42cc4af40978b1ebaefa4c",
-          "bytes": 11684
+          "sha256": "e048954cd09ed6aa412d400d67067bcd6e7f3fcf2ca52259ac477ba491c1af35",
+          "bytes": 11627
         },
-        "row_count": 195
+        "row_count": 194
       },
       "amounts": {
         "object": {

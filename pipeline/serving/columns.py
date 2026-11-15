@@ -51,8 +51,7 @@ INDEXES = {
     'evaluation_indicator': [['sheet_id']],
     'evaluation_indicator_value': [['indicator_id']],
     'project': [['jurisdiction_code'], ['parent_project_id']],
-    'project_year': [['project_id'], ['fiscal_year', 'jurisdiction_code'], ['initial_expenditure_detail_id'], ['settlement_expenditure_detail_id'],
-                     ['initial_expenditure_subject_id'], ['settlement_expenditure_subject_id']],
+    'project_year': [['project_id', 'fiscal_year'], ['fiscal_year'], ['initial_expenditure_detail_id'], ['settlement_expenditure_detail_id']],
     'source_page_text': [['sha256', 'page']],
 }
 

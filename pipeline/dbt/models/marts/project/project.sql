@@ -1,5 +1,6 @@
 -- 事業。予算書・決算書の事業の行を年度をまたいでつないだもの（つなぎ方は風土記の判断。int_project__line_ids）。
 -- 始めた年度・終えた年度は、その自治体・会計の収録の年度で決まる。親の事業は、最新の年度の行の1つ上の事業の行の事業。
+-- 名前・会計は事業の行（内訳）にあるので持たない。API が最新の年度の行から JOIN で引く。
 with years as (
     select * from {{ ref('int_project__years') }}
 ),
@@ -25,7 +26,7 @@ parents as (
     join years py on line.parent_detail_id in (py.initial_expenditure_detail_id, py.settlement_expenditure_detail_id)
     group by l.project_id
 )
-select l.project_id, l.jurisdiction_code, l.name, l.account_name,
+select l.project_id, l.jurisdiction_code,
     s.first_year,
     case
         when exists (select 1 from coverage c where c.jurisdiction_code = l.jurisdiction_code
