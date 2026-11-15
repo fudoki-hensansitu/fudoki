@@ -11,6 +11,7 @@
     "dev": "vite dev",
     "fetch:boundaries": "uv run python map/build.py",
     "sync-data:population": "uv run python scripts/sync-data/population.py",
+    "sync-data:local-finance": "uv run python scripts/sync-data/local_finance.py",
     "build:map": "bun jurisdiction/map-build.ts",
     "test": "bun test server",
     "lint": "oxlint",
