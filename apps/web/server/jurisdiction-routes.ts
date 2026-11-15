@@ -73,24 +73,33 @@ export async function sitemapResponse(env: Env): Promise<Response> {
   }
 }
 
-/** 町の検索に返す数 */
-const TOWN_LIMIT = 10
+/** 町の検索で一度に返す数 */
+const TOWN_PAGE = 20
 /** 探す語の長さの上限 */
 const QUERY_MAX = 50
+/** 続きを読む位置の上限（収録の数より十分に大きく取る） */
+const OFFSET_MAX = 10_000
 /** /api の応答はブラウザにだけ少し置く（CDN は /api を置かない） */
 const BROWSER_CACHE = 'public, max-age=300'
 
-/** 町を探す（/api/jurisdictions?q=）。語に当たる自治体を上位 TOWN_LIMIT 件だけ返す。?code= ならその自治体だけ（うちのまちの名前を引く） */
+/** 町を探す（/api/jurisdictions?q=&offset=）。語に当たる自治体を、名前が語で始まるものを先に並べ、offset から TOWN_PAGE 件ずつ返す。
+ * next は続きの offset（続きが無ければ null）。?code= ならその自治体だけを配列で返す（うちのまちの名前を引く） */
 export async function jurisdictionSearchResponse(env: Env, request: Request): Promise<Response> {
   try {
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     const params = new URL(request.url).searchParams
     const code = params.get('code')
     const q = params.get('q') ?? ''
-    if ((code !== null && !/^\d{6}$/.test(code)) || q.length > QUERY_MAX) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コードか探す語の形が違います')
+    const offsetText = params.get('offset') ?? '0'
+    if ((code !== null && !/^\d{6}$/.test(code)) || q.length > QUERY_MAX || !/^\d{1,5}$/.test(offsetText) || Number(offsetText) > OFFSET_MAX) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コード・探す語・続きの位置の形が違います')
     const entries = await homeEntries(env)
-    const hits = code !== null ? entries.filter((e) => e.code === code) : entries.filter((e) => townMatches(e, q)).sort((a, b) => Number(b.name.startsWith(q.trim())) - Number(a.name.startsWith(q.trim()))).slice(0, TOWN_LIMIT)
-    return new Response(JSON.stringify(hits), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
+    const json = (body: unknown) => new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
+    if (code !== null) return json(entries.filter((e) => e.code === code))
+    const word = q.trim()
+    const hits = entries.filter((e) => townMatches(e, q)).sort((a, b) => Number(b.name.startsWith(word)) - Number(a.name.startsWith(word)))
+    const offset = Number(offsetText)
+    const end = offset + TOWN_PAGE
+    return json({ entries: hits.slice(offset, end), next: end < hits.length ? end : null })
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))

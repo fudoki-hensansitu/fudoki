@@ -2,23 +2,66 @@
 // サイドバーとホームが同じものを読むので、変えたら window に知らせる。住んでいるまちのコードは前のホームと同じ鍵（saveHomeCode、fudoki:home-jurisdiction）を正にし、前に選んだ人はそのまま引き継ぐ
 import * as React from 'react'
 import { loadHomeCode, loadRecent, saveHomeCode, type RecentJurisdiction } from './recent'
-import { townMatches, type MapEntry } from '../jurisdiction/index-table'
+import type { MapEntry } from '../jurisdiction/index-table'
 
 const KEY = 'fudoki:home-town'
 const EVENT = 'fudoki:home-town'
 
 export type Town = RecentJurisdiction
 
-export { townMatches }
+/** 探す語に当たる自治体の1頁。next は続きの offset（無ければ null） */
+export type TownPage = { entries: MapEntry[]; next: number | null }
 
-/** 探す語に当たる自治体（上位 10 件）。サーバー（/api/jurisdictions?q=）が当てて返す。読めなければ null */
-export const searchTowns = (q: string, signal?: AbortSignal): Promise<MapEntry[] | null> =>
-  fetch(`/api/jurisdictions?${new URLSearchParams({ q })}`, { signal })
-    .then((r) => (r.ok ? (r.json() as Promise<MapEntry[]>) : null))
+/** 探す語に当たる自治体を offset から1頁ぶん。サーバー（/api/jurisdictions?q=&offset=）が当てて返す。読めなければ null */
+const searchTowns = (q: string, offset: number, signal?: AbortSignal): Promise<TownPage | null> =>
+  fetch(`/api/jurisdictions?${new URLSearchParams({ q, offset: String(offset) })}`, { signal })
+    .then((r) => (r.ok ? (r.json() as Promise<TownPage>) : null))
     .catch(() => null)
 
+/** 打ち終えるのを待つ間 */
+const TYPING_MS = 150
+
+/** 名前で自治体を探す候補（まちを探す・まち比べ）。開いている間だけ、打った語の1頁目を読み、more で続きを足す。
+ * 全部を手元に取らず、一覧の末尾の印（MoreDots）が見えたら more を呼ぶ。entries は undefined が読んでいる、null が読めなかった。word は entries を読んだ語 */
+export function useTownSearch(open: boolean, q: string) {
+  // 読んだ頁は、どの語で読んだかと一緒に持つ（続きは同じ語で読む）
+  const [page, setPage] = React.useState<(TownPage & { q: string }) | null | undefined>(undefined)
+  const [attempt, retry] = React.useReducer((n: number) => n + 1, 0)
+  // 続きを読んでいる間は重ねて読まない。語が変わったら読みかけの続きは捨てる
+  const loading = React.useRef<AbortController | null>(null)
+  const [tries, bump] = React.useReducer((n: number) => n + 1, 0)
+  React.useEffect(() => {
+    if (!open) return
+    const controller = new AbortController()
+    loading.current?.abort()
+    loading.current = null
+    const timer = setTimeout(() => void searchTowns(q, 0, controller.signal).then((p) => !controller.signal.aborted && setPage(p && { ...p, q })), q ? TYPING_MS : 0)
+    return () => {
+      clearTimeout(timer)
+      controller.abort()
+    }
+  }, [open, q, attempt])
+  const next = page?.next ?? null
+  const more = () => {
+    if (loading.current || !page || next === null) return
+    const word = page.q
+    const controller = new AbortController()
+    loading.current = controller
+    void searchTowns(word, next, controller.signal).then((p) => {
+      if (controller.signal.aborted) return
+      if (p) setPage((cur) => (cur && cur.q === word && cur.next === next ? { q: word, entries: [...cur.entries, ...p.entries], next: p.next } : cur))
+      // 読めなければ少し待って印を置き直す（見えたままなら、もう一度読みに行く）
+      setTimeout(() => {
+        if (loading.current === controller) loading.current = null
+        bump()
+      }, p ? 0 : 3000)
+    })
+  }
+  return { entries: page === undefined ? undefined : (page?.entries ?? null), word: page?.q, hasMore: next !== null, more, moreKey: `${page?.entries.length ?? 0}:${tries}`, retry }
+}
+
 /** 自治体コードで1つ引く（/api/jurisdictions?code=）。収録が無ければ undefined、読めなければ null */
-const townOf = (code: string): Promise<MapEntry | undefined | null> =>
+export const townOf = (code: string): Promise<MapEntry | undefined | null> =>
   fetch(`/api/jurisdictions?${new URLSearchParams({ code })}`)
     .then((r) => (r.ok ? (r.json() as Promise<MapEntry[]>).then((x) => x[0]) : null))
     .catch(() => null)

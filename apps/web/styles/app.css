@@ -43,3 +43,8 @@
 html[data-nav-closed]:not([data-nav-ready]) [data-slot="sidebar-gap"],
 html[data-nav-closed]:not([data-nav-ready]) [data-slot="sidebar-container"] { width: var(--sidebar-width-icon); transition: none; }
 html[data-nav-closed]:not([data-nav-ready]) [data-slot="sidebar-inner"] { visibility: hidden; }
+
+/* 一覧の末尾の「続きを読む」印（components/more-dots.tsx）。点が順に跳ねる */
+@keyframes app-dot { 0%, 100% { opacity: .3; transform: translateY(0) } 50% { opacity: 1; transform: translateY(-3px) } }
+.app-dot { animation: app-dot 1s ease-in-out infinite }
+@media (prefers-reduced-motion: reduce) { .app-dot { animation: none } }

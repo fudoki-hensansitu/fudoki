@@ -320,9 +320,14 @@ describe('お金の流れ', () => {
 
 describe('自治体の検索（/api/jurisdictions）', () => {
   test('語に当たる自治体だけを返し、引数の形が違えば 400、流量の binding が無ければ 503', async () => {
-    const hits = (await (await get('/api/jurisdictions?q=中野')).json()) as { name: string; path: string }[]
-    expect(hits.map((h) => [h.name, h.path])).toEqual([['中野区', '/tokyo/nakano']])
-    expect(await (await get('/api/jurisdictions?q=存在しない')).json()).toEqual([])
+    const hits = (await (await get('/api/jurisdictions?q=中野')).json()) as { entries: { name: string; path: string }[]; next: number | null }
+    expect(hits.entries.map((h) => [h.name, h.path])).toEqual([['中野区', '/tokyo/nakano']])
+    expect(hits.next).toBeNull()
+    expect(await (await get('/api/jurisdictions?q=存在しない')).json()).toEqual({ entries: [], next: null })
+    // 続きの位置が当たる数を越えれば空
+    expect(await (await get('/api/jurisdictions?q=中野&offset=20')).json()).toEqual({ entries: [], next: null })
+    expect((await get('/api/jurisdictions?q=中野&offset=-1')).status).toBe(400)
+    expect((await get('/api/jurisdictions?q=中野&offset=99999')).status).toBe(400)
     // うちのまちの名前はコードで引く。決算の収録の無い自治体は返さない
     expect(((await (await get('/api/jurisdictions?code=131148')).json()) as { name: string }[]).map((h) => h.name)).toEqual(['中野区'])
     expect(await (await get('/api/jurisdictions?code=131016')).json()).toEqual([])
