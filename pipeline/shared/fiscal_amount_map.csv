@@ -29,6 +29,7 @@ initial,内訳,approved
 initial,細目,approved
 initial,細々目,approved
 initial,節／金額,approved
+initial,細節／金額,approved
 supplementary,備考,adjusted
 supplementary,説明,adjusted
 supplementary,事業説明,adjusted
@@ -39,6 +40,9 @@ supplementary,細々目,adjusted
 supplementary,節／金額,adjusted
 ,施工概要／計,
 ,不用額,
+,調定額,
+,不納欠損額,
+,収入未済額,
 ,比較,
 ,翌年度繰越額,
 ,繰越明許費,
@@ -90,6 +94,7 @@ settlement,科目,
 ,翌年度繰越額／継続費逓次繰越額,
 ,翌年度繰越額／合計,
 initial,本年度,approved
+initial,予定額,approved
 initial,前年度,
 initial,科目,
 initial,節,

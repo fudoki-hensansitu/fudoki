@@ -15,6 +15,7 @@ import duckdb
 from ingestion.fiscal import manifest, unit_checks
 from ingestion.fiscal.storage import fetch, fetch_ocr, keep, save_ocr, cleanup, verify, write_ocr
 from ingestion.paths import BUILD
+from ingestion.generic.patterns import quirk
 from ingestion.lib import coverage_checks, digit_recheck, heavy_lock, node_tables, poppler, source_inconsistencies, tree_checks
 
 MATCH, MISMATCH, NOT_APPLICABLE = '一致', '不一致', '対象外'
@@ -147,7 +148,8 @@ def unit_gate(document: dict, conversion: dict, table_id: str, tables: node_tabl
         tables.nodes, tables.amounts, document_kind=document['target']['document_kind'],
         account=pdf_account(document, conversion, tables.nodes),
         partial=bool(conversion['options'].get('partial')), scope=scope,
-        statement_kind=conversion.get('statement_kind', 'ordinary'), direction=document['direction'])
+        statement_kind=conversion.get('statement_kind', 'ordinary'), direction=document['direction'],
+        rounded=quirk(conversion['options'].get('workflow'), 'rounded_items'))
     if result['stopped']:
         raise ValueError(f'Unit check failed: {table_id}: {unit_checks.describe(result)}')
     return result
@@ -420,7 +422,8 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         checked = tree_checks.check_tree(built.nodes, built.amounts, document['target']['document_kind'],
                                          source_inconsistencies.declared_for(document, ident))
         if not built.nodes or not built.amounts or not checked['passed']:
-            raise ValueError(f'Table failed the tree check: {ident}: {checked["counts"]}; {checked["issues"][:5]}')
+            raise ValueError(f'Table failed the tree check: {ident}: {checked["counts"]}; '
+                             f'{len(checked["issues"])} issues: {checked["issues"][:5]}')
         completed_by_id[ident] = []
         adopted[ident] = built
         checked_pdf.append((conversion, ident, built, None, file))

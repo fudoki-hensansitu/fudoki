@@ -11,10 +11,14 @@ from pathlib import Path, PurePosixPath
 import gzip
 import hashlib
 
-from ingestion.fiscal.manifest import BUCKET, object_key, ocr_key, sha_file, table_references
+from ingestion.fiscal.manifest import BUCKET, document_slot, object_key, ocr_key, sha_file, table_references
+from ingestion import r2
 from ingestion.paths import CACHE
 
 OBJECTS = CACHE / 'objects'
+# The receipts of the tables in R2, one list for all (docs/prd/ingestion-receipts/dd.md). Only `ingestion:store`
+# writes it, after its uploads. Until readers switch to it, it mirrors the Git records of stored tables.
+RECEIPTS_KEY = 'fiscal/ingestion/receipts.json'
 
 
 def verify(path: Path, reference: dict) -> None:
@@ -51,8 +55,7 @@ def fetch_ocr(document: dict, item: dict, *, remote: bool = False) -> Path:
         with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
             temporary = Path(stream.name)
             try:
-                subprocess.run(['cf', 'r2', 'objects', 'get', ocr_key(document, item['id']), '--bucket-name',
-                                BUCKET, '--quiet'], stdout=stream, check=True)
+                r2.objects('get', ocr_key(document, item['id']), '--bucket-name', BUCKET, '--quiet', stdout=stream)
                 verify_ocr(temporary, item)
                 os.replace(temporary, path)
             finally:
@@ -66,12 +69,12 @@ def save_ocr(document: dict, item: dict) -> None:
     path = fetch_ocr(document, item)
     if path.stat().st_size > 300_000_000:
         raise ValueError('cf REST upload limit exceeded; configure a file-based S3 multipart transport')
-    subprocess.run(['cf', 'r2', 'objects', 'put', ocr_key(document, item['id']), '--bucket-name', BUCKET,
-                    '--file', str(path), '--quiet'], check=True, stdout=subprocess.DEVNULL)
+    r2.objects('put', ocr_key(document, item['id']), '--bucket-name', BUCKET, '--file', str(path), '--quiet',
+               stdout=subprocess.DEVNULL)
     run = path.with_name(item['id'] + '.run.json')
     if run.exists():
-        subprocess.run(['cf', 'r2', 'objects', 'put', ocr_key(document, item['id'], '.run.json'), '--bucket-name',
-                        BUCKET, '--file', str(run), '--quiet'], check=True, stdout=subprocess.DEVNULL)
+        r2.objects('put', ocr_key(document, item['id'], '.run.json'), '--bucket-name', BUCKET, '--file', str(run),
+                   '--quiet', stdout=subprocess.DEVNULL)
 
 
 def safe_relative(value: str) -> str:
@@ -81,10 +84,15 @@ def safe_relative(value: str) -> str:
     return str(path)
 
 
-def fetch(reference: dict, *, remote: bool = False) -> Path:
+def object_path(reference: dict) -> Path:
+    """Where `fetch` keeps the object in the cache (it may not be there)."""
     if reference.get('bucket', BUCKET) != BUCKET:
         raise ValueError('Only the private input bucket is supported')
-    path = OBJECTS / safe_relative(reference['key'])
+    return OBJECTS / safe_relative(reference['key'])
+
+
+def fetch(reference: dict, *, remote: bool = False) -> Path:
+    path = object_path(reference)
     if path.is_symlink() or not path.resolve().is_relative_to(OBJECTS.resolve()):
         raise ValueError('Object cache path escapes its root')
     if path.exists():
@@ -101,8 +109,8 @@ def fetch(reference: dict, *, remote: bool = False) -> Path:
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
         temporary = Path(stream.name)
         try:
-            subprocess.run(['cf', 'r2', 'objects', 'get', reference['key'], '--bucket-name',
-                            reference.get('bucket', BUCKET), '--quiet'], stdout=stream, check=True)
+            r2.objects('get', reference['key'], '--bucket-name', reference.get('bucket', BUCKET), '--quiet',
+                       stdout=stream)
         except BaseException:
             temporary.unlink(missing_ok=True)
             raise
@@ -175,8 +183,34 @@ def upload(key: str, file: Path, reference: dict) -> None:
     verify(file, reference)
     if file.stat().st_size > 300_000_000:
         raise ValueError('cf REST upload limit exceeded; configure a file-based S3 multipart transport')
-    subprocess.run(['cf', 'r2', 'objects', 'put', key, '--bucket-name', BUCKET,
-                    '--file', str(file), '--quiet'], check=True, stdout=subprocess.DEVNULL)
+    r2.objects('put', key, '--bucket-name', BUCKET, '--file', str(file), '--quiet', stdout=subprocess.DEVNULL)
+
+
+def receipt_id(document: dict, table_id: str) -> str:
+    target = document['target']
+    return f'{target["jurisdiction"]}/{target["fiscal_year"]}/{document_slot(target)}/{document["direction"]}/{table_id}'
+
+
+def read_receipts() -> dict[str, dict] | None:
+    """The receipts list in R2, or None when it is not there yet. Always read from R2, never from the cache."""
+    try:
+        shown = r2.objects('get', RECEIPTS_KEY, '--bucket-name', BUCKET, '--quiet', quiet=True)
+    except subprocess.CalledProcessError as error:
+        if b'10007' in error.stderr or b'does not exist' in error.stderr:
+            return None
+        raise
+    return json.loads(shown.stdout)
+
+
+def write_receipts(receipts: dict[str, dict]) -> None:
+    with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as stream:
+        json.dump(receipts, stream, ensure_ascii=False, sort_keys=True, indent=1)
+        temporary = Path(stream.name)
+    try:
+        r2.objects('put', RECEIPTS_KEY, '--bucket-name', BUCKET, '--file', str(temporary),
+                   '--content-type', 'application/json', '--quiet', stdout=subprocess.DEVNULL)
+    finally:
+        temporary.unlink(missing_ok=True)
 
 
 def cleanup(document: dict) -> int:

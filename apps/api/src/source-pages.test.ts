@@ -32,7 +32,7 @@ test('origin_id か sha256 で出典の頁の文字と公式の URL を返す', 
 
 test('風土記の出典に無いもの・予算決算の出典は、頁の文字があっても返さない', async () => {
   const { db, sqlite } = setup(['x'])
-  sqlite.query(`INSERT INTO expenditure_origin (origin_id, jurisdiction_code, fiscal_year, document_kind, title, url, format, sha256) VALUES (?,?,?,?,?,?,?,?)`)
+  sqlite.query(`INSERT INTO fiscal_origin (origin_id, jurisdiction_code, fiscal_year, document_kind, title, url, format, sha256) VALUES (?,?,?,?,?,?,?,?)`)
     .run('x1', '131091', 2026, 'initial', '予算書', 'https://city.example.jp/x.pdf', 'pdf', OTHER)
   addPages(sqlite, OTHER, ['予算書の本文'])
   for (const origin of [OTHER, 'x1', '../fiscal/ingestion/x', `source-text/${SHA}.json`])

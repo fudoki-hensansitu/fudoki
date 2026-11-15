@@ -2,7 +2,7 @@ from collections import Counter, defaultdict
 import re
 from ingestion.generic.layout import SUBJECT_LEVELS, normalize
 from ingestion.generic.patterns import document_quirk
-from ingestion.generic.tree import subject_header
+from ingestion.generic.tree import ABOLISHED, subject_header, title_shift
 
 
 def select(bands):
@@ -39,12 +39,15 @@ def alignment(all_items, codes_right, glued=None):
                             digit_widths[item.level].append(item.glyphs[0].x1 - item.glyphs[0].x0)
     # Codes set right across the whole subject column (a 款 `5` and `10` of nested boxes): a two-digit code starts
     # one digit before a one-digit code of its level, so it is read at the position the one-digit codes start.
+    # (A two-digit code the text layer cuts after its first digit, `1` `3.文` of `13.文化費`, is a two-digit one.)
     ones = [item.glyphs[0] for _, ordered, found in all_items for group in ordered
             if group.subject and group.mode == 'indent' for item in found[id(group)]
-            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]', digits_of(item.glyphs[0]))]
+            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]', digits_of(item.glyphs[0]))
+            and re.fullmatch(r'[0-9]', item.code)]
     twos = [item.glyphs[0] for _, ordered, found in all_items for group in ordered
             if group.subject and group.mode == 'indent' for item in found[id(group)]
-            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]{2}', digits_of(item.glyphs[0]))]
+            if item.code is not None and item.role == 'node' and item.glyphs and re.fullmatch(r'[0-9]{2}', item.code)
+            and re.fullmatch(r'[0-9]{1,2}', digits_of(item.glyphs[0]))]
     one_width = sorted(digit_width(g) for g in ones)[len(ones) // 2] if ones else 0
     starts_of_ones = [g.x0 for g in ones]
     set_right = sum(any(abs(g.x0 + one_width - x) <= 1 for x in starts_of_ones) for g in twos)
@@ -80,7 +83,8 @@ def align(logical, group, kept, alignment):
         if run_into is not None and codes_set_right and item.code is not None and run_into.module.set_right(item):
             item.indent += one_width if len(item.code) == 2 else 0
         elif run_into is None and codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', digits_of(lead)):
-            item.indent += one_width if len(digits_of(lead)) == 2 else 0
+            # A two-digit code the text layer cuts after its first digit (`1` `3.文`) is two-digit too.
+            item.indent += one_width if 2 in (len(item.code), len(digits_of(lead))) else 0
         elif band is not None and item.code is not None and narrow and item.level in right_set:
             # A staircase of narrow level columns with the codes set right: the column is the level,
             # not where the digits start (`5` and `10` of one 目 start 5pt apart).
@@ -133,11 +137,16 @@ def learn_levels(all_items, codeless=None, stray=None):
         for group in ordered:
             if group.subject and group.mode == 'indent':
                 group.levels = len(centres) or 1
+                above = 1 if title_shift(group) else 0  # a column of the 項 and the 目 under a title naming the 款
                 for item in found[id(group)]:
                     if item.level == -1:
                         continue  # a title the layout read (`level_titles`): its level is the one it names
                     item.level = min(range(len(centres)), key=lambda i: abs(centres[i] - edge(item))) if centres else 0
-                    item.level_name = SUBJECT_LEVELS[item.level] if item.level < len(SUBJECT_LEVELS) else None
+                    # The line of the subjects dropped this year names their level (`(廃項整理)`), wherever it starts.
+                    if item.code is None and (dropped := ABOLISHED.fullmatch(normalize(item.name or ''))) is not None \
+                            and dropped.group(1) in SUBJECT_LEVELS and 0 <= SUBJECT_LEVELS.index(dropped.group(1)) - above < len(centres):
+                        item.level = SUBJECT_LEVELS.index(dropped.group(1)) - above
+                    item.level_name = SUBJECT_LEVELS[item.level + above] if item.level + above < len(SUBJECT_LEVELS) else None
     # A 項・目 printed without its code: the quirk `codeless_name_levels`.
     if codeless is not None:
         codeless.module.relevel(coded_, nodes_, centres, edge)

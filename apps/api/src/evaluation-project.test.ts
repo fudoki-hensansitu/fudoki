@@ -6,7 +6,7 @@ import type { Db } from './db'
 import { EvaluationOutput, SheetOutput, SheetSearchOutput, type SheetCountOutput } from './evaluation/model'
 import { callWebOp } from './web-ops'
 import { ProjectOutput, ProjectSearchOutput } from './project/model'
-import { testDb } from './testing'
+import { insertDetail, insertSubject, testDb } from './testing'
 
 let db: Db
 let sqlite: Database
@@ -87,18 +87,30 @@ describe('事業', () => {
   const CHILD = H('c')
   beforeEach(() => {
     insert('evaluation_sheet_project', { link_id: H('e'), sheet_id: H('0'), jurisdiction_code: '131091', fiscal_year: 2024, project_id: P, method: 'code' })
-    for (const [id, name, parent] of [[P, '子育て支援費', null], [CHILD, '子育て相談', P]] as const)
-      insert('project', { project_id: id, jurisdiction_code: '131091', name, account_name: '一般会計', first_year: 2024, first_year_kind: 'before_coverage', last_year: null, last_year_kind: 'latest', parent_project_id: parent })
-    for (const [fy, budget, settled] of [[2024, 'd-old', 'd-settled'], [2026, 'd-initial', null]] as const)
-      insert('project_year', {
-        project_year_id: H(String(fy % 10)), project_id: P, jurisdiction_code: '131091', fiscal_year: fy, name: '子育て支援費', account_name: '一般会計',
-        kan_name: '民生費', kou_name: '児童福祉費', moku_name: '児童福祉総務費', initial_expenditure_detail_id: budget, settlement_expenditure_detail_id: settled, budget_yen: 1000, settled_yen: settled ? 900 : null,
-      })
+    for (const [id, parent] of [[P, null], [CHILD, P]] as const)
+      insert('project', { project_id: id, jurisdiction_code: '131091', first_year: 2024, first_year_kind: 'before_coverage', last_year: null, last_year_kind: 'latest', parent_project_id: parent })
+    // 名前・款項目・金額は事業の年度が指す内訳から引く。会計・款項目は内訳の科目と根から求める（ADR 0047）
+    for (const [fy, kind] of [[2024, 'initial'], [2024, 'settlement'], [2026, 'initial']] as const) {
+      const root = { jurisdiction_code: '131091', fiscal_year: fy, document_kind: kind, account_name: '一般会計' }
+      insertSubject(sqlite, { ...root, subject_id: `k-${kind}-${fy}`, level: '款', name: '民生費', amount_yen: 1 })
+      insertSubject(sqlite, { ...root, subject_id: `h-${kind}-${fy}`, parent_subject_id: `k-${kind}-${fy}`, level: '項', name: '児童福祉費', amount_yen: 1 })
+      insertSubject(sqlite, { ...root, subject_id: `s-${kind}-${fy}`, parent_subject_id: `h-${kind}-${fy}`, level: '目', name: '児童福祉総務費', amount_yen: 1 })
+    }
+    for (const [id, fy, kind, name, yen] of [['d-old', 2024, 'initial', '子育て支援費', 1000], ['d-settled', 2024, 'settlement', '子育て支援費', 900], ['d-initial', 2026, 'initial', '子育て支援事業費', 1100], ['d-child', 2026, 'initial', '家庭相談', 100]] as const)
+      insertDetail(sqlite, { detail_id: id, subject_id: `s-${kind}-${fy}`, jurisdiction_code: '131091', fiscal_year: fy, document_kind: kind, account_name: '一般会計', breakdown: '事業', depth: 1, name, amount_yen: yen })
+    for (const [yid, pid, fy, budget, settled] of [[H('4'), P, 2024, 'd-old', 'd-settled'], [H('6'), P, 2026, 'd-initial', null], [H('7'), CHILD, 2026, 'd-child', null]] as const)
+      insert('project_year', { project_year_id: yid, project_id: pid, fiscal_year: fy, initial_expenditure_detail_id: budget, settlement_expenditure_detail_id: settled })
   })
 
   test('事業は年度と直下の事業を返し、評価シートはつなぎの表で引く', async () => {
     const body = ProjectOutput.parse(await (await get(`/v1/projects/${P}`)).json())
     expect(body.years.map((y) => y.fiscal_year)).toEqual([2024, 2026])
+    // 金額・科目は当初予算と決算の内訳から、名前は当初予算の内訳から引き、事業の名前は最新の年度のもの
+    expect(body.years.map((y) => [y.name, y.budget_yen, y.settled_yen, y.initial_expenditure_subject_id, y.settlement_expenditure_subject_id])).toEqual([
+      ['子育て支援費', 1000, 900, 's-initial-2024', 's-settlement-2024'],
+      ['子育て支援事業費', 1100, null, 's-initial-2026', null],
+    ])
+    expect(body.project.name).toBe('子育て支援事業費')
     expect(body.children.map((c) => c.project_id)).toEqual([CHILD])
     expect(Object.keys(body).sort()).toEqual(['children', 'project', 'years'])
     const sheets = await (await post('/v1/evaluations/sheets:search', { fiscal_year: { min: 2024, max: 2026 }, project_ids: [P] })).json()
@@ -125,7 +137,7 @@ describe('事業', () => {
   })
 
   test('合計件数は 10,000 で数えるのをやめる', async () => {
-    const add = sqlite.prepare(`INSERT INTO project_year ("project_year_id", "project_id", "jurisdiction_code", "fiscal_year", "name", "account_name") VALUES (?, ?, '131091', 2025, '事業', '一般会計')`)
+    const add = sqlite.prepare(`INSERT INTO project_year ("project_year_id", "project_id", "fiscal_year", "initial_expenditure_detail_id") VALUES (?, ?, 2025, 'd-initial')`)
     sqlite.transaction(() => {
       for (let i = 0; i < 10_001; i++) add.run(`py-${i}`, P)
     })()

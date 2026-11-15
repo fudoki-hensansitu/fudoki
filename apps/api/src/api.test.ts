@@ -597,12 +597,12 @@ describe('operation の応答は output の schema に合う', () => {
     return { ...Object.fromEntries(cols.filter((c) => !c.nullable).map((c) => [c.name, dflt(c.type)])), ...row }
   }
   beforeEach(() => {
-    insertOrigin(sqlite, filled('expenditure_origin', { origin_id: 'of', fiscal_year: 2023, sha256: 'f'.repeat(64) }))
+    insertOrigin(sqlite, filled('fiscal_origin', { origin_id: 'of', fiscal_year: 2023, sha256: 'f'.repeat(64) }))
     for (const document_kind of ['settlement', 'initial'] as const) {
       const { P, C, D } = IDS[document_kind]
       const amount_phase = document_kind === 'settlement' ? 'executed' : 'approved'
-      insertSubject(sqlite, filled('expenditure_subject', { document_kind, amount_phase, subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '款', is_leaf: 0 }))
-      insertSubject(sqlite, filled('expenditure_subject', { document_kind, amount_phase, subject_id: C, parent_subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '目', is_leaf: 1 }))
+      insertSubject(sqlite, filled('expenditure_subject', { document_kind, amount_phase, subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '款', code: '1' }))
+      insertSubject(sqlite, filled('expenditure_subject', { document_kind, amount_phase, subject_id: C, parent_subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '目', code: '1' }))
       insertDetail(sqlite, filled('expenditure_detail', { document_kind, amount_phase, detail_id: D, subject_id: C, fiscal_year: 2023, origin_id: 'of', breakdown: '事業', depth: 1 }))
     }
   })

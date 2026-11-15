@@ -8,7 +8,7 @@
           "name": "jurisdiction_code",
           "type": "string",
           "nullable": false,
-          "description": "全国地方公共団体コード（6桁、末尾は検査数字）。科目の表・expenditure_origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。"
+          "description": "全国地方公共団体コード（6桁、末尾は検査数字）。科目の表・fiscal_origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。"
         },
         {
           "name": "name",
@@ -42,10 +42,75 @@
         }
       ]
     },
+    "fiscal_origin": {
+      "primary_key": "origin_id",
+      "indexes": [],
+      "columns": [
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典ファイルを指すSHA由来のID。歳出・歳入の科目・内訳・印字の位置の表の origin_id が指す。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "自治体コード。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "出典の年度。"
+        },
+        {
+          "name": "document_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "資料区分（initial 当初予算・supplementary 補正予算・settlement 決算）。"
+        },
+        {
+          "name": "amendment_number",
+          "type": "integer",
+          "nullable": true,
+          "description": "補正予算の号数。補正予算以外はNULL。"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の資料名（前後の空白を除いたもの）。"
+        },
+        {
+          "name": "url",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の公開URL。"
+        },
+        {
+          "name": "format",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の形式（pdf か csv）。"
+        },
+        {
+          "name": "sha256",
+          "type": "string",
+          "nullable": false,
+          "description": "出典ファイルの SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。"
+        }
+      ]
+    },
     "expenditure": {
       "primary_key": "expenditure_id",
       "indexes": [
         [
+          "jurisdiction_code"
+        ],
+        [
+          "fiscal_year",
+          "document_kind",
           "jurisdiction_code"
         ]
       ],
@@ -170,66 +235,6 @@
         }
       ]
     },
-    "expenditure_origin": {
-      "primary_key": "origin_id",
-      "indexes": [],
-      "columns": [
-        {
-          "name": "origin_id",
-          "type": "string",
-          "nullable": false,
-          "description": "出典ファイルを指すSHA由来のID。科目・内訳・印字の位置の表の origin_id が指す。"
-        },
-        {
-          "name": "jurisdiction_code",
-          "type": "string",
-          "nullable": false,
-          "description": "自治体コード。"
-        },
-        {
-          "name": "fiscal_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "出典の年度。"
-        },
-        {
-          "name": "document_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "資料区分（initial 当初予算・supplementary 補正予算・settlement 決算）。"
-        },
-        {
-          "name": "amendment_number",
-          "type": "integer",
-          "nullable": true,
-          "description": "補正予算の号数。補正予算以外はNULL。"
-        },
-        {
-          "name": "title",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の資料名（前後の空白を除いたもの）。"
-        },
-        {
-          "name": "url",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の公開URL。"
-        },
-        {
-          "name": "format",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の形式（pdf か csv）。"
-        },
-        {
-          "name": "sha256",
-          "type": "string",
-          "nullable": false,
-          "description": "出典ファイルの SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。"
-        }
-      ]
-    },
     "expenditure_origin_link": {
       "primary_key": "link_id",
       "indexes": [
@@ -257,7 +262,7 @@
           "name": "origin_id",
           "type": "string",
           "nullable": false,
-          "description": "出典。expenditure_origin の origin_id。"
+          "description": "出典。fiscal_origin の origin_id。"
         }
       ]
     },
@@ -265,21 +270,11 @@
       "primary_key": "subject_id",
       "indexes": [
         [
-          "fiscal_year",
-          "document_kind",
-          "jurisdiction_code",
+          "expenditure_id",
           "level"
         ],
         [
-          "fiscal_year",
-          "document_kind",
-          "cofog_code"
-        ],
-        [
           "parent_subject_id"
-        ],
-        [
-          "expenditure_id"
         ]
       ],
       "columns": [
@@ -308,60 +303,10 @@
           "description": "歳出の根（自治体・年度・資料区分・補正号・会計）の ID。expenditure の expenditure_id。"
         },
         {
-          "name": "jurisdiction_code",
-          "type": "string",
-          "nullable": false,
-          "description": "宣言の自治体コード。"
-        },
-        {
-          "name": "fiscal_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "宣言の会計年度（西暦）。"
-        },
-        {
-          "name": "document_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。",
-          "values": [
-            "settlement",
-            "initial"
-          ]
-        },
-        {
-          "name": "amendment_number",
-          "type": "integer",
-          "nullable": true,
-          "description": "補正予算の号数。補正予算は未収録なので今は常に NULL。"
-        },
-        {
-          "name": "amount_phase",
-          "type": "string",
-          "nullable": false,
-          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。",
-          "values": [
-            "executed",
-            "approved"
-          ]
-        },
-        {
-          "name": "account_name",
-          "type": "string",
-          "nullable": false,
-          "description": "選定scope・管理JSONにある出典の会計名。"
-        },
-        {
-          "name": "account_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "自治体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。出典の会計名を account_kind_map の語で対応づけた風土記の判断。自治体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。"
-        },
-        {
           "name": "level",
           "type": "string",
           "nullable": false,
-          "description": "科目の段（款・項・目）。足すときは同じ資料で一つの段か is_leaf に絞る。",
+          "description": "科目の段（款・項・目）。足すときは同じ資料で一つの段か末端に絞る。",
           "values": [
             "款",
             "項",
@@ -381,52 +326,10 @@
           "description": "出典の名称をNFKC・前後trimし、日本語の字間空白と折り返し改行を除いた値。英単語間の空白は保持。"
         },
         {
-          "name": "kan_code",
-          "type": "string",
-          "nullable": false,
-          "description": "所属する出典の款番号。"
-        },
-        {
-          "name": "kan_name",
-          "type": "string",
-          "nullable": false,
-          "description": "所属する款の出典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。"
-        },
-        {
-          "name": "kou_code",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する出典の項番号。款ではNULL。"
-        },
-        {
-          "name": "kou_name",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する項の出典の名称。款ではNULL。"
-        },
-        {
-          "name": "moku_code",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する出典の目番号。款・項ではNULL。"
-        },
-        {
-          "name": "moku_name",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する目の名称（name と同じ正規化）。款・項では NULL。"
-        },
-        {
           "name": "amount_yen",
           "type": "integer",
           "nullable": false,
-          "description": "資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親と、款・項の金額を印字しない資料の款・項は子の和で、印字ではない。出典で空欄の末端（決算で支出の無い予備費、その年度に廃した目の括弧書きなど）は 0。"
-        },
-        {
-          "name": "is_leaf",
-          "type": "boolean",
-          "nullable": false,
-          "description": "科目の子を持たないか（目と、目の無い項）。同じ資料の is_leaf の行の和が歳出の総額。例外は神戸市の2025年度一般会計で、170,000円足りない（内訳の表の is_subject_remainder を見る）。"
+          "description": "資料区分の金額（円）。決算（根の document_kind = settlement）は支出済額、当初予算（initial）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親と、款・項の金額を印字しない資料の款・項は子の和で、印字ではない。出典で空欄の末端（決算で支出の無い予備費、その年度に廃した目の括弧書きなど）は 0。"
         },
         {
           "name": "cofog_status",
@@ -472,13 +375,8 @@
           "parent_detail_id"
         ],
         [
-          "fiscal_year",
-          "document_kind",
-          "jurisdiction_code",
+          "expenditure_id",
           "breakdown"
-        ],
-        [
-          "expenditure_id"
         ]
       ],
       "columns": [
@@ -511,92 +409,6 @@
           "type": "string",
           "nullable": false,
           "description": "歳出の根（自治体・年度・資料区分・補正号・会計）の ID。expenditure の expenditure_id。"
-        },
-        {
-          "name": "jurisdiction_code",
-          "type": "string",
-          "nullable": false,
-          "description": "宣言の自治体コード。"
-        },
-        {
-          "name": "fiscal_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "宣言の会計年度（西暦）。"
-        },
-        {
-          "name": "document_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "資料区分（settlement 決算・initial 当初予算）。意味の違う金額を足さないよう、検索は必ず一つに絞る。",
-          "values": [
-            "settlement",
-            "initial"
-          ]
-        },
-        {
-          "name": "amendment_number",
-          "type": "integer",
-          "nullable": true,
-          "description": "補正予算の号数。補正予算は未収録なので今は常に NULL。"
-        },
-        {
-          "name": "amount_phase",
-          "type": "string",
-          "nullable": false,
-          "description": "金額の段階（executed 決算・執行実績、approved 当初予算）。document_kind と1対1。",
-          "values": [
-            "executed",
-            "approved"
-          ]
-        },
-        {
-          "name": "account_name",
-          "type": "string",
-          "nullable": false,
-          "description": "選定scope・管理JSONにある出典の会計名。"
-        },
-        {
-          "name": "account_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "自治体共通の会計の種類（一般会計・国民健康保険・介護保険・後期高齢者医療・用地・駐車場・下水道・介護サービス事業・土地区画整理）。出典の会計名を account_kind_map の語で対応づけた風土記の判断。自治体をまたぐ比較はこの列で行う。辞書に無い会計名は構築を止める。"
-        },
-        {
-          "name": "kan_code",
-          "type": "string",
-          "nullable": false,
-          "description": "所属する出典の款番号。"
-        },
-        {
-          "name": "kan_name",
-          "type": "string",
-          "nullable": false,
-          "description": "所属する款の出典の名称（name と同じ正規化）。比較の絞り込みで親を辿らずに使う（ADR 0022）。"
-        },
-        {
-          "name": "kou_code",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する出典の項番号。款ではNULL。"
-        },
-        {
-          "name": "kou_name",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する項の出典の名称。款ではNULL。"
-        },
-        {
-          "name": "moku_code",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する出典の目番号。款・項ではNULL。"
-        },
-        {
-          "name": "moku_name",
-          "type": "string",
-          "nullable": true,
-          "description": "所属する目の名称。項の直下の内訳では NULL。"
         },
         {
           "name": "breakdown",
@@ -649,19 +461,7 @@
           "name": "amount_yen",
           "type": "integer",
           "nullable": true,
-          "description": "資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親は子の和の集計で印字ではない。印字がない段は NULL。 金額を欠く行があると depth = 1 の和は科目の額と閉じない。"
-        },
-        {
-          "name": "is_leaf",
-          "type": "boolean",
-          "nullable": false,
-          "description": "内訳の子を持たないか。"
-        },
-        {
-          "name": "is_subject_remainder",
-          "type": "boolean",
-          "nullable": false,
-          "description": "末端でない科目（目を持つ項など）の直下の枝の根か。子の科目と並んで科目の額の一部を構成する（神戸市の福祉局の冊が目を立てずに印字した項の分、ADR 0030）。神戸市の2025年度一般会計は、科目の is_leaf の和にこの行を足しても款の和に 38,000円足りない（冊をまたいで足せない節がノードに無い）。depth = 1 の和の規則の外。"
+          "description": "資料区分の金額（円）。決算（根の document_kind = settlement）は支出済額、当初予算（initial）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親は子の和の集計で印字ではない。印字がない段は NULL。 金額を欠く行があると depth = 1 の和は科目の額と閉じない。"
         },
         {
           "name": "expenditure_setsu_id",
@@ -1225,18 +1025,6 @@
           "description": "全国地方公共団体コード（6桁）。"
         },
         {
-          "name": "name",
-          "type": "string",
-          "nullable": false,
-          "description": "最新の年度の事業の名前（当初予算の表記を優先。所管課の【】・[] を含む出典の表記のまま）。"
-        },
-        {
-          "name": "account_name",
-          "type": "string",
-          "nullable": false,
-          "description": "最新の年度の会計の名前。"
-        },
-        {
           "name": "first_year",
           "type": "integer",
           "nullable": false,
@@ -1281,23 +1069,17 @@
       "primary_key": "project_year_id",
       "indexes": [
         [
-          "project_id"
+          "project_id",
+          "fiscal_year"
         ],
         [
-          "fiscal_year",
-          "jurisdiction_code"
+          "fiscal_year"
         ],
         [
           "initial_expenditure_detail_id"
         ],
         [
           "settlement_expenditure_detail_id"
-        ],
-        [
-          "initial_expenditure_subject_id"
-        ],
-        [
-          "settlement_expenditure_subject_id"
         ]
       ],
       "columns": [
@@ -1314,46 +1096,10 @@
           "description": "事業。project の project_id。"
         },
         {
-          "name": "jurisdiction_code",
-          "type": "string",
-          "nullable": false,
-          "description": "全国地方公共団体コード（6桁）。"
-        },
-        {
           "name": "fiscal_year",
           "type": "integer",
           "nullable": false,
           "description": "会計年度（西暦）。"
-        },
-        {
-          "name": "name",
-          "type": "string",
-          "nullable": false,
-          "description": "この年度の事業の名前（当初予算の表記を優先）。"
-        },
-        {
-          "name": "account_name",
-          "type": "string",
-          "nullable": false,
-          "description": "会計の名前。"
-        },
-        {
-          "name": "kan_name",
-          "type": "string",
-          "nullable": true,
-          "description": "款の名前。"
-        },
-        {
-          "name": "kou_name",
-          "type": "string",
-          "nullable": true,
-          "description": "項の名前。"
-        },
-        {
-          "name": "moku_name",
-          "type": "string",
-          "nullable": true,
-          "description": "目の名前。目の無い項の下の事業は NULL。"
         },
         {
           "name": "initial_expenditure_detail_id",
@@ -1366,30 +1112,6 @@
           "type": "string",
           "nullable": true,
           "description": "決算書の事業の行。expenditure_detail の detail_id。決算に無い年度は NULL。"
-        },
-        {
-          "name": "initial_expenditure_subject_id",
-          "type": "string",
-          "nullable": true,
-          "description": "当初予算書の事業の行が載る科目（目。目の無い項の下は項）。expenditure_subject の subject_id。当初予算に無い年度は NULL。科目の分野（COFOG）はこの ID で科目から引く。"
-        },
-        {
-          "name": "settlement_expenditure_subject_id",
-          "type": "string",
-          "nullable": true,
-          "description": "決算書の事業の行が載る科目（目。目の無い項の下は項）。expenditure_subject の subject_id。決算に無い年度は NULL。"
-        },
-        {
-          "name": "budget_yen",
-          "type": "integer",
-          "nullable": true,
-          "description": "当初予算額（円）。当初予算書の事業の行の金額。"
-        },
-        {
-          "name": "settled_yen",
-          "type": "integer",
-          "nullable": true,
-          "description": "支出済額（円）。決算書の事業の行の金額。"
         }
       ]
     },

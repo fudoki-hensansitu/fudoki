@@ -1,0 +1,11 @@
+{"criteria": {"false": "取り込むべきでない数字。例: 款・項・目・節・事業の番号、頁番号、年月日・年度・議決の号数（令和8年第6号）、住所の番地、人数・件数・回数・面積などの数量、率（％）、本文や注記の中の数字、「第10節へ同項同目第8節から流用 12,846」のような流用・充用の注記の金額。", "true": "表の項目（科目・事業）の金額として取り込むべき値。例: 予算額、補正額、決算額、支出済額、不用額、事業費、国・県支出金など、表の金額の欄に印字された円の金額（0 や 1,234,000 のような値も含む）。"}, "instructions": "日本の自治体の決算書（歳出）のある頁から、数字を1つ取り出した。文脈は `items.{id}` にある（同じ行の語を左から並べた文、列の見出し、上下の行）。取り出した数字 `items.{id}.対象の数字`（同じ行では【】で示す）は、表の項目の金額として取り込むべき値か。", "kind": "digit-recheck", "model": "jev-1.13.0", "threshold": 0.7, "version": 1}
+{"fp":"d1f96c1b42ddcecf26967fb03fcf9682","p":0.18,"t":"disability-mutual-aid-expenditure"}
+{"fp":"07b9a6a758460f4d308870bf5339b935","p":0.13,"t":"farming-support-loan-expenditure"}
+{"fp":"6a4be6a0f83a8771a2c846c5b4a48da3","p":0.12,"t":"forestry-improvement-loan-expenditure"}
+{"fp":"615fda51092ddbc4eebfd2e4f16335d8","p":0.11,"t":"general-expenditure"}
+{"fp":"3c82fb2f5aea9b66ea8435c82c67f0f5","p":0.15,"t":"hospital-loan-expenditure"}
+{"fp":"034d891e4c634fcc6856a0cabc3c1250","p":0.14,"t":"national-health-insurance-expenditure"}
+{"fp":"9be18b5c1a002d47e75a85f45b8e20c5","p":0.13,"t":"prefectural-forest-expenditure"}
+{"fp":"7b7ccc5100e60e026655544c1b515c0b","p":0.16,"t":"public-debt-expenditure"}
+{"fp":"982f32d97a6e366bd4ccb7e616672caa","p":0.17,"t":"single-parent-loan-expenditure"}
+{"fp":"b61747dd8468fc2c8e069de40eabd23d","p":0.13,"t":"sme-advancement-loan-expenditure"}

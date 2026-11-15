@@ -224,6 +224,7 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
             regions += coverage_regions([(g.page, g.original, g.text) for g in glyphs], kind=kind,
                                         reason=notes.module.REASONS[kind])
     for logical in logicals:
+        regions += logical.excluded  # the rows under another heading (`header.frame_headings`)
         for band in logical.bands:
             # The digits a column sets past its right rule (`overhang`) are still the column's.
             excluded = {k: v for k, v in (band.excluded or {}).items() if k != 'overhang'}
@@ -451,7 +452,7 @@ class Table:
 OCR_GATES = ('unread ink in amount column', 'unreadable declared amount cell', 'amount in a column of no kind',
              'unread strip seam')
 # The options of a conversion that reread an OCR observation (`scan.read_pages`).
-OCR_REREADS = ('amount_corrections', 'code_corrections', 'amount_readings', 'code_readings', 'dropped_readings', 'unit_readings',
+OCR_REREADS = ('amount_corrections', 'code_corrections', 'amount_readings', 'code_readings', 'name_readings', 'dropped_readings', 'unit_readings',
                'header_readings')
 
 
@@ -508,32 +509,52 @@ def _build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
 
 
 def continue_volume(nodes: list[dict], spec: dict) -> str:
-    """A volume that starts inside a 事業 the volume before opened (町田市 prints its general account in two volumes
-    cut anywhere): its first rows are parts of rows it does not print and are read with no parent. The 款・項・目
-    and the 事業 rows above them are declared (`continued_rows`) and put at the head with no amount, on the first
-    page; the rows read with no parent are put under the last of them. The rows with no amount identify with the
-    volume before's rows (`continued` in the dbt rows model). Returns the note of what was put."""
+    """A volume that starts inside a 目 or a 事業 the volume before opened (町田市 and 文京区 print their general
+    account in volumes cut anywhere): its first rows are parts of rows it does not print. They are read with no
+    parent, or under the 款・項 the volume prints again as running titles over its first page (文京区). The 款・項・目
+    and the 事業 rows above them are declared (`continued_rows`); the ones the volume does not print are put at the
+    head with no amount, on the first page, and the rows read at the head are put under the last of them. A 事業 row
+    declared with `children` takes only that many of the head rows (in reading order), and the rest go under the row
+    above it: the volume goes on to the 事業's siblings. The rows with no amount identify with the volume before's
+    rows (`continued` in the dbt rows model). Returns the note of what was put."""
     def node_key(page: int, box: tuple[float, float, float, float], axis: str) -> str:
         return 'n-' + hashlib.sha256(f'{page}:{box[0]:.2f}:{box[1]:.2f}:{axis}'.encode()).hexdigest()[:24]
     subject = next((n['axis_header'] for n in nodes if n.get('level_header') in ('款', '項', '目')), None)
-    orphans = [n for n in nodes if n['parent_node_key'] is None and n['axis_header'] != subject]
-    if subject is None or not orphans:
-        raise ValueError('continued_rows: the volume reads no row at the head with no parent')
-    axis = orphans[0]['axis_header']
-    if any(n['axis_header'] != axis for n in orphans):
-        raise ValueError('continued_rows: the rows with no parent are on more than one axis')
     first = min(n['physical_page'] for n in nodes)
-    if any(n['physical_page'] != first for n in orphans):
+    heads = [n for n in nodes if n['parent_node_key'] is None and n['axis_header'] != subject]
+    printed: list[dict] = []  # the 款・項 the volume prints again over its first page
+    if subject is not None and not heads:
+        for index, row in enumerate(spec['subjects']):
+            above = printed[-1]['node_key'] if printed else None
+            found = next((n for n in nodes if n['axis_header'] == subject and n['parent_node_key'] == above
+                          and n.get('level_header') == '款項目'[index] and n['code_text'] == row['code']
+                          and n['physical_page'] == first), None)
+            if found is None:
+                break
+            printed.append(found)
+        if printed and len(printed) < len(spec['subjects']):
+            heads = [n for n in nodes if n['parent_node_key'] == printed[-1]['node_key'] and n['axis_header'] != subject]
+    if subject is None or not heads:
+        raise ValueError('continued_rows: the volume reads no row at the head with no parent')
+    if spec['rows'] and any(n['axis_header'] != heads[0]['axis_header'] for n in heads):
+        raise ValueError('continued_rows: the rows with no parent are on more than one axis')
+    # Rows read with no parent are on the first page. (Under the 款・項 the volume prints again, the rows are the
+    # 目's until the first 目 the volume prints, over as many spreads as it runs.)
+    if not printed and any(n['physical_page'] != first for n in heads):
         raise ValueError('continued_rows: a row with no parent is not on the first page')
-    top = min(n['y0'] for n in orphans)
-    chain, parent = [], None
+    axis = heads[0]['axis_header']
+    top = min(n['y0'] for n in heads)
+    chain, parent = [], printed[-1]['node_key'] if printed else None
     for index, row in enumerate(spec['subjects']):
+        if index < len(printed):
+            continue
         box = (0.0, top - 0.01 * (len(spec['subjects']) + len(spec['rows']) - index), 0.0, top)
         chain.append({'node_key': node_key(first, box, subject), 'parent_node_key': parent, 'axis_header': subject,
                       'depth': index + 1, 'level_header': '款項目'[index], 'code_text': row['code'],
                       'name_text': row.get('name'), 'physical_page': first,
                       'x0': box[0], 'y0': box[1], 'x1': box[2], 'y1': box[3]})
         parent = chain[-1]['node_key']
+    under = parent
     rows = []
     for index, row in enumerate(spec['rows']):
         box = (0.0, top - 0.01 * (len(spec['rows']) - index), 0.0, top)
@@ -546,15 +567,24 @@ def continue_volume(nodes: list[dict], spec: dict) -> str:
         if n['parent_node_key'] is not None:
             by_parent.setdefault(n['parent_node_key'], []).append(n)
 
-    def shift(node: dict) -> None:
-        node['depth'] += len(rows)
+    def shift(node: dict, by: int) -> None:
+        node['depth'] += by
         for child in by_parent.get(node['node_key'], ()):
-            shift(child)
-    for n in orphans:
-        n['parent_node_key'] = parent
-        shift(n)
+            shift(child, by)
+    level, taken = len(rows), [0] * len(rows)
+    for n in sorted(heads, key=lambda n: (n['physical_page'], n['y0'])):
+        while level and spec['rows'][level - 1].get('children') is not None \
+                and taken[level - 1] >= spec['rows'][level - 1]['children']:
+            level -= 1
+        n['parent_node_key'] = rows[level - 1]['node_key'] if level else under
+        if level:
+            taken[level - 1] += 1
+        shift(n, level)
     nodes[:0] = [*chain, *rows]
-    return '続きの冊の頭の款・項・目と事業 %d 行を金額なしで置き、親の無い %d 行をその下に付けた' % (len(rows), len(orphans))
+    if not printed:
+        return '続きの冊の頭の款・項・目と事業 %d 行を金額なしで置き、親の無い %d 行をその下に付けた' % (len(rows), len(heads))
+    return '続きの冊の頭に、印字の無い款・項・目 %d 行と事業 %d 行を金額なしで置き、頭の %d 行をその下に付けた' % (
+        len(chain), len(rows), len(heads))
 
 
 def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
@@ -643,6 +673,8 @@ def receipt_notes(table: Table) -> list[str]:
         check = f'分冊のため款の和 {unit.get("kan_sum"):,} と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）'
     elif unit.get('printed_total') is not None:
         check = f'款の和 {unit["kan_sum"]:,} と印字の「{unit.get("total_label")}」{unit["printed_total"]:,} が一致'
+        if unit.get('rounded_match'):
+            check += '（款と合計をそれぞれ四捨五入した差の範囲。quirk rounded_items）'
     else:
         check = f'款の和 {unit.get("kan_sum"):,}（頁に歳出合計の印字なし。桁だけを確かめた）'
     kinds = Counter(n['level_header'] for n in table.nodes if n['axis_header'] == '注記')
@@ -663,8 +695,10 @@ def receipt_notes(table: Table) -> list[str]:
     if variants:
         notes.append(f'Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: {"・".join(variants)}。')
     if table.ocr_pages:
+        learned = ('段の読み方は文字層の頁から当てはめた。' if {page.number for page in table.observed} - set(table.ocr_pages)
+                   else '文字層の頁が無いので、欄の種類も OCR の頁から決めた。')
         notes.append(f'文字層の無い頁 {len(table.ocr_pages)} 頁（{"・".join(map(str, table.ocr_pages))}）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、'
-                     '段の読み方は文字層の頁から当てはめた。')
+                     + learned)
     if table.report.skipped_pages:
         notes.append(f'選定の scope が共有していた別の方向（歳入）の頁 {len(table.report.skipped_pages)} 頁は読んでいない。')
     return notes

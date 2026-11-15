@@ -13,8 +13,9 @@ import duckdb
 import yaml
 
 from ingestion.fiscal import manifest
+from ingestion.fiscal import storage
 from ingestion.fiscal.storage import fetch, verify
-from ingestion.lib.node_tables import AMOUNT_COLUMNS, NODE_COLUMNS
+from ingestion.lib.table_columns import AMOUNT_COLUMNS, NODE_COLUMNS
 from ingestion.lib.source_inconsistencies import declared_for
 from ingestion.project import run as project
 
@@ -49,7 +50,7 @@ def input_path(document: dict, table: dict, kind: str, candidate: Path | None,
     return path
 
 
-# The yen of one printed unit, as the rows model reads `unit_text` (int_fiscal__settlement_expenditure_rows).
+# The yen of one printed unit, as the rows model reads `unit_text` (int_fiscal__rows).
 UNIT_YEN = {'円': 1, '千円': 1000}
 
 
@@ -123,7 +124,41 @@ def write_macro(macro_name: str, relations: list[str]) -> None:
                      '{% endmacro %}\n')
 
 
-def load_document(documents: dict, spec: dict, candidate: Path | None) -> dict:
+def readable(document: dict, *, remote: bool) -> bool:
+    """Whether every table of the document can be read (cached, or fetched from R2 with these bytes)."""
+    try:
+        for table in document['tables']:
+            for reference in manifest.table_references(table).values():
+                fetch(reference['object'], remote=remote)
+    except (FileNotFoundError, ValueError, subprocess.CalledProcessError):
+        return False
+    return True
+
+
+def with_receipts(document: dict, receipts: dict[str, dict]) -> dict | None:
+    """The document with the tables R2 holds (the receipts list), when it has every table the document declares
+    and each was converted from the declared inputs: its fingerprint is the recorded one or the current one (both
+    cover the inputs and options), so a table of a replaced original is not read under the new declaration."""
+    tables = [receipts.get(storage.receipt_id(document, table['table_id'])) for table in document['tables']]
+    if any(table is None for table in tables):
+        return None
+    current = None
+    for recorded, stored in zip(document['tables'], tables):
+        if stored['input_fingerprint'] == recorded['input_fingerprint']:
+            continue
+        current = current if current is not None else manifest.fingerprints(document)
+        if stored['input_fingerprint'] != current.get(stored['conversion_id']):
+            return None
+    return {**document, 'tables': tables}
+
+
+def load_document(documents: dict, spec: dict, candidate: Path | None, *, remote: bool = False,
+                  receipts: dict[str, dict] | None = None, fallbacks: list[str] | None = None,
+                  skipped: list[str] | None = None) -> dict | None:
+    """The manifest of the spec. With the receipts list (a remote build), a manifest whose recorded tables R2 does
+    not hold yet (merged, but `ingestion:store` failed or has not run) is read with the tables R2 holds instead,
+    when it holds all of them (stage 2 of docs/prd/ingestion-receipts/dd.md). A manifest R2 holds no table of is
+    left out (None). Otherwise the build stops as before."""
     target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
     key = (target['jurisdiction'], target['fiscal_year'], target['document_kind'], spec['direction'])
     if key not in documents:
@@ -133,6 +168,18 @@ def load_document(documents: dict, spec: dict, candidate: Path | None) -> dict:
                     else manifest.read(path, check_code=False))
         if document['target'] != target or document['direction'] != spec['direction']:
             raise ValueError(f'Manifest target differs: {path}')
+        if root is None and receipts is not None and not readable(document, remote=remote):
+            stored = with_receipts(document, receipts)
+            if stored is not None and readable(stored, remote=remote):
+                document = stored
+                if fallbacks is not None:
+                    fallbacks.append(str(path.relative_to(PIPELINE)))
+            elif receipts and not any(ident.startswith(storage.receipt_id(document, '')) for ident in receipts):
+                # Merged but never stored (its store failed): leave it out rather than stop every other
+                # jurisdiction's sync. D1 holds no rows of it, so the sync deletes nothing.
+                document = None
+                if skipped is not None:
+                    skipped.append(str(path.relative_to(PIPELINE)))
         documents[key] = document
     return documents[key]
 
@@ -176,6 +223,11 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
     if jurisdictions:
         declarations = only_jurisdictions(declarations, jurisdictions)
     write_relations(declarations)
+    # A remote build reads tables R2 does not hold yet from the receipts list instead (stage 2 of the receipts dd)
+    receipts = (storage.read_receipts() or {}) if remote else None
+    fallbacks: list[str] = []
+    skipped: list[str] = []
+    left_out: set[str] = set()
     provided = set(candidate.rglob('manifest.json')) if candidate is not None else set()
     if candidate is not None and not provided:
         raise ValueError('Candidate directory contains no manifest.json')
@@ -191,7 +243,11 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         for declared in sources['tables']:
             spec = declared['meta']
             target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
-            document = load_document(documents, spec, candidate)
+            document = load_document(documents, spec, candidate, remote=remote, receipts=receipts, fallbacks=fallbacks,
+                                     skipped=skipped)
+            if document is None:
+                left_out.add(declared['name'])
+                continue
             table = next((t for t in document['tables'] if t['table_id'] == spec['table_id']), None)
             if table is None or 'nodes' not in table:
                 raise ValueError(f'Missing node table: {declared["name"]}')
@@ -220,7 +276,11 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             for declared in csv_source['tables']:
                 spec = declared['meta']
                 target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
-                document = load_document(documents, spec, candidate)
+                document = load_document(documents, spec, candidate, remote=remote, receipts=receipts, fallbacks=fallbacks,
+                                         skipped=skipped)
+                if document is None:
+                    left_out.add(declared['name'])
+                    continue
                 table = next((t for t in document['tables'] if t['table_id'] == spec['table_id']), None)
                 if table is None or 'object' not in table:
                     raise ValueError(f'Missing raw CSV table: {declared["name"]}')
@@ -264,12 +324,17 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         # 事業評価は自治体で絞るとき、その自治体のものだけ読む
         project_tables = project.load(remote=remote, jurisdictions=jurisdictions or None)
         project.write(con, project_tables)
-        used = {root / 'manifest.json' for document in documents.values()
-                if (root := candidate_root(candidate, document['target'], document['direction'])) is not None}
+        used = {root / 'manifest.json' for document in documents.values() if document is not None
+                and (root := candidate_root(candidate, document['target'], document['direction'])) is not None}
         if provided - used:
             raise ValueError(f'Unused candidate manifests: {sorted(str(p) for p in provided - used)}')
         con.commit()
+    if left_out:
+        # dbt reads the relations a left-out manifest would have provided; drop them from the macros too.
+        write_relations([{**source, 'tables': [t for t in source['tables'] if t['name'] not in left_out]}
+                         if source['name'] in ('fiscal_pdf', 'fiscal_csv') else source for source in declarations])
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
+            'read_from_receipts': fallbacks, 'not_stored': skipped,
             'origins': len(origins), 'jurisdictions': len(registry),
             'evaluation_sheets': len(project_tables['project_evaluation_sheet']),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
@@ -281,7 +346,7 @@ def main() -> None:
                         help='Overlay candidates at jurisdiction/year/document-slot/direction/manifest.json '
                              '(legacy jurisdiction/manifest.json also supported); other targets use cached saved objects')
     parser.add_argument('--remote', action='store_true', help='Restore missing saved objects with cf (read only)')
-    parser.add_argument('--build', action='store_true', help='Build and test the expenditure marts after preparation')
+    parser.add_argument('--build', action='store_true', help='Build and test the fiscal (expenditure and revenue) marts after preparation')
     parser.add_argument('--jurisdiction', action='append', metavar='CODE',
                         help='Load only these jurisdictions\' fiscal tables (repeatable), for serving:sync --jurisdiction')
     args = parser.parse_args()
@@ -295,7 +360,7 @@ def main() -> None:
     if args.build:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
-                        '--select', 'marts.expenditure+', '+marts.expenditure', '+jurisdiction',
+                        '--select', 'marts.expenditure+', '+marts.expenditure', '+marts.revenue', '+marts.fiscal', 'fiscal_revenue_category', '+jurisdiction',
                         'cofog_master', '+marts.evaluation', '+marts.project', '+marts.source',
                         # 自治体で絞ったとき、他の自治体を宣言した seed の検査をその自治体に絞る
                         *(['--vars', json.dumps({'only_jurisdictions': sorted(args.jurisdiction)})] if args.jurisdiction else [])],

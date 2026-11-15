@@ -1,0 +1,487 @@
+{
+  "jurisdiction": "092037",
+  "name": "栃木市",
+  "official_url": "https://www.city.tochigi.lg.jp/",
+  "selections": [
+    {
+      "target": {
+        "jurisdiction": "092037",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度栃木市予算書",
+          "landing_url": "https://www.city.tochigi.lg.jp/soshiki/14/36214.html",
+          "inspected_at": "2026-11-15T15:40:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tochigi.lg.jp/uploaded/attachment/68290.pdf",
+              "sha256": "cf673797287a3d7a9d76b7b946869d72139b3c2dc4b6a7307b49a4f388cad79e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 140,
+                      "end": 347
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 396,
+                      "end": 441
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 466,
+                      "end": 479
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険特別会計（保険事業勘定）",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 510,
+                      "end": 555
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険特別会計（介護サービス事業勘定）",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 578,
+                      "end": 583
+                    }
+                  ]
+                },
+                {
+                  "account": "栃木インター西産業団地特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 602,
+                      "end": 605
+                    }
+                  ]
+                },
+                {
+                  "account": "平川産業団地特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 628,
+                      "end": 631
+                    }
+                  ]
+                },
+                {
+                  "account": "水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 659,
+                      "end": 659
+                    },
+                    {
+                      "start": 661,
+                      "end": 661
+                    }
+                  ]
+                },
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 683,
+                      "end": 683
+                    },
+                    {
+                      "start": 685,
+                      "end": 685
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の「予算書」の頁（https://www.city.tochigi.lg.jp/soshiki/14/36214.html）の「令和8年度栃木市予算書」（1冊の text PDF。一般会計・特別会計予算書、予算に関する説明書、企業会計予算書・説明書を含む）。一般会計・特別会計6つは歳入歳出予算事項別明細書の歳出を範囲にする。見開き（A3横）を1枚の頁に刷り、同じ頁を2回入れて左頁と右頁を CropBox で切り分けている。表の罫線は罫線素片の文字（┃━│など）で描く。左頁に目と本年度・前年度・比較・本年度の財源内訳（特定財源・一般財源）、右頁に節（区分・金額）・細節（区分・金額）と説明を千円単位で印字し、款・項は表の上に「（款）1 議会費」「（項）1 議会費」と印字する。水道事業会計・下水道事業会計は予算に関する説明書の予算実施計画の支出の頁（収益的支出・資本的支出、款・項・目、予定額、千円）を範囲にする。給与費明細書・債務負担行為・地方債の調書は範囲外。物理頁: 一般会計140〜347、国民健康保険特別会計396〜441、後期高齢者医療特別会計466〜479、介護保険特別会計（保険事業勘定）510〜555、介護保険特別会計（介護サービス事業勘定）578〜583、栃木インター西産業団地特別会計602〜605、平川産業団地特別会計628〜631、水道事業会計659・661、下水道事業会計683・685。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092037/2026/initial.pdf",
+            "sha256": "cf673797287a3d7a9d76b7b946869d72139b3c2dc4b6a7307b49a4f388cad79e",
+            "final_url": "https://www.city.tochigi.lg.jp/uploaded/attachment/68290.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T15:22:05.623Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092037",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度栃木市予算書",
+          "landing_url": "https://www.city.tochigi.lg.jp/soshiki/14/36214.html",
+          "inspected_at": "2026-11-15T15:40:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tochigi.lg.jp/uploaded/attachment/60659.pdf",
+              "sha256": "92f0254b54cb34969a4cdf5de352785f1ad8b986e44e08f4823aa512a3d2c959",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 144,
+                      "end": 355
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 404,
+                      "end": 447
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 472,
+                      "end": 485
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険特別会計（保険事業勘定）",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 514,
+                      "end": 559
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険特別会計（介護サービス事業勘定）",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 582,
+                      "end": 587
+                    }
+                  ]
+                },
+                {
+                  "account": "栃木インター西産業団地特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 606,
+                      "end": 611
+                    }
+                  ]
+                },
+                {
+                  "account": "平川産業団地特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 634,
+                      "end": 637
+                    }
+                  ]
+                },
+                {
+                  "account": "水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 665,
+                      "end": 665
+                    },
+                    {
+                      "start": 667,
+                      "end": 667
+                    }
+                  ]
+                },
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 691,
+                      "end": 691
+                    },
+                    {
+                      "start": 693,
+                      "end": 693
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の「予算書」の頁（https://www.city.tochigi.lg.jp/soshiki/14/36214.html）の「令和7年度栃木市予算書」（1冊の text PDF。一般会計・特別会計予算書、予算に関する説明書、企業会計予算書・説明書を含む）。一般会計・特別会計6つは歳入歳出予算事項別明細書の歳出を範囲にする。見開き（A3横）を1枚の頁に刷り、同じ頁を2回入れて左頁と右頁を CropBox で切り分けている。表の罫線は罫線素片の文字（┃━│など）で描く。左頁に目と本年度・前年度・比較・本年度の財源内訳（特定財源・一般財源）、右頁に節（区分・金額）・細節（区分・金額）と説明を千円単位で印字し、款・項は表の上に「（款）1 議会費」「（項）1 議会費」と印字する。水道事業会計・下水道事業会計は予算に関する説明書の予算実施計画の支出の頁（収益的支出・資本的支出、款・項・目、予定額、千円）を範囲にする。給与費明細書・債務負担行為・地方債の調書は範囲外。物理頁: 一般会計144〜355、国民健康保険特別会計404〜447、後期高齢者医療特別会計472〜485、介護保険特別会計（保険事業勘定）514〜559、介護保険特別会計（介護サービス事業勘定）582〜587、栃木インター西産業団地特別会計606〜611、平川産業団地特別会計634〜637、水道事業会計665・667、下水道事業会計691・693。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092037/2025/initial.pdf",
+            "sha256": "92f0254b54cb34969a4cdf5de352785f1ad8b986e44e08f4823aa512a3d2c959",
+            "final_url": "https://www.city.tochigi.lg.jp/uploaded/attachment/60659.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T15:22:10.815Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092037",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度栃木市予算書",
+          "landing_url": "https://www.city.tochigi.lg.jp/soshiki/14/36214.html",
+          "inspected_at": "2026-11-15T15:40:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.tochigi.lg.jp/uploaded/attachment/54520.pdf",
+              "sha256": "8abf792525f146f469b47ee4397e8267b05c93da12fc548e086d062cca6bd25f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 140,
+                      "end": 341
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 388,
+                      "end": 431
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 456,
+                      "end": 469
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険特別会計（保険事業勘定）",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 498,
+                      "end": 543
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険特別会計（介護サービス事業勘定）",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 566,
+                      "end": 571
+                    }
+                  ]
+                },
+                {
+                  "account": "栃木インター西産業団地特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 590,
+                      "end": 595
+                    }
+                  ]
+                },
+                {
+                  "account": "平川産業団地特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 618,
+                      "end": 621
+                    }
+                  ]
+                },
+                {
+                  "account": "水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 649,
+                      "end": 649
+                    },
+                    {
+                      "start": 651,
+                      "end": 651
+                    }
+                  ]
+                },
+                {
+                  "account": "下水道事業会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 675,
+                      "end": 675
+                    },
+                    {
+                      "start": 677,
+                      "end": 677
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の「予算書」の頁（https://www.city.tochigi.lg.jp/soshiki/14/36214.html）の「令和6年度栃木市予算書」（1冊の text PDF。一般会計・特別会計予算書、予算に関する説明書、企業会計予算書・説明書を含む）。一般会計・特別会計6つは歳入歳出予算事項別明細書の歳出を範囲にする。見開き（A3横）を1枚の頁に刷り、同じ頁を2回入れて左頁と右頁を CropBox で切り分けている。表の罫線は罫線素片の文字（┃━│など）で描く。左頁に目と本年度・前年度・比較・本年度の財源内訳（特定財源・一般財源）、右頁に節（区分・金額）・細節（区分・金額）と説明を千円単位で印字し、款・項は表の上に「（款）1 議会費」「（項）1 議会費」と印字する。水道事業会計・下水道事業会計は予算に関する説明書の予算実施計画の支出の頁（収益的支出・資本的支出、款・項・目、予定額、千円）を範囲にする。給与費明細書・債務負担行為・地方債の調書は範囲外。物理頁: 一般会計140〜341、国民健康保険特別会計388〜431、後期高齢者医療特別会計456〜469、介護保険特別会計（保険事業勘定）498〜543、介護保険特別会計（介護サービス事業勘定）566〜571、栃木インター西産業団地特別会計590〜595、平川産業団地特別会計618〜621、水道事業会計649・651、下水道事業会計675・677。令和5年度以前の予算書も同じ頁にあるが、事項別明細書の頁の文字が字の対応表（ToUnicode）を持たず文字として読めないため、同じ宣言で読める令和6年度で止める（確認日 2026-11-15）。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092037/2024/initial.pdf",
+            "sha256": "8abf792525f146f469b47ee4397e8267b05c93da12fc548e086d062cca6bd25f",
+            "final_url": "https://www.city.tochigi.lg.jp/uploaded/attachment/54520.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T15:22:15.237Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092037",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "reason": "未公表（予算書の頁 https://www.city.tochigi.lg.jp/soshiki/14/36214.html と、財政課の決算の頁 https://www.city.tochigi.lg.jp/soshiki/14/34437.html を確認。決算の頁は決算カードと、広報とちぎに載せた『栃木市の決算』の記事（1頁。一般会計の円グラフと会計別の総額の要約）だけで、全会計の款ごとの支出済額を載せた決算書・歳入歳出決算事項別明細書・決算審査意見書は公開されていない。確認日 2026-11-15）。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "092037",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "reason": "未公表（予算書の頁 https://www.city.tochigi.lg.jp/soshiki/14/36214.html と、財政課の決算の頁 https://www.city.tochigi.lg.jp/soshiki/14/34437.html を確認。決算の頁は決算カードと、広報とちぎに載せた『栃木市の決算』の記事（1頁。一般会計の円グラフと会計別の総額の要約）だけで、全会計の款ごとの支出済額を載せた決算書・歳入歳出決算事項別明細書・決算審査意見書は公開されていない。確認日 2026-11-15）。",
+      "selected_candidate_id": null,
+      "archive": null
+    },
+    {
+      "target": {
+        "jurisdiction": "092037",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "reason": "未公表（予算書の頁 https://www.city.tochigi.lg.jp/soshiki/14/36214.html と、財政課の決算の頁 https://www.city.tochigi.lg.jp/soshiki/14/34437.html を確認。決算の頁は決算カードと、広報とちぎに載せた『栃木市の決算』の記事（1頁。一般会計の円グラフと会計別の総額の要約）だけで、全会計の款ごとの支出済額を載せた決算書・歳入歳出決算事項別明細書・決算審査意見書は公開されていない。確認日 2026-11-15）。",
+      "selected_candidate_id": null,
+      "archive": null
+    }
+  ],
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "092037",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（事業の粒度の評価の公開なし）。栃木市の公式サイト内を「事務事業評価」「行政評価」「事業評価」で探したが、事業ごとの評価シートは公開されていない（市政年報 https://www.city.tochigi.lg.jp/uploaded/attachment/71704.pdf は事務の報告で評価ではない）。確認日：2026-11-15。"
+    },
+    {
+      "target": {
+        "jurisdiction": "092037",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（事業の粒度の評価の公開なし）。栃木市の公式サイト内を「事務事業評価」「行政評価」「事業評価」で探したが、事業ごとの評価シートは公開されていない（市政年報 https://www.city.tochigi.lg.jp/uploaded/attachment/71704.pdf は事務の報告で評価ではない）。確認日：2026-11-15。"
+    },
+    {
+      "target": {
+        "jurisdiction": "092037",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定（事業の粒度の評価の公開なし）。栃木市の公式サイト内を「事務事業評価」「行政評価」「事業評価」で探したが、事業ごとの評価シートは公開されていない（市政年報 https://www.city.tochigi.lg.jp/uploaded/attachment/71704.pdf は事務の報告で評価ではない）。確認日：2026-11-15。"
+    }
+  ]
+}

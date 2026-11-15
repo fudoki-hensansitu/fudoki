@@ -1,6 +1,6 @@
 // 集約の型（*/model.ts）の enum と、dbt の accepted_values（columns.json）が同じ値かを照合する（docs/prd/aggregate-api/dd.md）。
 import { describe, expect, test } from 'bun:test'
-import { TABLES } from './columns'
+import { DETAIL_TABLE, PROJECT_COLUMNS, PROJECT_YEAR_COLUMNS, SUBJECT_TABLE, TABLES, type ColumnSpec } from './columns'
 import { DIRECTIONS, DirectionCode, EvaluationOriginRow, EvaluationRow, IndicatorRow, IndicatorValueRow, SheetRow } from './evaluation/model'
 import { ProjectRow, ProjectYearRow } from './project/model'
 import { z } from 'zod'
@@ -8,13 +8,23 @@ import { DocumentKind } from './shared/model'
 import { Breakdown, DetailRow, LocationKind, LocationRow, OriginRow, SubjectRow } from './expenditure/model'
 import { JurisdictionList } from './jurisdiction/model'
 
+/** 科目・内訳は表に無い列も検索の中で求めて返すので（ADR 0047）、検索の対象の列と照合する */
+// 表に無い列を JOIN で引く検索・事業は、その列の一覧と照合する
+const VIEWS: Record<string, readonly ColumnSpec[]> = {
+  expenditure_subject: SUBJECT_TABLE.columns,
+  expenditure_detail: DETAIL_TABLE.columns,
+  project: PROJECT_COLUMNS,
+  project_year: PROJECT_YEAR_COLUMNS,
+}
+const columnsOfTable = (table: string) => VIEWS[table] ?? TABLES[table]!.columns
+
 const values = (table: string, column: string) => {
-  const spec = TABLES[table]?.columns.find((c) => c.name === column)
+  const spec = columnsOfTable(table).find((c) => c.name === column)
   if (!spec?.values) throw new Error(`${table}.${column} に accepted_values が無い`)
   return [...spec.values].sort()
 }
 const sorted = (xs: readonly string[]) => [...xs].sort()
-
+/** 表の列に JOIN で引く列を足した API の行の列 */
 describe('型と表の値', () => {
   test.each([
     ['expenditure', 'document_kind', DocumentKind.options],
@@ -55,19 +65,20 @@ describe('API の行の schema と表の列', () => {
     ['expenditure_subject', shapeOf(SubjectRow), true],
     ['expenditure_detail', shapeOf(DetailRow), true],
     ['expenditure_location', shapeOf(LocationRow), true],
-    ['expenditure_origin', shapeOf(OriginRow), true],
+    ['fiscal_origin', shapeOf(OriginRow), true],
     ['evaluation', shapeOf(EvaluationRow), true],
     ['evaluation_origin', shapeOf(EvaluationOriginRow), true],
     // シートは表の全列と、方向性の区分から組み立てた outlook
     ['evaluation_sheet', shapeOf(SheetRow), false],
     ['evaluation_indicator', shapeOf(IndicatorRow), true],
     ['evaluation_indicator_value', shapeOf(IndicatorValueRow), true],
-    ['project', shapeOf(ProjectRow), true],
-    ['project_year', shapeOf(ProjectYearRow), true],
     // 一覧の要約は自治体マスタの全列と、組み立てた列（収録範囲・年度）
     ['jurisdiction', jurisdiction, false],
+    // 事業・事業の年度は表の列と、表に写さず JOIN で引く列
+    ['project', shapeOf(ProjectRow), true],
+    ['project_year', shapeOf(ProjectYearRow), true],
   ] as const)('%s', (table, shape, exact) => {
-    const columns = TABLES[table]!.columns
+    const columns = columnsOfTable(table)
     if (exact) expect(Object.keys(shape).sort()).toEqual(columns.map((c) => c.name).sort())
     for (const c of columns) {
       const got = describeColumn(shape[c.name]!)

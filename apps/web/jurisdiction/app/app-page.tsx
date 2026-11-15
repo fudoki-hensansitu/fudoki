@@ -67,6 +67,8 @@ import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView,
 import { directionOf, DIRECTION_ICONS, GRADES, withExtras, yearView, type AccountTotal, type Proj, type Sheet as EvalSheet, type Snapshot, type YearExtras, type YearView } from './data'
 import { fieldSubjects, listKey, listPage, projectFull, projectOfId, sheetCountKey, sheetCounts, sheetKey, sheetPage, type ListPage, type ListQuery, type ProjectFull, type ProjRow, type SheetCount, type SheetQuery } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
+import { Amt, yenParts } from './amount'
+import { FinanceSections, Tag } from './finance'
 import './app.css'
 
 const FIELD_ICON: Record<string, Icon> = {
@@ -78,24 +80,6 @@ const MARK_ICON: Record<string, (p: { className?: string }) => React.ReactNode> 
 }
 
 // ---------- 金額 ----------
-function yenParts(y: number): [string, string] {
-  if (Math.abs(y) >= 1e8) {
-    const v = y / 1e8
-    return [v >= 100 ? Math.round(v).toLocaleString('ja-JP') : v.toLocaleString('ja-JP', { maximumFractionDigits: 1 }), '億円']
-  }
-  return [Math.round(y / 1e4).toLocaleString('ja-JP'), '万円']
-}
-/** 数字を強調し、単位は小さく */
-function Amt({ yen, className }: { yen: number | null | undefined; className?: string }) {
-  if (yen == null) return <span className={cn('text-muted-foreground', className)}>—</span>
-  const [n, u] = yenParts(yen)
-  return (
-    <span className={cn('whitespace-nowrap tabular-nums', className)}>
-      {n}
-      <small className="ml-px text-[0.6em]">{u}</small>
-    </span>
-  )
-}
 const yenText = (y: number) => yenParts(y).join('')
 /** 人口の無い自治体は空 */
 const perHead = (y: number, pop: number) => {
@@ -541,7 +525,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   )
 }
 
-function Overview({ go }: { go: Go }) {
+function Overview() {
   const { v, page, openField } = useApp()
   return (
     <div className="flex flex-col gap-8">
@@ -557,31 +541,26 @@ function Overview({ go }: { go: Go }) {
       </section>
 
       <section>
-        <SectionHead title="分野" />
+        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+          <h2 className="text-[17px] font-semibold">
+            何に使う？<span className="ml-1.5 text-[13px] font-normal text-muted-foreground">歳出</span>
+            <Amt yen={v.total} className="ml-2 font-medium text-primary" />
+          </h2>
+          <Tag>{r(v.year)} {v.word === '決算' ? '決算' : '当初予算'}</Tag>
+        </div>
+        <p className="-mt-1 mb-2.5 text-[15px] leading-[1.7] text-muted-foreground">
+          {v.word === '決算'
+            ? '歳出は、自治体が1年間に使ったお金です。ここでは、税金を主な財源にする基本の会計（一般会計）の決算を、使い道の分野ごとに分けています。'
+            : '歳出は、自治体が1年間に使う予定のお金です。ここでは、税金を主な財源にする基本の会計（一般会計）の当初予算を、使い道の分野ごとに分けています。'}
+        </p>
         {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
         <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
           {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={Math.max(...v.fields.map((x) => x.yen))} onClick={() => openField(f.id)} />)}
         </div>
       </section>
 
-      {/* 新しく始める事業・お金のかかる事業・事業評価は最初の画面の下にあるので、loader が defer で後から流す（届くまで骨組み） */}
-      <Full fallback={<section><SectionHead title="お金のかかる事業" /><RowsSkeleton /></section>}>
-        {(v) => (
-          <>
-            {v.comparable ? <FreshCarousel items={(v.page('new')?.rows ?? []).slice(0, 12)} more={() => go('projects', { filter: 'new' })} /> : null}
-            <section>
-              <SectionHead title="お金のかかる事業"><MoreLink onClick={() => go('projects', { filter: 'all' })} /></SectionHead>
-              {v.failed && v.hasProjects === undefined ? <LoadFailed /> : <Rows>{v.top.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>}
-            </section>
-            {v.sheetTotal ? (
-              <section>
-                <SectionHead title="事業評価" sub={`${r(v.year)}年度の事業`}><MoreLink onClick={() => go('projects', { filter: 'eval' })} /></SectionHead>
-                <GradeCards counts={v.sheetCounts} onChange={(g) => go('projects', { filter: 'eval', grade: g })} />
-              </section>
-            ) : null}
-          </>
-        )}
-      </Full>
+      {/* 借金と貯金・事業に使えるお金・財政の指標（総務省の決算状況調。web の D1 から loader が頁のデータに入れる） */}
+      <FinanceSections finance={page.finance} year={v.year} people={page.population?.people ?? null} />
       <Elsewhere />
     </div>
   )
@@ -630,8 +609,25 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
       </ClientSuspense>
     ) : null
   }
+  // まとめから移した、新しく始める事業と事業評価の札。絞り込みの無い「すべて」のときだけ一覧の上に出す（残りの defer が届いてから）
+  const lead = filter === 'all' && !q && field === 'all' ? (
+    <Full fallback={null}>
+      {(v) => (
+        <div className="mb-6 flex flex-col gap-8 empty:hidden">
+          {v.comparable ? <FreshCarousel items={(v.page('new')?.rows ?? []).slice(0, 12)} more={() => setFilter('new')} /> : null}
+          {v.sheetTotal ? (
+            <section>
+              <SectionHead title="事業評価" sub={`${r(v.year)}年度の事業`}><MoreLink onClick={() => setFilter('eval')} /></SectionHead>
+              <GradeCards counts={v.sheetCounts} onChange={(g) => (setGrade(g), setFilter('eval'))} />
+            </section>
+          ) : null}
+        </div>
+      )}
+    </Full>
+  ) : null
   return (
     <div className="flex flex-col gap-2">
+      {lead}
       <div className="flex flex-wrap items-center gap-2">
         <div className="relative min-w-[220px] flex-1">
           <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
@@ -1305,7 +1301,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   )
 
   const panel = (key: TabKey) =>
-    !v ? null : key === 'overview' ? <Overview go={go} /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
+    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
 
   return (
     <div className={cn('@container transition-[padding] duration-300', wide && selected && 'pr-[440px]')}>

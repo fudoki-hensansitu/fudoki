@@ -48,8 +48,9 @@ BUILD_ENTRIES = ('dbt/scripts/prepare.py', 'dbt/scripts/fiscal_inputs.py', 'serv
                  'serving/columns.py')
 BUILD_PACKAGES = ('dbt/models', 'ingestion/project')
 # 関数の中の import を追わない module。manifest は変換器の検査（check_code）と指紋のときだけ、storage は保存の検査
-# （prepare_save）のときだけ変換器と木の検査を import する。build（prepare.py）は check_code=False で読み、fetch・verify だけを使う
-TOP_LEVEL_ONLY = ('ingestion/fiscal/manifest.py', 'ingestion/fiscal/storage.py')
+# （prepare_save）のときだけ変換器と木の検査を import する。build（prepare.py）は check_code=False で読み、fetch・verify だけを使う。
+# 事業評価の OCR は、観測を取る（acquire、OCR の実行）ときだけ scan_ocr を import する。build は固定した観測を読むだけ
+TOP_LEVEL_ONLY = ('ingestion/fiscal/manifest.py', 'ingestion/fiscal/storage.py', 'ingestion/project/sheet/ocr.py')
 # import の解決先（prepare.py は dbt/scripts の fiscal_inputs を import する）
 MODULE_ROOTS = (PIPELINE, PIPELINE / 'dbt/scripts')
 # build が import しない取り込みのコードはこの下で探す。ここに無い Python は今までどおり入力とみなす
@@ -57,6 +58,7 @@ INGESTION = re.compile(r'^pipeline/ingestion/.+\.py$')
 # 変換器の宣言（options の schema・pattern の目録など。Python 以外）。変換にだけ効き、build は読まない
 CONVERTER_DATA = (
     re.compile(r'^pipeline/ingestion/fiscal/layouts/'),
+    re.compile(r'^pipeline/ingestion/fiscal/jurisdictions/\d{6}/layouts/'),
     re.compile(r'^pipeline/ingestion/generic/patterns/'),
 )
 # 自治体の取り込みの宣言（管理 JSON）と出典の選定。保存し直した表は管理 JSON の変更として現れる

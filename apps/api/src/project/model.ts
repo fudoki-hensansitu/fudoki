@@ -1,7 +1,7 @@
 // 事業の集約（docs/prd/jurisdiction-page-data/project-domain-model.md）: 予算書の事業の行を1つずつ事業にし、年度をまたいでつないだ木。
 // 守ること: 1つの年度に事業の金額は1つ。1つの内訳は高々1つの事業の年度に入る。金額は事業の木で足さず、資料ごとに末端の内訳を足す。
 import { z } from 'zod'
-import { described, PROJECT_YEAR_SEARCH } from '../columns'
+import { described, PROJECT_COLUMNS, PROJECT_YEAR_COLUMNS, PROJECT_YEAR_SEARCH } from '../columns'
 import { FiscalYear, JurisdictionCode, RowId } from '../shared/model'
 import { MAX_TOTAL_SIZE, nextPageToken } from '../shared/paging'
 import { yearSearchInputFor } from '../shared/search'
@@ -45,11 +45,12 @@ export const Project = z.strictObject({
 })
 export type Project = z.infer<typeof Project>
 
-// API の行。列は表（columns.json）のまま。列の集合・型・null の可否・accepted_values は model.test.ts が照合する。
+// API の行。表（columns.json）の列と、表に写さず JOIN で引く列（columns.ts の PROJECT_COLUMNS・PROJECT_YEAR_COLUMNS）。
+// 列の集合・型・null の可否・accepted_values は model.test.ts が照合する。
 
 export const ProjectRow = z
   .strictObject(
-    described('project', {
+    described(PROJECT_COLUMNS, {
       project_id: z.string(),
       jurisdiction_code: z.string(),
       name: z.string(),
@@ -65,7 +66,7 @@ export const ProjectRow = z
 
 export const ProjectYearRow = z
   .strictObject(
-    described('project_year', {
+    described(PROJECT_YEAR_COLUMNS, {
       project_year_id: z.string(),
       project_id: z.string(),
       jurisdiction_code: z.string(),

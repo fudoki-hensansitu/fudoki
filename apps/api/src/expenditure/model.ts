@@ -130,7 +130,7 @@ const lineCommon = {
 // meta の id を付けると、JSON Schema では $defs に一度だけ出て $ref で参照される（tools/list と OpenAPI が小さくなる）。
 export const OriginRow = z
   .strictObject(
-    described('expenditure_origin', {
+    described('fiscal_origin', {
       origin_id: z.string(),
       jurisdiction_code: z.string(),
       fiscal_year: z.int(),
@@ -166,7 +166,7 @@ export const LocationRow = z
   )
   .meta({ id: 'LocationRow', description: '行が印字された出典の位置。line_id は subject_id か detail_id。kind が pdf なら頁と枠、csv なら行番号。' })
 
-const subjectShape = described('expenditure_subject', {
+const subjectShape = described(SUBJECT_TABLE.columns, {
   subject_id: z.string(),
   node_key: z.string(),
   parent_subject_id: z.string().nullable(),
@@ -184,7 +184,7 @@ const subjectShape = described('expenditure_subject', {
 })
 export const SubjectRow = z.strictObject(subjectShape).meta({ id: 'SubjectRow', description: '歳出の科目（款・項・目）。' })
 
-const detailShape = described('expenditure_detail', {
+const detailShape = described(DETAIL_TABLE.columns, {
   detail_id: z.string(),
   node_key: z.string(),
   parent_detail_id: z.string().nullable(),

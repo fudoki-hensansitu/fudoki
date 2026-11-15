@@ -51,6 +51,7 @@ class ClassifyTest(unittest.TestCase):
             'pipeline/ingestion/fiscal/layouts/generic_scan/convert.py',
             'pipeline/ingestion/fiscal/layouts/generic_text/options.schema.json',
             'pipeline/ingestion/generic/patterns/catalog.json',
+            'pipeline/ingestion/fiscal/jurisdictions/133612/layouts/purpose_summary_2023.json',
             'pipeline/ingestion/fiscal/store.py',
         ), {'mode': 'none', 'jurisdictions': []})
 
@@ -74,13 +75,16 @@ class BuildModulesTest(unittest.TestCase):
     def test_follows_what_the_build_imports(self):
         build = build_modules()
         for path in ('pipeline/dbt/scripts/prepare.py', 'pipeline/ingestion/fiscal/manifest.py',
-                     'pipeline/ingestion/lib/node_tables.py', 'pipeline/ingestion/generic/page_words.py',
+                     'pipeline/ingestion/lib/table_columns.py', 'pipeline/ingestion/generic/page_words.py',
                      'pipeline/ingestion/generic/layout_settings.py', 'pipeline/ingestion/project/link_projects.py'):
             with self.subTest(path=path):
                 self.assertIn(path, build)
         # manifest・storage が検査と指紋のときだけ import する変換器は入れない
+        # 表を書く node_tables と、その検査・OCR の実行（変換にだけ効く library）も入れない
         for path in ('pipeline/ingestion/generic/tree.py', 'pipeline/ingestion/generic/convert.py',
-                     'pipeline/ingestion/fiscal/layouts/generic_scan/convert.py', 'pipeline/ingestion/fiscal/store.py'):
+                     'pipeline/ingestion/fiscal/layouts/generic_scan/convert.py', 'pipeline/ingestion/fiscal/store.py',
+                     'pipeline/ingestion/lib/node_tables.py', 'pipeline/ingestion/lib/coverage_checks.py',
+                     'pipeline/ingestion/lib/tree_checks.py', 'pipeline/ingestion/lib/scan_ocr.py'):
             with self.subTest(path=path):
                 self.assertNotIn(path, build)
 

@@ -312,7 +312,7 @@ type 目の参照 = {             // 事業の内訳が無い自治体。目の�
 | モデル | 今の表 | 状態 |
 | --- | --- | --- |
 | 事業・事業の金額 | なし | 案（下の「表の案」） |
-| 歳出 | `expenditure`（root）・`expenditure_subject`（科目）・`expenditure_detail`（内訳。`breakdown='事業'` が事業の行）・`expenditure_location`・`expenditure_origin`・`expenditure_origin_link` | あり |
+| 歳出 | `expenditure`（root）・`expenditure_subject`（科目）・`expenditure_detail`（内訳。`breakdown='事業'` が事業の行）・`expenditure_location`・`fiscal_origin`・`expenditure_origin_link` | あり |
 | 事業評価 | `evaluation`（root）・`evaluation_origin`・`evaluation_sheet`（`sheet_id` は出典と頁から作る列で、指標の表から引くために持つ）・`evaluation_indicator`・`evaluation_indicator_value` | あり。シートは当初・決算の目（`initial_expenditure_subject_id`・`settlement_expenditure_subject_id`）を持ち、事業とは `evaluation_sheet_project`（シート×事業、年度）でつなぐ |
 | 人口 | `population`・`population_origin` | あり |
 
@@ -350,10 +350,10 @@ type 目の参照 = {             // 事業の内訳が無い自治体。目の�
 
 | 表 | 1行 | 主な列 |
 | --- | --- | --- |
-| `project` | 事業1つ | `project_id`（代理キー）・`jurisdiction_code`・`name`・`first_year`・`first_year_kind`（`confirmed`・`before_coverage`）・`last_year`・`last_year_kind`（`confirmed`・`latest`・`unknown`。`latest` のとき `last_year` は空）・`parent_project_id` |
-| `project_year` | 事業の1年度 | `project_id`・`fiscal_year`・`initial_expenditure_detail_id`・`settlement_expenditure_detail_id`（その事業の行。内訳のある自治体）・`initial_expenditure_subject_id`・`settlement_expenditure_subject_id`（目。内訳の無い自治体だけ。目の無い項を含む） |
+| `project` | 事業1つ | `project_id`（代理キー）・`jurisdiction_code`・`first_year`・`first_year_kind`（`confirmed`・`before_coverage`）・`last_year`・`last_year_kind`（`confirmed`・`latest`・`unknown`。`latest` のとき `last_year` は空）・`parent_project_id` |
+| `project_year` | 事業の1年度 | `project_id`・`fiscal_year`・`initial_expenditure_detail_id`・`settlement_expenditure_detail_id`（その事業の行） |
 
-- `project_year` は資料ごとに、内訳か目のどちらか1つを持ち、当初予算と決算の少なくとも一方を持つ。目と分野は内訳から導けるので、内訳のある自治体では持たない。
+- `project_year` は当初予算と決算の少なくとも一方の行を持つ。名前・款項目・科目・金額は行から、事業の名前は最新の年度の行から API が JOIN で引き、表には写さない（ADR 0050）。
 - `initial_expenditure_detail_id`・`settlement_expenditure_detail_id` は、空でなければ表の中で重ならない（unique test）。
 - 評価シートは `evaluation_sheet_project` を {事業, 年度} で引く。
 

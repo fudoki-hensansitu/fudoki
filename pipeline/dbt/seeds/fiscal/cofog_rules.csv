@@ -526,3 +526,18 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1687,vocab-environment-policy,,一般会計,,衛生費,,,環境政策費,eq,,assigned,05,retained,目,,環境政策の企画・調整の目を環境保護 05 に置く。分野は特定できない（例: 090000 衛生費の環境対策費の項）。,true
 1688,vocab-disaster-forest,,一般会計,,災害復旧費,,,林道災害復旧費|治山施設災害復旧費,contains,,assigned,04.2,retained,目,,林道・治山施設の災害復旧を農業・林業・漁業 04.2 に分類する（vocab-agri-fishery-name と同じ。例: 090000）。,false
 1689,vocab-disaster-civil,,一般会計,,災害復旧費,土木施設災害復旧費|県有施設等災害復旧費,,,eq,,unclassifiable,,retained,目,,土木施設（道路・河川など）と県有施設の災害復旧は施設の機能を名称から分けられないので分類不能とする（kobe-disaster-civil と同じ。例: 090000）。,false
+1690,fallback-kou-agri-disaster,,一般会計,,災害復旧費,農林水産施設災害復旧費,,,eq,,assigned,04.2,retained,目,,農林水産施設の災害復旧の項に属する目（名に農林水産を持たない廃目整理の行を含む）を農業・林業・漁業 04.2 に置く（vocab-agri-fishery-name と同じ。例: 090000）。,false
+1691,kind-fallback-simple-waterworks,,,簡易水道,,,,,,,assigned,06.3,retained,目,,簡易水道の会計の目を UN COFOG 06.3 水供給に置く（例: 133621 利島村の簡易水道事業特別会計）。一般会計の簡易水道（vocab-simple-waterworks）と同じ。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
+1692,kind-fallback-septic,,,浄化槽,,,,,,,assigned,05.2,retained,目,,浄化槽の設置・管理の会計の目を UN COFOG 05.2 排水管理に置く（例: 133621 利島村の合併処理浄化槽事業特別会計）。下水道事業の会計（kind-fallback-sewer）と同じ。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
+1693,kind-fallback-water-supply,,,水道,,,,,,,assigned,06.3,retained,目,,水道の公営企業会計（市町村へ用水を供給する水道用水供給事業を含む）の目を水供給 06.3 に分類する（例: 090000 水道事業会計）。償還・繰出など行き先が違う目は先の規則が取る。,false
+1694,kind-fallback-industrial-water,,,工業用水道,,,,,,,assigned,06.3,retained,目,,工業用水道の公営企業会計の目を水供給 06.3 に分類する。COFOG 06.3 は用途を問わず水の供給の施設の運営を含む（例: 090000 工業用水道事業会計）。工業の振興 04 とみる見方との境界のため暫定。,true
+1695,kind-fallback-electricity,,,電気事業,,,,,,,assigned,04,retained,目,,県営の発電・売電の公営企業会計の目を経済業務 04 に置く。COFOG では燃料・エネルギー 04.3（電力）に当たるが、マスタ（packages/fiscal/cofog-master.ts）は 04.3 を持たない（例: 090000 電気事業会計）。,false
+1696,kind-golf-course,,,施設管理,ゴルフ場事業費用|ゴルフ場事業資本的支出,,,,,,assigned,08.1,retained,目,,県営ゴルフ場の経営をレクリエーション及びスポーツのサービス 08.1 に分類する（例: 090000 施設管理事業会計のゴルフ場事業）。,false
+1697,kind-fallback-facility-management,,,施設管理,,,,,,,unclassifiable,,retained,目,,施設管理事業会計の賃貸ビル事業・経営総合管理事業は県有の建物の賃貸と会計全体の管理で、名称から支出の機能を決められない。捨てずに分類不能として残す（例: 090000）。,false
+-1306,kobe-cultural-property,281000,一般会計,,市民費,市民費,,文化財費,eq,,assigned,08.2,retained,目,,神戸市（281000）当初予算（各会計予算に関する説明書）の目。文化財の保護を文化サービス 08.2 に分類する（keyword-culture と同じ）。,false
+-1305,kobe-citizen-information,281000,一般会計,,市民費,市民費,,情報提供費,eq,,assigned,01.3,retained,目,,神戸市（281000）当初予算（各会計予算に関する説明書）の目。市民への情報提供（広報・相談）を総合的サービス 01.3 に分類する。名称からの判断のため暫定。,true
+-1304,kobe-past-year-refund,281000,一般会計,,諸支出金,過年度支出,,過年度支出,eq,,unclassifiable,,retained,目,,神戸市（281000）当初予算（各会計予算に関する説明書）の目。市税等の過年度返還金は機能を目の名前で決められない（kobe-misc と同じ）。,false
+1698,kind-fallback-municipal-housing,,,市営住宅,,,,,,,assigned,06.1,retained,目,,市営住宅の建設・管理の特別会計の目を住宅開発 06.1 に分類する（kind-fallback-metropolitan-housing と同じ。例: 281000 市営住宅事業費）。,false
+1699,kind-fallback-airport,,,空港整備,,,,,,,assigned,04.5,retained,目,,空港の整備・管理の特別会計の目を運輸 04.5 に分類する（マスタは航空の 04.5.4 を持たない。例: 281000 空港整備事業費）。,false
+1700,tochigi-city-health-centers,092037,一般会計,,衛生費,保健衛生費,,保健施設費,eq,,assigned,07,retained,目,,栃木市 保健福祉センター・健康福祉センターの管理運営と改修を保健に分類する。渋谷区の保健施設費（shibuya-2024-01）と同じ扱い。名称からの判断。,true
+1701,sumida-2023-01,131075,一般会計,,区民生活費,区民施設費,,女性センター費,eq,,assigned,01,retained,目,,墨田区 区民施設費の目の女性センター（男女共同参画の拠点、2023年度の当初予算にだけある）を一般行政に分類する。男女共同参画を 01 に置く共通の規則（keyword-general-admin）に合わせる。名称からの判断。,true

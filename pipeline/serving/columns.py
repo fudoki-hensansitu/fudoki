@@ -17,33 +17,31 @@ import yaml
 
 PIPELINE = Path(__file__).resolve().parents[1]
 MODELS = [PIPELINE / f'dbt/models/marts/{name}/_models.yml'
-          for name in ('jurisdiction', 'expenditure', 'evaluation', 'project', 'source')]
+          for name in ('jurisdiction', 'fiscal', 'expenditure', 'evaluation', 'project', 'source')]
 WAREHOUSE = PIPELINE / '.build/warehouse.duckdb'
 OUTPUT = PIPELINE.parent / 'apps/api/src/columns.json'
 
 # D1 に写す marts の表（同期の順は sync_d1.TABLE_ORDER）
 TABLES = ['jurisdiction',
-          'expenditure', 'expenditure_origin', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
+          'fiscal_origin', 'expenditure', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
           'expenditure_location',
           'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_sheet_project', 'evaluation_indicator', 'evaluation_indicator_value',
           'project', 'project_year',
           'source_page_text']
 PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code',
-                'expenditure': 'expenditure_id', 'expenditure_origin': 'origin_id', 'expenditure_origin_link': 'link_id',
+                'expenditure': 'expenditure_id', 'fiscal_origin': 'origin_id', 'expenditure_origin_link': 'link_id',
                 'expenditure_subject': 'subject_id', 'expenditure_detail': 'detail_id', 'expenditure_location': 'line_id',
                 'evaluation': 'evaluation_id', 'evaluation_origin': 'origin_id', 'evaluation_sheet': 'sheet_id', 'evaluation_sheet_project': 'link_id',
                 'evaluation_indicator': 'indicator_id', 'evaluation_indicator_value': 'value_id',
                 'project': 'project_id', 'project_year': 'project_year_id',
                 'source_page_text': 'page_id'}
-# index（docs/prd/aggregate-api/dd.md）。科目は自治体の一覧・比較・COFOG・子・根、内訳は科目の下・子・自治体の事業・根。
-# 根の表は自治体のページごとに自治体コードで引く
+# index（docs/prd/aggregate-api/dd.md）。科目は根の下の段・子、内訳は科目の下・子・根の下の事業。
+# 科目・内訳は自治体・年度を持たないので（ADR 0047）、根を自治体コードと年度・資料区分で引いてから根の ID で引く
 INDEXES = {
-    'expenditure': [['jurisdiction_code']],
+    'expenditure': [['jurisdiction_code'], ['fiscal_year', 'document_kind', 'jurisdiction_code']],
     'expenditure_origin_link': [['expenditure_id'], ['origin_id']],
-    'expenditure_subject': [['fiscal_year', 'document_kind', 'jurisdiction_code', 'level'],
-                            ['fiscal_year', 'document_kind', 'cofog_code'], ['parent_subject_id'], ['expenditure_id']],
-    'expenditure_detail': [['subject_id', 'breakdown', 'depth'], ['parent_detail_id'],
-                           ['fiscal_year', 'document_kind', 'jurisdiction_code', 'breakdown'], ['expenditure_id']],
+    'expenditure_subject': [['expenditure_id', 'level'], ['parent_subject_id']],
+    'expenditure_detail': [['subject_id', 'breakdown', 'depth'], ['parent_detail_id'], ['expenditure_id', 'breakdown']],
     'evaluation': [['jurisdiction_code']],
     'evaluation_origin': [['evaluation_id']],
     'evaluation_sheet': [['evaluation_id'], ['jurisdiction_code', 'fiscal_year']],
@@ -51,8 +49,7 @@ INDEXES = {
     'evaluation_indicator': [['sheet_id']],
     'evaluation_indicator_value': [['indicator_id']],
     'project': [['jurisdiction_code'], ['parent_project_id']],
-    'project_year': [['project_id'], ['fiscal_year', 'jurisdiction_code'], ['initial_expenditure_detail_id'], ['settlement_expenditure_detail_id'],
-                     ['initial_expenditure_subject_id'], ['settlement_expenditure_subject_id']],
+    'project_year': [['project_id', 'fiscal_year'], ['fiscal_year'], ['initial_expenditure_detail_id'], ['settlement_expenditure_detail_id']],
     'source_page_text': [['sha256', 'page']],
 }
 

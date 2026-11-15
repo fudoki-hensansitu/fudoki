@@ -18,8 +18,8 @@
 -- The printed name stays as it is. Non-節 axes (備考・事業説明・CSV の科目など) are out of scope.
 with recursive setsu_nodes as (
     select node_id, parent_node_id, document_kind, fiscal_year, name, code
-    from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
-    where axis = '節'
+    from {{ ref('int_fiscal__nodes') }}
+    where direction = 'expenditure' and axis = '節'
 ), stripped as (
     select *, {{ fiscal_setsu_strip('name') }} as stripped_name
     from setsu_nodes

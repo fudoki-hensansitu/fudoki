@@ -1,0 +1,100 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "092011",
+    "fiscal_year": 2021,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e5b0f25579f4ea3d0c62bd4dfb57ad79908696f480657b46029da572536cf12f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "区分": {
+                  "heading": "款"
+                },
+                "令和3年度／当初予算": {
+                  "heading": "当初予算額"
+                },
+                "令和2年度／当初予算": {
+                  "heading": "前年度予算額"
+                },
+                "令和3年度／構成比": {
+                  "kind": "ignore"
+                },
+                "令和2年度／構成比": {
+                  "kind": "ignore"
+                },
+                "比較／増減": {
+                  "heading": "比較"
+                },
+                "比較／増減比": {
+                  "kind": "ignore"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "e09435698f498728e461584454254ae6701fdafbed4c9a43dae029d38f6ff789",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 229,000,000 と印字の「歳出合計」229,000,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/092011/2021/initial/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "7a35dcdce2653916a93f0715ccbee7405969b12cbe449632c3dba1570b0af0ae",
+          "bytes": 2923
+        },
+        "row_count": 14
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/092011/2021/initial/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "f3ac3ff95b15e56e8420ee93c83c0881176e2123a686e9ecae44e682f68d840e",
+          "bytes": 2922
+        },
+        "row_count": 42
+      }
+    }
+  ]
+}

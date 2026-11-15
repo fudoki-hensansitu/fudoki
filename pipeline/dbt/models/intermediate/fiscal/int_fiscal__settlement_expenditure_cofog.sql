@@ -7,7 +7,7 @@ with account_kinds as (
     -- One kind per (jurisdiction, account): the keyword dictionary maps an
     -- account name to one kind no matter which year prints it (ADR 0023).
     select distinct jurisdiction_code, account_name, account_kind
-    from {{ ref('int_fiscal__expenditure_accounts') }}
+    from {{ ref('int_fiscal__accounts') }}
 ), unioned as (
     select node_id, document_kind,
         {{ fiscal_match_text('jurisdiction_code') }} as jurisdiction_code,
@@ -16,8 +16,8 @@ with account_kinds as (
         {{ fiscal_cofog_name('kou_name') }} as kou_name,
         {{ fiscal_match_text('kan_code') }} as kan_code,
         {{ fiscal_cofog_name('name') }} as moku_name, '' as setsu_name
-    from {{ ref('int_fiscal__settlement_expenditure_nodes') }}
-    where is_subject and node_kind = '目'
+    from {{ ref('int_fiscal__nodes') }}
+    where direction = 'expenditure' and is_subject and node_kind = '目'
     union all
     select node_id, document_kind,
         {{ fiscal_match_text('jurisdiction_code') }} as jurisdiction_code,
