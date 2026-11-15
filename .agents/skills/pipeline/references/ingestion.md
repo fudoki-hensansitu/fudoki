@@ -15,13 +15,14 @@
 ## 形式ごとの読み方
 
 - **CSV**: 共通の変換で取り込み、出典を読み直して全セルが一致することを確かめる。
-- **text PDF**: Poppler の語と座標から読む。Poppler は `mise.toml` で版を固定する（版で読める語が変わる）。版を上げたら全表を読み直して比べる。
-- **scan PDF**: OCR は共通の入口で変換の外で取り、観測を固定する（[ADR 0019](../../../../docs/adr/0019-freeze-scan-ocr-observations.md)、[ADR 0032](../../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。読めなかったセルは範囲を絞って読み直す。名称の誤読は確かめた辞書で直し、出典の字形は保つ。合計から値を逆算しない。
+- **text PDF**: Poppler の語と座標から読む。Poppler は `mise.toml` で版を固定する（版で読める語が変わる）。
+- **scan PDF**: OCR はクラウド環境で、共通の入口で変換の外で取り、観測を固定する（[ADR 0019](../../../../docs/adr/0019-freeze-scan-ocr-observations.md)、[ADR 0032](../../../../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。読めなかったセルは範囲を絞って読み直す。名称の誤読は確かめた辞書で直し、出典の字形は保つ。合計から値を逆算しない。
 
 ## 読み方の宣言
 
 - PDF の読み方は管理 JSON の workflow に宣言する。書式ごとに作り（年度・会計ごとではない）、同じ書式の年度・会計に写す。自治体別の変換コードは増やさない（[PDF workflow の設計](../../../../docs/prd/pdf-workflow-patterns/dd.md)）。
-- 1つの書式のための判定は opt-in の quirk にし、使う表だけが選ぶ（[ADR 0043](../../../../docs/adr/0043-format-quirks-are-opt-in.md)）。共通コードを直すのは、全表に効くべき直しのときだけ。共通の規則を足す・広げるときは、既存の全表で出力が変わらないことを確かめる。
+- 他の書式・自治体にも効く処理は共通コード（`generic/`・`lib/`）に入れる。1つの書式だけの判定は opt-in の quirk にし、使う表だけが選ぶ（[ADR 0043](../../../../docs/adr/0043-format-quirks-are-opt-in.md)）。
+- 共通コードを変えても、既存の全表の作り直し・比較は手元で回さない（[CI に任せる範囲](workflow.md#手元で確かめることと-ci-に任せること)）。
 - LLM は宣言とコードを作るのに使い、実行時に表を作らせない。
 
 ## 検査（保存の関門）
@@ -36,7 +37,8 @@
 ## 保存と指紋
 
 - `ingestion:convert` は検査が通った表を管理 JSON に記録する（R2 には書かない）。R2 に置くのは merge 後の CI の `ingestion:store` だけで、記録と変換し直した表が一致したものを置く（[ADR 0045](../../../../docs/adr/0045-ingestion-tables-uploaded-by-ci.md)）。スレッドが R2 に書くのは OCR 結果（`ingestion:ocr --save`）だけ。保存済みの対象に会計を足すときは、既存の表を変えずに1変換ずつ足す。
-- 指紋が古いのは、表を作るコード・設定・出典が変わった合図で、中身が変わった証拠ではない。`ingestion:refresh` で作り直して中身を比べ、同じなら指紋だけを書き換える。違えば convert で記録し直す（[ADR 0027](../../../../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。refresh は PR ごとに回さない（定期の `refresh-check.yml` が確かめる）。
+- 変換の入力は R2 に保存した出典と OCR 結果だけ。自治体のサイトから直接取らない。
+- 指紋が古いのは、表を作るコード・設定・出典が変わった合図で、中身が変わった証拠ではない。古くても止めず、PR で `ingestion:refresh` を回さない。全表の比較は定期の `refresh-check.yml` が行い、違う表が出たときだけ convert で記録し直す（[ADR 0027](../../../../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。
 - 合否だけを決める検査のコード（`*_checks.py`）は指紋の外にある。検査を厳しくしたら、保存済みの全表に当て直して通ることを確かめる。
 
 ## 関連文書
