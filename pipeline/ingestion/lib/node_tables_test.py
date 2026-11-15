@@ -95,6 +95,15 @@ class NodeTablesTests(unittest.TestCase):
         self.assertEqual(mismatch['parent_node_key'],'a')
         self.assertEqual(mismatch['difference'],-1)
 
+    def test_breakdown_item_without_name_stops_but_subject_number_and_note_do_not(self):
+        def named(key, parent, axis, name, level=None):
+            return {**node(key, parent, axis), 'name_text': name, 'level_header': level, 'code_text': '11'}
+        nodes = [named('p', None, '科目', '', '目'), named('n', 'p', '注記', ''), named('a', 'p', '説明', '事業')]
+        amounts = [amount('p', '10'), amount('a', '10', '説明')]
+        self.assertFalse([i for i in check_tree(nodes, amounts)['issues'] if '名前の無いノード' in i])
+        nodes.append(named('b', 'p', '説明', ' '))
+        self.assertIn("名前の無いノード: p1 '11'", check_tree(nodes, amounts)['issues'])
+
     def test_missing_leaf_print_is_zero_and_units_are_not_converted(self):
         nodes=[node('p'),node('a','p'),node('b','p')]
         amounts=[amount('p','15'),amount('a','10')]

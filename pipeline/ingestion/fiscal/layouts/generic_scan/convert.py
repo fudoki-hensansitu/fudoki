@@ -46,6 +46,7 @@ def convert(inputs: list[dict], destination: Path, options: dict) -> dict:
     table.built.unowned[:] = drop_rule_ink(table.built.unowned, options.get('rule_ink', ()))
     if table.built.unowned or table.unresolved:
         raise ValueError(f'Scan table has unowned amounts/rows or unresolved annotations: '
-                         f'{len(table.built.unowned)}/{len(table.unresolved)}')
+                         f'{len(table.built.unowned)}/{len(table.unresolved)}: {options["table_id"]} '
+                         f'{table.built.unowned[:3]} {table.unresolved[:3]}')
     table.built.notes.extend(observation_bound_corrections(options))
     return write_files(destination, options['table_id'], table)

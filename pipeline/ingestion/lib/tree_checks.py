@@ -58,6 +58,14 @@ def check_tree(nodes: list[dict], amounts: list[dict], document_kind: str = 'set
                 if cursor in chain:
                     issues.append(f'親の循環: {cursor}'); break
                 chain.add(cursor); cursor = by_key[cursor]['parent_node_key']
+    for node in nodes:
+        # A printed item of a breakdown always has a name. A number left without one is an amount or a count that
+        # the reading took for an item number (two `1`s printed on two lines, read as one `11`): the amounts of the
+        # items it stands beside then go unread, and the group they belong to would compare nothing. (A 款・項・目
+        # may print its number alone, its name coming from the 款 identity: 132098.)
+        if (node['axis_header'] != '注記' and node.get('level_header') is None
+                and not (node.get('name_text') or '').strip()):
+            issues.append(f'名前の無いノード: p{node.get("physical_page")} {node.get("code_text")!r}')
     for amount in amounts:
         key = amount['node_key']
         if key not in by_key:
