@@ -129,6 +129,7 @@
     "short_amounts_at_line_end": "ingestion.generic.patterns.quirks.short_amounts_at_line_end",
     "gapped_column_rules": "ingestion.generic.patterns.quirks.gapped_column_rules",
     "skewed_cell_rows": "ingestion.generic.patterns.quirks.skewed_cell_rows",
+    "wrapped_years": "ingestion.generic.patterns.quirks.wrapped_years",
     "glued_number_stops": "ingestion.generic.patterns.quirks.glued_number_stops",
     "repeated_at_top": "ingestion.generic.patterns.quirks.repeated_at_top",
     "glued_numbers": "ingestion.generic.patterns.quirks.glued_numbers",

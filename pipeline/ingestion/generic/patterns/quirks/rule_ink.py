@@ -33,8 +33,13 @@ def ruled(box: list, page_: dict, logicals_: list) -> bool:
     columns = {x for logical in logicals_ for b in logical.bands if b.page == page_['page_number']
                for x in (b.x0 - b.offset, b.x1 - b.offset)}
     across = sum(1 for x in columns if box[0] + 4 < x < box[2] - 4)  # the page's column rules the ink runs across
+    # (only the rules of a band whose body runs the whole height of the ink: a figure between rules that stop above
+    # or below its row is no mark)
+    spanning = {x for logical in logicals_ for b in logical.bands if b.page == page_['page_number']
+                and b.body_top - 4 <= box[1] and box[3] <= b.body_bottom + 4 for x in (b.x0 - b.offset, b.x1 - b.offset)}
+    through = sum(1 for x in spanning if box[0] + 4 < x < box[2] - 4)
     crossing = (box[3] - box[1] <= 24 and crossed) or (box[3] - box[1] <= 50 and crossed >= 2) \
-        or (box[3] - box[1] <= 80 and across >= 3) or across >= 2 \
+        or (box[3] - box[1] <= 80 and across >= 3) or through >= 2 \
         or (box[3] - box[1] <= 32 and crossed and box[2] - box[0] >= 2 * (box[3] - box[1]))
     beside = box[2] - box[0] <= 14 and any(box[0] - 4 <= x <= box[2] + 4 for x in edges)
     # (a sliver a line tall or taller a little off the rule read in its place: the rule of a skewed page, read a few

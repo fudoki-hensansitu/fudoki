@@ -58,6 +58,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         }
       },
@@ -364,6 +367,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         }
       },
@@ -895,6 +901,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         }
       },
@@ -1325,6 +1334,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         }
       },
@@ -1484,6 +1496,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         },
         "dropped_bands": [
@@ -1579,6 +1594,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         },
         "dropped_bands": [
@@ -1746,6 +1764,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         }
       },
@@ -1894,6 +1915,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         }
       },
@@ -2050,6 +2074,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         }
       },
@@ -2437,6 +2464,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         }
       },
@@ -2638,6 +2668,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         },
         "dropped_bands": [
@@ -2735,6 +2768,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         }
       },
@@ -2963,6 +2999,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         }
       },
@@ -3065,6 +3104,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "wrapped_years": true
           }
         }
       },

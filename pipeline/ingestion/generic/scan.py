@@ -30,7 +30,7 @@ from ingestion.lib.ocr_names import (AmountDictionary, AmountRule, correct_amoun
 
 # Vision reads the minus sign △ as a letter.
 # A letter before digits that go on into a word is a name (`A2用電子複写機使用料`, 132101), not a sign.
-MINUS = re.compile(r'^[AΔ▲−–-]\s*(?=[0-9][0-9,.\s]*(?:[^\w]|$))')  # (`–76,872`: an en dash, 132080)
+MINUS = re.compile(r'^[AΔ▲−–-]\s*(?=[0-9][0-9,.\s]*(?![0-9,.\s])(?:[^\w]|$))')  # (`–76,872`: an en dash, 132080)
 NUMBER = re.compile(r'△?[0-9][0-9,.]*')
 AMOUNT = re.compile(r'△?[0-9]{1,3}([,.][0-9]{3})+|△?[0-9]{4,}')
 GROUPED = re.compile(r'△?[0-9]{1,3}([,.][0-9]{3})+')
@@ -989,28 +989,8 @@ def join_ordinals(observed: list[Page]) -> list[Page]:
             joined = Word(before.text + word.text, before.x0, min(before.y0, word.y0), word.x1, max(before.y1, word.y1))
             words[words.index(before)] = joined
             words[index] = None
-        for index, word in enumerate(words):
-            # A year in a name wrapped in the middle of its digits (`全国自治体シンポジウム2` / `023負担金`, 132101):
-            # the whole of the next line's word goes on the line above, so neither part is read as an amount or a code.
-            found = word is not None and re.fullmatch(r'([0-9]{1,3})([^0-9\s].*)', word.text)
-            if not found or any(w is not None and w is not word and abs(middle(w) - middle(word)) < 3
-                                and w.x1 <= word.x0 + 0.5 for w in words):
-                continue
-            above = [w for w in words if w is not None and 6 < middle(word) - middle(w) < 14
-                     and w.x0 < word.x0 + 120 and w.x1 > word.x0]
-            last = max(above, key=lambda w: w.x1) if above else None
-            # OCR may read the digits ending the line as a word of their own (`全国自治体シンポジウム` `2`).
-            left = [w for w in words if last is not None and w is not None and w is not last
-                    and abs(middle(w) - middle(last)) < 3 and 0 <= last.x0 - w.x1 <= ORDINAL_GAP]
-            start = left[0] if left and re.fullmatch(r'[0-9]{1,3}', last.text) else last
-            head = last and re.search(r'([^\W\d_])([0-9]{1,3})$', (start.text if start is not last else '') + last.text)
-            if not head or not re.fullmatch(r'(19|20)[0-9]{2}', head.group(2) + found.group(1)):
-                continue
-            words[words.index(last)] = Word(start.text + last.text + word.text if start is not last else last.text + word.text,
-                                            start.x0, min(start.y0, last.y0), last.x1, max(start.y1, last.y1))
-            if start is not last:
-                words[words.index(start)] = None
-            words[index] = None
+        if (wrapped := document_quirk('wrapped_years')) is not None:
+            words = wrapped.module.join(words, middle)
         for index, word in enumerate(words):
             # The number wrapped to the next line with what follows it (`エアコン借上料その` / `1 (平成27年度導入分)`,
             # `（東小金井北第` / `1自転車駐車場)`, `地下水保全会議委員報酬 （` / `5人)`).
