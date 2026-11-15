@@ -99,8 +99,7 @@
             }
           },
           "quirks": {
-            "codeless_name_levels": true,
-            "scaled_spread_pages": true
+            "codeless_name_levels": true
           }
         }
       },
@@ -150,8 +149,7 @@
             }
           },
           "quirks": {
-            "codeless_name_levels": true,
-            "scaled_spread_pages": true
+            "codeless_name_levels": true
           }
         }
       },
@@ -201,8 +199,7 @@
             }
           },
           "quirks": {
-            "codeless_name_levels": true,
-            "scaled_spread_pages": true
+            "codeless_name_levels": true
           }
         }
       },
@@ -252,8 +249,7 @@
             }
           },
           "quirks": {
-            "codeless_name_levels": true,
-            "scaled_spread_pages": true
+            "codeless_name_levels": true
           }
         }
       },
@@ -295,8 +291,7 @@
             }
           },
           "quirks": {
-            "codeless_name_levels": true,
-            "scaled_spread_pages": true
+            "codeless_name_levels": true
           }
         }
       },
@@ -360,8 +355,7 @@
             }
           },
           "quirks": {
-            "codeless_name_levels": true,
-            "scaled_spread_pages": true
+            "codeless_name_levels": true
           }
         }
       },
@@ -406,7 +400,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "7fdd3639b1643f48011cbd456b0ef96248b3847d653c6b4c96efc70720497403",
+      "input_fingerprint": "6c276946f78610c9c97e444f9607d5d9213d54938ad2cb2bac6e683a830919ee",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -436,7 +430,7 @@
     {
       "table_id": "late-elderly-medical-expenditure",
       "conversion_id": "late-elderly-medical-settlement",
-      "input_fingerprint": "947bea24c3b8b6f21d6936862b82c6b1c69a8c325827ec5da88605a2ed4b1620",
+      "input_fingerprint": "2bd1f9a14573a2aadd613ebfb610b02f08aeecd1e606f14851f5370df50ae4db",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -466,7 +460,7 @@
     {
       "table_id": "care-insurance-expenditure",
       "conversion_id": "care-insurance-settlement",
-      "input_fingerprint": "747c5ab19ea7c5478a66dbc69114df4c75b6eb2a9cb165677b4485a98b017ee9",
+      "input_fingerprint": "f3b8b5028bbb773d35bcf178b32a38fb9dda554a21b36e978818f6ab64a06354",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -496,7 +490,7 @@
     {
       "table_id": "public-land-expenditure",
       "conversion_id": "public-land-settlement",
-      "input_fingerprint": "1027ac7e41f9130672911021e1f78be1e255b7d430f822d7b1ce8bc988115e56",
+      "input_fingerprint": "03dd9768c2ce3dc75549357acdc7ad147871a791c6faa2588a80cb14dd4411c7",
       "account": "公共用地特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -526,7 +520,7 @@
     {
       "table_id": "racing-expenditure",
       "conversion_id": "racing-settlement",
-      "input_fingerprint": "574b28d5b1e5c293b8dcba5b1b7543efa066d8f635456e9e3472366e1395a6d9",
+      "input_fingerprint": "812578205e36df00ee58da836a24828aeadd2399f819e2c8ef1d4c3428ba9802",
       "account": "競走事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -556,7 +550,7 @@
     {
       "table_id": "sewerage-expenditure",
       "conversion_id": "sewerage-settlement",
-      "input_fingerprint": "27935315e97bbda6f1c39bc790d71d4bb6799e79b0a490b8f985be1232980014",
+      "input_fingerprint": "f51fef03cd8db4d77d049f49e988e98117699c7f8d21773b1dcddbcfcb7930ad",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
