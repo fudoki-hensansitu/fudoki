@@ -1,6 +1,6 @@
 import unittest
 
-from ingestion.generic.convert import (excluded_regions, frame_words, lay_notes, scope_pages, split_notes, zero_marks)
+from ingestion.generic.convert import (continue_volume, excluded_regions, frame_words, lay_notes, scope_pages, split_notes, zero_marks)
 from ingestion.generic.layout import Band, Glyph, Logical
 from ingestion.generic.notes import kind_of, reads_as_note
 from ingestion.generic.observe import Page, Word
@@ -204,3 +204,29 @@ class HeadingTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ContinuedVolumeTest(unittest.TestCase):
+    def node(self, key, parent, axis, depth, level, name, y):
+        return {'node_key': key, 'parent_node_key': parent, 'axis_header': axis, 'depth': depth, 'level_header': level,
+                'code_text': None, 'name_text': name, 'physical_page': 1, 'x0': 10.0, 'y0': y, 'x1': 20.0, 'y1': y + 9}
+
+    def test_rows_read_with_no_parent_go_under_the_declared_款_項_目_and_事業_one_level_deeper(self):
+        nodes = [self.node('a', None, '事業名', 1, None, '印刷製本費', 100.0),
+                 self.node('b', 'a', '事業名', 2, None, '内訳', 110.0),
+                 self.node('k', None, '科目', 1, '款', None, 200.0)]
+        spec = {'subjects': [{'code': '7'}, {'code': '1'}, {'code': '3', 'name': '消費生活費'}],
+                'rows': [{'code': '02', 'name': '消費生活センター運営費'}]}
+        continue_volume(nodes, spec)
+        by_name = {n['name_text']: n for n in nodes if n['name_text']}
+        project = by_name['消費生活センター運営費']
+        self.assertEqual(by_name['印刷製本費']['parent_node_key'], project['node_key'])
+        self.assertEqual((by_name['印刷製本費']['depth'], by_name['内訳']['depth']), (2, 3))
+        self.assertEqual(by_name['消費生活費']['level_header'], '目')
+        self.assertEqual(project['parent_node_key'], by_name['消費生活費']['node_key'])
+        self.assertIsNone(next(n for n in nodes if n['node_key'] == 'k')['parent_node_key'])
+
+    def test_a_volume_with_no_row_at_the_head_without_a_parent_stops(self):
+        nodes = [self.node('k', None, '科目', 1, '款', None, 200.0)]
+        with self.assertRaises(ValueError):
+            continue_volume(nodes, {'subjects': [{'code': '1'}] * 3, 'rows': [{'code': '1', 'name': 'x'}]})

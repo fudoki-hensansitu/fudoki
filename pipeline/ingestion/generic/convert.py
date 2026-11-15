@@ -488,6 +488,8 @@ def _build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))
     built.notes.extend({'kind': 'name correction', 'text': f'{rule["page"]}頁 {rule["observed_name"]}→{rule["corrected_name"]}'}
                        for rule in options.get('name_corrections', ()) if 'observation_id' in rule)
+    if options.get('continued_rows'):
+        built.notes.append({'kind': 'continued rows', 'text': continue_volume(built.nodes, options['continued_rows'])})
     all_nodes = [*built.nodes, *nodes]
     all_amounts, headings = canonical_headings([*kept, *amounts], all_nodes, source['target']['document_kind'],
                                                (layout or {}).get('header'))
@@ -497,6 +499,55 @@ def _build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
     declared = [{k: v for k, v in box.items() if k != 'id'} for box in options.get('excluded_boxes', ())]
     return Table(all_nodes, all_amounts, unresolved, excluded_regions(built, logicals, codes, observed) + declared,
                  built, report, observed, logicals, headings, plain, ocr_numbers)
+
+
+def continue_volume(nodes: list[dict], spec: dict) -> str:
+    """A volume that starts inside a 事業 the volume before opened (町田市 prints its general account in two volumes
+    cut anywhere): its first rows are parts of rows it does not print and are read with no parent. The 款・項・目
+    and the 事業 rows above them are declared (`continued_rows`) and put at the head with no amount, on the first
+    page; the rows read with no parent are put under the last of them. The rows with no amount identify with the
+    volume before's rows (`continued` in the dbt rows model). Returns the note of what was put."""
+    from ingestion.generic.patterns.quirks.inner_tables import node_key
+    subject = next((n['axis_header'] for n in nodes if n.get('level_header') in ('款', '項', '目')), None)
+    orphans = [n for n in nodes if n['parent_node_key'] is None and n['axis_header'] != subject]
+    if subject is None or not orphans:
+        raise ValueError('continued_rows: the volume reads no row at the head with no parent')
+    axis = orphans[0]['axis_header']
+    if any(n['axis_header'] != axis for n in orphans):
+        raise ValueError('continued_rows: the rows with no parent are on more than one axis')
+    first = min(n['physical_page'] for n in nodes)
+    if any(n['physical_page'] != first for n in orphans):
+        raise ValueError('continued_rows: a row with no parent is not on the first page')
+    top = min(n['y0'] for n in orphans)
+    chain, parent = [], None
+    for index, row in enumerate(spec['subjects']):
+        box = (0.0, top - 0.01 * (len(spec['subjects']) + len(spec['rows']) - index), 0.0, top)
+        chain.append({'node_key': node_key(first, box, subject), 'parent_node_key': parent, 'axis_header': subject,
+                      'depth': index + 1, 'level_header': '款項目'[index], 'code_text': row['code'],
+                      'name_text': row.get('name'), 'physical_page': first,
+                      'x0': box[0], 'y0': box[1], 'x1': box[2], 'y1': box[3]})
+        parent = chain[-1]['node_key']
+    rows = []
+    for index, row in enumerate(spec['rows']):
+        box = (0.0, top - 0.01 * (len(spec['rows']) - index), 0.0, top)
+        rows.append({'node_key': node_key(first, box, axis), 'parent_node_key': parent, 'axis_header': axis,
+                     'depth': index + 1, 'level_header': None, 'code_text': row['code'], 'name_text': row['name'],
+                     'physical_page': first, 'x0': box[0], 'y0': box[1], 'x1': box[2], 'y1': box[3]})
+        parent = rows[-1]['node_key']
+    by_parent: dict[str, list[dict]] = {}
+    for n in nodes:
+        if n['parent_node_key'] is not None:
+            by_parent.setdefault(n['parent_node_key'], []).append(n)
+
+    def shift(node: dict) -> None:
+        node['depth'] += len(rows)
+        for child in by_parent.get(node['node_key'], ()):
+            shift(child)
+    for n in orphans:
+        n['parent_node_key'] = parent
+        shift(n)
+    nodes[:0] = [*chain, *rows]
+    return '続きの冊の頭の款・項・目と事業 %d 行を金額なしで置き、親の無い %d 行をその下に付けた' % (len(rows), len(orphans))
 
 
 def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
