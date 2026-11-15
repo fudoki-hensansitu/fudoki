@@ -31,6 +31,8 @@
                 "description": "The explanation item markers, one pattern per depth from the top (a whole word: `1`, `(1)`)."},
     "marker_reach": {"type": "number", "description": "How far right of the explanation frame's left edge an item marker may start."},
     "item_amount_reach": {"type": "number", "description": "An item's amount ends within this distance of the explanation frame's right edge."},
+    "explanation_flags": {"type": "array", "items": {"type": "string", "minLength": 1},
+                          "description": "The headings of the columns right of 説明 (レベルアップ・新規・臨時), each repeating the part of an item's amount the heading marks: read as a coverage exclusion, not taken in."},
     "total_label": {"type": "string", "minLength": 1, "description": "The label of the 項 total cell in the 目 column."},
     "grand_total_label": {"type": "string", "minLength": 1, "description": "The label of the summary's total row (歳出合計)."}
   }

@@ -14,8 +14,8 @@ SHOWN = type('Shown', (), {'__bool__': lambda self: True, '__repr__': lambda sel
 
 
 def flat(clip) -> bool:
-    """Whether a clip box (left, bottom, right, top) has no area."""
-    return clip is not None and (clip[2] - clip[0] <= 0 or clip[3] - clip[1] <= 0)
+    """Whether a clip box (left, bottom, right, top) is a line, of no area (not an empty clip, whose paths do not meet)."""
+    return clip is not None and clip[2] >= clip[0] and clip[3] >= clip[1] and (clip[2] == clip[0] or clip[3] == clip[1])
 
 
 def prints_own_copy(found: list, width: float) -> bool:

@@ -25,9 +25,10 @@ from ingestion.generic.patterns.layout import running_titles, stacked_titles
 HEADINGS = layout.SUBJECT_LEVELS  # the heading of a subject column: a frame whose header holds one prints its header
 
 
-def heads(page, top: float, bottom: float) -> bool:
-    """Whether the stretch from `top` to `bottom` of the page prints a subject column's heading."""
-    return any(normalize(w.text) in HEADINGS and top < (w.y0 + w.y1) / 2 < bottom for w in page.words)
+def heads(page, top: float, bottom: float, right: float | None = None) -> bool:
+    """Whether the stretch from `top` to `bottom` of the page prints a subject column's heading (left of `right`)."""
+    return any(normalize(w.text) in HEADINGS and top < (w.y0 + w.y1) / 2 < bottom and (right is None or w.x1 <= right)
+               for w in page.words)
 
 
 def headless_top(page) -> tuple[float, float] | None:
@@ -49,9 +50,12 @@ def headless_top(page) -> tuple[float, float] | None:
 
 
 def headless(page, spread: dict | None) -> bool:
-    """The page's frames print no header: none holds a subject heading above its body."""
+    """The page's frames print no header: none holds a subject heading above its body. The subject column opens the
+    frame, so a heading word is looked for in the frame's left quarter: a frame with no header rule is header all
+    through, and a `目` of the 説明 (`岩戸北三・四丁目`, 狛江 R5 p229) is no heading."""
     frames = layout._frames(page, spread)
-    return bool(frames) and not any(heads(page, frame[2] - 1, layout._header_bottom(page, frame) + 1) for frame in frames)
+    return bool(frames) and not any(heads(page, frame[2] - 1, layout._header_bottom(page, frame) + 1,
+                                          frame[0] + (frame[1] - frame[0]) / 4) for frame in frames)
 
 
 def continued(page, template: Logical) -> Logical:
