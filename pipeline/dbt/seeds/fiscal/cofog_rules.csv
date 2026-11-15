@@ -539,4 +539,5 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 -1304,kobe-past-year-refund,281000,一般会計,,諸支出金,過年度支出,,過年度支出,eq,,unclassifiable,,retained,目,,神戸市（281000）当初予算（各会計予算に関する説明書）の目。市税等の過年度返還金は機能を目の名前で決められない（kobe-misc と同じ）。,false
 1698,kind-fallback-municipal-housing,,,市営住宅,,,,,,,assigned,06.1,retained,目,,市営住宅の建設・管理の特別会計の目を住宅開発 06.1 に分類する（kind-fallback-metropolitan-housing と同じ。例: 281000 市営住宅事業費）。,false
 1699,kind-fallback-airport,,,空港整備,,,,,,,assigned,04.5,retained,目,,空港の整備・管理の特別会計の目を運輸 04.5 に分類する（マスタは航空の 04.5.4 を持たない。例: 281000 空港整備事業費）。,false
-1700,sumida-2023-01,131075,一般会計,,区民生活費,区民施設費,,女性センター費,eq,,assigned,01,retained,目,,墨田区 区民施設費の目の女性センター（男女共同参画の拠点、2023年度の当初予算にだけある）を一般行政に分類する。男女共同参画を 01 に置く共通の規則（keyword-general-admin）に合わせる。名称からの判断。,true
+1700,tochigi-city-health-centers,092037,一般会計,,衛生費,保健衛生費,,保健施設費,eq,,assigned,07,retained,目,,栃木市 保健福祉センター・健康福祉センターの管理運営と改修を保健に分類する。渋谷区の保健施設費（shibuya-2024-01）と同じ扱い。名称からの判断。,true
+1701,sumida-2023-01,131075,一般会計,,区民生活費,区民施設費,,女性センター費,eq,,assigned,01,retained,目,,墨田区 区民施設費の目の女性センター（男女共同参画の拠点、2023年度の当初予算にだけある）を一般行政に分類する。男女共同参画を 01 に置く共通の規則（keyword-general-admin）に合わせる。名称からの判断。,true

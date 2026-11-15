@@ -667,6 +667,8 @@ def receipt_notes(table: Table) -> list[str]:
         check = f'分冊のため款の和 {unit.get("kan_sum"):,} と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）'
     elif unit.get('printed_total') is not None:
         check = f'款の和 {unit["kan_sum"]:,} と印字の「{unit.get("total_label")}」{unit["printed_total"]:,} が一致'
+        if unit.get('rounded_match'):
+            check += '（款と合計をそれぞれ四捨五入した差の範囲。quirk rounded_items）'
     else:
         check = f'款の和 {unit.get("kan_sum"):,}（頁に歳出合計の印字なし。桁だけを確かめた）'
     kinds = Counter(n['level_header'] for n in table.nodes if n['axis_header'] == '注記')

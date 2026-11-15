@@ -1,0 +1,680 @@
+{
+  "jurisdiction": "092011",
+  "name": "宇都宮市",
+  "official_url": "https://www.city.utsunomiya.lg.jp/",
+  "selections": [
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和8年度当初予算の大綱",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r8yosantaikou.pdf",
+              "sha256": "e047b464d3ec5f69847fccf9058d7d0bbcce838249c32deb500faad7ad0bde1b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 68,
+                      "end": 68
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の「予算の大綱」（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html）が当初予算を最も細かく載せる公開資料。予算書・予算に関する説明書は公開されていない。一般会計の「一般会計（歳出：目的別）」の表（款ごとの当初予算額、千円）を選ぶ。特別会計・企業会計は大綱に会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2026/initial.pdf",
+            "sha256": "e047b464d3ec5f69847fccf9058d7d0bbcce838249c32deb500faad7ad0bde1b",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r8yosantaikou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:32:07.150Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度当初予算の大綱",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r7yosantaikou.pdf",
+              "sha256": "29c033d72d08efab37696a1d56c68010c9726d7b9e0f28a005df91e012a8262b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 107,
+                      "end": 107
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の「予算の大綱」（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html）が当初予算を最も細かく載せる公開資料。予算書・予算に関する説明書は公開されていない。一般会計の「一般会計（歳出：目的別）」の表（款ごとの当初予算額、千円）を選ぶ。特別会計・企業会計は大綱に会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2025/initial.pdf",
+            "sha256": "29c033d72d08efab37696a1d56c68010c9726d7b9e0f28a005df91e012a8262b",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r7yosantaikou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:32:10.705Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度当初予算の大綱",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r6yosantaikou-2.pdf",
+              "sha256": "e52a76875f219614c5632e2b9e002ad750a13efb7690bf7eaae51697ba2f5b9c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 108,
+                      "end": 108
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の「予算の大綱」（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html）が当初予算を最も細かく載せる公開資料。予算書・予算に関する説明書は公開されていない。一般会計の「一般会計（歳出：目的別）」の表（款ごとの当初予算額、千円）を選ぶ。特別会計・企業会計は大綱に会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2024/initial.pdf",
+            "sha256": "e52a76875f219614c5632e2b9e002ad750a13efb7690bf7eaae51697ba2f5b9c",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r6yosantaikou-2.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:32:53.699Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2023,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和5年度当初予算の大綱",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r5yosantaikou2.pdf",
+              "sha256": "be1f3e3e21adf062506562a28631fd5be829518cd5804ff10342528becd337c2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 88,
+                      "end": 88
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の「予算の大綱」（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html）が当初予算を最も細かく載せる公開資料。予算書・予算に関する説明書は公開されていない。一般会計の「一般会計（歳出：目的別）」の表（款ごとの当初予算額、千円）を選ぶ。特別会計・企業会計は大綱に会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2023/initial.pdf",
+            "sha256": "be1f3e3e21adf062506562a28631fd5be829518cd5804ff10342528becd337c2",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r5yosantaikou2.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:32:57.643Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2022,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和4年度当初予算の大綱",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r4yosanntaikou.pdf",
+              "sha256": "0b0b13f53d636dc469759b12f30ab61f7d4ec7e0c6e27114253e149cbd1d84bc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 68,
+                      "end": 68
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の「予算の大綱」（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html）が当初予算を最も細かく載せる公開資料。予算書・予算に関する説明書は公開されていない。一般会計の「一般会計（歳出：目的別）」の表（款ごとの当初予算額、千円）を選ぶ。特別会計・企業会計は大綱に会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2022/initial.pdf",
+            "sha256": "0b0b13f53d636dc469759b12f30ab61f7d4ec7e0c6e27114253e149cbd1d84bc",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r4yosanntaikou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:33:09.598Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2021,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和3年度当初予算の大綱",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/03taikou.pdf",
+              "sha256": "e5b0f25579f4ea3d0c62bd4dfb57ad79908696f480657b46029da572536cf12f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 70,
+                      "end": 70
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の「予算の大綱」（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html）が当初予算を最も細かく載せる公開資料。予算書・予算に関する説明書は公開されていない。一般会計の「一般会計（歳出：目的別）」の表（款ごとの当初予算額、千円）を選ぶ。特別会計・企業会計は大綱に会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2021/initial.pdf",
+            "sha256": "e5b0f25579f4ea3d0c62bd4dfb57ad79908696f480657b46029da572536cf12f",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/03taikou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:33:13.573Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2020,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和2年度当初予算の大綱",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r2taikou.pdf",
+              "sha256": "1a5317b62f8ebd79330aa38b85dcd6f79712c2ff3f28e227981638303874e12d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 64,
+                      "end": 64
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の「予算の大綱」（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010664.html）が当初予算を最も細かく載せる公開資料。予算書・予算に関する説明書は公開されていない。一般会計の「一般会計（歳出：目的別）」の表（款ごとの当初予算額、千円）を選ぶ。特別会計・企業会計は大綱に会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2020/initial.pdf",
+            "sha256": "1a5317b62f8ebd79330aa38b85dcd6f79712c2ff3f28e227981638303874e12d",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/664/r2taikou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:33:16.623Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度決算 計数資料",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/r7keisusiryo.pdf",
+              "sha256": "0c564448e25fb670582a6687334ffe8fcf8f59745eb4352a0975cc8bdaf59989",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の決算の頁（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html）の「計数資料」が決算を最も細かく載せる公開資料。決算書・歳入歳出決算事項別明細書・決算審査意見書は公開されていない。4頁の「歳出の状況（一般会計，目的別）」（款ごとの決算額、千円）を選ぶ。特別会計・企業会計は会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2025/settlement.pdf",
+            "sha256": "0c564448e25fb670582a6687334ffe8fcf8f59745eb4352a0975cc8bdaf59989",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/r7keisusiryo.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:33:19.425Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和6年度決算 計数資料",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/r6keisusiryo.pdf",
+              "sha256": "7cbb272ad4df0b86b5f1d046860c919f09d20f8c48091a3ece50bc1c5dd34723",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の決算の頁（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html）の「計数資料」が決算を最も細かく載せる公開資料。決算書・歳入歳出決算事項別明細書・決算審査意見書は公開されていない。4頁の「歳出の状況（一般会計，目的別）」（款ごとの決算額、千円）を選ぶ。特別会計・企業会計は会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2024/settlement.pdf",
+            "sha256": "7cbb272ad4df0b86b5f1d046860c919f09d20f8c48091a3ece50bc1c5dd34723",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/r6keisusiryo.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:33:22.452Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和5年度決算 計数資料",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/r5keisuusiryou2.pdf",
+              "sha256": "6d9cb086bb6da9af077c799ddf90677837fdd162192bc08ee34eddbaf8ea8549",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の決算の頁（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html）の「計数資料」が決算を最も細かく載せる公開資料。決算書・歳入歳出決算事項別明細書・決算審査意見書は公開されていない。4頁の「歳出の状況（一般会計，目的別）」（款ごとの決算額、千円）を選ぶ。特別会計・企業会計は会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2023/settlement.pdf",
+            "sha256": "6d9cb086bb6da9af077c799ddf90677837fdd162192bc08ee34eddbaf8ea8549",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/r5keisuusiryou2.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:33:25.307Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2022,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和4年度決算 計数資料",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/r4keisuusiryou.pdf",
+              "sha256": "ee6ebc2b5654d4555748ad5f7b66895b63e1fa1b396d027bb2e43b17c43910a0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の決算の頁（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html）の「計数資料」が決算を最も細かく載せる公開資料。決算書・歳入歳出決算事項別明細書・決算審査意見書は公開されていない。4頁の「歳出の状況（一般会計，目的別）」（款ごとの決算額、千円）を選ぶ。特別会計・企業会計は会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2022/settlement.pdf",
+            "sha256": "ee6ebc2b5654d4555748ad5f7b66895b63e1fa1b396d027bb2e43b17c43910a0",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/r4keisuusiryou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:33:28.605Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2021,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和3年度決算 計数資料",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/r3keisuusiryou.pdf",
+              "sha256": "a0c80ed5ae2ce99169a6be9199c080b3d783dc3dade524d2b0b4338a686d1ef3",
+              "format": "pdf",
+              "pdf_type": "scan",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の決算の頁（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html）の「計数資料」が決算を最も細かく載せる公開資料。決算書・歳入歳出決算事項別明細書・決算審査意見書は公開されていない。4頁の「歳出の状況（一般会計，目的別）」（款ごとの決算額、千円）を選ぶ。特別会計・企業会計は会計ごとの総額しか載らないので scope に入れない。この年度の計数資料はスキャンで、文字層を持たない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2021/settlement.pdf",
+            "sha256": "a0c80ed5ae2ce99169a6be9199c080b3d783dc3dade524d2b0b4338a686d1ef3",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/r3keisuusiryou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:33:32.263Z"
+      }
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2020,
+        "document_kind": "settlement"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和2年度決算 計数資料",
+          "landing_url": "https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html",
+          "inspected_at": "2026-11-15T16:30:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/02keisuusiryou.pdf",
+              "sha256": "f8640496c40bcba2eba3b9c6012b87d79c18b80b601292bb9e4a378c271d3548",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 4,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "財政課の決算の頁（https://www.city.utsunomiya.lg.jp/shisei/johokokai/zaisei/1010665.html）の「計数資料」が決算を最も細かく載せる公開資料。決算書・歳入歳出決算事項別明細書・決算審査意見書は公開されていない。4頁の「歳出の状況（一般会計，目的別）」（款ごとの決算額、千円）を選ぶ。特別会計・企業会計は会計ごとの総額しか載らないので scope に入れない。確認日 2026-11-15。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/092011/2020/settlement.pdf",
+            "sha256": "f8640496c40bcba2eba3b9c6012b87d79c18b80b601292bb9e4a378c271d3548",
+            "final_url": "https://www.city.utsunomiya.lg.jp/_res/projects/default_project/_page_/001/010/665/02keisuusiryou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T16:33:36.830Z"
+      }
+    }
+  ],
+  "unresolved_candidates": [],
+  "evaluation_selections": [
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2023,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。行政評価の頁（https://www.city.utsunomiya.lg.jp/shisei/johokokai/gyoseihyouka/1042010/index.html）に施策評価・事業評価のカルテが載るが、予算・決算を款の粒度でしか取り込まず、評価を結び付ける事業（予算・決算の内訳）が無いので選ばない。確認日 2026-11-15。"
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2024,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。行政評価の頁（https://www.city.utsunomiya.lg.jp/shisei/johokokai/gyoseihyouka/1042010/index.html）に施策評価・事業評価のカルテが載るが、予算・決算を款の粒度でしか取り込まず、評価を結び付ける事業（予算・決算の内訳）が無いので選ばない。確認日 2026-11-15。"
+    },
+    {
+      "target": {
+        "jurisdiction": "092011",
+        "fiscal_year": 2025,
+        "document_kind": "settlement"
+      },
+      "candidates": [],
+      "selected_candidate_id": null,
+      "archive": null,
+      "reason": "未選定。行政評価の頁（https://www.city.utsunomiya.lg.jp/shisei/johokokai/gyoseihyouka/1042010/index.html）に施策評価・事業評価のカルテが載るが、予算・決算を款の粒度でしか取り込まず、評価を結び付ける事業（予算・決算の内訳）が無いので選ばない。確認日 2026-11-15。"
+    }
+  ]
+}

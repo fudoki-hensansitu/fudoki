@@ -3,6 +3,7 @@ import re
 from ingestion.generic import mixed
 from ingestion.generic.layout import normalize
 from ingestion.generic.observe import Page, Rule, cropped, observe
+from ingestion.generic.patterns import document_quirk
 from ingestion.generic.repair import repair
 from ingestion.generic.units import check as check_units
 from ingestion.generic.workflow import build_reading, read_layout
@@ -97,7 +98,8 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
         declared_unread(built, read_logicals, columns, moved)
         built.unowned.extend(mixed.unlearned_amounts(read_logicals, frozenset(numbers), moved))
         built.notes.extend({'kind': 'variant characters', 'text': text} for text in variants)
-    unit = check_units(built, document_kind, account, partial, direction or 'expenditure')
+    unit = check_units(built, document_kind, account, partial, direction or 'expenditure',
+                       document_quirk('rounded_items'))
     if unit['stopped'] and stop:
         raise ValueError(f'Unit check failed: {unit}')
     report.unit = unit
