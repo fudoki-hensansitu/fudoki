@@ -3,7 +3,7 @@
 // /api/jurisdictions は誰でも読める GET で、IP ごとの流量と引数の形の検査で守る（CDN には置かない）
 import { sitemapXml } from '../jurisdiction/html'
 import { jurisdictionPath } from '../jurisdiction/path'
-import { townMatches, type MapEntry } from '../jurisdiction/index-table'
+import type { MapEntry } from '../jurisdiction/index-table'
 import { jurisdictionKind, type PageData } from '../jurisdiction/types'
 import { assetPath, EMBLEMS } from '../jurisdiction/emblems'
 import { clientIp, errorResponse, HttpError, rateLimit } from './http'
@@ -11,7 +11,8 @@ import { VIEW_RATE_LIMIT } from './limits'
 import type { Env, Fetcher, RateLimiter } from './env'
 import type { OgInput } from './og'
 import { appYears, loadFieldSubjects, loadYearSnapshot } from './app-data'
-import { loadCatalog, loadCatalogEntry, loadSettlementSummary, type CatalogEntry } from './jurisdiction'
+import { loadCatalog, loadCatalogEntry, loadSettlementSummary, searchCatalog, type CatalogEntry } from './jurisdiction'
+import { FudokiApiError } from './fudoki-api'
 
 // 応答は CDN（Void の ISR、void.config.ts の routing.revalidate）に置く。Worker の中には置かず、毎回 API から組む。
 // 自治体の一覧だけは、1つの頁を組むあいだに何度も引くので、同じ isolate の中で1分だけ使い回す
@@ -30,7 +31,7 @@ export const catalog = (env: Env) => {
 export async function homeEntries(env: Env): Promise<MapEntry[]> {
   return (await catalog(env))
     .filter((e) => e.settlementYears.length > 0)
-    .map((e) => ({ code: e.code, name: e.name, prefecture: e.prefecture, kind: jurisdictionKind(e.code, e.name), path: jurisdictionPath(e.code), latestYear: pageYearsOf(e)[0] }))
+    .map(toMapEntry)
 }
 
 /** 自治体の頁で選べる年度（新しい順）。頁のデータを読まずにカタログだけで決める（sitemap・ホームのリンク） */
@@ -74,34 +75,36 @@ export async function sitemapResponse(env: Env): Promise<Response> {
 }
 
 /** 町の検索で一度に返す数 */
-const TOWN_PAGE = 20
+const TOWN_PAGE = 10
 /** 探す語の長さの上限 */
 const QUERY_MAX = 50
-/** 続きを読む位置の上限（収録の数より十分に大きく取る） */
-const OFFSET_MAX = 10_000
+/** 続きの印（api の page_token）の長さの上限 */
+const CURSOR_MAX = 512
 /** /api の応答はブラウザにだけ少し置く（CDN は /api を置かない） */
 const BROWSER_CACHE = 'public, max-age=300'
 
-/** 町を探す（/api/jurisdictions?q=&offset=）。語に当たる自治体を、名前が語で始まるものを先に並べ、offset から TOWN_PAGE 件ずつ返す。
- * next は続きの offset（続きが無ければ null）。?code= ならその自治体だけを配列で返す（うちのまちの名前を引く） */
+/** 一覧の1件を、検索の候補の形にする */
+const toMapEntry = (e: CatalogEntry): MapEntry => ({ code: e.code, name: e.name, prefecture: e.prefecture, kind: jurisdictionKind(e.code, e.name), path: jurisdictionPath(e.code), latestYear: pageYearsOf(e)[0] })
+
+/** 町を探す（/api/jurisdictions?q=&cursor=）。決算を収録した自治体を名前で探し、api の頁送り（list_jurisdictions の page_token）のまま TOWN_PAGE 件ずつ返す。
+ * 一覧を全部は読まない。next は続きの cursor（無ければ null）。?code= ならその自治体だけを配列で返す（うちのまちの名前を引く） */
 export async function jurisdictionSearchResponse(env: Env, request: Request): Promise<Response> {
   try {
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
     const params = new URL(request.url).searchParams
     const code = params.get('code')
-    const q = params.get('q') ?? ''
-    const offsetText = params.get('offset') ?? '0'
-    if ((code !== null && !/^\d{6}$/.test(code)) || q.length > QUERY_MAX || !/^\d{1,5}$/.test(offsetText) || Number(offsetText) > OFFSET_MAX) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コード・探す語・続きの位置の形が違います')
-    const entries = await homeEntries(env)
+    const q = (params.get('q') ?? '').trim()
+    const cursor = params.get('cursor') ?? undefined
+    if ((code !== null && !/^\d{6}$/.test(code)) || q.length > QUERY_MAX || (cursor !== undefined && (cursor.length > CURSOR_MAX || !/^[A-Za-z0-9_-]+$/.test(cursor)))) throw new HttpError(400, 'INVALID_ARGUMENT', '自治体コード・探す語・続きの印の形が違います')
     const json = (body: unknown) => new Response(JSON.stringify(body), { headers: { 'Content-Type': 'application/json; charset=utf-8', 'Cache-Control': BROWSER_CACHE } })
-    if (code !== null) return json(entries.filter((e) => e.code === code))
-    const word = q.trim()
-    const hits = entries.filter((e) => townMatches(e, q)).sort((a, b) => Number(b.name.startsWith(word)) - Number(a.name.startsWith(word)))
-    const offset = Number(offsetText)
-    const end = offset + TOWN_PAGE
-    return json({ entries: hits.slice(offset, end), next: end < hits.length ? end : null })
+    // 決算が一般会計の外にしか無い自治体は、頁に年度が無いので出さない
+    const shown = (e: CatalogEntry) => e.settlementYears.length > 0
+    if (code !== null) return json((await searchCatalog(env, { code, pageSize: 1 })).entries.filter(shown).map(toMapEntry))
+    const page = await searchCatalog(env, { ...(q ? { name: q } : {}), pageSize: TOWN_PAGE, ...(cursor ? { pageToken: cursor } : {}) })
+    return json({ entries: page.entries.filter(shown).map(toMapEntry), next: page.next })
   } catch (e) {
     if (e instanceof HttpError) return errorResponse(e)
+    if (e instanceof FudokiApiError && e.status === 400) return errorResponse(new HttpError(400, 'INVALID_ARGUMENT', '続きの印が古いか、形が違います'))
     return errorResponse(new HttpError(502, 'UNAVAILABLE', '風土記の API に繋がりませんでした'))
   }
 }

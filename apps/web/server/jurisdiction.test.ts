@@ -84,7 +84,12 @@ function fixtureApi({ code = '131148', name = '中野区', extraNodes = [] as Ro
       { jurisdiction_code: '131016', name: '千代田区', prefecture_name: '東京都', population: [], evaluations: [], coverage: [] },
       { jurisdiction_code: '130001', name: '東京都', prefecture_name: '東京都', population: [], evaluations: [], coverage: [] },
     ]
-    if (url.pathname === '/v1/jurisdictions') return Response.json({ jurisdictions })
+    if (url.pathname === '/v1/jurisdictions') {
+      // 公開 REST と同じ絞り込み（名前の部分一致・コード・資料区分の収録）だけを真似る
+      const q = url.searchParams
+      const hits = jurisdictions.filter((j) => (!q.get('name') || j.name.includes(q.get('name')!)) && (!q.get('code') || j.jurisdiction_code === q.get('code')) && (!q.get('document_kind') || j.coverage.some((c) => c.document_kind === q.get('document_kind'))))
+      return Response.json({ jurisdictions: hits, next_page_token: null })
+    }
     const one = url.pathname.match(/^\/v1\/jurisdictions\/(\d{6})$/)
     if (one) {
       const j = jurisdictions.find((x) => x.jurisdiction_code === one[1])
@@ -324,10 +329,9 @@ describe('自治体の検索（/api/jurisdictions）', () => {
     expect(hits.entries.map((h) => [h.name, h.path])).toEqual([['中野区', '/tokyo/nakano']])
     expect(hits.next).toBeNull()
     expect(await (await get('/api/jurisdictions?q=存在しない')).json()).toEqual({ entries: [], next: null })
-    // 続きの位置が当たる数を越えれば空
-    expect(await (await get('/api/jurisdictions?q=中野&offset=20')).json()).toEqual({ entries: [], next: null })
-    expect((await get('/api/jurisdictions?q=中野&offset=-1')).status).toBe(400)
-    expect((await get('/api/jurisdictions?q=中野&offset=99999')).status).toBe(400)
+    // 続きの印は api の page_token の形だけを通す
+    expect((await get('/api/jurisdictions?q=中野&cursor=a%2Fb')).status).toBe(400)
+    expect((await get(`/api/jurisdictions?q=中野&cursor=${'a'.repeat(513)}`)).status).toBe(400)
     // うちのまちの名前はコードで引く。決算の収録の無い自治体は返さない
     expect(((await (await get('/api/jurisdictions?code=131148')).json()) as { name: string }[]).map((h) => h.name)).toEqual(['中野区'])
     expect(await (await get('/api/jurisdictions?code=131016')).json()).toEqual([])

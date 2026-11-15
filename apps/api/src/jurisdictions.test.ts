@@ -145,6 +145,19 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
     expect(await codes('?prefecture_code=01')).toEqual([])
   })
 
+  test('資料区分で、その資料を収録した自治体だけを返す。名前で絞ると、名前がその語で始まる自治体を先に並べる', async () => {
+    const codes = async (q: string) => (await list(q)).jurisdictions.map((j: { jurisdiction_code: string }) => j.jurisdiction_code)
+    expect(await codes('?document_kind=settlement')).toEqual(['132039', '132063'])
+    expect(await codes('?document_kind=initial')).toEqual(['132039'])
+    insertJurisdiction(sqlite, { jurisdiction_code: '131130', name: '新府中町' })
+    expect(await codes(`?name=${encodeURIComponent('府中')}`)).toEqual(['132063', '342076', '131130'])
+    // 並びを変えても、頁をまたいで欠落・重複しない
+    const first = await list(`?name=${encodeURIComponent('府中')}&page_size=2`)
+    const rest = await list(`?name=${encodeURIComponent('府中')}&page_size=2&page_token=${first.next_page_token}`)
+    expect([...first.jurisdictions, ...rest.jurisdictions].map((j: { jurisdiction_code: string }) => j.jurisdiction_code)).toEqual(['132063', '342076', '131130'])
+    expect(rest.next_page_token).toBeNull()
+  })
+
   test('page_token は同じ条件の問い合わせにだけ使える', async () => {
     const first = await list('?page_size=1')
     const res = await get(`/v1/jurisdictions?page_size=1&name=${encodeURIComponent('府中')}&page_token=${first.next_page_token}`)
@@ -152,7 +165,7 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
   })
 
   test('入力の誤りは 400', async () => {
-    for (const q of ['?code=1320', '?code=1320391', '?code=13203a', '?page_size=0', '?page_size=101', '?prefecture_code=1', '?prefecture_code=1a', `?name=${'a'.repeat(51)}`, '?extra=1'])
+    for (const q of ['?code=1320', '?code=1320391', '?code=13203a', '?page_size=0', '?page_size=101', '?prefecture_code=1', '?prefecture_code=1a', '?document_kind=draft', `?name=${'a'.repeat(51)}`, '?extra=1'])
       expect((await get(`/v1/jurisdictions${q}`)).status, q).toBe(400)
   })
 

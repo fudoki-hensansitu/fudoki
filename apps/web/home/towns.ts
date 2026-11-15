@@ -9,12 +9,12 @@ const EVENT = 'fudoki:home-town'
 
 export type Town = RecentJurisdiction
 
-/** 探す語に当たる自治体の1頁。next は続きの offset（無ければ null） */
-export type TownPage = { entries: MapEntry[]; next: number | null }
+/** 探す語に当たる自治体の1頁。next は続きの印（api の頁送り、無ければ null） */
+export type TownPage = { entries: MapEntry[]; next: string | null }
 
-/** 探す語に当たる自治体を offset から1頁ぶん。サーバー（/api/jurisdictions?q=&offset=）が当てて返す。読めなければ null */
-const searchTowns = (q: string, offset: number, signal?: AbortSignal): Promise<TownPage | null> =>
-  fetch(`/api/jurisdictions?${new URLSearchParams({ q, offset: String(offset) })}`, { signal })
+/** 探す語に当たる自治体を1頁ぶん。cursor が無ければ最初の頁。サーバー（/api/jurisdictions?q=&cursor=）が api の頁送りのまま返す。読めなければ null */
+const searchTowns = (q: string, cursor: string | null, signal?: AbortSignal): Promise<TownPage | null> =>
+  fetch(`/api/jurisdictions?${new URLSearchParams({ q, ...(cursor ? { cursor } : {}) })}`, { signal })
     .then((r) => (r.ok ? (r.json() as Promise<TownPage>) : null))
     .catch(() => null)
 
@@ -35,7 +35,7 @@ export function useTownSearch(open: boolean, q: string) {
     const controller = new AbortController()
     loading.current?.abort()
     loading.current = null
-    const timer = setTimeout(() => void searchTowns(q, 0, controller.signal).then((p) => !controller.signal.aborted && setPage(p && { ...p, q })), q ? TYPING_MS : 0)
+    const timer = setTimeout(() => void searchTowns(q, null, controller.signal).then((p) => !controller.signal.aborted && setPage(p && { ...p, q })), q ? TYPING_MS : 0)
     return () => {
       clearTimeout(timer)
       controller.abort()
