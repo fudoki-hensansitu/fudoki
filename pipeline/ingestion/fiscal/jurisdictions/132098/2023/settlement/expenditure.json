@@ -1,0 +1,91 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132098",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "87cc00ed88eda922a15cc4e350e5581a218e7722dac1b157efae663aec97b785"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "options": {
+                  "notes": [
+                    "○同款",
+                    "○同項",
+                    "○同目"
+                  ],
+                  "wrap": "amount_on_last_line",
+                  "hang_chars": 1
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "ecc144519994a3936175da00e5d7e64b8243246b129152355aa4f5c34e55b06f",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'indent'}。",
+        "金額の単位は column mark 106頁 から決めた。款の和 179,721,689,418 と印字の「歳出合計」179,721,689,418 が一致。",
+        "金額の注記 292 件（不用額 13・充用 18・流用 261）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（2319 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "a0a18b9363925fea6746b14552c3d1ddb31851178f41414767945b4ef003f084",
+          "bytes": 99659
+        },
+        "row_count": 3026
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132098/2023/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "f80aee4e1ec1fb2716c98645214bdf0e672a7f9e537f39fb1d083ce94acff7fe",
+          "bytes": 139655
+        },
+        "row_count": 7426
+      }
+    }
+  ]
+}
