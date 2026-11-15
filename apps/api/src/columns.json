@@ -100,7 +100,7 @@
           "name": "total_yen",
           "type": "integer",
           "nullable": true,
-          "description": "総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無ければNULL。出典が金額を欠く行は足していない。"
+          "description": "総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無いか、金額の無い款がある（子に金額の欠けがあり補えない）ならNULL。"
         },
         {
           "name": "cofog_01_yen",

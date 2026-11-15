@@ -1,7 +1,7 @@
 version: 2
 models:
 - name: expenditure_subject
-  description: 歳出の科目の表。一つの資料（自治体・年度・資料区分・会計）の款・項・目の印字。同じ資料で level を一つに絞るか is_leaf の行を足すと総額。目より下は expenditure_detail、印字の位置は expenditure_location。
+  description: 歳出の科目の表。一つの資料（自治体・年度・資料区分・会計）の款・項・目の印字と、印字の無い款・項を子の和で補った値。同じ資料で level を一つに絞るか is_leaf の行を足すと総額。目より下は expenditure_detail、印字の位置は expenditure_location。
   columns:
   - name: subject_id
     description: 行の ID。資料区分・補正号・node_key から作る（sha256）。
@@ -366,7 +366,7 @@ models:
     data_tests:
     - not_null
   - name: total_yen
-    description: 総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無ければNULL。出典が金額を欠く行は足していない。
+    description: 総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無いか、金額の無い款がある（子に金額の欠けがあり補えない）ならNULL。
   - name: cofog_01_yen
     description: COFOG の大分類 01（行政・議会）の額（円）。科目の表の末端の行のうち cofog_code が 01 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。
   - name: cofog_02_yen
