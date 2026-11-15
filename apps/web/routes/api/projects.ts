@@ -1,4 +1,4 @@
-// /api/projects: 自治体の頁の事業の一覧の続き（POST）と、施策・評価シートを紐付けた事業（GET ?detail=）。server/project-routes.ts
+// /api/projects: 自治体の頁の事業の一覧の続き（POST）と、評価シートをつないだ事業（GET ?project=）。server/project-routes.ts
 import { defineHandler } from 'void'
 import { projectListResponse, projectOfIdResponse } from '../../server/project-routes'
 import type { Env } from '../../server/env'

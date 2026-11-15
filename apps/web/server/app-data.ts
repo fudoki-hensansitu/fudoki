@@ -133,12 +133,12 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   // まとめ・事業のタブの頁でも読んでおく（予算・決算のタブへ移ったとき、loader を待つあいだも札を出して流れの図がずれないように）
   const accounts = entry.accounts?.[docKind]?.[String(year)] ?? []
   const wantAccounts = accounts.length > 1
-  // ホームのまちの札は「新しく始めた事業」「やめた事業」も出す
-  const homeLists = !tab && prev ? (['new', 'ended'] as const).map((f) => listQuery({ code: entry.code, year, years: { [year]: { kind: me.kind } as YearData }, prev: { year: prev.year, kind: prev.kind } }, f)) : []
+  // ホームのまちの札は「やめた事業」も出す（新しく始めた事業は残り（loadYearExtras）が読む）
+  const homeLists = !tab && prev ? [listQuery({ code: entry.code, year, years: { [year]: { kind: me.kind } as YearData }, prev: { year: prev.year, kind: prev.kind } }, 'ended')] : []
   const [projects, accountTotals, extras, evalSheets, homePages] = await Promise.all([
     projectPage,
     wantAccounts ? loadAccountTotals(env, entry.code, year, docKind, accounts) : Promise.resolve(undefined),
-    tab ? Promise.resolve(undefined) : loadYearExtras(env, entry.code, year, me.kind),
+    tab ? Promise.resolve(undefined) : loadYearExtras(env, entry.code, year, me.kind, prev),
     evalYear ? sheetsOf(env, entry.code, evalYear).then((r) => r.rows) : Promise.resolve(null),
     Promise.all(homeLists.map((q) => readListPage(apiCall(env), q).then((p) => [listKey(q), p] as const))),
   ])
@@ -167,14 +167,18 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
 }
 
 /** 頁の1年度の残り（最初の画面に要らない分）。その年度の評価シートの区分ごとの数と、事業の一覧（すべて）の1頁目。
+ * 前の年度があれば、新しく始めた事業の一覧の1頁目も読む（まとめの「新しく始める事業」）。
  * 款項目は読まない（分野は画面が開いた年度の款項目から引く。withExtras） */
-export async function loadYearExtras(env: Env, code: string, year: number, kind: Kind): Promise<YearExtras> {
-  const allQuery = listQuery({ code, year, years: { [year]: { kind } as YearData }, prev: undefined }, 'all')
-  const [sheetCounts, allPage] = await Promise.all([
+export async function loadYearExtras(env: Env, code: string, year: number, kind: Kind, prev?: { year: number; kind: Kind }): Promise<YearExtras> {
+  const at = { code, year, years: { [year]: { kind } as YearData }, prev }
+  const allQuery = listQuery(at, 'all')
+  const newQuery = prev ? listQuery(at, 'new') : undefined
+  const [sheetCounts, allPage, newPage] = await Promise.all([
     readSheetCounts(apiCall(env), { code, year, kind }),
     readListPage(apiCall(env), allQuery),
+    newQuery ? readListPage(apiCall(env), newQuery) : undefined,
   ])
-  return { sheetCounts, hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage } }
+  return { sheetCounts, hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage, ...(newQuery && newPage ? { [listKey(newQuery)]: newPage } : {}) } }
 }
 
 /** 前の年度の分野ごとの末端の科目。やめた事業を分野で絞るときだけ、画面が読む */

@@ -1,5 +1,5 @@
 // 自治体の頁（アプリ型）のデータ。server/app-data.ts が API から組んだ1年度の分を、画面の見え方に組み直す。
-// 事業・評価シートは頁ごとに API から読む（事業の1頁目はサーバーが lists に入れて渡す。評価シートは区分ごとの数だけを持つ）。施策は年度の分を全部持ち、事業とは歳出の内訳の ID で照らす
+// 事業・評価シートは頁ごとに API から読む（事業の1頁目はサーバーが lists に入れて渡す。評価シートは区分ごとの数だけを持つ）
 import { DOMAIN_FRAMES, OTHER_FRAME, type DomainFrame } from '../domains'
 import { listKey, type ListPage, type ListQuery, type ProjRow, type ProjectFull, type SheetCount } from './api'
 
@@ -23,7 +23,7 @@ export type YearData = {
 }
 /** 会計ごとの総額（款の和）。一般会計が先頭 */
 export type AccountTotal = { name: string; yen: number; amountMissing?: true }
-/** 1年度の頁のデータ。years は開いた年度の款項目、施策・評価シート・事業の1頁目はその年度の分。
+/** 1年度の頁のデータ。years は開いた年度の款項目、評価シートの数・事業の1頁目はその年度の分。
  * 自治体の頁の loader は最初の画面に要る分だけを読み（pending）、残り（YearExtras）は loader が defer で後から流し、画面が Suspense と use() で待って withExtras で足す */
 export type Snapshot = {
   code: string
@@ -51,26 +51,15 @@ export type Snapshot = {
   failed?: true
 }
 
-/** 最初の画面に要らない、1年度の残りのデータ。評価シートの区分ごとの数と、事業の一覧（すべて）の1頁目 */
+/** 最初の画面に要らない、1年度の残りのデータ。評価シートの区分ごとの数と、事業の一覧（すべて・新しく始めた事業）の1頁目 */
 export type YearExtras = {
   sheetCounts: SheetCount[]
   hasProjects: boolean
   lists: Record<string, ListPage>
 }
 
-/** 款項目から分野を引く。科目の ID で当たらなければ款・項・目の名前で引く（決算の年度の施策は当初予算書の内訳に紐づき、科目の ID が違う） */
-function fieldResolver(y: YearData) {
-  const byId = new Map(Object.entries(y.fieldSubjects).flatMap(([f, ids]) => ids.map((id) => [id, f] as const)))
-  const byPath = new Map<string, string>(y.kan.flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => [`${k.name}/${o.name}/${m.name}`, m.field] as const))))
-  // 項に属さない目は款・項の名前を持たないので、目の名前で引く
-  const byLoose = new Map<string, string>(y.looseMoku.map((m) => [m.name, m.field] as const))
-  return (subject: string | null, path: string[] | null) => (subject ? byId.get(subject) : undefined) ?? (path ? (byPath.get(path.join('/')) ?? byLoose.get(path.at(-1) ?? '')) : undefined) ?? OTHER_FRAME.id
-}
-
 /** 頁のデータに残り（YearExtras）を足す */
 export function withExtras(d: Snapshot, x: YearExtras): Snapshot {
-  const y = d.years[String(d.year)]
-  const fieldOf = y ? fieldResolver(y) : () => OTHER_FRAME.id
   const { pending: _, ...rest } = d
   return {
     ...rest,

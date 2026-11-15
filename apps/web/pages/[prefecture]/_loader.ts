@@ -30,11 +30,11 @@ export type JurisdictionProps = JurisdictionView & {
   field?: string
   /** タブの頁（/tokyo/nakano/2026/projects）のときのタブ */
   tab?: Exclude<PageTab, 'overview'>
-  /** 開いた年度の款項目・施策・評価シート・事業の一覧の1頁目。サーバーで本文まで描くために渡す。API に繋がらなければ無く、画面が取る */
+  /** 開いた年度の款項目・評価シート・事業の一覧の1頁目。サーバーで本文まで描くために渡す。API に繋がらなければ無く、画面が取る */
   snapshot?: Snapshot
   /** 予算・決算のタブの頁（/tokyo/nakano/2025/settlement?account=…）の流れ。API に繋がらなければ無く、画面が読み直しを出す */
   flow?: PageFlow
-  /** 最初の画面に要らない残り（施策・評価シート・お金のかかる事業）。defer で HTML の後ろに流す */
+  /** 最初の画面に要らない残り（評価シート・お金のかかる事業・新しく始めた事業）。defer で HTML の後ろに流す */
   extras?: Promise<YearExtras>
   /** 流れの目ごとの節。defer で HTML の後ろに流す */
   setsu?: Promise<Record<string, Setsu[]>>
@@ -130,7 +130,7 @@ const within = <T,>(p: Promise<T>, ms: number): Promise<T> => {
   return Promise.race([p, deadline]).finally(() => clearTimeout(timer))
 }
 
-/** 開いた年度の款項目・施策・評価シート・事業の一覧の1頁目を props に足す（年度の段が無ければ最新の年度）。予算・決算のタブの頁なら、その流れも足す */
+/** 開いた年度の款項目・評価シート・事業の一覧の1頁目を props に足す（年度の段が無ければ最新の年度）。予算・決算のタブの頁なら、その流れも足す */
 async function withSnapshot(c: Context, props: JurisdictionProps): Promise<JurisdictionProps> {
   if (props.kind !== 'page') return props
   const env = c.env as unknown as Env
@@ -168,8 +168,10 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
     c.header('Cache-Control', 'no-store')
   }
   // 最初の画面に要らない分は defer で渡し、頁を描いた後に同じ応答の後ろで届ける
-  const kind = entry ? appYears(entry).find((y) => y.year === year)?.kind : undefined
-  const extras = entry && kind ? defer(() => loadYearExtras(env, entry.code, year, kind)) : undefined
+  const pageYears = entry ? appYears(entry) : []
+  const kind = pageYears.find((y) => y.year === year)?.kind
+  const prevYear = pageYears.find((y) => y.year === year - 1)
+  const extras = entry && kind ? defer(() => loadYearExtras(env, entry.code, year, kind, prevYear)) : undefined
   const mokuIds = flow ? [...flow.drills.flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => m.id))), ...flow.loose.map((m) => m.id)] : []
   const setsu = entry && flow && phase ? defer(async () => Object.fromEntries(await loadSetsuByMoku(env, entry.code, year, mokuIds, phase, account))) : undefined
   return { ...props, ...(headline ? { data: { ...props.data, headline } } : {}), ...(snapshot ? { snapshot } : {}), ...(flow ? { flow } : {}), ...(extras ? { extras } : {}), ...(setsu ? { setsu } : {}) }

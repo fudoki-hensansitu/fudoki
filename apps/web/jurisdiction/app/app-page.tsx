@@ -1,4 +1,4 @@
-// 自治体の頁（アプリ型）。ヘッダーの下を「まとめ・事業・決算・予算」のタブにし（決算・予算のタブはどの年度にも出す）、事業・施策・評価シートは一覧と詳細、分野は分野の頁に分ける。
+// 自治体の頁（アプリ型）。ヘッダーの下を「まとめ・事業・決算・予算」のタブにし（決算・予算のタブはどの年度にも出す）、事業・評価シートは一覧と詳細、分野は分野の頁に分ける。
 // 一覧は名前と金額だけを出し、説明は詳細にだけ出す。部品は shadcn/ui（Tabs・Carousel・Sheet・Card・Input・ToggleGroup）
 import * as React from 'react'
 import { useNavigation, useRouter } from '@void/react'
@@ -139,7 +139,7 @@ const AppContext = React.createContext<Ctx>(null!)
 const useApp = () => React.useContext(AppContext)
 const extrasKeyOf = (d: Snapshot) => `extras:${d.code}:${d.year}`
 
-/** 施策・評価シート・お金のかかる事業を足した年度の見方。loader が defer で渡す残りを use() で待つので、Full（ClientSuspense）の中で呼ぶ。
+/** 評価シート・お金のかかる事業・新しく始めた事業を足した年度の見方。loader が defer で渡す残りを use() で待つので、Full（ClientSuspense）の中で呼ぶ。
  * 読めなかったら止めずに failed を立てる（画面が「読み込めませんでした」を出す） */
 function useFullView(): YearView {
   const { d, v, res, extras, prevFieldSubjects } = useApp()
@@ -1115,7 +1115,7 @@ const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').repl
 const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
 
 export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（施策・評価シート・お金のかかる事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; initialField?: string; initialTab?: TabKey }) {
-  // 最初の画面に要らない分（施策・評価シート・お金のかかる事業）は loader が defer で流し、使う部分が Full（Suspense と use()）で待つ
+  // 最初の画面に要らない分（評価シート・お金のかかる事業・新しく始めた事業）は loader が defer で流し、使う部分が Full（Suspense と use()）で待つ
   const d = base
   const vision = data.vision?.text
   const emblem = data.emblem?.src ?? null
@@ -1140,7 +1140,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const setYear = (y: number) => {
     if (y === year) return
     move(yearHref(y))
-    // 目の詳細は開いた年度の図の値を、施策・評価シートはその年度の資料を持つので、年度を変えたら閉じる（事業は年度をまたいで同じ）
+    // 目の詳細は開いた年度の図の値を、評価シートはその年度の資料を持つので、年度を変えたら閉じる（事業は年度をまたいで同じ）
     select((s) => (s?.kind === 'project' ? s : null))
   }
   const setTab = (t: TabKey, { push = true, query = '' } = {}) => {
