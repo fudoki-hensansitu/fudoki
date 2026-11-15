@@ -1,6 +1,6 @@
 # 事業評価を整理する — 設計書
 
-状態: 合意（2026-11-15 yuito）。決めること1・2を実装した（ADR 0048）。3・4は未着手、5は別の PR で行う。
+状態: 合意（2026-11-15 yuito）。決めること1・2を実装した（ADR 0048）。5は ADR 0049 で実装した。3・4は未着手。
 
 ## 背景
 
@@ -83,7 +83,7 @@
 機械でつながらないものは、上書き用の seed（`evaluation_sheet_link.csv`）で直す。
 
 - 鍵は (`jurisdiction_code`, `fiscal_year`, `origin_id`, `page`, `position`)。`project_id` は前の年度を取り込むと変わる（ADR 0046）ので、鍵にも値にも使わない。
-- 値は内訳の `detail_id`（複数なら行を分ける）と `method`。`budget_measure_link.csv` と同じ形にする。
+- 値は内訳の `detail_id`（複数なら行を分ける）と `method`。
 
 名前の近さで当てる方式（施策のつなぎの Dice 係数と Jev）は、この PR では使わない。一致で当たらないものの量を測ってから決める。
 
@@ -147,7 +147,7 @@
 
 いまのつながる率では、「つながらなかった事業」を「評価されていない事業」とは言えない。そのため `coverage` は資料の説明としてだけ出し、事業ごとに「評価なし」の印は付けない。
 
-`project_origin.document_type`（sheets・press）は別の列として残るので、名前を変えた。
+`project_origin.document_type`（sheets・press）は、プレスを消したので列ごと消した。
 
 ### 4. 施策名はシートの列にとどめる
 

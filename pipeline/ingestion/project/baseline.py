@@ -24,7 +24,6 @@ KEYS = {
     'project_evaluation_sheet': 3,
     'project_evaluation_indicator': 3,
     'project_evaluation_indicator_value': 4,
-    'project_budget_measure': 3,
 }
 
 

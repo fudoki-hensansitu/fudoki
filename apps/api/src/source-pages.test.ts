@@ -66,18 +66,6 @@ test('事業評価の出典は、Wayback Machine の写しでなく自治体の�
   }
 })
 
-test('予算案のプレス発表の出典も origin_id か sha256 で引ける', async () => {
-  const { db, sqlite } = setup([])
-  sqlite
-    .query(`INSERT INTO budget_proposal_origin (origin_id, budget_proposal_id, jurisdiction_code, fiscal_year, title, url, landing_url, sha256) VALUES (?,?,?,?,?,?,?,?)`)
-    .run('p1', 'bp1', '131091', 2026, '予算案の概要', 'https://city.example.jp/p1.pdf', null, OTHER)
-  addPages(sqlite, OTHER, ['本文'])
-  for (const origin of [OTHER, 'p1']) {
-    const r = await readSourcePage(db, { origin, page: 1 })
-    expect(r.status === 'ok' && [r.title, r.url, r.text]).toEqual(['予算案の概要', 'https://city.example.jp/p1.pdf', '本文'])
-  }
-})
-
 // 頁の文字は資料の文章そのものなので、公開の REST・MCP から読めないようにする。
 // 公開か内部かは api のインターフェースだけが持つ（D1・columns.json には区別が無い）ので、表を読むモジュールを限って守る
 test('頁の文字の表を読むのは内部の RPC（source-pages.ts）だけで、表の全部をなめるコードも無い', () => {

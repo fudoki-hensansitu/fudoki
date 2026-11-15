@@ -1,8 +1,7 @@
-// 事業評価・予算案・事業の操作（REST と MCP）。応答が出力の schema に合うか、404・ページ・bind を確かめる。
+// 事業評価・事業の操作（REST と MCP）。応答が出力の schema に合うか、404・ページ・bind を確かめる。
 import { beforeEach, describe, expect, test } from 'bun:test'
 import type { Database } from 'bun:sqlite'
 import { createApp } from './app'
-import { BudgetProposalOutput, MeasureSearchOutput } from './budget-proposal/model'
 import type { Db } from './db'
 import { EvaluationOutput, SheetOutput, SheetSearchOutput, type SheetCountOutput } from './evaluation/model'
 import { callWebOp } from './web-ops'
@@ -14,7 +13,6 @@ let sqlite: Database
 const app = createApp()
 const H = (c: string) => c.repeat(64)
 const EV = H('e')
-const BP = H('b')
 const get = (path: string) => app.request(path, {}, { DB: db })
 const post = (path: string, body: unknown) => app.request(path, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(body) }, { DB: db })
 
@@ -35,13 +33,6 @@ beforeEach(() => {
     })
   insert('evaluation_indicator', { indicator_id: 'i1', sheet_id: H('0'), position: 1, name: '参加者数', unit: '人', definition: null, final_target_text: '100', final_target_year_text: '令和8年度' })
   insert('evaluation_indicator_value', { value_id: 'v1', indicator_id: 'i1', fiscal_year: 2024, target_text: '80', actual_text: '75' })
-  insert('budget_proposal', { budget_proposal_id: BP, jurisdiction_code: '131091', fiscal_year: 2026 })
-  insert('budget_proposal_origin', { origin_id: 'p1', budget_proposal_id: BP, jurisdiction_code: '131091', fiscal_year: 2026, title: '予算案の概要', url: 'https://example.test/p1.pdf', landing_url: null, sha256: H('3') })
-  for (const [i, isNew] of [1, 0].entries())
-    insert('budget_measure', {
-      measure_id: H(String(5 + i)), budget_proposal_id: BP, origin_id: 'p1', jurisdiction_code: '131091', fiscal_year: 2026, page: i + 1, position: 1,
-      title: `施策${i}`, names: '["事業"]', is_new: isNew, budget_yen: 500, description: null, expenditure_detail_id: null, link_method: 'none', link_confidence: null,
-    })
 })
 
 describe('事業評価', () => {
@@ -91,27 +82,11 @@ describe('事業評価の数（web だけの count_evaluation_sheets）', () => 
   })
 })
 
-describe('予算案', () => {
-  test('根・施策・出典を返す', async () => {
-    const body = BudgetProposalOutput.parse(await (await get(`/v1/budget-proposals/${BP}`)).json())
-    expect([body.measures.length, body.measures[0]!.is_new, body.origins[0]!.origin_id]).toEqual([2, true, 'p1'])
-    expect((await get(`/v1/budget-proposals/${H('f')}`)).status).toBe(404)
-  })
-
-  test('施策の検索は boolean で絞れる', async () => {
-    const body = MeasureSearchOutput.parse(
-      await (await post('/v1/budget-proposals/measures:search', { fiscal_year: { min: 2026, max: 2026 }, where: { is_new: { eq: true } } })).json()
-    )
-    expect(body.measures.map((m) => m.title)).toEqual(['施策0'])
-  })
-})
-
 describe('事業', () => {
   const P = H('a')
   const CHILD = H('c')
   beforeEach(() => {
     insert('evaluation_sheet_project', { link_id: H('e'), sheet_id: H('0'), jurisdiction_code: '131091', fiscal_year: 2024, project_id: P, method: 'code' })
-    sqlite.query(`UPDATE budget_measure SET expenditure_detail_id = 'd-initial' WHERE measure_id = ?`).run(H('5'))
     for (const [id, name, parent] of [[P, '子育て支援費', null], [CHILD, '子育て相談', P]] as const)
       insert('project', { project_id: id, jurisdiction_code: '131091', name, account_name: '一般会計', first_year: 2024, first_year_kind: 'before_coverage', last_year: null, last_year_kind: 'latest', parent_project_id: parent })
     for (const [fy, budget, settled] of [[2024, 'd-old', 'd-settled'], [2026, 'd-initial', null]] as const)
@@ -121,16 +96,13 @@ describe('事業', () => {
       })
   })
 
-  test('事業は年度と直下の事業を返し、評価シートはつなぎの表、施策は expenditure_detail_id の検索で引く', async () => {
+  test('事業は年度と直下の事業を返し、評価シートはつなぎの表で引く', async () => {
     const body = ProjectOutput.parse(await (await get(`/v1/projects/${P}`)).json())
     expect(body.years.map((y) => y.fiscal_year)).toEqual([2024, 2026])
     expect(body.children.map((c) => c.project_id)).toEqual([CHILD])
     expect(Object.keys(body).sort()).toEqual(['children', 'project', 'years'])
-    const initial = body.years.flatMap((y) => (y.initial_expenditure_detail_id ? [y.initial_expenditure_detail_id] : []))
     const sheets = await (await post('/v1/evaluations/sheets:search', { fiscal_year: { min: 2024, max: 2026 }, project_ids: [P] })).json()
     expect(sheets.sheets.map((s: { sheet_id: string; project_ids: string[] }) => [s.sheet_id, s.project_ids])).toEqual([[H('0'), [P]]])
-    const measures = await (await post('/v1/budget-proposals/measures:search', { fiscal_year: { min: 2024, max: 2026 }, where: { expenditure_detail_id: { eq: initial } } })).json()
-    expect(measures.measures.map((m: { measure_id: string }) => m.measure_id)).toEqual([H('5')])
     expect((await get(`/v1/projects/${H('f')}`)).status).toBe(404)
     expect((await get('/v1/projects/xyz')).status).toBe(400)
   })

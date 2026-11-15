@@ -104,7 +104,7 @@ fudoki-inputs/
     settlement-2.pdf
     supplementary-<号>.pdf
     evaluation-settlement[-<n>].pdf   # 事業評価の評価シート（evaluation_selections）
-    press-initial[-<n>].pdf           # 予算案のプレス発表（press_selections）
+    press-initial[-<n>].pdf           # 予算案のプレス発表（ADR 0049 で取り込みをやめた。保存した PDF は残す）
   fiscal/ingestion/<自治体>/<年度>/<initial|settlement|supplementary-号>/
     expenditure/<表ID>-nodes.parquet
     expenditure/<表ID>-amounts.parquet

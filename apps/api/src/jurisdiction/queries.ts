@@ -1,6 +1,5 @@
 // 自治体の集約の問い合わせ。自治体と収録範囲を1つの batch で読み、同期の入れ替えをまたいで食い違わないようにする。
 import {
-  BUDGET_PROPOSAL_TABLE,
   COVERAGE_TABLE,
   EVALUATION_TABLE,
   JURISDICTION_COLUMNS,
@@ -81,20 +80,18 @@ const coverageSql = (codes: string, withOrigins: boolean) =>
       `ORDER BY c."jurisdiction_code", c."fiscal_year", c."document_kind", c."account_kind" <> '一般会計', c."account_name"`
 
 const yearsSql = (codes: string) =>
-  `SELECT "jurisdiction_code", 'evaluation' AS "kind", "evaluation_id" AS "id", "fiscal_year" FROM ${EVALUATION_TABLE} WHERE "jurisdiction_code" IN (${codes}) ` +
-  `UNION ALL SELECT "jurisdiction_code", 'budget_proposal', "budget_proposal_id", "fiscal_year" FROM ${BUDGET_PROPOSAL_TABLE} WHERE "jurisdiction_code" IN (${codes}) ` +
-  `ORDER BY 1, 2, 4`
+  `SELECT "jurisdiction_code", "evaluation_id", "fiscal_year" FROM ${EVALUATION_TABLE} WHERE "jurisdiction_code" IN (${codes}) ` +
+  `ORDER BY 1, 3`
 
-type YearRow = { jurisdiction_code: string; kind: 'evaluation' | 'budget_proposal'; id: string; fiscal_year: number }
+type YearRow = { jurisdiction_code: string; evaluation_id: string; fiscal_year: number }
 
 function groupYears(rows: YearRow[]) {
-  type Refs = { evaluations: { evaluation_id: string; fiscal_year: number }[]; budget_proposals: { budget_proposal_id: string; fiscal_year: number }[] }
+  type Refs = { evaluations: { evaluation_id: string; fiscal_year: number }[] }
   const out = new Map<string, Refs>()
   for (const r of rows) {
-    const y = out.get(r.jurisdiction_code) ?? { evaluations: [], budget_proposals: [] }
+    const y = out.get(r.jurisdiction_code) ?? { evaluations: [] }
     out.set(r.jurisdiction_code, y)
-    if (r.kind === 'evaluation') y.evaluations.push({ evaluation_id: r.id, fiscal_year: r.fiscal_year })
-    else y.budget_proposals.push({ budget_proposal_id: r.id, fiscal_year: r.fiscal_year })
+    y.evaluations.push({ evaluation_id: r.evaluation_id, fiscal_year: r.fiscal_year })
   }
   return out
 }
@@ -146,7 +143,7 @@ export async function listJurisdictions(ctx: Ctx, input: ListInput): Promise<Jur
   const [page, coverage, years] = await db.batch([
     db.prepare(`SELECT ${JURISDICTION_SELECT_LIST} FROM ${JURISDICTION_TABLE} WHERE ${where} ORDER BY ${order} LIMIT ? OFFSET ?`).bind(...params, ...orderParams, limit + 1, offset),
     db.prepare(coverageSql(pageSql, false)).bind(...pageParams),
-    db.prepare(yearsSql(pageSql)).bind(...pageParams, ...pageParams),
+    db.prepare(yearsSql(pageSql)).bind(...pageParams),
   ])
   const more = page!.results.length > limit
   const nested = nestCoverage(coverage!.results as unknown as CoverageRow[], false)
@@ -158,7 +155,6 @@ export async function listJurisdictions(ctx: Ctx, input: ListInput): Promise<Jur
         ...toRow(JURISDICTION_COLUMNS, r),
         coverage: (nested.get(code) ?? []).map((c) => ({ ...c, accounts: c.accounts.map(({ origins: _, ...a }) => a) })),
         evaluations: yearsOf.get(code)?.evaluations ?? [],
-        budget_proposals: yearsOf.get(code)?.budget_proposals ?? [],
       } as JurisdictionList['jurisdictions'][number]
     }),
     next_page_token: more ? await nextToken(offset + limit, fp) : null,
@@ -172,7 +168,7 @@ export async function getJurisdiction(ctx: Ctx, code: string): Promise<Jurisdict
   const [self, coverage, years] = await db.batch([
     db.prepare(`SELECT ${JURISDICTION_SELECT_LIST} FROM ${JURISDICTION_TABLE} WHERE "jurisdiction_code" = ?`).bind(code),
     db.prepare(coverageSql(one, true)).bind(code),
-    db.prepare(yearsSql(one)).bind(code, code),
+    db.prepare(yearsSql(one)).bind(code),
   ])
   const raw = self!.results[0]
   if (!raw) throw new ApiError(404, 'NOT_FOUND', `自治体が見つかりません: ${code}`)
@@ -181,7 +177,6 @@ export async function getJurisdiction(ctx: Ctx, code: string): Promise<Jurisdict
     ...toRow(JURISDICTION_COLUMNS, raw),
     coverage: nestCoverage(coverage!.results as unknown as CoverageRow[], true).get(code) ?? [],
     evaluations: y?.evaluations ?? [],
-    budget_proposals: y?.budget_proposals ?? [],
     uncovered_sources: UNCOVERED_SOURCES,
   } as JurisdictionDetail
 }

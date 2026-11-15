@@ -2,7 +2,7 @@
 // HTTP の route・MCP には載せず、web のアシスタントが内部の RPC（source-pages-entrypoint.ts）から呼ぶだけ。
 // 出典の利用条件が無断の転載を禁じるため、本文は公開の REST・MCP には返さない。この表を読むモジュールはここだけにする（source-pages.test.ts）。
 import { z } from 'zod'
-import { BUDGET_PROPOSAL_ORIGIN_TABLE, EVALUATION_ORIGIN_TABLE } from './columns'
+import { EVALUATION_ORIGIN_TABLE } from './columns'
 import type { Db } from './db'
 
 /** 頁の文字の表。公開の route・tool から読まないよう、表名は columns.ts に置かずここに書く */
@@ -24,11 +24,10 @@ export type SourcePageResult =
 
 interface Origin { sha256: string; title: string; url: string }
 
-// 頁の文字があるのは事業評価・予算案の出典だけ（予算・決算は金額と説明欄を表にしてあるので作らない）。
+// 頁の文字があるのは事業評価の出典だけ（予算・決算は金額と説明欄を表にしてあるので作らない）。
 // url は自治体から消えた資料だと Wayback Machine の写しになるので、landing_url（自治体の公式の頁）も引く
 const ORIGINS =
-  `SELECT "origin_id", "sha256", "title", "url", "landing_url" FROM ${EVALUATION_ORIGIN_TABLE} ` +
-  `UNION ALL SELECT "origin_id", "sha256", "title", "url", "landing_url" FROM ${BUDGET_PROPOSAL_ORIGIN_TABLE}`
+  `SELECT "origin_id", "sha256", "title", "url", "landing_url" FROM ${EVALUATION_ORIGIN_TABLE}`
 
 type OriginRecord = { sha256: string | null; title: string | null; url: string; landing_url: string | null }
 

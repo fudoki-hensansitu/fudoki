@@ -1,11 +1,11 @@
 ---
-title: 事業評価と予算案
-description: 自治体の事業評価シートと、予算案のプレス発表の施策、年度をまたいだ事業を引く。
+title: 事業評価と事業
+description: 自治体の事業評価シートと、年度をまたいだ事業を引く。
 sidebar:
   icon: /icons/file-text.svg
 ---
 
-事業評価シートと予算案のプレス発表は、資料から読み取った表で返します。収録している年度と ID は `list_jurisdictions`（REST は `GET /v1/jurisdictions`）の `evaluations`・`budget_proposals` にあります。
+事業評価シートは、資料から読み取った表で返します。収録している年度と ID は `list_jurisdictions`（REST は `GET /v1/jurisdictions`）の `evaluations` にあります。
 
 <Prompt description="品川区の2024年度の事業評価で、評価がCの事業を一覧して" actions={["copy"]}>品川区の2024年度の事業評価で、評価がCの事業を一覧して</Prompt>
 
@@ -17,29 +17,22 @@ sidebar:
 | `get_evaluation_sheet` | `GET /v1/evaluations/sheets/{sheet_id}` | 評価シート 1 枚と、その指標・指標の値 |
 | `search_evaluation_sheets` | `POST /v1/evaluations/sheets:search` | 評価シートを年度・自治体・事業名・方向性の区分（`direction_code`）などで絞って一覧する |
 
-## 予算案
-
-| tool | REST | 返すもの |
-| --- | --- | --- |
-| `get_budget_proposal` | `GET /v1/budget-proposals/{budget_proposal_id}` | 1 つの自治体・年度の予算案のプレス発表と、その施策 |
-| `search_budget_measures` | `POST /v1/budget-proposals/measures:search` | 施策を年度・自治体・新規かどうかなどで絞って一覧する |
-
 ## 事業
 
-予算書・決算書の事業の行を、年度をまたいでつないだものです。つなぎ方は風土記の判断で、予算書・決算書に事業の内訳がある自治体を収録しています。
+予算書・決算書の事業の行を、年度をまたいでつないだものです。つなぎ方は風土記の判断で、予算書・決算書に事業の内訳がある自治体を収録しています。新しく始めた事業・やめた事業は、事業の始めた年度（`first_year`）・終えた年度（`last_year`）で分かります。
 
 | tool | REST | 返すもの |
 | --- | --- | --- |
 | `get_project` | `GET /v1/projects/{project_id}` | 事業 1 つの年度ごとの当初予算額・支出済額と、直下の事業 |
 | `search_projects` | `POST /v1/projects:search` | 事業の年度を年度・自治体・名前・款項目などで絞って一覧する |
 
-評価シートは事業と多対多でつながります（予算書は1つの事業を所管課ごとの行に分け、評価シートは小事業ごとに1枚あることがあるため）。シートの `project_ids` がつながった事業で、事業に付いた評価シートは `search_evaluation_sheets` の `project_ids` に事業IDを渡して引きます。施策は、事業の年度の `initial_expenditure_detail_id` を `search_budget_measures` の `where` の `expenditure_detail_id` に渡して引きます。
+評価シートは事業と多対多でつながります（予算書は1つの事業を所管課ごとの行に分け、評価シートは小事業ごとに1枚あることがあるため）。シートの `project_ids` がつながった事業で、事業に付いた評価シートは `search_evaluation_sheets` の `project_ids` に事業IDを渡して引きます。
 
 評価シートの `initial_expenditure_subject_id`・`settlement_expenditure_subject_id` は、シートの予算科目が当たった当初予算書・決算書の目です。つなぎ方は、シートの款・項・目の番号（無ければ名前）で目を決め、その目の下で事業名が当たる行を採ります。目が決まらないシートは、自治体・年度の中で事業名が1つの事業にだけ当たるときにつなぎます。つながらないシートは「評価されていない事業」を意味しません。
 
 ## 気をつけること
 
-- 評価シートと施策の金額は、歳出の金額（支出済額・当初予算額）に足しません。
+- 評価シートの金額は、歳出の金額（支出済額・当初予算額）に足しません。
 - 事業は予算書の入れ子のまま親子を持ち、子の事業の額は親の事業の額に含まれます。事業どうしを足しません。
 - 評価の印字（`grade_label`）と今後の方向性の印字（`direction`）は、自治体ごとに書き方が違います。`direction_code` はそれを共通の区分に当てたもの、`outlook.grade`（A 広げる・B 続ける・C 見直す・D 終える）はその区分を4つにまとめたもので、どちらも風土記の判断です。`outlook` は表の列ではないので `where` では絞れません。A〜D で絞るときは `direction_code` で絞ります（A は new・expand、B は keep・statutory・as_planned、C は improve・resize・reduce、D は merge・complete・end・consider_end）。
 - 評価は各自治体が自ら付けたものです。自治体どうしの順位付けには使いません。
