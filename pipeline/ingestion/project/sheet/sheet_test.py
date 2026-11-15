@@ -50,5 +50,43 @@ class DirectionTest(unittest.TestCase):
         with self.assertRaises(ValueError):
             sheet.direction_code('X', {'X': 'unknown'})
 
+class ItemTest(unittest.TestCase):
+    WORKFLOW = {'item': '^事業名 ', 'fields': ['^事業名 (?P<name>.+)$', '^所管 (?P<division>.+)$'], 'unit': '円'}
+
+    def test_items_get_positions_and_share_header(self):
+        text = sheet.norm('所管 総務課\n事業名 広報\n事業名 庁舎管理')
+        got = sheet.parse_items(text, 4, self.WORKFLOW)
+        self.assertEqual([(s.name, s.page, s.position, s.division) for s in got],
+                         [('広報', 4, 1, '総務課'), ('庁舎管理', 4, 2, '総務課')])
+
+    def test_page_without_items_is_empty(self):
+        self.assertEqual(sheet.parse_items('所管 総務課', 1, self.WORKFLOW), [])
+
+
+class CsvTest(unittest.TestCase):
+    def test_rows_become_sheets(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / 'a.csv'
+            path.write_text('\ufeff事業名,課,評価\n広報,総務課,維持・推進\n,,\n庁舎,管財課,―\n', encoding='utf-8')
+            got = sheet.read_csv(path, {'columns': {'name': '事業名', 'division': '課', 'grade': '評価'}})
+        self.assertEqual([(s.page, s.name, s.division, s.grade_label) for s in got],
+                         [(1, '広報', '総務課', '維持・推進'), (3, '庁舎', '管財課', None)])
+
+    def test_fallback_column(self):
+        import tempfile
+        from pathlib import Path
+        with tempfile.TemporaryDirectory() as d:
+            path = Path(d) / 'a.csv'
+            path.write_text('事業名,検索キー\n広報,1 広報\n,2 庁舎管理\n', encoding='utf-8')
+            got = sheet.read_csv(path, {'columns': {'name': ['事業名', {'column': '検索キー', 'pattern': '^\\d+ (.+)$'}]}})
+        self.assertEqual([s.name for s in got], ['広報', '庁舎管理'])
+
+    def test_amounts_are_not_allowed(self):
+        with self.assertRaises(ValueError):
+            sheet.read_csv('unused.csv', {'columns': {'name': 'a', 'budget': 'b'}})
+
+
 if __name__ == '__main__':
     unittest.main()

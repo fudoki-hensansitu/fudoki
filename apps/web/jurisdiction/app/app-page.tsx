@@ -39,6 +39,7 @@ import {
   XIcon,
   type Icon,
 } from '@phosphor-icons/react'
+import { MoreDots } from '@/components/more-dots'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from '@/components/ui/carousel'
@@ -263,25 +264,6 @@ function Rows({ children }: { children: React.ReactNode[] }) {
   return <div className="flex flex-col">{children.map((c, i) => <React.Fragment key={i}>{i ? <Separator /> : null}{c}</React.Fragment>)}</div>
 }
 const fieldName = (v: YearView, id: string) => v.fields.find((f) => f.id === id)?.name ?? 'その他'
-
-/** 末尾が見えたら続きを足す印。IntersectionObserver を置くだけで、取るのは呼び出し側 */
-function MoreDots({ onVisible }: { onVisible: () => void }) {
-  const ref = React.useRef<HTMLDivElement>(null)
-  const latest = React.useRef(onVisible)
-  latest.current = onVisible
-  React.useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const io = new IntersectionObserver(([e]) => e!.isIntersecting && latest.current(), { rootMargin: '600px 0px' })
-    io.observe(el)
-    return () => io.disconnect()
-  }, [])
-  return (
-    <div ref={ref} className="flex justify-center gap-1.5 py-5" aria-hidden="true">
-      {[0, 1, 2].map((i) => <span key={i} className="app-dot size-1.5 rounded-full bg-border" style={{ animationDelay: `${i * 150}ms` }} />)}
-    </div>
-  )
-}
 
 /** 手元に全部ある一覧（評価シート・目）は下まで来たら続きを描く */
 function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, i: number) => React.ReactNode; step?: number }) {
@@ -828,10 +810,9 @@ function ProjectBody({ p }: { p: ProjectFull }) {
       ) : null}
       {kids.length ? (
         <DetailSection icon={TreeStructureIcon} title="中の事業" count={kids.length}>
-          <Rows>{kids.slice(0, 8).map(({ name, yen }, i) => (
+          <Infinite items={kids} step={10} render={({ name, yen }, i) => (
             <div key={i} className="flex items-center gap-3 px-1.5 py-2 text-[15px]"><span className="flex-1">{name}</span><Amt yen={yen} className="text-base" /></div>
-          ))}</Rows>
-          {kids.length > 8 ? <p className="mt-1 text-xs text-muted-foreground">ほか {kids.length - 8} 件</p> : null}
+          )} />
         </DetailSection>
       ) : null}
       {v.origin ? <DetailSection icon={FileTextIcon} title="出典"><Ext href={v.origin}>{v.originTitle ?? '予算書'}</Ext></DetailSection> : null}

@@ -87,7 +87,7 @@
 | `project_year` | なし | `project_year_id` | 同上 |
 
 - 根の ID（`expenditure_id`・`evaluation_id`・`budget_proposal_id`）と結ぶ表・事業の年度の ID（`link_id`・`project_year_id`）は、主キーの組の sha256 の16進にする。NULL（補正号の無い当初・決算）は空文字にして hash に入れる。`evaluation_id`・`budget_proposal_id` は組の先頭に集約の名前（`evaluation`・`budget_proposal`）を入れて hash し、自治体・年度だけの組が他の根の ID と重ならないようにする。`expenditure_id` は組に資料区分・会計を含むので集約の名前を入れない。
-- `project_id` は seed に足すときに一度だけ振る16進の乱数（32桁）。sync の読み戻しは主キーの先頭1文字で分けるので、接頭辞を付けない。
+- `project_id` は事業の最初の年度の行の鍵（自治体・年度・資料区分・会計・款・項・目・名前の並び）の sha256 の16進（64桁）。sync の読み戻しは主キーの先頭1文字で分けるので、接頭辞を付けない。
 - index（`pipeline/serving/columns.py` の `INDEXES`）: `expenditure_subject`・`expenditure_detail` の `expenditure_id`、`expenditure_origin_link` の `expenditure_id`・`origin_id`、`evaluation_sheet` の `evaluation_id`、`budget_measure` の `budget_proposal_id`、`project_year` の `project_id`・`budget_detail_id`・`settlement_detail_id`。今ある index は新しい表名で引き継ぐ。
 - D1 の schema は sync（`pipeline/serving/sync_d1.py`）が作るので、表の migration は作らない（今と同じ）。`columns.py` の `TABLES`・`PRIMARY_KEYS`・`INDEXES`・`MODELS` と `columns.json` を新しい表で作り直し、旧表は `LEGACY_TABLES` に移す。
 - 名前の変わらない `jurisdiction`・`population`・`population_origin` は、merge の前に sync すると古い Worker も新しい表を読む。この3表は列を変えない。
@@ -125,13 +125,13 @@ MCP の tool は11にする（今は8）。人口・収録の範囲・収録し�
 
 ## 事業を作る
 
-ドメインモデルの「事業を作る」の手順1〜3・5〜7を作る。dbt は seed に書けないので、`project:link-measures` と同じく Python の script が判断して seed の CSV を書く。
+ドメインモデルの「事業を作る」の手順1〜3・5〜7を作る。手順1〜3は機械的な規則なので、seed に置かず dbt の build のたびに計算する（[ADR 0046](../../adr/0046-projects-linked-on-every-build.md)）。
 
-- script `project:link-projects` が、手順1〜3（名前の並びで決まる規則）で前年度と結び、seed（`project_line`: 自治体・年度・資料区分・会計・款・項・目・名前の並び → `project_id`）に書く。2回目からは seed を正にし、seed に無い行だけを新しく判断して足す。手順4に回る事業は新しい事業として始める。
-- 事業の行と鍵（名前の並び。同じ親・同じ名前は印字の順で `#2` を付ける）は dbt の `int_project__lines` が作り、script はそれを読んで判断し、dbt はその鍵で seed と結ぶ（鍵の作り方を1か所に置く）。対象の自治体は seed `project_jurisdiction`（今は品川・真岡）。
+- dbt の Python model `int_project__line_ids` が、build のたびに手順1〜3（名前の並びで決まる規則、`ingestion/project/link_projects.py`）で前年度と結び、事業の行ごとに `project_id` を付ける。seed には置かない。手順4に回る事業は新しい事業として始める。
+- 事業の行と鍵（名前の並び。同じ親・同じ名前は印字の順で `#2` を付ける）は dbt の `int_project__lines` が作る。対象は内訳の分け方を「事業」と宣言した全自治体。
 - 手順4（Jev）はまだ使わず、手順3で決まらない事業は新しい事業にする。
 - `project_year` は検索に使うので、ドメインモデルの表の案より列を足し、名前・会計・款・項・目・当初予算額・支出済額を持つ。`search_projects` はこの表を年度で引く（事業の表は年度を持たないため）。
-- dbt は seed と `expenditure_detail` を名前の並びで結んで `project`・`project_year` を作る。seed の行が `expenditure_detail` のどの行にも当たらない（取り込みを直して名前が変わった）ときは dbt の検査で止め、script を流し直す。
+- dbt は `int_project__line_ids` と `int_project__lines` を `detail_id` で結んで `project`・`project_year` を作る。事業の行がちょうど1つの事業ID を持つことは dbt の検査（`project_lines_linked`）で確かめる。
 
 ## 本番の切り替え
 

@@ -146,10 +146,10 @@ def page_texts_cached(path: Path, sha256: str) -> list[str]:
 
 
 def page_text_rows(paths: dict[str, Path]) -> list[tuple]:
-    """出典ごとの頁の文字の行。文字が1字も無い出典（スキャン）は行を作らない。キャッシュに無い出典は CPU の数だけ並べて読む。"""
+    """出典ごとの頁の文字の行。文字が1字も無い出典（スキャン）と、頁の無い出典（CSV）は行を作らない。キャッシュに無い出典は CPU の数だけ並べて読む。"""
     from concurrent.futures import ProcessPoolExecutor
 
-    items = sorted(paths.items())
+    items = sorted((sha256, path) for sha256, path in paths.items() if path.suffix.lower() == '.pdf')
     with ProcessPoolExecutor(max_workers=max(1, min(len(items), os.cpu_count() or 1))) as pool:
         read = list(pool.map(page_texts_cached, [p for _, p in items], [s for s, _ in items]))
     rows = []
@@ -177,8 +177,12 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
         'project_budget_measure', 'project_source_page_text')}
     paths: dict[str, Path] = {}
     for origin in sheet_sources(declared['sheets']):
-        path = paths[origin['sha256']] = fetch(origin['reference'], remote=remote)
+        path = fetch(origin['reference'], remote=remote)
         sheets = read_cached(path, origin)
+        if not sheets:
+            # 施策の冊などシートの無い冊は出典にしない
+            continue
+        paths[origin['sha256']] = path
         tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'sheets', origin['fiscal_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
         for item in sheets:
@@ -188,7 +192,7 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
             budget = item['budget_yen'] if 'budget_yen' in item else thousand(item['budget_thousand'])
             settled = item['settled_yen'] if 'settled_yen' in item else thousand(item['settled_thousand'])
             tables['project_evaluation_sheet'].append((
-                origin_id(origin), item['page'], item.get('evaluation_year'), item['name'], item['account'],
+                origin_id(origin), item['page'], item.get('position', 1), item.get('evaluation_year'), item['name'], item['account'],
                 item['kan'], item['kou'], item['moku'], item['jigyo'],
                 item.get('kan_code'), item.get('kou_code'), item.get('moku_code'), item.get('jigyo_code'),
                 item['department'], item['division'], budget, settled,
@@ -221,7 +225,7 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
 SCHEMAS = {
     'project_origin': 'origin_id varchar, jurisdiction_code varchar, document_type varchar, fiscal_year integer, '
                          'title varchar, url varchar, landing_url varchar, sha256 varchar',
-    'project_evaluation_sheet': 'origin_id varchar, page integer, evaluation_year integer, name varchar, account_name varchar, '
+    'project_evaluation_sheet': 'origin_id varchar, page integer, position integer, evaluation_year integer, name varchar, account_name varchar, '
                         'kan varchar, kou varchar, moku varchar, jigyo varchar, '
                         'kan_code varchar, kou_code varchar, moku_code varchar, jigyo_code varchar, '
                         'department varchar, division varchar, budget_yen bigint, settled_yen bigint, '

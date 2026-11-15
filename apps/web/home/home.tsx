@@ -22,13 +22,17 @@ export interface Featured {
   code: string
   name: string
   path: string
+  prefecture: string
+  /** 自治体の頁で選べる最新の年度 */
+  latestYear?: number
   vision?: string
   /** 自治体の頁で選べる年度のうち、事業評価を収録した最新の年度。札はその年度の事業のタブへ繋ぐ */
   evalYear?: number
 }
 
 export interface HomeProps {
-  entries: MapEntry[]
+  /** 自治体の一覧を読めたか。読めなければ、名前で探す欄の代わりに読み込めないと出す */
+  listed: boolean
   /** くわしい頁（事業評価・新しく始めること）のある自治体 */
   featured: Featured[]
 }
@@ -356,12 +360,9 @@ const checkItems = (c: Ctx): CheckItem[] => [
 
 
 /** まちを選ぶ前のホームで、緑の札の下に置く。他のまちを名前で探す欄と、見本のまち（事業評価か都市像のあるまち）を都市像と並べて開けるようにする。住んでいるまちは変えない */
-function FeaturedTowns({ featured, entries }: { featured: Featured[]; entries: MapEntry[] }) {
-  const items = featured.slice(0, 6).flatMap((f) => {
-    const e = entries.find((x) => x.code === f.code)
-    return e ? [{ ...f, prefecture: e.prefecture, href: e.latestYear ? `${f.path}/${e.latestYear}` : f.path }] : []
-  })
-  if (!items.length && !entries.length) return null
+function FeaturedTowns({ featured, listed }: { featured: Featured[]; listed: boolean }) {
+  const items = featured.slice(0, 6).map((f) => ({ ...f, href: f.latestYear ? `${f.path}/${f.latestYear}` : f.path }))
+  if (!items.length && !listed) return null
   return (
     <section className="mt-10" aria-labelledby="featured-towns">
       <h2 id="featured-towns" className="mb-3 text-[17px] font-semibold">他のまちを見る</h2>
@@ -420,7 +421,7 @@ function Footer() {
   )
 }
 
-export function Home({ entries, featured }: HomeProps) {
+export function Home({ listed, featured }: HomeProps) {
   const { ready, town, set } = useMyTown()
   // はじめての流れで選んだまち。要点を見せてから「このまちにする」で決める
   const [pending, setPending] = React.useState<Town | null>(null)
@@ -441,7 +442,7 @@ export function Home({ entries, featured }: HomeProps) {
   else if (!town)
     body = (
       <Empty
-        entries={entries}
+        listed={listed}
         again={again}
         onPick={(e) => (again ? set(toTown(e)) : setPending(toTown(e)))}
         reveal={
@@ -481,7 +482,7 @@ export function Home({ entries, featured }: HomeProps) {
       </>
     )
   }
-  const featuredTowns = ready && !town && !pending ? <FeaturedTowns featured={featured} entries={entries} /> : null
+  const featuredTowns = ready && !town && !pending ? <FeaturedTowns featured={featured} listed={listed} /> : null
   return (
     <main className="mx-auto flex min-h-[calc(100svh-56px)] w-full max-w-4xl flex-col px-4 pt-10 pb-28 sm:px-8 sm:pt-14 md:min-h-svh md:pb-10">
       <Intro mode={!ready ? 'hidden' : town ? 'compact' : 'full'} />

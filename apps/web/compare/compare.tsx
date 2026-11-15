@@ -6,14 +6,15 @@ import { useRouter } from '@void/react'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
 import { Separator } from '@/components/ui/separator'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
-import { Combobox, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
+import { Combobox, ComboboxCollection, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
+import { MoreDots } from '@/components/more-dots'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { FieldIcon, yenParts } from '../home/parts'
 import { reiwa, TAB_SLUGS } from '../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../jurisdiction/domains'
 import { Emblem } from '../home/town-picker'
-import { searchTowns, useMyTown } from '../home/towns'
+import { useMyTown, useTownSearch } from '../home/towns'
 import type { MapEntry } from '../jurisdiction/index-table'
 import { AskDock } from '../jurisdiction/ask-dock'
 import type { CompareTown, Props, TownRef, Version } from '../pages/compare.server'
@@ -51,24 +52,11 @@ function Num({ n, m, className }: { n: number; m: Measure | 'yen'; className?: s
 }
 const popText = (n: number) => (n ? `人口 ${(n / 1e4).toFixed(1)}万人` : '')
 
-/** 打ち終えるのを待つ間 */
-const TYPING_MS = 150
-
-/** まちの名前そのものが選ぶ欄。押すと名前で探せる候補が開く。候補は頁に全部を載せず、打った語でサーバー（/api/jurisdictions?q=）に上位だけを聞く */
+/** まちの名前そのものが選ぶ欄。押すと名前で探せる候補が開く。候補は頁に全部を載せず、打った語でサーバー（/api/jurisdictions?name=）に1頁ずつ聞き、下まで scroll したら続きを足す */
 function TownPicker({ current, onPick, children, className }: { current: string; onPick: (code: string) => void; children: React.ReactNode; className?: string }) {
   const [open, setOpen] = React.useState(false)
   const [q, setQ] = React.useState('')
-  // null は読めなかった
-  const [items, setItems] = React.useState<MapEntry[] | null>([])
-  React.useEffect(() => {
-    if (!open) return
-    const controller = new AbortController()
-    const timer = setTimeout(() => void searchTowns(q, controller.signal).then((e) => !controller.signal.aborted && setItems(e)), q ? TYPING_MS : 0)
-    return () => {
-      clearTimeout(timer)
-      controller.abort()
-    }
-  }, [open, q])
+  const { entries: items, hasMore, more, moreKey } = useTownSearch(open, q)
   return (
     <Combobox open={open} onOpenChange={setOpen} items={items ?? []} filter={null} itemToStringLabel={(e: MapEntry) => e.name} value={null} onInputValueChange={(v) => setQ(v)} onValueChange={(e) => e && (e as MapEntry).code !== current && onPick((e as MapEntry).code)}>
       <ComboboxTrigger aria-label="まちを選ぶ" className={cn('-mx-1.5 flex max-w-full min-w-0 items-center gap-1 rounded-lg px-1.5 py-0.5 text-left text-[17px] font-semibold text-foreground hover:bg-card', className)}>
@@ -76,14 +64,17 @@ function TownPicker({ current, onPick, children, className }: { current: string;
       </ComboboxTrigger>
       <ComboboxContent className="w-64">
         <ComboboxInput showTrigger={false} placeholder="まちの名前" className="h-9" />
-        <ComboboxEmpty>{items === null ? '読み込めませんでした' : '見つかりません'}</ComboboxEmpty>
+        <ComboboxEmpty>{items === null ? '読み込めませんでした' : items ? '見つかりません' : '読み込んでいます…'}</ComboboxEmpty>
         <ComboboxList>
-          {(e: MapEntry) => (
-            <ComboboxItem key={e.code} value={e}>
-              {e.name}
-              <small className="text-[11px] text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</small>
-            </ComboboxItem>
-          )}
+          <ComboboxCollection>
+            {(e: MapEntry) => (
+              <ComboboxItem key={e.code} value={e}>
+                {e.name}
+                <small className="text-[11px] text-muted-foreground">{e.kind === '都道府県' ? '都道府県' : e.prefecture}</small>
+              </ComboboxItem>
+            )}
+          </ComboboxCollection>
+          {hasMore ? <MoreDots key={moreKey} onVisible={more} /> : null}
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
