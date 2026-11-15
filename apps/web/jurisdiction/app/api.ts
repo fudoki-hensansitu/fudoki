@@ -192,7 +192,7 @@ const ID_CHUNK = 80
 /** 事業と中の事業の決算の内訳に紐付いた評価シート（サーバー） */
 async function readSheetsOfDetails(call: ApiCall, year: number, details: string[]): Promise<Sheet[]> {
   const chunks = Array.from({ length: Math.ceil(details.length / ID_CHUNK) }, (_, i) => details.slice(i * ID_CHUNK, (i + 1) * ID_CHUNK))
-  const pages = await Promise.all(chunks.map((c) => searchSheets(call, year, { account_name: { eq: [ACCOUNT] }, expenditure_detail_id: { eq: c } }, 100)))
+  const pages = await Promise.all(chunks.map((c) => searchSheets(call, year, { account_name: { eq: [ACCOUNT] }, expenditure_detail_id: { eq: c } }, 1000)))
   return pages.flatMap((p) => p.rows)
 }
 
