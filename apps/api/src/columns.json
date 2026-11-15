@@ -100,7 +100,7 @@
           "name": "total_yen",
           "type": "integer",
           "nullable": true,
-          "description": "総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無いか、金額の無い款がある（子に金額の欠けがあり補えない）ならNULL。"
+          "description": "総額（円）。款の行の金額の和（会計の合計）。科目の表に行が無いか、金額の無い款の下に金額のある行がある（子に金額の欠けがあり補えない）ならNULL。下に一つも金額の無い款（決算で支出の無い予備費など）は和に数えない。"
         },
         {
           "name": "cofog_01_yen",
@@ -166,7 +166,7 @@
           "name": "cofog_unclassified_yen",
           "type": "integer",
           "nullable": true,
-          "description": "total_yen から大分類の額の和を引いた残り（円）。COFOG コードの無い末端の行（cofog_status が unclassifiable・out-of-scope の目と、目の無い項）と、末端の和に入らない額（目を立てずに印字された項の内訳など）。大分類の額とこの額を足すと total_yen になる。total_yen が NULL（科目の表に行が無いか、金額の無い款がある）ならNULL。"
+          "description": "total_yen から大分類の額の和を引いた残り（円）。COFOG コードの無い末端の行（cofog_status が unclassifiable・out-of-scope の目と、目の無い項）と、末端の和に入らない額（目を立てずに印字された項の内訳など）。大分類の額とこの額を足すと total_yen になる。total_yen が NULL（科目の表に行が無いか、金額の無い款の下に金額のある行がある）ならNULL。"
         }
       ]
     },

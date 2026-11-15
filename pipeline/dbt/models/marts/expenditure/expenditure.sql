@@ -17,11 +17,16 @@ with roots as (
 ),
 
 kan as (
-    -- 金額の無い款が残る資料（子に金額の欠けがあり補えないもの）は、款の和が総額より小さくなるので NULL にする
-    select expenditure_id, case when count(amount_yen) = count(*) then sum(amount_yen) end as total_yen
-    from {{ ref('expenditure_subject') }}
-    where level = '款'
-    group by expenditure_id
+    -- 金額の無い款の下に金額のある行が残る資料（子に金額の欠けがあり補えないもの）は、款の和が総額より小さくなるので NULL にする。
+    -- 下に一つも金額の無い款（決算で支出の無い予備費など）は額が無いだけなので和から外す
+    select k.expenditure_id,
+        case when count(*) filter (where k.amount_yen is null and exists (
+            select 1 from {{ ref('expenditure_subject') }} d
+            where d.expenditure_id = k.expenditure_id and d.kan_code = k.code and d.level <> '款' and d.amount_yen is not null
+        )) = 0 then sum(k.amount_yen) end as total_yen
+    from {{ ref('expenditure_subject') }} k
+    where k.level = '款'
+    group by k.expenditure_id
 ),
 
 leaves as (
