@@ -129,6 +129,39 @@ def rule_glyphs(items: list[Word], chars: list | None = None) -> tuple[list[Word
     return kept, rules
 
 
+def covered_by_notes(page, items: list[Word]) -> list[Word]:
+    """A note pasted over the page (a FreeText annotation filled white) hides what is printed under it and shows its
+    own text, if any: a number corrected after printing (栃木県の予算書 2024, a 項 `6` covered by `5`). Poppler reads
+    the printed words and the note's text both, so the words under the note are dropped and the note's text is kept
+    (the last word in its box that reads as it: Poppler reads an annotation after the page) in their place. A note
+    that covers nothing printed corrects nothing, and its text is not read."""
+    notes = []
+    for note in page.annots or ():
+        data = note.get('data') or {}
+        fill = [float(value) for value in data.get('C') or ()]
+        if str(data.get('Subtype')).strip("/'") != 'FreeText' or fill != [1.0, 1.0, 1.0] or int(data.get('F') or 0) & 2:
+            continue
+        notes.append((note['x0'], note['top'], note['x1'], note['bottom'], (note.get('contents') or '').strip()))
+    if not notes:
+        return items
+    under = lambda word, box: box[0] <= (word.x0 + word.x1) / 2 <= box[2] and box[1] <= (word.y0 + word.y1) / 2 <= box[3]
+    dropped, placed = set(), {}
+    for box in notes:
+        inside = [index for index, word in enumerate(items) if under(word, box)]
+        own = next((index for index in reversed(inside) if box[4] and items[index].text == box[4]), None)
+        covered = [items[index] for index in inside if index != own]
+        dropped.update(index for index in inside if index != own)
+        if own is not None and not covered:
+            dropped.add(own)  # a note over nothing printed corrects nothing (a stray `8` in a heading, 栃木県 2024)
+        elif own is not None:
+            # The note reads in place of what it covers, set to the right end of the printed words as a code or an
+            # amount is: where the note's own text box happens to sit says nothing about the column.
+            word, right = items[own], max(w.x1 for w in covered)
+            placed[own] = Word(word.text, right - (word.x1 - word.x0), min(w.y0 for w in covered), right,
+                               max(w.y1 for w in covered))
+    return [placed.get(index, word) for index, word in enumerate(items) if index not in dropped]
+
+
 def drop_hidden_copies(pdf: Path, number: int, width: float, items: list[Word]) -> list[Word]:
     """Some documents print every word twice, the second copy a fixed distance to the side and not visible
     (a layer the page's clip hides): Poppler reads both. A page where a good share of the words have a twin at one
@@ -336,6 +369,7 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None,
             width, height, items = poppler[number]
             page = document.pages[number - 1]
             items = drop_hidden_copies(pdf, number, width, items)
+            items = covered_by_notes(page, items)
             items, glyph_rules = rule_glyphs(items, page.chars)
             result.append(Page(number, width, height, items, merge_rules(_to_poppler(page, _segments(page, pdf)) + glyph_rules)))
             page.close()

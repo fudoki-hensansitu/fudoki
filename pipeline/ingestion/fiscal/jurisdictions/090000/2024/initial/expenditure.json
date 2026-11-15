@@ -1,0 +1,1173 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "090000",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "69f01aa3486d28d345ff127ebcdcfcdc0c303cf7f3cc1e4dc982f2d72d1a6683"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般会計から繰入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "項目": {
+                  "heading": "目"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "public-debt-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "69f01aa3486d28d345ff127ebcdcfcdc0c303cf7f3cc1e4dc982f2d72d1a6683"
+        }
+      ],
+      "options": {
+        "account": "公債管理特別会計",
+        "table_id": "public-debt-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般会計から繰入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "項目": {
+                  "heading": "目"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "public-debt-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "hospital-loan-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "69f01aa3486d28d345ff127ebcdcfcdc0c303cf7f3cc1e4dc982f2d72d1a6683"
+        }
+      ],
+      "options": {
+        "account": "地方独立行政法人県立病院貸付金特別会計",
+        "table_id": "hospital-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般会計から繰入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "項目": {
+                  "heading": "目"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "hospital-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "single-parent-loan-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "69f01aa3486d28d345ff127ebcdcfcdc0c303cf7f3cc1e4dc982f2d72d1a6683"
+        }
+      ],
+      "options": {
+        "account": "母子父子寡婦福祉資金貸付事業特別会計",
+        "table_id": "single-parent-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般会計から繰入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "項目": {
+                  "heading": "目"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "single-parent-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "disability-mutual-aid-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "69f01aa3486d28d345ff127ebcdcfcdc0c303cf7f3cc1e4dc982f2d72d1a6683"
+        }
+      ],
+      "options": {
+        "account": "心身障害者扶養共済事業特別会計",
+        "table_id": "disability-mutual-aid-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般会計から繰入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "項目": {
+                  "heading": "目"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "disability-mutual-aid-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "69f01aa3486d28d345ff127ebcdcfcdc0c303cf7f3cc1e4dc982f2d72d1a6683"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般会計から繰入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "項目": {
+                  "heading": "目"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "prefectural-forest-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "69f01aa3486d28d345ff127ebcdcfcdc0c303cf7f3cc1e4dc982f2d72d1a6683"
+        }
+      ],
+      "options": {
+        "account": "県営林事業特別会計",
+        "table_id": "prefectural-forest-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般会計から繰入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "項目": {
+                  "heading": "目"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "prefectural-forest-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "forestry-improvement-loan-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "69f01aa3486d28d345ff127ebcdcfcdc0c303cf7f3cc1e4dc982f2d72d1a6683"
+        }
+      ],
+      "options": {
+        "account": "林業・木材産業改善資金貸付事業特別会計",
+        "table_id": "forestry-improvement-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般会計から繰入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "項目": {
+                  "heading": "目"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "forestry-improvement-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "sme-advancement-loan-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "69f01aa3486d28d345ff127ebcdcfcdc0c303cf7f3cc1e4dc982f2d72d1a6683"
+        }
+      ],
+      "options": {
+        "account": "中小企業高度化等資金貸付事業特別会計",
+        "table_id": "sme-advancement-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般会計から繰入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "項目": {
+                  "heading": "目"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "sme-advancement-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "farming-support-loan-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "69f01aa3486d28d345ff127ebcdcfcdc0c303cf7f3cc1e4dc982f2d72d1a6683"
+        }
+      ],
+      "options": {
+        "account": "就農支援資金貸付事業特別会計",
+        "table_id": "farming-support-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般会計から繰入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。財源の内訳で、歳出の目の金額は本年度で確かめる。"
+                  }
+                },
+                "項目": {
+                  "heading": "目"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "carried": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "farming-support-loan-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "5e18b84d135bede663c156bc1e92f74bde66df453cc910b7ec31f632ee284749",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 123頁 から決めた。款の和 932,800,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "c847e5d3abc2ebfffa8716779cb968ef0d4309bec88fad21a0b86be3717696d0",
+          "bytes": 65345
+        },
+        "row_count": 2424
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "e681248b5b57cbf360774680f1a40f826bc051f2c65734749feef6449d83be6f",
+          "bytes": 58395
+        },
+        "row_count": 2894
+      }
+    },
+    {
+      "table_id": "public-debt-expenditure",
+      "conversion_id": "public-debt-initial",
+      "input_fingerprint": "d55b60ebd7eead279c906856a761ca29b8c7cf71f8bbc341f0a70dc8a67cedf3",
+      "account": "公債管理特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 43,164,060（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/public-debt-expenditure-nodes.parquet",
+          "sha256": "4a0eab597500f3af1b39209a1e626450576a255276e55a4236a139ce88effec7",
+          "bytes": 2508
+        },
+        "row_count": 6
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/public-debt-expenditure-amounts.parquet",
+          "sha256": "cbb37abd0c823745ca858729f0d50dbdc4c347c73774bcfc132020234f056710",
+          "bytes": 1967
+        },
+        "row_count": 9
+      }
+    },
+    {
+      "table_id": "hospital-loan-expenditure",
+      "conversion_id": "hospital-loan-initial",
+      "input_fingerprint": "d6faab9a9378908453b8436a89eab8eca20b201af14b6983dad615893b31bc38",
+      "account": "地方独立行政法人県立病院貸付金特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 1頁 から決めた。款の和 3,923,460（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/hospital-loan-expenditure-nodes.parquet",
+          "sha256": "ea96b783a361291abb6824d709a16645b63ba8c5b10489b55177283b84fb87ca",
+          "bytes": 3286
+        },
+        "row_count": 15
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/hospital-loan-expenditure-amounts.parquet",
+          "sha256": "30d326b775014ec7acc391f168190bd9633391216a5c1f3925a5c9b64459b270",
+          "bytes": 2309
+        },
+        "row_count": 23
+      }
+    },
+    {
+      "table_id": "single-parent-loan-expenditure",
+      "conversion_id": "single-parent-loan-initial",
+      "input_fingerprint": "2821b734f6b715d059abb981e2f2985cfa1b752895a3375448b2b73c99ea478d",
+      "account": "母子父子寡婦福祉資金貸付事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 384,140（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/single-parent-loan-expenditure-nodes.parquet",
+          "sha256": "f42dfef275c2b08b5c403788aa75632557f82600d086a5e39fc9e09a9c7d49fb",
+          "bytes": 3403
+        },
+        "row_count": 21
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/single-parent-loan-expenditure-amounts.parquet",
+          "sha256": "ca3f2fbde44ae518692ad7e1e54fe2e5c20a78f7b3281e2243ccb297061fb34d",
+          "bytes": 2640
+        },
+        "row_count": 32
+      }
+    },
+    {
+      "table_id": "disability-mutual-aid-expenditure",
+      "conversion_id": "disability-mutual-aid-initial",
+      "input_fingerprint": "6c67b72211f8073e7a214d640379668ae73a08958f789ab80873401fd4713df9",
+      "account": "心身障害者扶養共済事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
+        "金額の単位は printed 1頁 から決めた。款の和 304,640（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/disability-mutual-aid-expenditure-nodes.parquet",
+          "sha256": "e3e6d173233042f5e477796c6d8a19f3f763d0b732e4974d773d4c724098457d",
+          "bytes": 2664
+        },
+        "row_count": 9
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/disability-mutual-aid-expenditure-amounts.parquet",
+          "sha256": "6f2d7f5e9f7188c4477b1581c4f167d3b2e6c477ec42bc7806c2bb9c9728a642",
+          "bytes": 2035
+        },
+        "row_count": 12
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-initial",
+      "input_fingerprint": "3bd5e7fb7f899975d256e09cf6503b982d225b98382a35ddba3b320dfc12e66d",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 1頁 から決めた。款の和 169,663,930（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "8581c84230d30c94b429a32aaca3a7152ed2dd3a525b7f01ede877786653b078",
+          "bytes": 3732
+        },
+        "row_count": 24
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "32ee5b2abcc5f523f39306bacc5a92c6335256be03a73b2e59cbb41be52b6354",
+          "bytes": 2816
+        },
+        "row_count": 27
+      }
+    },
+    {
+      "table_id": "prefectural-forest-expenditure",
+      "conversion_id": "prefectural-forest-initial",
+      "input_fingerprint": "2fe79ba2d389ab8374e7d0cf0054154c446fee732e194178ed411b77a328d651",
+      "account": "県営林事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 2頁 から決めた。款の和 348,020（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/prefectural-forest-expenditure-nodes.parquet",
+          "sha256": "84403aeb1987ed697356414b0f860f30fd266caab7db992512c391f83d6444e8",
+          "bytes": 3811
+        },
+        "row_count": 30
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/prefectural-forest-expenditure-amounts.parquet",
+          "sha256": "a780473c0315edc55769e199f32eb3162e8a39d70df9ea1de7fe72e1f7c003f8",
+          "bytes": 2901
+        },
+        "row_count": 39
+      }
+    },
+    {
+      "table_id": "forestry-improvement-loan-expenditure",
+      "conversion_id": "forestry-improvement-loan-initial",
+      "input_fingerprint": "54f1dbddb0d42a7d193b2f50b1b49308fda6899086526d110e912d317822698b",
+      "account": "林業・木材産業改善資金貸付事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 1頁 から決めた。款の和 162,870（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/forestry-improvement-loan-expenditure-nodes.parquet",
+          "sha256": "edf381e064b45d01b90e4df0b65bd785ec0e3adc1e0518afa49901b0870140e3",
+          "bytes": 3390
+        },
+        "row_count": 19
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/forestry-improvement-loan-expenditure-amounts.parquet",
+          "sha256": "450723e8421155022d74b69f9998716b2ae2128d8bbb433be6e86915d467eca5",
+          "bytes": 2577
+        },
+        "row_count": 28
+      }
+    },
+    {
+      "table_id": "sme-advancement-loan-expenditure",
+      "conversion_id": "sme-advancement-loan-initial",
+      "input_fingerprint": "0772e2f34a2d515219140c18630ad86c3e4a6efa16de9f1fd641eca8928675d1",
+      "account": "中小企業高度化等資金貸付事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 1頁 から決めた。款の和 37,140（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/sme-advancement-loan-expenditure-nodes.parquet",
+          "sha256": "38ba82e2fb8997a0ac395e8beb4d6f6e51ea045956d41709af56e50c8c1aaef1",
+          "bytes": 3530
+        },
+        "row_count": 21
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/sme-advancement-loan-expenditure-amounts.parquet",
+          "sha256": "593b3155db122e69a552c18d4fdbac79aa5e0af37c9e136695ec2705b11cd882",
+          "bytes": 2681
+        },
+        "row_count": 28
+      }
+    },
+    {
+      "table_id": "farming-support-loan-expenditure",
+      "conversion_id": "farming-support-loan-initial",
+      "input_fingerprint": "ea3cfe9e465cd6bf5ce66fe953d01b4406ec25f38af359937a191b773d7054ef",
+      "account": "就農支援資金貸付事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
+        "金額の単位は printed 1頁・carried 3頁 から決めた。款の和 61,660（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/farming-support-loan-expenditure-nodes.parquet",
+          "sha256": "2cc72aff45b2bc1aa0cf7c0e83b25f238ea59ed50f68c6fe65eebc0c6b538a76",
+          "bytes": 4258
+        },
+        "row_count": 41
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2024/initial/expenditure/farming-support-loan-expenditure-amounts.parquet",
+          "sha256": "3db37e032196c9c70f19b820ec3c488b93852a9e57e633e974b77a784c6f11ba",
+          "bytes": 3313
+        },
+        "row_count": 65
+      }
+    }
+  ]
+}
