@@ -1,4 +1,4 @@
-// まとめタブの財政の状況（借金と貯金・事業に使えるお金・財政の指標）。総務省「市町村別決算状況調」の普通会計（PageData.finance）から描く。
+// まとめタブの財政の状況（借金と貯金・事業に回ったお金・財政の指標）。総務省「市町村別決算状況調」の普通会計（PageData.finance）から描く。
 // 開いた年度までの最新の決算の年度を出し、推移はそこまでの5年。評価の言葉や色は付けず、項目の意味だけを書く
 import * as React from 'react'
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion'
@@ -250,7 +250,7 @@ function OtherNumbers({ at, rows }: { at: LocalFinance; rows: LocalFinance[] }) 
   )
 }
 
-/** 開いた年度までの最新の決算の年度の、借金と貯金・事業に使えるお金・財政の指標。決算状況調に載らない自治体（都道府県）は何も出さない */
+/** 開いた年度までの最新の決算の年度の、借金と貯金・事業に回ったお金・財政の指標。決算状況調に載らない自治体（都道府県）は何も出さない */
 export function FinanceSections({ finance, year, people }: { finance: LocalFinance[] | undefined; year: number; people: number | null }) {
   const upTo = (finance ?? []).filter((f) => f.year <= year)
   const at = upTo.at(-1)
@@ -265,7 +265,7 @@ export function FinanceSections({ finance, year, people }: { finance: LocalFinan
         <div className={card}><DebtAndFunds at={at} rows={rows} people={people} /></div>
       </section>
       <section>
-        <Head title="事業に使えるお金" tag={tag} />
+        <Head title="事業に回ったお金" tag={tag} />
         <div className={card}><FreeMoney at={at} rows={rows} people={people} /></div>
       </section>
       <section>

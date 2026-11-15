@@ -241,6 +241,18 @@
       "observed_name": "予備費支出及増減",
       "corrected_name": "予備費支出及び流用増減",
       "reason": "Paddle が「及び流用」の字を落として読む同じ見出しの誤り（字形の対応表で增→増にした後の形）。原典の予備費支出及び流用増減を確認した。金額欄の見出しだけに適用する。"
+    },
+    {
+      "id": "accident-carryover-heading-sha",
+      "observed_name": "事故杀越し",
+      "corrected_name": "事故繰越",
+      "reason": "OCRが翌年度繰越額の升の「繰」を「杀」と読む見出しの誤り。小金井市2023年度決算書（132101）の各冊で、原典の描画で事故繰越しの印字を確認した。"
+    },
+    {
+      "id": "explicit-carryover-heading-sha",
+      "observed_name": "杀越明許費",
+      "corrected_name": "繰越明許費",
+      "reason": "OCRが翌年度繰越額の升の「繰」を「杀」と読む見出しの誤り。小金井市2023年度決算書（132101）の各冊で、原典の描画で繰越明許費の印字を確認した。"
     }
   ]
 }

@@ -1855,7 +1855,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
         if dots is not None:
             dots.module.shift(item)
         raw = normalize(text(item.lines[0]))
-        note = raw.startswith(prefixes) or raw in whole_names
+        # `(仮称)` begins a name (`(仮称)中学生サミット実行委員会委員謝礼`, 132101), not a bracketed note.
+        note = (raw.startswith(prefixes) and not raw.startswith('(仮称)')) or raw in whole_names
         if tables is not None and (tabled := tables.module.within(raw, item, tabled, tables.value)) and not note:
             note, item.hint = True, tables.module.KIND
         if not note and highlights is not None and highlights.module.listed(item) and id(item) not in column_amount_items:
@@ -1898,11 +1899,14 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
             item.name_aligned = float(aligned.value)
         previous = result[-1] if result else None
         if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
-                and normalize(previous.name).startswith(('(', '（')) and not re.search(r'[)）]', normalize(previous.name))
+                and (opened := ''.join(normalize(text(line)) for line in previous.lines)).startswith(('(', '（'))
+                and len(re.findall(r'[(（]', opened)) > len(re.findall(r'[)）]', opened))
                 and (item.amounts or re.search(r'[)）]$', normalize(text(item.lines[-1]))))
                 and 0 <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
             # A bracketed note wrapped before its count (`(投票用紙読取分類機` / `3台 2,805,000)`): the number
-            # starting the second line is the count, not an item's number.
+            # starting the second line is the count, not an item's number. The bracket left open decides, not any
+            # closing one: `(2) 住宅・土地統計調査費 (総務` / `課) 7,415,286` (132101) waits for its end, and the
+            # line's own text decides, since the name no longer holds its number in brackets.
             if id(item) in column_amount_items:
                 raise ValueError(f'Configured note carries separate-column money: p{item.page} {item.name!r}')
             previous.name += ''.join(normalize(text(line)) for line in item.lines)
@@ -2078,6 +2082,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 group_items = items(group, group.axis, joined_codes=not logical.ocr,
                                     settings={'quirks': {'repeated_subject_headings': True}}
                                     if quirk(document, 'repeated_subject_headings') is not None else None)
+                if group.subject and (between := quirk(document, 'code_between_name_lines')) is not None:
+                    group_items = between.module.join(group_items)
             else:
                 for band in group.bands:
                     band.words = split_glued_numbers(band.words, edges)
@@ -2362,7 +2368,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 steps = (start(item) - item.group.x0 - origin) / (chars * height)
                 item.level = floor(steps + .4)
     if pattern == "indent":
-        subject_pattern.learn_levels(all_items, quirk(document, 'codeless_name_levels'))
+        subject_pattern.learn_levels(all_items, quirk(document, 'codeless_name_levels'),
+                                     quirk(document, 'stray_subject_starts'))
     for axis, hints in (layout or {}).items():
         if (edge := quirk(hints, 'column_edge')) is not None:
             edge.module.shift(all_items, axis)
