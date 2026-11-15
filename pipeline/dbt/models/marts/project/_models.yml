@@ -41,7 +41,7 @@ models:
           to: ref('project')
           field: project_id
 - name: project_year
-  description: 事業の1年度。その年度の当初予算と決算の事業の行（少なくとも一方）を指す。名前・款項目・科目・金額は指した行（expenditure_detail）にあり、ここには写さない。子の事業の額は親の事業の額に含まれるので、事業どうしを足さない。
+  description: 事業の1年度。その年度の当初予算と決算の事業の行（少なくとも一方）を指す。予算書に事業名の無い自治体では、当初予算の内訳の代わりに事業の一覧の資料の行（project_list_line）を指す。名前・款項目・科目・金額は指した行にあり、ここには写さない。子の事業の額は親の事業の額に含まれるので、事業どうしを足さない。
   columns:
   - name: project_year_id
     description: 事業の ID と年度から作る ID（sha256）。
@@ -73,3 +73,85 @@ models:
         arguments:
           to: ref('expenditure_detail')
           field: detail_id
+  - name: initial_project_list_line_id
+    description: 事業の一覧の資料の行。project_list_line の list_line_id。予算書に事業名の無い自治体（その年度の当初予算に「事業」の内訳が無い自治体）だけが持ち、そのときは initial_expenditure_detail_id が NULL。今はまだ一覧の行から事業を作らないので、どの行も NULL。
+    data_tests:
+    - unique
+    - relationships:
+        arguments:
+          to: ref('project_list_line')
+          field: list_line_id
+- name: project_list_origin
+  description: 事業の一覧の資料の出典。予算書に事業名の無い自治体で、事業を作る資料（予算の概要の主要事業など、出典の選定の project_list_selections）。PDF 1つが1行。
+  columns:
+  - name: origin_id
+    description: 出典の識別子。PDF の sha256。
+    data_tests: [not_null, unique]
+  - name: jurisdiction_code
+    description: 全国地方公共団体コード（6桁）。jurisdiction の jurisdiction_code。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('jurisdiction')
+          field: jurisdiction_code
+  - name: fiscal_year
+    description: 資料が載せる当初予算の会計年度（西暦）。
+    data_tests: [not_null]
+  - name: title
+    description: 資料の名前。
+  - name: url
+    description: 資料（PDF）の URL。
+    data_tests: [not_null]
+  - name: landing_url
+    description: 資料を載せた自治体のページの URL。
+  - name: sha256
+    description: 読んだ PDF の sha256。
+    data_tests: [not_null]
+- name: project_list_line
+  description: 事業の一覧の資料に印字された事業の1行。名前・会計・款項目・所管課・金額は資料の印字のまま。資料に無い欄は NULL。一覧は事業の一部だけを載せることがある（北区は主要事業だけ）ので、足しても科目の額にはならない。
+  columns:
+  - name: list_line_id
+    description: 出典・頁・頁の中の順から作る ID（sha256）。
+    data_tests: [not_null, unique]
+  - name: origin_id
+    description: 出典。project_list_origin の origin_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('project_list_origin')
+          field: origin_id
+  - name: page
+    description: 行が印字された物理頁（1始まり）。
+    data_tests: [not_null]
+  - name: position
+    description: 頁の中の上からの順（1始まり）。
+    data_tests: [not_null]
+  - name: account_name
+    description: 会計の名前（資料の印字）。
+    data_tests: [not_null]
+  - name: kan_name
+    description: 款の名前（資料の印字）。資料に無ければ NULL。
+  - name: kou_name
+    description: 項の名前（資料の印字）。資料に無ければ NULL。
+  - name: moku_name
+    description: 目の名前（資料の印字）。資料に無ければ NULL。
+  - name: name
+    description: 事業の名前（資料の印字のまま）。
+    data_tests: [not_null]
+  - name: department
+    description: 所管課（資料の印字）。資料に無ければ NULL。
+  - name: budget_yen
+    description: 当初予算額（円）。資料の単位（千円など）を円にしたもの。
+    data_tests: [not_null]
+  - name: is_new
+    description: 資料が新規の事業と印字したか（北区は「新」の印）。
+    data_tests: [not_null]
+  - name: subject_id
+    description: 当てた当初予算の科目。expenditure_subject の subject_id。会計と、一覧の款・項・目の名前で、下の段から当てる（風土記の判断）。当たらなければ NULL。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('expenditure_subject')
+          field: subject_id

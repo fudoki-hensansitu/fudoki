@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObjectKey, originObjectSlot } from './storage'
+import { ARCHIVE_BUCKET, evaluationObjectKey, evaluationObjectSlot, originObjectKey, originObjectSlot, projectListObjectKey, projectListObjectSlot } from './storage'
 
 const nonEmptyString = z.string().min(1).refine(value => value.trim().length > 0, { message: 'Blank text is not allowed' })
 const sha256Schema = z.string().regex(/^[a-f0-9]{64}$/)
@@ -23,6 +23,7 @@ const targetFields = {
 }
 
 const settlementTargetSchema = z.object({ ...targetFields, document_kind: z.literal('settlement') }).strict()
+const initialTargetSchema = z.object({ ...targetFields, document_kind: z.literal('initial') }).strict()
 
 /** 資料区分は金額の段階（phase）とは別。補正だけに出典の号数を持つ。 */
 export const sourceTargetSchema = z.discriminatedUnion('document_kind', [
@@ -252,7 +253,25 @@ export const evaluationSelectionSchema = z.object({
 }).strict()
 export type EvaluationSelection = z.infer<typeof evaluationSelectionSchema>
 
-/** 評価資料・プレス発表の選定に共通の検査。選んだら候補は1つだけ残し、ファイルは確認済みのバイト列を持つ。 */
+export const projectListCandidateSchema = z.object({
+  ...candidateFields,
+  files: z.array(evaluationPdfSchema).min(1),
+}).strict().superRefine(rejectDuplicateFiles)
+
+/**
+ * 事業の一覧の資料の選定。予算書に事業名の無い自治体で、事業を作る資料（予算の概要の主要事業・事務事業の一覧・局別の予算説明書など）。
+ * target はその予算の当初予算。保存先は予算書とは別の slot（`project-list-initial`）。
+ */
+export const projectListSelectionSchema = z.object({
+  target: initialTargetSchema,
+  candidates: z.array(projectListCandidateSchema),
+  selected_candidate_id: nonEmptyString.nullable(),
+  archive: archivedOriginSchema.nullable(),
+  reason: nonEmptyString,
+}).strict()
+export type ProjectListSelection = z.infer<typeof projectListSelectionSchema>
+
+/** 評価資料・事業の一覧の選定に共通の検査。選んだら候補は1つだけ残し、ファイルは確認済みのバイト列を持つ。 */
 function refineDocumentSelections<T extends SourceTarget>(slot: (target: T) => string, key: (target: T, format: 'csv' | 'pdf') => string) {
   return (selections: { target: T; candidates: { id: string; files: { sha256: string | null; download_url: string; format: 'csv' | 'pdf' }[] }[]; selected_candidate_id: string | null; archive: ArchivedOrigin | null }[], ctx: z.RefinementCtx) => {
     const targets = new Set<string>()
@@ -285,6 +304,7 @@ function refineDocumentSelections<T extends SourceTarget>(slot: (target: T) => s
 }
 
 export const evaluationSelectionsSchema = z.array(evaluationSelectionSchema).superRefine(refineDocumentSelections(evaluationObjectSlot, evaluationObjectKey))
+export const projectListSelectionsSchema = z.array(projectListSelectionSchema).superRefine(refineDocumentSelections(projectListObjectSlot, projectListObjectKey))
 
 /** ファイルや列挙順によらない出典対象の識別。 */
 export function targetKey(target: SourceTarget): string {
@@ -303,8 +323,10 @@ export const jurisdictionSelectionsSchema = z.object({
   unresolved_candidates: unresolvedCandidatesSchema,
   /** 金額の出典とは別の、事業の評価の出典。取り込み・dbtは読まない。 */
   evaluation_selections: evaluationSelectionsSchema.optional(),
+  /** 予算書に事業名の無い自治体で、事業を作る資料。取り込みは ingestion/project が読む。 */
+  project_list_selections: projectListSelectionsSchema.optional(),
 }).strict().superRefine((file, ctx) => {
-  for (const [field, selections] of [['selections', file.selections], ['evaluation_selections', file.evaluation_selections ?? []]] as const) {
+  for (const [field, selections] of [['selections', file.selections], ['evaluation_selections', file.evaluation_selections ?? []], ['project_list_selections', file.project_list_selections ?? []]] as const) {
     for (const [index, selection] of selections.entries()) {
       if (selection.target.jurisdiction !== file.jurisdiction) {
         ctx.addIssue({ code: 'custom', path: [field, index, 'target', 'jurisdiction'], message: 'Target belongs to another jurisdiction' })

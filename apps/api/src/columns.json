@@ -1201,6 +1201,147 @@
         }
       ]
     },
+    "project_list_origin": {
+      "primary_key": "origin_id",
+      "indexes": [
+        [
+          "jurisdiction_code",
+          "fiscal_year"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の識別子。PDF の sha256。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。jurisdiction の jurisdiction_code。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "資料が載せる当初予算の会計年度（西暦）。"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "nullable": true,
+          "description": "資料の名前。"
+        },
+        {
+          "name": "url",
+          "type": "string",
+          "nullable": false,
+          "description": "資料（PDF）の URL。"
+        },
+        {
+          "name": "landing_url",
+          "type": "string",
+          "nullable": true,
+          "description": "資料を載せた自治体のページの URL。"
+        },
+        {
+          "name": "sha256",
+          "type": "string",
+          "nullable": false,
+          "description": "読んだ PDF の sha256。"
+        }
+      ]
+    },
+    "project_list_line": {
+      "primary_key": "list_line_id",
+      "indexes": [
+        [
+          "origin_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "list_line_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典・頁・頁の中の順から作る ID（sha256）。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典。project_list_origin の origin_id。"
+        },
+        {
+          "name": "page",
+          "type": "integer",
+          "nullable": false,
+          "description": "行が印字された物理頁（1始まり）。"
+        },
+        {
+          "name": "position",
+          "type": "integer",
+          "nullable": false,
+          "description": "頁の中の上からの順（1始まり）。"
+        },
+        {
+          "name": "account_name",
+          "type": "string",
+          "nullable": false,
+          "description": "会計の名前（資料の印字）。"
+        },
+        {
+          "name": "kan_name",
+          "type": "string",
+          "nullable": true,
+          "description": "款の名前（資料の印字）。資料に無ければ NULL。"
+        },
+        {
+          "name": "kou_name",
+          "type": "string",
+          "nullable": true,
+          "description": "項の名前（資料の印字）。資料に無ければ NULL。"
+        },
+        {
+          "name": "moku_name",
+          "type": "string",
+          "nullable": true,
+          "description": "目の名前（資料の印字）。資料に無ければ NULL。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": false,
+          "description": "事業の名前（資料の印字のまま）。"
+        },
+        {
+          "name": "department",
+          "type": "string",
+          "nullable": true,
+          "description": "所管課（資料の印字）。資料に無ければ NULL。"
+        },
+        {
+          "name": "budget_yen",
+          "type": "integer",
+          "nullable": false,
+          "description": "当初予算額（円）。資料の単位（千円など）を円にしたもの。"
+        },
+        {
+          "name": "is_new",
+          "type": "boolean",
+          "nullable": false,
+          "description": "資料が新規の事業と印字したか（北区は「新」の印）。"
+        },
+        {
+          "name": "subject_id",
+          "type": "string",
+          "nullable": true,
+          "description": "当てた当初予算の科目。expenditure_subject の subject_id。会計と、一覧の款・項・目の名前で、下の段から当てる（風土記の判断）。当たらなければ NULL。"
+        }
+      ]
+    },
     "project": {
       "primary_key": "project_id",
       "indexes": [
@@ -1280,6 +1421,9 @@
         ],
         [
           "settlement_expenditure_detail_id"
+        ],
+        [
+          "initial_project_list_line_id"
         ]
       ],
       "columns": [
@@ -1312,6 +1456,12 @@
           "type": "string",
           "nullable": true,
           "description": "決算書の事業の行。expenditure_detail の detail_id。決算に無い年度は NULL。"
+        },
+        {
+          "name": "initial_project_list_line_id",
+          "type": "string",
+          "nullable": true,
+          "description": "事業の一覧の資料の行。project_list_line の list_line_id。予算書に事業名の無い自治体（その年度の当初予算に「事業」の内訳が無い自治体）だけが持ち、そのときは initial_expenditure_detail_id が NULL。今はまだ一覧の行から事業を作らないので、どの行も NULL。"
         }
       ]
     },

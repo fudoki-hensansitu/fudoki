@@ -1,8 +1,9 @@
-"""事業評価の評価シートを、出典の PDF から読んで入力準備の表にする。
+"""事業評価の評価シートと、事業の一覧の資料を、出典の PDF から読んで入力準備の表にする。
 
 各行は資料の粒度のまま（評価シート1枚）にし、予算書・決算書の事業への紐付けは dbt で足す。
 
-評価シートは出典の選定の `evaluation_selections` で保存済みの PDF を読む。
+評価シートは出典の選定の `evaluation_selections`、事業の一覧は `project_list_selections` で保存済みの PDF を読む
+（事業の一覧は、予算書に事業名の無い自治体で事業を作る資料。予算書の内訳には混ぜず、別の表にする）。
 どの様式で読むかは `origins.json` の宣言で決める。工程ごとのパターンの組み合わせ（`workflow`、`sheet/`）か、型に収まらない自治体だけ `layout` で読む
 （年度ごとに様式が違うことがあるので `years` で年度を絞れる）。読んだ結果は PDF の指紋と読み方のコードの指紋ごとにキャッシュし、
 同じ PDF を毎回読み直さない。
@@ -54,6 +55,25 @@ def sheet_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[d
                             # OCR で読む冊は固定した観測（未固定なら None、読むときに止める）
                             **({'ocr': entry['ocr'].get('observations', {}).get(stored['sha256'])} if 'ocr' in entry else {}),
                             'directions': entry.get('directions', {}),
+                            'title': candidate['title'], 'landing_url': candidate['landing_url'], 'url': url,
+                            'sha256': stored['sha256'], 'reference': {'key': stored['key'], 'sha256': stored['sha256']}})
+    return out
+
+
+def list_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[dict]:
+    """事業の一覧の出典。出典の選定で保存済みの `project_list_selections` を、宣言の様式で読む。分冊は1冊ずつ別の出典にする。"""
+    out = []
+    for entry in declared:
+        selection = json.loads((selections / f'{entry["jurisdiction"]}.json').read_text(encoding='utf-8'))
+        for item in selection.get('project_list_selections', []):
+            archive = item.get('archive')
+            if not archive:
+                continue
+            candidate = next(c for c in item['candidates'] if c['id'] == archive['candidate_id'])
+            for stored in archive['files']:
+                url = stored.get('final_url') or next(
+                    f['download_url'] for f in candidate['files'] if f['sha256'] == stored['sha256'])
+                out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': item['target']['fiscal_year'], 'layout': entry['layout'],
                             'title': candidate['title'], 'landing_url': candidate['landing_url'], 'url': url,
                             'sha256': stored['sha256'], 'reference': {'key': stored['key'], 'sha256': stored['sha256']}})
     return out
@@ -161,8 +181,18 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
         declared = {kind: [o for o in entries if o['jurisdiction'] in jurisdictions] for kind, entries in declared.items()}
     tables: dict[str, list[tuple]] = {name: [] for name in (
         'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator', 'project_evaluation_indicator_value',
-        'project_source_page_text')}
+        'project_source_page_text', 'project_list_origin', 'project_list_line')}
     paths: dict[str, Path] = {}
+    for origin in list_sources(declared.get('lists', [])):
+        path = fetch(origin['reference'], remote=remote)
+        lines = read_cached(path, origin, remote=remote)
+        paths[origin['sha256']] = path
+        tables['project_list_origin'].append((origin_id(origin), origin['jurisdiction'], origin['fiscal_year'],
+                                              origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
+        for line in lines:
+            tables['project_list_line'].append((
+                origin_id(origin), line['page'], line['position'], line['account'], line['kan'], line['kou'], line['moku'],
+                line['name'], line['department'], thousand(line['amount_thousand']), line['is_new']))
     for origin in sheet_sources(declared['sheets']):
         path = fetch(origin['reference'], remote=remote)
         sheets = read_cached(path, origin, remote=remote)
@@ -213,6 +243,11 @@ SCHEMAS = {
     'project_evaluation_indicator_value': 'origin_id varchar, page integer, position integer, fiscal_year integer, '
                                   'target_text varchar, actual_text varchar',
     'project_source_page_text': 'sha256 varchar, page integer, text varchar',
+    # 予算書に事業名の無い自治体の、事業の一覧の資料（当初予算）
+    'project_list_origin': 'origin_id varchar, jurisdiction_code varchar, fiscal_year integer, '
+                           'title varchar, url varchar, landing_url varchar, sha256 varchar',
+    'project_list_line': 'origin_id varchar, page integer, position integer, account_name varchar, '
+                         'kan varchar, kou varchar, moku varchar, name varchar, department varchar, budget_yen bigint, is_new boolean',
 }
 
 

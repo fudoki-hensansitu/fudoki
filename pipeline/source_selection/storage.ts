@@ -24,3 +24,14 @@ export function evaluationObjectKey(target: Extract<SourceTarget, { document_kin
   return index === undefined ? `${evaluationObjectSlot(target)}.${format}` : `${evaluationObjectSlot(target)}-${index}.${format}`
 }
 
+
+/**
+ * 事業の一覧（予算書に事業名の無い自治体で、事業を作る資料）の保存先。`initial-` で始めない: 予算書の保存は `<slot>/initial-` を一覧して、残さない key を消す。
+ */
+export function projectListObjectSlot(target: Extract<SourceTarget, { document_kind: 'initial' }>): string {
+  return `fiscal/source-selection/${target.jurisdiction}/${target.fiscal_year}/project-list-${target.document_kind}`
+}
+
+export function projectListObjectKey(target: Extract<SourceTarget, { document_kind: 'initial' }>, format: 'csv' | 'pdf', index?: number): string {
+  return index === undefined ? `${projectListObjectSlot(target)}.${format}` : `${projectListObjectSlot(target)}-${index}.${format}`
+}

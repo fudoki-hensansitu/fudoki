@@ -2650,5 +2650,121 @@
       "archive": null,
       "reason": "ブラウザで描画した行政評価の一覧（https://www.city.kita.lg.jp/city-information/evaluation/1011919/index.html、https://www.city.kita.lg.jp/city-information/evaluation/1011919/1011920.html）の掲載は令和8・7・5・4年度の事務事業評価の概要と平成30年度施策評価のみで、令和6年度（令和5年度実績）の事務事業評価は掲載されていない（令和7年度評価から新制度で、令和5年度評価の決算は令和4年度＝2022年度）。2023年度を評価した資料は無い。確認日：2026-10-23（UTC）。"
     }
+  ],
+  "project_list_selections": [
+    {
+      "target": {
+        "jurisdiction": "131172",
+        "fiscal_year": 2024,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "予算の概要（令和6年度）",
+          "landing_url": "https://www.city.kita.lg.jp/city-information/finance/1014484/1014485.html",
+          "inspected_at": "2026-11-15T21:30:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/485/r6gaiyou.pdf",
+              "sha256": "c28147944cc85e57ef3426b9efb006f32f7caac16e4a2a092efba3344fcfe944",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131172/2024/project-list-initial.pdf",
+            "sha256": "c28147944cc85e57ef3426b9efb006f32f7caac16e4a2a092efba3344fcfe944",
+            "final_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/485/r6gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T12:18:05.147Z"
+      },
+      "reason": "予算書（当初予算説明書）は目までで事業名を印字しないため、予算の概要の「主要事業」の章（会計・款・項ごとの事業名と本年度予算額、千円）から事業を作る。項の合計の一部（掲載事業小計）だけが載る。令和5年度以前の予算の概要には主要事業の章が無い（様式が違う）ので選ばない。文字として読める。確認日：2026-11-15。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131172",
+        "fiscal_year": 2025,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "予算の概要（令和7年度）",
+          "landing_url": "https://www.city.kita.lg.jp/city-information/finance/1014484/1014485.html",
+          "inspected_at": "2026-11-15T21:30:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/485/r7gaiyou.pdf",
+              "sha256": "912c96995b366b9eadc168866be084aa5b2650845d2682474c350327f8759c4d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131172/2025/project-list-initial.pdf",
+            "sha256": "912c96995b366b9eadc168866be084aa5b2650845d2682474c350327f8759c4d",
+            "final_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/485/r7gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T12:18:09.000Z"
+      },
+      "reason": "予算書（当初予算説明書）は目までで事業名を印字しないため、予算の概要の「主要事業」の章（会計・款・項ごとの事業名と本年度予算額、千円）から事業を作る。項の合計の一部（掲載事業小計）だけが載る。令和5年度以前の予算の概要には主要事業の章が無い（様式が違う）ので選ばない。文字として読める。確認日：2026-11-15。"
+    },
+    {
+      "target": {
+        "jurisdiction": "131172",
+        "fiscal_year": 2026,
+        "document_kind": "initial"
+      },
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "予算の概要（令和8年度）",
+          "landing_url": "https://www.city.kita.lg.jp/city-information/finance/1014484/1014485.html",
+          "inspected_at": "2026-11-15T21:30:00+09:00",
+          "files": [
+            {
+              "download_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/485/r8gaiyou.pdf",
+              "sha256": "7e208fa3af6966090d5c374c6999b0f0e61ed474a2d35981936d2e2a8fbf42dc",
+              "format": "pdf",
+              "pdf_type": "text",
+              "pages": null
+            }
+          ]
+        }
+      ],
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131172/2026/project-list-initial.pdf",
+            "sha256": "7e208fa3af6966090d5c374c6999b0f0e61ed474a2d35981936d2e2a8fbf42dc",
+            "final_url": "https://www.city.kita.lg.jp/_res/projects/default_project/_page_/001/014/485/r8gaiyou.pdf"
+          }
+        ],
+        "archived_at": "2026-11-15T12:18:12.815Z"
+      },
+      "reason": "予算書（当初予算説明書）は目までで事業名を印字しないため、予算の概要の「主要事業」の章（会計・款・項ごとの事業名と本年度予算額、千円）から事業を作る。項の合計の一部（掲載事業小計）だけが載る。令和5年度以前の予算の概要には主要事業の章が無い（様式が違う）ので選ばない。文字として読める。確認日：2026-11-15。"
+    }
   ]
 }

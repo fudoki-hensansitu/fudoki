@@ -351,10 +351,13 @@ type 目の参照 = {             // 事業の内訳が無い自治体。目の�
 | 表 | 1行 | 主な列 |
 | --- | --- | --- |
 | `project` | 事業1つ | `project_id`（代理キー）・`jurisdiction_code`・`first_year`・`first_year_kind`（`confirmed`・`before_coverage`）・`last_year`・`last_year_kind`（`confirmed`・`latest`・`unknown`。`latest` のとき `last_year` は空）・`parent_project_id` |
-| `project_year` | 事業の1年度 | `project_id`・`fiscal_year`・`initial_expenditure_detail_id`・`settlement_expenditure_detail_id`（その事業の行） |
+| `project_year` | 事業の1年度 | `project_id`・`fiscal_year`・`initial_expenditure_detail_id`・`settlement_expenditure_detail_id`（その事業の行）・`initial_project_list_line_id`（事業の一覧の行） |
+| `project_list_origin` | 事業の一覧の資料の PDF 1つ | `origin_id`・`jurisdiction_code`・`fiscal_year`・`title`・`url` |
+| `project_list_line` | 事業の一覧の資料の1行 | `list_line_id`・`origin_id`・頁と順・会計・款項目の名前・事業名・所管課・`budget_yen`・`is_new`・当てた科目 `subject_id` |
 
 - `project_year` は当初予算と決算の少なくとも一方の行を持つ。名前・款項目・科目・金額は行から、事業の名前は最新の年度の行から API が JOIN で引き、表には写さない（ADR 0050）。
 - `initial_expenditure_detail_id`・`settlement_expenditure_detail_id` は、空でなければ表の中で重ならない（unique test）。
+- 予算書に事業名の無い自治体（港区・北区・神戸市）は、事業の一覧の資料の行から事業を作り、`initial_project_list_line_id` で指す（ADR 0051）。一覧の行は内訳に混ぜない。
 - 評価シートは `evaluation_sheet_project` を {事業, 年度} で引く。
 
 ## まだ決めていないこと

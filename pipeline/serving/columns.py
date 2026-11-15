@@ -26,13 +26,14 @@ TABLES = ['jurisdiction',
           'expenditure', 'expenditure_origin', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
           'expenditure_location',
           'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_sheet_project', 'evaluation_indicator', 'evaluation_indicator_value',
-          'project', 'project_year',
+          'project_list_origin', 'project_list_line', 'project', 'project_year',
           'source_page_text']
 PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code',
                 'expenditure': 'expenditure_id', 'expenditure_origin': 'origin_id', 'expenditure_origin_link': 'link_id',
                 'expenditure_subject': 'subject_id', 'expenditure_detail': 'detail_id', 'expenditure_location': 'line_id',
                 'evaluation': 'evaluation_id', 'evaluation_origin': 'origin_id', 'evaluation_sheet': 'sheet_id', 'evaluation_sheet_project': 'link_id',
                 'evaluation_indicator': 'indicator_id', 'evaluation_indicator_value': 'value_id',
+                'project_list_origin': 'origin_id', 'project_list_line': 'list_line_id',
                 'project': 'project_id', 'project_year': 'project_year_id',
                 'source_page_text': 'page_id'}
 # index（docs/prd/aggregate-api/dd.md）。科目は自治体の一覧・比較・COFOG・子・根、内訳は科目の下・子・自治体の事業・根。
@@ -51,7 +52,10 @@ INDEXES = {
     'evaluation_indicator': [['sheet_id']],
     'evaluation_indicator_value': [['indicator_id']],
     'project': [['jurisdiction_code'], ['parent_project_id']],
-    'project_year': [['project_id', 'fiscal_year'], ['fiscal_year'], ['initial_expenditure_detail_id'], ['settlement_expenditure_detail_id']],
+    'project_year': [['project_id', 'fiscal_year'], ['fiscal_year'], ['initial_expenditure_detail_id'], ['settlement_expenditure_detail_id'],
+                     ['initial_project_list_line_id']],
+    'project_list_origin': [['jurisdiction_code', 'fiscal_year']],
+    'project_list_line': [['origin_id']],
     'source_page_text': [['sha256', 'page']],
 }
 

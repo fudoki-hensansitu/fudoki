@@ -1,6 +1,6 @@
 """事業の資料の取り込み結果を、別の commit の読み方の結果と全件で突き合わせる（docs/prd/page-words/dd.md の手順 6〜8）。
 
-評価シート・指標・指標の値・施策の全行を、公開の ID の元になる列（`origin_id`・`page`・`position`）ごと比べる。
+評価シート・指標・指標の値・事業の一覧の全行を、公開の ID の元になる列（`origin_id`・`page`・`position`）ごと比べる。
 基準は `--base` の commit のコードで読んだ結果で、その commit を `.cache/worktrees/` に取り出して読む。
 出典の PDF と読んだ結果のキャッシュ（`.cache/objects`・`.cache/project`）は今の作業ツリーと共有する。
 
@@ -24,6 +24,8 @@ KEYS = {
     'project_evaluation_sheet': 3,
     'project_evaluation_indicator': 3,
     'project_evaluation_indicator_value': 4,
+    'project_list_origin': 1,
+    'project_list_line': 3,
 }
 
 
@@ -54,7 +56,7 @@ def read(directory: Path, name: str) -> list[list]:
 
 def compare(base: Path, head: Path, samples: int) -> int:
     """表ごとに、基準にだけある行・今にだけある行を数え、自治体ごとの数と例を出す。差の行の数の合計を返す。"""
-    origins = {row[0]: row[1] for directory in (base, head) for row in read(directory, 'project_origin')}
+    origins = {row[0]: row[1] for directory in (base, head) for name in ('project_origin', 'project_list_origin') for row in read(directory, name)}
     total = 0
     for name, width in KEYS.items():
         before = Counter(json.dumps(r, ensure_ascii=False) for r in read(base, name))

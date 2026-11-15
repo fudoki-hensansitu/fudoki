@@ -10,7 +10,7 @@
 | `ingestion/fiscal/` | 予算書・決算書の取り込み。管理 JSON（`jurisdictions/<自治体>/<年度>/<資料区分>/<方向>.json`、型は `manifest.schema.json`、対象間の制約は `manifest.py`）、書式別の変換器（`layouts/`）、自治体ごとの宣言（`jurisdictions/<自治体>/layouts/`） |
 | `ingestion/generic/` | 自治体の書式を書かない汎用の変換器。固定した読み方は管理 JSON の `options.workflow`、選べる実装は `patterns/` |
 | `ingestion/lib/` | 共通処理。木の検査・網羅の検査・OCR の入口（`scan_ocr.py`、[説明](ingestion/lib/scan_ocr.md)）・PDF の表の組み立て（`pdf_table.py`、[説明](ingestion/lib/pdf_table.md)） |
-| `ingestion/project/` | 事業評価の評価シートの取り込みと、事業・評価シートのつなぎの規則。様式ごとの読み方は `layouts/`、工程ごとのパターンは `sheet/` |
+| `ingestion/project/` | 事業評価の評価シートと事業の一覧の資料の取り込みと、事業・評価シートのつなぎの規則。様式ごとの読み方は `layouts/`、工程ごとのパターンは `sheet/` |
 | `shared/` | 取り込みと dbt を横断する辞書。取り込みは直接読み、dbt は seed として読む |
 | `dbt/` | 入力準備（`scripts/`）、staging・intermediate・marts、seeds、検査（`tests/`） |
 | `serving/` | marts を D1 へ写す同期（`sync_d1.py`）、列の契約（`columns.py`）、配信の入口（`publish.py`）、Queria への配布 |
@@ -58,6 +58,7 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 - 金額の注記は段階を付けず、木の合計に足さない（[ADR 0024](../docs/adr/0024-monetary-annotations-without-phase.md)）
 - 統計の決算・普通会計の表は取り込まない（[ADR 0037](../docs/adr/0037-do-not-ingest-statistical-settlements.md)）。補正予算は当面取り込まない（[ADR 0039](../docs/adr/0039-defer-supplementary-budget-ingestion.md)）
 - 事業評価の評価シートは、出典の選定（`evaluation_selections`）で保存した PDF を入力準備が読む。評価の結果の資料と予算案のプレス発表は取り込まない（ADR 0049）
+- 予算書に事業名の無い自治体は、事業の一覧の資料（`project_list_selections`）を入力準備が読み、内訳とは別の表にする（ADR 0051）
 
 ### dbt
 

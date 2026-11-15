@@ -2,10 +2,14 @@ version: 2
 sources:
 - name: project
   schema: ingestion
-  description: 入力準備（dbt/scripts/prepare.py）が ingestion/project の読み方で出典の PDF から読んだ、事業評価の評価シート。
+  description: 入力準備（dbt/scripts/prepare.py）が ingestion/project の読み方で出典の PDF から読んだ、事業評価の評価シートと事業の一覧。
   tables:
   - name: project_origin
   - name: project_evaluation_sheet
   - name: project_evaluation_indicator
   - name: project_evaluation_indicator_value
   - name: project_source_page_text
+  - name: project_list_origin
+    description: 予算書に事業名の無い自治体で事業を作る、事業の一覧の資料（出典の選定の project_list_selections）。1冊1行。
+  - name: project_list_line
+    description: 事業の一覧の資料に印字された事業の行。金額は当初予算額（円）。款・項・目・所管課は資料に無ければ空。
