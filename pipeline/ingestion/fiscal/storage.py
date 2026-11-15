@@ -5,7 +5,9 @@ import json
 import os
 import shutil
 import subprocess
+import sys
 import tempfile
+import time
 from pathlib import Path, PurePosixPath
 
 import gzip
@@ -15,6 +17,7 @@ from ingestion.fiscal.manifest import BUCKET, object_key, ocr_key, sha_file, tab
 from ingestion.paths import CACHE
 
 OBJECTS = CACHE / 'objects'
+RATE_LIMIT_WAITS = (2, 4, 8, 16, 32)  # seconds before each read again after a 429
 
 
 def verify(path: Path, reference: dict) -> None:
@@ -101,8 +104,18 @@ def fetch(reference: dict, *, remote: bool = False) -> Path:
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
         temporary = Path(stream.name)
         try:
-            subprocess.run(['cf', 'r2', 'objects', 'get', reference['key'], '--bucket-name',
-                            reference.get('bucket', BUCKET), '--quiet'], stdout=stream, check=True)
+            for wait in (*RATE_LIMIT_WAITS, None):
+                stream.seek(0)
+                stream.truncate()
+                shown = subprocess.run(['cf', 'r2', 'objects', 'get', reference['key'], '--bucket-name',
+                                        reference.get('bucket', BUCKET), '--quiet'], stdout=stream, stderr=subprocess.PIPE)
+                if shown.returncode == 0:
+                    break
+                sys.stderr.buffer.write(shown.stderr)
+                # R2 answers 429 when a full build reads many objects in a short time: wait and read again.
+                if wait is None or b'429' not in shown.stderr:
+                    raise subprocess.CalledProcessError(shown.returncode, shown.args, stderr=shown.stderr)
+                time.sleep(wait)
         except BaseException:
             temporary.unlink(missing_ok=True)
             raise
