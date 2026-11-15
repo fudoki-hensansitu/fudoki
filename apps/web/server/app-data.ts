@@ -115,7 +115,7 @@ function yearDataOf(rows0: { rows: SubjectRows; kind: Kind; origin: string | nul
 type SubjectRows = Awaited<ReturnType<typeof subjectsOf>>['rows']
 
 /** 頁の1年度の、最初の画面に要る分。開いた年度の款項目と、タブが要るもの（予算・決算は会計ごとの総額、事業は一覧の1頁目）だけを読む。
- * 施策・評価シート・お金のかかる事業は残り（loadYearExtras）として、頁を描いた後にブラウザが読む（pending）。
+ * 施策・評価シート・お金のかかる事業は残り（loadYearExtras）として、loader が defer で後から流す（pending）。
  * tab を渡さない（ホームのまちの札）ときは残りもここで読んで足し、評価のある最新の年度の評価シートも持つ（evaluated） */
 export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: number, opt: { evaluated?: boolean; tab?: PageTab } = {}): Promise<Snapshot> {
   const { tab } = opt
