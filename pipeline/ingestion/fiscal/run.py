@@ -420,7 +420,8 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         checked = tree_checks.check_tree(built.nodes, built.amounts, document['target']['document_kind'],
                                          source_inconsistencies.declared_for(document, ident))
         if not built.nodes or not built.amounts or not checked['passed']:
-            raise ValueError(f'Table failed the tree check: {ident}: {checked["counts"]}; {checked["issues"][:5]}')
+            raise ValueError(f'Table failed the tree check: {ident}: {checked["counts"]}; '
+                             f'{len(checked["issues"])} issues: {checked["issues"][:5]}')
         completed_by_id[ident] = []
         adopted[ident] = built
         checked_pdf.append((conversion, ident, built, None, file))
