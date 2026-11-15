@@ -96,7 +96,8 @@
           "quirks": {
             "rule_ink": true,
             "partial_headings": true,
-            "short_amounts_at_line_end": true
+            "short_amounts_at_line_end": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -316,7 +317,8 @@
           "quirks": {
             "rule_ink": true,
             "partial_headings": true,
-            "short_amounts_at_line_end": true
+            "short_amounts_at_line_end": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -1392,7 +1394,8 @@
           "quirks": {
             "rule_ink": true,
             "partial_headings": true,
-            "short_amounts_at_line_end": true
+            "short_amounts_at_line_end": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -1899,7 +1902,8 @@
           "quirks": {
             "rule_ink": true,
             "partial_headings": true,
-            "short_amounts_at_line_end": true
+            "short_amounts_at_line_end": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -2275,7 +2279,8 @@
           "quirks": {
             "rule_ink": true,
             "partial_headings": true,
-            "short_amounts_at_line_end": true
+            "short_amounts_at_line_end": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -2387,7 +2392,8 @@
           "quirks": {
             "rule_ink": true,
             "partial_headings": true,
-            "short_amounts_at_line_end": true
+            "short_amounts_at_line_end": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -2590,7 +2596,8 @@
           "quirks": {
             "rule_ink": true,
             "partial_headings": true,
-            "short_amounts_at_line_end": true
+            "short_amounts_at_line_end": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -2755,7 +2762,8 @@
           "quirks": {
             "rule_ink": true,
             "partial_headings": true,
-            "short_amounts_at_line_end": true
+            "short_amounts_at_line_end": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -3117,7 +3125,8 @@
           "quirks": {
             "rule_ink": true,
             "partial_headings": true,
-            "short_amounts_at_line_end": true
+            "short_amounts_at_line_end": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -3379,7 +3388,8 @@
           "quirks": {
             "rule_ink": true,
             "partial_headings": true,
-            "short_amounts_at_line_end": true
+            "short_amounts_at_line_end": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -3953,7 +3963,8 @@
           "quirks": {
             "rule_ink": true,
             "partial_headings": true,
-            "short_amounts_at_line_end": true
+            "short_amounts_at_line_end": true,
+            "unnumbered_abolished_names": true
           }
         },
         "pages": [
@@ -3975,7 +3986,7 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "0fef18ae6dca85304418f37eb40d382ea7d95387031e4c8fe427b845373c761e",
+      "input_fingerprint": "0aa50fd09008ac5bbf684964503b8fa0e4035669359e844ef7c20b0ecccec012",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
@@ -4004,7 +4015,7 @@
     {
       "table_id": "general-initial-2",
       "conversion_id": "general-initial-2",
-      "input_fingerprint": "1b4d0f3263b8c98a02bb13c2a77833933eb9cb43efd0e7853c030d2ad2c8b5e4",
+      "input_fingerprint": "87711f44540ed447e3d55235325b5e0f6e4e801d5195ba0d5a9fa28bb26b7c50",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
@@ -4035,7 +4046,7 @@
     {
       "table_id": "general-initial-3",
       "conversion_id": "general-initial-3",
-      "input_fingerprint": "e86a47b217cb81f4f9930d0d05b62be50a5da1fd68b7e6fa97c4d44ed4a3f8c6",
+      "input_fingerprint": "10033175aeb39e3241ef4e931911d7c8983bcb1d048fdec838b789fd96c4e9c0",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
@@ -4049,10 +4060,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132055/2024/initial/expenditure/general-initial-3-nodes.parquet",
-          "sha256": "d5922d4aa83fce6d670678cb53fd7ef99715ff83799ecee341fb293c16d69442",
-          "bytes": 37607
+          "sha256": "5adde9e883433d9af696ca216927c1f2f849bd53690d9da2eeadeb11a907fa68",
+          "bytes": 37580
         },
-        "row_count": 878
+        "row_count": 877
       },
       "amounts": {
         "object": {
@@ -4066,7 +4077,7 @@
     {
       "table_id": "general-initial-4",
       "conversion_id": "general-initial-4",
-      "input_fingerprint": "d4bcd971a6e58aff0e8bad764f0f4c922f07deb18b326d0dd0f5c77e49cc7b53",
+      "input_fingerprint": "d56852d535bf76a1c5f02471e94e54d6e13f3f497e54e6edfec16a5370a3efd2",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
@@ -4097,7 +4108,7 @@
     {
       "table_id": "general-initial-5",
       "conversion_id": "general-initial-5",
-      "input_fingerprint": "304d99710f4738642e174a98dd9c534c0ef32b2ac728b3985ff2c3c4cf59da1b",
+      "input_fingerprint": "9121d48dd69ea347b727fa45e95f4f02dff375665f97c916a04f6eb5cfe975e9",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
@@ -4126,7 +4137,7 @@
     {
       "table_id": "general-initial-6",
       "conversion_id": "general-initial-6",
-      "input_fingerprint": "a9675b5edb9134bb13349f2de54c42c951b887827c0e79440763f4c1e1cc4b6f",
+      "input_fingerprint": "ca9755d866d99879f58d4425c395d4ee606b8ccb61e3e4f016442b50af29dbf5",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
@@ -4157,7 +4168,7 @@
     {
       "table_id": "general-initial-7",
       "conversion_id": "general-initial-7",
-      "input_fingerprint": "b73fc277f8fe7bc3ef09a0bdabd3159f07ea6827246aa8f7a923cb823873d4ab",
+      "input_fingerprint": "1a0ab715c538f242cbf352fe321b0717490a76cbef715c4a93e05588750e0e90",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
@@ -4188,7 +4199,7 @@
     {
       "table_id": "general-initial-8",
       "conversion_id": "general-initial-8",
-      "input_fingerprint": "86e77bcc156e9da48f4614059853344b47cafda4a8d06d2c584fd27b0232872a",
+      "input_fingerprint": "d5b31239e68b8c6eed01a3d1b419fea281a15ea8c3004376a75bcc0b1b9a321f",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
@@ -4219,7 +4230,7 @@
     {
       "table_id": "general-initial-9",
       "conversion_id": "general-initial-9",
-      "input_fingerprint": "856569efd073a77742b3693af65a4f40dbb69113f3586eded475c2dfcbf9f1c7",
+      "input_fingerprint": "6655dc1375a635598b33162ebb183ad5269774984ab25e98d6c110cef2e820e9",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
@@ -4249,7 +4260,7 @@
     {
       "table_id": "general-initial-10",
       "conversion_id": "general-initial-10",
-      "input_fingerprint": "bc6e3b086372e57d22fa17f27cc17624de622eb352839ea4e4080be8a2937efc",
+      "input_fingerprint": "9c1213b9ba5710281911cbdc5c0096adeeb819c868b1b3543eae9a3ea1ad3085",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
@@ -4280,7 +4291,7 @@
     {
       "table_id": "general-initial-11",
       "conversion_id": "general-initial-11",
-      "input_fingerprint": "538de59348bd7e198f3ae7fc14be14f1ce52ad55e2629dbe2e2d95ef5bfd86b7",
+      "input_fingerprint": "d71befd29c89d259b198224a2e289968ffee34364a7f2cc440fe802b3b34bbd7",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'amount_ends'}。",
