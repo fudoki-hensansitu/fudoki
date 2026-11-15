@@ -101,8 +101,9 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
         glued = re.fullmatch(r'([0-9,△▲\-－―—]+)(明許|事故|逓次)', _word_key(text))
         if glued and (page, round(box[1])) in candidate_baselines:
             # A carried-over kind word printed against the amount before it (`4,402,4` `83,956明許`, 132250 R5 決算書):
-            # the amount's part of the word, its digits half a character wide and the word's characters whole.
-            share = len(glued[1]) / (len(glued[1]) + 2 * len(glued[2]))
+            # the amount's part of the word, a half-width character half a full-width one's width (`layout._width`).
+            width = lambda chars: sum(.5 if ord(c) < 128 else 1.0 for c in chars)
+            share = width(text[:text.rfind(glued[2])]) / width(text)
             part = (box[0], box[1], box[0] + (box[2] - box[0]) * share, box[3])
             originals[page, tuple(part)] = tuple(box)
             box, text = part, glued[1]

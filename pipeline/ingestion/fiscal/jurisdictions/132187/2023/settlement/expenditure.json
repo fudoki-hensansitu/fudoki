@@ -43,6 +43,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "stacked_subject_owner": true
           }
         },
         "pages": [
@@ -216,7 +219,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "092cf3668c158acfcac65ac63315544250f826296dd6cd0bf2ffd3b097d82125",
+      "input_fingerprint": "2c5d30c5db59173c794d120072a18369c16dde25a18a0c545590b4f6738b4b20",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -246,7 +249,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "69d88c7b3318812adcf21516b74a9ebc67643f9bbcb5d61dec0260cd9995a3aa",
+      "input_fingerprint": "672b302611749669917276403eb86c9857aeb2dacf3ac78e11cda9776e4bf176",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -276,7 +279,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "9357ad1fa8b94477585efce923b74e7f53e670f3989471050773e76d43237aa5",
+      "input_fingerprint": "049896162dba0a89c6cc9822e5614eb79b3d188d3530085d12cf5f5dac7bf9f7",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
@@ -306,7 +309,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "b4ba935e87c6bc168bbc656728ce41c953c3b9dabe5d1e066157228e8cb5480d",
+      "input_fingerprint": "1a9631b470eca547139a303925b62525e9a45ddd86b029cec4dd7c84a25c7d2b",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
