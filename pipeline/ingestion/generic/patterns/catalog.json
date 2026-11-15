@@ -155,6 +155,7 @@
     "name_tails_over_pages": "ingestion.generic.patterns.quirks.name_tails_over_pages",
     "numbers_set_right": "ingestion.generic.patterns.quirks.numbers_set_right",
     "office_departments": "ingestion.generic.patterns.quirks.office_departments",
+    "wrapped_departments": "ingestion.generic.patterns.quirks.wrapped_departments",
     "one_row_header": "ingestion.generic.patterns.quirks.one_row_header",
     "opening_bracket_ink": "ingestion.generic.patterns.quirks.opening_bracket_ink",
     "padded_runs": "ingestion.generic.patterns.quirks.padded_runs",

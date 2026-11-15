@@ -733,6 +733,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         for index, (label, money, code, name) in enumerate(entries):
             if label and not money and code is None and (found := shares.module.split(label, _cut)) is not None:
                 entries[index] = (found[0], [found[1]], None, normalize(text(found[0])))
+    if (wrapped := quirk(settings, 'wrapped_departments')) is not None:
+        entries, origin = wrapped.module.join(entries)
+        if roles is not None:  # the roles were judged on the lines before the join
+            roles = {new: roles[old] for new, old in enumerate(origin) if old in roles}
     if (tabled := quirk(settings, 'labels_over_amounts')) is not None:
         # Each label of a table of notes with the amount under it is a note of its own (the quirk); the roles of the
         # other lines keep their entries.

@@ -179,7 +179,7 @@ models:
   - *code_col
   - *name
   - name: department
-    description: 名称の末尾の【】に印字された所管課。無ければ NULL。
+    description: 名称の最後の【】（後ろに人数などの注記が続くこともある）、または末尾の []（中身が課・部・局などで終わり、数を含まないもの。[84カ所] のような注記は外す）に印字された所管課。無ければ NULL。
   - name: amount_yen
     description: 金額（円）。決算は支出済額、当初予算は当初予算額。
     config:

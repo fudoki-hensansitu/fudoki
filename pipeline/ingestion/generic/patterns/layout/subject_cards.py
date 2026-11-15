@@ -296,15 +296,28 @@ def amount_value(text: str) -> int | None:
     return int(found.group(1).replace(',', '')) if found else None
 
 
+PURPOSE = re.compile(r'を計上(?:[0-9,]+千円)?(?:[\[〔][^\]〕]*[\]〕])?$')
+
+
 def restated_lines(words: list[Word], held: set) -> list[list[Word]]:
     """The lines of a 目's 計上説明 that print the 目's amount again: the first, which says what the 目 is for
     (`療養の給付に要する経費を計上 6,626,796千円 [保険年金課]`, 中央区), and the 合計 of its items at the end. The
     amount is the 目's, no item of it."""
     printed = lines(words)
     found = []
+    # The first lines say what the 目 is for, also without its amount (`会計管理に要する経費を計上 [会計室]`, or two
+    # lines ending `…に要する経費を計上`, 令和8年度): no item either, nor the start of the item under them.
+    for index, line in enumerate(printed[:2]):
+        text = norm(''.join(w.text for w in line))
+        if text[:1].isdigit():
+            break  # an item's number: the 目 says nothing before its items
+        if PURPOSE.search(text):
+            found.extend(printed[:index + 1])
+            break
     for index, line in enumerate(printed):
         text = norm(''.join(w.text for w in line))
-        if ((index == 0 and '計上' in text) or text.startswith('合計')) and any(amount_value(w.text) in held for w in line):
+        if line not in found and ((index == 0 and '計上' in text) or text.startswith('合計')) \
+                and any(amount_value(w.text) in held for w in line):
             found.append(line)
     return found
 
