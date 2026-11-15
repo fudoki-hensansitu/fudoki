@@ -131,9 +131,16 @@ def link(*, refresh: bool = False, model: str = MODEL) -> dict:
         for jurisdiction, year in sorted({(i['jurisdiction_code'], i['fiscal_year']) for i in todo}):
             details[(jurisdiction, year)] = [dict(zip(('detail_id', 'name', 'kan_name', 'moku_name', 'amount_yen'), row))
                                              for row in con.execute(
-                "select detail_id, name, kan_name, moku_name, amount_yen from expenditure_detail"
-                " where jurisdiction_code = ? and fiscal_year = ? and document_kind = 'initial'"
-                " and amendment_number is null and breakdown = '事業' and name is not null order by detail_id", [jurisdiction, year]).fetchall()]
+                # 所属する款・目は表に持たないので、科目を辿って引く（ADR 0047）
+                "select d.detail_id, d.name, coalesce(k2.name, k1.name, s.name) as kan_name,"
+                " case when s.level = '目' then s.name end as moku_name, d.amount_yen"
+                " from expenditure_detail d join expenditure e using (expenditure_id)"
+                " join expenditure_subject s on s.subject_id = d.subject_id"
+                " left join expenditure_subject k1 on k1.subject_id = s.parent_subject_id"
+                " left join expenditure_subject k2 on k2.subject_id = k1.parent_subject_id"
+                " where e.jurisdiction_code = ? and e.fiscal_year = ? and e.document_kind = 'initial'"
+                " and e.amendment_number is null and d.breakdown = '事業' and d.name is not null order by d.detail_id",
+                [jurisdiction, year]).fetchall()]
         # 当初予算書の内訳（事業）がまだ無い年度は紐付けを決めず、seed に行を書かない（予算書を取り込んだら紐付ける）
         skipped = sorted({k for k, v in details.items() if not v})
         todo = [i for i in todo if details[(i['jurisdiction_code'], i['fiscal_year'])]]

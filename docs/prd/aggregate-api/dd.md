@@ -75,7 +75,7 @@
 | `expenditure` | `fiscal_coverage` | `expenditure_id` | 根。1行 = 自治体・年度・資料区分・補正号・会計 |
 | `expenditure_origin` | `fiscal_origin` | `origin_id` | 冊ごとに1行。会計は持たない（1冊が最大18会計にまたがる） |
 | `expenditure_origin_link` | なし | `link_id` | 根と冊を結ぶ（品川など 245冊・359根・456組） |
-| `expenditure_subject`・`expenditure_detail` | `fiscal_expenditure_*` | 今と同じ | `expenditure_id` を足す。根で決まる列（`fiscal_year`・`document_kind`・`account_name` など）は検索のために残す |
+| `expenditure_subject`・`expenditure_detail` | `fiscal_expenditure_*` | 今と同じ | `expenditure_id` を足す。根で決まる列・所属する款・項・目・子の有無は持たず、検索の SQL で JOIN して求める（[ADR 0047](../../adr/0047-serving-tables-hold-no-derivable-columns.md)） |
 | `expenditure_location` | `fiscal_expenditure_location` | `line_id` | `kind`（`pdf`・`csv`）を足し、CSV は行番号の列にする |
 | `evaluation` | `project_origin`（`sheets`） | `evaluation_id` | 1行 = 自治体・事業を行った年度 |
 | `evaluation_origin` | `project_origin`（`sheets`） | `origin_id` | `evaluation_id` を持つ |

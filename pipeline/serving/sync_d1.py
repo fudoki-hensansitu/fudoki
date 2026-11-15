@@ -189,6 +189,9 @@ def open_warehouse(path: Path) -> duckdb.DuckDBPyConnection:
 
 # 自治体コードの列を持たない表を、どの列でどの親の表の自治体に絞るか。親の表はその列を主キーか自治体で絞れる列に持つ
 PARENT_SCOPE = {
+    # 科目・内訳は自治体を持たず、根の自治体で絞る（ADR 0047）
+    'expenditure_subject': ('expenditure_id', 'expenditure'),
+    'expenditure_detail': ('expenditure_id', 'expenditure'),
     'expenditure_origin_link': ('origin_id', 'expenditure_origin'),
     'expenditure_location': ('origin_id', 'expenditure_origin'),
     'evaluation_indicator': ('sheet_id', 'evaluation_sheet'),

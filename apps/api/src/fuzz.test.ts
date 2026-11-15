@@ -119,7 +119,7 @@ describe('schema の fuzz', () => {
 describe('handler の fuzz', () => {
   test('schema を通った入力は正常に終わるか ApiError だけ', async () => {
     const { db, sqlite } = testDb()
-    insertSubject(sqlite, { document_kind: 'settlement', subject_id: 'a'.repeat(64), level: '目', name: '庁舎', amount_yen: 5, is_leaf: 1 })
+    insertSubject(sqlite, { document_kind: 'settlement', subject_id: 'a'.repeat(64), level: '目', name: '庁舎', amount_yen: 5 })
     const r = rng(12)
     const started = performance.now()
     let ran = 0

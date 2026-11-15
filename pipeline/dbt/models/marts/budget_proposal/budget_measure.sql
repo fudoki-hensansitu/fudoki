@@ -18,6 +18,7 @@ left join {{ ref('budget_measure_link') }} l
 cross join lateral (
     select not exists (
         select 1 from {{ ref('expenditure_detail') }} d
-        where d.jurisdiction_code = o.jurisdiction_code and d.fiscal_year = o.fiscal_year
-            and d.document_kind = 'initial') as held
+        join {{ ref('expenditure') }} e using (expenditure_id)
+        where e.jurisdiction_code = o.jurisdiction_code and e.fiscal_year = o.fiscal_year
+            and e.document_kind = 'initial') as held
 ) held

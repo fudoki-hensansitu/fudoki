@@ -52,17 +52,31 @@ export function testDb(): { db: Db; sqlite: Database } {
 }
 
 function insertRow(sqlite: Database, table: string, defaults: Record<string, unknown>, row: Record<string, unknown>) {
-  // 非 NULL の列は、指定が無ければ型ごとの既定値で埋める（MCP の outputSchema の検査に通る行にする）
+  // 非 NULL の列は、指定が無ければ型ごとの既定値で埋める（MCP の outputSchema の検査に通る行にする）。表に無い列は捨てる
+  const names = new Set(TABLES[table]!.columns.map((c) => c.name))
   const required = Object.fromEntries(TABLES[table]!.columns.filter((c) => c.nullable === false).map((c) => [c.name, c.type === 'string' ? 'x' : 1]))
-  const full = { ...required, ...defaults, ...row }
+  const full = Object.fromEntries(Object.entries({ ...required, ...defaults, ...row }).filter(([k]) => names.has(k)))
   const keys = Object.keys(full)
   sqlite.query(`INSERT INTO ${table} (${keys.join(',')}) VALUES (${keys.map(() => '?').join(',')})`).run(...(Object.values(full) as never[]))
 }
 
-const PHASE: Record<string, string> = { settlement: 'executed', initial: 'approved' }
-const docDefaults = (row: Record<string, unknown>) => {
-  const kind = (row.document_kind as string | undefined) ?? 'settlement'
-  return { jurisdiction_code: '132039', fiscal_year: 2024, account_name: '一般会計', account_kind: '一般会計', document_kind: kind, amount_phase: PHASE[kind] }
+const ROOT_KEYS = ['jurisdiction_code', 'fiscal_year', 'document_kind', 'amendment_number', 'account_name', 'account_kind'] as const
+
+/**
+ * 科目・内訳の行の根（自治体・年度・資料区分・会計）を歳出の根の表に置き、その ID を返す。
+ * 科目・内訳の表は根の値を持たないので（ADR 0047）、行に書いた根の値はここで根の表へ移す。
+ */
+function rootOf(sqlite: Database, row: Record<string, unknown>): string {
+  // 根の表にある ID を指定したときだけそれを使う（非 NULL の列を既定値で埋めた行の 'x' は使わない）
+  if (typeof row.expenditure_id === 'string' && sqlite.query('SELECT 1 FROM expenditure WHERE expenditure_id = ?').get(row.expenditure_id)) return row.expenditure_id
+  const root = { jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement', amendment_number: null, account_name: '一般会計', ...Object.fromEntries(ROOT_KEYS.filter((k) => k in row).map((k) => [k, row[k]])) }
+  const full = { account_kind: root.account_name, ...root }
+  // insertCoverage と同じ ID（補正号は試験では使わない）
+  const id = JSON.stringify([full.jurisdiction_code, full.fiscal_year, full.document_kind, full.account_name])
+  sqlite
+    .query(`INSERT OR IGNORE INTO expenditure (expenditure_id, ${ROOT_KEYS.join(', ')}) VALUES (?, ${ROOT_KEYS.map(() => '?').join(', ')})`)
+    .run(id, ...(ROOT_KEYS.map((k) => full[k as keyof typeof full] ?? null) as never[]))
+  return id
 }
 
 /** marts と同じく、科目・内訳の1行ごとに印字の位置の行を置く（出典はここから引く）。 */
@@ -70,17 +84,17 @@ function insertOwnLocation(sqlite: Database, rowId: unknown, originId: unknown) 
   if (originId !== undefined && originId !== null) insertLocation(sqlite, { line_id: rowId as string, origin_id: originId as string })
 }
 
-/** 科目の表の1行。subject_id を省くと node_key と同じにする。origin_id があれば印字の位置の行も置く。 */
+/** 科目の表の1行。subject_id を省くと node_key と同じにする。origin_id があれば印字の位置の行も置く。根の値は根の表へ置く */
 export function insertSubject(sqlite: Database, row: Record<string, string | number | null>) {
   const id = row.subject_id ?? row.node_key ?? crypto.randomUUID()
-  insertRow(sqlite, 'expenditure_subject', { ...docDefaults(row), subject_id: id, node_key: id, level: '目', is_leaf: row.level && row.level !== '目' ? 0 : 1 }, row)
+  insertRow(sqlite, 'expenditure_subject', { subject_id: id, node_key: id, level: '目', code: '1' }, { ...row, expenditure_id: rootOf(sqlite, row) })
   insertOwnLocation(sqlite, id, row.origin_id)
 }
 
-/** 内訳の表の1行。origin_id があれば印字の位置の行も置く。 */
+/** 内訳の表の1行。origin_id があれば印字の位置の行も置く。根の値は根の表へ置く */
 export function insertDetail(sqlite: Database, row: Record<string, string | number | null>) {
   const id = row.detail_id ?? row.node_key ?? crypto.randomUUID()
-  insertRow(sqlite, 'expenditure_detail', { ...docDefaults(row), detail_id: id, node_key: id, breakdown: '事業', source_heading: '備考', node_kind: '内訳1', depth: 1, is_leaf: 1, is_subject_remainder: 0 }, row)
+  insertRow(sqlite, 'expenditure_detail', { detail_id: id, node_key: id, breakdown: '事業', source_heading: '備考', node_kind: '内訳1', depth: 1 }, { ...row, expenditure_id: rootOf(sqlite, row) })
   insertOwnLocation(sqlite, id, row.origin_id)
 }
 

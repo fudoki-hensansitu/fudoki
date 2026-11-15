@@ -1,6 +1,6 @@
 // 集約の型（*/model.ts）の enum と、dbt の accepted_values（columns.json）が同じ値かを照合する（docs/prd/aggregate-api/dd.md）。
 import { describe, expect, test } from 'bun:test'
-import { TABLES } from './columns'
+import { DETAIL_TABLE, SUBJECT_TABLE, TABLES, type ColumnSpec } from './columns'
 import { DIRECTIONS, DirectionCode, EvaluationOriginRow, EvaluationRow, IndicatorRow, IndicatorValueRow, SheetRow } from './evaluation/model'
 import { BudgetProposalOriginRow, BudgetProposalRow, MeasureRow } from './budget-proposal/model'
 import { ProjectRow, ProjectYearRow } from './project/model'
@@ -9,8 +9,12 @@ import { DocumentKind } from './shared/model'
 import { Breakdown, DetailRow, LocationKind, LocationRow, OriginRow, SubjectRow } from './expenditure/model'
 import { JurisdictionList } from './jurisdiction/model'
 
+/** 科目・内訳は表に無い列も検索の中で求めて返すので（ADR 0047）、検索の対象の列と照合する */
+const SEARCH_COLUMNS: Record<string, readonly ColumnSpec[]> = { expenditure_subject: SUBJECT_TABLE.columns, expenditure_detail: DETAIL_TABLE.columns }
+const columnsOfTable = (table: string) => SEARCH_COLUMNS[table] ?? TABLES[table]!.columns
+
 const values = (table: string, column: string) => {
-  const spec = TABLES[table]?.columns.find((c) => c.name === column)
+  const spec = columnsOfTable(table).find((c) => c.name === column)
   if (!spec?.values) throw new Error(`${table}.${column} に accepted_values が無い`)
   return [...spec.values].sort()
 }
@@ -71,7 +75,7 @@ describe('API の行の schema と表の列', () => {
     // 一覧の要約は自治体マスタの全列と、組み立てた列（収録範囲・年度）
     ['jurisdiction', jurisdiction, false],
   ] as const)('%s', (table, shape, exact) => {
-    const columns = TABLES[table]!.columns
+    const columns = columnsOfTable(table)
     if (exact) expect(Object.keys(shape).sort()).toEqual(columns.map((c) => c.name).sort())
     for (const c of columns) {
       const got = describeColumn(shape[c.name]!)

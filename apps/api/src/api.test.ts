@@ -605,8 +605,8 @@ describe('operation の応答は output の schema に合う', () => {
     for (const document_kind of ['settlement', 'initial'] as const) {
       const { P, C, D } = IDS[document_kind]
       const amount_phase = document_kind === 'settlement' ? 'executed' : 'approved'
-      insertSubject(sqlite, filled('expenditure_subject', { document_kind, amount_phase, subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '款', is_leaf: 0 }))
-      insertSubject(sqlite, filled('expenditure_subject', { document_kind, amount_phase, subject_id: C, parent_subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '目', is_leaf: 1 }))
+      insertSubject(sqlite, filled('expenditure_subject', { document_kind, amount_phase, subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '款', code: '1' }))
+      insertSubject(sqlite, filled('expenditure_subject', { document_kind, amount_phase, subject_id: C, parent_subject_id: P, fiscal_year: 2023, origin_id: 'of', level: '目', code: '1' }))
       insertDetail(sqlite, filled('expenditure_detail', { document_kind, amount_phase, detail_id: D, subject_id: C, fiscal_year: 2023, origin_id: 'of', breakdown: '事業', depth: 1 }))
     }
   })

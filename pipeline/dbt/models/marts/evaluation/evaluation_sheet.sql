@@ -9,9 +9,11 @@ with recursive sheet as (
     join {{ source('project', 'project_origin') }} o using (origin_id)
 ),
 moku as (
-    select subject_id, jurisdiction_code, fiscal_year, account_name, kan_name, kou_name, name as moku_name
-    from {{ ref('expenditure_subject') }}
-    where document_kind = 'settlement' and amendment_number is null and level = '目'
+    select s.subject_id, e.jurisdiction_code, e.fiscal_year, e.account_name, sp.kan_name, sp.kou_name, s.name as moku_name
+    from {{ ref('expenditure_subject') }} s
+    join {{ ref('expenditure') }} e using (expenditure_id)
+    join {{ ref('int_fiscal__subject_path') }} sp using (subject_id)
+    where e.document_kind = 'settlement' and e.amendment_number is null and s.level = '目'
 ),
 -- 名前で1つに決まる目だけを採る
 subject as (
