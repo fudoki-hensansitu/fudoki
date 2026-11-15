@@ -36,6 +36,7 @@ from ingestion.lib.coverage_checks import TOTAL_LABELS
 from ingestion.lib.node_tables import _coverage_word, _word_key, amount_phase
 from shared.amount import number
 
+DIRECTION_WORD = {'expenditure': '歳出', 'revenue': '歳入'}
 AMOUNT_RUN = re.compile(r'[△▲\-－―—]?(?:0|[1-9][0-9]{0,2}(?:,[0-9]{3})+|[0-9]+)')
 JOIN_GAP = 1.0   # points: fragments of one printed number abut; two columns are further apart (3 points in 131172)
 BASELINE = 2.0   # points: words of one printed line
@@ -44,7 +45,7 @@ ALIGN = 2.0      # points: right edges of two numbers printed in one column
 NUMERIC = re.compile(r'[0-9,.△▲\-－―—]*')
 
 
-def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict]) -> list[dict]:
+def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict], direction: str = 'expenditure') -> list[dict]:
     """The numbers of every 歳出合計 row in a coverage scope, as `total amount` notes.
 
     A number joins the word fragments it was cut into (a text layer may split `4,753,793,797` into
@@ -73,7 +74,9 @@ def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict]) -> list[
         line.sort(key=lambda item: item[0][0])
     found = []
     for (page, top), line in lines.items():
-        label = next((label for label in TOTAL_LABELS if label in ''.join(text for _, text in line)), None)
+        # The total of the table's own direction (`歳出合計` or `歳入合計`): a page printing both reads only its own.
+        label = next((label for label in TOTAL_LABELS if label.startswith(DIRECTION_WORD[direction])
+                      and label in ''.join(text for _, text in line)), None)
         if label is None:
             continue
         # On a spread the label is printed on the left page and the amounts go on across the right page,
@@ -126,7 +129,7 @@ def check_table(nodes: list[dict], amounts: list[dict], *, document_kind: str, a
     # The subject axis is named by the converter (科目, 款項, 款項目); the check reads the 款 roots.
     shaped = [{**node, 'axis_header': '科目'} if node['parent_node_key'] is None and node.get('level_header') == '款'
               else node for node in nodes]
-    notes = printed_totals(scope, shaped, amounts) if scope else []
+    notes = printed_totals(scope, shaped, amounts, direction) if scope else []
     # Two different totals of the phase the document reports (a second table with its own 歳出合計 row on the
     # pages read): which one is the account's is not decided here, so none is compared.
     phase = _phase(document_kind)
@@ -135,7 +138,7 @@ def check_table(nodes: list[dict], amounts: list[dict], *, document_kind: str, a
     ambiguous = len({note['text'] for note in ofphase}) > 1
     if ambiguous:
         notes = [note for note in notes if note not in ofphase]
-    result = check_units(SimpleNamespace(nodes=shaped, amounts=amounts, notes=notes), document_kind, account, partial)
+    result = check_units(SimpleNamespace(nodes=shaped, amounts=amounts, notes=notes), document_kind, account, partial, direction)
     result['subject_check'] = check_subject(nodes, amounts, document_kind, statement_kind, direction, partial)
     result['stopped'] = result['stopped'] or not result['subject_check']['passed']
     result['printed_totals'] = len(notes)

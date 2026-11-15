@@ -148,7 +148,8 @@ def general_total(nodes: list[dict], amounts: list[dict], document_kind: str) ->
     return sum(value * MULTIPLIER.get(unit, 1) for value, unit in entries) if entries else None
 
 
-def check(built, document_kind: str, account: str | None = None, partial: bool = False) -> dict:
+def check(built, document_kind: str, account: str | None = None, partial: bool = False,
+          direction: str = 'expenditure') -> dict:
     """款 sum = printed 歳出合計 (in the phase the document reports), and a general account's digits fit the unit.
 
     `partial`: the original holds one volume of an account printed in several (西東京's 13 files). Its
@@ -191,7 +192,7 @@ def check(built, document_kind: str, account: str | None = None, partial: bool =
         # (other 計 rows are subtotals).
         named = [n for n in printed if '合計' in (n.get('label') or '')]
         # Each 項 may close on a `合計` of its own (奥多摩町's 予算書): the `歳出合計` (`歳入合計`) row is the grand total.
-        named = [n for n in named if re.search(r'歳[出入]', n.get('label', ''))] or named
+        named = [n for n in named if ('歳入' if direction == 'revenue' else '歳出') in n.get('label', '')] or named
         chosen = named[-1] if named else max(printed, key=lambda n: abs(number(n['text']) or 0))
         total = number(chosen['text'])
         result['total_label'] = chosen.get('label')
