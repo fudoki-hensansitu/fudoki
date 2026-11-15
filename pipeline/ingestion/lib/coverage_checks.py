@@ -94,10 +94,20 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
     """
     baselines = defaultdict(list)
     total_labels = defaultdict(list)
+    originals = {}  # (page, the amount's part of a word) → the whole word's box
     for raw in words:
         page, box, text = _coverage_word(raw)
         if _word_key(text) in ('計', '合計', '小計') or _word_key(text) in TOTAL_LABELS:
             total_labels[page, round(box[1])].append(box)
+        glued = re.fullmatch(r'([0-9,△▲\-－―—]+)(明許|事故|逓次)', _word_key(text))
+        if glued and (page, round(box[1])) in candidate_baselines:
+            # A carried-over kind word printed against the amount before it (`4,402,4` `83,956明許`, 132250 R5 決算書):
+            # the amount's part of the word, a half-width character half a full-width one's width (`layout._width`).
+            width = lambda chars: sum(.5 if ord(c) < 128 else 1.0 for c in chars)
+            share = width(text[:text.rfind(glued[2])]) / width(text)
+            part = (box[0], box[1], box[0] + (box[2] - box[0]) * share, box[3])
+            originals[page, tuple(part)] = tuple(box)
+            box, text = part, glued[1]
         if (page, round(box[1])) in candidate_baselines and re.fullmatch(r'[0-9,△▲\-－―—]+', _word_key(text)):
             baselines[page, round(box[1])].append((box, text))
 
@@ -271,7 +281,7 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
                 if any(0 < y - top <= 3 * height for top, height in established[page, identity]):
                     verified.update((page, tuple(box)) for _, expected, parts in group
                                     if expected != 0 for box, _ in parts)
-    return verified
+    return {(page, originals.get((page, box), box)) for page, box in verified}
 
 
 def _continued_subject_boxes(words, control_tables, tolerance):
