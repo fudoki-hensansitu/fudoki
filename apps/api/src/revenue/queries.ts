@@ -30,7 +30,7 @@ export async function getRevenue(ctx: Ctx, input: RevenueInput): Promise<Revenue
         `ORDER BY r."fiscal_year" DESC, r."document_kind", r."account_kind" <> '一般会計', r."account_name", r."revenue_id"`
     ).bind(...params),
     db.prepare(
-      `SELECT s."revenue_id", s."subject_id", s."code", s."name", s."amount_yen", c."category", l."source_page" AS "page" ` +
+      `SELECT s."revenue_id", s."subject_id", s."code", s."name", s."amount_yen", c."category", l."source_page" AS "page", l."origin_id" ` +
         `FROM revenue_subject s JOIN revenue r ON r."revenue_id" = s."revenue_id" ` +
         `LEFT JOIN fiscal_revenue_category c ON c."kan_name" = s."name" LEFT JOIN revenue_location l ON l."line_id" = s."subject_id" ` +
         `WHERE s."level" = '款' AND ${where} ORDER BY s."revenue_id", CAST(s."code" AS INTEGER), s."code", s."subject_id"`

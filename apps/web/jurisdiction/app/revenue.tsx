@@ -70,10 +70,13 @@ export function RevenueSection({ revenue, year, kind, prefecture }: { revenue: R
           ? '歳入は、自治体に1年間に入ったお金です。ここでは、基本の会計（一般会計）の決算を、入ったお金の種類（款）ごとに分けています。'
           : '歳入は、自治体に1年間に入る予定のお金です。ここでは、基本の会計（一般会計）の当初予算を、入るお金の種類（款）ごとに分けています。'}
       </p>
+      {/* 区分の辞書は市区町村の一般会計の款だけを持つ。区分の当たらない資料（都道府県など）は0円と見せないよう札を出さない */}
+      {doc.kan.some((k) => k.category != null) ? (
       <div className="mb-4 grid gap-3 sm:grid-cols-2">
         <Highlight title="まちの税" yen={sumOf(doc, 'まちの税')} total={doc.total} note="住民や会社がこのまちに納める税（住民税・固定資産税など）です。" />
         <Highlight title={`${from}から配られるお金`} yen={sumOf(doc, '国・都道府県から配られるお金')} total={doc.total} note={`${from}が集めた税などから、使い道を決めずに配られるお金（交付税・交付金・譲与税）です。`} />
       </div>
+      ) : null}
       <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(kan.length / 2)}, auto)` } as React.CSSProperties}>
         {kan.map((k, i) => <KanRow key={k.name} name={k.name} yen={k.yen} total={doc.total} max={max} i={i} />)}
       </div>

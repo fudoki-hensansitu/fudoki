@@ -51,12 +51,12 @@ describe('歳入（get_revenue）', () => {
     expect(general.origins.map((o) => o.title)).toEqual(['予算書'])
   })
 
-  test('区分は款の名前で辞書を引き、辞書に無い款は null。印字の頁を返す', async () => {
+  test('区分は款の名前で辞書を引き、辞書に無い款は null。印字の頁とその冊を返す', async () => {
     const { revenues } = await call({ jurisdiction_code: '131091', fiscal_year: 2026 })
-    expect(revenues[0]!.kan.map((k) => [k.name, k.category, k.page])).toEqual([
-      ['特別区税', 'まちの税', 11],
-      ['特別区交付金', '国・都道府県から配られるお金', 12],
-      ['国庫支出金', '国・都道府県の支出金', 20],
+    expect(revenues[0]!.kan.map((k) => [k.name, k.category, k.page, k.origin_id])).toEqual([
+      ['特別区税', 'まちの税', 11, 'o-initial'],
+      ['特別区交付金', '国・都道府県から配られるお金', 12, 'o-initial'],
+      ['国庫支出金', '国・都道府県の支出金', 20, 'o-initial'],
     ])
     expect(revenues[1]!.kan[0]!.category).toBeNull()
   })

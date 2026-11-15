@@ -14,6 +14,7 @@ export const RevenueKan = z.strictObject({
   amount_yen: Yen.nullable().describe('Amount of the document kind: received (収入済額) for settlement, initial budget for initial'),
   category: RevenueCategory.nullable(),
   page: z.int().min(1).nullable().describe('Page of the origin file where the kan name is printed'),
+  origin_id: z.string().nullable().describe('Origin file the page refers to (one of origins[].origin_id)'),
 })
 
 export const Revenue = z.strictObject({
