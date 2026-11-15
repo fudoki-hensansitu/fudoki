@@ -47,7 +47,12 @@ export function apiCall(env: Pick<Env, 'WEB'>): ApiCall {
 export function mcpFetch(env: Pick<Env, 'WEB'>): typeof fetch {
   const rpc = fudokiApi(env)
   // @ai-sdk/mcp は redirect: 'error' で呼ぶが、Workers は 'error' を受け付けず Request の生成で例外になる。'manual' なら 3xx は結果として返るので同じ安全さで足りる
-  return ((input: RequestInfo | URL, init?: RequestInit) => rpc.mcp(new Request(input, init?.redirect === 'error' ? { ...init, redirect: 'manual' } : init))) as typeof fetch
+  // @ai-sdk/mcp は AbortSignal も付けるが、Workers の RPC は signal を持つ Request を渡せず DataCloneError になる。signal を外して渡す
+  return ((input: RequestInfo | URL, init?: RequestInit) => {
+    const { signal: _signal, ...rest } = init ?? {}
+    const request = new Request(input, rest.redirect === 'error' ? { ...rest, redirect: 'manual' } : rest)
+    return rpc.mcp(new Request(request.url, { method: request.method, headers: request.headers, body: request.body, redirect: request.redirect }))
+  }) as typeof fetch
 }
 
 /** 操作を公開の REST の要求に読み替える。web が使う操作だけを持つ */
