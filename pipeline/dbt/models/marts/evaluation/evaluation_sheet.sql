@@ -1,8 +1,10 @@
 -- 事務事業評価シート。1枚（1事業）が1行。金額は出典の印字を円にしたもの。
+-- 1枚に複数の事業を並べる様式は頁の中の順（position）で分ける。頁に1件の様式の ID は (出典, 頁) のまま
 -- 決算書の目・内訳への紐付けは風土記の判断（列の説明を参照）。
 with recursive sheet as (
     select s.*, o.jurisdiction_code, o.fiscal_year,
-        sha256(to_json([s.origin_id, s.page::varchar])) as sheet_id
+        sha256(to_json(case when s.position = 1 then [s.origin_id, s.page::varchar]
+            else [s.origin_id, s.page::varchar, s.position::varchar] end)) as sheet_id
     from {{ source('project', 'project_evaluation_sheet') }} s
     join {{ source('project', 'project_origin') }} o using (origin_id)
 ),

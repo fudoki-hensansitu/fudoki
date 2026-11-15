@@ -1,6 +1,6 @@
 # ADR 0027: 取り込み表の指紋はコード変化の合図とし、保存し直すかは表の中身で決める。検査だけのコードは指紋から外す
 
-状態: 採用（2026-10-13）。2026-11-12 に「古い指紋で止める」を改め（下の「改定（2026-11-12）」）、2026-11-13 に `ingestion:check` は指紋を見なくした（下の「改定（2026-11-13）」）。[保存設計](../prd/ingestion-storage/dd.md)の「fingerprintで入力条件の変更を検知する」を補う。fingerprintの計算（出典SHA・scope・変換設定・参照するコードの中身のハッシュ）は変えない。
+状態: 採用（2026-10-13）。2026-11-12 に「古い指紋で止める」を改め（下の「改定（2026-11-12）」）、2026-11-13 に `ingestion:check` は指紋を見なくした（下の「改定（2026-11-13）」）。2026-11-15 に指紋の書き換えを refresh-check に移した（下の「改定（2026-11-15）」）。[保存設計](../prd/ingestion-storage/dd.md)の「fingerprintで入力条件の変更を検知する」を補う。fingerprintの計算（出典SHA・scope・変換設定・参照するコードの中身のハッシュ）は変えない。
 
 fingerprintは「表が変わったかもしれない」という合図として持ち続ける。古い表は `ingestion:refresh --plan` で一覧できる（`ingestion:check` は当初は止め、改定を経て今は指紋を見ない）。合図が出たら `ingestion:refresh` が変換をローカルでやり直し、保存済みの表と**中身**を比べる。全表が同じなら管理JSONの `input_fingerprint` だけを書き換える（Gitのみ。R2には書かない）。違う表が1つでもあれば、その管理JSONは書き換えず、増えた・消えた・変わった行の数と例を出す。違いは本当の変更なので、件数と差分を見せ、`ingestion:convert` で記録し直す（R2 への保存は [ADR 0045](0045-ingestion-tables-uploaded-by-ci.md) で merge 後の CI に移した）。
 
@@ -76,3 +76,13 @@ fingerprintはコードのファイルの中身のハッシュなので、1文�
 
 - `ingestion:check` は指紋を見ない。CI（verify）の時間のほとんどが指紋の計算で、表示だけの結果に払う代償に見合わないため。check は管理 JSON の構造と、変換の入力が選んで保存済みの資料を指すかだけを確かめる。
 - 古い表の一覧は `ingestion:refresh --plan`、中身の比較は定期の refresh-check（`.github/workflows/refresh-check.yml`）が受け持つ。`ingestion:restore` は今までどおり古い表を表示する。
+
+## 改定（2026-11-15）
+
+- main の refresh-check は `--dry-run` を外して回し、中身が同じだった管理 JSON の `input_fingerprint` を書き換えて、その差分の PR（branch `refresh-check/fingerprints`）を出す。R2 には書かない。違う表がある管理 JSON は書き換えず、ジョブを落とす。
+- main 以外の branch で手動実行したときは今までどおり比べるだけにする。Poppler の版を上げたときは `all` を付けて手動実行する。
+- スレッドや PR で `ingestion:refresh` を回して指紋を書き換えない。
+
+### 理由
+
+PR で refresh を回さなくなってから指紋を書き換える担当がいなくなり、古い指紋がたまって、毎日の比較と merge 後の `ingestion:store` が作り直す表が増え続けていた。

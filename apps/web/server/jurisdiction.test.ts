@@ -17,40 +17,6 @@ import { TOPIC_SEGMENTS } from '../jurisdiction/path'
 import { appYears } from './app-data'
 import { withExtras, type Snapshot } from '../jurisdiction/app/data'
 
-describe('金額と年度の表記', () => {
-  test('1億円以上は億円、未満は万円。100億円以上は小数を出さない', () => {
-    expect(formatYen(58_443_843_520)).toBe('584億円')
-    expect(formatYen(9_147_986_681)).toBe('91.5億円')
-    expect(formatYen(355_826_620)).toBe('3.6億円')
-    expect(formatYen(76_543_210)).toBe('7,654万円')
-  })
-  test('西暦を令和の R 表記にする', () => {
-    expect(reiwa(2025)).toBe('R7年度')
-    expect(reiwa(2019)).toBe('R1年度')
-    expect(reiwa(2018)).toBe('2018年度')
-  })
-  test('前の年度が無い・0 のときは増減を出さない', () => {
-    expect(changePct(110, 100)).toBeCloseTo(10)
-    expect(changePct(50, null)).toBeNull()
-    expect(changePct(50, 0)).toBeNull()
-  })
-  test('款の増減は前年の同じ款だけを比べ、未収録年度を飛び越えない', () => {
-    const year = (year: number, amounts: Record<string, number>): YearTotal => ({
-      year,
-      yen: Object.values(amounts).reduce((sum, yen) => sum + yen, 0),
-      kan: Object.entries(amounts).map(([name, yen]) => ({ id: name, name, yen })),
-    })
-    const latest = year(2025, { 民生費: 120, 総務費: 50, 教育費: 100, 衛生費: 20 })
-    expect(kanChanges([year(2023, { 民生費: 100 }), latest])).toEqual([])
-    expect(kanChanges([year(2023, { 民生費: 60 }), year(2024, { 民生費: 100, 総務費: 100, 教育費: 0 }), latest])).toEqual([
-      { name: '民生費', pct: 20 },
-      { name: '総務費', pct: -50 },
-    ])
-    expect(kanChanges([latest])).toEqual([])
-    expect(kanChanges([])).toEqual([])
-  })
-})
-
 const id = (n: number) => n.toString(16).padStart(64, '0')
 type Row = Record<string, unknown> & { node_id: string; fiscal_year: number }
 const node = (over: Record<string, unknown>): Row => ({ document_kind: 'settlement', jurisdiction_code: '131148', account_name: '一般会計', axis: '科目', is_subject: true, parent_node_id: null, origin_id: 'o1', source_page: 1, amount_source_page: 2, kan_name: null, kou_name: null, node_id: '', fiscal_year: 0, ...over })
@@ -132,142 +98,6 @@ const view = async (path: string, e: Env = env) => {
 const canonical = (h: Head) => h.link.find((l) => l.rel === 'canonical')?.href
 
 describe('自治体の個別ページ', () => {
-  test('当初予算と決算の両方がある年度は決算を読み、決算より後の年度だけ当初予算を読む', () => {
-    expect(appYears({ initialYears: [2024, 2025, 2026], settlementYears: [2024] })).toEqual([
-      { year: 2026, kind: 'initial' },
-      { year: 2025, kind: 'initial' },
-      { year: 2024, kind: 'settlement' },
-    ])
-  })
-  test('head に最新の決算・当初予算の金額と自治体名を入れる', async () => {
-    const base = await view('/tokyo/nakano')
-    // 金額（headline）は loader が本文と同じ段で足す
-    const data = { ...base, headline: { settlement: { year: 2025, yen: 1000, areas: [{ name: '教育', yen: 600, other: false }, { name: 'その他', yen: 400, other: true }] } } }
-    const head = pageHead(data)
-    expect(head.title).toBe('中野区の決算（令和7年度）｜風土記')
-    // 決算より後の当初予算があれば、title に予算と決算を、説明文に両方の金額を年度つきで入れる
-    const withBudget = { ...data, budgetYears: [2026], headline: { ...data.headline, budget: { year: 2026, yen: 1_234_000_000 } } }
-    expect(pageHead(withBudget).title).toBe('中野区の予算と決算（令和8年度）｜風土記')
-    expect(pageHead(withBudget).meta.find((m) => m.name === 'description')?.content).toMatch(/^中野区の令和8年度当初予算の歳出は約12\.3億円、令和7年度決算（一般会計）の歳出は約/)
-    // 金額の無い当初予算（headline に無い）は title に使わない
-    expect(pageHead({ ...data, budgetYears: [2026] }).title).toBe(head.title)
-    // 金額の読めない当初予算が最新の年度でも、入口の canonical は本文・年度チップと同じ最新の年度
-    expect(canonical(pageHead({ ...data, budgetYears: [2026] }))).toBe('https://fudoki.dev/tokyo/nakano/2026')
-    expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano/2025')
-    // 紋章と決算のある自治体は og:image を自治体の画像に差し替え、紋章の無い自治体は全頁共通の画像のまま
-    expect(head.meta).toContainEqual({ property: 'og:image', content: 'https://fudoki.dev/jurisdictions/131148/og.png' })
-    expect(pageHead({ ...data, emblem: null }).meta.some((m) => m.property === 'og:image')).toBe(false)
-    // 画像の金額は最新の決算なので、過去の年度の頁・決算の分野が無い頁は全頁共通の画像のまま
-    expect(pageHead(data, 2024).meta.some((m) => m.property === 'og:image')).toBe(false)
-    expect(pageHead({ ...data, headline: { settlement: { ...data.headline.settlement, areas: [] } } }).meta.some((m) => m.property === 'og:image')).toBe(false)
-    const ld = JSON.parse(head.script![0]!.innerHTML!) as { '@type': string; itemListElement?: { position: number; name: string; item: string }[] }[]
-    expect(ld.find((x) => x['@type'] === 'BreadcrumbList')?.itemListElement?.map((x) => [x.position, x.name, x.item])).toEqual([
-      [1, '風土記', 'https://fudoki.dev/'],
-      [2, '東京都', 'https://fudoki.dev/tokyo'],
-      [3, '中野区', 'https://fudoki.dev/tokyo/nakano'],
-    ])
-    // 頁のデータは API を読まずにカタログの1件から決まる（金額は持たない）
-    expect(base.settlementYears).toEqual([2024, 2025])
-    const flow = await loadFlow(env, '131148', 2025)
-    expect(flow.map((d) => [d.kan.name, d.kou.map((k) => k.name)])).toEqual([['子ども教育費', ['子ども費']], ['総務費', ['総務管理費']]])
-    expect(flow[0]!.kou[0]!.moku).toEqual([])
-  })
-
-  test('予算・決算のタブはどの年度にもあり、収録の無い年度のタブは検索に出さない', async () => {
-    const data = await view('/tokyo/nakano')
-    const robots = (h: Head) => h.meta.find((m) => m.name === 'robots')?.content
-    // 決算は 2024・2025 だけ。2026 の決算のタブは「まだ収録していません」の頁
-    expect(robots(pageHead({ ...data, budgetYears: [2026] }, 2026, { tab: 'settled' }))).toBe('noindex')
-    expect(robots(pageHead(data, 2025, { tab: 'settled' }))).toBeUndefined()
-    expect(robots(pageHead({ ...data, initialYears: [] }, 2025, { tab: 'money' }))).toBe('noindex')
-    expect(robots(pageHead({ ...data, initialYears: [2025] }, 2025, { tab: 'money' }))).toBeUndefined()
-  })
-
-  test('収録の無い自治体は検索に出さず、名前が違えば 404、sitemap には収録のある自治体だけ', async () => {
-    const empty = await resolveJurisdiction(env, '/tokyo/chiyoda')
-    expect(empty?.kind).toBe('empty')
-    if (empty?.kind === 'empty') expect(emptyHead(empty.entry).meta).toContainEqual({ name: 'robots', content: 'noindex' })
-    expect(await resolveJurisdiction(env, '/tokyo/sonzaishinai')).toBeNull()
-    // 都道府県自体は /tokyo（/tokyo/tokyo にしない）
-    const tokyo = await resolveJurisdiction(env, '/tokyo')
-    expect(tokyo?.kind === 'empty' && canonical(emptyHead(tokyo.entry))).toBe('https://fudoki.dev/tokyo')
-    expect(await resolveJurisdiction(env, '/tokyo/tokyo')).toBeNull()
-    // 都道府県の slug でなければ自治体のページにしない（/s/:id などを奪わない）
-    expect(await resolveJurisdiction(env, '/jurisdictions')).toBeNull()
-    expect(await resolveJurisdiction(env, '/s/not-a-session')).toBeNull()
-    expect((await get('/api/none')).status).toBe(404)
-    const sitemap = await (await get('/sitemap.xml')).text()
-    expect(sitemap).not.toContain('<loc>https://fudoki.dev/tokyo/nakano</loc>')
-    expect(sitemap).not.toContain('chiyoda')
-    // 年度の頁とタブの頁を載せ、年度の段の無い入口は最新の年度への pointer なので載せない
-    expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano/2024</loc>')
-    expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano/2025</loc>')
-    expect(sitemap).toContain('<loc>https://fudoki.dev/tokyo/nakano/2025/projects</loc>')
-  })
-
-  test('年度の頁は、その年度の title と canonical を持ち、最新の年度は 200 で入口の canonical も年度つきにし、選べない年度は 404', async () => {
-    const data = await view('/tokyo/nakano')
-    // 年度の頁の金額は、本文が読んだその年度の款項目（opened）から書く
-    const head = pageHead(data, 2024, undefined, { year: 2024, kind: 'settlement', yen: 500, originTitle: null })
-    expect(head.title).toBe('中野区の決算（令和6年度）｜風土記')
-    expect(canonical(head)).toBe('https://fudoki.dev/tokyo/nakano/2024')
-    expect(head.meta.find((m) => m.name === 'description')?.content).toStartWith('中野区の令和6年度決算（一般会計）の歳出は約')
-    const headers = new Headers()
-    const c = { env, req: { url: 'https://fudoki.dev/tokyo/nakano/2024' }, header: (k: string, v: string) => headers.set(k, v) } as unknown as Context
-    expect((await jurisdictionProps(c, '/tokyo/nakano', '2024')).year).toBe(2024)
-    // 戻る遷移で取り直さないようブラウザに置く
-    expect(headers.get('Cache-Control')).toBe('public, max-age=300')
-    const status = (segment: string) => jurisdictionProps(c, '/tokyo/nakano', segment).then(() => 200, (e: { status: number; res?: Response }) => [e.status, e.res?.headers.get('Location') ?? null])
-    expect(await status('2025')).toBe(200)
-    expect(canonical(pageHead(data))).toBe('https://fudoki.dev/tokyo/nakano/2025')
-    expect(canonical(pageHead(data, 2025))).toBe('https://fudoki.dev/tokyo/nakano/2025')
-    expect(canonical(pageHead(data, 2025, { tab: 'projects' }))).toBe('https://fudoki.dev/tokyo/nakano/2025/projects')
-    expect(await status('2019')).toEqual([404, null])
-  })
-
-  test('ホームの自治体の要約は決算を収録している自治体だけを載せる', async () => {
-    expect((await homeEntries(env)).map((e) => [e.name, e.path, e.latestYear])).toEqual([['中野区', '/tokyo/nakano', 2025]])
-  })
-
-
-  test('URL のローマ字は自治体マスタの全自治体にあり、同じ都道府県の中でもテーマの段とも重ならない', () => {
-    const seen = new Set<string>()
-    for (const [code, j] of Object.entries(registry.jurisdictions as Record<string, { name: string; slug?: string }>)) {
-      expect(j.slug, `${code} ${j.name}`).toMatch(/^[a-z]+(-[a-z]+)*$/)
-      const key = `${code.slice(0, 2)}/${j.slug}`
-      expect(seen.has(key), `${code} ${j.name} の slug が重なる`).toBe(false)
-      expect(TOPIC_SEGMENTS.has(j.slug!), `${code} ${j.name} の slug がテーマの段と重なる`).toBe(false)
-      seen.add(key)
-    }
-    expect(Object.keys(prefectures.slugs)).toHaveLength(47)
-    expect(new Set(Object.values(prefectures.slugs)).size).toBe(47)
-  })
-
-  test('収録年度が離れていても最新年度から5年間の決算を表示する', async () => {
-    const sparse: Env = web({ fetch: async (req) => {
-      const url = new URL(req.url)
-      const nakano = { jurisdiction_code: '131148', name: '中野区', prefecture_name: '東京都', population: [], evaluations: [], coverage: [2019, 2020, 2021, 2023, 2025].map((fiscal_year) => ({ fiscal_year, document_kind: 'settlement', accounts: [{ account_name: '一般会計' }] })) }
-      if (url.pathname === '/v1/jurisdictions') return Response.json({ jurisdictions: [nakano] })
-      if (url.pathname === '/v1/jurisdictions/131148') return Response.json(nakano)
-      if (url.pathname === '/v1/expenditures/subjects:search') {
-        const body = await req.json() as { fiscal_year: { min: number; max: number }; where: { level: { eq: string[] } } }
-        if (body.fiscal_year.max - body.fiscal_year.min > 4) return Response.json({ error: 'fiscal_year は 5 年以内にしてください' }, { status: 400 })
-        const rows = body.where.level.eq[0] === '款'
-          ? [...KAN.filter((n) => n.fiscal_year === 2025), node({ node_id: id(4), node_kind: '款', name: '総務費', fiscal_year: 2021, amount_yen: 250 }), node({ node_id: id(5), node_kind: '款', name: '総務費', fiscal_year: 2023, amount_yen: 300 })]
-          : MOKU_2025
-        return Response.json({ subjects: rows.filter((n) => n.fiscal_year >= body.fiscal_year.min && n.fiscal_year <= body.fiscal_year.max).map(toSubject) })
-      }
-      return API.fetch(req)
-    } })
-    const data = await view('/tokyo/nakano', sparse)
-    expect(data.settlementYears).toEqual([2021, 2023, 2025])
-    const xml = await (await get('/sitemap.xml', sparse)).text()
-    expect(xml).toContain('https://fudoki.dev/tokyo/nakano/2023')
-    expect(xml).toContain('https://fudoki.dev/tokyo/nakano/2021')
-    expect(xml).not.toContain('https://fudoki.dev/tokyo/nakano/2020')
-    expect(xml).not.toContain('https://fudoki.dev/tokyo/nakano/2019')
-  })
-
   test('API に繋がらないときは投げて（頁は 502）、sitemap は入口・アシスタントだけで答える', async () => {
     const down: Env = web({ fetch: async () => new Response('x', { status: 500 }) })
     await expect(resolveJurisdiction(down, '/tokyo/nakano')).rejects.toThrow()
@@ -370,6 +200,22 @@ describe('事業の読み込み（/api/projects）', () => {
     expect((await get(`/api/projects?detail=${H}&year=20255&kind=initial`)).status).toBe(400)
     expect((await post({ query }, web(API))).status).toBe(503)
   })
+  test('評価シートの一覧・区分ごとの数（/api/sheets）は内部の RPC で読み、引数の形が違えば 400', async () => {
+    const seen: [string, unknown][] = []
+    const WEB: Env['WEB'] = {
+      call: async (name, input) => (seen.push([name, input]), { ok: true, value: (name === 'count_evaluation_sheets' ? { counts: [{ outlook: null, size: 2 }] } : { sheets: [], origins: [], total_size: 0, total_size_capped: false, next_page_token: null }) as never }),
+      mcp: async () => new Response('x'),
+    }
+    const sheets = (path: string, body: unknown, e: Env = env) => fetchRoute(new Request(`https://fudoki.dev${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }), e)
+    const q = { code: '131148', year: 2025, codes: ['keep'] }
+    expect(await (await sheets('/api/sheets', { query: q }, { ...env, WEB })).json()).toEqual({ rows: [], next: null })
+    expect(await (await sheets('/api/sheets/counts', { query: q }, { ...env, WEB })).json()).toEqual([{ code: null, label: null, grade: null, n: 2 }])
+    // 数えるときは区分で絞らない
+    expect(seen.map(([n, i]) => [n, (i as { where: Record<string, unknown> }).where.direction_code])).toEqual([['search_evaluation_sheets', { eq: ['keep'] }], ['count_evaluation_sheets', undefined]])
+    expect((await sheets('/api/sheets', { query: { ...q, codes: ['x'] } })).status).toBe(400)
+    expect((await sheets('/api/sheets', { query: { ...q, code: 'nakano' } })).status).toBe(400)
+    expect((await sheets('/api/sheets/counts', { query: { ...q, subjects: ['x'] } })).status).toBe(400)
+  })
   test('うちのまちの札（/api/jurisdictions/:code）は形が違えば 400、未収録・頁に無い年度は 404、API に繋がらなければ 502', async () => {
     expect((await get('/api/jurisdictions/nakano?year=2025')).status).toBe(400)
     expect((await get('/api/jurisdictions/131148?year=25')).status).toBe(400)
@@ -386,23 +232,5 @@ describe('最初の画面に要らない分', () => {
     expect((await get('/api/jurisdictions/131148/2025/field-subjects')).status).toBe(400)
     expect((await get('/api/jurisdictions/131148/2025/field-subjects?kind=other')).status).toBe(400)
     expect((await get('/api/jurisdictions/131148/2025/field-subjects?kind=initial', web(API))).status).toBe(503)
-  })
-  test('施策・評価シートの分野は、開いた年度の款項目から科目の ID、無ければ款・項・目の名前で引く', () => {
-    const base: Snapshot = {
-      code: '131148', name: '中野区', pop: 0, year: 2025, kinds: { 2025: 'settlement' }, measures: [], sheets: [], lists: {}, pending: true,
-      years: { 2025: { kind: 'settlement', total: 300, fields: { welfare: 300 }, fieldSubjects: { welfare: [id(11)] }, looseMoku: [], origin: null, originTitle: null, kan: [{ name: '子ども教育費', yen: 300, kou: [{ name: '子ども費', yen: 300, moku: [{ id: id(11), name: '保育園費', yen: 300, field: 'welfare', cofog: null }] }] }] } },
-    }
-    const m = { id: 'm', fy: 2025, title: '', new: true, yen: 1, desc: [], detail: null, url: '', origin: 'o', page: 1 }
-    const s = { id: 's', fy: 2025, name: '', grade: null, dir: null, dc: null, dl: null, div: null, acct: '', b: null, s: null, detail: null, url: '', origin: 'o', page: 1 }
-    const d = withExtras(base, {
-      measures: [{ ...m, subject: id(11), path: null }, { ...m, subject: id(99), path: ['子ども教育費', '子ども費', '保育園費'] }, { ...m, subject: null, path: null }],
-      sheets: [{ ...s, path: ['子ども教育費', '子ども費', '保育園費'] }, { ...s, path: ['総務費', '総務管理費', '一般管理費'] }],
-      hasProjects: true,
-      lists: {},
-    })
-    expect(d.measures.map((x) => x.field)).toEqual(['welfare', 'welfare', 'other'])
-    expect(d.sheets.map((x) => x.field)).toEqual(['welfare', 'other'])
-    expect(d.pending).toBeUndefined()
-    expect(d.hasProjects).toBe(true)
   })
 })

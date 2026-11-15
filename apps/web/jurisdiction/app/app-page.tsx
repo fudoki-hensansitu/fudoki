@@ -66,7 +66,7 @@ import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
 import { directionOf, DIRECTION_ICONS, GRADES, withExtras, yearView, type AccountTotal, type Measure, type Proj, type Sheet as EvalSheet, type Snapshot, type YearExtras, type YearView } from './data'
-import { fieldSubjects, listKey, listPage, projectFull, projectOfDetail, type ListPage, type ListQuery, type ProjectFull } from './api'
+import { fieldSubjects, listKey, listPage, projectFull, projectOfDetail, sheetCountKey, sheetCounts, sheetKey, sheetPage, type ListPage, type ListQuery, type ProjectFull, type SheetCount, type SheetQuery } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import './app.css'
 
@@ -107,7 +107,7 @@ const perHead = (y: number, pop: number) => {
 const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
-type Selected = { kind: 'project' | 'measure' | 'sheet'; id: string } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
+type Selected = { kind: 'project' | 'measure'; id: string } | { kind: 'sheet'; id: string; /** 一覧は頁ごとに読むので、選んだシートをそのまま持つ */ sheet: EvalSheet } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
 type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected | ((s: Selected) => Selected)) => void; selected: Selected; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; /** loader が defer で渡す残り（施策・評価シート・お金のかかる事業）。useFullView が use() で待つ */ extras?: Promise<YearExtras>; prevFieldSubjects?: Record<string, string[]> }
 /** 文脈に添える、開いている事業の評価シート（評価は過去の年度にしか無いので全年度の新しい順）・施策の数の上限（文脈の長さの上限に収める） */
 const DETAIL_SOURCES = 3
@@ -123,10 +123,7 @@ function describeSelected(sel: Selected, d: Snapshot, prevFieldSubjects: Record<
   const v = yearView(d, prevFieldSubjects)
   const source = (label: string, x: { fy: number; origin: string; page: number }, name: string) => `${label}: ${r(x.fy)}「${name}」（origin_id ${x.origin}、${x.page}頁）`
   if (sel.kind === 'moku') return `開いている科目: ${[...(sel.moku.path ?? []), sel.moku.name].filter(Boolean).join(' > ')}（subject_id ${sel.moku.id}）`
-  if (sel.kind === 'sheet') {
-    const s = d.sheets.find((x) => x.id === sel.id)
-    return s ? source('開いている評価シート', s, s.name) : ''
-  }
+  if (sel.kind === 'sheet') return source('開いている評価シート', sel.sheet, sel.sheet.name)
   if (sel.kind === 'measure') {
     const m = d.measures.find((x) => x.id === sel.id)
     return m ? source('開いている予算案の施策', m, m.title) : ''
@@ -136,7 +133,7 @@ function describeSelected(sel: Selected, d: Snapshot, prevFieldSubjects: Record<
   const now = (v.kind === 'initial' ? p.y[String(v.year)]?.b : p.y[String(v.year)]?.s) ?? null
   return [
     `開いている事業: ${p.name}（${[p.path.filter(Boolean).join(' > '), p.dept].filter(Boolean).join('、')}）${now != null ? `、${r(v.year)}の${v.word} ${yenText(now)}` : ''}（project_id ${p.id}）`,
-    ...[...v.measuresFor(p).map((m) => source('この事業の予算案の施策', m, m.title)), ...v.sheetsFor(p).map((s) => source(`この事業の評価シート（${r(s.fy)}に行った事業の評価）`, s, s.name))].slice(0, DETAIL_SOURCES),
+    ...[...v.measuresFor(p).map((m) => source('この事業の予算案の施策', m, m.title)), ...p.sheets.map((s) => source(`この事業の評価シート（${r(s.fy)}に行った事業の評価）`, s, s.name))].slice(0, DETAIL_SOURCES),
   ].join('\n')
 }
 
@@ -234,7 +231,7 @@ function MeasureRow({ m }: { m: Measure }) {
 function SheetRow({ s }: { s: EvalSheet }) {
   const { select, selected } = useApp()
   const dir = directionOf(s)
-  return <Row icon={dir ? <Mark kind={dir.icon} label={dir.label} /> : <IconBox><ClipboardTextIcon /></IconBox>} title={s.name} sub={[s.div, dir?.label ?? s.dir].filter(Boolean).join(' · ')} yen={s.s} note={`${r(s.fy)} 決算`} selected={selected?.kind === 'sheet' && selected.id === s.id} onClick={() => select({ kind: 'sheet', id: s.id })} />
+  return <Row icon={dir ? <Mark kind={dir.icon} label={dir.label} /> : <IconBox><ClipboardTextIcon /></IconBox>} title={s.name} sub={[s.div, dir?.label ?? s.dir].filter(Boolean).join(' · ')} yen={s.s} note={`${r(s.fy)} 決算`} selected={selected?.kind === 'sheet' && selected.id === s.id} onClick={() => select({ kind: 'sheet', id: s.id, sheet: s })} />
 }
 /** 行の間に Separator を挟む */
 /** 最後の節。都道府県・近くの自治体へ。見出しと行はほかの節と同じ形にする */
@@ -276,7 +273,7 @@ function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, 
   )
 }
 
-/** 一覧の1頁目。サーバーが渡した分はそのまま、無ければ API から読む（読み終えるまで Suspense の fallback） */
+/** 一覧の1頁目。サーバーが渡した分はそのまま、無ければ API から読む（読み終えるまで Suspense の fallback）。ProjectList と同じ置き場を読む */
 function useListPage(q: ListQuery): Loaded<ListPage> {
   const { res } = useApp()
   return React.use(res.get(listKey(q), () => listPage(q)))
@@ -289,19 +286,19 @@ const RowsSkeleton = ({ n = 5 }: { n?: number }) => (
 )
 const LoadFailed = () => <p className="px-2.5 py-4 text-sm text-muted-foreground">読み込めませんでした。少し待ってから開き直してください。</p>
 
-/** 事業の一覧。1頁目のあと、末尾が見えたら公開 API から続きを読んで足す */
-function ProjectList({ q, head, render = (p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} /> }: { q: ListQuery; head?: (page: ListPage) => React.ReactNode; render?: (p: Proj, i: number) => React.ReactNode }) {
+/** 頁ごとに読む一覧。1頁目のあと、末尾が見えたら続きを読んで足す（足した一覧は key の置き場に入れ直す） */
+function Paged<T, P extends { rows: T[]; next: string | null }>({ k, first, next, head, render }: { k: string; first: () => Promise<P>; next: (token: string) => Promise<P>; head?: (page: P) => React.ReactNode; render: (t: T, i: number) => React.ReactNode }) {
   const { res } = useApp()
-  const page = useListPage(q)
+  const page = React.use(res.get(k, first))
   const [tries, bump] = React.useReducer((x: number) => x + 1, 0)
   const loading = React.useRef(false)
   if (page === FAILED) return <LoadFailed />
   const more = () => {
     if (loading.current || !page.next) return
     loading.current = true
-    listPage(q, page.next).then(
+    next(page.next).then(
       (p) => {
-        res.set(listKey(q), { ...page, rows: [...page.rows, ...p.rows], next: p.next })
+        res.set(k, { ...page, rows: [...page.rows, ...p.rows], next: p.next })
         loading.current = false
         bump()
       },
@@ -319,6 +316,33 @@ function ProjectList({ q, head, render = (p, i) => <ProjectRow key={p.id} p={p} 
       {page.next ? <MoreDots key={`${page.rows.length}:${tries}`} onVisible={more} /> : null}
     </>
   )
+}
+
+/** 事業の一覧（頁ごとに web の /api/projects から読む） */
+function ProjectList({ q, head, render = (p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} /> }: { q: ListQuery; head?: (page: ListPage) => React.ReactNode; render?: (p: Proj, i: number) => React.ReactNode }) {
+  return <Paged k={listKey(q)} first={() => listPage(q)} next={(t) => listPage(q, t)} head={head} render={render} />
+}
+
+/** 評価シートの一覧の条件（その年度の、分野・事業名で絞ったもの） */
+const sheetQueryOf = (d: Pick<Snapshot, 'code'>, v: YearView, field: string, q: string): SheetQuery => ({
+  code: d.code,
+  year: v.year,
+  ...(field !== 'all' ? { subjects: v.subjectsOf(field) } : {}),
+  ...(q ? { q } : {}),
+})
+
+/** 評価シートの区分ごとの数。絞らないときは残り（defer）で届いた数をそのまま使う */
+function useSheetCounts(v: YearView, q: SheetQuery): Loaded<SheetCount[]> {
+  const { res } = useApp()
+  const plain = !q.subjects && !q.q
+  return plain ? v.sheetCounts : React.use(res.get(sheetCountKey(q), () => sheetCounts(q)))
+}
+
+/** 分野の頁の A〜D の札（その分野の科目のシートを数える） */
+function FieldGradeCards({ q }: { q: SheetQuery }) {
+  const { v } = useApp()
+  const counts = useSheetCounts(v, q)
+  return counts === FAILED ? <LoadFailed /> : <GradeCards counts={counts} />
 }
 
 /** 件数（数えるのを打ち切ったら「以上」） */
@@ -397,7 +421,8 @@ function FreshCarousel({ items, more }: { items: Measure[]; more?: () => void })
   )
 }
 
-function GradeCards({ sheets, value, onChange }: { sheets: EvalSheet[]; value?: string; onChange?: (g: string) => void }) {
+/** A〜D の札。数は api が方向性の区分ごとに数えたもの */
+function GradeCards({ counts, value, onChange }: { counts: SheetCount[]; value?: string; onChange?: (g: string) => void }) {
   return (
     <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-4">
       {GRADES.map(([g, label]) => (
@@ -408,7 +433,7 @@ function GradeCards({ sheets, value, onChange }: { sheets: EvalSheet[]; value?: 
             {label}
           </span>
           <span className="text-[26px] leading-tight tabular-nums">
-            {sheets.filter((s) => s.grade === g).length}
+            {counts.reduce((n, c) => n + (c.grade === g ? c.n : 0), 0)}
             <small className="ml-1 text-xs text-muted-foreground">事業</small>
           </span>
         </Card></button>
@@ -555,10 +580,10 @@ function Overview({ go }: { go: Go }) {
               <SectionHead title="お金のかかる事業"><MoreLink onClick={() => go('projects', { filter: 'all' })} /></SectionHead>
               {v.failed && v.hasProjects === undefined ? <LoadFailed /> : <Rows>{v.top.slice(0, 5).map((p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />)}</Rows>}
             </section>
-            {v.sheets.length ? (
+            {v.sheetTotal ? (
               <section>
                 <SectionHead title="事業評価" sub={`${r(v.year)}年度の事業`}><MoreLink onClick={() => go('projects', { filter: 'eval' })} /></SectionHead>
-                <GradeCards sheets={v.sheets} onChange={(g) => go('projects', { filter: 'eval', grade: g })} />
+                <GradeCards counts={v.sheetCounts} onChange={(g) => go('projects', { filter: 'eval', grade: g })} />
               </section>
             ) : null}
           </>
@@ -627,7 +652,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
               <>
                 {v.comparable || v.fresh.length ? <ToggleGroupItem value="new"><NewIcon className="size-4 text-primary" />新しく始める</ToggleGroupItem> : null}
                 {v.comparable ? <ToggleGroupItem value="ended"><StopIcon className="size-4 text-primary" />やめた</ToggleGroupItem> : null}
-                {v.sheets.length ? <ToggleGroupItem value="eval"><ClipboardTextIcon className="size-4" />評価した</ToggleGroupItem> : null}
+                {v.sheetTotal ? <ToggleGroupItem value="eval"><ClipboardTextIcon className="size-4" />評価した</ToggleGroupItem> : null}
               </>
             )}
           </Full>
@@ -672,31 +697,45 @@ function EndedFieldList({ field, q, head }: { field: string; q: string; head: (n
   return <ProjectList q={list} head={(page) => head(countOf(page))} />
 }
 
-/** 事業の一覧の「評価した」。評価は事業の属性なので、別のタブにせず事業の絞り込みの1つにする */
+/** 事業の一覧の「評価した」。評価は事業の属性なので、別のタブにせず事業の絞り込みの1つにする。
+ * A〜D の札は api が数えた数、シートは選んだ札の区分だけを頁ごとに読む */
 function EvalList({ v, grade, setGrade, field, q, leave }: { v: YearView; grade: string; setGrade: (g: string) => void; field: string; q: string; /** 評価の無い年度へ移ったら絞り込みを戻す */ leave: () => void }) {
+  const { d } = useApp()
   React.useEffect(() => {
-    if (!v.failed && !v.sheets.length) leave()
+    if (!v.failed && !v.sheetTotal) leave()
   }, [v])
-  const t = q.trim()
-  const all = React.useMemo(() => v.sheets.filter((s) => (field === 'all' || s.field === field) && (!t || s.name.includes(t) || (s.div ?? '').includes(t))), [v, field, t])
-  const ss = React.useMemo(() => all.filter((s) => s.grade === grade).sort((a, b) => (b.s ?? 0) - (a.s ?? 0)), [all, grade])
-  const dirs = (Object.keys(DIRECTION_ICONS) as (keyof typeof DIRECTION_ICONS)[])
-    .map((k) => ss.filter((s) => s.dc === k))
-    .filter((xs) => xs.length)
-    .map((xs) => [directionOf(xs[0]!)!, xs.length] as const)
   // 評価シートを読めなかったら、0件と見せずに読めなかったと出す
   if (v.failed) return <LoadFailed />
+  const base = sheetQueryOf(d, v, field, q.trim())
   return (
     <div className="mt-1 flex flex-col gap-3">
-      <GradeCards sheets={all} value={grade} onChange={setGrade} />
-      <div className="flex flex-wrap gap-1.5">
-        {dirs.map(([x, n]) => (
-          <span key={x.label} className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs text-muted-foreground"><Mark kind={x.icon} className="size-[18px]" />{x.label} {n}</span>
-        ))}
-      </div>
-      <Infinite items={ss} render={(s) => <SheetRow key={s.id} s={s} />} />
+      <ClientSuspense fallback={<RowsSkeleton />} ready={!base.subjects && !base.q}>
+        <EvalBody v={v} base={base} grade={grade} setGrade={setGrade} />
+      </ClientSuspense>
       <p className="text-xs text-muted-foreground">自治体が {r(v.year)}年度に行った事業を自ら評価した結果です。A〜D と方向性は、自治体ごとに違う評価の書き方を共通の区分に揃えたもので、風土記は評価を加えていません。</p>
     </div>
+  )
+}
+
+function EvalBody({ v, base, grade, setGrade }: { v: YearView; base: SheetQuery; grade: string; setGrade: (g: string) => void }) {
+  const { res } = useApp()
+  const counts = useSheetCounts(v, base)
+  if (counts === FAILED) return <LoadFailed />
+  // 札の区分（数えた中で、その札に入る方向性）だけでシートを引く
+  const dirs = counts.filter((c): c is SheetCount & { code: NonNullable<SheetCount['code']> } => c.grade === grade && !!c.code).sort((a, b) => Object.keys(DIRECTION_ICONS).indexOf(a.code) - Object.keys(DIRECTION_ICONS).indexOf(b.code))
+  const list: SheetQuery = { ...base, codes: dirs.map((c) => c.code) }
+  return (
+    <>
+      <GradeCards counts={counts} value={grade} onChange={setGrade} />
+      <div className="flex flex-wrap gap-1.5">
+        {dirs.map((c) => (
+          <span key={c.code} className="inline-flex items-center gap-1.5 rounded-full border px-2.5 py-1 text-xs text-muted-foreground"><Mark kind={DIRECTION_ICONS[c.code]} className="size-[18px]" />{c.label} {c.n}</span>
+        ))}
+      </div>
+      <ClientSuspense fallback={<RowsSkeleton />} ready={!!res.peek(sheetKey(list))}>
+        <Paged k={sheetKey(list)} first={() => sheetPage(list)} next={(t) => sheetPage(list, t)} render={(s: EvalSheet) => <SheetRow key={s.id} s={s} />} />
+      </ClientSuspense>
+    </>
   )
 }
 
@@ -720,7 +759,7 @@ function ProjectDetail({ id }: { id: string }) {
     const m = v.mokuRows.find((x) => x.id === id)
     if (!m) return null
     const yen = { b: v.kind === 'initial' ? m.yen : null, s: v.kind === 'initial' ? null : m.yen }
-    return <ProjectBody p={{ id, name: m.name, dept: null, path: m.path, started: null, ended: null, y: { [String(v.year)]: yen }, kids: [], subject: m.subject, initialDetails: [], settlementDetails: [] }} />
+    return <ProjectBody p={{ id, name: m.name, dept: null, path: m.path, started: null, ended: null, y: { [String(v.year)]: yen }, kids: [], subject: m.subject, initialDetails: [], settlementDetails: [], sheets: [] }} />
   }
   const loaded = React.use(res.get(projectKey(id, v.year, v.kind), () => projectFull(id, v.year, v.kind)))
   return loaded === FAILED ? <LoadFailed /> : <ProjectBody p={loaded} />
@@ -735,7 +774,7 @@ function ProjectBody({ p }: { p: ProjectFull }) {
   const now = amt(ys)
   const prev = amt(String(v.year - 1))
   const ms = v.measuresFor(p)
-  const ss = v.sheetsFor(p)
+  const ss = p.sheets
   const kids = p.kids
   const ended = v.isEnded(p)
   const field = v.fieldOf(p)
@@ -800,7 +839,7 @@ function ProjectBody({ p }: { p: ProjectFull }) {
           {ss.map((s) => {
             const dir = directionOf(s)
             return (
-              <button key={s.id} type="button" onClick={() => select({ kind: 'sheet', id: s.id })} className="mb-2 flex w-full items-start gap-2.5 rounded-xl bg-card p-3 text-left hover:bg-secondary">
+              <button key={s.id} type="button" onClick={() => select({ kind: 'sheet', id: s.id, sheet: s })} className="mb-2 flex w-full items-start gap-2.5 rounded-xl bg-card p-3 text-left hover:bg-secondary">
                 {dir ? <Mark kind={dir.icon} /> : null}
                 <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">{[s.grade ? `評価 ${s.grade} ${GRADES.find((g) => g[0] === s.grade)?.[1] ?? ''}` : null, dir?.label ?? s.dir].filter(Boolean).join(' · ')}</span></span>
               </button>
@@ -971,9 +1010,11 @@ function FieldPage({ id }: { id: string }) {
         <FieldProjectsOf v={v} id={f.id} />
       )}
       <Full fallback={null}>
-        {(v) => v.sheets.length ? (
+        {(v) => v.sheetTotal ? (
           <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(v.year)}年度の事業`}>
-            <GradeCards sheets={v.sheets.filter((s) => s.field === f.id)} />
+            <ClientSuspense fallback={<Skeleton className="h-20 rounded-xl" />}>
+              <FieldGradeCards q={sheetQueryOf(d, v, f.id, '')} />
+            </ClientSuspense>
           </DetailSection>
         ) : null}
       </Full>
@@ -1076,21 +1117,19 @@ function MokuProjects({ subject, phase }: { subject: string; phase: 'initial' | 
   )
 }
 
-/** 施策・評価シートの詳細。どちらも残り（defer）に入っているので待つ。開いた年度の分だけ持つ（年度を変えると閉じる）。見つからなければ何も出さない */
-function DocDetail({ sel }: { sel: { kind: 'measure' | 'sheet'; id: string } }) {
+/** 施策の詳細。残り（defer）に入っているので待つ。開いた年度の分だけ持つ（年度を変えると閉じる）。見つからなければ何も出さない */
+function MeasureDetailOf({ id }: { id: string }) {
   const { d, res } = useApp()
   useFullView()
-  const full = withPeekedExtras(d, res)
-  const m = sel.kind === 'measure' ? full.measures.find((x) => x.id === sel.id) : undefined
-  const s = sel.kind === 'sheet' ? full.sheets.find((x) => x.id === sel.id) : undefined
-  return m ? <MeasureDetail m={m} /> : s ? <SheetDetail s={s} /> : null
+  const m = withPeekedExtras(d, res).measures.find((x) => x.id === id)
+  return m ? <MeasureDetail m={m} /> : null
 }
 
 function Detail({ sel }: { sel: NonNullable<Selected> }) {
   const kind = { project: ['事業', BriefcaseIcon], measure: ['新しく始めること', SparkleIcon], sheet: ['事業評価', ClipboardTextIcon], moku: ['目', TreeStructureIcon] } as const
   const [label, I] = kind[sel.kind]
   const body =
-    sel.kind === 'moku' ? <MokuDetail moku={sel.moku} phase={sel.phase} special={sel.special} /> : sel.kind === 'project' ? <ClientSuspense fallback={<RowsSkeleton n={4} />}><ProjectDetail id={sel.id} /></ClientSuspense> : <ClientSuspense fallback={<RowsSkeleton n={4} />}><DocDetail sel={sel as { kind: 'measure' | 'sheet'; id: string }} /></ClientSuspense>
+    sel.kind === 'moku' ? <MokuDetail moku={sel.moku} phase={sel.phase} special={sel.special} /> : sel.kind === 'sheet' ? <SheetDetail s={sel.sheet} /> : sel.kind === 'project' ? <ClientSuspense fallback={<RowsSkeleton n={4} />}><ProjectDetail id={sel.id} /></ClientSuspense> : <ClientSuspense fallback={<RowsSkeleton n={4} />}><MeasureDetailOf id={sel.id} /></ClientSuspense>
   return (
     <div key={`${sel.kind}${sel.id}`}>
       <p className="mb-4 flex items-center gap-1.5 text-xs text-muted-foreground"><I className="size-3.5" aria-hidden="true" />{label}</p>
@@ -1174,9 +1213,9 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     // 目の詳細は開いた年度の図の値を、施策・評価シートはその年度の資料を持つので、年度を変えたら閉じる（事業は年度をまたいで同じ）
     select((s) => (s?.kind === 'project' ? s : null))
   }
-  const setTab = (t: TabKey, { push = true } = {}) => {
+  const setTab = (t: TabKey, { push = true, query = '' } = {}) => {
     setTabState(t)
-    if (t !== at.current.tab || fieldOfPath()) move(pageHref(at.current.year, t), { push })
+    if (t !== at.current.tab || fieldOfPath()) move(pageHref(at.current.year, t) + query, { push })
   }
   /** 流れの会計を変える。一般会計は ?account= を付けない */
   const pickAccount = (account: string) => move(pageHref(year, at.current.tab) + (account === GENERAL ? '' : `?${new URLSearchParams({ account })}`))
@@ -1187,16 +1226,23 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const [filter, setFilterState] = React.useState('all')
   const setField = (f: string) => React.startTransition(() => setFieldState(f))
   const setFilter = (f: string) => React.startTransition(() => setFilterState(f))
-  // ?filter=new などで事業の絞り込みを開いた状態で来られる（ホームのはじめにやることから）。読んだら URL から外す
+  const [grade, setGrade] = React.useState('A')
+  // ?filter=new などで事業の絞り込みを開いた状態で来られる（ホームのはじめにやることから・まとめの札から）。読んだら URL から外す。
+  // まとめ（/2024）と事業のタブ（/2024/projects）は頁が別で、移ると画面を作り直して絞り込みが消えるので、go も URL で渡す
+  // 頁を移る途中は URL がまだ前の頁のままなので、移り終えてから読む
+  const idle = navigation.state === 'idle'
   React.useEffect(() => {
     const q = new URLSearchParams(location.search)
     const f = q.get('filter')
-    if (!f) return
+    if (!idle || !f) return
     if (['all', 'new', 'ended', 'eval'].includes(f)) setFilter(f)
-    q.delete('filter')
+    const g = q.get('grade')
+    if (g && GRADES.some(([x]) => x === g)) setGrade(g)
+    const field = q.get('field')
+    if (field) setField(field)
+    for (const k of ['filter', 'grade', 'field']) q.delete(k)
     history.replaceState(history.state, '', location.pathname + (q.size ? `?${q}` : '') + location.hash)
-  }, [])
-  const [grade, setGrade] = React.useState('A')
+  }, [initialTab, idle])
   // 事業を開いたら詳細を読む。読み終えるまで前の詳細を出したままにする
   const [selected, setSelected] = React.useState<Selected>(null)
   const select = (x: Selected | ((s: Selected) => Selected)) => React.startTransition(() => setSelected(x))
@@ -1256,8 +1302,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     io.observe(el)
     return () => io.disconnect()
   }, [d])
-  const changeTab = (t: TabKey) => {
-    setTab(t)
+  const changeTab = (t: TabKey, query?: string) => {
+    setTab(t, { query })
     const el = tabsTop.current
     if (el && el.getBoundingClientRect().top < 0) el.scrollIntoView({ block: 'start' })
   }
@@ -1265,7 +1311,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     if (opt.filter) setFilter(opt.filter)
     if (opt.grade) setGrade(opt.grade)
     if (t === 'projects') setField(opt.field ?? 'all')
-    changeTab(t)
+    const q = new URLSearchParams(Object.entries(opt).filter((e): e is [string, string] => !!e[1]))
+    changeTab(t, t === 'projects' && opt.filter ? `?${q}` : undefined)
   }
 
   // スマホではタブの中身を左右のスワイプで切り替える（shadcn の Carousel）。高さは今のタブに合わせる
