@@ -19,6 +19,7 @@ import sys
 import tempfile
 from pathlib import Path
 
+from ingestion import r2
 from ingestion.fiscal.manifest import BUCKET
 from ingestion.fiscal.storage import OBJECTS
 from ingestion.generic import page_words
@@ -52,8 +53,7 @@ def fetch(source_sha256: str, pin: dict, *, remote: bool = False) -> bytes:
         with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
             temporary = Path(stream.name)
             try:
-                subprocess.run(['cf', 'r2', 'objects', 'get', key(source_sha256), '--bucket-name', BUCKET, '--quiet'],
-                               stdout=stream, check=True)
+                r2.objects('get', key(source_sha256), '--bucket-name', BUCKET, '--quiet', stdout=stream)
                 verify(temporary, pin)
                 os.replace(temporary, path)
             finally:
