@@ -1,0 +1,15 @@
+{
+  "schema_version": 1,
+  "source_inconsistencies": [
+    {
+      "table_id": "general-initial",
+      "page": 259,
+      "axis": "説明",
+      "parent": {"code": "17", "name": "備品購入費"},
+      "printed": 4180,
+      "children_sum": 4123,
+      "difference": -57,
+      "basis": "社会教育費の図書館の事業で、節「17 備品購入費」は 4,180 千円と印字するが、その下の内訳は「図書 4,123」の1行だけで、差の 57 千円を印字した行が無い。出典の印字そのもので、取り込みで落とした行は無い（頁の画像と文字層で確認した）。"
+    }
+  ]
+}
