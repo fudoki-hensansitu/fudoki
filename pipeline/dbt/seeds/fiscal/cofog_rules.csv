@@ -527,3 +527,5 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1688,vocab-disaster-forest,,一般会計,,災害復旧費,,,林道災害復旧費|治山施設災害復旧費,contains,,assigned,04.2,retained,目,,林道・治山施設の災害復旧を農業・林業・漁業 04.2 に分類する（vocab-agri-fishery-name と同じ。例: 090000）。,false
 1689,vocab-disaster-civil,,一般会計,,災害復旧費,土木施設災害復旧費|県有施設等災害復旧費,,,eq,,unclassifiable,,retained,目,,土木施設（道路・河川など）と県有施設の災害復旧は施設の機能を名称から分けられないので分類不能とする（kobe-disaster-civil と同じ。例: 090000）。,false
 1690,fallback-kou-agri-disaster,,一般会計,,災害復旧費,農林水産施設災害復旧費,,,eq,,assigned,04.2,retained,目,,農林水産施設の災害復旧の項に属する目（名に農林水産を持たない廃目整理の行を含む）を農業・林業・漁業 04.2 に置く（vocab-agri-fishery-name と同じ。例: 090000）。,false
+1691,kind-fallback-simple-waterworks,,,簡易水道,,,,,,,assigned,06.3,retained,目,,簡易水道の会計の目を UN COFOG 06.3 水供給に置く（例: 133621 利島村の簡易水道事業特別会計）。一般会計の簡易水道（vocab-simple-waterworks）と同じ。償還・積立・繰出など行き先が違う目は先の規則が取る。,false
+1692,kind-fallback-septic,,,浄化槽,,,,,,,assigned,05.2,retained,目,,浄化槽の設置・管理の会計の目を UN COFOG 05.2 排水管理に置く（例: 133621 利島村の合併処理浄化槽事業特別会計）。下水道事業の会計（kind-fallback-sewer）と同じ。償還・積立・繰出など行き先が違う目は先の規則が取る。,false

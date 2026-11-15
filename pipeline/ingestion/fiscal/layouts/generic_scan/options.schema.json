@@ -377,6 +377,10 @@
             "type": "string",
             "minLength": 1
           },
+          "restores": {
+            "const": true,
+            "description": "除く読みが墨の読み直しで、頁の読みの一部を置き換えていた（観測の supersedes）とき、置き換えられた頁の読みを戻す。墨の読み直しが金額と隣の欄の名前を1語に読み、頁の読みは分けて読めていたとき（港区 R7 の 81多様な…）に使う。"
+          },
           "reason": {
             "type": "string",
             "minLength": 10
@@ -520,6 +524,22 @@
           "amount",
           "reason"
         ]
+      }
+    },
+    "name_readings": {
+      "description": "OCR が読み落とした名前の印字（額だけを読んだ説明の行の名前等）。原画で確かめた位置（PDF の pt）と名前を宣言して補う。箱に読みがあれば止める。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "page": {"type": "integer", "minimum": 1},
+          "box": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+          "name": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 10}
+        },
+        "required": ["id", "page", "box", "name", "reason"]
       }
     },
     "rule_ink": {
