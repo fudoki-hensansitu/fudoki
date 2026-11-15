@@ -124,7 +124,7 @@ def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict], directio
 
 def check_table(nodes: list[dict], amounts: list[dict], *, document_kind: str, account: str | None,
                 partial: bool = False, scope: dict | None = None, statement_kind: str = 'ordinary',
-                direction: str = 'expenditure') -> dict:
+                direction: str = 'expenditure', rounded=None) -> dict:
     """The generic builder's unit check on a finished table, plus a ``status`` and where the total came from."""
     # The subject axis is named by the converter (科目, 款項, 款項目); the check reads the 款 roots.
     shaped = [{**node, 'axis_header': '科目'} if node['parent_node_key'] is None and node.get('level_header') == '款'
@@ -138,7 +138,8 @@ def check_table(nodes: list[dict], amounts: list[dict], *, document_kind: str, a
     ambiguous = len({note['text'] for note in ofphase}) > 1
     if ambiguous:
         notes = [note for note in notes if note not in ofphase]
-    result = check_units(SimpleNamespace(nodes=shaped, amounts=amounts, notes=notes), document_kind, account, partial, direction)
+    result = check_units(SimpleNamespace(nodes=shaped, amounts=amounts, notes=notes), document_kind, account, partial, direction,
+                         rounded)
     result['subject_check'] = check_subject(nodes, amounts, document_kind, statement_kind, direction, partial)
     result['stopped'] = result['stopped'] or not result['subject_check']['passed']
     result['printed_totals'] = len(notes)
