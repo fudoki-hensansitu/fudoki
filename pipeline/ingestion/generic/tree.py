@@ -2213,10 +2213,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             found[id(group)] = kept
     # A subject name cut at the foot of a page continues without a number or amount at the next page's
     # start (`8 市立社会福祉` / `センター費`). Keep its first-page position; a box cannot span two pages.
+    # A name without a code goes on too while its bracket is still open (the dropped 目 `(区議会議員・区長` /
+    # `選挙費)`, 131059 R6).
     for position, ((_, ordered, found), (_, next_ordered, next_found)) in enumerate(zip(all_items, all_items[1:])):
         for group in ordered:
             tail = found[id(group)][-1] if group.subject and found[id(group)] else None
-            if tail is None or tail.role != 'node' or tail.code is None or not tail.name:
+            if (tail is None or tail.role != 'node' or not tail.name
+                    or (tail.code is None and len(re.findall(r'[(（]', tail.name)) <= len(re.findall(r'[)）]', tail.name)))):
                 continue
             tail_band = group.bands[tail.level or 0]
             if abs(_cell(tail_band, tail.anchor)[1] - tail_band.body_bottom) > .5:
