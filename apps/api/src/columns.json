@@ -894,7 +894,7 @@
           "name": "sheet_id",
           "type": "string",
           "nullable": false,
-          "description": "行の ID。origin_id と頁から作る（sha256）。"
+          "description": "行の ID。origin_id と頁（1頁に複数の事業を並べる様式は頁と頁の中の順）から作る（sha256）。"
         },
         {
           "name": "evaluation_id",

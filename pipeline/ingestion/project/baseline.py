@@ -21,7 +21,7 @@ from ingestion.paths import CACHE, REPO
 # 表ごとの行を区別する列（表の先頭からの列の数）。公開の ID はこの列から作る
 KEYS = {
     'project_origin': 1,
-    'project_evaluation_sheet': 2,
+    'project_evaluation_sheet': 3,
     'project_evaluation_indicator': 3,
     'project_evaluation_indicator_value': 4,
     'project_budget_measure': 3,
