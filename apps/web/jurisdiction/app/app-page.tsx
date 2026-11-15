@@ -15,6 +15,7 @@ import {
   ChartPieSliceIcon,
   ClipboardTextIcon,
   DotsThreeCircleIcon,
+  FileDashedIcon,
   FileTextIcon,
   FirstAidKitIcon,
   GlobeIcon,
@@ -47,6 +48,7 @@ import { Separator } from '@/components/ui/separator'
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Empty, EmptyContent, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 import { RequestTown } from '../../nav/request-town'
 import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group'
@@ -522,13 +524,19 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       ) : recorded ? (
         <Skeleton className="h-[480px] rounded-xl" />
       ) : (
-        <div className="flex flex-col items-center gap-3 py-10 text-center text-sm text-muted-foreground">
-          <p>{reiwa(v.year)}の{label}はまだ収録していません</p>
-          <RequestTown className="text-[13px]">{label}の収録をリクエストする</RequestTown>
-        </div>
+        <Empty className="min-h-[320px] border border-border bg-card">
+          <EmptyHeader>
+            <EmptyMedia variant="icon" className="size-11 rounded-full text-muted-foreground [&_svg:not([class*='size-'])]:size-6">
+              <FileDashedIcon aria-hidden="true" />
+            </EmptyMedia>
+            <EmptyTitle className="text-base">{reiwa(v.year)}の{label}はまだ収録していません</EmptyTitle>
+          </EmptyHeader>
+          <EmptyContent>
+            <RequestTown className="text-sm text-muted-foreground">{label}の収録をリクエストする</RequestTown>
+          </EmptyContent>
+        </Empty>
       )}
       {byMoku === FAILED ? <p className="text-xs text-muted-foreground">目の内訳（節）を読み込めませんでした。少し待ってから開き直してください。</p> : null}
-      <p className="text-xs text-muted-foreground">分野は使い道を目的ごとに分ける世界共通の分類（COFOG）で、風土記が独自で区別しています。款・項は予算書・決算書の分け方のままです。</p>
     </div>
   )
 }
