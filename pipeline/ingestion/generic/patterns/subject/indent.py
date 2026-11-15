@@ -64,6 +64,8 @@ def alignment(all_items, codes_right, glued=None):
 def align(logical, group, kept, alignment):
     one_width, codes_set_right, right_set = alignment
     run_into = document_quirk('code_run_into_name')
+    glued = document_quirk('glued_subject_codes')
+    digits_of = glued.module.digits if glued is not None else (lambda glyph: glyph.text)
     # Join at the name's position before learning subject levels from the code's start.
     for item in kept:
         # The code leads the item: a name set a few points above its code's line (OCR) is not the start.
@@ -71,12 +73,14 @@ def align(logical, group, kept, alignment):
         coded = next((line[0] for line in item.lines if line and item.code is not None
                       and normalize(line[0].text).startswith(item.code)), None)
         item.indent = min(g.x0 for g in item.glyphs) if logical.ocr else (coded or item.glyphs[0]).x0
+        # With the codes glued to the names, the word that starts with the code tells its digits, on whichever line.
+        lead = (coded or item.glyphs[0]) if glued is not None else item.glyphs[0]
         band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
         narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
         if run_into is not None and codes_set_right and item.code is not None and run_into.module.set_right(item):
             item.indent += one_width if len(item.code) == 2 else 0
-        elif run_into is None and codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', item.glyphs[0].text):
-            item.indent += one_width if len(item.glyphs[0].text) == 2 else 0
+        elif run_into is None and codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', digits_of(lead)):
+            item.indent += one_width if len(digits_of(lead)) == 2 else 0
         elif band is not None and item.code is not None and narrow and item.level in right_set:
             # A staircase of narrow level columns with the codes set right: the column is the level,
             # not where the digits start (`5` and `10` of one 目 start 5pt apart).

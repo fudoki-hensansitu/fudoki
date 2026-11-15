@@ -8,7 +8,8 @@ import re
 SCOPE = 'document'
 OPTIONS = {'const': True}
 
-GLUED = re.compile(r'([0-9]{1,2})[.．]')
+# Without the point, the code runs straight into the name (`1議` / `会` / `費`, 渋谷区 R5 決算の文字層).
+GLUED = re.compile(r'([0-9]{1,2})(?:[.．]|(?=[^\W\d_]))')
 
 
 def digits(glyph) -> str:

@@ -2022,6 +2022,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 group_items = items(group, group.axis, joined_codes=not logical.ocr,
                                     settings={'quirks': {'repeated_subject_headings': True}}
                                     if quirk(document, 'repeated_subject_headings') is not None else None)
+                if group.subject and (between := quirk(document, 'code_between_name_lines')) is not None:
+                    group_items = between.module.join(group_items)
             else:
                 for band in group.bands:
                     band.words = split_glued_numbers(band.words, edges)
