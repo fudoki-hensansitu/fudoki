@@ -14,6 +14,9 @@ on:
       - uv.lock
       - pyproject.toml
       - mise.toml
+  # 週に1回、写しがあっても D1 を全行読んで比べ、写しと D1 のずれ（手での書き込みなど）を直す（月曜 04:00 JST）
+  schedule:
+    - cron: '0 19 * * 0'
   workflow_dispatch:
     inputs:
       jurisdictions:
@@ -42,14 +45,14 @@ jobs:
       - uses: actions/checkout@v7
         with:
           fetch-depth: 0
-      # 手動の実行は自治体コード（空なら全件）。push は最後に成功した push の同期からの差分
+      # 手動の実行は自治体コード（空なら全件）、週1の照合は全件。push は最後に成功した push の同期からの差分
       # （取り消された run・落ちた run の範囲も次の run が拾う）。見つからなければ全件
       - id: scope
         env:
           CODES: ${{ inputs.jurisdictions }}
           GH_TOKEN: ${{ github.token }}
         run: |
-          if [ "${{ github.event_name }}" = workflow_dispatch ]; then
+          if [ "${{ github.event_name }}" != push ]; then
             args=""
             for c in $CODES; do
               [[ "$c" =~ ^[0-9]{6}$ ]] || { echo "not a jurisdiction code: $c"; exit 1; }
@@ -138,9 +141,37 @@ jobs:
           restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
       - id: cache-before
         run: echo "files=$(find pipeline/.cache -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
-      - run: bun run --cwd pipeline publish -- --database-id b9b6f209-083e-45b3-a896-1014a17a15f9 ${{ needs.store.outputs.args }}
+      # 前回の同期で D1 に入れた表の写し。最新のものを戻し、D1 の印と合うかは sync_d1 が確かめる（合わなければ D1 を読む）
+      - uses: actions/cache/restore@v6
+        with:
+          path: ${{ runner.temp }}/d1-snapshot
+          key: d1-snapshot-${{ github.run_id }}
+          restore-keys: d1-snapshot-
+      - id: snapshot-before
+        run: echo "sha=$(sha256sum "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" 2>/dev/null | cut -c1-64)" >> "$GITHUB_OUTPUT"
+      - run: >-
+          bun run --cwd pipeline publish -- --database-id b9b6f209-083e-45b3-a896-1014a17a15f9 ${{ needs.store.outputs.args }}
+          --snapshot "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" ${{ github.event_name == 'schedule' && '--verify-all' || '' }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      # 同期が成功して写しが書き直された回だけ保存し、古い写しは消す
+      - id: snapshot-after
+        run: echo "sha=$(sha256sum "$RUNNER_TEMP/d1-snapshot/snapshot.duckdb" 2>/dev/null | cut -c1-64)" >> "$GITHUB_OUTPUT"
+      - id: snapshot-save
+        if: steps.snapshot-after.outputs.sha != '' && steps.snapshot-after.outputs.sha != steps.snapshot-before.outputs.sha
+        uses: actions/cache/save@v6
+        with:
+          path: ${{ runner.temp }}/d1-snapshot
+          key: d1-snapshot-${{ github.run_id }}
+      - if: steps.snapshot-save.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEEP: d1-snapshot-${{ github.run_id }}
+        run: |
+          gh cache list --repo "${{ github.repository }}" --key d1-snapshot- --limit 100 --json key --jq '.[].key' |
+            while read -r key; do
+              [ "$key" = "$KEEP" ] || gh cache delete "$key" --repo "${{ github.repository }}" || true
+            done
       # 毎回 3GB を保存すると repo の cache の上限（10GB）から refresh-check の generic-observation が追い出される。
       # 中身（file の名前と大きさ）が変わった回だけ保存し、古い pipeline-cache は消す
       - id: cache-after

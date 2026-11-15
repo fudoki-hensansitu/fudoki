@@ -5,6 +5,7 @@
     ... --all                              # 全件を build して同期する
     ... --jurisdiction 131016 [...]        # その自治体を指定して流す
     ... --local                            # ローカルの D1 に写す
+    ... --snapshot <file> [--verify-all]   # 前回の同期の写しと比べて D1 を全行は読まない（serving/sync_d1.py）
 
 既定は `--since`（省略時は origin/main と HEAD の分岐点）から HEAD までの差分で範囲を決める。
 - 取り込みの宣言・出典の選定・1列目が自治体コードの seed の行だけが変わった → その自治体だけ
@@ -177,6 +178,8 @@ def main() -> None:
     which.add_argument('--jurisdiction', action='append', metavar='CODE', help='その自治体を流す（複数指定可）')
     parser.add_argument('--dry-run', action='store_true',
                         help='D1 に書かない（build はする）。D1 を指定すれば D1 を読んで書く予定の行数を出し、指定しなければ D1 を読まない')
+    parser.add_argument('--snapshot', help='前回の同期の写し（serving.sync_d1 の --snapshot）')
+    parser.add_argument('--verify-all', action='store_true', help='写しがあっても D1 を全行読んで比べる')
     args = parser.parse_args()
     if not (args.database_id or args.local or args.dry_run):
         parser.error('--database-id か --local が要る（--dry-run なら省略できる）')
@@ -199,7 +202,8 @@ def main() -> None:
         run('uv', 'run', 'python', 'dbt/scripts/prepare.py', '--build', '--remote', *scoped)
         run('uv', 'run', 'python', '-m', 'serving.sync_d1',
             *(['--local'] if args.local else ['--database-id', args.database_id] if args.database_id else []),
-            *scoped, *(['--dry-run'] if args.dry_run else []))
+            *scoped, *(['--dry-run'] if args.dry_run else []),
+            *(['--snapshot', args.snapshot] if args.snapshot else []), *(['--verify-all'] if args.verify_all else []))
     finally:
         if scoped and not dirty:
             git('checkout', '--', *RELATIONS)
