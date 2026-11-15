@@ -134,7 +134,7 @@ fingerprintは「変わったかもしれない」という合図であり、表
 1. 全表をローカルで用意し、行数・列型・空表・期待する表集合を検査する。
 2. 入力条件が変わっていないことを確認し、全表をローカルcacheの固定keyに置いて、Gitの管理JSONを置換する（`ingestion:convert`）。
 3. PRでは `ingestion-store-check` が、参照の変わった表をR2の出典・OCR結果から変換し直し、記録（指紋を除く）と一致するかを見る。
-4. merge後の `sync-d1` が同じ変換をし、一致した管理JSONの表だけを固定keyへアップロードしてから（`ingestion:store`）、dbt・D1へ流す。
+4. merge後の `sync-d1` が同じ変換をし、一致した管理JSONの表だけを固定keyへアップロードしてから（`ingestion:store`、D1 の同期とは別の job）、dbt・D1へ流す。
 5. 現在の管理JSONが変わっていないことを確認し、同じ対象と方向の領域を全ページ一覧取得する。参照されていない直下のParquetだけを削除する。
 6. 後段は全表の存在・fingerprintと取得した表のSHAを検査して読む。
 

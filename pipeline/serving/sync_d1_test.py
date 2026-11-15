@@ -302,7 +302,8 @@ class FakeD1:
         return [list(r) for r in self.con.execute(f'select * from "{table}" order by "{key}"')]
 
     def writes(self):
-        return [s for s in self.log if s.startswith(('insert', 'delete', 'create', 'drop', 'alter'))]
+        """表への書き込み（写しの印の sync_state を除く）。"""
+        return [s for s in self.log if s.startswith(('insert', 'delete', 'create', 'drop', 'alter')) and '"sync_state"' not in s]
 
 
 class SyncTest(unittest.TestCase):
@@ -427,7 +428,7 @@ class SyncTest(unittest.TestCase):
         origin('b2', '000002', 'x')
         location('lb2', 'b2')
         messages = self.sync(jurisdictions=['000002'])
-        self.assertFalse([s for s in self.d1.log if s.startswith(('drop table "', 'alter table', 'create table'))], messages)
+        self.assertFalse([s for s in self.d1.writes() if s.startswith(('drop table "', 'alter table', 'create table'))], messages)
         self.assertEqual(self.d1.rows('expenditure_origin', 'origin_id')[0], before['expenditure_origin'][0])  # a1
         self.assertEqual([r[0] for r in self.d1.rows('expenditure_origin', 'origin_id')], ['a1', 'b1', 'b2'])
         self.assertEqual([r[0] for r in self.d1.rows('expenditure_location', 'line_id')], ['la', 'lb2'])
@@ -480,9 +481,136 @@ class SyncTest(unittest.TestCase):
         self.duck.execute('delete from main."expenditure_location"')
         self.duck.execute('delete from main."expenditure_origin"')
         self.sync(jurisdictions=['000001'])
-        deletes = [s for s in self.d1.log if s.startswith('delete from')]
+        deletes = [s for s in self.d1.writes() if s.startswith('delete from')]
         self.assertEqual([s.split('"')[1] for s in deletes], ['expenditure_location', 'expenditure_origin'])
         self.assertEqual(self.d1.rows('expenditure_location', 'line_id'), [])
+
+
+class SnapshotSyncTest(SyncTest):
+    """写しと比べる同期。写しの印が D1 と合うときだけ写しを使い、D1 を全行は読まない。"""
+
+    def setUp(self):
+        import duckdb
+        import tempfile
+        from pathlib import Path
+
+        super().setUp()
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        self.warehouse = Path(directory.name) / 'warehouse.duckdb'
+        self.snapshot_path = Path(directory.name) / 'snapshot' / 'snapshot.duckdb'
+        self.duck.execute(f"attach '{self.warehouse}' as w")
+        self.duck.execute('copy from database memory to w')
+        self.duck.close()
+        self.duck = duckdb.connect(str(self.warehouse))
+        self.addCleanup(lambda: self.duck.close())
+
+    def sync_snapshot(self, jurisdictions=None, verify_all=False):
+        import duckdb
+
+        self.d1.log.clear()
+        messages = []
+        snapshot = sync_d1.Snapshot(self.snapshot_path, self.tables, verify_all)
+        snapshot.attach(self.duck)
+        code = sync_d1.run(self.d1, self.duck, self.tables, False, jurisdictions, False, messages.append, snapshot)
+        self.duck.close()
+        if code == 0 and snapshot.new_token:
+            snapshot.save(self.warehouse, list(self.tables), jurisdictions)
+        self.duck = duckdb.connect(str(self.warehouse))
+        self.assertEqual(code, 0, messages)
+        return messages
+
+    def range_reads(self, table):
+        """D1 の表を主キーの範囲で読んだ文（写しを使わずに比べた印）。"""
+        return [s for s in self.d1.log if s.startswith('select') and f'from "{table}" where' in s and ' in (' not in s]
+
+    def assert_snapshot_matches_d1(self):
+        import duckdb
+
+        con = duckdb.connect(str(self.snapshot_path), read_only=True)
+        try:
+            for name, spec in self.tables.items():
+                key = spec['primary_key']
+                rows = [[sync_d1.d1_value(v) for v in r] for r in con.execute(f'select * from main."{name}" order by "{key}"').fetchall()]
+                self.assertEqual(rows, self.d1.rows(name, key), name)
+            token = con.execute('select distinct token from main._snapshot').fetchall()
+        finally:
+            con.close()
+        self.assertEqual(token, self.d1.con.execute("select value from sync_state where key = 'snapshot'").fetchall())
+
+    def test_second_sync_compares_with_snapshot_without_reading_d1(self):
+        self.sync_snapshot()
+        self.assert_snapshot_matches_d1()
+        key = 'project_year_id'
+        self.duck.execute(f'delete from main."project_year" where "{key}" = ?', [f'{4:064x}'])
+        self.duck.execute(f'update main."project_year" set "project_id" = \'changed\' where "{key}" = ?', [f'{10:064x}'])
+        self.add('project_year', [f'{1:064x}'])
+        messages = self.sync_snapshot()
+        self.assert_same()
+        self.assert_snapshot_matches_d1()
+        self.assertTrue(any(m.startswith('project_year: 消す 1 行・書く 2 行') and '写しと比べた' in m for m in messages), messages)
+        self.assertEqual(self.range_reads('project_year'), [])
+
+    def test_sync_without_snapshot_invalidates_it(self):
+        """写しを持たない同期の後は印が合わないので、D1 を読んで比べ、D1 だけの変更も埋める。"""
+        self.sync_snapshot()
+        self.d1.con.execute('delete from project_year where rowid % 3 = 0')
+        self.sync()
+        self.d1.con.execute('delete from project_year where rowid % 5 = 0')
+        messages = self.sync_snapshot()
+        self.assert_same()
+        self.assertFalse([m for m in messages if '写しと比べた' in m], messages)
+        self.assertTrue(self.range_reads('project_year'))
+        self.assert_snapshot_matches_d1()
+
+    def test_failed_sync_leaves_no_token(self):
+        self.sync_snapshot()
+        self.duck.execute('update main."project_year" set "project_id" = \'all\'')
+        from unittest import mock
+        with mock.patch.object(sync_d1, 'swap_statements', side_effect=RuntimeError('stopped')):
+            with self.assertRaises(RuntimeError):
+                self.sync_snapshot()
+        self.assertEqual(self.d1.con.execute('select count(*) from sync_state').fetchone()[0], 0)
+        messages = self.sync_snapshot()
+        self.assertFalse([m for m in messages if '写しと比べた' in m], messages)
+        self.assert_same()
+
+    def test_jurisdiction_sync_keeps_snapshot_complete(self):
+        """自治体を絞った同期の後も、写しは他の自治体の行を持ったまま D1 と同じになり、次の同期で使える。"""
+        self.duck.execute('insert into main."expenditure_origin" ("origin_id", "jurisdiction_code", "title") values (\'a1\', \'000001\', \'x\'), (\'b1\', \'000002\', \'x\')')
+        self.duck.execute('insert into main."expenditure_location" ("line_id", "origin_id", "kind") values (\'la\', \'a1\', \'pdf\'), (\'lb\', \'b1\', \'pdf\')')
+        self.sync_snapshot()
+        for name in self.tables:
+            self.duck.execute(f'delete from main."{name}"')
+        self.add('jurisdiction', ['000002'], value='changed')
+        self.duck.execute('insert into main."expenditure_origin" ("origin_id", "jurisdiction_code", "title") values (\'b2\', \'000002\', \'x\')')
+        self.duck.execute('insert into main."expenditure_location" ("line_id", "origin_id", "kind") values (\'lb2\', \'b2\', \'pdf\')')
+        messages = self.sync_snapshot(jurisdictions=['000002'])
+        self.assertTrue(any('expenditure_location: 消す 1 行・書く 1 行' in m and '写しと比べた' in m for m in messages), messages)
+        self.assertEqual([r[0] for r in self.d1.rows('expenditure_location', 'line_id')], ['la', 'lb2'])
+        self.assert_snapshot_matches_d1()
+
+    def test_row_moving_into_scope_replaces_snapshot_row(self):
+        """主キーが自治体をまたいで付き直した行（同じ PDF の頁など）は、写しにも1行だけ残り、次の全件の同期で戻る。"""
+        def page(code):
+            self.duck.execute('delete from main."source_page_text" where "page_id" = \'p1\'')
+            self.duck.execute('insert into main."source_page_text" ("page_id", "jurisdiction_code") values (\'p1\', ?)', [code])
+        page('000001')
+        self.sync_snapshot()
+        page('000002')
+        self.sync_snapshot(jurisdictions=['000002'])
+        self.assert_snapshot_matches_d1()
+        page('000001')
+        self.sync_snapshot()
+        self.assert_same()
+
+    def test_verify_all_reads_d1(self):
+        self.sync_snapshot()
+        self.d1.con.execute('delete from project_year where rowid % 4 = 0')  # 印を残したまま D1 だけが変わった
+        messages = self.sync_snapshot(verify_all=True)
+        self.assertFalse([m for m in messages if '写しと比べた' in m], messages)
+        self.assert_same()
+        self.assert_snapshot_matches_d1()
 
 
 if __name__ == '__main__':
