@@ -30,13 +30,15 @@ def _below(tail: list, head) -> bool:
             and 0 <= tail[0].y0 - head.y1 <= head.y1 - head.y0 + 4)
 
 
-def join(entries: list) -> list:
-    """`entries` (label, money, code, name) with each wrapped department joined in brackets onto its 事業's label.
+def join(entries: list) -> tuple[list, list[int]]:
+    """`entries` (label, money, code, name) with each wrapped department joined in brackets onto its 事業's label, and
+    for each entry kept, its index in `entries` (a line that only ends a department is taken out).
 
     Three forms: the letter-spaced lines with drawn brackets (`子ども子育て支援課･` / `･保・育・課･`, the second line no
     item); a printed bracket left open on the 事業's line and closed on the next item's line in the same column
     (`[シティプロモー]` over `[ション推進課]`, or `[シティプロモー` over `ション推進課]`, on a line of its own or at the end of the next item's line, taken off it); a bare department alone."""
     out = list(entries)
+    origin = list(range(len(entries)))
     index = 0
     while index < len(out):
         label, money, code, name = out[index]
@@ -80,10 +82,11 @@ def join(entries: list) -> list:
         out[index] = (label[:start] + [glyph], money, code, re.sub(re.escape(first) + '$', text, name) if name else name)
         if taken is tail:
             del out[index + 1]
+            del origin[index + 1]
         elif taken is not None:
             kept = tail[:len(tail) - len(taken)]
             dropped = normalize(''.join(g.text for g in taken))
             out[index + 1] = (kept, tail_money, tail_code,
                               re.sub(re.escape(dropped) + '$', '', tail_name) if tail_name else tail_name)
         index += 1
-    return out
+    return out, origin
