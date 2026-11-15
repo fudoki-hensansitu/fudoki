@@ -6,7 +6,8 @@ with doc as (
     select jurisdiction_code, fiscal_year, document_kind, account_name,
         sum(amount_yen) filter (where level = '款') as kan_sum,
         sum(amount_yen) filter (where is_leaf) as leaf_sum,
-        count(*) filter (where is_leaf and amount_yen is null) as leaf_missing
+        -- 番号も金額も無い末端（その年度に廃した目の括弧書き）はその年度の額が無いので欠けに数えない
+        count(*) filter (where is_leaf and amount_yen is null and code is not null) as leaf_missing
     from {{ ref('expenditure_subject') }}
     group by all
 ), rows as (

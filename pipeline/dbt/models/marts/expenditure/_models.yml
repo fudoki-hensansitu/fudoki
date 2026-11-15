@@ -103,7 +103,7 @@ models:
   - name: moku_name
     description: 所属する目の名称（name と同じ正規化）。款・項では NULL。
   - name: amount_yen
-    description: 資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親は子の和の集計で印字ではない。款・項の金額を印字しない資料では、子の金額がすべてある款・項に子の和を入れる（印字ではない）。子に金額の欠けがある段は NULL。
+    description: 資料区分の金額（円）。決算（amount_phase = executed）は支出済額、当初予算（approved）は当初予算額。出典の金額を円換算し、見出しの対応を適用する。立川の繰越内訳は支出済額＋本年度支出額。当初予算 CSV の親は子の和の集計で印字ではない。款・項の金額を印字しない資料では、子の金額がすべてある款・項に子の和を入れる（印字ではない。番号も金額も無い子の無い行、その年度に廃した目の括弧書きは数えない）。子に金額の欠けがある段は NULL。
   - name: is_leaf
     description: 科目の子を持たないか（目と、目の無い項）。同じ資料の is_leaf の行の和が歳出の総額。例外は神戸市の2025年度一般会計で、170,000円足りない（内訳の表の is_subject_remainder を見る）。
     data_tests: *id001
@@ -388,7 +388,7 @@ models:
   - name: cofog_10_yen
     description: COFOG の大分類 10（福祉・子育て）の額（円）。科目の表の末端の行のうち cofog_code が 10 かその下の行の金額の和（風土記の判断による分類）。科目の表に行が無ければNULL。
   - name: cofog_unclassified_yen
-    description: total_yen から大分類の額の和を引いた残り（円）。COFOG コードの無い末端の行（cofog_status が unclassifiable・out-of-scope の目と、目の無い項）と、末端の和に入らない額（目を立てずに印字された項の内訳など）。大分類の額とこの額を足すと total_yen になる。科目の表に行が無ければNULL。
+    description: total_yen から大分類の額の和を引いた残り（円）。COFOG コードの無い末端の行（cofog_status が unclassifiable・out-of-scope の目と、目の無い項）と、末端の和に入らない額（目を立てずに印字された項の内訳など）。大分類の額とこの額を足すと total_yen になる。total_yen が NULL（科目の表に行が無いか、金額の無い款がある）ならNULL。
 - name: expenditure_origin_link
   description: 歳出の根と出典（冊）の組。1冊が複数の会計にまたがり、1つの会計が分冊になることもある。
   columns:

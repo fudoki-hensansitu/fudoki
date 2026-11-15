@@ -13,7 +13,9 @@ subjects as (
 ),
 -- 印字の無い項は子（目）の和。款は項を埋めた後で子（項と、項に属さない目）の和
 dropped as (
-    select row_id from subjects where code is null and amount_yen is null
+    select d.row_id from subjects d
+    where d.code is null and d.amount_yen is null
+        and not exists (select 1 from subjects g where g.parent_node_id = d.node_id and g.document_kind = d.document_kind)
 ),
 kou_sum as (
     select p.row_id, sum(c.amount_yen)::bigint as amount_yen
