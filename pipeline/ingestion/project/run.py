@@ -171,10 +171,12 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
         'project_source_page_text')}
     paths: dict[str, Path] = {}
     for origin in sheet_sources(declared['sheets']):
-        # 読んだ結果と頁の文字がキャッシュにあれば、PDF は取らない（読むのはキャッシュが無いときだけ）
-        cached = reading_cache(origin).exists() and (not page_texts or page_text_cache(origin['sha256']).exists())
-        path = object_path(origin['reference']) if cached else fetch(origin['reference'], remote=remote)
-        sheets = read_cached(path, origin, remote=remote)
+        # 読んだ結果がキャッシュにあれば PDF は取らない。頁の文字は、シートのある PDF でキャッシュが無いときだけ PDF から読む
+        path = object_path(origin['reference'])
+        sheets = read_cached(path if reading_cache(origin).exists() else fetch(origin['reference'], remote=remote),
+                             origin, remote=remote)
+        if sheets and page_texts and path.suffix.lower() == '.pdf' and not page_text_cache(origin['sha256']).exists():
+            fetch(origin['reference'], remote=remote)
         if not sheets:
             # 施策の冊などシートの無い冊は出典にしない
             continue
