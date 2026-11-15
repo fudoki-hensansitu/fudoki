@@ -300,14 +300,16 @@ def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.D
     image = pdf_rules.render(pdf, detected.page)
     scale = pdf_rules.DPI / 72
     vertical = sorted(detected.vertical, key=lambda r: r.position)
+    skewed = document_quirk('skewed_cell_rows')
     runs = []
-    for left, right in zip(vertical, vertical[1:]):
+    for left, right in (skewed.module.pairs(vertical) if skewed is not None else zip(vertical, vertical[1:])):
         top, bottom = max(left.start, right.start), min(left.end, right.end)
         x0, x1 = round(left.position * scale), round(right.position * scale)
         if top >= bottom or x1 <= x0:
             continue
         y0, y1 = max(0, round(top * scale)), min(image.shape[0], round(bottom * scale))
-        joined = np.all(image[y0:y1, x0:x1 + 1] < dark, axis=1)
+        cell = image[y0:y1, x0:x1 + 1] < dark
+        joined = skewed.module.joined(cell) if skewed is not None else np.all(cell, axis=1)
         runs.extend((y0 + int(y), x0, x1 + 1) for y in np.flatnonzero(joined))
     found = pdf_rules._merge(runs, 1 / scale)
     extra = [r for r in found if not any(abs(old.position - r.position) <= 1

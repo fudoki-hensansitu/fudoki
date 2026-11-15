@@ -1,0 +1,651 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "134015",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "07d1aba4b2b89131ef54dfe18da4b383586c2a53908acb1e3ee7ad10924598e9"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "carried": true,
+                "open_frame": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_line": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true
+          }
+        },
+        "pages": [
+          [
+            40,
+            122
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6b9cc4d7a8ca8c9a55b2ebecb4421f062e72ee93c8bc962673f8a384714496d8"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true
+          }
+        },
+        "pages": [
+          [
+            17,
+            27
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3a60109d77822c63d8f87d5f7bce044eb3398ef4e0b38051ef7f1825569a72b2"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-initial",
+        "pages": [
+          [
+            17,
+            26
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "nhi-odd-本年度",
+            "pages": [
+              17,
+              19,
+              21,
+              23,
+              25
+            ],
+            "box": [
+              150,
+              72,
+              203.5,
+              100
+            ],
+            "text": "本年度",
+            "reason": "原典の画像の見出しは「本年度」「前年度」「国都支出金」「地方債」「その他」の升に分かれるが、OCR が隣の升と1語に読む。偶数頁は奇数頁より16.5pt 右に印字する。"
+          },
+          {
+            "id": "nhi-odd-前年度",
+            "pages": [
+              17,
+              19,
+              21,
+              23,
+              25
+            ],
+            "box": [
+              204,
+              72,
+              253.5,
+              100
+            ],
+            "text": "前年度",
+            "reason": "原典の画像の見出しは「本年度」「前年度」「国都支出金」「地方債」「その他」の升に分かれるが、OCR が隣の升と1語に読む。偶数頁は奇数頁より16.5pt 右に印字する。"
+          },
+          {
+            "id": "nhi-odd-国都支出金",
+            "pages": [
+              17,
+              19,
+              21,
+              23,
+              25
+            ],
+            "box": [
+              322,
+              85,
+              370,
+              101
+            ],
+            "text": "国都支出金",
+            "reason": "原典の画像の見出しは「本年度」「前年度」「国都支出金」「地方債」「その他」の升に分かれるが、OCR が隣の升と1語に読む。偶数頁は奇数頁より16.5pt 右に印字する。"
+          },
+          {
+            "id": "nhi-odd-地方債",
+            "pages": [
+              17,
+              19,
+              21,
+              23,
+              25
+            ],
+            "box": [
+              370.5,
+              85,
+              419.5,
+              101
+            ],
+            "text": "地方債",
+            "reason": "原典の画像の見出しは「本年度」「前年度」「国都支出金」「地方債」「その他」の升に分かれるが、OCR が隣の升と1語に読む。偶数頁は奇数頁より16.5pt 右に印字する。"
+          },
+          {
+            "id": "nhi-odd-その他",
+            "pages": [
+              17,
+              19,
+              21,
+              23,
+              25
+            ],
+            "box": [
+              420,
+              85,
+              470,
+              101
+            ],
+            "text": "その他",
+            "reason": "原典の画像の見出しは「本年度」「前年度」「国都支出金」「地方債」「その他」の升に分かれるが、OCR が隣の升と1語に読む。偶数頁は奇数頁より16.5pt 右に印字する。"
+          },
+          {
+            "id": "nhi-even-本年度",
+            "pages": [
+              18,
+              20,
+              22,
+              24,
+              26
+            ],
+            "box": [
+              166.5,
+              72,
+              220.0,
+              100
+            ],
+            "text": "本年度",
+            "reason": "原典の画像の見出しは「本年度」「前年度」「国都支出金」「地方債」「その他」の升に分かれるが、OCR が隣の升と1語に読む。偶数頁は奇数頁より16.5pt 右に印字する。"
+          },
+          {
+            "id": "nhi-even-前年度",
+            "pages": [
+              18,
+              20,
+              22,
+              24,
+              26
+            ],
+            "box": [
+              220.5,
+              72,
+              270.0,
+              100
+            ],
+            "text": "前年度",
+            "reason": "原典の画像の見出しは「本年度」「前年度」「国都支出金」「地方債」「その他」の升に分かれるが、OCR が隣の升と1語に読む。偶数頁は奇数頁より16.5pt 右に印字する。"
+          },
+          {
+            "id": "nhi-even-国都支出金",
+            "pages": [
+              18,
+              20,
+              22,
+              24,
+              26
+            ],
+            "box": [
+              338.5,
+              85,
+              386.5,
+              101
+            ],
+            "text": "国都支出金",
+            "reason": "原典の画像の見出しは「本年度」「前年度」「国都支出金」「地方債」「その他」の升に分かれるが、OCR が隣の升と1語に読む。偶数頁は奇数頁より16.5pt 右に印字する。"
+          },
+          {
+            "id": "nhi-even-地方債",
+            "pages": [
+              18,
+              20,
+              22,
+              24,
+              26
+            ],
+            "box": [
+              387.0,
+              85,
+              436.0,
+              101
+            ],
+            "text": "地方債",
+            "reason": "原典の画像の見出しは「本年度」「前年度」「国都支出金」「地方債」「その他」の升に分かれるが、OCR が隣の升と1語に読む。偶数頁は奇数頁より16.5pt 右に印字する。"
+          },
+          {
+            "id": "nhi-even-その他",
+            "pages": [
+              18,
+              20,
+              22,
+              24,
+              26
+            ],
+            "box": [
+              436.5,
+              85,
+              486.5,
+              101
+            ],
+            "text": "その他",
+            "reason": "原典の画像の見出しは「本年度」「前年度」「国都支出金」「地方債」「その他」の升に分かれるが、OCR が隣の升と1語に読む。偶数頁は奇数頁より16.5pt 右に印字する。"
+          },
+          {
+            "id": "nhi-款項目",
+            "pages": [
+              17,
+              23
+            ],
+            "box": [
+              36,
+              62,
+              151,
+              102
+            ],
+            "text": "款項目",
+            "reason": "原典の画像の科目の見出しは「科目」の下に「款」「項」「目」の升を印字する。傾いた頁で款・項・目の間の短い罫が読まれず、升が1つになるので、升の見出しを宣言する。"
+          },
+          {
+            "id": "nhi-p21-款",
+            "pages": [
+              21
+            ],
+            "box": [
+              38,
+              62,
+              54,
+              102
+            ],
+            "text": "款",
+            "reason": "原典の画像の科目の見出しは「科目」の下に「款」「項」「目」の升を印字する。傾いた頁で款・項・目の間の短い罫が読まれず、升が1つになるので、升の見出しを宣言する。"
+          },
+          {
+            "id": "nhi-p21-項目",
+            "pages": [
+              21
+            ],
+            "box": [
+              54.5,
+              62,
+              153,
+              102
+            ],
+            "text": "項目",
+            "reason": "原典の画像の科目の見出しは「科目」の下に「款」「項」「目」の升を印字する。傾いた頁で款・項・目の間の短い罫が読まれず、升が1つになるので、升の見出しを宣言する。"
+          },
+          {
+            "id": "nhi-odd-特定財源",
+            "pages": [
+              17,
+              19,
+              21,
+              23,
+              25
+            ],
+            "box": [
+              322,
+              77,
+              470,
+              86.5
+            ],
+            "text": "特定財源",
+            "reason": "原典の画像の見出しは「本年度の財源内訳」の下に「特定財源」の升を印字するが、OCR が「特」と「定財源」に分けて読む。"
+          },
+          {
+            "id": "nhi-even-特定財源",
+            "pages": [
+              18,
+              20,
+              22,
+              24,
+              26
+            ],
+            "box": [
+              338.5,
+              77,
+              486.5,
+              86.5
+            ],
+            "text": "特定財源",
+            "reason": "原典の画像の見出しは「本年度の財源内訳」の下に「特定財源」の升を印字するが、OCR が「特」と「定財源」に分けて読む。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p17-rule-1",
+            "page": 17,
+            "observation_id": "p17:digit-1:r0",
+            "observed": "1",
+            "reason": "物理17頁の前年度の欄の罫の切れ端（縦の罫の脇の墨）を、OCR が数字「1」と読んだ。原典の画像に数字は無い。"
+          },
+          {
+            "id": "p25-rule-dash",
+            "page": 25,
+            "observation_id": "p25:ink-57:a57:result0:r0",
+            "observed": "--",
+            "reason": "物理25頁の節の金額の欄の横の罫の切れ端を、OCR が「--」と読んだ。原典の画像に字は無い。"
+          },
+          {
+            "id": "p20-head-ka",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r6",
+            "observed": "科",
+            "reason": "物理20頁の見出しの「科目」の升の字。升の下の罫と本年度の欄の左の罫が読まれず、本年度の欄の見出しに混じるので除く。款・項・目の見出しは残る。"
+          },
+          {
+            "id": "p20-head-moku",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r4",
+            "observed": "目",
+            "reason": "物理20頁の見出しの「科目」の升の字。升の下の罫と本年度の欄の左の罫が読まれず、本年度の欄の見出しに混じるので除く。款・項・目の見出しは残る。"
+          }
+        ],
+        "amount_corrections": [
+          {
+            "id": "p22-dot-8400",
+            "page": 22,
+            "observation_id": "p22:full-page:a0:result0:r48",
+            "observed_amount": ".8,400",
+            "corrected_amount": "8,400",
+            "reason": "物理22頁の財源内訳（国都支出金）の 8,400 の左に墨の点がある。OCR が点を額の頭に読んだ。原画で確かめた。"
+          }
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。傾いた scan で見出しの升を分ける罫が頁ごとに違って読まれ、欄の見出しが揃わない。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。傾いた scan で見出しの升を分ける罫が頁ごとに違って読まれ、欄の見出しが揃わない。"
+                  }
+                },
+                "本年度の財源内訳／地方債／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。傾いた scan で見出しの升を分ける罫が頁ごとに違って読まれ、欄の見出しが揃わない。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。傾いた scan で見出しの升を分ける罫が頁ごとに違って読まれ、欄の見出しが揃わない。"
+                  }
+                },
+                "本年度の財源内訳／その他／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。傾いた scan で見出しの升を分ける罫が頁ごとに違って読まれ、欄の見出しが揃わない。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。傾いた scan で見出しの升を分ける罫が頁ごとに違って読まれ、欄の見出しが揃わない。"
+                  }
+                },
+                "本年度の財源内訳／節／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、歳出の目の金額は本年度の予算額で確かめる。傾いた scan で見出しの升を分ける罫が頁ごとに違って読まれ、欄の見出しが揃わない。"
+                  }
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "rules": {
+                "skewed": true
+              },
+              "header": {
+                "staircase": true,
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true,
+            "rule_ink": true,
+            "skewed_cell_rows": true,
+            "shifted_pages": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "3a60109d77822c63d8f87d5f7bce044eb3398ef4e0b38051ef7f1825569a72b2",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26
+            ]
+          },
+          "sha256": "cc44d85576897b3f483126b30fc1cedefc786613a9cb8d2855ef0914df98af06",
+          "bytes": 2212332
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "8c88aee92e94932dc0cc4cde3161f51d73bd8acac7fff168439c2cf16288aab3",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 42頁・carried 41頁 から決めた。款の和 11,537,432 と印字の「計」11,537,432 が一致。",
+        "金額の注記 1 件（充用 1）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2023/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "f56eece8ff3533c7d421fdd38a0243851cc0fa97cd98b7e70e13e03353ad0ace",
+          "bytes": 83089
+        },
+        "row_count": 2970
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2023/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "f5466e19bd7c210bbb965629e830828b2ccecc84c950a88be2e9e0fc02565914",
+          "bytes": 71774
+        },
+        "row_count": 3602
+      }
+    },
+    {
+      "table_id": "long-term-care-initial",
+      "conversion_id": "long-term-care-initial",
+      "input_fingerprint": "f4715e50c7dee7e2e77f3cfd272285f463b3ef21e47dc93b7c46f5f2427cfaaa",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 11頁 から決めた。款の和 1,104,674 と印字の「計」1,104,674 が一致。",
+        "金額の注記 1 件（充用 1）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2023/initial/expenditure/long-term-care-initial-nodes.parquet",
+          "sha256": "f85850bfad80351e2eea7cf02db851ae5576d9d45b0bfaee600c429da615008b",
+          "bytes": 11051
+        },
+        "row_count": 245
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2023/initial/expenditure/long-term-care-initial-amounts.parquet",
+          "sha256": "c8295a91e1ca2ec78a184192da7ff3d1f9d92828be7cd506eeea77aa7767b02a",
+          "bytes": 8986
+        },
+        "row_count": 511
+      }
+    },
+    {
+      "table_id": "national-health-insurance-initial",
+      "conversion_id": "national-health-insurance-initial",
+      "input_fingerprint": "adcbbf269150d944411067d770ae2f8db2d1005e1774c5c9fd5939224d65d01e",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 7頁・carried 3頁 から決めた。款の和 1,125,916 と印字の「計」1,125,916 が一致。",
+        "金額の注記 1 件（充用 1）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（8 件）を、印字された語から辞書の見出しに寄せた: 本年度の財源内訳／節／金額→節／金額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 6 件（p21:full-page:a0:result0:r68・p21:full-page:a0:result0:r68:w3・p21:full-page:a0:result0:r73・p21:full-page:a0:result0:r73:w2・p21:full-page:a0:result0:r79・p21:full-page:a0:result0:r79:w4）・债→債 2 件（p19:full-page:a0:result0:r23・p19:full-page:a0:result0:r23:w2）・查→査 10 件（p20:full-page:a0:result0:r36・p20:full-page:a0:result0:r36:w12・p20:full-page:a0:result0:r41・p20:full-page:a0:result0:r41:w3・p23:full-page:a0:result0:r30・p23:full-page:a0:result0:r30:w6・p23:full-page:a0:result0:r42・p23:full-page:a0:result0:r42:w7・p23:full-page:a0:result0:r66・p23:full-page:a0:result0:r66:w5）・產→産 2 件（p21:full-page:a0:result0:r28・p21:full-page:a0:result0:r28:w2）・說→説 6 件（p17:full-page:a0:result0:r8・p17:full-page:a0:result0:r8:w0・p18:full-page:a0:result0:r7・p18:full-page:a0:result0:r7:w0・p21:full-page:a0:result0:r8・p21:full-page:a0:result0:r8:w0）・费→費 2 件（p21:full-page:a0:result0:r56・p21:full-page:a0:result0:r56:w2）・额→額 2 件（p19:full-page:a0:result0:r18・p19:full-page:a0:result0:r18:w0）・齡→齢 10 件（p22:full-page:a0:result0:r54・p22:full-page:a0:result0:r54:w4・p22:full-page:a0:result0:r61・p22:full-page:a0:result0:r61:w9・p22:full-page:a0:result0:r68・p22:full-page:a0:result0:r68:w1・p22:full-page:a0:result0:r72・p22:full-page:a0:result0:r72:w10・p22:full-page:a0:result0:r80・p22:full-page:a0:result0:r80:w2）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2023/initial/expenditure/national-health-insurance-initial-nodes.parquet",
+          "sha256": "0ca0b341fc7e44676b90d10c0ead7effa84a9815e305b4faefd7f69905a9613b",
+          "bytes": 13671
+        },
+        "row_count": 212
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134015/2023/initial/expenditure/national-health-insurance-initial-amounts.parquet",
+          "sha256": "b841cf888157ce677c41c3868da4ae4bf1888473e524838ebbbe33602ccac449",
+          "bytes": 13998
+        },
+        "row_count": 352
+      }
+    }
+  ]
+}
