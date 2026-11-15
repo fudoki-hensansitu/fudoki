@@ -234,7 +234,6 @@ seeds:
       区分は表に写さず、使う所で JOIN する。辞書に無い款の名前は tests/fiscal_revenue_category_coverage.sql が止める
       （[docs/prd/fiscal-revenue/dd.md](../../../../docs/prd/fiscal-revenue/dd.md)）。
     config:
-      fast: false
       column_types:
         kan_name: varchar
         category: varchar

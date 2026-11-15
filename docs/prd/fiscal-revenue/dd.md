@@ -90,7 +90,7 @@ ADR 0047 に従い、木と根で決まる列（自治体・年度・款の名�
 | `revenue` | `revenue_id` | 根。自治体・年度・資料区分・補正号・会計・会計の種類。総額（款の和、歳出の根の `total_yen` と同じく ADR 0047 の例外として持つ。頁の一覧で全根の総額を JOIN なしで返すため） |
 | `revenue_subject` | `subject_id` | `revenue_id`・`parent_subject_id`・`level`（款・項・目）・`code`・`name`・`amount_yen`・`origin_id` |
 | `revenue_detail` | `detail_id` | 節。`subject_id`・`parent_detail_id`・`depth`・`code`・`name`・`amount_yen`・`origin_id` |
-| `revenue_location` | `line_id` | 印字の位置（歳出の `expenditure_location` と同じ列） |
+| `revenue_location` | `line_id` | 印字の位置（歳出の `expenditure_location` の PDF の列。歳入は PDF だけを読むので `kind`・行番号の列は持たない） |
 | `revenue_origin_link` | `link_id` | 根と出典（冊）を結ぶ |
 
 - 出典の冊は歳入と歳出で同じ。`expenditure_origin` は今も `fiscal_metadata.origin` を方向で絞らずに全部読んでいて、同じ行の `revenue_origin` を作ると写しになる。`expenditure_origin` を `fiscal_origin` に改名し、`expenditure_origin_link`・`revenue_origin_link` がそれを指す（aggregate-api のドメインの型名も `fiscal_origin`）。aggregate-api の dd の表の行と、api の `shared/` の「3つの出典の表」の照会も同じ PR で直す。

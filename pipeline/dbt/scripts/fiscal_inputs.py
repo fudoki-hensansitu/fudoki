@@ -69,8 +69,9 @@ EXCLUDE_YEAR: dict[tuple[str, int, str, str], str] = {}
 def relation_name(jurisdiction: str, fiscal_year: int, document_kind: str, table_id: str,
                   direction: str = 'expenditure') -> str:
     # 表 ID は自治体の中で年度・資料区分・お金の向きをまたいで同じ名前を使えるため、relation 名にそれらを含める。
-    # 歳出の relation 名は向きを足す前の名前のままにする。
-    infix = '' if direction == 'expenditure' else f'{direction}_'
+    # 歳出の relation 名は向きを足す前の名前のままにする。歳入は二重の _ で挟み、`revenue-` で始まる歳出の表 ID と分ける
+    # （表 ID の - は _ 1つになるので、二重の _ は歳出の名前に現れない）。
+    infix = '' if direction == 'expenditure' else f'_{direction}__'
     return f'j{jurisdiction}_{fiscal_year}_{document_kind}_{infix}' + table_id.replace('-', '_')
 
 
