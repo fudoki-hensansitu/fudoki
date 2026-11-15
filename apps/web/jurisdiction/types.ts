@@ -92,6 +92,39 @@ export const formatPeople = (people: number) => (people >= 1e4 ? `${(people / 1e
 /** 基準日（2026-01-01）を「2026年1月1日」に */
 export const formatAsOf = (asOf: string) => asOf.replace(/^(\d+)-0?(\d+)-0?(\d+)$/, '$1年$2月$3日')
 
+/** 市町村の決算の指標の1年度（総務省「市町村別決算状況調」の普通会計）。金額は円、比率は %。出典の「-」（該当なし）は null */
+export interface LocalFinance {
+  year: number
+  /** 歳出総額 */
+  expenditureTotal: number | null
+  /** 標準財政規模 */
+  standardFiscalScale: number | null
+  /** 実質収支 */
+  realBalance: number | null
+  /** 実質収支比率 */
+  realBalanceRatio: number | null
+  /** 経常収支比率 */
+  currentBalanceRatio: number | null
+  /** 財政力指数（3年の平均） */
+  fiscalCapabilityIndex: number | null
+  /** 健全化判断比率の4つ */
+  realDeficitRatio: number | null
+  consolidatedRealDeficitRatio: number | null
+  realDebtServiceRatio: number | null
+  futureBurdenRatio: number | null
+  /** 性質別の人件費・扶助費・公債費（義務的経費） */
+  personnel: number | null
+  socialAssistance: number | null
+  debtService: number | null
+  /** 地方債現在高 */
+  localBondBalance: number | null
+  /** 積立金現在高と、その内訳（財政調整基金・減債基金・その他特定目的基金） */
+  fundBalance: number | null
+  fiscalAdjustmentFund: number | null
+  debtReductionFund: number | null
+  specifiedPurposeFund: number | null
+}
+
 export interface PageData {
   code: string
   name: string
@@ -118,6 +151,8 @@ export interface PageData {
   headline?: Headline
   /** 基本構想の都市像（jurisdiction/visions.ts）。手で起こした自治体だけにある */
   vision?: Vision | null
+  /** 市町村の決算の指標（年度の古い順）。都道府県と、読めなかったときは空 */
+  finance?: LocalFinance[]
 }
 
 /** 入口の頁の題・説明文に書く、最新の決算（総額と分野）と、決算より後の最新の当初予算（金額のあるときだけ）の総額 */

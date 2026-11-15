@@ -11,12 +11,14 @@ request runs it to find a mismatch before merge, then builds dbt from the verifi
 """
 from __future__ import annotations
 
+from concurrent.futures import ProcessPoolExecutor
 import json
+import multiprocessing
 import subprocess
 import tempfile
 from pathlib import Path
 
-from ingestion.fiscal import manifest, run, storage
+from ingestion.fiscal import manifest, refresh, run, storage
 from ingestion.paths import PIPELINE
 
 
@@ -90,13 +92,33 @@ def store_manifest(path: Path, since: str, *, dry_run: bool) -> dict:
     return {'manifest': str(path), 'tables': sorted(changed), 'uploaded': not dry_run}
 
 
-def store(since: str, *, dry_run: bool = False) -> dict:
-    reports, failures = [], []
-    for path in changed_manifests(since):
+def store_group(paths: list[Path], since: str, dry_run: bool) -> list[tuple[Path, dict | str]]:
+    """Each manifest's report, or its error as text (a worker reports every manifest, then the caller fails)."""
+    outcomes: list[tuple[Path, dict | str]] = []
+    for path in paths:
         try:
-            reports.append(store_manifest(path, since, dry_run=dry_run))
-        except Exception as error:  # report every manifest, then fail
-            failures.append(str(error) or type(error).__name__)
+            outcomes.append((path, store_manifest(path, since, dry_run=dry_run)))
+        except Exception as error:
+            outcomes.append((path, str(error) or type(error).__name__))
+    return outcomes
+
+
+def store(since: str, *, dry_run: bool = False) -> dict:
+    paths = changed_manifests(since)
+    # Manifests are re-converted in parallel processes, sized like `refresh` (manifests that read the same
+    # original stay in one process, since its observation cache is written without a lock).
+    groups = refresh.groups_of(paths)
+    jobs = min(refresh.auto_jobs(), len(groups))
+    if jobs <= 1:
+        outcomes = [outcome for group in groups for outcome in store_group(group, since, dry_run)]
+    else:
+        # spawn, not fork: DuckDB and the converters hold threads and file handles a forked child must not share.
+        with ProcessPoolExecutor(max_workers=jobs, mp_context=multiprocessing.get_context('spawn')) as pool:
+            futures = [pool.submit(store_group, group, since, dry_run) for group in groups]
+            outcomes = [outcome for future in futures for outcome in future.result()]
+    found = dict(outcomes)
+    reports = [found[path] for path in paths if isinstance(found[path], dict)]
+    failures = [found[path] for path in paths if isinstance(found[path], str)]
     if failures:
         raise SystemExit('\n'.join(failures))
     return {'since': since, 'dry_run': dry_run, 'manifests': [report for report in reports if report['tables']]}

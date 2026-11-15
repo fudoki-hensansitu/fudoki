@@ -578,6 +578,9 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             code, name = held[0], normalize(held[1])
         if code is not None and len(name) > 1 and re.match(r'[０-９]{3,}', raw_text):
             code, name = None, line_text  # `２０３０ビジョン…`: three or more full-width digits begin a name, not an item number (a one-character name stays `161`/`人`)
+        if (code is not None and (bracketed := document_quirk('bracketed_numbers')) is not None
+                and (held := bracketed.module.split(line_text)) is not None):
+            code, name = held  # `(2)７歳以上…` is item 2; `(26所 児童定員…)` is no item number
         if code is not None and (full := document_quirk('full_width_names')) is not None and full.module.names(raw_text):
             code, name = None, line_text
         script = re.match(r'([0-9]+)(?=[０-９])', raw_text)
@@ -1410,8 +1413,11 @@ def untitled(group: Group) -> bool:
     first = group.bands[0]
     if group.mode in ('bands', 'names') and first.header[-1] in SUBJECT_LEVELS[1:]:
         return True
-    if group.mode == 'indent' and len(group.bands) == 1 and first.header[-1] in SUBJECT_LEVELS[1:]:
-        return True  # one column of the 項 and the 目 (`項 目`, 栃木県の予算書) under a title naming the 款
+    if group.mode == 'indent' and len(group.bands) == 1 and first.header[-1] in SUBJECT_LEVELS[1:] \
+            and SUBJECT_LEVELS[0] not in first.header:
+        # one column of the 項 and the 目 (`項 目`, 栃木県の予算書) under a title naming the 款. A column headed by the 款
+        # as well (`款 項 目`, 世田谷区の予算書 R5) holds the 款 itself.
+        return True
     return first.header[-1] == '款項目' and not first.words and not first.stripped_codes
 
 
@@ -1419,7 +1425,8 @@ def title_shift(group: Group) -> bool:
     """Whether the group's columns sit one level below a title's 款 (an `indent` group's columns include the 款's,
     unless its one column is headed by a level below: `項 目`)."""
     if group.mode == 'indent':
-        return len(group.bands) == 1 and bool(group.bands[0].header) and group.bands[0].header[-1] in SUBJECT_LEVELS[1:]
+        return (len(group.bands) == 1 and bool(group.bands[0].header) and group.bands[0].header[-1] in SUBJECT_LEVELS[1:]
+                and SUBJECT_LEVELS[0] not in group.bands[0].header)
     return untitled(group)
 
 
@@ -1810,24 +1817,34 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
     prefixes = note_prefixes(settings)
     rows = quirk(settings, 'rows')
     spaced = document_quirk('letter_spaced_lines')
+    overlap = quirk(settings, 'wrapped_line_overlap')
     unnumbered = quirk(settings, 'unnumbered_shift')
     highlights = quirk(settings, 'listed_highlights')
     whole = quirk(settings, 'whole_name_notes')
+    dots = quirk(settings, 'dot_bullets')
     whole_names = {normalize(name): kind for name, kind in whole.value.items()} if whole is not None else {}
+    tables, tabled = quirk(settings, 'rate_tables'), False
     for item in items:
         if rows is not None:
             rows.module.unnumber(item)
         if settings.get('wrap'):
             item.indent = layout_name_start(item, settings.get('hang_chars'))
+        if dots is not None:
+            dots.module.shift(item)
         raw = normalize(text(item.lines[0]))
         note = raw.startswith(prefixes) or raw in whole_names
+        if tables is not None and (tabled := tables.module.within(raw, item, tabled, tables.value)) and not note:
+            note, item.hint = True, tables.module.KIND
         if not note and highlights is not None and highlights.module.listed(item) and id(item) not in column_amount_items:
             note, item.hint = True, highlights.module.KIND
         waiting = result[-1] if result else None
         if (note and raw.startswith(('(', '（')) and settings.get('wrap') == 'amount_on_last_line' and waiting is not None and waiting.role in ('node', 'note')
                 and not waiting.amounts and id(waiting) not in column_amount_items
                 and waiting.page == item.page
-                and abs(item.lines[0][0].x0 - waiting.indent) <= max(g.y1 - g.y0 for g in item.glyphs)  # a character
+                # a character either way; a bracket hung one character left of the name (`（繰越明許費）` 9pt left,
+                # 132128) also when its box is a hair under the character's size
+                and -max(g.y1 - g.y0 for g in item.glyphs) <= waiting.indent - item.lines[0][0].x0
+                <= max(g.y1 - g.y0 for g in item.glyphs) + .5
                 and 0 <= item.y0 - waiting.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
             # The second line of a name still waiting for its amount (`…委員報酬` / `(9人) 840,000`); the count in
             # its bracket is no item number. Only a bracket: a note of another prefix under a name (`1報酬` /
@@ -1889,7 +1906,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
                 and item.page == previous.page
                 and bisect_right(subject_starts, previous.anchor) == bisect_right(subject_starts, item.anchor)
                 and ((abs(item.indent - previous.indent) <= 3 + float(settings.get('name_start_slack', 0))
-                      and -(spaced.module.overlap(max(g.y1 - g.y0 for g in item.glyphs)) if spaced is not None else 0)
+                      and -max(spaced.module.overlap(max(g.y1 - g.y0 for g in item.glyphs)) if spaced is not None else 0,
+                               float(overlap.value) * max(g.y1 - g.y0 for g in item.glyphs) if overlap is not None else 0)
                       <= item.y0 - previous.y1 <= max(g.y1 - g.y0 for g in item.glyphs))
                      or (spaced is not None and spaced.module.same_line_after(previous, item)))):
             if previous.role == 'annotation' and id(item) in column_amount_items:
@@ -1904,6 +1922,8 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
         result.append(item)
     if rows is not None:
         rows.module.flatten(result)
+    if (funding := quirk(settings, 'amount_on_funding_line')) is not None:
+        funding.module.move(result)
     columns = quirk(settings, 'name_columns')
     columned = columns.module.columned(result) if columns is not None else []
     if (fitted := quirk(settings, 'fitted_names')) is not None:
@@ -1999,6 +2019,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
         text_taught = (margins, edges, limits)
     skipped: list[Logical] = []
     gaps = document_quirk('code_gap_wraps')
+    labelled = document_quirk('labelled_amount_cells')
     open_headings: dict[str, tuple[int, float]] = {}  # per axis: the depth and line start of the open department heading
     summing: dict[str, list] = {}  # per axis: the depth, amount and items' sum so far of the open declared heading
     for logical in logicals:
@@ -2137,7 +2158,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                         # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)
                         # (no rule between them in the amount columns: a subject of its own has its amount in a cell of its own)
                         and (id(item) not in column_amount_items
-                             or (id(previous) not in column_amount_items and same_amount_cell(logical, previous, item))
+                             or ((id(previous) not in column_amount_items or labelled is not None)
+                                 and same_amount_cell(logical, previous, item))
                              or stacked_under(logical, previous, item))
                         and not TOTAL.search(item.name) and item.page == previous.page
                         # (A line starting between the code's end and the name's start wraps that name: a name split from
@@ -2243,6 +2265,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                1 if (layout or {}).get(group.axis, {}).get('single_part_notes') else 2)
     # The amount of a label that ends a page is the first line of the next page, under the subject's row
     # repeated at its top (`wrap: amount_on_last_line`, `items` keeps that line as a nameless item).
+    # On facing pages the axis's next page is two physical pages on, past the subject page (港区 R8: `1 …をつくる` ends
+    # p207, its `18,101` heads p209); an axis that declares `wrapped_names_over_pages` (pages it continues over are
+    # facing pages) joins two pages on as well. `tails` keeps the last item of a page that prints the axis.
     tails: dict[str, Item] = {}
     for _, ordered, found in all_items:
         for group in ordered:
@@ -2255,13 +2280,18 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                  or quirk((layout or {}).get(group.axis), 'amount_over_page') is not None) and previous is not None
                     and mine and not mine[0].name and mine[0].amounts and mine[0].code is None
                     and not previous.amounts and previous.name
-                    and previous.role in ('node', 'note', 'annotation') and mine[0].page == previous.page + 1):
+                    and previous.role in ('node', 'note', 'annotation')
+                    and (mine[0].page - previous.page == 1
+                         or (mine[0].page - previous.page == 2
+                             and quirk((layout or {}).get(group.axis), 'wrapped_names_over_pages') is not None))):
                 first = mine.pop(0)
                 previous.lines += first.lines
                 previous.amounts += first.amounts
             elif (previous is not None and mine
-                  and (over := quirk((layout or {}).get(group.axis), 'names_over_pages')) is not None
-                  and over.module.runs_on(previous, mine[0])):
+                  and (((over := quirk((layout or {}).get(group.axis), 'names_over_pages')) is not None
+                        and over.module.runs_on(previous, mine[0]))
+                       or ((wrapped := quirk((layout or {}).get(group.axis), 'wrapped_names_over_pages')) is not None
+                           and wrapped.module.runs_on(previous, mine[0])))):
                 first = mine.pop(0)
                 previous.role = 'node'
                 previous.name += first.name
@@ -2413,6 +2443,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             subject_depth = min(subject_depth, 3)
         row = None  # (subject item, top, bottom) of the latest subject row
         opening = logical.reprints  # no subject with a code has begun on this page yet
+        fresh = True  # no subject has begun on this page yet (the headings printed again are no new subject)
         page_axes: set[str] = set()  # the breakdown axes with an item on this page so far (`repeated_at_top`)
         digit_set = quirk(document, 'digit_set_codes')
         codeless_items = document_quirk('codeless_column_items')
@@ -2493,6 +2524,17 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     opening = False
                 depth = item.title_depth if item.level == -1 else item.level + 1 + (titled if title_shift(item.group) else 0)
                 previous = stack[depth - 1] if len(stack) >= depth else None
+                if (fresh and logical.reprints and previous is not None and item.role == 'node' and item.code is not None
+                        and previous.code is not None and normalize(previous.code) == normalize(item.code)
+                        and item.name and not repeats(previous, item, logical.ocr)
+                        and item.level is not None and 0 <= item.level < len(item.group.bands) - 1):
+                    # A continuation page prints the open headings' codes again over a line whose own level prints no
+                    # code (`2 4 参議院議員選挙費 0 79,195`, 132128 当初予算 R5 p33: 款 2 and 項 4 again, then a 目 the
+                    # year drops, printed with no number): the last code is the open heading's, not the line's. Two
+                    # siblings never share a code, so the line is a codeless item one level down.
+                    repeated_codes.extend(g for g in item.glyphs[:1] if CODE.match(normalize(g.text)))
+                    item.code, item.level, depth = None, item.level + 1, depth + 1
+                    previous = stack[depth - 1] if len(stack) >= depth else None
                 if previous is None and logical.level_titles is None:
                     # Bands that skip a level (a name band between the codes): find the open one by band. (Under
                     # stacked titles the open ones are titles or the 款 of the summary: a 目 of the same code and name
@@ -2523,6 +2565,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 item.parent = stack[-1] if stack else None
                 item.depth = depth
                 stack.append(item)
+                fresh = False
                 branch.clear()
                 open_headings.clear()
                 summing.clear()
