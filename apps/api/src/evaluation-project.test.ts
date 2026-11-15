@@ -90,7 +90,7 @@ describe('事業', () => {
     for (const [id, parent] of [[P, null], [CHILD, P]] as const)
       insert('project', { project_id: id, jurisdiction_code: '131091', first_year: 2024, first_year_kind: 'before_coverage', last_year: null, last_year_kind: 'latest', parent_project_id: parent })
     // 名前・款項目・金額は事業の年度が指す内訳から引く
-    for (const [id, fy, kind, name, yen] of [['d-old', 2024, 'initial', '子育て支援費', 1000], ['d-settled', 2024, 'settlement', '子育て支援費', 900], ['d-initial', 2026, 'initial', '子育て支援費', 1000], ['d-child', 2026, 'initial', '家庭相談', 100]] as const)
+    for (const [id, fy, kind, name, yen] of [['d-old', 2024, 'initial', '子育て支援費', 1000], ['d-settled', 2024, 'settlement', '子育て支援費', 900], ['d-initial', 2026, 'initial', '子育て支援事業費', 1100], ['d-child', 2026, 'initial', '家庭相談', 100]] as const)
       insert('expenditure_detail', {
         detail_id: id, subject_id: `s-${kind}`, jurisdiction_code: '131091', fiscal_year: fy, document_kind: kind, account_name: '一般会計',
         kan_name: '民生費', kou_name: '児童福祉費', moku_name: '児童福祉総務費', breakdown: '事業', depth: 1, name, amount_yen: yen,
@@ -102,6 +102,12 @@ describe('事業', () => {
   test('事業は年度と直下の事業を返し、評価シートはつなぎの表で引く', async () => {
     const body = ProjectOutput.parse(await (await get(`/v1/projects/${P}`)).json())
     expect(body.years.map((y) => y.fiscal_year)).toEqual([2024, 2026])
+    // 金額・科目は当初予算と決算の内訳から、名前は当初予算の内訳から引き、事業の名前は最新の年度のもの
+    expect(body.years.map((y) => [y.name, y.budget_yen, y.settled_yen, y.initial_expenditure_subject_id, y.settlement_expenditure_subject_id])).toEqual([
+      ['子育て支援費', 1000, 900, 's-initial', 's-settlement'],
+      ['子育て支援事業費', 1100, null, 's-initial', null],
+    ])
+    expect(body.project.name).toBe('子育て支援事業費')
     expect(body.children.map((c) => c.project_id)).toEqual([CHILD])
     expect(Object.keys(body).sort()).toEqual(['children', 'project', 'years'])
     const sheets = await (await post('/v1/evaluations/sheets:search', { fiscal_year: { min: 2024, max: 2026 }, project_ids: [P] })).json()
