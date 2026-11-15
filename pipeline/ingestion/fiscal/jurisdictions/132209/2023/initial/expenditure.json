@@ -1,0 +1,1755 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132209",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "35c33d4d62fdb5d1fe0ac8ab4ee6ac36f18be70a9dd3fc6de1f65d6cfdf2fa0c"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-1",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-2",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e8b3c21c59f8e667cab01e529c94569039f401fc249e82bd318f77345fa4d390"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-2",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-2"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-3",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "1cdcf73c93f95897555d81773469d84e04529bf1b9cadd38fc346d64e12484fe"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-3",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        },
+        "excluded_boxes": [
+          {
+            "id": "p23-funding-amount",
+            "page": 23,
+            "bbox": [
+              505,
+              616,
+              590,
+              640
+            ],
+            "kind": "財源内訳",
+            "reason": "財源の名前（(国) 障害者自立支援給付費等負担金 など）の金額。財源内訳の列を取り込まない語で、その他と一般財源の罫をまたいで印字されている。"
+          },
+          {
+            "id": "p75-funding-amount",
+            "page": 75,
+            "bbox": [
+              505,
+              569,
+              590,
+              593
+            ],
+            "kind": "財源内訳",
+            "reason": "財源の名前（(国) 障害者自立支援給付費等負担金 など）の金額。財源内訳の列を取り込まない語で、その他と一般財源の罫をまたいで印字されている。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-3"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-4",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "903e01174c94478e58247170e1ebfa241ded33c6f269255dbbefba4ce7923b65"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-4",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-4"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-5",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e1e4aed8172562054aa45b9487dddcf6c3ab0ed2834b50d7f252f2bb0d27af74"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-5",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-5"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-6",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a689a102d2b972cadbcae4d866acb266769eea74065df20dee541046d098ea45"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-6",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-6"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-7",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "2e8fa3773756868f21a046afd8b7e28836f57c6fba74d57d21a1fcb911f4f41f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-7",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-7"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-8",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f772e8140c8832fe2fcd98ea703707ec189bcea0e290bfcec6db44ecdfb3a282"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-8",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-8"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-9",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4103569c04eee3a7a7a07ca17ce6c157e656dd6db5a47c753cdc57ca12fcaca3"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-9",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-9"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-10",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ccb15060dd80cc146a80ae6c336f54c5f474bfb7ed57c6f42c1ad7f0f88ec3f6"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-10",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-10"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-11",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ed25d3f283ce254b520ef3a0817e354e601435df89b73637fd746927a82a09f9"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-11",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-11"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-12",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0819791655735498714c55c5a151d5f8b8ed051df76bef0c8d610a989ad53c2b"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-12",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-12"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-13",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ad022a27f1200755b7d86833a173242f0caf4ea3a54143995ee4f54621163824"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-13",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度": {
+                  "kind": "amount"
+                },
+                "前年度": {
+                  "kind": "amount"
+                },
+                "比較増(△)減": {
+                  "kind": "amount"
+                },
+                "節／金額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "facing_pages": true,
+                "carried_names": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "split_at_rules"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "○": 2
+                  }
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "marks": {
+                    "○": 3,
+                    "・": 4
+                  }
+                },
+                "quirks": {
+                  "headings": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-13"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial-1",
+      "conversion_id": "general-initial-1",
+      "input_fingerprint": "0459acfa803d1dd0ab668585c7f9daafde060ce8a7e2d651196407c6d32e343c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。分冊のため款の和 308,241 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（3 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-1-nodes.parquet",
+          "sha256": "255288b676640cbe29c1c738af16ff9cd14b15bc64b345780a1f100d3e7ce660",
+          "bytes": 7148
+        },
+        "row_count": 87
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-1-amounts.parquet",
+          "sha256": "4612361a31d5e5d084cf934f0f7104b9a73545468f43e7ac3c988705e989b89c",
+          "bytes": 5043
+        },
+        "row_count": 93
+      }
+    },
+    {
+      "table_id": "general-initial-2",
+      "conversion_id": "general-initial-2",
+      "input_fingerprint": "140e496ade2314c882ae24f415e858b73e452ce3a2634b9e2b38cc8ec29191f7",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 40頁 から決めた。分冊のため款の和 3,895,997 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（31 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-2-nodes.parquet",
+          "sha256": "7717c9c851d4b015a38f5b5ee69042d3e9f854c036f5c6bd33c438d4978982bd",
+          "bytes": 58595
+        },
+        "row_count": 1713
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-2-amounts.parquet",
+          "sha256": "b5c0d2911091ef305e3cfc73921ee90d9e5088b30dec0a6d8061cec057aa4268",
+          "bytes": 40177
+        },
+        "row_count": 1775
+      }
+    },
+    {
+      "table_id": "general-initial-3",
+      "conversion_id": "general-initial-3",
+      "input_fingerprint": "296ad93f27d607360c64ef6e2745c9234ab31eaaadbc446fbd192b49418cfb56",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 39頁 から決めた。分冊のため款の和 18,781,238 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（22 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-3-nodes.parquet",
+          "sha256": "0a731976efcbedcbf91c6d9af9fd62190b49379a8a343b7e6a18db0a5f5e2c32",
+          "bytes": 55546
+        },
+        "row_count": 1577
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-3-amounts.parquet",
+          "sha256": "f4c9e55f66160d334104643b7059652c2617b1e1ba3523d0b3085d8569f00f89",
+          "bytes": 37547
+        },
+        "row_count": 1621
+      }
+    },
+    {
+      "table_id": "general-initial-4",
+      "conversion_id": "general-initial-4",
+      "input_fingerprint": "df89f2d5f2d521c2b098d32bb2e3f00e736a808efb4e688993b3a03df77b06de",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 15頁 から決めた。分冊のため款の和 2,704,513 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（14 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-4-nodes.parquet",
+          "sha256": "0f711404a1b5eeae244f68a2b8281b6fa08c1b27dc9a0599774ec9ca9bbe3caf",
+          "bytes": 26822
+        },
+        "row_count": 645
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-4-amounts.parquet",
+          "sha256": "87770d13dad92fd3a077cd4fe28be6460ea9fe235d16923bf671542bd3c45dd1",
+          "bytes": 18662
+        },
+        "row_count": 673
+      }
+    },
+    {
+      "table_id": "general-initial-5",
+      "conversion_id": "general-initial-5",
+      "input_fingerprint": "97ff158ea0b52d510cb57b469aee1a2813a355d01e66a5fb135383ba3d38590d",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。分冊のため款の和 3,020 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（3 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-5-nodes.parquet",
+          "sha256": "0052deece67d9558164d27c2c943901257b11761bdf0a948e5f3f79b84194e57",
+          "bytes": 2959
+        },
+        "row_count": 10
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-5-amounts.parquet",
+          "sha256": "1f7a8264dbcc3a1741e6def41739571557c37f458497acbb365e544c350e1281",
+          "bytes": 2250
+        },
+        "row_count": 16
+      }
+    },
+    {
+      "table_id": "general-initial-6",
+      "conversion_id": "general-initial-6",
+      "input_fingerprint": "b9569b5d0cc795335d7283f6781c2d6b13953246a118529164e7ed61df3d79ba",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 4頁 から決めた。分冊のため款の和 49,619 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（6 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-6-nodes.parquet",
+          "sha256": "f8e0f26674c16d84c25ced9cca302bc90d8d571fa679895a9c0dc6e7924274a1",
+          "bytes": 9180
+        },
+        "row_count": 141
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-6-amounts.parquet",
+          "sha256": "33ed2bd15b7423760eefe3166a98891ef8e65bebe552763f4b93e26da0e2fc34",
+          "bytes": 6408
+        },
+        "row_count": 153
+      }
+    },
+    {
+      "table_id": "general-initial-7",
+      "conversion_id": "general-initial-7",
+      "input_fingerprint": "e3bc03d97df0d0e5c28f3aa08da8f522c20ffc940666709f3f5c1476ba1c9a94",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 3頁 から決めた。分冊のため款の和 102,827 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（6 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-7-nodes.parquet",
+          "sha256": "cbe60cbe5b471ce53c7ef1607f1c40d41cc5f5f37c90ce1c5caea07ea8d28700",
+          "bytes": 9237
+        },
+        "row_count": 137
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-7-amounts.parquet",
+          "sha256": "d7182d02018fe1c121535322edf37fee70c4e3e1969f6a000a468deda97acfb5",
+          "bytes": 6530
+        },
+        "row_count": 149
+      }
+    },
+    {
+      "table_id": "general-initial-8",
+      "conversion_id": "general-initial-8",
+      "input_fingerprint": "c26adc484cf243a7511d1ee31692c3be3499a2f864f1d49cbb7d7c2f68f69771",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 11頁 から決めた。分冊のため款の和 1,767,541 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（15 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-8-nodes.parquet",
+          "sha256": "3bc73d5ecef0628da19f529f69ecb218290d9598dd9940a4c98037cba8279317",
+          "bytes": 21175
+        },
+        "row_count": 473
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-8-amounts.parquet",
+          "sha256": "07867abaac5863f16b96859f4e4e08333403b014ad7b9b8126ba10853f503123",
+          "bytes": 15241
+        },
+        "row_count": 503
+      }
+    },
+    {
+      "table_id": "general-initial-9",
+      "conversion_id": "general-initial-9",
+      "input_fingerprint": "3deb719df7262f56280283df660e25f450bb6a294e139628f4923ab4c207062c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 4頁 から決めた。分冊のため款の和 1,136,214 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（7 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-9-nodes.parquet",
+          "sha256": "ae1f02bd9f93e8b75c9156c4e691653d5b86c5a8a04ce65a7af07be7365bbe01",
+          "bytes": 10656
+        },
+        "row_count": 184
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-9-amounts.parquet",
+          "sha256": "34608c5ba11a602a06b7ef1716dac7a662a394577d917d50f059064501d6ebb8",
+          "bytes": 7565
+        },
+        "row_count": 198
+      }
+    },
+    {
+      "table_id": "general-initial-10",
+      "conversion_id": "general-initial-10",
+      "input_fingerprint": "5057c6bff1453ce3abd798a35c1ffebdbbe7b37825b13641042146a7421b29e5",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 40頁 から決めた。分冊のため款の和 3,500,448 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（28 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-10-nodes.parquet",
+          "sha256": "09ffbd52a9e5ce49aa0f6d5db849d49012c03b828889335429cf05600568f902",
+          "bytes": 59821
+        },
+        "row_count": 1776
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-10-amounts.parquet",
+          "sha256": "cf14be33c57a59eb69d94173e3fe4b5756cb7d01db3f73c1eb5af6635bf33d10",
+          "bytes": 40986
+        },
+        "row_count": 1832
+      }
+    },
+    {
+      "table_id": "general-initial-11",
+      "conversion_id": "general-initial-11",
+      "input_fingerprint": "66db0e5408367a8e3edb37391e417ff79e6d6e3367275ce7cfc9bf79fbfd34d9",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。分冊のため款の和 1,725,278 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（4 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-11-nodes.parquet",
+          "sha256": "b4940cfd0dafe35ab003077945a6efae795b9a9432c9b6c4751d0fc3dbd4ac70",
+          "bytes": 3020
+        },
+        "row_count": 13
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-11-amounts.parquet",
+          "sha256": "ea94daafe0cb3f980e90a082372004a67387923fce915dc48e634bae7d3abe1a",
+          "bytes": 2525
+        },
+        "row_count": 21
+      }
+    },
+    {
+      "table_id": "general-initial-12",
+      "conversion_id": "general-initial-12",
+      "input_fingerprint": "18738940b300fc55de2eebba3339b79117548d51f5b00f1d0210b4b79cff67e7",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。分冊のため款の和 3,064 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（3 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-12-nodes.parquet",
+          "sha256": "105b41dc9809794219cba43082d92a79786d26e24d1c5adc1ef0a52755fa7705",
+          "bytes": 3667
+        },
+        "row_count": 17
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-12-amounts.parquet",
+          "sha256": "dae9153a3ea8891d515c388d5cb059b25193ce85251b0a6aab553f926a4148a8",
+          "bytes": 2557
+        },
+        "row_count": 23
+      }
+    },
+    {
+      "table_id": "general-initial-13",
+      "conversion_id": "general-initial-13",
+      "input_fingerprint": "b4776a87b37e860fcc3584caaa4672934fae7d5ddf7c4c0e4b7ccd42f3201199",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 1頁 から決めた。分冊のため款の和 30,000 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（3 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-13-nodes.parquet",
+          "sha256": "1c4f178447bd1fb7c3efb25544bb0eac1cde30f85d035da744529e49f698f50a",
+          "bytes": 2438
+        },
+        "row_count": 7
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/initial/expenditure/general-initial-13-amounts.parquet",
+          "sha256": "8db20f0030317f1d2485a35d91d9858419dc45da22948593ca60b6c295196c32",
+          "bytes": 2202
+        },
+        "row_count": 13
+      }
+    }
+  ]
+}
