@@ -752,6 +752,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     kind_names = quirk(settings, 'names_end_with_kind_words')
     remainder = quirk(settings, 'bracketed_remainder')
     department = quirk(settings, 'department_line')
+    bracket_heading = quirk(settings, 'bracket_heading_amount_below')
     headings = quirk(settings, 'headings')
     glued = quirk(settings, 'glued_numbers')
     stops = quirk(settings, 'glued_number_stops')
@@ -909,7 +910,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             continue
         whole = normalize(text(line_of(label, money)))
         if (previous is not None and code is None and whole[:1] in '(（' and whole[-1:] in ')）'
-                and not (amount_brackets and money) and not whole.startswith(note_prefixes(settings))):
+                and not (amount_brackets and money) and not whole.startswith(note_prefixes(settings))
+                and not (bracket_heading is not None and not money and bracket_heading.module.heads(entries, index))):
             previous.lines.append(label + [g for run in money for g in run])
             previous.name += whole  # a parenthesised remark on the previous item, not an amount of it
             continue
