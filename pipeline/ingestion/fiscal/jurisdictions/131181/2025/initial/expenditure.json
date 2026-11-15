@@ -898,7 +898,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "a28d9d788673fe0c8dfef5008e2a0fc287d93cf4d785529a0f7d6ea6e5b97bc3",
+      "input_fingerprint": "4956d95bfb309a5ee3220cc7f0aca8750f5aa4129ecd36ccb52ba4ce10afb6a3",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -928,7 +928,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "1d490634dc99c73020d8f77631b7e827d5ad94f064534c0e39d97e4b0ce06647",
+      "input_fingerprint": "ffdf6814ad2375ae82a3d3a83750d94bb0e1906a60397752eb18f539ae1077d7",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -941,8 +941,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131181/2025/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "f589ec7e79a9f4ac6e23d87087f423d5920d3f632128993f38ac43358825ba08",
-          "bytes": 9993
+          "sha256": "dfb26f9ddc783a56e3d103c0622c34525c36b09b30f6b0a2b61e4becc4f974be",
+          "bytes": 10002
         },
         "row_count": 160
       },
@@ -958,7 +958,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "507627003e97eb72c3983e149c82834683cd1d69ef79439bdc66d49bd4e964d5",
+      "input_fingerprint": "243378d4fc877d39a4e2c399c733f6d1716280f616cb0a658ee5a195928f2a72",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -988,7 +988,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "f3d6febad94996dd528724ce40ebfdbdcbf80246d422f88458ca55e94ee5ebb3",
+      "input_fingerprint": "c8d553617a7e3477735004112e160895696e7e351706ec75065b336808463464",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -1001,10 +1001,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131181/2025/initial/expenditure/care-initial-nodes.parquet",
-          "sha256": "df4182eb784a475b0964f7441eca4994b95583e9658a9f32f738cf6fbf89d182",
-          "bytes": 11793
+          "sha256": "b3c94ac156be41677bdb0d2983d5c3e08995fc11d8333b21d9b070c0fbdd5556",
+          "bytes": 11729
         },
-        "row_count": 199
+        "row_count": 198
       },
       "amounts": {
         "object": {

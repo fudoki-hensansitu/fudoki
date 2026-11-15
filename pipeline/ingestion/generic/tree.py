@@ -2098,10 +2098,16 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
             for item in found[id(group)]:
                 previous = kept[-1] if kept else None
                 # (Under stacked titles a 目 abolished this year prints no number: `退職被保険` / `者等療養費` `0 1 △1`.)
+                abolished = document_quirk('unnumbered_abolished_names')
                 if (previous is not None and previous.name
                         and (previous.code is not None or (id(previous) in column_amount_items and (
                             logical.level_titles is not None
-                            or (document_quirk('unnumbered_abolished_names') is not None and not TOTAL.search(previous.name)))))
+                            or (abolished is not None and not TOTAL.search(previous.name))))
+                             # (its amounts on the name's last line: `(退職被保険者等` / `療養給付費) － 100 △100`)
+                             or (abolished is not None and id(previous) not in column_amount_items
+                                 and id(item) in column_amount_items and not TOTAL.search(previous.name)))
+                        and not (abolished is not None and id(previous) in column_amount_items
+                                 and not abolished.module.same_row(logical, previous, item, _cell))
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts
                         # (a line that opens with a bracket starts an item of its own: `bracketed_subjects`)

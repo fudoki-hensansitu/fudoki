@@ -375,6 +375,9 @@
                 }
               }
             }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true
           }
         }
       },
@@ -389,7 +392,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "7f2fa7ab143d00d983d61b1a2fc6491a3433b66e3ca5d7b53db093d2c56d563a",
+      "input_fingerprint": "c38ac5ea724ac1dcdcc7d7645d656d6c86f88df0e3b1e6f07fe41ffc12e8803b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -418,7 +421,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "1af191025a9cdc87b5e4c9132b991e43e4c0afe03595ff70220f2465b75df2a4",
+      "input_fingerprint": "48058fb4cae3e07a9d62b0efd8300e9254f6842c68cbfc23e774863c4a969a4d",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -447,7 +450,7 @@
     {
       "table_id": "late-elderly-initial",
       "conversion_id": "late-elderly-initial",
-      "input_fingerprint": "6ee2d3d1dbcc000c8ea417d9ede11a308a8f3fc7d13d02416fc0f658131851d6",
+      "input_fingerprint": "39d8b66a43958da90a5064547ef94d81bcbaf434273477e483702f865aab3170",
       "account": "後期高齢者医療事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -476,7 +479,7 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "f287195766beac4404b6a8c46c95e894daed3a1d9cc6414ae57787a764c5ea05",
+      "input_fingerprint": "83b83da8f9d852eea421fdaba51f04aea4c6b1224f0fb62e4d1ece91f27e19dd",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '説明': 'shape'}。",
@@ -488,16 +491,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131164/2023/initial/expenditure/long-term-care-initial-nodes.parquet",
-          "sha256": "6e991345b36cdf39446f2c418163e22cc6f2b9c7c06239ba19e5ba5f0345382d",
-          "bytes": 12366
+          "sha256": "bba2cdac00c4bbbb92c6b6c5d38815d4195735a356e4ccad1c0f3d3700095745",
+          "bytes": 12360
         },
-        "row_count": 213
+        "row_count": 212
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131164/2023/initial/expenditure/long-term-care-initial-amounts.parquet",
-          "sha256": "d1a771d709c827b51c31354b9ba19ee17c1542aa34dc003e8ea96f5797bff041",
-          "bytes": 9842
+          "sha256": "4f14aa7857522d0d6ddfd51539c94f73b0e4ffda6cf4c48faec040f5aaeee516",
+          "bytes": 9846
         },
         "row_count": 259
       }
