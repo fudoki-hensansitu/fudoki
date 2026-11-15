@@ -31,6 +31,7 @@ AMOUNT = re.compile(r'^[△▲]?(?:[0-9]{1,3}(?:,[0-9]{3})+|[0-9]+)$')
 CODE = re.compile(r'^([0-9]+)(.*)$')
 FULL_WIDTH_DIGITS = str.maketrans('０１２３４５６７８９', '0123456789')
 LINE = 2.5   # points: words of one printed line
+SUBJECT_LINE = 5.0   # points: words of one line of the 目 and 節 columns, whose wrapped names print off the baseline
 JOIN = 3.0   # points: fragments of one printed number (`562,` `750`) abut
 EDGE = 2.0   # points: a rule of the page at a column edge of the profile
 
@@ -44,10 +45,13 @@ def name_of(text: str) -> str:
     return text.replace('...', '')
 
 
-def lines(words, tolerance=LINE):
+def lines(words, tolerance=LINE, apart=False):
+    """Words of one line, by y. With `apart`, a word that mostly lies over the words of the line in x opens the next line."""
     result = []
     for word in sorted(words, key=lambda w: (w.y0, w.x0)):
-        if result and abs(word.y0 - result[-1][0].y0) <= tolerance:
+        if result and abs(word.y0 - result[-1][0].y0) <= tolerance \
+                and not (apart and sum(max(0, min(word.x1, other.x1) - max(word.x0, other.x0))
+                                       for other in result[-1]) > (word.x1 - word.x0) / 2):
             result[-1].append(word)
         else:
             result.append([word])
@@ -96,6 +100,43 @@ def box(words):
     return (min(w.x0 for w in words), min(w.y0 for w in words), max(w.x1 for w in words), max(w.y1 for w in words))
 
 
+GLUED_AT_EDGE = re.compile(r'^([△▲]?[0-9,]+…+)([0-9]{1,2}[^0-9,…].*)$')
+AFTER_LEADER = re.compile(r'[^…]+…*')
+
+
+def split_word(word, texts, cut=None):
+    """The word as one word per text, by the characters' widths (full-width one box high, ASCII half); a word of two
+    texts is cut at `cut` when it is given."""
+    if cut is not None:
+        return [Word(texts[0], word.x0, word.y0, cut, word.y1), Word(texts[1], cut, word.y0, word.x1, word.y1)]
+    widths = [[.5 if ord(c) < 128 else 1.0 for c in text] for text in texts]
+    total = sum(sum(w) for w in widths)
+    result, left = [], word.x0
+    for text, w in zip(texts, widths):
+        right = left + (word.x1 - word.x0) * sum(w) / total
+        result.append(Word(text, left, word.y0, right, word.y1))
+        left = right
+    return result
+
+
+def unglue(words, edge):
+    """Words that run two printed things together are split. A comparison amount that runs into the 節 number printed
+    right of it (`△9…11需` over the edge of the two columns); an amount's leader dots that run into the next amount
+    (`464…12,`)."""
+    result = []
+    for word in words:
+        found = GLUED_AT_EDGE.match(word.text) if word.x0 < edge < word.x1 else None
+        if found:
+            result += split_word(word, [found.group(1), found.group(2)], edge)
+            continue
+        parts = AFTER_LEADER.findall(word.text) if '…' in word.text.rstrip('…') else []
+        if len(parts) > 1 and ''.join(parts) == word.text:
+            result += split_word(word, parts)
+        else:
+            result.append(word)
+    return result
+
+
 def inside(word, x_range):
     middle = (word.x0 + word.x1) / 2
     return x_range[0] <= middle < x_range[1]
@@ -108,10 +149,10 @@ def numbers(words):
         if previous is not None and previous.text in ('△', '▲') and re.match(r'[0-9]', word.text) \
                 and word.x0 - previous.x1 <= JOIN:
             raise ValueError(f'A sign printed apart from its amount: {previous.text} {word.text}')
-        if runs and runs[-1] is not None and word.x0 - runs[-1][-1].x1 <= JOIN and re.fullmatch(r'[0-9,]+[)）]?', word.text) \
+        if runs and runs[-1] is not None and word.x0 - runs[-1][-1].x1 <= JOIN and re.fullmatch(r'[0-9,]+[)）]?…*', word.text) \
                 and runs[-1][-1].text.endswith(','):
             runs[-1].append(word)
-        elif re.fullmatch(r'[△▲]?[0-9,]+[)）]?', word.text):
+        elif re.fullmatch(r'[△▲]?[0-9,]+[)）]?…*', word.text):   # `622,` `516…`: leader dots follow the amount
             runs.append([word])
         else:
             runs.append(None)
@@ -119,7 +160,7 @@ def numbers(words):
     for run in runs:
         if run is None:
             continue
-        value = ''.join(w.text for w in run).rstrip(')）')   # `611）` closes a 目 printed in parentheses
+        value = ''.join(w.text for w in run).rstrip('…').rstrip(')）')   # `611）` closes a 目 printed in parentheses
         if AMOUNT.fullmatch(value):
             result.append((value, run))
     return result
@@ -288,8 +329,8 @@ class Reader(Reading):
             if unit not in (None, title['unit']):
                 raise ValueError(f'Page {page.number}: the unit changes within the account')
             unit = title['unit']
-            in_frame = [w for w in page.words if self.FRAME[0] - 1 <= (w.x0 + w.x1) / 2 <= self.FRAME[1] + 1
-                        and top < (w.y0 + w.y1) / 2 < bottom]
+            in_frame = unglue([w for w in page.words if self.FRAME[0] - 1 <= (w.x0 + w.x1) / 2 <= self.FRAME[1] + 1
+                               and top < (w.y0 + w.y1) / 2 < bottom], self.SETSU[0])
             # The title is read for its 款・項 and unit; the page number at its right end is not read.
             title_words = [w for w in page.words if w.y1 <= top + 1 and w not in title['folio']]
             words.extend((page.number, box([w]), w.text) for w in [*title_words, *in_frame])
@@ -312,19 +353,20 @@ class Reader(Reading):
                 exclude('反復見出し', repeated, page.number, title['項']['code_words'])
             body = [w for w in in_frame if (w.y0 + w.y1) / 2 > body_top]
             # 目 column.
-            subject_lines = centered_codes(lines([w for w in body if inside(w, self.SUBJECT)]))
+            # A name wrapped over three lines prints its words up to half a line off the baseline (`センター` / `費…`).
+            subject_lines = centered_codes(lines([w for w in body if inside(w, self.SUBJECT)], SUBJECT_LINE, apart=True))
             continuing = moku   # the 目 that runs on from the page before
             starts = []   # (y, 目 node) of the 目 that open on this page
             total_y = None
             amount_rows = [run[0].y0 for _, x_range in self.SUBJECT_AMOUNTS
-                           for line in lines([w for w in body if inside(w, x_range)]) for _, run in numbers(line)]
+                           for line in lines([w for w in body if inside(w, x_range)], SUBJECT_LINE) for _, run in numbers(line)]
             last_line = None   # the y of the last line of the 目 that opened last on this page
             for line in subject_lines:
                 text = compact(''.join(w.text for w in line))
                 found = CODE.match(text)
                 y = line[0].y0
                 follows = starts and last_line is not None and y - last_line <= 10
-                if text.strip('()') == self.TOTAL:
+                if text.strip('()').rstrip('.…') == self.TOTAL:   # the 計 row may print leader dots (`計…`)
                     total_y = y
                 elif not starts and continuing is not None and not found and repeats(text, continuing['name_text']):
                     # The name of the 目 that runs on, printed again (`（議会費）`, `住民基本台帳…` / `事務費`).
@@ -355,7 +397,7 @@ class Reader(Reading):
                 return found[-1] if found else continuing
 
             for header, x_range in self.SUBJECT_AMOUNTS:
-                for line in lines([w for w in body if inside(w, x_range)]):
+                for line in lines([w for w in body if inside(w, x_range)], SUBJECT_LINE):
                     for value, run in numbers(line):
                         y = run[0].y0
                         if total_y is not None and abs(y - total_y) <= LINE:
@@ -367,9 +409,11 @@ class Reader(Reading):
                         add_amount(target, header, value, run, page.number, unit)
             # 節 column.
             setsu_starts = []
-            setsu_lines = centered_codes(lines([w for w in body if inside(w, self.SETSU)]))
+            setsu_lines = centered_codes(lines([w for w in body if inside(w, self.SETSU)], SUBJECT_LINE, apart=True))
             for line in setsu_lines:
                 text = compact(''.join(w.text for w in line))
+                if not text.strip('.…'):
+                    continue   # the leader dots the 計 row prints in the 節 columns
                 found = CODE.match(text)
                 y = line[0].y0
                 parent = owner_at(y)

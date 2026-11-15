@@ -553,9 +553,11 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
             # A count printed in the name (`療養給付費負担金179,856件`) is the name's, though it reads like an amount.
             # Brackets are compared away on both sides: the word may keep the name's page reference in them
             # (`2総合行政情報誌 (P295)`) while the number's bracket is gone (`(2)`, 131199).
-            if word['key'] and (word['key'].removesuffix('件') + '件' in printed or not _amount_shaped(word['key']) and (
-                    word['key'] in printed or re.sub(r'[()（）]', '', word['key']) in re.sub(r'[()（）]', '', printed)
-                    or word['key'] in _level_marks(code, node.get('level_header')))):
+            # The leader dots a name is printed with (`15工事請負費…`) are not its characters.
+            key = word['key'].rstrip('.') or word['key']
+            if key and (key.removesuffix('件') + '件' in printed or not _amount_shaped(key) and (
+                    key in printed or re.sub(r'[()（）]', '', key) in re.sub(r'[()（）]', '', printed)
+                    or key in _level_marks(code, node.get('level_header')))):
                 word['covered'] = 'label'
                 break
     # Adopted prints take precedence over an auxiliary block. An exclusion
