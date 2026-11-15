@@ -23,7 +23,7 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 
 # 所管課を [] で印字する自治体（中央区・八王子など）。[1人分]・[科目存置] のような注記は所管課の語尾で外す
-DEPARTMENT_BRACKET = re.compile(r'\[[^\[\]]*(?:課|部|局|室|所|係|センター|委員会|館)\]\s*$')
+DEPARTMENT_BRACKET = re.compile(r'\[[^\[\]0-9]*(?:課|部|局|室|所|係|センター|委員会|館)\]\s*$')
 KEY = ('jurisdiction_code', 'fiscal_year', 'document_kind', 'account_name', 'kan_name', 'kou_name', 'moku_name', 'path')
 
 

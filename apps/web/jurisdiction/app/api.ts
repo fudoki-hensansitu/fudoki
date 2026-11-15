@@ -60,7 +60,7 @@ function fitSearch(q: string): string {
 }
 
 /** 出典の事業名の【】と、末尾の []（中央区・八王子など。[1人分] のような注記は語尾で外す）は所管課。名前からは外して別に持つ */
-const BRACKET_DEPT = /\[([^[\]]*(?:課|部|局|室|所|係|センター|委員会|館))\]\s*$/
+const BRACKET_DEPT = /\[([^[\]0-9０-９]*(?:課|部|局|室|所|係|センター|委員会|館))\]\s*$/
 const clean = (name: string) => name.replace(/【[^】]*】/g, '').replace(BRACKET_DEPT, '').trim()
 const deptOf = (name: string) => name.match(/【([^】]*)】/)?.[1] ?? name.match(BRACKET_DEPT)?.[1] ?? null
 

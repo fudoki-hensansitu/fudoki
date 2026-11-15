@@ -76,6 +76,7 @@ class LinkProjectsTest(unittest.TestCase):
         # 中央区・八王子は所管課を [] で印字する。所管課が変わっても同じ事業、[1人分] のような注記は名前に残す
         self.assertEqual(normalize('小学校管理事業[学務課]'), normalize('小学校管理事業[教育総務課]'))
         self.assertEqual(normalize('職員費[1人分]'), '職員費[1人分]')
+        self.assertEqual(normalize('公衆便所の維持管理[84カ所]'), '公衆便所の維持管理[84カ所]')
 
 
 if __name__ == '__main__':
