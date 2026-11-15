@@ -4,7 +4,7 @@ models:
   description: 事業。予算書・決算書の事業の行（内訳の分け方が「事業」の行）を、年度をまたいでつないだもの。つなぎ方は**風土記の判断**（規則は ingestion/project/link_projects.py、dbt の int_project__line_ids が build のたびに当てる）。内訳の分け方を「事業」と宣言した自治体はすべて対象。
   columns:
   - name: project_id
-    description: 事業の ID（代理キー）。事業の最初の年度の行の鍵（自治体・年度・資料区分・会計・款・項・目・名前の並び）の sha256。
+    description: 事業の ID（代理キー）。事業の最初の年度の行の鍵（自治体・年度・資料区分・会計・款・項・目・名前の並び）の sha256。収録を足して最初の年度・最初の行が変わると変わる。
     data_tests: [not_null, unique]
   - name: jurisdiction_code
     description: 全国地方公共団体コード（6桁）。

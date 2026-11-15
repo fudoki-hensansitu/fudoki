@@ -2,7 +2,7 @@
 import json
 import unittest
 
-from ingestion.project.link_projects import Line, assign, build_years, link_previous
+from ingestion.project.link_projects import Line, assign, build_years, link, link_previous
 
 
 def line(detail_id, year, kind, path, parent=None, moku='目', order=0):
@@ -50,6 +50,26 @@ class LinkProjectsTest(unittest.TestCase):
         link_previous(cur, prev)
         assign({2025: prev, 2026: cur})
         self.assertEqual(cur[0].method, 'new')
+
+
+    def test_link_gives_every_line_one_project(self):
+        # dbt が呼ぶ入口。自治体をまたいで行を落とさず、どの行もちょうど1つの事業ID を持つ
+        rows = [(x.detail_id, x.parent_detail_id, *x.key, x.name, x.print_order) for x in (
+            line('a', 2025, 'initial', ['子育て支援費']),
+            line('b', 2025, 'initial', ['子育て支援費', '相談'], 'a'),
+            line('c', 2026, 'initial', ['子育て支援費']),
+            line('d', 2026, 'settlement', ['子育て支援費']),
+            line('e', 2026, 'settlement', ['補正の事業']),
+        )]
+        rows.append(('z', None, '131016', 2026, 'initial', '一般会計', '款', '項', '目', '["子育て支援費"]', '子育て支援費', 0))
+        ids = {}
+        for detail_id, project, _ in link(rows):
+            self.assertNotIn(detail_id, ids)
+            ids[detail_id] = project
+        self.assertEqual(set(ids), {'a', 'b', 'c', 'd', 'e', 'z'})
+        self.assertEqual(ids['a'], ids['c'])
+        self.assertEqual(ids['c'], ids['d'])
+        self.assertNotEqual(ids['z'], ids['c'])
 
 
 if __name__ == '__main__':
