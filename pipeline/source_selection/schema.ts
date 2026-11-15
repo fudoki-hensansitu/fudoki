@@ -155,7 +155,8 @@ function checkArchive(
     const numberedPrefix = slot + '-'
     const suffix = saved.key.startsWith(numberedPrefix) ? saved.key.slice(numberedPrefix.length) : ''
     const numbered = /^[1-9]\d*\.(csv|pdf)$/.test(suffix) && suffix.endsWith(`.${file.format}`)
-    const single = selected.files.length === 1 && saved.key === singleKey(file.format)
+    // The unnumbered key also stays when a replacement adds parts to a document first saved as one file
+    const single = saved.key === singleKey(file.format)
     if ((!single && !numbered) || saved.sha256 !== file.sha256 || keys.has(saved.key)) {
       ctx.addIssue({ code: 'custom', path: [...path, 'files', fileIndex], message: 'Archive differs from the selected target or file' })
     }

@@ -5,14 +5,10 @@
 -- （目を立てずに印字された項の内訳など、末端の和に入らない額も残りに入る。ADR 0030）。自治体をまたいで比べる（まち比べ）のに使う。
 -- 科目の表に行の無い根（内訳の表だけ）は NULL。
 with roots as (
-    select distinct expenditure_id, jurisdiction_code, fiscal_year, document_kind, amendment_number, account_name, account_kind
-    from (
-        select expenditure_id, jurisdiction_code, fiscal_year, document_kind, amendment_number, account_name, account_kind
-        from {{ ref('expenditure_subject') }}
-        union
-        select expenditure_id, jurisdiction_code, fiscal_year, document_kind, amendment_number, account_name, account_kind
-        from {{ ref('expenditure_detail') }}
-    )
+    select distinct {{ expenditure_id('r.') }} as expenditure_id, r.jurisdiction_code, r.fiscal_year, r.document_kind, r.amendment_number, r.account_name, r.account_kind
+    from {{ ref('int_fiscal__expenditure_rows') }} r
+    where r.row_id in (select subject_id from {{ ref('expenditure_subject') }})
+       or r.row_id in (select detail_id from {{ ref('expenditure_detail') }})
 ),
 
 kan as (
@@ -28,6 +24,7 @@ leaves as (
         coalesce(sum(amount_yen) filter (where split_part(cofog_code, '.', 1) = '{{ d }}'), 0) as cofog_{{ d }}_yen{{ ',' if not loop.last }}
         {%- endfor %}
     from {{ ref('expenditure_subject') }}
+    join {{ ref('int_fiscal__subject_path') }} using (subject_id)
     where is_leaf
     group by expenditure_id
 ),

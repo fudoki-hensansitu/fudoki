@@ -904,13 +904,745 @@
           "table_id": "farming-support-loan-expenditure"
         }
       ]
+    },
+    {
+      "id": "sewerage-revenue-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "流域下水道事業会計",
+        "table_id": "sewerage-revenue-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "収益的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "sewerage-revenue-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "sewerage-capital-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "流域下水道事業会計",
+        "table_id": "sewerage-capital-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "資本的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "sewerage-capital-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "electricity-revenue-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "電気事業会計",
+        "table_id": "electricity-revenue-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "収益的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "electricity-revenue-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "electricity-capital-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "電気事業会計",
+        "table_id": "electricity-capital-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "資本的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "electricity-capital-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "water-revenue-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "水道事業会計",
+        "table_id": "water-revenue-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "収益的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "water-revenue-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "water-capital-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "水道事業会計",
+        "table_id": "water-capital-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "資本的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "water-capital-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "industrial-water-revenue-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "工業用水道事業会計",
+        "table_id": "industrial-water-revenue-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "収益的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "industrial-water-revenue-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "industrial-water-capital-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "工業用水道事業会計",
+        "table_id": "industrial-water-capital-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "資本的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "industrial-water-capital-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "land-development-revenue-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "用地造成事業会計",
+        "table_id": "land-development-revenue-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "収益的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-development-revenue-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "land-development-capital-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "用地造成事業会計",
+        "table_id": "land-development-capital-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "資本的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-development-capital-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "facility-management-revenue-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "施設管理事業会計",
+        "table_id": "facility-management-revenue-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "収益的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "facility-management-revenue-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "facility-management-capital-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "a767a19c978ddf0b5e8839a84d32faba62e3c4b57c8d64c610c801cc19c51cfc"
+        }
+      ],
+      "options": {
+        "account": "施設管理事業会計",
+        "table_id": "facility-management-capital-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予定額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "kind": "label"
+                }
+              },
+              "header": {
+                "frame_headings": {
+                  "levels": [
+                    [
+                      "収益的収入及び支出",
+                      "資本的収入及び支出"
+                    ],
+                    [
+                      "収入",
+                      "支出"
+                    ]
+                  ],
+                  "keep": [
+                    "資本的収入及び支出",
+                    "支出"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "facility-management-capital-expenditure"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-initial",
-      "input_fingerprint": "6c356f2410f7cc6093afaecfc74192b9eaba957203f0e37170ed01a6a551a65f",
+      "input_fingerprint": "daf2245caaff229677eda698f8a667bb578546b33ffabee82f738f3d098fe1cc",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -941,7 +1673,7 @@
     {
       "table_id": "public-debt-expenditure",
       "conversion_id": "public-debt-initial",
-      "input_fingerprint": "5ddfb65d256ce74ecef49dcaa09527ae0694a9b174b8527c3cc3b5d16dbd6f43",
+      "input_fingerprint": "5385eae6952e3a5501245c2ab73ed79ea51a7e42ee704f2ec3a8f6bcb573c9cd",
       "account": "公債管理特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -970,7 +1702,7 @@
     {
       "table_id": "hospital-loan-expenditure",
       "conversion_id": "hospital-loan-initial",
-      "input_fingerprint": "01df1da72981a993bd12766d2fabc40d930ef7d434d11768d9a35db7fbbd755b",
+      "input_fingerprint": "281aa31b27f13ff2636572889366a25eb8b84e9a6693dca40623dddb76af6b32",
       "account": "地方独立行政法人県立病院貸付金特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -999,7 +1731,7 @@
     {
       "table_id": "single-parent-loan-expenditure",
       "conversion_id": "single-parent-loan-initial",
-      "input_fingerprint": "479d4b07eea753926399c295c9883597726b889fb6c1fa78b7c5e3e5736f97b8",
+      "input_fingerprint": "1ba9a8a6f6d6af522fb23cdfe8cf4ce2d4d2027736b29a92035bb02ef632267d",
       "account": "母子父子寡婦福祉資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1028,7 +1760,7 @@
     {
       "table_id": "disability-mutual-aid-expenditure",
       "conversion_id": "disability-mutual-aid-initial",
-      "input_fingerprint": "8973043258cc3499acdfe8b7c13e8f023024aee3ca6c0ee7dc2db87e11c3f2c3",
+      "input_fingerprint": "7cf98eb49af271502ffb70fce39f59d6d98c4b59879f4e49482dfe096e379751",
       "account": "心身障害者扶養共済事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1057,7 +1789,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "deabf5773bca5cd4f9dc7b5ecbd68b297dc31cb41ff65c8145e91425ff64d82e",
+      "input_fingerprint": "ab682e894d9cc5f75cbf226cbe91326b104723957498b9db3d185da5c2a2e16d",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1086,7 +1818,7 @@
     {
       "table_id": "prefectural-forest-expenditure",
       "conversion_id": "prefectural-forest-initial",
-      "input_fingerprint": "c4cb8212ae79ca905fcf77d845ab6eb09a8a46381750cabc64bb0584b2de708e",
+      "input_fingerprint": "035a7e2d8dfada125bbd50f0e3d713699de03c3b3276b77f323ddbc062f77410",
       "account": "県営林事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1115,7 +1847,7 @@
     {
       "table_id": "forestry-improvement-loan-expenditure",
       "conversion_id": "forestry-improvement-loan-initial",
-      "input_fingerprint": "70d4878f8e54a1f7e1e53a4812c9b2b23f4e9502a636dc93d79f53956642ac70",
+      "input_fingerprint": "a806a497db8335585eae4994d0e445fd841107dad55664290ab9a2e0c09d39c9",
       "account": "林業・木材産業改善資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1144,7 +1876,7 @@
     {
       "table_id": "sme-advancement-loan-expenditure",
       "conversion_id": "sme-advancement-loan-initial",
-      "input_fingerprint": "f7970eff1910efbcc15f8961219637890f8901205297c824fa80eb71987cc504",
+      "input_fingerprint": "46740e1b8bf706136287578c0c6ebda1ea01b51ec1e90844845b8b81b0af1296",
       "account": "中小企業高度化等資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1173,7 +1905,7 @@
     {
       "table_id": "farming-support-loan-expenditure",
       "conversion_id": "farming-support-loan-initial",
-      "input_fingerprint": "fe9d93195f1701375682125bdcafa7466eaaeba532ce2ea87f39b26d2e14d17f",
+      "input_fingerprint": "af45cfcaaaf7d0d33bfbb6b51b8ad968b044b9c6da93f031daa01abe0e8ce13a",
       "account": "就農支援資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1197,6 +1929,354 @@
           "bytes": 2823
         },
         "row_count": 52
+      }
+    },
+    {
+      "table_id": "sewerage-revenue-expenditure",
+      "conversion_id": "sewerage-revenue-initial",
+      "input_fingerprint": "eaf5fd8d596639d95f8129fb783f0602919d0b884dffe6428aba67d09367e4c2",
+      "account": "流域下水道事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 3頁・carried 1頁 から決めた。款の和 9,809,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/sewerage-revenue-expenditure-nodes.parquet",
+          "sha256": "2dc49bc521ba0da11ddcdd562b781b084016ea646504bd11264f30e43bf13c24",
+          "bytes": 3474
+        },
+        "row_count": 16
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/sewerage-revenue-expenditure-amounts.parquet",
+          "sha256": "28d194d34eb41f17063b2680be1e730c464a543a372befa3f00fdc4d679e502a",
+          "bytes": 2430
+        },
+        "row_count": 16
+      }
+    },
+    {
+      "table_id": "sewerage-capital-expenditure",
+      "conversion_id": "sewerage-capital-initial",
+      "input_fingerprint": "dd382e383485a6acdc2957249e68228851ed9cd5e4e1bf492f885ab1f3218577",
+      "account": "流域下水道事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 3頁・carried 1頁 から決めた。款の和 5,296,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/sewerage-capital-expenditure-nodes.parquet",
+          "sha256": "f2d538c81e83fcef4de0707b3d2ff48de169f1239414f75895bf557636ff2d21",
+          "bytes": 2970
+        },
+        "row_count": 13
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/sewerage-capital-expenditure-amounts.parquet",
+          "sha256": "2b6e9dc8e8ebd9867778b8e3a1ae06a4aef6add66a6c5ac561f58ca7a35bc003",
+          "bytes": 2322
+        },
+        "row_count": 13
+      }
+    },
+    {
+      "table_id": "electricity-revenue-expenditure",
+      "conversion_id": "electricity-revenue-initial",
+      "input_fingerprint": "d66b25cda83ee3f8490aa0f6a4f89efd8f89e4d0f41c94663a444ac82aea056d",
+      "account": "電気事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 3頁・carried 1頁 から決めた。款の和 3,376,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/electricity-revenue-expenditure-nodes.parquet",
+          "sha256": "792a7419cbb33d132515f988f0da407558694d4100405e05a254a08793f1ad27",
+          "bytes": 3422
+        },
+        "row_count": 15
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/electricity-revenue-expenditure-amounts.parquet",
+          "sha256": "e084c2adb0b72c028bf5bc99bcc0ccce90a5ed4d7dd9396596f30e89ad650b4d",
+          "bytes": 2391
+        },
+        "row_count": 15
+      }
+    },
+    {
+      "table_id": "electricity-capital-expenditure",
+      "conversion_id": "electricity-capital-initial",
+      "input_fingerprint": "c2ac56d13e629a9bec12a205d80edf7cfc80565c947ed2041172c3971f733bae",
+      "account": "電気事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 3頁・carried 1頁 から決めた。款の和 3,372,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/electricity-capital-expenditure-nodes.parquet",
+          "sha256": "9e2712f230f3df3ce79defd2da229d46082c38b35932491ecae8c95355a109c1",
+          "bytes": 3909
+        },
+        "row_count": 26
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/electricity-capital-expenditure-amounts.parquet",
+          "sha256": "c2f62de381221a42407ec7d272afda37f765c1f4ed0f6817cada83049d64fcc8",
+          "bytes": 2798
+        },
+        "row_count": 26
+      }
+    },
+    {
+      "table_id": "water-revenue-expenditure",
+      "conversion_id": "water-revenue-initial",
+      "input_fingerprint": "84bb847901a372186ab09fa65ccb6ca42f33c55f27dbbdc6ff3479190e3bd0d5",
+      "account": "水道事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 2頁・carried 1頁 から決めた。款の和 2,018,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/water-revenue-expenditure-nodes.parquet",
+          "sha256": "9cb585336088c0170cdac7c957671a0fe6c68b71f0966c4091cafdddc6e1fb25",
+          "bytes": 2898
+        },
+        "row_count": 12
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/water-revenue-expenditure-amounts.parquet",
+          "sha256": "b4d8d1472ffc4ae84c58b2f80a43bd689da4f825a05df4f6b12a34c3170c6f17",
+          "bytes": 2282
+        },
+        "row_count": 12
+      }
+    },
+    {
+      "table_id": "water-capital-expenditure",
+      "conversion_id": "water-capital-initial",
+      "input_fingerprint": "dba367177f64ceca1285e64ef571e214eb4665c8bf55e3799f53b04e3c0fd9eb",
+      "account": "水道事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 2頁・carried 1頁 から決めた。款の和 692,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/water-capital-expenditure-nodes.parquet",
+          "sha256": "f1b09975300c24ae60191bb409118cfb9f256262c595b13380607ea9bec27dd0",
+          "bytes": 2906
+        },
+        "row_count": 11
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/water-capital-expenditure-amounts.parquet",
+          "sha256": "50dc99c7cfbd8ab9a7d6bc9d9fabb6935f565fb5a524d863a9992d1d4e0fc64e",
+          "bytes": 2256
+        },
+        "row_count": 11
+      }
+    },
+    {
+      "table_id": "industrial-water-revenue-expenditure",
+      "conversion_id": "industrial-water-revenue-initial",
+      "input_fingerprint": "58999850e59b3df314503f285ec008a56b29166f54713457fd69426dc85aae33",
+      "account": "工業用水道事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 3頁 から決めた。款の和 810,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/industrial-water-revenue-expenditure-nodes.parquet",
+          "sha256": "b1b48bd449c716709c7b82195da245ebb305c28c487f29935ee236557e84ebaa",
+          "bytes": 2903
+        },
+        "row_count": 12
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/industrial-water-revenue-expenditure-amounts.parquet",
+          "sha256": "af7f69962e9e6b73372a23477d3c7e8bf66a1c1ac463b9b5f794385648dcccf5",
+          "bytes": 2281
+        },
+        "row_count": 12
+      }
+    },
+    {
+      "table_id": "industrial-water-capital-expenditure",
+      "conversion_id": "industrial-water-capital-initial",
+      "input_fingerprint": "7fedaa736002493ddf71f51da63965fd03c489a38cfbd15cdfc9eb0d08289f7d",
+      "account": "工業用水道事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 3頁 から決めた。款の和 183,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/industrial-water-capital-expenditure-nodes.parquet",
+          "sha256": "34c8765e59639392a00e3b64a56eb8557e8863d149b2aaa587e941799c25b8be",
+          "bytes": 2870
+        },
+        "row_count": 10
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/industrial-water-capital-expenditure-amounts.parquet",
+          "sha256": "8d9ed3b3b79bbcd29ffe5798b30c5223f2222e1f9fad3d3a2394ad39eb1f3769",
+          "bytes": 2190
+        },
+        "row_count": 10
+      }
+    },
+    {
+      "table_id": "land-development-revenue-expenditure",
+      "conversion_id": "land-development-revenue-initial",
+      "input_fingerprint": "62d0ce64240b34a09049d54fb6e200238e006381ec750243d30810a3a05e193f",
+      "account": "用地造成事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 3頁 から決めた。款の和 131,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/land-development-revenue-expenditure-nodes.parquet",
+          "sha256": "527add11eae7d66e341b216b0987ac228d31747fe55b54137a4864f57064c80b",
+          "bytes": 2875
+        },
+        "row_count": 10
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/land-development-revenue-expenditure-amounts.parquet",
+          "sha256": "35314a85028e9c73afaec0bdcc0c1a86fc5ee43db2a447eb0b95402c317239fa",
+          "bytes": 2168
+        },
+        "row_count": 10
+      }
+    },
+    {
+      "table_id": "land-development-capital-expenditure",
+      "conversion_id": "land-development-capital-initial",
+      "input_fingerprint": "8ecbd7000dbfd0ad9d1a11f684e7021645751e821387cbac12baae612ddfc70b",
+      "account": "用地造成事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 3頁 から決めた。款の和 3,142,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/land-development-capital-expenditure-nodes.parquet",
+          "sha256": "598a98ba36652f2eb271e73ab1d5199821117e03e395a9cbefd04c7ca869fe0a",
+          "bytes": 2853
+        },
+        "row_count": 10
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/land-development-capital-expenditure-amounts.parquet",
+          "sha256": "accd32a50051d3981351ca3ad09466703904751c4b9fac29a08897cc017c1ed8",
+          "bytes": 2216
+        },
+        "row_count": 10
+      }
+    },
+    {
+      "table_id": "facility-management-revenue-expenditure",
+      "conversion_id": "facility-management-revenue-initial",
+      "input_fingerprint": "a73aa054ec05165905379eff7170a0064375a43bef1bff91a1e907dc39826830",
+      "account": "施設管理事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 4頁・carried 1頁 から決めた。款の和 452,000 と印字の「支出合計」452,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/facility-management-revenue-expenditure-nodes.parquet",
+          "sha256": "cf214f164938581810602ed6235d9ff1b915f642897cdbd79c91c5bf0098990e",
+          "bytes": 3866
+        },
+        "row_count": 25
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/facility-management-revenue-expenditure-amounts.parquet",
+          "sha256": "8a2e7dec84392ffb19eab9c9c3b6df365b34748e1443ace2ac719daae2345bbe",
+          "bytes": 2729
+        },
+        "row_count": 25
+      }
+    },
+    {
+      "table_id": "facility-management-capital-expenditure",
+      "conversion_id": "facility-management-capital-initial",
+      "input_fingerprint": "7fd5abddcab3f0895a438f86b73dbcf46084ecd72f1befac2ff09c13793c802a",
+      "account": "施設管理事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は printed 4頁・carried 1頁 から決めた。款の和 321,000 と印字の「支出合計」321,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/facility-management-capital-expenditure-nodes.parquet",
+          "sha256": "c2b97b728aa09dbda4f1d07bd2c2992be2ce41aade3b749b1a4bb3c648784fcf",
+          "bytes": 2963
+        },
+        "row_count": 12
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2026/initial/expenditure/facility-management-capital-expenditure-amounts.parquet",
+          "sha256": "f3abdf018ec31a4be6cf27c4084305bbb358f204a8300f90fe0a4b5c6e777626",
+          "bytes": 2249
+        },
+        "row_count": 12
       }
     }
   ]

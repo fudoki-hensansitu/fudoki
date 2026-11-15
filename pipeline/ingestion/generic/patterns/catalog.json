@@ -148,6 +148,7 @@
     "tall_kind_stacks": "ingestion.generic.patterns.quirks.tall_kind_stacks",
     "carry_kind_words": "ingestion.generic.patterns.quirks.carry_kind_words",
     "wide_digits_in_names": "ingestion.generic.patterns.quirks.wide_digits_in_names",
+    "traced_glyphs": "ingestion.generic.patterns.quirks.traced_glyphs",
     "zero_kind_lines": "ingestion.generic.patterns.quirks.zero_kind_lines",
     "scaled_spread_pages": "ingestion.generic.patterns.quirks.scaled_spread_pages",
     "amount_on_funding_line": "ingestion.generic.patterns.quirks.amount_on_funding_line",

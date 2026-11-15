@@ -283,7 +283,10 @@ def _segments(page, pdf: Path | None = None) -> list[Rule]:
     # A few dark strokes beside the table (a box drawn in the 備考 column, 130001) are not its rules either: the table's
     # are still the light ones, when they far outnumber the dark.
     if pdf is not None and len(unread) >= 6 and len(shown) * SHOWN_SHARE <= len(unread) and _drawn_dark(pdf, page, unread):
-        rules = rules if shown else []  # what is drawn outside the page was all there was: the marks, not the table's rules
+        # What is drawn outside the page was all there was: the marks, not the table's rules. On the page, a spot colour
+        # read as 0.0 draws no ink (a white ground 0.24pt high over the frame, 132071 R5): only the ones the page shows.
+        boxes = [{'x0': r.x0, 'x1': r.x1, 'top': r.y0, 'bottom': r.y1} for r in shown]
+        rules = [r for r, inked in zip(shown, _inked(pdf, page, boxes)) if inked] if shown else []
         for rect in unread:  # a spot colour read as 1.0 draws black: the rule is there when the page shows ink on it
             x0, x1, y0, y1 = rect['x0'], rect['x1'], rect['top'], rect['bottom']
             rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1) if x1 - x0 < y1 - y0
@@ -310,6 +313,12 @@ def _joined(strokes: list[dict], gap: float = 1.0) -> list[dict]:
 
 def _drawn_dark(pdf: Path, page, rects: list[dict]) -> bool:
     """Whether the page, rendered, shows ink along the longest of these light-coloured thin rectangles."""
+    longest = sorted(rects, key=lambda r: -max(r['x1'] - r['x0'], r['bottom'] - r['top']))[:5]
+    return all(_inked(pdf, page, longest))
+
+
+def _inked(pdf: Path, page, rects: list[dict]) -> list[bool]:
+    """For each thin rectangle, whether the page, rendered, shows ink along it."""
     import numpy as np
     from PIL import Image
     with tempfile.TemporaryDirectory() as directory:
@@ -317,14 +326,13 @@ def _drawn_dark(pdf: Path, page, rects: list[dict]) -> bool:
                         str(pdf), str(Path(directory) / 'page')], check=True)
         image = np.array(Image.open(next(Path(directory).glob('page*.png'))).convert('L'))
     scale = image.shape[1] / float(page.width)
-    longest = sorted(rects, key=lambda r: -max(r['x1'] - r['x0'], r['bottom'] - r['top']))[:5]
     dark = []
-    for rect in longest:
+    for rect in rects:
         y0, y1 = int(rect['top'] * scale), int(rect['bottom'] * scale) + 1
         x0, x1 = int(rect['x0'] * scale), int(rect['x1'] * scale) + 1
         region = image[max(y0 - 1, 0):y1 + 1, max(x0 - 1, 0):x1 + 1]
         dark.append(bool(region.size) and float(region.min(axis=0 if x1 - x0 > y1 - y0 else 1).mean()) < 128)
-    return all(dark)
+    return dark
 
 
 def _to_poppler(page, rules: list[Rule]) -> list[Rule]:
@@ -371,6 +379,8 @@ def merge_rules(rules: list[Rule], tolerance: float = 2.5, gap: float = 2.0) -> 
 def observe(pdf: Path, pages: list[int], cache: Path | None = None,
             character_map: dict[str, str] | None = None) -> list[Page]:
     """Observe the listed physical pages. A JSON cache keeps reruns cheap."""
+    if not pages:  # every page of the scope is read from OCR (a document whose glyphs are outlines)
+        return []
     if cache is not None and cache.exists():
         data = json.loads(cache.read_text())
         if data['pages'] == pages and data.get('character_map', {}) == (character_map or {}):

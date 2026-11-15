@@ -11,6 +11,8 @@
 題字の金額は、その款・項の表の始まり（項の最初の目が `1`）と終わり（項の `計` の行）が読む範囲に収まるときだけ読む。
 分冊の境で款が2冊にまたがると（文京区は冊の末尾に次の款の最初の見開きを載せる）、どちらの冊にも款・項の一部の目しか
 無く、題字の金額は冊の目の和と比べられない。その題字は項目として残し、金額は読まない（`complete_titles`）。
+分冊を同じ表の続きとしてつなぐときは（`continued_rows`、文京区 R5）、題字の金額を読み（`header.volume_titles`）、
+冊だけの和とのずれを `source_inconsistencies` に宣言する。款・項の額は dbt で冊をまたいだ子の和と比べる。
 
 この書式の説明欄は金額の後に単位を印字する（`291,731 千円`、`361,665千円`）。単位は欄の上の印字（`千円`）と同じで、
 金額の一部でも名前の一部でもないので、金額の直後の `千円` を欄の語から外す（`tree._split_line` が外すのは `円` だけ）。
@@ -671,6 +673,6 @@ def read(pages, **options):
             logical.level_titles = opened(opening, repeated) + logical.level_titles
             logical.opening = True
     carry_amounts(logicals)
-    if heading:
+    if heading and not (options.get('header') or {}).get('volume_titles'):
         complete_titles(logicals)
     return logicals

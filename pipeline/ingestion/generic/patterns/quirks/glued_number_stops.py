@@ -27,8 +27,11 @@ def name_start(glyph, prefix: int) -> float | None:
     head, rest = glyph.text[:prefix], glyph.text[prefix:]
     if head and not rest and head[-1] == '．' and head[:-1].isdigit() and head[:-1].isascii():
         return glyph.x1  # the number and its stop stand as a word, the name begins with the next (`4．` `１歳６か月児…`)
+    units = lambda text: sum(1 if c.isascii() else 2 for c in text)
+    if head in ('.', '．') and rest:
+        # the number stands as a word and its stop begins the name's word (`5` `．３歳児…`, 132047 R2)
+        return glyph.x0 + (glyph.x1 - glyph.x0) * units(head) / units(glyph.text)
     if not head or not rest or not all(c.isdigit() and c.isascii() or c in '.．' for c in head) \
             or not any(c.isdigit() for c in head):
         return None
-    units = lambda text: sum(1 if c.isascii() else 2 for c in text)
     return glyph.x0 + (glyph.x1 - glyph.x0) * units(head) / units(glyph.text)
