@@ -19,6 +19,12 @@ alone cannot settle those pairs: the side the half votes for is kept and the oth
 Where the text layer also holds copies a line apart that the render cannot tell (世田谷 国保 p31, a stray `1` set 135
 pt above the printed line and 120 pt left of it), the workflow names the glyphs by page and the top left corner of
 their box: `{"pages": {"31": {"hide": [[684.5, 282.4]], "show": [[804.8, 417.8]]}}, "reason": "…"}`.
+
+Where the copy sits nearer than `REACH` (品川区の予算書 2023, every line read twice 10.6 pt to the left of itself, less than
+a character, so the two copies interleave into `議議会会費費`), the workflow gives the distances to look at:
+`{"reach": [8, 14], "reason": "…"}`. So near, two like figures printed side by side stand at the distance too (`808,120`
+on the 総括 page, which holds no copy), so a declared reach counts only the pairs the clip tells apart toward a page's
+distance.
 """
 from __future__ import annotations
 
@@ -29,8 +35,10 @@ import tempfile
 
 SCOPE = 'document'
 OPTIONS = {'oneOf': [{'const': True}, {
-    'type': 'object', 'additionalProperties': False, 'required': ['pages', 'reason'],
-    'properties': {'reason': {'type': 'string', 'minLength': 1}, 'pages': {
+    'type': 'object', 'additionalProperties': False, 'required': ['reason'], 'minProperties': 2,
+    'properties': {'reason': {'type': 'string', 'minLength': 1},
+                   'reach': {'type': 'array', 'minItems': 2, 'maxItems': 2, 'items': {'type': 'number', 'exclusiveMinimum': 0}},
+                   'pages': {
         'type': 'object', 'minProperties': 1, 'propertyNames': {'pattern': '^[1-9][0-9]*$'},
         'additionalProperties': {'type': 'object', 'additionalProperties': False, 'minProperties': 1, 'properties': {
             side: {'type': 'array', 'minItems': 1, 'items': {'type': 'array', 'minItems': 2, 'maxItems': 2,
@@ -67,10 +75,14 @@ CORNER = .2       # pt: how far a declared glyph's corner may sit from the box's
 
 def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list:
     """`glyphs` are `(box, char, visible)`; the hidden copies come back as not visible."""
-    glyphs = _hide(pdf, number, width, glyphs, image)
     from ingestion.generic.patterns import document_quirk
     selected = document_quirk('shifted_hidden_copies')
-    declared = (selected.value if selected and isinstance(selected.value, dict) else {}).get('pages', {}).get(str(number))
+    settings = selected.value if selected and isinstance(selected.value, dict) else {}
+    reach = tuple(settings.get('reach', REACH))
+    if reach[0] >= reach[1]:
+        raise ValueError(f'shifted_hidden_copies: reach must run from near to far: {list(reach)}')
+    glyphs = _hide(pdf, number, width, glyphs, image, reach, 'reach' in settings)
+    declared = settings.get('pages', {}).get(str(number))
     if not declared:
         return glyphs
     def at(corners: list) -> set:
@@ -84,7 +96,8 @@ def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list
             for index, (box, char, visible) in enumerate(glyphs)]
 
 
-def _hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list:
+def _hide(pdf: Path, number: int, width: float, glyphs: list, image=None, reach: tuple = REACH,
+          declared: bool = False) -> list:
     by_line: dict[str, list[int]] = {}
     for index, (box, char, visible) in enumerate(glyphs):
         if not char.isspace():
@@ -109,7 +122,8 @@ def _hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> lis
         for a in members:
             for b in members:
                 gap = glyphs[b][0][0] - glyphs[a][0][0]
-                if REACH[0] < gap < REACH[1] and abs(glyphs[b][0][1] - glyphs[a][0][1]) < PLACE:
+                if reach[0] < gap < reach[1] and abs(glyphs[b][0][1] - glyphs[a][0][1]) < PLACE \
+                        and (not declared or glyphs[a][2] != glyphs[b][2]):
                     distances[round(gap, 1)] += 1
     if not distances or distances.most_common(1)[0][1] < LEAST:
         return glyphs
