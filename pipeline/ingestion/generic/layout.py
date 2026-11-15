@@ -686,6 +686,7 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
     # half of its printed lines carry text; otherwise it holds amounts if any
     # grouped number or only zeros appear (item codes alone are labels).
     stats: dict[tuple, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    zero_kinds = document_quirk('zero_kind_lines')
     for page, bands, _ in per_page:
         if page.number in ocr_pages:
             continue
@@ -708,7 +709,8 @@ def classify(per_page: list[tuple[Page, list[Band], list[Word]]], columns: dict 
                         kinds.add('code')
                 counts = stats[band.header]
                 counts['lines'] += 1
-                if len(band.header) > 1 and 'text' in kinds and 'grouped' in kinds and inline_kind(band, line):
+                amounted = 'grouped' in kinds or ('zero' in kinds and zero_kinds is not None)
+                if len(band.header) > 1 and 'text' in kinds and amounted and inline_kind(band, line):
                     counts['inline'] += 1
                 for kind in kinds:
                     counts[kind] += 1
