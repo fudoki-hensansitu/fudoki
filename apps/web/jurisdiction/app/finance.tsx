@@ -135,8 +135,8 @@ function Tile({ label, yen, sub, on }: { label: string; yen: number; sub?: strin
   )
 }
 
-/** 毎年決まって出ていくお金の3つの塗り。分類を見分けるだけで良し悪しを表さないので、ブランドの緑を使わず生成りと灰の濃さで分ける */
-const DUTY_FILLS = ['bg-muted-foreground', 'bg-paper', 'bg-border']
+/** 毎年決まって出ていくお金の3つの塗り。分類を見分けるだけで良し悪しを表さないので、ブランドの緑を使わず灰・生成り・墨で明るさをはっきり分ける */
+const DUTY_FILLS = ['bg-muted-foreground', 'bg-paper', 'bg-foreground']
 
 /** 歳出の内訳の帯。切れの間を空けて境を見せ、名前と割合は帯の下の凡例に書く（細い切れにも書けるように） */
 function ShareBar({ total, parts }: { total: number; parts: { name: string; yen: number; fill: string }[] }) {
