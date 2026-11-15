@@ -116,6 +116,7 @@ def hidden_copies(pdf: Path, page: Page, report: dict) -> Page:
         return page
     pairs = [(a, b) for members in by_line.values() for a in members for b in members
              if abs(glyphs[b][0][0] - glyphs[a][0][0] - shift) < .3 and abs(glyphs[b][0][1] - glyphs[a][0][1]) < .3]
+    pairs = chained_pairs(glyphs, pairs)
     import numpy as np
     from PIL import Image
     with tempfile.TemporaryDirectory() as directory:
@@ -141,6 +142,16 @@ def hidden_copies(pdf: Path, page: Page, report: dict) -> Page:
     else:
         raise ValueError(f'Page {page.number}: characters drawn twice and no side shows the ink ({dict(votes)})')
     return rebuilt(page, glyphs, dropped, shift, votes, clipped_away, report)
+
+
+def chained_pairs(glyphs, pairs):
+    """The pairs of a copy, without the ones that only link two copies: a character of a printed word is the twin of
+    one pair and the same character the copy's distance from another one (the `2` of a label's copy, and the `2` of
+    `32,094,667` printed 46.6pt after it, 131083 2023). The pair between two pairs, each of which holds one of its
+    characters, is no copy."""
+    firsts = {a for a, _ in pairs}
+    seconds = {b for _, b in pairs}
+    return [(a, b) for a, b in pairs if not (a in seconds and b in firsts)]
 
 
 def rebuilt(page, glyphs, dropped, shift, votes, clipped_away, report):
@@ -301,8 +312,18 @@ class Reader(Reading):
             return [w for w in page_words if x0 + x_range[0] <= (w.x0 + w.x1) / 2 < x0 + x_range[1]]
 
         pending_left = []   # amounts of a left page wait for the unit its facing page prints
+        last_right = None   # the frame of the last explanation page
         for page in pages:
             frame = self.frame(page)
+            # An explanation page whose frame is drawn in white (131083 2023: the page prints its lines under the words and
+            # shows none) has the frame of the explanation pages before it, when it faces a left page and draws no long
+            # vertical rule of its own.
+            if (frame is None and last_right is not None and spread is not None and spread['page'] == page.number - 1
+                    and not any(r.vertical and r.y1 - r.y0 > page.height * .4 for r in page.rules)):
+                frame = last_right
+                report['explanation pages without a drawn frame'] += 1
+            if frame is not None and frame[0] == 'right':
+                last_right = frame
             if frame is None:
                 text = compact(''.join(w.text for w in page.words if page.height * .1 < w.y0 < page.height * .9))
                 if DIGIT.search(text):

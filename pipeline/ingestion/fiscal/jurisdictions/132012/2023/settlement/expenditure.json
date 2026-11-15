@@ -1,0 +1,150 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132012",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "kaigo-settlement-detail",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "666f4a9bed4377f03801344a739a09a94d9576c47fe3af4700478a54d21aeb7a"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "scope_label": "物理504-505・510-527頁",
+        "fund_columns": [
+          "保険料",
+          "国庫支出金",
+          "都支出金",
+          "一般会計繰入金",
+          "その他"
+        ],
+        "stat_titles": [
+          "保険給付費の状況"
+        ],
+        "detail_table_id": "kaigo-detail",
+        "emit": [
+          "detail"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "narrative_results",
+            "profile": "fiscal/jurisdictions/132012/layouts/text_settlement_report/reading.json"
+          },
+          "components": [
+            "narrative_subjects",
+            "narrative_projects"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki-settlement-detail",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "666f4a9bed4377f03801344a739a09a94d9576c47fe3af4700478a54d21aeb7a"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "scope_label": "物理488-489・493-503頁",
+        "fund_columns": [
+          "保険料",
+          "国庫支出金",
+          "都支出金",
+          "一般会計繰入金",
+          "その他"
+        ],
+        "detail_table_id": "kouki-detail",
+        "emit": [
+          "detail"
+        ],
+        "workflow": {
+          "reading": {
+            "pattern": "narrative_results",
+            "profile": "fiscal/jurisdictions/132012/layouts/text_settlement_report/reading.json"
+          },
+          "components": [
+            "narrative_subjects",
+            "narrative_projects"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-detail"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "kaigo-detail",
+      "conversion_id": "kaigo-settlement-detail",
+      "input_fingerprint": "c82fbddb8b7aa413422ded4534043fa433a42be47215b98467c474c5ef22edcf",
+      "account": "介護保険特別会計",
+      "notes": [
+        "「主要な施策の成果・事務報告書」の歳出部（物理504-505・510-527頁）。款・項・目の印字された名称・金額・位置を保持する。項の金額は印字されない場合がある。目の下の事業は主要施策の抜粋であるため、この表には含めない。範囲番号の目は一つの目として保持する。款の財源内訳は別の金額欄である。（予算現額）・<前年度決算額>は印字通りの文字列。網羅検査の対象は処理した頁の文字層であり、採用表以外の事業説明・財源内訳・内表・注記の数字は件数と例を報告する。款の資金分解5列は原典款見出しの印字どおり（保険料・国庫支出金・都支出金・一般会計繰入金・その他）で、一般会計の分解（国庫支出金・都支出金・市債・その他・一般財源）とは列名が異なる。決算額・執行率と合わせた7列が款集計行に対応する。宣言された統計表（保険給付費の状況）の (n) 行は表断片として annex へ送り、属する事業行を葉とする。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/kaigo-detail-nodes.parquet",
+          "sha256": "e900a5b7bc9297e582e6fdaa35da1960ded15e1945dc5a348aaa2b1cadf40fd1",
+          "bytes": 3176
+        },
+        "row_count": 15
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/kaigo-detail-amounts.parquet",
+          "sha256": "cff34a1017af71dda7d3a9f31ddf3c67d3572010c8e1879b05e001facdb0fddc",
+          "bytes": 3513
+        },
+        "row_count": 53
+      }
+    },
+    {
+      "table_id": "kouki-detail",
+      "conversion_id": "kouki-settlement-detail",
+      "input_fingerprint": "286b0043d671f8eb7a4985df55ed86a29b7ea92d633281a93dffa2334b36b7c0",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "「主要な施策の成果・事務報告書」の歳出部（物理488-489・493-503頁）。款・項・目の印字された名称・金額・位置を保持する。項の金額は印字されない場合がある。目の下の事業は主要施策の抜粋であるため、この表には含めない。範囲番号の目は一つの目として保持する。款の財源内訳は別の金額欄である。（予算現額）・<前年度決算額>は印字通りの文字列。網羅検査の対象は処理した頁の文字層であり、採用表以外の事業説明・財源内訳・内表・注記の数字は件数と例を報告する。款の資金分解5列は原典款見出しの印字どおり（保険料・国庫支出金・都支出金・一般会計繰入金・その他）で、一般会計の分解（国庫支出金・都支出金・市債・その他・一般財源）とは列名が異なる。決算額・執行率と合わせた7列が款集計行に対応する。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/kouki-detail-nodes.parquet",
+          "sha256": "2a895577b4299df98a5dbc9f09b1e07cacbdcf57433b5fd987171f3eb07d7697",
+          "bytes": 2893
+        },
+        "row_count": 11
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/kouki-detail-amounts.parquet",
+          "sha256": "c2f3801e33bfe821b93eb3cfa8cfe06bde2ef20d638a3600f658e3d79f2378c6",
+          "bytes": 2788
+        },
+        "row_count": 34
+      }
+    }
+  ]
+}
