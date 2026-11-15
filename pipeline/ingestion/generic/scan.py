@@ -847,7 +847,7 @@ def drop_readings(observation: dict, rules: list[dict] | None) -> dict:
     (`dropped_readings`: page, observation id and the text read). The reading and its words are left out; one
     not found as declared stops the conversion. A dropped re-read declared `restores` gives back the page readings it
     replaced (its region's `supersedes`): the re-read glued marks the page reading had read apart (`81多様な…` over the
-    page's `8` and `1多様な…`, 港区 R7). Its region must hold nothing else then."""
+    page's `8` and `1多様な…`, 港区 R7). Its region must hold nothing else then, kept or dropped without `restores`."""
     if not rules:
         return observation
     drop = {(r['page'], r['observation_id']): r for r in rules}
@@ -857,7 +857,7 @@ def drop_readings(observation: dict, rules: list[dict] | None) -> dict:
         regions = []
         for region in p['regions']:
             kept = []
-            restored = False
+            restored, plain = False, False
             for o in region['observations']:
                 rule = drop.get((p['page_number'], o['id']))
                 if rule is not None:
@@ -865,13 +865,14 @@ def drop_readings(observation: dict, rules: list[dict] | None) -> dict:
                         raise ValueError(f'A dropped reading differs from the observation: {rule["id"]}')
                     found.add((p['page_number'], o['id']))
                     restored = restored or bool(rule.get('restores'))
+                    plain = plain or not rule.get('restores')
                     continue
                 if (p['page_number'], o.get('parent_id')) in drop:
                     continue
                 kept.append(o)
             if restored:
-                if kept:
-                    raise ValueError(f'A restoring dropped reading leaves other readings in its region: p{p["page_number"]} {region.get("id")}')
+                if kept or plain:
+                    raise ValueError(f'A restoring dropped reading shares its region with other readings: p{p["page_number"]} {region.get("id")}')
                 region = {**region, 'supersedes': []}
             regions.append({**region, 'observations': kept})
         pages_.append({**p, 'regions': regions})

@@ -2246,7 +2246,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
     # The amount of a label that ends a page is the first line of the next page, under the subject's row
     # repeated at its top (`wrap: amount_on_last_line`, `items` keeps that line as a nameless item).
     # On facing pages the axis's next page is two physical pages on, past the subject page (港区 R8: `1 …をつくる` ends
-    # p207, its `18,101` heads p209); `tails` keeps the last item of a page that prints the axis.
+    # p207, its `18,101` heads p209); an axis that declares `wrapped_names_over_pages` (pages it continues over are
+    # facing pages) joins two pages on as well. `tails` keeps the last item of a page that prints the axis.
     tails: dict[str, Item] = {}
     for _, ordered, found in all_items:
         for group in ordered:
@@ -2260,7 +2261,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     and mine and not mine[0].name and mine[0].amounts and mine[0].code is None
                     and not previous.amounts and previous.name
                     and previous.role in ('node', 'note', 'annotation')
-                    and mine[0].page - previous.page in (1, 2)):
+                    and (mine[0].page - previous.page == 1
+                         or (mine[0].page - previous.page == 2
+                             and quirk((layout or {}).get(group.axis), 'wrapped_names_over_pages') is not None))):
                 first = mine.pop(0)
                 previous.lines += first.lines
                 previous.amounts += first.amounts
