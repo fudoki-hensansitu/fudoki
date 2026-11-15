@@ -42,6 +42,8 @@ READING = re.compile(r'[(（][ァ-ヶー]+[)）]')
 BRACKET_PAIRS = {')': '(', ']': '['}  # the closing and opening brackets of a bracketed amount
 BRACKETS = {'(', ')', '（', '）'}  # a stacked amount's brackets printed as words of their own (`(` `1,110,941` `)`)
 AGE = re.compile(r'(歳|歲|箇月|か月|ヶ月|ケ月|カ月)')
+# What follows an age in a name (`3歳児`, `65歳以上`, `1歳6箇月`, `3～5歳`): a name that reads so after a number is a count.
+AGE_WORD = re.compile(r'(?:歳|歲)(?:児|以上|未満|以下|から|まで|[0-9０-９～〜~・])|箇月|か月|ヶ月|ケ月|カ月')
 CODE_LED = re.compile(r'^[0-9０-９]{1,4}[^0-9０-９,，.．]')  # a code joined to its name (`1商`)
 TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|予備費[よか]り|第[0-9０-９]+節[へか]|^第[0-9０-９]+[款項目節]|^[○〇●]?同[款項目])')
 # The words that end a transfer remark begun on the line above (`…費` / `から流用 13,281,000円`).
@@ -571,6 +573,13 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
         if label and not money and UNIT_NOTATION.fullmatch(line_text):
             continue  # `(単位:円・税抜)` printed over a column names the unit; it is no item of the column
         code, name = _split_code(line_text)
+        if (code is None and len(label) > 1 and margins is not None and margins & set(_margins(label))
+                and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) and label[1].x0 - label[0].x1 >= 2
+                and AGE.match(normalize(text(label[1:]))) and not AGE_WORD.match(normalize(text(label[1:])))):
+            # `1` `歳計現金利子`: the number is a word of its own in the column's number margin, so the 歳 after it
+            # starts the name and is no age (`1歳6箇月児…`, joined to the number, and `3 歳児健康診査`, where an age
+            # word follows the 歳, stay names).
+            code, name = normalize(label[0].text), normalize(text(label[1:]))
         raw_text = text(label).strip()
         if code is None and numbers is not None and (held := numbers.module.split(raw_text, numbers.value)) is not None:
             code, name = normalize(held[0]), normalize(held[1])

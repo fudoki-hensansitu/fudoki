@@ -1,0 +1,441 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131091",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0f7d8057eb11f36c334d2fc7c445de9b63b62948274e823b751924345c4c8dba"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの充当事業・補助基本額と率・調定額と収入率で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考注△印は減": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの充当事業・補助基本額と率・調定額と収入率で、節の内訳ではない。見出しに「注 △印は減」を印字する頁としない頁があり、見出しは印字のまま突き合わせるので、備考と同じ除外をこの見出しにも書く。"
+                  }
+                },
+                "不納欠損額収入未済額": {
+                  "lines": [
+                    "不納欠損額",
+                    "収入未済額"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "opening_cell",
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-settlement"
+        }
+      ]
+    },
+    {
+      "id": "care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40b87c7964bbc688953b3d12cf234bb38fd4d4c1b9d038bf5726f15a007e6b16"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの充当事業・補助基本額と率・調定額と収入率で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考注△印は減": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの充当事業・補助基本額と率・調定額と収入率で、節の内訳ではない。見出しに「注 △印は減」を印字する頁としない頁があり、見出しは印字のまま突き合わせるので、備考と同じ除外をこの見出しにも書く。"
+                  }
+                },
+                "不納欠損額収入未済額": {
+                  "lines": [
+                    "不納欠損額",
+                    "収入未済額"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "opening_cell",
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-settlement"
+        }
+      ]
+    },
+    {
+      "id": "national-health-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40b87c7964bbc688953b3d12cf234bb38fd4d4c1b9d038bf5726f15a007e6b16"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの充当事業・補助基本額と率・調定額と収入率で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考注△印は減": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの充当事業・補助基本額と率・調定額と収入率で、節の内訳ではない。見出しに「注 △印は減」を印字する頁としない頁があり、見出しは印字のまま突き合わせるので、備考と同じ除外をこの見出しにも書く。"
+                  }
+                },
+                "不納欠損額収入未済額": {
+                  "lines": [
+                    "不納欠損額",
+                    "収入未済額"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "opening_cell",
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-settlement"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "40b87c7964bbc688953b3d12cf234bb38fd4d4c1b9d038bf5726f15a007e6b16"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "text_layer": {
+                "character_map": {
+                  "\u0013": "0",
+                  "\u0014": "1",
+                  "\u0015": "2",
+                  "\u0016": "3",
+                  "\u0017": "4",
+                  "\u0018": "5",
+                  "\u0019": "6",
+                  "\u001a": "7",
+                  "\u001b": "8",
+                  "\u001c": "9",
+                  "\u000f": ","
+                }
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの充当事業・補助基本額と率・調定額と収入率で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "備考注△印は減": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの充当事業・補助基本額と率・調定額と収入率で、節の内訳ではない。見出しに「注 △印は減」を印字する頁としない頁があり、見出しは印字のまま突き合わせるので、備考と同じ除外をこの見出しにも書く。"
+                  }
+                },
+                "不納欠損額収入未済額": {
+                  "lines": [
+                    "不納欠損額",
+                    "収入未済額"
+                  ]
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "repairs": [
+            "opening_cell",
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-settlement"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-settlement",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "11eb2dfdf32df63fca8b9a7f18a68a7d4e854e849da17c90c1da32eccf7f1c41",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は printed 63頁 から決めた。款の和 247,973,497,670 と印字の「歳入合計」247,973,497,670 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（480 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/settlement/revenue/general-settlement-nodes.parquet",
+          "sha256": "fa2e5dfd61a7aa140f0192d82531884b865dc0be03aa35e8dbbed3c482422ea1",
+          "bytes": 25773
+        },
+        "row_count": 635
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/settlement/revenue/general-settlement-amounts.parquet",
+          "sha256": "3edc6c6b369c5983ab42f2f100fdd750063c073af16a7014d0293337c4c20b51",
+          "bytes": 43322
+        },
+        "row_count": 3640
+      }
+    },
+    {
+      "table_id": "care-settlement",
+      "conversion_id": "care-settlement",
+      "input_fingerprint": "99a976d5eb25495615312ae83c92b8a8935299b3799112da6caa76c7e8a058f0",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は printed 8頁 から決めた。款の和 28,681,091,856 と印字の「歳入合計」28,681,091,856 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（36 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/settlement/revenue/care-settlement-nodes.parquet",
+          "sha256": "0f8499db92745a270acf97f4bc266ef534dc015b5f2a54ddf041bcdfaddc05ff",
+          "bytes": 6706
+        },
+        "row_count": 86
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/settlement/revenue/care-settlement-amounts.parquet",
+          "sha256": "7ed59b44ccd2dcc189b37d2b3650cb51193db172ad6a96c7a85a673098ab1d81",
+          "bytes": 10079
+        },
+        "row_count": 580
+      }
+    },
+    {
+      "table_id": "national-health-settlement",
+      "conversion_id": "national-health-settlement",
+      "input_fingerprint": "8649a1abb106259858856b7111c720800e68c89c0fb955ecd994e2f3b8217aca",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は printed 5頁 から決めた。款の和 35,371,890,668 と印字の「歳入合計」35,371,890,668 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（27 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/settlement/revenue/national-health-settlement-nodes.parquet",
+          "sha256": "44551beb8ea235aa53c746540d5f69fa53b8562ab93072a75573f5da2ea753b7",
+          "bytes": 5368
+        },
+        "row_count": 55
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/settlement/revenue/national-health-settlement-amounts.parquet",
+          "sha256": "7709353e9d0b88b4e9285f8a0a7756fcfeaf0dc32974b4a98c25aa4e254b205e",
+          "bytes": 7915
+        },
+        "row_count": 359
+      }
+    },
+    {
+      "table_id": "elderly-medical-settlement",
+      "conversion_id": "elderly-medical-settlement",
+      "input_fingerprint": "e5e69d32e39225c053391d444b6ede65d3ab88e2d669d725a9cd0f6d7f83c57b",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 11,246,632,581 と印字の「歳入合計」11,246,632,581 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（19 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/settlement/revenue/elderly-medical-settlement-nodes.parquet",
+          "sha256": "553f6e0d28854b6116caf10b0e07937b5a671b6a50964ccd99ebe723fc865f92",
+          "bytes": 4958
+        },
+        "row_count": 43
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/settlement/revenue/elderly-medical-settlement-amounts.parquet",
+          "sha256": "9b9239da58c6c43aa83723baba93b506a8b6bf3db17cf296cd5f78ce1eb08e07",
+          "bytes": 6611
+        },
+        "row_count": 287
+      }
+    }
+  ]
+}
