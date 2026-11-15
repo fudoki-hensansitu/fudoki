@@ -5,19 +5,17 @@ import json
 import os
 import shutil
 import subprocess
-import sys
 import tempfile
-import time
 from pathlib import Path, PurePosixPath
 
 import gzip
 import hashlib
 
 from ingestion.fiscal.manifest import BUCKET, document_slot, object_key, ocr_key, sha_file, table_references
+from ingestion import r2
 from ingestion.paths import CACHE
 
 OBJECTS = CACHE / 'objects'
-RATE_LIMIT_WAITS = (2, 4, 8, 16, 32)  # seconds before each read again after a 429
 # The receipts of the tables in R2, one list for all (docs/prd/ingestion-receipts/dd.md). Only `ingestion:store`
 # writes it, after its uploads. Until readers switch to it, it mirrors the Git records of stored tables.
 RECEIPTS_KEY = 'fiscal/ingestion/receipts.json'
@@ -57,8 +55,7 @@ def fetch_ocr(document: dict, item: dict, *, remote: bool = False) -> Path:
         with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
             temporary = Path(stream.name)
             try:
-                subprocess.run(['cf', 'r2', 'objects', 'get', ocr_key(document, item['id']), '--bucket-name',
-                                BUCKET, '--quiet'], stdout=stream, check=True)
+                r2.objects('get', ocr_key(document, item['id']), '--bucket-name', BUCKET, '--quiet', stdout=stream)
                 verify_ocr(temporary, item)
                 os.replace(temporary, path)
             finally:
@@ -72,12 +69,12 @@ def save_ocr(document: dict, item: dict) -> None:
     path = fetch_ocr(document, item)
     if path.stat().st_size > 300_000_000:
         raise ValueError('cf REST upload limit exceeded; configure a file-based S3 multipart transport')
-    subprocess.run(['cf', 'r2', 'objects', 'put', ocr_key(document, item['id']), '--bucket-name', BUCKET,
-                    '--file', str(path), '--quiet'], check=True, stdout=subprocess.DEVNULL)
+    r2.objects('put', ocr_key(document, item['id']), '--bucket-name', BUCKET, '--file', str(path), '--quiet',
+               stdout=subprocess.DEVNULL)
     run = path.with_name(item['id'] + '.run.json')
     if run.exists():
-        subprocess.run(['cf', 'r2', 'objects', 'put', ocr_key(document, item['id'], '.run.json'), '--bucket-name',
-                        BUCKET, '--file', str(run), '--quiet'], check=True, stdout=subprocess.DEVNULL)
+        r2.objects('put', ocr_key(document, item['id'], '.run.json'), '--bucket-name', BUCKET, '--file', str(run),
+                   '--quiet', stdout=subprocess.DEVNULL)
 
 
 def safe_relative(value: str) -> str:
@@ -107,18 +104,8 @@ def fetch(reference: dict, *, remote: bool = False) -> Path:
     with tempfile.NamedTemporaryFile(dir=path.parent, delete=False) as stream:
         temporary = Path(stream.name)
         try:
-            for wait in (*RATE_LIMIT_WAITS, None):
-                stream.seek(0)
-                stream.truncate()
-                shown = subprocess.run(['cf', 'r2', 'objects', 'get', reference['key'], '--bucket-name',
-                                        reference.get('bucket', BUCKET), '--quiet'], stdout=stream, stderr=subprocess.PIPE)
-                if shown.returncode == 0:
-                    break
-                sys.stderr.buffer.write(shown.stderr)
-                # R2 answers 429 when a full build reads many objects in a short time: wait and read again.
-                if wait is None or b'429' not in shown.stderr:
-                    raise subprocess.CalledProcessError(shown.returncode, shown.args, stderr=shown.stderr)
-                time.sleep(wait)
+            r2.objects('get', reference['key'], '--bucket-name', reference.get('bucket', BUCKET), '--quiet',
+                       stdout=stream)
         except BaseException:
             temporary.unlink(missing_ok=True)
             raise
@@ -191,8 +178,7 @@ def upload(key: str, file: Path, reference: dict) -> None:
     verify(file, reference)
     if file.stat().st_size > 300_000_000:
         raise ValueError('cf REST upload limit exceeded; configure a file-based S3 multipart transport')
-    subprocess.run(['cf', 'r2', 'objects', 'put', key, '--bucket-name', BUCKET,
-                    '--file', str(file), '--quiet'], check=True, stdout=subprocess.DEVNULL)
+    r2.objects('put', key, '--bucket-name', BUCKET, '--file', str(file), '--quiet', stdout=subprocess.DEVNULL)
 
 
 def receipt_id(document: dict, table_id: str) -> str:
@@ -202,12 +188,12 @@ def receipt_id(document: dict, table_id: str) -> str:
 
 def read_receipts() -> dict[str, dict] | None:
     """The receipts list in R2, or None when it is not there yet. Always read from R2, never from the cache."""
-    shown = subprocess.run(['cf', 'r2', 'objects', 'get', RECEIPTS_KEY, '--bucket-name', BUCKET, '--quiet'],
-                           capture_output=True)
-    if shown.returncode != 0:
-        if b'10007' in shown.stderr or b'does not exist' in shown.stderr:
+    try:
+        shown = r2.objects('get', RECEIPTS_KEY, '--bucket-name', BUCKET, '--quiet', quiet=True)
+    except subprocess.CalledProcessError as error:
+        if b'10007' in error.stderr or b'does not exist' in error.stderr:
             return None
-        raise subprocess.CalledProcessError(shown.returncode, shown.args, shown.stdout, shown.stderr)
+        raise
     return json.loads(shown.stdout)
 
 
@@ -216,9 +202,8 @@ def write_receipts(receipts: dict[str, dict]) -> None:
         json.dump(receipts, stream, ensure_ascii=False, sort_keys=True, indent=1)
         temporary = Path(stream.name)
     try:
-        subprocess.run(['cf', 'r2', 'objects', 'put', RECEIPTS_KEY, '--bucket-name', BUCKET,
-                        '--file', str(temporary), '--content-type', 'application/json', '--quiet'],
-                       check=True, stdout=subprocess.DEVNULL)
+        r2.objects('put', RECEIPTS_KEY, '--bucket-name', BUCKET, '--file', str(temporary),
+                   '--content-type', 'application/json', '--quiet', stdout=subprocess.DEVNULL)
     finally:
         temporary.unlink(missing_ok=True)
 

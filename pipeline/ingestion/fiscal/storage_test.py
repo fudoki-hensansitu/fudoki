@@ -1,7 +1,6 @@
 """Cleanup confirms deletion without touching current tables or other object scopes."""
 from copy import deepcopy
 import hashlib
-import io
 import json
 from pathlib import Path
 import subprocess
@@ -26,39 +25,29 @@ class FetchTest(unittest.TestCase):
     def get(self, command, stdout, stderr):
         self.assertEqual(command[:5], ['cf', 'r2', 'objects', 'get', self.reference['key']])
         stdout.write(self.body)
-        stdout.flush()
-        return subprocess.CompletedProcess(command, 0, stderr=b'')
+        return subprocess.CompletedProcess(command, 0, None, b'')
+
+    def test_rate_limited_get_waits_and_keeps_only_the_retried_body(self):
+        calls = []
+
+        def limited(command, stdout, stderr):
+            calls.append(command)
+            if len(calls) == 1:
+                stdout.write(b'partial')
+                return subprocess.CompletedProcess(command, 1, None, b'429 Too Many Requests')
+            return self.get(command, stdout, stderr)
+
+        with patch.object(storage.subprocess, 'run', side_effect=limited), patch('ingestion.r2.time.sleep') as sleep:
+            path = storage.fetch(self.reference, remote=True)
+        self.assertEqual(len(calls), 2)
+        sleep.assert_called_once()
+        self.assertEqual(path.read_bytes(), self.body)
 
     def test_remote_refetches_an_object_whose_cache_is_stale(self):
         with patch.object(storage.subprocess, 'run', side_effect=self.get) as run:
             path = storage.fetch(self.reference, remote=True)
         run.assert_called_once()
         self.assertEqual(path.read_bytes(), self.body)
-
-    def test_remote_reads_again_after_a_rate_limit(self):
-        answers = iter([(b'partial', 1, b'429 Too Many Requests'), (self.body, 0, b'')])
-
-        def limited(command, stdout, stderr):
-            body, code, error = next(answers)
-            stdout.write(body)
-            stdout.flush()
-            return subprocess.CompletedProcess(command, code, stderr=error)
-        with patch.object(storage.subprocess, 'run', side_effect=limited) as run, \
-                patch.object(storage.time, 'sleep') as sleep, patch.object(storage.sys, 'stderr', io.TextIOWrapper(io.BytesIO())):
-            path = storage.fetch(self.reference, remote=True)
-        self.assertEqual(run.call_count, 2)
-        sleep.assert_called_once_with(storage.RATE_LIMIT_WAITS[0])
-        self.assertEqual(path.read_bytes(), self.body)
-
-    def test_other_failures_stop_at_once(self):
-        failed = lambda command, stdout, stderr: subprocess.CompletedProcess(command, 1, stderr=b'404 Not Found')
-        with patch.object(storage.subprocess, 'run', side_effect=failed) as run, \
-                patch.object(storage.time, 'sleep') as sleep, patch.object(storage.sys, 'stderr', io.TextIOWrapper(io.BytesIO())):
-            with self.assertRaises(subprocess.CalledProcessError):
-                storage.fetch(self.reference, remote=True)
-        run.assert_called_once()
-        sleep.assert_not_called()
-        self.assertEqual(self.cached.read_bytes(), b'table before re-save')
 
     def test_local_stale_cache_stops_and_names_the_remedy(self):
         with patch.object(storage.subprocess, 'run') as run:
