@@ -29,7 +29,7 @@
 | --- | --- | --- | --- | --- |
 | 自治体 | `apps/api/src/jurisdiction/model.ts` | `marts/jurisdiction/` | `jurisdiction` | `apps/api/src/jurisdiction/` |
 | 人口 | `apps/api/src/population/model.ts` | `marts/population/` | `population`・`population_origin` | `apps/api/src/population/` |
-| 歳出 | `apps/api/src/expenditure/model.ts` | `marts/expenditure/` | `expenditure`（根）・`expenditure_origin`・`expenditure_origin_link`・`expenditure_subject`・`expenditure_detail`・`expenditure_location` | `apps/api/src/expenditure/` |
+| 歳出 | `apps/api/src/expenditure/model.ts` | `marts/expenditure/` | `expenditure`（根）・`fiscal_origin`・`expenditure_origin_link`・`expenditure_subject`・`expenditure_detail`・`expenditure_location` | `apps/api/src/expenditure/` |
 | 事業評価 | `apps/api/src/evaluation/model.ts` | `marts/evaluation/` | `evaluation`（根）・`evaluation_origin`・`evaluation_sheet`・`evaluation_indicator`・`evaluation_indicator_value` | `apps/api/src/evaluation/` |
 | 予算案 | `apps/api/src/budget-proposal/model.ts` | `marts/budget_proposal/` | `budget_proposal`（根）・`budget_proposal_origin`・`budget_measure` | `apps/api/src/budget-proposal/` |
 | 事業 | `apps/api/src/project/model.ts` | `marts/project/` | `project`・`project_year` | `apps/api/src/project/` |
@@ -73,7 +73,7 @@
 | `jurisdiction` | `jurisdiction` | `jurisdiction_code` | なし |
 | `population`・`population_origin` | 同じ | 今と同じ | なし |
 | `expenditure` | `fiscal_coverage` | `expenditure_id` | 根。1行 = 自治体・年度・資料区分・補正号・会計 |
-| `expenditure_origin` | `fiscal_origin` | `origin_id` | 冊ごとに1行。会計は持たない（1冊が最大18会計にまたがる） |
+| `fiscal_origin` | `fiscal_origin` | `origin_id` | 冊ごとに1行。会計は持たない（1冊が最大18会計にまたがる） |
 | `expenditure_origin_link` | なし | `link_id` | 根と冊を結ぶ（品川など 245冊・359根・456組） |
 | `expenditure_subject`・`expenditure_detail` | `fiscal_expenditure_*` | 今と同じ | `expenditure_id` を足す。根で決まる列・所属する款・項・目・子の有無は持たず、検索の SQL で JOIN して求める（[ADR 0047](../../adr/0047-serving-tables-hold-no-derivable-columns.md)） |
 | `expenditure_location` | `fiscal_expenditure_location` | `line_id` | `kind`（`pdf`・`csv`）を足し、CSV は行番号の列にする |

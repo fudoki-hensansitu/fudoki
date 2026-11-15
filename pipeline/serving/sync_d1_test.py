@@ -202,12 +202,12 @@ class ScopeTest(unittest.TestCase):
         d = duckdb.connect()
         q = sqlite3.connect(':memory:')
         for con in (d, q):
-            con.execute('create table expenditure_origin (origin_id varchar, jurisdiction_code varchar)')
+            con.execute('create table fiscal_origin (origin_id varchar, jurisdiction_code varchar)')
             con.execute('create table expenditure_location (line_id varchar, origin_id varchar)')
-            con.executemany('insert into expenditure_origin values (?, ?)', origins)
+            con.executemany('insert into fiscal_origin values (?, ?)', origins)
             con.executemany('insert into expenditure_location values (?, ?)', locations)
         for scope in (['131202'], ['131202', "13'x"], ['999999']):
-            for table, names in (('expenditure_origin', ['origin_id', 'jurisdiction_code']), ('expenditure_location', ['line_id', 'origin_id'])):
+            for table, names in (('fiscal_origin', ['origin_id', 'jurisdiction_code']), ('expenditure_location', ['line_id', 'origin_id'])):
                 sql = f'select * from {table} where {sync_d1.scope_condition(table, names, scope)} order by 1'
                 self.assertEqual(d.execute(sql).fetchall(), q.execute(sql).fetchall())
         sql = 'select line_id from expenditure_location where ' + sync_d1.scope_condition('expenditure_location', ['line_id', 'origin_id'], ['131202'])
@@ -407,7 +407,7 @@ class SyncTest(unittest.TestCase):
     def test_jurisdiction_writes_only_that_jurisdiction(self):
         """その自治体だけの warehouse から流しても、他の自治体の行（親で絞る表も）は消えない。"""
         def origin(key, code, title):
-            self.duck.execute('insert into main."expenditure_origin" ("origin_id", "jurisdiction_code", "title") values (?, ?, ?)',
+            self.duck.execute('insert into main."fiscal_origin" ("origin_id", "jurisdiction_code", "title") values (?, ?, ?)',
                               [key, code, title])
 
         def location(key, origin_id):
@@ -429,8 +429,8 @@ class SyncTest(unittest.TestCase):
         location('lb2', 'b2')
         messages = self.sync(jurisdictions=['000002'])
         self.assertFalse([s for s in self.d1.writes() if s.startswith(('drop table "', 'alter table', 'create table'))], messages)
-        self.assertEqual(self.d1.rows('expenditure_origin', 'origin_id')[0], before['expenditure_origin'][0])  # a1
-        self.assertEqual([r[0] for r in self.d1.rows('expenditure_origin', 'origin_id')], ['a1', 'b1', 'b2'])
+        self.assertEqual(self.d1.rows('fiscal_origin', 'origin_id')[0], before['fiscal_origin'][0])  # a1
+        self.assertEqual([r[0] for r in self.d1.rows('fiscal_origin', 'origin_id')], ['a1', 'b1', 'b2'])
         self.assertEqual([r[0] for r in self.d1.rows('expenditure_location', 'line_id')], ['la', 'lb2'])
         self.assertEqual([r[0] for r in self.d1.rows('jurisdiction', 'jurisdiction_code')], ['000000', '000001', '000002'])
         self.assertEqual(self.d1.rows('project_year', 'project_year_id'), before['project_year'])
@@ -440,15 +440,15 @@ class SyncTest(unittest.TestCase):
         self.sync()
         before = {name: self.d1.rows(name, spec['primary_key']) for name, spec in self.tables.items()}
         self.add('jurisdiction', ['000009'], value='new')
-        self.duck.execute('insert into main."expenditure_origin" ("origin_id", "jurisdiction_code", "title") values (?, ?, ?)',
+        self.duck.execute('insert into main."fiscal_origin" ("origin_id", "jurisdiction_code", "title") values (?, ?, ?)',
                           ['z9', '000009', 'x'])
         self.d1.log.clear()
         messages = []
-        only = {'expenditure_origin': self.tables['expenditure_origin']}
+        only = {'fiscal_origin': self.tables['fiscal_origin']}
         self.assertEqual(sync_d1.run(self.d1, self.duck, only, False, None, False, messages.append), 0, messages)
-        self.assertIn('z9', [r[0] for r in self.d1.rows('expenditure_origin', 'origin_id')])
+        self.assertIn('z9', [r[0] for r in self.d1.rows('fiscal_origin', 'origin_id')])
         for name in self.tables:
-            if name != 'expenditure_origin':
+            if name != 'fiscal_origin':
                 self.assertEqual(self.d1.rows(name, self.tables[name]['primary_key']), before[name], name)
 
     def test_jurisdiction_stops_on_schema_change_with_its_rows(self):
@@ -475,14 +475,14 @@ class SyncTest(unittest.TestCase):
 
     def test_deletes_children_before_parents(self):
         """親の行を消す前に子の行を消す。途中で止まっても、親の消えた子の行が残らない。"""
-        self.duck.execute('insert into main."expenditure_origin" ("origin_id", "jurisdiction_code") values (\'o1\', \'000001\')')
+        self.duck.execute('insert into main."fiscal_origin" ("origin_id", "jurisdiction_code") values (\'o1\', \'000001\')')
         self.duck.execute('insert into main."expenditure_location" ("line_id", "origin_id", "kind") values (\'l1\', \'o1\', \'pdf\')')
         self.sync()
         self.duck.execute('delete from main."expenditure_location"')
-        self.duck.execute('delete from main."expenditure_origin"')
+        self.duck.execute('delete from main."fiscal_origin"')
         self.sync(jurisdictions=['000001'])
         deletes = [s for s in self.d1.writes() if s.startswith('delete from')]
-        self.assertEqual([s.split('"')[1] for s in deletes], ['expenditure_location', 'expenditure_origin'])
+        self.assertEqual([s.split('"')[1] for s in deletes], ['expenditure_location', 'fiscal_origin'])
         self.assertEqual(self.d1.rows('expenditure_location', 'line_id'), [])
 
 
@@ -577,13 +577,13 @@ class SnapshotSyncTest(SyncTest):
 
     def test_jurisdiction_sync_keeps_snapshot_complete(self):
         """自治体を絞った同期の後も、写しは他の自治体の行を持ったまま D1 と同じになり、次の同期で使える。"""
-        self.duck.execute('insert into main."expenditure_origin" ("origin_id", "jurisdiction_code", "title") values (\'a1\', \'000001\', \'x\'), (\'b1\', \'000002\', \'x\')')
+        self.duck.execute('insert into main."fiscal_origin" ("origin_id", "jurisdiction_code", "title") values (\'a1\', \'000001\', \'x\'), (\'b1\', \'000002\', \'x\')')
         self.duck.execute('insert into main."expenditure_location" ("line_id", "origin_id", "kind") values (\'la\', \'a1\', \'pdf\'), (\'lb\', \'b1\', \'pdf\')')
         self.sync_snapshot()
         for name in self.tables:
             self.duck.execute(f'delete from main."{name}"')
         self.add('jurisdiction', ['000002'], value='changed')
-        self.duck.execute('insert into main."expenditure_origin" ("origin_id", "jurisdiction_code", "title") values (\'b2\', \'000002\', \'x\')')
+        self.duck.execute('insert into main."fiscal_origin" ("origin_id", "jurisdiction_code", "title") values (\'b2\', \'000002\', \'x\')')
         self.duck.execute('insert into main."expenditure_location" ("line_id", "origin_id", "kind") values (\'lb2\', \'b2\', \'pdf\')')
         messages = self.sync_snapshot(jurisdictions=['000002'])
         self.assertTrue(any('expenditure_location: 消す 1 行・書く 1 行' in m and '写しと比べた' in m for m in messages), messages)

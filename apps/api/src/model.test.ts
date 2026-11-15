@@ -65,7 +65,7 @@ describe('API の行の schema と表の列', () => {
     ['expenditure_subject', shapeOf(SubjectRow), true],
     ['expenditure_detail', shapeOf(DetailRow), true],
     ['expenditure_location', shapeOf(LocationRow), true],
-    ['expenditure_origin', shapeOf(OriginRow), true],
+    ['fiscal_origin', shapeOf(OriginRow), true],
     ['evaluation', shapeOf(EvaluationRow), true],
     ['evaluation_origin', shapeOf(EvaluationOriginRow), true],
     // シートは表の全列と、方向性の区分から組み立てた outlook

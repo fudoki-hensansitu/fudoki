@@ -282,11 +282,21 @@ def _segments(page, pdf: Path | None = None) -> list[Rule]:
     unread = [r for r in unread if onpage(r['x0'], r['x1'], r['top'], r['bottom']) and not across(r)]
     # A few dark strokes beside the table (a box drawn in the 備考 column, 130001) are not its rules either: the table's
     # are still the light ones, when they far outnumber the dark.
-    if pdf is not None and len(unread) >= 6 and len(shown) * SHOWN_SHARE <= len(unread) and _drawn_dark(pdf, page, unread):
+    # A light line that shows no ink (a trim mark inside the crop box, 131083 R5) is no rule: the table's are the light
+    # lines that show ink, which must be at least four in five of them.
+    if pdf is not None and len(unread) >= 6 and len(shown) * SHOWN_SHARE <= len(unread):
+        inked = _inked(pdf, page, unread)
+        if sum(inked) * 5 >= len(inked) * 4:
+            unread = [r for r, ink in zip(unread, inked) if ink]
+        else:
+            unread = []
+    if pdf is not None and len(unread) >= 6 and len(shown) * SHOWN_SHARE <= len(unread):
         # What is drawn outside the page was all there was: the marks, not the table's rules. On the page, a spot colour
         # read as 0.0 draws no ink (a white ground 0.24pt high over the frame, 132071 R5): only the ones the page shows.
+        # (The rules off the page stay, as before: 130001's spread draws its 備考 boxes past the crop box.)
         boxes = [{'x0': r.x0, 'x1': r.x1, 'top': r.y0, 'bottom': r.y1} for r in shown]
-        rules = [r for r, inked in zip(shown, _inked(pdf, page, boxes)) if inked] if shown else []
+        blank = {id(r) for r, inked in zip(shown, _inked(pdf, page, boxes)) if not inked}
+        rules = [r for r in rules if id(r) not in blank] if shown else []
         for rect in unread:  # a spot colour read as 1.0 draws black: the rule is there when the page shows ink on it
             x0, x1, y0, y1 = rect['x0'], rect['x1'], rect['top'], rect['bottom']
             rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1) if x1 - x0 < y1 - y0
@@ -309,12 +319,6 @@ def _joined(strokes: list[dict], gap: float = 1.0) -> list[dict]:
             else:
                 joined.append({**stroke, '_vertical': vertical})
     return joined
-
-
-def _drawn_dark(pdf: Path, page, rects: list[dict]) -> bool:
-    """Whether the page, rendered, shows ink along the longest of these light-coloured thin rectangles."""
-    longest = sorted(rects, key=lambda r: -max(r['x1'] - r['x0'], r['bottom'] - r['top']))[:5]
-    return all(_inked(pdf, page, longest))
 
 
 def _inked(pdf: Path, page, rects: list[dict]) -> list[bool]:

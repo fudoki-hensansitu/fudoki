@@ -1,0 +1,223 @@
+version: 2
+models:
+- name: revenue
+  description: 歳入の根。一つの資料（自治体・年度・資料区分・補正号）の一つの会計。科目・内訳の表に行があるものだけ。行があることを示し、会計全体を収録し終えたことは保証しない。
+  columns:
+  - name: revenue_id
+    description: 自治体・年度・資料区分・補正号（無ければ空文字）・会計名と向き（revenue）から作る ID（sha256）。同じ会計の歳出の根 expenditure_id とは別の値。
+    data_tests:
+    - not_null
+    - unique
+  - name: jurisdiction_code
+    description: 自治体コード。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('jurisdiction')
+          field: jurisdiction_code
+  - name: fiscal_year
+    description: 会計年度（西暦）。
+    data_tests:
+    - not_null
+  - name: document_kind
+    description: 資料区分（settlement 決算・initial 当初予算）。
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - settlement
+          - initial
+  - name: amendment_number
+    description: 補正予算の号数。当初予算・決算は NULL。
+  - name: account_name
+    description: 出典の会計名をNFKC・前後trimした値。
+    data_tests:
+    - not_null
+  - name: account_kind
+    description: 会計の種類（一般会計・国民健康保険など）。会計名から共通の辞書（account_kind_map）で引く風土記の判断。
+    data_tests:
+    - not_null
+  - name: total_yen
+    description: 款の行の和（円）。決算は収入済額、当初予算は本年度予算額の和。印字された歳入合計の行は表に無いので、款の和を会計の合計とする。
+    data_tests:
+    - not_null
+- name: revenue_subject
+  description: 歳入の科目の表。一つの資料（自治体・年度・資料区分・会計）の款・項・目の印字と、印字の無い款・項を子の和で補った値。同じ資料で level を一つに絞るか末端（子の無い科目）の行を足すと総額。自治体・年度・会計は根 revenue に置き、この表には持たない（ADR 0047）。目より下（節）は revenue_detail、印字の位置は revenue_location。
+  columns:
+  - name: subject_id
+    description: 行の ID。資料区分・補正号・node_key から作る（sha256）。
+    data_tests:
+    - not_null
+    - unique
+  - name: node_key
+    description: 今の木の node_id。自治体・年度・会計・款項目番号と向き（revenue）から作り、資料区分を含まない。同じ自治体・年度の当初予算と決算の同じ科目は同じ値になる。年度をまたいだ同一性は保証しない。
+    data_tests:
+    - not_null
+  - name: parent_subject_id
+    description: 親の科目（款は NULL）。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('revenue_subject')
+          field: subject_id
+  - name: revenue_id
+    description: 歳入の根の ID。revenue の revenue_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('revenue')
+          field: revenue_id
+  - name: level
+    description: 科目の段（款・項・目）。足すときは同じ資料で一つの段か末端に絞る。
+    data_tests:
+    - not_null
+    - accepted_values:
+        arguments:
+          values:
+          - 款
+          - 項
+          - 目
+  - name: code
+    description: 出典の番号をNFKC・前後trimした値。番号がない段はNULL。
+  - name: name
+    description: 出典の名称をNFKC・前後trimし、日本語の字間空白と折り返し改行を除いた値。
+    data_tests:
+    - not_null
+  - name: amount_yen
+    description: 資料区分の金額（円）。決算（根の document_kind = settlement）は収入済額、当初予算（initial）は本年度予算額。調定額・不納欠損額・収入未済額は持たない。款・項の金額を印字しない資料の款・項は子の和で、印字ではない。出典で空欄の末端は 0。
+    data_tests:
+    - not_null
+  - name: origin_id
+    description: 出典選定のファイルを指すSHA由来のID。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('fiscal_origin')
+          field: origin_id
+- name: revenue_detail
+  description: 歳入の内訳の表。科目の下の印字（節と、その下の印字）。同じ科目の depth = 1 の行を足すと科目の額になる（出典の金額が欠ける行を除く）。歳入の節は収入の種類を分ける区分で、歳出の節（expenditure_setsu）とは意味が違う。根の値・所属する款・項・目は持たない（ADR 0047）。
+  columns:
+  - name: detail_id
+    description: 行の ID。資料区分・補正号・node_key から作る（sha256）。
+    data_tests:
+    - not_null
+    - unique
+  - name: node_key
+    description: 今の木の node_id。親・軸・段・番号・名称から作る。
+    data_tests:
+    - not_null
+  - name: parent_detail_id
+    description: 親の内訳の行（depth = 1 は NULL）。
+    data_tests:
+    - relationships:
+        arguments:
+          to: ref('revenue_detail')
+          field: detail_id
+  - name: subject_id
+    description: 属する科目の行。revenue_subject の subject_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('revenue_subject')
+          field: subject_id
+  - name: revenue_id
+    description: 歳入の根の ID。revenue の revenue_id。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('revenue')
+          field: revenue_id
+  - name: source_heading
+    description: 枝の欄の見出し（出典の印字。多くは「節」）。
+    data_tests:
+    - not_null
+  - name: node_kind
+    description: 段の名前。出典が段の見出しを印字すればその語、無ければ 内訳{深さ}。
+    data_tests:
+    - not_null
+  - name: depth
+    description: 科目の直下を 1 とする深さ。
+    data_tests:
+    - not_null
+  - name: code
+    description: 出典の番号をNFKC・前後trimした値。番号がなければNULL。
+  - name: name
+    description: 出典の名称をNFKC・前後trimし、日本語の字間空白と折り返し改行を除いた値。
+    data_tests:
+    - not_null
+  - name: amount_yen
+    description: 資料区分の金額（円）。決算は収入済額、当初予算は本年度予算額。出典に金額の無い行は NULL。
+  - name: origin_id
+    description: 出典選定のファイルを指すSHA由来のID。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('fiscal_origin')
+          field: origin_id
+- name: revenue_location
+  description: 歳入の科目の表・内訳の表の1行が印字された出典の位置（頁と枠、pt、頁の左上が原点）。歳入は PDF だけを読む。複数の印字を足した金額の金額の位置は NULL。
+  columns:
+  - name: line_id
+    description: 科目の表の subject_id か内訳の表の detail_id。
+    data_tests:
+    - not_null
+    - unique
+  - name: origin_id
+    description: 出典選定のファイルを指すSHA由来のID。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('fiscal_origin')
+          field: origin_id
+  - name: source_page
+    description: 名称を印字した頁（1始まり）。
+  - name: source_x0
+    description: 名称の枠の左端（pt）。
+  - name: source_y0
+    description: 名称の枠の上端（pt）。
+  - name: source_x1
+    description: 名称の枠の右端（pt）。
+  - name: source_y1
+    description: 名称の枠の下端（pt）。
+  - name: amount_source_page
+    description: 金額を印字した頁。複数の印字を足した金額は NULL。
+  - name: amount_source_x0
+    description: 金額の枠の左端（pt）。一つの印字が金額のときだけ。
+  - name: amount_source_y0
+    description: 金額の枠の上端（pt）。
+  - name: amount_source_x1
+    description: 金額の枠の右端（pt）。
+  - name: amount_source_y1
+    description: 金額の枠の下端（pt）。
+- name: revenue_origin_link
+  description: 歳入の根と出典（冊）を結ぶ表。1冊が複数の会計にまたがり、1つの会計が分冊になることもある。出典の表は歳出と共有の fiscal_origin。
+  columns:
+  - name: link_id
+    description: 根と出典の組から作る ID（sha256）。
+    data_tests:
+    - not_null
+    - unique
+  - name: revenue_id
+    description: 歳入の根の ID。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('revenue')
+          field: revenue_id
+  - name: origin_id
+    description: 出典の ID。
+    data_tests:
+    - not_null
+    - relationships:
+        arguments:
+          to: ref('fiscal_origin')
+          field: origin_id

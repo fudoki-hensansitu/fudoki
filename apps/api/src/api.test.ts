@@ -597,7 +597,7 @@ describe('operation の応答は output の schema に合う', () => {
     return { ...Object.fromEntries(cols.filter((c) => !c.nullable).map((c) => [c.name, dflt(c.type)])), ...row }
   }
   beforeEach(() => {
-    insertOrigin(sqlite, filled('expenditure_origin', { origin_id: 'of', fiscal_year: 2023, sha256: 'f'.repeat(64) }))
+    insertOrigin(sqlite, filled('fiscal_origin', { origin_id: 'of', fiscal_year: 2023, sha256: 'f'.repeat(64) }))
     for (const document_kind of ['settlement', 'initial'] as const) {
       const { P, C, D } = IDS[document_kind]
       const amount_phase = document_kind === 'settlement' ? 'executed' : 'approved'

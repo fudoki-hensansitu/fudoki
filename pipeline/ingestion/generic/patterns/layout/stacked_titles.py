@@ -11,7 +11,8 @@ import re
 from ingestion.generic import layout
 from ingestion.generic.layout import Glyph, lines, normalize, runs, text
 
-TITLE = re.compile(r'^([0-9]+)(款|項)(.+)$')
+# A 款・項 abolished for the year prints no number (`款 特別区債 … 0千円`, 品川区 R8 歳入): it still prints its amount.
+TITLE = re.compile(r'^([0-9]*)(款|項)(.+)$')
 # A running title naming the 款 and the 項 on one line (`（款） 2 政策経営費 （項） 1 政策経営費`, 131164), over a table of 目.
 RUNNING = re.compile(r'^[(（]款[)）]([0-9]+)(.+?)(?:[(（]項[)）]([0-9]+)(.+))?$')
 # The amount at the right end of a title, with the unit it prints (`24,930,655千円`).
@@ -72,12 +73,12 @@ def titles(logical: layout.Logical, heading: str | None) -> list[tuple[str, str,
                 kou = [Glyph(g.text, g.x0, low, g.x1, low + height, g.page, g.offset) for g in kou]
                 found.append(('項', running.group(3), running.group(4), kou, None))
             continue
-        if not match:
+        if not match or (not match.group(1) and amount is None):
             continue
         if amount is not None and not heading:
             raise ValueError(f'A title prints an amount with no heading: p{name[0].page} {normalize(text(line))!r}; '
                              'declare the heading it is under (`header.title_amount`)')
-        found.append((match.group(2), match.group(1), match.group(3), name, (heading, amount) if amount else None))
+        found.append((match.group(2), match.group(1) or None, match.group(3), name, (heading, amount) if amount else None))
     return found
 
 

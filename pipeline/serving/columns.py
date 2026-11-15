@@ -17,19 +17,19 @@ import yaml
 
 PIPELINE = Path(__file__).resolve().parents[1]
 MODELS = [PIPELINE / f'dbt/models/marts/{name}/_models.yml'
-          for name in ('jurisdiction', 'expenditure', 'evaluation', 'project', 'source')]
+          for name in ('jurisdiction', 'fiscal', 'expenditure', 'evaluation', 'project', 'source')]
 WAREHOUSE = PIPELINE / '.build/warehouse.duckdb'
 OUTPUT = PIPELINE.parent / 'apps/api/src/columns.json'
 
 # D1 に写す marts の表（同期の順は sync_d1.TABLE_ORDER）
 TABLES = ['jurisdiction',
-          'expenditure', 'expenditure_origin', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
+          'fiscal_origin', 'expenditure', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
           'expenditure_location',
           'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_sheet_project', 'evaluation_indicator', 'evaluation_indicator_value',
           'project', 'project_year',
           'source_page_text']
 PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code',
-                'expenditure': 'expenditure_id', 'expenditure_origin': 'origin_id', 'expenditure_origin_link': 'link_id',
+                'expenditure': 'expenditure_id', 'fiscal_origin': 'origin_id', 'expenditure_origin_link': 'link_id',
                 'expenditure_subject': 'subject_id', 'expenditure_detail': 'detail_id', 'expenditure_location': 'line_id',
                 'evaluation': 'evaluation_id', 'evaluation_origin': 'origin_id', 'evaluation_sheet': 'sheet_id', 'evaluation_sheet_project': 'link_id',
                 'evaluation_indicator': 'indicator_id', 'evaluation_indicator_value': 'value_id',
