@@ -812,13 +812,42 @@ class Reader(Reading):
                     label_state = 'kan_amounts'
                     b.emit_annex(page, line)
                     continue
+                if label_state == 'kan_amounts' and b.kan_amount_cells and not all(
+                        self.is_amount(w['text']) or w['text'].endswith(('%', '％')) for w in line):
+                    # 金額の無い升は何も印字しない（2023年度の介護・後期高齢者の款集計は保険料・都支出金が空）。集計行が
+                    # 終わっていれば、決算額の右端から執行率の右端までを7等分した升へ、右端が最も近い升に割り当てる。
+                    cells = sorted(b.kan_amount_cells, key=lambda c: c[0])
+                    if len(cells) < 7 and cells[-1][1].endswith(('%', '％')) and not cells[0][1].endswith(('%', '％')):
+                        left, right = cells[0][0], cells[-1][0]
+                        slots = [left + (right - left) * n / 6 for n in range(7)]
+                        taken = {}
+                        for cell in cells:
+                            slot = min(range(7), key=lambda n: abs(slots[n] - cell[0]))
+                            if slot in taken:
+                                raise ValueError(f'款集計の金額セルが同じ升に入る（{page}頁）: {[t for _, t, _, _ in cells]}')
+                            taken[slot] = cell
+                        b.kan_amount_cells = [taken.get(n, (slots[n], '', page, None)) for n in range(7)]
+                    else:
+                        raise ValueError(f'款集計の金額セルが7に満たない（{page}頁）: {[t for _, t, _, _ in cells]}')
+                    ordered = b.kan_amount_cells
+                    vals = dict(zip(kan_keys, [t or None for _, t, _, _ in ordered]))
+                    owners = {k: [w] for k, (_, _, _, w) in zip(kan_keys, ordered) if w is not None}
+                    amount_keys = [k for k in kan_keys if k != '執行率']
+                    b.kan.update(self.amount_cells(amount_keys, {k: vals[k] for k in amount_keys},
+                                                   {k: owners[k] for k in amount_keys if k in owners}, page))
+                    b.kan['執行率'] = vals['執行率']
+                    b.obs_kan.append({'page': page, '番号': b.kan['番号'], '名称': b.kan['名称'], **vals,
+                                      **self.position(page, line)})
+                    b.capture_subject()
+                    b.kan_amount_cells = []
+                    label_state = None
                 if label_state == 'kan_amounts':
                     # 款集計の金額行: 7セルを右端 (xMax) 順に固定順序へ割り当てる。
                     # 頁途中の款見出しではy jitterで行が割れるためxMax順で復元する。
                     # 単一行では従来の印字順と同一になる。
                     b.kan_amount_cells.extend((w['xMax'], w['text'], page, w) for w in line)
                     if len(b.kan_amount_cells) > 7:
-                        raise ValueError(f'款集計の金額セルが7超: {[t for _, t, _, _ in b.kan_amount_cells]}')
+                        raise ValueError(f'款集計の金額セルが7超（{page}頁）: {[t for _, t, _, _ in b.kan_amount_cells]}')
                     if len(b.kan_amount_cells) == 7:
                         ordered = sorted(b.kan_amount_cells, key=lambda c: c[0])
                         vals = dict(zip(kan_keys, [t for _, t, _, _ in ordered]))
