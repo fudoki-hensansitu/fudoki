@@ -5,8 +5,7 @@
 with doc as (
     select jurisdiction_code, fiscal_year, document_kind, account_name,
         sum(amount_yen) filter (where level = '款') as kan_sum,
-        sum(amount_yen) filter (where is_leaf) as leaf_sum,
-        count(*) filter (where is_leaf and amount_yen is null) as leaf_missing
+        sum(amount_yen) filter (where is_leaf) as leaf_sum
     from {{ ref('expenditure_subject') }}
     group by all
 ), rows as (
@@ -26,4 +25,4 @@ select doc.jurisdiction_code || ':' || doc.fiscal_year || ':' || doc.document_ki
     kan_sum as expected, leaf_sum + coalesce(d.amount, 0) as actual
 from doc
 left join division_kou_without_moku d using (jurisdiction_code, fiscal_year, document_kind, account_name)
-where kan_sum is not null and leaf_missing = 0 and kan_sum <> leaf_sum + coalesce(d.amount, 0)
+where kan_sum <> leaf_sum + coalesce(d.amount, 0)

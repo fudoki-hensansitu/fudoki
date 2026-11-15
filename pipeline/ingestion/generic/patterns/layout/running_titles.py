@@ -297,6 +297,11 @@ def full_rules(page) -> list[float]:
         first = next((x for x in verticals if x > left + reach), None)
         whole = sorted({*whole, *(r.y0 for r in layout._joined(horizontals) if first is not None
                                    and left + reach < r.x0 < first - 10 and r.x1 >= right - reach)})
+        # The right end goes pale the same way (国分寺市 R8 p55: the top rule of the first of two stacked tables
+        # stops inside the last column): a rule from the left edge that reaches into the last column is one.
+        last = next((x for x in reversed(verticals) if x < right - reach), None)
+        whole = sorted({*whole, *(r.y0 for r in layout._joined(horizontals) if last is not None
+                                   and r.x0 <= left + reach and last + 10 < r.x1 < right - reach)})
     if whole:
         return whole
     joined = []

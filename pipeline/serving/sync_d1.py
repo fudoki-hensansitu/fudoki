@@ -14,6 +14,12 @@
    1つでも違えば最初の数件の主キーと列名を出して止める。この時点では本名の表に何も書いていない。
 4. 差分の表に、消す行の delete と、書く行の `insert or replace` を流す。変わった範囲を読み戻して突き合わせ、行数も比べる。
 5. 作り直した表を、1つの batch で `drop table if exists <表>; alter table <表>__new rename to <表>;` と index の作成で入れ替える。
+`--snapshot <file>` は、前回の同期が成功したときに D1 へ入れた表の写し（DuckDB の file）と warehouse を手元で比べて差分を決め、
+D1 を全行は読まない（2 の差分を写しで決める）。写しは同期が成功するたびに書き直す。写しが D1 の今の中身と同じであることは、
+D1 の `sync_state` に置く印（token）で確かめる。同期は書き始める前に印を消し、成功したら新しい印を D1 と写しの両方に置く。
+印が無い・合わない（途中で落ちた同期、写しを持たない同期の後、cache が消えたなど）表は、今までどおり D1 を読んで比べる。
+`--verify-all` は写しがあっても D1 を全行読んで比べる（定期実行で、写しと D1 のずれを直す）。
+差分の表の読み戻しは、書いた主キーと消した主キーだけを読み、行数は表全体で比べる。
 `--full` は全表を作り直す。`--dry-run` は書かずに、書く予定の行数を出す（D1 を指定すれば D1 を読んで差分を数える）。
 `--jurisdiction` は、表ごとにその自治体の行だけを D1 と warehouse の両方から選んで突き合わせ、差を書く。他の自治体の行は読むだけで
 消さないので、その自治体だけを build した warehouse から本番へ流せる。自治体コードを持たない表は親の表の自治体で絞る（`PARENT_SCOPE`）。
@@ -48,6 +54,7 @@ import sys
 import tempfile
 import threading
 import time
+import uuid
 from pathlib import Path
 from typing import Any, Callable, Iterator, Sequence
 
@@ -73,6 +80,13 @@ READ_ROWS_BY_TABLE = {'source_page_text': 200}
 REBUILD_RATIO = 0.5
 # delete の1文に入れる主キーの数
 DELETE_KEYS_PER_STATEMENT = 500
+
+# 写しが D1 と同じかを確かめる印を置く表（D1 の中だけに置き、columns.json の表ではない）
+SYNC_STATE = 'sync_state'
+SNAPSHOT_KEY = 'snapshot'
+# 写しを attach する名前
+SNAPSHOT_CATALOG = 'snap'
+SNAPSHOT_META = '_snapshot'
 
 # 参照される表（自治体マスタ・根・出典）を先に、参照する表を後に
 TABLE_ORDER = ['jurisdiction',
@@ -182,11 +196,13 @@ PARENT_SCOPE = {
 }
 
 
-def scope_condition(table: str, names: list[str], jurisdictions: Sequence[str]) -> str:
-    """その自治体の行を選ぶ条件。DuckDB と SQLite のどちらでも同じ行を選ぶ（親の表は同じ側の表を読む）。"""
+def scope_condition(table: str, names: list[str], jurisdictions: Sequence[str], prefix: str = '') -> str:
+    """その自治体の行を選ぶ条件。DuckDB と SQLite のどちらでも同じ行を選ぶ（親の表は同じ側の表を読む）。
+    prefix は親の表の前に付ける名前（DuckDB で写しや別の DB の表を読むとき。例: `snap.main.`）。"""
     if table in PARENT_SCOPE:
         column, parent = PARENT_SCOPE[table]
-        return f'"{column}" in (select "{column}" from "{parent}" where {scope_condition(parent, ["jurisdiction_code"], jurisdictions)})'
+        return (f'"{column}" in (select "{column}" from {prefix}"{parent}" '
+                f'where {scope_condition(parent, ["jurisdiction_code"], jurisdictions, prefix)})')
     if 'jurisdiction_code' not in names:
         raise SystemExit(f'{table}: 自治体で絞る列が無い（PARENT_SCOPE に親の表を足す）')
     return '"jurisdiction_code" in (' + ', '.join(literal(j) for j in jurisdictions) + ')'
@@ -367,12 +383,11 @@ def read_schemas(d1: D1, tables: dict[str, Table]) -> dict[str, bool]:
 
 
 class TableDiff:
-    """1表の warehouse と D1 の差。ranges は書き込み後に読み戻す範囲（差のあった範囲）。"""
+    """1表の warehouse と D1 の差。書いたあとは deletes・writes の主キーだけを読み戻す。"""
 
     def __init__(self) -> None:
         self.deletes: list[str] = []
         self.writes: list[str] = []
-        self.ranges: list[tuple[str | None, str | None]] = []
         self.problems: list[str] = []
 
     @property
@@ -380,8 +395,7 @@ class TableDiff:
         return len(self.deletes) + len(self.writes)
 
 
-def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d1_table: str, scope: str = '',
-               ranges: list[tuple[str | None, str | None]] | None = None) -> TableDiff:
+def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d1_table: str, scope: str = '') -> TableDiff:
     """主キーの範囲ごとに D1 の d1_table を読み、warehouse の name と全列で突き合わせる。
 
     1回の cf 呼び出しは READ_ROWS_PER_CALL 行（1行が大きい表は READ_ROWS_BY_TABLE の行数）ほどにまとめる。メモリにあるのはその分と、差のある主キーだけ。
@@ -392,7 +406,7 @@ def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d
     cols = ', '.join(f'"{n}"' for n in names)
     where = and_where('', scope) if scope else ''
     d1_scope = f' and {scope}' if scope else ''
-    ranges = key_ranges(con, name, key, where) if ranges is None else ranges
+    ranges = key_ranges(con, name, key, where)
     per_call = max(1, READ_ROWS_BY_TABLE.get(name, READ_ROWS_PER_CALL) // range_rows_of(name))
     diff = TableDiff()
     for i in range(0, len(ranges), per_call):
@@ -406,8 +420,24 @@ def diff_table(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d
             if deletes or writes:
                 diff.deletes += deletes
                 diff.writes += writes
-                diff.ranges.append((lo, hi))
                 diff.problems += [f'{name}: {p}' for p in compare_rows(names, key, got, want)]
+    return diff
+
+
+def snapshot_diff(con: duckdb.DuckDBPyConnection, name: str, spec: Table, jurisdictions: Sequence[str] | None = None) -> TableDiff:
+    """写し（前回の同期で D1 に入れた行）と warehouse を手元で比べる。D1 は読まない。"""
+    names = [c['name'] for c in spec['columns']]
+    key = spec['primary_key']
+    cols = ', '.join(f'"{n}"' for n in names)
+    snapshot = f'{SNAPSHOT_CATALOG}.main.'
+    ws = and_where('', scope_condition(name, names, jurisdictions)) if jurisdictions else ''
+    ss = and_where('', scope_condition(name, names, jurisdictions, snapshot)) if jurisdictions else ''
+    diff = TableDiff()
+    diff.deletes = [r[0] for r in con.execute(
+        f'select "{key}" from {snapshot}"{name}"{ss} except select "{key}" from main."{name}"{ws} order by 1').fetchall()]
+    diff.writes = [r[0] for r in con.execute(
+        f'select "{key}" from (select {cols} from main."{name}"{ws} except select {cols} from {snapshot}"{name}"{ss}) order by 1'
+    ).fetchall()]
     return diff
 
 
@@ -419,18 +449,43 @@ def warehouse_count(con: duckdb.DuckDBPyConnection, table: str, where: str = '')
     return con.execute(f'select count(*) from main."{table}"{where}').fetchone()[0]
 
 
-def verify(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d1_table: str, scope: str = '',
-           ranges: list[tuple[str | None, str | None]] | None = None) -> list[str]:
-    """D1 の d1_table が warehouse と同じか。ranges を渡せばその範囲だけを読み戻す。行数は常に（scope の）全体で比べる。"""
+def verify(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, d1_table: str) -> list[str]:
+    """作り直した D1 の d1_table を全範囲読み戻し、warehouse と同じか。"""
     problems = []
-    where = and_where('', scope) if scope else ''
-    total, want = count_rows(d1, d1_table, scope), warehouse_count(con, name, where)
+    total, want = count_rows(d1, d1_table), warehouse_count(con, name)
     if total != want:
         problems.append(f'{name}: 行数 D1 {total} != warehouse {want}')
-    ranges = key_ranges(con, name, spec['primary_key'], where) if ranges is None else ranges
-    problems += diff_table(d1, con, name, spec, d1_table, scope, ranges).problems[:5]
-    print(f'  読み戻し {name}: {len(ranges)} 範囲', flush=True)
+    problems += diff_table(d1, con, name, spec, d1_table).problems[:5]
+    print(f'  読み戻し {name}: 全件', flush=True)
     return problems
+
+
+def verify_keys(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, keys: Sequence[str], scope: str = '') -> list[str]:
+    """書いた・消した主キーの行だけを D1 から読み戻して warehouse と比べ、行数は（scope の）全体で比べる。"""
+    problems = []
+    where = and_where('', scope) if scope else ''
+    total, want = count_rows(d1, name, scope), warehouse_count(con, name, where)
+    if total != want:
+        problems.append(f'{name}: 行数 D1 {total} != warehouse {want}')
+    names = [c['name'] for c in spec['columns']]
+    key = spec['primary_key']
+    cols = ', '.join(f'"{n}"' for n in names)
+    d1_scope = f' and {scope}' if scope else ''
+    per_call = READ_ROWS_BY_TABLE.get(name, READ_ROWS_PER_CALL)
+    per_statement = min(DELETE_KEYS_PER_STATEMENT, per_call)
+    chunks = [list(keys[i:i + per_statement]) for i in range(0, len(keys), per_statement)]
+    group_size = max(1, per_call // per_statement)
+    for i in range(0, len(chunks), group_size):
+        group = chunks[i:i + group_size]
+        results = d1.batch([{'sql': f'select {cols} from "{name}" where "{key}" in ({", ".join(literal(k) for k in chunk)})'
+                                    f'{d1_scope} order by "{key}"'} for chunk in group])
+        for chunk, result in zip(group, results):
+            want_rows = [[d1_value(v) for v in row] for row in con.execute(
+                f'select {cols} from main."{name}"{and_where(where, f"{chr(34)}{key}{chr(34)} in ({", ".join(literal(k) for k in chunk)})")} '
+                f'order by "{key}"').fetchall()]
+            problems += [f'{name}: {p}' for p in compare_rows(names, key, result['results']['rows'], want_rows)]
+    print(f'  読み戻し {name}: {len(keys)} 行', flush=True)
+    return problems[:5]
 
 
 def rows_written(rows: int, spec: Table) -> int:
@@ -442,10 +497,122 @@ def rss_mb() -> float:
     return resource.getrusage(resource.RUSAGE_SELF).ru_maxrss / 1024 / 1024  # macOS は bytes
 
 
+# 写し（前回の同期で D1 に入れた表）
+
+def spec_json(spec: Table) -> str:
+    return json.dumps(spec, sort_keys=True, ensure_ascii=False)
+
+
+class Snapshot:
+    """写しの file と、それが D1 の今の中身と同じか（D1 の印と写しの印が一致するか）。
+
+    all_tables は columns.json の全表。写しは全表がそろい、表の定義が columns.json と同じときだけ、次の同期の写しの元にできる。
+    """
+
+    def __init__(self, path: Path, all_tables: dict[str, Table], verify_all: bool = False):
+        self.path = path
+        self.all_tables = all_tables
+        self.verify_all = verify_all
+        self.attached = False
+        self.token: str | None = None
+        self.specs: dict[str, str] = {}
+        self.d1_token: str | None = None
+        self.new_token: str | None = None
+
+    def attach(self, con: duckdb.DuckDBPyConnection) -> None:
+        if not self.path.is_file():
+            return
+        try:
+            con.execute(f'attach {literal(str(self.path))} as {SNAPSHOT_CATALOG} (read_only)')
+            rows = con.execute(f'select table_name, spec, token from {SNAPSHOT_CATALOG}.main.{SNAPSHOT_META}').fetchall()
+        except duckdb.Error as error:
+            print(f'写しを読めない（D1 を読んで比べる）: {error}', flush=True)
+            return
+        self.attached = True
+        self.specs = {name: spec for name, spec, _ in rows}
+        self.token = rows[0][2] if rows else None
+
+    def valid(self) -> bool:
+        """写しが D1 の今の中身と同じか。"""
+        return self.attached and self.token is not None and self.token == self.d1_token
+
+    def usable(self, name: str, spec: Table) -> bool:
+        """この表の差分を写しで決めてよいか。"""
+        return not self.verify_all and self.valid() and self.specs.get(name) == spec_json(spec)
+
+    def complete_after(self, synced: Sequence[str], scoped: bool) -> bool:
+        """同期が成功したら、全表がそろった写しを作れるか。全表を全自治体で同期すれば warehouse から作れる。
+        一部の表・自治体だけの同期は、ほかの行を今の写しから写すので、今の写しが D1 と同じで全表の定義が合っていること。"""
+        if not scoped and set(synced) == set(self.all_tables):
+            return True
+        return self.valid() and all(self.specs.get(n) == spec_json(s) for n, s in self.all_tables.items())
+
+    def save(self, warehouse: Path, synced: Sequence[str], jurisdictions: Sequence[str] | None) -> None:
+        """同期が成功した後の D1 の中身の写しを書く（今の写しを読むので、別の file に書いてから置き換える）。"""
+        assert self.new_token
+        self.path.parent.mkdir(parents=True, exist_ok=True)
+        new = self.path.with_name(self.path.name + '.new')
+        new.unlink(missing_ok=True)
+        con = duckdb.connect(str(new), config={'memory_limit': MEMORY_LIMIT, 'threads': 2})
+        try:
+            con.execute(f'attach {literal(str(warehouse))} as w (read_only)')
+            if self.path.is_file():
+                con.execute(f'attach {literal(str(self.path))} as s (read_only)')
+            for name in TABLE_ORDER:
+                if name not in self.all_tables:
+                    continue
+                names = [c['name'] for c in self.all_tables[name]['columns']]
+                cols = ', '.join(f'"{n}"' for n in names)
+                if name in synced and not jurisdictions:
+                    query = f'select {cols} from w.main."{name}"'
+                elif name in synced:
+                    # 範囲の外の行を写しから残す。主キーが範囲をまたいだ行（同じ PDF の頁が別の自治体に付き直したなど）は、
+                    # D1 では範囲の中の行で置き換わっているので、写しからも主キーで除く
+                    key = self.all_tables[name]['primary_key']
+                    inside = scope_condition(name, names, jurisdictions, 'w.main.')
+                    query = (f'select {cols} from s.main."{name}" '
+                             f'where not coalesce({scope_condition(name, names, jurisdictions, "s.main.")}, false) '
+                             f'and "{key}" not in (select "{key}" from w.main."{name}" where {inside}) '
+                             f'union all select {cols} from w.main."{name}" where {inside}')
+                else:
+                    query = f'select {cols} from s.main."{name}"'
+                con.execute(f'create table main."{name}" as {query}')
+            con.execute(f'create table main.{SNAPSHOT_META} (table_name varchar, spec varchar, token varchar)')
+            con.executemany(f'insert into main.{SNAPSHOT_META} values (?, ?, ?)',
+                            [(name, spec_json(spec), self.new_token) for name, spec in self.all_tables.items()])
+        finally:
+            con.close()
+        os.replace(new, self.path)
+
+
+def begin(d1: D1, snapshot: Snapshot | None) -> None:
+    """前回の失敗の残骸を捨て、写しの印を読んでから消す（この同期が終わるまで、D1 は写しと同じとは言えない）。"""
+    statements = cleanup_statements() + [
+        {'sql': f'create table if not exists "{SYNC_STATE}" ("key" text primary key, "value" text not null)'},
+        {'sql': f'select "value" from "{SYNC_STATE}" where "key" = {literal(SNAPSHOT_KEY)}'},
+        {'sql': f'delete from "{SYNC_STATE}" where "key" = {literal(SNAPSHOT_KEY)}'},
+    ]
+    rows = d1.batch(statements)[-2]['results']['rows']
+    if snapshot:
+        snapshot.d1_token = rows[0][0] if rows else None
+        if snapshot.attached and not snapshot.valid():
+            print('写しの印が D1 と合わない（D1 を読んで比べる）', flush=True)
+
+
+def finish(d1: D1, snapshot: Snapshot | None, synced: Sequence[str], scoped: bool) -> None:
+    """成功した同期の印を D1 に置く。写しはこの後に同じ印で書く（書けなければ印が合わず、次の同期は D1 を読む）。"""
+    if snapshot and snapshot.complete_after(synced, scoped):
+        snapshot.new_token = uuid.uuid4().hex
+        d1.batch([{'sql': f'insert or replace into "{SYNC_STATE}" ("key", "value") '
+                          f'values ({literal(SNAPSHOT_KEY)}, {literal(snapshot.new_token)})'}])
+
+
 def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[str] | None = None, full: bool = False,
-         log: Callable[[str], None] = lambda m: print(m, flush=True), only: Sequence[str] | None = None) -> int:
+         log: Callable[[str], None] = lambda m: print(m, flush=True), only: Sequence[str] | None = None,
+         snapshot_path: Path | None = None, verify_all: bool = False) -> int:
     tables = contract.load()
     con = open_warehouse(warehouse)
+    snapshot = Snapshot(snapshot_path, tables, verify_all) if snapshot_path and d1 and not dry_run else None
     try:
         if contract.build(contract.warehouse_columns(warehouse, con)) != {'tables': tables}:
             raise SystemExit('columns.json が warehouse と食い違う。serving:columns で書き直す')
@@ -454,22 +621,29 @@ def sync(d1: D1 | None, warehouse: Path, dry_run: bool, jurisdictions: Sequence[
             if unknown:
                 raise SystemExit(f'columns.json に無い表: {", ".join(unknown)}')
             tables = {name: spec for name, spec in tables.items() if name in only}
-        return run(d1, con, tables, dry_run, jurisdictions, full, log)
+        if snapshot:
+            snapshot.attach(con)
+        code = run(d1, con, tables, dry_run, jurisdictions, full, log, snapshot)
     finally:
         con.close()
+    if code == 0 and snapshot and snapshot.new_token:
+        started = time.time()
+        snapshot.save(warehouse, list(tables), jurisdictions)
+        log(f'写しを書いた: {snapshot.path}（{time.time() - started:.0f} 秒）')
+    return code
 
 
 def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], dry_run: bool,
-        jurisdictions: Sequence[str] | None, full: bool, log: Callable[[str], None]) -> int:
+        jurisdictions: Sequence[str] | None, full: bool, log: Callable[[str], None], snapshot: Snapshot | None = None) -> int:
     if jurisdictions:
         if full:
             raise SystemExit('--jurisdiction と --full は一緒に使えない（作り直しは全自治体の行が要る）')
-        return run_scoped(d1, con, tables, dry_run, jurisdictions, log)
+        return run_scoped(d1, con, tables, dry_run, jurisdictions, log, snapshot)
     started = time.time()
     if d1 and not dry_run:
-        d1.batch(cleanup_statements())
+        begin(d1, snapshot)
 
-    # 1. 作り直す表と、差分で書く表を決める（D1 を読むだけ）
+    # 1. 作り直す表と、差分で書く表を決める（D1 を読むか、写しと比べる）
     matches = read_schemas(d1, tables) if d1 and not full else {name: False for name in ordered(tables)}
     rebuild: list[str] = []
     diffs: dict[str, TableDiff] = {}
@@ -481,14 +655,16 @@ def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table],
             reason = '--full' if full else 'D1 に無いか列・index が違う' if d1 else 'D1 を指定していない'
             log(f'{name}: 作り直す（{reason}）{rows} 行 / 書き込み約 {rows_written(rows, spec):,} 行')
             continue
-        diff = diff_table(d1, con, name, spec, name)
+        from_snapshot = bool(snapshot and snapshot.usable(name, spec))
+        diff = snapshot_diff(con, name, spec) if from_snapshot else diff_table(d1, con, name, spec, name)
         if diff.changes > REBUILD_RATIO * max(rows, 1):
             rebuild.append(name)
             log(f'{name}: 変わる行 {diff.changes} が多いので作り直す {rows} 行 / 書き込み約 {rows_written(rows, spec):,} 行')
             continue
         diffs[name] = diff
         cost = rows_written(len(diff.deletes), spec) + 2 * rows_written(len(diff.writes), spec)
-        log(f'{name}: 消す {len(diff.deletes)} 行・書く {len(diff.writes)} 行 / 書き込み約 {cost:,} 行（{rows} 行中）')
+        log(f'{name}: 消す {len(diff.deletes)} 行・書く {len(diff.writes)} 行 / 書き込み約 {cost:,} 行（{rows} 行中）'
+            f'{"・写しと比べた" if from_snapshot else ""}')
     if dry_run or not d1:
         log('dry-run: D1 には書いていない')
         return 0
@@ -527,6 +703,7 @@ def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table],
     # 失敗は応答を失う散発エラー（起動時）なので再送する
     if rebuild:
         d1.batch(swap_statements({name: tables[name] for name in rebuild}), retries=3 if d1.local else 1)
+    finish(d1, snapshot, ordered(tables), scoped=False)
     log(f'完了: 作り直し {len(rebuild)} 表・差分 {sum(1 for d in diffs.values() if d.changes)} 表 / cf {d1.calls} 回 / '
         f'{time.time() - started:.0f} 秒 / RSS最大 {rss_mb():.0f}MB')
     return 0
@@ -534,7 +711,7 @@ def run(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table],
 
 def write_diffs(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], diffs: dict[str, TableDiff],
                 scopes: dict[str, str] | None = None) -> list[str]:
-    """差分の表に書いて、差のあった範囲を読み戻す。
+    """差分の表に書いて、書いた・消した主キーを読み戻す。
 
     消す行は参照する表から（TABLE_ORDER の逆順）、書く行は参照される表から流す。途中で止まっても、親より先に
     子が消えるので、親の消えた子の行（自治体で絞った同期では親の自治体で選ぶので、次の差分に出ない）が残らない。
@@ -557,12 +734,13 @@ def write_diffs(d1: D1, con: duckdb.DuckDBPyConnection, tables: dict[str, Table]
         for batch in pack(insert_statements(name, names, rows)):
             d1.batch(batch)
     for name in changed:
-        problems += verify(d1, con, name, tables[name], name, (scopes or {}).get(name, ''), diffs[name].ranges)
+        problems += verify_keys(d1, con, name, tables[name], sorted(diffs[name].writes + diffs[name].deletes),
+                                (scopes or {}).get(name, ''))
     return problems
 
 
 def run_scoped(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, Table], dry_run: bool,
-               jurisdictions: Sequence[str], log: Callable[[str], None]) -> int:
+               jurisdictions: Sequence[str], log: Callable[[str], None], snapshot: Snapshot | None = None) -> int:
     """その自治体の行だけを差分で書く。表を作り直さず、他の自治体の行を消さない。"""
     log(f'自治体を絞って同期する: {", ".join(jurisdictions)}（その自治体の行だけを書き、他の自治体の行には触れない）')
     started = time.time()
@@ -572,6 +750,8 @@ def run_scoped(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, 
             log(f'{name}: {warehouse_count(con, name, and_where("", scopes[name]))} 行')
         log('dry-run: D1 には書いていない')
         return 0
+    if not dry_run:
+        begin(d1, snapshot)
     matches = read_schemas(d1, tables)
     existing = {r[0] for r in d1.batch([{'sql': "select name from sqlite_master where type = 'table'"}])[0]['results']['rows']}
     skipped = []
@@ -588,10 +768,13 @@ def run_scoped(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, 
     diffs: dict[str, TableDiff] = {}
     for name in [n for n in ordered(tables) if n not in skipped]:
         spec = tables[name]
-        diff = diffs[name] = diff_table(d1, con, name, spec, name, scopes[name])
+        from_snapshot = bool(snapshot and snapshot.usable(name, spec))
+        diff = diffs[name] = (snapshot_diff(con, name, spec, jurisdictions) if from_snapshot
+                              else diff_table(d1, con, name, spec, name, scopes[name]))
         rows = warehouse_count(con, name, and_where('', scopes[name]))
         cost = rows_written(len(diff.deletes), spec) + 2 * rows_written(len(diff.writes), spec)
-        log(f'{name}: 消す {len(diff.deletes)} 行・書く {len(diff.writes)} 行 / 書き込み約 {cost:,} 行（その自治体の {rows} 行中）')
+        log(f'{name}: 消す {len(diff.deletes)} 行・書く {len(diff.writes)} 行 / 書き込み約 {cost:,} 行（その自治体の {rows} 行中）'
+            f'{"・写しと比べた" if from_snapshot else ""}')
     if dry_run:
         log('dry-run: D1 には書いていない')
         return 0
@@ -600,6 +783,7 @@ def run_scoped(d1: D1 | None, con: duckdb.DuckDBPyConnection, tables: dict[str, 
             log(f'照合に失敗: {p}')
         log('中止。もう一度同期を流す')
         return 1
+    finish(d1, snapshot, ordered(tables), scoped=True)
     log(f'完了: 差分 {sum(1 for d in diffs.values() if d.changes)} 表 / cf {d1.calls} 回 / {time.time() - started:.0f} 秒')
     return 0
 
@@ -614,6 +798,9 @@ def main() -> int:
                         help='その自治体の行だけを差分で書く（複数指定可）。他の自治体の行には触れない。省略は全件')
     parser.add_argument('--dry-run', action='store_true', help='書かずに、書く予定の行数を出す（D1 を指定すれば D1 を読んで差分を数える）')
     parser.add_argument('--full', action='store_true', help='差分ではなく全表を作り直す')
+    parser.add_argument('--snapshot', type=Path, metavar='file',
+                        help='前回の同期の写し（DuckDB）。印が D1 と合えば、写しと比べて差分を決め D1 を全行は読まない。成功したら書き直す')
+    parser.add_argument('--verify-all', action='store_true', help='写しがあっても D1 を全行読んで比べる（写しは書き直す）')
     parser.add_argument('--table', action='append', metavar='表',
                         help='その表だけを同期する（複数指定可）。ほかの表には触れない。省略は全表')
     parser.add_argument('--drop-legacy', action='store_true',
@@ -629,7 +816,8 @@ def main() -> int:
             d1.batch(statements)
         print('\n'.join(s['sql'] for s in statements) + ('\ndry-run: D1 には書いていない' if args.dry_run or not d1 else ''))
         return 0
-    return sync(d1, args.warehouse, args.dry_run, args.jurisdiction, args.full, only=args.table)
+    return sync(d1, args.warehouse, args.dry_run, args.jurisdiction, args.full, only=args.table,
+                snapshot_path=args.snapshot, verify_all=args.verify_all)
 
 
 if __name__ == '__main__':

@@ -53,8 +53,8 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 - PDF はノードの表と金額の表、CSV は原文の行と1対1の表にする（[ADR 0020](../docs/adr/0020-ingestion-outputs-node-tables.md)）
 - 保存の関門: 木の検査（`ingestion/lib/tree_checks.py`）、text PDF の印字された数字の網羅（`coverage_checks.py`。Jev の聞き直しは止める方向だけ、[ADR 0026](../docs/adr/0026-jev-recheck-printed-digits-stop-only.md)）、単位の確かめ（[ADR 0028](../docs/adr/0028-unit-check-in-the-save-gate.md)）、決算の款の軸と支出済額（[ADR 0029](../docs/adr/0029-structural-check-in-the-save-gate.md)）
 - 合否だけを決める検査のコードは `*_checks.py` に置き、指紋から外す。検査を厳しくしたら保存済みの全表に `ingestion:verify --remote` を当てる。候補の対象範囲が要る検査（網羅・印字の合計）は `ingestion:convert` の候補に `ingestion:verify --candidate <dir>` を当てる
-- 指紋（`input_fingerprint`）は「変わったかもしれない」という合図で、古くても止めない。中身が同じなら `ingestion:refresh` で指紋だけを書き換え、違えば `ingestion:convert` で記録し直す（[ADR 0027](../docs/adr/0027-refresh-fingerprints-by-table-content.md)）。全表の確かめは定期の `refresh-check.yml` が流す
-- PDF の読み方は書式ごとの固定した workflow（[ADR 0035](../docs/adr/0035-fixed-pdf-workflow-patterns.md)・[PDF workflow の設計](../docs/prd/pdf-workflow-patterns/dd.md)）。1つの書式のための判定は opt-in の quirk にする（[ADR 0043](../docs/adr/0043-format-quirks-are-opt-in.md)）。結び付きの強い読み方は `readings/`、独立に選べる部品は `components/`（[ADR 0036](../docs/adr/0036-shared-coupled-pdf-readings.md)）
+- 指紋（`input_fingerprint`）は「変わったかもしれない」という合図で、古くても止めない。作り直しと比較、中身が同じ表の指紋を書き換える PR は定期の `refresh-check.yml` が出し、PR の check と手元では refresh を回さない（PR の branch での refresh-check の手動実行は比べるだけ）。違う表が出たら `ingestion:convert` で記録し直す（[ADR 0027](../docs/adr/0027-refresh-fingerprints-by-table-content.md)）
+- PDF の読み方は書式ごとの固定した workflow（[ADR 0035](../docs/adr/0035-fixed-pdf-workflow-patterns.md)・[PDF workflow の設計](../docs/prd/pdf-workflow-patterns/dd.md)）。他の書式にも効く処理は共通コードに入れ、1つの書式のための判定は opt-in の quirk にする（[ADR 0043](../docs/adr/0043-format-quirks-are-opt-in.md)）。結び付きの強い読み方は `readings/`、独立に選べる部品は `components/`（[ADR 0036](../docs/adr/0036-shared-coupled-pdf-readings.md)）
 - 金額の注記は段階を付けず、木の合計に足さない（[ADR 0024](../docs/adr/0024-monetary-annotations-without-phase.md)）
 - 統計の決算・普通会計の表は取り込まない（[ADR 0037](../docs/adr/0037-do-not-ingest-statistical-settlements.md)）。補正予算は当面取り込まない（[ADR 0039](../docs/adr/0039-defer-supplementary-budget-ingestion.md)）
 - 事業評価の評価シートと予算案のプレス発表は、どちらも出典の選定（`evaluation_selections`・`press_selections`）で保存した PDF を入力準備が読む。評価の結果の資料は取り込まない
@@ -72,6 +72,6 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 ### 配信
 
 - marts の表を同名・同列のまま D1 に写す（[ADR 0022](../docs/adr/0022-serve-marts-via-worker-d1-rest-and-mcp.md)・[ADR 0038](../docs/adr/0038-split-serving-tables-by-grain.md)）。表名は集約の名前で始める
-- 同期は変わった行だけを書く（[ADR 0040](../docs/adr/0040-sync-d1-by-row-diff.md)）。D1 に書くのは `serving/sync_d1.py` だけで、同時に2つ流さない。D1 には control 以外の表を migration で作らない
+- 同期は変わった行だけを書く（[ADR 0040](../docs/adr/0040-sync-d1-by-row-diff.md)）。D1 に書くのは `serving/sync_d1.py` だけで、同時に2つ流さない。D1 には control 以外の表を migration で作らない。同期の写しの印を置く `sync_state` は `sync_d1.py` が自分で作る
 - main への merge で `sync-d1.yml` が変わった範囲を build し、本番 D1 へ写す（入口は `publish`）。取り込みの PR では R2 にも本番にも手で書かない
 - Queria の公開データセットには、Queria 用の marts（`marts/queria/`）を同名・同列のまま写す。Queria の規約に合わせた形はこの marts で作り、写す側では変えない。手順は `.agents/skills/pipeline/references/queria.md`

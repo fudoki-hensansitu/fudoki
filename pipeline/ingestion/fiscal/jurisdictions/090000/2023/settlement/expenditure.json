@@ -1,0 +1,813 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "090000",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ab93a21858ded526213769b809d05b324b3936ac298369cd12f9bd4befae4121"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "quirks": {
+                  "labels_over_amounts": true
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "public-debt-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "a8afa0aa48b491eb4167e1d7f47e49a065f8388c1b69d5cc1bd8fb17bf8c266b"
+        }
+      ],
+      "options": {
+        "account": "公債管理特別会計",
+        "table_id": "public-debt-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "quirks": {
+                  "labels_over_amounts": true
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "public-debt-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "hospital-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f95ede7be7fe7c64d891bf69c11a78ade3d734fa58d7e83341de7cc4cb918bdc"
+        }
+      ],
+      "options": {
+        "account": "地方独立行政法人県立病院貸付金特別会計",
+        "table_id": "hospital-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "quirks": {
+                  "labels_over_amounts": true
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "hospital-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "single-parent-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "84f49f366db53a533578c896a6b5d304c8dbb2e83f150acf6d34aa50368a2c06"
+        }
+      ],
+      "options": {
+        "account": "母子父子寡婦福祉資金貸付事業特別会計",
+        "table_id": "single-parent-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "quirks": {
+                  "labels_over_amounts": true
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "single-parent-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "disability-mutual-aid-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "ca1fbdd096ce95750089418c0bf72c96e3d102b01fb4fb2167adf7f3165daca4"
+        }
+      ],
+      "options": {
+        "account": "心身障害者扶養共済事業特別会計",
+        "table_id": "disability-mutual-aid-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "quirks": {
+                  "labels_over_amounts": true
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "disability-mutual-aid-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "8245fa9b68dcc433fac2f7abb6474a70be6404df29803342e6f109edf48e19d9"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "quirks": {
+                  "labels_over_amounts": true
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "sme-advancement-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "29a7e6e19d1d4a5c59cef1ef8447b0f966bd590037c3d193e7d2703232e0ee05"
+        }
+      ],
+      "options": {
+        "account": "中小企業高度化等資金貸付事業特別会計",
+        "table_id": "sme-advancement-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "quirks": {
+                  "labels_over_amounts": true
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "sme-advancement-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "farming-support-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "88169247ef700a6a16eedab661f09b0ce54eb588ccf29b59d3a7536ab9d3b8cc"
+        }
+      ],
+      "options": {
+        "account": "就農支援資金貸付事業特別会計",
+        "table_id": "farming-support-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "quirks": {
+                  "labels_over_amounts": true
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "farming-support-loan-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "prefectural-forest-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "33351a37514197c7317e6f48a4e7e399e1c1bf2580e0bc5009190212430ff8ee"
+        }
+      ],
+      "options": {
+        "account": "県営林事業特別会計",
+        "table_id": "prefectural-forest-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "quirks": {
+                  "labels_over_amounts": true
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "prefectural-forest-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "forestry-improvement-loan-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4371e7dacf88400e8422997ae0ce7d885ac9470ecbcfa8dead60230513be3f4f"
+        }
+      ],
+      "options": {
+        "account": "林業・木材産業改善資金貸付事業特別会計",
+        "table_id": "forestry-improvement-loan-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "position",
+                "quirks": {
+                  "labels_over_amounts": true
+                }
+              },
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "spread_columns": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "forestry-improvement-loan-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "51979f473a367c19096aa836680b38a9cc66279651d53c368d2054d0c47fb6b0",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は carried 120頁・default 1頁 から決めた。款の和 951,798,383,391 と印字の「歳出合計」951,798,383,391 が一致。",
+        "金額の注記 258 件（不用額 111・繰越額 147）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（1949 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／事繰越し故→事故繰越し・翌年度繰越額／繰明許費越→繰越明許費。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "fc7ea789bb7d3011204980ef960e5405ebdb974ba8e064f45c06c5cc3aae756a",
+          "bytes": 63547
+        },
+        "row_count": 2189
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "51ab3ea67329cd23ff7dfdd8515b1ee88a3aeabf56c7bb02ff4f7e39e24f7e7b",
+          "bytes": 132588
+        },
+        "row_count": 6932
+      }
+    },
+    {
+      "table_id": "public-debt-expenditure",
+      "conversion_id": "public-debt-settlement",
+      "input_fingerprint": "2195bd8efa2fc4bf937061f4f1330dc4bde13e90d88406f296f995dcbc9e3327",
+      "account": "公債管理特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は default 1頁 から決めた。款の和 45,088,920,000 と印字の「歳出合計」45,088,920,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（2 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/public-debt-expenditure-nodes.parquet",
+          "sha256": "82c08fef6546f57bac130d4c976e9f262f63a992d3f57dec4195384222e5b84e",
+          "bytes": 2445
+        },
+        "row_count": 5
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/public-debt-expenditure-amounts.parquet",
+          "sha256": "20c1c1a740b51b690aecacbbdacad0678150cb999b687f88164e431f81232282",
+          "bytes": 2131
+        },
+        "row_count": 13
+      }
+    },
+    {
+      "table_id": "hospital-loan-expenditure",
+      "conversion_id": "hospital-loan-settlement",
+      "input_fingerprint": "8d2b5055e359c0637bf667eb775736aa34face604b1474e8fa258d4140263e83",
+      "account": "地方独立行政法人県立病院貸付金特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は default 1頁 から決めた。款の和 2,266,722,029 と印字の「歳出合計」2,266,722,029 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（3 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/hospital-loan-expenditure-nodes.parquet",
+          "sha256": "d70ff6b860ae23c1689ed3f95d21c517800a7bdff8f601b609132554437fd09b",
+          "bytes": 2916
+        },
+        "row_count": 10
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/hospital-loan-expenditure-amounts.parquet",
+          "sha256": "ff6e2b87b34d91428c7e07cd1497eff644a12609686589a0dac423d8909a032e",
+          "bytes": 2654
+        },
+        "row_count": 37
+      }
+    },
+    {
+      "table_id": "single-parent-loan-expenditure",
+      "conversion_id": "single-parent-loan-settlement",
+      "input_fingerprint": "e342decb96516561271e765eff708af33708becd9304fd2dc1a1111db2998aff",
+      "account": "母子父子寡婦福祉資金貸付事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は carried 1頁・default 1頁 から決めた。款の和 139,002,749 と印字の「歳出合計」139,002,749 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（11 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/single-parent-loan-expenditure-nodes.parquet",
+          "sha256": "aba05c7cf5f79b14967bade91b6d61d8a856d26dcca019753aeadb9ede957209",
+          "bytes": 3485
+        },
+        "row_count": 18
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/single-parent-loan-expenditure-amounts.parquet",
+          "sha256": "d1fa29e28ed1cd6e396ee2706a6c3a14f0005dd51dd33852bdd910193dcb48ae",
+          "bytes": 3572
+        },
+        "row_count": 61
+      }
+    },
+    {
+      "table_id": "disability-mutual-aid-expenditure",
+      "conversion_id": "disability-mutual-aid-settlement",
+      "input_fingerprint": "22355a83d9fd8b656116bbb5a201321c4ac9e6dc29e3d18fdf6c1ba51286e305",
+      "account": "心身障害者扶養共済事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は default 1頁 から決めた。款の和 285,794,300 と印字の「歳出合計」285,794,300 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（5 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/disability-mutual-aid-expenditure-nodes.parquet",
+          "sha256": "a4349027aa6bd3d762a7447bdbe7ca047cac150e20af064f1d153f7beb3ec4da",
+          "bytes": 2643
+        },
+        "row_count": 8
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/disability-mutual-aid-expenditure-amounts.parquet",
+          "sha256": "5c1c2ebb88a5a60995b3db7cd8793b8409a17bf8c798823a46bda7288ce1e4d6",
+          "bytes": 2370
+        },
+        "row_count": 23
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "5de30e78f31691d16cdb324ab536a3c832b66c0f149c2951b765941585aa7716",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は carried 1頁・default 1頁 から決めた。款の和 176,370,474,191 と印字の「歳出合計」176,370,474,191 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（13 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "5c387e9730eedefe1fff5af15d12e5da7a0400866b9a1da5f0c31ea268901838",
+          "bytes": 3422
+        },
+        "row_count": 16
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "8d5238fb953f2a29aacc787d21f76824ce3d5ea7bce782d9e783bbcd53487a89",
+          "bytes": 3451
+        },
+        "row_count": 54
+      }
+    },
+    {
+      "table_id": "sme-advancement-loan-expenditure",
+      "conversion_id": "sme-advancement-loan-settlement",
+      "input_fingerprint": "8c8efeb1474b108fa4917dc2d1f850a5c181439d454781ec2d03b2479d369a66",
+      "account": "中小企業高度化等資金貸付事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は carried 1頁・default 1頁 から決めた。款の和 517,762,520 と印字の「歳出合計」517,762,520 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（9 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/sme-advancement-loan-expenditure-nodes.parquet",
+          "sha256": "672990b1b5d83e68f7a1e1bb304665e27bfddaad4a03c952e5f4134c3d9acbbd",
+          "bytes": 3409
+        },
+        "row_count": 16
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/sme-advancement-loan-expenditure-amounts.parquet",
+          "sha256": "cd01af7149802e243a16451d8184f71869fae8754513cf250bbe50bf417a4955",
+          "bytes": 3271
+        },
+        "row_count": 50
+      }
+    },
+    {
+      "table_id": "farming-support-loan-expenditure",
+      "conversion_id": "farming-support-loan-settlement",
+      "input_fingerprint": "dc0b1c5482b82f7c6a9736ca707d1180814d5c2b9ddc708497a413a16033d57b",
+      "account": "就農支援資金貸付事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は carried 2頁・default 1頁 から決めた。款の和 60,602,350 と印字の「歳出合計」60,602,350 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（13 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/farming-support-loan-expenditure-nodes.parquet",
+          "sha256": "3f22bb123bb6e47b73911ff913c7c61b07c910cb9d1e9f93ba52f4243f9887de",
+          "bytes": 4253
+        },
+        "row_count": 33
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/farming-support-loan-expenditure-amounts.parquet",
+          "sha256": "59af7436cdb14656f36838334fb10a6bedc8c3f1ca81587752a0a1463f8f1681",
+          "bytes": 4198
+        },
+        "row_count": 103
+      }
+    },
+    {
+      "table_id": "prefectural-forest-expenditure",
+      "conversion_id": "prefectural-forest-settlement",
+      "input_fingerprint": "12d05e8aa103fac2a27031ffff896b3c19c1d14f452e84eb5e031cf03edeb97b",
+      "account": "県営林事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は carried 1頁・default 1頁 から決めた。款の和 325,706,870 と印字の「歳出合計」325,706,870 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（12 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/prefectural-forest-expenditure-nodes.parquet",
+          "sha256": "16954b2f4dad5dde3dd703ee0a58a00bb7fd30d488ac7aacc8fb402e3bbd3279",
+          "bytes": 3612
+        },
+        "row_count": 22
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/prefectural-forest-expenditure-amounts.parquet",
+          "sha256": "78bfd05af550fea216c5c2e7309bf017b54aff4d9c2026f028af062b6fc5daa3",
+          "bytes": 3733
+        },
+        "row_count": 73
+      }
+    },
+    {
+      "table_id": "forestry-improvement-loan-expenditure",
+      "conversion_id": "forestry-improvement-loan-settlement",
+      "input_fingerprint": "330bdd966ca926d9910af54588f013e148de17b176a62d62f293428257b45b76",
+      "account": "林業・木材産業改善資金貸付事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
+        "金額の単位は default 1頁 から決めた。款の和 94,383 と印字の「歳出合計」94,383 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（6 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/forestry-improvement-loan-expenditure-nodes.parquet",
+          "sha256": "dc665f66d567b01ab088ae45cfc775785cef18ec47a7e9d01137953f360e2053",
+          "bytes": 3078
+        },
+        "row_count": 14
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/090000/2023/settlement/expenditure/forestry-improvement-loan-expenditure-amounts.parquet",
+          "sha256": "cfaa0f5a1094dcc28c4a1cbf086c810f6a8c6ef1610992e1b499802357e18e68",
+          "bytes": 3002
+        },
+        "row_count": 42
+      }
+    }
+  ]
+}
