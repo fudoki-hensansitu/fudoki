@@ -78,7 +78,7 @@ describe('MCP Apps の View', () => {
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
     insertOrigin(sqlite, { origin_id: 'o1', title: '決算書', url: 'https://example.test/settlement.pdf', sha256: 'abc123' })
     const subjectId = 'a'.repeat(64)
-    insertSubject(sqlite, { subject_id: subjectId, name: '総務費', amount_yen: 123456, origin_id: 'o1' })
+    insertSubject(sqlite, { subject_id: subjectId, name: '総務費', level: '款', amount_yen: 123456, origin_id: 'o1' })
     const calls = [
       { name: 'search_expenditure_subjects', arguments: { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } } },
       { name: 'get_expenditure_line', arguments: { line_id: subjectId } },
@@ -125,9 +125,12 @@ describe('MCP Apps の View', () => {
 
   test('結果の _meta に次の質問の候補を載せ、text と structuredContent には載せない', async () => {
     insertJurisdiction(sqlite, { jurisdiction_code: '132039', name: '武蔵野市' })
-    insertSubject(sqlite, { subject_id: 'n1', name: '総務費', level: '款', amount_yen: 100, is_leaf: 0 })
-    insertSubject(sqlite, { subject_id: 'n2', name: '民生費', level: '款', amount_yen: 900, is_leaf: 0 })
-    const args = { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 } }
+    insertSubject(sqlite, { subject_id: 'n1', name: '総務費', level: '款', amount_yen: 100 })
+    insertSubject(sqlite, { subject_id: 'n2', name: '民生費', level: '款', amount_yen: 900 })
+    // 子を持つ款（末端でない）だけが内訳の候補になる
+    insertSubject(sqlite, { subject_id: 'n1m', parent_subject_id: 'n1', name: '庁舎管理費', level: '目', amount_yen: 100 })
+    insertSubject(sqlite, { subject_id: 'n2m', parent_subject_id: 'n2', name: '社会福祉費', level: '目', amount_yen: 900 })
+    const args = { document_kind: 'settlement', fiscal_year: { min: 2024, max: 2024 }, where: { level: { eq: ['款'] } } }
     const res = (await rpc('tools/call', { name: 'search_expenditure_subjects', arguments: args })).result
     expect(res._meta[SUGGESTIONS_META_KEY]).toEqual([
       { label: '「民生費」の内訳を見る', prompt: '武蔵野市の2024年度決算（一般会計）の「民生費」の内訳を見せて' },
