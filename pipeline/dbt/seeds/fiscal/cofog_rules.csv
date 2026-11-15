@@ -514,3 +514,16 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 1674,toshima-sdgs-future-city,131164,一般会計,,政策経営費,政策経営費,,SDGs未来都市推進費,eq,,unclassifiable,,retained,目,,豊島区 SDGs未来都市推進費は環境・福祉・まちづくりなどを併せて進める目で、機能を1つに決められない。名称からの判断。,false
 1675,nakano-2023-care-elderly-support,131148,一般会計,,地域支えあい推進費,介護・高齢者支援費,,介護・高齢者支援費,eq,,assigned,10.2,retained,目,,中野区 2023年度の地域支えあい推進費・介護・高齢者支援費は高齢者の介護と支援で、介護保険費の（介護・高齢者支援費）と同じ高齢 10.2 に置く。名称からの判断。,true
 1676,nakano-2023-culture-international,131148,一般会計,,区民費,区民費,,(区民文化国際費),eq,,assigned,01,retained,目,,中野区 2023年度の区民費の（区民文化国際費）は金額が0の見出しで、後の年度の文化振興・多文化共生推進費と同じ 01 に置く。名称からの判断。,true
+1677,vocab-contingency-any-account,,,,,,,予備費,eq,,unclassifiable,,retained,目,,特別会計の勘定の項・目に置いた予備費も、執行されるまで機能が決まらないので分類不能とする（keyword-contingency と同じ。例: 090000 就農支援資金貸付事業特別会計の業務勘定）。,false
+1678,kind-loan-principal,,,,,公債費,,元金,eq,,out-of-scope,,retained,目,,特別会計の勘定の公債費の項に置いた元金の償還は金融負債の返済として対象外とする（keyword-debt-principal と同じ。例: 090000 就農支援資金貸付事業特別会計の貸付勘定）。,false
+1679,kind-fallback-farming-support-loan,,,就農支援資金,,,,,,,assigned,04.2,retained,目,,就農支援資金・農業改良資金の貸付の事務と国庫補助金の返納を農業・林業・漁業 04.2 に分類する。貸付金そのものと元金の償還は先の規則が対象外にする（例: 090000）。,false
+1680,kind-fallback-prefectural-forest,,,県営林,,,,,,,assigned,04.2,retained,目,,県営林の造成・管理の目を農業・林業・漁業 04.2 に分類する（vocab-forestry と同じ。例: 090000 県営林事業費）。,false
+1681,kind-fallback-sme-advancement-loan,,,中小企業高度化資金,,,,,,,assigned,04.1,retained,目,,中小企業高度化資金の貸付の事務を一般経済・商業 04.1 に分類する。貸付金そのものは先の規則が対象外にする（例: 090000 中小企業高度化等資金貸付事務費）。,false
+1682,fallback-kan-misc-local-grants,,一般会計,,諸支出金,,,交付金,contains,,assigned,01.8,retained,目,,都道府県の諸支出金の款で、税の交付金を項・目にそのまま置いた目（地方消費税交付金・法人事業税交付金など）を政府間の一般的移転 01.8 に分類する（fallback-kou-local-grants と同じ。例: 090000）。,false
+1683,vocab-local-consumption-tax-settlement,,一般会計,,諸支出金,,,地方消費税清算金,eq,,assigned,01.8,retained,目,,他の都道府県への地方消費税の清算金を政府間の一般的移転 01.8 に分類する（kind-fallback-local-consumption-tax-settlement と同じ。例: 090000 の一般会計）。,false
+1684,fallback-kou-prefectural-medical-affairs,,一般会計,,衛生費,医薬費,,,eq,,assigned,07,retained,目,,都道府県の衛生費の医薬費の項（医務・薬務・保健師の指導）に属する目を保健 07 に置く。医療と薬事の行政が混ざり段階は特定できない（例: 090000）。,false
+1685,vocab-mental-health,,一般会計,,衛生費,,,精神衛生費,eq,,assigned,07,retained,目,,都道府県の精神衛生費（精神保健福祉センター・措置入院など）を保健 07 に置く。外来と入院が混ざり段階は特定できない（例: 090000）。,true
+1686,vocab-public-health-institute,,一般会計,,衛生費,,,衛生研究所費,eq,,assigned,07,retained,目,,地方衛生研究所の目を保健 07 に置く（kobe-health-lab と同じ。例: 090000）。,false
+1687,vocab-environment-policy,,一般会計,,衛生費,,,環境政策費,eq,,assigned,05,retained,目,,環境政策の企画・調整の目を環境保護 05 に置く。分野は特定できない（例: 090000 衛生費の環境対策費の項）。,true
+1688,vocab-disaster-forest,,一般会計,,災害復旧費,,,林道災害復旧費|治山施設災害復旧費,contains,,assigned,04.2,retained,目,,林道・治山施設の災害復旧を農業・林業・漁業 04.2 に分類する（vocab-agri-fishery-name と同じ。例: 090000）。,false
+1689,vocab-disaster-civil,,一般会計,,災害復旧費,土木施設災害復旧費|県有施設等災害復旧費,,,eq,,unclassifiable,,retained,目,,土木施設（道路・河川など）と県有施設の災害復旧は施設の機能を名称から分けられないので分類不能とする（kobe-disaster-civil と同じ。例: 090000）。,false
