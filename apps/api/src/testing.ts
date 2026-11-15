@@ -105,10 +105,10 @@ export function insertLocation(sqlite: Database, row: Record<string, string | nu
 
 /** origin の列は columns.json にあるものだけ入れる。 */
 export function insertOrigin(sqlite: Database, row: Record<string, string | number | null>) {
-  const names = new Set(TABLES.expenditure_origin!.columns.map((c) => c.name))
+  const names = new Set(TABLES.fiscal_origin!.columns.map((c) => c.name))
   const full = Object.entries({ jurisdiction_code: '132039', fiscal_year: 2024, document_kind: 'settlement', format: 'pdf', ...row }).filter(([k]) => names.has(k))
   sqlite
-    .query(`INSERT INTO expenditure_origin (${full.map(([k]) => k).join(',')}) VALUES (${full.map(() => '?').join(',')})`)
+    .query(`INSERT INTO fiscal_origin (${full.map(([k]) => k).join(',')}) VALUES (${full.map(() => '?').join(',')})`)
     .run(...(full.map(([, v]) => v) as never[]))
 }
 

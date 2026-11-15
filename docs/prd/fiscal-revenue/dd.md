@@ -54,7 +54,7 @@
 
 ## 2. 金額の段階
 
-共有の辞書 `shared/fiscal_amount_map.csv` は変えない。収入済額（executed）・本年度予算額・当初予算額・予算現額は既にあり、調定額・不納欠損額・収入未済額は辞書に無いので段階が付かず、取り込みの表にだけ残る。
+収入済額（executed）・本年度予算額・当初予算額・予算現額は共有の辞書 `shared/fiscal_amount_map.csv` に既にある。調定額・不納欠損額・収入未済額は、段階を空にした行として辞書に足す（印字した金額の見出しは全て辞書に載っていることを `tests/fiscal_amounts_contract.sql` が確かめるため）。段階が無いので取り込みの表にだけ残り、marts には入らない。
 
 - 決算の節の欄 `節／金額` は予算現額（adjusted）で、節の収入済額は欄 `収入済額` にある。歳出と同じく決算は executed を選ぶ。
 - 調定額と収入未済額は「税をどれだけ取り切れたか」を表すが、評価に読まれやすく、今の目的（何で賄う？）に要らない。marts には出さない。
@@ -90,7 +90,7 @@ ADR 0047 に従い、木と根で決まる列（自治体・年度・款の名�
 | `revenue` | `revenue_id` | 根。自治体・年度・資料区分・補正号・会計・会計の種類。総額（款の和、歳出の根の `total_yen` と同じく ADR 0047 の例外として持つ。頁の一覧で全根の総額を JOIN なしで返すため） |
 | `revenue_subject` | `subject_id` | `revenue_id`・`parent_subject_id`・`level`（款・項・目）・`code`・`name`・`amount_yen`・`origin_id` |
 | `revenue_detail` | `detail_id` | 節。`subject_id`・`parent_detail_id`・`depth`・`code`・`name`・`amount_yen`・`origin_id` |
-| `revenue_location` | `line_id` | 印字の位置（歳出の `expenditure_location` と同じ列） |
+| `revenue_location` | `line_id` | 印字の位置（歳出の `expenditure_location` の PDF の列。歳入は PDF だけを読むので `kind`・行番号の列は持たない） |
 | `revenue_origin_link` | `link_id` | 根と出典（冊）を結ぶ |
 
 - 出典の冊は歳入と歳出で同じ。`expenditure_origin` は今も `fiscal_metadata.origin` を方向で絞らずに全部読んでいて、同じ行の `revenue_origin` を作ると写しになる。`expenditure_origin` を `fiscal_origin` に改名し、`expenditure_origin_link`・`revenue_origin_link` がそれを指す（aggregate-api のドメインの型名も `fiscal_origin`）。aggregate-api の dd の表の行と、api の `shared/` の「3つの出典の表」の照会も同じ PR で直す。
@@ -121,7 +121,7 @@ ADR 0047 に従い、木と根で決まる列（自治体・年度・款の名�
 ## 5. 範囲と順序
 
 1. PR 1（取り込み）: 共通コード3点、`歳入の説明` の語彙、合計の行の語、品川の R6〜R8 当初・R5〜R7 決算の全会計の `revenue.json`。branch で refresh-check を回して保存済みの表への影響を比べる。
-2. PR 2（dbt）: intermediate の共通化、`marts/revenue/`、区分の seed、検査。
+2. PR 2（dbt）: intermediate の共通化、`marts/revenue/`、区分の seed、検査、`fiscal_origin` への改名（api の参照も）。dbt の入力（`scripts/fiscal_inputs.py`）は歳入の PDF の表を読み、relation 名に `revenue_` を挟んで歳出の表と分ける。共通の会計の表は `int_fiscal__accounts` に改名し、歳入の会計も持つ。確かめ: 7自治体（131091・131148・131211・132047・132080・132098・133639）で前後の marts を比べ、歳出・事業・事業評価・Queria の表が全行一致した。
 3. PR 3（api・web）: revenue の API とまとめタブ。
 4. その後: 取り込み済みの団体へ、自治体ごとに1 PR で広げる（歳出の宣言を写して歳入の欄を足す）。
 

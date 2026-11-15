@@ -8,7 +8,7 @@
           "name": "jurisdiction_code",
           "type": "string",
           "nullable": false,
-          "description": "全国地方公共団体コード（6桁、末尾は検査数字）。科目の表・expenditure_origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。"
+          "description": "全国地方公共団体コード（6桁、末尾は検査数字）。科目の表・fiscal_origin の jurisdiction_code と同じ値。検査数字を除いた先頭5桁でも一意に決まる。"
         },
         {
           "name": "name",
@@ -39,6 +39,66 @@
           "type": "string",
           "nullable": true,
           "description": "自治体の公式サイトの URL。出典の選定（pipeline/source_selection）に記録した値で、選定の無い自治体は NULL。"
+        }
+      ]
+    },
+    "fiscal_origin": {
+      "primary_key": "origin_id",
+      "indexes": [],
+      "columns": [
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典ファイルを指すSHA由来のID。歳出・歳入の科目・内訳・印字の位置の表の origin_id が指す。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "自治体コード。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "出典の年度。"
+        },
+        {
+          "name": "document_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "資料区分（initial 当初予算・supplementary 補正予算・settlement 決算）。"
+        },
+        {
+          "name": "amendment_number",
+          "type": "integer",
+          "nullable": true,
+          "description": "補正予算の号数。補正予算以外はNULL。"
+        },
+        {
+          "name": "title",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の資料名（前後の空白を除いたもの）。"
+        },
+        {
+          "name": "url",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の公開URL。"
+        },
+        {
+          "name": "format",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の形式（pdf か csv）。"
+        },
+        {
+          "name": "sha256",
+          "type": "string",
+          "nullable": false,
+          "description": "出典ファイルの SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。"
         }
       ]
     },
@@ -175,66 +235,6 @@
         }
       ]
     },
-    "expenditure_origin": {
-      "primary_key": "origin_id",
-      "indexes": [],
-      "columns": [
-        {
-          "name": "origin_id",
-          "type": "string",
-          "nullable": false,
-          "description": "出典ファイルを指すSHA由来のID。科目・内訳・印字の位置の表の origin_id が指す。"
-        },
-        {
-          "name": "jurisdiction_code",
-          "type": "string",
-          "nullable": false,
-          "description": "自治体コード。"
-        },
-        {
-          "name": "fiscal_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "出典の年度。"
-        },
-        {
-          "name": "document_kind",
-          "type": "string",
-          "nullable": false,
-          "description": "資料区分（initial 当初予算・supplementary 補正予算・settlement 決算）。"
-        },
-        {
-          "name": "amendment_number",
-          "type": "integer",
-          "nullable": true,
-          "description": "補正予算の号数。補正予算以外はNULL。"
-        },
-        {
-          "name": "title",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の資料名（前後の空白を除いたもの）。"
-        },
-        {
-          "name": "url",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の公開URL。"
-        },
-        {
-          "name": "format",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の形式（pdf か csv）。"
-        },
-        {
-          "name": "sha256",
-          "type": "string",
-          "nullable": false,
-          "description": "出典ファイルの SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。"
-        }
-      ]
-    },
     "expenditure_origin_link": {
       "primary_key": "link_id",
       "indexes": [
@@ -262,7 +262,7 @@
           "name": "origin_id",
           "type": "string",
           "nullable": false,
-          "description": "出典。expenditure_origin の origin_id。"
+          "description": "出典。fiscal_origin の origin_id。"
         }
       ]
     },

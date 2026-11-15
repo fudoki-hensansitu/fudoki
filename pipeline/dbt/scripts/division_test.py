@@ -22,9 +22,9 @@ class DivisionTest(unittest.TestCase):
         con = duckdb.connect()
         typed = ', '.join(f'{c}::bigint as {c}' if c == 'amount_yen' else f'{c}::integer as {c}'
                           if c == 'physical_page' else f'{c}::varchar as {c}' for c in COLUMNS)
-        con.execute(f'''create table int_fiscal__settlement_expenditure_rows as select
+        con.execute(f'''create table int_fiscal__rows as select
             {typed}, 'fixture' as jurisdiction_code, 2025 as fiscal_year, 'settlement' as document_kind,
-            '一般会計' as account_name, '科目' as subject_axis, null::double as x0, null::double as y0,
+            'expenditure' as direction, '一般会計' as account_name, '科目' as subject_axis, null::double as x0, null::double as y0,
             null::double as x1, null::double as y1, physical_page::integer as amount_source_page,
             1.0 as amount_source_x0, 2.0 as amount_source_y0, 3.0 as amount_source_x1, 4.0 as amount_source_y1,
             null::varchar as kan_name, null::varchar as kou_name
@@ -35,7 +35,7 @@ class DivisionTest(unittest.TestCase):
             1 as nodes_row_count from (values ('a', '甲局'), ('b', '乙局'), ('w', null)) t(source_table_key, division)
             where source_table_key in ({})'''.format(', '.join(f"'{t}'" for t in tables)))
         con.execute('create table stg_fiscal__nodes as select source_table_key, null::varchar as axis_header from fiscal_metadata_tables where false')
-        con.execute('create table nodes as ' + render('models/intermediate/fiscal/int_fiscal__settlement_expenditure_nodes.sql'))
+        con.execute('create table nodes as ' + render('models/intermediate/fiscal/int_fiscal__nodes.sql'))
         # The node-count line of the contract reads the fixture's own row counts; only the identity checks matter here.
         failures = con.execute(f"select * from ({render('tests/fiscal_rows_contract.sql')}) where failure <> 'missing_or_duplicated_row'").fetchall()
         return con, failures

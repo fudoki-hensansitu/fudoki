@@ -130,7 +130,7 @@ const lineCommon = {
 // meta の id を付けると、JSON Schema では $defs に一度だけ出て $ref で参照される（tools/list と OpenAPI が小さくなる）。
 export const OriginRow = z
   .strictObject(
-    described('expenditure_origin', {
+    described('fiscal_origin', {
       origin_id: z.string(),
       jurisdiction_code: z.string(),
       fiscal_year: z.int(),

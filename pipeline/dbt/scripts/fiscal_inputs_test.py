@@ -8,7 +8,8 @@ class FiscalInputsTest(unittest.TestCase):
     def test_every_manifest_table_is_collected_or_excluded_with_reason(self):
         import json
         names = {e['name'] for e in fiscal_inputs.collect()}
-        patterns = ('*/*/settlement/expenditure.json', '*/*/initial/expenditure.json')
+        patterns = ('*/*/settlement/expenditure.json', '*/*/initial/expenditure.json',
+                    '*/*/settlement/revenue.json', '*/*/initial/revenue.json')
         manifests = sorted({p for pattern in patterns
                             for p in (fiscal_inputs.PIPELINE / 'ingestion/fiscal/jurisdictions').glob(pattern)})
         for path in manifests:
@@ -16,11 +17,14 @@ class FiscalInputsTest(unittest.TestCase):
             target = document['target']
             jurisdiction = target['jurisdiction']
             for table in document['tables']:
+                if document['direction'] == 'revenue' and 'nodes' not in table:
+                    continue
                 key = (jurisdiction, table['table_id'])
                 entry = fiscal_inputs.relation_name(
-                    jurisdiction, target['fiscal_year'], target['document_kind'], table['table_id'])
+                    jurisdiction, target['fiscal_year'], target['document_kind'], table['table_id'], document['direction'])
                 year_key = (jurisdiction, target['fiscal_year'], target['document_kind'], table['table_id'])
-                if key in fiscal_inputs.EXCLUDE or year_key in fiscal_inputs.EXCLUDE_YEAR:
+                if document['direction'] == 'expenditure' and (
+                        key in fiscal_inputs.EXCLUDE or year_key in fiscal_inputs.EXCLUDE_YEAR):
                     self.assertTrue(fiscal_inputs.EXCLUDE.get(key) or fiscal_inputs.EXCLUDE_YEAR[year_key])
                     self.assertNotIn(entry + '_nodes', names)
                     self.assertNotIn(entry, names)

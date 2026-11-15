@@ -14,9 +14,9 @@ class TransferTest(unittest.TestCase):
     def test_recipient_split_beats_a_combined_section_but_an_ambiguous_remark_does_not(self):
         with duckdb.connect() as con:
             con.create_function('staging_text', normalize_text)
-            con.execute('''create table int_fiscal__settlement_expenditure_nodes (
+            con.execute('''create table int_fiscal__nodes (
                 node_id varchar, parent_node_id varchar, jurisdiction_code varchar,
-                fiscal_year integer, document_kind varchar, account_name varchar,
+                fiscal_year integer, document_kind varchar, direction varchar, account_name varchar,
                 axis varchar, is_subject boolean, node_kind varchar, code varchar, name varchar,
                 amount_yen bigint)''')
             rows = [
@@ -64,11 +64,11 @@ class TransferTest(unittest.TestCase):
                 ('vs', 'v', '節', False, '内訳1', '繰出金', 100),
                 ('vr', 'v', '備考', False, '内訳1', '介護保険特別会計繰出金', 100),
             ]
-            con.executemany('insert into int_fiscal__settlement_expenditure_nodes values (?,?,?,?,?,?,?,?,?,?,?,?)',
-                            [(key, parent, 'fixture', 2025, 'settlement', '一般会計', axis, subject, kind, None, name, amount)
+            con.executemany('insert into int_fiscal__nodes values (?,?,?,?,?,?,?,?,?,?,?,?,?)',
+                            [(key, parent, 'fixture', 2025, 'settlement', 'expenditure', '一般会計', axis, subject, kind, None, name, amount)
                              for key, parent, axis, subject, kind, name, amount in rows])
-            con.execute('create table int_fiscal__csv_expenditure_nodes as select * from int_fiscal__settlement_expenditure_nodes where false')
-            con.execute("create table int_fiscal__expenditure_accounts as select distinct jurisdiction_code, fiscal_year, account_name, '一般会計' as account_kind from int_fiscal__settlement_expenditure_nodes")
+            con.execute('create table int_fiscal__csv_expenditure_nodes as select * from int_fiscal__nodes where false')
+            con.execute("create table int_fiscal__accounts as select distinct jurisdiction_code, fiscal_year, account_name, '一般会計' as account_kind from int_fiscal__nodes")
             con.execute('create table account_kind_map as select * from read_csv(?, all_varchar=true)',
                         [str(DBT / 'seeds/fiscal/account_kind_map.csv')])
             source = '\n'.join((DBT / f'macros/{name}.sql').read_text() for name in ('trim_cell', 'fiscal_normalize'))
@@ -77,7 +77,7 @@ class TransferTest(unittest.TestCase):
             con.execute('create table transfers as ' + sql)
             marked = con.execute('select node_id,interfund_transfer_to from transfers where is_interfund_transfer order by node_id').fetchall()
             self.assertEqual(marked, [('as', None), ('bs', '国民健康保険'), ('cs', None), ('d', '介護保険'), ('es', None), ('fs', None), ('gl', '後期高齢者医療'), ('gn', '国民健康保険'), ('hd', '一般会計'), ('is', '介護保険'), ('js', None), ('l', '後期高齢者医療'), ('l2s', '介護保険'), ('n', '国民健康保険'), ('vr', '介護保険')])
-            self.assertEqual(con.execute("select sum(n.amount_yen) from transfers t join int_fiscal__settlement_expenditure_nodes n using(node_id) where t.is_interfund_transfer and n.parent_node_id='m'").fetchone()[0], 8485855706)
+            self.assertEqual(con.execute("select sum(n.amount_yen) from transfers t join int_fiscal__nodes n using(node_id) where t.is_interfund_transfer and n.parent_node_id='m'").fetchone()[0], 8485855706)
 
 
 if __name__ == '__main__':
