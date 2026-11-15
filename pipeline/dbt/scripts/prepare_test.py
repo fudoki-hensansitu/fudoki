@@ -3,6 +3,7 @@ import copy
 import hashlib
 import json
 import shutil
+import subprocess
 import tempfile
 import unittest
 from pathlib import Path
@@ -169,3 +170,44 @@ class PrepareTest(unittest.TestCase):
 
 if __name__ == '__main__':
     unittest.main()
+
+
+class ReceiptsFallbackTest(unittest.TestCase):
+    """A merged manifest whose tables R2 does not hold yet is read with the tables R2 holds (receipts dd, stage 2)."""
+
+    def setUp(self):
+        self.spec = {'jurisdiction': '131041', 'fiscal_year': 2025, 'document_kind': 'settlement',
+                     'direction': 'expenditure'}
+        target = {k: self.spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
+
+        def table(sha):
+            return {'table_id': 't', 'conversion_id': 'c',
+                    **{kind: {'row_count': 1, 'object': {'key': f'{kind}.parquet', 'sha256': sha, 'bytes': 1}}
+                       for kind in ('nodes', 'amounts')}}
+        self.recorded, self.stored = table('new'), table('old')
+        self.document = {'target': target, 'direction': 'expenditure', 'conversions': [{'id': 'c'}],
+                         'tables': [self.recorded]}
+        self.receipts = {prepare.storage.receipt_id(self.document, 't'): self.stored}
+        self.enterContext(patch.object(prepare.manifest, 'read', return_value=self.document))
+        self.enterContext(patch.object(prepare.manifest, 'manifest_path',
+                                       return_value=prepare.PIPELINE / 'ingestion/fiscal/jurisdictions/x.json'))
+
+    def fetch(self, reference, remote=False):
+        if reference['sha256'] != 'old':
+            raise subprocess.CalledProcessError(1, ['cf'])  # not in R2 yet
+        return Path('/dev/null')
+
+    def test_unstored_tables_are_read_from_the_receipts(self):
+        fallbacks = []
+        with patch.object(prepare, 'fetch', side_effect=self.fetch):
+            document = prepare.load_document({}, self.spec, None, remote=True, receipts=self.receipts, fallbacks=fallbacks)
+        self.assertEqual(document['tables'], [self.stored])
+        self.assertEqual(fallbacks, ['ingestion/fiscal/jurisdictions/x.json'])
+
+    def test_readable_tables_and_missing_receipts_keep_the_record(self):
+        with patch.object(prepare, 'fetch', return_value=Path('/dev/null')):
+            self.assertEqual(prepare.load_document({}, self.spec, None, remote=True, receipts=self.receipts)['tables'],
+                             [self.recorded])
+        with patch.object(prepare, 'fetch', side_effect=self.fetch):
+            self.assertEqual(prepare.load_document({}, self.spec, None, remote=True, receipts={})['tables'],
+                             [self.recorded])

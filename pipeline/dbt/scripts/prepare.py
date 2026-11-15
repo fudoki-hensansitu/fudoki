@@ -13,6 +13,7 @@ import duckdb
 import yaml
 
 from ingestion.fiscal import manifest
+from ingestion.fiscal import storage
 from ingestion.fiscal.storage import fetch, verify
 from ingestion.lib.table_columns import AMOUNT_COLUMNS, NODE_COLUMNS
 from ingestion.lib.source_inconsistencies import declared_for
@@ -123,7 +124,28 @@ def write_macro(macro_name: str, relations: list[str]) -> None:
                      '{% endmacro %}\n')
 
 
-def load_document(documents: dict, spec: dict, candidate: Path | None) -> dict:
+def readable(document: dict, *, remote: bool) -> bool:
+    """Whether every table of the document can be read (cached, or fetched from R2 with these bytes)."""
+    try:
+        for table in document['tables']:
+            for reference in manifest.table_references(table).values():
+                fetch(reference['object'], remote=remote)
+    except (FileNotFoundError, ValueError, subprocess.CalledProcessError):
+        return False
+    return True
+
+
+def with_receipts(document: dict, receipts: dict[str, dict]) -> dict | None:
+    """The document with the tables R2 holds (the receipts list), when it has every table the document declares."""
+    tables = [receipts.get(storage.receipt_id(document, table['table_id'])) for table in document['tables']]
+    return None if any(table is None for table in tables) else {**document, 'tables': tables}
+
+
+def load_document(documents: dict, spec: dict, candidate: Path | None, *, remote: bool = False,
+                  receipts: dict[str, dict] | None = None, fallbacks: list[str] | None = None) -> dict:
+    """The manifest of the spec. With the receipts list (a remote build), a manifest whose recorded tables R2 does
+    not hold yet (merged, but `ingestion:store` failed or has not run) is read with the tables R2 holds instead,
+    when it holds all of them (stage 2 of docs/prd/ingestion-receipts/dd.md). Otherwise the build stops as before."""
     target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
     key = (target['jurisdiction'], target['fiscal_year'], target['document_kind'], spec['direction'])
     if key not in documents:
@@ -133,6 +155,12 @@ def load_document(documents: dict, spec: dict, candidate: Path | None) -> dict:
                     else manifest.read(path, check_code=False))
         if document['target'] != target or document['direction'] != spec['direction']:
             raise ValueError(f'Manifest target differs: {path}')
+        if root is None and receipts is not None and not readable(document, remote=remote):
+            stored = with_receipts(document, receipts)
+            if stored is not None and readable(stored, remote=remote):
+                document = stored
+                if fallbacks is not None:
+                    fallbacks.append(str(path.relative_to(PIPELINE)))
         documents[key] = document
     return documents[key]
 
@@ -176,6 +204,9 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
     if jurisdictions:
         declarations = only_jurisdictions(declarations, jurisdictions)
     write_relations(declarations)
+    # A remote build reads tables R2 does not hold yet from the receipts list instead (stage 2 of the receipts dd)
+    receipts = (storage.read_receipts() or {}) if remote else None
+    fallbacks: list[str] = []
     provided = set(candidate.rglob('manifest.json')) if candidate is not None else set()
     if candidate is not None and not provided:
         raise ValueError('Candidate directory contains no manifest.json')
@@ -191,7 +222,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         for declared in sources['tables']:
             spec = declared['meta']
             target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
-            document = load_document(documents, spec, candidate)
+            document = load_document(documents, spec, candidate, remote=remote, receipts=receipts, fallbacks=fallbacks)
             table = next((t for t in document['tables'] if t['table_id'] == spec['table_id']), None)
             if table is None or 'nodes' not in table:
                 raise ValueError(f'Missing node table: {declared["name"]}')
@@ -220,7 +251,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             for declared in csv_source['tables']:
                 spec = declared['meta']
                 target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
-                document = load_document(documents, spec, candidate)
+                document = load_document(documents, spec, candidate, remote=remote, receipts=receipts, fallbacks=fallbacks)
                 table = next((t for t in document['tables'] if t['table_id'] == spec['table_id']), None)
                 if table is None or 'object' not in table:
                     raise ValueError(f'Missing raw CSV table: {declared["name"]}')
@@ -270,6 +301,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             raise ValueError(f'Unused candidate manifests: {sorted(str(p) for p in provided - used)}')
         con.commit()
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
+            'read_from_receipts': fallbacks,
             'origins': len(origins), 'jurisdictions': len(registry),
             'evaluation_sheets': len(project_tables['project_evaluation_sheet']),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
