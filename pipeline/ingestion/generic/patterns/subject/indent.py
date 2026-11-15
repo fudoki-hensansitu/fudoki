@@ -79,7 +79,8 @@ def align(logical, group, kept, alignment):
         if run_into is not None and codes_set_right and item.code is not None and run_into.module.set_right(item):
             item.indent += one_width if len(item.code) == 2 else 0
         elif run_into is None and codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', item.glyphs[0].text):
-            item.indent += one_width if len(item.glyphs[0].text) == 2 else 0
+            # A two-digit code the text layer cuts after its first digit (`1` `3.文`) is two-digit too.
+            item.indent += one_width if 2 in (len(item.code), len(item.glyphs[0].text)) else 0
         elif band is not None and item.code is not None and narrow and item.level in right_set:
             # A staircase of narrow level columns with the codes set right: the column is the level,
             # not where the digits start (`5` and `10` of one 目 start 5pt apart).
