@@ -14,7 +14,7 @@ const filters = {
     .max(MAX_NAME)
     .regex(/^[^\u0000-\u001f\u007f]*$/, '制御文字は使えません')
     .optional()
-    .describe('Partial municipality name (e.g. "武蔵野市", "府中"), compared after NFKC normalization. All municipalities with matching names are returned; distinguish them using prefecture_name and jurisdiction_code.'),
+    .describe('Partial municipality name (e.g. "武蔵野市", "府中"), compared after NFKC normalization. Also matches every municipality whose prefecture name starts with it (e.g. "東京" returns Tokyo and its municipalities). All matching municipalities are returned; distinguish them using prefecture_name and jurisdiction_code.'),
   code: z
     .string()
     .regex(/^[0-9]{5,6}$/, 'code は5桁か6桁の数字です')

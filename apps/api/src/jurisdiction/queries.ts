@@ -118,8 +118,9 @@ export async function listJurisdictions(ctx: Ctx, input: ListInput): Promise<Jur
   const conds: string[] = []
   const params: string[] = []
   if (name !== undefined) {
-    conds.push('instr("name", ?) > 0')
-    params.push(name)
+    // 名前の部分一致か、都道府県名の頭の一致（「東京」で東京都の自治体を全部返す）
+    conds.push('(instr("name", ?) > 0 OR instr("prefecture_name", ?) = 1)')
+    params.push(name, name)
   }
   if (code !== undefined) {
     // 5桁は検査数字を除いた同じコード。検査数字は先頭5桁で決まるので、先頭5桁の一致で一つに決まる

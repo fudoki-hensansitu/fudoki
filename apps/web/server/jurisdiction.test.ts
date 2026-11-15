@@ -88,7 +88,10 @@ function fixtureApi({ code = '131148', name = '中野区', extraNodes = [] as Ro
       // 公開 REST と同じ絞り込み（名前の部分一致・コード・資料区分の収録）だけを真似る
       const q = url.searchParams
       const hits = jurisdictions.filter((j) => (!q.get('name') || j.name.includes(q.get('name')!)) && (!q.get('code') || j.jurisdiction_code === q.get('code')) && (!q.get('document_kind') || j.coverage.some((c) => c.document_kind === q.get('document_kind'))))
-      return Response.json({ jurisdictions: hits, next_page_token: null })
+      // page_size が1なら1件ずつ頁を送る（token は次の位置）
+      const size = Number(q.get('page_size') ?? 100)
+      const at = Number(q.get('page_token')?.replace('p', '') ?? 0)
+      return Response.json({ jurisdictions: hits.slice(at, at + size), next_page_token: at + size < hits.length ? `p${at + size}` : null })
     }
     const one = url.pathname.match(/^\/v1\/jurisdictions\/(\d{6})$/)
     if (one) {
@@ -329,6 +332,8 @@ describe('自治体の検索（/api/jurisdictions）', () => {
     expect(hits.entries.map((h) => [h.name, h.path])).toEqual([['中野区', '/tokyo/nakano']])
     expect(hits.next).toBeNull()
     expect(await (await get('/api/jurisdictions?name=存在しない')).json()).toEqual({ entries: [], next: null })
+    // 続きの印は api の page_token としてそのまま渡す（1件目より後には当たる自治体が無い）
+    expect(await (await get('/api/jurisdictions?name=&cursor=p1')).json()).toEqual({ entries: [], next: null })
     // 続きの印は api の page_token の形だけを通す
     expect((await get('/api/jurisdictions?name=中野&cursor=a%2Fb')).status).toBe(400)
     expect((await get(`/api/jurisdictions?name=中野&cursor=${'a'.repeat(513)}`)).status).toBe(400)

@@ -151,6 +151,9 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
     expect(await codes('?document_kind=initial')).toEqual(['132039'])
     insertJurisdiction(sqlite, { jurisdiction_code: '131130', name: '新府中町' })
     expect(await codes(`?name=${encodeURIComponent('府中')}`)).toEqual(['132063', '342076', '131130'])
+    // 都道府県名の頭に合えば、その都道府県の自治体も返す（名前がその語で始まる自治体が先）
+    expect(await codes(`?name=${encodeURIComponent('広島')}`)).toEqual(['342076'])
+    expect(await codes(`?name=${encodeURIComponent('東京')}`)).toEqual(['131016', '131130', '132039', '132063'])
     // 並びを変えても、頁をまたいで欠落・重複しない
     const first = await list(`?name=${encodeURIComponent('府中')}&page_size=2`)
     const rest = await list(`?name=${encodeURIComponent('府中')}&page_size=2&page_token=${first.next_page_token}`)

@@ -40,6 +40,8 @@ export function useTownSearch(open: boolean, q: string) {
     return () => {
       clearTimeout(timer)
       controller.abort()
+      loading.current?.abort()
+      loading.current = null
     }
   }, [open, q, attempt])
   const next = page?.next ?? null
