@@ -52,5 +52,4 @@ describe('EXPLAIN QUERY PLAN', () => {
       .all(10, 0) as { detail: string }[]
     expect(rows.map((r) => r.detail).join('\n')).toMatch(/expenditure USING INDEX expenditure_jurisdiction_code \(jurisdiction_code=\?\)/)
   })
-
 })
