@@ -187,7 +187,7 @@ def read_csv(path, workflow: dict) -> list[Sheet]:
         raise ValueError(f'CSV に列が無い: {sorted(missing)}')
 
     def cell(row, spec):
-        value = clean(unicodedata.normalize('NFKC', row[spec['column']])) or ''
+        value = clean(unicodedata.normalize('NFKC', row[spec['column']] or '')) or ''
         if 'pattern' in spec:
             value = (m.group(1) if (m := re.search(spec['pattern'], value)) else '').strip()
         # 「―」だけの欄は空にする
