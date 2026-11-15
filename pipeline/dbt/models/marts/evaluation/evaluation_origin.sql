@@ -3,4 +3,3 @@ select origin_id,
     sha256(to_json(['evaluation', jurisdiction_code, fiscal_year::varchar])) as evaluation_id,
     jurisdiction_code, fiscal_year, title, url, landing_url, sha256
 from {{ source('project', 'project_origin') }}
-where document_type = 'sheets'

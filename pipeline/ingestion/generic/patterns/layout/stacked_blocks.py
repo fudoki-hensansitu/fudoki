@@ -46,6 +46,7 @@ COUNTED = re.compile(r'^[0-9][0-9,]*' + COUNTERS + '?$')
 TITLE_REASON = '会計の歳出の初めの頁の題（3 歳出）の番号。金額ではない。'
 TITLE = re.compile(r'^[0-9]+歳出$')
 CIRCLE_REASON = '説明の行末の丸数字は節の番号（⑫など）。金額ではない。'
+FRAME_DRIFT = 3.0  # pt: a frame placed at least this far from the first page's is read from its own left edge
 SETSU_OFFSET = 600  # the 節 columns are moved this far right, the 説明 twice as far
 CIRCLE = 50  # the circled numbers start this far right of the 比較 column's left edge; the 説明's amounts end before it
 UNCODED = 12  # how far right of its level's codes a name starts
@@ -268,6 +269,7 @@ def apart(logicals: list[layout.Logical]) -> list[layout.Logical]:
 def read(pages, **options):
     logicals = apart(layout.logical_pages(pages, **options))
     known: tuple[float, float, float] | None = None
+    first_left: float | None = None  # the left edge of the first frame: the 説明 of every page is read from there
     for logical in logicals:
         if not logical.bands:
             continue
@@ -280,6 +282,12 @@ def read(pages, **options):
         bottom = max(b.body_bottom for b in bands)
         left = min(b.x0 for b in bands)
         right = max(b.x1 for b in bands)
+        # A page may place its frame further right than the page before (131202's 2023 予算説明書: 17pt on the pages
+        # whose MediaBox is wider). The 説明 levels are read by where their lines start, so they are measured from
+        # the frame's left edge, the same on every page. A frame that sits within a few points of the first (a scan's
+        # wobble) keeps its words where they are: the levels are told apart by more than that.
+        first_left = left if first_left is None else first_left
+        drift = left - first_left if abs(left - first_left) >= FRAME_DRIFT else 0.0
         inside = [g for g in logical.outside if top - 1 <= g.y0 and g.y1 <= bottom + 1 and left - 1 <= g.x0 <= right]
         taken = {id(g) for g in inside}
         logical.outside = [g for g in logical.outside if id(g) not in taken]
@@ -330,7 +338,7 @@ def read(pages, **options):
                 continue
             figures += [[g] for g, after in zip(body[:-1], body[1:]) if counted(g, after)]
             circles += [g for g in line if g.x0 >= circle]
-            explanation += [shifted(g, 2 * SETSU_OFFSET) for g in merged([g for g in line if g.x0 < circle])]
+            explanation += [shifted(g, 2 * SETSU_OFFSET - drift) for g in merged([g for g in line if g.x0 < circle])]
         template = bands[0]
 
         def band(x0, x1, header, kind, words, offset, spans=None, axis=None):
@@ -353,7 +361,7 @@ def read(pages, **options):
                        spans=[setsu, (current_edge + SETSU_OFFSET, previous_edge + SETSU_OFFSET, '区分')], axis='節'),
                   band(previous_edge, right, ('節', '金額'), 'amount', setsu_amounts, SETSU_OFFSET,
                        spans=[setsu, (previous_edge + SETSU_OFFSET, right + SETSU_OFFSET, '金額')]),
-                  band(left, circle, ('説明',), 'label', explanation, 2 * SETSU_OFFSET)]
+                  band(left, circle, ('説明',), 'label', explanation, 2 * SETSU_OFFSET - drift)]
         for kind, reason, groups in ((FUNDING, FUNDING_REASON, [g for g in funding if g]),
                                      ('本文', FIGURE_REASON, figures),
                                      ('本文', CIRCLE_REASON, [[g] for g in circles if any(c.isdigit() for c in normalize(g.text))])):

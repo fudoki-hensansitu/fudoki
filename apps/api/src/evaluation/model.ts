@@ -2,7 +2,7 @@
 import { z } from 'zod'
 import { EVALUATION_SHEET_TABLE, described } from '../columns'
 import { nextPageToken } from '../shared/paging'
-import { yearSearchInputFor } from '../shared/search'
+import { yearSearchInputWith } from '../shared/search'
 import { FiscalYear, JurisdictionCode, PagedOrigin, RowId, Yen } from '../shared/model'
 
 export const Grade = z.enum(['A', 'B', 'C', 'D'])
@@ -79,7 +79,7 @@ export const EvaluationSheet = z.strictObject({
   grade_label: z.string().nullable().describe('シートの表記。読めない欄は空'),
   direction: z.string().nullable().describe('今後の方向。シートの表記。読めない欄は空'),
   outlook: Outlook,
-  expenditure_detail_id: z.string().nullable().describe('紐付けた決算書の内訳（歳出の集約の内訳の ID。風土記の判断）'),
+  project_ids: z.array(z.string()).describe('つないだ事業（事業の集約の ID。風土記の判断）。所管課ごとの複数の事業につながることがある'),
   indicators: z.array(Indicator),
   origin: PagedOrigin,
 })
@@ -136,6 +136,9 @@ export const SheetRow = z
       kou_name: z.string().nullable(),
       moku_name: z.string().nullable(),
       jigyo_name: z.string().nullable(),
+      kan_code: z.string().nullable(),
+      kou_code: z.string().nullable(),
+      moku_code: z.string().nullable(),
       department: z.string().nullable(),
       division: z.string().nullable(),
       budget_yen: z.int().nullable(),
@@ -143,11 +146,15 @@ export const SheetRow = z
       grade_label: z.string().nullable(),
       direction: z.string().nullable(),
       direction_code: DirectionCode.nullable(),
-      expenditure_subject_id: z.string().nullable(),
-      expenditure_detail_id: z.string().nullable(),
+      initial_expenditure_subject_id: z.string().nullable(),
+      settlement_expenditure_subject_id: z.string().nullable(),
     }),
     // 表の列ではなく、direction_code から組み立てる
     outlook: Outlook,
+    // 表の列ではなく、evaluation_sheet_project から引く
+    project_ids: z
+      .array(z.string())
+      .describe('Projects this sheet is linked to (project_id of get_project; Fudoki\'s judgment). One sheet can link to several projects (one per department line), and several sheets to one project. Empty when not linked.'),
   })
   .meta({ id: 'EvaluationSheetRow', description: '評価シート（1枚 = 事業（品川は小事業）の1年度）。' })
 
@@ -199,7 +206,16 @@ export const SheetOutput = z.strictObject({
 })
 export type SheetOutput = z.infer<typeof SheetOutput>
 
-export const SheetSearchInput = yearSearchInputFor(EVALUATION_SHEET_TABLE)
+/** 事業で絞るときの事業の数の上限 */
+export const MAX_PROJECT_IDS = 200
+export const SheetSearchInput = yearSearchInputWith(EVALUATION_SHEET_TABLE, {
+  project_ids: z
+    .array(z.string().min(1).max(128))
+    .min(1)
+    .max(MAX_PROJECT_IDS)
+    .optional()
+    .describe(`Only sheets linked to any of these projects (project_id; up to ${MAX_PROJECT_IDS}).`),
+})
 export const SheetSearchOutput = z.strictObject({
   sheets: z.array(SheetRow),
   next_page_token: nextPageToken,

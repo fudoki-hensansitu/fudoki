@@ -6,7 +6,6 @@ import iconSvg from './favicon.svg?raw'
 import { ApiError, errorBody, invalid } from './errors'
 import { VIEW_HTML, VIEW_URI } from './gen/view'
 import { JURISDICTION_TABLE } from './columns'
-import { budgetProposalTools } from './budget-proposal/tools'
 import { projectTools } from './project/tools'
 import { evaluationTools } from './evaluation/tools'
 import { ORIGIN_PDF_PATH } from './expenditure/routes'
@@ -30,8 +29,6 @@ export const tools: Tool[] = [
   evaluationTools.get,
   evaluationTools.getSheet,
   evaluationTools.searchSheets,
-  budgetProposalTools.get,
-  budgetProposalTools.searchMeasures,
   projectTools.get,
   projectTools.search,
 ]
@@ -147,7 +144,7 @@ function mcpServer(ctx: Ctx, apiOrigin: string): McpServer {
     },
     // stateless で tool・resource の一覧は変わらず、通知を送る経路も無いので、listChanged は名乗らない
     {
-      instructions: '風土記 provides read-only search of Japanese municipal expenditure budgets and settlements, project evaluation sheets, budget proposal press releases and projects followed across years. Use it for questions about municipal spending, project evaluations, new budget measures or how a project changed over the years.',
+      instructions: '風土記 provides read-only search of Japanese municipal expenditure budgets and settlements, project evaluation sheets and projects followed across years. Use it for questions about municipal spending, project evaluations or how a project changed over the years.',
       capabilities: { tools: { listChanged: false }, resources: { listChanged: false } },
     }
   )

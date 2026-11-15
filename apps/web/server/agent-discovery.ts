@@ -29,7 +29,7 @@ export const MCP_SERVER_CARD = {
   name: 'dev.fudoki/fudoki-api',
   title: '風土記(fudoki)',
   version: '1.0.0',
-  description: 'Read-only search of Japanese municipal budgets, settlements, project evaluations and press releases.',
+  description: 'Read-only search of Japanese municipal budgets, settlements, project evaluations and projects followed across years.',
   websiteUrl: 'https://fudoki.dev/',
   repository: { url: 'https://github.com/fudoki-hensansitu/fudoki', source: 'github', subfolder: 'apps/api' },
   remotes: [{ type: 'streamable-http', url: MCP_URL }],

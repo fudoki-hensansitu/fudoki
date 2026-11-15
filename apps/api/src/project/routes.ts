@@ -9,7 +9,7 @@ const getRoute = createRoute({
   method: 'get',
   path: '/v1/projects/{project_id}',
   operationId: t.get.name,
-  summary: '事業を年度・評価シート・施策まで取得する',
+  summary: '事業を年度と評価シートまで取得する',
   description: t.get.description,
   request: { params: z.strictObject({ project_id: ProjectId }) },
   responses: { ...ok(ProjectOutput), ...getErrors },

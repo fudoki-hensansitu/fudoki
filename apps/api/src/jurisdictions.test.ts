@@ -59,15 +59,13 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
     expect(fuchu.jurisdictions[0].coverage[0].accounts).toEqual([{ account_name: '一般会計', account_kind: '一般会計' }])
   })
 
-  test('一覧は事業評価・予算案を収録した年度を返す', async () => {
+  test('一覧は事業評価を収録した年度を返す', async () => {
     sqlite.exec(`INSERT INTO evaluation (evaluation_id, jurisdiction_code, fiscal_year) VALUES ('e2', '132039', 2025), ('e1', '132039', 2024)`)
-    sqlite.exec(`INSERT INTO budget_proposal (budget_proposal_id, jurisdiction_code, fiscal_year) VALUES ('b1', '132039', 2026)`)
     const [j] = (await list('?code=132039')).jurisdictions
     expect(j).not.toHaveProperty('population')
     expect(j.evaluations).toEqual([{ evaluation_id: 'e1', fiscal_year: 2024 }, { evaluation_id: 'e2', fiscal_year: 2025 }])
-    expect(j.budget_proposals).toEqual([{ budget_proposal_id: 'b1', fiscal_year: 2026 }])
     const detail = await (await get('/v1/jurisdictions/132039')).json()
-    expect([detail.evaluations.map((e: { fiscal_year: number }) => e.fiscal_year), detail.budget_proposals.length]).toEqual([[2024, 2025], 1])
+    expect(detail.evaluations.map((e: { fiscal_year: number }) => e.fiscal_year)).toEqual([2024, 2025])
   })
 
   test('1つの自治体は、収録している年度・資料区分・会計・出典を1回で得る', async () => {
@@ -100,7 +98,6 @@ describe('自治体と収録範囲（GET /v1/jurisdictions・list_jurisdictions�
             },
           ],
           evaluations: [],
-          budget_proposals: [],
           uncovered_sources: UNCOVERED_SOURCES,
     })
     expect((await get('/v1/jurisdictions/999999')).status).toBe(404)

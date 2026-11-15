@@ -261,7 +261,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         registry = load_jurisdictions(JURISDICTIONS)
         con.execute('create or replace table ingestion.jurisdiction (jurisdiction_code varchar, name varchar, ocd_id varchar, official_url varchar)')
         con.executemany('insert into ingestion.jurisdiction values (?,?,?,?)', registry)
-        # 事業評価・プレスは自治体で絞るとき、その自治体のものが無ければ読まない（今は品川区だけ）
+        # 事業評価は自治体で絞るとき、その自治体のものだけ読む
         project_tables = project.load(remote=remote, jurisdictions=jurisdictions or None)
         project.write(con, project_tables)
         used = {root / 'manifest.json' for document in documents.values()
@@ -271,7 +271,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         con.commit()
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
             'origins': len(origins), 'jurisdictions': len(registry),
-            'evaluation_sheets': len(project_tables['project_evaluation_sheet']), 'budget_measures': len(project_tables['project_budget_measure']),
+            'evaluation_sheets': len(project_tables['project_evaluation_sheet']),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
 
 
@@ -296,7 +296,7 @@ def main() -> None:
         # --full-refresh: a seed that gains a column would otherwise fail against the table of an earlier build.
         subprocess.run(['dbt', 'build', '--full-refresh', '--project-dir', str(DBT), '--profiles-dir', str(DBT),
                         '--select', 'marts.expenditure+', '+marts.expenditure', '+jurisdiction',
-                        'cofog_master', '+marts.evaluation', '+marts.budget_proposal', '+marts.project', '+marts.source',
+                        'cofog_master', '+marts.evaluation', '+marts.project', '+marts.source',
                         # 自治体で絞ったとき、他の自治体を宣言した seed の検査をその自治体に絞る
                         *(['--vars', json.dumps({'only_jurisdictions': sorted(args.jurisdiction)})] if args.jurisdiction else [])],
                        cwd=DBT, stdout=sys.stderr, check=True)
