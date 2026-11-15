@@ -57,6 +57,7 @@ INGESTION = re.compile(r'^pipeline/ingestion/.+\.py$')
 # 変換器の宣言（options の schema・pattern の目録など。Python 以外）。変換にだけ効き、build は読まない
 CONVERTER_DATA = (
     re.compile(r'^pipeline/ingestion/fiscal/layouts/'),
+    re.compile(r'^pipeline/ingestion/fiscal/jurisdictions/\d{6}/layouts/'),
     re.compile(r'^pipeline/ingestion/generic/patterns/'),
 )
 # 自治体の取り込みの宣言（管理 JSON）と出典の選定。保存し直した表は管理 JSON の変更として現れる
