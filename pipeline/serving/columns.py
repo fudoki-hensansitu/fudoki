@@ -35,15 +35,13 @@ PRIMARY_KEYS = {'jurisdiction': 'jurisdiction_code',
                 'evaluation_indicator': 'indicator_id', 'evaluation_indicator_value': 'value_id',
                 'project': 'project_id', 'project_year': 'project_year_id',
                 'source_page_text': 'page_id'}
-# index（docs/prd/aggregate-api/dd.md）。科目は自治体の一覧・比較・COFOG・子・根、内訳は科目の下・子・自治体の事業・根。
-# 根の表は自治体のページごとに自治体コードで引く
+# index（docs/prd/aggregate-api/dd.md）。科目は根の下の段・子、内訳は科目の下・子・根の下の事業。
+# 科目・内訳は自治体・年度を持たないので（ADR 0047）、根を自治体コードと年度・資料区分で引いてから根の ID で引く
 INDEXES = {
-    'expenditure': [['jurisdiction_code']],
+    'expenditure': [['jurisdiction_code'], ['fiscal_year', 'document_kind', 'jurisdiction_code']],
     'expenditure_origin_link': [['expenditure_id'], ['origin_id']],
-    'expenditure_subject': [['fiscal_year', 'document_kind', 'jurisdiction_code', 'level'],
-                            ['fiscal_year', 'document_kind', 'cofog_code'], ['parent_subject_id'], ['expenditure_id']],
-    'expenditure_detail': [['subject_id', 'breakdown', 'depth'], ['parent_detail_id'],
-                           ['fiscal_year', 'document_kind', 'jurisdiction_code', 'breakdown'], ['expenditure_id']],
+    'expenditure_subject': [['expenditure_id', 'level'], ['parent_subject_id']],
+    'expenditure_detail': [['subject_id', 'breakdown', 'depth'], ['parent_detail_id'], ['expenditure_id', 'breakdown']],
     'evaluation': [['jurisdiction_code']],
     'evaluation_origin': [['evaluation_id']],
     'evaluation_sheet': [['evaluation_id'], ['jurisdiction_code', 'fiscal_year']],
