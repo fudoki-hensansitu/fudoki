@@ -1389,6 +1389,311 @@
         }
       },
       "note": "施策分野評価シートの「個別事務事業概要」（1行1事業）。事業名が折り返すので字の位置で読む。金額は実施年度の当初予算額と決算額（千円）。（再掲）の行は別の施策分野の行と同じ事業なので読まない。R7 の冊の事務事業評価シートは概要の行と同じ事業なので読まない"
+    },
+    {
+      "jurisdiction": "131059",
+      "years": [
+        2023
+      ],
+      "workflow": {
+        "page": "戦略点検シート|主な取組実績",
+        "skip": "戦略点検シートの見方",
+        "rows": {
+          "anchor": {
+            "x": [
+              480,
+              640
+            ],
+            "pattern": "^[\\d, ]+千円$"
+          },
+          "fields": {
+            "name": {
+              "x": [
+                69,
+                220
+              ],
+              "y": [
+                -8,
+                22
+              ],
+              "before": "^主な取組実績$",
+              "cut": true,
+              "ignore": "^\\d+$"
+            },
+            "division": {
+              "x": [
+                220,
+                305
+              ],
+              "y": [
+                -8,
+                22
+              ],
+              "before": "^主な取組実績$",
+              "cut": true
+            },
+            "settled": {
+              "x": [
+                480,
+                640
+              ],
+              "y": [
+                -1,
+                1
+              ],
+              "pattern": "^([\\d, ]+)千円$"
+            },
+            "budget": {
+              "x": [
+                480,
+                640
+              ],
+              "y": [
+                3,
+                27
+              ],
+              "pattern": "\\(([\\d, ]+)千円\\)"
+            }
+          },
+          "distinct": true
+        },
+        "unit": "千円"
+      },
+      "ocr": {
+        "request": {},
+        "observations": {
+          "a53712732d3be805818a1da93b7b4a2345d0fb4253f12a6c491f095af612f99a": {
+            "sha256": "a84fe43f8f2e6d3ec5bda1813c0472ead3563fadcd2ae6f372bdb5620be18e3f",
+            "bytes": 70062979
+          }
+        }
+      },
+      "note": "R5 の戦略点検シートは文字の層が無いので OCR の観測の行で読む。R7・R6 と同じ表を、R5 の位置と、OCR が事業名と所管課をつないだ行の切り分け（cut）で読む"
+    },
+    {
+      "jurisdiction": "132080",
+      "years": [
+        2025
+      ],
+      "workflow": {
+        "page": "基本計画事業名",
+        "unit": "千円",
+        "rows": {
+          "anchor": {
+            "x": [
+              40,
+              75
+            ],
+            "pattern": "^\\d+$",
+            "below": "^基本計画事業名$"
+          },
+          "fields": {
+            "name": {
+              "x": [
+                76,
+                175
+              ],
+              "y": [
+                -16,
+                16
+              ],
+              "pattern": "^(?:【[^】]*】)?([^・①-⑳].*)$"
+            },
+            "grade": {
+              "x": [
+                185,
+                245
+              ],
+              "y": [
+                0,
+                200
+              ],
+              "pattern": "✔(計画どおり|計画前倒し|計画遅れ)",
+              "from": "^今後の方向$",
+              "before": "^今後の方向$"
+            },
+            "direction": {
+              "x": [
+                444,
+                510
+              ],
+              "y": [
+                0,
+                200
+              ],
+              "pattern": "✔(現状継続|有効性改善|効率性改善|財政面改善|参加と協働改善|拡充|縮小|休止|廃止|完了)",
+              "from": "^今後の方向$",
+              "before": "^今後の方向$"
+            }
+          }
+        },
+        "marks": {
+          "pattern": "^(計画どおり|計画前倒し|計画遅れ|現状継続|有効性改善|効率性改善|財政面改善|参加と協働改善|拡充|縮小|休止|廃止|完了)$",
+          "x": [
+            -11,
+            -2
+          ]
+        }
+      },
+      "ocr": {
+        "request": {},
+        "observations": {
+          "2afe05df6561f51467ec5045b487f73032f393d97b8a42a3a13c0aa338019650": {
+            "sha256": "c9638aa20c5d454b20831558324cc31d6e0f02b8395e47896681c1ac508c6728",
+            "bytes": 2464152
+          },
+          "f656d1d6a7342b2d3d978db81d1722d9c55821384ead1a3ee875ef29545709d0": {
+            "sha256": "c7bbe685d4eb3a077d7bd57322987080b8d3912afbc37ef698431d05459c077f",
+            "bytes": 2008103
+          },
+          "9c804a4434dfff79a2e9c971e0a8e407ed1d8a5a0ae419c5e38ea6b2c8f49814": {
+            "sha256": "e1705bd547274cd7f874752829efe5dfa8af746a4aa3ac95d8b72a4078b35fac",
+            "bytes": 2581642
+          },
+          "14f648e7bcda1053b755518cd80c2cc02fb74b87a8cad043ad1fc866a4ec912f": {
+            "sha256": "60dcafca4b6653c49d68c71f13b00cea72e69e205358a4da14033c208f3be190",
+            "bytes": 4083308
+          },
+          "fe532648943c43cf810d63dbbf67838490d746e5089ab0e2ef0f27c1a43963a8": {
+            "sha256": "2c5f00aa958a72cfa04a68aecbce7cc404b3154f80c7c04991127d3d45b698c2",
+            "bytes": 1804976
+          },
+          "5d8e06ae68fbddd9140d5053e232e5afa22a70d8fb2f885d1233b2b47575274c": {
+            "sha256": "4101e1f2074e843bcc054a957127ca32358705db8ee3d0e7d4afad5e71c3f8e6",
+            "bytes": 1984274
+          },
+          "3ff54cafcbe0a0e5b6b495be53eb5a3d1fd97279906c63b4391d877e7ad1f698": {
+            "sha256": "8a9bc76995646b432aef10ac90e48fced3c240a63dbe6c9025a191b663eb1ec1",
+            "bytes": 2217605
+          },
+          "a118853a8e34a7292a89973ae160622a3191693e43d006a9ec226b0befd94378": {
+            "sha256": "d857834d43e288059da3ecf08c3603c15c7eda1d3a63aea89f078c2f26029072",
+            "bytes": 1736562
+          },
+          "6d52f26d7c51774fe02ee6b5518905310114b3c751d5aab5cbe05a8978bcab4c": {
+            "sha256": "e2a936e5a039d8dbf37dba52daed243649fcc8d3b9df7e59e437510fbf30c38c",
+            "bytes": 1238731
+          },
+          "9be12b70df12d431ef6f92b4ba51d7d01490bccca3cd75259fb53caa9a023778": {
+            "sha256": "e80d5fd475a116a59cbfece4d730b9a3ee6f7a3efb804f17be7674e529cdb87b",
+            "bytes": 831528
+          },
+          "8ae920b2b0108b491151f2009a59992726a890c5741ee713a3ab1ab8e7813fc4": {
+            "sha256": "db75c6f880217b32920105b990df67fabed264c0dce2a788e6af1ff333c48f67",
+            "bytes": 1976410
+          },
+          "5e402a46b996e39680a7d3cac0a2d1e5c898e06ce4071a9265d56d13defe6487": {
+            "sha256": "f27743b802a25e2a6daf15992cb14d6e1e030670fa0d08125cad2e7782dee8ff",
+            "bytes": 1787176
+          },
+          "000793f65a22094b124961f8d7ae40ef8320551131050b981570a51dd1712d28": {
+            "sha256": "ad368234cffc56da91c830980ff93f229f707f624aaf30ce16d7372302a4227d",
+            "bytes": 1866045
+          },
+          "9a9294229a758421e97570764eba512c590546575156a5d13565c92273c2edb5": {
+            "sha256": "9724cbd8dfa704d02de4f7f78220d855ba8fb416a7e85addabb0fa8ae2ba7b40",
+            "bytes": 1355213
+          },
+          "1deaf9a62a4c502487ecbe3868d1ee2788e4455d9454cd4f46b6a3ca33216011": {
+            "sha256": "465ea845876ddc6368e61e57aa14d1df829675f351ceb88f0ec3fbdf3cf9011e",
+            "bytes": 1488956
+          },
+          "096e3b488139e1fe44ab33e4edf91e68aa83a4cb572b055901642b9b62bc1f88": {
+            "sha256": "aa5f107e877c560d939dba754dfcf3462dbadad3539f375a92e1ff8cd3396034",
+            "bytes": 1189358
+          },
+          "b5367b66d8821476502639cb270f64a7065f166f902d9cead302184b47d8a4bc": {
+            "sha256": "4099ac92059bbfc18ab2b0d2ac735a74200b494210b5de9042394d57dbee8fa9",
+            "bytes": 1531783
+          },
+          "d71af7fcea50c6f71201e68ad926b62d20f130ded121c6cfa038ec670b0c011e": {
+            "sha256": "953c0384e4d4bab6e5d7706369d1552dc575588f0fed7fb041836a47cef68a03",
+            "bytes": 1386341
+          },
+          "43b3800db356c8a02c7d3eaab651ecf038f37821c357744c344674031cf131bd": {
+            "sha256": "e0fe493bca51b3276c7015144e255d2c24ded3f73d822dd410ef66ef4b2a848a",
+            "bytes": 1333406
+          },
+          "adbb0095f057db03a5d6c341f3cc969ce3a401d849571e6c73a929a27c0ba5dc": {
+            "sha256": "1770696f1b658103d200093b352e5ded8176516ac648a4f388cbd0a33900b126",
+            "bytes": 1457497
+          },
+          "82a0e716ea8bc18bd8a453de9fcc3404c6a92d6a2a9389692fb732c53e7336a4": {
+            "sha256": "8308449523e84230e512056c5570eb29de9b6768e44d859bf0506ff479161ef1",
+            "bytes": 1929660
+          },
+          "ea6ca538d52b9b9d7b5bb330c4500f047d04c945d8072d9aa2f85390a6b98dcc": {
+            "sha256": "f7545c48c14ccf81e7d7e1d79ab7433038b5817c616d0a214355a304c7314b35",
+            "bytes": 985766
+          },
+          "56f7f722632872dc0aa43adbc42703aafd6e9d433be3429fc96414be7cdbad9e": {
+            "sha256": "59b370b82e76134284b9fcc8c739076169390723471313b50ed2c26e6e3e5de9",
+            "bytes": 1638989
+          },
+          "ef09be1ed2a2ea1b3646601f8d5fa8f348b5730c21bcfd2ae08469fa08664814": {
+            "sha256": "d85e579fa135fdb99f1c1598e43753f41c71c66fd5d42e72e1e0bbdebbf605a4",
+            "bytes": 1477536
+          },
+          "5567592d60ebd6af430755bd46061524eaee9c9db804a3ca3378f672af1563ed": {
+            "sha256": "be40c4b87fce724ab2033b14ebb5dd7b5d202e2ca3dc47f066fa72dcd5e34ae2",
+            "bytes": 1518046
+          },
+          "8dae99ae5b5cc99139882bde98929e47645fc82070b228f32830c472cef9713d": {
+            "sha256": "13ec7a91cfed085be28fcc26e2beb30925b8ab0f6d28701681c28d5a69d10410",
+            "bytes": 1393140
+          },
+          "2cf9ecff5daf568c96da81edb90ef9dd8a59bdf4abb18e4d8064505f06db1c11": {
+            "sha256": "0c626393a45948e7327c23d90ce77c7bff6017ec09d71ca32d68891c786e6099",
+            "bytes": 1707624
+          },
+          "0e857d8ba046f19537177aa9783988979ac09ce228b3b79866cb5a1b5fecd432": {
+            "sha256": "38c869a5658c7f2455ca069be05865ba16ddb6dc9088331cba0499e9946522d8",
+            "bytes": 1552257
+          },
+          "6da6db1884b5be3d9c33f760e919d5f9bff45993508cca411e8c82871f71db1d": {
+            "sha256": "5703d0b837d0a51f8e9e518113e51c16529762cf06b0998a3fe3988ef28f628d",
+            "bytes": 1400698
+          },
+          "13216a4781bb612e6a4ec4dbd898761bd69d187ef7f4d84f6f664b25191f0232": {
+            "sha256": "2e410b34eb114ab5c8b9800093b15d46148630f24b401a74348bd1808b5ca94a",
+            "bytes": 1336875
+          }
+        }
+      },
+      "note": "R7 は文字の層が無いので OCR の観測の行で読む。R6・R5 と同じ表で、チェックの印は OCR が読まないので選択肢の左の箱の墨（marks）で決め、評価・方向性は区画の見出しからの枠で拾う"
+    },
+    {
+      "jurisdiction": "132101",
+      "years": [
+        2023,
+        2024
+      ],
+      "workflow": {
+        "fields": [
+          "^事務事業の名称 (?:\\d+ ?)?(?P<name>.+?)(?: 事務事業.*)?(?: (?:昭和|平成|令和)\\S*)?$",
+          "^課名 ?(?P<division>\\S+)",
+          "^決算額 (?:\\S* ?千円 )*(?P<settled>[\\d,]+) ?千円$",
+          "^1 休・廃止 2 縮小 3 現状維持 4 改善・改革 5 拡充 (?P<direction>\\S+)$",
+          "^1 奨励 2 承認 3 調整 4 見直し (?P<grade>\\S+)$"
+        ],
+        "page": "事務事業評価シ|^◇?自己点検|^課名",
+        "start": "事務事業評価シ\\S{0,3}\\(評価対象|^課名",
+        "unit": "千円"
+      },
+      "ocr": {
+        "request": {},
+        "observations": {
+          "9435d566da19e5ed2d29e2c720f1e8757485f26cce62768ec06da015d2086934": {
+            "sha256": "20d9b609d44d56e1bc3e733aaf18f4de2c108193f50d8197c9004afc2ab0e20b",
+            "bytes": 48031169
+          },
+          "69950defda354801c41c428f6967eb816fd7149129f1b2a2b511cc2b8296307a": {
+            "sha256": "9e5ecf6ff2e3ee53d9cfd4546d919ed6fedb75e8e98426b41a3fc2cd7216ea12",
+            "bytes": 50419603
+          }
+        }
+      },
+      "note": "令和5・6年度実施分は文字の層の字の割り当てが壊れているので OCR の観測の行で読む。令和7年度と同じ欄を、OCR の行（見出しの読み違い・空白の欠け）に合わせた正規表現で拾う"
     }
   ],
   "press": [

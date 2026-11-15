@@ -103,6 +103,32 @@ class RegionTest(unittest.TestCase):
         # before の行から下は枠に入れない
         self.assertEqual(sheet.region(words, anchor, {'x': [36, 110], 'y': [-10, 50], 'before': '^業務量'}), '技能功労褒賞事業')
 
+    def test_block_from_heading_stops_at_next_heading(self):
+        # 区画の見出し（from）からの枠は、見出しの行を数えず、次の区画の見出しから下を外す
+        first, second = self.W('01', 30, 100), self.W('02', 30, 200)
+        words = [self.W('方向', 300, 60), self.W('✔継続', 300, 80), self.W('改善', 300, 120), first,
+                 self.W('方向', 300, 160), self.W('継続', 300, 180), self.W('✔改善', 300, 220), second]
+        spec = {'from': '^方向$', 'x': [290, 400], 'y': [0, 200], 'before': '^方向$', 'pattern': '✔(\\S\\S)'}
+        self.assertEqual(sheet.region(words, first, spec), '継続')
+        self.assertEqual(sheet.region(words, second, spec), '改善')
+
+    def test_cut_splits_word_across_columns(self):
+        # OCR が事業名と所管課をつないだ行は、字の幅を等分に見て欄の境で切る
+        anchor = self.W('100千円', 300, 100)
+        words = [anchor, self.Word('保育施設の運営幼児保育課', 70, 100, 190, 110), self.W('1', 52, 100)]
+        name = {'x': [69, 140], 'y': [-2, 2], 'cut': True, 'ignore': '^\\d+$'}
+        self.assertEqual(sheet.region(words, anchor, name), '保育施設の運営')
+        self.assertEqual(sheet.region(words, anchor, {'x': [140, 200], 'y': [-2, 2], 'cut': True}), '幼児保育課')
+
+
+class OcrTest(unittest.TestCase):
+    def test_overlapping_boxes_are_read_once(self):
+        from ingestion.generic.page_words import Word
+        from ingestion.project.sheet import ocr
+
+        line, overlap, other = Word('予防接種事業(帯状疱疹)', 180, 94, 310, 101), Word('疱疹)', 283, 93, 311, 102), Word('令和5年度', 482, 93, 521, 103)
+        self.assertEqual(ocr.distinct([line, overlap, other]), [line, other])
+
 
 if __name__ == '__main__':
     unittest.main()
