@@ -99,6 +99,7 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
     left, _, _, top = page.get_mediabox()  # Poppler's words are measured from the MediaBox, even when a CropBox is smaller
     textpage = page.get_textpage()
     clips: dict[int, tuple | None] = {}
+    nested = document_quirk('nested_clips')
 
     def clip_of(handle):
         """The clip rectangle of an object (page space), or None when it has none."""
@@ -107,14 +108,20 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
             clip = raw.FPDFPageObj_GetClipPath(handle)
             box = None
             if clip and raw.FPDFClipPath_CountPaths(clip) > 0:
-                xs, ys = [], []
+                boxes = []
                 for i in range(raw.FPDFClipPath_CountPaths(clip)):
+                    xs, ys = [], []
                     for j in range(raw.FPDFClipPath_CountPathSegments(clip, i)):
                         segment = raw.FPDFClipPath_GetPathSegment(clip, i, j)
                         x, y = ctypes.c_float(), ctypes.c_float()
                         raw.FPDFPathSegment_GetPoint(segment, x, y)
                         xs.append(x.value); ys.append(y.value)
-                box = (min(xs), min(ys), max(xs), max(ys)) if xs else None
+                    if xs:
+                        boxes.append((min(xs), min(ys), max(xs), max(ys)))
+                if boxes and nested is not None:
+                    box = nested.module.clip(boxes)
+                elif boxes:
+                    box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
             clips[address] = box
         return clips[address]
 
@@ -122,6 +129,8 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         # box and clip as (left, bottom, right, top) in PDF space
         return clip is None or (box[0] < clip[2] and box[2] > clip[0] and box[1] < clip[3] and box[3] > clip[1])
 
+    patched = document_quirk('white_patches')
+    covered = patched.module.reader(raw, page.raw) if patched is not None else None
     paths = []
     flat_paths: set[int] = set()
     for index in range(raw.FPDFPage_CountObjects(page.raw)):
@@ -156,6 +165,8 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
             ol, ob, orr, ot = (ctypes.c_float() for _ in range(4))
             raw.FPDFPageObj_GetBounds(handle, ol, ob, orr, ot)
             visible = inside((ol.value, ob.value, orr.value, ot.value), clip_of(handle))
+        if visible and covered is not None and handle and covered(handle, (l.value, b.value, r.value, t.value)):
+            visible = False
         char = (character_map or {}).get(chr(code), chr(code))
         if not char:
             continue  # declared to drop (`character_map`)
