@@ -65,7 +65,7 @@ export type Detail =
 type DetailCommon = z.infer<z.ZodObject<typeof detailCommon>>
 export const Detail: z.ZodType<Detail> = z.lazy(() =>
   z.discriminatedUnion('kind', [
-    z.strictObject({ ...detailCommon, kind: z.literal('project'), department: z.string().nullable().describe('所管課（名前の末尾の【】）'), children: z.array(Detail) }),
+    z.strictObject({ ...detailCommon, kind: z.literal('project'), department: z.string().nullable().describe('所管課（名前の最後の【】、または末尾の [課] など）'), children: z.array(Detail) }),
     z.strictObject({ ...detailCommon, kind: z.literal('other'), breakdown: z.enum(['節', 'その他']), children: z.array(Detail) }),
   ])
 )

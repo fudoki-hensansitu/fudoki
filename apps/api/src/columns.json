@@ -455,7 +455,7 @@
           "name": "department",
           "type": "string",
           "nullable": true,
-          "description": "名称末尾の【…】の中身（所管課）。印字からの機械的な切り出しで、無ければ NULL。"
+          "description": "名称の最後の【…】の中身（所管課。後ろに「13人」などの注記が続くこともある）。【】が無く末尾が [] のときは、中身が課・部・局・室・所・係・センター・委員会・館で終わるものを所管課とする（中央区・八王子など。[1人分]・[84カ所] のような数を含む注記は外す）。印字からの機械的な切り出しで、無ければ NULL。"
         },
         {
           "name": "amount_yen",
@@ -684,9 +684,6 @@
         [
           "jurisdiction_code",
           "fiscal_year"
-        ],
-        [
-          "expenditure_detail_id"
         ]
       ],
       "columns": [
@@ -763,6 +760,24 @@
           "description": "シートの予算科目の事業。"
         },
         {
+          "name": "kan_code",
+          "type": "string",
+          "nullable": true,
+          "description": "シートの予算科目の款の番号（印字のまま）。"
+        },
+        {
+          "name": "kou_code",
+          "type": "string",
+          "nullable": true,
+          "description": "シートの予算科目の項の番号（印字のまま）。"
+        },
+        {
+          "name": "moku_code",
+          "type": "string",
+          "nullable": true,
+          "description": "シートの予算科目の目の番号（印字のまま）。"
+        },
+        {
           "name": "department",
           "type": "string",
           "nullable": true,
@@ -819,16 +834,72 @@
           ]
         },
         {
-          "name": "expenditure_subject_id",
+          "name": "initial_expenditure_subject_id",
           "type": "string",
           "nullable": true,
-          "description": "風土記の判断。シートの予算科目（会計・款・項・目の名前）が1つに当たる、同じ年度の決算書の目。expenditure_subject の subject_id。当たらなければ空。"
+          "description": "風土記の判断。シートの予算科目（会計・款・項・目の番号。番号が無ければ名前）が1つに当たる、同じ年度の当初予算書の目。expenditure_subject の subject_id。会計は会計の種類か名前の頭で比べ、印字が無ければ全部の会計から1つに当たるときだけ採る。当たらなければ空。"
         },
         {
-          "name": "expenditure_detail_id",
+          "name": "settlement_expenditure_subject_id",
           "type": "string",
           "nullable": true,
-          "description": "風土記の判断。expenditure_subject_id の目の下で、シートの予算科目の事業と同じ名前（内訳の末尾の【所管課】以降を除く）の内訳（分け方が事業）が1つだけあるとき、その内訳。さらにその子孫に、シートの事業名と同じ名前の事業の内訳が1つだけあれば、そちらの内訳。expenditure_detail の detail_id。1つの内訳に複数の小事業（シート）が入ることがあり、そのときシートの決算額は内訳の額より小さい。"
+          "description": "風土記の判断。initial_expenditure_subject_id と同じ当て方で、同じ年度の決算書の目。当たらなければ空。"
+        }
+      ]
+    },
+    "evaluation_sheet_project": {
+      "primary_key": "link_id",
+      "indexes": [
+        [
+          "sheet_id"
+        ],
+        [
+          "project_id",
+          "fiscal_year"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "link_id",
+          "type": "string",
+          "nullable": false,
+          "description": "行の ID。シートと事業から作る（sha256）。"
+        },
+        {
+          "name": "sheet_id",
+          "type": "string",
+          "nullable": false,
+          "description": "evaluation_sheet の sheet_id。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "全国地方公共団体コード（6桁）。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "シートの事業を実施した会計年度（西暦）。事業の年度は project_id とこの年度で決まる。"
+        },
+        {
+          "name": "project_id",
+          "type": "string",
+          "nullable": false,
+          "description": "project の project_id。"
+        },
+        {
+          "name": "method",
+          "type": "string",
+          "nullable": false,
+          "description": "風土記の判断の当て方。code（科目の番号で目を決め、その下で事業名が当たった）・subject_name（科目の名前で目を決めた）・name（目が決まらず、自治体・年度の中で事業名が1つの事業にだけ当たった）・seed（人の判断、seed の evaluation_sheet_link）。",
+          "values": [
+            "code",
+            "subject_name",
+            "name",
+            "seed"
+          ]
         }
       ]
     },
@@ -930,199 +1001,6 @@
         }
       ]
     },
-    "budget_proposal": {
-      "primary_key": "budget_proposal_id",
-      "indexes": [
-        [
-          "jurisdiction_code"
-        ]
-      ],
-      "columns": [
-        {
-          "name": "budget_proposal_id",
-          "type": "string",
-          "nullable": false,
-          "description": "自治体コードと年度から作る ID（sha256）。"
-        },
-        {
-          "name": "jurisdiction_code",
-          "type": "string",
-          "nullable": false,
-          "description": "全国地方公共団体コード（6桁）。"
-        },
-        {
-          "name": "fiscal_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "予算の会計年度（西暦）。"
-        }
-      ]
-    },
-    "budget_proposal_origin": {
-      "primary_key": "origin_id",
-      "indexes": [
-        [
-          "budget_proposal_id"
-        ]
-      ],
-      "columns": [
-        {
-          "name": "origin_id",
-          "type": "string",
-          "nullable": false,
-          "description": "出典の識別子。PDF の sha256。"
-        },
-        {
-          "name": "budget_proposal_id",
-          "type": "string",
-          "nullable": false,
-          "description": "予算案の根。budget_proposal の budget_proposal_id。"
-        },
-        {
-          "name": "jurisdiction_code",
-          "type": "string",
-          "nullable": false,
-          "description": "全国地方公共団体コード（6桁）。"
-        },
-        {
-          "name": "fiscal_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "予算の会計年度（西暦）。"
-        },
-        {
-          "name": "title",
-          "type": "string",
-          "nullable": true,
-          "description": "資料の名前。"
-        },
-        {
-          "name": "url",
-          "type": "string",
-          "nullable": false,
-          "description": "資料（PDF）の URL。"
-        },
-        {
-          "name": "landing_url",
-          "type": "string",
-          "nullable": true,
-          "description": "資料を載せた自治体のページの URL。"
-        },
-        {
-          "name": "sha256",
-          "type": "string",
-          "nullable": false,
-          "description": "読んだ PDF の sha256。"
-        }
-      ]
-    },
-    "budget_measure": {
-      "primary_key": "measure_id",
-      "indexes": [
-        [
-          "budget_proposal_id"
-        ],
-        [
-          "jurisdiction_code",
-          "fiscal_year"
-        ],
-        [
-          "expenditure_detail_id"
-        ]
-      ],
-      "columns": [
-        {
-          "name": "measure_id",
-          "type": "string",
-          "nullable": false,
-          "description": "行の ID。origin_id と頁と頁の中の順から作る（sha256）。"
-        },
-        {
-          "name": "budget_proposal_id",
-          "type": "string",
-          "nullable": false,
-          "description": "予算案の根。budget_proposal の budget_proposal_id。"
-        },
-        {
-          "name": "origin_id",
-          "type": "string",
-          "nullable": false,
-          "description": "出典。budget_proposal_origin の origin_id。"
-        },
-        {
-          "name": "jurisdiction_code",
-          "type": "string",
-          "nullable": false,
-          "description": "全国地方公共団体コード（6桁）。"
-        },
-        {
-          "name": "fiscal_year",
-          "type": "integer",
-          "nullable": false,
-          "description": "予算の会計年度（西暦）。"
-        },
-        {
-          "name": "page",
-          "type": "integer",
-          "nullable": false,
-          "description": "出典の PDF の頁（1始まり）。"
-        },
-        {
-          "name": "position",
-          "type": "integer",
-          "nullable": false,
-          "description": "同じ頁の中の施策の順（1始まり、上から。2段組は左から）。"
-        },
-        {
-          "name": "title",
-          "type": "string",
-          "nullable": true,
-          "description": "頁の見出し（副題を含む、資料の表記）。"
-        },
-        {
-          "name": "names",
-          "type": "string",
-          "nullable": true,
-          "description": "事業名の欄（JSON の文字列の配列。複数のことがある）。"
-        },
-        {
-          "name": "is_new",
-          "type": "boolean",
-          "nullable": false,
-          "description": "事業名に「新規」の印がある。施策ごとに印を付けない資料（千代田など）は常に偽。"
-        },
-        {
-          "name": "budget_yen",
-          "type": "integer",
-          "nullable": true,
-          "description": "予算額（円）。事業名が複数なら合計。"
-        },
-        {
-          "name": "description",
-          "type": "string",
-          "nullable": true,
-          "description": "施策の説明。資料の箇条書き（品川は POINT）を改行でつないだもの（資料の表記）。"
-        },
-        {
-          "name": "expenditure_detail_id",
-          "type": "string",
-          "nullable": true,
-          "description": "風土記の判断。施策を紐付けた、同じ年度の当初予算書の内訳（expenditure_detail の detail_id）。紐付かなければ空。"
-        },
-        {
-          "name": "link_method",
-          "type": "string",
-          "nullable": true,
-          "description": "風土記の判断。紐付けの方法。name（名前と額で直接当たった）・jev（候補12件から TypeSafe の Jev が確信度 0.6 以上で選んだ）・none（紐付かない）。同じ年度の当初予算書の内訳（事業）がまだ無ければ空（未判断）。"
-        },
-        {
-          "name": "link_confidence",
-          "type": "number",
-          "nullable": true,
-          "description": "風土記の判断。link_method が jev のときの Jev の確信度。"
-        }
-      ]
-    },
     "project": {
       "primary_key": "project_id",
       "indexes": [
@@ -1150,7 +1028,7 @@
           "name": "name",
           "type": "string",
           "nullable": false,
-          "description": "最新の年度の事業の名前（当初予算の表記を優先。所管課の【】を含む出典の表記のまま）。"
+          "description": "最新の年度の事業の名前（当初予算の表記を優先。所管課の【】・[] を含む出典の表記のまま）。"
         },
         {
           "name": "account_name",
@@ -1340,7 +1218,7 @@
           "name": "sha256",
           "type": "string",
           "nullable": false,
-          "description": "出典 PDF の sha256。evaluation_origin・budget_proposal_origin の origin_id と同じ値。"
+          "description": "出典 PDF の sha256。evaluation_origin の origin_id と同じ値。"
         },
         {
           "name": "page",

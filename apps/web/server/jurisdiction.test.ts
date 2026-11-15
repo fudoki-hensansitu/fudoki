@@ -207,11 +207,16 @@ describe('事業の読み込み（/api/projects）', () => {
       mcp: async () => new Response('x'),
     }
     const sheets = (path: string, body: unknown, e: Env = env) => fetchRoute(new Request(`https://fudoki.dev${path}`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }), e)
-    const q = { code: '131148', year: 2025, codes: ['keep'] }
+    const q = { code: '131148', year: 2025, kind: 'initial', codes: ['keep'] }
     expect(await (await sheets('/api/sheets', { query: q }, { ...env, WEB })).json()).toEqual({ rows: [], next: null })
     expect(await (await sheets('/api/sheets/counts', { query: q }, { ...env, WEB })).json()).toEqual([{ code: null, label: null, grade: null, n: 2 }])
     // 数えるときは区分で絞らない
     expect(seen.map(([n, i]) => [n, (i as { where: Record<string, unknown> }).where.direction_code])).toEqual([['search_evaluation_sheets', { eq: ['keep'] }], ['count_evaluation_sheets', undefined]])
+    // 分野の科目は、頁が見せている資料の目で絞る
+    seen.length = 0
+    await sheets('/api/sheets', { query: { ...q, subjects: [H] } }, { ...env, WEB })
+    expect(Object.keys((seen[0]![1] as { where: Record<string, unknown> }).where)).toContain('initial_expenditure_subject_id')
+    expect((await sheets('/api/sheets', { query: { ...q, kind: 'other' } })).status).toBe(400)
     expect((await sheets('/api/sheets', { query: { ...q, codes: ['x'] } })).status).toBe(400)
     expect((await sheets('/api/sheets', { query: { ...q, code: 'nakano' } })).status).toBe(400)
     expect((await sheets('/api/sheets/counts', { query: { ...q, subjects: ['x'] } })).status).toBe(400)

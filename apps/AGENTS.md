@@ -10,7 +10,7 @@
 - web が持つデータの binding は、web 自身の D1 `fudoki-web`（binding `DB`。会話の保存と、外部サービスから引く参照データ（ADR 0042））だけ
 - 会話: アシスタントの入力 → Turnstile → `/s/:id`。`server/` が Workers AI と apps/api の MCP を繋ぎ、出典の頁を読む tool `read_source_page`（`server/source-pages.ts`）を足す。頁の文字は AI にだけ渡し、画面と保存には出さない。結果は apps/api の MCP Apps の View を sandbox の iframe に描く。構成・上限・手で設定するもの・集計の SQL は `web/README.md`
 - 自治体の OG 画像は `/jurisdictions/<code>/og.png` を Worker が頁と同じデータから描く（`server/og-render.ts`）
-- 自治体の頁の loader は最初の画面に要る分だけを await し、施策・評価シート・お金のかかる事業・流れの図の節は Void の `defer` で同じ応答の後ろに流し、画面は使う部分だけを Suspense と `use()` で待つ（defer の値の script に hash を付けられないので、CSP は inline の script を許す）。頁の中の操作で後から要るもの（やめた事業を分野で絞るときの前の年度の分野の科目など）だけ、ブラウザが `/api/jurisdictions/<code>/<year>/*` から読む
+- 自治体の頁の loader は最初の画面に要る分だけを await し、評価シート・お金のかかる事業・流れの図の節は Void の `defer` で同じ応答の後ろに流し、画面は使う部分だけを Suspense と `use()` で待つ（defer の値の script に hash を付けられないので、CSP は inline の script を許す）。頁の中の操作で後から要るもの（やめた事業を分野で絞るときの前の年度の分野の科目など）だけ、ブラウザが `/api/jurisdictions/<code>/<year>/*` から読む
 - brand・map の資産生成（`build:brand`・`fetch:boundaries`）はこの package の script
 - `web/server/availability.test.ts` が配るファイルと PWA の繋ぎを確かめる
 - DESIGN.md・自治体の頁の作り・都市像の集め方は `.agents/skills/web-app/`
@@ -18,7 +18,7 @@
 ## api（`@fudoki/api`）
 
 - Cloudflare Workers + D1（ADR 0022・0038）。集約ごとの dir（`src/jurisdiction/`・`src/expenditure/` など）に型（`model.ts`）・問い合わせ（`queries.ts`）・REST の route（`routes.ts`、`@hono/zod-openapi`）・MCP の tool（`tools.ts`）を置く。設計は `docs/prd/aggregate-api/dd.md`
-- `src/app.ts` が middleware・MCP（`/mcp`）・`/openapi.json` を持つ。REST は `/v1/jurisdictions*`・`/v1/expenditures/*`・`/v1/evaluations/*`・`/v1/budget-proposals/*`・`/v1/projects*`
+- `src/app.ts` が middleware・MCP（`/mcp`）・`/openapi.json` を持つ。REST は `/v1/jurisdictions*`・`/v1/expenditures/*`・`/v1/evaluations/*`・`/v1/projects*`
 - `src/rpc.ts` が型 `AppType` と、web 用の内部の RPC の型（`WebRpc`）を export する。内部の RPC `Web`（`src/web-entrypoint.ts`、操作は `src/web-ops.ts`）は MCP の tool と同じ名前・schema・問い合わせを使う
 - 出典の頁の文字を読む内部の RPC `SourcePages`（`src/source-pages-entrypoint.ts`）は HTTP の route・MCP に載せない。頁の文字は D1 の `source_page_text` を出典の sha256 で引く（`docs/prd/page-words/dd.md`）
 - 公開か内部かは api のインターフェース（REST の route・MCP の tool・内部の RPC）だけが持ち、D1・marts・`columns.json` には持たせない。内部の RPC だけが読む表は、参照するモジュールを試験で限る

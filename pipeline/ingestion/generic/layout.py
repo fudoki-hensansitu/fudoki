@@ -370,12 +370,15 @@ def _header_bottom(page: Page, frame, one_row: bool = False) -> float:
         candidates = candidates[:1]
     # A row that prints only the unit (`千円` over each column) opens the body on the pages whose header rule is read
     # whole; a page that draws a full rule under it too (国分寺市) keeps it in the body as well: the header ends at the
-    # rule across most of the frame above that row.
+    # rule across most of the frame above that row. The body under the unit row may print text and no figures before
+    # the next full rule (新宿区: a continued page whose only row is the 計, the 財源's name run on from the page before
+    # under the unit): the unit line alone opens the body.
     if candidates:
         wide = [h.y0 for h in horizontals if h.x0 <= x0 + reach and h.x1 - x0 >= .6 * (x1 - x0) and top + 1 < h.y0 < candidates[-1] - 1]
         if wide:
             row = [w for w in page.words if x0 < (w.x0 + w.x1) / 2 < x1 and max(wide) < (w.y0 + w.y1) / 2 < candidates[-1]]
-            if row and all(normalize(w.text) in ('千円', '円') for w in row):
+            first_line = [w for w in row if w.y0 <= min(v.y1 for v in row)] if row else []
+            if first_line and all(normalize(w.text) in ('千円', '円') for w in first_line):
                 return max(wide)
     if candidates:
         return candidates[-1]
@@ -638,6 +641,8 @@ def same_rows(left: Page, right: Page) -> bool:
     if not a or not b:
         return False
     shorter, longer = (a, b) if len(a) <= len(b) else (b, a)
+    if (scaled := document_quirk('scaled_spread_pages')) is not None and scaled.module.matches(shorter, longer) / len(shorter) >= SPREAD_ROW_MATCH:
+        return True
     if (drifting := document_quirk('drifting_spread_rows')) is not None:
         return drifting.module.matches(shorter, longer) / len(shorter) >= SPREAD_ROW_MATCH
     shifts = {round(y - x, 1) for x in shorter for y in longer if abs(y - x) <= SPREAD_MAX_SHIFT} or {0.0}

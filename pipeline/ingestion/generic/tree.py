@@ -402,6 +402,10 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
         money.append([parts[-1].pop()])  # `…委員報償金81`: the short amount set close after the name, one run with it
     if (numbered := document_quirk('numbered_names')) is not None and numbered.module.keeps(parts, money):
         parts.append(money.pop(0))  # `消耗品費 1 … 104`: the number after the name is the name's
+    if money and parts and (wide := document_quirk('wide_digits_in_names')) is not None \
+            and wide.module.in_name([text(run) for run in money]):
+        parts.extend(money)  # the quirk `wide_digits_in_names`: `…議案第３１` / `号、…`, a word of the text
+        money = []
     # Full-width digits without a comma before a half-width grouped amount are part of the name (`…東京２０２４ 1,619,271`).
     while len(money) > 1 and WIDE_DIGITS.fullmatch(text(money[0])) and GROUPED.fullmatch(normalize(text(money[-1]))) \
             and not WIDE_DIGITS.search(text(money[-1])):
@@ -733,6 +737,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         for index, (label, money, code, name) in enumerate(entries):
             if label and not money and code is None and (found := shares.module.split(label, _cut)) is not None:
                 entries[index] = (found[0], [found[1]], None, normalize(text(found[0])))
+    if (wrapped := quirk(settings, 'wrapped_departments')) is not None:
+        entries, origin = wrapped.module.join(entries)
+        if roles is not None:  # the roles were judged on the lines before the join
+            roles = {new: roles[old] for new, old in enumerate(origin) if old in roles}
     if (tabled := quirk(settings, 'labels_over_amounts')) is not None:
         # Each label of a table of notes with the amount under it is a note of its own (the quirk); the roles of the
         # other lines keep their entries.
@@ -748,6 +756,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
     kind_names = quirk(settings, 'names_end_with_kind_words')
     remainder = quirk(settings, 'bracketed_remainder')
     department = quirk(settings, 'department_line')
+    bracket_heading = quirk(settings, 'bracket_heading_amount_below')
     headings = quirk(settings, 'headings')
     glued = quirk(settings, 'glued_numbers')
     stops = quirk(settings, 'glued_number_stops')
@@ -905,7 +914,8 @@ def items(group: Group, header: str, margins: set[int] | None = None,
             continue
         whole = normalize(text(line_of(label, money)))
         if (previous is not None and code is None and whole[:1] in '(（' and whole[-1:] in ')）'
-                and not (amount_brackets and money) and not whole.startswith(note_prefixes(settings))):
+                and not (amount_brackets and money) and not whole.startswith(note_prefixes(settings))
+                and not (bracket_heading is not None and not money and bracket_heading.module.heads(entries, index))):
             previous.lines.append(label + [g for run in money for g in run])
             previous.name += whole  # a parenthesised remark on the previous item, not an amount of it
             continue
@@ -1521,10 +1531,12 @@ def _owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[in
             if above:
                 return max(above, key=lambda i: centre(i.lines[-1]))
     if band.inline:
+        # The quirk `tall_kind_stacks` lets a stack run to 8 heights (seven lines), not 6.
+        reach_in_heights = 8 if document_quirk('tall_kind_stacks') is not None else 6
         # Kind lines stacked in the cell of the item that opens them (`計` / `当初` / `補正` …, one line each): the
         # nearest item above in the nearest label group, within the height of the stack.
         for group in left:
-            stacked = [i for i in found[id(group)] if i.role in roles and 0 <= y - i.anchor <= 6 * height]
+            stacked = [i for i in found[id(group)] if i.role in roles and 0 <= y - i.anchor <= reach_in_heights * height]
             if stacked:
                 return max(stacked, key=lambda i: i.anchor)
     return None
@@ -2793,6 +2805,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                             'text': candidate, 'header': header})
                             continue
                         header = '／'.join(band.header[:-1] + (band.lines[index],))
+                    carried_unit = None
+                    if (tagged := document_quirk('carry_kind_words')) is not None and not band.inline and not band.lines:
+                        # The quirk `carry_kind_words`: `明許 20,942,000`, the kind of the carried-over amount before it,
+                        # in the unit of its column.
+                        word = normalize(''.join(g.text for g in line if g not in money and g.text not in SIGNS))
+                        if (kind_header := tagged.module.heading(band.header, word)) is not None:
+                            carried_unit, header = logical.unit_of(header), kind_header
                     y = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
                     if unpaid and stacked[1] != _cell(band, y) and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
                         unpaid_rounds.extend(stacked_label)  # the cell ended without an amount for it
@@ -2805,7 +2824,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             # amount of its own (the column's total is the sum).
                             remarks.append({'kind': 'kind line', 'target': target, 'heading': header, 'label': stacked_label,
                                             'runs': [money], 'unit': logical.unit_of(header)})
-                    amounts.append(_amount(target.key, header, money, logical.unit_of(header)))
+                    amounts.append(_amount(target.key, header, money, carried_unit or logical.unit_of(header)))
                     if target.role == 'repeat' and not target.group.subject:
                         repeated_codes.extend(money)  # the open item's amount printed again (`repeated_at_top`)
                     owned.add(target.key)

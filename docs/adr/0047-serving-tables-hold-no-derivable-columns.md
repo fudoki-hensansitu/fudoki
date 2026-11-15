@@ -31,7 +31,7 @@ ADR 0022 は、API の検索が JOIN を持たないことを前提にしてい�
 ## Consequences
 
 - 根 `expenditure` は、科目・内訳の表に行がある取り込みの行（`int_fiscal__expenditure_rows`）から作る。
-- dbt で所属する款・項・目と子の有無が要る所（根の COFOG の額、事業の行、評価シートの紐付け、Queria の表、検査）は、ephemeral の `int_fiscal__subject_path` を JOIN する。自治体・年度・資料区分が要る所（評価シート・予算案の施策の紐付けなど）は、根 `expenditure` を JOIN する。
+- dbt で所属する款・項・目と子の有無が要る所（根の COFOG の額、事業の行、評価シートの紐付け、Queria の表、検査）は、view の `int_fiscal__subject_path` を JOIN する。自治体・年度・資料区分が要る所（評価シートの紐付けなど）は、根 `expenditure` を JOIN する。
 - D1 の index は、根を `(fiscal_year, document_kind, jurisdiction_code)` で引き、科目を `(expenditure_id, level)`、内訳を `(expenditure_id, breakdown)` で引く形にする。年度・資料区分の絞り込みは、根への JOIN で保つ。
 - 表の列と index が変わるので、merge 後の同期で D1 の科目・内訳の表を作り直す（全行を書き直す）。
 - web（`apps/web/server/app-data.ts` の分野の振り分け）と api（`suggestions.ts`）は、`is_leaf` を API の応答から読む。値は SQL で求めるので、web 側の変更は要らない。

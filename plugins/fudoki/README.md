@@ -6,7 +6,7 @@
 
 ローカル開発時はrepoの `docs/prd/mcp-distribution/install.md` でCodex・Claude Code・Cursorを選んでください。Gitからの導入・更新は [導入ガイド](https://github.com/fudoki-hensansitu/fudoki/blob/main/docs/prd/mcp-distribution/install.md)を参照してください。ChatGPTとChatGPT desktopのCodexでは[plugin ディレクトリ](https://chatgpt.com/plugins/plugin_asdk_app_6ad87dc03a608191a13bba05310ea5d9)からインストールできます。Claude Codeのセッション内では `/plugin install fudoki --marketplace fudoki-hensansitu/fudoki` を実行できます（v2.1.275以降）。導入ガイドの `claude plugin marketplace add` と `claude plugin install` はshellで行う同じ導入の二段階手順です。
 
-共通skillは `skills/compare-expenditure/SKILL.md`。Claude Codeでは `/fudoki:compare-expenditure`、Codex・Cursorでは導入後のskill一覧から呼び出せます。収録範囲・列説明を確認してから検索・比較します。事業評価の評価シートと予算案の施策を引く手順は `skills/compare-expenditure/references/evaluation.md`。UI非対応hostでは構造化結果と出典リンクを使います。
+共通skillは `skills/compare-expenditure/SKILL.md`。Claude Codeでは `/fudoki:compare-expenditure`、Codex・Cursorでは導入後のskill一覧から呼び出せます。収録範囲・列説明を確認してから検索・比較します。事業評価の評価シートと事業を引く手順は `skills/compare-expenditure/references/evaluation.md`。UI非対応hostでは構造化結果と出典リンクを使います。
 
 API・MCP・UIはURLの先で更新されます。skillや接続設定はpluginの更新が必要です。`serverInfo.version` はpluginの自動更新通知ではありません。詳細は導入ガイドにあります。
 

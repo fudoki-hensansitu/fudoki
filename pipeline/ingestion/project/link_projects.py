@@ -10,7 +10,7 @@ dbt の `int_project__line_ids`（Python model）が、build のたびに `int_p
 3. 前の年度の事業の1年度と、上の段から結ぶ。目の直下は会計・款・項・目と名前、その下は親が同じ事業の中で名前が、
    両方に1つずつあるときだけ同じ事業にする。前の年度に無い事業は新しい事業にする（手順4の Jev はまだ使わない）。
 
-名前は NFKC にし、【所管課】から後ろ・「(うち…)」の注記・空白を除いて比べる。
+名前は NFKC にし、【所管課】から後ろ・末尾の [所管課]・「(うち…)」の注記・空白を除いて比べる。
 事業ID は事業の最初の年度の行の鍵の sha256。毎回計算し直しても、最初の年度の行が変わらない限り同じ ID になる。
 """
 from __future__ import annotations
@@ -22,13 +22,15 @@ import unicodedata
 from collections import defaultdict
 from dataclasses import dataclass, field
 
+# 所管課を [] で印字する自治体（中央区・八王子など）。[1人分]・[科目存置] のような注記は所管課の語尾で外す
+DEPARTMENT_BRACKET = re.compile(r'\[[^\[\]0-9]*(?:課|部|局|室|所|係|センター|委員会|館)\]\s*$')
 KEY = ('jurisdiction_code', 'fiscal_year', 'document_kind', 'account_name', 'kan_name', 'kou_name', 'moku_name', 'path')
 
 
 def normalize(name: str) -> str:
-    """名前を比べる形。NFKC、【所管課】から後ろ（所管課と注記）、「(うち…)」の内訳の注記（職員費の退職手当負担金の額など、年度で変わる）と空白を除く。"""
-    text = unicodedata.normalize('NFKC', name)
-    return re.sub(r'\s', '', re.sub(r'\(うち[^)]*\)', '', re.sub(r'【.*$', '', text)))
+    """名前を比べる形。NFKC、【所管課】から後ろ（所管課と注記）、末尾の [所管課]、「(うち…)」の内訳の注記（職員費の退職手当負担金の額など、年度で変わる）と空白を除く。"""
+    text = DEPARTMENT_BRACKET.sub('', re.sub(r'【.*$', '', unicodedata.normalize('NFKC', name)))
+    return re.sub(r'\s', '', re.sub(r'\(うち[^)]*\)', '', text))
 
 
 @dataclass

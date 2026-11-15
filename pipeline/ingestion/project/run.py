@@ -1,10 +1,9 @@
-"""事業についての資料（事業評価の評価シート、予算案のプレス発表）を、出典の PDF から読んで入力準備の表にする。
+"""事業評価の評価シートを、出典の PDF から読んで入力準備の表にする。
 
-各行は資料の粒度のまま（評価シート1枚、施策1件）にし、予算書・決算書の事業（内訳）への紐付けは dbt と seed で足す。
+各行は資料の粒度のまま（評価シート1枚）にし、予算書・決算書の事業への紐付けは dbt で足す。
 
-評価シートは出典の選定の `evaluation_selections`、予算案のプレス発表は `press_selections` で保存済みの PDF を読む。
-どの様式で読むかは `origins.json` の `layout` で決める。
-プレス発表は工程ごとのパターンの組み合わせ（`workflow`、`press/`）か、型に収まらない自治体だけ `layout` で読む
+評価シートは出典の選定の `evaluation_selections` で保存済みの PDF を読む。
+どの様式で読むかは `origins.json` の宣言で決める。工程ごとのパターンの組み合わせ（`workflow`、`sheet/`）か、型に収まらない自治体だけ `layout` で読む
 （年度ごとに様式が違うことがあるので `years` で年度を絞れる）。読んだ結果は PDF の指紋と読み方のコードの指紋ごとにキャッシュし、
 同じ PDF を毎回読み直さない。
 """
@@ -19,7 +18,7 @@ from pathlib import Path
 
 from ingestion.fiscal.storage import fetch
 from ingestion.paths import CACHE, PIPELINE
-from ingestion.project import press, sheet
+from ingestion.project import sheet
 
 HERE = Path(__file__).parent
 ORIGINS = HERE / 'origins.json'
@@ -49,7 +48,7 @@ def sheet_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[d
             for stored in archive['files']:
                 url = stored.get('final_url') or next(
                     f['download_url'] for f in candidate['files'] if f['sha256'] == stored['sha256'])
-                out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': year, 'reader': 'sheet',
+                out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': year,
                             **({'layout': entry['layout']} if 'layout' in entry else {}),
                             **({'workflow': entry['workflow']} if 'workflow' in entry else {}),
                             # OCR で読む冊は固定した観測（未固定なら None、読むときに止める）
@@ -60,39 +59,14 @@ def sheet_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[d
     return out
 
 
-def press_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[dict]:
-    """予算案のプレス発表の出典。出典の選定で保存済みの資料を、宣言の様式で読む。分冊は1冊ずつ別の出典にする。"""
-    out = []
-    for entry in declared:
-        selection = json.loads((selections / f'{entry["jurisdiction"]}.json').read_text(encoding='utf-8'))
-        for item in selection.get('press_selections', []):
-            archive = item.get('archive')
-            year = item['target']['fiscal_year']
-            if not archive or ('years' in entry and year not in entry['years']):
-                continue
-            candidate = next(c for c in item['candidates'] if c['id'] == archive['candidate_id'])
-            for stored in archive['files']:
-                url = stored.get('final_url') or next(
-                    f['download_url'] for f in candidate['files'] if f['sha256'] == stored['sha256'])
-                out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': year,
-                            **({'layout': entry['layout']} if 'layout' in entry else {}),
-                            **({'workflow': entry['workflow']} if 'workflow' in entry else {}),
-                            'title': candidate['title'], 'landing_url': candidate['landing_url'], 'url': url,
-                            'sha256': stored['sha256'], 'reference': {'key': stored['key'], 'sha256': stored['sha256']}})
-    return out
-
-
 def layout(name: str):
     return importlib.import_module(f'ingestion.project.layouts.{name}')
 
 
 def code_fingerprint(origin: dict) -> str:
-    """読み方の指紋（様式のモジュールか、評価シートの sheet/・プレス発表の組み合わせたパターンと共通の press.py、宣言の workflow）。読み方を直したらキャッシュを読み直す。"""
+    """読み方の指紋（様式のモジュールか sheet/ のパターン、宣言の workflow）。読み方を直したらキャッシュを読み直す。"""
     workflow = origin.get('workflow')
-    if origin.get('reader') == 'sheet':
-        files = sheet.modules() if workflow else [Path(layout(origin['layout']).__file__)]
-    else:
-        files = [*(press.modules(workflow) if workflow else [Path(layout(origin['layout']).__file__)]), HERE / 'layouts' / 'press.py']
+    files = sheet.modules() if workflow else [Path(layout(origin['layout']).__file__)]
     from importlib.metadata import version
 
     from ingestion.lib import poppler
@@ -114,7 +88,7 @@ def read_cached(path: Path, origin: dict, *, remote: bool = False) -> object:
         # 古い読み（空の一覧）のキャッシュで黙って飛ばさないよう、キャッシュを見る前に止める
         raise ValueError(f'{origin["jurisdiction"]} {origin["fiscal_year"]} {origin["sha256"][:12]}: OCR の観測が宣言に固定されていない'
                          '（python -m ingestion.project.sheet.ocr で読む）')
-    name = origin.get('layout', origin.get('reader', 'press'))
+    name = origin.get('layout', 'sheet')
     cache = READINGS / f'{origin["sha256"]}-{name}-{code_fingerprint(origin)}.json'
     if cache.exists():
         return json.loads(cache.read_text(encoding='utf-8'))
@@ -124,7 +98,7 @@ def read_cached(path: Path, origin: dict, *, remote: bool = False) -> object:
 
         result = sheet.read(path, origin['workflow'], ocr.pages(ocr.fetch(origin['sha256'], origin['ocr'], remote=remote)))
     elif 'workflow' in origin:
-        result = (sheet if origin.get('reader') == 'sheet' else press).read(path, origin['workflow'])
+        result = sheet.read(path, origin['workflow'])
     else:
         result = layout(origin['layout']).read(path)
     data = [dataclasses.asdict(r) for r in result]
@@ -187,7 +161,7 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
         declared = {kind: [o for o in entries if o['jurisdiction'] in jurisdictions] for kind, entries in declared.items()}
     tables: dict[str, list[tuple]] = {name: [] for name in (
         'project_origin', 'project_evaluation_sheet', 'project_evaluation_indicator', 'project_evaluation_indicator_value',
-        'project_budget_measure', 'project_source_page_text')}
+        'project_source_page_text')}
     paths: dict[str, Path] = {}
     for origin in sheet_sources(declared['sheets']):
         path = fetch(origin['reference'], remote=remote)
@@ -196,7 +170,7 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
             # 施策の冊などシートの無い冊は出典にしない
             continue
         paths[origin['sha256']] = path
-        tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'sheets', origin['fiscal_year'],
+        tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], origin['fiscal_year'],
                                             origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
         for item in sheets:
             if 'fiscal_year' in item and item['fiscal_year'] != origin['fiscal_year']:
@@ -221,22 +195,13 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
                     tables['project_evaluation_indicator_value'].append((
                         origin_id(origin), item['page'], indicator['position'], int(year),
                         indicator['targets'].get(year), indicator['actuals'].get(year)))
-    for origin in press_sources(declared['press']):
-        path = paths[origin['sha256']] = fetch(origin['reference'], remote=remote)
-        items = read_cached(path, origin)
-        tables['project_origin'].append((origin_id(origin), origin['jurisdiction'], 'press', origin['fiscal_year'],
-                                            origin['title'], origin['url'], origin['landing_url'], origin['sha256']))
-        for item in items:
-            tables['project_budget_measure'].append((
-                origin_id(origin), item['page'], item.get('position', 1), item['title'], json.dumps(item['names'], ensure_ascii=False),
-                item['is_new'], item['budget_thousand'], json.dumps(item['points'], ensure_ascii=False)))
     if page_texts:
         tables['project_source_page_text'] = page_text_rows(paths)
     return tables
 
 
 SCHEMAS = {
-    'project_origin': 'origin_id varchar, jurisdiction_code varchar, document_type varchar, fiscal_year integer, '
+    'project_origin': 'origin_id varchar, jurisdiction_code varchar, fiscal_year integer, '
                          'title varchar, url varchar, landing_url varchar, sha256 varchar',
     'project_evaluation_sheet': 'origin_id varchar, page integer, position integer, evaluation_year integer, name varchar, account_name varchar, '
                         'kan varchar, kou varchar, moku varchar, jigyo varchar, '
@@ -247,8 +212,6 @@ SCHEMAS = {
                             'definition varchar, final_target_text varchar, final_target_year_text varchar',
     'project_evaluation_indicator_value': 'origin_id varchar, page integer, position integer, fiscal_year integer, '
                                   'target_text varchar, actual_text varchar',
-    'project_budget_measure': 'origin_id varchar, page integer, position integer, title varchar, names varchar, is_new boolean, '
-                  'budget_thousand bigint, points varchar',
     'project_source_page_text': 'sha256 varchar, page integer, text varchar',
 }
 

@@ -1,0 +1,237 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131172",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "612a0b3c6423405b7ef0d77d9c104f44c3af191d3643d3879eaa6d1f3682f8cc"
+        }
+      ],
+      "options": {
+        "table_id": "general-setsu",
+        "account": "一般会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-setsu"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "612a0b3c6423405b7ef0d77d9c104f44c3af191d3643d3879eaa6d1f3682f8cc"
+        }
+      ],
+      "options": {
+        "table_id": "kaigo-setsu",
+        "account": "介護保険会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-setsu"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "612a0b3c6423405b7ef0d77d9c104f44c3af191d3643d3879eaa6d1f3682f8cc"
+        }
+      ],
+      "options": {
+        "table_id": "kokuho-setsu",
+        "account": "国民健康保険事業会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-setsu"
+        }
+      ]
+    },
+    {
+      "id": "kouki-setsu",
+      "converter": "fiscal/layouts/workflow_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "612a0b3c6423405b7ef0d77d9c104f44c3af191d3643d3879eaa6d1f3682f8cc"
+        }
+      ],
+      "options": {
+        "table_id": "kouki-setsu",
+        "account": "後期高齢者医療会計",
+        "part": "detail",
+        "workflow": {
+          "reading": {
+            "pattern": "clipped_columns",
+            "profile": "fiscal/jurisdictions/131172/layouts/text_settlement/reading.json"
+          },
+          "components": [
+            "clipped_words"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-setsu"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-setsu",
+      "conversion_id": "general-setsu",
+      "input_fingerprint": "dc40f04085af6696d62d9507e00334a37baa1f6ec50d945cc8b713a80ca8e080",
+      "account": "一般会計",
+      "notes": [
+        "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「一般会計」会計標は行の備考ではないため除く。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2023/settlement/expenditure/general-setsu-nodes.parquet",
+          "sha256": "f6107ab565ab76b2ae53944f3ade419dd9c6c04261fc051fb4b54e4afe86a4a7",
+          "bytes": 28479
+        },
+        "row_count": 1149
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2023/settlement/expenditure/general-setsu-amounts.parquet",
+          "sha256": "ee7b88ef3675b80cfcb6880d6bdef535168f0fca3e9d31cf42d55f054a26f351",
+          "bytes": 49218
+        },
+        "row_count": 7449
+      }
+    },
+    {
+      "table_id": "kaigo-setsu",
+      "conversion_id": "kaigo-setsu",
+      "input_fingerprint": "a68cca0f5f768b94856ccb4a90f46de86214bbd05bc2d6154f726fea2fa65305",
+      "account": "介護保険会計",
+      "notes": [
+        "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「介護保険会計」会計標は行の備考ではないため除く。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2023/settlement/expenditure/kaigo-setsu-nodes.parquet",
+          "sha256": "97eb390b5f3eed001aec065ebb629ed9b9f71209f16c1d9e6c077ff77444156b",
+          "bytes": 7665
+        },
+        "row_count": 129
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2023/settlement/expenditure/kaigo-setsu-amounts.parquet",
+          "sha256": "3287139c340413527ac37f8c81be893bfec982a88b74883ef26b686f13f7340a",
+          "bytes": 9157
+        },
+        "row_count": 989
+      }
+    },
+    {
+      "table_id": "kokuho-setsu",
+      "conversion_id": "kokuho-setsu",
+      "input_fingerprint": "351411a89b8df3d2bb62cb28dc7dd228287a8b404f33058cb8482c79ff8d27ce",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「国民健康保険事業会計」会計標は行の備考ではないため除く。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2023/settlement/expenditure/kokuho-setsu-nodes.parquet",
+          "sha256": "caec22929fc20c4b84a60c0db5a167440dc96a82fa597678566e7951f32091ae",
+          "bytes": 7061
+        },
+        "row_count": 111
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2023/settlement/expenditure/kokuho-setsu-amounts.parquet",
+          "sha256": "8b83c1ba11aa2a2c4079395a6f52500bd52462d26837707b78f6abb80f554bd6",
+          "bytes": 8279
+        },
+        "row_count": 966
+      }
+    },
+    {
+      "table_id": "kouki-setsu",
+      "conversion_id": "kouki-setsu",
+      "input_fingerprint": "78418cbd439752ce598f89dc8791b0a8fff1ebd58936775539bbde991eec3308",
+      "account": "後期高齢者医療会計",
+      "notes": [
+        "最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、節のない目（予備費等）は目行が葉行（区分_列は空）。款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が印字される。備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち最上位の行の備考欄へセル全文を印字行の改行のまま保持する。物理頁はPDFの物理頁。名称の折り返しは改行、字間の印字間隔は空白で保持。本文の文字は描画が二重（クリップ済みの幽霊層は含めない）。見開き末尾の「後期高齢者医療会計」会計標は行の備考ではないため除く。",
+        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2023/settlement/expenditure/kouki-setsu-nodes.parquet",
+          "sha256": "70a5e419dd330bc20e1051cedbc785bc0dc396e7d125da01a43aeaf21a259c7c",
+          "bytes": 4968
+        },
+        "row_count": 51
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131172/2023/settlement/expenditure/kouki-setsu-amounts.parquet",
+          "sha256": "9ed8f2bb398722ba53d0f9903b68789d9b8c741e3b4427df690f55b6224bafdc",
+          "bytes": 5581
+        },
+        "row_count": 411
+      }
+    }
+  ]
+}

@@ -71,10 +71,19 @@ def fit(xs: list[float], places: tuple) -> tuple[int, float]:
     return best
 
 
+def stray(xs: list[float], places: tuple, left: float) -> int:
+    """How many rules read between the frame's sides stand at none of the columns' places."""
+    return sum(1 for x in xs if places[0] + NEAR < x - left < places[-1] - NEAR
+               and not any(abs(x - left - p) <= NEAR for p in places))
+
+
 def kind(page: Page) -> tuple[tuple | None, float]:
     xs = verticals(page)
     scores = {headings: fit(xs, PLACES[headings]) for headings in (LEFT, RIGHT)}
-    sure = [h for h in (LEFT, RIGHT) if scores[h][0] >= SURE[h] and scores[h][0] > scores[LEFT if h is RIGHT else RIGHT][0]]
+    # A rule between the sides at none of the places is another table's (the 款 summary's 財源内訳 has columns of its own
+    # whose sides fall near some of the left page's).
+    sure = [h for h in (LEFT, RIGHT) if scores[h][0] >= SURE[h] and scores[h][0] > scores[LEFT if h is RIGHT else RIGHT][0]
+            and not stray(xs, PLACES[h], scores[h][1])]
     if sure:
         return sure[0], scores[sure[0]][1]
     return None, max(scores.values())[1] if xs else 0.0

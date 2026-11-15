@@ -3,7 +3,6 @@
 import { z } from 'zod'
 import type { Env } from './db'
 import { ApiError } from './errors'
-import { budgetProposalTools } from './budget-proposal/tools'
 import { evaluationTools } from './evaluation/tools'
 import { SheetCountOutput, SheetSearchInput } from './evaluation/model'
 import { countSheets } from './evaluation/queries'
@@ -35,8 +34,6 @@ export const WEB_OPS = {
   search_evaluation_sheets: ofTool(evaluationTools.searchSheets),
   // 事業評価の A〜D の札。条件に当たるシートを方向性の区分ごとに数える（シートを全部 web へ渡さない）
   count_evaluation_sheets: op(SheetSearchInput, SheetCountOutput, (ctx, input) => countSheets(ctx, input)),
-  get_budget_proposal: ofTool(budgetProposalTools.get),
-  search_budget_measures: ofTool(budgetProposalTools.searchMeasures),
   get_project: ofTool(projectTools.get),
   search_projects: ofTool(projectTools.search),
 }

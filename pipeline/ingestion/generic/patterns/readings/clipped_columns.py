@@ -272,6 +272,7 @@ class Reader(Reading):
         """
         current = {}
         leaves, parents, note_cells, orphans = [], [], [], []
+        moku_leaf = None                # (record, context) for a 目 awaiting its first 節; a page break does not close it
         for page, words in pages:
             body = [w for w in words if self.BODY_TOP <= w['yMin'] < self.BODY_BOTTOM]
             events = []
@@ -290,7 +291,6 @@ class Reader(Reading):
             # it and emit after assign_notes so a merged remarks cell on the same
             # page is already attached to its record.
             delayed_moku = []           # (record, context) closed by a new parent
-            moku_leaf = None            # (record, context) for a 目 awaiting its first 節
             for index, (y, kind, row) in enumerate(events):
                 name_high = events[index + 1][0] - 7.5 if index + 1 < len(events) else self.BODY_BOTTOM
                 if kind == 'parent':

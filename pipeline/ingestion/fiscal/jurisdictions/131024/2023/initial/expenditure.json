@@ -80,6 +80,7 @@
                 },
                 "quirks": {
                   "office_departments": true,
+                  "wrapped_departments": true,
                   "kana_set_apart": true
                 }
               }
@@ -169,6 +170,7 @@
                 },
                 "quirks": {
                   "office_departments": true,
+                  "wrapped_departments": true,
                   "kana_set_apart": true
                 }
               }
@@ -258,6 +260,7 @@
                 },
                 "quirks": {
                   "office_departments": true,
+                  "wrapped_departments": true,
                   "kana_set_apart": true
                 }
               }
@@ -346,6 +349,7 @@
                 },
                 "quirks": {
                   "office_departments": true,
+                  "wrapped_departments": true,
                   "kana_set_apart": true
                 }
               }
@@ -434,6 +438,7 @@
                 },
                 "quirks": {
                   "office_departments": true,
+                  "wrapped_departments": true,
                   "kana_set_apart": true
                 }
               }
@@ -455,11 +460,11 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "791cb4bc26feae844144c77a7de079581be4a8780dc608c65382fc6156080ca5",
+      "input_fingerprint": "e530db5ff5745003582b5a9fe6653d65550a8cb9c59194107a855a78d399fae8",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は column mark 39頁・carried 156頁 から決めた。分冊のため款の和 77,179,052 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の単位は column mark 39頁・carried 197頁 から決めた。分冊のため款の和 77,179,052 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 3 件（積算 3）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（62 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
       ],
@@ -468,8 +473,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2023/initial/expenditure/general-initial-1-nodes.parquet",
-          "sha256": "9117c67f4b286c733dda0d97c5c3c0f269a73a52161f1dfddf2470de51edb441",
-          "bytes": 48803
+          "sha256": "00b741b7dff52cb67607e2cb842b0be484bf63f655b11fbdbe5f7af1bf10eef4",
+          "bytes": 48808
         },
         "row_count": 1258
       },
@@ -485,11 +490,11 @@
     {
       "table_id": "general-initial-2",
       "conversion_id": "general-initial-2",
-      "input_fingerprint": "fc434c58ff586da889d24a8ae52e2c4c2d37824b8bac3117a32c86e77a638106",
+      "input_fingerprint": "75a4e84b657b8477cb5aa8b1299e8484b0fbdfb843b8485738cb3e21cee1d722",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は column mark 15頁・carried 46頁 から決めた。分冊のため款の和 71,214,712 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の単位は column mark 15頁・carried 61頁 から決めた。分冊のため款の和 71,214,712 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（29 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
       ],
@@ -515,11 +520,11 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "05ec952b66efd00c68e9aa66d6da8a3508d7b45568e89a941aafdfaea2aebb4a",
+      "input_fingerprint": "224aa9c47fbc516e3e8897db1ffee82167eb2e3111420d2b04d853dc3c79091d",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は column mark 24頁・carried 62頁 から決めた。款の和 14,044,404（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は column mark 24頁・carried 74頁 から決めた。款の和 14,044,404（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 1 件（積算 1）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（61 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
       ],
@@ -528,28 +533,28 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2023/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "1457af5697132550da278939ca1114942c798812f5acdac10961d0283f340c0b",
-          "bytes": 9586
+          "sha256": "1110a35216f7ca6f55e2f3de896ba2fc92bbf45fffe7ac0301313d33712bd8ae",
+          "bytes": 9532
         },
-        "row_count": 156
+        "row_count": 155
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2023/initial/expenditure/national-health-initial-amounts.parquet",
-          "sha256": "59314edcc162815486703c38f7bef04a15bd9b5d205747d10b97d72f5fc779ca",
-          "bytes": 7692
+          "sha256": "e261f3e3201ae7cb6af64144a2af64381f38e5922d525b0189457f781b4e27e7",
+          "bytes": 7665
         },
-        "row_count": 278
+        "row_count": 277
       }
     },
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "72b2e8bbcfadf676362bdd4da8f011787d700aa0a0c2c7843cd1e60de847bd80",
+      "input_fingerprint": "e7a33524ee333547f48ac2a1ffbaa736d0524afa3906abec4c29e50c1ffbf950",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は column mark 24頁・carried 59頁 から決めた。款の和 9,260,607（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は column mark 24頁・carried 73頁 から決めた。款の和 9,260,607（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（48 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
       ],
@@ -558,28 +563,28 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131024/2023/initial/expenditure/care-initial-nodes.parquet",
-          "sha256": "b9b20ec18ed29d3f154ee422447eb009751ca942361472d96f0e03b72a74ea17",
-          "bytes": 10596
+          "sha256": "80153d0c52253f3e0f5c60b39abeb5f3e946381a729765463d6cb8a1e6001ed7",
+          "bytes": 10499
         },
-        "row_count": 180
+        "row_count": 179
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/131024/2023/initial/expenditure/care-initial-amounts.parquet",
-          "sha256": "66317ad9cd073054136615c73383232896999b810140a77284b467a0eeaa06be",
-          "bytes": 8475
+          "sha256": "a52735f52df795bfb20167c2bfd1318947b41efce24d8c55e7f180333327996f",
+          "bytes": 8427
         },
-        "row_count": 276
+        "row_count": 275
       }
     },
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "bc6702102e76fb8ad3d9ad14809f55f1330c5841f45164f1b6e247ad5890ccf7",
+      "input_fingerprint": "fc1261deb1e1be670ce3724b65a454252f856e38ea448e1f70bc9bae423b8f05",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は column mark 8頁・carried 19頁 から決めた。款の和 3,502,836（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の単位は column mark 8頁・carried 24頁 から決めた。款の和 3,502,836（頁に歳出合計の印字なし。桁だけを確かめた）。",
         "金額の注記 1 件（積算 1）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（24 件）を、印字された語から辞書の見出しに寄せた: 比較増(△)減→比較増減。"
       ],

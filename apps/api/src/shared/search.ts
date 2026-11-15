@@ -221,9 +221,14 @@ export function searchInputFor(t: FiscalTable) {
   return z.strictObject({ document_kind: DOCUMENT_KIND_INPUT, ...searchShape(t) }).superRefine(checkSearch)
 }
 
-/** 資料区分の無い表（評価シート・施策）の検索の入力（年度が必須） */
+/** 資料区分の無い表（評価シート）の検索の入力（年度が必須） */
 export function yearSearchInputFor(t: FiscalTable) {
   return z.strictObject(searchShape(t)).superRefine(checkSearch)
+}
+
+/** 資料区分の無い表の検索の入力に、表の列ではない絞り込み（別の表を引くもの）を足す */
+export function yearSearchInputWith<E extends z.ZodRawShape>(t: FiscalTable, extra: E) {
+  return z.strictObject({ ...searchShape(t), ...extra }).superRefine((v, ctx) => checkSearch(v as ShapeValue, ctx))
 }
 
 export type SearchInput = z.output<ReturnType<typeof yearSearchInputFor>> & { document_kind?: string }

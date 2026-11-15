@@ -21,8 +21,9 @@ differently instead of serialising everything:
 Memory pressure is the kernel's own level (`kern.memorystatus_vm_pressure_level`: 1 normal,
 2 warning, 4 critical), read at the start. It is chosen over a swap threshold because swap stays
 used after the pressure has eased, and over macOS "free" memory, which is not what the kernel acts
-on. If the level cannot be read (the agent sandbox blocks sysctl) while another run is active, the
-start is refused rather than guessed.
+on. Linux (the cloud containers) has no such sysctl, so its pressure stall information
+(`/proc/pressure/memory`) is mapped onto the same levels. If the level cannot be read (the agent
+sandbox blocks sysctl and PSI) while another run is active, the start is refused rather than guessed.
 
 Nothing waits. A refused run exits immediately with the holders' PID and command and the reason
 (memory pressure / concurrency limit / same target / OCR exclusion), so a caller can decide between waiting for the
@@ -61,7 +62,23 @@ def memory_pressure_level() -> int | None:
             return None
         return value.value
     except (OSError, AttributeError, TypeError):
+        return linux_pressure_level()
+
+
+def linux_pressure_level(path: Path = Path('/proc/pressure/memory')) -> int | None:
+    """Linux has no sysctl level; map the kernel's pressure stall information onto the same scale.
+
+    `some avg10` is the share of the last 10 s in which a task stalled on memory: under 10% is
+    normal (1), under 40% warning (2), otherwise critical (4). None when PSI cannot be read.
+    """
+    try:
+        for line in path.read_text().splitlines():
+            if line.startswith('some '):
+                stalled = float(dict(item.split('=') for item in line.split()[1:])['avg10'])
+                return 1 if stalled < 10 else 2 if stalled < 40 else 4
+    except (OSError, KeyError, ValueError):
         return None
+    return None
 
 
 class Holder:

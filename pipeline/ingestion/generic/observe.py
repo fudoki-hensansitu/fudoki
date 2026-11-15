@@ -278,6 +278,18 @@ def _drawn_dark(pdf: Path, page, rects: list[dict]) -> bool:
     return all(dark)
 
 
+def _to_poppler(page, rules: list[Rule]) -> list[Rule]:
+    """Rules from pdfplumber's coordinates into Poppler's, where the words are.
+
+    Poppler measures from the MediaBox's top-left corner, pdfplumber from its own page box: a MediaBox that does not
+    start at the origin (131202's 2023 settlement: -11.99, 11.99) puts every rule that far from the words.
+    """
+    dx, dy = page.bbox[0], page.bbox[1]
+    if not dx and not dy:
+        return rules
+    return [Rule(r.x0 - dx, r.y0 - dy, r.x1 - dx, r.y1 - dy) for r in rules]
+
+
 def merge_rules(rules: list[Rule], tolerance: float = 2.5, gap: float = 2.0) -> list[Rule]:
     """Merge parallel rules drawn as several thin strokes and join collinear pieces."""
     merged = []
@@ -325,7 +337,7 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None,
             page = document.pages[number - 1]
             items = drop_hidden_copies(pdf, number, width, items)
             items, glyph_rules = rule_glyphs(items, page.chars)
-            result.append(Page(number, width, height, items, merge_rules(_segments(page, pdf) + glyph_rules)))
+            result.append(Page(number, width, height, items, merge_rules(_to_poppler(page, _segments(page, pdf)) + glyph_rules)))
             page.close()
     if cache is not None:
         cache.parent.mkdir(parents=True, exist_ok=True)

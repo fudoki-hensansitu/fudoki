@@ -1,7 +1,7 @@
 version: 2
 models:
 - name: source_page_text
-  description: 出典の頁の文字（事業評価・予算案のプレス発表の PDF）。頁1つが1行。文字の層の語を行にまとめ、列を空白で揃えた形。文字が1字も無い出典は行が無い。
+  description: 出典の頁の文字（事業評価の PDF）。頁1つが1行。文字の層の語を行にまとめ、列を空白で揃えた形。文字が1字も無い出典は行が無い。
   columns:
   - name: page_id
     description: 頁の識別子。sha256 と頁から作る。
@@ -15,7 +15,7 @@ models:
           to: ref('jurisdiction')
           field: jurisdiction_code
   - name: sha256
-    description: 出典 PDF の sha256。evaluation_origin・budget_proposal_origin の origin_id と同じ値。
+    description: 出典 PDF の sha256。evaluation_origin の origin_id と同じ値。
     data_tests: [not_null]
   - name: page
     description: 物理頁（1始まり）。
