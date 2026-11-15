@@ -55,7 +55,14 @@ class SubjectCardsTest(unittest.TestCase):
                  word('合', 20, 40), word('計', 60, 40), word('6,626,796千円', 300, 40)]
         found = subject_cards.restated_lines(notes, {6626796})
         self.assertEqual([[w.text for w in line][0] for line in found], ['療養の給付に要する経費を計上', '合'])
-        self.assertEqual(subject_cards.restated_lines(notes, {1}), [])
+        # The 合計 is the 目's only where it prints the 目's amount; the line saying what the 目 is for never is an item.
+        found = subject_cards.restated_lines(notes, {1})
+        self.assertEqual([[w.text for w in line][0] for line in found], ['療養の給付に要する経費を計上'])
+        # Without the amount, over two lines, and with the 課 (令和8年度): still the 目's, not the start of its item.
+        purpose = [word('区議会議員の報酬並びに議会運営等', 0, 0), word('[議会局]', 300, 0),
+                   word('に要する経費を計上', 0, 20), word('1', 0, 40), word('職員の給与費', 20, 40)]
+        found = subject_cards.restated_lines(purpose, {1})
+        self.assertEqual([[w.text for w in line][0] for line in found], ['区議会議員の報酬並びに議会運営等', 'に要する経費を計上'])
 
     def test_an_office_heading_is_laid_out_where_its_items_start(self):
         heading = [word('日本橋特別出張所', 61.9, 0), word('2,332,236千円', 385, 0), word('[', 461, 0, width=5),
