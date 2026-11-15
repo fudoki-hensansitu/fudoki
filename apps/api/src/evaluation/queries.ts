@@ -13,8 +13,8 @@ import { ApiError } from '../errors'
 import type { Ctx } from '../shared/context'
 import { decodeToken, nextToken } from '../shared/paging'
 import { searchRows } from '../shared/query'
-import { DEFAULT_PAGE_SIZE, type SearchInput } from '../shared/search'
-import { outlookOf, type EvaluationOutput, type SheetOutput, type SheetSearchOutput } from './model'
+import { DEFAULT_PAGE_SIZE, buildWhere, type SearchInput } from '../shared/search'
+import { outlookOf, type EvaluationOutput, type SheetCountOutput, type SheetOutput, type SheetSearchOutput } from './model'
 
 const ORIGIN = { table: EVALUATION_ORIGIN_TABLE, selectList: selectListOf(EVALUATION_ORIGIN_TABLE) }
 const S = EVALUATION_SHEET_TABLE
@@ -79,4 +79,14 @@ export async function getSheet(ctx: Ctx, input: { sheet_id: string }): Promise<S
 export async function searchSheets(ctx: Ctx, input: SearchInput): Promise<SheetSearchOutput> {
   const { rows: sheets, ...rest } = await searchRows(S, ORIGIN, ctx, input)
   return { sheets: sheets.map(withOutlook), ...rest } as SheetSearchOutput
+}
+
+/** 条件に当たるシートの数を、方向性の区分ごとに数える（web の事業評価の A〜D の札。シートを全部は読まない）。並び・頁の入力は使わない */
+export async function countSheets(ctx: Ctx, input: SearchInput): Promise<SheetCountOutput> {
+  const where = buildWhere(S, undefined, input.fiscal_year, input.where as never)
+  const r = await ctx.db
+    .prepare(`SELECT "direction_code", COUNT(*) AS n FROM ${S.table} WHERE ${where.sql} GROUP BY "direction_code" ORDER BY "direction_code"`)
+    .bind(...where.params)
+    .all<{ direction_code: string | null; n: number }>()
+  return { counts: r.results.map((c) => ({ outlook: outlookOf(c.direction_code), size: Number(c.n) })) } as SheetCountOutput
 }
