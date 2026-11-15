@@ -58,6 +58,16 @@ ABBREVIATED_DATE = re.compile(r'[0-9]{2,6}(?:から|より)(?:流用|充用)[^0-
 ERA_INITIAL_DATE = re.compile(r'[(（]?[RHS][0-9]{1,2}[.．](?:0?[1-9]|1[0-2])[.．](?:0?[1-9]|[12][0-9]|3[01])[)）]?')
 
 
+# A resolution number dated by the fiscal year and set off from its body by a middle dot
+# (`令和4年度議案第66号・区議会議決`, 131181) reads like DOCUMENT_NUMBER.
+FISCAL_YEAR_DOCUMENT_NUMBER = re.compile(
+    DOCUMENT_NUMBER.pattern.replace('[0-9]+年)', '[0-9]+年度?)')
+    .replace('(?:議案)?(?:(?:市|区|町|村)?議会議決', '[・．.、,]?(?:議案)?(?:(?:市|区|町|村)?議会議決'))
+# The derivation above silently does nothing if DOCUMENT_NUMBER is reworded; fail at import instead.
+assert FISCAL_YEAR_DOCUMENT_NUMBER.pattern != DOCUMENT_NUMBER.pattern and '年度?)' in FISCAL_YEAR_DOCUMENT_NUMBER.pattern \
+    and "[・．.、,]?(?:議案)?(?:(?:市|区|町|村)?議会議決" in FISCAL_YEAR_DOCUMENT_NUMBER.pattern
+
+
 ORDINAL_PHRASE = re.compile(r'(?:[^0-9,円]|第[0-9]+(?:款|項|目|節|条|土曜日|ブロック|期|農園?)|[0-9]+ブロック|同[款項目節][0-9]+)+')
 
 
@@ -589,8 +599,9 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
     # amount, so it is explained outright instead of being left for recheck.
     document_boxes = set()
     non_amount_boxes, lines, merged_lines = _notation_context(
-        words, lambda text: _document_notation(text) or QUANTITY_PHRASE.fullmatch(text) or ORDINAL_PHRASE.fullmatch(text) or ABBREVIATED_DATE.fullmatch(text),
-        strong=lambda text: bool(DOCUMENT_NUMBER.fullmatch(text)), strong_boxes=document_boxes)
+        words, lambda text: (_document_notation(text) or FISCAL_YEAR_DOCUMENT_NUMBER.fullmatch(text)
+                             or QUANTITY_PHRASE.fullmatch(text) or ORDINAL_PHRASE.fullmatch(text) or ABBREVIATED_DATE.fullmatch(text)),
+        strong=lambda text: bool(FISCAL_YEAR_DOCUMENT_NUMBER.fullmatch(text)), strong_boxes=document_boxes)
     for word in normalized:
         # A fragment (7号) may already read as a glued code; the number still explains it.
         if word['covered'] in (None, 'non_amount') and (word['page'], tuple(word['bbox'])) in document_boxes:
