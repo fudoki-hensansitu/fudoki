@@ -312,7 +312,7 @@ type 目の参照 = {             // 事業の内訳が無い自治体。目の�
 | モデル | 今の表 | 状態 |
 | --- | --- | --- |
 | 事業・事業の金額 | なし | 案（下の「表の案」） |
-| 歳出 | `expenditure`（root）・`expenditure_subject`（科目）・`expenditure_detail`（内訳。`breakdown='事業'` が事業の行）・`expenditure_location`・`expenditure_origin`・`expenditure_origin_link` | あり |
+| 歳出 | `expenditure`（root）・`expenditure_subject`（科目）・`expenditure_detail`（内訳。`breakdown='事業'` が事業の行）・`expenditure_location`・`fiscal_origin`・`expenditure_origin_link` | あり |
 | 事業評価 | `evaluation`（root）・`evaluation_origin`・`evaluation_sheet`（`sheet_id` は出典と頁から作る列で、指標の表から引くために持つ）・`evaluation_indicator`・`evaluation_indicator_value` | あり。シートは当初・決算の目（`initial_expenditure_subject_id`・`settlement_expenditure_subject_id`）を持ち、事業とは `evaluation_sheet_project`（シート×事業、年度）でつなぐ |
 | 人口 | `population`・`population_origin` | あり |
 

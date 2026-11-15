@@ -2,12 +2,17 @@
 
 A thread converts and records a table's sha256 and size in its manifest; the bytes stay on its machine.
 After merge, CI re-converts each recorded table whose reference changed, from the originals and OCR
-observations already in R2, and uploads it only when the whole receipt (keys, sha256, sizes, row counts,
-metadata) equals the record. The input fingerprint is not compared (a stale one is allowed, ADR 0027). Conversion is byte-deterministic for the pinned Poppler and dependencies, so a
-difference means the record and the code disagree: nothing of that manifest is uploaded and the job fails.
+observations already in R2, and uploads it when the whole receipt (keys, sha256, sizes, row counts,
+metadata) equals the record. The input fingerprint is not compared (a stale one is allowed, ADR 0027).
 
-The Jev answers are read from Git and never asked (no API key in CI). ``dry_run`` compares only; a pull
-request runs it to find a mismatch before merge, then builds dbt from the verified tables left in the cache.
+A pull request (``dry_run``) must match its records. After merge, a table whose conversion was declared or
+changed in this range is uploaded as main converts it, even when it differs from the record: a converter
+merged after the pull request's check makes the record stale, and the receipts list in R2 (which builds read
+when the Git record is not in R2) then holds the uploaded table (docs/prd/ingestion-receipts/dd.md, stage 3).
+A table whose declaration did not change must still match, so a converter regression is not uploaded unseen.
+
+The Jev answers are read from Git and never asked (no API key in CI). A pull request builds dbt from the
+verified tables left in the cache.
 """
 from __future__ import annotations
 
@@ -41,6 +46,13 @@ def previous(path: Path, since: str) -> dict:
     return json.loads(shown.stdout) if shown.returncode == 0 else {'tables': []}
 
 
+def declared(before: dict, document: dict) -> set[str]:
+    """Conversions new or changed (inputs, options, expected tables) since ``before``."""
+    previous_conversions = {conversion['id']: conversion for conversion in before.get('conversions', [])}
+    return {conversion['id'] for conversion in document['conversions']
+            if previous_conversions.get(conversion['id']) != conversion}
+
+
 def changed_manifests(since: str) -> list[Path]:
     names = subprocess.run(['git', 'diff', '--name-only', since, 'HEAD', '--', '.'], cwd=PIPELINE.parent,
                            check=True, capture_output=True, text=True).stdout.split()
@@ -59,9 +71,15 @@ def stored(reference: dict) -> bool:
 
 def store_manifest(path: Path, since: str, *, dry_run: bool) -> dict:
     document = manifest.read(path)
-    before = references(previous(path, since))
+    earlier = previous(path, since)
+    before = references(earlier)
     recorded = {table['table_id']: table for table in document['tables']}
-    changed = {ident for ident, refs in references(document).items() if before.get(ident) != refs}
+    # A table whose conversion was declared again (its options changed) is checked against R2 too, even when its
+    # bytes are as recorded before: R2 may hold what main converted in place of the record (`replaced`), which the
+    # new declaration is meant to put right (133086 R5 当初, read with `traced_glyphs`).
+    redeclared = declared(earlier, document)
+    changed = {ident for ident, refs in references(document).items()
+               if before.get(ident) != refs or recorded[ident]['conversion_id'] in redeclared}
     # Tables a thread uploaded before this flow, or a previous run already stored, are not converted again.
     changed = {ident for ident in changed if not all(stored(reference['object'])
                                                     for reference in manifest.table_references(recorded[ident]).values())}
@@ -77,20 +95,36 @@ def store_manifest(path: Path, since: str, *, dry_run: bool) -> dict:
                              conversion_ids=conversions, persist_answers=False, ask_answers=False)
         candidate = {table['table_id']: table for table in json.loads(Path(result['candidate']).read_text())['tables']}
         differing = sorted(ident for ident in changed if comparable(candidate.get(ident)) != comparable(recorded[ident]))
+        replaced = {}
         if differing:
-            raise ValueError(f'{path}: re-converted tables differ from their records: {", ".join(differing)}')
+            new_declarations = declared(earlier, document)
+            refused = [ident for ident in differing if dry_run or recorded[ident]['conversion_id'] not in new_declarations]
+            if refused:
+                raise ValueError(f'{path}: re-converted tables differ from their records: {", ".join(refused)}')
+            converted = json.loads(Path(result['candidate']).read_text())
+            for ident in differing:
+                table = candidate[ident]
+                files = {kind: Path(result['files'][reference['object']['key']])
+                         for kind, reference in manifest.table_references(table).items()}
+                storage.prepare_save(converted, table, files[None] if None in files else files)
+                replaced[ident] = table
         uploads = [(reference['object']['key'], Path(result['files'][reference['object']['key']]), reference['object'])
-                   for ident in sorted(changed) for reference in manifest.table_references(recorded[ident]).values()]
+                   for ident in sorted(changed)
+                   for reference in manifest.table_references(replaced.get(ident, recorded[ident])).values()]
         for key, file, reference in uploads:
             storage.verify(file, reference)
-        # The cache then holds exactly the recorded bytes, so the dbt build that follows reads them without
+        # The cache then holds exactly the uploaded bytes, so the dbt build that follows reads them without
         # fetching from R2 (where a pull request's tables are not yet stored). An upload caches only after it
         # succeeds: `stored` trusts the cache, so a table must not be cached that R2 lacks.
         for key, file, reference in uploads:
             if not dry_run:
                 storage.upload(key, file, reference)
             storage.cache(key, file)
-    return {'manifest': str(path), 'tables': sorted(changed), 'uploaded': not dry_run}
+    report = {'manifest': str(path), 'tables': sorted(changed), 'uploaded': not dry_run}
+    if replaced:
+        # Uploaded as main converts them, not as recorded in Git; the receipts list takes these.
+        report['replaced'] = {storage.receipt_id(document, ident): table for ident, table in replaced.items()}
+    return report
 
 
 def mirrored(path: Path) -> tuple[dict, dict[str, dict]]:
@@ -99,12 +133,14 @@ def mirrored(path: Path) -> tuple[dict, dict[str, dict]]:
     return document, {storage.receipt_id(document, table['table_id']): table for table in document['tables']}
 
 
-def update_receipts(stored_paths: list[Path]) -> dict:
+def update_receipts(stored_paths: list[Path], replaced: dict[str, dict] | None = None) -> dict:
     """Mirror the Git records into the receipts list in R2 (stage 1 of docs/prd/ingestion-receipts/dd.md).
 
     The first run seeds it from every manifest, keeping only tables whose recorded bytes R2 holds. Later runs
     replace the entries of the manifests this run stored; a manifest that failed keeps its previous entries,
-    since nothing of it was uploaded."""
+    since nothing of it was uploaded. ``replaced`` holds the tables uploaded as main converted them instead of
+    as recorded in Git (their recorded bytes are not in R2)."""
+    replaced = replaced or {}
     receipts = storage.read_receipts()
     seeded = receipts is None
     if seeded:
@@ -121,6 +157,9 @@ def update_receipts(stored_paths: list[Path]) -> dict:
         for ident in [ident for ident in receipts if ident.startswith(prefix) and ident not in records]:
             del receipts[ident]
         for ident, table in records.items():
+            if ident in replaced:
+                receipts[ident] = replaced[ident]
+                continue
             if not all(stored(reference['object']) for reference in manifest.table_references(table).values()):
                 missing.append(ident)
                 continue
@@ -158,12 +197,18 @@ def store(since: str, *, dry_run: bool = False) -> dict:
     failures = [found[path] for path in paths if isinstance(found[path], str)]
     if not dry_run:
         # Only this (parent) process writes the list, once, after every upload.
-        # Nothing reads the list yet, so failing to write it must not fail the store (and skip the D1 sync).
+        # Failing to write it fails the store only when it holds replaced tables: builds read the other tables
+        # from their Git records, but a replaced table only from the list.
+        replaced = {ident: table for report in reports for ident, table in report.get('replaced', {}).items()}
         try:
-            receipts = update_receipts([path for path in paths if isinstance(found[path], dict)])
+            receipts = update_receipts([path for path in paths if isinstance(found[path], dict)], replaced)
         except Exception as error:
             receipts = {'error': str(error) or type(error).__name__}
+            if replaced:
+                failures.append(f'receipts list not written; replaced tables unreadable: {receipts["error"]}')
         print(json.dumps({'receipts': receipts}, ensure_ascii=False), file=sys.stderr, flush=True)
     if failures:
         raise SystemExit('\n'.join(failures))
-    return {'since': since, 'dry_run': dry_run, 'manifests': [report for report in reports if report['tables']]}
+    shown = [{**report, 'replaced': sorted(report['replaced'])} if 'replaced' in report else report
+             for report in reports if report['tables']]
+    return {'since': since, 'dry_run': dry_run, 'manifests': shown}

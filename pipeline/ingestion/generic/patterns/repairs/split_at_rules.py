@@ -14,9 +14,10 @@ def split_text_at_rules(word: Word, verticals: list[Rule]) -> list[Word]:
     if len(word.text) < 2 or is_amount(word.text):
         return [word]
     y = (word.y0 + word.y1) / 2
-    glued = re.match(r'^([△▲\-]?[0-9][0-9,]*)([^0-9,△▲\-].*)$', word.text)
+    glued = re.match(r'^([△▲\-]?,?[0-9][0-9,]*)([^0-9,△▲\-].*)$', word.text)
     if glued:
-        # An amount with text glued to its end (`4,123,524国`): cut where the amount ends when a rule runs there.
+        # An amount with text glued to its end (`4,123,524国`, or the rest of an amount Poppler split, `150,080` `,868明許`):
+        # cut where the amount ends when a rule runs there.
         at = word.x0 + sum(_width(c) for c in glued.group(1)) * (word.x1 - word.x0) / sum(_width(c) for c in word.text)
         if any(abs(r.x0 - at) <= 3 and _crosses(r, y) for r in verticals):
             return [Word(glued.group(1), word.x0, word.y0, at, word.y1), Word(glued.group(2), at, word.y0, word.x1, word.y1)]

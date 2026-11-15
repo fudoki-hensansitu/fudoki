@@ -1,8 +1,8 @@
 -- A council amendment (seed fiscal_budget_amendment) applies only where it meets the budget book:
 -- each declared table exists, and each amended line is a node of the budget book that printed the line's
--- 原案金額 and now holds its 修正金額 (int_fiscal__settlement_expenditure_nodes).
+-- 原案金額 and now holds its 修正金額 (int_fiscal__nodes).
 with lines as (
-    select r.* from {{ ref('int_fiscal__settlement_expenditure_rows') }} r
+    select r.* from {{ ref('int_fiscal__rows') }} r
     where r.is_amendment and r.amount_yen is not null and r.proposed_yen is not null
 )
 select a.jurisdiction_code || ':' || a.fiscal_year || ':' || a.table_id as key, 'undeclared_table' as failure
@@ -15,7 +15,7 @@ where {{ only_jurisdictions('a.jurisdiction_code') }} and not exists (
 union all
 select l.source_table_key || '/' || l.node_key, 'unmatched_line'
 from lines l
-left join {{ ref('int_fiscal__settlement_expenditure_nodes') }} n using (document_kind, node_id)
+left join {{ ref('int_fiscal__nodes') }} n using (document_kind, node_id)
 where n.node_id is null
     or n.amount_yen is distinct from l.amount_yen
     or n.amount_yen - n.amendment_yen is distinct from l.proposed_yen

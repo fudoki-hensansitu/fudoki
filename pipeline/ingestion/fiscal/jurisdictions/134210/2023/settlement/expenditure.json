@@ -1,0 +1,856 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "134210",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "pages": [
+          [
+            17,
+            18
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "titled_table",
+            "options": {
+              "header": {
+                "section": {
+                  "title": "表15",
+                  "continued": [
+                    18
+                  ]
+                },
+                "carried": true
+              },
+              "columns": {
+                "令和5年度決算額": {
+                  "heading": "決算額"
+                },
+                "令和4年度決算額": {
+                  "heading": "前年度決算額"
+                },
+                "比較／増減額": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "比較の列を取り込まない。本年度と前年度の決算額の差で、決算額そのものではない。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "増減率の列を取り込まない。前年度に対する割合で、金額ではない。"
+                  }
+                },
+                "主な増減理由": {
+                  "excluded": {
+                    "kind": "本文",
+                    "reason": "主な増減理由は款の増減を説明する文で、款の決算額の列ではない。"
+                  }
+                },
+                "科目": {
+                  "heading": "款"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kokuho-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "kokuho-expenditure",
+        "pages": [
+          [
+            104,
+            104
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "支出額": {
+                  "heading": "支出済額"
+                },
+                "執行率%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "執行率の列を取り込まない。支出額を予算現額で割った率で、金額ではない。"
+                  }
+                },
+                "構成比%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。支出額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kani-suido-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "簡易水道事業特別会計",
+        "table_id": "kani-suido-expenditure",
+        "pages": [
+          [
+            111,
+            111
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "支出額": {
+                  "heading": "支出済額"
+                },
+                "執行率%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "執行率の列を取り込まない。支出額を予算現額で割った率で、金額ではない。"
+                  }
+                },
+                "構成比%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。支出額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kani-suido-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "takuchi-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "宅地造成事業特別会計",
+        "table_id": "takuchi-expenditure",
+        "pages": [
+          [
+            118,
+            118
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "支出額": {
+                  "heading": "支出済額"
+                },
+                "執行率%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "執行率の列を取り込まない。支出額を予算現額で割った率で、金額ではない。"
+                  }
+                },
+                "構成比%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。支出額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "takuchi-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-hoken-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "介護保険（保険事業勘定）特別会計",
+        "table_id": "kaigo-hoken-expenditure",
+        "pages": [
+          [
+            125,
+            125
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "支出額": {
+                  "heading": "支出済額"
+                },
+                "執行率%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "執行率の列を取り込まない。支出額を予算現額で割った率で、金額ではない。"
+                  }
+                },
+                "構成比%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。支出額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-hoken-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kaigo-service-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "介護保険（介護サービス事業勘定）特別会計",
+        "table_id": "kaigo-service-expenditure",
+        "pages": [
+          [
+            132,
+            132
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "支出額": {
+                  "heading": "支出済額"
+                },
+                "執行率%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "執行率の列を取り込まない。支出額を予算現額で割った率で、金額ではない。"
+                  }
+                },
+                "構成比%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。支出額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-service-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "gesuido-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "下水道事業特別会計",
+        "table_id": "gesuido-expenditure",
+        "pages": [
+          [
+            139,
+            139
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "支出額": {
+                  "heading": "支出済額"
+                },
+                "執行率%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "執行率の列を取り込まない。支出額を予算現額で割った率で、金額ではない。"
+                  }
+                },
+                "構成比%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。支出額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "gesuido-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "jokaso-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "浄化槽事業特別会計",
+        "table_id": "jokaso-expenditure",
+        "pages": [
+          [
+            147,
+            147
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "支出額": {
+                  "heading": "支出済額"
+                },
+                "執行率%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "執行率の列を取り込まない。支出額を予算現額で割った率で、金額ではない。"
+                  }
+                },
+                "構成比%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。支出額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "jokaso-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "kouki-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure",
+        "pages": [
+          [
+            155,
+            155
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "年度": {
+                  "kind": "ignore"
+                },
+                "支出額": {
+                  "heading": "支出済額"
+                },
+                "執行率%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "執行率の列を取り込まない。支出額を予算現額で割った率で、金額ではない。"
+                  }
+                },
+                "構成比%": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "構成比の列を取り込まない。支出額の合計に対する割合で、金額ではない。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "repairs": [
+            "prior_year_rows"
+          ],
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "09f46a5d38208f69876a091662b7bf91a99fd256d243e4d18f8b4963f9ab477c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は carried 1頁・default 1頁 から決めた。款の和 5,653,475,714 と印字の「合計」5,653,475,714 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "d1dd0c7293843d1d001816b82498a6fd98bee78f2150a440265b53409d154422",
+          "bytes": 2824
+        },
+        "row_count": 12
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "3a139ddd57554c4e686c2ebbbe91f8c0e30109b35835ee4f941777d171e11c5c",
+          "bytes": 2520
+        },
+        "row_count": 24
+      }
+    },
+    {
+      "table_id": "kokuho-expenditure",
+      "conversion_id": "kokuho-settlement",
+      "input_fingerprint": "7d7b560509670902065b113ce924b5a9d2c4c8c3e97c636d965555af6f2b19b5",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 342,683 と印字の「合計」342,683 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/kokuho-expenditure-nodes.parquet",
+          "sha256": "3ca8548451dc73673313d9d2e7d7d0675b17c15eebae57aaeb58fe568c57c7f7",
+          "bytes": 2716
+        },
+        "row_count": 8
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/kokuho-expenditure-amounts.parquet",
+          "sha256": "e2e6d4aa668efd68c8d537c8c6506bac8884b00ff16db048893346662abf4b1d",
+          "bytes": 2335
+        },
+        "row_count": 32
+      }
+    },
+    {
+      "table_id": "kani-suido-expenditure",
+      "conversion_id": "kani-suido-settlement",
+      "input_fingerprint": "74d6b41551e4ffcddf14f0f8ae764111ce9f693d4bf4897175354b2c6490e128",
+      "account": "簡易水道事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 285,364 と印字の「合計」285,364 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/kani-suido-expenditure-nodes.parquet",
+          "sha256": "b6a08129c4869aaecb8920e5588b791f8570ba68dd0716dcab80ee47586bf532",
+          "bytes": 2561
+        },
+        "row_count": 6
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/kani-suido-expenditure-amounts.parquet",
+          "sha256": "0421f058c0992ad758a18e68cf94fcd29aca542bc2ee6c345f420c3770f6e0c8",
+          "bytes": 2255
+        },
+        "row_count": 24
+      }
+    },
+    {
+      "table_id": "takuchi-expenditure",
+      "conversion_id": "takuchi-settlement",
+      "input_fingerprint": "5ac9bc89f49e706f5241f55ce4ca2f7c78d1e2fa3bc5893e06a0beb1995b0edc",
+      "account": "宅地造成事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 6,828 と印字の「合計」6,828 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/takuchi-expenditure-nodes.parquet",
+          "sha256": "c234d07cfa11830229c384ebd82ca081d59ceb62850bf5b5d2bb3a7b01b3f270",
+          "bytes": 1925
+        },
+        "row_count": 3
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/takuchi-expenditure-amounts.parquet",
+          "sha256": "4d88be6e0e26a384dd28db9d4e274f4904cacf877f4e67368923d03fd9c7448e",
+          "bytes": 1946
+        },
+        "row_count": 12
+      }
+    },
+    {
+      "table_id": "kaigo-hoken-expenditure",
+      "conversion_id": "kaigo-hoken-settlement",
+      "input_fingerprint": "7fd33f7630d020c39dd04b543db4acc67b5222910ba2e4de110f0ee07d989d19",
+      "account": "介護保険（保険事業勘定）特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 102,247 と印字の「合計」102,247 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/kaigo-hoken-expenditure-nodes.parquet",
+          "sha256": "d32f4c0388705e2635053f5e41f8bdc18e06ae3da36fcd3c56a7dbd804d78066",
+          "bytes": 2746
+        },
+        "row_count": 9
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/kaigo-hoken-expenditure-amounts.parquet",
+          "sha256": "95194b5ce2e444141f66d0f0dab5532f64ce0f4b090e2549cd44d8cc153af336",
+          "bytes": 2373
+        },
+        "row_count": 36
+      }
+    },
+    {
+      "table_id": "kaigo-service-expenditure",
+      "conversion_id": "kaigo-service-settlement",
+      "input_fingerprint": "6426b1eec94a201ce44d001fe536c7e5f41680f449eb89ee0c62d477182c13e7",
+      "account": "介護保険（介護サービス事業勘定）特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 176,602 と印字の「合計」176,602 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/kaigo-service-expenditure-nodes.parquet",
+          "sha256": "e1094cd6245146aa39df349062873f7e01fe61f522bcfb58d276055452d4d74b",
+          "bytes": 2543
+        },
+        "row_count": 5
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/kaigo-service-expenditure-amounts.parquet",
+          "sha256": "9db7e1cc71715198f2b7ebb7364d902157aeea8be24fe724093070f872cf32a7",
+          "bytes": 2198
+        },
+        "row_count": 20
+      }
+    },
+    {
+      "table_id": "gesuido-expenditure",
+      "conversion_id": "gesuido-settlement",
+      "input_fingerprint": "34b3dc918af88418602f806a519d4a1812914e857640add2b5dedec2a7b523c0",
+      "account": "下水道事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 192,893 と印字の「合計」192,893 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/gesuido-expenditure-nodes.parquet",
+          "sha256": "bc88c2792cfec190593d159d726363c7c84a12ef907020c6b571cbeaf540df81",
+          "bytes": 2561
+        },
+        "row_count": 6
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/gesuido-expenditure-amounts.parquet",
+          "sha256": "b4d661a688e82e59402f21a920f5864d947deea1cfb8dcd12cdd8d6726937ffe",
+          "bytes": 2263
+        },
+        "row_count": 24
+      }
+    },
+    {
+      "table_id": "jokaso-expenditure",
+      "conversion_id": "jokaso-settlement",
+      "input_fingerprint": "9d5f76e4a6f45c89a575c5236eb1e936dd5fa0e8ec92b94dd3c88be5437ec943",
+      "account": "浄化槽事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 22,472 と印字の「合計」22,472 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/jokaso-expenditure-nodes.parquet",
+          "sha256": "df5956d5923d14e12e70af8a84ec0bfe4a341d5db4fbbca4c3b60fdece530a7e",
+          "bytes": 2509
+        },
+        "row_count": 5
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/jokaso-expenditure-amounts.parquet",
+          "sha256": "12af1da17af13fd0bb2ae9c193f67b39cc0d74c20c0508c43cda18084b62616a",
+          "bytes": 2170
+        },
+        "row_count": 20
+      }
+    },
+    {
+      "table_id": "kouki-expenditure",
+      "conversion_id": "kouki-settlement",
+      "input_fingerprint": "612abdc1a411528219b09e1daeb29273925f8f616f33295b24d464c1759d3efd",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
+        "金額の単位は printed 1頁 から決めた。款の和 42,034 と印字の「合計」42,034 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/kouki-expenditure-nodes.parquet",
+          "sha256": "9b723e1650a152d7fbefac48d9d3bdaafb3996269af907af7dc5abfef1ecf212",
+          "bytes": 2574
+        },
+        "row_count": 6
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/kouki-expenditure-amounts.parquet",
+          "sha256": "071aa693e077ade3a17dde263da01e44bf26e5fc0034f1813fe1cc3e40941b6b",
+          "bytes": 2213
+        },
+        "row_count": 24
+      }
+    }
+  ]
+}

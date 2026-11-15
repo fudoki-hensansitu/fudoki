@@ -1,0 +1,40 @@
+version: 2
+models:
+- name: fiscal_origin
+  description: 出典選定から毎回生成する、財政の資料（予算書・決算書）の出典ファイルの表。歳出と歳入で共有する。独立した証跡ファイルを保存するものではない。
+  columns:
+  - name: origin_id
+    description: 出典ファイルを指すSHA由来のID。歳出・歳入の科目・内訳・印字の位置の表の origin_id が指す。
+    data_tests:
+    - unique
+    - not_null
+  - name: sha256
+    description: 出典ファイルの SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。
+    data_tests:
+    - not_null
+  - name: jurisdiction_code
+    description: 自治体コード。
+    data_tests:
+    - not_null
+  - name: fiscal_year
+    description: 出典の年度。
+    data_tests:
+    - not_null
+  - name: document_kind
+    description: 資料区分（initial 当初予算・supplementary 補正予算・settlement 決算）。
+    data_tests:
+    - not_null
+  - name: amendment_number
+    description: 補正予算の号数。補正予算以外はNULL。
+  - name: title
+    description: 出典の資料名（前後の空白を除いたもの）。
+    data_tests:
+    - not_null
+  - name: url
+    description: 出典の公開URL。
+    data_tests:
+    - not_null
+  - name: format
+    description: 出典の形式（pdf か csv）。
+    data_tests:
+    - not_null

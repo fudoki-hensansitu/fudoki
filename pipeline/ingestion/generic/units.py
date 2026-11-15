@@ -148,12 +148,16 @@ def general_total(nodes: list[dict], amounts: list[dict], document_kind: str) ->
     return sum(value * MULTIPLIER.get(unit, 1) for value, unit in entries) if entries else None
 
 
-def check(built, document_kind: str, account: str | None = None, partial: bool = False) -> dict:
+def check(built, document_kind: str, account: str | None = None, partial: bool = False,
+          direction: str = 'expenditure', rounded=None) -> dict:
     """款 sum = printed 歳出合計 (in the phase the document reports), and a general account's digits fit the unit.
 
     `partial`: the original holds one volume of an account printed in several (西東京's 13 files). Its
     款 are some of the account's, so neither the sum against the printed total nor the digits of the sum say
-    anything: both are reported and never stop the table. A 款 printed with two amounts still does."""
+    anything: both are reported and never stop the table. A 款 printed with two amounts still does.
+
+    `rounded`: the quirk `rounded_items` when selected (each 款 and the total rounded on their own): a sum off the total by
+    no more than the rounding of the items matches, and the result says so (`rounded_match`)."""
     from ingestion.generic.headers import dictionary_header
     from ingestion.lib.node_tables import amount_phase
     from shared.amount import number
@@ -190,14 +194,16 @@ def check(built, document_kind: str, account: str | None = None, partial: bool =
         # The grand total: a row named 合計 (歳出合計) if any, else the largest printed total
         # (other 計 rows are subtotals).
         named = [n for n in printed if '合計' in (n.get('label') or '')]
-        # Each 項 may close on a `合計` of its own (奥多摩町's 予算書): the `歳出合計` row is the grand total.
-        named = [n for n in named if '歳出' in n.get('label', '')] or named
+        # Each 項 may close on a `合計` of its own (奥多摩町's 予算書): the `歳出合計` (`歳入合計`) row is the grand total.
+        named = [n for n in named if ('歳入' if direction == 'revenue' else '歳出') in n.get('label', '')] or named
         chosen = named[-1] if named else max(printed, key=lambda n: abs(number(n['text']) or 0))
         total = number(chosen['text'])
         result['total_label'] = chosen.get('label')
         result['printed_total'] = total
         if len(units) <= 1:
             result['sum_matches'] = total == raw_sum
+            if rounded is not None and total is not None and total != raw_sum:
+                result['sum_matches'] = result['rounded_match'] = rounded.module.close(total, raw_sum, len(entries))
         else:
             result['sum_matches'] = chosen.get('unit') in MULTIPLIER and None not in units and \
                 total is not None and total * MULTIPLIER[chosen['unit']] == raw_sum

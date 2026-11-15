@@ -1,0 +1,16 @@
+{"criteria": {"false": "取り込むべきでない数字。例: 款・項・目・節・事業の番号、頁番号、年月日・年度・議決の号数（令和8年第6号）、住所の番地、人数・件数・回数・面積などの数量、率（％）、本文や注記の中の数字、「第10節へ同項同目第8節から流用 12,846」のような流用・充用の注記の金額。", "true": "表の項目（科目・事業）の金額として取り込むべき値。例: 予算額、補正額、決算額、支出済額、不用額、事業費、国・県支出金など、表の金額の欄に印字された円の金額（0 や 1,234,000 のような値も含む）。"}, "instructions": "日本の自治体の決算書（歳出）のある頁から、数字を1つ取り出した。文脈は `items.{id}` にある（同じ行の語を左から並べた文、列の見出し、上下の行）。取り出した数字 `items.{id}.対象の数字`（同じ行では【】で示す）は、表の項目の金額として取り込むべき値か。", "kind": "digit-recheck", "model": "jev-1.13.0", "threshold": 0.7, "version": 1}
+{"fp":"0faf59428d023b410f7c0942db6e819c","p":0.09,"t":"general-expenditure"}
+{"fp":"2d0f0f6d6cc9539153d21f7c4713e1e0","p":0.09,"t":"general-expenditure"}
+{"fp":"441dff03275bb8d7421f3c13c158160e","p":0.09,"t":"general-expenditure"}
+{"fp":"51c3d1a21d69c0ae88c2bde86f7f8b38","p":0.11,"t":"general-expenditure"}
+{"fp":"6f270900b653129379420217486eaa22","p":0.09,"t":"general-expenditure"}
+{"fp":"97e24431ffb05eec1bb1662a4588f5c9","p":0.08,"t":"general-expenditure"}
+{"fp":"a296d8a06e1a6f77e34ae710a6d3dc61","p":0.11,"t":"general-expenditure"}
+{"fp":"a55b0a1782b8d889dc327158607cc466","p":0.11,"t":"general-expenditure"}
+{"fp":"c798ee9cd4262b89f831e8975ea7a286","p":0.11,"t":"general-expenditure"}
+{"fp":"cc52ce22f1d4ff2bb664cb733b1ee0a7","p":0.1,"t":"general-expenditure"}
+{"fp":"d1ce2769ae432fecd1103a1f5e39d738","p":0.11,"t":"general-expenditure"}
+{"fp":"fb2c6598139f795fb0958c93d817dea7","p":0.09,"t":"general-expenditure"}
+{"fp":"fcb3f565d232220ee227a82069d600c2","p":0.08,"t":"general-expenditure"}
+{"fp":"6b55b4cac2e09c5f389731d702fe53f3","p":0.06,"t":"long-term-care-expenditure"}
+{"fp":"075de87117c7d1617ec01e73fc763452","p":0.1,"t":"national-health-insurance-expenditure"}

@@ -14,7 +14,7 @@ with account_sums as (
     where is_subject
     group by 1, 2, 3
 ), rows as (
-    select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}
+    select * from {{ ref('int_fiscal__rows') }} where direction = 'expenditure'
 ), division_kou_without_moku as (
     select k.jurisdiction_code, k.fiscal_year, k.account_name, sum(k.amount_yen) as amount
     from rows k

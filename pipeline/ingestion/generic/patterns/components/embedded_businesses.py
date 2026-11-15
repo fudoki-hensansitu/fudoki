@@ -436,7 +436,7 @@ def nonfinancial_facts(self, pages, nodes, source, destination, grids, handled, 
 
 def assemble(self, pages, first, last, *, source, destination, reserve_kan='11', personnel_breakdown=False,
              unexplained_section_detail=False, nonfinancial_breakdown=False, remark_column=False,
-             remark_min_x=1024, remark_merged_cells=False, row_tolerance=4.1, measured):
+             remark_min_x=1024, remark_merged_cells=False, row_tolerance=4.1, parent_row_tolerance=4.1, measured):
     parents = {}
     nodes = []
     current = {}
@@ -480,7 +480,8 @@ def assemble(self, pages, first, last, *, source, destination, reserve_kan='11',
                 if min(w['y'] for w in row) < 60 or min(w['y'] for w in row) > 790:
                     continue
                 if offset == 0:
-                    full_row = [w for w in words if abs(w['y'] - row[0]['y']) <= 4.1]
+                    full_row = [w for w in words if abs(w['y'] - row[0]['y']) <= (
+                        parent_row_tolerance if w['x'] >= remark_min_x - 120 else 4.1)]
                     parent = self.rule('parent_event')(sorted(full_row, key=lambda w: w['x']), page, words)
                     if parent:
                         level = parent['level']
@@ -505,6 +506,14 @@ def assemble(self, pages, first, last, *, source, destination, reserve_kan='11',
                     continue
                 value = self.text(row)
                 stripped = self.compact(value)
+                if any(table[0] == page and table[1] == int(offset != 0) and table[5] == '施工概要'
+                       and table[2] - 20 <= min(w['y'] for w in row) < table[4]
+                       for table in measured['auxiliary_tables']):
+                    # A 施工概要 whose rows are measured by hand (`auxiliary_tables`, title 施工概要): its unit
+                    # row sits closer to the first row than the row tolerance, so the native reading
+                    # would join them. The measured table reads it; the business gains no rows here.
+                    pending = []
+                    continue
                 if parents['款']['番号'] == reserve_kan:
                     # Reserve appropriations are a distinct explanation, not
                     # executed business detail under the zero-expense reserve.
@@ -593,7 +602,7 @@ def assemble(self, pages, first, last, *, source, destination, reserve_kan='11',
                         for column, location in (item.get('cell_locations') or {}).items():
                             if location:
                                 record.update({column + '_' + key: value for key, value in location.items()})
-                                if column != amount_column and re.sub(r'（[^）]*）|等$', '', column).endswith(('件数', '数量', '者数', '児童数', '施工数')):
+                                if column != amount_column and re.sub(r'（[^）]*）|等$', '', column).endswith(('件数', '数量', '者数', '児童数', '施工数', '助成基準')):
                                     excluded.append({**self.QUANTITY_EXCLUSION, 'page': page,
                                         'bbox': [location[k] for k in self.coordinates_keys()[1:]]})
                         if title:

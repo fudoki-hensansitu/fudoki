@@ -17,7 +17,7 @@ export type Jurisdiction = z.infer<typeof Jurisdiction>
 // --- API の応答（docs/prd/aggregate-api/dd.md）。一覧は要約、1つの自治体は会計ごとの出典まで ---
 
 export const CoverageOrigin = z
-  .strictObject(described('expenditure_origin', { origin_id: z.string(), title: z.string(), url: z.string(), format: z.string() }))
+  .strictObject(described('fiscal_origin', { origin_id: z.string(), title: z.string(), url: z.string(), format: z.string() }))
   .meta({ id: 'CoverageOrigin', description: '明細が指す出典（予算書・決算書の1冊）。' })
 
 const coverageAccount = described('expenditure', { account_name: z.string(), account_kind: z.string() })

@@ -17,18 +17,9 @@ from pathlib import Path
 import duckdb
 
 from shared.amount import is_fiscal_year_notation, number, parse_amount
-from ingestion.lib.parquet import ParquetColumn, write_parquet
+from ingestion.lib.parquet import write_parquet
+from ingestion.lib.table_columns import AMOUNT_COLUMNS, NODE_COLUMNS  # noqa: F401 (re-exported to the converters)
 
-NODE_COLUMNS = tuple(ParquetColumn(name, kind) for name, kind in (
-    ('node_key', 'VARCHAR'), ('parent_node_key', 'VARCHAR'), ('axis_header', 'VARCHAR'),
-    ('depth', 'BIGINT'), ('level_header', 'VARCHAR'), ('code_text', 'VARCHAR'),
-    ('name_text', 'VARCHAR'), ('physical_page', 'BIGINT'),
-    ('x0', 'DOUBLE'), ('y0', 'DOUBLE'), ('x1', 'DOUBLE'), ('y1', 'DOUBLE')))
-# Amount positions are nullable: unknown pages never inherit a label position.
-AMOUNT_COLUMNS = tuple(ParquetColumn(name, kind) for name, kind in (
-    ('node_key', 'VARCHAR'), ('header_path', 'VARCHAR'), ('amount_text', 'VARCHAR'),
-    ('unit_text', 'VARCHAR'), ('physical_page', 'BIGINT'),
-    ('x0', 'DOUBLE'), ('y0', 'DOUBLE'), ('x1', 'DOUBLE'), ('y1', 'DOUBLE')))
 MIGRATION_NOTE = ('旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、'
                   '0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。')
 
@@ -157,7 +148,7 @@ COVERAGE_SIDECAR_SUFFIX = '.coverage.json'
 # goes through ask first.
 EXCLUSION_KINDS = frozenset({
     '総括', '財源内訳', '節の一覧', '経費内訳', '数量表', '法定節の観測', '本文',
-    '予備費の充用', '職員', '貸付金', '反復見出し', '親の繰り返し', '別の表',
+    '予備費の充用', '職員', '貸付金', '反復見出し', '親の繰り返し', '別の表', '歳入の説明',
 })
 
 

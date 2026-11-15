@@ -28,7 +28,8 @@ def _word_digits(text):
 # adopted tables keep it as an observation, not as amount rows, and every
 # converter asserts its shape. Digits sharing the total row's baseline are
 # classified as control totals, counted visibly, never silently passed.
-TOTAL_LABELS = frozenset({'歳出合計', '歳出総計'})
+# A table reads one direction's pages (`run_pages`), so a revenue table's scope prints only 歳入合計.
+TOTAL_LABELS = frozenset({'歳出合計', '歳出総計', '歳入合計', '歳入総計'})
 
 
 # A glued percent sign is never an adopted amount: converters keep rates as
@@ -55,6 +56,16 @@ QUANTITY_PHRASE = re.compile(
 ABBREVIATED_DATE = re.compile(r'[0-9]{2,6}(?:から|より)(?:流用|充用)[^0-9円]*')
 # A date with the era's initial (`(R7.3.31)`: 令和7年3月31日, the day a count in a remark is taken).
 ERA_INITIAL_DATE = re.compile(r'[(（]?[RHS][0-9]{1,2}[.．](?:0?[1-9]|1[0-2])[.．](?:0?[1-9]|[12][0-9]|3[01])[)）]?')
+
+
+# A resolution number dated by the fiscal year and set off from its body by a middle dot
+# (`令和4年度議案第66号・区議会議決`, 131181) reads like DOCUMENT_NUMBER.
+FISCAL_YEAR_DOCUMENT_NUMBER = re.compile(
+    DOCUMENT_NUMBER.pattern.replace('[0-9]+年)', '[0-9]+年度?)')
+    .replace('(?:議案)?(?:(?:市|区|町|村)?議会議決', '[・．.、,]?(?:議案)?(?:(?:市|区|町|村)?議会議決'))
+# The derivation above silently does nothing if DOCUMENT_NUMBER is reworded; fail at import instead.
+assert FISCAL_YEAR_DOCUMENT_NUMBER.pattern != DOCUMENT_NUMBER.pattern and '年度?)' in FISCAL_YEAR_DOCUMENT_NUMBER.pattern \
+    and "[・．.、,]?(?:議案)?(?:(?:市|区|町|村)?議会議決" in FISCAL_YEAR_DOCUMENT_NUMBER.pattern
 
 
 ORDINAL_PHRASE = re.compile(r'(?:[^0-9,円]|第[0-9]+(?:款|項|目|節|条|土曜日|ブロック|期|農園?)|[0-9]+ブロック|同[款項目節][0-9]+)+')
@@ -93,10 +104,20 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
     """
     baselines = defaultdict(list)
     total_labels = defaultdict(list)
+    originals = {}  # (page, the amount's part of a word) → the whole word's box
     for raw in words:
         page, box, text = _coverage_word(raw)
         if _word_key(text) in ('計', '合計', '小計') or _word_key(text) in TOTAL_LABELS:
             total_labels[page, round(box[1])].append(box)
+        glued = re.fullmatch(r'([0-9,△▲\-－―—]+)(明許|事故|逓次)', _word_key(text))
+        if glued and (page, round(box[1])) in candidate_baselines:
+            # A carried-over kind word printed against the amount before it (`4,402,4` `83,956明許`, 132250 R5 決算書):
+            # the amount's part of the word, a half-width character half a full-width one's width (`layout._width`).
+            width = lambda chars: sum(.5 if ord(c) < 128 else 1.0 for c in chars)
+            share = width(text[:text.rfind(glued[2])]) / width(text)
+            part = (box[0], box[1], box[0] + (box[2] - box[0]) * share, box[3])
+            originals[page, tuple(part)] = tuple(box)
+            box, text = part, glued[1]
         if (page, round(box[1])) in candidate_baselines and re.fullmatch(r'[0-9,△▲\-－―—]+', _word_key(text)):
             baselines[page, round(box[1])].append((box, text))
 
@@ -270,7 +291,7 @@ def _verified_total_boxes(words, tables, amount_columns, tolerance, candidate_ba
                 if any(0 < y - top <= 3 * height for top, height in established[page, identity]):
                     verified.update((page, tuple(box)) for _, expected, parts in group
                                     if expected != 0 for box, _ in parts)
-    return verified
+    return {(page, originals.get((page, box), box)) for page, box in verified}
 
 
 def _continued_subject_boxes(words, control_tables, tolerance):
@@ -542,9 +563,11 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
             # A count printed in the name (`療養給付費負担金179,856件`) is the name's, though it reads like an amount.
             # Brackets are compared away on both sides: the word may keep the name's page reference in them
             # (`2総合行政情報誌 (P295)`) while the number's bracket is gone (`(2)`, 131199).
-            if word['key'] and (word['key'].removesuffix('件') + '件' in printed or not _amount_shaped(word['key']) and (
-                    word['key'] in printed or re.sub(r'[()（）]', '', word['key']) in re.sub(r'[()（）]', '', printed)
-                    or word['key'] in _level_marks(code, node.get('level_header')))):
+            # The leader dots a name is printed with (`15工事請負費…`) are not its characters.
+            key = word['key'].rstrip('.') or word['key']
+            if key and (key.removesuffix('件') + '件' in printed or not _amount_shaped(key) and (
+                    key in printed or re.sub(r'[()（）]', '', key) in re.sub(r'[()（）]', '', printed)
+                    or key in _level_marks(code, node.get('level_header')))):
                 word['covered'] = 'label'
                 break
     # Adopted prints take precedence over an auxiliary block. An exclusion
@@ -576,8 +599,9 @@ def check_digit_coverage(words, tables, *, tolerance=0.5, exclusions=(), amount_
     # amount, so it is explained outright instead of being left for recheck.
     document_boxes = set()
     non_amount_boxes, lines, merged_lines = _notation_context(
-        words, lambda text: _document_notation(text) or QUANTITY_PHRASE.fullmatch(text) or ORDINAL_PHRASE.fullmatch(text) or ABBREVIATED_DATE.fullmatch(text),
-        strong=lambda text: bool(DOCUMENT_NUMBER.fullmatch(text)), strong_boxes=document_boxes)
+        words, lambda text: (_document_notation(text) or FISCAL_YEAR_DOCUMENT_NUMBER.fullmatch(text)
+                             or QUANTITY_PHRASE.fullmatch(text) or ORDINAL_PHRASE.fullmatch(text) or ABBREVIATED_DATE.fullmatch(text)),
+        strong=lambda text: bool(FISCAL_YEAR_DOCUMENT_NUMBER.fullmatch(text)), strong_boxes=document_boxes)
     for word in normalized:
         # A fragment (7号) may already read as a glued code; the number still explains it.
         if word['covered'] in (None, 'non_amount') and (word['page'], tuple(word['bbox'])) in document_boxes:

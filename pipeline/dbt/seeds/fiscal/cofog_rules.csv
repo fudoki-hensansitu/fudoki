@@ -539,3 +539,10 @@ priority,rule_id,applies_to,match_fund,match_account_kind,match_kan,match_kou,ma
 -1304,kobe-past-year-refund,281000,一般会計,,諸支出金,過年度支出,,過年度支出,eq,,unclassifiable,,retained,目,,神戸市（281000）当初予算（各会計予算に関する説明書）の目。市税等の過年度返還金は機能を目の名前で決められない（kobe-misc と同じ）。,false
 1698,kind-fallback-municipal-housing,,,市営住宅,,,,,,,assigned,06.1,retained,目,,市営住宅の建設・管理の特別会計の目を住宅開発 06.1 に分類する（kind-fallback-metropolitan-housing と同じ。例: 281000 市営住宅事業費）。,false
 1699,kind-fallback-airport,,,空港整備,,,,,,,assigned,04.5,retained,目,,空港の整備・管理の特別会計の目を運輸 04.5 に分類する（マスタは航空の 04.5.4 を持たない。例: 281000 空港整備事業費）。,false
+1700,tochigi-city-health-centers,092037,一般会計,,衛生費,保健衛生費,,保健施設費,eq,,assigned,07,retained,目,,栃木市 保健福祉センター・健康福祉センターの管理運営と改修を保健に分類する。渋谷区の保健施設費（shibuya-2024-01）と同じ扱い。名称からの判断。,true
+1701,sumida-2023-01,131075,一般会計,,区民生活費,区民施設費,,女性センター費,eq,,assigned,01,retained,目,,墨田区 区民施設費の目の女性センター（男女共同参画の拠点、2023年度の当初予算にだけある）を一般行政に分類する。男女共同参画を 01 に置く共通の規則（keyword-general-admin）に合わせる。名称からの判断。,true
+1702,kozushima-2022-01,133647,一般会計,,衛生費,保健衛生費,,精神保健福祉費,eq,,assigned,07,retained,目,,神津島村 保健衛生費の目の精神保健福祉（相談・措置など）を保健 07 に置く。名称からの判断。,true
+1703,kozushima-2022-02,133647,一般会計,,衛生費,上水道費,,上水道費,eq,,assigned,06.3,retained,目,,神津島村 上水道費の目（簡易水道事業特別会計への繰出金）を給水 06.3 に分類する。名称からの判断。,true
+1704,kozushima-2022-03,133647,一般会計,,土木費,下水道費,,下水処理対策費,eq,,assigned,05.2,retained,目,,神津島村 下水道費の目の下水処理対策を排水管理 05.2 に分類する。名称からの判断。,true
+1705,okutama-2023-01,133086,一般会計,,災害復旧費,公共土木施設災害復旧費,,過年度災害復旧費,eq,,unclassifiable,,retained,目,,奥多摩町 過年度に発生した公共土木施設の災害復旧は、対象の施設（道路・河川など）が名称から特定できず機能を決められない。捨てずに分類不能とする。,false
+1706,chuo-public-utility-payment-fund,131024,一般会計,,諸支出金,,,公共料金支払基金繰出金|(公共料金支払基金繰出金),eq,,out-of-scope,,retained,目,,中央区 諸支出金の公共料金支払基金繰出金は基金への積立で金融資産への振替のため対象外とする（vocab-fund-contribution と同じ扱い）。名称からの判断。,false
