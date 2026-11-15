@@ -24,4 +24,4 @@ user-invocable: false
 
 - 全体設計・配布の方針は repo root の `AGENTS.md`
 - Cloudflare の運用（deploy・token・ゾーン設定）は `.agents/skills/cloudflare-api-ops/`
-- web が出すデータ（事業評価・プレス発表の施策・その紐付けなど）は pipeline で作る。作り方は `.agents/skills/pipeline/`
+- web が出すデータ（事業評価・事業とのつながりなど）は pipeline で作る。作り方は `.agents/skills/pipeline/`

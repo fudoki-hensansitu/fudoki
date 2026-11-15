@@ -52,12 +52,8 @@ const jurisdictionFields = described('jurisdiction', {
 const EvaluationRef = z
   .strictObject({ evaluation_id: z.string(), fiscal_year: z.int().describe('評価した事業を行った年度') })
   .meta({ id: 'EvaluationRef', description: '収録した事業評価の年度。get_evaluation に evaluation_id を渡す。' })
-const BudgetProposalRef = z
-  .strictObject({ budget_proposal_id: z.string(), fiscal_year: z.int().describe('予算の年度') })
-  .meta({ id: 'BudgetProposalRef', description: '収録した予算案の年度。get_budget_proposal に budget_proposal_id を渡す。' })
 const refs = {
   evaluations: z.array(EvaluationRef).describe('収録した事業評価（年度の昇順）。'),
-  budget_proposals: z.array(BudgetProposalRef).describe('収録した予算案（年度の昇順）。'),
 }
 
 /** 一覧の1行（要約） */

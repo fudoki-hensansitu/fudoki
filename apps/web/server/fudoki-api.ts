@@ -73,8 +73,6 @@ function restRequest(name: WebOpName, input: Record<string, unknown>): Request |
       return post('/v1/expenditures/subjects:search')
     case 'search_expenditure_details':
       return post('/v1/expenditures/details:search')
-    case 'search_budget_measures':
-      return post('/v1/budget-proposals/measures:search')
     case 'search_evaluation_sheets':
       return post('/v1/evaluations/sheets:search')
     case 'search_projects':

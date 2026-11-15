@@ -1,6 +1,6 @@
 // 自治体の頁の事業・評価シートをブラウザが読む口（/api/projects・/api/sheets）。サーバーが api の内部の RPC で読み（jurisdiction/app/api.ts の read*）、ブラウザは api.fudoki.dev を直接は呼ばない（ADR 0044）。
 // 誰でも呼べるので、IP ごとの流量と引数の形の検査で守る。細かい値の検査は api の操作の schema に任せ、その 400 をそのまま返す
-import { readListPage, readProjectFull, readProjectOfDetail, readProjectOfId, readSheetCounts, readSheetPage, type Kind, type ListQuery, type SheetQuery } from '../jurisdiction/app/api'
+import { readListPage, readProjectFull, readProjectOfId, readSheetCounts, readSheetPage, type Kind, type ListQuery, type SheetQuery } from '../jurisdiction/app/api'
 import { DIRECTION_ICONS } from '../jurisdiction/app/data'
 import type { Env, RateLimiter } from './env'
 import { apiCall, FudokiApiError } from './fudoki-api'
@@ -85,18 +85,13 @@ export function projectListResponse(env: Env, request: Request): Promise<Respons
   })
 }
 
-/** GET /api/projects?detail=&year=&kind=: 施策を紐付けた内訳が載る事業。?project= は評価シートをつないだ事業のその年度の行 */
-export function projectOfDetailResponse(env: Env, request: Request): Promise<Response> {
+/** GET /api/projects?project=&year=&kind=: 評価シートをつないだ事業のその年度の行 */
+export function projectOfIdResponse(env: Env, request: Request): Promise<Response> {
   return respond(env, request, async () => {
     const p = new URL(request.url).searchParams
-    const project = p.get('project')
-    if (project !== null) {
-      if (!ID.test(project)) throw invalid('事業の ID の形が違います')
-      return readProjectOfId(apiCall(env), project, yearOf(p.get('year')), kindOf(p.get('kind')))
-    }
-    const detail = p.get('detail') ?? ''
-    if (!ID.test(detail)) throw invalid('内訳の ID の形が違います')
-    return readProjectOfDetail(apiCall(env), detail, yearOf(p.get('year')), kindOf(p.get('kind')))
+    const project = p.get('project') ?? ''
+    if (!ID.test(project)) throw invalid('事業の ID の形が違います')
+    return readProjectOfId(apiCall(env), project, yearOf(p.get('year')), kindOf(p.get('kind')))
   })
 }
 

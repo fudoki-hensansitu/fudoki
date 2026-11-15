@@ -22,7 +22,7 @@ const getRoute = createRoute({
   operationId: 'get_jurisdiction',
   summary: '自治体と、収録範囲の出典を取得する',
   description:
-    'Return one municipality by its six-digit code with expenditure coverage with the source documents of each account, project evaluation years and budget proposal years.',
+    'Return one municipality by its six-digit code with expenditure coverage with the source documents of each account, and project evaluation years.',
   request: { params: z.strictObject({ jurisdiction_code: JurisdictionCode }) },
   responses: { ...ok(JurisdictionDetail), ...getErrors },
 })
