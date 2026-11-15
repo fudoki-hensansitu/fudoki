@@ -1,6 +1,6 @@
 # ADR 0038: 配信する歳出の表を、印字の木から粒度ごとの表に分ける
 
-状態: 採用（2026-11-06）。[ADR 0022](0022-serve-marts-via-worker-d1-rest-and-mcp.md) のデータの形・操作・表名を置き換える（Worker・D1・一つの操作定義で REST と MCP に出す構成はそのまま）。
+状態: 採用（2026-11-06）。[ADR 0022](0022-serve-marts-via-worker-d1-rest-and-mcp.md) のデータの形・操作・表名を置き換える（Worker・D1・一つの操作定義で REST と MCP に出す構成はそのまま）。表の列（木と根から求まる列を持つこと）は [ADR 0047](0047-serving-tables-hold-no-derivable-columns.md) で置き換えた（2026-11-15）。
 
 これまでの marts と D1 は、資料区分ごとの印字の木（`settlement_expenditure_node`・`initial_expenditure_node`）を1表ずつ配っていた。木は出典をそのまま写すので、同じ親に事業と節がぶら下がり、`axis` で絞らずに子を足すと二重計上になる。事業を引く列が無く、同じ「事業」の欄が資料ごとに違う見出し（決算は備考、当初予算は説明）で入っていた。
 
