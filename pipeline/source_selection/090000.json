@@ -33,11 +33,173 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201101903.pdf",
+              "sha256": "b9a08f307c40a331a85a948888a9dbe8aef8adbffa5b7fc2f476f83e6adf6988",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "公債管理特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102012.pdf",
+              "sha256": "150549d56b023e296d44cebc8c47fa932ce9a7d802e34a4345d017c69784f21c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "地方独立行政法人県立病院貸付金特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 3,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102137.pdf",
+              "sha256": "e68b808a46954d5129d318308c6cdc50e3df8b8db9bded3f0644a03b3645177f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "母子父子寡婦福祉資金貸付事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102304.pdf",
+              "sha256": "1818ffdd767d9e5ad07896443c61711336e5b978e94e76b4bef312067cf4ac78",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "心身障害者扶養共済事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102419.pdf",
+              "sha256": "f5ee3c11396d023597fd7a1402a95b0962f1928dc23f7852a74e5a505b25cbce",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 10
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102926.pdf",
+              "sha256": "defada93b2277501a1a119bb770b66ff532837521521a26088964c598d53ceff",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "就農支援資金貸付事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 12
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201103038.pdf",
+              "sha256": "78f049c15933748e6c211a109995f2f3ba7f580fa273d45765cd2adec39aa3f9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "県営林事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 7,
+                      "end": 10
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201103142.pdf",
+              "sha256": "f8b173e2184a22694239063d6cc60ac9cffb9e213874f15836cac33d47973a9b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "林業・木材産業改善資金貸付事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102746.pdf",
+              "sha256": "7c95902bd0a8b82a18daf7a9fbacb958cd5570c33da27a763203cca0e46a26db",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "中小企業高度化等資金貸付事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 5,
+                      "end": 8
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "会計管理課の「令和3（2021）年度栃木県歳入歳出決算書」の頁（https://www.pref.tochigi.lg.jp/i02/2021kessan.html）。一般会計は「歳入歳出決算事項別明細書（歳出）」の1冊、特別会計は会計ごとの事項別明細書の歳出の頁。どれも Adobe InDesign で組んだ text PDF。見開き2頁で1枚の表になり、左頁に款・項・目と予算現額（当初予算額・補正予算額・繰越事業費繰越額・予備費支出及び流用増減・計）と節（区分・金額）、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費繰越・事故繰越し）・不用額・備考を円単位で印字する。範囲は事項別明細書の歳出の見開きだけ（予備費支出及び流用増減内訳・実質収支に関する調書は範囲外）。令和3年度の特別会計9つの事項別明細書は文字が輪郭の図形になっていて文字の層を持たない（pdftotext で文字が出ず、画像も無い）ため、様式が同じ一般会計だけを選ぶ。令和2年度以前は歳出の事項別明細書を公開していない（決算書の款・項だけ、確認日 2026-11-15）。",
+      "reason": "会計管理課の「令和3（2021）年度栃木県歳入歳出決算書」の頁（https://www.pref.tochigi.lg.jp/i02/2021kessan.html）。一般会計は「歳入歳出決算事項別明細書（歳出）」の1冊、特別会計は会計ごとの事項別明細書の歳出の頁。どれも Adobe InDesign で組んだ text PDF。見開き2頁で1枚の表になり、左頁に款・項・目と予算現額（当初予算額・補正予算額・繰越事業費繰越額・予備費支出及び流用増減・計）と節（区分・金額）、右頁に支出済額・翌年度繰越額（継続費逓次繰越・繰越明許費繰越・事故繰越し）・不用額・備考を円単位で印字する。範囲は事項別明細書の歳出の見開きだけ（予備費支出及び流用増減内訳・実質収支に関する調書は範囲外）。令和3年度の特別会計9つの事項別明細書は文字が輪郭の図形になっていて文字の層を持たない（pdftotext で文字が出ず、画像も無い）ので、罫線は描画から、文字は OCR で読む。様式は一般会計と同じ。令和2年度以前は歳出の事項別明細書を公開していない（決算書の款・項だけ、確認日 2026-11-15）。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -47,9 +209,54 @@
             "key": "fiscal/source-selection/090000/2021/settlement.pdf",
             "sha256": "f5afcd72b92f1a4a16d7866567625c338059abbefc394dd933c1719daa03e4e5",
             "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201101652.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2021/settlement-5.pdf",
+            "sha256": "b9a08f307c40a331a85a948888a9dbe8aef8adbffa5b7fc2f476f83e6adf6988",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201101903.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2021/settlement-1.pdf",
+            "sha256": "150549d56b023e296d44cebc8c47fa932ce9a7d802e34a4345d017c69784f21c",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102012.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2021/settlement-7.pdf",
+            "sha256": "e68b808a46954d5129d318308c6cdc50e3df8b8db9bded3f0644a03b3645177f",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102137.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2021/settlement-2.pdf",
+            "sha256": "1818ffdd767d9e5ad07896443c61711336e5b978e94e76b4bef312067cf4ac78",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102304.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2021/settlement-8.pdf",
+            "sha256": "f5ee3c11396d023597fd7a1402a95b0962f1928dc23f7852a74e5a505b25cbce",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102419.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2021/settlement-6.pdf",
+            "sha256": "defada93b2277501a1a119bb770b66ff532837521521a26088964c598d53ceff",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102926.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2021/settlement-3.pdf",
+            "sha256": "78f049c15933748e6c211a109995f2f3ba7f580fa273d45765cd2adec39aa3f9",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201103038.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2021/settlement-9.pdf",
+            "sha256": "f8b173e2184a22694239063d6cc60ac9cffb9e213874f15836cac33d47973a9b",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201103142.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/090000/2021/settlement-4.pdf",
+            "sha256": "7c95902bd0a8b82a18daf7a9fbacb958cd5570c33da27a763203cca0e46a26db",
+            "final_url": "https://www.pref.tochigi.lg.jp/i02/documents/20221201102746.pdf"
           }
         ],
-        "archived_at": "2026-11-15T05:44:41.272Z"
+        "archived_at": "2026-11-15T07:59:29.591Z"
       }
     },
     {
