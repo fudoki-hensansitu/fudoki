@@ -232,6 +232,9 @@ def _groups(bands, selection):
 
 
 BULLET = re.compile(r'^[〇○●◎□■◇◆]')
+# The mark a 目・項・款 the year drops or adds prints where its number would stand (`○ 統一地方選挙費`), which a scan
+# reads as a letter O (`O区長選挙費`). It is no part of the name; a name that starts with O and more letters or digits (`OA機器`, `ＯＤＡ`, `Ｏ１５７`) keeps it.
+SUBJECT_MARK = re.compile(r'^(?:[〇○◯]|[OＯ](?=[^\x00-\x7f０-９Ａ-Ｚａ-ｚ]))\s*')
 # The words that qualify a printed amount as carried over (`一部繰越明許`, `逓次繰越`), printed after it.
 CARRY_OVER_TAG = re.compile(r'[(（]?(?:一部)?(?:繰越明許費?|逓次繰越|事故繰越し?)[)）]?')
 # Every parenthesised remark at the end of a name (`委託料（…へ流用△280,000）（…から流用1,815,000）`).
@@ -2604,6 +2607,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 open_items.append(item)
                 if item.parent is None:
                     unowned.append({'kind': 'no subject parent', 'page': item.page, 'text': item.name})
+            if item.group.subject and item.code is None and item.name:
+                item.name = SUBJECT_MARK.sub('', item.name) or item.name
             item.key = node_key(item)
             placed.append(item)
             x0, y0, x1, y1 = _bbox(item.glyphs)
