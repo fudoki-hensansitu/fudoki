@@ -181,6 +181,8 @@ def repeated_header(page: Page, frame, header_bottom: float, body: list[tuple[in
         words = [(i, w) for i, w in body if inside(w, upper, lower)]
         if len(words) < 4 or sum(known(normalize(w.text)) for _, w in words) < REPEATED_HEADER * len(words):
             continue
+        if any(re.fullmatch(r'[△▲]?[0-9]{1,3}(?:,[0-9]{3})+', normalize(w.text)) for _, w in words):
+            continue  # a header prints no grouped amount: a body row of letter-spaced words (`27 繰 出 金 52,842,000`)
         skip.update(i for i, _ in words)
         if number:
             above = [(i, w) for i, w in body if inside(w, *rows[number - 1])]

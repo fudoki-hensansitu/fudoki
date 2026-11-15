@@ -156,7 +156,10 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
             ol, ob, orr, ot = (ctypes.c_float() for _ in range(4))
             raw.FPDFPageObj_GetBounds(handle, ol, ob, orr, ot)
             visible = inside((ol.value, ob.value, orr.value, ot.value), clip_of(handle))
-        found.append(((l.value - left, top - t.value, r.value - left, top - b.value), (character_map or {}).get(chr(code), chr(code)), visible))
+        char = (character_map or {}).get(chr(code), chr(code))
+        if not char:
+            continue  # declared to drop (`character_map`)
+        found.append(((l.value - left, top - t.value, r.value - left, top - b.value), char, visible))
         if line_clips and not visible and handle and load_pattern("repairs", "line_clips").flat(clip_of(handle)):
             flat.add(len(found) - 1)
     width = page.get_width()
