@@ -99,7 +99,6 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
     left, _, _, top = page.get_mediabox()  # Poppler's words are measured from the MediaBox, even when a CropBox is smaller
     textpage = page.get_textpage()
     clips: dict[int, tuple | None] = {}
-    nested = document_quirk('nested_clips')
 
     def clip_of(handle):
         """The clip rectangle of an object (page space), or None when it has none."""
@@ -108,20 +107,14 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
             clip = raw.FPDFPageObj_GetClipPath(handle)
             box = None
             if clip and raw.FPDFClipPath_CountPaths(clip) > 0:
-                boxes = []
+                xs, ys = [], []
                 for i in range(raw.FPDFClipPath_CountPaths(clip)):
-                    xs, ys = [], []
                     for j in range(raw.FPDFClipPath_CountPathSegments(clip, i)):
                         segment = raw.FPDFClipPath_GetPathSegment(clip, i, j)
                         x, y = ctypes.c_float(), ctypes.c_float()
                         raw.FPDFPathSegment_GetPoint(segment, x, y)
                         xs.append(x.value); ys.append(y.value)
-                    if xs:
-                        boxes.append((min(xs), min(ys), max(xs), max(ys)))
-                if boxes and nested is not None:
-                    box = nested.module.clip(boxes)
-                elif boxes:
-                    box = (min(b[0] for b in boxes), min(b[1] for b in boxes), max(b[2] for b in boxes), max(b[3] for b in boxes))
+                box = (min(xs), min(ys), max(xs), max(ys)) if xs else None
             clips[address] = box
         return clips[address]
 
@@ -129,8 +122,6 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
         # box and clip as (left, bottom, right, top) in PDF space
         return clip is None or (box[0] < clip[2] and box[2] > clip[0] and box[1] < clip[3] and box[3] > clip[1])
 
-    patched = document_quirk('white_patches')
-    covered = patched.module.reader(raw, page.raw) if patched is not None else None
     paths = []
     flat_paths: set[int] = set()
     for index in range(raw.FPDFPage_CountObjects(page.raw)):
@@ -165,8 +156,6 @@ def _glyphs(pdf, number: int, opening: bool = False, form_clips: bool = False, c
             ol, ob, orr, ot = (ctypes.c_float() for _ in range(4))
             raw.FPDFPageObj_GetBounds(handle, ol, ob, orr, ot)
             visible = inside((ol.value, ob.value, orr.value, ot.value), clip_of(handle))
-        if visible and covered is not None and handle and covered(handle, (l.value, b.value, r.value, t.value)):
-            visible = False
         char = (character_map or {}).get(chr(code), chr(code))
         if not char:
             continue  # declared to drop (`character_map`)
@@ -285,7 +274,11 @@ def drop_invisible(pdf_path: Path, pages: list[Page], report: Report, repairs: f
         cached = {page.number: read(page.number) for page in pages} if 'line_clips' in repairs else {}
         offset = load_pattern("repairs", "line_clips").offset([found for found, _ in cached.values()]) if cached else 0.0
         for page in pages:
-            glyphs, paths = cached.get(page.number) or read(page.number)
+            traced = document_quirk('traced_glyphs')
+            if traced is not None:
+                glyphs, paths = traced.module.glyphs(pdf_path, page.number, character_map)
+            else:
+                glyphs, paths = cached.get(page.number) or read(page.number)
             # Glyphs placed off the page are not on it at all (Poppler skips them);
             # only invisible glyphs on the page call for a rebuild.
             glyphs = [g for g in glyphs if g[0][2] > 0 and g[0][0] < page.width and g[0][3] > 0 and g[0][1] < page.height]
