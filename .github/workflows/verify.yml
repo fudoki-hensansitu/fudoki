@@ -1,6 +1,11 @@
 name: verify
 on:
   pull_request:
+    # 文書だけの PR では回さない。ADR は番号の検査（pipeline/verify/docs.ts）があるので回す
+    paths:
+      - '**'
+      - '!**/*.md'
+      - 'docs/adr/**'
   push:
     branches: [main]
   workflow_dispatch:
