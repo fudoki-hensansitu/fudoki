@@ -1,0 +1,463 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131091",
+    "fiscal_year": 2025,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "9794b3b5a280217136b0e887f38960fd6d518e7886540a2ea8cb7d85e4c1d99f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。この年度の冊は見出し「説　明」の2字が離れて印字され、頁によって「説」だけ、または「説／明」の2段に読まれるので、説明と同じ除外をこの見出しにも書く。"
+                  }
+                },
+                "説／明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。この年度の冊は見出し「説　明」の2字が離れて印字され、頁によって「説」だけ、または「説／明」の2段に読まれるので、説明と同じ除外をこの見出しにも書く。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f1a8a14f62f301402a4aafec23852d692a756b6af594f785fc593772f498afd"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。この年度の冊は見出し「説　明」の2字が離れて印字され、頁によって「説」だけ、または「説／明」の2段に読まれるので、説明と同じ除外をこの見出しにも書く。"
+                  }
+                },
+                "説／明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。この年度の冊は見出し「説　明」の2字が離れて印字され、頁によって「説」だけ、または「説／明」の2段に読まれるので、説明と同じ除外をこの見出しにも書く。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f1a8a14f62f301402a4aafec23852d692a756b6af594f785fc593772f498afd"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。この年度の冊は見出し「説　明」の2字が離れて印字され、頁によって「説」だけ、または「説／明」の2段に読まれるので、説明と同じ除外をこの見出しにも書く。"
+                  }
+                },
+                "説／明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。この年度の冊は見出し「説　明」の2字が離れて印字され、頁によって「説」だけ、または「説／明」の2段に読まれるので、説明と同じ除外をこの見出しにも書く。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f1a8a14f62f301402a4aafec23852d692a756b6af594f785fc593772f498afd"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。この年度の冊は見出し「説　明」の2字が離れて印字され、頁によって「説」だけ、または「説／明」の2段に読まれるので、説明と同じ除外をこの見出しにも書く。"
+                  }
+                },
+                "説／明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。この年度の冊は見出し「説　明」の2字が離れて印字され、頁によって「説」だけ、または「説／明」の2段に読まれるので、説明と同じ除外をこの見出しにも書く。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "disaster-recovery-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5f1a8a14f62f301402a4aafec23852d692a756b6af594f785fc593772f498afd"
+        }
+      ],
+      "options": {
+        "account": "災害復旧特別会計",
+        "table_id": "disaster-recovery-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_titles",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "説": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。この年度の冊は見出し「説　明」の2字が離れて印字され、頁によって「説」だけ、または「説／明」の2段に読まれるので、説明と同じ除外をこの見出しにも書く。"
+                  }
+                },
+                "説／明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの充当事業・負担基本額と率・調定の見込みで、節の内訳ではない。この年度の冊は見出し「説　明」の2字が離れて印字され、頁によって「説」だけ、または「説／明」の2段に読まれるので、説明と同じ除外をこの見出しにも書く。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "disaster-recovery-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "8460dd267394b4503af6c00424dbd810245b6b422e8dbb6c4d335ce7f7eb82b3",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 64頁 から決めた。款の和 234,763,000 と印字の「歳入合計」234,763,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/revenue/general-initial-nodes.parquet",
+          "sha256": "cf901e9ffc7e3e7c371d94a3ef973fe119a65646b59cbd01b967207a5d5c05bf",
+          "bytes": 26683
+        },
+        "row_count": 596
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/revenue/general-initial-amounts.parquet",
+          "sha256": "7b27a69d84b70c5d770e5c26917226fd1c14edc8997a305b00262cfd5429b710",
+          "bytes": 20030
+        },
+        "row_count": 832
+      }
+    },
+    {
+      "table_id": "national-health-initial",
+      "conversion_id": "national-health-initial",
+      "input_fingerprint": "e08365fe2352aa1d3ad488ff6dad56fd7af11e5cc53cbc139cd57112c3118ac8",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 5頁 から決めた。款の和 34,384,515 と印字の「歳入合計」34,384,515 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/revenue/national-health-initial-nodes.parquet",
+          "sha256": "670ae6ba2cd99b77e3f91dd8a5d70043c94dd1f215d3368d5224b431cf5f83bd",
+          "bytes": 5699
+        },
+        "row_count": 60
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/revenue/national-health-initial-amounts.parquet",
+          "sha256": "25a4e1d7fa9f2bfc2cc87c47f1412984bcc995d71de3ed83ecde0840ea20bbb5",
+          "bytes": 4592
+        },
+        "row_count": 98
+      }
+    },
+    {
+      "table_id": "elderly-medical-initial",
+      "conversion_id": "elderly-medical-initial",
+      "input_fingerprint": "0df613c92c127fd66d6da538cdd14f0388ef35aee94e8a19f14bde90adb85b9a",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 4頁 から決めた。款の和 11,000,237 と印字の「歳入合計」11,000,237 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/revenue/elderly-medical-initial-nodes.parquet",
+          "sha256": "9b23d62d0f2d4e84b05096419b91ad5852f8ce35678f463ac2c6d9d220e8e3ad",
+          "bytes": 4905
+        },
+        "row_count": 44
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/revenue/elderly-medical-initial-amounts.parquet",
+          "sha256": "12e3f7c4d63b5d03a1bb2e3f6fd0e8a2e1ef8c42ada174dd8bea91787cd7a6f7",
+          "bytes": 3916
+        },
+        "row_count": 72
+      }
+    },
+    {
+      "table_id": "care-initial",
+      "conversion_id": "care-initial",
+      "input_fingerprint": "895eb883a20a21e12117ae9b768e0f161dee8a04338cc4a338982b64a8bc562d",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 6頁 から決めた。款の和 28,110,560 と印字の「歳入合計」28,110,560 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/revenue/care-initial-nodes.parquet",
+          "sha256": "ffc09f24862409f2adaf8193b112045036a43c1c856c915a35ab61fc8f983949",
+          "bytes": 7004
+        },
+        "row_count": 90
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/revenue/care-initial-amounts.parquet",
+          "sha256": "d56d7366fad021b224b07aa55b2343e5e9e676c2893b99061408f1c506d42691",
+          "bytes": 5490
+        },
+        "row_count": 160
+      }
+    },
+    {
+      "table_id": "disaster-recovery-initial",
+      "conversion_id": "disaster-recovery-initial",
+      "input_fingerprint": "b0cc92e42bf9060bf29e9e2d6a651a47e7e188268a44731b2468afab102fc9c8",
+      "account": "災害復旧特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent'}。",
+        "金額の単位は column mark 2頁 から決めた。款の和 1,500,000 と印字の「歳入合計」1,500,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/revenue/disaster-recovery-initial-nodes.parquet",
+          "sha256": "5d1a24fa9aa458faf80c16ed2b4c9afc8206ff6e3c370985fc3e407b44b26ea9",
+          "bytes": 2228
+        },
+        "row_count": 4
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131091/2025/initial/revenue/disaster-recovery-initial-amounts.parquet",
+          "sha256": "44fc1c09b2c4e68097b3319c82e574ff7e42694db3bbdc034b52a4945b9f7131",
+          "bytes": 1861
+        },
+        "row_count": 8
+      }
+    }
+  ]
+}
