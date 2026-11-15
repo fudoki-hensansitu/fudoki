@@ -52,7 +52,7 @@ function Num({ n, m, className }: { n: number; m: Measure | 'yen'; className?: s
 }
 const popText = (n: number) => (n ? `人口 ${(n / 1e4).toFixed(1)}万人` : '')
 
-/** まちの名前そのものが選ぶ欄。押すと名前で探せる候補が開く。候補は頁に全部を載せず、打った語でサーバー（/api/jurisdictions?q=）に1頁ずつ聞き、下まで scroll したら続きを足す */
+/** まちの名前そのものが選ぶ欄。押すと名前で探せる候補が開く。候補は頁に全部を載せず、打った語でサーバー（/api/jurisdictions?name=）に1頁ずつ聞き、下まで scroll したら続きを足す */
 function TownPicker({ current, onPick, children, className }: { current: string; onPick: (code: string) => void; children: React.ReactNode; className?: string }) {
   const [open, setOpen] = React.useState(false)
   const [q, setQ] = React.useState('')

@@ -21,7 +21,7 @@ export function Emblem({ code, name, className = 'size-10' }: { code: string; na
 }
 
 /** plain: 白い地に置くとき。地と同じ白に溶けないよう枠を付ける。
- * 候補は全部を手元に取らず、打った語でサーバー（/api/jurisdictions?q=）に1頁ずつ聞き、下まで scroll したら続きを足す */
+ * 候補は全部を手元に取らず、打った語でサーバー（/api/jurisdictions?name=）に1頁ずつ聞き、下まで scroll したら続きを足す */
 export function Picker({ onPick, placeholder, plain }: { onPick: (e: MapEntry) => void; placeholder: string; plain?: boolean }) {
   const [open, setOpen] = React.useState(false)
   // 欄の今の語（候補を聞く）と、手で打った語（窓が閉じて欄が空に戻っても、要望フォームへの入口を残す）

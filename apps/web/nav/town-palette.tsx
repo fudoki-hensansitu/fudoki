@@ -1,5 +1,5 @@
 // まちを探すパレット（shadcn の Command）。サイドバーの「まちを探す」とホームの「他のまちを見る」が同じものを開く。選んだまちの頁へ移り、住んでいるまちは変えない。
-// 当てるのはサーバー（/api/jurisdictions?q=）で、打った語ごとに1頁ずつ読み、下まで scroll したら続きを足す（home/towns.ts の useTownSearch）
+// 当てるのはサーバー（/api/jurisdictions?name=）で、打った語ごとに1頁ずつ読み、下まで scroll したら続きを足す（home/towns.ts の useTownSearch）
 import * as React from 'react'
 import { useRouter } from '@void/react'
 import { Command, CommandDialog, CommandEmpty, CommandInput, CommandItem, CommandList } from '@/components/ui/command'
