@@ -6,6 +6,8 @@ export function yenParts(y: number): [string, string] {
     const v = y / 1e8
     return [v >= 100 ? Math.round(v).toLocaleString('ja-JP') : v.toLocaleString('ja-JP', { maximumFractionDigits: 1 }), '億円']
   }
+  // 1万円に満たない金額は「0万円」と読めないよう円で出す
+  if (y !== 0 && Math.abs(y) < 1e4) return [Math.round(y).toLocaleString('ja-JP'), '円']
   return [Math.round(y / 1e4).toLocaleString('ja-JP'), '万円']
 }
 /** 数字を強調し、単位は小さく */

@@ -202,7 +202,7 @@ class ReceiptsFallbackTest(unittest.TestCase):
         with patch.object(prepare, 'fetch', side_effect=self.fetch):
             document = prepare.load_document({}, self.spec, None, remote=True, receipts=self.receipts, fallbacks=fallbacks)
         self.assertEqual(document['tables'], [self.stored])
-        self.assertEqual(fallbacks, ['ingestion/fiscal/jurisdictions/x.json'])
+        self.assertEqual(fallbacks, ['ingestion/fiscal/jurisdictions/x.json: t'])
 
     def test_a_receipt_of_other_inputs_is_not_read(self):
         self.stored['input_fingerprint'] = 'old-source'
@@ -216,12 +216,17 @@ class ReceiptsFallbackTest(unittest.TestCase):
             self.assertEqual(prepare.load_document({}, self.spec, None, remote=True, receipts=self.receipts)['tables'],
                              [self.stored])
 
-    def test_a_manifest_r2_holds_no_table_of_is_left_out(self):
-        skipped = []
-        other = {'131041/2024/settlement/expenditure/t': self.stored}
+    def test_a_table_never_stored_is_left_out_and_the_stored_ones_kept(self):
+        # #775 stored the special accounts, #776 added the general account and its store failed.
+        added = {**self.recorded, 'table_id': 'u'}
+        self.document['tables'] = [self.recorded, added]
+        skipped, left = [], set()
         with patch.object(prepare, 'fetch', side_effect=self.fetch):
-            self.assertIsNone(prepare.load_document({}, self.spec, None, remote=True, receipts=other, skipped=skipped))
-        self.assertEqual(skipped, ['ingestion/fiscal/jurisdictions/x.json'])
+            document = prepare.load_document({}, self.spec, None, remote=True, receipts=self.receipts,
+                                             skipped=skipped, left_tables=left)
+        self.assertEqual(document['tables'], [self.stored])
+        self.assertEqual(skipped, ['ingestion/fiscal/jurisdictions/x.json: u'])
+        self.assertEqual(left, {(prepare.document_key(self.spec), 'u')})
 
     def test_readable_tables_and_missing_receipts_keep_the_record(self):
         with patch.object(prepare, 'fetch', return_value=Path('/dev/null')):
