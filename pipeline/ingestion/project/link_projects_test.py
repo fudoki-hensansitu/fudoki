@@ -2,7 +2,7 @@
 import json
 import unittest
 
-from ingestion.project.link_projects import Line, assign, build_years, link, link_previous
+from ingestion.project.link_projects import Line, assign, build_years, link, link_previous, normalize
 
 
 def line(detail_id, year, kind, path, parent=None, moku='目', order=0):
@@ -70,6 +70,12 @@ class LinkProjectsTest(unittest.TestCase):
         self.assertEqual(ids['a'], ids['c'])
         self.assertEqual(ids['c'], ids['d'])
         self.assertNotEqual(ids['z'], ids['c'])
+
+
+    def test_bracketed_department_is_not_part_of_the_name(self):
+        # 中央区・八王子は所管課を [] で印字する。所管課が変わっても同じ事業、[1人分] のような注記は名前に残す
+        self.assertEqual(normalize('小学校管理事業[学務課]'), normalize('小学校管理事業[教育総務課]'))
+        self.assertEqual(normalize('職員費[1人分]'), '職員費[1人分]')
 
 
 if __name__ == '__main__':
