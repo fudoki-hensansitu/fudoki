@@ -1525,10 +1525,12 @@ def _owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[in
             if above:
                 return max(above, key=lambda i: centre(i.lines[-1]))
     if band.inline:
+        # The quirk `tall_kind_stacks` lets a stack run to 8 heights (seven lines), not 6.
+        reach_in_heights = 8 if document_quirk('tall_kind_stacks') is not None else 6
         # Kind lines stacked in the cell of the item that opens them (`計` / `当初` / `補正` …, one line each): the
         # nearest item above in the nearest label group, within the height of the stack.
         for group in left:
-            stacked = [i for i in found[id(group)] if i.role in roles and 0 <= y - i.anchor <= 6 * height]
+            stacked = [i for i in found[id(group)] if i.role in roles and 0 <= y - i.anchor <= reach_in_heights * height]
             if stacked:
                 return max(stacked, key=lambda i: i.anchor)
     return None

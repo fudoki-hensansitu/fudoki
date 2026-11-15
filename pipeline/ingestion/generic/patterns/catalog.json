@@ -141,6 +141,8 @@
     "name_column": "ingestion.generic.patterns.quirks.name_column",
     "head_counts": "ingestion.generic.patterns.quirks.head_counts",
     "drifting_spread_rows": "ingestion.generic.patterns.quirks.drifting_spread_rows",
+    "tall_kind_stacks": "ingestion.generic.patterns.quirks.tall_kind_stacks",
+    "scaled_spread_pages": "ingestion.generic.patterns.quirks.scaled_spread_pages",
     "dropped_notes": "ingestion.generic.patterns.quirks.dropped_notes",
     "unit_marked": "ingestion.generic.patterns.quirks.unit_marked",
     "marked_subjects": "ingestion.generic.patterns.quirks.marked_subjects",
