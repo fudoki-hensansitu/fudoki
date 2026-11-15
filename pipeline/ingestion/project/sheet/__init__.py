@@ -34,10 +34,15 @@ CSV の評価（1行1事業）は `columns` に組の名前 → 列の見出し�
                            "pattern": "^(?P<kan_code>\\d+) (?P<kou_code>\\d+)"}}  # 名前付きの組はその組の名前で採る
     }
 
+`ignore` に当たる語は枠に入れない（枠にかかる事業番号など）。`cut` が真の欄は、欄の境をまたぐ語を字の幅を等分に見て欄の中の字だけにする（OCR が隣の欄の語とつないだ行）。
 `from` は欄ごとの基準の語（錨の上で最も近い語）、`before` はそれに当たる語の行から下を枠から外す。
 `skip`（枠の list）のどれかに当たる行は読まず、`distinct` が真なら事業名・所管課・金額が同じ2つ目からの行を読まない。
 座標は `page_words` の語の座標。頁の文字の `fields` は枠で拾えなかった組を埋め、`carry_fields` は見出しの頁で拾った組を
 次に当たる頁まで後ろの頁へ引き継ぐ。1冊に様式の違う部分があれば `parts` に宣言を並べ、それぞれで読んだものを合わせる。
+
+文字の層の無い・字形の壊れた冊は、宣言の `ocr` に依頼を書くと OCR の観測の行を語にして読む（`ocr.py`）。チェックの印
+（✔）は OCR が読まないので、選択肢の語に当たる `marks.pattern` と、語の左端からの箱の x の範囲 `marks.x` を書くと、
+箱に墨（黒い画素の割合が `marks.ink`、既定 0.05 以上）のある語の頭に ✔ を足す: `"marks": {"pattern": "^(計画どおり|拡充)$", "x": [-11, -2]}`。
 
 評価の区分の印字（grade）は grade_label にそのまま残す。共通の区分は付けず、今後の方向性の区分（direction_code）を
 入力準備で当てる（`DIRECTIONS`・宣言の `directions`）。A〜D のような4区分は API が方向性の区分からまとめる。
@@ -52,6 +57,7 @@ direction（今後の方向性）。`<名前>_more` の組は、名前が折り�
 from __future__ import annotations
 
 import re
+import statistics
 import sys
 import unicodedata
 from dataclasses import dataclass, field
@@ -120,7 +126,10 @@ class Sheet:
 
 
 def modules() -> list[Path]:
-    return [Path(__file__)]
+    from ingestion.lib import ocr_ink
+
+    # OCR の観測から語を選ぶ処理（ocr.py が使う superseded）も読みの指紋に入れる
+    return [Path(__file__), Path(__file__).with_name('ocr.py'), Path(ocr_ink.__file__)]
 
 
 def norm(text: str) -> str:
@@ -196,9 +205,43 @@ def unspace(text: str) -> str:
     return SPACED.sub(lambda m: m.group(0).replace(' ', ''), text)
 
 
-def pages(path) -> list[tuple[int, str]]:
-    """頁ごとの文字。bbox（`page_words`）の語を行に組み、行ごとに空白を1つに詰め、字の間を空けた語を詰める。"""
-    return [(page.number, unspace(norm('\n'.join(page_words.lines(page))))) for page in page_words.pages(Path(path))]
+def word_pages(path, ocr: list | None = None, marks: dict | None = None) -> list:
+    """頁の語。OCR で読む冊（`ocr.py`）は観測の行の箱、ほかは bbox（`page_words`）の語。"""
+    out = ocr if ocr is not None else page_words.pages(Path(path))
+    return [mark(path, page, marks) for page in out] if marks else out
+
+
+def mark(path, page, marks: dict):
+    """選択肢の左の箱に墨があれば、その語の頭に ✔ を足す。スキャンでは OCR がチェックの印を読まないので、
+    頁の画像の箱（語の左端からの x の範囲 `marks.x`、語の高さ）の黒い画素の割合で決める。"""
+    targets = [word for word in page.words if re.search(marks['pattern'], unicodedata.normalize('NFKC', word.text))]
+    if not targets:
+        return page
+    import numpy
+    import pypdfium2
+
+    scale = 4
+    document = pypdfium2.PdfDocument(str(path))
+    try:
+        image = numpy.asarray(document[page.number - 1].render(scale=scale).to_pil().convert('L')) < 128
+    finally:
+        document.close()
+    lo, hi = marks['x']
+
+    def inked(word) -> bool:
+        # OCR の箱が印の箱まで含むことがあるので、同じ列の選択肢の左端の中央値を語の左端にする
+        left = statistics.median(other.x0 for other in targets if abs(other.x0 - word.x0) <= 15)
+        box = image[int((word.y0 + 1) * scale):int((word.y1 - 1) * scale), int((left + lo) * scale):int((left + hi) * scale)]
+        return box.size > 0 and box.mean() >= marks.get('ink', 0.05)
+
+    words = [page_words.Word(f'✔{word.text}', word.x0, word.y0, word.x1, word.y1) if word in targets and inked(word) else word
+             for word in page.words]
+    return page_words.Page(page.number, page.width, page.height, words)
+
+
+def pages(path, ocr: list | None = None, marks: dict | None = None) -> list[tuple[int, str]]:
+    """頁ごとの文字。語を行に組み、行ごとに空白を1つに詰め、字の間を空けた語を詰める。"""
+    return [(page.number, unspace(norm('\n'.join(page_words.lines(page))))) for page in word_pages(path, ocr, marks)]
 
 
 def read_csv(path, workflow: dict) -> list[Sheet]:
@@ -234,16 +277,16 @@ def read_csv(path, workflow: dict) -> list[Sheet]:
     return sheets
 
 
-def read(path, workflow: dict) -> list[Sheet]:
-    """シートの頁を読む。`start` があれば、1枚目の頁から次の1枚目の前までを1枚にする。"""
+def read(path, workflow: dict, ocr: list | None = None) -> list[Sheet]:
+    """シートの頁を読む。`start` があれば、1枚目の頁から次の1枚目の前までを1枚にする。`ocr` は OCR の観測の頁。"""
     if 'parts' in workflow:
-        return [sheet for part in workflow['parts'] for sheet in read(path, part)]
+        return [sheet for part in workflow['parts'] for sheet in read(path, part, ocr)]
     if 'columns' in workflow:
         return read_csv(path, workflow)
     if 'rows' in workflow:
-        return read_rows(path, workflow)
+        return read_rows(path, workflow, ocr)
     groups: list[tuple[int, list[str]]] = []
-    texts = pages(path)
+    texts = pages(path, ocr, workflow.get('marks'))
     if not any(text.strip() for _, text in texts):
         print(f'{Path(path).name}: 文字の層が無い（スキャン）ので読まない', file=sys.stderr)
     for number, text in texts:
@@ -294,6 +337,18 @@ def inside(word, anchor, spec: dict) -> bool:
     return x0 <= (word.x0 + word.x1) / 2 <= x1 and y0 <= word.y0 - anchor.y0 <= y1
 
 
+def cut(word, x: list):
+    """欄の境をまたぐ語（OCR が隣の欄の語とつないだ行）を、字の幅を等分に見て欄の中の字だけにする。"""
+    text = word.text
+    width = (word.x1 - word.x0) / max(len(text), 1)
+    keep = [i for i in range(len(text)) if x[0] <= word.x0 + (i + 0.5) * width <= x[1]]
+    if not keep:
+        return None
+    if len(keep) == len(text):
+        return word
+    return page_words.Word(text[keep[0]:keep[-1] + 1], word.x0 + keep[0] * width, word.y0, word.x0 + (keep[-1] + 1) * width, word.y1)
+
+
 def region(words: list, anchor, spec: dict) -> dict[str, str] | str | None:
     """枠の語をつないだ文字。`pattern` に名前付きの組があれば、組の名前 → 値を返す。"""
     if 'from' in spec:
@@ -303,10 +358,17 @@ def region(words: list, anchor, spec: dict) -> dict[str, str] | str | None:
             return None
         above = [word for word in refs if word.y0 <= anchor.y0 + 2]
         anchor = max(above, key=lambda word: word.y0) if above else min(refs, key=lambda word: abs(word.y0 - anchor.y0))
-    found = [word for word in words if inside(word, anchor, spec)]
+    # `cut` の欄は境をまたぐ語を切ってから枠に入れる（`before` は切る前の語で見る）
+    if 'ignore' in spec:
+        # 枠にかかる別の欄の語（事業番号など）は `ignore` に当たれば入れない
+        words = [word for word in words if not re.search(spec['ignore'], unicodedata.normalize('NFKC', word.text))]
+    pieces = [cut(word, spec['x']) for word in words] if spec.get('cut') else words
+    found = [word for word in pieces if word is not None and inside(word, anchor, spec)]
     if 'before' in spec:
-        # 錨より下で `before` に当たる最初の語の行から下は枠に入れない（折り返しの行数が欄ごとに違う様式）
-        stops = [word.y0 for word in words if word.y0 > anchor.y0 - 2 and re.search(spec['before'], unicodedata.normalize('NFKC', word.text))]
+        # 錨より下で `before` に当たる最初の語の行から下は枠に入れない（折り返しの行数が欄ごとに違う様式）。
+        # 基準の語（`from`）からの枠では、基準の語の行は数えず、次の区画の見出しから下を外す
+        floor = anchor.y0 + 2 if 'from' in spec else anchor.y0 - 2
+        stops = [word.y0 for word in words if word.y0 > floor and re.search(spec['before'], unicodedata.normalize('NFKC', word.text))]
         if stops:
             found = [word for word in found if word.y0 < min(stops) - 2]
     text = clean(join(found))
@@ -318,13 +380,13 @@ def region(words: list, anchor, spec: dict) -> dict[str, str] | str | None:
     return clean(hit.group(1) if hit and hit.groups() else hit.group(0) if hit else None)
 
 
-def read_rows(path, workflow: dict) -> list[Sheet]:
+def read_rows(path, workflow: dict, ocr: list | None = None) -> list[Sheet]:
     """座標で読む。`rows.anchor` に当たる語ごとに1事業とし、欄は錨の語からの位置の枠の語をつないで拾う。
     `fields`（頁の文字の正規表現）があれば、枠で拾えなかった組をそれで埋める（所管課の見出しなど）。"""
     rows = workflow['rows']
     sheets: list[Sheet] = []
     carried: dict[str, str] = {}
-    for page in page_words.pages(Path(path)):
+    for page in word_pages(path, ocr, workflow.get('marks')):
         text = unspace(norm('\n'.join(page_words.lines(page))))
         # 見出しの頁にだけ印字した欄（所管課など）は `carry_fields` で拾い、次に当たる頁まで後ろの頁へ引き継ぐ
         carried.update(match(text, workflow.get('carry_fields', []))[0])

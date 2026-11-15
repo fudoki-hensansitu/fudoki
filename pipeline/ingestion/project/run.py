@@ -52,6 +52,8 @@ def sheet_sources(declared: list[dict], selections: Path = SELECTIONS) -> list[d
                 out.append({'jurisdiction': entry['jurisdiction'], 'fiscal_year': year, 'reader': 'sheet',
                             **({'layout': entry['layout']} if 'layout' in entry else {}),
                             **({'workflow': entry['workflow']} if 'workflow' in entry else {}),
+                            # OCR で読む冊は固定した観測（未固定なら None、読むときに止める）
+                            **({'ocr': entry['ocr'].get('observations', {}).get(stored['sha256'])} if 'ocr' in entry else {}),
                             'directions': entry.get('directions', {}),
                             'title': candidate['title'], 'landing_url': candidate['landing_url'], 'url': url,
                             'sha256': stored['sha256'], 'reference': {'key': stored['key'], 'sha256': stored['sha256']}})
@@ -101,16 +103,27 @@ def code_fingerprint(origin: dict) -> str:
         digest.update(path.read_bytes())
     if workflow is not None:
         digest.update(json.dumps(workflow, ensure_ascii=False, sort_keys=True).encode())
+    if origin.get('ocr'):
+        digest.update(origin['ocr']['sha256'].encode())
     return digest.hexdigest()[:16]
 
 
-def read_cached(path: Path, origin: dict) -> object:
+def read_cached(path: Path, origin: dict, *, remote: bool = False) -> object:
     """PDF を宣言の様式（またはパターンの組み合わせ）で読む。結果は dataclass を dict にしたもの。"""
+    if 'ocr' in origin and origin['ocr'] is None:
+        # 古い読み（空の一覧）のキャッシュで黙って飛ばさないよう、キャッシュを見る前に止める
+        raise ValueError(f'{origin["jurisdiction"]} {origin["fiscal_year"]} {origin["sha256"][:12]}: OCR の観測が宣言に固定されていない'
+                         '（python -m ingestion.project.sheet.ocr で読む）')
     name = origin.get('layout', origin.get('reader', 'press'))
     cache = READINGS / f'{origin["sha256"]}-{name}-{code_fingerprint(origin)}.json'
     if cache.exists():
         return json.loads(cache.read_text(encoding='utf-8'))
-    if 'workflow' in origin:
+    if 'ocr' in origin:
+        # 文字の層の無い・字形の壊れた冊は、固定した OCR の観測の行を語にして読む
+        from ingestion.project.sheet import ocr
+
+        result = sheet.read(path, origin['workflow'], ocr.pages(ocr.fetch(origin['sha256'], origin['ocr'], remote=remote)))
+    elif 'workflow' in origin:
         result = (sheet if origin.get('reader') == 'sheet' else press).read(path, origin['workflow'])
     else:
         result = layout(origin['layout']).read(path)
@@ -178,7 +191,7 @@ def load(*, remote: bool = False, jurisdictions: set[str] | None = None, page_te
     paths: dict[str, Path] = {}
     for origin in sheet_sources(declared['sheets']):
         path = fetch(origin['reference'], remote=remote)
-        sheets = read_cached(path, origin)
+        sheets = read_cached(path, origin, remote=remote)
         if not sheets:
             # 施策の冊などシートの無い冊は出典にしない
             continue
