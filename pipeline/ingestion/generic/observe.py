@@ -129,6 +129,55 @@ def rule_glyphs(items: list[Word], chars: list | None = None) -> tuple[list[Word
     return kept, rules
 
 
+def covered_by_notes(page, items: list[Word]) -> list[Word]:
+    """A note pasted over the page (a FreeText annotation filled white) hides what is printed under it and shows its
+    own text, if any: a number corrected after printing (栃木県の予算書 2024, a 項 `6` covered by `5`). Poppler reads
+    the printed words and the note's text both, so the words under the note are dropped and the note's text is kept
+    (the last run of words in its box that reads as it: Poppler reads an annotation after the page) in their place. A note
+    that covers nothing printed corrects nothing, and its text is not read. A note whose text sits inside a printed
+    word it covers only in part (a code Poppler joined to the name), or whose text Poppler does not read, cannot be
+    read in place and stops the reading."""
+    left, top = (getattr(page, 'bbox', None) or (0, 0))[:2]  # pdfplumber counts from the MediaBox, Poppler from 0
+    notes = []
+    for note in page.annots or ():
+        data = note.get('data') or {}
+        subtype = data.get('Subtype')
+        fill = [float(value) for value in data.get('C') or ()]
+        if getattr(subtype, 'name', str(subtype).strip("/'")) != 'FreeText' or fill != [1.0, 1.0, 1.0] \
+                or int(data.get('F') or 0) & 2:
+            continue
+        notes.append((note['x0'] - left, note['top'] - top, note['x1'] - left, note['bottom'] - top,
+                      ''.join((note.get('contents') or '').split())))
+    if not notes:
+        return items
+    centre = lambda word: ((word.x0 + word.x1) / 2, (word.y0 + word.y1) / 2)
+    within = lambda point, box: box[0] <= point[0] <= box[2] and box[1] <= point[1] <= box[3]
+    dropped, placed = set(), {}
+    for box in notes:
+        inside = [index for index, word in enumerate(items) if within(centre(word), box)]
+        # The note's text: the last run of words in the box that reads as it
+        own = next((inside[start:end] for end in range(len(inside), 0, -1) for start in range(end - 1, -1, -1)
+                    if box[4] and ''.join(items[index].text for index in inside[start:end]) == box[4]), [])
+        if box[4] and inside and not own:  # the note's text is not read where it is pasted: what it corrects is unknown
+            raise ValueError(f'a note `{box[4]}` covers printed words but its text is not read in their place')
+        covered = [items[index] for index in inside if index not in own]
+        dropped.update(index for index in inside if index not in own)
+        if own and not covered:
+            point = centre(items[own[0]])
+            if any(within(point, (w.x0, w.y0, w.x1, w.y1)) for index, w in enumerate(items) if index not in own):
+                raise ValueError(f'a note `{box[4]}` covers only part of a printed word and cannot be read in its place')
+            dropped.update(own)  # a note over nothing printed corrects nothing (a stray `8` in a heading, 栃木県 2024)
+        elif own:
+            # The note reads in place of what it covers, set to the right end of the printed words as a code or an
+            # amount is: where the note's own text box happens to sit says nothing about the column.
+            shift = max(w.x1 for w in covered) - max(items[index].x1 for index in own)
+            y0, y1 = min(w.y0 for w in covered), max(w.y1 for w in covered)
+            for index in own:
+                word = items[index]
+                placed[index] = Word(word.text, word.x0 + shift, y0, word.x1 + shift, y1)
+    return [placed.get(index, word) for index, word in enumerate(items) if index not in dropped]
+
+
 def drop_hidden_copies(pdf: Path, number: int, width: float, items: list[Word]) -> list[Word]:
     """Some documents print every word twice, the second copy a fixed distance to the side and not visible
     (a layer the page's clip hides): Poppler reads both. A page where a good share of the words have a twin at one
@@ -336,6 +385,7 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None,
             width, height, items = poppler[number]
             page = document.pages[number - 1]
             items = drop_hidden_copies(pdf, number, width, items)
+            items = covered_by_notes(page, items)
             items, glyph_rules = rule_glyphs(items, page.chars)
             result.append(Page(number, width, height, items, merge_rules(_to_poppler(page, _segments(page, pdf)) + glyph_rules)))
             page.close()
