@@ -22,7 +22,8 @@ on:
         default: ''
 permissions:
   contents: read
-  actions: read
+  # actions: write は古い pipeline-cache を消すため（読むだけなら read で足りる）
+  actions: write
 # serving:sync は同時に2つ流せない（`<表>__new` が衝突する）。前の同期を止めず、順に流す。
 # 待てる run は1本だけで、それより前の待ちは取り消されるが、範囲は最後に成功した同期から決めるので取りこぼさない
 concurrency:
@@ -78,12 +79,14 @@ jobs:
             sleep "$wait"
           done
           exit 1
-      # R2 から戻した取り込みの表・出典と、事業の PDF を読んだ結果。毎回新しい key で保存して温めておく
+      # R2 から戻した取り込みの表・出典と、事業の PDF を読んだ結果（約3GB）。中身が増えた回だけ新しい key で保存する
       - uses: actions/cache/restore@v6
         with:
           path: pipeline/.cache
           key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
           restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
+      - id: cache-before
+        run: echo "files=$(find pipeline/.cache -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
       # 一部の scan の表は mutool で字を読む（generic/patterns/components/clipped_words.py）
       - if: steps.scope.outputs.since != ''
         run: mise install conda:mupdf@1.28.6
@@ -95,8 +98,23 @@ jobs:
       - run: bun run --cwd pipeline publish -- --database-id b9b6f209-083e-45b3-a896-1014a17a15f9 ${{ steps.scope.outputs.args }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - if: always()
+      # 毎回 3GB を保存すると repo の cache の上限（10GB）から refresh-check の generic-observation が追い出される。
+      # 中身（file の名前と大きさ）が変わった回だけ保存し、古い pipeline-cache は消す
+      - id: cache-after
+        if: always()
+        run: echo "files=$(find pipeline/.cache -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
+      - id: cache-save
+        if: always() && steps.cache-after.outputs.files != steps.cache-before.outputs.files
         uses: actions/cache/save@v6
         with:
           path: pipeline/.cache
           key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
+      - if: always() && steps.cache-save.outcome == 'success'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          KEEP: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
+        run: |
+          gh cache list --repo "${{ github.repository }}" --key pipeline-cache- --limit 100 --json key --jq '.[].key' |
+            while read -r key; do
+              [ "$key" = "$KEEP" ] || gh cache delete "$key" --repo "${{ github.repository }}" || true
+            done
