@@ -1775,6 +1775,17 @@ class NumberApartFromDigitNameTest(unittest.TestCase):
         self.assertAlmostEqual(item.indent, 388.1, places=3)
         self.assertAlmostEqual(layout_name_start(item), 388.1, places=3)
 
+class WideStopBeforeDigitNameTest(unittest.TestCase):
+    def test_the_name_starts_after_the_full_width_stop_before_a_digit(self):
+        from ingestion.generic.tree import Group, Item, _measure
+        # `4．１歳６か月児…` (三鷹 R4): one word; the name starts after `4．`, where `3．乳幼児…` starts its name.
+        word = Glyph('4．１歳６か月児健康診査関係費', 720.0, 0, 855.0, 10, 1, 0)
+        shared = Group.__new__(Group)
+        shared.subject = False
+        item = Item(shared, 1, [[word]], '4', '１歳６か月児健康診査関係費', 0)
+        _measure(item, [word], '4')
+        self.assertAlmostEqual(item.indent, 720.0 + 2 * 135.0 / 15, places=3)
+
 class HeadingsTest(unittest.TestCase):
     """`headings`: a name-only line heads the deeper lines under it, only in an axis that declares it."""
     SETTINGS = {'備考': {'quirks': {'headings': True}, 'plain_names': ['繰越明許費分']}}
