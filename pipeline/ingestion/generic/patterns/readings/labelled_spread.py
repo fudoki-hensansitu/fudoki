@@ -125,6 +125,7 @@ class Reader(Reading):
         self.ITEM_AMOUNT_REACH = profile['item_amount_reach']
         self.TOTAL = profile['total_label']
         self.GRAND_TOTAL = profile['grand_total_label']
+        self.FLAGS = profile.get('explanation_flags', [])
 
     # ---- page geometry -------------------------------------------------------------------------------------------
     def geometry(self, page):
@@ -163,9 +164,12 @@ class Reader(Reading):
         n = len(geo['columns'])
         words = [w for w in page.words if geo['top'] < (w.y0 + w.y1) / 2 and geo['x0'] <= w.x0 <= geo['x1']]
         head = compact(''.join(w.text for w in words if w.y0 < geo['top'] + 60))
+        # The flag headings read left to right on their line, whatever order the text layer keeps.
+        flag_head = compact(''.join(w.text for w in sorted((w for w in words if w.y0 < geo['top'] + 60),
+                                                           key=lambda w: (round(w.y0), w.x0))))
         if n == 6 and head.startswith(self.HEADERS['subject']) and self.HEADERS['budget'] in head:
             return 'left'
-        if n == 2 and head.startswith(self.HEADERS['explanation']):
+        if n == 2 + len(self.FLAGS) and head.startswith(self.HEADERS['explanation']) and all(f in flag_head for f in self.FLAGS):
             return 'right'
         if n == 4 and all(h in head for h in self.HEADERS['summary']):
             return 'summary'
@@ -294,6 +298,8 @@ class Reader(Reading):
             '予算額の欄の本年度・前年度・比較は共有辞書の本年度予算額・前年度予算額・比較とし、増減率(%)・本年度の財源内訳は取り込んでいない。'
             '説明は番号（1・(1)）と右端の金額（千円）で読み、文中・数量の数は取り込んでいない。',
         ]
+        if self.FLAGS:
+            notes.append(f'説明の右の{"・".join(self.FLAGS)}の欄は、項目の金額のうちその区分に当たる額の再掲なので取り込んでいない。')
         if not nodes or not amounts:
             raise ValueError(f'{table_id}: nothing read')
         return {'nodes': nodes, 'amounts': amounts, 'words': words, 'excluded': excluded,
@@ -523,8 +529,14 @@ class Reader(Reading):
         unit = page_unit(body, (geo['x0'], geo['x1']), page.number) or state.get('explanation_unit')
         state['explanation_unit'] = unit
         body = [w for w in body if compact(w.text) not in UNITS]
-        right_edge = geo['x1']
+        # Flag columns right of 説明 (レベルアップ・新規・臨時) repeat the part of an item's amount the flag marks.
+        right_edge = geo['columns'][1] if self.FLAGS else geo['x1']
+        flags = [(geo['columns'][1 + i], geo['columns'][2 + i]) for i in range(len(self.FLAGS))]
         column_ranges[self.EXPLANATION_AMOUNT].append((right_edge - self.ITEM_AMOUNT_REACH, right_edge))
+
+        def add_flags(flagged):
+            exclude('経費内訳', f'説明の右の{"・".join(self.FLAGS)}の欄は、項目の金額のうちその区分に当たる額の再掲'
+                    '（同じ金額の別の切り口）で、事業の内訳の金額として取り込まない。', page.number, flagged)
 
         def owner_at(y):
             for upper, lower, owner, total in cells:
@@ -533,6 +545,10 @@ class Reader(Reading):
             raise ValueError(f'Page {page.number}: explanation line at {y:.1f} outside every cell')
 
         for line in lines(body):
+            flagged = [w for w in line if any(middle_in(w, x_range) for x_range in flags)]
+            line = [w for w in line if w not in flagged]
+            if not line:
+                raise ValueError(f'Page {page.number}: a flag amount on a line with no explanation')
             owner, total = owner_at((line[0].y0 + line[0].y1) / 2)
             if total or owner is None:
                 raise ValueError(f'Page {page.number}: an explanation line in a cell with no 目: {text_of(line)!r}')
@@ -554,6 +570,8 @@ class Reader(Reading):
                 item = add_node('説明', depth, None, compact(line[0].text), text_of(name_words), page.number,
                                 [line[0], *name_words] if name_words else [line[0]], parent)
                 stack.append(item)
+                # A flag is printed on the item's first line, its amount on the last line of a wrapped name.
+                add_flags(flagged)
                 if tail:
                     add_amount(item, self.EXPLANATION_AMOUNT, tail[0], tail[1], page.number, unit)
                     state['waiting'] = None
@@ -567,10 +585,13 @@ class Reader(Reading):
                 # The name of an item that wraps: the amount is on its last line.
                 extend(waiting, [w for w in line if not tail or w not in tail[1]])
                 report['wrapped item names'] += 1
+                add_flags(flagged)
                 if tail:
                     add_amount(waiting, self.EXPLANATION_AMOUNT, tail[0], tail[1], page.number, unit)
                     state['waiting'] = None
                 continue
+            if flagged:
+                raise ValueError(f'Page {page.number}: a flag amount on a line that is no item: {text_of(line)!r}')
             if tail:
                 raise ValueError(f'Page {page.number}: an amount at the right end of a line that is no item: {text_of(line)!r}')
             if any(re.search(r'[0-9]', unicodedata.normalize('NFKC', w.text)) for w in line):

@@ -1,0 +1,325 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131105",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "283dd1877fe9dd1a4cf6fcec17eb5fcd0e76f9ce21a9439458a2b156d808f345"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-setsu",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "repairs": [
+            "spaced_letters",
+            "spaced_codes"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-setsu"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "283dd1877fe9dd1a4cf6fcec17eb5fcd0e76f9ce21a9439458a2b156d808f345"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-setsu",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "repairs": [
+            "spaced_letters",
+            "spaced_codes"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-setsu"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "283dd1877fe9dd1a4cf6fcec17eb5fcd0e76f9ce21a9439458a2b156d808f345"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-setsu",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "repairs": [
+            "spaced_letters",
+            "spaced_codes"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-setsu"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "283dd1877fe9dd1a4cf6fcec17eb5fcd0e76f9ce21a9439458a2b156d808f345"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-setsu",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "spread": {
+                "gutter": 0.5
+              },
+              "header": {
+                "ignore_frame_title": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "repairs": [
+            "spaced_letters",
+            "spaced_codes"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-setsu"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-setsu",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "1e805712c38168132336ee381594cd0e50674e0bef6425078cc34a5d2c342a7f",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
+        "金額の単位は column mark 53頁・carried 1頁 から決めた。款の和 125,884,879,444 と印字の「歳出合計」125,884,879,444 が一致。",
+        "金額の注記 128 件（不用額 8・充用 102・流用 18）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（904 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2023/settlement/expenditure/general-setsu-nodes.parquet",
+          "sha256": "4db9db5037b68ae44364acadbe4fb3ca2f6bd33100c95ebd5e2bd098db62d9b1",
+          "bytes": 33718
+        },
+        "row_count": 1194
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2023/settlement/expenditure/general-setsu-amounts.parquet",
+          "sha256": "2624790bba08767f5dc59983645e7b36953c16a62013dd0fbb8af0b38642f87c",
+          "bytes": 75443
+        },
+        "row_count": 7123
+      }
+    },
+    {
+      "table_id": "national-health-insurance-setsu",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "150abd5c38b9380009f74eed0a35d3ff70efb8a541925abc72d0679253aed236",
+      "account": "国民健康保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
+        "金額の単位は column mark 13頁 から決めた。款の和 26,422,164,126 と印字の「歳出合計」26,422,164,126 が一致。",
+        "金額の注記 9 件（充用 9）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（87 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2023/settlement/expenditure/national-health-insurance-setsu-nodes.parquet",
+          "sha256": "4c6f8d0d189e419a3194eb35e19225242f8c27660850da2a4c98ab46a41c0fbf",
+          "bytes": 8989
+        },
+        "row_count": 159
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2023/settlement/expenditure/national-health-insurance-setsu-amounts.parquet",
+          "sha256": "fe72db9cc3670d049ce6542b17e05add14c48afb1edeaf1927718e0c7ed2b5c4",
+          "bytes": 13636
+        },
+        "row_count": 1134
+      }
+    },
+    {
+      "table_id": "elderly-medical-setsu",
+      "conversion_id": "elderly-medical-settlement",
+      "input_fingerprint": "8716b0d7a0305ba3a2b6fc21410ed6ac9faca76d865327f30e755542b949c187",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
+        "金額の単位は column mark 8頁 から決めた。款の和 7,559,524,502 と印字の「歳出合計」7,559,524,502 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（43 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2023/settlement/expenditure/elderly-medical-setsu-nodes.parquet",
+          "sha256": "5470bd2f35ec2a8a9d0683392b3cf1b115081eb499894b9bcd113ad81131aaf0",
+          "bytes": 5409
+        },
+        "row_count": 67
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2023/settlement/expenditure/elderly-medical-setsu-amounts.parquet",
+          "sha256": "af4d522e2cbddb667926f2d73dfe4fa90a5013cadd82d075180d08a2820232bb",
+          "bytes": 7475
+        },
+        "row_count": 484
+      }
+    },
+    {
+      "table_id": "long-term-care-setsu",
+      "conversion_id": "long-term-care-settlement",
+      "input_fingerprint": "ca02eb51d63437c499d5c9a92eb8e53700939c74d727d97fb2a248dd580d11bf",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
+        "金額の単位は column mark 13頁 から決めた。款の和 21,708,315,400 と印字の「歳出合計」21,708,315,400 が一致。",
+        "金額の注記 23 件（充用 19・流用 4）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（86 件）を、印字された語から辞書の見出しに寄せた: 予算現額と支出済額との比較→比較・予算現額／節／金額→節／金額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2023/settlement/expenditure/long-term-care-setsu-nodes.parquet",
+          "sha256": "c67166de1978df2005ef0226d127c8c1e2e4f5ffed77fa8179e01223cf2c4caa",
+          "bytes": 8735
+        },
+        "row_count": 157
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131105/2023/settlement/expenditure/long-term-care-setsu-amounts.parquet",
+          "sha256": "38afad2f71aa25478efaaf700a5b2627a33a2976b352dbd87187622346405a15",
+          "bytes": 13187
+        },
+        "row_count": 995
+      }
+    }
+  ]
+}

@@ -1,0 +1,121 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132071",
+    "fiscal_year": 2022,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b7dc0fcf2a63b1c33b1c580cbf93250d7d71b053fc795cfd6079dfce23cec679"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "running_titles",
+            "options": {
+              "header": {
+                "facing_pages": true
+              },
+              "columns": {
+                "本年度予算額の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、目の金額は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、目の金額は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、目の金額は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額を財源の種類ごとに印字した内訳で、目の金額は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                },
+                "quirks": {
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "f2e3fceeb29490247576d397876696852ab5e8b77fc54124cfcceb822f3e3ab1",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は column mark 159頁 から決めた。款の和 46,204,000 と印字の「歳出合計」46,204,000 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132071/2022/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "24cbee58f7dd364bf1ad672f8ef8d789fefed10c1ce848b7c054fb4ca3c8f5fd",
+          "bytes": 193362
+        },
+        "row_count": 6406
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132071/2022/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "2f6bca78721fffe6a1ae8bc2099d8f3216608e5eeba789f23c58a719c7dd14f1",
+          "bytes": 139990
+        },
+        "row_count": 6608
+      }
+    }
+  ]
+}
