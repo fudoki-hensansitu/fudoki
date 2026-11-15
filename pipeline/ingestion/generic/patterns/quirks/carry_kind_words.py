@@ -11,6 +11,8 @@ KINDS = {'明許': '繰越明許費', '繰越明許': '繰越明許費', '繰越
          '逓次': '継続費逓次繰越', '逓次繰越': '継続費逓次繰越', '継続費逓次繰越': '継続費逓次繰越'}
 
 
-def kind(word: str) -> str | None:
-    """The heading of the carry-over kind a tag word names, or None."""
-    return KINDS.get(word)
+def heading(header: tuple[str, ...], word: str) -> str | None:
+    """The heading path of an amount tagged with `word` in the column `header`: the kind under the column's group
+    (`翌年度繰越額／繰越明許費`), or None when the word names no kind."""
+    kind = KINDS.get(word)
+    return '／'.join(header[:-1] + (kind,)) if kind else None

@@ -402,8 +402,8 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
         money.append([parts[-1].pop()])  # `…委員報償金81`: the short amount set close after the name, one run with it
     if (numbered := document_quirk('numbered_names')) is not None and numbered.module.keeps(parts, money):
         parts.append(money.pop(0))  # `消耗品費 1 … 104`: the number after the name is the name's
-    if money and parts and document_quirk('wide_digits_in_names') is not None \
-            and all(WIDE_DIGITS.fullmatch(text(run)) for run in money):
+    if money and parts and (wide := document_quirk('wide_digits_in_names')) is not None \
+            and wide.module.in_name([text(run) for run in money]):
         parts.extend(money)  # the quirk `wide_digits_in_names`: `…議案第３１` / `号、…`, a word of the text
         money = []
     # Full-width digits without a comma before a half-width grouped amount are part of the name (`…東京２０２４ 1,619,271`).
@@ -2803,11 +2803,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                             'text': candidate, 'header': header})
                             continue
                         header = '／'.join(band.header[:-1] + (band.lines[index],))
+                    carried_unit = None
                     if (tagged := document_quirk('carry_kind_words')) is not None and not band.inline and not band.lines:
-                        # The quirk `carry_kind_words`: `明許 20,942,000`, the kind of the carried-over amount before it.
+                        # The quirk `carry_kind_words`: `明許 20,942,000`, the kind of the carried-over amount before it,
+                        # in the unit of its column.
                         word = normalize(''.join(g.text for g in line if g not in money and g.text not in SIGNS))
-                        if word and (carried_kind := tagged.module.kind(word)) is not None:
-                            header = '／'.join(band.header[:-1] + (carried_kind,))
+                        if (carried := tagged.module.heading(band.header, word)) is not None:
+                            carried_unit, header = logical.unit_of(header), carried
                     y = sum((g.y0 + g.y1) / 2 for g in money) / len(money)
                     if unpaid and stacked[1] != _cell(band, y) and SUPPLEMENT_ROUND.fullmatch(stacked[0]):
                         unpaid_rounds.extend(stacked_label)  # the cell ended without an amount for it
@@ -2820,7 +2822,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                             # amount of its own (the column's total is the sum).
                             remarks.append({'kind': 'kind line', 'target': target, 'heading': header, 'label': stacked_label,
                                             'runs': [money], 'unit': logical.unit_of(header)})
-                    amounts.append(_amount(target.key, header, money, logical.unit_of(header)))
+                    amounts.append(_amount(target.key, header, money, carried_unit or logical.unit_of(header)))
                     if target.role == 'repeat' and not target.group.subject:
                         repeated_codes.extend(money)  # the open item's amount printed again (`repeated_at_top`)
                     owned.add(target.key)
