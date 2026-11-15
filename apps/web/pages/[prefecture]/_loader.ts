@@ -17,6 +17,7 @@ import { appYears, loadYearExtras, loadYearSnapshot } from '../../server/app-dat
 import type { Snapshot, YearExtras } from '../../jurisdiction/app/data'
 import type { Setsu } from '../../jurisdiction/types'
 import { siteKey } from '../../server/site-key'
+import { loadLocalFinance } from '../../server/local-finance'
 
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
 export const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
@@ -215,7 +216,7 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
   if (!code) return null
   // 自分の1件と、近隣に並べる同じ都道府県の自治体を並べて読む。全国の一覧は読まない
   const prefectureCode = prefectureCodeOf(code)
-  const [entry, entries] = await Promise.all([loadCatalogEntry(env, code), loadCatalog(env, code.slice(0, 2), false)])
+  const [entry, entries, finance] = await Promise.all([loadCatalogEntry(env, code), loadCatalog(env, code.slice(0, 2), false), loadLocalFinance(env, code)])
   if (!entry) return null
   // 都道府県の頁はある前提でリンクする（都道府県自体の頁ではリンクしない）
   const prefecturePath = entry.code !== prefectureCode ? jurisdictionPath(prefectureCode) : null
@@ -225,7 +226,7 @@ export async function resolveJurisdiction(env: Env, path: string): Promise<Juris
     .map((e) => ({ code: e.code, name: e.name, path: jurisdictionPath(e.code), ...(EMBLEMS[e.code] ? { logo: assetPath(e.code, 'emblem.svg') } : {}) }))
   const data = pageBase(entry)
   if (!data) return { kind: 'empty', entry, neighbors }
-  const page: PageData = { ...data, prefecturePath, ...(prefecturePath && EMBLEMS[prefectureCode] ? { prefectureLogo: assetPath(prefectureCode, 'emblem.svg') } : {}), emblem: emblemOf(entry.code), neighbors, vision: VISIONS[entry.code] ?? null }
+  const page: PageData = { ...data, prefecturePath, ...(prefecturePath && EMBLEMS[prefectureCode] ? { prefectureLogo: assetPath(prefectureCode, 'emblem.svg') } : {}), emblem: emblemOf(entry.code), neighbors, vision: VISIONS[entry.code] ?? null, finance }
   ENTRY_OF.set(page, entry)
   return { kind: 'page', data: page }
 }
