@@ -3,13 +3,13 @@
 level. The subject pattern `indent` reads the codes set right (`hierarchy.subject.codes: right`) by the digits of
 such a word, and a half-width digit is half the word's height wide (the word's own width holds the point and a
 character of the name). A code printed close to its name with no stop is joined to it the same way (`1議`, `10教`,
-092011 決算の計数資料): the digits before the first character that is not a digit are the code."""
+092011 決算の計数資料): the digits before the name's first kana or kanji are the code."""
 import re
 
 SCOPE = 'document'
 OPTIONS = {'const': True}
 
-GLUED = re.compile(r'([0-9]{1,2})(?:[.．]|(?=[^0-9,.．]))')
+GLUED = re.compile(r'([0-9]{1,2})(?:[.．]|(?=[\u3040-\u30ff\u4e00-\u9fff]))')
 
 
 def digits(glyph) -> str:
