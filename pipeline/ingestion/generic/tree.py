@@ -1407,8 +1407,11 @@ def untitled(group: Group) -> bool:
     first = group.bands[0]
     if group.mode in ('bands', 'names') and first.header[-1] in SUBJECT_LEVELS[1:]:
         return True
-    if group.mode == 'indent' and len(group.bands) == 1 and first.header[-1] in SUBJECT_LEVELS[1:]:
-        return True  # one column of the 項 and the 目 (`項 目`, 栃木県の予算書) under a title naming the 款
+    if group.mode == 'indent' and len(group.bands) == 1 and first.header[-1] in SUBJECT_LEVELS[1:] \
+            and SUBJECT_LEVELS[0] not in first.header:
+        # one column of the 項 and the 目 (`項 目`, 栃木県の予算書) under a title naming the 款. A column headed by the 款
+        # as well (`款 項 目`, 世田谷区の予算書 R5) holds the 款 itself.
+        return True
     return first.header[-1] == '款項目' and not first.words and not first.stripped_codes
 
 
@@ -1416,7 +1419,8 @@ def title_shift(group: Group) -> bool:
     """Whether the group's columns sit one level below a title's 款 (an `indent` group's columns include the 款's,
     unless its one column is headed by a level below: `項 目`)."""
     if group.mode == 'indent':
-        return len(group.bands) == 1 and bool(group.bands[0].header) and group.bands[0].header[-1] in SUBJECT_LEVELS[1:]
+        return (len(group.bands) == 1 and bool(group.bands[0].header) and group.bands[0].header[-1] in SUBJECT_LEVELS[1:]
+                and SUBJECT_LEVELS[0] not in group.bands[0].header)
     return untitled(group)
 
 
