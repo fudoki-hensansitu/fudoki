@@ -8,6 +8,84 @@
   "direction": "expenditure",
   "conversions": [
     {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4b468c75c40d3fb10e4c587af5c00aa8c4b0df6055bab584c43a8a3b06ea14a6"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "pages": [
+          [
+            17,
+            18
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "titled_table",
+            "options": {
+              "header": {
+                "section": {
+                  "title": "表15",
+                  "continued": [
+                    18
+                  ]
+                },
+                "carried": true
+              },
+              "columns": {
+                "令和5年度決算額": {
+                  "heading": "決算額"
+                },
+                "令和4年度決算額": {
+                  "heading": "前年度決算額"
+                },
+                "比較／増減額": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "比較の列を取り込まない。本年度と前年度の決算額の差で、決算額そのものではない。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "数量表",
+                    "reason": "増減率の列を取り込まない。前年度に対する割合で、金額ではない。"
+                  }
+                },
+                "主な増減理由": {
+                  "excluded": {
+                    "kind": "本文",
+                    "reason": "主な増減理由は款の増減を説明する文で、款の決算額の列ではない。"
+                  }
+                },
+                "科目": {
+                  "heading": "款"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {}
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    },
+    {
       "id": "kokuho-settlement",
       "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [
@@ -514,9 +592,38 @@
   ],
   "tables": [
     {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "09f46a5d38208f69876a091662b7bf91a99fd256d243e4d18f8b4963f9ab477c",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
+        "金額の単位は carried 1頁・default 1頁 から決めた。款の和 5,653,475,714 と印字の「合計」5,653,475,714 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "d1dd0c7293843d1d001816b82498a6fd98bee78f2150a440265b53409d154422",
+          "bytes": 2824
+        },
+        "row_count": 12
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/134210/2023/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "3a139ddd57554c4e686c2ebbbe91f8c0e30109b35835ee4f941777d171e11c5c",
+          "bytes": 2520
+        },
+        "row_count": 24
+      }
+    },
+    {
       "table_id": "kokuho-expenditure",
       "conversion_id": "kokuho-settlement",
-      "input_fingerprint": "aa6f45ea253d0b926e5b78f08321fef3e792f9ea7f276462ed0f566ed349bdbd",
+      "input_fingerprint": "7d7b560509670902065b113ce924b5a9d2c4c8c3e97c636d965555af6f2b19b5",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -545,7 +652,7 @@
     {
       "table_id": "kani-suido-expenditure",
       "conversion_id": "kani-suido-settlement",
-      "input_fingerprint": "a142349d4b7fd01a7ed6fdea1e1e3fbf3b173b59b0d46625851db501508995b5",
+      "input_fingerprint": "74d6b41551e4ffcddf14f0f8ae764111ce9f693d4bf4897175354b2c6490e128",
       "account": "簡易水道事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -574,7 +681,7 @@
     {
       "table_id": "takuchi-expenditure",
       "conversion_id": "takuchi-settlement",
-      "input_fingerprint": "ce27a45418378fe3dd1d656021246ed96e1a9802d5f7fe327481c726cf640dc6",
+      "input_fingerprint": "5ac9bc89f49e706f5241f55ce4ca2f7c78d1e2fa3bc5893e06a0beb1995b0edc",
       "account": "宅地造成事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -603,7 +710,7 @@
     {
       "table_id": "kaigo-hoken-expenditure",
       "conversion_id": "kaigo-hoken-settlement",
-      "input_fingerprint": "e2f8966d2edd08684920fc8282fc6ccd31275c3de6738c92599f18234531f464",
+      "input_fingerprint": "7fd33f7630d020c39dd04b543db4acc67b5222910ba2e4de110f0ee07d989d19",
       "account": "介護保険（保険事業勘定）特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -632,7 +739,7 @@
     {
       "table_id": "kaigo-service-expenditure",
       "conversion_id": "kaigo-service-settlement",
-      "input_fingerprint": "8c2ac00051540cecfd9f8c87d99f51550bff1f8bc27d047a3f7018d8ac2a64d7",
+      "input_fingerprint": "6426b1eec94a201ce44d001fe536c7e5f41680f449eb89ee0c62d477182c13e7",
       "account": "介護保険（介護サービス事業勘定）特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -661,7 +768,7 @@
     {
       "table_id": "gesuido-expenditure",
       "conversion_id": "gesuido-settlement",
-      "input_fingerprint": "e688dbd8207a4d6bb2f039eb5893b23c71f4a56434e362aa2c1a38478d16a038",
+      "input_fingerprint": "34b3dc918af88418602f806a519d4a1812914e857640add2b5dedec2a7b523c0",
       "account": "下水道事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -690,7 +797,7 @@
     {
       "table_id": "jokaso-expenditure",
       "conversion_id": "jokaso-settlement",
-      "input_fingerprint": "696a90598ed9f267b27ce469f0e123ca1b5d01dabde550df760e2785afc02668",
+      "input_fingerprint": "9d5f76e4a6f45c89a575c5236eb1e936dd5fa0e8ec92b94dd3c88be5437ec943",
       "account": "浄化槽事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -719,7 +826,7 @@
     {
       "table_id": "kouki-expenditure",
       "conversion_id": "kouki-settlement",
-      "input_fingerprint": "5c7266344bd00bd0fbba487f193162bc25eb49db408940f63ed678e0d6e05523",
+      "input_fingerprint": "612abdc1a411528219b09e1daeb29273925f8f616f33295b24d464c1759d3efd",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
