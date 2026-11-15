@@ -63,6 +63,22 @@
         "maxItems": 10
       }
     },
+    "excluded_boxes": {
+      "description": "印字された数字のうち、読み方が表の外と見分けられない枠。頁と枠（PDF の pt、左上原点）、除外の種類（node_tables.EXCLUSION_KINDS）と理由を宣言し、網羅の検査で金額の取りこぼしと数えない。表には何も足さない。",
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "minLength": 1},
+          "page": {"type": "integer", "minimum": 1},
+          "bbox": {"type": "array", "items": {"type": "number"}, "minItems": 4, "maxItems": 4},
+          "kind": {"type": "string", "minLength": 1},
+          "reason": {"type": "string", "minLength": 10}
+        },
+        "required": ["id", "page", "bbox", "kind", "reason"]
+      }
+    },
     "prose_lines": {
       "type": "array",
       "items": {
@@ -91,6 +107,11 @@
     "row_tolerance": {
       "type": "number",
       "exclusiveMinimum": 0
+    },
+    "parent_row_tolerance": {
+      "type": "number",
+      "exclusiveMinimum": 0,
+      "description": "How far (pt) from a 款・項・目 row's first word a cell in the last columns before the remark (翌年度繰越額・不用額・執行率) may sit and still be the row's. Where a remark wraps over several lines, such a cell sits above or below the row's first word (中央区 R5 国保・後期)。"
     }
   },
   "required": [
