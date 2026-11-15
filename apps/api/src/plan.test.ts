@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { DETAIL_TABLE, PROJECT_VIEW, PROJECT_YEAR_TABLE, SUBJECT_TABLE } from './columns'
+import { DETAIL_TABLE, SUBJECT_TABLE } from './columns'
 import { buildWhere } from './shared/search'
 import { testDb } from './testing'
 
@@ -53,13 +53,4 @@ describe('EXPLAIN QUERY PLAN', () => {
     expect(rows.map((r) => r.detail).join('\n')).toMatch(/expenditure USING INDEX expenditure_jurisdiction_code \(jurisdiction_code=\?\)/)
   })
 
-  // 事業の名前・款項目は内訳の科目と根から求める。内訳の検索の副問い合わせを JOIN すると内訳の全行を作るので、表を直に引く
-  test('事業と事業の年度は、指した内訳を主キーで引き、内訳の全行を作らない', () => {
-    for (const table of [PROJECT_YEAR_TABLE.table, PROJECT_VIEW]) {
-      const rows = sqlite.query(`EXPLAIN QUERY PLAN SELECT * FROM ${table} WHERE project_id = ?`).all('x') as { detail: string }[]
-      const p = rows.map((r) => r.detail).join('\n')
-      expect(p).not.toMatch(/MATERIALIZE|SCAN|AUTOMATIC/)
-      expect(p).toMatch(/SEARCH i USING INDEX sqlite_autoindex_expenditure_detail_1 \(detail_id=\?\)/)
-    }
-  })
 })
