@@ -60,7 +60,7 @@ jobs:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       # Rewritten fingerprints only (refresh leaves a manifest with a different table untouched), so this
       # runs even when the refresh step failed on such a table.
-      - if: always() && github.ref == 'refs/heads/main'
+      - if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
         name: 書き換えた指紋の PR を出す
         env:
           GH_TOKEN: ${{ github.token }}
@@ -73,7 +73,7 @@ jobs:
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git switch -c "$BRANCH"
-          git add pipeline/ingestion/fiscal/jurisdictions
+          git add -u -- pipeline/ingestion/fiscal/jurisdictions
           git commit -m 'chore(ingestion): 中身が同じだった表の指紋を書き換える（refresh-check）'
           git push --force origin "$BRANCH"
           if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
