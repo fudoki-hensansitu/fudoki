@@ -1814,9 +1814,10 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
         if (note and raw.startswith(('(', '（')) and settings.get('wrap') == 'amount_on_last_line' and waiting is not None and waiting.role in ('node', 'note')
                 and not waiting.amounts and id(waiting) not in column_amount_items
                 and waiting.page == item.page
-                # a character: a bracket hung one character left of the name (`（繰越明許費）` 9pt left, 132128), whose
-                # box is a hair under the character's size
-                and abs(item.lines[0][0].x0 - waiting.indent) <= max(g.y1 - g.y0 for g in item.glyphs) + .5
+                # a character either way; a bracket hung one character left of the name (`（繰越明許費）` 9pt left,
+                # 132128) also when its box is a hair under the character's size
+                and -max(g.y1 - g.y0 for g in item.glyphs) <= waiting.indent - item.lines[0][0].x0
+                <= max(g.y1 - g.y0 for g in item.glyphs) + .5
                 and 0 <= item.y0 - waiting.y1 <= max(g.y1 - g.y0 for g in item.glyphs)):
             # The second line of a name still waiting for its amount (`…委員報酬` / `(9人) 840,000`); the count in
             # its bracket is no item number. Only a bracket: a note of another prefix under a name (`1報酬` /
@@ -2483,7 +2484,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 previous = stack[depth - 1] if len(stack) >= depth else None
                 if (fresh and logical.reprints and previous is not None and item.role == 'node' and item.code is not None
                         and previous.code is not None and normalize(previous.code) == normalize(item.code)
-                        and item.name and normalize(previous.name) != normalize(item.name)
+                        and item.name and not repeats(previous, item, logical.ocr)
                         and item.level is not None and 0 <= item.level < len(item.group.bands) - 1):
                     # A continuation page prints the open headings' codes again over a line whose own level prints no
                     # code (`2 4 参議院議員選挙費 0 79,195`, 132128 当初予算 R5 p33: 款 2 and 項 4 again, then a 目 the

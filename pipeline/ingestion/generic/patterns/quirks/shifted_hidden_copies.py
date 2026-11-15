@@ -78,7 +78,10 @@ def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list
     from ingestion.generic.patterns import document_quirk
     selected = document_quirk('shifted_hidden_copies')
     settings = selected.value if selected and isinstance(selected.value, dict) else {}
-    glyphs = _hide(pdf, number, width, glyphs, image, tuple(settings.get('reach', REACH)))
+    reach = tuple(settings.get('reach', REACH))
+    if reach[0] >= reach[1]:
+        raise ValueError(f'shifted_hidden_copies: reach must run from near to far: {list(reach)}')
+    glyphs = _hide(pdf, number, width, glyphs, image, reach, 'reach' in settings)
     declared = settings.get('pages', {}).get(str(number))
     if not declared:
         return glyphs
@@ -93,7 +96,8 @@ def hide(pdf: Path, number: int, width: float, glyphs: list, image=None) -> list
             for index, (box, char, visible) in enumerate(glyphs)]
 
 
-def _hide(pdf: Path, number: int, width: float, glyphs: list, image=None, reach: tuple = REACH) -> list:
+def _hide(pdf: Path, number: int, width: float, glyphs: list, image=None, reach: tuple = REACH,
+          declared: bool = False) -> list:
     by_line: dict[str, list[int]] = {}
     for index, (box, char, visible) in enumerate(glyphs):
         if not char.isspace():
@@ -119,7 +123,7 @@ def _hide(pdf: Path, number: int, width: float, glyphs: list, image=None, reach:
             for b in members:
                 gap = glyphs[b][0][0] - glyphs[a][0][0]
                 if reach[0] < gap < reach[1] and abs(glyphs[b][0][1] - glyphs[a][0][1]) < PLACE \
-                        and (reach == REACH or glyphs[a][2] != glyphs[b][2]):
+                        and (not declared or glyphs[a][2] != glyphs[b][2]):
                     distances[round(gap, 1)] += 1
     if not distances or distances.most_common(1)[0][1] < LEAST:
         return glyphs
