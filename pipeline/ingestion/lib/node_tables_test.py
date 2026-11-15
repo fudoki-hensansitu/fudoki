@@ -462,6 +462,13 @@ class NodeTablesTests(unittest.TestCase):
         self.assertEqual(result['counts'], {'non_amount': 1, 'blocked': 2})
         self.assertEqual([w['text'] for w in result['uncovered']], ['第53号、9', '第9'])
 
+    def test_a_resolution_number_dated_by_fiscal_year_is_no_amount(self):
+        words = [(1, (10., 10., 120., 19.), '令和4年度議案第66号・区議会議決'), (1, (10., 30., 60., 39.), '1,234')]
+        result = check_digit_coverage(words, NodeTables([], []),
+                                     amount_columns=[{'header': '金額', 'x_range': [10, 120]}])
+        self.assertEqual(result['counts'], {'non_amount': 1, 'blocked': 1})
+        self.assertEqual([w['text'] for w in result['uncovered']], ['1,234'])
+
     def test_a_label_word_that_drops_the_number_bracket_but_keeps_the_name_bracket_is_covered(self):
         tables = NodeTables([{**node('a'), 'code_text': '(2)', 'name_text': '総合行政情報誌(P295)',
                               'x0': 10., 'y0': 10., 'x1': 80., 'y1': 19.}], [])
