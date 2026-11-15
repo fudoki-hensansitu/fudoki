@@ -140,7 +140,7 @@ jobs:
           key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
           restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
       - id: cache-before
-        run: echo "files=$(find pipeline/.cache -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
+        run: echo "files=$(find pipeline/.cache -type f -printf '%P %s %T@\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
       # 前回の同期で D1 に入れた表の写し。最新のものを戻し、D1 の印と合うかは sync_d1 が確かめる（合わなければ D1 を読む）
       - uses: actions/cache/restore@v6
         with:
@@ -173,10 +173,10 @@ jobs:
               [ "$key" = "$KEEP" ] || gh cache delete "$key" --repo "${{ github.repository }}" || true
             done
       # 毎回 3GB を保存すると repo の cache の上限（10GB）から refresh-check の generic-observation が追い出される。
-      # 中身（file の名前と大きさ）が変わった回だけ保存し、古い pipeline-cache は消す
+      # 中身（file の名前・大きさ・更新時刻）が変わった回だけ保存し、古い pipeline-cache は消す
       - id: cache-after
         if: always()
-        run: echo "files=$(find pipeline/.cache -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
+        run: echo "files=$(find pipeline/.cache -type f -printf '%P %s %T@\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
       - id: cache-save
         if: always() && steps.cache-after.outputs.files != steps.cache-before.outputs.files
         uses: actions/cache/save@v6

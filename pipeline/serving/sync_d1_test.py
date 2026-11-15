@@ -590,6 +590,20 @@ class SnapshotSyncTest(SyncTest):
         self.assertEqual([r[0] for r in self.d1.rows('expenditure_location', 'line_id')], ['la', 'lb2'])
         self.assert_snapshot_matches_d1()
 
+    def test_row_moving_into_scope_replaces_snapshot_row(self):
+        """主キーが自治体をまたいで付き直した行（同じ PDF の頁など）は、写しにも1行だけ残り、次の全件の同期で戻る。"""
+        def page(code):
+            self.duck.execute('delete from main."source_page_text" where "page_id" = \'p1\'')
+            self.duck.execute('insert into main."source_page_text" ("page_id", "jurisdiction_code") values (\'p1\', ?)', [code])
+        page('000001')
+        self.sync_snapshot()
+        page('000002')
+        self.sync_snapshot(jurisdictions=['000002'])
+        self.assert_snapshot_matches_d1()
+        page('000001')
+        self.sync_snapshot()
+        self.assert_same()
+
     def test_verify_all_reads_d1(self):
         self.sync_snapshot()
         self.d1.con.execute('delete from project_year where rowid % 4 = 0')  # 印を残したまま D1 だけが変わった

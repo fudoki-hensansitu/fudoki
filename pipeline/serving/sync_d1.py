@@ -566,9 +566,14 @@ class Snapshot:
                 if name in synced and not jurisdictions:
                     query = f'select {cols} from w.main."{name}"'
                 elif name in synced:
+                    # 範囲の外の行を写しから残す。主キーが範囲をまたいだ行（同じ PDF の頁が別の自治体に付き直したなど）は、
+                    # D1 では範囲の中の行で置き換わっているので、写しからも主キーで除く
+                    key = self.all_tables[name]['primary_key']
+                    inside = scope_condition(name, names, jurisdictions, 'w.main.')
                     query = (f'select {cols} from s.main."{name}" '
                              f'where not coalesce({scope_condition(name, names, jurisdictions, "s.main.")}, false) '
-                             f'union all select {cols} from w.main."{name}" where {scope_condition(name, names, jurisdictions, "w.main.")}')
+                             f'and "{key}" not in (select "{key}" from w.main."{name}" where {inside}) '
+                             f'union all select {cols} from w.main."{name}" where {inside}')
                 else:
                     query = f'select {cols} from s.main."{name}"'
                 con.execute(f'create table main."{name}" as {query}')

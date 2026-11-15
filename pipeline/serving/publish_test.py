@@ -85,6 +85,20 @@ class BuildModulesTest(unittest.TestCase):
                 self.assertNotIn(path, build)
 
 
+    def test_relative_imports_are_followed(self):
+        import ast
+        from pathlib import Path
+        from unittest import mock
+        from serving import publish
+
+        source = 'from .lib import a\nfrom ..x.y import b\nfrom . import c\n'
+        with mock.patch.object(Path, 'read_text', return_value=source):
+            names = publish.imported(publish.PIPELINE / 'ingestion/fiscal/storage.py')
+        self.assertIn('ingestion.fiscal.lib.a', names)
+        self.assertIn('ingestion.x.y.b', names)
+        self.assertIn('ingestion.fiscal.c', names)
+
+
 class SeedCodesTest(unittest.TestCase):
     def test_changed_rows(self):
         diff = ['--- a/x.csv', '+++ b/x.csv', '@@ -1 +1 @@', '-131016,a', '+131016,b', '+132098,c', '-132284,d']

@@ -86,8 +86,14 @@ def imported(path: Path) -> list[str]:
     for node in tree.body if top else ast.walk(tree):
         if isinstance(node, ast.Import):
             names += [alias.name for alias in node.names]
-        elif isinstance(node, ast.ImportFrom) and node.module and not node.level:
-            names += [node.module, *(f'{node.module}.{alias.name}' for alias in node.names)]
+        elif isinstance(node, ast.ImportFrom):
+            module = node.module or ''
+            if node.level:  # 相対 import は、この file の package から絶対の名前にする
+                package = path.relative_to(PIPELINE).with_suffix('').parts[:-1]  # a/b/c.py も a/b/__init__.py も a.b
+                base = package[:len(package) - (node.level - 1)]
+                module = '.'.join([*base, *([module] if module else [])])
+            if module:
+                names += [module, *(f'{module}.{alias.name}' for alias in node.names)]
     return names
 
 
