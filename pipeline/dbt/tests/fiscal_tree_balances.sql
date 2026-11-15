@@ -6,12 +6,12 @@
 -- within the table (scope = the table); the summed tree is checked where a table
 -- printing the whole stands for the node (scope '').
 with recursive rows as (
-    select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}
+    select * from {{ ref('int_fiscal__rows') }}
 ), scoped as (
     select '' as scope, n.node_id, n.parent_node_id, n.document_kind, n.axis, n.amount_yen,
         n.jurisdiction_code, n.fiscal_year, n.account_name, n.source_page, n.code, n.name, n.amendment_yen,
         n.is_subject
-    from {{ ref('int_fiscal__settlement_expenditure_nodes') }} n
+    from {{ ref('int_fiscal__nodes') }} n
     where not exists (
         select 1 from rows r where r.document_kind = n.document_kind and r.node_id = n.node_id
             and r.division is not null

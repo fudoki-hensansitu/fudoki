@@ -11,7 +11,7 @@ with doc as (
     join {{ ref('int_fiscal__subject_path') }} sp using (subject_id)
     group by all
 ), rows as (
-    select * from {{ ref('int_fiscal__settlement_expenditure_rows') }}
+    select * from {{ ref('int_fiscal__rows') }} where direction = 'expenditure'
 ), division_kou_without_moku as (
     select k.jurisdiction_code, k.fiscal_year, 'settlement' as document_kind, k.account_name, sum(k.amount_yen) as amount
     from rows k

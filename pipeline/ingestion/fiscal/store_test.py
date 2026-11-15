@@ -23,15 +23,18 @@ class StoreTest(unittest.TestCase):
             file = root / 't.parquet'
             file.write_bytes(b'abc')
             candidate = root / 'manifest.json'
-            candidate.write_text(json.dumps({'tables': [converted]}))
+            candidate.write_text(json.dumps({'conversions': [{'id': 'c'}], 'tables': [converted]}))
             result = {'candidate': str(candidate), 'files': {converted['object']['key']: str(file)}}
-            with patch.object(manifest, 'read', return_value={'tables': [recorded]}), \
+            document = {'conversions': [{'id': 'c'}], 'tables': [recorded]}
+            with patch.object(manifest, 'read', return_value=document), \
                  patch.object(manifest, 'fingerprints', return_value={'c': 'f'}), \
                  patch.object(store, 'previous', return_value=previous), \
                  patch.object(store, 'stored', return_value=already_stored), \
                  patch.object(store.run, 'original_files', return_value={}), \
                  patch.object(store.run, 'convert', return_value=result) as convert, \
                  patch.object(store.storage, 'verify'), \
+                 patch.object(store.storage, 'prepare_save') as self.prepare_save, \
+                 patch.object(store.storage, 'receipt_id', side_effect=lambda document, ident: f'x/{ident}'), \
                  patch.object(store.storage, 'upload', side_effect=upload_error) as upload, \
                  patch.object(store.storage, 'cache') as self.cache:
                 report = store.store_manifest(path, 'base', dry_run=dry_run)
@@ -46,9 +49,21 @@ class StoreTest(unittest.TestCase):
         self.assertFalse(convert.call_args.kwargs['ask_answers'])
         upload.assert_called_once()
 
-    def test_a_differing_receipt_uploads_nothing(self):
+    def test_a_differing_receipt_of_an_unchanged_declaration_uploads_nothing(self):
+        same = {'conversions': [{'id': 'c'}], 'tables': []}
         with self.assertRaisesRegex(ValueError, 'differ from their records: t'):
-            self.run_store(table('a' * 64), table('b' * 64), {'tables': []})
+            self.run_store(table('a' * 64), table('b' * 64), same)
+
+    def test_a_new_declaration_uploads_the_table_as_main_converts_it(self):
+        # A converter merged after the pull request's check made the record stale (#713, #749).
+        report, _, upload = self.run_store(table('a' * 64), table('b' * 64), {'tables': []})
+        self.assertEqual(report['replaced'], {'x/t': table('b' * 64)})
+        self.prepare_save.assert_called_once()
+        self.assertEqual(upload.call_args.args[2]['sha256'], 'b' * 64)
+
+    def test_a_pull_request_must_match_its_records(self):
+        with self.assertRaisesRegex(ValueError, 'differ from their records: t'):
+            self.run_store(table('a' * 64), table('b' * 64), {'tables': []}, dry_run=True)
 
     def test_dry_run_compares_without_upload_and_caches_for_the_dbt_build(self):
         _, _, upload = self.run_store(table('a' * 64), table('a' * 64), {'tables': []}, dry_run=True)
@@ -71,6 +86,19 @@ class StoreTest(unittest.TestCase):
         self.assertEqual(report['tables'], [])
         convert.assert_not_called()
         upload.assert_not_called()
+
+
+class UpdateReceiptsTest(unittest.TestCase):
+    def test_a_replaced_table_takes_the_uploaded_receipt(self):
+        document = {'target': {}, 'direction': 'expenditure', 'tables': [table('a' * 64)]}
+        with patch.object(store.storage, 'read_receipts', return_value={'x/t': table('0' * 64)}), \
+             patch.object(store.manifest, 'paths', return_value=[Path('m.json')]), \
+             patch.object(store.manifest, 'read', return_value=document), \
+             patch.object(store.storage, 'receipt_id', side_effect=lambda document, ident: f'x/{ident}'), \
+             patch.object(store, 'stored', return_value=False), \
+             patch.object(store.storage, 'write_receipts') as written:
+            store.update_receipts([Path('m.json')], {'x/t': table('b' * 64)})
+        self.assertEqual(written.call_args.args[0], {'x/t': table('b' * 64)})
 
 
 class StoreCliTest(unittest.TestCase):

@@ -293,8 +293,10 @@ def _segments(page, pdf: Path | None = None) -> list[Rule]:
     if pdf is not None and len(unread) >= 6 and len(shown) * SHOWN_SHARE <= len(unread):
         # What is drawn outside the page was all there was: the marks, not the table's rules. On the page, a spot colour
         # read as 0.0 draws no ink (a white ground 0.24pt high over the frame, 132071 R5): only the ones the page shows.
+        # (The rules off the page stay, as before: 130001's spread draws its 備考 boxes past the crop box.)
         boxes = [{'x0': r.x0, 'x1': r.x1, 'top': r.y0, 'bottom': r.y1} for r in shown]
-        rules = [r for r, inked in zip(shown, _inked(pdf, page, boxes)) if inked] if shown else []
+        blank = {id(r) for r, inked in zip(shown, _inked(pdf, page, boxes)) if not inked}
+        rules = [r for r in rules if id(r) not in blank] if shown else []
         for rect in unread:  # a spot colour read as 1.0 draws black: the rule is there when the page shows ink on it
             x0, x1, y0, y1 = rect['x0'], rect['x1'], rect['top'], rect['bottom']
             rules.append(Rule((x0 + x1) / 2, y0, (x0 + x1) / 2, y1) if x1 - x0 < y1 - y0

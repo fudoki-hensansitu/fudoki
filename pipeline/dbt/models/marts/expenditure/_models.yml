@@ -67,7 +67,7 @@ models:
     - not_null
     - relationships:
         arguments:
-          to: ref('expenditure_origin')
+          to: ref('fiscal_origin')
           field: origin_id
 - name: expenditure_detail
   description: 歳出の内訳の表。科目の下の印字（事業・節・その他の分け方の枝）。同じ科目・同じ breakdown の depth = 1 の行を足すと科目の額になる。分け方・深さを混ぜて足さない。根の値・所属する款・項・目・子の有無は持たない（ADR 0047）。
@@ -149,7 +149,7 @@ models:
     - not_null
     - relationships:
         arguments:
-          to: ref('expenditure_origin')
+          to: ref('fiscal_origin')
           field: origin_id
 - name: expenditure_location
   description: 科目・内訳の表の1行が印字された出典の位置。kind で形が違う（pdf は頁と枠、csv は行番号）。
@@ -165,7 +165,7 @@ models:
     - not_null
     - relationships:
         arguments:
-          to: ref('expenditure_origin')
+          to: ref('fiscal_origin')
           field: origin_id
   - name: kind
     description: 出典の形式。pdf（頁と枠を持つ）か csv（行番号を持つ）。
@@ -200,44 +200,6 @@ models:
     description: kind が csv のときだけ。出典ファイルの1始まりの物理行（見出しの行が1行目）。末端は印字された行の開始行、CSVに行の無い親（款〜節）は子孫の行のうち最も小さい開始行。
   - name: amount_source_line
     description: kind が csv のときだけ。採用した金額の行。CSVの親の集計額はNULL。
-- name: expenditure_origin
-  description: 出典選定から毎回生成する出典ファイルの表。独立した証跡ファイルを保存するものではない。
-  columns:
-  - name: origin_id
-    description: 出典ファイルを指すSHA由来のID。科目・内訳・印字の位置の表の origin_id が指す。
-    data_tests:
-    - unique
-    - not_null
-  - name: sha256
-    description: 出典ファイルの SHA-256。風土記が取得・保存した時点のもの。自治体がファイルを再保存すると、url から取得したファイルの SHA-256 とは一致しないことがある。
-    data_tests:
-    - not_null
-  - name: jurisdiction_code
-    description: 自治体コード。
-    data_tests:
-    - not_null
-  - name: fiscal_year
-    description: 出典の年度。
-    data_tests:
-    - not_null
-  - name: document_kind
-    description: 資料区分（initial 当初予算・supplementary 補正予算・settlement 決算）。
-    data_tests:
-    - not_null
-  - name: amendment_number
-    description: 補正予算の号数。補正予算以外はNULL。
-  - name: title
-    description: 出典の資料名（前後の空白を除いたもの）。
-    data_tests:
-    - not_null
-  - name: url
-    description: 出典の公開URL。
-    data_tests:
-    - not_null
-  - name: format
-    description: 出典の形式（pdf か csv）。
-    data_tests:
-    - not_null
 - name: expenditure
   description: 歳出の根。一つの資料（自治体・年度・資料区分・補正号）の一つの会計。科目・内訳の表に行があるものだけで、検索で返る範囲と一致する。行があることを示し、会計全体・全事業を収録し終えたことは保証しない。出典の選定結果は使わないので、収録が無い理由（未収録か出典が無いか）は区別しない。
   columns:
@@ -318,10 +280,10 @@ models:
           to: ref('expenditure')
           field: expenditure_id
   - name: origin_id
-    description: 出典。expenditure_origin の origin_id。
+    description: 出典。fiscal_origin の origin_id。
     data_tests:
     - not_null
     - relationships:
         arguments:
-          to: ref('expenditure_origin')
+          to: ref('fiscal_origin')
           field: origin_id

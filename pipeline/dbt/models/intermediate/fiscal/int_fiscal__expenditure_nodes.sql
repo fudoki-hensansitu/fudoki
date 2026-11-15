@@ -2,8 +2,8 @@
 -- 印字の位置の表を作る。会計の種類と繰出の印・節の ID・COFOG は共有の intermediate から引く（ADR 0023）。
 -- node_id は資料区分を含まない（同じ自治体・年度の当初予算と決算の同じ項目が同じ値）。
 with unioned as (
-    select n.* from {{ ref('int_fiscal__settlement_expenditure_nodes') }} n
-    where n.document_kind in ('settlement', 'initial')
+    select n.* exclude (direction) from {{ ref('int_fiscal__nodes') }} n
+    where n.direction = 'expenditure' and n.document_kind in ('settlement', 'initial')
     union all
     select n.* from {{ ref('int_fiscal__csv_expenditure_nodes') }} n
     where n.document_kind in ('settlement', 'initial')

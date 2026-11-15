@@ -164,7 +164,7 @@ export const LOCATION_TABLE = 'expenditure_location'
 export const LOCATION_COLUMNS = TABLES[LOCATION_TABLE]!.columns
 export const LOCATION_SELECT_LIST = selectList(LOCATION_COLUMNS)
 
-export const ORIGIN_TABLE = 'expenditure_origin'
+export const ORIGIN_TABLE = 'fiscal_origin'
 export const ORIGIN_COLUMNS = TABLES[ORIGIN_TABLE]!.columns
 export const ORIGIN_SELECT_LIST = selectList(ORIGIN_COLUMNS)
 

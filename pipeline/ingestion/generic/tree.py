@@ -2242,6 +2242,9 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     if any(same_heading(''.join(reversed(opened[:count])), head.name) for count in range(1, len(opened) + 1)):
                         break
                     if (head.code is not None or head.amounts or id(head) in column_amount_items
+                            # (an item marked abolished by an empty bracket, `()妊産婦・乳幼児保健指導事業費` of 133086,
+                            # starts an item of its own)
+                            or re.match(r'[(（]\s*[)）]', head.name or '')
                             or head.role != 'node' or not head.name or TOTAL.search(head.name)
                             or not 0 < head.page - tail.page <= 2
                             or [b.header for b in other.bands] != [b.header for b in group.bands]):
@@ -2559,11 +2562,13 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 if (fresh and logical.reprints and previous is not None and item.role == 'node' and item.code is not None
                         and previous.code is not None and normalize(previous.code) == normalize(item.code)
                         and item.name and not repeats(previous, item, logical.ocr)
-                        and item.level is not None and 0 <= item.level < len(item.group.bands) - 1):
+                        and item.level is not None and 1 <= item.level < len(item.group.bands) - 1):
                     # A continuation page prints the open headings' codes again over a line whose own level prints no
                     # code (`2 4 参議院議員選挙費 0 79,195`, 132128 当初予算 R5 p33: 款 2 and 項 4 again, then a 目 the
                     # year drops, printed with no number): the last code is the open heading's, not the line's. Two
                     # siblings never share a code, so the line is a codeless item one level down.
+                    # (Not a 款: the 款 of a public enterprise's capital account starts again from 1 after the revenue
+                    # account's 款 1, `1 資本的支出` of 132063's 決算書, and a 款 has no open heading to print again.)
                     repeated_codes.extend(g for g in item.glyphs[:1] if CODE.match(normalize(g.text)))
                     item.code, item.level, depth = None, item.level + 1, depth + 1
                     previous = stack[depth - 1] if len(stack) >= depth else None

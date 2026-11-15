@@ -16,7 +16,7 @@ with recursive ranked as (
         count(*) filter (where r.division is not null) over node as division_rows,
         count(r.amount_yen) filter (where r.division is not null) over node as division_printed,
         sum(r.amount_yen) filter (where r.division is not null) over node as division_amount
-    from {{ ref('int_fiscal__settlement_expenditure_rows') }} r
+    from {{ ref('int_fiscal__rows') }} r
     where not r.is_amendment
     window node as (partition by r.document_kind, r.node_id)
 ), merged as (
@@ -35,7 +35,7 @@ with recursive ranked as (
 ), amended_lines as (
     -- The lines of the amendment that print both amounts: the deepest 事務事業 (修正金額 and 原案金額).
     select document_kind, node_id, amount_yen - proposed_yen as amendment_yen
-    from {{ ref('int_fiscal__settlement_expenditure_rows') }}
+    from {{ ref('int_fiscal__rows') }}
     where is_amendment and amount_yen is not null and proposed_yen is not null
 ), amended_path(document_kind, node_id, amendment_yen) as (
     select document_kind, node_id, amendment_yen from amended_lines
@@ -57,7 +57,7 @@ with recursive ranked as (
         a.amendment_yen
     from merged m left join amendments a using (document_kind, node_id)
 )
-select n.node_id, n.parent_node_id, n.jurisdiction_code, n.fiscal_year, n.document_kind, n.account_name,
+select n.node_id, n.parent_node_id, n.jurisdiction_code, n.fiscal_year, n.document_kind, n.direction, n.account_name,
     n.axis_header as axis, n.axis_header = n.subject_axis as is_subject, n.node_kind, n.code_text as code, n.name, n.amount_yen,
     not exists (select 1 from applied c where c.document_kind = n.document_kind and c.parent_node_id = n.node_id and c.axis_header = n.axis_header) as is_leaf,
     n.kan_code, n.kou_code, n.moku_code, n.origin_id, n.physical_page as source_page,

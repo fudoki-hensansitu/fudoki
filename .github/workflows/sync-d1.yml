@@ -41,6 +41,7 @@ jobs:
       cancel-in-progress: false
     outputs:
       args: ${{ steps.scope.outputs.args }}
+      store: ${{ steps.store.outcome }}
     steps:
       - uses: actions/checkout@v7
         with:
@@ -134,7 +135,9 @@ jobs:
       - if: steps.scope.outputs.since != ''
         run: mise install conda:mupdf@1.28.6
       # 手動の実行は R2 に置かない（置くのは merge された記録だけ）。since が古くても、R2 にある表は変換し直さない（store.stored）
-      - if: steps.scope.outputs.since != ''
+      # 落ちた管理 JSON があっても、ほかは置き終えてから job を落とす。sync はそれでも流す（下の sync の if）
+      - id: store
+        if: steps.scope.outputs.since != ''
         run: bun run --cwd pipeline ingestion:store -- --since ${{ steps.scope.outputs.since }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
@@ -178,6 +181,9 @@ jobs:
 
   sync:
     needs: store
+    # 保存（ingestion:store）が一部の管理 JSON で落ちても、ほかの自治体の同期は止めない。保存されなかった新しい資料は
+    # build から外れ（prepare の not_stored）、run は赤いままなので範囲の起点は進まず、直した後の run が拾い直す
+    if: ${{ !cancelled() && (needs.store.result == 'success' || needs.store.outputs.store == 'failure') }}
     runs-on: ubuntu-latest
     timeout-minutes: 180
     # serving:sync は同時に2つ流せない（`<表>__new` が衝突する）。前の同期を止めず、順に流す。

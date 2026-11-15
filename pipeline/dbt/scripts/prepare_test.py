@@ -181,7 +181,7 @@ class ReceiptsFallbackTest(unittest.TestCase):
         target = {k: self.spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
 
         def table(sha):
-            return {'table_id': 't', 'conversion_id': 'c',
+            return {'table_id': 't', 'conversion_id': 'c', 'input_fingerprint': 'f',
                     **{kind: {'row_count': 1, 'object': {'key': f'{kind}.parquet', 'sha256': sha, 'bytes': 1}}
                        for kind in ('nodes', 'amounts')}}
         self.recorded, self.stored = table('new'), table('old')
@@ -203,6 +203,25 @@ class ReceiptsFallbackTest(unittest.TestCase):
             document = prepare.load_document({}, self.spec, None, remote=True, receipts=self.receipts, fallbacks=fallbacks)
         self.assertEqual(document['tables'], [self.stored])
         self.assertEqual(fallbacks, ['ingestion/fiscal/jurisdictions/x.json'])
+
+    def test_a_receipt_of_other_inputs_is_not_read(self):
+        self.stored['input_fingerprint'] = 'old-source'
+        with patch.object(prepare, 'fetch', side_effect=self.fetch), \
+             patch.object(prepare.manifest, 'fingerprints', return_value={'c': 'main'}):
+            self.assertEqual(prepare.load_document({}, self.spec, None, remote=True, receipts=self.receipts)['tables'],
+                             [self.recorded])
+        self.stored['input_fingerprint'] = 'main'
+        with patch.object(prepare, 'fetch', side_effect=self.fetch), \
+             patch.object(prepare.manifest, 'fingerprints', return_value={'c': 'main'}):
+            self.assertEqual(prepare.load_document({}, self.spec, None, remote=True, receipts=self.receipts)['tables'],
+                             [self.stored])
+
+    def test_a_manifest_r2_holds_no_table_of_is_left_out(self):
+        skipped = []
+        other = {'131041/2024/settlement/expenditure/t': self.stored}
+        with patch.object(prepare, 'fetch', side_effect=self.fetch):
+            self.assertIsNone(prepare.load_document({}, self.spec, None, remote=True, receipts=other, skipped=skipped))
+        self.assertEqual(skipped, ['ingestion/fiscal/jurisdictions/x.json'])
 
     def test_readable_tables_and_missing_receipts_keep_the_record(self):
         with patch.object(prepare, 'fetch', return_value=Path('/dev/null')):
