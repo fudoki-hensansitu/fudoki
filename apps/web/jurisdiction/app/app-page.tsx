@@ -738,7 +738,7 @@ const projectLatestKey = (id: string) => `project-latest:${id}`
 function BackButton({ label, onClick }: { label: string; onClick: () => void }) {
   return <Button variant="ghost" onClick={onClick} className="-ml-2 min-w-0 max-w-full text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" /><span className="truncate">{label}</span></Button>
 }
-/** 事業の頁の戻る先。自治体と、入れ子の上にある事業をすべてパンくずに並べ、押すとそこへ戻る */
+/** 事業の頁の戻る先。事業のタブと、入れ子の上にある事業をすべてパンくずに並べ、押すとそこへ戻る */
 function ProjectBack({ res, id, label, close, open }: { res: Resources; id: string; label: string; close: () => void; open: (id: string) => void }) {
   const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
   const ancestors = p === FAILED ? [] : (p.ancestors ?? [])
@@ -1146,12 +1146,15 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const [projectPage, setProjectPage] = React.useState<string | null>(initialProject ?? null)
   const openProject = (id: string) => {
     React.startTransition(() => setSelected(null))
-    history.pushState({ ...history.state, project: id }, '', `${basePath()}/${projectSegment(id)}`)
+    // depth は事業の頁を続けて開いた数。事業のタブへ戻るときに、その数だけ履歴を戻る
+    const state = history.state as { project?: string; depth?: number } | null
+    history.pushState({ ...state, project: id, depth: (state?.project ? (state.depth ?? 1) : 0) + 1 }, '', `${basePath()}/${projectSegment(id)}`)
     React.startTransition(() => setProjectPage(id))
     window.scrollTo({ top: 0 })
   }
   const closeProject = () => {
-    if ((history.state as { project?: string } | null)?.project) return history.back()
+    const state = history.state as { project?: string; depth?: number } | null
+    if (state?.project) return history.go(-(state.depth ?? 1))
     setProjectPage(null)
     setTabState('projects')
     void router.visit(pageHref(year, 'projects'), { preserveState: true })
@@ -1310,9 +1313,9 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             <div className="flex items-center gap-3">
             {projectPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
-                {/* 入れ子の事業は上の事業をパンくずに並べる。分かるまでは自治体へ戻るボタンを出しておく */}
-                <ClientSuspense fallback={<BackButton label={data.name} onClick={closeProject} />}>
-                  <ProjectBack res={res} id={projectPage} label={data.name} close={closeProject} open={openProject} />
+                {/* 入れ子の事業は上の事業をパンくずに並べる。分かるまでは事業のタブへ戻るボタンを出しておく */}
+                <ClientSuspense fallback={<BackButton label="事業" onClick={closeProject} />}>
+                  <ProjectBack res={res} id={projectPage} label="事業" close={closeProject} open={openProject} />
                 </ClientSuspense>
               </div>
             ) : (

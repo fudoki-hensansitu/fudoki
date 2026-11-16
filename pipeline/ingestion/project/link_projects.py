@@ -6,10 +6,13 @@ dbt の `int_project__line_ids`（Python model）が、build のたびに `int_p
 
 1. 当初予算の事業の行を1つずつ、事業の1年度にする。
 2. 同じ年度の決算の行を、会計・款・項・目と名前の並びが同じ当初予算の行に結ぶ。並びが両方に同じ数だけあるときだけ、印字の順で結ぶ。
-   並びの中は印字の順（int_project__lines の print_order）で並べる。結べない決算の行は、決算の行だけを持つ事業の1年度にする。
+   並びの中は印字の順（int_project__lines の print_order）で並べる。結べなかった残りどうしは、名前の並びから数を除いて
+   （下の「数を除いた名前」）同じ決まりで結ぶ（当初予算は「7歳~69歳分16,124,513×0.7=」、決算は「7歳~69歳分0.7」と印字する事業）。
+   結べない決算の行は、決算の行だけを持つ事業の1年度にする。
 3. 前の年度の事業の1年度と、上の段から結ぶ。目の直下は会計・款・項・目と名前、その下は親が同じ事業の中で名前が、
    両方に1つずつあるときだけ同じ事業にする。名前で結べなかった残りどうしは、名前から数と単位（「105園」「延83,703人」）を
-   除いて同じ決まりで結ぶ（園の数・定員のように年度で変わる数を名前に印字する事業）。前の年度に無い事業は新しい事業にする（手順4の Jev はまだ使わない）。
+   除いて同じ決まりで結ぶ（園の数・定員のように年度で変わる数を名前に印字する事業）。数を除いた名前は、それに加えて名前の末尾の
+   数と式（「16,124,513×0.7=」）も除く。前の年度に無い事業は新しい事業にする（手順4の Jev はまだ使わない）。
 
 名前は NFKC にし、【所管課】から後ろ・末尾の [所管課]・「(うち…)」の注記・空白を除いて比べる。
 事業ID は事業の最初の年度の行の鍵の sha256。毎回計算し直しても、最初の年度の行が変わらない限り同じ ID になる。
@@ -31,6 +34,10 @@ KEY = ('jurisdiction_code', 'fiscal_year', 'document_kind', 'account_name', 'kan
 # 名前に印字された数と単位（「105園」「延83,703人」）。年度で変わるので、前の年度と結ぶときの2回目だけ除いて比べる。
 # 単位の付かない数と「第1」のような番号は、別の事業を見分ける数なので除かない
 COUNT = re.compile(r'(?<![第0-9,.])(?:延|約)?[0-9][0-9,.]*(?:か所|箇所|ヶ所|カ所|世帯|施設|団体|園|人|件|校|名|回|台|戸|床|室|館|個|点|冊|枚|日|か月|ヶ月|月|年|千円|万円|円|kW|t|%)')
+
+
+# 名前の末尾に印字された数と式（「16,124,513×0.7=」「0.7」）。人数や率のように年度・資料で変わる。「第1」のような番号は除かない
+TRAILING_NUMBERS = re.compile(r'(?<![第0-9,.])[0-9][0-9,.×=\s]*$')
 
 
 def normalize(name: str) -> str:
@@ -96,6 +103,17 @@ def name_paths(lines: list[Line]) -> dict[str, tuple]:
     return {x.detail_id: path(x) for x in lines}
 
 
+def pair_in_order(budget: list[Line], settled: list[Line]) -> list[Year]:
+    """同じ数の当初予算と決算の行を、印字の順で組にする"""
+    pairs = zip(sorted(budget, key=lambda x: x.print_order), sorted(settled, key=lambda x: x.print_order))
+    return [Year(initial=b, settlement=s) for b, s in pairs]
+
+
+def loose_key(x: Line, paths: dict[str, tuple]) -> tuple:
+    """会計・款・項・目と、数を除いた名前の並び"""
+    return (x.scope, tuple(TRAILING_NUMBERS.sub('', COUNT.sub('', n)) for n in paths[x.detail_id]))
+
+
 def build_years(docs: dict[str, list[Line]]) -> list[Year]:
     """手順1・2: 1つの年度の事業の1年度"""
     initial, settlement = docs.get('initial', []), docs.get('settlement', [])
@@ -106,10 +124,19 @@ def build_years(docs: dict[str, list[Line]]) -> list[Year]:
     for x in settlement:
         groups[(x.scope, paths[x.detail_id])][1].append(x)
     years: list[Year] = []
+    rest: dict[tuple, tuple[list[Line], list[Line]]] = defaultdict(lambda: ([], []))
     for budget, settled in groups.values():
         if len(budget) == len(settled):
-            pairs = zip(sorted(budget, key=lambda x: x.print_order), sorted(settled, key=lambda x: x.print_order))
-            years += [Year(initial=b, settlement=s) for b, s in pairs]
+            years += pair_in_order(budget, settled)
+        else:
+            # 名前の並びで結べなかった残りは、並びの名前から数を除いてもう一度組にする
+            for x in budget:
+                rest[loose_key(x, paths)][0].append(x)
+            for x in settled:
+                rest[loose_key(x, paths)][1].append(x)
+    for budget, settled in rest.values():
+        if len(budget) == len(settled):
+            years += pair_in_order(budget, settled)
         else:
             years += [Year(initial=b) for b in budget] + [Year(settlement=s) for s in settled]
     owner = {x.detail_id: y for y in years for x in y.lines}
@@ -133,7 +160,8 @@ def unique_pairs(current: list[Year], previous: list[Year], key) -> list[tuple[Y
 
 
 def without_counts(name: str) -> str:
-    return COUNT.sub('', normalize(name))
+    """数を除いた名前。数と単位（「105園」）と、名前の末尾の数と式（「16,124,513×0.7=」）を除く"""
+    return TRAILING_NUMBERS.sub('', COUNT.sub('', normalize(name)))
 
 
 def pair(current: list[Year], previous: list[Year], key) -> list[Year]:
