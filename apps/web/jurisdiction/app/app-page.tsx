@@ -60,14 +60,14 @@ import { Link } from '../../nav/link'
 import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon, NewIcon, PlanIcon, SizeIcon, StopIcon, UpIcon } from '../fresh-icons'
 import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
-import { cofogFlowOf, cofogFlowOfDrills } from '../cofog-flow'
+import { cofogFlowOf } from '../cofog-flow'
 import { COFOG_NAMES } from '@fudoki/fiscal/cofog-master'
 import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { pageHead } from '../html'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
 import { directionOf, DIRECTION_ICONS, GRADES, withExtras, yearView, type AccountTotal, type Proj, type Sheet as EvalSheet, type Snapshot, type YearExtras, type YearView } from './data'
 import { fieldSubjects, listKey, listPage, projectFull, projectLatest, projectOfId, sheetCountKey, sheetCounts, sheetKey, sheetPage, type ListPage, type ListQuery, type ProjectFull, type ProjRow, type SheetCount, type SheetQuery } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
@@ -496,12 +496,6 @@ function GradeCards({ counts, value, onChange }: { counts: SheetCount[]; value?:
   )
 }
 
-/** お金の流れの分け方。分野（COFOG の大分類）か、予算書・決算書の款・項のまま */
-const VIEWS: { key: FlowView; label: string }[] = [
-  { key: 'cofog', label: '分野' },
-  { key: 'kan', label: '款・項' },
-]
-
 const GENERAL = '一般会計'
 
 function AccountCards({ accounts, account, setAccount }: { accounts: AccountTotal[]; account: string; setAccount: (a: string) => void }) {
@@ -527,7 +521,6 @@ const withSetsu = (flow: PageFlow, byMoku: Record<string, Setsu[]>): PageFlow =>
 
 function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   const { v, d, res, page, select, flow, flowFailed, pickAccount, setsu: setsuProp } = useApp()
-  const [view, setView] = React.useState<FlowView>('cofog')
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = y?.kind === phase ? { year: v.year, yen: y.total, kan: [] } : undefined
   // 収録はあるが、今の頁のデータが別の資料（スマホで隣のタブを開いた頁など）なら、タブへ移って loader が読むまで待つ
@@ -536,9 +529,6 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   const tabs = (
     <div className="flex items-center justify-between gap-3">
       <span className="text-base">{reiwa(v.year)}の{label}</span>
-      <ToggleGroup value={[view]} onValueChange={(x) => x[0] && setView(x[0] as FlowView)} variant="outline" size="sm" spacing={0}>
-        {VIEWS.map((x) => <ToggleGroupItem key={x.key} value={x.key}>{x.label}</ToggleGroupItem>)}
-      </ToggleGroup>
     </div>
   )
   // 会計ごとの総額（頁のデータに入っている）。一般会計を先頭に並べ、押した会計の流れを下に出す。押したらすぐ札を選び、流れは移った頁の loader が読む
@@ -570,7 +560,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
     select((s) => (s?.kind === 'moku' && s.phase === phase && !s.moku.setsu.length && byMoku[s.id] ? { ...s, moku: { ...s.moku, setsu: byMoku[s.id]! } } : s))
   }, [byMoku])
   const drills = current?.drills
-  const flows = React.useMemo(() => (current && view === 'cofog' ? cofogFlowOfDrills(current.drills, current.loose) : current?.drills), [current, view])
+  const flows = current?.drills
   const router = useRouter()
   const accounts = d.accounts ?? []
   // 会計の総額は頁のデータの資料のもの。別の資料のタブ（スマホで隣に並ぶタブ）では使わない
@@ -586,7 +576,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       </TabHead>
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
       {picked ? (
-        <Flow key={`${v.year}-${view}-${phase}-${account}`} flows={flows} total={picked} view={view} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase, special: account !== GENERAL })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
+        <Flow key={`${v.year}-${phase}-${account}`} flows={flows} total={picked} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase, special: account !== GENERAL })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
       ) : recorded ? (
         <Skeleton className="h-[480px] rounded-xl" />
       ) : (
@@ -873,7 +863,7 @@ function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name' | 'path'>; mark
 const projectLatestKey = (id: string) => `project-latest:${id}`
 
 /** 事業の頁（/tokyo/shinagawa/projects/<project_id>）。一覧の行・評価シート・分野の頁の事業から開く。事業は年度をまたぐので年度の段を持たず、
- * 金額・中の事業・評価シートは事業の最新の年度（決算があれば決算）のものを出し、年度ごとの額を並べる */
+ * 金額・内訳（中の事業）・評価シートは事業の最新の年度（決算があれば決算）のものを出し、年度ごとの額を並べる */
 function ProjectPage({ id }: { id: string }) {
   return (
     <ClientSuspense fallback={<RowsSkeleton n={4} />}>
@@ -934,7 +924,7 @@ function ProjectPageBody({ id }: { id: string }) {
         </DetailSection>
       ) : null}
       {p.kids.length ? (
-        <DetailSection icon={TreeStructureIcon} title="中の事業" count={`${r(year)}年度の${label} · ${p.kids.length}件`}>
+        <DetailSection icon={TreeStructureIcon} title="内訳" count={`${r(year)}年度の${label} · ${p.kids.length}件`}>
           <Infinite items={p.kids} step={10} render={({ name, yen }, i) => (
             <div key={i} className="flex items-center gap-3 px-1.5 py-2 text-[15px]"><span className="flex-1">{name}</span><Amt yen={yen} className="text-base" /></div>
           )} />
@@ -1007,7 +997,7 @@ function ProjectBody({ p }: { p: ProjectFull }) {
         </DetailSection>
       ) : null}
       {kids.length ? (
-        <DetailSection icon={TreeStructureIcon} title="中の事業" count={kids.length}>
+        <DetailSection icon={TreeStructureIcon} title="内訳" count={kids.length}>
           <Infinite items={kids} step={10} render={({ name, yen }, i) => (
             <div key={i} className="flex items-center gap-3 px-1.5 py-2 text-[15px]"><span className="flex-1">{name}</span><Amt yen={yen} className="text-base" /></div>
           )} />
