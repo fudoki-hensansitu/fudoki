@@ -1,0 +1,642 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131016",
+    "fiscal_year": 2022,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "e51210e291d9f01fb330627f81f21a1f64aeec95e05ef68ffe697ec3e35dd759"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "e51210e291d9f01fb330627f81f21a1f64aeec95e05ef68ffe697ec3e35dd759",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "0d16fd324af04d024f764ea737779f33fb01469646b3c30b1e1ec402ec750e9e",
+          "bytes": 2883368
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "e51210e291d9f01fb330627f81f21a1f64aeec95e05ef68ffe697ec3e35dd759",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "42f868010c779179a67cd7c8eeba07f00f82ac45f6a6a5333e7a51b142c9940e",
+          "bytes": 2684361
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "e51210e291d9f01fb330627f81f21a1f64aeec95e05ef68ffe697ec3e35dd759",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "104cc1c60c19a8f31bad0453cb7686c7a6985261ca4f263236d84170ed48202f",
+          "bytes": 2990619
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "e51210e291d9f01fb330627f81f21a1f64aeec95e05ef68ffe697ec3e35dd759",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "439995f70de426a6472fb226305b6644876b722643d874c9fc83c981aca9cb76",
+          "bytes": 2941313
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "e51210e291d9f01fb330627f81f21a1f64aeec95e05ef68ffe697ec3e35dd759",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "01d5a7b27c5b4484a785f93ff3a498d857f759ff00b0a63c7ec5704456c2bb3d",
+          "bytes": 1975653
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "e51210e291d9f01fb330627f81f21a1f64aeec95e05ef68ffe697ec3e35dd759",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              104,
+              105,
+              106,
+              107,
+              108,
+              109
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f4800a8423de384d26c8fd3d15337de67bb7cf805f051f801eafef4cde588021",
+          "bytes": 980654
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-detail",
+        "pages": [
+          [
+            54,
+            109
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "f7ea2024b1f20aef632ef56e511dd28b00678ce6f105df5c69bccc439779d40c"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "f7ea2024b1f20aef632ef56e511dd28b00678ce6f105df5c69bccc439779d40c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c9c52049a34449fe807c24f2f9d280d1676e846671379823e23939f17f2b7516",
+          "bytes": 2132092
+        },
+        {
+          "id": "nhi-ocr-2",
+          "origin_sha256": "f7ea2024b1f20aef632ef56e511dd28b00678ce6f105df5c69bccc439779d40c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4f8afb154cea373c332c0108f65f4197ffc61b2943391d755a973c5bfea13766",
+          "bytes": 863993
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "nhi-expenditure-detail",
+        "pages": [
+          [
+            22,
+            37
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2a5737008ae22202c6dca8e7f14ec22591b24dea815b629258d411a051cd58f8"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "2a5737008ae22202c6dca8e7f14ec22591b24dea815b629258d411a051cd58f8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3ef5b7a021a673e1c3a0fe1de18c4e55b590e9587b29f8c4be228d8dab650395",
+          "bytes": 2070993
+        },
+        {
+          "id": "kaigo-ocr-2",
+          "origin_sha256": "2a5737008ae22202c6dca8e7f14ec22591b24dea815b629258d411a051cd58f8",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "da61f6b1765b32c593c3e9eca97beb40beb214cd1b861cd7d4b6628af8ae0e3f",
+          "bytes": 1050381
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "pages": [
+          [
+            24,
+            43
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "f9a29838a1d2d1d22b7e096245014cc8afd539623d7eea5aef2da2b25106a43a"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "f9a29838a1d2d1d22b7e096245014cc8afd539623d7eea5aef2da2b25106a43a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6bcbd6173556a7d273a879484bdf484efaa7cc12696e5149d7b5c74561998c91",
+          "bytes": 1193644
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "pages": [
+          [
+            18,
+            27
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure-detail",
+      "conversion_id": "general",
+      "input_fingerprint": "f9510029673342e7c819688062d8bd5bf9e221dae7808db382d365c08e115df9",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 28頁 から決めた。款の和 66,256,486,472 と印字の「歳出合計」66,256,486,472 が一致。",
+        "金額の注記 36 件（不用額 18・充用 14・流用 4）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 3 種（1234 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 2 件（p66:full-page:a0:result0:r76・p66:full-page:a0:result0:r76:w5）・產→産 4 件（p92:full-page:a0:result0:r77・p92:full-page:a0:result0:r77:w5・p104:full-page:a0:result0:r73・p104:full-page:a0:result0:r73:w2）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131016/2022/settlement/expenditure/general-expenditure-detail-nodes.parquet",
+          "sha256": "56ddcce07c80c46998858ee9b0338a2a3aa472f3bb4239d83f3ba669b4a2f88d",
+          "bytes": 25679
+        },
+        "row_count": 725
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131016/2022/settlement/expenditure/general-expenditure-detail-amounts.parquet",
+          "sha256": "1fddfa66c972569772c8dffd8c3522a3b11f4a71f0c9d297613e45644fe91acf",
+          "bytes": 46194
+        },
+        "row_count": 3258
+      }
+    },
+    {
+      "table_id": "nhi-expenditure-detail",
+      "conversion_id": "nhi",
+      "input_fingerprint": "d21193fde753caddee6c89bb8ee5367d33eec901e1717d5bb2ba4cc9cfc60b99",
+      "account": "国民健康保険事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 8頁 から決めた。款の和 5,619,855,668 と印字の「歳出合計」5,619,855,668 が一致。",
+        "金額の注記 12 件（充用 12）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（168 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 2 件（p26:full-page:a0:result0:r79・p26:full-page:a0:result0:r79:w4）・徵→徴 2 件（p22:full-page:a0:result0:r89・p22:full-page:a0:result0:r89:w2）・查→査 4 件（p24:full-page:a0:result0:r86・p24:full-page:a0:result0:r86:w3・p26:full-page:a0:result0:r48・p26:full-page:a0:result0:r48:w3）・產→産 2 件（p26:full-page:a0:result0:r32・p26:full-page:a0:result0:r32:w3）・齡→齢 2 件（p28:full-page:a0:result0:r65・p28:full-page:a0:result0:r65:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131016/2022/settlement/expenditure/nhi-expenditure-detail-nodes.parquet",
+          "sha256": "456437c035024c5a2dc3df367b05c0c0c3c48ac880900c48222a6b29ad9ad49b",
+          "bytes": 8527
+        },
+        "row_count": 125
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131016/2022/settlement/expenditure/nhi-expenditure-detail-amounts.parquet",
+          "sha256": "e115e9fe3b07df18d147b09126301d78368d45661df57e83cb0cf056b3b961a3",
+          "bytes": 12867
+        },
+        "row_count": 696
+      }
+    },
+    {
+      "table_id": "kaigo-expenditure-detail",
+      "conversion_id": "kaigo",
+      "input_fingerprint": "eb47b3acac8889904f7ea22b6754277735addedbdd986fe33cca7798cb9bae4d",
+      "account": "介護保険特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 10頁 から決めた。款の和 4,139,148,092 と印字の「歳出合計」4,139,148,092 が一致。",
+        "金額の注記 2 件（流用 2）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（188 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 22 件（p28:full-page:a0:result0:r35・p28:full-page:a0:result0:r35:w4・p28:full-page:a0:result0:r44・p28:full-page:a0:result0:r44:w0・p28:full-page:a0:result0:r57・p28:full-page:a0:result0:r57:w3・p28:full-page:a0:result0:r81・p28:full-page:a0:result0:r81:w0・p28:full-page:a0:result0:r93・p28:full-page:a0:result0:r93:w0・p28:full-page:a0:result0:r105・p28:full-page:a0:result0:r105:w0・p28:full-page:a0:result0:r118・p28:full-page:a0:result0:r118:w0・p28:full-page:a0:result0:r136・p28:full-page:a0:result0:r136:w0・p32:full-page:a0:result0:r37・p32:full-page:a0:result0:r37:w6・p32:full-page:a0:result0:r96・p32:full-page:a0:result0:r96:w1・p32:full-page:a0:result0:r124・p32:full-page:a0:result0:r124:w0）・徵→徴 2 件（p24:full-page:a0:result0:r80・p24:full-page:a0:result0:r80:w1）・查→査 8 件（p24:full-page:a0:result0:r97・p24:full-page:a0:result0:r97:w7・p24:full-page:a0:result0:r105・p24:full-page:a0:result0:r105:w1・p30:full-page:a0:result0:r38・p30:full-page:a0:result0:r38:w3・p34:full-page:a0:result0:r65・p34:full-page:a0:result0:r65:w3）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131016/2022/settlement/expenditure/kaigo-expenditure-detail-nodes.parquet",
+          "sha256": "348fe69afb1095d7d4060a2447557cd2d2abcc52d70f42eb4cbb95fa1854b2af",
+          "bytes": 8700
+        },
+        "row_count": 123
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131016/2022/settlement/expenditure/kaigo-expenditure-detail-amounts.parquet",
+          "sha256": "173cb34a970710a0f3d02ede59c5422543671306f15390c6150c8521a58d9b27",
+          "bytes": 13673
+        },
+        "row_count": 702
+      }
+    },
+    {
+      "table_id": "kouki-expenditure-detail",
+      "conversion_id": "kouki",
+      "input_fingerprint": "64254265e0838848474368e8f8c262aabe46efe126d6347cd19578127a8f64cb",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '備考': 'indent'}。",
+        "金額の単位は column mark 5頁 から決めた。款の和 1,883,585,395 と印字の「歳出合計」1,883,585,395 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（59 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131016/2022/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
+          "sha256": "ae7ed9a9bb3177d9596a0cc186a49faa6102fe3a151d6b6f202064e9516eb7bc",
+          "bytes": 4646
+        },
+        "row_count": 40
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131016/2022/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
+          "sha256": "1a0ff1e3e97bec2e1586cccd5b47860aaa0c1080751ddb1e5a290af8cb49e2fc",
+          "bytes": 6111
+        },
+        "row_count": 244
+      }
+    }
+  ]
+}

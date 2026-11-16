@@ -589,6 +589,280 @@
         }
       ]
     },
+    "revenue": {
+      "primary_key": "revenue_id",
+      "indexes": [
+        [
+          "jurisdiction_code"
+        ],
+        [
+          "fiscal_year",
+          "document_kind",
+          "jurisdiction_code"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "revenue_id",
+          "type": "string",
+          "nullable": false,
+          "description": "自治体・年度・資料区分・補正号（無ければ空文字）・会計名と向き（revenue）から作る ID（sha256）。同じ会計の歳出の根 expenditure_id とは別の値。"
+        },
+        {
+          "name": "jurisdiction_code",
+          "type": "string",
+          "nullable": false,
+          "description": "自治体コード。"
+        },
+        {
+          "name": "fiscal_year",
+          "type": "integer",
+          "nullable": false,
+          "description": "会計年度（西暦）。"
+        },
+        {
+          "name": "document_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "資料区分（settlement 決算・initial 当初予算）。",
+          "values": [
+            "settlement",
+            "initial"
+          ]
+        },
+        {
+          "name": "amendment_number",
+          "type": "integer",
+          "nullable": true,
+          "description": "補正予算の号数。当初予算・決算は NULL。"
+        },
+        {
+          "name": "account_name",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の会計名をNFKC・前後trimした値。"
+        },
+        {
+          "name": "account_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "会計の種類（一般会計・国民健康保険など）。会計名から共通の辞書（account_kind_map）で引く風土記の判断。"
+        },
+        {
+          "name": "total_yen",
+          "type": "integer",
+          "nullable": false,
+          "description": "款の行の和（円）。決算は収入済額、当初予算は本年度予算額の和。印字された歳入合計の行は表に無いので、款の和を会計の合計とする。"
+        }
+      ]
+    },
+    "revenue_origin_link": {
+      "primary_key": "link_id",
+      "indexes": [
+        [
+          "revenue_id"
+        ],
+        [
+          "origin_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "link_id",
+          "type": "string",
+          "nullable": false,
+          "description": "根と出典の組から作る ID（sha256）。"
+        },
+        {
+          "name": "revenue_id",
+          "type": "string",
+          "nullable": false,
+          "description": "歳入の根の ID。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の ID。"
+        }
+      ]
+    },
+    "revenue_subject": {
+      "primary_key": "subject_id",
+      "indexes": [
+        [
+          "revenue_id",
+          "level"
+        ],
+        [
+          "parent_subject_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "subject_id",
+          "type": "string",
+          "nullable": false,
+          "description": "行の ID。資料区分・補正号・node_key から作る（sha256）。"
+        },
+        {
+          "name": "node_key",
+          "type": "string",
+          "nullable": false,
+          "description": "今の木の node_id。自治体・年度・会計・款項目番号と向き（revenue）から作り、資料区分を含まない。同じ自治体・年度の当初予算と決算の同じ科目は同じ値になる。年度をまたいだ同一性は保証しない。"
+        },
+        {
+          "name": "parent_subject_id",
+          "type": "string",
+          "nullable": true,
+          "description": "親の科目（款は NULL）。"
+        },
+        {
+          "name": "revenue_id",
+          "type": "string",
+          "nullable": false,
+          "description": "歳入の根の ID。revenue の revenue_id。"
+        },
+        {
+          "name": "level",
+          "type": "string",
+          "nullable": false,
+          "description": "科目の段（款・項・目）。足すときは同じ資料で一つの段か末端に絞る。",
+          "values": [
+            "款",
+            "項",
+            "目"
+          ]
+        },
+        {
+          "name": "code",
+          "type": "string",
+          "nullable": true,
+          "description": "出典の番号をNFKC・前後trimした値。番号がない段はNULL。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の名称をNFKC・前後trimし、日本語の字間空白と折り返し改行を除いた値。"
+        },
+        {
+          "name": "amount_yen",
+          "type": "integer",
+          "nullable": false,
+          "description": "資料区分の金額（円）。決算（根の document_kind = settlement）は収入済額、当初予算（initial）は本年度予算額。調定額・不納欠損額・収入未済額は持たない。款・項の金額を印字しない資料の款・項は子の和で、印字ではない。出典で空欄の末端は 0。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典選定のファイルを指すSHA由来のID。"
+        }
+      ]
+    },
+    "revenue_location": {
+      "primary_key": "line_id",
+      "indexes": [],
+      "columns": [
+        {
+          "name": "line_id",
+          "type": "string",
+          "nullable": false,
+          "description": "科目の表の subject_id か内訳の表の detail_id。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典選定のファイルを指すSHA由来のID。"
+        },
+        {
+          "name": "source_page",
+          "type": "integer",
+          "nullable": true,
+          "description": "名称を印字した頁（1始まり）。"
+        },
+        {
+          "name": "source_x0",
+          "type": "number",
+          "nullable": true,
+          "description": "名称の枠の左端（pt）。"
+        },
+        {
+          "name": "source_y0",
+          "type": "number",
+          "nullable": true,
+          "description": "名称の枠の上端（pt）。"
+        },
+        {
+          "name": "source_x1",
+          "type": "number",
+          "nullable": true,
+          "description": "名称の枠の右端（pt）。"
+        },
+        {
+          "name": "source_y1",
+          "type": "number",
+          "nullable": true,
+          "description": "名称の枠の下端（pt）。"
+        },
+        {
+          "name": "amount_source_page",
+          "type": "integer",
+          "nullable": true,
+          "description": "金額を印字した頁。複数の印字を足した金額は NULL。"
+        },
+        {
+          "name": "amount_source_x0",
+          "type": "number",
+          "nullable": true,
+          "description": "金額の枠の左端（pt）。一つの印字が金額のときだけ。"
+        },
+        {
+          "name": "amount_source_y0",
+          "type": "number",
+          "nullable": true,
+          "description": "金額の枠の上端（pt）。"
+        },
+        {
+          "name": "amount_source_x1",
+          "type": "number",
+          "nullable": true,
+          "description": "金額の枠の右端（pt）。"
+        },
+        {
+          "name": "amount_source_y1",
+          "type": "number",
+          "nullable": true,
+          "description": "金額の枠の下端（pt）。"
+        }
+      ]
+    },
+    "fiscal_revenue_category": {
+      "primary_key": "kan_name",
+      "indexes": [],
+      "columns": [
+        {
+          "name": "kan_name",
+          "type": "string",
+          "nullable": false,
+          "description": "歳入の款の名前（取り込みの印字を整えた名前。revenue_subject.name と完全一致で突き合わせる）。"
+        },
+        {
+          "name": "category",
+          "type": "string",
+          "nullable": false,
+          "description": "風土記が自治体の頁で使う歳入の区分。**fudoki の判断。** まちの税・国・都道府県から配られるお金\n（譲与税・交付金・地方交付税など、使い道を決めずに配られるお金）・国・都道府県の支出金・借入れ・その他。\n",
+          "values": [
+            "まちの税",
+            "国・都道府県から配られるお金",
+            "国・都道府県の支出金",
+            "借入れ",
+            "その他"
+          ]
+        }
+      ]
+    },
     "evaluation": {
       "primary_key": "evaluation_id",
       "indexes": [

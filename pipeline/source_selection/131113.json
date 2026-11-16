@@ -447,7 +447,7 @@
               "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r05yosan/r05-yosan.files/02_r5_jikoubetsu_ippan.pdf",
               "sha256": "15b52dcae9764b8f9c461cb5ee232506e68e4e90efe1877739128502f421b523",
               "format": "pdf",
-              "pdf_type": "text",
+              "pdf_type": "scan",
               "scope": [
                 {
                   "account": "一般会計",
@@ -465,7 +465,7 @@
               "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r05yosan/r05-yosan.files/03_r5_jikoubetsu_kokuminkenkouhoken.pdf",
               "sha256": "c1809256c4a7f6cefa882a8a599d714f3d0498632a66dbd80e4b0fd562315109",
               "format": "pdf",
-              "pdf_type": "text",
+              "pdf_type": "scan",
               "scope": [
                 {
                   "account": "国民健康保険事業特別会計",
@@ -483,7 +483,7 @@
               "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r05yosan/r05-yosan.files/04_r5_jikoubetsu_koukikoureisyairyou.pdf",
               "sha256": "a355d723407b65a8df0e75f00813f016ae4673ad71d36dea07dfc68d2029cdf9",
               "format": "pdf",
-              "pdf_type": "text",
+              "pdf_type": "scan",
               "scope": [
                 {
                   "account": "後期高齢者医療特別会計",
@@ -501,7 +501,7 @@
               "download_url": "https://www.city.ota.tokyo.jp/kuseijoho/suuji/yosan_kessan/yosan/r05yosan/r05-yosan.files/05_r5_jikoubetsu_kaigohoken.pdf",
               "sha256": "90ee6e11e5b0e5c5363fd99965fc7832b322bb1c5f4b5d145738254d925cdb5c",
               "format": "pdf",
-              "pdf_type": "text",
+              "pdf_type": "scan",
               "scope": [
                 {
                   "account": "介護保険特別会計",

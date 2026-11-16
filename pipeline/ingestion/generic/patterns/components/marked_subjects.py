@@ -14,7 +14,12 @@ def parent_event(self, row, page, page_words=None):
         if w['x'] < 130 or w['x'] > 1025:
             continue
         # Poppler sometimes joins the last 0 in one cell to the next cell's △.
-        for part in re.findall(r'△|[0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?|（[0-9.]+）|\([0-9.]+\)', w['text']):
+        parts = re.findall(r'△|[0-9]+(?:,[0-9]{3})*(?:\.[0-9]+)?|（[0-9.]+）|\([0-9.]+\)', w['text'])
+        # Poppler joins the 執行率 with the remark that starts right after it (`42.8同項・3償還金へ流用12,000円`):
+        # the cell is the number the word starts with, and the numbers in the remark are not cells.
+        if re.search(r'[぀-ヿ一-鿿]', w['text']):
+            parts = parts[:1] if re.match(r'[0-9]', w['text']) else []
+        for part in parts:
             if part == '△':
                 sign = part
                 sign_words = [w]

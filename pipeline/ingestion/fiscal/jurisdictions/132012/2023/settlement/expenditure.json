@@ -87,6 +87,96 @@
           "table_id": "kouki-detail"
         }
       ]
+    },
+    {
+      "id": "sewer-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "db6fd7927e2af81dfb8da1139216552aba2c251dbab34602ab458b310f0a847c"
+        }
+      ],
+      "options": {
+        "account": "下水道事業会計",
+        "table_id": "sewer-revenue-expenditure-detail",
+        "pages": [
+          [
+            36,
+            39
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "款": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "項": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "目": {
+                  "kind": "label",
+                  "axis_header": "科目"
+                },
+                "金額": {
+                  "heading": "決算額"
+                }
+              },
+              "header": {
+                "staircase": "款項目節"
+              },
+              "rules": {
+                "row_gaps": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "sewer-revenue-ocr-1",
+          "origin_sha256": "db6fd7927e2af81dfb8da1139216552aba2c251dbab34602ab458b310f0a847c",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              36,
+              37,
+              38,
+              39
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e6425cd81ed2303235e26ecb112dd32212cdbf5a4d786cffff78969ea745c061",
+          "bytes": 725861
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "sewer-revenue-expenditure-detail"
+        }
+      ]
     }
   ],
   "tables": [
@@ -144,6 +234,36 @@
           "bytes": 2788
         },
         "row_count": 34
+      }
+    },
+    {
+      "table_id": "sewer-revenue-expenditure-detail",
+      "conversion_id": "sewer-revenue",
+      "input_fingerprint": "bb2b641db4c541ac073dcd4a17e1a01a74d8bd5080515cff6f3f43e00df3470e",
+      "account": "下水道事業会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape'}。",
+        "金額の単位は printed 4頁 から決めた。款の和 11,975,784,015 と印字の「費用合計」11,975,784,015 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 8 件（p36:full-page:a0:result0:r2・p36:full-page:a0:result0:r2:w4・p37:full-page:a0:result0:r0・p37:full-page:a0:result0:r0:w4・p38:full-page:a0:result0:r0・p38:full-page:a0:result0:r0:w4・p39:full-page:a0:result0:r0・p39:full-page:a0:result0:r0:w4）・產→産 8 件（p38:full-page:a0:result0:r23・p38:full-page:a0:result0:r23:w5・p38:full-page:a0:result0:r25・p38:full-page:a0:result0:r25:w5・p38:full-page:a0:result0:r27・p38:full-page:a0:result0:r27:w1・p39:full-page:a0:result0:r17・p39:full-page:a0:result0:r17:w5）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/sewer-revenue-expenditure-detail-nodes.parquet",
+          "sha256": "6979c79d949b4244306bbffebc171123ee3039b69be1e10984a0265bf9e7ba4a",
+          "bytes": 7360
+        },
+        "row_count": 116
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/sewer-revenue-expenditure-detail-amounts.parquet",
+          "sha256": "490147511f296d54a0ea52b4f14a064fce828ccce2f78816e9804a3060e803a9",
+          "bytes": 6025
+        },
+        "row_count": 116
       }
     }
   ]

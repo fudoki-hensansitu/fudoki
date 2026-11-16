@@ -418,6 +418,9 @@ def level_cells(cells: list[tuple[tuple, str]], edges: list[float], levels: str 
         elif (value.startswith('款') and set(value) <= set(levels) and len(set(value)) == len(value)
                 and (len(inner) in (2, 3) or four) and len(value) <= len(inner)):
             result.extend(((left, right, key[2], key[3]), level) for (left, right), level in zip(inner, levels))
+        elif value == '項目' and len(inner) == 2 and levels.startswith('款項目'):
+            # The rule between 款 and 項 reaches the header and the one between 項 and 目 does not (134015 R5 p21).
+            result.extend(((left, right, key[2], key[3]), level) for (left, right), level in zip(inner, '項目'))
         else:
             result.append((key, value))
     return result
@@ -900,4 +903,6 @@ def logical_pages(pages: list[Page], *, columns: dict | None = None, spread: dic
             if region['page'] in logical.pages:
                 logical.excluded.append(region)
                 break
+    if (shifted := document_quirk('shifted_pages')) is not None:
+        shifted.module.align(result)
     return result

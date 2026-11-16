@@ -74,7 +74,12 @@ def store_manifest(path: Path, since: str, *, dry_run: bool) -> dict:
     earlier = previous(path, since)
     before = references(earlier)
     recorded = {table['table_id']: table for table in document['tables']}
-    changed = {ident for ident, refs in references(document).items() if before.get(ident) != refs}
+    # A table whose conversion was declared again (its options changed) is checked against R2 too, even when its
+    # bytes are as recorded before: R2 may hold what main converted in place of the record (`replaced`), which the
+    # new declaration is meant to put right (133086 R5 当初, read with `traced_glyphs`).
+    redeclared = declared(earlier, document)
+    changed = {ident for ident, refs in references(document).items()
+               if before.get(ident) != refs or recorded[ident]['conversion_id'] in redeclared}
     # Tables a thread uploaded before this flow, or a previous run already stored, are not converted again.
     changed = {ident for ident in changed if not all(stored(reference['object'])
                                                     for reference in manifest.table_references(recorded[ident]).values())}

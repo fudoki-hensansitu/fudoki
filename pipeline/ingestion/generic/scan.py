@@ -29,7 +29,8 @@ from ingestion.lib.ocr_names import (AmountDictionary, AmountRule, correct_amoun
                                      load_name_dictionary, load_variant_chars)
 
 # Vision reads the minus sign △ as a letter.
-MINUS = re.compile(r'^[AΔ▲−–-]\s*(?=[0-9])')  # (`–76,872`: an en dash, 132080)
+# A letter before digits that go on into a word is a name (`A2用電子複写機使用料`, 132101), not a sign.
+MINUS = re.compile(r'^[AΔ▲−–-]\s*(?=[0-9][0-9,.\s]*(?![0-9,.\s])(?:[^\w]|$))')  # (`–76,872`: an en dash, 132080)
 NUMBER = re.compile(r'△?[0-9][0-9,.]*')
 AMOUNT = re.compile(r'△?[0-9]{1,3}([,.][0-9]{3})+|△?[0-9]{4,}')
 GROUPED = re.compile(r'△?[0-9]{1,3}([,.][0-9]{3})+')
@@ -302,14 +303,16 @@ def short_rows(pdf: Path, detected: pdf_rules.PageRules, dark: int = pdf_rules.D
     image = pdf_rules.render(pdf, detected.page)
     scale = pdf_rules.DPI / 72
     vertical = sorted(detected.vertical, key=lambda r: r.position)
+    skewed = document_quirk('skewed_cell_rows')
     runs = []
-    for left, right in zip(vertical, vertical[1:]):
+    for left, right in (skewed.module.pairs(vertical) if skewed is not None else zip(vertical, vertical[1:])):
         top, bottom = max(left.start, right.start), min(left.end, right.end)
         x0, x1 = round(left.position * scale), round(right.position * scale)
         if top >= bottom or x1 <= x0:
             continue
         y0, y1 = max(0, round(top * scale)), min(image.shape[0], round(bottom * scale))
-        joined = np.all(image[y0:y1, x0:x1 + 1] < dark, axis=1)
+        cell = image[y0:y1, x0:x1 + 1] < dark
+        joined = skewed.module.joined(cell) if skewed is not None else np.all(cell, axis=1)
         runs.extend((y0 + int(y), x0, x1 + 1) for y in np.flatnonzero(joined))
     found = pdf_rules._merge(runs, 1 / scale)
     extra = [r for r in found if not any(abs(old.position - r.position) <= 1
@@ -986,11 +989,17 @@ def join_ordinals(observed: list[Page]) -> list[Page]:
             joined = Word(before.text + word.text, before.x0, min(before.y0, word.y0), word.x1, max(before.y1, word.y1))
             words[words.index(before)] = joined
             words[index] = None
+        if (wrapped := document_quirk('wrapped_years')) is not None:
+            words = wrapped.module.join(words, middle)
         for index, word in enumerate(words):
             # The number wrapped to the next line with what follows it (`エアコン借上料その` / `1 (平成27年度導入分)`,
             # `（東小金井北第` / `1自転車駐車場)`, `地下水保全会議委員報酬 （` / `5人)`).
             found = word is not None and re.fullmatch(r'([0-9]{1,2})\s*([^0-9\s].*)', word.text)
-            if not found:
+            # OCR may read the number as a word of its own before the rest of the line (`その` / `1` `(平成30年度導入分)`).
+            alone = word is not None and re.fullmatch(r'[0-9]{1,2}', word.text) and any(
+                w is not None and abs(middle(w) - middle(word)) < 3 and 0 <= w.x0 - word.x1 <= ORDINAL_GAP
+                and not re.match(r'[0-9△▲]', w.text) for w in words)
+            if not found and not alone:
                 continue
             if any(w is not None and w is not word and abs(middle(w) - middle(word)) < 3 and w.x1 <= word.x0 + 0.5
                    for w in words):
@@ -998,6 +1007,10 @@ def join_ordinals(observed: list[Page]) -> list[Page]:
             above = [w for w in words if w is not None and 6 < middle(word) - middle(w) < 14
                      and w.x0 < word.x0 + 120 and w.x1 > word.x0]
             if not above or not normalize((last := max(above, key=lambda w: w.x1)).text).endswith(('その', '第', '(')):
+                continue
+            if not found:
+                words[words.index(last)] = Word(last.text + word.text, last.x0, last.y0, last.x1, last.y1)
+                words[index] = None
                 continue
             width = (word.x1 - word.x0) / len(word.text)
             cut = word.x0 + width * (len(word.text) - len(found.group(2)))
@@ -1322,7 +1335,8 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
     if report.unit['stopped'] and stop:
         raise ValueError(f'Unit check failed: {report.unit}')
     kept, notes, amounts, unresolved, codes = split_notes(built)
-    built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))
+    # A misread annotation (`教育センタ一費へ流用`, 131164 R5) is put right like a node.
+    built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names([*built.nodes, *notes], by_node))
     built.notes.extend({'kind': 'variant characters', 'text': text} for text in variants)
     nodes = [*built.nodes, *notes]
     amounts, headings = canonical_headings([*kept, *amounts], nodes, kind, header)

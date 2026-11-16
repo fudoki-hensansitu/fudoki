@@ -245,6 +245,7 @@ class Reader(Reading):
                 box = token.bbox
                 pages[token.page].append({'text': token.raw_text, 'x': box.left, 'xe': box.right,
                                            'y': box.top, 'ye': box.bottom})
+        declared_boxes = [{k: v for k, v in box.items() if k != 'id'} for box in options.get('excluded_boxes', ())]
         measured = {k: [tuple(row) for row in options.get(k, [])]
                     for k in ('auxiliary_tables', 'prose_lines', 'office_headings')}
         records, reserve, lending, observations, excluded = self.rule('assemble')(pages, first, last, source=source['path'], destination=destination,
@@ -256,6 +257,7 @@ class Reader(Reading):
                                                           remark_min_x=options.get('remark_min_x', 1024),
                                                           remark_merged_cells=options.get('remark_merged_cells', False),
                                                           row_tolerance=options.get('row_tolerance', 4.1),
+                                                          parent_row_tolerance=options.get('parent_row_tolerance', 4.1),
                                                           measured=measured)
         (destination / 'builder-observations.json').write_text(json.dumps(observations, ensure_ascii=False, indent=2) + '\n')
         result = {}
@@ -279,7 +281,7 @@ class Reader(Reading):
             write_coverage_words(output, [(page, (w['x'], w['y'], w['xe'], w['ye']), w['text'])
                                           for page, words in pages.items() for w in words
                                           if 60 <= w['y'] < 790],
-                                 excluded_regions=[] if is_reserve or is_lending else excluded)
+                                 excluded_regions=[] if is_reserve or is_lending else [*excluded, *declared_boxes])
             if not is_reserve and not is_lending:
                 data = self.monetary.prepare(data)
             columns = self.write_parquet(output, data)

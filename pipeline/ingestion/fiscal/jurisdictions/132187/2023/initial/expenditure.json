@@ -1,0 +1,186 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132187",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "957f1ab968e8b8d6eef2bbbea80f5f9240ff4b2f47cceb191f32ffdb279688ed"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "facing_pages",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源・一般財源の額と財源の名前を印字した内訳で、目の金額は本年度の額で確かめる。"
+                  }
+                }
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "name_tails_over_pages": true
+                }
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "amount_brackets": true,
+                  "yen_marked": true,
+                  "yen_notes": true
+                },
+                "quirks": {
+                  "headings": true,
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "repairs": [
+            "em_boxes",
+            "line_clips",
+            "spaced_codes"
+          ]
+        },
+        "pages": [
+          [
+            58,
+            279
+          ]
+        ],
+        "excluded_boxes": [
+          {
+            "id": "p58-chapter-number",
+            "page": 58,
+            "bbox": [
+              47,
+              56,
+              63,
+              72
+            ],
+            "kind": "本文",
+            "reason": "章の見出し「3 歳出」の章番号。款の見出し（款・項の行）の上に印字され、科目の番号ではない。"
+          },
+          {
+            "id": "p219-estimate-note",
+            "page": 219,
+            "bbox": [
+              842,
+              598,
+              945,
+              613
+            ],
+            "kind": "本文",
+            "reason": "積算の注記（円×校数×月数などの算式）の金額。科目・事業の金額の列ではない。"
+          },
+          {
+            "id": "p221-estimate-note",
+            "page": 221,
+            "bbox": [
+              842,
+              536.5,
+              945,
+              549
+            ],
+            "kind": "本文",
+            "reason": "積算の注記（円×校数×月数などの算式）の金額。科目・事業の金額の列ではない。"
+          },
+          {
+            "id": "p243-estimate-note",
+            "page": 243,
+            "bbox": [
+              838,
+              682,
+              938,
+              695
+            ],
+            "kind": "本文",
+            "reason": "積算の注記（講師謝礼 376,000円（10校分））の金額。節の金額の列ではない。"
+          },
+          {
+            "id": "p279-reserve-amount",
+            "page": 279,
+            "bbox": [
+              750,
+              212,
+              788,
+              227
+            ],
+            "kind": "親の繰り返し",
+            "reason": "予備費の節の欄の金額。予備費は節の区分を印字せず金額だけを印字し、その額は目（予備費）の額と同じ。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "97a25f3f63a458e51e302a8a7048ee00a9e42279c6fc1eaa5d9a6360ac235777",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 111頁 から決めた。款の和 27,280,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132187/2023/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "c3fecc91909e80f19746c9dc9dc86aeec26a7eae36b573a09f3865a5ea057017",
+          "bytes": 139762
+        },
+        "row_count": 4989
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132187/2023/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "46ff7d3a077ae9a1731d340f9033771cbb5456c8b0124e541b5c032860e179ed",
+          "bytes": 104827
+        },
+        "row_count": 5184
+      }
+    }
+  ]
+}

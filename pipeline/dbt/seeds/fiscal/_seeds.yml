@@ -239,8 +239,12 @@ seeds:
         category: varchar
     columns:
       - name: kan_name
+        description: 歳入の款の名前（取り込みの印字を整えた名前。revenue_subject.name と完全一致で突き合わせる）。
         data_tests: [unique, not_null]
       - name: category
+        description: |
+          風土記が自治体の頁で使う歳入の区分。**fudoki の判断。** まちの税・国・都道府県から配られるお金
+          （譲与税・交付金・地方交付税など、使い道を決めずに配られるお金）・国・都道府県の支出金・借入れ・その他。
         data_tests:
           - not_null
           - accepted_values:

@@ -822,13 +822,2795 @@
           "table_id": "debt-initial"
         }
       ]
+    },
+    {
+      "id": "kodomo-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "07d27010ef5460d79feb2cd5ea78ffd3d14addaaedd7bde4666a6eb99fb28289"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "kodomo-general-initial",
+        "partial": true,
+        "division": "こども家庭局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^(?P<code>[0-9]+)(?![0-9,])(?P<name>\\D.*)$",
+                  "item": "^[(（][0-9]+[)）]"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "(1)": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kodomo-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "kikaku-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "fc36578058c7c67b32852b0b3f8994e82f7b1c9cd2d65fff6bfa9f6a383dc32a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "kikaku-general-initial",
+        "partial": true,
+        "division": "企画調整局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^第(?P<code>[0-9]+)目(?P<name>.+?)(?:[0-9,]+千円)?$",
+                  "item": "^[0-9]+(?![0-9,])",
+                  "skip": "^計[0-9]"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kikaku-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "chiiki-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "20d7edc5794b72911f2305855afee840a475f04a53a28414b8e4bb3d16b9694f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "chiiki-general-initial",
+        "partial": true,
+        "division": "地域協働局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^第(?P<code>[0-9]+)目(?P<name>.+?)(?:[0-9,]+千円)?$",
+                  "item": "^[0-9]+(?![0-9,])"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "chiiki-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "shobo-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4c01aff49bae4645d394caf7b91b4ee8713a7463391e1a6982b756f09230dd86"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "shobo-general-initial",
+        "partial": true,
+        "division": "消防局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^(?P<code>[0-9]+)(?![0-9,])(?P<name>\\D.*?)(?:[0-9,]+千円)?$",
+                  "item": "^[(（][0-9]+[)）]"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "(1)": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "shobo-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "kikikanri-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "772a69ceb0546e65ae17bfa87c7bef1e386ecbddc6b28f56db102f065857392c"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "kikikanri-general-initial",
+        "partial": true,
+        "division": "危機管理局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^(?P<code>[0-9]+)(?![0-9,])(?P<name>\\D.*?)(?:[0-9,]+千円)?$",
+                  "item": "^[(（][0-9]+[)）]"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "(1)": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kikikanri-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "kyoiku-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0cfbf9b69c8cc2ac43c9fb81ceafbaca31838ee8f6f6ca80900505ef673bda1e"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "kyoiku-general-initial",
+        "partial": true,
+        "division": "教育委員会事務局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^(?P<code>[0-9]+)(?![0-9,])(?P<name>\\D*?)(?:本目は.*)?$",
+                  "item": "^[(（][0-9]+[)）]",
+                  "skip": "^[(（](別途|[^0-9]*[)）]$)"
+                }
+              },
+              "text_layer": {
+                "form_clips": true,
+                "image_rules": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "(1)": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kyoiku-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "kankyo-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "6b27202f2380596f4f447c9ff68c6deaa3fc6f55e0adfe9b36fd56ece66cc9b1"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "kankyo-general-initial",
+        "partial": true,
+        "division": "環境局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "7年度": {
+                  "heading": "前年度"
+                },
+                "8年度": {
+                  "heading": "本年度"
+                },
+                "本年度の財源内訳／その他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^[(（]目[)）](?P<code>[0-9]+)(?P<name>\\D*?)(?:[0-9,]+千円)?$",
+                  "item": "^[0-9]+(?![0-9,])",
+                  "skip": "^[(（](款|項)[)）]"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kankyo-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "kenko-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b5c7e4a7d8b689a9aec3d5aec758fc01da710f68798e5aa9f5791249305d14b6"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "kenko-general-initial",
+        "partial": true,
+        "division": "健康局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "備考欄。財源の注記などで、項目の金額ではない。"
+                  }
+                },
+                "本年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^(?P<code>[0-9]+)(?![0-9,])(?P<name>\\D.*?)(?:[0-9,]+千円)?$",
+                  "item": "^[(（][0-9]+[)）]",
+                  "skip": "^([(（][^0-9]*|[^(（・0-9][^0-9]*[)）])$"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "(1)": 1,
+                    "・": 2
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kenko-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "senkyo-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "47dad2b6fa02dd2946b9c526f53fcf5878e91e132ad9a274b4453bf2d8792d31"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "senkyo-general-initial",
+        "partial": true,
+        "division": "選挙管理委員会事務局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "item": "^[0-9]+(?![0-9,])",
+                  "skip": "^◎"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true,
+            "abolished_marks": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            8
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "senkyo-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "jinji-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "47dad2b6fa02dd2946b9c526f53fcf5878e91e132ad9a274b4453bf2d8792d31"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "jinji-general-initial",
+        "partial": true,
+        "division": "人事委員会事務局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "item": "^[0-9]+(?![0-9,])",
+                  "skip": "^◎"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true,
+            "abolished_marks": true
+          }
+        },
+        "pages": [
+          [
+            12,
+            13
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "jinji-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "kansa-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "47dad2b6fa02dd2946b9c526f53fcf5878e91e132ad9a274b4453bf2d8792d31"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "kansa-general-initial",
+        "partial": true,
+        "division": "監査事務局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "item": "^[0-9]+(?![0-9,])",
+                  "skip": "^◎"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true,
+            "abolished_marks": true
+          }
+        },
+        "pages": [
+          [
+            17,
+            18
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kansa-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "bunka-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5bdeac647d80ae2310ff2e340fb0dcba43306fcbdb9c6d98136bd10b30cab41f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "bunka-general-initial",
+        "partial": true,
+        "division": "文化スポーツ局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "令和7年度": {
+                  "heading": "前年度"
+                },
+                "令和8年度": {
+                  "heading": "本年度"
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／特定財源／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^第(?P<code>[0-9]+)目(?P<name>.+?)(?:[0-9,]+千円)?$",
+                  "item": "^[0-9]+(?![0-9,])"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true,
+            "delta_minus": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "bunka-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "fukushi-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "188605fb4d83eb553216d3c07c4af507d8e332ad3a0825a31e03059820c450d5"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "fukushi-general-initial",
+        "partial": true,
+        "division": "福祉局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "備考欄。財源の注記などで、項目の金額ではない。"
+                  }
+                },
+                "本年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^(?P<code>[0-9]+)(?![0-9,])(?P<name>\\D.*?)(?:[0-9,]+千円)?$",
+                  "item": "^[(（][0-9]+[)）]",
+                  "skip": "^([(（][^0-9]*|[^(（・0-9][^0-9]*[)）])$"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "(1)": 1,
+                    "・": 2
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          },
+          "repairs": [
+            "spaced_letters"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "fukushi-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "fukushi-nhi-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "188605fb4d83eb553216d3c07c4af507d8e332ad3a0825a31e03059820c450d5"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業費",
+        "table_id": "fukushi-nhi-initial",
+        "partial": true,
+        "division": "福祉局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "備考欄。財源の注記などで、項目の金額ではない。"
+                  }
+                },
+                "本年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^(?P<code>[0-9]+)(?![0-9,])(?P<name>\\D.*?)(?:[0-9,]+千円)?$",
+                  "item": "^[(（][0-9]+[)）]",
+                  "skip": "^([(（][^0-9]*|[^(（・0-9][^0-9]*[)）])$"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "(1)": 1,
+                    "・": 2
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          },
+          "repairs": [
+            "spaced_letters"
+          ]
+        },
+        "name_corrections": [
+          {
+            "id": "kodomo-kosodate-name",
+            "page": 30,
+            "code": "4",
+            "observed_name": "こども・子育て支援納付金分納付金",
+            "corrected_name": "子ども子育て支援納付金分納付金",
+            "reason": "福祉局の冊は国民健康保険事業費の第1款第3項第4目を「こども・子育て支援納付金分納付金」と印字するが、全市の各会計予算に関する説明書（R8）は「子ども子育て支援納付金分納付金」と印字する。所属の表の目は全市の表の目と名前をそろえるので、全市の表の名前に直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "fukushi-nhi-initial"
+        }
+      ]
+    },
+    {
+      "id": "fukushi-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "188605fb4d83eb553216d3c07c4af507d8e332ad3a0825a31e03059820c450d5"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業費",
+        "table_id": "fukushi-care-initial",
+        "partial": true,
+        "division": "福祉局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "備考欄。財源の注記などで、項目の金額ではない。"
+                  }
+                },
+                "本年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^(?P<code>[0-9]+)(?![0-9,])(?P<name>\\D.*?)(?:[0-9,]+千円)?$",
+                  "item": "^[(（][0-9]+[)）]",
+                  "skip": "^([(（][^0-9]*|[^(（・0-9][^0-9]*[)）])$"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "(1)": 1,
+                    "・": 2
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          },
+          "repairs": [
+            "spaced_letters"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "fukushi-care-initial"
+        }
+      ]
+    },
+    {
+      "id": "fukushi-elderly-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "188605fb4d83eb553216d3c07c4af507d8e332ad3a0825a31e03059820c450d5"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業費",
+        "table_id": "fukushi-elderly-initial",
+        "partial": true,
+        "division": "福祉局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "備考欄。財源の注記などで、項目の金額ではない。"
+                  }
+                },
+                "本年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^(?P<code>[0-9]+)(?![0-9,])(?P<name>\\D.*?)(?:[0-9,]+千円)?$",
+                  "item": "^[(（][0-9]+[)）]",
+                  "skip": "^([(（][^0-9]*|[^(（・0-9][^0-9]*[)）])$"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "(1)": 1,
+                    "・": 2
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          },
+          "repairs": [
+            "spaced_letters"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "fukushi-elderly-initial"
+        }
+      ]
+    },
+    {
+      "id": "keizai-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "323788968e2e57652781b2e370d095739028b60dd66bd1b48b0f7789be1ba99d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "keizai-general-initial",
+        "partial": true,
+        "division": "経済観光局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "令和7年度": {
+                  "heading": "前年度"
+                },
+                "令和8年度": {
+                  "heading": "本年度"
+                },
+                "令和8年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "令和8年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "令和8年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "令和8年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^第(?P<code>[0-9]+)目[「]?(?P<name>.+?)[」]?(?:[0-9,]+千円)?$",
+                  "item": "^[0-9]+(?![0-9,])"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true,
+            "delta_minus": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "aquarium-moku-code",
+            "page": 31,
+            "code": "2",
+            "observed_name": "水族園費",
+            "corrected_name": "水族園費",
+            "corrected_code": "1",
+            "reason": "経済観光局の冊は第13款第11項社会教育費の水族園費を第2目と印字するが、項の目は水族園費だけで、全市の各会計予算に関する説明書（R6〜R8）は第1目と印字する。出典の誤植として番号だけを1に直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "keizai-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "keizai-market-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "323788968e2e57652781b2e370d095739028b60dd66bd1b48b0f7789be1ba99d"
+        }
+      ],
+      "options": {
+        "account": "市場事業費",
+        "table_id": "keizai-market-initial",
+        "partial": true,
+        "division": "経済観光局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "令和7年度": {
+                  "heading": "前年度"
+                },
+                "令和8年度": {
+                  "heading": "本年度"
+                },
+                "令和8年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "令和8年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "令和8年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "令和8年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^第(?P<code>[0-9]+)目[「]?(?P<name>.+?)[」]?(?:[0-9,]+千円)?$",
+                  "item": "^[0-9]+(?![0-9,])"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true,
+            "delta_minus": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "keizai-market-initial"
+        }
+      ]
+    },
+    {
+      "id": "keizai-meat-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "323788968e2e57652781b2e370d095739028b60dd66bd1b48b0f7789be1ba99d"
+        }
+      ],
+      "options": {
+        "account": "食肉センター事業費",
+        "table_id": "keizai-meat-initial",
+        "partial": true,
+        "division": "経済観光局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "令和7年度": {
+                  "heading": "前年度"
+                },
+                "令和8年度": {
+                  "heading": "本年度"
+                },
+                "令和8年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "令和8年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "令和8年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "令和8年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^第(?P<code>[0-9]+)目[「]?(?P<name>.+?)[」]?(?:[0-9,]+千円)?$",
+                  "item": "^[0-9]+(?![0-9,])"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1": 1,
+                    "(1)": 2
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true,
+            "delta_minus": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "keizai-meat-initial"
+        }
+      ]
+    },
+    {
+      "id": "kensetsu-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4384987cb488ef173c0ff3dbe65ee147fad9000b01b871696ef03ce5e6847dbc"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "kensetsu-general-initial",
+        "partial": true,
+        "division": "建設局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^[（(](?P<code>[0-9]+)目[)）](?P<name>\\D*?)(?:[0-9,]+千円)?$",
+                  "item": "^\\D.*[0-9]千円$",
+                  "skip": "^本項の内容"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {}
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kensetsu-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "kensetsu-parking-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4384987cb488ef173c0ff3dbe65ee147fad9000b01b871696ef03ce5e6847dbc"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業費",
+        "table_id": "kensetsu-parking-initial",
+        "partial": true,
+        "division": "建設局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^[（(](?P<code>[0-9]+)目[)）](?P<name>\\D*?)(?:[0-9,]+千円)?$",
+                  "item": "^\\D.*[0-9]千円$",
+                  "skip": "^本項の内容"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {}
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kensetsu-parking-initial"
+        }
+      ]
+    },
+    {
+      "id": "kenchiku-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "caa40a8c4c457afd3346172cfac18f4dfa1cc1daa3083bd5b1696eced46c86de"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "kenchiku-general-initial",
+        "partial": true,
+        "division": "建築住宅局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "備考欄。財源の注記などで、項目の金額ではない。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／其他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^[（(](?P<code>[0-9]+)目[)）](?P<name>\\D*?)(?:[0-9,]+千円)?$",
+                  "item": "^\\D.*[0-9]千円$",
+                  "skip": "^(本項の内容|計[0-9])"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {}
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          },
+          "repairs": [
+            "spaced_letters",
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kenchiku-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "kenchiku-housing-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "caa40a8c4c457afd3346172cfac18f4dfa1cc1daa3083bd5b1696eced46c86de"
+        }
+      ],
+      "options": {
+        "account": "市営住宅事業費",
+        "table_id": "kenchiku-housing-initial",
+        "partial": true,
+        "division": "建築住宅局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "備考欄。財源の注記などで、項目の金額ではない。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／其他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^[（(](?P<code>[0-9]+)目[)）](?P<name>\\D*?)(?:[0-9,]+千円)?$",
+                  "item": "^\\D.*[0-9]千円$",
+                  "skip": "^(本項の内容|計[0-9])"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {}
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          },
+          "repairs": [
+            "spaced_letters",
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kenchiku-housing-initial"
+        }
+      ]
+    },
+    {
+      "id": "toshi-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4f76623fea3d4a0b23d7c4a7d1c4eccc3a5d43de11b48f446379f2923aff4e33"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "toshi-general-initial",
+        "partial": true,
+        "division": "都市局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "備考欄。財源の注記などで、項目の金額ではない。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／其他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^[（(](?P<code>[0-9]+)目[)）](?P<name>\\D*?)(?:[0-9,]+千円)?$",
+                  "item": "^\\D.*[0-9]千円$",
+                  "skip": "^(本項の内容|計[0-9])"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {}
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          },
+          "repairs": [
+            "spaced_letters",
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "toshi-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "toshi-redevelopment-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "4f76623fea3d4a0b23d7c4a7d1c4eccc3a5d43de11b48f446379f2923aff4e33"
+        }
+      ],
+      "options": {
+        "account": "市街地再開発事業費",
+        "table_id": "toshi-redevelopment-initial",
+        "partial": true,
+        "division": "都市局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "備考欄。財源の注記などで、項目の金額ではない。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／其他特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^[（(](?P<code>[0-9]+)目[)）](?P<name>\\D*?)(?:[0-9,]+千円)?$",
+                  "item": "^\\D.*[0-9]千円$",
+                  "skip": "^(本項の内容|計[0-9])"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {}
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          },
+          "repairs": [
+            "spaced_letters",
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "toshi-redevelopment-initial"
+        }
+      ]
+    },
+    {
+      "id": "gyozai-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "eeb98c6dd22c4f960d4c91a92653f65d22592daa043f79abdc5a48bb888d1ba2"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "gyozai-general-initial",
+        "partial": true,
+        "division": "行財政局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^[（(]第(?P<code>[0-9]+)目[)）](?P<name>\\D*?)(?:[0-9,]+千円)?$",
+                  "item": "^[0-9]+(?![0-9,])(?!千円)"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          },
+          "repairs": [
+            "spaced_letters"
+          ]
+        },
+        "name_corrections": [
+          {
+            "id": "wrapped-name-12",
+            "page": 28,
+            "code": "12",
+            "observed_name": "港湾事業会へ計出繰金",
+            "corrected_name": "港湾事業会計へ繰出金",
+            "reason": "行財政局の冊は目の名前を3行に字を空けて印字し、2行目「会　計　へ」と3行目「繰　出　金」の字が縦に並ぶ。1行目の字が同じ位置に無い目では、縦書きの語として「計出」を1語に読み、名前の字順が崩れる。印字どおりの名前に直す。"
+          },
+          {
+            "id": "wrapped-name-14",
+            "page": 28,
+            "code": "14",
+            "observed_name": "高速鉄道事業会へ計出繰金",
+            "corrected_name": "高速鉄道事業会計へ繰出金",
+            "reason": "行財政局の冊は目の名前を3行に字を空けて印字し、2行目「会　計　へ」と3行目「繰　出　金」の字が縦に並ぶ。1行目の字が同じ位置に無い目では、縦書きの語として「計出」を1語に読み、名前の字順が崩れる。印字どおりの名前に直す。"
+          },
+          {
+            "id": "wrapped-name-15",
+            "page": 28,
+            "code": "15",
+            "observed_name": "水道事業会へ計出繰金",
+            "corrected_name": "水道事業会計へ繰出金",
+            "reason": "行財政局の冊は目の名前を3行に字を空けて印字し、2行目「会　計　へ」と3行目「繰　出　金」の字が縦に並ぶ。1行目の字が同じ位置に無い目では、縦書きの語として「計出」を1語に読み、名前の字順が崩れる。印字どおりの名前に直す。"
+          },
+          {
+            "id": "wrapped-name-16",
+            "page": 28,
+            "code": "16",
+            "observed_name": "工業用水道事業会計出へ金繰",
+            "corrected_name": "工業用水道事業会計へ繰出金",
+            "reason": "行財政局の冊は目の名前を3行に字を空けて印字し、2行目「会　計　へ」と3行目「繰　出　金」の字が縦に並ぶ。1行目の字が同じ位置に無い目では、縦書きの語として「計出」を1語に読み、名前の字順が崩れる。印字どおりの名前に直す。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "gyozai-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "kowan-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d4b9d44e0168fcea3ca415f75f87de2ead4c092cd12b25a2ff8b3001c47b34bf"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "kowan-general-initial",
+        "partial": true,
+        "division": "港湾局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／特定財源／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^[0-9]+(?![0-9,])(?P<name>\\D+?)(?:[0-9,]+千円)?$",
+                  "item": "^・",
+                  "skip": "^([(（][0-9]+[)）]|[^・0-9].*[^円])$"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "・": 1
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          },
+          "repairs": [
+            "spaced_letters"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kowan-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "kaikei-general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "487390686a4a275df496947ebab5085f4dc434e468cf74b1af889f3d6a4468a9"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "kaikei-general-initial",
+        "partial": true,
+        "division": "会計室",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "備考欄。財源の注記などで、項目の金額ではない。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／特定財源／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／特定財源／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^[（(](?P<code>[0-9]+)目[)）](?P<name>\\D*?)(?:[0-9,]+千円)?$",
+                  "item": "^\\D.*[0-9]千円$",
+                  "skip": "^(本項の内容|計[0-9])"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {}
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          },
+          "repairs": [
+            "spaced_letters",
+            "overprint"
+          ]
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaikei-general-initial"
+        }
+      ]
+    },
+    {
+      "id": "kenko-care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "b5c7e4a7d8b689a9aec3d5aec758fc01da710f68798e5aa9f5791249305d14b6"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業費",
+        "table_id": "kenko-care-initial",
+        "partial": true,
+        "division": "健康局",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_subjects",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "経費内訳",
+                    "reason": "備考欄。財源の注記などで、項目の金額ではない。"
+                  }
+                },
+                "本年度の財源内訳／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／国県支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                },
+                "本年度の財源内訳／市債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度の財源内訳の列を取り込まない。目の額は本年度の欄で読み、財源の内訳は全市の説明書の表にも取り込んでいない。",
+                    "overhang": 8
+                  }
+                }
+              },
+              "header": {
+                "staircase": true,
+                "explanations": {
+                  "heading": "^(?P<code>[0-9]+)(?![0-9,])(?P<name>\\D.*?)(?:[0-9,]+千円)?$",
+                  "item": "^[(（][0-9]+[)）]",
+                  "skip": "^([(（][^0-9]*|[^(（・0-9][^0-9]*[)）])$"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "characters"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "marks": {
+                    "(1)": 1,
+                    "・": 2
+                  }
+                },
+                "quirks": {
+                  "unnumbered_shift": 1
+                }
+              }
+            }
+          },
+          "quirks": {
+            "marked_subjects": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "kenko-care-initial"
+        }
+      ]
     }
   ],
   "tables": [
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "d76286ed9ac54ee0abd4b655ea0922da29149001592bb640a806cf83bcf4a68b",
+      "input_fingerprint": "2ae462de81e59963678a8c7d69ac17402f6ce2dab4faf0cd2fb706204a36fa77",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -857,7 +3639,7 @@
     {
       "table_id": "market-initial",
       "conversion_id": "market-initial",
-      "input_fingerprint": "e4046d0a3a647baf8273c6b3bdc381332d17bd05f8b81c0657a55dec0305909b",
+      "input_fingerprint": "7801b5999c1dde41c18b03ede261006bf1f92562f7ae581d500102475ac1f73c",
       "account": "市場事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -886,7 +3668,7 @@
     {
       "table_id": "meat-initial",
       "conversion_id": "meat-initial",
-      "input_fingerprint": "32e73b9c67003adf1b434411390842b8d045ae95e985b5b90bbd492c7e20422e",
+      "input_fingerprint": "8b7d0fdc3637d800292ccaa8d163f082b1b37886a78e0c6c3fd1e2d5cca25f72",
       "account": "食肉センター事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -915,7 +3697,7 @@
     {
       "table_id": "nhi-initial",
       "conversion_id": "nhi-initial",
-      "input_fingerprint": "58bc99889aa62854db5496c1cf0434a696a80bc23f1ad5335c46df343b8fdd02",
+      "input_fingerprint": "961278922294da445e9b8207bca1e4fed9e5b9ba1a0bbaf608822b3ef91d8f81",
       "account": "国民健康保険事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -944,7 +3726,7 @@
     {
       "table_id": "single-parent-initial",
       "conversion_id": "single-parent-initial",
-      "input_fingerprint": "49e665502193ec352f398b93feddd3b74b3a9069db7c16bc04d914cfe52204ff",
+      "input_fingerprint": "2102a8bd276c21d2415fd300fee05b07407464c0920db425d1a3998bcdc40b06",
       "account": "母子父子寡婦福祉資金貸付事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -973,7 +3755,7 @@
     {
       "table_id": "parking-initial",
       "conversion_id": "parking-initial",
-      "input_fingerprint": "44d9d577d5d7995acbf662e23cbdc9770c632b272de19f6110f2c98675e3d3d3",
+      "input_fingerprint": "08bae23c4f738cbe58f9acc0f310c63a78f6b956734335e68cd889b9d6265aad",
       "account": "駐車場事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1002,7 +3784,7 @@
     {
       "table_id": "redevelopment-initial",
       "conversion_id": "redevelopment-initial",
-      "input_fingerprint": "3919e2b0104ae2cc31fa3997fdcf35c407c6613c7c31032c94df6ea1db8b0a30",
+      "input_fingerprint": "421941a879efb5168db3c767a335605606be39474b19c718a13cdb4c057d6a1b",
       "account": "市街地再開発事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1031,7 +3813,7 @@
     {
       "table_id": "housing-initial",
       "conversion_id": "housing-initial",
-      "input_fingerprint": "94d5a44a360aea3d27aa62392499c52c551ae4904fed19eed4fb3037565b1f82",
+      "input_fingerprint": "443e3e37d48f9a1a5d9b27fade36c99ddcbcf397bd0a05633674090ff45054f8",
       "account": "市営住宅事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1060,7 +3842,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "492d0ceee5a0b16c37dbfbcc89de314005330e8a16119425011e88286f9efc89",
+      "input_fingerprint": "040ecdb4c10a63301011f6dec86d4e011b7b59a9988f24e54664667fa594a67d",
       "account": "介護保険事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1089,7 +3871,7 @@
     {
       "table_id": "elderly-initial",
       "conversion_id": "elderly-initial",
-      "input_fingerprint": "b23162f39bf1c1bf01cf302e4a267a077bb7add187841b24da6c14c0d7b532e2",
+      "input_fingerprint": "d47fbc7b1acc675010eca8c0dde745a72b322b80d9fab13b0741391c7ca60e87",
       "account": "後期高齢者医療事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1118,7 +3900,7 @@
     {
       "table_id": "airport-initial",
       "conversion_id": "airport-initial",
-      "input_fingerprint": "6ff99dbc73d50839d79c29f81102c94c9898a1a8c1e2be3b16593cc6799b8b66",
+      "input_fingerprint": "6b9e0bc5487f9518b891a7162cf5d809f48f959e5f53608522cb4a0827f3666a",
       "account": "空港整備事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1147,7 +3929,7 @@
     {
       "table_id": "debt-initial",
       "conversion_id": "debt-initial",
-      "input_fingerprint": "3b97b059d5d842c9ed9381ddc811d0f212f570e9873f3ff6e4548d13abbab038",
+      "input_fingerprint": "e957e61a4b2783f8bf424caf435b55becdb5c2e2e98ef4429fe707056d6d0c91",
       "account": "公債費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1171,6 +3953,879 @@
           "bytes": 2723
         },
         "row_count": 30
+      }
+    },
+    {
+      "table_id": "kodomo-general-initial",
+      "conversion_id": "kodomo-general-initial",
+      "input_fingerprint": "2e0628238d0f207a9a6f4eb18b774e7364fa796531af559db0943d0f073918ba",
+      "account": "一般会計",
+      "division": "こども家庭局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 6頁 から決めた。分冊のため款の和 152,725,195 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kodomo-general-initial-nodes.parquet",
+          "sha256": "d7812a39df3add1e7355f9290b953ad207e0338c4d9d853a2847c259238dd955",
+          "bytes": 7783
+        },
+        "row_count": 90
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kodomo-general-initial-amounts.parquet",
+          "sha256": "5e50dd8137839eab0ca55010989c128b6ced04f65664106d41d0f8a3b5b38a28",
+          "bytes": 6066
+        },
+        "row_count": 142
+      }
+    },
+    {
+      "table_id": "kikaku-general-initial",
+      "conversion_id": "kikaku-general-initial",
+      "input_fingerprint": "7f71a41da87c16b37b817517ff7999a94b5e248063fb7eba169e7d7ad8f05d00",
+      "account": "一般会計",
+      "division": "企画調整局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 3頁 から決めた。分冊のため款の和 12,288,771 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kikaku-general-initial-nodes.parquet",
+          "sha256": "5209d9b5d89322bcb1aa6e259bff74efa133979582687a12888cca63220763fb",
+          "bytes": 4261
+        },
+        "row_count": 27
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kikaku-general-initial-amounts.parquet",
+          "sha256": "d80ceb632a8fa23ad4348b7d26e105d07ec6df253b6a098c6c5789f3376bbf94",
+          "bytes": 3345
+        },
+        "row_count": 61
+      }
+    },
+    {
+      "table_id": "chiiki-general-initial",
+      "conversion_id": "chiiki-general-initial",
+      "input_fingerprint": "8603a68f6f675b919fe2d74aa0a4d9786e087deec87f82b26f9a1257be5b2931",
+      "account": "一般会計",
+      "division": "地域協働局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は default 1頁 から決めた。分冊のため款の和 14,404,624 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/chiiki-general-initial-nodes.parquet",
+          "sha256": "b6e7a0f4e8435cf0dca8938ce666af0194d01b0cf2c7179506374b4dac004fc5",
+          "bytes": 4081
+        },
+        "row_count": 24
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/chiiki-general-initial-amounts.parquet",
+          "sha256": "3777288068b956da43ec5cc3bcbe0b8eeb942533813e139c25f897958c920595",
+          "bytes": 3029
+        },
+        "row_count": 52
+      }
+    },
+    {
+      "table_id": "shobo-general-initial",
+      "conversion_id": "shobo-general-initial",
+      "input_fingerprint": "a023025cce57c039ef78b337fff8df178d8f96226fbef81fc35af50bf0fb15fd",
+      "account": "一般会計",
+      "division": "消防局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 26,902,284 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/shobo-general-initial-nodes.parquet",
+          "sha256": "c66423dde54760ca977f06a02d7af4133a9f95e62dfa59fa1bc1f96a8d45cd54",
+          "bytes": 4362
+        },
+        "row_count": 32
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/shobo-general-initial-amounts.parquet",
+          "sha256": "3200f1801f5c3b1f6edbb725898fd4e8971f68047f3afffe9b60f324cb0cdf04",
+          "bytes": 3212
+        },
+        "row_count": 44
+      }
+    },
+    {
+      "table_id": "kikikanri-general-initial",
+      "conversion_id": "kikikanri-general-initial",
+      "input_fingerprint": "61d9f5e6660b0c8b8e8a2168ad7bcfe31505d44f0e379687eef662c9d05596e3",
+      "account": "一般会計",
+      "division": "危機管理局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 1,806,065 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kikikanri-general-initial-nodes.parquet",
+          "sha256": "2ca65981db9200b5208844ba043938d3f8df062aa8675f49a04da74e36fea5b2",
+          "bytes": 2615
+        },
+        "row_count": 7
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kikikanri-general-initial-amounts.parquet",
+          "sha256": "9b365a0ab7b9baa7b1ec3da9724d4e6f3eb3d8eaddf3b9996ecda049760da272",
+          "bytes": 2293
+        },
+        "row_count": 21
+      }
+    },
+    {
+      "table_id": "kyoiku-general-initial",
+      "conversion_id": "kyoiku-general-initial",
+      "input_fingerprint": "ae662a4c8c38ff8796b0167ff13852aaa1a35c16e61289d896b9dcb302faec58",
+      "account": "一般会計",
+      "division": "教育委員会事務局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 8頁 から決めた。分冊のため款の和 137,952,146 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kyoiku-general-initial-nodes.parquet",
+          "sha256": "bff900e4323f302cbca096d136b77ac4634833483e3d41ff1244dccb7d9e3aca",
+          "bytes": 7878
+        },
+        "row_count": 98
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kyoiku-general-initial-amounts.parquet",
+          "sha256": "2e296ec2b5928f6c4d43e678df98f85bddac1094c5cbc3aa996a4c19520d9b6a",
+          "bytes": 6770
+        },
+        "row_count": 172
+      }
+    },
+    {
+      "table_id": "kankyo-general-initial",
+      "conversion_id": "kankyo-general-initial",
+      "input_fingerprint": "d5813afc9e321a1cc2d2e52475b5d969c3598542da80771906501181cf7a4ff6",
+      "account": "一般会計",
+      "division": "環境局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 26,138,642 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kankyo-general-initial-nodes.parquet",
+          "sha256": "c6e6a659c07173fa62a4c335f8109750db9696e8f1baf13b5ee98724b9acdc1a",
+          "bytes": 5548
+        },
+        "row_count": 45
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kankyo-general-initial-amounts.parquet",
+          "sha256": "1d26339529c278baef80d3d3ce8e766376860f360743e045976ce91a802643d8",
+          "bytes": 4123
+        },
+        "row_count": 75
+      }
+    },
+    {
+      "table_id": "kenko-general-initial",
+      "conversion_id": "kenko-general-initial",
+      "input_fingerprint": "5c8fefead7cc47db709862251e9c7625acd91bc05e75cbfdb14533cf1ae6e1c4",
+      "account": "一般会計",
+      "division": "健康局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 4頁 から決めた。分冊のため款の和 34,588,456 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kenko-general-initial-nodes.parquet",
+          "sha256": "86fdfda4eb53337f54bd638afd25cbcff94078474de43bb92fe3811795edf1f7",
+          "bytes": 8282
+        },
+        "row_count": 93
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kenko-general-initial-amounts.parquet",
+          "sha256": "0f048403a08432c9fdaeaa563880a251bea0f449475d06a88b35a0d58b5d2da5",
+          "bytes": 5807
+        },
+        "row_count": 123
+      }
+    },
+    {
+      "table_id": "senkyo-general-initial",
+      "conversion_id": "senkyo-general-initial",
+      "input_fingerprint": "7625b1e54457a8882ef70ca5e70d7c950b251bc4ae6770a47e9cb405382f7ef4",
+      "account": "一般会計",
+      "division": "選挙管理委員会事務局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 3頁 から決めた。分冊のため款の和 575,650 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/senkyo-general-initial-nodes.parquet",
+          "sha256": "61605c1d90ed3b80e9508cc0d9ad9fbdffb1467434868b0f11fdddb9e2c71e8c",
+          "bytes": 4567
+        },
+        "row_count": 38
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/senkyo-general-initial-amounts.parquet",
+          "sha256": "850d9915ca83d052bc90e646d562910aea4090056d80643ecb74948cc99ffa41",
+          "bytes": 3546
+        },
+        "row_count": 55
+      }
+    },
+    {
+      "table_id": "jinji-general-initial",
+      "conversion_id": "jinji-general-initial",
+      "input_fingerprint": "df6e217ce693a30fb2716bbea4a5b4ddb7fab45d9c02f0842a17bf458bca667c",
+      "account": "一般会計",
+      "division": "人事委員会事務局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。分冊のため款の和 260,374 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/jinji-general-initial-nodes.parquet",
+          "sha256": "d5477ed13c305071c70e688cec311e90686bddfd54c7200de00c4e5fcdf89643",
+          "bytes": 3251
+        },
+        "row_count": 15
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/jinji-general-initial-amounts.parquet",
+          "sha256": "2130e2e054d55b7500d7255043d383c1cdb64adac9f73e80e77d76249105eb52",
+          "bytes": 2539
+        },
+        "row_count": 25
+      }
+    },
+    {
+      "table_id": "kansa-general-initial",
+      "conversion_id": "kansa-general-initial",
+      "input_fingerprint": "09092510c7941b4463aebcb908fc4a6034bbae632b7b8390f27d9b423da38c37",
+      "account": "一般会計",
+      "division": "監査事務局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。分冊のため款の和 306,502 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kansa-general-initial-nodes.parquet",
+          "sha256": "bc8ec65f5f74fe9b77f9e6ac5dc4fcc493efa76e653d0d8629be80993828e797",
+          "bytes": 2932
+        },
+        "row_count": 13
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kansa-general-initial-amounts.parquet",
+          "sha256": "3cdf1c91520f85e5e081b0b533754d2b029ccd216d1f8983c8d19dd99ab51a16",
+          "bytes": 2449
+        },
+        "row_count": 23
+      }
+    },
+    {
+      "table_id": "bunka-general-initial",
+      "conversion_id": "bunka-general-initial",
+      "input_fingerprint": "047b1cf458c05186aac62336a8c7c1146b2472cb5f6d48f392808d765803df7c",
+      "account": "一般会計",
+      "division": "文化スポーツ局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 23,650,442 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/bunka-general-initial-nodes.parquet",
+          "sha256": "1c686b116ab09381c3b99d5d46962be7703af6b2332ea2698310b85062ae08ad",
+          "bytes": 6861
+        },
+        "row_count": 76
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/bunka-general-initial-amounts.parquet",
+          "sha256": "b9179258c02124769b140a30936082ea730adb0161438d3d1fb391a9f1061be6",
+          "bytes": 3358
+        },
+        "row_count": 53
+      }
+    },
+    {
+      "table_id": "fukushi-general-initial",
+      "conversion_id": "fukushi-general-initial",
+      "input_fingerprint": "7b949bfea3c9f04519fc00efc0a27d3f74110960329af8a0dbb845a74d307b2b",
+      "account": "一般会計",
+      "division": "福祉局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 6頁 から決めた。分冊のため款の和 197,186,009 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/fukushi-general-initial-nodes.parquet",
+          "sha256": "077cc2f3d3ec7e80f0cbc760e3bdaa6a85d987fb0535ab0e3a0211f27429d211",
+          "bytes": 8028
+        },
+        "row_count": 91
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/fukushi-general-initial-amounts.parquet",
+          "sha256": "5b496156d4feb9815a4ebb960d29b5d216bb4ab9c82261e55d7299e5529efe4f",
+          "bytes": 6461
+        },
+        "row_count": 147
+      }
+    },
+    {
+      "table_id": "fukushi-nhi-initial",
+      "conversion_id": "fukushi-nhi-initial",
+      "input_fingerprint": "775c3dbdfcd3c9a4e04a8b76131f8d003b4e1e79c5ca772d34cbd8029a49dc6b",
+      "account": "国民健康保険事業費",
+      "division": "福祉局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 5頁 から決めた。分冊のため款の和 148,415,846 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 4こども・子育て支援納付金分納付金→4子ども子育て支援納付金分納付金。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/fukushi-nhi-initial-nodes.parquet",
+          "sha256": "092350292cc5446d4938ba12b4aad81a6b1e6ad1fa3243734bd3564d6c628159",
+          "bytes": 3655
+        },
+        "row_count": 23
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/fukushi-nhi-initial-amounts.parquet",
+          "sha256": "e859c153ced700079a03fbc30bafa51a809b4f7b074adb468f5446cab7c84ed6",
+          "bytes": 3171
+        },
+        "row_count": 63
+      }
+    },
+    {
+      "table_id": "fukushi-care-initial",
+      "conversion_id": "fukushi-care-initial",
+      "input_fingerprint": "4a26e6da6a10fb8b0af2d36fe6430cc050f01ba6ee8e89f48566ec717be65843",
+      "account": "介護保険事業費",
+      "division": "福祉局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 5頁 から決めた。分冊のため款の和 164,610,228 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/fukushi-care-initial-nodes.parquet",
+          "sha256": "611422bd8458a7cd505a1a7dae74f9fdc890aebbe88ca8b5fce7988dbce92d8a",
+          "bytes": 4981
+        },
+        "row_count": 42
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/fukushi-care-initial-amounts.parquet",
+          "sha256": "c22f78608c906effd4f60f8fe699bf3fe60744543eb4ec61b13645ed13a44c1d",
+          "bytes": 4020
+        },
+        "row_count": 100
+      }
+    },
+    {
+      "table_id": "fukushi-elderly-initial",
+      "conversion_id": "fukushi-elderly-initial",
+      "input_fingerprint": "e8beb9720fc2f745b77982254da05656918e26cea1f64e3384fa0c6e29323265",
+      "account": "後期高齢者医療事業費",
+      "division": "福祉局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。分冊のため款の和 53,504,912 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/fukushi-elderly-initial-nodes.parquet",
+          "sha256": "4cd5118b45144a1daaa8a0d078bceb37cc3301dd4f19426fd41449867a50b0e8",
+          "bytes": 2955
+        },
+        "row_count": 13
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/fukushi-elderly-initial-amounts.parquet",
+          "sha256": "c4eda95e1e4f8462ed18031dee49d8babe794b840eae122dd39566b7f268a71b",
+          "bytes": 2570
+        },
+        "row_count": 31
+      }
+    },
+    {
+      "table_id": "keizai-general-initial",
+      "conversion_id": "keizai-general-initial",
+      "input_fingerprint": "ac81e4784b37ef96507533ee9dc8a5079e5acd6abca735cc11e0c263e692fa97",
+      "account": "一般会計",
+      "division": "経済観光局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 7頁 から決めた。分冊のため款の和 11,149,209 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 2水族園費→1水族園費。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/keizai-general-initial-nodes.parquet",
+          "sha256": "d5952f21499bfd2f772ea54eb425bb3f608c1539fec39e947ae724e5569acf43",
+          "bytes": 11811
+        },
+        "row_count": 179
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/keizai-general-initial-amounts.parquet",
+          "sha256": "16bf89e46ac8484f9c2a0a58a65c6b51c329536e56212498d8281a875630d256",
+          "bytes": 8764
+        },
+        "row_count": 239
+      }
+    },
+    {
+      "table_id": "keizai-market-initial",
+      "conversion_id": "keizai-market-initial",
+      "input_fingerprint": "06773a5868a548637284e1bd8f83f3dcc06c8b939d5acec1a28ddedc64807b54",
+      "account": "市場事業費",
+      "division": "経済観光局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。分冊のため款の和 10,073,986 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/keizai-market-initial-nodes.parquet",
+          "sha256": "2fe8733d9cdc7355d6fae6f31b57715c15e614ef02dbecb09af4d7d609e251a3",
+          "bytes": 4258
+        },
+        "row_count": 30
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/keizai-market-initial-amounts.parquet",
+          "sha256": "48c0bed171fa2c1c3f138dba60410aa16fcba2f79f4e162f456642a2511731f2",
+          "bytes": 3291
+        },
+        "row_count": 58
+      }
+    },
+    {
+      "table_id": "keizai-meat-initial",
+      "conversion_id": "keizai-meat-initial",
+      "input_fingerprint": "591b6bc14ee677b0173efe7b620f81dd27f74a906a9ac6aab9fad4663b00c8e1",
+      "account": "食肉センター事業費",
+      "division": "経済観光局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。分冊のため款の和 1,105,541 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/keizai-meat-initial-nodes.parquet",
+          "sha256": "449407fff3e8fd1188eed37fbe8c4c3f7bde78fcae28804d76545da1662bd4a2",
+          "bytes": 3461
+        },
+        "row_count": 19
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/keizai-meat-initial-amounts.parquet",
+          "sha256": "92b1d43397ec47b5e585cbdb18077961ffce604e3afbda59ffe0437fe00a7fdf",
+          "bytes": 2788
+        },
+        "row_count": 45
+      }
+    },
+    {
+      "table_id": "kensetsu-general-initial",
+      "conversion_id": "kensetsu-general-initial",
+      "input_fingerprint": "ba365d82ee2840efbfbec02dc2dd48de98fb4f86a8e5c49168135340c286e7b6",
+      "account": "一般会計",
+      "division": "建設局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 7頁 から決めた。分冊のため款の和 48,819,288 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kensetsu-general-initial-nodes.parquet",
+          "sha256": "b9c184faba383f908ab7ab6ff4c01c10b90a81193c797616090024d707072924",
+          "bytes": 10476
+        },
+        "row_count": 140
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kensetsu-general-initial-amounts.parquet",
+          "sha256": "45328956716cbb5381d5cbf75f6c07b77e91b223cf889a83e709fe06effd0a98",
+          "bytes": 7550
+        },
+        "row_count": 208
+      }
+    },
+    {
+      "table_id": "kensetsu-parking-initial",
+      "conversion_id": "kensetsu-parking-initial",
+      "input_fingerprint": "80327c6d84641644b20275f1f8e197a6ab21d0e0b36a675870936e50c707de52",
+      "account": "駐車場事業費",
+      "division": "建設局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 617,469 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kensetsu-parking-initial-nodes.parquet",
+          "sha256": "b4719d540ad38935e1a59e3ac180822985110424f98999f099f436e7dd06773e",
+          "bytes": 2352
+        },
+        "row_count": 4
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kensetsu-parking-initial-amounts.parquet",
+          "sha256": "f1ef703e43d4add38a91dc3e4a25ae567e9f173b2a603b0f474e14fb6ab041d8",
+          "bytes": 1895
+        },
+        "row_count": 10
+      }
+    },
+    {
+      "table_id": "kenchiku-general-initial",
+      "conversion_id": "kenchiku-general-initial",
+      "input_fingerprint": "7a6b33e6d363127e17b0e7a353bde26b6f66b3e9fb705a2c60269cfc2b4a25b3",
+      "account": "一般会計",
+      "division": "建築住宅局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 2頁 から決めた。分冊のため款の和 4,917,502 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kenchiku-general-initial-nodes.parquet",
+          "sha256": "0abd227063fb5f393949e0a9107af56e3d7c019be3dcc33deca78f7576af1e48",
+          "bytes": 4643
+        },
+        "row_count": 28
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kenchiku-general-initial-amounts.parquet",
+          "sha256": "0538e6a503b7e76a7a3f11647013f0c1e00085bb3d7a4386dbf3660a9b3a1a73",
+          "bytes": 3139
+        },
+        "row_count": 44
+      }
+    },
+    {
+      "table_id": "kenchiku-housing-initial",
+      "conversion_id": "kenchiku-housing-initial",
+      "input_fingerprint": "6d0c40aaf0fe6d48dda09869e34d4483212f1afce0c3590b8148724c476d7b09",
+      "account": "市営住宅事業費",
+      "division": "建築住宅局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 3頁 から決めた。分冊のため款の和 34,057,660 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kenchiku-housing-initial-nodes.parquet",
+          "sha256": "dd347b15a2bdd1f8b2a8ab97eeb35abec17fcc4cfda9c5152bf9c64d8ec0e05a",
+          "bytes": 4023
+        },
+        "row_count": 24
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kenchiku-housing-initial-amounts.parquet",
+          "sha256": "b20cac1b32de03e4a9cd2e7a287c82a3ba35ee6ed4bca826de18c4b3f97840ac",
+          "bytes": 3146
+        },
+        "row_count": 44
+      }
+    },
+    {
+      "table_id": "toshi-general-initial",
+      "conversion_id": "toshi-general-initial",
+      "input_fingerprint": "922eaaf62d5ba135614a821019205872d2a07e1b2f732c6cde9c455ce0598ac1",
+      "account": "一般会計",
+      "division": "都市局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 5頁 から決めた。分冊のため款の和 23,989,400 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/toshi-general-initial-nodes.parquet",
+          "sha256": "5a0d61e4f972a4020d61ae3039024420e81dbaa71f43b73388bdcd9450d76692",
+          "bytes": 6446
+        },
+        "row_count": 64
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/toshi-general-initial-amounts.parquet",
+          "sha256": "4604507afdd07c8fec87d7229ee1358dbbc0833b367a2f4024f97bdb4ea5c494",
+          "bytes": 4598
+        },
+        "row_count": 98
+      }
+    },
+    {
+      "table_id": "toshi-redevelopment-initial",
+      "conversion_id": "toshi-redevelopment-initial",
+      "input_fingerprint": "0d0b25d14f4a75de4e019edd7c8e8349dba454cb7bc5dceae0f7acf426450ca7",
+      "account": "市街地再開発事業費",
+      "division": "都市局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 4頁 から決めた。分冊のため款の和 3,617,934 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/toshi-redevelopment-initial-nodes.parquet",
+          "sha256": "3e66536eeeb24556f272bc22a432537c6b1f46e3a8d25d980693dd135323d9d9",
+          "bytes": 3393
+        },
+        "row_count": 16
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/toshi-redevelopment-initial-amounts.parquet",
+          "sha256": "40ec2468e559d1696266bb5794aed05d5b283d45fd24795ceb744fe07c5bc544",
+          "bytes": 2589
+        },
+        "row_count": 38
+      }
+    },
+    {
+      "table_id": "gyozai-general-initial",
+      "conversion_id": "gyozai-general-initial",
+      "input_fingerprint": "1f915372febfce54743cbfcb82b84224b3a921fd5355fb90ea5fc5edc107c372",
+      "account": "一般会計",
+      "division": "行財政局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 6頁 から決めた。分冊のため款の和 253,217,829 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 4 件を、管理 JSON の name_corrections で印字に直した: 12港湾事業会へ計出繰金→12港湾事業会計へ繰出金・14高速鉄道事業会へ計出繰金→14高速鉄道事業会計へ繰出金・15水道事業会へ計出繰金→15水道事業会計へ繰出金・16工業用水道事業会計出へ金繰→16工業用水道事業会計へ繰出金。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/gyozai-general-initial-nodes.parquet",
+          "sha256": "0763282667032ccb4feba1a9b827c4d5f0ad64fe5ecc3127f4af5b47c30ec6d9",
+          "bytes": 5500
+        },
+        "row_count": 52
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/gyozai-general-initial-amounts.parquet",
+          "sha256": "5bf8babc0c3e4a5acf1a1269b9916ebf97016cb12e8b54867e408d040a2a1bfa",
+          "bytes": 5648
+        },
+        "row_count": 128
+      }
+    },
+    {
+      "table_id": "kowan-general-initial",
+      "conversion_id": "kowan-general-initial",
+      "input_fingerprint": "931991b59e30c8492b7fc11551b27f92a6aba4e3c7a1034a513cfe9b8fb51988",
+      "account": "一般会計",
+      "division": "港湾局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 2,203,749 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kowan-general-initial-nodes.parquet",
+          "sha256": "4694825c8d5832ba3d1aa27ae26076be3b4edc9dfb2f2dbe43657cecb370cc7e",
+          "bytes": 2918
+        },
+        "row_count": 10
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kowan-general-initial-amounts.parquet",
+          "sha256": "f218a5bd1eb855d9052b1a76fd0d273fdc0a695b7536bd96134946857a113646",
+          "bytes": 2387
+        },
+        "row_count": 22
+      }
+    },
+    {
+      "table_id": "kaikei-general-initial",
+      "conversion_id": "kaikei-general-initial",
+      "input_fingerprint": "bd843991a1e454addd2cab6019443b614c3735c25ebf4eb0439a283ce5cae567",
+      "account": "一般会計",
+      "division": "会計室",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 4,699,094 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kaikei-general-initial-nodes.parquet",
+          "sha256": "c921dd3c428c31a67f25a04e8e673a98e0aebc70076864f80b16df53d85e33e8",
+          "bytes": 2145
+        },
+        "row_count": 3
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kaikei-general-initial-amounts.parquet",
+          "sha256": "3f0af04d0ffba86105a377c82da682bd718cd6ad0e704b22e2598a1331f7346a",
+          "bytes": 1826
+        },
+        "row_count": 9
+      }
+    },
+    {
+      "table_id": "kenko-care-initial",
+      "conversion_id": "kenko-care-initial",
+      "input_fingerprint": "3b8094312dd4db8f6de4e670b848b5c8e61a858661672a2c3abac0b7c8d114f7",
+      "account": "介護保険事業費",
+      "division": "健康局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 1頁 から決めた。分冊のため款の和 188,613 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kenko-care-initial-nodes.parquet",
+          "sha256": "772de0e1b082cee8301117fdc001848d285d9bf347e83b0364aa613996ffeb3a",
+          "bytes": 2278
+        },
+        "row_count": 4
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2026/initial/expenditure/kenko-care-initial-amounts.parquet",
+          "sha256": "07cf77793a2813a8cafe16456a39c90a989959dea42056d4c765f1091ea35057",
+          "bytes": 1904
+        },
+        "row_count": 12
       }
     }
   ]
