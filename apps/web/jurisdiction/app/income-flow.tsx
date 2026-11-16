@@ -1,9 +1,9 @@
-// 予算・決算のタブの頭の「入る→使う」。一般会計の歳入（入るお金の種類）と歳出（使い道の分野）の総額・1人あたりと、両者を一般会計でつなぐ流れの図。
-// 図の寸法・割合の置き方・帯の濃さはお金の流れ（sankey.tsx）に揃え、入るは金茶、使うは緑で分ける。区分は風土記の判断（api の fiscal_revenue_category）
+// 予算・決算のタブの頭の「入る→使う」。一般会計の歳入（款）と歳出（使い道の分野）の総額・1人あたりと、両者を一般会計でつなぐ流れの図。
+// 図の寸法・割合の置き方・帯の濃さはお金の流れ（sankey.tsx）に揃え、入るは金茶、使うは緑で分ける。入るは款で分ける
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { AmountTip } from '../amount-tip'
-import { formatShare, type RevenueCategory, type RevenueDoc } from '../types'
+import { formatShare, type RevenueDoc } from '../types'
 import { Amt } from './amount'
 
 const BAR = 8
@@ -21,14 +21,6 @@ const BAR_FILL: Record<Tone, string> = { in: 'fill-(--kincha)', out: 'fill-prima
 const RIBBON_FILL: Record<Tone, string> = { in: 'fill-(--kincha)/30', out: 'fill-primary/20', rest: 'fill-muted-foreground/15' }
 const SHARE_FILL: Record<Tone, string> = { in: 'fill-(--kincha-ink)', out: 'fill-primary', rest: 'fill-muted-foreground' }
 
-/** 入るお金の種類（区分）の短い名前。〇は都道府県の名前の末尾 */
-const CATEGORIES: { id: RevenueCategory; label: (pref: string) => string }[] = [
-  { id: 'まちの税', label: () => 'まちの税' },
-  { id: '国・都道府県から配られるお金', label: (p) => `国・${p}から配られる` },
-  { id: '国・都道府県の支出金', label: (p) => `国・${p}の支出金` },
-  { id: 'その他', label: () => '使用料・繰入金など' },
-  { id: '借入れ', label: () => '借入れ' },
-]
 
 const fit = (values: number[], slot: number, gap: number, height: number) => {
   let low = 0
@@ -160,30 +152,40 @@ function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[
 }
 
 function Stat({ tone, word, sub, yen, pop }: { tone: 'in' | 'out'; word: string; sub: string; yen: number; pop: number }) {
+  const big = cn('block text-[22px] leading-tight font-semibold sm:text-[32px]', tone === 'in' ? 'text-(--kincha-ink)' : 'text-primary')
   return (
     <div className="rounded-2xl bg-card px-4 py-3.5 sm:px-5 sm:py-4">
       <p className="text-sm text-muted-foreground">{word}<span className="ml-1.5 text-xs">{sub}</span></p>
-      <Amt yen={yen} className={cn('mt-1 block text-[24px] leading-tight font-semibold sm:text-[32px]', tone === 'in' ? 'text-(--kincha-ink)' : 'text-primary')} />
-      {pop ? <p className="mt-1.5 text-[13px] text-muted-foreground">1人あたり <Amt yen={yen / pop} className="text-[15px] text-foreground" /></p> : null}
+      {/* 総額と1人あたりは同じ大きさで並べる（狭い幅は上下） */}
+      <div className="mt-1 flex flex-col gap-x-6 gap-y-1 sm:flex-row sm:items-end">
+        <Amt yen={yen} className={big} />
+        {pop ? (
+          <span className="flex flex-col">
+            <span className="text-xs text-muted-foreground">1人あたり</span>
+            <Amt yen={yen / pop} className={big} />
+          </span>
+        ) : null}
+      </div>
     </div>
   )
 }
 
 /** 歳入の無い年度・資料は出さない（呼ぶ側が doc を探す）。fields は歳出の分野（金額の多い順、その他は最後） */
-export function IncomeFlow({ doc, phase, expTotal, fields, pop, prefecture, openField }: {
+export function IncomeFlow({ doc, phase, expTotal, fields, pop, openField }: {
   doc: RevenueDoc
   phase: 'initial' | 'settlement'
   expTotal: number
   fields: { id: string; name: string; yen: number }[]
   pop: number
-  prefecture: string
   openField: (id: string) => void
 }) {
   const words: [string, string] = phase === 'initial' ? ['入る', '使う'] : ['入った', '使った']
-  const pref = prefecture.slice(-1)
   const kan = doc.kan.filter((k): k is typeof k & { yen: number } => k.yen != null && k.yen > 0)
-  // 区分の辞書は市区町村の一般会計の款だけを持つ。区分の当たらない款はその他に寄せる
-  const incoming: Node[] = CATEGORIES.map((c) => ({ id: c.id, label: c.label(pref), yen: kan.filter((k) => (k.category ?? 'その他') === c.id).reduce((s, k) => s + k.yen, 0), tone: 'in' as const, base: doc.total })).filter((n) => n.yen > 0)
+  // 入るは款（特別区税・交付金・国庫支出金など）で分ける。細かい款は名前が重なるので、多い順に7つまで出し、残りは「ほかの収入」にまとめる
+  const sorted = [...kan].sort((a, b) => b.yen - a.yen)
+  const shown = sorted.length > 8 ? sorted.slice(0, 7) : sorted
+  const others = sorted.slice(shown.length).reduce((s, k) => s + k.yen, 0)
+  const incoming: Node[] = [...shown.map((k) => ({ id: k.name, label: k.name, yen: k.yen, tone: 'in' as const, base: doc.total })), ...(others > 0 ? [{ id: 'others', label: 'ほかの収入', yen: others, tone: 'in' as const, base: doc.total }] : [])]
   const outgoing: Node[] = fields.filter((f) => f.yen > 0).map((f) => ({ id: f.id, label: f.name, yen: f.yen, tone: 'out' as const, base: expTotal, onClick: () => openField(f.id) }))
   // 決算は入ったお金が使ったお金より多い。差は翌年度へ繰り越すお金などなので、灰色で右に足して入ると使うの高さを揃える
   const rest = doc.total - expTotal

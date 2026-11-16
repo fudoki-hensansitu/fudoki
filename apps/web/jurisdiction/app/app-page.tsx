@@ -571,7 +571,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
           : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。このタブでは、年度の初めに決めた当初予算を扱います。'}
       </TabHead>
       {/* 入る→使う（一般会計の歳入と歳出の総額と流れ）。その年度・資料の歳入を収録しているときだけ */}
-      {total && revenueDoc ? <IncomeFlow doc={revenueDoc} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} prefecture={page.prefecture} openField={openField} /> : null}
+      {total && revenueDoc ? <IncomeFlow doc={revenueDoc} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openField} /> : null}
       {total ? <FieldsSection phase={phase} /> : null}
       {total ? (
         <div>
