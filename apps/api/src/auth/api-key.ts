@@ -97,8 +97,15 @@ export async function verifyRemote(deps: AuthDeps, env: Pick<Env, 'WORKOS_API_KE
     throw new AuthUnavailable()
   }
   let verdict: Verdict
-  if (res.ok) verdict = judge((await res.json()) as ValidationBody, env.WORKOS_DEVELOPERS_ORG_ID)
-  else if (res.status === 400 || res.status === 404 || res.status === 422) verdict = { kind: 'invalid' }
+  if (res.ok) {
+    try {
+      verdict = judge((await res.json()) as ValidationBody, env.WORKOS_DEVELOPERS_ORG_ID)
+    } catch (e) {
+      // 本文の途中で timeout した・JSON でない・想定外の形。利用者のキーのせいではないので置かない
+      console.error('WorkOS の API キー検証の応答を読めない', e instanceof Error ? e.name : 'unknown')
+      throw new AuthUnavailable()
+    }
+  } else if (res.status === 400 || res.status === 404 || res.status === 422) verdict = { kind: 'invalid' }
   else {
     // 風土記の WORKOS_API_KEY が無効（401・403）・WorkOS の流量の上限（429）・障害（5xx）。どれも利用者のキーのせいではない
     console.error('WorkOS の API キー検証が', res.status, 'を返した')

@@ -122,6 +122,8 @@ describe('WorkOS が落ちている', () => {
     ['5xx', async () => new Response('', { status: 502 })],
     ['timeout', async () => Promise.reject(new DOMException('timeout', 'TimeoutError'))],
     ['風土記の secret が無効（401）', async () => new Response('', { status: 401 })],
+    ['200 で JSON でない本文', async () => new Response('<html>', { status: 200 })],
+    ['200 で想定外の形', async () => Response.json({ api_key: { id: 'k' } })],
   ] as const) {
     test(`${name} は 503 で、結果を置かない`, async () => {
       spyOn(console, 'error').mockImplementation(() => {})

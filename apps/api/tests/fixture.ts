@@ -114,12 +114,16 @@ export async function fixture(real = false) {
     await insert('expenditure_location', { kind: 'pdf', line_id: id, origin_id, ...location })
   }
   if (real) {
-    const response = await fetch('https://api.fudoki.dev/v1/expenditures/subjects:search', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { jurisdiction_code: { eq: ['132039'] } }, page_size: 2 }) })
+    // 本番の REST は API キーが要る（auth.fudoki.dev で発行し、FUDOKI_API_KEY で渡す）
+    const key = process.env.FUDOKI_API_KEY
+    if (!key) throw new Error('本番のデータで試すには FUDOKI_API_KEY に API キーを入れてください')
+    const authorization = { Authorization: `Bearer ${key}` }
+    const response = await fetch('https://api.fudoki.dev/v1/expenditures/subjects:search', { method: 'POST', headers: { 'Content-Type': 'application/json', ...authorization }, body: JSON.stringify({ document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { jurisdiction_code: { eq: ['132039'] } }, page_size: 2 }) })
     const data = await response.json() as { subjects: Record<string, unknown>[]; origins: Record<string, unknown>[] }
     for (const origin of data.origins) await insert('fiscal_origin', origin)
     for (const subject of data.subjects) {
       await insert('expenditure_subject', subject)
-      const detail = await (await fetch(`https://api.fudoki.dev/v1/expenditures/lines/${subject.subject_id}`)).json() as { locations: Record<string, unknown>[] }
+      const detail = await (await fetch(`https://api.fudoki.dev/v1/expenditures/lines/${subject.subject_id}`, { headers: authorization })).json() as { locations: Record<string, unknown>[] }
       for (const location of detail.locations.filter((l) => l.line_id === subject.subject_id)) await insert('expenditure_location', location)
     }
   }
