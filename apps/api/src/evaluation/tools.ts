@@ -22,7 +22,7 @@ const searchSheetsDescription =
   GRADES +
   `Required: fiscal_year {min, max} in Gregorian years (at most ${MAX_YEARS} years). ` +
   `where takes one condition per column, combined with AND: strings eq/not_eq (up to ${MAX_LIST} values), prefix/suffix/contains, is_null; integers eq/not_eq/min/max/is_null. Years plus condition values are limited to ${MAX_BINDS}. ` +
-  'Narrow by jurisdiction_code when searching names. project_ids on each sheet are the projects it was linked to, and the project_ids input returns the sheets linked to any of the given projects (Fudoki\'s judgment); initial_expenditure_subject_id and settlement_expenditure_subject_id are the budget and settlement subjects (目) the sheet\'s printed budget subject matched. budget_yen and settled_yen are the sheet\'s own amounts and are never added to expenditure lines. ' +
+  'Narrow by jurisdiction_code when searching names. project_ids on each sheet are the projects it was linked to, and the project_ids input returns the sheets linked to any of the given projects (Fudoki\'s judgment); initial_expenditure_subject_id and settlement_expenditure_subject_id are the budget and settlement subjects (目) the sheet\'s printed budget subject matched. where can also filter by the cofog_code of those subjects (initial_cofog_code, settlement_cofog_code). budget_yen and settled_yen are the sheet\'s own amounts and are never added to expenditure lines. ' +
   'Use get_evaluation_sheet for indicators.'
 
 const getEvaluationDescription =

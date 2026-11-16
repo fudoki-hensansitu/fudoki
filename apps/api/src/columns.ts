@@ -210,6 +210,29 @@ export const EVALUATION_INDICATOR_TABLE = 'evaluation_indicator'
 export const EVALUATION_INDICATOR_VALUE_TABLE = 'evaluation_indicator_value'
 /** 評価シート。1枚 = 小事業の1年度 */
 export const EVALUATION_SHEET_TABLE = fiscalTable('evaluation_sheets', 'evaluation_sheet')
+
+/** 指した科目の COFOG で絞るための列（initial_・settlement_ の科目ごと）。値は科目にだけあり、検索の中で科目から引く */
+const cofogCode = (kind: 'initial' | 'settlement'): ColumnSpec => ({
+  name: `${kind}_cofog_code`,
+  type: 'string',
+  nullable: true,
+  description: `${kind === 'initial' ? '当初予算' : '決算'}の科目（${kind}_expenditure_subject_id）の cofog_code（例 '10.4'）。科目から引く。分類の無い科目は NULL。絞り込みだけに使い、行には返さない。`,
+})
+const COFOG_CODE_COLUMNS = [cofogCode('initial'), cofogCode('settlement')]
+const cofogOf = (subjectId: string) => `(SELECT k."cofog_code" FROM expenditure_subject k WHERE k."subject_id" = ${subjectId})`
+
+/** 評価シートの検索の対象。行はシートの列だけを返し、条件には科目の COFOG も使える */
+export const EVALUATION_SHEET_SEARCH: FiscalTable = (() => {
+  const columns = [...EVALUATION_SHEET_TABLE.columns, ...COFOG_CODE_COLUMNS]
+  const own = EVALUATION_SHEET_TABLE.columns.map((c) => `x."${c.name}"`).join(', ')
+  return {
+    ...EVALUATION_SHEET_TABLE,
+    table: `(SELECT ${own}, ${cofogOf('x."initial_expenditure_subject_id"')} AS "initial_cofog_code", ${cofogOf('x."settlement_expenditure_subject_id"')} AS "settlement_cofog_code" FROM evaluation_sheet x)`,
+    columns,
+    types: new Map(columns.map((c) => [c.name, c.type])),
+    selectList: selectList(columns),
+  }
+})()
 export const EVALUATION_SHEET_PROJECT_TABLE = 'evaluation_sheet_project'
 export const PROJECT_TABLE = 'project'
 const PROJECT_YEAR_BASE = 'project_year'
@@ -310,12 +333,13 @@ const viewOf = (kind: FiscalTable['kind'], table: string, primaryKey: string, co
 export const PROJECT_YEAR_TABLE = viewOf('project_years', `(${projectYearSelect()})`, TABLES[PROJECT_YEAR_BASE]!.primary_key, PROJECT_YEAR_COLUMNS)
 
 const projectYearSearch = (join: ProjectYearJoin): FiscalTable => {
-  const extra = PROJECT_FILTER_COLUMNS.map((n) => columnOf(PROJECT_TABLE, n))
+  const extra = [...PROJECT_FILTER_COLUMNS.map((n) => columnOf(PROJECT_TABLE, n)), ...COFOG_CODE_COLUMNS]
   const columns = [...PROJECT_YEAR_COLUMNS, ...extra]
-  return viewOf('project_years', `(${projectYearSelect(PROJECT_FILTER_COLUMNS.map((n) => `, p."${n}"`).join(''), join)})`, TABLES[PROJECT_YEAR_BASE]!.primary_key, columns)
+  const select = PROJECT_FILTER_COLUMNS.map((n) => `, p."${n}"`).join('') + `, ik."cofog_code" AS "initial_cofog_code", sk."cofog_code" AS "settlement_cofog_code"`
+  return viewOf('project_years', `(${projectYearSelect(select, join)})`, TABLES[PROJECT_YEAR_BASE]!.primary_key, columns)
 }
 
-/** 事業の年度の検索の対象。行は事業の年度の列だけを返し、条件には事業の列も使える */
+/** 事業の年度の検索の対象。行は事業の年度の列だけを返し、条件には事業の列と科目の COFOG も使える */
 export const PROJECT_YEAR_SEARCH = projectYearSearch('project-first')
 /** 事業の年度の ID・内訳の ID で絞る検索の対象（事業の年度を外側にする）。列は PROJECT_YEAR_SEARCH と同じ */
 export const PROJECT_YEAR_SEARCH_BY_YEAR_KEY = projectYearSearch('year-first')

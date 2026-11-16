@@ -30,6 +30,8 @@ export type JurisdictionProps = JurisdictionView & {
   year?: number
   /** 分野の頁（/tokyo/nakano/2026/fields/fukushi）のときの分野の id */
   field?: string
+  /** 事業の頁（/tokyo/nakano/projects/<project_id>）のときの事業の ID。事業は年度をまたぐので年度の段を持たない。本文のデータは最新の年度、タブは事業のタブ */
+  project?: string
   /** タブの頁（/tokyo/nakano/2026/projects）のときのタブ */
   tab?: Exclude<PageTab, 'overview'>
   /** 開いた年度の款項目・評価シート・事業の一覧の1頁目。サーバーで本文まで描くために渡す。API に繋がらなければ無く、画面が取る */
@@ -91,6 +93,21 @@ export async function fieldProps(c: Context, path: string, field: string, yearSe
   return { ...(await jurisdictionProps(c, path, yearSegment)), field }
 }
 
+/** 事業の ID の段。事業の ID と、事業の収録の無い自治体で目を事業の代わりにした ID（moku:<subject_id>） */
+const PROJECT_SEGMENT = /^[\w:.-]{1,160}$/
+
+/** 事業の頁（/tokyo/nakano/projects/<project_id>）。中身は画面が事業の ID で読む（収録に無い ID は画面が「読み込めませんでした」を出す） */
+export async function projectProps(c: Context, path: string, segment: string): Promise<JurisdictionProps> {
+  let project: string
+  try {
+    project = decodeURIComponent(segment)
+  } catch {
+    throw new HTTPException(404, { res: notFound() })
+  }
+  if (!PROJECT_SEGMENT.test(project)) throw new HTTPException(404, { res: notFound() })
+  return { ...(await jurisdictionProps(c, path)), tab: 'projects', project }
+}
+
 /** タブの頁（/tokyo/nakano/projects、/tokyo/nakano/2024/budget）。タブの名前が違えば 404。予算・決算のタブは収録の無い年度にもあり、画面が「まだ収録していない」と出す */
 export async function tabProps(c: Context, path: string, slug: string, yearSegment?: string): Promise<JurisdictionProps> {
   const tab = tabOfSlug(slug)
@@ -113,7 +130,7 @@ export async function routeProps(c: Context, segments: string[]): Promise<Jurisd
     if (extra.length) throw new HTTPException(404, { res: notFound() })
     if (a === undefined) return jurisdictionProps(c, path)
     if (a === 'fields') return b !== undefined && f === undefined ? fieldProps(c, path, b) : Promise.reject(new HTTPException(404, { res: notFound() }))
-    if (!YEAR_SEGMENT.test(a)) return b === undefined ? tabProps(c, path, a) : Promise.reject(new HTTPException(404, { res: notFound() }))
+    if (!YEAR_SEGMENT.test(a)) return b === undefined ? tabProps(c, path, a) : a === 'projects' && f === undefined ? projectProps(c, path, b) : Promise.reject(new HTTPException(404, { res: notFound() }))
     if (b === undefined) return jurisdictionProps(c, path, a)
     if (b === 'fields') return f !== undefined ? fieldProps(c, path, f, a) : Promise.reject(new HTTPException(404, { res: notFound() }))
     return f === undefined ? tabProps(c, path, b, a) : Promise.reject(new HTTPException(404, { res: notFound() }))

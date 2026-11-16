@@ -1,6 +1,6 @@
 // 事業評価の集約: 自治体の1年度（評価した事業を行った年度）分の事務事業評価。評価シート全部を持つ。
 import { z } from 'zod'
-import { EVALUATION_SHEET_TABLE, described } from '../columns'
+import { EVALUATION_SHEET_SEARCH, described } from '../columns'
 import { nextPageToken } from '../shared/paging'
 import { yearSearchInputWith } from '../shared/search'
 import { FiscalYear, JurisdictionCode, PagedOrigin, RowId, Yen } from '../shared/model'
@@ -208,7 +208,7 @@ export type SheetOutput = z.infer<typeof SheetOutput>
 
 /** 事業で絞るときの事業の数の上限 */
 export const MAX_PROJECT_IDS = 200
-export const SheetSearchInput = yearSearchInputWith(EVALUATION_SHEET_TABLE, {
+export const SheetSearchInput = yearSearchInputWith(EVALUATION_SHEET_SEARCH, {
   project_ids: z
     .array(z.string().min(1).max(128))
     .min(1)
