@@ -468,7 +468,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       {total ? (
         <div>
           <h2 className="mb-2.5 text-[17px] font-semibold">お金の流れ</h2>
-          <p className="text-[15px] leading-[1.7] text-muted-foreground">歳出が、款から項・目へとどう分かれていくかを示しています。会計を選ぶと、その会計の流れに切り替わります。</p>
+          <p className="text-[15px] leading-[1.7] text-muted-foreground">{current?.revenue?.length ? '歳入（左）と歳出（右）が、款から項・目へとどう分かれていくかを示しています。' : '歳出が、款から項・目へとどう分かれていくかを示しています。'}会計を選ぶと、その会計の流れに切り替わります。</p>
         </div>
       ) : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
