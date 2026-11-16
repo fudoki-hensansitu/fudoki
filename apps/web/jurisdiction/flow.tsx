@@ -371,8 +371,7 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: D
 }
 
 /** 款→項の全体図と款ごとの内訳。流れ（目の内訳まで）は頁の loader が読んで渡す。flows が無い間は読み込み中の形を出す */
-/** tabs はカードの左上に置く見出し、summary は全体図のときに出す総額 */
-export function Flow({ flows: given, total: year, tabs, summary, className, bare, onMoku, natural, onRetry }: { /** 款 → 項 → 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; tabs?: React.ReactNode; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
+export function Flow({ flows: given, total: year, className, bare, onMoku, natural, onRetry }: { /** 款 → 項 → 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
   const levels = LEVELS
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
@@ -436,9 +435,8 @@ export function Flow({ flows: given, total: year, tabs, summary, className, bare
   return (
     <div ref={root} className={cn('flex min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:scroll-mt-[77px]', !natural && 'h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] @4xl:h-[calc(100svh-61px-2rem)]', bare && 'rounded-none border-0', className)}>
       <div className={cn('shrink-0', bare ? 'pt-1' : 'px-5 pt-5 sm:px-6')}>
-        {tabs}
         {/* 見出しと金額の行。右に今いる段（大分類 4 / 8）と前後の矢印を置く */}
-        <div className="mt-3 flex min-h-9 items-center justify-between gap-3">
+        <div className="flex min-h-9 items-center justify-between gap-3">
           {/* 名前と金額の置き方を段ごとに変えない（名前の長さで折り返すと、横に送るたびに金額の位置と行の高さが動いて見える）。スマホは名前の下に金額、広い画面は横に並べる */}
           <div className="flex min-w-0 flex-col sm:flex-row sm:items-baseline sm:gap-x-3" aria-live="polite">
             {kan ? (
@@ -446,7 +444,12 @@ export function Flow({ flows: given, total: year, tabs, summary, className, bare
                 <span className="min-w-0 truncate text-sm text-muted-foreground">{kan.kan.name}</span>
                 <b className="shrink-0 text-[26px] font-normal leading-snug tabular-nums">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
               </>
-            ) : summary}
+            ) : (
+              <>
+                <span className="min-w-0 truncate text-sm text-muted-foreground">すべて</span>
+                <b className="shrink-0 text-[26px] font-normal leading-snug tabular-nums">{amountText(year.yen)}</b>
+              </>
+            )}
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
             <span className="text-xs tabular-nums text-muted-foreground">{kan ? `${levels.kan} ${index} / ${total}` : ''}</span>
