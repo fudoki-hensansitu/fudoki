@@ -38,6 +38,7 @@ import {
   type Icon,
 } from '@phosphor-icons/react'
 import { MoreDots } from '@/components/more-dots'
+import { Breadcrumb, BreadcrumbItem, BreadcrumbLink, BreadcrumbList, BreadcrumbSeparator } from '@/components/ui/breadcrumb'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel'
@@ -737,11 +738,29 @@ const projectLatestKey = (id: string) => `project-latest:${id}`
 function BackButton({ label, onClick }: { label: string; onClick: () => void }) {
   return <Button variant="ghost" onClick={onClick} className="-ml-2 min-w-0 max-w-full text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" /><span className="truncate">{label}</span></Button>
 }
-/** 事業の頁の戻るボタン。入れ子の事業は親の事業の名前を出して親の事業の頁へ、そうでなければ自治体の頁へ戻る */
+/** 事業の頁の戻る先。自治体と、入れ子の上にある事業をすべてパンくずに並べ、押すとそこへ戻る */
 function ProjectBack({ res, id, label, close, open }: { res: Resources; id: string; label: string; close: () => void; open: (id: string) => void }) {
   const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
-  const parent = p === FAILED ? null : p.parent
-  return parent ? <BackButton label={parent.name} onClick={() => open(parent.id)} /> : <BackButton label={label} onClick={close} />
+  const ancestors = p === FAILED ? [] : (p.ancestors ?? [])
+  if (!ancestors.length) return <BackButton label={label} onClick={close} />
+  const crumb = 'min-w-0 cursor-pointer truncate rounded-sm text-foreground outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-primary'
+  return (
+    <Breadcrumb className="min-w-0">
+      <BreadcrumbList className="flex-nowrap gap-1 text-[15px] text-muted-foreground sm:text-[17px]">
+        <BreadcrumbItem className="shrink-0">
+          <BreadcrumbLink render={<button type="button" onClick={close} />} className={cn(crumb, 'inline-flex items-center gap-1')}><CaretLeftIcon className="size-4 shrink-0" />{label}</BreadcrumbLink>
+        </BreadcrumbItem>
+        {ancestors.map((a) => (
+          <React.Fragment key={a.id}>
+            <BreadcrumbSeparator />
+            <BreadcrumbItem className="min-w-[3em]">
+              <BreadcrumbLink render={<button type="button" onClick={() => open(a.id)} />} className={crumb}>{a.name}</BreadcrumbLink>
+            </BreadcrumbItem>
+          </React.Fragment>
+        ))}
+      </BreadcrumbList>
+    </Breadcrumb>
+  )
 }
 
 /** 年度ごとの表の額。出典の頁が分かれば、額から公式の資料（その頁）を開く */
@@ -1291,7 +1310,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             <div className="flex items-center gap-3">
             {projectPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
-                {/* 入れ子の事業は親の事業へ戻る。親が分かるまでは自治体へ戻るボタンを出しておく */}
+                {/* 入れ子の事業は上の事業をパンくずに並べる。分かるまでは自治体へ戻るボタンを出しておく */}
                 <ClientSuspense fallback={<BackButton label={data.name} onClick={closeProject} />}>
                   <ProjectBack res={res} id={projectPage} label={data.name} close={closeProject} open={openProject} />
                 </ClientSuspense>
