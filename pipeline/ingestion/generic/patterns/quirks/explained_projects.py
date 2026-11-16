@@ -138,8 +138,10 @@ def _unstacked(words: list[Word], middle: float, right: float) -> list[Word]:
             result.append(w)
             continue
         # the amounts whose middles the word spans (its box can stop short of the first and last line's middle)
+        # the mark below the codes stretches the box down a line: the codes span their share of it
+        bottom = w.y0 + (w.y1 - w.y0) * len(text) / len(normalize(w.text))
         beside = next((found for slack in (0.0, SAME_LINE) if len(found := sorted(
-            (a for a in column if a.x0 > w.x1 and _value(a.text) is not None and w.y0 - slack <= (a.y0 + a.y1) / 2 <= w.y1 + slack),
+            (a for a in column if a.x0 > w.x1 and _value(a.text) is not None and w.y0 - slack <= (a.y0 + a.y1) / 2 <= bottom + slack),
             key=lambda a: a.y0)) == len(text)), None)
         if beside is None:
             result.append(w)
