@@ -211,7 +211,7 @@ function Dashboard({ c }: { c: Ctx }) {
             </p>
             {d.pop ? <p className="mt-2 text-sm opacity-80">1人あたり {perHeadText(v.total, d.pop)}</p> : null}
           </div>
-          <Link href={c.town.path} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
+          <Link href={c.year === c.years.at(-1) ? c.town.path : flowHref(c)} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
             詳細を見る
             <ArrowRightIcon className="size-4" />
           </Link>
