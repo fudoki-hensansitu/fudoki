@@ -151,7 +151,7 @@ function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[
   )
 }
 
-function Stat({ tone, word, sub, yen, pop }: { tone: 'in' | 'out'; word: string; sub: string; yen: number; pop: number }) {
+function Stat({ tone, word, sub, yen, per }: { tone: 'in' | 'out'; word: string; sub: string; yen: number; per: { label: string; yen: number } | null }) {
   const big = cn('block text-[22px] leading-tight font-semibold sm:text-[32px]', tone === 'in' ? 'text-(--kincha-ink)' : 'text-primary')
   return (
     <div className="rounded-2xl bg-card px-4 py-3.5 sm:px-5 sm:py-4">
@@ -159,10 +159,10 @@ function Stat({ tone, word, sub, yen, pop }: { tone: 'in' | 'out'; word: string;
       {/* 総額と1人あたりは同じ大きさで並べる（狭い幅は上下） */}
       <div className="mt-1 flex flex-col gap-x-6 gap-y-1 sm:flex-row sm:items-end">
         <Amt yen={yen} className={big} />
-        {pop ? (
+        {per ? (
           <span className="flex flex-col">
-            <span className="text-xs text-muted-foreground">1人あたり</span>
-            <Amt yen={yen / pop} className={big} />
+            <span className="text-xs text-muted-foreground">{per.label}</span>
+            <Amt yen={per.yen} className={big} />
           </span>
         ) : null}
       </div>
@@ -190,11 +190,13 @@ export function IncomeFlow({ doc, phase, expTotal, fields, pop, openField }: {
   // 決算は入ったお金が使ったお金より多い。差は翌年度へ繰り越すお金などなので、灰色で右に足して入ると使うの高さを揃える
   const rest = doc.total - expTotal
   if (rest > 0) outgoing.push({ id: 'rest', label: '翌年度へ繰り越すお金など', yen: rest, tone: 'rest' })
+  // 入るの1人あたりは、歳入の総額でなく住民が納める税（区分「まちの税」の款の和）で割る
+  const tax = kan.reduce((s, k) => s + (k.category === 'まちの税' ? k.yen : 0), 0)
   return (
     <section className="mb-8">
       <div className="mb-5 grid grid-cols-2 gap-3">
-        <Stat tone="in" word={words[0]} sub="歳入" yen={doc.total} pop={pop} />
-        <Stat tone="out" word={words[1]} sub="歳出" yen={expTotal} pop={pop} />
+        <Stat tone="in" word={words[0]} sub="歳入" yen={doc.total} per={pop && tax > 0 ? { label: '1人あたりの税金', yen: tax / pop } : null} />
+        <Stat tone="out" word={words[1]} sub="歳出" yen={expTotal} per={pop ? { label: '1人あたり', yen: expTotal / pop } : null} />
       </div>
       <Flow incoming={incoming} outgoing={outgoing} heads={[words[0], '一般会計', words[1]]} />
       {phase === 'settlement' && rest > 0 ? (
