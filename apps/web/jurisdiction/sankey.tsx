@@ -55,7 +55,8 @@ const end = (nodes: { top: number; size: number }[]) => (nodes.length ? nodes[no
 /** 款・項の金額から、列の位置と各段の高さを決める。高さ（total）は幅に依らない */
 const geometry = (kanValues: number[], kouValues: number[], width: number, height: number) => {
   const narrow = width < 560
-  const left = narrow ? 104 : 180
+  // 狭い画面の款の名前は9文字まで（10.5px）。棒との間（GAP）を足して収まる幅を取る
+  const left = narrow ? 114 : 180
   const right = narrow ? 170 : 260
   // ラベルの最小の高さだけで指定の高さを超えると帯の太さが0になるので、そのときは図を縦に伸ばして帯の分を残す
   const floor = (n: number, slot: number, gap: number) => n * (slot + gap) + BAND_ROOM
@@ -154,7 +155,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
                 <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x1 + BAR / 2} y={node.y - 3} textAnchor="middle" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(kou.yen, kou.amountMissing)}</text>
                 <text x={x1 + BAR + GAP} y={node.y + Math.max(node.height, 2) / 2} dominantBaseline="central" className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
-                  {cut(kou.name, narrow ? 12 : Math.max(10, Math.floor((width - x1 - BAR - GAP - 8) / 12)))}
+                  {cut(kou.name, Math.max(6, Math.floor((width - x1 - BAR - GAP - 8) / (narrow ? 10.5 : 12))))}
                 </text>
                 </g>
               </AmountTip>
