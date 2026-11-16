@@ -173,7 +173,7 @@ function SectionHead({ title, sub, children }: { title: string; sub?: string; ch
     </div>
   )
 }
-/** まとめ以外のタブの頭。見出しと、その言葉の意味の一文と、年度の切り替え（狭い画面はメニュー1つ） */
+/** タブの年度の切り替え。広い画面は年度を並べ、狭い画面はメニュー1つ */
 function TabYear() {
   const { years, v, setYear, yearHref } = useApp()
   return (
@@ -183,6 +183,7 @@ function TabYear() {
     </div>
   )
 }
+/** まとめ以外のタブの頭。見出しと、その言葉の意味の一文と、年度の切り替え */
 function TabHead({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-5">
@@ -345,7 +346,7 @@ function ProjectFieldCell({ p }: { p: Proj }) {
   return <>{fieldName(v, v.fieldOf(p))}</>
 }
 
-/** 事業の表（shadcn の data table）。並びは api が返した金額の多い順のまま。行を押すと詳細を開く。文字は見出しも中身もすべて同じ大きさ・同じ色にする */
+/** 事業の表（shadcn の data table）。並びは api が返した金額の多い順のまま。行を押すと詳細を開く。文字は見出しも中身もすべて同じ大きさ・同じ色にする（狭い画面で名前の下に出す担当の課・分野だけは薄い色） */
 function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前の年度の額を出す */ ended?: boolean }) {
   const { v, select, selected } = useApp()
   const by = ended ? v.year - 1 : v.year
