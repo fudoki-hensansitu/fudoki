@@ -63,7 +63,7 @@ function useWidth(ref: React.RefObject<HTMLElement | null>) {
 }
 
 /** 入る（左）→ 一般会計（中）→ 使う（右）の流れ。割合は棒の真上、名前は棒の横、金額は hover・focus のツールチップ */
-export function MoneyFlow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[]; heads: [string, string, string] }) {
+export function MoneyFlow({ incoming, outgoing, heads, label }: { incoming: Node[]; outgoing: Node[]; heads: [string, string, string]; /** 読み上げの名前。無ければ「入るお金から使うお金への流れ」の形 */ label?: string }) {
   const ref = React.useRef<HTMLDivElement>(null)
   const { seen, still } = useFlowSeen(ref, `${heads.join()}:${incoming.reduce((t, n) => t + n.yen, 0)}:${outgoing.reduce((t, n) => t + n.yen, 0)}`)
   const width = useWidth(ref)
@@ -92,7 +92,7 @@ export function MoneyFlow({ incoming, outgoing, heads }: { incoming: Node[]; out
   return (
     <div ref={ref} className="relative w-full" style={{ height: total + HEAD }}>
       {width ? (
-        <svg width={width} height={total + HEAD} role="img" aria-label={`${heads[0]}お金から${heads[2]}お金への流れ`} data-seen={seen ? '' : undefined} data-still={still ? '' : undefined} className="flow-svg block font-sans">
+        <svg width={width} height={total + HEAD} role="img" aria-label={label ?? `${heads[0]}お金から${heads[2]}お金への流れ`} data-seen={seen ? '' : undefined} data-still={still ? '' : undefined} className="flow-svg block font-sans">
           <g aria-hidden="true" className="fill-muted-foreground" fontSize={11}>
             <text x={x0 + BAR} y={11} textAnchor="end">{heads[0]}</text>
             <text x={x1 + BAR / 2} y={11} textAnchor="middle">{heads[1]}</text>
