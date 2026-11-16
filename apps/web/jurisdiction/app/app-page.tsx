@@ -662,9 +662,10 @@ function KindMenu({ v, filter, setFilter }: { v: YearView; filter: string; setFi
         <span className="min-w-0 truncate">{picked?.label ?? 'すべての事業'}</span>
         <CaretDownIcon className="size-3.5 shrink-0" aria-hidden="true" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-auto min-w-48">
+      <DropdownMenuContent align="start" className="w-auto min-w-56">
         <DropdownMenuRadioGroup value={value} onValueChange={(x) => { setValue(x as string); setFilter(x as string) }}>
           <DropdownMenuRadioItem value="all" closeOnClick>すべての事業</DropdownMenuRadioItem>
+          {shown.length ? <DropdownMenuSeparator /> : null}
           {shown.map((k) => <DropdownMenuRadioItem key={k.id} value={k.id} closeOnClick>{k.icon}{k.label}</DropdownMenuRadioItem>)}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
@@ -860,6 +861,17 @@ function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name'>; mark: 'new' |
 
 const projectLatestKey = (id: string) => `project-latest:${id}`
 
+/** 頁の左上の戻るボタン */
+function BackButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return <Button variant="ghost" onClick={onClick} className="-ml-2 min-w-0 max-w-full text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" /><span className="truncate">{label}</span></Button>
+}
+/** 事業の頁の戻るボタン。入れ子の事業は親の事業の名前を出して親の事業の頁へ、そうでなければ自治体の頁へ戻る */
+function ProjectBack({ res, id, label, close, open }: { res: Resources; id: string; label: string; close: () => void; open: (id: string) => void }) {
+  const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
+  const parent = p === FAILED ? null : p.parent
+  return parent ? <BackButton label={parent.name} onClick={() => open(parent.id)} /> : <BackButton label={label} onClick={close} />
+}
+
 /** 年度ごとの表の額。出典の頁が分かれば、額から公式の資料（その頁）を開く */
 function SourceAmt({ yen, href, label }: { yen: number | null | undefined; href?: string; label: string }) {
   if (yen == null || !href) return <Amt yen={yen} className="text-[15px]" />
@@ -872,7 +884,7 @@ function SourceAmt({ yen, href, label }: { yen: number | null | undefined; href?
 }
 
 /** 事業の頁（/tokyo/shinagawa/projects/<project_id>）。一覧の行・評価シート・分野の頁の事業から開く。事業は年度をまたぐので年度の段を持たず、
- * 金額は年度ごとの表で出す（大きな金額は出さない）。内訳（中の事業）・評価シートは事業の最新の年度（決算があれば決算）のもの */
+ * 金額は年度ごとの表で出す（大きな金額は出さない）。内訳（中の事業）は事業の最新の年度（決算があれば決算）のもの */
 function ProjectPage({ id }: { id: string }) {
   return (
     <ClientSuspense fallback={<RowsSkeleton n={4} />}>
@@ -882,7 +894,7 @@ function ProjectPage({ id }: { id: string }) {
 }
 
 function ProjectPageBody({ id }: { id: string }) {
-  const { res, select, v: pageView } = useApp()
+  const { res, select } = useApp()
   const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
   if (p === FAILED || p.year === undefined || !p.kind) return <LoadFailed />
   const year = p.year
@@ -907,24 +919,6 @@ function ProjectPageBody({ id }: { id: string }) {
           ))}
         </div>
       </DetailSection>
-      {p.sheets.length ? (
-        <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${p.sheets.length}件`}>
-          <div className="grid gap-2 @3xl:grid-cols-2">
-            {p.sheets.map((s) => {
-              const dir = directionOf(s)
-              return (
-                <div key={s.id} className="flex flex-col gap-1.5 rounded-xl bg-card p-3">
-                  <button type="button" onClick={() => select({ kind: 'sheet', id: s.id, sheet: s })} className="flex w-full items-start gap-2.5 rounded-md text-left outline-none hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary">
-                    {dir ? <Mark kind={dir.icon} /> : null}
-                    <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">{[`${r(s.fy)}年度の事業`, s.grade ? `評価 ${s.grade} ${GRADES.find((g) => g[0] === s.grade)?.[1] ?? ''}` : null, dir?.label ?? s.dir].filter(Boolean).join(' · ')}</span></span>
-                  </button>
-                  {s.url ? <span className={dir ? 'pl-[34px]' : ''}><Ext href={`${s.url}#page=${s.page}`}>評価シート（{s.page}頁）</Ext></span> : null}
-                </div>
-              )
-            })}
-          </div>
-        </DetailSection>
-      ) : null}
       {p.kids.length ? (
         <DetailSection icon={TreeStructureIcon} title="内訳">
           {/* 内訳の一つ一つも年度をまたぐ事業なので、押すとその事業の頁へ移る。額はその事業の最新の年度のもの */}
@@ -936,8 +930,6 @@ function ProjectPageBody({ id }: { id: string }) {
           )} />
         </DetailSection>
       ) : null}
-      {/* 出典の資料は頁の年度のもの。事業の年度と同じときだけ添える */}
-      {pageView.year === year && pageView.kind === p.kind && pageView.origin ? <DetailSection icon={FileTextIcon} title="出典"><Ext href={pageView.origin}>{pageView.originTitle ?? '予算書'}</Ext></DetailSection> : null}
     </>
   )
 }
@@ -1537,7 +1529,12 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             <div className="flex items-center gap-3">
             {projectPage || fieldPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
-                <Button variant="ghost" onClick={projectPage ? closeProject : closeField} className="-ml-2 text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" />{data.name}</Button>
+                {projectPage ? (
+                  // 入れ子の事業は親の事業へ戻る。親が分かるまでは自治体へ戻るボタンを出しておく
+                  <ClientSuspense fallback={<BackButton label={data.name} onClick={closeProject} />}>
+                    <ProjectBack res={res} id={projectPage} label={data.name} close={closeProject} open={openProject} />
+                  </ClientSuspense>
+                ) : <BackButton label={data.name} onClick={closeField} />}
               </div>
             ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
