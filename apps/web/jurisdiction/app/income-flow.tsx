@@ -19,7 +19,7 @@ export type Node = { id: string; label: string; yen: number; tone: Tone; base?: 
 
 const BAR_FILL: Record<Tone, string> = { in: 'fill-(--kincha)', out: 'fill-primary', rest: 'fill-muted-foreground' }
 // oxlint-disable-next-line design/color-opacity -- お金の流れ（sankey.tsx）の帯と同じ濃さに揃える。あちらの例外を決めるときに一緒に直す
-const RIBBON_FILL: Record<Tone, string> = { in: 'fill-(--kincha)/30', out: 'fill-primary/20', rest: 'fill-muted-foreground/15' }
+const RIBBON_FILL: Record<Tone, string> = { in: 'fill-(--kincha)/20', out: 'fill-primary/20', rest: 'fill-muted-foreground/15' }
 const SHARE_FILL: Record<Tone, string> = { in: 'fill-(--kincha-ink)', out: 'fill-primary', rest: 'fill-muted-foreground' }
 
 
