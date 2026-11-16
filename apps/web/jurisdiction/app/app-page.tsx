@@ -1,4 +1,4 @@
-// 自治体の頁（アプリ型）。ヘッダーの下を「まとめ・事業・決算・予算」のタブにし（決算・予算のタブはどの年度にも出す）、事業・評価シートは一覧と詳細、分野は分野の頁に分ける。
+// 自治体の頁（アプリ型）。ヘッダーの下を「まとめ・事業・予算・決算」のタブにし（予算・決算のタブはどの年度にも出す）、事業・評価シートは一覧と詳細、分野は分野の頁に分ける。
 // 一覧は名前と金額だけを出し、説明は詳細にだけ出す。部品は shadcn/ui（Tabs・Carousel・Sheet・Card・Input・ToggleGroup）
 import * as React from 'react'
 import { useNavigation, useRouter } from '@void/react'
@@ -71,7 +71,7 @@ import { directionOf, DIRECTION_ICONS, GRADES, withExtras, yearView, type Accoun
 import { fieldSubjects, listKey, listPage, projectFull, projectLatest, projectOfId, sheetCountKey, sheetCounts, sheetKey, sheetPage, type ListPage, type ListQuery, type ProjectFull, type ProjRow, type SheetCount, type SheetQuery } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import { Amt, yenParts } from './amount'
-import { FinanceSections, Tag } from './finance'
+import { FinanceSections } from './finance'
 import { RevenueSection } from './revenue'
 import './app.css'
 
@@ -568,6 +568,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
           ? '決算は、1年間に実際に入ったお金と使ったお金を、年度が終わった後にまとめたものです。議会の認定を受けて確定します。'
           : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。このタブでは、年度の初めに決めた当初予算を扱います。'}
       </TabHead>
+      {total ? <FieldsSection phase={phase} /> : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
       {picked ? (
         <Flow key={`${v.year}-${phase}-${account}`} flows={flows} total={picked} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase, special: account !== GENERAL })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
@@ -591,8 +592,31 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   )
 }
 
+/** 何に使う？／何に使った？（歳出を分野ごとに）。予算・決算のタブのお金の流れの上に置く。棒を押すと分野の頁へ */
+function FieldsSection({ phase }: { phase: 'initial' | 'settlement' }) {
+  const { v, openField } = useApp()
+  const max = Math.max(...v.fields.map((x) => x.yen))
+  return (
+    <section>
+      <h2 className="mb-2.5 text-[17px] font-semibold">
+        {phase === 'initial' ? '何に使う？' : '何に使った？'}<span className="ml-1.5 text-[13px] font-normal text-muted-foreground">歳出</span>
+        <Amt yen={v.total} className="ml-2 font-medium text-primary" />
+      </h2>
+      <p className="mb-2.5 text-[15px] leading-[1.7] text-muted-foreground">
+        {phase === 'initial'
+          ? '歳出は、自治体が1年間に使う予定のお金です。ここでは、税金を主な財源にする基本の会計（一般会計）の当初予算を、使い道の分野ごとに分けています。'
+          : '歳出は、自治体が1年間に使ったお金です。ここでは、税金を主な財源にする基本の会計（一般会計）の決算を、使い道の分野ごとに分けています。'}
+      </p>
+      {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
+      <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
+        {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={max} onClick={() => openField(f.id)} />)}
+      </div>
+    </section>
+  )
+}
+
 function Overview() {
-  const { v, page, openField } = useApp()
+  const { v, page } = useApp()
   return (
     <div className="flex flex-col gap-8">
       {/* ホームのまちの札と同じく、濃い緑の地に総額と1人あたりを載せる。事業の件数は出さない */}
@@ -606,24 +630,6 @@ function Overview() {
         ) : null}
       </section>
 
-      <section>
-        <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
-          <h2 className="text-[17px] font-semibold">
-            何に使う？<span className="ml-1.5 text-[13px] font-normal text-muted-foreground">歳出</span>
-            <Amt yen={v.total} className="ml-2 font-medium text-primary" />
-          </h2>
-          <Tag>{r(v.year)} {v.word === '決算' ? '決算' : '当初予算'}</Tag>
-        </div>
-        <p className="-mt-1 mb-2.5 text-[15px] leading-[1.7] text-muted-foreground">
-          {v.word === '決算'
-            ? '歳出は、自治体が1年間に使ったお金です。ここでは、税金を主な財源にする基本の会計（一般会計）の決算を、使い道の分野ごとに分けています。'
-            : '歳出は、自治体が1年間に使う予定のお金です。ここでは、税金を主な財源にする基本の会計（一般会計）の当初予算を、使い道の分野ごとに分けています。'}
-        </p>
-        {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
-        <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
-          {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={Math.max(...v.fields.map((x) => x.yen))} onClick={() => openField(f.id)} />)}
-        </div>
-      </section>
 
       {/* 一般会計の歳入（api の get_revenue を loader が頁のデータに入れる）。歳入の無い年度は節ごと出さない */}
       <RevenueSection revenue={page.revenue} year={v.year} kind={v.kind} prefecture={page.prefecture} />
@@ -1293,8 +1299,8 @@ function YearMenu({ years, current, onChange }: { years: number[]; current: numb
 const TABS: { key: TabKey; label: string; icon: Icon }[] = [
   { key: 'overview', label: 'まとめ', icon: SquaresFourIcon },
   { key: 'projects', label: '事業', icon: ListBulletsIcon },
-  { key: 'settled', label: '決算', icon: ReceiptIcon },
   { key: 'money', label: '予算', icon: WalletIcon },
+  { key: 'settled', label: '決算', icon: ReceiptIcon },
 ]
 
 const TAB_SEGMENT = new RegExp(`/(${Object.values(TAB_SLUGS).join('|')})/?$`)
