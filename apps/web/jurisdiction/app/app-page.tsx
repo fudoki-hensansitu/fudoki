@@ -597,7 +597,7 @@ function FieldsSection({ phase }: { phase: 'initial' | 'settlement' }) {
   const { v, openField } = useApp()
   const max = Math.max(...v.fields.map((x) => x.yen))
   return (
-    <section>
+    <section className="mb-5">
       <h2 className="mb-2.5 text-[17px] font-semibold">
         {phase === 'initial' ? '何に使う？' : '何に使った？'}<span className="ml-1.5 text-[13px] font-normal text-muted-foreground">歳出</span>
         <Amt yen={v.total} className="ml-2 font-medium text-primary" />
