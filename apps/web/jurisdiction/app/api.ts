@@ -229,6 +229,8 @@ export type ProjectFull = {
   kind?: Kind
   /** 分野を引く科目の COFOG のコード（年度を指さずに読んだときだけ持つ。科目が無い・分類が無ければ null） */
   cofog?: string | null
+  /** 年度ごとの当初予算（b）・決算（s）の事業の行が印字された出典の URL（PDF は頁つき）。年度を指さずに読んだときだけ持つ */
+  src?: Record<string, { b?: string; s?: string }>
 }
 
 /** 事業の詳細（サーバー） */
@@ -248,7 +250,7 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
   const here = p.years.find((y) => y.fiscal_year === year) ?? latest
   const subject = here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null
   // 事業の頁は開いた頁の年度の科目の表を持たないので、分野は科目の COFOG を引いて決める
-  const cofog = at ? undefined : subject ? await subjectCofog(call, subject, here!, year) : null
+  const [cofog, src] = at ? [undefined, undefined] : await Promise.all([subject ? subjectCofog(call, subject, here!, year) : null, sourcesOf(call, p.years)])
   return {
     id,
     name: clean(p.project.name),
@@ -260,8 +262,28 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
     kids: at ? kids.project_years.map((k) => ({ name: clean(k.name), yen: kind === 'initial' ? k.budget_yen : k.settled_yen })) : latestKids(kids.project_years),
     subject,
     sheets,
-    ...(at ? {} : { year, kind, cofog }),
+    ...(at ? {} : { year, kind, cofog, src }),
   }
+}
+
+/** 事業の年度ごとの当初予算・決算の行が印字された出典の URL（PDF は頁つき）。行ごとに get_expenditure_line で位置と出典を引く。読めない行は外す */
+async function sourcesOf(call: ApiCall, years: { fiscal_year: number; initial_expenditure_detail_id: string | null; settlement_expenditure_detail_id: string | null }[]): Promise<NonNullable<ProjectFull['src']>> {
+  const lines = years.flatMap((y) => [['b', y.fiscal_year, y.initial_expenditure_detail_id], ['s', y.fiscal_year, y.settlement_expenditure_detail_id]] as const).filter((x): x is readonly ['b' | 's', number, string] => !!x[2])
+  const found = await Promise.all(
+    lines.map(async ([k, fy, id]) => {
+      try {
+        const r = await call('get_expenditure_line', { line_id: id, page_size: 1 } as WebOpInput<'get_expenditure_line'>)
+        const at = r.locations.find((l) => l.line_id === id && l.source_page != null)
+        const origin = r.origins.find((o) => o.origin_id === (at?.origin_id ?? r.line.origin_id))
+        return origin ? ([k, fy, at ? `${origin.url}#page=${at.source_page}` : origin.url] as const) : null
+      } catch {
+        return null
+      }
+    })
+  )
+  const out: NonNullable<ProjectFull['src']> = {}
+  for (const x of found) if (x) (out[String(x[1])] ??= {})[x[0]] = x[2]
+  return out
 }
 
 /** 内訳の事業ごとに、その事業の最新の年度の行（決算があれば決算の額）。額の多い順 */

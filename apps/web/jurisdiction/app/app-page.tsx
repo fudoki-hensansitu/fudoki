@@ -860,6 +860,17 @@ function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name'>; mark: 'new' |
 
 const projectLatestKey = (id: string) => `project-latest:${id}`
 
+/** 年度ごとの表の額。出典の頁が分かれば、額から公式の資料（その頁）を開く */
+function SourceAmt({ yen, href, label }: { yen: number | null | undefined; href?: string; label: string }) {
+  if (yen == null || !href) return <Amt yen={yen} className="text-[15px]" />
+  return (
+    <a href={href} target="_blank" rel="noopener" aria-label={`${label}（${yenText(yen)}）`} className="inline-flex items-center gap-1 text-foreground no-underline hover:text-primary hover:underline">
+      <Amt yen={yen} className="text-[15px]" />
+      <ArrowSquareOutIcon className="size-3 text-muted-foreground" aria-hidden="true" />
+    </a>
+  )
+}
+
 /** 事業の頁（/tokyo/shinagawa/projects/<project_id>）。一覧の行・評価シート・分野の頁の事業から開く。事業は年度をまたぐので年度の段を持たず、
  * 金額は年度ごとの表で出す（大きな金額は出さない）。内訳（中の事業）・評価シートは事業の最新の年度（決算があれば決算）のもの */
 function ProjectPage({ id }: { id: string }) {
@@ -890,8 +901,8 @@ function ProjectPageBody({ id }: { id: string }) {
             <div key={y} className={cn('col-span-full grid grid-cols-subgrid', y === year && 'bg-card')}>
               <Separator className="col-span-full" />
               <span className="px-1 py-2">{r(y)}</span>
-              <span className="py-2 text-right"><Amt yen={p.y[String(y)]?.b} className="text-[15px]" /></span>
-              <span className="px-1 py-2 text-right"><Amt yen={p.y[String(y)]?.s} className="text-[15px]" /></span>
+              <span className="py-2 text-right"><SourceAmt yen={p.y[String(y)]?.b} href={p.src?.[String(y)]?.b} label={`${r(y)}年度の当初予算の出典`} /></span>
+              <span className="px-1 py-2 text-right"><SourceAmt yen={p.y[String(y)]?.s} href={p.src?.[String(y)]?.s} label={`${r(y)}年度の決算の出典`} /></span>
             </div>
           ))}
         </div>
@@ -902,22 +913,24 @@ function ProjectPageBody({ id }: { id: string }) {
             {p.sheets.map((s) => {
               const dir = directionOf(s)
               return (
-                <button key={s.id} type="button" onClick={() => select({ kind: 'sheet', id: s.id, sheet: s })} className="flex w-full items-start gap-2.5 rounded-xl bg-card p-3 text-left hover:bg-secondary">
-                  {dir ? <Mark kind={dir.icon} /> : null}
-                  <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">{[`${r(s.fy)}年度の事業`, s.grade ? `評価 ${s.grade} ${GRADES.find((g) => g[0] === s.grade)?.[1] ?? ''}` : null, dir?.label ?? s.dir].filter(Boolean).join(' · ')}</span></span>
-                </button>
+                <div key={s.id} className="flex flex-col gap-1.5 rounded-xl bg-card p-3">
+                  <button type="button" onClick={() => select({ kind: 'sheet', id: s.id, sheet: s })} className="flex w-full items-start gap-2.5 rounded-md text-left outline-none hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary">
+                    {dir ? <Mark kind={dir.icon} /> : null}
+                    <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">{[`${r(s.fy)}年度の事業`, s.grade ? `評価 ${s.grade} ${GRADES.find((g) => g[0] === s.grade)?.[1] ?? ''}` : null, dir?.label ?? s.dir].filter(Boolean).join(' · ')}</span></span>
+                  </button>
+                  {s.url ? <span className={dir ? 'pl-[34px]' : ''}><Ext href={`${s.url}#page=${s.page}`}>評価シート（{s.page}頁）</Ext></span> : null}
+                </div>
               )
             })}
           </div>
         </DetailSection>
       ) : null}
       {p.kids.length ? (
-        <DetailSection icon={TreeStructureIcon} title="内訳" count={`${p.kids.length}件`}>
+        <DetailSection icon={TreeStructureIcon} title="内訳">
           {/* 内訳の一つ一つも年度をまたぐ事業なので、押すとその事業の頁へ移る。額はその事業の最新の年度のもの */}
           <Infinite items={p.kids} step={10} render={(k, i) => (
             <button key={k.id ?? i} type="button" onClick={() => k.id && select({ kind: 'project', id: k.id })} className="flex w-full items-center gap-3 px-1.5 py-2 text-left text-[15px] hover:bg-card">
               <span className="flex-1">{k.name}</span>
-              {k.fy !== undefined ? <span className="text-xs text-muted-foreground">{r(k.fy)} {k.kind === 'initial' ? '当初予算' : '決算'}</span> : null}
               <Amt yen={k.yen} className="text-base" />
             </button>
           )} />
@@ -989,7 +1002,7 @@ function ProjectBody({ p }: { p: ProjectFull }) {
         </DetailSection>
       ) : null}
       {kids.length ? (
-        <DetailSection icon={TreeStructureIcon} title="内訳" count={kids.length}>
+        <DetailSection icon={TreeStructureIcon} title="内訳">
           <Infinite items={kids} step={10} render={({ name, yen }, i) => (
             <div key={i} className="flex items-center gap-3 px-1.5 py-2 text-[15px]"><span className="flex-1">{name}</span><Amt yen={yen} className="text-base" /></div>
           )} />

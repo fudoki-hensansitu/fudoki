@@ -73,6 +73,11 @@ function restRequest(name: WebOpName, input: Record<string, unknown>): Request |
       return post('/v1/expenditures/subjects:search')
     case 'search_expenditure_details':
       return post('/v1/expenditures/details:search')
+    case 'get_expenditure_line': {
+      const url = new URL(`/v1/expenditures/lines/${id('line_id')}`, API_ORIGIN)
+      if (input.page_size !== undefined) url.searchParams.set('page_size', String(input.page_size))
+      return new Request(url)
+    }
     case 'search_evaluation_sheets':
       return post('/v1/evaluations/sheets:search')
     case 'search_projects':
