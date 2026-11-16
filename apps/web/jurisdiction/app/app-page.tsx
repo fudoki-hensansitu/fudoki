@@ -651,12 +651,8 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
     clearTimeout(timer.current)
     timer.current = setTimeout(() => setQ(t.trim()), 300)
   }
-  const head = (n: string) => (
-    <p className="px-2.5 text-xs text-muted-foreground">
-      {filter === 'new' ? '予算書で新しく現れた事業・' : ''}
-      {n}
-    </p>
-  )
+  // 件数は出さない。新しく始める事業だけ、何を新しいとしたかを添える
+  const head = () => (filter === 'new' ? <p className="px-2.5 text-xs text-muted-foreground">予算書で新しく現れた事業</p> : null)
   const body = (v: YearView) => {
     const list = v.query(filter as ListQuery['filter'], { ...cofogOf(fields), ...(q ? { q } : {}) })
     // 事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある）
@@ -665,13 +661,13 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
       // 目には始めた年度が無いので、新しく始める・やめた事業は出さない
       filter === 'all' ? (
         <>
-          {head(`${moku.length}件`)}
+          {head()}
           <Infinite items={moku} list={(rows) => <ProjectTable rows={rows} />} />
         </>
       ) : null
     ) : list ? (
       <ClientSuspense fallback={<RowsSkeleton />} ready={!!res.peek(listKey(list))}>
-        <ProjectList q={list} head={(page) => head(countOf(page))} />
+        <ProjectList q={list} head={() => head()} />
       </ClientSuspense>
     ) : null
   }
@@ -817,11 +813,27 @@ function ProjectPageBody({ id }: { id: string }) {
       {p.kids.length ? (
         <DetailSection icon={TreeStructureIcon} title="内訳">
           {/* 内訳の一つ一つも年度をまたぐ事業なので、押すとその事業の頁へ移る。額はその事業の最新の年度のもの */}
-          <Infinite items={p.kids} step={10} render={(k, i) => (
-            <button key={k.id ?? i} type="button" onClick={() => k.id && select({ kind: 'project', id: k.id })} className="flex w-full items-center gap-3 px-1.5 py-2 text-left text-[15px] hover:bg-card">
-              <span className="flex-1">{k.name}</span>
-              <Amt yen={k.yen} className="text-base" />
-            </button>
+          <Infinite items={p.kids} step={10} list={(kids) => (
+            <Table className="text-[15px]">
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="h-9 font-normal">事業名</TableHead>
+                  <TableHead className="h-9 font-normal">年度</TableHead>
+                  <TableHead className="h-9 text-right font-normal">金額</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {kids.map((k, i) => (
+                  <TableRow key={k.id ?? i} onClick={() => k.id && select({ kind: 'project', id: k.id })} className="cursor-pointer hover:bg-card">
+                    <TableCell className="whitespace-normal py-2.5 [overflow-wrap:anywhere]">
+                      <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{k.name}</button>
+                    </TableCell>
+                    <TableCell className="py-2.5 text-muted-foreground">{k.fy != null ? `${r(k.fy)} ${k.kind === 'initial' ? '当初予算' : '決算'}` : ''}</TableCell>
+                    <TableCell className="py-2.5 text-right tabular-nums">{k.yen == null ? '—' : yenText(k.yen)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )} />
         </DetailSection>
       ) : null}
