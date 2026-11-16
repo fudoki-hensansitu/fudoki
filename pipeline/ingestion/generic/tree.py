@@ -397,6 +397,9 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
     # is no part of the item's name or of the amount. The amount stays the line's last run.
     if len(parts) >= 3 and CARRY_OVER_TAG.fullmatch(normalize(text(parts[-1]))) and is_amount(text(parts[-2])):
         parts.pop()
+    if parts and (short_yen := document_quirk('short_yen_notes')) is not None \
+            and (kept := short_yen.module.digits(normalize(text([g for part in parts for g in part])))) is not None:
+        return [], [_cut([g for part in parts for g in part], kept)[0]]  # `400円` under a remark: its amount
     while parts and len(parts[-1]) > 1 and normalize(parts[-1][-1].text) == '円' and is_amount(text(parts[-1][:-1])):
         parts[-1] = parts[-1][:-1]
     while len(parts) > 1 and normalize(text(parts[-1])) == '円' and is_amount(text(parts[-2])):
