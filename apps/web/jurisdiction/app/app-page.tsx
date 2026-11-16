@@ -662,9 +662,10 @@ function KindMenu({ v, filter, setFilter }: { v: YearView; filter: string; setFi
         <span className="min-w-0 truncate">{picked?.label ?? 'すべての事業'}</span>
         <CaretDownIcon className="size-3.5 shrink-0" aria-hidden="true" />
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start" className="w-auto min-w-48">
+      <DropdownMenuContent align="start" className="w-auto min-w-56">
         <DropdownMenuRadioGroup value={value} onValueChange={(x) => { setValue(x as string); setFilter(x as string) }}>
           <DropdownMenuRadioItem value="all" closeOnClick>すべての事業</DropdownMenuRadioItem>
+          <DropdownMenuSeparator />
           {shown.map((k) => <DropdownMenuRadioItem key={k.id} value={k.id} closeOnClick>{k.icon}{k.label}</DropdownMenuRadioItem>)}
         </DropdownMenuRadioGroup>
       </DropdownMenuContent>
