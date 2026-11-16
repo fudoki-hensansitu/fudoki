@@ -911,7 +911,7 @@ def add_code_readings(observed: list[Page], readings: list[dict] | None, key: st
     for reading in readings or ():
         x0, y0, x1, y1 = reading['box']
         if reading['page'] not in words or not re.fullmatch(printed, reading[key]):
-            raise ValueError(f'A {key} reading needs a scoped page and a number: {reading["id"]}')
+            raise ValueError(f'A {key} reading needs a scoped page and a printed value of its form: {reading["id"]}')
         if any(re.search(r'[0-9]', w.text) and w.x0 < x1 and x0 < w.x1 and w.y0 < y1 and y0 < w.y1
                for w in words[reading['page']]):
             raise ValueError(f'A {key} reading overlaps a read digit: {reading["id"]} {reading["box"]}')
