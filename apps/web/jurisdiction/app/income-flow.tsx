@@ -14,8 +14,8 @@ const HEAD = 20
 const IN_SLOT = 30
 const OUT_SLOT = 26
 
-type Tone = 'in' | 'out' | 'rest'
-type Node = { id: string; label: string; yen: number; tone: Tone; base?: number; onClick?: () => void }
+export type Tone = 'in' | 'out' | 'rest'
+export type Node = { id: string; label: string; yen: number; tone: Tone; base?: number; onClick?: () => void }
 
 const BAR_FILL: Record<Tone, string> = { in: 'fill-(--kincha)', out: 'fill-primary', rest: 'fill-muted-foreground' }
 // oxlint-disable-next-line design/color-opacity -- お金の流れ（sankey.tsx）の帯と同じ濃さに揃える。あちらの例外を決めるときに一緒に直す
@@ -63,7 +63,7 @@ function useWidth(ref: React.RefObject<HTMLElement | null>) {
 }
 
 /** 入る（左）→ 一般会計（中）→ 使う（右）の流れ。割合は棒の真上、名前は棒の横、金額は hover・focus のツールチップ */
-function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[]; heads: [string, string, string] }) {
+export function MoneyFlow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[]; heads: [string, string, string] }) {
   const ref = React.useRef<HTMLDivElement>(null)
   const { seen, still } = useFlowSeen(ref, `${heads.join()}:${incoming.reduce((t, n) => t + n.yen, 0)}:${outgoing.reduce((t, n) => t + n.yen, 0)}`)
   const width = useWidth(ref)
@@ -118,7 +118,7 @@ function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[
               const node = ins[i]!
               const h = Math.max(node.height, 2)
               return (
-                <AmountTip key={n.id} name={n.label} yen={n.yen} side="right" render={<g aria-label={n.label} />}>
+                <AmountTip key={n.id} name={n.label} yen={n.yen} side="right" render={<g {...pick(n.onClick)} aria-label={n.label} />}>
                   <rect x={0} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
                   <rect x={x0} y={node.y} width={BAR} height={h} rx={2} className={BAR_FILL[n.tone]} />
                   <text x={x0 + BAR / 2} y={node.y - 3} textAnchor="middle" className={cn('font-semibold tabular-nums', SHARE_FILL[n.tone])} fontSize={narrow ? 10 : 11}>{share(n)}</text>
@@ -199,7 +199,7 @@ export function IncomeFlow({ doc, phase, expTotal, fields, pop, openField }: {
       </div>
       {/* スマホは頁の左右の余白まで使って画面いっぱいに描く */}
       <div className="-mx-2 sm:mx-0">
-        <Flow incoming={incoming} outgoing={outgoing} heads={[words[0], '一般会計', words[1]]} />
+        <MoneyFlow incoming={incoming} outgoing={outgoing} heads={[words[0], '一般会計', words[1]]} />
       </div>
     </section>
   )
