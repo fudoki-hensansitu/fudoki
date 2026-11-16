@@ -903,14 +903,15 @@ def drop_readings(observation: dict, rules: list[dict] | None) -> dict:
 def add_code_readings(observed: list[Page], readings: list[dict] | None, key: str = 'code',
                       printed: str = r'[0-9]+') -> list[Page]:
     """Subject codes (`code_readings`) or amounts (`amount_readings`, key `amount`) OCR left unread, as the
-    conversion's options declare them from the rendered page (page, box in PDF points, the printed text).
+    conversion's options declare them from the rendered page (page, box in PDF points, the printed text). An amount
+    reading may be the dash a cell prints for no amount (`－`): a dash wider than OCR takes for one is left as ink.
     A box that already holds a digit is not a missing reading, and the conversion stops. A code reading may
     carry the subject's name OCR left unread on that line (`name`, `name_box`); its box must hold no reading."""
     words = {p.number: list(p.words) for p in observed}
     for reading in readings or ():
         x0, y0, x1, y1 = reading['box']
         if reading['page'] not in words or not re.fullmatch(printed, reading[key]):
-            raise ValueError(f'A {key} reading needs a scoped page and a number: {reading["id"]}')
+            raise ValueError(f'A {key} reading needs a scoped page and a printed value of its form: {reading["id"]}')
         if any(re.search(r'[0-9]', w.text) and w.x0 < x1 and x0 < w.x1 and w.y0 < y1 and y0 < w.y1
                for w in words[reading['page']]):
             raise ValueError(f'A {key} reading overlaps a read digit: {reading["id"]} {reading["box"]}')
@@ -1243,7 +1244,7 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
         printed = specks.module.drop(printed)
     printed = add_code_readings(printed, options.get('code_readings'))
     printed = add_code_readings(printed, [{**r, 'box': box} for r in options.get('amount_readings', ()) for box in r['boxes']],
-                                'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)')
+                                'amount', r'△?(0|[1-9][0-9]{0,2}(,[0-9]{3})*)|－')
     printed = add_name_readings(printed, options.get('name_readings'))
     if (marks := document_quirk('bracket_marks')) is not None:
         printed = marks.module.drop(printed)
