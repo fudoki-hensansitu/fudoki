@@ -39,6 +39,8 @@
   /* 左右を逆にした全体図（歳入）は、帯が右（款）から左（項）へ伸びる */
   .flow-svg[data-mirror] .flow-ribbon { animation-name: fudoki-flow-in-rev; }
   .flow-svg[data-mirror] .flow-node { animation-name: fudoki-flow-node-rev; }
+  /* 歳入の款の面（flow.tsx の KouSection の mirror）も、帯は右から左へ伸びる */
+  .flow-ribbon.flow-rev { animation-name: fudoki-flow-in-rev; }
 }
 @keyframes fudoki-flow-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 @keyframes fudoki-flow-node { from { opacity: 0; transform: translateX(-6px); } }
