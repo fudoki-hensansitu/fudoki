@@ -47,6 +47,8 @@ export interface PageFlow {
   drills: Drill[]
   /** 項の行が無い目（drills の木に入らない）。分野の図はこれも足す */
   loose: Moku[]
+  /** 同じ年度・資料の一般会計の歳入（款 → 項 → 目）。流れの図の左に出す。歳入の無い自治体・年度と特別会計では空 */
+  revenue?: Drill[]
 }
 
 export interface Project extends Line {

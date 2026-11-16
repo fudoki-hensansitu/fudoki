@@ -10,6 +10,9 @@ import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
 import { Overview, OverviewSkeleton } from './sankey'
 import { formatShare, formatYen, type Drill, type Kou, type Moku, type YearTotal } from './types'
 
+/** 歳入の面は、緑（使う）の代わりに入るの色で描く。図の部品は --primary で色を付けているので、面の中だけ差し替える */
+const INCOMING = { '--primary': 'var(--kincha-ink)', '--color-primary': 'var(--kincha-ink)' } as React.CSSProperties
+
 /** 段の呼び名 */
 const LEVELS = { kan: '款', kou: '項', moku: '目', setsu: '節' }
 type Levels = typeof LEVELS
@@ -294,7 +297,8 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
         {kou.moku.length > 0 ? (
           <div className="hidden grid-cols-[5fr_7fr] gap-4 text-[11px] text-muted-foreground sm:grid" aria-hidden="true">
             <span>{levels.moku}</span>
-            <span className="pl-4">{levels.setsu}</span>
+            {/* 歳入の目には節を付けないので、節の見出しも出さない */}
+            <span className="pl-4">{kou.moku.some((m) => m.setsu.length > 0) ? levels.setsu : null}</span>
           </div>
         ) : null}
         {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} levels={levels} onMoku={onMoku} />) : (
@@ -306,7 +310,7 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
 }
 
 /** natural は面の中で縦に送らず、中身の高さのまま頁のスクロールで読む */
-function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void; natural?: boolean; /** 横に並ぶ面のうち、今見せている面か */ shown?: boolean }) {
+function KanPanel({ drill, loading, levels, onMoku, natural, shown, pos, style }: { drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void; natural?: boolean; /** 横に並ぶ面のうち、今見せている面か */ shown?: boolean; /** 横に並ぶ面の中の位置 */ pos: number; style?: React.CSSProperties }) {
   const body = React.useRef<HTMLDivElement>(null)
   // natural のとき、面が画面に入っている間だけ目盛りを画面の右に固定して出す（track が横のスクロールの箱なので sticky は効かない）
   const [inView, setInView] = React.useState(false)
@@ -355,7 +359,7 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: D
         </TickMenu>
   )
   return (
-    <div className={cn('relative w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel>
+    <div className={cn('relative w-full shrink-0 snap-start snap-always', !natural && 'h-full')} style={style} data-panel data-pos={pos}>
       {drill.kou.length > 1 && (!natural || (shown && inView)) ? (
         // 項の目盛り。押すとその項へ縦に送る。natural のときは画面の右の真ん中に固定する。
         // 祖先に transform（スマホのタブのカルーセル）があると fixed が画面に効かないので、body に出す
@@ -371,17 +375,33 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: D
 }
 
 /** 款→項の全体図と款ごとの内訳。流れ（目の内訳まで）は頁の loader が読んで渡す。flows が無い間は読み込み中の形を出す */
-export function Flow({ flows: given, total: year, className, bare, onMoku, natural, onRetry }: { /** 款 → 項 → 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
+export function Flow({ flows: given, revenue: revenueGiven, total: year, className, bare, onMoku, natural, onRetry }: { /** 一般会計の歳入（款 → 項 → 目）。あれば全体図の左に置き、左へスクロールするとたどれる。無ければ今までどおり歳出だけ */ revenue?: Drill[]; /** 款 → 項 → 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
   const levels = LEVELS
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
   const overview = React.useRef<HTMLDivElement>(null)
-  const [index, setIndex] = React.useState(0)
   const flows = given ?? []
+  const revenue = revenueGiven ?? []
+  // 歳入の面の数（歳入の全体図と款ごとの面）。面は左から 歳入の款（小さい順）→ 歳入の全体図 → 歳出の全体図 → 歳出の款（大きい順）と並ぶ
+  const R = revenue.length ? revenue.length + 1 : 0
+  /** 歳入の款を面の並び（左から、小さい款から）にしたもの。全体図の隣が一番大きい款 */
+  const revenueOrder = React.useMemo(() => [...revenue].reverse(), [revenue])
+  /** 歳出の全体図を 0 とした今の面。歳入の全体図は -1、歳入の款は -2 から左へ */
+  const [index, setIndex] = React.useState(0)
+  const pos = index + R
+  // 開いたときは歳出の全体図から見せる。歳入の面が増えたら、同じ面を見せたまま左に足す
+  React.useLayoutEffect(() => {
+    const el = track.current
+    if (!el || !R) return
+    el.style.scrollBehavior = 'auto'
+    el.scrollLeft = pos * el.clientWidth
+    el.style.scrollBehavior = ''
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [R])
   // 款の面は、今の面と左右の面、一度開いた面だけ中身を描く。全部の款の目・節を描くと、大きい自治体の決算で HTML が 1MB を超えるため
   const [opened, setOpened] = React.useState<ReadonlySet<number>>(() => new Set())
-  React.useEffect(() => setOpened((s) => (s.has(index) ? s : new Set(s).add(index))), [index])
-  const drawsPanel = (i: number) => Math.abs(index - i) <= 1 || opened.has(i)
+  React.useEffect(() => setOpened((s) => (s.has(pos) ? s : new Set(s).add(pos))), [pos])
+  const drawsPanel = (p: number) => Math.abs(pos - p) <= 1 || opened.has(p)
   const error = !!onRetry
   const overviewFade = useEdgeFade(overview, [flows.length], natural)
   // natural のときは、横に並ぶ面のうち今の面の高さに枠を合わせる（ほかの面の高さで下が空かないように）
@@ -390,26 +410,26 @@ export function Flow({ flows: given, total: year, className, bare, onMoku, natur
     const el = track.current
     if (!natural || !el) return
     const panels = [...el.children] as HTMLElement[]
-    const measure = () => setTrackHeight(panels[index]?.offsetHeight)
+    const measure = () => setTrackHeight(panels[pos]?.offsetHeight)
     measure()
     const observer = new ResizeObserver(measure)
     for (const p of panels) observer.observe(p)
     return () => observer.disconnect()
-  }, [natural, index, flows.length])
+  }, [natural, pos, flows.length, R])
   const onScroll = () => {
     const el = track.current
     if (!el) return
-    const next = Math.round(el.scrollLeft / el.clientWidth)
+    const next = Math.round(el.scrollLeft / el.clientWidth) - R
     setIndex((prev) => (prev === next ? prev : next))
   }
-  // 全体図で押した款の面へ移り、項を押したときはその項まで縦に送る
-  const select = (kanIndex: number, kouIndex?: number) => {
+  // 全体図で押した款の面（p は面の位置）へ移り、項を押したときはその項まで縦に送る
+  const select = (p: number, kouIndex?: number) => {
     const el = track.current
     if (!el) return
     // 遠い款の面はまだ中身が無いので、項まで送る前に描いておく
-    flushSync(() => setOpened((s) => new Set(s).add(kanIndex + 1)))
-    el.scrollTo({ left: (kanIndex + 1) * el.clientWidth, behavior: 'smooth' })
-    const panel = el.querySelectorAll<HTMLElement>('[data-panel]')[kanIndex]
+    flushSync(() => setOpened((s) => new Set(s).add(p)))
+    el.scrollTo({ left: p * el.clientWidth, behavior: 'smooth' })
+    const panel = el.querySelector<HTMLElement>(`[data-pos="${p}"]`)
     const body = panel?.lastElementChild as HTMLElement | null
     const section = kouIndex === undefined ? undefined : body?.querySelectorAll<HTMLElement>('[data-kou]')[kouIndex]
     if (!body) return
@@ -422,7 +442,8 @@ export function Flow({ flows: given, total: year, className, bare, onMoku, natur
     body.scrollTo({ top, behavior: 'instant' })
     el.focus({ preventScroll: true })
   }
-  const goTo = (i: number) => track.current?.scrollTo({ left: i * (track.current?.clientWidth ?? 0), behavior: 'smooth' })
+  /** p は面の位置（歳入の面を含めて左から数える） */
+  const goTo = (p: number) => track.current?.scrollTo({ left: p * (track.current?.clientWidth ?? 0), behavior: 'smooth' })
   const go = (delta: number) => track.current?.scrollBy({ left: delta * (track.current?.clientWidth ?? 0), behavior: 'smooth' })
   const onKey = (e: React.KeyboardEvent) => {
     if (e.key === 'ArrowRight') { go(1); e.preventDefault() }
@@ -430,8 +451,10 @@ export function Flow({ flows: given, total: year, className, bare, onMoku, natur
   }
   const total = flows.length
   const overviewHeight = Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))
-  const kan = index > 0 ? flows[index - 1] : undefined
-  const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) || 1
+  const kan = index > 0 ? flows[index - 1] : index < -1 ? revenue[-index - 2] : undefined
+  const incoming = index < 0
+  const revenueTotal = revenue.reduce((s, f) => s + Math.max(0, f.kan.yen), 0)
+  const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) + revenueTotal || 1
   return (
     <div ref={root} className={cn('flex min-w-0 scroll-mt-[122px] flex-col rounded-[20px] border bg-background @4xl:scroll-mt-[77px]', !natural && 'h-[calc(100svh-61px-53px-1.5rem)] min-h-[480px] @4xl:h-[calc(100svh-61px-2rem)]', bare && 'rounded-none border-0', className)}>
       <div className={cn('shrink-0', bare ? 'pt-1' : 'px-5 pt-5 sm:px-6')}>
@@ -441,19 +464,24 @@ export function Flow({ flows: given, total: year, className, bare, onMoku, natur
           <div className="flex min-w-0 flex-col sm:flex-row sm:items-baseline sm:gap-x-3" aria-live="polite">
             {kan ? (
               <>
-                <span className="min-w-0 truncate text-sm text-muted-foreground">{kan.kan.name}</span>
-                <b className="shrink-0 text-[26px] font-normal leading-snug tabular-nums">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
+                <span className="min-w-0 truncate text-sm text-muted-foreground">{incoming ? `入る・${kan.kan.name}` : kan.kan.name}</span>
+                <b className={cn('shrink-0 text-[26px] font-normal leading-snug tabular-nums', incoming && 'text-(--kincha-ink)')}>{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
+              </>
+            ) : index === -1 ? (
+              <>
+                <span className="min-w-0 truncate text-sm text-muted-foreground">入る（歳入）すべて</span>
+                <b className="shrink-0 text-[26px] font-normal leading-snug tabular-nums text-(--kincha-ink)">{amountText(revenueTotal)}</b>
               </>
             ) : (
               <>
-                <span className="min-w-0 truncate text-sm text-muted-foreground">すべて</span>
+                <span className="min-w-0 truncate text-sm text-muted-foreground">{R ? '使う（歳出）すべて' : 'すべて'}</span>
                 <b className="shrink-0 text-[26px] font-normal leading-snug tabular-nums">{amountText(year.yen)}</b>
               </>
             )}
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
-            <span className="text-xs tabular-nums text-muted-foreground">{kan ? `${levels.kan} ${index} / ${total}` : ''}</span>
-            <Button variant="outline" size="icon-sm" aria-label={`前の${levels.kan}`} disabled={index === 0} onClick={() => go(-1)} className="rounded-full [@media(hover:none)]:hidden"><CaretLeftIcon /></Button>
+            <span className="text-xs tabular-nums text-muted-foreground">{kan ? (incoming ? `${levels.kan} ${-index - 1} / ${revenue.length}` : `${levels.kan} ${index} / ${total}`) : ''}</span>
+            <Button variant="outline" size="icon-sm" aria-label={`前の${levels.kan}`} disabled={pos === 0} onClick={() => go(-1)} className="rounded-full [@media(hover:none)]:hidden"><CaretLeftIcon /></Button>
             <Button variant="outline" size="icon-sm" aria-label={`次の${levels.kan}`} disabled={index >= total} onClick={() => go(1)} className="rounded-full [@media(hover:none)]:hidden"><CaretRightIcon /></Button>
           </div>
         </div>
@@ -461,24 +489,40 @@ export function Flow({ flows: given, total: year, className, bare, onMoku, natur
         <TickMenu
           label={`${levels.kan}へ移る`}
           side="bottom"
-          current={index}
+          current={pos}
           onPick={goTo}
-          items={[{ key: 'overview', name: '全体', note: formatYen(year.yen) }, ...flows.map((f) => ({ key: f.kan.id, name: f.kan.name, note: amountText(f.kan.yen, f.kan.amountMissing) }))]}
+          items={[
+            ...revenueOrder.map((f) => ({ key: `in-${f.kan.id}`, name: `入る・${f.kan.name}`, note: amountText(f.kan.yen, f.kan.amountMissing) })),
+            ...(R ? [{ key: 'in-overview', name: '入る（歳入）全体', note: formatYen(revenueTotal) }] : []),
+            { key: 'overview', name: R ? '使う（歳出）全体' : '全体', note: formatYen(year.yen) },
+            ...flows.map((f) => ({ key: f.kan.id, name: f.kan.name, note: amountText(f.kan.yen, f.kan.amountMissing) })),
+          ]}
           className="mt-1 flex gap-0.5"
         >
-          <button type="button" onClick={() => goTo(0)} aria-label="全体" aria-current={index === 0 || undefined} className="group/seg w-3.5 py-1">
+          {/* 歳入の目盛りは使うの左に、入るの色で並べる */}
+          {revenueOrder.map((f, i) => (
+            <button key={`in-${f.kan.id}`} type="button" onClick={() => goTo(i)} aria-label={`入る・${f.kan.name}`} aria-current={pos === i || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
+              <i className={`block h-1.5 rounded-sm transition-colors ${pos === i ? 'bg-(--kincha-ink)' : 'bg-border group-hover/seg:bg-(--kincha)'}`} />
+            </button>
+          ))}
+          {R ? (
+            <button type="button" onClick={() => goTo(R - 1)} aria-label="入る（歳入）全体" aria-current={index === -1 || undefined} className="group/seg mr-1 w-3.5 py-1">
+              <i className={`block h-1.5 rounded-sm transition-colors ${index === -1 ? 'bg-(--kincha-ink)' : 'bg-border group-hover/seg:bg-(--kincha)'}`} />
+            </button>
+          ) : null}
+          <button type="button" onClick={() => goTo(R)} aria-label="全体" aria-current={index === 0 || undefined} className="group/seg w-3.5 py-1">
             {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
             <i className={`block h-1.5 rounded-sm transition-colors ${index === 0 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
           </button>
           {flows.map((f, i) => (
-            <button key={f.kan.id} type="button" onClick={() => goTo(i + 1)} aria-label={f.kan.name} aria-current={index === i + 1 || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
+            <button key={f.kan.id} type="button" onClick={() => goTo(R + i + 1)} aria-label={f.kan.name} aria-current={index === i + 1 || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
               {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
               <i className={`block h-1.5 rounded-sm transition-colors ${index === i + 1 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
             </button>
           ))}
         </TickMenu>
         <p className="mt-2 text-xs text-muted-foreground">
-          {index > 0 ? natural ? null : <>縦にスクロールすると、{levels.kan}の中の{levels.kou}が一つずつ開きます。{index < total ? `横で次の${levels.kan}へ。` : null}</> : '横にスクロールすると、詳細が開きます。'}
+          {index !== 0 ? natural ? null : <>縦にスクロールすると、{levels.kan}の中の{levels.kou}が一つずつ開きます。{index < total ? `横で次の${levels.kan}へ。` : null}</> : R ? '右へスクロールすると使うお金（歳出）の、左へスクロールすると入るお金（歳入）の詳細が開きます。' : '横にスクロールすると、詳細が開きます。'}
         </p>
       </div>
       <div className={cn('relative mt-2', !natural && 'min-h-0 flex-1')}>
@@ -492,15 +536,23 @@ export function Flow({ flows: given, total: year, className, bare, onMoku, natur
           style={natural ? { height: trackHeight } : undefined}
           className={cn('flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden', natural ? 'items-start transition-[height] duration-300' : 'h-full')}
         >
+          {revenueOrder.map((f, i) => drawsPanel(i)
+            ? <KanPanel key={`in-${f.kan.id}`} drill={f} loading={false} levels={levels} natural={natural} shown={pos === i} pos={i} style={INCOMING} />
+            : <div key={`in-${f.kan.id}`} className={cn('w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel aria-hidden="true" />)}
+          {R ? (
+            <div style={INCOMING} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
+              <Overview flows={revenue} total={revenueTotal} levels={levels} onSelect={(k, kou) => select(R - 2 - k, kou)} height={overviewHeight} />
+            </div>
+          ) : null}
           <div ref={overview} style={overviewFade} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
             {flows.length > 0 ? (
-              <Overview flows={flows} total={year.yen} levels={levels} onSelect={select} height={overviewHeight} />
+              <Overview flows={flows} total={year.yen} levels={levels} onSelect={(k, kou) => select(R + k + 1, kou)} height={overviewHeight} />
             ) : (
               error ? null : <OverviewSkeleton total={year.yen} levels={levels} height={overviewHeight} />
             )}
           </div>
-          {flows.map((f, i) => drawsPanel(i + 1)
-            ? <KanPanel key={f.kan.id} drill={f} loading={!given && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} />
+          {flows.map((f, i) => drawsPanel(R + i + 1)
+            ? <KanPanel key={f.kan.id} drill={f} loading={!given && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} pos={R + i + 1} />
             : <div key={f.kan.id} className={cn('w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel aria-hidden="true" />)}
         </div>
       </div>
