@@ -2,15 +2,18 @@
 (docs/prd/ingestion-receipts/dd.md, stage 3).
 
 A saved manifest declares its conversions; the tables are in R2 and the receipts list (`fiscal/ingestion/
-receipts.json`) points at them. After merge, every conversion of a changed manifest whose tables the list lacks,
-or holds under another declaration or a stale fingerprint, is converted from the originals and OCR observations
-in R2 and checked by the save gate. Then, per table:
+receipts.json`) points at them. After merge, the conversions of a changed manifest whose tables the list lacks
+or holds under another declaration are converted from the originals and OCR observations in R2 and checked by
+the save gate. When a manifest has any such conversion, its conversions with a stale fingerprint are converted
+too (a partial conversion keeps only current tables). A manifest whose declarations are all stored is left to
+`ingestion:refresh`, however stale. Then, per table:
 
 - the declaration changed (or the table is new): the table is stored as main converts it, and the difference
   from the previous table is reported. A converter merged after the pull request's check no longer stops this.
 - the declaration is the same and only the fingerprint is stale: identical content only refreshes the
   fingerprint. Different content (converter drift brought along by a change elsewhere in the manifest) is
-  stored and reported as ``drifted``. Manifests nobody touches are compared by `ingestion:refresh`.
+  stored and reported as ``drifted``. Such a table is converted only alongside a changed declaration in the
+  same manifest; manifests without one, touched or not, are compared by `ingestion:refresh`.
 
 A manifest that fails (a save gate, a missing Jev answer) stores nothing (its receipts stay); the others are stored and the job fails afterwards.
 Parquet keys hold the content sha, so an upload never overwrites a table a build may be reading, and only the
