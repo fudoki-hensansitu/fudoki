@@ -875,7 +875,6 @@ function ProjectPageBody({ id }: { id: string }) {
   const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
   if (p === FAILED || p.year === undefined || !p.kind) return <LoadFailed />
   const year = p.year
-  const label = p.kind === 'initial' ? '当初予算' : '決算'
   const frame = (p.cofog ? frameOf(p.cofog) : undefined) ?? OTHER_FRAME
   const rows = Object.keys(p.y).map(Number).sort((a, b) => b - a)
   return (
@@ -913,9 +912,14 @@ function ProjectPageBody({ id }: { id: string }) {
         </DetailSection>
       ) : null}
       {p.kids.length ? (
-        <DetailSection icon={TreeStructureIcon} title="内訳" count={`${r(year)}年度の${label} · ${p.kids.length}件`}>
-          <Infinite items={p.kids} step={10} render={({ name, yen }, i) => (
-            <div key={i} className="flex items-center gap-3 px-1.5 py-2 text-[15px]"><span className="flex-1">{name}</span><Amt yen={yen} className="text-base" /></div>
+        <DetailSection icon={TreeStructureIcon} title="内訳" count={`${p.kids.length}件`}>
+          {/* 内訳の一つ一つも年度をまたぐ事業なので、押すとその事業の頁へ移る。額はその事業の最新の年度のもの */}
+          <Infinite items={p.kids} step={10} render={(k, i) => (
+            <button key={k.id ?? i} type="button" onClick={() => k.id && select({ kind: 'project', id: k.id })} className="flex w-full items-center gap-3 px-1.5 py-2 text-left text-[15px] hover:bg-card">
+              <span className="flex-1">{k.name}</span>
+              {k.fy !== undefined ? <span className="text-xs text-muted-foreground">{r(k.fy)} {k.kind === 'initial' ? '当初予算' : '決算'}</span> : null}
+              <Amt yen={k.yen} className="text-base" />
+            </button>
           )} />
         </DetailSection>
       ) : null}

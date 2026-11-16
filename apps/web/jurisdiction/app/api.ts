@@ -219,7 +219,7 @@ export type ProjectFull = {
   /** 年度ごとの当初予算（b）と決算（s） */
   y: Record<string, { b: number | null; s: number | null }>
   /** 開いた年度の中の事業（名前・金額）。金額の多い順 */
-  kids: { name: string; yen: number | null }[]
+  kids: { name: string; yen: number | null; /** 事業の頁（年度を指さずに読んだとき）は、内訳の事業の ID と、額の年度・資料（その事業の最新の年度） */ id?: string; fy?: number; kind?: Kind }[]
   /** 分野を引く科目（開いた年度、無ければ最新の年度の行） */
   subject: string | null
   /** この事業と中の事業につないだ評価シート（年度を指して読めばその年度、指さなければ事業の年度すべて） */
@@ -238,11 +238,12 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
   const latest = p.years.at(-1)
   const year = at?.year ?? latest?.fiscal_year ?? new Date().getFullYear()
   const kind: Kind = at?.kind ?? (latest?.settled_yen != null ? 'settlement' : 'initial')
-  const kids = await searchYears(call, { fiscal_year: { min: year, max: year }, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody)
-  // 事業の頁（at なし）は、事業の年度すべての評価シートを引く（評価は評価した事業を行った年度に付くので、最新の年度には無いことが多い）。
-  // 検索は5年度までなので、新しい方から5年度
+  // 事業の頁（at なし）は年度をまたいで内訳の事業を引く。検索は5年度までなので、新しい方から5年度
   const first = p.years[0]?.fiscal_year ?? year
   const span = at ? { min: year, max: year } : { min: Math.max(first, year - (MAX_SHEET_YEARS - 1)), max: year }
+  const kids = await searchYears(call, { fiscal_year: span, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody)
+  // 事業の頁（at なし）は、事業の年度すべての評価シートを引く（評価は評価した事業を行った年度に付くので、最新の年度には無いことが多い）。
+  // 検索は5年度までなので、新しい方から5年度
   const sheets = await readSheetsOfProjects(call, span, [id, ...kids.project_years.map((k) => k.project_id)])
   const here = p.years.find((y) => y.fiscal_year === year) ?? latest
   const subject = here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null
@@ -256,11 +257,23 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
     started: p.project.first_year_kind === 'confirmed' ? p.project.first_year : null,
     ended: p.project.last_year_kind === 'confirmed' ? p.project.last_year : null,
     y: Object.fromEntries(p.years.map((y) => [String(y.fiscal_year), { b: y.budget_yen, s: y.settled_yen }])),
-    kids: kids.project_years.map((k) => ({ name: clean(k.name), yen: kind === 'initial' ? k.budget_yen : k.settled_yen })),
+    kids: at ? kids.project_years.map((k) => ({ name: clean(k.name), yen: kind === 'initial' ? k.budget_yen : k.settled_yen })) : latestKids(kids.project_years),
     subject,
     sheets,
     ...(at ? {} : { year, kind, cofog }),
   }
+}
+
+/** 内訳の事業ごとに、その事業の最新の年度の行（決算があれば決算の額）。額の多い順 */
+function latestKids(rows: SearchResult['project_years']): ProjectFull['kids'] {
+  const last = new Map<string, SearchResult['project_years'][number]>()
+  for (const y of rows) if ((last.get(y.project_id)?.fiscal_year ?? 0) < y.fiscal_year) last.set(y.project_id, y)
+  return [...last.values()]
+    .map((y) => {
+      const kind: Kind = y.settled_yen != null ? 'settlement' : 'initial'
+      return { id: y.project_id, name: clean(y.name), yen: kind === 'settlement' ? y.settled_yen : y.budget_yen, fy: y.fiscal_year, kind }
+    })
+    .sort((a, b) => (b.yen ?? -1) - (a.yen ?? -1))
 }
 
 /** 科目の COFOG のコード。科目は当初予算・決算のどちらかの資料にある */
