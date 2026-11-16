@@ -73,3 +73,6 @@ jobs:
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
           INGESTION_PENDING_RECEIPTS: ${{ github.workspace }}/pipeline/.build/pending-receipts.json
+          # 全件の範囲（自治体の列を持たない seed を変えた PR）の build は 4GB だと int_fiscal__rows で DuckDB の上限に
+          # 当たる。sync-d1 と同じく runner（16GB）に合わせて上げる
+          FUDOKI_DUCKDB_MEMORY_LIMIT: 12GB
