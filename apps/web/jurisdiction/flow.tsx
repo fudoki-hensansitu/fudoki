@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
 import { Overview, OverviewSkeleton } from './sankey'
+import { MoneyFlow } from './app/income-flow'
 import { formatShare, formatYen, type Drill, type Kou, type Moku, type YearTotal } from './types'
 
 /** 歳入の面は、緑（使う）の代わりに入るの色で描く。図の部品は --primary で色を付けているので、面の中だけ差し替える */
@@ -376,11 +377,13 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
   const overview = React.useRef<HTMLDivElement>(null)
   const flows = given ?? []
   const revenue = revenueGiven ?? []
-  // 歳入の款の面の数。面は左から 歳入の款（小さい順）→ 全体図（歳入と歳出の款を真ん中で向き合わせる）→ 歳出の款（大きい順）と並ぶ
-  const R = revenue.length
+  // 面は左から 歳入の款（小さい順）→ 歳入の全体図（項 ← 款）→ 真ん中の図（歳入の款 → 一般会計 → 歳出の款）→ 歳出の全体図（款 → 項）→ 歳出の款（大きい順）と並ぶ。
+  // R は真ん中の図の位置（歳入の無いまちは真ん中の図も歳入の面も無く、歳出の全体図が 0）。D は歳出の全体図の index
+  const R = revenue.length ? revenue.length + 1 : 0
+  const D = R ? 1 : 0
   /** 歳入の款を面の並び（左から、小さい款から）にしたもの。全体図の隣が一番大きい款 */
   const revenueOrder = React.useMemo(() => [...revenue].reverse(), [revenue])
-  /** 全体図を 0 とした今の面。歳出の款は 1 から右へ、歳入の款は -1 から左へ */
+  /** 開いたときの面（真ん中の図、歳入が無ければ歳出の全体図）を 0 とした今の面。歳入の全体図は -1、歳入の款は -2 から左へ */
   const [index, setIndex] = React.useState(0)
   const pos = index + R
   // 開いたときは全体図から見せる。歳入の面が増えたら、同じ面を見せたまま左に足す
@@ -445,7 +448,7 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
   }
   const total = flows.length
   const overviewHeight = Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))
-  const kan = index > 0 ? flows[index - 1] : index < 0 ? revenue[-index - 1] : undefined
+  const kan = index > D ? flows[index - D - 1] : index < -1 ? revenue[-index - 2] : undefined
   const incoming = index < 0
   const revenueTotal = revenue.reduce((s, f) => s + Math.max(0, f.kan.yen), 0)
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) + revenueTotal || 1
@@ -461,9 +464,14 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
                 <span className={HEAD_NAME}>{kan.kan.name}</span>
                 <b className={cn(HEAD_YEN, incoming && 'text-(--kincha-ink)')}>{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
               </>
+            ) : index === -1 ? (
+              <>
+                <span className={HEAD_NAME}>歳入</span>
+                <b className={cn(HEAD_YEN, 'text-(--kincha-ink)')}>{amountText(revenueTotal)}</b>
+              </>
             ) : (
               <>
-                {R ? (
+                {R && index === 0 ? (
                   <span className="flex items-baseline gap-x-3">
                     <span className={HEAD_NAME}>歳入</span>
                     <b className={cn(HEAD_YEN, 'text-(--kincha-ink)')}>{amountText(revenueTotal)}</b>
@@ -477,9 +485,9 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
             )}
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
-            <span className="text-xs tabular-nums text-muted-foreground">{kan ? (incoming ? `${levels.kan} ${-index} / ${revenue.length}` : `${levels.kan} ${index} / ${total}`) : ''}</span>
+            <span className="text-xs tabular-nums text-muted-foreground">{kan ? (incoming ? `${levels.kan} ${-index - 1} / ${revenue.length}` : `${levels.kan} ${index - D} / ${total}`) : ''}</span>
             <Button variant="outline" size="icon-sm" aria-label={`前の${levels.kan}`} disabled={pos === 0} onClick={() => go(-1)} className="rounded-full [@media(hover:none)]:hidden"><CaretLeftIcon /></Button>
-            <Button variant="outline" size="icon-sm" aria-label={`次の${levels.kan}`} disabled={index >= total} onClick={() => go(1)} className="rounded-full [@media(hover:none)]:hidden"><CaretRightIcon /></Button>
+            <Button variant="outline" size="icon-sm" aria-label={`次の${levels.kan}`} disabled={index >= D + total} onClick={() => go(1)} className="rounded-full [@media(hover:none)]:hidden"><CaretRightIcon /></Button>
           </div>
         </div>
         {/* 款の目盛り。押すとその款（先頭は全体図）へ移る。押せる高さを取り、見える棒は細いまま */}
@@ -490,7 +498,8 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
           onPick={goTo}
           items={[
             ...revenueOrder.map((f) => ({ key: `in-${f.kan.id}`, name: `歳入・${f.kan.name}`, note: amountText(f.kan.yen, f.kan.amountMissing) })),
-            { key: 'overview', name: '全体', note: formatYen(year.yen) },
+            ...(R ? [{ key: 'in-overview', name: '歳入の全体', note: formatYen(revenueTotal) }, { key: 'middle', name: '歳入と歳出', note: formatYen(year.yen) }] : []),
+            { key: 'overview', name: R ? '歳出の全体' : '全体', note: formatYen(year.yen) },
             ...flows.map((f) => ({ key: f.kan.id, name: f.kan.name, note: amountText(f.kan.yen, f.kan.amountMissing) })),
           ]}
           className="mt-1 flex gap-0.5"
@@ -501,19 +510,29 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
               <i className={`block h-1.5 rounded-sm transition-colors ${pos === i ? 'bg-(--kincha-ink)' : 'bg-border group-hover/seg:bg-(--kincha)'}`} />
             </button>
           ))}
-          <button type="button" onClick={() => goTo(R)} aria-label="全体" aria-current={index === 0 || undefined} className="group/seg w-3.5 py-1">
+          {R ? (
+            <>
+              <button type="button" onClick={() => goTo(R - 1)} aria-label="歳入の全体" aria-current={index === -1 || undefined} className="group/seg w-3.5 py-1">
+                <i className={`block h-1.5 rounded-sm transition-colors ${index === -1 ? 'bg-(--kincha-ink)' : 'bg-border group-hover/seg:bg-(--kincha)'}`} />
+              </button>
+              <button type="button" onClick={() => goTo(R)} aria-label="歳入と歳出" aria-current={index === 0 || undefined} className="group/seg mx-1 w-5 py-1">
+                <i className={`block h-1.5 rounded-sm transition-colors ${index === 0 ? 'bg-foreground' : 'bg-border group-hover/seg:bg-muted-foreground'}`} />
+              </button>
+            </>
+          ) : null}
+          <button type="button" onClick={() => goTo(R + D)} aria-label={R ? '歳出の全体' : '全体'} aria-current={index === D || undefined} className="group/seg w-3.5 py-1">
             {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
-            <i className={`block h-1.5 rounded-sm transition-colors ${index === 0 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
+            <i className={`block h-1.5 rounded-sm transition-colors ${index === D ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
           </button>
           {flows.map((f, i) => (
-            <button key={f.kan.id} type="button" onClick={() => goTo(R + i + 1)} aria-label={f.kan.name} aria-current={index === i + 1 || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
+            <button key={f.kan.id} type="button" onClick={() => goTo(R + D + i + 1)} aria-label={f.kan.name} aria-current={index === D + i + 1 || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
               {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
-              <i className={`block h-1.5 rounded-sm transition-colors ${index === i + 1 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
+              <i className={`block h-1.5 rounded-sm transition-colors ${index === D + i + 1 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
             </button>
           ))}
         </TickMenu>
         <p className="mt-2 text-xs text-muted-foreground">
-          {index !== 0 ? natural ? null : <>縦にスクロールすると、{levels.kan}の中の{levels.kou}が一つずつ開きます。{index < total ? `横で次の${levels.kan}へ。` : null}</> : R ? `右へスクロールすると歳出の、左へスクロールすると歳入の${levels.kan}ごとの内訳が開きます。` : '横にスクロールすると、詳細が開きます。'}
+          {kan ? natural ? null : <>縦にスクロールすると、{levels.kan}の中の{levels.kou}が一つずつ開きます。{index < D + total ? `横で次の${levels.kan}へ。` : null}</> : R && index === 0 ? '右へスクロールすると歳出の、左へスクロールすると歳入の内訳が開きます。' : '横にスクロールすると、詳細が開きます。'}
         </p>
       </div>
       <div className={cn('relative mt-2', !natural && 'min-h-0 flex-1')}>
@@ -530,23 +549,40 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
           {revenueOrder.map((f, i) => drawsPanel(i)
             ? <KanPanel key={`in-${f.kan.id}`} drill={f} loading={false} levels={levels} natural={natural} shown={pos === i} pos={i} style={INCOMING} noSetsu />
             : <div key={`in-${f.kan.id}`} className={cn('w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel aria-hidden="true" />)}
-          {/* 全体図。歳入があれば、左に歳入（項 ← 款）、右に歳出（款 → 項）を置き、款どうしを真ん中で向き合わせる。狭い画面は歳入を上に重ねる */}
-          <div ref={overview} style={overviewFade} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', R && 'grid grid-cols-1 content-start gap-8 lg:grid-cols-2 lg:gap-0', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
-            {R ? (
-              <div style={INCOMING} className="min-w-0">
-                <Overview flows={revenue} total={revenueTotal} levels={levels} label="歳入" mirror onSelect={(k, kou) => select(R - 1 - k, kou)} height={overviewHeight} />
+          {R ? (
+            <>
+              {/* 歳入の全体図。左右を逆にして（項 ← 款）、款を真ん中の図の側に置く */}
+              <div style={INCOMING} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
+                <Overview flows={revenue} total={revenueTotal} levels={levels} label="歳入" mirror onSelect={(k, kou) => select(R - 2 - k, kou)} height={overviewHeight} />
               </div>
-            ) : null}
-            <div className="min-w-0">
-              {flows.length > 0 ? (
-                <Overview flows={flows} total={year.yen} levels={levels} onSelect={(k, kou) => select(R + k + 1, kou)} height={overviewHeight} />
-              ) : (
-                error ? null : <OverviewSkeleton total={year.yen} levels={levels} height={overviewHeight} />
-              )}
-            </div>
+              {/* 真ん中の図。歳入の款 → 一般会計 → 歳出の款。款を押すとその款の面へ */}
+              <div className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
+                {flows.length > 0 ? (
+                  <MoneyFlow
+                    heads={['歳入', '一般会計', '歳出']}
+                    name="歳入の款から一般会計を通って歳出の款への流れ"
+                    incoming={revenue.filter((f) => f.kan.yen > 0).map((f) => ({ id: f.kan.id, label: f.kan.name, yen: f.kan.yen, tone: 'in' as const, base: revenueTotal, onClick: () => select(R - 2 - revenue.indexOf(f)) }))}
+                    outgoing={[
+                      ...flows.filter((f) => f.kan.yen > 0).map((f) => ({ id: f.kan.id, label: f.kan.name, yen: f.kan.yen, tone: 'out' as const, base: year.yen, onClick: () => select(R + D + 1 + flows.indexOf(f)) })),
+                      // 決算は入ったお金が使ったお金より多い。差は灰色で右に足して高さを揃える
+                      ...(revenueTotal > year.yen ? [{ id: 'rest', label: '翌年度へ繰り越すお金など', yen: revenueTotal - year.yen, tone: 'rest' as const }] : []),
+                    ]}
+                  />
+                ) : (
+                  error ? null : <OverviewSkeleton total={year.yen} levels={levels} height={overviewHeight} />
+                )}
+              </div>
+            </>
+          ) : null}
+          <div ref={overview} style={overviewFade} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
+            {flows.length > 0 ? (
+              <Overview flows={flows} total={year.yen} levels={levels} onSelect={(k, kou) => select(R + D + 1 + k, kou)} height={overviewHeight} />
+            ) : (
+              error ? null : <OverviewSkeleton total={year.yen} levels={levels} height={overviewHeight} />
+            )}
           </div>
-          {flows.map((f, i) => drawsPanel(R + i + 1)
-            ? <KanPanel key={f.kan.id} drill={f} loading={!given && !error} levels={levels} natural={natural} shown={index === i + 1} pos={R + i + 1} />
+          {flows.map((f, i) => drawsPanel(R + D + i + 1)
+            ? <KanPanel key={f.kan.id} drill={f} loading={!given && !error} levels={levels} natural={natural} shown={index === D + i + 1} pos={R + D + i + 1} />
             : <div key={f.kan.id} className={cn('w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel aria-hidden="true" />)}
         </div>
       </div>
