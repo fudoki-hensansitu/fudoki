@@ -69,6 +69,28 @@ const geometry = (kanValues: number[], kouValues: number[], width: number, heigh
   return { narrow, x0, x1, kans, kouNodes, total: Math.max(end(kans), end(kouNodes), 40) }
 }
 
+// タブへ移ると、すぐ描いた頁を loader が読み終えた頁で作り直す。同じ図を少し前に描いたなら、作り直した図では帯を伸ばし直さない（FieldsSection の grownAt と同じ）
+const drawnAt = new Map<string, number>()
+/** 図が画面に入ったら true（帯が伸び始める）。still は少し前に同じ図を描いたので動かさないとき */
+export function useFlowSeen(ref: React.RefObject<HTMLElement | null>, key: string) {
+  const [still] = React.useState(() => {
+    // サーバーの描画は頁ごとに1回なので覚えない
+    if (typeof window === 'undefined') return false
+    const last = drawnAt.get(key)
+    drawnAt.set(key, Date.now())
+    return last !== undefined && Date.now() - last < 5000
+  })
+  const [seen, setSeen] = React.useState(still)
+  React.useEffect(() => {
+    const el = ref.current
+    if (!el || seen) return
+    const observer = new IntersectionObserver(([e]) => { if (e?.isIntersecting) { setSeen(true); observer.disconnect() } }, { threshold: 0.2 })
+    observer.observe(el)
+    return () => observer.disconnect()
+  }, [])
+  return { seen, still }
+}
+
 function useWidth(ref: React.RefObject<HTMLElement | null>) {
   const [width, setWidth] = React.useState(0)
   React.useEffect(() => {
@@ -95,14 +117,7 @@ const pick = (fn: () => void) => ({
 export function Overview({ flows, total: base, height = 520, levels = { kan: '款', kou: '項' }, onSelect }: { flows: Drill[]; total: number; height?: number; levels?: { kan: string; kou: string }; onSelect?: (kan: number, kou?: number) => void }) {
   const ref = React.useRef<HTMLDivElement>(null)
   // 図が画面に入ってから帯が伸びる動きを始める
-  const [seen, setSeen] = React.useState(false)
-  React.useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(([e]) => { if (e?.isIntersecting) { setSeen(true); observer.disconnect() } }, { threshold: 0.2 })
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
+  const { seen, still } = useFlowSeen(ref, `${levels.kan}:${base}:${flows.length}`)
   const pct = (yen: number, missing?: boolean) => formatShare(yen, base, missing) ?? '—'
   const width = useWidth(ref)
   const kous = flows.flatMap((flow, kanIndex) => flow.kou.map((kou, kouIndex) => ({ kanIndex, kouIndex, kou })))
@@ -113,7 +128,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
     // 幅を測る前（最初の描画）から図の高さを取っておき、読み込み中の形から図に替わるときに下が動かないようにする
     <div ref={ref} className="relative w-full" style={{ height: total + HEAD }}>
       {width ? (
-        <svg width={width} height={total + HEAD} role="img" aria-label={`${levels.kan}から${levels.kou}への歳出の流れ`} data-seen={seen ? '' : undefined} className="flow-svg block font-sans">
+        <svg width={width} height={total + HEAD} role="img" aria-label={`${levels.kan}から${levels.kou}への歳出の流れ`} data-seen={seen ? '' : undefined} data-still={still ? '' : undefined} className="flow-svg block font-sans">
           <g aria-hidden="true" className="fill-muted-foreground" fontSize={11}>
             <text x={x0 + BAR} y={11} textAnchor="end">{levels.kan}</text>
             <text x={x1} y={11}>{levels.kou}</text>
