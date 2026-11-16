@@ -4,9 +4,9 @@ import unittest
 from ingestion.project.link_projects import link
 
 
-def row(detail_id, year, names, parent=None):
+def row(detail_id, year, names, parent=None, kind='initial'):
     """(detail_id, parent_detail_id, *KEY, name, print_order)。会計・款・項・目は全部同じ"""
-    return (detail_id, parent, '131091', year, 'initial', '一般会計', '民生費', '児童福祉費', '保育園費',
+    return (detail_id, parent, '131091', year, kind, '一般会計', '民生費', '児童福祉費', '保育園費',
             json.dumps(names, ensure_ascii=False), names[-1], 0)
 
 
@@ -43,6 +43,29 @@ class LinkPreviousTest(unittest.TestCase):
             row('b', 2025, ['学校改築費']), row('b1', 2025, ['学校改築費', '区立第2小学校改築事業'], 'b'),
         ])
         self.assertNotEqual(ids['a1'], ids['b1'])
+
+    def test_名前の末尾の式が年度で変わる事業は前の年度と結ぶ(self):
+        ids = self.ids([
+            row('a', 2024, ['療養給付費']), row('a1', 2024, ['療養給付費', '7歳~69歳分16,124,513×0.7='], 'a'),
+            row('a2', 2024, ['療養給付費', '0歳~6歳分268,062×0.8='], 'a'),
+            row('b', 2025, ['療養給付費']), row('b1', 2025, ['療養給付費', '7歳~69歳分16,026,551×0.7='], 'b'),
+            row('b2', 2025, ['療養給付費', '0歳~6歳分177,194×0.8='], 'b'),
+        ])
+        self.assertEqual(ids['a1'], ids['b1'])
+        self.assertEqual(ids['a2'], ids['b2'])
+
+
+class BuildYearsTest(unittest.TestCase):
+    def test_当初予算と決算で末尾の式が違う事業は同じ年度に結ぶ(self):
+        ids = {d: p for d, p, _ in link([
+            row('a', 2025, ['療養給付費']), row('a1', 2025, ['療養給付費', '7歳~69歳分16,026,551×0.7='], 'a'),
+            row('a2', 2025, ['療養給付費', '0歳~6歳分177,194×0.8='], 'a'),
+            row('s', 2025, ['療養給付費'], kind='settlement'), row('s1', 2025, ['療養給付費', '7歳~69歳分0.7'], 's', 'settlement'),
+            row('s2', 2025, ['療養給付費', '0歳~6歳分0.8'], 's', 'settlement'),
+        ])}
+        self.assertEqual(ids['a1'], ids['s1'])
+        self.assertEqual(ids['a2'], ids['s2'])
+        self.assertNotEqual(ids['a1'], ids['a2'])
 
 
 if __name__ == '__main__':

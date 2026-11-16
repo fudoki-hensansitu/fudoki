@@ -199,6 +199,8 @@ export type ProjectFull = {
   cofog?: string | null
   /** 予算書の入れ子で上にある事業。目の直下の事業から1つ上の事業までの順（目の直下の事業は空）。年度を指さずに読んだときだけ持つ */
   ancestors?: { id: string; name: string }[]
+  /** 年度ごとの評価（この事業につないだ評価シートの A〜D。新しい方から5年度）。年度を指さずに読んだときだけ持つ */
+  grades?: Record<string, NonNullable<Sheet['grade']>>
   /** 年度ごとの当初予算（b）・決算（s）の事業の行が印字された出典の URL（PDF は頁つき）。年度を指さずに読んだときだけ持つ */
   src?: Record<string, { b?: string; s?: string }>
 }
@@ -219,12 +221,13 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
   const here = p.years.find((y) => y.fiscal_year === year) ?? latest
   const subject = here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null
   // 事業の頁は開いた頁の年度の科目の表を持たないので、分野は科目の COFOG を引いて決める
-  const [cofog, src, ancestors] = at
-    ? [undefined, undefined, undefined]
+  const [cofog, src, ancestors, grades] = at
+    ? [undefined, undefined, undefined, undefined]
     : await Promise.all([
         subject ? subjectCofog(call, subject, here!, year) : null,
         sourcesOf(call, p.years),
         ancestorsOf(call, p.project.parent_project_id),
+        gradesOf(call, span, id),
       ])
   return {
     id,
@@ -237,8 +240,16 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
     kids: at ? kids.project_years.map((k) => ({ name: clean(k.name), yen: kind === 'initial' ? k.budget_yen : k.settled_yen })) : latestKids(kids.project_years),
     subject,
     sheets,
-    ...(at ? {} : { year, kind, cofog, src, ancestors }),
+    ...(at ? {} : { year, kind, cofog, src, ancestors, grades }),
   }
+}
+
+/** 事業につないだ評価シートの、年度ごとの評価。読めなければ空 */
+async function gradesOf(call: ApiCall, span: { min: number; max: number }, id: string): Promise<NonNullable<ProjectFull['grades']>> {
+  const sheets = await readSheetsOfProjects(call, span, [id]).catch(() => [])
+  const out: NonNullable<ProjectFull['grades']> = {}
+  for (const s of sheets) if (s.grade && s.projects.includes(id)) out[String(s.fy)] ??= s.grade
+  return out
 }
 
 /** 入れ子の上にある事業を、親から順に get_project でたどる（目の直下の事業が先頭）。読めなかったところで止める */

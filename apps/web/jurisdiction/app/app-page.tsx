@@ -354,7 +354,6 @@ const cofogOf = (fields: string[]): { cofog?: string[] } => {
 
 
 /** 件数（数えるのを打ち切ったら「以上」） */
-const countOf = (p: Pick<ListPage, 'total' | 'capped'>) => `${p.total.toLocaleString('ja-JP')}件${p.capped ? '以上' : ''}`
 
 // ---------- 画面 ----------
 type TabKey = PageTab
@@ -622,12 +621,8 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
     clearTimeout(timer.current)
     timer.current = setTimeout(() => setQ(t.trim()), 300)
   }
-  const head = (n: string) => (
-    <p className="px-2.5 text-xs text-muted-foreground">
-      {filter === 'new' ? '予算書で新しく現れた事業・' : ''}
-      {n}
-    </p>
-  )
+  // 件数は出さない。新しく始める事業だけ、何を新しいとしたかを添える
+  const head = () => (filter === 'new' ? <p className="px-2.5 text-xs text-muted-foreground">予算書で新しく現れた事業</p> : null)
   const body = (v: YearView) => {
     const list = v.query(filter as ListQuery['filter'], { ...cofogOf(fields), ...(q ? { q } : {}) })
     // 事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある）
@@ -636,13 +631,13 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
       // 目には始めた年度が無いので、新しく始める・やめた事業は出さない
       filter === 'all' ? (
         <>
-          {head(`${moku.length}件`)}
+          {head()}
           <Infinite items={moku} list={(rows) => <ProjectTable rows={rows} />} />
         </>
       ) : null
     ) : list ? (
       <ClientSuspense fallback={<RowsSkeleton />} ready={!!res.peek(listKey(list))}>
-        <ProjectList q={list} head={(page) => head(countOf(page))} />
+        <ProjectList q={list} head={() => head()} />
       </ClientSuspense>
     ) : null
   }
@@ -666,10 +661,10 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
 }
 
 // ---------- 詳細 ----------
-function DetailSection({ icon: I, title, count, children }: { icon: Icon; title: string; count?: React.ReactNode; children: React.ReactNode }) {
+function DetailSection({ icon: I, title, children }: { icon: Icon; title: string; children: React.ReactNode }) {
   return (
     <section className="mt-6">
-      <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}{count != null ? <span className="font-normal text-muted-foreground">{count}</span> : null}</h3>
+      <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}</h3>
       {children}
     </section>
   )
@@ -692,7 +687,7 @@ const projectLatestKey = (id: string) => `project-latest:${id}`
 function BackButton({ label, onClick }: { label: string; onClick: () => void }) {
   return <Button variant="ghost" onClick={onClick} className="-ml-2 min-w-0 max-w-full text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" /><span className="truncate">{label}</span></Button>
 }
-/** 事業の頁の戻る先。自治体と、入れ子の上にある事業をすべてパンくずに並べ、押すとそこへ戻る */
+/** 事業の頁の戻る先。事業のタブと、入れ子の上にある事業をすべてパンくずに並べ、押すとそこへ戻る */
 function ProjectBack({ res, id, label, close, open }: { res: Resources; id: string; label: string; close: () => void; open: (id: string) => void }) {
   const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
   const ancestors = p === FAILED ? [] : (p.ancestors ?? [])
@@ -745,6 +740,7 @@ function ProjectPageBody({ id }: { id: string }) {
   const year = p.year
   const frame = (p.cofog ? frameOf(p.cofog) : undefined) ?? OTHER_FRAME
   const rows = Object.keys(p.y).map(Number).sort((a, b) => b - a)
+  const graded = Object.keys(p.grades ?? {}).length > 0
   return (
     <>
       <ProjectTitle p={p} mark={p.ended != null ? 'stop' : p.started === year ? 'new' : null} />
@@ -752,14 +748,17 @@ function ProjectPageBody({ id }: { id: string }) {
         <Chip><FieldIcon id={frame.id} />{frame.name}</Chip>
       </div>
       <DetailSection icon={CalendarBlankIcon} title="年度ごと">
-        <div className="grid max-w-xl grid-cols-[auto_1fr_1fr] text-[15px]">
+        {/* 評価シートのある年度は、その年度の行に評価（A〜D）を並べる。評価が一つも無ければ列を出さない */}
+        <div className={cn('grid max-w-xl text-[15px]', graded ? 'grid-cols-[auto_1fr_1fr_auto]' : 'grid-cols-[auto_1fr_1fr]')}>
           <span className="py-1.5 text-xs" /><span className="py-1.5 text-right text-xs text-muted-foreground">当初予算</span><span className="px-1 py-1.5 text-right text-xs text-muted-foreground">決算</span>
+          {graded ? <span className="px-2 py-1.5 text-center text-xs text-muted-foreground">評価</span> : null}
           {rows.map((y) => (
             <div key={y} className={cn('col-span-full grid grid-cols-subgrid', y === year && 'bg-card')}>
               <Separator className="col-span-full" />
               <span className="px-1 py-2">{r(y)}</span>
               <span className="py-2 text-right"><SourceAmt yen={p.y[String(y)]?.b} href={p.src?.[String(y)]?.b} label={`${r(y)}年度の当初予算の出典`} /></span>
               <span className="px-1 py-2 text-right"><SourceAmt yen={p.y[String(y)]?.s} href={p.src?.[String(y)]?.s} label={`${r(y)}年度の決算の出典`} /></span>
+              {graded ? <span className="px-2 py-2 text-center">{p.grades?.[String(y)] ?? ''}</span> : null}
             </div>
           ))}
         </div>
@@ -767,11 +766,27 @@ function ProjectPageBody({ id }: { id: string }) {
       {p.kids.length ? (
         <DetailSection icon={TreeStructureIcon} title="内訳">
           {/* 内訳の一つ一つも年度をまたぐ事業なので、押すとその事業の頁へ移る。額はその事業の最新の年度のもの */}
-          <Infinite items={p.kids} step={10} render={(k, i) => (
-            <button key={k.id ?? i} type="button" onClick={() => k.id && openProject(k.id)} className="flex w-full items-center gap-3 px-1.5 py-2 text-left text-[15px] hover:bg-card">
-              <span className="flex-1">{k.name}</span>
-              <Amt yen={k.yen} className="text-base" />
-            </button>
+          <Infinite items={p.kids} step={10} list={(kids) => (
+            <Table className="text-[15px]">
+              <TableHeader>
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="h-9 font-normal">事業名</TableHead>
+                  <TableHead className="h-9 font-normal">年度</TableHead>
+                  <TableHead className="h-9 text-right font-normal">金額</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {kids.map((k, i) => (
+                  <TableRow key={k.id ?? i} onClick={() => k.id && openProject(k.id)} className="cursor-pointer hover:bg-card">
+                    <TableCell className="whitespace-normal py-2.5 [overflow-wrap:anywhere]">
+                      <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{k.name}</button>
+                    </TableCell>
+                    <TableCell className="py-2.5 text-muted-foreground">{k.fy != null ? `${r(k.fy)} ${k.kind === 'initial' ? '当初予算' : '決算'}` : ''}</TableCell>
+                    <TableCell className="py-2.5 text-right tabular-nums">{k.yen == null ? '—' : yenText(k.yen)}</TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
           )} />
         </DetailSection>
       ) : null}
@@ -890,12 +905,15 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   // 事業の頁。URL を /projects/<project_id>（年度の段なし）にして、戻るで前の頁へ帰る。中身は事業の ID で読む
   const [projectPage, setProjectPage] = React.useState<string | null>(initialProject ?? null)
   const openProject = (id: string) => {
-    history.pushState({ ...history.state, project: id }, '', `${basePath()}/${projectSegment(id)}`)
+    // depth は事業の頁を続けて開いた数。事業のタブへ戻るときに、その数だけ履歴を戻る
+    const state = history.state as { project?: string; depth?: number } | null
+    history.pushState({ ...state, project: id, depth: (state?.project ? (state.depth ?? 1) : 0) + 1 }, '', `${basePath()}/${projectSegment(id)}`)
     React.startTransition(() => setProjectPage(id))
     window.scrollTo({ top: 0 })
   }
   const closeProject = () => {
-    if ((history.state as { project?: string } | null)?.project) return history.back()
+    const state = history.state as { project?: string; depth?: number } | null
+    if (state?.project) return history.go(-(state.depth ?? 1))
     setProjectPage(null)
     setTabState('projects')
     void router.visit(pageHref(year, 'projects'), { preserveState: true })
@@ -1050,9 +1068,9 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             <div className="flex items-center gap-3">
             {projectPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
-                {/* 入れ子の事業は上の事業をパンくずに並べる。分かるまでは自治体へ戻るボタンを出しておく */}
-                <ClientSuspense fallback={<BackButton label={data.name} onClick={closeProject} />}>
-                  <ProjectBack res={res} id={projectPage} label={data.name} close={closeProject} open={openProject} />
+                {/* 入れ子の事業は上の事業をパンくずに並べる。分かるまでは事業のタブへ戻るボタンを出しておく */}
+                <ClientSuspense fallback={<BackButton label="事業" onClick={closeProject} />}>
+                  <ProjectBack res={res} id={projectPage} label="事業" close={closeProject} open={openProject} />
                 </ClientSuspense>
               </div>
             ) : (
