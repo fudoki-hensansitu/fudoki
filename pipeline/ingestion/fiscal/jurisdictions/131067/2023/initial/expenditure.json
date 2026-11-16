@@ -468,9 +468,38 @@
   ],
   "tables": [
     {
+      "table_id": "general-initial",
+      "conversion_id": "general-initial",
+      "input_fingerprint": "b9a3db32f3e7d47fa5eba2562bd81576ab2e0a0028254a3e52a6fca8e02ba0d5",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
+        "金額の単位は printed 204頁・carried 197頁・default 1頁 から決めた。款の和 111,700,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
+        "金額の注記 43 件（積算 43）を注記軸に置いた。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2023/initial/expenditure/general-initial-nodes.parquet",
+          "sha256": "6887fc7448fe00162fc46f0bec9f7ccca520f4802ebb7006695ac0e4df4aeb68",
+          "bytes": 88349
+        },
+        "row_count": 2942
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131067/2023/initial/expenditure/general-initial-amounts.parquet",
+          "sha256": "4b43547f13b69be02fc3d0762f62ae8fe1c8630d74f01e446dd1e12f8b672624",
+          "bytes": 67422
+        },
+        "row_count": 3187
+      }
+    },
+    {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "e0642e2ea24d91ca43bdbdcdbf55b30af0873ba867d8d59e47f4ef2fa4a9cad3",
+      "input_fingerprint": "b41c7f11a2e93cd5f356dbb2f7d081b628a86604cb8d8b632f8a3ae184a610d7",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -482,10 +511,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131067/2023/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "5f2fd5e9bbfd5d44945fa0df50fdc336a5c4cf38b522a23d4fa91e893de70b21",
-          "bytes": 10817
+          "sha256": "f839e098abdb42466173a6426309ddbc151bb45df254cacd63b7beeac8b0319f",
+          "bytes": 10686
         },
-        "row_count": 197
+        "row_count": 195
       },
       "amounts": {
         "object": {
@@ -499,7 +528,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "1807fc059661a2dacd37c497c19173f2bd0ecbcdde9ecc4783946d91679545e0",
+      "input_fingerprint": "0ef53db064d38af38806134acf7f893fa39fb635361a87f1bbdb660a39ce7c41",
       "account": "介護保険会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -528,7 +557,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "921fb69c6456e6d470fabb7d98d8916d627b877c125a0cf1f60832e45772aee4",
+      "input_fingerprint": "b3589b5569cd166d20e121ff81bb666541f611a8b1c5f4d4d7d08cfdac549276",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -557,7 +586,7 @@
     {
       "table_id": "geriatric-facility-initial",
       "conversion_id": "geriatric-facility-initial",
-      "input_fingerprint": "ab8d0a76a361c7ce539e1b37cfef975ee3bf2f709686aca963a560cd6896761e",
+      "input_fingerprint": "a0a3f1ad8b75abbde09d7d4a1721d2db9d92995d97c55e3d9cb088d8ac29d41c",
       "account": "老人保健施設会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -586,7 +615,7 @@
     {
       "table_id": "hospital-initial",
       "conversion_id": "hospital-initial",
-      "input_fingerprint": "c4b34371b3f3d9c18ad17d3e095f3ef80d463bdb7f659d61bdf0762174ce13fe",
+      "input_fingerprint": "2426c1734ae32020659ea4a76e6d78224f65375c3e74380813f09cb11b86117c",
       "account": "病院施設会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -610,35 +639,6 @@
           "bytes": 2766
         },
         "row_count": 26
-      }
-    },
-    {
-      "table_id": "general-initial",
-      "conversion_id": "general-initial",
-      "input_fingerprint": "cc008a60578ce9c1ef9ff96b6c872dc1434abcc45a9281ddc58fe19b09243f15",
-      "account": "一般会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 204頁・carried 197頁・default 1頁 から決めた。款の和 111,700,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 43 件（積算 43）を注記軸に置いた。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131067/2023/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "b11fd4a53efee1cac7f5e388d8ec6a0597af45b462339f4f8aff1570a882027d",
-          "bytes": 88456
-        },
-        "row_count": 2946
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131067/2023/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "4b43547f13b69be02fc3d0762f62ae8fe1c8630d74f01e446dd1e12f8b672624",
-          "bytes": 67422
-        },
-        "row_count": 3187
       }
     }
   ]

@@ -196,14 +196,6 @@
         },
         "name_corrections": [
           {
-            "id": "p159-wrapped-election",
-            "page": 159,
-            "code": null,
-            "observed_name": "(区議会議員・区長",
-            "corrected_name": "(区議会議員・区長選挙費)",
-            "reason": "目の名前「(区議会議員・区長選挙費)」が頁159（見開きの左）の末尾で折り返し、続きの「選挙費)」は次の見開きの頁161の先頭の行に印字されている。頁をまたぐ折り返しは結ばれないので、原画で確かめた名前に直す。"
-          },
-          {
             "id": "p240-paren-code-before-digit",
             "page": 240,
             "code": "4",
@@ -806,14 +798,14 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "d0789fc33c11d4a14056d88f077b77fb4956db737b1bebccf8317219948987c1",
+      "input_fingerprint": "a04426b775b671ef2d9dfbaca427ebc20ecdbee766b1c27210cc11dcd911edab",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
         "金額の単位は column mark 83頁 から決めた。款の和 127,528,000 と印字の「歳出合計」127,528,000 が一致。",
         "金額の注記 52 件（積算 52）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 2 種（128 件）を、印字された語から辞書の見出しに寄せた: 歳出／比較増(△)減→比較増減・比較増(△)減→比較増減。",
-        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: (区議会議員・区長→(区議会議員・区長選挙費)・4)3歳児健康診査→43歳児健康診査。"
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 4)3歳児健康診査→43歳児健康診査。"
       ],
       "unread_amount_count": 0,
       "unresolved_parent_count": 0,
@@ -837,7 +829,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "e61dc4bb012441101a46da4903e0635f09495da7db72ca5e5e14d5585ce829d6",
+      "input_fingerprint": "65145db03b240f2011b29d71327395bbed9499617d9f6e23625aabddff8a62b3",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -867,7 +859,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "958c5693d7f6c31048a8f2b9b52d1c24caebe63be4613e9212703e682053878a",
+      "input_fingerprint": "462a9e482a4c134d2864b71469cbcf2ae693cda7b2fed1a6adefd03e2f798055",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -897,7 +889,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "350ada07c4dc2bf56929bd448a1fe745b0536e7674e010197ce536f43e9afdcb",
+      "input_fingerprint": "bb0844d70332feaf75ae5262841e02884d28e2757d8765ffaab3446232fd78b5",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
