@@ -335,7 +335,7 @@ function ProjectNameCell({ p }: { p: Proj }) {
       <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{p.name}</button>
       {ended || v.isNew(p) ? <span className="ml-1.5 inline-flex align-middle">{ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : <Mark kind="new" label="新しく始める事業" className="size-5" />}</span> : null}
       {/* 狭い幅で事業名の下に添える分野は、事業名より控えめな色にする */}
-      <span className="block text-muted-foreground @3xl:hidden">{fieldName(v, v.fieldOf(p))}</span>
+      <span className="flex items-center gap-1 text-muted-foreground @3xl:hidden"><FieldIcon id={v.fieldOf(p)} className="size-4 shrink-0" />{fieldName(v, v.fieldOf(p))}</span>
     </span>
   )
 }
@@ -347,7 +347,7 @@ function ProjectShareCell({ p }: { p: Proj }) {
 }
 function ProjectFieldCell({ p }: { p: Proj }) {
   const { v } = useApp()
-  return <>{fieldName(v, v.fieldOf(p))}</>
+  return <span className="inline-flex items-center gap-1.5"><FieldIcon id={v.fieldOf(p)} className="size-4 shrink-0 text-muted-foreground" />{fieldName(v, v.fieldOf(p))}</span>
 }
 
 /** 事業の表（shadcn の data table）。並びは api が返した金額の多い順のまま。行を押すと詳細を開く。文字は見出しも中身もすべて同じ大きさ・同じ色にする（狭い画面で名前の下に出す分野だけは薄い色） */
@@ -691,6 +691,7 @@ function FieldMenu({ v, fields, setFields }: { v: YearView; fields: string[]; se
   return (
     <DropdownMenu>
       <DropdownMenuTrigger aria-label="分野で絞る" className={filterTrigger(value.length > 0)}>
+        {value.length === 1 ? <FieldIcon id={value[0]!} className="size-4 shrink-0" /> : null}
         <span className="min-w-0 truncate">{label}</span>
         <CaretDownIcon className="size-3.5 shrink-0" aria-hidden="true" />
       </DropdownMenuTrigger>
