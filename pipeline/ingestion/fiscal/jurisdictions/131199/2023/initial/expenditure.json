@@ -1,0 +1,1608 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131199",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／使用料及び手数料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／支払基金交付金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／繰入金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／繰越金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／計": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／諸収入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p222-rule",
+            "page": 222,
+            "observation_id": "p222:full-page:a0:result0:r38",
+            "observed": "1",
+            "reason": "物理222頁の節「19 扶助費」の左の縦の罫線を OCR が「1」と読み、左の比較の金額 △284,316 につながった（△284,3161）。罫線の読みなので使わない。原画で確かめた。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p161-r85-long-vowel",
+            "page": 161,
+            "observation_id": "p161:full-page:a0:result0:r85",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理161頁の「9情報処理センタ一維持管理経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p179-r55-long-vowel",
+            "page": 179,
+            "observation_id": "p179:full-page:a0:result0:r55",
+            "observed_name": "力一ド",
+            "corrected_name": "カード",
+            "reason": "物理179頁の「3個人番号力一ド発行経費」。OCR が長音の「ー」を漢数字の「一」と読んだ（「カ」を「力」とも読んだ）。片仮名の語の中なので「カード」と読む。"
+          },
+          {
+            "id": "p181-r53-long-vowel",
+            "page": 181,
+            "observation_id": "p181:full-page:a0:result0:r53",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理181頁の「1地域センタ一維持管理経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p203-r42-long-vowel",
+            "page": 203,
+            "observation_id": "p203:full-page:a0:result0:r42",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理203頁の「2障がい者福祉センタ一運営経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p203-r46-long-vowel",
+            "page": 203,
+            "observation_id": "p203:full-page:a0:result0:r46",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理203頁の「3発達障がい者支援センタ一運営経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p209-r36-long-vowel",
+            "page": 209,
+            "observation_id": "p209:full-page:a0:result0:r36",
+            "observed_name": "サ一",
+            "corrected_name": "サー",
+            "reason": "物理209頁の「15福祉サ一ビス第三者評価受審費助成経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「サー」と読む。"
+          },
+          {
+            "id": "p209-r44-long-vowel",
+            "page": 209,
+            "observation_id": "p209:full-page:a0:result0:r44",
+            "observed_name": "ホ一",
+            "corrected_name": "ホー",
+            "reason": "物理209頁の「17都市型軽費老人ホ一ム整備費助成経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ホー」と読む。"
+          },
+          {
+            "id": "p209-r48-long-vowel",
+            "page": 209,
+            "observation_id": "p209:full-page:a0:result0:r48",
+            "observed_name": "ホ一",
+            "corrected_name": "ホー",
+            "reason": "物理209頁の「18民間特別養護老人ホ一ム等整備費助成経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ホー」と読む。"
+          },
+          {
+            "id": "p209-r52-long-vowel",
+            "page": 209,
+            "observation_id": "p209:full-page:a0:result0:r52",
+            "observed_name": "ホ一",
+            "corrected_name": "ホー",
+            "reason": "物理209頁の「19民営化特別養護老人ホ一ム運営費等助成経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ホー」と読む。"
+          },
+          {
+            "id": "p215-r72-kana",
+            "page": 215,
+            "observation_id": "p215:full-page:a0:result0:r72",
+            "observed_name": "ク卜",
+            "corrected_name": "クト",
+            "reason": "物理215頁の「(1）児童養護施設卒園者住まい応援プロジェク卜」。OCR が「ト」を「卜」と読んだ。片仮名の語の中なので「クト」と読む。"
+          },
+          {
+            "id": "p219-r78-long-vowel",
+            "page": 219,
+            "observation_id": "p219:full-page:a0:result0:r78",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理219頁の「5子ども家庭総合支援センタ一維持管理経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p231-r52-long-vowel",
+            "page": 231,
+            "observation_id": "p231:full-page:a0:result0:r52",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理231頁の「(3）在宅療養連携拠点センタ一運営経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p231-r70-long-vowel",
+            "page": 231,
+            "observation_id": "p231:full-page:a0:result0:r70",
+            "observed_name": "ナ一",
+            "corrected_name": "ナー",
+            "reason": "物理231頁の「12骨髄移植ドナ一等支援事業経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ナー」と読む。"
+          },
+          {
+            "id": "p237-r60-kana",
+            "page": 237,
+            "observation_id": "p237:full-page:a0:result0:r60",
+            "observed_name": "しよう症",
+            "corrected_name": "しょう症",
+            "reason": "物理237頁の「(5）骨粗しよう症予防検診」。OCR が小書きの「ょ」を「よ」と読んだ。片仮名の語の中なので「しょう症」と読む。"
+          },
+          {
+            "id": "p259-r70-long-vowel",
+            "page": 259,
+            "observation_id": "p259:full-page:a0:result0:r70",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理259頁の「7消費者センタ一経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p261-r37-long-vowel",
+            "page": 261,
+            "observation_id": "p261:full-page:a0:result0:r37",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理261頁の「2ものづくり研究開発連携センタ一管理運営経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p261-r45-long-vowel",
+            "page": 261,
+            "observation_id": "p261:full-page:a0:result0:r45",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理261頁の「4企業活性化センタ一運営経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p261-r49-long-vowel",
+            "page": 261,
+            "observation_id": "p261:full-page:a0:result0:r49",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理261頁の「5板橋産業技術支援センタ一運営経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p293-r60-long-vowel",
+            "page": 293,
+            "observation_id": "p293:full-page:a0:result0:r60",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理293頁の「1 教育支援センタ一相談事業経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-ocr-1",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              152,
+              153,
+              154,
+              155,
+              156,
+              157,
+              158,
+              159,
+              160,
+              161
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "36d9793b1406311255517f164db1998c882396782264c99e54d52564e4297293",
+          "bytes": 2013352
+        },
+        {
+          "id": "general-initial-ocr-2",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              162,
+              163,
+              164,
+              165,
+              166,
+              167,
+              168,
+              169,
+              170,
+              171
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "afa8fc7e695d227fd003e7c6598271172c1b21391036082b75ae3551d584a496",
+          "bytes": 1692224
+        },
+        {
+          "id": "general-initial-ocr-3",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              172,
+              173,
+              174,
+              175,
+              176,
+              177,
+              178,
+              179,
+              180,
+              181
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c22a29cf8ce10a3d08b76c68bb63896dbcf0f0cf00432672fb50b7b2d8f13fb2",
+          "bytes": 1953253
+        },
+        {
+          "id": "general-initial-ocr-4",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              182,
+              183,
+              184,
+              185,
+              186,
+              187,
+              188,
+              189,
+              190,
+              191
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "805c664c4fb85cb74fd3d481a804acc8ff9c4e5720e2eddb50138dc9ee533f36",
+          "bytes": 1813429
+        },
+        {
+          "id": "general-initial-ocr-5",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              192,
+              193,
+              194,
+              195,
+              196,
+              197,
+              198,
+              199,
+              200,
+              201
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "dcaa4b38b40178a17cce23863e5788d3b5a0f82f3f88692d986331027755f6ce",
+          "bytes": 1579379
+        },
+        {
+          "id": "general-initial-ocr-6",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              202,
+              203,
+              204,
+              205,
+              206,
+              207,
+              208,
+              209,
+              210,
+              211
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2f3728beb470ead16bea516cc996b9e0df3f82dfebdc0cd215ffb60c0117d42c",
+          "bytes": 1665980
+        },
+        {
+          "id": "general-initial-ocr-7",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              212,
+              213,
+              214,
+              215,
+              216,
+              217,
+              218,
+              219,
+              220,
+              221
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3c4df6187709a9237bc064670e795cbb1a715b54b22e032a93ec12061ed8149c",
+          "bytes": 1820486
+        },
+        {
+          "id": "general-initial-ocr-8",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              222,
+              223,
+              224,
+              225,
+              226,
+              227,
+              228,
+              229,
+              230,
+              231
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9293e9fa1b77d30ab706f0a356e637edb627edaf4a2d9b34e6e661d8fbd6da20",
+          "bytes": 1709416
+        },
+        {
+          "id": "general-initial-ocr-9",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              232,
+              233,
+              234,
+              235,
+              236,
+              237,
+              238,
+              239,
+              240,
+              241
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3d295257262933006b7c1fe88efc9660789f9e65ab980893c4d8f6cc8eca36e7",
+          "bytes": 1688098
+        },
+        {
+          "id": "general-initial-ocr-10",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              242,
+              243,
+              244,
+              245,
+              246,
+              247,
+              248,
+              249,
+              250,
+              251
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7e4386768c73f0cf8a4f3a95904f6d2de8d644135b5f1a681903e9551e3123cf",
+          "bytes": 1847439
+        },
+        {
+          "id": "general-initial-ocr-11",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              252,
+              253,
+              254,
+              255,
+              256,
+              257,
+              258,
+              259,
+              260,
+              261
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e4f8b5fcda42e44096344ebf5b9d36a8410052b6628e2ad80197f19ec61d40a0",
+          "bytes": 1838380
+        },
+        {
+          "id": "general-initial-ocr-12",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              262,
+              263,
+              264,
+              265,
+              266,
+              267,
+              268,
+              269,
+              270,
+              271
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f8a16095ce051fbeae4e571303035d86095585934d7f4912aa989940f8e8026d",
+          "bytes": 1924279
+        },
+        {
+          "id": "general-initial-ocr-13",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              272,
+              273,
+              274,
+              275,
+              276,
+              277,
+              278,
+              279,
+              280,
+              281
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2ea1bd3d45f6c49c8d06a4f821c52dca0f93cf6f943f5187d62521c28f92d283",
+          "bytes": 1736860
+        },
+        {
+          "id": "general-initial-ocr-14",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              282,
+              283,
+              284,
+              285,
+              286,
+              287,
+              288,
+              289,
+              290,
+              291
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "bb0428283d248d7a4a65024734364ef1b85560dcc74ddb763a38abf3f4b4fda7",
+          "bytes": 1811424
+        },
+        {
+          "id": "general-initial-ocr-15",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              292,
+              293,
+              294,
+              295,
+              296,
+              297,
+              298,
+              299,
+              300,
+              301
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "0198cb752b4ffa18bbb311eefe826f846fa5ef4c88fdc3c8cdf8e46aae5c1ffb",
+          "bytes": 1826678
+        },
+        {
+          "id": "general-initial-ocr-16",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              302,
+              303,
+              304,
+              305,
+              306,
+              307,
+              308,
+              309,
+              310,
+              311
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e187af9e8827322db6436ea060f0e0ec40d08a5fd1337d23b0768ad7c1885060",
+          "bytes": 1849587
+        },
+        {
+          "id": "general-initial-ocr-17",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              312,
+              313,
+              314,
+              315,
+              316,
+              317,
+              318,
+              319,
+              320,
+              321
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a144e0ad4c615a7939fb8dcc0559df4e0e3444107d73b0ddef9b0e427abba40f",
+          "bytes": 1712879
+        },
+        {
+          "id": "general-initial-ocr-18",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              322,
+              323,
+              324,
+              325
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d5e5eacd06e31064b71519a69d2a3cb2e3164996414eb059413040088857ebbc",
+          "bytes": 472254
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／使用料及び手数料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／支払基金交付金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／繰入金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／繰越金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／計": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／諸収入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-initial-ocr-1",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              362,
+              363,
+              364,
+              365,
+              366,
+              367,
+              368,
+              369,
+              370,
+              371
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "695e49e13b8c2c406f9f338fc937450f5d017dbc876dbd600689e831f040bf97",
+          "bytes": 1897200
+        },
+        {
+          "id": "national-health-initial-ocr-2",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              372,
+              373,
+              374,
+              375,
+              376,
+              377,
+              378,
+              379,
+              380,
+              381
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a2b4c69c765162397d51cfdcfbc2eeb8fdf647d99061e3cf53fc93a60caf7d4c",
+          "bytes": 1966746
+        },
+        {
+          "id": "national-health-initial-ocr-3",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              382,
+              383
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c31d444744b1ab6449085cb93192d04085ff66188dffd0f37c3b113251993a33",
+          "bytes": 312247
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／使用料及び手数料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／支払基金交付金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／繰入金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／繰越金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／計": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／諸収入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p425-r1-long-vowel",
+            "page": 425,
+            "observation_id": "p425:full-page:a0:result0:r1",
+            "observed_name": "サ一",
+            "corrected_name": "サー",
+            "reason": "物理425頁の「(項) 1 介護予防・生活支援サ一ビ」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「サー」と読む。"
+          },
+          {
+            "id": "p429-r74-long-vowel",
+            "page": 429,
+            "observation_id": "p429:full-page:a0:result0:r74",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理429頁の「1地域包括支援センタ一運営事業」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-initial-ocr-1",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              416,
+              417,
+              418,
+              419,
+              420,
+              421,
+              422,
+              423,
+              424,
+              425
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9f8acfd82ee67f15f712ccad36933c9dce10aaeaf4d424113db5af82a80604fe",
+          "bytes": 1621507
+        },
+        {
+          "id": "care-initial-ocr-2",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              426,
+              427,
+              428,
+              429,
+              430,
+              431,
+              432,
+              433,
+              434,
+              435
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2d63fe676b551f9d0f5f48ca726b12e35a78504d315063c128326676310c20b3",
+          "bytes": 1773197
+        },
+        {
+          "id": "care-initial-ocr-3",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              436,
+              437
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c2c2fd9aa0ac5cdf327ed4e976ff9da6a1a96f9e0cd70236af53790805595bd7",
+          "bytes": 152036
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／使用料及び手数料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／支払基金交付金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／繰入金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／繰越金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／計": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／諸収入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-ocr-1",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              458,
+              459,
+              460,
+              461,
+              462,
+              463,
+              464,
+              465
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "bce84424d1b14efcc180d73fd7c1421fa70701ecc78f70622795e0fe9a2a3cfd",
+          "bytes": 934239
+        }
+      ]
+    },
+    {
+      "id": "tobu-tojo-grade-separation-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a"
+        }
+      ],
+      "options": {
+        "account": "東武東上線連続立体化事業特別会計",
+        "table_id": "tobu-tojo-grade-separation-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "funded_explanation",
+            "options": {
+              "columns": {
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／予算額": {
+                  "heading": "前年度予算額"
+                },
+                "前年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "本年度予算額の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／使用料及び手数料": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／国庫支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／支払基金交付金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／特別区債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／繰入金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／繰越金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／計": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／諸収入": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度予算額の財源内訳／特定財源／都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄は取り込まない。総括の款の行に財源の種類別の額が並ぶが、歳出の金額は予算額で確かめる。"
+                  }
+                },
+                "本年度／予算額": {
+                  "heading": "本年度予算額"
+                },
+                "本年度／構成比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                },
+                "比較／増減率": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の構成比・増減率の欄は取り込まない。款の予算額から計算した比率（％）で、金額ではないため。"
+                  }
+                }
+              },
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "position",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "tobu-tojo-grade-separation-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "tobu-tojo-grade-separation-initial-ocr-1",
+          "origin_sha256": "58a243ae8f8de2676450c98ca7488dbcdf7c379c7543bf71dbba5bb5d059ea3a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              478,
+              479,
+              480,
+              481
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "35073a3659abd66f78e4721bed518368373ddff489b7011ee0d056819040beca",
+          "bytes": 503837
+        }
+      ]
+    }
+  ]
+}

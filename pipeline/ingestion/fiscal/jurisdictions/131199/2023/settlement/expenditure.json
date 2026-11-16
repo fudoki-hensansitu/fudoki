@@ -1,0 +1,1438 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131199",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-detail",
+        "pages": [
+          [
+            240,
+            449
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true,
+                  "note_kinds": {
+                    "総務費": "充用",
+                    "福祉費": "充用",
+                    "産業経済費": "充用",
+                    "土木費": "充用"
+                  },
+                  "notes": [
+                    "令和"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "heading": "事務事業"
+            },
+            "digit_set_codes": 4.0
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p250-r35-long-vowel",
+            "page": 250,
+            "observation_id": "p250:full-page:a0:result0:r35",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理250頁の「9 情報処理センタ一維持管理経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p258-r25-long-vowel",
+            "page": 258,
+            "observation_id": "p258:full-page:a0:result0:r25",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理258頁の「1 防災センタ一経費(P240)※」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p262-r82-long-vowel",
+            "page": 262,
+            "observation_id": "p262:full-page:a0:result0:r82",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理262頁の「2納付案内センタ一運営経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p268-r46-long-vowel",
+            "page": 268,
+            "observation_id": "p268:full-page:a0:result0:r46",
+            "observed_name": "力一ド",
+            "corrected_name": "カード",
+            "reason": "物理268頁の「3 個人番号力一ド発行経費 (P310)」。OCR が長音の「ー」を漢数字の「一」と読んだ（「カ」を「力」とも読んだ）。片仮名の語の中なので「カード」と読む。"
+          },
+          {
+            "id": "p298-r23-long-vowel",
+            "page": 298,
+            "observation_id": "p298:full-page:a0:result0:r23",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理298頁の「3 発達障がい者支援センタ一運営経費(P118)※」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p302-r94-long-vowel",
+            "page": 302,
+            "observation_id": "p302:full-page:a0:result0:r94",
+            "observed_name": "サ一",
+            "corrected_name": "サー",
+            "reason": "物理302頁の「15 福祉サ一ビス第三者評価受審費助成経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「サー」と読む。"
+          },
+          {
+            "id": "p304-r27-long-vowel",
+            "page": 304,
+            "observation_id": "p304:full-page:a0:result0:r27",
+            "observed_name": "ホ一",
+            "corrected_name": "ホー",
+            "reason": "物理304頁の「17 都市型軽費老人ホ一ム整備費助成経費(P136)」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ホー」と読む。"
+          },
+          {
+            "id": "p304-r33-long-vowel",
+            "page": 304,
+            "observation_id": "p304:full-page:a0:result0:r33",
+            "observed_name": "ホ一",
+            "corrected_name": "ホー",
+            "reason": "物理304頁の「18 民間特別養護老人ホ一ム等整備費助成経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ホー」と読む。"
+          },
+          {
+            "id": "p304-r40-long-vowel",
+            "page": 304,
+            "observation_id": "p304:full-page:a0:result0:r40",
+            "observed_name": "ホ一",
+            "corrected_name": "ホー",
+            "reason": "物理304頁の「19 民営化特別養護老人ホ一ム運営費等助成経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ホー」と読む。"
+          },
+          {
+            "id": "p310-r89-kana",
+            "page": 310,
+            "observation_id": "p310:full-page:a0:result0:r89",
+            "observed_name": "ク卜",
+            "corrected_name": "クト",
+            "reason": "物理310頁の「（1）児童養護施設卒園者住まい応援プロジェク卜」。OCR が「ト」を「卜」と読んだ。片仮名の語の中なので「クト」と読む。"
+          },
+          {
+            "id": "p316-r70-long-vowel",
+            "page": 316,
+            "observation_id": "p316:full-page:a0:result0:r70",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理316頁の「5子ども家庭総合支援センタ一維持管理経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p330-r74-long-vowel",
+            "page": 330,
+            "observation_id": "p330:full-page:a0:result0:r74",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理330頁の「上板橋健康福祉センタ一」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p332-r23-long-vowel",
+            "page": 332,
+            "observation_id": "p332:full-page:a0:result0:r23",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理332頁の「(3）在宅療養連携拠点センタ一運営経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p332-r50-long-vowel",
+            "page": 332,
+            "observation_id": "p332:full-page:a0:result0:r50",
+            "observed_name": "ナ一",
+            "corrected_name": "ナー",
+            "reason": "物理332頁の「12 骨髄移植ドナ一等支援事業経費 (P152)」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ナー」と読む。"
+          },
+          {
+            "id": "p332-r72-long-vowel",
+            "page": 332,
+            "observation_id": "p332:full-page:a0:result0:r72",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理332頁の「上板橋健康福祉センタ一」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p332-r84-long-vowel",
+            "page": 332,
+            "observation_id": "p332:full-page:a0:result0:r84",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理332頁の「15 女性健康支援センタ一運営経費 (P151)」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p332-r90-long-vowel",
+            "page": 332,
+            "observation_id": "p332:full-page:a0:result0:r90",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理332頁の「16 歯科衛生センタ一運営経費(P149)」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p336-r47-long-vowel",
+            "page": 336,
+            "observation_id": "p336:full-page:a0:result0:r47",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理336頁の「赤塚健康福祉センタ一」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p340-r26-kana",
+            "page": 340,
+            "observation_id": "p340:full-page:a0:result0:r26",
+            "observed_name": "しよう症",
+            "corrected_name": "しょう症",
+            "reason": "物理340頁の「(5)骨粗しよう症予防検診(P154)」。OCR が小書きの「ょ」を「よ」と読んだ。片仮名の語の中なので「しょう症」と読む。"
+          },
+          {
+            "id": "p362-r23-long-vowel",
+            "page": 362,
+            "observation_id": "p362:full-page:a0:result0:r23",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理362頁の「6 粗大ごみ受付センタ一経費(P228)」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p366-r98-long-vowel",
+            "page": 366,
+            "observation_id": "p366:full-page:a0:result0:r98",
+            "observed_name": "ポ一",
+            "corrected_name": "ポー",
+            "reason": "物理366頁の「4 就職活動サポ一ト事業(P195)」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ポー」と読む。"
+          },
+          {
+            "id": "p368-r53-long-vowel",
+            "page": 368,
+            "observation_id": "p368:full-page:a0:result0:r53",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理368頁の「7 消費者センタ一経費(P205)」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p370-r26-long-vowel",
+            "page": 370,
+            "observation_id": "p370:full-page:a0:result0:r26",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理370頁の「2ものづくり研究開発連携センタ一管理運営経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p370-r38-long-vowel",
+            "page": 370,
+            "observation_id": "p370:full-page:a0:result0:r38",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理370頁の「4 企業活性化センタ一運営経費(P206)※」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p370-r44-long-vowel",
+            "page": 370,
+            "observation_id": "p370:full-page:a0:result0:r44",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理370頁の「5板橋産業技術支援センタ一運営経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p408-r73-long-vowel",
+            "page": 408,
+            "observation_id": "p408:full-page:a0:result0:r73",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理408頁の「1 教育支援センタ一相談事業経費 (P72)」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p436-r23-long-vowel",
+            "page": 436,
+            "observation_id": "p436:full-page:a0:result0:r23",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理436頁の「1 生涯学習センタ一管理運営経費」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              240,
+              241,
+              242,
+              243,
+              244,
+              245,
+              246,
+              247,
+              248,
+              249
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a01afc0d396f30fcd85cd3dca95f3d3478cc21eabf55617ed6c37fdd5fdabfd0",
+          "bytes": 2517187
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              250,
+              251,
+              252,
+              253,
+              254,
+              255,
+              256,
+              257,
+              258,
+              259
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "273491c5ffde4b514d99e94ac7fe679bd2929dba54a9b529bfdfebeb879f0b00",
+          "bytes": 2488465
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              260,
+              261,
+              262,
+              263,
+              264,
+              265,
+              266,
+              267,
+              268,
+              269
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "dd344c5f3e865ead1ee7864f46071ea3176a0241c3f3caddac835898ec2ce995",
+          "bytes": 2619167
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              270,
+              271,
+              272,
+              273,
+              274,
+              275,
+              276,
+              277,
+              278,
+              279
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9616990e67bb1caae84fe41828e08734e0aba0cc33dfa335b770480485cf636f",
+          "bytes": 2241507
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              280,
+              281,
+              282,
+              283,
+              284,
+              285,
+              286,
+              287,
+              288,
+              289
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2f0079ceed2d89439af62b4483aeb1da31c37965632461749cabaffd72997b82",
+          "bytes": 2558343
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              290,
+              291,
+              292,
+              293,
+              294,
+              295,
+              296,
+              297,
+              298,
+              299
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d4a100de77ff70e9caba15cc94ace38aa83b53c4a9fd0ee30782a6cd6ab4ffad",
+          "bytes": 2392186
+        },
+        {
+          "id": "general-ocr-7",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              300,
+              301,
+              302,
+              303,
+              304,
+              305,
+              306,
+              307,
+              308,
+              309
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "401e5a69ef68f1688a07b78be6c001f05f97585faaa579b09f0b821922e73348",
+          "bytes": 2389935
+        },
+        {
+          "id": "general-ocr-8",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              310,
+              311,
+              312,
+              313,
+              314,
+              315,
+              316,
+              317,
+              318,
+              319
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "11aa6b03578b1dcb25f2589922095d18ab572ad05626af55e0d779ae2ff35290",
+          "bytes": 2525088
+        },
+        {
+          "id": "general-ocr-9",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              320,
+              321,
+              322,
+              323,
+              324,
+              325,
+              326,
+              327,
+              328,
+              329
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6c1c94580b5325554bb15db932c069a78f6b5ac792232ba804740494aaa7529d",
+          "bytes": 2122580
+        },
+        {
+          "id": "general-ocr-10",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              330,
+              331,
+              332,
+              333,
+              334,
+              335,
+              336,
+              337,
+              338,
+              339
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "fd9bb13914ed1dbf654a03acf4892f80c487d60876185ebae73c13ab194819b1",
+          "bytes": 2219796
+        },
+        {
+          "id": "general-ocr-11",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              340,
+              341,
+              342,
+              343,
+              344,
+              345,
+              346,
+              347,
+              348,
+              349
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6d4e94a942199d14568b50ffcbd42eb30c6c6234f628b6ef0e1ed49e6064045c",
+          "bytes": 2182301
+        },
+        {
+          "id": "general-ocr-12",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              350,
+              351,
+              352,
+              353,
+              354,
+              355,
+              356,
+              357,
+              358,
+              359
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "acdce0ca50ae2944fcf4e494a68494332181d9795affb3c2a459b2a7e8e7adc7",
+          "bytes": 2481270
+        },
+        {
+          "id": "general-ocr-13",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              360,
+              361,
+              362,
+              363,
+              364,
+              365,
+              366,
+              367,
+              368,
+              369
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "09f58b7f203f47c40cbd6314bc7583be79ef052e202ab9b5289a444295fb3f25",
+          "bytes": 2229977
+        },
+        {
+          "id": "general-ocr-14",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              370,
+              371,
+              372,
+              373,
+              374,
+              375,
+              376,
+              377,
+              378,
+              379
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "1c7d6219c018695eb0ccb3ad53cc43171967bbe90879aa2bd19365c44a3187bc",
+          "bytes": 2651087
+        },
+        {
+          "id": "general-ocr-15",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              380,
+              381,
+              382,
+              383,
+              384,
+              385,
+              386,
+              387,
+              388,
+              389
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a7905d0fbfd73d0f22362225268af715adfde738884caea72f2a27a2ba5eec4f",
+          "bytes": 2566722
+        },
+        {
+          "id": "general-ocr-16",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              390,
+              391,
+              392,
+              393,
+              394,
+              395,
+              396,
+              397,
+              398,
+              399
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "dd274ab815933c1b20f57e1b1d456bc884dd72ac83771bee629de2d80ad770aa",
+          "bytes": 2456987
+        },
+        {
+          "id": "general-ocr-17",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              400,
+              401,
+              402,
+              403,
+              404,
+              405,
+              406,
+              407,
+              408,
+              409
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "113227de913a1c419e6fcf14683715b51e8a2ebee091917681a19f0e31466c87",
+          "bytes": 2408224
+        },
+        {
+          "id": "general-ocr-18",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              410,
+              411,
+              412,
+              413,
+              414,
+              415,
+              416,
+              417,
+              418,
+              419
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "9ce507a2b3a8ca69d19c206cf52a7017a9bd9fc9114048423fced838a0e572ad",
+          "bytes": 2615835
+        },
+        {
+          "id": "general-ocr-19",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              420,
+              421,
+              422,
+              423,
+              424,
+              425,
+              426,
+              427,
+              428,
+              429
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "d5ede8a552f1f381d579b3d45c15fad68795efdac02a20c14a714d2174fb45f8",
+          "bytes": 2290841
+        },
+        {
+          "id": "general-ocr-20",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              430,
+              431,
+              432,
+              433,
+              434,
+              435,
+              436,
+              437,
+              438,
+              439
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8937fe657a312089517bf1ccf585409ebadbe3e57ce0b96d719d67cf0b52a567",
+          "bytes": 2303492
+        },
+        {
+          "id": "general-ocr-21",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              440,
+              441,
+              442,
+              443,
+              444,
+              445,
+              446,
+              447,
+              448,
+              449
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "eba6ba6d1793cf387971534ae3cd28960c5294b0b7d83a3d7cd130420181a0fb",
+          "bytes": 1740798
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-expenditure-detail",
+        "pages": [
+          [
+            482,
+            513
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true,
+                  "note_kinds": {
+                    "総務費": "充用",
+                    "福祉費": "充用",
+                    "産業経済費": "充用",
+                    "土木費": "充用"
+                  },
+                  "notes": [
+                    "令和"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "heading": "事務事業"
+            },
+            "digit_set_codes": 4.0
+          }
+        },
+        "amount_readings": [
+          {
+            "id": "p490-dash",
+            "page": 490,
+            "boxes": [
+              [
+                252.0,
+                280.2,
+                267.1,
+                294.2
+              ]
+            ],
+            "amount": "－",
+            "reason": "物理490頁の行（504,126,413 の行）の左の金額の欄は、金額が無いことを示すダッシュ（幅約10pt）を印字する。OCR がダッシュと取るより幅が広く、読まれずにインクとして残った。原画で確かめた。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              482,
+              483,
+              484,
+              485,
+              486,
+              487,
+              488,
+              489,
+              490,
+              491
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7184f0a2bc5a34f0a9894b8e14a9d0a32c1ad9232a806e4ec9d913fd32250b43",
+          "bytes": 1658229
+        },
+        {
+          "id": "nhi-ocr-2",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              492,
+              493,
+              494,
+              495,
+              496,
+              497,
+              498,
+              499,
+              500,
+              501
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "65dd4d9cfd28f1be260ef3a89d55398c93e4dcd11e08b21bc3a99cbedc9c98f1",
+          "bytes": 1524720
+        },
+        {
+          "id": "nhi-ocr-3",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              502,
+              503,
+              504,
+              505,
+              506,
+              507,
+              508,
+              509,
+              510,
+              511
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5c104652d104a0fce9016529ec2636b1251cbe020daee2379f4f3d06598e9129",
+          "bytes": 1729821
+        },
+        {
+          "id": "nhi-ocr-4",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              512,
+              513
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8847fac2473a3aec8078378c707fd0da430abb3c5dcdac663bd624ed946d1384",
+          "bytes": 160316
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "pages": [
+          [
+            546,
+            571
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true,
+                  "note_kinds": {
+                    "総務費": "充用",
+                    "福祉費": "充用",
+                    "産業経済費": "充用",
+                    "土木費": "充用"
+                  },
+                  "notes": [
+                    "令和"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "heading": "事務事業"
+            },
+            "digit_set_codes": 4.0
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p558-r71-long-vowel",
+            "page": 558,
+            "observation_id": "p558:full-page:a0:result0:r71",
+            "observed_name": "ル一",
+            "corrected_name": "ルー",
+            "reason": "物理558頁の「(3）介護予防自主グル一プ活動支援事業」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ルー」と読む。"
+          },
+          {
+            "id": "p560-r41-long-vowel",
+            "page": 560,
+            "observation_id": "p560:full-page:a0:result0:r41",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理560頁の「1地域包括支援センタ一運営事業」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          },
+          {
+            "id": "p564-r36-long-vowel",
+            "page": 564,
+            "observation_id": "p564:full-page:a0:result0:r36",
+            "observed_name": "タ一",
+            "corrected_name": "ター",
+            "reason": "物理564頁の「（2）高齢者電話相談センタ一事業」。OCR が長音の「ー」を漢数字の「一」と読んだ。片仮名の語の中なので「ター」と読む。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              546,
+              547,
+              548,
+              549,
+              550,
+              551,
+              552,
+              553,
+              554,
+              555
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ed4e83c726cfd12f2297ed6a94c7522d5007c3e8b814a6eb164283bd44cf2161",
+          "bytes": 1937704
+        },
+        {
+          "id": "kaigo-ocr-2",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              556,
+              557,
+              558,
+              559,
+              560,
+              561,
+              562,
+              563,
+              564,
+              565
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "65b60c94051ed980b6b723756fcad6ba556cf4a30dcdba1c78d71b5b44b858de",
+          "bytes": 2181941
+        },
+        {
+          "id": "kaigo-ocr-3",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              566,
+              567,
+              568,
+              569,
+              570,
+              571
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ea8bc13e232b97de6eb29aad7ca8baf36782c8b7a09cdaa188991bc36a989c79",
+          "bytes": 1043097
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "pages": [
+          [
+            590,
+            601
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true,
+                  "note_kinds": {
+                    "総務費": "充用",
+                    "福祉費": "充用",
+                    "産業経済費": "充用",
+                    "土木費": "充用"
+                  },
+                  "notes": [
+                    "令和"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "heading": "事務事業"
+            },
+            "digit_set_codes": 4.0
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              590,
+              591,
+              592,
+              593,
+              594,
+              595,
+              596,
+              597,
+              598,
+              599
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "24f1c937fefcd7aeb30834d35e42507a7538a6654ed8dd4665248447cf23e8c1",
+          "bytes": 1352090
+        },
+        {
+          "id": "kouki-ocr-2",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              600,
+              601
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "728d5130ac33977f23f6fe281612c206f5586c62645a2843cf9bebd69af10fd9",
+          "bytes": 159011
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "tobu",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7"
+        }
+      ],
+      "options": {
+        "account": "東武東上線連続立体化事業特別会計",
+        "table_id": "tobu-expenditure-detail",
+        "pages": [
+          [
+            616,
+            621
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "row_gaps": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "indent_chars": 2
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "wrap": "amount_on_last_line",
+                  "bare_amounts": true,
+                  "note_kinds": {
+                    "総務費": "充用",
+                    "福祉費": "充用",
+                    "産業経済費": "充用",
+                    "土木費": "充用"
+                  },
+                  "notes": [
+                    "令和"
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "inner_tables": {
+              "marker": "当初予算額",
+              "left": "目",
+              "heading": "事務事業"
+            },
+            "digit_set_codes": 4.0
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "tobu-ocr-1",
+          "origin_sha256": "0c876a32711c64cd338d9080fb189296b0d0dddfb7cb51e45e73cf6ca6d5dbf7",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              616,
+              617,
+              618,
+              619,
+              620,
+              621
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "300ed232575b235c194598983a682808f24b4dce1d85c646738e0d21e78dff51",
+          "bytes": 840781
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "tobu-expenditure-detail"
+        }
+      ]
+    }
+  ]
+}
