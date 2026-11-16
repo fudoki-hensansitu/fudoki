@@ -2345,10 +2345,158 @@
         "fiscal_year": 2025,
         "document_kind": "settlement"
       },
-      "candidates": [],
-      "reason": "未公表（決算一覧 information/1000085/1013101/index.html、2026-10-13確認。令和7年度の決算書・事項別明細書の掲載なし）。【従前の確認】令和7年度（2025年度）決算は未選定（公開を確認できない）。公式の決算一覧（information/1000085/1013101/index.html）を2026-10-08に再確認したところ、掲載は令和6年度（2024年度）までで令和7年度の各会計歳入歳出決算書・各会計決算参考書は未掲載。令和7年度決算の監査委員審査意見書（令和8年9月4日付、www2.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/005/909/r07ikensho.pdf）は2026-10-07時点で公表済みだが、決算書本文の掲載は確認できない。これは公開の確認ができていないという記録であり、公開義務の有無や非公開の断定ではない。公開後に再確認が必要。議決状況は今回確認していない。",
-      "selected_candidate_id": null,
-      "archive": null
+      "candidates": [
+        {
+          "id": "representative",
+          "title": "令和7年度葛飾区各会計歳入歳出決算書",
+          "landing_url": "https://www.city.katsushika.lg.jp/information/1000085/1013101/1043662.html",
+          "inspected_at": "2026-11-16T17:40:00+00:00",
+          "files": [
+            {
+              "download_url": "https://www.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/043/662/0702.pdf",
+              "sha256": "af5b30eb58cd611bbe8617908914355fea6867c06adf2252d844c8bccbe80002",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 57,
+                      "end": 89
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 92,
+                      "end": 131
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 136,
+                      "end": 138
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 141,
+                      "end": 148
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 153,
+                      "end": 154
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 157,
+                      "end": 160
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 165,
+                      "end": 168
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 171,
+                      "end": 177
+                    }
+                  ]
+                },
+                {
+                  "account": "用地特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 182,
+                      "end": 182
+                    }
+                  ]
+                },
+                {
+                  "account": "用地特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 185,
+                      "end": 185
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 190,
+                      "end": 190
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 193,
+                      "end": 195
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ],
+      "reason": "令和7年度（2025年度、最新公表）各会計歳入歳出決算書（決算一覧 information/1000085/1013101/1043662.html、令和8年10月16日更新、2026-11-16確認）。単一PDF246頁・文字抽出可（pdf_type=text）。R5・R6 と同じ様式で、事項別明細書は1物理頁=印字2頁の見開き、単位は円。歳出範囲（物理頁）: 一般会計92-131（第1款議会費〜予備費、歳出合計まで。直前の物理91は「歳出」扉）、国民健康保険事業特別会計141-148、後期高齢者医療事業特別会計157-160、介護保険事業特別会計171-177、用地特別会計185、駐車場事業特別会計193-195。歳入範囲（物理頁）: 各会計の歳出の直前で、一般会計57-89（第1款特別区税〜歳入合計）、国保136-138、後期153-154、介護165-168、用地182、駐車場190。各会計の歳入決算額（物理16-48の決算書）: 一般会計284,397,648,377円、国保43,677,431,115円、後期12,387,399,579円、介護46,645,641,345円、用地293,604,288円、駐車場705,220,077円。【従前の確認】2026-10-13 までの確認では未掲載だった（監査委員の審査意見書 r07ikensho.pdf は令和8年9月4日付で公表済み）。",
+      "selected_candidate_id": "representative",
+      "archive": {
+        "bucket": "fudoki-inputs",
+        "candidate_id": "representative",
+        "files": [
+          {
+            "key": "fiscal/source-selection/131229/2025/settlement.pdf",
+            "sha256": "af5b30eb58cd611bbe8617908914355fea6867c06adf2252d844c8bccbe80002",
+            "final_url": "https://www.city.katsushika.lg.jp/_res/projects/default_project/_page_/001/043/662/0702.pdf"
+          }
+        ],
+        "archived_at": "2026-11-16T17:34:34.337Z"
+      }
     },
     {
       "target": {

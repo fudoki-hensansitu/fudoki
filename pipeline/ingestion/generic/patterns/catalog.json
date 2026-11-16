@@ -130,6 +130,7 @@
     "glued_project_codes": "ingestion.generic.patterns.quirks.glued_project_codes",
     "spaced_project_codes": "ingestion.generic.patterns.quirks.spaced_project_codes",
     "short_amounts_at_line_end": "ingestion.generic.patterns.quirks.short_amounts_at_line_end",
+    "short_yen_notes": "ingestion.generic.patterns.quirks.short_yen_notes",
     "gapped_column_rules": "ingestion.generic.patterns.quirks.gapped_column_rules",
     "skewed_cell_rows": "ingestion.generic.patterns.quirks.skewed_cell_rows",
     "wrapped_years": "ingestion.generic.patterns.quirks.wrapped_years",
