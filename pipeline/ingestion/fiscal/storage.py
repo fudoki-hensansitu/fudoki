@@ -12,6 +12,7 @@ import gzip
 import hashlib
 
 from copy import deepcopy
+from datetime import datetime, timedelta, timezone
 
 from ingestion.fiscal.manifest import BUCKET, document_slot, object_key, ocr_key, sha_file, table_references
 from ingestion import r2
@@ -236,6 +237,15 @@ def write_receipts(receipts: dict[str, dict]) -> None:
         temporary.unlink(missing_ok=True)
 
 
+# An object newer than this may be one a store or refresh has put but whose receipt is not in the list yet.
+CLEANUP_GRACE = timedelta(hours=24)
+
+
+def recent(item: dict, now: datetime) -> bool:
+    modified = item.get('last_modified')
+    return modified is not None and now - datetime.fromisoformat(modified.replace('Z', '+00:00')) < CLEANUP_GRACE
+
+
 def cleanup(document: dict) -> int:
     from ingestion.fiscal.manifest import validate, require_current, read, manifest_path
     validate(document)
@@ -251,6 +261,7 @@ def cleanup(document: dict) -> int:
     wanted |= measurement_ocr_keys()
     removed = 0
     after = None
+    now = datetime.now(timezone.utc)
     while True:
         if read(manifest_path(document['target'], document['direction'])) != document:
             raise ValueError('Saved manifest changed; cleanup stopped')
@@ -274,7 +285,7 @@ def cleanup(document: dict) -> int:
             stored_table = name.endswith('.parquet') and '/' not in name
             stored_ocr = (name.startswith('ocr/') and '/' not in name[4:]
                           and name.endswith(('.json.gz', '.run.json')))
-            if key not in wanted and (stored_table or stored_ocr):
+            if key not in wanted and (stored_table or stored_ocr) and not recent(item, now):
                 if read(manifest_path(document['target'], document['direction'])) != document:
                     raise ValueError('Saved manifest changed; cleanup stopped')
                 if key in measurement_ocr_keys():

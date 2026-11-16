@@ -20,9 +20,9 @@
 | 確かめること | どこで |
 | --- | --- |
 | 変換した表の保存の関門（木・網羅・単位） | 手元の `ingestion:convert` |
-| 取り込んだ自治体の dbt の検査 | 手元の `dbt:build -- --jurisdiction <自治体コード>` |
+| 取り込んだ自治体の dbt の検査 | 手元の `dbt:build -- --jurisdiction <自治体コード>`（受領書の一覧を R2 から読むので、R2 の読み取りの token が要る） |
 | PR の宣言が R2 の出典から main のコードで変換でき関門を通るか、変わった範囲の dbt の検査 | 管理 JSON を変えた PR の `ingestion-store-check.yml` |
-| 指紋が古くなった保存済みの表が、今のコードで同じに作り直せるか（同じなら指紋を書き換える PR を出す） | 毎日の `refresh-check.yml`。merge 前に見たいときは PR の branch で手動実行する（比べるだけ） |
+| 指紋が古くなった保存済みの表が、今のコードで同じに作り直せるか（同じなら main の run が R2 の受領書の一覧の指紋を書き換える） | 毎日の `refresh-check.yml`。merge 前に見たいときは PR の branch で手動実行する（比べるだけ） |
 | Poppler の版を上げたあと、保存済みの全表が同じに作り直せるか | `refresh-check.yml` を `all` を付けて手動実行する |
 | R2 への保存・marts の build・本番 D1 への同期 | merge 後の `sync-d1.yml` |
 

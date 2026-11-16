@@ -126,6 +126,17 @@ class CleanupTest(unittest.TestCase):
         self.delete.assert_called_once()
         self.assertEqual(self.list.call_count, 2)
 
+    def test_a_recently_put_object_is_kept_until_its_receipt_can_be_listed(self):
+        listed = self.list_objects
+        modified = (storage.datetime.now(storage.timezone.utc) - storage.timedelta(hours=1)).isoformat()
+
+        def with_time(command):
+            return json.dumps([{**item, 'last_modified': modified} for item in json.loads(listed(command))]).encode()
+        self.list.side_effect = with_time
+        self.assertEqual(storage.cleanup(self.document), 0)
+        self.assertIn(self.old, self.keys)
+        self.delete.assert_not_called()
+
     def test_scan_measurement_inputs_are_not_deleted(self):
         observation = self.prefix + 'ocr/measurement.json.gz'
         self.keys.add(observation)

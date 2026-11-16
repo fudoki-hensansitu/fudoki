@@ -116,6 +116,14 @@ class UpdatedReceiptsTest(unittest.TestCase):
             receipts = store.updated_receipts(listed, [{'receipts': {'x/t': table('b' * 64)}}])
         self.assertEqual(receipts, {'x/t': table('b' * 64)})
 
+    def test_an_unreadable_manifest_drops_no_receipt_and_the_others_are_written(self):
+        listed = {'x/t': table('0' * 64), 'x/gone': table('1' * 64)}
+        with patch.object(store.manifest, 'paths', return_value=[Path('m.json'), Path('broken.json')]), \
+             patch.object(store.manifest, 'read', side_effect=[DOCUMENT, ValueError('holds tables')]), \
+             patch.object(store.storage, 'receipt_id', side_effect=lambda document, ident: f'x/{ident}'):
+            receipts = store.updated_receipts(listed, [{'receipts': {'x/t': table('b' * 64)}}])
+        self.assertEqual(receipts, {'x/t': table('b' * 64), 'x/gone': table('1' * 64)})
+
 
 class StoreCliTest(unittest.TestCase):
     def test_the_cli_reaches_store_without_a_manifest_argument(self):

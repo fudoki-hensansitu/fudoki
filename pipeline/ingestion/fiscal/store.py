@@ -143,9 +143,15 @@ def updated_receipts(listed: dict[str, dict], reports: list[dict]) -> dict[str, 
     receipts = dict(listed)
     for report in reports:
         receipts.update(report['receipts'])
-    declared_ids = {storage.receipt_id(document, table['table_id'])
-                    for document in (manifest.read(path, check_code=False) for path in manifest.paths())
-                    for conversion in document['conversions'] for table in conversion['expected_tables']}
+    declared_ids = set()
+    for path in manifest.paths():
+        try:
+            document = manifest.read(path, check_code=False)
+        except Exception:
+            # A manifest that cannot be read declares nothing we can check; no receipt is dropped this time.
+            return receipts
+        declared_ids |= {storage.receipt_id(document, table['table_id'])
+                         for conversion in document['conversions'] for table in conversion['expected_tables']}
     return {ident: receipt for ident, receipt in receipts.items() if ident in declared_ids}
 
 
@@ -185,7 +191,7 @@ def store(since: str, *, dry_run: bool = False) -> dict:
         # Only this (parent) process writes the list, once, after every upload. It is read again first, so a
         # concurrent writer's entries (refresh) are kept.
         receipts = updated_receipts(storage.read_receipts() or {}, reports)
-        if receipts != listed or pending:
+        if receipts != listed:
             storage.write_receipts(receipts)
         print(json.dumps({'receipts': {'tables': len(receipts), 'written': len(pending)}}), file=sys.stderr, flush=True)
     if failures:
