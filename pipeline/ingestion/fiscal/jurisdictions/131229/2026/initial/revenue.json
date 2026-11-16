@@ -1,0 +1,347 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131229",
+    "fiscal_year": 2026,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "e60181f0dac672a0b4f71a170510206f54dacc607a1588865a33a8251c4d7f0d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（人数・調定見込額・収納率など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5c5327a2e2396d00967a4048878c97c4500455d3670235897b055734bc719f83"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（人数・調定見込額・収納率など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "70c4bb0a4041a4fb5a5b26412a670fa854a15915d83af849ae64a4d384e8a55c"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（人数・調定見込額・収納率など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "be33b37cb1ee73e5f9daf4545ebf990fc6add3cb10a5dbebb674b959fd06193d"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（人数・調定見込額・収納率など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ]
+    },
+    {
+      "id": "land-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "22b2b49094b60691243e88d2f1731a297be98a8c63272ee6797dfad2abbb4bd8"
+        }
+      ],
+      "options": {
+        "account": "用地特別会計",
+        "table_id": "land-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（人数・調定見込額・収納率など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-initial"
+        }
+      ]
+    },
+    {
+      "id": "parking-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "dc309b9a9fc6c3f38429dc8a07a6aaef2e8f4a5526dda75846350ce9a7ae3547"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの積算（人数・調定見込額・収納率など）と主な収入の名前で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                },
+                "款項目": {
+                  "heading": "科目"
+                }
+              },
+              "spread": {
+                "gutter": 0.5
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              }
+            }
+          },
+          "quirks": {
+            "unnumbered_abolished_names": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-initial"
+        }
+      ]
+    }
+  ]
+}
