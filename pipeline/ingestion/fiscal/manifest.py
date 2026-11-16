@@ -26,6 +26,9 @@ def paths(root: Path | None = None) -> list[Path]:
                   for path in year.rglob('*.json') if not path.name.endswith('.layout.json'))
 
 
+CSV_CONVERTER = 'fiscal/layouts/csv/convert.py'
+
+
 def canonical(value: object) -> bytes:
     return json.dumps(value, ensure_ascii=False, sort_keys=True, separators=(',', ':'), allow_nan=False).encode()
 
@@ -78,10 +81,25 @@ def manifest_path(target: dict, direction: str, root: Path | None = None) -> Pat
     return root / target['jurisdiction'] / str(target['fiscal_year']) / document_slot(target) / f'{direction}.json'
 
 
-def object_key(document: dict, table_id: str, kind: str | None = None) -> str:
+def object_key(document: dict, table_id: str, kind: str | None = None, sha256: str | None = None) -> str:
+    """The R2 key of a table. With its sha256 (every table stored since the receipts moved to R2), the key holds the
+    first 16 hex digits, so a new table never overwrites one a build may still read (docs/prd/ingestion-receipts/dd.md)."""
     target = document['target']
     return (f'fiscal/ingestion/{target["jurisdiction"]}/{target["fiscal_year"]}/'
-            f'{document_slot(target)}/{document["direction"]}/{table_id}{'-' + kind if kind else ''}.parquet')
+            f'{document_slot(target)}/{document["direction"]}/{table_id}{'-' + kind if kind else ''}'
+            f'{'-' + sha256[:16] if sha256 else ''}.parquet')
+
+
+def table_kinds(conversion: dict) -> tuple[str | None, ...]:
+    """The parts of a declared table: a CSV conversion writes one object, a PDF one a nodes/amounts pair."""
+    return (None,) if conversion['converter'] == CSV_CONVERTER else ('nodes', 'amounts')
+
+
+def declaration(document: dict, conversion: dict) -> str:
+    """The sha256 of what a conversion declares (inputs, OCR pins, options, expected tables, converter), without
+    the code: a receipt converted under another declaration is not the table of this one."""
+    material = {'target': document['target'], 'direction': document['direction'], 'conversion': conversion}
+    return hashlib.sha256(canonical(material)).hexdigest()
 
 
 def ocr_key(document: dict, ocr_id: str, suffix: str = '.json.gz') -> str:
@@ -103,8 +121,6 @@ def measurement_ocr_keys() -> set[str]:
     for path in sorted(directory.glob('*.json')):
         document = json.loads(path.read_text())
         validate(document, check_code=False)
-        if document['tables']:
-            raise ValueError(f'Measurement plan contains saved tables: {path}')
         keys.update(ocr_key(document, item['id'], suffix) for _, item in ocr_inputs(document)
                     for suffix in ('.json.gz', '.run.json'))
     return keys
@@ -419,8 +435,17 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
         ocr_ids.add(item['id'])
         if item['origin_sha256'] not in {i['sha256'] for i in conversion['inputs']}:
             raise ValueError('OCR input must read an original of its own conversion')
+    return document
+
+
+def validate_tables(document: dict, tables: list[dict], *, complete: bool = True) -> None:
+    """The receipts of a document's tables: owned by their declared conversion, keyed under its target, in the
+    account scope of its inputs. ``complete`` requires every expected table (a conversion's result)."""
+    conversions = {item['id']: item for item in document['conversions']}
+    expected = {table['table_id']: conversion['id'] for conversion in document['conversions']
+                for table in conversion['expected_tables']}
     seen: set[str] = set()
-    for table in document['tables']:
+    for table in tables:
         ident = table['table_id']
         if ident in seen or expected.get(ident) != table['conversion_id']:
             raise ValueError('Duplicate, unexpected or incorrectly owned saved table')
@@ -428,7 +453,8 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
         if any('sha256' not in item for item in conversions[table['conversion_id']].get('ocr_inputs', [])):
             raise ValueError('Saved table needs every OCR input of its conversion pinned')
         for kind, reference in table_references(table).items():
-            if reference['object']['key'] != object_key(document, ident, kind):
+            if reference['object']['key'] not in (object_key(document, ident, kind),
+                                                  object_key(document, ident, kind, reference['object']['sha256'])):
                 raise ValueError('Saved table key differs from its target/direction/table ID')
         if 'nodes' in table:
             origins = resolved_inputs(document, conversions[table['conversion_id']])
@@ -438,13 +464,16 @@ def validate(document: dict, *, path: Path | None = None, check_code: bool = Tru
                 raise ValueError('Saved table account is outside selected input scopes')
         if 'metadata' in table:
             validate_metadata(table['metadata'])
-    if seen and seen != set(expected):
+    if complete and seen != set(expected):
         raise ValueError('Saved manifest must contain every expected table')
-    return document
 
 
 def read(path: Path, *, check_code: bool = True) -> dict:
-    return validate(json.loads(path.read_text()), path=path, check_code=check_code)
+    """A saved manifest: the declaration only. Its tables are in the receipts list in R2 (``storage.attach``)."""
+    document = json.loads(path.read_text())
+    if 'tables' in document:
+        raise ValueError(f'A saved manifest holds no tables; they are in the receipts list in R2: {path}')
+    return validate(document, path=path, check_code=check_code)
 
 
 def selection_for(document: dict) -> dict:
@@ -566,6 +595,8 @@ def require_current(document: dict) -> None:
 def write(path: Path, document: dict) -> None:
     import os
     import tempfile
+    # Only the declaration is saved; the tables of an attached document stay in the receipts list.
+    document = {key: value for key, value in document.items() if key != 'tables'}
     validate(document, path=path)
     path.parent.mkdir(parents=True, exist_ok=True)
     data = (json.dumps(document, ensure_ascii=False, indent=2, allow_nan=False) + '\n').encode()

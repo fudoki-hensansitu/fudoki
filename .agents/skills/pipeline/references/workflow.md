@@ -5,7 +5,7 @@
 | 工程 | 終点 | reference |
 | --- | --- | --- |
 | A. 出典の選定 | 1資料を選び、R2 に保存する | [source-selection](source-selection.md) |
-| B. 取り込み | 表を作って検査を通し、管理 JSON に記録する（R2 には merge 後の CI が置く） | [ingestion](ingestion.md) |
+| B. 取り込み | 宣言を書き、表を作って検査を通す（表と受領書は merge 後の CI が R2 に置く） | [ingestion](ingestion.md) |
 | C. dbt | 保存済みの表から staging・intermediate・marts を作る | [dbt](dbt.md) |
 | 本番への反映 | main への merge で自動 | 下記 |
 
@@ -13,16 +13,16 @@
 - `ingestion:check` は管理情報・選定の検査で、財政の値の正しさは認定しない。
 - 出典は source_selection、表と保存先は管理 JSON に置く。独立した provenance ファイルは作らない。
 - dbt は管理 JSON と保存済みの表だけを読み、取り込みの検査をやり直さない。取り込みの成功と dbt の構築の成功は分けて扱う。
-- 本番への反映は main への merge で自動に行う（`.github/workflows/sync-d1.yml` が記録された表を R2 に置き（`ingestion:store`）、変わった範囲だけを marts に build し、本番 D1 へ差分で写す。入口は `publish`）。取り込みの PR では R2 にも本番にも手で書かない。
+- 本番への反映は main への merge で自動に行う（`.github/workflows/sync-d1.yml` が宣言の変わった表を main のコードで変換して R2 に置き（`ingestion:store`）、変わった範囲だけを marts に build し、本番 D1 へ差分で写す。入口は `publish`）。取り込みの PR では R2 にも本番にも手で書かない。
 
 ## 手元で確かめることと CI に任せること
 
 | 確かめること | どこで |
 | --- | --- |
 | 変換した表の保存の関門（木・網羅・単位） | 手元の `ingestion:convert` |
-| 取り込んだ自治体の dbt の検査 | 手元の `dbt:build -- --jurisdiction <自治体コード>` |
-| PR で記録した表が R2 の出典から同じに作り直せるか、変わった範囲の dbt の検査 | 管理 JSON を変えた PR の `ingestion-store-check.yml` |
-| 指紋が古くなった保存済みの表が、今のコードで同じに作り直せるか（同じなら指紋を書き換える PR を出す） | 毎日の `refresh-check.yml`。merge 前に見たいときは PR の branch で手動実行する（比べるだけ） |
+| 取り込んだ自治体の dbt の検査 | 手元の `dbt:build -- --jurisdiction <自治体コード>`（受領書の一覧を R2 から読むので、R2 の読み取りの token が要る） |
+| PR の宣言が R2 の出典から main のコードで変換でき関門を通るか、変わった範囲の dbt の検査 | 管理 JSON を変えた PR の `ingestion-store-check.yml` |
+| 指紋が古くなった保存済みの表が、今のコードで同じに作り直せるか（同じなら main の run が R2 の受領書の一覧の指紋を書き換える） | 毎日の `refresh-check.yml`。merge 前に見たいときは PR の branch で手動実行する（比べるだけ） |
 | Poppler の版を上げたあと、保存済みの全表が同じに作り直せるか | `refresh-check.yml` を `all` を付けて手動実行する |
 | R2 への保存・marts の build・本番 D1 への同期 | merge 後の `sync-d1.yml` |
 

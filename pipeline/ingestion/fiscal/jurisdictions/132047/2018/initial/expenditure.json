@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "132047",
     "fiscal_year": 2018,
@@ -26,19 +26,6 @@
           "table_id": "csv-32e4dba0f4c6ea30"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "csv-32e4dba0f4c6ea30",
-      "conversion_id": "csv-32e4dba0f4c6ea30",
-      "input_fingerprint": "221340c23b0b2e79cc418a4e6129f824aaba279dc194bf16237bcf329f80e2c3",
-      "object": {
-        "key": "fiscal/ingestion/132047/2018/initial/expenditure/csv-32e4dba0f4c6ea30.parquet",
-        "sha256": "2c83503b179319cebdb82c7ffb4b91c47e7c63ddae47f2152adedd0a3eec474e",
-        "bytes": 89601
-      },
-      "row_count": 5065
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "132047",
     "fiscal_year": 2024,
@@ -24,19 +24,6 @@
           "table_id": "csv-9ae9636703f90430"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "csv-9ae9636703f90430",
-      "conversion_id": "csv-9ae9636703f90430",
-      "input_fingerprint": "74a084d5da257935ef8a4cb1f58703fd43e50181b13064302a54392dbcf3e898",
-      "object": {
-        "key": "fiscal/ingestion/132047/2024/initial/revenue/csv-9ae9636703f90430.parquet",
-        "sha256": "4ccdc6253f16175df19e473cc53eaa3d00d96ee61eeb26cc1e1b5460d4dcc075",
-        "bytes": 30634
-      },
-      "row_count": 821
     }
   ]
 }

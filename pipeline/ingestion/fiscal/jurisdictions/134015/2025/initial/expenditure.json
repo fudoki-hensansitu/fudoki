@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "134015",
     "fiscal_year": 2025,
@@ -126,95 +126,6 @@
           "table_id": "national-health-insurance-initial"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "general-initial",
-      "conversion_id": "general-initial",
-      "input_fingerprint": "685d8954d8a6deae50042d771cc556b109aebdfff47a8f5fc39b06e7bdf20770",
-      "account": "一般会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 106頁 から決めた。款の和 9,108,200 と印字の「計」9,108,200 が一致。",
-        "金額の注記 1 件（充用 1）を注記軸に置いた。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2025/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "fbc99dc4a6bf7bfb76d496430b669cb55ce1a43e23875c2c27160beae10be6cb",
-          "bytes": 73133
-        },
-        "row_count": 2983
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2025/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "f615138dc3d1ae5f0296b23591bae263e50cace1351c677d72b0d53a548c767b",
-          "bytes": 62817
-        },
-        "row_count": 3616
-      }
-    },
-    {
-      "table_id": "long-term-care-initial",
-      "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "f6e15e2b20b77625306e0864b86a38b06157ad93f125b4c450eee15734db0ac2",
-      "account": "介護保険特別会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 11頁 から決めた。款の和 1,066,435 と印字の「計」1,066,435 が一致。",
-        "金額の注記 1 件（充用 1）を注記軸に置いた。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2025/initial/expenditure/long-term-care-initial-nodes.parquet",
-          "sha256": "6946d4d82857f9247bf5b226d71bfc47a3de5098a5a08739b9bba08ba953d59d",
-          "bytes": 11117
-        },
-        "row_count": 247
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2025/initial/expenditure/long-term-care-initial-amounts.parquet",
-          "sha256": "867501caf4e58048d273194b75cd6d6dbf669200df8f32ce94b4048c09f1144d",
-          "bytes": 9112
-        },
-        "row_count": 560
-      }
-    },
-    {
-      "table_id": "national-health-insurance-initial",
-      "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "8a041de28d0ce4ae16ff38165e2bf3511331aab6169f5cc06c915354ad1e3a72",
-      "account": "国民健康保険特別会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 9頁 から決めた。款の和 1,089,356 と印字の「計」1,089,356 が一致。",
-        "金額の注記 1 件（充用 1）を注記軸に置いた。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2025/initial/expenditure/national-health-insurance-initial-nodes.parquet",
-          "sha256": "e3ab8fe911749032c289efc0189e808d0a5e65f44d025d8990dd61befa1a5e13",
-          "bytes": 9444
-        },
-        "row_count": 186
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2025/initial/expenditure/national-health-insurance-initial-amounts.parquet",
-          "sha256": "67ce77a4c0c469bd14991ef0799c5e21c632217c6d766e8f451b5b05fa1085d3",
-          "bytes": 7802
-        },
-        "row_count": 399
-      }
     }
   ]
 }

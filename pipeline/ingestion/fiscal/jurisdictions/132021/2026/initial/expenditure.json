@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "132021",
     "fiscal_year": 2026,
@@ -145,39 +145,6 @@
           "table_id": "general-initial"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "general-initial",
-      "conversion_id": "general-initial",
-      "input_fingerprint": "d7c9d22a60f31d0f6a52465382d3e863acdfc31a0b278a1b454bd8c8c94696ee",
-      "account": "一般会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 163頁 から決めた。款の和 93,506,000 と印字の「歳出合計」93,506,000 が一致。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "原画で確かめた名称の誤読 5 件を、管理 JSON の name_corrections で印字に直した: 188頁 センタ一→センター・188頁 センタ一→センター・188頁 センタ一→センター・188頁 サポ一卜→サポート・188頁 サポ一卜→サポート。",
-        "文字層の無い頁 1 頁（188）は、固定した OCR の観測（頁の単語）と描画の罫線で読み、段の読み方は文字層の頁から当てはめた。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/132021/2026/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "b5db08c71b99976f70c369588002bea5223dd93a200e8e082e52c2c25ac7bcf2",
-          "bytes": 183582
-        },
-        "row_count": 5683
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/132021/2026/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "254487a15e973a9d1b6e54fd78a0917ddc5d9a99bddadd48e66586aa72c84e59",
-          "bytes": 121772
-        },
-        "row_count": 5967
-      }
     }
   ]
 }

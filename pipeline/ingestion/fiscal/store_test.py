@@ -7,107 +7,138 @@ from unittest.mock import patch
 from ingestion.fiscal import manifest, store
 
 
-def table(sha: str) -> dict:
-    return {'table_id': 't', 'conversion_id': 'c',
-            'object': {'key': 'fiscal/ingestion/x/t.parquet', 'sha256': sha, 'bytes': 3}, 'row_count': 1,
-            'input_fingerprint': 'f'}
+def table(sha: str, *, fingerprint: str = 'f', declaration: str | None = 'd', ident: str = 't',
+          conversion: str = 'c') -> dict:
+    receipt = {'table_id': ident, 'conversion_id': conversion,
+               'object': {'key': f'fiscal/ingestion/x/{ident}-{sha[:16]}.parquet', 'sha256': sha, 'bytes': 3},
+               'row_count': 1, 'input_fingerprint': fingerprint}
+    if declaration is not None:
+        receipt['declaration'] = declaration
+    return receipt
+
+
+def sibling(sha: str, **options) -> dict:
+    return table(sha, ident='u', conversion='s', **options)
+
+
+# Two conversions: `c` makes table t, `s` makes table u.
+DOCUMENT = {'target': {}, 'direction': 'expenditure',
+            'conversions': [{'id': 'c', 'expected_tables': [{'table_id': 't'}]},
+                            {'id': 's', 'expected_tables': [{'table_id': 'u'}]}]}
 
 
 class StoreTest(unittest.TestCase):
-    def run_store(self, recorded: dict, converted: dict, previous: dict, *, dry_run: bool = False,
-                  already_stored: bool = False, upload_error: Exception | None = None):
+    def run_store(self, listed: list[dict], converted: list[dict], *, previous: dict | None = None,
+                  dry_run: bool = False, upload_error: Exception | None = None, gate_error: Exception | None = None):
         with tempfile.TemporaryDirectory() as root:
             root = Path(root)
             path = root / 'expenditure.json'
             path.write_text('{}')
             file = root / 't.parquet'
             file.write_bytes(b'abc')
-            candidate = root / 'manifest.json'
-            candidate.write_text(json.dumps({'conversions': [{'id': 'c'}], 'tables': [converted]}))
-            result = {'candidate': str(candidate), 'files': {converted['object']['key']: str(file)}}
-            document = {'conversions': [{'id': 'c'}], 'tables': [recorded]}
-            with patch.object(manifest, 'read', return_value=document), \
-                 patch.object(manifest, 'fingerprints', return_value={'c': 'f'}), \
-                 patch.object(store, 'previous', return_value=previous), \
-                 patch.object(store, 'stored', return_value=already_stored), \
+            self.converted_ids = None
+
+            def convert(*args, conversion_ids, retained, **kwargs):
+                self.converted_ids = conversion_ids
+                tables = [t for t in converted if t['conversion_id'] in conversion_ids] + retained
+                candidate = root / 'manifest.json'
+                candidate.write_text(json.dumps({**DOCUMENT, 'tables': tables}))
+                return {'candidate': str(candidate), 'files': {t['object']['key']: str(file) for t in tables}}
+            receipts = {f'x/{t["table_id"]}': t for t in listed}
+            with patch.object(manifest, 'read', return_value=DOCUMENT), \
+                 patch.object(manifest, 'fingerprints', return_value={'c': 'f', 's': 'f'}), \
+                 patch.object(manifest, 'declaration', return_value='d'), \
+                 patch.object(store, 'previous', return_value=DOCUMENT if previous is None else previous), \
                  patch.object(store.run, 'original_files', return_value={}), \
-                 patch.object(store.run, 'convert', return_value=result) as convert, \
+                 patch.object(store.run, 'convert', side_effect=convert) as convert_mock, \
+                 patch.object(store.unit_checks, 'find_scope', return_value=None), \
                  patch.object(store.storage, 'verify'), \
-                 patch.object(store.storage, 'prepare_save') as self.prepare_save, \
+                 patch.object(store.storage, 'prepare_save', side_effect=gate_error) as self.prepare_save, \
                  patch.object(store.storage, 'receipt_id', side_effect=lambda document, ident: f'x/{ident}'), \
                  patch.object(store.storage, 'upload', side_effect=upload_error) as upload, \
                  patch.object(store.storage, 'cache') as self.cache:
-                report = store.store_manifest(path, 'base', dry_run=dry_run)
+                report = store.store_manifest(path, 'base', receipts, dry_run=dry_run)
                 self.cache_calls = [(key, Path(file).read_bytes()) for key, file in
                                     (c.args for c in self.cache.call_args_list)]
-            return report, convert, upload
+            return report, convert_mock, upload
 
-    def test_uploads_only_when_the_re_converted_receipt_equals_the_record(self):
-        report, convert, upload = self.run_store(table('a' * 64), table('a' * 64), {'tables': []})
-        self.assertEqual(report['tables'], ['t'])
+    def test_a_new_table_is_converted_with_main_and_uploaded(self):
+        report, convert, upload = self.run_store([sibling('9' * 64)], [table('a' * 64)])
+        self.assertEqual(self.converted_ids, ['c'])
+        self.assertEqual((report['placed'], report['drifted']), (['t'], []))
+        self.assertEqual(report['receipts'], {'x/t': table('a' * 64)})
         self.assertFalse(convert.call_args.kwargs['record'])
         self.assertFalse(convert.call_args.kwargs['ask_answers'])
+        self.prepare_save.assert_called_once()
+        self.assertEqual(upload.call_args.args[2]['sha256'], 'a' * 64)
+
+    def test_stale_fingerprints_alone_are_left_to_refresh_check(self):
+        # A change that touches every manifest without changing a declaration (the schema bump) converts nothing.
+        report, convert, upload = self.run_store([table('a' * 64, fingerprint='old'), sibling('9' * 64, fingerprint='old')],
+                                                 [table('a' * 64)])
+        self.assertEqual(report['tables'], [])
+        convert.assert_not_called()
+        upload.assert_not_called()
+
+    def test_a_new_declaration_stores_the_table_as_main_converts_it(self):
+        report, _, upload = self.run_store([table('a' * 64, declaration='old'), sibling('9' * 64)], [table('b' * 64)])
+        self.assertEqual(self.converted_ids, ['c'])
+        self.assertEqual((report['placed'], report['drifted']), (['t'], []))
+        self.assertEqual(report['receipts'], {'x/t': table('b' * 64)})
         upload.assert_called_once()
 
-    def test_a_differing_receipt_of_an_unchanged_declaration_uploads_nothing(self):
-        same = {'conversions': [{'id': 'c'}], 'tables': []}
-        with self.assertRaisesRegex(ValueError, 'differ from their records: t'):
-            self.run_store(table('a' * 64), table('b' * 64), same)
+    def test_a_stale_sibling_is_converted_along_refreshed_or_reported_as_drift(self):
+        listed = [table('a' * 64, declaration='old'), sibling('9' * 64, fingerprint='old')]
+        report, _, _ = self.run_store(listed, [table('b' * 64), sibling('9' * 64)])
+        self.assertEqual(self.converted_ids, ['c', 's'])
+        self.assertEqual((report['placed'], report['refreshed'], report['drifted']), (['t'], ['u'], []))
+        self.assertEqual(report['receipts']['x/u']['input_fingerprint'], 'f')
+        report, _, upload = self.run_store(listed, [table('b' * 64), sibling('8' * 64)])
+        self.assertEqual((sorted(report['placed']), report['drifted']), (['t', 'u'], ['u']))
+        self.assertEqual(upload.call_count, 2)
 
-    def test_a_new_declaration_uploads_the_table_as_main_converts_it(self):
-        # A converter merged after the pull request's check made the record stale (#713, #749).
-        report, _, upload = self.run_store(table('a' * 64), table('b' * 64), {'tables': []})
-        self.assertEqual(report['replaced'], {'x/t': table('b' * 64)})
-        self.prepare_save.assert_called_once()
-        self.assertEqual(upload.call_args.args[2]['sha256'], 'b' * 64)
+    def test_a_receipt_without_declaration_reads_the_change_from_git(self):
+        changed = {**DOCUMENT, 'conversions': [{**DOCUMENT['conversions'][0], 'options': {'x': 1}},
+                                               DOCUMENT['conversions'][1]]}
+        legacy = [table('a' * 64, declaration=None), sibling('9' * 64, declaration=None)]
+        report, _, _ = self.run_store(legacy, [table('b' * 64)], previous=changed)
+        self.assertEqual((report['placed'], report['drifted']), (['t'], []))
+        report, convert, _ = self.run_store(legacy, [table('b' * 64)])
+        convert.assert_not_called()
 
-    def test_a_pull_request_must_match_its_records(self):
-        with self.assertRaisesRegex(ValueError, 'differ from their records: t'):
-            self.run_store(table('a' * 64), table('b' * 64), {'tables': []}, dry_run=True)
+    def test_a_failed_save_gate_stores_nothing(self):
+        with self.assertRaises(ValueError):
+            self.run_store([], [table('a' * 64), sibling('9' * 64)], gate_error=ValueError('gate'))
+        self.cache.assert_not_called()
 
-    def test_dry_run_compares_without_upload_and_caches_for_the_dbt_build(self):
-        _, _, upload = self.run_store(table('a' * 64), table('a' * 64), {'tables': []}, dry_run=True)
+    def test_dry_run_uploads_nothing_and_caches_for_the_dbt_build(self):
+        report, _, upload = self.run_store([sibling('9' * 64)], [table('a' * 64)], dry_run=True)
         upload.assert_not_called()
-        self.assertEqual(self.cache_calls, [('fiscal/ingestion/x/t.parquet', b'abc')])
+        self.assertEqual(report['receipts'], {'x/t': table('a' * 64)})
+        self.assertEqual(self.cache_calls, [(table('a' * 64)['object']['key'], b'abc')])
 
     def test_a_failed_upload_leaves_the_table_out_of_the_cache(self):
         with self.assertRaises(RuntimeError):
-            self.run_store(table('a' * 64), table('a' * 64), {'tables': []}, upload_error=RuntimeError('cf'))
+            self.run_store([sibling('9' * 64)], [table('a' * 64)], upload_error=RuntimeError('cf'))
         self.cache.assert_not_called()
 
-    def test_an_unchanged_record_is_not_re_converted(self):
-        report, convert, upload = self.run_store(table('a' * 64), table('a' * 64),
-                                                 {'conversions': [{'id': 'c'}], 'tables': [table('a' * 64)]})
-        self.assertEqual(report['tables'], [])
-        convert.assert_not_called()
-        upload.assert_not_called()
 
-    def test_a_redeclared_conversion_puts_back_the_record_r2_lacks(self):
-        # R2 holds what main converted in place of the record; the conversion declared again reads as recorded.
-        report, convert, upload = self.run_store(table('a' * 64), table('a' * 64),
-                                                 {'conversions': [{'id': 'c', 'options': {}}], 'tables': [table('a' * 64)]})
-        self.assertEqual(report['tables'], ['t'])
-        convert.assert_called_once()
-        upload.assert_called_once()
+class UpdatedReceiptsTest(unittest.TestCase):
+    def test_new_receipts_replace_and_undeclared_tables_leave_the_list(self):
+        listed = {'x/t': table('0' * 64), 'x/gone': table('1' * 64)}
+        with patch.object(store.manifest, 'paths', return_value=[Path('m.json')]), \
+             patch.object(store.manifest, 'read', return_value=DOCUMENT), \
+             patch.object(store.storage, 'receipt_id', side_effect=lambda document, ident: f'x/{ident}'):
+            receipts = store.updated_receipts(listed, [{'receipts': {'x/t': table('b' * 64)}}])
+        self.assertEqual(receipts, {'x/t': table('b' * 64)})
 
-    def test_a_table_already_in_r2_is_not_re_converted(self):
-        report, convert, upload = self.run_store(table('a' * 64), table('b' * 64), {'tables': []}, already_stored=True)
-        self.assertEqual(report['tables'], [])
-        convert.assert_not_called()
-        upload.assert_not_called()
-
-
-class UpdateReceiptsTest(unittest.TestCase):
-    def test_a_replaced_table_takes_the_uploaded_receipt(self):
-        document = {'target': {}, 'direction': 'expenditure', 'tables': [table('a' * 64)]}
-        with patch.object(store.storage, 'read_receipts', return_value={'x/t': table('0' * 64)}), \
-             patch.object(store.manifest, 'paths', return_value=[Path('m.json')]), \
-             patch.object(store.manifest, 'read', return_value=document), \
-             patch.object(store.storage, 'receipt_id', side_effect=lambda document, ident: f'x/{ident}'), \
-             patch.object(store, 'stored', return_value=False), \
-             patch.object(store.storage, 'write_receipts') as written:
-            store.update_receipts([Path('m.json')], {'x/t': table('b' * 64)})
-        self.assertEqual(written.call_args.args[0], {'x/t': table('b' * 64)})
+    def test_an_unreadable_manifest_drops_no_receipt_and_the_others_are_written(self):
+        listed = {'x/t': table('0' * 64), 'x/gone': table('1' * 64)}
+        with patch.object(store.manifest, 'paths', return_value=[Path('m.json'), Path('broken.json')]), \
+             patch.object(store.manifest, 'read', side_effect=[DOCUMENT, ValueError('holds tables')]), \
+             patch.object(store.storage, 'receipt_id', side_effect=lambda document, ident: f'x/{ident}'):
+            receipts = store.updated_receipts(listed, [{'receipts': {'x/t': table('b' * 64)}}])
+        self.assertEqual(receipts, {'x/t': table('b' * 64), 'x/gone': table('1' * 64)})
 
 
 class StoreCliTest(unittest.TestCase):

@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "131091",
     "fiscal_year": 2025,
@@ -204,98 +204,6 @@
           "table_id": "elderly-medical-expenditure"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "care-expenditure",
-      "conversion_id": "care-settlement",
-      "input_fingerprint": "2423433c00d3b5dd6db27eb7a15aba7948f1cd8654dec11b2c3dc0d55cbbd668",
-      "account": "介護保険特別会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
-        "金額の単位は printed 12頁 から決めた。款の和 27,471,280,415 と印字の「歳出合計」27,471,280,415 が一致。",
-        "金額の注記 36 件（充用 8・流用 28）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（239 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131091/2025/settlement/expenditure/care-expenditure-nodes.parquet",
-          "sha256": "5cf1a0e3dff8a34d2d90464af2052c85a108871a8bcfd8b82e0ef1a7c402e878",
-          "bytes": 13250
-        },
-        "row_count": 272
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131091/2025/settlement/expenditure/care-expenditure-amounts.parquet",
-          "sha256": "facca825748b5ef8225fbdcce548579ccf49311b60ea8e30c4187f5be82b04ba",
-          "bytes": 16430
-        },
-        "row_count": 977
-      }
-    },
-    {
-      "table_id": "national-health-expenditure",
-      "conversion_id": "national-health-settlement",
-      "input_fingerprint": "bb60b64be0dbdf279d81dedf524f6b8583b77a5c1ac5c48efd3827ec8b0b7a1c",
-      "account": "国民健康保険事業会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'shape'}。",
-        "金額の単位は printed 9頁 から決めた。款の和 34,862,626,180 と印字の「歳出合計」34,862,626,180 が一致。",
-        "金額の注記 12 件（充用 6・流用 6）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（143 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131091/2025/settlement/expenditure/national-health-expenditure-nodes.parquet",
-          "sha256": "dffecdd893dbb5bb982f53b668f26aec9b3ce28c7247187c8878839c45dfc04d",
-          "bytes": 10276
-        },
-        "row_count": 180
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131091/2025/settlement/expenditure/national-health-expenditure-amounts.parquet",
-          "sha256": "64ecd768a1a238b92d9278f6a0d00f79ac64cda651250e0b0258f91455fd347e",
-          "bytes": 12168
-        },
-        "row_count": 653
-      }
-    },
-    {
-      "table_id": "elderly-medical-expenditure",
-      "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "84696fdd7d357b95f8b0d01b70c1a939ed913caf4427ff00a13d1e97ce8980d5",
-      "account": "後期高齢者医療特別会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
-        "金額の単位は printed 4頁 から決めた。款の和 11,235,347,075 と印字の「歳出合計」11,235,347,075 が一致。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 2 種（71 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額・翌年度繰越額／継続費逓次繰越繰越明許費事故繰越し→翌年度繰越額。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131091/2025/settlement/expenditure/elderly-medical-expenditure-nodes.parquet",
-          "sha256": "adf200c09c8533abd59784436aa8a7de6d48453496095411869ae071b236ddc0",
-          "bytes": 7146
-        },
-        "row_count": 92
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131091/2025/settlement/expenditure/elderly-medical-expenditure-amounts.parquet",
-          "sha256": "b897beaa7be73f52ba29ed90295d454548521ed78c67c1550f45ed5068695514",
-          "bytes": 7879
-        },
-        "row_count": 314
-      }
     }
   ]
 }

@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "131075",
     "fiscal_year": 2025,
@@ -106,120 +106,6 @@
           "table_id": "elderly-medical-initial"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "general-initial",
-      "conversion_id": "general-initial",
-      "input_fingerprint": "9e6df2f1a678c442d41c1d63317184bfd5c811408596c3e6539fddd8a7da6dce",
-      "account": "一般会計",
-      "notes": [
-        "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",
-        "計上説明の頭と計の行の財源内訳は取り込んでいない。説明の項目は番号（1・⑴・ア…）と右端の金額（千円）で読み、文中・表中の数は取り込んでいない。印字の見出し「計上説明」の金額は共有辞書の「説明」とした。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131075/2025/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "5f7e50c9b54652066b8885ac13b89dc0f3b308dc36af1e7f66f732d091ccaa76",
-          "bytes": 110454
-        },
-        "row_count": 2784
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131075/2025/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "b554af3d56689556bb00661583aae640e7bd0f7d9c4ccfa9f03ffbda20f74be9",
-          "bytes": 88435
-        },
-        "row_count": 3147
-      }
-    },
-    {
-      "table_id": "national-health-initial",
-      "conversion_id": "national-health-initial",
-      "input_fingerprint": "0cc75015d38915c1d1b6c806657fa21ba9f3728a8cff7c152349bd7179337c34",
-      "account": "国民健康保険特別会計",
-      "notes": [
-        "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",
-        "計上説明の頭と計の行の財源内訳は取り込んでいない。説明の項目は番号（1・⑴・ア…）と右端の金額（千円）で読み、文中・表中の数は取り込んでいない。印字の見出し「計上説明」の金額は共有辞書の「説明」とした。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131075/2025/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "0a7e90d8465ca6a5324e130a45507c51e16ca0c0defe64f82ff3165514375d26",
-          "bytes": 9737
-        },
-        "row_count": 154
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131075/2025/initial/expenditure/national-health-initial-amounts.parquet",
-          "sha256": "1ed21653a299e49afd979e0f49534961b4aa70eec69bd78a91bc0e5bd3da9fb4",
-          "bytes": 7967
-        },
-        "row_count": 257
-      }
-    },
-    {
-      "table_id": "care-initial",
-      "conversion_id": "care-initial",
-      "input_fingerprint": "bc3ed65c6cce6341ed5c417ee9b96f3ca725a5efbfb36dada18be651e947a17e",
-      "account": "介護保険特別会計",
-      "notes": [
-        "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",
-        "計上説明の頭と計の行の財源内訳は取り込んでいない。説明の項目は番号（1・⑴・ア…）と右端の金額（千円）で読み、文中・表中の数は取り込んでいない。印字の見出し「計上説明」の金額は共有辞書の「説明」とした。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131075/2025/initial/expenditure/care-initial-nodes.parquet",
-          "sha256": "3339d2a710b758833b0c0a053bbb2137f24661cb37bb5ebcf31830e263191010",
-          "bytes": 10053
-        },
-        "row_count": 151
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131075/2025/initial/expenditure/care-initial-amounts.parquet",
-          "sha256": "990340ba95a498836c6ebc4f1f2e2bac0647395d1df69c348abdd4f0a38d99b4",
-          "bytes": 8032
-        },
-        "row_count": 211
-      }
-    },
-    {
-      "table_id": "elderly-medical-initial",
-      "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "bf761176f1dc496f1e2d723b26c3c5a28dc388e54be27719e1c540e9cfc9005e",
-      "account": "後期高齢者医療特別会計",
-      "notes": [
-        "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",
-        "計上説明の頭と計の行の財源内訳は取り込んでいない。説明の項目は番号（1・⑴・ア…）と右端の金額（千円）で読み、文中・表中の数は取り込んでいない。印字の見出し「計上説明」の金額は共有辞書の「説明」とした。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131075/2025/initial/expenditure/elderly-medical-initial-nodes.parquet",
-          "sha256": "729267346f86616b1a478a92623e708e99c4bacfbce649396af6ba5bea30e011",
-          "bytes": 5904
-        },
-        "row_count": 68
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131075/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
-          "sha256": "09b9b336601c1853f15fdf8ee1b71ee3353f2276f9f6ec82be6c2db8d9f4c1f8",
-          "bytes": 4568
-        },
-        "row_count": 94
-      }
     }
   ]
 }

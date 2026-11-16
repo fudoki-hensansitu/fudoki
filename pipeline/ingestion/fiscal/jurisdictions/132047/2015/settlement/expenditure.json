@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "132047",
     "fiscal_year": 2015,
@@ -26,19 +26,6 @@
           "table_id": "csv-d81edd1604dd437c"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "csv-d81edd1604dd437c",
-      "conversion_id": "csv-d81edd1604dd437c",
-      "input_fingerprint": "875b9bf3c449918d1b59288c5a4adb50362884afbacba1e8d48aa981812e6cfc",
-      "object": {
-        "key": "fiscal/ingestion/132047/2015/settlement/expenditure/csv-d81edd1604dd437c.parquet",
-        "sha256": "3f671fc82a36c83758310b213119e5ec149fd4e2822e31e9c8235b3337fff729",
-        "bytes": 92262
-      },
-      "row_count": 4715
     }
   ]
 }

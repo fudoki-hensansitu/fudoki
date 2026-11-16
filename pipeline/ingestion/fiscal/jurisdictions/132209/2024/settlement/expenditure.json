@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "132209",
     "fiscal_year": 2024,
@@ -84,68 +84,6 @@
           "table_id": "national-health-insurance-expenditure"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "general-expenditure",
-      "conversion_id": "general-settlement",
-      "input_fingerprint": "a07041016e62158a24316847805c3eb7003ee4e40c31bf02c7034b40838db739",
-      "account": "一般会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
-        "金額の単位は printed 95頁 から決めた。款の和 37,648,397,141 と印字の「歳出合計」37,648,397,141 が一致。",
-        "金額の注記 23 件（不用額 23）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（775 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/132209/2024/settlement/expenditure/general-expenditure-nodes.parquet",
-          "sha256": "a985709a6cc120b9272c5d5c33e37b532a5668919ccd7f3fd58efc058cb56695",
-          "bytes": 111758
-        },
-        "row_count": 3892
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/132209/2024/settlement/expenditure/general-expenditure-amounts.parquet",
-          "sha256": "df48d38e4d02db2828510a9561c18f3736c5ec7936e2d122ce594d30acc52a5d",
-          "bytes": 123269
-        },
-        "row_count": 9054
-      }
-    },
-    {
-      "table_id": "national-health-insurance-expenditure",
-      "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "e615f11a35cfbb2b3c2cc9693912a5618b8c92f8e9d3f5eace8b4e6fffc7fcaf",
-      "account": "国民健康保険事業特別会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
-        "金額の単位は printed 9頁 から決めた。款の和 8,309,266,792 と印字の「歳出合計」8,309,266,792 が一致。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（43 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/132209/2024/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
-          "sha256": "438c97a88a8eaccc6a34f83de137cfb6fa2f106371998b4ed2e7d1092b493af8",
-          "bytes": 9578
-        },
-        "row_count": 179
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/132209/2024/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
-          "sha256": "8447b0d0bbc0b242aa5bdc6a25f4dc5050bc3c8f6449104a7cbfefede85bd016",
-          "bytes": 10844
-        },
-        "row_count": 843
-      }
     }
   ]
 }

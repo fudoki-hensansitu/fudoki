@@ -36,7 +36,7 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 | 内容 | 保存先 | Git |
 |---|---|---|
 | 出典 CSV・PDF | 非公開 R2 の `fiscal/source-selection/` | 選定と保存の参照だけ |
-| 取り込みの表（Parquet） | 非公開 R2 の `fiscal/ingestion/<対象>/<方向>/` | 管理 JSON だけ |
+| 取り込みの表（Parquet） | 非公開 R2 の `fiscal/ingestion/<対象>/<方向>/`、受領書は `fiscal/ingestion/receipts.json` | 管理 JSON の宣言だけ |
 | scan PDF の OCR の観測 | 非公開 R2 の `fiscal/ingestion/<対象>/<方向>/ocr/<id>.json.gz` | 依頼と SHA（`ocr_inputs`）だけ |
 | Jev の聞き直しの答え | 管理 JSON の隣の `<方向>.digit-recheck.jsonl` | 管理する |
 | 出典の頁ごとの文字 | D1 の `source_page_text`（marts から写す） | 管理しない |
@@ -44,7 +44,7 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 | 復元した入力・キャッシュ | `pipeline/.cache/` | 管理しない |
 | DuckDB・dbt manifest・検査結果 | `pipeline/.build/` | 管理しない |
 
-- 取り込みの表は `ingestion:convert` が管理 JSON に記録し、R2 には merge 後の CI の `ingestion:store` だけが置く（[ADR 0045](../docs/adr/0045-ingestion-tables-uploaded-by-ci.md)）。PR の check は記録と一致することを求める。merge 後の store は、この範囲で宣言が新しく・変わった変換なら、記録と違っても main のコードで変換して関門を通った表を置き、R2 の受領書の一覧に入れる（check の後に変換器が main に入ったすれ違い。build は Git の記録が R2 に無い資料を一覧から読む）。宣言が同じ変換の差は置かずに止める。store で落ちた資料があっても D1 の同期は流し、保存されたことの無い表は build から外す（保存済みの表は前の受領書で読む。[受領書の設計](../docs/prd/ingestion-receipts/dd.md) の段階3の先取り）
+- 管理 JSON は宣言と入力だけを持ち、表の受領書（key・sha・行数・指紋）は R2 の受領書の一覧に置く（[ADR 0051](../docs/adr/0051-ingestion-receipts-in-r2.md)）。スレッドの `ingestion:convert` は検査が通ることを確かめ、表を手元の cache に置くだけで、Git に受領書を書かない。R2 には merge 後の CI の `ingestion:store` だけが、宣言の変わった変換（と同じ管理 JSON の指紋の古い変換）を main のコードで変換し、関門を通った表を置く（中身が前と同じなら指紋だけ、宣言は同じで中身が違えば置いて `drifted` と報告）。指紋だけが古い管理 JSON は refresh-check に任せる。PR の check は同じ変換を回し、その受領書を一覧に重ねて dbt を build する。store で落ちた資料があっても D1 の同期は流し、保存されたことの無い表は build から外す（保存済みの表は前の受領書で読む）
 - OCR は変換器の外で一度だけ取り、観測を固定する（[ADR 0019](../docs/adr/0019-freeze-scan-ocr-observations.md)）。エンジンは PaddleOCR を ONNX Runtime で動かす（[ADR 0032](../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。誤読は宣言で直し、観測は書き換えない
 - 独立した provenance ファイルは作らない
 
@@ -53,7 +53,7 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 - PDF はノードの表と金額の表、CSV は原文の行と1対1の表にする（[ADR 0020](../docs/adr/0020-ingestion-outputs-node-tables.md)）
 - 保存の関門: 木の検査（`ingestion/lib/tree_checks.py`）、text PDF の印字された数字の網羅（`coverage_checks.py`。Jev の聞き直しは止める方向だけ、[ADR 0026](../docs/adr/0026-jev-recheck-printed-digits-stop-only.md)）、単位の確かめ（[ADR 0028](../docs/adr/0028-unit-check-in-the-save-gate.md)）、決算の款の軸と支出済額（[ADR 0029](../docs/adr/0029-structural-check-in-the-save-gate.md)）
 - 合否だけを決める検査のコードは `*_checks.py` に置き、指紋から外す。検査を厳しくしたら保存済みの全表に `ingestion:verify --remote` を当てる。候補の対象範囲が要る検査（網羅・印字の合計）は `ingestion:convert` の候補に `ingestion:verify --candidate <dir>` を当てる
-- 指紋（`input_fingerprint`）は「変わったかもしれない」という合図で、古くても止めない。作り直しと比較、中身が同じ表の指紋を書き換える PR は定期の `refresh-check.yml` が出し、PR の check と手元では refresh を回さない（PR の branch での refresh-check の手動実行は比べるだけ）。違う表が出たら `ingestion:convert` で記録し直す（[ADR 0027](../docs/adr/0027-refresh-fingerprints-by-table-content.md)）
+- 指紋（`input_fingerprint`）は「変わったかもしれない」という合図で、古くても止めない。作り直しと比較、中身が同じ表の指紋の書き換え（受領書の一覧）は定期の `refresh-check.yml` が行い、PR の check と手元では refresh を回さない（PR の branch での refresh-check の手動実行は比べるだけ）。違う表が意図どおりなら main で `accept` を付けて手動実行する（[ADR 0027](../docs/adr/0027-refresh-fingerprints-by-table-content.md)・[ADR 0051](../docs/adr/0051-ingestion-receipts-in-r2.md)）
 - PDF の読み方は書式ごとの固定した workflow（[ADR 0035](../docs/adr/0035-fixed-pdf-workflow-patterns.md)・[PDF workflow の設計](../docs/prd/pdf-workflow-patterns/dd.md)）。他の書式にも効く処理は共通コードに入れ、1つの書式のための判定は opt-in の quirk にする（[ADR 0043](../docs/adr/0043-format-quirks-are-opt-in.md)）。結び付きの強い読み方は `readings/`、独立に選べる部品は `components/`（[ADR 0036](../docs/adr/0036-shared-coupled-pdf-readings.md)）
 - 金額の注記は段階を付けず、木の合計に足さない（[ADR 0024](../docs/adr/0024-monetary-annotations-without-phase.md)）
 - 統計の決算・普通会計の表は取り込まない（[ADR 0037](../docs/adr/0037-do-not-ingest-statistical-settlements.md)）。補正予算は当面取り込まない（[ADR 0039](../docs/adr/0039-defer-supplementary-budget-ingestion.md)）

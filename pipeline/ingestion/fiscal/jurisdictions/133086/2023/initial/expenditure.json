@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "133086",
     "fiscal_year": 2023,
@@ -106,37 +106,6 @@
           "table_id": "general-initial"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "general-initial",
-      "conversion_id": "general-initial",
-      "input_fingerprint": "488179162e39831e164435b73c78eafc34f4cc7ef7e60b412370022912e58475",
-      "account": "一般会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 158頁 から決めた。款の和 7,010,000 と印字の「歳出合計」7,010,000 が一致。",
-        "金額の注記 0 件（なし）を注記軸に置いた。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/133086/2023/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "d25c7b9f050d254330679d58f25293143f99727349f2439262aa3ee12ca0dbd5",
-          "bytes": 128551
-        },
-        "row_count": 4747
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/133086/2023/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "fdd1d8b9978dd6fe58f091cac713b6197e4c046eb14aed426899d00d6289919d",
-          "bytes": 104884
-        },
-        "row_count": 5520
-      }
     }
   ]
 }

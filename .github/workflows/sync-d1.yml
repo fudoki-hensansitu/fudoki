@@ -1,6 +1,6 @@
 name: sync-d1
 # main に入った取り込み・dbt の変更を、marts に build して本番 D1（fudoki-api）へ差分で写す（ADR 0040）。
-# publish の前に、取り込みの PR が管理 JSON に記録した表を変換し直し、記録と一致したものだけ R2 に置く（ingestion:store、ADR 0045）。
+# publish の前に、取り込みの PR が変えた宣言を main のコードで変換し、保存の関門を通った表と受領書を R2 に置く（ingestion:store、ADR 0051）。
 # 範囲は serving/publish.py（bun run --cwd pipeline publish）が差分から決める。取り込みの宣言・選定・自治体の列を持つ seed だけならその自治体だけ、
 # 全自治体に効く変更なら全件。事業と評価シートのつなぎは build のたびに計算する。
 on:
@@ -134,7 +134,7 @@ jobs:
       # 一部の scan の表は mutool で字を読む（generic/patterns/components/clipped_words.py）
       - if: steps.scope.outputs.since != ''
         run: mise install conda:mupdf@1.28.6
-      # 手動の実行は R2 に置かない（置くのは merge された記録だけ）。since が古くても、R2 にある表は変換し直さない（store.stored）
+      # 手動の実行は R2 に置かない（置くのは merge された宣言の表だけ）。since が古くても、受領書の宣言と指紋が今と同じ表は変換し直さない（store.to_convert）
       # 落ちた管理 JSON があっても、ほかは置き終えてから job を落とす。sync はそれでも流す（下の sync の if）
       - id: store
         if: steps.scope.outputs.since != ''

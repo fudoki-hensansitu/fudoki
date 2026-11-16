@@ -13,7 +13,7 @@ from pathlib import Path
 import duckdb
 
 from ingestion.fiscal import manifest, unit_checks
-from ingestion.fiscal.storage import fetch, fetch_ocr, keep, save_ocr, cleanup, verify, write_ocr
+from ingestion.fiscal.storage import attach, fetch, fetch_ocr, keep, save_ocr, cleanup, verify, write_ocr
 from ingestion.paths import BUILD
 from ingestion.generic.patterns import quirk
 from ingestion.lib import coverage_checks, digit_recheck, heavy_lock, node_tables, poppler, source_inconsistencies, tree_checks
@@ -100,17 +100,12 @@ def table_receipt(document: dict, conversion: dict, table_id: str, path: Path, *
                   metadata: dict | None = None) -> dict:
     fingerprint = input_fingerprint or manifest.fingerprint(document, conversion)
     sha = manifest.sha_file(path)
-    previous = next((table for table in document['tables'] if table['table_id'] == table_id), None)
-    if metadata is None and previous is not None and 'metadata' in previous:
-        if previous['input_fingerprint'] != fingerprint or previous['object']['sha256'] != sha:
-            raise ValueError('Changed annotated table requires metadata from its converter')
-        metadata = previous['metadata']
     count = inspect_table(path, metadata)
     if count == 0:
         raise ValueError('Empty output is not supported')
     result = {'table_id': table_id, 'conversion_id': conversion['id'],
-            'input_fingerprint': fingerprint,
-            'object': {'key': manifest.object_key(document, table_id),
+            'input_fingerprint': fingerprint, 'declaration': manifest.declaration(document, conversion),
+            'object': {'key': manifest.object_key(document, table_id, sha256=sha),
                        'sha256': sha, 'bytes': path.stat().st_size},
             'row_count': count}
     if metadata is not None:
@@ -176,21 +171,23 @@ def node_receipt(document: dict, conversion: dict, table_id: str, tables: node_t
     # A direct converter never counted anything while migrating a wide table: no migration note.
     receipt = {'table_id': table_id, 'conversion_id': conversion['id'],
                'input_fingerprint': input_fingerprint or manifest.fingerprint(document, conversion),
+               'declaration': manifest.declaration(document, conversion),
                'account': account, **({'division': conversion['options']['division']}
                                       if conversion['options'].get('division') else {}),
                'notes': [*(notes or []), *([node_tables.MIGRATION_NOTE] if migrated else [])],
                'unread_amount_count': tables.unread_amount_count,
                'unresolved_parent_count': tables.unresolved_parent_count}
     for kind, path in paths.items():
-        receipt[kind] = {'object': {'key': manifest.object_key(document, table_id, kind),
-                                   'sha256': manifest.sha_file(path), 'bytes': path.stat().st_size},
+        sha = manifest.sha_file(path)
+        receipt[kind] = {'object': {'key': manifest.object_key(document, table_id, kind, sha),
+                                   'sha256': sha, 'bytes': path.stat().st_size},
                          'row_count': inspect_table(path)}
     return receipt, paths
 
 def unchanged_legacy_receipt(document: dict, conversion: dict, table_id: str, file: Path,
                              fingerprint: str, *, remote: bool) -> dict:
-    """Retain a failed migration only when its wide bytes match the saved object."""
-    previous = next((t for t in document['tables'] if t['table_id'] == table_id), None)
+    """Retain a failed migration only when its wide bytes match the stored table (none is stored today)."""
+    previous = next((t for t in document.get('tables', []) if t['table_id'] == table_id), None)
     if previous is None or 'nodes' in previous or previous['conversion_id'] != conversion['id']:
         raise ValueError(f'Failed node migration has no saved legacy table: {table_id}')
     verify(file, previous['object'])
@@ -230,42 +227,51 @@ def coverage_peers(document: dict, converted: dict) -> dict:
 
 def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bool = False, record: bool = False,
             conversion_ids: list[str] | None = None, extend_plan: Path | None = None,
-            persist_answers: bool = True, ask_answers: bool = True) -> dict:
+            persist_answers: bool = True, ask_answers: bool = True, retained: list[dict] | None = None) -> dict:
     """Convert and check tables.
 
-    ``remote`` restores missing inputs and retained tables from R2 (read only). ``record`` writes the
-    passing tables to the Git manifest and the local object cache; R2 is written only by ``store`` (ADR 0045).
+    The tables of conversions not chosen are retained as the receipts list in R2 holds them (``retained``
+    overrides the list). ``remote`` restores missing inputs and retained tables from R2 (read only). ``record``
+    places the passing tables in the local object cache (and writes an extension's declaration); R2 and the
+    receipts list are written only by ``store`` after merge (docs/prd/ingestion-receipts/dd.md).
     A caller may read the Jev answers without extending or writing them (refresh): a read-only run
     must not change tracked files or spend API calls.
     """
-    document = manifest.read(path)
+    declared = manifest.read(path)
+    document = {**declared, 'tables': []}
     original_bytes = None
     if extend_plan is not None:
         original_bytes = path.read_bytes()
-        if json.loads(original_bytes) != document:
+        if json.loads(original_bytes) != declared:
             raise ValueError('Saved manifest changed while preparing extension')
         plan = manifest.validate(json.loads(extend_plan.read_text()), path=path)
-        old = document['conversions']
-        if (plan['target'] != document['target'] or plan['direction'] != document['direction']
-                or plan['tables'] or len(plan['conversions']) != len(old) + 1
+        old = declared['conversions']
+        if (plan['target'] != declared['target'] or plan['direction'] != declared['direction']
+                or plan.get('tables') or len(plan['conversions']) != len(old) + 1
                 or plan['conversions'][:-1] != old):
-            raise ValueError('Extension must append one conversion to the same target/direction with unchanged definitions and tables=[]')
+            raise ValueError('Extension must append one conversion to the same target/direction with unchanged definitions')
         added = plan['conversions'][-1]
         if len(added['expected_tables']) != 1:
             raise ValueError('Extension requires exactly one new expected table')
         if conversion_ids is not None and conversion_ids != [added['id']]:
             raise ValueError('Extension conversion selection must be the one new ID')
-        manifest.require_current(document)
-        retained_tables = deepcopy(document['tables'])
-        document = deepcopy(plan)
-        document['tables'] = retained_tables
+        stored = attach(declared) if retained is None else {**declared, 'tables': retained}
+        manifest.validate_tables(declared, stored['tables'])
+        manifest.require_current(stored)
+        document = {**deepcopy(plan), 'tables': deepcopy(stored['tables'])}
         conversion_ids = [added['id']]
+    elif conversion_ids is not None and set(conversion_ids) != {c['id'] for c in declared['conversions']}:
+        document = attach(declared) if retained is None else {**declared, 'tables': deepcopy(retained)}
     selection = manifest.selection_for(document)
     all_ids = {conversion['id'] for conversion in document['conversions']}
     chosen = set(conversion_ids) if conversion_ids is not None else all_ids
     if not chosen or not chosen <= all_ids:
         raise ValueError('Unknown or empty conversion selection')
     before = manifest.fingerprints(document)
+
+    def stored_document() -> dict:
+        # The stored tables a failed node migration may keep (read only when one fails).
+        return {**declared, 'tables': retained} if retained is not None else attach(declared)
     output.mkdir(parents=True, exist_ok=False)
     outputs = {}
     tables = []
@@ -281,12 +287,14 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
     direct_notes = {}
     for conversion in document['conversions']:
         if conversion['id'] not in chosen:
-            retained = [table for table in document['tables'] if table['conversion_id'] == conversion['id']]
-            if {table['table_id'] for table in retained} != {item['table_id'] for item in conversion['expected_tables']}:
+            kept = [table for table in document['tables'] if table['conversion_id'] == conversion['id']]
+            if {table['table_id'] for table in kept} != {item['table_id'] for item in conversion['expected_tables']}:
                 raise ValueError('Partial conversion cannot omit unsaved expected tables')
-            for table in retained:
+            for table in kept:
                 if table['input_fingerprint'] != before[conversion['id']]:
                     raise ValueError('An untouched table is stale; include its conversion')
+                if table.get('declaration', manifest.declaration(document, conversion)) != manifest.declaration(document, conversion):
+                    raise ValueError('An untouched table was converted under another declaration; include its conversion')
                 for reference in manifest.table_references(table).values():
                     stored = fetch(reference['object'], remote=remote)
                     if extend_plan is not None:
@@ -294,12 +302,12 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                     count = inspect_table(stored, table.get('metadata'))
                     if extend_plan is not None and count != reference['row_count']:
                         raise ValueError('Retained table row count differs from its receipt')
-            for table in retained:
+            for table in kept:
                 if 'nodes' in table:
                     adopted[table['table_id']] = node_tables.NodeTables(
                         node_tables.read_rows(fetch(table['nodes']['object'], remote=remote)),
                         node_tables.read_rows(fetch(table['amounts']['object'], remote=remote)))
-            tables.extend(retained)
+            tables.extend(kept)
             continue
         inputs = manifest.resolved_inputs(document, conversion, selection)
         for item in inputs:
@@ -381,7 +389,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                 try:
                     initial = node_tables.migrate_rows(rows, metadata or {})
                 except ValueError:
-                    tables.append(unchanged_legacy_receipt(document, conversion, ident, file,
+                    tables.append(unchanged_legacy_receipt(stored_document(), conversion, ident, file,
                                   before[conversion['id']], remote=remote))
                     outputs[ident] = file
                     continue
@@ -411,7 +419,7 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         checked = tree_checks.check_tree(migrated.nodes, migrated.amounts, document['target']['document_kind']) if migrated else {'passed': False}
         if (migrated is None or not migrated.nodes or not migrated.amounts or migrated.issues or migrated.unread_amount_count
                 or migrated.unresolved_parent_count or not checked['passed']):
-            tables.append(unchanged_legacy_receipt(document, conversion, ident, file,
+            tables.append(unchanged_legacy_receipt(stored_document(), conversion, ident, file,
                           before[conversion['id']], remote=remote))
             outputs[ident] = file
             continue
@@ -491,7 +499,8 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
         raise ValueError('\n'.join(unit_failures))
     result = deepcopy(document)
     result['tables'] = tables
-    manifest.validate(result)
+    manifest.validate({key: value for key, value in result.items() if key != 'tables'})
+    manifest.validate_tables(result, tables)
     used_originals = {item['sha256'] for conversion in document['conversions']
                       if conversion['id'] in chosen for item in conversion['inputs']}
     for sha in sorted(used_originals):
@@ -510,17 +519,18 @@ def convert(path: Path, local_files: dict[str, str], output: Path, *, remote: bo
                 continue
             keep(result, table, outputs[table['table_id']], scope=scopes.get(table['table_id']))
         manifest.require_current(result)
-        if original_bytes is not None and path.read_bytes() != original_bytes:
-            raise ValueError('Saved manifest changed before extension registration')
-        manifest.write(path, result)
-        # Deletion is always a separate operation, including legacy-only documents.
+        if original_bytes is not None:
+            if path.read_bytes() != original_bytes:
+                raise ValueError('Saved manifest changed before extension registration')
+            # The extension's declaration is the only thing written to Git; the tables go to R2 after merge.
+            manifest.write(path, result)
     files = {}
     for table in tables:
         if table['conversion_id'] in chosen:
             for kind, reference in manifest.table_references(table).items():
                 output_file = outputs[table['table_id']]
                 files[reference['object']['key']] = str(output_file[kind] if kind is not None else output_file)
-    return {'status': 'recorded' if record else 'candidate', 'tables': len(tables), 'jev': recheck.summary(),
+    return {'status': 'checked' if record else 'candidate', 'tables': len(tables), 'jev': recheck.summary(),
             'files': files,
             'units': {'tables': {ident: item['status'] for ident, item in sorted(unit_results.items())},
                       'counts': unit_checks.summarize(unit_results)},
@@ -671,23 +681,26 @@ def main() -> None:
     check_sums.add_argument('--candidate', type=Path, help='Candidate directory from convert (uses its manifest.json)')
     check_sums.add_argument('--output', type=Path, help='Detail directory (default: .build/ingestion-verify)')
     check_sums.add_argument('--remote', action='store_true', help='Restore missing saved tables from R2')
-    refresh = sub.add_parser('refresh', help='Re-convert stale tables, compare contents with the saved ones, and rewrite only the fingerprints of unchanged manifests')
+    refresh = sub.add_parser('refresh', help='Re-convert stale tables, compare contents with the stored ones, and rewrite only the fingerprints of unchanged tables in the receipts list')
     refresh.add_argument('--manifest', type=Path, action='append', help='Saved manifest(s); default: all')
     refresh.add_argument('--output', type=Path, help='Report file (default: .build/ingestion-refresh/report.json)')
-    refresh.add_argument('--remote', action='store_true', help='Restore missing originals and saved tables from R2 (read only; nothing is uploaded)')
-    refresh.add_argument('--dry-run', action='store_true', help='Compare only; do not rewrite any manifest')
+    refresh.add_argument('--remote', action='store_true', help='Restore missing originals and stored tables from R2')
+    refresh.add_argument('--dry-run', action='store_true', help='Compare only; do not write the receipts list')
+    refresh.add_argument('--accept', action='store_true', help='Store the differing tables as re-converted (after reading the report; CI on main only)')
     refresh.add_argument('--all', action='store_true', help='Re-read every conversion, not only stale ones (after a Poppler change)')
     refresh.add_argument('--jobs', type=int, help='Manifests refreshed at once (default: from free CPUs and memory, at most 4; 1 runs them one by one)')
     refresh.add_argument('--plan', action='store_true', help='List stale conversions only; no original reads, conversion, or writes')
+    refresh.add_argument('--defer-write', action='store_true', help='Keep the receipts to write in the report instead of writing them (CI writes them with --apply under the store concurrency)')
+    refresh.add_argument('--apply', type=Path, help='Write the receipts a --defer-write report kept; no conversion')
     ocr = sub.add_parser('ocr', help='Read declared OCR requests and pin observation SHA (Paddle; run outside the sandbox)')
     ocr.add_argument('--manifest', type=Path, required=True)
     ocr.add_argument('--inputs', type=Path, help='JSON: original SHA-256 to local file path (not with --save)')
     ocr.add_argument('--id', action='append', help='Only these OCR input IDs')
     ocr.add_argument('--verify', action='store_true', help='Re-read and compare with the pinned SHA; write nothing')
     ocr.add_argument('--save', action='store_true', help='Upload the pinned observations to R2 (the one R2 write left to a thread)')
-    store = sub.add_parser('store', help='Re-convert the tables recorded since a commit, compare with their records, and upload them to R2 (CI after merge)')
+    store = sub.add_parser('store', help='Convert the manifests changed since a commit with this code, and store the tables that pass the save gate in R2 and the receipts list (CI after merge)')
     store.add_argument('--since', required=True, help='Commit to diff the manifests against')
-    store.add_argument('--dry-run', action='store_true', help='Re-convert and compare only; write nothing')
+    store.add_argument('--dry-run', action='store_true', help='Convert and check only; upload nothing and write the pending receipts for the build (pull request)')
     clean = sub.add_parser('cleanup')
     clean.add_argument('--manifest', type=Path, required=True)
     args = parser.parse_args()
@@ -703,6 +716,10 @@ def main() -> None:
         from ingestion.fiscal.refresh import plan
         print(json.dumps(plan(manifests), ensure_ascii=False))
         return
+    if args.command == 'refresh' and args.apply:
+        from ingestion.fiscal.refresh import apply_report
+        print(json.dumps(apply_report(args.apply), ensure_ascii=False))
+        return
     if args.command == 'refresh' and args.jobs is not None and args.jobs < 1:
         parser.error('--jobs must be at least 1')
     if args.command in ('convert', 'refresh', 'store'):
@@ -716,15 +733,14 @@ def main() -> None:
         # Structure and selection only. Stale fingerprints are listed by `refresh --plan`, and the scheduled
         # refresh dry-run compares contents (ADR 0027).
         paths = [args.manifest] if args.manifest else manifest.paths()
-        count = ready = tables = 0
+        count = declared = 0
         for path in paths:
             document = manifest.read(path)
             for conversion in document['conversions']:
                 manifest.resolved_inputs(document, conversion)
-            ready += bool(document['tables'])
+                declared += len(conversion['expected_tables'])
             count += 1
-            tables += len(document['tables'])
-        print(json.dumps({'valid': True, 'manifests': count, 'ready': ready, 'saved_tables': tables}))
+        print(json.dumps({'valid': True, 'manifests': count, 'declared_tables': declared}))
     elif args.command == 'ocr' and args.save:
         document = manifest.read(args.manifest)
         saved = [item['id'] for _, item in manifest.ocr_inputs(document) if not args.id or item['id'] in args.id]
@@ -733,8 +749,8 @@ def main() -> None:
                 save_ocr(document, item)
         print(json.dumps({'saved': saved}, ensure_ascii=False))
     elif args.command == 'store':
-        from ingestion.fiscal.store import store as store_recorded
-        print(json.dumps(store_recorded(args.since, dry_run=args.dry_run), ensure_ascii=False))
+        from ingestion.fiscal.store import store as store_changed
+        print(json.dumps(store_changed(args.since, dry_run=args.dry_run), ensure_ascii=False))
     elif args.command == 'ocr':
         if args.inputs is None:
             parser.error('ocr requires --inputs unless --save')
@@ -756,7 +772,7 @@ def main() -> None:
         else:
             runs = []
             for path in args.manifest or manifest.paths():
-                document = manifest.read(path)
+                document = attach(manifest.read(path))
                 runs.append((path, document, lambda table: ({kind: fetch(ref['object'], remote=args.remote)
                     for kind, ref in manifest.table_references(table).items()} if 'nodes' in table
                     else fetch(table['object'], remote=args.remote))))
@@ -784,9 +800,9 @@ def main() -> None:
         print(json.dumps({'manifests': len(runs), 'tables': summary}, ensure_ascii=False))
         raise SystemExit(1 if failed else 0)
     elif args.command == 'restore':
-        document = manifest.read(args.manifest)
+        document = attach(manifest.read(args.manifest))
         if not document['tables']:
-            raise ValueError('Manifest has no complete saved table set')
+            raise ValueError('The receipts list holds no table of this manifest')
         for table_id in manifest.stale_tables(document):
             print(f'stale: {args.manifest}: {table_id}', file=sys.stderr)
         for table in document['tables']:
@@ -799,7 +815,7 @@ def main() -> None:
         from ingestion.fiscal.refresh import refresh_all
         report = refresh_all(args.manifest or manifest.paths(), remote=args.remote, dry_run=args.dry_run,
                              output=args.output or BUILD / 'ingestion-refresh' / 'report.json', everything=args.all,
-                             jobs=args.jobs)
+                             jobs=args.jobs, accept=args.accept, defer_write=args.defer_write)
         print(json.dumps(report['summary'], ensure_ascii=False))
         raise SystemExit(0 if report['ok'] else 1)
     else:

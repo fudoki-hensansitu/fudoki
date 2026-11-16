@@ -6,7 +6,7 @@
   "additionalProperties": false,
   "properties": {
     "schema_version": {
-      "const": 1
+      "const": 2
     },
     "target": {
       "$ref": "#/$defs/target"
@@ -29,15 +29,15 @@
       "items": {
         "$ref": "#/$defs/table"
       },
-      "minItems": 0
+      "minItems": 0,
+      "description": "In-memory only: the receipts of the tables (from the receipts list in R2, or a candidate). A saved manifest never holds them."
     }
   },
   "required": [
     "schema_version",
     "target",
     "direction",
-    "conversions",
-    "tables"
+    "conversions"
   ],
   "$defs": {
     "sha256": {
@@ -307,7 +307,10 @@
         },
         "statement_kind": {
           "description": "Printed accounting statement form. Omitted means ordinary (歳入歳出決算の事項別明細); public-enterprise has a separate accounting form, without the ordinary executed-subject check.",
-          "enum": ["ordinary", "public-enterprise"]
+          "enum": [
+            "ordinary",
+            "public-enterprise"
+          ]
         },
         "expected_tables": {
           "type": "array",
@@ -513,6 +516,10 @@
         "unresolved_parent_count": {
           "type": "integer",
           "minimum": 0
+        },
+        "declaration": {
+          "description": "manifest.declaration of the conversion the table was converted under (receipts in R2).",
+          "$ref": "#/$defs/sha256"
         }
       },
       "required": [

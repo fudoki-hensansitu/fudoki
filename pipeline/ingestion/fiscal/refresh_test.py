@@ -1,4 +1,4 @@
-"""Stale fingerprints are settled by table content, never by bytes, and only unchanged manifests are rewritten."""
+"""Stale fingerprints are settled by table content, never by bytes; only unchanged receipts are rewritten."""
 from collections import Counter
 from copy import deepcopy
 import json
@@ -114,12 +114,19 @@ class CompareParquetTest(unittest.TestCase):
 
 
 class RefreshFixture:
-    """A saved manifest plus a stand-in R2; subclasses decide which conversion produced it."""
+    """A saved manifest plus a stand-in R2 (objects and receipts list); subclasses decide which conversion produced it."""
 
     def setUp(self):
         manifest_test.ManifestWorkflowTest.setUp(self)
         self.objects = self.root / 'objects'
         self.enterContext(patch.object(storage, 'OBJECTS', self.objects))
+        self.enterContext(patch.object(storage, 'read_receipts', side_effect=lambda: deepcopy(self.receipts)))
+        self.uploads = self.enterContext(patch.object(storage, 'upload'))
+
+        def write(receipts):
+            self.receipts.clear()
+            self.receipts.update(deepcopy(receipts))
+        self.enterContext(patch.object(storage, 'write_receipts', side_effect=write))
         self.prepare()
         self.save_and_stage()
 
@@ -127,10 +134,10 @@ class RefreshFixture:
         """Declare the conversion and the gate stubs before the first conversion."""
 
     def save_and_stage(self):
-        """Convert once with uploads stubbed at the `cf` call, so the stand-in R2 holds what refresh restores."""
-        with patch('ingestion.fiscal.storage.subprocess.run'), patch('ingestion.fiscal.run.cleanup'):
-            run.convert(self.path, self.files, self.root / 'saved', remote=True, record=True)
-        self.saved = manifest.read(self.path)
+        """Convert once and store the tables as `store` would after merge, so the stand-in R2 holds what refresh restores."""
+        result = run.convert(self.path, self.files, self.root / 'saved', remote=True, record=True)
+        manifest_test.ManifestWorkflowTest.store(self, json.loads(Path(result['candidate']).read_text()))
+        self.saved = storage.attach(manifest.read(self.path))
         for receipt in self.selection['archive']['files']:
             target = self.objects / receipt['key']
             target.parent.mkdir(parents=True, exist_ok=True)
@@ -141,7 +148,18 @@ class RefreshFixture:
         manifest_test.ManifestWorkflowTest.tearDown(self)
 
     def refresh(self, **options):
-        return refresh.refresh_manifest(self.path, remote=False, dry_run=options.pop('dry_run', False), work=self.work)
+        return refresh.refresh_manifest(self.path, remote=False, dry_run=options.pop('dry_run', False), work=self.work,
+                                        accept=options.pop('accept', False))
+
+    def stored(self) -> dict:
+        return storage.attach(manifest.read(self.path))
+
+    def change_content(self):
+        self.edit_converter('    return {table_id: output}', (
+            "    import duckdb, os\n"
+            "    duckdb.sql(f\"copy (select * replace ('9' as 金額) from read_parquet('{output}')) to '{output}.new' (format parquet)\")\n"
+            "    os.replace(f'{output}.new', output)\n"
+            '    return {table_id: output}'))
 
     def edit_converter(self, old: str, new: str):
         code = self.code / 'fiscal/layouts/csv/convert.py'
@@ -159,11 +177,12 @@ class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
         with (self.code / 'lib/parquet.py').open('a') as stream:
             stream.write('\n_EDITED = "a comment does not change a table"\n')
         with self.assertRaisesRegex(ValueError, 'Stale saved table'):
-            manifest.require_current(manifest.read(self.path))
+            manifest.require_current(self.stored())
         result = self.refresh()
         self.assertEqual(result['status'], refresh.REFRESHED)
         self.assertEqual(result['counts'], {'same': 2, 'different': 0, 'blocked': 0})
-        updated = manifest.read(self.path)
+        self.assertEqual(refresh.write_receipts([result]), {'written': 2, 'changed_meanwhile': []})
+        updated = self.stored()
         manifest.require_current(updated)
         expected = deepcopy(self.saved)
         for table in expected['tables']:
@@ -172,15 +191,17 @@ class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
         for before, after in zip(self.saved['tables'], updated['tables']):
             self.assertNotEqual(before['input_fingerprint'], after['input_fingerprint'])
             self.assertEqual(before['object'], after['object'])
+        self.uploads.assert_not_called()
         self.assertFalse((self.work / refresh.slug(self.saved)).exists())
 
-    def test_dry_run_compares_but_keeps_the_manifest(self):
+    def test_dry_run_compares_but_keeps_the_receipts(self):
         with (self.code / 'lib/parquet.py').open('a') as stream:
             stream.write('\n_EDITED = "comment"\n')
-        before = self.path.read_bytes()
+        before = deepcopy(self.receipts)
         result = self.refresh(dry_run=True)
         self.assertEqual(result['status'], refresh.WOULD_REFRESH)
-        self.assertEqual(self.path.read_bytes(), before)
+        self.assertNotIn('receipts', result)
+        self.assertEqual(self.receipts, before)
 
     def test_refresh_never_asks_or_writes_jev_answers(self):
         # A refresh (dry-run included) compares tables; it must not extend or rewrite the tracked answer store.
@@ -198,22 +219,27 @@ class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
         self.assertEqual(result['status'], refresh.WOULD_REFRESH)
         self.assertEqual(seen, [(False, False)])
 
-    def test_changed_content_is_reported_and_manifest_is_not_rewritten(self):
-        self.edit_converter('    return {table_id: output}', (
-            "    import duckdb, os\n"
-            "    duckdb.sql(f\"copy (select * replace ('9' as 金額) from read_parquet('{output}')) to '{output}.new' (format parquet)\")\n"
-            "    os.replace(f'{output}.new', output)\n"
-            '    return {table_id: output}'))
-        before = self.path.read_bytes()
+    def test_changed_content_is_reported_and_receipts_are_not_rewritten(self):
+        self.change_content()
         result = self.refresh()
         self.assertEqual(result['status'], refresh.DIFFERENT)
-        self.assertEqual(self.path.read_bytes(), before)
+        self.assertNotIn('receipts', result)
         self.assertEqual(result['counts'], {'same': 0, 'different': 2, 'blocked': 0})
         diff = result['tables'][0]['diff']['content']['table']
         self.assertEqual((diff['removed'], diff['added'], diff['changed']), (1, 1, 1))
         self.assertTrue((self.work / refresh.slug(self.saved) / 'manifest.json').is_file())
         with self.assertRaisesRegex(ValueError, 'Stale saved table'):
-            manifest.require_current(manifest.read(self.path))
+            manifest.require_current(self.stored())
+
+    def test_accepted_difference_stores_the_re_converted_tables(self):
+        self.change_content()
+        result = self.refresh(accept=True)
+        self.assertEqual(result['status'], refresh.ACCEPTED)
+        self.assertEqual(self.uploads.call_count, 2)
+        refresh.write_receipts([result])
+        stored = self.stored()
+        manifest.require_current(stored)
+        self.assertNotEqual([t['object'] for t in stored['tables']], [t['object'] for t in self.saved['tables']])
 
     def test_receipt_metadata_change_is_a_difference_even_when_rows_match(self):
         metadata = {'notes': [{'text': '新しい注記', 'scope': {'kind': 'table'}}]}
@@ -245,19 +271,17 @@ class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
         self.assertIn('Digit coverage failed', result['reason'])
         self.assertEqual(self.path.read_bytes(), before)
 
-    def test_manifest_changed_during_comparison_is_not_overwritten(self):
+    def test_a_receipt_stored_during_the_comparison_is_not_overwritten(self):
         with (self.code / 'lib/parquet.py').open('a') as stream:
             stream.write('\n_EDITED = "comment"\n')
-        original = refresh.compare_table
-
-        def compare_and_edit(*args):
-            self.path.write_bytes(self.path.read_bytes() + b' ')
-            return original(*args)
-
-        with patch.object(refresh, 'compare_table', side_effect=compare_and_edit):
-            result = self.refresh()
-        self.assertEqual(result['status'], refresh.ERROR)
-        self.assertIn('changed during refresh', result['reason'])
+        result = self.refresh()
+        self.assertEqual(result['status'], refresh.REFRESHED)
+        # A store after merge replaced one table while this refresh compared it.
+        ident = next(iter(self.receipts))
+        self.receipts[ident] = {**self.receipts[ident], 'row_count': 99}
+        written = refresh.write_receipts([result])
+        self.assertEqual(written['changed_meanwhile'], [ident])
+        self.assertEqual(self.receipts[ident]['row_count'], 99)
 
     def test_missing_saved_table_without_remote_is_an_error_not_a_rewrite(self):
         with (self.code / 'lib/parquet.py').open('a') as stream:
@@ -274,16 +298,23 @@ class RefreshWorkflowTest(RefreshFixture, unittest.TestCase):
         report = refresh.refresh_all([self.path], remote=False, dry_run=False, output=output)
         self.assertTrue(report['ok'])
         self.assertEqual(report['summary']['manifests'], {'current': 1})
-        self.edit_converter('    return {table_id: output}', (
-            "    import duckdb, os\n"
-            "    duckdb.sql(f\"copy (select * replace ('9' as 金額) from read_parquet('{output}')) to '{output}.new' (format parquet)\")\n"
-            "    os.replace(f'{output}.new', output)\n"
-            '    return {table_id: output}'))
+        self.change_content()
         report = refresh.refresh_all([self.path], remote=False, dry_run=False, output=output)
         self.assertFalse(report['ok'])
         self.assertEqual(report['summary']['tables'], {'same': 0, 'different': 2, 'blocked': 0})
         self.assertEqual(json.loads(output.read_text())['manifests'][0]['status'], refresh.DIFFERENT)
         self.assertEqual(report['summary']['attention'][0]['status'], refresh.DIFFERENT)
+
+    def test_deferred_receipts_are_written_by_apply(self):
+        self.change_content()
+        output = self.root / 'report' / 'report.json'
+        before = deepcopy(self.receipts)
+        refresh.refresh_all([self.path], remote=False, dry_run=False, output=output, accept=True, defer_write=True)
+        self.assertEqual(self.receipts, before)
+        applied = refresh.apply_report(output)
+        self.assertEqual(applied, {'receipts': {'written': 2, 'changed_meanwhile': []},
+                                   'accepted_jurisdictions': ['131016']})
+        manifest.require_current(self.stored())
 
     def test_refresh_all_removes_a_stale_report_before_starting(self):
         output = self.root / 'report' / 'report.json'
@@ -335,11 +366,9 @@ class RefreshJevAnswersTest(RefreshFixture, unittest.TestCase):
         return run.recheck_store_path(manifest.read(self.path))
 
     def make_stale(self):
-        """Mark every saved table stale the way a changed converter would: only the stored fingerprint moves."""
-        document = manifest.read(self.path)
-        for table in document['tables']:
-            table['input_fingerprint'] = '0' * 64
-        manifest.write(self.path, document)
+        """Mark every stored table stale the way a changed converter would: only the stored fingerprint moves."""
+        for receipt in self.receipts.values():
+            receipt['input_fingerprint'] = '0' * 64
 
     def test_answers_used_by_the_refresh_leave_the_store_untouched(self):
         store = self.store()
@@ -394,7 +423,8 @@ class SaveGateTest(unittest.TestCase):
         document = {'target': {'jurisdiction': '131016', 'fiscal_year': 2024, 'document_kind': 'settlement'},
                     'direction': 'expenditure', 'conversions': [{'id': 'c', 'options': {}}]}
         table = {'table_id': 'one', 'conversion_id': 'c', 'account': '一般会計',
-                 'nodes': {'object': {'key': 'x'}}, 'amounts': {'object': {'key': 'y'}},
+                 'nodes': {'object': {'key': 'x', 'sha256': '0' * 64}},
+                 'amounts': {'object': {'key': 'y', 'sha256': '1' * 64}},
                  'unread_amount_count': 0, 'unresolved_parent_count': 0}
         paths = {'nodes': Path('n'), 'amounts': Path('a')}
 
@@ -416,6 +446,16 @@ class SaveGateTest(unittest.TestCase):
         with self.assertRaisesRegex(ValueError, 'Wrong current-table key'):
             gate(nodes, amounts, special, fixtures.scope(('150,000', 300.0, 360.0)))
 
+
+
+class ReceiptShapeTest(unittest.TestCase):
+    def test_a_fixed_key_receipt_without_declaration_matches_its_sha_key_conversion(self):
+        stored = {'table_id': 't', 'conversion_id': 'c', 'input_fingerprint': 'a' * 64, 'row_count': 1,
+                  'object': {'key': 'fiscal/ingestion/x/t.parquet', 'sha256': '0' * 64, 'bytes': 3}}
+        converted = {**stored, 'input_fingerprint': 'b' * 64, 'declaration': 'd' * 64,
+                     'object': {'key': 'fiscal/ingestion/x/t-1111111111111111.parquet', 'sha256': '1' * 64, 'bytes': 4}}
+        self.assertEqual(refresh.receipt_differences(stored, converted), [])
+        self.assertTrue(refresh.receipt_differences(stored, {**converted, 'row_count': 2}))
 
 
 class GroupsOfTest(unittest.TestCase):
