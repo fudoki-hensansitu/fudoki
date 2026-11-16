@@ -3,6 +3,7 @@
 import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { AmountTip } from '../amount-tip'
+import { useFlowSeen } from '../sankey'
 import { formatShare, type RevenueDoc } from '../types'
 import { Amt } from './amount'
 
@@ -64,14 +65,7 @@ function useWidth(ref: React.RefObject<HTMLElement | null>) {
 /** 入る（左）→ 一般会計（中）→ 使う（右）の流れ。割合は棒の真上、名前は棒の横、金額は hover・focus のツールチップ */
 function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[]; heads: [string, string, string] }) {
   const ref = React.useRef<HTMLDivElement>(null)
-  const [seen, setSeen] = React.useState(false)
-  React.useEffect(() => {
-    const el = ref.current
-    if (!el) return
-    const observer = new IntersectionObserver(([e]) => { if (e?.isIntersecting) { setSeen(true); observer.disconnect() } }, { threshold: 0.2 })
-    observer.observe(el)
-    return () => observer.disconnect()
-  }, [])
+  const { seen, still } = useFlowSeen(ref, `${heads.join()}:${incoming.reduce((t, n) => t + n.yen, 0)}:${outgoing.reduce((t, n) => t + n.yen, 0)}`)
   const width = useWidth(ref)
   const narrow = width < 560
   // 名前の欄は一番長い名前の幅だけ取り、残りを帯に回す（名前は全角なので文字数×文字の大きさで足りる）
@@ -98,7 +92,7 @@ function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[
   return (
     <div ref={ref} className="relative w-full" style={{ height: total + HEAD }}>
       {width ? (
-        <svg width={width} height={total + HEAD} role="img" aria-label={`${heads[0]}お金から${heads[2]}お金への流れ`} data-seen={seen ? '' : undefined} className="flow-svg block font-sans">
+        <svg width={width} height={total + HEAD} role="img" aria-label={`${heads[0]}お金から${heads[2]}お金への流れ`} data-seen={seen ? '' : undefined} data-still={still ? '' : undefined} className="flow-svg block font-sans">
           <g aria-hidden="true" className="fill-muted-foreground" fontSize={11}>
             <text x={x0 + BAR} y={11} textAnchor="end">{heads[0]}</text>
             <text x={x1 + BAR / 2} y={11} textAnchor="middle">{heads[1]}</text>

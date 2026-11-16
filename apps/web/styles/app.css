@@ -34,6 +34,8 @@
   .flow-ribbon { animation: 1.2s cubic-bezier(0.45, 0, 0.2, 1) both fudoki-flow-in; }
   .flow-node { animation: 0.5s ease-out both fudoki-flow-node; }
   .flow-svg:not([data-seen]) :is(.flow-ribbon, .flow-node) { animation-play-state: paused; }
+  /* タブへ移った直後に作り直した図（少し前に同じ図を描いた）は動かさない（sankey.tsx の useFlowSeen） */
+  .flow-svg[data-still] :is(.flow-ribbon, .flow-node) { animation: none; }
 }
 @keyframes fudoki-flow-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 @keyframes fudoki-flow-node { from { opacity: 0; transform: translateX(-6px); } }
