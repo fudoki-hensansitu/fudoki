@@ -43,11 +43,6 @@ jobs:
       - run: bun run --cwd pipeline ingestion:bundle restore
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - uses: actions/cache/restore@v6
-        with:
-          path: pipeline/.cache/objects/fiscal/source-selection
-          key: pipeline-origins-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-origins-${{ hashFiles('mise.toml') }}-
       # PDF から読んだ字と位置（変換し直しで一番重い）。main の store と refresh-check が温める。
       # 中身が増えたらこの PR の範囲に保存し、同じ PR への次の push はそこから読む
       - uses: actions/cache/restore@v6

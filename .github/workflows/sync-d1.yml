@@ -89,17 +89,7 @@ jobs:
             sleep "$wait"
           done
           exit 1
-      # 変換し直しが読む出典の cache（保存はこの job）。build の入力は R2 の束から読むので cache しない
-      - id: origins-restore
-        if: steps.scope.outputs.since != ''
-        uses: actions/cache/restore@v6
-        with:
-          path: pipeline/.cache/objects/fiscal/source-selection
-          key: pipeline-origins-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-origins-${{ hashFiles('mise.toml') }}-
-      - id: origins-before
-        if: steps.scope.outputs.since != ''
-        run: echo "files=$(find pipeline/.cache/objects/fiscal/source-selection -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
+      # 出典の PDF と build の入力は cache せず、要るものを R2 から取る（変換し直すのは変わった管理 JSON の出典だけ）
       # PDF から読んだ字と位置（変換し直しで一番重い）。中身が増えた回だけ保存し、後の PR の check と refresh-check が読む
       - if: steps.scope.outputs.since != ''
         uses: actions/cache/restore@v6
@@ -122,22 +112,6 @@ jobs:
         run: bun run --cwd pipeline ingestion:store -- --since ${{ steps.scope.outputs.since }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - id: origins-after
-        if: ${{ !cancelled() && steps.scope.outputs.since != '' }}
-        run: echo "files=$(find pipeline/.cache/objects/fiscal/source-selection -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
-      # 中身が変わった回（と、分けた cache がまだ無い回）だけ保存する。古いキーは保存の前に消す（新旧を同時に持つと repo の上限 10GB を超え、他の cache が追い出される）
-      - id: origins-clear
-        if: ${{ !cancelled() && steps.origins-restore.outcome == 'success' && (steps.origins-after.outputs.files != steps.origins-before.outputs.files || steps.origins-restore.outputs.cache-matched-key == '') }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh cache list --repo "${{ github.repository }}" --key pipeline-origins- --limit 100 --json key --jq '.[].key' |
-            while read -r key; do gh cache delete "$key" --repo "${{ github.repository }}" || true; done
-      - if: ${{ !cancelled() && steps.scope.outputs.since != '' && steps.origins-clear.outcome == 'success' }}
-        uses: actions/cache/save@v6
-        with:
-          path: pipeline/.cache/objects/fiscal/source-selection
-          key: pipeline-origins-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
       - id: observation-after
         if: ${{ !cancelled() && steps.scope.outputs.since != '' }}
         run: echo "files=$(find pipeline/.cache/generic-observation -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
@@ -233,12 +207,12 @@ jobs:
             while read -r key; do
               [ "$key" = "$KEEP" ] || gh cache delete "$key" --repo "${{ github.repository }}" || true
             done
-      # 束に移す前の build の cache（pipeline-build・pipeline-cache）を消す。どちらも無くなったら、この step は外してよい
+      # 使わなくなった cache（build の入力の pipeline-build・pipeline-cache、出典の pipeline-origins）を消す。どれも無くなったら、この step は外してよい
       - if: ${{ !cancelled() && github.event_name == 'push' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          for prefix in pipeline-build- pipeline-cache-; do
+          for prefix in pipeline-build- pipeline-cache- pipeline-origins-; do
             gh cache list --repo "${{ github.repository }}" --key "$prefix" --limit 100 --json key --jq '.[].key' |
               while read -r key; do gh cache delete "$key" --repo "${{ github.repository }}" || true; done
           done
