@@ -406,6 +406,10 @@ def level_cells(cells: list[tuple[tuple, str]], edges: list[float], levels: str 
     result = []
     for key, value in cells:
         inner = [(left, right) for left, right in zip(edges, edges[1:]) if key[0] - 1 <= left and right <= key[1] + 1]
+        if value.startswith('科目款'):
+            # The rule under 科目 is drawn only between the outer rules of the code columns, and the rules between
+            # them start below the header: 科目 and 款項目 read as one cell (東大和 R5 決算). 科目 names no column.
+            value = value.removeprefix('科目')
         four = levels == '款項目節' and '節' in value and len(inner) == 4
         if levels == '款項目名' and value == '款項目' and len(inner) == 4:
             # 神戸市の各会計予算に関する説明書: the codes in three narrow columns, the names of every level in the fourth
