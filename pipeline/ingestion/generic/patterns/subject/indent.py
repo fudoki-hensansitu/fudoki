@@ -80,14 +80,18 @@ def align(logical, group, kept, alignment):
         lead = (coded or item.glyphs[0]) if glued is not None else item.glyphs[0]
         band = group.bands[item.level] if 0 <= item.level < len(group.bands) else None
         narrow = len(group.bands) >= 3 and all(b.x1 - b.x0 < 20 for b in group.bands[:-1])
-        if run_into is not None and codes_set_right and item.code is not None and run_into.module.set_right(item):
+        staircase = band is not None and item.code is not None and narrow and item.level in right_set
+        if staircase and logical.ocr:
+            # A staircase of narrow level columns with the codes set right: the column is the level, not where the
+            # digits start (`5` and `10` of one 目 start 5pt apart). On a scan this holds whether OCR reads the code as
+            # a word of its own (`1` `一般管理費`) or glued to the name (`2秘書事務費`, 瑞穂町 R5 決算).
+            item.indent = band.x0
+        elif run_into is not None and codes_set_right and item.code is not None and run_into.module.set_right(item):
             item.indent += one_width if len(item.code) == 2 else 0
         elif run_into is None and codes_set_right and item.code is not None and re.fullmatch(r'[0-9]{1,2}', digits_of(lead)):
             # A two-digit code the text layer cuts after its first digit (`1` `3.文`) is two-digit too.
             item.indent += one_width if 2 in (len(item.code), len(digits_of(lead))) else 0
-        elif band is not None and item.code is not None and narrow and item.level in right_set:
-            # A staircase of narrow level columns with the codes set right: the column is the level,
-            # not where the digits start (`5` and `10` of one 目 start 5pt apart).
+        elif staircase:
             item.indent = band.x0
 
 
