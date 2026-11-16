@@ -33,7 +33,7 @@ const share = (yen: number, max: number, missing?: boolean) => (missing || max <
 /** 節は目の内訳。上位だけ名前を出して残りは件数にまとめる。広い画面では目の棒から帯でつなぎ、狭い画面では目の金額に占める割合の横棒を出す */
 
 /** kouYen は割合の基準（目は項に占める割合、節は目に占める割合）。金額と割合を並べて出す */
-function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: number; levels: Levels; onMoku?: (m: Moku) => void }) {
+function MokuGroup({ moku, kouYen, levels, onMoku, noSetsu }: { moku: Moku; kouYen: number; levels: Levels; onMoku?: (m: Moku) => void; /** 節を持たない流れ（歳入）。節の欄に何も出さない */ noSetsu?: boolean }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
   const rest = shown.slice(SETSU_SHOWN)
@@ -99,7 +99,7 @@ function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: numbe
             </li>
           ) : null}
         </ul>
-      ) : (
+      ) : noSetsu ? null : (
         <p className="border-l pl-3 text-[12.5px] text-muted-foreground">内訳の区分は出典にありません</p>
       )}
     </div>
@@ -187,7 +187,7 @@ function TickMenu({ items, current, onPick, side, label, className, children }: 
   )
 }
 
-function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void; levels: Levels; onMoku?: (m: Moku) => void }) {
+function KouSection({ kou, active, loading, onBox, levels, onMoku, noSetsu }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void; levels: Levels; onMoku?: (m: Moku) => void; noSetsu?: boolean }) {
   const box = React.useRef<HTMLElement | null>(null)
   const rib = React.useRef<HTMLDivElement>(null)
   // 一度画面に入った項は開いたままにする。いま読んでいる項（active）だけを見せると、ほかの項の図形が消えて見えるため
@@ -301,7 +301,7 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
             <span className="pl-4">{kou.moku.some((m) => m.setsu.length > 0) ? levels.setsu : null}</span>
           </div>
         ) : null}
-        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} levels={levels} onMoku={onMoku} />) : (
+        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} levels={levels} onMoku={onMoku} noSetsu={noSetsu} />) : (
           <p className="text-[12.5px] text-muted-foreground" role={loading ? 'status' : undefined}>{loading ? '内訳を読み込んでいます…' : `この${levels.kou}に${levels.moku}はありません`}</p>
         )}
       </div>
@@ -310,7 +310,7 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
 }
 
 /** natural は面の中で縦に送らず、中身の高さのまま頁のスクロールで読む */
-function KanPanel({ drill, loading, levels, onMoku, natural, shown, pos, style }: { drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void; natural?: boolean; /** 横に並ぶ面のうち、今見せている面か */ shown?: boolean; /** 横に並ぶ面の中の位置 */ pos: number; style?: React.CSSProperties }) {
+function KanPanel({ drill, loading, levels, onMoku, natural, shown, pos, style, noSetsu }: { noSetsu?: boolean; drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void; natural?: boolean; /** 横に並ぶ面のうち、今見せている面か */ shown?: boolean; /** 横に並ぶ面の中の位置 */ pos: number; style?: React.CSSProperties }) {
   const body = React.useRef<HTMLDivElement>(null)
   // natural のとき、面が画面に入っている間だけ目盛りを画面の右に固定して出す（track が横のスクロールの箱なので sticky は効かない）
   const [inView, setInView] = React.useState(false)
@@ -363,11 +363,11 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown, pos, style }
       {drill.kou.length > 1 && (!natural || (shown && inView)) ? (
         // 項の目盛り。押すとその項へ縦に送る。natural のときは画面の右の真ん中に固定する。
         // 祖先に transform（スマホのタブのカルーセル）があると fixed が画面に効かないので、body に出す
-        natural ? createPortal(ticks, document.body) : ticks
+        natural ? createPortal(<div style={style}>{ticks}</div>, document.body) : ticks
       ) : null}
       <div ref={body} style={fade} className={natural ? '' : 'h-full overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'} tabIndex={-1}>
         {drill.kou.map((k, i) => (
-          <KouSection key={k.id} kou={k} active={i === current} loading={loading} levels={levels} onMoku={onMoku} onBox={(el) => { sections.current[i] = el }} />
+          <KouSection key={k.id} kou={k} active={i === current} loading={loading} levels={levels} onMoku={onMoku} noSetsu={noSetsu} onBox={(el) => { sections.current[i] = el }} />
         ))}
       </div>
     </div>
@@ -537,7 +537,7 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
           className={cn('flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden', natural ? 'items-start transition-[height] duration-300' : 'h-full')}
         >
           {revenueOrder.map((f, i) => drawsPanel(i)
-            ? <KanPanel key={`in-${f.kan.id}`} drill={f} loading={false} levels={levels} natural={natural} shown={pos === i} pos={i} style={INCOMING} />
+            ? <KanPanel key={`in-${f.kan.id}`} drill={f} loading={false} levels={levels} natural={natural} shown={pos === i} pos={i} style={INCOMING} noSetsu />
             : <div key={`in-${f.kan.id}`} className={cn('w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel aria-hidden="true" />)}
           {R ? (
             <div style={INCOMING} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
