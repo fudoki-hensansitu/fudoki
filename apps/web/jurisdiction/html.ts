@@ -62,7 +62,7 @@ export function pageDescription(d: PageData): string {
 }
 
 /** 頁の区分。まとめ（無し）・タブの頁・分野の頁 */
-export type Section = { tab: Exclude<PageTab, 'overview'> } | { field: string }
+export type Section = { tab: Exclude<PageTab, 'overview'> }
 
 /** その年度の当初予算と決算（一般会計）の歳出の総額。金額の欠けたものは無いことにする */
 const amountsOf = (d: PageData, year: number, opened?: Opened) => ({
@@ -80,8 +80,7 @@ export function pageTitle(d: PageData, year: number, section?: Section, opened?:
       const { budget, settlement } = amountsOf(d, year, opened)
       return budget && settlement ? 'の予算と決算' : budget ? 'の予算' : 'の決算'
     }
-    if ('tab' in section) return section.tab === 'projects' ? 'の事業一覧' : section.tab === 'money' ? 'の当初予算' : 'の決算'
-    return `の${FIELDS.find((f) => f.id === section.field)?.name ?? '分野'}`
+    return section.tab === 'projects' ? 'の事業一覧' : section.tab === 'money' ? 'の当初予算' : 'の決算'
   })()
   return `${d.name}${subject}（${y}）｜風土記`
 }
@@ -92,15 +91,11 @@ export function pageDescriptionOf(d: PageData, year: number, section?: Section, 
   const { budget, settlement } = amountsOf(d, year, opened)
   // 入口の説明文は最新の決算・当初予算の金額（headline）で書く。headline の無い頁（過去の年度）はその年度の金額で書く
   if (!section) return d.headline && (year === appPageYears(d)[0] || year === defaultYear(d)) ? pageDescription(d) : yearHead(d, year, opened).description
-  if ('tab' in section) {
-    if (section.tab === 'projects')
-      return `${d.name}の${y}の事業を、金額の大きい順に並べています。新しく始める事業・やめた事業や事業評価も、出典の資料と並べて見られます。`
-    if (section.tab === 'money')
-      return `${d.name}の${y}当初予算（一般会計）の歳出${budget ? `は約${formatYen(budget)}。その` : 'の'}お金の流れを、分野ごと・款項目ごとに図で見られます。予算書の頁と並べて確かめられます。`
-    return `${d.name}の${y}決算（一般会計）の歳出${settlement ? `は約${formatYen(settlement)}。` : '。'}何にいくら使ったかを、分野ごと・款項目ごとに図で見られます。決算書の頁と並べて確かめられます。`
-  }
-  const field = FIELDS.find((f) => f.id === section.field)
-  return `${d.name}の${y}の${field?.name ?? 'この分野'}の分野にかけるお金と、その事業。出典の資料と並べて見られます。`
+  if (section.tab === 'projects')
+    return `${d.name}の${y}の事業を、金額の大きい順に並べています。新しく始める事業・やめた事業や事業評価も、出典の資料と並べて見られます。`
+  if (section.tab === 'money')
+    return `${d.name}の${y}当初予算（一般会計）の歳出${budget ? `は約${formatYen(budget)}。その` : 'の'}お金の流れを、分野ごと・款項目ごとに図で見られます。予算書の頁と並べて確かめられます。`
+  return `${d.name}の${y}決算（一般会計）の歳出${settlement ? `は約${formatYen(settlement)}。` : '。'}何にいくら使ったかを、分野ごと・款項目ごとに図で見られます。決算書の頁と並べて確かめられます。`
 }
 
 /** 既定でない年度の頁（/tokyo/shinagawa/2024）の説明文と Dataset の名前。その年度に載っている決算か当初予算の金額で書く */
@@ -131,8 +126,8 @@ export function yearHead(d: PageData, year: number, opened?: Opened): { descript
 /** 年度の段の無い入口の頁の年度。説明文（pageDescription）と同じく、金額のある最新の当初予算か、無ければ最新の決算の年度 */
 const defaultYear = (d: PageData) => latestBudget(d)?.year ?? latestSettledYear(d)
 
-/** 頁の path の、年度の段より後ろ（/projects、/fields/fukushi） */
-const sectionPath = (section?: Section) => (!section ? '' : 'tab' in section ? `/${TAB_SLUGS[section.tab]}` : `/fields/${section.field}`)
+/** 頁の path の、年度の段より後ろ（/projects） */
+const sectionPath = (section?: Section) => (!section ? '' : `/${TAB_SLUGS[section.tab]}`)
 
 /** 自治体の頁の head。year は年度の段のある頁のときだけ渡す。section は分野・タブの頁 */
 export function pageHead(d: PageData, year?: number, section?: Section, opened?: Opened): Head {

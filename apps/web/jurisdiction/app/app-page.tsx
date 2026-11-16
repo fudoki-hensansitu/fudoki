@@ -11,7 +11,6 @@ import {
   CaretDownIcon,
   CaretLeftIcon,
   CaretRightIcon,
-  ChartPieSliceIcon,
   ClipboardTextIcon,
   DotsThreeCircleIcon,
   FileDashedIcon,
@@ -59,10 +58,8 @@ import { Link } from '../../nav/link'
 import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon, NewIcon, PlanIcon, SizeIcon, StopIcon, UpIcon } from '../fresh-icons'
 import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
-import { cofogFlowOf } from '../cofog-flow'
 import { COFOG_NAMES } from '@fudoki/fiscal/cofog-master'
 import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
-import { pageHead } from '../html'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
@@ -72,7 +69,6 @@ import { fieldSubjects, listKey, listPage, projectFull, projectLatest, projectOf
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import { Amt, yenParts } from './amount'
 import { FinanceSections } from './finance'
-import { RevenueSection } from './revenue'
 import { IncomeFlow } from './income-flow'
 import './app.css'
 
@@ -429,13 +425,6 @@ function useSheetCounts(v: YearView, q: SheetQuery): Loaded<SheetCount[]> {
   return plain ? v.sheetCounts : React.use(res.get(sheetCountKey(q), () => sheetCounts(q)))
 }
 
-/** 分野の頁の A〜D の札（その分野の科目のシートを数える） */
-function FieldGradeCards({ q }: { q: SheetQuery }) {
-  const { v } = useApp()
-  const counts = useSheetCounts(v, q)
-  return counts === FAILED ? <LoadFailed /> : <GradeCards counts={counts} />
-}
-
 /** 件数（数えるのを打ち切ったら「以上」） */
 const countOf = (p: Pick<ListPage, 'total' | 'capped'>) => `${p.total.toLocaleString('ja-JP')}件${p.capped ? '以上' : ''}`
 
@@ -645,9 +634,6 @@ function Overview() {
           </p>
         ) : null}
       </section>
-
-      {/* 一般会計の歳入（api の get_revenue を loader が頁のデータに入れる）。歳入の無い年度は節ごと出さない */}
-      <RevenueSection revenue={page.revenue} year={v.year} kind={v.kind} prefecture={page.prefecture} />
 
       {/* 借金と貯金・事業に回ったお金・財政の指標（総務省の決算状況調。web の D1 から loader が頁のデータに入れる） */}
       <FinanceSections finance={page.finance} year={v.year} people={page.population?.people ?? null} />
@@ -1073,126 +1059,6 @@ function ProjectButton({ p }: { p: ProjRow }) {
   )
 }
 
-/** 分野の頁（/tokyo/shinagawa/2026/fields/fukushi）。まとめのタイルから開く */
-const loadFieldChart = () => import('./field-chart')
-const FieldChart = React.lazy(loadFieldChart)
-/** 内訳の色。緑の濃さを金額の順に下げる（色に意味は持たせない）。その他は灰色。ink は切れの上に書く割合の文字色 */
-// oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで
-const SLICE_COLORS = [100, 78, 60, 44, 30].map((n) => `color-mix(in oklab, var(--primary) ${n}%, var(--background))`)
-const SLICE_INKS = ['var(--primary-foreground)', 'var(--primary-foreground)', 'var(--primary-foreground)', 'var(--foreground)', 'var(--foreground)']
-// oxlint-disable-next-line design/color-literal -- 既存のずれ。直すか例外にするか決めるまで
-const REST_COLOR = 'color-mix(in oklab, var(--muted-foreground) 22%, var(--background))'
-
-/** 分野の内訳: COFOG の中分類ごとの金額。多い順に5つと、残りはまとめる */
-function FieldBreakdown({ frame }: { frame: { cofog: string } }) {
-  return (
-    <ClientSuspense fallback={<DetailSection icon={ChartPieSliceIcon} title="内訳"><Skeleton className="h-[320px] rounded-xl @2xl:h-[420px]" /></DetailSection>}>
-      <FieldSlices frame={frame} />
-    </ClientSuspense>
-  )
-}
-
-function FieldSlices({ frame }: { frame: { cofog: string } }) {
-  const { v, d } = useApp()
-  // 中分類は開いた年度の目の COFOG のコードから組む（予算・決算のタブの分野の図と同じ分け方）
-  const drills = React.useMemo(() => {
-    const y = d.years[String(v.year)]
-    const moku = [...(y?.kan ?? []).flatMap((k) => k.kou.flatMap((o) => o.moku)), ...(y?.looseMoku ?? [])]
-    return cofogFlowOf(moku.map((m) => ({ id: m.id, name: m.name, yen: m.yen, setsu: [], cofog: m.cofog })), false)
-  }, [d, v.year])
-  const slices = React.useMemo(() => {
-    const drill = drills.find((x) => x.kan.id === `cofog-${frame.cofog || 'none'}`)
-    const rows = (drill?.kou ?? []).filter((k) => !k.amountMissing && k.yen > 0).sort((a, b) => Number(!a.id.includes('.')) - Number(!b.id.includes('.')) || b.yen - a.yen)
-    const many = rows.length > SLICE_COLORS.length + 1
-    const top = (many ? rows.slice(0, SLICE_COLORS.length) : rows.slice(0, SLICE_COLORS.length + 1)).map((k, i) => ({ key: k.id, name: k.name, yen: k.yen, color: SLICE_COLORS[i] ?? REST_COLOR, ink: SLICE_INKS[i] ?? 'var(--foreground)' }))
-    const rest = rows.slice(top.length).reduce((t, k) => t + k.yen, 0)
-    return rest > 0 ? [...top, { key: 'rest', name: `ほか${rows.length - top.length}件`, yen: rest, color: REST_COLOR, ink: 'var(--foreground)' }] : top
-  }, [drills, frame.cofog])
-  if (!slices.length) return null
-  return (
-    <DetailSection icon={ChartPieSliceIcon} title="内訳">
-      <React.Suspense fallback={<Skeleton className="h-[320px] rounded-xl @2xl:h-[420px]" />}>
-        <FieldChart slices={slices} format={yenText} />
-      </React.Suspense>
-    </DetailSection>
-  )
-}
-
-function FieldPage({ id }: { id: string }) {
-  const { v, d, res } = useApp()
-  const f = v.fields.find((x) => x.id === id)
-  if (!f) return <div className="flex items-center justify-between gap-3"><p className="text-sm text-muted-foreground">{reiwa(v.year)}にはこの分野の予算がありません。</p><TabYear /></div>
-  return (
-    <>
-      <div>
-      <div className="flex items-center gap-3">
-        <span className="grid size-12 place-items-center rounded-2xl bg-card text-muted-foreground"><FieldIcon id={f.id} className="size-6" /></span>
-        <div className="min-w-0 flex-1">
-          <h2 className="text-xl font-semibold leading-snug">{f.name}</h2>
-          <p className="text-xs text-muted-foreground">{f.examples}</p>
-        </div>
-        {/* 分野の頁は同じ分野のまま年度を移れる（yearHref が分野の段を残す） */}
-        <TabYear />
-      </div>
-      <div className="mt-5">
-        <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}</span>
-        <Amt yen={f.yen} className="block text-4xl leading-tight text-primary" />
-        <span className="text-xs text-muted-foreground">{[`全体の ${((f.yen / v.total) * 100).toFixed(1)}%`, perHead(f.yen, d.pop)].filter(Boolean).join(' · ')}</span>
-      </div>
-      </div>
-      <FieldBreakdown frame={[...DOMAIN_FRAMES, OTHER_FRAME].find((x) => x.id === f.id) ?? OTHER_FRAME} />
-      {/* 事業の収録があるかは、事業のタブの頁なら loader が渡し、それ以外は残り（defer）で届く */}
-      {v.hasProjects === undefined ? (
-        <Full fallback={<DetailSection icon={ListBulletsIcon} title="事業"><RowsSkeleton /></DetailSection>}>
-          {(v) => (v.failed ? <DetailSection icon={ListBulletsIcon} title="事業"><LoadFailed /></DetailSection> : <FieldProjectsOf v={v} id={f.id} />)}
-        </Full>
-      ) : (
-        <FieldProjectsOf v={v} id={f.id} />
-      )}
-      <Full fallback={null}>
-        {(v) => v.sheetTotal ? (
-          <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(v.year)}年度の事業`}>
-            <ClientSuspense fallback={<Skeleton className="h-20 rounded-xl" />}>
-              <FieldGradeCards q={{ code: d.code, year: v.year, kind: v.kind, subjects: v.subjectsOf(f.id) }} />
-            </ClientSuspense>
-          </DetailSection>
-        ) : null}
-      </Full>
-      <p className="mt-6 text-xs text-muted-foreground">分野は COFOG（政府支出の機能別分類）の大分類です。風土記が独自で区別しています。</p>
-    </>
-  )
-}
-
-/** 分野の事業。事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある） */
-function FieldProjectsOf({ v, id }: { v: YearView; id: string }) {
-  const { res } = useApp()
-  if (v.hasProjects) {
-    return (
-      <ClientSuspense fallback={<DetailSection icon={ListBulletsIcon} title="事業"><RowsSkeleton /></DetailSection>} ready={!!res.peek(listKey(v.query('all', { subjects: v.subjectsOf(id) })))}>
-        <FieldProjects id={id} />
-      </ClientSuspense>
-    )
-  }
-  const rows = v.mokuRows.filter((p) => v.fieldOf(p) === id)
-  return (
-    <DetailSection icon={ListBulletsIcon} title="事業" count={`${rows.length}件`}>
-      <Infinite items={rows} list={(rows) => <ProjectTable rows={rows} />} />
-    </DetailSection>
-  )
-}
-
-/** 分野の事業。分野の末端の科目の ID で事業の年度を絞る（科目を1回、事業を1回読むだけ） */
-function FieldProjects({ id }: { id: string }) {
-  const { v } = useApp()
-  const q = v.query('all', { subjects: v.subjectsOf(id) })
-  const page = useListPage(q)
-  return (
-    <DetailSection icon={ListBulletsIcon} title="事業" count={page === FAILED ? undefined : countOf(page)}>
-      <ProjectList q={q} />
-    </DetailSection>
-  )
-}
-
 /** 予算タブの図で押した目。事業の詳細と同じ形で、目の金額・中の事業・節を出す */
 function MokuDetail({ moku, phase, special }: { moku: Moku; phase: 'initial' | 'settlement'; special?: boolean }) {
   const { v, d } = useApp()
@@ -1312,9 +1178,7 @@ const TABS: { key: TabKey; label: string; icon: Icon }[] = [
 
 const TAB_SEGMENT = new RegExp(`/(${Object.values(TAB_SLUGS).join('|')})/?$`)
 /** 今の URL から年度・タブ・分野の段を除いた、自治体の頁の path */
-const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').replace(PROJECT_PATH, '').replace(TAB_SEGMENT, '').replace(/\/\d{4}\/?$/, '')
-/** 今の URL の分野の段（/fields/fukushi）の id */
-const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
+const basePath = () => location.pathname.replace(PROJECT_PATH, '').replace(TAB_SEGMENT, '').replace(/\/\d{4}\/?$/, '')
 /** 事業の頁の段（/projects/<project_id>） */
 const PROJECT_PATH = /\/projects\/([^/]+)\/?$/
 /** 今の URL の事業の頁の事業の ID */
@@ -1325,7 +1189,7 @@ const projectOfPath = () => {
 /** 事業の頁の URL の段 */
 const projectSegment = (id: string) => `projects/${encodeURIComponent(id)}`
 
-export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialField, initialProject, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; initialField?: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialProject, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; initialTab?: TabKey }) {
   // 最初の画面に要らない分（評価シート・お金のかかる事業・新しく始めた事業）は loader が defer で流し、使う部分が Full（Suspense と use()）で待つ
   const d = base
   const vision = data.vision?.text
@@ -1347,7 +1211,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   // 年度・タブを移っても、選んでいる状態とスクロールは持ち越す。タブは履歴に積み、戻るで前のタブとそのスクロールへ帰す。年度・会計は置き換える
   const move = (href: string, { push = false } = {}) => void router.visit(href, { replace: !push, preserveState: true, preserveScroll: true })
   // 年度のリンクは今のタブを引き継ぐ（予算・決算のタブはどの年度にもある）。分野の頁なら同じ分野のまま年度を移る
-  const yearHref = (y: number) => (fieldPage ? `${data.path}/${y}/fields/${fieldPage}` : pageHref(y, tab))
+  const yearHref = (y: number) => pageHref(y, tab)
   const setYear = (y: number) => {
     if (y === year) return
     move(yearHref(y))
@@ -1356,7 +1220,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   }
   const setTab = (t: TabKey, { push = true, query = '' } = {}) => {
     setTabState(t)
-    if (t !== at.current.tab || fieldOfPath() || projectOfPath()) move(pageHref(at.current.year, t) + query, { push })
+    if (t !== at.current.tab || projectOfPath()) move(pageHref(at.current.year, t) + query, { push })
   }
   /** 流れの会計を変える。一般会計は ?account= を付けない */
   const pickAccount = (account: string) => move(pageHref(year, at.current.tab) + (account === GENERAL ? '' : `?${new URLSearchParams({ account })}`))
@@ -1375,11 +1239,11 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   React.useEffect(() => {
     const q = new URLSearchParams(location.search)
     const f = q.get('filter')
-    if (!idle || !f) return
-    if (['all', 'new', 'ended', 'eval'].includes(f)) setFilter(f)
+    const field = q.get('field')
+    if (!idle || (!f && !field)) return
+    if (f && ['all', 'new', 'ended', 'eval'].includes(f)) setFilter(f)
     const g = q.get('grade')
     if (g && GRADES.some(([x]) => x === g)) setGrade(g)
-    const field = q.get('field')
     if (field) setFields([field])
     for (const k of ['filter', 'grade', 'field']) q.delete(k)
     history.replaceState(history.state, '', location.pathname + (q.size ? `?${q}` : '') + location.hash)
@@ -1391,33 +1255,12 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     if (x && typeof x !== 'function' && x.kind === 'project' && !x.id.startsWith('moku:')) return openProject(x.id)
     React.startTransition(() => setSelected(x))
   }
-  // 分野の頁。URL を /fields/<id> にして、戻るで自治体の頁へ帰る。中身は開いた年度のデータで描くので loader を待たない
-  const [fieldPage, setFieldPage] = React.useState<string | null>(initialField ?? null)
-  // 頁の中で開いた分野の頁は履歴の state に印を付け、閉じるときは履歴を戻る（進むで戻ってきた場合も同じ）
-  const openField = (id: string) => {
-    select(null)
-    setProjectPage(null)
-    history.pushState({ ...history.state, field: id }, '', `${basePath()}/${year}/fields/${id}`)
-    document.title = pageHead(data, year, { field: id }).title
-    React.startTransition(() => setFieldPage(id))
-    window.scrollTo({ top: 0 })
-  }
-  const closeField = () => {
-    select(null)
-    if ((history.state as { field?: string } | null)?.field) return history.back()
-    setFieldPage(null)
-    void router.visit(pageHref(year, tab), { preserveState: true })
-    window.scrollTo({ top: 0 })
-  }
-  // 事業の頁。分野の頁と同じく URL を /projects/<project_id>（年度の段なし）にして、戻るで前の頁へ帰る。中身は事業の ID で読む
+  // 事業の頁。URL を /projects/<project_id>（年度の段なし）にして、戻るで前の頁へ帰る。中身は事業の ID で読む
   const [projectPage, setProjectPage] = React.useState<string | null>(initialProject ?? null)
   const openProject = (id: string) => {
     React.startTransition(() => setSelected(null))
     history.pushState({ ...history.state, project: id }, '', `${basePath()}/${projectSegment(id)}`)
-    React.startTransition(() => {
-      setFieldPage(null)
-      setProjectPage(id)
-    })
+    React.startTransition(() => setProjectPage(id))
     window.scrollTo({ top: 0 })
   }
   const closeProject = () => {
@@ -1428,10 +1271,9 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     window.scrollTo({ top: 0 })
   }
   React.useEffect(() => {
-    // 戻る・進むでは、URL の分野・事業に画面を合わせる（年度・タブは移った頁の loader が渡す）
+    // 戻る・進むでは、URL の事業に画面を合わせる（年度・タブは移った頁の loader が渡す）
     const onPop = () => {
       select(null)
-      setFieldPage(fieldOfPath())
       setProjectPage(projectOfPath())
     }
     window.addEventListener('popstate', onPop)
@@ -1486,14 +1328,16 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
       removeEventListener('scroll', check)
       removeEventListener('resize', check)
     }
-  }, [tab, year, projectPage, fieldPage])
+  }, [tab, year, projectPage])
   const go: Go = (t, opt = {}) => {
     if (opt.filter) setFilter(opt.filter)
     if (opt.grade) setGrade(opt.grade)
     if (t === 'projects') setFields(opt.field ? [opt.field] : [])
     const q = new URLSearchParams(Object.entries(opt).filter((e): e is [string, string] => !!e[1]))
-    changeTab(t, t === 'projects' && opt.filter ? `?${q}` : undefined)
+    changeTab(t, t === 'projects' && (opt.filter || opt.field) ? `?${q}` : undefined)
   }
+  // 分野（何に使う？の棒・入る→使うの分野）を押したら、その分野で絞った事業のタブへ移る
+  const openField = (id: string) => go('projects', { field: id })
 
   // スマホではタブの中身を左右のスワイプで切り替える（shadcn の Carousel）。高さは今のタブに合わせる
   const [api, setApi] = React.useState<CarouselApi>()
@@ -1505,7 +1349,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const index = Math.max(0, tabs.findIndex((t) => t.key === tab))
   // 始めの位置は Carousel を置いたときだけ渡す。タブのたびに変わると embla が作り直されて、滑らずに飛ぶ
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const carouselOpts = React.useMemo(() => ({ startIndex: index, watchDrag: startsTabSwipe }), [phone, fieldPage])
+  const carouselOpts = React.useMemo(() => ({ startIndex: index, watchDrag: startsTabSwipe }), [phone])
   React.useEffect(() => {
     if (!api) return
     const onSelect = () => changeTab(tabsRef.current[api.selectedScrollSnap()]!.key)
@@ -1526,8 +1370,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     const ro = new ResizeObserver(() => setHeight(el.offsetHeight))
     ro.observe(el)
     return () => ro.disconnect()
-    // 分野の頁から戻ると Carousel が作り直されるので、新しいスライドを測り直す
-  }, [phone, index, v, fieldPage])
+    // 事業の頁から戻ると Carousel が作り直されるので、新しいスライドを測り直す
+  }, [phone, index, v, projectPage])
 
   const header = (
     <header className="grid grid-cols-[80px_minmax(0,1fr)] items-start gap-4 py-7 sm:grid-cols-[108px_minmax(0,1fr)] sm:gap-6">
@@ -1567,14 +1411,12 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             <Separator className="absolute inset-x-0 bottom-0 data-horizontal:w-auto" />
             {/* スクロールしたら上にタブを残す。下に Separator を引いて中身と分ける */}
             <div className="flex items-center gap-3">
-            {projectPage || fieldPage ? (
+            {projectPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
-                {projectPage ? (
-                  // 入れ子の事業は親の事業へ戻る。親が分かるまでは自治体へ戻るボタンを出しておく
-                  <ClientSuspense fallback={<BackButton label={data.name} onClick={closeProject} />}>
-                    <ProjectBack res={res} id={projectPage} label={data.name} close={closeProject} open={openProject} />
-                  </ClientSuspense>
-                ) : <BackButton label={data.name} onClick={closeField} />}
+                {/* 入れ子の事業は親の事業へ戻る。親が分かるまでは自治体へ戻るボタンを出しておく */}
+                <ClientSuspense fallback={<BackButton label={data.name} onClick={closeProject} />}>
+                  <ProjectBack res={res} id={projectPage} label={data.name} close={closeProject} open={openProject} />
+                </ClientSuspense>
               </div>
             ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
@@ -1591,7 +1433,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             {yearStuck && v ? (
               <div className="relative h-0">
               <div className="absolute inset-x-0 top-0 mx-[calc(50%-50cqw)] flex h-12 items-center justify-between gap-3 border-b bg-background px-[calc(50cqw-50%)]">
-                <span className="truncate text-[15px] font-semibold">{projectPage || fieldPage ? '' : TABS.find((t) => t.key === tab)?.label}</span>
+                <span className="truncate text-[15px] font-semibold">{projectPage ? '' : TABS.find((t) => t.key === tab)?.label}</span>
                 <div className="shrink-0">
                   <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
                   <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>
@@ -1604,8 +1446,6 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             <AppContext.Provider value={{ d, page: data, years, v, res, select, selected, go, openField, flow, flowFailed, pickAccount, setsu, extras: extrasProp, prevFieldSubjects, setYear, yearHref }}>
               {projectPage ? (
                 <div key={projectPage} className="pt-6"><ProjectPage id={projectPage} /></div>
-              ) : fieldPage ? (
-                <div key={fieldPage} className="pt-6"><FieldPage id={fieldPage} /></div>
               ) : phone ? (
                 <Carousel setApi={setApi} opts={carouselOpts} className="-mx-4 pt-5">
                   <CarouselContent className="ml-0 items-start" style={{ height }}>
