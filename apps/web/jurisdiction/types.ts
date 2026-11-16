@@ -48,8 +48,6 @@ export interface PageFlow {
   /** 項の行が無い目（drills の木に入らない）。分野の図はこれも足す */
   loose: Moku[]
 }
-/** お金の流れの分け方。cofog は分野（COFOG の大分類）→ 中分類、kan は自治体の科目（款 → 項） */
-export type FlowView = 'cofog' | 'kan'
 
 export interface Project extends Line {
   kanName: string
