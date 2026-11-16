@@ -109,9 +109,9 @@ def pair_in_order(budget: list[Line], settled: list[Line]) -> list[Year]:
     return [Year(initial=b, settlement=s) for b, s in pairs]
 
 
-def loose_key(x: Line, paths: dict[str, tuple]) -> tuple:
-    """会計・款・項・目と、数を除いた名前の並び"""
-    return (x.scope, tuple(TRAILING_NUMBERS.sub('', COUNT.sub('', n)) for n in paths[x.detail_id]))
+def loose(name: str) -> str:
+    """比べる名前（normalize 済み）から数を除いた形"""
+    return TRAILING_NUMBERS.sub('', COUNT.sub('', name))
 
 
 def build_years(docs: dict[str, list[Line]]) -> list[Year]:
@@ -124,22 +124,26 @@ def build_years(docs: dict[str, list[Line]]) -> list[Year]:
     for x in settlement:
         groups[(x.scope, paths[x.detail_id])][1].append(x)
     years: list[Year] = []
-    rest: dict[tuple, tuple[list[Line], list[Line]]] = defaultdict(lambda: ([], []))
+    rest: list[Line] = []
     for budget, settled in groups.values():
         if len(budget) == len(settled):
             years += pair_in_order(budget, settled)
         else:
-            # 名前の並びで結べなかった残りは、並びの名前から数を除いてもう一度組にする
-            for x in budget:
-                rest[loose_key(x, paths)][0].append(x)
-            for x in settled:
-                rest[loose_key(x, paths)][1].append(x)
-    for budget, settled in rest.values():
-        if len(budget) == len(settled):
-            years += pair_in_order(budget, settled)
-        else:
-            years += [Year(initial=b) for b in budget] + [Year(settlement=s) for s in settled]
+            rest += budget + settled
+    # 名前の並びで結べなかった残りは、上の段から、親が同じ事業の1年度の中で、数を除いた名前でもう一度組にする
+    # （親を名前で比べると、数だけ違う別の親の子どうしを結んでしまう）
     owner = {x.detail_id: y for y in years for x in y.lines}
+    for depth in sorted({len(paths[x.detail_id]) for x in rest}):
+        loose_groups: dict[tuple, tuple[list[Line], list[Line]]] = defaultdict(lambda: ([], []))
+        for x in rest:
+            if len(paths[x.detail_id]) == depth:
+                parent = owner.get(x.parent_detail_id) if x.parent_detail_id else None
+                key = (x.scope, id(parent) if parent else None, loose(paths[x.detail_id][-1]))
+                loose_groups[key][0 if x.key[2] == 'initial' else 1].append(x)
+        for budget, settled in loose_groups.values():
+            made = pair_in_order(budget, settled) if len(budget) == len(settled) else [Year(initial=b) for b in budget] + [Year(settlement=s) for s in settled]
+            years += made
+            owner |= {x.detail_id: y for y in made for x in y.lines}
     for y in years:
         parent = y.line.parent_detail_id
         if parent:
@@ -161,7 +165,7 @@ def unique_pairs(current: list[Year], previous: list[Year], key) -> list[tuple[Y
 
 def without_counts(name: str) -> str:
     """数を除いた名前。数と単位（「105園」）と、名前の末尾の数と式（「16,124,513×0.7=」）を除く"""
-    return TRAILING_NUMBERS.sub('', COUNT.sub('', normalize(name)))
+    return loose(normalize(name))
 
 
 def pair(current: list[Year], previous: list[Year], key) -> list[Year]:
