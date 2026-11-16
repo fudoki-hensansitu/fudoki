@@ -92,7 +92,7 @@ function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[
   let outOffset = 0
   const share = (n: Node) => (n.base ? (formatShare(n.yen, n.base) ?? '') : '')
   const label = (n: Node) => (narrow && Array.from(n.label).length > 10 ? `${Array.from(n.label).slice(0, 9).join('')}…` : n.label)
-  const pick = (fn?: () => void) => (fn ? { role: 'button', tabIndex: 0, className: 'cursor-pointer outline-none [&:hover_text]:underline [&:focus-visible_rect]:fill-ring', onClick: fn, onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn() } } } : {})
+  const pick = (fn?: () => void) => (fn ? { role: 'button', tabIndex: 0, className: 'cursor-pointer outline-none [&:hover_text[data-name]]:underline [&:focus-visible_rect]:fill-ring', onClick: fn, onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn() } } } : {})
   return (
     <div ref={ref} className="relative w-full" style={{ height: total + HEAD }}>
       {width ? (
@@ -126,7 +126,7 @@ function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[
                   <rect x={0} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
                   <rect x={x0} y={node.y} width={BAR} height={h} rx={2} className={BAR_FILL[n.tone]} />
                   <text x={x0 + BAR / 2} y={node.y - 3} textAnchor="middle" className={cn('font-semibold tabular-nums', SHARE_FILL[n.tone])} fontSize={narrow ? 10 : 11}>{share(n)}</text>
-                  <text x={x0 - GAP} y={node.y + h / 2} dominantBaseline="central" textAnchor="end" className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label(n)}</text>
+                  <text x={x0 - GAP} y={node.y + h / 2} dy="0.35em" data-name="" textAnchor="end" className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label(n)}</text>
                 </AmountTip>
               )
             })}
@@ -139,7 +139,7 @@ function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[
                     <rect x={x2} y={node.top} width={width - x2} height={node.size} className="fill-transparent" />
                     <rect x={x2} y={node.y} width={BAR} height={h} rx={2} className={BAR_FILL[n.tone]} />
                     <text x={x2 + BAR / 2} y={node.y - 3} textAnchor="middle" className={cn('font-semibold tabular-nums', SHARE_FILL[n.tone])} fontSize={narrow ? 10 : 11}>{share(n)}</text>
-                    <text x={x2 + BAR + GAP} y={node.y + h / 2} dominantBaseline="central" className="fill-foreground" fontSize={narrow ? 10.5 : 12}>{label(n)}</text>
+                    <text x={x2 + BAR + GAP} y={node.y + h / 2} dy="0.35em" data-name="" className="fill-foreground" fontSize={narrow ? 10.5 : 12}>{label(n)}</text>
                   </g>
                 </AmountTip>
               )
