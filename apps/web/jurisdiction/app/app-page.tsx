@@ -791,6 +791,7 @@ function ProjectPageBody({ id }: { id: string }) {
   const year = p.year
   const frame = (p.cofog ? frameOf(p.cofog) : undefined) ?? OTHER_FRAME
   const rows = Object.keys(p.y).map(Number).sort((a, b) => b - a)
+  const graded = Object.keys(p.grades ?? {}).length > 0
   return (
     <>
       <ProjectTitle p={p} mark={p.ended != null ? 'stop' : p.started === year ? 'new' : null} />
@@ -798,14 +799,17 @@ function ProjectPageBody({ id }: { id: string }) {
         <Chip><FieldIcon id={frame.id} />{frame.name}</Chip>
       </div>
       <DetailSection icon={CalendarBlankIcon} title="年度ごと">
-        <div className="grid max-w-xl grid-cols-[auto_1fr_1fr] text-[15px]">
+        {/* 評価シートのある年度は、その年度の行に評価（A〜D）を並べる。評価が一つも無ければ列を出さない */}
+        <div className={cn('grid max-w-xl text-[15px]', graded ? 'grid-cols-[auto_1fr_1fr_auto]' : 'grid-cols-[auto_1fr_1fr]')}>
           <span className="py-1.5 text-xs" /><span className="py-1.5 text-right text-xs text-muted-foreground">当初予算</span><span className="px-1 py-1.5 text-right text-xs text-muted-foreground">決算</span>
+          {graded ? <span className="px-2 py-1.5 text-center text-xs text-muted-foreground">評価</span> : null}
           {rows.map((y) => (
             <div key={y} className={cn('col-span-full grid grid-cols-subgrid', y === year && 'bg-card')}>
               <Separator className="col-span-full" />
               <span className="px-1 py-2">{r(y)}</span>
               <span className="py-2 text-right"><SourceAmt yen={p.y[String(y)]?.b} href={p.src?.[String(y)]?.b} label={`${r(y)}年度の当初予算の出典`} /></span>
               <span className="px-1 py-2 text-right"><SourceAmt yen={p.y[String(y)]?.s} href={p.src?.[String(y)]?.s} label={`${r(y)}年度の決算の出典`} /></span>
+              {graded ? <span className="px-2 py-2 text-center">{p.grades?.[String(y)] ?? ''}</span> : null}
             </div>
           ))}
         </div>
