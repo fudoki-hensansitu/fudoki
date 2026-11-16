@@ -674,7 +674,7 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
           header: dict | None = None, code_corrections: list[dict] | None = None,
           header_readings: list[dict] | None = None, rule_dark: int = pdf_rules.DARK, rule_hook=None,
           keep_marks: bool = False, row_gaps: bool = False, short_columns: bool = False,
-          skewed: bool = False, row_columns: bool = False, pale_pages: dict | None = None) -> list[Page]:
+          skewed: bool = False, row_columns: bool = False) -> list[Page]:
     """`rule_hook(PageRules) -> PageRules` completes the rules read from a rendered page before the words are cut at
     them; `keep_marks` keeps the bullet that starts a line in its first word (both for a text document's OCR pages, `mixed.py`)."""
     every = bool((header or {}).get('agree_all_frames'))
@@ -687,11 +687,10 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
 
     @cache
     def detected(number):
-        dark = (pale_pages or {}).get(str(number), rule_dark)  # `rules.pale_pages`: a page whose rules print paler
-        found = (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=dark, skewed=skewed)
+        found = (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed)
         if (dotted := document_quirk('dotted_column_rules')) is not None:
-            found = dotted.module.added(pdf, found, dark)
-        found = short_rows(pdf, found, dark,
+            found = dotted.module.added(pdf, found, rule_dark)
+        found = short_rows(pdf, found, rule_dark,
                            bool((header or {}).get('staircase')) or short_columns, row_columns)
         return rule_hook(found) if rule_hook else found
 
@@ -1255,7 +1254,6 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
                     rule_dark=((settings or {}).get('rules') or {}).get('dark', pdf_rules.DARK), rule_hook=rule_hook,
                     keep_marks=keep_marks, row_gaps=bool(((settings or {}).get('rules') or {}).get('row_gaps')),
                     short_columns=bool(((settings or {}).get('rules') or {}).get('short_columns')),
-                    pale_pages=((settings or {}).get('rules') or {}).get('pale_pages'),
                     skewed=bool(((settings or {}).get('rules') or {}).get('skewed')),
                     row_columns=bool(((settings or {}).get('rules') or {}).get('row_columns')))
     if (specks := document_quirk('specks')) is not None:
