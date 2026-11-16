@@ -181,6 +181,35 @@ export async function loadFlowParts(env: Env, code: string, year: number, depth:
   return { drills, loose }
 }
 
+/** 一般会計の歳入の款 → 項 → 目（歳出の流れと同じ形。歳入に節の内訳は付けない）。歳入の無い自治体・年度は空 */
+export async function loadRevenueFlow(env: Env, code: string, year: number, kind: DocumentKind): Promise<Drill[]> {
+  const subjects: RevenueSubject[] = []
+  let token: string | undefined
+  do {
+    const r = await apiCall(env)('search_revenue_subjects', {
+      document_kind: kind,
+      fiscal_year: { min: year, max: year },
+      where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } },
+      order_by: [{ column: 'amount_yen', desc: true }],
+      page_size: 1000,
+      ...(token ? { page_token: token } : {}),
+    })
+    subjects.push(...r.subjects)
+    token = r.next_page_token ?? undefined
+  } while (token)
+  const byParent = new Map<string, RevenueSubject[]>()
+  for (const n of subjects) if (n.parent_subject_id) (byParent.get(n.parent_subject_id) ?? byParent.set(n.parent_subject_id, []).get(n.parent_subject_id)!).push(n)
+  const lineOf = (n: RevenueSubject): Line => ({ id: n.subject_id, name: n.name, ...amount(n) })
+  return subjects.filter((n) => n.level === '款').sort(byAmount).map((kan) => ({
+    kan: lineOf(kan),
+    kou: (byParent.get(kan.subject_id) ?? []).filter((n) => n.level === '項').sort(byAmount).map((kou) => ({
+      ...lineOf(kou),
+      moku: (byParent.get(kou.subject_id) ?? []).filter((n) => n.level === '目').sort(byAmount).map((m) => ({ ...lineOf(m), setsu: [] })),
+    })),
+  }))
+}
+type RevenueSubject = WebOpOutput<'search_revenue_subjects'>['subjects'][number]
+
 const sumYen = (lines: { yen: number; amountMissing?: true }[]) => lines.reduce((s, l) => s + (l.amountMissing ? 0 : l.yen), 0)
 /** 金額の印字が無い目を含む和は、印字された分だけの和であることを amountMissing で画面に伝える（一覧の総額と同じ扱い） */
 const partial = (lines: { amountMissing?: true }[]) => (lines.some((l) => l.amountMissing) ? { amountMissing: true as const } : {})

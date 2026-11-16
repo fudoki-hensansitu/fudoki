@@ -12,7 +12,7 @@ import { assetPath, EMBLEMS, emblemOf, prefectureCodeOf } from '../../jurisdicti
 import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
-import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadSetsuByMoku, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
+import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadRevenueFlow, loadSetsuByMoku, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
 import { appYears, loadYearExtras, loadYearSnapshot } from '../../server/app-data'
 import type { Snapshot, YearExtras } from '../../jurisdiction/app/data'
 import type { Setsu } from '../../jurisdiction/types'
@@ -165,14 +165,17 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   // 当初予算を開いたとき（決算のある年度の予算のタブも）の最新の決算だけを本文と同じ段で読む
   const latestSettled = props.data.settlementYears.at(-1)
   const newest = year === appPageYears(props.data)[0]
-  const [snapshot, flow, settledSummary] = await Promise.all([
+  const [snapshot, expenditureFlow, revenueFlow, settledSummary] = await Promise.all([
     entry ? within(loadYearSnapshot(env, entry, year, { tab: props.tab ?? 'overview' }), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
     entry && phase ? within(loadFlowParts(env, entry.code, year, 'moku', phase, account), FLOW_WAIT_MS)
       // 款が1つも無い流れは読めなかったものとして扱う（CDN に置かず、画面が読み直しを出す）
       .then(({ drills, loose }): PageFlow | undefined => (drills.length ? { year, phase, account, drills, loose } : undefined))
       .catch(() => undefined) : undefined,
+    // 流れの左に出す一般会計の歳入。読めない・収録の無いときは空にして、歳出の流れだけを描く（頁は止めない）
+    entry && phase && account === ACCOUNT ? within(loadRevenueFlow(env, entry.code, year, phase), FLOW_WAIT_MS).catch(() => []) : [],
     newest && latestSettled !== undefined && (latestSettled !== year || phase === 'initial') ? within(loadSettlementSummary(env, props.data.code, latestSettled), SNAPSHOT_WAIT_MS).catch(() => undefined) : undefined,
   ])
+  const flow = expenditureFlow && revenueFlow.length ? { ...expenditureFlow, revenue: revenueFlow } : expenditureFlow
   const opened = snapshot?.years[String(year)]
   const headline: Headline | undefined = newest
     ? {
