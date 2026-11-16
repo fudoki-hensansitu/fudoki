@@ -52,12 +52,12 @@ function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: numbe
           <button type="button" onClick={() => onMoku(moku)} className="group/moku -mx-1.5 grid w-[calc(100%+0.75rem)] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 rounded-lg px-1.5 py-1 text-left hover:bg-secondary">
             <span className="text-sm leading-snug underline-offset-2 group-hover/moku:underline">{moku.name}</span>
             <CaretRightIcon className="row-span-2 size-3.5 text-muted-foreground" aria-hidden="true" />
-            <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground sm:hidden">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
+            <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground sm:sr-only">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
           </button>
         ) : (
           <AmountTip name={moku.name} yen={moku.yen} missing={moku.amountMissing} side="right" className="inline-grid outline-none">
             <span className="text-sm leading-snug">{moku.name}</span>
-            <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground sm:hidden">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
+            <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground sm:sr-only">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
           </AmountTip>
         )}
       </div>
@@ -68,7 +68,7 @@ function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: numbe
             <li key={s.name} data-setsu data-yen={s.amountMissing ? 0 : Math.max(0, s.yen)} data-share={formatShare(s.yen, mokuYen, s.amountMissing) ?? ''} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
               <AmountTip name={`${moku.name}・${s.name}`} yen={s.yen} missing={s.amountMissing} side="right" className="col-span-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 outline-none">
                 <span className="truncate">{s.name}</span>
-                <span className="text-right tabular-nums"><span className="font-semibold">{amountText(s.yen, s.amountMissing)}</span>{formatShare(s.yen, mokuYen, s.amountMissing) ? <span className="ml-1.5 text-muted-foreground sm:hidden">{formatShare(s.yen, mokuYen, s.amountMissing)}</span> : null}</span>
+                <span className="text-right tabular-nums"><span className="font-semibold">{amountText(s.yen, s.amountMissing)}</span>{formatShare(s.yen, mokuYen, s.amountMissing) ? <span className="ml-1.5 text-muted-foreground sm:sr-only">{formatShare(s.yen, mokuYen, s.amountMissing)}</span> : null}</span>
               </AmountTip>
               {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
               <span className="col-span-2 h-1 overflow-hidden rounded-full bg-foreground/5 sm:hidden">
@@ -78,11 +78,11 @@ function MokuGroup({ moku, kouYen, levels, onMoku }: { moku: Moku; kouYen: numbe
             </li>
           ))}
           {rest.length > 0 ? (
-            <li data-setsu-rest data-share={restYen !== null ? (formatShare(restYen, mokuYen) ?? '') : ''} className="text-[11.5px] text-muted-foreground">
+            <li data-setsu-rest data-yen={restYen ?? ''} data-share={restYen !== null ? (formatShare(restYen, mokuYen) ?? '') : ''} className="text-[11.5px] text-muted-foreground">
               <Tooltip>
                 <TooltipTrigger delay={100} className="grid w-full cursor-default! grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
                   <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}件</span>
-                  {restYen !== null ? <span className="text-right tabular-nums">{amountText(restYen)}{formatShare(restYen, mokuYen) ? <span className="ml-1.5 sm:hidden">{formatShare(restYen, mokuYen)}</span> : null}</span> : null}
+                  {restYen !== null ? <span className="text-right tabular-nums">{amountText(restYen)}{formatShare(restYen, mokuYen) ? <span className="ml-1.5 sm:sr-only">{formatShare(restYen, mokuYen)}</span> : null}</span> : null}
                 </TooltipTrigger>
                 <TooltipContent side="right" className={`block max-w-72 ${TIP_CARD}`}>
                   {restYen !== null ? <div className="mb-1.5"><TipCard name={`ほか${rest.length}件`} yen={restYen} /></div> : null}
@@ -240,7 +240,9 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
         // 「ほか○節」には、目の棒のうち上位の節が使わなかった残りの太さで帯を渡す（金額は足し上げない）
         const restRow = list.querySelector<HTMLElement>('[data-setsu-rest]')
         const topParts = items.map((li) => Math.min(1, Number(li.dataset.yen) / yen[i]!))
-        const restPart = Math.max(0, 1 - topParts.reduce((a, v) => a + v, 0))
+        // 残りの合計が分かるときはその金額で、分からないとき（金額未記載が混じる）は上位の節が使わなかった残りで
+        const restKnown = restRow?.dataset.yen ? Math.min(1, Number(restRow.dataset.yen) / yen[i]!) : null
+        const restPart = restKnown ?? Math.max(0, 1 - topParts.reduce((a, v) => a + v, 0))
         const rows2 = restRow && restPart > 0 ? [...items, restRow] : items
         const rects = rows2.map((li) => li.getBoundingClientRect())
         const parts = restRow && restPart > 0 ? [...topParts, restPart] : topParts
