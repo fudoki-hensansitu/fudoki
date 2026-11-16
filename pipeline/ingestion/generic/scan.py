@@ -386,6 +386,8 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
     rules += [Rule(r.start, r.position, r.end, r.position) for r in detected.horizontal]
     cuts = sorted(r.position for r in detected.vertical)
     gone = superseded(observation_page)
+    if (rule_pieces := document_quirk('rule_pieces_as_digits')) is not None:
+        gone |= rule_pieces.module.pieces(observation_page, cuts)
     # Adjacent OCR tiles can both read a comma's descender. Keep its complete number;
     # a punctuation fragment contained in that number's box is no second amount.
     readings = [(index, o) for index, region in enumerate(observation_page['regions']) for o in region['observations']
