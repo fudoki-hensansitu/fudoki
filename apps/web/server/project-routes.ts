@@ -14,6 +14,10 @@ const ID = /^[0-9a-f]{64}$/
 const KINDS: readonly Kind[] = ['initial', 'settlement']
 const FILTERS: readonly ListQuery['filter'][] = ['all', 'new', 'ended']
 
+/** 科目の COFOG のコード（01、10.4、04.5.1） */
+const COFOG = /^\d{2}(\.\d+){0,2}$/
+const isCofogList = (v: unknown) => Array.isArray(v) && v.length <= 100 && v.every((c) => typeof c === 'string' && COFOG.test(c))
+
 const invalid = (message: string) => new HttpError(400, 'INVALID_ARGUMENT', message)
 const isKind = (v: unknown): v is Kind => KINDS.includes(v as Kind)
 const yearOf = (v: unknown) => {
@@ -33,6 +37,7 @@ function listQueryOf(v: unknown): ListQuery {
   if (!FILTERS.includes(q.filter as ListQuery['filter'])) throw invalid('filter の形が違います')
   if (q.prevKind !== undefined && !isKind(q.prevKind)) throw invalid('prevKind の形が違います')
   if (q.subjects !== undefined && !(Array.isArray(q.subjects) && q.subjects.length <= 100 && q.subjects.every((s) => typeof s === 'string' && ID.test(s)))) throw invalid('科目の ID の形が違います')
+  if (q.cofog !== undefined && !isCofogList(q.cofog)) throw invalid('COFOG のコードの形が違います')
   if (q.q !== undefined && !(typeof q.q === 'string' && q.q.length <= MAX_TEXT)) throw invalid('探す語の形が違います')
   return {
     code: q.code,
@@ -41,6 +46,7 @@ function listQueryOf(v: unknown): ListQuery {
     filter: q.filter as ListQuery['filter'],
     ...(q.prevKind !== undefined ? { prevKind: q.prevKind as Kind } : {}),
     ...(q.subjects !== undefined ? { subjects: q.subjects as string[] } : {}),
+    ...(q.cofog !== undefined ? { cofog: q.cofog as string[] } : {}),
     ...(q.q !== undefined ? { q: q.q as string } : {}),
   }
 }
@@ -52,6 +58,7 @@ function sheetQueryOf(v: unknown): SheetQuery {
   const q = (v ?? {}) as Record<string, unknown>
   if (typeof q !== 'object' || typeof q.code !== 'string' || !/^\d{6}$/.test(q.code)) throw invalid('自治体コードの形が違います')
   if (q.subjects !== undefined && !(Array.isArray(q.subjects) && q.subjects.length <= 100 && q.subjects.every((s) => typeof s === 'string' && ID.test(s)))) throw invalid('科目の ID の形が違います')
+  if (q.cofog !== undefined && !isCofogList(q.cofog)) throw invalid('COFOG のコードの形が違います')
   if (q.q !== undefined && !(typeof q.q === 'string' && q.q.length <= MAX_TEXT)) throw invalid('探す語の形が違います')
   if (q.codes !== undefined && !(Array.isArray(q.codes) && q.codes.every((c) => CODES.includes(c)))) throw invalid('方向性の区分の形が違います')
   return {
@@ -59,6 +66,7 @@ function sheetQueryOf(v: unknown): SheetQuery {
     year: yearOf(q.year),
     kind: kindOf(q.kind),
     ...(q.subjects !== undefined ? { subjects: q.subjects as string[] } : {}),
+    ...(q.cofog !== undefined ? { cofog: q.cofog as string[] } : {}),
     ...(q.q !== undefined ? { q: q.q as string } : {}),
     ...(q.codes !== undefined ? { codes: q.codes as SheetQuery['codes'] } : {}),
   }
@@ -95,12 +103,13 @@ export function projectOfIdResponse(env: Env, request: Request): Promise<Respons
   })
 }
 
-/** GET /api/projects/:id?year=&kind=: 事業の詳細 */
+/** GET /api/projects/:id?year=&kind=: 事業の詳細。year・kind が無ければ事業の最新の年度（決算があれば決算） */
 export function projectResponse(env: Env, request: Request, id: string): Promise<Response> {
   return respond(env, request, async () => {
     if (!ID.test(id)) throw invalid('事業の ID の形が違います')
     const p = new URL(request.url).searchParams
-    return readProjectFull(apiCall(env), id, yearOf(p.get('year')), kindOf(p.get('kind')))
+    const year = p.get('year')
+    return readProjectFull(apiCall(env), id, year === null ? undefined : { year: yearOf(year), kind: kindOf(p.get('kind')) })
   })
 }
 

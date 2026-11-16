@@ -7,7 +7,6 @@ import {
   BankIcon,
   BasketballIcon,
   BriefcaseIcon,
-  BuildingsIcon,
   CalendarBlankIcon,
   CaretDownIcon,
   CaretLeftIcon,
@@ -27,6 +26,7 @@ import {
   ReceiptIcon,
   MapPinIcon,
   ShieldCheckIcon,
+  ArrowDownIcon,
   SquaresFourIcon,
   MapTrifoldIcon,
   MapPinAreaIcon,
@@ -41,13 +41,15 @@ import {
 import { MoreDots } from '@/components/more-dots'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
-import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious, type CarouselApi } from '@/components/ui/carousel'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel'
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
+import { createColumnHelper, tableFeatures, useTable } from '@tanstack/react-table'
 import { Empty, EmptyContent, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
 import { Skeleton } from '@/components/ui/skeleton'
 import { RequestTown } from '../../nav/request-town'
@@ -58,14 +60,15 @@ import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon,
 import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
 import { cofogFlowOf } from '../cofog-flow'
-import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
+import { COFOG_NAMES } from '@fudoki/fiscal/cofog-master'
+import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { pageHead } from '../html'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
 import { directionOf, DIRECTION_ICONS, GRADES, withExtras, yearView, type AccountTotal, type Proj, type Sheet as EvalSheet, type Snapshot, type YearExtras, type YearView } from './data'
-import { fieldSubjects, listKey, listPage, projectFull, projectOfId, sheetCountKey, sheetCounts, sheetKey, sheetPage, type ListPage, type ListQuery, type ProjectFull, type ProjRow, type SheetCount, type SheetQuery } from './api'
+import { fieldSubjects, listKey, listPage, projectFull, projectLatest, projectOfId, sheetCountKey, sheetCounts, sheetKey, sheetPage, type ListPage, type ListQuery, type ProjectFull, type ProjRow, type SheetCount, type SheetQuery } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import { Amt, yenParts } from './amount'
 import { FinanceSections, Tag } from './finance'
@@ -92,7 +95,7 @@ const r = (y: number) => `R${y - 2018}`
 
 // ---------- 選んだもの（詳細） ----------
 type Selected = { kind: 'project'; id: string } | { kind: 'sheet'; id: string; /** 一覧は頁ごとに読むので、選んだシートをそのまま持つ */ sheet: EvalSheet } | { kind: 'moku'; id: string; moku: Moku; phase: 'initial' | 'settlement'; /** 特別会計の目。事業は一般会計の分だけ持つので、中の事業を引かない */ special?: boolean } | null
-type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected | ((s: Selected) => Selected)) => void; selected: Selected; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; /** loader が defer で渡す残り（評価シート・お金のかかる事業）。useFullView が use() で待つ */ extras?: Promise<YearExtras>; prevFieldSubjects?: Record<string, string[]> }
+type Ctx = { d: Snapshot; page: PageData; years: number[]; v: YearView; res: Resources; select: (s: Selected | ((s: Selected) => Selected)) => void; selected: Selected; go: Go; openField: (id: string) => void; /** 予算・決算のタブの頁で loader が読んだ流れ */ flow?: PageFlow; /** 予算・決算のタブの頁なのに流れを読めなかった（API に繋がらなかった） */ flowFailed: boolean; /** 流れの会計を変える（?account= の頁へ移る） */ pickAccount: (account: string) => void; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; /** loader が defer で渡す残り（評価シート・お金のかかる事業）。useFullView が use() で待つ */ extras?: Promise<YearExtras>; prevFieldSubjects?: Record<string, string[]>; /** 年度を移る（タブの見出しの年度の切り替え） */ setYear: (y: number) => void; /** 年度の頁の URL（今のタブのまま） */ yearHref: (y: number) => string }
 /** 文脈に添える、開いている事業の評価シートの数の上限（文脈の長さの上限に収める） */
 const DETAIL_SOURCES = 3
 /** 詳細に開いているものを、アシスタントに渡す文脈の行にする。出典の origin_id と頁・科目の ID を添え、AI が検索し直さずに読めるようにする */
@@ -108,11 +111,18 @@ function describeSelected(sel: Selected, d: Snapshot, prevFieldSubjects: Record<
   const source = (label: string, x: { fy: number; origin: string; page: number }, name: string) => `${label}: ${r(x.fy)}「${name}」（origin_id ${x.origin}、${x.page}頁）`
   if (sel.kind === 'moku') return `開いている科目: ${[...(sel.moku.path ?? []), sel.moku.name].filter(Boolean).join(' > ')}（subject_id ${sel.moku.id}）`
   if (sel.kind === 'sheet') return source('開いている評価シート', sel.sheet, sel.sheet.name)
-  const p = res.peek<Loaded<ProjectFull>>(projectKey(sel.id, v.year, v.kind))
+  return describeProject(res.peek<Loaded<ProjectFull>>(projectKey(sel.id, v.year, v.kind)), { year: v.year, kind: v.kind })
+}
+
+/** 開いている事業を、アシスタントに渡す文脈の行にする。金額は at（無ければ事業が持つ年度と資料）のもの */
+function describeProject(p: Loaded<ProjectFull> | undefined, at?: { year: number; kind: string }): string {
   if (!p || p === FAILED) return ''
-  const now = (v.kind === 'initial' ? p.y[String(v.year)]?.b : p.y[String(v.year)]?.s) ?? null
+  const year = at?.year ?? p.year
+  const kind = at?.kind ?? p.kind
+  const now = year === undefined ? null : ((kind === 'initial' ? p.y[String(year)]?.b : p.y[String(year)]?.s) ?? null)
+  const source = (label: string, x: { fy: number; origin: string; page: number }, name: string) => `${label}: ${r(x.fy)}「${name}」（origin_id ${x.origin}、${x.page}頁）`
   return [
-    `開いている事業: ${p.name}（${[p.path.filter(Boolean).join(' > '), p.dept].filter(Boolean).join('、')}）${now != null ? `、${r(v.year)}の${v.word} ${yenText(now)}` : ''}（project_id ${p.id}）`,
+    `開いている事業: ${p.name}（${[p.path.filter(Boolean).join(' > '), p.dept].filter(Boolean).join('、')}）${now != null && year !== undefined ? `、${r(year)}の${kind === 'initial' ? '当初予算' : '決算'} ${yenText(now)}` : ''}（project_id ${p.id}）`,
     ...p.sheets.map((s) => source(`この事業の評価シート（${r(s.fy)}に行った事業の評価）`, s, s.name)).slice(0, DETAIL_SOURCES),
   ].join('\n')
 }
@@ -169,6 +179,28 @@ function SectionHead({ title, sub, children }: { title: string; sub?: string; ch
     </div>
   )
 }
+/** タブの年度の切り替え。広い画面は年度を並べ、狭い画面はメニュー1つ */
+function TabYear() {
+  const { years, v, setYear, yearHref } = useApp()
+  return (
+    <div className="shrink-0">
+      <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
+      <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>
+    </div>
+  )
+}
+/** まとめ以外のタブの頭。見出しと、その言葉の意味の一文と、年度の切り替え */
+function TabHead({ title, children }: { title: string; children: React.ReactNode }) {
+  return (
+    <div className="mb-5">
+      <div className="flex items-center justify-between gap-3">
+        <h2 className="text-xl font-semibold leading-snug">{title}</h2>
+        <TabYear />
+      </div>
+      <p className="mt-1.5 text-[15px] leading-[1.7] text-muted-foreground">{children}</p>
+    </div>
+  )
+}
 function MoreLink({ onClick }: { onClick: () => void }) {
   return (
     <Button variant="link" size="sm" className="h-auto px-0 text-xs" onClick={onClick}>
@@ -197,13 +229,6 @@ function Row({ icon, title, sub, yen, note, rank, selected, onClick }: { icon: R
 }
 const IconBox = ({ children }: { children: React.ReactNode }) => <span className="grid size-[30px] shrink-0 place-items-center rounded-[9px] bg-card text-muted-foreground [&_svg]:size-4">{children}</span>
 
-function ProjectRow({ p, rank }: { p: Proj; rank?: number }) {
-  const { v, select, selected } = useApp()
-  const ended = v.isEnded(p)
-  // 分野は sub に文字で書くので、分野のアイコンは出さない。新規・やめた事業の印と行の頭を揃えるため、印の幅だけ空ける
-  const icon = ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : <span aria-hidden className="w-6 shrink-0" />
-  return <Row rank={rank} icon={icon} title={p.name} sub={[p.dept, fieldName(v, v.fieldOf(p))].filter(Boolean).join(' · ')} yen={p.yen} note={ended ? `${r(p.fy)} ${v.label(p.fy)}` : p.yen != null ? `${((p.yen / v.total) * 100).toFixed(1)}%` : undefined} selected={selected?.kind === 'project' && selected.id === p.id} onClick={() => select({ kind: 'project', id: p.id })} />
-}
 function SheetRow({ s }: { s: EvalSheet }) {
   const { select, selected } = useApp()
   const dir = directionOf(s)
@@ -239,11 +264,11 @@ function Rows({ children }: { children: React.ReactNode[] }) {
 const fieldName = (v: YearView, id: string) => v.fields.find((f) => f.id === id)?.name ?? 'その他'
 
 /** 手元に全部ある一覧（評価シート・目）は下まで来たら続きを描く */
-function Infinite<T>({ items, render, step = 30 }: { items: T[]; render: (t: T, i: number) => React.ReactNode; step?: number }) {
+function Infinite<T>({ items, render, list, step = 30 }: { items: T[]; render?: (t: T, i: number) => React.ReactNode; /** 行をまとめて描く（表）。無ければ render で1行ずつ描く */ list?: (rows: T[]) => React.ReactNode; step?: number }) {
   const [n, setN] = React.useState(step)
   return (
     <>
-      <Rows>{items.slice(0, n).map(render)}</Rows>
+      {list ? list(items.slice(0, n)) : <Rows>{items.slice(0, n).map(render!)}</Rows>}
       {items.length > n ? <MoreDots key={n} onVisible={() => setN((x) => x + step)} /> : null}
     </>
   )
@@ -263,7 +288,7 @@ const RowsSkeleton = ({ n = 5 }: { n?: number }) => (
 const LoadFailed = () => <p className="px-2.5 py-4 text-sm text-muted-foreground">読み込めませんでした。少し待ってから開き直してください。</p>
 
 /** 頁ごとに読む一覧。1頁目のあと、末尾が見えたら続きを読んで足す（足した一覧は key の置き場に入れ直す） */
-function Paged<T, P extends { rows: T[]; next: string | null }>({ k, first, next, head, render }: { k: string; first: () => Promise<P>; next: (token: string) => Promise<P>; head?: (page: P) => React.ReactNode; render: (t: T, i: number) => React.ReactNode }) {
+function Paged<T, P extends { rows: T[]; next: string | null }>({ k, first, next, head, render, list }: { k: string; first: () => Promise<P>; next: (token: string) => Promise<P>; head?: (page: P) => React.ReactNode; render?: (t: T, i: number) => React.ReactNode; /** 行をまとめて描く（表）。無ければ render で1行ずつ描く */ list?: (rows: T[]) => React.ReactNode }) {
   const { res } = useApp()
   const page = React.use(res.get(k, first))
   const [tries, bump] = React.useReducer((x: number) => x + 1, 0)
@@ -288,30 +313,117 @@ function Paged<T, P extends { rows: T[]; next: string | null }>({ k, first, next
   return (
     <>
       {head?.(page)}
-      <Rows>{page.rows.map(render)}</Rows>
+      {list ? list(page.rows) : <Rows>{page.rows.map(render!)}</Rows>}
       {page.next ? <MoreDots key={`${page.rows.length}:${tries}`} onVisible={more} /> : null}
     </>
   )
 }
 
-/** 事業の一覧（頁ごとに web の /api/projects から読む） */
-function ProjectList({ q, head, render = (p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} /> }: { q: ListQuery; head?: (page: ListPage) => React.ReactNode; render?: (p: Proj, i: number) => React.ReactNode }) {
-  return <Paged k={listKey(q)} first={() => listPage(q)} next={(t) => listPage(q, t)} head={head} render={render} />
+/** 事業の一覧（頁ごとに web の /api/projects から読む）。表で出し、末尾が見えたら続きの頁を足す */
+function ProjectList({ q, head, render }: { q: ListQuery; head?: (page: ListPage) => React.ReactNode; /** 1行ずつ描く（詳細の中の短い一覧）。無ければ表で出す */ render?: (p: Proj, i: number) => React.ReactNode }) {
+  return <Paged k={listKey(q)} first={() => listPage(q)} next={(t) => listPage(q, t)} head={head} render={render} list={render ? undefined : (rows: Proj[]) => <ProjectTable rows={rows} ended={q.filter === 'ended'} />} />
+}
+
+const projectFeatures = tableFeatures({})
+const projectColumn = createColumnHelper<typeof projectFeatures, Proj & { rank: number }>()
+
+/** 事業の名前の欄。新しく始める・やめた事業の印は事業名の後ろに付け、狭い幅（詳細を横に開いたときも）では分野を下に添える（広い幅は別の列） */
+function ProjectNameCell({ p }: { p: Proj }) {
+  const { v } = useApp()
+  const ended = v.isEnded(p)
+  return (
+    <span className="block">
+      {/* 押せることとフォーカスは事業名のボタンが持つ（行を押しても同じく詳細を開く） */}
+      <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{p.name}</button>
+      {ended || v.isNew(p) ? <span className="ml-1.5 inline-flex align-middle">{ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : <Mark kind="new" label="新しく始める事業" className="size-5" />}</span> : null}
+      {/* 狭い幅で事業名の下に添える分野は、事業名より控えめな色にする */}
+      <span className="block text-muted-foreground @3xl:hidden">{fieldName(v, v.fieldOf(p))}</span>
+    </span>
+  )
+}
+function ProjectShareCell({ p }: { p: Proj }) {
+  const { v } = useApp()
+  // やめた事業の額は前の年度の資料のもの（列の見出しに年度を出す）なので、今の年度の総額に対する割合は出さない
+  if (v.isEnded(p)) return null
+  return p.yen != null && v.total ? <span className="tabular-nums">{((p.yen / v.total) * 100).toFixed(1)}%</span> : null
+}
+function ProjectFieldCell({ p }: { p: Proj }) {
+  const { v } = useApp()
+  return <>{fieldName(v, v.fieldOf(p))}</>
+}
+
+/** 事業の表（shadcn の data table）。並びは api が返した金額の多い順のまま。行を押すと詳細を開く。文字は見出しも中身もすべて同じ大きさ・同じ色にする（狭い画面で名前の下に出す分野だけは薄い色） */
+function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前の年度の額を出す */ ended?: boolean }) {
+  const { v, select, selected } = useApp()
+  const by = ended ? v.year - 1 : v.year
+  const amount = `${r(by)} ${v.label(by)}`
+  const columns = React.useMemo(() => projectColumn.columns([
+    projectColumn.accessor('rank', { header: () => <span className="sr-only">順位</span>, cell: (c) => c.getValue(), meta: { className: 'w-8 pr-0 text-right tabular-nums' } }),
+    projectColumn.display({ id: 'name', header: '事業名', cell: (c) => <ProjectNameCell p={c.row.original} />, meta: { className: 'whitespace-normal' } }),
+    projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden' } }),
+    projectColumn.accessor('yen', { header: () => <span className="inline-flex items-center gap-1">{amount}<ArrowDownIcon className="size-3.5" aria-label="多い順" /></span>, cell: (c) => (c.getValue() == null ? '—' : yenText(c.getValue()!)), meta: { className: 'text-right tabular-nums' } }),
+    // やめた事業は割合を出さないので、列ごと出さない
+    ...(ended ? [] : [projectColumn.display({ id: 'share', header: '割合', cell: (c) => <ProjectShareCell p={c.row.original} />, meta: { className: '@max-xl:hidden text-right' } })]),
+  ]), [amount, ended])
+  const data = React.useMemo(() => rows.map((p, i) => ({ ...p, rank: i + 1 })), [rows])
+  const table = useTable({ features: projectFeatures, columns, data, getRowId: (p) => p.id })
+  const cls = (meta: unknown) => (meta as { className?: string } | undefined)?.className
+  return (
+    <Table className="text-sm">
+      <TableHeader>
+        {table.getHeaderGroups().map((g) => (
+          <TableRow key={g.id} className="hover:bg-transparent">
+            {g.headers.map((h) => (
+              <TableHead key={h.id} aria-sort={h.column.id === 'yen' ? 'descending' : undefined} className={cn('h-9 font-normal', cls(h.column.columnDef.meta))}>
+                {h.isPlaceholder ? null : <table.FlexRender header={h} />}
+              </TableHead>
+            ))}
+          </TableRow>
+        ))}
+      </TableHeader>
+      <TableBody>
+        {!rows.length ? (
+          <TableRow className="hover:bg-transparent"><TableCell colSpan={columns.length} className="py-6 text-center">当てはまる事業はありません</TableCell></TableRow>
+        ) : null}
+        {table.getRowModel().rows.map((row) => {
+          const on = selected?.kind === 'project' && selected.id === row.original.id
+          return (
+            <TableRow key={row.id} data-state={on ? 'selected' : undefined} onClick={() => select({ kind: 'project', id: row.original.id })} className="cursor-pointer hover:bg-card data-[state=selected]:bg-accent">
+              {row.getAllCells().map((cell) => (
+                <TableCell key={cell.id} className={cn('py-2.5', cls(cell.column.columnDef.meta))}>
+                  <table.FlexRender cell={cell} />
+                </TableCell>
+              ))}
+            </TableRow>
+          )
+        })}
+      </TableBody>
+    </Table>
+  )
+}
+
+/** COFOG のコード（大分類・中分類・小分類）。分野で絞るときは、その分野（大分類）に入るコードを並べて api に渡す */
+const COFOG_CODES = Object.values(COFOG_NAMES).flatMap((names) => Object.keys(names))
+/** 選んだ分野で絞る条件。分野を選んでいなければ空（絞らない） */
+const cofogOf = (fields: string[]): { cofog?: string[] } => {
+  const frames = DOMAIN_FRAMES.filter((f) => fields.includes(f.id))
+  const cofog = COFOG_CODES.filter((c) => frames.some((f) => frameOf(c) === f))
+  return cofog.length ? { cofog } : {}
 }
 
 /** 評価シートの一覧の条件（その年度の、分野・事業名で絞ったもの） */
-const sheetQueryOf = (d: Pick<Snapshot, 'code'>, v: YearView, field: string, q: string): SheetQuery => ({
+const sheetQueryOf = (d: Pick<Snapshot, 'code'>, v: YearView, fields: string[], q: string): SheetQuery => ({
   code: d.code,
   year: v.year,
   kind: v.kind,
-  ...(field !== 'all' ? { subjects: v.subjectsOf(field) } : {}),
+  ...cofogOf(fields),
   ...(q ? { q } : {}),
 })
 
 /** 評価シートの区分ごとの数。絞らないときは残り（defer）で届いた数をそのまま使う */
 function useSheetCounts(v: YearView, q: SheetQuery): Loaded<SheetCount[]> {
   const { res } = useApp()
-  const plain = !q.subjects && !q.q
+  const plain = !q.subjects && !q.cofog && !q.q
   return plain ? v.sheetCounts : React.use(res.get(sheetCountKey(q), () => sheetCounts(q)))
 }
 
@@ -351,23 +463,7 @@ function FieldRow({ f, i, max, onClick }: { f: YearView['fields'][number]; i: nu
   )
 }
 
-/** 新しく始める事業（予算書に新しく現れた事業）のカード。事業の詳細を開く */
-function FreshCard({ p }: { p: ProjRow }) {
-  const { v, select } = useApp()
-  const field = v.fieldOf(p)
-  return (
-    <button type="button" onClick={() => select({ kind: 'project', id: p.id })} className="block h-full w-full rounded-xl text-left transition-transform active:scale-[.98]"><Card className="h-full h-full min-h-[132px] gap-2.5 bg-card p-3.5 text-left ring-0 transition-[background,transform] hover:bg-secondary active:scale-[.98]">
-      <Mark kind="new" />
-      <span className="line-clamp-2 text-base font-semibold leading-normal">{p.name}</span>
-      <span className="mt-auto flex items-end justify-between gap-2">
-        <Chip><FieldIcon id={field} />{fieldName(v, field)}</Chip>
-        <Amt yen={p.yen} className="text-primary" />
-      </span>
-    </Card></button>
-  )
-}
-
-// タブのスワイプは、横に動かせる中身（新しく始めることの Carousel・横スクロールの列）の上では始めない。始めると中身より先にタブが動く
+// タブのスワイプは、横に動かせる中身（Carousel・横スクロールの列・表）の上では始めない。始めると中身より先にタブが動く
 function startsTabSwipe(api: NonNullable<CarouselApi>, evt: MouseEvent | TouchEvent) {
   const root = api.rootNode()
   for (let el = evt.target instanceof Element ? evt.target : null; el && el !== root; el = el.parentElement) {
@@ -376,27 +472,6 @@ function startsTabSwipe(api: NonNullable<CarouselApi>, evt: MouseEvent | TouchEv
     if ((x === 'auto' || x === 'scroll') && el.scrollWidth > el.clientWidth) return false
   }
   return true
-}
-
-function FreshCarousel({ items, more }: { items: ProjRow[]; more?: () => void }) {
-  if (!items.length) return null
-  return (
-    <section>
-      <SectionHead title="新しく始める事業">{more ? <MoreLink onClick={more} /> : null}</SectionHead>
-      {/* 前へ・次へは shadcn の Carousel のとおりカードの左右に置く（スマホはスワイプだけ） */}
-      <Carousel opts={{ align: 'start', slidesToScroll: 'auto' }} className="w-full md:px-11">
-        <CarouselContent className="-ml-2.5">
-          {items.map((p) => (
-            <CarouselItem key={p.id} className="basis-4/5 pl-2.5 sm:basis-1/3 @3xl:basis-1/4">
-              <FreshCard p={p} />
-            </CarouselItem>
-          ))}
-        </CarouselContent>
-        <CarouselPrevious className="left-0 max-md:hidden" />
-        <CarouselNext className="right-0 max-md:hidden" />
-      </Carousel>
-    </section>
-  )
 }
 
 /** A〜D の札。数は api が方向性の区分ごとに数えたもの */
@@ -493,6 +568,11 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   const summary = picked ? <Amt yen={picked.yen} className="text-[26px] leading-snug text-primary" /> : null
   return (
     <div className="flex flex-col gap-3">
+      <TabHead title={label === '決算' ? '決算' : '予算'}>
+        {phase === 'settlement'
+          ? '決算は、1年間に実際に入ったお金と使ったお金を、年度が終わった後にまとめたものです。議会の認定を受けて確定します。'
+          : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。このタブでは、年度の初めに決めた当初予算を扱います。'}
+      </TabHead>
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
       {picked ? (
         <Flow key={`${v.year}-${phase}-${account}`} flows={flows} total={picked} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} tabs={tabs} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase, special: account !== GENERAL })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
@@ -560,10 +640,72 @@ function Overview() {
   )
 }
 
-function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { filter: string; setFilter: (f: string) => void; field: string; setField: (f: string) => void; grade: string; setGrade: (g: string) => void }) {
+const KINDS = [
+  { id: 'new', label: '新しく始める', icon: <NewIcon className="size-4 text-primary" /> },
+  { id: 'ended', label: 'やめた', icon: <StopIcon className="size-4 text-primary" /> },
+  { id: 'eval', label: '評価した', icon: <ClipboardTextIcon className="size-4" /> },
+] as const
+// 絞り込みのボタン（Apple の pop-up / pull-down button と同じく、押すとメニューが開き、今の値をボタンに出す）。絞っている間は緑地にする
+const filterTrigger = (on: boolean) => cn('inline-flex h-9 min-w-0 max-w-full items-center gap-1.5 rounded-full border px-3.5 text-sm transition-colors', on ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-background hover:bg-card')
+/** 事業の区分（新しく始める・やめた）。1つだけ選ぶ（引く年度の資料が違うので重ねられない）。既定は「すべての事業」。
+ * 評価した事業はメニューに出さず、事業評価の札から開く（開いている間はボタンに「評価した」と出す） */
+function KindMenu({ v, filter, setFilter }: { v: YearView; filter: string; setFilter: (f: string) => void }) {
+  const shown = KINDS.filter((k) => k.id !== 'eval' && v.comparable)
+  // 一覧の読み直しは transition で遅れて届くので、選んだ状態は手元に持ってすぐ出す
+  const [value, setValue] = React.useState(filter)
+  React.useEffect(() => setValue(filter), [filter])
+  if (!shown.length && value !== 'eval') return null
+  const picked = KINDS.find((k) => k.id === value)
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger aria-label="事業の区分で絞る" className={filterTrigger(!!picked)}>
+        <span className="min-w-0 truncate">{picked?.label ?? 'すべての事業'}</span>
+        <CaretDownIcon className="size-3.5 shrink-0" aria-hidden="true" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-auto min-w-48">
+        <DropdownMenuRadioGroup value={value} onValueChange={(x) => { setValue(x as string); setFilter(x as string) }}>
+          <DropdownMenuRadioItem value="all" closeOnClick>すべての事業</DropdownMenuRadioItem>
+          {shown.map((k) => <DropdownMenuRadioItem key={k.id} value={k.id} closeOnClick>{k.icon}{k.label}</DropdownMenuRadioItem>)}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+/** 分野（COFOG の大分類）。いくつでも選べ、メニューは開いたまま続けて選べる。先頭の「すべての分野」で全部外す。
+ * COFOG の付かない科目（その他）は COFOG のコードでは絞れないので出さない */
+function FieldMenu({ v, fields, setFields }: { v: YearView; fields: string[]; setFields: (f: string[]) => void }) {
+  // 続けて押しても前の選択を落とさないよう、選んだ状態は手元に持つ
+  const choices = v.fields.filter((f) => f.id !== OTHER_FRAME.id)
+  const [value, setValue] = React.useState(fields)
+  React.useEffect(() => setValue(fields), [fields.join()])
+  const set = (next: string[]) => {
+    // 並びは分野の並び（金額の多い順）に揃える
+    const ordered = choices.map((f) => f.id).filter((id) => next.includes(id))
+    setValue(ordered)
+    setFields(ordered)
+  }
+  const label = !value.length ? 'すべての分野' : value.length === 1 ? fieldName(v, value[0]!) : `${fieldName(v, value[0]!)} ほか${value.length - 1}`
+  return (
+    <DropdownMenu>
+      <DropdownMenuTrigger aria-label="分野で絞る" className={filterTrigger(value.length > 0)}>
+        <span className="min-w-0 truncate">{label}</span>
+        <CaretDownIcon className="size-3.5 shrink-0" aria-hidden="true" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-auto min-w-56">
+        <DropdownMenuCheckboxItem checked={!value.length} onCheckedChange={() => set([])}>すべての分野</DropdownMenuCheckboxItem>
+        <DropdownMenuSeparator />
+        {choices.map((f) => (
+          <DropdownMenuCheckboxItem key={f.id} checked={value.includes(f.id)} onCheckedChange={(on) => set(on ? [...value, f.id] : value.filter((x) => x !== f.id))}>
+            <FieldIcon id={f.id} />{f.name}
+          </DropdownMenuCheckboxItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )
+}
+
+function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: { filter: string; setFilter: (f: string) => void; /** 選んだ分野（空はすべて） */ fields: string[]; setFields: (f: string[]) => void; grade: string; setGrade: (g: string) => void }) {
   const { v, res } = useApp()
-  const by = filter === 'ended' ? v.year - 1 : v.year
-  const byLabel = `${r(by)} ${v.label(by)}`
   // 入力は少し待ってから絞る（打つたびに API を呼ばない）。待つあいだと読むあいだは前の一覧を出したまま
   const [text, setText] = React.useState('')
   const [q, setQ] = React.useState('')
@@ -573,42 +715,35 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
     clearTimeout(timer.current)
     timer.current = setTimeout(() => React.startTransition(() => setQ(t.trim())), 300)
   }
-  // やめた事業を分野で絞るときは、前の年度の分野の科目を読んでから一覧を引く（EndedFieldList）
-  const endedField = filter === 'ended' && field !== 'all'
   const head = (n: string) => (
     <p className="px-2.5 text-xs text-muted-foreground">
       {filter === 'new' ? '予算書で新しく現れた事業・' : ''}
-      {n}・{byLabel}の多い順
+      {n}
     </p>
   )
   const body = (v: YearView) => {
-    const list = filter === 'eval' || endedField ? null : v.query(filter as ListQuery['filter'], { ...(field !== 'all' ? { subjects: v.subjectsOf(field) } : {}), ...(q ? { q } : {}) })
+    const list = filter === 'eval' ? null : v.query(filter as ListQuery['filter'], { ...cofogOf(fields), ...(q ? { q } : {}) })
     // 事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある）
-    const moku = v.hasProjects !== false ? [] : v.mokuRows.filter((p) => (field === 'all' || v.fieldOf(p) === field) && (!q || p.name.includes(q)))
+    const moku = v.hasProjects !== false ? [] : v.mokuRows.filter((p) => (!fields.length || fields.includes(v.fieldOf(p))) && (!q || p.name.includes(q)))
     return !v.hasProjects ? (
       // 目には始めた年度が無いので、新しく始める・やめた事業は出さない
       filter === 'all' ? (
         <>
           {head(`${moku.length}件`)}
-          <Infinite items={moku} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
+          <Infinite items={moku} list={(rows) => <ProjectTable rows={rows} />} />
         </>
       ) : null
     ) : list ? (
       <ClientSuspense fallback={<RowsSkeleton />} ready={!!res.peek(listKey(list))}>
         <ProjectList q={list} head={(page) => head(countOf(page))} />
       </ClientSuspense>
-    ) : endedField ? (
-      <ClientSuspense fallback={<RowsSkeleton />}>
-        <EndedFieldList field={field} q={q} head={head} />
-      </ClientSuspense>
     ) : null
   }
-  // まとめから移した、新しく始める事業と事業評価の札。絞り込みの無い「すべて」のときだけ一覧の上に出す（残りの defer が届いてから）
-  const lead = filter === 'all' && !q && field === 'all' ? (
+  // 事業評価の札。絞り込みの無い「すべて」のときだけ一覧の上に出す（残りの defer が届いてから）
+  const lead = filter === 'all' && !q && !fields.length ? (
     <Full fallback={null}>
       {(v) => (
         <div className="mb-6 flex flex-col gap-8 empty:hidden">
-          {v.comparable ? <FreshCarousel items={(v.page('new')?.rows ?? []).slice(0, 12)} more={() => setFilter('new')} /> : null}
           {v.sheetTotal ? (
             <section>
               <SectionHead title="事業評価" sub={`${r(v.year)}年度の事業`}><MoreLink onClick={() => setFilter('eval')} /></SectionHead>
@@ -621,34 +756,20 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
   ) : null
   return (
     <div className="flex flex-col gap-2">
+      <TabHead title="事業">事業は、自治体がお金を使って行う一つ一つの仕事です。</TabHead>
       {lead}
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative min-w-[220px] flex-1">
-          <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-          <Input value={text} onChange={(e) => onText(e.target.value)} placeholder="事業名・担当の課で探す" className="h-9 rounded-full pl-9" aria-label="事業を探す" />
-        </div>
-        <ToggleGroup value={[filter]} onValueChange={(x) => x[0] && setFilter(x[0])} variant="outline" size="sm" spacing={0}>
-          <ToggleGroupItem value="all">すべて</ToggleGroupItem>
-          {/* 新しく始める・やめた・評価したは残り（defer）が届いてから出す */}
-          <Full fallback={null}>
-            {(v) => (
-              <>
-                {v.comparable ? <ToggleGroupItem value="new"><NewIcon className="size-4 text-primary" />新しく始める</ToggleGroupItem> : null}
-                {v.comparable ? <ToggleGroupItem value="ended"><StopIcon className="size-4 text-primary" />やめた</ToggleGroupItem> : null}
-                {v.sheetTotal ? <ToggleGroupItem value="eval"><ClipboardTextIcon className="size-4" />評価した</ToggleGroupItem> : null}
-              </>
-            )}
-          </Full>
-        </ToggleGroup>
+      {/* 検索の行と、絞り込み（事業の区分・分野の combobox）の行を分ける */}
+      <div className="relative">
+        <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+        <Input value={text} onChange={(e) => onText(e.target.value)} placeholder="事業名・担当の課で探す" className="h-9 rounded-full pl-9" aria-label="事業を探す" />
       </div>
-      <ToggleGroup value={[field]} onValueChange={(x) => x[0] && setField(x[0])} variant="outline" size="sm" className="-mx-1 w-auto overflow-x-auto px-1 py-1 [scrollbar-width:none]">
-        <ToggleGroupItem value="all" className="rounded-full">すべての分野</ToggleGroupItem>
-        {v.fields.map((f) => (
-          <ToggleGroupItem key={f.id} value={f.id} className="rounded-full"><FieldIcon id={f.id} />{f.name}</ToggleGroupItem>
-        ))}
-      </ToggleGroup>
+      <div className="flex min-w-0 items-center gap-2">
+        {/* 新しく始める・やめた・評価したは残り（defer）が届いてから選べるようにする */}
+        <Full fallback={null}>{(v) => <KindMenu v={v} filter={filter} setFilter={setFilter} />}</Full>
+        <FieldMenu v={v} fields={fields} setFields={setFields} />
+      </div>
       {filter === 'eval' ? (
-        <Full fallback={<RowsSkeleton />}>{(v) => <EvalList v={v} grade={grade} setGrade={setGrade} field={field} q={q} leave={() => setFilter('all')} />}</Full>
+        <Full fallback={<RowsSkeleton />}>{(v) => <EvalList v={v} grade={grade} setGrade={setGrade} fields={fields} q={q} leave={() => setFilter('all')} />}</Full>
       ) : <>
       {/* 事業の収録があるかは、事業のタブの頁なら loader が渡し、他のタブの頁（スマホで横に並ぶ事業のタブ）では残り（defer）で届く */}
       {v.hasProjects === undefined ? <Full fallback={<RowsSkeleton />}>{(v) => (v.failed && v.hasProjects === undefined ? <LoadFailed /> : body(v))}</Full> : body(v)}
@@ -657,29 +778,19 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
   )
 }
 
-/** やめた事業を分野で絞った一覧。やめた事業は前の年度の資料で引くので、前の年度の分野の科目を読んでから絞る */
-function EndedFieldList({ field, q, head }: { field: string; q: string; head: (n: string) => React.ReactNode }) {
-  const { v, d, res } = useApp()
-  const prev = d.prev
-  const subjects = prev ? React.use(res.get(`field-subjects:${d.code}:${prev.year}`, () => fieldSubjects(d.code, prev.year, prev.kind))) : FAILED
-  if (subjects === FAILED) return <LoadFailed />
-  const list = v.query('ended', { subjects: subjects[field] ?? [], ...(q ? { q } : {}) })
-  return <ProjectList q={list} head={(page) => head(countOf(page))} />
-}
-
 /** 事業の一覧の「評価した」。評価は事業の属性なので、別のタブにせず事業の絞り込みの1つにする。
  * A〜D の札は api が数えた数、シートは選んだ札の区分だけを頁ごとに読む */
-function EvalList({ v, grade, setGrade, field, q, leave }: { v: YearView; grade: string; setGrade: (g: string) => void; field: string; q: string; /** 評価の無い年度へ移ったら絞り込みを戻す */ leave: () => void }) {
+function EvalList({ v, grade, setGrade, fields, q, leave }: { v: YearView; grade: string; setGrade: (g: string) => void; fields: string[]; q: string; /** 評価の無い年度へ移ったら絞り込みを戻す */ leave: () => void }) {
   const { d } = useApp()
   React.useEffect(() => {
     if (!v.failed && !v.sheetTotal) leave()
   }, [v])
   // 評価シートを読めなかったら、0件と見せずに読めなかったと出す
   if (v.failed) return <LoadFailed />
-  const base = sheetQueryOf(d, v, field, q.trim())
+  const base = sheetQueryOf(d, v, fields, q.trim())
   return (
     <div className="mt-1 flex flex-col gap-3">
-      <ClientSuspense fallback={<RowsSkeleton />} ready={!base.subjects && !base.q}>
+      <ClientSuspense fallback={<RowsSkeleton />} ready={!base.cofog && !base.q}>
         <EvalBody v={v} base={base} grade={grade} setGrade={setGrade} />
       </ClientSuspense>
       <p className="text-xs text-muted-foreground">自治体が {r(v.year)}年度に行った事業を自ら評価した結果です。A〜D と方向性は、自治体ごとに違う評価の書き方を共通の区分に揃えたもので、風土記は評価を加えていません。</p>
@@ -735,6 +846,102 @@ function ProjectDetail({ id }: { id: string }) {
   return loaded === FAILED ? <LoadFailed /> : <ProjectBody p={loaded} />
 }
 
+/** 事業の名前。新しく始める・やめた事業の印は名前の後ろに付ける */
+function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name'>; mark: 'new' | 'stop' | null }) {
+  return (
+    <>
+      <h2 className="mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
+        {p.name}
+        {mark === 'stop' ? <Mark kind="stop" label="やめた事業" /> : mark === 'new' ? <Mark kind="new" label="新しく始める事業" /> : null}
+      </h2>
+    </>
+  )
+}
+
+const projectLatestKey = (id: string) => `project-latest:${id}`
+
+/** 年度ごとの表の額。出典の頁が分かれば、額から公式の資料（その頁）を開く */
+function SourceAmt({ yen, href, label }: { yen: number | null | undefined; href?: string; label: string }) {
+  if (yen == null || !href) return <Amt yen={yen} className="text-[15px]" />
+  return (
+    <a href={href} target="_blank" rel="noopener" aria-label={`${label}（${yenText(yen)}）`} className="inline-flex items-center gap-1 text-foreground no-underline hover:text-primary hover:underline">
+      <Amt yen={yen} className="text-[15px]" />
+      <ArrowSquareOutIcon className="size-3 text-muted-foreground" aria-hidden="true" />
+    </a>
+  )
+}
+
+/** 事業の頁（/tokyo/shinagawa/projects/<project_id>）。一覧の行・評価シート・分野の頁の事業から開く。事業は年度をまたぐので年度の段を持たず、
+ * 金額は年度ごとの表で出す（大きな金額は出さない）。内訳（中の事業）・評価シートは事業の最新の年度（決算があれば決算）のもの */
+function ProjectPage({ id }: { id: string }) {
+  return (
+    <ClientSuspense fallback={<RowsSkeleton n={4} />}>
+      <ProjectPageBody id={id} />
+    </ClientSuspense>
+  )
+}
+
+function ProjectPageBody({ id }: { id: string }) {
+  const { res, select, v: pageView } = useApp()
+  const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
+  if (p === FAILED || p.year === undefined || !p.kind) return <LoadFailed />
+  const year = p.year
+  const frame = (p.cofog ? frameOf(p.cofog) : undefined) ?? OTHER_FRAME
+  const rows = Object.keys(p.y).map(Number).sort((a, b) => b - a)
+  return (
+    <>
+      <ProjectTitle p={p} mark={p.ended != null ? 'stop' : p.started === year ? 'new' : null} />
+      <div className="flex flex-wrap gap-1.5">
+        <Chip><FieldIcon id={frame.id} />{frame.name}</Chip>
+      </div>
+      <DetailSection icon={CalendarBlankIcon} title="年度ごと">
+        <div className="grid max-w-xl grid-cols-[auto_1fr_1fr] text-[15px]">
+          <span className="py-1.5 text-xs" /><span className="py-1.5 text-right text-xs text-muted-foreground">当初予算</span><span className="px-1 py-1.5 text-right text-xs text-muted-foreground">決算</span>
+          {rows.map((y) => (
+            <div key={y} className={cn('col-span-full grid grid-cols-subgrid', y === year && 'bg-card')}>
+              <Separator className="col-span-full" />
+              <span className="px-1 py-2">{r(y)}</span>
+              <span className="py-2 text-right"><SourceAmt yen={p.y[String(y)]?.b} href={p.src?.[String(y)]?.b} label={`${r(y)}年度の当初予算の出典`} /></span>
+              <span className="px-1 py-2 text-right"><SourceAmt yen={p.y[String(y)]?.s} href={p.src?.[String(y)]?.s} label={`${r(y)}年度の決算の出典`} /></span>
+            </div>
+          ))}
+        </div>
+      </DetailSection>
+      {p.sheets.length ? (
+        <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${p.sheets.length}件`}>
+          <div className="grid gap-2 @3xl:grid-cols-2">
+            {p.sheets.map((s) => {
+              const dir = directionOf(s)
+              return (
+                <div key={s.id} className="flex flex-col gap-1.5 rounded-xl bg-card p-3">
+                  <button type="button" onClick={() => select({ kind: 'sheet', id: s.id, sheet: s })} className="flex w-full items-start gap-2.5 rounded-md text-left outline-none hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary">
+                    {dir ? <Mark kind={dir.icon} /> : null}
+                    <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">{[`${r(s.fy)}年度の事業`, s.grade ? `評価 ${s.grade} ${GRADES.find((g) => g[0] === s.grade)?.[1] ?? ''}` : null, dir?.label ?? s.dir].filter(Boolean).join(' · ')}</span></span>
+                  </button>
+                  {s.url ? <span className={dir ? 'pl-[34px]' : ''}><Ext href={`${s.url}#page=${s.page}`}>評価シート（{s.page}頁）</Ext></span> : null}
+                </div>
+              )
+            })}
+          </div>
+        </DetailSection>
+      ) : null}
+      {p.kids.length ? (
+        <DetailSection icon={TreeStructureIcon} title="内訳">
+          {/* 内訳の一つ一つも年度をまたぐ事業なので、押すとその事業の頁へ移る。額はその事業の最新の年度のもの */}
+          <Infinite items={p.kids} step={10} render={(k, i) => (
+            <button key={k.id ?? i} type="button" onClick={() => k.id && select({ kind: 'project', id: k.id })} className="flex w-full items-center gap-3 px-1.5 py-2 text-left text-[15px] hover:bg-card">
+              <span className="flex-1">{k.name}</span>
+              <Amt yen={k.yen} className="text-base" />
+            </button>
+          )} />
+        </DetailSection>
+      ) : null}
+      {/* 出典の資料は頁の年度のもの。事業の年度と同じときだけ添える */}
+      {pageView.year === year && pageView.kind === p.kind && pageView.origin ? <DetailSection icon={FileTextIcon} title="出典"><Ext href={pageView.origin}>{pageView.originTitle ?? '予算書'}</Ext></DetailSection> : null}
+    </>
+  )
+}
+
 function ProjectBody({ p }: { p: ProjectFull }) {
   const { d, select, years } = useApp()
   // 新しく始めた・やめたの印は残り（defer）の事業の収録で決まるので待つ（ProjectDetail は ClientSuspense の中）
@@ -749,14 +956,9 @@ function ProjectBody({ p }: { p: ProjectFull }) {
   const field = v.fieldOf(p)
   return (
     <>
-      <p className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">{p.path.filter(Boolean).map((x, i) => <React.Fragment key={i}>{i ? <CaretRightIcon className="size-2.5" /> : null}{x}</React.Fragment>)}</p>
-      <h2 className="mt-1.5 mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
-        {ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : null}
-        {p.name}
-      </h2>
+      <ProjectTitle p={p} mark={ended ? 'stop' : v.isNew(p) ? 'new' : null} />
       <div className="flex flex-wrap gap-1.5">
         <Chip><FieldIcon id={field} />{fieldName(v, field)}</Chip>
-        {p.dept ? <Chip><BuildingsIcon />{p.dept}</Chip> : null}
       </div>
       <div className="mt-5">
         {ended ? (
@@ -800,7 +1002,7 @@ function ProjectBody({ p }: { p: ProjectFull }) {
         </DetailSection>
       ) : null}
       {kids.length ? (
-        <DetailSection icon={TreeStructureIcon} title="中の事業" count={kids.length}>
+        <DetailSection icon={TreeStructureIcon} title="内訳">
           <Infinite items={kids} step={10} render={({ name, yen }, i) => (
             <div key={i} className="flex items-center gap-3 px-1.5 py-2 text-[15px]"><span className="flex-1">{name}</span><Amt yen={yen} className="text-base" /></div>
           )} />
@@ -911,16 +1113,18 @@ function FieldSlices({ frame }: { frame: { cofog: string } }) {
 function FieldPage({ id }: { id: string }) {
   const { v, d, res } = useApp()
   const f = v.fields.find((x) => x.id === id)
-  if (!f) return <p className="text-sm text-muted-foreground">{reiwa(v.year)}にはこの分野の予算がありません。</p>
+  if (!f) return <div className="flex items-center justify-between gap-3"><p className="text-sm text-muted-foreground">{reiwa(v.year)}にはこの分野の予算がありません。</p><TabYear /></div>
   return (
     <>
       <div>
       <div className="flex items-center gap-3">
         <span className="grid size-12 place-items-center rounded-2xl bg-card text-muted-foreground"><FieldIcon id={f.id} className="size-6" /></span>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h2 className="text-xl font-semibold leading-snug">{f.name}</h2>
           <p className="text-xs text-muted-foreground">{f.examples}</p>
         </div>
+        {/* 分野の頁は同じ分野のまま年度を移れる（yearHref が分野の段を残す） */}
+        <TabYear />
       </div>
       <div className="mt-5">
         <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}</span>
@@ -941,7 +1145,7 @@ function FieldPage({ id }: { id: string }) {
         {(v) => v.sheetTotal ? (
           <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(v.year)}年度の事業`}>
             <ClientSuspense fallback={<Skeleton className="h-20 rounded-xl" />}>
-              <FieldGradeCards q={sheetQueryOf(d, v, f.id, '')} />
+              <FieldGradeCards q={{ code: d.code, year: v.year, kind: v.kind, subjects: v.subjectsOf(f.id) }} />
             </ClientSuspense>
           </DetailSection>
         ) : null}
@@ -964,7 +1168,7 @@ function FieldProjectsOf({ v, id }: { v: YearView; id: string }) {
   const rows = v.mokuRows.filter((p) => v.fieldOf(p) === id)
   return (
     <DetailSection icon={ListBulletsIcon} title="事業" count={`${rows.length}件`}>
-      <Infinite items={rows} render={(p, i) => <ProjectRow key={p.id} p={p} rank={i + 1} />} />
+      <Infinite items={rows} list={(rows) => <ProjectTable rows={rows} />} />
     </DetailSection>
   )
 }
@@ -1074,8 +1278,8 @@ function useMedia(query: string) {
 function YearMenu({ years, current, onChange }: { years: number[]; current: number; onChange: (y: number) => void }) {
   return (
     <DropdownMenu>
-      {/* 高さは自治体名の行（h1 の leading-7・sm:leading-8）に揃える */}
-      <DropdownMenuTrigger render={<Button variant="secondary" size="sm" className="rounded-full px-3 text-[15px] font-normal text-foreground sm:h-8" />}>
+      {/* 選んでいる年度を出すので、広い画面の年度の丸（選択中）と同じく緑地に白字にする */}
+      <DropdownMenuTrigger render={<Button size="sm" className="h-8 rounded-full px-3 text-[13px] font-normal" />}>
         {yearName(current)}
         <CaretDownIcon className="size-3.5" aria-hidden="true" />
       </DropdownMenuTrigger>
@@ -1100,11 +1304,20 @@ const TABS: { key: TabKey; label: string; icon: Icon }[] = [
 
 const TAB_SEGMENT = new RegExp(`/(${Object.values(TAB_SLUGS).join('|')})/?$`)
 /** 今の URL から年度・タブ・分野の段を除いた、自治体の頁の path */
-const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').replace(TAB_SEGMENT, '').replace(/\/\d{4}\/?$/, '')
+const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').replace(PROJECT_PATH, '').replace(TAB_SEGMENT, '').replace(/\/\d{4}\/?$/, '')
 /** 今の URL の分野の段（/fields/fukushi）の id */
 const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
+/** 事業の頁の段（/projects/<project_id>） */
+const PROJECT_PATH = /\/projects\/([^/]+)\/?$/
+/** 今の URL の事業の頁の事業の ID */
+const projectOfPath = () => {
+  const m = location.pathname.match(PROJECT_PATH)?.[1]
+  return m ? decodeURIComponent(m) : null
+}
+/** 事業の頁の URL の段 */
+const projectSegment = (id: string) => `projects/${encodeURIComponent(id)}`
 
-export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; initialField?: string; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialField, initialProject, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; initialField?: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; initialTab?: TabKey }) {
   // 最初の画面に要らない分（評価シート・お金のかかる事業・新しく始めた事業）は loader が defer で流し、使う部分が Full（Suspense と use()）で待つ
   const d = base
   const vision = data.vision?.text
@@ -1135,16 +1348,16 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   }
   const setTab = (t: TabKey, { push = true, query = '' } = {}) => {
     setTabState(t)
-    if (t !== at.current.tab || fieldOfPath()) move(pageHref(at.current.year, t) + query, { push })
+    if (t !== at.current.tab || fieldOfPath() || projectOfPath()) move(pageHref(at.current.year, t) + query, { push })
   }
   /** 流れの会計を変える。一般会計は ?account= を付けない */
   const pickAccount = (account: string) => move(pageHref(year, at.current.tab) + (account === GENERAL ? '' : `?${new URLSearchParams({ account })}`))
   // 予算・決算のタブの頁を読み終えたのに流れが無ければ、API に繋がらなかった
   const flowFailed = (initialTab === 'money' || initialTab === 'settled') && !flow && navigation.state === 'idle'
   // 絞り込みを変えたら一覧を読み直す。読み終えるまで前の一覧を出したままにする
-  const [field, setFieldState] = React.useState('all')
+  const [fields, setFieldsState] = React.useState<string[]>([])
   const [filter, setFilterState] = React.useState('all')
-  const setField = (f: string) => React.startTransition(() => setFieldState(f))
+  const setFields = (f: string[]) => React.startTransition(() => setFieldsState(f))
   const setFilter = (f: string) => React.startTransition(() => setFilterState(f))
   const [grade, setGrade] = React.useState('A')
   // ?filter=new などで事業の絞り込みを開いた状態で来られる（ホームのはじめにやることから・まとめの札から）。読んだら URL から外す。
@@ -1159,18 +1372,23 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     const g = q.get('grade')
     if (g && GRADES.some(([x]) => x === g)) setGrade(g)
     const field = q.get('field')
-    if (field) setField(field)
+    if (field) setFields([field])
     for (const k of ['filter', 'grade', 'field']) q.delete(k)
     history.replaceState(history.state, '', location.pathname + (q.size ? `?${q}` : '') + location.hash)
   }, [initialTab, idle])
-  // 事業を開いたら詳細を読む。読み終えるまで前の詳細を出したままにする
+  // 目・評価シートを開いたら横（スマホは下）に詳細を出す。読み終えるまで前の詳細を出したままにする。事業は詳細を出さず事業の頁へ移る
   const [selected, setSelected] = React.useState<Selected>(null)
-  const select = (x: Selected | ((s: Selected) => Selected)) => React.startTransition(() => setSelected(x))
+  const select = (x: Selected | ((s: Selected) => Selected)) => {
+    // 目を事業の代わりにした行（moku:）は年度の資料の目なので、頁にせず詳細に出す
+    if (x && typeof x !== 'function' && x.kind === 'project' && !x.id.startsWith('moku:')) return openProject(x.id)
+    React.startTransition(() => setSelected(x))
+  }
   // 分野の頁。URL を /fields/<id> にして、戻るで自治体の頁へ帰る。中身は開いた年度のデータで描くので loader を待たない
   const [fieldPage, setFieldPage] = React.useState<string | null>(initialField ?? null)
   // 頁の中で開いた分野の頁は履歴の state に印を付け、閉じるときは履歴を戻る（進むで戻ってきた場合も同じ）
   const openField = (id: string) => {
     select(null)
+    setProjectPage(null)
     history.pushState({ ...history.state, field: id }, '', `${basePath()}/${year}/fields/${id}`)
     document.title = pageHead(data, year, { field: id }).title
     React.startTransition(() => setFieldPage(id))
@@ -1183,11 +1401,30 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     void router.visit(pageHref(year, tab), { preserveState: true })
     window.scrollTo({ top: 0 })
   }
+  // 事業の頁。分野の頁と同じく URL を /projects/<project_id>（年度の段なし）にして、戻るで前の頁へ帰る。中身は事業の ID で読む
+  const [projectPage, setProjectPage] = React.useState<string | null>(initialProject ?? null)
+  const openProject = (id: string) => {
+    React.startTransition(() => setSelected(null))
+    history.pushState({ ...history.state, project: id }, '', `${basePath()}/${projectSegment(id)}`)
+    React.startTransition(() => {
+      setFieldPage(null)
+      setProjectPage(id)
+    })
+    window.scrollTo({ top: 0 })
+  }
+  const closeProject = () => {
+    if ((history.state as { project?: string } | null)?.project) return history.back()
+    setProjectPage(null)
+    setTabState('projects')
+    void router.visit(pageHref(year, 'projects'), { preserveState: true })
+    window.scrollTo({ top: 0 })
+  }
   React.useEffect(() => {
-    // 戻る・進むでは、URL の分野に画面を合わせる（年度・タブは移った頁の loader が渡す）
+    // 戻る・進むでは、URL の分野・事業に画面を合わせる（年度・タブは移った頁の loader が渡す）
     const onPop = () => {
       select(null)
       setFieldPage(fieldOfPath())
+      setProjectPage(projectOfPath())
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
@@ -1211,17 +1448,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const prevFieldSubjects = prevFields?.key === prevKey ? prevFields.x : undefined
   const v = React.useMemo(() => (d.years[year] ? yearView(d, prevFieldSubjects) : undefined), [d, year, prevFieldSubjects])
 
-  // タブの真上の目印。これが画面の上へ消えたら、タブが上に貼り付いている
+  // タブの真上の目印。タブを変えたとき、タブが上に貼り付いていたらここまで戻す
   const tabsTop = React.useRef<HTMLDivElement>(null)
-  const [stuck, setStuck] = React.useState(false)
-  React.useEffect(() => {
-    const el = tabsTop.current
-    if (!el) return
-    // 目印がちょうど上端（top = 0）にあるときも貼り付きとみなすため、判定の枠を 1px 下げる
-    const io = new IntersectionObserver(([e]) => setStuck(!e!.isIntersecting && e!.boundingClientRect.top < 1), { rootMargin: '-1px 0px 0px 0px' })
-    io.observe(el)
-    return () => io.disconnect()
-  }, [d])
   const changeTab = (t: TabKey, query?: string) => {
     setTab(t, { query })
     const el = tabsTop.current
@@ -1230,7 +1458,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const go: Go = (t, opt = {}) => {
     if (opt.filter) setFilter(opt.filter)
     if (opt.grade) setGrade(opt.grade)
-    if (t === 'projects') setField(opt.field ?? 'all')
+    if (t === 'projects') setFields(opt.field ? [opt.field] : [])
     const q = new URLSearchParams(Object.entries(opt).filter((e): e is [string, string] => !!e[1]))
     changeTab(t, t === 'projects' && opt.filter ? `?${q}` : undefined)
   }
@@ -1275,11 +1503,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         {emblem ? <img src={emblem} alt="" className="size-full min-h-0 min-w-0 object-contain" /> : <span className="text-3xl text-foreground sm:text-5xl">{data.name[0]}</span>}
       </div>
       <div className="flex min-w-0 flex-col gap-1.5">
-        {/* 自治体名の行の右に年度の切り替えを置く。自治体名の行の高さ（スマホ 28px・広い画面 32px）と切り替えの高さを揃える */}
-        <div className="flex items-center justify-between gap-3">
-          <h1 className="min-w-0 text-[22px] font-normal leading-7 sm:text-[26px] sm:leading-8">{data.name}</h1>
-          <div className="shrink-0">{phone ? <YearMenu years={years} current={year} onChange={setYear} /> : <YearPicker years={years} current={year} onChange={setYear} hrefOf={yearHref} />}</div>
-        </div>
+        {/* 年度の切り替えは、まとめ以外のタブの見出しの横に置く（まとめには置かない） */}
+        <h1 className="min-w-0 text-[22px] font-normal leading-7 sm:text-[26px] sm:leading-8">{data.name}</h1>
         {vision ? <p className="mt-2 text-base leading-snug sm:mt-0 sm:text-[17px]">{vision}</p> : null}
         <div className="mt-1 flex flex-wrap gap-x-2.5 gap-y-1.5 whitespace-nowrap text-xs text-muted-foreground sm:gap-x-6 sm:text-sm">
           <span className="inline-flex items-center gap-1 sm:gap-1.5"><MapPinIcon className="size-3.5 sm:size-4" aria-hidden="true" />{data.prefecturePath ? <Button variant="link" size="inline" nativeButton={false} render={<Link href={data.prefecturePath} />}>{data.prefecture}</Button> : data.prefecture}</span>
@@ -1295,7 +1520,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   )
 
   const panel = (key: TabKey) =>
-    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
+    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} grade={grade} setGrade={setGrade} />
 
   return (
     <div className={cn('@container transition-[padding] duration-300', wide && selected && 'pr-[440px]')}>
@@ -1308,11 +1533,11 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
           <div className="sticky top-0 z-20 mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] bg-background">
             {/* 下線を区切りの線に重ねて、線が二重に見えないようにする */}
             <Separator className="absolute inset-x-0 bottom-0 data-horizontal:w-auto" />
-            {/* スクロールしたら上にタブを残し、右に年度の切り替えを出す。下に Separator を引いて中身と分ける */}
+            {/* スクロールしたら上にタブを残す。下に Separator を引いて中身と分ける */}
             <div className="flex items-center gap-3">
-            {fieldPage ? (
+            {projectPage || fieldPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
-                <Button variant="ghost" onClick={closeField} className="-ml-2 text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" />{data.name}</Button>
+                <Button variant="ghost" onClick={projectPage ? closeProject : closeField} className="-ml-2 text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" />{data.name}</Button>
               </div>
             ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
@@ -1324,22 +1549,13 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
               ))}
             </TabsList>
             )}
-              {/* 貼り付いた帯ではタブを優先する。幅が足りないとき（会話を横に開いたときなど）は年度を「今年度 ▾」の1つにまとめる */}
-              {stuck ? (
-                <div className="shrink-0">
-                  {phone ? <YearMenu years={years} current={year} onChange={setYear} /> : (
-                    <>
-                      <div className="@max-4xl:hidden"><YearPicker years={years} current={year} onChange={setYear} hrefOf={yearHref} /></div>
-                      <div className="@4xl:hidden"><YearMenu years={years} current={year} onChange={setYear} /></div>
-                    </>
-                  )}
-                </div>
-              ) : null}
             </div>
           </div>
           {v ? (
-            <AppContext.Provider value={{ d, page: data, years, v, res, select, selected, go, openField, flow, flowFailed, pickAccount, setsu, extras: extrasProp, prevFieldSubjects }}>
-              {fieldPage ? (
+            <AppContext.Provider value={{ d, page: data, years, v, res, select, selected, go, openField, flow, flowFailed, pickAccount, setsu, extras: extrasProp, prevFieldSubjects, setYear, yearHref }}>
+              {projectPage ? (
+                <div key={projectPage} className="pt-6"><ProjectPage id={projectPage} /></div>
+              ) : fieldPage ? (
                 <div key={fieldPage} className="pt-6"><FieldPage id={fieldPage} /></div>
               ) : phone ? (
                 <Carousel setApi={setApi} opts={carouselOpts} className="-mx-4 pt-5">
@@ -1395,7 +1611,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
           )}
         </Tabs>
       </div>
-      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? describeSelected(selected, withPeekedExtras(d, res), prevFieldSubjects, res) : '')} section={TABS.find((t) => t.key === tab)?.label} />
+      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? (projectPage ? describeProject(res.peek<Loaded<ProjectFull>>(projectLatestKey(projectPage))) : describeSelected(selected, withPeekedExtras(d, res), prevFieldSubjects, res)) : '')} section={TABS.find((t) => t.key === tab)?.label} />
     </div>
   )
 }

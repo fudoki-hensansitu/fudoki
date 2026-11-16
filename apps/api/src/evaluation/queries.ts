@@ -4,6 +4,7 @@ import {
   EVALUATION_INDICATOR_VALUE_TABLE,
   EVALUATION_ORIGIN_TABLE,
   EVALUATION_SHEET_PROJECT_TABLE,
+  EVALUATION_SHEET_SEARCH,
   EVALUATION_SHEET_TABLE,
   EVALUATION_TABLE,
   columnsOf,
@@ -104,16 +105,18 @@ export async function getSheet(ctx: Ctx, input: { sheet_id: string }): Promise<S
 export type SheetSearch = SearchInput & { project_ids?: string[] }
 
 export async function searchSheets(ctx: Ctx, input: SheetSearch): Promise<SheetSearchOutput> {
-  const { rows: sheets, ...rest } = await searchRows(S, ORIGIN, ctx, input, { extra: byProjects(input.project_ids) })
+  const { rows: found, ...rest } = await searchRows(EVALUATION_SHEET_SEARCH, ORIGIN, ctx, input, { extra: byProjects(input.project_ids) })
+  const sheets = found.map((r) => Object.fromEntries(S.columns.map((c) => [c.name, r[c.name] ?? null])))
   const projects = await readProjects(ctx, sheets.map((r) => r.sheet_id as string))
   return { sheets: sheets.map(withDerived(projects)), ...rest } as unknown as SheetSearchOutput
 }
 
 /** 条件に当たるシートの数を、方向性の区分ごとに数える（web の事業評価の A〜D の札。シートを全部は読まない）。並び・頁の入力は使わない */
 export async function countSheets(ctx: Ctx, input: SheetSearch): Promise<SheetCountOutput> {
-  const where = withExtra(buildWhere(S, undefined, input.fiscal_year, input.where as never), byProjects(input.project_ids))
+  const T = EVALUATION_SHEET_SEARCH
+  const where = withExtra(buildWhere(T, undefined, input.fiscal_year, input.where as never), byProjects(input.project_ids))
   const r = await ctx.db
-    .prepare(`SELECT "direction_code", COUNT(*) AS n FROM ${S.table} WHERE ${where.sql} GROUP BY "direction_code" ORDER BY "direction_code"`)
+    .prepare(`SELECT "direction_code", COUNT(*) AS n FROM ${T.table} WHERE ${where.sql} GROUP BY "direction_code" ORDER BY "direction_code"`)
     .bind(...where.params)
     .all<{ direction_code: string | null; n: number }>()
   return { counts: r.results.map((c) => ({ outlook: outlookOf(c.direction_code), size: Number(c.n) })) } as SheetCountOutput

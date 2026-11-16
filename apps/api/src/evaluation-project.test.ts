@@ -119,6 +119,21 @@ describe('事業', () => {
     expect((await get('/v1/projects/xyz')).status).toBe(400)
   })
 
+  test('事業の年度と評価シートは、科目の COFOG で絞れる（科目の ID を並べずに済む）', async () => {
+    sqlite.query(`UPDATE expenditure_subject SET "cofog_code" = '10.4' WHERE "subject_id" = 's-initial-2026'`).run()
+    sqlite.query(`UPDATE evaluation_sheet SET "initial_expenditure_subject_id" = 's-initial-2026' WHERE "sheet_id" = ?`).run(H('1'))
+    const years = async (where: object) => ProjectSearchOutput.parse(await (await post('/v1/projects:search', { fiscal_year: { min: 2026, max: 2026 }, where })).json())
+    const hit = await years({ initial_cofog_code: { eq: ['09', '10.4'] } })
+    expect(hit.project_years.map((y) => y.project_year_id).sort()).toEqual([H('6'), H('7')])
+    // 絞り込みの列は行に返さない
+    expect(Object.keys(hit.project_years[0]!)).not.toContain('initial_cofog_code')
+    expect((await years({ initial_cofog_code: { eq: ['10'] } })).project_years).toEqual([])
+    const sheets = SheetSearchOutput.parse(await (await post('/v1/evaluations/sheets:search', { fiscal_year: { min: 2024, max: 2024 }, where: { initial_cofog_code: { eq: ['10.4'] } } })).json())
+    expect(sheets.sheets.map((s) => s.sheet_id)).toEqual([H('1')])
+    const counted = await callWebOp({ DB: db }, 'count_evaluation_sheets', { fiscal_year: { min: 2024, max: 2024 }, where: { initial_cofog_code: { eq: ['10.4'] } } })
+    expect(counted.ok ? (counted.value as SheetCountOutput).counts.map((c) => [c.outlook?.code, c.size]) : null).toEqual([['keep', 1]])
+  })
+
   test('事業の年度の検索は年度が必須で、値は bind する', async () => {
     expect((await post('/v1/projects:search', { where: {} })).status).toBe(400)
     const body = ProjectSearchOutput.parse(

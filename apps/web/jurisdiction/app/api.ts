@@ -43,12 +43,14 @@ export type ListQuery = {
   prevKind?: Kind
   /** 分野・目で絞るときの科目の ID */
   subjects?: string[]
+  /** 科目の COFOG のコード（cofog_code）で絞る。分野で絞るときはその分野に入るコードを並べる */
+  cofog?: string[]
   /** 事業名（所管課を含む）で絞る */
   q?: string
 }
 export type ListPage = { rows: ProjRow[]; total: number; capped: boolean; next: string | null }
 
-export const listKey = (q: ListQuery) => JSON.stringify([q.code, q.year, q.kind, q.filter, q.prevKind ?? null, q.subjects ?? null, q.q?.trim() || null])
+export const listKey = (q: ListQuery) => JSON.stringify([q.code, q.year, q.kind, q.filter, q.prevKind ?? null, q.subjects ?? null, q.cofog ?? null, q.q?.trim() || null])
 
 /** API の GLOB は前後の * と escape（* ? [ は3バイト）を含めて50バイトまで。長い検索語は収まるところまでで探す */
 const GLOB_BYTES = 50
@@ -102,6 +104,7 @@ function bodyOf(q: ListQuery, pageSize: number, token?: string): { body: SearchB
     ...(ended ? { last_year: { eq: [fy] }, last_year_kind: { eq: ['confirmed'] } } : { [amount]: { is_null: false } }),
     ...(q.filter === 'new' ? { first_year: { eq: [q.year] }, first_year_kind: { eq: ['confirmed'] } } : {}),
     ...(q.subjects ? { [`${kind}_expenditure_subject_id`]: { eq: q.subjects } } : {}),
+    ...(q.cofog ? { [`${kind}_cofog_code`]: { eq: q.cofog } } : {}),
     ...(q.q?.trim() ? { name: { contains: fitSearch(q.q.trim()) } } : {}),
   }
   return {
@@ -132,6 +135,8 @@ export type SheetQuery = {
   kind: Kind
   /** 分野で絞るときの科目（kind の資料の目）の ID */
   subjects?: string[]
+  /** kind の資料の科目の COFOG のコード（cofog_code）で絞る */
+  cofog?: string[]
   /** 事業名で絞る */
   q?: string
   /** 方向性の区分で絞る（A〜D の札は、数えた区分の中からその札の区分を渡す） */
@@ -142,13 +147,14 @@ export type SheetPage = { rows: Sheet[]; next: string | null }
 /** 方向性の区分ごとのシートの数。区分の当たらないシートは code が null の1行 */
 export type SheetCount = { code: DirectionCode | null; label: string | null; grade: Sheet['grade']; n: number }
 
-export const sheetKey = (q: SheetQuery) => JSON.stringify(['sheets', q.code, q.year, q.kind, q.subjects ?? null, q.q?.trim() || null, q.codes ?? null])
-export const sheetCountKey = (q: SheetQuery) => JSON.stringify(['sheet-counts', q.code, q.year, q.kind, q.subjects ?? null, q.q?.trim() || null])
+export const sheetKey = (q: SheetQuery) => JSON.stringify(['sheets', q.code, q.year, q.kind, q.subjects ?? null, q.cofog ?? null, q.q?.trim() || null, q.codes ?? null])
+export const sheetCountKey = (q: SheetQuery) => JSON.stringify(['sheet-counts', q.code, q.year, q.kind, q.subjects ?? null, q.cofog ?? null, q.q?.trim() || null])
 
 const sheetWhere = (q: SheetQuery): Record<string, unknown> => ({
   jurisdiction_code: { eq: [q.code] },
   account_name: { eq: [ACCOUNT] },
   ...(q.subjects ? { [`${q.kind}_expenditure_subject_id`]: { eq: q.subjects } } : {}),
+  ...(q.cofog ? { [`${q.kind}_cofog_code`]: { eq: q.cofog } } : {}),
   ...(q.q?.trim() ? { name: { contains: fitSearch(q.q.trim()) } } : {}),
   ...(q.codes ? { direction_code: { eq: q.codes } } : {}),
 })
@@ -171,8 +177,8 @@ export const toSheet = (s: SheetResult['sheets'][number], origins: SheetResult['
   page: s.page,
 })
 
-const searchSheets = async (call: ApiCall, year: number, where: Record<string, unknown>, pageSize: number, token?: string, projectIds?: string[]) => {
-  const r = await call('search_evaluation_sheets', { fiscal_year: { min: year, max: year }, where, order_by: [{ column: 'settled_yen', desc: true }], page_size: pageSize, ...(projectIds ? { project_ids: projectIds } : {}), ...(token ? { page_token: token } : {}) } as SheetBody)
+const searchSheets = async (call: ApiCall, year: number | { min: number; max: number }, where: Record<string, unknown>, pageSize: number, token?: string, projectIds?: string[]) => {
+  const r = await call('search_evaluation_sheets', { fiscal_year: typeof year === 'number' ? { min: year, max: year } : year, where, order_by: [{ column: 'settled_yen', desc: true }], page_size: pageSize, ...(projectIds ? { project_ids: projectIds } : {}), ...(token ? { page_token: token } : {}) } as SheetBody)
   return { rows: r.sheets.map((s) => toSheet(s, r.origins)), next: r.next_page_token ?? null }
 }
 
@@ -189,13 +195,15 @@ export async function readSheetCounts(call: ApiCall, q: SheetQuery): Promise<She
   return r.counts.map((c) => ({ code: c.outlook?.code ?? null, label: c.outlook?.label ?? null, grade: c.outlook?.grade ?? null, n: c.size }))
 }
 
+/** 評価シートの検索で一度に指せる年度の数（API の上限） */
+const MAX_SHEET_YEARS = 5
 /** 事業を ID で引くときの1回の数（API の project_ids の上限） */
 const PROJECT_CHUNK = 200
 
 /** 事業と中の事業につないだ評価シート（サーバー） */
-async function readSheetsOfProjects(call: ApiCall, year: number, projectIds: string[]): Promise<Sheet[]> {
+async function readSheetsOfProjects(call: ApiCall, years: { min: number; max: number }, projectIds: string[]): Promise<Sheet[]> {
   const chunks = Array.from({ length: Math.ceil(projectIds.length / PROJECT_CHUNK) }, (_, i) => projectIds.slice(i * PROJECT_CHUNK, (i + 1) * PROJECT_CHUNK))
-  const pages = await Promise.all(chunks.map((c) => searchSheets(call, year, { account_name: { eq: [ACCOUNT] } }, 1000, undefined, c)))
+  const pages = await Promise.all(chunks.map((c) => searchSheets(call, years, { account_name: { eq: [ACCOUNT] } }, 1000, undefined, c)))
   const seen = new Set<string>()
   return pages.flatMap((p) => p.rows).filter((s) => !seen.has(s.id) && seen.add(s.id))
 }
@@ -211,22 +219,38 @@ export type ProjectFull = {
   /** 年度ごとの当初予算（b）と決算（s） */
   y: Record<string, { b: number | null; s: number | null }>
   /** 開いた年度の中の事業（名前・金額）。金額の多い順 */
-  kids: { name: string; yen: number | null }[]
+  kids: { name: string; yen: number | null; /** 事業の頁（年度を指さずに読んだとき）は、内訳の事業の ID と、額の年度・資料（その事業の最新の年度） */ id?: string; fy?: number; kind?: Kind }[]
   /** 分野を引く科目（開いた年度、無ければ最新の年度の行） */
   subject: string | null
-  /** 開いた年度の、この事業と中の事業につないだ評価シート */
+  /** この事業と中の事業につないだ評価シート（年度を指して読めばその年度、指さなければ事業の年度すべて） */
   sheets: Sheet[]
+  /** 開いた年度と資料（年度を指さずに読むと事業の最新の年度） */
+  year?: number
+  kind?: Kind
+  /** 分野を引く科目の COFOG のコード（年度を指さずに読んだときだけ持つ。科目が無い・分類が無ければ null） */
+  cofog?: string | null
+  /** 年度ごとの当初予算（b）・決算（s）の事業の行が印字された出典の URL（PDF は頁つき）。年度を指さずに読んだときだけ持つ */
+  src?: Record<string, { b?: string; s?: string }>
 }
 
 /** 事業の詳細（サーバー） */
-export async function readProjectFull(call: ApiCall, id: string, year: number, kind: Kind): Promise<ProjectFull> {
-  const [p, kids] = await Promise.all([
-    call('get_project', { project_id: id }),
-    searchYears(call, { fiscal_year: { min: year, max: year }, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody),
-  ])
+/** 事業の詳細（サーバー）。at を指さなければ事業の最新の年度（決算があれば決算）で、中の事業・評価シート・分野の COFOG を引く（事業の頁） */
+export async function readProjectFull(call: ApiCall, id: string, at?: { year: number; kind: Kind }): Promise<ProjectFull> {
+  const p = await call('get_project', { project_id: id })
   const latest = p.years.at(-1)
-  const sheets = await readSheetsOfProjects(call, year, [id, ...kids.project_years.map((k) => k.project_id)])
+  const year = at?.year ?? latest?.fiscal_year ?? new Date().getFullYear()
+  const kind: Kind = at?.kind ?? (latest?.settled_yen != null ? 'settlement' : 'initial')
+  // 事業の頁（at なし）は年度をまたいで内訳の事業を引く。検索は5年度までなので、新しい方から5年度
+  const first = p.years[0]?.fiscal_year ?? year
+  const span = at ? { min: year, max: year } : { min: Math.max(first, year - (MAX_SHEET_YEARS - 1)), max: year }
+  const kids = await searchYears(call, { fiscal_year: span, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody)
+  // 事業の頁（at なし）は、事業の年度すべての評価シートを引く（評価は評価した事業を行った年度に付くので、最新の年度には無いことが多い）。
+  // 検索は5年度までなので、新しい方から5年度
+  const sheets = await readSheetsOfProjects(call, span, [id, ...kids.project_years.map((k) => k.project_id)])
   const here = p.years.find((y) => y.fiscal_year === year) ?? latest
+  const subject = here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null
+  // 事業の頁は開いた頁の年度の科目の表を持たないので、分野は科目の COFOG を引いて決める
+  const [cofog, src] = at ? [undefined, undefined] : await Promise.all([subject ? subjectCofog(call, subject, here!, year) : null, sourcesOf(call, p.years)])
   return {
     id,
     name: clean(p.project.name),
@@ -235,10 +259,54 @@ export async function readProjectFull(call: ApiCall, id: string, year: number, k
     started: p.project.first_year_kind === 'confirmed' ? p.project.first_year : null,
     ended: p.project.last_year_kind === 'confirmed' ? p.project.last_year : null,
     y: Object.fromEntries(p.years.map((y) => [String(y.fiscal_year), { b: y.budget_yen, s: y.settled_yen }])),
-    kids: kids.project_years.map((k) => ({ name: clean(k.name), yen: kind === 'initial' ? k.budget_yen : k.settled_yen })),
-    subject: here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null,
+    kids: at ? kids.project_years.map((k) => ({ name: clean(k.name), yen: kind === 'initial' ? k.budget_yen : k.settled_yen })) : latestKids(kids.project_years),
+    subject,
     sheets,
+    ...(at ? {} : { year, kind, cofog, src }),
   }
+}
+
+/** 事業の年度ごとの当初予算・決算の行が印字された出典の URL（PDF は頁つき）。行ごとに get_expenditure_line で位置と出典を引く。読めない行は外す */
+async function sourcesOf(call: ApiCall, years: { fiscal_year: number; initial_expenditure_detail_id: string | null; settlement_expenditure_detail_id: string | null }[]): Promise<NonNullable<ProjectFull['src']>> {
+  const lines = years.flatMap((y) => [['b', y.fiscal_year, y.initial_expenditure_detail_id], ['s', y.fiscal_year, y.settlement_expenditure_detail_id]] as const).filter((x): x is readonly ['b' | 's', number, string] => !!x[2])
+  const found = await Promise.all(
+    lines.map(async ([k, fy, id]) => {
+      try {
+        const r = await call('get_expenditure_line', { line_id: id, page_size: 1 } as WebOpInput<'get_expenditure_line'>)
+        const at = r.locations.find((l) => l.line_id === id && l.source_page != null)
+        const origin = r.origins.find((o) => o.origin_id === (at?.origin_id ?? r.line.origin_id))
+        return origin ? ([k, fy, at ? `${origin.url}#page=${at.source_page}` : origin.url] as const) : null
+      } catch {
+        return null
+      }
+    })
+  )
+  const out: NonNullable<ProjectFull['src']> = {}
+  for (const x of found) if (x) (out[String(x[1])] ??= {})[x[0]] = x[2]
+  return out
+}
+
+/** 内訳の事業ごとに、その事業の最新の年度の行（決算があれば決算の額）。額の多い順 */
+function latestKids(rows: SearchResult['project_years']): ProjectFull['kids'] {
+  const last = new Map<string, SearchResult['project_years'][number]>()
+  for (const y of rows) if ((last.get(y.project_id)?.fiscal_year ?? 0) < y.fiscal_year) last.set(y.project_id, y)
+  return [...last.values()]
+    .map((y) => {
+      const kind: Kind = y.settled_yen != null ? 'settlement' : 'initial'
+      return { id: y.project_id, name: clean(y.name), yen: kind === 'settlement' ? y.settled_yen : y.budget_yen, fy: y.fiscal_year, kind }
+    })
+    .sort((a, b) => (b.yen ?? -1) - (a.yen ?? -1))
+}
+
+/** 科目の COFOG のコード。科目は当初予算・決算のどちらかの資料にある */
+async function subjectCofog(call: ApiCall, subject: string, y: { initial_expenditure_subject_id: string | null; jurisdiction_code: string; fiscal_year: number }, year: number): Promise<string | null> {
+  const r = await call('search_expenditure_subjects', {
+    document_kind: subject === y.initial_expenditure_subject_id ? 'initial' : 'settlement',
+    fiscal_year: { min: year, max: year },
+    where: { jurisdiction_code: { eq: [y.jurisdiction_code] }, subject_id: { eq: [subject] } },
+    page_size: 1,
+  } as WebOpInput<'search_expenditure_subjects'>)
+  return r.subjects[0]?.cofog_code ?? null
 }
 
 /** 評価シートをつないだ事業の、その年度の行（サーバー） */
@@ -270,6 +338,8 @@ export const listPage = (q: ListQuery, token?: string): Promise<ListPage> =>
 /** 事業の詳細: 年度ごとの額と、開いた年度の中の事業 */
 export const projectFull = (id: string, year: number, kind: Kind): Promise<ProjectFull> =>
   webApi(`/api/projects/${encodeURIComponent(id)}?${new URLSearchParams({ year: String(year), kind })}`)
+/** 事業の頁の事業（事業の最新の年度で読む） */
+export const projectLatest = (id: string): Promise<ProjectFull> => webApi(`/api/projects/${encodeURIComponent(id)}`)
 
 /** その年度の分野ごとの末端の科目（やめた事業を分野で絞るとき、前の年度の分を読む） */
 export const fieldSubjects = (code: string, year: number, kind: Kind): Promise<Record<string, string[]>> => webApi(`/api/jurisdictions/${code}/${year}/field-subjects?kind=${kind}`)
