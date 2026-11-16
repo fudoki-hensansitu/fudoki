@@ -3,8 +3,8 @@
 
 Two bundles: the tables the receipts list points at, and the project readings and page texts of the declared
 evaluation sheets. Each is a tar.gz named by the sha of its contents; `bundles/index.json` names the current
-pair and is written last, so a reader never sees a half-written pair. The previous bundles are removed after
-the index moves; a reader that loses the race falls back to fetching objects one by one.
+pair and is written last, so a reader never sees a half-written pair. Bundles the index does not name are
+removed after it moves; a reader that loses the race falls back to fetching objects one by one.
 
 `restore` only fills the cache: it never overwrites a file (a pull request's candidate tables stay), and the
 build still checks every table against its receipt, so a stale or partial bundle costs time, never correctness.
@@ -103,13 +103,21 @@ def save() -> dict:
     changed = after != before
     if changed:
         put(INDEX_KEY, json.dumps(after, indent=1).encode() + b'\n')
-        for name, entry in before.items():
-            if isinstance(entry, dict) and entry.get('key') not in {e['key'] for e in after.values()}:
-                try:
-                    r2.objects('delete', entry['key'], '--bucket-name', BUCKET, '--quiet', stdout=subprocess.DEVNULL)
-                except subprocess.CalledProcessError:
-                    pass
-    return {'saved': after, 'changed': changed}
+    return {'saved': after, 'changed': changed, 'removed': sweep({e['key'] for e in after.values()})}
+
+
+def sweep(current: set[str]) -> list[str]:
+    """Remove the bundles the index no longer names (also those of a run that failed before its index)."""
+    listed = json.loads(r2.objects('list', '--bucket-name', BUCKET, '--prefix', PREFIX, '--per-page', '1000').stdout)
+    if not isinstance(listed, list):
+        raise ValueError('Unrecognized R2 listing response; no bundle removed')
+    removed = []
+    for key in sorted(item['key'] for item in listed):
+        if key.endswith('.tar.gz') and key not in current:
+            # cf can abort a non-interactive delete with exit 0 unless forced.
+            r2.objects('delete', key, '--bucket-name', BUCKET, '--force', '--quiet', stdout=subprocess.DEVNULL)
+            removed.append(key)
+    return removed
 
 
 def extract(data: bytes) -> int:
@@ -133,13 +141,13 @@ def extract(data: bytes) -> int:
 
 
 def restore(names: list[str] | None = None) -> dict:
-    """Fill the cache from the current bundles (or only the named ones). Any failure is reported, not raised: the build fetches what is
-    missing one object at a time."""
+    """Fill the cache from the current bundles (or only the named ones). Any failure is reported, not raised: the
+    build fetches what is missing one object at a time."""
     try:
         index = read_index()
-    except subprocess.CalledProcessError as error:
-        return {'restored': {}, 'error': error.stderr.decode(errors='replace')[-300:]}
-    if not index:
+    except Exception as error:  # noqa: BLE001 — any failure leaves the build to fetch one by one
+        return {'restored': {}, 'error': f'{type(error).__name__}: {error}'[:300]}
+    if not isinstance(index, dict) or not index:
         return {'restored': {}, 'error': 'no index'}
     restored = {}
     for name, entry in index.items():
@@ -148,7 +156,7 @@ def restore(names: list[str] | None = None) -> dict:
         try:
             shown = r2.objects('get', entry['key'], '--bucket-name', BUCKET, '--quiet', quiet=True)
             restored[name] = extract(shown.stdout)
-        except (subprocess.CalledProcessError, tarfile.TarError, ValueError) as error:
+        except Exception as error:  # noqa: BLE001
             restored[name] = f'failed: {type(error).__name__}'
     return {'restored': restored}
 

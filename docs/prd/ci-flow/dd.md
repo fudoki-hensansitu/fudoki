@@ -81,7 +81,7 @@ ingestion-store-check は、管理 JSON（`jurisdictions/**/*.json`）を変え�
 
 **実装した形**（`pipeline/ingestion/bundle.py`）:
 
-- **置き方**: main の sync job が、build の後に毎回 `ingestion:bundle save` を回す。束の名前は中身（ファイル名と sha の並び）の sha で、`fiscal/ingestion/bundles/<tables|project>-<sha16>.tar.gz`。中身が前と同じなら置き直さない。2つの束を指す `bundles/index.json` を最後に書き、そのあと前の束を消す。置けなくても同期は失敗にしない（束は戻り道にすぎない）
+- **置き方**: main の sync job が、build の後に毎回 `ingestion:bundle save` を回す。束の名前は中身（ファイル名と sha の並び）の sha で、`fiscal/ingestion/bundles/<tables|project>-<sha16>.tar.gz`。中身が前と同じなら置き直さない。2つの束を指す `bundles/index.json` を最後に書き、そのあと index が指さない束（index を書く前に落ちた回の束も）を消す。置けなくても同期は失敗にしない（束は戻り道にすぎない）
 - **読み方**: Actions の build の cache が無い回だけ、sync job と PR の check が `ingestion:bundle restore` で束を読む。手元に既にあるファイルは上書きしない（PR の候補の表を潰さない）。build は今までどおり表を1つずつ受領書と照合し、束に無いもの・合わないものだけを1個ずつ取る。refresh-check は cache を持たないので、毎回 `restore tables` で表の束を読む（比べる表を1個ずつ取っていた）
 - **設計から変えた点**: 束の目印を受領書の一覧の sha にせず、index を1つ置いた（事業評価の束は受領書と関係なく変わるため、どちらの束にも同じ読み方を使う）。変わった表だけの入れ替えはせず、毎回手元から作り直す（sync job の手元には build が読んだ表が全部ある）。zstd ではなく gzip にした（Python 3.13 の標準に zstd が無く、Parquet はもう圧縮されている）。書くのは store ではなく sync job にした（事業評価の読んだ結果は build で作られる）。index と束を書くのは sync job だけで、concurrency `sync-d1` で順に流れる
 - **読んでいる途中で消えたとき**: restore は index を読んでから束を取る。その間に新しい束に替わって前の束が消えると、その束の取得が失敗する。restore は失敗を報告するだけで落ちず、build が1個ずつ取る
@@ -123,6 +123,6 @@ ingestion-store-check は、管理 JSON（`jurisdictions/**/*.json`）を変え�
 
 ## Risks
 
-- **束の作り直しの重さ**: 入れ替えは変わった表だけだが、zstd の圧縮し直しは毎回全体にかかる。最初の実装で時間を測り、重ければ束を自治体ごとに分ける
+- **束の作り直しの重さ**: 束は毎回手元から作り直し、gzip で全体を圧縮し直す（中身が同じなら置かない）。最初の sync で時間を測り、重ければ束を自治体ごとに分ける
 - **キャッシュを分けたあとの初回**: 新しいキーには中身が無いので、初回は R2 から取ることになる。束より先にキャッシュの分割を入れると、その回は #745 の待ちで遅くなる。その回だけなので許す
 - **事業評価の読んだ結果の束**: 指紋が変わると、束の中身もすべて入れ替わる。そのときは読み直しの時間がかかるが、これは束が無くても同じである
