@@ -48,7 +48,7 @@ import { Separator } from '@/components/ui/separator'
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Combobox, ComboboxContent, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
+import { Combobox, ComboboxChip, ComboboxChips, ComboboxChipsInput, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxValue, useComboboxAnchor } from '@/components/ui/combobox'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { createColumnHelper, tableFeatures, useTable } from '@tanstack/react-table'
 import { Empty, EmptyContent, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
@@ -641,41 +641,49 @@ const KINDS = [
   { id: 'ended', label: 'やめた', icon: <StopIcon className="size-4 text-primary" /> },
   { id: 'eval', label: '評価した', icon: <ClipboardTextIcon className="size-4" /> },
 ] as const
-const pillTrigger = (on: boolean) => cn('inline-flex h-9 min-w-0 max-w-[60%] items-center gap-1.5 rounded-full border px-3.5 text-sm transition-colors hover:bg-card sm:max-w-xs', on ? 'border-primary bg-primary text-primary-foreground hover:bg-primary [&_svg]:text-primary-foreground' : 'border-input bg-background')
-/** 事業の区分（新しく始める・やめた・評価した）の combobox。1つだけ選べる（新しく始める・やめたは引く年度の資料が違うので重ねられない）。選び直すと外れる */
+/** 事業の区分（新しく始める・やめた・評価した）の combobox（shadcn/ui の Combobox）。1つだけ選べる（新しく始める・やめたは引く年度の資料が違うので重ねられない）。消すとすべての事業に戻る */
 function KindBox({ v, filter, setFilter }: { v: YearView; filter: string; setFilter: (f: string) => void }) {
   const shown = KINDS.filter((k) => (k.id === 'eval' ? !!v.sheetTotal : v.comparable))
   // 一覧の読み直しは transition で遅れて届くので、選んだ状態は手元に持ってすぐ出す
   const [value, setValue] = React.useState<string | null>(filter === 'all' ? null : filter)
   React.useEffect(() => setValue(filter === 'all' ? null : filter), [filter])
   if (!shown.length) return null
-  const picked = KINDS.find((k) => k.id === value)
+  const label = (id: string) => KINDS.find((k) => k.id === id)?.label ?? id
   return (
-    <Combobox value={value} onValueChange={(x) => { const next = (x as string | null) ?? null; setValue(next); setFilter(next ?? 'all') }} items={shown.map((k) => k.id)}>
-      <ComboboxTrigger aria-label="事業の区分で絞る" className={pillTrigger(!!picked)}>
-        <span className="min-w-0 truncate">{picked?.label ?? 'すべての事業'}</span>
-      </ComboboxTrigger>
-      <ComboboxContent align="start" className="w-52">
+    <Combobox items={shown.map((k) => k.id)} value={value} itemToStringLabel={label} onValueChange={(x) => { const next = (x as string | null) ?? null; setValue(next); setFilter(next ?? 'all') }}>
+      <ComboboxInput placeholder="すべての事業" showClear={!!value} aria-label="事業の区分で絞る" className="w-full" />
+      <ComboboxContent>
+        <ComboboxEmpty>見つかりません</ComboboxEmpty>
         <ComboboxList>
-          {shown.map((k) => <ComboboxItem key={k.id} value={k.id}>{k.icon}{k.label}</ComboboxItem>)}
+          {(id: string) => <ComboboxItem key={id} value={id}>{KINDS.find((k) => k.id === id)?.icon}{label(id)}</ComboboxItem>}
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
   )
 }
-/** 分野の combobox。いくつでも選べる */
+/** 分野の combobox（shadcn/ui の Combobox の複数選択。選んだ分野は Chip で並べる） */
 function FieldBox({ v, fields, setFields }: { v: YearView; fields: string[]; setFields: (f: string[]) => void }) {
   // 続けて押しても前の選択を落とさないよう、選んだ状態は手元に持つ
   const [value, setValue] = React.useState(fields)
   React.useEffect(() => setValue(fields), [fields.join()])
+  const anchor = useComboboxAnchor()
+  const label = (id: string) => fieldName(v, id)
   return (
-    <Combobox multiple value={value} onValueChange={(x) => { setValue(x as string[]); setFields(x as string[]) }} items={v.fields.map((f) => f.id)}>
-      <ComboboxTrigger aria-label="分野で絞る" className={pillTrigger(value.length > 0)}>
-        <span className="min-w-0 truncate">{value.length ? value.map((x) => fieldName(v, x)).join('・') : 'すべての分野'}</span>
-      </ComboboxTrigger>
-      <ComboboxContent align="start" className="w-60">
+    <Combobox multiple items={v.fields.map((f) => f.id)} value={value} itemToStringLabel={label} onValueChange={(x) => { setValue(x as string[]); setFields(x as string[]) }}>
+      <ComboboxChips ref={anchor} className="w-full">
+        <ComboboxValue>
+          {(values: string[]) => (
+            <>
+              {values.map((id) => <ComboboxChip key={id}>{label(id)}</ComboboxChip>)}
+              <ComboboxChipsInput placeholder={values.length ? '' : 'すべての分野'} aria-label="分野で絞る" />
+            </>
+          )}
+        </ComboboxValue>
+      </ComboboxChips>
+      <ComboboxContent anchor={anchor}>
+        <ComboboxEmpty>見つかりません</ComboboxEmpty>
         <ComboboxList>
-          {v.fields.map((f) => <ComboboxItem key={f.id} value={f.id}><FieldIcon id={f.id} />{f.name}</ComboboxItem>)}
+          {(id: string) => <ComboboxItem key={id} value={id}><FieldIcon id={id} />{label(id)}</ComboboxItem>}
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
@@ -749,7 +757,7 @@ function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: 
         <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
         <Input value={text} onChange={(e) => onText(e.target.value)} placeholder="事業名・担当の課で探す" className="h-9 rounded-full pl-9" aria-label="事業を探す" />
       </div>
-      <div className="flex min-w-0 items-center gap-2">
+      <div className="grid gap-2 sm:grid-cols-2">
         {/* 新しく始める・やめた・評価したは残り（defer）が届いてから選べるようにする */}
         <Full fallback={null}>{(v) => <KindBox v={v} filter={filter} setFilter={setFilter} />}</Full>
         <FieldBox v={v} fields={fields} setFields={setFields} />
