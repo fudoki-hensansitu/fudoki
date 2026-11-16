@@ -8,7 +8,7 @@
 
 [ADR 0044](../../adr/0044-separate-web-and-public-api.md) の 4・5 を実装する。公開の REST（`/v1/*`）と MCP（`/mcp`）を、ログインした利用者だけが使えるようにし、呼び出しを利用者ごとに記録して流量を制限する。
 
-ログインと資格情報の発行は風土記の中に作らない。風土記のデータを使う他のサービス（補助金の検索など）と共通の認証基盤にする。認証は WorkOS AuthKit に任せ、ログインは Google だけで始める。開発者がキーを発行する頁は、風土記の外の非公開 repo に置く。風土記の api は、届いた資格情報を検証して利用者の ID を取り出すだけにする。
+ログインと資格情報の発行は風土記の中に作らない。風土記のデータを使う他のサービス（補助金の検索など）と共通の認証基盤にする。認証は WorkOS AuthKit に任せ、ログインは Google だけで始める。開発者がキーを発行する頁は、風土記の外の repo に置く。風土記の api は、届いた資格情報を検証して利用者の ID を取り出すだけにする。
 
 ## 今の形
 
@@ -34,7 +34,7 @@
 ```
 開発者のブラウザ ──ログイン──▶ WorkOS AuthKit（Google）
         │                              ▲
-        └── キーの発行・失効 ──▶ アカウントの頁（非公開 repo、WorkOS の API Keys widget）
+        └── キーの発行・失効 ──▶ アカウントの頁（別 repo、WorkOS の API Keys widget）
 
 MCP の client（claude.ai など）──OAuth（CIMD / DCR、PKCE）──▶ AuthKit ──access token（JWT）
         │
@@ -50,7 +50,7 @@ REST の client ── Authorization: Bearer <API キー> ──▶ api.fudoki.d
 | 部分 | 置き場 | 持つもの |
 | --- | --- | --- |
 | WorkOS AuthKit | WorkOS（外部サービス） | 利用者・Google のログイン・OAuth の認可サーバー・API キーの保管と検証 |
-| アカウントの頁 | 風土記の外の非公開 repo（Worker 1つ） | 開発者のログイン、キーの発行・一覧・失効（API Keys widget） |
+| アカウントの頁 | 風土記の外の repo（Worker 1つ） | 開発者のログイン、キーの発行・一覧・失効（API Keys widget） |
 | 各サービスの API（風土記の `apps/api` など） | 各 repo | 資格情報の検証、利用者 ID ごとの記録と流量の制限 |
 
 各サービスの D1 に置くのは WorkOS の利用者 ID（`user_…`）だけにする。名前・メールアドレスは WorkOS に置き、サービスの D1 には写さない。
@@ -112,9 +112,10 @@ REST の client ── Authorization: Bearer <API キー> ──▶ api.fudoki.d
 - 流量の制限は Workers の Rate Limiting binding で、利用者 ID を鍵にする。最初の値は 60 回/60 秒にし、運用を見て変える。binding は拠点ごとに近似で数えるので、上限は拠点ごとの目安になる。WAF の IP ごとの制限は残すが、同じ IP を共有する利用者（社内の NAT・CI）が利用者ごとの上限より先に止まらないよう、値を今より十分大きくする。
 - 商用で問い合わせた利用者の上限を上げるときは、WorkOS の利用者の metadata に上限の区分を置き、api が検証の結果と一緒に読む。最初は区分を1つだけにし、仕組みは作らない。
 
-### アカウントの頁（非公開 repo）
+### アカウントの頁（別 repo）
 
-- 風土記の外に非公開の repo（`fudoki-hensansitu/auth`）と Worker を1つ作り、`auth.fudoki.dev` で出す。補助金などのサービスも同じ頁でキーを発行する。
+- 風土記の外に repo（`fudoki-hensansitu/auth`、public・MIT。2026-11-16 yuito の判断で非公開から変更）と Worker を1つ作り、`auth.fudoki.dev` で出す。補助金などのサービスも同じ頁でキーを発行する。
+- repo が public なので、WorkOS の secret と organization ID・permission 名などの設定値は tracked なファイルに入れず env で受ける。
 - 持つ機能は、Google でのログインと、キーの発行・一覧・失効（WorkOS の API Keys widget を user scope で使う）だけにする。自分の呼び出し回数の表示は、Analytics Engine を読む token が要るので後回しにする。
 - 利用者の削除（退会）は、WorkOS の利用者を消すことで行う。キーは organization の所属が消えると失効する。OAuth の承認は利用者の削除で消える。
 
