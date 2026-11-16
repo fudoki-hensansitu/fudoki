@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "132071",
     "fiscal_year": 2025,
@@ -36,36 +36,6 @@
           "table_id": "akishima-text-budget-expenditure"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "akishima-text-budget-expenditure",
-      "conversion_id": "akishima-text-budget-expenditure",
-      "input_fingerprint": "a82d4a0db2a2e1dd50762e18dc2a69523c2d3eda665997861c5addfad182b37f",
-      "account": "一般会計",
-      "notes": [
-        "科目、説明、節の区分、財源内訳は独立した印字欄。空欄を0に置換しない。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/132071/2025/initial/expenditure/akishima-text-budget-expenditure-nodes.parquet",
-          "sha256": "43409c842fe846a109e7af5a1c3c2741870eaef1f82ef6b3d76030af3588167c",
-          "bytes": 199690
-        },
-        "row_count": 7060
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/132071/2025/initial/expenditure/akishima-text-budget-expenditure-amounts.parquet",
-          "sha256": "f4565766fd03584cf934096a389851e817f9f5a3d97f502e9dc183c7dfb768c8",
-          "bytes": 149468
-        },
-        "row_count": 7629
-      }
     }
   ]
 }

@@ -3,6 +3,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 import sys
@@ -25,6 +26,16 @@ DBT = Path(__file__).resolve().parents[1]
 PIPELINE = DBT.parent
 JURISDICTIONS = PIPELINE.parent / 'packages/jurisdictions/jurisdictions.json'
 SELECTIONS = PIPELINE / 'source_selection'
+
+
+# `ingestion:store --dry-run` (a pull request's check) writes the receipts of the tables it converted here; they
+# are in the local object cache. The build overlays them on the list.
+PENDING_ENV = 'INGESTION_PENDING_RECEIPTS'
+
+
+def pending_receipts() -> dict[str, dict]:
+    path = os.environ.get(PENDING_ENV)
+    return json.loads(Path(path).read_text()) if path and Path(path).is_file() else {}
 
 
 def identifier(value: str) -> str:
@@ -124,77 +135,41 @@ def write_macro(macro_name: str, relations: list[str]) -> None:
                      '{% endmacro %}\n')
 
 
-def readable(tables: list[dict], *, remote: bool) -> bool:
-    """Whether every table can be read (cached, or fetched from R2 with these bytes)."""
-    try:
-        for table in tables:
-            for reference in manifest.table_references(table).values():
-                fetch(reference['object'], remote=remote)
-    except (FileNotFoundError, ValueError, subprocess.CalledProcessError):
-        return False
-    return True
-
-
-def with_receipts(document: dict, receipts: dict[str, dict], *, remote: bool) -> tuple[list[dict], list[str], list[str]] | None:
-    """The tables to build when R2 lacks some recorded ones (merged, but `ingestion:store` failed or has not run;
-    docs/prd/ingestion-receipts/dd.md): each table as recorded when R2 holds it, else as the receipts list holds
-    it when it was converted from the declared inputs (its fingerprint is the recorded or the current one, both
-    covering the inputs and options), else left out when the list has no table of that ID: it was never stored,
-    so D1 holds no rows of it and the sync deletes nothing. Any other table (a receipt of other inputs, or one R2
-    cannot read) stops the build: leaving it out would delete its rows from D1. Returns the tables, the IDs read
-    from the list and the IDs left out."""
-    tables, from_receipts, left_out, current = [], [], [], None
-    for recorded in document['tables']:
-        if readable([recorded], remote=remote):
-            tables.append(recorded)
-            continue
-        stored = receipts.get(storage.receipt_id(document, recorded['table_id']))
-        if stored is None:
-            left_out.append(recorded['table_id'])
-            continue
-        if stored['input_fingerprint'] != recorded['input_fingerprint']:
-            current = current if current is not None else manifest.fingerprints(document)
-            if stored['input_fingerprint'] != current.get(stored['conversion_id']):
-                return None
-        if not readable([stored], remote=remote):
-            return None
-        tables.append(stored)
-        from_receipts.append(recorded['table_id'])
-    return tables, from_receipts, left_out
-
-
 def document_key(spec: dict) -> tuple:
     return spec['jurisdiction'], spec['fiscal_year'], spec['document_kind'], spec['direction']
 
 
-def load_document(documents: dict, spec: dict, candidate: Path | None, *, remote: bool = False,
-                  receipts: dict[str, dict] | None = None, fallbacks: list[str] | None = None,
+def load_document(documents: dict, spec: dict, candidate: Path | None, *, receipts: dict[str, dict],
                   skipped: list[str] | None = None, left_tables: set | None = None) -> dict:
-    """The manifest of the spec. In a remote build with the receipts list, a manifest whose recorded tables R2
-    does not all hold is read with `with_receipts`; its left-out tables are absent from the returned document.
-    Otherwise (or when `with_receipts` refuses) the build stops on the unreadable table as before."""
+    """The manifest of the spec with its tables: a candidate's own, or the receipts list's
+    (docs/prd/ingestion-receipts/dd.md). A declared table the list lacks was never stored (a new table whose
+    store failed or has not run): it is left out, and D1 holds no rows of it, so the sync deletes nothing. A table
+    stored under another declaration (its new declaration merged, its store failed) stops the build: leaving it
+    out would delete its rows from D1, and reading it would label it with the new declaration's originals."""
     target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
     key = document_key(spec)
     if key not in documents:
         root = candidate_root(candidate, target, spec['direction'])
         path = root / 'manifest.json' if root else manifest.manifest_path(target, spec['direction'])
-        document = (manifest.validate(json.loads(path.read_text()), check_code=False) if root
-                    else manifest.read(path, check_code=False))
+        if root:
+            document = manifest.validate(json.loads(path.read_text()), check_code=False)
+        else:
+            document = storage.attach(manifest.read(path, check_code=False), receipts)
+            conversions = {conversion['id']: conversion for conversion in document['conversions']}
+            for table in document['tables']:
+                declaration = manifest.declaration(document, conversions[table['conversion_id']])
+                if table.get('declaration', declaration) != declaration:
+                    raise ValueError(f'{path}: {table["table_id"]} is stored under another declaration '
+                                     '(its ingestion:store has not succeeded since the declaration changed)')
+            stored = {table['table_id'] for table in document['tables']}
+            left_out = [table['table_id'] for conversion in document['conversions']
+                        for table in conversion['expected_tables'] if table['table_id'] not in stored]
+            if left_out and skipped is not None:
+                skipped.append(f'{path.relative_to(PIPELINE)}: {", ".join(left_out)}')
+            if left_tables is not None:
+                left_tables.update((key, ident) for ident in left_out)
         if document['target'] != target or document['direction'] != spec['direction']:
             raise ValueError(f'Manifest target differs: {path}')
-        # An empty list (not written, or unreadable) leaves nothing out: every unreadable table would go.
-        if root is None and receipts and not readable(document['tables'], remote=remote):
-            resolved = with_receipts(document, receipts, remote=remote)
-            if resolved is not None:
-                tables, from_receipts, left_out = resolved
-                document = {**document, 'tables': tables}
-                name = str(path.relative_to(PIPELINE))
-                if from_receipts and fallbacks is not None:
-                    fallbacks.append(f'{name}: {", ".join(from_receipts)}')
-                if left_out and skipped is not None:
-                    skipped.append(f'{name}: {", ".join(left_out)}')
-                if left_tables is not None:
-                    left_tables.update((key, ident) for ident in left_out)
         documents[key] = document
     return documents[key]
 
@@ -238,9 +213,8 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
     if jurisdictions:
         declarations = only_jurisdictions(declarations, jurisdictions)
     write_relations(declarations)
-    # A remote build reads tables R2 does not hold yet from the receipts list instead (stage 2 of the receipts dd)
-    receipts = (storage.read_receipts() or {}) if remote else None
-    fallbacks: list[str] = []
+    # The tables are those the receipts list in R2 points at, with a pull request's converted tables over them.
+    receipts = {**(storage.read_receipts() or {}), **pending_receipts()}
     skipped: list[str] = []
     left_out: set[str] = set()
     left_tables: set[tuple] = set()
@@ -259,8 +233,8 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         for declared in sources['tables']:
             spec = declared['meta']
             target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
-            document = load_document(documents, spec, candidate, remote=remote, receipts=receipts, fallbacks=fallbacks,
-                                     skipped=skipped, left_tables=left_tables)
+            document = load_document(documents, spec, candidate, receipts=receipts, skipped=skipped,
+                                     left_tables=left_tables)
             if (document_key(spec), spec['table_id']) in left_tables:
                 left_out.add(declared['name'])
                 continue
@@ -292,8 +266,8 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
             for declared in csv_source['tables']:
                 spec = declared['meta']
                 target = {k: spec[k] for k in ('jurisdiction', 'fiscal_year', 'document_kind')}
-                document = load_document(documents, spec, candidate, remote=remote, receipts=receipts, fallbacks=fallbacks,
-                                         skipped=skipped, left_tables=left_tables)
+                document = load_document(documents, spec, candidate, receipts=receipts, skipped=skipped,
+                                         left_tables=left_tables)
                 if (document_key(spec), spec['table_id']) in left_tables:
                     left_out.add(declared['name'])
                     continue
@@ -350,7 +324,7 @@ def prepare(warehouse: Path, candidate: Path | None = None, *, remote: bool = Fa
         write_relations([{**source, 'tables': [t for t in source['tables'] if t['name'] not in left_out]}
                          if source['name'] in ('fiscal_pdf', 'fiscal_csv') else source for source in declarations])
     return {'warehouse': str(warehouse), 'tables': len(tables), 'csv_tables': len(csv_tables),
-            'read_from_receipts': fallbacks, 'not_stored': skipped,
+            'not_stored': skipped,
             'origins': len(origins), 'jurisdictions': len(registry),
             'evaluation_sheets': len(project_tables['project_evaluation_sheet']),
             'nodes': sum(t[-2] for t in tables), 'amounts': sum(t[-1] for t in tables)}
@@ -366,8 +340,6 @@ def main() -> None:
     parser.add_argument('--jurisdiction', action='append', metavar='CODE',
                         help='Load only these jurisdictions\' fiscal tables (repeatable), for serving:sync --jurisdiction')
     args = parser.parse_args()
-    if args.remote and args.candidate_dir:
-        parser.error('--remote and --candidate-dir are mutually exclusive')
     # Resolve the same profile path as dbt (relative to its project directory).
     profile = yaml.safe_load((DBT / 'profiles.yml').read_text())['fudoki']['outputs']['dev']
     warehouse = (DBT / profile['path']).resolve()

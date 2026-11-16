@@ -1,5 +1,6 @@
 """A failed node migration may refresh only byte-identical saved wide tables."""
 from copy import deepcopy
+import json
 from pathlib import Path
 from tempfile import TemporaryDirectory
 import unittest
@@ -35,14 +36,16 @@ def convert(inputs, destination, options):
                               'bytes': stored.stat().st_size}, 'row_count': 1}
             document = {'target': {'jurisdiction': '131041', 'fiscal_year': 2025,
                                   'document_kind': 'settlement'}, 'direction': 'expenditure',
-                        'conversions': [conversion], 'tables': [old]}
+                        'conversions': [conversion]}
             with patch.object(manifest, 'read', return_value=document), \
+                 patch.object(run, 'attach', side_effect=lambda declared: {**declared, 'tables': [old]}), \
                  patch.object(manifest, 'selection_for', return_value={}), \
                  patch.object(manifest, 'resolved_inputs', return_value=[{'sha256': sha, 'format': 'pdf',
                      'scope': [{'account': '一般会計'}]}]), \
                  patch.object(manifest, 'code_path', return_value=converter), \
                  patch.object(manifest, 'fingerprints', return_value={'one': 'b'*64}), \
-                 patch.object(manifest, 'validate'), patch.object(manifest, 'write') as register, \
+                 patch.object(manifest, 'validate'), patch.object(manifest, 'validate_tables'), \
+                 patch.object(manifest, 'write') as register, \
                  patch.object(run, 'fetch', return_value=stored), patch.object(run, 'keep') as save, \
                  patch.object(run, 'cleanup') as cleanup:
                 # No declared hierarchy, and a hierarchy that fails the tree gate.
@@ -50,7 +53,9 @@ def convert(inputs, destination, options):
                     with patch.object(node_tables, 'migrate_rows', side_effect=(migration if isinstance(migration, Exception)
                                       else lambda *args: migration)):
                         run.convert(root/'manifest.json', {sha: str(original)}, root/f'candidate-{index}', remote=True, record=True)
-                    self.assertEqual(register.call_args.args[1]['tables'], [{**old, 'input_fingerprint': 'b'*64}])
+                    candidate = json.loads((root/f'candidate-{index}/manifest.json').read_text())
+                    self.assertEqual(candidate['tables'], [{**old, 'input_fingerprint': 'b'*64}])
+                    register.assert_not_called()
                 save.reset_mock()
                 register.reset_mock()
                 conversion['options']['text'] = 'changed'

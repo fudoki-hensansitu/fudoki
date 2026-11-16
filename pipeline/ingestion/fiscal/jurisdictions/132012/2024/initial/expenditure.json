@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "132012",
     "fiscal_year": 2024,
@@ -94,37 +94,6 @@
           "table_id": "general-initial"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "general-initial",
-      "conversion_id": "general-initial",
-      "input_fingerprint": "7872bfd8e7fc59600601cf105912028632070326cb211f0fd6dc4a105c538293",
-      "account": "一般会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
-        "金額の単位は printed 1頁・carried 81頁 から決めた。款の和 227,200,000（頁に歳出合計の印字なし。桁だけを確かめた）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/132012/2024/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "8faa04ff03957539fab72d1f2b77ec04252169ecaa7eb403c5063979bc24ca3d",
-          "bytes": 83577
-        },
-        "row_count": 2717
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/132012/2024/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "2b49fec017f99961c4353c04a2cdb8ee502474c48fe5124c91454fa39b4cce78",
-          "bytes": 61680
-        },
-        "row_count": 3034
-      }
     }
   ]
 }

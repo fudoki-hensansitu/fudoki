@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "132241",
     "fiscal_year": 2022,
@@ -46,30 +46,6 @@
           "table_id": "csv-e94593f2cce5bde4"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "csv-4ccb155bd86b154b",
-      "conversion_id": "csv-4ccb155bd86b154b",
-      "input_fingerprint": "aa082daea11fc4eadcb5781c346b11478dc63ea13151eae368a65d01d149d60d",
-      "object": {
-        "key": "fiscal/ingestion/132241/2022/initial/expenditure/csv-4ccb155bd86b154b.parquet",
-        "sha256": "e00bb9f7695ca1a420248ff561548947c09d90e33d416199ed6398684156aa82",
-        "bytes": 8266
-      },
-      "row_count": 189
-    },
-    {
-      "table_id": "csv-e94593f2cce5bde4",
-      "conversion_id": "csv-e94593f2cce5bde4",
-      "input_fingerprint": "31b86a7e5cb97b00d23d8ee0481e711e40f5d3d44007f88f27c46dc16e908607",
-      "object": {
-        "key": "fiscal/ingestion/132241/2022/initial/expenditure/csv-e94593f2cce5bde4.parquet",
-        "sha256": "203fd99726344d8bb43c79d2f86a182ba4a11ca684b1e68187917e3bc48f460b",
-        "bytes": 23896
-      },
-      "row_count": 1440
     }
   ]
 }

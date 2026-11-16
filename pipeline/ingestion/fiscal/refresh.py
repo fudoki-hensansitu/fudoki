@@ -1,10 +1,11 @@
-"""Refresh stale input fingerprints by comparing re-converted tables with the saved ones by content.
+"""Refresh stale input fingerprints by comparing re-converted tables with the stored ones by content.
 
 The fingerprint of the converter code only says "something may have changed". The decision is the
-content: when every re-converted table equals its saved table (columns, types, rows and their order, and
-the metadata the converter writes to the manifest), only ``input_fingerprint`` in the Git manifest is
-rewritten. The saved Parquet, its sha256 and size stay as they are. R2 is read, never written. When any
-table differs, or the current save gate would refuse it, the manifest is left untouched.
+content: when every re-converted table equals its stored table (columns, types, rows and their order, and
+the metadata the converter writes to its receipt), only ``input_fingerprint`` in the receipts list in R2 is
+rewritten (docs/prd/ingestion-receipts/dd.md). The stored Parquet stays as it is. When any table differs, or the
+current save gate would refuse it, the receipts are left untouched and the difference is reported; with
+``accept`` (a manual run on main, after reading the report) the re-converted tables are stored instead.
 
 The Jev answer store is read, never written and never extended: a refresh that asked a new question
 would spend money and change a tracked file from what looks like a comparison (a dry-run rewrote the
@@ -36,6 +37,7 @@ from ingestion.paths import PIPELINE
 CURRENT, REFRESHED, WOULD_REFRESH = 'current', 'refreshed', 'would-refresh'
 DIFFERENT, BLOCKED, ERROR, NO_TABLES = 'different', 'blocked', 'error', 'no-saved-tables'
 SAME = 'same'
+ACCEPTED = 'accepted'
 EXAMPLES = 5
 
 
@@ -163,18 +165,45 @@ def compare_table(saved: dict, candidate: dict, saved_paths: dict, candidate_pat
     return {'status': DIFFERENT if diff else SAME, **({'diff': diff} if diff else {})}
 
 
-def rewrite_fingerprints(path: Path, document: dict, current: dict[str, str], stale: list[str],
-                         original_bytes: bytes) -> None:
-    updated = deepcopy(document)
-    for table in updated['tables']:
+def refreshed_receipts(document: dict, current: dict[str, str], stale: list[str]) -> dict[str, dict]:
+    """The receipts of the stale conversions with the current fingerprint and declaration; the objects stay."""
+    conversions = {conversion['id']: conversion for conversion in document['conversions']}
+    updated = {}
+    for table in document['tables']:
         if table['conversion_id'] in stale:
-            table['input_fingerprint'] = current[table['conversion_id']]
-    if path.read_bytes() != original_bytes:
-        raise ValueError('Saved manifest changed during refresh')
-    # Recomputed now: the converter code or its inputs must not have moved while we compared.
-    manifest.require_current(updated)
-    manifest.write(path, updated)
-    manifest.require_current(manifest.read(path))
+            updated[storage.receipt_id(document, table['table_id'])] = {
+                **table, 'input_fingerprint': current[table['conversion_id']],
+                'declaration': manifest.declaration(document, conversions[table['conversion_id']])}
+    return updated
+
+
+def write_receipts(results: list[dict]) -> dict:
+    """Apply the refreshed receipts to the list, read again now. A receipt that changed since it was compared
+    (a store in between) is not overwritten."""
+    listed = storage.read_receipts() or {}
+    written, skipped = 0, []
+    for item in results:
+        for ident, receipt in item.get('receipts', {}).items():
+            compared = item['compared'].get(ident)
+            if listed.get(ident) != compared:
+                skipped.append(ident)
+                continue
+            listed[ident] = receipt
+            written += 1
+    if written:
+        storage.write_receipts(listed)
+    return {'written': written, 'changed_meanwhile': skipped}
+
+
+def apply_report(path: Path) -> dict:
+    """Write the receipts a ``defer_write`` report kept. The jurisdictions whose tables were accepted (stored at
+    new content) are returned for a sync, since no Git change brings them to the build."""
+    report = json.loads(path.read_text())
+    if report.get('dry_run'):
+        raise ValueError('A dry-run report keeps no receipts to write')
+    written = write_receipts(report['manifests'])
+    accepted = sorted({item['name'].split('-', 1)[0] for item in report['manifests'] if item['status'] == ACCEPTED})
+    return {'receipts': written, 'accepted_jurisdictions': accepted}
 
 
 def slug(document: dict) -> str:
@@ -186,7 +215,7 @@ def plan(paths: list[Path]) -> dict:
     """List stale conversions without reading originals or executing converters."""
     affected = []
     for path in paths:
-        document = manifest.read(path)
+        document = storage.attach(manifest.read(path))
         fingerprints = manifest.fingerprints(document)
         stale = {table['conversion_id'] for table in document['tables']
                  if table['input_fingerprint'] != fingerprints[table['conversion_id']]}
@@ -197,10 +226,10 @@ def plan(paths: list[Path]) -> dict:
     return {'manifests': affected, 'conversions': sum(len(item['conversions']) for item in affected)}
 
 
-def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path, everything: bool = False) -> dict:
+def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path, everything: bool = False,
+                     accept: bool = False) -> dict:
     started = time.monotonic()
-    original_bytes = path.read_bytes()
-    document = manifest.read(path)
+    document = storage.attach(manifest.read(path))
     name = slug(document)
     try:
         label = str(path.resolve().relative_to(PIPELINE))
@@ -237,7 +266,8 @@ def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path, eve
     shutil.rmtree(output, ignore_errors=True)
     try:
         converted = run.convert(path, originals, output, remote=False, conversion_ids=stale,
-                                persist_answers=False, ask_answers=False)
+                                persist_answers=False, ask_answers=False,
+                                retained=[table for table in document['tables'] if table['conversion_id'] not in stale])
         result['units'] = converted.get('units', {}).get('counts', {})
         candidate = json.loads((output / 'manifest.json').read_text())
     except Exception as error:
@@ -266,15 +296,28 @@ def refresh_manifest(path: Path, *, remote: bool, dry_run: bool, work: Path, eve
     result['counts'] = counts
     if counts[BLOCKED]:
         return finish(BLOCKED, stage='gate', candidate=str(output))
-    if counts[DIFFERENT]:
+    compared = {storage.receipt_id(document, table['table_id']): table for table in document['tables']
+                if table['conversion_id'] in stale}
+    if counts[DIFFERENT] and not accept:
         return finish(DIFFERENT, candidate=str(output))
+    receipts = refreshed_receipts(document, current, stale)
+    if counts[DIFFERENT]:
+        # Accepted: the differing tables are stored as re-converted, at new keys (their content sha).
+        for entry in tables:
+            if entry['status'] != DIFFERENT:
+                continue
+            new = by_id[entry['table_id']]
+            located = locate(new)
+            files = located if isinstance(located, dict) else {None: located}
+            if not dry_run:
+                for kind, reference in manifest.table_references(new).items():
+                    storage.upload(reference['object']['key'], files[kind], reference['object'])
+            receipts[storage.receipt_id(document, entry['table_id'])] = new
     if not dry_run:
-        try:
-            rewrite_fingerprints(path, document, current, stale, original_bytes)
-        except Exception as error:
-            return finish(ERROR, stage='rewrite', reason=f'{type(error).__name__}: {error}')
+        result['receipts'], result['compared'] = receipts, compared
     shutil.rmtree(output, ignore_errors=True)
-    return finish(WOULD_REFRESH if dry_run else REFRESHED)
+    status = (WOULD_REFRESH if dry_run else REFRESHED)
+    return finish(ACCEPTED if counts[DIFFERENT] and not dry_run else status)
 
 
 # Manifests are refreshed in parallel processes. How many is decided from the machine at the start, so the
@@ -374,9 +417,9 @@ def groups_of(paths: list[Path]) -> list[list[Path]]:
     return [group for group in groups if group]
 
 
-def refresh_one(path: Path, *, remote: bool, dry_run: bool, work: Path, everything: bool) -> dict:
+def refresh_one(path: Path, *, remote: bool, dry_run: bool, work: Path, everything: bool, accept: bool = False) -> dict:
     try:
-        return refresh_manifest(path, remote=remote, dry_run=dry_run, work=work, everything=everything)
+        return refresh_manifest(path, remote=remote, dry_run=dry_run, work=work, everything=everything, accept=accept)
     except Exception as error:
         return {'manifest': str(path), 'status': ERROR, 'stage': 'read', 'reason': f'{type(error).__name__}: {error}'}
 
@@ -413,7 +456,9 @@ def run_manifests(paths: list[Path], jobs: int, **options) -> list[dict]:
 
 
 def refresh_all(paths: list[Path], *, remote: bool, dry_run: bool, output: Path, everything: bool = False,
-                jobs: int | None = None) -> dict:
+                jobs: int | None = None, accept: bool = False, defer_write: bool = False) -> dict:
+    """``defer_write`` keeps the receipts in the report for `apply_report` (CI writes them in a short job that
+    shares the store's concurrency, so the long comparison never holds it)."""
     started = time.monotonic()
     output.parent.mkdir(parents=True, exist_ok=True)
     # A caller waits for this file to appear to know the run finished. Drop a previous run's report
@@ -422,7 +467,14 @@ def refresh_all(paths: list[Path], *, remote: bool, dry_run: bool, output: Path,
     work = output.parent / 'candidates'
     jobs = auto_jobs() if jobs is None else jobs
     print(f'refresh: {len(paths)} manifests, {jobs} process(es)', file=sys.stderr, flush=True)
-    manifests = run_manifests(list(paths), jobs, remote=remote, dry_run=dry_run, work=work, everything=everything)
+    manifests = run_manifests(list(paths), jobs, remote=remote, dry_run=dry_run, work=work, everything=everything,
+                              accept=accept)
+    # Only this (parent) process writes the receipts list, once.
+    written = None if dry_run or defer_write else write_receipts(manifests)
+    if not defer_write:
+        for item in manifests:
+            item.pop('receipts', None)
+            item.pop('compared', None)
     statuses: dict[str, int] = {}
     tables = {SAME: 0, DIFFERENT: 0, BLOCKED: 0}
     for item in manifests:
@@ -431,14 +483,14 @@ def refresh_all(paths: list[Path], *, remote: bool, dry_run: bool, output: Path,
             tables[status] += count
     ok = not {DIFFERENT, BLOCKED, ERROR} & set(statuses)
     report = {'ok': ok, 'dry_run': dry_run, 'jobs': jobs, 'elapsed_seconds': round(time.monotonic() - started, 1),
-              'manifests': manifests}
+              'receipts': written, 'manifests': manifests}
     # Report first, atomically, so a reader never sees a half-written file.
     with tempfile.NamedTemporaryFile('w', dir=output.parent, delete=False, suffix='.tmp') as stream:
         temporary = Path(stream.name)
         json.dump(report, stream, ensure_ascii=False, indent=1, default=str)
         stream.write('\n')
     os.replace(temporary, output)
-    summary = {'ok': ok, 'dry_run': dry_run, 'jobs': jobs, 'manifests': statuses, 'tables': tables,
+    summary = {'ok': ok, 'dry_run': dry_run, 'jobs': jobs, 'manifests': statuses, 'tables': tables, 'receipts': written,
                'elapsed_seconds': report['elapsed_seconds'], 'report': str(output),
                'attention': [{key: item[key] for key in ('manifest', 'status', 'stage', 'reason', 'counts', 'candidate')
                               if key in item} for item in manifests if item['status'] in {DIFFERENT, BLOCKED, ERROR}]}

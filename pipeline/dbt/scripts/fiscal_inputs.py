@@ -10,6 +10,9 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+# A CSV conversion writes one raw table; every other converter a nodes/amounts pair (manifest.table_kinds).
+CSV_CONVERTER = 'fiscal/layouts/csv/convert.py'
+
 
 DBT = Path(__file__).resolve().parents[1]
 PIPELINE = DBT.parent
@@ -86,8 +89,12 @@ def collect() -> list[dict]:
         conversions = {c['id']: c for c in document['conversions']}
         target = document['target']
         direction = document['direction']
-        for table in document['tables']:
-            if direction == 'revenue' and 'nodes' not in table:
+        # The declared tables, stored or not: the build leaves out a table the receipts list lacks.
+        declared_tables = [{'table_id': table['table_id'], 'conversion_id': conversion['id'],
+                            'csv': conversion['converter'] == CSV_CONVERTER}
+                           for conversion in document['conversions'] for table in conversion['expected_tables']]
+        for table in declared_tables:
+            if direction == 'revenue' and table['csv']:
                 continue
             if direction == 'expenditure' and ((target['jurisdiction'], table['table_id']) in EXCLUDE or (
                     target['jurisdiction'], target['fiscal_year'], target['document_kind'], table['table_id']) in EXCLUDE_YEAR):
@@ -97,19 +104,17 @@ def collect() -> list[dict]:
             meta = {'jurisdiction': target['jurisdiction'], 'fiscal_year': target['fiscal_year'],
                     'document_kind': target['document_kind'], 'direction': direction,
                     'table_id': table['table_id']}
-            if 'nodes' in table:
+            if not table['csv']:
                 for kind in ('nodes', 'amounts'):
                     entries.append({'name': f'{prefix}_{kind}', 'source': 'fiscal_pdf',
                                     'meta': {**meta, 'kind': kind}})
-            elif 'object' in table:
+            else:
                 # The amount column and its unit are declared by the CSV conversion, never fixed in SQL.
                 options = conversions[table['conversion_id']]['options']
                 if direction == 'expenditure' and not {'amount_column', 'amount_unit'} <= options.keys():
                     raise ValueError(f"Expenditure CSV conversion must declare amount_column and amount_unit: {path}")
                 declared = {k: options[k] for k in ('amount_column', 'amount_unit') if k in options}
                 entries.append({'name': prefix, 'source': 'fiscal_csv', 'meta': {**meta, **declared}})
-            else:
-                raise ValueError(f"Table is neither PDF nodes nor raw CSV: {path} {table.get('table_id')}")
     entries.sort(key=lambda e: e['name'])
     return entries
 

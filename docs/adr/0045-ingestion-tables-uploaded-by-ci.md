@@ -1,6 +1,6 @@
 # ADR 0045: 取り込みの表は merge 後の CI だけが R2 に置く
 
-状態: 採用（2026-11-13）。[取り込み保存の設計](../prd/ingestion-storage/dd.md) の「`ingestion:convert --remote` が R2 に保存してから管理 JSON を更新する」を置き換える。
+状態: 採用（2026-11-13）。2026-11-16 に [ADR 0051](0051-ingestion-receipts-in-r2.md) で置き換えた（受領書は R2 の一覧に置き、store は記録と照らさず main のコードで変換して置く。merge 後の CI だけが表を置くこと、OCR 結果と出典の保存は変えない）。[取り込み保存の設計](../prd/ingestion-storage/dd.md) の「`ingestion:convert --remote` が R2 に保存してから管理 JSON を更新する」を置き換える。
 
 1. `ingestion:convert` は、検査が通った表を管理 JSON に記録し（key・sha256・バイト数・行数・メタデータ）、手元の object cache（`pipeline/.cache/objects`）の同じ key に置く。R2 には書かない。記録しないで候補だけを作るときは `--dry-run` を付ける。`--remote` は手元に無い入力と保存済みの表を R2 から戻すだけで、書き込みはしない。
 2. 表の Parquet は git に入れない。PR に入るのは管理 JSON の記録と、Jev の聞き直しの答え（`*.digit-recheck.jsonl`）だけにする。

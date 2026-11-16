@@ -1,6 +1,6 @@
 name: sync-d1
 # main に入った取り込み・dbt の変更を、marts に build して本番 D1（fudoki-api）へ差分で写す（ADR 0040）。
-# publish の前に、取り込みの PR が管理 JSON に記録した表を変換し直し、記録と一致したものだけ R2 に置く（ingestion:store、ADR 0045）。
+# publish の前に、取り込みの PR が変えた宣言を main のコードで変換し、保存の関門を通った表と受領書を R2 に置く（ingestion:store、ADR 0051）。
 # 範囲は serving/publish.py（bun run --cwd pipeline publish）が差分から決める。取り込みの宣言・選定・自治体の列を持つ seed だけならその自治体だけ、
 # 全自治体に効く変更なら全件。事業と評価シートのつなぎは build のたびに計算する。
 on:

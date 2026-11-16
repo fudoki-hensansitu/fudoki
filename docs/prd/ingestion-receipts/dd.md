@@ -2,7 +2,7 @@
 
 担当者: wwwyo / Claude
 更新日: `2026-11-15`
-状態: Draft（2回のレビューを反映）。採用したら [取り込み保存の設計](../ingestion-storage/dd.md) に畳み込み、[ADR 0045](../../adr/0045-ingestion-tables-uploaded-by-ci.md)・[ADR 0027](../../adr/0027-refresh-fingerprints-by-table-content.md) を置き換える ADR を足す
+状態: 採用・段階3まで実装（2026-11-16、[ADR 0051](../../adr/0051-ingestion-receipts-in-r2.md)）。実装で設計から変えた点は末尾の「実装で変えた点」
 
 ## Summary
 
@@ -226,3 +226,11 @@ main の refresh-check を、比べる job と書く job に分ける。
   2. store が止まらないことを確かめる
   3. store の summary に差が出ることを確かめる
   4. refresh-check が差を報告することを確かめる
+
+## 実装で変えた点
+
+- **宣言が同じで中身が違う表も置く**: 設計では止めるとしたが、store は置いて `drifted` として summary に出す。止めると、変換器の変更と取り込み PR がすれ違うたびに取り込みの反映が止まるため。意図しない退行は refresh-check の比較でも拾う
+- **PR の check の重ね方**: `prepare.py --candidate-dir` でなく、store の `--dry-run` が書く `pending-receipts.json` を環境変数 `INGESTION_PENDING_RECEIPTS` で一覧に重ねる。表は store が手元の cache に置く
+- **宣言の sha**: 変換の宣言（target・direction・conversion）の sha を受領書の `declaration` に持ち、store・prepare・convert の保持がそれで宣言の変更を見分ける。`declaration` の無い古い受領書は、Git の差分で宣言の変更を判断する
+- **refresh-check の書く job**: 比べる job が `--defer-write` で受領書を report に残し、書く job が `--apply` で一覧に書く。accept で置き直した自治体は、書く job が sync-d1 を自治体を絞って起動する
+

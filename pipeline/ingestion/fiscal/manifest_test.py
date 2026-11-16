@@ -10,7 +10,7 @@ from unittest.mock import patch
 import duckdb
 import jsonschema
 
-from ingestion.fiscal import manifest
+from ingestion.fiscal import manifest, storage
 from ingestion.fiscal.run import convert
 from ingestion.fiscal.run import table_receipt, verify_sums
 
@@ -33,6 +33,9 @@ class ManifestWorkflowTest(unittest.TestCase):
         self.patch = patch.multiple(manifest, INGESTION=self.code, PIPELINE=self.pipeline,
                                     JURISDICTIONS=self.root/'jurisdictions')
         self.patch.start()
+        # The receipts list in R2, held in memory: what `store` would have stored after merge.
+        self.receipts = {}
+        self.enterContext(patch.object(storage, '_RECEIPTS', self.receipts))
         self.target = {'jurisdiction': '131016', 'fiscal_year': 2024, 'document_kind': 'initial'}
         originals = []
         archived = []
@@ -54,7 +57,7 @@ class ManifestWorkflowTest(unittest.TestCase):
                           'archive': {'bucket': 'fudoki-inputs', 'candidate_id': 'chosen', 'files': archived}}
         self.ledger = self.source / '131016.json'
         self.ledger.write_text(json.dumps({'selections': [self.selection]}))
-        self.document = {'schema_version': 1, 'target': self.target, 'direction': 'expenditure',
+        self.document = {'schema_version': 2, 'target': self.target, 'direction': 'expenditure',
                          'conversions': conversions, 'tables': []}
         self.path = self.root / 'jurisdictions/131016/2024/initial/expenditure.json'
         manifest.write(self.path, self.document)
@@ -62,6 +65,20 @@ class ManifestWorkflowTest(unittest.TestCase):
     def tearDown(self):
         self.patch.stop()
         self.tmp.cleanup()
+
+    def store(self, document: dict) -> None:
+        """Put a document's tables in the receipts list, as `store` does after merge."""
+        for table in document['tables']:
+            self.receipts[storage.receipt_id(document, table['table_id'])] = deepcopy(table)
+
+    @staticmethod
+    def candidate(result: dict) -> dict:
+        return json.loads(Path(result['candidate']).read_text())
+
+    @staticmethod
+    def check_tables(document: dict) -> None:
+        manifest.validate(document)
+        manifest.validate_tables(document, document['tables'])
 
     def test_statement_kind_is_a_shared_declared_form_not_a_free_gate_override(self):
         document = deepcopy(self.document)
@@ -81,7 +98,8 @@ class ManifestWorkflowTest(unittest.TestCase):
         self.assertEqual(checks['check'], 'csv_to_parquet_preservation')
         self.assertEqual(checks['origin_sha256'], manifest.sha_file(Path(next(iter(self.files.values())))))
         self.assertEqual(checks['parquet_sha256'], manifest.sha_file(self.root/'candidate/one.parquet'))
-        self.assertEqual(manifest.read(self.path)['tables'], [])
+        self.assertNotIn('tables', json.loads(self.path.read_text()))
+        self.assertEqual(self.receipts, {})
         candidate = json.loads(Path(result['candidate']).read_text())
         manifest.validate(candidate)
         manifest.require_current(candidate)
@@ -115,15 +133,10 @@ class ManifestWorkflowTest(unittest.TestCase):
         code.write_text(code.read_text().replace('    return {table_id: output}',
             f"    return {{table_id: {{'path': output, 'metadata': {metadata!r}}}}}"))
         with patch('ingestion.fiscal.run.keep'), patch('ingestion.fiscal.run.cleanup'):
-            convert(self.path, self.files, self.root/'annotated', remote=True, record=True)
-        saved = manifest.read(self.path)
+            saved = self.candidate(convert(self.path, self.files, self.root/'annotated', remote=True, record=True))
         self.assertEqual(saved['tables'][0]['metadata'], metadata)
-        # A path-only caller can retain annotations only for identical inputs and bytes.
-        receipt = table_receipt(saved, saved['conversions'][0], 'one', self.root/'annotated/one.parquet')
-        self.assertEqual(receipt['metadata'], metadata)
-        with self.assertRaisesRegex(ValueError, 'Changed annotated table'):
-            table_receipt(saved, saved['conversions'][0], 'one', self.root/'annotated/one.parquet',
-                          input_fingerprint='0'*64)
+        self.store(saved)
+        self.assertEqual(storage.attach(manifest.read(self.path))['tables'][0]['metadata'], metadata)
         with duckdb.connect() as con:
             columns = con.execute('describe select * from read_parquet(?)',
                                   [str(self.root/'annotated/one.parquet')]).fetchall()
@@ -134,8 +147,7 @@ class ManifestWorkflowTest(unittest.TestCase):
 
     def test_csv_tables_are_out_of_scope_for_tree_checks(self):
         with patch('ingestion.fiscal.run.keep'), patch('ingestion.fiscal.run.cleanup'):
-            convert(self.path, self.files, self.root/'saved', remote=True, record=True)
-        saved = manifest.read(self.path)
+            saved = self.candidate(convert(self.path, self.files, self.root/'saved', remote=True, record=True))
         # CSV tables are verified by cell retention at conversion, not by printed sums.
         results = verify_sums(saved, lambda table: self.root/'saved'/f'{table["table_id"]}.parquet')
         self.assertEqual({item['status'] for item in results}, {'対象外'})
@@ -306,7 +318,7 @@ class ManifestWorkflowTest(unittest.TestCase):
             bad = deepcopy(candidate)
             mutate(bad)
             with self.assertRaises((ValueError, jsonschema.ValidationError)):
-                manifest.validate(bad)
+                self.check_tables(bad)
 
     def test_zero_row_node_or_amount_receipt_is_rejected(self):
         result = convert(self.path, self.files, self.root/'paired-candidate')
@@ -335,17 +347,18 @@ class ManifestWorkflowTest(unittest.TestCase):
         saved = json.loads(Path(result['candidate']).read_text())
         saved['tables'][0]['metadata'] = {
             'notes': [{'text': '既存の原典注記', 'scope': {'kind': 'table'}}]}
-        manifest.write(self.path, saved)
+        self.store(saved)
         local = {t['object']['sha256']: self.root/'partial-baseline'/f'{t["table_id"]}.parquet'
                  for t in saved['tables']}
         old_bytes = {sha: path.read_bytes() for sha, path in local.items()}
         with patch('ingestion.fiscal.run.fetch', side_effect=lambda ref, **kwargs: local[ref['sha256']]), \
              patch('ingestion.fiscal.run.keep') as save, patch('ingestion.fiscal.run.cleanup'):
-            convert(self.path, self.files, self.root/'partial-remote',
-                    conversion_ids=['two'], remote=True, record=True)
+            result = convert(self.path, self.files, self.root/'partial-remote',
+                             conversion_ids=['two'], remote=True, record=True)
         save.assert_called_once()
         self.assertEqual(save.call_args.args[1]['table_id'], 'two')
-        published = manifest.read(self.path)
+        self.assertNotIn('tables', json.loads(self.path.read_text()))
+        published = self.candidate(result)
         self.assertEqual(published['tables'][0], saved['tables'][0])
         self.assertEqual(published['conversions'], saved['conversions'])
         self.assertEqual({sha: path.read_bytes() for sha, path in local.items()}, old_bytes)
@@ -376,7 +389,7 @@ class ManifestWorkflowTest(unittest.TestCase):
         for conversion, table in zip(saved['conversions'], generated['tables'], strict=True):
             saved['tables'].append(table_receipt(saved, conversion, table['table_id'], local[table['object']['sha256']]))
         saved['tables'][0]['metadata'] = {'notes': [{'text': '既存の原典注記', 'scope': {'kind': 'table'}}]}
-        manifest.write(self.path, saved)
+        self.store(saved)
         manifest.require_current(saved)
         plan = deepcopy(saved)
         plan['tables'] = []
@@ -408,7 +421,9 @@ class ManifestWorkflowTest(unittest.TestCase):
                 write.assert_called_once()
             save.assert_called_once()
             self.assertEqual(save.call_args.args[1]['table_id'], 'three')
-            published = manifest.read(self.path)
+            # Only the declaration is written to Git; the new table reaches the receipts list after merge.
+            self.assertEqual(manifest.read(self.path)['conversions'], plan['conversions'])
+            published = self.candidate(result)
             self.assertEqual(published['tables'][:2], saved['tables'])
             self.assertEqual(published['conversions'], plan['conversions'])
             self.assertEqual({key: value for key, value in manifest.fingerprints(published).items() if key in fingerprints}, fingerprints)
@@ -436,7 +451,7 @@ class ManifestWorkflowTest(unittest.TestCase):
             else:
                 wrong = self.root/'corrupted.parquet'
                 wrong.write_bytes(b'changed')
-            manifest.write(self.path, invalid)
+            self.store(invalid)
             before = self.path.read_bytes()
             with patch('ingestion.fiscal.run.fetch', return_value=wrong), patch('ingestion.fiscal.run.keep') as save:
                 with self.subTest(case=case), self.assertRaisesRegex(ValueError, 'hash/size'):

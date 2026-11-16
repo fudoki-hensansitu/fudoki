@@ -81,6 +81,9 @@ class CleanupTest(unittest.TestCase):
         self.validate = self.enterContext(patch.object(manifest, 'validate'))
         self.current = self.enterContext(patch.object(manifest, 'require_current'))
         self.read = self.enterContext(patch.object(manifest, 'read', return_value=self.document))
+        # The receipts list points at the wanted table.
+        self.enterContext(patch.object(storage, 'read_receipts', return_value={}))
+        self.enterContext(patch.object(storage, 'attach', return_value=self.document))
         self.plan_keys = self.enterContext(patch.object(manifest, 'measurement_ocr_keys', return_value=set()))
         self.list = self.enterContext(patch.object(storage.subprocess, 'check_output', side_effect=self.list_objects))
         self.delete = self.enterContext(patch.object(storage.subprocess, 'run', side_effect=self.delete_object))

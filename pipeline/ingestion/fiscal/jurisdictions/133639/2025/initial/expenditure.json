@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "133639",
     "fiscal_year": 2025,
@@ -31,39 +31,6 @@
           "table_id": "general-expenditure"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "general-expenditure",
-      "conversion_id": "general-initial",
-      "input_fingerprint": "01c007dae01a93ffc09d75f48d219a0bbf8755221ecf92fc6333a89d3cc4a145",
-      "account": "一般会計",
-      "notes": [
-        "物理7頁の「（３）令和7年度一般会計当初予算（単位：千円）」は歳入と歳出を左右に並べた表なので、右の「歳出」の枠だけを読んだ（読み方 paired_summary）。左の歳入と頁の他の表は取り込んでいない。",
-        "款の行 14 行を、印字のとおり款として置いた。款の番号は印字されていない。項・目は印字されていない。",
-        "金額の欄に見出しの印字が無いので、表の題のとおり「当初予算額」の見出しで持った。",
-        "金額の単位は表の題の「（単位：千円）」。款の和と印字の「歳出合計」が一致。",
-        "構成比の欄は金額ではないので取り込んでいない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/133639/2025/initial/expenditure/general-expenditure-nodes.parquet",
-          "sha256": "d1e856a2330d91ccef455c0f34ea584861f8cbbabb84a310e8c8f750a7627dd8",
-          "bytes": 2890
-        },
-        "row_count": 14
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/133639/2025/initial/expenditure/general-expenditure-amounts.parquet",
-          "sha256": "7f5a243e28750799e90af61abc313842fb38a5df79bfc8944109a2cfc3aac83c",
-          "bytes": 2357
-        },
-        "row_count": 14
-      }
     }
   ]
 }

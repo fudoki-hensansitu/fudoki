@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "134015",
     "fiscal_year": 2023,
@@ -555,97 +555,6 @@
           "bytes": 2212332
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "general-initial",
-      "conversion_id": "general-initial",
-      "input_fingerprint": "711c232d9601241ddefa64b7ab13879b86ad5495fe68cc04ce2a0fb39226f5dc",
-      "account": "一般会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 42頁・carried 41頁 から決めた。款の和 11,537,432 と印字の「計」11,537,432 が一致。",
-        "金額の注記 1 件（充用 1）を注記軸に置いた。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2023/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "d4f7d13eed585a41dff2fce7ce2c3dbf1fb89ceb6a2556833fb0bf802fab84d9",
-          "bytes": 83043
-        },
-        "row_count": 2968
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2023/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "3af672c27d94ef8091dc88db2569d3d6473646cf6bcbeefacd6f456bc608da37",
-          "bytes": 71775
-        },
-        "row_count": 3602
-      }
-    },
-    {
-      "table_id": "long-term-care-initial",
-      "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "905c55d988e47ab2f3a87b417370cb673b7e8b9bd6a6c6153b3e00c0fefb9d02",
-      "account": "介護保険特別会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 11頁 から決めた。款の和 1,104,674 と印字の「計」1,104,674 が一致。",
-        "金額の注記 1 件（充用 1）を注記軸に置いた。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2023/initial/expenditure/long-term-care-initial-nodes.parquet",
-          "sha256": "f85850bfad80351e2eea7cf02db851ae5576d9d45b0bfaee600c429da615008b",
-          "bytes": 11051
-        },
-        "row_count": 245
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2023/initial/expenditure/long-term-care-initial-amounts.parquet",
-          "sha256": "c8295a91e1ca2ec78a184192da7ff3d1f9d92828be7cd506eeea77aa7767b02a",
-          "bytes": 8986
-        },
-        "row_count": 511
-      }
-    },
-    {
-      "table_id": "national-health-insurance-initial",
-      "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "dae4851bd36f31b54b97ac54b11e6bb54a4910ac11dec2038dcbe5197fc8bf64",
-      "account": "国民健康保険特別会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
-        "金額の単位は printed 7頁・carried 3頁 から決めた。款の和 1,125,916 と印字の「計」1,125,916 が一致。",
-        "金額の注記 1 件（充用 1）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（8 件）を、印字された語から辞書の見出しに寄せた: 本年度の財源内訳／節／金額→節／金額。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 6 件（p21:full-page:a0:result0:r68・p21:full-page:a0:result0:r68:w3・p21:full-page:a0:result0:r73・p21:full-page:a0:result0:r73:w2・p21:full-page:a0:result0:r79・p21:full-page:a0:result0:r79:w4）・债→債 2 件（p19:full-page:a0:result0:r23・p19:full-page:a0:result0:r23:w2）・查→査 10 件（p20:full-page:a0:result0:r36・p20:full-page:a0:result0:r36:w12・p20:full-page:a0:result0:r41・p20:full-page:a0:result0:r41:w3・p23:full-page:a0:result0:r30・p23:full-page:a0:result0:r30:w6・p23:full-page:a0:result0:r42・p23:full-page:a0:result0:r42:w7・p23:full-page:a0:result0:r66・p23:full-page:a0:result0:r66:w5）・產→産 2 件（p21:full-page:a0:result0:r28・p21:full-page:a0:result0:r28:w2）・說→説 6 件（p17:full-page:a0:result0:r8・p17:full-page:a0:result0:r8:w0・p18:full-page:a0:result0:r7・p18:full-page:a0:result0:r7:w0・p21:full-page:a0:result0:r8・p21:full-page:a0:result0:r8:w0）・费→費 2 件（p21:full-page:a0:result0:r56・p21:full-page:a0:result0:r56:w2）・额→額 2 件（p19:full-page:a0:result0:r18・p19:full-page:a0:result0:r18:w0）・齡→齢 10 件（p22:full-page:a0:result0:r54・p22:full-page:a0:result0:r54:w4・p22:full-page:a0:result0:r61・p22:full-page:a0:result0:r61:w9・p22:full-page:a0:result0:r68・p22:full-page:a0:result0:r68:w1・p22:full-page:a0:result0:r72・p22:full-page:a0:result0:r72:w10・p22:full-page:a0:result0:r80・p22:full-page:a0:result0:r80:w2）。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2023/initial/expenditure/national-health-insurance-initial-nodes.parquet",
-          "sha256": "0ca0b341fc7e44676b90d10c0ead7effa84a9815e305b4faefd7f69905a9613b",
-          "bytes": 13671
-        },
-        "row_count": 212
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2023/initial/expenditure/national-health-insurance-initial-amounts.parquet",
-          "sha256": "b841cf888157ce677c41c3868da4ae4bf1888473e524838ebbbe33602ccac449",
-          "bytes": 13998
-        },
-        "row_count": 352
-      }
     }
   ]
 }

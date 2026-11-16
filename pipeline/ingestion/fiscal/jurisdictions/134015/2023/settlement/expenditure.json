@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "134015",
     "fiscal_year": 2023,
@@ -78,68 +78,6 @@
           "table_id": "long-term-care-expenditure"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "general-expenditure",
-      "conversion_id": "general-settlement",
-      "input_fingerprint": "e01bdba2dd4743df30381c2048af6a16731ebcac4cba509b9262775ea349cb09",
-      "account": "一般会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
-        "金額の単位は printed 90頁 から決めた。款の和 10,578,167,106 と印字の「歳出合計」10,578,167,106 が一致。",
-        "金額の注記 103 件（充用 7・流用 96）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（837 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2023/settlement/expenditure/general-expenditure-nodes.parquet",
-          "sha256": "9bc7e1473e0996391461185c7cdb8d5e6981ae9ab92946a4d05cf3f76ea6a8d1",
-          "bytes": 29997
-        },
-        "row_count": 1099
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2023/settlement/expenditure/general-expenditure-amounts.parquet",
-          "sha256": "d448c87348538aa64b0394c123dd41b5ea4145cc5e5c36eed509b33120728113",
-          "bytes": 45775
-        },
-        "row_count": 4720
-      }
-    },
-    {
-      "table_id": "long-term-care-expenditure",
-      "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "dd1f95c466a8435b1a44d207f8d638065bed2f5d65a6b8741d4aaa1b099d07a2",
-      "account": "介護保険特別会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape'}。",
-        "金額の単位は printed 18頁 から決めた。款の和 1,034,859,574 と印字の「歳出合計」1,034,859,574 が一致。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（76 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2023/settlement/expenditure/long-term-care-expenditure-nodes.parquet",
-          "sha256": "7d18f3ac9bda9137229961a59435cf5a79f7abc2a5a9f92fc03c8bf121a2ba3a",
-          "bytes": 8289
-        },
-        "row_count": 149
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/134015/2023/settlement/expenditure/long-term-care-expenditure-amounts.parquet",
-          "sha256": "305c5cdcfece01025287bebf5fd02f5a45805c2ac977aa015919d43d88656a69",
-          "bytes": 10210
-        },
-        "row_count": 885
-      }
     }
   ]
 }
