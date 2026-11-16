@@ -300,7 +300,8 @@ function ProjectNameCell({ p }: { p: Proj }) {
   const { v } = useApp()
   const ended = v.isEnded(p)
   return (
-    <span className="block">
+    // 文節で折り返す設定のままだと、長い事業名が狭い幅で列を押し広げるので、収まらないときは文節の途中でも折り返す
+    <span className="block [overflow-wrap:anywhere]">
       {/* 押せることとフォーカスは事業名のボタンが持つ（行を押しても同じく詳細を開く） */}
       <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{p.name}</button>
       {ended || v.isNew(p) ? <span className="ml-1.5 inline-flex align-middle">{ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : <Mark kind="new" label="新しく始める事業" className="size-5" />}</span> : null}
