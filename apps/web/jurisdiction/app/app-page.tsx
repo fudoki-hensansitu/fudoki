@@ -862,7 +862,7 @@ function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name'>; mark: 'new' |
 const projectLatestKey = (id: string) => `project-latest:${id}`
 
 /** 事業の頁（/tokyo/shinagawa/projects/<project_id>）。一覧の行・評価シート・分野の頁の事業から開く。事業は年度をまたぐので年度の段を持たず、
- * 金額・内訳（中の事業）・評価シートは事業の最新の年度（決算があれば決算）のものを出し、年度ごとの額を並べる */
+ * 金額は年度ごとの表で出す（大きな金額は出さない）。内訳（中の事業）・評価シートは事業の最新の年度（決算があれば決算）のもの */
 function ProjectPage({ id }: { id: string }) {
   return (
     <ClientSuspense fallback={<RowsSkeleton n={4} />}>
@@ -872,14 +872,11 @@ function ProjectPage({ id }: { id: string }) {
 }
 
 function ProjectPageBody({ id }: { id: string }) {
-  const { d, res, select, v: pageView } = useApp()
+  const { res, select, v: pageView } = useApp()
   const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
   if (p === FAILED || p.year === undefined || !p.kind) return <LoadFailed />
   const year = p.year
   const label = p.kind === 'initial' ? '当初予算' : '決算'
-  const amt = (y: number) => (p.kind === 'initial' ? p.y[String(y)]?.b : p.y[String(y)]?.s) ?? null
-  const now = amt(year)
-  const prev = amt(year - 1)
   const frame = (p.cofog ? frameOf(p.cofog) : undefined) ?? OTHER_FRAME
   const rows = Object.keys(p.y).map(Number).sort((a, b) => b - a)
   return (
@@ -888,11 +885,6 @@ function ProjectPageBody({ id }: { id: string }) {
       <div className="flex flex-wrap gap-1.5">
         <Chip><FieldIcon id={frame.id} />{frame.name}</Chip>
         {p.dept ? <Chip><BuildingsIcon />{p.dept}</Chip> : null}
-      </div>
-      <div className="mt-5">
-        <span className="text-xs text-muted-foreground">{reiwa(year)}の{label}{p.ended != null ? `（${r(p.ended)}年度で終えた事業）` : ''}</span>
-        <Amt yen={now} className="block text-4xl leading-tight text-primary" />
-        {now != null ? <span className="text-xs text-muted-foreground">{[perHead(now, d.pop), prev ? `${r(year - 1)}年度から ${now >= prev ? '+' : '−'}${yenText(Math.abs(now - prev))}` : ''].filter(Boolean).join(' · ')}</span> : null}
       </div>
       <DetailSection icon={CalendarBlankIcon} title="年度ごと">
         <div className="grid max-w-xl grid-cols-[auto_1fr_1fr] text-[15px]">
