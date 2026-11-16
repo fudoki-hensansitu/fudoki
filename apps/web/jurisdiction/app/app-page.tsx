@@ -618,7 +618,8 @@ function FieldsSection({ phase }: { phase: 'initial' | 'settlement' }) {
         {phase === 'initial' ? '何に使う？' : '何に使った？'}<span className="ml-1.5 text-[13px] font-normal text-muted-foreground">歳出</span>
         <Amt yen={v.total} className="ml-2 font-medium text-primary" />
       </h2>
-      <p className="mb-2.5 text-[15px] leading-[1.7] text-muted-foreground">税金を主な財源にする基本の会計（一般会計）の歳出を、使い道の分野ごとに分けています。</p>      {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
+      <p className="mb-2.5 text-[15px] leading-[1.7] text-muted-foreground">税金を主な財源にする基本の会計（一般会計）の歳出を、使い道の分野ごとに分けています。</p>
+      {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
       <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
         {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={max} grow={grow} onClick={() => openField(f.id)} />)}
       </div>
@@ -640,7 +641,6 @@ function Overview() {
           </p>
         ) : null}
       </section>
-
 
       {/* 一般会計の歳入（api の get_revenue を loader が頁のデータに入れる）。歳入の無い年度は節ごと出さない */}
       <RevenueSection revenue={page.revenue} year={v.year} kind={v.kind} prefecture={page.prefecture} />
