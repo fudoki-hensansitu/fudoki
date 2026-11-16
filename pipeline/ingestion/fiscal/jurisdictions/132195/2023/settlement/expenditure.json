@@ -1,0 +1,752 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132195",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "amount_corrections": [
+          {
+            "id": "general-73-r24",
+            "page": 73,
+            "observation_id": "p73:full-page:a0:result0:r24",
+            "observed_amount": "34,456,709,927",
+            "corrected_amount": "4,456,709,927",
+            "reason": "目「2 児童措置費」の予算現額の計。左の欄の「△2,579,073」の末尾の3を頭に読んだ。原画の印字は4,456,709,927で、当初4,215,030,000・補正244,259,000・流用△2,579,073の和に合う。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "komae-p58-ti",
+            "page": 58,
+            "observation_id": "p58:full-page:a0:result0:r22",
+            "observed_name": "コミュニテイ",
+            "corrected_name": "コミュニティ",
+            "reason": "原典の画像で「コミュニティ推進費」と印字されている。Paddle は小さい「ィ」を「イ」と読んだ。字形の対応表は1字ずつで、イ→ィ は置けないので、この行だけを宣言する（2024年度と同じ）。"
+          },
+          {
+            "id": "komae-p71-i",
+            "page": 71,
+            "observation_id": "p71:full-page:a0:result0:r25",
+            "observed_name": "サービス費",
+            "corrected_name": "いサービス費",
+            "reason": "原典の画像で「障がいサービス費」と印字されている（1行目の末尾が「障がい」、2行目が「サービス費」）。Paddle は1行目の「い」を落とした。名称が続く2行目に「い」を戻す（2024年度と同じ）。"
+          },
+          {
+            "id": "komae-p89-ryo-44",
+            "page": 89,
+            "observation_id": "p89:full-page:a0:result0:r44",
+            "observed_name": "りよう",
+            "corrected_name": "りょう",
+            "reason": "原典の画像で「道路橋りょう費」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ（2024年度と同じ）。"
+          },
+          {
+            "id": "komae-p89-ryo-50",
+            "page": 89,
+            "observation_id": "p89:full-page:a0:result0:r50",
+            "observed_name": "りよう",
+            "corrected_name": "りょう",
+            "reason": "原典の画像で「道路橋りょう総務費」と印字されている。Paddle は小さい「ょ」を「よ」と読んだ（2024年度と同じ）。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "b9759dfab5c51a9ec09b90da3e06e18574035727de97edf55cac1a8ff9440d46",
+          "bytes": 3109307
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "f5ac13c1148a47dc0db1806f823b7a253f0c5a916f2c32f14c75c5c8450006b5",
+          "bytes": 2949486
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "162d31c5049b5c31fa5816a22191090f938eb35eb36399ba98387990bb30a1e0",
+          "bytes": 3114228
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              82,
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "2829203b1b1580e9921ac5a3f895fb319bdce1a25cc1e0de2bea30f72c150bec",
+          "bytes": 2949664
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              92,
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "83b25f3d62a1c65adf8e2c7388e2636a86f5afabccc7a8673790ecfbfa8aa8f7",
+          "bytes": 3037136
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              102,
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "869378fa3e2623ecc253edbf5d716529b9b40d59b93a834b320cf57dd785b9d0",
+          "bytes": 3068019
+        },
+        {
+          "id": "general-ocr-7",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              112,
+              113,
+              114,
+              115,
+              116
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "7d7f8aa4cd8d53dc4064d21f788922b56449b0d576520c02b380d3d48becc6ef",
+          "bytes": 1098710
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p126-ichijikin",
+            "page": 126,
+            "code": "1",
+            "observed_name": "出産育児時金",
+            "corrected_name": "出産育児一時金",
+            "reason": "原画の頁126は「出産育児一時金」（2行目は「一　時　金」と均等割付）。OCR が横1本の「一」を観測しなかった（2024年度と同じ）。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              122,
+              123,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "3fd28190787a70aea788f998bde3511008f951288184e78d52bdae8556e6010f",
+          "bytes": 2713315
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              137,
+              138,
+              139,
+              140,
+              141
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "cf92bb0f4d5c768a969432d5b4881ab63afd69936ce3314b84a5864d63781745",
+          "bytes": 1191275
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p154-shohi",
+            "page": 154,
+            "code": "2",
+            "observed_name": "介護予防サービス等費諸",
+            "corrected_name": "介護予防サービス等諸費",
+            "reason": "原画の頁154は「介護予防サービス等諸費」（3行目は「諸　　費」と均等割付）。右端の「費」の枠が「諸」より上に取られ、行の中の順が入れ替わった（2024年度と同じ）。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              153,
+              154,
+              155,
+              156,
+              157,
+              158,
+              159,
+              160
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "584ae6a4a70b37c8abf8a1ba39f340e3eb25843e26a57e9df31358ad7c939db0",
+          "bytes": 2154117
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "parking",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "parking-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              164,
+              165
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215
+          },
+          "sha256": "b00550c6676619b797a12ce7c69e34eb41f29222c56c71b4e5893b562e7854cc",
+          "bytes": 283772
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "parking-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "sewer-revenue",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "下水道事業会計",
+        "table_id": "sewer-revenue-expenditure-detail",
+        "pages": [
+          [
+            203,
+            204
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "金額": {
+                  "heading": "決算額"
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "note_kinds": {
+                    "予算額": "予算額"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p204-houtei",
+            "page": 204,
+            "code": "7",
+            "observed_name": "額",
+            "corrected_name": "法定福利費引当金繰入額",
+            "reason": "原画の頁204の節7は「法定福利費引当金繰入額」（2行に折り返し、番号は2行の中ほどに印字）。OCR は番号より上の1行目を名前に結ばず、2行目の「額」だけを名前にした。"
+          },
+          {
+            "id": "p204-yukei",
+            "page": 204,
+            "code": "1",
+            "observed_name": "費",
+            "corrected_name": "有形固定資産減価償却費",
+            "reason": "原画の頁204の節1は「有形固定資産減価償却費」（2行に折り返し、番号は2行の中ほどに印字）。OCR は番号より上の1行目を名前に結ばず、2行目の「費」だけを名前にした。"
+          },
+          {
+            "id": "p204-mukei",
+            "page": 204,
+            "code": "2",
+            "observed_name": "費",
+            "corrected_name": "無形固定資産減価償却費",
+            "reason": "原画の頁204の節2は「無形固定資産減価償却費」（2行に折り返し、番号は2行の中ほどに印字）。OCR は番号より上の1行目を名前に結ばず、2行目の「費」だけを名前にした。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "sewer-revenue-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              203,
+              204
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3266cfdcd8923cb966e0554f51b8d21f597a271071b796b0200eb9150154eaca",
+          "bytes": 415610
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "sewer-revenue-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "sewer-capital",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "statement_kind": "public-enterprise",
+      "inputs": [
+        {
+          "sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe"
+        }
+      ],
+      "options": {
+        "account": "下水道事業会計",
+        "table_id": "sewer-capital-expenditure-detail",
+        "pages": [
+          [
+            205,
+            205
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "金額": {
+                  "heading": "決算額"
+                }
+              },
+              "rules": {
+                "dark": 215
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "note_kinds": {
+                    "予算額": "予算額"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p205-houtei",
+            "page": 205,
+            "code": "7",
+            "observed_name": "額",
+            "corrected_name": "法定福利費引当金繰入額",
+            "reason": "原画の頁205の節7は「法定福利費引当金繰入額」（2行に折り返し、番号は2行の中ほどに印字）。OCR は番号より上の1行目を名前に結ばず、2行目の「額」だけを名前にした。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "sewer-capital-ocr-1",
+          "origin_sha256": "ce231f9efe46850e20db1d6d6fd67f8793ceebf52d11f2984a5faaf9bd66bbbe",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              205
+            ],
+            "vlm_fallback": false,
+            "rule_dark": 215,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "7be6c4fa37be26de513c63ebbe298408cc07675e6a8ab2c3ab895b810b847167",
+          "bytes": 361001
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "sewer-capital-expenditure-detail"
+        }
+      ]
+    }
+  ]
+}
