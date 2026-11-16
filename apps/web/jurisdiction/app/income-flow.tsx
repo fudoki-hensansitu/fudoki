@@ -157,10 +157,13 @@ function Stat({ tone, word, sub, yen, per }: { tone: 'in' | 'out'; word: string;
   const big = cn('block text-[22px] leading-tight font-semibold sm:text-[32px]', tone === 'in' ? 'text-(--kincha-ink)' : 'text-primary')
   return (
     <div className="rounded-2xl bg-card px-4 py-3.5 sm:px-5 sm:py-4">
-      <p className="text-sm text-muted-foreground">{word}<span className="ml-1.5 text-xs">{sub}</span></p>
-      {/* 総額と1人あたりは同じ大きさで並べる（狭い幅は上下） */}
+      <p className="text-sm text-muted-foreground">{word}</p>
+      {/* 総額と1人あたりは同じ大きさ・同じ見出しの付け方で並べる（狭い幅は上下） */}
       <div className="mt-1 flex flex-col gap-x-6 gap-y-1 sm:flex-row sm:items-end">
-        <Amt yen={yen} className={big} />
+        <span className="flex flex-col">
+          <span className="text-xs text-muted-foreground">{sub}</span>
+          <Amt yen={yen} className={big} />
+        </span>
         {per ? (
           <span className="flex flex-col">
             <span className="text-xs text-muted-foreground">{per.label}</span>
