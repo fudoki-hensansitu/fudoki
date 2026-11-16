@@ -207,9 +207,6 @@ export function IncomeFlow({ doc, phase, expTotal, fields, pop, openField }: {
       <div className="-mx-2 sm:mx-0">
         <Flow incoming={incoming} outgoing={outgoing} heads={[words[0], '一般会計', words[1]]} />
       </div>
-      {phase === 'settlement' && rest > 0 ? (
-        <p className="mt-2 text-[13px] text-muted-foreground">入ったお金と使ったお金の差 <Amt yen={rest} /> は、翌年度へ繰り越すお金などになります。</p>
-      ) : null}
     </section>
   )
 }
