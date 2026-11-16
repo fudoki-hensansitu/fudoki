@@ -49,7 +49,7 @@ function MokuGroup({ moku, kouYen, levels, noSetsu, mirror }: { moku: Moku; kouY
   const mokuYen = moku.amountMissing ? 0 : moku.yen
   return (
     <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} data-share={formatShare(moku.yen, kouYen, moku.amountMissing) ?? ''} className={cn('grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[drawn=true]/kou:translate-y-0 group-data-[drawn=true]/kou:opacity-100 sm:gap-4', mirror ? 'text-right sm:grid-cols-[7fr_5fr]' : 'sm:grid-cols-[5fr_7fr]')}>
-      <div className="min-w-0">
+      <div className={cn('min-w-0', mirror && 'sm:col-start-2 sm:row-start-1')}>
         <div className="text-[11px] text-muted-foreground sm:hidden">{levels.moku}</div>
         <AmountTip name={moku.name} yen={moku.yen} missing={moku.amountMissing} side={mirror ? 'left' : 'right'} className="inline-grid outline-none">
           <span className="text-sm leading-snug">{moku.name}</span>
@@ -57,7 +57,7 @@ function MokuGroup({ moku, kouYen, levels, noSetsu, mirror }: { moku: Moku; kouY
         </AmountTip>
       </div>
       {top.length > 0 ? (
-        <ul data-setsu-list className={cn('grid min-w-0 gap-y-1 text-[12.5px] leading-snug sm:gap-y-3 sm:border-0', mirror ? 'border-r pr-3 text-left sm:order-first sm:pr-4' : 'border-l pl-3 sm:pl-4')} aria-label={`${moku.name}の${levels.setsu}`}>
+        <ul data-setsu-list className={cn('grid min-w-0 gap-y-1 text-[12.5px] leading-snug sm:gap-y-3 sm:border-0', mirror ? 'border-r pr-3 text-left sm:col-start-1 sm:row-start-1 sm:pr-4' : 'border-l pl-3 sm:pl-4')} aria-label={`${moku.name}の${levels.setsu}`}>
           <li className="text-[11px] text-muted-foreground sm:hidden">{levels.setsu}</li>
           {top.map((s) => (
             <li key={s.name} data-setsu data-yen={s.amountMissing ? 0 : Math.max(0, s.yen)} data-share={formatShare(s.yen, mokuYen, s.amountMissing) ?? ''} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
