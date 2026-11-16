@@ -114,24 +114,31 @@ const pick = (fn: () => void) => ({
 })
 
 /** total は割合の基準（その年度の全体）。割合は棒の真上に、名前は棒の横に出し、金額は hover・focus のツールチップで見せる */
-export function Overview({ flows, total: base, height = 520, levels = { kan: '款', kou: '項' }, onSelect }: { flows: Drill[]; total: number; height?: number; levels?: { kan: string; kou: string }; onSelect?: (kan: number, kou?: number) => void }) {
+export function Overview({ flows, total: base, height = 520, levels = { kan: '款', kou: '項' }, onSelect, mirror, label = '歳出' }: { flows: Drill[]; total: number; height?: number; levels?: { kan: string; kou: string }; onSelect?: (kan: number, kou?: number) => void; /** 左右を逆にする（項が左、款が右）。歳入を歳出の全体図の左に並べ、款どうしを真ん中で向き合わせる */ mirror?: boolean; /** 何の流れか（読み上げ用） */ label?: string }) {
   const ref = React.useRef<HTMLDivElement>(null)
   // 図が画面に入ってから帯が伸びる動きを始める
-  const { seen, still } = useFlowSeen(ref, `${levels.kan}:${base}:${flows.length}`)
+  const { seen, still } = useFlowSeen(ref, `${levels.kan}:${base}:${flows.length}:${mirror ? 1 : 0}`)
   const pct = (yen: number, missing?: boolean) => formatShare(yen, base, missing) ?? '—'
   const width = useWidth(ref)
   const kous = flows.flatMap((flow, kanIndex) => flow.kou.map((kou, kouIndex) => ({ kanIndex, kouIndex, kou })))
   const { narrow, x0, x1, kans, kouNodes, total } = geometry(flows.map((flow) => Math.max(0, flow.kan.yen)), kous.map(({ kou }) => Math.max(0, kou.yen)), width, height)
   const cut = (name: string, n: number) => (Array.from(name).length > n ? `${Array.from(name).slice(0, n - 1).join('')}…` : name)
   const offsets = new Map<number, number>()
+  // 左右を逆にするときは、x を図の幅から引き、棒は右端から、文字の寄せも逆にする
+  const X = (x: number) => (mirror ? width - x : x)
+  const left = (x: number, w: number) => (mirror ? width - x - w : x)
+  const start = mirror ? 'end' : 'start'
+  const endAnchor = mirror ? 'start' : 'end'
+  const kanSide = mirror ? 'left' : 'right'
+  const kouSide = mirror ? 'right' : 'left'
   return (
     // 幅を測る前（最初の描画）から図の高さを取っておき、読み込み中の形から図に替わるときに下が動かないようにする
     <div ref={ref} className="relative w-full" style={{ height: total + HEAD }}>
       {width ? (
-        <svg width={width} height={total + HEAD} role="img" aria-label={`${levels.kan}から${levels.kou}への歳出の流れ`} data-seen={seen ? '' : undefined} data-still={still ? '' : undefined} className="flow-svg block font-sans">
+        <svg width={width} height={total + HEAD} role="img" aria-label={`${levels.kan}から${levels.kou}への${label}の流れ`} data-seen={seen ? '' : undefined} data-still={still ? '' : undefined} data-mirror={mirror ? '' : undefined} className="flow-svg block font-sans">
           <g aria-hidden="true" className="fill-muted-foreground" fontSize={11}>
-            <text x={x0 + BAR} y={11} textAnchor="end">{levels.kan}</text>
-            <text x={x1} y={11}>{levels.kou}</text>
+            <text x={X(x0 + BAR)} y={11} textAnchor={endAnchor}>{levels.kan}</text>
+            <text x={X(x1)} y={11} textAnchor={start}>{levels.kou}</text>
           </g>
           <g transform={`translate(0 ${HEAD})`}>
           {/* 帯はまとめて一枚で左から右へ伸ばす。帯ごとにずらすと先端がぎざぎざになり、切れて見えるため */}
@@ -142,7 +149,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
             const h = kouNodes[i]!.height
             offsets.set(kanIndex, offset + h)
             if (h <= 0) return null
-            const d = ribbon(x0 + BAR, source.y + offset, h, x1, kouNodes[i]!.y, h)
+            const d = ribbon(X(x0 + BAR), source.y + offset, h, X(x1), kouNodes[i]!.y, h)
             return (
               // oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで
               <path key={kou.id} d={d} className="fill-primary/20" />
@@ -153,23 +160,23 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
             const node = kans[i]!
             const label = narrow ? cut(flow.kan.name, 9) : flow.kan.name
             return (
-              <AmountTip key={flow.kan.id} name={flow.kan.name} yen={flow.kan.yen} missing={flow.kan.amountMissing} side="right" render={<g {...(onSelect ? pick(() => onSelect(i)) : {})} aria-label={`${flow.kan.name} ${amountText(flow.kan.yen, flow.kan.amountMissing)}${onSelect ? '、内訳を見る' : ''}`} />}>
-                <rect x={0} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
-                <rect x={x0} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
-                <text x={x0 + BAR / 2} y={node.y - 3} textAnchor="middle" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(flow.kan.yen, flow.kan.amountMissing)}</text>
-                <text x={x0 - GAP} y={node.y + Math.max(node.height, 2) / 2} dy="0.35em" data-name="" textAnchor="end" className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label}</text>
+              <AmountTip key={flow.kan.id} name={flow.kan.name} yen={flow.kan.yen} missing={flow.kan.amountMissing} side={kanSide} render={<g {...(onSelect ? pick(() => onSelect(i)) : {})} aria-label={`${flow.kan.name} ${amountText(flow.kan.yen, flow.kan.amountMissing)}${onSelect ? '、内訳を見る' : ''}`} />}>
+                <rect x={left(0, x0 + BAR)} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
+                <rect x={left(x0, BAR)} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
+                <text x={X(x0 + BAR / 2)} y={node.y - 3} textAnchor="middle" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(flow.kan.yen, flow.kan.amountMissing)}</text>
+                <text x={X(x0 - GAP)} y={node.y + Math.max(node.height, 2) / 2} dy="0.35em" data-name="" textAnchor={endAnchor} className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label}</text>
               </AmountTip>
             )
           })}
           {kous.map(({ kanIndex, kouIndex, kou }, i) => {
             const node = kouNodes[i]!
             return (
-              <AmountTip key={kou.id} name={kou.name} yen={kou.yen} missing={kou.amountMissing} side="left" render={<g {...(onSelect ? pick(() => onSelect(kanIndex, kouIndex)) : {})} aria-label={`${kou.name} ${amountText(kou.yen, kou.amountMissing)}${onSelect ? '、内訳を見る' : ''}`} />}>
+              <AmountTip key={kou.id} name={kou.name} yen={kou.yen} missing={kou.amountMissing} side={kouSide} render={<g {...(onSelect ? pick(() => onSelect(kanIndex, kouIndex)) : {})} aria-label={`${kou.name} ${amountText(kou.yen, kou.amountMissing)}${onSelect ? '、内訳を見る' : ''}`} />}>
                 <g className="flow-node" style={{ animationDelay: `${650 + Math.min(i * 12, 240)}ms` }}>
-                <rect x={x1} y={node.top} width={width - x1} height={node.size} className="fill-transparent" />
-                <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
-                <text x={x1 + BAR / 2} y={node.y - 3} textAnchor="middle" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(kou.yen, kou.amountMissing)}</text>
-                <text x={x1 + BAR + GAP} y={node.y + Math.max(node.height, 2) / 2} dy="0.35em" data-name="" className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
+                <rect x={left(x1, width - x1)} y={node.top} width={width - x1} height={node.size} className="fill-transparent" />
+                <rect x={left(x1, BAR)} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
+                <text x={X(x1 + BAR / 2)} y={node.y - 3} textAnchor="middle" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(kou.yen, kou.amountMissing)}</text>
+                <text x={X(x1 + BAR + GAP)} y={node.y + Math.max(node.height, 2) / 2} dy="0.35em" data-name="" textAnchor={start} className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
                   {cut(kou.name, Math.max(6, Math.floor((width - x1 - BAR - GAP - 8) / (narrow ? 10.5 : 12))))}
                 </text>
                 </g>

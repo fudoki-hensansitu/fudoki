@@ -36,9 +36,14 @@
   .flow-svg:not([data-seen]) :is(.flow-ribbon, .flow-node) { animation-play-state: paused; }
   /* タブへ移った直後に作り直した図（少し前に同じ図を描いた）は動かさない（sankey.tsx の useFlowSeen） */
   .flow-svg[data-still] :is(.flow-ribbon, .flow-node) { animation: none; }
+  /* 左右を逆にした全体図（歳入）は、帯が右（款）から左（項）へ伸びる */
+  .flow-svg[data-mirror] .flow-ribbon { animation-name: fudoki-flow-in-rev; }
+  .flow-svg[data-mirror] .flow-node { animation-name: fudoki-flow-node-rev; }
 }
 @keyframes fudoki-flow-in { from { clip-path: inset(0 100% 0 0); } to { clip-path: inset(0 0 0 0); } }
 @keyframes fudoki-flow-node { from { opacity: 0; transform: translateX(-6px); } }
+@keyframes fudoki-flow-in-rev { from { clip-path: inset(0 0 0 100%); } to { clip-path: inset(0 0 0 0); } }
+@keyframes fudoki-flow-node-rev { from { opacity: 0; transform: translateX(6px); } }
 
 /* サイドバーを閉じた人の、hydrate するまでの見た目（nav/nav-state.ts）。サーバーは開いて描くので、幅だけを閉じたときに揃えて本文がずれないようにし、
    開いたときの中身は隠す。hydrate したら nav/site-nav.tsx が data-nav-ready を付けて、shadcn の Sidebar の状態の見た目に戻す */
