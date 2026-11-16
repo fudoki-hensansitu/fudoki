@@ -213,6 +213,7 @@
     "under": "ingestion.generic.patterns.quirks.under",
     "unnumbered_shift": "ingestion.generic.patterns.quirks.unnumbered_shift",
     "unnumbered_abolished_names": "ingestion.generic.patterns.quirks.unnumbered_abolished_names",
+    "unnumbered_names_at_rule": "ingestion.generic.patterns.quirks.unnumbered_names_at_rule",
     "unopened_brackets": "ingestion.generic.patterns.quirks.unopened_brackets",
     "whole_name_notes": "ingestion.generic.patterns.quirks.whole_name_notes",
     "yen_split_amounts": "ingestion.generic.patterns.quirks.yen_split_amounts",
