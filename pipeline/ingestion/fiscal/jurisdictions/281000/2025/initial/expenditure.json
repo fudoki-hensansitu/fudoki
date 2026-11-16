@@ -3796,7 +3796,7 @@
     {
       "table_id": "kodomo-general-initial",
       "conversion_id": "kodomo-general-initial",
-      "input_fingerprint": "3df16231e346c9cf54a1d2528d3c7b6589505979474a2d30090545a2ce60ac82",
+      "input_fingerprint": "2d90c2c20b0a7b1c12025153ea878cc24d2bac427a9177b8df2543a6a45839da",
       "account": "一般会計",
       "division": "こども家庭局",
       "notes": [
@@ -3826,7 +3826,7 @@
     {
       "table_id": "kikaku-general-initial",
       "conversion_id": "kikaku-general-initial",
-      "input_fingerprint": "6edadaadb8ae99ab6c24e0ef2af2ab5aa89d1384cfd81affef667a6c1f5ac007",
+      "input_fingerprint": "cab5407c3c5795bad02a6023c97b2d933750b8952d471208b7bb2962ad4ff7f5",
       "account": "一般会計",
       "division": "企画調整局",
       "notes": [
@@ -3856,7 +3856,7 @@
     {
       "table_id": "chiiki-general-initial",
       "conversion_id": "chiiki-general-initial",
-      "input_fingerprint": "2b5c3f3ab2c0ec36a69def6ef7bd2a206733c7cbd21fbd4909f069b1f099a80d",
+      "input_fingerprint": "ded10edecbe9f160b9b704e28bfe47541077a0e7504915b507e15b8bcd30d2c7",
       "account": "一般会計",
       "division": "地域協働局",
       "notes": [
@@ -3886,7 +3886,7 @@
     {
       "table_id": "kikikanri-general-initial",
       "conversion_id": "kikikanri-general-initial",
-      "input_fingerprint": "6d5752452b17aa535480d47bf9516187c0069879d5e17017e07e4d3a6ce3b155",
+      "input_fingerprint": "15030b728873449db2e613e8bb931f08032b70eaf0ed352a53b0eef2b323906d",
       "account": "一般会計",
       "division": "危機管理局",
       "notes": [
@@ -3916,7 +3916,7 @@
     {
       "table_id": "kyoiku-general-initial",
       "conversion_id": "kyoiku-general-initial",
-      "input_fingerprint": "acc7787e63b5de0e466e24af49e7c1191f9ec7edf1423d6c41c48f7cbcc62d65",
+      "input_fingerprint": "adc3759d5e4c80896a7276a0acd4a6f80cbef4b13bd459ce3d9a954ec1964ede",
       "account": "一般会計",
       "division": "教育委員会事務局",
       "notes": [
@@ -3946,7 +3946,7 @@
     {
       "table_id": "kankyo-general-initial",
       "conversion_id": "kankyo-general-initial",
-      "input_fingerprint": "81fcb384a8e8e798414c0fda3adbe9ee60e7a2da42628328f94e5ed3fb77f1ff",
+      "input_fingerprint": "52f236e79dfeb7ecf69be6c13b4bfa290df004db320602e49b6f346ab741ef37",
       "account": "一般会計",
       "division": "環境局",
       "notes": [
@@ -3976,7 +3976,7 @@
     {
       "table_id": "kenko-general-initial",
       "conversion_id": "kenko-general-initial",
-      "input_fingerprint": "f6cb4ff549e4e56603dea93cc8d6f31e4f8ec566d33d14739bb39732e4121353",
+      "input_fingerprint": "48551b4870ffcd852226d7b64bb5e931b863e6835a80580ac7d3c5f10f8f9725",
       "account": "一般会計",
       "division": "健康局",
       "notes": [
@@ -4004,9 +4004,40 @@
       }
     },
     {
+      "table_id": "senkyo-general-initial",
+      "conversion_id": "senkyo-general-initial",
+      "input_fingerprint": "39c3560639dabcd9119c49894e9c39fbc153350d7555975e515463d3c2a1081a",
+      "account": "一般会計",
+      "division": "選挙管理委員会事務局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 4頁 から決めた。分冊のため款の和 1,624,084 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 8市長選挙費→7神戸市長選挙。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2025/initial/expenditure/senkyo-general-initial-nodes.parquet",
+          "sha256": "e49f19d5503497f065a3bde37c67fd0a41d329abbadb4181ff6c71705da74a4d",
+          "bytes": 4812
+        },
+        "row_count": 44
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2025/initial/expenditure/senkyo-general-initial-amounts.parquet",
+          "sha256": "da65121b2a5158a8afe6603e71da8fb47f29acc65509520c66692c3eba9e1311",
+          "bytes": 3688
+        },
+        "row_count": 62
+      }
+    },
+    {
       "table_id": "jinji-general-initial",
       "conversion_id": "jinji-general-initial",
-      "input_fingerprint": "4b4c311b35911ca044a1a0055482f6def447d632e4f59ed61da8bdcddf901523",
+      "input_fingerprint": "bf0b584b46cfa0a45d66f5fc13e065d7081966180e3851b2d29c59dbcb8aac2b",
       "account": "一般会計",
       "division": "人事委員会事務局",
       "notes": [
@@ -4036,7 +4067,7 @@
     {
       "table_id": "kansa-general-initial",
       "conversion_id": "kansa-general-initial",
-      "input_fingerprint": "ac16f8bcacaa01aa2635aa29266769d130067476403f9163c062c49c1958ee19",
+      "input_fingerprint": "a464b4802e52f5bed6b1ea4b7c8d91ec345065005feb2103d46e5a45c5621a27",
       "account": "一般会計",
       "division": "監査事務局",
       "notes": [
@@ -4066,7 +4097,7 @@
     {
       "table_id": "bunka-general-initial",
       "conversion_id": "bunka-general-initial",
-      "input_fingerprint": "1166373fc552ad39466a81fc5312ec8d63ffbb18c5cfcf904506208c5acfbdd1",
+      "input_fingerprint": "6b3e079eb3bea13a1c0ca51ba5a83dd36d18b92aea1a0063707be3a7e6366f90",
       "account": "一般会計",
       "division": "文化スポーツ局",
       "notes": [
@@ -4096,7 +4127,7 @@
     {
       "table_id": "fukushi-general-initial",
       "conversion_id": "fukushi-general-initial",
-      "input_fingerprint": "92c8369273bff0cd4c28a9d23783aa022fdee573b0d7004ea6f7f399506bad0d",
+      "input_fingerprint": "7cf7b29b327eabb598f137065d91c8c89eaf411f86e270e4c01e4e8709fd0961",
       "account": "一般会計",
       "division": "福祉局",
       "notes": [
@@ -4126,7 +4157,7 @@
     {
       "table_id": "fukushi-nhi-initial",
       "conversion_id": "fukushi-nhi-initial",
-      "input_fingerprint": "57b2b6ea831487d9b56e77af2db3d7b25100a8f4cfa101455a6d183300617c11",
+      "input_fingerprint": "5157e20dd840429c97da8e01bdc2f4fa2df78257cf058bf828786df485cdc0cd",
       "account": "国民健康保険事業費",
       "division": "福祉局",
       "notes": [
@@ -4156,7 +4187,7 @@
     {
       "table_id": "fukushi-care-initial",
       "conversion_id": "fukushi-care-initial",
-      "input_fingerprint": "be2b94d7a98653543792b4d69c87385f259d3f92250d48976f6a341d9fd5cc01",
+      "input_fingerprint": "6973fd35b995642d1f3df2b3e3892eb2535c6557a8d6bab0ca8ffac766eef435",
       "account": "介護保険事業費",
       "division": "福祉局",
       "notes": [
@@ -4186,7 +4217,7 @@
     {
       "table_id": "fukushi-elderly-initial",
       "conversion_id": "fukushi-elderly-initial",
-      "input_fingerprint": "1045a40353347ae9305184e1b8312a6bb38e735dbed49450d4186c2bcad72c41",
+      "input_fingerprint": "934119c8067bab705f146d441da3e5858c1e18d6db5abc8cb8cb732f8150e255",
       "account": "後期高齢者医療事業費",
       "division": "福祉局",
       "notes": [
@@ -4214,9 +4245,40 @@
       }
     },
     {
+      "table_id": "keizai-general-initial",
+      "conversion_id": "keizai-general-initial",
+      "input_fingerprint": "7939936fec0a471cc2f19501ea41c11d2d4ebf3aec0c2536032fd8fd6d27b589",
+      "account": "一般会計",
+      "division": "経済観光局",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
+        "金額の単位は printed 8頁 から決めた。分冊のため款の和 11,896,048 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 4援護諸費→3援護諸費・2水族園費→1水族園費。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2025/initial/expenditure/keizai-general-initial-nodes.parquet",
+          "sha256": "956a2ac00e83036a9964d042f575a33186c40268efbfb6a03dd22ecee93ee999",
+          "bytes": 13269
+        },
+        "row_count": 179
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/281000/2025/initial/expenditure/keizai-general-initial-amounts.parquet",
+          "sha256": "48bc61dbae011f17a8f046ef12cf66da39fd03a4b89edc9a18ca9f62cc6de7a0",
+          "bytes": 10351
+        },
+        "row_count": 245
+      }
+    },
+    {
       "table_id": "keizai-market-initial",
       "conversion_id": "keizai-market-initial",
-      "input_fingerprint": "0d61972b3ec7146e351251aeccdfb9a008e6db624ff2ea74d5119d1b650adefe",
+      "input_fingerprint": "d3f184bc1e53d1bc137e9cd315d58059b0e32f83a3119ee86cd08bb0baeeb589",
       "account": "市場事業費",
       "division": "経済観光局",
       "notes": [
@@ -4246,7 +4308,7 @@
     {
       "table_id": "keizai-meat-initial",
       "conversion_id": "keizai-meat-initial",
-      "input_fingerprint": "d6f9a8a95e086be8bb8ffffa89b26c3408f88958674a38c4ee54e78b968285d7",
+      "input_fingerprint": "f583b65f984996bc998c1f2f56b2f36e15498bbab053190bbb4c084b97369618",
       "account": "食肉センター事業費",
       "division": "経済観光局",
       "notes": [
@@ -4276,7 +4338,7 @@
     {
       "table_id": "kensetsu-general-initial",
       "conversion_id": "kensetsu-general-initial",
-      "input_fingerprint": "7e95ad316fbfc8e9bf44e7ef31a157a1bcd864c814804135e0ff52ea8a56c4ed",
+      "input_fingerprint": "49cc6dc2f75c5ef03fb985270ad10d5245dbb661129066effc0dbc5d59488abd",
       "account": "一般会計",
       "division": "建設局",
       "notes": [
@@ -4306,7 +4368,7 @@
     {
       "table_id": "kensetsu-parking-initial",
       "conversion_id": "kensetsu-parking-initial",
-      "input_fingerprint": "912f5d2f3573277a70e3459cbfc2e9f59230c76e18db02d789158aafe8c0a11b",
+      "input_fingerprint": "edbedccf837c09113e4f780aa194ee155f4b2b632ee75d1401de1409299f4210",
       "account": "駐車場事業費",
       "division": "建設局",
       "notes": [
@@ -4336,7 +4398,7 @@
     {
       "table_id": "kenchiku-general-initial",
       "conversion_id": "kenchiku-general-initial",
-      "input_fingerprint": "a144f0fa93b624ddc7122231db4aba276bb8a3aae0a5cacf7f30ffe3e5aa32cf",
+      "input_fingerprint": "4ae9f97d0b71c96137de8b8d9503b9573430c19fcbf5884f606989e98f48d1a2",
       "account": "一般会計",
       "division": "建築住宅局",
       "notes": [
@@ -4366,7 +4428,7 @@
     {
       "table_id": "kenchiku-housing-initial",
       "conversion_id": "kenchiku-housing-initial",
-      "input_fingerprint": "b3d3728f7536d8a5655753cd73fedfc339f1d0c1e66b5ff49d34790a97409936",
+      "input_fingerprint": "913090bac065d34d54833a9d6eba97edbf111910bfb55c9783bc32b2c5ebf52d",
       "account": "市営住宅事業費",
       "division": "建築住宅局",
       "notes": [
@@ -4396,7 +4458,7 @@
     {
       "table_id": "toshi-general-initial",
       "conversion_id": "toshi-general-initial",
-      "input_fingerprint": "eea008d7ec3ae5860c24783d652eaec0e741dfd4d38ff8bb2894d1d01c7b9799",
+      "input_fingerprint": "73a246d2b8be304caa602ef74071de51c29105959d2209fb3262db7ab82b7db7",
       "account": "一般会計",
       "division": "都市局",
       "notes": [
@@ -4426,7 +4488,7 @@
     {
       "table_id": "toshi-redevelopment-initial",
       "conversion_id": "toshi-redevelopment-initial",
-      "input_fingerprint": "41df106a14a27a3816a64f1f224c742e070b2d9780755a3e4e65b22242611d2f",
+      "input_fingerprint": "ea30e5d42724a2256a67158280f4b3bb467af89f54b52ceadfae5c8695258fc0",
       "account": "市街地再開発事業費",
       "division": "都市局",
       "notes": [
@@ -4456,7 +4518,7 @@
     {
       "table_id": "gyozai-general-initial",
       "conversion_id": "gyozai-general-initial",
-      "input_fingerprint": "965a0ee0f174be6e3123000780da7a8240ae323809e8e35d6a41b0c1a5750d5e",
+      "input_fingerprint": "5725cec1468ea46274e4703095bd256b3bf0eacb2f15ef6c60ce707d99cbdd3c",
       "account": "一般会計",
       "division": "市長室・行財政局",
       "notes": [
@@ -4487,7 +4549,7 @@
     {
       "table_id": "kowan-general-initial",
       "conversion_id": "kowan-general-initial",
-      "input_fingerprint": "4f8891b659794310989674232c3f7d8b5fdd33c9db2aff8041ec3ab99cf06ceb",
+      "input_fingerprint": "89072e64f6a7263cbb4cd9036b2de186f2cebacc2528685def6a1118668cd1d7",
       "account": "一般会計",
       "division": "港湾局",
       "notes": [
@@ -4517,7 +4579,7 @@
     {
       "table_id": "kaikei-general-initial",
       "conversion_id": "kaikei-general-initial",
-      "input_fingerprint": "5ece4fc93ea7d288227424e095f0c57b4bd556f3e4cfe4475968f3416ea9c6dc",
+      "input_fingerprint": "7ad412539f3d05950caaf032c1125c1dd72f6660c1853d9fe3dea0ff7d47e6af",
       "account": "一般会計",
       "division": "会計室",
       "notes": [
@@ -4547,7 +4609,7 @@
     {
       "table_id": "kenko-care-initial",
       "conversion_id": "kenko-care-initial",
-      "input_fingerprint": "ae16cea9fd43f2286452f6b4ce5d5bc64426c832f14578f06e6f1071fe48f882",
+      "input_fingerprint": "9ee928a47de2b8757e9950e4b9302ef41db05873140ffc6738c3e2229ed2b444",
       "account": "介護保険事業費",
       "division": "健康局",
       "notes": [
@@ -4572,68 +4634,6 @@
           "bytes": 1968
         },
         "row_count": 12
-      }
-    },
-    {
-      "table_id": "senkyo-general-initial",
-      "conversion_id": "senkyo-general-initial",
-      "input_fingerprint": "345c0f2b0ef7f13783a22b5a83ba2b58fc9c37f3cb0501a20725e0c5e97287d4",
-      "account": "一般会計",
-      "division": "選挙管理委員会事務局",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
-        "金額の単位は printed 4頁 から決めた。分冊のため款の和 1,624,084 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 8市長選挙費→7神戸市長選挙。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/281000/2025/initial/expenditure/senkyo-general-initial-nodes.parquet",
-          "sha256": "e49f19d5503497f065a3bde37c67fd0a41d329abbadb4181ff6c71705da74a4d",
-          "bytes": 4812
-        },
-        "row_count": 44
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/281000/2025/initial/expenditure/senkyo-general-initial-amounts.parquet",
-          "sha256": "da65121b2a5158a8afe6603e71da8fb47f29acc65509520c66692c3eba9e1311",
-          "bytes": 3688
-        },
-        "row_count": 62
-      }
-    },
-    {
-      "table_id": "keizai-general-initial",
-      "conversion_id": "keizai-general-initial",
-      "input_fingerprint": "7fdd4723f38733d87842557f1a2981e2e110c8d74d6e1fca9125e0ac91bdddd7",
-      "account": "一般会計",
-      "division": "経済観光局",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'説明': 'shape'}。",
-        "金額の単位は printed 8頁 から決めた。分冊のため款の和 11,896,048 と印字の歳出合計は照合していない（分冊をまたぐ照合は検査の外）。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "原画で確かめた名称の誤読 2 件を、管理 JSON の name_corrections で印字に直した: 4援護諸費→3援護諸費・2水族園費→1水族園費。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/281000/2025/initial/expenditure/keizai-general-initial-nodes.parquet",
-          "sha256": "956a2ac00e83036a9964d042f575a33186c40268efbfb6a03dd22ecee93ee999",
-          "bytes": 13269
-        },
-        "row_count": 179
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/281000/2025/initial/expenditure/keizai-general-initial-amounts.parquet",
-          "sha256": "48bc61dbae011f17a8f046ef12cf66da39fd03a4b89edc9a18ca9f62cc6de7a0",
-          "bytes": 10351
-        },
-        "row_count": 245
       }
     }
   ]
