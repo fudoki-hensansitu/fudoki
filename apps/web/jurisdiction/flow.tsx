@@ -8,14 +8,11 @@ import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
 import { Overview, OverviewSkeleton } from './sankey'
-import { formatShare, formatYen, type Drill, type FlowView, type Kou, type Moku, type YearTotal } from './types'
+import { formatShare, formatYen, type Drill, type Kou, type Moku, type YearTotal } from './types'
 
-/** 分け方ごとの段の呼び名。機能分類は COFOG の大分類・中分類のあとに自治体の科目（目）とその内訳（節・事業）が来る */
-const LEVELS: Record<FlowView, { kan: string; kou: string; moku: string; setsu: string }> = {
-  cofog: { kan: '大分類', kou: '中分類', moku: '科目', setsu: '内訳' },
-  kan: { kan: '款', kou: '項', moku: '目', setsu: '節' },
-}
-type Levels = (typeof LEVELS)[FlowView]
+/** 段の呼び名 */
+const LEVELS = { kan: '款', kou: '項', moku: '目', setsu: '節' }
+type Levels = typeof LEVELS
 
 const SETSU_SHOWN = 3
 /** 目の側に立てる棒の幅。項の棒（w-2）と揃える */
@@ -374,9 +371,9 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: D
 }
 
 /** 款→項の全体図と款ごとの内訳。流れ（目の内訳まで）は頁の loader が読んで渡す。flows が無い間は読み込み中の形を出す */
-/** tabs はカードの左上に置く切り替え（分け方）、summary は全体図のときに出す総額。view は分野（COFOG の枠）か款か */
-export function Flow({ flows: given, total: year, view = 'kan', tabs, summary, className, bare, onMoku, natural, onRetry }: { /** 款（分野）→ 項（中分類）→ 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; view?: FlowView; tabs?: React.ReactNode; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
-  const levels = LEVELS[view]
+/** tabs はカードの左上に置く見出し、summary は全体図のときに出す総額 */
+export function Flow({ flows: given, total: year, tabs, summary, className, bare, onMoku, natural, onRetry }: { /** 款 → 項 → 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; tabs?: React.ReactNode; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
+  const levels = LEVELS
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
   const overview = React.useRef<HTMLDivElement>(null)
