@@ -1,0 +1,959 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "132209",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "shape",
+                "quirks": {
+                  "bracketed_remainder": true
+                }
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            54,
+            145
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p137-r118",
+            "page": 137,
+            "observation_id": "p137:full-page:a0:result0:r118",
+            "observed": "1中央図書館管理費",
+            "reason": "物理137頁の備考の事業「1 中央図書館管理費」の読みの枠が左の罫線を越え、番号の位置を事業より左に読んだため、下の節を事業と同じ段に置いた。番号と名称の位置で読み直す。原画で確かめた。"
+          },
+          {
+            "id": "p89-r64",
+            "page": 89,
+            "observation_id": "p89:full-page:a0:result0:r64",
+            "observed": "091,600,6382保育園事業費",
+            "reason": "物理89頁の目「2 児童措置費」の節「12 委託料」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。左の 0 は事故繰越しの欄。原画で確かめた。"
+          },
+          {
+            "id": "p97-r85",
+            "page": 97,
+            "observation_id": "p97:full-page:a0:result0:r85",
+            "observed": "1,537,8941職員人件費",
+            "reason": "物理97頁の目「1 生活保護総務費」の節「1 報酬」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p130-r245",
+            "page": 130,
+            "observation_id": "p130:full-page:a0:result0:r245",
+            "observed": "7,496,2011中学校就学援助事業費",
+            "reason": "物理130頁の目「2 教育振興費」の節「19 扶助費」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p142-r99",
+            "page": 142,
+            "observation_id": "p142:full-page:a0:result0:r99",
+            "observed": "3,164,7731借入金利子支払費",
+            "reason": "物理142頁の目「2 利子」の節「22 償還金利子及び割引料」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p79-r112",
+            "page": 79,
+            "observation_id": "p79:full-page:a0:result0:r112",
+            "observed": "21住民税非課税世帯等に対する臨時特",
+            "reason": "物理79頁の備考の事業「21 住民税非課税世帯等に対する臨時特別給付金事業費」は名称を2行に印字し、2行目に金額を置く。節は次の頁へ続くため、2行目が1行目の続きであることを頁の中で確かめられない。名称を1行目にまとめて読み、2行目の金額をこの事業のものとする。原画で確かめた。"
+          },
+          {
+            "id": "p79-r113",
+            "page": 79,
+            "observation_id": "p79:full-page:a0:result0:r113",
+            "observed": "別給付金事業費",
+            "reason": "物理79頁の備考の事業「21 住民税非課税世帯等に対する臨時特別給付金事業費」は名称を2行に印字し、2行目に金額を置く。節は次の頁へ続くため、2行目が1行目の続きであることを頁の中で確かめられない。名称を1行目にまとめて読み、2行目の金額をこの事業のものとする。原画で確かめた。"
+          },
+          {
+            "id": "p105-r219",
+            "page": 105,
+            "observation_id": "p105:full-page:a0:result0:r219",
+            "observed": "4ホタル・トウキョウサンショウウオ",
+            "reason": "物理105頁の備考の事業「4 ホタル・トウキョウサンショウウオ飼育事業費」は名称を2行に印字し、2行目に金額を置く。節は次の頁へ続くため、2行目が1行目の続きであることを頁の中で確かめられない。名称を1行目にまとめて読み、2行目の金額をこの事業のものとする。原画で確かめた。"
+          },
+          {
+            "id": "p105-r220",
+            "page": 105,
+            "observation_id": "p105:full-page:a0:result0:r220",
+            "observed": "飼育事業費",
+            "reason": "物理105頁の備考の事業「4 ホタル・トウキョウサンショウウオ飼育事業費」は名称を2行に印字し、2行目に金額を置く。節は次の頁へ続くため、2行目が1行目の続きであることを頁の中で確かめられない。名称を1行目にまとめて読み、2行目の金額をこの事業のものとする。原画で確かめた。"
+          },
+          {
+            "id": "p80-r158",
+            "page": 80,
+            "observation_id": "p80:full-page:a0:result0:r158",
+            "observed": "10 需用費",
+            "reason": "物理80頁の備考の節「10 需用費」の読みの枠を、OCR が同じ頁の他の「10 需用費」より左に広げ、番号を事業と同じ段に置いた。番号は他の節と同じく右揃えに印字されている。原画で確かめた。"
+          }
+        ],
+        "name_readings": [
+          {
+            "id": "p137-1-code",
+            "page": 137,
+            "box": [
+              933.5,
+              609.1,
+              939.5,
+              618.9
+            ],
+            "name": "1",
+            "reason": "物理137頁の備考の事業「1 中央図書館管理費」の読みの枠が左の罫線を越え、番号の位置を事業より左に読んだため、下の節を事業と同じ段に置いた。番号と名称の位置で読み直す。原画で確かめた。"
+          },
+          {
+            "id": "p137-1-name",
+            "page": 137,
+            "box": [
+              943.8,
+              609.1,
+              1013.2,
+              618.9
+            ],
+            "name": "中央図書館管理費",
+            "reason": "物理137頁の備考の事業「1 中央図書館管理費」の読みの枠が左の罫線を越え、番号の位置を事業より左に読んだため、下の節を事業と同じ段に置いた。番号と名称の位置で読み直す。原画で確かめた。"
+          },
+          {
+            "id": "p89-2-code",
+            "page": 89,
+            "box": [
+              933.5,
+              183.1,
+              939.5,
+              192.7
+            ],
+            "name": "2",
+            "reason": "物理89頁の目「2 児童措置費」の節「12 委託料」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。左の 0 は事故繰越しの欄。原画で確かめた。"
+          },
+          {
+            "id": "p89-2-name",
+            "page": 89,
+            "box": [
+              942.9,
+              183.1,
+              996.4,
+              192.7
+            ],
+            "name": "保育園事業費",
+            "reason": "物理89頁の目「2 児童措置費」の節「12 委託料」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。左の 0 は事故繰越しの欄。原画で確かめた。"
+          },
+          {
+            "id": "p97-1-code",
+            "page": 97,
+            "box": [
+              933.5,
+              242.2,
+              939.5,
+              250.8
+            ],
+            "name": "1",
+            "reason": "物理97頁の目「1 生活保護総務費」の節「1 報酬」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p97-1-name",
+            "page": 97,
+            "box": [
+              943.4,
+              242.2,
+              987.8,
+              250.8
+            ],
+            "name": "職員人件費",
+            "reason": "物理97頁の目「1 生活保護総務費」の節「1 報酬」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p130-1-code",
+            "page": 130,
+            "box": [
+              933.5,
+              683.0,
+              939.5,
+              692.6
+            ],
+            "name": "1",
+            "reason": "物理130頁の目「2 教育振興費」の節「19 扶助費」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p130-1-name",
+            "page": 130,
+            "box": [
+              944.1,
+              683.0,
+              1030.0,
+              692.6
+            ],
+            "name": "中学校就学援助事業費",
+            "reason": "物理130頁の目「2 教育振興費」の節「19 扶助費」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p142-1-code",
+            "page": 142,
+            "box": [
+              933.5,
+              286.1,
+              939.5,
+              295.2
+            ],
+            "name": "1",
+            "reason": "物理142頁の目「2 利子」の節「22 償還金利子及び割引料」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p142-1-name",
+            "page": 142,
+            "box": [
+              943.1,
+              286.1,
+              1014.4,
+              295.2
+            ],
+            "name": "借入金利子支払費",
+            "reason": "物理142頁の目「2 利子」の節「22 償還金利子及び割引料」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p79-21-code",
+            "page": 79,
+            "box": [
+              929.5,
+              713.3,
+              939.5,
+              721.2
+            ],
+            "name": "21",
+            "reason": "物理79頁の備考の事業「21 住民税非課税世帯等に対する臨時特別給付金事業費」は名称を2行に印字し、2行目に金額を置く。節は次の頁へ続くため、2行目が1行目の続きであることを頁の中で確かめられない。名称を1行目にまとめて読み、2行目の金額をこの事業のものとする。原画で確かめた。"
+          },
+          {
+            "id": "p79-21-name",
+            "page": 79,
+            "box": [
+              942.9,
+              713.3,
+              1084.2,
+              721.2
+            ],
+            "name": "住民税非課税世帯等に対する臨時特別給付金事業費",
+            "reason": "物理79頁の備考の事業「21 住民税非課税世帯等に対する臨時特別給付金事業費」は名称を2行に印字し、2行目に金額を置く。節は次の頁へ続くため、2行目が1行目の続きであることを頁の中で確かめられない。名称を1行目にまとめて読み、2行目の金額をこの事業のものとする。原画で確かめた。"
+          },
+          {
+            "id": "p105-4-code",
+            "page": 105,
+            "box": [
+              933.5,
+              712.3,
+              939.5,
+              721.2
+            ],
+            "name": "4",
+            "reason": "物理105頁の備考の事業「4 ホタル・トウキョウサンショウウオ飼育事業費」は名称を2行に印字し、2行目に金額を置く。節は次の頁へ続くため、2行目が1行目の続きであることを頁の中で確かめられない。名称を1行目にまとめて読み、2行目の金額をこの事業のものとする。原画で確かめた。"
+          },
+          {
+            "id": "p105-4-name",
+            "page": 105,
+            "box": [
+              947.7,
+              712.3,
+              1081.1,
+              721.2
+            ],
+            "name": "ホタル・トウキョウサンショウウオ飼育事業費",
+            "reason": "物理105頁の備考の事業「4 ホタル・トウキョウサンショウウオ飼育事業費」は名称を2行に印字し、2行目に金額を置く。節は次の頁へ続くため、2行目が1行目の続きであることを頁の中で確かめられない。名称を1行目にまとめて読み、2行目の金額をこの事業のものとする。原画で確かめた。"
+          },
+          {
+            "id": "p80-10-code",
+            "page": 80,
+            "box": [
+              938.2,
+              741.6,
+              947.0,
+              751.4
+            ],
+            "name": "10",
+            "reason": "物理80頁の備考の節「10 需用費」の読みの枠を、OCR が同じ頁の他の「10 需用費」より左に広げ、番号を事業と同じ段に置いた。番号は他の節と同じく右揃えに印字されている。原画で確かめた。"
+          },
+          {
+            "id": "p80-10-name",
+            "page": 80,
+            "box": [
+              952.0,
+              741.6,
+              979.1,
+              751.4
+            ],
+            "name": "需用費",
+            "reason": "物理80頁の備考の節「10 需用費」の読みの枠を、OCR が同じ頁の他の「10 需用費」より左に広げ、番号を事業と同じ段に置いた。番号は他の節と同じく右揃えに印字されている。原画で確かめた。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p89-accident-zero",
+            "page": 89,
+            "boxes": [
+              [
+                870.7,
+                183.1,
+                875.0,
+                192.7
+              ]
+            ],
+            "amount": "0",
+            "reason": "物理89頁の目「2 児童措置費」の節「12 委託料」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。左の 0 は事故繰越しの欄。原画で確かめた。"
+          },
+          {
+            "id": "p89-unused",
+            "page": 89,
+            "boxes": [
+              [
+                876.5,
+                183.1,
+                926.0,
+                192.7
+              ]
+            ],
+            "amount": "91,600,638",
+            "reason": "物理89頁の目「2 児童措置費」の節「12 委託料」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。左の 0 は事故繰越しの欄。原画で確かめた。"
+          },
+          {
+            "id": "p97-unused",
+            "page": 97,
+            "boxes": [
+              [
+                887.9,
+                242.2,
+                926.0,
+                250.8
+              ]
+            ],
+            "amount": "1,537,894",
+            "reason": "物理97頁の目「1 生活保護総務費」の節「1 報酬」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p130-unused",
+            "page": 130,
+            "boxes": [
+              [
+                888.4,
+                683.0,
+                926.0,
+                692.6
+              ]
+            ],
+            "amount": "7,496,201",
+            "reason": "物理130頁の目「2 教育振興費」の節「19 扶助費」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p142-unused",
+            "page": 142,
+            "boxes": [
+              [
+                888.2,
+                286.1,
+                926.0,
+                295.2
+              ]
+            ],
+            "amount": "3,164,773",
+            "reason": "物理142頁の目「2 利子」の節「22 償還金利子及び割引料」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-ocr-1",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63
+            ]
+          },
+          "sha256": "2abd635201b9dc3a03dbbe521bbf93eed607a90b29828e63d277ec55b4e12101",
+          "bytes": 5346890
+        },
+        {
+          "id": "general-settlement-ocr-2",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73
+            ]
+          },
+          "sha256": "e279e5b6a0be74a85ddb2aea0172daee4f85b6f457d09a45891ab67f3c2d3822",
+          "bytes": 4742373
+        },
+        {
+          "id": "general-settlement-ocr-3",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83
+            ]
+          },
+          "sha256": "ead1bb222dcc05e1368587470ba5417b588bbcab344455e8024fd38483ecf872",
+          "bytes": 4598827
+        },
+        {
+          "id": "general-settlement-ocr-4",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92,
+              93
+            ]
+          },
+          "sha256": "ea5c79de752f49bc270b9125f6f4628ba3404be7988ff3a916d38f8ab80ed8a4",
+          "bytes": 4722832
+        },
+        {
+          "id": "general-settlement-ocr-5",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102,
+              103
+            ]
+          },
+          "sha256": "6ca22e15645f3b69134ba65e4cf05bd6c4412778cd4e2f5373b9e1bfe6b7457f",
+          "bytes": 4527663
+        },
+        {
+          "id": "general-settlement-ocr-6",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112,
+              113
+            ]
+          },
+          "sha256": "54357dfac5548d2c191f192a1c82590591da97a9ada85d19475de98a1d3abcc4",
+          "bytes": 5017591
+        },
+        {
+          "id": "general-settlement-ocr-7",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122,
+              123
+            ]
+          },
+          "sha256": "7b9677eea99a1b27738488c59aea73b46c980e8f89703426c859bf31ea2f6044",
+          "bytes": 5832242
+        },
+        {
+          "id": "general-settlement-ocr-8",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131,
+              132,
+              133
+            ]
+          },
+          "sha256": "9b0e6b2b56099d0d3e42af85b848a240488df80c7289f458e7c24e14492dd7b9",
+          "bytes": 5163179
+        },
+        {
+          "id": "general-settlement-ocr-9",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              134,
+              135,
+              136,
+              137,
+              138,
+              139,
+              140,
+              141,
+              142,
+              143
+            ]
+          },
+          "sha256": "44279f468ca0277d72f7d7aa147e7297cb432ca32f6bf1ecf90e26dab5942ce6",
+          "bytes": 4595183
+        },
+        {
+          "id": "general-settlement-ocr-10",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              144,
+              145
+            ]
+          },
+          "sha256": "8679b8ace18115f9aff94d22e507409efc0ca36b800e020ce4d2fb1d8f0cbb93",
+          "bytes": 611413
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "shape"
+              },
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            160,
+            169
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p161-r79",
+            "page": 161,
+            "observation_id": "p161:full-page:a0:result0:r79",
+            "observed": "1,272,57710需用費",
+            "reason": "物理161頁の目「1 徴税費」の節「11 役務費」の不用額は備考の罫線に接して印字され、OCR がその右の備考の節の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p162-r208",
+            "page": 162,
+            "observation_id": "p162:full-page:a0:result0:r208",
+            "observed": "048,924,9741一般被保険者高額療養費",
+            "reason": "物理162頁の目「1 一般被保険者高額療養費」の節「18 負担金補助及び交付金」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。左の 0 は事故繰越しの欄。原画で確かめた。"
+          },
+          {
+            "id": "p164-r72",
+            "page": 164,
+            "observation_id": "p164:full-page:a0:result0:r72",
+            "observed": "4,413,2751傷病手当金",
+            "reason": "物理164頁の目「1 傷病手当金」の節「18 負担金補助及び交付金」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          }
+        ],
+        "name_readings": [
+          {
+            "id": "p161-10-code",
+            "page": 161,
+            "box": [
+              938.2,
+              212.2,
+              947.0,
+              222.7
+            ],
+            "name": "10",
+            "reason": "物理161頁の目「1 徴税費」の節「11 役務費」の不用額は備考の罫線に接して印字され、OCR がその右の備考の節の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p161-10-name",
+            "page": 161,
+            "box": [
+              951.0,
+              212.2,
+              977.2,
+              222.7
+            ],
+            "name": "需用費",
+            "reason": "物理161頁の目「1 徴税費」の節「11 役務費」の不用額は備考の罫線に接して印字され、OCR がその右の備考の節の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p162-1-code",
+            "page": 162,
+            "box": [
+              933.5,
+              682.3,
+              939.5,
+              693.6
+            ],
+            "name": "1",
+            "reason": "物理162頁の目「1 一般被保険者高額療養費」の節「18 負担金補助及び交付金」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。左の 0 は事故繰越しの欄。原画で確かめた。"
+          },
+          {
+            "id": "p162-1-name",
+            "page": 162,
+            "box": [
+              944.6,
+              682.3,
+              1040.1,
+              693.6
+            ],
+            "name": "一般被保険者高額療養費",
+            "reason": "物理162頁の目「1 一般被保険者高額療養費」の節「18 負担金補助及び交付金」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。左の 0 は事故繰越しの欄。原画で確かめた。"
+          },
+          {
+            "id": "p164-1-code",
+            "page": 164,
+            "box": [
+              933.5,
+              183.6,
+              939.5,
+              192.0
+            ],
+            "name": "1",
+            "reason": "物理164頁の目「1 傷病手当金」の節「18 負担金補助及び交付金」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p164-1-name",
+            "page": 164,
+            "box": [
+              943.6,
+              183.6,
+              987.0,
+              192.0
+            ],
+            "name": "傷病手当金",
+            "reason": "物理164頁の目「1 傷病手当金」の節「18 負担金補助及び交付金」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p161-unused",
+            "page": 161,
+            "boxes": [
+              [
+                887.5,
+                212.2,
+                926.0,
+                222.7
+              ]
+            ],
+            "amount": "1,272,577",
+            "reason": "物理161頁の目「1 徴税費」の節「11 役務費」の不用額は備考の罫線に接して印字され、OCR がその右の備考の節の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          },
+          {
+            "id": "p162-accident-zero",
+            "page": 162,
+            "boxes": [
+              [
+                870.7,
+                682.3,
+                875.0,
+                693.6
+              ]
+            ],
+            "amount": "0",
+            "reason": "物理162頁の目「1 一般被保険者高額療養費」の節「18 負担金補助及び交付金」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。左の 0 は事故繰越しの欄。原画で確かめた。"
+          },
+          {
+            "id": "p162-unused",
+            "page": 162,
+            "boxes": [
+              [
+                876.5,
+                682.3,
+                926.0,
+                693.6
+              ]
+            ],
+            "amount": "48,924,974",
+            "reason": "物理162頁の目「1 一般被保険者高額療養費」の節「18 負担金補助及び交付金」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。左の 0 は事故繰越しの欄。原画で確かめた。"
+          },
+          {
+            "id": "p164-unused",
+            "page": 164,
+            "boxes": [
+              [
+                888.4,
+                183.6,
+                926.0,
+                192.0
+              ]
+            ],
+            "amount": "4,413,275",
+            "reason": "物理164頁の目「1 傷病手当金」の節「18 負担金補助及び交付金」の不用額は備考の罫線に接して印字され、OCR がその右の備考の事業の番号まで1つの読みにまとめた。不用額・番号・名称に分けて読む。原画で確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-settlement-ocr-1",
+          "origin_sha256": "526e949da64d5b388465cf8a2ca7527b48f96e91a45d320e80c76d7f862cbb65",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              160,
+              161,
+              162,
+              163,
+              164,
+              165,
+              166,
+              167,
+              168,
+              169
+            ]
+          },
+          "sha256": "c01c091cb88fe32585ce3e5354746d73c5b0d46c0fb331ec80daeaa0df60313b",
+          "bytes": 3734850
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure",
+      "conversion_id": "general-settlement",
+      "input_fingerprint": "25058e8f9f100e0d4029e5a3d55cd3b811288eadde5ee287ff5b197ae73b1eba",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
+        "金額の単位は printed 81頁・carried 11頁 から決めた。款の和 37,929,215,366 と印字の「歳出合計」37,929,215,366 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（789 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 50 件（p57:full-page:a0:result0:r189・p57:full-page:a0:result0:r189:w5・p59:full-page:a0:result0:r188・p59:full-page:a0:result0:r188:w10・p61:full-page:a0:result0:r59・p61:full-page:a0:result0:r59・p61:full-page:a0:result0:r59・p61:full-page:a0:result0:r59:w12・p61:full-page:a0:result0:r59:w16・p61:full-page:a0:result0:r59:w20・p62:full-page:a0:result0:r53・p62:full-page:a0:result0:r53:w5・p63:full-page:a0:result0:r176・p63:full-page:a0:result0:r176:w5・p75:full-page:a0:result0:r93・p75:full-page:a0:result0:r93:w3・p78:full-page:a0:result0:r56・p78:full-page:a0:result0:r56:w0・p78:full-page:a0:result0:r61・p78:full-page:a0:result0:r61:w14・p84:full-page:a0:result0:r146・p84:full-page:a0:result0:r146:w8・p89:full-page:a0:result0:r122・p89:full-page:a0:result0:r122:w3・p92:full-page:a0:result0:r111・p92:full-page:a0:result0:r111:w3・p118:full-page:a0:result0:r91・p118:full-page:a0:result0:r91:w4・p119:full-page:a0:result0:r60・p119:full-page:a0:result0:r60・p119:full-page:a0:result0:r60:w8・p119:full-page:a0:result0:r60:w10・p123:full-page:a0:result0:r210・p123:full-page:a0:result0:r210:w3・p124:full-page:a0:result0:r43・p124:full-page:a0:result0:r43:w3・p124:full-page:a0:result0:r102・p124:full-page:a0:result0:r102:w6・p125:full-page:a0:result0:r99・p125:full-page:a0:result0:r99・p125:full-page:a0:result0:r99:w4・p125:full-page:a0:result0:r99:w8・p125:full-page:a0:result0:r111・p125:full-page:a0:result0:r111:w6・p127:full-page:a0:result0:r40・p127:full-page:a0:result0:r40:w3・p127:full-page:a0:result0:r102・p127:full-page:a0:result0:r102:w9・p133:full-page:a0:result0:r105・p133:full-page:a0:result0:r105:w6）・举→挙 4 件（p73:full-page:a0:result0:r128・p73:full-page:a0:result0:r128:w2・p74:full-page:a0:result0:r2・p74:full-page:a0:result0:r2:w1）・减→減 184 件（p54:full-page:a0:result0:r35・p54:full-page:a0:result0:r35:w3・p55:full-page:a0:result0:r31・p55:full-page:a0:result0:r31:w3・p56:full-page:a0:result0:r34・p56:full-page:a0:result0:r34:w3・p57:full-page:a0:result0:r34・p57:full-page:a0:result0:r34:w3・p58:full-page:a0:result0:r36・p58:full-page:a0:result0:r36:w3・p59:full-page:a0:result0:r36・p59:full-page:a0:result0:r36:w3・p60:full-page:a0:result0:r37・p60:full-page:a0:result0:r37:w3・p61:full-page:a0:result0:r35・p61:full-page:a0:result0:r35:w3・p62:full-page:a0:result0:r32・p62:full-page:a0:result0:r32:w3・p63:full-page:a0:result0:r31・p63:full-page:a0:result0:r31:w3・p64:full-page:a0:result0:r34・p64:full-page:a0:result0:r34:w3・p65:full-page:a0:result0:r35・p65:full-page:a0:result0:r35:w3・p66:full-page:a0:result0:r35・p66:full-page:a0:result0:r35:w3・p67:full-page:a0:result0:r34・p67:full-page:a0:result0:r34:w3・p68:full-page:a0:result0:r36・p68:full-page:a0:result0:r36:w3・p69:full-page:a0:result0:r32・p69:full-page:a0:result0:r32:w3・p70:full-page:a0:result0:r32・p70:full-page:a0:result0:r32:w3・p71:full-page:a0:result0:r34・p71:full-page:a0:result0:r34:w3・p72:full-page:a0:result0:r34・p72:full-page:a0:result0:r34:w3・p73:full-page:a0:result0:r36・p73:full-page:a0:result0:r36:w3・p74:full-page:a0:result0:r37・p74:full-page:a0:result0:r37:w3・p75:full-page:a0:result0:r35・p75:full-page:a0:result0:r35:w3・p76:full-page:a0:result0:r35・p76:full-page:a0:result0:r35:w3・p77:full-page:a0:result0:r31・p77:full-page:a0:result0:r31:w3・p78:full-page:a0:result0:r35・p78:full-page:a0:result0:r35:w3・p79:full-page:a0:result0:r33・p79:full-page:a0:result0:r33:w3・p80:full-page:a0:result0:r34・p80:full-page:a0:result0:r34:w3・p81:full-page:a0:result0:r36・p81:full-page:a0:result0:r36:w3・p82:full-page:a0:result0:r34・p82:full-page:a0:result0:r34:w3・p83:full-page:a0:result0:r34・p83:full-page:a0:result0:r34:w3・p84:full-page:a0:result0:r33・p84:full-page:a0:result0:r33:w3・p85:full-page:a0:result0:r36・p85:full-page:a0:result0:r36:w3・p86:full-page:a0:result0:r34・p86:full-page:a0:result0:r34:w3・p87:full-page:a0:result0:r36・p87:full-page:a0:result0:r36:w3・p88:full-page:a0:result0:r33・p88:full-page:a0:result0:r33:w3・p89:full-page:a0:result0:r33・p89:full-page:a0:result0:r33:w3・p90:full-page:a0:result0:r35・p90:full-page:a0:result0:r35:w3・p91:full-page:a0:result0:r34・p91:full-page:a0:result0:r34:w3・p92:full-page:a0:result0:r32・p92:full-page:a0:result0:r32:w3・p93:full-page:a0:result0:r33・p93:full-page:a0:result0:r33:w3・p94:full-page:a0:result0:r36・p94:full-page:a0:result0:r36:w3・p95:full-page:a0:result0:r35・p95:full-page:a0:result0:r35:w3・p96:full-page:a0:result0:r32・p96:full-page:a0:result0:r32:w3・p97:full-page:a0:result0:r35・p97:full-page:a0:result0:r35:w3・p98:full-page:a0:result0:r34・p98:full-page:a0:result0:r34:w3・p99:full-page:a0:result0:r36・p99:full-page:a0:result0:r36:w3・p100:full-page:a0:result0:r33・p100:full-page:a0:result0:r33:w3・p101:full-page:a0:result0:r36・p101:full-page:a0:result0:r36:w3・p102:full-page:a0:result0:r35・p102:full-page:a0:result0:r35:w3・p103:full-page:a0:result0:r35・p103:full-page:a0:result0:r35:w3・p104:full-page:a0:result0:r37・p104:full-page:a0:result0:r37:w3・p105:full-page:a0:result0:r37・p105:full-page:a0:result0:r37:w3・p106:full-page:a0:result0:r32・p106:full-page:a0:result0:r32:w3・p107:full-page:a0:result0:r35・p107:full-page:a0:result0:r35:w3・p108:full-page:a0:result0:r34・p108:full-page:a0:result0:r34:w3・p109:full-page:a0:result0:r37・p109:full-page:a0:result0:r37:w3・p110:full-page:a0:result0:r36・p110:full-page:a0:result0:r36:w3・p111:full-page:a0:result0:r37・p111:full-page:a0:result0:r37:w3・p112:full-page:a0:result0:r36・p112:full-page:a0:result0:r36:w3・p113:full-page:a0:result0:r34・p113:full-page:a0:result0:r34:w3・p114:full-page:a0:result0:r34・p114:full-page:a0:result0:r34:w3・p115:full-page:a0:result0:r33・p115:full-page:a0:result0:r33:w3・p116:full-page:a0:result0:r34・p116:full-page:a0:result0:r34:w3・p117:full-page:a0:result0:r33・p117:full-page:a0:result0:r33:w3・p118:full-page:a0:result0:r35・p118:full-page:a0:result0:r35:w3・p119:full-page:a0:result0:r33・p119:full-page:a0:result0:r33:w3・p120:full-page:a0:result0:r33・p120:full-page:a0:result0:r33:w3・p121:full-page:a0:result0:r36・p121:full-page:a0:result0:r36:w3・p122:full-page:a0:result0:r34・p122:full-page:a0:result0:r34:w3・p123:full-page:a0:result0:r34・p123:full-page:a0:result0:r34:w3・p124:full-page:a0:result0:r35・p124:full-page:a0:result0:r35:w3・p125:full-page:a0:result0:r36・p125:full-page:a0:result0:r36:w3・p126:full-page:a0:result0:r35・p126:full-page:a0:result0:r35:w3・p127:full-page:a0:result0:r35・p127:full-page:a0:result0:r35:w3・p128:full-page:a0:result0:r36・p128:full-page:a0:result0:r36:w3・p129:full-page:a0:result0:r37・p129:full-page:a0:result0:r37:w3・p130:full-page:a0:result0:r36・p130:full-page:a0:result0:r36:w3・p131:full-page:a0:result0:r36・p131:full-page:a0:result0:r36:w3・p132:full-page:a0:result0:r33・p132:full-page:a0:result0:r33:w3・p133:full-page:a0:result0:r35・p133:full-page:a0:result0:r35:w3・p134:full-page:a0:result0:r35・p134:full-page:a0:result0:r35:w3・p135:full-page:a0:result0:r35・p135:full-page:a0:result0:r35:w3・p136:full-page:a0:result0:r35・p136:full-page:a0:result0:r35:w3・p137:full-page:a0:result0:r32・p137:full-page:a0:result0:r32:w3・p138:full-page:a0:result0:r34・p138:full-page:a0:result0:r34:w3・p139:full-page:a0:result0:r37・p139:full-page:a0:result0:r37:w3・p140:full-page:a0:result0:r33・p140:full-page:a0:result0:r33:w3・p141:full-page:a0:result0:r34・p141:full-page:a0:result0:r34:w3・p142:full-page:a0:result0:r35・p142:full-page:a0:result0:r35:w3・p143:full-page:a0:result0:r34・p143:full-page:a0:result0:r34:w3・p144:full-page:a0:result0:r31・p144:full-page:a0:result0:r31:w3・p145:full-page:a0:result0:r36・p145:full-page:a0:result0:r36:w3）・增→増 184 件（p54:full-page:a0:result0:r35・p54:full-page:a0:result0:r35:w2・p55:full-page:a0:result0:r31・p55:full-page:a0:result0:r31:w2・p56:full-page:a0:result0:r34・p56:full-page:a0:result0:r34:w2・p57:full-page:a0:result0:r34・p57:full-page:a0:result0:r34:w2・p58:full-page:a0:result0:r36・p58:full-page:a0:result0:r36:w2・p59:full-page:a0:result0:r36・p59:full-page:a0:result0:r36:w2・p60:full-page:a0:result0:r37・p60:full-page:a0:result0:r37:w2・p61:full-page:a0:result0:r35・p61:full-page:a0:result0:r35:w2・p62:full-page:a0:result0:r32・p62:full-page:a0:result0:r32:w2・p63:full-page:a0:result0:r31・p63:full-page:a0:result0:r31:w2・p64:full-page:a0:result0:r34・p64:full-page:a0:result0:r34:w2・p65:full-page:a0:result0:r35・p65:full-page:a0:result0:r35:w2・p66:full-page:a0:result0:r35・p66:full-page:a0:result0:r35:w2・p67:full-page:a0:result0:r34・p67:full-page:a0:result0:r34:w2・p68:full-page:a0:result0:r36・p68:full-page:a0:result0:r36:w2・p69:full-page:a0:result0:r32・p69:full-page:a0:result0:r32:w2・p70:full-page:a0:result0:r32・p70:full-page:a0:result0:r32:w2・p71:full-page:a0:result0:r34・p71:full-page:a0:result0:r34:w2・p72:full-page:a0:result0:r34・p72:full-page:a0:result0:r34:w2・p73:full-page:a0:result0:r36・p73:full-page:a0:result0:r36:w2・p74:full-page:a0:result0:r37・p74:full-page:a0:result0:r37:w2・p75:full-page:a0:result0:r35・p75:full-page:a0:result0:r35:w2・p76:full-page:a0:result0:r35・p76:full-page:a0:result0:r35:w2・p77:full-page:a0:result0:r31・p77:full-page:a0:result0:r31:w2・p78:full-page:a0:result0:r35・p78:full-page:a0:result0:r35:w2・p79:full-page:a0:result0:r33・p79:full-page:a0:result0:r33:w2・p80:full-page:a0:result0:r34・p80:full-page:a0:result0:r34:w2・p81:full-page:a0:result0:r36・p81:full-page:a0:result0:r36:w2・p82:full-page:a0:result0:r34・p82:full-page:a0:result0:r34:w2・p83:full-page:a0:result0:r34・p83:full-page:a0:result0:r34:w2・p84:full-page:a0:result0:r33・p84:full-page:a0:result0:r33:w2・p85:full-page:a0:result0:r36・p85:full-page:a0:result0:r36:w2・p86:full-page:a0:result0:r34・p86:full-page:a0:result0:r34:w2・p87:full-page:a0:result0:r36・p87:full-page:a0:result0:r36:w2・p88:full-page:a0:result0:r33・p88:full-page:a0:result0:r33:w2・p89:full-page:a0:result0:r33・p89:full-page:a0:result0:r33:w2・p90:full-page:a0:result0:r35・p90:full-page:a0:result0:r35:w2・p91:full-page:a0:result0:r34・p91:full-page:a0:result0:r34:w2・p92:full-page:a0:result0:r32・p92:full-page:a0:result0:r32:w2・p93:full-page:a0:result0:r33・p93:full-page:a0:result0:r33:w2・p94:full-page:a0:result0:r36・p94:full-page:a0:result0:r36:w2・p95:full-page:a0:result0:r35・p95:full-page:a0:result0:r35:w2・p96:full-page:a0:result0:r32・p96:full-page:a0:result0:r32:w2・p97:full-page:a0:result0:r35・p97:full-page:a0:result0:r35:w2・p98:full-page:a0:result0:r34・p98:full-page:a0:result0:r34:w2・p99:full-page:a0:result0:r36・p99:full-page:a0:result0:r36:w2・p100:full-page:a0:result0:r33・p100:full-page:a0:result0:r33:w2・p101:full-page:a0:result0:r36・p101:full-page:a0:result0:r36:w2・p102:full-page:a0:result0:r35・p102:full-page:a0:result0:r35:w2・p103:full-page:a0:result0:r35・p103:full-page:a0:result0:r35:w2・p104:full-page:a0:result0:r37・p104:full-page:a0:result0:r37:w2・p105:full-page:a0:result0:r37・p105:full-page:a0:result0:r37:w2・p106:full-page:a0:result0:r32・p106:full-page:a0:result0:r32:w2・p107:full-page:a0:result0:r35・p107:full-page:a0:result0:r35:w2・p108:full-page:a0:result0:r34・p108:full-page:a0:result0:r34:w2・p109:full-page:a0:result0:r37・p109:full-page:a0:result0:r37:w2・p110:full-page:a0:result0:r36・p110:full-page:a0:result0:r36:w2・p111:full-page:a0:result0:r37・p111:full-page:a0:result0:r37:w2・p112:full-page:a0:result0:r36・p112:full-page:a0:result0:r36:w2・p113:full-page:a0:result0:r34・p113:full-page:a0:result0:r34:w2・p114:full-page:a0:result0:r34・p114:full-page:a0:result0:r34:w2・p115:full-page:a0:result0:r33・p115:full-page:a0:result0:r33:w2・p116:full-page:a0:result0:r34・p116:full-page:a0:result0:r34:w2・p117:full-page:a0:result0:r33・p117:full-page:a0:result0:r33:w2・p118:full-page:a0:result0:r35・p118:full-page:a0:result0:r35:w2・p119:full-page:a0:result0:r33・p119:full-page:a0:result0:r33:w2・p120:full-page:a0:result0:r33・p120:full-page:a0:result0:r33:w2・p121:full-page:a0:result0:r36・p121:full-page:a0:result0:r36:w2・p122:full-page:a0:result0:r34・p122:full-page:a0:result0:r34:w2・p123:full-page:a0:result0:r34・p123:full-page:a0:result0:r34:w2・p124:full-page:a0:result0:r35・p124:full-page:a0:result0:r35:w2・p125:full-page:a0:result0:r36・p125:full-page:a0:result0:r36:w2・p126:full-page:a0:result0:r35・p126:full-page:a0:result0:r35:w2・p127:full-page:a0:result0:r35・p127:full-page:a0:result0:r35:w2・p128:full-page:a0:result0:r36・p128:full-page:a0:result0:r36:w2・p129:full-page:a0:result0:r37・p129:full-page:a0:result0:r37:w2・p130:full-page:a0:result0:r36・p130:full-page:a0:result0:r36:w2・p131:full-page:a0:result0:r36・p131:full-page:a0:result0:r36:w2・p132:full-page:a0:result0:r33・p132:full-page:a0:result0:r33:w2・p133:full-page:a0:result0:r35・p133:full-page:a0:result0:r35:w2・p134:full-page:a0:result0:r35・p134:full-page:a0:result0:r35:w2・p135:full-page:a0:result0:r35・p135:full-page:a0:result0:r35:w2・p136:full-page:a0:result0:r35・p136:full-page:a0:result0:r35:w2・p137:full-page:a0:result0:r32・p137:full-page:a0:result0:r32:w2・p138:full-page:a0:result0:r34・p138:full-page:a0:result0:r34:w2・p139:full-page:a0:result0:r37・p139:full-page:a0:result0:r37:w2・p140:full-page:a0:result0:r33・p140:full-page:a0:result0:r33:w2・p141:full-page:a0:result0:r34・p141:full-page:a0:result0:r34:w2・p142:full-page:a0:result0:r35・p142:full-page:a0:result0:r35:w2・p143:full-page:a0:result0:r34・p143:full-page:a0:result0:r34:w2・p144:full-page:a0:result0:r31・p144:full-page:a0:result0:r31:w2・p145:full-page:a0:result0:r36・p145:full-page:a0:result0:r36:w2）・徵→徴 6 件（p70:full-page:a0:result0:r75・p70:full-page:a0:result0:r75:w2・p71:full-page:a0:result0:r177・p71:full-page:a0:result0:r177:w2・p144:full-page:a0:result0:r87・p144:full-page:a0:result0:r87:w5）・查→査 32 件（p56:full-page:a0:result0:r116・p56:full-page:a0:result0:r116:w9・p60:full-page:a0:result0:r62・p60:full-page:a0:result0:r62:w4・p60:full-page:a0:result0:r145・p60:full-page:a0:result0:r145:w3・p60:full-page:a0:result0:r147・p60:full-page:a0:result0:r147:w4・p74:full-page:a0:result0:r174・p74:full-page:a0:result0:r174:w5・p75:full-page:a0:result0:r2・p75:full-page:a0:result0:r2:w3・p75:full-page:a0:result0:r59・p75:full-page:a0:result0:r59・p75:full-page:a0:result0:r59:w5・p75:full-page:a0:result0:r59:w7・p75:full-page:a0:result0:r93・p75:full-page:a0:result0:r93:w9・p75:full-page:a0:result0:r130・p75:full-page:a0:result0:r130:w6・p75:full-page:a0:result0:r158・p75:full-page:a0:result0:r158:w7・p76:full-page:a0:result0:r2・p76:full-page:a0:result0:r2:w3・p76:full-page:a0:result0:r48・p76:full-page:a0:result0:r48:w3・p76:full-page:a0:result0:r59・p76:full-page:a0:result0:r59:w3・p76:full-page:a0:result0:r110・p76:full-page:a0:result0:r110:w2・p79:full-page:a0:result0:r37・p79:full-page:a0:result0:r37:w12）・涉→渉 2 件（p56:full-page:a0:result0:r60・p56:full-page:a0:result0:r60:w2）・產→産 28 件（p56:full-page:a0:result0:r116・p56:full-page:a0:result0:r116:w5・p60:full-page:a0:result0:r2・p60:full-page:a0:result0:r2:w1・p60:full-page:a0:result0:r104・p60:full-page:a0:result0:r104:w2・p101:full-page:a0:result0:r101・p101:full-page:a0:result0:r101:w2・p109:full-page:a0:result0:r85・p109:full-page:a0:result0:r85:w1・p110:full-page:a0:result0:r81・p110:full-page:a0:result0:r81:w1・p110:full-page:a0:result0:r236・p110:full-page:a0:result0:r236:w1・p111:full-page:a0:result0:r84・p111:full-page:a0:result0:r84:w1・p112:full-page:a0:result0:r111・p112:full-page:a0:result0:r111:w1・p112:full-page:a0:result0:r159・p112:full-page:a0:result0:r159:w1・p112:full-page:a0:result0:r207・p112:full-page:a0:result0:r207:w1・p112:full-page:a0:result0:r212・p112:full-page:a0:result0:r212:w1・p116:full-page:a0:result0:r98・p116:full-page:a0:result0:r98:w4・p116:full-page:a0:result0:r110・p116:full-page:a0:result0:r110:w4）・继→継 32 件（p64:full-page:a0:result0:r18・p64:full-page:a0:result0:r18:w0・p69:full-page:a0:result0:r17・p69:full-page:a0:result0:r17:w0・p71:full-page:a0:result0:r19・p71:full-page:a0:result0:r19:w0・p79:full-page:a0:result0:r17・p79:full-page:a0:result0:r17:w0・p84:full-page:a0:result0:r17・p84:full-page:a0:result0:r17:w0・p89:full-page:a0:result0:r17・p89:full-page:a0:result0:r17:w0・p91:full-page:a0:result0:r18・p91:full-page:a0:result0:r18:w0・p92:full-page:a0:result0:r17・p92:full-page:a0:result0:r17:w0・p93:full-page:a0:result0:r19・p93:full-page:a0:result0:r19:w0・p99:full-page:a0:result0:r23・p99:full-page:a0:result0:r23:w0・p103:full-page:a0:result0:r17・p103:full-page:a0:result0:r17:w0・p108:full-page:a0:result0:r19・p108:full-page:a0:result0:r19:w0・p111:full-page:a0:result0:r19・p111:full-page:a0:result0:r19:w0・p115:full-page:a0:result0:r17・p115:full-page:a0:result0:r17:w0・p117:full-page:a0:result0:r17・p117:full-page:a0:result0:r17:w0・p121:full-page:a0:result0:r20・p121:full-page:a0:result0:r20:w0）・费→費 40 件（p54:full-page:a0:result0:r165・p54:full-page:a0:result0:r165:w5・p56:full-page:a0:result0:r86・p56:full-page:a0:result0:r86:w5・p57:full-page:a0:result0:r110・p57:full-page:a0:result0:r110:w4・p64:full-page:a0:result0:r147・p64:full-page:a0:result0:r147:w4・p66:full-page:a0:result0:r78・p66:full-page:a0:result0:r78:w11・p68:full-page:a0:result0:r78・p68:full-page:a0:result0:r78:w5・p71:full-page:a0:result0:r132・p71:full-page:a0:result0:r132:w5・p86:full-page:a0:result0:r163・p86:full-page:a0:result0:r163:w4・p95:full-page:a0:result0:r92・p95:full-page:a0:result0:r92:w5・p100:full-page:a0:result0:r150・p100:full-page:a0:result0:r150:w5・p105:full-page:a0:result0:r114・p105:full-page:a0:result0:r114:w4・p107:full-page:a0:result0:r134・p107:full-page:a0:result0:r134:w5・p113:full-page:a0:result0:r172・p113:full-page:a0:result0:r172:w5・p118:full-page:a0:result0:r147・p118:full-page:a0:result0:r147:w5・p123:full-page:a0:result0:r127・p123:full-page:a0:result0:r127:w5・p127:full-page:a0:result0:r81・p127:full-page:a0:result0:r81:w5・p134:full-page:a0:result0:r76・p134:full-page:a0:result0:r76:w4・p135:full-page:a0:result0:r131・p135:full-page:a0:result0:r131:w5・p137:full-page:a0:result0:r84・p137:full-page:a0:result0:r84:w4・p137:full-page:a0:result0:r88・p137:full-page:a0:result0:r88:w5）・额→額 38 件（p55:full-page:a0:result0:r19・p55:full-page:a0:result0:r19:w4・p63:full-page:a0:result0:r20・p63:full-page:a0:result0:r20:w4・p70:full-page:a0:result0:r20・p70:full-page:a0:result0:r20:w4・p77:full-page:a0:result0:r20・p77:full-page:a0:result0:r20:w4・p77:full-page:a0:result0:r27・p77:full-page:a0:result0:r27:w0・p83:full-page:a0:result0:r21・p83:full-page:a0:result0:r21:w4・p84:full-page:a0:result0:r21・p84:full-page:a0:result0:r21:w4・p86:full-page:a0:result0:r21・p86:full-page:a0:result0:r21:w4・p89:full-page:a0:result0:r21・p89:full-page:a0:result0:r21:w4・p96:full-page:a0:result0:r20・p96:full-page:a0:result0:r20:w4・p100:full-page:a0:result0:r21・p100:full-page:a0:result0:r21:w4・p107:full-page:a0:result0:r22・p107:full-page:a0:result0:r22:w4・p108:full-page:a0:result0:r23・p108:full-page:a0:result0:r23:w4・p114:full-page:a0:result0:r21・p114:full-page:a0:result0:r21:w4・p116:full-page:a0:result0:r21・p116:full-page:a0:result0:r21:w4・p117:full-page:a0:result0:r21・p117:full-page:a0:result0:r21:w4・p132:full-page:a0:result0:r21・p132:full-page:a0:result0:r21:w4・p140:full-page:a0:result0:r22・p140:full-page:a0:result0:r22:w4・p140:full-page:a0:result0:r23・p140:full-page:a0:result0:r23:w4）・齡→齢 6 件（p77:full-page:a0:result0:r126・p77:full-page:a0:result0:r126:w5・p81:full-page:a0:result0:r136・p81:full-page:a0:result0:r136:w3・p82:full-page:a0:result0:r37・p82:full-page:a0:result0:r37:w2）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/settlement/expenditure/general-expenditure-nodes.parquet",
+          "sha256": "4f5e6dbb827cbd45aa0fdab063556c2e35d217d2cac2863e19d48093d98c2eed",
+          "bytes": 111767
+        },
+        "row_count": 3884
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/settlement/expenditure/general-expenditure-amounts.parquet",
+          "sha256": "ef5e145191329d3f0a3f7929a31408c9b0ee1e8043b5fc1348a58a4d1995a514",
+          "bytes": 131380
+        },
+        "row_count": 9112
+      }
+    },
+    {
+      "table_id": "national-health-insurance-expenditure",
+      "conversion_id": "national-health-insurance-settlement",
+      "input_fingerprint": "51bd5614ba13abc55bb51c6cea75b6a2ade1f722b2ccb31b9402962f158b38ca",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'shape', '節': 'indent'}。",
+        "金額の単位は printed 9頁・default 1頁 から決めた。款の和 8,414,282,441 と印字の「歳出合計」8,414,282,441 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（44 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 10 件（p162:full-page:a0:result0:r156・p162:full-page:a0:result0:r156:w4・p162:full-page:a0:result0:r175・p162:full-page:a0:result0:r175:w4・p163:full-page:a0:result0:r208・p163:full-page:a0:result0:r208:w4・p163:full-page:a0:result0:r220・p163:full-page:a0:result0:r220:w4・p163:full-page:a0:result0:r240・p163:full-page:a0:result0:r240:w4）・减→減 18 件（p160:full-page:a0:result0:r36・p160:full-page:a0:result0:r36:w3・p161:full-page:a0:result0:r36・p161:full-page:a0:result0:r36:w3・p162:full-page:a0:result0:r36・p162:full-page:a0:result0:r36:w3・p164:full-page:a0:result0:r37・p164:full-page:a0:result0:r37:w3・p165:full-page:a0:result0:r35・p165:full-page:a0:result0:r35:w3・p166:full-page:a0:result0:r36・p166:full-page:a0:result0:r36:w3・p167:full-page:a0:result0:r36・p167:full-page:a0:result0:r36:w3・p168:full-page:a0:result0:r36・p168:full-page:a0:result0:r36:w3・p169:full-page:a0:result0:r36・p169:full-page:a0:result0:r36:w3）・增→増 18 件（p160:full-page:a0:result0:r36・p160:full-page:a0:result0:r36:w2・p161:full-page:a0:result0:r36・p161:full-page:a0:result0:r36:w2・p162:full-page:a0:result0:r36・p162:full-page:a0:result0:r36:w2・p164:full-page:a0:result0:r37・p164:full-page:a0:result0:r37:w2・p165:full-page:a0:result0:r35・p165:full-page:a0:result0:r35:w2・p166:full-page:a0:result0:r36・p166:full-page:a0:result0:r36:w2・p167:full-page:a0:result0:r36・p167:full-page:a0:result0:r36:w2・p168:full-page:a0:result0:r36・p168:full-page:a0:result0:r36:w2・p169:full-page:a0:result0:r36・p169:full-page:a0:result0:r36:w2）・徵→徴 6 件（p161:full-page:a0:result0:r42・p161:full-page:a0:result0:r42:w2・p161:full-page:a0:result0:r53・p161:full-page:a0:result0:r53:w2・p161:full-page:a0:result0:r71・p161:full-page:a0:result0:r71:w2）・查→査 12 件（p162:full-page:a0:result0:r156・p162:full-page:a0:result0:r156:w3・p162:full-page:a0:result0:r175・p162:full-page:a0:result0:r175:w3・p167:full-page:a0:result0:r2・p167:full-page:a0:result0:r2:w5・p167:full-page:a0:result0:r62・p167:full-page:a0:result0:r62:w0・p167:full-page:a0:result0:r73・p167:full-page:a0:result0:r73:w1・p167:full-page:a0:result0:r82・p167:full-page:a0:result0:r82:w6）・產→産 2 件（p163:full-page:a0:result0:r129・p163:full-page:a0:result0:r129:w3）・继→継 6 件（p165:full-page:a0:result0:r19・p165:full-page:a0:result0:r19:w0・p167:full-page:a0:result0:r19・p167:full-page:a0:result0:r19:w0・p168:full-page:a0:result0:r20・p168:full-page:a0:result0:r20:w0）・费→費 2 件（p160:full-page:a0:result0:r145・p160:full-page:a0:result0:r145:w5）・额→額 4 件（p162:full-page:a0:result0:r23・p162:full-page:a0:result0:r23:w4・p165:full-page:a0:result0:r24・p165:full-page:a0:result0:r24:w4）・齡→齢 6 件（p165:full-page:a0:result0:r86・p165:full-page:a0:result0:r86:w5・p165:full-page:a0:result0:r110・p165:full-page:a0:result0:r110:w1・p165:full-page:a0:result0:r119・p165:full-page:a0:result0:r119:w11）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
+          "sha256": "503b96892f479092b53723dd8ea53995fd9f37611e512de6820f4b0ad799047a",
+          "bytes": 11473
+        },
+        "row_count": 191
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/132209/2023/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
+          "sha256": "e591c2044d34240f37b5fff0b98353c978be3b3b0958573cf0d8ac13b58ddb23",
+          "bytes": 15062
+        },
+        "row_count": 887
+      }
+    }
+  ]
+}
