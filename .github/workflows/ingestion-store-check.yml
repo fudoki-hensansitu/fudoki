@@ -57,6 +57,11 @@ jobs:
           path: pipeline/.cache
           key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
           restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
+      # Actions の cache が無い回は、R2 の束（main の sync job が置く）から戻す。足りない表は build が1個ずつ取る
+      - if: steps.build-restore.outputs.cache-matched-key == ''
+        run: bun run --cwd pipeline ingestion:bundle restore
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       - uses: actions/cache/restore@v6
         with:
           path: pipeline/.cache/objects/fiscal/source-selection

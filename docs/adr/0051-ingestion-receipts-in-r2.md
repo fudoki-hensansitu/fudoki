@@ -22,4 +22,4 @@ PR の check は走った時点の main で照合する。その後に変換器�
 
 - Git の diff で表の中身の変化は見えなくなる。store の summary（placed・refreshed・drifted）と refresh-check の報告で見る。
 - `tables[]` を持つ管理 JSON は読めなくなる（`manifest.read` が止める）。開いている取り込み PR は main を取り込み、`tables[]` を消す。
-- R2 の取り込みの bucket に書くのは、main の store と refresh-check の書く job の2つになる。
+- R2 の取り込みの bucket に書くのは、main の store と refresh-check の書く job の2つになる。表と受領書の一覧に限ればこの2つで、build の入力の束（`fiscal/ingestion/bundles/`、[CI の待ちの設計](../prd/ci-flow/dd.md) の2）は main の sync job が置く。
