@@ -203,14 +203,14 @@ def cut_at(word: Word, edge: float) -> list[Word]:
 def setsu_lines(page: Page, words: list[Word], top: float, bottom: float, left: float, right: float,
                 fallback: list[float] = ()) -> list[list[Word]]:
     """Each cell of the 節区分 frame as one entry: its words in reading order. A scan whose cell edges are too short
-    to be found divides the cells where the 目's frame divides its amounts (`fallback`), and a word read across an
-    edge is cut there."""
+    to be found divides the cells where the 目's frame divides its amounts (`fallback`). A word a scan reads across
+    an edge is cut there (`2,869,7562` over `2,869,756 | 2 支援金分現`, 中央区 R7 歳入)."""
     verticals, horizontals = dividing(page, top, bottom, left, right)
     if not verticals and fallback:
         verticals = list(fallback)
-        for edge in verticals:
-            words = [part for w in words
-                     for part in (cut_at(w, edge) if w.x0 + 3 < edge < w.x1 - 3 else [w])]
+    for edge in verticals:
+        words = [part for w in words
+                 for part in (cut_at(w, edge) if w.x0 + 3 < edge < w.x1 - 3 else [w])]
     edges = [left, *verticals, right]
     bands = [top, *horizontals, bottom]
     cells = []
@@ -535,9 +535,17 @@ def place_page(page: Page, columns: Columns | None):
                 for word in rest:
                     in_names = (word.x0 + word.x1) / 2 < columns.inner[0]
                     placed.put(word, offset if in_names else shift, heads.get(id(word)))
-                first_row = min(w.y0 for w in rest) if first_row is None else first_row
+                # The 節 rows start on the 目's row, the line of its amounts: laid out beside the `(款)` / `(項)`
+                # rows above it, or the first line of the 目's wrapped name, a 節 would be read under the 款 or 項.
+                if first_row is None and (row_level == '目' or row_level not in columns.levels) and any(
+                        (w.x0 + w.x1) / 2 >= columns.inner[0] for w in rest):
+                    first_row = min(heads.get(id(w), w.y0) for w in rest)
                 bottoms.append(max(w.y1 for w in rest))
         row_top = first_row if first_row is not None else header_bottom + 4
+        # The 節 rows start below the header: a scan reads the first row's name a little above the header's
+        # bottom (the `千円` marks under the headings run down beside it, 中央区 R7 歳入), and a 節 laid out above
+        # the card's first row would be read before its 款・項・目.
+        row_top = max(row_top, header_bottom + 1)
         for name, b_top, b_bottom, words, _ in card:
             if name == 'funds':
                 left_out.append(((left, b_top, right, b_bottom), words))
