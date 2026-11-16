@@ -143,11 +143,433 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r6kodomo.pdf",
+              "sha256": "1a6a23bbca1e134b84f2de309ae4e3faf073383a8054b89ab4ed09367fa8ca9b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 18,
+                      "end": 27
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r06kikaku.pdf",
+              "sha256": "fe056179e4ffd888227ac043723c460a7f0c397f357c546ced2223351a6502d6",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 13,
+                      "end": 15
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r06chiikikyodo.pdf",
+              "sha256": "1dceef8c16ce86884b8d8666688612b786291297cc7b6e47030a8462d5991a52",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 11
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r6kikikanri.pdf",
+              "sha256": "56c75cd26eeb53ec90032c0918413023f5e45440289c88a259d4b0d85ca4eeca",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 12,
+                      "end": 12
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r6kyouiku.pdf",
+              "sha256": "841a8d2ea914c3c9e251d42612138b3b1df72dd703ee9410df52a5bf46c31cec",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 16,
+                      "end": 24
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r6kankyou.pdf",
+              "sha256": "2e2ad22808d639cef94f97587b18baa91074db1a4941f144f741993f9ae2fb53",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 17,
+                      "end": 21
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r6kenko.pdf",
+              "sha256": "c17adb9430d8ff511c4b0753c736647e8c3872021e6f08eb2df330dcd430ca4a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 19,
+                      "end": 28
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 29,
+                      "end": 29
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r06gyouseii.pdf",
+              "sha256": "f60ff1be199fad230edf17729ad798c5852d1a5b0e7a5fc0524da8ed6668b256",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 8
+                    },
+                    {
+                      "start": 12,
+                      "end": 13
+                    },
+                    {
+                      "start": 16,
+                      "end": 17
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r6bunka.pdf",
+              "sha256": "99348bff99ecfacd11de1075aa16021643c99ce7aad5491d16d2f893ee7be62f",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 16,
+                      "end": 18
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r6fukushi.pdf",
+              "sha256": "24e3df75124a65f0dcc16a82269f25ccb29c77e28056a1635256a78e12b45b60",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 16,
+                      "end": 27
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 29,
+                      "end": 34
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 37,
+                      "end": 42
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 44,
+                      "end": 46
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r6keizai.pdf",
+              "sha256": "735c99c3264079dd191cb251c5cbaa949895efde7c6dafd4445918dc33fbc688",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 21,
+                      "end": 32
+                    }
+                  ]
+                },
+                {
+                  "account": "市場事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 37,
+                      "end": 38
+                    }
+                  ]
+                },
+                {
+                  "account": "食肉センター事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 43,
+                      "end": 44
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r6kensetsu.pdf",
+              "sha256": "33fe3be1b336f58cefc7b8f742da5a1878755140bdab1eb8dee1b8a4e215eba0",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 27,
+                      "end": 37
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 42,
+                      "end": 42
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r06kenju.pdf",
+              "sha256": "ecd12c1445da8c815a48e6448b2ebabe162202ae8be2c1a869fbc46a2eb5eed9",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 13,
+                      "end": 15
+                    }
+                  ]
+                },
+                {
+                  "account": "市営住宅事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 24,
+                      "end": 27
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r06toshi.pdf",
+              "sha256": "c3cc0dce0ecb29b5807b5662d512aad57bcc86c97782ea563cb8c9caf73f37c4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 45,
+                      "end": 52
+                    }
+                  ]
+                },
+                {
+                  "account": "市街地再開発事業費",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 59,
+                      "end": 62
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r06shichogyouzai.pdf",
+              "sha256": "e76cb812c5feb257f9705e469b822ba63f0f881ab01896652fa4854fe5bc9919",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 27,
+                      "end": 34
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r6kouwan.pdf",
+              "sha256": "b177c0221103524b49837e027ad38cab257e3ffa813166be8e1a88063e599c6c",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 42,
+                      "end": 42
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r06kaikei.pdf",
+              "sha256": "c2efa54f5f0a24e0ec6b5b67eed78182704fa6c560689189d36228aded46d86e",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 6,
+                      "end": 6
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.kobe.lg.jp/documents/68836/r6shoubou.pdf",
+              "sha256": "6cbf4214bf5871bb35c96b715b648388661b325ee09e49bbf23a410d23dab18b",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "expenditure",
+                  "pages": [
+                    {
+                      "start": 10,
+                      "end": 11
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和6年度当初予算の歳出明細。予算・決算のページ（a61436/shise/financial/yosankessan.html）に掲載の「令和6年度神戸市各会計予算に関する説明書」1冊（物理577頁、文字 PDF）を選定（2026-11-15確認）。各会計の歳入歳出予算事項別明細書の「３ 歳出」は、項ごとに（款）（項）の題字を枠の上に印字し、枠は款・項・目、本年度・前年度・比較、本年度の財源内訳（特定財源・一般財源）、節（区分・金額）、説明の欄を持つ。単位は千円（題字の行の「（単位：千円）」）。説明の欄は「・市税システム関連経費」のような経費の説明で金額を持たない。会計は一般会計と特別会計11（市場事業費・食肉センター事業費・国民健康保険事業費・母子父子寡婦福祉資金貸付事業費・駐車場事業費・市街地再開発事業費・市営住宅事業費・介護保険事業費・後期高齢者医療事業費・空港整備事業費・公債費）で、目次と予算第1〜12号議案が一致する。公営企業会計（下水道・産業団地整備・港湾・自動車・高速鉄道・水道・工業用水道、予算第13〜19号）は様式が違い対象外。同じページの「各会計予算」（予算書本体）は第1表の款・項だけで目を持たず不採用。事業の名前と金額は、市会の予算特別委員会に局が出した局別の「予算説明書」（giann_etc/r8/yosantokubetsu.html ほか）の歳出予算の説明に載るが、局の所管分の抜粋なので会計全体の科目には使わない。歳入は未確認。",
+      "reason": "令和6年度当初予算の歳出明細。予算・決算のページ（a61436/shise/financial/yosankessan.html）に掲載の「令和6年度神戸市各会計予算に関する説明書」1冊（物理577頁、文字 PDF）を選定（2026-11-15確認）。各会計の歳入歳出予算事項別明細書の「３ 歳出」は、項ごとに（款）（項）の題字を枠の上に印字し、枠は款・項・目、本年度・前年度・比較、本年度の財源内訳（特定財源・一般財源）、節（区分・金額）、説明の欄を持つ。単位は千円（題字の行の「（単位：千円）」）。説明の欄は「・市税システム関連経費」のような経費の説明で金額を持たない。会計は一般会計と特別会計11（市場事業費・食肉センター事業費・国民健康保険事業費・母子父子寡婦福祉資金貸付事業費・駐車場事業費・市街地再開発事業費・市営住宅事業費・介護保険事業費・後期高齢者医療事業費・空港整備事業費・公債費）で、目次と予算第1〜12号議案が一致する。公営企業会計（下水道・産業団地整備・港湾・自動車・高速鉄道・水道・工業用水道、予算第13〜19号）は様式が違い対象外。同じページの「各会計予算」（予算書本体）は第1表の款・項だけで目を持たず不採用。事業の名前と金額は、市会の予算特別委員会に局が出した局別の「予算説明書」（giann_etc/r8/yosantokubetsu.html ほか）の歳出予算の説明に載るが、局の所管分の抜粋なので会計全体の科目には使わない。局別の予算説明書（giann_etc/r6/yosantokubetsu.html、局ごとの冊、文字 PDF、2026-11-16確認）は、局の所管分の款・項・目（所属の表、ADR 0030）と、目の説明の事業を読むために18冊を加える。市長室と行財政局は1冊（市長室・行財政局の所属の表）、行政委員会の冊は選挙管理委員会事務局・人事委員会事務局・監査事務局の3局を頁で分ける。公営企業（水道・交通）の冊、空港整備事業費と公債費の頁は対象外。歳入は未確認。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -157,9 +579,99 @@
             "key": "fiscal/source-selection/281000/2024/initial.pdf",
             "sha256": "0a17f0a61859c920079d0c785022a50c2031293394d50ca407d7787eeaf43519",
             "final_url": "https://www.city.kobe.lg.jp/documents/48584/2024yosannsetumeisyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-1.pdf",
+            "sha256": "1a6a23bbca1e134b84f2de309ae4e3faf073383a8054b89ab4ed09367fa8ca9b",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r6kodomo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-18.pdf",
+            "sha256": "fe056179e4ffd888227ac043723c460a7f0c397f357c546ced2223351a6502d6",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r06kikaku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-2.pdf",
+            "sha256": "1dceef8c16ce86884b8d8666688612b786291297cc7b6e47030a8462d5991a52",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r06chiikikyodo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-6.pdf",
+            "sha256": "56c75cd26eeb53ec90032c0918413023f5e45440289c88a259d4b0d85ca4eeca",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r6kikikanri.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-9.pdf",
+            "sha256": "841a8d2ea914c3c9e251d42612138b3b1df72dd703ee9410df52a5bf46c31cec",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r6kyouiku.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-4.pdf",
+            "sha256": "2e2ad22808d639cef94f97587b18baa91074db1a4941f144f741993f9ae2fb53",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r6kankyou.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-12.pdf",
+            "sha256": "c17adb9430d8ff511c4b0753c736647e8c3872021e6f08eb2df330dcd430ca4a",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r6kenko.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-17.pdf",
+            "sha256": "f60ff1be199fad230edf17729ad798c5852d1a5b0e7a5fc0524da8ed6668b256",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r06gyouseii.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-10.pdf",
+            "sha256": "99348bff99ecfacd11de1075aa16021643c99ce7aad5491d16d2f893ee7be62f",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r6bunka.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-3.pdf",
+            "sha256": "24e3df75124a65f0dcc16a82269f25ccb29c77e28056a1635256a78e12b45b60",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r6fukushi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-8.pdf",
+            "sha256": "735c99c3264079dd191cb251c5cbaa949895efde7c6dafd4445918dc33fbc688",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r6keizai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-5.pdf",
+            "sha256": "33fe3be1b336f58cefc7b8f742da5a1878755140bdab1eb8dee1b8a4e215eba0",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r6kensetsu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-16.pdf",
+            "sha256": "ecd12c1445da8c815a48e6448b2ebabe162202ae8be2c1a869fbc46a2eb5eed9",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r06kenju.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-14.pdf",
+            "sha256": "c3cc0dce0ecb29b5807b5662d512aad57bcc86c97782ea563cb8c9caf73f37c4",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r06toshi.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-15.pdf",
+            "sha256": "e76cb812c5feb257f9705e469b822ba63f0f881ab01896652fa4854fe5bc9919",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r06shichogyouzai.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-11.pdf",
+            "sha256": "b177c0221103524b49837e027ad38cab257e3ffa813166be8e1a88063e599c6c",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r6kouwan.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-13.pdf",
+            "sha256": "c2efa54f5f0a24e0ec6b5b67eed78182704fa6c560689189d36228aded46d86e",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r06kaikei.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/281000/2024/initial-7.pdf",
+            "sha256": "6cbf4214bf5871bb35c96b715b648388661b325ee09e49bbf23a410d23dab18b",
+            "final_url": "https://www.city.kobe.lg.jp/documents/68836/r6shoubou.pdf"
           }
         ],
-        "archived_at": "2026-11-15T15:08:44.419Z"
+        "archived_at": "2026-11-16T00:35:32.952Z"
       }
     },
     {
