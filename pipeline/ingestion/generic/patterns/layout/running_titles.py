@@ -306,6 +306,8 @@ def full_rules(page) -> list[float]:
                                    and r.x0 <= left + reach and last + 10 < r.x1 < right - reach)})
     if whole:
         return whole
+    if (spread := document_quirk('spread_stacked_tables')) is not None:
+        return spread.module.full_rules(horizontals, layout._joined, FULL_REACH)
     joined = []
     for y in sorted({r.y0 for r in horizontals}):
         pieces = sorted((r.x0, r.x1) for r in horizontals if abs(r.y0 - y) <= 0.5)

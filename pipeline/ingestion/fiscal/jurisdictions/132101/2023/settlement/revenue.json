@@ -1,0 +1,376 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132101",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "957b9e55a85cb48d4c7c7b8f04dff8cfb368d78bc369d559aa8e466f1e927fa6"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general",
+        "pages": [
+          [
+            1,
+            31
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの算定の基（調定の内訳・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "957b9e55a85cb48d4c7c7b8f04dff8cfb368d78bc369d559aa8e466f1e927fa6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "f4c57e62a42a1042826a28522f0a9bf67e1100bd47102cb3b32cd56d27bebd5f",
+          "bytes": 5594466
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "957b9e55a85cb48d4c7c7b8f04dff8cfb368d78bc369d559aa8e466f1e927fa6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "6553ebb2f279fccd6e9c2f974c23b6e4afbe9ab0f960b1c21cce3ba279c11654",
+          "bytes": 4820771
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "957b9e55a85cb48d4c7c7b8f04dff8cfb368d78bc369d559aa8e466f1e927fa6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7f6b7d0a8d928e9f46b0e4fbe24e59adb3245b50b57a6339457be317cd75428a",
+          "bytes": 4310609
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "957b9e55a85cb48d4c7c7b8f04dff8cfb368d78bc369d559aa8e466f1e927fa6",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "f633567b3d7d7fec8fd9c5305eb9810a66a544faedda56260a0d5b05ccd31993",
+          "bytes": 99105
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "45ccfb8755beeb28473701e473e2cca784c2a560bb2a3622e08937f03306b278"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "nhi",
+        "pages": [
+          [
+            1,
+            5
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの算定の基（調定の内訳・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "45ccfb8755beeb28473701e473e2cca784c2a560bb2a3622e08937f03306b278",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "6b534acda791909cf23427a06c5e39ee9721f41dec8bd7048a3003b4a8613218",
+          "bytes": 2311618
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "489ee847c0a384692df20ccaff51f6d8abe80dd48dff6f1edd0ef519a0d0ae32"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo",
+        "pages": [
+          [
+            1,
+            6
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの算定の基（調定の内訳・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "489ee847c0a384692df20ccaff51f6d8abe80dd48dff6f1edd0ef519a0d0ae32",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b60aa97b73435f7a4ac0bd181466c6c8ac4296b0f1e3d907d1379db2ba14760c",
+          "bytes": 2782300
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "339f7c95d3ceafc6db3dc61efd5432371dc5ab532fefd120894b434dff144c2b"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki",
+        "pages": [
+          [
+            1,
+            3
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの算定の基（調定の内訳・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "339f7c95d3ceafc6db3dc61efd5432371dc5ab532fefd120894b434dff144c2b",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "fe08b6dd7e029adedd077bd21c7ce6d88a8de718b0eb5278c15f19ef2312117d",
+          "bytes": 1334518
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki"
+        }
+      ]
+    }
+  ]
+}

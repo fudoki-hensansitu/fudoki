@@ -205,6 +205,7 @@
     "specks": "ingestion.generic.patterns.quirks.specks",
     "rule_pieces_as_digits": "ingestion.generic.patterns.quirks.rule_pieces_as_digits",
     "spread_columns": "ingestion.generic.patterns.quirks.spread_columns",
+    "spread_stacked_tables": "ingestion.generic.patterns.quirks.spread_stacked_tables",
     "stacked_tables_apart": "ingestion.generic.patterns.quirks.stacked_tables_apart",
     "sum_levels": "ingestion.generic.patterns.quirks.sum_levels",
     "title_depths": "ingestion.generic.patterns.quirks.title_depths",
