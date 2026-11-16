@@ -28,6 +28,8 @@ export const tools: Tool[] = [
   expenditureTools.searchDetails,
   expenditureTools.getLine,
   revenueTools.get,
+  revenueTools.searchSubjects,
+  revenueTools.getLine,
   evaluationTools.get,
   evaluationTools.getSheet,
   evaluationTools.searchSheets,

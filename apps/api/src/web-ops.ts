@@ -31,6 +31,8 @@ export const WEB_OPS = {
   search_expenditure_details: ofTool(expenditureTools.searchDetails),
   get_expenditure_line: ofTool(expenditureTools.getLine),
   get_revenue: ofTool(revenueTools.get),
+  search_revenue_subjects: ofTool(revenueTools.searchSubjects),
+  get_revenue_line: ofTool(revenueTools.getLine),
   get_evaluation: ofTool(evaluationTools.get),
   get_evaluation_sheet: ofTool(evaluationTools.getSheet),
   search_evaluation_sheets: ofTool(evaluationTools.searchSheets),

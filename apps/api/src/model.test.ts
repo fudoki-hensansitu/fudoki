@@ -1,18 +1,20 @@
 // 集約の型（*/model.ts）の enum と、dbt の accepted_values（columns.json）が同じ値かを照合する（docs/prd/aggregate-api/dd.md）。
 import { describe, expect, test } from 'bun:test'
-import { DETAIL_TABLE, PROJECT_COLUMNS, PROJECT_YEAR_COLUMNS, SUBJECT_TABLE, TABLES, type ColumnSpec } from './columns'
+import { DETAIL_TABLE, PROJECT_COLUMNS, PROJECT_YEAR_COLUMNS, REVENUE_SUBJECT_TABLE, SUBJECT_TABLE, TABLES, type ColumnSpec } from './columns'
 import { DIRECTIONS, DirectionCode, EvaluationOriginRow, EvaluationRow, IndicatorRow, IndicatorValueRow, SheetRow } from './evaluation/model'
 import { ProjectRow, ProjectYearRow } from './project/model'
 import { z } from 'zod'
 import { DocumentKind } from './shared/model'
 import { Breakdown, DetailRow, LocationKind, LocationRow, OriginRow, SubjectRow } from './expenditure/model'
 import { JurisdictionList } from './jurisdiction/model'
+import { RevenueCategory, RevenueLocationRow, RevenueSubjectRow } from './revenue/model'
 
 /** 科目・内訳は表に無い列も検索の中で求めて返すので（ADR 0047）、検索の対象の列と照合する */
 // 表に無い列を JOIN で引く検索・事業は、その列の一覧と照合する
 const VIEWS: Record<string, readonly ColumnSpec[]> = {
   expenditure_subject: SUBJECT_TABLE.columns,
   expenditure_detail: DETAIL_TABLE.columns,
+  revenue_subject: REVENUE_SUBJECT_TABLE.columns,
   project: PROJECT_COLUMNS,
   project_year: PROJECT_YEAR_COLUMNS,
 }
@@ -31,6 +33,8 @@ describe('型と表の値', () => {
     ['expenditure_subject', 'document_kind', DocumentKind.options],
     ['expenditure_detail', 'document_kind', DocumentKind.options],
     ['expenditure_detail', 'breakdown', Breakdown.options],
+    ['revenue_subject', 'document_kind', DocumentKind.options],
+    ['revenue_subject', 'category', RevenueCategory.options],
     ['expenditure_location', 'kind', LocationKind.options],
     ['evaluation_sheet', 'direction_code', DirectionCode.options],
     ['evaluation_sheet', 'direction_code', Object.keys(DIRECTIONS)],
@@ -65,6 +69,8 @@ describe('API の行の schema と表の列', () => {
     ['expenditure_subject', shapeOf(SubjectRow), true],
     ['expenditure_detail', shapeOf(DetailRow), true],
     ['expenditure_location', shapeOf(LocationRow), true],
+    ['revenue_subject', shapeOf(RevenueSubjectRow), true],
+    ['revenue_location', shapeOf(RevenueLocationRow), true],
     ['fiscal_origin', shapeOf(OriginRow), true],
     ['evaluation', shapeOf(EvaluationRow), true],
     ['evaluation_origin', shapeOf(EvaluationOriginRow), true],

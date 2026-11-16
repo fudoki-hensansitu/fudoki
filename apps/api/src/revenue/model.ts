@@ -1,6 +1,10 @@
 // 歳入の集約: 1つの資料（自治体・年度・資料区分・補正号）の1つの会計の歳入全体。
 // 守ること: 款の和が総額。区分は風土記の判断（seed fiscal_revenue_category）で、款の名前で引く。
 import { z } from 'zod'
+import { REVENUE_SUBJECT_TABLE, described } from '../columns'
+import { OriginRow } from '../expenditure/model'
+import { nextPageToken } from '../shared/paging'
+import { searchInputFor } from '../shared/search'
 import { DocumentKind, FiscalYear, JurisdictionCode, Origin, OriginFormat, Yen } from '../shared/model'
 
 export const RevenueCategory = z
@@ -47,3 +51,73 @@ export const RevenueOutput = z.strictObject({
 })
 export type RevenueOutput = z.infer<typeof RevenueOutput>
 export type RevenueInput = z.infer<typeof RevenueInput>
+
+// --- 歳入の科目（款・項・目）の検索と行の取得。歳出の search_expenditure_subjects・get_expenditure_line と同じ形 ---
+
+const revenueSubjectShape = described(REVENUE_SUBJECT_TABLE.columns, {
+  subject_id: z.string(),
+  node_key: z.string(),
+  parent_subject_id: z.string().nullable(),
+  revenue_id: z.string(),
+  jurisdiction_code: z.string(),
+  fiscal_year: z.int(),
+  document_kind: z.enum(['settlement', 'initial']),
+  amendment_number: z.int().nullable(),
+  amount_phase: z.enum(['executed', 'approved']),
+  account_name: z.string(),
+  account_kind: z.string(),
+  level: z.enum(['款', '項', '目']),
+  code: z.string().nullable(),
+  name: z.string(),
+  kan_code: z.string(),
+  kan_name: z.string(),
+  kou_code: z.string().nullable(),
+  kou_name: z.string().nullable(),
+  moku_code: z.string().nullable(),
+  moku_name: z.string().nullable(),
+  amount_yen: z.int(),
+  is_leaf: z.boolean(),
+  category: RevenueCategory.nullable(),
+  origin_id: z.string(),
+})
+export const RevenueSubjectRow = z.strictObject(revenueSubjectShape).meta({ id: 'RevenueSubjectRow', description: '歳入の科目（款・項・目）。' })
+
+export const RevenueLocationRow = z
+  .strictObject(
+    described('revenue_location', {
+      line_id: z.string(),
+      origin_id: z.string(),
+      source_page: z.int().nullable(),
+      source_x0: z.number().nullable(),
+      source_y0: z.number().nullable(),
+      source_x1: z.number().nullable(),
+      source_y1: z.number().nullable(),
+      amount_source_page: z.int().nullable(),
+      amount_source_x0: z.number().nullable(),
+      amount_source_y0: z.number().nullable(),
+      amount_source_x1: z.number().nullable(),
+      amount_source_y1: z.number().nullable(),
+    })
+  )
+  .meta({ id: 'RevenueLocationRow', description: '歳入の科目が印字された出典の位置（頁と枠）。line_id は subject_id。' })
+
+export const RevenueSubjectSearchInput = searchInputFor(REVENUE_SUBJECT_TABLE)
+export const RevenueSubjectSearchOutput = z.strictObject({
+  subjects: z.array(RevenueSubjectRow),
+  next_page_token: nextPageToken,
+  origins: z.array(OriginRow).describe('結果の行が指す出典。行の origin_id から引く。'),
+})
+export type RevenueSubjectSearchOutput = z.infer<typeof RevenueSubjectSearchOutput>
+
+export const RevenueLineId = z.string().regex(/^[0-9a-f]{64}$/).describe('subject_id from a revenue search response (64 lowercase hexadecimal characters).')
+export const RevenueLineInput = z.strictObject({ line_id: RevenueLineId })
+export type RevenueLineInput = z.infer<typeof RevenueLineInput>
+
+/** 歳入の科目と、その子の科目（款なら項、項なら目） */
+export const RevenueLineOutput = z.strictObject({
+  line: RevenueSubjectRow,
+  child_subjects: z.array(RevenueSubjectRow).describe('子の科目（款なら項、項なら目）。ページを切らずに返す。'),
+  locations: z.array(RevenueLocationRow).describe('行と子の科目が印字された位置。subject_id を line_id で引く。'),
+  origins: z.array(OriginRow).describe('行と子の科目が印字された出典。'),
+})
+export type RevenueLineOutput = z.infer<typeof RevenueLineOutput>
