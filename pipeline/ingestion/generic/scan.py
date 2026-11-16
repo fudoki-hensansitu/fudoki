@@ -1221,8 +1221,8 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
     corrections, readings of what OCR left unread, unit readings), and the variant characters it replaced. A text
     document's OCR pages (`mixed.py`) are read by this too."""
     observation = drop_readings(pinned(source, selected), options.get('dropped_readings'))
-    if (stacked := document_quirk('stacked_digits')) is not None:
-        observation = stacked.module.split(observation)
+    if (digits := document_quirk('stacked_digits')) is not None:
+        observation = digits.module.split(observation)
     columns = (settings or {}).get('columns')
     spread = (settings or {}).get('spread')
     header = (settings or {}).get('header')

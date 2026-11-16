@@ -1997,7 +1997,7 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "5b496c8ef6d2a8812b0d59c9aa36d7cf87e536e70dc759d9bb30ed9c3d451dd3",
+      "input_fingerprint": "a4b16a712b9559ee8169ba4587a54433a1ee9becd9016ad05517d9927b2fadc7",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -2029,7 +2029,7 @@
     {
       "table_id": "general-initial-4",
       "conversion_id": "general-initial-4",
-      "input_fingerprint": "06619d8fb2d9f1b4f79c1ec428a87ce1f83c686d41407c060ccd839f80e2a596",
+      "input_fingerprint": "01302d56586676b524f0ad09da56ad969fbc622bf5a67b75280fe5e32d1f5eff",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",
@@ -2060,7 +2060,7 @@
     {
       "table_id": "general-initial-7",
       "conversion_id": "general-initial-7",
-      "input_fingerprint": "51a71fc02f0580027608d6288f831d2a1dcdc78cdd731cb7486abc917553844a",
+      "input_fingerprint": "5f781c141fb96c149057db7148ce9d0b236919a29fd2e308489ba13a832d1e55",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'flat', '説明': 'position'}。",

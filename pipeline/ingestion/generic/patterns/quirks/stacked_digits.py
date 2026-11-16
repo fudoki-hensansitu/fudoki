@@ -1,8 +1,11 @@
 """Document quirk: OCR reads the one-digit amounts of lines printed one under another as one number (国分寺市 R5 当初予算の
 説明 `3` `4` `1` `1` as `3411`, the stacked 本年度・(前年度)・(比較) `2` `2` `0` as `220`). A reading of digits only
-whose box is as tall as one line per digit is read again as one digit per line, the box cut into equal heights.
+whose box stands upright and is as tall as one line per digit is read again as one digit per line, the box cut into
+equal heights; the new readings are `<id>:s<n>`, top first. A reading a fuller re-read superseded stays as it is.
 Read by `scan.read_pages`."""
 import re
+
+from ingestion.lib.ocr_ink import superseded
 
 SCOPE = 'document'
 OPTIONS = {'const': True}
@@ -13,10 +16,12 @@ LINE = (9.0, 12.5)  # pt: the height of one printed line per digit (10–11.5 at
 def split(observation: dict) -> dict:
     pages = []
     for page in observation['pages']:
+        replaced = superseded(page)
         regions = []
         for region in page['regions']:
             stacked = {o['id'] for o in region['observations'] if o['kind'] == 'region' and o.get('bbox_pdf_pt')
-                       and re.fullmatch(r'[0-9]{2,}', o['raw_text'])
+                       and o['id'] not in replaced and re.fullmatch(r'[0-9]{2,}', o['raw_text'])
+                       and o['bbox_pdf_pt'][3] - o['bbox_pdf_pt'][1] > 1.5 * (o['bbox_pdf_pt'][2] - o['bbox_pdf_pt'][0])
                        and LINE[0] <= (o['bbox_pdf_pt'][3] - o['bbox_pdf_pt'][1]) / len(o['raw_text']) <= LINE[1]}
             kept = []
             for o in region['observations']:
