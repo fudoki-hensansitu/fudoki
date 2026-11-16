@@ -8,10 +8,14 @@ import { cn } from '@/lib/utils'
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip'
 import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
 import { Overview, OverviewSkeleton } from './sankey'
+import { MoneyFlow } from './app/income-flow'
 import { formatShare, formatYen, type Drill, type Kou, type Moku, type YearTotal } from './types'
 
 /** 歳入の面は、緑（使う）の代わりに入るの色で描く。図の部品は --primary で色を付けているので、面の中だけ差し替える */
-const INCOMING = { '--primary': 'var(--kincha-ink)', '--color-primary': 'var(--kincha-ink)' } as React.CSSProperties
+/** 見出しの名前と金額。名前も金額と同じ大きさにする */
+const HEAD_NAME = 'min-w-0 truncate text-[26px] leading-snug text-muted-foreground'
+const HEAD_YEN = 'shrink-0 text-[26px] font-normal leading-snug tabular-nums'
+const INCOMING = { '--primary': 'var(--kincha)', '--color-primary': 'var(--kincha)' } as React.CSSProperties
 
 /** 段の呼び名 */
 const LEVELS = { kan: '款', kou: '項', moku: '目', setsu: '節' }
@@ -30,10 +34,13 @@ const MOBILE_QUERY = '(max-width: 639.98px)'
 const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記載' : formatYen(yen))
 const share = (yen: number, max: number, missing?: boolean) => (missing || max <= 0 ? 0 : Math.min(100, (Math.max(0, yen) / max) * 100))
 
+/** 款のどこかの目に節があるか。歳入は節を後から読み、節の無い資料もあるので、無いうちは「内訳の区分は出典にありません」を出さない */
+const hasSetsu = (drill: Drill) => drill.kou.some((k) => k.moku.some((m) => m.setsu.length > 0))
+
 /** 節は目の内訳。上位だけ名前を出して残りは件数にまとめる。広い画面では目の棒から帯でつなぎ、狭い画面では目の金額に占める割合の横棒を出す */
 
 /** kouYen は割合の基準（目は項に占める割合、節は目に占める割合）。金額と割合を並べて出す */
-function MokuGroup({ moku, kouYen, levels, onMoku, noSetsu }: { moku: Moku; kouYen: number; levels: Levels; onMoku?: (m: Moku) => void; /** 節を持たない流れ（歳入）。節の欄に何も出さない */ noSetsu?: boolean }) {
+function MokuGroup({ moku, kouYen, levels, noSetsu, mirror }: { moku: Moku; kouYen: number; levels: Levels; /** 款のどの目にも節の無い流れ（節を読む前か、節の無い歳入）。節の欄に何も出さない */ noSetsu?: boolean; /** 左右を逆にする（歳入）。節を左、目を右に置き、右に寄せる */ mirror?: boolean }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
   const rest = shown.slice(SETSU_SHOWN)
@@ -44,25 +51,16 @@ function MokuGroup({ moku, kouYen, levels, onMoku, noSetsu }: { moku: Moku; kouY
   // 割合は目の金額が印字されているときだけ。無いときは節の金額をそのまま出す
   const mokuYen = moku.amountMissing ? 0 : moku.yen
   return (
-    <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} data-share={formatShare(moku.yen, kouYen, moku.amountMissing) ?? ''} className="grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[drawn=true]/kou:translate-y-0 group-data-[drawn=true]/kou:opacity-100 sm:grid-cols-[5fr_7fr] sm:gap-4">
-      <div className="min-w-0">
+    <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} data-share={formatShare(moku.yen, kouYen, moku.amountMissing) ?? ''} className={cn('grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[drawn=true]/kou:translate-y-0 group-data-[drawn=true]/kou:opacity-100 sm:gap-4', mirror ? 'text-right sm:grid-cols-[7fr_5fr]' : 'sm:grid-cols-[5fr_7fr]')}>
+      <div className={cn('min-w-0', mirror && 'sm:col-start-2 sm:row-start-1')}>
         <div className="text-[11px] text-muted-foreground sm:hidden">{levels.moku}</div>
-        {onMoku ? (
-          // 押すと事業と同じ詳細のパネルで目の中身（事業・節）を出す
-          <button type="button" onClick={() => onMoku(moku)} className="group/moku -mx-1.5 grid w-[calc(100%+0.75rem)] grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2 rounded-lg px-1.5 py-1 text-left hover:bg-secondary">
-            <span className="text-sm leading-snug underline-offset-2 group-hover/moku:underline">{moku.name}</span>
-            <CaretRightIcon className="row-span-2 size-3.5 text-muted-foreground" aria-hidden="true" />
-            <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground sm:sr-only">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
-          </button>
-        ) : (
-          <AmountTip name={moku.name} yen={moku.yen} missing={moku.amountMissing} side="right" className="inline-grid outline-none">
-            <span className="text-sm leading-snug">{moku.name}</span>
-            <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground sm:sr-only">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
-          </AmountTip>
-        )}
+        <AmountTip name={moku.name} yen={moku.yen} missing={moku.amountMissing} side={mirror ? 'left' : 'right'} className="inline-grid outline-none">
+          <span className="text-sm leading-snug">{moku.name}</span>
+          <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground sm:sr-only">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
+        </AmountTip>
       </div>
       {top.length > 0 ? (
-        <ul data-setsu-list className="grid min-w-0 gap-y-1 border-l pl-3 text-[12.5px] leading-snug sm:gap-y-3 sm:border-0 sm:pl-4" aria-label={`${moku.name}の${levels.setsu}`}>
+        <ul data-setsu-list className={cn('grid min-w-0 gap-y-1 text-[12.5px] leading-snug sm:gap-y-3 sm:border-0', mirror ? 'border-r pr-3 text-left sm:col-start-1 sm:row-start-1 sm:pr-4' : 'border-l pl-3 sm:pl-4')} aria-label={`${moku.name}の${levels.setsu}`}>
           <li className="text-[11px] text-muted-foreground sm:hidden">{levels.setsu}</li>
           {top.map((s) => (
             <li key={s.name} data-setsu data-yen={s.amountMissing ? 0 : Math.max(0, s.yen)} data-share={formatShare(s.yen, mokuYen, s.amountMissing) ?? ''} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
@@ -187,7 +185,7 @@ function TickMenu({ items, current, onPick, side, label, className, children }: 
   )
 }
 
-function KouSection({ kou, active, loading, onBox, levels, onMoku, noSetsu }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void; levels: Levels; onMoku?: (m: Moku) => void; noSetsu?: boolean }) {
+function KouSection({ kou, active, loading, onBox, levels, noSetsu, mirror }: { kou: Kou; active: boolean; loading: boolean; onBox: (el: HTMLElement | null) => void; levels: Levels; noSetsu?: boolean; /** 左右を逆にする（歳入）。項を右に置き、帯は右から左へ流れる */ mirror?: boolean }) {
   const box = React.useRef<HTMLElement | null>(null)
   const rib = React.useRef<HTMLDivElement>(null)
   // 一度画面に入った項は開いたままにする。いま読んでいる項（active）だけを見せると、ほかの項の図形が消えて見えるため
@@ -230,13 +228,15 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku, noSetsu }: { 
       boxes.forEach((r, i) => {
         const h = Math.max(shares[i]! * scale, 2)
         const ty = r.top - origin
-        next.push({ d: band(0, y, h, end, ty, h), x: end, y: ty, h, label: rows[i]!.dataset.share })
+        // 左右を逆にするときは、項の棒（帯の右端）から左端の目の棒へ流す
+        next.push(mirror ? { d: band(width, y, h, MOKU_BAR, ty, h), x: 0, y: ty, h, label: rows[i]!.dataset.share } : { d: band(0, y, h, end, ty, h), x: end, y: ty, h, label: rows[i]!.dataset.share })
         y += h
         // 目の棒から上位の節へ。節の棒は目の金額に占める割合で、節の行に重ならない太さまで縮める
         const list = rows[i]!.querySelector<HTMLElement>('[data-setsu-list]')
         const items = list ? [...list.querySelectorAll<HTMLElement>('[data-setsu]')] : []
         if (!list || items.length === 0 || yen[i]! <= 0) return
-        const x = list.getBoundingClientRect().left - lanebox.left
+        // 節の棒は節の欄の目の側の端に置く（逆のときは右端の内側）
+        const x = mirror ? list.getBoundingClientRect().right - lanebox.left - SETSU_BAR : list.getBoundingClientRect().left - lanebox.left
         // 「ほか○節」には、目の棒のうち上位の節が使わなかった残りの太さで帯を渡す（金額は足し上げない）
         const restRow = list.querySelector<HTMLElement>('[data-setsu-rest]')
         const topParts = items.map((li) => Math.min(1, Number(li.dataset.yen) / yen[i]!))
@@ -253,7 +253,7 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku, noSetsu }: { 
         rects.forEach((b, j) => {
           const sh = Math.max(parts[j]! * h, 1)
           const th = Math.min(Math.max(sh, 2), gaps[j]!)
-          twigs.push({ d: band(width, from, sh, x, b.top - origin, th), x, y: b.top - origin, h: th, rest: rows2[j] === restRow, label: rows2[j]!.dataset.share })
+          twigs.push({ d: mirror ? band(0, from, sh, x + SETSU_BAR, b.top - origin, th) : band(width, from, sh, x, b.top - origin, th), x, y: b.top - origin, h: th, rest: rows2[j] === restRow, label: rows2[j]!.dataset.share })
           from += sh
         })
       })
@@ -267,41 +267,41 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku, noSetsu }: { 
     // 目の行は開くときに少し動くので、動き終わってから測り直す
     const settle = window.setTimeout(measure, 550)
     return () => { observer.disconnect(); window.clearTimeout(settle) }
-  }, [kou.moku.length, drawn])
+  }, [kou.moku.length, drawn, mirror])
   return (
-    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} data-drawn={drawn} className="group/kou grid min-h-[calc(100%-7.5rem)] grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:gap-0 sm:pr-8">
-      <div className="min-w-0 border-b pb-2 sm:border-0 sm:pb-0 sm:pr-2">
+    <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} data-drawn={drawn} className={cn('group/kou grid min-h-[calc(100%-7.5rem)] grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:gap-0', mirror ? 'text-right sm:grid-cols-[minmax(0,1fr)_64px_10px_150px] sm:pl-8' : 'sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:pr-8')}>
+      <div className={cn('min-w-0 border-b pb-2 sm:border-0 sm:pb-0', mirror ? 'sm:order-4 sm:pl-2' : 'sm:pr-2')}>
         <div className="text-[11px] text-muted-foreground">{levels.kou}</div>
         <div className="font-sans text-lg leading-snug">{kou.name}</div>
         <div className="text-[13px] tabular-nums text-muted-foreground">{amountText(kou.yen, kou.amountMissing)}</div>
       </div>
-      <div className="relative hidden sm:block" aria-hidden="true">
-        <i className="absolute left-0 w-2 rounded-sm bg-primary transition-[height] duration-500" style={{ top: bar.top, height: bar.height }} />
+      <div className={cn('relative hidden sm:block', mirror && 'sm:order-3')} aria-hidden="true">
+        <i className={cn('absolute w-2 rounded-sm bg-primary transition-[height] duration-500', mirror ? 'right-0' : 'left-0')} style={{ top: bar.top, height: bar.height }} />
       </div>
-      <div ref={rib} className="relative hidden sm:block" aria-hidden="true">
+      <div ref={rib} className={cn('relative hidden sm:block', mirror && 'sm:order-2')} aria-hidden="true">
         <svg className="absolute inset-0 size-full overflow-visible">
           {/* 項が画面に入ったら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。帯は段ごとにまとめて一枚で伸ばす */}
           {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
-          <g key={`r${drawn}`} className={drawn ? 'flow-ribbon' : 'opacity-0'}>{paths.map((p, i) => <path key={i} d={p.d} className="fill-primary/20" />)}</g>
+          <g key={`r${drawn}`} className={drawn ? cn('flow-ribbon', mirror && 'flow-rev') : 'opacity-0'}>{paths.map((p, i) => <path key={i} d={p.d} className="fill-primary/20" />)}</g>
           {/* 割合は棒の真上に出す（全体図と同じ）。狭い画面は帯を描かないので、行の金額の横に出す */}
           {paths.map((p, i) => (p.label ? <text key={`p${drawn}${i}`} x={p.x + MOKU_BAR / 2} y={p.y - 3} textAnchor="middle" fontSize={11} style={{ animationDelay: `${550 + Math.min(i * 15, 150)}ms` }} className={`fill-primary font-semibold tabular-nums ${drawn ? 'flow-node' : 'opacity-0'}`}>{p.label}</text> : null))}
           {setsu.map((p, i) => (p.label ? <text key={`q${drawn}${i}`} x={p.x + SETSU_BAR / 2} y={p.y - 3} textAnchor="middle" fontSize={10} style={{ animationDelay: `${1000 + Math.min(i * 10, 150)}ms` }} className={`${p.rest ? 'fill-muted-foreground' : 'fill-primary'} font-semibold tabular-nums ${drawn ? 'flow-node' : 'opacity-0'}`}>{p.label}</text> : null))}
           {paths.map((p, i) => <rect key={`b${drawn}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${550 + Math.min(i * 15, 150)}ms` }} className={`fill-primary ${drawn ? 'flow-node' : 'opacity-0'}`} />)}
           {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
-          <g key={`s${drawn}`} style={{ animationDelay: '450ms' }} className={drawn ? 'flow-ribbon' : 'opacity-0'}>{setsu.map((p, i) => <path key={i} d={p.d} className={p.rest ? 'fill-primary/10' : 'fill-primary/15'} />)}</g>
+          <g key={`s${drawn}`} style={{ animationDelay: '450ms' }} className={drawn ? cn('flow-ribbon', mirror && 'flow-rev') : 'opacity-0'}>{setsu.map((p, i) => <path key={i} d={p.d} className={p.rest ? 'fill-primary/10' : 'fill-primary/15'} />)}</g>
           {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
           {setsu.map((p, i) => <rect key={`t${drawn}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${1000 + Math.min(i * 10, 150)}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${drawn ? 'flow-node' : 'opacity-0'}`} />)}
         </svg>
       </div>
-      <div className="flex min-w-0 flex-col gap-3 sm:pl-2.5">
+      <div className={cn('flex min-w-0 flex-col gap-3', mirror ? 'sm:order-1 sm:pr-2.5' : 'sm:pl-2.5')}>
         {kou.moku.length > 0 ? (
-          <div className="hidden grid-cols-[5fr_7fr] gap-4 text-[11px] text-muted-foreground sm:grid" aria-hidden="true">
-            <span>{levels.moku}</span>
-            {/* 歳入の目には節を付けないので、節の見出しも出さない */}
-            <span className="pl-4">{kou.moku.some((m) => m.setsu.length > 0) ? levels.setsu : null}</span>
+          <div className={cn('hidden gap-4 text-[11px] text-muted-foreground sm:grid', mirror ? 'grid-cols-[7fr_5fr]' : 'grid-cols-[5fr_7fr]')} aria-hidden="true">
+            <span className={mirror ? 'order-2' : ''}>{levels.moku}</span>
+            {/* 節の無い目だけのときは、節の見出しも出さない */}
+            <span className={mirror ? 'pr-4 text-left' : 'pl-4'}>{kou.moku.some((m) => m.setsu.length > 0) ? levels.setsu : null}</span>
           </div>
         ) : null}
-        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} levels={levels} onMoku={onMoku} noSetsu={noSetsu} />) : (
+        {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} levels={levels} noSetsu={noSetsu} mirror={mirror} />) : (
           <p className="text-[12.5px] text-muted-foreground" role={loading ? 'status' : undefined}>{loading ? '内訳を読み込んでいます…' : `この${levels.kou}に${levels.moku}はありません`}</p>
         )}
       </div>
@@ -310,7 +310,7 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku, noSetsu }: { 
 }
 
 /** natural は面の中で縦に送らず、中身の高さのまま頁のスクロールで読む */
-function KanPanel({ drill, loading, levels, onMoku, natural, shown, pos, style, noSetsu }: { noSetsu?: boolean; drill: Drill; loading: boolean; levels: Levels; onMoku?: (m: Moku) => void; natural?: boolean; /** 横に並ぶ面のうち、今見せている面か */ shown?: boolean; /** 横に並ぶ面の中の位置 */ pos: number; style?: React.CSSProperties }) {
+function KanPanel({ drill, loading, levels, natural, shown, pos, style, noSetsu, mirror }: { noSetsu?: boolean; /** 左右を逆にする（歳入）。項を右に置き、目盛りは左 */ mirror?: boolean; drill: Drill; loading: boolean; levels: Levels; natural?: boolean; /** 横に並ぶ面のうち、今見せている面か */ shown?: boolean; /** 横に並ぶ面の中の位置 */ pos: number; style?: React.CSSProperties }) {
   const body = React.useRef<HTMLDivElement>(null)
   // natural のとき、面が画面に入っている間だけ目盛りを画面の右に固定して出す（track が横のスクロールの箱なので sticky は効かない）
   const [inView, setInView] = React.useState(false)
@@ -348,7 +348,7 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown, pos, style, 
           current={current}
           onPick={toKou}
           items={drill.kou.map((k) => ({ key: k.id, name: k.name, note: amountText(k.yen, k.amountMissing) }))}
-          className={natural ? 'fixed right-1 top-1/2 z-10 flex -translate-y-1/2 flex-col' : 'absolute right-0.5 top-1/2 z-10 flex -translate-y-1/2 flex-col'}
+          className={cn('top-1/2 z-10 flex -translate-y-1/2 flex-col', natural ? (mirror ? 'fixed left-1' : 'fixed right-1') : (mirror ? 'absolute left-0.5' : 'absolute right-0.5'))}
         >
           {drill.kou.map((k, i) => (
             <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} className="group/dot flex h-[11px] items-center px-1.5">
@@ -367,7 +367,7 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown, pos, style, 
       ) : null}
       <div ref={body} style={fade} className={natural ? '' : 'h-full overflow-y-auto scroll-smooth [scrollbar-width:none] [&::-webkit-scrollbar]:hidden'} tabIndex={-1}>
         {drill.kou.map((k, i) => (
-          <KouSection key={k.id} kou={k} active={i === current} loading={loading} levels={levels} onMoku={onMoku} noSetsu={noSetsu} onBox={(el) => { sections.current[i] = el }} />
+          <KouSection key={k.id} kou={k} active={i === current} loading={loading} levels={levels} noSetsu={noSetsu} mirror={mirror} onBox={(el) => { sections.current[i] = el }} />
         ))}
       </div>
     </div>
@@ -375,21 +375,23 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown, pos, style, 
 }
 
 /** 款→項の全体図と款ごとの内訳。流れ（目の内訳まで）は頁の loader が読んで渡す。flows が無い間は読み込み中の形を出す */
-export function Flow({ flows: given, revenue: revenueGiven, total: year, className, bare, onMoku, natural, onRetry }: { /** 一般会計の歳入（款 → 項 → 目）。あれば全体図の左に置き、左へスクロールするとたどれる。無ければ今までどおり歳出だけ */ revenue?: Drill[]; /** 款 → 項 → 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
+export function Flow({ flows: given, revenue: revenueGiven, total: year, className, bare, natural, onRetry }: { /** 一般会計の歳入（款 → 項 → 目）。あれば全体図の左に置き、左へスクロールするとたどれる。無ければ今までどおり歳出だけ */ revenue?: Drill[]; /** 款 → 項 → 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
   const levels = LEVELS
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
   const overview = React.useRef<HTMLDivElement>(null)
   const flows = given ?? []
   const revenue = revenueGiven ?? []
-  // 歳入の面の数（歳入の全体図と款ごとの面）。面は左から 歳入の款（小さい順）→ 歳入の全体図 → 歳出の全体図 → 歳出の款（大きい順）と並ぶ
+  // 面は左から 歳入の款（小さい順）→ 歳入の全体図（項 ← 款）→ 真ん中の図（歳入の款 → 一般会計 → 歳出の款）→ 歳出の全体図（款 → 項）→ 歳出の款（大きい順）と並ぶ。
+  // R は真ん中の図の位置（歳入の無いまちは真ん中の図も歳入の面も無く、歳出の全体図が 0）。D は歳出の全体図の index
   const R = revenue.length ? revenue.length + 1 : 0
+  const D = R ? 1 : 0
   /** 歳入の款を面の並び（左から、小さい款から）にしたもの。全体図の隣が一番大きい款 */
   const revenueOrder = React.useMemo(() => [...revenue].reverse(), [revenue])
-  /** 歳出の全体図を 0 とした今の面。歳入の全体図は -1、歳入の款は -2 から左へ */
+  /** 開いたときの面（真ん中の図、歳入が無ければ歳出の全体図）を 0 とした今の面。歳入の全体図は -1、歳入の款は -2 から左へ */
   const [index, setIndex] = React.useState(0)
   const pos = index + R
-  // 開いたときは歳出の全体図から見せる。歳入の面が増えたら、同じ面を見せたまま左に足す
+  // 開いたときは全体図から見せる。歳入の面が増えたら、同じ面を見せたまま左に足す
   React.useLayoutEffect(() => {
     const el = track.current
     if (!el || !R) return
@@ -451,7 +453,7 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
   }
   const total = flows.length
   const overviewHeight = Math.min(560, typeof window === 'undefined' ? 520 : Math.max(380, window.innerHeight * 0.7))
-  const kan = index > 0 ? flows[index - 1] : index < -1 ? revenue[-index - 2] : undefined
+  const kan = index > D ? flows[index - D - 1] : index < -1 ? revenue[-index - 2] : undefined
   const incoming = index < 0
   const revenueTotal = revenue.reduce((s, f) => s + Math.max(0, f.kan.yen), 0)
   const sum = flows.reduce((s, f) => s + Math.max(0, f.kan.yen), 0) + revenueTotal || 1
@@ -464,25 +466,33 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
           <div className="flex min-w-0 flex-col sm:flex-row sm:items-baseline sm:gap-x-3" aria-live="polite">
             {kan ? (
               <>
-                <span className="min-w-0 truncate text-sm text-muted-foreground">{incoming ? `入る・${kan.kan.name}` : kan.kan.name}</span>
-                <b className={cn('shrink-0 text-[26px] font-normal leading-snug tabular-nums', incoming && 'text-(--kincha-ink)')}>{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
+                <span className={HEAD_NAME}>{kan.kan.name}</span>
+                <b className={HEAD_YEN}>{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
               </>
             ) : index === -1 ? (
               <>
-                <span className="min-w-0 truncate text-sm text-muted-foreground">入る（歳入）すべて</span>
-                <b className="shrink-0 text-[26px] font-normal leading-snug tabular-nums text-(--kincha-ink)">{amountText(revenueTotal)}</b>
+                <span className={HEAD_NAME}>歳入</span>
+                <b className={HEAD_YEN}>{amountText(revenueTotal)}</b>
               </>
             ) : (
               <>
-                <span className="min-w-0 truncate text-sm text-muted-foreground">{R ? '使う（歳出）すべて' : 'すべて'}</span>
-                <b className="shrink-0 text-[26px] font-normal leading-snug tabular-nums">{amountText(year.yen)}</b>
+                {R && index === 0 ? (
+                  <span className="flex items-baseline gap-x-3">
+                    <span className={HEAD_NAME}>歳入</span>
+                    <b className={HEAD_YEN}>{amountText(revenueTotal)}</b>
+                  </span>
+                ) : null}
+                <span className="flex items-baseline gap-x-3">
+                  <span className={HEAD_NAME}>歳出</span>
+                  <b className={HEAD_YEN}>{amountText(year.yen)}</b>
+                </span>
               </>
             )}
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
-            <span className="text-xs tabular-nums text-muted-foreground">{kan ? (incoming ? `${levels.kan} ${-index - 1} / ${revenue.length}` : `${levels.kan} ${index} / ${total}`) : ''}</span>
+            <span className="text-xs tabular-nums text-muted-foreground">{kan ? (incoming ? `${levels.kan} ${-index - 1} / ${revenue.length}` : `${levels.kan} ${index - D} / ${total}`) : ''}</span>
             <Button variant="outline" size="icon-sm" aria-label={`前の${levels.kan}`} disabled={pos === 0} onClick={() => go(-1)} className="rounded-full [@media(hover:none)]:hidden"><CaretLeftIcon /></Button>
-            <Button variant="outline" size="icon-sm" aria-label={`次の${levels.kan}`} disabled={index >= total} onClick={() => go(1)} className="rounded-full [@media(hover:none)]:hidden"><CaretRightIcon /></Button>
+            <Button variant="outline" size="icon-sm" aria-label={`次の${levels.kan}`} disabled={index >= D + total} onClick={() => go(1)} className="rounded-full [@media(hover:none)]:hidden"><CaretRightIcon /></Button>
           </div>
         </div>
         {/* 款の目盛り。押すとその款（先頭は全体図）へ移る。押せる高さを取り、見える棒は細いまま */}
@@ -492,37 +502,42 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
           current={pos}
           onPick={goTo}
           items={[
-            ...revenueOrder.map((f) => ({ key: `in-${f.kan.id}`, name: `入る・${f.kan.name}`, note: amountText(f.kan.yen, f.kan.amountMissing) })),
-            ...(R ? [{ key: 'in-overview', name: '入る（歳入）全体', note: formatYen(revenueTotal) }] : []),
-            { key: 'overview', name: R ? '使う（歳出）全体' : '全体', note: formatYen(year.yen) },
+            ...revenueOrder.map((f) => ({ key: `in-${f.kan.id}`, name: `歳入・${f.kan.name}`, note: amountText(f.kan.yen, f.kan.amountMissing) })),
+            ...(R ? [{ key: 'in-overview', name: '歳入の全体', note: formatYen(revenueTotal) }, { key: 'middle', name: '歳入と歳出', note: formatYen(year.yen) }] : []),
+            { key: 'overview', name: R ? '歳出の全体' : '全体', note: formatYen(year.yen) },
             ...flows.map((f) => ({ key: f.kan.id, name: f.kan.name, note: amountText(f.kan.yen, f.kan.amountMissing) })),
           ]}
           className="mt-1 flex gap-0.5"
         >
           {/* 歳入の目盛りは使うの左に、入るの色で並べる */}
           {revenueOrder.map((f, i) => (
-            <button key={`in-${f.kan.id}`} type="button" onClick={() => goTo(i)} aria-label={`入る・${f.kan.name}`} aria-current={pos === i || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
+            <button key={`in-${f.kan.id}`} type="button" onClick={() => goTo(i)} aria-label={`歳入・${f.kan.name}`} aria-current={pos === i || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
               <i className={`block h-1.5 rounded-sm transition-colors ${pos === i ? 'bg-(--kincha-ink)' : 'bg-border group-hover/seg:bg-(--kincha)'}`} />
             </button>
           ))}
           {R ? (
-            <button type="button" onClick={() => goTo(R - 1)} aria-label="入る（歳入）全体" aria-current={index === -1 || undefined} className="group/seg mr-1 w-3.5 py-1">
-              <i className={`block h-1.5 rounded-sm transition-colors ${index === -1 ? 'bg-(--kincha-ink)' : 'bg-border group-hover/seg:bg-(--kincha)'}`} />
-            </button>
+            <>
+              <button type="button" onClick={() => goTo(R - 1)} aria-label="歳入の全体" aria-current={index === -1 || undefined} className="group/seg w-3.5 py-1">
+                <i className={`block h-1.5 rounded-sm transition-colors ${index === -1 ? 'bg-(--kincha-ink)' : 'bg-border group-hover/seg:bg-(--kincha)'}`} />
+              </button>
+              <button type="button" onClick={() => goTo(R)} aria-label="歳入と歳出" aria-current={index === 0 || undefined} className="group/seg mx-1 w-5 py-1">
+                <i className={`block h-1.5 rounded-sm transition-colors ${index === 0 ? 'bg-foreground' : 'bg-border group-hover/seg:bg-muted-foreground'}`} />
+              </button>
+            </>
           ) : null}
-          <button type="button" onClick={() => goTo(R)} aria-label="全体" aria-current={index === 0 || undefined} className="group/seg w-3.5 py-1">
+          <button type="button" onClick={() => goTo(R + D)} aria-label={R ? '歳出の全体' : '全体'} aria-current={index === D || undefined} className="group/seg w-3.5 py-1">
             {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
-            <i className={`block h-1.5 rounded-sm transition-colors ${index === 0 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
+            <i className={`block h-1.5 rounded-sm transition-colors ${index === D ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
           </button>
           {flows.map((f, i) => (
-            <button key={f.kan.id} type="button" onClick={() => goTo(R + i + 1)} aria-label={f.kan.name} aria-current={index === i + 1 || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
+            <button key={f.kan.id} type="button" onClick={() => goTo(R + D + i + 1)} aria-label={f.kan.name} aria-current={index === D + i + 1 || undefined} className="group/seg min-w-[3px] py-1" style={{ flexGrow: Math.max(f.kan.yen, 0) / sum || 0.01, flexBasis: 0 }}>
               {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
-              <i className={`block h-1.5 rounded-sm transition-colors ${index === i + 1 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
+              <i className={`block h-1.5 rounded-sm transition-colors ${index === D + i + 1 ? 'bg-primary' : 'bg-border group-hover/seg:bg-primary/40'}`} />
             </button>
           ))}
         </TickMenu>
         <p className="mt-2 text-xs text-muted-foreground">
-          {index !== 0 ? natural ? null : <>縦にスクロールすると、{levels.kan}の中の{levels.kou}が一つずつ開きます。{index < total ? `横で次の${levels.kan}へ。` : null}</> : R ? '右へスクロールすると使うお金（歳出）の、左へスクロールすると入るお金（歳入）の詳細が開きます。' : '横にスクロールすると、詳細が開きます。'}
+          {kan ? natural ? null : <>縦にスクロールすると、{levels.kan}の中の{levels.kou}が一つずつ開きます。{index < D + total ? `横で次の${levels.kan}へ。` : null}</> : R && index === 0 ? '右へスクロールすると歳出の、左へスクロールすると歳入の内訳が開きます。' : '横にスクロールすると、詳細が開きます。'}
         </p>
       </div>
       <div className={cn('relative mt-2', !natural && 'min-h-0 flex-1')}>
@@ -537,22 +552,42 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
           className={cn('flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden', natural ? 'items-start transition-[height] duration-300' : 'h-full')}
         >
           {revenueOrder.map((f, i) => drawsPanel(i)
-            ? <KanPanel key={`in-${f.kan.id}`} drill={f} loading={false} levels={levels} natural={natural} shown={pos === i} pos={i} style={INCOMING} noSetsu />
+            ? <KanPanel key={`in-${f.kan.id}`} drill={f} loading={false} levels={levels} natural={natural} shown={pos === i} pos={i} style={INCOMING} noSetsu={!hasSetsu(f)} mirror />
             : <div key={`in-${f.kan.id}`} className={cn('w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel aria-hidden="true" />)}
           {R ? (
-            <div style={INCOMING} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
-              <Overview flows={revenue} total={revenueTotal} levels={levels} onSelect={(k, kou) => select(R - 2 - k, kou)} height={overviewHeight} />
-            </div>
+            <>
+              {/* 歳入の全体図。左右を逆にして（項 ← 款）、款を真ん中の図の側に置く */}
+              <div style={INCOMING} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
+                <Overview flows={revenue} total={revenueTotal} levels={levels} label="歳入" mirror onSelect={(k, kou) => select(R - 2 - k, kou)} height={overviewHeight} />
+              </div>
+              {/* 真ん中の図。歳入の款 → 一般会計 → 歳出の款。款を押すとその款の面へ */}
+              <div className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
+                {flows.length > 0 ? (
+                  <MoneyFlow
+                    heads={['歳入', '一般会計', '歳出']}
+                    name="歳入の款から一般会計を通って歳出の款への流れ"
+                    incoming={revenue.filter((f) => f.kan.yen > 0).map((f) => ({ id: f.kan.id, label: f.kan.name, yen: f.kan.yen, tone: 'in' as const, base: revenueTotal, onClick: () => select(R - 2 - revenue.indexOf(f)) }))}
+                    outgoing={[
+                      ...flows.filter((f) => f.kan.yen > 0).map((f) => ({ id: f.kan.id, label: f.kan.name, yen: f.kan.yen, tone: 'out' as const, base: year.yen, onClick: () => select(R + D + 1 + flows.indexOf(f)) })),
+                      // 決算は入ったお金が使ったお金より多い。差は灰色で右に足して高さを揃える
+                      ...(revenueTotal > year.yen ? [{ id: 'rest', label: '翌年度へ繰り越すお金など', yen: revenueTotal - year.yen, tone: 'rest' as const }] : []),
+                    ]}
+                  />
+                ) : (
+                  error ? null : <OverviewSkeleton total={year.yen} levels={levels} height={overviewHeight} />
+                )}
+              </div>
+            </>
           ) : null}
           <div ref={overview} style={overviewFade} className={cn('w-full shrink-0 snap-start snap-always pb-3 pt-2', !natural && 'h-full overflow-y-auto [scrollbar-width:none] [&::-webkit-scrollbar]:hidden', !bare && 'px-3 sm:px-5')}>
             {flows.length > 0 ? (
-              <Overview flows={flows} total={year.yen} levels={levels} onSelect={(k, kou) => select(R + k + 1, kou)} height={overviewHeight} />
+              <Overview flows={flows} total={year.yen} levels={levels} onSelect={(k, kou) => select(R + D + 1 + k, kou)} height={overviewHeight} />
             ) : (
               error ? null : <OverviewSkeleton total={year.yen} levels={levels} height={overviewHeight} />
             )}
           </div>
-          {flows.map((f, i) => drawsPanel(R + i + 1)
-            ? <KanPanel key={f.kan.id} drill={f} loading={!given && !error} levels={levels} onMoku={onMoku} natural={natural} shown={index === i + 1} pos={R + i + 1} />
+          {flows.map((f, i) => drawsPanel(R + D + i + 1)
+            ? <KanPanel key={f.kan.id} drill={f} loading={!given && !error} levels={levels} natural={natural} shown={index === D + i + 1} pos={R + D + i + 1} />
             : <div key={f.kan.id} className={cn('w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel aria-hidden="true" />)}
         </div>
       </div>

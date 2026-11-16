@@ -4,7 +4,7 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { AmountTip } from '../amount-tip'
 import { useFlowSeen } from '../sankey'
-import { formatShare, type RevenueDoc } from '../types'
+import { formatShare, type Drill, type RevenueDoc } from '../types'
 import { Amt } from './amount'
 
 const BAR = 8
@@ -14,12 +14,12 @@ const HEAD = 20
 const IN_SLOT = 30
 const OUT_SLOT = 26
 
-type Tone = 'in' | 'out' | 'rest'
-type Node = { id: string; label: string; yen: number; tone: Tone; base?: number; onClick?: () => void }
+export type Tone = 'in' | 'out' | 'rest'
+export type Node = { id: string; label: string; yen: number; tone: Tone; base?: number; onClick?: () => void }
 
 const BAR_FILL: Record<Tone, string> = { in: 'fill-(--kincha)', out: 'fill-primary', rest: 'fill-muted-foreground' }
 // oxlint-disable-next-line design/color-opacity -- お金の流れ（sankey.tsx）の帯と同じ濃さに揃える。あちらの例外を決めるときに一緒に直す
-const RIBBON_FILL: Record<Tone, string> = { in: 'fill-(--kincha)/30', out: 'fill-primary/20', rest: 'fill-muted-foreground/15' }
+const RIBBON_FILL: Record<Tone, string> = { in: 'fill-(--kincha)/20', out: 'fill-primary/20', rest: 'fill-muted-foreground/15' }
 const SHARE_FILL: Record<Tone, string> = { in: 'fill-(--kincha-ink)', out: 'fill-primary', rest: 'fill-muted-foreground' }
 
 
@@ -63,7 +63,7 @@ function useWidth(ref: React.RefObject<HTMLElement | null>) {
 }
 
 /** 入る（左）→ 一般会計（中）→ 使う（右）の流れ。割合は棒の真上、名前は棒の横、金額は hover・focus のツールチップ */
-function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[]; heads: [string, string, string] }) {
+export function MoneyFlow({ incoming, outgoing, heads, name }: { incoming: Node[]; outgoing: Node[]; heads: [string, string, string]; /** 読み上げの名前。無ければ「入るお金から使うお金への流れ」の形 */ name?: string }) {
   const ref = React.useRef<HTMLDivElement>(null)
   const { seen, still } = useFlowSeen(ref, `${heads.join()}:${incoming.reduce((t, n) => t + n.yen, 0)}:${outgoing.reduce((t, n) => t + n.yen, 0)}`)
   const width = useWidth(ref)
@@ -92,7 +92,7 @@ function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[
   return (
     <div ref={ref} className="relative w-full" style={{ height: total + HEAD }}>
       {width ? (
-        <svg width={width} height={total + HEAD} role="img" aria-label={`${heads[0]}お金から${heads[2]}お金への流れ`} data-seen={seen ? '' : undefined} data-still={still ? '' : undefined} className="flow-svg block font-sans">
+        <svg width={width} height={total + HEAD} role="img" aria-label={name ?? `${heads[0]}お金から${heads[2]}お金への流れ`} data-seen={seen ? '' : undefined} data-still={still ? '' : undefined} className="flow-svg block font-sans">
           <g aria-hidden="true" className="fill-muted-foreground" fontSize={11}>
             <text x={x0 + BAR} y={11} textAnchor="end">{heads[0]}</text>
             <text x={x1 + BAR / 2} y={11} textAnchor="middle">{heads[1]}</text>
@@ -118,7 +118,7 @@ function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[
               const node = ins[i]!
               const h = Math.max(node.height, 2)
               return (
-                <AmountTip key={n.id} name={n.label} yen={n.yen} side="right" render={<g aria-label={n.label} />}>
+                <AmountTip key={n.id} name={n.label} yen={n.yen} side="right" render={<g {...pick(n.onClick)} aria-label={n.label} />}>
                   <rect x={0} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
                   <rect x={x0} y={node.y} width={BAR} height={h} rx={2} className={BAR_FILL[n.tone]} />
                   <text x={x0 + BAR / 2} y={node.y - 3} textAnchor="middle" className={cn('font-semibold tabular-nums', SHARE_FILL[n.tone])} fontSize={narrow ? 10 : 11}>{share(n)}</text>
@@ -170,8 +170,18 @@ function Stat({ tone, word, sub, yen, per }: { tone: 'in' | 'out'; word: string;
 }
 
 /** 歳入の無い年度・資料は出さない（呼ぶ側が doc を探す）。fields は歳出の分野（金額の多い順、その他は最後） */
-export function IncomeFlow({ doc, phase, expTotal, fields, pop, openField }: {
+/** 住民税（個人）の額。歳入の項「〇民税」（特別区民税・市町村民税など）の中に「個人」の目・節があればその和、無ければ項の額。項が無ければ null */
+function residentTax(revenue: Drill[] | undefined): number | null {
+  const kou = revenue?.flatMap((k) => k.kou).find((o) => /(区|市町村|市|町|村)民税$/.test(o.name) && !o.amountMissing)
+  if (!kou) return null
+  const personal = kou.moku.flatMap((m) => (m.name.includes('個人') ? [m.yen] : m.setsu.filter((x) => x.name.includes('個人') && !x.amountMissing).map((x) => x.yen)))
+  return personal.length ? personal.reduce((a, v) => a + v, 0) : kou.yen
+}
+
+export function IncomeFlow({ doc, revenue, phase, expTotal, fields, pop, openField }: {
   doc: RevenueDoc
+  /** 歳入の款・項・目・節（お金の流れと同じ）。1人あたりの住民税に使う */
+  revenue?: Drill[]
   phase: 'initial' | 'settlement'
   expTotal: number
   fields: { id: string; name: string; yen: number }[]
@@ -189,17 +199,19 @@ export function IncomeFlow({ doc, phase, expTotal, fields, pop, openField }: {
   // 決算は入ったお金が使ったお金より多い。差は翌年度へ繰り越すお金などなので、灰色で右に足して入ると使うの高さを揃える
   const rest = doc.total - expTotal
   if (rest > 0) outgoing.push({ id: 'rest', label: '翌年度へ繰り越すお金など', yen: rest, tone: 'rest' })
-  // 入るの1人あたりは、歳入の総額でなく住民が納める税（区分「まちの税」の款の和）で割る
+  // 入るの1人あたりは、歳入の総額でなく住民税（個人）で割る。住民税の項が引けないときは、まちの税（区分「まちの税」の款の和）で割る
+  const resident = residentTax(revenue)
   const tax = kan.reduce((s, k) => s + (k.category === 'まちの税' ? k.yen : 0), 0)
+  const per = !pop ? null : resident && resident > 0 ? { label: '1人あたりの住民税', yen: resident / pop } : tax > 0 ? { label: '1人あたりの税金', yen: tax / pop } : null
   return (
     <section className="mb-8">
       <div className="mb-5 grid grid-cols-2 gap-3">
-        <Stat tone="in" word={words[0]} sub="歳入" yen={doc.total} per={pop && tax > 0 ? { label: '1人あたりの税金', yen: tax / pop } : null} />
+        <Stat tone="in" word={words[0]} sub="歳入" yen={doc.total} per={per} />
         <Stat tone="out" word={words[1]} sub="歳出" yen={expTotal} per={pop ? { label: '1人あたり', yen: expTotal / pop } : null} />
       </div>
       {/* スマホは頁の左右の余白まで使って画面いっぱいに描く */}
       <div className="-mx-2 sm:mx-0">
-        <Flow incoming={incoming} outgoing={outgoing} heads={[words[0], '一般会計', words[1]]} />
+        <MoneyFlow incoming={incoming} outgoing={outgoing} heads={[words[0], '一般会計', words[1]]} />
       </div>
     </section>
   )

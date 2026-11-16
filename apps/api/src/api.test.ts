@@ -308,6 +308,7 @@ describe('MCP', () => {
       'search_expenditure_details',
       'search_expenditure_subjects',
       'search_projects',
+      'search_revenue_details',
       'search_revenue_subjects',
     ])
     const res = await call('search_expenditure_subjects', { ...base, where: { level: { eq: ['目'] } }, page_size: 1 })
@@ -542,6 +543,7 @@ describe('MCP 2026-07-28', () => {
       'search_expenditure_details',
       'search_expenditure_subjects',
       'search_projects',
+      'search_revenue_details',
       'search_revenue_subjects',
     ])
     const res = await modern('tools/call', { name: 'search_expenditure_subjects', arguments: valid }, { 'Mcp-Name': 'search_expenditure_subjects' })

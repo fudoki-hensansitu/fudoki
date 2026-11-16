@@ -92,7 +92,7 @@ SNAPSHOT_META = '_snapshot'
 TABLE_ORDER = ['jurisdiction',
                'fiscal_origin', 'expenditure', 'expenditure_origin_link', 'expenditure_subject', 'expenditure_detail',
                'expenditure_location',
-               'revenue', 'revenue_origin_link', 'revenue_subject', 'revenue_location', 'fiscal_revenue_category',
+               'revenue', 'revenue_origin_link', 'revenue_subject', 'revenue_detail', 'revenue_location', 'fiscal_revenue_category',
                'evaluation', 'evaluation_origin', 'evaluation_sheet', 'evaluation_indicator', 'evaluation_indicator_value',
                'project', 'project_year',
                'evaluation_sheet_project', 'source_page_text']
@@ -200,6 +200,7 @@ PARENT_SCOPE = {
     'expenditure_origin_link': ('origin_id', 'fiscal_origin'),
     'expenditure_location': ('origin_id', 'fiscal_origin'),
     'revenue_subject': ('revenue_id', 'revenue'),
+    'revenue_detail': ('revenue_id', 'revenue'),
     'revenue_origin_link': ('origin_id', 'fiscal_origin'),
     'revenue_location': ('origin_id', 'fiscal_origin'),
     'evaluation_indicator': ('sheet_id', 'evaluation_sheet'),

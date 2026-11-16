@@ -1,7 +1,7 @@
 // 歳入の集約: 1つの資料（自治体・年度・資料区分・補正号）の1つの会計の歳入全体。
 // 守ること: 款の和が総額。区分は風土記の判断（seed fiscal_revenue_category）で、款の名前で引く。
 import { z } from 'zod'
-import { REVENUE_SUBJECT_TABLE, described } from '../columns'
+import { REVENUE_DETAIL_TABLE, REVENUE_SUBJECT_TABLE, described } from '../columns'
 import { OriginRow } from '../expenditure/model'
 import { nextPageToken } from '../shared/paging'
 import { searchInputFor } from '../shared/search'
@@ -82,6 +82,36 @@ const revenueSubjectShape = described(REVENUE_SUBJECT_TABLE.columns, {
 })
 export const RevenueSubjectRow = z.strictObject(revenueSubjectShape).meta({ id: 'RevenueSubjectRow', description: '歳入の科目（款・項・目）。' })
 
+const revenueDetailShape = described(REVENUE_DETAIL_TABLE.columns, {
+  detail_id: z.string(),
+  node_key: z.string(),
+  parent_detail_id: z.string().nullable(),
+  subject_id: z.string(),
+  revenue_id: z.string(),
+  jurisdiction_code: z.string(),
+  fiscal_year: z.int(),
+  document_kind: z.enum(['settlement', 'initial']),
+  amendment_number: z.int().nullable(),
+  amount_phase: z.enum(['executed', 'approved']),
+  account_name: z.string(),
+  account_kind: z.string(),
+  kan_code: z.string(),
+  kan_name: z.string(),
+  kou_code: z.string().nullable(),
+  kou_name: z.string().nullable(),
+  moku_code: z.string().nullable(),
+  moku_name: z.string().nullable(),
+  source_heading: z.string(),
+  node_kind: z.string(),
+  depth: z.int(),
+  code: z.string().nullable(),
+  name: z.string(),
+  amount_yen: z.int().nullable(),
+  is_leaf: z.boolean(),
+  origin_id: z.string(),
+})
+export const RevenueDetailRow = z.strictObject(revenueDetailShape).meta({ id: 'RevenueDetailRow', description: '歳入の内訳（科目の下の節と、その下の印字）。' })
+
 export const RevenueLocationRow = z
   .strictObject(
     described('revenue_location', {
@@ -108,6 +138,14 @@ export const RevenueSubjectSearchOutput = z.strictObject({
   origins: z.array(OriginRow).describe('結果の行が指す出典。行の origin_id から引く。'),
 })
 export type RevenueSubjectSearchOutput = z.infer<typeof RevenueSubjectSearchOutput>
+
+export const RevenueDetailSearchInput = searchInputFor(REVENUE_DETAIL_TABLE)
+export const RevenueDetailSearchOutput = z.strictObject({
+  details: z.array(RevenueDetailRow),
+  next_page_token: nextPageToken,
+  origins: z.array(OriginRow).describe('結果の行が指す出典。行の origin_id から引く。'),
+})
+export type RevenueDetailSearchOutput = z.infer<typeof RevenueDetailSearchOutput>
 
 export const RevenueLineId = z.string().regex(/^[0-9a-f]{64}$/).describe('subject_id from a revenue search response (64 lowercase hexadecimal characters).')
 export const RevenueLineInput = z.strictObject({ line_id: RevenueLineId })

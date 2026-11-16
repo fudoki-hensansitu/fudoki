@@ -115,7 +115,7 @@ ADR 0047 に従い、木と根で決まる列（自治体・年度・款の名�
 
 ## 4. API・web
 
-- api: `apps/api/src/revenue/`（`model.ts`・`queries.ts`・`routes.ts`・`tools.ts`）。操作は歳出に揃え、根を返す `get_revenue` と、科目・節を探す `search_revenue_subjects`。区分は `queries.ts` で seed の表を JOIN して返す。D1 には seed の区分も写す（`fiscal_revenue_category`）。
+- api: `apps/api/src/revenue/`（`model.ts`・`queries.ts`・`routes.ts`・`tools.ts`）。操作は歳出に揃え、根を返す `get_revenue` と、科目を探す `search_revenue_subjects`、節を探す `search_revenue_details`。区分は `queries.ts` で seed の表を JOIN して返す。D1 には seed の区分も写す（`fiscal_revenue_category`）。
 - web: まとめタブに「何で賄う？」の節（「何に使う？」は予算・決算のタブへ移した）。開いた年度の当初予算（無ければ決算）の一般会計で、総額・まちの税・国・〇から配られるお金と、款の内訳を出す。どちらの資料の額かを「R8 当初予算」「R6 決算」のように添え、出典は資料名と頁へのリンク。歳入の無い年度は節ごと出さない（「未収録」の札は出さない。歳出のタブとは違い、まとめの一節のため）。
   - 2026-11-16 変更: まとめタブの「何で賄う？」はやめ、予算・決算タブの頭に「入る→使う」（入る＝歳入の款、使う＝歳出の分野の流れ）を置いた。入るの1人あたりは、まちの税の款の和を人口で割った1人あたりの税金。
 

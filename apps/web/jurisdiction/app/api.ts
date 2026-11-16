@@ -326,16 +326,10 @@ async function webApi<T>(path: string, init?: RequestInit): Promise<T> {
 export const listPage = (q: ListQuery, token?: string): Promise<ListPage> =>
   webApi('/api/projects', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ query: q, ...(token ? { token } : {}) }) })
 
-/** 事業の詳細: 年度ごとの額と、開いた年度の中の事業 */
-export const projectFull = (id: string, year: number, kind: Kind): Promise<ProjectFull> =>
-  webApi(`/api/projects/${encodeURIComponent(id)}?${new URLSearchParams({ year: String(year), kind })}`)
 /** 事業の頁の事業（事業の最新の年度で読む） */
 export const projectLatest = (id: string): Promise<ProjectFull> => webApi(`/api/projects/${encodeURIComponent(id)}`)
 
 /** その年度の分野ごとの末端の科目（やめた事業を分野で絞るとき、前の年度の分を読む） */
 export const fieldSubjects = (code: string, year: number, kind: Kind): Promise<Record<string, string[]>> => webApi(`/api/jurisdictions/${code}/${year}/field-subjects?kind=${kind}`)
 
-/** 評価シートをつないだ事業の、その年度の行 */
-export const projectOfId = (project: string, year: number, kind: Kind): Promise<ProjRow | null> =>
-  webApi(`/api/projects?${new URLSearchParams({ project, year: String(year), kind })}`)
 
