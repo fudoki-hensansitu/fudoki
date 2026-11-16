@@ -234,6 +234,11 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
         else:
             joined.append(word)
     merged = joined
+    if (len(merged) == 1 and re.fullmatch(r'[0-9]{2,}', merged[0].text) and document_quirk('dotted_column_rules') is not None
+            and any(merged[0].x0 < x < merged[0].x1 for x in cuts)):
+        # The codes of two levels read as one number across a dotted rule (`1010` = 款10 項10, 132080 R5): the
+        # characters' box, not the line's padded one, says where the rule cuts it.
+        return merged
     if len(merged) < 2:
         return None
     # The line's own box includes the padding its characters' boxes lack: the ends keep it, so a line no rule cuts
@@ -466,6 +471,10 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                                      line_cuts(detected, item['bbox_pdf_pt']) if row_gaps else cuts, reach)
     if (nested := document_quirk('nested_subject_boxes')) is not None:
         words = nested.module.snap(words, detected.vertical)
+    if (repeats := document_quirk('bracketed_repeats')) is not None:
+        words = repeats.module.dropped(words, detected)
+    if (marks := document_quirk('unread_marks')) is not None:
+        words = marks.module.marked(words, pdf, number, cuts)
     return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
 
 
@@ -678,7 +687,10 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
 
     @cache
     def detected(number):
-        found = short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed), rule_dark,
+        found = (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed)
+        if (dotted := document_quirk('dotted_column_rules')) is not None:
+            found = dotted.module.added(pdf, found, rule_dark)
+        found = short_rows(pdf, found, rule_dark,
                            bool((header or {}).get('staircase')) or short_columns, row_columns)
         return rule_hook(found) if rule_hook else found
 
@@ -1337,6 +1349,12 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
         u['kind'] == 'unread ink in amount column'
         and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
                 and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in declared))]
+    # So is a heading the strip seam cut (`header_readings`: 不用額 on 132080 R5 p422): the declared cell stands for it.
+    headings = [(page, r['box']) for r in options.get('header_readings', ()) for page in r['pages']]
+    built.unowned = [u for u in built.unowned if not (
+        u['kind'] == 'unread strip seam'
+        and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
+                and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in headings))]
     built.notes.extend(recovered)
     report.unit = check_units(built, kind, options['account'], bool(options.get('partial')))
     if report.unit['stopped'] and stop:

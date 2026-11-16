@@ -40,7 +40,8 @@
     "flat": "ingestion.generic.patterns.breakdown.flat",
     "amount_ends": "ingestion.generic.patterns.breakdown.amount_ends",
     "numbered": "ingestion.generic.patterns.breakdown.numbered",
-    "setsu_lines": "ingestion.generic.patterns.breakdown.setsu_lines"
+    "setsu_lines": "ingestion.generic.patterns.breakdown.setsu_lines",
+    "setsu_ends": "ingestion.generic.patterns.breakdown.setsu_ends"
   },
   "repairs": {
     "line_clips": "ingestion.generic.patterns.repairs.line_clips",
@@ -132,6 +133,9 @@
     "short_amounts_at_line_end": "ingestion.generic.patterns.quirks.short_amounts_at_line_end",
     "short_yen_notes": "ingestion.generic.patterns.quirks.short_yen_notes",
     "gapped_column_rules": "ingestion.generic.patterns.quirks.gapped_column_rules",
+    "dotted_column_rules": "ingestion.generic.patterns.quirks.dotted_column_rules",
+    "unread_marks": "ingestion.generic.patterns.quirks.unread_marks",
+    "bracketed_repeats": "ingestion.generic.patterns.quirks.bracketed_repeats",
     "skewed_cell_rows": "ingestion.generic.patterns.quirks.skewed_cell_rows",
     "wrapped_years": "ingestion.generic.patterns.quirks.wrapped_years",
     "stacked_digits": "ingestion.generic.patterns.quirks.stacked_digits",

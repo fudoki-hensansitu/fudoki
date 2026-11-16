@@ -49,6 +49,24 @@ TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|�
 # The words that end a transfer remark begun on the line above (`…費` / `から流用 13,281,000円`).
 # A transfer remark ends with the word (`…へ流用`): a line after it is another remark, even when it reaches the column's limit.
 ENDED_TRANSFER = re.compile(r'(?:流用|充用)$')
+
+
+def ends_transfer(name: str) -> bool:
+    """The name ends a transfer remark (`ENDED_TRANSFER`), but for brackets after it: the line under a remark may be a
+    department (`…へ流用` / `(高齢者支援室(高齢福祉担当))`, 132080), which the remark takes in as a wrapped line."""
+    while name[-1:] in (')', '）'):
+        depth = 0
+        for index in range(len(name) - 1, -1, -1):
+            depth += name[index] in ')）'
+            depth -= name[index] in '(（'
+            if depth == 0:
+                break
+        else:
+            break
+        name = name[:index]
+    return ENDED_TRANSFER.search(name) is not None
+
+
 # A kind word printed above an amount inside an amount column's cell (a stacked carry-over column).
 SUPPLEMENT_ROUND = re.compile(r'第[0-9０-９]+次補正')  # the round of a supplementary budget printed over its amount
 # The history of the year's supplementary budgets printed under an item's amount in its column (131113): `補正経過`, then
@@ -991,7 +1009,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                    and label[0].x0 >= previous.lines[0][0].x0 - left_slack
                    and not (headings is not None and headings.module.indented_under(label, previous))
                    and (not money or bracketed
-                        or (reaches and not ENDED_TRANSFER.search(previous.name) and (abs(label[0].x0 - previous.indent) <= 3
+                        or (reaches and not ends_transfer(previous.name) and (abs(label[0].x0 - previous.indent) <= 3
                                          or abs(label[0].x0 - _name_start(previous)) <= 3 + float(settings.get('name_start_slack', 0)))))
                    and _cell(band_of(label[0]), label[0].y0) == _cell(band_of(previous.lines[-1][0]), previous.lines[-1][0].y0))
         # (Not only the rule-bounded cell: the name and the amount of a 備考 can have grids of their own.)
@@ -1162,7 +1180,8 @@ def join_transfer_tails(items_: list[Item], layout: dict | None) -> list[Item]:
         previous = result[-1] if result else None
         if (previous is not None and item.code is None and not item.amounts and previous.code is None
                 and previous.amounts and not previous.kinds and item.lines and previous.lines
-                and abs(item.lines[0][0].x0 - previous.lines[0][0].x0) <= 2
+                # (within a third of a character: a tail led by `・` boxes it from its ink, `・一般需用費へ流用`, 132080)
+                and abs(item.lines[0][0].x0 - previous.lines[0][0].x0) <= max(2, .3 * (previous.lines[0][0].y1 - previous.lines[0][0].y0))
                 and 0 < item.lines[0][0].y0 - previous.lines[-1][0].y0 <= 2.5 * (previous.lines[-1][0].y1 - previous.lines[-1][0].y0)
                 and not TRANSFER.search(PAREN_TAIL.sub('', previous.name))
                 and TRANSFER.search(PAREN_TAIL.sub('', previous.name + item.name))
