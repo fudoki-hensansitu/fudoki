@@ -847,12 +847,11 @@ function ProjectDetail({ id }: { id: string }) {
   return loaded === FAILED ? <LoadFailed /> : <ProjectBody p={loaded} />
 }
 
-/** 事業の科目の道筋と名前。新しく始める・やめた事業の印は名前の後ろに付ける */
-function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name' | 'path'>; mark: 'new' | 'stop' | null }) {
+/** 事業の名前。新しく始める・やめた事業の印は名前の後ろに付ける */
+function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name'>; mark: 'new' | 'stop' | null }) {
   return (
     <>
-      <p className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">{p.path.filter(Boolean).map((x, i) => <React.Fragment key={i}>{i ? <CaretRightIcon className="size-2.5" /> : null}{x}</React.Fragment>)}</p>
-      <h2 className="mt-1.5 mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
+      <h2 className="mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
         {p.name}
         {mark === 'stop' ? <Mark kind="stop" label="やめた事業" /> : mark === 'new' ? <Mark kind="new" label="新しく始める事業" /> : null}
       </h2>
