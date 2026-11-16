@@ -590,7 +590,8 @@ def continue_volume(nodes: list[dict], spec: dict) -> str:
 def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
     """Names the text layer or OCR misread, put back to what the original prints (`name_corrections` of the
     conversion's options, each checked on the rendered page). A rule names the page, the code and the name as
-    read (and its top `y` in points when the same misread repeats on the page); it must find exactly that one
+    read (and its top `y` in points when the same misread repeats on the page, its `level` when nodes of one line
+    share the code and the name read: `1 1 1 議会費`); it must find exactly that one
     node, or the conversion stops. When none is found but exactly one node there already prints the corrected
     name (the shared variant table `ocr_variant_chars.json` made the fix first), the rule is passed and noted. A breakdown item's misread number
     (`corrected_code`) is put right with it: the item's place in the tree never depended on it. A null
@@ -598,7 +599,8 @@ def correct_names(nodes: list[dict], rules: list[dict] | None) -> list[str]:
     notes = []
     for rule in rules or ():
         at = lambda n, name: n['physical_page'] == rule['page'] and n['name_text'] == name \
-            and n['code_text'] == rule.get('code') and ('y' not in rule or abs(n['y0'] - rule['y']) <= 3)
+            and n['code_text'] == rule.get('code') and ('y' not in rule or abs(n['y0'] - rule['y']) <= 3) \
+            and ('level' not in rule or n.get('level_header') == rule['level'])
         found = [n for n in nodes if at(n, rule['observed_name'])]
         if not found and 'corrected_code' not in rule and len([n for n in nodes if at(n, rule['corrected_name'])]) == 1:
             notes.append(f'{rule["observed_name"]}→{rule["corrected_name"]}（字形表で直っていた）')
