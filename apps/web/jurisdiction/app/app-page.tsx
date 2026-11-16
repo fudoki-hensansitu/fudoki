@@ -27,6 +27,7 @@ import {
   ReceiptIcon,
   MapPinIcon,
   ShieldCheckIcon,
+  ArrowDownIcon,
   SquaresFourIcon,
   MapTrifoldIcon,
   MapPinAreaIcon,
@@ -356,7 +357,7 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
     projectColumn.display({ id: 'name', header: '事業名', cell: (c) => <ProjectNameCell p={c.row.original} />, meta: { className: 'whitespace-normal' } }),
     ...(hasDept ? [projectColumn.accessor('dept', { header: '担当の課', cell: (c) => c.getValue() ?? '', meta: { className: '@max-3xl:hidden' } })] : []),
     projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden' } }),
-    projectColumn.accessor('yen', { header: amount, cell: (c) => (c.getValue() == null ? '—' : yenText(c.getValue()!)), meta: { className: 'text-right tabular-nums' } }),
+    projectColumn.accessor('yen', { header: () => <span className="inline-flex items-center gap-1">{amount}<ArrowDownIcon className="size-3.5" aria-label="多い順" /></span>, cell: (c) => (c.getValue() == null ? '—' : yenText(c.getValue()!)), meta: { className: 'text-right tabular-nums' } }),
     // やめた事業は割合を出さないので、列ごと出さない
     ...(ended ? [] : [projectColumn.display({ id: 'share', header: '割合', cell: (c) => <ProjectShareCell p={c.row.original} />, meta: { className: '@max-xl:hidden text-right' } })]),
   ]), [amount, hasDept, ended])
@@ -369,7 +370,7 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
         {table.getHeaderGroups().map((g) => (
           <TableRow key={g.id} className="hover:bg-transparent">
             {g.headers.map((h) => (
-              <TableHead key={h.id} className={cn('h-9 font-normal', cls(h.column.columnDef.meta))}>
+              <TableHead key={h.id} aria-sort={h.column.id === 'yen' ? 'descending' : undefined} className={cn('h-9 font-normal', cls(h.column.columnDef.meta))}>
                 {h.isPlaceholder ? null : <table.FlexRender header={h} />}
               </TableHead>
             ))}
@@ -694,8 +695,6 @@ function FieldBox({ v, fields, setFields }: { v: YearView; fields: string[]; set
 
 function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: { filter: string; setFilter: (f: string) => void; /** 選んだ分野（空はすべて） */ fields: string[]; setFields: (f: string[]) => void; grade: string; setGrade: (g: string) => void }) {
   const { v, res } = useApp()
-  const by = filter === 'ended' ? v.year - 1 : v.year
-  const byLabel = `${r(by)} ${v.label(by)}`
   // 入力は少し待ってから絞る（打つたびに API を呼ばない）。待つあいだと読むあいだは前の一覧を出したまま
   const [text, setText] = React.useState('')
   const [q, setQ] = React.useState('')
@@ -710,7 +709,7 @@ function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: 
   const head = (n: string) => (
     <p className="px-2.5 text-xs text-muted-foreground">
       {filter === 'new' ? '予算書で新しく現れた事業・' : ''}
-      {n}・{byLabel}の多い順
+      {n}
     </p>
   )
   const body = (v: YearView) => {
@@ -752,7 +751,7 @@ function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: 
   ) : null
   return (
     <div className="flex flex-col gap-2">
-      <TabHead title="事業">事業は、自治体がお金を使って行う一つ一つの仕事です。予算書・決算書に載っている事業を、使うお金の多い順に並べています。</TabHead>
+      <TabHead title="事業">事業は、自治体がお金を使って行う一つ一つの仕事です。</TabHead>
       {lead}
       {/* 検索の行と、絞り込み（事業の区分・分野の combobox）の行を分ける */}
       <div className="relative">
