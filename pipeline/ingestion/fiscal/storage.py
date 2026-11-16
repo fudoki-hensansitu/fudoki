@@ -11,13 +11,16 @@ from pathlib import Path, PurePosixPath
 import gzip
 import hashlib
 
+from copy import deepcopy
+from datetime import datetime, timedelta, timezone
+
 from ingestion.fiscal.manifest import BUCKET, document_slot, object_key, ocr_key, sha_file, table_references
 from ingestion import r2
 from ingestion.paths import CACHE
 
 OBJECTS = CACHE / 'objects'
 # The receipts of the tables in R2, one list for all (docs/prd/ingestion-receipts/dd.md). Only `ingestion:store`
-# writes it, after its uploads. Until readers switch to it, it mirrors the Git records of stored tables.
+# and `ingestion:refresh` (on main) write it; a saved manifest holds no tables.
 RECEIPTS_KEY = 'fiscal/ingestion/receipts.json'
 
 
@@ -153,7 +156,7 @@ def prepare_save(document: dict, table: dict, path: Path | dict[str, Path], *,
     for kind, receipt in table_references(table).items():
         file = path[kind] if kind is not None else path
         reference = receipt['object']
-        key = object_key(document, table['table_id'], kind)
+        key = object_key(document, table['table_id'], kind, reference['sha256'])
         if reference['key'] != key:
             raise ValueError('Wrong current-table key')
         verify(file, reference)
@@ -165,7 +168,7 @@ def prepare_save(document: dict, table: dict, path: Path | dict[str, Path], *,
 
 def keep(document: dict, table: dict, path: Path | dict[str, Path], *, scope: dict | None = None) -> None:
     """Pass the save gate and place the table in the local object cache at its key. R2 is not written:
-    `ingestion:store` uploads the recorded tables after merge (ADR 0045)."""
+    `ingestion:store` converts and uploads after merge."""
     for key, file in prepare_save(document, table, path, scope=scope):
         cache(key, file)
 
@@ -179,7 +182,7 @@ def cache(key: str, file: Path) -> None:
 
 
 def upload(key: str, file: Path, reference: dict) -> None:
-    """Put one verified object at its fixed key. Only `ingestion:store` (CI) calls this."""
+    """Put one verified object at its key. Only `ingestion:store` (CI) calls this."""
     verify(file, reference)
     if file.stat().st_size > 300_000_000:
         raise ValueError('cf REST upload limit exceeded; configure a file-based S3 multipart transport')
@@ -202,6 +205,27 @@ def read_receipts() -> dict[str, dict] | None:
     return json.loads(shown.stdout)
 
 
+_RECEIPTS: dict[str, dict] | None = None
+
+
+def receipts() -> dict[str, dict]:
+    """The receipts list, read from R2 once per process (an absent list is empty)."""
+    global _RECEIPTS
+    if _RECEIPTS is None:
+        _RECEIPTS = read_receipts() or {}
+    return _RECEIPTS
+
+
+def attach(document: dict, listed: dict[str, dict] | None = None) -> dict:
+    """The document with ``tables``: the receipts of its declared tables, in declaration order. A table the list
+    lacks (never stored) or holds for another owning conversion is absent."""
+    listed = receipts() if listed is None else listed
+    tables = [deepcopy(listed[ident]) for conversion in document['conversions'] for table in conversion['expected_tables']
+              if (ident := receipt_id(document, table['table_id'])) in listed
+              and listed[ident].get('conversion_id') == conversion['id']]
+    return {**document, 'tables': tables}
+
+
 def write_receipts(receipts: dict[str, dict]) -> None:
     with tempfile.NamedTemporaryFile('w', suffix='.json', delete=False) as stream:
         json.dump(receipts, stream, ensure_ascii=False, sort_keys=True, indent=1)
@@ -213,12 +237,23 @@ def write_receipts(receipts: dict[str, dict]) -> None:
         temporary.unlink(missing_ok=True)
 
 
+# An object newer than this may be one a store or refresh has put but whose receipt is not in the list yet.
+CLEANUP_GRACE = timedelta(hours=24)
+
+
+def recent(item: dict, now: datetime) -> bool:
+    modified = item.get('last_modified')
+    return modified is not None and now - datetime.fromisoformat(modified.replace('Z', '+00:00')) < CLEANUP_GRACE
+
+
 def cleanup(document: dict) -> int:
     from ingestion.fiscal.manifest import validate, require_current, read, manifest_path
     validate(document)
-    require_current(document)
+    # A table the list does not point at is removed (only after the list stopped pointing at it).
+    stored = attach(document, read_receipts() or {})
+    require_current(stored)
     prefix = object_key(document, 'placeholder').rsplit('/', 1)[0] + '/'
-    wanted = {reference['object']['key'] for table in document['tables']
+    wanted = {reference['object']['key'] for table in stored['tables']
               for reference in table_references(table).values()}
     from ingestion.fiscal.manifest import ocr_inputs, measurement_ocr_keys
     wanted |= {ocr_key(document, item['id'], suffix) for _, item in ocr_inputs(document)
@@ -226,6 +261,7 @@ def cleanup(document: dict) -> int:
     wanted |= measurement_ocr_keys()
     removed = 0
     after = None
+    now = datetime.now(timezone.utc)
     while True:
         if read(manifest_path(document['target'], document['direction'])) != document:
             raise ValueError('Saved manifest changed; cleanup stopped')
@@ -249,7 +285,7 @@ def cleanup(document: dict) -> int:
             stored_table = name.endswith('.parquet') and '/' not in name
             stored_ocr = (name.startswith('ocr/') and '/' not in name[4:]
                           and name.endswith(('.json.gz', '.run.json')))
-            if key not in wanted and (stored_table or stored_ocr):
+            if key not in wanted and (stored_table or stored_ocr) and not recent(item, now):
                 if read(manifest_path(document['target'], document['direction'])) != document:
                     raise ValueError('Saved manifest changed; cleanup stopped')
                 if key in measurement_ocr_keys():

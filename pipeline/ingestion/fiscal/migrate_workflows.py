@@ -85,7 +85,8 @@ def main() -> None:
     results = []
     layouts = []
     for path in args.manifest or manifest.paths():
-        document = manifest.read(path, check_code=False)
+        # The readings are recorded in the notes of the stored tables (the receipts list in R2).
+        document = storage.attach(manifest.read(path, check_code=False))
         candidate, changes = plan(document)
         if changes:
             results.append({'manifest': str(path.resolve().relative_to(manifest.PIPELINE)), 'changes': changes})

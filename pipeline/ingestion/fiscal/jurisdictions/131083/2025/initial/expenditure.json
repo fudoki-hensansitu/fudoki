@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "131083",
     "fiscal_year": 2025,
@@ -106,120 +106,6 @@
           "table_id": "elderly-medical-initial"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "general-initial",
-      "conversion_id": "general-initial",
-      "input_fingerprint": "4ed57d429fd7a8c001c191d290bfb33e735f9f29657537fd9627972ffd27a8e0",
-      "account": "一般会計",
-      "notes": [
-        "款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。",
-        "財源内訳の欄は取り込んでいない。説明は向かいの頁から、施策（4桁の番号）・事業（番号と右端の金額）・「・」の項目（右端の金額）を字下げで読み、文中の数（人数・回数など）は取り込んでいない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131083/2025/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "df5e5bd9a9f80eded3262d335d73258343861cf8fabfd28915141794f6cf6d33",
-          "bytes": 227514
-        },
-        "row_count": 7172
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131083/2025/initial/expenditure/general-initial-amounts.parquet",
-          "sha256": "f41899b6170285b62380f581d3d0b8e6f1a226e1d236afdbd42833bcf7d3fd95",
-          "bytes": 178305
-        },
-        "row_count": 7210
-      }
-    },
-    {
-      "table_id": "national-health-initial",
-      "conversion_id": "national-health-initial",
-      "input_fingerprint": "36b0501add90861ded0edb402f89306a9486c27c4ab38466a85ab06d4497c233",
-      "account": "国民健康保険会計",
-      "notes": [
-        "款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。",
-        "財源内訳の欄は取り込んでいない。説明は向かいの頁から、施策（4桁の番号）・事業（番号と右端の金額）・「・」の項目（右端の金額）を字下げで読み、文中の数（人数・回数など）は取り込んでいない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131083/2025/initial/expenditure/national-health-initial-nodes.parquet",
-          "sha256": "f2ae7de9285991bb1bf5516881c9b26aeab199e09ecef9dc8a5cb845e6ef2f05",
-          "bytes": 13354
-        },
-        "row_count": 266
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131083/2025/initial/expenditure/national-health-initial-amounts.parquet",
-          "sha256": "3292fcc8cde81418c0ad88e532ede2883a59449955c142672210c4d5cca44ca0",
-          "bytes": 10332
-        },
-        "row_count": 369
-      }
-    },
-    {
-      "table_id": "care-initial",
-      "conversion_id": "care-initial",
-      "input_fingerprint": "156dea7a1a85f142bbe88092aee5cb76100331e66e7deab862cb90a4ab48d67d",
-      "account": "介護保険会計",
-      "notes": [
-        "款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。",
-        "財源内訳の欄は取り込んでいない。説明は向かいの頁から、施策（4桁の番号）・事業（番号と右端の金額）・「・」の項目（右端の金額）を字下げで読み、文中の数（人数・回数など）は取り込んでいない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131083/2025/initial/expenditure/care-initial-nodes.parquet",
-          "sha256": "bff8ad627251c60a4f76c967de5d637eab7ca47260d87ec3cd6c5ae51ccb6ba7",
-          "bytes": 16768
-        },
-        "row_count": 373
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131083/2025/initial/expenditure/care-initial-amounts.parquet",
-          "sha256": "9ae6deeb3d574115ffbf35fbf0f35ada6c0ffefe155dfcdd75278e84e2cbc213",
-          "bytes": 12918
-        },
-        "row_count": 450
-      }
-    },
-    {
-      "table_id": "elderly-medical-initial",
-      "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "d52e73467b56a9b504222cd61271bf5af2362ac4e11bb1807a86a1ff81507697",
-      "account": "後期高齢者医療会計",
-      "notes": [
-        "款・項・目は左頁の科目の欄から、それぞれの行の本年度・前年度・比較の金額とともに読んだ。印字の見出し「本年度」「前年度」「比較増(△)減」は共有辞書の「本年度予算額」「前年度予算額」「比較」とした。",
-        "財源内訳の欄は取り込んでいない。説明は向かいの頁から、施策（4桁の番号）・事業（番号と右端の金額）・「・」の項目（右端の金額）を字下げで読み、文中の数（人数・回数など）は取り込んでいない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131083/2025/initial/expenditure/elderly-medical-initial-nodes.parquet",
-          "sha256": "2b7430505bdf66f79b686a2b0f877762993217a3c4522001f321c267c01b2f71",
-          "bytes": 8271
-        },
-        "row_count": 128
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131083/2025/initial/expenditure/elderly-medical-initial-amounts.parquet",
-          "sha256": "25a0514b1f223db451566bdaecb1bfa2b550cb7cc71545152887cfe9d06bb188",
-          "bytes": 6029
-        },
-        "row_count": 168
-      }
     }
   ]
 }

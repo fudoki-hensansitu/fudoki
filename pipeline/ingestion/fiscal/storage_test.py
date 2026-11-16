@@ -81,6 +81,9 @@ class CleanupTest(unittest.TestCase):
         self.validate = self.enterContext(patch.object(manifest, 'validate'))
         self.current = self.enterContext(patch.object(manifest, 'require_current'))
         self.read = self.enterContext(patch.object(manifest, 'read', return_value=self.document))
+        # The receipts list points at the wanted table.
+        self.enterContext(patch.object(storage, 'read_receipts', return_value={}))
+        self.enterContext(patch.object(storage, 'attach', return_value=self.document))
         self.plan_keys = self.enterContext(patch.object(manifest, 'measurement_ocr_keys', return_value=set()))
         self.list = self.enterContext(patch.object(storage.subprocess, 'check_output', side_effect=self.list_objects))
         self.delete = self.enterContext(patch.object(storage.subprocess, 'run', side_effect=self.delete_object))
@@ -122,6 +125,17 @@ class CleanupTest(unittest.TestCase):
         self.assertEqual(self.keys, before)
         self.delete.assert_called_once()
         self.assertEqual(self.list.call_count, 2)
+
+    def test_a_recently_put_object_is_kept_until_its_receipt_can_be_listed(self):
+        listed = self.list_objects
+        modified = (storage.datetime.now(storage.timezone.utc) - storage.timedelta(hours=1)).isoformat()
+
+        def with_time(command):
+            return json.dumps([{**item, 'last_modified': modified} for item in json.loads(listed(command))]).encode()
+        self.list.side_effect = with_time
+        self.assertEqual(storage.cleanup(self.document), 0)
+        self.assertIn(self.old, self.keys)
+        self.delete.assert_not_called()
 
     def test_scan_measurement_inputs_are_not_deleted(self):
         observation = self.prefix + 'ocr/measurement.json.gz'

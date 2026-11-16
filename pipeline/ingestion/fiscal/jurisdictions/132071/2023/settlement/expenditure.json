@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "132071",
     "fiscal_year": 2023,
@@ -64,38 +64,6 @@
           "table_id": "general-expenditure"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "general-expenditure",
-      "conversion_id": "general-settlement",
-      "input_fingerprint": "ff9fdf35c3ac921bb32f50d298d9159891124dd66d74c6287c91bd13bddb8b4c",
-      "account": "一般会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
-        "金額の単位は printed 159頁 から決めた。款の和 52,670,501,866 と印字の「歳出合計」52,670,501,866 が一致。",
-        "金額の注記 247 件（不用額 8・充用 61・流用 175・繰越額 3）を注記軸に置いた。",
-        "共有辞書に無い金額の見出し 1 種（838 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/132071/2023/settlement/expenditure/general-expenditure-nodes.parquet",
-          "sha256": "f8de6a72bfb9ae665fece84c9b7ea7cfa7a69adc09583a81da83595efe1f5b4c",
-          "bytes": 226755
-        },
-        "row_count": 6578
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/132071/2023/settlement/expenditure/general-expenditure-amounts.parquet",
-          "sha256": "da2f7fb795fcb52cde4e2a53eb77f4c7743d3875a0be42161d96caa2475a3124",
-          "bytes": 262854
-        },
-        "row_count": 12099
-      }
     }
   ]
 }

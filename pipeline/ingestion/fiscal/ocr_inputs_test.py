@@ -262,19 +262,20 @@ class OcrManifestTest(unittest.TestCase):
             "\n    (destination / (options['table_id'] + '.ocr')).write_text("
             "repr([(o['id'], str(o['path'])) for item in inputs for o in item['ocr']]))"), 1))
         with patch('ingestion.fiscal.run.keep'), patch('ingestion.fiscal.run.save_ocr') as save_ocr:
-            run.convert(self.path, self.files, self.root / 'saved', remote=True, record=True)
+            result = run.convert(self.path, self.files, self.root / 'saved', remote=True, record=True)
         cached = str(self.objects / manifest.ocr_key(self.document, 'one-pages'))
         self.assertEqual((self.root / 'saved/one.ocr').read_text(), repr([('one-pages', cached)]))
         self.assertEqual((self.root / 'saved/two.ocr').read_text(), '[]')
         # Recording never writes R2; the thread uploads observations with `ocr --save`.
         save_ocr.assert_not_called()
-        saved = manifest.read(self.path)
+        saved = json.loads(Path(result['candidate']).read_text())
         manifest.require_current(saved)
-        # Re-pinning a different observation makes the conversion's saved table stale.
+        manifest_test.ManifestWorkflowTest.store(self, saved)
+        # Re-pinning a different observation makes the conversion's stored table stale.
         with self.acquire('second'):
             run.acquire_ocr(self.path, self.files)
         with self.assertRaisesRegex(ValueError, 'Stale saved table: one'):
-            manifest.require_current(manifest.read(self.path))
+            manifest.require_current(storage.attach(manifest.read(self.path)))
 
     def test_cleanup_keeps_declared_observations_and_removes_stale_ones(self):
         prefix = manifest.ocr_key(self.document, 'x').rsplit('/', 1)[0] + '/'
@@ -293,6 +294,7 @@ class OcrManifestTest(unittest.TestCase):
             deleted.append(command[4])
         document = deepcopy(self.document)
         with patch.object(manifest, 'require_current'), patch.object(manifest, 'read', return_value=document), \
+                patch.object(storage, 'read_receipts', return_value={}), \
                 patch.object(storage.subprocess, 'check_output', side_effect=listing), \
                 patch.object(storage.subprocess, 'run', side_effect=delete):
             self.assertEqual(storage.cleanup(document), 2)

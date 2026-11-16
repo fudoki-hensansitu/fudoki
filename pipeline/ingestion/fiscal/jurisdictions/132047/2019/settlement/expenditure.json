@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "132047",
     "fiscal_year": 2019,
@@ -26,19 +26,6 @@
           "table_id": "csv-137e20a4952e7a5a"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "csv-137e20a4952e7a5a",
-      "conversion_id": "csv-137e20a4952e7a5a",
-      "input_fingerprint": "6feb9feddf2989ad38bd0f380c84f57c2648a1c86d1de14f8674175931636cfa",
-      "object": {
-        "key": "fiscal/ingestion/132047/2019/settlement/expenditure/csv-137e20a4952e7a5a.parquet",
-        "sha256": "c52d4944319d4f7ca9cef046bf52604c98624fe5022ecac2ad179f0c7f0e80e0",
-        "bytes": 96272
-      },
-      "row_count": 5009
     }
   ]
 }

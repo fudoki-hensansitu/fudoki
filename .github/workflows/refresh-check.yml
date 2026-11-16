@@ -1,8 +1,11 @@
 name: refresh-check
-# Compares every saved table whose fingerprint is stale with a fresh conversion (ADR 0027, revised 2026-11-12).
+# Compares every stored table whose fingerprint is stale with a fresh conversion (ADR 0051).
 # A pull request no longer stops on a stale fingerprint; this run finds a table that a shared-code change altered.
-# On main it also rewrites the fingerprints of unchanged manifests and opens a pull request with them
-# (ADR 0027, revised 2026-11-15), so stale fingerprints do not pile up. On another branch it only compares.
+# On main a second, short job rewrites the fingerprints of unchanged tables in the receipts list in R2, so stale
+# fingerprints do not pile up (no pull request: the receipts are not in Git). It shares the store's concurrency;
+# the long comparison does not. On another branch the run only compares.
+# A table that differs is reported; a manual run on main with `accept` stores it as re-converted and syncs
+# its jurisdictions to D1 (no Git change brings them to the build).
 on:
   schedule:
     # Every day at 18:00 UTC (03:00 JST the next day), so a shared-code change that altered a table
@@ -14,9 +17,13 @@ on:
         description: Re-read every conversion, not only stale ones (after a Poppler change)
         type: boolean
         default: false
+      accept:
+        description: Store the tables that differ as re-converted (main only, after reading the last report)
+        type: boolean
+        default: false
 permissions:
-  contents: write
-  pull-requests: write
+  contents: read
+  actions: write
 concurrency:
   group: refresh-check
   cancel-in-progress: false
@@ -52,36 +59,14 @@ jobs:
           path: pipeline/.cache/generic-observation
           key: generic-observation-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
           restore-keys: generic-observation-${{ hashFiles('mise.toml') }}-
+      - if: ${{ inputs.accept && github.ref != 'refs/heads/main' }}
+        run: echo 'accept は main でだけ使える' && exit 1
       - id: refresh
-        run: bun run --cwd pipeline ingestion:refresh --remote ${{ github.ref != 'refs/heads/main' && '--dry-run' || '' }} ${{ inputs.all && '--all' || '' }} --output "$RUNNER_TEMP/refresh/report.json"
+        run: bun run --cwd pipeline ingestion:refresh --remote ${{ github.ref != 'refs/heads/main' && '--dry-run' || '--defer-write' }} ${{ inputs.all && '--all' || '' }} ${{ inputs.accept && '--accept' || '' }} --output "$RUNNER_TEMP/refresh/report.json"
         env:
-          # The deploy token also reads the private input bucket (R2 read only); refresh never writes R2,
-          # only the fingerprints in the Git manifests.
+          # Reads R2; an accepted table is uploaded at its content-sha key (no stored table is overwritten).
+          # The receipts are written by the write job below.
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      # Rewritten fingerprints only (refresh leaves a manifest with a different table untouched), so this
-      # runs even when the refresh step failed on such a table.
-      - if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
-        name: 書き換えた指紋の PR を出す
-        env:
-          GH_TOKEN: ${{ github.token }}
-          BRANCH: refresh-check/fingerprints
-        run: |
-          if git diff --quiet -- pipeline/ingestion/fiscal/jurisdictions; then
-            echo '書き換えた指紋はありません' >> "$GITHUB_STEP_SUMMARY"
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git switch -c "$BRANCH"
-          git add -u -- pipeline/ingestion/fiscal/jurisdictions
-          git commit -m 'chore(ingestion): 中身が同じだった表の指紋を書き換える（refresh-check）'
-          git push --force origin "$BRANCH"
-          if [ -z "$(gh pr list --head "$BRANCH" --state open --json number --jq '.[].number')" ]; then
-            gh pr create --head "$BRANCH" --base main \
-              --title 'chore(ingestion): 中身が同じだった表の指紋を書き換える' \
-              --body "refresh-check（${GITHUB_SERVER_URL}/${GITHUB_REPOSITORY}/actions/runs/${GITHUB_RUN_ID}）が作り直して中身が同じだった管理 JSON の \`input_fingerprint\` だけを書き換えた。表と R2 は変えていない（ADR 0027）。"
-          fi
-          echo "指紋を書き換えた PR: branch \`$BRANCH\`" >> "$GITHUB_STEP_SUMMARY"
       - if: always()
         uses: actions/cache/save@v6
         with:
@@ -105,6 +90,7 @@ jobs:
           for item in report['manifests']:
               statuses[item['status']] = statuses.get(item['status'], 0) + 1
           print(f"管理JSON {len(report['manifests'])} 件・{report['jobs']} 並列・{report['elapsed_seconds']} 秒: {statuses}")
+          print(f"受領書: {report.get('receipts')}")
           print()
           for item in report['manifests']:
               if item['status'] in ('different', 'blocked', 'error'):
@@ -117,3 +103,50 @@ jobs:
                           receipt = [entry.get('field') for entry in table.get('diff', {}).get('receipt', [])]
                           print(f"  - `{table['table_id']}`: {table.get('status')} rows={rows} receipt={receipt}")
           PY
+  write:
+    name: Receipts of the refreshed tables
+    needs: refresh
+    if: ${{ !cancelled() && github.ref == 'refs/heads/main' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    # The receipts list is written by one job at a time (sync-d1's store shares this group).
+    concurrency:
+      group: ingestion-store
+      cancel-in-progress: false
+    steps:
+      - uses: actions/checkout@v7
+      - uses: jdx/mise-action@v5
+        with:
+          version: 2026.8.6
+      - uses: actions/cache/restore@v6
+        with:
+          path: ~/.cache/uv
+          key: uv-${{ runner.os }}-${{ hashFiles('uv.lock') }}
+          restore-keys: uv-${{ runner.os }}-
+      - run: |
+          for wait in 30 60 0; do
+            uv sync --frozen && exit 0
+            sleep "$wait"
+          done
+          exit 1
+      - id: download
+        continue-on-error: true
+        uses: actions/download-artifact@v7
+        with:
+          name: refresh-report
+          path: ${{ runner.temp }}/refresh
+      - id: apply
+        if: steps.download.outcome == 'success'
+        run: |
+          result=$(bun run --cwd pipeline ingestion:refresh --apply "$RUNNER_TEMP/refresh/report.json")
+          echo "$result"
+          echo "受領書: $result" >> "$GITHUB_STEP_SUMMARY"
+          echo "jurisdictions=$(echo "$result" | jq -r '.accepted_jurisdictions | join(" ")')" >> "$GITHUB_OUTPUT"
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      - if: steps.apply.outputs.jurisdictions != ''
+        name: 置き直した自治体を D1 へ同期する
+        env:
+          GH_TOKEN: ${{ github.token }}
+          CODES: ${{ steps.apply.outputs.jurisdictions }}
+        run: gh workflow run sync-d1.yml --ref main -f jurisdictions="$CODES"

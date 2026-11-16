@@ -51,7 +51,7 @@ class DirectNodeTest(unittest.TestCase):
         with patch('ingestion.fiscal.run.keep') as save:
             result = run.convert(self.path, self.files, self.root / 'saved', remote=True, record=True)
         self.assertEqual(result['rows'], 4)
-        table = manifest.read(self.path)['tables'][0]
+        table = json.loads(Path(result['candidate']).read_text())['tables'][0]
         self.assertEqual((table['account'], table['notes']), ('一般会計', ['原典の注記']))
         save.assert_called_once()
         self.assertEqual(set(save.call_args.args[2]), {'nodes', 'amounts'})

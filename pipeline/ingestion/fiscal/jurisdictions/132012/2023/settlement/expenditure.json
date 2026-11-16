@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "132012",
     "fiscal_year": 2023,
@@ -177,94 +177,6 @@
           "table_id": "sewer-revenue-expenditure-detail"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "kaigo-detail",
-      "conversion_id": "kaigo-settlement-detail",
-      "input_fingerprint": "c82fbddb8b7aa413422ded4534043fa433a42be47215b98467c474c5ef22edcf",
-      "account": "介護保険特別会計",
-      "notes": [
-        "「主要な施策の成果・事務報告書」の歳出部（物理504-505・510-527頁）。款・項・目の印字された名称・金額・位置を保持する。項の金額は印字されない場合がある。目の下の事業は主要施策の抜粋であるため、この表には含めない。範囲番号の目は一つの目として保持する。款の財源内訳は別の金額欄である。（予算現額）・<前年度決算額>は印字通りの文字列。網羅検査の対象は処理した頁の文字層であり、採用表以外の事業説明・財源内訳・内表・注記の数字は件数と例を報告する。款の資金分解5列は原典款見出しの印字どおり（保険料・国庫支出金・都支出金・一般会計繰入金・その他）で、一般会計の分解（国庫支出金・都支出金・市債・その他・一般財源）とは列名が異なる。決算額・執行率と合わせた7列が款集計行に対応する。宣言された統計表（保険給付費の状況）の (n) 行は表断片として annex へ送り、属する事業行を葉とする。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/kaigo-detail-nodes.parquet",
-          "sha256": "e900a5b7bc9297e582e6fdaa35da1960ded15e1945dc5a348aaa2b1cadf40fd1",
-          "bytes": 3176
-        },
-        "row_count": 15
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/kaigo-detail-amounts.parquet",
-          "sha256": "cff34a1017af71dda7d3a9f31ddf3c67d3572010c8e1879b05e001facdb0fddc",
-          "bytes": 3513
-        },
-        "row_count": 53
-      }
-    },
-    {
-      "table_id": "kouki-detail",
-      "conversion_id": "kouki-settlement-detail",
-      "input_fingerprint": "286b0043d671f8eb7a4985df55ed86a29b7ea92d633281a93dffa2334b36b7c0",
-      "account": "後期高齢者医療特別会計",
-      "notes": [
-        "「主要な施策の成果・事務報告書」の歳出部（物理488-489・493-503頁）。款・項・目の印字された名称・金額・位置を保持する。項の金額は印字されない場合がある。目の下の事業は主要施策の抜粋であるため、この表には含めない。範囲番号の目は一つの目として保持する。款の財源内訳は別の金額欄である。（予算現額）・<前年度決算額>は印字通りの文字列。網羅検査の対象は処理した頁の文字層であり、採用表以外の事業説明・財源内訳・内表・注記の数字は件数と例を報告する。款の資金分解5列は原典款見出しの印字どおり（保険料・国庫支出金・都支出金・一般会計繰入金・その他）で、一般会計の分解（国庫支出金・都支出金・市債・その他・一般財源）とは列名が異なる。決算額・執行率と合わせた7列が款集計行に対応する。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/kouki-detail-nodes.parquet",
-          "sha256": "2a895577b4299df98a5dbc9f09b1e07cacbdcf57433b5fd987171f3eb07d7697",
-          "bytes": 2893
-        },
-        "row_count": 11
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/kouki-detail-amounts.parquet",
-          "sha256": "c2f3801e33bfe821b93eb3cfa8cfe06bde2ef20d638a3600f658e3d79f2378c6",
-          "bytes": 2788
-        },
-        "row_count": 34
-      }
-    },
-    {
-      "table_id": "sewer-revenue-expenditure-detail",
-      "conversion_id": "sewer-revenue",
-      "input_fingerprint": "bb2b641db4c541ac073dcd4a17e1a01a74d8bd5080515cff6f3f43e00df3470e",
-      "account": "下水道事業会計",
-      "notes": [
-        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape'}。",
-        "金額の単位は printed 4頁 から決めた。款の和 11,975,784,015 と印字の「費用合計」11,975,784,015 が一致。",
-        "金額の注記 0 件（なし）を注記軸に置いた。",
-        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 8 件（p36:full-page:a0:result0:r2・p36:full-page:a0:result0:r2:w4・p37:full-page:a0:result0:r0・p37:full-page:a0:result0:r0:w4・p38:full-page:a0:result0:r0・p38:full-page:a0:result0:r0:w4・p39:full-page:a0:result0:r0・p39:full-page:a0:result0:r0:w4）・產→産 8 件（p38:full-page:a0:result0:r23・p38:full-page:a0:result0:r23:w5・p38:full-page:a0:result0:r25・p38:full-page:a0:result0:r25:w5・p38:full-page:a0:result0:r27・p38:full-page:a0:result0:r27:w1・p39:full-page:a0:result0:r17・p39:full-page:a0:result0:r17:w5）。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/sewer-revenue-expenditure-detail-nodes.parquet",
-          "sha256": "6979c79d949b4244306bbffebc171123ee3039b69be1e10984a0265bf9e7ba4a",
-          "bytes": 7360
-        },
-        "row_count": 116
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/132012/2023/settlement/expenditure/sewer-revenue-expenditure-detail-amounts.parquet",
-          "sha256": "490147511f296d54a0ea52b4f14a064fce828ccce2f78816e9804a3060e803a9",
-          "bytes": 6025
-        },
-        "row_count": 116
-      }
     }
   ]
 }

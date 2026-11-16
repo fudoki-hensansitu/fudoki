@@ -1,5 +1,5 @@
 {
-  "schema_version": 1,
+  "schema_version": 2,
   "target": {
     "jurisdiction": "131024",
     "fiscal_year": 2025,
@@ -1059,120 +1059,6 @@
           "table_id": "chuo-kouki-settlement"
         }
       ]
-    }
-  ],
-  "tables": [
-    {
-      "table_id": "chuo-general-settlement",
-      "conversion_id": "chuo-text-settlement-general",
-      "input_fingerprint": "df489d1c7328f43005d52b64d27191c5e62820a27be1f6e04200caebdb81062b",
-      "account": "一般会計",
-      "notes": [
-        "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-general-settlement-nodes.parquet",
-          "sha256": "0c17694dbda73dd86eb45c18195db7a9ba2edda3e2611f2ad2909a7b8a8d632f",
-          "bytes": 74666
-        },
-        "row_count": 1729
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-general-settlement-amounts.parquet",
-          "sha256": "e918e4123a6dc5e646f202b7ff5b6725e72b37b3af613bd212646d8ab621c900",
-          "bytes": 67584
-        },
-        "row_count": 2640
-      }
-    },
-    {
-      "table_id": "chuo-care-settlement",
-      "conversion_id": "chuo-text-settlement-care-detail",
-      "input_fingerprint": "4bf266c9f6acd1f95c7d1fd127e11b51d97108905c4eb4f31117f153914bd612",
-      "account": "介護保険事業会計",
-      "notes": [
-        "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-care-settlement-nodes.parquet",
-          "sha256": "3757ce34dfa74e16c3c367a8e37466acb6e9dded2dd0799c7700e7f409a7a0f5",
-          "bytes": 10456
-        },
-        "row_count": 133
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-care-settlement-amounts.parquet",
-          "sha256": "3bb7cf63ade03bc3c1fa778d3801774785ba17e1196a8c158b2bdc340e33f19c",
-          "bytes": 11051
-        },
-        "row_count": 526
-      }
-    },
-    {
-      "table_id": "chuo-kokuho-settlement",
-      "conversion_id": "chuo-text-settlement-kokuho-detail",
-      "input_fingerprint": "cc40ca2174da7a69a787d313b933ef62acee24c57b55525ba4afe5ae53bf5082",
-      "account": "国民健康保険事業会計",
-      "notes": [
-        "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-kokuho-settlement-nodes.parquet",
-          "sha256": "ad4c6324e4bc8baae91442d11487e493420d8cd1f9f268a2057c913c3b8d3770",
-          "bytes": 8930
-        },
-        "row_count": 105
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-kokuho-settlement-amounts.parquet",
-          "sha256": "6841ae7689d3b0d6c241d81836a8d7113f62a9472dbdbc8eb2dccf6adc8298b7",
-          "bytes": 10867
-        },
-        "row_count": 506
-      }
-    },
-    {
-      "table_id": "chuo-kouki-settlement",
-      "conversion_id": "chuo-text-settlement-kouki-detail",
-      "input_fingerprint": "911ae03a99f74ed4604f6b5c73bc186032591e0fae29b1953106667bd035ddf6",
-      "account": "後期高齢者医療会計",
-      "notes": [
-        "人数・件数・率・月額の基準および職員人数は金額の分解ではなく金額表に入れない。明細金額は最深の事業金額の反復であり二重計上しない。内表の縦結合金額は原典セルの位置で一度だけ数え、所属する印字区分の文字をまとめて保持する。",
-        "旧変換器は未読・所属未確認を数えていない。件数は移行時に検出できた原文の未読と親の未解決を数え、0の根拠は段階を解決できる印字金額の親子について全段の子の和の一致である。原典の未抽出箇所が無いことの証明ではない。"
-      ],
-      "unread_amount_count": 0,
-      "unresolved_parent_count": 0,
-      "nodes": {
-        "object": {
-          "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-kouki-settlement-nodes.parquet",
-          "sha256": "363cbad4731dbfa6de40d6b9122b693632898b073238cd307acb89597bba046c",
-          "bytes": 5186
-        },
-        "row_count": 41
-      },
-      "amounts": {
-        "object": {
-          "key": "fiscal/ingestion/131024/2025/settlement/expenditure/chuo-kouki-settlement-amounts.parquet",
-          "sha256": "e31bd735c8b6e4811eebb8c442a1eb860b03ea895d356cf2123a94d4163853c9",
-          "bytes": 7171
-        },
-        "row_count": 239
-      }
     }
   ]
 }

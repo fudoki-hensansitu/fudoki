@@ -6,9 +6,9 @@
 
 ## Summary
 
-出典はsource_selectionの非公開R2領域に保存し、取り込みParquetは出典対象と方向ごとの固定keyに保存する。Gitでは同じ対象の変換設定と保存済み表を一つのJSONで管理する。構造はJSON Schema、ファイルの配置・表の所有者・出典との対応は実行時の検査で強制する。
+出典はsource_selectionの非公開R2領域に保存し、取り込みParquetは出典対象と方向ごとの領域に、中身のSHAを含むkeyで保存する。Gitでは同じ対象の変換設定（宣言と入力）を一つのJSONで管理し、保存済み表の受領書はR2の受領書の一覧（`fiscal/ingestion/receipts.json`）に置く（[ADR 0051](../../adr/0051-ingestion-receipts-in-r2.md)）。構造はJSON Schema、ファイルの配置・表の所有者・出典との対応は実行時の検査で強制する。
 
-変換は受け取ったCSV/PDFと対象情報を使う。全表をローカルで準備し、検査が通ればJSONに記録する。R2へは merge 後の CI（`ingestion:store`）が、記録と変換し直した表が一致したときに保存する（[ADR 0045](../../adr/0045-ingestion-tables-uploaded-by-ci.md)）。宣言が新しく・変わった変換は、記録と違っても関門を通れば main の変換結果を保存し、R2 の受領書の一覧に入れる（[受領書の設計](../ingestion-receipts/dd.md)）。その後、対象と方向が同じ領域の不要な表を削除する。現在版だけを保存し、別年度・別補正号は別対象として保持する。
+変換は受け取ったCSV/PDFと対象情報を使う。スレッドは全表をローカルで準備し、検査が通ることを確かめる。R2へは merge 後の CI（`ingestion:store`）が、宣言の変わった変換を main のコードで変換し、関門を通った表を保存して受領書の一覧に入れる（[受領書の設計](../ingestion-receipts/dd.md)）。その後、対象と方向が同じ領域の不要な表を削除する。現在版だけを保存し、別年度・別補正号は別対象として保持する。
 
 ## Goals / Non-Goals
 
@@ -30,8 +30,8 @@ flowchart LR
   A[選定済み出典とscope] --> B[入力照合・ローカル変換]
   J[対象別JSONの変換設定] --> B
   B --> P[全表の候補Parquet]
-  P --> M[対象別JSONに記録・ローカルcacheに置く]
-  M --> S[merge後のCIが変換し直し、記録と一致すればprivate R2へ保存]
+  P --> M[検査が通った表をローカルcacheに置く（宣言だけGitへ）]
+  M --> S[merge後のCIがmainのコードで変換し、関門を通ればprivate R2と受領書の一覧へ保存]
   S --> D[同じ対象・方向の不要表を削除]
   S --> C[Cへ受け渡し]
 ```
@@ -58,7 +58,7 @@ pipeline/ingestion/
         2025/settlement/expenditure.json
 ```
 
-対象別JSONは出典対象と方向の組ごとに作る。設定用 `config.toml` は必須にしない。JSONの `conversions` に使用する変換コード、入力SHA、書式設定、期待する表をまとめ、`tables` に保存参照を持つ。列名・型はParquetから取得し、管理JSONへ複製しない。
+対象別JSONは出典対象と方向の組ごとに作る。設定用 `config.toml` は必須にしない。JSONの `conversions` に使用する変換コード、入力SHA、書式設定、期待する表をまとめる。保存参照（受領書）はR2の受領書の一覧に置き、管理JSONには持たない。列名・型はParquetから取得し、管理JSONへ複製しない。
 
 ### 取り込み表はノードの表と金額の表の組で保存する
 
@@ -68,11 +68,11 @@ PDFの取り込みの表（表ID）一つは、出典に印字された項目を
 - 金額の表は、属するノード、金額が印字された欄の出典の見出し（上位から「／」で連結。必須）、金額と単位の原文、物理頁と印字範囲の座標を持つ。見開きでは、金額が属するノードと違う頁に印字されることがある。
 - 同じ支出の独立した分解（節の一覧と事業の説明など）は、別の軸の枝にする。
 
-表の単位で決まる事実は、Parquetの行に反復せず管理JSONの `tables[]` に置く。対象・方向・表ID・保存参照（SHA・サイズ・行数）に加えて、表が属する出典の会計名（`ingestion:check` で選定のscopeと照合する）と、出典由来の注記（`notes`）、読み取れなかった金額と所属を確認できない項目の件数を持つ。一つの表は出典ファイル一つから作る。出典ファイルのSHAは変換の `inputs` にあり、表へ複製しない。変換が複数の出典を受け取る場合は、表ごとにどの出典から作ったかを管理JSONに持つ。分冊をまたいで続く款・項・目は、各分冊の表に同じノードを置き、dbtで一つにまとめる。出典にない関係、単位の換算倍率、段の名前・金額の段階への対応、共通分類、集計方法は取り込みに入れず、dbtの宣言で扱う（[ADR 0021](../../adr/0021-level-and-phase-map-in-dbt-seed.md)）。
+表の単位で決まる事実は、Parquetの行に反復せず表の受領書（R2の受領書の一覧）に置く。対象・方向・表ID・保存参照（SHA・サイズ・行数）に加えて、表が属する出典の会計名（`ingestion:check` で選定のscopeと照合する）と、出典由来の注記（`notes`）、読み取れなかった金額と所属を確認できない項目の件数を持つ。一つの表は出典ファイル一つから作る。出典ファイルのSHAは変換の `inputs` にあり、表へ複製しない。変換が複数の出典を受け取る場合は、表ごとにどの出典から作ったかを管理JSONに持つ。分冊をまたいで続く款・項・目は、各分冊の表に同じノードを置き、dbtで一つにまとめる。出典にない関係、単位の換算倍率、段の名前・金額の段階への対応、共通分類、集計方法は取り込みに入れず、dbtの宣言で扱う（[ADR 0021](../../adr/0021-level-and-phase-map-in-dbt-seed.md)）。
 
 PDF の表は 2026-10-11 にノードの表と金額の表へ移行済みで、横持ちの表は使わない（[ADR 0020](../../adr/0020-ingestion-outputs-node-tables.md)）。横持ちの表と metadata からノードの表と金額の表を作る共通の変換は残し、新しい変換器はノードの表と金額の表を直接出す。CSV の原文の表は単一の `object` のままで、ノードの形への変換は dbt の intermediate で行う。管理JSONのschemaは旧形式を受け入れつつ、新形式では `nodes`・`amounts` にそれぞれ `object`（key・SHA・サイズ）と `row_count` を持つ。表には `account`・`notes`・`unread_amount_count`・`unresolved_parent_count` を置く。旧形式の `object`・`row_count`・`metadata` と新形式の2参照は混在させない。
 
-管理形式は `schema_version: 1`。`expected_tables` は管理側が採用する表IDだけを持ち、変換器が生成した余分な補助表は採用しない。期待した表の欠落は停止する。支出額の集計に使わない補助表は管理JSONから外すが、R2の実体の削除は別の操作にする。後工程の `declaration`・`definition_files`・`legacy_path` はschemaで拒否する。`inputs` は出典SHAだけを保持する。形式・会計・ページ範囲はselectionから解決し、抽出をさらに絞る設定は変換器のoptionsに置く。取り込みfingerprintは出典・変換設定・取り込みコードから作り、dbtの宣言やモデルを含めない。
+管理形式は `schema_version: 2`（`tables` を持たない）。`expected_tables` は管理側が採用する表IDだけを持ち、変換器が生成した余分な補助表は採用しない。期待した表の欠落は停止する。支出額の集計に使わない補助表は管理JSONから外すが、R2の実体の削除は別の操作にする。後工程の `declaration`・`definition_files`・`legacy_path` はschemaで拒否する。`inputs` は出典SHAだけを保持する。形式・会計・ページ範囲はselectionから解決し、抽出をさらに絞る設定は変換器のoptionsに置く。取り込みfingerprintは出典・変換設定・取り込みコードから作り、dbtの宣言やモデルを含めない。
 
 書式は年度・会計ごとに増やさない。設定値の違いで対応できる場合は同じコードを使う。別自治体で同じ規則を使えることを確認した書式は `fiscal/layouts/` へ置く。自治体固有の処理はその自治体の `layouts/` に置き、歳入・歳出で規則が異なる場合は別の書式や設定を選ぶ。
 
@@ -88,7 +88,7 @@ JSON Schemaは未知の管理項目、型、識別子の文字を検査する。
 
 ### 変換器は渡された出典からローカルの表を作る
 
-変換器の入口は `convert(inputs, destination, options)` で、表IDとParquetのパスの対応を返す。新しい変換器は、表IDごとにノードの表と金額の表のパスと、表の会計名・notesを返す。移行前の横持ちの表を出す変換器は、パスの代わりに `{"path": path, "metadata": metadata}` を返せる。管理側はschemaと実際のParquet列への参照を検査し、表の保存情報へmetadataを含める。パスだけを返す既存の変換器も使える。再変換でmetadataを省略した場合、入力fingerprintとParquet SHAがともに同じなら既存metadataを保持し、変わっていれば古い情報を引き継がず、新しいmetadataの提出を要求して保存前に止める。入力には選定から解決した出典参照とscope、受け取った対象・方向、SHA照合済みのローカルパスが入る。変換器は出典の選定、Gitへの登録、R2への保存を行わない。
+変換器の入口は `convert(inputs, destination, options)` で、表IDとParquetのパスの対応を返す。新しい変換器は、表IDごとにノードの表と金額の表のパスと、表の会計名・notesを返す。移行前の横持ちの表を出す変換器は、パスの代わりに `{"path": path, "metadata": metadata}` を返せる。管理側はschemaと実際のParquet列への参照を検査し、表の保存情報へmetadataを含める。パスだけを返す既存の変換器も使える。再変換でmetadataを省略した場合は、metadataの無い受領書になる（前の受領書から引き継がない）。入力には選定から解決した出典参照とscope、受け取った対象・方向、SHA照合済みのローカルパスが入る。変換器は出典の選定、Gitへの登録、R2への保存を行わない。
 
 CSVは [csv/convert.py](../../../pipeline/ingestion/fiscal/layouts/csv/convert.py) を使う。金額のカンマや空文字を含め原文を保持する。text PDFとscan PDFは書式別のコードで表を組み立て、[conversion.py](../../../pipeline/ingestion/lib/conversion.py) と [parquet.py](../../../pipeline/ingestion/lib/parquet.py) を使う。scan PDFの文字・位置の取得は共通入口の [scan_ocr](../../../pipeline/ingestion/lib/scan_ocr.md) に任せる。新しい取得の既定はPaddleOCR small（ONNX Runtime）で、依頼は `ocr_inputs[].request.engine` に `paddle` と書く（[ADR 0032](../../adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。Apple Visionは、すでに `engine: "vision"` で固定した冊の観測だけに残す（観測IDが違い、固定した訂正がVisionのIDに結び付くため。[ADR 0019](../../adr/0019-freeze-scan-ocr-observations.md)）。OCRは変換器の外で取得し、凍結した観測を補助入力として変換器へ渡す（[ADR 0019](../../adr/0019-freeze-scan-ocr-observations.md)。補助入力の保存・取得は未実装で、現在のscan PDFの変換器はローカルの凍結観測をパスで受け取る）。
 
@@ -123,22 +123,22 @@ fingerprintは、対象・方向、使用した出典SHAとscope、変換設定�
 
 実行環境は管理JSONとfingerprintに含めない。OS・Python・DuckDBの版だけが変わっても再変換の判定は変わらない。
 
-fingerprintは変更検知の仕組みである。固定keyへの上書きと保存参照の置換により、同じ入力の再実行で表が重複しない。OCRの出力が常に同じバイト列になることは保証しない。
+fingerprintは変更検知の仕組みである。keyは中身のSHAで決まるので、同じ入力の再実行で表が重複せず、置き直しが読んでいる表を上書きしない。OCRの出力が常に同じバイト列になることは保証しない。
 
-fingerprintは「変わったかもしれない」という合図であり、表の中身が変わった証拠ではない。古いときは `ingestion:refresh` が変換をローカルでやり直し、保存済みの表と中身（列・型・行とその順序・値と、変換が管理JSONへ書くメタデータ）を比べる。全表が同じなら管理JSONの `input_fingerprint` だけを書き換え、保存済みのParquetとその `sha256`・サイズ、R2は変えない。違う表が1つでもあれば管理JSONは書き換えず、増えた・消えた・変わった行の数と例を出す。保存前の関門は `storage.prepare_save` を共有して当て直す。中身が違う表は `ingestion:convert` で記録し直し、merge 後の CI（`ingestion:store`）が R2 に置く（[ADR 0045](../../adr/0045-ingestion-tables-uploaded-by-ci.md)）。表を作らず合否だけを決める検査のコード（`tree_checks.py`・`coverage_checks.py`・`fiscal/unit_checks.py`）は `*_checks.py` と名付けて指紋の対象外とし、書き込みの関数・呼び出しがあれば `manifest.dependencies` が停止する。検査の戻り値で段のパターンを選ぶ汎用の組み立てだけは、`manifest.RESULT_SHAPES_TABLE` で `tree_checks.py` を指紋に残す。検査を厳しくしたときは保存済みの表が古く見えないので、`ingestion:verify --remote` を保存済みの全表に当てて確かめる。共有のコードを直す PR は、この比べ直しで指紋を更新した管理JSONを含める。判断は [ADR 0027](../../adr/0027-refresh-fingerprints-by-table-content.md)。
+fingerprintは「変わったかもしれない」という合図であり、表の中身が変わった証拠ではない。古いときは `ingestion:refresh` が変換をローカルでやり直し、保存済みの表と中身（列・型・行とその順序・値と、変換が管理JSONへ書くメタデータ）を比べる。全表が同じなら受領書の一覧の `input_fingerprint` だけを書き換え、保存済みのParquetは変えない。違う表が1つでもあればその管理JSONの受領書は書き換えず、増えた・消えた・変わった行の数と例を出す。保存前の関門は `storage.prepare_save` を共有して当て直す。中身が違う表は、意図どおりなら main の refresh-check を `accept` で手動実行して置き直す（[ADR 0051](../../adr/0051-ingestion-receipts-in-r2.md)）。表を作らず合否だけを決める検査のコード（`tree_checks.py`・`coverage_checks.py`・`fiscal/unit_checks.py`）は `*_checks.py` と名付けて指紋の対象外とし、書き込みの関数・呼び出しがあれば `manifest.dependencies` が停止する。検査の戻り値で段のパターンを選ぶ汎用の組み立てだけは、`manifest.RESULT_SHAPES_TABLE` で `tree_checks.py` を指紋に残す。検査を厳しくしたときは保存済みの表が古く見えないので、`ingestion:verify --remote` を保存済みの全表に当てて確かめる。指紋の書き換えは定期の refresh-check が行い、PR には含めない。判断は [ADR 0027](../../adr/0027-refresh-fingerprints-by-table-content.md)。
 
 ### 管理情報に記録し、merge 後に CI が保存する
 
 同じ対象・方向の変換、記録、読み取りは逐次実行する。局所再処理でも変更しない表の参照を残し、その入力条件が現在のままであることを確認する。
 
 1. 全表をローカルで用意し、行数・列型・空表・期待する表集合を検査する。
-2. 入力条件が変わっていないことを確認し、全表をローカルcacheの固定keyに置いて、Gitの管理JSONを置換する（`ingestion:convert`）。
-3. PRでは `ingestion-store-check` が、参照の変わった表をR2の出典・OCR結果から変換し直し、記録（指紋を除く）と一致するかを見る。
-4. merge後の `sync-d1` が同じ変換をし、一致した管理JSONの表だけを固定keyへアップロードしてから（`ingestion:store`、D1 の同期とは別の job）、dbt・D1へ流す。
-5. 現在の管理JSONが変わっていないことを確認し、同じ対象と方向の領域を全ページ一覧取得する。参照されていない直下のParquetだけを削除する。
-6. 後段は全表の存在・fingerprintと取得した表のSHAを検査して読む。
+2. 入力条件が変わっていないことを確認し、全表をローカルcacheのSHA入りのkeyに置く（`ingestion:convert`）。Gitには宣言だけを書く。
+3. PRでは `ingestion-store-check` が、宣言の変わった変換をR2の出典・OCR結果から main とマージした状態で変換し、関門を通った表の受領書を一覧に重ねて dbt を build する。
+4. merge後の `sync-d1` が同じ変換をし、関門を通った表をアップロードして受領書の一覧に入れてから（`ingestion:store`、D1 の同期とは別の job）、dbt・D1へ流す。
+5. 現在の管理JSONが変わっていないことを確認し、同じ対象と方向の領域を全ページ一覧取得する。受領書の一覧が指していない直下のParquetだけを削除する。
+6. 後段は受領書の一覧の宣言・fingerprintと取得した表のSHAを検査して読む。保存されたことの無い表は build から外す。
 
-一致しない表があればその管理JSONの表はアップロードせず、CIを止める。途中のアップロード失敗ではR2の一部のkeyは上書き済みになり得るが、次の同期が最後に成功した同期からの差分で同じ表を置き直す。更新の完了と掃除の完了は分け、掃除だけ失敗した場合は `ingestion:cleanup` を再実行する。世代切替や分散ロックを省くため、同時更新と読み取り中の更新には対応しない。
+関門に落ちた管理JSONの表はアップロードせず、前の受領書を残して CI を止める（ほかの管理JSONは置く）。アップロードは中身のSHAのkeyに書き、一覧は全アップロードの後に1回だけ書くので、途中で失敗しても一覧は前の表を指したままになる。更新の完了と掃除の完了は分け、掃除だけ失敗した場合は `ingestion:cleanup` を再実行する。世代切替や分散ロックを省くため、同時更新と読み取り中の更新には対応しない。
 
 ## Alternatives Considered
 

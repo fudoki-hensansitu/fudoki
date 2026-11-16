@@ -47,7 +47,7 @@ class ConversionSelectionTests(unittest.TestCase):
                  'expected_tables': [{'table_id': ident}]}
                 for ident, account, rows in [('notes','一般会計',[base]), ('details','一般会計',[base,zero]),
                                              ('foreign','特別会計',[foreign, {**zero,'款_名称':'別会計'}])]]
-            document = {'schema_version':1,'target':{'jurisdiction':'131041','fiscal_year':2025,'document_kind':'settlement'},
+            document = {'schema_version':2,'target':{'jurisdiction':'131041','fiscal_year':2025,'document_kind':'settlement'},
                         'direction':'expenditure','conversions':conversions,'tables':[]}
             validate = manifest.validate
             with patch.object(manifest, 'read', return_value=document), \

@@ -6,9 +6,14 @@ import jsonschema
 from ingestion.fiscal import manifest
 
 
+def check(doc, check_code=False):
+    manifest.validate(doc, check_code=check_code)
+    manifest.validate_tables(doc, doc['tables'])
+
+
 class NodeManifestTests(unittest.TestCase):
     def document(self, paired=True):
-        doc={'schema_version':1,'target':{'jurisdiction':'131041','fiscal_year':2025,'document_kind':'settlement'},
+        doc={'schema_version':2,'target':{'jurisdiction':'131041','fiscal_year':2025,'document_kind':'settlement'},
              'direction':'expenditure','conversions':[{'id':'one','converter':'fiscal/layouts/csv/convert.py',
               'inputs':[{'sha256':'a'*64}],'options':{},'expected_tables':[{'table_id':'one'}]}],
              'tables':[]}
@@ -22,16 +27,16 @@ class NodeManifestTests(unittest.TestCase):
         return doc
 
     def test_existing_single_parquet_receipt_remains_valid_without_new_fields(self):
-        manifest.validate(self.document(False),check_code=False)
+        check(self.document(False),check_code=False)
 
     def test_account_must_be_a_selected_pdf_input_scope(self):
         doc=self.document()
         with patch.object(manifest,'resolved_inputs',return_value=[{'format':'pdf','scope':[{'account':'一般会計'}]}]):
-            manifest.validate(doc,check_code=False)
+            check(doc,check_code=False)
             doc['tables'][0]['account']='特別会計'
-            with self.assertRaisesRegex(ValueError,'account'):manifest.validate(doc,check_code=False)
+            with self.assertRaisesRegex(ValueError,'account'):check(doc,check_code=False)
         with patch.object(manifest,'resolved_inputs',return_value=[{'format':'csv','scope':[{'account':'一般会計'}]}]):
-            with self.assertRaisesRegex(ValueError,'PDF'):manifest.validate(self.document(),check_code=False)
+            with self.assertRaisesRegex(ValueError,'PDF'):check(self.document(),check_code=False)
 
     def test_pair_is_complete_owned_and_cannot_mix_with_legacy_receipt(self):
         for mutate in (lambda t:t.pop('amounts'),lambda t:t.update(object=t['nodes']['object']),
@@ -39,7 +44,7 @@ class NodeManifestTests(unittest.TestCase):
                        lambda t:t['nodes']['object'].update(key=t['amounts']['object']['key'])):
             doc=deepcopy(self.document());mutate(doc['tables'][0])
             with patch.object(manifest,'resolved_inputs',return_value=[{'format':'pdf','scope':[{'account':'一般会計'}]}]):
-                with self.assertRaises((ValueError,jsonschema.ValidationError)):manifest.validate(doc,check_code=False)
+                with self.assertRaises((ValueError,jsonschema.ValidationError)):check(doc,check_code=False)
 
 
 if __name__=='__main__':unittest.main()
