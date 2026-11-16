@@ -22,6 +22,8 @@ const SETSU_SHOWN = 3
 const MOKU_BAR = 8
 /** 節の側に立てる棒の幅 */
 const SETSU_BAR = 5
+/** 棒の真上に出す割合の高さ。上の棒はここまでで止め、割合に重ねない */
+const LABEL_ROOM = 15
 /** 帯を描かない幅。項の段の並び（sm: で横並びになる）と同じ境目にする。ずれると、横並びなのに帯が出ない幅ができる */
 const MOBILE_QUERY = '(max-width: 639.98px)'
 
@@ -215,7 +217,8 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
       const sum = yen.reduce((s, v) => s + v, 0)
       const shares = yen.map((v) => (sum > 0 ? v / sum : 1 / rows.length))
       // 帯は両端で同じ太さ（全体図と同じ読み方）。目の棒が次の目の行に重ならない太さまで縮める
-      const slots = boxes.map((r, i) => (boxes[i + 1] ? boxes[i + 1]!.top - r.top - 6 : r.height))
+      // 次の目の棒の上には割合を出すので、その分（LABEL_ROOM）を空けて止める
+      const slots = boxes.map((r, i) => (boxes[i + 1] ? boxes[i + 1]!.top - r.top - LABEL_ROOM : r.height))
       const scale = Math.max(Math.min(boxes.at(-1)!.bottom - boxes[0]!.top, ...shares.map((v, i) => (v > 0 ? slots[i]! / v : Infinity))), 24)
       const lanebox = lane.getBoundingClientRect()
       const width = lanebox.width
@@ -241,7 +244,7 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
         const rows2 = restRow && restPart > 0 ? [...items, restRow] : items
         const rects = rows2.map((li) => li.getBoundingClientRect())
         const parts = restRow && restPart > 0 ? [...topParts, restPart] : topParts
-        const gaps = rects.map((b, j) => (rects[j + 1] ? rects[j + 1]!.top - b.top - 3 : b.height))
+        const gaps = rects.map((b, j) => (rects[j + 1] ? rects[j + 1]!.top - b.top - LABEL_ROOM : b.height))
         // 帯は目の棒と同じ縮尺（項の中で共通）で両端を同じ太さにする。目ごとに縮尺を変えると、同じ金額でも目によって太さが違って見える。
         // 節の行の高さを超える分だけ、節の側で行の高さに収める
         let from = ty
