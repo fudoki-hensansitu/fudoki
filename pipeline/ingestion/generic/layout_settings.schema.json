@@ -13,6 +13,7 @@
       "additionalProperties": false,
       "properties": {
         "dark": {"type": "integer", "minimum": 129, "maximum": 255},
+        "pale_pages": {"type": "object", "propertyNames": {"pattern": "^[1-9][0-9]*$"}, "additionalProperties": {"type": "integer", "minimum": 129, "maximum": 255}, "description": "A page of the source whose rules print paler than the rest (132241's 令和2年度決算書 p24 of one volume): its rules are read at the darkness given for it, the other pages at `dark`."},
         "skewed": {"const": true, "description": "A scan set a little off level breaks each long horizontal rule into pieces a pixel row apart (国分寺市): the pieces are joined end to end before a rule's length is checked, and the words of one printed line are grouped with a wider tolerance (a line's amount at the right end sits up to 2.5pt above its name at the left)."},
         "row_gaps": {"const": true, "description": "A vertical rule the page leaves out for a row lets the row's text run on into the next column (133086's 事業 names): an OCR line is cut only at the rules drawn across its middle."},
         "short_columns": {"const": true, "description": "A column rule drawn only over one short row (shorter than the page-wide detector keeps) is still a rule: a short vertical stroke joining two horizontal rules at the place of a vertical rule the page draws elsewhere closes the cell, as in a staircase (131199's 目 rows between 事務事業 blocks)."},
