@@ -257,6 +257,17 @@
             "corrected_amount": "11,232,249,381",
             "reason": "都支出金の収入済額。原画は11,232,249,381で、OCR が左の調定額の末尾の1を頭に読んだ。項の和に合う。"
           }
+        ],
+        "name_corrections": [
+          {
+            "id": "p29-y390",
+            "page": 29,
+            "observed_name": "自動車取得稅交付金",
+            "corrected_name": "自動車取得税交付金",
+            "reason": "原画の頁29は「自動車取得税交付金」。OCR が似た字に読んだ。歳入決算書の頁14も「自動車取得税交付金」。",
+            "y": 390.2,
+            "code": "1"
+          }
         ]
       },
       "expected_tables": [
@@ -584,7 +595,18 @@
           "quirks": {
             "one_row_header": true
           }
-        }
+        },
+        "name_corrections": [
+          {
+            "id": "p506-y550",
+            "page": 506,
+            "observed_name": "般会計繰入金",
+            "corrected_name": "一般会計繰入金",
+            "reason": "原画の頁506（歳入決算書）は「一般会計繰入金」。OCR が頭の横棒1本の「一」を読み落とした。明細書の頁521も「一般会計繰入金」。",
+            "y": 549.7,
+            "code": "1"
+          }
+        ]
       },
       "expected_tables": [
         {
