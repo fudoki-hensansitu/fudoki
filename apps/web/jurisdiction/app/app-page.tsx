@@ -58,7 +58,7 @@ import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
-import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
+import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type Drill, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
 import { withExtras, yearView, type AccountTotal, type Proj, type Snapshot, type YearExtras, type YearView } from './data'
 import { fieldSubjects, listKey, listPage, projectLatest, type ListPage, type ListQuery, type ProjectFull } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
@@ -411,10 +411,11 @@ function AccountCards({ accounts, account, setAccount }: { accounts: AccountTota
 }
 
 /** 予算・決算。事業は下から積み上げる見方、こちらは大きい項目から下りていく見方。当初予算と決算の両方がある年度はタブを分ける */
-/** 流れの目に節を足す */
+/** 流れの目（歳入の目も）に節を足す */
 const withSetsu = (flow: PageFlow, byMoku: Record<string, Setsu[]>): PageFlow => {
   const moku = (m: Moku): Moku => ({ ...m, setsu: byMoku[m.id] ?? m.setsu })
-  return { ...flow, drills: flow.drills.map((k) => ({ ...k, kou: k.kou.map((o) => ({ ...o, moku: o.moku.map(moku) })) })), loose: flow.loose.map(moku) }
+  const drills = (ds: Drill[]) => ds.map((k) => ({ ...k, kou: k.kou.map((o) => ({ ...o, moku: o.moku.map(moku) })) }))
+  return { ...flow, drills: drills(flow.drills), loose: flow.loose.map(moku), ...(flow.revenue ? { revenue: drills(flow.revenue) } : {}) }
 }
 
 function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
@@ -463,7 +464,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
           : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。このタブでは、年度の初めに決めた当初予算を扱います。'}
       </TabHead>
       {/* 入る→使う（一般会計の歳入と歳出の総額と流れ）。その年度・資料の歳入を収録しているときだけ */}
-      {total && revenueDoc ? <IncomeFlow doc={revenueDoc} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openField} /> : null}
+      {total && revenueDoc ? <IncomeFlow doc={revenueDoc} revenue={current?.revenue} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} openField={openField} /> : null}
       {total ? <FieldsSection phase={phase} /> : null}
       {total ? (
         <div>

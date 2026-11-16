@@ -30,7 +30,7 @@ export const DOCUMENT_KINDS = ['settlement', 'initial'] as const
 /** 検索の対象の表（歳出の科目・内訳、事業評価のシート、事業の年度） */
 export interface FiscalTable {
   /** 操作名に使う複数形（page_token の指紋に入れる） */
-  kind: 'subjects' | 'details' | 'revenue_subjects' | 'evaluation_sheets' | 'project_years'
+  kind: 'subjects' | 'details' | 'revenue_subjects' | 'revenue_details' | 'evaluation_sheets' | 'project_years'
   table: string
   primaryKey: string
   /** document_kind の列があり、検索で必ず1つに絞る表か */
@@ -190,6 +190,23 @@ export const REVENUE_SUBJECT_TABLE = searchView(
   `revenue_subject x JOIN revenue e ON e."revenue_id" = x."revenue_id" ` +
     `LEFT JOIN revenue_subject p ON p."subject_id" = x."parent_subject_id" LEFT JOIN revenue_subject g ON g."subject_id" = p."parent_subject_id"`,
   { is_leaf: REVENUE_LEAF, category: REVENUE_CATEGORY },
+  'revenue'
+)
+/** 歳入の科目の下の内訳（節と、その下の印字）。同じ科目の depth = 1 の和が科目の額。歳出の節マスタとは別の区分 */
+export const REVENUE_DETAIL_TABLE = searchView(
+  'revenue_details',
+  'revenue_detail',
+  ['detail_id', 'node_key', 'parent_detail_id', 'subject_id', 'revenue_id', ...ROOT_COLUMNS.slice(0, 4), 'amount_phase', ...ROOT_COLUMNS.slice(4),
+    'kan_code', 'kan_name', 'kou_code', 'kou_name', 'moku_code', 'moku_name',
+    'source_heading', 'node_kind', 'depth', 'code', 'name', 'amount_yen', 'is_leaf', 'origin_id'],
+  {
+    ...pathExprs('s'),
+    amount_phase: AMOUNT_PHASE,
+    is_leaf: `NOT EXISTS (SELECT 1 FROM revenue_detail c WHERE c."parent_detail_id" = x."detail_id")`,
+  },
+  `revenue_detail x JOIN revenue_subject s ON s."subject_id" = x."subject_id" JOIN revenue e ON e."revenue_id" = x."revenue_id" ` +
+    `LEFT JOIN revenue_subject p ON p."subject_id" = s."parent_subject_id" LEFT JOIN revenue_subject g ON g."subject_id" = p."parent_subject_id"`,
+  { is_leaf: DETAIL_LEAF },
   'revenue'
 )
 /** 歳入の科目が印字された位置（line_id は subject_id） */

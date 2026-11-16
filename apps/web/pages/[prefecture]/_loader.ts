@@ -12,7 +12,7 @@ import { assetPath, EMBLEMS, emblemOf, prefectureCodeOf } from '../../jurisdicti
 import { VISIONS } from '../../jurisdiction/visions'
 import type { Env } from '../../server/env'
 import type { CatalogEntry } from '../../server/jurisdiction'
-import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadRevenueFlow, loadSetsuByMoku, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
+import { ACCOUNT, loadCatalog, loadCatalogEntry, loadFlowParts, loadRevenueFlow, loadRevenueSetsuByMoku, loadSetsuByMoku, loadSettlementSummary, pageBase } from '../../server/jurisdiction'
 import { appYears, loadYearExtras, loadYearSnapshot } from '../../server/app-data'
 import type { Snapshot, YearExtras } from '../../jurisdiction/app/data'
 import type { Setsu } from '../../jurisdiction/types'
@@ -193,8 +193,19 @@ async function withSnapshot(c: Context, props: JurisdictionProps): Promise<Juris
   const kind = pageYears.find((y) => y.year === year)?.kind
   const prevYear = pageYears.find((y) => y.year === year - 1)
   const extras = entry && kind ? defer(() => loadYearExtras(env, entry.code, year, kind, prevYear)) : undefined
-  const mokuIds = flow ? [...flow.drills.flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => m.id))), ...flow.loose.map((m) => m.id)] : []
-  const setsu = entry && flow && phase ? defer(async () => Object.fromEntries(await loadSetsuByMoku(env, entry.code, year, mokuIds, phase, account))) : undefined
+  const mokuIdsOf = (drills: PageFlow['drills']) => drills.flatMap((k) => k.kou.flatMap((o) => o.moku.map((m) => m.id)))
+  const mokuIds = flow ? [...mokuIdsOf(flow.drills), ...flow.loose.map((m) => m.id)] : []
+  // 歳入の目の節も同じ defer で渡す（目の id は歳出と重ならない）。歳入の節が読めなくても歳出の節は出す
+  const revenueMokuIds = flow?.revenue ? mokuIdsOf(flow.revenue) : []
+  const setsu = entry && flow && phase
+    ? defer(async () => {
+        const [expenditure, revenue] = await Promise.all([
+          loadSetsuByMoku(env, entry.code, year, mokuIds, phase, account),
+          revenueMokuIds.length ? loadRevenueSetsuByMoku(env, entry.code, year, revenueMokuIds, phase).catch(() => new Map()) : new Map(),
+        ])
+        return Object.fromEntries([...expenditure, ...revenue])
+      })
+    : undefined
   return { ...props, ...(headline ? { data: { ...props.data, headline } } : {}), ...(snapshot ? { snapshot } : {}), ...(flow ? { flow } : {}), ...(extras ? { extras } : {}), ...(setsu ? { setsu } : {}) }
 }
 

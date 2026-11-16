@@ -34,10 +34,13 @@ const MOBILE_QUERY = '(max-width: 639.98px)'
 const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記載' : formatYen(yen))
 const share = (yen: number, max: number, missing?: boolean) => (missing || max <= 0 ? 0 : Math.min(100, (Math.max(0, yen) / max) * 100))
 
+/** 款のどこかの目に節があるか。歳入は節を後から読み、節の無い資料もあるので、無いうちは「内訳の区分は出典にありません」を出さない */
+const hasSetsu = (drill: Drill) => drill.kou.some((k) => k.moku.some((m) => m.setsu.length > 0))
+
 /** 節は目の内訳。上位だけ名前を出して残りは件数にまとめる。広い画面では目の棒から帯でつなぎ、狭い画面では目の金額に占める割合の横棒を出す */
 
 /** kouYen は割合の基準（目は項に占める割合、節は目に占める割合）。金額と割合を並べて出す */
-function MokuGroup({ moku, kouYen, levels, noSetsu, mirror }: { moku: Moku; kouYen: number; levels: Levels; /** 節を持たない流れ（歳入）。節の欄に何も出さない */ noSetsu?: boolean; /** 左右を逆にする（歳入）。節を左、目を右に置き、右に寄せる */ mirror?: boolean }) {
+function MokuGroup({ moku, kouYen, levels, noSetsu, mirror }: { moku: Moku; kouYen: number; levels: Levels; /** 款のどの目にも節の無い流れ（節を読む前か、節の無い歳入）。節の欄に何も出さない */ noSetsu?: boolean; /** 左右を逆にする（歳入）。節を左、目を右に置き、右に寄せる */ mirror?: boolean }) {
   const shown = moku.setsu.filter((s) => s.amountMissing || s.yen > 0)
   const top = shown.slice(0, SETSU_SHOWN)
   const rest = shown.slice(SETSU_SHOWN)
@@ -549,7 +552,7 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
           className={cn('flex snap-x snap-mandatory overflow-x-auto overflow-y-hidden overscroll-x-contain scroll-smooth rounded-b-[20px] [scrollbar-width:none] focus-visible:outline-2 focus-visible:-outline-offset-2 focus-visible:outline-ring [&::-webkit-scrollbar]:hidden', natural ? 'items-start transition-[height] duration-300' : 'h-full')}
         >
           {revenueOrder.map((f, i) => drawsPanel(i)
-            ? <KanPanel key={`in-${f.kan.id}`} drill={f} loading={false} levels={levels} natural={natural} shown={pos === i} pos={i} style={INCOMING} noSetsu mirror />
+            ? <KanPanel key={`in-${f.kan.id}`} drill={f} loading={false} levels={levels} natural={natural} shown={pos === i} pos={i} style={INCOMING} noSetsu={!hasSetsu(f)} mirror />
             : <div key={`in-${f.kan.id}`} className={cn('w-full shrink-0 snap-start snap-always', !natural && 'h-full')} data-panel aria-hidden="true" />)}
           {R ? (
             <>

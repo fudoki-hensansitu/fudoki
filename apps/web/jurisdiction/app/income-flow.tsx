@@ -4,7 +4,7 @@ import * as React from 'react'
 import { cn } from '@/lib/utils'
 import { AmountTip } from '../amount-tip'
 import { useFlowSeen } from '../sankey'
-import { formatShare, type RevenueDoc } from '../types'
+import { formatShare, type Drill, type RevenueDoc } from '../types'
 import { Amt } from './amount'
 
 const BAR = 8
@@ -170,8 +170,18 @@ function Stat({ tone, word, sub, yen, per }: { tone: 'in' | 'out'; word: string;
 }
 
 /** 歳入の無い年度・資料は出さない（呼ぶ側が doc を探す）。fields は歳出の分野（金額の多い順、その他は最後） */
-export function IncomeFlow({ doc, phase, expTotal, fields, pop, openField }: {
+/** 住民税（個人）の額。歳入の項「〇民税」（特別区民税・市町村民税など）の中に「個人」の目・節があればその和、無ければ項の額。項が無ければ null */
+function residentTax(revenue: Drill[] | undefined): number | null {
+  const kou = revenue?.flatMap((k) => k.kou).find((o) => /(区|市町村|市|町|村)民税$/.test(o.name) && !o.amountMissing)
+  if (!kou) return null
+  const personal = kou.moku.flatMap((m) => (m.name.includes('個人') ? [m.yen] : m.setsu.filter((x) => x.name.includes('個人') && !x.amountMissing).map((x) => x.yen)))
+  return personal.length ? personal.reduce((a, v) => a + v, 0) : kou.yen
+}
+
+export function IncomeFlow({ doc, revenue, phase, expTotal, fields, pop, openField }: {
   doc: RevenueDoc
+  /** 歳入の款・項・目・節（お金の流れと同じ）。1人あたりの住民税に使う */
+  revenue?: Drill[]
   phase: 'initial' | 'settlement'
   expTotal: number
   fields: { id: string; name: string; yen: number }[]
@@ -189,12 +199,14 @@ export function IncomeFlow({ doc, phase, expTotal, fields, pop, openField }: {
   // 決算は入ったお金が使ったお金より多い。差は翌年度へ繰り越すお金などなので、灰色で右に足して入ると使うの高さを揃える
   const rest = doc.total - expTotal
   if (rest > 0) outgoing.push({ id: 'rest', label: '翌年度へ繰り越すお金など', yen: rest, tone: 'rest' })
-  // 入るの1人あたりは、歳入の総額でなく住民が納める税（区分「まちの税」の款の和）で割る
+  // 入るの1人あたりは、歳入の総額でなく住民税（個人）で割る。住民税の項が引けないときは、まちの税（区分「まちの税」の款の和）で割る
+  const resident = residentTax(revenue)
   const tax = kan.reduce((s, k) => s + (k.category === 'まちの税' ? k.yen : 0), 0)
+  const per = !pop ? null : resident && resident > 0 ? { label: '1人あたりの住民税', yen: resident / pop } : tax > 0 ? { label: '1人あたりの税金', yen: tax / pop } : null
   return (
     <section className="mb-8">
       <div className="mb-5 grid grid-cols-2 gap-3">
-        <Stat tone="in" word={words[0]} sub="歳入" yen={doc.total} per={pop && tax > 0 ? { label: '1人あたりの税金', yen: tax / pop } : null} />
+        <Stat tone="in" word={words[0]} sub="歳入" yen={doc.total} per={per} />
         <Stat tone="out" word={words[1]} sub="歳出" yen={expTotal} per={pop ? { label: '1人あたり', yen: expTotal / pop } : null} />
       </div>
       {/* スマホは頁の左右の余白まで使って画面いっぱいに描く */}

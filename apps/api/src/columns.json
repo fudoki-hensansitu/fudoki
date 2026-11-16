@@ -760,6 +760,95 @@
         }
       ]
     },
+    "revenue_detail": {
+      "primary_key": "detail_id",
+      "indexes": [
+        [
+          "subject_id",
+          "depth"
+        ],
+        [
+          "parent_detail_id"
+        ],
+        [
+          "revenue_id"
+        ]
+      ],
+      "columns": [
+        {
+          "name": "detail_id",
+          "type": "string",
+          "nullable": false,
+          "description": "行の ID。資料区分・補正号・node_key から作る（sha256）。"
+        },
+        {
+          "name": "node_key",
+          "type": "string",
+          "nullable": false,
+          "description": "今の木の node_id。親・軸・段・番号・名称から作る。"
+        },
+        {
+          "name": "parent_detail_id",
+          "type": "string",
+          "nullable": true,
+          "description": "親の内訳の行（depth = 1 は NULL）。"
+        },
+        {
+          "name": "subject_id",
+          "type": "string",
+          "nullable": false,
+          "description": "属する科目の行。revenue_subject の subject_id。"
+        },
+        {
+          "name": "revenue_id",
+          "type": "string",
+          "nullable": false,
+          "description": "歳入の根の ID。revenue の revenue_id。"
+        },
+        {
+          "name": "source_heading",
+          "type": "string",
+          "nullable": false,
+          "description": "枝の欄の見出し（出典の印字。多くは「節」）。"
+        },
+        {
+          "name": "node_kind",
+          "type": "string",
+          "nullable": false,
+          "description": "段の名前。出典が段の見出しを印字すればその語、無ければ 内訳{深さ}。"
+        },
+        {
+          "name": "depth",
+          "type": "integer",
+          "nullable": false,
+          "description": "科目の直下を 1 とする深さ。"
+        },
+        {
+          "name": "code",
+          "type": "string",
+          "nullable": true,
+          "description": "出典の番号をNFKC・前後trimした値。番号がなければNULL。"
+        },
+        {
+          "name": "name",
+          "type": "string",
+          "nullable": false,
+          "description": "出典の名称をNFKC・前後trimし、日本語の字間空白と折り返し改行を除いた値。"
+        },
+        {
+          "name": "amount_yen",
+          "type": "integer",
+          "nullable": true,
+          "description": "資料区分の金額（円）。決算は収入済額、当初予算は本年度予算額。出典に金額の無い行は NULL。"
+        },
+        {
+          "name": "origin_id",
+          "type": "string",
+          "nullable": false,
+          "description": "出典選定のファイルを指すSHA由来のID。"
+        }
+      ]
+    },
     "revenue_location": {
       "primary_key": "line_id",
       "indexes": [],
