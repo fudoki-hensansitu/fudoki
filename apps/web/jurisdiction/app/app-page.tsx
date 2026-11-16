@@ -872,7 +872,7 @@ function SourceAmt({ yen, href, label }: { yen: number | null | undefined; href?
 }
 
 /** 事業の頁（/tokyo/shinagawa/projects/<project_id>）。一覧の行・評価シート・分野の頁の事業から開く。事業は年度をまたぐので年度の段を持たず、
- * 金額は年度ごとの表で出す（大きな金額は出さない）。内訳（中の事業）・評価シートは事業の最新の年度（決算があれば決算）のもの */
+ * 金額は年度ごとの表で出す（大きな金額は出さない）。内訳（中の事業）は事業の最新の年度（決算があれば決算）のもの */
 function ProjectPage({ id }: { id: string }) {
   return (
     <ClientSuspense fallback={<RowsSkeleton n={4} />}>
@@ -907,24 +907,6 @@ function ProjectPageBody({ id }: { id: string }) {
           ))}
         </div>
       </DetailSection>
-      {p.sheets.length ? (
-        <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${p.sheets.length}件`}>
-          <div className="grid gap-2 @3xl:grid-cols-2">
-            {p.sheets.map((s) => {
-              const dir = directionOf(s)
-              return (
-                <div key={s.id} className="flex flex-col gap-1.5 rounded-xl bg-card p-3">
-                  <button type="button" onClick={() => select({ kind: 'sheet', id: s.id, sheet: s })} className="flex w-full items-start gap-2.5 rounded-md text-left outline-none hover:opacity-80 focus-visible:ring-2 focus-visible:ring-primary">
-                    {dir ? <Mark kind={dir.icon} /> : null}
-                    <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">{[`${r(s.fy)}年度の事業`, s.grade ? `評価 ${s.grade} ${GRADES.find((g) => g[0] === s.grade)?.[1] ?? ''}` : null, dir?.label ?? s.dir].filter(Boolean).join(' · ')}</span></span>
-                  </button>
-                  {s.url ? <span className={dir ? 'pl-[34px]' : ''}><Ext href={`${s.url}#page=${s.page}`}>評価シート（{s.page}頁）</Ext></span> : null}
-                </div>
-              )
-            })}
-          </div>
-        </DetailSection>
-      ) : null}
       {p.kids.length ? (
         <DetailSection icon={TreeStructureIcon} title="内訳">
           {/* 内訳の一つ一つも年度をまたぐ事業なので、押すとその事業の頁へ移る。額はその事業の最新の年度のもの */}

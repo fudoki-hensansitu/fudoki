@@ -222,7 +222,7 @@ export type ProjectFull = {
   kids: { name: string; yen: number | null; /** 事業の頁（年度を指さずに読んだとき）は、内訳の事業の ID と、額の年度・資料（その事業の最新の年度） */ id?: string; fy?: number; kind?: Kind }[]
   /** 分野を引く科目（開いた年度、無ければ最新の年度の行） */
   subject: string | null
-  /** この事業と中の事業につないだ評価シート（年度を指して読めばその年度、指さなければ事業の年度すべて） */
+  /** この事業と中の事業につないだ、開いた年度の評価シート（年度を指さずに読む事業の頁では空） */
   sheets: Sheet[]
   /** 開いた年度と資料（年度を指さずに読むと事業の最新の年度） */
   year?: number
@@ -234,7 +234,7 @@ export type ProjectFull = {
 }
 
 /** 事業の詳細（サーバー） */
-/** 事業の詳細（サーバー）。at を指さなければ事業の最新の年度（決算があれば決算）で、中の事業・評価シート・分野の COFOG を引く（事業の頁） */
+/** 事業の詳細（サーバー）。at を指さなければ事業の最新の年度（決算があれば決算）で、中の事業・分野の COFOG を引く（事業の頁） */
 export async function readProjectFull(call: ApiCall, id: string, at?: { year: number; kind: Kind }): Promise<ProjectFull> {
   const p = await call('get_project', { project_id: id })
   const latest = p.years.at(-1)
@@ -244,9 +244,8 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
   const first = p.years[0]?.fiscal_year ?? year
   const span = at ? { min: year, max: year } : { min: Math.max(first, year - (MAX_SHEET_YEARS - 1)), max: year }
   const kids = await searchYears(call, { fiscal_year: span, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody)
-  // 事業の頁（at なし）は、事業の年度すべての評価シートを引く（評価は評価した事業を行った年度に付くので、最新の年度には無いことが多い）。
-  // 検索は5年度までなので、新しい方から5年度
-  const sheets = await readSheetsOfProjects(call, span, [id, ...kids.project_years.map((k) => k.project_id)])
+  // 評価シートは年度を指した詳細だけに出す（事業の頁には出さない）
+  const sheets = at ? await readSheetsOfProjects(call, span, [id, ...kids.project_years.map((k) => k.project_id)]) : []
   const here = p.years.find((y) => y.fiscal_year === year) ?? latest
   const subject = here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null
   // 事業の頁は開いた頁の年度の科目の表を持たないので、分野は科目の COFOG を引いて決める
