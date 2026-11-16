@@ -448,6 +448,16 @@ class SaveGateTest(unittest.TestCase):
 
 
 
+class ReceiptShapeTest(unittest.TestCase):
+    def test_a_fixed_key_receipt_without_declaration_matches_its_sha_key_conversion(self):
+        stored = {'table_id': 't', 'conversion_id': 'c', 'input_fingerprint': 'a' * 64, 'row_count': 1,
+                  'object': {'key': 'fiscal/ingestion/x/t.parquet', 'sha256': '0' * 64, 'bytes': 3}}
+        converted = {**stored, 'input_fingerprint': 'b' * 64, 'declaration': 'd' * 64,
+                     'object': {'key': 'fiscal/ingestion/x/t-1111111111111111.parquet', 'sha256': '1' * 64, 'bytes': 4}}
+        self.assertEqual(refresh.receipt_differences(stored, converted), [])
+        self.assertTrue(refresh.receipt_differences(stored, {**converted, 'row_count': 2}))
+
+
 class GroupsOfTest(unittest.TestCase):
     def groups(self, origins: dict[str, set[str]]) -> list[list[str]]:
         with patch.object(refresh, 'origin_shas', side_effect=lambda path: origins[str(path)]):

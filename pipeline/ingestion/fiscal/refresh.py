@@ -109,12 +109,14 @@ def compare_parquet(saved: Path, candidate: Path, *, examples: int = EXAMPLES) -
 
 
 def receipt_shape(table: dict) -> dict:
-    """The converter-written part of a table receipt; fingerprint and Parquet bytes are not content."""
+    """The converter-written part of a table receipt. Fingerprint, declaration and the Parquet bytes (with the
+    key, which holds their sha; a fixed-key receipt predates it) are not content."""
     shape = deepcopy(table)
     shape.pop('input_fingerprint', None)
+    shape.pop('declaration', None)
     for reference in manifest.table_references(shape).values():
-        reference['object'].pop('sha256', None)
-        reference['object'].pop('bytes', None)
+        for field in ('key', 'sha256', 'bytes'):
+            reference['object'].pop(field, None)
     return shape
 
 
