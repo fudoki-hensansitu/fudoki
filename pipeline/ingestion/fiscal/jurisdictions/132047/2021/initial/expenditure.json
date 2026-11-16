@@ -368,7 +368,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "1b73e7cd068deb65274b8407a0d8e6fe5c532f39ca7955739756b2bb734218dc",
+      "input_fingerprint": "56de8873607300dbbd7dc485e8fc920637c3082fd42efed2a12384adc79a6542",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
@@ -397,7 +397,7 @@
     {
       "table_id": "kaigo-service-initial",
       "conversion_id": "kaigo-service-initial",
-      "input_fingerprint": "526fb0158f8ae7fcb44e352c5beabb6ecc98d05921d9e77ce5a030c72a4da601",
+      "input_fingerprint": "6fcd6f55dfe14908ac25876b377fed1c84eba197a49512e4b1948f24654da0f4",
       "account": "介護サービス事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
@@ -426,7 +426,7 @@
     {
       "table_id": "kaigo-hoken-initial",
       "conversion_id": "kaigo-hoken-initial",
-      "input_fingerprint": "ea5672d45af940964855e052a8377c9263e80cc1b9fe9eac188942318e69f3ae",
+      "input_fingerprint": "21458f96997ec6e6dca123baf5319f654c9f5d301ba2cc38a742d040fdae0750",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
@@ -455,7 +455,7 @@
     {
       "table_id": "kokuho-initial",
       "conversion_id": "kokuho-initial",
-      "input_fingerprint": "822d799590354f0d9127468b8f848d7210045630d7f8c86cebda82337424ce17",
+      "input_fingerprint": "6e84247a906b595047bed3f2f389a11cae79e3fbddbcd5aca2d87cd206c963d2",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
@@ -484,7 +484,7 @@
     {
       "table_id": "kouki-initial",
       "conversion_id": "kouki-initial",
-      "input_fingerprint": "b1cecee028a9911b9d6ba3fd31ff56627464d752b9d762cf2528334c436de4b7",
+      "input_fingerprint": "fffd61a1ffcf3f530712cb3a682c7b3fcea8d1aa525aae2c504c9b30809a6452",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",

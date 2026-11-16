@@ -318,7 +318,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general",
-      "input_fingerprint": "08232fdfd1a72218135c257e548bc6e8a487c4e07b6bc0b808ad0f588072c856",
+      "input_fingerprint": "a6b5bddc70b71d3e9b617b3521eb4f0660fd1b7aaf142d3c2d2df9ac721d00a9",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -347,7 +347,7 @@
     {
       "table_id": "kokuho-expenditure",
       "conversion_id": "kokuho",
-      "input_fingerprint": "33f7b1aae71f1f1b7121fc5837d60a7de783ceee127c6f2df9d551e2d32fdaf6",
+      "input_fingerprint": "de6fddb44a2b6d0d08dd33a27c5c856f6e80bc2d1e7ab879704f4209b2926329",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -377,7 +377,7 @@
     {
       "table_id": "kaigo-expenditure",
       "conversion_id": "kaigo",
-      "input_fingerprint": "a512212bcb90318ed9d1f7bc545e202d0afc202f56e20e160ce9d6dc5a0b438d",
+      "input_fingerprint": "680611e35a115f1b4ceab6157488e91eba1322007cdcd9c0c1c0c0ac35618f1e",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -407,7 +407,7 @@
     {
       "table_id": "toshikaku-expenditure",
       "conversion_id": "toshikaku",
-      "input_fingerprint": "f4507d7b9803534be3a423a0afa3649dd07b7bb90500fe4716703c2885f7d8d7",
+      "input_fingerprint": "85a1d39c069fdb525a0302cd5941c7a28b04d0fbd11e253a8314602cb7e53893",
       "account": "都市核地区土地区画整理事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",
@@ -436,7 +436,7 @@
     {
       "table_id": "kouki-expenditure",
       "conversion_id": "kouki",
-      "input_fingerprint": "f862c26d45c8957182f6991cd8b2528d462877381a9ef4b4bea9fb1a39d91e87",
+      "input_fingerprint": "98897905168fc1f6fca905a0b0fe3c5d76f1e9b195e9871a927c6b1bd9dac6a7",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {}。",

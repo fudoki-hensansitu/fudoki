@@ -1642,7 +1642,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-initial",
-      "input_fingerprint": "daf2245caaff229677eda698f8a667bb578546b33ffabee82f738f3d098fe1cc",
+      "input_fingerprint": "bce5c21ba585a44fb97bb1084c1b6ab9be649711db09e243f7986f07da66d6ee",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1673,7 +1673,7 @@
     {
       "table_id": "public-debt-expenditure",
       "conversion_id": "public-debt-initial",
-      "input_fingerprint": "5385eae6952e3a5501245c2ab73ed79ea51a7e42ee704f2ec3a8f6bcb573c9cd",
+      "input_fingerprint": "1dd5b789169ebe2bd3ee3a73082b6a865746b27b83a63b2d4a11210898753963",
       "account": "公債管理特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1702,7 +1702,7 @@
     {
       "table_id": "hospital-loan-expenditure",
       "conversion_id": "hospital-loan-initial",
-      "input_fingerprint": "281aa31b27f13ff2636572889366a25eb8b84e9a6693dca40623dddb76af6b32",
+      "input_fingerprint": "c5ad76c8b573f69f4da2819c2e63f4a12daf4a44d4557574d31f034c1712d05b",
       "account": "地方独立行政法人県立病院貸付金特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1731,7 +1731,7 @@
     {
       "table_id": "single-parent-loan-expenditure",
       "conversion_id": "single-parent-loan-initial",
-      "input_fingerprint": "1ba9a8a6f6d6af522fb23cdfe8cf4ce2d4d2027736b29a92035bb02ef632267d",
+      "input_fingerprint": "161e5054581601a2e6bbe7b409c80b6fcd65ae69546d88ee5617ab48580b5453",
       "account": "母子父子寡婦福祉資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1760,7 +1760,7 @@
     {
       "table_id": "disability-mutual-aid-expenditure",
       "conversion_id": "disability-mutual-aid-initial",
-      "input_fingerprint": "7cf98eb49af271502ffb70fce39f59d6d98c4b59879f4e49482dfe096e379751",
+      "input_fingerprint": "027172dd7be42e116b8db9b9ced4670b24b9de0bbd605b9e497d9d05ce2c1d39",
       "account": "心身障害者扶養共済事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1789,7 +1789,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "ab682e894d9cc5f75cbf226cbe91326b104723957498b9db3d185da5c2a2e16d",
+      "input_fingerprint": "237e1342552c1e04a0fa2a508c18d92eb5ca11c4f6cfc817855823a0261764b7",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1818,7 +1818,7 @@
     {
       "table_id": "prefectural-forest-expenditure",
       "conversion_id": "prefectural-forest-initial",
-      "input_fingerprint": "035a7e2d8dfada125bbd50f0e3d713699de03c3b3276b77f323ddbc062f77410",
+      "input_fingerprint": "fbf522c88f8f74e9be0e6cd68bfa037600c8aac74699edd36a1bae649db9918d",
       "account": "県営林事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1847,7 +1847,7 @@
     {
       "table_id": "forestry-improvement-loan-expenditure",
       "conversion_id": "forestry-improvement-loan-initial",
-      "input_fingerprint": "a806a497db8335585eae4994d0e445fd841107dad55664290ab9a2e0c09d39c9",
+      "input_fingerprint": "b7236a6fe6bb64d4a27f35a1fe88fd824ffe22c28c8fa3785c720e57d9e0853c",
       "account": "林業・木材産業改善資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1876,7 +1876,7 @@
     {
       "table_id": "sme-advancement-loan-expenditure",
       "conversion_id": "sme-advancement-loan-initial",
-      "input_fingerprint": "46740e1b8bf706136287578c0c6ebda1ea01b51ec1e90844845b8b81b0af1296",
+      "input_fingerprint": "b0bf757ff1a7ffa54d435688479d1851d71d8265a85cb26d497ea91c8b8d29a8",
       "account": "中小企業高度化等資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1905,7 +1905,7 @@
     {
       "table_id": "farming-support-loan-expenditure",
       "conversion_id": "farming-support-loan-initial",
-      "input_fingerprint": "af45cfcaaaf7d0d33bfbb6b51b8ad968b044b9c6da93f031daa01abe0e8ce13a",
+      "input_fingerprint": "1b798290e389fb7c7e6966c69ec345a104c90191dc075c77e9809f6d6b125a81",
       "account": "就農支援資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'position'}。",
@@ -1934,7 +1934,7 @@
     {
       "table_id": "sewerage-revenue-expenditure",
       "conversion_id": "sewerage-revenue-initial",
-      "input_fingerprint": "eaf5fd8d596639d95f8129fb783f0602919d0b884dffe6428aba67d09367e4c2",
+      "input_fingerprint": "907b823a5784c597e0252c7aa4bcdd4f53edfb882e2ac0ad812b6549d66b6b6d",
       "account": "流域下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -1963,7 +1963,7 @@
     {
       "table_id": "sewerage-capital-expenditure",
       "conversion_id": "sewerage-capital-initial",
-      "input_fingerprint": "dd382e383485a6acdc2957249e68228851ed9cd5e4e1bf492f885ab1f3218577",
+      "input_fingerprint": "2a766b70cfc3d4eeb2287027457cf3e11e1895039322ed18b707335af68f1848",
       "account": "流域下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -1992,7 +1992,7 @@
     {
       "table_id": "electricity-revenue-expenditure",
       "conversion_id": "electricity-revenue-initial",
-      "input_fingerprint": "d66b25cda83ee3f8490aa0f6a4f89efd8f89e4d0f41c94663a444ac82aea056d",
+      "input_fingerprint": "273eade7a082d995beb3278053796937d60168a0337cd72c0acb841b977558a9",
       "account": "電気事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -2021,7 +2021,7 @@
     {
       "table_id": "electricity-capital-expenditure",
       "conversion_id": "electricity-capital-initial",
-      "input_fingerprint": "c2ac56d13e629a9bec12a205d80edf7cfc80565c947ed2041172c3971f733bae",
+      "input_fingerprint": "18d3e1f6108b0b0ea39c19ee33df08e1377509d647ceea641c447cf991fde863",
       "account": "電気事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -2050,7 +2050,7 @@
     {
       "table_id": "water-revenue-expenditure",
       "conversion_id": "water-revenue-initial",
-      "input_fingerprint": "84bb847901a372186ab09fa65ccb6ca42f33c55f27dbbdc6ff3479190e3bd0d5",
+      "input_fingerprint": "e0b41a441edd9497d3e8eef774a63ab75a49aaa942102129ec8861b30d61d980",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -2079,7 +2079,7 @@
     {
       "table_id": "water-capital-expenditure",
       "conversion_id": "water-capital-initial",
-      "input_fingerprint": "dba367177f64ceca1285e64ef571e214eb4665c8bf55e3799f53b04e3c0fd9eb",
+      "input_fingerprint": "d75372acfaeb2050dd73a21fd0bd2c61954d8697b39b7d70f353df3f0cd146d2",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -2108,7 +2108,7 @@
     {
       "table_id": "industrial-water-revenue-expenditure",
       "conversion_id": "industrial-water-revenue-initial",
-      "input_fingerprint": "58999850e59b3df314503f285ec008a56b29166f54713457fd69426dc85aae33",
+      "input_fingerprint": "74200fde81d6ae50027bb13837ed3061c3a6019f430b5e2fa0c4ebf8ccf5d8c6",
       "account": "工業用水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -2137,7 +2137,7 @@
     {
       "table_id": "industrial-water-capital-expenditure",
       "conversion_id": "industrial-water-capital-initial",
-      "input_fingerprint": "7fedaa736002493ddf71f51da63965fd03c489a38cfbd15cdfc9eb0d08289f7d",
+      "input_fingerprint": "6237c6e60dfcbc080b11d22fd956c8db824e8614e57c41eeb62202177e366dd8",
       "account": "工業用水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -2166,7 +2166,7 @@
     {
       "table_id": "land-development-revenue-expenditure",
       "conversion_id": "land-development-revenue-initial",
-      "input_fingerprint": "62d0ce64240b34a09049d54fb6e200238e006381ec750243d30810a3a05e193f",
+      "input_fingerprint": "ffe2ecdc99c251b09004c28fcc56efca89d74dac521643e22be40719cf384a63",
       "account": "用地造成事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -2195,7 +2195,7 @@
     {
       "table_id": "land-development-capital-expenditure",
       "conversion_id": "land-development-capital-initial",
-      "input_fingerprint": "8ecbd7000dbfd0ad9d1a11f684e7021645751e821387cbac12baae612ddfc70b",
+      "input_fingerprint": "e55b4b98c5a87882395d09c243849fc5b66f1f3795465682fa057b26db0b51c1",
       "account": "用地造成事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -2224,7 +2224,7 @@
     {
       "table_id": "facility-management-revenue-expenditure",
       "conversion_id": "facility-management-revenue-initial",
-      "input_fingerprint": "a73aa054ec05165905379eff7170a0064375a43bef1bff91a1e907dc39826830",
+      "input_fingerprint": "120d015897af30f3ae9e5f1ace1e223385a30c06f2bc647e81f3f1343ecc8a2c",
       "account": "施設管理事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -2253,7 +2253,7 @@
     {
       "table_id": "facility-management-capital-expenditure",
       "conversion_id": "facility-management-capital-initial",
-      "input_fingerprint": "7fd5abddcab3f0895a438f86b73dbcf46084ecd72f1befac2ff09c13793c802a",
+      "input_fingerprint": "3ca62d0dc80aa73576493ac0a7fc52c2bbf871a2fbf334379454c3b48c43135b",
       "account": "施設管理事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",

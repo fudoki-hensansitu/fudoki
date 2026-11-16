@@ -10,7 +10,7 @@
     {
       "table_id": "general-initial-1",
       "conversion_id": "general-initial-1",
-      "input_fingerprint": "d71735577eaacdae250881e7b91b94bdfb68fde7d68cf540545429b89a1f2f70",
+      "input_fingerprint": "72c1ef812f774411ff8d5e6a8501ddb3f86a281814578a2aa0515fe76dc26774",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",
@@ -40,7 +40,7 @@
     {
       "table_id": "general-initial-2",
       "conversion_id": "general-initial-2",
-      "input_fingerprint": "51b8c3bc06bdcfc50d2820e43d90859baf9dfe27ad2d6cf151588740c5c7bd3c",
+      "input_fingerprint": "29a08383b6fe6102fcaa6f71c6032635e4f5b00ebf4741c3c5e2a537818a199c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",
@@ -70,7 +70,7 @@
     {
       "table_id": "general-initial-3",
       "conversion_id": "general-initial-3",
-      "input_fingerprint": "6e73cbd9ce9bf3aee3096dd600d7e47ada8aae0a33ebfbfe50d871e3ca830582",
+      "input_fingerprint": "74d6d36542e2c39b788e694031392a86f7f2b18122a94143a8486a7935c5181f",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",
@@ -100,7 +100,7 @@
     {
       "table_id": "general-initial-4",
       "conversion_id": "general-initial-4",
-      "input_fingerprint": "afef0f66808e5179fd6b93df7cb7e456e9508d0849adb645673fc865510d29fb",
+      "input_fingerprint": "a22dc38a28c853442aa5f6ce96da1bf15e3bcdbf96684bfcf2acf71afc636b53",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",
@@ -130,7 +130,7 @@
     {
       "table_id": "general-initial-5",
       "conversion_id": "general-initial-5",
-      "input_fingerprint": "88150b8279ca880c5c615b3854bcbb5a413963f34745227143b9572ee9531f2f",
+      "input_fingerprint": "d7dcae81e6ed6c411cc8c9969913c1cc892f0e5f4fab96a55e6369a4d795c5c6",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",
@@ -161,7 +161,7 @@
     {
       "table_id": "general-initial-6",
       "conversion_id": "general-initial-6",
-      "input_fingerprint": "8fe570f3de0326625b2241c707157142794ec93418e2438e6bb224b6868889de",
+      "input_fingerprint": "9cab1d091a66e893020d16004b972fbd1566c36a28437f189dd620751fd8e2fb",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",
@@ -191,7 +191,7 @@
     {
       "table_id": "general-initial-7",
       "conversion_id": "general-initial-7",
-      "input_fingerprint": "a3465f43bb1ac61b4d548db12222d22e7dbed6a7e67b7f5053d0a98d5fc7faea",
+      "input_fingerprint": "e1412cfb394169461b9b71555875ebfa4f8d639455b6a3a68f43b4de2b6cccf6",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",
@@ -221,7 +221,7 @@
     {
       "table_id": "general-initial-8",
       "conversion_id": "general-initial-8",
-      "input_fingerprint": "31ddb3aa9b92c58bd048a7b889ec4e611c15e1945ce791454ab4b662299c1aba",
+      "input_fingerprint": "d59df816571ce0d9817788ca9d46910a1bd622e98cba4edd3f8e586c483b000e",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",
@@ -251,7 +251,7 @@
     {
       "table_id": "general-initial-9",
       "conversion_id": "general-initial-9",
-      "input_fingerprint": "3f58b7f1f1891a42a5f1864324d48c7cc5919ed3ad60e498b8629dc5fa9d65f7",
+      "input_fingerprint": "f7ef244c06a7bea67eb46f5d17e1faec154fd1f9ee2f66bf459ceac4e6aea9e7",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",
@@ -281,7 +281,7 @@
     {
       "table_id": "nhi-initial",
       "conversion_id": "nhi-initial",
-      "input_fingerprint": "add85c9b0be84098435c9e09db443e5d07968192f85ad4287112cf96ba9155ff",
+      "input_fingerprint": "0785acd690e6eb815c8909d5540e78ed4090921cd1bc5efd4f4edbbc950060d3",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",
@@ -312,7 +312,7 @@
     {
       "table_id": "kouki-initial",
       "conversion_id": "kouki-initial",
-      "input_fingerprint": "0f10b50815cac55e873ef663084450192a327c1be78448e915063accac55cf22",
+      "input_fingerprint": "1c844454456b60bae693d875c758b108065af8231f175129a41236b99c88944b",
       "account": "後期高齢者医療会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",
@@ -342,7 +342,7 @@
     {
       "table_id": "kaigo-initial",
       "conversion_id": "kaigo-initial",
-      "input_fingerprint": "1ca06aafca2f4e68a8ddc89b512dd7604582ab135055dc642b61e803ee28a8ee",
+      "input_fingerprint": "792b7887ec3c3eecb75d3fb920d1011e72d533cd5d02cd40ce8591012319a3e9",
       "account": "介護保険会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'numbered', '説明': 'shape'}。",

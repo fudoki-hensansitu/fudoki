@@ -845,7 +845,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "04fd08b3df8b24ff8cf71e0db79ed028146cc06b5ab84b40adce3646bc77b12f",
+      "input_fingerprint": "ba2b81429b674e1074f788ae7ec5d93432194aa253041d08ab373ee4d2f52f9b",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '細節': 'indent', '説明': 'indent'}。",
@@ -874,7 +874,7 @@
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "972c5261c47ba01703f41838e5d426f0d0ceb1dfab7a59135fd5034b21e78714",
+      "input_fingerprint": "0ba3d2c35ad64e34e58dd590c7431e5e43753ae89294358d886d60613b038343",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '細節': 'indent', '説明': 'indent'}。",
@@ -903,7 +903,7 @@
     {
       "table_id": "late-elderly-medical-initial",
       "conversion_id": "late-elderly-medical-initial",
-      "input_fingerprint": "06856a55a5ac788c1a0abe185d7e909da0c32f8c1b01ffa950fd22f42a1d53bb",
+      "input_fingerprint": "f4b5fe259520f12b533f9f50ab8cc706f2063026d5218c5338cb9ad69ffe7272",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '細節': 'indent', '説明': 'indent'}。",
@@ -932,7 +932,7 @@
     {
       "table_id": "long-term-care-insurance-initial",
       "conversion_id": "long-term-care-insurance-initial",
-      "input_fingerprint": "d8d2df2a8213b52920bfab2deb41121c0fb268fbc5a9f8f2eea515ec792cf4d1",
+      "input_fingerprint": "c794ffbb8d748a098848794a13e16467d8face5da803c3c8ba09e2d614439d60",
       "account": "介護保険特別会計（保険事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '細節': 'indent', '説明': 'indent'}。",
@@ -961,7 +961,7 @@
     {
       "table_id": "long-term-care-service-initial",
       "conversion_id": "long-term-care-service-initial",
-      "input_fingerprint": "1ab88293f57709ccb7289fa66541acb0114e28a4d9be63554fa76eee90e3e11d",
+      "input_fingerprint": "bf1a63b38fb775f95a886246947b6f960c6c15aea2f08d4b933980d739fdd831",
       "account": "介護保険特別会計（介護サービス事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '細節': 'indent', '説明': 'indent'}。",
@@ -990,7 +990,7 @@
     {
       "table_id": "tochigi-inter-nishi-industrial-park-initial",
       "conversion_id": "tochigi-inter-nishi-industrial-park-initial",
-      "input_fingerprint": "d1395af6b9bbf88080b3d0a7a600126a74e000a22e4332cc8e066631333a7933",
+      "input_fingerprint": "f295ce52a6c7e081afb4f3fac2d31937ab4119827abaa6e073ac923753c13d35",
       "account": "栃木インター西産業団地特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '細節': 'indent', '説明': 'indent'}。",
@@ -1019,7 +1019,7 @@
     {
       "table_id": "hirakawa-industrial-park-initial",
       "conversion_id": "hirakawa-industrial-park-initial",
-      "input_fingerprint": "abff6d7f4de97dbfc0f885435fd24b449c92d349b5d5849b3ebd0ea9f39937ab",
+      "input_fingerprint": "3d98579d6aeda14d487ac9a5baf14661e802c03687cb4926f7ecb14b508cd32a",
       "account": "平川産業団地特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'shape', '細節': 'indent', '説明': 'indent'}。",
@@ -1048,7 +1048,7 @@
     {
       "table_id": "water-revenue-expenditure",
       "conversion_id": "water-revenue-initial",
-      "input_fingerprint": "59ae91b7a730bcdc9e104a0005c7808adab8063072da31da99fbb84c508bcc91",
+      "input_fingerprint": "de1e29774786f72c1f4f3f4ead1fe88dbd65fe2435d3bb96570995dbf3cebb05",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -1077,7 +1077,7 @@
     {
       "table_id": "water-capital-expenditure",
       "conversion_id": "water-capital-initial",
-      "input_fingerprint": "2b4dec269b5e2a92180ddbdd68010e4246c3007802e017d4ac9a6ff0445e118b",
+      "input_fingerprint": "3e281509c48223c1fc516b775bc68c0dc495ff81435939971f198c020ca1dcc8",
       "account": "水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -1106,7 +1106,7 @@
     {
       "table_id": "sewerage-revenue-expenditure",
       "conversion_id": "sewerage-revenue-initial",
-      "input_fingerprint": "8f690984b1affadeccd30dba59cf1ae15610a30db7d4cc2a6d768b08a82c484e",
+      "input_fingerprint": "aa7a40859671cbde7ddfecd7d6378ade34e9de0608800a46bd85ff3f1a9bd504",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",
@@ -1135,7 +1135,7 @@
     {
       "table_id": "sewerage-capital-expenditure",
       "conversion_id": "sewerage-capital-initial",
-      "input_fingerprint": "1efb356dc2b6da566dd6ec9709b32d3fdf849fdd64f5c297f05528993d9cc4fe",
+      "input_fingerprint": "9810391851a3eb080895cbe5b8a6d1ac0730dfeab7097bb26861df92a7f7bbf1",
       "account": "下水道事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {}。",

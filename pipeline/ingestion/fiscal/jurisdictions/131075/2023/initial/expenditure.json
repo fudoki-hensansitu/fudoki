@@ -112,7 +112,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "2d0242ca89acb2f5fd79ae2d29a66ac3c3b0b9b7f825f5d9faeb373192b9d1e5",
+      "input_fingerprint": "f7486635862d2ffe5a64f9b443505e8acd3e1a850926527c8675ae536fb4aa96",
       "account": "一般会計",
       "notes": [
         "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",
@@ -140,7 +140,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "e99a514ad237b439a3b4a58251c45b2716bf8bf96aaf2d7b2120f97800a7a7c0",
+      "input_fingerprint": "c2d67259b6df9d3f3a482e85593ff671eca9e6a2f0334db795bb8e03576e2145",
       "account": "国民健康保険特別会計",
       "notes": [
         "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",
@@ -168,7 +168,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "3533b3ae6a1759c9f88ae6bc8ff51689c16cd1e5aef67b4412481258b3267666",
+      "input_fingerprint": "c5c1d698d8e0f30f04731f43ea556e4262da79d7cdc77d44502d1475d96a17ac",
       "account": "介護保険特別会計",
       "notes": [
         "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",
@@ -196,7 +196,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "cf913ff16a71d036aa74f8f47280301c533569b0b4b55bce8cd318cceb72a0a8",
+      "input_fingerprint": "55f0d08201795d7dab232a372583e2080c0ce1dc30cfd472861964f680920a54",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "款・項は各頁の題（款 1 議会費 項 1 議会費）から読み、項の金額は項の最後の頁の「計」の行から取った。款の金額は印字されていない。",

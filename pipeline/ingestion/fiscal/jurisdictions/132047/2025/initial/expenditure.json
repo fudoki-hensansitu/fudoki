@@ -368,7 +368,7 @@
     {
       "table_id": "kokuho-initial",
       "conversion_id": "kokuho-initial",
-      "input_fingerprint": "5ee5f1dc47cfb9cae7b60f3f25767cca47f2803de9c813132af2fe466d80b405",
+      "input_fingerprint": "869a8cec445d01d46b49e007509427ab7bc2d7a9431402881ee07a92042a2c72",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
@@ -397,7 +397,7 @@
     {
       "table_id": "kaigo-service-initial",
       "conversion_id": "kaigo-service-initial",
-      "input_fingerprint": "58daf5b0fdd708ff6b8d7aed737a5d36658d96703bdec1e594ceb598851961f4",
+      "input_fingerprint": "06411d55bf49bc5aef6d16d8353d6eb4c4e29a997b159f6b7be758a7875fde70",
       "account": "介護サービス事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
@@ -426,7 +426,7 @@
     {
       "table_id": "kaigo-hoken-initial",
       "conversion_id": "kaigo-hoken-initial",
-      "input_fingerprint": "ea4ca7552123493934474367ac5258743436db3334d6d0dea7f9bc6944604ce6",
+      "input_fingerprint": "35da7cb1cea49d5c886d205c441d73b74f43265b7bfab85693542c6546e7d5ed",
       "account": "介護保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
@@ -455,7 +455,7 @@
     {
       "table_id": "kouki-initial",
       "conversion_id": "kouki-initial",
-      "input_fingerprint": "639dd736edec64ea2d9582d3a030eb8cccaf0ca531d708db3116d0f434e11add",
+      "input_fingerprint": "d54fec6969f0e5113a39ab00ba2268900c4f124d008530fe611714ebc88d98fc",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",
@@ -484,7 +484,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "c5a1a2fb0de480fc972bf4e16e36d4c46247237a48a60cb96960b7296aad2107",
+      "input_fingerprint": "de66780cf3d6596bae9d80fa200c355b7a2777b2bb59334d025ce02eab27055d",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '説明': 'indent'}。",

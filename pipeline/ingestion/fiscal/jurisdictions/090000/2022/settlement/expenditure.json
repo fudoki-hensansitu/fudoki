@@ -557,7 +557,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "b3efeff79667b606e543bb5b0710812ed815a6add98f12ce037e6eaa93b17414",
+      "input_fingerprint": "c2d64007fd6ed6bf4af9c3e532256ac873e40b3cbb97de91bfa777a3b4c3445c",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -587,7 +587,7 @@
     {
       "table_id": "public-debt-expenditure",
       "conversion_id": "public-debt-settlement",
-      "input_fingerprint": "1a88f0ade167e8a920075511a58f628e30e47a5a18980330f399b34a396fcd80",
+      "input_fingerprint": "7c35c015c42bb1e56c6d8cd6f41a808fbb86ebdc089a77308a13323654618d25",
       "account": "公債管理特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -617,7 +617,7 @@
     {
       "table_id": "hospital-loan-expenditure",
       "conversion_id": "hospital-loan-settlement",
-      "input_fingerprint": "d46fd7bfb0fb3c7e75506e270c204d3ca747f85656048ab39863c55e25d002a4",
+      "input_fingerprint": "396402fe3e6829fe69270f2228feb125fd9384b671f894cea1fde0f869a5c462",
       "account": "地方独立行政法人県立病院貸付金特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -647,7 +647,7 @@
     {
       "table_id": "single-parent-loan-expenditure",
       "conversion_id": "single-parent-loan-settlement",
-      "input_fingerprint": "71957ba28a5dc2f3143690126e0e76303ae933899e660f16b063bf4278db2520",
+      "input_fingerprint": "8f963053dbfc1b7b8f600feb56e300f359fd635c2b95308479fcdeda3c8bb231",
       "account": "母子父子寡婦福祉資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -677,7 +677,7 @@
     {
       "table_id": "disability-mutual-aid-expenditure",
       "conversion_id": "disability-mutual-aid-settlement",
-      "input_fingerprint": "07b30cf053cb84d7e1382db55198fc30bbd2f6125b59577807135046220c664f",
+      "input_fingerprint": "c141f295b06f8503a640bdccf12cf0ad5485c7a3b921ad30350ea6c6ef995fc2",
       "account": "心身障害者扶養共済事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -707,7 +707,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "579557889a8f51662d3da401b29ab0b3016519309a9b94fc8bf88d2c0fc57a52",
+      "input_fingerprint": "29efa9f0a67edb2110901557a97f2642424bc0d2f8dbe95f88015399f8c4d488",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -737,7 +737,7 @@
     {
       "table_id": "sme-advancement-loan-expenditure",
       "conversion_id": "sme-advancement-loan-settlement",
-      "input_fingerprint": "f53fb68eeb68eceeefe2523546294215dc6e9f55b1692562d73cc180198bc50b",
+      "input_fingerprint": "1ac4e3484769847e72553b65875455f9c2f76c6add61a38324b02f94c85811dc",
       "account": "中小企業高度化等資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -767,7 +767,7 @@
     {
       "table_id": "farming-support-loan-expenditure",
       "conversion_id": "farming-support-loan-settlement",
-      "input_fingerprint": "0e43ce1a2406b3c450433e22762ba5bd598a0669cb195c907067ddcd482d1fa4",
+      "input_fingerprint": "dd1e21494701a4f0ae75e7c57453e4991fc1838458709c116c8bc3ce5b4c7a4d",
       "account": "就農支援資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -797,7 +797,7 @@
     {
       "table_id": "prefectural-forest-expenditure",
       "conversion_id": "prefectural-forest-settlement",
-      "input_fingerprint": "5dabeae5ce04049be3da171ee827c7b64b5d4a3aae6b0a83cf0670effe7c7eec",
+      "input_fingerprint": "9a57089d427fa056c2929bfcf98cd597bfd13e80b6280a5d360b1c244ba1863a",
       "account": "県営林事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -827,7 +827,7 @@
     {
       "table_id": "forestry-improvement-loan-expenditure",
       "conversion_id": "forestry-improvement-loan-settlement",
-      "input_fingerprint": "96efeb9c8192cb81a0d43e52a922a22a5ec6fda6fe1f32c408cc6bf5ff726393",
+      "input_fingerprint": "ab25dc44d11de362da713ad1abf0bf1f2ec59b8401e1d1483766065440227fcc",
       "account": "林業・木材産業改善資金貸付事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'position', '節': 'shape'}。",

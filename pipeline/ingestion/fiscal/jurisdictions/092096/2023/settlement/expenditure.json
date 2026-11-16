@@ -306,7 +306,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "03808603c6e5bd2981d4f4c2d1430e7b8499437d2bc87f7b666c80fe53e156ff",
+      "input_fingerprint": "f52403bc03e11f7a3ce5107a1cf575d69b9e23b3a9ef60ef6c6776a3bd5c4ef3",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -336,7 +336,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "fbaeb785bcdbd6241b87022e5ebce444484b447950fb57cf87f83cc2e5b7b498",
+      "input_fingerprint": "8637ad4ea45fa20ca5d840d400abb4f5879c5f6a588f1bb801fe57d9d1e54747",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -366,7 +366,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "bd7a6225d61d98a6ee67bdf83429d8be4f1403736692c43dfca35dc9a4d595ea",
+      "input_fingerprint": "1dc2e8456043da966f3036f9bffecbe55a8da85765eba09e73a5494cca9d8d85",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -396,7 +396,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "2efbbd411d9291c1b3b4a336f8d16237a7800fb4ab6c12faa5a9e65220a78afc",
+      "input_fingerprint": "44e0c9adf46dab446868add1ef8447228e1bfe98bdb5302a2a8e0d0a3bd53a50",
       "account": "介護保険特別会計（保険事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -426,7 +426,7 @@
     {
       "table_id": "care-service-expenditure",
       "conversion_id": "care-service-settlement",
-      "input_fingerprint": "bec2eb64d671807c7000d512ce8808f6ccd14868feecf0eaf329b32022faa7b2",
+      "input_fingerprint": "ea3167da21021c37b4d25fcaff862c0b02fe4f94f6cd617a0831c5df7add4561",
       "account": "介護保険特別会計（介護サービス事業勘定）",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -456,7 +456,7 @@
     {
       "table_id": "holiday-clinic-expenditure",
       "conversion_id": "holiday-clinic-settlement",
-      "input_fingerprint": "bac7e0f305af8d12b1d6f4e4c0d22f3dc20d2f7da603aac60dbff5c777763bc8",
+      "input_fingerprint": "a4dad71aa5d665c828cc697f4333c68a6623d7126886a63e03ea56491d72018a",
       "account": "休日夜間急患診療所特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'備考': 'position', '節': 'shape'}。",
@@ -486,7 +486,7 @@
     {
       "table_id": "industrial-park-expenditure",
       "conversion_id": "industrial-park-settlement",
-      "input_fingerprint": "c694155021f90aba53da07279fa38a7ef074dcb22821b946e62de5879c5e07a3",
+      "input_fingerprint": "2f9d4544392d1bf31ba2c12d99a726426d7df5c768b8cc1a66660a505769eb97",
       "account": "産業団地整備事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'備考': 'position', '節': 'shape'}。",

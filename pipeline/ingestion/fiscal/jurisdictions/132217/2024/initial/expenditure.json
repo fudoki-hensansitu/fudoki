@@ -324,7 +324,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "de6fb966832b36805f1ad0e7b456bf483ffd4f525b3d6d96245d2542f5be0e90",
+      "input_fingerprint": "20e0bad3cd84a81c625e4eee224cb7b4f1ca1b8550f401494220289422bc6fb0",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -354,7 +354,7 @@
     {
       "table_id": "national-health-initial",
       "conversion_id": "national-health-initial",
-      "input_fingerprint": "03b94e906f6c67997e534d48ba20d735af7b11811c13c0ad46d97cd9fbdc9ae3",
+      "input_fingerprint": "85005b6dd254f8eb20af65477567113e791805f7836817ea9e8c0e72d38383b7",
       "account": "国民健康保険事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -384,7 +384,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "0218023e14015cb9bf3933575f0815e61690b8f3de85de23c4045b9cb6c9d6be",
+      "input_fingerprint": "22ca5843cd5eaa7f64e934bdeca9b98bac491e6c81d7d5f18e98d86e2d3aa6d6",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -414,7 +414,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "f12b8bd76a0c1d83fcab60883cf11082f9383448157ad75b73465cbf0b119e07",
+      "input_fingerprint": "f325ebe7bf770a65616ee8177b3cdd48c83189874d70f2d9ddc84e6d142f380e",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -444,7 +444,7 @@
     {
       "table_id": "parking-initial",
       "conversion_id": "parking-initial",
-      "input_fingerprint": "061a2d41d334feb499f42574177cc102ba64e2ba7a7f78a9bd79bf3ef709da60",
+      "input_fingerprint": "a05cd3f91df63a9fff009c34cfadd240fc88b5be343c6c7cf1672b5d73a17bd1",
       "account": "駐車場事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",

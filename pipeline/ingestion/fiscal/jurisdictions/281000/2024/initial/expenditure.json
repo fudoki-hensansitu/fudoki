@@ -828,7 +828,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "5ededb073d94100b98bcc878a24614f92ba99010632b91348cffd4088f2ec384",
+      "input_fingerprint": "ebfe08739e30ab5b113ff04e53a3c1c5bfb82e8beef8f217a32fabfdb4180198",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -857,7 +857,7 @@
     {
       "table_id": "market-initial",
       "conversion_id": "market-initial",
-      "input_fingerprint": "f04cb87caffb594b8c8a6171dfd847892616a743d1a56c5f59781d371bc9ec2e",
+      "input_fingerprint": "39e81da84fa1796a4ac512fcdda1ccad2a61614b188b40d66117dabaf46c62dc",
       "account": "市場事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -886,7 +886,7 @@
     {
       "table_id": "meat-initial",
       "conversion_id": "meat-initial",
-      "input_fingerprint": "0fb15d6bd18ac5f88bbe9d0c658c1b61880551e7b59e5c04918a91c10c295bd4",
+      "input_fingerprint": "9730f30ceb4926d314154a549a59f8e389be662733e403d8737dc1394bab2f30",
       "account": "食肉センター事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -915,7 +915,7 @@
     {
       "table_id": "nhi-initial",
       "conversion_id": "nhi-initial",
-      "input_fingerprint": "a00b8c4a0c36120edcb6530479840ca3d26fb465fc9dfb6df3b421e678fcb9c9",
+      "input_fingerprint": "df79227df4c7686645e9da869bbf0016ace92a4e8107bf65d0440c9515721ffe",
       "account": "国民健康保険事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -944,7 +944,7 @@
     {
       "table_id": "single-parent-initial",
       "conversion_id": "single-parent-initial",
-      "input_fingerprint": "f14961f4a2e42a48b8b7493e5a4156d9534c8780c08a8b5e19d551f5e8df0a73",
+      "input_fingerprint": "99a17868284529234fee712c6301a1d5be9c9b82af0df3cfd0297887189a02bf",
       "account": "母子父子寡婦福祉資金貸付事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -973,7 +973,7 @@
     {
       "table_id": "parking-initial",
       "conversion_id": "parking-initial",
-      "input_fingerprint": "981131a4bbf8cb00c66ed8d6120989d09725778bbe8bb1796779fa741af90b4b",
+      "input_fingerprint": "e016204b2f9377b4e8377d763ca0d4d618cb170e239b8eb23f0981fab857c551",
       "account": "駐車場事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1002,7 +1002,7 @@
     {
       "table_id": "redevelopment-initial",
       "conversion_id": "redevelopment-initial",
-      "input_fingerprint": "8a5734ff42d85c95a4d32174d63876a36d3597ad987403505e4ed8d277dfa573",
+      "input_fingerprint": "364793deb448b12897249814aa03cd992c777c04f229c571feb7bd0db815616e",
       "account": "市街地再開発事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1031,7 +1031,7 @@
     {
       "table_id": "housing-initial",
       "conversion_id": "housing-initial",
-      "input_fingerprint": "4e9cdc3e6169a0077a2a0a07d929bf20defbd629903ab27417cfa8506ed97b35",
+      "input_fingerprint": "d0b35d30ba52918b9d2af69379a4cdd701a075bd69cb1cbe2e937a9adad3d63e",
       "account": "市営住宅事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1060,7 +1060,7 @@
     {
       "table_id": "care-initial",
       "conversion_id": "care-initial",
-      "input_fingerprint": "3b3e4c04cb96983606d6343e7d3d84fffc8227b3e8b57ef4aa2d28e0b82511ce",
+      "input_fingerprint": "fc2283502d5b01c4852642c8e761da8945bb7ce3433e749e1fb2201461c69e12",
       "account": "介護保険事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1089,7 +1089,7 @@
     {
       "table_id": "elderly-initial",
       "conversion_id": "elderly-initial",
-      "input_fingerprint": "22b41b119a1cf276e30b473c1cf36d8a1e18ae986cd0577795fc74323cfe0f5d",
+      "input_fingerprint": "17efa0af46f8e761c8f3ead2be9c7692a386e08575b93ae6d7d5d9bdd0b12dbf",
       "account": "後期高齢者医療事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1118,7 +1118,7 @@
     {
       "table_id": "airport-initial",
       "conversion_id": "airport-initial",
-      "input_fingerprint": "c5342bc33f783720e65a492791d7234138ea8d406e941f3722ecdf6ed3a48e6a",
+      "input_fingerprint": "8236aab0b0aaea425e22af799c40c0a93ae13e719ce3ed808fabd29c40745dfe",
       "account": "空港整備事業費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",
@@ -1147,7 +1147,7 @@
     {
       "table_id": "debt-initial",
       "conversion_id": "debt-initial",
-      "input_fingerprint": "d66470adf51b0fbc3c57d42b6c5a441901d9565258c411f3e9123c38b1aae625",
+      "input_fingerprint": "b776839b3901de17f41f9556d0e5a9fc3dfb1610845ea7a2f138b1532d7c9c1b",
       "account": "公債費",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は names、内訳の段は {'節': 'shape'}。",

@@ -292,7 +292,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "f8991a59af250acdb291d1c31fa21d0af87d52f0a994ab48dddfe1a24ae50247",
+      "input_fingerprint": "a39715dc41d8a9a8ce7f17dfa2f701978d288c3e02064be265a9253388a72c88",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
@@ -321,7 +321,7 @@
     {
       "table_id": "national-health-insurance-initial",
       "conversion_id": "national-health-insurance-initial",
-      "input_fingerprint": "4a45da502205bf7cacc5d39f0168d46304f482498d58e7a0259a84041050c743",
+      "input_fingerprint": "1402d1ab4dc076f0cb02c8c538aa8e5ae9d2e79864486550a4fef44c16d9c25f",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
@@ -350,7 +350,7 @@
     {
       "table_id": "long-term-care-initial",
       "conversion_id": "long-term-care-initial",
-      "input_fingerprint": "2777e8d82dfd6d59d97640d2a51719b0415f0e9cb53bb4615f9c909298a54a97",
+      "input_fingerprint": "c1d445df34251a244213e641b2176a064d1e56ab09c2e0c64da76d66a00560ec",
       "account": "介護保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
@@ -379,7 +379,7 @@
     {
       "table_id": "elderly-medical-initial",
       "conversion_id": "elderly-medical-initial",
-      "input_fingerprint": "09acbe986966d63b8093a34925f47a96eea7d0c7895bee62e8ced9b62101b987",
+      "input_fingerprint": "e57c90c58c95644ca684292a273642be6a0df1a2303f2b74184ae0ae9f94725a",
       "account": "後期高齢者医療事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",
@@ -408,7 +408,7 @@
     {
       "table_id": "land-readjustment-initial",
       "conversion_id": "land-readjustment-initial",
-      "input_fingerprint": "e6793fd44ffe151fcb1971927be38336bb588965b79fa372ffaa9e18ea9e3936",
+      "input_fingerprint": "a53dcab941f7fda4f2cf0bffa846b4d7c8c38bbd08ff2bc2158fb5899980c45d",
       "account": "鶴川駅南土地区画整理事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'事業名': 'indent'}。",

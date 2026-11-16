@@ -156,7 +156,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "97a25f3f63a458e51e302a8a7048ee00a9e42279c6fc1eaa5d9a6360ac235777",
+      "input_fingerprint": "9831cc1dfa514d9e811c399694ca1f3099547c61b00c5be26d2c65a52e10db1e",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'indent'}。",
