@@ -1,10 +1,10 @@
 // 歳入の集約の問い合わせ。根・款・出典は1つの batch（トランザクション）で読み、同期の入れ替えをまたいで食い違わないようにする。
-import { ORIGIN_SELECT_LIST, ORIGIN_TABLE, REVENUE_LOCATION_SELECT_LIST, REVENUE_LOCATION_TABLE, REVENUE_SUBJECT_TABLE, toRow } from '../columns'
+import { ORIGIN_SELECT_LIST, ORIGIN_TABLE, REVENUE_LOCATION_SELECT_LIST, REVENUE_DETAIL_TABLE, REVENUE_LOCATION_TABLE, REVENUE_SUBJECT_TABLE, toRow } from '../columns'
 import { ApiError } from '../errors'
 import type { Ctx } from '../shared/context'
 import { searchRows } from '../shared/query'
 import type { SearchInput } from '../shared/search'
-import type { RevenueInput, RevenueLineInput, RevenueLineOutput, RevenueOutput, RevenueSubjectSearchOutput } from './model'
+import type { RevenueDetailSearchOutput, RevenueInput, RevenueLineInput, RevenueLineOutput, RevenueOutput, RevenueSubjectSearchOutput } from './model'
 
 const ROOT_COLUMNS = ['revenue_id', 'jurisdiction_code', 'fiscal_year', 'document_kind', 'amendment_number', 'account_name', 'account_kind', 'total_yen']
 
@@ -62,6 +62,12 @@ const REVENUE_ORIGIN = { table: ORIGIN_TABLE, selectList: ORIGIN_SELECT_LIST }
 export async function searchRevenueSubjects(ctx: Ctx, input: SearchInput): Promise<RevenueSubjectSearchOutput> {
   const { rows, ...rest } = await searchRows(REVENUE_SUBJECT_TABLE, REVENUE_ORIGIN, ctx, input)
   return { subjects: rows, ...rest } as RevenueSubjectSearchOutput
+}
+
+/** 歳入の内訳（節）の検索。歳出の内訳の検索と同じ条件・並び・ページ */
+export async function searchRevenueDetails(ctx: Ctx, input: SearchInput): Promise<RevenueDetailSearchOutput> {
+  const { rows, ...rest } = await searchRows(REVENUE_DETAIL_TABLE, REVENUE_ORIGIN, ctx, input)
+  return { details: rows, ...rest } as RevenueDetailSearchOutput
 }
 
 /** 子の科目は少ない（款の下の項、項の下の目）のでページを切らずに返す。上限は D1 の走査を抑えるため */

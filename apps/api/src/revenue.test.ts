@@ -68,8 +68,8 @@ describe('歳入（get_revenue）', () => {
   })
 })
 
-// 歳入の科目の検索・行の取得（search_revenue_subjects・get_revenue_line）。歳出の科目と同じ形
-describe('歳入の科目（search_revenue_subjects・get_revenue_line）', () => {
+// 歳入の科目・内訳の検索と行の取得（search_revenue_subjects・search_revenue_details・get_revenue_line）。歳出の科目・内訳と同じ形
+describe('歳入の科目・内訳（search_revenue_subjects・search_revenue_details・get_revenue_line）', () => {
   const op = async (name: string, input: Record<string, unknown>) => (await callWebOp({ DB: db } as never, name, input)) as { ok: boolean; value?: any; status?: number }
   const KAN = 'a'.repeat(64)
   const KOU = 'b'.repeat(64)
@@ -102,6 +102,20 @@ describe('歳入の科目（search_revenue_subjects・get_revenue_line）', () =
     const res = await op('search_revenue_subjects', { document_kind: 'initial', fiscal_year: { min: 2020, max: 2020 } })
     expect(res.ok).toBe(true)
     expect(res.value.subjects).toEqual([])
+  })
+
+  test('目の下の節を、根の値・所属する款・項・目つきで返す。depth = 1 の和が目の額', async () => {
+    insert('revenue_detail', { detail_id: 'd1', node_key: 'd1', parent_detail_id: null, subject_id: MOKU, revenue_id: 'r-2025-settlement', source_heading: '節', node_kind: '節', depth: 1, code: '1', name: '普通交付金', amount_yen: 20, origin_id: 'o-settlement' })
+    insert('revenue_detail', { detail_id: 'd2', node_key: 'd2', parent_detail_id: null, subject_id: MOKU, revenue_id: 'r-2025-settlement', source_heading: '節', node_kind: '節', depth: 1, code: '2', name: '特別交付金', amount_yen: 10, origin_id: 'o-settlement' })
+    insert('revenue_detail', { detail_id: 'd3', node_key: 'd3', parent_detail_id: 'd1', subject_id: MOKU, revenue_id: 'r-2025-settlement', source_heading: '節', node_kind: '内訳2', depth: 2, code: null, name: '現年度分', amount_yen: 20, origin_id: 'o-settlement' })
+    const res = await op('search_revenue_details', { document_kind: 'settlement', fiscal_year: { min: 2025, max: 2025 }, where: { subject_id: { eq: [MOKU] }, depth: { eq: [1] } }, order_by: [{ column: 'amount_yen', desc: true }] })
+    expect(res.ok).toBe(true)
+    expect(res.value.details.map((d: any) => [d.name, d.amount_yen, d.kan_name, d.kou_name, d.moku_name, d.is_leaf, d.amount_phase, d.jurisdiction_code])).toEqual([
+      ['普通交付金', 20, '特別区交付金', '特別区財政調整交付金', '普通交付金', false, 'executed', '131091'],
+      ['特別交付金', 10, '特別区交付金', '特別区財政調整交付金', '普通交付金', true, 'executed', '131091'],
+    ])
+    expect(res.value.details.reduce((s: number, d: any) => s + d.amount_yen, 0)).toBe(30)
+    expect(res.value.origins.map((o: any) => o.origin_id)).toEqual(['o-settlement'])
   })
 
   test('行と子の科目・印字の位置・出典を返し、無い行は 404', async () => {

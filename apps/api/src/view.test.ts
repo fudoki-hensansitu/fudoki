@@ -55,6 +55,7 @@ describe('MCP Apps の View', () => {
       'get_evaluation', 'get_evaluation_sheet', 'get_expenditure_line', 'get_project', 'get_revenue', 'get_revenue_line', 'list_jurisdictions',
       'render_expenditure_view', 'search_evaluation_sheets', 'search_expenditure_details', 'search_expenditure_subjects',
       'search_projects',
+      'search_revenue_details',
       'search_revenue_subjects',
     ])
     for (const t of tools) {

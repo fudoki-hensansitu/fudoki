@@ -181,7 +181,34 @@ export async function loadFlowParts(env: Env, code: string, year: number, depth:
   return { drills, loose }
 }
 
-/** 一般会計の歳入の款 → 項 → 目（歳出の流れと同じ形。歳入に節の内訳は付けない）。歳入の無い自治体・年度は空 */
+/** 歳入の目の直下の内訳（節）。目の id ごとに大きい順。歳入の節は収入の種類の区分で、歳出の節とは別のもの */
+export async function loadRevenueSetsuByMoku(env: Env, code: string, year: number, mokuIds: string[], kind: DocumentKind): Promise<Map<string, Setsu[]>> {
+  const setsuByMoku = new Map<string, Setsu[]>()
+  // 歳出の節と同じく、ほかの条件と合わせて API の bind 上限（90）に収まる件数で区切り、並べて読む
+  const chunks = Array.from({ length: Math.ceil(mokuIds.length / 50) }, (_, i) => mokuIds.slice(i * 50, (i + 1) * 50))
+  const pages = await Promise.all(chunks.map(async (ids) => {
+    const rows: RevenueDetail[] = []
+    let token: string | undefined
+    do {
+      const r = await apiCall(env)('search_revenue_details', {
+        document_kind: kind,
+        fiscal_year: { min: year, max: year },
+        where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] }, depth: { eq: [1] }, subject_id: { eq: ids } } as WebOpInput<'search_revenue_details'>['where'],
+        order_by: [{ column: 'amount_yen', desc: true }],
+        page_size: 1000,
+        ...(token ? { page_token: token } : {}),
+      })
+      rows.push(...r.details)
+      token = r.next_page_token ?? undefined
+    } while (token)
+    return rows
+  }))
+  for (const n of pages.flat()) (setsuByMoku.get(n.subject_id) ?? setsuByMoku.set(n.subject_id, []).get(n.subject_id)!).push({ name: n.name, ...amount(n) })
+  return setsuByMoku
+}
+type RevenueDetail = WebOpOutput<'search_revenue_details'>['details'][number]
+
+/** 一般会計の歳入の款 → 項 → 目（歳出の流れと同じ形）。節は最初の画面に要らないので、loader が loadRevenueSetsuByMoku で後から足す。歳入の無い自治体・年度は空 */
 export async function loadRevenueFlow(env: Env, code: string, year: number, kind: DocumentKind): Promise<Drill[]> {
   const subjects: RevenueSubject[] = []
   let token: string | undefined
