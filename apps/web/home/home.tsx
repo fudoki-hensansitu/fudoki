@@ -158,7 +158,7 @@ function FieldBars({ c, limit }: { c: Ctx; limit: number }) {
     <ul className="space-y-2.5">
       {c.v.fields.slice(0, limit).map((f) => (
         <li key={f.id}>
-          <Link href={`${c.base}/fields/${f.id}`} className="group block">
+          <Link href={`${c.base}/projects?field=${f.id}`} className="group block">
             <span className="flex items-center gap-2 text-sm">
               <FieldIcon id={f.id} className="size-[18px] text-muted-foreground" />
               <span className="flex-1 group-hover:text-primary">{f.name}</span>

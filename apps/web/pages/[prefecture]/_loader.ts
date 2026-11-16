@@ -4,7 +4,7 @@ import { HTTPException } from 'hono/http-exception'
 import { defer } from 'void'
 import type { Context } from 'hono'
 import { emptyHead, pageHead, type Head } from '../../jurisdiction/html'
-import { appPageYears, hasDocument, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
+import { appPageYears, hasDocument, TAB_SLUGS, tabOfSlug, type Headline, type PageData, type PageFlow, type PageTab } from '../../jurisdiction/types'
 import { DOMAIN_FRAMES, OTHER_FRAME } from '../../jurisdiction/domains'
 import { PREFECTURE_MAPS } from '../../jurisdiction/map.generated'
 import { codeOfPath, jurisdictionPath } from '../../jurisdiction/path'
@@ -28,8 +28,6 @@ export const unavailable = () => new Response('風土記の API に繋がりま�
 export type JurisdictionProps = JurisdictionView & {
   sitekey: string
   year?: number
-  /** 分野の頁（/tokyo/nakano/2026/fields/fukushi）のときの分野の id */
-  field?: string
   /** 事業の頁（/tokyo/nakano/projects/<project_id>）のときの事業の ID。事業は年度をまたぐので年度の段を持たない。本文のデータは最新の年度、タブは事業のタブ */
   project?: string
   /** タブの頁（/tokyo/nakano/2026/projects）のときのタブ */
@@ -86,11 +84,12 @@ async function toLatestYear(c: Context, path: string, sub: string, tab?: PageTab
   throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${latest}${sub}` } }) })
 }
 
-/** 分野の頁（/tokyo/nakano/2026/fields/fukushi）。分野の id が違えば 404 */
-export async function fieldProps(c: Context, path: string, field: string, yearSegment?: string): Promise<JurisdictionProps> {
+/** もとの分野の頁（/tokyo/nakano/2026/fields/fukushi）。分野の頁はやめたので、その分野で絞った事業のタブへ 301。分野の id が違えば 404 */
+export async function fieldProps(c: Context, path: string, field: string, yearSegment?: string): Promise<never> {
   if (!FIELD_IDS.has(field)) throw new HTTPException(404, { res: notFound() })
-  if (yearSegment === undefined) return toLatestYear(c, path, `/fields/${field}`)
-  return { ...(await jurisdictionProps(c, path, yearSegment)), field }
+  const sub = `/${TAB_SLUGS.projects}?field=${field}`
+  if (yearSegment === undefined) return toLatestYear(c, path, sub)
+  throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${yearSegment}${sub}` } }) })
 }
 
 /** 事業の ID の段。事業の ID と、事業の収録の無い自治体で目を事業の代わりにした ID（moku:<subject_id>） */
@@ -208,7 +207,7 @@ export const jurisdictionHead = (p: JurisdictionProps): Head => {
   if (p.kind !== 'page') return emptyHead(p.entry)
   const year = p.year ?? appPageYears(p.data)[0]
   const opened = year === undefined ? undefined : p.snapshot?.years[String(year)]
-  return pageHead(p.data, p.year, p.field ? { field: p.field } : p.tab ? { tab: p.tab } : undefined, opened && year !== undefined ? { year, kind: opened.kind, yen: opened.total, originTitle: opened.originTitle, areas: areasOfFields(opened.fields) } : undefined)
+  return pageHead(p.data, p.year, p.tab ? { tab: p.tab } : undefined, opened && year !== undefined ? { year, kind: opened.kind, yen: opened.total, originTitle: opened.originTitle, areas: areasOfFields(opened.fields) } : undefined)
 }
 
 /** 最後の節に出す近くの自治体の数 */
