@@ -18,9 +18,6 @@ const LEVELS: Record<FlowView, { kan: string; kou: string; moku: string; setsu: 
 type Levels = (typeof LEVELS)[FlowView]
 
 const SETSU_SHOWN = 3
-/** 帯の上を流れる光の幅と速さ（px、px/秒） */
-const LIGHT = 140
-const LIGHT_SPEED = 320
 /** 目の側に立てる棒の幅。項の棒（w-2）と揃える */
 const MOKU_BAR = 8
 /** 節の側に立てる棒の幅 */
@@ -203,12 +200,6 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
   const [paths, setPaths] = React.useState<Ribbon[]>([])
   const [setsu, setSetsu] = React.useState<Ribbon[]>([])
   const [bar, setBar] = React.useState({ top: 0, height: 0 })
-  // 帯の上を流れる光（全体図と同じ）。動きを減らす設定では出さない
-  const [still, setStill] = React.useState(true)
-  React.useEffect(() => setStill(window.matchMedia('(prefers-reduced-motion: reduce)').matches), [])
-  // 光が流れる右端。節の帯があればその先、無ければ目の棒まで
-  const reach = Math.max(paths.at(0)?.x ?? 0, ...setsu.map((t) => t.x))
-  const lightId = `flow-light${React.useId().replace(/[^a-zA-Z0-9_-]/g, '')}`
   React.useLayoutEffect(() => {
     const el = box.current
     const lane = rib.current
@@ -283,22 +274,9 @@ function KouSection({ kou, active, loading, onBox, levels, onMoku }: { kou: Kou;
       </div>
       <div ref={rib} className="relative hidden sm:block" aria-hidden="true">
         <svg className="absolute inset-0 size-full overflow-visible">
-          {/* 光は項の棒から目、節の帯まで一続きで左から右へ流れる（帯全体の座標で動かす。帯ごとの幅で動かすと段ごとに速さがずれて、流れて見えないため） */}
-          {active && !still ? (
-            <defs>
-              <linearGradient id={lightId} gradientUnits="userSpaceOnUse" x1={-LIGHT} x2={0} y1={0} y2={0}>
-                <stop offset="0" stopColor="var(--primary)" stopOpacity={0} />
-                <stop offset="0.5" stopColor="var(--primary)" stopOpacity={0.3} />
-                <stop offset="1" stopColor="var(--primary)" stopOpacity={0} />
-                <animateTransform attributeName="gradientTransform" type="translate" from="0 0" to={`${reach + LIGHT} 0`} dur={`${((reach + LIGHT) / LIGHT_SPEED).toFixed(2)}s`} begin="1.4s" repeatCount="indefinite" />
-              </linearGradient>
-            </defs>
-          ) : null}
-          {/* 項が画面に入ったら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。帯は段ごとにまとめて一枚で伸ばす。光はいま読んでいる項だけに流す */}
+          {/* 項が画面に入ったら、中分類（項）→科目（目）→内訳（節）の順に帯が左から右へ伸びて流れ込む（全体図と同じ動き。styles/app.css）。帯は段ごとにまとめて一枚で伸ばす */}
           {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
           <g key={`r${drawn}`} className={drawn ? 'flow-ribbon' : 'opacity-0'}>{paths.map((p, i) => <path key={i} d={p.d} className="fill-primary/20" />)}</g>
-          {active && !still ? paths.map((p, i) => <path key={`l${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
-          {active && !still ? setsu.map((p, i) => <path key={`ls${i}`} d={p.d} fill={`url(#${lightId})`} />) : null}
           {paths.map((p, i) => <rect key={`b${drawn}${i}`} x={p.x} y={p.y} width={MOKU_BAR} height={p.h} rx={2} style={{ animationDelay: `${550 + Math.min(i * 15, 150)}ms` }} className={`fill-primary ${drawn ? 'flow-node' : 'opacity-0'}`} />)}
           {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
           <g key={`s${drawn}`} style={{ animationDelay: '450ms' }} className={drawn ? 'flow-ribbon' : 'opacity-0'}>{setsu.map((p, i) => <path key={i} d={p.d} className={p.rest ? 'fill-primary/10' : 'fill-primary/15'} />)}</g>
