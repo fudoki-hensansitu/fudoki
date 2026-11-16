@@ -74,8 +74,10 @@ function Flow({ incoming, outgoing, heads }: { incoming: Node[]; outgoing: Node[
   }, [])
   const width = useWidth(ref)
   const narrow = width < 560
-  const x0 = narrow ? 114 : 180
-  const x2 = Math.max(width - (narrow ? 150 : 230) - BAR, x0 + 2 * BAR + 80)
+  // 名前の欄は一番長い名前の幅だけ取り、残りを帯に回す（名前は全角なので文字数×文字の大きさで足りる）
+  const nameWidth = (ns: Node[], size: number) => Math.max(0, ...ns.map((n) => Math.min(Array.from(n.label).length, narrow ? 10 : 99))) * size + GAP + 4
+  const x0 = Math.min(nameWidth(incoming, narrow ? 10.5 : 13), width * 0.3)
+  const x2 = Math.max(width - Math.min(nameWidth(outgoing, narrow ? 10.5 : 12), width * 0.32) - BAR, x0 + 2 * BAR + 80)
   const x1 = (x0 + x2) / 2
   const inGap = 6
   const outGap = 4
@@ -198,7 +200,10 @@ export function IncomeFlow({ doc, phase, expTotal, fields, pop, openField }: {
         <Stat tone="in" word={words[0]} sub="歳入" yen={doc.total} per={pop && tax > 0 ? { label: '1人あたりの税金', yen: tax / pop } : null} />
         <Stat tone="out" word={words[1]} sub="歳出" yen={expTotal} per={pop ? { label: '1人あたり', yen: expTotal / pop } : null} />
       </div>
-      <Flow incoming={incoming} outgoing={outgoing} heads={[words[0], '一般会計', words[1]]} />
+      {/* スマホは頁の左右の余白まで使って画面いっぱいに描く */}
+      <div className="-mx-2 sm:mx-0">
+        <Flow incoming={incoming} outgoing={outgoing} heads={[words[0], '一般会計', words[1]]} />
+      </div>
       {phase === 'settlement' && rest > 0 ? (
         <p className="mt-2 text-[13px] text-muted-foreground">入ったお金と使ったお金の差 <Amt yen={rest} /> は、翌年度へ繰り越すお金などになります。</p>
       ) : null}
