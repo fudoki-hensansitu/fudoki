@@ -189,7 +189,7 @@ export function IncomeFlow({ doc, phase, expTotal, fields, pop, prefecture, open
   const rest = doc.total - expTotal
   if (rest > 0) outgoing.push({ id: 'rest', label: '翌年度へ繰り越すお金など', yen: rest, tone: 'rest' })
   return (
-    <section>
+    <section className="mb-8">
       <div className="mb-5 grid grid-cols-2 gap-3">
         <Stat tone="in" word={words[0]} sub="歳入" yen={doc.total} pop={pop} />
         <Stat tone="out" word={words[1]} sub="歳出" yen={expTotal} pop={pop} />
