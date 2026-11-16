@@ -50,11 +50,13 @@ COLUMN_RULE = 45.0  # points: over the 40 a vertical rule needs to be a column's
 HEAD = 80.0  # points: a table's header stands this far under its top
 OVER = 45.0  # points: the titles of a table stand this close over its top
 MARGIN = 20.0
-TITLE = re.compile(r'^(第[0-9]+[款項]|[（(][0-9]+[款項][)）]|[（(]?単位|.{0,5}歳[入出]予算の説明$)')
+TITLE = re.compile(r'^(第[0-9]+[款項]|[（(][0-9]+[款項][)）]|[（(]?単位|.{0,5}歳[入出]予算の説明(?:[（(][^）)]*[）)])?$)')  # 健康局 R7: `(3) 歳出予算の説明（ は新規事業を示す。）`
 END = re.compile(r'^[（(]?[0-9０-９]*[)）.．]?\s*債務負担行為')  # the section after the 歳出 (`４ 債務負担行為`), not a line that names one
 AMOUNT = re.compile(r'[0-9],[0-9]{3}|[0-9]千円')
 SUBJECT_HEAD = re.compile(r'(?:款|科目)(.*?)(?:本年度|(?:令和)?[0-9０-９]+年度)')  # the subject cells, then the first amount column's
 STRAY = re.compile(r'[A-Za-z]')  # a lone Latin letter in the subject cells (no 款・項・目 name is one)
+SPACED = re.compile(r'[△▲]?[0-9][0-9,]*,')  # the head of an amount set apart after its comma (`1,` `940,` `223千円`)
+NONE = {'-', '－', '―', '—', '‐', '0'}  # the 本年度 of a 目 with no budget this year
 FOLIO = re.compile(r'^-?[0-9]+-?$')
 HEADING_REASON = '局別の予算説明書で目の説明の見出し（目の番号と名前、目の金額）。目の行で読み取り済み。'
 SKIP_REASON = '局別の予算説明書で説明の中の注記（「（別途 令和８年２月補正予算 1,297,400千円）」、款・項の金額の再掲など、項目でない金額）。'
@@ -95,6 +97,7 @@ class Frame:
     amounts: float  # the left edge of the first amount column
     drawn: float  # how long the 目 level's column rule is drawn
     subjects: list = field(default_factory=list)  # (code, name, bottom rule of its row)
+    idle: set = field(default_factory=set)  # the bottom rules of the 目 rows with no budget this year
 
 
 def joined(rules: list[Rule]) -> list[Rule]:
@@ -148,7 +151,8 @@ def frames(page: Page, others: list | None = None) -> list[Frame]:
 
 def edges(frame: Frame, rules: list[Rule], top: float, bottom: float, end: float) -> list[Rule]:
     """The frame's outer rules the page does not draw as rules: its left side, its top and bottom (the right side is
-    the 説明 column's left)."""
+    the 説明 column's left). A top or bottom the page draws only in part (人事委員会 R6 draws none over 財源内訳) is drawn
+    whole."""
     near = lambda r, vertical, at: r.vertical == vertical and abs((r.x0 if vertical else r.y0) - at) <= REACH \
         and ((r.y1 - r.y0) if vertical else (r.x1 - r.x0)) >= LONG
     added = []
@@ -156,9 +160,10 @@ def edges(frame: Frame, rules: list[Rule], top: float, bottom: float, end: float
         added.append(Rule(frame.left, top, frame.left, bottom))
     if not any(near(r, True, frame.right) for r in rules):
         added.append(Rule(frame.right, top, frame.right, bottom))
-    if not any(near(r, False, frame.top) for r in rules):
+    spans = lambda r: r.x0 <= frame.left + REACH and r.x1 >= frame.right - REACH
+    if not any(near(r, False, frame.top) and spans(r) for r in rules):
         added.append(Rule(frame.left, top, end, top))
-    if not any(near(r, False, frame.bottom) for r in rules):
+    if not any(near(r, False, frame.bottom) and spans(r) for r in rules):
         added.append(Rule(frame.left, bottom, end, bottom))
     return added
 
@@ -170,7 +175,8 @@ def inside(frame: Frame, word: Word) -> bool:
 
 def subject_rows(frame: Frame, words: list[Word]) -> None:
     """The 目 rows of the frame: a line whose first word starts in the 目 level's column with a code; with the
-    row's name (its words left of the amounts between the rules above and below it, the code taken off)."""
+    row's name (its words left of the amounts between the rules above and below it, the code taken off). A row whose
+    本年度 is a dash has no budget this year and is no 目 an explanation can explain (`idle`)."""
     body = [w for w in words if inside(frame, w) and frame.left - REACH <= w.x0 < frame.amounts]
     for line in lines(body):
         first = line[0]
@@ -180,12 +186,17 @@ def subject_rows(frame: Frame, words: list[Word]) -> None:
             # the explanation names the row it explains)
             continue
         middle = (first.y0 + first.y1) / 2
+        amounts = sorted((w for w in words if inside(frame, w) and w.x0 >= frame.amounts
+                          and abs((w.y0 + w.y1) / 2 - middle) < LINE), key=lambda w: w.x0)
         below = next((y for y in frame.rows if y > middle), frame.bottom)
         above = max((y for y in frame.rows if y < middle), default=frame.top)
         cell = [w for w in body if above < (w.y0 + w.y1) / 2 < below and w.x0 >= frame.inner - REACH]
         name = ''.join(norm(w.text)[len(found.group()):] if w is first else norm(w.text)
                        for row in lines(cell) for w in row)
         frame.subjects.append((int(found.group()), name, below))
+        if amounts and norm(amounts[0].text) in NONE:
+            # no budget this year (`1 職員費 － 6,999`, a 目 another 項 of the page also numbers 1): nothing to explain
+            frame.idle.add(below)
 
 
 @dataclass
@@ -322,13 +333,15 @@ def wrapped_around(rows: list, item: re.Pattern) -> list:
 
 
 def signed(words: list[Word]) -> list[Word]:
-    """`△ 2,499` (教育委員会): a minus sign set apart from its amount is one word with it. The tree would join them
+    """`△ 2,499` (教育委員会): a minus sign set apart from its amount is one word with it; so is the rest of an amount
+    set apart after its comma (`1, 940, 223千円`, 文化スポーツ局 R6). The tree would join them
     after the words are laid out, and the joined word would lose the place where it is printed."""
     result: list[Word] = []
     for word in sorted(words, key=lambda w: (round((w.y0 + w.y1) / 2), w.x0)):
         last = result[-1] if result else None
-        if (last is not None and last.text in ('△', '▲') and is_amount(word.text) and 0 <= word.x0 - last.x1 < SIGN_GAP
-                and abs((last.y0 + last.y1) / 2 - (word.y0 + word.y1) / 2) < LINE):
+        if (last is not None and abs((last.y0 + last.y1) / 2 - (word.y0 + word.y1) / 2) < LINE and 0 <= word.x0 - last.x1 < SIGN_GAP
+                and ((last.text in ('△', '▲') and is_amount(word.text))
+                     or (SPACED.fullmatch(last.text) and re.match(r'[0-9]{3}(?![0-9])', word.text)))):
             result[-1] = Word(last.text + word.text, last.x0, min(last.y0, word.y0), word.x1, max(last.y1, word.y1))
         else:
             result.append(word)
@@ -401,7 +414,7 @@ def read(pages, *, header: dict | None = None, **options):
         before = [f for f in ordered if block.heading and (f.page, f.top) < (block.page, block.heading[0].y0)]
         target = (block.frame, block.frame.subjects[-1][2]) if block.frame is not None else next(
             ((f, bottom) for f in reversed(before) for code, name, bottom in reversed(f.subjects)
-             if block.code in (None, code) and (block.name is None or name == block.name)), None)
+             if block.code in (None, code) and (block.name is None or name == block.name) and bottom not in f.idle), None)
         if target is None:
             raise ValueError(f'No 目 {block.code} for the explanation on p{block.page}: {text(block.heading)!r}')
         frame, bottom = target

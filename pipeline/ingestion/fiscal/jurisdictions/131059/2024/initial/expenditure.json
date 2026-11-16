@@ -196,14 +196,6 @@
         },
         "name_corrections": [
           {
-            "id": "p159-wrapped-election",
-            "page": 159,
-            "code": null,
-            "observed_name": "(区議会議員・区長",
-            "corrected_name": "(区議会議員・区長選挙費)",
-            "reason": "目の名前「(区議会議員・区長選挙費)」が頁159（見開きの左）の末尾で折り返し、続きの「選挙費)」は次の見開きの頁161の先頭の行に印字されている。頁をまたぐ折り返しは結ばれないので、原画で確かめた名前に直す。"
-          },
-          {
             "id": "p240-paren-code-before-digit",
             "page": 240,
             "code": "4",
