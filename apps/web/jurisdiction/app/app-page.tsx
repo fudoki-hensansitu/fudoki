@@ -645,17 +645,18 @@ const KINDS = [
 function KindBox({ v, filter, setFilter }: { v: YearView; filter: string; setFilter: (f: string) => void }) {
   const shown = KINDS.filter((k) => (k.id === 'eval' ? !!v.sheetTotal : v.comparable))
   // 一覧の読み直しは transition で遅れて届くので、選んだ状態は手元に持ってすぐ出す
-  const [value, setValue] = React.useState<string | null>(filter === 'all' ? null : filter)
-  React.useEffect(() => setValue(filter === 'all' ? null : filter), [filter])
+  // 既定は「すべての事業」を選んだ状態
+  const [value, setValue] = React.useState(filter)
+  React.useEffect(() => setValue(filter), [filter])
   if (!shown.length) return null
-  const label = (id: string) => KINDS.find((k) => k.id === id)?.label ?? id
+  const label = (id: string) => (id === 'all' ? 'すべての事業' : (KINDS.find((k) => k.id === id)?.label ?? id))
   return (
-    <Combobox items={shown.map((k) => k.id)} value={value} itemToStringLabel={label} onValueChange={(x) => { const next = (x as string | null) ?? null; setValue(next); setFilter(next ?? 'all') }}>
-      <ComboboxInput placeholder="すべての事業" showClear={!!value} aria-label="事業の区分で絞る" className="w-full" />
+    <Combobox items={['all', ...shown.map((k) => k.id)]} value={value} itemToStringLabel={label} onValueChange={(x) => { const next = (x as string | null) ?? 'all'; setValue(next); setFilter(next) }}>
+      <ComboboxInput placeholder="すべての事業" aria-label="事業の区分で絞る" className="w-full" />
       <ComboboxContent>
         <ComboboxEmpty>見つかりません</ComboboxEmpty>
         <ComboboxList>
-          {(id: string) => <ComboboxItem key={id} value={id}>{KINDS.find((k) => k.id === id)?.icon}{label(id)}</ComboboxItem>}
+          {(id: string) => <ComboboxItem key={id} value={id}>{KINDS.find((k) => k.id === id)?.icon ?? <ListBulletsIcon />}{label(id)}</ComboboxItem>}
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
@@ -674,8 +675,9 @@ function FieldBox({ v, fields, setFields }: { v: YearView; fields: string[]; set
         <ComboboxValue>
           {(values: string[]) => (
             <>
-              {values.map((id) => <ComboboxChip key={id}>{label(id)}</ComboboxChip>)}
-              <ComboboxChipsInput placeholder={values.length ? '' : 'すべての分野'} aria-label="分野で絞る" />
+              {/* 既定は「すべての分野」。分野を選ぶとその分野の Chip に替わり、全部外すと戻る */}
+              {values.length ? values.map((id) => <ComboboxChip key={id}>{label(id)}</ComboboxChip>) : <ComboboxChip showRemove={false}>すべての分野</ComboboxChip>}
+              <ComboboxChipsInput aria-label="分野で絞る" />
             </>
           )}
         </ComboboxValue>
