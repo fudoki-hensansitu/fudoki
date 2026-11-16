@@ -1,0 +1,924 @@
+{
+  "schema_version": 1,
+  "target": {
+    "jurisdiction": "131237",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure-detail",
+        "pages": [
+          [
+            167,
+            295
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "agree_on_bottom": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "note_kinds": {
+                    "総務費": "予備費充用",
+                    "環境費": "予備費充用",
+                    "土木費": "予備費充用"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "amount_corrections": [
+          {
+            "id": "p256-carryover-leading-zero",
+            "page": 256,
+            "observation_id": "p256:full-page:a0:result0:r20",
+            "observed_amount": "01,230,197,000",
+            "corrected_amount": "1,230,197,000",
+            "reason": "物理256頁の款の「継続費及び繰越事業費繰越額」は 1,230,197,000。OCR が左の升の 3,750,700,000 の末尾の 0 を読みに付けた。原画で確かめた。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p174-sdgs-kou",
+            "page": 174,
+            "code": "1",
+            "observed_name": "SDGS推進費",
+            "corrected_name": "SDGs推進費",
+            "reason": "物理174頁の項「1 SDGs推進費」は名称を2行に分けて字間を空けて印字しており、OCR が末尾の小文字 s を大文字 S と読んだ。原画で確かめた。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              167,
+              168,
+              169,
+              170,
+              171,
+              172,
+              173,
+              174,
+              175,
+              176
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "89cc0d4b1a919767d99b05efb67b7fc98292e48c0968bf13b6ab7807a43c49a3",
+          "bytes": 1927728
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              177,
+              178,
+              179,
+              180,
+              181,
+              182,
+              183,
+              184,
+              185,
+              186
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d2e04774ed222b482a4c885a49f7da1c04146fe34148f908c02ca6a694cccc7d",
+          "bytes": 1927132
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              187,
+              188,
+              189,
+              190,
+              191,
+              192,
+              193,
+              194,
+              195,
+              196
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "f2b0554736907cc5164c0e145bc84960fafc417533adb7424781ee7046078594",
+          "bytes": 2301896
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              197,
+              198,
+              199,
+              200,
+              201,
+              202,
+              203,
+              204,
+              205,
+              206
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "5562e3ebfa8eff3837120bc45e9bb32b2106ac8f110a60adfc814dc2fcb9d30a",
+          "bytes": 1977015
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              207,
+              208,
+              209,
+              210,
+              211,
+              212,
+              213,
+              214,
+              215,
+              216
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d68491d53b920715af1d321f467ca80571db11c0b3dcac298b21dd8f90ad4d2d",
+          "bytes": 2118391
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              217,
+              218,
+              219,
+              220,
+              221,
+              222,
+              223,
+              224,
+              225,
+              226
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "21ca2cc90753e3773d6054babc55759216a092eb69f602b81cbcc238c0cc7eed",
+          "bytes": 2125674
+        },
+        {
+          "id": "general-ocr-7",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              227,
+              228,
+              229,
+              230,
+              231,
+              232,
+              233,
+              234,
+              235,
+              236
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "67f3b95657d672470648019ad6639b4f8f9f1f16c53dacc1775ca9d85aa4c1c5",
+          "bytes": 2281862
+        },
+        {
+          "id": "general-ocr-8",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              237,
+              238,
+              239,
+              240,
+              241,
+              242,
+              243,
+              244,
+              245,
+              246
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "3a34c36fe49f6a16e993b8b9dbe4899cd32d92cb2acbd888c1662c46cc4b3699",
+          "bytes": 2246878
+        },
+        {
+          "id": "general-ocr-9",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              247,
+              248,
+              249,
+              250,
+              251,
+              252,
+              253,
+              254,
+              255,
+              256
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c1dd95928c9453820326b40f42dc31cc5680d25d08db2c11df34c5111854e9a1",
+          "bytes": 2083268
+        },
+        {
+          "id": "general-ocr-10",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              257,
+              258,
+              259,
+              260,
+              261,
+              262,
+              263,
+              264,
+              265,
+              266
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "622c8ae29f926c5f455ef2168c424ac8e660fa9d91318a246e5fd0b86cb2d9e2",
+          "bytes": 2416335
+        },
+        {
+          "id": "general-ocr-11",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              267,
+              268,
+              269,
+              270,
+              271,
+              272,
+              273,
+              274,
+              275,
+              276
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "dd17ecefef41d08fe38df6e86c2d4d2098c4a876e7f07d7e268b7a8658adfd82",
+          "bytes": 2317992
+        },
+        {
+          "id": "general-ocr-12",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              277,
+              278,
+              279,
+              280,
+              281,
+              282,
+              283,
+              284,
+              285,
+              286
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4beb228a3656a61dcda18a7c8f50247ba7f9788c5fe9408cd3050fc4a30e9534",
+          "bytes": 2483388
+        },
+        {
+          "id": "general-ocr-13",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              287,
+              288,
+              289,
+              290,
+              291,
+              292,
+              293,
+              294,
+              295
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "ddfb9fd1a310667f582fcb782c64ff70cf6064d61507d51222a130ac032260e6",
+          "bytes": 1612893
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-expenditure-detail",
+        "pages": [
+          [
+            317,
+            337
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "agree_on_bottom": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "note_kinds": {
+                    "総務費": "予備費充用",
+                    "保健事業費": "予備費充用",
+                    "令和5年議案第2号区議会議決": "予備費充用"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p322-taishoku-ryoyo",
+            "page": 322,
+            "code": "2",
+            "observed_name": "退識被保険者等療養給付費",
+            "corrected_name": "退職被保険者等療養給付費",
+            "reason": "物理322頁の目「2 退職被保険者等療養給付費」の「職」を、OCR が「識」と読んだ。原画で確かめた。"
+          },
+          {
+            "id": "p322-taishoku-kogaku",
+            "page": 322,
+            "code": "2",
+            "observed_name": "退識被保険者等高額療養費",
+            "corrected_name": "退職被保険者等高額療養費",
+            "reason": "物理322頁の目「2 退職被保険者等高額療養費」の「職」を、OCR が「識」と読んだ。原画で確かめた。"
+          },
+          {
+            "id": "p324-shobyo",
+            "page": 324,
+            "code": "7",
+            "observed_name": "伤病手当金",
+            "corrected_name": "傷病手当金",
+            "reason": "物理324頁の項「7 傷病手当金」の「傷」を、OCR が簡体字の「伤」と読んだ。原画で確かめた。"
+          },
+          {
+            "id": "p328-kyodo-kou",
+            "page": 328,
+            "code": "1",
+            "observed_name": "共同事業抛出金",
+            "corrected_name": "共同事業拠出金",
+            "reason": "物理328頁の項「1 共同事業拠出金」の「拠」を、OCR が「抛」と読んだ。原画で確かめた。"
+          },
+          {
+            "id": "p328-kyodo-moku",
+            "page": 328,
+            "code": "1",
+            "observed_name": "その他共同事業事務費拋出金",
+            "corrected_name": "その他共同事業事務費拠出金",
+            "reason": "物理328頁の目「1 その他共同事業事務費拠出金」の「拠」を、OCR が「拋」と読んだ。原画で確かめた。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              317,
+              318,
+              319,
+              320,
+              321,
+              322,
+              323,
+              324,
+              325,
+              326
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7d5dba226563dca9f7e22acfe2e85b568b6eb7f9917d98013f272b90d50da8aa",
+          "bytes": 2199072
+        },
+        {
+          "id": "nhi-ocr-2",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              327,
+              328,
+              329,
+              330,
+              331,
+              332,
+              333,
+              334,
+              335,
+              336
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7d480f3d69e24181187b669702f66a82e4184a7c9ac21e0ab41519ccd367ce6b",
+          "bytes": 1324639
+        },
+        {
+          "id": "nhi-ocr-3",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              337
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d07e31b0464160f1d8d9268c7224bd43cc1efa6472ad27f7bd9616f015cca930",
+          "bytes": 92918
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-expenditure-detail",
+        "pages": [
+          [
+            361,
+            375
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "agree_on_bottom": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "note_kinds": {
+                    "基金積立金": "予備費充用"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "header_readings": [
+          {
+            "id": "kaigo-p368-予備費",
+            "pages": [
+              368
+            ],
+            "box": [
+              311.0,
+              48.5,
+              373.0,
+              83.5
+            ],
+            "text": "予備費支出及び流用増減",
+            "reason": "物理368頁の予算現額の升「予備費支出及び充用増減」は3行に分けて印字し、OCR が「支流」「び減」「充用增」と縦に切れ切れに読んで、見出しの段が1つにまとまった。他の頁と同じ欄なので、共有の見出し辞書の語（予算現額／予備費支出及び流用増減）で升の見出しを宣言する。原典の描画で升の位置を確かめた。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              361,
+              362,
+              363,
+              364,
+              365,
+              366,
+              367,
+              368,
+              369,
+              370
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b2becf1fbf68a3884058914996098cdada8fa7ee251d80529315f9532f126c9a",
+          "bytes": 1413255
+        },
+        {
+          "id": "kaigo-ocr-2",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              371,
+              372,
+              373,
+              374,
+              375
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c4185c6a9c3616fc84d4d359c484a4bac03e4da7d4a6172a7af4683d2ceb55ec",
+          "bytes": 591636
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-expenditure-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-expenditure-detail",
+        "pages": [
+          [
+            393,
+            407
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "ignore_frame_title": true,
+                "agree_on_bottom": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape"
+              },
+              "備考": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              393,
+              394,
+              395,
+              396,
+              397,
+              398,
+              399,
+              400,
+              401,
+              402
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c399582b1d0dec5c944db43cef45417892a16c26c574f08b763154ab9cbbb24e",
+          "bytes": 1114326
+        },
+        {
+          "id": "kouki-ocr-2",
+          "origin_sha256": "06f3009fab3e2aa564547ad69db02ae73eb479dc8354a86ad99a8e6a7a790829",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              403,
+              404,
+              405,
+              406,
+              407
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "fdd8c689839b056e9607ae1d16255693ba612cc07e932aa1b471c7fb860bd773",
+          "bytes": 586100
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-expenditure-detail"
+        }
+      ]
+    }
+  ],
+  "tables": [
+    {
+      "table_id": "general-expenditure-detail",
+      "conversion_id": "general",
+      "input_fingerprint": "893416ec5f370662020b8f7871ed7976a1c42027d8d780680f371e8d0b7472a9",
+      "account": "一般会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 64頁 から決めた。款の和 325,114,266,237 と印字の「歳出合計」325,114,266,237 が一致。",
+        "金額の注記 76 件（不用額 52・流用 24）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（977 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 1SDGS推進費→1SDGs推進費。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 14 件（p178:full-page:a0:result0:r0・p178:full-page:a0:result0:r0:w4・p178:full-page:a0:result0:r15・p178:full-page:a0:result0:r15:w4・p178:full-page:a0:result0:r20・p178:full-page:a0:result0:r20:w4・p180:full-page:a0:result0:r0・p180:full-page:a0:result0:r0:w4・p182:full-page:a0:result0:r0・p182:full-page:a0:result0:r0:w4・p232:full-page:a0:result0:r15・p232:full-page:a0:result0:r15:w4・p242:full-page:a0:result0:r19・p242:full-page:a0:result0:r19:w4）・举→挙 2 件（p196:full-page:a0:result0:r19・p196:full-page:a0:result0:r19:w2）・减→減 8 件（p168:full-page:a0:result1:r16・p168:full-page:a0:result1:r16:w2・p230:full-page:a0:result1:r18・p230:full-page:a0:result1:r18:w2・p244:full-page:a0:result1:r14・p244:full-page:a0:result1:r14:w3・p256:full-page:a0:result1:r14・p256:full-page:a0:result1:r14:w3）・增→増 118 件（p168:full-page:a0:result1:r16・p168:full-page:a0:result1:r16:w1・p170:full-page:a0:result1:r18・p170:full-page:a0:result1:r18:w1・p172:full-page:a0:result1:r15・p172:full-page:a0:result1:r15:w2・p174:full-page:a0:result1:r15・p174:full-page:a0:result1:r15:w2・p176:full-page:a0:result1:r17・p176:full-page:a0:result1:r17:w1・p178:full-page:a0:result1:r15・p178:full-page:a0:result1:r15:w2・p180:full-page:a0:result1:r18・p180:full-page:a0:result1:r18:w1・p182:full-page:a0:result1:r15・p182:full-page:a0:result1:r15:w1・p184:full-page:a0:result1:r16・p184:full-page:a0:result1:r16:w2・p186:full-page:a0:result1:r18・p186:full-page:a0:result1:r18:w1・p188:full-page:a0:result1:r16・p188:full-page:a0:result1:r16:w1・p190:full-page:a0:result1:r16・p190:full-page:a0:result1:r16:w2・p192:full-page:a0:result1:r16・p192:full-page:a0:result1:r16:w1・p194:full-page:a0:result1:r17・p194:full-page:a0:result1:r17:w1・p196:full-page:a0:result1:r15・p196:full-page:a0:result1:r15:w2・p198:full-page:a0:result1:r18・p198:full-page:a0:result1:r18:w1・p200:full-page:a0:result1:r14・p200:full-page:a0:result1:r14:w2・p202:full-page:a0:result1:r17・p202:full-page:a0:result1:r17:w2・p204:full-page:a0:result1:r17・p204:full-page:a0:result1:r17:w1・p206:full-page:a0:result1:r15・p206:full-page:a0:result1:r15:w2・p208:full-page:a0:result1:r17・p208:full-page:a0:result1:r17:w1・p210:full-page:a0:result1:r16・p210:full-page:a0:result1:r16:w1・p212:full-page:a0:result1:r16・p212:full-page:a0:result1:r16:w2・p214:full-page:a0:result1:r16・p214:full-page:a0:result1:r16:w1・p216:full-page:a0:result1:r15・p216:full-page:a0:result1:r15:w2・p218:full-page:a0:result1:r16・p218:full-page:a0:result1:r16:w2・p220:full-page:a0:result1:r13・p220:full-page:a0:result1:r13:w1・p222:full-page:a0:result1:r16・p222:full-page:a0:result1:r16:w2・p224:full-page:a0:result1:r17・p224:full-page:a0:result1:r17:w1・p226:full-page:a0:result1:r18・p226:full-page:a0:result1:r18:w1・p228:full-page:a0:result1:r15・p228:full-page:a0:result1:r15:w2・p230:full-page:a0:result1:r18・p230:full-page:a0:result1:r18:w1・p234:full-page:a0:result1:r12・p234:full-page:a0:result1:r12:w2・p236:full-page:a0:result1:r15・p236:full-page:a0:result1:r15:w2・p238:full-page:a0:result1:r18・p238:full-page:a0:result1:r18:w1・p240:full-page:a0:result1:r16・p240:full-page:a0:result1:r16:w1・p242:full-page:a0:result1:r15・p242:full-page:a0:result1:r15:w2・p244:full-page:a0:result1:r14・p244:full-page:a0:result1:r14:w2・p246:full-page:a0:result1:r14・p246:full-page:a0:result1:r14:w2・p248:full-page:a0:result1:r16・p248:full-page:a0:result1:r16:w2・p250:full-page:a0:result1:r13・p250:full-page:a0:result1:r13:w2・p254:full-page:a0:result1:r13・p254:full-page:a0:result1:r13:w1・p256:full-page:a0:result1:r14・p256:full-page:a0:result1:r14:w2・p258:full-page:a0:result1:r16・p258:full-page:a0:result1:r16:w2・p260:full-page:a0:result1:r15・p260:full-page:a0:result1:r15:w2・p262:full-page:a0:result1:r17・p262:full-page:a0:result1:r17:w1・p264:full-page:a0:result1:r13・p264:full-page:a0:result1:r13:w2・p266:full-page:a0:result1:r16・p266:full-page:a0:result1:r16:w2・p270:full-page:a0:result1:r13・p270:full-page:a0:result1:r13:w2・p272:full-page:a0:result1:r18・p272:full-page:a0:result1:r18:w1・p276:full-page:a0:result1:r16・p276:full-page:a0:result1:r16:w2・p278:full-page:a0:result1:r18・p278:full-page:a0:result1:r18:w1・p280:full-page:a0:result1:r14・p280:full-page:a0:result1:r14:w2・p282:full-page:a0:result1:r15・p282:full-page:a0:result1:r15:w2・p284:full-page:a0:result1:r15・p284:full-page:a0:result1:r15:w2・p286:full-page:a0:result1:r15・p286:full-page:a0:result1:r15:w2・p290:full-page:a0:result1:r14・p290:full-page:a0:result1:r14:w2・p292:full-page:a0:result1:r16・p292:full-page:a0:result1:r16:w2・p294:full-page:a0:result1:r16・p294:full-page:a0:result1:r16:w2）・徵→徴 2 件（p194:full-page:a0:result0:r15・p194:full-page:a0:result0:r15:w1）・查→査 2 件（p198:full-page:a0:result0:r15・p198:full-page:a0:result0:r15:w2）・產→産 14 件（p178:full-page:a0:result0:r29・p178:full-page:a0:result0:r29:w2・p206:full-page:a0:result1:r50・p206:full-page:a0:result1:r50:w4・p216:full-page:a0:result1:r22・p216:full-page:a0:result1:r22:w4・p242:full-page:a0:result0:r0・p242:full-page:a0:result0:r0:w1・p242:full-page:a0:result0:r24・p242:full-page:a0:result0:r24:w2・p280:full-page:a0:result1:r24・p280:full-page:a0:result1:r24:w4・p280:full-page:a0:result1:r60・p280:full-page:a0:result1:r60:w4）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2023/settlement/expenditure/general-expenditure-detail-nodes.parquet",
+          "sha256": "7c26ceff53c004619461d434bbce1485398033cd6aa5afc08f07d0b1044741c4",
+          "bytes": 33800
+        },
+        "row_count": 1177
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2023/settlement/expenditure/general-expenditure-detail-amounts.parquet",
+          "sha256": "056421a62c3a53b840579490b52d8dcdb11b01ccaa56a66259593eb39fbd5840",
+          "bytes": 76508
+        },
+        "row_count": 7178
+      }
+    },
+    {
+      "table_id": "nhi-expenditure-detail",
+      "conversion_id": "nhi",
+      "input_fingerprint": "8dbf511eeb07b6cb97190a61d455f80c6f872de52855519dcee6747d9b99c4fb",
+      "account": "国民健康保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 10頁 から決めた。款の和 61,274,328,210 と印字の「歳出合計」61,274,328,210 が一致。",
+        "金額の注記 6 件（予備費充用 3・充用 3）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（59 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予備費支出及び流充用増減→予算現額・予算現額／節／金額→節／金額。",
+        "原画で確かめた名称の誤読 5 件を、管理 JSON の name_corrections で印字に直した: 2退識被保険者等療養給付費→2退職被保険者等療養給付費・2退識被保険者等高額療養費→2退職被保険者等高額療養費・7伤病手当金→7傷病手当金・1共同事業抛出金→1共同事業拠出金・1その他共同事業事務費拋出金→1その他共同事業事務費拠出金。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 2 件（p324:full-page:a0:result0:r46・p324:full-page:a0:result0:r46:w3）・减→減 10 件（p318:full-page:a0:result1:r16・p318:full-page:a0:result1:r16:w3・p322:full-page:a0:result1:r16・p322:full-page:a0:result1:r16:w3・p324:full-page:a0:result1:r15・p324:full-page:a0:result1:r15:w3・p326:full-page:a0:result1:r16・p326:full-page:a0:result1:r16:w3・p334:full-page:a0:result1:r15・p334:full-page:a0:result1:r15:w3）・增→増 18 件（p318:full-page:a0:result1:r16・p318:full-page:a0:result1:r16:w2・p322:full-page:a0:result1:r16・p322:full-page:a0:result1:r16:w2・p324:full-page:a0:result1:r15・p324:full-page:a0:result1:r15:w2・p326:full-page:a0:result1:r16・p326:full-page:a0:result1:r16:w2・p328:full-page:a0:result1:r16・p328:full-page:a0:result1:r16:w2・p330:full-page:a0:result1:r18・p330:full-page:a0:result1:r18:w1・p332:full-page:a0:result1:r16・p332:full-page:a0:result1:r16:w2・p334:full-page:a0:result1:r15・p334:full-page:a0:result1:r15:w2・p336:full-page:a0:result1:r17・p336:full-page:a0:result1:r17:w2）・徵→徴 8 件（p318:full-page:a0:result0:r31・p318:full-page:a0:result0:r31:w1・p318:full-page:a0:result0:r35・p318:full-page:a0:result0:r35:w1・p337:full-page:a0:result1:r15・p337:full-page:a0:result1:r15・p337:full-page:a0:result1:r15:w4・p337:full-page:a0:result1:r15:w8）・查→査 4 件（p322:full-page:a0:result0:r43・p322:full-page:a0:result0:r43:w2・p330:full-page:a0:result0:r23・p330:full-page:a0:result0:r23:w7）・產→産 4 件（p324:full-page:a0:result0:r29・p324:full-page:a0:result0:r29:w3・p324:full-page:a0:result0:r33・p324:full-page:a0:result0:r33:w3）・齡→齢 4 件（p326:full-page:a0:result0:r36・p326:full-page:a0:result0:r36:w4・p326:full-page:a0:result0:r48・p326:full-page:a0:result0:r48:w4）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2023/settlement/expenditure/nhi-expenditure-detail-nodes.parquet",
+          "sha256": "21836f99974b8358710b60ff8f35ae38db7f1abafb91abe660b6297ccde4b5ea",
+          "bytes": 8560
+        },
+        "row_count": 122
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2023/settlement/expenditure/nhi-expenditure-detail-amounts.parquet",
+          "sha256": "a3d0d172fca645a433a367bc96cfedfac3c7f902c63ffd5956a879f6e1d0f4ec",
+          "bytes": 14518
+        },
+        "row_count": 942
+      }
+    },
+    {
+      "table_id": "kaigo-expenditure-detail",
+      "conversion_id": "kaigo",
+      "input_fingerprint": "2ae696a8fe8ab6c46bc9d7ea507331abf5d52a55235113c28ef90dfacc23ea2c",
+      "account": "介護保険事業特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 7頁 から決めた。款の和 50,396,909,543 と印字の「歳出合計」50,396,909,543 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 1 種（34 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 8 件（p366:full-page:a0:result0:r19・p366:full-page:a0:result0:r19:w5・p366:full-page:a0:result0:r25・p366:full-page:a0:result0:r25:w5・p366:full-page:a0:result0:r41・p366:full-page:a0:result0:r41:w0・p366:full-page:a0:result0:r43・p366:full-page:a0:result0:r43:w4）・减→減 2 件（p366:full-page:a0:result1:r15・p366:full-page:a0:result1:r15:w3）・增→増 14 件（p362:full-page:a0:result1:r15・p362:full-page:a0:result1:r15:w2・p364:full-page:a0:result1:r17・p364:full-page:a0:result1:r17:w1・p366:full-page:a0:result1:r15・p366:full-page:a0:result1:r15:w2・p368:full-page:a0:result1:r13・p368:full-page:a0:result1:r13:w2・p370:full-page:a0:result1:r17・p370:full-page:a0:result1:r17:w2・p372:full-page:a0:result1:r19・p372:full-page:a0:result1:r19:w1・p374:full-page:a0:result1:r15・p374:full-page:a0:result1:r15:w2）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2023/settlement/expenditure/kaigo-expenditure-detail-nodes.parquet",
+          "sha256": "308e74d122452c4fc83fee6b32b6c2c438a8b2e16f37540b13846006296b4472",
+          "bytes": 5466
+        },
+        "row_count": 58
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2023/settlement/expenditure/kaigo-expenditure-detail-amounts.parquet",
+          "sha256": "1845cea3b6297a2e1ffaa4b955f43c471474f131fdea840d7b454762cfb687ca",
+          "bytes": 8910
+        },
+        "row_count": 444
+      }
+    },
+    {
+      "table_id": "kouki-expenditure-detail",
+      "conversion_id": "kouki",
+      "input_fingerprint": "f208246a246fd621101a4fde63acdf646cac8cfaeed38b8bff6bb346f0711227",
+      "account": "後期高齢者医療特別会計",
+      "notes": [
+        "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'shape', '備考': 'indent'}。",
+        "金額の単位は column mark 7頁 から決めた。款の和 15,831,667,651 と印字の「歳出合計」15,831,667,651 が一致。",
+        "金額の注記 0 件（なし）を注記軸に置いた。",
+        "共有辞書に無い金額の見出し 2 種（30 件）を、印字された語から辞書の見出しに寄せた: 予算現額／予備費支出及び流充用増減→予算現額・予算現額／節／金額→節／金額。",
+        "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: 减→減 2 件（p394:full-page:a0:result1:r17・p394:full-page:a0:result1:r17:w2）・增→増 12 件（p394:full-page:a0:result1:r17・p394:full-page:a0:result1:r17:w1・p396:full-page:a0:result1:r14・p396:full-page:a0:result1:r14:w2・p398:full-page:a0:result1:r17・p398:full-page:a0:result1:r17:w2・p400:full-page:a0:result1:r16・p400:full-page:a0:result1:r16:w2・p402:full-page:a0:result1:r18・p402:full-page:a0:result1:r18:w1・p404:full-page:a0:result1:r17・p404:full-page:a0:result1:r17:w1）・徵→徴 4 件（p394:full-page:a0:result0:r27・p394:full-page:a0:result0:r27:w1・p394:full-page:a0:result0:r31・p394:full-page:a0:result0:r31:w1）・查→査 2 件（p402:full-page:a0:result0:r23・p402:full-page:a0:result0:r23:w4）。"
+      ],
+      "unread_amount_count": 0,
+      "unresolved_parent_count": 0,
+      "nodes": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2023/settlement/expenditure/kouki-expenditure-detail-nodes.parquet",
+          "sha256": "49ccfd3aea27666a371fc1dbc08fe8de571b170d72b1495d7a8c8af79eb2e4f3",
+          "bytes": 4941
+        },
+        "row_count": 49
+      },
+      "amounts": {
+        "object": {
+          "key": "fiscal/ingestion/131237/2023/settlement/expenditure/kouki-expenditure-detail-amounts.parquet",
+          "sha256": "4a05cf7bb1922c42127b060823bc1fec5ea19d9a0d81e7da82bf99cb6f79d3bb",
+          "bytes": 7495
+        },
+        "row_count": 382
+      }
+    }
+  ]
+}
