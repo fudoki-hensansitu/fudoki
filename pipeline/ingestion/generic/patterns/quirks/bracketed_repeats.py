@@ -18,6 +18,8 @@ AMOUNT = re.compile(r'△?[0-9]{1,3}(,[0-9]{3})+|0')
 def dropped(words: list, detected) -> list:
     long = sorted({round(v.position, 1) for v in detected.vertical if v.end - v.start >= .5 * detected.height})
     units = [w for w in words if normalize(w.text) == '円']
+    # (the unit row over the amount columns: the topmost 円, not one a body line prints, `…から流用 13,281,000円`)
+    units = [w for w in units if w.y0 <= min(u.y0 for u in units) + 3] if units else units
     # (the first column's dotted rules, `dotted_column_rules`, part its narrow code columns: its edge is the first long
     # rule `WIDE` or more right of the frame's left)
     edges = [x for x in long[1:] if x - long[0] >= WIDE] if long else []
