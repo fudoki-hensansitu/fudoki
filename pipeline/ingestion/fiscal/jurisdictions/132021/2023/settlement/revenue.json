@@ -1,0 +1,694 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132021",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-ocr-1",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              23,
+              24,
+              25,
+              26
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "9e5670cf404a6238a8003f029d93e5e7a0dba7be2ce0d03f60ddd8ea0d218969",
+          "bytes": 3179066
+        },
+        {
+          "id": "general-settlement-ocr-2",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "8e67bdca3b8a754cda7fd52575f277cc53261136d69afeb3e08ee697d9e7716a",
+          "bytes": 3098350
+        },
+        {
+          "id": "general-settlement-ocr-3",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "f01f3ff3e8713a855acf53f0a836c396a134d1c238b489953beda0fb187e2bad",
+          "bytes": 2990294
+        },
+        {
+          "id": "general-settlement-ocr-4",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "943c549dba3e479837ca2d0a93116097b84bb179dde6e69aa4ccdb72068b5fd7",
+          "bytes": 2879427
+        },
+        {
+          "id": "general-settlement-ocr-5",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              57,
+              58,
+              59,
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "7aa8a91b5113e4131eb6fcf7a56bcaf298e7c8e808bc761ac26856e554048fe6",
+          "bytes": 2783680
+        },
+        {
+          "id": "general-settlement-ocr-6",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "36309fd34baa4fc5d5e4fc54817ca0be3fad172cf75201f670c19e556600833b",
+          "bytes": 2255878
+        },
+        {
+          "id": "general-settlement-ocr-7",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              77,
+              78
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "45684ed3484ba7665d4b16c63f05764d1adcf20554930cbe83f086549ffe73ab",
+          "bytes": 475651
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入率・還付未済額や収入の内訳の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "amount_corrections": [
+          {
+            "id": "general-24-r20",
+            "page": 24,
+            "observation_id": "p24:full-page:a0:result0:r20",
+            "observed_amount": "14,361,194,1831",
+            "corrected_amount": "14,361,194,183",
+            "reason": "個人の市民税の調定額。原画は14,361,194,183で、OCR が右の収入済額の先頭の1を末尾に読んだ。"
+          },
+          {
+            "id": "general-38-r84",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result0:r84",
+            "observed_amount": "515,336,526,615",
+            "corrected_amount": "15,336,526,615",
+            "reason": "国庫負担金の収入済額。原画は15,336,526,615で、OCR が左の調定額の末尾の5を頭に読んだ。節の和に合う。"
+          },
+          {
+            "id": "general-46-r104",
+            "page": 46,
+            "observation_id": "p46:full-page:a0:result0:r104",
+            "observed_amount": "111,232,249,381",
+            "corrected_amount": "11,232,249,381",
+            "reason": "都支出金の収入済額。原画は11,232,249,381で、OCR が左の調定額の末尾の1を頭に読んだ。項の和に合う。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p29-y390",
+            "page": 29,
+            "observed_name": "自動車取得稅交付金",
+            "corrected_name": "自動車取得税交付金",
+            "reason": "原画の頁29は「自動車取得税交付金」。OCR が似た字に読んだ。歳入決算書の頁14も「自動車取得税交付金」。",
+            "y": 390.2,
+            "code": "1"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-settlement"
+        }
+      ]
+    },
+    {
+      "id": "keirin-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "keirin-settlement-ocr-1",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              438,
+              439,
+              443,
+              444,
+              445,
+              446,
+              447,
+              448
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "0a1bc9f03cb88985434b30505e010ebce96033de7a9f59b6582da516a283534a",
+          "bytes": 1807460
+        }
+      ],
+      "options": {
+        "account": "競輪事業特別会計",
+        "table_id": "keirin-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入率・還付未済額や収入の内訳の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "keirin-settlement"
+        }
+      ]
+    },
+    {
+      "id": "nhi-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "nhi-settlement-ocr-1",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              464,
+              465,
+              471,
+              472,
+              473,
+              474,
+              475,
+              476,
+              477,
+              478
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "fd3b0b9d81b47a722a8c0bc106118b4a0feb093462df57fde08272d598f5be1f",
+          "bytes": 2484696
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入率・還付未済額や収入の内訳の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "nhi-settlement"
+        }
+      ]
+    },
+    {
+      "id": "parking-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "parking-settlement-ocr-1",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              494,
+              495,
+              499,
+              500
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "ffa3c505c5b828cc9ae7fbd9a5cb367c32a269250dacf40a4ab6cdb6d5557c59",
+          "bytes": 707432
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入率・還付未済額や収入の内訳の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-settlement"
+        }
+      ]
+    },
+    {
+      "id": "care-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-settlement-ocr-1",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              506,
+              507,
+              508,
+              509,
+              515,
+              516,
+              517,
+              518,
+              519,
+              520
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "c5d02412aea8aa7c8d5019be0b0e092f3ad762bf2f6be76436926631bec8804f",
+          "bytes": 2364573
+        },
+        {
+          "id": "care-settlement-ocr-2",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              521,
+              522,
+              523,
+              524,
+              525,
+              526
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "b3b5707da8540628a0c868c9cc638120fc8ad7ccba391407e8bed85d77d13a8f",
+          "bytes": 1213138
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "care-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入率・還付未済額や収入の内訳の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p506-y550",
+            "page": 506,
+            "observed_name": "般会計繰入金",
+            "corrected_name": "一般会計繰入金",
+            "reason": "原画の頁506（歳入決算書）は「一般会計繰入金」。OCR が頭の横棒1本の「一」を読み落とした。明細書の頁521も「一般会計繰入金」。",
+            "y": 549.7,
+            "code": "1"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-settlement"
+        }
+      ]
+    },
+    {
+      "id": "elderly-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-settlement-ocr-1",
+          "origin_sha256": "9de52f3322ea762b98920e675a386ed7be3ba5cd89f6b4e67cb449d424ac4157",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              548,
+              549,
+              553,
+              554,
+              555,
+              556,
+              557,
+              558
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "rule_steps": true
+          },
+          "sha256": "27c1f3607a59db7a62f5cdfb769b62d7892567a0d9f6e156bc95ecac8a15b51d",
+          "bytes": 1736393
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業特別会計",
+        "table_id": "elderly-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は収入率・還付未済額や収入の内訳の注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "one_row_header": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-settlement"
+        }
+      ]
+    }
+  ]
+}
