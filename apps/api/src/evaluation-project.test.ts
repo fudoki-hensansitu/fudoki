@@ -1,7 +1,7 @@
 // 事業評価・事業の操作（REST と MCP）。応答が出力の schema に合うか、404・ページ・bind を確かめる。
 import { beforeEach, describe, expect, test } from 'bun:test'
 import type { Database } from 'bun:sqlite'
-import { createApp } from './app'
+import { authedApp } from './testing'
 import type { Db } from './db'
 import { EvaluationOutput, SheetOutput, SheetSearchOutput, type SheetCountOutput } from './evaluation/model'
 import { callWebOp } from './web-ops'
@@ -10,7 +10,7 @@ import { insertDetail, insertSubject, testDb } from './testing'
 
 let db: Db
 let sqlite: Database
-const app = createApp()
+const app = authedApp()
 const H = (c: string) => c.repeat(64)
 const EV = H('e')
 const get = (path: string) => app.request(path, {}, { DB: db })

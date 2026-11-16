@@ -2,6 +2,7 @@ import { Database } from 'bun:sqlite'
 import { readdirSync, readFileSync } from 'node:fs'
 import columnsJson from './columns.json'
 import type { Db, Statement } from './db'
+import { createApp } from './app'
 
 // テスト用: bun:sqlite を D1 の prepare / bind / all / first / batch に被せる。
 class SqliteStatement implements Statement {
@@ -134,4 +135,64 @@ export function insertCoverage(
   sqlite
     .query('INSERT INTO expenditure_origin_link (link_id, expenditure_id, origin_id) VALUES (?, ?, ?)')
     .run(JSON.stringify([id, full.origin_id]), id, full.origin_id)
+}
+
+/** 試験で WorkOS が有効と答えるキー */
+export const TEST_API_KEY = 'sk_test_valid'
+export const TEST_USER_ID = 'user_test'
+export const TEST_ORG_ID = 'org_developers'
+
+/** Workers の Cache API の代わり。max-age は見ない */
+export function memoryCache() {
+  const store = new Map<string, string>()
+  return {
+    store,
+    match: async (req: Request) => (store.has(req.url) ? new Response(store.get(req.url)) : undefined),
+    put: async (req: Request, res: Response) => void store.set(req.url, await res.text()),
+  }
+}
+
+/** WorkOS の検証 API の代わり。keys にあるキーをその内容で答え、他は api_key: null */
+type StubKey = { owner: { type: string; id: string; organization_id?: string }; permissions: string[] }
+export function workosStub(keys: Record<string, StubKey> = {}) {
+  const calls: string[] = []
+  const all: Record<string, StubKey> = { [TEST_API_KEY]: { owner: { type: 'user', id: TEST_USER_ID, organization_id: TEST_ORG_ID }, permissions: ['fudoki:read'] }, ...keys }
+  const fetch = async (_url: string, init: RequestInit) => {
+    const { value } = JSON.parse(init.body as string) as { value: string }
+    calls.push(value)
+    return Response.json({ api_key: all[value] ?? null })
+  }
+  return { fetch, calls }
+}
+
+/** API キーの検査に要る binding。limiter は常に通す */
+export function authEnv(overrides: Record<string, unknown> = {}) {
+  const points: unknown[] = []
+  return {
+    WORKOS_API_KEY: 'sk_server',
+    WORKOS_DEVELOPERS_ORG_ID: TEST_ORG_ID,
+    API_KEY_FAILURES: { limit: async () => ({ success: true }) },
+    API_CALLER_LIMIT: { limit: async () => ({ success: true }) },
+    API_CALLS: { writeDataPoint: (p: unknown) => void points.push(p) },
+    points,
+    ...overrides,
+  }
+}
+
+/**
+ * 有効な API キーを付けて呼ぶ app。REST の中身を確かめる試験が使う（認証そのものは auth.test.ts）。
+ * 要求に Authorization が無ければ TEST_API_KEY を付け、env に API キーの検査の binding を足す。
+ */
+export function authedApp() {
+  const cache = memoryCache()
+  const app = createApp({ fetch: workosStub().fetch, cache: () => cache })
+  const withKey = (init: RequestInit = {}) => {
+    const headers = new Headers(init.headers)
+    if (!headers.has('authorization')) headers.set('authorization', `Bearer ${TEST_API_KEY}`)
+    return { ...init, headers }
+  }
+  return {
+    request: (path: string, init?: RequestInit, env: Record<string, unknown> = {}) => app.request(path, withKey(init), { ...authEnv(), ...env }),
+    fetch: (req: Request, env: Record<string, unknown> = {}) => app.fetch(new Request(req, withKey({ headers: req.headers })), { ...authEnv(), ...env }),
+  }
 }

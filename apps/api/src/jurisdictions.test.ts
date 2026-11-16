@@ -1,14 +1,14 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import type { Database } from 'bun:sqlite'
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/validators/cf-worker'
-import { createApp } from './app'
+import { authedApp } from './testing'
 import { UNCOVERED_SOURCES } from './jurisdiction/queries'
 import type { Db } from './db'
 import { insertCoverage, insertJurisdiction, insertOrigin, insertSubject, testDb } from './testing'
 
 let db: Db
 let sqlite: Database
-const app = createApp()
+const app = authedApp()
 
 const get = (path: string) => app.request(path, {}, { DB: db })
 const list = async (query = '') => {

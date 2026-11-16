@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
-import { createApp, RENDER_RESULT_TEXT } from './app'
+import { RENDER_RESULT_TEXT } from './app'
+import { authedApp } from './testing'
 import type { Db } from './db'
 import type { Database } from 'bun:sqlite'
 import { insertJurisdiction, insertOrigin, insertSubject, testDb } from './testing'
@@ -9,7 +10,7 @@ import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
 
 let db: Db
 let sqlite: Database
-const app = createApp()
+const app = authedApp()
 
 const rpc = async (method: string, params: unknown = {}) => {
   const res = await app.request(

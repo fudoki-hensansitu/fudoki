@@ -46,6 +46,8 @@ const originPdfRoute = createRoute({
   method: 'get',
   path: '/v1/expenditures/origins/{origin_id}/pdf',
   operationId: 'get_origin_pdf',
+  // 出典の PDF の中継だけは API キーなしで読める（ADR 0044 の 8）
+  security: [],
   summary: '出典の PDF を表示する',
   description:
     '出典 ID が指す自治体の公開 PDF を中継する。32 MiB・20秒、取得6回/分（同一URL1回/分）、閲覧120回/分、成功PDFを24時間・最大16 URL保持。上限は全利用者合計。取得 URL（percent-encoding）と取得日時を X-Origin-Url・X-Origin-Fetched-At で返す。取り込み時の内容との一致は保証しない。query・任意 URL・リダイレクト・CSV は受け付けない。',

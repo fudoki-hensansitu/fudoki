@@ -63,7 +63,7 @@ export async function serving(db: Env['DB']): Promise<boolean> {
   }
 }
 
-export async function callWebOp(env: Env, name: string, input: unknown): Promise<WebResult<unknown>> {
+export async function callWebOp(env: Pick<Env, 'DB'>, name: string, input: unknown): Promise<WebResult<unknown>> {
   const fail = (status: number, code: string, message: string) => ({ ok: false as const, status, code, message })
   const target = Object.hasOwn(WEB_OPS, name) ? WEB_OPS[name as WebOpName] : undefined
   if (!target) return fail(404, 'NOT_FOUND', `存在しない操作です: ${name}`)

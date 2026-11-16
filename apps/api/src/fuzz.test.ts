@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'bun:test'
-import { createApp } from './app'
+import { authedApp } from './testing'
 import { ApiError } from './errors'
 import { tools as operations } from './app'
 import { decodeToken } from './shared/paging'
@@ -141,7 +141,7 @@ describe('handler の fuzz', () => {
 describe('REST の fuzz', () => {
   test('body が何でも 400 か 200（500 にならない）', async () => {
     const { db } = testDb()
-    const app = createApp()
+    const app = authedApp()
     const r = rng(13)
     const bodies: string[] = [
       '', 'null', 'true', '1', '"x"', '[]', '{}', '{', '{"a":', '[' .repeat(8000), '{"a":'.repeat(2000) + '1' + '}'.repeat(2000), '\u0000', '\ud800',

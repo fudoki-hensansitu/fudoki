@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, test } from 'bun:test'
 import type { Database } from 'bun:sqlite'
-import { createApp } from './app'
+import { authedApp } from './testing'
 import columnsJson from './columns.json'
 import { CfWorkerJsonSchemaValidator } from '@modelcontextprotocol/server/validators/cf-worker'
 import { tools as operations } from './app'
@@ -9,7 +9,7 @@ import { insertDetail, insertOrigin, insertSubject, testDb } from './testing'
 
 let db: Db
 let sqlite: Database
-const app = createApp()
+const app = authedApp()
 
 // subject_id・detail_id は小文字 16 進 64 文字。当初予算の款（K1I）は決算の款と node_key が同じで ID が違う
 const id = (prefix: string) => prefix.padEnd(64, '0')
@@ -72,17 +72,6 @@ describe('crawler の除外', () => {
     for (const path of ['/robots.txt', '/health', '/openapi.json', '/no-such-path']) {
       expect((await get(path)).headers.get('X-Robots-Tag')).toBe('noindex, nofollow')
     }
-  })
-})
-
-describe('ブラウザからの読み取り（CORS）', () => {
-  test('/v1/ の下は誰でも読め、資格情報は許さない。preflight は D1 を読まない', async () => {
-    sqlite.query('DROP TABLE control').run()
-    const pre = await app.request(SEARCH, { method: 'OPTIONS', headers: { Origin: 'https://example.test', 'Access-Control-Request-Method': 'POST', 'Access-Control-Request-Headers': 'content-type' } }, { DB: db })
-    expect(pre.status).toBe(204)
-    expect(pre.headers.get('Access-Control-Allow-Origin')).toBe('*')
-    expect(pre.headers.get('Access-Control-Allow-Credentials')).toBeNull()
-    expect((await get('/mcp')).headers.get('Access-Control-Allow-Origin')).toBeNull()
   })
 })
 

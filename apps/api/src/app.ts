@@ -1,7 +1,6 @@
 import { createRoute, z } from '@hono/zod-openapi'
 import { McpServer, createMcpHandler, preloadSchemas } from '@modelcontextprotocol/server'
 import { HTTPException } from 'hono/http-exception'
-import { cors } from 'hono/cors'
 import iconSvg from './favicon.svg?raw'
 import { ApiError, errorBody, invalid } from './errors'
 import { VIEW_HTML, VIEW_URI } from './gen/view'
@@ -20,6 +19,8 @@ import type { Tool } from './shared/tool'
 import { SUGGESTIONS_META_KEY } from '../../../packages/fiscal/suggestions'
 import { suggestionsFor } from './suggestions'
 import { serving } from './web-ops'
+import { workerAuthDeps, type AuthDeps } from './auth/api-key'
+import { apiKeyAuth } from './auth/middleware'
 
 /** MCP の tool。並びは tools/list の順 */
 export const tools: Tool[] = [
@@ -97,7 +98,12 @@ export const OPENAPI_CONFIG = {
   openapi: '3.1.0',
   info: { title: '風土記 API', version: '1.0.0', description: '自治体の歳出の予算・決算を、事業の単位まで収録範囲と出典つきで検索する。' },
   servers: [{ url: 'https://api.fudoki.dev' }],
+  // 出典の PDF の中継（security: []）を除き、API キーを Authorization: Bearer で送る
+  security: [{ apiKey: [] }],
 }
+
+/** 出典の PDF の中継の path。ここだけは API キーなしで読める */
+const ORIGIN_PDF_PATTERN = new RegExp(`^${ORIGIN_PDF_PATH.replace(/:[a-z_]+/g, '[^/]+')}$`)
 
 // SDK の schema 群は初回の要求で遅延構築される（冷えた isolate の初回で CPU 約 40ms）。
 // module scope なら起動時の処理で、要求ごとの cpuMs に数えられない。
@@ -250,7 +256,7 @@ export async function mcpResponse(ctx: Ctx, raw: Request, body: unknown, apiOrig
 }
 
 /** web のアシスタントの MCP（内部の RPC、web-entrypoint.ts）。公開の /mcp と同じ検査（kill switch・body の大きさ・JSON）を通し、同じ tool に答える */
-export async function webMcp(env: Env, request: Request): Promise<Response> {
+export async function webMcp(env: Pick<Env, 'DB'>, request: Request): Promise<Response> {
   const json = (value: unknown, status: number) => new Response(JSON.stringify(value), { status, headers: { 'Content-Type': 'application/json', 'Cache-Control': 'no-store' } })
   if (request.method !== 'POST') return json(errorBody('INVALID_ARGUMENT', 'MCP は POST だけを受け付けます'), 405)
   if (!(await serving(env.DB))) return json(errorBody('UNAVAILABLE', '提供を停止しています'), 503)
@@ -265,8 +271,13 @@ export async function webMcp(env: Env, request: Request): Promise<Response> {
   return mcpResponse({ db: env.DB }, request, body, new URL(request.url).origin)
 }
 
-export function createApp() {
+export function createApp(authDeps: AuthDeps = workerAuthDeps()) {
   const app = routes()
+  app.openAPIRegistry.registerComponent('securitySchemes', 'apiKey', {
+    type: 'http',
+    scheme: 'bearer',
+    description: 'https://auth.fudoki.dev で発行した API キー',
+  })
 
   // すべての応答（成功・エラー）をキャッシュさせない
   app.use('*', async (c, next) => {
@@ -286,9 +297,9 @@ export function createApp() {
     c.res.headers.set('Access-Control-Expose-Headers', 'X-Origin-Url, X-Origin-Fetched-At')
   })
 
-  // REST はブラウザからも直接読める（風土記の web は使わず、内部の RPC で読む）。資格情報は送らせない。
-  // kill switch より前に置き、preflight（OPTIONS）は D1 を読まずに返す。
-  app.use('/v1/*', cors({ origin: '*', allowMethods: ['GET', 'POST'], allowHeaders: ['Content-Type'], maxAge: 86400 }))
+  // REST は API キーで呼ぶ。キーをブラウザの JavaScript に置かせないため、CORS は許さない（PDF の中継だけは上で許す）。
+  // kill switch より前に置き、資格情報の無い要求は D1 を読まずに断る。
+  app.use('/v1/*', apiKeyAuth(authDeps, (path) => ORIGIN_PDF_PATTERN.test(path)))
 
   // kill switch: control の serving が 'on' 以外なら 503。読めないときも止める。
   app.use('*', async (c, next) => {
