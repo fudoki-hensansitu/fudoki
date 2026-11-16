@@ -417,7 +417,7 @@
     {
       "table_id": "general-expenditure",
       "conversion_id": "general-settlement",
-      "input_fingerprint": "da873671154eb5ae58162344c62d58e23d3446613568fc7d148c884e29b5eb3c",
+      "input_fingerprint": "d708d5b5ef9ed089009fce013a98cddd72f9d430c78c4611198d302866444165",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -430,16 +430,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/general-expenditure-nodes.parquet",
-          "sha256": "8f612e6b9ce3c6d153e395510197c3c3236b9e71e55ac92efa609de5ad81de39",
-          "bytes": 131819
+          "sha256": "5ec5771619bbe9d2eec1256cbd1120743b2ab8b90b8767acbf5df783e7f52907",
+          "bytes": 131743
         },
-        "row_count": 3891
+        "row_count": 3887
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/general-expenditure-amounts.parquet",
-          "sha256": "a1b12a06f6c5ba35f8c9d17fd9f046c159b9bb7929052546fad407a66c1eb22e",
-          "bytes": 147352
+          "sha256": "2201bdbff2d4ba6db9c41b5a513fc2ead271af964ace5dd2388d106a3dc40e04",
+          "bytes": 147339
         },
         "row_count": 7505
       }
@@ -447,7 +447,7 @@
     {
       "table_id": "national-health-insurance-expenditure",
       "conversion_id": "national-health-insurance-settlement",
-      "input_fingerprint": "4dab39d7d87cd9f908f8c4bcaa081fbcd8135da8973144a27abdbda7abca2400",
+      "input_fingerprint": "0d5026e0bab8ecb2c7707363d403cbb48ed84a2a3839d91b204fe829053ff7ea",
       "account": "国民健康保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -460,16 +460,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/national-health-insurance-expenditure-nodes.parquet",
-          "sha256": "5afa0969dc1361f36ee02ef7fd446513f103cc4b297163284a0b7755b011d556",
-          "bytes": 14272
+          "sha256": "74df1d7bafa9d6214e928432bdca4e085ea011fcd54e66b40c9d51403fa9e380",
+          "bytes": 14344
         },
         "row_count": 229
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/national-health-insurance-expenditure-amounts.parquet",
-          "sha256": "1fc8b5a4bee896c7ffa8a16f72658ec11077109db5e947d2403b5331141a0409",
-          "bytes": 16002
+          "sha256": "1bdcabd8e7430a157741db1809cebc2516aaed195abc7c3a7b6b8327af504b50",
+          "bytes": 16039
         },
         "row_count": 860
       }
@@ -477,7 +477,7 @@
     {
       "table_id": "land-readjustment-expenditure",
       "conversion_id": "land-readjustment-settlement",
-      "input_fingerprint": "f04ed3b4d9cf5521ad2f4a87f4eab72d599a118e6c5e0ad4c13001cd05b00b59",
+      "input_fingerprint": "d766dd8863715c7702464f02065a6c89cd0d22256fedde3beaa5af76ec4622b2",
       "account": "福生都市計画瑞穂町箱根ケ崎駅西土地区画整理事業特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -490,16 +490,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/land-readjustment-expenditure-nodes.parquet",
-          "sha256": "dc7fb97b81599a6ee80e25d3e822d4c4db330ba54d2950e0c08e58c0a73cc93e",
-          "bytes": 6693
+          "sha256": "4c3d9dd17349b618954a912c68cb96e5d52450f0377e3167123ecb8f5ede7887",
+          "bytes": 6758
         },
         "row_count": 72
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/land-readjustment-expenditure-amounts.parquet",
-          "sha256": "ea49c0d8975a8ab3dc3e4073ba2ebcf79dba650f2c14ee2312d41983760f4b53",
-          "bytes": 6641
+          "sha256": "07d0f04cfcbbca71f257dfc01d6c57ab579b0482ba3a43ea7e613ee181b593cd",
+          "bytes": 6679
         },
         "row_count": 205
       }
@@ -507,7 +507,7 @@
     {
       "table_id": "long-term-care-expenditure",
       "conversion_id": "long-term-care-settlement",
-      "input_fingerprint": "a067fec716d12f6cb16b49c4a7c80d6363e5cc5a2a3e15e46cddd5457c00ef03",
+      "input_fingerprint": "66e11d1c26ff22550e6778dd0d98d75e1eab4dfb4809d5cb64979ab8090ed142",
       "account": "瑞穂町介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -520,16 +520,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/long-term-care-expenditure-nodes.parquet",
-          "sha256": "89b0238fd0b31efb3408a439d1d6e33744aecddbdd9f0014f2f7c2e249eb7eec",
-          "bytes": 17839
+          "sha256": "3486ab3a951e5591eefeb08df5a3b3a8d406d2da767bc1f1c4aa8de4e6457dd0",
+          "bytes": 17903
         },
         "row_count": 317
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/long-term-care-expenditure-amounts.parquet",
-          "sha256": "d6d6a6a98a5e9644d89443cb92233d4dfb48c7f8e77fb46ce30e608f365a1042",
-          "bytes": 20401
+          "sha256": "e791b0426c0ec1e1e268a3bdabe03db62d9c0cfef6c9930c26a0840322a65299",
+          "bytes": 20442
         },
         "row_count": 1041
       }
@@ -537,7 +537,7 @@
     {
       "table_id": "elderly-medical-expenditure",
       "conversion_id": "elderly-medical-settlement",
-      "input_fingerprint": "607f010954b1bc60967085eb853cab04a5033047cd68e7a0d4f5a82af021ccb9",
+      "input_fingerprint": "8364c50e21caa8801b514ee005428377043b38950348fd088f1d64a61dec9690",
       "account": "瑞穂町後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -550,16 +550,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/elderly-medical-expenditure-nodes.parquet",
-          "sha256": "da8e346229a4cab9d1713ffc24866210610c1fe861291bc2a619ab43eff06a20",
-          "bytes": 8307
+          "sha256": "478c08f7a363c702d4c7688b59e12a9be6f18e1cb2678e289ba7d3594e0fd48f",
+          "bytes": 8375
         },
         "row_count": 103
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/elderly-medical-expenditure-amounts.parquet",
-          "sha256": "96f7d56bbb64f1ec9f2d457a8610aa183ba2cf1a30acc3d8f39add0a58522f08",
-          "bytes": 8829
+          "sha256": "2a10942b949c5d57902707d60b06437ae0e5e47164e83f7433fe7a7566ada1ff",
+          "bytes": 8862
         },
         "row_count": 369
       }
@@ -567,7 +567,7 @@
     {
       "table_id": "property-ward-tonogaya-expenditure",
       "conversion_id": "property-ward-tonogaya-settlement",
-      "input_fingerprint": "b604fcda3c428c0cf6062d39881d4baa707a533f9bd0d458aa6fcf7d8f005fc5",
+      "input_fingerprint": "a7d9acca018f99e969f4195f9be068e0ca1f976c6f72878b03da2feeedd1e0ce",
       "account": "瑞穂町殿ケ谷財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -580,16 +580,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/property-ward-tonogaya-expenditure-nodes.parquet",
-          "sha256": "22b09d8653e96f6dea72c14c19881138f7bf85f4a71170c55da606f7b8132804",
-          "bytes": 5014
+          "sha256": "a5c6b238ca022a65b3ac44b9e1132f4822e8c88dac3b0e0e666f65ba6ada91f0",
+          "bytes": 5097
         },
         "row_count": 43
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/property-ward-tonogaya-expenditure-amounts.parquet",
-          "sha256": "dfbcffa5a0cd1b78e865e45f11a3108dde35494a21a15a122693fe005cda2c5f",
-          "bytes": 5119
+          "sha256": "273aa85546f976db374cceb684266521615bd8965f8fb0a7cb6acd286b7ce331",
+          "bytes": 5149
         },
         "row_count": 164
       }
@@ -597,7 +597,7 @@
     {
       "table_id": "property-ward-ishihata-expenditure",
       "conversion_id": "property-ward-ishihata-settlement",
-      "input_fingerprint": "a41cf681a74fc32756eb2435f10d9d06005881c4a3270fa0e4fcfb4e3e85e6b1",
+      "input_fingerprint": "185a46841a7f335d670c7aae559e214cb1afd9dd745328ef2c1df118f694d539",
       "account": "瑞穂町石畑財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -610,16 +610,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/property-ward-ishihata-expenditure-nodes.parquet",
-          "sha256": "1c50c8b437efe97087a8fa1fae0ccb7caf2240a855f1c8ae712a392a039e0239",
-          "bytes": 6724
+          "sha256": "4a715d0a73d9edd615e385db94ce349941259c33c7c42cdd4b3cd59201ae6ff3",
+          "bytes": 6792
         },
         "row_count": 76
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/property-ward-ishihata-expenditure-amounts.parquet",
-          "sha256": "39efc58fa0716976b37896011c84620a8ab4a0d66f17281615c90d11f35a065f",
-          "bytes": 7129
+          "sha256": "ca0abd64f9ba658aed7ff21ca4dbc008efeb2729696de116d396f4ee906a5ad4",
+          "bytes": 7172
         },
         "row_count": 241
       }
@@ -627,7 +627,7 @@
     {
       "table_id": "property-ward-hakonegasaki-expenditure",
       "conversion_id": "property-ward-hakonegasaki-settlement",
-      "input_fingerprint": "45068a691f5fd9bced559ea33dcfb9fdda2e96a4c207a311568277dc9a27ef9a",
+      "input_fingerprint": "a34d30c12ec3edf3fa27f77e720f9c9784608c539fbb5400c785ee83eca4a5b3",
       "account": "瑞穂町箱根ケ崎財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -640,16 +640,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/property-ward-hakonegasaki-expenditure-nodes.parquet",
-          "sha256": "6112881ffc2fe32833444688d8525a9c56b8626a7fbe172e52b0f00d1a1ce681",
-          "bytes": 5249
+          "sha256": "50ceda9a7f8f7269e2b3c48585187c0e8e764649d3fafe0538c103587a6b7bc6",
+          "bytes": 5333
         },
         "row_count": 47
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/property-ward-hakonegasaki-expenditure-amounts.parquet",
-          "sha256": "509432dd65dd6e213f4375fc60391ea589322921ebadc0f58785fd3af8325f68",
-          "bytes": 5727
+          "sha256": "3ca2566ece2599c476243efffa51b45da52dab27e1bb4fbfd814a7e65765c20f",
+          "bytes": 5764
         },
         "row_count": 171
       }
@@ -657,7 +657,7 @@
     {
       "table_id": "property-ward-nagaoka-expenditure",
       "conversion_id": "property-ward-nagaoka-settlement",
-      "input_fingerprint": "5b37d914581e9db38659a9f9da7cc20bc5f353475edab875af6fe25cbae61a80",
+      "input_fingerprint": "b77d160a9334baf2c26ab2c1320dec1d90b700b60b4a6b3e036384d0ec0af111",
       "account": "瑞穂町長岡財産区特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'備考': 'indent', '節': 'indent', '予算現額に対する支出割合': 'indent', '支出総額に対する割合': 'indent'}。",
@@ -670,16 +670,16 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/property-ward-nagaoka-expenditure-nodes.parquet",
-          "sha256": "dd1adec4d74b701f6697549495fa1c9ab32b2652d7d95b3d2af16946d62b2de1",
-          "bytes": 4993
+          "sha256": "5cfba40b733d56af3801b147be173a4c224709bed3cd8d08b71205bb0d864582",
+          "bytes": 5074
         },
         "row_count": 43
       },
       "amounts": {
         "object": {
           "key": "fiscal/ingestion/133035/2025/settlement/expenditure/property-ward-nagaoka-expenditure-amounts.parquet",
-          "sha256": "2dd53f6aed5a2eed90149f767fba48bc204e87a0e8827751e1bf4698b7f9ca23",
-          "bytes": 4942
+          "sha256": "61b81c506bb519a44096cb77bf36f070dd3d98a7ae89d2f761a0cad6f711f1c7",
+          "bytes": 4976
         },
         "row_count": 164
       }

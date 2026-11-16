@@ -77,6 +77,11 @@ function restRequest(name: WebOpName, input: Record<string, unknown>): Request |
       return post('/v1/evaluations/sheets:search')
     case 'search_projects':
       return post('/v1/projects:search')
+    case 'get_revenue': {
+      const url = new URL('/v1/revenues', API_ORIGIN)
+      for (const [k, v] of Object.entries(input)) if (v !== undefined) url.searchParams.set(k, String(v))
+      return new Request(url)
+    }
     default:
       return null
   }

@@ -127,7 +127,7 @@
     {
       "table_id": "general",
       "conversion_id": "general",
-      "input_fingerprint": "54104b02ecc65a854ea17c0b071bf6e18e9df58a56bab75aa3d7db7cddc8f73b",
+      "input_fingerprint": "3e54d54fe159810fdabf1eb10dbeea6ab54206c617a6fda43fc67052b59b3b36",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '説明': 'position'}。",
@@ -139,8 +139,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132152/2023/initial/expenditure/general-nodes.parquet",
-          "sha256": "521b607572ee72baffbe951895ade99cfc3d682688f51641512d9381acb88f39",
-          "bytes": 257482
+          "sha256": "33fa947bb6f91e99d3f0e901e66d0dc28ab5cc06f09a8b5a49bbdc7e684b2013",
+          "bytes": 257480
         },
         "row_count": 8140
       },

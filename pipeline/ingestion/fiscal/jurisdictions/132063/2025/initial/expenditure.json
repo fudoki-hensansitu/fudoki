@@ -273,7 +273,7 @@
     {
       "table_id": "kaigo-initial",
       "conversion_id": "kaigo-initial",
-      "input_fingerprint": "6bf09da646044901d2d8db424df546c128e3fb1741a5024b950fc871409b5ddf",
+      "input_fingerprint": "0f6494eb903dba01fd1cf3011ae2e46247127a6acd4edd77062d65b71d0ad67c",
       "account": "介護保険特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -302,7 +302,7 @@
     {
       "table_id": "kouki-initial",
       "conversion_id": "kouki-initial",
-      "input_fingerprint": "4612ce4d4da98aba9fa7d4688038d7f018bf6ab849501f5f9cf48beb5f67c4dc",
+      "input_fingerprint": "d0eb8042480e7922a40ec65b611f81da343ed739f7324bb2aee296c6e896d3c2",
       "account": "後期高齢者医療特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -331,7 +331,7 @@
     {
       "table_id": "kouyouchi-initial",
       "conversion_id": "kouyouchi-initial",
-      "input_fingerprint": "65ed185c13b09d2a392e091054a5e7d294cf43cb2f6051320679a0f87a5d7077",
+      "input_fingerprint": "9173980f6cc29317b390ad63e863640c671e833ad36d8060ff38e2e4445e40d7",
       "account": "公共用地特別会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -360,7 +360,7 @@
     {
       "table_id": "general-initial",
       "conversion_id": "general-initial",
-      "input_fingerprint": "2cc73cfc5a1d4383641b6507a552b78b257ab71d5e9a8fa3e50b50d358949df4",
+      "input_fingerprint": "54acbb98f1d2ce048d9d8a61cb96a5cf032f96285ae20f8e2f51deacda322a5a",
       "account": "一般会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は indent、内訳の段は {'節': 'indent', '説明': 'indent'}。",
@@ -372,10 +372,10 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/132063/2025/initial/expenditure/general-initial-nodes.parquet",
-          "sha256": "566e42c36233546ad8c6d3a8f17f9199c40bad7237eba8d5586db5b784f9125a",
-          "bytes": 79081
+          "sha256": "adc7e55e339a17aff43ff98eefca5c35be2c04645d0a72859d8d4ad9f83342b1",
+          "bytes": 78489
         },
-        "row_count": 2847
+        "row_count": 2843
       },
       "amounts": {
         "object": {
