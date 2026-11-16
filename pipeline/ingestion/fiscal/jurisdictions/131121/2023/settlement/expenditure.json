@@ -317,6 +317,16 @@
             "text": "予備費支出及び流用増減",
             "reason": "予算現額の「予備費支出及び流用増減」の升は3行に分けて印字し、OCR が「予備費支出」「及乙流田」「増減」と切れ切れに読む。見出しの辞書に寄せられず、この欄の額が予算現額に入って補正後の予算に足されていた。原典の描画で升の印字と罫線の位置を確かめ、どの頁も同じ位置なので升の見出しを宣言する。"
           }
+        ],
+        "name_corrections": [
+          {
+            "id": "p17-shussan",
+            "page": 17,
+            "code": "2",
+            "observed_name": "出産育児時金",
+            "corrected_name": "出産育児一時金",
+            "reason": "物理17頁の目「2 出産育児一時金」は名称を2行に分けて印字しており、OCR が行末の「一」を罫線と見て落とした。原画で確かめた。"
+          }
         ]
       },
       "expected_tables": [
@@ -749,13 +759,14 @@
     {
       "table_id": "nhi-expenditure",
       "conversion_id": "nhi-settlement",
-      "input_fingerprint": "afbdac1c27b5ae5ef3b192f776b47edc1ec080ab1cc7b4a10722f43dc0ed0355",
+      "input_fingerprint": "b3f7527e51cccf47acb1c49099b8b93defcaa182e55747fbd9e38a89fc9a0b2e",
       "account": "国民健康保険事業会計",
       "notes": [
         "汎用のノード生成機（docs/prd/generic-node-builder）が選定の scope の頁を罫線・見出し・字下げ・番号から読んだ。科目の段は bands、内訳の段は {'節': 'indent', '備考': 'indent'}。",
         "金額の単位は printed 6頁・carried 3頁・default 1頁 から決めた。款の和 84,528,777,286 と印字の「歳出合計」84,528,777,286 が一致。",
         "金額の注記 0 件（なし）を注記軸に置いた。",
         "共有辞書に無い金額の見出し 1 種（53 件）を、印字された語から辞書の見出しに寄せた: 予算現額／節／金額→節／金額。",
+        "原画で確かめた名称の誤読 1 件を、管理 JSON の name_corrections で印字に直した: 2出産育児時金→2出産育児一時金。",
         "Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: ·→・ 4 件（p17:full-page:a0:result0:r96・p17:full-page:a0:result0:r96:w3・p17:full-page:a0:result0:r103・p17:full-page:a0:result0:r103:w3）・减→減 14 件（p17:full-page:a0:result0:r16・p17:full-page:a0:result0:r16:w1・p18:full-page:a0:result0:r17・p18:full-page:a0:result0:r17:w1・p19:full-page:a0:result0:r16・p19:full-page:a0:result0:r16:w1・p20:full-page:a0:result0:r17・p20:full-page:a0:result0:r17:w1・p21:full-page:a0:result0:r16・p21:full-page:a0:result0:r16:w1・p22:full-page:a0:result0:r17・p22:full-page:a0:result0:r17:w1・p23:full-page:a0:result0:r17・p23:full-page:a0:result0:r17:w1）・增→増 20 件（p15:full-page:a0:result0:r17・p15:full-page:a0:result0:r17:w0・p16:full-page:a0:result0:r17・p16:full-page:a0:result0:r17:w0・p17:full-page:a0:result0:r16・p17:full-page:a0:result0:r16:w0・p18:full-page:a0:result0:r17・p18:full-page:a0:result0:r17:w0・p19:full-page:a0:result0:r16・p19:full-page:a0:result0:r16:w0・p20:full-page:a0:result0:r17・p20:full-page:a0:result0:r17:w0・p21:full-page:a0:result0:r16・p21:full-page:a0:result0:r16:w0・p22:full-page:a0:result0:r17・p22:full-page:a0:result0:r17:w0・p23:full-page:a0:result0:r17・p23:full-page:a0:result0:r17:w0・p24:full-page:a0:result0:r14・p24:full-page:a0:result0:r14:w0）・查→査 6 件（p16:full-page:a0:result0:r74・p16:full-page:a0:result0:r74:w3・p20:full-page:a0:result0:r26・p20:full-page:a0:result0:r26:w7・p20:full-page:a0:result0:r39・p20:full-page:a0:result0:r39:w0）・產→産 2 件（p17:full-page:a0:result0:r31・p17:full-page:a0:result0:r31:w3）・额→額 10 件（p15:full-page:a0:result0:r13・p15:full-page:a0:result0:r13:w4・p16:full-page:a0:result0:r12・p16:full-page:a0:result0:r12:w4・p22:full-page:a0:result0:r12・p22:full-page:a0:result0:r12:w4・p23:full-page:a0:result0:r12・p23:full-page:a0:result0:r12:w4・p24:full-page:a0:result0:r11・p24:full-page:a0:result0:r11:w4）・齡→齢 2 件（p23:full-page:a0:result0:r55・p23:full-page:a0:result0:r55:w5）。"
       ],
       "unread_amount_count": 0,
@@ -763,8 +774,8 @@
       "nodes": {
         "object": {
           "key": "fiscal/ingestion/131121/2023/settlement/expenditure/nhi-expenditure-nodes.parquet",
-          "sha256": "98bf50e458b9370a7c5c56a60a45c7ef599a3dbd096bb8e01a89e36861794234",
-          "bytes": 7649
+          "sha256": "154ee8ce93a788bd2b1229bb1fc0eeef9b606de08ee87ffa0e4bceed7c49da90",
+          "bytes": 7652
         },
         "row_count": 111
       },
