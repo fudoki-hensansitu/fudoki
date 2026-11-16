@@ -116,6 +116,7 @@
     "delta_minus": "ingestion.generic.patterns.quirks.delta_minus",
     "department_amounts": "ingestion.generic.patterns.quirks.department_amounts",
     "labels_over_amounts": "ingestion.generic.patterns.quirks.labels_over_amounts",
+    "abolished_level_marks": "ingestion.generic.patterns.quirks.abolished_level_marks",
     "abolished_marks": "ingestion.generic.patterns.quirks.abolished_marks",
     "codeless_priced_moku": "ingestion.generic.patterns.quirks.codeless_priced_moku",
     "department_heading_slack": "ingestion.generic.patterns.quirks.department_heading_slack",

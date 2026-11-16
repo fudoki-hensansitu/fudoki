@@ -137,6 +137,7 @@ def learn_levels(all_items, codeless=None, stray=None):
     if stray is not None:  # the quirk `stray_subject_starts`
         subject_levels = stray.module.fold(subject_levels)
     centres = [sum(c) / len(c) for c in subject_levels]
+    marked = document_quirk('abolished_level_marks')
     for _, ordered, found in all_items:
         for group in ordered:
             if group.subject and group.mode == 'indent':
@@ -150,6 +151,11 @@ def learn_levels(all_items, codeless=None, stray=None):
                     if item.code is None and (dropped := ABOLISHED.fullmatch(normalize(item.name or ''))) is not None \
                             and dropped.group(1) in SUBJECT_LEVELS and 0 <= SUBJECT_LEVELS.index(dropped.group(1)) - above < len(centres):
                         item.level = SUBJECT_LEVELS.index(dropped.group(1)) - above
+                    # A dropped subject marked `廃目` where its code would stand: the quirk `abolished_level_marks`.
+                    if item.code is None and marked is not None and (split := marked.module.split(normalize(item.name or ''))) \
+                            and 0 <= SUBJECT_LEVELS.index(split[0]) - above < len(centres):
+                        item.level = SUBJECT_LEVELS.index(split[0]) - above
+                        item.name = split[1]
                     item.level_name = SUBJECT_LEVELS[item.level + above] if item.level + above < len(SUBJECT_LEVELS) else None
     # A 項・目 printed without its code: the quirk `codeless_name_levels`.
     if codeless is not None:
