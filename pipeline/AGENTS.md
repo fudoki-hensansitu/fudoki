@@ -44,7 +44,7 @@ script はこの package の `package.json` が持つ。使い方は各 script �
 | 復元した入力・キャッシュ | `pipeline/.cache/` | 管理しない |
 | DuckDB・dbt manifest・検査結果 | `pipeline/.build/` | 管理しない |
 
-- 管理 JSON は宣言と入力だけを持ち、表の受領書（key・sha・行数・指紋）は R2 の受領書の一覧に置く（[ADR 0051](../docs/adr/0051-ingestion-receipts-in-r2.md)）。スレッドの `ingestion:convert` は検査が通ることを確かめ、表を手元の cache に置くだけで、Git に受領書を書かない。R2 には merge 後の CI の `ingestion:store` だけが、宣言の変わった変換を main のコードで変換し、関門を通った表を置く（中身が前と同じなら指紋だけ、宣言は同じで中身が違えば置いて `drifted` と報告）。PR の check は同じ変換を回し、その受領書を一覧に重ねて dbt を build する。store で落ちた資料があっても D1 の同期は流し、保存されたことの無い表は build から外す（保存済みの表は前の受領書で読む）
+- 管理 JSON は宣言と入力だけを持ち、表の受領書（key・sha・行数・指紋）は R2 の受領書の一覧に置く（[ADR 0051](../docs/adr/0051-ingestion-receipts-in-r2.md)）。スレッドの `ingestion:convert` は検査が通ることを確かめ、表を手元の cache に置くだけで、Git に受領書を書かない。R2 には merge 後の CI の `ingestion:store` だけが、宣言の変わった変換（と同じ管理 JSON の指紋の古い変換）を main のコードで変換し、関門を通った表を置く（中身が前と同じなら指紋だけ、宣言は同じで中身が違えば置いて `drifted` と報告）。指紋だけが古い管理 JSON は refresh-check に任せる。PR の check は同じ変換を回し、その受領書を一覧に重ねて dbt を build する。store で落ちた資料があっても D1 の同期は流し、保存されたことの無い表は build から外す（保存済みの表は前の受領書で読む）
 - OCR は変換器の外で一度だけ取り、観測を固定する（[ADR 0019](../docs/adr/0019-freeze-scan-ocr-observations.md)）。エンジンは PaddleOCR を ONNX Runtime で動かす（[ADR 0032](../docs/adr/0032-paddle-onnx-for-new-scan-acquisitions.md)）。誤読は宣言で直し、観測は書き換えない
 - 独立した provenance ファイルは作らない
 

@@ -229,6 +229,7 @@ main の refresh-check を、比べる job と書く job に分ける。
 
 ## 実装で変えた点
 
+- **指紋だけが古い管理 JSON は store で変換しない**: 宣言の変わった変換の無い管理 JSON は、指紋が古くても refresh-check に任せる。この PR のように全管理 JSON に触れて宣言を変えない変更が、merge 後に全表（2026-11-16 時点で約1800変換の指紋が古い）の変換にならないため。宣言の変わった変換のある管理 JSON では、指紋の古い変換も一緒に変換する
 - **宣言が同じで中身が違う表も置く**: 設計では止めるとしたが、store は置いて `drifted` として summary に出す。止めると、変換器の変更と取り込み PR がすれ違うたびに取り込みの反映が止まるため。意図しない退行は refresh-check の比較でも拾う
 - **PR の check の重ね方**: `prepare.py --candidate-dir` でなく、store の `--dry-run` が書く `pending-receipts.json` を環境変数 `INGESTION_PENDING_RECEIPTS` で一覧に重ねる。表は store が手元の cache に置く
 - **宣言の sha**: 変換の宣言（target・direction・conversion）の sha を受領書の `declaration` に持ち、store・prepare・convert の保持がそれで宣言の変更を見分ける。`declaration` の無い古い受領書は、Git の差分で宣言の変更を判断する

@@ -62,19 +62,27 @@ def shas(table: dict) -> dict:
     return {str(kind): reference['object']['sha256'] for kind, reference in manifest.table_references(table).items()}
 
 
-def to_convert(document: dict, listed: dict[str, dict], fingerprints: dict[str, str]) -> list[str]:
-    """Conversions whose tables the list lacks or holds under another declaration or fingerprint."""
-    chosen = []
+def to_convert(document: dict, listed: dict[str, dict], fingerprints: dict[str, str], changed: set[str]) -> list[str]:
+    """Conversions whose tables the list lacks or holds under another declaration; when there are any, also the
+    conversions of the same manifest with a stale fingerprint (a partial conversion keeps only current tables).
+    A manifest whose declarations are all stored is left to refresh-check, however stale: a change that touches
+    every manifest without changing a declaration (a schema bump) converts nothing.
+
+    ``changed`` are the conversions Git says were declared anew; it decides for a receipt that predates
+    ``declaration``."""
+    declared_anew, stale = [], []
     for conversion in document['conversions']:
         declaration = manifest.declaration(document, conversion)
-        for table in conversion['expected_tables']:
-            stored = listed.get(storage.receipt_id(document, table['table_id']))
-            if (stored is None or stored.get('conversion_id') != conversion['id']
-                    or stored['input_fingerprint'] != fingerprints[conversion['id']]
-                    or stored.get('declaration', declaration) != declaration):
-                chosen.append(conversion['id'])
-                break
-    return chosen
+        receipts = [listed.get(storage.receipt_id(document, table['table_id'])) for table in conversion['expected_tables']]
+        if any(stored is None or stored.get('conversion_id') != conversion['id']
+               or stored.get('declaration', declaration if conversion['id'] not in changed else None) != declaration
+               for stored in receipts):
+            declared_anew.append(conversion['id'])
+        elif any(stored['input_fingerprint'] != fingerprints[conversion['id']] for stored in receipts):
+            stale.append(conversion['id'])
+    if not declared_anew:
+        return []
+    return [conversion['id'] for conversion in document['conversions'] if conversion['id'] in {*declared_anew, *stale}]
 
 
 def store_manifest(path: Path, since: str, listed: dict[str, dict], *, dry_run: bool) -> dict:
@@ -83,11 +91,11 @@ def store_manifest(path: Path, since: str, listed: dict[str, dict], *, dry_run: 
     document = manifest.read(path)
     stored = storage.attach(document, listed)
     fingerprints = manifest.fingerprints(document)
-    conversions = to_convert(document, listed, fingerprints)
-    if not conversions:
-        return {'manifest': str(path), 'tables': [], 'receipts': {}}
     # Receipts without a declaration predate it (the Git records): their declaration changed when Git says so.
     changed = declared(previous(path, since), document)
+    conversions = to_convert(document, listed, fingerprints, changed)
+    if not conversions:
+        return {'manifest': str(path), 'tables': [], 'receipts': {}}
     by_id = {table['table_id']: table for table in stored['tables']}
     originals = run.original_files(document, remote=True, conversion_ids=set(conversions))
     with tempfile.TemporaryDirectory(prefix='ingestion-store-') as directory:
