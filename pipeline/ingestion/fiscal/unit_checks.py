@@ -75,8 +75,9 @@ def printed_totals(scope: dict, nodes: list[dict], amounts: list[dict], directio
     found = []
     for (page, top), line in lines.items():
         # The total of the table's own direction (`歳出合計` or `歳入合計`): a page printing both reads only its own.
+        # OCR may read 歳 in its traditional form 歲 (小笠原村 R5 当初予算: `歲出合計`): the same word.
         label = next((label for label in TOTAL_LABELS if label.startswith(DIRECTION_WORD[direction])
-                      and label in ''.join(text for _, text in line)), None)
+                      and label in ''.join(text for _, text in line).replace('歲', '歳')), None)
         if label is None:
             continue
         # On a spread the label is printed on the left page and the amounts go on across the right page,

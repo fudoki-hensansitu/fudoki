@@ -175,6 +175,8 @@
     "names_in_own_column": "ingestion.generic.patterns.quirks.names_in_own_column",
     "open_subject_cells": "ingestion.generic.patterns.quirks.open_subject_cells",
     "names_over_pages": "ingestion.generic.patterns.quirks.names_over_pages",
+    "nested_subject_boxes": "ingestion.generic.patterns.quirks.nested_subject_boxes",
+    "stepped_amount_lines": "ingestion.generic.patterns.quirks.stepped_amount_lines",
     "name_tails_over_pages": "ingestion.generic.patterns.quirks.name_tails_over_pages",
     "wrapped_names_over_pages": "ingestion.generic.patterns.quirks.wrapped_names_over_pages",
     "wrapped_line_overlap": "ingestion.generic.patterns.quirks.wrapped_line_overlap",

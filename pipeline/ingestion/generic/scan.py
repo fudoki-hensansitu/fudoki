@@ -464,6 +464,8 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                     pieces = with_mark(item, pieces)
                 words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])],
                                      line_cuts(detected, item['bbox_pdf_pt']) if row_gaps else cuts, reach)
+    if (nested := document_quirk('nested_subject_boxes')) is not None:
+        words = nested.module.snap(words, detected.vertical)
     return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
 
 
