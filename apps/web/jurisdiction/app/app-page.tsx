@@ -8,7 +8,6 @@ import {
   BasketballIcon,
   CalendarBlankIcon,
   CaretDownIcon,
-  CaretLeftIcon,
   CaretRightIcon,
   DotsThreeCircleIcon,
   FileDashedIcon,
@@ -686,27 +685,23 @@ type ProjectHistory = { project: string; depth?: number; fromList?: boolean }
 
 const projectLatestKey = (id: string) => `project-latest:${id}`
 
-/** 頁の左上の戻るボタン */
-function BackButton({ label, onClick }: { label: string; onClick: () => void }) {
-  return <Button variant="ghost" onClick={onClick} className="-ml-2 min-w-0 max-w-full text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" /><span className="truncate">{label}</span></Button>
-}
 /** 事業の頁の戻る先。事業のタブと、入れ子の上にある事業をすべてパンくずに並べ、押すとそこへ戻る */
 function ProjectBack({ res, id, label, close, open }: { res: Resources; id: string; label: string; close: () => void; open: (id: string) => void }) {
   const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
-  const ancestors = p === FAILED ? [] : (p.ancestors ?? [])
-  if (!ancestors.length) return <BackButton label={label} onClick={close} />
-  const crumb = 'min-w-0 cursor-pointer truncate rounded-sm text-foreground outline-none hover:text-primary focus-visible:ring-2 focus-visible:ring-primary'
+  return <ProjectCrumbs label={label} close={close} open={open} ancestors={p === FAILED ? [] : (p.ancestors ?? [])} />
+}
+function ProjectCrumbs({ label, close, open, ancestors }: { label: string; close: () => void; open: (id: string) => void; ancestors: NonNullable<ProjectFull['ancestors']> }) {
   return (
     <Breadcrumb className="min-w-0">
-      <BreadcrumbList className="flex-nowrap gap-1 text-[15px] text-muted-foreground sm:text-[17px]">
+      <BreadcrumbList className="flex-nowrap text-[15px] sm:text-[17px]">
         <BreadcrumbItem className="shrink-0">
-          <BreadcrumbLink render={<button type="button" onClick={close} />} className={cn(crumb, 'inline-flex items-center gap-1')}><CaretLeftIcon className="size-4 shrink-0" />{label}</BreadcrumbLink>
+          <BreadcrumbLink render={<button type="button" onClick={close} />} className="cursor-pointer">{label}</BreadcrumbLink>
         </BreadcrumbItem>
         {ancestors.map((a) => (
           <React.Fragment key={a.id}>
             <BreadcrumbSeparator />
             <BreadcrumbItem className="min-w-[3em]">
-              <BreadcrumbLink render={<button type="button" onClick={() => open(a.id)} />} className={crumb}>{a.name}</BreadcrumbLink>
+              <BreadcrumbLink render={<button type="button" onClick={() => open(a.id)} />} className="min-w-0 cursor-pointer truncate">{a.name}</BreadcrumbLink>
             </BreadcrumbItem>
           </React.Fragment>
         ))}
@@ -1076,7 +1071,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             {projectPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
                 {/* 入れ子の事業は上の事業をパンくずに並べる。分かるまでは事業のタブへ戻るボタンを出しておく */}
-                <ClientSuspense fallback={<BackButton label="事業" onClick={closeProject} />}>
+                <ClientSuspense fallback={<ProjectCrumbs label="事業" close={closeProject} open={openProject} ancestors={[]} />}>
                   <ProjectBack res={res} id={projectPage} label="事業" close={closeProject} open={openProject} />
                 </ClientSuspense>
               </div>
