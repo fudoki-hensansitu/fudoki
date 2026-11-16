@@ -229,6 +229,8 @@ export type ProjectFull = {
   kind?: Kind
   /** 分野を引く科目の COFOG のコード（年度を指さずに読んだときだけ持つ。科目が無い・分類が無ければ null） */
   cofog?: string | null
+  /** 予算書の入れ子の1つ上の事業（目の直下の事業は null）。年度を指さずに読んだときだけ持つ */
+  parent?: { id: string; name: string } | null
   /** 年度ごとの当初予算（b）・決算（s）の事業の行が印字された出典の URL（PDF は頁つき）。年度を指さずに読んだときだけ持つ */
   src?: Record<string, { b?: string; s?: string }>
 }
@@ -249,7 +251,14 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
   const here = p.years.find((y) => y.fiscal_year === year) ?? latest
   const subject = here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null
   // 事業の頁は開いた頁の年度の科目の表を持たないので、分野は科目の COFOG を引いて決める
-  const [cofog, src] = at ? [undefined, undefined] : await Promise.all([subject ? subjectCofog(call, subject, here!, year) : null, sourcesOf(call, p.years)])
+  const parentId = p.project.parent_project_id
+  const [cofog, src, parent] = at
+    ? [undefined, undefined, undefined]
+    : await Promise.all([
+        subject ? subjectCofog(call, subject, here!, year) : null,
+        sourcesOf(call, p.years),
+        parentId ? call('get_project', { project_id: parentId }).then((x) => ({ id: parentId, name: clean(x.project.name) }), () => null) : null,
+      ])
   return {
     id,
     name: clean(p.project.name),
@@ -261,7 +270,7 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
     kids: at ? kids.project_years.map((k) => ({ name: clean(k.name), yen: kind === 'initial' ? k.budget_yen : k.settled_yen })) : latestKids(kids.project_years),
     subject,
     sheets,
-    ...(at ? {} : { year, kind, cofog, src }),
+    ...(at ? {} : { year, kind, cofog, src, parent }),
   }
 }
 

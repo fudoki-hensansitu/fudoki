@@ -861,6 +861,17 @@ function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name'>; mark: 'new' |
 
 const projectLatestKey = (id: string) => `project-latest:${id}`
 
+/** 頁の左上の戻るボタン */
+function BackButton({ label, onClick }: { label: string; onClick: () => void }) {
+  return <Button variant="ghost" onClick={onClick} className="-ml-2 min-w-0 max-w-full text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" /><span className="truncate">{label}</span></Button>
+}
+/** 事業の頁の戻るボタン。入れ子の事業は親の事業の名前を出して親の事業の頁へ、そうでなければ自治体の頁へ戻る */
+function ProjectBack({ res, id, label, close, open }: { res: Resources; id: string; label: string; close: () => void; open: (id: string) => void }) {
+  const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
+  const parent = p === FAILED ? null : p.parent
+  return parent ? <BackButton label={parent.name} onClick={() => open(parent.id)} /> : <BackButton label={label} onClick={close} />
+}
+
 /** 年度ごとの表の額。出典の頁が分かれば、額から公式の資料（その頁）を開く */
 function SourceAmt({ yen, href, label }: { yen: number | null | undefined; href?: string; label: string }) {
   if (yen == null || !href) return <Amt yen={yen} className="text-[15px]" />
@@ -883,7 +894,7 @@ function ProjectPage({ id }: { id: string }) {
 }
 
 function ProjectPageBody({ id }: { id: string }) {
-  const { res, select, v: pageView } = useApp()
+  const { res, select } = useApp()
   const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
   if (p === FAILED || p.year === undefined || !p.kind) return <LoadFailed />
   const year = p.year
@@ -919,8 +930,6 @@ function ProjectPageBody({ id }: { id: string }) {
           )} />
         </DetailSection>
       ) : null}
-      {/* 出典の資料は頁の年度のもの。事業の年度と同じときだけ添える */}
-      {pageView.year === year && pageView.kind === p.kind && pageView.origin ? <DetailSection icon={FileTextIcon} title="出典"><Ext href={pageView.origin}>{pageView.originTitle ?? '予算書'}</Ext></DetailSection> : null}
     </>
   )
 }
@@ -1520,7 +1529,12 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             <div className="flex items-center gap-3">
             {projectPage || fieldPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
-                <Button variant="ghost" onClick={projectPage ? closeProject : closeField} className="-ml-2 text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" />{data.name}</Button>
+                {projectPage ? (
+                  // 入れ子の事業は親の事業へ戻る。親が分かるまでは自治体へ戻るボタンを出しておく
+                  <ClientSuspense fallback={<BackButton label={data.name} onClick={closeProject} />}>
+                    <ProjectBack res={res} id={projectPage} label={data.name} close={closeProject} open={openProject} />
+                  </ClientSuspense>
+                ) : <BackButton label={data.name} onClick={closeField} />}
               </div>
             ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
