@@ -51,6 +51,11 @@ jobs:
           exit 1
       # Some scan tables read clipped words with mutool (generic/patterns/components/clipped_words.py).
       - run: mise install conda:mupdf@1.28.6
+      # The stored tables to compare with, from the bundle main's sync job keeps in R2 (one read instead of one
+      # per table). Whatever it lacks is fetched one by one.
+      - run: bun run --cwd pipeline ingestion:bundle restore tables
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
       # Page words read from the PDFs: the slow part of a cold run. A new key each run keeps the cache fresh.
       # The words depend on the Poppler pinned in mise.toml but are cached without its version
       # (ingestion/lib/poppler.py), so the key carries mise.toml and a Poppler change starts empty.
