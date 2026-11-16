@@ -69,7 +69,7 @@ import { Hint } from '@/components/hint'
 import { AskDock } from '../ask-dock'
 import { appPageYears, formatAsOf, formatPeople, reiwa, yearName, type FlowView, type Moku, type PageData, type PageFlow, type Setsu, type YearTotal, TAB_SLUGS, hasDocument, type PageTab } from '../types'
 import { directionOf, DIRECTION_ICONS, GRADES, withExtras, yearView, type AccountTotal, type Proj, type Sheet as EvalSheet, type Snapshot, type YearExtras, type YearView } from './data'
-import { fieldSubjects, listKey, listPage, projectFull, projectOfId, sheetCountKey, sheetCounts, sheetKey, sheetPage, type ListPage, type ListQuery, type ProjectFull, type ProjRow, type SheetCount, type SheetQuery } from './api'
+import { fieldSubjects, listKey, listPage, projectFull, projectLatest, projectOfId, sheetCountKey, sheetCounts, sheetKey, sheetPage, type ListPage, type ListQuery, type ProjectFull, type ProjRow, type SheetCount, type SheetQuery } from './api'
 import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import { Amt, yenParts } from './amount'
 import { FinanceSections, Tag } from './finance'
@@ -112,11 +112,18 @@ function describeSelected(sel: Selected, d: Snapshot, prevFieldSubjects: Record<
   const source = (label: string, x: { fy: number; origin: string; page: number }, name: string) => `${label}: ${r(x.fy)}「${name}」（origin_id ${x.origin}、${x.page}頁）`
   if (sel.kind === 'moku') return `開いている科目: ${[...(sel.moku.path ?? []), sel.moku.name].filter(Boolean).join(' > ')}（subject_id ${sel.moku.id}）`
   if (sel.kind === 'sheet') return source('開いている評価シート', sel.sheet, sel.sheet.name)
-  const p = res.peek<Loaded<ProjectFull>>(projectKey(sel.id, v.year, v.kind))
+  return describeProject(res.peek<Loaded<ProjectFull>>(projectKey(sel.id, v.year, v.kind)), { year: v.year, kind: v.kind })
+}
+
+/** 開いている事業を、アシスタントに渡す文脈の行にする。金額は at（無ければ事業が持つ年度と資料）のもの */
+function describeProject(p: Loaded<ProjectFull> | undefined, at?: { year: number; kind: string }): string {
   if (!p || p === FAILED) return ''
-  const now = (v.kind === 'initial' ? p.y[String(v.year)]?.b : p.y[String(v.year)]?.s) ?? null
+  const year = at?.year ?? p.year
+  const kind = at?.kind ?? p.kind
+  const now = year === undefined ? null : ((kind === 'initial' ? p.y[String(year)]?.b : p.y[String(year)]?.s) ?? null)
+  const source = (label: string, x: { fy: number; origin: string; page: number }, name: string) => `${label}: ${r(x.fy)}「${name}」（origin_id ${x.origin}、${x.page}頁）`
   return [
-    `開いている事業: ${p.name}（${[p.path.filter(Boolean).join(' > '), p.dept].filter(Boolean).join('、')}）${now != null ? `、${r(v.year)}の${v.word} ${yenText(now)}` : ''}（project_id ${p.id}）`,
+    `開いている事業: ${p.name}（${[p.path.filter(Boolean).join(' > '), p.dept].filter(Boolean).join('、')}）${now != null && year !== undefined ? `、${r(year)}の${kind === 'initial' ? '当初予算' : '決算'} ${yenText(now)}` : ''}（project_id ${p.id}）`,
     ...p.sheets.map((s) => source(`この事業の評価シート（${r(s.fy)}に行った事業の評価）`, s, s.name)).slice(0, DETAIL_SOURCES),
   ].join('\n')
 }
@@ -321,7 +328,7 @@ function ProjectList({ q, head, render }: { q: ListQuery; head?: (page: ListPage
 const projectFeatures = tableFeatures({})
 const projectColumn = createColumnHelper<typeof projectFeatures, Proj & { rank: number }>()
 
-/** 事業の名前の欄。新しく始める・やめた事業の印は事業名の後ろに付け、狭い幅（詳細を横に開いたときも）では担当の課と分野を下に添える（広い幅は別の列） */
+/** 事業の名前の欄。新しく始める・やめた事業の印は事業名の後ろに付け、狭い幅（詳細を横に開いたときも）では分野を下に添える（広い幅は別の列） */
 function ProjectNameCell({ p }: { p: Proj }) {
   const { v } = useApp()
   const ended = v.isEnded(p)
@@ -330,8 +337,8 @@ function ProjectNameCell({ p }: { p: Proj }) {
       {/* 押せることとフォーカスは事業名のボタンが持つ（行を押しても同じく詳細を開く） */}
       <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{p.name}</button>
       {ended || v.isNew(p) ? <span className="ml-1.5 inline-flex align-middle">{ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : <Mark kind="new" label="新しく始める事業" className="size-5" />}</span> : null}
-      {/* 狭い幅で事業名の下に添える担当の課・分野は、事業名より控えめな色にする */}
-      <span className="block text-muted-foreground @3xl:hidden">{[p.dept, fieldName(v, v.fieldOf(p))].filter(Boolean).join(' · ')}</span>
+      {/* 狭い幅で事業名の下に添える分野は、事業名より控えめな色にする */}
+      <span className="block text-muted-foreground @3xl:hidden">{fieldName(v, v.fieldOf(p))}</span>
     </span>
   )
 }
@@ -346,22 +353,19 @@ function ProjectFieldCell({ p }: { p: Proj }) {
   return <>{fieldName(v, v.fieldOf(p))}</>
 }
 
-/** 事業の表（shadcn の data table）。並びは api が返した金額の多い順のまま。行を押すと詳細を開く。文字は見出しも中身もすべて同じ大きさ・同じ色にする（狭い画面で名前の下に出す担当の課・分野だけは薄い色） */
+/** 事業の表（shadcn の data table）。並びは api が返した金額の多い順のまま。行を押すと詳細を開く。文字は見出しも中身もすべて同じ大きさ・同じ色にする（狭い画面で名前の下に出す分野だけは薄い色） */
 function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前の年度の額を出す */ ended?: boolean }) {
   const { v, select, selected } = useApp()
   const by = ended ? v.year - 1 : v.year
   const amount = `${r(by)} ${v.label(by)}`
-  // 担当の課を持たない自治体（目を事業の代わりに並べるときなど）は、空の列を出さない
-  const hasDept = rows.some((p) => p.dept)
   const columns = React.useMemo(() => projectColumn.columns([
     projectColumn.accessor('rank', { header: () => <span className="sr-only">順位</span>, cell: (c) => c.getValue(), meta: { className: 'w-8 pr-0 text-right tabular-nums' } }),
     projectColumn.display({ id: 'name', header: '事業名', cell: (c) => <ProjectNameCell p={c.row.original} />, meta: { className: 'whitespace-normal' } }),
-    ...(hasDept ? [projectColumn.accessor('dept', { header: '担当の課', cell: (c) => c.getValue() ?? '', meta: { className: '@max-3xl:hidden' } })] : []),
     projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden' } }),
     projectColumn.accessor('yen', { header: () => <span className="inline-flex items-center gap-1">{amount}<ArrowDownIcon className="size-3.5" aria-label="多い順" /></span>, cell: (c) => (c.getValue() == null ? '—' : yenText(c.getValue()!)), meta: { className: 'text-right tabular-nums' } }),
     // やめた事業は割合を出さないので、列ごと出さない
     ...(ended ? [] : [projectColumn.display({ id: 'share', header: '割合', cell: (c) => <ProjectShareCell p={c.row.original} />, meta: { className: '@max-xl:hidden text-right' } })]),
-  ]), [amount, hasDept, ended])
+  ]), [amount, ended])
   const data = React.useMemo(() => rows.map((p, i) => ({ ...p, rank: i + 1 })), [rows])
   const table = useTable({ features: projectFeatures, columns, data, getRowId: (p) => p.id })
   const cls = (meta: unknown) => (meta as { className?: string } | undefined)?.className
@@ -853,6 +857,95 @@ function ProjectDetail({ id }: { id: string }) {
   return loaded === FAILED ? <LoadFailed /> : <ProjectBody p={loaded} />
 }
 
+/** 事業の科目の道筋と名前。新しく始める・やめた事業の印は名前の後ろに付ける */
+function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name' | 'path'>; mark: 'new' | 'stop' | null }) {
+  return (
+    <>
+      <p className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">{p.path.filter(Boolean).map((x, i) => <React.Fragment key={i}>{i ? <CaretRightIcon className="size-2.5" /> : null}{x}</React.Fragment>)}</p>
+      <h2 className="mt-1.5 mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
+        {p.name}
+        {mark === 'stop' ? <Mark kind="stop" label="やめた事業" /> : mark === 'new' ? <Mark kind="new" label="新しく始める事業" /> : null}
+      </h2>
+    </>
+  )
+}
+
+const projectLatestKey = (id: string) => `project-latest:${id}`
+
+/** 事業の頁（/tokyo/shinagawa/projects/<project_id>）。一覧の行・評価シート・分野の頁の事業から開く。事業は年度をまたぐので年度の段を持たず、
+ * 金額・中の事業・評価シートは事業の最新の年度（決算があれば決算）のものを出し、年度ごとの額を並べる */
+function ProjectPage({ id }: { id: string }) {
+  return (
+    <ClientSuspense fallback={<RowsSkeleton n={4} />}>
+      <ProjectPageBody id={id} />
+    </ClientSuspense>
+  )
+}
+
+function ProjectPageBody({ id }: { id: string }) {
+  const { d, res, select, v: pageView } = useApp()
+  const p = React.use(res.get(projectLatestKey(id), () => projectLatest(id)))
+  if (p === FAILED || p.year === undefined || !p.kind) return <LoadFailed />
+  const year = p.year
+  const label = p.kind === 'initial' ? '当初予算' : '決算'
+  const amt = (y: number) => (p.kind === 'initial' ? p.y[String(y)]?.b : p.y[String(y)]?.s) ?? null
+  const now = amt(year)
+  const prev = amt(year - 1)
+  const frame = (p.cofog ? frameOf(p.cofog) : undefined) ?? OTHER_FRAME
+  const rows = Object.keys(p.y).map(Number).sort((a, b) => b - a)
+  return (
+    <>
+      <ProjectTitle p={p} mark={p.ended != null ? 'stop' : p.started === year ? 'new' : null} />
+      <div className="flex flex-wrap gap-1.5">
+        <Chip><FieldIcon id={frame.id} />{frame.name}</Chip>
+        {p.dept ? <Chip><BuildingsIcon />{p.dept}</Chip> : null}
+      </div>
+      <div className="mt-5">
+        <span className="text-xs text-muted-foreground">{reiwa(year)}の{label}{p.ended != null ? `（${r(p.ended)}年度で終えた事業）` : ''}</span>
+        <Amt yen={now} className="block text-4xl leading-tight text-primary" />
+        {now != null ? <span className="text-xs text-muted-foreground">{[perHead(now, d.pop), prev ? `${r(year - 1)}年度から ${now >= prev ? '+' : '−'}${yenText(Math.abs(now - prev))}` : ''].filter(Boolean).join(' · ')}</span> : null}
+      </div>
+      <DetailSection icon={CalendarBlankIcon} title="年度ごと">
+        <div className="grid max-w-xl grid-cols-[auto_1fr_1fr] text-[15px]">
+          <span className="py-1.5 text-xs" /><span className="py-1.5 text-right text-xs text-muted-foreground">当初予算</span><span className="px-1 py-1.5 text-right text-xs text-muted-foreground">決算</span>
+          {rows.map((y) => (
+            <div key={y} className={cn('col-span-full grid grid-cols-subgrid', y === year && 'bg-card')}>
+              <Separator className="col-span-full" />
+              <span className="px-1 py-2">{r(y)}</span>
+              <span className="py-2 text-right"><Amt yen={p.y[String(y)]?.b} className="text-[15px]" /></span>
+              <span className="px-1 py-2 text-right"><Amt yen={p.y[String(y)]?.s} className="text-[15px]" /></span>
+            </div>
+          ))}
+        </div>
+      </DetailSection>
+      {p.sheets.length ? (
+        <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(year)}年度の事業`}>
+          <div className="grid gap-2 @3xl:grid-cols-2">
+            {p.sheets.map((s) => {
+              const dir = directionOf(s)
+              return (
+                <button key={s.id} type="button" onClick={() => select({ kind: 'sheet', id: s.id, sheet: s })} className="flex w-full items-start gap-2.5 rounded-xl bg-card p-3 text-left hover:bg-secondary">
+                  {dir ? <Mark kind={dir.icon} /> : null}
+                  <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">{[s.grade ? `評価 ${s.grade} ${GRADES.find((g) => g[0] === s.grade)?.[1] ?? ''}` : null, dir?.label ?? s.dir].filter(Boolean).join(' · ')}</span></span>
+                </button>
+              )
+            })}
+          </div>
+        </DetailSection>
+      ) : null}
+      {p.kids.length ? (
+        <DetailSection icon={TreeStructureIcon} title="中の事業" count={`${r(year)}年度の${label} · ${p.kids.length}件`}>
+          <Infinite items={p.kids} step={10} render={({ name, yen }, i) => (
+            <div key={i} className="flex items-center gap-3 px-1.5 py-2 text-[15px]"><span className="flex-1">{name}</span><Amt yen={yen} className="text-base" /></div>
+          )} />
+        </DetailSection>
+      ) : null}
+      {/* 出典の資料は頁の年度のもの。事業の年度と同じときだけ添える */}
+      {pageView.year === year && pageView.kind === p.kind && pageView.origin ? <DetailSection icon={FileTextIcon} title="出典"><Ext href={pageView.origin}>{pageView.originTitle ?? '予算書'}</Ext></DetailSection> : null}
+    </>
+  )
+}
+
 function ProjectBody({ p }: { p: ProjectFull }) {
   const { d, select, years } = useApp()
   // 新しく始めた・やめたの印は残り（defer）の事業の収録で決まるので待つ（ProjectDetail は ClientSuspense の中）
@@ -867,11 +960,7 @@ function ProjectBody({ p }: { p: ProjectFull }) {
   const field = v.fieldOf(p)
   return (
     <>
-      <p className="flex flex-wrap items-center gap-1 text-xs text-muted-foreground">{p.path.filter(Boolean).map((x, i) => <React.Fragment key={i}>{i ? <CaretRightIcon className="size-2.5" /> : null}{x}</React.Fragment>)}</p>
-      <h2 className="mt-1.5 mb-2 flex items-start gap-1.5 text-xl font-semibold leading-snug">
-        {ended ? <Mark kind="stop" label="やめた事業" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" /> : null}
-        {p.name}
-      </h2>
+      <ProjectTitle p={p} mark={ended ? 'stop' : v.isNew(p) ? 'new' : null} />
       <div className="flex flex-wrap gap-1.5">
         <Chip><FieldIcon id={field} />{fieldName(v, field)}</Chip>
         {p.dept ? <Chip><BuildingsIcon />{p.dept}</Chip> : null}
@@ -1220,11 +1309,20 @@ const TABS: { key: TabKey; label: string; icon: Icon }[] = [
 
 const TAB_SEGMENT = new RegExp(`/(${Object.values(TAB_SLUGS).join('|')})/?$`)
 /** 今の URL から年度・タブ・分野の段を除いた、自治体の頁の path */
-const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').replace(TAB_SEGMENT, '').replace(/\/\d{4}\/?$/, '')
+const basePath = () => location.pathname.replace(/\/fields\/[^/]+\/?$/, '').replace(PROJECT_PATH, '').replace(TAB_SEGMENT, '').replace(/\/\d{4}\/?$/, '')
 /** 今の URL の分野の段（/fields/fukushi）の id */
 const fieldOfPath = () => location.pathname.match(/\/fields\/([^/]+)\/?$/)?.[1] ?? null
+/** 事業の頁の段（/projects/<project_id>） */
+const PROJECT_PATH = /\/projects\/([^/]+)\/?$/
+/** 今の URL の事業の頁の事業の ID */
+const projectOfPath = () => {
+  const m = location.pathname.match(PROJECT_PATH)?.[1]
+  return m ? decodeURIComponent(m) : null
+}
+/** 事業の頁の URL の段 */
+const projectSegment = (id: string) => `projects/${encodeURIComponent(id)}`
 
-export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialField, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; initialField?: string; initialTab?: TabKey }) {
+export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, setsu, sitekey, initialField, initialProject, initialTab }: { /** 頁のデータの置き場。Suspense の外で作って渡す（初めて描く前に止まると、中で作った state は捨てられて読み直しが繰り返される） */ res: Resources; data: PageData; /** 開いた年度の頁のデータ。年度・タブを移ると loader が読み直して渡す */ snapshot: Snapshot; flow?: PageFlow; /** loader が defer で渡す残り（評価シート・お金のかかる事業・新しく始めた事業） */ extras?: Promise<YearExtras>; /** loader が defer で渡す流れの節 */ setsu?: Promise<Record<string, Setsu[]>>; sitekey: string; initialField?: string; /** 事業の頁（/2026/projects/<project_id>）で開いた事業 */ initialProject?: string; initialTab?: TabKey }) {
   // 最初の画面に要らない分（評価シート・お金のかかる事業・新しく始めた事業）は loader が defer で流し、使う部分が Full（Suspense と use()）で待つ
   const d = base
   const vision = data.vision?.text
@@ -1255,7 +1353,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   }
   const setTab = (t: TabKey, { push = true, query = '' } = {}) => {
     setTabState(t)
-    if (t !== at.current.tab || fieldOfPath()) move(pageHref(at.current.year, t) + query, { push })
+    if (t !== at.current.tab || fieldOfPath() || projectOfPath()) move(pageHref(at.current.year, t) + query, { push })
   }
   /** 流れの会計を変える。一般会計は ?account= を付けない */
   const pickAccount = (account: string) => move(pageHref(year, at.current.tab) + (account === GENERAL ? '' : `?${new URLSearchParams({ account })}`))
@@ -1283,14 +1381,19 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     for (const k of ['filter', 'grade', 'field']) q.delete(k)
     history.replaceState(history.state, '', location.pathname + (q.size ? `?${q}` : '') + location.hash)
   }, [initialTab, idle])
-  // 事業を開いたら詳細を読む。読み終えるまで前の詳細を出したままにする
+  // 目・評価シートを開いたら横（スマホは下）に詳細を出す。読み終えるまで前の詳細を出したままにする。事業は詳細を出さず事業の頁へ移る
   const [selected, setSelected] = React.useState<Selected>(null)
-  const select = (x: Selected | ((s: Selected) => Selected)) => React.startTransition(() => setSelected(x))
+  const select = (x: Selected | ((s: Selected) => Selected)) => {
+    // 目を事業の代わりにした行（moku:）は年度の資料の目なので、頁にせず詳細に出す
+    if (x && typeof x !== 'function' && x.kind === 'project' && !x.id.startsWith('moku:')) return openProject(x.id)
+    React.startTransition(() => setSelected(x))
+  }
   // 分野の頁。URL を /fields/<id> にして、戻るで自治体の頁へ帰る。中身は開いた年度のデータで描くので loader を待たない
   const [fieldPage, setFieldPage] = React.useState<string | null>(initialField ?? null)
   // 頁の中で開いた分野の頁は履歴の state に印を付け、閉じるときは履歴を戻る（進むで戻ってきた場合も同じ）
   const openField = (id: string) => {
     select(null)
+    setProjectPage(null)
     history.pushState({ ...history.state, field: id }, '', `${basePath()}/${year}/fields/${id}`)
     document.title = pageHead(data, year, { field: id }).title
     React.startTransition(() => setFieldPage(id))
@@ -1303,11 +1406,30 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     void router.visit(pageHref(year, tab), { preserveState: true })
     window.scrollTo({ top: 0 })
   }
+  // 事業の頁。分野の頁と同じく URL を /projects/<project_id>（年度の段なし）にして、戻るで前の頁へ帰る。中身は事業の ID で読む
+  const [projectPage, setProjectPage] = React.useState<string | null>(initialProject ?? null)
+  const openProject = (id: string) => {
+    React.startTransition(() => setSelected(null))
+    history.pushState({ ...history.state, project: id }, '', `${basePath()}/${projectSegment(id)}`)
+    React.startTransition(() => {
+      setFieldPage(null)
+      setProjectPage(id)
+    })
+    window.scrollTo({ top: 0 })
+  }
+  const closeProject = () => {
+    if ((history.state as { project?: string } | null)?.project) return history.back()
+    setProjectPage(null)
+    setTabState('projects')
+    void router.visit(pageHref(year, 'projects'), { preserveState: true })
+    window.scrollTo({ top: 0 })
+  }
   React.useEffect(() => {
-    // 戻る・進むでは、URL の分野に画面を合わせる（年度・タブは移った頁の loader が渡す）
+    // 戻る・進むでは、URL の分野・事業に画面を合わせる（年度・タブは移った頁の loader が渡す）
     const onPop = () => {
       select(null)
       setFieldPage(fieldOfPath())
+      setProjectPage(projectOfPath())
     }
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
@@ -1418,9 +1540,9 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             <Separator className="absolute inset-x-0 bottom-0 data-horizontal:w-auto" />
             {/* スクロールしたら上にタブを残す。下に Separator を引いて中身と分ける */}
             <div className="flex items-center gap-3">
-            {fieldPage ? (
+            {projectPage || fieldPage ? (
               <div className="relative z-10 flex h-12 min-w-0 flex-1 items-center sm:h-[52px]">
-                <Button variant="ghost" onClick={closeField} className="-ml-2 text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" />{data.name}</Button>
+                <Button variant="ghost" onClick={projectPage ? closeProject : closeField} className="-ml-2 text-[15px] sm:text-[17px]"><CaretLeftIcon data-icon="inline-start" />{data.name}</Button>
               </div>
             ) : (
             <TabsList variant="line" className="relative z-10 min-w-0 flex-1 justify-start gap-2 overflow-x-auto p-0 [scrollbar-width:none] group-data-horizontal/tabs:h-12 sm:gap-4 sm:group-data-horizontal/tabs:h-[52px]">
@@ -1436,7 +1558,9 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
           </div>
           {v ? (
             <AppContext.Provider value={{ d, page: data, years, v, res, select, selected, go, openField, flow, flowFailed, pickAccount, setsu, extras: extrasProp, prevFieldSubjects, setYear, yearHref }}>
-              {fieldPage ? (
+              {projectPage ? (
+                <div key={projectPage} className="pt-6"><ProjectPage id={projectPage} /></div>
+              ) : fieldPage ? (
                 <div key={fieldPage} className="pt-6"><FieldPage id={fieldPage} /></div>
               ) : phone ? (
                 <Carousel setApi={setApi} opts={carouselOpts} className="-mx-4 pt-5">
@@ -1492,7 +1616,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
           )}
         </Tabs>
       </div>
-      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? describeSelected(selected, withPeekedExtras(d, res), prevFieldSubjects, res) : '')} section={TABS.find((t) => t.key === tab)?.label} />
+      <AskDock name={data.name} code={data.code} sitekey={sitekey} year={year} detail={() => (v ? (projectPage ? describeProject(res.peek<Loaded<ProjectFull>>(projectLatestKey(projectPage))) : describeSelected(selected, withPeekedExtras(d, res), prevFieldSubjects, res)) : '')} section={TABS.find((t) => t.key === tab)?.label} />
     </div>
   )
 }

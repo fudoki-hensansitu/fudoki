@@ -222,17 +222,26 @@ export type ProjectFull = {
   subject: string | null
   /** 開いた年度の、この事業と中の事業につないだ評価シート */
   sheets: Sheet[]
+  /** 開いた年度と資料（年度を指さずに読むと事業の最新の年度） */
+  year?: number
+  kind?: Kind
+  /** 分野を引く科目の COFOG のコード（年度を指さずに読んだときだけ持つ。科目が無い・分類が無ければ null） */
+  cofog?: string | null
 }
 
 /** 事業の詳細（サーバー） */
-export async function readProjectFull(call: ApiCall, id: string, year: number, kind: Kind): Promise<ProjectFull> {
-  const [p, kids] = await Promise.all([
-    call('get_project', { project_id: id }),
-    searchYears(call, { fiscal_year: { min: year, max: year }, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody),
-  ])
+/** 事業の詳細（サーバー）。at を指さなければ事業の最新の年度（決算があれば決算）で、中の事業・評価シート・分野の COFOG を引く（事業の頁） */
+export async function readProjectFull(call: ApiCall, id: string, at?: { year: number; kind: Kind }): Promise<ProjectFull> {
+  const p = await call('get_project', { project_id: id })
   const latest = p.years.at(-1)
+  const year = at?.year ?? latest?.fiscal_year ?? new Date().getFullYear()
+  const kind: Kind = at?.kind ?? (latest?.settled_yen != null ? 'settlement' : 'initial')
+  const kids = await searchYears(call, { fiscal_year: { min: year, max: year }, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody)
   const sheets = await readSheetsOfProjects(call, year, [id, ...kids.project_years.map((k) => k.project_id)])
   const here = p.years.find((y) => y.fiscal_year === year) ?? latest
+  const subject = here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null
+  // 事業の頁は開いた頁の年度の科目の表を持たないので、分野は科目の COFOG を引いて決める
+  const cofog = at ? undefined : subject ? await subjectCofog(call, subject, here!, year) : null
   return {
     id,
     name: clean(p.project.name),
@@ -242,9 +251,21 @@ export async function readProjectFull(call: ApiCall, id: string, year: number, k
     ended: p.project.last_year_kind === 'confirmed' ? p.project.last_year : null,
     y: Object.fromEntries(p.years.map((y) => [String(y.fiscal_year), { b: y.budget_yen, s: y.settled_yen }])),
     kids: kids.project_years.map((k) => ({ name: clean(k.name), yen: kind === 'initial' ? k.budget_yen : k.settled_yen })),
-    subject: here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null,
+    subject,
     sheets,
+    ...(at ? {} : { year, kind, cofog }),
   }
+}
+
+/** 科目の COFOG のコード。科目は当初予算・決算のどちらかの資料にある */
+async function subjectCofog(call: ApiCall, subject: string, y: { initial_expenditure_subject_id: string | null; jurisdiction_code: string; fiscal_year: number }, year: number): Promise<string | null> {
+  const r = await call('search_expenditure_subjects', {
+    document_kind: subject === y.initial_expenditure_subject_id ? 'initial' : 'settlement',
+    fiscal_year: { min: year, max: year },
+    where: { jurisdiction_code: { eq: [y.jurisdiction_code] }, subject_id: { eq: [subject] } },
+    page_size: 1,
+  } as WebOpInput<'search_expenditure_subjects'>)
+  return r.subjects[0]?.cofog_code ?? null
 }
 
 /** 評価シートをつないだ事業の、その年度の行（サーバー） */
@@ -276,6 +297,8 @@ export const listPage = (q: ListQuery, token?: string): Promise<ListPage> =>
 /** 事業の詳細: 年度ごとの額と、開いた年度の中の事業 */
 export const projectFull = (id: string, year: number, kind: Kind): Promise<ProjectFull> =>
   webApi(`/api/projects/${encodeURIComponent(id)}?${new URLSearchParams({ year: String(year), kind })}`)
+/** 事業の頁の事業（事業の最新の年度で読む） */
+export const projectLatest = (id: string): Promise<ProjectFull> => webApi(`/api/projects/${encodeURIComponent(id)}`)
 
 /** その年度の分野ごとの末端の科目（やめた事業を分野で絞るとき、前の年度の分を読む） */
 export const fieldSubjects = (code: string, year: number, kind: Kind): Promise<Record<string, string[]>> => webApi(`/api/jurisdictions/${code}/${year}/field-subjects?kind=${kind}`)
