@@ -43,12 +43,14 @@ export type ListQuery = {
   prevKind?: Kind
   /** 分野・目で絞るときの科目の ID */
   subjects?: string[]
+  /** 科目の COFOG のコード（cofog_code）で絞る。分野で絞るときはその分野に入るコードを並べる */
+  cofog?: string[]
   /** 事業名（所管課を含む）で絞る */
   q?: string
 }
 export type ListPage = { rows: ProjRow[]; total: number; capped: boolean; next: string | null }
 
-export const listKey = (q: ListQuery) => JSON.stringify([q.code, q.year, q.kind, q.filter, q.prevKind ?? null, q.subjects ?? null, q.q?.trim() || null])
+export const listKey = (q: ListQuery) => JSON.stringify([q.code, q.year, q.kind, q.filter, q.prevKind ?? null, q.subjects ?? null, q.cofog ?? null, q.q?.trim() || null])
 
 /** API の GLOB は前後の * と escape（* ? [ は3バイト）を含めて50バイトまで。長い検索語は収まるところまでで探す */
 const GLOB_BYTES = 50
@@ -102,6 +104,7 @@ function bodyOf(q: ListQuery, pageSize: number, token?: string): { body: SearchB
     ...(ended ? { last_year: { eq: [fy] }, last_year_kind: { eq: ['confirmed'] } } : { [amount]: { is_null: false } }),
     ...(q.filter === 'new' ? { first_year: { eq: [q.year] }, first_year_kind: { eq: ['confirmed'] } } : {}),
     ...(q.subjects ? { [`${kind}_expenditure_subject_id`]: { eq: q.subjects } } : {}),
+    ...(q.cofog ? { [`${kind}_cofog_code`]: { eq: q.cofog } } : {}),
     ...(q.q?.trim() ? { name: { contains: fitSearch(q.q.trim()) } } : {}),
   }
   return {
@@ -132,6 +135,8 @@ export type SheetQuery = {
   kind: Kind
   /** 分野で絞るときの科目（kind の資料の目）の ID */
   subjects?: string[]
+  /** kind の資料の科目の COFOG のコード（cofog_code）で絞る */
+  cofog?: string[]
   /** 事業名で絞る */
   q?: string
   /** 方向性の区分で絞る（A〜D の札は、数えた区分の中からその札の区分を渡す） */
@@ -142,13 +147,14 @@ export type SheetPage = { rows: Sheet[]; next: string | null }
 /** 方向性の区分ごとのシートの数。区分の当たらないシートは code が null の1行 */
 export type SheetCount = { code: DirectionCode | null; label: string | null; grade: Sheet['grade']; n: number }
 
-export const sheetKey = (q: SheetQuery) => JSON.stringify(['sheets', q.code, q.year, q.kind, q.subjects ?? null, q.q?.trim() || null, q.codes ?? null])
-export const sheetCountKey = (q: SheetQuery) => JSON.stringify(['sheet-counts', q.code, q.year, q.kind, q.subjects ?? null, q.q?.trim() || null])
+export const sheetKey = (q: SheetQuery) => JSON.stringify(['sheets', q.code, q.year, q.kind, q.subjects ?? null, q.cofog ?? null, q.q?.trim() || null, q.codes ?? null])
+export const sheetCountKey = (q: SheetQuery) => JSON.stringify(['sheet-counts', q.code, q.year, q.kind, q.subjects ?? null, q.cofog ?? null, q.q?.trim() || null])
 
 const sheetWhere = (q: SheetQuery): Record<string, unknown> => ({
   jurisdiction_code: { eq: [q.code] },
   account_name: { eq: [ACCOUNT] },
   ...(q.subjects ? { [`${q.kind}_expenditure_subject_id`]: { eq: q.subjects } } : {}),
+  ...(q.cofog ? { [`${q.kind}_cofog_code`]: { eq: q.cofog } } : {}),
   ...(q.q?.trim() ? { name: { contains: fitSearch(q.q.trim()) } } : {}),
   ...(q.codes ? { direction_code: { eq: q.codes } } : {}),
 })

@@ -43,13 +43,12 @@ import { MoreDots } from '@/components/more-dots'
 import { Button } from '@/components/ui/button'
 import { Card } from '@/components/ui/card'
 import { Carousel, CarouselContent, CarouselItem, type CarouselApi } from '@/components/ui/carousel'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Input } from '@/components/ui/input'
 import { Separator } from '@/components/ui/separator'
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Combobox, ComboboxChip, ComboboxChips, ComboboxChipsInput, ComboboxContent, ComboboxEmpty, ComboboxInput, ComboboxItem, ComboboxList, ComboboxValue, useComboboxAnchor } from '@/components/ui/combobox'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { createColumnHelper, tableFeatures, useTable } from '@tanstack/react-table'
 import { Empty, EmptyContent, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
@@ -62,7 +61,8 @@ import { CutIcon, DoneIcon, FixIcon, JoinIcon, KeepIcon, LawIcon, MaybeStopIcon,
 import { YearPicker } from '../year-picker'
 import { Flow } from '../flow'
 import { cofogFlowOf, cofogFlowOfDrills } from '../cofog-flow'
-import { DOMAIN_FRAMES, OTHER_FRAME } from '../domains'
+import { COFOG_NAMES } from '@fudoki/fiscal/cofog-master'
+import { DOMAIN_FRAMES, OTHER_FRAME, frameOf } from '../domains'
 import { pageHead } from '../html'
 import { rememberJurisdiction } from '../../home/recent'
 import { Hint } from '@/components/hint'
@@ -398,19 +398,28 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
   )
 }
 
+/** COFOG のコード（大分類・中分類・小分類）。分野で絞るときは、その分野（大分類）に入るコードを並べて api に渡す */
+const COFOG_CODES = Object.values(COFOG_NAMES).flatMap((names) => Object.keys(names))
+/** 選んだ分野で絞る条件。分野を選んでいなければ空（絞らない） */
+const cofogOf = (fields: string[]): { cofog?: string[] } => {
+  const frames = DOMAIN_FRAMES.filter((f) => fields.includes(f.id))
+  const cofog = COFOG_CODES.filter((c) => frames.some((f) => frameOf(c) === f))
+  return cofog.length ? { cofog } : {}
+}
+
 /** 評価シートの一覧の条件（その年度の、分野・事業名で絞ったもの） */
 const sheetQueryOf = (d: Pick<Snapshot, 'code'>, v: YearView, fields: string[], q: string): SheetQuery => ({
   code: d.code,
   year: v.year,
   kind: v.kind,
-  ...(fields.length ? { subjects: fields.flatMap((f) => v.subjectsOf(f)) } : {}),
+  ...cofogOf(fields),
   ...(q ? { q } : {}),
 })
 
 /** 評価シートの区分ごとの数。絞らないときは残り（defer）で届いた数をそのまま使う */
 function useSheetCounts(v: YearView, q: SheetQuery): Loaded<SheetCount[]> {
   const { res } = useApp()
-  const plain = !q.subjects && !q.q
+  const plain = !q.subjects && !q.cofog && !q.q
   return plain ? v.sheetCounts : React.use(res.get(sheetCountKey(q), () => sheetCounts(q)))
 }
 
@@ -642,54 +651,61 @@ const KINDS = [
   { id: 'ended', label: 'やめた', icon: <StopIcon className="size-4 text-primary" /> },
   { id: 'eval', label: '評価した', icon: <ClipboardTextIcon className="size-4" /> },
 ] as const
-/** 事業の区分（新しく始める・やめた・評価した）の combobox（shadcn/ui の Combobox）。1つだけ選べる（新しく始める・やめたは引く年度の資料が違うので重ねられない）。消すとすべての事業に戻る */
-function KindBox({ v, filter, setFilter }: { v: YearView; filter: string; setFilter: (f: string) => void }) {
+// 絞り込みのボタン（Apple の pop-up / pull-down button と同じく、押すとメニューが開き、今の値をボタンに出す）。絞っている間は緑地にする
+const filterTrigger = (on: boolean) => cn('inline-flex h-9 min-w-0 max-w-full items-center gap-1.5 rounded-full border px-3.5 text-sm transition-colors', on ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-background hover:bg-card')
+/** 事業の区分（新しく始める・やめた・評価した）。1つだけ選ぶ（新しく始める・やめたは引く年度の資料が違うので重ねられない）。既定は「すべての事業」 */
+function KindMenu({ v, filter, setFilter }: { v: YearView; filter: string; setFilter: (f: string) => void }) {
   const shown = KINDS.filter((k) => (k.id === 'eval' ? !!v.sheetTotal : v.comparable))
   // 一覧の読み直しは transition で遅れて届くので、選んだ状態は手元に持ってすぐ出す
-  // 既定は「すべての事業」を選んだ状態
   const [value, setValue] = React.useState(filter)
   React.useEffect(() => setValue(filter), [filter])
   if (!shown.length) return null
-  const label = (id: string) => (id === 'all' ? 'すべての事業' : (KINDS.find((k) => k.id === id)?.label ?? id))
+  const picked = KINDS.find((k) => k.id === value)
   return (
-    <Combobox items={['all', ...shown.map((k) => k.id)]} value={value} itemToStringLabel={label} onValueChange={(x) => { const next = (x as string | null) ?? 'all'; setValue(next); setFilter(next) }}>
-      <ComboboxInput placeholder="すべての事業" aria-label="事業の区分で絞る" className="w-full" />
-      <ComboboxContent>
-        <ComboboxEmpty>見つかりません</ComboboxEmpty>
-        <ComboboxList>
-          {(id: string) => <ComboboxItem key={id} value={id}>{KINDS.find((k) => k.id === id)?.icon ?? <ListBulletsIcon />}{label(id)}</ComboboxItem>}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
+    <DropdownMenu>
+      <DropdownMenuTrigger aria-label="事業の区分で絞る" className={filterTrigger(!!picked)}>
+        <span className="min-w-0 truncate">{picked?.label ?? 'すべての事業'}</span>
+        <CaretDownIcon className="size-3.5 shrink-0" aria-hidden="true" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-auto min-w-48">
+        <DropdownMenuRadioGroup value={value} onValueChange={(x) => { setValue(x as string); setFilter(x as string) }}>
+          <DropdownMenuRadioItem value="all" closeOnClick>すべての事業</DropdownMenuRadioItem>
+          {shown.map((k) => <DropdownMenuRadioItem key={k.id} value={k.id} closeOnClick>{k.icon}{k.label}</DropdownMenuRadioItem>)}
+        </DropdownMenuRadioGroup>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
-/** 分野の combobox（shadcn/ui の Combobox の複数選択。選んだ分野は Chip で並べる） */
-function FieldBox({ v, fields, setFields }: { v: YearView; fields: string[]; setFields: (f: string[]) => void }) {
+/** 分野（COFOG の大分類）。いくつでも選べ、メニューは開いたまま続けて選べる。先頭の「すべての分野」で全部外す。
+ * COFOG の付かない科目（その他）は COFOG のコードでは絞れないので出さない */
+function FieldMenu({ v, fields, setFields }: { v: YearView; fields: string[]; setFields: (f: string[]) => void }) {
   // 続けて押しても前の選択を落とさないよう、選んだ状態は手元に持つ
+  const choices = v.fields.filter((f) => f.id !== OTHER_FRAME.id)
   const [value, setValue] = React.useState(fields)
   React.useEffect(() => setValue(fields), [fields.join()])
-  const anchor = useComboboxAnchor()
-  const label = (id: string) => fieldName(v, id)
+  const set = (next: string[]) => {
+    // 並びは分野の並び（金額の多い順）に揃える
+    const ordered = choices.map((f) => f.id).filter((id) => next.includes(id))
+    setValue(ordered)
+    setFields(ordered)
+  }
+  const label = !value.length ? 'すべての分野' : value.length === 1 ? fieldName(v, value[0]!) : `${fieldName(v, value[0]!)} ほか${value.length - 1}`
   return (
-    <Combobox multiple items={v.fields.map((f) => f.id)} value={value} itemToStringLabel={label} onValueChange={(x) => { setValue(x as string[]); setFields(x as string[]) }}>
-      <ComboboxChips ref={anchor} className="w-full">
-        <ComboboxValue>
-          {(values: string[]) => (
-            <>
-              {/* 既定は「すべての分野」。分野を選ぶとその分野の Chip に替わり、全部外すと戻る */}
-              {values.length ? values.map((id) => <ComboboxChip key={id}>{label(id)}</ComboboxChip>) : <ComboboxChip showRemove={false}>すべての分野</ComboboxChip>}
-              <ComboboxChipsInput aria-label="分野で絞る" />
-            </>
-          )}
-        </ComboboxValue>
-      </ComboboxChips>
-      <ComboboxContent anchor={anchor}>
-        <ComboboxEmpty>見つかりません</ComboboxEmpty>
-        <ComboboxList>
-          {(id: string) => <ComboboxItem key={id} value={id}><FieldIcon id={id} />{label(id)}</ComboboxItem>}
-        </ComboboxList>
-      </ComboboxContent>
-    </Combobox>
+    <DropdownMenu>
+      <DropdownMenuTrigger aria-label="分野で絞る" className={filterTrigger(value.length > 0)}>
+        <span className="min-w-0 truncate">{label}</span>
+        <CaretDownIcon className="size-3.5 shrink-0" aria-hidden="true" />
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start" className="w-auto min-w-56">
+        <DropdownMenuCheckboxItem checked={!value.length} onCheckedChange={() => set([])}>すべての分野</DropdownMenuCheckboxItem>
+        <DropdownMenuSeparator />
+        {choices.map((f) => (
+          <DropdownMenuCheckboxItem key={f.id} checked={value.includes(f.id)} onCheckedChange={(on) => set(on ? [...value, f.id] : value.filter((x) => x !== f.id))}>
+            <FieldIcon id={f.id} />{f.name}
+          </DropdownMenuCheckboxItem>
+        ))}
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
 
@@ -704,8 +720,6 @@ function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: 
     clearTimeout(timer.current)
     timer.current = setTimeout(() => React.startTransition(() => setQ(t.trim())), 300)
   }
-  // やめた事業を分野で絞るときは、前の年度の分野の科目を読んでから一覧を引く（EndedFieldList）
-  const endedField = filter === 'ended' && fields.length > 0
   const head = (n: string) => (
     <p className="px-2.5 text-xs text-muted-foreground">
       {filter === 'new' ? '予算書で新しく現れた事業・' : ''}
@@ -713,7 +727,7 @@ function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: 
     </p>
   )
   const body = (v: YearView) => {
-    const list = filter === 'eval' || endedField ? null : v.query(filter as ListQuery['filter'], { ...(fields.length ? { subjects: fields.flatMap((f) => v.subjectsOf(f)) } : {}), ...(q ? { q } : {}) })
+    const list = filter === 'eval' ? null : v.query(filter as ListQuery['filter'], { ...cofogOf(fields), ...(q ? { q } : {}) })
     // 事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある）
     const moku = v.hasProjects !== false ? [] : v.mokuRows.filter((p) => (!fields.length || fields.includes(v.fieldOf(p))) && (!q || p.name.includes(q)))
     return !v.hasProjects ? (
@@ -727,10 +741,6 @@ function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: 
     ) : list ? (
       <ClientSuspense fallback={<RowsSkeleton />} ready={!!res.peek(listKey(list))}>
         <ProjectList q={list} head={(page) => head(countOf(page))} />
-      </ClientSuspense>
-    ) : endedField ? (
-      <ClientSuspense fallback={<RowsSkeleton />}>
-        <EndedFieldList fields={fields} q={q} head={head} />
       </ClientSuspense>
     ) : null
   }
@@ -758,10 +768,10 @@ function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: 
         <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
         <Input value={text} onChange={(e) => onText(e.target.value)} placeholder="事業名・担当の課で探す" className="h-9 rounded-full pl-9" aria-label="事業を探す" />
       </div>
-      <div className="grid gap-2 sm:grid-cols-2">
+      <div className="flex min-w-0 items-center gap-2">
         {/* 新しく始める・やめた・評価したは残り（defer）が届いてから選べるようにする */}
-        <Full fallback={null}>{(v) => <KindBox v={v} filter={filter} setFilter={setFilter} />}</Full>
-        <FieldBox v={v} fields={fields} setFields={setFields} />
+        <Full fallback={null}>{(v) => <KindMenu v={v} filter={filter} setFilter={setFilter} />}</Full>
+        <FieldMenu v={v} fields={fields} setFields={setFields} />
       </div>
       {filter === 'eval' ? (
         <Full fallback={<RowsSkeleton />}>{(v) => <EvalList v={v} grade={grade} setGrade={setGrade} fields={fields} q={q} leave={() => setFilter('all')} />}</Full>
@@ -771,16 +781,6 @@ function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: 
       </>}
     </div>
   )
-}
-
-/** やめた事業を分野で絞った一覧。やめた事業は前の年度の資料で引くので、前の年度の分野の科目を読んでから絞る */
-function EndedFieldList({ fields, q, head }: { fields: string[]; q: string; head: (n: string) => React.ReactNode }) {
-  const { v, d, res } = useApp()
-  const prev = d.prev
-  const subjects = prev ? React.use(res.get(`field-subjects:${d.code}:${prev.year}`, () => fieldSubjects(d.code, prev.year, prev.kind))) : FAILED
-  if (subjects === FAILED) return <LoadFailed />
-  const list = v.query('ended', { subjects: fields.flatMap((f) => subjects[f] ?? []), ...(q ? { q } : {}) })
-  return <ProjectList q={list} head={(page) => head(countOf(page))} />
 }
 
 /** 事業の一覧の「評価した」。評価は事業の属性なので、別のタブにせず事業の絞り込みの1つにする。
@@ -795,7 +795,7 @@ function EvalList({ v, grade, setGrade, fields, q, leave }: { v: YearView; grade
   const base = sheetQueryOf(d, v, fields, q.trim())
   return (
     <div className="mt-1 flex flex-col gap-3">
-      <ClientSuspense fallback={<RowsSkeleton />} ready={!base.subjects && !base.q}>
+      <ClientSuspense fallback={<RowsSkeleton />} ready={!base.cofog && !base.q}>
         <EvalBody v={v} base={base} grade={grade} setGrade={setGrade} />
       </ClientSuspense>
       <p className="text-xs text-muted-foreground">自治体が {r(v.year)}年度に行った事業を自ら評価した結果です。A〜D と方向性は、自治体ごとに違う評価の書き方を共通の区分に揃えたもので、風土記は評価を加えていません。</p>
@@ -1059,7 +1059,7 @@ function FieldPage({ id }: { id: string }) {
         {(v) => v.sheetTotal ? (
           <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(v.year)}年度の事業`}>
             <ClientSuspense fallback={<Skeleton className="h-20 rounded-xl" />}>
-              <FieldGradeCards q={sheetQueryOf(d, v, [f.id], '')} />
+              <FieldGradeCards q={{ code: d.code, year: v.year, kind: v.kind, subjects: v.subjectsOf(f.id) }} />
             </ClientSuspense>
           </DetailSection>
         ) : null}

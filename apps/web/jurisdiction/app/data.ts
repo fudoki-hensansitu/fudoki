@@ -75,7 +75,7 @@ export type Field = DomainFrame & { yen: number }
 const byYenOtherLast = (a: Field, b: Field) => Number(a.id === 'other') - Number(b.id === 'other') || b.yen - a.yen
 
 /** 一覧の条件（年度・資料は頁の年度のもの） */
-export function listQuery(d: Pick<Snapshot, 'code' | 'year' | 'years' | 'prev'>, filter: ListQuery['filter'], opt: { subjects?: string[]; q?: string } = {}): ListQuery {
+export function listQuery(d: Pick<Snapshot, 'code' | 'year' | 'years' | 'prev'>, filter: ListQuery['filter'], opt: { subjects?: string[]; cofog?: string[]; q?: string } = {}): ListQuery {
   const kind = d.years[String(d.year)]?.kind ?? 'settlement'
   const prevKind = d.prev?.kind
   return { code: d.code, year: d.year, kind, filter, ...(filter === 'ended' && prevKind ? { prevKind } : {}), ...opt }
@@ -117,7 +117,7 @@ export function yearView(d: Snapshot, prevFieldSubjects?: Record<string, string[
     fieldOf: (p: Pick<ProjRow, 'subject'>) => (p.subject ? (fieldBySubject.get(p.subject) ?? prevFieldBySubject?.get(p.subject)) : undefined) ?? OTHER_FRAME.id,
     /** 分野の末端の科目（開いた年度）。やめた事業は前の年度の資料で探すので、前の年度の科目を別に読む（prevFieldSubjects） */
     subjectsOf: (field: string) => y.fieldSubjects[field] ?? [],
-    query: (filter: ListQuery['filter'], opt?: { subjects?: string[]; q?: string }) => listQuery(d, filter, opt),
+    query: (filter: ListQuery['filter'], opt?: { subjects?: string[]; cofog?: string[]; q?: string }) => listQuery(d, filter, opt),
     page,
     /** まだ分からないときは undefined */
     hasProjects: d.hasProjects,
