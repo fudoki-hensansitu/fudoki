@@ -172,16 +172,21 @@ function SectionHead({ title, sub, children }: { title: string; sub?: string; ch
   )
 }
 /** まとめ以外のタブの頭。見出しと、その言葉の意味の一文と、年度の切り替え（狭い画面はメニュー1つ） */
-function TabHead({ title, children }: { title: string; children: React.ReactNode }) {
+function TabYear() {
   const { years, v, setYear, yearHref } = useApp()
+  return (
+    <div className="shrink-0">
+      <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
+      <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>
+    </div>
+  )
+}
+function TabHead({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <div className="mb-5">
       <div className="flex items-center justify-between gap-3">
         <h2 className="text-xl font-semibold leading-snug">{title}</h2>
-        <div className="shrink-0">
-          <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
-          <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>
-        </div>
+        <TabYear />
       </div>
       <p className="mt-1.5 text-[15px] leading-[1.7] text-muted-foreground">{children}</p>
     </div>
@@ -319,9 +324,11 @@ function ProjectNameCell({ p }: { p: Proj }) {
   const ended = v.isEnded(p)
   return (
     <span className="flex items-center gap-2">
-      {ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" className="size-5" /> : null}
+      {/* 印の無い行も印の幅だけ空けて、事業名の頭を揃える */}
+      {ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" className="size-5" /> : <span aria-hidden className="w-5 shrink-0" />}
       <span className="min-w-0">
-        <span className="line-clamp-2 text-[15px] leading-normal">{p.name}</span>
+        {/* 押せることとフォーカスは事業名のボタンが持つ（行を押しても同じく詳細を開く） */}
+        <button type="button" className="line-clamp-2 rounded-sm text-left text-[15px] leading-normal outline-none focus-visible:ring-2 focus-visible:ring-primary">{p.name}</button>
         <span className="block truncate text-xs text-muted-foreground @3xl:hidden">{[p.dept, fieldName(v, v.fieldOf(p))].filter(Boolean).join(' · ')}</span>
       </span>
     </span>
@@ -329,7 +336,8 @@ function ProjectNameCell({ p }: { p: Proj }) {
 }
 function ProjectShareCell({ p }: { p: Proj }) {
   const { v } = useApp()
-  if (v.isEnded(p)) return <span className="text-muted-foreground">{r(p.fy)} {v.label(p.fy)}</span>
+  // やめた事業の額は前の年度の資料のもの（列の見出しに年度を出す）なので、今の年度の総額に対する割合は出さない
+  if (v.isEnded(p)) return null
   return p.yen != null && v.total ? <span className="tabular-nums">{((p.yen / v.total) * 100).toFixed(1)}%</span> : null
 }
 function ProjectFieldCell({ p }: { p: Proj }) {
@@ -345,13 +353,14 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
   // 担当の課を持たない自治体（目を事業の代わりに並べるときなど）は、空の列を出さない
   const hasDept = rows.some((p) => p.dept)
   const columns = React.useMemo(() => projectColumn.columns([
-    projectColumn.accessor('rank', { header: '', cell: (c) => c.getValue(), meta: { className: 'w-8 pr-0 text-right text-muted-foreground tabular-nums' } }),
+    projectColumn.accessor('rank', { header: () => <span className="sr-only">順位</span>, cell: (c) => c.getValue(), meta: { className: 'w-8 pr-0 text-right text-muted-foreground tabular-nums' } }),
     projectColumn.display({ id: 'name', header: '事業名', cell: (c) => <ProjectNameCell p={c.row.original} />, meta: { className: 'w-full min-w-[12rem] whitespace-normal' } }),
     ...(hasDept ? [projectColumn.accessor('dept', { header: '担当の課', cell: (c) => c.getValue() ?? '', meta: { className: '@max-3xl:hidden text-muted-foreground' } })] : []),
     projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden text-muted-foreground' } }),
     projectColumn.accessor('yen', { header: amount, cell: (c) => <Amt yen={c.getValue()} className="text-base" />, meta: { className: 'text-right' } }),
-    projectColumn.display({ id: 'share', header: '割合', cell: (c) => <ProjectShareCell p={c.row.original} />, meta: { className: '@max-xl:hidden text-right text-xs text-muted-foreground' } }),
-  ]), [amount, hasDept])
+    // やめた事業は割合を出さないので、列ごと出さない
+    ...(ended ? [] : [projectColumn.display({ id: 'share', header: '割合', cell: (c) => <ProjectShareCell p={c.row.original} />, meta: { className: '@max-xl:hidden text-right text-xs text-muted-foreground' } })]),
+  ]), [amount, hasDept, ended])
   const data = React.useMemo(() => rows.map((p, i) => ({ ...p, rank: i + 1 })), [rows])
   const table = useTable({ features: projectFeatures, columns, data, getRowId: (p) => p.id })
   const cls = (meta: unknown) => (meta as { className?: string } | undefined)?.className
@@ -372,7 +381,7 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
         {table.getRowModel().rows.map((row) => {
           const on = selected?.kind === 'project' && selected.id === row.original.id
           return (
-            <TableRow key={row.id} data-state={on ? 'selected' : undefined} tabIndex={0} aria-selected={on} onClick={() => select({ kind: 'project', id: row.original.id })} onKeyDown={(e) => (e.key === 'Enter' || e.key === ' ') && (e.preventDefault(), select({ kind: 'project', id: row.original.id }))} className="cursor-pointer hover:bg-card focus-visible:bg-card focus-visible:outline-none data-[state=selected]:bg-accent">
+            <TableRow key={row.id} data-state={on ? 'selected' : undefined} onClick={() => select({ kind: 'project', id: row.original.id })} className="cursor-pointer hover:bg-card data-[state=selected]:bg-accent">
               {row.getAllCells().map((cell) => (
                 <TableCell key={cell.id} className={cn('py-2.5', cls(cell.column.columnDef.meta))}>
                   <table.FlexRender cell={cell} />
@@ -556,7 +565,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       <TabHead title={label === '決算' ? '決算' : '予算'}>
         {phase === 'settlement'
           ? '決算は、1年間に実際に入ったお金と使ったお金を、年度が終わった後にまとめたものです。議会の認定を受けて確定します。'
-          : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。ここでは年度の初めに決めた当初予算を出しています。'}
+          : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。このタブでは、年度の初めに決めた当初予算を扱います。'}
       </TabHead>
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
       {picked ? (
@@ -976,16 +985,18 @@ function FieldSlices({ frame }: { frame: { cofog: string } }) {
 function FieldPage({ id }: { id: string }) {
   const { v, d, res } = useApp()
   const f = v.fields.find((x) => x.id === id)
-  if (!f) return <p className="text-sm text-muted-foreground">{reiwa(v.year)}にはこの分野の予算がありません。</p>
+  if (!f) return <div className="flex items-center justify-between gap-3"><p className="text-sm text-muted-foreground">{reiwa(v.year)}にはこの分野の予算がありません。</p><TabYear /></div>
   return (
     <>
       <div>
       <div className="flex items-center gap-3">
         <span className="grid size-12 place-items-center rounded-2xl bg-card text-muted-foreground"><FieldIcon id={f.id} className="size-6" /></span>
-        <div className="min-w-0">
+        <div className="min-w-0 flex-1">
           <h2 className="text-xl font-semibold leading-snug">{f.name}</h2>
           <p className="text-xs text-muted-foreground">{f.examples}</p>
         </div>
+        {/* 分野の頁は同じ分野のまま年度を移れる（yearHref が分野の段を残す） */}
+        <TabYear />
       </div>
       <div className="mt-5">
         <span className="text-xs text-muted-foreground">{reiwa(v.year)}の{v.word}</span>
@@ -1139,8 +1150,8 @@ function useMedia(query: string) {
 function YearMenu({ years, current, onChange }: { years: number[]; current: number; onChange: (y: number) => void }) {
   return (
     <DropdownMenu>
-      {/* 高さは自治体名の行（h1 の leading-7・sm:leading-8）に揃える */}
-      <DropdownMenuTrigger render={<Button variant="secondary" size="sm" className="rounded-full px-3 text-[15px] font-normal text-foreground sm:h-8" />}>
+      {/* 選んでいる年度を出すので、広い画面の年度の丸（選択中）と同じく緑地に白字にする */}
+      <DropdownMenuTrigger render={<Button size="sm" className="h-8 rounded-full px-3 text-[13px] font-normal" />}>
         {yearName(current)}
         <CaretDownIcon className="size-3.5" aria-hidden="true" />
       </DropdownMenuTrigger>
