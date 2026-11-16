@@ -654,13 +654,14 @@ const KINDS = [
 ] as const
 // 絞り込みのボタン（Apple の pop-up / pull-down button と同じく、押すとメニューが開き、今の値をボタンに出す）。絞っている間は緑地にする
 const filterTrigger = (on: boolean) => cn('inline-flex h-9 min-w-0 max-w-full items-center gap-1.5 rounded-full border px-3.5 text-sm transition-colors', on ? 'border-primary bg-primary text-primary-foreground' : 'border-input bg-background hover:bg-card')
-/** 事業の区分（新しく始める・やめた・評価した）。1つだけ選ぶ（新しく始める・やめたは引く年度の資料が違うので重ねられない）。既定は「すべての事業」 */
+/** 事業の区分（新しく始める・やめた）。1つだけ選ぶ（引く年度の資料が違うので重ねられない）。既定は「すべての事業」。
+ * 評価した事業はメニューに出さず、事業評価の札から開く（開いている間はボタンに「評価した」と出す） */
 function KindMenu({ v, filter, setFilter }: { v: YearView; filter: string; setFilter: (f: string) => void }) {
-  const shown = KINDS.filter((k) => (k.id === 'eval' ? !!v.sheetTotal : v.comparable))
+  const shown = KINDS.filter((k) => k.id !== 'eval' && v.comparable)
   // 一覧の読み直しは transition で遅れて届くので、選んだ状態は手元に持ってすぐ出す
   const [value, setValue] = React.useState(filter)
   React.useEffect(() => setValue(filter), [filter])
-  if (!shown.length) return null
+  if (!shown.length && value !== 'eval') return null
   const picked = KINDS.find((k) => k.id === value)
   return (
     <DropdownMenu>
