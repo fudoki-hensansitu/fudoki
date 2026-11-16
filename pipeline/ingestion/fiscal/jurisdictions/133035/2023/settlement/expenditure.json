@@ -1,0 +1,373 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "133035",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "備考": {
+                "pattern": "shape"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            53,
+            166
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-ocr-1",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61,
+              62
+            ]
+          },
+          "sha256": "fb93018ac58ecaa22d5cdcb7788a78f20ea6f999f006c4f63e39faca97c74234",
+          "bytes": 3690790
+        },
+        {
+          "id": "general-settlement-ocr-2",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72
+            ]
+          },
+          "sha256": "a73ea045eebe11e4637552b346473b9e4923616eb5391e2dc911f011b325f597",
+          "bytes": 3642352
+        },
+        {
+          "id": "general-settlement-ocr-3",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82
+            ]
+          },
+          "sha256": "4b2105306dca95bfab18a7b98a4c01504253ba4cff68976d6f4e146c2ca11cda",
+          "bytes": 3751213
+        },
+        {
+          "id": "general-settlement-ocr-4",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              83,
+              84,
+              85,
+              86,
+              87,
+              88,
+              89,
+              90,
+              91,
+              92
+            ]
+          },
+          "sha256": "8ce7a6c8e590cb94baf3435414f0e2ce784ef5ea8b9cc213fb4e114d1e693448",
+          "bytes": 3736073
+        },
+        {
+          "id": "general-settlement-ocr-5",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              93,
+              94,
+              95,
+              96,
+              97,
+              98,
+              99,
+              100,
+              101,
+              102
+            ]
+          },
+          "sha256": "377b78451faa50393f6c852991c90ab6b75aecba1d73df67c6fd89703ee68939",
+          "bytes": 3632202
+        },
+        {
+          "id": "general-settlement-ocr-6",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              103,
+              104,
+              105,
+              106,
+              107,
+              108,
+              109,
+              110,
+              111,
+              112
+            ]
+          },
+          "sha256": "de144591c780c5c15adb0c4e53a650e55b0fd6d9491439949c6086e96f0437cd",
+          "bytes": 3810546
+        },
+        {
+          "id": "general-settlement-ocr-7",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              113,
+              114,
+              115,
+              116,
+              117,
+              118,
+              119,
+              120,
+              121,
+              122
+            ]
+          },
+          "sha256": "ba6a081a151be255a28af23a185135bcfa035a1a7834aef6ba218e0ceac649bb",
+          "bytes": 3730083
+        },
+        {
+          "id": "general-settlement-ocr-8",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              123,
+              124,
+              125,
+              126,
+              127,
+              128,
+              129,
+              130,
+              131,
+              132
+            ]
+          },
+          "sha256": "c441561a0227c86a5177d227c66c8781750c22108d747615b2c380b4c4a1297b",
+          "bytes": 3861827
+        },
+        {
+          "id": "general-settlement-ocr-9",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              133,
+              134,
+              135,
+              136,
+              137,
+              138,
+              139,
+              140,
+              141,
+              142
+            ]
+          },
+          "sha256": "8525372d8291d43b3cfb00e5ad32def345a6f5b86fc0f910b2c737cc53cfad48",
+          "bytes": 3736464
+        },
+        {
+          "id": "general-settlement-ocr-10",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              143,
+              144,
+              145,
+              146,
+              147,
+              148,
+              149,
+              150,
+              151,
+              152
+            ]
+          },
+          "sha256": "3aa7e3bb9e32a2d9eb0c7f550fb643da420c9f5e80d54fa6a598b927d7e3662c",
+          "bytes": 3364427
+        },
+        {
+          "id": "general-settlement-ocr-11",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              153,
+              154,
+              155,
+              156,
+              157,
+              158,
+              159,
+              160,
+              161,
+              162
+            ]
+          },
+          "sha256": "b9b57feb97dbb0035cbcb9f0190a56879eaf20d9733659196012ddf4baae8571",
+          "bytes": 3651698
+        },
+        {
+          "id": "general-settlement-ocr-12",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              163,
+              164,
+              165,
+              166
+            ]
+          },
+          "sha256": "72aedb0f7b16ab3b64863b6de7fbb215a1e2947f24400b4362baddc9317924c8",
+          "bytes": 1216673
+        }
+      ]
+    }
+  ]
+}
