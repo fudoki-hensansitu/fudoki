@@ -73,6 +73,7 @@ import { ClientSuspense, FAILED, Resources, type Loaded } from './resource'
 import { Amt, yenParts } from './amount'
 import { FinanceSections } from './finance'
 import { RevenueSection } from './revenue'
+import { IncomeFlow } from './income-flow'
 import './app.css'
 
 const FIELD_ICON: Record<string, Icon> = {
@@ -520,12 +521,13 @@ const withSetsu = (flow: PageFlow, byMoku: Record<string, Setsu[]>): PageFlow =>
 }
 
 function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
-  const { v, d, res, page, select, flow, flowFailed, pickAccount, setsu: setsuProp } = useApp()
+  const { v, d, res, page, select, flow, flowFailed, pickAccount, setsu: setsuProp, openField } = useApp()
   const y = d.years[String(v.year)]
   const total: YearTotal | undefined = y?.kind === phase ? { year: v.year, yen: y.total, kan: [] } : undefined
   // 収録はあるが、今の頁のデータが別の資料（スマホで隣のタブを開いた頁など）なら、タブへ移って loader が読むまで待つ
   const recorded = hasDocument(page, v.year, phase)
   const label = phase === 'initial' ? '当初予算' : '決算'
+  const revenueDoc = page.revenue?.find((r) => r.year === v.year && r.kind === phase && r.total > 0)
   // 会計ごとの総額（頁のデータに入っている）。一般会計を先頭に並べ、押した会計の流れを下に出す。押したらすぐ札を選び、流れは移った頁の loader が読む
   const [account, setAccountState] = React.useState(flow?.account ?? GENERAL)
   React.useEffect(() => setAccountState(flow?.account ?? GENERAL), [flow?.account])
@@ -568,6 +570,8 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
           ? '決算は、1年間に実際に入ったお金と使ったお金を、年度が終わった後にまとめたものです。議会の認定を受けて確定します。'
           : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。このタブでは、年度の初めに決めた当初予算を扱います。'}
       </TabHead>
+      {/* 入る→使う（一般会計の歳入と歳出の総額と流れ）。その年度・資料の歳入を収録しているときだけ */}
+      {total && revenueDoc ? <IncomeFlow doc={revenueDoc} phase={phase} expTotal={total.yen} fields={v.fields} pop={d.pop} prefecture={page.prefecture} openField={openField} /> : null}
       {total ? <FieldsSection phase={phase} /> : null}
       {total ? (
         <div>
