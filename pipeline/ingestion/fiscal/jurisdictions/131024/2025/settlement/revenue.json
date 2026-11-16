@@ -1,0 +1,279 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131024",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3ee6181ceb5bbed03d05e1fd7bcabe2f97d12d25a944a413db14f58b4b33c7ec"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_blocks",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "執行率B／A": {
+                  "kind": "ignore"
+                },
+                "収入済額B": {
+                  "heading": "収入済額"
+                },
+                "予算現額計A": {
+                  "heading": "予算現額計"
+                },
+                "比較増減額B-A": {
+                  "heading": "比較増減額"
+                },
+                "補正予算額": {
+                  "heading": "予算現額／補正予算額"
+                },
+                "繰越事業費繰越財源充当額": {
+                  "heading": "予算現額／継続費及び繰越事業費繰越財源充当額"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-settlement"
+        }
+      ]
+    },
+    {
+      "id": "national-health-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3ee6181ceb5bbed03d05e1fd7bcabe2f97d12d25a944a413db14f58b4b33c7ec"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_blocks",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "執行率B／A": {
+                  "kind": "ignore"
+                },
+                "収入済額B": {
+                  "heading": "収入済額"
+                },
+                "予算現額計A": {
+                  "heading": "予算現額計"
+                },
+                "比較増減額B-A": {
+                  "heading": "比較増減額"
+                },
+                "補正予算額": {
+                  "heading": "予算現額／補正予算額"
+                },
+                "繰越事業費繰越財源充当額": {
+                  "heading": "予算現額／継続費及び繰越事業費繰越財源充当額"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-settlement"
+        }
+      ]
+    },
+    {
+      "id": "care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3ee6181ceb5bbed03d05e1fd7bcabe2f97d12d25a944a413db14f58b4b33c7ec"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "care-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_blocks",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "執行率B／A": {
+                  "kind": "ignore"
+                },
+                "収入済額B": {
+                  "heading": "収入済額"
+                },
+                "予算現額計A": {
+                  "heading": "予算現額計"
+                },
+                "比較増減額B-A": {
+                  "heading": "比較増減額"
+                },
+                "補正予算額": {
+                  "heading": "予算現額／補正予算額"
+                },
+                "繰越事業費繰越財源充当額": {
+                  "heading": "予算現額／継続費及び繰越事業費繰越財源充当額"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-settlement"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "3ee6181ceb5bbed03d05e1fd7bcabe2f97d12d25a944a413db14f58b4b33c7ec"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "explained_blocks",
+            "options": {
+              "header": {
+                "ignore_frame_title": true
+              },
+              "columns": {
+                "執行率B／A": {
+                  "kind": "ignore"
+                },
+                "収入済額B": {
+                  "heading": "収入済額"
+                },
+                "予算現額計A": {
+                  "heading": "予算現額計"
+                },
+                "比較増減額B-A": {
+                  "heading": "比較増減額"
+                },
+                "補正予算額": {
+                  "heading": "予算現額／補正予算額"
+                },
+                "繰越事業費繰越財源充当額": {
+                  "heading": "予算現額／継続費及び繰越事業費繰越財源充当額"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-settlement"
+        }
+      ]
+    }
+  ]
+}

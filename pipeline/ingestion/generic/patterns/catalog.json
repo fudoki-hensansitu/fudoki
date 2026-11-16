@@ -19,7 +19,8 @@
     "listed_sources": "ingestion.generic.patterns.layout.listed_sources",
     "redrawn_facing_pages": "ingestion.generic.patterns.layout.redrawn_facing_pages",
     "redrawn_headers": "ingestion.generic.patterns.layout.redrawn_headers",
-    "explained_subjects": "ingestion.generic.patterns.layout.explained_subjects"
+    "explained_subjects": "ingestion.generic.patterns.layout.explained_subjects",
+    "explained_blocks": "ingestion.generic.patterns.layout.explained_blocks"
   },
   "headers": {
     "standard": "ingestion.generic.patterns.headers.standard",
