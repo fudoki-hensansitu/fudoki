@@ -18,12 +18,6 @@
       "options": {
         "account": "一般会計",
         "table_id": "general-expenditure-detail",
-        "pages": [
-          [
-            70,
-            363
-          ]
-        ],
         "workflow": {
           "layout": {
             "pattern": "ruled",
@@ -137,24 +131,6 @@
           }
         ],
         "name_corrections": [
-          {
-            "id": "p70-kan-1-name",
-            "page": 70,
-            "code": "1",
-            "level": "款",
-            "observed_name": null,
-            "corrected_name": "議会費",
-            "reason": "頁70の先頭の行は款・項・目の番号 1 1 1 を並べ、3つに共通の名前「議会費」を目の升に1度だけ印字する（2024年度の決算書は3行に分けて印字する）。原画で確かめた。款と項の名前を印字の名前で埋める。"
-          },
-          {
-            "id": "p70-kou-1-name",
-            "page": 70,
-            "code": "1",
-            "level": "項",
-            "observed_name": null,
-            "corrected_name": "議会費",
-            "reason": "頁70の先頭の行は款・項・目の番号 1 1 1 を並べ、3つに共通の名前「議会費」を目の升に1度だけ印字する（2024年度の決算書は3行に分けて印字する）。原画で確かめた。款と項の名前を印字の名前で埋める。"
-          },
           {
             "id": "p163-r25-kana",
             "page": 163,

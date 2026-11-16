@@ -2479,7 +2479,6 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                           ordered.index(group), item.level or 0, item.anchor, item)
                          for group in ordered for item in found[id(group)]), key=lambda e: e[:4])
         events = [(e[0], e[1], e[4]) for e in events]
-        line_up_codes(events)
         headings = heading_names(logical)
         subject_depth = max((g.levels or len(g.bands) for g in ordered if g.subject), default=3) \
             + (titled if any(title_shift(g) for g in ordered if g.subject) else 0)
@@ -3035,21 +3034,6 @@ def within_row(logical: Logical, previous: Item, item: Item) -> bool:
         return False
     top, bottom = _cell(min(beside, key=lambda b: b.x0), y)
     return item.y0 >= previous.y1 and top - .5 <= item.y0 and item.y1 <= bottom + .5
-
-
-def line_up_codes(events: list) -> None:
-    """Put the codes of one printed line (`1 1 1 議会費`: a 款, 項 and 目 of one name, 羽村市 R5 決算 p70) in level order,
-    in place. A row with no rule under it within reach gives each its own centre (`subject_row`), and OCR boxes the codes
-    of one line a point or two apart: a deeper code read a little higher would open before its parent."""
-    for i in range(1, len(events)):
-        j = i
-        while j > 0:
-            (_, g, a), (_, h, b) = events[j - 1], events[j]
-            if not (a.group is b.group and a.group.subject and a.level is not None and b.level is not None
-                    and b.level < a.level and abs(a.anchor - b.anchor) < 2):
-                break
-            events[j - 1], events[j] = events[j], events[j - 1]
-            j -= 1
 
 
 def subject_row(item: Item, logical: Logical) -> tuple[float, float]:
