@@ -1,0 +1,215 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132233",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "sewer",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "0c2c878f2f95b3f09a2b76de4a1401a9ceb21fdb62f34bc169895539ab348d14"
+        }
+      ],
+      "options": {
+        "account": "下水道事業会計",
+        "table_id": "sewer-expenditure-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "金額": {
+                  "heading": "決算額"
+                },
+                "・金額": {
+                  "heading": "決算額"
+                },
+                "款.": {
+                  "kind": "label",
+                  "heading": "款"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "備考": {
+                "pattern": "indent",
+                "options": {
+                  "note_kinds": {
+                    "予算額": "予算額"
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true
+          }
+        },
+        "amount_corrections": [
+          {
+            "id": "p38-koji",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result2:r14",
+            "observed_amount": "68,461, 304",
+            "corrected_amount": "68,451,304",
+            "reason": "目「1 管渠費」の節「30 工事請負費」。原画の印字は 68,451,304 で、OCR が5を6と読んだ。節の和が目の 94,327,005 に合う。"
+          },
+          {
+            "id": "p38-hosho",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result2:r33",
+            "observed_amount": "376;500",
+            "corrected_amount": "376,500",
+            "reason": "目「4 総係費」の節「10 報償費」。OCR が桁区切りのカンマをセミコロンと読んだ。節の和が目の 54,916,177 に合う。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "p38-speck",
+            "page": 38,
+            "observation_id": "p38:ink-10:a10:result0:r0",
+            "observed": "7",
+            "reason": "頁38の節「1 報酬」の行の名前の右にある紙の汚れを、墨の読み直しが「7」と読んだ。原画に印字は無い。"
+          },
+          {
+            "id": "p39-speck",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result0:r8",
+            "observed": "1",
+            "reason": "頁39の目「1 過年度損益修正損」の番号を OCR が別の読みとしてもう一度読んだ。番号が「11」になるので、重なった読みを使わない。"
+          },
+          {
+            "id": "p40-speck",
+            "page": 40,
+            "observation_id": "p40:ink-0:a0:result0:r0",
+            "observed": "J",
+            "reason": "頁40の項「4 予備費」の名前の左にある紙の汚れを、墨の読み直しが「J」と読んだ。原画に印字は無い。"
+          },
+          {
+            "id": "p39-speck-5",
+            "page": 39,
+            "observation_id": "p39:full-page:a0:result2:r11",
+            "observed": "5",
+            "reason": "頁39の節「26 委託料」の行の備考の欄にある紙の汚れを、OCR が「5」と読んだ。原画に印字は無い。"
+          },
+          {
+            "id": "p39-speck-1",
+            "page": 39,
+            "observation_id": "p39:ink-4:a4:result0:r0",
+            "observed": "1",
+            "reason": "頁39の目「1 支払利息及び企業債取扱諸費」の行の備考の欄にある点を、墨の読み直しが「1」と読んだ。原画に印字は無い。"
+          },
+          {
+            "id": "p42-speck",
+            "page": 42,
+            "observation_id": "p42:ink-1:a1:result0:r0",
+            "observed": "1",
+            "reason": "頁42の目「1 建設改良費」の行の節の欄にある鉛筆の印を、墨の読み直しが「1」と読んだ。原画に印字は無い。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p38-r12-ryuiki",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result1:r12",
+            "observed_name": "流城",
+            "corrected_name": "流域",
+            "reason": "頁38の目「2 流域下水道管理運営費負担金」。OCR が「域」を「城」と読んだ。"
+          },
+          {
+            "id": "p42-r41-ryuiki",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r41",
+            "observed_name": "流城",
+            "corrected_name": "流域",
+            "reason": "頁42の項「3 流域下水道建設負担金」。OCR が「域」を「城」と読んだ。"
+          },
+          {
+            "id": "p42-r45-ryuiki",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r45",
+            "observed_name": "流城",
+            "corrected_name": "流域",
+            "reason": "頁42の目「1 流域下水道建設負担金」。OCR が「域」を「城」と読んだ。"
+          },
+          {
+            "id": "p42-r49-ryuiki",
+            "page": 42,
+            "observation_id": "p42:full-page:a0:result0:r49",
+            "observed_name": "流城",
+            "corrected_name": "流域",
+            "reason": "頁42の節「1 流域下水道建設負担金」。OCR が「域」を「城」と読んだ。"
+          },
+          {
+            "id": "p38-33-unei",
+            "page": 38,
+            "code": "33",
+            "observed_name": "流域下水道管理運運営費負担金",
+            "corrected_name": "流域下水道管理運営費負担金",
+            "reason": "原画の頁38 節33 は「流域下水道管理運営費負担金」（2行に折り返し）。OCR が1行目の末尾の「運」を2行目の頭にも重ねて読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "sewer-ocr-1",
+          "origin_sha256": "0c2c878f2f95b3f09a2b76de4a1401a9ceb21fdb62f34bc169895539ab348d14",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              38,
+              39,
+              40
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 3
+            }
+          },
+          "sha256": "c1792b3bda77f6f2697cc1f93e08dead676417a0db0e1c13850add5a50a7a00e",
+          "bytes": 444645
+        },
+        {
+          "id": "sewer-ocr-2",
+          "origin_sha256": "0c2c878f2f95b3f09a2b76de4a1401a9ceb21fdb62f34bc169895539ab348d14",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              42
+            ],
+            "vlm_fallback": false,
+            "rule_steps": true,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6177cae50ef2362bb8a0a50f424e2006214b4a98f7b6b18491ffe7124860294d",
+          "bytes": 212261
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "sewer-expenditure-detail"
+        }
+      ]
+    }
+  ]
+}
