@@ -1,7 +1,7 @@
 // 自治体の頁（アプリ型）のデータ。server/app-data.ts が API から組んだ1年度の分を、画面の見え方に組み直す。
 // 事業・評価シートは頁ごとに API から読む（事業の1頁目はサーバーが lists に入れて渡す。評価シートは区分ごとの数だけを持つ）
 import { DOMAIN_FRAMES, OTHER_FRAME, type DomainFrame } from '../domains'
-import { listKey, type ListPage, type ListQuery, type ProjRow, type ProjectFull, type SheetCount } from './api'
+import { listKey, type ListPage, type ListQuery, type ProjRow, type ProjectFull } from './api'
 
 export type { ProjRow as Proj } from './api'
 export type DirectionCode = 'new' | 'expand' | 'keep' | 'statutory' | 'as_planned' | 'improve' | 'resize' | 'reduce' | 'merge' | 'complete' | 'end' | 'consider_end'
@@ -37,8 +37,6 @@ export type Snapshot = {
   prev?: { year: number; kind: YearData['kind'] }
   /** 一般会計のほかにも会計を収録した年度の、会計ごとの総額 */
   accounts?: AccountTotal[]
-  /** 評価シートの方向性の区分ごとの数（その年度に行った事業の評価） */
-  sheetCounts: SheetCount[]
   /** 評価のある最新の年度の評価シート（ホームのまちの札だけが読む） */
   evaluated?: { fy: number; sheets: Sheet[] }
   /** 事業の収録がある自治体か。無ければ目を事業の代わりに並べる。まだ分からない（事業の1頁目を読んでいない）ときは undefined */
@@ -53,7 +51,6 @@ export type Snapshot = {
 
 /** 最初の画面に要らない、1年度の残りのデータ。評価シートの区分ごとの数と、事業の一覧（すべて・新しく始めた事業）の1頁目 */
 export type YearExtras = {
-  sheetCounts: SheetCount[]
   hasProjects: boolean
   lists: Record<string, ListPage>
 }
@@ -63,7 +60,6 @@ export function withExtras(d: Snapshot, x: YearExtras): Snapshot {
   const { pending: _, ...rest } = d
   return {
     ...rest,
-    sheetCounts: x.sheetCounts,
     hasProjects: d.hasProjects ?? x.hasProjects,
     lists: { ...x.lists, ...d.lists },
   }
@@ -103,8 +99,6 @@ export function yearView(d: Snapshot, prevFieldSubjects?: Record<string, string[
   const isNew = (p: Pick<ProjRow, 'started'>) => p.started === year
   // やめた事業は前の年度で終えた事業（DB の事業の終えた年度）だけ
   const isEnded = (p: Pick<ProjRow, 'ended'>) => p.ended === year - 1
-  // 評価シートは評価した事業を行った年度の頁に出す（R6 の事業の評価は R6 の頁）。まだ評価の無い年度は出さない
-  const sheetCounts = d.sheetCounts
   return {
     year,
     total: y.total,
@@ -128,9 +122,6 @@ export function yearView(d: Snapshot, prevFieldSubjects?: Record<string, string[
     /** お金のかかる事業（1頁目） */
     top,
     mokuRows,
-    sheetCounts,
-    /** その年度の評価シートの数 */
-    sheetTotal: sheetCounts.reduce((n, c) => n + c.n, 0),
     isNew,
     isEnded,
     kind: y.kind,
