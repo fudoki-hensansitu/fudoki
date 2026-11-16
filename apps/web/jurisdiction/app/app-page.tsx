@@ -48,6 +48,7 @@ import { Separator } from '@/components/ui/separator'
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
+import { Combobox, ComboboxContent, ComboboxGroup, ComboboxItem, ComboboxLabel, ComboboxList, ComboboxSeparator, ComboboxTrigger } from '@/components/ui/combobox'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { createColumnHelper, tableFeatures, useTable } from '@tanstack/react-table'
 import { Empty, EmptyContent, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
@@ -318,19 +319,16 @@ function ProjectList({ q, head, render }: { q: ListQuery; head?: (page: ListPage
 const projectFeatures = tableFeatures({})
 const projectColumn = createColumnHelper<typeof projectFeatures, Proj & { rank: number }>()
 
-/** 事業の名前の欄。新しく始める・やめた事業の印を頭に付け、狭い幅（詳細を横に開いたときも）では担当の課と分野を下に添える（広い幅は別の列） */
+/** 事業の名前の欄。新しく始める・やめた事業の印は事業名の後ろに付け、狭い幅（詳細を横に開いたときも）では担当の課と分野を下に添える（広い幅は別の列） */
 function ProjectNameCell({ p }: { p: Proj }) {
   const { v } = useApp()
   const ended = v.isEnded(p)
   return (
-    <span className="flex items-center gap-2">
-      {/* 印の無い行も印の幅だけ空けて、事業名の頭を揃える */}
-      {ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : v.isNew(p) ? <Mark kind="new" label="新しく始める事業" className="size-5" /> : <span aria-hidden className="w-5 shrink-0" />}
-      <span className="min-w-0">
-        {/* 押せることとフォーカスは事業名のボタンが持つ（行を押しても同じく詳細を開く） */}
-        <button type="button" className="line-clamp-2 rounded-sm text-left text-[15px] leading-normal outline-none focus-visible:ring-2 focus-visible:ring-primary">{p.name}</button>
-        <span className="block truncate text-xs text-muted-foreground @3xl:hidden">{[p.dept, fieldName(v, v.fieldOf(p))].filter(Boolean).join(' · ')}</span>
-      </span>
+    <span className="block">
+      {/* 押せることとフォーカスは事業名のボタンが持つ（行を押しても同じく詳細を開く） */}
+      <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{p.name}</button>
+      {ended || v.isNew(p) ? <span className="ml-1.5 inline-flex align-middle">{ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : <Mark kind="new" label="新しく始める事業" className="size-5" />}</span> : null}
+      <span className="block @3xl:hidden">{[p.dept, fieldName(v, v.fieldOf(p))].filter(Boolean).join(' · ')}</span>
     </span>
   )
 }
@@ -345,7 +343,7 @@ function ProjectFieldCell({ p }: { p: Proj }) {
   return <>{fieldName(v, v.fieldOf(p))}</>
 }
 
-/** 事業の表（shadcn の data table）。並びは api が返した金額の多い順のまま。行を押すと詳細を開く */
+/** 事業の表（shadcn の data table）。並びは api が返した金額の多い順のまま。行を押すと詳細を開く。文字は見出しも中身もすべて同じ大きさ・同じ色にする */
 function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前の年度の額を出す */ ended?: boolean }) {
   const { v, select, selected } = useApp()
   const by = ended ? v.year - 1 : v.year
@@ -353,13 +351,13 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
   // 担当の課を持たない自治体（目を事業の代わりに並べるときなど）は、空の列を出さない
   const hasDept = rows.some((p) => p.dept)
   const columns = React.useMemo(() => projectColumn.columns([
-    projectColumn.accessor('rank', { header: () => <span className="sr-only">順位</span>, cell: (c) => c.getValue(), meta: { className: 'w-8 pr-0 text-right text-muted-foreground tabular-nums' } }),
-    projectColumn.display({ id: 'name', header: '事業名', cell: (c) => <ProjectNameCell p={c.row.original} />, meta: { className: 'w-full min-w-[12rem] whitespace-normal' } }),
-    ...(hasDept ? [projectColumn.accessor('dept', { header: '担当の課', cell: (c) => c.getValue() ?? '', meta: { className: '@max-3xl:hidden text-muted-foreground' } })] : []),
-    projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden text-muted-foreground' } }),
-    projectColumn.accessor('yen', { header: amount, cell: (c) => <Amt yen={c.getValue()} className="text-base" />, meta: { className: 'text-right' } }),
+    projectColumn.accessor('rank', { header: () => <span className="sr-only">順位</span>, cell: (c) => c.getValue(), meta: { className: 'w-8 pr-0 text-right tabular-nums' } }),
+    projectColumn.display({ id: 'name', header: '事業名', cell: (c) => <ProjectNameCell p={c.row.original} />, meta: { className: 'whitespace-normal' } }),
+    ...(hasDept ? [projectColumn.accessor('dept', { header: '担当の課', cell: (c) => c.getValue() ?? '', meta: { className: '@max-3xl:hidden' } })] : []),
+    projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden' } }),
+    projectColumn.accessor('yen', { header: amount, cell: (c) => (c.getValue() == null ? '—' : yenText(c.getValue()!)), meta: { className: 'text-right tabular-nums' } }),
     // やめた事業は割合を出さないので、列ごと出さない
-    ...(ended ? [] : [projectColumn.display({ id: 'share', header: '割合', cell: (c) => <ProjectShareCell p={c.row.original} />, meta: { className: '@max-xl:hidden text-right text-xs text-muted-foreground' } })]),
+    ...(ended ? [] : [projectColumn.display({ id: 'share', header: '割合', cell: (c) => <ProjectShareCell p={c.row.original} />, meta: { className: '@max-xl:hidden text-right' } })]),
   ]), [amount, hasDept, ended])
   const data = React.useMemo(() => rows.map((p, i) => ({ ...p, rank: i + 1 })), [rows])
   const table = useTable({ features: projectFeatures, columns, data, getRowId: (p) => p.id })
@@ -370,7 +368,7 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
         {table.getHeaderGroups().map((g) => (
           <TableRow key={g.id} className="hover:bg-transparent">
             {g.headers.map((h) => (
-              <TableHead key={h.id} className={cn('h-9 text-xs font-normal text-muted-foreground', cls(h.column.columnDef.meta))}>
+              <TableHead key={h.id} className={cn('h-9 font-normal', cls(h.column.columnDef.meta))}>
                 {h.isPlaceholder ? null : <table.FlexRender header={h} />}
               </TableHead>
             ))}
@@ -378,6 +376,9 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
         ))}
       </TableHeader>
       <TableBody>
+        {!rows.length ? (
+          <TableRow className="hover:bg-transparent"><TableCell colSpan={columns.length} className="py-6 text-center">当てはまる事業はありません</TableCell></TableRow>
+        ) : null}
         {table.getRowModel().rows.map((row) => {
           const on = selected?.kind === 'project' && selected.id === row.original.id
           return (
@@ -396,11 +397,11 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
 }
 
 /** 評価シートの一覧の条件（その年度の、分野・事業名で絞ったもの） */
-const sheetQueryOf = (d: Pick<Snapshot, 'code'>, v: YearView, field: string, q: string): SheetQuery => ({
+const sheetQueryOf = (d: Pick<Snapshot, 'code'>, v: YearView, fields: string[], q: string): SheetQuery => ({
   code: d.code,
   year: v.year,
   kind: v.kind,
-  ...(field !== 'all' ? { subjects: v.subjectsOf(field) } : {}),
+  ...(fields.length ? { subjects: fields.flatMap((f) => v.subjectsOf(f)) } : {}),
   ...(q ? { q } : {}),
 })
 
@@ -634,7 +635,57 @@ function Overview() {
   )
 }
 
-function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { filter: string; setFilter: (f: string) => void; field: string; setField: (f: string) => void; grade: string; setGrade: (g: string) => void }) {
+const KINDS = [
+  { id: 'new', label: '新しく始める', icon: <NewIcon className="size-4 text-primary" /> },
+  { id: 'ended', label: 'やめた', icon: <StopIcon className="size-4 text-primary" /> },
+  { id: 'eval', label: '評価した', icon: <ClipboardTextIcon className="size-4" /> },
+] as const
+/** 事業の絞り込み。区分（新しく始める・やめた・評価した）と分野を1つの combobox の中で選ぶ。
+ * 分野はいくつでも選べ、区分は1つだけ（新しく始める・やめたは引く年度の資料が違うので重ねられない）。選んだ別の区分は外す */
+function FilterBox({ v, kinds, filter, setFilter, fields, setFields }: { v: YearView; /** 区分を出す（残りの defer が届いてから） */ kinds?: boolean; filter: string; setFilter: (f: string) => void; fields: string[]; setFields: (f: string[]) => void }) {
+  const shown = kinds ? KINDS.filter((k) => (k.id === 'eval' ? !!v.sheetTotal : v.comparable)) : []
+  // 一覧の読み直しは transition で遅れて届くので、選んだ状態は手元に持ってすぐ出す（続けて押しても前の選択を落とさない）
+  const outer = [...(filter !== 'all' ? [filter] : []), ...fields]
+  const [value, setValue] = React.useState(outer)
+  React.useEffect(() => setValue(outer), [outer.join()])
+  const onChange = (raw: string[]) => {
+    const picked0 = raw.filter((x) => KINDS.some((k) => k.id === x))
+    const cur = value.find((x) => KINDS.some((k) => k.id === x)) ?? 'all'
+    const kind0 = picked0.find((x) => x !== cur) ?? (picked0.includes(cur) ? cur : 'all')
+    const next = [...(kind0 !== 'all' ? [kind0] : []), ...raw.filter((x) => !KINDS.some((k) => k.id === x))]
+    setValue(next)
+    if (kind0 !== filter) setFilter(kind0)
+    const f = next.filter((x) => !KINDS.some((k) => k.id === x))
+    if (f.join() !== fields.join()) setFields(f)
+  }
+  const names = value.map((x) => KINDS.find((k) => k.id === x)?.label ?? fieldName(v, x))
+  return (
+    <Combobox multiple value={value} onValueChange={(x) => onChange(x as string[])} items={[...shown.map((k) => k.id), ...v.fields.map((f) => f.id)]}>
+      <ComboboxTrigger aria-label="絞り込み" className={cn('inline-flex h-9 max-w-[55%] shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-sm transition-colors hover:bg-card sm:max-w-xs', value.length ? 'border-primary bg-primary text-primary-foreground hover:bg-primary [&_svg]:text-primary-foreground' : 'border-input bg-background')}>
+        <span className="min-w-0 truncate">{names.length ? names.join('・') : '絞り込み'}</span>
+      </ComboboxTrigger>
+      <ComboboxContent align="end" className="w-64">
+        <ComboboxList>
+          {shown.length ? (
+            <>
+              <ComboboxGroup>
+                <ComboboxLabel>事業</ComboboxLabel>
+                {shown.map((k) => <ComboboxItem key={k.id} value={k.id}>{k.icon}{k.label}</ComboboxItem>)}
+              </ComboboxGroup>
+              <ComboboxSeparator />
+            </>
+          ) : null}
+          <ComboboxGroup>
+            <ComboboxLabel>分野</ComboboxLabel>
+            {v.fields.map((f) => <ComboboxItem key={f.id} value={f.id}><FieldIcon id={f.id} />{f.name}</ComboboxItem>)}
+          </ComboboxGroup>
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+  )
+}
+
+function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: { filter: string; setFilter: (f: string) => void; /** 選んだ分野（空はすべて） */ fields: string[]; setFields: (f: string[]) => void; grade: string; setGrade: (g: string) => void }) {
   const { v, res } = useApp()
   const by = filter === 'ended' ? v.year - 1 : v.year
   const byLabel = `${r(by)} ${v.label(by)}`
@@ -648,7 +699,7 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
     timer.current = setTimeout(() => React.startTransition(() => setQ(t.trim())), 300)
   }
   // やめた事業を分野で絞るときは、前の年度の分野の科目を読んでから一覧を引く（EndedFieldList）
-  const endedField = filter === 'ended' && field !== 'all'
+  const endedField = filter === 'ended' && fields.length > 0
   const head = (n: string) => (
     <p className="px-2.5 text-xs text-muted-foreground">
       {filter === 'new' ? '予算書で新しく現れた事業・' : ''}
@@ -656,9 +707,9 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
     </p>
   )
   const body = (v: YearView) => {
-    const list = filter === 'eval' || endedField ? null : v.query(filter as ListQuery['filter'], { ...(field !== 'all' ? { subjects: v.subjectsOf(field) } : {}), ...(q ? { q } : {}) })
+    const list = filter === 'eval' || endedField ? null : v.query(filter as ListQuery['filter'], { ...(fields.length ? { subjects: fields.flatMap((f) => v.subjectsOf(f)) } : {}), ...(q ? { q } : {}) })
     // 事業の収録の無い自治体は、目を事業の代わりに並べる（手元に全部ある）
-    const moku = v.hasProjects !== false ? [] : v.mokuRows.filter((p) => (field === 'all' || v.fieldOf(p) === field) && (!q || p.name.includes(q)))
+    const moku = v.hasProjects !== false ? [] : v.mokuRows.filter((p) => (!fields.length || fields.includes(v.fieldOf(p))) && (!q || p.name.includes(q)))
     return !v.hasProjects ? (
       // 目には始めた年度が無いので、新しく始める・やめた事業は出さない
       filter === 'all' ? (
@@ -673,12 +724,12 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
       </ClientSuspense>
     ) : endedField ? (
       <ClientSuspense fallback={<RowsSkeleton />}>
-        <EndedFieldList field={field} q={q} head={head} />
+        <EndedFieldList fields={fields} q={q} head={head} />
       </ClientSuspense>
     ) : null
   }
   // 事業評価の札。絞り込みの無い「すべて」のときだけ一覧の上に出す（残りの defer が届いてから）
-  const lead = filter === 'all' && !q && field === 'all' ? (
+  const lead = filter === 'all' && !q && !fields.length ? (
     <Full fallback={null}>
       {(v) => (
         <div className="mb-6 flex flex-col gap-8 empty:hidden">
@@ -696,33 +747,19 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
     <div className="flex flex-col gap-2">
       <TabHead title="事業">事業は、自治体がお金を使って行う一つ一つの仕事です。予算書・決算書に載っている事業を、使うお金の多い順に並べています。</TabHead>
       {lead}
-      <div className="flex flex-wrap items-center gap-2">
-        <div className="relative min-w-[220px] flex-1">
+      {/* 絞り込みは1行。検索と、区分・分野をまとめて選ぶ combobox */}
+      <div className="flex items-center gap-2">
+        <div className="relative min-w-0 flex-1">
           <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
           <Input value={text} onChange={(e) => onText(e.target.value)} placeholder="事業名・担当の課で探す" className="h-9 rounded-full pl-9" aria-label="事業を探す" />
         </div>
-        <ToggleGroup value={[filter]} onValueChange={(x) => x[0] && setFilter(x[0])} variant="outline" size="sm" spacing={0}>
-          <ToggleGroupItem value="all">すべて</ToggleGroupItem>
-          {/* 新しく始める・やめた・評価したは残り（defer）が届いてから出す */}
-          <Full fallback={null}>
-            {(v) => (
-              <>
-                {v.comparable ? <ToggleGroupItem value="new"><NewIcon className="size-4 text-primary" />新しく始める</ToggleGroupItem> : null}
-                {v.comparable ? <ToggleGroupItem value="ended"><StopIcon className="size-4 text-primary" />やめた</ToggleGroupItem> : null}
-                {v.sheetTotal ? <ToggleGroupItem value="eval"><ClipboardTextIcon className="size-4" />評価した</ToggleGroupItem> : null}
-              </>
-            )}
-          </Full>
-        </ToggleGroup>
+        {/* 新しく始める・やめた・評価したは残り（defer）が届いてから選べるようにする。届くまでは分野だけ */}
+        <Full fallback={<FilterBox v={v} filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} />}>
+          {(v) => <FilterBox v={v} kinds filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} />}
+        </Full>
       </div>
-      <ToggleGroup value={[field]} onValueChange={(x) => x[0] && setField(x[0])} variant="outline" size="sm" className="-mx-1 w-auto overflow-x-auto px-1 py-1 [scrollbar-width:none]">
-        <ToggleGroupItem value="all" className="rounded-full">すべての分野</ToggleGroupItem>
-        {v.fields.map((f) => (
-          <ToggleGroupItem key={f.id} value={f.id} className="rounded-full"><FieldIcon id={f.id} />{f.name}</ToggleGroupItem>
-        ))}
-      </ToggleGroup>
       {filter === 'eval' ? (
-        <Full fallback={<RowsSkeleton />}>{(v) => <EvalList v={v} grade={grade} setGrade={setGrade} field={field} q={q} leave={() => setFilter('all')} />}</Full>
+        <Full fallback={<RowsSkeleton />}>{(v) => <EvalList v={v} grade={grade} setGrade={setGrade} fields={fields} q={q} leave={() => setFilter('all')} />}</Full>
       ) : <>
       {/* 事業の収録があるかは、事業のタブの頁なら loader が渡し、他のタブの頁（スマホで横に並ぶ事業のタブ）では残り（defer）で届く */}
       {v.hasProjects === undefined ? <Full fallback={<RowsSkeleton />}>{(v) => (v.failed && v.hasProjects === undefined ? <LoadFailed /> : body(v))}</Full> : body(v)}
@@ -732,25 +769,25 @@ function ProjectsTab({ filter, setFilter, field, setField, grade, setGrade }: { 
 }
 
 /** やめた事業を分野で絞った一覧。やめた事業は前の年度の資料で引くので、前の年度の分野の科目を読んでから絞る */
-function EndedFieldList({ field, q, head }: { field: string; q: string; head: (n: string) => React.ReactNode }) {
+function EndedFieldList({ fields, q, head }: { fields: string[]; q: string; head: (n: string) => React.ReactNode }) {
   const { v, d, res } = useApp()
   const prev = d.prev
   const subjects = prev ? React.use(res.get(`field-subjects:${d.code}:${prev.year}`, () => fieldSubjects(d.code, prev.year, prev.kind))) : FAILED
   if (subjects === FAILED) return <LoadFailed />
-  const list = v.query('ended', { subjects: subjects[field] ?? [], ...(q ? { q } : {}) })
+  const list = v.query('ended', { subjects: fields.flatMap((f) => subjects[f] ?? []), ...(q ? { q } : {}) })
   return <ProjectList q={list} head={(page) => head(countOf(page))} />
 }
 
 /** 事業の一覧の「評価した」。評価は事業の属性なので、別のタブにせず事業の絞り込みの1つにする。
  * A〜D の札は api が数えた数、シートは選んだ札の区分だけを頁ごとに読む */
-function EvalList({ v, grade, setGrade, field, q, leave }: { v: YearView; grade: string; setGrade: (g: string) => void; field: string; q: string; /** 評価の無い年度へ移ったら絞り込みを戻す */ leave: () => void }) {
+function EvalList({ v, grade, setGrade, fields, q, leave }: { v: YearView; grade: string; setGrade: (g: string) => void; fields: string[]; q: string; /** 評価の無い年度へ移ったら絞り込みを戻す */ leave: () => void }) {
   const { d } = useApp()
   React.useEffect(() => {
     if (!v.failed && !v.sheetTotal) leave()
   }, [v])
   // 評価シートを読めなかったら、0件と見せずに読めなかったと出す
   if (v.failed) return <LoadFailed />
-  const base = sheetQueryOf(d, v, field, q.trim())
+  const base = sheetQueryOf(d, v, fields, q.trim())
   return (
     <div className="mt-1 flex flex-col gap-3">
       <ClientSuspense fallback={<RowsSkeleton />} ready={!base.subjects && !base.q}>
@@ -1017,7 +1054,7 @@ function FieldPage({ id }: { id: string }) {
         {(v) => v.sheetTotal ? (
           <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(v.year)}年度の事業`}>
             <ClientSuspense fallback={<Skeleton className="h-20 rounded-xl" />}>
-              <FieldGradeCards q={sheetQueryOf(d, v, f.id, '')} />
+              <FieldGradeCards q={sheetQueryOf(d, v, [f.id], '')} />
             </ClientSuspense>
           </DetailSection>
         ) : null}
@@ -1218,9 +1255,9 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   // 予算・決算のタブの頁を読み終えたのに流れが無ければ、API に繋がらなかった
   const flowFailed = (initialTab === 'money' || initialTab === 'settled') && !flow && navigation.state === 'idle'
   // 絞り込みを変えたら一覧を読み直す。読み終えるまで前の一覧を出したままにする
-  const [field, setFieldState] = React.useState('all')
+  const [fields, setFieldsState] = React.useState<string[]>([])
   const [filter, setFilterState] = React.useState('all')
-  const setField = (f: string) => React.startTransition(() => setFieldState(f))
+  const setFields = (f: string[]) => React.startTransition(() => setFieldsState(f))
   const setFilter = (f: string) => React.startTransition(() => setFilterState(f))
   const [grade, setGrade] = React.useState('A')
   // ?filter=new などで事業の絞り込みを開いた状態で来られる（ホームのはじめにやることから・まとめの札から）。読んだら URL から外す。
@@ -1235,7 +1272,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     const g = q.get('grade')
     if (g && GRADES.some(([x]) => x === g)) setGrade(g)
     const field = q.get('field')
-    if (field) setField(field)
+    if (field) setFields([field])
     for (const k of ['filter', 'grade', 'field']) q.delete(k)
     history.replaceState(history.state, '', location.pathname + (q.size ? `?${q}` : '') + location.hash)
   }, [initialTab, idle])
@@ -1297,7 +1334,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const go: Go = (t, opt = {}) => {
     if (opt.filter) setFilter(opt.filter)
     if (opt.grade) setGrade(opt.grade)
-    if (t === 'projects') setField(opt.field ?? 'all')
+    if (t === 'projects') setFields(opt.field ? [opt.field] : [])
     const q = new URLSearchParams(Object.entries(opt).filter((e): e is [string, string] => !!e[1]))
     changeTab(t, t === 'projects' && opt.filter ? `?${q}` : undefined)
   }
@@ -1359,7 +1396,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   )
 
   const panel = (key: TabKey) =>
-    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} field={field} setField={setField} grade={grade} setGrade={setGrade} />
+    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} grade={grade} setGrade={setGrade} />
 
   return (
     <div className={cn('@container transition-[padding] duration-300', wide && selected && 'pr-[440px]')}>
