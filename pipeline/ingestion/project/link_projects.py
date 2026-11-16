@@ -8,7 +8,8 @@ dbt の `int_project__line_ids`（Python model）が、build のたびに `int_p
 2. 同じ年度の決算の行を、会計・款・項・目と名前の並びが同じ当初予算の行に結ぶ。並びが両方に同じ数だけあるときだけ、印字の順で結ぶ。
    並びの中は印字の順（int_project__lines の print_order）で並べる。結べない決算の行は、決算の行だけを持つ事業の1年度にする。
 3. 前の年度の事業の1年度と、上の段から結ぶ。目の直下は会計・款・項・目と名前、その下は親が同じ事業の中で名前が、
-   両方に1つずつあるときだけ同じ事業にする。前の年度に無い事業は新しい事業にする（手順4の Jev はまだ使わない）。
+   両方に1つずつあるときだけ同じ事業にする。名前で結べなかった残りどうしは、名前から数と単位（「105園」「延83,703人」）を
+   除いて同じ決まりで結ぶ（園の数・定員のように年度で変わる数を名前に印字する事業）。前の年度に無い事業は新しい事業にする（手順4の Jev はまだ使わない）。
 
 名前は NFKC にし、【所管課】から後ろ・末尾の [所管課]・「(うち…)」の注記・空白を除いて比べる。
 事業ID は事業の最初の年度の行の鍵の sha256。毎回計算し直しても、最初の年度の行が変わらない限り同じ ID になる。
@@ -25,6 +26,11 @@ from dataclasses import dataclass, field
 # 所管課を [] で印字する自治体（中央区・八王子など）。[1人分]・[科目存置] のような注記は所管課の語尾で外す
 DEPARTMENT_BRACKET = re.compile(r'\[[^\[\]0-9]*(?:課|部|局|室|所|係|センター|委員会|館)\]\s*$')
 KEY = ('jurisdiction_code', 'fiscal_year', 'document_kind', 'account_name', 'kan_name', 'kou_name', 'moku_name', 'path')
+
+
+# 名前に印字された数と単位（「105園」「延83,703人」）。年度で変わるので、前の年度と結ぶときの2回目だけ除いて比べる。
+# 単位の付かない数と「第1」のような番号は、別の事業を見分ける数なので除かない
+COUNT = re.compile(r'(?<![第0-9,.])(?:延|約)?[0-9][0-9,.]*(?:か所|箇所|ヶ所|カ所|世帯|施設|団体|園|人|件|校|名|回|台|戸|床|室|館|個|点|冊|枚|日|か月|ヶ月|月|年|千円|万円|円|kW|t|%)')
 
 
 def normalize(name: str) -> str:
@@ -126,18 +132,29 @@ def unique_pairs(current: list[Year], previous: list[Year], key) -> list[tuple[Y
     return [(a[k][0], b[k][0]) for k in a if len(a[k]) == 1 and len(b.get(k, [])) == 1]
 
 
+def without_counts(name: str) -> str:
+    return COUNT.sub('', normalize(name))
+
+
+def pair(current: list[Year], previous: list[Year], key) -> list[Year]:
+    """名前で一意に結び、残りどうしを数を除いた名前で一意に結ぶ。結んだ今年度の事業の1年度を返す"""
+    linked = []
+    for name in (normalize, without_counts):
+        used = {id(y.previous) for y in current if y.previous}
+        rest, candidates = [y for y in current if not y.previous], [p for p in previous if id(p) not in used]
+        for y, p in unique_pairs(rest, candidates, lambda y: key(y, name(y.line.name))):
+            y.previous = p
+            linked.append(y)
+    return linked
+
+
 def link_previous(current: list[Year], previous: list[Year]) -> None:
     """手順3: 上の段から前の年度と結ぶ"""
-    name = lambda y: normalize(y.line.name)  # noqa: E731
     roots = [y for y in current if y.parent is None]
-    for y, p in unique_pairs(roots, [y for y in previous if y.parent is None], lambda y: (y.line.scope, name(y))):
-        y.previous = p
-    queue = [y for y in roots if y.previous]
+    queue = pair(roots, [y for y in previous if y.parent is None], lambda y, name: (y.line.scope, name))
     while queue:
         parent = queue.pop()
-        for y, p in unique_pairs(parent.children, parent.previous.children, name):  # type: ignore[union-attr]
-            y.previous = p
-            queue.append(y)
+        queue += pair(parent.children, parent.previous.children, lambda y, name: name)  # type: ignore[union-attr]
 
 
 def project_id(line: Line) -> str:
