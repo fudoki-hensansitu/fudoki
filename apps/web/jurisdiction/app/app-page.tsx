@@ -305,7 +305,7 @@ function ProjectNameCell({ p }: { p: Proj }) {
       <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{p.name}</button>
       {ended || v.isNew(p) ? <span className="ml-1.5 inline-flex align-middle">{ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : <Mark kind="new" label="新しく始める事業" className="size-5" />}</span> : null}
       {/* 狭い幅で事業名の下に添える分野は、事業名より控えめな色にする */}
-      <span className="block text-muted-foreground @3xl:hidden">{fieldName(v, v.fieldOf(p))}</span>
+      <span className="block text-muted-foreground @3xl:hidden">{[fieldName(v, v.fieldOf(p)), 'grade' in p && p.grade ? `評価 ${p.grade}` : null].filter(Boolean).join(' · ')}</span>
     </span>
   )
 }
@@ -326,7 +326,7 @@ function ProjectTable({ rows, ended }: { rows: Proj[]; /** やめた事業は前
     projectColumn.display({ id: 'field', header: '分野', cell: (c) => <ProjectFieldCell p={c.row.original} />, meta: { className: '@max-3xl:hidden' } }),
     projectColumn.accessor('yen', { header: () => <span className="inline-flex items-center gap-1">{amount}<ArrowDownIcon className="size-3.5" aria-label="多い順" /></span>, cell: (c) => (c.getValue() == null ? '—' : yenText(c.getValue()!)), meta: { className: 'text-right tabular-nums' } }),
     // 評価の列は、頁の中に評価のある事業があるときだけ出す
-    ...(graded ? [projectColumn.accessor('grade', { header: '評価', cell: (c) => c.getValue() ?? '', meta: { className: 'text-center' } })] : []),
+    ...(graded ? [projectColumn.accessor('grade', { header: '評価', cell: (c) => c.getValue() ?? '', meta: { className: '@max-3xl:hidden text-center' } })] : []),
   ]), [amount, graded])
   const data = React.useMemo(() => rows.map((p, i) => ({ ...p, rank: i + 1 })), [rows])
   const table = useTable({ features: projectFeatures, columns, data, getRowId: (p) => p.id })
@@ -636,16 +636,17 @@ function FieldMenu({ v, fields, setFields }: { v: YearView; fields: string[]; se
   )
 }
 
-function ProjectsTab({ filter, setFilter, fields, setFields }: { filter: string; setFilter: (f: string) => void; /** 選んだ分野（空はすべて） */ fields: string[]; setFields: (f: string[]) => void }) {
+function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter: string; setFilter: (f: string) => void; /** 選んだ分野（空はすべて） */ fields: string[]; setFields: (f: string[]) => void; /** 探す語（URL の ?q=） */ q: string; setQ: (q: string) => void }) {
   const { v, res } = useApp()
   // 入力は少し待ってから絞る（打つたびに API を呼ばない）。待つあいだと読むあいだは前の一覧を出したまま
-  const [text, setText] = React.useState('')
-  const [q, setQ] = React.useState('')
+  const [text, setText] = React.useState(q)
+  // 戻る・URL から語が変わったら入力欄も合わせる
+  React.useEffect(() => setText((t) => (t.trim() === q ? t : q)), [q])
   const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   const onText = (t: string) => {
     setText(t)
     clearTimeout(timer.current)
-    timer.current = setTimeout(() => React.startTransition(() => setQ(t.trim())), 300)
+    timer.current = setTimeout(() => setQ(t.trim()), 300)
   }
   const head = (n: string) => (
     <p className="px-2.5 text-xs text-muted-foreground">
@@ -1098,19 +1099,20 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const [filter, setFilterState] = React.useState('all')
   const setFields = (f: string[]) => React.startTransition(() => setFieldsState(f))
   const setFilter = (f: string) => React.startTransition(() => setFilterState(f))
-  // ?filter=new などで事業の絞り込みを開いた状態で来られる（ホームのはじめにやることから・まとめの札から）。読んだら URL から外す。
-  // まとめ（/2024）と事業のタブ（/2024/projects）は頁が別で、移ると画面を作り直して絞り込みが消えるので、go も URL で渡す
+  const [query, setQueryState] = React.useState('')
+  const setQuery = (x: string) => React.startTransition(() => setQueryState(x))
+  // 事業の絞り込み（?filter=・?field=・探す語の ?q=）は URL に持つ。ホームのはじめにやることやまとめの札から開いた状態で来られ、
+  // 事業の頁を開いて戻ったときも URL から戻せる。まとめ（/2024）と事業のタブ（/2024/projects）は頁が別で、移ると画面を作り直すので、go も URL で渡す
   // 頁を移る途中は URL がまだ前の頁のままなので、移り終えてから読む
   const idle = navigation.state === 'idle'
   React.useEffect(() => {
+    if (!idle) return
     const q = new URLSearchParams(location.search)
     const f = q.get('filter')
-    const field = q.get('field')
-    if (!idle || (!f && !field)) return
     if (f && ['all', 'new', 'ended'].includes(f)) setFilter(f)
-    if (field) setFields([field])
-    for (const k of ['filter', 'field']) q.delete(k)
-    history.replaceState(history.state, '', location.pathname + (q.size ? `?${q}` : '') + location.hash)
+    const field = q.get('field')
+    if (field) setFields(field.split(','))
+    if (q.has('q')) setQuery(q.get('q')!.trim())
   }, [initialTab, idle])
   // 目・評価シートを開いたら横（スマホは下）に詳細を出す。読み終えるまで前の詳細を出したままにする。事業は詳細を出さず事業の頁へ移る
   const [selected, setSelected] = React.useState<Selected>(null)
@@ -1143,6 +1145,17 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     window.addEventListener('popstate', onPop)
     return () => window.removeEventListener('popstate', onPop)
   }, [])
+  // 事業のタブの絞り込みを URL に書き写す（履歴は積まない）。事業の頁を開くと、その前の URL が絞り込みつきで履歴に残る
+  React.useEffect(() => {
+    if (!idle || tab !== 'projects' || projectPage || projectOfPath()) return
+    const q = new URLSearchParams(location.search)
+    const set = (k: string, x: string) => (x ? q.set(k, x) : q.delete(k))
+    set('q', query)
+    set('filter', filter === 'all' ? '' : filter)
+    set('field', fields.join(','))
+    const next = location.pathname + (q.size ? `?${q}` : '') + location.hash
+    if (next !== location.pathname + location.search + location.hash) history.replaceState(history.state, '', next)
+  }, [idle, tab, projectPage, query, filter, fields.join()])
   const wide = useMedia('(min-width: 1280px)')
   const phone = useMedia('(max-width: 767px)')
   // やめた事業は前の年度の科目を持つので、やめた事業を出すときは前の年度の分野の科目を読んで分野を引く
@@ -1259,7 +1272,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   )
 
   const panel = (key: TabKey) =>
-    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} />
+    !v ? null : key === 'overview' ? <Overview /> : key === 'money' ? <MoneyTab key={v.year} phase="initial" /> : key === 'settled' ? <MoneyTab key={v.year} phase="settlement" /> : <ProjectsTab filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} q={query} setQ={setQuery} />
 
   return (
     <div className={cn('@container transition-[padding] duration-300', wide && selected && 'pr-[440px]')}>
