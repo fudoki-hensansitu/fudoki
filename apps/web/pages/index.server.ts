@@ -27,7 +27,7 @@ export const loader = defineHandler<Props>(async (c) => {
       const e = entries.find((x) => x.code === j.code)
       const years = pageYearsOf(j)
       const evalYear = j.evaluationYears.filter((y) => years.includes(y)).at(-1)
-      return e ? [{ code: j.code, name: e.name, path: e.path, prefecture: e.prefecture, ...(e.latestYear !== undefined ? { latestYear: e.latestYear } : {}), vision: VISIONS[j.code]?.text, ...(evalYear !== undefined ? { evalYear } : {}) }] : []
+      return e ? [{ code: j.code, name: e.name, path: e.path, prefecture: e.prefecture, vision: VISIONS[j.code]?.text, ...(evalYear !== undefined ? { evalYear } : {}) }] : []
     })
   // 自治体の一覧そのものは渡さない（名前で探す欄はサーバーに少しずつ聞く）
   return { listed: entries.length > 0, featured }

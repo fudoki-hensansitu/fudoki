@@ -867,8 +867,8 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   React.useEffect(() => setTabState(initialTab ?? 'overview'), [initialTab, year])
   const at = React.useRef({ year, tab })
   at.current = { year, tab }
-  /** 年度・タブの頁の URL。リンクの先にして検索エンジンにも辿らせる */
-  const pageHref = (y: number, t: TabKey) => `${data.path}/${y}` + (t === 'overview' ? '' : `/${TAB_SLUGS[t]}`)
+  /** 年度・タブの頁の URL。リンクの先にして検索エンジンにも辿らせる。まとめは年度の段を持たない（最新の年度を出す） */
+  const pageHref = (y: number, t: TabKey) => (t === 'overview' ? data.path : `${data.path}/${y}/${TAB_SLUGS[t]}`)
   // 年度・タブを移っても、選んでいる状態とスクロールは持ち越す。タブは履歴に積み、戻るで前のタブとそのスクロールへ帰す。年度・会計は置き換える
   const move = (href: string, { push = false } = {}) => void router.visit(href, { replace: !push, preserveState: true, preserveScroll: true })
   // 年度のリンクは今のタブを引き継ぐ（予算・決算のタブはどの年度にもある）。分野の頁なら同じ分野のまま年度を移る
@@ -893,7 +893,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   const [query, setQueryState] = React.useState('')
   const setQuery = (x: string) => React.startTransition(() => setQueryState(x))
   // 事業の絞り込み（?filter=・?field=・探す語の ?q=）は URL に持つ。ホームのはじめにやることやまとめの札から開いた状態で来られ、
-  // 事業の頁を開いて戻ったときも URL から戻せる。まとめ（/2024）と事業のタブ（/2024/projects）は頁が別で、移ると画面を作り直すので、go も URL で渡す
+  // 事業の頁を開いて戻ったときも URL から戻せる。まとめ（/tokyo/nakano）と事業のタブ（/2024/projects）は頁が別で、移ると画面を作り直すので、go も URL で渡す
   // 頁を移る途中は URL がまだ前の頁のままなので、移り終えてから読む
   const idle = navigation.state === 'idle'
   React.useEffect(() => {

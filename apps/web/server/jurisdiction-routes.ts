@@ -84,7 +84,7 @@ const CURSOR_MAX = 512
 const BROWSER_CACHE = 'public, max-age=300'
 
 /** 一覧の1件を、検索の候補の形にする */
-const toMapEntry = (e: CatalogEntry): MapEntry => ({ code: e.code, name: e.name, prefecture: e.prefecture, kind: jurisdictionKind(e.code, e.name), path: jurisdictionPath(e.code), latestYear: pageYearsOf(e)[0] })
+const toMapEntry = (e: CatalogEntry): MapEntry => ({ code: e.code, name: e.name, prefecture: e.prefecture, kind: jurisdictionKind(e.code, e.name), path: jurisdictionPath(e.code) })
 
 /** 町を探す（/api/jurisdictions?name=&cursor=）。決算を収録した自治体を名前で探し、api の頁送り（list_jurisdictions の page_token）のまま TOWN_PAGE 件ずつ返す。
  * 一覧を全部は読まない。next は続きの cursor（無ければ null）。?code= ならその自治体だけを配列で返す（うちのまちの名前を引く） */

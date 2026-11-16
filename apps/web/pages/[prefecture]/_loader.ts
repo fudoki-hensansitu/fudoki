@@ -23,8 +23,8 @@ import { loadRevenue } from '../../server/revenue'
 export const notFound = () => new Response('Not Found\n', { status: 404, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'public, max-age=300' } })
 export const unavailable = () => new Response('風土記の API に繋がりませんでした。少し待ってからもう一度開いてください。\n', { status: 502, headers: { 'Content-Type': 'text/plain; charset=utf-8', 'Cache-Control': 'no-store' } })
 
-/** 自治体の頁（/tokyo、/tokyo/nakano、/tokyo/nakano/2024）の props。sitekey は頁の中の「この自治体について質問」の Turnstile。
- * year は年度の段のある頁（/tokyo/nakano/2026、/tokyo/nakano/2024）のときだけ持つ。年度の段の無い /tokyo/nakano は最新の年度を出す入口 */
+/** 自治体の頁（/tokyo、/tokyo/nakano、/tokyo/nakano/2024/budget）の props。sitekey は頁の中の「この自治体について質問」の Turnstile。
+ * year は年度の段のあるタブの頁（/tokyo/nakano/2024/budget）のときだけ持つ。まとめは年度の段の無い /tokyo/nakano だけで、最新の年度を出す */
 export type JurisdictionProps = JurisdictionView & {
   sitekey: string
   year?: number
@@ -65,7 +65,7 @@ export async function jurisdictionProps(c: Context, path: string, yearSegment?: 
   if (!view) throw new HTTPException(404, { res: notFound() })
   c.header('Cache-Control', PAGE_CACHE)
   if (yearSegment === undefined) return { ...view, sitekey: siteKey(c) }
-  // 年度の頁: 頁で選べない年度は 404。頁の中の導線は最新の年度も年度の段つきの URL にする
+  // 年度のタブの頁: 頁で選べない年度は 404。頁の中の導線は最新の年度も年度の段つきの URL にする
   const years = view.kind === 'page' ? appPageYears(view.data) : []
   const year = Number(yearSegment)
   if (!YEAR_SEGMENT.test(yearSegment) || !years.includes(year)) throw new HTTPException(404, { res: notFound() })
@@ -90,6 +90,11 @@ export async function fieldProps(c: Context, path: string, field: string, yearSe
   const sub = `/${TAB_SLUGS.projects}?field=${field}`
   if (yearSegment === undefined) return toLatestYear(c, path, sub)
   throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: `${path}/${yearSegment}${sub}` } }) })
+}
+
+/** もとの年度のまとめの頁（/tokyo/nakano/2024）。まとめは年度の段を持たないので、年度の段の無い頁へ 301 */
+const toOverview = (path: string): never => {
+  throw new HTTPException(301, { res: new Response(null, { status: 301, headers: { Location: path } }) })
 }
 
 /** 事業の ID の段。事業の ID と、事業の収録の無い自治体で目を事業の代わりにした ID（moku:<subject_id>） */
@@ -130,7 +135,7 @@ export async function routeProps(c: Context, segments: string[]): Promise<Jurisd
     if (a === undefined) return jurisdictionProps(c, path)
     if (a === 'fields') return b !== undefined && f === undefined ? fieldProps(c, path, b) : Promise.reject(new HTTPException(404, { res: notFound() }))
     if (!YEAR_SEGMENT.test(a)) return b === undefined ? tabProps(c, path, a) : a === 'projects' && f === undefined ? projectProps(c, path, b) : Promise.reject(new HTTPException(404, { res: notFound() }))
-    if (b === undefined) return jurisdictionProps(c, path, a)
+    if (b === undefined) return toOverview(path)
     if (b === 'fields') return f !== undefined ? fieldProps(c, path, f, a) : Promise.reject(new HTTPException(404, { res: notFound() }))
     return f === undefined ? tabProps(c, path, b, a) : Promise.reject(new HTTPException(404, { res: notFound() }))
   })()
