@@ -560,7 +560,6 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
   // 会計の総額は頁のデータの資料のもの。別の資料のタブ（スマホで隣に並ぶタブ）では使わない
   const special = account === GENERAL || !total ? undefined : accounts.find((x) => x.name === account)
   const picked: YearTotal | undefined = special ? { year: v.year, yen: special.yen, kan: [] } : total
-  const summary = picked ? <Amt yen={picked.yen} className="text-[26px] leading-snug text-primary" /> : null
   return (
     <div className="flex flex-col gap-3">
       <TabHead title={label === '決算' ? '決算' : '予算'}>
@@ -577,7 +576,7 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
       ) : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
       {picked ? (
-        <Flow key={`${v.year}-${phase}-${account}`} flows={flows} total={picked} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase, special: account !== GENERAL })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
+        <Flow key={`${v.year}-${phase}-${account}`} flows={flows} total={picked} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase, special: account !== GENERAL })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
       ) : recorded ? (
         <Skeleton className="h-[480px] rounded-xl" />
       ) : (
@@ -608,12 +607,7 @@ function FieldsSection({ phase }: { phase: 'initial' | 'settlement' }) {
         {phase === 'initial' ? '何に使う？' : '何に使った？'}<span className="ml-1.5 text-[13px] font-normal text-muted-foreground">歳出</span>
         <Amt yen={v.total} className="ml-2 font-medium text-primary" />
       </h2>
-      <p className="mb-2.5 text-[15px] leading-[1.7] text-muted-foreground">
-        {phase === 'initial'
-          ? '歳出は、自治体が1年間に使う予定のお金です。ここでは、税金を主な財源にする基本の会計（一般会計）の当初予算を、使い道の分野ごとに分けています。'
-          : '歳出は、自治体が1年間に使ったお金です。ここでは、税金を主な財源にする基本の会計（一般会計）の決算を、使い道の分野ごとに分けています。'}
-      </p>
-      {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
+      <p className="mb-2.5 text-[15px] leading-[1.7] text-muted-foreground">税金を主な財源にする基本の会計（一般会計）の歳出を、使い道の分野ごとに分けています。</p>      {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
       <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
         {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={max} onClick={() => openField(f.id)} />)}
       </div>

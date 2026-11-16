@@ -371,8 +371,7 @@ function KanPanel({ drill, loading, levels, onMoku, natural, shown }: { drill: D
 }
 
 /** 款→項の全体図と款ごとの内訳。流れ（目の内訳まで）は頁の loader が読んで渡す。flows が無い間は読み込み中の形を出す */
-/** summary は全体図のときに出す総額 */
-export function Flow({ flows: given, total: year, summary, className, bare, onMoku, natural, onRetry }: { /** 款 → 項 → 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; summary?: React.ReactNode; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
+export function Flow({ flows: given, total: year, className, bare, onMoku, natural, onRetry }: { /** 款 → 項 → 目 → 節の流れ。読み込み中は undefined */ flows: Drill[] | undefined; total: YearTotal; /** 図の高さなど、置き場ごとに変える枠の class */ className?: string; /** 枠（カード）を付けず、置き場の幅いっぱいに出す */ bare?: boolean; /** 目を押したときに詳細を開く。無ければ金額をツールチップで見せるだけ */ onMoku?: (m: Moku) => void; /** 図の高さを画面に合わせて決めず、中身の高さで伸ばして頁のスクロールで読む */ natural?: boolean; /** 読めなかったときに読み直す。あれば「読めませんでした」とボタンを出す */ onRetry?: () => void }) {
   const levels = LEVELS
   const root = React.useRef<HTMLDivElement>(null)
   const track = React.useRef<HTMLDivElement>(null)
@@ -445,7 +444,12 @@ export function Flow({ flows: given, total: year, summary, className, bare, onMo
                 <span className="min-w-0 truncate text-sm text-muted-foreground">{kan.kan.name}</span>
                 <b className="shrink-0 text-[26px] font-normal leading-snug tabular-nums">{amountText(kan.kan.yen, kan.kan.amountMissing)}</b>
               </>
-            ) : summary}
+            ) : (
+              <>
+                <span className="min-w-0 truncate text-sm text-muted-foreground">すべて</span>
+                <b className="shrink-0 text-[26px] font-normal leading-snug tabular-nums">{amountText(year.yen)}</b>
+              </>
+            )}
           </div>
           <div className="flex shrink-0 items-center gap-1.5">
             <span className="text-xs tabular-nums text-muted-foreground">{kan ? `${levels.kan} ${index} / ${total}` : ''}</span>
