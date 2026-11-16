@@ -25,7 +25,7 @@ on:
         default: ''
 permissions:
   contents: read
-  # actions: write は古い pipeline-cache を消すため（読むだけなら read で足りる）
+  # actions: write は古い cache を消すため（読むだけなら read で足りる）
   actions: write
 # R2 への保存（store）と D1 への同期（sync）は別の job にし、concurrency も分ける。
 # store は merge のたびにすぐ流し、前の run の D1 同期（全件だと30分を超える）の後ろに並ばない。
@@ -89,36 +89,7 @@ jobs:
             sleep "$wait"
           done
           exit 1
-      # R2 から戻した cache。build が読む小さいもの（取り込みの表・OCR の観測・事業評価の読んだ結果、保存は sync job）と、
-      # 変換し直しが読む出典（大きい、保存はこの job）に分ける
-      - id: build-restore
-        if: steps.scope.outputs.since != ''
-        uses: actions/cache/restore@v6
-        with:
-          path: |
-            pipeline/.cache/objects/fiscal/ingestion
-            pipeline/.cache/objects/project
-            pipeline/.cache/project
-            pipeline/.cache/source-page-text
-          key: pipeline-build-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-build-${{ hashFiles('mise.toml') }}-
-      # 分ける前の pipeline-cache から一度だけ戻す（分けた cache がまだ無い回）。全部消えたら外してよい
-      - if: steps.scope.outputs.since != '' && steps.build-restore.outputs.cache-matched-key == ''
-        uses: actions/cache/restore@v6
-        with:
-          path: pipeline/.cache
-          key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
-      - id: origins-restore
-        if: steps.scope.outputs.since != ''
-        uses: actions/cache/restore@v6
-        with:
-          path: pipeline/.cache/objects/fiscal/source-selection
-          key: pipeline-origins-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-origins-${{ hashFiles('mise.toml') }}-
-      - id: origins-before
-        if: steps.scope.outputs.since != ''
-        run: echo "files=$(find pipeline/.cache/objects/fiscal/source-selection -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
+      # 出典の PDF と build の入力は cache せず、要るものを R2 から取る（変換し直すのは変わった管理 JSON の出典だけ）
       # PDF から読んだ字と位置（変換し直しで一番重い）。中身が増えた回だけ保存し、後の PR の check と refresh-check が読む
       - if: steps.scope.outputs.since != ''
         uses: actions/cache/restore@v6
@@ -141,22 +112,6 @@ jobs:
         run: bun run --cwd pipeline ingestion:store -- --since ${{ steps.scope.outputs.since }}
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - id: origins-after
-        if: ${{ !cancelled() && steps.scope.outputs.since != '' }}
-        run: echo "files=$(find pipeline/.cache/objects/fiscal/source-selection -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
-      # 中身が変わった回（と、分けた cache がまだ無い回）だけ保存する。古いキーは保存の前に消す（新旧を同時に持つと repo の上限 10GB を超え、他の cache が追い出される）
-      - id: origins-clear
-        if: ${{ !cancelled() && steps.origins-restore.outcome == 'success' && (steps.origins-after.outputs.files != steps.origins-before.outputs.files || steps.origins-restore.outputs.cache-matched-key == '') }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh cache list --repo "${{ github.repository }}" --key pipeline-origins- --limit 100 --json key --jq '.[].key' |
-            while read -r key; do gh cache delete "$key" --repo "${{ github.repository }}" || true; done
-      - if: ${{ !cancelled() && steps.scope.outputs.since != '' && steps.origins-clear.outcome == 'success' }}
-        uses: actions/cache/save@v6
-        with:
-          path: pipeline/.cache/objects/fiscal/source-selection
-          key: pipeline-origins-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
       - id: observation-after
         if: ${{ !cancelled() && steps.scope.outputs.since != '' }}
         run: echo "files=$(find pipeline/.cache/generic-observation -type f -printf '%P %s\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
@@ -211,31 +166,10 @@ jobs:
             sleep "$wait"
           done
           exit 1
-      # build が読む小さい cache（取り込みの表・OCR の観測・事業評価の読んだ結果と頁の文字）。中身が変わった回だけ保存する
-      - id: build-restore
-        uses: actions/cache/restore@v6
-        with:
-          path: |
-            pipeline/.cache/objects/fiscal/ingestion
-            pipeline/.cache/objects/project
-            pipeline/.cache/project
-            pipeline/.cache/source-page-text
-          key: pipeline-build-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-build-${{ hashFiles('mise.toml') }}-
-      # 分ける前の pipeline-cache から一度だけ戻す（分けた cache がまだ無い回）。全部消えたら外してよい
-      - if: steps.build-restore.outputs.cache-matched-key == ''
-        uses: actions/cache/restore@v6
-        with:
-          path: pipeline/.cache
-          key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
-      # Actions の cache が無い回は、R2 の束（main の sync job が置く）から戻す。足りない表は build が1個ずつ取る
-      - if: steps.build-restore.outputs.cache-matched-key == ''
-        run: bun run --cwd pipeline ingestion:bundle restore
+      # build の入力（受領書の一覧の表・事業評価の読んだ結果と頁の文字）は R2 の束から読む。足りないものは build が1個ずつ取る
+      - run: bun run --cwd pipeline ingestion:bundle restore
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - id: build-before
-        run: echo "files=$(find pipeline/.cache/objects/fiscal/ingestion pipeline/.cache/objects/project pipeline/.cache/project pipeline/.cache/source-page-text -type f -printf '%P %s %T@\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
       # 前回の同期で D1 に入れた表の写し。最新のものを戻し、D1 の印と合うかは sync_d1 が確かめる（合わなければ D1 を読む）
       - uses: actions/cache/restore@v6
         with:
@@ -273,32 +207,12 @@ jobs:
             while read -r key; do
               [ "$key" = "$KEEP" ] || gh cache delete "$key" --repo "${{ github.repository }}" || true
             done
-      - id: build-after
-        if: ${{ !cancelled() }}
-        run: echo "files=$(find pipeline/.cache/objects/fiscal/ingestion pipeline/.cache/objects/project pipeline/.cache/project pipeline/.cache/source-page-text -type f -printf '%P %s %T@\n' 2>/dev/null | sort | sha256sum | cut -c1-64)" >> "$GITHUB_OUTPUT"
-      # 中身が変わった回（と、分けた cache がまだ無い回）だけ保存する。古いキーは保存の前に消す（新旧を同時に持つと repo の上限 10GB を超え、他の cache が追い出される）
-      - id: build-clear
-        if: ${{ !cancelled() && steps.build-restore.outcome == 'success' && (steps.build-after.outputs.files != steps.build-before.outputs.files || steps.build-restore.outputs.cache-matched-key == '') }}
+      # 使わなくなった cache（build の入力の pipeline-build・pipeline-cache、出典の pipeline-origins）を消す。どれも無くなったら、この step は外してよい
+      - if: ${{ !cancelled() && github.event_name == 'push' }}
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh cache list --repo "${{ github.repository }}" --key pipeline-build- --limit 100 --json key --jq '.[].key' |
-            while read -r key; do gh cache delete "$key" --repo "${{ github.repository }}" || true; done
-      - id: build-save
-        if: ${{ !cancelled() && steps.build-clear.outcome == 'success' }}
-        uses: actions/cache/save@v6
-        with:
-          path: |
-            pipeline/.cache/objects/fiscal/ingestion
-            pipeline/.cache/objects/project
-            pipeline/.cache/project
-            pipeline/.cache/source-page-text
-          key: pipeline-build-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-      # 分ける前の pipeline-cache（約4.4GB）を、分けた cache ができてから消す。全部消えたら、この step は外してよい
-      # 出典の cache（pipeline-origins）は push の回の store job が作るので、push の回だけ消す
-      - if: ${{ !cancelled() && github.event_name == 'push' && steps.build-restore.outcome == 'success' && (steps.build-save.outcome == 'success' || steps.build-restore.outputs.cache-matched-key != '') }}
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          gh cache list --repo "${{ github.repository }}" --key pipeline-cache- --limit 100 --json key --jq '.[].key' |
-            while read -r key; do gh cache delete "$key" --repo "${{ github.repository }}" || true; done
+          for prefix in pipeline-build- pipeline-cache- pipeline-origins-; do
+            gh cache list --repo "${{ github.repository }}" --key "$prefix" --limit 100 --json key --jq '.[].key' |
+              while read -r key; do gh cache delete "$key" --repo "${{ github.repository }}" || true; done
+          done

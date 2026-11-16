@@ -39,34 +39,10 @@ jobs:
           done
           exit 1
       - run: mise install conda:mupdf@1.28.6
-      # main で温めた cache を読むだけ。PR からは保存しない。build が読む小さいもの（sync-d1 の sync job が保存）と、変換し直しが読む出典（store job が保存）
-      - id: build-restore
-        uses: actions/cache/restore@v6
-        with:
-          path: |
-            pipeline/.cache/objects/fiscal/ingestion
-            pipeline/.cache/objects/project
-            pipeline/.cache/project
-            pipeline/.cache/source-page-text
-          key: pipeline-build-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-build-${{ hashFiles('mise.toml') }}-
-      # 分ける前の pipeline-cache から一度だけ戻す（分けた cache がまだ無い回）。全部消えたら外してよい
-      - if: steps.build-restore.outputs.cache-matched-key == ''
-        uses: actions/cache/restore@v6
-        with:
-          path: pipeline/.cache
-          key: pipeline-cache-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-cache-${{ hashFiles('mise.toml') }}-
-      # Actions の cache が無い回は、R2 の束（main の sync job が置く）から戻す。足りない表は build が1個ずつ取る
-      - if: steps.build-restore.outputs.cache-matched-key == ''
-        run: bun run --cwd pipeline ingestion:bundle restore
+      # build の入力は R2 の束（main の sync job が置く）から読む。足りない表は build が1個ずつ取る
+      - run: bun run --cwd pipeline ingestion:bundle restore
         env:
           CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-      - uses: actions/cache/restore@v6
-        with:
-          path: pipeline/.cache/objects/fiscal/source-selection
-          key: pipeline-origins-${{ hashFiles('mise.toml') }}-${{ github.run_id }}
-          restore-keys: pipeline-origins-${{ hashFiles('mise.toml') }}-
       # PDF から読んだ字と位置（変換し直しで一番重い）。main の store と refresh-check が温める。
       # 中身が増えたらこの PR の範囲に保存し、同じ PR への次の push はそこから読む
       - uses: actions/cache/restore@v6
