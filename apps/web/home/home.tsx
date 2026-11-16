@@ -23,8 +23,6 @@ export interface Featured {
   name: string
   path: string
   prefecture: string
-  /** 自治体の頁で選べる最新の年度 */
-  latestYear?: number
   vision?: string
   /** 自治体の頁で選べる年度のうち、事業評価を収録した最新の年度。札はその年度の事業のタブへ繋ぐ */
   evalYear?: number
@@ -213,7 +211,7 @@ function Dashboard({ c }: { c: Ctx }) {
             </p>
             {d.pop ? <p className="mt-2 text-sm opacity-80">1人あたり {perHeadText(v.total, d.pop)}</p> : null}
           </div>
-          <Link href={c.base} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
+          <Link href={c.town.path} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
             詳細を見る
             <ArrowRightIcon className="size-4" />
           </Link>
@@ -361,7 +359,7 @@ const checkItems = (c: Ctx): CheckItem[] => [
 
 /** まちを選ぶ前のホームで、緑の札の下に置く。他のまちを名前で探す欄と、見本のまち（事業評価か都市像のあるまち）を都市像と並べて開けるようにする。住んでいるまちは変えない */
 function FeaturedTowns({ featured, listed }: { featured: Featured[]; listed: boolean }) {
-  const items = featured.slice(0, 6).map((f) => ({ ...f, href: f.latestYear ? `${f.path}/${f.latestYear}` : f.path }))
+  const items = featured.slice(0, 6).map((f) => ({ ...f, href: f.path }))
   if (!items.length && !listed) return null
   return (
     <section className="mt-10" aria-labelledby="featured-towns">

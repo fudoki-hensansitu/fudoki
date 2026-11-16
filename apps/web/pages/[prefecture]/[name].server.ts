@@ -1,4 +1,4 @@
-// 市区町村の頁（/tokyo/nakano）と都道府県自体の年度の頁（/tokyo/2024）。都道府県の slug でない・名前が違えば 404。
+// 市区町村の頁（/tokyo/nakano）と、もとの都道府県自体の年度の頁（/tokyo/2024、/tokyo へ 301）。都道府県の slug でない・名前が違えば 404。
 // 会話の画面（/s/:id）も同じ形の URL なので、ここで受ける。Void は動的な経路を pattern の文字の順に当てるので、pages/s/[id] を置いても /:prefecture/:name が先に当たる
 import { defineHandler, defineHead } from 'void'
 import { jurisdictionHead, routeProps, type JurisdictionProps } from './_loader'

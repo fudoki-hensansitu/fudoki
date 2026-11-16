@@ -9,6 +9,4 @@ export type MapEntry = {
   kind: JurisdictionKind
   /** 個別ページの path（/tokyo/shinagawa） */
   path: string
-  /** 自治体の頁の最新の年度（決算より後の当初予算があればその年度）。頁へのリンクはこの年度の段を付ける */
-  latestYear?: number
 }
