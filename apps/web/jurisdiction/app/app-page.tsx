@@ -569,6 +569,12 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
           : '予算は、1年間に何にいくら使うかを、年度が始まる前に決めた計画です。議会の議決を経て決まります。このタブでは、年度の初めに決めた当初予算を扱います。'}
       </TabHead>
       {total ? <FieldsSection phase={phase} /> : null}
+      {total ? (
+        <div>
+          <h2 className="mb-2.5 text-[17px] font-semibold">お金の流れ</h2>
+          <p className="text-[15px] leading-[1.7] text-muted-foreground">歳出が、款から項・目へとどう分かれていくかを示しています。会計を選ぶと、その会計の流れに切り替わります。</p>
+        </div>
+      ) : null}
       {total ? <AccountCards accounts={accounts} account={account} setAccount={setAccount} /> : null}
       {picked ? (
         <Flow key={`${v.year}-${phase}-${account}`} flows={flows} total={picked} onRetry={flowFailed && !drills ? () => void router.refresh({ preserveState: true, preserveScroll: true }) : undefined} summary={summary} onMoku={(m) => select({ kind: 'moku', id: m.id, moku: m, phase, special: account !== GENERAL })} bare natural className="scroll-mt-16 @4xl:scroll-mt-16" />
