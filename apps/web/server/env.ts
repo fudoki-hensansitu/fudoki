@@ -23,6 +23,8 @@ export interface Env {
   AI?: unknown
   /** apps/api の内部の RPC（Service Binding・entrypoint Web）。web が api を読むのはこれだけ（server/fudoki-api.ts）。無ければ（手元の開発・試験）公開の api に繋ぐ */
   WEB?: import('./fudoki-api').WebRpc
+  /** 手元の開発で WEB が無いとき、公開の REST に付ける API キー（apps/web/.env に置く。本番では使わない） */
+  FUDOKI_API_KEY?: string
   /** apps/api の内部の RPC（entrypoint SourcePages）。出典の頁の文字を読む（server/source-pages.ts）。無ければ tool を出さない */
   SOURCES?: import('./source-pages').SourcePagesRpc
   CHAT_RATE_LIMIT?: RateLimiter

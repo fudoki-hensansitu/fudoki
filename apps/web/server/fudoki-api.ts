@@ -25,16 +25,20 @@ export type ApiCall = <N extends WebOpName>(name: N, input: WebOpInput<N>) => Pr
 
 let warned = false
 /** binding が無いとき（手元の開発・試験）だけ公開の REST に読み替える。本番で binding を落としたと気づけるよう、一度だけ警告を出す */
-export const fudokiApi = (env: Pick<Env, 'WEB'>): WebRpc => {
+export const fudokiApi = (env: Pick<Env, 'WEB' | 'FUDOKI_API_KEY'>): WebRpc => {
   if (env.WEB) return env.WEB
   if (!warned) {
     warned = true
     console.warn('WEB binding が無いので、公開の api（api.fudoki.dev）に読み替えます。手元の開発・試験のほかでは起きてはいけません')
   }
-  return restRpc((r) => fetch(r))
+  // 公開の REST は API キーが要る（auth.fudoki.dev で発行し、apps/web/.env の FUDOKI_API_KEY に置く）
+  return restRpc((r) => {
+    if (env.FUDOKI_API_KEY) r.headers.set('authorization', `Bearer ${env.FUDOKI_API_KEY}`)
+    return fetch(r)
+  })
 }
 
-export function apiCall(env: Pick<Env, 'WEB'>): ApiCall {
+export function apiCall(env: Pick<Env, 'WEB' | 'FUDOKI_API_KEY'>): ApiCall {
   const rpc = fudokiApi(env)
   return async (name, input) => {
     const r = await rpc.call(name, input)

@@ -29,7 +29,7 @@ export default defineConfig({
       // 検証に失敗した要求の IP ごとの上限。超えた IP は 60 秒 WorkOS を呼ばずに断る
       API_KEY_FAILURES: bindings.rateLimit({ namespace: '1001', simple: { limit: 10, period: 60 } }),
       // 利用者ごとの上限。拠点ごとの近似で数える
-      API_CALLER_LIMIT: bindings.rateLimit({ namespace: '1002', simple: { limit: 60, period: 60 } }),
+      API_CALLER_LIMIT: bindings.rateLimit({ namespace: '1004', simple: { limit: 60, period: 60 } }),
       API_CALLS: bindings.analyticsEngineDataset({ name: 'fudoki_api_calls' }),
     },
   },

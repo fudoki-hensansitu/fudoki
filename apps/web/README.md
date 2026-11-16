@@ -44,6 +44,7 @@ bun run build:web
 ### 手で設定するもの
 
 - Turnstile の widget を dashboard で作り（hostname は `fudoki.dev`）、site key を `void.config.ts` の `TURNSTILE_SITE_KEY` に書く（設定済み）。secret key は Worker の secret `TURNSTILE_SECRET_KEY` に置く（会話の token の署名の鍵もここから作る）
+- 手元の `bun run dev:web`（vite dev）は api の内部 RPC を持てないので公開の REST を読む。REST は API キーが要るので、[auth.fudoki.dev](https://auth.fudoki.dev) で発行したキーを `apps/web/.env` の `FUDOKI_API_KEY` に置く
 - 手元の `bun run dev:web`（vite dev）は `apps/web/.env` に `TURNSTILE_SECRET_KEY=1x0000000000000000000000000000000AA`（Cloudflare 公開の「常に通る」試験用の secret）を書く（`.env` は commit しない。Void は `.env` 以外の `.dev.vars`・`.env.example` などがあると build を止める）。site key は localhost / 127.0.0.1 のときだけ `server/site-key.ts` の `siteKey` が試験用の値に差し替える（本番の widget の hostname は `fudoki.dev`）
 - preview（`pr-<番号>.fudoki.dev`、Cloudflare Access で保護）は `void.config.ts` の `preview` の分岐の `worker.vars` で site key・secret を Cloudflare 公開の「常に通る」試験用の値に差し替える（AI エージェントが操作できる）。試験用の secret は action・hostname が合わないダミー値を返すので、`server/session.ts` はその secret のときだけ success のみを見る。本番は変えない
 
