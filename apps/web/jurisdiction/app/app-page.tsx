@@ -582,11 +582,10 @@ const filterTrigger = (on: boolean) => cn('inline-flex h-9 min-w-0 max-w-full it
 /** 事業の区分（新しく始める・やめた）。1つだけ選ぶ（引く年度の資料が違うので重ねられない）。既定は「すべての事業」。
  */
 function KindMenu({ v, filter, setFilter }: { v: YearView; filter: string; setFilter: (f: string) => void }) {
-  const shown = KINDS.filter(() => v.comparable)
+  const shown = v.comparable ? KINDS : []
   // 一覧の読み直しは transition で遅れて届くので、選んだ状態は手元に持ってすぐ出す
   const [value, setValue] = React.useState(filter)
   React.useEffect(() => setValue(filter), [filter])
-  if (!shown.length) return null
   const picked = KINDS.find((k) => k.id === value)
   return (
     <DropdownMenu>
@@ -681,8 +680,8 @@ function ProjectsTab({ filter, setFilter, fields, setFields }: { filter: string;
         <Input value={text} onChange={(e) => onText(e.target.value)} placeholder="事業名・担当の課で探す" className="h-9 rounded-full pl-9" aria-label="事業を探す" />
       </div>
       <div className="flex min-w-0 items-center gap-2">
-        {/* 新しく始める・やめたは残り（defer）が届いてから選べるようにする */}
-        <Full fallback={null}>{(v) => <KindMenu v={v} filter={filter} setFilter={setFilter} />}</Full>
+        {/* メニューは分野と同じくいつも出す。新しく始める・やめたは残り（defer）が届き、前の年度と比べられるときだけ選べる */}
+        <Full fallback={<KindMenu v={v} filter={filter} setFilter={setFilter} />}>{(v) => <KindMenu v={v} filter={filter} setFilter={setFilter} />}</Full>
         <FieldMenu v={v} fields={fields} setFields={setFields} />
       </div>
       {/* 事業の収録があるかは、事業のタブの頁なら loader が渡し、他のタブの頁（スマホで横に並ぶ事業のタブ）では残り（defer）で届く */}
