@@ -22,7 +22,7 @@ export const DETAIL_SEARCH_EXAMPLE = {
   page_size: 50,
 }
 
-const INPUT_HELP =
+export const INPUT_HELP =
   `Required: document_kind ("settlement" = executed amounts, "initial" = initial budget; never add the two) and fiscal_year {min, max} in Gregorian years (at most ${MAX_YEARS} years). ` +
   `where takes one condition per column, combined with AND: strings eq/not_eq (up to ${MAX_LIST} values, eq is OR), prefix/suffix/contains, is_null; integers eq/not_eq/min/max/is_null; numbers min/max/is_null; booleans eq. ` +
   `There is no cross-column OR or NOT; run separate queries. Years plus condition values are limited to ${MAX_BINDS} in total. Column meanings are in the output schema descriptions.`

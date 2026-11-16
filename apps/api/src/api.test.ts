@@ -301,12 +301,14 @@ describe('MCP', () => {
       'get_expenditure_line',
       'get_project',
       'get_revenue',
+      'get_revenue_line',
       'list_jurisdictions',
       'render_expenditure_view',
       'search_evaluation_sheets',
       'search_expenditure_details',
       'search_expenditure_subjects',
       'search_projects',
+      'search_revenue_subjects',
     ])
     const res = await call('search_expenditure_subjects', { ...base, where: { level: { eq: ['目'] } }, page_size: 1 })
     const out = JSON.parse(res.body.result.content[0].text)
@@ -533,12 +535,14 @@ describe('MCP 2026-07-28', () => {
       'get_expenditure_line',
       'get_project',
       'get_revenue',
+      'get_revenue_line',
       'list_jurisdictions',
       'render_expenditure_view',
       'search_evaluation_sheets',
       'search_expenditure_details',
       'search_expenditure_subjects',
       'search_projects',
+      'search_revenue_subjects',
     ])
     const res = await modern('tools/call', { name: 'search_expenditure_subjects', arguments: valid }, { 'Mcp-Name': 'search_expenditure_subjects' })
     const body = await rpcBody(res)
