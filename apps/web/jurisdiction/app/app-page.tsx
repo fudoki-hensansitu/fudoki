@@ -7,7 +7,6 @@ import {
   BankIcon,
   BasketballIcon,
   BriefcaseIcon,
-  BuildingsIcon,
   CalendarBlankIcon,
   CaretDownIcon,
   CaretLeftIcon,
@@ -884,7 +883,6 @@ function ProjectPageBody({ id }: { id: string }) {
       <ProjectTitle p={p} mark={p.ended != null ? 'stop' : p.started === year ? 'new' : null} />
       <div className="flex flex-wrap gap-1.5">
         <Chip><FieldIcon id={frame.id} />{frame.name}</Chip>
-        {p.dept ? <Chip><BuildingsIcon />{p.dept}</Chip> : null}
       </div>
       <DetailSection icon={CalendarBlankIcon} title="年度ごと">
         <div className="grid max-w-xl grid-cols-[auto_1fr_1fr] text-[15px]">
@@ -944,7 +942,6 @@ function ProjectBody({ p }: { p: ProjectFull }) {
       <ProjectTitle p={p} mark={ended ? 'stop' : v.isNew(p) ? 'new' : null} />
       <div className="flex flex-wrap gap-1.5">
         <Chip><FieldIcon id={field} />{fieldName(v, field)}</Chip>
-        {p.dept ? <Chip><BuildingsIcon />{p.dept}</Chip> : null}
       </div>
       <div className="mt-5">
         {ended ? (
