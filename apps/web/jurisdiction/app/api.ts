@@ -177,8 +177,8 @@ export const toSheet = (s: SheetResult['sheets'][number], origins: SheetResult['
   page: s.page,
 })
 
-const searchSheets = async (call: ApiCall, year: number, where: Record<string, unknown>, pageSize: number, token?: string, projectIds?: string[]) => {
-  const r = await call('search_evaluation_sheets', { fiscal_year: { min: year, max: year }, where, order_by: [{ column: 'settled_yen', desc: true }], page_size: pageSize, ...(projectIds ? { project_ids: projectIds } : {}), ...(token ? { page_token: token } : {}) } as SheetBody)
+const searchSheets = async (call: ApiCall, year: number | { min: number; max: number }, where: Record<string, unknown>, pageSize: number, token?: string, projectIds?: string[]) => {
+  const r = await call('search_evaluation_sheets', { fiscal_year: typeof year === 'number' ? { min: year, max: year } : year, where, order_by: [{ column: 'settled_yen', desc: true }], page_size: pageSize, ...(projectIds ? { project_ids: projectIds } : {}), ...(token ? { page_token: token } : {}) } as SheetBody)
   return { rows: r.sheets.map((s) => toSheet(s, r.origins)), next: r.next_page_token ?? null }
 }
 
@@ -195,13 +195,15 @@ export async function readSheetCounts(call: ApiCall, q: SheetQuery): Promise<She
   return r.counts.map((c) => ({ code: c.outlook?.code ?? null, label: c.outlook?.label ?? null, grade: c.outlook?.grade ?? null, n: c.size }))
 }
 
+/** 評価シートの検索で一度に指せる年度の数（API の上限） */
+const MAX_SHEET_YEARS = 5
 /** 事業を ID で引くときの1回の数（API の project_ids の上限） */
 const PROJECT_CHUNK = 200
 
 /** 事業と中の事業につないだ評価シート（サーバー） */
-async function readSheetsOfProjects(call: ApiCall, year: number, projectIds: string[]): Promise<Sheet[]> {
+async function readSheetsOfProjects(call: ApiCall, years: { min: number; max: number }, projectIds: string[]): Promise<Sheet[]> {
   const chunks = Array.from({ length: Math.ceil(projectIds.length / PROJECT_CHUNK) }, (_, i) => projectIds.slice(i * PROJECT_CHUNK, (i + 1) * PROJECT_CHUNK))
-  const pages = await Promise.all(chunks.map((c) => searchSheets(call, year, { account_name: { eq: [ACCOUNT] } }, 1000, undefined, c)))
+  const pages = await Promise.all(chunks.map((c) => searchSheets(call, years, { account_name: { eq: [ACCOUNT] } }, 1000, undefined, c)))
   const seen = new Set<string>()
   return pages.flatMap((p) => p.rows).filter((s) => !seen.has(s.id) && seen.add(s.id))
 }
@@ -220,7 +222,7 @@ export type ProjectFull = {
   kids: { name: string; yen: number | null }[]
   /** 分野を引く科目（開いた年度、無ければ最新の年度の行） */
   subject: string | null
-  /** 開いた年度の、この事業と中の事業につないだ評価シート */
+  /** この事業と中の事業につないだ評価シート（年度を指して読めばその年度、指さなければ事業の年度すべて） */
   sheets: Sheet[]
   /** 開いた年度と資料（年度を指さずに読むと事業の最新の年度） */
   year?: number
@@ -237,7 +239,11 @@ export async function readProjectFull(call: ApiCall, id: string, at?: { year: nu
   const year = at?.year ?? latest?.fiscal_year ?? new Date().getFullYear()
   const kind: Kind = at?.kind ?? (latest?.settled_yen != null ? 'settlement' : 'initial')
   const kids = await searchYears(call, { fiscal_year: { min: year, max: year }, where: { parent_project_id: { eq: [id] } }, order_by: [{ column: kind === 'initial' ? 'budget_yen' : 'settled_yen', desc: true }], page_size: 1000 } as SearchBody)
-  const sheets = await readSheetsOfProjects(call, year, [id, ...kids.project_years.map((k) => k.project_id)])
+  // 事業の頁（at なし）は、事業の年度すべての評価シートを引く（評価は評価した事業を行った年度に付くので、最新の年度には無いことが多い）。
+  // 検索は5年度までなので、新しい方から5年度
+  const first = p.years[0]?.fiscal_year ?? year
+  const span = at ? { min: year, max: year } : { min: Math.max(first, year - (MAX_SHEET_YEARS - 1)), max: year }
+  const sheets = await readSheetsOfProjects(call, span, [id, ...kids.project_years.map((k) => k.project_id)])
   const here = p.years.find((y) => y.fiscal_year === year) ?? latest
   const subject = here ? (kind === 'initial' ? here.initial_expenditure_subject_id : here.settlement_expenditure_subject_id) ?? here.initial_expenditure_subject_id ?? here.settlement_expenditure_subject_id : null
   // 事業の頁は開いた頁の年度の科目の表を持たないので、分野は科目の COFOG を引いて決める

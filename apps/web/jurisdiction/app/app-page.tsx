@@ -898,14 +898,14 @@ function ProjectPageBody({ id }: { id: string }) {
         </div>
       </DetailSection>
       {p.sheets.length ? (
-        <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${r(year)}年度の事業`}>
+        <DetailSection icon={ClipboardTextIcon} title="事業評価" count={`${p.sheets.length}件`}>
           <div className="grid gap-2 @3xl:grid-cols-2">
             {p.sheets.map((s) => {
               const dir = directionOf(s)
               return (
                 <button key={s.id} type="button" onClick={() => select({ kind: 'sheet', id: s.id, sheet: s })} className="flex w-full items-start gap-2.5 rounded-xl bg-card p-3 text-left hover:bg-secondary">
                   {dir ? <Mark kind={dir.icon} /> : null}
-                  <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">{[s.grade ? `評価 ${s.grade} ${GRADES.find((g) => g[0] === s.grade)?.[1] ?? ''}` : null, dir?.label ?? s.dir].filter(Boolean).join(' · ')}</span></span>
+                  <span><span className="block text-[15px] font-semibold">{s.name}</span><span className="text-xs text-muted-foreground">{[`${r(s.fy)}年度の事業`, s.grade ? `評価 ${s.grade} ${GRADES.find((g) => g[0] === s.grade)?.[1] ?? ''}` : null, dir?.label ?? s.dir].filter(Boolean).join(' · ')}</span></span>
                 </button>
               )
             })}
