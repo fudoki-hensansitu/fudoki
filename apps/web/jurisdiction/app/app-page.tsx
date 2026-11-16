@@ -354,7 +354,6 @@ const cofogOf = (fields: string[]): { cofog?: string[] } => {
 
 
 /** 件数（数えるのを打ち切ったら「以上」） */
-const countOf = (p: Pick<ListPage, 'total' | 'capped'>) => `${p.total.toLocaleString('ja-JP')}件${p.capped ? '以上' : ''}`
 
 // ---------- 画面 ----------
 type TabKey = PageTab
@@ -662,10 +661,10 @@ function ProjectsTab({ filter, setFilter, fields, setFields, q, setQ }: { filter
 }
 
 // ---------- 詳細 ----------
-function DetailSection({ icon: I, title, count, children }: { icon: Icon; title: string; count?: React.ReactNode; children: React.ReactNode }) {
+function DetailSection({ icon: I, title, children }: { icon: Icon; title: string; children: React.ReactNode }) {
   return (
     <section className="mt-6">
-      <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}{count != null ? <span className="font-normal text-muted-foreground">{count}</span> : null}</h3>
+      <h3 className="mb-2 flex items-center gap-1.5 text-sm font-semibold"><I className="size-4 text-muted-foreground" aria-hidden="true" />{title}</h3>
       {children}
     </section>
   )
