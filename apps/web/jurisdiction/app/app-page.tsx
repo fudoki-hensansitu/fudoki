@@ -182,8 +182,9 @@ function SectionHead({ title, sub, children }: { title: string; sub?: string; ch
 /** タブの年度の切り替え。広い画面は年度を並べ、狭い画面はメニュー1つ */
 function TabYear() {
   const { years, v, setYear, yearHref } = useApp()
+  // 頁の上に貼り付くタブの帯は、この切り替えが帯の下に隠れたら同じ切り替えを帯に出す（data-tab-year で探す）
   return (
-    <div className="shrink-0">
+    <div data-tab-year className="shrink-0">
       <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
       <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>
     </div>
@@ -443,7 +444,7 @@ type Go = (t: TabKey, opt?: { filter?: string; field?: string; grade?: string })
 
 
 /** 分野の行。名前・金額・棒・割合を1行に並べる。割合は前景色で、緑は棒だけに置く */
-function FieldRow({ f, i, max, onClick }: { f: YearView['fields'][number]; i: number; max: number; onClick: () => void }) {
+function FieldRow({ f, i, max, onClick, grow = true }: { f: YearView['fields'][number]; i: number; max: number; onClick: () => void; /** 棒を伸ばすアニメーションを出す */ grow?: boolean }) {
   const { v } = useApp()
   const pct = (f.yen / v.total) * 100
   return (
@@ -453,7 +454,7 @@ function FieldRow({ f, i, max, onClick }: { f: YearView['fields'][number]; i: nu
         <span className="block text-xs text-muted-foreground"><Amt yen={f.yen} /></span>
       </span>
       <span className="col-span-2 col-start-1 row-start-2 block h-1.5 overflow-hidden rounded-full bg-secondary sm:col-span-1 sm:col-start-auto sm:row-start-auto">
-        <span className="app-grow block h-full rounded-full bg-primary" style={{ width: `${Math.max(1, (f.yen / max) * 100)}%`, animationDelay: `${i * 30}ms` }} />
+        <span className={cn(grow && 'app-grow', 'block h-full rounded-full bg-primary')} style={{ width: `${Math.max(1, (f.yen / max) * 100)}%`, animationDelay: `${i * 30}ms` }} />
       </span>
       <span className="col-start-2 row-start-1 text-right text-[17px] tabular-nums sm:col-start-auto sm:row-start-auto">
         {pct.toFixed(1)}
@@ -598,9 +599,19 @@ function MoneyTab({ phase }: { phase: 'initial' | 'settlement' }) {
 }
 
 /** 何に使う？／何に使った？（歳出を分野ごとに）。予算・決算のタブのお金の流れの上に置く。棒を押すと分野の頁へ */
+// タブへ移ると、すぐ描いた頁を loader が読み終えた頁で作り直すので、同じ棒を少し前に伸ばしたなら作り直した頁では伸ばさない
+const grownAt = new Map<string, number>()
 function FieldsSection({ phase }: { phase: 'initial' | 'settlement' }) {
-  const { v, openField } = useApp()
+  const { d, v, openField } = useApp()
   const max = Math.max(...v.fields.map((x) => x.yen))
+  const [grow] = React.useState(() => {
+    // サーバーの描画は頁ごとに1回なので覚えない（覚えると別の人の頁と食い違う）
+    if (typeof window === 'undefined') return true
+    const key = `${d.code}:${v.year}:${phase}`
+    const last = grownAt.get(key)
+    grownAt.set(key, Date.now())
+    return last === undefined || Date.now() - last > 5000
+  })
   return (
     <section className="mb-5">
       <h2 className="mb-2.5 text-[17px] font-semibold">
@@ -609,7 +620,7 @@ function FieldsSection({ phase }: { phase: 'initial' | 'settlement' }) {
       </h2>
       <p className="mb-2.5 text-[15px] leading-[1.7] text-muted-foreground">税金を主な財源にする基本の会計（一般会計）の歳出を、使い道の分野ごとに分けています。</p>      {/* 棒の長さは一番大きい分野を満たんにし、割合の数字は合計に対する比のまま出す */}
       <div className="grid gap-x-8 @3xl:grid-flow-col @3xl:grid-cols-2 @3xl:grid-rows-(--rows)" style={{ '--rows': `repeat(${Math.ceil(v.fields.length / 2)}, auto)` } as React.CSSProperties}>
-        {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={max} onClick={() => openField(f.id)} />)}
+        {v.fields.map((f, i) => <FieldRow key={f.id} f={f} i={i} max={max} grow={grow} onClick={() => openField(f.id)} />)}
       </div>
     </section>
   )
@@ -1456,6 +1467,30 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     const el = tabsTop.current
     if (el && el.getBoundingClientRect().top < 0) el.scrollIntoView({ block: 'start' })
   }
+  // タブの頭の年度の切り替えがタブの帯の下に隠れたら、帯の中に同じ切り替えを出して画面に残す。
+  // スマホのタブは Carousel（overflow: hidden）の中にあり sticky が効かないので、帯の側に出す
+  const stickyBar = React.useRef<HTMLDivElement>(null)
+  const [yearStuck, setYearStuck] = React.useState(false)
+  React.useEffect(() => {
+    let frame = 0
+    const check = () => {
+      cancelAnimationFrame(frame)
+      frame = requestAnimationFrame(() => {
+        const bar = stickyBar.current?.getBoundingClientRect().bottom ?? 0
+        // 見えているタブの切り替えだけ（隠れたタブは幅が 0、スマホの隣のタブは画面の横の外）
+        const heads = [...document.querySelectorAll<HTMLElement>('[data-tab-year]')].map((el) => el.getBoundingClientRect()).filter((r) => r.width > 0 && r.right > 0 && r.left < innerWidth)
+        setYearStuck(heads.length > 0 && heads.every((r) => r.bottom <= bar))
+      })
+    }
+    check()
+    addEventListener('scroll', check, { passive: true })
+    addEventListener('resize', check)
+    return () => {
+      cancelAnimationFrame(frame)
+      removeEventListener('scroll', check)
+      removeEventListener('resize', check)
+    }
+  }, [tab, year, projectPage, fieldPage])
   const go: Go = (t, opt = {}) => {
     if (opt.filter) setFilter(opt.filter)
     if (opt.grade) setGrade(opt.grade)
@@ -1531,7 +1566,7 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
         <Tabs value={tab} onValueChange={(t) => changeTab(t as TabKey)} className="gap-0">
           <div ref={tabsTop} aria-hidden="true" />
           {/* 区切りの線は画面の端から端まで引く（50cqw は外側の幅の半分、50% は中身の幅の半分。px で文字の位置は中身に揃える） */}
-          <div className="sticky top-0 z-20 mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] bg-background">
+          <div ref={stickyBar} className="sticky top-0 z-20 mx-[calc(50%-50cqw)] px-[calc(50cqw-50%)] bg-background">
             {/* 下線を区切りの線に重ねて、線が二重に見えないようにする */}
             <Separator className="absolute inset-x-0 bottom-0 data-horizontal:w-auto" />
             {/* スクロールしたら上にタブを残す。下に Separator を引いて中身と分ける */}
@@ -1551,6 +1586,18 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
             </TabsList>
             )}
             </div>
+            {/* 帯の高さを変えると中身がずれて出し入れが揺れるので、帯の下に重ねて出す（幅は帯と同じく画面の端から端まで） */}
+            {yearStuck && v ? (
+              <div className="relative h-0">
+              <div className="absolute inset-x-0 top-0 mx-[calc(50%-50cqw)] flex h-12 items-center justify-between gap-3 border-b bg-background px-[calc(50cqw-50%)]">
+                <span className="truncate text-[15px] font-semibold">{projectPage || fieldPage ? '' : TABS.find((t) => t.key === tab)?.label}</span>
+                <div className="shrink-0">
+                  <div className="md:hidden"><YearMenu years={years} current={v.year} onChange={setYear} /></div>
+                  <div className="max-md:hidden"><YearPicker years={years} current={v.year} onChange={setYear} hrefOf={yearHref} /></div>
+                </div>
+              </div>
+              </div>
+            ) : null}
           </div>
           {v ? (
             <AppContext.Provider value={{ d, page: data, years, v, res, select, selected, go, openField, flow, flowFailed, pickAccount, setsu, extras: extrasProp, prevFieldSubjects, setYear, yearHref }}>
