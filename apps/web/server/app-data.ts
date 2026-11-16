@@ -3,7 +3,7 @@
 // 事業の続き・詳細は画面が web の /api から読む（jurisdiction/app/api.ts）。評価シートと事業のつながりは api のつなぎの表を引くだけで、新しく判断しない
 import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { listQuery, withExtras, type Kan, type YearData, type YearExtras, type Snapshot } from '../jurisdiction/app/data'
-import { listKey, readListPage, readSheetCounts, toSheet } from '../jurisdiction/app/api'
+import { listKey, readListPage, toSheet } from '../jurisdiction/app/api'
 import type { Env } from './env'
 import { apiCall, type WebOpInput } from './fudoki-api'
 import { loadAccountTotals, shownSettlementYears, type CatalogEntry } from './jurisdiction'
@@ -157,7 +157,6 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
     ...(prev ? { prev: { year: prev.year, kind: prev.kind } } : {}),
     // 会計の札は款項目と同じ資料のものだけ渡す（事業のタブで当初予算の事業を並べたときは、決算で読んだ札を捨てる）
     ...(accountTotals && subjects.kind === docKind ? { accounts: accountTotals } : {}),
-    sheetCounts: [],
     ...(allPage ? { hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage } } : { lists: {} }),
     pending: true,
   }
@@ -173,12 +172,11 @@ export async function loadYearExtras(env: Env, code: string, year: number, kind:
   const at = { code, year, years: { [year]: { kind } as YearData }, prev }
   const allQuery = listQuery(at, 'all')
   const newQuery = prev ? listQuery(at, 'new') : undefined
-  const [sheetCounts, allPage, newPage] = await Promise.all([
-    readSheetCounts(apiCall(env), { code, year, kind }),
+  const [allPage, newPage] = await Promise.all([
     readListPage(apiCall(env), allQuery),
     newQuery ? readListPage(apiCall(env), newQuery) : undefined,
   ])
-  return { sheetCounts, hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage, ...(newQuery && newPage ? { [listKey(newQuery)]: newPage } : {}) } }
+  return { hasProjects: allPage.total > 0, lists: { [listKey(allQuery)]: allPage, ...(newQuery && newPage ? { [listKey(newQuery)]: newPage } : {}) } }
 }
 
 /** 前の年度の分野ごとの末端の科目。やめた事業を分野で絞るときだけ、画面が読む */

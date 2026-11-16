@@ -1,7 +1,7 @@
 // 自治体の頁が事業を読む口。サーバーは api の内部の RPC（server/fudoki-api.ts の ApiCall）で事業の検索・事業を読み、ブラウザは web の /api（routes/api/projects）を通して同じものを読む。
 // ブラウザは api.fudoki.dev を直接は呼ばない（ADR 0044）。一覧は頁ごとに読む（1頁目はサーバーが描き、続きは末尾が見えたときにブラウザが取る）。分野・目で絞るときは科目の ID で絞る
 import type { ApiCall, WebOpInput, WebOpOutput } from '../../server/fudoki-api'
-import type { DirectionCode, Sheet } from './data'
+import type { Sheet } from './data'
 import type { Setsu } from '../types'
 
 const ACCOUNT = '一般会計'
@@ -30,6 +30,8 @@ export type ProjRow = {
   ended: number | null
   /** 当初予算・決算の事業の行 */
   details: string[]
+  /** その年度の事業評価の A〜D（評価シートがつながっていれば。一覧の頁を読むときに引く） */
+  grade?: Sheet['grade']
 }
 
 /** 一覧の条件。filter が ended なら前の年度に終えた事業を、前の年度の額で並べる */
@@ -118,7 +120,18 @@ export async function readListPage(call: ApiCall, q: ListQuery, token?: string):
   if (q.subjects && !q.subjects.length) return { rows: [], total: 0, capped: false, next: null }
   const { body, kind } = bodyOf(q, token ? NEXT_PAGE : FIRST_PAGE, token)
   const r = await searchYears(call, body)
-  return { rows: rowsOf(r, kind), total: r.total_size, capped: r.total_size_capped, next: r.next_page_token ?? null }
+  const rows = await withGrades(call, rowsOf(r, kind))
+  return { rows, total: r.total_size, capped: r.total_size_capped, next: r.next_page_token ?? null }
+}
+
+/** 頁の事業に、その年度の評価シートの A〜D を付ける。評価シートを読めなくても一覧は出す */
+async function withGrades(call: ApiCall, rows: ProjRow[]): Promise<ProjRow[]> {
+  const fy = rows[0]?.fy
+  if (fy === undefined) return rows
+  const sheets = await readSheetsOfProjects(call, { min: fy, max: fy }, rows.map((p) => p.id)).catch(() => [])
+  const grade = new Map<string, Sheet['grade']>()
+  for (const s of sheets) for (const id of s.projects) if (s.grade && !grade.has(id)) grade.set(id, s.grade)
+  return rows.map((p) => (grade.has(p.id) ? { ...p, grade: grade.get(p.id) } : p))
 }
 
 // ---------- 評価シート ----------
@@ -126,38 +139,6 @@ export async function readListPage(call: ApiCall, q: ListQuery, token?: string):
 
 type SheetBody = WebOpInput<'search_evaluation_sheets'>
 type SheetResult = WebOpOutput<'search_evaluation_sheets'>
-
-/** 評価シートの一覧の条件。評価した事業を行った年度（year）の、一般会計のシート */
-export type SheetQuery = {
-  code: string
-  year: number
-  /** 頁が見せている資料。分野の科目はこの資料の目 */
-  kind: Kind
-  /** 分野で絞るときの科目（kind の資料の目）の ID */
-  subjects?: string[]
-  /** kind の資料の科目の COFOG のコード（cofog_code）で絞る */
-  cofog?: string[]
-  /** 事業名で絞る */
-  q?: string
-  /** 方向性の区分で絞る（A〜D の札は、数えた区分の中からその札の区分を渡す） */
-  codes?: DirectionCode[]
-}
-/** 件数は持たない（A〜D の札の数は readSheetCounts） */
-export type SheetPage = { rows: Sheet[]; next: string | null }
-/** 方向性の区分ごとのシートの数。区分の当たらないシートは code が null の1行 */
-export type SheetCount = { code: DirectionCode | null; label: string | null; grade: Sheet['grade']; n: number }
-
-export const sheetKey = (q: SheetQuery) => JSON.stringify(['sheets', q.code, q.year, q.kind, q.subjects ?? null, q.cofog ?? null, q.q?.trim() || null, q.codes ?? null])
-export const sheetCountKey = (q: SheetQuery) => JSON.stringify(['sheet-counts', q.code, q.year, q.kind, q.subjects ?? null, q.cofog ?? null, q.q?.trim() || null])
-
-const sheetWhere = (q: SheetQuery): Record<string, unknown> => ({
-  jurisdiction_code: { eq: [q.code] },
-  account_name: { eq: [ACCOUNT] },
-  ...(q.subjects ? { [`${q.kind}_expenditure_subject_id`]: { eq: q.subjects } } : {}),
-  ...(q.cofog ? { [`${q.kind}_cofog_code`]: { eq: q.cofog } } : {}),
-  ...(q.q?.trim() ? { name: { contains: fitSearch(q.q.trim()) } } : {}),
-  ...(q.codes ? { direction_code: { eq: q.codes } } : {}),
-})
 
 export const toSheet = (s: SheetResult['sheets'][number], origins: SheetResult['origins']): Sheet => ({
   id: s.sheet_id,
@@ -180,19 +161,6 @@ export const toSheet = (s: SheetResult['sheets'][number], origins: SheetResult['
 const searchSheets = async (call: ApiCall, year: number | { min: number; max: number }, where: Record<string, unknown>, pageSize: number, token?: string, projectIds?: string[]) => {
   const r = await call('search_evaluation_sheets', { fiscal_year: typeof year === 'number' ? { min: year, max: year } : year, where, order_by: [{ column: 'settled_yen', desc: true }], page_size: pageSize, ...(projectIds ? { project_ids: projectIds } : {}), ...(token ? { page_token: token } : {}) } as SheetBody)
   return { rows: r.sheets.map((s) => toSheet(s, r.origins)), next: r.next_page_token ?? null }
-}
-
-/** 評価シートの一覧の1頁（サーバー）。決算の額の多い順。絞る科目・区分が空なら空 */
-export async function readSheetPage(call: ApiCall, q: SheetQuery, token?: string): Promise<SheetPage> {
-  if ((q.subjects && !q.subjects.length) || (q.codes && !q.codes.length)) return { rows: [], next: null }
-  return searchSheets(call, q.year, sheetWhere(q), token ? NEXT_PAGE : FIRST_PAGE, token)
-}
-
-/** 条件に当たる評価シートの、方向性の区分ごとの数（サーバー）。区分では絞らない */
-export async function readSheetCounts(call: ApiCall, q: SheetQuery): Promise<SheetCount[]> {
-  if (q.subjects && !q.subjects.length) return []
-  const r = await call('count_evaluation_sheets', { fiscal_year: { min: q.year, max: q.year }, where: sheetWhere({ ...q, codes: undefined }) } as WebOpInput<'count_evaluation_sheets'>)
-  return r.counts.map((c) => ({ code: c.outlook?.code ?? null, label: c.outlook?.label ?? null, grade: c.outlook?.grade ?? null, n: c.size }))
 }
 
 /** 評価シートの検索で一度に指せる年度の数（API の上限） */
@@ -330,14 +298,6 @@ async function webApi<T>(path: string, init?: RequestInit): Promise<T> {
   if (!r.ok) throw new Error(`${path} ${r.status}`)
   return (await r.json()) as T
 }
-
-/** 評価シートの一覧の1頁 */
-export const sheetPage = (q: SheetQuery, token?: string): Promise<SheetPage> =>
-  webApi('/api/sheets', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ query: q, ...(token ? { token } : {}) }) })
-
-/** 評価シートの方向性の区分ごとの数 */
-export const sheetCounts = (q: SheetQuery): Promise<SheetCount[]> =>
-  webApi('/api/sheets/counts', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ query: q }) })
 
 /** 一覧の1頁 */
 export const listPage = (q: ListQuery, token?: string): Promise<ListPage> =>

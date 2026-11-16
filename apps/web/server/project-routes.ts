@@ -1,7 +1,6 @@
 // 自治体の頁の事業・評価シートをブラウザが読む口（/api/projects・/api/sheets）。サーバーが api の内部の RPC で読み（jurisdiction/app/api.ts の read*）、ブラウザは api.fudoki.dev を直接は呼ばない（ADR 0044）。
 // 誰でも呼べるので、IP ごとの流量と引数の形の検査で守る。細かい値の検査は api の操作の schema に任せ、その 400 をそのまま返す
-import { readListPage, readProjectFull, readProjectOfId, readSheetCounts, readSheetPage, type Kind, type ListQuery, type SheetQuery } from '../jurisdiction/app/api'
-import { DIRECTION_ICONS } from '../jurisdiction/app/data'
+import { readListPage, readProjectFull, readProjectOfId, type Kind, type ListQuery } from '../jurisdiction/app/api'
 import type { Env, RateLimiter } from './env'
 import { apiCall, FudokiApiError } from './fudoki-api'
 import { clientIp, errorResponse, HttpError, json, rateLimit, readJson } from './http'
@@ -51,27 +50,6 @@ function listQueryOf(v: unknown): ListQuery {
   }
 }
 
-const CODES = Object.keys(DIRECTION_ICONS)
-
-/** body の評価シートの一覧の条件。形だけを確かめ、知らない鍵は落とす */
-function sheetQueryOf(v: unknown): SheetQuery {
-  const q = (v ?? {}) as Record<string, unknown>
-  if (typeof q !== 'object' || typeof q.code !== 'string' || !/^\d{6}$/.test(q.code)) throw invalid('自治体コードの形が違います')
-  if (q.subjects !== undefined && !(Array.isArray(q.subjects) && q.subjects.length <= 100 && q.subjects.every((s) => typeof s === 'string' && ID.test(s)))) throw invalid('科目の ID の形が違います')
-  if (q.cofog !== undefined && !isCofogList(q.cofog)) throw invalid('COFOG のコードの形が違います')
-  if (q.q !== undefined && !(typeof q.q === 'string' && q.q.length <= MAX_TEXT)) throw invalid('探す語の形が違います')
-  if (q.codes !== undefined && !(Array.isArray(q.codes) && q.codes.every((c) => CODES.includes(c)))) throw invalid('方向性の区分の形が違います')
-  return {
-    code: q.code,
-    year: yearOf(q.year),
-    kind: kindOf(q.kind),
-    ...(q.subjects !== undefined ? { subjects: q.subjects as string[] } : {}),
-    ...(q.cofog !== undefined ? { cofog: q.cofog as string[] } : {}),
-    ...(q.q !== undefined ? { q: q.q as string } : {}),
-    ...(q.codes !== undefined ? { codes: q.codes as SheetQuery['codes'] } : {}),
-  }
-}
-
 async function respond(env: Env, request: Request, run: () => Promise<unknown>): Promise<Response> {
   try {
     await rateLimit(env.VIEW_RATE_LIMIT as RateLimiter | undefined, clientIp(request), VIEW_RATE_LIMIT.period)
@@ -110,23 +88,5 @@ export function projectResponse(env: Env, request: Request, id: string): Promise
     const p = new URL(request.url).searchParams
     const year = p.get('year')
     return readProjectFull(apiCall(env), id, year === null ? undefined : { year: yearOf(year), kind: kindOf(p.get('kind')) })
-  })
-}
-
-/** POST /api/sheets: 評価シートの一覧の1頁（body は { query, token? }） */
-export function sheetListResponse(env: Env, request: Request): Promise<Response> {
-  return respond(env, request, async () => {
-    const body = (await readJson(request, MAX_BODY_BYTES)) as Record<string, unknown> | null
-    const token = body?.token
-    if (token !== undefined && !(typeof token === 'string' && token.length <= MAX_TEXT)) throw invalid('token の形が違います')
-    return readSheetPage(apiCall(env), sheetQueryOf(body?.query), token)
-  })
-}
-
-/** POST /api/sheets/counts: 評価シートの方向性の区分ごとの数（body は { query }） */
-export function sheetCountResponse(env: Env, request: Request): Promise<Response> {
-  return respond(env, request, async () => {
-    const body = (await readJson(request, MAX_BODY_BYTES)) as Record<string, unknown> | null
-    return readSheetCounts(apiCall(env), sheetQueryOf(body?.query))
   })
 }
