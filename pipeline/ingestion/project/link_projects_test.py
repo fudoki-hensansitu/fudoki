@@ -67,6 +67,19 @@ class BuildYearsTest(unittest.TestCase):
         self.assertEqual(ids['a2'], ids['s2'])
         self.assertNotEqual(ids['a1'], ids['a2'])
 
+    def test_数を除いて結ぶ子は同じ親の中だけで結ぶ(self):
+        # 親は名前どおりに結ばれる（決算は逆の順に印字）。子は数を除くと同じ名前になるが、親が違う子どうしは結ばない
+        ids = {d: p for d, p, _ in link([
+            row('a', 2025, ['施設10人']), row('a1', 2025, ['施設10人', '委託費100円'], 'a'),
+            row('b', 2025, ['施設20人']), row('b1', 2025, ['施設20人', '委託費200円'], 'b'),
+            (*row('t', 2025, ['施設20人'], kind='settlement')[:-1], 0), (*row('t1', 2025, ['施設20人', '委託費300円'], 't', 'settlement')[:-1], 1),
+            (*row('s', 2025, ['施設10人'], kind='settlement')[:-1], 2), (*row('s1', 2025, ['施設10人', '委託費400円'], 's', 'settlement')[:-1], 3),
+        ])}
+        self.assertEqual(ids['a'], ids['s'])
+        self.assertEqual(ids['b'], ids['t'])
+        self.assertEqual(ids['a1'], ids['s1'])
+        self.assertEqual(ids['b1'], ids['t1'])
+
 
 if __name__ == '__main__':
     unittest.main()

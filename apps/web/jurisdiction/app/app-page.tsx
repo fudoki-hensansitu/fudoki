@@ -681,6 +681,9 @@ function ProjectTitle({ p, mark }: { p: Pick<ProjectFull, 'name'>; mark: 'new' |
   )
 }
 
+/** 事業の頁を開いたときに history.state に持つもの */
+type ProjectHistory = { project: string; depth?: number; fromList?: boolean }
+
 const projectLatestKey = (id: string) => `project-latest:${id}`
 
 /** 頁の左上の戻るボタン */
@@ -905,15 +908,19 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
   // 事業の頁。URL を /projects/<project_id>（年度の段なし）にして、戻るで前の頁へ帰る。中身は事業の ID で読む
   const [projectPage, setProjectPage] = React.useState<string | null>(initialProject ?? null)
   const openProject = (id: string) => {
-    // depth は事業の頁を続けて開いた数。事業のタブへ戻るときに、その数だけ履歴を戻る
-    const state = history.state as { project?: string; depth?: number } | null
-    history.pushState({ ...state, project: id, depth: (state?.project ? (state.depth ?? 1) : 0) + 1 }, '', `${basePath()}/${projectSegment(id)}`)
+    // depth は事業の頁を続けて開いた数、fromList はその始まりが事業のタブだったか。事業のタブへ戻るときに、始まりが事業のタブならその数だけ履歴を戻る
+    const state = history.state as ProjectHistory | null
+    const next: ProjectHistory = state?.project
+      ? { project: id, depth: (state.depth ?? 1) + 1, fromList: !!state.fromList }
+      : { project: id, depth: 1, fromList: tab === 'projects' && !projectPage }
+    history.pushState({ ...state, ...next }, '', `${basePath()}/${projectSegment(id)}`)
     React.startTransition(() => setProjectPage(id))
     window.scrollTo({ top: 0 })
   }
   const closeProject = () => {
-    const state = history.state as { project?: string; depth?: number } | null
-    if (state?.project) return history.go(-(state.depth ?? 1))
+    // 事業のタブから開いたなら履歴を戻る（探す語・絞り込み・スクロールが戻る）。他のタブや事業の頁を直に開いたときは事業のタブへ移る
+    const state = history.state as ProjectHistory | null
+    if (state?.project && state.fromList) return history.go(-(state.depth ?? 1))
     setProjectPage(null)
     setTabState('projects')
     void router.visit(pageHref(year, 'projects'), { preserveState: true })
