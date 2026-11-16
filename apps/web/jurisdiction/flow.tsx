@@ -560,7 +560,7 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
                 {flows.length > 0 ? (
                   <MoneyFlow
                     heads={['歳入', '一般会計', '歳出']}
-                    label="歳入の款から一般会計を通って歳出の款への流れ"
+                    name="歳入の款から一般会計を通って歳出の款への流れ"
                     incoming={revenue.filter((f) => f.kan.yen > 0).map((f) => ({ id: f.kan.id, label: f.kan.name, yen: f.kan.yen, tone: 'in' as const, base: revenueTotal, onClick: () => select(R - 2 - revenue.indexOf(f)) }))}
                     outgoing={[
                       ...flows.filter((f) => f.kan.yen > 0).map((f) => ({ id: f.kan.id, label: f.kan.name, yen: f.kan.yen, tone: 'out' as const, base: year.yen, onClick: () => select(R + D + 1 + flows.indexOf(f)) })),
