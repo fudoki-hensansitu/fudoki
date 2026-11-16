@@ -15,6 +15,8 @@ const BAND_ROOM = 160
 const HEAD = 20
 /** 棒の真上に割合を出すために、棒の上に空ける高さ */
 const LEAD = 13
+/** 棒と名前の間。棒の上の割合（「<0.1%」まで）が細い棒で名前に掛からない幅を空ける */
+const GAP = 14
 
 const amountText = (yen: number, missing?: boolean) => (missing ? '金額未記載' : formatYen(yen))
 
@@ -139,7 +141,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
                 <rect x={0} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
                 <rect x={x0} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x0 + BAR / 2} y={node.y - 3} textAnchor="middle" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(flow.kan.yen, flow.kan.amountMissing)}</text>
-                <text x={x0 - 8} y={node.y + Math.max(node.height, 2) / 2} dominantBaseline="central" textAnchor="end" className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label}</text>
+                <text x={x0 - GAP} y={node.y + Math.max(node.height, 2) / 2} dominantBaseline="central" textAnchor="end" className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label}</text>
               </AmountTip>
             )
           })}
@@ -151,8 +153,8 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: '�
                 <rect x={x1} y={node.top} width={width - x1} height={node.size} className="fill-transparent" />
                 <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x1 + BAR / 2} y={node.y - 3} textAnchor="middle" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(kou.yen, kou.amountMissing)}</text>
-                <text x={x1 + BAR + 8} y={node.y + Math.max(node.height, 2) / 2} dominantBaseline="central" className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
-                  {cut(kou.name, narrow ? 12 : Math.max(10, Math.floor((width - x1 - BAR - 8 - 8) / 12)))}
+                <text x={x1 + BAR + GAP} y={node.y + Math.max(node.height, 2) / 2} dominantBaseline="central" className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
+                  {cut(kou.name, narrow ? 12 : Math.max(10, Math.floor((width - x1 - BAR - GAP - 8) / 12)))}
                 </text>
                 </g>
               </AmountTip>
@@ -203,18 +205,18 @@ export function OverviewSkeleton({ total: yen, height = 520, levels = { kan: '�
                 <g key={i}>
                   <rect x={x0 + BAR / 2 - 11} y={node.y - 3 - (line - 2)} width={22} height={line - 2} rx={(line - 2) / 2} className="fill-muted" />
                   <rect x={x0} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-muted" />
-                  <rect x={x0 - 8 - w} y={mid - line / 2} width={w} height={line} rx={line / 2} className="fill-muted" />
+                  <rect x={x0 - GAP - w} y={mid - line / 2} width={w} height={line} rx={line / 2} className="fill-muted" />
                 </g>
               )
             })}
             {kouNodes.map((node, i) => {
-              const w = Math.min((narrow ? 0.8 : 1.4) * LABEL_WIDTHS[(i + 3) % LABEL_WIDTHS.length]!, width - x1 - BAR - 8 - 36)
+              const w = Math.min((narrow ? 0.8 : 1.4) * LABEL_WIDTHS[(i + 3) % LABEL_WIDTHS.length]!, width - x1 - BAR - GAP - 36)
               const mid = node.y + Math.max(node.height, 2) / 2
               return (
                 <g key={i}>
                   <rect x={x1 + BAR / 2 - 11} y={node.y - 3 - (line - 2)} width={22} height={line - 2} rx={(line - 2) / 2} className="fill-muted" />
                   <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-muted" />
-                  <rect x={x1 + BAR + 8} y={mid - line / 2} width={Math.max(w, 24)} height={line} rx={line / 2} className="fill-muted" />
+                  <rect x={x1 + BAR + GAP} y={mid - line / 2} width={Math.max(w, 24)} height={line} rx={line / 2} className="fill-muted" />
                 </g>
               )
             })}
