@@ -48,7 +48,7 @@ import { Separator } from '@/components/ui/separator'
 import { Drawer, DrawerContent, DrawerTitle } from '@/components/ui/drawer'
 import { Sheet, SheetContent, SheetTitle } from '@/components/ui/sheet'
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
-import { Combobox, ComboboxContent, ComboboxGroup, ComboboxItem, ComboboxLabel, ComboboxList, ComboboxSeparator, ComboboxTrigger } from '@/components/ui/combobox'
+import { Combobox, ComboboxContent, ComboboxItem, ComboboxList, ComboboxTrigger } from '@/components/ui/combobox'
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table'
 import { createColumnHelper, tableFeatures, useTable } from '@tanstack/react-table'
 import { Empty, EmptyContent, EmptyHeader, EmptyMedia, EmptyTitle } from '@/components/ui/empty'
@@ -328,7 +328,8 @@ function ProjectNameCell({ p }: { p: Proj }) {
       {/* 押せることとフォーカスは事業名のボタンが持つ（行を押しても同じく詳細を開く） */}
       <button type="button" className="rounded-sm text-left outline-none focus-visible:ring-2 focus-visible:ring-primary">{p.name}</button>
       {ended || v.isNew(p) ? <span className="ml-1.5 inline-flex align-middle">{ended ? <Mark kind="stop" label="やめた事業" className="size-5" /> : <Mark kind="new" label="新しく始める事業" className="size-5" />}</span> : null}
-      <span className="block @3xl:hidden">{[p.dept, fieldName(v, v.fieldOf(p))].filter(Boolean).join(' · ')}</span>
+      {/* 狭い幅で事業名の下に添える担当の課・分野は、事業名より控えめな色にする */}
+      <span className="block text-muted-foreground @3xl:hidden">{[p.dept, fieldName(v, v.fieldOf(p))].filter(Boolean).join(' · ')}</span>
     </span>
   )
 }
@@ -640,45 +641,41 @@ const KINDS = [
   { id: 'ended', label: 'やめた', icon: <StopIcon className="size-4 text-primary" /> },
   { id: 'eval', label: '評価した', icon: <ClipboardTextIcon className="size-4" /> },
 ] as const
-/** 事業の絞り込み。区分（新しく始める・やめた・評価した）と分野を1つの combobox の中で選ぶ。
- * 分野はいくつでも選べ、区分は1つだけ（新しく始める・やめたは引く年度の資料が違うので重ねられない）。選んだ別の区分は外す */
-function FilterBox({ v, kinds, filter, setFilter, fields, setFields }: { v: YearView; /** 区分を出す（残りの defer が届いてから） */ kinds?: boolean; filter: string; setFilter: (f: string) => void; fields: string[]; setFields: (f: string[]) => void }) {
-  const shown = kinds ? KINDS.filter((k) => (k.id === 'eval' ? !!v.sheetTotal : v.comparable)) : []
-  // 一覧の読み直しは transition で遅れて届くので、選んだ状態は手元に持ってすぐ出す（続けて押しても前の選択を落とさない）
-  const outer = [...(filter !== 'all' ? [filter] : []), ...fields]
-  const [value, setValue] = React.useState(outer)
-  React.useEffect(() => setValue(outer), [outer.join()])
-  const onChange = (raw: string[]) => {
-    const picked0 = raw.filter((x) => KINDS.some((k) => k.id === x))
-    const cur = value.find((x) => KINDS.some((k) => k.id === x)) ?? 'all'
-    const kind0 = picked0.find((x) => x !== cur) ?? (picked0.includes(cur) ? cur : 'all')
-    const next = [...(kind0 !== 'all' ? [kind0] : []), ...raw.filter((x) => !KINDS.some((k) => k.id === x))]
-    setValue(next)
-    if (kind0 !== filter) setFilter(kind0)
-    const f = next.filter((x) => !KINDS.some((k) => k.id === x))
-    if (f.join() !== fields.join()) setFields(f)
-  }
-  const names = value.map((x) => KINDS.find((k) => k.id === x)?.label ?? fieldName(v, x))
+const pillTrigger = (on: boolean) => cn('inline-flex h-9 min-w-0 max-w-[60%] items-center gap-1.5 rounded-full border px-3.5 text-sm transition-colors hover:bg-card sm:max-w-xs', on ? 'border-primary bg-primary text-primary-foreground hover:bg-primary [&_svg]:text-primary-foreground' : 'border-input bg-background')
+/** 事業の区分（新しく始める・やめた・評価した）の combobox。1つだけ選べる（新しく始める・やめたは引く年度の資料が違うので重ねられない）。選び直すと外れる */
+function KindBox({ v, filter, setFilter }: { v: YearView; filter: string; setFilter: (f: string) => void }) {
+  const shown = KINDS.filter((k) => (k.id === 'eval' ? !!v.sheetTotal : v.comparable))
+  // 一覧の読み直しは transition で遅れて届くので、選んだ状態は手元に持ってすぐ出す
+  const [value, setValue] = React.useState<string | null>(filter === 'all' ? null : filter)
+  React.useEffect(() => setValue(filter === 'all' ? null : filter), [filter])
+  if (!shown.length) return null
+  const picked = KINDS.find((k) => k.id === value)
   return (
-    <Combobox multiple value={value} onValueChange={(x) => onChange(x as string[])} items={[...shown.map((k) => k.id), ...v.fields.map((f) => f.id)]}>
-      <ComboboxTrigger aria-label="絞り込み" className={cn('inline-flex h-9 max-w-[55%] shrink-0 items-center gap-1.5 rounded-full border px-3.5 text-sm transition-colors hover:bg-card sm:max-w-xs', value.length ? 'border-primary bg-primary text-primary-foreground hover:bg-primary [&_svg]:text-primary-foreground' : 'border-input bg-background')}>
-        <span className="min-w-0 truncate">{names.length ? names.join('・') : '絞り込み'}</span>
+    <Combobox value={value} onValueChange={(x) => { const next = (x as string | null) ?? null; setValue(next); setFilter(next ?? 'all') }} items={shown.map((k) => k.id)}>
+      <ComboboxTrigger aria-label="事業の区分で絞る" className={pillTrigger(!!picked)}>
+        <span className="min-w-0 truncate">{picked?.label ?? 'すべての事業'}</span>
       </ComboboxTrigger>
-      <ComboboxContent align="end" className="w-64">
+      <ComboboxContent align="start" className="w-52">
         <ComboboxList>
-          {shown.length ? (
-            <>
-              <ComboboxGroup>
-                <ComboboxLabel>事業</ComboboxLabel>
-                {shown.map((k) => <ComboboxItem key={k.id} value={k.id}>{k.icon}{k.label}</ComboboxItem>)}
-              </ComboboxGroup>
-              <ComboboxSeparator />
-            </>
-          ) : null}
-          <ComboboxGroup>
-            <ComboboxLabel>分野</ComboboxLabel>
-            {v.fields.map((f) => <ComboboxItem key={f.id} value={f.id}><FieldIcon id={f.id} />{f.name}</ComboboxItem>)}
-          </ComboboxGroup>
+          {shown.map((k) => <ComboboxItem key={k.id} value={k.id}>{k.icon}{k.label}</ComboboxItem>)}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
+  )
+}
+/** 分野の combobox。いくつでも選べる */
+function FieldBox({ v, fields, setFields }: { v: YearView; fields: string[]; setFields: (f: string[]) => void }) {
+  // 続けて押しても前の選択を落とさないよう、選んだ状態は手元に持つ
+  const [value, setValue] = React.useState(fields)
+  React.useEffect(() => setValue(fields), [fields.join()])
+  return (
+    <Combobox multiple value={value} onValueChange={(x) => { setValue(x as string[]); setFields(x as string[]) }} items={v.fields.map((f) => f.id)}>
+      <ComboboxTrigger aria-label="分野で絞る" className={pillTrigger(value.length > 0)}>
+        <span className="min-w-0 truncate">{value.length ? value.map((x) => fieldName(v, x)).join('・') : 'すべての分野'}</span>
+      </ComboboxTrigger>
+      <ComboboxContent align="start" className="w-60">
+        <ComboboxList>
+          {v.fields.map((f) => <ComboboxItem key={f.id} value={f.id}><FieldIcon id={f.id} />{f.name}</ComboboxItem>)}
         </ComboboxList>
       </ComboboxContent>
     </Combobox>
@@ -747,16 +744,15 @@ function ProjectsTab({ filter, setFilter, fields, setFields, grade, setGrade }: 
     <div className="flex flex-col gap-2">
       <TabHead title="事業">事業は、自治体がお金を使って行う一つ一つの仕事です。予算書・決算書に載っている事業を、使うお金の多い順に並べています。</TabHead>
       {lead}
-      {/* 絞り込みは1行。検索と、区分・分野をまとめて選ぶ combobox */}
-      <div className="flex items-center gap-2">
-        <div className="relative min-w-0 flex-1">
-          <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
-          <Input value={text} onChange={(e) => onText(e.target.value)} placeholder="事業名・担当の課で探す" className="h-9 rounded-full pl-9" aria-label="事業を探す" />
-        </div>
-        {/* 新しく始める・やめた・評価したは残り（defer）が届いてから選べるようにする。届くまでは分野だけ */}
-        <Full fallback={<FilterBox v={v} filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} />}>
-          {(v) => <FilterBox v={v} kinds filter={filter} setFilter={setFilter} fields={fields} setFields={setFields} />}
-        </Full>
+      {/* 検索の行と、絞り込み（事業の区分・分野の combobox）の行を分ける */}
+      <div className="relative">
+        <MagnifyingGlassIcon className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground" aria-hidden="true" />
+        <Input value={text} onChange={(e) => onText(e.target.value)} placeholder="事業名・担当の課で探す" className="h-9 rounded-full pl-9" aria-label="事業を探す" />
+      </div>
+      <div className="flex min-w-0 items-center gap-2">
+        {/* 新しく始める・やめた・評価したは残り（defer）が届いてから選べるようにする */}
+        <Full fallback={null}>{(v) => <KindBox v={v} filter={filter} setFilter={setFilter} />}</Full>
+        <FieldBox v={v} fields={fields} setFields={setFields} />
       </div>
       {filter === 'eval' ? (
         <Full fallback={<RowsSkeleton />}>{(v) => <EvalList v={v} grade={grade} setGrade={setGrade} fields={fields} q={q} leave={() => setFilter('all')} />}</Full>
