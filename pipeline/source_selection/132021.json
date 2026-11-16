@@ -24,6 +24,20 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 17,
+                      "end": 17
+                    },
+                    {
+                      "start": 19,
+                      "end": 78
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -50,6 +64,16 @@
               "scope": [
                 {
                   "account": "競輪事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 15,
+                      "end": 20
+                    }
+                  ]
+                },
+                {
+                  "account": "競輪事業特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -63,6 +87,16 @@
                     {
                       "start": 21,
                       "end": 34
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 53,
+                      "end": 58
                     }
                   ]
                 },
@@ -86,6 +120,16 @@
                 },
                 {
                   "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 89,
+                      "end": 90
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -104,6 +148,16 @@
                 },
                 {
                   "account": "介護保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 111,
+                      "end": 120
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -117,6 +171,16 @@
                     {
                       "start": 121,
                       "end": 140
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 161,
+                      "end": 166
                     }
                   ]
                 },
@@ -215,6 +279,20 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 14,
+                      "end": 19
+                    },
+                    {
+                      "start": 26,
+                      "end": 81
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -224,6 +302,20 @@
                     {
                       "start": 82,
                       "end": 443
+                    }
+                  ]
+                },
+                {
+                  "account": "競輪事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 446,
+                      "end": 447
+                    },
+                    {
+                      "start": 452,
+                      "end": 457
                     }
                   ]
                 },
@@ -243,6 +335,20 @@
                 },
                 {
                   "account": "国民健康保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 472,
+                      "end": 473
+                    },
+                    {
+                      "start": 480,
+                      "end": 485
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -252,6 +358,20 @@
                     {
                       "start": 486,
                       "end": 497
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 500,
+                      "end": 501
+                    },
+                    {
+                      "start": 506,
+                      "end": 507
                     }
                   ]
                 },
@@ -271,6 +391,20 @@
                 },
                 {
                   "account": "介護保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 514,
+                      "end": 517
+                    },
+                    {
+                      "start": 524,
+                      "end": 535
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -280,6 +414,20 @@
                     {
                       "start": 536,
                       "end": 555
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 558,
+                      "end": 559
+                    },
+                    {
+                      "start": 564,
+                      "end": 569
                     }
                   ]
                 },
@@ -523,6 +671,20 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 17,
+                      "end": 17
+                    },
+                    {
+                      "start": 19,
+                      "end": 76
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -549,6 +711,16 @@
               "scope": [
                 {
                   "account": "競輪事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 15,
+                      "end": 20
+                    }
+                  ]
+                },
+                {
+                  "account": "競輪事業特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -562,6 +734,16 @@
                     {
                       "start": 21,
                       "end": 34
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 53,
+                      "end": 58
                     }
                   ]
                 },
@@ -585,6 +767,16 @@
                 },
                 {
                   "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 89,
+                      "end": 90
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -603,6 +795,16 @@
                 },
                 {
                   "account": "介護保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 111,
+                      "end": 120
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -616,6 +818,16 @@
                     {
                       "start": 121,
                       "end": 140
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 161,
+                      "end": 166
                     }
                   ]
                 },
@@ -905,6 +1117,20 @@
               "scope": [
                 {
                   "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 22,
+                      "end": 22
+                    },
+                    {
+                      "start": 24,
+                      "end": 79
+                    }
+                  ]
+                },
+                {
+                  "account": "一般会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -931,6 +1157,16 @@
               "scope": [
                 {
                   "account": "競輪事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 18,
+                      "end": 23
+                    }
+                  ]
+                },
+                {
+                  "account": "競輪事業特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -944,6 +1180,16 @@
                     {
                       "start": 24,
                       "end": 39
+                    }
+                  ]
+                },
+                {
+                  "account": "国民健康保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 58,
+                      "end": 65
                     }
                   ]
                 },
@@ -967,6 +1213,16 @@
                 },
                 {
                   "account": "駐車場事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 98,
+                      "end": 99
+                    }
+                  ]
+                },
+                {
+                  "account": "駐車場事業特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -985,6 +1241,16 @@
                 },
                 {
                   "account": "介護保険事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 120,
+                      "end": 129
+                    }
+                  ]
+                },
+                {
+                  "account": "介護保険事業特別会計",
                   "direction": "expenditure",
                   "pages": [
                     {
@@ -998,6 +1264,16 @@
                     {
                       "start": 130,
                       "end": 149
+                    }
+                  ]
+                },
+                {
+                  "account": "後期高齢者医療事業特別会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 170,
+                      "end": 175
                     }
                   ]
                 },
