@@ -1,0 +1,241 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132098",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "bc81d4ddd0bdb97198d93761c2e40232674c9b1c4e4ffc90dd2e0ec0ab7517f5"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "bc81d4ddd0bdb97198d93761c2e40232674c9b1c4e4ffc90dd2e0ec0ab7517f5"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-insurance-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "bc81d4ddd0bdb97198d93761c2e40232674c9b1c4e4ffc90dd2e0ec0ab7517f5"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業会計",
+        "table_id": "long-term-care-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-revenue"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "bc81d4ddd0bdb97198d93761c2e40232674c9b1c4e4ffc90dd2e0ec0ab7517f5"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療事業会計",
+        "table_id": "elderly-medical-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "bc81d4ddd0bdb97198d93761c2e40232674c9b1c4e4ffc90dd2e0ec0ab7517f5"
+        }
+      ],
+      "options": {
+        "account": "鶴川駅南土地区画整理事業会計",
+        "table_id": "land-readjustment-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節ごとの還付未済額などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-revenue"
+        }
+      ]
+    }
+  ]
+}
