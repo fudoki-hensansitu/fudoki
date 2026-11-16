@@ -37,6 +37,13 @@ class LinkPreviousTest(unittest.TestCase):
         self.assertEqual(ids['a1'], ids['b1'])
         self.assertEqual(ids['a2'], ids['b2'])
 
+    def test_番号で見分ける事業は数を除いて結ばない(self):
+        ids = self.ids([
+            row('a', 2024, ['学校改築費']), row('a1', 2024, ['学校改築費', '区立第1小学校改築事業'], 'a'),
+            row('b', 2025, ['学校改築費']), row('b1', 2025, ['学校改築費', '区立第2小学校改築事業'], 'b'),
+        ])
+        self.assertNotEqual(ids['a1'], ids['b1'])
+
 
 if __name__ == '__main__':
     unittest.main()
