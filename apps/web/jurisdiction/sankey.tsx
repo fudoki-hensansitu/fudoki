@@ -86,7 +86,7 @@ function useWidth(ref: React.RefObject<HTMLElement | null>) {
 const pick = (fn: () => void) => ({
   role: 'button',
   tabIndex: 0,
-  className: 'cursor-pointer outline-none [&:hover_text]:underline [&:focus-visible_rect]:fill-ring',
+  className: 'cursor-pointer outline-none [&:hover_text[data-name]]:underline [&:focus-visible_rect]:fill-ring',
   onClick: fn,
   onKeyDown: (e: React.KeyboardEvent) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); fn() } },
 })
@@ -142,7 +142,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: 'æ¬
                 <rect x={0} y={node.top} width={x0 + BAR} height={node.size} className="fill-transparent" />
                 <rect x={x0} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x0 + BAR / 2} y={node.y - 3} textAnchor="middle" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(flow.kan.yen, flow.kan.amountMissing)}</text>
-                <text x={x0 - GAP} y={node.y + Math.max(node.height, 2) / 2} dominantBaseline="central" textAnchor="end" className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label}</text>
+                <text x={x0 - GAP} y={node.y + Math.max(node.height, 2) / 2} dy="0.35em" data-name="" textAnchor="end" className="fill-foreground" fontSize={narrow ? 10.5 : 13}>{label}</text>
               </AmountTip>
             )
           })}
@@ -154,7 +154,7 @@ export function Overview({ flows, total: base, height = 520, levels = { kan: 'æ¬
                 <rect x={x1} y={node.top} width={width - x1} height={node.size} className="fill-transparent" />
                 <rect x={x1} y={node.y} width={BAR} height={Math.max(node.height, 2)} rx={2} className="fill-primary" />
                 <text x={x1 + BAR / 2} y={node.y - 3} textAnchor="middle" className="fill-primary font-semibold tabular-nums" fontSize={narrow ? 10 : 11}>{pct(kou.yen, kou.amountMissing)}</text>
-                <text x={x1 + BAR + GAP} y={node.y + Math.max(node.height, 2) / 2} dominantBaseline="central" className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
+                <text x={x1 + BAR + GAP} y={node.y + Math.max(node.height, 2) / 2} dy="0.35em" data-name="" className="fill-foreground" fontSize={narrow ? 10.5 : 12}>
                   {cut(kou.name, Math.max(6, Math.floor((width - x1 - BAR - GAP - 8) / (narrow ? 10.5 : 12))))}
                 </text>
                 </g>
