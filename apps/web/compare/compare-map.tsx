@@ -85,12 +85,36 @@ function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; 
   )
 }
 
-/** 凡例。濃淡の帯の両端に最小・最多のまちを置き（押すとそのまちを選ぶ）、選んでいるまちが帯のどこにいるかを縦の線で示す */
+/** 凡例。濃淡の帯の両端に最小・最多のまちを置き（押すとそのまちを選ぶ）、選んでいるまちが帯のどこにいるかを縦の線で示す。
+ * 帯はスライダーで、押したまま左右に動かすと線が指に付いてきて、いちばん近い値のまちを選ぶ。離すと線はそのまちの位置に収まる */
 function Legend({ map, q, scale, selected, onPick }: { map: CompareMap; q: Question; scale: Scale | null; selected?: string | null; onPick?: (code: string) => void }) {
   const { top, bottom } = extremes(map.towns, q.slug)
   const sel = map.towns.find((t) => t.code === selected)
   const v = sel?.values[q.slug]
-  const at = scale && v != null ? scale.pos(v) : null
+  const [drag, setDrag] = React.useState<number | null>(null)
+  const band = React.useRef<HTMLSpanElement>(null)
+  // 値のあるまちを小さい順に、帯の上の位置と並べる
+  const ranked = React.useMemo(
+    () => (scale ? map.towns.filter((t) => t.values[q.slug] != null).map((t) => ({ t, at: scale.pos(t.values[q.slug]!) })).sort((x, y) => x.at - y.at) : []),
+    [map, q.slug, scale],
+  )
+  const at = drag ?? (scale && v != null ? scale.pos(v) : null)
+  const follow = (clientX: number) => {
+    const r = band.current?.getBoundingClientRect()
+    if (!r || !ranked.length) return
+    const x = Math.min(1, Math.max(0, (clientX - r.left) / r.width))
+    setDrag(x)
+    const near = ranked.reduce((a, b) => (Math.abs(b.at - x) < Math.abs(a.at - x) ? b : a))
+    if (near.t.code !== selected) onPick?.(near.t.code)
+  }
+  const index = ranked.findIndex((r) => r.t.code === selected)
+  const onKey = (e: React.KeyboardEvent) => {
+    const to = e.key === 'ArrowRight' || e.key === 'ArrowUp' ? index + 1 : e.key === 'ArrowLeft' || e.key === 'ArrowDown' ? index - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? ranked.length - 1 : null
+    if (to == null) return
+    e.preventDefault()
+    const r = ranked[Math.min(ranked.length - 1, Math.max(0, to))]
+    if (r) onPick?.(r.t.code)
+  }
   const end = (t: MapTown | undefined, label: string) =>
     t ? (
       <button type="button" onClick={() => onPick?.(t.code)} className="flex items-baseline gap-1.5 rounded-sm text-left transition-colors hover:text-foreground">
@@ -104,11 +128,34 @@ function Legend({ map, q, scale, selected, onPick }: { map: CompareMap; q: Quest
       {scale ? (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           {end(bottom, '最小')}
-          <span className="relative flex gap-0.5">
-            {at != null ? (
-              <span aria-hidden="true" className="absolute -top-1 -bottom-1 w-0.5 -translate-x-1/2 rounded-full bg-foreground transition-[left] duration-300 ease-out motion-reduce:transition-none" style={{ left: `${at * 100}%` }} />
-            ) : null}
-            {Array.from({ length: STEPS }, (_, i) => <span key={i} className="h-2.5 w-7 rounded-[2px]" style={{ background: fillOf(i) }} />)}
+          <span
+            role="slider"
+            tabIndex={0}
+            aria-label={`${q.short}でまちを選ぶ`}
+            aria-valuemin={0}
+            aria-valuemax={Math.max(0, ranked.length - 1)}
+            aria-valuenow={Math.max(0, index)}
+            aria-valuetext={sel ? `${sel.name} ${plain(v ?? null, q)}` : undefined}
+            onKeyDown={onKey}
+            onPointerDown={(e) => {
+              e.currentTarget.setPointerCapture(e.pointerId)
+              follow(e.clientX)
+            }}
+            onPointerMove={(e) => drag != null && follow(e.clientX)}
+            onPointerUp={() => setDrag(null)}
+            onPointerCancel={() => setDrag(null)}
+            className="cursor-ew-resize touch-none rounded-sm py-2 outline-none select-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            <span ref={band} className="relative flex gap-0.5">
+              {at != null ? (
+                <span
+                  aria-hidden="true"
+                  className={cn('absolute -top-1.5 -bottom-1.5 w-1 -translate-x-1/2 rounded-full bg-foreground motion-reduce:transition-none', drag == null && 'transition-[left] duration-300 ease-out')}
+                  style={{ left: `${at * 100}%` }}
+                />
+              ) : null}
+              {Array.from({ length: STEPS }, (_, i) => <span key={i} className="h-2.5 w-10 rounded-[2px] sm:w-12" style={{ background: fillOf(i) }} />)}
+            </span>
           </span>
           {end(top, '最多')}
         </div>
