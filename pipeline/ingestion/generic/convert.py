@@ -238,6 +238,7 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
             if band.kind == 'label' and RATIO_HEADER.search(''.join(band.header)) and band.x0 - band.offset < band.x1 - band.offset:
                 regions.append({'kind': '数量表', 'reason': '比率の欄（見出しが割合・率）。金額の欄ではない。',
                                 'pages': [[band.page, band.page]], 'x_range': [band.x0 - band.offset, band.x1 - band.offset]})
+    regions += joined_columns(regions)
     regions += [{'kind': '本文', 'reason': '表の一部でない欄（設定で読まないと宣言した列。施策番号など）。金額ではない。',
                  'pages': [[band.page, band.page]], 'x_range': [band.x0 - band.offset, band.x1 - band.offset]}
                 for logical in logicals for band in logical.bands if band.ignored]
@@ -287,6 +288,28 @@ def excluded_regions(built, logicals, codes, observed) -> list[dict]:
     regions += [{'kind': '総括', 'reason': '合計の行。款の和には入れない統制値。見開きでは見出しの語が反対の頁にある。',
                  'page': note['page'], 'bbox': list(note['box'])} for note in totals]
     return regions
+
+
+def joined_columns(regions: list[dict]) -> list[dict]:
+    """A declared column that inner rules cut into several bands (清瀬市の歳入の説明: the boxes of 調定見込額 and
+    収入歩合 drawn in it, its amounts set across their rules), joined back into one x range per run of side-by-side
+    bands of the same kind and reason: a word that straddles an inner rule is the column's too (a straddling word
+    stays in scope for each band alone)."""
+    by_page = defaultdict(list)
+    for region in regions:
+        if 'x_range' in region and len(region.get('pages', [])) == 1 and region['pages'][0][0] == region['pages'][0][1]:
+            by_page[(region['pages'][0][0], region['kind'], region['reason'])].append(region['x_range'])
+    joined = []
+    for (page, kind, reason), ranges in by_page.items():
+        runs: list[list[float]] = []
+        for left, right in sorted(ranges):
+            if runs and left - runs[-1][1] <= .5:
+                runs[-1][1] = max(runs[-1][1], right)
+            else:
+                runs.append([left, right])
+        joined += [{'kind': kind, 'reason': reason, 'pages': [[page, page]], 'x_range': run}
+                   for run in runs if sum(1 for r in ranges if run[0] <= r[0] and r[1] <= run[1]) > 1]
+    return joined
 
 
 def funding_words(observed) -> list[tuple]:

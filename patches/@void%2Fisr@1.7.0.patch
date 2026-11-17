@@ -1,5 +1,5 @@
 diff --git a/dist/core.mjs b/dist/core.mjs
-index 348ec4a142275a6feb17d1d105722bf121b1bfdb..c630dd783d8b1ece9f34437e5513e11970e7ac29 100644
+index ba9adf78dda68f09b0a0021f73a74ad3155aeb72..600e514345c5314693c9d4d85ed06c30e38eaac5 100644
 --- a/dist/core.mjs
 +++ b/dist/core.mjs
 @@ -149,7 +149,11 @@ function acceptsEventStream(request) {
