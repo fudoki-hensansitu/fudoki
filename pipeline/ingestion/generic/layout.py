@@ -499,6 +499,9 @@ def page_bands(page: Page, spread: dict | None = None,
             used.add(index)
             cells[left, right, upper, lower].append(word)
         header_cells = sorted(((key, normalize(reading(ws))) for key, ws in cells.items()), key=lambda c: c[0][2])
+        if document_quirk('unruled_stacked_headings') is not None:  # (cells at one rule stack as printed, top first)
+            tops = {key: min(w.y0 for w in ws) for key, ws in cells.items()}
+            header_cells = sorted(header_cells, key=lambda c: (c[0][2], tops[c[0]]))
         if staircase:
             levels = (header or {})['staircase']
             header_cells = level_cells(header_cells, edges, levels if isinstance(levels, str) else '款項目')
