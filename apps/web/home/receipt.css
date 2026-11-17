@@ -10,7 +10,8 @@
 /* 紙の影。紙は下端を mask で切るので、影は外側の箱に drop-shadow で付ける */
 .rc-print {
   margin-inline: auto;
-  width: min(440px, calc(100% - 40px));
+  /* three.js で描けたら、差し出し口の幅（machine3d.ts の --rm-paper）に合わせる */
+  width: var(--rm-paper, min(440px, calc(100% - 40px)));
   filter: drop-shadow(0 1px 1px rgba(43, 39, 35, 0.12)) drop-shadow(0 8px 16px rgba(43, 39, 35, 0.1));
 }
 .rc-paper {

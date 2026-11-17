@@ -1,5 +1,5 @@
 // ホームのうちのまちの札の下に置く、レシートプリンタ。形は Blender で組んだ model（public/home/receipt-machine.glb、組み方は brand/receipt_machine.py）。
-// model の原点は差し出し口の中心（紙が出てくる点）で、差し出し口の幅は紙の最大幅（SLOT_W）と同じ。DOM の紙（.rc-print）の幅に差し出し口が合うよう一様に拡大縮小し、
+// model の原点は差し出し口の中心（紙が出てくる点）で、差し出し口の幅は紙の最大幅（SLOT_W）と同じ。筐体が置き場の幅に収まるよう一様に拡大縮小し、DOM の紙（.rc-print）の幅を差し出し口に合わせ、
 // 原点を置き場（stage）の下端の中央に置く。置き場の高さは差し出し口より上に見える分で、ここが決める。紙は置き場のすぐ下から DOM で伸びる。
 // 正射影で、群れ（rig）を手前へ θ 倒して天板を見せる。動き（現れる・紙を送る）は AnimationClip で持ち、AnimationMixer で進める。
 // 動いている間だけ毎フレーム描き、止まっているときは大きさが変わったときだけ描く
@@ -184,8 +184,9 @@ export async function mountPrinter(stage: HTMLElement, lost: () => void): Promis
     const w = stage.clientWidth
     if (!w || w === width) return render()
     width = w
-    // DOM の紙の幅（min(440px, 100% - 40px)）に差し出し口を合わせる
-    const scale = Math.min(SLOT_W, w - 40) / SLOT_W
+    // 紙の最大幅に差し出し口を合わせ、狭い画面では筐体が幅に収まるまで縮める。紙の幅は差し出し口に合わせる（--rm-paper）
+    const scale = Math.min(1, (w - 8) / (reach.side * 2 + PAD * 2), (w - 40) / SLOT_W)
+    stage.parentElement?.style.setProperty('--rm-paper', `${SLOT_W * scale}px`)
     fit.scale.setScalar(scale)
     const up = reach.up * scale + PAD
     const down = reach.down * scale + PAD
@@ -252,6 +253,7 @@ export async function mountPrinter(stage: HTMLElement, lost: () => void): Promis
       mixer.uncacheRoot(rig)
       timer.dispose()
       stage.style.removeProperty('height')
+      stage.parentElement?.style.removeProperty('--rm-paper')
       for (const g of geometries) g.dispose()
       for (const m of materials) m.dispose()
       env.dispose()
