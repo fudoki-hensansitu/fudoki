@@ -72,6 +72,15 @@
             "rule_ink": true
           }
         },
+        "dropped_readings": [
+          {
+            "id": "general-p46-rule-digit",
+            "page": 46,
+            "observation_id": "p46:digit-3:r0",
+            "observed": "1",
+            "reason": "物理46頁の目「4 公共施設整備資金積立基金繰入金」の補正経過の下で、数字の読み直しが科目の欄と本年度の欄の間の縦罫（258pt）の切れ端を「1」と読んだ（257.5〜260.5pt）。原典の画像ではそこに番号は無いので、この読みは使わない。"
+          }
+        ],
         "code_readings": [
           {
             "id": "p8-kan-1",
