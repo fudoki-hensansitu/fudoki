@@ -859,6 +859,10 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                     entries[index] = (label, money, digits[:cut], raw[cut:])
                     code = digits[:cut]
                     break
+        if (code is None and run and (int(run.group()) == 1 or previous_code is not None and int(run.group()) == previous_code + 1)
+                and COUNTED.match(raw) and document_quirk('next_number_counts') is not None):
+            entries[index] = (label, money, run.group(), raw[len(run.group()):])  # the quirk `next_number_counts`
+            code = run.group()
         if (code is not None and label and (previous_code is None or int(code) != previous_code + 1)
                 and (ONLY_COUNT.match(raw)
                      or any((counts := document_quirk(name)) is not None and counts.module.counted(normalize(label[0].text), raw)

@@ -1,0 +1,621 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131181",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p45-full-page-a0-result0-r46",
+            "page": 45,
+            "observation_id": "p45:full-page:a0:result0:r46",
+            "observed_name": "1 閱覧手数料",
+            "corrected_name": "1 閲覧手数料",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p52-full-page-a0-result0-r23",
+            "page": 52,
+            "observation_id": "p52:full-page:a0:result0:r23",
+            "observed_name": "個人番号力一",
+            "corrected_name": "個人番号カー",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p52-ink-0-a0-result0-r0",
+            "page": 52,
+            "observation_id": "p52:ink-0:a0:result0:r0",
+            "observed_name": "3 個人番号力一",
+            "corrected_name": "3 個人番号カー",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p55-full-page-a0-result0-r58",
+            "page": 55,
+            "observation_id": "p55:full-page:a0:result0:r58",
+            "observed_name": "14 保育士等キヤ",
+            "corrected_name": "14 保育士等キャ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p56-full-page-a0-result0-r38",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r38",
+            "observed_name": "多子世带負担",
+            "corrected_name": "多子世帯負担",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p56-full-page-a0-result0-r53",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r53",
+            "observed_name": "一利用支援事",
+            "corrected_name": "ー利用支援事",
+            "reason": "原典の画像では前の行の末尾のカタカナに続く長音「ー」で行が始まる。Paddle は「ー」を漢字の「一」と読んだ。"
+          },
+          {
+            "id": "auto-p65-full-page-a0-result0-r33",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result0:r33",
+            "observed_name": "1 不用品壳払代",
+            "corrected_name": "1 不用品売払代",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p65-full-page-a0-result0-r46",
+            "page": 65,
+            "observation_id": "p65:full-page:a0:result0:r46",
+            "observed_name": "1 土地壳払代金",
+            "corrected_name": "1 土地売払代金",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p71-full-page-a0-result0-r31",
+            "page": 71,
+            "observation_id": "p71:full-page:a0:result0:r31",
+            "observed_name": "1 高額介護サ一",
+            "corrected_name": "1 高額介護サー",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p71-full-page-a0-result0-r92",
+            "page": 71,
+            "observation_id": "p71:full-page:a0:result0:r92",
+            "observed_name": "イブ交付金",
+            "corrected_name": "ィブ交付金",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p73-full-page-a0-result0-r87",
+            "page": 73,
+            "observation_id": "p73:full-page:a0:result0:r87",
+            "observed_name": "広告揭載料",
+            "corrected_name": "広告掲載料",
+            "reason": "原典の画像では日本の字形で印字されている。Paddle は中国語の字形で読んだ。"
+          },
+          {
+            "id": "auto-p74-full-page-a0-result0-r31",
+            "page": 74,
+            "observation_id": "p74:full-page:a0:result0:r31",
+            "observed_name": "9コミュニテイ",
+            "corrected_name": "9コミュニティ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p74-full-page-a0-result0-r36",
+            "page": 74,
+            "observation_id": "p74:full-page:a0:result0:r36",
+            "observed_name": "10 全国連携プ口",
+            "corrected_name": "10 全国連携プロ",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          },
+          {
+            "id": "auto-p74-full-page-a0-result0-r40",
+            "page": 74,
+            "observation_id": "p74:full-page:a0:result0:r40",
+            "observed_name": "11 荒川区公式示",
+            "corrected_name": "11 荒川区公式ホ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p74-full-page-a0-result0-r47",
+            "page": 74,
+            "observation_id": "p74:full-page:a0:result0:r47",
+            "observed_name": "13JーLISデ",
+            "corrected_name": "13J-LISデ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          },
+          {
+            "id": "auto-p74-full-page-a0-result0-r53",
+            "page": 74,
+            "observation_id": "p74:full-page:a0:result0:r53",
+            "observed_name": "タ一事業収入",
+            "corrected_name": "ター事業収入",
+            "reason": "原典の画像ではカタカナで印字されている（長音の「ー」、カ・タ・ニ・ト・エ・ロ）。Paddle は形の似た漢字（一・力・夕・二・卜・工・口）と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41
+            ]
+          },
+          "sha256": "a4c5c35e0de4f6a009bb64a131f7702a7d7ed8ffa95191a5f934f5f7e48d52b9",
+          "bytes": 2218569
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51
+            ]
+          },
+          "sha256": "1e55a78a13473554d36f48cbc9cc2ae761b75a33207d71b760a40b302da64c7a",
+          "bytes": 4014567
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61
+            ]
+          },
+          "sha256": "32bf3703691122174d5926863f25f132c2256c8721ceb5baa31250a84d13e611",
+          "bytes": 3674471
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71
+            ]
+          },
+          "sha256": "bfefadfdcd1e94ac09543c1e55dd08b6b19e0674ecde8a554aa3d97a062497d6",
+          "bytes": 3371709
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              72,
+              73,
+              74,
+              75
+            ]
+          },
+          "sha256": "d6d30290cfdac278029d3874023f3b786cebb70cb6127d4f8a388f8b05a3e496",
+          "bytes": 1482481
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "nhi-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true
+          }
+        },
+        "header_readings": [
+          {
+            "id": "nhi-header-carryover",
+            "pages": [
+              146
+            ],
+            "box": [
+              248.0,
+              93.0,
+              320.0,
+              126.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "OCR が p146 の見出しの升の「繰越」を「杀越」と読み、辞書に一致せず「予算現額」だけの欄になっていた。原典の画像で升の印字が次の頁と同じ「継続費及び繰越事業費繰越財源充当額」であることを確認した。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "auto-p154-full-page-a0-result0-r64",
+            "page": 154,
+            "observation_id": "p154:full-page:a0:result0:r64",
+            "observed_name": "1JーLISデ",
+            "corrected_name": "1J-LISデ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-revenue-ocr-1",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              146,
+              147,
+              148,
+              149,
+              150,
+              151,
+              152,
+              153,
+              154
+            ]
+          },
+          "sha256": "525275988ba8679423b1d4903a443d5ea47dc9a29772c7cd6d3ddc44c957869a",
+          "bytes": 2509496
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p176-full-page-a0-result0-r58",
+            "page": 176,
+            "observation_id": "p176:full-page:a0:result0:r58",
+            "observed_name": "1JーLISデ",
+            "corrected_name": "1J-LISデ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-revenue-ocr-1",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              171,
+              172,
+              173,
+              174,
+              175,
+              176,
+              177,
+              178
+            ]
+          },
+          "sha256": "426eeef9b6e3f2f244a523afb2ab8c7a00c5c5d59e19c53e2b441cb225f1ed73",
+          "bytes": 1899673
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "kaigo-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "翌年度繰越額／継続費逓次繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／繰越明許費": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額／事故繰越": {
+                  "kind": "amount"
+                },
+                "翌年度繰越額": {
+                  "kind": "amount"
+                },
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "備考は収入の内容・相手先・件数などの説明で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "next_number_counts": true
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "auto-p199-full-page-a0-result0-r64",
+            "page": 199,
+            "observation_id": "p199:full-page:a0:result0:r64",
+            "observed_name": "1JーLISデ",
+            "corrected_name": "1J-LISデ",
+            "reason": "原典の画像では「滞」「売」「自立」「とうきょう」「シャル」「チャレンジ」「キャラクター」「キャリア」「アップ」「聞こえ」「J-LIS」「コミュニティ」「インセンティブ」「ホーム」と印字されている。Paddle は形の似た字（滯・壳・白・よ・ヤ・ツ・二・ー・イ・示）と読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-revenue-ocr-1",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              189,
+              190,
+              191,
+              192,
+              193,
+              194,
+              195,
+              196,
+              197,
+              198
+            ]
+          },
+          "sha256": "3b476a44e948a44423a4b075d8c20b2390fd3957841a7d2699c34002671bd226",
+          "bytes": 2846815
+        },
+        {
+          "id": "kaigo-revenue-ocr-2",
+          "origin_sha256": "1301286b5257b82dc868e6d7cd38038abd9e3182fe1eb4a0ff1ee35bae36e382",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              199,
+              200,
+              201
+            ]
+          },
+          "sha256": "42c30292d9e7c815413668a326fed8f9655dc2c3fb54b358ef9e396704aaa6d6",
+          "bytes": 649562
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue-detail"
+        }
+      ]
+    }
+  ]
+}
