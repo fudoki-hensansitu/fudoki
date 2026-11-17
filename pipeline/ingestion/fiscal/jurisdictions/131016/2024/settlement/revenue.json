@@ -1,0 +1,1469 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131016",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c270b3f1617065120090f2398c024162de1deb0016c91a9dec3a8e9d3164e77f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "short_columns": true,
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "gapped_column_rules": true,
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            61
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "general-繰越財源充当額",
+            "pages": [
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20,
+              22,
+              24,
+              26,
+              28,
+              30,
+              32,
+              34,
+              36,
+              38,
+              40,
+              42,
+              44,
+              46,
+              48,
+              50,
+              52,
+              54,
+              56,
+              58,
+              60
+            ],
+            "box": [
+              263.0,
+              121.0,
+              330.0,
+              161.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "予算現額の「継続費及び繰越事業費繰越財源充当額」の升は3行に分けて印字し、OCR が読まない。見出しの無いこの欄の額が予算現額に入っていた。原典の描画で升の印字と罫線の位置を確かめ、どの左頁も同じ位置なので升の見出しを宣言する。見出しは共有の見出し辞書の語（予算現額／継続費及び繰越事業費繰越財源充当額）に揃える。升の左右の罫は頁ごとに 260〜262pt・331〜335pt にあり、箱をどの頁でも罫の内側に収める（罫を越えると見出しが罫で切られ、端の字が隣の升に付く）。"
+          },
+          {
+            "id": "general-収入未済額",
+            "pages": [
+              33
+            ],
+            "box": [
+              276.0,
+              124.0,
+              347.0,
+              148.0
+            ],
+            "text": "収入未済額",
+            "reason": "右頁の「収入未済額」の升を OCR の帯の継ぎ目が切り、読み直しでも戻らない。原典の描画で升の印字と罫線の位置を確かめ、見出しを宣言する。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "general-p16-1-wrapped-full-page-a0-result0-r16",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r16",
+            "observed": "地方消費税交付",
+            "reason": "物理16頁の項「1 地方消費税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p16-1-wrapped-full-page-a0-result0-r19",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r19",
+            "observed": "金",
+            "reason": "物理16頁の項「1 地方消費税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p16-1-wrapped-digit-0-r0",
+            "page": 16,
+            "observation_id": "p16:digit-0:r0",
+            "observed": "1",
+            "reason": "物理16頁の項「1 地方消費税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p16-1-wrapped-full-page-a0-result0-r20",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r20",
+            "observed": "地方消費税交",
+            "reason": "物理16頁の目「1 地方消費税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p16-1-wrapped-full-page-a0-result0-r23",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r23",
+            "observed": "付金",
+            "reason": "物理16頁の目「1 地方消費税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p16-1-wrapped-digit-1-r0",
+            "page": 16,
+            "observation_id": "p16:digit-1:r0",
+            "observed": "1",
+            "reason": "物理16頁の目「1 地方消費税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p18-1-wrapped-full-page-a0-result0-r18",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r18",
+            "observed": "自動車取得税交",
+            "reason": "物理18頁の項「1 自動車取得税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p18-1-wrapped-full-page-a0-result0-r21",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r21",
+            "observed": "付金",
+            "reason": "物理18頁の項「1 自動車取得税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p18-1-wrapped-digit-0-r0",
+            "page": 18,
+            "observation_id": "p18:digit-0:r0",
+            "observed": "1",
+            "reason": "物理18頁の項「1 自動車取得税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p18-1-wrapped-full-page-a0-result0-r22",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r22",
+            "observed": "自動車取得税",
+            "reason": "物理18頁の目「1 自動車取得税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p18-1-wrapped-full-page-a0-result0-r25",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r25",
+            "observed": "交付金",
+            "reason": "物理18頁の目「1 自動車取得税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p18-1-wrapped-digit-1-r0",
+            "page": 18,
+            "observation_id": "p18:digit-1:r0",
+            "observed": "1",
+            "reason": "物理18頁の目「1 自動車取得税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p56-1-wrapped-full-page-a0-result0-r17",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r17",
+            "observed": "延滞金加算金及",
+            "reason": "物理56頁の項「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p56-1-wrapped-full-page-a0-result0-r20",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r20",
+            "observed": "び過料",
+            "reason": "物理56頁の項「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p56-1-wrapped-ink-3-a3-result0-r1",
+            "page": 56,
+            "observation_id": "p56:ink-3:a3:result0:r1",
+            "observed": "1",
+            "reason": "物理56頁の項「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p20-1-wrapped-full-page-a0-result0-r20",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r20",
+            "observed": "環境性能割交",
+            "reason": "物理20頁の目「1 環境性能割交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p20-1-wrapped-full-page-a0-result0-r23",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r23",
+            "observed": "付金",
+            "reason": "物理20頁の目「1 環境性能割交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p20-1-wrapped-digit-1-r0",
+            "page": 20,
+            "observation_id": "p20:digit-1:r0",
+            "observed": "1",
+            "reason": "物理20頁の目「1 環境性能割交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p8-1-wrapped-full-page-a0-result0-r16",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r16",
+            "observed": "地方揮発油譲与",
+            "reason": "物理8頁の目「1 地方揮発油譲与税」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p8-1-wrapped-full-page-a0-result0-r19",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r19",
+            "observed": "税",
+            "reason": "物理8頁の目「1 地方揮発油譲与税」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p8-1-wrapped-digit-0-r0",
+            "page": 8,
+            "observation_id": "p8:digit-0:r0",
+            "observed": "1",
+            "reason": "物理8頁の目「1 地方揮発油譲与税」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p14-1-wrapped-full-page-a0-result0-r18",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r18",
+            "observed": "株式等譲渡所得",
+            "reason": "物理14頁の目「1 株式等譲渡所得割交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p14-1-wrapped-full-page-a0-result0-r21",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r21",
+            "observed": "割交付金",
+            "reason": "物理14頁の目「1 株式等譲渡所得割交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p14-1-wrapped-digit-0-r0",
+            "page": 14,
+            "observation_id": "p14:digit-0:r0",
+            "observed": "1",
+            "reason": "物理14頁の目「1 株式等譲渡所得割交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p24-1-wrapped-full-page-a0-result0-r16",
+            "page": 24,
+            "observation_id": "p24:full-page:a0:result0:r16",
+            "observed": "特別区財政調整",
+            "reason": "物理24頁の目「1 特別区財政調整交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p24-1-wrapped-full-page-a0-result0-r19",
+            "page": 24,
+            "observation_id": "p24:full-page:a0:result0:r19",
+            "observed": "交付金",
+            "reason": "物理24頁の目「1 特別区財政調整交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p24-1-wrapped-digit-0-r0",
+            "page": 24,
+            "observation_id": "p24:digit-0:r0",
+            "observed": "1",
+            "reason": "物理24頁の目「1 特別区財政調整交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p56-1-wrapped-full-page-a0-result0-r48",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r48",
+            "observed": "子ども費受託",
+            "reason": "物理56頁の目「1 子ども費受託収入」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR はその番号を読まず、OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p56-1-wrapped-full-page-a0-result0-r51",
+            "page": 56,
+            "observation_id": "p56:full-page:a0:result0:r51",
+            "observed": "収入",
+            "reason": "物理56頁の目「1 子ども費受託収入」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR はその番号を読まず、OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "general-p16-1-wrapped",
+            "page": 16,
+            "box": [
+              41.0,
+              198.0,
+              43.0,
+              204.0
+            ],
+            "code": "1",
+            "name": "地方消費税交付金",
+            "name_box": [
+              45.6,
+              189.5,
+              108.5,
+              212.6
+            ],
+            "reason": "物理16頁の項「1 地方消費税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p16-1-wrapped-214",
+            "page": 16,
+            "box": [
+              50.0,
+              225.0,
+              52.0,
+              231.0
+            ],
+            "code": "1",
+            "name": "地方消費税交付金",
+            "name_box": [
+              53.5,
+              216.2,
+              109.4,
+              240.4
+            ],
+            "reason": "物理16頁の目「1 地方消費税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p18-1-wrapped",
+            "page": 18,
+            "box": [
+              42.0,
+              198.0,
+              44.0,
+              204.0
+            ],
+            "code": "1",
+            "name": "自動車取得税交付金",
+            "name_box": [
+              45.6,
+              189.5,
+              110.4,
+              213.1
+            ],
+            "reason": "物理18頁の項「1 自動車取得税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p18-1-wrapped-214",
+            "page": 18,
+            "box": [
+              50.5,
+              225.0,
+              53.0,
+              231.0
+            ],
+            "code": "1",
+            "name": "自動車取得税交付金",
+            "name_box": [
+              54.9,
+              215.7,
+              110.9,
+              239.9
+            ],
+            "reason": "物理18頁の目「1 自動車取得税交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p56-1-wrapped",
+            "page": 56,
+            "box": [
+              39.8,
+              197.5,
+              45.1,
+              204.5
+            ],
+            "code": "1",
+            "name": "延滞金加算金及び過料",
+            "name_box": [
+              46.1,
+              189.5,
+              109.4,
+              214.0
+            ],
+            "reason": "物理56頁の項「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p8-1-wrapped",
+            "page": 8,
+            "box": [
+              42.0,
+              198.0,
+              44.0,
+              204.0
+            ],
+            "code": "1",
+            "name": "地方揮発油譲与税",
+            "name_box": [
+              46.1,
+              189.5,
+              110.4,
+              212.6
+            ],
+            "reason": "物理8頁の目「1 地方揮発油譲与税」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p14-1-wrapped",
+            "page": 14,
+            "box": [
+              41.0,
+              198.0,
+              43.0,
+              204.0
+            ],
+            "code": "1",
+            "name": "株式等譲渡所得割交付金",
+            "name_box": [
+              45.1,
+              189.5,
+              109.4,
+              213.1
+            ],
+            "reason": "物理14頁の目「1 株式等譲渡所得割交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p20-1-wrapped",
+            "page": 20,
+            "box": [
+              50.5,
+              225.0,
+              52.0,
+              231.0
+            ],
+            "code": "1",
+            "name": "環境性能割交付金",
+            "name_box": [
+              54.0,
+              216.2,
+              109.9,
+              240.4
+            ],
+            "reason": "物理20頁の目「1 環境性能割交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p24-1-wrapped",
+            "page": 24,
+            "box": [
+              41.0,
+              198.0,
+              43.0,
+              204.0
+            ],
+            "code": "1",
+            "name": "特別区財政調整交付金",
+            "name_box": [
+              45.6,
+              189.5,
+              109.4,
+              213.1
+            ],
+            "reason": "物理24頁の目「1 特別区財政調整交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "general-p56-1-wrapped-668",
+            "page": 56,
+            "box": [
+              50.5,
+              679.5,
+              53.0,
+              685.5
+            ],
+            "code": "1",
+            "name": "子ども費受託収入",
+            "name_box": [
+              53.3,
+              670.1,
+              110.9,
+              696.5
+            ],
+            "reason": "物理56頁の目「1 子ども費受託収入」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR はその番号を読まず、OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "c270b3f1617065120090f2398c024162de1deb0016c91a9dec3a8e9d3164e77f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b84f5d756b12b9ad72bda40fcdeeab0c652b0166579b33dd1bc33184da218e6a",
+          "bytes": 1410849
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "c270b3f1617065120090f2398c024162de1deb0016c91a9dec3a8e9d3164e77f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "14451ff8415ef670a129e3ad0624203cbe43066d97d616db6cc876fff79d6a64",
+          "bytes": 963375
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "c270b3f1617065120090f2398c024162de1deb0016c91a9dec3a8e9d3164e77f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7352862bae73628340158a99a58e3b15f1e641066e98d0974b1322514806ba95",
+          "bytes": 2033640
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "c270b3f1617065120090f2398c024162de1deb0016c91a9dec3a8e9d3164e77f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "bd5d56781521774ea6b9790206263d3a4e3e2e5bf3fb2ab50f7fcb63f4a0ea21",
+          "bytes": 2297468
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "c270b3f1617065120090f2398c024162de1deb0016c91a9dec3a8e9d3164e77f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53,
+              54,
+              55
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "28348a19c5fe8f5463861e64c058295c33b3d149e3e3a3f74a23a42e71aee014",
+          "bytes": 1398685
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "c270b3f1617065120090f2398c024162de1deb0016c91a9dec3a8e9d3164e77f",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              56,
+              57,
+              58,
+              59,
+              60,
+              61
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "39d661cde023a362a3b97587980cb5f42e27bedb62e97b0015a6e3f5b20c336c",
+          "bytes": 1607547
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "063bf9201dd4db00d33c30bf092bb02cf3561750cfd401da2ae77727492557aa"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "nhi-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "short_columns": true,
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "gapped_column_rules": true,
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            23
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "nhi-繰越財源充当額",
+            "pages": [
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20,
+              22
+            ],
+            "box": [
+              263.0,
+              121.0,
+              330.0,
+              161.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "予算現額の「継続費及び繰越事業費繰越財源充当額」の升は3行に分けて印字し、OCR が読まない。見出しの無いこの欄の額が予算現額に入っていた。原典の描画で升の印字と罫線の位置を確かめ、どの左頁も同じ位置なので升の見出しを宣言する。見出しは共有の見出し辞書の語（予算現額／継続費及び繰越事業費繰越財源充当額）に揃える。升の左右の罫は頁ごとに 260〜262pt・331〜335pt にあり、箱をどの頁でも罫の内側に収める（罫を越えると見出しが罫で切られ、端の字が隣の升に付く）。"
+          },
+          {
+            "id": "nhi-収入未済額",
+            "pages": [
+              9
+            ],
+            "box": [
+              276.0,
+              124.0,
+              347.0,
+              148.0
+            ],
+            "text": "収入未済額",
+            "reason": "右頁の「収入未済額」の升を OCR の帯の継ぎ目が切り、読み直しでも戻らない。原典の描画で升の印字と罫線の位置を確かめ、見出しを宣言する。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "nhi-p20-1-wrapped-full-page-a0-result0-r40",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r40",
+            "observed": "一般被保険者",
+            "reason": "物理20頁の目「1 一般被保険者第三者納付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "nhi-p20-1-wrapped-full-page-a0-result0-r41",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r41",
+            "observed": "1",
+            "reason": "物理20頁の目「1 一般被保険者第三者納付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "nhi-p20-1-wrapped-full-page-a0-result0-r44",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r44",
+            "observed": "第三者納付金",
+            "reason": "物理20頁の目「1 一般被保険者第三者納付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "nhi-p20-1-wrapped-full-page-a0-result0-r17",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r17",
+            "observed": "延滞金加算金及",
+            "reason": "物理20頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "nhi-p20-1-wrapped-full-page-a0-result0-r19",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r19",
+            "observed": "1",
+            "reason": "物理20頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "nhi-p20-1-wrapped-full-page-a0-result0-r21",
+            "page": 20,
+            "observation_id": "p20:full-page:a0:result0:r21",
+            "observed": "び過料",
+            "reason": "物理20頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "nhi-p20-1-wrapped-187",
+            "page": 20,
+            "box": [
+              39.8,
+              197.7,
+              44.4,
+              204.4
+            ],
+            "code": "1",
+            "name": "延滞金加算金及び過料",
+            "name_box": [
+              44.9,
+              189.1,
+              108.5,
+              214.0
+            ],
+            "reason": "物理20頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "nhi-p20-1-wrapped",
+            "page": 20,
+            "box": [
+              48.2,
+              491.6,
+              53.3,
+              499.5
+            ],
+            "code": "1",
+            "name": "一般被保険者第三者納付金",
+            "name_box": [
+              54.0,
+              483.2,
+              109.4,
+              507.5
+            ],
+            "reason": "物理20頁の目「1 一般被保険者第三者納付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "063bf9201dd4db00d33c30bf092bb02cf3561750cfd401da2ae77727492557aa",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c2914cbb8552a040d67be0c7c3b9f7dab184d7eedd6d4d9aa7bffc3b849f76bb",
+          "bytes": 1153221
+        },
+        {
+          "id": "nhi-ocr-2",
+          "origin_sha256": "063bf9201dd4db00d33c30bf092bb02cf3561750cfd401da2ae77727492557aa",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "12b85de19bd9a344cbfef440a6a4b92769c4bc7d4dbe5bdf558c6c08b0fb43fa",
+          "bytes": 1025417
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "e1bfe2e66d49c572623065404c5e8a57a2978da4b4766ff3a6d8ba18917f8d59"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "short_columns": true,
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "gapped_column_rules": true,
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            25
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "kaigo-繰越財源充当額",
+            "pages": [
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18,
+              20,
+              22,
+              24
+            ],
+            "box": [
+              263.0,
+              121.0,
+              330.0,
+              161.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "予算現額の「継続費及び繰越事業費繰越財源充当額」の升は3行に分けて印字し、OCR が読まない。見出しの無いこの欄の額が予算現額に入っていた。原典の描画で升の印字と罫線の位置を確かめ、どの左頁も同じ位置なので升の見出しを宣言する。見出しは共有の見出し辞書の語（予算現額／継続費及び繰越事業費繰越財源充当額）に揃える。升の左右の罫は頁ごとに 260〜262pt・331〜335pt にあり、箱をどの頁でも罫の内側に収める（罫を越えると見出しが罫で切られ、端の字が隣の升に付く）。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "kaigo-p16-1-wrapped-full-page-a0-result0-r34",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r34",
+            "observed": "介護予防・日",
+            "reason": "物理16頁の目「1 介護予防・日常生活支援総合事業費交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kaigo-p16-1-wrapped-full-page-a0-result0-r37",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r37",
+            "observed": "常生活支援総",
+            "reason": "物理16頁の目「1 介護予防・日常生活支援総合事業費交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kaigo-p16-1-wrapped-full-page-a0-result0-r38",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r38",
+            "observed": "合事業費交付",
+            "reason": "物理16頁の目「1 介護予防・日常生活支援総合事業費交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kaigo-p16-1-wrapped-full-page-a0-result0-r39",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r39",
+            "observed": "金",
+            "reason": "物理16頁の目「1 介護予防・日常生活支援総合事業費交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kaigo-p16-1-wrapped-digit-0-r0",
+            "page": 16,
+            "observation_id": "p16:digit-0:r0",
+            "observed": "1",
+            "reason": "物理16頁の目「1 介護予防・日常生活支援総合事業費交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kaigo-p24-1-wrapped-full-page-a0-result0-r17",
+            "page": 24,
+            "observation_id": "p24:full-page:a0:result0:r17",
+            "observed": "延滞金加算金及",
+            "reason": "物理24頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kaigo-p24-1-wrapped-full-page-a0-result0-r18",
+            "page": 24,
+            "observation_id": "p24:full-page:a0:result0:r18",
+            "observed": "1",
+            "reason": "物理24頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kaigo-p24-1-wrapped-full-page-a0-result0-r21",
+            "page": 24,
+            "observation_id": "p24:full-page:a0:result0:r21",
+            "observed": "び過料",
+            "reason": "物理24頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kaigo-p10-1-wrapped-full-page-a0-result0-r20",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r20",
+            "observed": "介護給付費負",
+            "reason": "物理10頁の目「1 介護給付費負担金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR はその番号を読まず、OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kaigo-p10-1-wrapped-full-page-a0-result0-r23",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r23",
+            "observed": "担金",
+            "reason": "物理10頁の目「1 介護給付費負担金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR はその番号を読まず、OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "kaigo-p16-1-wrapped",
+            "page": 16,
+            "box": [
+              50.5,
+              412.0,
+              52.0,
+              418.0
+            ],
+            "code": "1",
+            "name": "介護予防・日常生活支援総合事業費交付金",
+            "name_box": [
+              54.0,
+              403.1,
+              110.4,
+              454.2
+            ],
+            "reason": "物理16頁の目「1 介護予防・日常生活支援総合事業費交付金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kaigo-p24-1-wrapped",
+            "page": 24,
+            "box": [
+              39.4,
+              197.0,
+              45.1,
+              204.4
+            ],
+            "code": "1",
+            "name": "延滞金加算金及び過料",
+            "name_box": [
+              45.4,
+              189.1,
+              109.9,
+              214.0
+            ],
+            "reason": "物理24頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kaigo-p10-1-wrapped",
+            "page": 10,
+            "box": [
+              50.2,
+              225.0,
+              52.8,
+              231.0
+            ],
+            "code": "1",
+            "name": "介護給付費負担金",
+            "name_box": [
+              53.1,
+              215.0,
+              110.4,
+              240.7
+            ],
+            "reason": "物理10頁の目「1 介護給付費負担金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR はその番号を読まず、OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "e1bfe2e66d49c572623065404c5e8a57a2978da4b4766ff3a6d8ba18917f8d59",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "ab56dc6a35c4903b29406e1648286e5791b25d52f353b8b610edfedc8638f800",
+          "bytes": 1292514
+        },
+        {
+          "id": "kaigo-ocr-2",
+          "origin_sha256": "e1bfe2e66d49c572623065404c5e8a57a2978da4b4766ff3a6d8ba18917f8d59",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "8d384c39dabe879a85e7caef424e4c6d91ff32a0654506adb402006366bef8c5",
+          "bytes": 1564863
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "7d193a7dc56593b9d5bf4d61aa490ea5709ead7998e07889f5a5e56251691d0a"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "rules": {
+                "short_columns": true,
+                "dark": 180
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "gapped_column_rules": true,
+            "rule_ink": true
+          }
+        },
+        "pages": [
+          [
+            6,
+            19
+          ]
+        ],
+        "header_readings": [
+          {
+            "id": "kouki-繰越財源充当額",
+            "pages": [
+              6,
+              8,
+              10,
+              12,
+              14,
+              16,
+              18
+            ],
+            "box": [
+              263.0,
+              121.0,
+              330.0,
+              161.0
+            ],
+            "text": "継続費及び繰越事業費繰越財源充当額",
+            "reason": "予算現額の「継続費及び繰越事業費繰越財源充当額」の升は3行に分けて印字し、OCR が読まない。見出しの無いこの欄の額が予算現額に入っていた。原典の描画で升の印字と罫線の位置を確かめ、どの左頁も同じ位置なので升の見出しを宣言する。見出しは共有の見出し辞書の語（予算現額／継続費及び繰越事業費繰越財源充当額）に揃える。升の左右の罫は頁ごとに 260〜262pt・331〜335pt にあり、箱をどの頁でも罫の内側に収める（罫を越えると見出しが罫で切られ、端の字が隣の升に付く）。"
+          }
+        ],
+        "dropped_readings": [
+          {
+            "id": "kouki-p12-1-wrapped-full-page-a0-result0-r19",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r19",
+            "observed": "一般会計繰入",
+            "reason": "物理12頁の目「1 一般会計繰入金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p12-1-wrapped-full-page-a0-result0-r22",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r22",
+            "observed": "金",
+            "reason": "物理12頁の目「1 一般会計繰入金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p12-1-wrapped-ink-3-a3-result0-r0",
+            "page": 12,
+            "observation_id": "p12:ink-3:a3:result0:r0",
+            "observed": "1",
+            "reason": "物理12頁の目「1 一般会計繰入金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p6-1-wrapped-full-page-a0-result0-r13",
+            "page": 6,
+            "observation_id": "p6:full-page:a0:result0:r13",
+            "observed": "後期高齢者医療保",
+            "reason": "物理6頁の項「1 後期高齢者医療保険料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p6-1-wrapped-full-page-a0-result0-r16",
+            "page": 6,
+            "observation_id": "p6:full-page:a0:result0:r16",
+            "observed": "険料",
+            "reason": "物理6頁の項「1 後期高齢者医療保険料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p6-1-wrapped-digit-0-r0",
+            "page": 6,
+            "observation_id": "p6:digit-0:r0",
+            "observed": "1",
+            "reason": "物理6頁の項「1 後期高齢者医療保険料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p6-1-wrapped-full-page-a0-result0-r17",
+            "page": 6,
+            "observation_id": "p6:full-page:a0:result0:r17",
+            "observed": "後期高齢者医療",
+            "reason": "物理6頁の目「1 後期高齢者医療保険料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p6-1-wrapped-full-page-a0-result0-r20",
+            "page": 6,
+            "observation_id": "p6:full-page:a0:result0:r20",
+            "observed": "保険料",
+            "reason": "物理6頁の目「1 後期高齢者医療保険料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p6-1-wrapped-digit-1-r0",
+            "page": 6,
+            "observation_id": "p6:digit-1:r0",
+            "observed": "1",
+            "reason": "物理6頁の目「1 後期高齢者医療保険料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p16-1-wrapped-full-page-a0-result0-r17",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r17",
+            "observed": "延滞金加算金及",
+            "reason": "物理16頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p16-1-wrapped-full-page-a0-result0-r18",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r18",
+            "observed": "1",
+            "reason": "物理16頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p16-1-wrapped-full-page-a0-result0-r21",
+            "page": 16,
+            "observation_id": "p16:full-page:a0:result0:r21",
+            "observed": "び過料",
+            "reason": "物理16頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "kouki-p6-1-wrapped",
+            "page": 6,
+            "box": [
+              33.0,
+              171.5,
+              34.0,
+              177.0
+            ],
+            "code": "1",
+            "name": "後期高齢者医療保険料",
+            "name_box": [
+              37.2,
+              162.7,
+              110.4,
+              186.4
+            ],
+            "reason": "物理6頁の項「1 後期高齢者医療保険料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p6-1-wrapped-187",
+            "page": 6,
+            "box": [
+              41.5,
+              198.0,
+              43.5,
+              204.0
+            ],
+            "code": "1",
+            "name": "後期高齢者医療保険料",
+            "name_box": [
+              45.6,
+              189.5,
+              109.9,
+              213.1
+            ],
+            "reason": "物理6頁の目「1 後期高齢者医療保険料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p12-1-wrapped",
+            "page": 12,
+            "box": [
+              48.7,
+              222.7,
+              58.6,
+              234.7
+            ],
+            "code": "1",
+            "name": "一般会計繰入金",
+            "name_box": [
+              58.9,
+              215.7,
+              109.9,
+              239.5
+            ],
+            "reason": "物理12頁の目「1 一般会計繰入金」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          },
+          {
+            "id": "kouki-p16-1-wrapped",
+            "page": 16,
+            "box": [
+              39.4,
+              197.0,
+              45.1,
+              204.7
+            ],
+            "code": "1",
+            "name": "延滞金加算金及び過料",
+            "name_box": [
+              45.4,
+              189.1,
+              109.9,
+              214.0
+            ],
+            "reason": "物理16頁の目「1 延滞金加算金及び過料」。名前を2行以上に折り返し、番号は行の間の高さに印字されている。OCR は行ごとに読み、組み立てで名前の1行目が番号の無い別の科目に分かれた。原典の描画で番号と名前を確認し、行ごとの読みは使わず、code_readings で1つの科目として宣言する。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "7d193a7dc56593b9d5bf4d61aa490ea5709ead7998e07889f5a5e56251691d0a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12,
+              13,
+              14,
+              15
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "6cbc24f0728c8adaccd9b332c4174d1caaf80f38d27c2f67462d447c16cd7876",
+          "bytes": 1028451
+        },
+        {
+          "id": "kouki-ocr-2",
+          "origin_sha256": "7d193a7dc56593b9d5bf4d61aa490ea5709ead7998e07889f5a5e56251691d0a",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "d525d55b745249aba64834457da47be845de2ed054e465763ede3efa941c88d3",
+          "bytes": 622521
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue-detail"
+        }
+      ]
+    }
+  ]
+}
