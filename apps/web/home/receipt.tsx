@@ -7,10 +7,9 @@ import { reiwa, yearName } from '../jurisdiction/types'
 import type { YearView } from '../jurisdiction/app/data'
 import { OTHER_FRAME } from '../jurisdiction/domains'
 import { FieldIcon } from './parts'
+import type { Machine } from './machine3d'
+import { COUNT_MS, MORPH_MS, READ_MS, SCROLL_MS, SETTLE_MS } from './motion'
 import './receipt.css'
-
-/** 数え上げの長さ */
-const COUNT_MS = 1200
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
@@ -61,18 +60,13 @@ export function perHeadParts(fields: { yen: number }[], total: number, pop: numb
 
 /** 演出の段。flat: 平らな札で数え上げる → solid: 札が立体の機械になる → print: 差し出し口からレシートが出る */
 type Phase = 'flat' | 'solid' | 'print'
-/** 数え上げを読み終える間（数え上げの後に置く） */
-const READ_MS = 500
-/** 立体になってからレシートが出るまで */
-const SOLID_MS = 650
-
 /** 段を進める。reduced-motion では最初から print */
 function usePhase() {
   const [phase, setPhase] = React.useState<Phase>(() => (reduced() ? 'print' : 'flat'))
   React.useEffect(() => {
     if (reduced()) return setPhase('print')
     const t1 = setTimeout(() => setPhase('solid'), COUNT_MS + READ_MS)
-    const t2 = setTimeout(() => setPhase('print'), COUNT_MS + READ_MS + SOLID_MS)
+    const t2 = setTimeout(() => setPhase('print'), COUNT_MS + READ_MS + MORPH_MS + SETTLE_MS)
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
@@ -87,19 +81,37 @@ function usePhase() {
  * scroll の event は数えない（天板が伸びたときのスクロールの anchor の補正でも起き、利用者の操作と区別できない） */
 function useFollow(phase: Phase, machine: React.RefObject<HTMLElement | null>, slot: React.RefObject<HTMLElement | null>) {
   const touched = React.useRef(false)
+  const raf = React.useRef(0)
   React.useEffect(() => {
-    const mark = () => (touched.current = true)
+    const mark = () => {
+      touched.current = true
+      cancelAnimationFrame(raf.current)
+    }
     const opts = { passive: true } as const
     const events = ['wheel', 'touchmove', 'keydown', 'pointerdown'] as const
     for (const e of events) window.addEventListener(e, mark, opts)
     return () => {
       for (const e of events) window.removeEventListener(e, mark)
+      cancelAnimationFrame(raf.current)
     }
   }, [])
   React.useEffect(() => {
     if (touched.current || reduced()) return
     const vh = window.innerHeight
-    const go = (y: number) => y > window.scrollY + 4 && window.scrollTo({ top: y, behavior: 'smooth' })
+    // ブラウザの smooth は速すぎるので、SCROLL_MS をかけて ease-in-out で送る
+    const go = (to: number) => {
+      const from = window.scrollY
+      if (to <= from + 4) return
+      cancelAnimationFrame(raf.current)
+      const t0 = performance.now()
+      const step = (t: number) => {
+        const p = Math.min(1, (t - t0) / SCROLL_MS)
+        const e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2
+        window.scrollTo(0, from + (to - from) * e)
+        if (p < 1 && !touched.current) raf.current = requestAnimationFrame(step)
+      }
+      raf.current = requestAnimationFrame(step)
+    }
     if (phase === 'flat' && machine.current) {
       // 札の下端が画面の外なら、札の上端まで送る（札が画面より高ければ上端を合わせる）
       const r = machine.current.getBoundingClientRect()
@@ -120,30 +132,41 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   const slot = React.useRef<HTMLDivElement>(null)
   const phase = usePhase()
   useFollow(phase, machine, slot)
-  const [gl, setGl] = React.useState(false)
-  // 本体を three.js で描く（読み込みは数え上げの間に済ませ、立体になる段で見せる）。描けないときは CSS の本体
+  const [gl, setGl] = React.useState<Machine | null>(null)
+  // 本体を three.js で描く（読み込みは数え上げの間に済ませる）。描けないときは CSS の本体
   React.useEffect(() => {
-    let stop: (() => void) | null = null
+    let m: Machine | null = null
     let alive = true
     // サーバーの bundle に three.js を入れない（import.meta.env.SSR はビルド時に定数になり、この import ごと消える）
     if (import.meta.env.SSR) return
     void import('./machine3d').then(({ mountMachine }) => {
       if (!alive || !machine.current || !front.current) return
-      stop = mountMachine(machine.current, front.current, () => {
+      m = mountMachine(machine.current, front.current, () => {
         // コンテキストを失ったら canvas を外し、CSS の本体へ戻す
-        stop?.()
-        stop = null
-        setGl(false)
+        m?.stop()
+        m = null
+        setGl(null)
       })
-      setGl(!!stop)
+      setGl(m)
     }).catch(() => {})
     return () => {
       alive = false
-      stop?.()
+      m?.stop()
     }
   }, [])
+  // 段に合わせて本体を動かす。three.js の読み込みが段より遅れたときと reduced-motion では、動かさずにその段の姿にする
+  const shown = React.useRef<{ m: Machine | null; phase: Phase; year: number }>({ m: null, phase: 'flat', year })
+  React.useEffect(() => {
+    if (!gl) return
+    const was = shown.current
+    const fresh = was.m !== gl
+    const instant = fresh || reduced()
+    if (phase !== 'flat' && (fresh || was.phase === 'flat')) gl.morph(instant)
+    if (phase === 'print' && (fresh || was.phase !== 'print' || was.year !== year)) gl.print(instant)
+    shown.current = { m: gl, phase, year }
+  }, [gl, phase, year])
   return (
-    <div ref={machine} className="rm relative" data-phase={phase} data-gl={gl || undefined}>
+    <div ref={machine} className="rm relative" data-phase={phase} data-gl={gl ? true : undefined}>
       {/* 天板。手前の辺を軸に奥へ倒し、奥ほど狭く見せる（立体の段で出す。three.js で描けたら隠す） */}
       <div className="rm-top" aria-hidden="true" />
       <section ref={front} className="rm-body relative z-10 p-5 pb-14 text-brand-foreground sm:p-7 sm:pb-16">

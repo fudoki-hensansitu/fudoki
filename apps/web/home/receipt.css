@@ -39,23 +39,28 @@
   background: linear-gradient(180deg, rgba(0, 0, 0, 0.18), rgba(0, 0, 0, 0.04) 45%, transparent);
 }
 .rc-print.rc-run {
-  animation: rc-print 1600ms cubic-bezier(0.33, 1, 0.68, 1) 150ms both;
+  /* 長さは motion.ts の PRINT_MS。紙送りの機械らしく、出だしと終わりだけ緩めてほぼ一定の速さで送る */
+  animation: rc-print 3600ms cubic-bezier(0.3, 0.1, 0.45, 1) both;
 }
 /* 刷った行から上から順に出てくる（紙の頭が差し出し口に残り、下へ伸びる） */
 @keyframes rc-print {
   from { clip-path: inset(0 -24px 100% -24px); transform: translateY(-8px); }
   to { clip-path: inset(0 -24px -40px -24px); transform: none; }
 }
-/* three.js の本体（machine3d.ts）。天板の上端から前面の下端までを覆い、DOM の前面の後ろに敷く */
+/* three.js の本体（machine3d.ts）。天板の上端から前面の下端までを覆い、DOM の前面の後ろに敷く。
+ * 平らな札のときから canvas が札を描き（前面は札と同じ色）、立体になる動きも canvas が持つ。top は machine3d.ts が毎フレーム合わせる */
 .rm > canvas {
   position: absolute;
-  top: -12px;
+  top: -52px;
   left: -12px;
   z-index: 0;
   pointer-events: none;
+  /* 床への影は、立体になるのに合わせてゆっくり落とす */
+  filter: drop-shadow(0 0 0 rgba(0, 0, 0, 0));
+  transition: filter 2200ms cubic-bezier(0.65, 0, 0.35, 1);
+}
+.rm:not([data-phase='flat']) > canvas {
   filter: drop-shadow(0 16px 16px rgba(0, 0, 0, 0.28));
-  opacity: 0;
-  transition: opacity 550ms cubic-bezier(0.22, 1, 0.36, 1);
 }
 /* 段ごとの見た目。flat は今までどおりの平らな緑の札で、立体の部品（天板・表示窓の彫り・差し出し口・キーの厚み）は出さない */
 .rm[data-phase='flat'] .rm-top {
@@ -69,10 +74,10 @@
 }
 .rm-slot,
 .rm-display::after {
-  transition: opacity 450ms ease-out;
+  transition: opacity 1400ms cubic-bezier(0.65, 0, 0.35, 1) 600ms;
 }
 .rm-top {
-  transition: opacity 450ms ease-out, height 450ms ease-out;
+  transition: opacity 1600ms cubic-bezier(0.65, 0, 0.35, 1), height 2200ms cubic-bezier(0.65, 0, 0.35, 1);
 }
 .rm[data-phase='flat'] .rm-body {
   background: var(--brand);
@@ -87,23 +92,14 @@
 .rm[data-phase='flat'] .rm-key {
   box-shadow: none;
 }
-/* 立体になる瞬間、機械が少し持ち上がって据わる */
-.rm:not([data-phase='flat']) {
-  animation: rm-settle 650ms cubic-bezier(0.22, 1, 0.36, 1) both;
-}
-@keyframes rm-settle {
-  0% { transform: none; }
-  40% { transform: translateY(-6px) scale(1.01); }
-  100% { transform: none; }
-}
-/* three.js で描けたら、CSS の本体と天板を消して canvas を見せる */
-.rm[data-gl]:not([data-phase='flat']) > canvas {
-  opacity: 1;
-}
-.rm[data-gl]:not([data-phase='flat']) .rm-top {
+/* three.js で描けたら、CSS の本体と天板を消して canvas に任せる。天板の場所の高さは canvas の天板に合わせる（--rm-top） */
+.rm[data-gl] .rm-top {
   opacity: 0;
+  height: var(--rm-top, 0px);
+  transition: none;
 }
-.rm[data-gl]:not([data-phase='flat']) .rm-body {
+.rm[data-gl] .rm-body,
+.rm[data-gl][data-phase='flat'] .rm-body {
   background: transparent;
   box-shadow: none;
 }
@@ -119,8 +115,8 @@
 }
 /* 機械の前面。上の縁に光、下に厚みの陰、床への影 */
 .rm-body {
-  transition: background-color 450ms ease-out, box-shadow 450ms ease-out, border-radius 450ms ease-out;
-  border-radius: 10px 10px 28px 28px;
+  transition: background-color 1600ms cubic-bezier(0.65, 0, 0.35, 1), box-shadow 1600ms cubic-bezier(0.65, 0, 0.35, 1), border-radius 1600ms cubic-bezier(0.65, 0, 0.35, 1);
+  border-radius: 24px;
   background: linear-gradient(180deg, #386c4f 0%, var(--brand) 38%, #284f39 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.22),
@@ -135,7 +131,8 @@
   position: relative;
   border-radius: 18px;
   background-color: #1c3b2d;
-  transition: background-color 450ms ease-out, box-shadow 450ms ease-out, padding 450ms cubic-bezier(0.22, 1, 0.36, 1);
+  /* 表示窓は、機械になる動きの後半でゆっくり彫り込まれる */
+  transition: background-color 1400ms cubic-bezier(0.65, 0, 0.35, 1) 600ms, box-shadow 1400ms cubic-bezier(0.65, 0, 0.35, 1) 600ms, padding 1400ms cubic-bezier(0.65, 0, 0.35, 1) 600ms;
   box-shadow: inset 0 4px 10px rgba(0, 0, 0, 0.5), inset 0 -1px 0 rgba(255, 255, 255, 0.08), 0 1px 0 rgba(255, 255, 255, 0.14);
   overflow: hidden;
 }
@@ -184,8 +181,7 @@
   background: repeating-linear-gradient(90deg, currentColor 0 2px, transparent 2px 4px, currentColor 4px 5px, transparent 5px 8px, currentColor 8px 11px, transparent 11px 12px);
 }
 @media (prefers-reduced-motion: reduce) {
-  .rc-print.rc-run,
-  .rm:not([data-phase='flat']) {
+  .rc-print.rc-run {
     animation: none;
   }
   .rm > canvas,
