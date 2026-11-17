@@ -217,15 +217,23 @@ export function isMissingR2ObjectError(stderr: string): boolean {
   return /(?:HTTP(?: status)?[ :]+404|404 Not Found|"status"\s*:\s*404|NoSuchKey|\[10007\]\s+The specified key does not exist\.)/i.test(stderr)
 }
 
+export function isTransientR2Error(stderr: string): boolean {
+  return /Status code: (?:429|5\d\d)\b/.test(stderr)
+}
+
+/** R2 は続けて put すると 429 を返すので、429・5xx だけ間を空けて試し直す。 */
 async function runCf(args: string[], allowMissing = false, capture = false): Promise<string> {
-  const process = Bun.spawn(['cf', 'r2', 'objects', ...args, '--bucket-name', ARCHIVE_BUCKET, '--quiet'], {
-    stdout: capture ? 'pipe' : 'ignore', stderr: 'pipe',
-  })
-  const [stderr, stdout, status] = await Promise.all([
-    new Response(process.stderr).text(), capture ? new Response(process.stdout).text() : Promise.resolve(''), process.exited,
-  ])
-  if (status !== 0 && !(allowMissing && isMissingR2ObjectError(stderr))) throw new Error(`cf R2 ${args[0]} failed (exit ${status})`)
-  return stdout
+  for (let attempt = 0; ; attempt++) {
+    const process = Bun.spawn(['cf', 'r2', 'objects', ...args, '--bucket-name', ARCHIVE_BUCKET, '--quiet'], {
+      stdout: capture ? 'pipe' : 'ignore', stderr: 'pipe',
+    })
+    const [stderr, stdout, status] = await Promise.all([
+      new Response(process.stderr).text(), capture ? new Response(process.stdout).text() : Promise.resolve(''), process.exited,
+    ])
+    if (status === 0 || (allowMissing && isMissingR2ObjectError(stderr))) return stdout
+    if (attempt >= 5 || !isTransientR2Error(stderr)) throw new Error(`cf R2 ${args[0]} failed (exit ${status})`)
+    await Bun.sleep(5_000 * 2 ** attempt)
+  }
 }
 
 const cfTransport: ArchiveTransport = {

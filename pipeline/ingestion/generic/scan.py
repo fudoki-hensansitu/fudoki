@@ -194,6 +194,8 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
             # and the first digits of the next cell's (`0005` = `000` + `5` of `…,051,000` | `5,918,437,000`, 281000).
             width = (child.x1 - child.x0) / len(child.text)
             edge = child.x0 + 3 * width
+            if (ends := document_quirk('grouped_ends_at_rule')) is not None:
+                edge = ends.module.edge(edge, crossing)
             ordered.append(Word(child.text[:3], child.x0, child.y0, edge, child.y1))
             child = Word(child.text[3:], edge, child.y0, child.x1, child.y1)
         elif (re.fullmatch(r'0[0-9]+', child.text) and crossing
@@ -390,6 +392,8 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
     rules += [Rule(r.start, r.position, r.end, r.position) for r in detected.horizontal]
     cuts = sorted(r.position for r in detected.vertical)
     gone = superseded(observation_page)
+    if (strips := document_quirk('strip_rereads')) is not None:
+        gone |= strips.module.rereads(observation_page, gone)
     if (rule_pieces := document_quirk('rule_pieces_as_digits')) is not None:
         gone |= rule_pieces.module.pieces(observation_page, cuts)
     # Adjacent OCR tiles can both read a comma's descender. Keep its complete number;
@@ -458,8 +462,12 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                 whole = _text(item['raw_text'])
                 reach = 0
                 if item.get('attempt_id') and pieces is not None:
+                    children = pieces
                     pieces = _paddle_pieces(item, pieces, item['id'] in corrected_word_parents, cuts)
                     reach = PADDLE_REACH if pieces else 0
+                    if pieces is None and (padded := document_quirk('padded_number_boxes')) is not None \
+                            and (word := padded.module.inside(item, children, cuts)) is not None:
+                        pieces = [word]
                 if (pieces and item['id'] not in corrected_word_parents and NUMBER.fullmatch(whole)
                         and whole != _text(''.join(p.text for p in pieces))
                         and not any(item['bbox_pdf_pt'][0] + 1 < x < item['bbox_pdf_pt'][2] - 1 for x in cuts)):
@@ -694,7 +702,9 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
 
     @cache
     def detected(number):
-        found = (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed)
+        found = (rules or {}).get(number) or (
+            vector.module.detected(pdf, number) if (vector := document_quirk('vector_rules')) is not None
+            else pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed))
         if (dotted := document_quirk('dotted_column_rules')) is not None:
             found = dotted.module.added(pdf, found, rule_dark)
         found = short_rows(pdf, found, rule_dark,
