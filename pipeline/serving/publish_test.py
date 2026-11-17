@@ -53,6 +53,15 @@ class ClassifyTest(unittest.TestCase):
             'pipeline/ingestion/generic/patterns/catalog.json',
             'pipeline/ingestion/fiscal/jurisdictions/133612/layouts/purpose_summary_2023.json',
             'pipeline/ingestion/fiscal/store.py',
+            'pipeline/ingestion/generic/layout_settings.schema.json',
+            'pipeline/ingestion/fiscal/manifest.schema.json',
+        ), {'mode': 'none', 'jurisdictions': []})
+
+    def test_pipeline_typescript_does_nothing(self):
+        self.assertEqual(scope(
+            'pipeline/source_selection/archive.ts',
+            'pipeline/dbt/scripts/generate_cofog_master.ts',
+            'pipeline/verify/boundaries.ts',
         ), {'mode': 'none', 'jurisdictions': []})
 
     def test_unknown_input_falls_to_full(self):

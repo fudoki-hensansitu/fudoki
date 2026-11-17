@@ -13,6 +13,7 @@
 - それ以外の marts の入力（dbt のモデル・共通の辞書・build と配信のコードなど）が変わった → 全件
 - 取り込みのコードのうち build が import しないもの（変換器・保存の検査・refresh）と変換器の宣言 → 見ない。
   build は R2 に保存済みの表を読むので、変換器を変えても marts は変わらない。表が変わるときは管理 JSON の記録が変わる
+- 宣言の schema（`pipeline/ingestion/**/*.schema.json`）と pipeline の TS（出典の選定・検査の道具）→ 見ない
 - marts の入力が変わっていない（web・docs だけ、文書・テストだけなど） → 何もしない
 自治体に絞れると分かるもの以外は全件に倒す（同期は D1 との差分しか書かないので、広く流しても書き込みは増えない）。
 自治体で絞った build は生成 macro `fiscal_*_relations.sql` を書き換えるので、終わったら元に戻す。
@@ -42,6 +43,8 @@ IGNORED = (
     re.compile(r'\.test\.ts$'),
     re.compile(r'\.digit-recheck\.jsonl$'),
     re.compile(r'^pipeline/dbt/macros/fiscal_(csv|pdf)_relations\.sql$'),
+    # build と同期は Python と dbt だけで動く。pipeline の TS は出典の選定・検査・seed を生成する道具（生成した seed は CSV の変更として現れる）
+    re.compile(r'^pipeline/.+\.ts$'),
 )
 # build と同期の入口。ingestion/project は様式を名前で import する（importlib）ので丸ごと入口にする
 BUILD_ENTRIES = ('dbt/scripts/prepare.py', 'dbt/scripts/fiscal_inputs.py', 'serving/publish.py', 'serving/sync_d1.py',
@@ -60,6 +63,9 @@ CONVERTER_DATA = (
     re.compile(r'^pipeline/ingestion/fiscal/layouts/'),
     re.compile(r'^pipeline/ingestion/fiscal/jurisdictions/\d{6}/layouts/'),
     re.compile(r'^pipeline/ingestion/generic/patterns/'),
+    # 宣言の schema は宣言を通すか止めるかだけで、表の中身を変えない。全自治体の宣言が新しい schema を通るかは
+    # verify-pipeline の ingestion:check（manifest.read が layout・workflow も検査する）が確かめる
+    re.compile(r'^pipeline/ingestion/.+\.schema\.json$'),
 )
 # 自治体の取り込みの宣言（管理 JSON）と出典の選定。保存し直した表は管理 JSON の変更として現れる
 JURISDICTION_PATHS = (
