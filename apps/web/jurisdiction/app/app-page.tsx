@@ -989,8 +989,10 @@ export function AppPage({ res, data, snapshot: base, flow, extras: extrasProp, s
     }
   }, [tab, year, projectPage])
   const go: Go = (t, opt = {}) => {
-    if (opt.filter) setFilter(opt.filter)
-    if (t === 'projects') setFields(opt.field ? [opt.field] : [])
+    // タブと同じ描画で絞り込みも変える。transition で後から変えると、先に絞らない一覧が描かれてその続きの頁まで読みに行き、
+    // 絞った一覧も頁の移動（loader）が終わるまで出ない
+    if (opt.filter) setFilterState(opt.filter)
+    if (t === 'projects') setFieldsState(opt.field ? [opt.field] : [])
     const q = new URLSearchParams(Object.entries(opt).filter((e): e is [string, string] => !!e[1]))
     changeTab(t, t === 'projects' && (opt.filter || opt.field) ? `?${q}` : undefined)
   }
