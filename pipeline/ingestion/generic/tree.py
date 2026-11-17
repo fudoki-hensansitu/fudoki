@@ -2660,6 +2660,17 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                     item.key, item.role = again.key, 'repeat'
                     repeated_codes.extend(g for g in item.glyphs if re.search(r'[0-9０-９]', g.text))
                     continue
+                if (first_on_page and item.role == 'node' and item.code is not None and not normalize(item.name or '')
+                        and not item.amounts
+                        and quirk((layout or {}).get(item.group.axis), 'repeated_code_at_top') is not None
+                        and not any(i.group.subject and i.page == item.page for i in placed)
+                        and (again := next((p for p in reversed(branch.get(item.group.axis, []))
+                                            if p is not None and normalize(p.code or '') == normalize(item.code)), None)) is not None):
+                    # The quirk `repeated_code_at_top`: the open item's code printed again, alone, at the top of a
+                    # continuation page. The code is the open item's (a coverage exclusion), not a new item.
+                    item.key, item.role = again.key, 'repeat'
+                    repeated_codes.extend(g for g in item.glyphs if re.search(r'[0-9０-９]', g.text))
+                    continue
                 ranks = levels[item.group.axis]
                 depth = 1 + min(range(len(ranks)), key=lambda i: abs(ranks[i] - item.indent)) if ranks else 1
                 mode = detail if isinstance(detail, str) else detail.get(item.group.axis)
