@@ -250,6 +250,7 @@
     "under": "ingestion.generic.patterns.quirks.under",
     "unnumbered_shift": "ingestion.generic.patterns.quirks.unnumbered_shift",
     "unnumbered_abolished_names": "ingestion.generic.patterns.quirks.unnumbered_abolished_names",
+    "uncoded_titles": "ingestion.generic.patterns.quirks.uncoded_titles",
     "unnumbered_names_at_rule": "ingestion.generic.patterns.quirks.unnumbered_names_at_rule",
     "zero_codes": "ingestion.generic.patterns.quirks.zero_codes",
     "unopened_brackets": "ingestion.generic.patterns.quirks.unopened_brackets",
