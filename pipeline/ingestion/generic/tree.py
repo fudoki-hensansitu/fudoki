@@ -2365,6 +2365,10 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 first = mine.pop(0)
                 previous.lines += first.lines
                 previous.amounts += first.amounts
+                if previous.role == 'note' and not reads_as_note(previous.name):
+                    # A name that ended its page without an amount was held as a note; with its amount it is an item
+                    # (`大崎ゆうゆうプラザ太陽光発電設備新設工事監理委託` / `418,000` over the page, 131091 決算 R7 p6・p8).
+                    previous.role = 'node'
             elif (previous is not None and mine
                   and (((over := quirk((layout or {}).get(group.axis), 'names_over_pages')) is not None
                         and over.module.runs_on(previous, mine[0]))
