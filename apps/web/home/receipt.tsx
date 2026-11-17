@@ -1,4 +1,5 @@
-// ホームのうちのまちの札。札を立体のレシートの機械（天板・前面・表示窓・差し出し口）に見立て、予算と1人あたりの額を数え上げ、差し出し口から分野ごとの1人あたりのレシートを出す。
+// ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、その下にレシートプリンタ（three.js、形は Blender の model）が現れて、
+// 差し出し口から分野ごとの1人あたりのレシートを刷り出す。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
 import { ArrowRightIcon } from '@phosphor-icons/react'
@@ -7,15 +8,15 @@ import { reiwa, yearName } from '../jurisdiction/types'
 import type { YearView } from '../jurisdiction/app/data'
 import { OTHER_FRAME } from '../jurisdiction/domains'
 import { FieldIcon } from './parts'
-import type { Machine } from './machine3d'
-import { COUNT_MS, MORPH_MS, READ_MS, SCROLL_MS, SETTLE_MS } from './motion'
+import type { Printer } from './machine3d'
+import { COUNT_MS, MORPH_MS, PRINT_MS, READ_MS, SCROLL_MS, SETTLE_MS } from './motion'
 import './receipt.css'
 
 const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-reduced-motion: reduce)').matches
 
-/** 0 から to まで数え上げる。reduced-motion では最初から to。
+/** delay の後に 0 から to まで数え上げる。reduced-motion では最初から to。
  * to が変わったら（年度の切り替え）描く前に 0 へ戻し、前の年度の額を新しい年度の見出しで見せない */
-function useCountUp(to: number) {
+function useCountUp(to: number, delay = 0) {
   const [n, setN] = React.useState(() => (reduced() ? to : 0))
   const [from, setFrom] = React.useState(to)
   if (from !== to) {
@@ -25,9 +26,9 @@ function useCountUp(to: number) {
   React.useEffect(() => {
     if (reduced()) return setN(to)
     let raf = 0
-    const t0 = performance.now()
+    const t0 = performance.now() + delay
     const step = (t: number) => {
-      const p = Math.min(1, (t - t0) / COUNT_MS)
+      const p = Math.max(0, Math.min(1, (t - t0) / COUNT_MS))
       setN(Math.round(to * (1 - Math.pow(1 - p, 3))))
       if (p < 1) raf = requestAnimationFrame(step)
     }
@@ -58,15 +59,20 @@ export function perHeadParts(fields: { yen: number }[], total: number, pop: numb
   return { sum, parts }
 }
 
-/** 演出の段。flat: 平らな札で数え上げる → solid: 札が立体の機械になる → print: 差し出し口からレシートが出る */
-type Phase = 'flat' | 'solid' | 'print'
+/** 演出の段。count: 札で数え上げる → appear: 札の下にプリンタが現れる → print: 差し出し口からレシートが出る */
+type Phase = 'count' | 'appear' | 'print'
+/** 予算を数え終えてから1人あたりを数える。2つを同時に動かすと目が追えない */
+const COUNT_ALL_MS = COUNT_MS * 2
+const APPEAR_AT = COUNT_ALL_MS + READ_MS
+const PRINT_AT = APPEAR_AT + MORPH_MS + SETTLE_MS
+
 /** 段を進める。reduced-motion では最初から print */
 function usePhase() {
-  const [phase, setPhase] = React.useState<Phase>(() => (reduced() ? 'print' : 'flat'))
+  const [phase, setPhase] = React.useState<Phase>(() => (reduced() ? 'print' : 'count'))
   React.useEffect(() => {
     if (reduced()) return setPhase('print')
-    const t1 = setTimeout(() => setPhase('solid'), COUNT_MS + READ_MS)
-    const t2 = setTimeout(() => setPhase('print'), COUNT_MS + READ_MS + MORPH_MS + SETTLE_MS)
+    const t1 = setTimeout(() => setPhase('appear'), APPEAR_AT)
+    const t2 = setTimeout(() => setPhase('print'), PRINT_AT)
     return () => {
       clearTimeout(t1)
       clearTimeout(t2)
@@ -75,11 +81,14 @@ function usePhase() {
   return phase
 }
 
-/** 段に合わせて頁を送り、動かさなくても見えるようにする。最初は札（数字）の下端が画面の外にあるときだけ札が収まる位置へ、
- * レシートが出るときは差し出し口が画面の真ん中より下にあるときだけ真ん中へ（上へは戻さない）。
- * 利用者が自分で送ったら（ホイール・タッチ・キー・スクロールバーの操作）、それ以降は動かさない。
- * scroll の event は数えない（天板が伸びたときのスクロールの anchor の補正でも起き、利用者の操作と区別できない） */
-function useFollow(phase: Phase, machine: React.RefObject<HTMLElement | null>, slot: React.RefObject<HTMLElement | null>) {
+const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2)
+
+/** 段に合わせて頁を送り、動かさなくても見えるようにする（カメラの代わり）。上へは戻さない。
+ * count: 札の下端が画面の外なら札が収まる位置へ。appear: プリンタが画面の下半分に入る位置へ。
+ * print: 紙が伸びるのと同じ長さ・同じ緩急で、プリンタが画面の上に残る位置まで送り、紙が出てくるのを追う。
+ * 利用者が自分で送ったら（ホイール・タッチ・キー・ポインタ）、それ以降は動かさない。
+ * scroll の event は数えない（レイアウトの補正でも起き、利用者の操作と区別できない） */
+function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>, stage: React.RefObject<HTMLElement | null>) {
   const touched = React.useRef(false)
   const raf = React.useRef(0)
   React.useEffect(() => {
@@ -98,51 +107,56 @@ function useFollow(phase: Phase, machine: React.RefObject<HTMLElement | null>, s
   React.useEffect(() => {
     if (touched.current || reduced()) return
     const vh = window.innerHeight
-    // ブラウザの smooth は速すぎるので、SCROLL_MS をかけて ease-in-out で送る
-    const go = (to: number) => {
+    const go = (to: number, ms: number, ease: (p: number) => number) => {
       const from = window.scrollY
       if (to <= from + 4) return
       cancelAnimationFrame(raf.current)
       const t0 = performance.now()
       const step = (t: number) => {
-        const p = Math.min(1, (t - t0) / SCROLL_MS)
-        const e = p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2
-        window.scrollTo(0, from + (to - from) * e)
+        const p = Math.min(1, (t - t0) / ms)
+        window.scrollTo(0, from + (to - from) * ease(p))
         if (p < 1 && !touched.current) raf.current = requestAnimationFrame(step)
       }
       raf.current = requestAnimationFrame(step)
     }
-    if (phase === 'flat' && machine.current) {
-      // 札の下端が画面の外なら、札の上端まで送る（札が画面より高ければ上端を合わせる）
-      const r = machine.current.getBoundingClientRect()
-      if (r.bottom > vh) go(window.scrollY + Math.min(r.top - 16, r.bottom - vh + 16))
+    if (phase === 'count' && card.current) {
+      const r = card.current.getBoundingClientRect()
+      if (r.bottom > vh) go(window.scrollY + Math.min(r.top - 16, r.bottom - vh + 16), SCROLL_MS, easeInOut)
     }
-    if (phase === 'print' && slot.current) go(window.scrollY + slot.current.getBoundingClientRect().top - vh * 0.5)
-  }, [phase, machine, slot])
+    if (phase === 'appear' && stage.current) {
+      const r = stage.current.getBoundingClientRect()
+      if (r.bottom > vh * 0.7) go(window.scrollY + r.bottom - vh * 0.7, SCROLL_MS, easeInOut)
+    }
+    if (phase === 'print' && stage.current) {
+      // 紙（receipt.css の rc-print）と同じ緩急で、差し出し口が画面の上から 3 割の位置に来るまで送る
+      const r = stage.current.getBoundingClientRect()
+      go(window.scrollY + r.bottom - vh * 0.3, PRINT_MS, (p) => 1 - Math.pow(1 - p, 1.6))
+    }
+  }, [phase, card, stage])
 }
 
 export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: { name: string; v: YearView; year: number; pop: number | null; base: string; detailHref: string; head: React.ReactNode }) {
   const settled = v.word === '決算'
   const what = `${yearName(year)}の${settled ? '決算' : '予算'}`
   const total = useCountUp(v.total)
-  const per = useCountUp(pop ? Math.round(v.total / pop) : 0)
+  const per = useCountUp(pop ? Math.round(v.total / pop) : 0, COUNT_MS)
   const receipt = pop ? perHeadParts(v.fields, v.total, pop) : null
-  const machine = React.useRef<HTMLDivElement>(null)
-  const front = React.useRef<HTMLElement>(null)
-  const slot = React.useRef<HTMLDivElement>(null)
+  const printable = !!receipt
+  const card = React.useRef<HTMLElement>(null)
+  const stage = React.useRef<HTMLDivElement>(null)
   const phase = usePhase()
-  useFollow(phase, machine, slot)
-  const [gl, setGl] = React.useState<Machine | null>(null)
-  // 本体を three.js で描く（読み込みは数え上げの間に済ませる）。描けないときは CSS の本体
+  useFollow(phase, card, stage)
+  const [gl, setGl] = React.useState<Printer | null>(null)
+  // プリンタを three.js で描く（読み込みは数え上げの間に済ませる）。描けないときは CSS の差し出し口だけ
   React.useEffect(() => {
-    let m: Machine | null = null
+    let m: Printer | null = null
     let alive = true
     // サーバーの bundle に three.js を入れない（import.meta.env.SSR はビルド時に定数になり、この import ごと消える）
-    if (import.meta.env.SSR) return
-    void import('./machine3d').then(async ({ mountMachine }) => {
-      if (!alive || !machine.current || !front.current) return
-      const mounted = await mountMachine(machine.current, front.current, () => {
-        // コンテキストを失ったら canvas を外し、CSS の本体へ戻す
+    if (import.meta.env.SSR || !printable) return
+    void import('./machine3d').then(async ({ mountPrinter }) => {
+      if (!alive || !stage.current) return
+      const mounted = await mountPrinter(stage.current, () => {
+        // コンテキストを失ったら canvas を外し、CSS の差し出し口へ戻す
         m?.stop()
         m = null
         setGl(null)
@@ -155,26 +169,24 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
       alive = false
       m?.stop()
     }
-  }, [])
-  // 段に合わせて本体を動かす。three.js の読み込みが段より遅れたときと reduced-motion では、動かさずにその段の姿にする
-  const shown = React.useRef<{ m: Machine | null; phase: Phase; year: number }>({ m: null, phase: 'flat', year })
+  }, [printable])
+  // 段に合わせてプリンタを動かす。three.js の読み込みが段より遅れたときと reduced-motion では、動かさずにその段の姿にする
+  const shown = React.useRef<{ m: Printer | null; phase: Phase; year: number }>({ m: null, phase: 'count', year })
   React.useEffect(() => {
     if (!gl) return
     const was = shown.current
     const fresh = was.m !== gl
     const instant = fresh || reduced()
-    if (phase !== 'flat' && (fresh || was.phase === 'flat')) gl.morph(instant)
+    if (phase !== 'count' && (fresh || was.phase === 'count')) gl.appear(instant)
     if (phase === 'print' && (fresh || was.phase !== 'print' || was.year !== year)) gl.print(instant)
     shown.current = { m: gl, phase, year }
   }, [gl, phase, year])
   return (
-    <div ref={machine} className="rm relative" data-phase={phase} data-gl={gl ? true : undefined}>
-      {/* 天板。手前の辺を軸に奥へ倒し、奥ほど狭く見せる（立体の段で出す。three.js で描けたら隠す） */}
-      <div className="rm-top" aria-hidden="true" />
-      <section ref={front} className="rm-body relative z-10 p-5 pb-14 text-brand-foreground sm:p-7 sm:pb-16">
+    <div className="rm" data-phase={phase} data-gl={gl ? true : undefined}>
+      <section ref={card} className="rm-card p-5 text-brand-foreground sm:p-7">
         {head}
-        {/* 表示窓。予算と1人あたりをいちばん大きく出す */}
-        <dl className="rm-display mt-5 grid gap-4 px-5 py-5 sm:mt-6 sm:gap-5 sm:px-7 sm:py-6">
+        {/* 予算と1人あたりをいちばん大きく出す */}
+        <dl className="mt-5 grid gap-4 sm:mt-6 sm:gap-5">
           <div>
             <dt className="text-[15px] opacity-80">{what}</dt>
             <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
@@ -199,8 +211,13 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             <ArrowRightIcon className="size-4" />
           </Link>
         </div>
-        {receipt ? <div ref={slot} className="rm-slot absolute inset-x-0 bottom-[22px]" aria-hidden="true" /> : null}
       </section>
+      {/* プリンタの置き場。高さは差し出し口までで、three.js が決める。描けないときは CSS の差し出し口 */}
+      {receipt ? (
+        <div ref={stage} className="rm-stage relative" aria-hidden="true">
+          <div className="rm-slot" />
+        </div>
+      ) : null}
       {receipt && phase === 'print' ? (
         <div className="rc-feed">
           {/* 年度を替えたら刷り直す */}
