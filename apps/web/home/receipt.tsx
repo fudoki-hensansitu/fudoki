@@ -242,7 +242,8 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
     // 数え直す（年度や額が変わる）ときは、出ている紙を差し出し口で切り離して落とし、新しい紙は数え終えてから一から刷る
     setSeen(counted)
     const height = feed.current?.querySelector<HTMLElement>('[data-latest]')?.scrollHeight ?? 0
-    const drop = printed && height > 0 && !reduced()
+    // 新しい年度に紙を出せない（人口が無い）ときは落とさずに消す。落とす紙が描かれず、落ち終えた合図が来ないため
+    const drop = !!pop && printed && height > 0 && !reduced()
     setFalling(drop ? { r: printed, height } : null)
     setPrinted(null)
   }
