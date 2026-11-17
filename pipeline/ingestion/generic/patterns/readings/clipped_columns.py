@@ -1,4 +1,5 @@
 import bisect
+import gzip
 import json
 from pathlib import Path
 import re
@@ -43,6 +44,13 @@ class Reader(Reading):
                           [{'header': key, 'x_range': list(edges)}
                            for key, edges in zip(self.SUM_COLUMNS, self.SUM_EDGES)])
         self.SUM_BODY_TOP = profile['sum_body_top']
+        # The unnumbered closing row: 歳出合計 in expenditure books, 歳入合計 in revenue books.
+        self.TOTAL = profile.get('total_label', '歳出合計')
+        # Revenue books print the 節 of a 目 by name only (現年課税分), without a statutory number.
+        self.SECTION_NUMBERS = profile.get('section_numbers', True)
+        # Remarks that only annotate the row (還付未済額 of a revenue 節) and hold no column amount:
+        # {kind, reason} from the shared exclusion vocabulary, kept out of the digit coverage.
+        self.EXCLUDED_NOTES = profile.get('excluded_notes')
         self.SPAN = re.compile(r'<span[^>]*trm="([^"]*)"[^>]*>(.*?)</span>', re.S)
         self.GLYPH = re.compile(r'<g unicode="([^"]*)"[^>]*x="(-?[\d.]+)" y="(-?[\d.]+)"[^>]*adv="(-?[\d.]+)"')
         self.TRACE_TAG = re.compile(
@@ -58,6 +66,74 @@ class Reader(Reading):
                           *(f'{key}_{suffix}' for key in self.SUM_COLUMNS for suffix in AMOUNT_POSITION_SUFFIXES),
                           '款_番号', '款_名称']
 
+
+    def ocr_words(self, source, options):
+        """Words of the pages the conversion reads from pinned OCR (pages printed as outlines, no text layer).
+
+        Paddle's lines become words; a line's top varies by a point or two across one printed row, so the
+        lines of a row (middles within 3pt) are brought to one top. Amounts lose the
+        spaces Paddle puts between digit groups and its ∆/Δ for △; names get the shared variant table."""
+        from ingestion.generic.scan import apply_name_corrections, apply_variant_chars
+        pages, notes = {}, []
+        for ocr in source.get('ocr', []):
+            observation = json.loads(gzip.decompress(Path(ocr['path']).read_bytes()))
+            if observation['origin']['sha256'] != source['sha256']:
+                raise ValueError(f'OCR input {ocr["id"]} reads another original')
+            engine = observation.get('request', {}).get('engine')
+            observation, variants = apply_variant_chars(
+                {**observation, 'pages': [{**q, 'engine': engine} for q in observation['pages']]})
+            rules = [r for r in options.get('name_corrections', ())
+                     if any(r['page'] == q['page_number'] for q in observation['pages'])]
+            observation = apply_name_corrections(observation, rules)
+            if variants:
+                notes.append('Paddle が中国語の字形で読む字を、字形の対応表（ocr_variant_chars.json）で日本の字形に置き換えた: '
+                             + '・'.join(variants) + '。')
+            if rules:
+                notes.append(f'原画で確かめた名称の誤読 {len(rules)} 件を、管理 JSON の name_corrections で印字に直した: '
+                             + '・'.join(f'{r["page"]}頁 {r["observed_name"]}→{r["corrected_name"]}' for r in rules) + '。')
+            for page in observation['pages']:
+                number = page['page_number']
+                if number in pages:
+                    raise ValueError(f'Page {number} is read by more than one OCR input')
+                words = []
+                for region in page['regions']:
+                    for item in region['observations']:
+                        if item['kind'] != 'region' or item.get('bbox_pdf_pt') is None:
+                            continue
+                        text = item['raw_text'].strip()
+                        compact = re.sub(r'\s+', '', text)
+                        if re.fullmatch(r'[△∆Δ\-0-9,]+', compact) and re.search(r'[0-9]', compact):
+                            text = compact.replace('∆', '△').replace('Δ', '△')
+                        elif re.fullmatch(r'[0-9]+\s+\D.*', text):
+                            text = re.sub(r'^([0-9]+)\s+', r'\1', text)   # `1 特別区民税` as the text layer prints `1特別区民税`
+                        x0, y0, x1, y1 = item['bbox_pdf_pt']
+                        # Paddle's box pads the ink by about a point on each side.
+                        x0, x1 = x0 + 1, max(x0 + 1, x1 - 1)
+                        # A right-aligned amount that touches the remarks text beside it is read as one line
+                        # (`128,660,943還付未済額`); split it where the digits end, a digit being half a letter wide.
+                        joined = re.fullmatch(r'([△∆Δ]?[0-9][0-9,\s]*[0-9])([^0-9,\s].*)', text)
+                        if joined:
+                            amount = re.sub(r'\s+', '', joined[1]).replace('∆', '△').replace('Δ', '△')
+                            share = len(amount) * .5 / (len(amount) * .5 + len(joined[2]))
+                            cut = x0 + (x1 - x0) * share
+                            words.append({'text': amount, 'xMin': x0, 'yMin': y0, 'xMax': cut - .5, 'yMax': y1})
+                            words.append({'text': joined[2], 'xMin': cut + .5, 'yMin': y0, 'xMax': x1, 'yMax': y1})
+                            continue
+                        words.append({'text': text, 'xMin': x0, 'yMin': y0, 'xMax': x1, 'yMax': y1})
+                words.sort(key=lambda w: (w['yMin'] + w['yMax']) / 2)
+                rows = []
+                for word in words:
+                    middle = (word['yMin'] + word['yMax']) / 2
+                    if rows and middle - rows[-1][0] <= 3:
+                        rows[-1][1].append(word)
+                    else:
+                        rows.append((middle, [word]))
+                for _, row in rows:
+                    top = min(w['yMin'] for w in row)
+                    for word in row:
+                        word['yMin'] = top
+                pages[number] = words
+        return pages, notes
 
     def lines(self, words):
         result = []
@@ -121,14 +197,24 @@ class Reader(Reading):
                           else {f'{key}_{suffix}': None for suffix in AMOUNT_POSITION_SUFFIXES})
         return record
 
-    def ruling_edges(self, pdf, page, workdir):
-        """Horizontal rules spanning the remarks region of one physical page."""
+    def ruling_edges(self, pdf, page, workdir, filled=False):
+        """Horizontal rules spanning the remarks region of one physical page.
+
+        `filled`: a page printed as outlines (read by OCR) draws its rules as thin filled boxes, not strokes."""
         svg = Path(workdir) / f'rules-{page}'
         subprocess.run(['pdftocairo', '-f', str(page), '-l', str(page), '-svg',
                         str(pdf), str(svg)], check=True)
         root = ET.parse(svg).getroot()
         ys = []
         for element in root.iter():
+            if filled and element.tag.endswith('path') and 'stroke' not in element.attrib:
+                points = [(float(x), float(y)) for _, x, y in self.SEGMENT.findall(element.get('d') or '')]
+                if 'transform' not in element.attrib and len(points) == 5:
+                    xs, ys_ = [x for x, _ in points], [y for _, y in points]
+                    if (max(ys_) - min(ys_) <= 2 and max(xs) - min(xs) >= 30
+                            and max(xs) >= self.NOTE_LEFT and min(xs) <= self.NOTE_RIGHT):
+                        ys.append((max(ys_) + min(ys_)) / 2)
+                continue
             if not element.tag.endswith('path') or 'stroke' not in element.attrib:
                 continue
             matrix = [float(v) for v in re.split(r'[,\s]+',
@@ -201,7 +287,7 @@ class Reader(Reading):
         marker = min(labels, key=lambda w: w['xMin'])
         match = re.match(r'([0-9]+)(.*)', marker['text'])
         if not match:
-            if ''.join(w['text'] for w in labels).replace(' ', '') != '歳出合計':
+            if ''.join(w['text'] for w in labels).replace(' ', '') != self.TOTAL:
                 raise ValueError(f'Unnumbered printed path at page {page}, y={y}')
             level = '合計'
         else:
@@ -212,12 +298,26 @@ class Reader(Reading):
             name_words.append({**marker, 'text': match[2],
                                'xMin': marker['xMin'] + 4.5 * len(match[1])})
         record = {'行種別': level, '番号': match[1] if match else None,
-                  '名称': '歳出合計' if level == '合計' else self.text(name_words),
+                  '名称': self.TOTAL if level == '合計' else self.text(name_words),
                   **self.amount_cells(row, page, self.BUDGET, self.BUDGET_EDGES),
                   **self.amount_cells(row, page, self.EXECUTED, self.EXEC_EDGES),
                   '備考': None,
                   **self.location(page, y, labels + name_words)}
         return record
+
+    def unnumbered_section_record(self, words, row, page, y, name_high, name_low):
+        # The name may wrap above and below the amount baseline; it is bounded by
+        # the neighbouring events, not by a number on the baseline.
+        name_words = self.select(words, self.SETSU_LEFT, self.SETSU_RIGHT + 5, name_low, name_high)
+        if not name_words:
+            raise ValueError(f'Section amounts without a printed name at page {page}, y={y}')
+        return {'行種別': '節', '番号': None, '名称': None, '区分_番号': None,
+                '区分_名称': self.text(name_words),
+                **{key: None for key in self.BUDGET},
+                **{f'{key}_{suffix}': None for key in self.BUDGET for suffix in AMOUNT_POSITION_SUFFIXES},
+                **self.amount_cells(row, page, self.EXECUTED, self.EXEC_EDGES),
+                '備考': None,
+                **self.location(page, min(y, *(w['yMin'] for w in name_words)), name_words)}
 
     def section_record(self, words, row, page, y, name_high):
         # The statutory-setsu number prints at the left edge of the 区分 column and
@@ -280,7 +380,11 @@ class Reader(Reading):
                 kinds = set()
                 if any(self.BUDGET_EDGES[0][0] <= w['xMin'] < self.SETSU_LEFT and self.AMOUNT.fullmatch(w['text']) for w in row):
                     kinds.add('parent')
-                if any(self.SETSU_LEFT <= w['xMin'] < self.SETSU_LEFT + 16 and re.match(r'[0-9]+', w['text']) for w in row):
+                if self.SECTION_NUMBERS:
+                    if any(self.SETSU_LEFT <= w['xMin'] < self.SETSU_LEFT + 16 and re.match(r'[0-9]+', w['text']) for w in row):
+                        kinds.add('section')
+                elif not kinds and any(self.AMOUNT.fullmatch(w['text']) and any(lo <= w['xMin'] and w['xMax'] <= hi
+                                                                                 for lo, hi in self.EXEC_EDGES) for w in row):
                     kinds.add('section')
                 for kind in kinds:
                     events.append((row[0]['yMin'], kind, row))
@@ -318,7 +422,12 @@ class Reader(Reading):
                     if set(current) != {'款', '項', '目'}:
                         raise ValueError(f'Missing printed path at page {page}, y={y}')
                     moku_leaf = None      # the open 目 has a setsu row: not a leaf
-                    record = self.section_record(body, row, page, y, name_high)
+                    if self.SECTION_NUMBERS:
+                        record = self.section_record(body, row, page, y, name_high)
+                    else:
+                        name_low = max([events[index - 1][0] + 7.5] if index else [self.BODY_TOP])
+                        name_low = max(name_low, y - 7.5)
+                        record = self.unnumbered_section_record(body, row, page, y, name_high, name_low)
                     pending.append((record, dict(current)))
                     anchors.append((tuple(current[a]['番号'] for a in ('款', '項', '目'))
                                     + (record['区分_番号'],), y, record))
@@ -364,7 +473,7 @@ class Reader(Reading):
                 joined = ''.join(w['text'] for w in labels).replace(' ', '')
                 # A wrapped name prints its first line(s) above and its last line
                 # below the numbered baseline; those lines hold labels only.
-                if labels and not any(value is not None for value, _ in amounts) and not match and joined != '歳出合計':
+                if labels and not any(value is not None for value, _ in amounts) and not match and joined != self.TOTAL:
                     fragments.append({'yMin': row[0]['yMin'],
                                       'yMax': max(w['yMax'] for w in labels),
                                       'text': self.text(labels)})
@@ -386,7 +495,7 @@ class Reader(Reading):
                 if match and match[2]:
                     name_words.append({**marker, 'text': match[2],
                                        'xMin': marker['xMin'] + 4.5 * len(match[1])})
-                if entry['joined'] == '歳出合計':
+                if entry['joined'] == self.TOTAL:
                     level = '合計'
                 elif marker and match and marker['xMin'] < self.SUM_KOU[0]:
                     level = '款'
@@ -394,7 +503,7 @@ class Reader(Reading):
                     level = '項'
                 else:
                     raise ValueError(f'Unrecognised summary row at page {page}, y={row[0]["yMin"]}')
-                name = '歳出合計' if level == '合計' else self.text(name_words)
+                name = self.TOTAL if level == '合計' else self.text(name_words)
                 if entry['prefix'] or entry['suffix']:
                     name = '\n'.join(part for part in
                                      [f['text'] for f in entry['prefix']]
@@ -432,7 +541,8 @@ class Reader(Reading):
                     for level in ('款', '項', '目')]
         contexts.append({'columns': ['区分_番号', '区分_名称', *self.EXECUTED, '備考'],
                          'header_path': ['節'], 'semantic_role': 'setsu',
-                         'grain_columns': ['目_物理頁', '目_上端', '区分_番号']})
+                         'grain_columns': ['目_物理頁', '目_上端', '区分_番号'] if self.SECTION_NUMBERS
+                         else ['目_物理頁', '目_上端', '物理頁', '上端']})
         note = ('最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、'
                 '節のない目（予備費等）は目行が葉行（区分_列は空）。'
                 '款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・'
@@ -491,6 +601,11 @@ class Reader(Reading):
         observations = destination / 'kita-observations'
         observations.mkdir(parents=True, exist_ok=True)
         traced = self.rule('trace_words')(source['path'], first, last)
+        read, ocr_notes = self.ocr_words(source, options)
+        if set(read) - {page for page, _ in traced}:
+            raise ValueError(f'OCR pages {sorted(set(read) - {page for page, _ in traced})} are outside the read range')
+        traced = [(page, {'words': read[page], 'stats': {**entry['stats'], 'OCRの頁': True}} if page in read else entry)
+                  for page, entry in traced]
         pages = [(page, entry['words']) for page, entry in traced]
         (observations / 'phantom-words.json').write_text(json.dumps(
             [{'物理頁': page, **entry['stats']} for page, entry in traced],
@@ -502,7 +617,7 @@ class Reader(Reading):
             meta = self.summary_metadata(columns)
         else:
             with tempfile.TemporaryDirectory() as workdir:
-                edges = {page: self.ruling_edges(source['path'], page, workdir) for page, _ in pages}
+                edges = {page: self.ruling_edges(source['path'], page, workdir, filled=page in read) for page, _ in pages}
             rows, parents, note_cells, orphans = self.detail(pages, edges, account)
             (observations / 'note-cells.json').write_text(json.dumps(
                 {'edges': {str(p): e for p, e in edges.items()}, 'cells': note_cells,
@@ -523,5 +638,10 @@ class Reader(Reading):
                               if threshold <= w['yMin'] < self.BODY_BOTTOM],
                              amount_columns=self.DETAIL_AMOUNT_COLUMNS if part == 'detail' else
                              [{'header': key, 'x_range': list(edges)}
-                              for key, edges in zip(self.SUM_COLUMNS, self.SUM_EDGES)])
+                              for key, edges in zip(self.SUM_COLUMNS, self.SUM_EDGES)],
+                             excluded_regions=[{**self.EXCLUDED_NOTES, 'pages': [[first, last]],
+                                                'x_range': [self.NOTE_LEFT, self.NOTE_RIGHT]}]
+                             if part == 'detail' and self.EXCLUDED_NOTES else ())
+        if ocr_notes:
+            meta = {**meta, 'notes': [*meta['notes'], *({'text': note, 'scope': {'kind': 'table'}} for note in ocr_notes)]}
         return {table_id: {'path': Path(output.path), 'metadata': meta}}
