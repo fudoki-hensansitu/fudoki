@@ -1337,6 +1337,32 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
         problems = explained_projects.continue_rows(built, observed, continued, levels, subject, explained['rows_axis'],
                                                     explained)
         built.unowned.extend({'kind': 'continued rows', 'detail': p} for p in problems)
+    elif continued is not None:
+        from ingestion.generic.convert import continue_volume
+
+        subject = next(n['axis_header'] for n in built.nodes if n.get('level_header') in ('款', '項', '目'))
+
+        def placed_nodes() -> set:
+            # (a row whose every row above stands one level up, or on another axis, up to a 款: what the
+            # diagnostics of a row with no parent or of a gap above it ask for)
+            by_key = {n['node_key']: n for n in built.nodes}
+            rooted: dict[str, bool] = {}
+
+            def placed(n: dict) -> bool:
+                if n['node_key'] not in rooted:
+                    parent = by_key.get(n['parent_node_key'])
+                    rooted[n['node_key']] = n['depth'] == 1 and n['axis_header'] == subject if parent is None else (
+                        (parent['axis_header'] != n['axis_header'] or parent['depth'] == n['depth'] - 1)
+                        and placed(parent))
+                return rooted[n['node_key']]
+            return {n['node_key'] for n in built.nodes if placed(n)}
+        before = placed_nodes()
+        built.notes.append({'kind': 'continued rows', 'text': continue_volume(built.nodes, continued)})
+        # Only the diagnostics of the rows the continuation placed go: a gap it did not mend still stops the table.
+        mended = placed_nodes() - before
+        placed = {(n['physical_page'], n['name_text']) for n in built.nodes if n['node_key'] in mended}
+        built.unowned = [u for u in built.unowned if not (u['kind'] in ('no subject parent', 'subject depth gap')
+                                                          and (u.get('page'), u.get('text')) in placed)]
     if explained:
         built.unowned.extend({'kind': 'explained item', 'detail': p} for p in explained_projects.attach(
             built, items, explained, declared=options.get('explained_names')))
@@ -1356,6 +1382,16 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
         u['kind'] == 'unread ink in amount column'
         and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
                 and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in declared))]
+    # Ink the rendered page shows to be only pieces of the column rules (`rule_pieces`: 多摩市 R2 決算 p1, a cell
+    # whose ink area runs from one rule to the next, past what the quirk `rule_ink` takes for a rule's piece) is no
+    # figure. A declaration names the unread box exactly, and one that names none stops the conversion.
+    pieces_ = [(r['page'], r['box']) for r in options.get('rule_pieces', ())]
+    for page, box in pieces_:
+        if not any(u['kind'] == 'unread ink in amount column' and u['page'] == page and u['box'] == box
+                   for u in built.unowned):
+            raise ValueError(f'rule_pieces: no unread ink at p{page} {box}')
+    built.unowned = [u for u in built.unowned if not (
+        u['kind'] == 'unread ink in amount column' and (u['page'], u['box']) in pieces_)]
     # So is a heading the strip seam cut (`header_readings`: 不用額 on 132080 R5 p422): the declared cell stands for it.
     headings = [(page, r['box']) for r in options.get('header_readings', ()) for page in r['pages']]
     built.unowned = [u for u in built.unowned if not (

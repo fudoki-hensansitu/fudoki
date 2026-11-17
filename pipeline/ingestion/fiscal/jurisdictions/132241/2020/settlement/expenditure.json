@@ -1,0 +1,902 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132241",
+    "fiscal_year": 2020,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "6014739dbda4fb74ca9ad3b4c888103ec6ba363c6b63cd9c376838855a9e4774"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement-1",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 220,
+                "skewed": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "column_edge": true
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true,
+            "rule_ink": true,
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            26
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "reread-p16-ink-75-a75-result0-r3",
+            "page": 16,
+            "observation_id": "p16:ink-75:a75:result0:r3",
+            "observed": "01",
+            "reason": "原典の画像では、ここは金額の右端の数字と縦の罫だけで、別の数字は印字されていない。読み残しの墨を読み直した OCR が、隣の金額の数字と罫を「01」と読んだ。この読みは使わない。"
+          },
+          {
+            "id": "reread-p17-ink-48-a48-result0-r0",
+            "page": 17,
+            "observation_id": "p17:ink-48:a48:result0:r0",
+            "observed": "01",
+            "reason": "原典の画像では、ここは金額の右端の数字と縦の罫だけで、別の数字は印字されていない。読み残しの墨を読み直した OCR が、隣の金額の数字と罫を「01」と読んだ。この読みは使わない。"
+          },
+          {
+            "id": "dust-p6-r132",
+            "page": 6,
+            "observation_id": "p6:full-page:a0:result0:r132",
+            "observed": "7",
+            "reason": "原典の画像ではこの位置に小さな墨の点があるだけで、数字は印字されていない。OCR はこの点を「7」と読んだ。この読みは使わない。"
+          },
+          {
+            "id": "dust-p18-digit-0-r0",
+            "page": 18,
+            "observation_id": "p18:digit-0:r0",
+            "observed": "8",
+            "reason": "原典の画像ではこの位置に小さな墨の点があるだけで、数字は印字されていない。OCR はこの点を「8」と読んだ。この読みは使わない。"
+          },
+          {
+            "id": "dust-p18-digit-1-r0",
+            "page": 18,
+            "observation_id": "p18:digit-1:r0",
+            "observed": "1",
+            "reason": "原典の画像ではこの位置に小さな墨の点があるだけで、数字は印字されていない。OCR はこの点を「1」と読んだ。この読みは使わない。"
+          }
+        ],
+        "rule_pieces": [
+          {
+            "id": "p1-rule-459",
+            "page": 1,
+            "box": [
+              453.5,
+              420.0,
+              521.5,
+              465.5
+            ],
+            "reason": "原典の画像で、頁1の予算現額の計の欄（生活保護費の上の空白の行）の墨は、左の縦の罫（x 459.5、1画素の幅）だけで、数字は印字されていない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-1-ocr-1",
+          "origin_sha256": "6014739dbda4fb74ca9ad3b4c888103ec6ba363c6b63cd9c376838855a9e4774",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "13f94095a6ec6aa0b0c783c28d188e61d9d0bbe23f0571cd8608788ab01c7a94",
+          "bytes": 2590514
+        },
+        {
+          "id": "general-settlement-1-ocr-2",
+          "origin_sha256": "6014739dbda4fb74ca9ad3b4c888103ec6ba363c6b63cd9c376838855a9e4774",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "2ad60be04a6ce3130f186a086b04e28e5bafa8b44dc947c86fef2734de055c50",
+          "bytes": 2618199
+        },
+        {
+          "id": "general-settlement-1-ocr-3",
+          "origin_sha256": "6014739dbda4fb74ca9ad3b4c888103ec6ba363c6b63cd9c376838855a9e4774",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c83ffe4950100da585a57e24abdfd577e026b10ddbaea53938a0212ce0ef5e99",
+          "bytes": 1534768
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-settlement-1"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-2",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a6d067d5860a4f2a7ba71386522ec1227fd97b2020fb0c1e6c9bbf4be0c45e4e"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement-2",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 220,
+                "skewed": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "column_edge": true
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true,
+            "rule_ink": true,
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            26
+          ]
+        ],
+        "continued_rows": {
+          "subjects": [
+            {
+              "code": "3",
+              "name": "民生費"
+            },
+            {
+              "code": "2",
+              "name": "児童福祉費"
+            },
+            {
+              "code": "4",
+              "name": "児童福祉施設費"
+            }
+          ],
+          "rows": []
+        },
+        "dropped_readings": [
+          {
+            "id": "dust-p7-r25",
+            "page": 7,
+            "observation_id": "p7:full-page:a0:result0:r25",
+            "observed": "2",
+            "reason": "原典の画像ではこの位置に小さな墨の点があるだけで、数字は印字されていない。OCR はこの点を「2」と読んだ。この読みは使わない。"
+          }
+        ],
+        "amount_corrections": [
+          {
+            "id": "p15-semicolon-r24",
+            "page": 15,
+            "observation_id": "p15:full-page:a0:result0:r24",
+            "observed_amount": "3,262, 785; 000",
+            "corrected_amount": "3,262,785,000",
+            "reason": "原典の画像で、頁15の款「土木費」の予算現額の計は「3,262,785,000」と印字されている。Paddle は最後の桁区切りのカンマをセミコロンと読んだ。"
+          },
+          {
+            "id": "p18-semicolon-r16",
+            "page": 18,
+            "observation_id": "p18:full-page:a0:result0:r16",
+            "observed_amount": "88; 000",
+            "corrected_amount": "88,000",
+            "reason": "原典の画像で、頁18の節「備品購入費」の予算現額は「88,000」と印字されている。Paddle は桁区切りのカンマをセミコロンと読んだ。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-2-ocr-1",
+          "origin_sha256": "a6d067d5860a4f2a7ba71386522ec1227fd97b2020fb0c1e6c9bbf4be0c45e4e",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c5e46f6b41195580d5b25e62f445177a36a37c2a5ebaf5c96bc5fac113b850e4",
+          "bytes": 2638901
+        },
+        {
+          "id": "general-settlement-2-ocr-2",
+          "origin_sha256": "a6d067d5860a4f2a7ba71386522ec1227fd97b2020fb0c1e6c9bbf4be0c45e4e",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "5e0ba21f4f1269439fecaed61a3dbdada69d6e55852139edd7085759032e9106",
+          "bytes": 2551196
+        },
+        {
+          "id": "general-settlement-2-ocr-3",
+          "origin_sha256": "a6d067d5860a4f2a7ba71386522ec1227fd97b2020fb0c1e6c9bbf4be0c45e4e",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b94d61ca938ae35dcb6ae90064b5aff18fe5a2a413c8cb4d29b9b94017b2edc7",
+          "bytes": 1523412
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-settlement-2"
+        }
+      ]
+    },
+    {
+      "id": "general-settlement-3",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c37bdd1179bafcbe340aabe6b2b3657116c0d7fc592ae51a572f742150a88f46"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-settlement-3",
+        "partial": true,
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 220,
+                "skewed": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "column_edge": true
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "column_edge": true
+                },
+                "options": {
+                  "note_kinds": {
+                    "教育費・": "充用"
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true,
+            "rule_ink": true,
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            21
+          ]
+        ],
+        "continued_rows": {
+          "subjects": [
+            {
+              "code": "10",
+              "name": "教育費"
+            },
+            {
+              "code": "1",
+              "name": "教育総務費"
+            },
+            {
+              "code": "2",
+              "name": "事務局費"
+            }
+          ],
+          "rows": []
+        },
+        "dropped_readings": [
+          {
+            "id": "reread-p10-ink-69-a69-result0-r0",
+            "page": 10,
+            "observation_id": "p10:ink-69:a69:result0:r0",
+            "observed": "01",
+            "reason": "原典の画像では、ここは金額の右端の数字と縦の罫だけで、別の数字は印字されていない。読み残しの墨を読み直した OCR が、隣の金額の数字と罫を「01」と読んだ。この読みは使わない。"
+          },
+          {
+            "id": "dust-p10-ink-62-a62-result0-r3",
+            "page": 10,
+            "observation_id": "p10:ink-62:a62:result0:r3",
+            "observed": "1",
+            "reason": "原典の画像ではこの位置に小さな墨の点があるだけで、数字は印字されていない。OCR はこの点を「1」と読んだ。この読みは使わない。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p20-juyouhi-he",
+            "page": 20,
+            "code": null,
+            "observed_name": "教育費・教育総務費 ・事務局費・需用費",
+            "corrected_name": "教育費・教育総務費・事務局費・需用費へ",
+            "reason": "原典の画像では、この充用先の「へ」は次の行の頭に1字だけ印字されている。OCR はその「へ」を読まなかった。"
+          },
+          {
+            "id": "p20-ekimuhi-he",
+            "page": 20,
+            "code": null,
+            "observed_name": "教育費・教育総務費・事務局費・役務費",
+            "corrected_name": "教育費・教育総務費・事務局費・役務費へ",
+            "reason": "原典の画像では、この充用先の「へ」は次の行の頭に1字だけ印字されている。OCR はその「へ」を読まなかった。"
+          },
+          {
+            "id": "p20-itakuryou-he",
+            "page": 20,
+            "code": null,
+            "observed_name": "教育費・教育総務費・事務局費・委託料",
+            "corrected_name": "教育費・教育総務費・事務局費・委託料へ",
+            "reason": "原典の画像では、この充用先の「へ」は次の行の頭に1字だけ印字されている。OCR はその「へ」を読まなかった。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-3-ocr-1",
+          "origin_sha256": "c37bdd1179bafcbe340aabe6b2b3657116c0d7fc592ae51a572f742150a88f46",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "ba3af35437bd3f2a5d95db0dff579d4052f1d9c50b96434a2ffcd01055fc216f",
+          "bytes": 2507239
+        },
+        {
+          "id": "general-settlement-3-ocr-2",
+          "origin_sha256": "c37bdd1179bafcbe340aabe6b2b3657116c0d7fc592ae51a572f742150a88f46",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e04c4589ee81c5728efebea9c5b0bb607697de320180ccce186b46592a5fef9c",
+          "bytes": 2614012
+        },
+        {
+          "id": "general-settlement-3-ocr-3",
+          "origin_sha256": "c37bdd1179bafcbe340aabe6b2b3657116c0d7fc592ae51a572f742150a88f46",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              21
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8b55fbcfaf922ca6a8b43e765bfbfbe23ad40f2a1c63c4623a670bb3805dab03",
+          "bytes": 2856
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-settlement-3"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "994f105855c4bbe57ca6fdd07c14b1e49b2f29772a40d57974460a71afc0ca3e"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 220,
+                "skewed": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "column_edge": true
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true,
+            "rule_ink": true,
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            20,
+            30
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "dust-p23-r52",
+            "page": 23,
+            "observation_id": "p23:full-page:a0:result0:r52",
+            "observed": "2",
+            "reason": "原典の画像では翌年度繰越額の欄の空白に小さな墨の点があるだけで、数字は印字されていない。OCR はこの点を「2」と読んだ。この読みは使わない。"
+          },
+          {
+            "id": "dust-p29-r61",
+            "page": 29,
+            "observation_id": "p29:full-page:a0:result0:r61",
+            "observed": "2",
+            "reason": "原典の画像では支出済額の欄の 0 の左の空白に小さな墨の点があるだけで、数字は印字されていない。OCR はこの点を「2」と読み、0 とつなげて 20 とした。この読みは使わない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-settlement-ocr-1",
+          "origin_sha256": "994f105855c4bbe57ca6fdd07c14b1e49b2f29772a40d57974460a71afc0ca3e",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "3a718dce12e5bae03880b5a8ed14279e5601374a627bd2adc7defb635c327905",
+          "bytes": 2954837
+        },
+        {
+          "id": "national-health-insurance-settlement-ocr-2",
+          "origin_sha256": "994f105855c4bbe57ca6fdd07c14b1e49b2f29772a40d57974460a71afc0ca3e",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              30
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a0b53c8ca9c1773d0a8085077ee63a4ec49c4e341fbc9b28e118a924b202a298",
+          "bytes": 3254
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-settlement"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2ccc7571acb6d5310ad2ed814e58e45fec8ceaa322f1e36389b74ac24ba53a1b"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 220,
+                "skewed": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "column_edge": true
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true,
+            "rule_ink": true,
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            20,
+            29
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "dust-p21-r72",
+            "page": 21,
+            "observation_id": "p21:full-page:a0:result0:r72",
+            "observed": "5",
+            "reason": "原典の画像では委託料の名前の下の空白に小さな墨の点があるだけで、数字は印字されていない。OCR はこの点を「5」と読んだ。この読みは使わない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-settlement-ocr-1",
+          "origin_sha256": "2ccc7571acb6d5310ad2ed814e58e45fec8ceaa322f1e36389b74ac24ba53a1b",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e5dc3e0f1cacbf7d90b7588638d066aadf4900bdb62bac77de1cb1b375ba7435",
+          "bytes": 2600710
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-settlement"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d2b80d66ed9f720741a1c9bc5a9f75f0c74b47d8e8208867277403b8bbd7c98f"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-settlement",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 220,
+                "skewed": true,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "position",
+                "quirks": {
+                  "column_edge": true
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "column_edge": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "names_in_own_column": true,
+            "rule_ink": true,
+            "gapped_column_rules": true
+          }
+        },
+        "pages": [
+          [
+            16,
+            19
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "dust-p17-r82",
+            "page": 17,
+            "observation_id": "p17:full-page:a0:result0:r82",
+            "observed": "4",
+            "reason": "原典の画像では備考の欄の空白に小さな墨の点があるだけで、数字は印字されていない。OCR はこの点を「4」と読んだ。この読みは使わない。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-settlement-ocr-1",
+          "origin_sha256": "d2b80d66ed9f720741a1c9bc5a9f75f0c74b47d8e8208867277403b8bbd7c98f",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "pages": [
+              16,
+              17,
+              18,
+              19
+            ],
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "6c1e0ecdc243de720b6ca0c0b87a9b6146db92f513c159ca3279cc5bb95b05f9",
+          "bytes": 1037513
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-settlement"
+        }
+      ]
+    }
+  ]
+}
