@@ -259,7 +259,7 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
       <header className="mb-4">
         <Title size="h1">{q.title}</Title>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{q.note}</p>
-        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">※{q.caveat}</p>
+        <p className="mt-1 text-sm leading-relaxed text-muted-foreground">※{q.caveat}</p>
       </header>
       {failed ? failedText : (
         <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
