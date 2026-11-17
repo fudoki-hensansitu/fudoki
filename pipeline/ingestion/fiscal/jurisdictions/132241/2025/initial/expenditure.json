@@ -117,6 +117,20 @@
       "options": {
         "account": "介護保険特別会計",
         "table_id": "long-term-care-expenditure",
+        "pages": [
+          [
+            67,
+            69
+          ],
+          [
+            71,
+            77
+          ],
+          [
+            100,
+            130
+          ]
+        ],
         "workflow": {
           "layout": {
             "pattern": "stacked_titles",
