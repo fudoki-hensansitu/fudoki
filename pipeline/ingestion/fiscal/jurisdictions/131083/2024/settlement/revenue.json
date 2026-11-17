@@ -1,0 +1,561 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131083",
+    "fiscal_year": 2024,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          },
+          "quirks": {
+            "code_between_name_lines": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p33-tile-seam-29",
+            "page": 33,
+            "observation_id": "p33:full-page:a0:result0:r73",
+            "observed": "2.9",
+            "reason": "5 教育費負担金の収入未済額 2,978,000 の頭を、隣の読みの切れ端が「2.9」と読んだ。金額は右の読みの 2,978,000 があり、この切れ端と合わさって 292,978,000 になる。この読みを使わない。"
+          }
+        ],
+        "amount_corrections": [
+          {
+            "id": "p68-public-facilities-fund-supplementary",
+            "page": 68,
+            "observation_id": "p68:full-page:a0:result0:r27",
+            "observed_amount": "553,000,000",
+            "corrected_amount": "-553,000,000",
+            "reason": "原典の画像で、頁68の 2 公共施設建設基金繰入金の補正予算額は −553,000,000（減額）と印字されている。OCR は負の印の −（同じ欄の −508,000,000 と同じ印）を読み落とした。1 基金繰入金の補正予算額 1,845,708,000 は目の和でこの額を引いた値。"
+          }
+        ]
+      },
+      "ocr_inputs": [
+        {
+          "id": "general-ocr-1",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4fd266171e38eec2ae4e8100ec22777893ea2256add2b714229f223bf557f392",
+          "bytes": 1515924
+        },
+        {
+          "id": "general-ocr-2",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "5fcec9ed208b9ae2fb6a7b82729a270e5d3a06168c46be4b76b3feed3deaea53",
+          "bytes": 904915
+        },
+        {
+          "id": "general-ocr-3",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              30,
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "7c584465a2a45154e92abda37fb016e0eede06aa73082692c0eb7748e105ebd4",
+          "bytes": 2431440
+        },
+        {
+          "id": "general-ocr-4",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              40,
+              41,
+              42,
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "3d114e9ef47b291d89630832e33b0372b2a5b59868a0b625d67f511e918de126",
+          "bytes": 2426335
+        },
+        {
+          "id": "general-ocr-5",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              50,
+              51,
+              52,
+              53,
+              54,
+              55,
+              56,
+              57,
+              58,
+              59
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "8fa0c73c94f84a67e80a2bbd70cd9f5e6dd485309f9296bedae0ab76b2b20e24",
+          "bytes": 2583416
+        },
+        {
+          "id": "general-ocr-6",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              60,
+              61,
+              62,
+              63,
+              64,
+              65,
+              66,
+              67,
+              68,
+              69
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b2d795c405690496dcd5287cd383a9c58e78bc4648a2ac522999662804334b6b",
+          "bytes": 1972154
+        },
+        {
+          "id": "general-ocr-7",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              70,
+              71,
+              72,
+              73,
+              74,
+              75,
+              76,
+              77,
+              78,
+              79
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b98c867e129842bba83ff323db6697ef43253ebd57aff1be5996b81a757c632d",
+          "bytes": 2515784
+        },
+        {
+          "id": "general-ocr-8",
+          "origin_sha256": "734c41222d2704fd0b570a91c8bb7de8552795e51b3444e8c5e7b3a2f130dba3",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              80,
+              81,
+              82,
+              83
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "a562cd60a7c971d8a994514d133d8deb3539076245a2b7dd4c92070765b17271",
+          "bytes": 705139
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "general-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "nhi",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c984d993f874af2f50f6512c0b93316b8bd918a9a62f71a6a58f9796c7744263"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険会計",
+        "table_id": "nhi-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "nhi-ocr-1",
+          "origin_sha256": "c984d993f874af2f50f6512c0b93316b8bd918a9a62f71a6a58f9796c7744263",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              10,
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "4c415786c6a5fc3a56c19777b26ade0d2918faaab99d564bd22fb502ab77a8eb",
+          "bytes": 1441725
+        },
+        {
+          "id": "nhi-ocr-2",
+          "origin_sha256": "c984d993f874af2f50f6512c0b93316b8bd918a9a62f71a6a58f9796c7744263",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              20,
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "b37beaf6c124cd3600a1fd5785c81a4709683c1a1e2ce7b0394367690cd5cf63",
+          "bytes": 1463654
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "nhi-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kaigo",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c984d993f874af2f50f6512c0b93316b8bd918a9a62f71a6a58f9796c7744263"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "kaigo-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kaigo-ocr-1",
+          "origin_sha256": "c984d993f874af2f50f6512c0b93316b8bd918a9a62f71a6a58f9796c7744263",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              64,
+              65,
+              66,
+              67,
+              68,
+              69,
+              70,
+              71,
+              72,
+              73
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "6a0d8cda29783b09a941bb1c72a117b3dbd6e71392c5dfe0186a8fa7d45be6ed",
+          "bytes": 1732727
+        },
+        {
+          "id": "kaigo-ocr-2",
+          "origin_sha256": "c984d993f874af2f50f6512c0b93316b8bd918a9a62f71a6a58f9796c7744263",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              74,
+              75,
+              76,
+              77,
+              78,
+              79,
+              80,
+              81,
+              82,
+              83
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "f20e85e060338dca24aa55bfa35d71518b6c133cd0451d1aa07328a776b61775",
+          "bytes": 1517644
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kaigo-revenue-detail"
+        }
+      ]
+    },
+    {
+      "id": "kouki",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c984d993f874af2f50f6512c0b93316b8bd918a9a62f71a6a58f9796c7744263"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "kouki-revenue-detail",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考の欄は調定の内訳・徴収率・所管課などの注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "options": {
+                  "marks": {
+                    "1": 1
+                  }
+                },
+                "quirks": {
+                  "name_column": {
+                    "line_reach": 1.3
+                  }
+                }
+              }
+            }
+          }
+        }
+      },
+      "ocr_inputs": [
+        {
+          "id": "kouki-ocr-1",
+          "origin_sha256": "c984d993f874af2f50f6512c0b93316b8bd918a9a62f71a6a58f9796c7744263",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              118,
+              119,
+              120,
+              121,
+              122,
+              123,
+              124,
+              125,
+              126,
+              127
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "c3ebb4016c44fb2d626e74334bf501226f565030a06d55d155fbff1d53f395bc",
+          "bytes": 1420841
+        },
+        {
+          "id": "kouki-ocr-2",
+          "origin_sha256": "c984d993f874af2f50f6512c0b93316b8bd918a9a62f71a6a58f9796c7744263",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              128,
+              129,
+              130,
+              131
+            ],
+            "vlm_fallback": false
+          },
+          "sha256": "5ec14d57ab744b160b642dc3430bb2703147da25b878c98bd87b5dd8c1582e8f",
+          "bytes": 720021
+        }
+      ],
+      "expected_tables": [
+        {
+          "table_id": "kouki-revenue-detail"
+        }
+      ]
+    }
+  ]
+}
