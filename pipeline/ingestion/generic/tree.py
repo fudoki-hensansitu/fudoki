@@ -366,6 +366,8 @@ def _split_code(line_text: str) -> tuple[str | None, str]:
         return None, line_text
     if found and READING.match(line_text, found.end()):  # `73（ナナサン）歯科健診事業`: the number's reading, a name
         return None, line_text
+    if found and int(unicodedata.normalize('NFKC', found.group(1))) == 0 and document_quirk('zero_codes') is not None:
+        return found.group(1), line_text[found.end():].strip()  # the quirk `zero_codes`: a dropped subject's `０.`
     if not found or int(unicodedata.normalize('NFKC', found.group(1))) == 0:
         if found:
             line_text = line_text[found.end():].strip()
