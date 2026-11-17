@@ -140,6 +140,8 @@
     "nearest_subject_code": "ingestion.generic.patterns.quirks.nearest_subject_code",
     "skewed_cell_rows": "ingestion.generic.patterns.quirks.skewed_cell_rows",
     "wrapped_years": "ingestion.generic.patterns.quirks.wrapped_years",
+    "stacked_characters": "ingestion.generic.patterns.quirks.stacked_characters",
+    "kana_successors": "ingestion.generic.patterns.quirks.kana_successors",
     "stacked_digits": "ingestion.generic.patterns.quirks.stacked_digits",
     "glued_number_stops": "ingestion.generic.patterns.quirks.glued_number_stops",
     "repeated_at_top": "ingestion.generic.patterns.quirks.repeated_at_top",

@@ -1247,6 +1247,10 @@ def read_pages(source: dict, options: dict, settings: dict | None, selected: lis
     observation = drop_readings(pinned(source, selected), options.get('dropped_readings'))
     if (digits := document_quirk('stacked_digits')) is not None:
         observation = digits.module.split(observation)
+    if (characters := document_quirk('stacked_characters')) is not None:
+        observation = characters.module.split(observation)
+    if (kana := document_quirk('kana_successors')) is not None:
+        observation = kana.module.read(observation)
     columns = (settings or {}).get('columns')
     spread = (settings or {}).get('spread')
     header = (settings or {}).get('header')

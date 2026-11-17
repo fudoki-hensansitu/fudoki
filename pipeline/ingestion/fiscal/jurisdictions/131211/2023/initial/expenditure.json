@@ -1,0 +1,489 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131211",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-initial-1",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "898293d5200f042694ba7e4b6d91324f2962eb887627fe7e8fc229a5df647c3e"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-1-ocr-1",
+          "origin_sha256": "898293d5200f042694ba7e4b6d91324f2962eb887627fe7e8fc229a5df647c3e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "f014a1d19f6f1b84a2753bd48481bd7dccf649e5629597ffd80af29219b4ceda",
+          "bytes": 2829852
+        },
+        {
+          "id": "general-initial-1-ocr-2",
+          "origin_sha256": "898293d5200f042694ba7e4b6d91324f2962eb887627fe7e8fc229a5df647c3e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "53a0349ce73f0d9581b604d8433d0cfa8b233362599e79e3030cbec8dd791d76",
+          "bytes": 2565021
+        },
+        {
+          "id": "general-initial-1-ocr-3",
+          "origin_sha256": "898293d5200f042694ba7e4b6d91324f2962eb887627fe7e8fc229a5df647c3e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "e9c50117df5259775fcababc9a923190b490761d06f3df573e4b973f08125201",
+          "bytes": 3308093
+        },
+        {
+          "id": "general-initial-1-ocr-4",
+          "origin_sha256": "898293d5200f042694ba7e4b6d91324f2962eb887627fe7e8fc229a5df647c3e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52,
+              53
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "8b46636f8a7125f77e44bf971dff22d81aad647babe50469c74d6761a71ac779",
+          "bytes": 2501494
+        },
+        {
+          "id": "general-initial-1-ocr-5",
+          "origin_sha256": "898293d5200f042694ba7e4b6d91324f2962eb887627fe7e8fc229a5df647c3e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              54,
+              55,
+              56,
+              57,
+              58,
+              59,
+              60,
+              61
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "712466a97877dc2d635c5d1f157f3d0240c8216b129b13f7bcac61772b0170fd",
+          "bytes": 2424143
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-1",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "財源内訳／区分": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "財源内訳／金額": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "節／区分": {
+                  "heading": "節"
+                }
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "区長": "基準額",
+                    "副区長": "基準額",
+                    "教育長": "基準額",
+                    "監査委員": "基準額"
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_characters": true,
+            "kana_successors": true,
+            "lost_name_characters": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            61
+          ]
+        ],
+        "partial": true,
+        "name_corrections": [
+          {
+            "id": "p24-r48-kana",
+            "page": 24,
+            "observation_id": "p24:full-page:a0:result0:r48",
+            "observed_name": "職員手当等",
+            "corrected_name": "イ職員手当等",
+            "reason": "物理24頁、説明「イ 職員手当等」。OCR が行頭の片仮名の記号を読み落とし、上の行の子にしていた。原典の描画で記号を確かめた。"
+          },
+          {
+            "id": "p59-r2-kana",
+            "page": 59,
+            "observation_id": "p59:full-page:a0:result0:r2",
+            "observed_name": "公害健康被害認定審查会運営",
+            "corrected_name": "ア公害健康被害認定審查会運営",
+            "reason": "物理59頁、説明「ア 公害健康被害認定審査会運営」。OCR が行頭の片仮名の記号を読み落とし、上の行の子にしていた。原典の描画で記号を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-1"
+        }
+      ]
+    },
+    {
+      "id": "general-initial-2",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "02da1d18ef52a1bc91901010a352a2c0ab28bb85ebb83d4d29218a90cf704307"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-2-ocr-1",
+          "origin_sha256": "02da1d18ef52a1bc91901010a352a2c0ab28bb85ebb83d4d29218a90cf704307",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "34e2dd8a45b45d00b131f2e4942217d4803db17165f9cdb0d56df150adfa8e6c",
+          "bytes": 2661317
+        },
+        {
+          "id": "general-initial-2-ocr-2",
+          "origin_sha256": "02da1d18ef52a1bc91901010a352a2c0ab28bb85ebb83d4d29218a90cf704307",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "b840e9db21c8c54cf8c579b872a07b3baf5965d6f7a55a5d87c66a992b6ad279",
+          "bytes": 3021549
+        },
+        {
+          "id": "general-initial-2-ocr-3",
+          "origin_sha256": "02da1d18ef52a1bc91901010a352a2c0ab28bb85ebb83d4d29218a90cf704307",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "4fce51d3237a9a3f52ca1936a129e60c9196a4380287d4a5da4b5ea1621074c4",
+          "bytes": 2852808
+        },
+        {
+          "id": "general-initial-2-ocr-4",
+          "origin_sha256": "02da1d18ef52a1bc91901010a352a2c0ab28bb85ebb83d4d29218a90cf704307",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "23ab0e777222b35d34b3157208b7296da2c2607209d08d571bb6875bb430c1dd",
+          "bytes": 841669
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial-2",
+        "workflow": {
+          "layout": {
+            "pattern": "framed_blocks",
+            "options": {
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "財源内訳／区分": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "財源内訳／金額": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の欄を取り込まない。目ごとに財源の種類と額が並び、歳出の目の和は本年度の額で確かめる。"
+                  }
+                },
+                "節／区分": {
+                  "heading": "節"
+                }
+              },
+              "header": {
+                "unagreed": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "shape",
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              },
+              "説明": {
+                "pattern": "shape",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_marked": true,
+                  "note_kinds": {
+                    "区長": "基準額",
+                    "副区長": "基準額",
+                    "教育長": "基準額",
+                    "監査委員": "基準額"
+                  }
+                },
+                "quirks": {
+                  "kana_set_apart": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_characters": true,
+            "kana_successors": true,
+            "lost_name_characters": true
+          }
+        },
+        "pages": [
+          [
+            1,
+            35
+          ]
+        ],
+        "partial": true,
+        "continued_rows": {
+          "subjects": [
+            {
+              "code": "5",
+              "name": "環境衛生費"
+            },
+            {
+              "code": "3",
+              "name": "清掃費"
+            },
+            {
+              "code": "3",
+              "name": "リサイクル事業費"
+            }
+          ],
+          "rows": []
+        },
+        "name_corrections": [
+          {
+            "id": "p14-r67-kana",
+            "page": 14,
+            "observation_id": "p14:full-page:a0:result0:r67",
+            "observed_name": "委員報酬",
+            "corrected_name": "ア委員報酬",
+            "reason": "物理14頁、説明「ア 委員報酬　4人　月額　232千円」。OCR が行頭の片仮名の記号を読み落とし、上の行の子にしていた。原典の描画で記号を確かめた。"
+          },
+          {
+            "id": "p19-r28-kana",
+            "page": 19,
+            "observation_id": "p19:full-page:a0:result0:r28",
+            "observed_name": "自然教室扶助",
+            "corrected_name": "ク 自然教室扶助",
+            "reason": "物理19頁、説明「ク 自然教室扶助」。OCR が行頭の片仮名の記号を読み落とし、上の行の子にしていた。原典の描画で記号を確かめた。"
+          },
+          {
+            "id": "p23-r28-kana",
+            "page": 23,
+            "observation_id": "p23:full-page:a0:result0:r28",
+            "observed_name": "卒業記念アルバム扶助",
+            "corrected_name": "ク 卒業記念アルバム扶助",
+            "reason": "物理23頁、説明「ク 卒業記念アルバム扶助」。OCR が行頭の片仮名の記号を読み落とし、上の行の子にしていた。原典の描画で記号を確かめた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial-2"
+        }
+      ]
+    }
+  ]
+}
