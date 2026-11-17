@@ -214,6 +214,9 @@ def redrawn(page: Page, places: tuple | None, left: float, width: float) -> Page
 
 def read(pages, **options):
     kinds = [kind(page) for page in pages]
+    # (a book whose left pages are the 歳入's: an expenditure book's left page with rules missing fits the 歳入's fewer
+    # rules as well, and stays an expenditure page)
+    lefts = (REVENUE_LEFT,) if any(k[0] is REVENUE_LEFT for k in kinds) else (LEFT,)
     numbers = {page.number: index for index, page in enumerate(pages)}
     for index, page in enumerate(pages):
         places, left, width = kinds[index]
@@ -223,7 +226,7 @@ def read(pages, **options):
             before = kinds[numbers[page.number - 1]][0] if page.number - 1 in numbers else None
             after = kinds[numbers[page.number + 1]][0] if page.number + 1 in numbers else None
             xs = verticals(page)
-            places = (RIGHT if before in LEFTS else max(LEFTS, key=lambda p: fit(xs, p)[0] / len(p)) if after is RIGHT
+            places = (RIGHT if before in LEFTS else lefts[0] if after is RIGHT
                       else None)
             if places is not None:
                 count, left, width = fit(xs, places)
@@ -235,7 +238,8 @@ def read(pages, **options):
         # A right page scanned a little higher or lower than its left page (大田区 R6 歳入: 4pt higher) puts a 節 in
         # the row above its 目: it is moved so that its frame's top meets the left page's.
         before = numbers.get(page.number - 1)
-        if places is RIGHT and before is not None and kinds[before][0] in LEFTS:
+        # (only after the 歳入's left page: an expenditure book's spreads are read as they lie)
+        if places is RIGHT and before is not None and kinds[before][0] is REVENUE_LEFT:
             tops = frame(pages[before]), frame(page)
             shift = tops[0][0] - tops[1][0] if None not in tops else 0.0
             if SHIFT_LEAST <= abs(shift) <= SHIFT_MOST:
