@@ -70,6 +70,12 @@
                 "merged_cells": [
                   "説明"
                 ]
+              },
+              "text_layer": {
+                "image_rules": true
+              },
+              "rules": {
+                "dark": 160
               }
             }
           },
@@ -160,6 +166,12 @@
                 "merged_cells": [
                   "説明"
                 ]
+              },
+              "text_layer": {
+                "image_rules": true
+              },
+              "rules": {
+                "dark": 160
               }
             }
           },
@@ -250,6 +262,12 @@
                 "merged_cells": [
                   "説明"
                 ]
+              },
+              "text_layer": {
+                "image_rules": true
+              },
+              "rules": {
+                "dark": 160
               }
             }
           },
@@ -340,6 +358,12 @@
                 "merged_cells": [
                   "説明"
                 ]
+              },
+              "text_layer": {
+                "image_rules": true
+              },
+              "rules": {
+                "dark": 160
               }
             }
           },

@@ -34,11 +34,13 @@ def page_titles(pages) -> dict[int, str | None]:
     return result
 
 
-def image_rules(pdf: Path, page: Page, staircase: bool = False) -> Page:
-    """A text page whose ruled grid is a background image (281000): its rules read from the render, as a scan's are."""
+def image_rules(pdf: Path, page: Page, staircase: bool = False, dark: int | None = None) -> Page:
+    """A text page whose ruled grid is a background image (281000): its rules read from the render, as a scan's are.
+    `dark` (the layout setting `rules.dark`) is the gray level below which the render is ink: a page that draws its
+    rules pale and in a colour the vector reading takes for no ink (131164's 歳入, olive 0.6・0.6・0.2) declares a higher one."""
     from ingestion.generic.scan import short_rows
     from ingestion.lib import pdf_rules
-    detected = short_rows(pdf, pdf_rules.detect(pdf, page.number), staircase=staircase)
+    detected = short_rows(pdf, pdf_rules.detect(pdf, page.number, dark=dark or pdf_rules.DARK), staircase=staircase)
     rules = [Rule(r.position, r.start, r.position, r.end) for r in detected.vertical]
     rules += [Rule(r.start, r.position, r.end, r.position) for r in detected.horizontal]
     return Page(page.number, page.width, page.height, page.words, rules)
@@ -49,7 +51,7 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
               partial: bool = False, direction: str | None = None, layout: dict | None = None,
               columns: dict | None = None, spread: dict | None = None, header: dict | None = None, repairs: frozenset = frozenset(),
               codes_right: bool = False, text_layer: dict | None = None, ocr: tuple | None = None, workflow: dict | None = None,
-              row_gaps: bool = False):
+              row_gaps: bool = False, rule_dark: int | None = None):
     """Build one table and keep what the converter needs next to it: the repaired pages (their
     words are the digit-coverage scope), the logical pages (their amount bands) and the unit check.
 
@@ -68,7 +70,7 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
     if (text_layer or {}).get('crop_box'):
         printed = cropped(pdf, printed, (quirk := document_quirk('left_sheet_crop')) and quirk.module.sheet_of)
     if (text_layer or {}).get('image_rules'):
-        printed = [image_rules(pdf, page, staircase) if not page.rules else page for page in printed]
+        printed = [image_rules(pdf, page, staircase, rule_dark) if not page.rules else page for page in printed]
     unrepaired = [Page(page.number, page.width, page.height, list(page.words), page.rules) for page in printed]
     observed, report = repair(pdf, printed, repairs, bool((text_layer or {}).get('form_clips')), character_map)
     read, observation, variants = read_ocr(mixed.completing(mixed.learn_frames(observed, spread, staircase), spread, staircase)) if read_ocr else ([], None, [])
