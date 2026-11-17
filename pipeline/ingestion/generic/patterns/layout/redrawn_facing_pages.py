@@ -78,15 +78,20 @@ def kind(page: Page) -> tuple[tuple | None, float, float]:
     return None, 0.0, 0.0
 
 
+KANJI_NAME = re.compile(r'[\u4e01-\u9fff]{2}')  # (no rule reads as two kanji: a rule is read `1`, `|` or `一`)
+
+
 def rule_pieces(words: list[Word], xs: list[float], top: float, bottom: float) -> list[Word]:
     """The words that are no piece of a column rule (a word of at most two characters whose box takes in the rule; a
     bracket or a sign printed against the rule is the figure's, and so is a code whose box OCR drew past the rule in
     the left page's code columns, its middle off the rule (`1` at 48–62 beside the rule at 60.5), and an amount of one or two
-    figures set right against the rule (`49` at 191–207.1, `8` at 201–210 on 港区 R7)."""
+    figures set right against the rule (`49` at 191–207.1, `8` at 201–210 on 港区 R7). Two kanji are a name whose box OCR
+    began on the rule (`雑入` at 99.1 beside the rule at 99.5, 大田区 R6 当初予算の歳入), not a piece of it."""
     codes = xs[3] if len(xs) != len(RIGHT) else xs[0]  # the right side of the left page's code columns
     def reach(w: Word) -> float:  # (a mark a point wide is read beside the rule as well as on it)
         return THIN_REACH if w.x1 - w.x0 <= THIN else .5
-    return [w for w in words if not (len(w.text) <= 2 and not set(w.text) & set('()（）△') and top < (w.y0 + w.y1) / 2 < bottom
+    return [w for w in words if not (len(w.text) <= 2 and not set(w.text) & set('()（）△') and not KANJI_NAME.fullmatch(w.text)
+                                     and top < (w.y0 + w.y1) / 2 < bottom
                                      and any(w.x0 - reach(w) <= x <= w.x1 + reach(w) and not (
                                          ((w.x0 + w.x1) / 2 < codes or (re.fullmatch(r'[1-9][0-9]', w.text) and w.x1 - w.x0 >= PAIR)
                                           or (re.fullmatch(r'[2-9]', w.text) and w.x1 - w.x0 >= DIGIT))
