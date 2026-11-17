@@ -15,6 +15,12 @@ const SLOT_W = 440
 const THETA = (20 * Math.PI) / 180
 /** 縁・影の切れを防ぐ余白（px） */
 const PAD = 16
+/** 広い画面で本体を大きくする上限（紙は最大で SLOT_W × これ） */
+const MAX_SCALE = 1.2
+/** 紙をこれより狭くしない（px）。画面の幅が足りないときだけ下回る */
+const MIN_PAPER = 300
+/** 狭い画面で本体が置き場の左右へはみ出してよい量（px、頁の余白より小さく） */
+const SIDE_OUT = 12
 /** 現れるときにせり上がる量（model の単位） */
 const RISE = 48
 
@@ -190,13 +196,14 @@ export async function mountPrinter(stage: HTMLElement, lost: () => void): Promis
     const w = stage.clientWidth
     if (!w || w === width) return render()
     width = w
-    // 紙の最大幅に差し出し口を合わせ、狭い画面では筐体が幅に収まるまで縮める。紙の幅は差し出し口に合わせる（--rm-paper）
-    const scale = Math.min(1, (w - 8) / (reach.side * 2 + PAD * 2), (w - 40) / SLOT_W)
+    // 本体は画面（札）の幅の 7 割ほどにし、紙の幅は差し出し口に合わせる（--rm-paper）。
+    // 狭い画面では紙を読める幅（MIN_PAPER）に保つため、本体は置き場の左右の余白（頁の余白）へ SIDE_OUT ずつはみ出してよい
+    const scale = Math.min(MAX_SCALE, (w + SIDE_OUT * 2) / (reach.side * 2), Math.max((w * 0.7) / (reach.side * 2), MIN_PAPER / SLOT_W))
     stage.parentElement?.style.setProperty('--rm-paper', `${SLOT_W * scale}px`)
     fit.scale.setScalar(scale)
     const up = reach.up * scale + PAD
     const down = reach.down * scale + PAD
-    const half = Math.max(w / 2, reach.side * scale + PAD)
+    const half = Math.max(w / 2, reach.side * scale)
     camera.left = -half
     camera.right = half
     camera.top = up

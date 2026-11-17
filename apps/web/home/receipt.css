@@ -23,7 +23,7 @@
   --border: #ddd6c8;
   --card: #f8f5ee;
   --primary: #2f5d43;
-  padding: 40px 22px 34px;
+  padding: 40px clamp(14px, 5%, 22px) 34px;
   /* 下端だけ、ちぎった跡のぎざぎざ */
   -webkit-mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
   mask: linear-gradient(#000 0 0) top / 100% calc(100% - 8px) no-repeat, conic-gradient(from -45deg at bottom, transparent 90deg, #000 0) bottom / 14px 8px repeat-x;
