@@ -46,6 +46,380 @@
           "table_id": "general-expenditure"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d8f144c44cb99a2e091a5da57df09e23157918ca3ce017a44d31969b06d8bb37"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "land-readjustment-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d8f144c44cb99a2e091a5da57df09e23157918ca3ce017a44d31969b06d8bb37"
+        }
+      ],
+      "options": {
+        "account": "福生都市計画瑞穂町箱根ケ崎駅西土地区画整理事業特別会計",
+        "table_id": "land-readjustment-expenditure",
+        "pages": [
+          [
+            205,
+            206
+          ],
+          [
+            211,
+            212
+          ],
+          [
+            217,
+            218
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-readjustment-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d8f144c44cb99a2e091a5da57df09e23157918ca3ce017a44d31969b06d8bb37"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町介護保険特別会計",
+        "table_id": "long-term-care-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d8f144c44cb99a2e091a5da57df09e23157918ca3ce017a44d31969b06d8bb37"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-tonogaya-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d8f144c44cb99a2e091a5da57df09e23157918ca3ce017a44d31969b06d8bb37"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町殿ケ谷財産区特別会計",
+        "table_id": "property-ward-tonogaya-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "property-ward-tonogaya-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-ishihata-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d8f144c44cb99a2e091a5da57df09e23157918ca3ce017a44d31969b06d8bb37"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町石畑財産区特別会計",
+        "table_id": "property-ward-ishihata-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "property-ward-ishihata-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-hakonegasaki-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d8f144c44cb99a2e091a5da57df09e23157918ca3ce017a44d31969b06d8bb37"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町箱根ケ崎財産区特別会計",
+        "table_id": "property-ward-hakonegasaki-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "property-ward-hakonegasaki-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "property-ward-nagaoka-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "d8f144c44cb99a2e091a5da57df09e23157918ca3ce017a44d31969b06d8bb37"
+        }
+      ],
+      "options": {
+        "account": "瑞穂町長岡財産区特別会計",
+        "table_id": "property-ward-nagaoka-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled"
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "備考": {
+                "pattern": "indent"
+              },
+              "節": {
+                "pattern": "indent"
+              },
+              "予算現額に対する支出割合": {
+                "pattern": "indent"
+              },
+              "支出総額に対する割合": {
+                "pattern": "indent"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "property-ward-nagaoka-expenditure"
+        }
+      ]
     }
   ]
 }
