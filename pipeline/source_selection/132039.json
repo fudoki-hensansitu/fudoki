@@ -197,11 +197,29 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/053/505/R8-03.pdf",
+              "sha256": "774a91441a9344bf028fe7845c6b6ec860f156ef746e1f76d7a1c27cc66b1006",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 26
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和8年度(予算書)掲載ページ(1053505、2026-02-16掲載)の分冊で全会計の歳出を覆う。款・項・目に節・区分金額・説明が同一明細で対応し、単位は千円。R8-04=一般会計歳出説明書(物理1-142頁、1款議会費-13款予備費、歳出のみ)。R8-07/08/09は特別会計別冊で歳入説明書→歳出説明書→給与費明細書の順（国保:歳入1-4・歳出5-13・給与費14、後期高齢者:歳入1-3・歳出4-6・給与費7、介護:歳入1-5・歳出6-12・給与費13。給与費明細書は歳出範囲から除外）。R8-10=水道事業会計(予算実施計画1-2・明細書:収益的収入3-4/収益的支出5-16/資本的収入17-18/資本的支出19-22、以降はCF計算書・給与費明細書・予定財務諸表・注記)。R8-11=下水道事業会計(実施計画1-4・明細書:収益的収入5-6/収益的支出7-14/資本的収入15-16/資本的支出17-20、以降はCF・給与費・債務負担行為調書・財務諸表・注記)。全会計=一般会計・国民健康保険事業会計・後期高齢者医療会計・介護保険事業会計・水道事業会計・下水道事業会計の6会計で、掲載一覧・議案一覧と一致。一般会計歳入(R8-03)・給与費明細書等(R8-05)・総括(R8-02/R8-06)・表紙目次議案(R8-01)は歳出明細の要件に不要または範囲外のため選定ファイルに含めない。文字PDFを選定（CSVの公開は市オープンデータ検索・東京都カタログに該当なし）。",
+      "reason": "令和8年度(予算書)掲載ページ(1053505、2026-02-16掲載)の分冊で全会計の歳出を覆う。款・項・目に節・区分金額・説明が同一明細で対応し、単位は千円。R8-04=一般会計歳出説明書(物理1-142頁、1款議会費-13款予備費、歳出のみ)。R8-07/08/09は特別会計別冊で歳入説明書→歳出説明書→給与費明細書の順（国保:歳入1-4・歳出5-13・給与費14、後期高齢者:歳入1-3・歳出4-6・給与費7、介護:歳入1-5・歳出6-12・給与費13。給与費明細書は歳出範囲から除外）。R8-10=水道事業会計(予算実施計画1-2・明細書:収益的収入3-4/収益的支出5-16/資本的収入17-18/資本的支出19-22、以降はCF計算書・給与費明細書・予定財務諸表・注記)。R8-11=下水道事業会計(実施計画1-4・明細書:収益的収入5-6/収益的支出7-14/資本的収入15-16/資本的支出17-20、以降はCF・給与費・債務負担行為調書・財務諸表・注記)。全会計=一般会計・国民健康保険事業会計・後期高齢者医療会計・介護保険事業会計・水道事業会計・下水道事業会計の6会計で、掲載一覧・議案一覧と一致。給与費明細書等(R8-05)・総括(R8-02/R8-06)・表紙目次議案(R8-01)は範囲外のため選定ファイルに含めない。文字PDFを選定（CSVの公開は市オープンデータ検索・東京都カタログに該当なし）。 歳入は同じ掲載頁の「一般会計(歳入)」の冊(R8-03)を足した。公営企業会計の歳入は款・項・目・節の木とは別の体系のため取り込まない。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -236,9 +254,14 @@
             "key": "fiscal/source-selection/132039/2026/initial-6.pdf",
             "sha256": "fed79d888a405ffa17245a19daf2f294cefa8ffc8c004302c525f606322a09fc",
             "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/053/505/R8-11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2026/initial-7.pdf",
+            "sha256": "774a91441a9344bf028fe7845c6b6ec860f156ef746e1f76d7a1c27cc66b1006",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/053/505/R8-03.pdf"
           }
         ],
-        "archived_at": "2026-10-07T15:25:55.694Z"
+        "archived_at": "2026-11-17T02:57:31.790Z"
       }
     },
     {
@@ -405,11 +428,83 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/963/R7meisai_ippan_sainyuu.pdf",
+              "sha256": "a6b7c29029f9d90e5bfd71368e618b448d4fc9b797e826cba00e3e346aceee66",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 26
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/963/R7meisai_kaigo_sainyuu.pdf",
+              "sha256": "06b8e1e138ac56f1691549c5cc25f14d2d426ca858d8aba81be26d2aab9b48d2",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/963/R7meisai_kokumin_sainyuu.pdf",
+              "sha256": "4f68c260a5cfc5435c50654b5790ae769c59debfff4cdbc5e809c7efa7ab1313",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 4
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/963/R7meisai_kouki_sainyuu.pdf",
+              "sha256": "baa3c04edfe5d8fbe7d8edc778f448194e8595ab3cb18d41feba732b2955c541",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和7年度(決算書・決算事項別明細書)掲載ページ(1054963、2026-09-01掲載)から歳出明細を選定。一般会計・国保事業・後期高齢者医療・介護保険事業の4会計は会計別の決算事項別明細書(歳出)分冊で、款・項・目に節区分と支出済額・翌年度繰越額・不用額が同一明細で対応し単位は円（R7meisai_*_saishutsu、全頁が歳出明細）。水道事業会計決算書(1005710頁、R80901kessan.pdf、51頁)はMicrosoft Print To PDFの輪郭線PDFで文字層なし(pdf_type=scan)。目次(物理3頁)より収益的収入及び支出=印字2-3頁→物理6-7頁、資本的収入及び支出=印字4-5頁→物理8-9頁、収益費用明細書=印字34-37頁→物理38-41頁、資本的収入支出明細書=印字38-39頁→物理42-43頁に款・項・目・節と金額(円)の支出明細を確認。下水道事業会計決算書(1034118頁、R7kessansyo.pdf、45頁、文字PDF)は収益的収入及び支出=物理6-7頁、資本的収入及び支出=物理8-9頁、収益費用明細書=33頁(収入)/34-35頁(支出)、資本的収入支出明細書=36頁(収入)/37頁(支出)で款・項・目・節と金額(円・税抜)。歳入歳出決算書(款項レベル総括)・歳入明細書・実質収支調書等は歳出明細の要件に不要または範囲外。全会計6会計を覆う。",
+      "reason": "令和7年度(決算書・決算事項別明細書)掲載ページ(1054963、2026-09-01掲載)から歳出明細を選定。一般会計・国保事業・後期高齢者医療・介護保険事業の4会計は会計別の決算事項別明細書(歳出)分冊で、款・項・目に節区分と支出済額・翌年度繰越額・不用額が同一明細で対応し単位は円（R7meisai_*_saishutsu、全頁が歳出明細）。水道事業会計決算書(1005710頁、R80901kessan.pdf、51頁)はMicrosoft Print To PDFの輪郭線PDFで文字層なし(pdf_type=scan)。目次(物理3頁)より収益的収入及び支出=印字2-3頁→物理6-7頁、資本的収入及び支出=印字4-5頁→物理8-9頁、収益費用明細書=印字34-37頁→物理38-41頁、資本的収入支出明細書=印字38-39頁→物理42-43頁に款・項・目・節と金額(円)の支出明細を確認。下水道事業会計決算書(1034118頁、R7kessansyo.pdf、45頁、文字PDF)は収益的収入及び支出=物理6-7頁、資本的収入及び支出=物理8-9頁、収益費用明細書=33頁(収入)/34-35頁(支出)、資本的収入支出明細書=36頁(収入)/37頁(支出)で款・項・目・節と金額(円・税抜)。歳入歳出決算書(款項レベル総括)・歳入明細書・実質収支調書等は歳出明細の要件に不要または範囲外。全会計6会計を覆う。 歳入は同じ掲載頁の各会計の「決算事項別明細書（歳入）」を会計ごとに足した。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -444,9 +539,29 @@
             "key": "fiscal/source-selection/132039/2025/settlement-3.pdf",
             "sha256": "730ea15f16e6607a8d9153a1602c4495f2e9ffb2f783b146f8da2856b8da8ada",
             "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/034/118/R7kessansyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/settlement-9.pdf",
+            "sha256": "a6b7c29029f9d90e5bfd71368e618b448d4fc9b797e826cba00e3e346aceee66",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/963/R7meisai_ippan_sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/settlement-7.pdf",
+            "sha256": "06b8e1e138ac56f1691549c5cc25f14d2d426ca858d8aba81be26d2aab9b48d2",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/963/R7meisai_kaigo_sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/settlement-8.pdf",
+            "sha256": "4f68c260a5cfc5435c50654b5790ae769c59debfff4cdbc5e809c7efa7ab1313",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/963/R7meisai_kokumin_sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/settlement-10.pdf",
+            "sha256": "baa3c04edfe5d8fbe7d8edc778f448194e8595ab3cb18d41feba732b2955c541",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/054/963/R7meisai_kouki_sainyuu.pdf"
           }
         ],
-        "archived_at": "2026-10-07T15:26:10.355Z"
+        "archived_at": "2026-11-17T02:58:04.969Z"
       }
     },
     {
@@ -617,11 +732,83 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/052/110/R6meisai_ippan_sainyuu.pdf",
+              "sha256": "250cde024c6434e872b63f369d2de9b9da2d504d88c029aa7098dcda4f92fe7a",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 25
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/052/110/R6meisai_kaigo_sainyuu.pdf",
+              "sha256": "bf92576e5ec218cda341824da0f2d0534fae6446cf4264237cd239d22fbefad1",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/052/110/R6meisai_kokumin_sainyuu.pdf",
+              "sha256": "a641cd19beb159a1b5e57e732726947041d86f4f8b28fcb91f7d5ca300a098e5",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/052/110/R6meisai_kouki_sainyuu.pdf",
+              "sha256": "544dd93b34bc8a9996bc4aa5979f2d4751d62c3301ae30c20e2c9a2ec093dcc4",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和6年度(決算書・決算事項別明細書)掲載ページ(1052110)から歳出明細を選定。一般会計・国保事業・後期高齢者医療・介護保険事業の4会計は会計別の決算事項別明細書(歳出)分冊で、款・項・目に節区分と支出済額・翌年度繰越額・不用額が同一明細で対応し単位は円（R6meisai_*_saishutsu、全頁が歳出明細）。水道事業会計決算書(1005710頁の令和6年度版、R70903kessan.pdf、50頁)はMicrosoft Print To PDFの輪郭線PDFで文字層なし(pdf_type=scan)。目次(物理3頁)より収益的収入及び支出=印字2-3頁→物理6-7頁、資本的収入及び支出=印字4-5頁→物理8-9頁、収益費用明細書は物理38頁が収入、39-41頁が支出（費用）、資本的収入支出明細書は物理42頁に収入と支出を併記（各明細の消費税抜き・単位円）。43頁は白紙でscope外。収支報告6-9頁は左右対で予算と決算を読む範囲、税区分は未確認。画像chk-38/39/41/42で方向を区別してscopeを訂正した。下水道事業会計決算書(1034118頁、R6kessansyo.pdf、43頁、文字PDF)は収益的収入及び支出=物理6-7頁、資本的収入及び支出=物理8-9頁、収益費用明細書=31頁(収入)/32-33頁(支出)、資本的収入支出明細書=34頁(収入)/35頁(支出)で款・項・目・節と金額(円・税抜;収支報告は円・税込)。歳入歳出決算書(款項総括)・歳入明細書・実質収支調書等は範囲外。全会計6会計を覆う。",
+      "reason": "令和6年度(決算書・決算事項別明細書)掲載ページ(1052110)から歳出明細を選定。一般会計・国保事業・後期高齢者医療・介護保険事業の4会計は会計別の決算事項別明細書(歳出)分冊で、款・項・目に節区分と支出済額・翌年度繰越額・不用額が同一明細で対応し単位は円（R6meisai_*_saishutsu、全頁が歳出明細）。水道事業会計決算書(1005710頁の令和6年度版、R70903kessan.pdf、50頁)はMicrosoft Print To PDFの輪郭線PDFで文字層なし(pdf_type=scan)。目次(物理3頁)より収益的収入及び支出=印字2-3頁→物理6-7頁、資本的収入及び支出=印字4-5頁→物理8-9頁、収益費用明細書は物理38頁が収入、39-41頁が支出（費用）、資本的収入支出明細書は物理42頁に収入と支出を併記（各明細の消費税抜き・単位円）。43頁は白紙でscope外。収支報告6-9頁は左右対で予算と決算を読む範囲、税区分は未確認。画像chk-38/39/41/42で方向を区別してscopeを訂正した。下水道事業会計決算書(1034118頁、R6kessansyo.pdf、43頁、文字PDF)は収益的収入及び支出=物理6-7頁、資本的収入及び支出=物理8-9頁、収益費用明細書=31頁(収入)/32-33頁(支出)、資本的収入支出明細書=34頁(収入)/35頁(支出)で款・項・目・節と金額(円・税抜;収支報告は円・税込)。歳入歳出決算書(款項総括)・歳入明細書・実質収支調書等は範囲外。全会計6会計を覆う。 歳入は同じ掲載頁の各会計の「決算事項別明細書（歳入）」を会計ごとに足した。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -656,9 +843,29 @@
             "key": "fiscal/source-selection/132039/2024/settlement-6.pdf",
             "sha256": "ef6f202677dff84b35460afb06f832c91dc99e225b19431eaec295d9c79e62c4",
             "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/034/118/R6kessansyo.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2024/settlement-7.pdf",
+            "sha256": "250cde024c6434e872b63f369d2de9b9da2d504d88c029aa7098dcda4f92fe7a",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/052/110/R6meisai_ippan_sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2024/settlement-10.pdf",
+            "sha256": "bf92576e5ec218cda341824da0f2d0534fae6446cf4264237cd239d22fbefad1",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/052/110/R6meisai_kaigo_sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2024/settlement-9.pdf",
+            "sha256": "a641cd19beb159a1b5e57e732726947041d86f4f8b28fcb91f7d5ca300a098e5",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/052/110/R6meisai_kokumin_sainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2024/settlement-8.pdf",
+            "sha256": "544dd93b34bc8a9996bc4aa5979f2d4751d62c3301ae30c20e2c9a2ec093dcc4",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/052/110/R6meisai_kouki_sainyuu.pdf"
           }
         ],
-        "archived_at": "2026-10-08T00:52:48.547Z"
+        "archived_at": "2026-11-17T02:57:57.351Z"
       }
     },
     {
@@ -855,11 +1062,29 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/049/269/R7-03.pdf",
+              "sha256": "91dbc4242b6d73dc12042fcc5720596d90132fcab1c721a7b90ad492a509325d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 26
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和7年度(予算書)掲載ページ(1049269、2025-02-14掲載)から、文字抽出で確認できた範囲の歳出を選定した部分出典。掲載一覧の分冊はR7-01〜R7-11で、会計は一般会計・国民健康保険事業会計・後期高齢者医療会計・介護保険事業会計・水道事業会計・下水道事業会計の6会計（一覧の説明文「一般会計、特別会計、水道事業会計、下水道事業会計」と一致）。R7-04=一般会計歳出説明書（物理1-145頁、全頁が文字PDF、1款議会費から13款予備費まで。款・項・目に節区分金額・節の説明・事業名が同一明細で対応。金額列は本年度予算額/前年度予算額/比較/財源内訳/節区分金額で単位は千円。歳出のみで歳入なし）。R7-10=水道事業会計予算説明書（物理1-2頁=予算実施計画、3-4頁=明細書(収益的収入)、5-16頁=明細書(収益的支出)、17-18頁=明細書(資本的収入)、19-22頁=明細書(資本的支出)、23頁以降はキャッシュ・フロー計算書・給与費明細書・予定貸借対照表・損益計算書・注記で歳出明細の範囲外。実施計画の1頁・2頁は同一頁に収入と支出の両節を持つため両方向に含めた。款・項・目に節・目・金額・説明が同一明細で対応し単位は千円、税の別記なし）。未選定の会計: 国民健康保険事業会計(R7-07)・後期高齢者医療会計(R7-08)・介護保険事業会計(R7-09)は歳入歳出の境界頁が文字抽出できず(物理最終頁の給与費明細書のみ文字可)、下水道事業会計(R7-11)は物理5-20頁の明細書が文字抽出できず頁境界・金額列を実物で確認できないため、visual-blockers.json にSHA・PDF・全頁の描画・物理頁・未確認点を記録して親の画像確認に回した（令和8年度は全6会計が選定済みで、本年度の不足はこの4会計）。CSVは候補なし（市のオープンデータ検索でキーワード「予算」が0件、東京都オープンデータカタログで武蔵野市の組織データに予算・決算CSVなし）。文字PDFを選定。\n追補(2026-10-08 visual-repair): visual-blockersの12冊を実物画像で確認し歳出を補った。SHAは台帳と一致。特別会計は左頁=本年度予算額/前年度予算額/比較/財源内訳・右頁=節区分金額/説明、物理頁は画像の表題(2歳入/3歳出)と款(予備費末尾)・印字頁で確定、単位は千円、税の別記なし。給与費明細書(各冊最終頁)は歳出範囲から除外。下水道は予算実施計画1-4(単位千円)+明細書で収益的収入/収益的支出/資本的収入/資本的支出に分け、同一account/directionは1要素・収益的支出と資本的支出はpages配列で分けた。R6-09/R5-09は総頁12で歳入1-4・歳出5-11(当初推定の歳入1-5・歳出6-11を訂正)。R6-11/R5-11は総頁40/39で収益的収入5-8・収益的支出9-16・資本的収入17-18・資本的支出19-22(R7と異なり収益的収入が1頁多い、画像で確定)。文字抽出不能頁はpdf_type=scan。",
+      "reason": "令和7年度(予算書)掲載ページ(1049269、2025-02-14掲載)から、文字抽出で確認できた範囲の歳出を選定した部分出典。掲載一覧の分冊はR7-01〜R7-11で、会計は一般会計・国民健康保険事業会計・後期高齢者医療会計・介護保険事業会計・水道事業会計・下水道事業会計の6会計（一覧の説明文「一般会計、特別会計、水道事業会計、下水道事業会計」と一致）。R7-04=一般会計歳出説明書（物理1-145頁、全頁が文字PDF、1款議会費から13款予備費まで。款・項・目に節区分金額・節の説明・事業名が同一明細で対応。金額列は本年度予算額/前年度予算額/比較/財源内訳/節区分金額で単位は千円。歳出のみで歳入なし）。R7-10=水道事業会計予算説明書（物理1-2頁=予算実施計画、3-4頁=明細書(収益的収入)、5-16頁=明細書(収益的支出)、17-18頁=明細書(資本的収入)、19-22頁=明細書(資本的支出)、23頁以降はキャッシュ・フロー計算書・給与費明細書・予定貸借対照表・損益計算書・注記で歳出明細の範囲外。実施計画の1頁・2頁は同一頁に収入と支出の両節を持つため両方向に含めた。款・項・目に節・目・金額・説明が同一明細で対応し単位は千円、税の別記なし）。未選定の会計: 国民健康保険事業会計(R7-07)・後期高齢者医療会計(R7-08)・介護保険事業会計(R7-09)は歳入歳出の境界頁が文字抽出できず(物理最終頁の給与費明細書のみ文字可)、下水道事業会計(R7-11)は物理5-20頁の明細書が文字抽出できず頁境界・金額列を実物で確認できないため、visual-blockers.json にSHA・PDF・全頁の描画・物理頁・未確認点を記録して親の画像確認に回した（令和8年度は全6会計が選定済みで、本年度の不足はこの4会計）。CSVは候補なし（市のオープンデータ検索でキーワード「予算」が0件、東京都オープンデータカタログで武蔵野市の組織データに予算・決算CSVなし）。文字PDFを選定。\n追補(2026-10-08 visual-repair): visual-blockersの12冊を実物画像で確認し歳出を補った。SHAは台帳と一致。特別会計は左頁=本年度予算額/前年度予算額/比較/財源内訳・右頁=節区分金額/説明、物理頁は画像の表題(2歳入/3歳出)と款(予備費末尾)・印字頁で確定、単位は千円、税の別記なし。給与費明細書(各冊最終頁)は歳出範囲から除外。下水道は予算実施計画1-4(単位千円)+明細書で収益的収入/収益的支出/資本的収入/資本的支出に分け、同一account/directionは1要素・収益的支出と資本的支出はpages配列で分けた。R6-09/R5-09は総頁12で歳入1-4・歳出5-11(当初推定の歳入1-5・歳出6-11を訂正)。R6-11/R5-11は総頁40/39で収益的収入5-8・収益的支出9-16・資本的収入17-18・資本的支出19-22(R7と異なり収益的収入が1頁多い、画像で確定)。文字抽出不能頁はpdf_type=scan。 歳入は同じ掲載頁の「一般会計(歳入)」の冊を足した。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -894,9 +1119,14 @@
             "key": "fiscal/source-selection/132039/2025/initial-2.pdf",
             "sha256": "6a32490b69029637efee8d920a37a0711adeaffc6db0b5bc025ba3e9cde2d17b",
             "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/049/269/R7-11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2025/initial-7.pdf",
+            "sha256": "91dbc4242b6d73dc12042fcc5720596d90132fcab1c721a7b90ad492a509325d",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/049/269/R7-03.pdf"
           }
         ],
-        "archived_at": "2026-10-08T07:05:46.841Z"
+        "archived_at": "2026-11-17T02:57:34.955Z"
       }
     },
     {
@@ -1093,11 +1323,29 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/046/439/R6-03.pdf",
+              "sha256": "a1af857a4437aa8e6b7fb75347c5cf613aa000ed21ce5f0ff79d1afcd9ef49aa",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 26
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和6年度(予算書)掲載ページ(1046439、2024-04-08更新)から、文字抽出で確認できた範囲の歳出を選定した部分出典。分冊はR6-01〜R6-11で、会計は一般会計・国民健康保険事業会計・後期高齢者医療会計・介護保険事業会計・水道事業会計・下水道事業会計の6会計。R6-04=一般会計歳出説明書（物理1-141頁、全頁が文字PDF、1款議会費から13款予備費まで。款・項・目に節区分金額・説明が同一明細で対応、単位は千円）。R6-10=水道事業会計予算説明書（物理1-2頁=予算実施計画、3-4頁=明細書(収益的収入)、5-16頁=明細書(収益的支出)、17-18頁=明細書(資本的収入)、19-22頁=明細書(資本的支出)、23頁以降はキャッシュ・フロー・給与費明細書・予定財務諸表・注記で範囲外。実施計画の1・2頁は収入と支出の両節を同一頁に持つ。単位は千円）。未選定の会計: R6-07(国保・15頁)・R6-08(後期高齢者・7頁)・R6-09(介護・12頁)は境界頁が文字抽出できず、R6-11(下水道・40頁)は物理1-23頁がページ番号のみで実施計画と明細書の境界が文字で特定できないため visual-blockers.json に記録して親の画像確認に回した。同ページには「令和6年度一般会計予算修正箇所(R6ippan_syuusei.pdf)」（2024-03-26 市議会本会議で修正可決された当初予算案の修正箇所）がある。\n追補(2026-10-08 initial-amendment-recheck): 同修正PDF(2頁・文字PDF・SHA346d32e9a16c9377cb4e0180e5c8dda6ae01063eac4e7feae46446406b1d4556、公式1046439頁に「本ページに掲載されている当初予算案からの修正箇所」として掲載、2024-03-26本会議修正可決)を既知キャッシュで実物確認し、2024initial既存出典R6-04(SHAcafbe040bc7627261dd06190a447855ccf3dd3400e2411ed10cb80a969f9d320)の該当3明細と比較した。R6-04は修正後額を収録済み: 4款1項1目保健衛生総務費=1,543,164千円(原案1,448,616なし、前年度1,471,207・比較+71,957で整合)、同項計=3,651,999千円(原案3,557,451なし、前年度4,090,019・比較△438,020で整合)、13款予備費=100,000千円(原案194,548なし、前年度100,000・比較0で整合)。修正内容は4款衛生費+94,548千円・13款予備費△94,548千円の振替で歳出合計81,523,000千円は不変。修正PDF内の上下2段併記は上段=原案額・下段=修正後額の非加算関係(総括の比較△227,634=6,959,092-7,186,726が原案行、△133,086=7,053,640-7,186,726が修正後行)で、合計してはならない。成立済み修正は既存冊に反映済みのため修正2頁を同candidateに二重追加せず、unresolved_candidatesのr6-council-amendmentを除いた。原資料の数字は変更していない。CSVは候補なし。文字PDFを選定。\n追補(2026-10-08 visual-repair): visual-blockersの12冊を実物画像で確認し歳出を補った。SHAは台帳と一致。特別会計は左頁=本年度予算額/前年度予算額/比較/財源内訳・右頁=節区分金額/説明、物理頁は画像の表題(2歳入/3歳出)と款(予備費末尾)・印字頁で確定、単位は千円、税の別記なし。給与費明細書(各冊最終頁)は歳出範囲から除外。下水道は予算実施計画1-4(単位千円)+明細書で収益的収入/収益的支出/資本的収入/資本的支出に分け、同一account/directionは1要素・収益的支出と資本的支出はpages配列で分けた。R6-09/R5-09は総頁12で歳入1-4・歳出5-11(当初推定の歳入1-5・歳出6-11を訂正)。R6-11/R5-11は総頁40/39で収益的収入5-8・収益的支出9-16・資本的収入17-18・資本的支出19-22(R7と異なり収益的収入が1頁多い、画像で確定)。文字抽出不能頁はpdf_type=scan。",
+      "reason": "令和6年度(予算書)掲載ページ(1046439、2024-04-08更新)から、文字抽出で確認できた範囲の歳出を選定した部分出典。分冊はR6-01〜R6-11で、会計は一般会計・国民健康保険事業会計・後期高齢者医療会計・介護保険事業会計・水道事業会計・下水道事業会計の6会計。R6-04=一般会計歳出説明書（物理1-141頁、全頁が文字PDF、1款議会費から13款予備費まで。款・項・目に節区分金額・説明が同一明細で対応、単位は千円）。R6-10=水道事業会計予算説明書（物理1-2頁=予算実施計画、3-4頁=明細書(収益的収入)、5-16頁=明細書(収益的支出)、17-18頁=明細書(資本的収入)、19-22頁=明細書(資本的支出)、23頁以降はキャッシュ・フロー・給与費明細書・予定財務諸表・注記で範囲外。実施計画の1・2頁は収入と支出の両節を同一頁に持つ。単位は千円）。未選定の会計: R6-07(国保・15頁)・R6-08(後期高齢者・7頁)・R6-09(介護・12頁)は境界頁が文字抽出できず、R6-11(下水道・40頁)は物理1-23頁がページ番号のみで実施計画と明細書の境界が文字で特定できないため visual-blockers.json に記録して親の画像確認に回した。同ページには「令和6年度一般会計予算修正箇所(R6ippan_syuusei.pdf)」（2024-03-26 市議会本会議で修正可決された当初予算案の修正箇所）がある。\n追補(2026-10-08 initial-amendment-recheck): 同修正PDF(2頁・文字PDF・SHA346d32e9a16c9377cb4e0180e5c8dda6ae01063eac4e7feae46446406b1d4556、公式1046439頁に「本ページに掲載されている当初予算案からの修正箇所」として掲載、2024-03-26本会議修正可決)を既知キャッシュで実物確認し、2024initial既存出典R6-04(SHAcafbe040bc7627261dd06190a447855ccf3dd3400e2411ed10cb80a969f9d320)の該当3明細と比較した。R6-04は修正後額を収録済み: 4款1項1目保健衛生総務費=1,543,164千円(原案1,448,616なし、前年度1,471,207・比較+71,957で整合)、同項計=3,651,999千円(原案3,557,451なし、前年度4,090,019・比較△438,020で整合)、13款予備費=100,000千円(原案194,548なし、前年度100,000・比較0で整合)。修正内容は4款衛生費+94,548千円・13款予備費△94,548千円の振替で歳出合計81,523,000千円は不変。修正PDF内の上下2段併記は上段=原案額・下段=修正後額の非加算関係(総括の比較△227,634=6,959,092-7,186,726が原案行、△133,086=7,053,640-7,186,726が修正後行)で、合計してはならない。成立済み修正は既存冊に反映済みのため修正2頁を同candidateに二重追加せず、unresolved_candidatesのr6-council-amendmentを除いた。原資料の数字は変更していない。CSVは候補なし。文字PDFを選定。\n追補(2026-10-08 visual-repair): visual-blockersの12冊を実物画像で確認し歳出を補った。SHAは台帳と一致。特別会計は左頁=本年度予算額/前年度予算額/比較/財源内訳・右頁=節区分金額/説明、物理頁は画像の表題(2歳入/3歳出)と款(予備費末尾)・印字頁で確定、単位は千円、税の別記なし。給与費明細書(各冊最終頁)は歳出範囲から除外。下水道は予算実施計画1-4(単位千円)+明細書で収益的収入/収益的支出/資本的収入/資本的支出に分け、同一account/directionは1要素・収益的支出と資本的支出はpages配列で分けた。R6-09/R5-09は総頁12で歳入1-4・歳出5-11(当初推定の歳入1-5・歳出6-11を訂正)。R6-11/R5-11は総頁40/39で収益的収入5-8・収益的支出9-16・資本的収入17-18・資本的支出19-22(R7と異なり収益的収入が1頁多い、画像で確定)。文字抽出不能頁はpdf_type=scan。 歳入は同じ掲載頁の「一般会計(歳入)」の冊を足した。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -1132,9 +1380,14 @@
             "key": "fiscal/source-selection/132039/2024/initial-3.pdf",
             "sha256": "a588ed5f957a92cf57c1ea49860e89b74f8969b70273f442a80d1a224c3fd213",
             "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/046/439/R6-11.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2024/initial-7.pdf",
+            "sha256": "a1af857a4437aa8e6b7fb75347c5cf613aa000ed21ce5f0ff79d1afcd9ef49aa",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/046/439/R6-03.pdf"
           }
         ],
-        "archived_at": "2026-10-08T07:06:05.556Z"
+        "archived_at": "2026-11-17T02:57:37.749Z"
       }
     },
     {
@@ -1547,11 +1800,83 @@
                   ]
                 }
               ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/048/281/R5ippannsainyuu.pdf",
+              "sha256": "8a035a55ba12e130a0c2dcfff6d1339f2b2d18577e2ae959a1e4802bb6054859",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "一般会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 25
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/048/281/R5kaihosainyuu.pdf",
+              "sha256": "7dfcb5f8cc8957e757a4b5ffa8af8ded4105366fc71df0e07cc01210c911896d",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "介護保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/048/281/R5kokuhosainyuu.pdf",
+              "sha256": "888cdc829a10eb44d5eb1a052ce2ad0ce2d15f88c53e48e400f86841fca25003",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "国民健康保険事業会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 5
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "download_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/048/281/R5koukisainyuu.pdf",
+              "sha256": "4ca098cbe519885bedd80d009b8045997387f388a90060c9a130489bc65c3a96",
+              "format": "pdf",
+              "pdf_type": "text",
+              "scope": [
+                {
+                  "account": "後期高齢者医療会計",
+                  "direction": "revenue",
+                  "pages": [
+                    {
+                      "start": 1,
+                      "end": 3
+                    }
+                  ]
+                }
+              ]
             }
           ]
         }
       ],
-      "reason": "令和5年度(決算書・決算事項別明細書)掲載ページ(1048281、2024-09-03掲載)から歳出明細を選定。水道・下水道の決算書は同ページからのリンク先(水道1005710、下水道1034118)に掲載されている令和5年度版を使用。全6会計を文字PDFで覆い、画像確認は不要。一般会計=添付ファイル「一般会計(歳出)」R5ippannsaishutsu(物理89頁、全頁が歳出。1頁に「歳出 1款議会費」、89頁に歳出合計。款・項・目に当初予算額・補正予算額・繰越事業費・予備費支出及び流用増減・計・節区分金額・支出済額・翌年度繰越額・不用額・備考が同一明細で対応、単位は円)。国民健康保険事業会計=R5kokuhosaishutsu(物理7頁)、後期高齢者医療会計=R5koukisaishutsu(物理3頁)、介護保険事業会計=R5kaihosaishutsu(物理5頁)。いずれも1頁が「歳出 会計名」、全頁が同形式の歳出明細、単位は円、最終頁まで歳出。水道事業会計決算書=R5kessansyo(49頁、文字PDF)。目次より決算報告書 収益的収入及び支出=物理6-7頁、資本的収入及び支出=物理8-9頁（各頁に収入節と支出節が同居、決算額は右頁）、財務諸表付属書類 収益費用明細書=物理38-41頁（38=収入、39-41=支出）、資本的収入支出明細書=物理42頁（同一頁に収入と支出の両方、消費税抜き・単位円）、物理43頁はページ番号のみの白紙でscope外。固定資産明細書(44-45)・企業債明細書(46-47)・決算付属書類の工事費・契約額・固定資産増加額は支出済額としないため範囲外。下水道事業会計決算書=R5kessann(43頁、文字PDF)。目次より決算報告書=物理6-9頁（6-7=収益的収入及び支出、8-9=資本的収入及び支出、各頁に収入節と支出節）、収益費用明細書=物理31-33頁（31=収入、32-33=支出、単位円・税抜）、資本的収入支出明細書=物理34頁(収入)/35頁(支出)。固定資産明細書・企業債明細書は範囲外。歳入は同ページに別冊(一般会計(歳入)等)があるが、歳出選定を先に終える方針と既存の令和6・7年度と同じ扱いのため、一般会計・特別会計の歳入冊は選定対象に含めない（水道・下水道は同じ冊に歳入が載るため確認できた範囲のrevenueを保持）。款項レベルの総括である歳入歳出決算書(R5kessan.pdf)は目・事業明細を持たないため選定しない。CSVは候補なし。",
+      "reason": "令和5年度(決算書・決算事項別明細書)掲載ページ(1048281、2024-09-03掲載)から歳出明細を選定。水道・下水道の決算書は同ページからのリンク先(水道1005710、下水道1034118)に掲載されている令和5年度版を使用。全6会計を文字PDFで覆い、画像確認は不要。一般会計=添付ファイル「一般会計(歳出)」R5ippannsaishutsu(物理89頁、全頁が歳出。1頁に「歳出 1款議会費」、89頁に歳出合計。款・項・目に当初予算額・補正予算額・繰越事業費・予備費支出及び流用増減・計・節区分金額・支出済額・翌年度繰越額・不用額・備考が同一明細で対応、単位は円)。国民健康保険事業会計=R5kokuhosaishutsu(物理7頁)、後期高齢者医療会計=R5koukisaishutsu(物理3頁)、介護保険事業会計=R5kaihosaishutsu(物理5頁)。いずれも1頁が「歳出 会計名」、全頁が同形式の歳出明細、単位は円、最終頁まで歳出。水道事業会計決算書=R5kessansyo(49頁、文字PDF)。目次より決算報告書 収益的収入及び支出=物理6-7頁、資本的収入及び支出=物理8-9頁（各頁に収入節と支出節が同居、決算額は右頁）、財務諸表付属書類 収益費用明細書=物理38-41頁（38=収入、39-41=支出）、資本的収入支出明細書=物理42頁（同一頁に収入と支出の両方、消費税抜き・単位円）、物理43頁はページ番号のみの白紙でscope外。固定資産明細書(44-45)・企業債明細書(46-47)・決算付属書類の工事費・契約額・固定資産増加額は支出済額としないため範囲外。下水道事業会計決算書=R5kessann(43頁、文字PDF)。目次より決算報告書=物理6-9頁（6-7=収益的収入及び支出、8-9=資本的収入及び支出、各頁に収入節と支出節）、収益費用明細書=物理31-33頁（31=収入、32-33=支出、単位円・税抜）、資本的収入支出明細書=物理34頁(収入)/35頁(支出)。固定資産明細書・企業債明細書は範囲外。歳入は同ページの別冊(一般会計(歳入)等)を会計ごとに足した（一般会計・国民健康保険事業会計・後期高齢者医療会計・介護保険事業会計の4会計）。水道・下水道は同じ冊に歳入と歳出が載るため確認できた範囲のrevenueを選定に保持するが、公営企業会計の歳入は款・項・目・節の木とは別の体系のため取り込まない。款項レベルの総括である歳入歳出決算書(R5kessan.pdf)は目・事業明細を持たないため選定しない。CSVは候補なし。",
       "selected_candidate_id": "representative",
       "archive": {
         "bucket": "fudoki-inputs",
@@ -1586,9 +1911,29 @@
             "key": "fiscal/source-selection/132039/2023/settlement-5.pdf",
             "sha256": "c407712b2c52f7ba761706224ae75995ff07daf844bf9bb5debc2905d600b98d",
             "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/034/118/R5kessann.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2023/settlement-10.pdf",
+            "sha256": "8a035a55ba12e130a0c2dcfff6d1339f2b2d18577e2ae959a1e4802bb6054859",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/048/281/R5ippannsainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2023/settlement-8.pdf",
+            "sha256": "7dfcb5f8cc8957e757a4b5ffa8af8ded4105366fc71df0e07cc01210c911896d",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/048/281/R5kaihosainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2023/settlement-9.pdf",
+            "sha256": "888cdc829a10eb44d5eb1a052ce2ad0ce2d15f88c53e48e400f86841fca25003",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/048/281/R5kokuhosainyuu.pdf"
+          },
+          {
+            "key": "fiscal/source-selection/132039/2023/settlement-7.pdf",
+            "sha256": "4ca098cbe519885bedd80d009b8045997387f388a90060c9a130489bc65c3a96",
+            "final_url": "https://www.city.musashino.lg.jp/_res/projects/default_project/_page_/001/048/281/R5koukisainyuu.pdf"
           }
         ],
-        "archived_at": "2026-10-08T06:47:45.925Z"
+        "archived_at": "2026-11-17T02:57:44.562Z"
       }
     },
     {

@@ -173,13 +173,15 @@ def title_segments(parts: list[list[Glyph]]) -> list[list[list[Glyph]]]:
     segments: list[list[list[Glyph]]] = []
     if (glued := document_quirk('glued_titles')) is not None:
         parts = glued.module.split(parts)
+    bare = document_quirk('unnumbered_titles')
     for run in parts:
         shown = normalize(text(run))
         if UNIT_NOTE.match(shown):
             continue
         # A mark opens the next title only after one (`2款 総務費 1項 総務管理費`): the digits of a code the
         # OCR split (`1` `1款 公債費`) stay with their mark.
-        if not segments or (MARK.match(shown) and any(c in '款項' for part in segments[-1] for c in text(part))):
+        opens = MARK.match(shown) or (bare is not None and bare.module.opens(shown))
+        if not segments or (opens and any(c in '款項' for part in segments[-1] for c in text(part))):
             segments.append([run])
         else:
             segments[-1].append(run)
