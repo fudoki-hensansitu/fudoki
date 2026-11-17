@@ -543,11 +543,12 @@ class Reader(Reading):
                          'header_path': ['節'], 'semantic_role': 'setsu',
                          'grain_columns': ['目_物理頁', '目_上端', '区分_番号'] if self.SECTION_NUMBERS
                          else ['目_物理頁', '目_上端', '物理頁', '上端']})
-        note = ('最細行のみ: 法定節（区分番号+区分名称）が原典の最細明細で、'
+        setsu = '法定節（区分番号+区分名称）' if self.SECTION_NUMBERS else '節（区分名称。番号は印字されない）'
+        note = (f'最細行のみ: {setsu}が原典の最細明細で、'
                 '節のない目（予備費等）は目行が葉行（区分_列は空）。'
-                '款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算5列・'
-                '執行6列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。'
-                '款・項・目・歳出合計の印字行自体はlocal観測 parents.json に保持する。'
+                f'款・項・目・合計の印字行は行にせず、所属する行の番号・名称・予算{len(self.BUDGET)}列・'
+                f'執行{len(self.EXECUTED)}列・備考・印字位置を款_/項_/目_列として各leaf行へ反復する。'
+                f'款・項・目・{self.TOTAL}の印字行自体はlocal観測 parents.json に保持する。'
                 '左印字頁に科目・予算5列・節区分、右印字頁に節金額・執行6列・備考が'
                 '印字される。'
                 '備考欄は水平罫線の結合セルが所属範囲を定め、セルが縦に覆う行のうち'
@@ -580,7 +581,7 @@ class Reader(Reading):
             raise ValueError('Kita general settlement requires one original')
         source = inputs[0]
         if source['format'] != 'pdf' or source.get('pdf_type') != 'text':
-            raise ValueError('This measured layout is Kita text settlement expenditure only')
+            raise ValueError(f'This measured layout reads Kita text settlements only, not {source.get("format")}/{source.get("pdf_type")}')
         account = options.get('account', '一般会計')
         scopes = [scope for scope in source['scope'] if scope['account'] == account]
         if len(scopes) != 1 or len(scopes[0]['pages']) < 2:
