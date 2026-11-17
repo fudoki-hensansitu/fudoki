@@ -771,6 +771,12 @@ def kind_heading(label: str, heading: str = '') -> str | None:
         if found:
             longest = max(found, key=len)  # `予備費支出` and `予備費支出及び流用増減`: the longer heading holds the other
             return longest if all(h in longest for h in found) else None
+    # A kind word cut short with `等` (`継続費等繰越財源充当額`, 132063 決算): the one heading that begins and ends as it does,
+    # its end named in the band's own heading (`…継続費繰越事業額繰越財源充当額`).
+    head, mark, tail = key.partition('等')
+    if mark and len(head) >= 2 and len(tail) >= 2 and tail in own:
+        found = [h for h in kind_headings() if h.replace('及び', '').startswith(head) and h.endswith(tail)]
+        return found[0] if len(found) == 1 else None
     return None
 
 
