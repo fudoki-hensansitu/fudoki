@@ -1,26 +1,23 @@
-"""ホームのうちのまちの札を画面に見立てたレジの本体を Blender で組み、glb に書き出す。
+"""ホームのうちのまちの札の下に置くレジの本体を Blender で組み、glb に書き出す。
 
   /Applications/Blender.app/Contents/MacOS/Blender -b --factory-startup --python apps/web/brand/receipt_machine.py -- [--render <dir>]
 
 起動中の Blender（Blender MCP など）でも同じ形を組める。そのときは scene `register-v1` の collection `receipt_machine`
 の中だけを作り直し、他の scene・object には触らない（書き出しは background のときか、引数に --export を付けたときだけ）。
 
-店のカウンターにある電子レジに見える形にする（実在の製品の形やロゴはなぞらない）。画面は作らない。
-画面はホームの緑の札（DOM）で、支柱の上端の empty `mount` に札の下端の中心が来る。
-下に現金の引き出し、その上に紙の差し出し口のある前面の帯、さらに上に手前へ傾いた鍵盤の台、奥の中央に画面の支柱。
-単位は px 相当。幅 560・奥行き 300・筐体の高さ 176（足を含む）、支柱の上端まで 286。
+店のカウンターにある電子レジに見える形にする（実在の製品の形やロゴはなぞらない）。札（DOM）とは独立に、単体で立つ。
+下に現金の引き出し、その上に紙の差し出し口のある前面の帯、さらに上に手前へ傾いた鍵盤の台、奥の天板に客向けの小さな表示窓。
+単位は px 相当。幅 560・奥行き 300・天板の高さ 176（足を含む）、表示窓の上端まで 221。
 
 向き: glTF では前面が +z、上が +y（Blender では前面が -Y、上が +Z で組み、書き出しで glTF の向きへ直る）。
 原点（glTF の座標の 0）は差し出し口の溝の中心（前面の外側の面で、紙が出てくる点）。
 three.js は model を一様に拡大縮小するだけで、伸ばさない。
 
 object:
-- body: 筐体・底の段・ゴムの足・引き出し（合わせ目と引き手の溝）・差し出し口（彫り込み・溝・刃・庇）・鍵盤の台の板。原点は差し出し口の中心
+- body: 筐体・底の段・ゴムの足・引き出し（合わせ目と引き手の溝）・差し出し口（彫り込み・溝・刃・庇）・鍵盤の台の板・表示窓。原点は差し出し口の中心
 - keys: 小さな角丸のキーの格子と横長のキー。原点は鍵盤の台の面の中心
 - btn: 右手前の大きめの「合計」キー。原点はキーの底面の中心。押し込みは glTF の -y（下）へ沈める
 - lamp: 通電の灯（台の奥の左）。原点は灯の底面の中心
-- pole: 画面の支柱。原点は支柱の底面の中心
-- mount: empty。画面（札）の下端の中心が来る点
 
 色は塗り分けの目安だけ（three.js で DESIGN.md の token の色に置き換える）。material は名前で引く。
 アニメーションは付けない。書き出した receipt-machine.raw.glb は gltf-transform の dedup だけをかけて
@@ -96,14 +93,15 @@ SIDE_U = 104.0  # 合計キーの左の小さなキーの列
 TOTAL = (176.0, -32.0, 84.0, 58.0)  # 合計キー (u, v, 幅, 奥行き)
 TOTAL_H = 9.0
 
-# 灯（台の奥の右）と支柱（奥の中央）
+# 灯（天板の右）と表示窓（天板の奥の中央）
 LAMP = (204.0, 64.0)
 LAMP_SIZE = (18.0, 6.0)
 LAMP_H = 1.6
-POLE = (0.0, 96.0)
-POLE_SIZE = (64.0, 26.0)
-POLE_TOP = 286.0
-POLE_BASE = (128.0, 70.0, 5.0)  # 支柱の根元の台座
+DISPLAY = (0.0, 100.0)  # 表示窓の箱の中心 (x, y)
+DISPLAY_SIZE = (188.0, 52.0, 46.0)  # 箱の幅・奥行き・天板からの高さ
+DISPLAY_LEAN = 8.0  # 箱の上端を奥へ倒す量（前の面を少し上向きにする）
+WINDOW = (150.0, 24.0)  # 暗い窓（箱の前と後ろの面）
+WINDOW_Z = 25.0  # 天板からの窓の中心の高さ
 
 
 def srgb(hex_: str, a: float = 1.0) -> tuple:
@@ -363,6 +361,7 @@ def body() -> bpy.types.Object:
     parts.append(bake(lip))
 
     # 鍵盤の台の板（斜面に少し埋めた暗い板。キーはこの上に載る）
+    parts.append(display())
     plate = cap("deck_plate", W - 2 * DECK_PLATE_IN, DECK_L - 2 * DECK_PLATE_IN + 8, 10, 5, 1.2, "cover")
     parts.append(on_deck(plate, 0, 0, PLATE_T - 5))
     return join("body", parts)
@@ -394,16 +393,26 @@ def lamp() -> bpy.types.Object:
     return ob
 
 
-def pole() -> bpy.types.Object:
-    """画面の支柱。天板の台座から細い首が立ち、上端に画面を受ける横長の受け"""
-    base = cap("pole_base", POLE_BASE[0], POLE_BASE[1], 18, POLE_BASE[2], 2.0, "shell")
-    neck = prism("pole_neck", rrect(POLE_SIZE[0], POLE_SIZE[1], 10, 6), 0, POLE_TOP - TOP_Z - 14, "shell")
-    bevel(neck, 2.0, 2)
-    bake(neck)
-    head = cap("pole_head", 104, 32, 12, 16, 3.0, "shell")
-    move(head, (0, 0, POLE_TOP - TOP_Z - 16))
-    ob = join("pole", [base, neck, head])
-    move(ob, (POLE[0], POLE[1], TOP_Z))
+def display() -> bpy.types.Object:
+    """客向けの表示窓。天板の奥に立つ小さな箱で、前と後ろの面に暗い横長の窓"""
+    w, d, h = DISPLAY_SIZE
+    box = prism("display_box", rrect(w, d, 12, 6), 0, h, "shell")
+    for v in box.data.vertices:  # 上ほど奥へ倒す
+        v.co.y += DISPLAY_LEAN * v.co.z / h
+    bevel(box, 5.0, 3, angle=30)
+    bake(box)
+    parts = [box]
+    tilt = math.atan2(DISPLAY_LEAN, h)
+    for side in (-1, 1):  # -1: 前、1: 後ろ
+        win = prism("display_window", rrect(WINDOW[0], WINDOW[1], 5, 4), -0.6, 0.6, "slot", axis="Y")
+        bevel(win, 0.5, 1)
+        bake(win)
+        win.data.transform(Matrix.Rotation(-tilt, 4, "X"))
+        y = side * d / 2 + DISPLAY_LEAN * WINDOW_Z / h
+        move(win, (0, y, WINDOW_Z))
+        parts.append(win)
+    ob = join("display", parts)
+    move(ob, (DISPLAY[0], DISPLAY[1], TOP_Z - 1))
     return ob
 
 
@@ -411,11 +420,7 @@ def build() -> list:
     global COL
     COL = reset()
     materials()
-    objs = [body(), keys(), total_key(), lamp(), pole()]
-    mount = bpy.data.objects.new("mount", None)
-    mount.empty_display_type = "ARROWS"
-    mount.empty_display_size = 30
-    COL.objects.link(mount)
+    objs = [body(), keys(), total_key(), lamp()]
     # 原点を差し出し口の中心へ移す。他の object はそれぞれの原点へ
     shift = Matrix.Translation((0, -FRONT, -SLOT_Z))
     pivots = {
@@ -423,7 +428,6 @@ def build() -> list:
         "keys": DECK @ Vector((0, 0, PLATE_T)),
         "btn": DECK @ Vector((TOTAL[0], TOTAL[1], PLATE_T)),
         "lamp": Vector((LAMP[0], LAMP[1], TOP_Z)),
-        "pole": Vector((POLE[0], POLE[1], TOP_Z)),
     }
     for ob in objs:
         ob.data.transform(shift)
@@ -432,8 +436,7 @@ def build() -> list:
         ob.matrix_world = Matrix.Translation(p)
         smooth(ob)
         ob.data.name = ob.name
-    mount.location = shift @ Vector((POLE[0], POLE[1], POLE_TOP))
-    return objs + [mount]
+    return objs
 
 
 def export(objs: list) -> None:
