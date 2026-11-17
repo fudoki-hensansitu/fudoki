@@ -169,6 +169,88 @@
       ]
     },
     {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "71255bd9b7a3a45e7498282c9508a3b1473d4a7c59d30ad89b4955a45a60f5bb"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "heading": "本年度予算額"
+                },
+                "前年度": {
+                  "heading": "前年度予算額"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳の列を取り込まない。財源の種類ごとの額で、歳出の金額ではない。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              },
+              "text_layer": {
+                "crop_box": "one_sheet"
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "repeated_breakdown_cells": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
+    },
+    {
       "id": "long-term-care-initial",
       "converter": "fiscal/layouts/generic_text/convert.py",
       "inputs": [

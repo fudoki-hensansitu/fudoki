@@ -66,7 +66,7 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
     character_map = (text_layer or {}).get('character_map')
     printed = observe(pdf, [number for number in pages if number not in numbers], cache, character_map)
     if (text_layer or {}).get('crop_box'):
-        printed = cropped(pdf, printed)
+        printed = cropped(pdf, printed, text_layer['crop_box'] == 'one_sheet')
     if (text_layer or {}).get('image_rules'):
         printed = [image_rules(pdf, page, staircase) if not page.rules else page for page in printed]
     unrepaired = [Page(page.number, page.width, page.height, list(page.words), page.rules) for page in printed]
