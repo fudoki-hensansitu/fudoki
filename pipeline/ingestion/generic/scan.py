@@ -482,6 +482,10 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                     continue
                 if keep_marks:
                     pieces = with_mark(item, pieces)
+                if pieces and (spaced := document_quirk('spaced_ocr_codes')) is not None \
+                        and (cut := spaced.module.split(pieces)) is not None:
+                    words += [w for part in cut for w in _cell_words(part, line_cuts(detected, item['bbox_pdf_pt']) if row_gaps else cuts, reach)]
+                    continue
                 words += _cell_words(pieces or [Word(item['raw_text'], *item['bbox_pdf_pt'])],
                                      line_cuts(detected, item['bbox_pdf_pt']) if row_gaps else cuts, reach)
     if (nested := document_quirk('nested_subject_boxes')) is not None:
