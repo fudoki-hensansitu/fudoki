@@ -1979,6 +1979,12 @@ def apply_layout(items: list[Item], settings: dict, column_amount_items: set[int
         if (aligned := quirk(settings, 'codeless_at_names')) is not None:
             item.name_aligned = float(aligned.value)
         previous = result[-1] if result else None
+        if previous and (over := quirk(settings, 'name_over_code_line')) is not None and over.module.heads(previous, item, column_amount_items):
+            item.name = previous.name + item.name
+            item.lines = item.lines + previous.lines  # the code's line stays first
+            item.indent = previous.indent  # the name's start: the code's line holds no name to measure it by
+            result[-1] = item
+            continue
         if (previous and previous.role == 'annotation' and not previous.amounts and item.page == previous.page
                 and (opened := ''.join(normalize(text(line)) for line in previous.lines)).startswith(('(', '（'))
                 and len(re.findall(r'[(（]', opened)) > len(re.findall(r'[)）]', opened))
@@ -2174,6 +2180,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 group_items = join_transfer_tails(group_items, layout)
                 if (between := quirk(document, 'code_between_name_lines')) is not None:
                     group_items = between.module.join(group_items)  # a 節 name wrapped round its code (132292)
+                if (centered := quirk((layout or {}).get(group.axis), 'centered_codes')) is not None:
+                    group_items = centered.module.regroup(group_items)
                 if (digit_set := quirk(document, 'digit_set_codes')) is not None:
                     digit_set.module.measure(group_items, digit_set.value)
             for position, item in enumerate(group_items):

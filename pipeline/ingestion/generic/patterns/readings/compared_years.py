@@ -7,9 +7,11 @@
 （`(60,758,000)`）は、表の注記（`※（ ）内は翌年度繰越額で外数`）のとおり別の欄（profile の
 `bracketed`）の金額にする。
 
-一つの頁に歳入と歳出の表を上下に並べる資料もあるので、表は支出の見出し（profile の `frame_heading`）の
-下の年度の行で探す。行は左頁の款の番号と、最初の金額の欄で決める。合計の行は款にせず、網羅の検査が款の和と
-突き合わせる印字として残す（右頁の合計は総括として除く）。
+一つの頁に歳入と歳出の表を上下に並べる資料もあるので、表は読む側の見出し（profile の `frame_heading`、歳出は
+`支出済額`、歳入は `収入済額`）の下の年度の行で探す。行は左頁の款の番号と、最初の金額の欄で決める。合計の行は
+款にせず、網羅の検査が款の和と突き合わせる印字として残す（右頁の合計は総括として除く）。歳入の表は款を自主財源・
+依存財源に分けて小計の行を挟み（profile の `subtotals`）、その行は款の和を重ねるので両頁とも総括として除く。款の
+番号の左に縦に印字した区分の字（`自` `主` `財` `源`）は款の名前に入れない。
 """
 from __future__ import annotations
 
@@ -48,6 +50,7 @@ class Reader(Reading):
         self.FRAME_HEADING = profile['frame_heading']
         self.NOTE = profile['note']
         self.BALANCES = dict(profile.get('balances', {}))
+        self.SUBTOTALS = set(profile.get('subtotals', []))
         headings = [c for c in self.LEFT + self.RIGHT if c != RATIO]
         if len(set(headings)) != len(headings) or set(self.BRACKETED) - set(headings):
             raise ValueError('Compared-year columns must name each amount heading once')
@@ -141,9 +144,12 @@ class Reader(Reading):
         # The rows: a line printing an amount in the first column, in order down the page, until the 合計 row.
         anchors = []
         for line in self.lines(left_body):
-            labels = [w for w in line if w['xMax'] <= label_right]
             if not any(self.column(left_centres, w) == 0 and AMOUNT.fullmatch(w['text']) for w in line):
                 continue
+            # The label may sit a little higher than the amounts (`合 計` 2.1pt over its figures, 132144 R5): a label
+            # whose box overlaps the line's is the row's.
+            top, bottom = min(w['yMin'] for w in line), max(w['yMax'] for w in line)
+            labels = [w for w in left_body if w['xMax'] <= label_right and w['yMin'] < bottom and w['yMax'] > top]
             anchors.append((line[0]['yMin'], line))
             if self.joined(labels) == TOTAL:
                 break
@@ -191,6 +197,12 @@ class Reader(Reading):
                     if heading in cells:
                         raise ValueError(f'Two amounts in column {heading} at page {page}, y={word["yMin"]}')
                     cells[heading] = (text, page, word)
+            if self.joined(labels) in self.SUBTOTALS:
+                # A 小計 row sums the 款 above it: no 款, and its amounts would count twice.
+                exclusions += [{'kind': '総括', 'reason': '小計の行。款の和を重ねる統制値。',
+                                'page': page, 'bbox': [edges[0][0], low, edges[-1][1], high]}
+                               for page, edges in ((left_page, left_edges), (right_page, right_edges))]
+                continue
             if self.joined(labels) == TOTAL:
                 # The 合計 row is no 款: the coverage check matches its left-page amounts to the 款 sums. Its right-page amounts are printed
                 # above and below its baseline (the bracketed 翌年度繰越額 over the 不用額), where the control-total
@@ -203,7 +215,10 @@ class Reader(Reading):
             if code_word is None:
                 raise ValueError(f'No 款 number at page {left_page}, y={y}')
             code, rest = CODE.fullmatch(code_word['text']).groups()
-            name = rest + ''.join(w['text'] for w in ordered if w is not code_word)
+            # A word left of the number is the side label of a group of 款 (`自` of 自主財源), not the name; its box may
+            # touch the number's (132144 R7: 0.1pt), so its centre decides.
+            name = rest + ''.join(w['text'] for w in ordered
+                                  if w is not code_word and (w['xMin'] + w['xMax']) / 2 > code_word['xMin'])
             name = name.replace(' ', '')
             if not name:
                 raise ValueError(f'No 款 name at page {left_page}, y={y}')
@@ -260,9 +275,9 @@ class Reader(Reading):
         if len(inputs) != 1:
             raise ValueError('A compared-year table is read from one original')
         source = inputs[0]
-        if (source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] != 'expenditure'
+        if (source['format'] != 'pdf' or source['pdf_type'] != 'text' or source['direction'] not in ('expenditure', 'revenue')
                 or source['target']['document_kind'] != 'settlement'):
-            raise ValueError('Compared-year tables are text PDF settlement expenditure')
+            raise ValueError('Compared-year tables are text PDF settlements')
         if sha_file(source['path']) != source['sha256']:
             raise ValueError('Original SHA differs')
         account = options['account']

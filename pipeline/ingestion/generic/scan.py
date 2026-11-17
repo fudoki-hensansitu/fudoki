@@ -1423,10 +1423,12 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
             raise ValueError(f'rule_pieces: no unread ink at p{page} {box}')
     built.unowned = [u for u in built.unowned if not (
         u['kind'] == 'unread ink in amount column' and (u['page'], u['box']) in pieces_)]
-    # So is a heading the strip seam cut (`header_readings`: 不用額 on 132080 R5 p422): the declared cell stands for it.
+    # So is a heading the strip seam cut (`header_readings`: 不用額 on 132080 R5 p422), or a heading OCR left unread
+    # where a stacked table repeats its header over the amount column (`(前 年 度)`, 132144 R7 後期 p24): the declared
+    # cell stands for it.
     headings = [(page, r['box']) for r in options.get('header_readings', ()) for page in r['pages']]
     built.unowned = [u for u in built.unowned if not (
-        u['kind'] == 'unread strip seam'
+        u['kind'] in ('unread strip seam', 'unread ink in amount column')
         and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
                 and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in headings))]
     built.notes.extend(recovered)
