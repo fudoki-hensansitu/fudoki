@@ -55,20 +55,6 @@
             "justified_names"
           ]
         },
-        "excluded_boxes": [
-          {
-            "id": "p147-carryover-note",
-            "page": 147,
-            "bbox": [
-              770,
-              238,
-              842,
-              266
-            ],
-            "kind": "本文",
-            "reason": "備考欄の注記「前年度繰越事業費不用額 0円」の金額。備考の文言で、科目の金額の列ではない。"
-          }
-        ],
         "pages": [
           [
             33,
