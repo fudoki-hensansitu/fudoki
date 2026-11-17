@@ -107,14 +107,14 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
         # as read (`17,585,227,000` boxed 3pt past its cell's right rule, 281000; `0532,413,000` and
         # `130,577,0001,156,707,000` are cut).
         return [word]
+    after = document_quirk('code_after_amount') if len(inside) == 1 else None
     if (NUMBER.fullmatch(_text(word.text)) and len(_text(word.text)) >= 3
             and all(word.x1 - x < width for x in inside)):
         # Nor does a rule within a character of a number's end: the box runs past its cell's right rule
         # (`448` of `134,271 448`, `296` 3pt past it, 281000), and no whole digit fits in that sliver. The box
         # still ends at the rule, as a cut keeping every character gives it (`422` 1pt past it, 132152).
         return [word] if _amount(word.text) else [Word(word.text, word.x0, word.y0, min(inside), word.y1)]
-    if len(inside) == 1 and (after := document_quirk('code_after_amount')) is not None \
-            and after.module.overrun(_text(word.text), word.x1 - inside[0], width):
+    if after is not None and after.module.overrun(_text(word.text), word.x1 - inside[0], width):
         return [Word(word.text, word.x0, word.y0, inside[0], word.y1)]
     # Two grouped amounts run together across one rule (`△77,756,000103,232,000`, 132276): the groups of three say
     # where the first ends. A share by width can be a digit off, and a sign makes the left part wider than it reads.
@@ -123,8 +123,7 @@ def _split(word: Word, cuts: list[float]) -> list[Word]:
     if len(together) == len(inside) and ''.join(together) == joined and len(inside) > 1 \
             and (padded := document_quirk('padded_runs')) is not None:
         inside = padded.module.inside(word, inside, width)
-    if len(inside) == 1 and (after := document_quirk('code_after_amount')) is not None \
-            and (cut := after.module.pieces(joined)) is not None:
+    if after is not None and (cut := after.module.pieces(joined, after.value)) is not None:
         return [Word(cut[0], word.x0, word.y0, inside[0], word.y1), Word(cut[1], inside[0], word.y0, word.x1, word.y1)]
     if len(together) == len(inside) + 1 and ''.join(together) == joined:
         edges = [word.x0, *inside, word.x1]
@@ -234,6 +233,11 @@ def _paddle_pieces(line: dict, children: list[Word], corrected: bool, cuts: list
         else:
             joined.append(word)
     merged = joined
+    if (len(merged) == 1 and re.fullmatch(r'[0-9]{2,}', merged[0].text) and document_quirk('dotted_column_rules') is not None
+            and any(merged[0].x0 < x < merged[0].x1 for x in cuts)):
+        # The codes of two levels read as one number across a dotted rule (`1010` = 款10 項10, 132080 R5): the
+        # characters' box, not the line's padded one, says where the rule cuts it.
+        return merged
     if len(merged) < 2:
         return None
     # The line's own box includes the padding its characters' boxes lack: the ends keep it, so a line no rule cuts
@@ -413,10 +417,18 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                           > (o['bbox_pdf_pt'][2] - o['bbox_pdf_pt'][0]) * (o['bbox_pdf_pt'][3] - o['bbox_pdf_pt'][1])
                           for other, full in marks)}
     gone |= fragments
+    if (after := document_quirk('code_after_amount')) is not None:
+        trimmed = after.module.read_twice([o for _, o in readings if o['id'] not in gone], cuts)
+        gone |= {o['id'] for region in observation_page['regions'] for o in region['observations']
+                 if o.get('parent_id') in trimmed}
+    else:
+        trimmed = {}
     words: list[Word] = []
     for region in observation_page['regions']:
         items = [o for o in region['observations'] if o['id'] not in gone
                  and o.get('parent_id') not in fragments and o['bbox_pdf_pt'] and o['raw_text'].strip()]
+        items = [{**o, 'raw_text': trimmed[o['id']][0], 'bbox_pdf_pt': trimmed[o['id']][1]} if o['id'] in trimmed else o
+                 for o in items]
         corrected_regions = set()
         corrected_word_parents = set()
         if corrections:
@@ -466,6 +478,10 @@ def page(observation_page: dict, pdf: Path, corrections: AmountDictionary | None
                                      line_cuts(detected, item['bbox_pdf_pt']) if row_gaps else cuts, reach)
     if (nested := document_quirk('nested_subject_boxes')) is not None:
         words = nested.module.snap(words, detected.vertical)
+    if (repeats := document_quirk('bracketed_repeats')) is not None:
+        words = repeats.module.dropped(words, detected)
+    if (marks := document_quirk('unread_marks')) is not None:
+        words = marks.module.marked(words, pdf, number, cuts)
     return Page(number, detected.width, detected.height, drop_covered_digits(words), rules)
 
 
@@ -678,7 +694,10 @@ def pages(observation: dict, pdf: Path, corrections: AmountDictionary | None = N
 
     @cache
     def detected(number):
-        found = short_rows(pdf, (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed), rule_dark,
+        found = (rules or {}).get(number) or pdf_rules.detect(pdf, number, dark=rule_dark, skewed=skewed)
+        if (dotted := document_quirk('dotted_column_rules')) is not None:
+            found = dotted.module.added(pdf, found, rule_dark)
+        found = short_rows(pdf, found, rule_dark,
                            bool((header or {}).get('staircase')) or short_columns, row_columns)
         return rule_hook(found) if rule_hook else found
 
@@ -1318,6 +1337,32 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
         problems = explained_projects.continue_rows(built, observed, continued, levels, subject, explained['rows_axis'],
                                                     explained)
         built.unowned.extend({'kind': 'continued rows', 'detail': p} for p in problems)
+    elif continued is not None:
+        from ingestion.generic.convert import continue_volume
+
+        subject = next(n['axis_header'] for n in built.nodes if n.get('level_header') in ('款', '項', '目'))
+
+        def placed_nodes() -> set:
+            # (a row whose every row above stands one level up, or on another axis, up to a 款: what the
+            # diagnostics of a row with no parent or of a gap above it ask for)
+            by_key = {n['node_key']: n for n in built.nodes}
+            rooted: dict[str, bool] = {}
+
+            def placed(n: dict) -> bool:
+                if n['node_key'] not in rooted:
+                    parent = by_key.get(n['parent_node_key'])
+                    rooted[n['node_key']] = n['depth'] == 1 and n['axis_header'] == subject if parent is None else (
+                        (parent['axis_header'] != n['axis_header'] or parent['depth'] == n['depth'] - 1)
+                        and placed(parent))
+                return rooted[n['node_key']]
+            return {n['node_key'] for n in built.nodes if placed(n)}
+        before = placed_nodes()
+        built.notes.append({'kind': 'continued rows', 'text': continue_volume(built.nodes, continued)})
+        # Only the diagnostics of the rows the continuation placed go: a gap it did not mend still stops the table.
+        mended = placed_nodes() - before
+        placed = {(n['physical_page'], n['name_text']) for n in built.nodes if n['node_key'] in mended}
+        built.unowned = [u for u in built.unowned if not (u['kind'] in ('no subject parent', 'subject depth gap')
+                                                          and (u.get('page'), u.get('text')) in placed)]
     if explained:
         built.unowned.extend({'kind': 'explained item', 'detail': p} for p in explained_projects.attach(
             built, items, explained, declared=options.get('explained_names')))
@@ -1337,6 +1382,22 @@ def _build_table(source: dict, options: dict, *, stop: bool = True, rules: dict 
         u['kind'] == 'unread ink in amount column'
         and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
                 and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in declared))]
+    # Ink the rendered page shows to be only pieces of the column rules (`rule_pieces`: 多摩市 R2 決算 p1, a cell
+    # whose ink area runs from one rule to the next, past what the quirk `rule_ink` takes for a rule's piece) is no
+    # figure. A declaration names the unread box exactly, and one that names none stops the conversion.
+    pieces_ = [(r['page'], r['box']) for r in options.get('rule_pieces', ())]
+    for page, box in pieces_:
+        if not any(u['kind'] == 'unread ink in amount column' and u['page'] == page and u['box'] == box
+                   for u in built.unowned):
+            raise ValueError(f'rule_pieces: no unread ink at p{page} {box}')
+    built.unowned = [u for u in built.unowned if not (
+        u['kind'] == 'unread ink in amount column' and (u['page'], u['box']) in pieces_)]
+    # So is a heading the strip seam cut (`header_readings`: 不用額 on 132080 R5 p422): the declared cell stands for it.
+    headings = [(page, r['box']) for r in options.get('header_readings', ()) for page in r['pages']]
+    built.unowned = [u for u in built.unowned if not (
+        u['kind'] == 'unread strip seam'
+        and any(page == u['page'] and box[0] <= (u['box'][0] + u['box'][2]) / 2 <= box[2]
+                and box[1] <= (u['box'][1] + u['box'][3]) / 2 <= box[3] for page, box in headings))]
     built.notes.extend(recovered)
     report.unit = check_units(built, kind, options['account'], bool(options.get('partial')))
     if report.unit['stopped'] and stop:

@@ -40,7 +40,8 @@
     "flat": "ingestion.generic.patterns.breakdown.flat",
     "amount_ends": "ingestion.generic.patterns.breakdown.amount_ends",
     "numbered": "ingestion.generic.patterns.breakdown.numbered",
-    "setsu_lines": "ingestion.generic.patterns.breakdown.setsu_lines"
+    "setsu_lines": "ingestion.generic.patterns.breakdown.setsu_lines",
+    "setsu_ends": "ingestion.generic.patterns.breakdown.setsu_ends"
   },
   "repairs": {
     "line_clips": "ingestion.generic.patterns.repairs.line_clips",
@@ -130,7 +131,12 @@
     "glued_project_codes": "ingestion.generic.patterns.quirks.glued_project_codes",
     "spaced_project_codes": "ingestion.generic.patterns.quirks.spaced_project_codes",
     "short_amounts_at_line_end": "ingestion.generic.patterns.quirks.short_amounts_at_line_end",
+    "short_yen_notes": "ingestion.generic.patterns.quirks.short_yen_notes",
     "gapped_column_rules": "ingestion.generic.patterns.quirks.gapped_column_rules",
+    "dotted_column_rules": "ingestion.generic.patterns.quirks.dotted_column_rules",
+    "unread_marks": "ingestion.generic.patterns.quirks.unread_marks",
+    "bracketed_repeats": "ingestion.generic.patterns.quirks.bracketed_repeats",
+    "nearest_subject_code": "ingestion.generic.patterns.quirks.nearest_subject_code",
     "skewed_cell_rows": "ingestion.generic.patterns.quirks.skewed_cell_rows",
     "wrapped_years": "ingestion.generic.patterns.quirks.wrapped_years",
     "stacked_digits": "ingestion.generic.patterns.quirks.stacked_digits",
@@ -205,6 +211,7 @@
     "specks": "ingestion.generic.patterns.quirks.specks",
     "rule_pieces_as_digits": "ingestion.generic.patterns.quirks.rule_pieces_as_digits",
     "spread_columns": "ingestion.generic.patterns.quirks.spread_columns",
+    "spread_stacked_tables": "ingestion.generic.patterns.quirks.spread_stacked_tables",
     "stacked_tables_apart": "ingestion.generic.patterns.quirks.stacked_tables_apart",
     "sum_levels": "ingestion.generic.patterns.quirks.sum_levels",
     "title_depths": "ingestion.generic.patterns.quirks.title_depths",
@@ -213,6 +220,7 @@
     "under": "ingestion.generic.patterns.quirks.under",
     "unnumbered_shift": "ingestion.generic.patterns.quirks.unnumbered_shift",
     "unnumbered_abolished_names": "ingestion.generic.patterns.quirks.unnumbered_abolished_names",
+    "unnumbered_names_at_rule": "ingestion.generic.patterns.quirks.unnumbered_names_at_rule",
     "unopened_brackets": "ingestion.generic.patterns.quirks.unopened_brackets",
     "whole_name_notes": "ingestion.generic.patterns.quirks.whole_name_notes",
     "yen_split_amounts": "ingestion.generic.patterns.quirks.yen_split_amounts",

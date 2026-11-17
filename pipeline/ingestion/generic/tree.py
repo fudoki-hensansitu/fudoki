@@ -49,6 +49,24 @@ TRANSFER = re.compile(r'(流用|充用|充当|予備費支出|予備費充当|�
 # The words that end a transfer remark begun on the line above (`…費` / `から流用 13,281,000円`).
 # A transfer remark ends with the word (`…へ流用`): a line after it is another remark, even when it reaches the column's limit.
 ENDED_TRANSFER = re.compile(r'(?:流用|充用)$')
+
+
+def ends_transfer(name: str) -> bool:
+    """The name ends a transfer remark (`ENDED_TRANSFER`), but for brackets after it: the line under a remark may be a
+    department (`…へ流用` / `(高齢者支援室(高齢福祉担当))`, 132080), which the remark takes in as a wrapped line."""
+    while name[-1:] in (')', '）'):
+        depth = 0
+        for index in range(len(name) - 1, -1, -1):
+            depth += name[index] in ')）'
+            depth -= name[index] in '(（'
+            if depth == 0:
+                break
+        else:
+            break
+        name = name[:index]
+    return ENDED_TRANSFER.search(name) is not None
+
+
 # A kind word printed above an amount inside an amount column's cell (a stacked carry-over column).
 SUPPLEMENT_ROUND = re.compile(r'第[0-9０-９]+次補正')  # the round of a supplementary budget printed over its amount
 # The history of the year's supplementary budgets printed under an item's amount in its column (131113): `補正経過`, then
@@ -397,6 +415,9 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
     # is no part of the item's name or of the amount. The amount stays the line's last run.
     if len(parts) >= 3 and CARRY_OVER_TAG.fullmatch(normalize(text(parts[-1]))) and is_amount(text(parts[-2])):
         parts.pop()
+    if parts and (short_yen := document_quirk('short_yen_notes')) is not None \
+            and (kept := short_yen.module.digits(normalize(text([g for part in parts for g in part])))) is not None:
+        return [], [_cut([g for part in parts for g in part], kept)[0]]  # `400円` under a remark: its amount
     while parts and len(parts[-1]) > 1 and normalize(parts[-1][-1].text) == '円' and is_amount(text(parts[-1][:-1])):
         parts[-1] = parts[-1][:-1]
     while len(parts) > 1 and normalize(text(parts[-1])) == '円' and is_amount(text(parts[-2])):
@@ -988,7 +1009,7 @@ def items(group: Group, header: str, margins: set[int] | None = None,
                    and label[0].x0 >= previous.lines[0][0].x0 - left_slack
                    and not (headings is not None and headings.module.indented_under(label, previous))
                    and (not money or bracketed
-                        or (reaches and not ENDED_TRANSFER.search(previous.name) and (abs(label[0].x0 - previous.indent) <= 3
+                        or (reaches and not ends_transfer(previous.name) and (abs(label[0].x0 - previous.indent) <= 3
                                          or abs(label[0].x0 - _name_start(previous)) <= 3 + float(settings.get('name_start_slack', 0)))))
                    and _cell(band_of(label[0]), label[0].y0) == _cell(band_of(previous.lines[-1][0]), previous.lines[-1][0].y0))
         # (Not only the rule-bounded cell: the name and the amount of a 備考 can have grids of their own.)
@@ -1146,6 +1167,9 @@ def _measure(item: Item, label: list[Glyph], code: str | None, joined: bool = Fa
             if band.x0 - 1 <= cx <= band.x1:
                 item.level = index
         item.level = item.level if item.level is not None else len(item.group.bands) - 1
+        if code is None and item.group.mode == 'bands' and (at_rule := document_quirk('unnumbered_names_at_rule')) is not None:
+            # A dropped subject's name without a number, set on the rule that closes its level's code column.
+            item.level = at_rule.module.level(first.x0, item.group.bands, item.level)
 
 
 def join_transfer_tails(items_: list[Item], layout: dict | None) -> list[Item]:
@@ -1156,7 +1180,8 @@ def join_transfer_tails(items_: list[Item], layout: dict | None) -> list[Item]:
         previous = result[-1] if result else None
         if (previous is not None and item.code is None and not item.amounts and previous.code is None
                 and previous.amounts and not previous.kinds and item.lines and previous.lines
-                and abs(item.lines[0][0].x0 - previous.lines[0][0].x0) <= 2
+                # (within a third of a character: a tail led by `・` boxes it from its ink, `・一般需用費へ流用`, 132080)
+                and abs(item.lines[0][0].x0 - previous.lines[0][0].x0) <= max(2, .3 * (previous.lines[0][0].y1 - previous.lines[0][0].y0))
                 and 0 < item.lines[0][0].y0 - previous.lines[-1][0].y0 <= 2.5 * (previous.lines[-1][0].y1 - previous.lines[-1][0].y0)
                 and not TRANSFER.search(PAREN_TAIL.sub('', previous.name))
                 and TRANSFER.search(PAREN_TAIL.sub('', previous.name + item.name))
@@ -1329,13 +1354,15 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
             in_column[band].append((cell, index))
     claimed: dict[tuple, tuple[tuple, int]] = {}
     own_column = document_quirk('names_in_own_column')
+    nearest = document_quirk('nearest_subject_code')
     for cell, (tokens, names) in parsed.items():
         for position, piece in enumerate(names):
             column = band_index(piece[0])
             span = _cell(group.bands[column], centre(piece))
             found = [(c, i) for c, i in in_column[column]
                      if _cell(group.bands[column], centre(parsed[c][0][i][1])) == span]
-            if len(found) == 1 and (found[0][0] == cell or own_column is not None):
+            if len(found) == 1 and (found[0][0] == cell or own_column is not None) \
+                    and not (nearest is not None and nearest.module.owner(tokens, piece, centre) is not None):
                 claimed[cell, position] = found[0]
     for (cell, position), owner_token in claimed.items():
         extra[owner_token].append(parsed[cell][1][position])
@@ -1375,6 +1402,8 @@ def subject_items(group: Group, marked=None, dropped=None) -> list[Item]:
                 continue
             same = [i for i, (band, _) in enumerate(tokens) if band == band_index(piece[0])]
             owner_of[position] = same[0] if len(same) == 1 else deepest_token
+            if nearest is not None and (found := nearest.module.owner(tokens, piece, centre)) is not None:
+                owner_of[position] = found
         for index, (band, piece) in enumerate(tokens):
             code, name = _split_code(normalize(text(piece)))
             own = [piece]
