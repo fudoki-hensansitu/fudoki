@@ -1,11 +1,11 @@
 // まち比べ。東京都のまちを、風土記が用意した問いの答えでタイル地図に塗る。一覧（/compare）は問いごとの小さな地図のカード、
-// カードを押すと問いの頁（/compare/<問い>）で大きな地図と、選んだまちの札（全部の問いの値・まちの頁へのリンク）を出す。
+// カードを押すと問いの頁（/compare/<問い>）で大きな地図と、選んだまちの札（その問いの値・まちの頁へのボタン）を出す。
 // 色は緑一色の濃淡で、値の並びを5つに分けて塗る（値の偏りが大きく、等間隔だと島しょだけが濃くなるため）。良し悪しの言葉は付けない
 import * as React from 'react'
 import { ArrowLeftIcon, ArrowRightIcon } from '@phosphor-icons/react'
 import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
-import { useMyTown } from '../home/towns'
+import { Button } from '@/components/ui/button'
 import { QUESTIONS, questionOf, type Question } from './questions'
 import type { CompareMap, MapTown } from '../server/compare-map'
 
@@ -13,6 +13,11 @@ const STEPS = 5
 // 濃淡の段ごとの地（DESIGN.md の --shade-1〜5）と、その上の文字の色。未収録は斜線（--shade-none）にして 0 と分ける
 const fillOf = (step: number) => (step < 0 ? 'var(--shade-none)' : `var(--shade-${step + 1})`)
 const inkOf = (step: number) => (step >= 3 ? 'var(--primary-foreground)' : undefined)
+// 最多・最小のまちの印（DESIGN.md の --shu・--ai）。タイルの内側の線で、選んでいる印（外側の線）と重ねられる
+const MARK = { top: 'var(--shu)', bottom: 'var(--ai)' } as const
+function Mark({ kind }: { kind: keyof typeof MARK }) {
+  return <span aria-hidden="true" className="inline-block size-2.5 shrink-0 rounded-[2px]" style={{ background: MARK[kind] }} />
+}
 
 type Scale = { step: (v: number | null) => number; min: number; max: number; median: number }
 /** 問いの値の並びを5つに分ける */
@@ -45,6 +50,7 @@ const popText = (n: number | null) => (n ? `人口 ${(n / 1e4).toFixed(1)}万人
 
 /** タイル地図。large は名前を書いて押せる地図、そうでなければ一覧のカードの小さな地図（押せない） */
 function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; q: Question; scale: Scale | null; selected?: string | null; onPick?: (code: string) => void; large?: boolean }) {
+  const { top, bottom } = extremes(map.towns, q.slug)
   return (
     <div className={cn('grid', large ? 'gap-0.5 sm:gap-1' : 'gap-0.5')} style={{ gridTemplateColumns: `repeat(${map.cols}, minmax(0, 1fr))` }}>
       {map.towns.map((t) => {
@@ -58,6 +64,8 @@ function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; 
           // 問いを替えたとき、色が西から東へ波のように移る
           transitionDelay: `${t.col * 18}ms`,
         }
+        const mark = t.code === top?.code ? MARK.top : t.code === bottom?.code ? MARK.bottom : null
+        if (mark) style.boxShadow = `inset 0 0 0 ${large ? 3 : 1.5}px ${mark}`
         const tile = cn(
           'aspect-square transition-[background-color,color] duration-300 ease-out motion-reduce:transition-none',
           large ? 'grid place-items-center rounded-[4px] sm:rounded-md' : 'rounded-[3px]',
@@ -67,7 +75,8 @@ function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; 
         return (
           <button key={t.code} type="button" onClick={() => onPick?.(t.code)} aria-label={`${t.name} ${plain(v, q)}`} aria-pressed={selected === t.code} className={cn(tile, 'cursor-pointer outline-offset-1 hover:outline-1 hover:outline-muted-foreground active:scale-95')} style={style}>
             {/* 狭い幅ではタイルが小さく名前が読めないので塗りだけにし、名前は札で出す */}
-            <span className="hidden max-w-full overflow-hidden text-center text-[11px] leading-none font-medium break-keep sm:inline">{shortName(t.name)}</span>
+            {/* 長い名前は2行に折り返し、それでも入らなければ … で切る */}
+            <span className="hidden max-w-full px-0.5 text-center text-[11px] leading-tight font-medium sm:line-clamp-2">{shortName(t.name)}</span>
           </button>
         )
       })}
@@ -86,6 +95,8 @@ function Legend({ q, scale }: { q: Question; scale: Scale | null }) {
           <Num v={scale.min} q={q} />〜<Num v={scale.max} q={q} />
         </span>
       ) : null}
+      <span className="flex items-center gap-2"><Mark kind="top" />最多</span>
+      <span className="flex items-center gap-2"><Mark kind="bottom" />最小</span>
       <span className="flex items-center gap-2">
         <span className="h-2.5 w-3.5 rounded-[2px]" style={{ background: fillOf(-1) }} />
         未収録
@@ -124,8 +135,8 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
                 <h2 className="min-h-[2.9em] text-[15px] leading-[1.45] font-medium">{q.title}</h2>
                 <TileMap map={map} q={q} scale={scale} />
                 <p className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  {top ? <span>最多 <b className="font-medium text-foreground">{top.name}</b> <Num v={top.values[q.slug]!} q={q} /></span> : null}
-                  {bottom ? <span>最小 <b className="font-medium text-foreground">{bottom.name}</b> <Num v={bottom.values[q.slug]!} q={q} /></span> : null}
+                  {top ? <span className="flex items-center gap-1"><Mark kind="top" />最多 <b className="font-medium text-foreground">{top.name}</b> <Num v={top.values[q.slug]!} q={q} /></span> : null}
+                  {bottom ? <span className="flex items-center gap-1"><Mark kind="bottom" />最小 <b className="font-medium text-foreground">{bottom.name}</b> <Num v={bottom.values[q.slug]!} q={q} /></span> : null}
                 </p>
                 <p className="mt-auto text-[11px] leading-relaxed text-muted-foreground">※{q.caveat}</p>
               </Link>
@@ -137,40 +148,29 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
   )
 }
 
-const DEFAULT_TOWN = '131091'
-
-/** 選んでいるまち。最初は URL の ?town、無ければ住んでいるまち（東京都のまちなら）、無ければ品川区。選び直すと URL の ?town も書き換える */
-function useSelected(map: CompareMap) {
-  const { town } = useMyTown()
-  const has = React.useCallback((c?: string | null) => !!c && map.towns.some((t) => t.code === c), [map])
-  const [code, setCode] = React.useState(DEFAULT_TOWN)
-  const asked = React.useRef(false)
+/** 選んでいるまち。URL の ?town があればそのまち、無ければその問いでいちばん大きいまち。選び直すと URL の ?town も書き換える。
+ * picked は自分で選んだまち（ほかの問いへ移っても選んだまちを持ち越す） */
+function useSelected(map: CompareMap, slug: string) {
+  const [picked, setPicked] = React.useState<string | null>(null)
   React.useEffect(() => {
     const fromUrl = new URLSearchParams(location.search).get('town')
-    if (has(fromUrl)) {
-      asked.current = true
-      setCode(fromUrl!)
-    }
-  }, [has])
-  React.useEffect(() => {
-    if (!asked.current && has(town?.code)) setCode(town!.code)
-  }, [town, has])
+    setPicked(fromUrl && map.towns.some((t) => t.code === fromUrl) ? fromUrl : null)
+  }, [map, slug])
   const pick = (c: string) => {
-    asked.current = true
-    setCode(c)
+    setPicked(c)
     const url = new URL(location.href)
     url.searchParams.set('town', c)
     history.replaceState(history.state, '', url)
   }
-  return [code, pick] as const
+  return { code: picked ?? extremes(map.towns, slug).top?.code ?? null, picked, pick }
 }
 
 export function CompareQuestion({ slug, map, failed }: { slug: string; map: CompareMap; failed: boolean }) {
   const q = questionOf(slug)!
-  const [code, pick] = useSelected(map)
+  const { code, picked, pick } = useSelected(map, slug)
   const scale = scaleOf(map.towns, q.slug)
   const t = map.towns.find((x) => x.code === code)
-  const hrefOf = (s: string) => `/compare/${s}?town=${code}`
+  const hrefOf = (s: string) => (picked ? `/compare/${s}?town=${picked}` : `/compare/${s}`)
   return (
     <main className="mx-auto w-full max-w-6xl px-4 pt-10 pb-28 sm:px-8 sm:pt-14">
       <Link href="/compare" className="mb-4 inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground">
@@ -182,22 +182,22 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{q.note}</p>
       </header>
       {failed ? failedText : (
-        <div className="grid items-start gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
+        <div className="grid gap-6 lg:grid-cols-[minmax(0,1fr)_280px]">
           <div>
             <TileMap map={map} q={q} scale={scale} selected={code} onPick={pick} large />
             <Legend q={q} scale={scale} />
           </div>
           {t ? (
-            <aside key={t.code} aria-live="polite" className="animate-in rounded-2xl border bg-background p-5 fade-in slide-in-from-bottom-1 duration-200 motion-reduce:animate-none">
+            <aside key={t.code} aria-live="polite" className="flex animate-in flex-col rounded-2xl border bg-background p-5 fade-in slide-in-from-bottom-1 duration-200 motion-reduce:animate-none">
               <p className="flex items-baseline gap-2 text-lg font-semibold">
                 {t.name}
                 <small className="text-xs font-normal text-muted-foreground">{popText(t.pop)}</small>
               </p>
-              <Link href={t.path} className="mt-1 inline-flex items-center gap-1 text-sm font-medium text-primary underline-offset-2 hover:underline">
+              <Button size="lg" nativeButton={false} render={<Link href={t.path} />} className="mt-3 h-11 w-full text-[15px]">
                 {t.name}の頁を開く
-                <ArrowRightIcon className="size-3.5" aria-hidden="true" />
-              </Link>
-              <p className="mt-4 text-[13px] text-muted-foreground">{q.short}</p>
+                <ArrowRightIcon aria-hidden="true" />
+              </Button>
+              <p className="mt-6 text-[13px] text-muted-foreground">{q.short}</p>
               <Num v={t.values[q.slug] ?? null} q={q} className="text-[32px] leading-tight font-semibold text-primary" />
               {scale ? <p className="text-[13px] text-muted-foreground">都内の真ん中 <Num v={scale.median} q={q} /></p> : null}
             </aside>
