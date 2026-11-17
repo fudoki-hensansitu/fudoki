@@ -13,6 +13,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import re
 
 import duckdb
 from population import DATABASES, write
@@ -80,6 +81,8 @@ def read() -> list[tuple]:
     by_item = {(s, i): name for name, (s, i, _) in COLUMNS.items()}
     merged: dict[tuple[str, int], dict[str, object]] = {}
     for code, year, section, item, unit, number, text in cells:
+        if not re.fullmatch(r'\d{6}', code):
+            raise ValueError(f'{year}: 団体コードが6桁ではありません: {code}')
         name = by_item[(section, item)]
         row = merged.setdefault((code, year), {})
         if name in row:
