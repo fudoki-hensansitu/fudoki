@@ -489,15 +489,17 @@ def verify_keys(d1: D1, con: duckdb.DuckDBPyConnection, name: str, spec: Table, 
     names = [c['name'] for c in spec['columns']]
     key = spec['primary_key']
     cols = ', '.join(f'"{n}"' for n in names)
-    d1_scope = f' and {scope}' if scope else ''
     per_call = READ_ROWS_BY_TABLE.get(name, READ_ROWS_PER_CALL)
     per_statement = min(DELETE_KEYS_PER_STATEMENT, per_call)
     chunks = [list(keys[i:i + per_statement]) for i in range(0, len(keys), per_statement)]
     group_size = max(1, per_call // per_statement)
     for i in range(0, len(chunks), group_size):
         group = chunks[i:i + group_size]
+        # Read by primary key only: the keys already come from the scope. With the scope's subquery as well, D1's SQLite
+        # (no ANALYZE statistics) drives the read by the parent's index (expenditure_detail's expenditure_id) and walks
+        # every row of the scope for each statement, which exceeded D1's CPU limit on a 55-jurisdiction sync.
         results = d1.batch([{'sql': f'select {cols} from "{name}" where "{key}" in ({", ".join(literal(k) for k in chunk)})'
-                                    f'{d1_scope} order by "{key}"'} for chunk in group])
+                                    f' order by "{key}"'} for chunk in group])
         for chunk, result in zip(group, results):
             want_rows = [[d1_value(v) for v in row] for row in con.execute(
                 f'select {cols} from main."{name}"{and_where(where, f"{chr(34)}{key}{chr(34)} in ({", ".join(literal(k) for k in chunk)})")} '
