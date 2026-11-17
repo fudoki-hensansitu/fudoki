@@ -10,11 +10,12 @@ import { AmountTip, TIP_CARD, TipCard } from './amount-tip'
 import { Overview, OverviewSkeleton } from './sankey'
 import { MoneyFlow } from './app/income-flow'
 import { formatShare, formatYen, type Drill, type Kou, type Moku, type YearTotal } from './types'
+import { titleVariants } from '@/components/ui/title'
 
 /** 歳入の面は、緑（使う）の代わりに入るの色で描く。図の部品は --primary で色を付けているので、面の中だけ差し替える */
 /** 見出しの名前と金額。名前も金額と同じ大きさにする */
-const HEAD_NAME = 'min-w-0 truncate text-[26px] leading-snug text-muted-foreground'
-const HEAD_YEN = 'shrink-0 text-[26px] font-normal leading-snug tabular-nums'
+const HEAD_NAME = cn(titleVariants({ size: 'h2' }), 'min-w-0 truncate font-normal text-muted-foreground')
+const HEAD_YEN = cn(titleVariants({ size: 'h2' }), 'shrink-0 font-normal tabular-nums')
 const INCOMING = { '--primary': 'var(--kincha)', '--color-primary': 'var(--kincha)' } as React.CSSProperties
 
 /** 段の呼び名 */
@@ -51,22 +52,22 @@ function MokuGroup({ moku, kouYen, levels, noSetsu, mirror }: { moku: Moku; kouY
   // 割合は目の金額が印字されているときだけ。無いときは節の金額をそのまま出す
   const mokuYen = moku.amountMissing ? 0 : moku.yen
   return (
-    <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} data-share={formatShare(moku.yen, kouYen, moku.amountMissing) ?? ''} className={cn('grid translate-y-1.5 grid-cols-1 items-start gap-1.5 opacity-30 transition-[opacity,transform] duration-500 group-data-[drawn=true]/kou:translate-y-0 group-data-[drawn=true]/kou:opacity-100 sm:gap-4', mirror ? 'text-right sm:grid-cols-[7fr_5fr]' : 'sm:grid-cols-[5fr_7fr]')}>
+    <div data-moku data-yen={moku.amountMissing ? 0 : moku.yen} data-share={formatShare(moku.yen, kouYen, moku.amountMissing) ?? ''} className={cn('grid translate-y-1.5 grid-cols-1 items-start gap-2 opacity-30 transition-[opacity,transform] duration-500 group-data-[drawn=true]/kou:translate-y-0 group-data-[drawn=true]/kou:opacity-100 sm:gap-4', mirror ? 'text-right sm:grid-cols-[7fr_5fr]' : 'sm:grid-cols-[5fr_7fr]')}>
       <div className={cn('min-w-0', mirror && 'sm:col-start-2 sm:row-start-1')}>
-        <div className="text-[11px] text-muted-foreground sm:hidden">{levels.moku}</div>
+        <div className="text-xs text-muted-foreground sm:hidden">{levels.moku}</div>
         <AmountTip name={moku.name} yen={moku.yen} missing={moku.amountMissing} side={mirror ? 'left' : 'right'} className="inline-grid outline-none">
           <span className="text-sm leading-snug">{moku.name}</span>
-          <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-1.5 text-muted-foreground sm:sr-only">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
+          <span className="text-xs tabular-nums"><span className="font-semibold text-primary">{amountText(moku.yen, moku.amountMissing)}</span>{formatShare(moku.yen, kouYen, moku.amountMissing) ? <span className="ml-2 text-muted-foreground sm:sr-only">{formatShare(moku.yen, kouYen, moku.amountMissing)}</span> : null}</span>
         </AmountTip>
       </div>
       {top.length > 0 ? (
-        <ul data-setsu-list className={cn('grid min-w-0 gap-y-1 text-[12.5px] leading-snug sm:gap-y-3 sm:border-0', mirror ? 'border-r pr-3 text-left sm:col-start-1 sm:row-start-1 sm:pr-4' : 'border-l pl-3 sm:pl-4')} aria-label={`${moku.name}の${levels.setsu}`}>
-          <li className="text-[11px] text-muted-foreground sm:hidden">{levels.setsu}</li>
+        <ul data-setsu-list className={cn('grid min-w-0 gap-y-1 text-xs leading-snug sm:gap-y-3 sm:border-0', mirror ? 'border-r pr-3 text-left sm:col-start-1 sm:row-start-1 sm:pr-4' : 'border-l pl-3 sm:pl-4')} aria-label={`${moku.name}の${levels.setsu}`}>
+          <li className="text-xs text-muted-foreground sm:hidden">{levels.setsu}</li>
           {top.map((s) => (
-            <li key={s.name} data-setsu data-yen={s.amountMissing ? 0 : Math.max(0, s.yen)} data-share={formatShare(s.yen, mokuYen, s.amountMissing) ?? ''} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-2.5">
-              <AmountTip name={`${moku.name}・${s.name}`} yen={s.yen} missing={s.amountMissing} side="right" className="col-span-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 outline-none">
+            <li key={s.name} data-setsu data-yen={s.amountMissing ? 0 : Math.max(0, s.yen)} data-share={formatShare(s.yen, mokuYen, s.amountMissing) ?? ''} className="grid grid-cols-[minmax(0,1fr)_auto] items-center gap-x-3">
+              <AmountTip name={`${moku.name}・${s.name}`} yen={s.yen} missing={s.amountMissing} side="right" className="col-span-2 grid grid-cols-[minmax(0,1fr)_auto] gap-x-3 outline-none">
                 <span className="truncate">{s.name}</span>
-                <span className="text-right tabular-nums"><span className="font-semibold">{amountText(s.yen, s.amountMissing)}</span>{formatShare(s.yen, mokuYen, s.amountMissing) ? <span className="ml-1.5 text-muted-foreground sm:sr-only">{formatShare(s.yen, mokuYen, s.amountMissing)}</span> : null}</span>
+                <span className="text-right tabular-nums"><span className="font-semibold">{amountText(s.yen, s.amountMissing)}</span>{formatShare(s.yen, mokuYen, s.amountMissing) ? <span className="ml-2 text-muted-foreground sm:sr-only">{formatShare(s.yen, mokuYen, s.amountMissing)}</span> : null}</span>
               </AmountTip>
               {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
               <span className="col-span-2 h-1 overflow-hidden rounded-full bg-foreground/5 sm:hidden">
@@ -76,15 +77,15 @@ function MokuGroup({ moku, kouYen, levels, noSetsu, mirror }: { moku: Moku; kouY
             </li>
           ))}
           {rest.length > 0 ? (
-            <li data-setsu-rest data-yen={restYen ?? ''} data-share={restYen !== null ? (formatShare(restYen, mokuYen) ?? '') : ''} className="text-[11.5px] text-muted-foreground">
+            <li data-setsu-rest data-yen={restYen ?? ''} data-share={restYen !== null ? (formatShare(restYen, mokuYen) ?? '') : ''} className="text-xs text-muted-foreground">
               <Tooltip>
-                <TooltipTrigger delay={100} className="grid w-full cursor-default! grid-cols-[minmax(0,1fr)_auto] gap-x-2.5 text-left hover:text-foreground">
+                <TooltipTrigger delay={100} className="grid w-full cursor-default! grid-cols-[minmax(0,1fr)_auto] gap-x-3 text-left hover:text-foreground">
                   <span className="underline decoration-dotted underline-offset-2">ほか{rest.length}件</span>
-                  {restYen !== null ? <span className="text-right tabular-nums">{amountText(restYen)}{formatShare(restYen, mokuYen) ? <span className="ml-1.5 sm:sr-only">{formatShare(restYen, mokuYen)}</span> : null}</span> : null}
+                  {restYen !== null ? <span className="text-right tabular-nums">{amountText(restYen)}{formatShare(restYen, mokuYen) ? <span className="ml-2 sm:sr-only">{formatShare(restYen, mokuYen)}</span> : null}</span> : null}
                 </TooltipTrigger>
                 <TooltipContent side="right" className={`block max-w-72 ${TIP_CARD}`}>
-                  {restYen !== null ? <div className="mb-1.5"><TipCard name={`ほか${rest.length}件`} yen={restYen} /></div> : null}
-                  <ul className="grid gap-y-0.5 text-xs">
+                  {restYen !== null ? <div className="mb-2"><TipCard name={`ほか${rest.length}件`} yen={restYen} /></div> : null}
+                  <ul className="grid gap-y-1 text-xs">
                     {rest.map((s) => (
                       <li key={s.name} className="grid grid-cols-[minmax(0,1fr)_auto] gap-x-3">
                         <span className="truncate">{s.name}</span>
@@ -98,7 +99,7 @@ function MokuGroup({ moku, kouYen, levels, noSetsu, mirror }: { moku: Moku; kouY
           ) : null}
         </ul>
       ) : noSetsu ? null : (
-        <p className="border-l pl-3 text-[12.5px] text-muted-foreground">内訳の区分は出典にありません</p>
+        <p className="border-l pl-3 text-xs text-muted-foreground">内訳の区分は出典にありません</p>
       )}
     </div>
   )
@@ -162,7 +163,7 @@ function TickMenu({ items, current, onPick, side, label, className, children }: 
   return (
     <Tooltip>
       <TooltipTrigger render={<div role="group" aria-label={label} className={className} />}>{children}</TooltipTrigger>
-      <TooltipContent side={side} sideOffset={6} className="block max-h-[min(60vh,420px)] w-60 overflow-y-auto rounded-xl p-1.5 shadow-lg">
+      <TooltipContent side={side} sideOffset={6} className="block max-h-[min(60vh,420px)] w-60 overflow-y-auto rounded-xl p-2 shadow-lg">
         <ul className="grid gap-px">
           {items.map((item, i) => (
             <li key={item.key}>
@@ -172,10 +173,10 @@ function TickMenu({ items, current, onPick, side, label, className, children }: 
                 onClick={() => onPick(i)}
                 data-current={i === current || undefined}
                 // 左の目次と同じ見た目（いまの所は地の色と左の縦線）
-                className="relative flex w-full items-baseline justify-between gap-3 rounded-lg px-3 py-1.5 text-left text-[13px] text-muted-foreground hover:bg-card hover:text-foreground data-[current]:bg-card data-[current]:text-foreground data-[current]:before:absolute data-[current]:before:inset-y-1.5 data-[current]:before:left-0 data-[current]:before:w-[3px] data-[current]:before:rounded-sm data-[current]:before:bg-primary"
+                className="relative flex w-full items-baseline justify-between gap-3 rounded-lg px-3 py-2 text-left text-sm text-muted-foreground hover:bg-card hover:text-foreground data-[current]:bg-card data-[current]:text-foreground data-[current]:before:absolute data-[current]:before:inset-y-1.5 data-[current]:before:left-0 data-[current]:before:w-[3px] data-[current]:before:rounded-sm data-[current]:before:bg-primary"
               >
                 <span className="min-w-0 truncate">{item.name}</span>
-                {item.note ? <span className="shrink-0 text-[11.5px] tabular-nums text-muted-foreground">{item.note}</span> : null}
+                {item.note ? <span className="shrink-0 text-xs tabular-nums text-muted-foreground">{item.note}</span> : null}
               </button>
             </li>
           ))}
@@ -271,9 +272,9 @@ function KouSection({ kou, active, loading, onBox, levels, noSetsu, mirror }: { 
   return (
     <section ref={(el) => { box.current = el; onBox(el) }} data-kou={kou.id} data-active={active} data-drawn={drawn} className={cn('group/kou grid min-h-[calc(100%-7.5rem)] grid-cols-1 content-start gap-3 px-5 pb-5 pt-3 sm:gap-0', mirror ? 'text-right sm:grid-cols-[minmax(0,1fr)_64px_10px_150px] sm:pl-8' : 'sm:grid-cols-[150px_10px_64px_minmax(0,1fr)] sm:pr-8')}>
       <div className={cn('min-w-0 border-b pb-2 sm:border-0 sm:pb-0', mirror ? 'sm:order-4 sm:pl-2' : 'sm:pr-2')}>
-        <div className="text-[11px] text-muted-foreground">{levels.kou}</div>
-        <div className="font-sans text-lg leading-snug">{kou.name}</div>
-        <div className="text-[13px] tabular-nums text-muted-foreground">{amountText(kou.yen, kou.amountMissing)}</div>
+        <div className="text-xs text-muted-foreground">{levels.kou}</div>
+        <div className="font-sans text-base leading-snug">{kou.name}</div>
+        <div className="text-sm tabular-nums text-muted-foreground">{amountText(kou.yen, kou.amountMissing)}</div>
       </div>
       <div className={cn('relative hidden sm:block', mirror && 'sm:order-3')} aria-hidden="true">
         <i className={cn('absolute w-2 rounded-sm bg-primary transition-[height] duration-500', mirror ? 'right-0' : 'left-0')} style={{ top: bar.top, height: bar.height }} />
@@ -293,16 +294,16 @@ function KouSection({ kou, active, loading, onBox, levels, noSetsu, mirror }: { 
           {setsu.map((p, i) => <rect key={`t${drawn}${i}`} x={p.x} y={p.y} width={SETSU_BAR} height={p.h} rx={1.5} style={{ animationDelay: `${1000 + Math.min(i * 10, 150)}ms` }} className={`${p.rest ? 'fill-primary/35' : 'fill-primary/70'} ${drawn ? 'flow-node' : 'opacity-0'}`} />)}
         </svg>
       </div>
-      <div className={cn('flex min-w-0 flex-col gap-3', mirror ? 'sm:order-1 sm:pr-2.5' : 'sm:pl-2.5')}>
+      <div className={cn('flex min-w-0 flex-col gap-3', mirror ? 'sm:order-1 sm:pr-3' : 'sm:pl-3')}>
         {kou.moku.length > 0 ? (
-          <div className={cn('hidden gap-4 text-[11px] text-muted-foreground sm:grid', mirror ? 'grid-cols-[7fr_5fr]' : 'grid-cols-[5fr_7fr]')} aria-hidden="true">
+          <div className={cn('hidden gap-4 text-xs text-muted-foreground sm:grid', mirror ? 'grid-cols-[7fr_5fr]' : 'grid-cols-[5fr_7fr]')} aria-hidden="true">
             <span className={mirror ? 'order-2' : ''}>{levels.moku}</span>
             {/* 節の無い目だけのときは、節の見出しも出さない */}
             <span className={mirror ? 'pr-4 text-left' : 'pl-4'}>{kou.moku.some((m) => m.setsu.length > 0) ? levels.setsu : null}</span>
           </div>
         ) : null}
         {kou.moku.length > 0 ? kou.moku.map((m) => <MokuGroup key={m.id} moku={m} kouYen={kou.amountMissing ? 0 : kou.yen} levels={levels} noSetsu={noSetsu} mirror={mirror} />) : (
-          <p className="text-[12.5px] text-muted-foreground" role={loading ? 'status' : undefined}>{loading ? '内訳を読み込んでいます…' : `この${levels.kou}に${levels.moku}はありません`}</p>
+          <p className="text-xs text-muted-foreground" role={loading ? 'status' : undefined}>{loading ? '内訳を読み込んでいます…' : `この${levels.kou}に${levels.moku}はありません`}</p>
         )}
       </div>
     </section>
@@ -351,7 +352,7 @@ function KanPanel({ drill, loading, levels, natural, shown, pos, style, noSetsu,
           className={cn('top-1/2 z-10 flex -translate-y-1/2 flex-col', natural ? (mirror ? 'fixed left-1' : 'fixed right-1') : (mirror ? 'absolute left-0.5' : 'absolute right-0.5'))}
         >
           {drill.kou.map((k, i) => (
-            <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} className="group/dot flex h-[11px] items-center px-1.5">
+            <button key={k.id} type="button" onClick={() => toKou(i)} aria-label={k.name} aria-current={i === current || undefined} className="group/dot flex h-[11px] items-center px-2">
               {/* oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで */}
               <i className={`block h-4 w-[5px] shrink-0 rounded-full transition-[transform,background-color] duration-150 motion-reduce:transition-none ${i === current ? 'bg-primary' : 'scale-y-[0.3125] bg-border group-hover/dot:bg-primary/50'}`} />
             </button>
@@ -489,7 +490,7 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
               </>
             )}
           </div>
-          <div className="flex shrink-0 items-center gap-1.5">
+          <div className="flex shrink-0 items-center gap-2">
             <span className="text-xs tabular-nums text-muted-foreground">{kan ? (incoming ? `${levels.kan} ${-index - 1} / ${revenue.length}` : `${levels.kan} ${index - D} / ${total}`) : ''}</span>
             <Button variant="outline" size="icon-sm" aria-label={`前の${levels.kan}`} disabled={pos === 0} onClick={() => go(-1)} className="rounded-full [@media(hover:none)]:hidden"><CaretLeftIcon /></Button>
             <Button variant="outline" size="icon-sm" aria-label={`次の${levels.kan}`} disabled={index >= D + total} onClick={() => go(1)} className="rounded-full [@media(hover:none)]:hidden"><CaretRightIcon /></Button>
@@ -507,7 +508,7 @@ export function Flow({ flows: given, revenue: revenueGiven, total: year, classNa
             { key: 'overview', name: R ? '歳出の全体' : '全体', note: formatYen(year.yen) },
             ...flows.map((f) => ({ key: f.kan.id, name: f.kan.name, note: amountText(f.kan.yen, f.kan.amountMissing) })),
           ]}
-          className="mt-1 flex gap-0.5"
+          className="mt-1 flex gap-1"
         >
           {/* 歳入の目盛りは使うの左に、入るの色で並べる */}
           {revenueOrder.map((f, i) => (

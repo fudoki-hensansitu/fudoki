@@ -424,7 +424,7 @@ export function ViewFrame({
                       setPanel({ ...panel, active: t.owner })
                       requestAnimationFrame(() => document.getElementById(`view-tab-${key}`)?.focus())
                     }}
-                    className="min-w-0 truncate py-1.5 pr-1 pl-3"
+                    className="min-w-0 truncate py-2 pr-1 pl-3"
                   >
                     {label}
                   </button>

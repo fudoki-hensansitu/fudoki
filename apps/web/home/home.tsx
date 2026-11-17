@@ -98,14 +98,14 @@ function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
             onClick={() => c.setYear(y)}
             aria-pressed={y === c.year}
             title={reiwa(y)}
-            className={cn('rounded-full px-3 py-1 text-[13px] transition-colors duration-150 ease-out', y === c.year ? (onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-primary text-primary-foreground') : onBrand ? 'hover:bg-brand-fill-hover hover:text-brand-fill-foreground' : 'text-muted-foreground hover:text-foreground')}
+            className={cn('rounded-full px-3 py-1 text-sm transition-colors duration-150 ease-out', y === c.year ? (onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-primary text-primary-foreground') : onBrand ? 'hover:bg-brand-fill-hover hover:text-brand-fill-foreground' : 'text-muted-foreground hover:text-foreground')}
           >
             {yearName(y)}
           </button>
         ))}
       </div>
       <DropdownMenu>
-        <DropdownMenuTrigger className={cn('inline-flex items-center gap-1 rounded-full px-3 py-1.5 text-[15px] sm:hidden', onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-secondary text-foreground')}>
+        <DropdownMenuTrigger className={cn('inline-flex items-center gap-1 rounded-full px-3 py-2 text-sm sm:hidden', onBrand ? 'bg-brand-fill text-brand-fill-foreground' : 'bg-secondary text-foreground')}>
           {yearName(c.year)}
           <CaretDownIcon className="size-3.5" aria-hidden="true" />
         </DropdownMenuTrigger>
@@ -140,7 +140,7 @@ function Dashboard({ c }: { c: Ctx }) {
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
           <div className="min-w-0 flex-1">
             <Title size="h1" as="h2">{town.name}</Title>
-            <p className="mt-0.5 truncate text-sm opacity-80">{c.vision}</p>
+            <p className="mt-1 truncate text-sm opacity-80">{c.vision}</p>
           </div>
           {/* 年度は数字の頭に効くので上に、頁へ進む導線は数字を読んだあとの下に置く */}
           <YearSwitch c={c} onBrand />
@@ -157,7 +157,7 @@ function Loading() {
     <div className="grid gap-3 md:grid-cols-2" aria-busy="true">
       <Skeleton className="h-52 rounded-[24px] md:col-span-2" />
       <Skeleton className="mx-auto h-96 w-[min(440px,calc(100%-40px))] rounded-none md:col-span-2" />
-      <p className="text-[13px] text-muted-foreground md:col-span-2">はじめて開くまちは、集めるのに少し時間がかかります。</p>
+      <p className="text-sm text-muted-foreground md:col-span-2">はじめて開くまちは、集めるのに少し時間がかかります。</p>
     </div>
   )
 }
@@ -183,7 +183,7 @@ function FeaturedTowns({ featured, listed }: { featured: Featured[]; listed: boo
       <ul className="grid grid-cols-1 gap-x-6 sm:grid-cols-2">
         {items.map((t) => (
           <li key={t.code}>
-            <Link href={t.href} className="flex items-center gap-3 rounded-lg px-2.5 py-3 text-foreground no-underline transition-colors hover:bg-card">
+            <Link href={t.href} className="flex items-center gap-3 rounded-lg px-3 py-3 text-foreground no-underline transition-colors hover:bg-card">
               <Emblem code={t.code} name={t.name} />
               <span className="min-w-0 flex-1">
                 <span className="block text-base font-medium">
@@ -250,7 +250,7 @@ export function Home({ listed, featured }: HomeProps) {
         <OtherTowns className="mb-3" />
         {/* リセットはまちの札の右上に添える（住んでいるまちを選び直す） */}
         <div className="mb-2 flex justify-end">
-          <button type="button" onClick={reset} className="text-[13px] text-muted-foreground hover:text-foreground">
+          <button type="button" onClick={reset} className="text-sm text-muted-foreground hover:text-foreground">
             リセット
           </button>
         </div>

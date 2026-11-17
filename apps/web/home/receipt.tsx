@@ -7,6 +7,8 @@ import { encode } from 'uqr'
 import { ArrowRightIcon, CheckIcon, LinkIcon, ShareNetworkIcon, XLogoIcon } from '@phosphor-icons/react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { Link } from '../nav/link'
+import { cn } from '@/lib/utils'
+import { titleVariants } from '@/components/ui/title'
 import { reiwa, yearName } from '../jurisdiction/types'
 import type { YearView } from '../jurisdiction/app/data'
 import { OTHER_FRAME } from '../jurisdiction/domains'
@@ -93,7 +95,7 @@ function Qr({ url }: { url: string }) {
 const Yen = ({ n, className }: { n: number; className?: string }) => (
   <span className={`whitespace-nowrap tabular-nums ${className ?? ''}`}>
     {n.toLocaleString('ja-JP')}
-    <small className="ml-0.5 text-[0.55em]">円</small>
+    <small className="ml-1 text-[0.55em]">円</small>
   </span>
 )
 
@@ -344,30 +346,30 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     const { parts, sum } = perHeadParts(r.v.fields, r.v.total, pop!)
     return (
     <div className="rc-paper">
-      <p className="text-center text-[18px] font-semibold tracking-[0.3em]">{name}</p>
-      <p className="mt-1 text-center text-[13px] text-muted-foreground">
+      <p className="text-center text-base font-semibold tracking-[0.3em]">{name}</p>
+      <p className="mt-1 text-center text-sm text-muted-foreground">
         {reiwa(r.year)} {r.v.word === '決算' ? '決算' : '当初予算'}・1人あたり
       </p>
       <ul className="rc-rule mt-4 pt-2">
         {r.v.fields.map((f, i) => {
           const row = (
             <>
-              <span className="flex items-baseline gap-2 text-[15px]">
+              <span className="flex items-baseline gap-2 text-sm">
                 <FieldIcon id={f.id} className="size-[18px] shrink-0 self-center text-muted-foreground" />
                 <span className="whitespace-nowrap">{f.name}</span>
                 <span className="rc-lead" />
-                <Yen n={parts[i]!} className="text-[16px]" />
+                <Yen n={parts[i]!} className="text-base" />
               </span>
-              {f.examples ? <span className="mt-0.5 block pl-[26px] text-[12px] text-muted-foreground">{f.examples}</span> : null}
+              {f.examples ? <span className="mt-1 block pl-7 text-xs text-muted-foreground">{f.examples}</span> : null}
             </>
           )
           // その他は事業の絞り込みに無いので押せない
           return (
             <li key={f.id}>
               {f.id === OTHER_FRAME.id ? (
-                <div className="px-1.5 py-2">{row}</div>
+                <div className="px-2 py-2">{row}</div>
               ) : (
-                <Link href={`${base}/projects?field=${f.id}`} className="block rounded-lg px-1.5 py-2 transition-colors hover:bg-card">
+                <Link href={`${base}/projects?field=${f.id}`} className="block rounded-lg px-2 py-2 transition-colors hover:bg-card">
                   {row}
                 </Link>
               )}
@@ -376,8 +378,8 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
         })}
       </ul>
       <p className="rc-rule mt-2 flex items-center justify-between pt-3">
-        <span className="text-[15px]">1人あたりの合計</span>
-        <Yen n={sum} className="text-[28px] font-semibold text-primary" />
+        <span className="text-sm">1人あたりの合計</span>
+        <Yen n={sum} className={cn(titleVariants({ size: 'h1' }), 'text-primary')} />
       </p>
       {/* 読み取るとまちの頁を開く QR と、このレシートをシェアするボタン（X かリンクのコピー。リンクはホーム） */}
       <div className="mt-5 flex items-center justify-center gap-5">
@@ -394,23 +396,27 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
         {/* 予算と1人あたりを同じ大きさでいちばん大きく出す。見出しも読める大きさにする */}
         <dl className="mt-5 grid gap-4 sm:mt-6 sm:gap-5">
           <div>
+            {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
             <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">{what}</dt>
-            <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
+            {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
+            <dd className="mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
               <Yen n={total} />
             </dd>
           </div>
           {pop ? (
             // 予算を数え終えてから出して数える（数え直すたびに出し直す）
             <div key={counted} className="rm-per rm-divider pt-4 sm:pt-5" style={{ animationDelay: `${COUNT_MS}ms` }}>
-              <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">1人あたりに直すと</dt>
-              <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
+              {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
+            <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">1人あたりに直すと</dt>
+              {/* oxlint-disable-next-line design/text-size, design/space-step -- うちのまちの札は画面幅に合わせて見出しと金額を伸ばす見せ場なので、段の外を許す（見出しの大きさは 2026-11-17 yuito） */}
+            <dd className="mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
                 <Yen n={per} />
               </dd>
             </div>
           ) : null}
         </dl>
         <div className="mt-4 flex justify-end">
-          <Link href={detailHref} className="inline-flex items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
+          <Link href={detailHref} className="inline-flex items-center gap-2 rounded-full bg-brand-fill px-4 py-2 text-sm font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
             詳細を見る
             <ArrowRightIcon className="size-4" />
           </Link>

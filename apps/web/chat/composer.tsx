@@ -73,8 +73,8 @@ export function Composer({
             autoFocus={autoFocus}
             disabled={disabled}
             aria-invalid={over || undefined}
-            // oxlint-disable-next-line design/color-opacity -- 既存のずれ。直すか例外にするか決めるまで
-            className={cn('max-h-48 min-h-0 py-4 pl-5 text-base leading-6 placeholder:text-muted-foreground/80 md:text-base', compact ? 'sm:pl-6' : 'sm:py-[22px] sm:pl-7 sm:text-xl sm:leading-7 md:text-xl')}
+            // oxlint-disable-next-line design/color-opacity, design/text-size -- 既存のずれ（透明度）。PC で大きく打てる入力欄は見出しではないので段の外の 20px を許す
+            className={cn('max-h-48 min-h-0 py-4 pl-5 text-base leading-6 placeholder:text-muted-foreground/80 md:text-base', compact ? 'sm:pl-6' : 'sm:py-6 sm:pl-7 sm:text-xl sm:leading-7 md:text-xl')}
             onFocus={onFocus}
             onChange={(e) => setText(e.target.value)}
             onKeyDown={(e) => {
@@ -84,7 +84,7 @@ export function Composer({
               if (!e.nativeEvent.isComposing && e.keyCode !== 229) submit()
             }}
           />
-          <InputGroupAddon align="inline-end" className={cn('self-end pr-2 pb-2 sm:pr-3', !compact && 'sm:pb-2.5')}>
+          <InputGroupAddon align="inline-end" className={cn('self-end pr-2 pb-2 sm:pr-3', !compact && 'sm:pb-3')}>
             {over ? <InputGroupText className="tabular-nums">{`${text.length} / ${MAX_TEXT}`}</InputGroupText> : null}
             {busy && onStop ? (
               <InputGroupButton type="button" variant="secondary" size="icon-sm" onClick={onStop} aria-label="止める" className="size-10 rounded-full">
