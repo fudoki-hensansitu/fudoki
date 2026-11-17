@@ -43,8 +43,8 @@ FIGURE_REASON = '説明の中の見込みの数（被保険者数・件数・1�
 COUNTERS = r'(?:人|件|円|世帯|世带|世帶|校|園|か所|箇所|戸|台|回|部|本|日|食|枚|冊|名|団体|時間|㎡|%|％)'
 FIGURE = re.compile(r'[0-9][0-9,.]*(?:' + COUNTERS + r'|現在)$')
 COUNTED = re.compile(r'^[0-9][0-9,]*' + COUNTERS + '?$')
-TITLE_REASON = '会計の歳出の初めの頁の題（3 歳出）の番号。金額ではない。'
-TITLE = re.compile(r'^[0-9]+歳出$')
+TITLE_REASON = '会計の歳出・歳入の初めの頁の題（3 歳出、2 歳入）の番号。金額ではない。'
+TITLE = re.compile(r'^[0-9]+[歳歲][出入]$')  # OCR may read the old form 歲
 CIRCLE_REASON = '説明の行末の丸数字は節の番号（⑫など）。金額ではない。'
 FRAME_DRIFT = 3.0  # pt: a frame placed at least this far from the first page's is read from its own left edge
 SETSU_OFFSET = 600  # the 節 columns are moved this far right, the 説明 twice as far
@@ -71,13 +71,15 @@ def marker(line: list[Glyph]) -> str | None:
         return 'head'
     if shown.startswith('区分金額'):
         return 'table'
+    if shown.startswith('節金額説明') or shown.startswith('節金額說明'):
+        return 'revenue'
     if shown in ('説明', '說明'):
         return 'explanation'
     return None
 
 
 def shifted(glyph: Glyph, offset: float) -> Glyph:
-    return Glyph(glyph.text, glyph.x0 + offset, glyph.y0, glyph.x1 + offset, glyph.y1, glyph.page, offset)
+    return Glyph(glyph.text, glyph.x0 + offset, glyph.y0, glyph.x1 + offset, glyph.y1, glyph.page, glyph.offset + offset)
 
 
 def circled_apart(glyph: Glyph) -> list[Glyph]:
@@ -121,6 +123,16 @@ def numbered_apart(glyph: Glyph) -> list[Glyph]:
     return [Glyph(found.group(1), glyph.x0, glyph.y0, end, glyph.y1, glyph.page, glyph.offset),
             Glyph(glyph.text[found.end():], end + NAME_GAP, glyph.y0, max(glyph.x1, end + NAME_GAP + 1), glyph.y1,
                   glyph.page, glyph.offset)]
+
+
+def priced_apart(glyph: Glyph, edge: float) -> list[Glyph]:
+    """A 節's amount and its 説明 read as one word across the 本年度 column's right edge (`536入院助産費本人負担金`):
+    the two words, the amount ending at the edge."""
+    found = re.match(r'([△▲]?[0-9][0-9,]*)(?=[^0-9,])', glyph.text)
+    if not found or not glyph.x0 < edge < glyph.x1:
+        return [glyph]
+    return [Glyph(found.group(1), glyph.x0, glyph.y0, edge - 1, glyph.y1, glyph.page, glyph.offset),
+            Glyph(glyph.text[found.end():], edge + 1, glyph.y0, glyph.x1, glyph.y1, glyph.page, glyph.offset)]
 
 
 def counted(glyph: Glyph, after: Glyph) -> bool:
@@ -223,7 +235,7 @@ def setsu_line(names: list[Glyph], left: float) -> list[Glyph]:
     return result
 
 
-def edges(bands: list[Band]) -> tuple[float, float, float] | None:
+def edges(bands: list[Band], revenue: bool = False) -> tuple[float, float, float] | None:
     """The right edges of the 款・項・目, 本年度 and 前年度 columns: the 節 table's 区分 and 金額 stand in the last two."""
     def right(word: str) -> float | None:
         found = [b.x1 for b in bands if b.header and normalize(b.header[-1]) == word]
@@ -231,11 +243,17 @@ def edges(bands: list[Band]) -> tuple[float, float, float] | None:
     subject = [b.x1 for b in bands if b.header and set(normalize(b.header[-1])) <= set('款項目')]
     current, previous = right('本年度'), right('前年度')
     if subject and current is not None and previous is not None:
+        if revenue and current - max(subject) > 2 * (previous - current):
+            return None  # a 歳入's 節 table splits the 款・項・目 cell (`款項目` over the 節's code only)
         return max(subject), current, previous
     # The header read as one cell (`款項目本年度前年度比較`), or the account's title over it (`3 歳出`) read as the
     # header: the three columns of amounts are the frame's last three.
     ordered = sorted(bands, key=lambda b: b.x0)
     if len(ordered) >= 4 and len({b.header for b in ordered}) == 1:
+        # the columns of amounts are the first three that hold one (a 歳入's 説明 adds a column right of them)
+        priced = [b for b in ordered if any(',' in w.text and DIGITS.match(normalize(w.text)) for w in b.words)]
+        if revenue and len(priced) >= 3:
+            return priced[0].x0, priced[1].x0, priced[2].x0
         return ordered[-3].x0, ordered[-2].x0, ordered[-1].x0
     return None
 
@@ -269,11 +287,20 @@ def apart(logicals: list[layout.Logical]) -> list[layout.Logical]:
 def read(pages, **options):
     logicals = apart(layout.logical_pages(pages, **options))
     known: tuple[float, float, float] | None = None
+    # `columns.説明.excluded`: the 説明 is not taken in (歳入の説明 gives the basis of each 節, not its breakdown)
+    declined = ((options.get('columns') or {}).get('説明') or {}).get('excluded')
+    known_left = 0.0  # the left edge of the frame the known columns were read on
     first_left: float | None = None  # the left edge of the first frame: the 説明 of every page is read from there
     for logical in logicals:
         if not logical.bands:
             continue
-        known = edges(logical.bands) or known
+        found_edges = edges(logical.bands, bool(declined))
+        frame_left = min(b.x0 for b in logical.bands)
+        if found_edges is None and known is not None and declined and abs(frame_left - known_left) >= FRAME_DRIFT:
+            # a 歳入's page under a header of its own (節 金額 説明): the columns of the page before, where this frame is
+            found_edges = tuple(edge + frame_left - known_left for edge in known)
+        if found_edges is not None:
+            known, known_left = found_edges, frame_left
         if known is None:
             continue
         name_edge, current_edge, previous_edge = known
@@ -296,8 +323,24 @@ def read(pages, **options):
         found = lines(words)
         marks = [marker(line) for line in found]
         first = next((m for m in marks if m), None)
-        state = 'subject' if first == 'head' else 'explanation'
-        parts: dict[str, list[Glyph]] = {'subject': [], 'table': [], 'explanation': []}
+        state = 'subject' if first in ('head', 'revenue') else 'explanation'
+        if declined:
+            # A 歳入's page opens with a 款・項・目 (amounts in its 比較 column too: a 目 in its last year prints no 節)
+            # or goes on with a 節 (an amount in the 本年度 column only) or its 説明. Its header tells them apart on a
+            # text page, but a scan reads `節 金額 説明` as the headings it knows: the first priced line does.
+            def priced(line, low, high):  # a part ending in a comma is a 説明's wrapped `(補助率10/10,` `1/2)`
+                return any(low <= (g.x0 + g.x1) / 2 < high and DIGITS.match(normalize(g.text))
+                           and not normalize(g.text).endswith(',') for g in line)
+            opening = next((line for line, mark in zip(found, marks) if mark or priced(line, name_edge, current_edge)), None)
+            if opening is not None and not marker(opening):
+                # a 節's 説明 starts in the 前年度 column (`（補助率`) and may print an amount where the 比較 is
+                worded = any(current_edge <= (g.x0 + g.x1) / 2 < previous_edge and not DIGITS.match(normalize(g.text))
+                             for g in opening)
+                state = 'subject' if priced(opening, current_edge, previous_edge) or (
+                    not worded and priced(opening, previous_edge, 2 * previous_edge - current_edge + CELL / 2)) else 'revenue'
+            elif first == 'subject' or first is None:
+                state = 'revenue'
+        parts: dict[str, list[Glyph]] = {'subject': [], 'table': [], 'explanation': [], 'revenue': []}
         funding: list[list[Glyph]] = []
         for line, mark in zip(found, marks):
             if mark:
@@ -309,7 +352,25 @@ def read(pages, **options):
             if state == 'table':
                 funding.append([g for g in kept if (g.x0 + g.x1) / 2 < current_edge])
                 kept = [g for g in kept if (g.x0 + g.x1) / 2 >= current_edge]
+            if state == 'revenue':  # the 節 under the 目 (区分 and 金額 in the 款・項・目 and 本年度 columns), its 説明 right
+                kept = sorted((part for g in kept for part in priced_apart(g, current_edge)), key=lambda g: g.x0)
+                taken = [g for g in kept if (g.x0 + g.x1) / 2 < current_edge]
+                kept = [g for g in kept if (g.x0 + g.x1) / 2 >= current_edge]
+                # the amount's last digits OCR boxed apart over the edge (`8` `5`): the amount goes on
+                while (taken and kept and DIGITS.match(normalize(taken[-1].text)) and re.fullmatch(r'[0-9,]+', normalize(kept[0].text))
+                       and kept[0].x0 - taken[-1].x1 <= JOIN and kept[0].x0 < current_edge + JOIN):
+                    taken.append(kept.pop(0))
+                parts['revenue'].append(taken)
+                if kept:
+                    parts['explanation'].append(kept)
+                continue
             parts[state].append(kept)
+        # A 歳入's 節 (区分 and 金額 in the 款・項・目 and 本年度 columns, a name wrapped around its code like a 目's)
+        # moved into the columns of an 歳出's 節 table: 区分 in the 本年度 column, 金額 in the 比較 column.
+        for g in subject_lines([g for line in parts['revenue'] for g in line], name_edge):
+            if g.x0 < name_edge:  # a long name kept inside the 区分 column it moves to
+                g = Glyph(g.text, g.x0, g.y0, min(g.x1, g.x0 + SETSU_NAME), g.y1, g.page, g.offset)
+            parts['table'].append([shifted(g, right - current_edge if g.x0 >= name_edge else current_edge - left)])
         circle = previous_edge + CIRCLE
         subject_words = []
         for line in parts['subject']:
@@ -327,10 +388,13 @@ def read(pages, **options):
                 setsu_names += [shifted(g, SETSU_OFFSET) for g in setsu_line(names, current_edge)]
             setsu_amounts += [shifted(g, SETSU_OFFSET)
                               for g in merged([g for g in line if (g.x0 + g.x1) / 2 >= previous_edge], CELL)]
-        explanation, circles, figures = [], [], []
+        explanation, circles, figures, declined_lines = [], [], [], []
         for line in parts['explanation']:
             line = [part for g in line for part in circled_apart(g)]
             line = opened([replace(g, text=LONG_VOWEL.sub('ー', g.text)) for g in line])
+            if declined:  # a 説明 the manifest does not take in (歳入の説明): each line, its tables too, an excluded box
+                declined_lines.append(line)
+                continue
             body = [g for g in line if g.x0 < circle]
             if body and FIGURE.search(normalize(text(body))) and not is_amount(normalize(body[-1].text)):
                 figures.append(body)
@@ -364,7 +428,8 @@ def read(pages, **options):
                   band(left, circle, ('説明',), 'label', explanation, 2 * SETSU_OFFSET - drift)]
         for kind, reason, groups in ((FUNDING, FUNDING_REASON, [g for g in funding if g]),
                                      ('本文', FIGURE_REASON, figures),
-                                     ('本文', CIRCLE_REASON, [[g] for g in circles if any(c.isdigit() for c in normalize(g.text))])):
+                                     ('本文', CIRCLE_REASON, [[g] for g in circles if any(c.isdigit() for c in normalize(g.text))]),
+                                     *([(declined['kind'], declined['reason'], [g for g in declined_lines if g])] if declined else [])):
             for group in groups:
                 box = [min(g.x0 for g in group), min(g.y0 for g in group), max(g.x1 for g in group), max(g.y1 for g in group)]
                 excluded = band(right, right + 10, ('節番号' if kind == '本文' else FUNDING,), None, [], 3 * SETSU_OFFSET)
