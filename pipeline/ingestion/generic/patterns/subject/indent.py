@@ -99,7 +99,7 @@ def align(logical, group, kept, alignment):
         elif staircase:
             item.indent = band.x0
         if across is not None:
-            across.module.align(item, across.value)
+            across.module.align(item, across.value, group.bands)
         if marked is not None:
             marked.module.align(item, marked.value)
 

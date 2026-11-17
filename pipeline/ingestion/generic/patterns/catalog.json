@@ -181,6 +181,7 @@
     "long_numbers": "ingestion.generic.patterns.quirks.long_numbers",
     "codeless_titles": "ingestion.generic.patterns.quirks.codeless_titles",
     "codes_across_level_rules": "ingestion.generic.patterns.quirks.codes_across_level_rules",
+    "two_digit_codes_over_rules": "ingestion.generic.patterns.quirks.two_digit_codes_over_rules",
     "codes_before_marks": "ingestion.generic.patterns.quirks.codes_before_marks",
     "lost_circle_marks": "ingestion.generic.patterns.quirks.lost_circle_marks",
     "lost_name_characters": "ingestion.generic.patterns.quirks.lost_name_characters",

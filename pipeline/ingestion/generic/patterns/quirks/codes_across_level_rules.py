@@ -10,7 +10,12 @@ SCOPE = 'document'
 OPTIONS = {'type': 'number', 'exclusiveMinimum': 0}
 
 
-def align(item, digit: float) -> None:
-    """Move a two-digit code to where its level's one-digit codes start."""
-    if item.code is not None and re.fullmatch(r'[0-9]{2,4}', item.code):
+def align(item, digit: float, bands=()) -> None:
+    """Move a two-digit code to where its level's one-digit codes start. A code that starts on a band's rule is one
+    the quirk `two_digit_codes_over_rules` cut at that rule, and it already starts where its box opens."""
+    from ingestion.generic.patterns import document_quirk
+    cut = document_quirk('two_digit_codes_over_rules') is not None
+    if item.code is not None and re.fullmatch(r'[0-9]{2,4}', item.code) \
+            and not (cut and any(abs(item.indent - band.x0) <= .5 for band in bands)):
         item.indent += digit * (len(item.code) - 1)
+

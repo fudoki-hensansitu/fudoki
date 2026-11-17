@@ -267,6 +267,140 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "kokuho-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a4b93fcd551f2aeb7710b2199efd37e52832b247511af98d3882c78b843711de"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "kokuho-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "施策番号": {
+                  "kind": "ignore"
+                },
+                "比較額(増減率%)": {
+                  "kind": "ignore"
+                },
+                "財源内訳／特定財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                },
+                "財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。目の行の財源額の下に「(内訳)」として財源の種類（国庫支出金・諸収入等）と額が複数行で印字され、名前と金額を1対1に組めないため。歳出の目の和は本年度予算額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "codeless_name_levels": true,
+            "digit_set_codes": 4.4,
+            "two_digit_codes_over_rules": "left"
+          }
+        },
+        "pages": [
+          [
+            9,
+            13
+          ]
+        ],
+        "dropped_readings": [
+          {
+            "id": "p10-repeated-heading",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r22",
+            "observed": "療養諸費",
+            "reason": "物理10頁の科目の欄の頭に、前の頁から続く項（療養諸費）の名前だけを番号なしで印字し直している。スキャンの読みでは字下げが款の位置に寄り、款として読むと続く目の親が抜ける。印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p11-repeated-heading",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r22",
+            "observed": "移送費",
+            "reason": "物理11頁の科目の欄の頭に、前の頁から続く項（移送費）の名前だけを番号なしで印字し直している。スキャンの読みでは字下げが款の位置に寄り、款として読むと続く目の親が抜ける。印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p12-repeated-heading",
+            "page": 12,
+            "observation_id": "p12:full-page:a0:result0:r22",
+            "observed": "医療給付費分",
+            "reason": "物理12頁の科目の欄の頭に、前の頁から続く項（医療給付費分）の名前だけを番号なしで印字し直している。スキャンの読みでは字下げが款の位置に寄り、款として読むと続く目の親が抜ける。印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p13-repeated-heading",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r22",
+            "observed": "公債費",
+            "reason": "物理13頁の科目の欄の頭に、前の頁から続く項（公債費）と目（利子）の名前だけを番号なしで印字し直している。読むと番号の無い款「公債費利子」になるので、印字し直した名前の読みは使わない。"
+          },
+          {
+            "id": "p13-repeated-moku",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r28",
+            "observed": "利子",
+            "reason": "物理13頁の科目の欄の頭に、前の頁から続く項（公債費）と目（利子）の名前だけを番号なしで印字し直している。読むと番号の無い款「公債費利子」になるので、印字し直した名前の読みは使わない。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kokuho-initial-ocr-1",
+          "origin_sha256": "a4b93fcd551f2aeb7710b2199efd37e52832b247511af98d3882c78b843711de",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              9,
+              10,
+              11,
+              12,
+              13
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "d8a91c6342d23f3a080aa576933cdc316b90dfef7f7675e1db1ed090ec186bb4",
+          "bytes": 2623505
+        }
+      ]
     }
   ]
 }
