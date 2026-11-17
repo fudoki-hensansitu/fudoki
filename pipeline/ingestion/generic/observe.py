@@ -427,17 +427,13 @@ def observe(pdf: Path, pages: list[int], cache: Path | None = None,
     return result
 
 
-def cropped(pdf: Path, pages: list[Page], one_sheet: bool = False) -> list[Page]:
+def cropped(pdf: Path, pages: list[Page], sheet_of=None) -> list[Page]:
     """The pages cut to their CropBox (the layout setting `text_layer.crop_box`).
 
     A sheet printed two pages up is shown page by page through a CropBox over each half (131211's 予算説明書): the
     text layer and the drawing hold the whole sheet on both pages. Only the words whose middle is inside the box,
-    and the rules cut to it, are the page's.
-
-    `one_sheet` (`text_layer.crop_box: "one_sheet"`): the right half is cut from the sheet of the page before it, when
-    that page shows the left half. 132284's 2024 後期高齢者医療 prints the sheet of the right page with one 説明 row
-    fewer (物理15頁 lacks the `01 講師等謝礼 (138)` that 物理14頁 holds), so the right half of its own sheet is one row
-    above the left half of the page before."""
+    and the rules cut to it, are the page's. `sheet_of(number, boxes)` (the quirk `left_sheet_crop`) names another
+    page whose sheet a page is cut from."""
     import pdfplumber
     result = []
     with pdfplumber.open(pdf) as document:
@@ -445,9 +441,8 @@ def cropped(pdf: Path, pages: list[Page], one_sheet: bool = False) -> list[Page]
         sheets = {page.number: page for page in pages}
         for page in pages:
             left, top, right, bottom = boxes[page.number]
-            before = boxes.get(page.number - 1)
-            if one_sheet and before is not None and before[2] == left and before[0] < left:
-                page = Page(page.number, page.width, page.height, sheets[page.number - 1].words, sheets[page.number - 1].rules)
+            if sheet_of is not None and (source := sheets[sheet_of(page.number, boxes)]) is not page:
+                page = Page(page.number, page.width, page.height, source.words, source.rules)
             inside = lambda x, y: left <= x <= right and top <= y <= bottom
             words = [w for w in page.words if inside((w.x0 + w.x1) / 2, (w.y0 + w.y1) / 2)]
             rules = []

@@ -216,7 +216,7 @@
                 }
               },
               "text_layer": {
-                "crop_box": "one_sheet"
+                "crop_box": true
               }
             }
           },
@@ -240,7 +240,8 @@
             }
           },
           "quirks": {
-            "repeated_breakdown_cells": true
+            "repeated_breakdown_cells": true,
+            "left_sheet_crop": true
           }
         }
       },

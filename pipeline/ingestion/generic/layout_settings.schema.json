@@ -137,7 +137,7 @@
         "character_map": {"type": "object", "minProperties": 1, "propertyNames": {"pattern": "^[\\u0000-\\u0008\\u000b\\u000c\\u000e-\\u001f\\ufffd\\u3400-\\u4dbf]$"}, "additionalProperties": {"type": "string", "maxLength": 1}, "description": "Explicit Unicode mapping for broken font maps, before XML parsing and glyph reconstruction. U+FFFD is the glyph Poppler could not map (栃木県 R4 の特別会計: an invisible mark after each header word); mapped to an empty string, a character is dropped. A character of CJK Extension A (U+3400–U+4DBF) is mapped too: a font that maps digits to unrelated ideographs (131156 R5 決算書: `0`–`9` to U+3EDC–U+3EE5, `,` to U+3ED8)."},
         "form_clips": {"const": true, "description": "Text drawn inside a form has its clip in the form's space: an object whose own bounds meet it is visible."},
         "image_rules": {"const": true, "description": "A page that draws no vector rule has its ruled grid in a background image: the rules are read from the render, as a scan's are."},
-        "crop_box": {"enum": [true, "one_sheet"], "description": "Each page shows one half of a sheet printed two pages up through its CropBox (131211): the words and rules outside it are the other page's, observed as that page. `one_sheet`: the right half is cut from the sheet of the page before it, when the sheets of the two pages differ (132284's 2024 後期高齢者医療)."}
+        "crop_box": {"const": true, "description": "Each page shows one half of a sheet printed two pages up through its CropBox (131211): the words and rules outside it are the other page's, observed as that page."}
       }
     },
     "breakdown": {
