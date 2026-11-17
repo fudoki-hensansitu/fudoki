@@ -118,7 +118,7 @@ selected_amounts as (
      and f.kan_code = case n.node_kind when '款' then n.code_text else p.code_text end
      and coalesce(f.kou_code, '') = case n.node_kind when '項' then n.code_text else '' end
     left join {{ ref('fiscal_kan_code_fill') }} c
-      on n.direction = 'expenditure' and n.node_kind = '款' and coalesce(n.code_text, '') = '' and c.jurisdiction_code = n.jurisdiction_code
+      on c.direction = n.direction and n.node_kind = '款' and coalesce(n.code_text, '') = '' and c.jurisdiction_code = n.jurisdiction_code
      and c.fiscal_year = n.fiscal_year and c.document_kind = n.document_kind and c.account_name = n.account_name
      and c.kan_name = n.name
 ), hierarchy as (

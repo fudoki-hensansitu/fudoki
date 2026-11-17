@@ -436,6 +436,9 @@ def _split_line(line: list[Glyph], amount_brackets: bool = False, bare_amounts: 
             and wide.module.in_name([text(run) for run in money]):
         parts.extend(money)  # the quirk `wide_digits_in_names`: `…議案第３１` / `号、…`, a word of the text
         money = []
+    if money and parts and (vowel := document_quirk('halfwidth_long_vowel')) is not None \
+            and vowel.module.in_name(text(parts[-1]), text(money[0])):
+        parts.append(money.pop(0))  # the quirk `halfwidth_long_vowel`: `ｾ ﾝ ﾀ ｰ`, the mark ends the name
     # Full-width digits without a comma before a half-width grouped amount are part of the name (`…東京２０２４ 1,619,271`).
     while len(money) > 1 and WIDE_DIGITS.fullmatch(text(money[0])) and GROUPED.fullmatch(normalize(text(money[-1]))) \
             and not WIDE_DIGITS.search(text(money[-1])):
@@ -1516,7 +1519,14 @@ def owner(amount: list[Glyph], band: Band, ordered: list[Group], found: dict[int
           roles: tuple[str, ...] = ('node', 'repeat', 'total'), *, ocr: bool = False, next_row: bool = False,
           name_line: dict | None = None) -> Item | None:
     """`_owner`, but a heading the page prints again (`営業費用`) does not take the amounts of the line it is on when
-    the row it opens is the next item of its ruled cell (`5 減価償却費`, whose `計` is printed beside the heading)."""
+    the row it opens is the next item of its ruled cell (`5 減価償却費`, whose `計` is printed beside the heading).
+
+    A right page whose rows lie off the left page's (`Band.lift`, quirk `far_shifted_spread_pages`) is read with its
+    amount and rules moved onto the left page's rows."""
+    if band.lift:
+        amount = [replace(g, y0=g.y0 + band.lift, y1=g.y1 + band.lift) for g in amount]
+        band = replace(band, rows=[r + band.lift for r in band.rows], body_top=band.body_top + band.lift,
+                       body_bottom=band.body_bottom + band.lift, lift=0.0)
     item = _owner(amount, band, ordered, found, roles, ocr=ocr, next_row=next_row, name_line=name_line)
     if item is None or item.role != 'repeat' or not band.rows:
         return item  # a column without rules draws no cell: the heading stays the owner
@@ -2211,6 +2221,8 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                                  and not abolished.module.same_row(logical, previous, item, _cell))
                         and previous.role == item.role == 'node' and item.code is None and item.name
                         and not item.amounts and not ABOLISHED.fullmatch(item.name)
+                        # (a title with no number is a title of its own: `unnumbered_titles`)
+                        and not (item.level == -1 and document_quirk('unnumbered_titles') is not None)
                         # (a line that opens with a bracket starts an item of its own: `bracketed_subjects`)
                         and not (bracketed is not None and item.lines and bracketed.module.marked(item.lines[0]))
                         # (a name wrapped so that its amount is printed on the last line, none on the code's line: `1 居宅サービス` / `事業費 3,596,885`)

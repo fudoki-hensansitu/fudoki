@@ -1,0 +1,823 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "134210",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "a4203a6ef94dce06fbdc11fc814d8b3c09c7c57efbb0b7f18d114a95eedd1a2f"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "pages": [
+          [
+            12,
+            39
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "款／項目": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried": true
+              },
+              "rules": {
+                "dark": 200,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true,
+            "nested_subject_boxes": true,
+            "stepped_amount_lines": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p38-total-char-1",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result0:r25",
+            "observed": "人",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p38-total-char-2",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result0:r26",
+            "observed": "合",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p38-total-char-3",
+            "page": 38,
+            "observation_id": "p38:full-page:a0:result0:r27",
+            "observed": "計",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p38-total-name",
+            "page": 38,
+            "observation_id": "p38:ink-1:a1:result0:r0",
+            "observed_name": "歳",
+            "corrected_name": "歳入合計",
+            "reason": "物理38頁の「歳 入 合 計」の行。1字ずつ離して印字した字を1つの名前に戻す（2字目以降は dropped_readings）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-initial-revenue-ocr-1",
+          "origin_sha256": "a4203a6ef94dce06fbdc11fc814d8b3c09c7c57efbb0b7f18d114a95eedd1a2f",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21
+            ]
+          },
+          "sha256": "e9770ed6d5d305e01b1b1643bfe55f5fbd975becc515d829b9af072a56e79b4d",
+          "bytes": 2309284
+        },
+        {
+          "id": "general-initial-revenue-ocr-2",
+          "origin_sha256": "a4203a6ef94dce06fbdc11fc814d8b3c09c7c57efbb0b7f18d114a95eedd1a2f",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31
+            ]
+          },
+          "sha256": "a7c45afe95b24a7fb7ec2f16a0aa31d1a28b2696fdb650673260388b3a41188e",
+          "bytes": 2523368
+        },
+        {
+          "id": "general-initial-revenue-ocr-3",
+          "origin_sha256": "a4203a6ef94dce06fbdc11fc814d8b3c09c7c57efbb0b7f18d114a95eedd1a2f",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39
+            ]
+          },
+          "sha256": "0aea36f7ae3dd37f7a2d3397940d14f51e41ca5efc7eefea548523951c582a79",
+          "bytes": 1539381
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "d0f2b4ef919db8a39ce329a8d8a6c94147b449dae9615e68d0d837f45efa9341"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "national-health-insurance-revenue",
+        "pages": [
+          [
+            9,
+            12
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "款／項目": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried": true
+              },
+              "rules": {
+                "dark": 200,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true,
+            "nested_subject_boxes": true,
+            "stepped_amount_lines": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p11-total-char-1",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r76",
+            "observed": "人",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p11-total-char-2",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r77",
+            "observed": "合",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p11-total-char-3",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r78",
+            "observed": "計",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p11-total-name",
+            "page": 11,
+            "observation_id": "p11:full-page:a0:result0:r75",
+            "observed_name": "歳",
+            "corrected_name": "歳入合計",
+            "reason": "物理11頁の「歳 入 合 計」の行。1字ずつ離して印字した字を1つの名前に戻す（2字目以降は dropped_readings）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-revenue-ocr-1",
+          "origin_sha256": "d0f2b4ef919db8a39ce329a8d8a6c94147b449dae9615e68d0d837f45efa9341",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              9,
+              10,
+              11,
+              12
+            ]
+          },
+          "sha256": "8aa0de90140cd0b067ba9f10263affe1e7d6539465c76a8af58f23b3c246c3b7",
+          "bytes": 747507
+        }
+      ]
+    },
+    {
+      "id": "land-development-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "2243e2dd7a11684847df0a332fe396874a00646e12e84d73f7d3f5daf2ed035c"
+        }
+      ],
+      "options": {
+        "account": "宅地造成事業特別会計",
+        "table_id": "land-development-revenue",
+        "pages": [
+          [
+            8,
+            9
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "款／項目": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried": true
+              },
+              "rules": {
+                "dark": 200,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true,
+            "nested_subject_boxes": true,
+            "stepped_amount_lines": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p8-total-char-1",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r59",
+            "observed": "人",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p8-total-char-2",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r60",
+            "observed": "合",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p8-total-char-3",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r61",
+            "observed": "計",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p8-total-name",
+            "page": 8,
+            "observation_id": "p8:full-page:a0:result0:r58",
+            "observed_name": "歳",
+            "corrected_name": "歳入合計",
+            "reason": "物理8頁の「歳 入 合 計」の行。1字ずつ離して印字した字を1つの名前に戻す（2字目以降は dropped_readings）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "land-development-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "land-development-initial-revenue-ocr-1",
+          "origin_sha256": "2243e2dd7a11684847df0a332fe396874a00646e12e84d73f7d3f5daf2ed035c",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              8,
+              9
+            ]
+          },
+          "sha256": "360827fb0d44fe902e635e09ea97abceb181344d608da3cdceaeabe425db6cfe",
+          "bytes": 172381
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "3f8a82ee17b2346370fc7607bd8a5eda7868ff3259bebb46db94ccfc9d492de8"
+        }
+      ],
+      "options": {
+        "account": "介護保険（保険事業勘定）特別会計",
+        "table_id": "long-term-care-insurance-revenue",
+        "pages": [
+          [
+            9,
+            14
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "款／項目": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried": true
+              },
+              "rules": {
+                "dark": 200,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true,
+            "nested_subject_boxes": true,
+            "stepped_amount_lines": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p13-total-char-1",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r42",
+            "observed": "人",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p13-total-char-2",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r43",
+            "observed": "合",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p13-total-char-3",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r44",
+            "observed": "計",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p13-total-name",
+            "page": 13,
+            "observation_id": "p13:full-page:a0:result0:r41",
+            "observed_name": "歳",
+            "corrected_name": "歳入合計",
+            "reason": "物理13頁の「歳 入 合 計」の行。1字ずつ離して印字した字を1つの名前に戻す（2字目以降は dropped_readings）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-insurance-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-insurance-initial-revenue-ocr-1",
+          "origin_sha256": "3f8a82ee17b2346370fc7607bd8a5eda7868ff3259bebb46db94ccfc9d492de8",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              9,
+              10,
+              11,
+              12,
+              13,
+              14
+            ]
+          },
+          "sha256": "3de6d02434077c05d2b637261dc4934880606d4efc4a51a16a21bffc0f6c0b58",
+          "bytes": 1006555
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-service-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "e7db204b48a2b40ccc8812d6c8079672bdc0224b784c04cdbd1791b7012ee7c6"
+        }
+      ],
+      "options": {
+        "account": "介護保険（介護サービス事業勘定）特別会計",
+        "table_id": "long-term-care-service-revenue",
+        "pages": [
+          [
+            8,
+            11
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "款／項目": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried": true
+              },
+              "rules": {
+                "dark": 200,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true,
+            "nested_subject_boxes": true,
+            "stepped_amount_lines": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p10-total-char-1",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r46",
+            "observed": "人",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p10-total-char-2",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r47",
+            "observed": "合",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p10-total-char-3",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r48",
+            "observed": "計",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p10-total-name",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r45",
+            "observed_name": "歳",
+            "corrected_name": "歳入合計",
+            "reason": "物理10頁の「歳 入 合 計」の行。1字ずつ離して印字した字を1つの名前に戻す（2字目以降は dropped_readings）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-service-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-service-initial-revenue-ocr-1",
+          "origin_sha256": "e7db204b48a2b40ccc8812d6c8079672bdc0224b784c04cdbd1791b7012ee7c6",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          "sha256": "f81c44e885e382440f158c2f93c6be881df534f225f2b80f096f63b816d5f120",
+          "bytes": 542566
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "99eaf2645be66483923c87d30f2a013adfc6d785209e11596aa7649f10668c23"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-revenue",
+        "pages": [
+          [
+            8,
+            11
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度": {
+                  "kind": "amount"
+                },
+                "款／項目": {
+                  "kind": "label",
+                  "heading": "目"
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              },
+              "header": {
+                "carried": true
+              },
+              "rules": {
+                "dark": 200,
+                "short_columns": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true,
+            "nested_subject_boxes": true,
+            "stepped_amount_lines": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p10-total-char-1",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r25",
+            "observed": "人",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p10-total-char-2",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r26",
+            "observed": "合",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          },
+          {
+            "id": "p10-total-char-3",
+            "page": 10,
+            "observation_id": "p10:full-page:a0:result0:r27",
+            "observed": "計",
+            "reason": "「歳 入 合 計」は1字ずつ離して印字し、OCR が1字ずつ別の読みにしたので字の並びが崩れ（「計人合歳」）、合計の行と分からない。2字目以降の読みは使わず、1字目の読みを名前の訂正で「歳入合計」にする。"
+          }
+        ],
+        "name_corrections": [
+          {
+            "id": "p10-total-name",
+            "page": 10,
+            "observation_id": "p10:ink-2:a2:result0:r0",
+            "observed_name": "歳",
+            "corrected_name": "歳入合計",
+            "reason": "物理10頁の「歳 入 合 計」の行。1字ずつ離して印字した字を1つの名前に戻す（2字目以降は dropped_readings）。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-initial-revenue-ocr-1",
+          "origin_sha256": "99eaf2645be66483923c87d30f2a013adfc6d785209e11596aa7649f10668c23",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              8,
+              9,
+              10,
+              11
+            ]
+          },
+          "sha256": "f65f71daabaca567c0f52756c3b0132b37db257d9ec35ae9d6d94ed5446bbe18",
+          "bytes": 524120
+        }
+      ]
+    }
+  ]
+}

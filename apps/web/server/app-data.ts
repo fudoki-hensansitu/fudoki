@@ -5,7 +5,7 @@ import { frameOf, OTHER_FRAME } from '../jurisdiction/domains'
 import { listQuery, withExtras, type Kan, type YearData, type YearExtras, type Snapshot } from '../jurisdiction/app/data'
 import { listKey, readListPage, toSheet } from '../jurisdiction/app/api'
 import type { Env } from './env'
-import { apiCall, type WebOpInput } from './fudoki-api'
+import { apiCall, type WebOpInput, type WebOpOutput } from './fudoki-api'
 import { loadAccountTotals, shownSettlementYears, type CatalogEntry } from './jurisdiction'
 import { appPageYears, type PageTab } from '../jurisdiction/types'
 
@@ -35,11 +35,18 @@ async function all<R extends { next_page_token?: string | null }, T>(page: (toke
   return { rows: out, last }
 }
 
-const subjectsOf = (env: Env, code: string, year: number, kind: Kind) =>
-  all(
+/** 1年度の款項目を全部。出典は頁ごとの応答に、その頁の行が指すものだけが載るので、全部の頁から集める */
+async function subjectsOf(env: Env, code: string, year: number, kind: Kind) {
+  const origins: WebOpOutput<'search_expenditure_subjects'>['origins'] = []
+  const { rows } = await all(
     (token) => apiCall(env)('search_expenditure_subjects', { document_kind: kind, fiscal_year: { min: year, max: year }, where: { jurisdiction_code: { eq: [code] }, account_name: { eq: [ACCOUNT] } }, page_size: 1000, ...(token ? { page_token: token } : {}) } as SubjectBody),
-    (r) => r.subjects,
+    (r) => {
+      origins.push(...r.origins)
+      return r.subjects
+    },
   )
+  return { rows, origins }
+}
 
 /** 1年度の評価シートを全部（ホームのまちの札だけが使う。自治体の頁は頁ごとに読む） */
 const sheetsOf = (env: Env, code: string, year: number) =>
@@ -83,6 +90,11 @@ export function subjectTree(subjects: readonly TreeSubject[]) {
       const o = { name: r.name, yen, moku: [] }
       kanById.get(r.parent_subject_id ?? '')?.kou.push(o)
       kouById.set(r.subject_id, o)
+      // 目の無い項（項だけの末端）は、その項が分野の合計に入る
+      if (r.is_leaf) {
+        const field = fieldOf(r.cofog_code)
+        fields[field] = (fields[field] ?? 0) + yen
+      }
     } else if (r.level === '目') {
       const field = fieldOf(r.cofog_code)
       const kou = kouById.get(r.parent_subject_id ?? '')
@@ -115,7 +127,7 @@ export async function loadYearSnapshot(env: Env, entry: CatalogEntry, year: numb
   const queryOf = (k: Kind) => listQuery({ code: entry.code, year, years: { [year]: { kind: k } as YearData }, prev: undefined }, 'all')
   const subjectsAs = (k: Kind) =>
     subjectsOf(env, entry.code, year, k).then((r) => {
-      const origin = r.last?.origins?.find((o) => o.origin_id === r.rows[0]?.origin_id)
+      const origin = r.origins.find((o) => o.origin_id === r.rows[0]?.origin_id)
       return { kind: k, rows: r.rows, origin: origin?.url ?? null, originTitle: origin?.title ?? null }
     })
   // 事業のタブは一覧の1頁目（すべて）が最初の画面。年度と資料の種類だけで決まるので、款項目を待たずに読む
