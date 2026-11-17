@@ -58,6 +58,656 @@
           "table_id": "general-initial"
         }
       ]
+    },
+    {
+      "id": "national-health-insurance-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "b5bbced26c5221f81186a9356f1d245bf3366734c9117a9d7d2103d1baa2813e"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／特定財／源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／特定財／源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／特定財／源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_notes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spaced_ocr_codes": true,
+            "code_after_amount": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p6-glued-r163",
+            "page": 6,
+            "observation_id": "p6:full-page:a0:result0:r163",
+            "observed": "4,445,4381療養給付事業",
+            "reason": "OCR が罫をまたいで、節の金額と説明の番号・名前を1語に読んだ（4,445,4381療養給付事業）。この読みを除き、金額・番号・名前を印字の位置で読む。"
+          },
+          {
+            "id": "p7-glued-r27",
+            "page": 7,
+            "observation_id": "p7:full-page:a0:result0:r27",
+            "observed": "11 療養給付事業 (退職被保険者)",
+            "reason": "OCR が罫をまたいで、節の金額と説明の番号・名前を1語に読んだ（11 療養給付事業 (退職被保険者)）。この読みを除き、金額・番号・名前を印字の位置で読む。"
+          },
+          {
+            "id": "p9-glued-r46",
+            "page": 9,
+            "observation_id": "p9:full-page:a0:result0:r46",
+            "observed": "1,523,5641,560,579",
+            "reason": "OCR が罫をまたいで、本年度 1,523,564 と前年度 1,560,579 の金額を1語に読んだ。この読みを除き、欄ごとに読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p6-glued-r163",
+            "page": 6,
+            "boxes": [
+              [
+                528.6,
+                467.9,
+                561.6,
+                476.5
+              ]
+            ],
+            "amount": "4,445,438",
+            "reason": "原画で確かめた節の金額 4,445,438。"
+          },
+          {
+            "id": "p7-glued-r27",
+            "page": 7,
+            "boxes": [
+              [
+                555.0,
+                99.3,
+                561.3,
+                108.2
+              ]
+            ],
+            "amount": "1",
+            "reason": "原画で確かめた節の金額 1。"
+          },
+          {
+            "id": "p9-glued-r46-current",
+            "page": 9,
+            "boxes": [
+              [
+                126.4,
+                190.3,
+                159.5,
+                197.7
+              ]
+            ],
+            "amount": "1,523,564",
+            "reason": "原画で確かめた医療給付費分の本年度 1,523,564。"
+          },
+          {
+            "id": "p9-glued-r46-previous",
+            "page": 9,
+            "boxes": [
+              [
+                160.5,
+                190.3,
+                195.5,
+                197.7
+              ]
+            ],
+            "amount": "1,560,579",
+            "reason": "原画で確かめた医療給付費分の前年度 1,560,579。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p6-glued-r163-code",
+            "page": 6,
+            "box": [
+              562.0,
+              468.4,
+              566.0,
+              476.1
+            ],
+            "code": "1",
+            "name": "療養給付事業",
+            "name_box": [
+              576.8,
+              468.4,
+              622.1,
+              476.1
+            ],
+            "reason": "原画で確かめた説明の番号 1 と名前 療養給付事業。OCR が左の節の金額と1語に読んでいた。"
+          },
+          {
+            "id": "p7-glued-r27-code",
+            "page": 7,
+            "box": [
+              561.8,
+              99.3,
+              566.0,
+              108.2
+            ],
+            "code": "1",
+            "name": "療養給付事業（退職被保険者）",
+            "name_box": [
+              577.0,
+              99.5,
+              676.4,
+              108.0
+            ],
+            "reason": "原画で確かめた説明の番号 1 と名前 療養給付事業（退職被保険者）。OCR が左の節の金額と1語に読んでいた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-insurance-initial-ocr-1",
+          "origin_sha256": "b5bbced26c5221f81186a9356f1d245bf3366734c9117a9d7d2103d1baa2813e",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              5,
+              6,
+              7,
+              8,
+              9,
+              10,
+              11,
+              12
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "a39c7a60b6d2aaa93789cfcb29adfddd1f51aa061c380e4be793a21369a1e988",
+          "bytes": 3265219
+        }
+      ]
+    },
+    {
+      "id": "parking-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "bdbc124eedc7b047a71a19ba1b9bd8c3e97556473c1651fd8395b22af6a26989"
+        }
+      ],
+      "options": {
+        "account": "駐車場事業特別会計",
+        "table_id": "parking-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／特定財／源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／特定財／源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／特定財／源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_notes": true
+                },
+                "quirks": {
+                  "line_starts": [
+                    {
+                      "page": 2,
+                      "y": 336.9,
+                      "shift": -3,
+                      "reason": "事業の行「1 予備費」は、OCR が番号と名前を1行に読んだので名前が字の位置（578.5pt）から始まり、他の事業の名前（余白込みの箱で575pt前後）より右になって節「29 予備費」と同じ段に読まれる。原画では他の事業と同じ位置に刷られている。"
+                    }
+                  ]
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spaced_ocr_codes": true,
+            "code_after_amount": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p2-glued-r157",
+            "page": 2,
+            "observation_id": "p2:full-page:a0:result0:r157",
+            "observed": "12,8311",
+            "reason": "OCR が罫をまたいで、節の金額 12,831 と説明の番号 1 を1語に読んだ（12,8311）。この読みを除き、金額と番号を印字の位置で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p2-glued-r157",
+            "page": 2,
+            "boxes": [
+              [
+                539.1,
+                419.2,
+                562.0,
+                427.6
+              ]
+            ],
+            "amount": "12,831",
+            "reason": "原画で確かめた節の金額 12,831。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p2-glued-r157-code",
+            "page": 2,
+            "box": [
+              562.3,
+              419.2,
+              566.0,
+              427.6
+            ],
+            "code": "1",
+            "reason": "原画で確かめた説明の番号 1（一般会計繰出金）。OCR が左の節の金額と1語に読んでいた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "parking-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "parking-initial-ocr-1",
+          "origin_sha256": "bdbc124eedc7b047a71a19ba1b9bd8c3e97556473c1651fd8395b22af6a26989",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              2
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "c47e3e722f9bf2b21658b020dc88ce5c30d9d440d9ccf83e5ef1b0b33fa9849f",
+          "bytes": 391801
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "f14e1017ad175031cb6b8656a8dc3b56a2ea9809f407cb1c266c45e60c3553c9"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "long-term-care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "款項目": {
+                  "heading": "科目"
+                },
+                "本年度の財源内訳／特定財源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／特定財源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／特定財／源／国都支出金": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／特定財／源／地方債": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／特定財／源／その他": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                },
+                "本年度の／財源内訳／一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "財源内訳の列を取り込まない。特定財源（国都支出金・地方債・その他）・一般財源の額で、目の金額は本年度の額で確かめる。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              },
+              "説明": {
+                "pattern": "indent",
+                "options": {
+                  "bare_amounts": true,
+                  "yen_notes": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "spaced_ocr_codes": true,
+            "code_after_amount": true
+          }
+        },
+        "dropped_readings": [
+          {
+            "id": "p5-glued-r46",
+            "page": 5,
+            "observation_id": "p5:full-page:a0:result0:r46",
+            "observed": "14,2421",
+            "reason": "OCR が罫をまたいで、節の金額と説明の番号を1語に読んだ（14,2421）。この読みを除き、印字の位置で読む。"
+          },
+          {
+            "id": "p6-glued-r70",
+            "page": 6,
+            "observation_id": "p6:full-page:a0:result0:r70",
+            "observed": "8,7101 審查·支払事業",
+            "reason": "OCR が罫をまたいで、節の金額と説明の番号・名前を1語に読んだ（8,7101 審查·支払事業）。この読みを除き、印字の位置で読む。"
+          }
+        ],
+        "amount_readings": [
+          {
+            "id": "p5-glued-r46",
+            "page": 5,
+            "boxes": [
+              [
+                539.4,
+                157.6,
+                562.0,
+                165.1
+              ]
+            ],
+            "amount": "14,242",
+            "reason": "原画で確かめた節の金額 14,242。"
+          },
+          {
+            "id": "p6-glued-r70",
+            "page": 6,
+            "boxes": [
+              [
+                542.2,
+                271.9,
+                562.0,
+                280.0
+              ]
+            ],
+            "amount": "8,710",
+            "reason": "原画で確かめた節の金額 8,710。"
+          }
+        ],
+        "code_readings": [
+          {
+            "id": "p5-glued-r46-code",
+            "page": 5,
+            "box": [
+              562.3,
+              157.6,
+              566.0,
+              165.1
+            ],
+            "code": "1",
+            "reason": "原画で確かめた説明の番号 1（介護認定審査会事業）。OCR が左の節の金額と1語に読んでいた。"
+          },
+          {
+            "id": "p6-glued-r70-code",
+            "page": 6,
+            "box": [
+              562.3,
+              272.0,
+              566.0,
+              279.9
+            ],
+            "code": "1",
+            "name": "審査・支払事業",
+            "name_box": [
+              576.8,
+              272.0,
+              629.3,
+              279.9
+            ],
+            "reason": "原画で確かめた説明の番号 1 と名前 審査・支払事業。OCR が左の節の金額と1語に読んでいた。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "long-term-care-initial-ocr-1",
+          "origin_sha256": "f14e1017ad175031cb6b8656a8dc3b56a2ea9809f407cb1c266c45e60c3553c9",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "768b8e9c6c8b3137e3108f3fec5c71af3658992200e1a8edf27591a57f03fca4",
+          "bytes": 2122995
+        },
+        {
+          "id": "long-term-care-initial-ocr-2",
+          "origin_sha256": "f14e1017ad175031cb6b8656a8dc3b56a2ea9809f407cb1c266c45e60c3553c9",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              4
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            }
+          },
+          "sha256": "838ad6891e2a5dab951eb2bdde210dd29e161f9ae218c322463bccbda5c89258",
+          "bytes": 415664
+        }
+      ]
     }
   ]
 }
