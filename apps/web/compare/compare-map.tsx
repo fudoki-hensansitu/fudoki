@@ -194,7 +194,7 @@ export function CompareList({ map, failed }: { map: CompareMap; failed: boolean 
               <Link
                 key={q.slug}
                 href={`/compare/${q.slug}`}
-                className="group/link block animate-in rounded-xl fill-mode-both fade-in slide-in-from-bottom-1.5 duration-300 transition-transform active:scale-[0.985] motion-reduce:animate-none"
+                className="group/link block animate-in rounded-xl fill-mode-both fade-in slide-in-from-bottom-1.5 duration-300 transition-transform active:scale-[0.985] motion-reduce:animate-none motion-reduce:transition-none"
                 style={{ animationDelay: `${Math.min(i, 8) * 30}ms` }}
               >
                 <Card className="h-full gap-3 bg-background px-4 py-4 transition-colors group-hover/link:bg-card">
