@@ -4,8 +4,7 @@
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
 import { encode } from 'uqr'
-import { ArrowRightIcon, CheckIcon, LinkIcon, ShareNetworkIcon, XLogoIcon } from '@phosphor-icons/react'
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { ArrowRightIcon, CheckIcon, LinkIcon, XLogoIcon } from '@phosphor-icons/react'
 import { Link } from '../nav/link'
 import { cn } from '@/lib/utils'
 import { titleVariants } from '@/components/ui/title'
@@ -48,35 +47,30 @@ const absolute = (url: string) => (typeof location === 'undefined' ? url : new U
 
 /** シェアで添えるリンク。受け取った人がホームで自分のまちを選ぶように、ホームだけにする（2026-11-17 yuito） */
 const HOME_URL = 'https://fudoki.dev/'
+/** X に添える文言（2026-11-17 yuito） */
+const SHARE_TEXT = '私のお金はどこへ行った？ | 風土記'
 
-/** このレシートをシェアする。アイコンのボタンで、X に投稿するか、ホームのリンクをコピーするかを選ぶ */
-function Share({ text }: { text: string }) {
+/** シェアのボタン。X に投稿するボタンと、ホームのリンクをコピーするボタンを、アイコンだけで並べる */
+function Share() {
   const [copied, setCopied] = React.useState(false)
   const timer = React.useRef<ReturnType<typeof setTimeout>>(undefined)
   React.useEffect(() => () => clearTimeout(timer.current), [])
-  const post = () => window.open(`https://x.com/intent/post?${new URLSearchParams({ text, url: HOME_URL })}`, '_blank', 'noopener,noreferrer')
   const copy = async () => {
     if (!(await navigator.clipboard.writeText(HOME_URL).then(() => true, () => false))) return
     setCopied(true)
     clearTimeout(timer.current)
     timer.current = setTimeout(() => setCopied(false), 2000)
   }
+  const round = 'inline-flex size-10 items-center justify-center rounded-full border border-border transition-colors hover:bg-card'
   return (
-    <DropdownMenu>
-      <DropdownMenuTrigger aria-label={copied ? 'リンクをコピーしました' : 'シェア'} className="inline-flex size-10 items-center justify-center rounded-full border border-border transition-colors hover:bg-card">
-        {copied ? <CheckIcon className="size-5" /> : <ShareNetworkIcon className="size-5" />}
-      </DropdownMenuTrigger>
-      <DropdownMenuContent align="center" className="w-auto">
-        <DropdownMenuItem onClick={post}>
-          <XLogoIcon />
-          Xでシェア
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => void copy()}>
-          <LinkIcon />
-          リンクをコピー
-        </DropdownMenuItem>
-      </DropdownMenuContent>
-    </DropdownMenu>
+    <div className="flex items-center gap-2">
+      <a href={`https://x.com/intent/post?${new URLSearchParams({ text: SHARE_TEXT, url: HOME_URL })}`} target="_blank" rel="noopener noreferrer" aria-label="Xでシェア" className={round}>
+        <XLogoIcon className="size-5" />
+      </a>
+      <button type="button" onClick={() => void copy()} aria-label={copied ? 'リンクをコピーしました' : 'リンクをコピー'} className={round}>
+        {copied ? <CheckIcon className="size-5" /> : <LinkIcon className="size-5" />}
+      </button>
+    </div>
   )
 }
 
@@ -200,11 +194,33 @@ function Strip({ mode, joined, children }: { mode: 'grow' | 'still'; joined: boo
 const RIBBON_MARGIN = 48
 /** 新しい紙の下端から床までに、少なくとも空ける高さ */
 const RIBBON_GAP = 40
+/** 紙の境のミシン目の色（紙の上なので明暗で変えない） */
+// oxlint-disable-next-line design/color-literal -- canvas に描く絵の色で、receipt.css の .rc-ribbon-dom::before と同じ値にする
+const PERFORATION = 'rgba(0, 0, 0, 0.3)'
 /** 刷った紙の絵（ribbon3d.ts に貼る）。刷り終えたときに写しておき、押し出されたら使う */
 const pictures = new Map<number, HTMLCanvasElement>()
 
 /** 紙を写す（差し出し口の影は .rc-print の上端に別に付けるので、紙には描かない） */
 const picture = async (el: HTMLElement) => (await import('./snap')).paperCanvas(el, { shade: false })
+
+/** 紙の境の切れ目（ミシン目）を、紙の絵の上端に描いたもの。前の紙は次の紙の下端に続くので、上端が二枚の境になる */
+const perforations = new WeakMap<HTMLCanvasElement, HTMLCanvasElement>()
+function perforated(texture: HTMLCanvasElement, height: number) {
+  let c = perforations.get(texture)
+  if (c) return c
+  c = document.createElement('canvas')
+  c.width = texture.width
+  c.height = texture.height
+  const g = c.getContext('2d')!
+  g.drawImage(texture, 0, 0)
+  const k = texture.height / height
+  g.scale(k, k)
+  g.fillStyle = PERFORATION
+  const w = texture.width / k
+  for (let x = 3; x < w - 3; x += 7) g.fillRect(x, 0, 4, 1.5)
+  perforations.set(texture, c)
+  return c
+}
 
 /** 押し出された前の紙（新しい順）。今出ている紙の下端に続く1本の紙として、真下へ垂れて床で折り重なる立体（ribbon3d.ts）に描く。
  * 立体を描くまで（読み込み・絵を写す間）は、いちばん新しい一枚を DOM のまま同じ場所に出しておく。WebGL が使えなければ DOM のまま出す */
@@ -214,6 +230,7 @@ function Ribbon({ papers, onHeight, children }: { papers: Older[]; onHeight: (h:
   /** 立体に描き終えた、いちばん新しい紙の id（それまでは DOM のまま出す） */
   const [drawn, setDrawn] = React.useState<number | null>(null)
   const [failed, setFailed] = React.useState(false)
+  const drawnRef = React.useRef<number | null>(null)
   const list = React.useRef(papers)
   list.current = papers
   const height = React.useRef(onHeight)
@@ -227,12 +244,12 @@ function Ribbon({ papers, onHeight, children }: { papers: Older[]; onHeight: (h:
     const taking = new Set<number>()
     void (async () => {
       try {
-        const { ribbon, pileExtent } = await import('./ribbon3d')
+        const { ribbon, pileAbove } = await import('./ribbon3d')
         if (!alive || !canvas.current) return
         stage = ribbon(canvas.current, RIBBON_MARGIN)
         if (!stage) throw new Error('WebGL が使えません')
         const print = canvas.current.parentElement!.parentElement!
-        let last = ''
+        let shown = 0
         const frame = () => {
           raf = requestAnimationFrame(frame)
           const top = list.current[0]
@@ -247,23 +264,28 @@ function Ribbon({ papers, onHeight, children }: { papers: Older[]; onHeight: (h:
           }
           const sheets = list.current.flatMap((o) => {
             const texture = pictures.get(o.r.id)
-            return texture ? [{ key: String(o.r.id), texture, height: o.height }] : []
+            return texture ? [{ key: String(o.r.id), texture: perforated(texture, o.height), height: o.height }] : []
           })
           const strip = print.querySelector<HTMLElement>(':scope > [data-latest]')
           const attach = strip?.offsetHeight ?? 0
           const incoming = strip?.scrollHeight ?? top?.height ?? 0
           const L = sheets.reduce((n, x) => n + x.height, 0)
-          const pile = pileExtent(L)
-          const floor = incoming + RIBBON_GAP + pile.above
-          const h = Math.ceil(floor + pile.below)
+          const floor = incoming + RIBBON_GAP + pileAbove(L)
           const width = print.clientWidth
-          const key = [sheets.map((x) => x.key).join(','), attach, floor, width].join(':')
-          if (key === last) return
-          last = key
-          height.current(h)
-          canvas.current!.style.height = `${h}px`
-          stage!.draw(sheets, attach, floor, width, width + RIBBON_MARGIN * 2, h)
-          setDrawn(top?.r.id ?? null)
+          // canvas の高さは、紙が手前へ広がって届いた所まで伸ばす（縮めると頁が揺れるので伸ばすだけ）
+          const want = Math.ceil(floor + RIBBON_GAP)
+          const h = Math.max(shown, want)
+          const { bottom, moving } = stage!.frame(sheets, attach, floor, width, width + RIBBON_MARGIN * 2, h)
+          const next = Math.max(h, Math.ceil(bottom + 8))
+          if (next !== shown) {
+            shown = next
+            height.current(next)
+            canvas.current!.style.height = `${next}px`
+          }
+          if (moving || drawnRef.current !== (top?.r.id ?? null)) {
+            drawnRef.current = top?.r.id ?? null
+            setDrawn(drawnRef.current)
+          }
         }
         frame()
       } catch {
@@ -381,10 +403,10 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
         <span className="text-sm">1人あたりの合計</span>
         <Yen n={sum} className={cn(titleVariants({ size: 'h1' }), 'text-primary')} />
       </p>
-      {/* 読み取るとまちの頁を開く QR と、このレシートをシェアするボタン（X かリンクのコピー。リンクはホーム） */}
+      {/* 読み取るとまちの頁を開く QR と、このレシートをシェアするボタン（X とリンクのコピー。リンクはホーム） */}
       <div className="mt-5 flex items-center justify-center gap-5">
         <Qr url={detailHref} />
-        <Share text={`${name}の1人あたりのレシート（${reiwa(r.year)}）｜風土記`} />
+        <Share />
       </div>
     </div>
     )

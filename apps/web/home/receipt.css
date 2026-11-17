@@ -64,6 +64,15 @@
   position: absolute;
   inset: 0 0 auto;
 }
+/* 紙の境の切れ目（ミシン目）。立体の絵にも同じものを描く（receipt.tsx の perforated） */
+.rc-ribbon-dom::before {
+  content: '';
+  position: absolute;
+  inset: 0 0 auto;
+  height: 1.5px;
+  z-index: 1;
+  background: repeating-linear-gradient(90deg, transparent 0 3px, rgba(0, 0, 0, 0.3) 3px 7px);
+}
 /* 数字の札。札そのものをレジに見立て、平らなまま動かさない（数字だけが数え上がる）。下端に差し出し口（.rm-slot）を持つ */
 .rm-card {
   position: relative;
