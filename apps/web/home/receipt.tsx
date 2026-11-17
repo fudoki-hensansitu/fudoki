@@ -1,4 +1,4 @@
-// ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、その下にレシートプリンタ（three.js、形は Blender の model）が現れて、
+// ホームのうちのまちの札。緑の札で予算と1人あたりの額を順に数え上げ、札がレジの画面になって、その下にレジの本体（three.js、形は Blender の model）が現れ、
 // 差し出し口から分野ごとの1人あたりのレシートを刷り出す。
 // 1人あたりは予算を人口で割った額（払った税金の額ではない）。分野の行の和が合計に合うよう、大きい端数から1円ずつ足して丸める
 import * as React from 'react'
@@ -59,7 +59,7 @@ export function perHeadParts(fields: { yen: number }[], total: number, pop: numb
   return { sum, parts }
 }
 
-/** 演出の段。count: 札で数え上げる → appear: 札の下にプリンタが現れる → print: 差し出し口からレシートが出る */
+/** 演出の段。count: 札で数え上げる → appear: 札がレジの画面になり本体が現れる → print: 差し出し口からレシートが出る */
 type Phase = 'count' | 'appear' | 'print'
 /** 予算を数え終えてから1人あたりを数える。2つを同時に動かすと目が追えない */
 const COUNT_ALL_MS = COUNT_MS * 2
@@ -84,8 +84,8 @@ function usePhase() {
 const easeInOut = (p: number) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2)
 
 /** 段に合わせて頁を送り、動かさなくても見えるようにする（カメラの代わり）。上へは戻さない。
- * count: 札の下端が画面の外なら札が収まる位置へ。appear: プリンタが画面の下半分に入る位置へ。
- * print: 紙が伸びるのと同じ長さ・同じ緩急で、プリンタが画面の上に残る位置まで送り、紙が出てくるのを追う。
+ * count: 札の下端が画面の外なら札が収まる位置へ。appear: 本体が画面の下半分に入る位置へ。
+ * print: 紙が伸びるのと同じ長さ・同じ緩急で、本体が画面の上に残る位置まで送り、紙が出てくるのを追う。
  * 利用者が自分で送ったら（ホイール・タッチ・キー・ポインタ）、それ以降は動かさない。
  * scroll の event は数えない（レイアウトの補正でも起き、利用者の操作と区別できない） */
 function useFollow(phase: Phase, card: React.RefObject<HTMLElement | null>, stage: React.RefObject<HTMLElement | null>) {
@@ -147,7 +147,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   const phase = usePhase()
   useFollow(phase, card, stage)
   const [gl, setGl] = React.useState<Printer | null>(null)
-  // プリンタを three.js で描く（読み込みは数え上げの間に済ませる）。描けないときは CSS の差し出し口だけ
+  // レジの本体を three.js で描く（読み込みは数え上げの間に済ませる）。描けないときは CSS の差し出し口だけ
   React.useEffect(() => {
     let m: Printer | null = null
     let alive = true
@@ -170,7 +170,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
       m?.stop()
     }
   }, [printable])
-  // 段に合わせてプリンタを動かす。three.js の読み込みが段より遅れたときと reduced-motion では、動かさずにその段の姿にする
+  // 段に合わせて本体を動かす。three.js の読み込みが段より遅れたときと reduced-motion では、動かさずにその段の姿にする
   const shown = React.useRef<{ m: Printer | null; phase: Phase; year: number }>({ m: null, phase: 'count', year })
   React.useEffect(() => {
     if (!gl) return
@@ -185,7 +185,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     <div className="rm" data-phase={phase} data-gl={gl ? true : undefined}>
       <section ref={card} className="rm-card p-5 text-brand-foreground sm:p-7">
         {head}
-        {/* 予算と1人あたりをいちばん大きく出す */}
+        {/* 予算と1人あたりを同じ大きさでいちばん大きく出す */}
         <dl className="mt-5 grid gap-4 sm:mt-6 sm:gap-5">
           <div>
             <dt className="text-[15px] opacity-80">{what}</dt>
@@ -196,12 +196,9 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
           {pop ? (
             <div className="rm-divider pt-4 sm:pt-5">
               <dt className="text-[15px] opacity-80">1人あたりに直すと</dt>
-              <dd className="mt-1.5 text-[clamp(44px,13vw,84px)] leading-none font-semibold">
+              <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
                 <Yen n={per} />
               </dd>
-              <p className="mt-2 text-[13px] opacity-80">
-                {settled ? '決算' : '予算'}の額を、人口 {pop.toLocaleString('ja-JP')}人で割った額です
-              </p>
             </div>
           ) : null}
         </dl>
@@ -212,7 +209,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
           </Link>
         </div>
       </section>
-      {/* プリンタの置き場。高さは差し出し口までで、three.js が決める。描けないときは CSS の差し出し口 */}
+      {/* レジの本体の置き場。高さは支柱の上端から差し出し口までで、three.js が決める。描けないときは CSS の差し出し口 */}
       {receipt ? (
         <div ref={stage} className="rm-stage relative" aria-hidden="true">
           <div className="rm-slot" />

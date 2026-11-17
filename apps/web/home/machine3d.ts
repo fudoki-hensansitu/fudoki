@@ -1,7 +1,7 @@
-// ホームのうちのまちの札の下に置く、レシートプリンタ。形は Blender で組んだ model（public/home/receipt-machine.glb、組み方は brand/receipt_machine.py）。
-// model の原点は差し出し口の中心（紙が出てくる点）で、差し出し口の幅は紙の最大幅（SLOT_W）と同じ。筐体が置き場の幅に収まるよう一様に拡大縮小し、DOM の紙（.rc-print）の幅を差し出し口に合わせ、
-// 原点を置き場（stage）の下端の中央に置く。置き場の高さは差し出し口より上に見える分で、ここが決める。紙は置き場のすぐ下から DOM で伸びる。
-// 正射影で、群れ（rig）を手前へ θ 倒して天板を見せる。動き（現れる・紙を送る）は AnimationClip で持ち、AnimationMixer で進める。
+// ホームのうちのまちの札を画面に見立てた、レジの本体。形は Blender で組んだ model（public/home/receipt-machine.glb、組み方は brand/receipt_machine.py）。
+// model の原点は差し出し口の中心（紙が出てくる点）で、差し出し口の幅は紙の最大幅（SLOT_W）と同じ。本体が置き場の幅に収まるよう一様に拡大縮小し、DOM の紙（.rc-print）の幅を差し出し口に合わせ、
+// 原点を置き場（stage）の下端の中央に置く。置き場の高さは画面の支柱の上端（mount）から差し出し口までで、ここが決める。支柱の上端は札（DOM、CSS で傾ける）の下端に隠れ、紙は置き場のすぐ下から DOM で伸びる。
+// 正射影で、群れ（rig）を手前へ θ 倒して鍵盤を見せる。動き（現れる・紙を送る）は AnimationClip で持ち、AnimationMixer で進める。
 // 動いている間だけ毎フレーム描き、止まっているときは大きさが変わったときだけ描く
 import * as THREE from 'three'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js'
@@ -15,6 +15,8 @@ const SLOT_W = 440
 const THETA = (20 * Math.PI) / 180
 /** 縁・影の切れを防ぐ余白（px） */
 const PAD = 16
+/** 現れるときにせり上がる量（model の単位） */
+const RISE = 48
 
 const APPEAR_S = MORPH_MS / 1000
 const PRINT_S = PRINT_MS / 1000
@@ -29,12 +31,11 @@ function eased(name: string, from: number, to: number, start: number, len: numbe
   return new THREE.NumberKeyframeTrack(name, times, values)
 }
 
-/** 現れる。斜めを向いた正面から、ゆっくり回って正面を向き、手前へ倒れて天板が見え、少し持ち上がって据わる */
+/** 現れる。画面（札）の下から、本体が少し手前へ起き上がりながらせり上がって据わる */
 const appearClip = () =>
   new THREE.AnimationClip('appear', APPEAR_S, [
-    eased('.rotation[y]', -0.55, 0, 0, APPEAR_S),
-    eased('.rotation[x]', 0.05, THETA, 0, APPEAR_S),
-    eased('.position[y]', -24, 0, 0, APPEAR_S, easeOut),
+    eased('.rotation[x]', THETA - 0.22, THETA, 0, APPEAR_S),
+    eased('.position[y]', -RISE, 0, 0, APPEAR_S, easeOut),
   ])
 
 /** 紙送り。キーが押し込まれて戻り、刷っている間は灯がゆっくり明滅し、刷り終えたら灯ったままにする */
@@ -156,25 +157,30 @@ export async function mountPrinter(stage: HTMLElement, lost: () => void): Promis
   const appear = appearClip()
   const print = printClip(press)
 
-  /** 動きの途中の姿も含めて、原点（差し出し口）から上と下・左右にどこまで見えるか（model の単位） */
+  /** 動きの途中の姿も含めて、原点（差し出し口）から上と下・左右にどこまで見えるか（model の単位）。
+   * mount は据わった姿での、画面（札）の下端が付く支柱の上端の高さ */
   const reach = (() => {
     const box = new THREE.Box3()
     const action = mixer.clipAction(appear)
     action.play()
+    const mountAt = model.getObjectByName('mount')
+    let mount = 0
     for (let i = 0; i <= 12; i++) {
       action.time = (appear.duration * i) / 12
       mixer.update(0)
       rig.updateMatrixWorld(true)
-      box.union(new THREE.Box3().setFromObject(rig))
+      const b = new THREE.Box3().setFromObject(rig)
+      box.union(b)
+      if (i === 12) mount = mountAt ? mountAt.getWorldPosition(new THREE.Vector3()).y : b.max.y
     }
     action.stop()
     rig.rotation.set(0, 0, 0)
     rig.position.set(0, 0, 0)
-    return { up: box.max.y, down: -box.min.y, side: Math.max(box.max.x, -box.min.x) }
+    return { up: box.max.y, down: -box.min.y, side: Math.max(box.max.x, -box.min.x), mount }
   })()
-  // 現れる前は、斜めを向いた最初の姿（canvas は CSS で隠しておく）
-  rig.rotation.set(0.05, -0.55, 0)
-  rig.position.y = -24
+  // 現れる前は、画面の下に沈んだ最初の姿（canvas は CSS で隠しておく）
+  rig.rotation.x = THETA - 0.22
+  rig.position.y = -RISE
 
   let width = 0
   const render = () => {
@@ -199,8 +205,10 @@ export async function mountPrinter(stage: HTMLElement, lost: () => void): Promis
     camera.far = 4000
     camera.updateProjectionMatrix()
     renderer.setSize(half * 2, up + down, false)
-    // 置き場は差し出し口までの高さ。canvas はその下（紙の頭の後ろ）へはみ出す
-    stage.style.height = `${up}px`
+    // 置き場は支柱の上端（札の下端）から差し出し口までの高さ。canvas は上（札の後ろ）と下（紙の頭の後ろ）へはみ出す
+    const mount = Math.max(0, reach.mount * scale)
+    stage.style.height = `${mount}px`
+    canvas.style.top = `${mount - up}px`
     canvas.style.left = `${w / 2 - half}px`
     canvas.style.width = `${half * 2}px`
     canvas.style.height = `${up + down}px`
@@ -253,6 +261,7 @@ export async function mountPrinter(stage: HTMLElement, lost: () => void): Promis
       mixer.uncacheRoot(rig)
       timer.dispose()
       stage.style.removeProperty('height')
+      canvas.style.removeProperty('top')
       stage.parentElement?.style.removeProperty('--rm-paper')
       for (const g of geometries) g.dispose()
       for (const m of materials) m.dispose()

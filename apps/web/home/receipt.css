@@ -1,5 +1,5 @@
-/* ホームのうちのまちの札と、その下のレシートプリンタ（machine3d.ts）の差し出し口から出てくるレシート。
- * 紙はプリンタの置き場のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は clip-path で上から伸ばし、ほかの動きは transform・opacity。入りは ease-out */
+/* ホームのうちのまちの札（レジの画面）と、その下のレジの本体（machine3d.ts）の差し出し口から出てくるレシート。
+ * 紙は本体の置き場のすぐ下に敷き、差し出し口の線から下だけを見せる（.rc-feed が切り口）。紙は clip-path で上から伸ばし、ほかの動きは transform・opacity。入りは ease-out */
 .rc-feed {
   position: relative;
   overflow: hidden;
@@ -46,15 +46,28 @@
   from { clip-path: inset(0 -24px 100% -24px); transform: translateY(-8px); }
   to { clip-path: inset(0 -24px -40px -24px); transform: none; }
 }
-/* 数字の札。緑の平らな札のまま動かさない（数字だけが数え上がる） */
+/* 数字の札。数え上げる間は緑の平らな札で、本体が現れると縁が付き、下端を軸に少し奥へ傾いてレジの画面になる。
+ * 中は DOM のままなので、年度の切り替えや「詳細を見る」はそのまま押せる。長さは motion.ts の MORPH_MS */
 .rm-card {
+  position: relative;
+  z-index: 1;
   border-radius: 24px;
   background: var(--brand);
+  transform-origin: 50% 100%;
+  transition: transform 2200ms cubic-bezier(0.45, 0, 0.2, 1), box-shadow 2200ms cubic-bezier(0.45, 0, 0.2, 1);
 }
-/* プリンタの置き場（machine3d.ts）。札の下に置き、高さは差し出し口より上に見える分（three.js が決める）。紙は置き場のすぐ下から伸びる */
+.rm[data-gl]:not([data-phase='count']) .rm-card {
+  transform: perspective(1600px) rotateX(10deg);
+  /* 画面の縁と、奥へ傾いた板の厚み */
+  box-shadow: 0 0 0 10px #1f2a24, 0 10px 0 10px #141c18, 0 30px 40px -6px rgba(0, 0, 0, 0.3);
+}
+/* レジの本体の置き場（machine3d.ts）。札の下に置き、高さは支柱の上端（札の下端）から差し出し口まで（three.js が決める）。紙は置き場のすぐ下から伸びる */
 .rm-stage {
   margin-top: 20px;
   height: 48px;
+}
+.rm[data-gl] .rm-stage {
+  margin-top: 0;
 }
 .rm-stage > canvas {
   position: absolute;
@@ -120,6 +133,7 @@
   .rc-print.rc-run {
     animation: none;
   }
+  .rm-card,
   .rm-stage > canvas,
   .rm-slot {
     transition: none;
