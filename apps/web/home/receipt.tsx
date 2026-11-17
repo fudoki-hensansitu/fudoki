@@ -274,7 +274,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     )
   }
   return (
-    <div className="rm" data-phase={phase}>
+    <div className="rm">
       <section ref={card} className={`rm-card p-5 text-brand-foreground sm:p-7 ${receipt ? 'pb-12 sm:pb-14' : ''}`}>
         {head}
         {/* 予算と1人あたりを同じ大きさでいちばん大きく出す。見出しも読める大きさにする */}
