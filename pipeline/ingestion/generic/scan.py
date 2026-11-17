@@ -1234,7 +1234,12 @@ def declared_unread(built, logicals_: list, columns: dict | None, observation: d
             ruled = ink is not None and ink.module.ruled(box, page_, logicals_)
             slash = document_quirk('slashed_cells')
             ruled = ruled or (slash is not None and slash.module.slashed(box, page_, logicals_))
-            if not unit and not bracket and not ruled and any(b.page == page_['page_number'] and b.kind == 'amount'
+            # ink inside a box the conversion excludes (a table in a 歳入の説明) is no amount of the table
+            declined = any(b.page == page_['page_number'] and b.excluded and b.excluded.get('bbox')
+                           and b.excluded['bbox'][0] <= cx <= b.excluded['bbox'][2]
+                           and b.excluded['bbox'][1] <= cy <= b.excluded['bbox'][3]
+                           for logical in logicals_ for b in logical.bands)
+            if not unit and not bracket and not ruled and not declined and any(b.page == page_['page_number'] and b.kind == 'amount'
                                 and b.x0 - b.offset < cx < b.x1 - b.offset and b.body_top < cy < b.body_bottom
                                 for logical in logicals_ for b in logical.bands):
                 built.unowned.append({'kind': 'unread ink in amount column', 'page': page_['page_number'], 'box': box})

@@ -1,0 +1,408 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "131202",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "e7dac6c7fc69c9d895beec542ca0781c7745d0960e74bdfbad5abdf34d59591b"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（収入見込額・交付率・単価など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "name_corrections": [
+          {
+            "id": "p5-kan10-name",
+            "page": 5,
+            "observation_id": "p5:full-page:a0:result0:r99",
+            "observed_name": "交通安全対策",
+            "corrected_name": "交通安全対策特別交付金",
+            "reason": "原典の画像では、頁5の款10の名前は2行（交通安全対策／特別交付金）に印字されている。OCR は2行目を読み落とした。頁の上の欄外の見出しと、下の項・目の名前は「交通安全対策特別交付金」。"
+          }
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-revenue-ocr-1",
+          "origin_sha256": "e7dac6c7fc69c9d895beec542ca0781c7745d0960e74bdfbad5abdf34d59591b",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9,
+              10
+            ]
+          },
+          "sha256": "1a29f0cbf3a9cd150cee593e134ddd71d42a669ba7309edd3d81c2a83fadf9dd",
+          "bytes": 2582391
+        },
+        {
+          "id": "general-revenue-ocr-2",
+          "origin_sha256": "e7dac6c7fc69c9d895beec542ca0781c7745d0960e74bdfbad5abdf34d59591b",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              11,
+              12,
+              13,
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20
+            ]
+          },
+          "sha256": "909e61e88f2c9e3e69a3719d92aae7641751e168dda798bb98a83d6028165845",
+          "bytes": 2957677
+        },
+        {
+          "id": "general-revenue-ocr-3",
+          "origin_sha256": "e7dac6c7fc69c9d895beec542ca0781c7745d0960e74bdfbad5abdf34d59591b",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              21,
+              22,
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30
+            ]
+          },
+          "sha256": "b577b0c4a6305953f301b9bdd1562b02ad7f2305910ed7e84bf6c10cacbeb9b0",
+          "bytes": 3263960
+        },
+        {
+          "id": "general-revenue-ocr-4",
+          "origin_sha256": "e7dac6c7fc69c9d895beec542ca0781c7745d0960e74bdfbad5abdf34d59591b",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              31,
+              32,
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40
+            ]
+          },
+          "sha256": "eddd3d0b0afb3e6fa1b2856acda375f5ec147438412953431e1e2d782d0c3874",
+          "bytes": 2357964
+        },
+        {
+          "id": "general-revenue-ocr-5",
+          "origin_sha256": "e7dac6c7fc69c9d895beec542ca0781c7745d0960e74bdfbad5abdf34d59591b",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              41,
+              42,
+              43,
+              44,
+              45,
+              46
+            ]
+          },
+          "sha256": "6b55bf069f5b7d66986af65f89c02d3f00f8158781f0af90370e498df6a90f90",
+          "bytes": 1303881
+        }
+      ]
+    },
+    {
+      "id": "national-health-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "c63805620e7a990377e15324b86ae2bb827a53243b53a118b48c9d9be9d271c0"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業会計",
+        "table_id": "national-health-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（収入見込額・交付率・単価など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "national-health-revenue-ocr-1",
+          "origin_sha256": "c63805620e7a990377e15324b86ae2bb827a53243b53a118b48c9d9be9d271c0",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8
+            ]
+          },
+          "sha256": "875ed7e2dc3a35f4c4dafb957657d0c30eafee598d4758ea6d1e50cf47bfd01f",
+          "bytes": 1770837
+        }
+      ]
+    },
+    {
+      "id": "care-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "57db13e8d9a0c7db6c0a98cc7d8945bc5af84a9bfaa1ea4bb86fa15b99d8bbbb"
+        }
+      ],
+      "options": {
+        "account": "介護保険会計",
+        "table_id": "care-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（収入見込額・交付率・単価など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "care-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "care-revenue-ocr-1",
+          "origin_sha256": "57db13e8d9a0c7db6c0a98cc7d8945bc5af84a9bfaa1ea4bb86fa15b99d8bbbb",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              1,
+              2,
+              3,
+              4,
+              5,
+              6,
+              7,
+              8,
+              9
+            ]
+          },
+          "sha256": "60212a1360d3474eb4019718b856e9dafc7eb7b05398bc8cd64ce9d3a81e5650",
+          "bytes": 2196723
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "14eb675df2ad5dcaf1c44e1a7111b5f2c49c8870dc9600146932e6fa1a3468d3"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療会計",
+        "table_id": "elderly-medical-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "stacked_blocks",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（収入見込額・交付率・単価など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "elderly-medical-revenue-ocr-1",
+          "origin_sha256": "14eb675df2ad5dcaf1c44e1a7111b5f2c49c8870dc9600146932e6fa1a3468d3",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              1,
+              2,
+              3,
+              4
+            ]
+          },
+          "sha256": "777d5061799037b2814d66fdafb420fadb3550bf585b7902dcb763d8e8b78e8a",
+          "bytes": 813212
+        }
+      ]
+    }
+  ]
+}

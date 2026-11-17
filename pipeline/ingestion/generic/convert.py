@@ -512,7 +512,8 @@ def _build_table(source: dict, options: dict, *, stop: bool = True) -> Table:
         spread=(layout or {}).get('spread'), header=(layout or {}).get('header'),
         repairs=frozenset((layout or {}).get('repairs', ())), codes_right=(layout or {}).get('codes') == 'right',
         text_layer=(layout or {}).get('text_layer'), ocr=ocr, workflow=options.get('workflow'),
-        row_gaps=bool(((layout or {}).get('rules') or {}).get('row_gaps')))
+        row_gaps=bool(((layout or {}).get('rules') or {}).get('row_gaps')),
+        rule_dark=((layout or {}).get('rules') or {}).get('dark'))
     kept, nodes, amounts, unresolved, codes = split_notes(built)
     by_node = [rule for rule in options.get('name_corrections', ()) if 'observation_id' not in rule]
     built.notes.extend({'kind': 'name correction', 'text': text} for text in correct_names(built.nodes, by_node))

@@ -3592,6 +3592,434 @@
           "table_id": "general-initial-11"
         }
       ]
+    },
+    {
+      "id": "kokuho-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "1e78284a03265ba41e3e0ac8f21e5ed938ef543011358c8cb7f3ac7526038df5"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険特別会計",
+        "table_id": "kokuho-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            14,
+            27
+          ]
+        ],
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "kokuho-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kokuho-initial-ocr-1",
+          "origin_sha256": "1e78284a03265ba41e3e0ac8f21e5ed938ef543011358c8cb7f3ac7526038df5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              14,
+              15,
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "3df7f78033bd3cc2e111b9b1b7a0e07fa422a5e5e426dea1a5d00e05aa7c602d",
+          "bytes": 2088161
+        },
+        {
+          "id": "kokuho-initial-ocr-2",
+          "origin_sha256": "1e78284a03265ba41e3e0ac8f21e5ed938ef543011358c8cb7f3ac7526038df5",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              24,
+              25,
+              26,
+              27
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "809f359783190b31a08b02d407d35c99ebf0f5b05d17fc38a56b57b4793dac9f",
+          "bytes": 565310
+        }
+      ]
+    },
+    {
+      "id": "kouki-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "4c701c95c32369f51584e29fc6a46d7e21304fff815a33e80fc1d5cd27a4f208"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "kouki-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            12,
+            17
+          ]
+        ],
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "kouki-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kouki-initial-ocr-1",
+          "origin_sha256": "4c701c95c32369f51584e29fc6a46d7e21304fff815a33e80fc1d5cd27a4f208",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              12,
+              13,
+              14,
+              15,
+              16,
+              17
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "541e202ed65702db4ec34835202a11112a7e91dc5d2aec98d142474c9dc180b3",
+          "bytes": 1196460
+        }
+      ]
+    },
+    {
+      "id": "kaigo-initial",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "337868c99a30fcdeae67926ebca19b64097207032c7866d9d03ebec802e01b29"
+        }
+      ],
+      "options": {
+        "account": "介護保険特別会計",
+        "table_id": "kaigo-initial",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "本年度の財源内訳／特定財源／国都支出金市債その他一般財源": {
+                  "excluded": {
+                    "kind": "財源内訳",
+                    "reason": "本年度予算額の財源の内訳で、歳出の金額ではない"
+                  }
+                },
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度变": {
+                  "heading": "前年度予算額",
+                  "kind": "amount"
+                },
+                "前年度予算額": {
+                  "kind": "amount"
+                },
+                "比較": {
+                  "kind": "amount"
+                }
+              },
+              "header": {
+                "staircase": true,
+                "facing_pages": true
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              },
+              "説明": {
+                "pattern": "amount_ends",
+                "options": {
+                  "bare_amounts": true,
+                  "name_start_slack": 10,
+                  "amount_brackets": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "rule_ink": true,
+            "partial_headings": true,
+            "short_amounts_at_line_end": true
+          }
+        },
+        "pages": [
+          [
+            16,
+            49
+          ]
+        ],
+        "partial": true
+      },
+      "expected_tables": [
+        {
+          "table_id": "kaigo-initial"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "kaigo-initial-ocr-1",
+          "origin_sha256": "337868c99a30fcdeae67926ebca19b64097207032c7866d9d03ebec802e01b29",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              16,
+              17,
+              18,
+              19,
+              20,
+              21,
+              22,
+              23,
+              24,
+              25
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "c16bb8538b94b849026e9bc77e0eb22125529ee986b3a4fc5b42173faf8574c7",
+          "bytes": 1898397
+        },
+        {
+          "id": "kaigo-initial-ocr-2",
+          "origin_sha256": "337868c99a30fcdeae67926ebca19b64097207032c7866d9d03ebec802e01b29",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32,
+              33,
+              34,
+              35
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "a85224c8b34b12c382077b68133ab57c4b334a00c3d964114232be080e130ecf",
+          "bytes": 1701308
+        },
+        {
+          "id": "kaigo-initial-ocr-3",
+          "origin_sha256": "337868c99a30fcdeae67926ebca19b64097207032c7866d9d03ebec802e01b29",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42,
+              43,
+              44,
+              45
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "bae2f9ce064badea62e5a538555e46f5bd8d023a489bc7cf6f015b798e278397",
+          "bytes": 1814297
+        },
+        {
+          "id": "kaigo-initial-ocr-4",
+          "origin_sha256": "337868c99a30fcdeae67926ebca19b64097207032c7866d9d03ebec802e01b29",
+          "request": {
+            "engine": "paddle",
+            "pages": [
+              46,
+              47,
+              48,
+              49
+            ],
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "letterspaced_names": true
+          },
+          "sha256": "03c3692b2eb1bb302c07aeb3166936f8191c4f465f4dc444ae5e45196fe70fcf",
+          "bytes": 614137
+        }
+      ]
     }
   ]
 }
