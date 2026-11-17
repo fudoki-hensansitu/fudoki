@@ -32,7 +32,7 @@ function scaleOf(towns: MapTown[], slug: string): Scale | null {
     const hi = edges[i + 1]!
     return (i + (hi > lo ? Math.min(1, Math.max(0, (v - lo) / (hi - lo))) : 0.5)) / STEPS
   }
-  return { step, pos, min: vals[0]!, max: vals.at(-1)!, median: vals[Math.floor(vals.length / 2)]! }
+  return { step, pos, min: vals[0]!, max: vals.at(-1)!, median: vals.length % 2 ? vals[(vals.length - 1) / 2]! : (vals[vals.length / 2 - 1]! + vals[vals.length / 2]!) / 2 }
 }
 
 /** 値を数字と単位に分ける。円は1万円からは万円、100万円からは小数を落とす */
@@ -255,6 +255,7 @@ export function CompareQuestion({ slug, map, failed }: { slug: string; map: Comp
       <header className="mb-4">
         <Title size="h1">{q.title}</Title>
         <p className="mt-1 text-sm leading-relaxed text-muted-foreground">{q.note}</p>
+        <p className="mt-1 text-xs leading-relaxed text-muted-foreground">※{q.caveat}</p>
         <YearNote year={map.year} />
       </header>
       {failed ? failedText : (
