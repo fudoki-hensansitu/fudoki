@@ -238,12 +238,16 @@ function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHei
   list.current = papers
   const height = React.useRef(onHeight)
   height.current = onHeight
+  /** 止まっている描き直しを起こす（紙が増えた・差し出し口の紙が伸びた・幅が変わったとき） */
+  const kick = React.useRef(() => {})
+  React.useEffect(() => kick.current(), [papers])
   React.useEffect(() => {
     // three.js はサーバーの bundle に入れない（effect はサーバーでは走らないが、分岐が無いと動的 import の chunk が入る）
     if (import.meta.env.SSR) return
     let alive = true
     let raf = 0
     let stage: ReturnType<typeof import('./ribbon3d').ribbon> = null
+    let resize: ResizeObserver | null = null
     const taking = new Set<number>()
     void (async () => {
       try {
@@ -253,8 +257,9 @@ function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHei
         if (!stage) throw new Error('WebGL が使えません')
         const print = canvas.current.parentElement!.parentElement!
         let shown = 0
+        // 紙が動いている間だけ毎コマ進め、止まったら描くのをやめる。また動かすのは kick（紙の並び・.rc-print の大きさが変わったとき）
         const frame = () => {
-          raf = requestAnimationFrame(frame)
+          raf = 0
           const top = list.current[0]
           // 絵の無い紙（刷り終える前に押し出された紙）は、DOM の写しから写す。写し終えるまで描かない
           if (top && !pictures.has(top.r.id)) {
@@ -269,6 +274,7 @@ function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHei
                 },
               )
             }
+            raf = requestAnimationFrame(frame)
             return
           }
           const sheets = list.current.flatMap((o) => {
@@ -295,7 +301,13 @@ function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHei
             drawnRef.current = top?.r.id ?? null
             setDrawn(drawnRef.current)
           }
+          if (moving) raf = requestAnimationFrame(frame)
         }
+        kick.current = () => {
+          if (alive && !raf) raf = requestAnimationFrame(frame)
+        }
+        resize = new ResizeObserver(() => kick.current())
+        resize.observe(print)
         frame()
       } catch {
         ribbonOff = true
@@ -305,6 +317,7 @@ function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHei
     return () => {
       alive = false
       cancelAnimationFrame(raf)
+      resize?.disconnect()
       stage?.dispose()
     }
   }, [])
