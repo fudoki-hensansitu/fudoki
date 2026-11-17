@@ -18,8 +18,9 @@ import duckdb
 from population import DATABASES, write
 
 CATALOG = 'ducklake:https://data.queria.io/soumu/ducklake.duckdb'
-# 入れる決算年度の下限
+# 入れる決算年度の下限と、少なくとも入っているはずの最新の年度（R6 決算は2026年春に公表）
 SINCE = 2020
+REQUIRED_THROUGH = 2024
 
 # 列ごとに、決算状況調の表（section）と項目（item、見出しを親から「/」でつないだ名前）と読み方。
 # 金額は千円で載るので円にする（yen_na は「-」を0ではなく該当なしと読む）。比率は %、財政力指数は指数のまま
@@ -94,7 +95,13 @@ def read() -> list[tuple]:
 
 def check(rows: list[tuple]) -> None:
     """列がずれた・団体が欠けたまま入れないよう、形と数を確かめる"""
-    for year in sorted({r[1] for r in rows}):
+    if not rows:
+        raise ValueError('Queria から決算の指標の行が1つも読めませんでした')
+    # 入れる年度は、SINCE から公表済みの年度（REQUIRED_THROUGH）までが全部揃うこと。Queria に新しい年度が入ればそれも足す
+    years = set(range(SINCE, max(REQUIRED_THROUGH, *(r[1] for r in rows)) + 1))
+    if missing := sorted(years - {r[1] for r in rows}):
+        raise ValueError(f'{missing} 年度の行がありません')
+    for year in sorted(years):
         got = [r for r in rows if r[1] == year]
         # 市区町村は約1,740。大きく減っていたら読み違い
         if len(got) < 1700:
