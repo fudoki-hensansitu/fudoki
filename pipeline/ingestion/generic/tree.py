@@ -615,8 +615,9 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
         if label and not money and UNIT_NOTATION.fullmatch(line_text):
             continue  # `(単位:円・税抜)` printed over a column names the unit; it is no item of the column
         code, name = _split_code(line_text)
+        gap = narrow.module.GAP if (narrow := document_quirk('narrow_number_gaps')) is not None else 2
         if (code is None and len(label) > 1 and margins is not None and margins & set(_margins(label))
-                and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) and label[1].x0 - label[0].x1 >= 2
+                and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) and label[1].x0 - label[0].x1 >= gap
                 and AGE.match(normalize(text(label[1:]))) and not AGE_WORD.match(normalize(text(label[1:])))):
             # `1` `歳計現金利子`: the number is a word of its own in the column's number margin, so the 歳 after it
             # starts the name and is no age (`1歳6箇月児…`, joined to the number, and `3 歳児健康診査`, where an age
@@ -662,7 +663,7 @@ def entries_of(group: Group, margins: set[int] | None = None, amount_brackets: b
             if year:  # `42025年農林業センサス費` is item `4` and `2025年…`
                 code, name = year.group(1), line_text[len(year.group(1)):]
         spaced = (len(label) > 1 and re.fullmatch(r'[0-9]{1,4}', normalize(label[0].text)) is not None
-                  and label[1].x0 - label[0].x1 >= 2)  # the number is a word of its own, set apart from the name
+                  and label[1].x0 - label[0].x1 >= gap)  # the number is a word of its own, set apart from the name
         if (code is not None and not project and COUNTED.match(line_text) and not YEAR_LED.match(line_text) and not script
                 and not spaced):
             code, name = None, line_text  # `110番非常通報装置`, `3歳児健康診査`: a count, not an item number
@@ -2174,7 +2175,7 @@ def build(logicals: list[Logical], judge=None, pattern: str = 'bands', detail: s
                 title = Item(subject, line[0].page, [line], code, name, line[0].x0, level=-1, level_name=level_name,
                              title_depth=SUBJECT_LEVELS.index(level_name) + 1)
                 if amount is not None:
-                    title.amounts.append(amount)
+                    title.amounts.extend(amount if isinstance(amount, list) else [amount])
                 if one_line is not None and before is not None:
                     one_line.module.follow(before, title, line)
                 before = title
