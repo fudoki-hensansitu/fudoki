@@ -176,17 +176,18 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     <div className="rm" data-phase={phase} data-gl={gl ? true : undefined}>
       <section ref={card} className="rm-card p-5 text-brand-foreground sm:p-7">
         {head}
-        {/* 予算と1人あたりを同じ大きさでいちばん大きく出す */}
+        {/* 予算と1人あたりを同じ大きさでいちばん大きく出す。見出しも読める大きさにする */}
         <dl className="mt-5 grid gap-4 sm:mt-6 sm:gap-5">
           <div>
-            <dt className="text-[15px] opacity-80">{what}</dt>
+            <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">{what}</dt>
             <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
               <Yen n={total} />
             </dd>
           </div>
           {pop ? (
-            <div className="rm-divider pt-4 sm:pt-5">
-              <dt className="text-[15px] opacity-80">1人あたりに直すと</dt>
+            // 予算を数え終えてから出して数える（年度を替えたら出し直す）
+            <div key={year} className="rm-per rm-divider pt-4 sm:pt-5">
+              <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">1人あたりに直すと</dt>
               <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
                 <Yen n={per} />
               </dd>

@@ -46,15 +46,27 @@
   from { clip-path: inset(0 -24px 100% -24px); transform: translateY(-8px); }
   to { clip-path: inset(0 -24px -40px -24px); transform: none; }
 }
-/* 数字の札。緑の平らな札のまま動かさない（数字だけが数え上がる）。レジの本体とは離して置く */
+/* 数字の札。緑の平らな札のまま動かさない（数字だけが数え上がる）。レジの本体の手前に重ね、札の下端のすぐ下に差し出し口が来る */
 .rm-card {
+  position: relative;
+  z-index: 1;
   border-radius: 24px;
   background: var(--brand);
 }
-/* レジの本体の置き場（machine3d.ts）。札の下に離して置き、高さは本体の上端から差し出し口まで（three.js が決める）。紙は置き場のすぐ下から伸びる */
+/* 1人あたりは予算を数え終えてから出す（motion.ts の COUNT_MS 待つ）。場所は最初から取っておき、頁を揺らさない */
+.rm-per {
+  animation: rm-per-in 500ms ease-out 1600ms both;
+}
+@keyframes rm-per-in {
+  from { opacity: 0; transform: translateY(8px); }
+}
+/* レジの本体の置き場（machine3d.ts）。札のすぐ下で、高さは札の下端から差し出し口まで（three.js が決める）。本体の上の方は札の後ろに隠れる。紙は置き場のすぐ下から伸びる */
 .rm-stage {
-  margin-top: 24px;
+  margin-top: 20px;
   height: 48px;
+}
+.rm[data-gl] .rm-stage {
+  margin-top: 0;
 }
 .rm-stage > canvas {
   position: absolute;
@@ -115,7 +127,8 @@
   .rc-print.rc-run {
     animation: none;
   }
-  .rm-stage > canvas {
+  .rm-stage > canvas,
+  .rm-per {
     animation: none;
   }
 }

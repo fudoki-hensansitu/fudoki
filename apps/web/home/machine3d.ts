@@ -1,6 +1,6 @@
-// ホームのうちのまちの札の下に置く、レジの本体。形は Blender で組んだ model（public/home/receipt-machine.glb、組み方は brand/receipt_machine.py）。
+// ホームのうちのまちの札の後ろに置き、札の下端から差し出し口をのぞかせる、レジの本体。形は Blender で組んだ model（public/home/receipt-machine.glb、組み方は brand/receipt_machine.py）。
 // model の原点は差し出し口の中心（紙が出てくる点）で、差し出し口の幅は紙の最大幅（SLOT_W）と同じ。本体が置き場の幅に収まるよう一様に拡大縮小し、DOM の紙（.rc-print）の幅を差し出し口に合わせ、
-// 原点を置き場（stage）の下端の中央に置く。置き場の高さは本体の上端から差し出し口まで（余白込み）で、ここが決める。紙は置き場のすぐ下から DOM で伸びる。
+// 原点を置き場（stage）の下端の中央に置く。置き場の高さは札の下端から差し出し口までの短い帯（SLOT_GAP）で、本体の上の方は札（DOM、手前に重なる）の後ろに隠れる。紙は置き場のすぐ下から DOM で伸びる。
 // 正射影で、群れ（rig）を手前へ θ 倒して鍵盤を見せる。最初から据わった姿で描き、紙を送る動きは AnimationClip で持ち、AnimationMixer で進める。
 // 動いている間だけ毎フレーム描き、止まっているときは大きさが変わったときだけ描く
 import * as THREE from 'three'
@@ -17,6 +17,8 @@ const THETA = (20 * Math.PI) / 180
 const PAD = 16
 /** 広い画面で本体を大きくする上限（紙は最大で SLOT_W × これ） */
 const MAX_SCALE = 1.2
+/** 札の下端から差し出し口までの間（px） */
+const SLOT_GAP = 22
 /** 紙をこれより狭くしない（px）。画面の幅が足りないときだけ下回る */
 const MIN_PAPER = 300
 /** 狭い画面で本体が置き場の左右へはみ出してよい量（px、頁の余白より小さく） */
@@ -186,7 +188,9 @@ export async function mountPrinter(stage: HTMLElement, lost: () => void): Promis
     camera.updateProjectionMatrix()
     renderer.setSize(half * 2, up + down, false)
     // 置き場は据わった本体の上端から差し出し口までの高さ。canvas は上下の余白と紙の頭の後ろへはみ出す
-    stage.style.height = `${up}px`
+    // 置き場は札の下端から差し出し口までの短い帯（SLOT_GAP）。本体の天板から上は札の後ろに隠し、札がレジの前の面に見えるようにする
+    stage.style.height = `${SLOT_GAP}px`
+    canvas.style.top = `${SLOT_GAP - up}px`
     canvas.style.left = `${w / 2 - half}px`
     canvas.style.width = `${half * 2}px`
     canvas.style.height = `${up + down}px`
