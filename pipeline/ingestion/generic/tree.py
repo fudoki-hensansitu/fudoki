@@ -825,9 +825,13 @@ def items(group: Group, header: str, margins: set[int] | None = None,
         roles = {i: kept[id(entry)] for i, entry in enumerate(entries) if id(entry) in kept}
         roles.update({i: 'note' for i in tabled_notes})
 
+    flush = quirk(settings, 'flush_right_numbers')
+
     def measure(item, label, code) -> None:
         _measure(item, label, code, ocr or joined_codes, stops)
         if numbers is not None and code is not None and (start := numbers.module.name_start(label, numbers.value)) is not None:
+            item.indent = start
+        if flush is not None and code is not None and (start := flush.module.name_start(label)) is not None:
             item.indent = start
     kind_names = quirk(settings, 'names_end_with_kind_words')
     remainder = quirk(settings, 'bracketed_remainder')
