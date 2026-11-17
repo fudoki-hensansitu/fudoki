@@ -287,7 +287,8 @@ export async function mountMachine(host: HTMLElement, body: HTMLElement, lost: (
   const print = printClip()
 
   const ro = new ResizeObserver(layout)
-  ro.observe(body)
+  // 立体になるとき前面の余白が伸びるので、余白を含む大きさの変化で描き直す
+  ro.observe(body, { box: 'border-box' })
   layout()
   return {
     morph: (instant = false) => play(morph, instant),
