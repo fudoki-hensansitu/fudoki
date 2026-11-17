@@ -13,7 +13,7 @@ const STEPS = 5
 // 濃淡の段ごとの地（DESIGN.md の --shade-1〜5）と、その上の文字の色。未収録は斜線（--shade-none）にして 0 と分ける
 const fillOf = (step: number) => (step < 0 ? 'var(--shade-none)' : `var(--shade-${step + 1})`)
 const inkOf = (step: number) => (step >= 3 ? 'var(--primary-foreground)' : undefined)
-// 最多・最小のまちの印（DESIGN.md の --shu・--ai）。タイルの内側の線で、選んでいる印（外側の線）と重ねられる
+// 最多・最小の印（DESIGN.md の --shu・--ai）。一覧のカードの最多・最小の行に付ける
 const MARK = { top: 'var(--shu)', bottom: 'var(--ai)' } as const
 function Mark({ kind }: { kind: keyof typeof MARK }) {
   return <span aria-hidden="true" className="inline-block size-2.5 shrink-0 rounded-[2px]" style={{ background: MARK[kind] }} />
@@ -50,7 +50,6 @@ const popText = (n: number | null) => (!n ? '' : n >= 1e4 ? `人口 ${(n / 1e4).
 
 /** タイル地図。large は名前を書いて押せる地図、そうでなければ一覧のカードの小さな地図（押せない） */
 function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; q: Question; scale: Scale | null; selected?: string | null; onPick?: (code: string) => void; large?: boolean }) {
-  const { top, bottom } = extremes(map.towns, q.slug)
   return (
     <div className={cn('grid', large ? 'gap-0.5 sm:gap-1' : 'gap-0.5')} style={{ gridTemplateColumns: `repeat(${map.cols}, minmax(0, 1fr))` }}>
       {map.towns.map((t) => {
@@ -64,8 +63,6 @@ function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; 
           // 問いを替えたとき、色が西から東へ波のように移る
           transitionDelay: `${t.col * 18}ms`,
         }
-        const mark = t.code === top?.code ? MARK.top : t.code === bottom?.code ? MARK.bottom : null
-        if (mark) style.boxShadow = `inset 0 0 0 ${large ? 3 : 1.5}px ${mark}`
         const tile = cn(
           'aspect-square transition-[background-color,color] duration-300 ease-out motion-reduce:transition-none',
           large ? 'grid place-items-center rounded-[4px] sm:rounded-md' : 'rounded-[3px]',
@@ -95,8 +92,6 @@ function Legend({ q, scale }: { q: Question; scale: Scale | null }) {
           <Num v={scale.min} q={q} />〜<Num v={scale.max} q={q} />
         </span>
       ) : null}
-      <span className="flex items-center gap-2"><Mark kind="top" />最多</span>
-      <span className="flex items-center gap-2"><Mark kind="bottom" />最小</span>
       <span className="flex items-center gap-2">
         <span className="h-2.5 w-3.5 rounded-[2px]" style={{ background: fillOf(-1) }} />
         未収録
