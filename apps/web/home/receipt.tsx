@@ -64,14 +64,20 @@ type Phase = 'count' | 'print'
 const COUNT_ALL_MS = COUNT_MS * 2
 const PRINT_AT = COUNT_ALL_MS + READ_MS
 
-/** 段を進める。reduced-motion では最初から print */
-function usePhase() {
+/** 段を進める。数え上げ直す（key が変わる＝年度や額が変わる）たびに count へ戻し、数え終えて読む間をおいてから print にする。
+ * 見せるものは常に一つにするため、数えている間は紙を出さない。reduced-motion では最初から print */
+function usePhase(key: string) {
   const [phase, setPhase] = React.useState<Phase>(() => (reduced() ? 'print' : 'count'))
+  const [from, setFrom] = React.useState(key)
+  if (from !== key) {
+    setFrom(key)
+    setPhase(reduced() ? 'print' : 'count')
+  }
   React.useEffect(() => {
     if (reduced()) return setPhase('print')
     const t = setTimeout(() => setPhase('print'), PRINT_AT)
     return () => clearTimeout(t)
-  }, [])
+  }, [key])
   return phase
 }
 
@@ -132,7 +138,8 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   const per = useCountUp(pop ? Math.round(v.total / pop) : 0, COUNT_MS)
   const receipt = pop ? perHeadParts(v.fields, v.total, pop) : null
   const card = React.useRef<HTMLElement>(null)
-  const phase = usePhase()
+  const counted = `${year}:${v.total}`
+  const phase = usePhase(counted)
   useFollow(phase, card)
   return (
     <div className="rm" data-phase={phase}>
@@ -147,8 +154,8 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             </dd>
           </div>
           {pop ? (
-            // 予算を数え終えてから出して数える（年度を替えたら出し直す）
-            <div key={year} className="rm-per rm-divider pt-4 sm:pt-5">
+            // 予算を数え終えてから出して数える（数え直すたびに出し直す）
+            <div key={counted} className="rm-per rm-divider pt-4 sm:pt-5">
               <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">1人あたりに直すと</dt>
               <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
                 <Yen n={per} />
@@ -157,7 +164,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
           ) : null}
         </dl>
         <div className="mt-4 flex justify-end">
-          <Link href={detailHref} className="rm-key inline-flex items-center gap-1.5 rounded-full px-4 py-2 text-[13px] font-medium">
+          <Link href={detailHref} className="inline-flex items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
             詳細を見る
             <ArrowRightIcon className="size-4" />
           </Link>
