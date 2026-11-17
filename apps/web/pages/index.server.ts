@@ -9,6 +9,7 @@ import type { Env } from '../server/env'
 
 export type Props = HomeProps
 
+const ORIGIN = 'https://fudoki.dev'
 const TITLE = '風土記 — 私のお金はどこへ行った？'
 const DESCRIPTION = '私のお金はどこへ行った？ 風土記は、自治体が何にいくら使い、どう振り返ったかを、事業ごとにわかりやすく見せるサイトです。ほかのまちと同じ物差しで比べられ、出典の資料まで辿れます。'
 const ORGANIZATION = { '@context': 'https://schema.org', '@type': 'Organization', name: '風土記（fudoki）', url: 'https://fudoki.dev/', logo: 'https://fudoki.dev/icon.png', sameAs: ['https://github.com/fudoki-hensansitu', 'https://docs.fudoki.dev/'] }
@@ -39,19 +40,20 @@ export const loader = defineHandler<Props>(async (c) => {
   const e = j ? entries.find((x) => x.code === code) : undefined
   const years = j ? appYears(j).map((y) => y.year) : []
   const year = /^\d{4}$/.test(yearText) && years.includes(Number(yearText)) ? Number(yearText) : years[0]
-  const shared = e && year !== undefined ? { town: { code, name: e.name, path: e.path }, year, origin: q.origin } : undefined
+  const shared = e && year !== undefined ? { town: { code, name: e.name, path: e.path }, year } : undefined
   // 自治体の一覧そのものは渡さない（名前で探す欄はサーバーに少しずつ聞く）
   return { listed: entries.length > 0, featured, ...(shared ? { shared } : {}) }
 })
 
 export const head = defineHead<Props>((_c, props) => {
   const s = props.shared
-  // シェアされたレシートは、題と OG 画像をそのまちのレシートにする（canonical はホームのまま）
+  // シェアされたレシートは、題と OG 画像をそのまちのレシートにする（canonical はホームのまま）。
+  // 人口が無くレシートを描けないまちの画像は、全頁共通の OG 画像へ回す（routes/jurisdictions/[code]/receipt.png.ts）
   const title = s ? `${s.town.name}の1人あたりのレシート（${reiwa(s.year)}）｜風土記` : TITLE
   const shared = s
     ? [
-        { property: 'og:image', content: `${s.origin}/jurisdictions/${s.town.code}/receipt.png?year=${s.year}` },
-        { property: 'og:url', content: `${s.origin}/?town=${s.town.code}&year=${s.year}` },
+        { property: 'og:image', content: `${ORIGIN}/jurisdictions/${s.town.code}/receipt.png?year=${s.year}` },
+        { property: 'og:url', content: `${ORIGIN}/?town=${s.town.code}&year=${s.year}` },
       ]
     : [{ property: 'og:url', content: 'https://fudoki.dev/' }]
   return {

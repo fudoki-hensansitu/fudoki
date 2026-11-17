@@ -18,7 +18,7 @@ const reduced = () => typeof matchMedia === 'function' && matchMedia('(prefers-r
 
 /** delay の後に 0 から to まで数え上げる。reduced-motion では最初から to。
  * to が変わったら（年度の切り替え）描く前に 0 へ戻し、前の年度の額を新しい年度の見出しで見せない */
-function useCountUp(to: number, delay = 0) {
+function useCountUp(to: number, delay: number, hold: boolean) {
   const [n, setN] = React.useState(() => (reduced() ? to : 0))
   const [from, setFrom] = React.useState(to)
   if (from !== to) {
@@ -27,6 +27,7 @@ function useCountUp(to: number, delay = 0) {
   }
   React.useEffect(() => {
     if (reduced()) return setN(to)
+    if (hold) return
     let raf = 0
     const t0 = performance.now() + delay
     const step = (t: number) => {
@@ -36,7 +37,7 @@ function useCountUp(to: number, delay = 0) {
     }
     raf = requestAnimationFrame(step)
     return () => cancelAnimationFrame(raf)
-  }, [to])
+  }, [to, hold])
   return n
 }
 
@@ -92,7 +93,7 @@ const PRINT_AT = COUNT_ALL_MS + READ_MS
 
 /** 段を進める。数え上げ直す（key が変わる＝年度や額が変わる）たびに count へ戻し、数え終えて読む間をおいてから print にする。
  * 見せるものは常に一つにするため、数えている間は紙を出さない。reduced-motion では最初から print */
-function usePhase(key: string, lead: number) {
+function usePhase(key: string, hold: boolean) {
   const [phase, setPhase] = React.useState<Phase>(() => (reduced() ? 'print' : 'count'))
   const [from, setFrom] = React.useState(key)
   if (from !== key) {
@@ -101,9 +102,10 @@ function usePhase(key: string, lead: number) {
   }
   React.useEffect(() => {
     if (reduced()) return setPhase('print')
-    const t = setTimeout(() => setPhase('print'), PRINT_AT + lead)
+    if (hold) return
+    const t = setTimeout(() => setPhase('print'), PRINT_AT)
     return () => clearTimeout(t)
-  }, [key])
+  }, [key, hold])
   return phase
 }
 
@@ -235,8 +237,6 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
   const [printed, setPrinted] = React.useState<Printed | null>(null)
   const [falling, setFalling] = React.useState<{ r: Printed; height: number } | null>(null)
   const fell = React.useCallback(() => setFalling(null), [])
-  /** 数え始めるまでの間。前の紙を落とすときは落ち終えてから数える（見せるものは常に一つ） */
-  const [lead, setLead] = React.useState(0)
   const [seen, setSeen] = React.useState(counted)
   if (seen !== counted) {
     // 数え直す（年度や額が変わる）ときは、出ている紙を差し出し口で切り離して落とし、新しい紙は数え終えてから一から刷る
@@ -244,14 +244,15 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
     const height = feed.current?.querySelector<HTMLElement>('[data-latest]')?.scrollHeight ?? 0
     const drop = printed && height > 0 && !reduced()
     setFalling(drop ? { r: printed, height } : null)
-    setLead(drop ? FALL_MS : 0)
     setPrinted(null)
   }
-  const total = useCountUp(v.total, lead)
-  const per = useCountUp(pop ? Math.round(v.total / pop) : 0, COUNT_MS + lead)
+  // 前の紙を落としている間は数えない。落ち終えた（落とせずに消した）ときから数える（見せるものは常に一つ）
+  const hold = falling != null
+  const total = useCountUp(v.total, 0, hold)
+  const per = useCountUp(pop ? Math.round(v.total / pop) : 0, COUNT_MS, hold)
   const receipt = pop ? perHeadParts(v.fields, v.total, pop) : null
   const card = React.useRef<HTMLElement>(null)
-  const phase = usePhase(counted, lead)
+  const phase = usePhase(counted, hold)
   React.useEffect(() => {
     if (phase === 'print' && pop && printed?.key !== counted) setPrinted({ key: counted, year, v })
   }, [phase, counted])
@@ -325,7 +326,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, shareOf, 
           </div>
           {pop ? (
             // 予算を数え終えてから出して数える（数え直すたびに出し直す）
-            <div key={counted} className="rm-per rm-divider pt-4 sm:pt-5" style={{ animationDelay: `${COUNT_MS + lead}ms` }}>
+            <div key={counted} className="rm-per rm-divider pt-4 sm:pt-5" style={{ animationDelay: `${COUNT_MS}ms`, animationPlayState: hold ? 'paused' : undefined }}>
               <dt className="text-[clamp(17px,4.6vw,22px)] opacity-80">1人あたりに直すと</dt>
               <dd className="mt-1.5 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
                 <Yen n={per} />

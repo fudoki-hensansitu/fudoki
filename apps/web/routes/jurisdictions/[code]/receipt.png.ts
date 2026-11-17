@@ -1,5 +1,5 @@
 // GET /jurisdictions/<code>/receipt.png?year=: ホームのレシートをシェアしたときの OG 画像（server/og-receipt.ts）。
-// ホームの札と同じ1年度のデータから描き、CDN（Void の ISR、void.config.ts の routing。year は key に残す）に1日置く。人口の無い自治体・頁に無い年度は 404
+// ホームの札と同じ1年度のデータから描き、CDN（Void の ISR、void.config.ts の routing。year は key に残す）に1日置く。人口の無い自治体・頁に無い年度は全頁共通の OG 画像（/og.png）へ回す（ホームの og:image はこの画像を指したままにする）
 import { defineHandler } from 'void'
 import { receiptOgInput } from '../../../server/jurisdiction-routes'
 import { receiptOgSvg } from '../../../server/og-receipt'
@@ -14,7 +14,7 @@ export const GET = defineHandler(async (c) => {
   const year = c.req.query('year')
   if (!/^\d{6}$/.test(code) || (year !== undefined && !/^\d{4}$/.test(year))) return c.notFound()
   const input = await receiptOgInput(env, code, year === undefined ? undefined : Number(year))
-  if (!input) return c.notFound()
+  if (!input) return c.redirect('/og.png', 302)
   const png = await renderPng(receiptOgSvg(input))
   // ISR の TTL は応答の x-revalidate が最優先（og.png.ts と同じ）
   return new Response(png, { headers: { 'Content-Type': 'image/png', 'Cache-Control': `public, max-age=${MAX_AGE}`, 'x-revalidate': String(MAX_AGE) } })

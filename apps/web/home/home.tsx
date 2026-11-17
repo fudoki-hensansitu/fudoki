@@ -32,7 +32,7 @@ export interface HomeProps {
   /** くわしい頁（事業評価・新しく始めること）のある自治体 */
   featured: Featured[]
   /** シェアされたレシート（/?town=&year=）。あれば住んでいるまちの代わりにそのまち・その年度の札を出し、住んでいるまちは変えない */
-  shared?: { town: Town; year: number; origin: string }
+  shared?: { town: Town; year: number }
 }
 
 
@@ -47,7 +47,7 @@ function useSnapshot(code: string | null, first: number | null = null) {
     setByYear({})
     setFailed(false)
     setYear(first)
-  }, [code])
+  }, [code, first])
   React.useEffect(() => {
     if (!code || (year != null && byYear[String(year)])) return
     let alive = true
@@ -266,7 +266,7 @@ export function Home({ listed, featured, shared }: HomeProps) {
             </button>
           )}
         </div>
-        <WithCtx town={town!} vision={vision} snap={snap}>
+        <WithCtx key={town!.code} town={town!} vision={vision} snap={snap}>
           {(c) => <Dashboard c={c} />}
         </WithCtx>
       </>
