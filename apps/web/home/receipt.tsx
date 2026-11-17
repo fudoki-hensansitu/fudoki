@@ -246,7 +246,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
               <span className="text-[15px]">合計</span>
               <Yen n={receipt.sum} className="text-[28px] font-semibold text-primary" />
             </p>
-            <p className="mt-3 text-center text-[12px] leading-relaxed text-muted-foreground">
+            <p className="mt-3 text-center text-[12px] leading-relaxed text-muted-foreground tabular-nums">
               {v.total.toLocaleString('ja-JP')}円 ÷ {pop!.toLocaleString('ja-JP')}人
               <br />
               払った税金の額ではありません
