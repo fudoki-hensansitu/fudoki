@@ -14,13 +14,22 @@ const STEPS = 5
 const fillOf = (step: number) => (step < 0 ? 'var(--shade-none)' : `var(--shade-${step + 1})`)
 const inkOf = (step: number) => (step >= 3 ? 'var(--primary-foreground)' : undefined)
 
-type Scale = { step: (v: number | null) => number; min: number; max: number; median: number }
+type Scale = { step: (v: number | null) => number; pos: (v: number) => number; min: number; max: number; median: number }
 /** 問いの値の並びを5つに分ける */
 function scaleOf(towns: MapTown[], slug: string): Scale | null {
   const vals = towns.map((t) => t.values[slug]).filter((v): v is number => v != null).sort((a, b) => a - b)
   if (!vals.length) return null
   const cuts = Array.from({ length: STEPS - 1 }, (_, i) => vals[Math.floor(((i + 1) * vals.length) / STEPS)]!)
-  return { step: (v) => (v == null ? -1 : cuts.filter((c) => v >= c).length), min: vals[0]!, max: vals.at(-1)!, median: vals[Math.floor(vals.length / 2)]! }
+  const step = (v: number | null) => (v == null ? -1 : cuts.filter((c) => v >= c).length)
+  const edges = [vals[0]!, ...cuts, vals.at(-1)!]
+  // 帯の上での位置（0〜1）。入っている段の中で、その段の下端と上端のあいだのどこかを足す
+  const pos = (v: number) => {
+    const i = step(v)
+    const lo = edges[i]!
+    const hi = edges[i + 1]!
+    return (i + (hi > lo ? Math.min(1, Math.max(0, (v - lo) / (hi - lo))) : 0.5)) / STEPS
+  }
+  return { step, pos, min: vals[0]!, max: vals.at(-1)!, median: vals[Math.floor(vals.length / 2)]! }
 }
 
 /** 値を数字と単位に分ける。円は1万円からは万円、100万円からは小数を落とす */
@@ -76,11 +85,12 @@ function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; 
   )
 }
 
-/** 凡例。濃淡の帯の両端に最小・最多のまちを置き（押すとそのまちを選ぶ）、選んでいるまちが帯のどこにいるかを上の印で示す */
+/** 凡例。濃淡の帯の両端に最小・最多のまちを置き（押すとそのまちを選ぶ）、選んでいるまちが帯のどこにいるかを縦の線で示す */
 function Legend({ map, q, scale, selected, onPick }: { map: CompareMap; q: Question; scale: Scale | null; selected?: string | null; onPick?: (code: string) => void }) {
   const { top, bottom } = extremes(map.towns, q.slug)
   const sel = map.towns.find((t) => t.code === selected)
-  const step = scale && sel ? scale.step(sel.values[q.slug] ?? null) : -1
+  const v = sel?.values[q.slug]
+  const at = scale && v != null ? scale.pos(v) : null
   const end = (t: MapTown | undefined, label: string) =>
     t ? (
       <button type="button" onClick={() => onPick?.(t.code)} className="flex items-baseline gap-1.5 rounded-sm text-left transition-colors hover:text-foreground">
@@ -94,9 +104,9 @@ function Legend({ map, q, scale, selected, onPick }: { map: CompareMap; q: Quest
       {scale ? (
         <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
           {end(bottom, '最小')}
-          <span className="relative flex gap-0.5 pt-2">
-            {step >= 0 ? (
-              <span aria-hidden="true" className="absolute top-0 h-1 w-7 rounded-full bg-foreground transition-[left] duration-300 ease-out motion-reduce:transition-none" style={{ left: `calc(${step} * (1.75rem + 2px))` }} />
+          <span className="relative flex gap-0.5">
+            {at != null ? (
+              <span aria-hidden="true" className="absolute -top-1 -bottom-1 w-0.5 -translate-x-1/2 rounded-full bg-foreground transition-[left] duration-300 ease-out motion-reduce:transition-none" style={{ left: `${at * 100}%` }} />
             ) : null}
             {Array.from({ length: STEPS }, (_, i) => <span key={i} className="h-2.5 w-7 rounded-[2px]" style={{ background: fillOf(i) }} />)}
           </span>
