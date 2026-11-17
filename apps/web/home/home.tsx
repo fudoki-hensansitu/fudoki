@@ -1,8 +1,8 @@
-// ホーム（/）。住んでいるまちのダッシュボード（総額・何に使っている・始めた事業・やめた事業・事業評価）と、ほかのまちを見る検索。
-// 住んでいるまちを決めていないときは、住んでいるまちを選ぶ欄（onboarding.tsx）を出し、選んだ時点でそのまちに決めてダッシュボードを出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
+// ホーム（/）。住んでいるまちの札（予算と1人あたりを数え上げ、分野ごとの1人あたりのレシートを出す。receipt.tsx）と、ほかのまちを見る検索。
+// 住んでいるまちを決めていないときは、住んでいるまちを選ぶ欄（onboarding.tsx）を出し、選んだ時点でそのまちに決めて札を出す。うちのまちは1つで、ブラウザ（localStorage）にだけ置く
 // データは自治体の頁と同じ1年度の分（server/app-data.ts）を /api/jurisdictions/:code で読み、yearView で年度ごとに見る
 import * as React from 'react'
-import { ArrowRightIcon, ArrowSquareOutIcon, CaretDownIcon, ClipboardTextIcon, CoinsIcon } from '@phosphor-icons/react'
+import { ArrowRightIcon, ArrowSquareOutIcon, CaretDownIcon } from '@phosphor-icons/react'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { FEEDBACK } from '../nav/feedback'
 import { Skeleton } from '@/components/ui/skeleton'
@@ -10,10 +10,9 @@ import { cn } from '@/lib/utils'
 import { Link } from '../nav/link'
 import { Emblem } from './town-picker'
 import type { MapEntry } from '../jurisdiction/index-table'
-import { GRADES, yearView, type Snapshot, type YearView } from '../jurisdiction/app/data'
-import { NewIcon, StopIcon } from '../jurisdiction/fresh-icons'
+import { yearView, type Snapshot, type YearView } from '../jurisdiction/app/data'
 import { reiwa, yearName } from '../jurisdiction/types'
-import { Amt, FieldIcon, perHeadText } from './parts'
+import { ReceiptMachine } from './receipt'
 import { useMyTown, type Town } from './towns'
 import { OtherTowns, AskTown, Intro } from './onboarding'
 
@@ -70,10 +69,7 @@ function useSnapshot(code: string | null) {
     }
   }, [code, year, byYear])
   const picked = year == null ? null : (byYear[String(year)] ?? Object.values(byYear)[0] ?? null)
-  // 評価のカードは最初に読んだ（年度なしの）応答の最新の評価を使い、年度を切り替えても残す
-  const evaluated = Object.values(byYear).find((s) => s.evaluated)?.evaluated
-  const d = picked && !picked.evaluated && evaluated ? { ...picked, evaluated } : picked
-  return { d, failed, year: d ? d.year : null, setYear }
+  return { d: picked, failed, year: picked ? picked.year : null, setYear }
 }
 
 type Ctx = { town: Town; d: Snapshot; v: YearView; year: number; years: number[]; setYear: (y: number) => void; base: string; vision?: string }
@@ -83,15 +79,6 @@ function buildCtx(town: Town, d: Snapshot, year: number, setYear: (y: number) =>
 }
 
 const flowHref = (c: Ctx) => `${c.base}/${c.v.word === '決算' ? 'settlement' : 'budget'}`
-const sheetsOf = (d: Snapshot) => d.evaluated ?? { fy: 0, sheets: [] }
-const pct = (yen: number, total: number) => `${((yen / total) * 100).toFixed(1)}%`
-
-const More = ({ href, children, className }: { href: string; children: React.ReactNode; className?: string }) => (
-  <Link href={href} className={cn('inline-flex items-center gap-1 text-[13px] text-primary hover:underline', className)}>
-    {children}
-    <ArrowRightIcon className="size-3.5" />
-  </Link>
-)
 
 /**
  * 年度の切り替え。名前は自治体の頁と同じく今年度・昨年度…で呼び、新しい年度から並べる。
@@ -136,61 +123,18 @@ function YearSwitch({ c, onBrand }: { c: Ctx; onBrand?: boolean }) {
   )
 }
 
-function ProjectList({ items, rest }: { items: { id: string; name: string; yen: number | null }[]; rest: number }) {
-  return (
-    <ul className="divide-y">
-      {items.map((p) => (
-        <li key={p.id} className="flex items-baseline gap-3 py-2 text-sm first:pt-0">
-          <span className="min-w-0 flex-1 truncate">{p.name}</span>
-          <Amt yen={p.yen} className="font-medium" />
-        </li>
-      ))}
-      {rest > 0 ? <li className="pt-2 text-xs text-muted-foreground">ほか {rest} 件</li> : null}
-    </ul>
-  )
-}
-
-function FieldBars({ c, limit }: { c: Ctx; limit: number }) {
-  return (
-    <ul className="space-y-2.5">
-      {c.v.fields.slice(0, limit).map((f) => (
-        <li key={f.id}>
-          <Link href={`${c.base}/projects?field=${f.id}`} className="group block">
-            <span className="flex items-center gap-2 text-sm">
-              <FieldIcon id={f.id} className="size-[18px] text-muted-foreground" />
-              <span className="flex-1 group-hover:text-primary">{f.name}</span>
-              <span className="text-xs text-muted-foreground tabular-nums">{pct(f.yen, c.v.total)}</span>
-              <Amt yen={f.yen} className="w-20 text-right text-sm font-medium" />
-            </span>
-            <span className="mt-1 block h-1.5 rounded-full bg-secondary">
-              <span className="block h-full rounded-full bg-primary" style={{ width: pct(f.yen, c.v.total) }} />
-            </span>
-          </Link>
-        </li>
-      ))}
-    </ul>
-  )
-}
-
-function Card({ title, icon, children, footer, className }: { title: string; icon?: React.ReactNode; children: React.ReactNode; footer?: React.ReactNode; className?: string }) {
-  return (
-    <section className={cn('flex flex-col rounded-2xl border bg-background p-5', className)}>
-      <h3 className="mb-3 flex items-center gap-2 text-[15px] font-medium [&_svg]:size-5 [&>svg]:text-muted-foreground">
-        {icon}
-        {title}
-      </h3>
-      <div className="flex-1">{children}</div>
-      {footer ? <div className="mt-3 border-t pt-3">{footer}</div> : null}
-    </section>
-  )
-}
-
+/** うちのまちの札（レシートの機械）。予算と1人あたりを数え上げ、分野ごとの1人あたりのレシートを出す */
 function Dashboard({ c }: { c: Ctx }) {
   const { v, d, year, town } = c
-  const { fy, sheets } = sheetsOf(d)
   return (
-    <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-      <section className="rounded-[24px] bg-brand p-5 text-brand-foreground sm:p-7 md:col-span-2">
+    <ReceiptMachine
+      name={town.name}
+      v={v}
+      year={year}
+      pop={d.pop ?? null}
+      base={c.base}
+      detailHref={c.year === c.years.at(-1) ? c.town.path : flowHref(c)}
+      head={
         <div className="flex items-start gap-4">
           <Emblem code={town.code} name={town.name} className="size-14 rounded-2xl border-0 p-2" />
           <div className="min-w-0 flex-1">
@@ -200,57 +144,8 @@ function Dashboard({ c }: { c: Ctx }) {
           {/* 年度は数字の頭に効くので上に、頁へ進む導線は数字を読んだあとの下に置く */}
           <YearSwitch c={c} onBrand />
         </div>
-        <div className="mt-6 flex flex-wrap items-end justify-between gap-4">
-          <div>
-            <p className="text-sm opacity-80">
-              {yearName(year)}の{v.word === '決算' ? '決算' : '当初予算'}
-            </p>
-            <p className="mt-1 text-[40px] leading-none font-semibold sm:text-[48px]">
-              <Amt yen={v.total} />
-            </p>
-            {d.pop ? <p className="mt-2 text-sm opacity-80">1人あたり {perHeadText(v.total, d.pop)}</p> : null}
-          </div>
-          <Link href={c.year === c.years.at(-1) ? c.town.path : flowHref(c)} className="inline-flex shrink-0 items-center gap-1.5 rounded-full bg-brand-fill px-3.5 py-2 text-[13px] font-medium text-brand-fill-foreground transition-colors hover:bg-brand-fill-hover">
-            詳細を見る
-            <ArrowRightIcon className="size-4" />
-          </Link>
-        </div>
-      </section>
-      {v.fields.length ? (
-        <Card title="何に使っている？" icon={<CoinsIcon />} footer={<More href={flowHref(c)}>お金の流れを見る</More>}>
-          <FieldBars c={c} limit={6} />
-        </Card>
-      ) : null}
-      {v.comparable && v.page('new')?.rows.length ? (
-        <Card title={`${yearName(year)}に始めた事業`} icon={<span className="flex text-primary"><NewIcon /></span>} footer={<More href={`${c.base}/projects?filter=new`}>事業をすべて見る</More>}>
-          <ProjectList items={v.page('new')!.rows.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: p.yen }))} rest={v.page('new')!.total - 5} />
-        </Card>
-      ) : v.top.length ? (
-        <Card title="お金のかかる事業" icon={<CoinsIcon />} footer={<More href={`${c.base}/projects`}>事業をすべて見る</More>}>
-          <ProjectList items={v.top.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: p.yen }))} rest={0} />
-        </Card>
-      ) : null}
-      {v.comparable && v.page('ended')?.rows.length ? (
-        <Card title={`${yearName(year - 1)}でやめた事業`} icon={<span className="flex text-primary"><StopIcon /></span>} footer={<More href={`${c.base}/projects?filter=ended`}>事業をすべて見る</More>}>
-          <ProjectList items={v.page('ended')!.rows.slice(0, 5).map((p) => ({ id: p.id, name: p.name, yen: p.yen }))} rest={v.page('ended')!.total - 5} />
-        </Card>
-      ) : null}
-      {sheets.length ? (
-        <Card title={`${yearName(fy)}の事業評価`} icon={<ClipboardTextIcon />} footer={<More href={`${town.path}/${fy}/projects`}>事業を見る</More>}>
-          <p className="text-sm text-muted-foreground">
-            <span className="text-2xl font-semibold text-foreground tabular-nums">{sheets.length}</span> 件の事業を振り返りました
-          </p>
-          <ul className="mt-4 grid grid-cols-4 gap-2">
-            {GRADES.map(([g, label]) => (
-              <li key={g} className="rounded-xl bg-card px-2 py-2.5 text-center">
-                <span className="block text-lg font-medium tabular-nums">{sheets.filter((s) => s.grade === g).length}</span>
-                <span className="block text-[11px] text-muted-foreground">{label}</span>
-              </li>
-            ))}
-          </ul>
-        </Card>
-      ) : null}
-    </div>
+      }
+    />
   )
 }
 
@@ -259,9 +154,8 @@ function Dashboard({ c }: { c: Ctx }) {
 function Loading() {
   return (
     <div className="grid gap-3 md:grid-cols-2" aria-busy="true">
-      <Skeleton className="h-44 rounded-[24px] md:col-span-2" />
-      <Skeleton className="h-56 rounded-2xl" />
-      <Skeleton className="h-56 rounded-2xl" />
+      <Skeleton className="h-52 rounded-[24px] md:col-span-2" />
+      <Skeleton className="mx-auto h-96 w-[min(440px,calc(100%-40px))] rounded-none md:col-span-2" />
       <p className="text-[13px] text-muted-foreground md:col-span-2">はじめて開くまちは、集めるのに少し時間がかかります。</p>
     </div>
   )
