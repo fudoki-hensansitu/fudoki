@@ -199,6 +199,8 @@ const RIBBON_GAP = 40
 const PERFORATION = 'rgba(0, 0, 0, 0.3)'
 /** 刷った紙の絵（ribbon3d.ts に貼る）。刷り終えたときに写しておき、押し出されたら使う */
 const pictures = new Map<number, HTMLCanvasElement>()
+/** 立体が使えない（WebGL が無い・絵を写せない）と分かったら、以後は前の紙を残さない */
+let ribbonOff = false
 
 /** 紙を写す（差し出し口の影は .rc-print の上端に別に付けるので、紙には描かない） */
 const picture = async (el: HTMLElement) => (await import('./snap')).paperCanvas(el, { shade: false })
@@ -223,13 +225,14 @@ function perforated(texture: HTMLCanvasElement, height: number) {
 }
 
 /** 押し出された前の紙（新しい順）。今出ている紙の下端に続く1本の紙として、真下へ垂れて床で折り重なる立体（ribbon3d.ts）に描く。
- * 立体を描くまで（読み込み・絵を写す間）は、いちばん新しい一枚を DOM のまま同じ場所に出しておく。WebGL が使えなければ DOM のまま出す */
-function Ribbon({ papers, onHeight, children }: { papers: Older[]; onHeight: (h: number) => void; children: React.ReactNode }) {
+ * 立体を描くまで（読み込み・絵を写す間）は、いちばん新しい一枚を DOM のまま同じ場所に出しておく。WebGL が使えない・絵を写せないときは、前の紙を残さない（以後も積まない） */
+function Ribbon({ papers, onHeight, onFail, children }: { papers: Older[]; onHeight: (h: number) => void; onFail: () => void; children: React.ReactNode }) {
   const wrap = React.useRef<HTMLDivElement>(null)
   const canvas = React.useRef<HTMLCanvasElement>(null)
   /** 立体に描き終えた、いちばん新しい紙の id（それまでは DOM のまま出す） */
   const [drawn, setDrawn] = React.useState<number | null>(null)
-  const [failed, setFailed] = React.useState(false)
+  const fail = React.useRef(onFail)
+  fail.current = onFail
   const drawnRef = React.useRef<number | null>(null)
   const list = React.useRef(papers)
   list.current = papers
@@ -258,7 +261,13 @@ function Ribbon({ papers, onHeight, children }: { papers: Older[]; onHeight: (h:
             const el = wrap.current?.querySelector<HTMLElement>('.rc-paper')
             if (el && !taking.has(top.r.id)) {
               taking.add(top.r.id)
-              void picture(el).then((c) => pictures.set(top.r.id, c), () => {})
+              void picture(el).then(
+                (c) => pictures.set(top.r.id, c),
+                () => {
+                  ribbonOff = true
+                  fail.current()
+                },
+              )
             }
             return
           }
@@ -289,7 +298,8 @@ function Ribbon({ papers, onHeight, children }: { papers: Older[]; onHeight: (h:
         }
         frame()
       } catch {
-        if (alive) setFailed(true)
+        ribbonOff = true
+        if (alive) fail.current()
       }
     })()
     return () => {
@@ -303,7 +313,7 @@ function Ribbon({ papers, onHeight, children }: { papers: Older[]; onHeight: (h:
     <div ref={wrap} className="rc-ribbon" aria-hidden="true" inert>
       <canvas ref={canvas} className="rc-ribbon-canvas" style={{ left: -RIBBON_MARGIN, width: `calc(100% + ${RIBBON_MARGIN * 2}px)` }} />
       {/* 立体を描くまでは、いちばん新しい一枚を DOM のまま差し出し口の下に出しておく */}
-      {top && (drawn !== top.r.id || failed) ? <div className="rc-ribbon-dom">{children}</div> : null}
+      {top && drawn !== top.r.id ? <div className="rc-ribbon-dom">{children}</div> : null}
     </div>
   )
 }
@@ -331,7 +341,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
     // 新しい年度に紙を出せない（人口が無い）ときや reduced-motion では、前の紙を残さない
     setSeen(counted)
     const height = feed.current?.querySelector<HTMLElement>('[data-latest]')?.scrollHeight ?? 0
-    const keep = !!pop && printed && height > 0 && !reduced()
+    const keep = !!pop && printed && height > 0 && !reduced() && !ribbonOff
     // 床に積もる紙は4枚まで（それより古い紙は積もりの下で見えない）
     setOlder(keep ? [{ r: printed, height }, ...older].slice(0, 4) : [])
     setPrinted(null)
@@ -350,13 +360,15 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
   React.useEffect(() => {
     if (import.meta.env.SSR || !printed || reduced()) return
     void import('./ribbon3d').catch(() => {})
-    if (printing || pictures.has(printed.id)) return
+    if (pictures.has(printed.id)) return
     const t = setTimeout(() => {
       const el = feed.current?.querySelector<HTMLElement>('[data-latest] .rc-paper')
       if (el) void picture(el).then((c) => pictures.set(printed.id, c), () => {})
     }, PRINT_MS + 100)
     return () => clearTimeout(t)
-  }, [printed, printing])
+  }, [printed])
+  // 札を外したら（まちを替える・頁を移る）写した絵を捨てる
+  React.useEffect(() => () => pictures.clear(), [])
   // 床に積もらなくなった紙の絵は捨てる
   React.useEffect(() => {
     const live = new Set([printed?.id, ...older.map((o) => o.r.id)])
@@ -456,7 +468,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
             ) : null}
             {/* 押し出された前の紙は、今の紙の下端に続いて垂れ、床で折り重なる */}
             {older.length ? (
-              <Ribbon papers={older} onHeight={setRibbonH}>
+              <Ribbon papers={older} onHeight={setRibbonH} onFail={() => setOlder([])}>
                 {paper(older[0]!.r)}
               </Ribbon>
             ) : null}

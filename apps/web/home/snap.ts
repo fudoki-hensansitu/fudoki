@@ -12,7 +12,7 @@ export async function paperCanvas(el: HTMLElement, { scale, shade = true }: { sc
   const page = getComputedStyle(el)
   g.fillStyle = page.backgroundColor
   g.fillRect(0, 0, box.width, box.height)
-  // 紙の頭は差し出し口の影に入る（receipt.css の .rc-paper::before）
+  // 紙の頭は差し出し口の影に入る（receipt.css の .rc-print::after と同じ影。shade のときだけ紙に描く）
   if (shade) {
     const fade = g.createLinearGradient(0, 0, 0, 40)
     fade.addColorStop(0, 'black')
