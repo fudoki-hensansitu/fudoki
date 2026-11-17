@@ -2,7 +2,7 @@ from pathlib import Path
 import re
 from ingestion.generic import mixed
 from ingestion.generic.layout import normalize
-from ingestion.generic.observe import Page, Rule, cropped, observe
+from ingestion.generic.observe import Page, Rule, cropped, observe, polyline_rules
 from ingestion.generic.patterns import document_quirk
 from ingestion.generic.repair import repair
 from ingestion.generic.units import check as check_units
@@ -69,6 +69,8 @@ def run_pages(pdf: Path, pages: list[int], cache: Path | None = None, judge=None
     printed = observe(pdf, [number for number in pages if number not in numbers], cache, character_map)
     if (text_layer or {}).get('crop_box'):
         printed = cropped(pdf, printed, (quirk := document_quirk('left_sheet_crop')) and quirk.module.sheet_of)
+    if (text_layer or {}).get('polyline_rules'):
+        printed = polyline_rules(pdf, printed)
     if (text_layer or {}).get('image_rules'):
         printed = [image_rules(pdf, page, staircase, rule_dark) if not page.rules else page for page in printed]
     unrepaired = [Page(page.number, page.width, page.height, list(page.words), page.rules) for page in printed]

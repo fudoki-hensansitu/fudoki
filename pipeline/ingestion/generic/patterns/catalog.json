@@ -145,6 +145,8 @@
     "grouped_ends_at_rule": "ingestion.generic.patterns.quirks.grouped_ends_at_rule",
     "padded_number_boxes": "ingestion.generic.patterns.quirks.padded_number_boxes",
     "strip_rereads": "ingestion.generic.patterns.quirks.strip_rereads",
+    "unfounded_supersessions": "ingestion.generic.patterns.quirks.unfounded_supersessions",
+    "shifted_right_pages": "ingestion.generic.patterns.quirks.shifted_right_pages",
     "unread_marks": "ingestion.generic.patterns.quirks.unread_marks",
     "bracketed_repeats": "ingestion.generic.patterns.quirks.bracketed_repeats",
     "page_edge_rules": "ingestion.generic.patterns.quirks.page_edge_rules",

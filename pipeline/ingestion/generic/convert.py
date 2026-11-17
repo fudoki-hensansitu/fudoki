@@ -560,17 +560,19 @@ def continue_volume(nodes: list[dict], spec: dict) -> str:
             printed.append(found)
         if printed and len(printed) < len(spec['subjects']):
             heads = [n for n in nodes if n['parent_node_key'] == printed[-1]['node_key'] and n['axis_header'] != subject]
-    if subject is None or not heads:
+    # (a volume that starts at a 目 declares only its 款・項: the 目 goes under them, and no row is read at the head)
+    at_subject = len(spec['subjects']) < 3 and not spec['rows']
+    if subject is None or not (heads or at_subject):
         raise ValueError('continued_rows: the volume reads no row at the head with no parent')
     if spec['rows'] and any(n['axis_header'] != heads[0]['axis_header'] for n in heads):
         raise ValueError('continued_rows: the rows with no parent are on more than one axis')
     # Rows read with no parent are on the first page, or all on the page after it (the right page of a spread, where
     # a scan prints the 節: 多摩市 R2 決算). (Under the 款・項 the volume prints again, the rows are the 目's until
     # the first 目 the volume prints, over as many spreads as it runs.)
-    if not printed and (len({n['physical_page'] for n in heads}) > 1 or heads[0]['physical_page'] > first + 1):
+    if not printed and heads and (len({n['physical_page'] for n in heads}) > 1 or heads[0]['physical_page'] > first + 1):
         raise ValueError('continued_rows: a row with no parent is not on the first page')
-    axis = heads[0]['axis_header']
-    top = min(n['y0'] for n in heads)
+    axis = heads[0]['axis_header'] if heads else None
+    top = min(n['y0'] for n in heads or [n for n in nodes if n['physical_page'] == first])
     chain, parent = [], printed[-1]['node_key'] if printed else None
     for index, row in enumerate(spec['subjects']):
         if index < len(printed):
