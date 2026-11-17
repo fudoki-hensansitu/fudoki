@@ -206,6 +206,7 @@
     "names_over_pages": "ingestion.generic.patterns.quirks.names_over_pages",
     "nested_subject_boxes": "ingestion.generic.patterns.quirks.nested_subject_boxes",
     "stepped_amount_lines": "ingestion.generic.patterns.quirks.stepped_amount_lines",
+    "name_over_code_line": "ingestion.generic.patterns.quirks.name_over_code_line",
     "name_tails_over_pages": "ingestion.generic.patterns.quirks.name_tails_over_pages",
     "wrapped_names_over_pages": "ingestion.generic.patterns.quirks.wrapped_names_over_pages",
     "wrapped_line_overlap": "ingestion.generic.patterns.quirks.wrapped_line_overlap",

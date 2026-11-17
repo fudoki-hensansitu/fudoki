@@ -1,0 +1,79 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132152",
+    "fiscal_year": 2024,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-revenue",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "f53902af0e878105ad689f6874c27765d36a05c8ca54bf4835d2c08e8dccac60"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明の欄は節ごとの積算の基（調定見込額・徴収率・単価×件数など）で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent"
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "pages": [
+          [
+            16,
+            28
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ]
+    }
+  ]
+}
