@@ -46,7 +46,7 @@ function Num({ v, q, className }: { v: number | null; q: Question; className?: s
 }
 const plain = (v: number | null, q: Question) => (v == null ? '未収録' : parts(v, q).join(''))
 const shortName = (name: string) => name.replace(/(区|市|町|村)$/, '')
-const popText = (n: number | null) => (n ? `人口 ${(n / 1e4).toFixed(1)}万人` : '')
+const popText = (n: number | null) => (!n ? '' : n >= 1e4 ? `人口 ${(n / 1e4).toFixed(1)}万人` : `人口 ${n.toLocaleString('ja-JP')}人`)
 
 /** タイル地図。large は名前を書いて押せる地図、そうでなければ一覧のカードの小さな地図（押せない） */
 function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; q: Question; scale: Scale | null; selected?: string | null; onPick?: (code: string) => void; large?: boolean }) {
