@@ -1,0 +1,366 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132110",
+    "fiscal_year": 2025,
+    "document_kind": "settlement"
+  },
+  "direction": "expenditure",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "5545cb8c0ede37a668cf935fd1780cf06df3286b0cdf5d075223032bac19cd13"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "columns": {
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／金額": {
+                  "kind": "amount"
+                },
+                "予算現額／当初予算額A": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／補正予算額B": {
+                  "heading": "補正予算額"
+                },
+                "予算現額／継続費及び繰越事業費繰越額C": {
+                  "heading": "継続費及び繰越事業費繰越額"
+                },
+                "予算現額／予備費支出及び流用増減D": {
+                  "heading": "予備費支出及び流用増減"
+                },
+                "予算現額／計E=A+B+C+D": {
+                  "heading": "計"
+                },
+                "支出済額F": {
+                  "heading": "支出済額"
+                },
+                "翌年度繰越額／継続費逓次繰越G": {
+                  "heading": "継続費逓次繰越"
+                },
+                "翌年度繰越額／繰越明許費H": {
+                  "heading": "繰越明許費"
+                },
+                "翌年度繰越額／事故繰越I": {
+                  "heading": "事故繰越"
+                },
+                "不用額J=E-F-G-H-I": {
+                  "heading": "不用額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "amount_on_next_page": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "national-health-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "0b7548547993cd12dd44547ae37662e6d213236d980920068ed4df9aa50fce68"
+        }
+      ],
+      "options": {
+        "account": "国民健康保険事業特別会計",
+        "table_id": "national-health-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／金額": {
+                  "kind": "amount"
+                },
+                "予算現額／当初予算額A": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／補正予算額B": {
+                  "heading": "補正予算額"
+                },
+                "予算現額／継続費及び繰越事業費繰越額C": {
+                  "heading": "継続費及び繰越事業費繰越額"
+                },
+                "予算現額／予備費支出及び流用増減D": {
+                  "heading": "予備費支出及び流用増減"
+                },
+                "予算現額／計E=A+B+C+D": {
+                  "heading": "計"
+                },
+                "支出済額F": {
+                  "heading": "支出済額"
+                },
+                "翌年度繰越額／継続費逓次繰越G": {
+                  "heading": "継続費逓次繰越"
+                },
+                "翌年度繰越額／繰越明許費H": {
+                  "heading": "繰越明許費"
+                },
+                "翌年度繰越額／事故繰越I": {
+                  "heading": "事故繰越"
+                },
+                "不用額J=E-F-G-H-I": {
+                  "heading": "不用額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "amount_on_next_page": true,
+                  "wrapped_names_over_pages": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "national-health-insurance-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "elderly-medical-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "16197d5787cf56212c049b0637d09a15f59c3a828914c03ff827e564b772eaac"
+        }
+      ],
+      "options": {
+        "account": "後期高齢者医療特別会計",
+        "table_id": "elderly-medical-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／金額": {
+                  "kind": "amount"
+                },
+                "予算現額／当初予算額A": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／補正予算額B": {
+                  "heading": "補正予算額"
+                },
+                "予算現額／継続費及び繰越事業費繰越額C": {
+                  "heading": "継続費及び繰越事業費繰越額"
+                },
+                "予算現額／予備費支出及び流用増減D": {
+                  "heading": "予備費支出及び流用増減"
+                },
+                "予算現額／計E=A+B+C+D": {
+                  "heading": "計"
+                },
+                "支出済額F": {
+                  "heading": "支出済額"
+                },
+                "翌年度繰越額／継続費逓次繰越G": {
+                  "heading": "継続費逓次繰越"
+                },
+                "翌年度繰越額／繰越明許費H": {
+                  "heading": "繰越明許費"
+                },
+                "翌年度繰越額／事故繰越I": {
+                  "heading": "事故繰越"
+                },
+                "不用額J=E-F-G-H-I": {
+                  "heading": "不用額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "amount_on_next_page": true,
+                  "wrapped_names_over_pages": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "elderly-medical-expenditure"
+        }
+      ]
+    },
+    {
+      "id": "long-term-care-insurance-settlement",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "efcbfac1e1bc735dda24b99ef8a57a4be3a89873a4ab2aee0260ac8fd1329d68"
+        }
+      ],
+      "options": {
+        "account": "介護保険事業特別会計",
+        "table_id": "long-term-care-insurance-expenditure",
+        "workflow": {
+          "layout": {
+            "pattern": "open_edge",
+            "options": {
+              "columns": {
+                "予算現額／節／区分": {
+                  "axis_header": "節"
+                },
+                "予算現額／節／金額": {
+                  "kind": "amount"
+                },
+                "予算現額／当初予算額A": {
+                  "heading": "当初予算額"
+                },
+                "予算現額／補正予算額B": {
+                  "heading": "補正予算額"
+                },
+                "予算現額／継続費及び繰越事業費繰越額C": {
+                  "heading": "継続費及び繰越事業費繰越額"
+                },
+                "予算現額／予備費支出及び流用増減D": {
+                  "heading": "予備費支出及び流用増減"
+                },
+                "予算現額／計E=A+B+C+D": {
+                  "heading": "計"
+                },
+                "支出済額F": {
+                  "heading": "支出済額"
+                },
+                "翌年度繰越額／継続費逓次繰越G": {
+                  "heading": "継続費逓次繰越"
+                },
+                "翌年度繰越額／繰越明許費H": {
+                  "heading": "繰越明許費"
+                },
+                "翌年度繰越額／事故繰越I": {
+                  "heading": "事故繰越"
+                },
+                "不用額J=E-F-G-H-I": {
+                  "heading": "不用額"
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              },
+              "備考": {
+                "pattern": "indent",
+                "quirks": {
+                  "amount_on_next_page": true,
+                  "wrapped_names_over_pages": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "stacked_tables_apart": true
+          }
+        }
+      },
+      "expected_tables": [
+        {
+          "table_id": "long-term-care-insurance-expenditure"
+        }
+      ]
+    }
+  ]
+}
