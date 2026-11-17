@@ -1,0 +1,150 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "133035",
+    "fiscal_year": 2023,
+    "document_kind": "settlement"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-settlement",
+      "converter": "fiscal/layouts/generic_scan/convert.py",
+      "inputs": [
+        {
+          "sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d"
+        }
+      ],
+      "options": {
+        "account": "一般会計",
+        "table_id": "general-revenue",
+        "workflow": {
+          "layout": {
+            "pattern": "ruled",
+            "options": {
+              "rules": {
+                "dark": 200
+              },
+              "header": {
+                "staircase": true
+              },
+              "columns": {
+                "備考": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の備考は節の下の徴収区分などの品目・注記で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "indent",
+              "codes": "right"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "flat"
+              }
+            }
+          }
+        },
+        "pages": [
+          [
+            23,
+            52
+          ]
+        ]
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-revenue"
+        }
+      ],
+      "ocr_inputs": [
+        {
+          "id": "general-settlement-revenue-ocr-1",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              23,
+              24,
+              25,
+              26,
+              27,
+              28,
+              29,
+              30,
+              31,
+              32
+            ]
+          },
+          "sha256": "02bb977a2ed6b0d8a8157fd6af701294cf77d54ee69737fca357061b4b6cb4c1",
+          "bytes": 4283280
+        },
+        {
+          "id": "general-settlement-revenue-ocr-2",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              33,
+              34,
+              35,
+              36,
+              37,
+              38,
+              39,
+              40,
+              41,
+              42
+            ]
+          },
+          "sha256": "d615a455f1b4c5dc486376dd1315eb1a4bef8d4d96aa3019120eeb035d97fbf2",
+          "bytes": 4145635
+        },
+        {
+          "id": "general-settlement-revenue-ocr-3",
+          "origin_sha256": "043c4c1f3aaf7453f0e7d063e2041ca3a40c2e91e644eb4fec85c88c5d4f553d",
+          "request": {
+            "engine": "paddle",
+            "vlm_fallback": false,
+            "config": {
+              "page_strips": 1,
+              "detection_limit_side_len": 3600
+            },
+            "pages": [
+              43,
+              44,
+              45,
+              46,
+              47,
+              48,
+              49,
+              50,
+              51,
+              52
+            ]
+          },
+          "sha256": "00ae10f3a7ce81a2fc4be736fa8c363c73c35b3ddd055aee8320d0b0cf211db6",
+          "bytes": 3351501
+        }
+      ]
+    }
+  ]
+}
