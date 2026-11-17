@@ -39,16 +39,11 @@ FRONT = -D / 2  # Blender の前面の y
 
 # 表示窓（前面に彫り込む）。四隅は帯の外
 WIN_X = 262.0
-WIN_TOP = 132.0
+WIN_TOP = 124.0
 WIN_BOTTOM = -122.0
 WIN_R = 18.0
 WIN_DEPTH = 4.0
 WIN_RIM = 5.0  # 窓の周りの縁の幅
-
-# 上の筐体と下の筐体の合わせ目（前面の上の、窓より上を一周する溝）
-SEAM_Y = 168.0
-SEAM_W = 3.0
-SEAM_DEPTH = 2.0
 
 # 差し出し口（前面の下）
 SLOT_W = 440.0
@@ -198,35 +193,6 @@ def body() -> bpy.types.Object:
     boo.material_mode = "TRANSFER"
     apply_modifiers(ob)
     bpy.data.objects.remove(cut)
-
-    # 上の筐体と下の筐体の合わせ目（一周する細い溝）。帯の外（y=SEAM_Y）に置く
-    inner_bm = bmesh.new()
-    bmesh.ops.create_cube(inner_bm, size=1.0)
-    bmesh.ops.scale(inner_bm, vec=(W - 2 * SEAM_DEPTH, D - 2 * SEAM_DEPTH, H * 2), verts=inner_bm.verts)
-    inner = mesh_object("seam_inner", inner_bm, ["shell"])
-    ibev = inner.modifiers.new("bevel", "BEVEL")
-    ibev.width = R - SEAM_DEPTH
-    ibev.segments = 6
-    ibev.limit_method = "ANGLE"
-    apply_modifiers(inner)
-    ring_bm = bmesh.new()
-    bmesh.ops.create_cube(ring_bm, size=1.0)
-    bmesh.ops.scale(ring_bm, vec=(W + 40, D + 40, SEAM_W), verts=ring_bm.verts)
-    ring = mesh_object("seam", ring_bm, ["panel"])
-    rb = ring.modifiers.new("hollow", "BOOLEAN")
-    rb.operation = "DIFFERENCE"
-    rb.solver = "EXACT"
-    rb.object = inner
-    apply_modifiers(ring)
-    bpy.data.objects.remove(inner)
-    ring.location = gl(0, SEAM_Y, 0)
-    sb = ob.modifiers.new("seam", "BOOLEAN")
-    sb.operation = "DIFFERENCE"
-    sb.solver = "EXACT"
-    sb.object = ring
-    sb.material_mode = "TRANSFER"
-    apply_modifiers(ob)
-    bpy.data.objects.remove(ring)
 
     # 窓の周りの縁（わずかに出る輪）
     rim = bmesh.new()
