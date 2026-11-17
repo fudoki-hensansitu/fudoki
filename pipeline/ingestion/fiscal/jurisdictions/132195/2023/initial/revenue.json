@@ -1,0 +1,110 @@
+{
+  "schema_version": 2,
+  "target": {
+    "jurisdiction": "132195",
+    "fiscal_year": 2023,
+    "document_kind": "initial"
+  },
+  "direction": "revenue",
+  "conversions": [
+    {
+      "id": "general-initial",
+      "converter": "fiscal/layouts/generic_text/convert.py",
+      "inputs": [
+        {
+          "sha256": "21fc642dc4ca89acab6ea18632d6ee8539949272ecba65c78231a37a71ba6ee9"
+        }
+      ],
+      "options": {
+        "pages": [
+          [
+            16,
+            16
+          ],
+          [
+            18,
+            40
+          ]
+        ],
+        "workflow": {
+          "layout": {
+            "pattern": "continued_pages",
+            "options": {
+              "header": {
+                "title_amount": "本年度予算額"
+              },
+              "columns": {
+                "本年度予算額": {
+                  "kind": "amount"
+                },
+                "前年度増減比": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／本年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "構成比／前年度": {
+                  "excluded": {
+                    "kind": "総括",
+                    "reason": "総括の頁の比率（前年度増減比・構成比、％）の列を取り込まない。金額ではなく、款の金額は本年度予算額の列で確かめるため。"
+                  }
+                },
+                "説明": {
+                  "excluded": {
+                    "kind": "歳入の説明",
+                    "reason": "歳入の説明は節ごとの算定の基（調定見込額・収納率・補助率など）と所管課で、節の内訳ではない。歳入は款・項・目・節で取り込む。"
+                  }
+                }
+              }
+            }
+          },
+          "headers": {
+            "pattern": "standard"
+          },
+          "hierarchy": {
+            "subject": {
+              "pattern": "bands"
+            },
+            "breakdown": {
+              "節": {
+                "pattern": "indent",
+                "quirks": {
+                  "repeated_code_at_top": true
+                }
+              }
+            }
+          },
+          "quirks": {
+            "bracketed_counts": true,
+            "code_gap_wraps": true,
+            "code_run_into_name": true,
+            "counted_cities": true,
+            "department_heading_slack": true,
+            "letter_spaced_lines": true,
+            "list_cut": true,
+            "names_in_own_column": true,
+            "padded_runs": true,
+            "spread_columns": true,
+            "stacked_tables_apart": true,
+            "title_depths": true,
+            "titles_on_one_line": true,
+            "unopened_brackets": true
+          }
+        },
+        "account": "一般会計",
+        "table_id": "general-initial"
+      },
+      "expected_tables": [
+        {
+          "table_id": "general-initial"
+        }
+      ]
+    }
+  ]
+}
