@@ -154,6 +154,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
         <dl className="rm-display mt-5 grid gap-4 px-5 py-5 sm:mt-6 sm:gap-5 sm:px-7 sm:py-6">
           <div>
             <dt className="text-sm opacity-80">{what}</dt>
+            {/* oxlint-disable-next-line design/text-size -- ホームのレシートの機械は画面幅に合わせて金額を伸ばす見せ場なので、Title の段の外を許す */}
             <dd className="mt-2 text-[clamp(28px,8vw,60px)] leading-none font-semibold">
               <Yen n={total} />
             </dd>
@@ -161,6 +162,7 @@ export function ReceiptMachine({ name, v, year, pop, base, detailHref, head }: {
           {pop ? (
             <div className="rm-divider pt-4 sm:pt-5">
               <dt className="text-sm opacity-80">1人あたりに直すと</dt>
+              {/* oxlint-disable-next-line design/text-size -- ホームのレシートの機械は画面幅に合わせて金額を伸ばす見せ場なので、Title の段の外を許す */}
               <dd className="mt-2 text-[clamp(44px,13vw,84px)] leading-none font-semibold">
                 <Yen n={per} />
               </dd>

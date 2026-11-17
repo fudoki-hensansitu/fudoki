@@ -58,7 +58,7 @@ const popText = (n: number | null) => (!n ? '' : n >= 1e4 ? `人口 ${(n / 1e4).
 /** タイル地図。large は名前を書いて押せる地図、そうでなければ一覧のカードの小さな地図（押せない） */
 function TileMap({ map, q, scale, selected, onPick, large }: { map: CompareMap; q: Question; scale: Scale | null; selected?: string | null; onPick?: (code: string) => void; large?: boolean }) {
   return (
-    <div className={cn('grid', large ? 'gap-1 sm:gap-1' : 'gap-1')} style={{ gridTemplateColumns: `repeat(${map.cols}, minmax(0, 1fr))` }}>
+    <div className="grid gap-1" style={{ gridTemplateColumns: `repeat(${map.cols}, minmax(0, 1fr))` }}>
       {map.towns.map((t) => {
         const v = t.values[q.slug] ?? null
         const step = scale ? scale.step(v) : -1

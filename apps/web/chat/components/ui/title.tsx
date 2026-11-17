@@ -11,7 +11,7 @@ const titleVariants = cva("font-semibold", {
       h2: "text-2xl leading-snug",
       h3: "text-xl leading-snug",
       headline: "text-base",
-      /** 頁でいちばん大きい総額だけに使う。見出しではないので as で要素を渡す */
+      /** 頁でいちばん大きい総額と、絵の代わりに置く大きな字（紋章の無いまちの頭文字）に使う。見出しではないので as で要素を渡す */
       display: "text-[40px] leading-none sm:text-5xl",
     },
   },

@@ -25,7 +25,7 @@ const PATTERNS = {
     message: '余白が 4px の格子から外れている。DESIGN.md の余白の段（Tailwind の整数の段）にする',
   },
   'text-size': {
-    pattern: new RegExp(`${EDGE_L}text-(?:\\[[\\d.]+(?:px|rem)\\]|lg|[2-9]?xl)${EDGE_R}`),
+    pattern: new RegExp(`${EDGE_L}text-(?:\\[(?![\\d.]+em\\]|max\\([\\d.]+em,[\\d.]+px\\)\\])[^\\]\\s]+\\]|lg|[2-9]?xl)${EDGE_R}`),
     message: '文字の大きさが DESIGN.md の段から外れている。本文は text-xs・text-sm・text-base、それより大きい文字（見出し・金額）は Title か titleVariants にする（単位を小さく添える em は可）',
   },
   'font-weight': {
